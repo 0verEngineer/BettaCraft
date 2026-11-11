@@ -1,0 +1,9 @@
+# Normalise line endings; scripts keep their native endings.
+* text=auto eol=lf
+*.bat text eol=crlf
+gradlew text eol=lf
+*.png binary
+*.jar binary
+*.nbt binary
+src/generated/**/.cache/* text eol=lf
+src/generated/**/*.json text eol=lf

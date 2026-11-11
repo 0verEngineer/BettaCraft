@@ -20,3 +20,8 @@ tools/assetgen/build/
 /optional-features.md
 # Fertige Test-Builds pro Meilenstein
 /builds/
+# Gradle extras
+repo/
+.run/
+src/generated/**/.cache/
+logs/
