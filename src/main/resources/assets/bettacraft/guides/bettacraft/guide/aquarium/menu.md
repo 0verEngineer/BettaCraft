@@ -1,0 +1,47 @@
+---
+navigation:
+  title: Tank menu
+  icon: minecraft:name_tag
+  parent: aquarium.md
+  position: 40
+---
+
+# Tank menu, name sign and lock
+
+**Right-click** an aquarium with an empty hand to open its menu. (**Sneak + right-click** enters the
+[interior](../interior.md) instead.)
+
+## Overview
+
+![The overview tab](../images/menu_overview.png)
+
+* **Name** (up to 32 characters) and the **name sign**: on or off, its position (top or bottom, left, centre or
+  right) and the **front** of the aquarium it is drawn on. The sign is black with white text; long names get a smaller
+  font. The name also shows in the menu and in Jade when the sign is off.
+* **Lock**: the player who placed the aquarium is its owner. When it is locked, only the owner and operators can
+  change it (water, animals, settings, interior); everyone can still look.
+* Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
+* Heaters, feeder, light and filters, the number of animals and the button to enter the interior.
+
+## Animals
+
+The list of all animals with name, type, sex and stage. The details of the selected fish: health and fed bars, stage
+progress, the genotype (tail, body, fins, pattern; all nine loci in the tooltip), the generation, a name field and the
+buttons to take it out with a bucket or a fish bag.
+
+![The animals tab](../images/menu_inhabitants.png)
+
+## Breeding
+
+Warnings, the bubble nest, the breeding conditions with ✔ and ✘, the young fish, the parents and the expected offspring.
+See [Breeding](../breeding.md).
+
+## Interior
+
+Scale and size of the interior, how many blocks are shown in the miniature, substrate, heaters and filters inside,
+floating plants, the decoration catalogue and the button to enter.
+
+## Log
+
+What happened in the aquarium: feeding, eggs, fights, sickness, deaths and their causes, with the in-game day. It keeps
+100 entries and can be filtered (all, breeding, health, feeding).

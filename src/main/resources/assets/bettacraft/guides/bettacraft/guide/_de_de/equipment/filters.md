@@ -1,0 +1,41 @@
+---
+navigation:
+  title: Filter
+  icon: bettacraft:internal_filter
+  parent: equipment.md
+  position: 20
+item_ids:
+  - bettacraft:internal_filter
+  - bettacraft:external_filter
+---
+
+# Filter
+
+Filter bringen Bewegung ins Aquarium: einen Wasserstrahl, Blasen und ein leises Blubbern (abschaltbar in der
+Client-Config, `sound.filterSound`). Die Strömung hat **keine Wirkung** auf die Fische.
+
+## Innenfilter
+
+<ItemImage id="bettacraft:internal_filter" scale="2" />
+
+Setze den <ItemLink id="bettacraft:internal_filter" /> in den [Innenraum](../interior.md): Er wird zu einem Filterturm
+(2x2x8 Blöcke bei Maßstab 16), dessen Auslass zu dir zeigt. Das Aquarium zeigt an seinem Auslass einen Wasserstrahl.
+
+<RecipeFor id="bettacraft:internal_filter" />
+
+## Außenfilter
+
+![Ein Außenfilter neben einem Aquarium](../images/external_filter.png)
+
+Der <ItemLink id="bettacraft:external_filter" /> steht **neben dem Aquarium** und zeigt darauf: Gegen einen
+Aquarium-Block gesetzt dreht er sich zu ihm, an jeder Seitenwand und in jeder Höhe. Ein Schlauch führt über den
+Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Strömung).
+
+* Er hat **zwei Plätze für [Heizstäbe](heaters.md)** beliebiger Größe. Öffne ihn per Rechtsklick oder rechtsklicke ihn
+  mit einem Heizstab. Solange der Filter angeschlossen ist, heizen seine Heizstäbe das Aquarium.
+* Abgebaut behält er seine Heizstäbe im Item (der Tooltip listet sie auf).
+* Er passt auch in einen [Aquariumschrank](cabinet.md) unter dem Aquarium.
+
+<RecipeFor id="bettacraft:external_filter" />
+
+Das Aquarium-Menü zeigt „Filter: 1 außen (Heizstäbe: 2), 1 innen“.
