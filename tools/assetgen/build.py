@@ -7,6 +7,7 @@ import time
 import blocks
 import breeding
 import decor
+import decor_icons
 import equipment
 import gui
 import icons
@@ -35,6 +36,7 @@ def main() -> int:
     written += icons.write_all()
     written += breeding.write_all()
     written += decor.write_all()
+    written += decor_icons.write_all()
     written += blocks.write_all()
     written += equipment.write_all()
     written += gui.write_all()

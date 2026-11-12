@@ -133,7 +133,7 @@ def bubble_nest():
     ang = np.arctan2((yy + 0.5) / N - 0.5, (xx + 0.5) / N - 0.5)
     rag = 0.40 + 0.05 * np.sin(ang * 5 + 1.3) + 0.03 * np.sin(ang * 11 + 0.4)
     inside = d < rag
-    base = np.where(inside, 0.35, 0.0) * alpha_disc
+    base = np.where(inside, 0.45, 0.0) * alpha_disc
     img[..., :3] = 0.86
     img[..., 3] = base
     for _ in range(70):
@@ -155,37 +155,54 @@ def bubble_nest():
 
 
 def nest_eggs():
-    """Eggs: small cream-white dots with a yellow core, clustered in the middle."""
+    """Eggs (M5: bigger and with contrast): 2x2 cream-yellow spheres with a dark amber rim and a highlight,
+    clustered in the middle, so they read against the white foam."""
     rng = _rng(91)
     img = np.zeros((N, N, 4), np.float64)
-    for _ in range(46):
+    taken = np.zeros((N, N), bool)
+    placed = 0
+    for _ in range(400):
+        if placed >= 26:
+            break
         a = rng.uniform(0, 2 * math.pi)
-        rr = abs(rng.normal(0, 0.16)) * N
+        rr = abs(rng.normal(0, 0.15)) * N
         x, y = int(N / 2 + math.cos(a) * rr), int(N / 2 + math.sin(a) * rr)
-        if not (1 <= x < N - 1 and 1 <= y < N - 1):
+        if not (2 <= x < N - 3 and 2 <= y < N - 3) or taken[y - 1:y + 3, x - 1:x + 3].any():
             continue
-        img[y, x] = (0.98, 0.94, 0.70, 1.0)
-        for dx, dy in ((1, 0), (0, 1), (1, 1)):
-            if img[y + dy, x + dx, 3] < 0.5:
-                img[y + dy, x + dx] = (0.92, 0.86, 0.62, 0.9)
-        img[y, x] = (0.95, 0.80, 0.35, 1.0)
+        taken[y - 1:y + 3, x - 1:x + 3] = True
+        for dx, dy in ((-1, 0), (2, 0), (0, -1), (1, -1), (-1, 1), (2, 1), (0, 2), (1, 2)):
+            img[y + dy, x + dx] = (0.55, 0.38, 0.12, 0.85)
+        img[y, x] = (1.0, 0.98, 0.86, 1.0)
+        img[y, x + 1] = (0.98, 0.88, 0.50, 1.0)
+        img[y + 1, x] = (0.96, 0.84, 0.44, 1.0)
+        img[y + 1, x + 1] = (0.88, 0.70, 0.30, 1.0)
+        placed += 1
     return img
 
 
 def nest_larvae():
-    """Larvae: tiny dark heads with short pale tails hanging from the foam."""
+    """Larvae (M5: more visible): dark 2-texel heads with a yolk dot and a 3-texel tail hanging from the foam."""
     rng = _rng(93)
     img = np.zeros((N, N, 4), np.float64)
-    for _ in range(30):
+    taken = np.zeros((N, N), bool)
+    placed = 0
+    for _ in range(400):
+        if placed >= 20:
+            break
         a = rng.uniform(0, 2 * math.pi)
         rr = abs(rng.normal(0, 0.17)) * N
         x, y = int(N / 2 + math.cos(a) * rr), int(N / 2 + math.sin(a) * rr)
-        if not (2 <= x < N - 2 and 2 <= y < N - 2):
+        horizontal = bool(rng.integers(2))
+        dx, dy = (1, 0) if horizontal else (0, 1)
+        if not (2 <= x < N - 6 and 2 <= y < N - 6) or taken[y - 1:y + 6, x - 1:x + 6].any():
             continue
-        img[y, x] = (0.18, 0.16, 0.14, 1.0)
-        dx, dy = (1, 0) if rng.integers(2) else (0, 1)
-        img[y + dy, x + dx] = (0.80, 0.76, 0.66, 0.9)
-        img[y + 2 * dy, x + 2 * dx] = (0.80, 0.76, 0.66, 0.6)
+        taken[y - 1:y + 6 if not horizontal else y + 2, x - 1:x + 6 if horizontal else x + 2] = True
+        img[y, x] = (0.10, 0.09, 0.08, 1.0)
+        img[y + dy, x + dx] = (0.20, 0.17, 0.14, 1.0)
+        img[y + (1 - dy), x + (1 - dx)] = (0.95, 0.80, 0.40, 1.0)  # yolk sac beside the head
+        for k, al in ((2, 0.95), (3, 0.8), (4, 0.55)):
+            img[y + k * dy, x + k * dx] = (0.62, 0.56, 0.46, al)
+        placed += 1
     return img
 
 

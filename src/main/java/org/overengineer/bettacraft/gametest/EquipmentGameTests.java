@@ -172,7 +172,7 @@ public final class EquipmentGameTests {
                 h.assertTrue(t.log().stream().anyMatch(e -> e.key().equals("log.bettacraft.heaters_moved")), "logged");
                 // saved again: schema 3, no old key
                 CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-                h.assertTrue(saved.getInt("schema") == 3 && !saved.getCompound("tank").contains("heaters"), "saved as v3");
+                h.assertTrue(saved.getInt("schema") == 4 && !saved.getCompound("tank").contains("heaters"), "saved as v4");
                 h.succeed();
             });
         });

@@ -72,11 +72,19 @@ public final class DecorPreview {
         PoseStack ps = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
         RenderType rt = Sheets.translucentCullBlockSheet();
-        float pulse = 0.45F + 0.1F * (float) Math.sin((mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) * 0.2);
+        // M5: more visible - stronger alpha, a slight cyan glow and an outline of the whole footprint
+        float pulse = 0.68F + 0.12F * (float) Math.sin((mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) * 0.2);
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+        boolean blocked = false;
         for (DecorTemplate.Placed b : blocks) {
+            BlockPos q = b.pos();
+            minX = Math.min(minX, q.getX()); minY = Math.min(minY, q.getY()); minZ = Math.min(minZ, q.getZ());
+            maxX = Math.max(maxX, q.getX()); maxY = Math.max(maxY, q.getY()); maxZ = Math.max(maxZ, q.getZ());
             if (b.state().getRenderShape() != RenderShape.MODEL) continue;
             boolean free = mc.level.getBlockState(b.pos()).canBeReplaced();
-            VertexConsumer vc = new Tinted(buffers.getBuffer(rt), free ? 1F : 1F, free ? 1F : 0.35F, free ? 1F : 0.35F, pulse);
+            blocked |= !free;
+            VertexConsumer vc = new Tinted(buffers.getBuffer(rt), free ? 0.85F : 1F, free ? 1F : 0.3F, free ? 1.1F : 0.3F, pulse);
             ps.pushPose();
             ps.translate(b.pos().getX() - cam.x, b.pos().getY() - cam.y, b.pos().getZ() - cam.z);
             ps.translate(0.5, 0.5, 0.5);
@@ -87,6 +95,15 @@ public final class DecorPreview {
             ps.popPose();
         }
         buffers.endBatch(rt);
+        if (!blocks.isEmpty()) {
+            ps.pushPose();
+            ps.translate(-cam.x, -cam.y, -cam.z);
+            net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1).inflate(0.01);
+            net.minecraft.client.renderer.LevelRenderer.renderLineBox(ps, buffers.getBuffer(RenderType.lines()), box,
+                    blocked ? 1F : 0.35F, blocked ? 0.25F : 0.95F, blocked ? 0.25F : 1F, 0.9F);
+            ps.popPose();
+            buffers.endBatch(RenderType.lines());
+        }
         if (!drawnLogged) {
             drawnLogged = true;
             LOGGER.debug("Decor hologram {}: {} blocks at {}", id, blocks.size(), base);
@@ -97,7 +114,7 @@ public final class DecorPreview {
     private record Tinted(VertexConsumer d, float r, float g, float b, float a) implements VertexConsumer {
         @Override public VertexConsumer addVertex(float x, float y, float z) { d.addVertex(x, y, z); return this; }
         @Override public VertexConsumer setColor(int red, int green, int blue, int alpha) {
-            d.setColor((int) (red * r), (int) (green * g), (int) (blue * b), (int) (255 * a));
+            d.setColor(Math.min(255, (int) (red * r)), Math.min(255, (int) (green * g)), Math.min(255, (int) (blue * b)), (int) (255 * a));
             return this;
         }
         @Override public VertexConsumer setUv(float u, float v) { d.setUv(u, v); return this; }

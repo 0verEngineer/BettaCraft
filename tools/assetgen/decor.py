@@ -508,10 +508,8 @@ def write_all() -> list:
         p = STRUCT_DIR / f"{name}.nbt"
         p.write_bytes(structure_nbt(v))
         out.append(p)
-        icon = iso_icon(v)
-        out.append(save_png(icon, ITEM_TEX / f"decor_{name}.png"))
+        # M5: the item icons are hand-authored pixel art (decor_icons.py); the isometric render stays as a debug sheet
         sheet.append(iso_icon(v, 64, 2))
-    out.append(save_png(internal_filter_icon(), ITEM_TEX / "internal_filter.png"))
     for part in ("anchor", "middle", "top"):
         out.append(save_png(heater_segment(part), BLOCK_TEX / f"heater_segment_{part}.png"))
         out.append(save_png(filter_segment(part), BLOCK_TEX / f"filter_segment_{part}.png"))

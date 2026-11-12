@@ -41,7 +41,10 @@ public final class GeneticsReloadListener extends SimplePreparableReloadListener
     @SubscribeEvent
     static void onDatapackSync(OnDatapackSyncEvent event) {
         GeneticsSyncPayload p = new GeneticsSyncPayload(GeneticsData.get().toNbt());
-        event.getRelevantPlayers().forEach((ServerPlayer sp) -> PacketDistributor.sendToPlayer(sp, p));
+        event.getRelevantPlayers().forEach((ServerPlayer sp) -> {
+            // fake and GameTest mock players have no channel
+            if (sp.connection != null && sp.connection.hasChannel(GeneticsSyncPayload.TYPE)) PacketDistributor.sendToPlayer(sp, p);
+        });
     }
 
     @Override
