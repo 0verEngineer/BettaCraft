@@ -67,6 +67,10 @@ public class TankBakedModel implements IDynamicBakedModel {
     private volatile int edgeCacheWidth = -1;
     /** Bit of {@link #CORNERS}: the block above belongs to the tank and holds water (no water surface in this block). */
     private static final int WATER_ABOVE_BIT = 1 << 30;
+    /** Bits 24..27 of {@link #CORNERS}: {@link TankWaterRenderer#gapMask}. */
+    private static final int GAP_SHIFT = 24;
+    /** Water quads drawn by the model while a shader pack is in use, by (fill, connection mask, water above, gaps). */
+    private final Map<Integer, List<BakedQuad>> waterCache = new ConcurrentHashMap<>();
     /** Connected / split glass quads: original quad -> [hidden slots 0..15 x split fill 0..16] -> 1 or 2 quads. */
     private final Map<BakedQuad, BakedQuad[][]> glassCache = new ConcurrentHashMap<>();
     /** Frame width (fraction of the face) per glass sprite. */
@@ -111,7 +115,14 @@ public class TankBakedModel implements IDynamicBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData data, @Nullable RenderType renderType) {
-        if (side == null) return List.of();
+        if (side == null) {
+            // with a shader pack the water is part of the block model (shaders then treat it like tinted glass)
+            if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == RenderType.translucent())
+                    && org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()) {
+                return waterQuads(state, data);
+            }
+            return List.of();
+        }
         int mask = state != null && state.getBlock() instanceof TankBlock ? TankBlock.connectionMask(state) : 0;
         if ((mask & (1 << side.ordinal())) != 0) return List.of();
         Long concaveData = data.get(CONCAVE);
@@ -152,9 +163,12 @@ public class TankBakedModel implements IDynamicBakedModel {
 
     @Override
     public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
-        if (styleOf(data) == TankStyle.CLEAN) return ChunkRenderTypeSet.of(RenderType.cutout());
+        ChunkRenderTypeSet own = state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0
+                && org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()
+                ? ChunkRenderTypeSet.of(RenderType.cutout(), RenderType.translucent()) : ChunkRenderTypeSet.of(RenderType.cutout());
+        if (styleOf(data) == TankStyle.CLEAN) return own;
         BlockState glass = glassOf(data);
-        return ChunkRenderTypeSet.union(glassModel(glass).getRenderTypes(glass, rand, ModelData.EMPTY), ChunkRenderTypeSet.of(RenderType.cutout()));
+        return ChunkRenderTypeSet.union(glassModel(glass).getRenderTypes(glass, rand, ModelData.EMPTY), own);
     }
 
     @Override
@@ -167,12 +181,55 @@ public class TankBakedModel implements IDynamicBakedModel {
         if (!(state.getBlock() instanceof TankBlock)) return modelData;
         long concave = TankBlock.concaveMask(level, pos, state);
         int corners = TankBlock.innerCornerMask(level, pos, state, concave);
-        if (TankBlock.isConnected(state, Direction.UP) && state.getValue(TankBlock.FILL) > 0) {
-            BlockState above = level.getBlockState(pos.above());
-            if (above.getBlock() instanceof TankBlock && above.getValue(TankBlock.FILL) > 0) corners |= WATER_ABOVE_BIT;
-        }
+        if (state.getValue(TankBlock.FILL) > 0 && TankWaterRenderer.waterAbove(level, pos, state)) corners |= WATER_ABOVE_BIT;
+        corners |= TankWaterRenderer.gapMask(level, pos, state) << GAP_SHIFT;
         if (concave == 0 && corners == 0) return modelData;
         return modelData.derive().with(CONCAVE, concave).with(CORNERS, corners).build();
+    }
+
+    // ------------------------------------------------------------------ water (shader packs)
+
+    /**
+     * Shader packs (Iris) give the fluid path the material of vanilla water: packs like Complementary then draw the
+     * side faces of tank water as deep, reflecting water and the fish behind them disappear. While a pack is in use the
+     * same faces ({@link TankWaterRenderer#faces}) are part of this model, so the pack sees the tank block (a generic
+     * translucent block, like tinted glass). Iris rebuilds all chunks when a pack is switched.
+     */
+    private List<BakedQuad> waterQuads(BlockState state, ModelData data) {
+        Integer cd = data.get(CORNERS);
+        int bits = cd == null ? 0 : cd;
+        boolean above = (bits & WATER_ABOVE_BIT) != 0;
+        int gaps = (bits >>> GAP_SHIFT) & 15;
+        int key = state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12;
+        return waterCache.computeIfAbsent(key, k -> {
+            var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
+            TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
+            List<BakedQuad> list = new ArrayList<>();
+            TankWaterRenderer.faces(state, above, gaps, (d, c, col, rev) ->
+                    list.add(bakeWater(d, c, col, rev, d.getAxis() == Direction.Axis.Y ? still : sideSprite)));
+            return List.copyOf(list);
+        });
+    }
+
+    private static BakedQuad bakeWater(Direction d, float[] c, int argb, boolean reversed, TextureAtlasSprite sprite) {
+        QuadBakingVertexConsumer q = new QuadBakingVertexConsumer();
+        q.setSprite(sprite);
+        q.setDirection(reversed ? d.getOpposite() : d);
+        q.setShade(false);
+        q.setTintIndex(-1);
+        float nx = d.getStepX(), ny = d.getStepY(), nz = d.getStepZ();
+        if (reversed) {
+            nx = -nx; ny = -ny; nz = -nz;
+        }
+        for (int k = 0; k < 4; k++) {
+            int i = reversed ? 3 - k : k;
+            float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
+            q.addVertex(x, y, z)
+                    .setColor(argb)
+                    .setUv(sprite.getU(BoxFaces.u(d, x, y, z)), sprite.getV(BoxFaces.v(d, x, y, z)))
+                    .setNormal(nx, ny, nz);
+        }
+        return q.bakeQuad();
     }
 
     // ------------------------------------------------------------------ connected glass

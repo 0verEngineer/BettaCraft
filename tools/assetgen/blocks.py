@@ -51,9 +51,11 @@ def _periodic_noise(rng, terms=6, max_f=2):
     return xx, yy, comps
 
 
-def tank_water_still() -> tuple[np.ndarray, dict]:
+def tank_water_still(alpha: int = 140) -> tuple[np.ndarray, dict]:
     """Calm greyscale water surface (tinted blue at runtime), 32-frame seamless loop.
-    Slow broad swell + a few sparkle pixels fading in and out."""
+    Slow broad swell + a few sparkle pixels fading in and out.
+    The see-through amount is in the texture alpha (shader packs ignore the vertex alpha): 140 for the surface,
+    90 for the side faces (`tank_water_side`, looked through at the fish)."""
     rng = _rng(202)
     xx, yy, comps = _periodic_noise(rng, terms=5)
     frames = []
@@ -79,7 +81,7 @@ def tank_water_still() -> tuple[np.ndarray, dict]:
         v = np.clip(np.rint(v), 190, 235).astype(np.uint8)
         fr = np.zeros((S, S, 4), np.uint8)
         fr[..., 0] = fr[..., 1] = fr[..., 2] = v
-        fr[..., 3] = 255
+        fr[..., 3] = alpha
         frames.append(fr)
     strip = np.concatenate(frames, 0)
     mcmeta = {"animation": {"frametime": 3, "interpolate": True}}
@@ -205,11 +207,13 @@ def _panel(on: bool) -> np.ndarray:
 
 
 def all_blocks():
-    water, meta = tank_water_still()
+    water, meta = tank_water_still(140)
+    side, _ = tank_water_still(90)
     return {
         "tank_edge": tank_edge(),
         "tank_frame": tank_frame(),
         "tank_water_still": water,
+        "tank_water_side": side,
         "interior_floor": interior_floor(),
         "interior_wall": interior_wall(),
         "feeder_side": feeder_side(),
@@ -218,7 +222,7 @@ def all_blocks():
         "tank_light": tank_light(),
         "tank_light_panel_on": _panel(True),
         "tank_light_panel_off": _panel(False),
-    }, {"tank_water_still": meta}
+    }, {"tank_water_still": meta, "tank_water_side": meta}
 
 
 def write_all() -> list:

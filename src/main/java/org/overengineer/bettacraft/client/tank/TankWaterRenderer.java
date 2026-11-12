@@ -22,12 +22,16 @@ import org.overengineer.bettacraft.tank.TankBlock;
  */
 public final class TankWaterRenderer {
     public static final ResourceLocation STILL = BettaCraft.id("block/tank_water_still");
+    /** Side faces: same animation, clearer (alpha 90 instead of 140). */
+    public static final ResourceLocation SIDE = BettaCraft.id("block/tank_water_side");
     /**
-     * ARGB; alpha controls how see-through the water is. M5: the side faces (looked through at the fish) are clearer and
-     * less saturated than the surface, so the fish keep their colours (BettaTints compensates the rest).
+     * RGB tint. M5: the side faces (looked through at the fish) are clearer and less saturated than the surface, so the
+     * fish keep their colours (BettaTints compensates the rest). How see-through the water is lives in the alpha of the
+     * textures (surface 140, sides 90), not in the vertex colour: shader packs such as Complementary ignore vertex alpha
+     * (Iris uses it for ambient occlusion) and drew the water opaque.
      */
-    private static final int COLOR = 0x8C4A90E2;
-    private static final int SIDE_COLOR = 0x5A6CA6DC;
+    private static final int COLOR = 0xFF4A90E2;
+    private static final int SIDE_COLOR = 0xFF6CA6DC;
     private static final float INSET = TankWaterGeometry.INSET;
 
     /**
@@ -38,47 +42,71 @@ public final class TankWaterRenderer {
 
     private TankWaterRenderer() {}
 
+    /**
+     * Receives one water face: direction, 4 corners (x,y,z each, reused between calls), ARGB colour, flipped. Faces along
+     * Y use the {@link #STILL} texture, all others {@link #SIDE}.
+     */
+    public interface FaceSink {
+        void face(Direction d, float[] corners, int argb, boolean reversed);
+    }
+
     public static void render(BlockAndTintGetter level, BlockPos pos, VertexConsumer vc, BlockState state) {
-        int fill = state.getValue(TankBlock.FILL);
-        if (fill <= 0) return;
-        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(STILL);
+        if (state.getValue(TankBlock.FILL) <= 0) return;
+        // with a shader pack the tank model draws the water instead (see TankBakedModel#waterQuads)
+        if (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()) return;
+        var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+        TextureAtlasSprite still = atlas.apply(STILL), side = atlas.apply(SIDE);
         int light = LevelRenderer.getLightColor(level, pos);
-
-        boolean up = TankBlock.isConnected(state, Direction.UP);
-        BlockState above = up ? level.getBlockState(pos.above()) : null;
-        boolean waterAbove = above != null && above.getBlock() instanceof TankBlock && above.getValue(TankBlock.FILL) > 0;
-        TankWaterGeometry.Body body = TankWaterGeometry.body(TankBlock.connectionMask(state), fill, waterAbove);
-        float x0 = body.x0(), y0 = body.y0(), z0 = body.z0(), x1 = body.x1(), y1 = body.y1(), z1 = body.z1();
-
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
-        float[] c = new float[12];
+        faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), (d, c, col, rev) -> {
+            int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
+            emit(vc, d, c, ox, oy, oz, d.getAxis() == Direction.Axis.Y ? still : side, r, g, b, a, light, rev);
+        });
+    }
 
+    /** The block above belongs to the tank and holds water (no surface in this block). */
+    public static boolean waterAbove(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        if (!TankBlock.isConnected(state, Direction.UP)) return false;
+        BlockState above = level.getBlockState(pos.above());
+        return above.getBlock() instanceof TankBlock && above.getValue(TankBlock.FILL) > 0;
+    }
+
+    /**
+     * M10 (free shapes): horizontal neighbours (bit = 2D data value) of the same tank whose top is closed by glass; their
+     * water ends just below the glass, the thin gap to this column (which goes on upwards) is closed by a face.
+     */
+    public static int gapMask(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        if (state.getValue(TankBlock.FILL) < 16 || !waterAbove(level, pos, state)) return 0;
+        int m = 0;
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            if (!TankBlock.isConnected(state, d)) continue;
+            BlockState n = level.getBlockState(pos.relative(d));
+            if (n.getBlock() instanceof TankBlock && !TankBlock.isConnected(n, Direction.UP)) m |= 1 << d.get2DDataValue();
+        }
+        return m;
+    }
+
+    /** All water faces of one tank block, in block coordinates (0..1). */
+    public static void faces(BlockState state, boolean waterAbove, int gapMask, FaceSink sink) {
+        int fill = state.getValue(TankBlock.FILL);
+        if (fill <= 0) return;
+        TankWaterGeometry.Body body = TankWaterGeometry.body(TankBlock.connectionMask(state), fill, waterAbove);
+        float[] c = new float[12];
         for (Direction d : Direction.values()) {
             if (!body.has(d)) continue;
             // M11: inset only along the normal, full width sideways (see TankWaterGeometry: sorting behind stained glass)
             if (m10Look) BoxFaces.corners(d, body.x0(), body.y0(), body.z0(), body.x1(), body.y1(), body.z1(), c);
             else TankWaterGeometry.face(body, d, c);
             int col = d.getAxis() == Direction.Axis.Y ? COLOR : SIDE_COLOR;
-            int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
-            emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, false);
-            if (d == Direction.UP) {
-                // visible from below the surface too (swimming players)
-                emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, true);
-            }
+            sink.face(d, c, col, false);
+            // visible from below the surface too (swimming players)
+            if (d == Direction.UP) sink.face(d, c, col, true);
         }
-
-        // M10 (free shapes): a connected neighbour of the same layer whose top is closed by glass ends its water just
-        // below the glass; close the thin gap between it and this column, which goes on upwards
-        if (waterAbove && fill >= 16) {
-            for (Direction d : Direction.Plane.HORIZONTAL) {
-                if (!TankBlock.isConnected(state, d)) continue;
-                BlockState n = level.getBlockState(pos.relative(d));
-                if (!(n.getBlock() instanceof TankBlock) || TankBlock.isConnected(n, Direction.UP)) continue;
-                BoxFaces.corners(d, 0, 1 - INSET, 0, 1, 1, 1, c);
-                int a = (SIDE_COLOR >>> 24) & 0xFF, r = (SIDE_COLOR >> 16) & 0xFF, g = (SIDE_COLOR >> 8) & 0xFF, b = SIDE_COLOR & 0xFF;
-                emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, false);
-            }
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            if ((gapMask & (1 << d.get2DDataValue())) == 0) continue;
+            BoxFaces.corners(d, 0, 1 - INSET, 0, 1, 1, 1, c);
+            sink.face(d, c, SIDE_COLOR, false);
         }
     }
 
