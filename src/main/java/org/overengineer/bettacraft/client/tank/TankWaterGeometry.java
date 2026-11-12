@@ -15,11 +15,14 @@ import net.minecraft.core.Direction;
  * M11, the water seam behind translucent (stained) glass: chunk meshes sort translucent quads by their centre, and
  * translucent quads write depth. When the centre of a water face was nearer to the camera than the centre of the glass
  * face in front of it, the glass was drawn first and hid the water behind it (the junction of the T, block borders).
- * The M10 faces were inset on every outer side, so a face next to one outer side had its centre shifted sideways and
- * the order flipped at flat view angles. Now every face is inset <b>only along its own normal</b> ({@link #INSET}) and
- * spans the full block sideways ({@link #face}); a side face ends at the water height {@link Body#y1}, where the glass
- * face is split as well ({@link #glassSplit}). So each water face has exactly the centre of the glass (piece) in front
- * of it, moved inwards: for every camera that can see that glass face it is the farther one and is drawn first.
+ * A face next to an outer side is inset there too, so its centre is shifted sideways and the order flipped at flat view
+ * angles (M10). The first M11 fix let every face span the full block sideways instead; at the outer corners the faces
+ * then stuck out past each other by {@link #INSET} (visible strips at the edges, the surface reaching past the side
+ * faces when looking at a corner at a flat angle). Now the water is a closed box again ({@link #face}: the body's own
+ * bounds, inset on the outer sides, full width towards connected blocks) and the translucent glass in front of it is
+ * cut at the same lines ({@link #glassCuts}): at the water height and {@link #INSET} from every outer edge. So each
+ * water face has exactly the centre of the glass piece in front of it, moved inwards: for every camera that can see
+ * that glass piece the water is the farther one and is drawn first.
  */
 public final class TankWaterGeometry {
     public static final float INSET = 0.5F / 16F;
@@ -69,14 +72,35 @@ public final class TankWaterGeometry {
      * by {@link #INSET} along the normal only, full block width sideways, side faces from 0 up to the water height.
      */
     public static void face(Body b, Direction d, float[] out) {
-        switch (d) {
-            case UP -> BoxFaces.corners(d, 0, 0, 0, 1, b.y1(), 1, out);
-            case DOWN -> BoxFaces.corners(d, 0, INSET, 0, 1, 1, 1, out);
-            case NORTH -> BoxFaces.corners(d, 0, 0, INSET, 1, b.y1(), 1, out);
-            case SOUTH -> BoxFaces.corners(d, 0, 0, 0, 1, b.y1(), 1 - INSET, out);
-            case WEST -> BoxFaces.corners(d, INSET, 0, 0, 1, b.y1(), 1, out);
-            case EAST -> BoxFaces.corners(d, 0, 0, 0, 1 - INSET, b.y1(), 1, out);
+        BoxFaces.corners(d, b.x0(), b.y0(), b.z0(), b.x1(), b.y1(), b.z1(), out);
+    }
+
+    /**
+     * Where the translucent glass face {@code side} of a block with this water is cut, as {sCuts..., NaN, tCuts...} in the
+     * face coordinates of {@link BoxFaces#u}/{@link BoxFaces#v} (0..1): {@link #INSET} from each outer edge of the water
+     * face behind it and, on the side faces, at the water height. Empty without water behind the glass.
+     */
+    public static float[] glassCuts(int mask, int fill, boolean waterAbove, Direction side) {
+        Body b = body(mask, fill, waterAbove);
+        if (b == null || !b.has(side)) return new float[0];
+        float[] q = new float[12];
+        face(b, side, q);
+        float sMin = 1, sMax = 0, tMin = 1, tMax = 0;
+        for (int i = 0; i < 4; i++) {
+            float s = BoxFaces.u(side, q[i * 3], q[i * 3 + 1], q[i * 3 + 2]), t = BoxFaces.v(side, q[i * 3], q[i * 3 + 1], q[i * 3 + 2]);
+            sMin = Math.min(sMin, s);
+            sMax = Math.max(sMax, s);
+            tMin = Math.min(tMin, t);
+            tMax = Math.max(tMax, t);
         }
+        float[] out = new float[5];
+        int n = 0;
+        if (sMin > 1e-4F) out[n++] = sMin;
+        if (sMax < 1 - 1e-4F) out[n++] = sMax;
+        out[n++] = Float.NaN;
+        if (tMin > 1e-4F) out[n++] = tMin;
+        if (tMax < 1 - 1e-4F) out[n++] = tMax;
+        return java.util.Arrays.copyOf(out, n);
     }
 
     /**

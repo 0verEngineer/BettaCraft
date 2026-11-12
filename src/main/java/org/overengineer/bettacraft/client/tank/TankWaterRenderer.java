@@ -105,7 +105,8 @@ public final class TankWaterRenderer {
         }
         for (Direction d : Direction.Plane.HORIZONTAL) {
             if ((gapMask & (1 << d.get2DDataValue())) == 0) continue;
-            BoxFaces.corners(d, 0, 1 - INSET, 0, 1, 1, 1, c);
+            // as wide as the water of this block (inset at the outer sides, like the faces)
+            BoxFaces.corners(d, body.x0(), 1 - INSET, body.z0(), body.x1(), 1, body.z1(), c);
             sink.face(d, c, SIDE_COLOR, false);
         }
     }

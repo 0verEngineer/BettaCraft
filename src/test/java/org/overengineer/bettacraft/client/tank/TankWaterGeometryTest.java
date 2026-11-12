@@ -126,39 +126,63 @@ class TankWaterGeometryTest {
      * glass centre moved inwards along the normal. Checked for every face of every block, full and partial fill.
      */
     @Test
-    void everyWaterFaceSitsRightBehindItsGlass() {
+    void everyWaterFaceSitsRightBehindItsGlassPiece() {
         float[] c = new float[12];
         for (int mask = 0; mask < 64; mask++) {
             for (int fill = 1; fill <= 16; fill++) {
                 for (boolean above : new boolean[]{false, true}) {
                     if (above && (fill < 16 || (mask & (1 << Direction.UP.ordinal())) == 0)) continue;
                     TankWaterGeometry.Body b = TankWaterGeometry.body(mask, fill, above);
-                    float split = TankWaterGeometry.glassSplit(fill, above);
                     for (Direction d : Direction.values()) {
                         if (!b.has(d)) continue;
-                        TankWaterGeometry.face(b, d, c);
-                        float wx = (c[0] + c[6]) / 2, wy = (c[1] + c[7]) / 2, wz = (c[2] + c[8]) / 2;
-                        if (d == Direction.UP) {
-                            assertEquals(0.5F, wx, E, "top centre x");
-                            assertEquals(0.5F, wz, E, "top centre z");
-                            assertTrue(wy < 1, "top below the glass");
-                            continue;
-                        }
-                        // centre of the glass face piece in front of the water (side faces: below the split)
-                        float gy = d.getAxis().isVertical() ? (d == Direction.DOWN ? 0 : 1) : (split > 0 ? split / 2 : 0.5F);
-                        float gx = 0.5F + 0.5F * d.getStepX(), gz = 0.5F + 0.5F * d.getStepZ();
-                        if (d.getAxis().isVertical()) {
-                            gx = 0.5F;
-                            gz = 0.5F;
-                        }
                         String where = d + " mask " + mask + " fill " + fill + " above " + above;
-                        assertEquals(gx - TankWaterGeometry.INSET * d.getStepX(), wx, E, "x of " + where);
-                        assertEquals(gy - TankWaterGeometry.INSET * d.getStepY(), wy, E, "y of " + where);
-                        assertEquals(gz - TankWaterGeometry.INSET * d.getStepZ(), wz, E, "z of " + where);
+                        TankWaterGeometry.face(b, d, c);
+                        // along the normal: INSET behind the glass plane of this side (the top: below the top glass)
+                        float plane = d.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0;
+                        float along = (float) d.getAxis().choose(c[0], c[1], c[2]);
+                        if (d == Direction.UP) assertTrue(along < 1, "top below the glass: " + where);
+                        else assertEquals(plane - TankWaterGeometry.INSET * d.getAxisDirection().getStep(), along, E, "inset of " + where);
+                        // sideways: every border of the water face is a block border or a cut of the glass in front of it,
+                        // so the glass piece in front of the water has exactly its extent (and centre)
+                        float sMin = 1, sMax = 0, tMin = 1, tMax = 0;
+                        for (int i = 0; i < 4; i++) {
+                            float su = BoxFaces.u(d, c[i * 3], c[i * 3 + 1], c[i * 3 + 2]), tv = BoxFaces.v(d, c[i * 3], c[i * 3 + 1], c[i * 3 + 2]);
+                            sMin = Math.min(sMin, su);
+                            sMax = Math.max(sMax, su);
+                            tMin = Math.min(tMin, tv);
+                            tMax = Math.max(tMax, tv);
+                        }
+                        float[] cuts = TankWaterGeometry.glassCuts(mask, fill, above, d);
+                        java.util.List<Float> sc = new java.util.ArrayList<>(), tc = new java.util.ArrayList<>();
+                        boolean inT = false;
+                        for (float x : cuts) {
+                            if (Float.isNaN(x)) inT = true;
+                            else (inT ? tc : sc).add(x);
+                        }
+                        assertTrue(isBorderOrCut(sMin, sc) && isBorderOrCut(sMax, sc), "s extent " + sMin + ".." + sMax + " of " + where);
+                        assertTrue(isBorderOrCut(tMin, tc) && isBorderOrCut(tMax, tc), "t extent " + tMin + ".." + tMax + " of " + where);
+                        // an outer side of the face ends exactly at the water face of that side (closed corner)
+                        for (Direction e : Direction.values()) {
+                            if (e.getAxis() == d.getAxis() || TankWaterGeometry.connected(mask, e)) continue;
+                            float edge = e.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 - TankWaterGeometry.INSET : TankWaterGeometry.INSET;
+                            float bound = (float) (e.getAxisDirection() == Direction.AxisDirection.POSITIVE
+                                    ? Math.max(Math.max(e.getAxis().choose(c[0], c[1], c[2]), e.getAxis().choose(c[3], c[4], c[5])),
+                                    Math.max(e.getAxis().choose(c[6], c[7], c[8]), e.getAxis().choose(c[9], c[10], c[11])))
+                                    : Math.min(Math.min(e.getAxis().choose(c[0], c[1], c[2]), e.getAxis().choose(c[3], c[4], c[5])),
+                                    Math.min(e.getAxis().choose(c[6], c[7], c[8]), e.getAxis().choose(c[9], c[10], c[11]))));
+                            if (e == Direction.UP) continue; // the top of a side face is the water height
+                            assertEquals(edge, bound, E, "closed corner towards " + e + " of " + where);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private static boolean isBorderOrCut(float v, java.util.List<Float> cuts) {
+        if (Math.abs(v) < E || Math.abs(v - 1) < E) return true;
+        for (float x : cuts) if (Math.abs(x - v) < E) return true;
+        return false;
     }
 
     @Test

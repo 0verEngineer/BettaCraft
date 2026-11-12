@@ -73,6 +73,10 @@ final class DevClientSmokeM11 {
         // close-up of the thin edge: the upper front left corner of the clean tank
         then(1, () -> look(base.getX() + 10.35, base.getY() + 2.25, base.getZ() - 0.55, 25F, 35F));
         then(50, () -> shot("edge_closeup"));
+        // a corner at a flat angle, just below the water surface: the water faces meet at the corner (no strips, the
+        // surface ends at the side faces) and the edge lines of both faces join without a hairline gap
+        then(1, () -> look(base.getX() + 9.2, base.getY() + 1.85, base.getZ() - 0.7, -65F, 10F));
+        then(40, () -> shot("corner_oblique"));
         // water seam: before (M10 look: a glass frame on every block, 1/16 edges) and after, cuboid and T
         then(1, () -> lookM10Style(false));
         then(80, () -> look(base.getX() + 6.5, base.getY() + 2.2, base.getZ() - 2.3, 0F, 30F));

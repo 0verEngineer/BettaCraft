@@ -71,8 +71,8 @@ public class TankBakedModel implements IDynamicBakedModel {
     private static final int GAP_SHIFT = 24;
     /** Water quads drawn by the model while a shader pack is in use, by (fill, connection mask, water above, gaps). */
     private final Map<Integer, List<BakedQuad>> waterCache = new ConcurrentHashMap<>();
-    /** Connected / split glass quads: original quad -> [hidden slots 0..15 x split fill 0..16] -> 1 or 2 quads. */
-    private final Map<BakedQuad, BakedQuad[][]> glassCache = new ConcurrentHashMap<>();
+    /** Connected / cut glass quads: original quad -> (hidden slots, water behind it) -> the pieces. */
+    private final Map<BakedQuad, Map<Integer, BakedQuad[]>> glassCache = new ConcurrentHashMap<>();
     /** Frame width (fraction of the face) per glass sprite. */
     private final Map<ResourceLocation, Float> frameCache = new ConcurrentHashMap<>();
     private final Map<String, TankBakedModel> itemVariants;
@@ -134,19 +134,21 @@ public class TankBakedModel implements IDynamicBakedModel {
             if (renderType == null || gm.getRenderTypes(glass, rand, ModelData.EMPTY).contains(renderType)) {
                 List<BakedQuad> quads = gm.getQuads(glass, side, rand, ModelData.EMPTY, renderType);
                 int hidden = ClientConfig.CONNECTED_GLASS.get() ? ConnectedGlass.hiddenSlots(mask, concave, side) : 0;
-                // translucent glass of a side face is split at the water height (water seam fix, see TankWaterGeometry)
-                int split = 0;
-                if (state != null && side.getAxis().isHorizontal() && !TankWaterRenderer.m10Look
-                        && (renderType == null || renderType == RenderType.translucent())) {
-                    Integer cd = data.get(CORNERS);
-                    boolean waterAbove = cd != null && (cd & WATER_ABOVE_BIT) != 0;
+                // translucent glass in front of water is cut where the water face behind it ends (the water height and
+                // INSET from the outer edges), so every water face sorts behind its glass piece (see TankWaterGeometry)
+                int water = 0; // 0 = no cut, else fill | mask << 5 | above << 11
+                if (state != null && !TankWaterRenderer.m10Look && (renderType == null || renderType == RenderType.translucent())) {
                     int fill = state.getValue(TankBlock.FILL);
-                    if (TankWaterGeometry.glassSplit(fill, waterAbove) > 0) split = fill;
+                    if (fill > 0) {
+                        Integer cd = data.get(CORNERS);
+                        boolean waterAbove = cd != null && (cd & WATER_ABOVE_BIT) != 0;
+                        water = fill | mask << 5 | (waterAbove ? 1 << 11 : 0);
+                    }
                 }
-                if (hidden == 0 && split == 0) {
+                if (hidden == 0 && water == 0) {
                     out.addAll(quads);
                 } else {
-                    for (BakedQuad q : quads) java.util.Collections.addAll(out, connected(q, side, hidden, split));
+                    for (BakedQuad q : quads) java.util.Collections.addAll(out, connected(q, side, hidden, water));
                 }
             }
         }
@@ -238,49 +240,88 @@ public class TankBakedModel implements IDynamicBakedModel {
      * The glass quad with UVs that skip the frame on the hidden edge slots, split at the water height of fill
      * {@code split} (0 = no split) into the piece in front of the water and the piece above it (cached per quad).
      */
-    private BakedQuad[] connected(BakedQuad q, Direction side, int hidden, int split) {
-        BakedQuad[][] variants = glassCache.computeIfAbsent(q, k -> new BakedQuad[16 * 17][]);
-        int key = hidden * 17 + split;
-        BakedQuad[] r = variants[key];
+    private BakedQuad[] connected(BakedQuad q, Direction side, int hidden, int water) {
+        Map<Integer, BakedQuad[]> variants = glassCache.computeIfAbsent(q, k -> new ConcurrentHashMap<>());
+        int key = hidden | water << 4;
+        BakedQuad[] r = variants.get(key);
         if (r == null) {
             float frame = hidden == 0 ? 0 : frameOf(q.getSprite());
-            if (split == 0) {
-                r = new BakedQuad[]{rebuild(q, side, hidden, frame, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)};
-            } else {
-                // side faces: t = 1 - y; lower piece y in [0, h], upper piece y in [h, 1]
-                float t = 1 - TankWaterGeometry.glassSplit(split, false);
-                r = new BakedQuad[]{rebuild(q, side, hidden, frame, t, Float.POSITIVE_INFINITY),
-                        rebuild(q, side, hidden, frame, Float.NEGATIVE_INFINITY, t)};
+            float[] cuts = water == 0 ? new float[]{Float.NaN}
+                    : TankWaterGeometry.glassCuts((water >> 5) & 63, water & 31, (water & (1 << 11)) != 0, side);
+            List<Float> sc = new ArrayList<>(), tc = new ArrayList<>();
+            boolean inT = false;
+            for (float c : cuts) {
+                if (Float.isNaN(c)) inT = true;
+                else (inT ? tc : sc).add(c);
             }
-            variants[key] = r;
+            List<BakedQuad> pieces = new ArrayList<>();
+            for (int i = 0; i <= sc.size(); i++) {
+                float s0 = i == 0 ? Float.NEGATIVE_INFINITY : sc.get(i - 1), s1 = i == sc.size() ? Float.POSITIVE_INFINITY : sc.get(i);
+                for (int j = 0; j <= tc.size(); j++) {
+                    float t0 = j == 0 ? Float.NEGATIVE_INFINITY : tc.get(j - 1), t1 = j == tc.size() ? Float.POSITIVE_INFINITY : tc.get(j);
+                    BakedQuad piece = rebuild(q, side, hidden, frame, s0, s1, t0, t1);
+                    if (piece != null) pieces.add(piece);
+                }
+            }
+            r = pieces.toArray(new BakedQuad[0]);
+            variants.put(key, r);
         }
         return r;
     }
 
-    /** One piece (face-local t in [tMin, tMax]) of a glass quad with remapped UVs; the quad itself if nothing changes. */
-    private static BakedQuad rebuild(BakedQuad q, Direction side, int hidden, float frame, float tMin, float tMax) {
-        boolean clip = tMin > Float.NEGATIVE_INFINITY || tMax < Float.POSITIVE_INFINITY;
+    /**
+     * One piece (face-local s in [sMin, sMax], t in [tMin, tMax]) of a glass quad with remapped UVs; the quad itself if
+     * nothing changes, null if the piece is empty.
+     */
+    @Nullable
+    private static BakedQuad rebuild(BakedQuad q, Direction side, int hidden, float frame, float sMin, float sMax, float tMin, float tMax) {
+        boolean clip = sMin > Float.NEGATIVE_INFINITY || sMax < Float.POSITIVE_INFINITY || tMin > Float.NEGATIVE_INFINITY
+                || tMax < Float.POSITIVE_INFINITY;
         if (frame <= 0 && !clip) return q;
         int[] data = q.getVertices();
         int stride = data.length / 4;
         if (stride < 6) return q;
         float[] s = new float[4], t = new float[4], u = new float[4], v = new float[4];
+        float[][] pos = new float[4][];
         for (int i = 0; i < 4; i++) {
             int o = i * stride;
             float x = Float.intBitsToFloat(data[o]), y = Float.intBitsToFloat(data[o + 1]), z = Float.intBitsToFloat(data[o + 2]);
+            pos[i] = new float[]{x, y, z};
             s[i] = BoxFaces.u(side, x, y, z);
             t[i] = BoxFaces.v(side, x, y, z);
             u[i] = Float.intBitsToFloat(data[o + 4]);
             v[i] = Float.intBitsToFloat(data[o + 5]);
         }
-        if (!ConnectedGlass.clipAndRemapUv(s, t, u, v, hidden, frame, tMin, tMax)) return q;
+        if (!ConnectedGlass.clipAndRemapUv(s, t, u, v, hidden, frame, sMin, sMax, tMin, tMax)) return q;
+        if (clip) {
+            float smin = Math.min(Math.min(s[0], s[1]), Math.min(s[2], s[3])), smax = Math.max(Math.max(s[0], s[1]), Math.max(s[2], s[3]));
+            float tmin = Math.min(Math.min(t[0], t[1]), Math.min(t[2], t[3])), tmax = Math.max(Math.max(t[0], t[1]), Math.max(t[2], t[3]));
+            if (smax - smin < 1e-5F || tmax - tmin < 1e-5F) return null;
+        }
         int[] copy = Arrays.copyOf(data, data.length);
         for (int i = 0; i < 4; i++) {
-            if (clip && side.getAxis().isHorizontal()) copy[i * stride + 1] = Float.floatToRawIntBits(1 - t[i]);
+            if (clip) {
+                setFacePos(side, pos[i], s[i], t[i]);
+                copy[i * stride] = Float.floatToRawIntBits(pos[i][0]);
+                copy[i * stride + 1] = Float.floatToRawIntBits(pos[i][1]);
+                copy[i * stride + 2] = Float.floatToRawIntBits(pos[i][2]);
+            }
             copy[i * stride + 4] = Float.floatToRawIntBits(u[i]);
             copy[i * stride + 5] = Float.floatToRawIntBits(v[i]);
         }
         return new BakedQuad(copy, q.getTintIndex(), q.getDirection(), q.getSprite(), q.isShade(), q.hasAmbientOcclusion());
+    }
+
+    /** Inverse of {@link BoxFaces#u} / {@link BoxFaces#v}: sets the in-plane coordinates of {@code p} on face {@code side}. */
+    private static void setFacePos(Direction side, float[] p, float s, float t) {
+        switch (side) {
+            case DOWN -> { p[0] = s; p[2] = 1 - t; }
+            case UP -> { p[0] = s; p[2] = t; }
+            case NORTH -> { p[0] = 1 - s; p[1] = 1 - t; }
+            case SOUTH -> { p[0] = s; p[1] = 1 - t; }
+            case WEST -> { p[2] = s; p[1] = 1 - t; }
+            case EAST -> { p[2] = 1 - s; p[1] = 1 - t; }
+        }
     }
 
     /** Frame width of a glass sprite as a fraction of the face (read once from its pixels; vanilla glass: 1/16). */
@@ -338,6 +379,9 @@ public class TankBakedModel implements IDynamicBakedModel {
             float[] b = {0, 0, 0, 1, 1, 1};
             towards(b, e, line);
             outOfPlane(b, side);
+            // at an outer edge the line of the neighbouring face sits EPS out of its own plane: reach out to it, or a
+            // hairline gap opens between the two lines at the corner
+            if ((mask & (1 << e.ordinal())) == 0) beyond(b, e);
             BoxFaces.corners(side, b[0], b[1], b[2], b[3], b[4], b[5], c);
             list.add(bake(side, c));
         }
@@ -367,6 +411,18 @@ public class TankBakedModel implements IDynamicBakedModel {
             case SOUTH -> b[2] = 1 - w;
             case WEST -> b[3] = w;
             case EAST -> b[0] = 1 - w;
+        }
+    }
+
+    /** Extends the box {@code b} by EPS past the block border towards {@code e}. */
+    private static void beyond(float[] b, Direction e) {
+        switch (e) {
+            case DOWN -> b[1] = -EPS;
+            case UP -> b[4] = 1 + EPS;
+            case NORTH -> b[2] = -EPS;
+            case SOUTH -> b[5] = 1 + EPS;
+            case WEST -> b[0] = -EPS;
+            case EAST -> b[3] = 1 + EPS;
         }
     }
 

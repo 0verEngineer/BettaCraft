@@ -64,6 +64,12 @@ public final class ConnectedGlass {
      * the water height (the water seam fix, see {@link TankWaterGeometry}).
      */
     public static boolean clipAndRemapUv(float[] s, float[] t, float[] u, float[] v, int hidden, float f, float tMin, float tMax) {
+        return clipAndRemapUv(s, t, u, v, hidden, f, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, tMin, tMax);
+    }
+
+    /** Like {@link #clipAndRemapUv(float[], float[], float[], float[], int, float, float, float)}, also clipped in s. */
+    public static boolean clipAndRemapUv(float[] s, float[] t, float[] u, float[] v, int hidden, float f, float sMin, float sMax,
+                                         float tMin, float tMax) {
         int[][] tri = {{0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}};
         for (int[] k : tri) {
             int i0 = k[0], i1 = k[1], i2 = k[2];
@@ -76,6 +82,7 @@ public final class ConnectedGlass {
             float aV = (dv1 * dt2 - dv2 * dt1) / det, bV = (ds1 * dv2 - ds2 * dv1) / det;
             float s0 = s[i0], t0 = t[i0], u0 = u[i0], v0 = v[i0];
             for (int i = 0; i < 4; i++) {
+                s[i] = Math.max(sMin, Math.min(sMax, s[i]));
                 t[i] = Math.max(tMin, Math.min(tMax, t[i]));
                 float ns = remap(s[i], (hidden & 1) != 0, (hidden & 2) != 0, f);
                 float nt = remap(t[i], (hidden & 4) != 0, (hidden & 8) != 0, f);
