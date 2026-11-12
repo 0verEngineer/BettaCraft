@@ -69,6 +69,11 @@ public final class InfoLines {
         if (d.getInt("filters_out") + d.getInt("filters_in") > 0) {
             out.add(Component.translatable("jade.bettacraft.tank.filters", d.getInt("filters_out"), d.getInt("filters_in")));
         }
+        // M12: floating plants
+        if (d.getInt("plants") > 0) {
+            out.add(Component.translatable("jade.bettacraft.tank.plants", d.getInt("plants"), Math.min(100, Math.round(d.getFloat("plant_cover") * 100)))
+                    .withStyle(ChatFormatting.DARK_GREEN));
+        }
         // M9: water quality, evaporation and power
         if (d.contains("quality")) {
             String st = d.getString("quality_state");

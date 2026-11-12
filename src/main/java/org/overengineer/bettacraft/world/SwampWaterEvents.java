@@ -25,7 +25,8 @@ import org.overengineer.bettacraft.registry.ModTags;
 /**
  * A glass bottle used on water whose block lies in a betta spawn biome gives a bottle of swamp water, in an ocean
  * ({@code #bettacraft:salt_water_biomes}) a bottle of salt water (PLAN 6.3).
- * The biome at the position of the clicked water block decides, found by the same fluid ray trace as vanilla.
+ * The biome at the position of the clicked water block decides, found by the same fluid ray trace as vanilla. Since M12
+ * swamp water sometimes brings up duckweed as well (server config floatingPlants.bottleDuckweedChance).
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class SwampWaterEvents {
@@ -55,5 +56,12 @@ public final class SwampWaterEvents {
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         player.setItemInHand(event.getHand(), ItemUtils.createFilledResult(stack, player, result));
+        // M12: swamp water sometimes brings up a bit of duckweed
+        if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && level.getRandom().nextDouble()
+                < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.PLANTS_BOTTLE_CHANCE, 0.15)) {
+            ItemStack duckweed = org.overengineer.bettacraft.tank.plants.TankPlants.item(org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED);
+            if (!player.getInventory().add(duckweed)) player.drop(duckweed, false);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.plants.duckweed_in_bottle"), true);
+        }
     }
 }

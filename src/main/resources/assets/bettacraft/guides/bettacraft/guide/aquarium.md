@@ -64,5 +64,6 @@ middle can split the aquarium into several smaller ones; each keeps the water an
 * [Shapes](aquarium/shapes.md)
 * [Water](aquarium/water.md)
 * [Inhabitants](aquarium/inhabitants.md)
+* [Floating plants](aquarium/floating_plants.md)
 * [Temperature](aquarium/temperature.md)
 * [Tank menu, name sign and lock](aquarium/menu.md)

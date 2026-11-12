@@ -20,6 +20,7 @@ public final class Schemas {
             .step(3, Schemas::tankV3toV4)
             .step(4, Schemas::tankV4toV5)
             .step(5, Schemas::tankV5toV6)
+            .step(6, Schemas::tankV6toV7)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -160,6 +161,19 @@ public final class Schemas {
      */
     static CompoundTag tankV5toV6(CompoundTag data) {
         if (!data.contains("style", Tag.TAG_STRING)) data.putString("style", "textured");
+        return data;
+    }
+
+    /**
+     * M12: floating plants on the water surface. A controller written before M12 gets an empty {@code plants} list and
+     * {@code next_plant_id} 1; members (no tank data) are only stamped. Lily pads or Fintastic duckweed placed in the
+     * interior stay blocks of the interior and are not converted.
+     */
+    static CompoundTag tankV6toV7(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        if (!tank.contains("plants", Tag.TAG_LIST)) tank.put("plants", new net.minecraft.nbt.ListTag());
+        if (!tank.contains("next_plant_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_plant_id", 1);
         return data;
     }
 

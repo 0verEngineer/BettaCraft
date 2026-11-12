@@ -29,6 +29,8 @@ public final class TankActions {
     /** value 0 = bucket, 1 = fish bag. */
     public static final int TAKE_OUT = 7;
     public static final int ENTER_INTERIOR = 8;
+    /** M12: thin the floating plants out by half (the plants go to the player). */
+    public static final int THIN_PLANTS = 9;
 
     public static final int MAX_FISH_NAME = 32;
 
@@ -77,6 +79,14 @@ public final class TankActions {
             }
             case TAKE_OUT -> {
                 if (p.target().isPresent()) error = TankInhabitants.takeOut(player, controller, p.target().get(), p.value() == 1);
+            }
+            case THIN_PLANTS -> {
+                if (!modify) error = locked();
+                else {
+                    var items = org.overengineer.bettacraft.tank.plants.TankPlants.thin(player.serverLevel(), controller);
+                    if (items.isEmpty()) error = Component.translatable("message.bettacraft.plants.none");
+                    else org.overengineer.bettacraft.tank.plants.TankPlants.taken(player.serverLevel(), controller, player, items, true);
+                }
             }
             case ENTER_INTERIOR -> {
                 player.closeContainer();

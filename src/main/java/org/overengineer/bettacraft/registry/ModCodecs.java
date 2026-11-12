@@ -29,6 +29,10 @@ public final class ModCodecs {
     public static final Supplier<MapCodec<org.overengineer.bettacraft.world.ArtemiaSandLootModifier>> ARTEMIA_SAND =
             LOOT_MODIFIERS.register("artemia_sand", () -> org.overengineer.bettacraft.world.ArtemiaSandLootModifier.CODEC);
 
+    /** M12: floating plants from fishing in swamps. */
+    public static final Supplier<MapCodec<org.overengineer.bettacraft.world.FloatingPlantFishingModifier>> FISHING_PLANTS =
+            LOOT_MODIFIERS.register("fishing_floating_plants", () -> org.overengineer.bettacraft.world.FloatingPlantFishingModifier.CODEC);
+
     public static void register(IEventBus bus) {
         BIOME_MODIFIERS.register(bus);
         CONDITIONS.register(bus);

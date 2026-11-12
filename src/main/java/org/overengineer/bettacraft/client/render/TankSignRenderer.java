@@ -20,7 +20,7 @@ import org.overengineer.bettacraft.tank.TankShape;
 /**
  * Name sign of a tank (PLAN 4.4): black plate with white text, 0.25 blocks high, on the front of the whole tank at
  * one of six positions (M10: on an irregular front, on the widest flat part of the top or bottom row). Drawn by the controller; shrinks the text when the front is too narrow. Also draws the bubble
- * nest with its eggs / larvae (M2).
+ * nest with its eggs / larvae (M2) and the floating plants on the surface (M12, {@link FloatingPlantRenderer}).
  */
 public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     private static final float PLATE_HEIGHT = 0.25F;
@@ -40,6 +40,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         TankData t = be.getTank();
         if (t == null || !be.isController()) return;
         if (t.nest() != null) renderNest(be, t.nest(), partialTick, pose, buffers);
+        FloatingPlantRenderer.render(be, t, partialTick, pose, buffers); // M12
         if (!t.signVisible() || t.name().isEmpty()) return;
         Direction front = t.front();
         SignPosition sp = t.signPos();

@@ -201,6 +201,12 @@ public final class TankMultiblock {
         for (TankData t : olds) {
             merged.inhabitants().addAll(t.inhabitants());
             moveHeaters(level, t, merged, extra);
+            // M12: the floating plants of the other tanks join (new ids: the ids of two tanks can clash)
+            if (t != main) for (var p : t.plants()) {
+                var q = new org.overengineer.bettacraft.tank.plants.FloatingPlant(merged.nextPlantId(), p.type, p.x, p.z, p.size, p.rot);
+                q.red = p.red;
+                merged.plants().add(q);
+            }
         }
         InteriorManager.onTanksMerged(level, olds, merged);
         install(level, merged);
@@ -255,6 +261,7 @@ public final class TankMultiblock {
         if (remaining.isEmpty()) {
             InteriorManager.freeRegion(level, t);
             net.minecraft.world.Containers.dropContents(level, pos, t.legacyHeaters());
+            org.overengineer.bettacraft.tank.plants.TankPlants.dropAll(level, t.plants(), pos); // M12
             return;
         }
 
@@ -277,8 +284,19 @@ public final class TankMultiblock {
             nt.setWaterMb(shares[i]);
             newTanks.add(nt);
         }
+        // M12: a plant never ends up in two pieces (pieces can share a column at different heights)
+        java.util.Set<Integer> placed = new java.util.HashSet<>();
+        for (TankData nt : newTanks) nt.plants().removeIf(p -> !placed.add(p.id));
         InteriorManager.onTankSplit(level, t, newTanks);
         for (TankData nt : newTanks) install(level, nt);
+        // M12: plants above the removed block (no piece has that column any more) drop
+        java.util.List<org.overengineer.bettacraft.tank.plants.FloatingPlant> lost = new ArrayList<>();
+        for (var p : t.plants()) {
+            boolean kept = false;
+            for (TankData nt : newTanks) kept |= nt.containsColumn(p.x, p.z);
+            if (!kept) lost.add(p);
+        }
+        org.overengineer.bettacraft.tank.plants.TankPlants.dropAll(level, lost, pos);
 
         if (newTanks.size() > 1) {
             for (ServerPlayer p : level.players()) {

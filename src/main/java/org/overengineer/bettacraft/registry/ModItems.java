@@ -27,6 +27,21 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.equipment.MirrorStickItem> MIRROR_STICK = ITEMS.register("mirror_stick",
             () -> new org.overengineer.bettacraft.equipment.MirrorStickItem(new Item.Properties().stacksTo(1)));
 
+    /** M12: floating plants for the water surface of a tank (no blocks; the lily pad is the vanilla item). */
+    public static final java.util.Map<org.overengineer.bettacraft.tank.plants.FloatingPlantType,
+            DeferredItem<org.overengineer.bettacraft.tank.plants.FloatingPlantItem>> FLOATING_PLANTS = floatingPlants();
+
+    private static java.util.Map<org.overengineer.bettacraft.tank.plants.FloatingPlantType,
+            DeferredItem<org.overengineer.bettacraft.tank.plants.FloatingPlantItem>> floatingPlants() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.tank.plants.FloatingPlantType,
+                DeferredItem<org.overengineer.bettacraft.tank.plants.FloatingPlantItem>>(org.overengineer.bettacraft.tank.plants.FloatingPlantType.class);
+        for (var t : org.overengineer.bettacraft.tank.plants.FloatingPlantType.values()) {
+            if (!t.grows()) continue;
+            m.put(t, ITEMS.register(t.id(), () -> new org.overengineer.bettacraft.tank.plants.FloatingPlantItem(t, new Item.Properties())));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
     public static final DeferredItem<BettaBucketItem> BETTA_BUCKET = ITEMS.register("betta_bucket",
             () -> new BettaBucketItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<FishBagItem> FISH_BAG = ITEMS.register("fish_bag",

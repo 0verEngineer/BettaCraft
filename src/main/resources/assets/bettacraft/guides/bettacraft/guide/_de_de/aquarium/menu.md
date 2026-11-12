@@ -46,6 +46,9 @@ leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Fi
 Verdunstung und offene obere Blöcke, Heizer und Kühler und der gespeicherte [Strom](../equipment/power.md), wenn der
 Server ihn verlangt.
 
+Der kleine Knopf mit dem Blatt oben rechts öffnet die Seite der [Schwimmpflanzen](floating_plants.md): Anzahl je Art,
+Bedeckung, Licht, Wachstum, Abfallaufnahme, die Warnung bei dichter Decke und der Knopf **Ausdünnen**.
+
 ## Innenraum
 
 Maßstab und Größe des Innenraums, wie viele Blöcke die Miniatur zeigt, Bodengrund, Heizstäbe und Filter im Innenraum,

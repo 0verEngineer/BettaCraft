@@ -146,6 +146,18 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
                 }
             }
         }
+        // M12: under a dense cover of floating plants some food stays on the leaves: it costs food and rots in the water
+        int stuck = org.overengineer.bettacraft.tank.plants.TankPlants.pelletsOnLeaves(tank.getTank(), used, level.getRandom()::nextLong);
+        if (stuck > 0) {
+            int left = stuck;
+            for (int i = 0; i < SLOTS && left > 0; i++) {
+                ItemStack s = items.getStackInSlot(i);
+                if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
+                left -= items.extractItem(i, left, false).getCount();
+            }
+            org.overengineer.bettacraft.tank.TankWater.overfed(level, tank, stuck);
+            TankCare.log(level, tank, "log.bettacraft.pellets_on_leaves", String.valueOf(stuck));
+        }
         if (used == 0 && !TankCare.bettas(level, tank.getTank()).isEmpty()) TankCare.log(level, tank, "log.bettacraft.feeder_empty");
         if (used > 0) org.overengineer.bettacraft.progression.Progress.awardNear(level, tank, org.overengineer.bettacraft.progression.Progress.FEEDER, used);
         return used;

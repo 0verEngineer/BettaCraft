@@ -158,7 +158,7 @@ public final class StyleGameTests {
         TankInteractions.changeWater(level, c, 1500);
         c.getTank().setName("M10 tank");
         CompoundTag be = c.saveWithFullMetadata(level.registryAccess());
-        h.assertTrue(be.getInt("schema") == 6 && "clean".equals(be.getString("style")), "M11 writes schema 6 with the style");
+        h.assertTrue(be.getInt("schema") >= 6 && "clean".equals(be.getString("style")), "M11 and later write schema 6+ with the style");
         be.putInt("schema", 5);
         be.remove("style");
         c.loadWithComponents(be, level.registryAccess());

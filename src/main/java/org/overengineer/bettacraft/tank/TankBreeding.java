@@ -147,7 +147,9 @@ public final class TankBreeding {
             boolean live = male.breeding().isConditioned() || female.breeding().isConditioned();
             // M11: mirror training of the male (breeding.mirrorReadinessBonus, 1 = off)
             double mirror = male.breeding().isTrained() ? ServerConfig.getOr(ServerConfig.BREEDING_MIRROR_BONUS, 1.25) : 1.0;
-            male.breeding().addReady(days * (live ? 2.0 : 1.0) * mirror);
+            // M12: floating plants on the surface (breeding.floatingPlants.breedingBonus, 1 = off)
+            double plants = org.overengineer.bettacraft.tank.plants.TankPlants.breedingBonus(tank);
+            male.breeding().addReady(days * (live ? 2.0 : 1.0) * mirror * plants);
             if (male.breeding().ready() >= ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)) {
                 male.breeding().resetReady();
                 BubbleNest nest = new BubbleNest();
@@ -239,11 +241,14 @@ public final class TankBreeding {
     }
 
     /**
-     * Nest position (PLAN 5.4): at the water surface, preferably under the floating plant of the interior (e.g. a lily
-     * pad) that is closest to the male, otherwise where the male is (slightly inside the top water block).
+     * Nest position (PLAN 5.4): at the water surface, preferably under the densest cluster of floating plants on the
+     * surface (M12), else under the floating plant of the interior (e.g. a lily pad) that is closest to the male,
+     * otherwise where the male is (slightly inside the top water block).
      */
-    static Vec3 nestSpot(ServerLevel level, TankData tank, Vec3 near) {
-        Vec3 plant = floatingPlantNear(level, tank, near);
+    public static Vec3 nestSpot(ServerLevel level, TankData tank, Vec3 near) {
+        // M12: under the densest cluster of floating plants on the surface (frogbit is the favourite)
+        Vec3 plant = org.overengineer.bettacraft.tank.plants.TankPlants.nestCluster(tank, near);
+        if (plant == null) plant = floatingPlantNear(level, tank, near);
         return nestSpot(tank, plant != null ? plant : near);
     }
 
@@ -461,6 +466,7 @@ public final class TankBreeding {
         if (fry > 0 && males > 0) out.add("remove_male");
         if (males >= 2 && ServerConfig.getOr(ServerConfig.COMBAT_MALES_FIGHT, true)) out.add("fight");
         if (predator && live.stream().anyMatch(e -> !e.getType().is(ModTags.PREDATORS) && e.getBbWidth() <= PREY_MAX_WIDTH)) out.add("predator");
+        if (org.overengineer.bettacraft.tank.plants.TankPlants.dense(tank)) out.add("dense_plants"); // M12
         return out;
     }
 
@@ -527,6 +533,7 @@ public final class TankBreeding {
         cond.putBoolean("live_food", male != null && male.breeding().isConditioned() || female != null && female.breeding().isConditioned());
         cond.putBoolean("mirror", male != null && male.breeding().isTrained()
                 && ServerConfig.getOr(ServerConfig.BREEDING_MIRROR_BONUS, 1.25) > 1.0);
+        cond.putBoolean("plants", org.overengineer.bettacraft.tank.plants.TankPlants.breedingBonus(tank) > 1.0);
         cond.putFloat("ready", male == null ? 0 : (float) Mth.clamp(male.breeding().ready()
                 / Math.max(1e-6, ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)), 0, 1));
         out.put("conditions", cond);

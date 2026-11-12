@@ -52,6 +52,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private final List<AbstractWidget> overview = new ArrayList<>();
     private final List<AbstractWidget> inhabitants = new ArrayList<>();
     private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, tabWater, logFilterButton, interiorEnterButton;
+    /** M12: the water tab has a second page for the floating plants. */
+    private boolean plantsPage;
+    private Button plantsButton, thinButton;
     private LogFilter logFilter = LogFilter.ALL;
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
@@ -104,7 +107,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         for (int i = 0; i < order.length; i++) {
             Tab t = order[i];
             int w = i == order.length - 1 ? x + 5 + total - tx : widths[i];
-            tabs[i] = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab." + keys[i]), b -> setTab(t)).bounds(tx, y + 3, w, 12).build());
+            tabs[i] = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab." + keys[i]), b -> {
+                plantsPage = false;
+                setTab(t);
+            }).bounds(tx, y + 3, w, 12).build());
             tx += w;
         }
         tabOverview = tabs[0];
@@ -115,6 +121,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabLog = tabs[5];
         interiorEnterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
                 .bounds(x + 176, y + 124, 62, 14).build());
+        plantsButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
+            plantsPage = !plantsPage;
+            updateWidgets();
+        }).bounds(x + 220, y + 18, 18, 13).build());
+        thinButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.plants.thin"), b -> send(TankActions.THIN_PLANTS, 0, "", null))
+                .bounds(x + 166, y + 124, 72, 14).build());
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
             logFilter = LogFilter.values()[(logFilter.ordinal() + 1) % LogFilter.values().length];
             logScroll = 0;
@@ -202,7 +214,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabBreeding.active = tab != Tab.BREEDING;
         tabLog.active = tab != Tab.LOG;
         tabInterior.active = tab != Tab.INTERIOR;
-        tabWater.active = tab != Tab.WATER;
+        tabWater.active = tab != Tab.WATER || plantsPage;
+        plantsButton.visible = tab == Tab.WATER;
+        thinButton.visible = tab == Tab.WATER && plantsPage;
+        plantsButton.setTooltip(Tooltip.create(Component.translatable(plantsPage ? "gui.bettacraft.plants.back" : "gui.bettacraft.plants.open")));
         interiorEnterButton.visible = tab == Tab.INTERIOR;
         logFilterButton.visible = tab == Tab.LOG;
         logFilterButton.setMessage(Component.translatable("gui.bettacraft.log.filter." + logFilter.name().toLowerCase(java.util.Locale.ROOT)));
@@ -229,6 +244,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         for (Button b : List.of(signButton, signPosButton, frontButton, minusButton, plusButton)) b.active = mod;
         enterButton.active = mod || !v.locked;
         interiorEnterButton.active = mod;
+        thinButton.active = mod && v.plants.total - v.plants.counts[org.overengineer.bettacraft.tank.plants.FloatingPlantType.LILY_PAD.ordinal()] > 0;
+        thinButton.setTooltip(Tooltip.create(Component.translatable(mod ? "gui.bettacraft.plants.thin_tooltip" : "message.bettacraft.tank.locked")));
 
         TankView.Inhabitant sel = selectedInhabitant(v);
         if (sel == null && !v.inhabitants.isEmpty()) {
@@ -366,7 +383,17 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             case BREEDING -> drawBreeding(g, v, mouseX - leftPos, mouseY - topPos);
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
-            case WATER -> drawWater(g, v);
+            case WATER -> {
+                if (plantsPage) drawPlants(g, v);
+                else drawWater(g, v);
+                // leaf icon on the page button
+                g.pose().pushPose();
+                g.pose().translate(plantsButton.getX() - leftPos + 3, plantsButton.getY() - topPos + 1, 0);
+                g.pose().scale(0.7F, 0.7F, 1);
+                g.renderItem(new net.minecraft.world.item.ItemStack(plantsPage ? net.minecraft.world.item.Items.WATER_BUCKET
+                        : org.overengineer.bettacraft.registry.ModItems.FLOATING_PLANTS.get(org.overengineer.bettacraft.tank.plants.FloatingPlantType.FROGBIT).get()), 0, 0);
+                g.pose().popPose();
+            }
         }
         if (v.locked && tab == Tab.OVERVIEW) g.blit(TEXTURE, 228, 125, 16, 232, 10, 10);
     }
@@ -509,6 +536,61 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         y += 13;
         line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    /** M12: floating plants page of the water tab. */
+    private void drawPlants(GuiGraphics g, TankView v) {
+        TankView.Plants p = v.plants;
+        int x = 11, y = 20;
+        line(g, Component.translatable("gui.bettacraft.plants.count", p.total, p.maxPlants), x, y, TEXT_LIGHT);
+        y += 11;
+        int cov = Math.round(p.coverage * 100);
+        line(g, Component.translatable("gui.bettacraft.plants.coverage", Math.min(100, cov), Math.round(p.maxCoverage * 100)), x, y, TEXT_LIGHT);
+        int bx = 150, bw = 64;
+        g.fill(bx, y + 1, bx + bw, y + 7, 0xFF202020);
+        g.fill(bx, y + 1, bx + Math.round(bw * Mth.clamp(p.coverage, 0, 1)), y + 7, p.dense ? 0xFFD0A040 : 0xFF5FB040);
+        g.fill(bx + Math.round(bw * p.maxCoverage), y, bx + Math.round(bw * p.maxCoverage) + 1, y + 8, 0xFFE0E0E0);
+        y += 11;
+        var types = org.overengineer.bettacraft.tank.plants.FloatingPlantType.values();
+        int col = 0;
+        if (p.total == 0) {
+            line(g, Component.translatable("gui.bettacraft.plants.none").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+            y += 11;
+        } else {
+            for (var t : types) {
+                if (p.counts[t.ordinal()] <= 0) continue;
+                Component name = Component.translatable(org.overengineer.bettacraft.tank.plants.TankPlants.item(t).getDescriptionId());
+                line(g, Component.translatable("gui.bettacraft.plants.species", name, p.counts[t.ordinal()]).withStyle(ChatFormatting.GREEN),
+                        x + col * 114, y, TEXT_LIGHT);
+                if (++col == 2) {
+                    col = 0;
+                    y += 11;
+                }
+            }
+            if (col != 0) y += 11;
+        }
+        int lc = org.overengineer.bettacraft.tank.plants.TankPlants.lightClass(p.light);
+        String[] lk = {"dark", "weak", "good", "strong"};
+        ChatFormatting[] lcol = {ChatFormatting.RED, ChatFormatting.GOLD, ChatFormatting.GREEN, ChatFormatting.AQUA};
+        line(g, Component.translatable("gui.bettacraft.plants.light", p.light,
+                Component.translatable("gui.bettacraft.plants.light." + lk[lc]).withStyle(lcol[lc])), x, y, TEXT_LIGHT);
+        y += 11;
+        Component growth;
+        if (p.growthSpeed <= 0) growth = Component.translatable("gui.bettacraft.plants.growth_off").withStyle(ChatFormatting.GRAY);
+        else if (lc == 0) growth = Component.translatable("gui.bettacraft.plants.too_dark").withStyle(ChatFormatting.GOLD);
+        else if (p.coverage >= p.maxCoverage || p.total >= p.maxPlants) growth = Component.translatable("gui.bettacraft.plants.full").withStyle(ChatFormatting.GRAY);
+        else growth = Component.translatable("gui.bettacraft.plants.growing").withStyle(ChatFormatting.GREEN);
+        line(g, growth, x, y, TEXT_LIGHT);
+        y += 11;
+        if (p.uptakePerDay > 0) {
+            line(g, Component.translatable("gui.bettacraft.plants.uptake", fmt((float) (p.uptakePerDay * 100))).withStyle(ChatFormatting.AQUA), x, y, TEXT_LIGHT);
+            y += 11;
+        }
+        if (p.dense) {
+            line(g, Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.plants.dense", Math.round(p.denseFrom * 100)))
+                    .withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+        }
+        line(g, Component.translatable("gui.bettacraft.plants.hint").withStyle(ChatFormatting.GRAY), x, 128, 0xA0A0A0);
     }
 
     private static Component powerGroup(String key, boolean required, boolean ok) {

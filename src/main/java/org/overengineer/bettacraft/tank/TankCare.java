@@ -68,6 +68,7 @@ public final class TankCare {
         TankPower.step(server, be, dt);
         updateTemperature(server, be, dt / 24000.0);
         TankWater.step(server, be, dt / 24000.0);
+        org.overengineer.bettacraft.tank.plants.TankPlants.step(server, be, dt / 24000.0);
         TankBreeding.step(server, be, dt / 24000.0);
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);

@@ -71,6 +71,9 @@ public final class TankData {
     /** Bubble nest (M2), null if there is none. */
     @Nullable
     private BubbleNest nest;
+    /** M12: floating plants on the water surface (absolute x/z) and the next free plant id. */
+    private final List<org.overengineer.bettacraft.tank.plants.FloatingPlant> plants = new ArrayList<>();
+    private int nextPlantId = 1;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -276,6 +279,16 @@ public final class TankData {
     public List<LogEntry> log() { return log; }
     @Nullable public BubbleNest nest() { return nest; }
     public void setNest(@Nullable BubbleNest n) { this.nest = n; }
+    /** M12: the floating plants of the surface (server: the simulation; client: the latest update). */
+    public List<org.overengineer.bettacraft.tank.plants.FloatingPlant> plants() { return plants; }
+    public int nextPlantId() { return nextPlantId++; }
+
+    /** Whether the column of (x, z) belongs to this tank (any layer). */
+    public boolean containsColumn(double x, double z) {
+        int bx = (int) Math.floor(x), bz = (int) Math.floor(z);
+        for (int y = minY; y <= maxY; y++) if (members.contains(BlockPos.asLong(bx, y, bz))) return true;
+        return false;
+    }
 
     public void addLog(long time, String key, String... args) {
         log.add(new LogEntry(time, key, List.of(args)));
@@ -316,6 +329,10 @@ public final class TankData {
         log.addAll(o.log);
         // the nest belongs to the part of the tank that contains it (never duplicated on a split)
         nest = o.nest != null && contains(BlockPos.containing(o.nest.pos())) ? o.nest.copy() : null;
+        // M12: the floating plants above this part stay (a merge adds the plants of the other tanks, see TankMultiblock)
+        plants.clear();
+        nextPlantId = Math.max(nextPlantId, o.nextPlantId);
+        for (var p : o.plants) if (containsColumn(p.x, p.z)) plants.add(p.copy());
     }
 
     public float waterQuality() { return waterQuality; }
@@ -363,6 +380,10 @@ public final class TankData {
         for (LogEntry e : log) lg.add(e.save());
         t.put("log", lg);
         if (nest != null) t.put("nest", nest.save());
+        ListTag pl = new ListTag();
+        for (var p : plants) pl.add(p.save());
+        t.put("plants", pl);
+        t.putInt("next_plant_id", nextPlantId);
         return t;
     }
 
@@ -401,6 +422,15 @@ public final class TankData {
         ListTag lg = t.getList("log", Tag.TAG_COMPOUND);
         for (int i = 0; i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompound(i)));
         d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.load(t.getCompound("nest")) : null;
+        ListTag pl = t.getList("plants", Tag.TAG_COMPOUND);
+        int maxId = 0;
+        for (int i = 0; i < pl.size(); i++) {
+            var p = org.overengineer.bettacraft.tank.plants.FloatingPlant.load(pl.getCompound(i));
+            if (p == null) continue;
+            d.plants.add(p);
+            maxId = Math.max(maxId, p.id);
+        }
+        d.nextPlantId = Math.max(maxId + 1, t.contains("next_plant_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_plant_id") : 1);
         d.recomputeBounds();
         return d;
     }
@@ -423,6 +453,7 @@ public final class TankData {
         t.putFloat("water_temp", waterTemp);
         t.putInt("inhabitants", inhabitants.size());
         if (nest != null) t.put("nest", nest.saveClientView());
+        if (!plants.isEmpty()) t.putByteArray("plants", org.overengineer.bettacraft.tank.plants.FloatingPlantSim.encode(plants, minX, minZ));
         return t;
     }
 
@@ -455,6 +486,7 @@ public final class TankData {
         d.waterTemp = t.getFloat("water_temp");
         d.clientInhabitants = t.getInt("inhabitants");
         d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.loadClientView(t.getCompound("nest")) : null;
+        if (t.contains("plants", Tag.TAG_BYTE_ARRAY)) d.plants.addAll(org.overengineer.bettacraft.tank.plants.FloatingPlantSim.decode(t.getByteArray("plants"), d.minX, d.minZ));
         return d;
     }
 

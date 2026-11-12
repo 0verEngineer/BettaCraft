@@ -406,6 +406,7 @@ public final class ModDataGen {
             basicItem(ModItems.SWAMP_WATER_BOTTLE.get());
             basicItem(ModItems.BETTA_PELLETS.get());
             handheldItem(ModItems.MIRROR_STICK.get());
+            for (var p : ModItems.FLOATING_PLANTS.values()) basicItem(p.get());
             basicItem(ModItems.MOSQUITO_LARVAE.get());
             basicItem(ModItems.SALT_WATER_BOTTLE.get());
             basicItem(ModItems.INFUSORIA_CULTURE.get());
@@ -759,6 +760,10 @@ public final class ModDataGen {
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
             add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[0],
                     new ItemStack(ModItems.ARTEMIA_CYSTS.get())));
+            // M12: fishing in swamps / mangrove swamps sometimes brings up a floating plant (chance from the server config)
+            add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
+                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
+            }));
         }
     }
 

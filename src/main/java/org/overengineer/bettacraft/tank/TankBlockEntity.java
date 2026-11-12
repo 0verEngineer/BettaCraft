@@ -163,7 +163,11 @@ public class TankBlockEntity extends BlockEntity {
         if (tag.contains("tank", Tag.TAG_COMPOUND)) {
             tank = TankData.load(tag.getCompound("tank"));
         } else if (tag.contains("tank_view", Tag.TAG_COMPOUND)) {
+            TankData old = tank;
             tank = TankData.loadClientView(tag.getCompound("tank_view"));
+            // M12: floating plants glide to their new place instead of jumping
+            if (old != null && level != null) org.overengineer.bettacraft.tank.plants.FloatingPlantSim.adopt(old.plants(), tank.plants(),
+                    level.getGameTime(), org.overengineer.bettacraft.tank.plants.TankPlants.SYNC_TICKS);
         } else {
             tank = null;
         }

@@ -79,6 +79,17 @@ public final class ServerConfig {
 
     // water quality (M9)
     public static final ModConfigSpec.BooleanValue WATER_QUALITY_ENABLED;
+
+    // floating plants (M12)
+    public static final ModConfigSpec.DoubleValue PLANTS_GROWTH_SPEED;
+    public static final ModConfigSpec.DoubleValue PLANTS_MAX_COVERAGE;
+    public static final ModConfigSpec.DoubleValue PLANTS_DENSE_FROM;
+    public static final ModConfigSpec.DoubleValue PLANTS_WASTE_UPTAKE;
+    public static final ModConfigSpec.DoubleValue PLANTS_BREEDING_BONUS;
+    public static final ModConfigSpec.DoubleValue PLANTS_PELLETS_ON_LEAVES;
+    public static final ModConfigSpec.IntValue PLANTS_MAX_PER_TANK;
+    public static final ModConfigSpec.DoubleValue PLANTS_BOTTLE_CHANCE;
+    public static final ModConfigSpec.DoubleValue PLANTS_FISHING_CHANCE;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_BASE_DECLINE;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_PER_ANIMAL;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_PER_OVERFED;
@@ -221,6 +232,30 @@ public final class ServerConfig {
                 .defineInRange("internalFilterBlocks", 16, 0, 4096);
         WATER_QUALITY_BAD_BELOW = b.comment("Below this water quality bettas are stressed (like by a wrong temperature)")
                 .defineInRange("badBelow", 0.35, 0.0, 1.0);
+        b.pop();
+
+        b.comment("Floating plants on the water surface of tanks (duckweed, Amazon frogbit, salvinia, red root floater; lily pads stay",
+                "as they are). With light and nutrients (the waste in the water) they grow, form offshoots and take up waste.").push("floatingPlants");
+        PLANTS_GROWTH_SPEED = b.comment("Growth speed of floating plants (1 = normal, 0 = they never grow or multiply)")
+                .defineInRange("growthSpeed", 1.0, 0.0, 20.0);
+        PLANTS_MAX_COVERAGE = b.comment("Share of the water surface covered by leaves above which no new offshoots form (0.6 = 60%)")
+                .defineInRange("maxCoverage", 0.6, 0.0, 1.0);
+        PLANTS_DENSE_FROM = b.comment("From this coverage the cover is dense: the menu warns, the plants shade each other (slower growth)",
+                        "and some pellets of the feeder stay on the leaves")
+                .defineInRange("denseCoverFrom", 0.5, 0.0, 1.0);
+        PLANTS_WASTE_UPTAKE = b.comment("Water quality per in-game day the plants take up for each block of leaf area per water block,",
+                        "while they have light (0 = plants do not clean the water)")
+                .defineInRange("wasteUptake", 0.04, 0.0, 1.0);
+        PLANTS_BREEDING_BONUS = b.comment("Floating plants (at least 10% cover) make a male ready for a nest this many times faster (1 = off)")
+                .defineInRange("breedingBonus", 1.15, 1.0, 4.0);
+        PLANTS_PELLETS_ON_LEAVES = b.comment("Share of the feeder's food that stays on the leaves under a full cover (rots in the water;",
+                        "starts at denseCoverFrom, 0 = off)")
+                .defineInRange("pelletsOnLeaves", 0.25, 0.0, 1.0);
+        PLANTS_MAX_PER_TANK = b.comment("Most floating plants one tank holds").defineInRange("maxPerTank", 256, 1, 4096);
+        PLANTS_BOTTLE_CHANCE = b.comment("Chance that filling a glass bottle with swamp water also brings up duckweed")
+                .defineInRange("bottleDuckweedChance", 0.15, 0.0, 1.0);
+        PLANTS_FISHING_CHANCE = b.comment("Chance that fishing in a swamp or mangrove swamp brings up a floating plant instead of the catch")
+                .defineInRange("fishingChance", 0.06, 0.0, 1.0);
         b.pop();
 
         b.comment("Evaporation: open tanks slowly lose water. A lid, the feeder or a light on a top block covers that block.").push("evaporation");

@@ -82,6 +82,9 @@ public final class InfoData {
         var r = InteriorRegions.get(level.getServer()).get(t.regionId());
         out.putInt("filters_out", TankEquipment.filters(level, c).size());
         out.putInt("filters_in", r == null || !r.built() ? 0 : InteriorManager.equipment(level.getServer(), r).filters().size());
+        // M12: floating plants
+        out.putInt("plants", t.plants().size());
+        out.putFloat("plant_cover", (float) org.overengineer.bettacraft.tank.plants.TankPlants.coverage(t));
         // M9: water quality, evaporation, power
         if (TankWater.qualityEnabled()) {
             out.putFloat("quality", t.waterQuality());

@@ -25,7 +25,8 @@ Bettas need food at least **once a day**. A fish counts as hungry one day after 
 </Row>
 
 1. **Swamp water:** use a glass bottle on water in a swamp. Whether water counts as swamp water depends on the biome
-   of the water block you click. You get a <ItemLink id="bettacraft:swamp_water_bottle" />.
+   of the water block you click. You get a <ItemLink id="bettacraft:swamp_water_bottle" />;
+   sometimes a bit of [duckweed](aquarium/floating_plants.md) comes up with it.
 2. **Mosquito larvae:** heat the bottle in a furnace, smoker or on a campfire and the larvae hatch, or breed them in a
    [larva tub](food/live_food.md). Mining mud in a
    swamp sometimes drops <ItemLink id="bettacraft:mosquito_larvae" /> as well.

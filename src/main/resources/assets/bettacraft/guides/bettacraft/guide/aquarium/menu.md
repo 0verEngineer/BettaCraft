@@ -45,6 +45,9 @@ Water volume, the [water quality](water_quality.md) with a bar (the red mark is 
 fast it drops and why (animals per water block, how much the filters remove), the last fresh water, evaporation and
 open top blocks, heaters and coolers, and the stored [power](../equipment/power.md) when the server needs it.
 
+The small button with the leaf at the top right opens the page of the [floating plants](floating_plants.md): number
+per species, cover, light, growth, waste uptake, the warning for a dense cover and the **Thin out** button.
+
 ## Interior
 
 Scale and size of the interior, how many blocks are shown in the miniature, substrate, heaters and filters inside,

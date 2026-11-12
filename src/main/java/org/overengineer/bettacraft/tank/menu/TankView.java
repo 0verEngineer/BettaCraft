@@ -114,6 +114,67 @@ public final class TankView {
     public double coolerBlocks;
     public int filterCoolers, coolersInside, coolerCapWet;
     public final Water water = new Water();
+    /** M12: floating plants (water tab, plants page). */
+    public final Plants plants = new Plants();
+
+    /** Floating plants of the tank: count per species, cover, light, growth and waste uptake. */
+    public static final class Plants {
+        public int[] counts = new int[org.overengineer.bettacraft.tank.plants.FloatingPlantType.values().length];
+        public int total, light, maxPlants;
+        public float coverage, maxCoverage, denseFrom, growthSpeed;
+        public double uptakePerDay;
+        public boolean dense;
+
+        CompoundTag save() {
+            CompoundTag t = new CompoundTag();
+            t.putIntArray("counts", counts);
+            t.putInt("total", total);
+            t.putInt("light", light);
+            t.putInt("max", maxPlants);
+            t.putFloat("cov", coverage);
+            t.putFloat("max_cov", maxCoverage);
+            t.putFloat("dense_from", denseFrom);
+            t.putFloat("speed", growthSpeed);
+            t.putDouble("uptake", uptakePerDay);
+            t.putBoolean("dense", dense);
+            return t;
+        }
+
+        void load(CompoundTag t) {
+            int[] c = t.getIntArray("counts");
+            if (c.length == counts.length) counts = c;
+            total = t.getInt("total");
+            light = t.getInt("light");
+            maxPlants = t.getInt("max");
+            coverage = t.getFloat("cov");
+            maxCoverage = t.getFloat("max_cov");
+            denseFrom = t.getFloat("dense_from");
+            growthSpeed = t.getFloat("speed");
+            uptakePerDay = t.getDouble("uptake");
+            dense = t.getBoolean("dense");
+        }
+    }
+
+    private static Plants plants(ServerLevel level, TankBlockEntity c) {
+        TankData t = c.getTank();
+        Plants p = new Plants();
+        for (var pl : t.plants()) p.counts[pl.type.ordinal()]++;
+        p.total = t.plants().size();
+        var params = org.overengineer.bettacraft.tank.plants.TankPlants.params();
+        p.maxPlants = params.maxPlants();
+        p.coverage = (float) org.overengineer.bettacraft.tank.plants.TankPlants.coverage(t);
+        p.maxCoverage = (float) params.maxCoverage();
+        p.denseFrom = (float) params.shadeFrom();
+        p.growthSpeed = (float) params.growthSpeed();
+        p.dense = org.overengineer.bettacraft.tank.plants.TankPlants.dense(t);
+        p.light = org.overengineer.bettacraft.tank.plants.TankPlants.light(level, c);
+        double area = 0;
+        for (var pl : t.plants()) if (pl.type.grows()) area += pl.area() * pl.type.uptake();
+        double uptake = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.PLANTS_WASTE_UPTAKE, 0.04);
+        p.uptakePerDay = !org.overengineer.bettacraft.tank.TankWater.qualityEnabled() ? 0
+                : uptake * area * org.overengineer.bettacraft.tank.plants.FloatingPlantSim.lightFactor(p.light) / Math.max(1.0, t.waterBlocks());
+        return p;
+    }
 
     /** Water tab (M9). */
     public static final class Water {
@@ -289,6 +350,7 @@ public final class TankView {
         eq.putInt("legacy", legacy);
         out.put("equipment", eq);
         out.put("water_care", water(level, controller, live).save());
+        out.put("plants", plants(level, controller).save());
         return out;
     }
 
@@ -433,6 +495,7 @@ public final class TankView {
         v.legacyHeaters = eq.getInt("legacy");
         v.filterCoolers = eq.getInt("filter_coolers");
         v.water.load(t.getCompound("water_care"));
+        v.plants.load(t.getCompound("plants"));
         v.breeding = t.getCompound("breeding");
         ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));

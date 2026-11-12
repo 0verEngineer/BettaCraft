@@ -27,8 +27,9 @@ hat zwei Eier mehr. Die Filterströmung spielt keine Rolle.
 ## 2. Schaumnest
 
 Das Männchen baut an der Wasseroberfläche ein **Schaumnest**, das dauert noch einmal einen Vierteltag. Am liebsten baut
-es unter einer Schwimmpflanze: Setze **Seerosen** in den [Innenraum](interior.md), dann entsteht das Nest unter der
-Seerose, die ihm am nächsten ist. Ein fertiges Nest ohne Weibchen zerfällt nach 3 Tagen.
+es unter Schwimmpflanzen: Setze [Schwimmpflanzen](aquarium/floating_plants.md) auf die Oberfläche (Amazonas-Froschbiss
+mag es am liebsten), dann entsteht das Nest unter der dichtesten Gruppe; ohne sie unter der **Seerose** im
+[Innenraum](interior.md), die ihm am nächsten ist. Schwimmpflanzen machen es außerdem etwas schneller bereit. Ein fertiges Nest ohne Weibchen zerfällt nach 3 Tagen.
 
 ## 3. Laichen
 

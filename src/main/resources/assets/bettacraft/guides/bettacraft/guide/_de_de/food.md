@@ -25,7 +25,8 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
 </Row>
 
 1. **Sumpfwasser:** Wende eine Glasflasche auf Wasser in einem Sumpf an. Ob Wasser als Sumpfwasser zählt, entscheidet
-   das Biom des angeklickten Wasserblocks. Du bekommst eine <ItemLink id="bettacraft:swamp_water_bottle" />.
+   das Biom des angeklickten Wasserblocks. Du bekommst eine <ItemLink id="bettacraft:swamp_water_bottle" />;
+   manchmal kommt etwas [Wasserlinse](aquarium/floating_plants.md) mit.
 2. **Mückenlarven:** Erhitze die Flasche im Ofen, Räucherofen oder am Lagerfeuer, dann schlüpfen die Larven, oder
    züchte sie in einem [Larvenbottich](food/live_food.md). Beim
    Abbauen von Schlamm im Sumpf fallen manchmal auch <ItemLink id="bettacraft:mosquito_larvae" /> heraus.
