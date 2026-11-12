@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "bettacraft:block/tank"
+      }
+    }
+  ]
+}

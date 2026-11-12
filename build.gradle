@@ -90,8 +90,8 @@ test {
     useJUnitPlatform()
     // Tests read lang files from the source tree (de_de completeness check).
     systemProperty 'bettacraft.projectDir', project.projectDir.absolutePath
-    inputs.dir('src/main/resources/assets')
-    inputs.dir('src/generated/resources').optional()
+    inputs.files(fileTree('src/main/resources/assets'), fileTree('src/generated/resources'))
+        .withPropertyName('langSources')
     testLogging {
         events 'failed', 'skipped'
         exceptionFormat 'full'

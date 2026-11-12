@@ -4,6 +4,10 @@
   "package": "org.overengineer.bettacraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
-  "client": [],
-  "injectors": { "defaultRequire": 1 }
+  "client": [
+    "client.ClientLevelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

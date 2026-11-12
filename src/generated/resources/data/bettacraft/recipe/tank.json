@@ -1,0 +1,21 @@
+{
+  "type": "bettacraft:tank",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "GIG",
+    "III"
+  ],
+  "result": {
+    "count": 4,
+    "id": "bettacraft:tank"
+  }
+}
