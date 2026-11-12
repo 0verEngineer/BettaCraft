@@ -262,4 +262,56 @@ public final class InhabitantGameTests {
             h.succeed();
         });
     }
+
+    /** M8: Shift + right-click with a filled bucket inserts the fish instead of releasing it in front of the tank. */
+    @GameTest(template = EMPTY)
+    public static void sneakClickWithBucketInserts(GameTestHelper h) {
+        TankBlockEntity c = tank(h, 4, 1, 4, 2, 2, 2, 6000);
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
+        try {
+            net.minecraft.world.phys.Vec3 eye = net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new BlockPos(4, 1, 2)));
+            sp.teleportTo(h.getLevel(), eye.x, eye.y - 1.0, eye.z, 0F, 0F);
+            sp.setShiftKeyDown(true);
+            h.assertTrue(sp.isSecondaryUseActive(), "player sneaks");
+            for (ItemStack stack : List.of(new ItemStack(Items.TROPICAL_FISH_BUCKET), bettaBucket(11))) {
+                sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, stack);
+                BlockPos face = h.absolutePos(new BlockPos(4, 1, 4));
+                var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(face).add(0, 0, -0.5),
+                        net.minecraft.core.Direction.NORTH, face, false);
+                sp.gameMode.useItemOn(sp, h.getLevel(), stack, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+            }
+            List<Entity> live = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
+            h.assertTrue(live.size() == 2, "both animals in the tank, got " + live.size());
+            var area = new net.minecraft.world.phys.AABB(h.absolutePos(BlockPos.ZERO)).inflate(16);
+            int outside = h.getLevel().getEntitiesOfClass(Entity.class, area, e -> (e instanceof net.minecraft.world.entity.animal.WaterAnimal || e instanceof BettaEntity)
+                    && !c.getTank().contains(e.blockPosition())).size();
+            h.assertTrue(outside == 0, "no animal released outside the tank, got " + outside);
+            h.assertTrue(!h.getLevel().getFluidState(h.absolutePos(new BlockPos(4, 1, 3))).isSource(), "no water placed in front of the tank");
+        } finally {
+            sp.getServer().getPlayerList().remove(sp);
+        }
+        h.succeed();
+    }
+
+    /** M8: a fish caught in the world (here a water bucket) is logged and leaves the inhabitant list at once. */
+    @GameTest(template = EMPTY)
+    public static void catchInTheWorldIsLoggedAtOnce(GameTestHelper h) {
+        TankBlockEntity c = tank(h, 4, 1, 4, 2, 2, 2, 6000);
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
+        try {
+            ok(insert(h, c, new ItemStack(Items.TROPICAL_FISH_BUCKET), sp));
+            Entity fish = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
+            int logs = c.getTank().log().size();
+            sp.teleportTo(h.getLevel(), fish.getX(), fish.getY() - 1.0, fish.getZ() - 1.5, 0F, 0F);
+            sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+            var r = sp.interactOn(fish, net.minecraft.world.InteractionHand.MAIN_HAND);
+            h.assertTrue(r.consumesAction() && fish.isRemoved(), "the bucket caught the fish: " + r);
+            h.assertTrue(!c.getTank().inhabitants().contains(fish.getUUID()), "no longer an inhabitant");
+            h.assertTrue(c.getTank().log().size() == logs + 1
+                    && "log.bettacraft.taken_out".equals(c.getTank().log().getLast().key()), "logged as taken out");
+        } finally {
+            sp.getServer().getPlayerList().remove(sp);
+        }
+        h.succeed();
+    }
 }

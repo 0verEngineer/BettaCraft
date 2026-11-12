@@ -191,14 +191,32 @@ public final class TankGameTests {
         });
     }
 
-    /** Logs the interior cost numbers: synthetic scenes and real 16x16x16 regions prepared asynchronously (M3). */
-    @GameTest(template = EMPTY, timeoutTicks = 2400)
+    /**
+     * Logs the interior cost numbers: synthetic scenes and real 16x16x16 regions prepared asynchronously (M3). It is a
+     * measurement, not a check: preparing two 256^3 regions while the other GameTests run in parallel can take longer
+     * than any fixed timeout (that made it flaky in M7). After {@link #BENCH_BUDGET} ticks the real-region part is
+     * aborted and logged as incomplete; the synthetic part has been measured by then in any case.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = BENCH_BUDGET + 200)
     public static void interiorCost(GameTestHelper h) {
         InteriorBench.runDefault();
-        if (!InteriorBench.startRealRegions(h.getLevel().getServer(), line -> {})) {
+        var server = h.getLevel().getServer();
+        if (InteriorBench.realRunning()) InteriorBench.abortReal(server); // left over from an earlier run on this server
+        if (!InteriorBench.startRealRegions(server, line -> {})) {
             h.succeed();
             return;
         }
-        h.succeedWhen(() -> h.assertFalse(InteriorBench.realRunning(), "real-region bench still running"));
+        long start = h.getTick();
+        h.onEachTick(() -> {
+            if (!InteriorBench.realRunning()) {
+                h.succeed();
+            } else if (h.getTick() - start >= BENCH_BUDGET) {
+                LOGGER.warn("interiorCost: real-region bench incomplete after {} ticks ({}), aborted", BENCH_BUDGET, InteriorBench.realProgress());
+                InteriorBench.abortReal(server);
+                h.succeed();
+            }
+        });
     }
+
+    private static final int BENCH_BUDGET = 3000;
 }

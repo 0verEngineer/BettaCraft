@@ -56,6 +56,20 @@ public final class InteriorBench {
         return running != null;
     }
 
+    /** Index of the running real-region step (0 = scale 16, 1 = scale 8) and whether its region is built yet. */
+    public static String realProgress() {
+        RealBench b = running;
+        if (b == null) return "done";
+        return "scale " + (b.index >= 0 && b.index < b.scales.length ? b.scales[b.index] : -1) + ", built " + (b.region != null && b.region.built());
+    }
+
+    /** Stops a running real-region bench and removes its region (GameTest timeout on a busy server). */
+    public static void abortReal(net.minecraft.server.MinecraftServer server) {
+        RealBench b = running;
+        running = null;
+        if (b != null && b.region != null) InteriorManager.destroyRegionForBench(server, b.region);
+    }
+
     /**
      * Allocates real regions for a 16x16x16 tank at scale 16 and 8 in the interior dimension and prepares them
      * asynchronously (chunk generation on the world-gen workers, shell written within a tick budget), then measures

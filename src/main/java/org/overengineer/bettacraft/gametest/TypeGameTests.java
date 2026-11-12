@@ -134,8 +134,20 @@ public final class TypeGameTests {
         for (int i = 0; i < 60 && (t.nest() == null || !t.nest().hasEggs()); i++) TankBreeding.step(level, c, 0.05);
         BubbleNest n = t.nest();
         h.assertTrue(n != null && n.hasEggs(), "eggs laid");
-        int shortFins = 0, longFins = 0;
+        int shortFins = 0, longFins = 0, mutated = 0;
         for (BubbleNest.Egg e : n.eggs()) {
+            // breeding.mutationChance (1 % per allele) may turn an allele into one the parents do not have: such
+            // eggs are skipped (they made this test flaky); every other egg must be a Mustard Gas
+            boolean fromParents = true;
+            for (var l : org.overengineer.bettacraft.genetics.BettaLoci.ALL) {
+                BettaGenotype.AllelePair pp = parent.pair(l), cp = e.genotype().pair(l);
+                List<String> have = List.of(pp.a(), pp.b());
+                if (!have.contains(cp.a()) || !have.contains(cp.b())) fromParents = false;
+            }
+            if (!fromParents) {
+                mutated++;
+                continue;
+            }
             BettaGenome child = e.genotype().express();
             GeneticsData.VarietyDef v = BettaTypes.variety(child);
             h.assertTrue(v != null && v.id().equals("mustard_gas"), "every egg is a Mustard Gas: " + child);
@@ -144,6 +156,7 @@ public final class TypeGameTests {
             if (child.isShortFinned()) shortFins++;
             else longFins++;
         }
+        h.assertTrue(mutated * 2 < n.eggs().size(), "most eggs carry only parental alleles (" + mutated + " mutated)");
         h.assertTrue(shortFins > 0, "some offspring are plakats (" + shortFins + "/" + longFins + ")");
         h.succeed();
     }
