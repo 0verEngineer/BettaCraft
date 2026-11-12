@@ -142,8 +142,8 @@ def jet() -> np.ndarray:
         streaks.append((rng.uniform(0.1, 0.9), rng.integers(1, 4), rng.uniform(0, 2 * math.pi), rng.uniform(0.25, 0.6)))
     for y in range(h):
         t = y / h
-        a = 0.35 + 0.15 * np.sin(2 * math.pi * (t * 2) + xs * 3)
-        bright = np.full(w, 0.82)
+        a = 0.55 + 0.12 * np.sin(2 * math.pi * (t * 2) + xs * 3)
+        bright = np.full(w, 0.86)
         for cx, freq, ph, amp in streaks:
             band = np.exp(-((xs - cx) / 0.06) ** 2)
             pulse = 0.5 + 0.5 * math.sin(2 * math.pi * freq * t + ph)

@@ -70,7 +70,7 @@ public final class MiniatureJets {
         for (FilterFlow.Path p : paths) {
             int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(p.nozzle()));
             FlowRenderer.jet(ps, buffers.getBuffer(rt), p.jet(8, scale), p.inward(), cam, light, time,
-                    (float) (0.035 * scale + 0.01), p.submerged() ? 0.6F : 0.85F);
+                    (float) (0.04 * scale + 0.012), p.submerged() ? 0.75F : 1.0F);
         }
         buffers.endBatch(rt);
     }

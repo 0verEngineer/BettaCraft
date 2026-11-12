@@ -64,7 +64,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         Vec3 start = n.add(p.inward().getStepX() * 0.1, 0, p.inward().getStepZ() * 0.1);
         FilterFlow.Path shifted = new FilterFlow.Path(p.bottom(), p.top(), p.inside(), start, p.inward(), p.surfaceY(), true);
         FlowRenderer.jet(ps, buffers.getBuffer(FlowRenderer.jetType()), shifted.jet(10), p.inward(), origin, jetLight, time,
-                p.submerged() ? 0.05F : 0.04F, p.submerged() ? 0.55F : 0.85F);
+                p.submerged() ? 0.06F : 0.05F, p.submerged() ? 0.7F : 1.0F);
     }
 
     @Override

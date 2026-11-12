@@ -34,8 +34,12 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         super.renderLabels(g, mouseX, mouseY);
-        Component l = Component.translatable(menu.hasFilter() ? "gui.bettacraft.cabinet.filter_heaters" : "gui.bettacraft.cabinet.no_filter");
-        g.drawString(font, font.plainSubstrByWidth(l.getString(), 80), 8, 66, 0x606060, false);
+        Component f = Component.translatable("gui.bettacraft.cabinet.filter");
+        g.drawString(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, 0x606060, false);
+        if (menu.hasFilter()) {
+            Component h = Component.translatable("gui.bettacraft.cabinet.heaters");
+            g.drawString(font, font.plainSubstrByWidth(h.getString(), 42), CabinetMenu.HEATER_X + 38, CabinetMenu.HEATER_Y + 4, 0x606060, false);
+        }
     }
 
     @Override

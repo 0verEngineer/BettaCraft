@@ -77,7 +77,8 @@ public final class DevSmokeTest {
         c.getTank().inhabitants().clear();
         c.getTank().setNest(null);
         if (c.getTank().waterMb() < 12000) TankInteractions.changeWater(level, c, 12000 - c.getTank().waterMb());
-        c.getTank().legacyHeaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get()));
+        // M4: cabinets under the breeding tank, one of them with a filter and a large heater
+        cabinetsUnder(level, c);
         c.getTank().setTargetTemp(27.0F);
         c.getTank().setWaterTemp(27.0F);
         var r = net.minecraft.util.RandomSource.create(5);
@@ -112,6 +113,58 @@ public final class DevSmokeTest {
         c.getTank().inhabitants().clear();
     }
 
+    /** M4: a row of oak/spruce cabinets under the tank; the first one holds a filter with a large heater. */
+    private static void cabinetsUnder(ServerLevel level, TankBlockEntity c) {
+        var t = c.getTank();
+        int y = t.min().getY() - 1;
+        boolean first = true;
+        for (int x = t.min().getX(); x <= t.max().getX(); x++)
+            for (int z = t.min().getZ(); z <= t.max().getZ(); z++) {
+                BlockPos p = new BlockPos(x, y, z);
+                var state = ModBlocks.CABINET.get().defaultBlockState()
+                        .setValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING, net.minecraft.core.Direction.NORTH);
+                level.setBlockAndUpdate(p, state);
+                if (level.getBlockEntity(p) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
+                    cab.setWood(net.minecraft.resources.ResourceLocation.withDefaultNamespace(x % 2 == 0 ? "oak_planks" : "spruce_planks"));
+                    if (first) {
+                        var f = new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.EXTERNAL_FILTER.get());
+                        org.overengineer.bettacraft.equipment.FilterHeaters.write(f, java.util.List.of(
+                                new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get()),
+                                net.minecraft.world.item.ItemStack.EMPTY));
+                        cab.items().setStackInSlot(org.overengineer.bettacraft.equipment.CabinetBlockEntity.FILTER_SLOT, f);
+                        first = false;
+                    }
+                }
+            }
+        for (int x = t.min().getX(); x <= t.max().getX(); x++)
+            for (int z = t.min().getZ(); z <= t.max().getZ(); z++) {
+                BlockPos p = new BlockPos(x, y, z);
+                level.setBlockAndUpdate(p, net.minecraft.world.level.block.Block.updateFromNeighbourShapes(level.getBlockState(p), level, p));
+            }
+        org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+    }
+
+    /** M4: external filter west of the main tank with a small heater; reports what the migration moved. */
+    private static void filterChecks(ServerLevel level, TankBlockEntity c) {
+        int legacyBefore = 0;
+        if (c.getTank().hasLegacyHeaters())
+            for (int i = 0; i < 4; i++) if (!c.getTank().legacyHeaters().getItem(i).isEmpty()) legacyBefore++;
+        BlockPos fp = base.offset(-1, 0, 0);
+        level.setBlockAndUpdate(fp, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState()
+                .setValue(org.overengineer.bettacraft.equipment.ExternalFilterBlock.FACING, net.minecraft.core.Direction.EAST));
+        var f = (org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity) level.getBlockEntity(fp);
+        if (f == null) throw new IllegalStateException("no filter block entity");
+        if (f.heaterCount() == 0) f.insertHeater(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get()));
+        org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+        int moved = org.overengineer.bettacraft.tank.TankEquipment.moveLegacyHeaters(level, c);
+        var filters = org.overengineer.bettacraft.tank.TankEquipment.filters(level, c);
+        LOGGER.info("[smoketest] filter: {} attached, heating {} blocks through filters, {} old heater slot(s) before, {} moved",
+                filters.size(), org.overengineer.bettacraft.tank.TankCare.filterHeaterBlocks(level, c.getTank()), legacyBefore, moved);
+        if (filters.isEmpty() || org.overengineer.bettacraft.tank.TankCare.filterHeaterBlocks(level, c.getTank()) < 16) {
+            throw new IllegalStateException("external filter not attached");
+        }
+    }
+
     @SubscribeEvent
     public static void onTick(ServerTickEvent.Post event) {
         if (!ENABLED) return;
@@ -132,8 +185,8 @@ public final class DevSmokeTest {
                 InteriorBench.runDefault();
                 InteriorBench.startRealRegions(server, line -> {});
                 interiorChecks(level, c, r);
-                // M1: bettas from buckets, a heater, a feeder with pellets
-                c.getTank().legacyHeaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get()));
+                // M1: bettas from buckets, a feeder with pellets; M4: the heater sits in an external filter
+                filterChecks(level, c);
                 for (int i = 0; i < 3; i++) {
                     var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(level.getRandom());
                     var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(
@@ -165,6 +218,11 @@ public final class DevSmokeTest {
                 var live = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank());
                 LOGGER.info("[smoketest] {} inhabitants alive, water {} C, crowded {}, log {}", live.size(),
                         c.getTank().waterTemp(), c.isCrowded(), c.getTank().log().size());
+                TankBlockEntity breed = TankMultiblock.getController(level, base.offset(6, 0, 0));
+                int cabinets = org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, breed).size();
+                double cabHeat = org.overengineer.bettacraft.tank.TankCare.filterHeaterBlocks(level, breed.getTank());
+                LOGGER.info("[smoketest] breeding tank: {} cabinets below, {} blocks of heating from the cabinet filter", cabinets, cabHeat);
+                if (cabinets != 6 || cabHeat < 64) throw new IllegalStateException("cabinets under the breeding tank");
                 if (live.size() < 3) throw new IllegalStateException("expected at least 3 bettas (more from earlier runs persist), found " + live.size());
                 if (org.overengineer.bettacraft.tank.TankInhabitants.breakBlockedReason(level, base).isEmpty()) {
                     throw new IllegalStateException("break rule not active");

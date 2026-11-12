@@ -22,7 +22,7 @@ public final class FlowRenderer {
     public static final ResourceLocation JET = BettaCraft.id("textures/entity/filter/jet.png");
     private static final float HOSE_HALF = 0.045F;
     /** Jet tint (ARGB). */
-    private static final int JET_COLOR = 0xC8D8F0FF;
+    private static final int JET_COLOR = 0xF0E4F0FF;
 
     private FlowRenderer() {}
 

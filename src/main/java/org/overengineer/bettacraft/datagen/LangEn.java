@@ -40,10 +40,10 @@ final class LangEn {
         a.accept("tooltip.bettacraft.cabinet", "Put a tank on it. Holds an external filter and nine stacks; the feeder takes food from it.");
         a.accept("message.bettacraft.filter.full", "Both heater slots of this filter are taken");
         a.accept("gui.bettacraft.filter.heaters_hint", "Two heaters of any size");
-        a.accept("gui.bettacraft.cabinet.filter_heaters", "Heaters in the filter");
-        a.accept("gui.bettacraft.cabinet.no_filter", "Slot for an external filter");
+        a.accept("gui.bettacraft.cabinet.filter", "Filter");
+        a.accept("gui.bettacraft.cabinet.heaters", "Heaters");
         a.accept("gui.bettacraft.tank.filters", "Filters: %s");
-        a.accept("gui.bettacraft.tank.filter_state", "%s outside (%s heaters), %s inside");
+        a.accept("gui.bettacraft.tank.filter_state", "%s outside (heaters: %s), %s inside");
         a.accept("gui.bettacraft.tank.legacy_heaters", "%s heater(s) left in the old slots (left): take out or attach a filter");
         a.accept("log.bettacraft.heaters_moved", "%s heater(s) moved from the old tank slots into the filter");
         a.accept("subtitles.bettacraft.block.filter.running", "Filter bubbles");
@@ -323,6 +323,7 @@ final class LangEn {
         a.accept("gui.bettacraft.breeding.no_pair", "Put an adult male and female in to see the expected offspring.");
         a.accept("config.jade.plugin_bettacraft.tank", "Bettacraft tank");
         a.accept("config.jade.plugin_bettacraft.betta", "Bettacraft betta");
+        a.accept("config.jade.plugin_bettacraft.filter", "Bettacraft filter and cabinet");
         a.accept("jade.bettacraft.tank.water", "Water %s °C | %s / %s mB");
         a.accept("jade.bettacraft.tank.animals", "Animals: %s (%s adults)");
         a.accept("jade.bettacraft.tank.nest", "Nest: %s");
