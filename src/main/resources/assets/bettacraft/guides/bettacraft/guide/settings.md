@@ -37,7 +37,7 @@ navigation:
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
 | `evaporation.evaporationEnabled` | true | open tanks lose water (`mbPerBlockPerDay` 20) |
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
-| `power.heaterFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 1, 10, 4, 100000 | FE use and storage |
+| `power.heaterFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 10, 4, 100000 | FE use and storage |
 | `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2) |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |

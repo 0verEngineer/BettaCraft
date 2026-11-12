@@ -37,6 +37,11 @@ neoForge {
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // client smoke tests and gradlew runClient -Pbackground : the window opens without focus (does not take the
+            // keyboard or capture the mouse) and on a secondary monitor if there is one (BackgroundWindowMixin)
+            if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') }) {
+                systemProperty 'bettacraft.background', 'true'
+            }
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
             // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits
@@ -216,20 +221,40 @@ idea {
     }
 }
 
-// gradlew runClient -Pshaders : loads the jars in run/shader-mods (e.g. Sodium, Iris; not in git) from run/mods;
-// runServer, runData and runClient without the flag remove them again (smoke tests and the server stay without them)
-def shaderModsDir = file('run/shader-mods')
+// Optional extra mods from local folders (not in git, e.g. copied from an ATM10 instance), synced into the mods folder
+// of each run before it starts and removed again from runs without the flag:
+//   -Pshaders : run/shader-mods (Sodium, Iris ...)                    for runClient
+//   -Ppower   : run/power-mods  (EnderIO, Mekanism, Powah, Flux ...)  for runClient, runServer and runGameTestServer
 def runModsDir = file('run/mods')
-def withShaders = project.hasProperty('shaders')
-tasks.matching { it.name in ['runClient', 'runServer', 'runData'] }.configureEach { t ->
-    def isClient = t.name == 'runClient'
+def gameTestModsDir = file('run/gametest/mods')
+def extraMods = [
+        [dir: file('run/shader-mods'), on: project.hasProperty('shaders'), tasks: ['runClient']],
+        [dir: file('run/power-mods'), on: project.hasProperty('power'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+]
+// background client runs need the FML early loading window off (it would be created, focused, before any mod code)
+def fmlToml = file('run/config/fml.toml')
+def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') }
+tasks.matching { it.name == 'runClient' }.configureEach { t ->
     t.doFirst {
-        runModsDir.mkdirs()
-        def names = (shaderModsDir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }
-        names.each { jar ->
-            def target = new File(runModsDir, jar.name)
-            if (isClient && withShaders) java.nio.file.Files.copy(jar.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
-            else if (target.exists()) target.delete()
+        if (fmlToml.exists()) {
+            def text = fmlToml.getText('UTF-8')
+            def want = "earlyWindowControl = ${!background}"
+            def updated = text.replaceAll(/earlyWindowControl = (true|false)/, want)
+            if (updated != text) fmlToml.setText(updated, 'UTF-8')
+        }
+    }
+}
+tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestServer'] }.configureEach { t ->
+    def target = t.name == 'runGameTestServer' ? gameTestModsDir : runModsDir
+    def plan = extraMods.collect { g -> [jars: (g.dir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }, add: g.on && t.name in g.tasks] }
+    t.doFirst {
+        target.mkdirs()
+        plan.each { g ->
+            g.jars.each { jar ->
+                def dst = new File(target, jar.name)
+                if (g.add) java.nio.file.Files.copy(jar.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                else if (dst.exists()) dst.delete()
+            }
         }
     }
 }

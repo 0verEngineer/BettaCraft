@@ -274,7 +274,7 @@ public final class WaterGameTests {
             h.assertTrue(tankEnergy.receiveEnergy(10, true) == 0, "buffer full");
             TankPower.step(level, c, 20);
             h.assertTrue(c.heatPowered() && c.filterPowered() && c.lightPowered(), "powered with FE");
-            int demand = 8 + 10 + 4; // heater for 8 water blocks, one filter, one light block
+            int demand = 8 * 8 + 10 + 4; // heater for 8 water blocks at 8 FE/t each, one filter, one light block
             h.assertTrue(c.lastDemand() == demand, "demand " + c.lastDemand() + " FE/t");
             h.assertTrue(t.powerBuffer() == 100000 - demand * 20L, "FE used: " + t.powerBuffer());
             h.assertTrue(TankCare.heaterBlocks(level, t) == 16, "heater works again");

@@ -37,7 +37,7 @@ navigation:
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | Wasserblöcke, die ein Filter sauber hält |
 | `evaporation.evaporationEnabled` | true | offene Aquarien verlieren Wasser (`mbPerBlockPerDay` 20) |
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | Ausrüstung braucht FE |
-| `power.heaterFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 1, 10, 4, 100000 | FE-Verbrauch und -Speicher |
+| `power.heaterFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 10, 4, 100000 | FE-Verbrauch und -Speicher |
 | `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2) |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
 | `simulateUnloadedTime` | false | Zeit läuft in nicht geladenen Chunks weiter |

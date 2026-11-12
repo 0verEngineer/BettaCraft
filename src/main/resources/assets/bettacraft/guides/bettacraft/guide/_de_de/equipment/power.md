@@ -15,7 +15,7 @@ einschalten (`power.heaterRequiresEnergy`, `power.filterRequiresEnergy`, `power.
 * Jedes Aquarium speichert FE für seine Ausrüstung (standardmäßig 100.000 FE, `power.bufferFe`).
 * Schließe ein Kabel oder einen Generator an **einen beliebigen Aquariumblock**, an einen angeschlossenen
   **Außenfilter**, an einen **Schrank** unter dem Aquarium oder an ein **Licht** darauf an.
-* Heizer und Kühler brauchen 1 FE pro Tick für jeden Wasserblock, den sie heizen oder kühlen (nur die Sorte, die gerade
+* Heizer und Kühler brauchen 8 FE pro Tick für jeden Wasserblock, den sie heizen oder kühlen (nur die Sorte, die gerade
   arbeitet, und höchstens für das Wasser im Aquarium), jeder Filter 10 FE pro Tick, jeder leuchtende Lichtblock 4 FE
   pro Tick.
 * Ohne genug FE bleibt die Gruppe stehen: Heizer und Kühler ändern die Temperatur nicht mehr, Filter reinigen das Wasser

@@ -20,6 +20,7 @@ version as release notes.
 - Client settings `render.connectedGlass` and `render.tankEdgeWidth` (in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = no edge lines).
 
 ### Changed
+- Heaters and coolers need 8 FE per tick for each water block they heat or cool (was 1), far more than a filter (10) or a light (4).
 - The dark edge lines are much thinner (1/64 block instead of 1/16) and close the inner corners of flat walls.
 - Aquariums from earlier versions keep their glass and become textured (tank data schema 6).
 

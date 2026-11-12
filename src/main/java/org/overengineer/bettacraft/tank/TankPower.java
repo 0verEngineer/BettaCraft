@@ -48,7 +48,7 @@ public final class TankPower {
         if (heating == null) return 0;
         double cap = heating ? TankCare.rawHeaterBlocks(level, t) : TankCare.rawCoolerBlocks(level, t);
         if (cap <= 0) return 0;
-        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 1.0));
+        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0));
     }
 
     /** Light blocks on top of the tank that are on or want to be on (not switched off by redstone). */
