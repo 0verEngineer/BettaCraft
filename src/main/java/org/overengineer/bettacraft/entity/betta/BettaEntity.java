@@ -262,6 +262,13 @@ public class BettaEntity extends AbstractFish {
         return entityData.get(DATA_SICK);
     }
 
+    /** Client: how far the fins are spread for flaring, 0..1, interpolated for the frame. */
+    public float flareAmount(float partialTick) {
+        return net.minecraft.util.Mth.lerp(partialTick, flareAmountO, flareAmount);
+    }
+
+    private float flareAmount, flareAmountO;
+
     public boolean isFlaring() {
         return (entityData.get(DATA_FLAGS) & FLAG_FLARE) != 0;
     }
@@ -399,6 +406,11 @@ public class BettaEntity extends AbstractFish {
     @Override
     public void tick() {
         super.tick();
+        if (level().isClientSide) {
+            // fins spread and fold smoothly (~8 ticks) instead of jumping when the synced flare flag toggles
+            flareAmountO = flareAmount;
+            flareAmount = net.minecraft.util.Mth.approach(flareAmount, isFlaring() ? 1F : 0F, 0.125F);
+        }
         if (level() instanceof ServerLevel server && isAlive()) {
             BettaCare.serverTick(server, this);
             long now = server.getGameTime();
@@ -422,7 +434,8 @@ public class BettaEntity extends AbstractFish {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
             }
             // the fins reach well beyond the hitbox: keep the whole rendered fish (tail, fins) inside the glass
-            Vec3 fin = BettaExtents.push(water, p, yBodyRot, genome().shape(), lifeStage().scale(), 1.0 / 16 + 0.01);
+            Vec3 fin = BettaExtents.push(water, p, yBodyRot, genome().shape(), lifeStage().scale(),
+                    level().getGameTime() < flareUntil, 1.0 / 16 + 0.01);
             if (fin.lengthSqr() > 1e-8) {
                 setPos(p.x + fin.x, p.y + fin.y, p.z + fin.z);
                 Vec3 dm = getDeltaMovement();

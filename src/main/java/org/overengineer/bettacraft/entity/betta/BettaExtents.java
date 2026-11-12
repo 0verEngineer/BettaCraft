@@ -46,13 +46,19 @@ public final class BettaExtents {
 
     /**
      * The shift that brings the outermost points of the fish (nose, tail and the sides of both, the tips of the dorsal
-     * and the lower fins) inside {@code water} (glass margin {@code glass}); zero if the whole fish is inside.
+     * and the lower fins, spread wider while flaring) inside {@code water} (glass margin {@code glass}); zero if the whole fish is inside.
      */
-    public static Vec3 push(TankWaterVolume water, Vec3 pos, float yawDeg, String shape, float scale, double glass) {
+    public static Vec3 push(TankWaterVolume water, Vec3 pos, float yawDeg, String shape, float scale, boolean flaring, double glass) {
         double yaw = yawDeg * Mth.DEG_TO_RAD;
         double fx = -Math.sin(yaw), fz = Math.cos(yaw); // facing (Entity#getLookAngle at pitch 0)
         double nose = (NOSE + MARGIN) * scale, tail = (tail(shape) + MARGIN) * scale, side = (SIDE + MARGIN) * scale;
         double top = (top(shape) + MARGIN) * scale, bottom = (bottom(shape) + MARGIN) * scale;
+        if (flaring) {
+            // flaring spreads the fins (BettaModel: caudal 1.12 longer, dorsal and anal 1.3 higher)
+            tail *= 1.12;
+            top *= 1.15;
+            bottom *= 1.3;
+        }
         // per axis the largest push in each direction; if the fish is too big for the water both add up (centred)
         double[] up = new double[3], down = new double[3];
         double[][] pts = {
