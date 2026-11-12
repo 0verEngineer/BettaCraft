@@ -128,10 +128,11 @@ public final class TankGameTests {
             for (int i = 0; i < 6; i++) TankInteractions.changeWater(level, c, TankData.MB_PER_BLOCK);
             h.assertTrue(c.getTank().waterMb() == 6000, "6000 mB");
             h.assertTrue(h.getBlockState(new BlockPos(4, 1, 4)).getValue(TankBlock.FILL) == 16, "bottom layer full");
-            h.assertTrue(h.getBlockState(new BlockPos(4, 2, 4)).getValue(TankBlock.FILL) == 8, "top layer half");
+            h.assertTrue(h.getBlockState(new BlockPos(4, 2, 4)).getValue(TankBlock.FILL) == (16 - TankData.headroom()) / 2,
+                    "top layer half (16 - headroom sixteenths when full)");
             h.assertTrue(h.getLevel().getFluidState(h.absolutePos(new BlockPos(4, 2, 4))).is(Fluids.WATER), "vanilla water");
             for (int i = 0; i < 2; i++) TankInteractions.changeWater(level, c, TankData.MB_PER_BLOCK);
-            h.assertTrue(h.getBlockState(new BlockPos(5, 2, 5)).getValue(TankBlock.FILL) == 16, "full");
+            h.assertTrue(h.getBlockState(new BlockPos(5, 2, 5)).getValue(TankBlock.FILL) == 16 - TankData.headroom(), "full (top layer: air gap below the glass)");
             TankInteractions.changeWater(level, c, TankData.MB_PER_BLOCK);
             h.assertTrue(c.getTank().waterMb() == 8000, "capacity is capped");
             // poke neighbours so any fluid logic would run

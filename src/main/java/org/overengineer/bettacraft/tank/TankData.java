@@ -79,6 +79,7 @@ public final class TankData {
     private int[] layerCounts;
     private long surfaceCacheMb = Long.MIN_VALUE;
     private double surfaceCache;
+    private int surfaceCacheHeadroom;
     private int clientMemberCount;
     private int clientInhabitants;
 
@@ -184,9 +185,11 @@ public final class TankData {
 
     /** Absolute height of the water surface (M10: correct for any shape; bottom of the tank when dry). */
     public double waterSurfaceY() {
-        if (surfaceCacheMb != waterMb) {
-            surfaceCache = members.isEmpty() ? minY : TankShape.surfaceY(layerCounts(), minY, waterMb);
+        int headroom = headroom();
+        if (surfaceCacheMb != waterMb || surfaceCacheHeadroom != headroom) {
+            surfaceCache = members.isEmpty() ? minY : TankShape.surfaceY(layerCounts(), minY, waterMb, headroom);
             surfaceCacheMb = waterMb;
+            surfaceCacheHeadroom = headroom;
         }
         return surfaceCache;
     }
@@ -220,15 +223,28 @@ public final class TankData {
         if (i < 0 || i >= c.length) return 0;
         long below = 0;
         for (int k = 0; k < i; k++) below += c[k];
-        return fillFor(waterMb, below * MB_PER_BLOCK, c[i] * MB_PER_BLOCK);
+        return fillFor(waterMb, below * MB_PER_BLOCK, c[i] * MB_PER_BLOCK, i == c.length - 1 ? 16 - headroom() : 16);
     }
 
     /** Pure helper (unit-tested): fill in 1/16 of a layer with the given capacity whose bottom starts at {@code belowMb}. */
     public static int fillFor(long waterMb, long belowMb, long layerCapacityMb) {
+        return fillFor(waterMb, belowMb, layerCapacityMb, 16);
+    }
+
+    /** Like {@link #fillFor(long, long, long)}, a full layer shows {@code maxFill} (top layer: 16 minus the headroom). */
+    public static int fillFor(long waterMb, long belowMb, long layerCapacityMb, int maxFill) {
         if (layerCapacityMb <= 0) return 0;
         long inLayer = Math.max(0, Math.min(waterMb - belowMb, layerCapacityMb));
         if (inLayer <= 0) return 0;
-        return (int) Math.min(16, Math.max(1, (inLayer * 16 + layerCapacityMb - 1) / layerCapacityMb));
+        return (int) Math.min(maxFill, Math.max(1, (inLayer * maxFill + layerCapacityMb - 1) / layerCapacityMb));
+    }
+
+    /**
+     * Air gap below the top glass of a full tank, in 1/16 block (server config {@code tank.waterHeadroom}): the top layer
+     * of the tank shows its water squeezed into 16 - headroom sixteenths. Same amount of water, it only looks less full.
+     */
+    public static int headroom() {
+        return org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TANK_WATER_HEADROOM, 2);
     }
 
     // ------------------------------------------------------------------ misc accessors

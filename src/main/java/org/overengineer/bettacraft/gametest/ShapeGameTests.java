@@ -191,9 +191,12 @@ public final class ShapeGameTests {
         TankInteractions.changeWater(h.getLevel(), c, 3500);
         h.assertTrue(h.getBlockState(new BlockPos(4, 1, 4)).getValue(TankBlock.FILL) == 16, "bottom layer full");
         h.assertTrue(h.getBlockState(new BlockPos(4, 1, 5)).getValue(TankBlock.FILL) == 16, "the arm is full too");
-        h.assertTrue(h.getBlockState(new BlockPos(5, 2, 4)).getValue(TankBlock.FILL) == 8, "upper block half");
-        h.assertTrue(Math.abs(t.waterSurfaceY() - (h.absolutePos(new BlockPos(0, 2, 0)).getY() + 0.5)) < 1e-6, "surface at 2.5: " + t.waterSurfaceY());
-        h.assertTrue(t.fillOfLayer(h.absolutePos(new BlockPos(0, 2, 0)).getY()) == 8, "layer fill");
+        h.assertTrue(h.getBlockState(new BlockPos(5, 2, 4)).getValue(TankBlock.FILL) == (16 - TankData.headroom()) / 2,
+                "upper block half (top layer: 16 - headroom sixteenths when full)");
+        double top = 1 - TankData.headroom() / 16.0;
+        h.assertTrue(Math.abs(t.waterSurfaceY() - (h.absolutePos(new BlockPos(0, 2, 0)).getY() + 0.5 * top)) < 1e-6,
+                "surface half way up the top layer: " + t.waterSurfaceY());
+        h.assertTrue(t.fillOfLayer(h.absolutePos(new BlockPos(0, 2, 0)).getY()) == (16 - TankData.headroom()) / 2, "layer fill");
         // evaporation: both open tops reach the water (the full low part and the column)
         h.assertTrue(TankWater.openTop(h.getLevel(), t)[0] == 3, "three open tops: " + TankWater.openTop(h.getLevel(), t)[0]);
         h.setBlock(new BlockPos(4, 2, 4), ModBlocks.TANK_LID.get().defaultBlockState());

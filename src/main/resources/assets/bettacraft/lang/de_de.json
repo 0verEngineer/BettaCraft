@@ -503,6 +503,8 @@
   "bettacraft.configuration.overcrowdedPerWaterBlock.tooltip": "Adulte Tiere pro Wasserblock, ab denen die Gesundheit sinkt",
   "bettacraft.configuration.minFillToInsert": "Mindestfüllung zum Einsetzen",
   "bettacraft.configuration.minFillToInsert.tooltip": "Mindestfüllstand (Anteil), ab dem Tiere eingesetzt werden können",
+  "bettacraft.configuration.waterHeadroom": "Luft unter dem Deckel",
+  "bettacraft.configuration.waterHeadroom.tooltip": "Luftspalt unter dem oberen Glas eines vollen Tanks in 1/16 Block (gleiche Wassermenge, sieht nur weniger voll aus); 0 = Wasser bis zum Rand",
   "bettacraft.configuration.health": "Gesundheit",
   "bettacraft.configuration.health.tooltip": "Gesundheit der Bettas",
   "bettacraft.configuration.daysUntilSick": "Tage bis krank",

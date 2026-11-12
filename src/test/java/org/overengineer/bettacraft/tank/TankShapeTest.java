@@ -69,6 +69,12 @@ class TankShapeTest {
         assertEquals(1.5, TankShape.surfaceY(counts, 0, 2500), 1e-9);
         assertEquals(0.25, TankShape.surfaceY(counts, 0, 500), 1e-9);
         assertEquals(2.0, TankShape.surfaceY(counts, 0, 99999), 1e-9);
+        // headroom 2: the top layer fills up to 14/16
+        assertEquals(1.4375, TankShape.surfaceY(counts, 0, 2500, 2), 1e-9);
+        assertEquals(0.25, TankShape.surfaceY(counts, 0, 500, 2), 1e-9, "lower layers unchanged");
+        assertEquals(1.875, TankShape.surfaceY(counts, 0, 99999, 2), 1e-9);
+        assertEquals(7, TankData.fillFor(2500, 2000, 1000, 14));
+        assertEquals(14, TankData.fillFor(3000, 2000, 1000, 14));
         assertEquals(TankData.fillFor(2500, 2000, 1000), 8);
     }
 

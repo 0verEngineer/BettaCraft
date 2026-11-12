@@ -21,6 +21,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue TANK_HARD_CAP_PER_WATER_BLOCK;
     public static final ModConfigSpec.IntValue TANK_OVERCROWDED_PER_WATER_BLOCK;
     public static final ModConfigSpec.DoubleValue TANK_MIN_FILL_TO_INSERT;
+    public static final ModConfigSpec.IntValue TANK_WATER_HEADROOM;
 
     // health
     public static final ModConfigSpec.DoubleValue HEALTH_DAYS_UNTIL_SICK;
@@ -123,6 +124,7 @@ public final class ServerConfig {
         TANK_HARD_CAP_PER_WATER_BLOCK = b.comment("Hard limit of adult animals per water block").defineInRange("hardCapPerWaterBlock", 6, 1, 64);
         TANK_OVERCROWDED_PER_WATER_BLOCK = b.comment("Adults per water block from which health starts to drop").defineInRange("overcrowdedPerWaterBlock", 2, 1, 64);
         TANK_MIN_FILL_TO_INSERT = b.comment("Minimum fill fraction before inhabitants can be inserted").defineInRange("minFillToInsert", 0.5, 0.0, 1.0);
+        TANK_WATER_HEADROOM = b.comment("Air gap below the top glass of a full tank in 1/16 block (the top layer holds the same water, it only looks less full); 0 = water up to the rim").defineInRange("waterHeadroom", 2, 0, 8);
         b.pop();
 
         b.comment("Health of bettas").push("health");

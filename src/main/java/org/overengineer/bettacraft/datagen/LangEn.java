@@ -397,6 +397,8 @@ final class LangEn {
         a.accept("bettacraft.configuration.overcrowdedPerWaterBlock.tooltip", "Adults per water block from which health starts to drop");
         a.accept("bettacraft.configuration.minFillToInsert", "Minimum fill to insert");
         a.accept("bettacraft.configuration.minFillToInsert.tooltip", "Minimum fill fraction before inhabitants can be inserted");
+        a.accept("bettacraft.configuration.waterHeadroom", "Air gap at the top");
+        a.accept("bettacraft.configuration.waterHeadroom.tooltip", "Air gap below the top glass of a full tank in 1/16 block (same amount of water, it only looks less full); 0 = water up to the rim");
         a.accept("bettacraft.configuration.health", "Health");
         a.accept("bettacraft.configuration.health.tooltip", "Health of bettas");
         a.accept("bettacraft.configuration.daysUntilSick", "Days until sick");

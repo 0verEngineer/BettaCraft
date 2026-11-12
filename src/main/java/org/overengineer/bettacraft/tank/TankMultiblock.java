@@ -385,9 +385,11 @@ public final class TankMultiblock {
         for (long l : tank.members()) perLayer.addTo(BlockPos.getY(l), 1);
         Int2IntOpenHashMap fill = new Int2IntOpenHashMap();
         long below = 0;
+        int topFill = 16 - TankData.headroom();
         for (int y = tank.min().getY(); y <= tank.max().getY(); y++) {
             long layerCap = perLayer.get(y) * TankData.MB_PER_BLOCK;
-            fill.put(y, TankData.fillFor(tank.waterMb(), below, layerCap));
+            // top layer: air gap below the top glass (looks less full, same water)
+            fill.put(y, TankData.fillFor(tank.waterMb(), below, layerCap, y == tank.max().getY() ? topFill : 16));
             below += layerCap;
         }
         LongSet members = tank.members();

@@ -254,6 +254,8 @@
   "bettacraft.configuration.temperature": "Temperature",
   "bettacraft.configuration.temperature.tooltip": "Water temperature",
   "bettacraft.configuration.title": "Bettacraft Configuration",
+  "bettacraft.configuration.waterHeadroom": "Air gap at the top",
+  "bettacraft.configuration.waterHeadroom.tooltip": "Air gap below the top glass of a full tank in 1/16 block (same amount of water, it only looks less full); 0 = water up to the rim",
   "bettacraft.configuration.waterQuality": "Water quality",
   "bettacraft.configuration.waterQuality.tooltip": "Waste of the animals and of uneaten food lowers the water quality, filters slow that down, a water change brings it back",
   "bettacraft.configuration.waterSurfaceAnimation": "Water surface animation",

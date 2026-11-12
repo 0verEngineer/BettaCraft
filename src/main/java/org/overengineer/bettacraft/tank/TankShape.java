@@ -103,14 +103,21 @@ public final class TankShape {
      * so the surface is flat over every block of the topmost wet layer.
      */
     public static double surfaceY(int[] layerCounts, int minY, long waterMb) {
+        return surfaceY(layerCounts, minY, waterMb, 0);
+    }
+
+    /** Like {@link #surfaceY(int[], int, long)}; the top layer only fills up to 16 - {@code headroom} sixteenths. */
+    public static double surfaceY(int[] layerCounts, int minY, long waterMb, int headroom) {
         long left = Math.max(0, waterMb);
+        double top = 1 - headroom / 16.0;
         for (int i = 0; i < layerCounts.length; i++) {
             long cap = layerCounts[i] * TankData.MB_PER_BLOCK;
             if (cap <= 0) continue;
-            if (left < cap) return minY + i + left / (double) cap;
+            double h = i == layerCounts.length - 1 ? top : 1;
+            if (left < cap) return minY + i + h * left / (double) cap;
             left -= cap;
         }
-        return minY + layerCounts.length;
+        return minY + layerCounts.length - 1 + top;
     }
 
     /**
