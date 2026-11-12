@@ -18,11 +18,13 @@ ENTITY_TEX = TEX / "entity" / "betta"
 ITEM_TEX = TEX / "item"
 BLOCK_TEX = TEX / "block"
 LOGO = RES / "bettacraft.png"
+GUI_TEX = TEX / "gui"
+JAVA_SRC = ROOT / "src" / "main" / "java" / "org" / "overengineer" / "bettacraft"
 REVIEW_DIR = ROOT / "builds"
 
 
 def ensure_dirs() -> None:
-    for d in (GEN, PREVIEW, ENTITY_TEX, ITEM_TEX, BLOCK_TEX, REVIEW_DIR):
+    for d in (GEN, PREVIEW, ENTITY_TEX, ITEM_TEX, BLOCK_TEX, GUI_TEX, REVIEW_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
 

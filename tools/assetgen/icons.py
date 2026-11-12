@@ -294,7 +294,36 @@ def heater(length: int) -> np.ndarray:
     return img
 
 
+# ---------------------------------------------------------------- swamp water bottle (vanilla potion-like)
+
+BOTTLE = {"k": "#2f3a2c", "c": "#6b4a2b", "C": "#a67a4c", "g": "#cfe3e8d8", "G": "#ffffffe8",
+          "W": "#7c8a4a", "w": "#5f6e36", "v": "#46522a", "d": "#2e3618", "s": "#8e9a58"}
+BOTTLE_ROWS = [
+    "................",
+    "......kkkk......",
+    "......kCck......",
+    "......kCck......",
+    ".......gg.......",
+    "......kGgk......",
+    ".....kG..gk.....",
+    "....kG....gk....",
+    "...kGWWsWWWgk...",
+    "...kGwwdwwwvk...",
+    "...kGwwwwdwvk...",
+    "...kGwdwwwwvk...",
+    "...kGwwwdwvvk...",
+    "....kwwvvvvk....",
+    ".....kkkkkk.....",
+    "................",
+]
+
+
+def swamp_water_bottle():
+    return grid(BOTTLE_ROWS, BOTTLE)
+
+
 ICONS = {
+    "swamp_water_bottle": swamp_water_bottle,
     "betta_bucket": bucket,
     "fish_bag": fish_bag,
     "betta_pellets": pellets,

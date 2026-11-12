@@ -5,6 +5,7 @@ import sys
 import time
 
 import blocks
+import gui
 import icons
 import model_defs as md
 import palette
@@ -22,8 +23,10 @@ def main() -> int:
     written += uv_template.write_region_masks()
     written += patterns.write_all()
     written.append(palette.write_json())
+    written.append(palette.write_java())
     written += icons.write_all()
     written += blocks.write_all()
+    written += gui.write_all()
     written += md.write_generated(GEN, preview.sample_textures())
     written += preview.write_all()
     for p in written:

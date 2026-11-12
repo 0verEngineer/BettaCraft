@@ -108,6 +108,102 @@ def interior_wall() -> np.ndarray:
     return out
 
 
+# ---------------------------------------------------------------- feeder (box 3..13 x 0..8 x 3..13)
+
+def _metal(seed, base, amp=4):
+    n = _rng(seed).integers(-amp, amp + 1, (S, S))
+    out = np.zeros((S, S, 4), np.uint8)
+    v = np.clip(base + n, 0, 255)
+    out[..., 0] = out[..., 1] = v.astype(np.uint8)
+    out[..., 2] = np.clip(v + 4, 0, 255).astype(np.uint8)
+    out[..., 3] = 255
+    return out
+
+
+def _put(img, x, y, rgb):
+    img[y, x, :3] = rgb
+    img[y, x, 3] = 255
+
+
+def feeder_side() -> np.ndarray:
+    """Metal box; rows 8..15 (= model height 0..8) carry the design, rows 0..7 repeat it."""
+    half = _metal(401, 0x86)[:8].copy()
+    half[0, :, :3] = 0xb4  # light top bevel
+    half[6, :, :3] = 0x66
+    half[7, :, :3] = 0x4a  # dark bottom
+    for x in (3, 12):  # edges of the visible part (u 3..13)
+        half[1:7, x, :3] = 0x5a
+    pel = [(0xc0, 0x70, 0x3e), (0x9a, 0x4f, 0x28), (0xe2, 0xa0, 0x70), (0x6e, 0x34, 0x18)]
+    rng = _rng(402)
+    for y in range(1, 6):  # window with pellets
+        for x in range(5, 11):
+            if y in (1, 5) or x in (5, 10):
+                _put(half, x, y, (0x2c, 0x2c, 0x31))
+            elif y == 2:
+                _put(half, x, y, (0xb8, 0xd8, 0xe4))
+            else:
+                _put(half, x, y, pel[int(rng.integers(0, 4))])
+    return np.concatenate([half, half], 0)
+
+
+def feeder_top() -> np.ndarray:
+    img = _metal(403, 0x9a)
+    img[3:13, 3, :3] = 0xc4
+    img[3, 3:13, :3] = 0xc4
+    img[3:13, 12, :3] = 0x58
+    img[12, 3:13, :3] = 0x58
+    for y in range(5, 11):  # hatch
+        for x in range(5, 11):
+            edge = y in (5, 10) or x in (5, 10)
+            _put(img, x, y, (0x3a, 0x3a, 0x40) if edge else (0x70, 0x70, 0x78))
+    for x in (7, 8):  # handle
+        _put(img, x, 7, (0xd8, 0xd8, 0xdc))
+        _put(img, x, 8, (0x4a, 0x4a, 0x50))
+    return img
+
+
+def feeder_bottom() -> np.ndarray:
+    img = _metal(404, 0x4c, 3)
+    for x in range(5, 11):
+        _put(img, x, 6, (0x2a, 0x2a, 0x2e))
+        _put(img, x, 7, (0x12, 0x12, 0x14))
+        _put(img, x, 8, (0x12, 0x12, 0x14))
+    return img
+
+
+# ---------------------------------------------------------------- tank light (bar along X, 3 px wide, 2 px high)
+
+def tank_light() -> np.ndarray:
+    """Anthracite housing, brushed along X, lighter top edge."""
+    rng = _rng(501)
+    img = np.zeros((S, S, 4), np.uint8)
+    row = rng.integers(-3, 4, S)
+    for y in range(S):
+        v = np.clip(0x34 + row[y] + rng.integers(-1, 2, S), 0, 255)
+        img[y, :, 0] = v
+        img[y, :, 1] = v
+        img[y, :, 2] = np.clip(v + 3, 0, 255)
+    img[..., 3] = 255
+    img[0, :, :3] = 0x5c
+    img[S - 1, :, :3] = 0x22
+    return img
+
+
+def _panel(on: bool) -> np.ndarray:
+    """LED panel (bottom face of the light): bright cool white when on, dark grey when off."""
+    img = np.zeros((S, S, 4), np.uint8)
+    yy, xx = np.mgrid[0:S, 0:S]
+    if on:
+        base, dot, dim = (0xf4, 0xf7, 0xff), (0xff, 0xff, 0xff), (0xe4, 0xea, 0xf4)
+    else:
+        base, dot, dim = (0x4a, 0x4c, 0x52), (0x5e, 0x60, 0x66), (0x40, 0x42, 0x48)
+    img[..., :3] = base
+    img[(xx % 2 == 0) & (yy % 2 == 0), :3] = dot
+    img[(xx % 2 == 1) & (yy % 2 == 1), :3] = dim
+    img[..., 3] = 255
+    return img
+
+
 def all_blocks():
     water, meta = tank_water_still()
     return {
@@ -116,6 +212,12 @@ def all_blocks():
         "tank_water_still": water,
         "interior_floor": interior_floor(),
         "interior_wall": interior_wall(),
+        "feeder_side": feeder_side(),
+        "feeder_top": feeder_top(),
+        "feeder_bottom": feeder_bottom(),
+        "tank_light": tank_light(),
+        "tank_light_panel_on": _panel(True),
+        "tank_light_panel_off": _panel(False),
     }, {"tank_water_still": meta}
 
 

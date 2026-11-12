@@ -16,13 +16,14 @@ is copied to `builds/m0-preview.png`.
 
 | Script | Makes |
 |---|---|
-| `model_defs.py` | The single source of truth for the betta model: cuboids per body shape (plakat, veil, halfmoon, crowntail, doubletail; dumbo = second pectoral set), the shared 64x64 box-UV layout (auto-packed), life-stage scales and female scales. Also writes `build/generated/BettaModelDefinitions.java`, `betta_<shape>.bbmodel` (Blockbench, modded entity) and `uv_layout.txt`. |
+| `model_defs.py` | The single source of truth for the betta model: cuboids per body shape (plakat, veil, halfmoon, crowntail, doubletail; dumbo = second pectoral set), the shared 64x64 box-UV layout (auto-packed), life-stage scales and female scales. Also writes `BettaModelDefinitions.java` (compiled copy in `src/main/java/.../client/model/`, reference copy in `build/generated/`; includes `PATTERNS`), `betta_<shape>.bbmodel` (Blockbench, modded entity) and `uv_layout.txt`. |
 | `fins.py` | Fin silhouettes (alpha cut-outs: crowntail spikes, doubletail notch), fin-ray field, distance-to-edge field. |
 | `uv_template.py` | Per-texel metadata (part, face, model-space position, fin coordinates). Writes `build/uv_template.png` (debug) and `region_body.png` / `region_fins.png`. |
 | `patterns.py` | `shade.png`, `pattern_*.png` (butterfly, marble, dragon, koi, mask, tipped, fade, grizzle, bars), `iridescence.png`, `eye.png`. |
-| `palette.py` | 43 named colours (id, en_us, de_de, hex) -> `build/generated/colors.json`. |
-| `icons.py` | 16x16 item icons plus greyscale fish overlay layers for the bucket and the bag. |
-| `blocks.py` | Tank block textures, including the animated greyscale water. |
+| `palette.py` | 43 named colours (id, en_us, de_de, hex) -> `build/generated/colors.json` and `src/main/java/.../genetics/BettaColorTable.java`. |
+| `icons.py` | 16x16 item icons (incl. `swamp_water_bottle`) plus greyscale fish overlay layers for the bucket and the bag. |
+| `blocks.py` | Tank block textures, including the animated greyscale water; feeder (`feeder_side/top/bottom`, design in rows 8..15 / uv 3..13) and tank light (`tank_light`, `tank_light_panel_on/off`). |
+| `gui.py` | `textures/gui/tank.png` (256x256): 248x230 vanilla-style panel, content inset 7..240 x 17..139, 4 heater slots (items at x 12, y 148+18i), player inventory (x 44+18c, y 148+18r, hotbar y 206), icons at (0,232) heater ghost 16x16, (16,232) lock and (26,232) open lock 10x10. Layout constants are mirrored in the Java screen. |
 | `render.py` | Texture compositing (same order as the runtime) and a side-view software rasterizer. |
 | `preview.py` | Preview sheets in `build/preview/`, `builds/m0-preview.png` and the mod logo `src/main/resources/bettacraft.png`. |
 | `build.py` | Runs all of the above. |
