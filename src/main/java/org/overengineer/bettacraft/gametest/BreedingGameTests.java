@@ -20,6 +20,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
+import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaCare;
 import org.overengineer.bettacraft.entity.betta.BettaData;
@@ -122,6 +123,104 @@ public final class BreedingGameTests {
      * The whole realistic flow (PLAN 5.4): nest building -> spawning -> the male chases the female (she loses health)
      * -> female taken out -> larvae -> fry entities with pedigree -> the male eats fry.
      */
+    /**
+     * The whole cycle in real server ticks, nothing called by hand: a fed pair in warm water, the male builds a nest,
+     * they spawn, eggs hatch into larvae and free-swimming fry, the fry eat fry food and grow up to adults - with the
+     * breeding and growth times of the server config shortened to a few hundred ticks. The player's part is done like a
+     * player would: feeding, taking the female out after spawning and the male once the fry swim free. Checks the
+     * pedigree and that every allele of the young comes from its parents (no mutations in this test).
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 6000, batch = "bettacraft_breeding_realtime")
+    public static void fullLifeCycleInRealTicks(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        double[] saved = {ServerConfig.BREEDING_READY_DAYS.get(), ServerConfig.BREEDING_NEST_BUILD_DAYS.get(), ServerConfig.STAGE_EGG_DAYS.get(),
+                ServerConfig.STAGE_LARVA_DAYS.get(), ServerConfig.STAGE_FRY_DAYS.get(), ServerConfig.STAGE_JUVENILE_DAYS.get(),
+                ServerConfig.STAGE_SUBADULT_DAYS.get(), ServerConfig.BREEDING_MUTATION_CHANCE.get()};
+        Runnable restore = () -> {
+            ServerConfig.BREEDING_READY_DAYS.set(saved[0]);
+            ServerConfig.BREEDING_NEST_BUILD_DAYS.set(saved[1]);
+            ServerConfig.STAGE_EGG_DAYS.set(saved[2]);
+            ServerConfig.STAGE_LARVA_DAYS.set(saved[3]);
+            ServerConfig.STAGE_FRY_DAYS.set(saved[4]);
+            ServerConfig.STAGE_JUVENILE_DAYS.set(saved[5]);
+            ServerConfig.STAGE_SUBADULT_DAYS.set(saved[6]);
+            ServerConfig.BREEDING_MUTATION_CHANCE.set(saved[7]);
+        };
+        // one in-game day = 24000 ticks: 0.01 days = 240 ticks
+        ServerConfig.BREEDING_READY_DAYS.set(0.01);
+        ServerConfig.BREEDING_NEST_BUILD_DAYS.set(0.005);
+        ServerConfig.STAGE_EGG_DAYS.set(0.01);
+        ServerConfig.STAGE_LARVA_DAYS.set(0.01);
+        ServerConfig.STAGE_FRY_DAYS.set(0.02);
+        ServerConfig.STAGE_JUVENILE_DAYS.set(0.01);
+        ServerConfig.STAGE_SUBADULT_DAYS.set(0.01);
+        ServerConfig.BREEDING_MUTATION_CHANCE.set(0.0);
+
+        TankBlockEntity c = tank(h, 3, 2, 2, 12000);
+        TankData t = c.getTank();
+        BettaEntity male = adult(h, c, false, 61);
+        BettaEntity female = adult(h, c, true, 62);
+        BettaGenotype father = male.getBettaData().genotype(), mother = female.getBettaData().genotype();
+        java.util.UUID fatherId = male.getBettaData().fishId(), motherId = female.getBettaData().fishId();
+        int[] phase = {0};
+        long[] at = new long[4];
+        h.onEachTick(() -> {
+            long tick = h.getTick();
+            if (phase[0] >= 3) return;
+            if (tick > 5800) {
+                restore.run();
+                throw new GameTestAssertException("life cycle stuck in phase " + phase[0] + " (0 nest, 1 hatching, 2 growing)");
+            }
+            // the player feeds now and then: pellets for the adults, infusoria and nauplii for the fry
+            if (tick % 40 == 0) {
+                TankCare.feed(level, c, new ItemStack(ModItems.BETTA_PELLETS.get()), 2);
+                TankCare.feed(level, c, new ItemStack(ModItems.INFUSORIA.get()), 4);
+                TankCare.feed(level, c, new ItemStack(ModItems.ARTEMIA_NAUPLII.get()), 4);
+            }
+            if (phase[0] == 0 && t.nest() != null && t.nest().hasEggs()) {
+                // spawned: take the female out
+                t.inhabitants().remove(female.getUUID());
+                female.discard();
+                at[0] = tick;
+                phase[0] = 1;
+            } else if (phase[0] == 1 && t.nest() == null && logged(t, "log.bettacraft.fry_free")) {
+                // the fry swim free: take the male out before he eats them
+                t.inhabitants().remove(male.getUUID());
+                male.discard();
+                at[1] = tick;
+                phase[0] = 2;
+            } else if (phase[0] == 2) {
+                List<BettaEntity> young = bettas(h, c);
+                if (!young.isEmpty() && young.stream().allMatch(BettaEntity::isAdult)) {
+                    at[2] = tick;
+                    phase[0] = 3;
+                    restore.run();
+                    h.assertTrue(logged(t, "log.bettacraft.nest_started") && logged(t, "log.bettacraft.spawned")
+                            && logged(t, "log.bettacraft.larvae") && logged(t, "log.bettacraft.grown_up"), "every step logged");
+                    for (BettaEntity b : young) {
+                        BettaData d = b.getBettaData();
+                        h.assertTrue(d.father().equals(java.util.Optional.of(fatherId)) && d.mother().equals(java.util.Optional.of(motherId))
+                                && d.generation() >= 1, "pedigree of " + d.fishId());
+                        for (var l : BettaLoci.ALL) {
+                            var p = d.genotype().pair(l);
+                            var m = mother.pair(l);
+                            var f = father.pair(l);
+                            boolean fromParents = (isOneOf(p.a(), m) && isOneOf(p.b(), f)) || (isOneOf(p.a(), f) && isOneOf(p.b(), m));
+                            h.assertTrue(fromParents, l.id() + " " + p + " not from mother " + m + " and father " + f);
+                        }
+                    }
+                    com.mojang.logging.LogUtils.getLogger().info("[gametest] life cycle: spawned after {} ticks, fry free after {}, {} adults after {}",
+                            at[0], at[1], young.size(), at[2]);
+                    h.succeed();
+                }
+            }
+        });
+    }
+
+    private static boolean isOneOf(String allele, BettaGenotype.AllelePair pair) {
+        return allele.equals(pair.a()) || allele.equals(pair.b());
+    }
+
     @GameTest(template = EMPTY, timeoutTicks = 200)
     public static void breedingFlow(GameTestHelper h) {
         ServerLevel level = h.getLevel();
