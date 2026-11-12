@@ -7,7 +7,8 @@ images at a quarter of their pixel size and shrinks them to the page width, so t
 exactly at GUI size.
 
 The interior and hologram images are kept as they are (from the M4/M5 screenshots). M9 adds the water care scene, the
-live food breeders and the water tab from the ``bettacraft_m9_*`` screenshots of the same run.
+live food breeders and the water tab from the ``bettacraft_m9_*`` screenshots of the same run, M11 the tank styles and the
+mirror stick from ``bettacraft_m11_*`` (also made by ``-Psmoketestm11`` alone).
 """
 from __future__ import annotations
 
@@ -37,6 +38,8 @@ MENUS = {"menu_overview": "guide_menu_overview", "menu_inhabitants": "guide_menu
 # M9 scene (DevClientSmokeM9): world shots without HUD and the water tab (English only; German pages fall back to it)
 M9_WORLD = {"water_care": ("bettacraft_m9_scene", (0, 240, 1140, 620)), "live_food": ("bettacraft_m9_breeders", (0, 100, 1060, 520))}
 M9_MENUS = {"menu_water": "bettacraft_m9_menu_water"}
+# M11 scene (DevClientSmokeM11): the three tank styles and a male flaring at the mirror stick (world shots without HUD)
+M11_WORLD = {"tank_styles": ("bettacraft_m11_styles", (60, 320, 1220, 570)), "mirror_stick": ("bettacraft_m11_mirror_side", (130, 250, 1060, 740))}
 
 
 def save(im: Image.Image, path: Path) -> None:
@@ -67,6 +70,12 @@ def main() -> int:
                 continue
             save(Image.open(src).convert("RGB").crop(MENU_BOX), out / f"{name}.png")
     for name, (shot, box) in M9_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name, (shot, box) in M11_WORLD.items():
         src = SHOTS / f"{shot}.png"
         if src.exists():
             save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")

@@ -4,6 +4,30 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.3.0-beta.1] - 2026-11-12
+
+### Added
+- Two aquarium styles. **Textured** aquariums show the texture of their glass with connected textures: the frame of the
+  glass texture runs only along the outer edges of the whole aquarium (works with the glass of other mods; the frame
+  width is read from the texture). **Clear glass** aquariums are perfectly clear vanilla glass without any texture:
+  6 glass, an iron nugget in the middle and 3 iron ingots below give 4. A single vanilla-glass aquarium converts between
+  both styles in the crafting grid. The two styles never join.
+- Jade, The One Probe and WTHIT show the glass of an aquarium (its localized name) and its style; so does the water tab
+  of the tank menu.
+- Mirror stick (glass pane, iron nugget, stick): adult males that see it flare at their reflection, hold still and turn
+  towards it. A male that flared at the mirror during the last day gets ready for a bubble nest 1.25 times faster
+  (`breeding.mirrorReadinessBonus`, 1 = purely cosmetic). Advancement "Mirror, Mirror".
+- Client settings `render.connectedGlass` and `render.tankEdgeWidth` (in 1/64 block, 0 = no edge lines).
+
+### Changed
+- The dark edge lines are much thinner (1/32 block instead of 1/16) and close the inner corners of flat walls.
+- Aquariums from earlier versions keep their glass and become textured (tank data schema 6).
+
+### Fixed
+- Water behind translucent (stained) glass looked darker along every block border, and in some blocks (the middle of
+  a T) the water surface was missing: water faces now always sort behind the glass in front of them, and the frames
+  of the glass texture no longer show between the blocks of one aquarium.
+
 ## [1.2.0-beta.1] - 2026-11-12
 
 ### Added

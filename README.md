@@ -17,7 +17,8 @@ block.
   short- and long-finned forms, dumbo ears, 43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo,
   Black Orchid, Mustard Gas, ...). Colours, genes and varieties are data-driven and can be changed with datapacks.
 - **Aquariums:** a multiblock tank of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16
-  (configurable up to 64). Real vanilla water, filled
+  (configurable up to 64), either with the connected texture of its glass or as perfectly clear glass, with thin dark
+  edges only along the outer edges. Real vanilla water, filled
   bucket by bucket from the bottom, rendered clear and without biome tint, also with Sodium and Iris. The animals are
   real entities, so frogs, axolotls and the fish of other mods keep their own behaviour.
 - **Care:** water temperature from the biome and the time of day, heaters and coolers in three sizes, health with
@@ -30,8 +31,8 @@ block.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
   female out after spawning and the male once the fry swim, or they get hurt or eaten. Fry need infusoria and
   artemia nauplii, which you culture yourself.
-- **Fights and predators:** two adult males fight (they flare at each other first), pufferfish and the predators of
-  other mods hunt small fish.
+- **Fights and predators:** two adult males fight (they flare at each other first, or at a mirror stick), pufferfish
+  and the predators of other mods hunt small fish.
 - **Interior:** sneak and right-click an aquarium with an empty hand to step inside a void dimension at 16 blocks per
   tank block (4 or 8 configurable) and build with any block. The result is shown in the aquarium as a miniature.
   Floor textures (substrate), decoration structures (castle, shipwreck, skull, volcano, driftwood, cave, ...),
@@ -41,7 +42,7 @@ block.
   connecting light bar that redstone switches off.
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass and a lock for the owner.
-- **Handbook and progression:** 30 handbook pages in English and German (with GuideME) and 28 advancements.
+- **Handbook and progression:** 31 handbook pages in English and German (with GuideME) and 29 advancements.
 - **Languages:** English and German.
 
 ## Requirements
@@ -61,7 +62,7 @@ No other mod is required.
 |---|---|
 | [GuideME](https://modrinth.com/mod/guideme) | the in-game handbook (given once per player, see `guide.giveBook`) |
 | [JEI](https://modrinth.com/mod/jei) | information pages for every Bettacraft item |
-| [Jade](https://modrinth.com/mod/jade), [The One Probe](https://modrinth.com/mod/the-one-probe), [WTHIT](https://modrinth.com/mod/wthit) | aquarium (name, temperature, water, animals, nest, filters, warnings), betta behind the glass (type, sex, health, hunger, stage, genes), filter and cabinet. Sneak for details; The One Probe needs its probe for the extended view. |
+| [Jade](https://modrinth.com/mod/jade), [The One Probe](https://modrinth.com/mod/the-one-probe), [WTHIT](https://modrinth.com/mod/wthit) | aquarium (name, glass and style, temperature, water, animals, nest, filters, warnings), betta behind the glass (type, sex, health, hunger, stage, genes), filter and cabinet. Sneak for details; The One Probe needs its probe for the extended view. |
 | Better Fish Tanks | its fish bag puts animals into and takes them out of Bettacraft aquariums; bettas live in its tanks |
 | [Fintastic](https://modrinth.com/mod/fintastic) | fish and fishnet in both directions, live prey, fish food, water plants in the interior |
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
@@ -74,7 +75,8 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 ## Getting started
 
 1. Find a swamp and catch a betta with a water bucket.
-2. Craft aquarium blocks (six glass of one kind and three iron ingots give four) and place them next to each other.
+2. Craft aquarium blocks (six glass of one kind and three iron ingots give four; an iron nugget in the middle instead
+   of the ingot makes clear glass aquariums from vanilla glass) and place them next to each other.
 3. Fill the aquarium with water buckets, at least half full.
 4. Right-click it with the betta bucket.
 5. Outside warm biomes add a heater (in the interior or in an external filter) and feed every day with betta pellets

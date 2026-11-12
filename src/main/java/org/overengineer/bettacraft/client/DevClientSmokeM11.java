@@ -124,7 +124,7 @@ final class DevClientSmokeM11 {
         then(1, () -> server(p -> p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY)));
         then(1, () -> {
             mc.options.hideGui = true;
-            lookAt(mirrorTank.getX() + 3.0, mirrorTank.getY() + 1.25, mirrorTank.getZ() + 0.9,
+            lookAt(mirrorTank.getX() + 3.4, mirrorTank.getY() + 0.62, mirrorTank.getZ() + 0.9,
                     new Vec3(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.5, mirrorTank.getZ() + 0.9));
         });
         then(12, () -> shot("mirror_side"));
