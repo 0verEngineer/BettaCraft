@@ -245,19 +245,19 @@ public final class WaterGameTests {
         BlockPos light = h.absolutePos(new BlockPos(4, 3, 4));
         float ambient = TankCare.ambient(level, t);
         t.setTargetTemp(32.0F);
-        var tankEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, c.getBlockPos(), null);
-        var filterEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, f.getBlockPos(), null);
-        var lightEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, light, null);
-        h.assertTrue(tankEnergy != null && filterEnergy != null && lightEnergy != null, "energy capabilities on tank, filter and light");
         try {
-            // default: nothing needs power, nothing is accepted
+            // default: nothing needs power, no energy capability is offered
             power(false, false, false);
-            h.assertTrue(tankEnergy.receiveEnergy(1000, false) == 0, "no FE accepted while power is off");
+            h.assertTrue(level.getCapability(Capabilities.EnergyStorage.BLOCK, c.getBlockPos(), null) == null, "no FE storage while power is off");
             TankPower.step(level, c, 20);
             h.assertTrue(TankCare.heaterBlocks(level, t) == 16 && TankWater.filterBlocks(level, c) > 0, "everything works without power");
 
             // power required, no FE: heaters, filter and light stop
             power(true, true, true);
+            var tankEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, c.getBlockPos(), null);
+            var filterEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, f.getBlockPos(), null);
+            var lightEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, light, null);
+            h.assertTrue(tankEnergy != null && filterEnergy != null && lightEnergy != null, "energy capabilities on tank, filter and light");
             TankPower.step(level, c, 20);
             h.assertTrue(!c.heatPowered() && !c.filterPowered() && !c.lightPowered(), "unpowered without FE");
             h.assertTrue(TankCare.heaterBlocks(level, t) == 0, "unpowered heater does not heat");

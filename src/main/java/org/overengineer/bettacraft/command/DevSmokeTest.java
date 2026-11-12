@@ -232,6 +232,8 @@ public final class DevSmokeTest {
                 breedingTank(level);
             } else if (ticks == 60) {
                 DevSmokeM7.setup(level, base); // M7: compat tank, Better Fish Tanks tank
+            } else if (ticks == 70) {
+                DevSmokeM9.setup(level, base); // M9: cooler filter, larva tub, hatchery
             } else if (!passed && ticks >= 200 && ticks < 2400 && (InteriorBench.realRunning() || ticks % 20 != 0)) {
                 // wait for the asynchronous real-region bench
             } else if (ticks >= 200 && !passed) {
@@ -264,6 +266,7 @@ public final class DevSmokeTest {
                 m6Checks(server);
                 DevSmokeM7.check(level, base);
                 DevSmokeM8.check(level, base, base.offset(-1, 0, 0));
+                DevSmokeM9.check(level, base);
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

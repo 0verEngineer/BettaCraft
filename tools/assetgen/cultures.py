@@ -60,6 +60,17 @@ def hatchery_base() -> np.ndarray:
     return img
 
 
+def hatchery_glass() -> np.ndarray:
+    """Translucent, slightly blue glass with a dark frame line and a highlight (the walls of the hatchery)."""
+    img = np.zeros((S, S, 4), np.uint8)
+    img[..., :3] = (190, 226, 238)
+    img[..., 3] = 70
+    img[0, :] = img[S - 1, :] = img[:, 0] = img[:, S - 1] = (70, 92, 104, 230)
+    for i in range(3, 8):
+        img[i, i - 1] = (255, 255, 255, 150)
+    return img
+
+
 def _specks(seed: int, colours: list[tuple[int, int, int]], count: int, wriggle: bool) -> np.ndarray:
     """Transparent overlay with small animals floating at the water surface."""
     r = _rng(seed)
@@ -86,6 +97,7 @@ TEXTURES = {
     "larva_tub_side": larva_tub_side,
     "larva_tub_bottom": larva_tub_bottom,
     "artemia_hatchery_base": hatchery_base,
+    "artemia_hatchery_glass": hatchery_glass,
     "culture_larvae": culture_larvae,
     "culture_nauplii": culture_nauplii,
 }

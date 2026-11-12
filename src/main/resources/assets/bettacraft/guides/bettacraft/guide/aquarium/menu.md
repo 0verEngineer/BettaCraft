@@ -21,7 +21,8 @@ navigation:
 * **Lock**: the player who placed the aquarium is its owner. When it is locked, only the owner and operators can
   change it (water, animals, settings, interior); everyone can still look.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
-* Heaters, feeder, light and filters, the number of animals and the button to enter the interior.
+* Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
+  and the button to enter the interior. The last line warns about poor water or missing power.
 
 ## Animals
 
@@ -35,6 +36,12 @@ buttons to take it out with a bucket or a fish bag.
 
 Warnings, the bubble nest, the breeding conditions with ✔ and ✘, the young fish, the parents and the expected offspring.
 See [Breeding](../breeding.md).
+
+## Water
+
+Water volume, the [water quality](water_quality.md) with a bar (the red mark is where the bettas start to suffer), how
+fast it drops and why (animals per water block, how much the filters remove), the last fresh water, evaporation and
+open top blocks, heaters and coolers, and the stored [power](../equipment/power.md) when the server needs it.
 
 ## Interior
 

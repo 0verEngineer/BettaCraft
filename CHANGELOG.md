@@ -4,6 +4,32 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.1.0-beta.1] - 2026-11-12
+
+### Added
+- Water quality: waste of the animals and food given to fish that are not hungry lower it, filters remove most of
+  the waste (external filter 32, internal filter 16 water blocks), fresh water dilutes it (water change with buckets
+  or pipes). Bad water (below 35 %) stresses bettas like a wrong temperature. Water tab in the tank menu, warnings in
+  the overview, the log and the info overlays.
+- Evaporation: open aquariums lose about 20 mB per top block and day (more in warm water); an aquarium lid, the feeder,
+  a light or any full block covers a top block.
+- Coolers in three sizes (16, 32, 64 water blocks) for the interior, the external filter and the cabinet filter;
+  heaters and coolers can share a filter.
+- Optional power: `power.heaterRequiresEnergy`, `power.filterRequiresEnergy` and `power.lightRequiresEnergy` (all off
+  by default). Each aquarium stores FE (100 000 by default) through any tank block, an attached filter, a cabinet
+  below or a light on it.
+- Larva tub (mosquito larvae from water and organic matter under the open sky) and artemia hatchery (nauplii from salt
+  water, cysts and glass bottles in the light), both with hoppers, pipes and comparator output.
+- Aquariums accept water from pipes and give it to pumps (down to the minimum fill while animals live in them).
+- Three advancements (Fresh Start, Keep Cool, Larva Farmer), four handbook pages, config screen labels.
+
+### Changed
+- Filters clean the water now (the flow itself still has no effect on the fish).
+- The tank menu has a sixth tab (Water); the tab widths follow their labels. In German the animals tab is called
+  „Tiere“.
+- Tank data schema 5: existing aquariums start with clean water; the unused evaporation placeholder of earlier
+  versions is replaced.
+
 ## [1.0.0-beta.1] - 2026-11-12
 
 First public beta for Minecraft 1.21.1 and NeoForge 21.1.200 or newer.
@@ -44,4 +70,5 @@ First public beta for Minecraft 1.21.1 and NeoForge 21.1.200 or newer.
   animal instead of releasing it in front of the aquarium.
 - A fish caught out of an aquarium in the world (bucket or bag of any mod) shows up in the tank log at once.
 
+[1.1.0-beta.1]: https://github.com/0verEngineer/BettaCraft/releases/tag/v1.1.0-beta.1
 [1.0.0-beta.1]: https://github.com/0verEngineer/BettaCraft/releases/tag/v1.0.0-beta.1

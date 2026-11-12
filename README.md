@@ -19,8 +19,13 @@ block.
 - **Aquariums:** a multiblock tank of any glass, up to 16x16x16 (configurable up to 64). Real vanilla water, filled
   bucket by bucket from the bottom, rendered clear and without biome tint, also with Sodium and Iris. The animals are
   real entities, so frogs, axolotls and the fish of other mods keep their own behaviour.
-- **Care:** water temperature from the biome and the time of day, heaters in three sizes, health with hunger,
-  temperature and overcrowding stress, sickness and recovery; a tank log tells you what happened.
+- **Care:** water temperature from the biome and the time of day, heaters and coolers in three sizes, health with
+  hunger, temperature, overcrowding and water quality stress, sickness and recovery; a tank log tells you what
+  happened.
+- **Water quality and evaporation:** waste of the animals and overfeeding foul the water, filters keep it clean,
+  water changes with buckets (or pipes) bring it back; open aquariums slowly evaporate, a lid stops that.
+- **Power (optional):** a server can make heaters, coolers, filters and lights need Forge Energy from any FE mod.
+- **Live food breeding:** a larva tub for mosquito larvae and an artemia hatchery for nauplii, both with hoppers.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
   female out after spawning and the male once the fry swim, or they get hurt or eaten. Fry need infusoria and
   artemia nauplii, which you culture yourself.
@@ -35,7 +40,7 @@ block.
   connecting light bar that redstone switches off.
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass and a lock for the owner.
-- **Handbook and progression:** 26 handbook pages in English and German (with GuideME) and 25 advancements.
+- **Handbook and progression:** 30 handbook pages in English and German (with GuideME) and 28 advancements.
 - **Languages:** English and German.
 
 ## Requirements
@@ -80,12 +85,13 @@ The handbook (GuideME) and the JEI pages explain everything else.
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, water quality, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
 | `config/bettacraft-client.toml` | animation and miniature distances, water surface animation, filter sound |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
-Config). By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`).
+Config). By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
+and evaporation are on but gentle, and no equipment needs power (`power.*RequiresEnergy = false`).
 
 ### For pack makers
 

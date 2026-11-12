@@ -184,8 +184,8 @@
   "textures": {
     "base": "bettacraft:block/artemia_hatchery_base",
     "food": "bettacraft:block/culture_nauplii",
-    "particle": "minecraft:block/glass",
-    "side": "minecraft:block/glass",
+    "particle": "bettacraft:block/artemia_hatchery_glass",
+    "side": "bettacraft:block/artemia_hatchery_glass",
     "water": "minecraft:block/water_still"
   }
 }

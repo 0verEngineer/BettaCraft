@@ -112,17 +112,25 @@ public final class TankPower {
     /** Energy storage of the tank whose block is at {@code tankPos} (receive only); forwards to its controller. */
     public static final class Storage implements IEnergyStorage {
         private final Level level;
-        private final BlockPos tankPos;
+        private final java.util.function.Supplier<BlockPos> tankPos;
 
         public Storage(Level level, BlockPos tankPos) {
+            BlockPos p = tankPos.immutable();
             this.level = level;
-            this.tankPos = tankPos.immutable();
+            this.tankPos = () -> p;
+        }
+
+        /** The tank block is looked up on every call (an external filter can turn to another tank). */
+        public Storage(Level level, java.util.function.Supplier<BlockPos> tankPos) {
+            this.level = level;
+            this.tankPos = tankPos;
         }
 
         @Nullable
         private TankBlockEntity controller() {
-            if (level == null || level.isClientSide || !level.isLoaded(tankPos)) return null;
-            return TankMultiblock.getController(level, tankPos);
+            BlockPos p = tankPos.get();
+            if (level == null || level.isClientSide || p == null || !level.isLoaded(p)) return null;
+            return TankMultiblock.getController(level, p);
         }
 
         @Override

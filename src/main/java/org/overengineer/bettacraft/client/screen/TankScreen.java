@@ -89,19 +89,30 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         overview.clear();
         inhabitants.clear();
         int x = leftPos, y = topPos;
-        // six tabs across the top (the title moved into the overview: no room for both)
-        tabOverview = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.overview"), b -> setTab(Tab.OVERVIEW))
-                .bounds(x + 5, y + 3, 46, 12).build());
-        tabInhabitants = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.inhabitants"), b -> setTab(Tab.INHABITANTS))
-                .bounds(x + 51, y + 3, 46, 12).build());
-        tabBreeding = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.breeding"), b -> setTab(Tab.BREEDING))
-                .bounds(x + 97, y + 3, 40, 12).build());
-        tabWater = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.water"), b -> setTab(Tab.WATER))
-                .bounds(x + 137, y + 3, 38, 12).build());
-        tabInterior = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.interior"), b -> setTab(Tab.INTERIOR))
-                .bounds(x + 175, y + 3, 44, 12).build());
-        tabLog = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.log"), b -> setTab(Tab.LOG))
-                .bounds(x + 219, y + 3, 22, 12).build());
+        // six tabs across the top (the title moved into the overview: no room for both); widths follow the labels
+        Tab[] order = {Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.INTERIOR, Tab.LOG};
+        String[] keys = {"overview", "inhabitants", "breeding", "water", "interior", "log"};
+        int[] widths = new int[order.length];
+        int sum = 0;
+        for (int i = 0; i < order.length; i++) sum += widths[i] = font.width(Component.translatable("gui.bettacraft.tab." + keys[i])) + 6;
+        int total = 236, left = total - sum;
+        for (int i = 0; i < order.length; i++) {
+            widths[i] = left >= 0 ? widths[i] + left / order.length + (i < left % order.length ? 1 : 0) : Math.max(16, widths[i] * total / sum);
+        }
+        int tx = x + 5;
+        Button[] tabs = new Button[order.length];
+        for (int i = 0; i < order.length; i++) {
+            Tab t = order[i];
+            int w = i == order.length - 1 ? x + 5 + total - tx : widths[i];
+            tabs[i] = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab." + keys[i]), b -> setTab(t)).bounds(tx, y + 3, w, 12).build());
+            tx += w;
+        }
+        tabOverview = tabs[0];
+        tabInhabitants = tabs[1];
+        tabBreeding = tabs[2];
+        tabWater = tabs[3];
+        tabInterior = tabs[4];
+        tabLog = tabs[5];
         interiorEnterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
                 .bounds(x + 176, y + 124, 62, 14).build());
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
@@ -376,7 +387,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         line(g, Component.translatable("gui.bettacraft.tank.target"), x, y + 2, TEXT_LIGHT);
         String t = fmt(v.targetTemp) + " °C";
         g.drawCenteredString(font, t, 203, y + 2, 0xFFFFFF);
-        y += 14;
+        y += 13;
         double water = Math.max(0.001, v.waterMb / 1000.0);
         // M9: below the ambient temperature the coolers matter, above it the heaters
         boolean cooling = v.targetTemp < v.ambient;
@@ -386,7 +397,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         else if (cap + 1e-6 >= water) heat = Component.translatable("gui.bettacraft.tank.heaters_ok", (int) cap, fmt((float) water)).withStyle(ChatFormatting.GREEN);
         else heat = Component.translatable("gui.bettacraft.tank.heaters_weak", (int) cap, fmt((float) water)).withStyle(ChatFormatting.GOLD);
         line(g, Component.translatable(cooling ? "gui.bettacraft.tank.coolers" : "gui.bettacraft.tank.heaters", heat), x, y, TEXT_LIGHT);
-        y += 11;
+        y += 10;
         Component feeder = v.feederFood < 0 ? Component.translatable("gui.bettacraft.tank.none").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.tank.feeder_state", v.feederFood, v.feederPerDay)
                 .withStyle(v.feederFood == 0 ? ChatFormatting.GOLD : ChatFormatting.GREEN);
@@ -394,17 +405,17 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 : Component.translatable("gui.bettacraft.tank.light_state", v.lightsLit, v.lights);
         line(g, Component.translatable("gui.bettacraft.tank.feeder", feeder).append("   ")
                 .append(Component.translatable("gui.bettacraft.tank.light", light)), x, y, TEXT_LIGHT);
-        y += 11;
+        y += 10;
         // M4: filters outside (blocks next to the tank, filters in cabinets below) and inside (interior)
         int outside = v.filterBlocks + v.cabinetFilters;
         Component filters = outside + v.filters == 0 ? Component.translatable("gui.bettacraft.tank.none").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.tank.filter_state", outside, v.filterHeaters, v.filters).withStyle(ChatFormatting.AQUA);
         line(g, Component.translatable("gui.bettacraft.tank.filters", filters), x, y, TEXT_LIGHT);
-        y += 11;
+        y += 10;
         MutableComponent inh = Component.translatable("gui.bettacraft.tank.inhabitants", v.inhabitants.size(), v.adults, v.hardCap);
         if (v.crowded) inh.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
         line(g, inh, x, y, TEXT_LIGHT);
-        y += 11;
+        y += 10;
         Component unpowered = unpowered(v);
         if (v.waterMb < v.minInsertMb) {
             line(g, Component.translatable("gui.bettacraft.tank.fill_hint", v.minInsertMb).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
@@ -412,7 +423,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             line(g, Component.translatable(v.water.quality < v.water.badBelow ? "gui.bettacraft.water.warn_bad" : "gui.bettacraft.water.warn_poor",
                     Math.round(v.water.quality * 100)).withStyle(v.water.quality < v.water.badBelow ? ChatFormatting.RED : ChatFormatting.GOLD), x, y, TEXT_LIGHT);
         } else if (unpowered != null) {
-            line(g, unpowered, x, y, TEXT_LIGHT);
+            // left of the interior button
+            g.drawString(font, net.minecraft.locale.Language.getInstance().getVisualOrder(font.substrByWidth(unpowered, 172)), x, y, TEXT_LIGHT, false);
         } else if (v.legacyHeaters > 0) {
             line(g, Component.translatable("gui.bettacraft.tank.legacy_heaters", v.legacyHeaters).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
         }

@@ -67,17 +67,19 @@ public final class BettaCraft {
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.CULTURE_TUB.get(),
                 (be, side) -> be.fluid());
         // M9 tank water from pipes (fresh water in, used water out) and FE for the equipment (power.* config):
-        // any tank block, an attached external filter, a cabinet under the tank or a light on it
+        // any tank block, an attached external filter, a cabinet under the tank or a light on it; only offered while the
+        // server config needs power (no misleading energy bars in info mods otherwise)
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.TANK.get(),
                 (be, side) -> new org.overengineer.bettacraft.tank.TankFluid(be.getLevel(), be.getBlockPos()));
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.TANK.get(),
-                (be, side) -> new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.getBlockPos()));
+                (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.getBlockPos()) : null);
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.EXTERNAL_FILTER.get(),
-                (be, side) -> be.tankBlockPos() == null ? null : new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.tankBlockPos()));
+                (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be::tankBlockPos) : null);
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CABINET.get(),
-                (be, side) -> new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.getBlockPos().above()));
+                (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.getBlockPos().above()) : null);
         event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
-                (level, pos, state, be, side) -> new org.overengineer.bettacraft.tank.TankPower.Storage(level, pos.below()), ModBlocks.TANK_LIGHT.get());
+                (level, pos, state, be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired()
+                        ? new org.overengineer.bettacraft.tank.TankPower.Storage(level, pos.below()) : null, ModBlocks.TANK_LIGHT.get());
     }
 
     public static ResourceLocation id(String path) {

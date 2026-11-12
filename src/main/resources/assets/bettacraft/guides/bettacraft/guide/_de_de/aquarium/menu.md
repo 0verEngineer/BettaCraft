@@ -21,20 +21,28 @@ den [Innenraum](../interior.md).)
 * **Sperre**: Wer das Aquarium gesetzt hat, ist sein Besitzer. Ist es gesperrt, dürfen nur Besitzer und Operatoren es
   ändern (Wasser, Tiere, Einstellungen, Innenraum); ansehen dürfen es alle.
 * Größe, Wassermenge, Wasser- und Umgebungstemperatur, die **Zieltemperatur** (– / +).
-* Heizstäbe, Futterautomat, Licht und Filter, die Zahl der Tiere und der Knopf zum Betreten des Innenraums.
+* Heizstäbe (oder Kühler, wenn das Ziel unter der Umgebung liegt), Futterautomat, Licht und Filter, die Zahl der Tiere
+  und der Knopf zum Betreten des Innenraums. Die letzte Zeile warnt vor mäßigem Wasser oder fehlendem Strom.
 
-## Bewohner
+## Tiere
 
 Die Liste aller Tiere mit Name, Typ, Geschlecht und Stufe. Zum ausgewählten Fisch: Gesundheits- und Satt-Balken,
 Fortschritt der Stufe, der Genotyp (Schwanzform, Körper, Flossen, Muster; alle neun Loci im Tooltip), die Generation,
 ein Namensfeld und die Knöpfe zum Entnehmen mit Eimer oder Fischtüte.
 
-![Der Bewohner-Tab](../images/menu_inhabitants.png)
+![Der Tiere-Tab](../images/menu_inhabitants.png)
 
 ## Zucht
 
 Warnungen, das Schaumnest, die Zuchtbedingungen mit ✔ und ✘, die Jungtiere, die Eltern und die erwarteten Nachkommen.
 Siehe [Zucht](../breeding.md).
+
+## Wasser
+
+Wasservolumen, die [Wasserqualität](water_quality.md) mit einem Balken (die rote Marke zeigt, ab wann die Bettas
+leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Filter entfernen), das letzte Frischwasser,
+Verdunstung und offene obere Blöcke, Heizer und Kühler und der gespeicherte [Strom](../equipment/power.md), wenn der
+Server ihn verlangt.
 
 ## Innenraum
 

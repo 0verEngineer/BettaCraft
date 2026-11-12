@@ -329,7 +329,8 @@ public final class ModDataGen {
                     .texture("food", modLoc(hatchery ? "block/culture_nauplii" : "block/culture_larvae"));
             float x0 = hatchery ? 2 : 1, x1 = hatchery ? 14 : 15, base = hatchery ? 3 : 1, top = hatchery ? 13 : 10;
             if (hatchery) {
-                m.texture("side", mcLoc("block/glass")).texture("base", modLoc("block/artemia_hatchery_base")).texture("particle", mcLoc("block/glass"));
+                m.texture("side", modLoc("block/artemia_hatchery_glass")).texture("base", modLoc("block/artemia_hatchery_base"))
+                        .texture("particle", modLoc("block/artemia_hatchery_glass"));
                 m.element().from(x0, 0, x0).to(x1, base, x1).allFaces((d, f) -> {
                     f.texture("#base");
                     if (d == Direction.DOWN) f.cullface(d);
