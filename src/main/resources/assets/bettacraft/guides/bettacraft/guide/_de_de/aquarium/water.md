@@ -28,3 +28,7 @@ Stellen der Welt bleibt unverändert.
   wie ein Deckel, für Spieler nicht.
 
 Das Aquarium-Menü zeigt das Volumen als „Wasser 12000 / 16000 mB (75 %)“.
+
+Wasser wird außerdem **verbraucht und schmutzig**: Offene Aquarien verdunsten langsam, und Abfall senkt die
+Wasserqualität, bis du einen Teil des Wassers wechselst. Siehe [Wasserqualität und Verdunstung](water_quality.md).
+Leitungen und Pumpen anderer Mods können ein Aquarium wie Eimer füllen und leeren.

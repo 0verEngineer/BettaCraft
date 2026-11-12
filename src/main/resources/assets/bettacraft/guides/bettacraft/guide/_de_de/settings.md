@@ -32,6 +32,12 @@ navigation:
 | `interior.maxRenderedBlocks` | 262144 | Limit der Miniatur |
 | `interior.leaveSneakTicks` | 60 | wie lange man zum Verlassen schleichen muss |
 | `drops.artemiaFromSandChance` | 0.02 | Artemia-Zysten aus Sand |
+| `waterQuality.qualityEnabled` | true | Wasserqualität an (Verlust pro Tag 0.01, pro Tier 0.04, pro Überfütterung 0.01, Filter entfernen 0.8, schlecht unter 0.35) |
+| `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | Wasserblöcke, die ein Filter sauber hält |
+| `evaporation.evaporationEnabled` | true | offene Aquarien verlieren Wasser (`mbPerBlockPerDay` 20) |
+| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | Ausrüstung braucht FE |
+| `power.heaterFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 1, 10, 4, 100000 | FE-Verbrauch und -Speicher |
+| `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2) |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
 | `simulateUnloadedTime` | false | Zeit läuft in nicht geladenen Chunks weiter |
 
@@ -58,7 +64,11 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
 * **Jade, The One Probe und WTHIT:** Der Blick auf ein Aquarium zeigt Name, Temperatur, Wasser und Tiere (schleichen
   für die Liste; The One Probe braucht dafür seine Sonde), das Nest, die Filter und Warnungen; der Blick durch das Glas
   auf einen Betta zeigt Typ, Geschlecht, Gesundheit, Hunger, Stufe und Gene. Filter und Schränke zeigen ihre
-  Heizstäbe und das Aquarium, in das sie pumpen.
+  Heizstäbe und Kühler und das Aquarium, in das sie pumpen; Aquarien zeigen die Wasserqualität und den gespeicherten
+  Strom, Larvenbottiche und Zuchtbecken ihren Ansatz.
+* **Energie-Mods:** Jede Mod mit Forge-Energy-Kabeln (FE) kann Aquarien versorgen, wenn ein Server `power.*`
+  einschaltet; Wasserleitungen können Aquarien füllen und leeren und den Larvenbottich füllen, Trichter und
+  Item-Leitungen funktionieren mit Futterautomat, Schrank, Larvenbottich und Zuchtbecken.
 * **JEI:** Info-Seiten für alle Bettacraft-Items.
 * **Sodium und Iris:** Aquarium-Wasser und Miniaturen funktionieren mit beiden.
 * **Better Fish Tanks:** Seine *Fish Bag* setzt Tiere in Bettacraft-Aquarien ein und nimmt sie über das Menü wieder

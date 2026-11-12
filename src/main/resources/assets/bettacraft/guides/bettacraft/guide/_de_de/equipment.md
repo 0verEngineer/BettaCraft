@@ -21,9 +21,11 @@ navigation:
 | Item | Wozu |
 |---|---|
 | [Heizstäbe](equipment/heaters.md) | wärmen das Wasser auf die Zieltemperatur |
-| [Innen- und Außenfilter](equipment/filters.md) | ein Wasserstrahl; der Außenfilter fasst zwei Heizstäbe |
+| [Kühler](equipment/coolers.md) | kühlen das Wasser in heißen Gegenden |
+| [Innen- und Außenfilter](equipment/filters.md) | halten das Wasser sauber; der Außenfilter fasst zwei Heizer oder Kühler |
 | [Futterautomat](equipment/feeder.md) | füttert die Fische bis zu dreimal am Tag |
 | [Licht](equipment/light.md) | eine Lichtleiste, per Redstone schaltbar |
 | [Schrank](equipment/cabinet.md) | Unterbau für das Aquarium mit Platz für Filter und Futter |
+| [Aquarium-Abdeckung](aquarium/water_quality.md) | verhindert, dass das Wasser verdunstet |
 
-Keine Ausrüstung braucht Strom. Die Strömung der Filter hat keine Wirkung auf die Fische; sie sieht nur schön aus.
+Standardmäßig braucht keine Ausrüstung Strom; ein Server kann das einschalten (siehe [Strom](equipment/power.md)).

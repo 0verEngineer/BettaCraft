@@ -12,7 +12,9 @@ item_ids:
 # Filters
 
 Filters bring movement into the aquarium: a water jet, bubbles and a quiet bubbling sound (can be turned off in the
-client config, `sound.filterSound`). The flow has **no effect** on the fish.
+client config, `sound.filterSound`). The flow itself has no effect on the fish, but filters **keep the water clean**:
+an external filter handles 32 water blocks, an internal filter under water 16 (see
+[Water quality](../aquarium/water_quality.md)).
 
 ## Internal filter
 
@@ -31,8 +33,8 @@ The <ItemLink id="bettacraft:external_filter" /> stands **next to the aquarium**
 tank block it turns towards it, at any height of any side wall. A hose runs over the glass rim and a jet pours into the
 water (under water it is a short current).
 
-* It has **two heater slots** for [heaters](heaters.md) of any size. Open it with a right-click or right-click it with
-  a heater. While the filter is attached, its heaters heat the aquarium.
+* It has **two slots** for [heaters](heaters.md) or [coolers](coolers.md) of any size. Open it with a right-click or
+  right-click it with a heater. While the filter is attached, its heaters heat and its coolers cool the aquarium.
 * Broken, it keeps its heaters in the item (the tooltip lists them).
 * It can also go into an [aquarium cabinet](cabinet.md) under the aquarium.
 

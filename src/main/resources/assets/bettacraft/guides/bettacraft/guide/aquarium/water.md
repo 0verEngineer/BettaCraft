@@ -28,3 +28,7 @@ places of the world is not changed.
   players.
 
 The tank menu shows the volume as "Water 12000 / 16000 mB (75 %)".
+
+Water also gets **used up and dirty**: open aquariums evaporate slowly, and waste lowers the water quality until you
+change some water. See [Water quality and evaporation](water_quality.md). Pipes and pumps of other mods can fill and
+drain an aquarium like buckets.

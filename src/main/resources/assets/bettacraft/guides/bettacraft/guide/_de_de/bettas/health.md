@@ -8,8 +8,8 @@ navigation:
 
 # Gesundheit
 
-Bettas in einem Bettacraft-Aquarium haben drei Bedürfnisse: **Futter**, die **richtige Temperatur** und **genug
-Platz**. Das Aquarium-Menü zeigt für jeden Fisch einen Gesundheits- und einen „Satt“-Balken, Jade zeigt beides, wenn du
+Bettas in einem Bettacraft-Aquarium haben vier Bedürfnisse: **Futter**, die **richtige Temperatur**, **genug Platz**
+und **sauberes Wasser**. Das Aquarium-Menü zeigt für jeden Fisch einen Gesundheits- und einen „Satt“-Balken, Jade zeigt beides, wenn du
 einen Fisch ansiehst.
 
 ## Was einen Betta krank macht
@@ -19,9 +19,10 @@ einen Fisch ansiehst.
 | Hunger | 7 Tage ohne Futter (hungrig ist ein Fisch ab einem Tag nach der letzten Fütterung) |
 | Temperatur | 7 Tage außerhalb von 24 bis 30 °C |
 | Überbesatz | 7 Tage mit 2 oder mehr adulten Tieren pro Wasserblock |
+| Wasserqualität | 7 Tage mit schlechtem Wasser (unter 35 %, siehe [Wasserqualität](../aquarium/water_quality.md)) |
 
-Temperatur- und Überbesatz-Belastung wachsen nur, solange die Bedingung schlecht ist, und sinken pro gutem Tag um
-2 Tage. Sind zwei oder mehr Bedingungen gleichzeitig schlecht, wachsen alle Belastungen **doppelt so schnell**.
+Temperatur-, Überbesatz- und Wasser-Belastung wachsen nur, solange die Bedingung schlecht ist, und sinken pro gutem Tag
+um 2 Tage. Sind zwei oder mehr Bedingungen gleichzeitig schlecht, wachsen alle Belastungen **doppelt so schnell**.
 
 ## Kranke Fische
 

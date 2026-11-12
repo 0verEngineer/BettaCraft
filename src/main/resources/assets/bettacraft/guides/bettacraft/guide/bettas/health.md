@@ -8,7 +8,8 @@ navigation:
 
 # Health
 
-Bettas in a Bettacraft aquarium have three needs: **food**, the **right temperature** and **enough room**.
+Bettas in a Bettacraft aquarium have four needs: **food**, the **right temperature**, **enough room** and **clean
+water**.
 The tank menu shows a health bar and a "fed" bar for each fish, Jade shows both when you look at a fish.
 
 ## What makes a betta sick
@@ -18,9 +19,10 @@ The tank menu shows a health bar and a "fed" bar for each fish, Jade shows both 
 | Hunger | no food for 7 days (a fish counts as hungry from one day after its last meal) |
 | Temperature | 7 days at a temperature outside 24 to 30 °C |
 | Overcrowding | 7 days with 2 or more adult animals per water block |
+| Water quality | 7 days with bad water (below 35 %, see [Water quality](../aquarium/water_quality.md)) |
 
-The temperature and overcrowding stress only grows while the condition is bad and goes down by 2 days for every good
-day. When two or more conditions are bad at the same time, all stress grows **twice as fast**.
+The temperature, overcrowding and water stress only grows while the condition is bad and goes down by 2 days for every
+good day. When two or more conditions are bad at the same time, all stress grows **twice as fast**.
 
 ## Sick fish
 

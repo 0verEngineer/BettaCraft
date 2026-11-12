@@ -32,6 +32,12 @@ navigation:
 | `interior.maxRenderedBlocks` | 262144 | limit of the miniature |
 | `interior.leaveSneakTicks` | 60 | how long to sneak to leave |
 | `drops.artemiaFromSandChance` | 0.02 | artemia cysts from sand |
+| `waterQuality.qualityEnabled` | true | water quality on (loss per day 0.01, per animal 0.04, per overfed portion 0.01, filters remove 0.8, bad below 0.35) |
+| `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
+| `evaporation.evaporationEnabled` | true | open tanks lose water (`mbPerBlockPerDay` 20) |
+| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
+| `power.heaterFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 1, 10, 4, 100000 | FE use and storage |
+| `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2) |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 
@@ -56,8 +62,12 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 
 * **Jade, The One Probe and WTHIT:** looking at an aquarium shows its name, temperature, water and animals (sneak for
   the list; The One Probe needs its probe for that), the nest, filters and warnings; looking at a betta through the
-  glass shows its type, sex, health, hunger, stage and genes. Filters and cabinets show their heaters and the
-  aquarium they pump into.
+  glass shows its type, sex, health, hunger, stage and genes. Filters and cabinets show their heaters and coolers and
+  the aquarium they pump into; aquariums show the water quality and the stored power, larva tubs and hatcheries their
+  batch.
+* **Energy mods:** every mod with Forge Energy (FE) cables can power aquariums when a server turns on `power.*`; pipes
+  for water can fill and drain aquariums and fill the larva tub, hoppers and item pipes work with the feeder, the
+  cabinet, the larva tub and the hatchery.
 * **JEI:** information pages for all Bettacraft items.
 * **Sodium and Iris:** the aquarium water and the miniatures work with both.
 * **Better Fish Tanks:** its *Fish Bag* puts animals into Bettacraft aquariums and takes them out through the menu.

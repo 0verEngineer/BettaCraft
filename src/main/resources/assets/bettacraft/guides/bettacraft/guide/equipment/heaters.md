@@ -40,3 +40,6 @@ Several heaters add up. The tank menu says whether they are enough ("128 blocks 
 target temperature (20 to 32 °C, default 27 °C). See [Temperature](../aquarium/temperature.md).
 
 Breaking one block of a heater rod removes the whole rod and gives the heater back.
+
+For hot places there are [coolers](coolers.md), which go into the same places. A server can make heaters and coolers
+need [power](power.md).

@@ -40,3 +40,6 @@ Mehrere Heizstäbe addieren sich. Das Aquarium-Menü zeigt, ob sie ausreichen (�
 stellt die Zieltemperatur ein (20 bis 32 °C, Standard 27 °C). Siehe [Temperatur](../aquarium/temperature.md).
 
 Baut man einen Block des Heizstabs ab, verschwindet der ganze Stab und man bekommt den Heizstab zurück.
+
+Für heiße Gegenden gibt es [Kühler](coolers.md), die an dieselben Stellen passen. Ein Server kann für Heizer und Kühler
+[Strom](power.md) verlangen.

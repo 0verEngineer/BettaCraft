@@ -12,7 +12,9 @@ item_ids:
 # Filter
 
 Filter bringen Bewegung ins Aquarium: einen Wasserstrahl, Blasen und ein leises Blubbern (abschaltbar in der
-Client-Config, `sound.filterSound`). Die Strömung hat **keine Wirkung** auf die Fische.
+Client-Config, `sound.filterSound`). Die Strömung selbst wirkt nicht auf die Fische, aber Filter **halten das Wasser
+sauber**: Ein Außenfilter schafft 32 Wasserblöcke, ein Innenfilter unter Wasser 16 (siehe
+[Wasserqualität](../aquarium/water_quality.md)).
 
 ## Innenfilter
 
@@ -31,8 +33,9 @@ Der <ItemLink id="bettacraft:external_filter" /> steht **neben dem Aquarium** un
 Aquarium-Block gesetzt dreht er sich zu ihm, an jeder Seitenwand und in jeder Höhe. Ein Schlauch führt über den
 Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Strömung).
 
-* Er hat **zwei Plätze für [Heizstäbe](heaters.md)** beliebiger Größe. Öffne ihn per Rechtsklick oder rechtsklicke ihn
-  mit einem Heizstab. Solange der Filter angeschlossen ist, heizen seine Heizstäbe das Aquarium.
+* Er hat **zwei Plätze** für [Heizstäbe](heaters.md) oder [Kühler](coolers.md) beliebiger Größe. Öffne ihn per
+  Rechtsklick oder rechtsklicke ihn mit einem Heizstab. Solange der Filter angeschlossen ist, heizen seine Heizstäbe
+  und kühlen seine Kühler das Aquarium.
 * Abgebaut behält er seine Heizstäbe im Item (der Tooltip listet sie auf).
 * Er passt auch in einen [Aquariumschrank](cabinet.md) unter dem Aquarium.
 

@@ -21,9 +21,11 @@ navigation:
 | Item | What it does |
 |---|---|
 | [Heaters](equipment/heaters.md) | warm the water to the target temperature |
-| [Internal and external filter](equipment/filters.md) | a water jet; the external filter holds two heaters |
+| [Coolers](equipment/coolers.md) | cool the water in hot places |
+| [Internal and external filter](equipment/filters.md) | keep the water clean; the external filter holds two heaters or coolers |
 | [Feeder](equipment/feeder.md) | feeds the fish up to three times a day |
 | [Light](equipment/light.md) | a light bar, switchable with redstone |
 | [Cabinet](equipment/cabinet.md) | stand for the aquarium with room for a filter and food |
+| [Aquarium lid](aquarium/water_quality.md) | stops the water from evaporating |
 
-None of the equipment needs power. The flow of the filters has no effect on the fish; it just looks nice.
+By default none of the equipment needs power; a server can switch that on (see [Power](equipment/power.md)).
