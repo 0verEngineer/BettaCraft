@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.equipment;
 
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -48,10 +47,5 @@ public interface FilterHost {
     @Nullable
     static TankBlockEntity tankOf(Level level, @Nullable BlockPos tankBlock) {
         return tankBlock == null || !level.isLoaded(tankBlock) ? null : TankMultiblock.getController(level, tankBlock);
-    }
-
-    /** Direction from the tank wall outwards for the filter block next to it. */
-    static Direction outward(Direction facingToTank) {
-        return facingToTank.getOpposite();
     }
 }

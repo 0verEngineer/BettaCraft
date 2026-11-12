@@ -26,7 +26,8 @@ public final class TankEquipment {
 
     private static void scanIfNeeded(Level level, TankBlockEntity c) {
         long now = level.getGameTime();
-        if (now - c.equipmentScanTime < RESCAN_TICKS && now >= c.equipmentScanTime) return;
+        long last = c.equipmentScanTime;
+        if (last != Long.MIN_VALUE && now >= last && now - last < RESCAN_TICKS) return;
         c.equipmentScanTime = now;
         TankData t = c.getTank();
         List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>();
