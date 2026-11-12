@@ -128,7 +128,7 @@ public final class TankGameTests {
             for (int i = 0; i < 6; i++) TankInteractions.changeWater(level, c, TankData.MB_PER_BLOCK);
             h.assertTrue(c.getTank().waterMb() == 6000, "6000 mB");
             h.assertTrue(h.getBlockState(new BlockPos(4, 1, 4)).getValue(TankBlock.FILL) == 16, "bottom layer full");
-            h.assertTrue(h.getBlockState(new BlockPos(4, 2, 4)).getValue(TankBlock.FILL) == (16 - TankData.headroom()) / 2,
+            h.assertTrue(h.getBlockState(new BlockPos(4, 2, 4)).getValue(TankBlock.FILL) == (17 - TankData.headroom()) / 2 /* half, rounded up */,
                     "top layer half (16 - headroom sixteenths when full)");
             h.assertTrue(h.getLevel().getFluidState(h.absolutePos(new BlockPos(4, 2, 4))).is(Fluids.WATER), "vanilla water");
             for (int i = 0; i < 2; i++) TankInteractions.changeWater(level, c, TankData.MB_PER_BLOCK);

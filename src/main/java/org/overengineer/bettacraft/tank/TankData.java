@@ -244,7 +244,7 @@ public final class TankData {
      * of the tank shows its water squeezed into 16 - headroom sixteenths. Same amount of water, it only looks less full.
      */
     public static int headroom() {
-        return org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TANK_WATER_HEADROOM, 2);
+        return org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TANK_WATER_HEADROOM, 1);
     }
 
     // ------------------------------------------------------------------ misc accessors
