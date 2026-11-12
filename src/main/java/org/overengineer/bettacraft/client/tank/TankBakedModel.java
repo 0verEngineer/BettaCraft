@@ -42,7 +42,7 @@ import org.overengineer.bettacraft.tank.TankStyle;
  *     the glass of any mod whose model has ordinary face quads (the frame width is read from the sprite).</li>
  *     <li>{@link TankStyle#CLEAN}: no glass quads at all (perfectly clear).</li>
  * </ul>
- * Both get thin dark-grey edge lines (M11: {@code render.tankEdgeWidth} / 64 block, default 1/32) along the outer edges
+ * Both get thin dark-grey edge lines ({@code render.tankEdgeWidth} pixels, default 0.25 = 1/64 block) along the outer edges
  * of the whole tank, the concave edges of free shapes (M10) and, new in M11, a small square in the in-plane inner
  * corners of a flat wall (e.g. the front of a T), where the lines of two neighbouring blocks meet.
  * The concave and corner masks need the neighbours' block states, which {@link #getModelData} reads while the chunk is
@@ -151,7 +151,7 @@ public class TankBakedModel implements IDynamicBakedModel {
             }
         }
         if (renderType == null || renderType == RenderType.cutout()) {
-            int width = ClientConfig.TANK_EDGE_WIDTH.get();
+            int width = edgeWidth();
             if (width > 0) {
                 Integer cornerData = data.get(CORNERS);
                 int corners = cornerData == null ? 0 : (cornerData >>> (side.ordinal() * 4)) & 15;
@@ -311,6 +311,16 @@ public class TankBakedModel implements IDynamicBakedModel {
      * connected ones with a concave crease ({@code concave}, bit = direction ordinal), and corner squares for the
      * in-plane inner corners ({@code corners}, see {@link TankBlock#cornerIndex}).
      */
+    /**
+     * The configured edge width in 1/1000 pixel: 0 = off, otherwise at least 0.1 px (thinner lines are far below a screen
+     * pixel even up close and only flicker).
+     */
+    static int edgeWidth() {
+        double px = ClientConfig.TANK_EDGE_WIDTH.get();
+        if (px <= 0) return 0;
+        return (int) Math.round(Math.min(1.0, Math.max(0.1, px)) * 1000);
+    }
+
     private List<BakedQuad> edgeQuads(Direction side, int mask, int concave, int corners, int width) {
         if (edgeCacheWidth != width) {
             edgeCache.clear();
@@ -319,7 +329,7 @@ public class TankBakedModel implements IDynamicBakedModel {
         long key = (((long) side.ordinal() * 64 + mask) * 64 + concave) * 16 + corners;
         List<BakedQuad> cached = edgeCache.get(key);
         if (cached != null) return cached;
-        float line = width / 64F;
+        float line = width / 1000F / 16F;
         List<BakedQuad> list = new ArrayList<>();
         float[] c = new float[12];
         for (Direction e : Direction.values()) {

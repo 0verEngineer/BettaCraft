@@ -140,10 +140,10 @@ final class DevClientSmokeM11 {
     /** {@code connectedGlass} off and 1/16 edges = the look of M10 (the "before" pictures); on with the default width = M11. */
     private void lookM10Style(boolean m11) {
         ClientConfig.CONNECTED_GLASS.set(m11);
-        ClientConfig.TANK_EDGE_WIDTH.set(m11 ? 2 : 4);
+        ClientConfig.TANK_EDGE_WIDTH.set(m11 ? 0.25 : 1.0);
         org.overengineer.bettacraft.client.tank.TankWaterRenderer.m10Look = !m11;
         if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
-        LOGGER.info("[smoketest] M11 tank look: {}", m11 ? "M11 (connected glass, 1/32 edges)" : "M10 (frame on every block, 1/16 edges)");
+        LOGGER.info("[smoketest] M11 tank look: {}", m11 ? "M11 (connected glass, 1/64 edges)" : "M10 (frame on every block, 1/16 edges)");
     }
 
     private static void place(ServerLevel level, List<BlockPos> blocks, ResourceLocation glass, TankStyle style) {

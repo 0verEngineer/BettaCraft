@@ -48,7 +48,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.connectedGlass", "Connected glass");
         a.accept("bettacraft.configuration.connectedGlass.tooltip", "Connected glass textures on textured tanks: the frame of the glass texture only along the outer edges of the whole tank (off: every block shows its own frame)");
         a.accept("bettacraft.configuration.tankEdgeWidth", "Tank edge width");
-        a.accept("bettacraft.configuration.tankEdgeWidth.tooltip", "Width of the dark edge lines along the outer edges of a tank, in 1/64 block (0 = no edge lines)");
+        a.accept("bettacraft.configuration.tankEdgeWidth.tooltip", "Width of the dark edge lines along the outer edges of a tank, in pixels (1/16 block): 0 = no edge lines, otherwise 0.1 to 1");
         a.accept("bettacraft.configuration.mirrorReadinessBonus", "Mirror training bonus");
         a.accept("bettacraft.configuration.mirrorReadinessBonus.tooltip", "Mirror training: a male that flared at a mirror stick during the last in-game day gets ready for a nest this many times faster (1 = no bonus, the mirror is then purely cosmetic)");
         a.accept("tooltip.bettacraft.tank", "Aquarium block. Place several of the same glass next to each other to build a larger tank.");

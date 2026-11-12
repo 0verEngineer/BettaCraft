@@ -12,7 +12,7 @@ public final class ClientConfig {
     public static final ModConfigSpec.IntValue MINIATURE_RENDER_DISTANCE;
     public static final ModConfigSpec.BooleanValue LOG_MINIATURE_STATS;
     public static final ModConfigSpec.BooleanValue CONNECTED_GLASS;
-    public static final ModConfigSpec.IntValue TANK_EDGE_WIDTH;
+    public static final ModConfigSpec.DoubleValue TANK_EDGE_WIDTH;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -22,8 +22,8 @@ public final class ClientConfig {
         MINIATURE_RENDER_DISTANCE = b.comment("Distance (blocks) up to which tank interiors are rendered as miniature").defineInRange("miniatureRenderDistance", 64, 8, 512);
         CONNECTED_GLASS = b.comment("Connected glass textures on textured tanks: the frame of the glass texture only along the outer edges of the whole tank (off: every block shows its own frame)")
                 .define("connectedGlass", true);
-        TANK_EDGE_WIDTH = b.comment("Width of the dark edge lines along the outer edges of a tank, in 1/64 block (0 = no edge lines)")
-                .defineInRange("tankEdgeWidth", 2, 0, 4);
+        TANK_EDGE_WIDTH = b.comment("Width of the dark edge lines along the outer edges of a tank, in pixels (1/16 block): 0 = no edge lines, otherwise 0.1 to 1")
+                .defineInRange("tankEdgeWidth", 0.25, 0.0, 1.0);
         LOG_MINIATURE_STATS = b.comment("Write mesh build and sync statistics of tank miniatures to the log (for debugging)").define("logMiniatureStats", false);
         b.pop();
         b.comment("Sounds").push("sound");

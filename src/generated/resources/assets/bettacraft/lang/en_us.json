@@ -248,7 +248,7 @@
   "bettacraft.configuration.tank": "Tank",
   "bettacraft.configuration.tank.tooltip": "Aquarium tank (multiblock) settings",
   "bettacraft.configuration.tankEdgeWidth": "Tank edge width",
-  "bettacraft.configuration.tankEdgeWidth.tooltip": "Width of the dark edge lines along the outer edges of a tank, in 1/64 block (0 = no edge lines)",
+  "bettacraft.configuration.tankEdgeWidth.tooltip": "Width of the dark edge lines along the outer edges of a tank, in pixels (1/16 block): 0 = no edge lines, otherwise 0.1 to 1",
   "bettacraft.configuration.tauDays": "Time constant (days)",
   "bettacraft.configuration.tauDays.tooltip": "Time constant (in-game days) of the exponential approach of the water to its equilibrium temperature",
   "bettacraft.configuration.temperature": "Temperature",

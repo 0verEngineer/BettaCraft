@@ -17,10 +17,10 @@ version as release notes.
 - Mirror stick (glass pane, iron nugget, stick): adult males that see it flare at their reflection, hold still and turn
   towards it. A male that flared at the mirror during the last day gets ready for a bubble nest 1.25 times faster
   (`breeding.mirrorReadinessBonus`, 1 = purely cosmetic). Advancement "Mirror, Mirror".
-- Client settings `render.connectedGlass` and `render.tankEdgeWidth` (in 1/64 block, 0 = no edge lines).
+- Client settings `render.connectedGlass` and `render.tankEdgeWidth` (in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = no edge lines).
 
 ### Changed
-- The dark edge lines are much thinner (1/32 block instead of 1/16) and close the inner corners of flat walls.
+- The dark edge lines are much thinner (1/64 block instead of 1/16) and close the inner corners of flat walls.
 - Aquariums from earlier versions keep their glass and become textured (tank data schema 6).
 
 ### Fixed

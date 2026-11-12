@@ -45,7 +45,7 @@ navigation:
 The **common config** sets the spawn weight and group size of wild bettas and the fish bag recipe (`recipes.fishBag`:
 AUTO, KELP or PLASTIC). The **client config** has the animation and miniature distances, the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
-(`render.tankEdgeWidth`, in 1/64 block, 0 = none).
+(`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none).
 
 ## This handbook
 

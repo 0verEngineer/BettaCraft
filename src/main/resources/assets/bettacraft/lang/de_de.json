@@ -772,7 +772,7 @@
   "bettacraft.configuration.connectedGlass": "Verbundenes Glas",
   "bettacraft.configuration.connectedGlass.tooltip": "Verbundene Glastexturen bei Aquarien mit Glastextur: Der Rahmen der Glastextur nur an den Außenkanten des ganzen Aquariums (aus: jeder Block zeigt seinen eigenen Rahmen)",
   "bettacraft.configuration.tankEdgeWidth": "Breite der Aquariumkanten",
-  "bettacraft.configuration.tankEdgeWidth.tooltip": "Breite der dunklen Kantenlinien an den Außenkanten eines Aquariums, in 1/64 Block (0 = keine Kantenlinien)",
+  "bettacraft.configuration.tankEdgeWidth.tooltip": "Breite der dunklen Kantenlinien an den Außenkanten eines Aquariums, in Pixeln (1/16 Block): 0 = keine Kantenlinien, sonst 0,1 bis 1",
   "bettacraft.configuration.mirrorReadinessBonus": "Bonus durch Spiegeltraining",
   "bettacraft.configuration.mirrorReadinessBonus.tooltip": "Spiegeltraining: Ein Männchen, das am letzten Spieltag vor einem Spiegelstab geflart hat, ist so viel schneller bereit für ein Nest (1 = kein Bonus, der Spiegel ist dann rein kosmetisch)"
 }
