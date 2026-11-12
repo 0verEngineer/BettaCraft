@@ -1,0 +1,25 @@
+{
+  "values": [
+    "minecraft:pufferfish",
+    {
+      "id": "naturalist:piranha",
+      "required": false
+    },
+    {
+      "id": "naturalist:anglerfish",
+      "required": false
+    },
+    {
+      "id": "fishofthieves:battlegill",
+      "required": false
+    },
+    {
+      "id": "fishofthieves:wrecker",
+      "required": false
+    },
+    {
+      "id": "fishofthieves:devilfish",
+      "required": false
+    }
+  ]
+}

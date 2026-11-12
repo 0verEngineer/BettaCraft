@@ -2,13 +2,26 @@ package org.overengineer.bettacraft.tank;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 /**
  * Data of one tank, held by its controller block entity.
@@ -32,9 +45,46 @@ public final class TankData {
     private CompoundTag zones = new CompoundTag();
     private long powerBuffer = 0L;
 
+    // Care data (M1).
+    public static final int HEATER_SLOTS = 4;
+    public static final int MAX_NAME_LENGTH = 32;
+    public static final int MAX_LOG = 64;
+    private float targetTemp = TankTemperature.DEFAULT_TARGET;
+    private float waterTemp = TankTemperature.DEFAULT_TARGET;
+    @Nullable
+    private SimpleContainer heaters;
+    private final String[] unknownHeaters = new String[HEATER_SLOTS];
+    private String name = "";
+    private boolean signVisible = true;
+    private SignPosition signPos = SignPosition.TOP_CENTER;
+    private Direction front = Direction.SOUTH;
+    private boolean locked;
+    private final Set<UUID> inhabitants = new LinkedHashSet<>();
+    private final List<LogEntry> log = new ArrayList<>();
+
     /** Client-side copy only knows box and summary values, not the member set. */
     private boolean clientView;
     private int clientMemberCount;
+    private int clientInhabitants;
+
+    public record LogEntry(long time, String key, List<String> args) {
+        CompoundTag save() {
+            CompoundTag t = new CompoundTag();
+            t.putLong("t", time);
+            t.putString("k", key);
+            ListTag a = new ListTag();
+            for (String s : args) a.add(StringTag.valueOf(s));
+            t.put("a", a);
+            return t;
+        }
+
+        static LogEntry load(CompoundTag t) {
+            List<String> args = new ArrayList<>();
+            ListTag a = t.getList("a", Tag.TAG_STRING);
+            for (int i = 0; i < a.size(); i++) args.add(a.getString(i));
+            return new LogEntry(t.getLong("t"), t.getString("k"), List.copyOf(args));
+        }
+    }
 
     public TankData() {}
 
@@ -136,6 +186,54 @@ public final class TankData {
     public void setRegionId(int regionId) { this.regionId = regionId; }
     @Nullable public UUID owner() { return owner; }
     public void setOwner(@Nullable UUID owner) { this.owner = owner; }
+    public float targetTemp() { return targetTemp; }
+    public void setTargetTemp(float t) { this.targetTemp = TankTemperature.clampTarget(Math.round(t * 2) / 2.0F); }
+    public float waterTemp() { return waterTemp; }
+    public void setWaterTemp(float t) { this.waterTemp = t; }
+    public String name() { return name; }
+    public void setName(String n) { this.name = n.length() > MAX_NAME_LENGTH ? n.substring(0, MAX_NAME_LENGTH) : n; }
+    public boolean signVisible() { return signVisible; }
+    public void setSignVisible(boolean v) { this.signVisible = v; }
+    public SignPosition signPos() { return signPos; }
+    public void setSignPos(SignPosition p) { this.signPos = p; }
+    public Direction front() { return front; }
+    public void setFront(Direction d) { if (d.getAxis().isHorizontal()) this.front = d; }
+    public boolean locked() { return locked; }
+    public void setLocked(boolean l) { this.locked = l; }
+    public Set<UUID> inhabitants() { return inhabitants; }
+    public int inhabitantCount() { return clientView ? clientInhabitants : inhabitants.size(); }
+    public List<LogEntry> log() { return log; }
+
+    public void addLog(long time, String key, String... args) {
+        log.add(new LogEntry(time, key, List.of(args)));
+        while (log.size() > MAX_LOG) log.removeFirst();
+    }
+
+    /** Heater slots (server side; created lazily so that pure unit tests never touch item registries). */
+    public SimpleContainer heaters() {
+        if (heaters == null) heaters = new SimpleContainer(HEATER_SLOTS);
+        return heaters;
+    }
+
+    /** Water blocks (may be fractional): 1000 mB = 1 block. */
+    public double waterBlocks() {
+        return waterMb / (double) MB_PER_BLOCK;
+    }
+
+    /** Copies name, sign, front, lock, temperatures, owner and log (not geometry, water, equipment or inhabitants). */
+    public void copySettingsFrom(TankData o) {
+        owner = o.owner;
+        targetTemp = o.targetTemp;
+        waterTemp = o.waterTemp;
+        name = o.name;
+        signVisible = o.signVisible;
+        signPos = o.signPos;
+        front = o.front;
+        locked = o.locked;
+        log.clear();
+        log.addAll(o.log);
+    }
+
     public float waterQuality() { return waterQuality; }
     public float evaporation() { return evaporation; }
     public long powerBuffer() { return powerBuffer; }
@@ -154,6 +252,26 @@ public final class TankData {
         t.putFloat("evaporation", evaporation);
         t.put("zones", zones.copy());
         t.putLong("power", powerBuffer);
+        t.putFloat("target_temp", targetTemp);
+        t.putFloat("water_temp", waterTemp);
+        ListTag hl = new ListTag();
+        for (int i = 0; i < HEATER_SLOTS; i++) {
+            ItemStack st = heaters == null ? ItemStack.EMPTY : heaters.getItem(i);
+            String id = st.isEmpty() ? (unknownHeaters[i] == null ? "" : unknownHeaters[i]) : BuiltInRegistries.ITEM.getKey(st.getItem()).toString();
+            hl.add(StringTag.valueOf(id));
+        }
+        t.put("heaters", hl);
+        t.putString("name", name);
+        t.putBoolean("sign_visible", signVisible);
+        t.putString("sign_pos", signPos.getSerializedName());
+        t.putString("front", front.getSerializedName());
+        t.putBoolean("locked", locked);
+        ListTag inh = new ListTag();
+        for (UUID u : inhabitants) inh.add(NbtUtils.createUUID(u));
+        t.put("inhabitants", inh);
+        ListTag lg = new ListTag();
+        for (LogEntry e : log) lg.add(e.save());
+        t.put("log", lg);
         return t;
     }
 
@@ -169,6 +287,27 @@ public final class TankData {
         if (t.contains("evaporation")) d.evaporation = t.getFloat("evaporation");
         d.zones = t.getCompound("zones").copy();
         d.powerBuffer = t.getLong("power");
+        d.targetTemp = t.contains("target_temp") ? TankTemperature.clampTarget(t.getFloat("target_temp")) : TankTemperature.DEFAULT_TARGET;
+        d.waterTemp = t.contains("water_temp") ? t.getFloat("water_temp") : d.targetTemp;
+        ListTag hl = t.getList("heaters", Tag.TAG_STRING);
+        for (int i = 0; i < Math.min(HEATER_SLOTS, hl.size()); i++) {
+            String id = hl.getString(i);
+            if (id.isEmpty()) continue;
+            ResourceLocation rl = ResourceLocation.tryParse(id);
+            Item item = rl == null ? Items.AIR : BuiltInRegistries.ITEM.get(rl);
+            if (item == Items.AIR) d.unknownHeaters[i] = id; // keep ids of removed mods
+            else d.heaters().setItem(i, new ItemStack(item));
+        }
+        d.name = t.getString("name");
+        d.signVisible = !t.contains("sign_visible") || t.getBoolean("sign_visible");
+        d.signPos = SignPosition.byName(t.getString("sign_pos"));
+        Direction f = Direction.byName(t.getString("front"));
+        d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
+        d.locked = t.getBoolean("locked");
+        ListTag inh = t.getList("inhabitants", Tag.TAG_INT_ARRAY);
+        for (Tag u : inh) d.inhabitants.add(NbtUtils.loadUUID(u));
+        ListTag lg = t.getList("log", Tag.TAG_COMPOUND);
+        for (int i = 0; i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompound(i)));
         d.recomputeBounds();
         return d;
     }
@@ -182,6 +321,12 @@ public final class TankData {
         t.putInt("scale", scale);
         t.putLong("water_mb", waterMb);
         t.putInt("region", regionId);
+        t.putString("name", name);
+        t.putBoolean("sign_visible", signVisible);
+        t.putString("sign_pos", signPos.getSerializedName());
+        t.putString("front", front.getSerializedName());
+        t.putFloat("water_temp", waterTemp);
+        t.putInt("inhabitants", inhabitants.size());
         return t;
     }
 
@@ -197,6 +342,13 @@ public final class TankData {
         d.scale = t.getInt("scale");
         d.waterMb = t.getLong("water_mb");
         d.regionId = t.getInt("region");
+        d.name = t.getString("name");
+        d.signVisible = t.getBoolean("sign_visible");
+        d.signPos = SignPosition.byName(t.getString("sign_pos"));
+        Direction f = Direction.byName(t.getString("front"));
+        d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
+        d.waterTemp = t.getFloat("water_temp");
+        d.clientInhabitants = t.getInt("inhabitants");
         return d;
     }
 

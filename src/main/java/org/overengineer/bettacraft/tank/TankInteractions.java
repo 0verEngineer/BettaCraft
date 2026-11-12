@@ -19,7 +19,12 @@ import net.minecraft.world.level.gameevent.GameEvent;
 public final class TankInteractions {
     private TankInteractions() {}
 
-    public static ItemInteractionResult useItemOn(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static ItemInteractionResult useItemOn(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand,
+                                                  net.minecraft.world.phys.BlockHitResult hit) {
+        ItemInteractionResult r = TankInhabitants.tryInsert(stack, level, pos, player, hand);
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = TankCare.handFeed(stack, level, pos, player, hand, hit.getLocation());
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         boolean fill = stack.is(Items.WATER_BUCKET);
         boolean drain = stack.is(Items.BUCKET);
         if (!fill && !drain) {
@@ -34,6 +39,10 @@ public final class TankInteractions {
             return ItemInteractionResult.CONSUME;
         }
         TankData tank = controller.getTank();
+        if (!TankInhabitants.canModify(player, tank)) {
+            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            return ItemInteractionResult.CONSUME;
+        }
         if (fill) {
             if (tank.waterMb() + TankData.MB_PER_BLOCK > tank.capacityMb()) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.full"), true);
@@ -48,6 +57,12 @@ public final class TankInteractions {
         } else {
             if (tank.waterMb() < TankData.MB_PER_BLOCK) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_enough_water"), true);
+                return ItemInteractionResult.CONSUME;
+            }
+            double minFill = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5);
+            if (tank.waterMb() - TankData.MB_PER_BLOCK < minFill * tank.capacityMb() && !TankInhabitants.liveInhabitants(server, tank).isEmpty()) {
+                // keep the inhabitants in water
+                player.displayClientMessage(Component.translatable("message.bettacraft.tank.keep_water", Math.round(minFill * 100)), true);
                 return ItemInteractionResult.CONSUME;
             }
             changeWater(server, controller, -TankData.MB_PER_BLOCK);

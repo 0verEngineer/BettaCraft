@@ -1,0 +1,43 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        8,
+        13
+      ]
+    }
+  ],
+  "textures": {
+    "bottom": "bettacraft:block/feeder_bottom",
+    "particle": "bettacraft:block/feeder_side",
+    "side": "bettacraft:block/feeder_side",
+    "top": "bettacraft:block/feeder_top"
+  }
+}

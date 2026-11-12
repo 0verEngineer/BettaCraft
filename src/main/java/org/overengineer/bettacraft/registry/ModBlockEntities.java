@@ -16,6 +16,10 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<TankBlockEntity>> TANK = BLOCK_ENTITIES.register("tank",
             () -> BlockEntityType.Builder.of(TankBlockEntity::new, ModBlocks.TANK.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.FeederBlockEntity>> FEEDER = BLOCK_ENTITIES.register("feeder",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.FeederBlockEntity::new, ModBlocks.FEEDER.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

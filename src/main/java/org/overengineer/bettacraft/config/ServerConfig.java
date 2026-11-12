@@ -34,6 +34,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue STAGE_JUVENILE_DAYS;
     public static final ModConfigSpec.DoubleValue STAGE_SUBADULT_DAYS;
 
+    // temperature
+    public static final ModConfigSpec.DoubleValue TEMPERATURE_TAU_DAYS;
+
     // interior
     public static final ModConfigSpec.ConfigValue<Integer> INTERIOR_DEFAULT_SCALE;
     public static final ModConfigSpec.BooleanValue INTERIOR_SUBSTRATE_COSTS_BLOCK;
@@ -70,6 +73,11 @@ public final class ServerConfig {
         HEALTH_OLD_AGE_YEARS = b.comment("Lifespan in in-game years").defineInRange("years", 2.0, 0.1, 100.0);
         HEALTH_OLD_AGE_DAYS_PER_YEAR = b.comment("In-game days per year (Serene Seasons default: 96)").defineInRange("daysPerYear", 96, 1, 10000);
         b.pop();
+        b.pop();
+
+        b.comment("Water temperature").push("temperature");
+        TEMPERATURE_TAU_DAYS = b.comment("Time constant (in-game days) of the exponential approach of the water to its equilibrium temperature")
+                .defineInRange("tauDays", 0.1, 0.0, 10.0);
         b.pop();
 
         b.comment("Duration of the life stages in in-game days").push("stages");

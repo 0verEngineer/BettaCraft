@@ -14,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.data.schema.Schemas;
+import org.overengineer.bettacraft.tank.TankRef;
 import org.overengineer.bettacraft.tank.interior.InteriorReturn;
 
 public final class ModAttachments {
@@ -37,6 +38,22 @@ public final class ModAttachments {
                             Tag t = InteriorReturn.CODEC.encodeStart(NbtOps.INSTANCE, value).result().orElseGet(CompoundTag::new);
                             CompoundTag tag = t instanceof CompoundTag c ? c : new CompoundTag();
                             return Schemas.INTERIOR_RETURN.stamp(tag);
+                        }
+                    })
+                    .build());
+
+    /** Tank an inhabitant entity belongs to (PLAN 4.2). Persistent; absent on entities outside tanks. */
+    public static final Supplier<AttachmentType<TankRef>> TANK_REF = ATTACHMENTS.register("tank_ref",
+            () -> AttachmentType.builder(() -> TankRef.NONE)
+                    .serialize(new IAttachmentSerializer<CompoundTag, TankRef>() {
+                        @Override
+                        public TankRef read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
+                            return TankRef.load(Schemas.TANK_REF.migrate(tag));
+                        }
+
+                        @Override
+                        public CompoundTag write(TankRef value, HolderLookup.Provider provider) {
+                            return value.isSet() ? Schemas.TANK_REF.stamp(value.save()) : null;
                         }
                     })
                     .build());

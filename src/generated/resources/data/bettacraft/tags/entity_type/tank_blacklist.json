@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "fintastic:arapaima",
+      "required": false
+    },
+    {
+      "id": "fintastic:coelacanth",
+      "required": false
+    }
+  ]
+}

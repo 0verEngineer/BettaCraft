@@ -1,0 +1,116 @@
+{
+  "variants": {
+    "axis=x,hanging=false,lit=false,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_off"
+    },
+    "axis=x,hanging=false,lit=false,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_off"
+    },
+    "axis=x,hanging=false,lit=false,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_off"
+    },
+    "axis=x,hanging=false,lit=false,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_off"
+    },
+    "axis=x,hanging=false,lit=true,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_on"
+    },
+    "axis=x,hanging=false,lit=true,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_on"
+    },
+    "axis=x,hanging=false,lit=true,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_on"
+    },
+    "axis=x,hanging=false,lit=true,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_on"
+    },
+    "axis=x,hanging=true,lit=false,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_hanging_off"
+    },
+    "axis=x,hanging=true,lit=false,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_hanging_off"
+    },
+    "axis=x,hanging=true,lit=false,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_hanging_off"
+    },
+    "axis=x,hanging=true,lit=false,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_hanging_off"
+    },
+    "axis=x,hanging=true,lit=true,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_hanging_on"
+    },
+    "axis=x,hanging=true,lit=true,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_hanging_on"
+    },
+    "axis=x,hanging=true,lit=true,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_hanging_on"
+    },
+    "axis=x,hanging=true,lit=true,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_hanging_on"
+    },
+    "axis=z,hanging=false,lit=false,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_off",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=false,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_off",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=false,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_off",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=false,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_off",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=true,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_on",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=true,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_on",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=true,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_on",
+      "y": 90
+    },
+    "axis=z,hanging=false,lit=true,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_on",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=false,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_hanging_off",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=false,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_hanging_off",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=false,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_hanging_off",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=false,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_hanging_off",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=true,neg=false,pos=false": {
+      "model": "bettacraft:block/tank_light_none_hanging_on",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=true,neg=false,pos=true": {
+      "model": "bettacraft:block/tank_light_pos_hanging_on",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=true,neg=true,pos=false": {
+      "model": "bettacraft:block/tank_light_neg_hanging_on",
+      "y": 90
+    },
+    "axis=z,hanging=true,lit=true,neg=true,pos=true": {
+      "model": "bettacraft:block/tank_light_both_hanging_on",
+      "y": 90
+    }
+  }
+}

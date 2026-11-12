@@ -27,5 +27,14 @@ public final class CommonConfig {
         SPEC = b.build();
     }
 
+    /** Safe accessor (the config may not be loaded yet, e.g. during datagen). */
+    public static <T> T getOr(ModConfigSpec.ConfigValue<T> value, T fallback) {
+        try {
+            return value.get();
+        } catch (IllegalStateException e) {
+            return fallback;
+        }
+    }
+
     private CommonConfig() {}
 }

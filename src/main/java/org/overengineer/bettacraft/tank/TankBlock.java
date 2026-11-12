@@ -35,6 +35,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.overengineer.bettacraft.registry.ModBlockEntities;
+import org.overengineer.bettacraft.tank.menu.TankMenu;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.overengineer.bettacraft.tank.interior.InteriorManager;
@@ -67,6 +72,8 @@ public class TankBlock extends BaseEntityBlock {
     /** Wall thickness of the collision shape (1 px). */
     private static final double WALL = 1.0;
     private static final VoxelShape[] COLLISION = new VoxelShape[64];
+    /** Same walls plus a closed top ("lid") for inhabitants (PLAN 4.2). */
+    private static final VoxelShape[] COLLISION_LID = new VoxelShape[64];
 
     static {
         for (int mask = 0; mask < 64; mask++) {
@@ -85,6 +92,8 @@ public class TankBlock extends BaseEntityBlock {
                 });
             }
             COLLISION[mask] = shape.optimize();
+            boolean up = (mask & (1 << Direction.UP.ordinal())) != 0;
+            COLLISION_LID[mask] = up ? COLLISION[mask] : Shapes.or(shape, box(0, 16 - WALL, 0, 16, 16, 16)).optimize();
         }
     }
 
@@ -129,6 +138,12 @@ public class TankBlock extends BaseEntityBlock {
         return new TankBlockEntity(pos, state);
     }
 
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.TANK.get(), TankCare::serverTick);
+    }
+
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
@@ -143,6 +158,10 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (context instanceof EntityCollisionContext ec && ec.getEntity() != null && !(ec.getEntity() instanceof Player)
+                && TankInhabitants.hasTankRef(ec.getEntity())) {
+            return COLLISION_LID[connectionMask(state)];
+        }
         return COLLISION[connectionMask(state)];
     }
 
@@ -202,6 +221,12 @@ public class TankBlock extends BaseEntityBlock {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level instanceof ServerLevel server) {
             TankMultiblock.onTankBlockAdded(server, pos, placer instanceof ServerPlayer sp ? sp : null);
+            TankBlockEntity c = TankMultiblock.getController(level, pos);
+            if (c != null && c.getTank().memberCount() == 1 && placer != null) {
+                // a new tank faces the player who placed it
+                c.getTank().setFront(placer.getDirection().getOpposite());
+                c.markTankChanged();
+            }
         }
     }
 
@@ -229,7 +254,7 @@ public class TankBlock extends BaseEntityBlock {
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         Optional<Component> blocked = TankInhabitants.breakBlockedReason(level, pos);
         if (blocked.isPresent()) {
-            player.displayClientMessage(blocked.get(), true);
+            if (!level.isClientSide) player.displayClientMessage(blocked.get(), true);
             return false;
         }
         playerWillDestroy(level, pos, state, player);
@@ -251,7 +276,7 @@ public class TankBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hit) {
-        return TankInteractions.useItemOn(stack, level, pos, player, hand);
+        return TankInteractions.useItemOn(stack, level, pos, player, hand, hit);
     }
 
     @Override
@@ -265,7 +290,13 @@ public class TankBlock extends BaseEntityBlock {
         if (player.isShiftKeyDown()) {
             InteriorManager.enter(sp, pos);
         } else {
-            TankInteractions.showInfo(sp, pos);
+            TankBlockEntity controller = TankMultiblock.getController(level, pos);
+            if (controller == null) {
+                TankInteractions.showInfo(sp, pos);
+            } else {
+                sp.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, controller),
+                        Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(controller.getBlockPos()));
+            }
         }
         return InteractionResult.CONSUME;
     }

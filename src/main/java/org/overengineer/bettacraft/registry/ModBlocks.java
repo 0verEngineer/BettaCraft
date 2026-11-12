@@ -9,6 +9,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.overengineer.bettacraft.BettaCraft;
+import org.overengineer.bettacraft.equipment.FeederBlock;
+import org.overengineer.bettacraft.equipment.TankLightBlock;
 import org.overengineer.bettacraft.tank.TankBlock;
 import org.overengineer.bettacraft.tank.interior.InteriorFloorBlock;
 import org.overengineer.bettacraft.tank.interior.InteriorWallBlock;
@@ -26,6 +28,22 @@ public final class ModBlocks {
             .isRedstoneConductor((s, l, p) -> false)
             .isSuffocating((s, l, p) -> false)
             .isViewBlocking((s, l, p) -> false)));
+
+    /** Automatic feeder on top of a tank. */
+    public static final DeferredBlock<FeederBlock> FEEDER = BLOCKS.register("feeder", () -> new FeederBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.METAL)
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.METAL)
+            .noOcclusion()));
+
+    /** Light bar for tanks: light level 15, switched off by redstone. */
+    public static final DeferredBlock<TankLightBlock> TANK_LIGHT = BLOCKS.register("tank_light", () -> new TankLightBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.METAL)
+            .strength(0.8F)
+            .sound(SoundType.METAL)
+            .noOcclusion()
+            .lightLevel(s -> s.getValue(TankLightBlock.LIT) ? 15 : 0)
+            .isRedstoneConductor((s, l, p) -> false)));
 
     /** Floor of a tank interior (substrate textures come in M3). Unbreakable. */
     public static final DeferredBlock<InteriorFloorBlock> INTERIOR_FLOOR = BLOCKS.register("interior_floor", () -> new InteriorFloorBlock(

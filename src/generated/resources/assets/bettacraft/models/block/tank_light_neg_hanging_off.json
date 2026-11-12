@@ -1,0 +1,121 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#housing",
+          "uv": [
+            6.5,
+            14.0,
+            9.5,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#housing",
+          "uv": [
+            1.0,
+            14.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            14.0,
+            15.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing",
+          "uv": [
+            6.5,
+            14.0,
+            9.5,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        0,
+        14,
+        6.5
+      ],
+      "to": [
+        15,
+        16,
+        9.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#housing",
+          "uv": [
+            6.5,
+            14.0,
+            9.5,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#housing",
+          "uv": [
+            1.0,
+            14.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            14.0,
+            15.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing",
+          "uv": [
+            6.5,
+            14.0,
+            9.5,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        0,
+        14,
+        6.5
+      ],
+      "to": [
+        15,
+        16,
+        9.5
+      ]
+    }
+  ],
+  "textures": {
+    "housing": "bettacraft:block/tank_light",
+    "panel": "bettacraft:block/tank_light_panel_off",
+    "particle": "bettacraft:block/tank_light"
+  }
+}

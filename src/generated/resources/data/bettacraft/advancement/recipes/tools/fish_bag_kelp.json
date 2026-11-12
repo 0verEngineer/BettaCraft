@@ -1,0 +1,56 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:or",
+      "values": [
+        {
+          "type": "bettacraft:config",
+          "fish_bag": "kelp"
+        },
+        {
+          "type": "neoforge:and",
+          "values": [
+            {
+              "type": "bettacraft:config",
+              "fish_bag": "auto"
+            },
+            {
+              "type": "neoforge:tag_empty",
+              "tag": "bettacraft:plastic_sheets"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_kelp": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:dried_kelp"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:fish_bag_kelp"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_kelp"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:fish_bag_kelp"
+    ]
+  }
+}

@@ -12,6 +12,9 @@ import org.overengineer.bettacraft.network.ModNetwork;
 import org.overengineer.bettacraft.registry.ModAttachments;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 import org.overengineer.bettacraft.registry.ModBlocks;
+import org.overengineer.bettacraft.registry.ModCodecs;
+import org.overengineer.bettacraft.registry.ModEntities;
+import org.overengineer.bettacraft.registry.ModMenus;
 import org.overengineer.bettacraft.registry.ModCreativeTabs;
 import org.overengineer.bettacraft.registry.ModDataComponents;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -25,16 +28,26 @@ public final class BettaCraft {
     public BettaCraft(IEventBus modBus, ModContainer container) {
         ModDataComponents.register(modBus);
         ModBlocks.register(modBus);
+        ModEntities.register(modBus);
         ModItems.register(modBus);
         ModBlockEntities.register(modBus);
+        ModMenus.register(modBus);
         ModRecipes.register(modBus);
+        ModCodecs.register(modBus);
         ModAttachments.register(modBus);
         ModCreativeTabs.register(modBus);
         modBus.addListener(ModNetwork::register);
+        modBus.addListener(BettaCraft::onCapabilities);
 
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
+    }
+
+    private static void onCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
+        // hoppers, pipes and other mods insert food into the feeder
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FEEDER.get(),
+                (be, side) -> be.items());
     }
 
     public static ResourceLocation id(String path) {

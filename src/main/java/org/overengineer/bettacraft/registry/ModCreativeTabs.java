@@ -30,13 +30,25 @@ public final class ModCreativeTabs {
                     any = true;
                 }
                 if (!any) out.accept(ModItems.TANK.get());
-                out.accept(ModItems.BETTA_BUCKET.get());
-                out.accept(ModItems.FISH_BAG.get());
-                out.accept(ModItems.BETTA_PELLETS.get());
-                out.accept(ModItems.MOSQUITO_LARVAE.get());
+                out.accept(ModItems.FEEDER.get());
+                out.accept(ModItems.TANK_LIGHT.get());
                 out.accept(ModItems.HEATER_SMALL.get());
                 out.accept(ModItems.HEATER_MEDIUM.get());
                 out.accept(ModItems.HEATER_LARGE.get());
+                // one bucket per body shape (male) plus a wild-type female
+                net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(42);
+                for (String shape : org.overengineer.bettacraft.genetics.BettaGenome.SHAPES) {
+                    var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(r).withShape(shape);
+                    out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                            org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
+                }
+                out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                        org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenome.randomWild(r), true, 0)));
+                out.accept(ModItems.FISH_BAG.get());
+                out.accept(ModItems.BETTA_SPAWN_EGG.get());
+                out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
+                out.accept(ModItems.MOSQUITO_LARVAE.get());
+                out.accept(ModItems.BETTA_PELLETS.get());
             })
             .build());
 

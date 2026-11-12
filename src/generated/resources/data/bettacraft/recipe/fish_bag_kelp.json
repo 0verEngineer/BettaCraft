@@ -1,0 +1,45 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:or",
+      "values": [
+        {
+          "type": "bettacraft:config",
+          "fish_bag": "kelp"
+        },
+        {
+          "type": "neoforge:and",
+          "values": [
+            {
+              "type": "bettacraft:config",
+              "fish_bag": "auto"
+            },
+            {
+              "type": "neoforge:tag_empty",
+              "tag": "bettacraft:plastic_sheets"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "K": {
+      "item": "minecraft:dried_kelp"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    " S ",
+    "K K",
+    " K "
+  ],
+  "result": {
+    "count": 2,
+    "id": "bettacraft:fish_bag"
+  }
+}

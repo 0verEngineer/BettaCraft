@@ -165,11 +165,33 @@ public final class TankMultiblock {
         all.add(extra.immutable());
         TankData merged = TankData.create(all, main.scale());
         merged.setId(main.id());
-        merged.setOwner(main.owner());
+        merged.copySettingsFrom(main);
         merged.setWaterMb(water);
+        // equipment of all merged tanks moves into the new one; what does not fit drops
+        for (TankData t : olds) {
+            merged.inhabitants().addAll(t.inhabitants());
+            moveHeaters(level, t, merged, extra);
+        }
         InteriorManager.onTanksMerged(level, olds, merged);
         install(level, merged);
         LOGGER.debug("Merged {} tank(s) into {}", olds.size(), merged);
+    }
+
+    private static void moveHeaters(ServerLevel level, TankData from, TankData to, BlockPos dropAt) {
+        var src = from.heaters();
+        var dst = to.heaters();
+        for (int i = 0; i < src.getContainerSize(); i++) {
+            net.minecraft.world.item.ItemStack s = src.removeItemNoUpdate(i);
+            if (s.isEmpty()) continue;
+            boolean placed = false;
+            for (int k = 0; k < dst.getContainerSize() && !placed; k++) {
+                if (dst.getItem(k).isEmpty()) {
+                    dst.setItem(k, s);
+                    placed = true;
+                }
+            }
+            if (!placed) net.minecraft.world.Containers.dropItemStack(level, dropAt.getX() + 0.5, dropAt.getY() + 0.5, dropAt.getZ() + 0.5, s);
+        }
     }
 
     private static TankData newTank(List<BlockPos> blocks, int scale, @Nullable ServerPlayer owner) {
@@ -203,6 +225,7 @@ public final class TankMultiblock {
         InteriorManager.dropInteriorOfBlock(level, t, pos);
         if (remaining.isEmpty()) {
             InteriorManager.freeRegion(level, t);
+            net.minecraft.world.Containers.dropContents(level, pos, t.heaters());
             return;
         }
 
@@ -212,8 +235,12 @@ public final class TankMultiblock {
         for (int i = 0; i < pieces.size(); i++) {
             List<BlockPos> piece = pieces.get(i);
             TankData nt = TankData.create(piece, t.scale());
-            nt.setOwner(t.owner());
+            nt.copySettingsFrom(t);
             nt.setId(i == 0 ? t.id() : UUID.randomUUID());
+            if (i == 0) {
+                moveHeaters(level, t, nt, pos); // the first piece keeps the equipment
+                nt.inhabitants().addAll(t.inhabitants());
+            }
             long share = i == pieces.size() - 1 ? newWater - distributed : newWater * piece.size() / remaining.size();
             distributed += share;
             nt.setWaterMb(share);

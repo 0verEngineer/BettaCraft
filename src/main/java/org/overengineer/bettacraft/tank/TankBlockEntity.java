@@ -37,6 +37,12 @@ public class TankBlockEntity extends BlockEntity {
     /** Client-side controllers currently loaded (used by the miniature renderer; never touched on the server). */
     public static final Set<TankBlockEntity> CLIENT_CONTROLLERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
+    // Transient server state of a controller (not saved).
+    /** Reconciliations an inhabitant id has been missing (see TankInhabitants#reconcile). */
+    final it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<java.util.UUID> missing = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>();
+    private boolean crowded;
+    long lastCareTick = -1;
+
     private ResourceLocation glass = DEFAULT_GLASS;
     @Nullable
     private BlockPos controllerPos;
@@ -90,6 +96,14 @@ public class TankBlockEntity extends BlockEntity {
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
+    }
+
+    public boolean isCrowded() {
+        return crowded;
+    }
+
+    void setCrowded(boolean crowded) {
+        this.crowded = crowded;
     }
 
     // ------------------------------------------------------------------ persistence

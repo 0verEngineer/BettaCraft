@@ -1,0 +1,48 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:or",
+      "values": [
+        {
+          "type": "bettacraft:config",
+          "fish_bag": "plastic"
+        },
+        {
+          "type": "neoforge:and",
+          "values": [
+            {
+              "type": "bettacraft:config",
+              "fish_bag": "auto"
+            },
+            {
+              "type": "neoforge:not",
+              "value": {
+                "type": "neoforge:tag_empty",
+                "tag": "bettacraft:plastic_sheets"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "bettacraft:plastic_sheets"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    " S ",
+    "P P",
+    " P "
+  ],
+  "result": {
+    "count": 4,
+    "id": "bettacraft:fish_bag"
+  }
+}

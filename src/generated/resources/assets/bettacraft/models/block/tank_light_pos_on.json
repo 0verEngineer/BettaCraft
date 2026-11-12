@@ -1,0 +1,81 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#housing"
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      },
+      "from": [
+        1,
+        0,
+        6.5
+      ],
+      "to": [
+        16,
+        2,
+        9.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#housing"
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      },
+      "from": [
+        1,
+        0,
+        6.5
+      ],
+      "to": [
+        16,
+        2,
+        9.5
+      ]
+    }
+  ],
+  "textures": {
+    "housing": "bettacraft:block/tank_light",
+    "panel": "bettacraft:block/tank_light_panel_on",
+    "particle": "bettacraft:block/tank_light"
+  }
+}

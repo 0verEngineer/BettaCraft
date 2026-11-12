@@ -85,7 +85,7 @@ class SchemaMigrationTest {
         // Frozen v0 example: controller written before the schema field existed.
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],owner:[I;1,2,3,4]}}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
-        assertEquals(1, Schema.read(v1));
+        assertEquals(2, Schema.read(v1));
         assertEquals(16, v1.getCompound("tank").getInt("scale"));
         assertEquals(0L, v1.getCompound("tank").getLong("water_mb"));
         assertEquals("minecraft:glass", v1.getString("glass"));
@@ -104,13 +104,50 @@ class SchemaMigrationTest {
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;1,2,3]}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
         assertFalse(v1.contains("tank"));
+        assertEquals(2, Schema.read(v1));
+    }
+
+    @Test
+    void tankV1GetsCareDefaults() {
+        // Frozen v1 example (M0 controller).
+        CompoundTag v1 = snbt("{schema:1,glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],scale:16,water_mb:1000L,region:-1}}");
+        CompoundTag v2 = Schemas.TANK_BLOCK_ENTITY.migrate(v1);
+        CompoundTag t = v2.getCompound("tank");
+        assertEquals(2, Schema.read(v2));
+        assertEquals(27.0F, t.getFloat("target_temp"));
+        assertEquals(27.0F, t.getFloat("water_temp"));
+        assertTrue(t.getBoolean("sign_visible"));
+        assertEquals("top_center", t.getString("sign_pos"));
+        assertEquals("south", t.getString("front"));
+        assertEquals(1000L, t.getLong("water_mb"), "existing values are kept");
+    }
+
+    @Test
+    void tankV1KeepsExistingCareValues() {
+        CompoundTag v2 = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:1,tank:{target_temp:30.0f,sign_visible:0b,front:\"east\"}}"));
+        CompoundTag t = v2.getCompound("tank");
+        assertEquals(30.0F, t.getFloat("target_temp"));
+        assertEquals(30.0F, t.getFloat("water_temp"), "water starts at the target temperature");
+        assertFalse(t.getBoolean("sign_visible"));
+        assertEquals("east", t.getString("front"));
+    }
+
+    @Test
+    void bettaV0IsStamped() {
+        CompoundTag v0 = snbt("{genome:{shape:\"veil\",body_color:\"does_not_exist\"},sex:\"female\",custom:1b}");
+        CompoundTag v1 = Schemas.BETTA.migrate(v0);
         assertEquals(1, Schema.read(v1));
+        assertEquals("does_not_exist", v1.getCompound("genome").getString("body_color"), "unknown ids are carried along");
+        assertTrue(v1.getBoolean("custom"));
     }
 
     @Test
     void currentVersionsAreStable() {
         // Bump these deliberately together with a new step + frozen test.
-        assertEquals(1, Schemas.TANK_BLOCK_ENTITY.currentVersion());
+        assertEquals(2, Schemas.TANK_BLOCK_ENTITY.currentVersion());
+        assertEquals(1, Schemas.BETTA.currentVersion());
+        assertEquals(1, Schemas.TANK_REF.currentVersion());
+        assertEquals(1, Schemas.FEEDER.currentVersion());
         assertEquals(1, Schemas.INTERIOR_REGIONS.currentVersion());
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
     }

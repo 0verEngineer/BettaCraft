@@ -1,0 +1,73 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#housing"
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      },
+      "from": [
+        0,
+        0,
+        6.5
+      ],
+      "to": [
+        15,
+        2,
+        9.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#housing"
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      },
+      "from": [
+        0,
+        0,
+        6.5
+      ],
+      "to": [
+        15,
+        2,
+        9.5
+      ]
+    }
+  ],
+  "textures": {
+    "housing": "bettacraft:block/tank_light",
+    "panel": "bettacraft:block/tank_light_panel_off",
+    "particle": "bettacraft:block/tank_light"
+  }
+}

@@ -19,6 +19,15 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<ResourceLocation>> GLASS = COMPONENTS.registerComponentType("glass",
             b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
 
+    /** Typed betta data of a bucket / bag (tooltip, item tint). Mirrored into minecraft:bucket_entity_data under key "betta". */
+    public static final Supplier<DataComponentType<org.overengineer.bettacraft.entity.betta.BettaData>> FISH_DATA = COMPONENTS.registerComponentType("fish_data",
+            b -> b.persistent(org.overengineer.bettacraft.entity.betta.BettaData.CODEC)
+                    .networkSynchronized(org.overengineer.bettacraft.entity.betta.BettaData.STREAM_CODEC));
+
+    /** Entity type inside a filled fish bag. */
+    public static final Supplier<DataComponentType<ResourceLocation>> BAG_ENTITY = COMPONENTS.registerComponentType("bag_entity",
+            b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }
