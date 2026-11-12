@@ -94,6 +94,39 @@ final class DevClientSmokeM12 {
             if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
         });
         then(20, () -> shot("menu_water"));
+        // the seven tabs (small tab font) at GUI scale 2, 3 and 4, in English and German: screenshots and a check that
+        // every label fits its button and the row fits the menu
+        String lang = mc.options.languageCode;
+        for (String code : new String[]{"en_us", "de_de"}) {
+            then(1, () -> language(code));
+            for (int scale = 2; scale <= 4; scale++) {
+                int sc = scale;
+                then(1, () -> {
+                    mc.options.guiScale().set(sc);
+                    mc.resizeDisplay();
+                });
+                then(10, () -> {
+                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+                        ts.showPlantsPageForTest();
+                        String fit = DevClientSmokeMP.tabsFit(mc, ts.tabButtonsForTest());
+                        StringBuilder labels = new StringBuilder();
+                        for (var b : ts.tabButtonsForTest()) labels.append(b.getMessage().getString()).append('=').append(b.getWidth()).append(' ');
+                        LOGGER.info("[smoketest] M12 menu tabs {} GUI scale {}: {} [{}]", code, sc, fit, labels.toString().trim());
+                        if (!fit.startsWith("tabs ok")) LOGGER.error("[smoketest] M12 menu tabs do not fit: {} {}", code, fit);
+                    }
+                });
+                then(20, () -> shot("menu_tabs_" + code.substring(0, 2) + "_gui" + sc));
+            }
+            then(1, () -> {
+                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+            });
+            then(20, () -> shot("menu_water_" + code.substring(0, 2) + "_gui4"));
+        }
+        then(1, () -> {
+            language(lang);
+            mc.options.guiScale().set(0);
+            mc.resizeDisplay();
+        });
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));
         then(1, () -> server(p -> {
@@ -211,6 +244,14 @@ final class DevClientSmokeM12 {
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+    }
+
+    /** Switches the client language without a full resource reload (only the translations), re-inits the open screen. */
+    private void language(String code) {
+        mc.options.languageCode = code;
+        mc.getLanguageManager().setSelected(code);
+        mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
+        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void then(int delay, Runnable action) {

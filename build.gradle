@@ -84,6 +84,15 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             // gradlew runServer -Psmoketest : builds a tank, measures the interior and stops the server
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
+            // gradlew runServer -PsmoketestOldWorld : runs on a fresh copy of a world saved by an older version
+            // (run/saves/<-PoldWorld, default "Bettacraft Testwelt M11"> -> run/oldworld_check), checks every tank, stops
+            if (project.hasProperty('smoketestOldWorld')) {
+                systemProperty 'bettacraft.smoketest.oldworld', 'true'
+                programArguments.addAll '--world', 'oldworld_check'
+            }
+            // gradlew runServer -Psmoketestmp : the multiplayer test stage, waits for the clients Dev1 and Dev2 (normally
+            // started together with the clients by gradlew runMultiplayerTest)
+            if (project.hasProperty('smoketestmp')) systemProperty 'bettacraft.smoketest.mp', 'true'
         }
 
         gameTestServer {
@@ -261,5 +270,128 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestSe
                 else if (dst.exists()) dst.delete()
             }
         }
+    }
+}
+
+// -PsmoketestOldWorld: a fresh copy of the old world for every run (the original in run/saves stays untouched)
+def oldWorldName = project.findProperty('oldWorld') ?: 'Bettacraft Testwelt M11'
+tasks.matching { it.name == 'runServer' }.configureEach { t ->
+    if (project.hasProperty('smoketestOldWorld')) {
+        def src = file("run/saves/${oldWorldName}")
+        def dst = file('run/oldworld_check')
+        t.doFirst {
+            if (!src.isDirectory()) throw new GradleException("old world not found: ${src}")
+            dst.deleteDir()
+            java.nio.file.Files.walk(src.toPath()).forEach { from ->
+                def rel = src.toPath().relativize(from)
+                def to = dst.toPath().resolve(rel)
+                if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+                else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
+            }
+        }
+    }
+}
+
+// gradlew runMultiplayerTest : multiplayer smoke test. Starts the dedicated server (run/, dev world, with the stage of
+// DevSmokeMP) and, once it is up, two clients in the background (unfocused, second monitor) as Dev1 and Dev2 with game
+// directories of their own (run/client1, run/client2: options and configs copied from run/, sound off, 30 fps) that join
+// it and follow the script (DevClientSmokeMP). The game processes are started directly from the java command lines of
+// runServer / runClient (no second Gradle build that would wait for the first one's locks). Logs: build/mptest/*.log,
+// screenshots: run/client1|2/screenshots/mp_*.png. Fails unless the server logs "MP PASSED" and both clients finish.
+tasks.register('runMultiplayerTest') {
+    group = 'verification'
+    description = 'Dedicated server + two background clients (Dev1, Dev2): multiplayer smoke test (plants, net, menu, sync)'
+    notCompatibleWithConfigurationCache('starts the game processes of runServer and runClient')
+    dependsOn 'prepareServerRun', 'prepareClientRun'
+    dependsOn { [tasks.named('runServer').get().classpathProvider, tasks.named('runClient').get().classpathProvider] }
+    doLast {
+        def srv = tasks.named('runServer').get()
+        def cli = tasks.named('runClient').get()
+        def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
+        def logs = file('build/mptest')
+        logs.deleteDir()
+        logs.mkdirs()
+        def runDir = file('run')
+        // the extra mods of -Pshaders / -Ppower are not part of this test
+        ['run/shader-mods', 'run/power-mods'].each { d ->
+            (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
+        }
+        def props = new Properties()
+        def sp = new File(runDir, 'server.properties')
+        if (sp.exists()) sp.withInputStream { props.load(it) }
+        if (props.getProperty('online-mode', 'true') != 'false') throw new GradleException('run/server.properties needs online-mode=false (dev clients have no account)')
+        def port = props.getProperty('server-port', '25565')
+        def cmd = { t, String name, List extraJvm, List extraArgs ->
+            // the class path goes into an argument file (the Windows command line is limited to 32k characters)
+            def cp = new File(logs, "${name}.classpath.txt")
+            cp.write('-cp\n' + t.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
+            ([java] + t.allJvmArgs + extraJvm + ["@${cp.absolutePath}", t.mainClass.get()] + t.args + extraArgs).collect { it.toString() }
+        }
+        def start = { String name, List command, File dir ->
+            dir.mkdirs()
+            def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(new File(logs, "${name}.log")).start()
+            logger.lifecycle("started ${name} (pid ${p.pid()}) in ${dir}")
+            p
+        }
+        def clientDir = { int n ->
+            def dir = new File(runDir, "client${n}")
+            dir.mkdirs()
+            def cfgFrom = new File(runDir, 'config').toPath()
+            if (java.nio.file.Files.isDirectory(cfgFrom)) {
+                java.nio.file.Files.walk(cfgFrom).forEach { from ->
+                    def to = new File(dir, 'config').toPath().resolve(cfgFrom.relativize(from).toString())
+                    if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+                    else if (!from.fileName.toString().endsWith('.bak')) java.nio.file.Files.copy(from, to, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                }
+            }
+            // background client: no FML early window (it would take the focus before any mod code runs)
+            def fml = new File(dir, 'config/fml.toml')
+            if (fml.exists()) fml.setText(fml.getText('UTF-8').replaceAll(/earlyWindowControl = (true|false)/, 'earlyWindowControl = false'), 'UTF-8')
+            def set = [lang: 'en_us', maxFps: '30', renderDistance: '6', simulationDistance: '5', soundCategory_master: '0.0',
+                       pauseOnLostFocus: 'false', onboardAccessibility: 'false', guiScale: '3', skipMultiplayerWarning: 'true',
+                       joinedFirstServer: 'true', tutorialStep: 'none', fullscreen: 'false', narrator: '0']
+            def src = new File(runDir, 'options.txt')
+            def lines = src.exists() ? src.readLines('UTF-8') : []
+            def out = lines.findAll { l -> !set.keySet().any { l.startsWith(it + ':') } } + set.collect { k, v -> "${k}:${v}".toString() }
+            new File(dir, 'options.txt').write(out.join('\n') + '\n', 'UTF-8')
+            dir
+        }
+        def procs = []
+        def deadline = System.currentTimeMillis() + 12 * 60 * 1000L
+        try {
+            def server = start('server', cmd(srv, 'server', ['-Dbettacraft.smoketest.mp=true'], []), runDir)
+            procs << server
+            def serverLog = new File(logs, 'server.log')
+            while (!(serverLog.exists() && serverLog.getText('UTF-8').contains('Done ('))) {
+                if (!server.isAlive()) throw new GradleException("the server stopped while starting, see ${serverLog}")
+                if (System.currentTimeMillis() > deadline - 9 * 60 * 1000L) throw new GradleException('the server did not start in 3 minutes')
+                Thread.sleep(1000)
+            }
+            logger.lifecycle("server is up on port ${port}")
+            [1, 2].each { n ->
+                procs << start("client${n}", cmd(cli, "client${n}", ['-Dbettacraft.smoketest.mp=true', '-Dbettacraft.background=true',
+                        "-Dbettacraft.smoketest.mp.address=localhost:${port}".toString()], ['--username', "Dev${n}".toString()]), clientDir(n))
+                Thread.sleep(5000) // do not start both at the same moment (CPU, the second monitor)
+            }
+            while (procs.any { it.isAlive() } && System.currentTimeMillis() < deadline) Thread.sleep(1000)
+            if (procs.any { it.isAlive() }) logger.error('runMultiplayerTest: timed out, stopping the game processes')
+        } finally {
+            procs.each { if (it.isAlive()) it.destroyForcibly() }
+        }
+        def text = { String n -> def f = new File(logs, "${n}.log"); f.exists() ? f.getText('UTF-8') : '' }
+        def problems = []
+        if (!text('server').contains('[smoketest] MP PASSED')) problems << 'server: no "[smoketest] MP PASSED" (see the "MP check failed" lines)'
+        ['client1', 'client2'].each { c -> if (!text(c).contains('client finished')) problems << "${c}: did not finish the script".toString() }
+        ['server', 'client1', 'client2'].each { n ->
+            def lines = text(n).readLines()
+            def errors = lines.findIndexValues { (it.contains('/ERROR]') && !it.contains('Missing translations')) || it =~ /^\S*(Exception|Error)\b/ }
+            def ours = lines.findAll { it.contains('org.overengineer') && (it.trim().startsWith('at ') || it.contains('Exception')) }
+            logger.lifecycle("${n}: ${errors.size()} error line(s), ${ours.size()} line(s) of a Bettacraft stack trace")
+            lines.findAll { it.contains('[smoketest] MP') && (it.contains('failed') || it.contains('FAILED') || it.contains('PASSED')) }.each { logger.lifecycle("  ${it}") }
+            if (!ours.isEmpty()) problems << "${n}: Bettacraft exception, e.g. ${ours.first().trim()}".toString()
+        }
+        [1, 2].each { n -> (new File(runDir, "client${n}/screenshots").listFiles() ?: []).findAll { it.name.startsWith('mp_') }.sort { it.name }.each { logger.lifecycle("screenshot ${it}") } }
+        if (!problems.isEmpty()) throw new GradleException('runMultiplayerTest failed:\n  ' + problems.join('\n  ') + "\nlogs in ${logs}")
+        logger.lifecycle("runMultiplayerTest PASSED (logs in ${logs})")
     }
 }

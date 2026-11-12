@@ -9,8 +9,8 @@ exactly at GUI size.
 The interior and hologram images are kept as they are (from the M4/M5 screenshots). M9 adds the water care scene, the
 live food breeders and the water tab from the ``bettacraft_m9_*`` screenshots of the same run, M11 the tank styles and the
 mirror stick from ``bettacraft_m11_*`` (also made by ``-Psmoketestm11`` alone), M12 the floating plants from
-``bettacraft_m12_*`` (``-Psmoketestm12``; the German plants page from a run with the client language set to German, saved
-as ``bettacraft_m12_menu_plants_de.png``). ``py guide_images.py m12`` crops only the M12 images.
+``bettacraft_m12_*`` (``-Psmoketestm12``; the plants and water tabs in English and German at GUI scale 4, the smoke test
+switches the language itself). ``py guide_images.py m12`` crops only the M12 images.
 """
 from __future__ import annotations
 
@@ -46,7 +46,9 @@ M11_WORLD = {"tank_styles": ("bettacraft_m11_styles", (60, 320, 1220, 570)), "mi
 # M12 scene (DevClientSmokeM12): the main plant tank from above, the roots through the glass, the plants page
 M12_WORLD = {"floating_plants": ("bettacraft_m12_overview", (230, 240, 1050, 660)),
              "floating_plants_roots": ("bettacraft_m12_roots", (0, 330, 1280, 640))}
-M12_MENUS = {"menu_plants": "bettacraft_m12_menu_plants"}
+# the plants tab and the water tab at GUI scale 4, English and German (DevClientSmokeM12 switches the language itself)
+M12_MENUS = {"menu_plants": ("bettacraft_m12_menu_tabs_en_gui4", "bettacraft_m12_menu_tabs_de_gui4"),
+             "menu_water": ("bettacraft_m12_menu_water_en_gui4", "bettacraft_m12_menu_water_de_gui4")}
 
 
 def m12(out_en: Path, out_de: Path) -> None:
@@ -56,9 +58,9 @@ def m12(out_en: Path, out_de: Path) -> None:
             save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
         else:
             print("missing", src)
-    for name, shot in M12_MENUS.items():
-        for suffix, out in (("", out_en), ("_de", out_de)):
-            src = SHOTS / f"{shot}{suffix}.png"
+    for name, shots in M12_MENUS.items():
+        for shot, out in zip(shots, (out_en, out_de)):
+            src = SHOTS / f"{shot}.png"
             if src.exists():
                 save(Image.open(src).convert("RGB").crop(MENU_BOX), out / f"{name}.png")
             else:

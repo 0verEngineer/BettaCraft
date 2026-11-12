@@ -89,6 +89,8 @@ public final class BettaCraftClient {
         });
         if (Boolean.getBoolean("bettacraft.smoketest.world")) {
             DevClientSmokeTest.register();
+        } else if (Boolean.getBoolean("bettacraft.smoketest.mp")) {
+            DevClientSmokeMP.register(); // gradlew runMultiplayerTest: joins the dedicated test server as Dev1 / Dev2
         } else if (Boolean.getBoolean("bettacraft.smoketest")) {
             // dev only: quit as soon as the title screen opens (models/textures baked without crash)
             NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ScreenEvent.Opening e) -> {

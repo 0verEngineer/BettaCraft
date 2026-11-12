@@ -29,7 +29,7 @@ block.
 - **Floating plants:** duckweed, Amazon frogbit, salvinia and the red root floater drift on the water surface of an
   aquarium (lily pads stay put). With light and nutrients they grow, put out offshoots and take up waste; the red root
   floater turns red under strong light; the male builds his nest under them. Found in swamp water bottles, by fishing
-  in swamps and from the wandering trader; an empty hand or shears take them out again.
+  in swamps and from the wandering trader; an empty hand or the aquarium net take them out again.
 - **Power (optional):** a server can make heaters, coolers, filters and lights need Forge Energy from any FE mod.
 - **Live food breeding:** a larva tub for mosquito larvae and an artemia hatchery for nauplii, both with hoppers.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
@@ -119,6 +119,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 ./gradlew runGameTestServer     # GameTests
 ./gradlew runData               # regenerate src/generated (recipes, tags, models, en_us, advancements)
 ./gradlew runClient             # dev client with Jade, JEI, GuideME, The One Probe, WTHIT and the aquarium mods
+./gradlew runMultiplayerTest    # dedicated server + two background clients (Dev1, Dev2) play a scripted session
 ```
 
 Leave optional mods out of the dev runtime with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoTop`, `-PnoWthit` and
