@@ -21,10 +21,12 @@ version as release notes.
 
 ### Changed
 - Heaters and coolers need 8 FE per tick for each water block they heat or cool (was 1), far more than a filter (10) or a light (4).
+- Separate server setting `power.coolerFePerBlock` for coolers (default 8, like `heaterFePerBlock`).
 - The dark edge lines are much thinner (1/64 block instead of 1/16) and close the inner corners of flat walls.
 - Aquariums from earlier versions keep their glass and become textured (tank data schema 6).
 
 ### Fixed
+- Switching a power setting on or off at runtime: connected cables and pipes notice it at once (before, only after a chunk reload).
 - Water behind translucent (stained) glass looked darker along every block border, and in some blocks (the middle of
   a T) the water surface was missing: water faces now always sort behind the glass in front of them, and the frames
   of the glass texture no longer show between the blocks of one aquarium.

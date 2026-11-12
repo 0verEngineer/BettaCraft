@@ -48,7 +48,9 @@ public final class TankPower {
         if (heating == null) return 0;
         double cap = heating ? TankCare.rawHeaterBlocks(level, t) : TankCare.rawCoolerBlocks(level, t);
         if (cap <= 0) return 0;
-        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0));
+        double perBlock = heating ? ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0)
+                : ServerConfig.getOr(ServerConfig.POWER_COOLER_FE_PER_BLOCK, 8.0);
+        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock);
     }
 
     /** Light blocks on top of the tank that are on or want to be on (not switched off by redstone). */
@@ -88,6 +90,30 @@ public final class TankPower {
             }
         }
         if (wasLight != c.lightPowered) updateLights(level, c.getTank());
+    }
+
+    /**
+     * Re-announces the energy capabilities of the tank and of everything around it that offers the tank's storage
+     * (external filters, cabinets below, lights above): every member block and its neighbours. Mods that cache
+     * capabilities hear the invalidation; cables that only look again on a block update (e.g. Powah) get a neighbour
+     * update from each of those blocks.
+     */
+    public static void invalidateCapabilities(ServerLevel level, TankData tank) {
+        java.util.Set<BlockPos> done = new java.util.LinkedHashSet<>();
+        for (long l : tank.members()) {
+            BlockPos p = BlockPos.of(l);
+            done.add(p);
+            for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values()) done.add(p.relative(d));
+        }
+        for (BlockPos p : done) {
+            if (!level.isLoaded(p)) continue;
+            level.invalidateCapabilities(p);
+        }
+        for (BlockPos p : done) {
+            if (!level.isLoaded(p)) continue;
+            BlockState s = level.getBlockState(p);
+            if (!s.isAir()) level.updateNeighborsAt(p, s.getBlock());
+        }
     }
 
     /** Lets the lights on the tank recompute whether they shine. */

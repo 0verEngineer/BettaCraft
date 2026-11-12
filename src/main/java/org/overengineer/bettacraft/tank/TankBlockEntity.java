@@ -46,6 +46,8 @@ public class TankBlockEntity extends BlockEntity {
     long lastCareTick = -1;
     /** Headroom the fill states were last computed with (transient): recomputed after loading or a config change. */
     int appliedHeadroom = -1;
+    /** Whether power was needed when the energy capabilities were last announced (transient, null = not yet). */
+    Boolean appliedPower;
 
     /** Recompute the fill states of the tank on its next tick (as after loading). */
     public void markFillStatesStale() {

@@ -96,6 +96,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue POWER_FILTER;
     public static final ModConfigSpec.BooleanValue POWER_LIGHT;
     public static final ModConfigSpec.DoubleValue POWER_HEATER_FE_PER_BLOCK;
+    public static final ModConfigSpec.DoubleValue POWER_COOLER_FE_PER_BLOCK;
     public static final ModConfigSpec.IntValue POWER_FILTER_FE;
     public static final ModConfigSpec.IntValue POWER_LIGHT_FE;
     public static final ModConfigSpec.IntValue POWER_BUFFER;
@@ -233,9 +234,11 @@ public final class ServerConfig {
         POWER_HEATER = b.comment("Heaters and coolers only work while the tank has enough FE").define("heaterRequiresEnergy", false);
         POWER_FILTER = b.comment("Filters only clean the water while the tank has enough FE").define("filterRequiresEnergy", false);
         POWER_LIGHT = b.comment("Lights on a tank only shine while the tank has enough FE").define("lightRequiresEnergy", false);
-        POWER_HEATER_FE_PER_BLOCK = b.comment("FE per tick a heater or cooler needs for each water block it heats or cools (only while it works;",
-                        "heating and cooling water costs far more than running a filter or a light)")
+        POWER_HEATER_FE_PER_BLOCK = b.comment("FE per tick a heater needs for each water block it heats (only while it heats;",
+                        "heating water costs far more than running a filter or a light)")
                 .defineInRange("heaterFePerBlock", 8.0, 0.0, 1000.0);
+        POWER_COOLER_FE_PER_BLOCK = b.comment("FE per tick a cooler needs for each water block it cools (only while it cools)")
+                .defineInRange("coolerFePerBlock", 8.0, 0.0, 1000.0);
         POWER_FILTER_FE = b.comment("FE per tick of each filter").defineInRange("filterFePerTick", 10, 0, 100000);
         POWER_LIGHT_FE = b.comment("FE per tick of each lit light block on a tank").defineInRange("lightFePerTick", 4, 0, 100000);
         POWER_BUFFER = b.comment("FE a tank can store").defineInRange("bufferFe", 100000, 1000, 100000000);

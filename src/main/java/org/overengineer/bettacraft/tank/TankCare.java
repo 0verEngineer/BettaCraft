@@ -51,6 +51,13 @@ public final class TankCare {
             be.appliedHeadroom = headroom;
             TankMultiblock.applyStates(server, be.getTank());
         }
+        // the energy capabilities only exist while a power option is on: when that changes, tell cables and pipes nearby
+        // (they cache capabilities; before, they only noticed after a chunk reload)
+        boolean power = TankPower.anyRequired();
+        if (be.appliedPower == null || be.appliedPower != power) {
+            if (be.appliedPower != null) TankPower.invalidateCapabilities(server, be.getTank());
+            be.appliedPower = power;
+        }
         long now = level.getGameTime();
         if ((now + pos.asLong()) % INTERVAL != 0) return;
         TankData tank = be.getTank();

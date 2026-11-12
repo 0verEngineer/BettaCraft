@@ -741,7 +741,9 @@ final class LangEn {
         a.accept("bettacraft.configuration.lightRequiresEnergy", "Lights need power");
         a.accept("bettacraft.configuration.lightRequiresEnergy.tooltip", "Lights on a tank only shine while the tank has enough FE");
         a.accept("bettacraft.configuration.heaterFePerBlock", "Heater FE per water block");
-        a.accept("bettacraft.configuration.heaterFePerBlock.tooltip", "FE per tick a heater or cooler needs for each water block it heats or cools");
+        a.accept("bettacraft.configuration.heaterFePerBlock.tooltip", "FE per tick a heater needs for each water block it heats (only while it heats)");
+        a.accept("bettacraft.configuration.coolerFePerBlock", "Cooler FE per water block");
+        a.accept("bettacraft.configuration.coolerFePerBlock.tooltip", "FE per tick a cooler needs for each water block it cools (only while it cools)");
         a.accept("bettacraft.configuration.filterFePerTick", "Filter FE per tick");
         a.accept("bettacraft.configuration.filterFePerTick.tooltip", "FE per tick of each filter");
         a.accept("bettacraft.configuration.lightFePerTick", "Light FE per tick");
