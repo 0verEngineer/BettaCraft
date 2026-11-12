@@ -80,6 +80,40 @@ public final class InhabitantGameTests {
         if (error != null) throw new GameTestAssertException("insert failed: " + error.getString());
     }
 
+    /** The rendered fish (tail, fins), not only its hitbox, stays inside the glass, whichever way it faces a wall. */
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void finsStayInsideTheGlass(GameTestHelper h) {
+        TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 2, 12000);
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
+        List<BettaEntity> fish = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            ItemStack s = bettaBucket(40 + i);
+            ok(insert(h, c, s, player));
+        }
+        for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (e instanceof BettaEntity b) fish.add(b);
+        h.assertTrue(fish.size() == 4, "four bettas");
+        var min = c.getTank().min();
+        // tail into the west, east, north and south wall: 0.15 from the glass, facing away from it
+        double[][] spots = {{min.getX() + 0.0625 + 0.15, min.getZ() + 1.0, -90}, {min.getX() + 3 - 0.0625 - 0.15, min.getZ() + 1.0, 90},
+                {min.getX() + 1.5, min.getZ() + 0.0625 + 0.15, 0}, {min.getX() + 1.5, min.getZ() + 2 - 0.0625 - 0.15, 180}};
+        for (int i = 0; i < 4; i++) {
+            BettaEntity b = fish.get(i);
+            b.setNoAi(true);
+            b.moveTo(spots[i][0], min.getY() + 0.8, spots[i][1], (float) spots[i][2], 0);
+            b.setYBodyRot((float) spots[i][2]);
+        }
+        h.runAfterDelay(40, () -> {
+            for (BettaEntity b : fish) {
+                var w = b.tankWater();
+                h.assertTrue(w != null, "fish knows its tank water");
+                var push = org.overengineer.bettacraft.entity.betta.BettaExtents.push(w, b.position(), b.yBodyRot, b.genome().shape(),
+                        b.lifeStage().scale(), 1.0 / 16);
+                h.assertTrue(push.lengthSqr() < 1e-4, "fins of " + b.genome().shape() + " at yaw " + b.yBodyRot + " stick out by " + push);
+            }
+            h.succeed();
+        });
+    }
+
     @GameTest(template = EMPTY)
     public static void insertBettaFromBucketKeepsData(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 1, 2, 2, 2, 2, 5000);

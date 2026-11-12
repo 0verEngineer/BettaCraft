@@ -68,6 +68,12 @@ public class BettaEntity extends AbstractFish {
     /** Water volume of the tank this fish lives in (server, refreshed regularly; M10: the actual shape); null outside tanks. */
     @Nullable
     org.overengineer.bettacraft.tank.TankWaterVolume tankWater;
+
+    /** Water volume of the tank this fish lives in (server); null outside tanks. */
+    @Nullable
+    public org.overengineer.bettacraft.tank.TankWaterVolume tankWater() {
+        return tankWater;
+    }
     /** Hand-fed food sinking here (server); bettas swim towards it until {@link #foodUntil}. */
     @Nullable
     Vec3 foodTarget;
@@ -414,6 +420,15 @@ public class BettaEntity extends AbstractFish {
             double cx = c.x, cy = c.y, cz = c.z;
             if (cx != p.x || cy != p.y || cz != p.z) {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
+            }
+            // the fins reach well beyond the hitbox: keep the whole rendered fish (tail, fins) inside the glass
+            Vec3 fin = BettaExtents.push(water, p, yBodyRot, genome().shape(), lifeStage().scale(), 1.0 / 16 + 0.01);
+            if (fin.lengthSqr() > 1e-8) {
+                setPos(p.x + fin.x, p.y + fin.y, p.z + fin.z);
+                Vec3 dm = getDeltaMovement();
+                // no speed towards the glass the fish was pushed away from
+                setDeltaMovement(fin.x * dm.x < 0 ? 0 : dm.x, fin.y * dm.y < 0 ? 0 : dm.y, fin.z * dm.z < 0 ? 0 : dm.z);
+                p = position();
             }
             // M11: flaring at a mirror stick: hold still and face the mirror
             if (mirrorAt != null && level().getGameTime() < mirrorUntil) {
