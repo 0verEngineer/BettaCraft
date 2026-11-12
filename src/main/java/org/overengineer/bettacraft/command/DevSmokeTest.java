@@ -218,6 +218,17 @@ public final class DevSmokeTest {
                 var live = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank());
                 LOGGER.info("[smoketest] {} inhabitants alive, water {} C, crowded {}, log {}", live.size(),
                         c.getTank().waterTemp(), c.isCrowded(), c.getTank().log().size());
+                // M5: fish from earlier runs were saved with older schemas; all of them load as v3 with a fin length
+                java.util.Map<String, Integer> types = new java.util.TreeMap<>();
+                int oldTails = 0;
+                for (var e : live) {
+                    if (!(e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b)) continue;
+                    types.merge(org.overengineer.bettacraft.genetics.BettaTypes.name(b.genome()).getString(), 1, Integer::sum);
+                    var fin = b.genotype().pair(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM);
+                    if ("plakat".equals(fin.a()) || "plakat".equals(fin.b())) oldTails++;
+                }
+                LOGGER.info("[smoketest] types in the tank: {}", types);
+                if (oldTails > 0) throw new IllegalStateException(oldTails + " bettas still carry the old plakat finform allele");
                 TankBlockEntity breed = TankMultiblock.getController(level, base.offset(6, 0, 0));
                 int cabinets = org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, breed).size();
                 double cabHeat = org.overengineer.bettacraft.tank.TankCare.filterHeaterBlocks(level, breed.getTank());

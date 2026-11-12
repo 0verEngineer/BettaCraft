@@ -111,97 +111,108 @@ final class DevClientSmokeTest {
                     ServerPlayer p = player(mc);
                     p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 2.3, tankMin.getZ() - 2.0, 0F, 32F);
                 });
-                case 330 -> shot(mc, "bettacraft_m4_tank");
+                case 330 -> shot(mc, "bettacraft_m5_tank");
                 case 340 -> mc.getSingleplayerServer().execute(() -> {
-                    // the 16x16x16 tank at scale 16 (bench: client meshing off the render thread)
+                    // M5: all named varieties side by side
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), bigMin.getX() + 8, bigMin.getY() + 12, bigMin.getZ() - 12, 0F, 30F);
+                    p.teleportTo(p.serverLevel(), typesMin.getX() + 4.0, typesMin.getY() + 1.0 - 1.62, typesMin.getZ() - 3.4, 0F, 0F);
                 });
-                case 520 -> shot(mc, "bettacraft_m4_big_tank");
-                case 530 -> mc.getSingleplayerServer().execute(() -> {
+                case 400 -> shot(mc, "bettacraft_m5_types");
+                case 410 -> mc.getSingleplayerServer().execute(() -> {
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 7.0, 0F, 20F);
-                    InteriorManager.enter(p, tankMin);
+                    p.teleportTo(p.serverLevel(), typesMin.getX() + 1.6, typesMin.getY() + 0.95 - 1.62, typesMin.getZ() - 1.25, 0F, 0F);
                 });
-                case 600 -> mc.getSingleplayerServer().execute(() -> {
-                    // inside: overview of the decoration
+                case 450 -> shot(mc, "bettacraft_m5_types_closeup");
+                case 455 -> mc.getSingleplayerServer().execute(() -> {
                     ServerPlayer p = player(mc);
-                    InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
-                    if (r != null) {
-                        BlockPos eye = r.toWorld(r.sizeX() / 2 + 6, 9, 3);
-                        p.teleportTo(p.serverLevel(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, 20F, 30F);
-                    }
+                    p.teleportTo(p.serverLevel(), typesMin.getX() + 6.4, typesMin.getY() + 0.95 - 1.62, typesMin.getZ() - 1.25, 0F, 0F);
                 });
-                case 660 -> shot(mc, "bettacraft_m4_interior");
+                case 495 -> shot(mc, "bettacraft_m5_types_closeup2");
+                case 500 -> mc.getSingleplayerServer().execute(() -> {
+                    // fin forms: 8 long-finned tails and 4 plakat forms in the same colours
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), formsMin.getX() + 3.0, formsMin.getY() + 1.0 - 1.62, formsMin.getZ() - 2.9, 0F, 0F);
+                });
+                case 550 -> shot(mc, "bettacraft_m5_forms");
+                case 555 -> mc.getSingleplayerServer().execute(() -> {
+                    // stages, flaring male and the female in breeding colours (bars)
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), showMin.getX() + 2.5, showMin.getY() - 1.15, showMin.getZ() - 2.1, 0F, 2F);
+                });
+                case 600 -> shot(mc, "bettacraft_m5_stages_bars");
+                case 601 -> mc.getSingleplayerServer().execute(() -> {
+                    // close-up of the female in breeding colours
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), showMin.getX() + 4.4, showMin.getY() + 0.42 - 1.62, showMin.getZ() - 0.55, 0F, 0F);
+                });
+                case 630 -> shot(mc, "bettacraft_m5_female_bars");
+                case 635 -> mc.getSingleplayerServer().execute(() -> {
+                    // straight at one variety (Jade shows the type)
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), typesMin.getX() + 1.5, typesMin.getY() + 0.42 - 1.62, typesMin.getZ() - 0.7, 0F, 0F);
+                });
+                case 660 -> shot(mc, "bettacraft_m5_jade_betta");
                 case 665 -> mc.getSingleplayerServer().execute(() -> {
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), typesMin.getX() + 4.0, typesMin.getY() + 1.2, typesMin.getZ() - 2.5, 0F, 20F);
+                    TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), typesMin);
+                    p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
+                            buf -> buf.writeBlockPos(c.getBlockPos()));
+                });
+                case 700 -> {
+                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
+                }
+                case 730 -> shot(mc, "bettacraft_m5_menu_inhabitants");
+                case 735 -> mc.getSingleplayerServer().execute(() -> {
+                    // inventory with the new icons: decor, internal filter, buckets of every variety, cabinets
+                    ServerPlayer p = player(mc);
+                    p.closeContainer();
+                    p.setGameMode(GameType.SURVIVAL);
+                    p.getAbilities().flying = true;
+                    p.getAbilities().mayfly = true;
+                    p.onUpdateAbilities();
+                    fillInventory(p);
+                });
+                case 760 -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+                case 770 -> hoverSlot(mc, 0, 1);
+                case 800 -> shot(mc, "bettacraft_m5_inventory");
+                case 805 -> hoverSlot(mc, 3, 3);
+                case 830 -> shot(mc, "bettacraft_m5_inventory_decor");
+                case 835 -> hoverSlot(mc, 7, 2);
+                case 860 -> shot(mc, "bettacraft_m5_inventory_cabinet");
+                case 865 -> {
+                    mc.setScreen(null);
+                    mc.getSingleplayerServer().execute(() -> {
+                        ServerPlayer p = player(mc);
+                        p.getInventory().clearContent();
+                        p.setGameMode(GameType.CREATIVE);
+                        p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 7.0, 0F, 20F);
+                        InteriorManager.enter(p, tankMin);
+                    });
+                }
+                case 940 -> mc.getSingleplayerServer().execute(() -> {
                     // holding a dino skull: placement hologram on the floor in front
                     ServerPlayer p = player(mc);
                     InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
                     if (r != null) {
-                        BlockPos eye = r.toWorld(58, 2, 13);
-                        p.teleportTo(p.serverLevel(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, 10F, 62F);
+                        BlockPos eye = r.toWorld(59, 1, 6);
+                        p.teleportTo(p.serverLevel(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, 0F, 45F);
                     }
                     p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
                             new ItemStack(ModItems.DECOR.get(org.overengineer.bettacraft.decor.DecorType.DINO_SKULL).get()));
                 });
-                case 690 -> shot(mc, "bettacraft_m4_interior_hologram");
-                case 700 -> mc.getSingleplayerServer().execute(() -> {
+                case 970 -> shot(mc, "bettacraft_m5_interior_hologram");
+                case 975 -> mc.getSingleplayerServer().execute(() -> {
                     ServerPlayer p = player(mc);
                     p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                     InteriorManager.leave(p);
                 });
-                case 780 -> mc.getSingleplayerServer().execute(() -> {
+                case 1040 -> mc.getSingleplayerServer().execute(() -> {
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 4.0, 0F, 20F);
-                    TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankMin);
-                    p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
-                            buf -> buf.writeBlockPos(c.getBlockPos()));
-                });
-                case 820 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(4);
-                }
-                case 850 -> shot(mc, "bettacraft_m4_menu_interior");
-                case 860 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(0);
-                }
-                case 890 -> shot(mc, "bettacraft_m4_menu_overview");
-                case 895 -> mc.getSingleplayerServer().execute(() -> {
-                    // M4: cabinets of four woods with tanks on top, filters in the cabinets
-                    ServerPlayer p = player(mc);
-                    p.closeContainer();
                     p.teleportTo(p.serverLevel(), cabMin.getX() + 5.5, cabMin.getY() + 2.4, cabMin.getZ() - 4.5, 0F, 16F);
                 });
-                case 950 -> shot(mc, "bettacraft_m4_cabinets");
-                case 955 -> mc.getSingleplayerServer().execute(() -> {
-                    // M4: external filter with hose and jet, internal filter in the miniature
-                    // spectator: the camera may go below the ground level of the small tank (eye = feet + 1.62)
-                    ServerPlayer p = player(mc);
-                    p.setGameMode(GameType.SPECTATOR);
-                    p.teleportTo(p.serverLevel(), filterMin.getX() + 1.1, filterMin.getY() + 1.55 - 1.62, filterMin.getZ() - 1.25, -28F, 36F);
-                });
-                case 1010 -> shot(mc, "bettacraft_m4_external_filter");
-                case 1015 -> mc.getSingleplayerServer().execute(() -> {
-                    ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), filterMin.getX() - 0.3, filterMin.getY() + 0.58 - 1.62, filterMin.getZ() + 0.4, -90F, 14F);
-                });
-                case 1060 -> shot(mc, "bettacraft_m4_internal_filter");
-                case 1065 -> mc.getSingleplayerServer().execute(() -> {
-                    ServerPlayer p = player(mc);
-                    p.setGameMode(GameType.CREATIVE);
-                    p.teleportTo(p.serverLevel(), cabMin.getX() + 0.5, cabMin.getY() + 1.5, cabMin.getZ() - 2.5, 0F, 20F);
-                    BlockPos cp = cabMin.offset(1, 0, 0);
-                    if (p.serverLevel().getBlockEntity(cp) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) p.openMenu(cab, cp);
-                });
-                case 1100 -> shot(mc, "bettacraft_m4_menu_cabinet");
-                case 1105 -> mc.getSingleplayerServer().execute(() -> {
-                    ServerPlayer p = player(mc);
-                    p.closeContainer();
-                    BlockPos fp = filterMin.offset(2, 0, 0);
-                    p.teleportTo(p.serverLevel(), fp.getX() + 0.5, fp.getY() + 1.5, fp.getZ() - 2.5, 0F, 20F);
-                    if (p.serverLevel().getBlockEntity(fp) instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity f) p.openMenu(f, fp);
-                });
-                case 1140 -> shot(mc, "bettacraft_m4_menu_filter");
-                case 1150 -> {
+                case 1090 -> shot(mc, "bettacraft_m5_cabinets");
+                case 1100 -> {
                     LOGGER.info("[smoketest] miniature render-thread time last frame: {} ms",
                             org.overengineer.bettacraft.client.interior.MiniatureRenderer.lastFrameNanos / 1e6);
                     LOGGER.info("[smoketest] client world test finished");
@@ -213,6 +224,109 @@ final class DevClientSmokeTest {
             LOGGER.error("[smoketest] FAILED", ex);
             mc.stop();
         }
+    }
+
+    /** Moves the mouse over a slot of the open inventory screen (col 0-8, row 0-2 main inventory, row 3 hotbar). */
+    private static void hoverSlot(Minecraft mc, int col, int row) {
+        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        double scale = mc.getWindow().getGuiScale();
+        int left = (scr.width - 176) / 2, top = (scr.height - 166) / 2;
+        int x = left + 8 + col * 18 + 8, y = top + (row < 3 ? 84 + row * 18 : 142) + 8;
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        try {
+            for (String f : new String[]{"xpos", "ypos"}) {
+                java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
+                fld.setAccessible(true);
+                fld.setDouble(mc.mouseHandler, f.equals("xpos") ? x * scale : y * scale);
+            }
+        } catch (ReflectiveOperationException e) {
+            LOGGER.warn("[smoketest] cannot move the mouse: {}", e.toString());
+        }
+    }
+
+    private static void fillInventory(ServerPlayer p) {
+        var inv = p.getInventory();
+        inv.clearContent();
+        int slot = 0;
+        for (var d : org.overengineer.bettacraft.decor.DecorType.values()) inv.setItem(slot++, new ItemStack(ModItems.DECOR.get(d).get()));
+        inv.setItem(slot++, new ItemStack(ModItems.INTERNAL_FILTER.get()));
+        inv.setItem(slot++, new ItemStack(ModItems.EXTERNAL_FILTER.get()));
+        inv.setItem(slot++, new ItemStack(ModItems.HEATER_SMALL.get()));
+        inv.setItem(slot++, new ItemStack(ModItems.BETTA_PELLETS.get(), 16));
+        inv.setItem(slot++, new ItemStack(ModItems.MOSQUITO_LARVAE.get(), 8));
+        inv.setItem(slot++, new ItemStack(ModItems.INFUSORIA.get()));
+        inv.setItem(slot++, new ItemStack(ModItems.ARTEMIA_NAUPLII.get()));
+        // main inventory: one bucket per variety, then cabinets
+        slot = 17;
+        for (var v : org.overengineer.bettacraft.genetics.GeneticsData.get().varieties()) {
+            if (slot >= 33) break;
+            BettaGenome g = BettaGenome.of(v.example(), BettaGenome.DEFAULT);
+            inv.setItem(slot++, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, false, 0)));
+        }
+        String[] woods = {"cherry_planks", "dark_oak_planks", "warped_planks"};
+        for (String w : woods) {
+            if (slot >= 36) break;
+            inv.setItem(slot++, org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()),
+                    net.minecraft.resources.ResourceLocation.withDefaultNamespace(w)));
+        }
+    }
+
+    private static BlockPos typesMin, formsMin;
+
+    /** M5: a showcase tank with every named variety and one with the fin forms (motionless fish, side view). */
+    private static void m5Scene(ServerLevel level, BlockPos feet, ServerPlayer p) {
+        typesMin = feet.offset(14, 0, 4);
+        place(level, typesMin, 8, 2, 1);
+        TankBlockEntity types = TankMultiblock.getController(level, typesMin);
+        TankInteractions.changeWater(level, types, 16000);
+        types.getTank().setName("Varieties");
+        types.getTank().setSignVisible(false);
+        types.getTank().setFront(Direction.NORTH);
+        java.util.List<BettaData> list = new java.util.ArrayList<>();
+        for (var v : org.overengineer.bettacraft.genetics.GeneticsData.get().varieties()) {
+            list.add(BettaData.create(BettaGenome.of(v.example(), BettaGenome.DEFAULT), false, level.getGameTime()));
+        }
+        showcase(level, types, typesMin, list, 8, p);
+        formsMin = feet.offset(14, 0, 10);
+        place(level, formsMin, 6, 2, 1);
+        TankBlockEntity forms = TankMultiblock.getController(level, formsMin);
+        TankInteractions.changeWater(level, forms, 12000);
+        forms.getTank().setSignVisible(false);
+        java.util.List<BettaData> fl = new java.util.ArrayList<>();
+        java.util.Map<String, String> colours = java.util.Map.of("body_color", "royal_blue", "fin_color", "red", "pattern", "butterfly",
+                "pattern_color", "white", "iridescence", "low", "iridescence_color", "steel");
+        for (String len : new String[]{"long", "short"}) {
+            for (String shape : BettaGenome.SHAPES) {
+                if (len.equals("short") && !java.util.List.of("round", "halfmoon", "crowntail", "doubletail").contains(shape)) continue;
+                java.util.Map<String, String> m = new java.util.HashMap<>(colours);
+                m.put("finform", shape);
+                m.put("fin_length", len);
+                fl.add(BettaData.create(BettaGenome.of(m, BettaGenome.DEFAULT), false, level.getGameTime()));
+            }
+        }
+        showcase(level, forms, formsMin, fl, 6, p);
+    }
+
+    private static void showcase(ServerLevel level, TankBlockEntity c, BlockPos min, java.util.List<BettaData> fish, int perRow, ServerPlayer p) {
+        java.util.List<java.util.UUID> order = new java.util.ArrayList<>();
+        for (BettaData d : fish) {
+            ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
+            Component err = TankInhabitants.insert(level, c, bucket, ModEntities.BETTA.get(), p, false);
+            if (err != null) LOGGER.warn("[smoketest] showcase insert failed: {}", err.getString());
+            order.add(d.fishId());
+        }
+        for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
+            if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity m) {
+                int k = order.indexOf(m.getBettaData().fishId());
+                m.setNoAi(true);
+                m.setNoGravity(true);
+                int col = k % perRow, row = k / perRow;
+                m.moveTo(min.getX() + col + 0.5, min.getY() + (1 - row) + 0.38, min.getZ() + 0.5, 90F, 0F);
+                m.setYBodyRot(90F);
+                m.setYHeadRot(90F);
+            }
+        }
+        c.markTankChanged();
     }
 
     private static ServerPlayer player(Minecraft mc) {
@@ -368,6 +482,7 @@ final class DevClientSmokeTest {
         org.overengineer.bettacraft.tank.interior.InteriorPreparation.prepare(level.getServer(), bigR, null);
         bigRegion = bigR;
         m4Scene(level, feet, p);
+        m5Scene(level, feet, p);
         p.teleportTo(level, tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 7.0, 0F, 20F);
         LOGGER.info("[smoketest] scene built: {} inhabitants, {}", TankInhabitants.liveInhabitants(level, c.getTank()).size(), c.getTank());
     }

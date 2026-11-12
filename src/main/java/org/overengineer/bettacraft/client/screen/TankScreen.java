@@ -454,7 +454,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     }
 
     private Component inhabitantName(TankView.Inhabitant i) {
-        return i.customName().isEmpty() ? Component.translatable(i.typeKey()) : Component.literal(i.customName());
+        if (!i.customName().isEmpty()) return Component.literal(i.customName());
+        // M5: unnamed bettas are listed by their type
+        return i.betta() ? BettaTooltip.type(i.genome()) : Component.translatable(i.typeKey());
     }
 
     private void drawInhabitants(GuiGraphics g, TankView v, int mx, int my) {
@@ -479,7 +481,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         TankView.Inhabitant sel = selectedInhabitant(v);
         if (sel == null) return;
         int x = 114, y = 19;
-        g.drawString(font, font.plainSubstrByWidth(inhabitantName(sel).getString(), 124), x, y, 0xFFFFFF, false);
+        Component header = sel.customName().isEmpty() ? Component.translatable(sel.typeKey()) : Component.literal(sel.customName());
+        g.drawString(font, font.plainSubstrByWidth(header.getString(), 124), x, y, 0xFFFFFF, false);
         y += 9;
         if (!sel.betta()) {
             line(g, Component.translatable(sel.typeKey()).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
@@ -504,7 +507,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 10;
         var gt = sel.genotype();
         int top = y;
-        for (Locus l : List.of(BettaLoci.FINFORM, BettaLoci.FIN_LENGTH, BettaLoci.BODY_COLOR, BettaLoci.FIN_COLOR, BettaLoci.PATTERN, BettaLoci.IRIDESCENCE)) {
+        for (Locus l : List.of(BettaLoci.FINFORM, BettaLoci.BODY_COLOR, BettaLoci.FIN_COLOR, BettaLoci.PATTERN)) {
             Component c = GenotypeText.line(gt, l);
             String s = font.plainSubstrByWidth(c.getString(), 124);
             g.drawString(font, s, x, y, 0xC8C8C8, false);

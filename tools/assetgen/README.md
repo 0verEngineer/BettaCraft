@@ -10,25 +10,28 @@ python tools/assetgen/build.py
 
 The generated PNGs under `src/main/resources` are committed, so the Gradle build does not need Python.
 `tools/assetgen/build/` is gitignored and only holds debug and preview output. The review sheet
-is copied to `builds/m0-preview.png`.
+is copied to `builds/m5-types.png`.
 
 ## Scripts
 
 | Script | Makes |
 |---|---|
-| `model_defs.py` | The single source of truth for the betta model: cuboids per body shape (plakat, veil, halfmoon, crowntail, doubletail; dumbo = second pectoral set), the shared 64x64 box-UV layout (auto-packed), life-stage scales and female scales. Also writes `BettaModelDefinitions.java` (compiled copy in `src/main/java/.../client/model/`, reference copy in `build/generated/`; includes `PATTERNS`), `betta_<shape>.bbmodel` (Blockbench, modded entity) and `uv_layout.txt`. |
+| `model_defs.py` | The single source of truth for the betta model: cuboids per tail shape (M5: round, spade, veil, delta, halfmoon, rosetail, crowntail, doubletail; dumbo = second pectoral set; short-finned plakat types reuse the mesh with `SHORT_*` scales of caudal/dorsal/anal), the shared 64x64 box-UV layout (auto-packed), life-stage scales and female scales. Also writes `BettaModelDefinitions.java` (compiled copy in `src/main/java/.../client/model/`, reference copy in `build/generated/`; includes `PATTERNS`), `betta_<shape>.bbmodel` (Blockbench, modded entity) and `uv_layout.txt`. |
 | `fins.py` | Fin silhouettes (alpha cut-outs: crowntail spikes, doubletail notch), fin-ray field, distance-to-edge field. |
 | `uv_template.py` | Per-texel metadata (part, face, model-space position, fin coordinates). Writes `build/uv_template.png` (debug) and `region_body.png` / `region_fins.png`. |
-| `patterns.py` | `shade.png`, `pattern_*.png` (butterfly, marble, dragon, koi, mask, tipped, fade, grizzle, bars), `iridescence.png`, `eye.png`. |
-| `palette.py` | 43 named colours (id, en_us, de_de, hex) -> `build/generated/colors.json` and `src/main/java/.../genetics/BettaColorTable.java`. |
+| `patterns.py` | `shade.png`, `pattern_*.png` (butterfly, marble, dragon, koi, mask, tipped, fade, grizzle, bars, M5: piebald, dalmatian, galaxy), `iridescence.png`, `eye.png`. |
+| `palette.py` | 43 named colours (id, en_us, de_de, hex) -> `build/generated/colors.json` and `src/main/java/.../genetics/BettaColorTable.java` (built-in defaults; the datagen writes them as `data/bettacraft/bettacraft/colors/*.json`). |
+| `varieties.py` | M5: the named varieties (Mustard Gas, Black Orchid, Koi Galaxy, ...): phenotype rules, priority, en/de name and an example fish -> `genetics/BettaVarietyTable.java` (datagen: `data/bettacraft/bettacraft/varieties/*.json`). Checks that every example is named by its own rule. |
+| `lang_de.py` | Writes the generated keys of `de_de.json` (colour, tail and variety names) and keeps every hand-written key. |
+| `decor_icons.py` | M5: hand-drawn 16x16 icons of the decoration items and the internal filter (replace the blurry isometric renders of M3). |
 | `icons.py` | 16x16 item icons (incl. `swamp_water_bottle`) plus greyscale fish overlay layers for the bucket and the bag. |
 | `blocks.py` | Tank block textures, including the animated greyscale water; feeder (`feeder_side/top/bottom`, design in rows 8..15 / uv 3..13) and tank light (`tank_light`, `tank_light_panel_on/off`). |
 | `breeding.py` | M2: fry food icons (`salt_water_bottle`, `infusoria_culture`, `infusoria`, `artemia_culture`, `artemia_nauplii`, `artemia_cysts`) and the bubble nest textures `entity/nest/bubble_nest`, `nest_eggs`, `nest_larvae` (32x32, drawn as flat discs at the water surface). |
-| `decor.py` | M3: the decoration structures `data/bettacraft/structure/decor/*.nbt` (vanilla blocks only, footprints 1x1 to 8x8, written with a tiny NBT writer, gzip mtime 0 so the files stay byte-identical), their item icons `decor_*.png` (isometric flat-colour rendering of the same voxels, no vanilla pixels), the interior equipment textures `heater_segment_*` / `filter_segment_*` (anchor, middle, top) and `internal_filter.png`. Debug sheet: `build/preview/decor_sheet.png`. |
+| `decor.py` | M3: the decoration structures `data/bettacraft/structure/decor/*.nbt` (vanilla blocks only, footprints 1x1 to 8x8, written with a tiny NBT writer, gzip mtime 0 so the files stay byte-identical), the interior equipment textures `heater_segment_*` / `filter_segment_*` (anchor, middle, top) and an isometric debug sheet of the structures `build/preview/decor_sheet.png` (the item icons moved to `decor_icons.py` in M5). |
 | `equipment.py` | M4: external filter canister (`external_filter_side/top/bottom`, side rows 4..15 = body, 2..3 = lid), cabinet placeholder planks `cabinet_wood` (swapped at runtime for the planks of the cabinet) and `cabinet_trim`, the internal filter outlet face `filter_segment_outlet`, and the entity textures `entity/filter/hose.png` (ribs repeat along u) and `entity/filter/jet.png` (16x64 water ribbon, seamless along v; the renderer scrolls v to animate the flow). |
 | `gui.py` | `textures/gui/tank.png` (256x256): 248x230 vanilla-style panel, content inset 7..240 x 17..139 (dark fill since M2), player inventory (x 44+18c, y 148+18r, hotbar y 206), icons at (0,232) heater ghost 16x16, (16,232) lock and (26,232) open lock 10x10, (36,232) slot frame 18x18 (since M4 the four old heater slots at x 12, y 148+18i are only drawn while a heater is left in them). M4: `external_filter.png` and `cabinet.png` (176x166, vanilla container layout; side sprites at (176,0) slot frame, (176,18) heater ghost, (176,34) filter ghost). Layout constants are mirrored in the Java screens. |
 | `render.py` | Texture compositing (same order as the runtime) and a side-view software rasterizer. |
-| `preview.py` | Preview sheets in `build/preview/`, `builds/m0-preview.png` and the mod logo `src/main/resources/bettacraft.png`. |
+| `preview.py` | Preview sheets in `build/preview/` (forms, patterns, stages, icons, `types.png` = all named varieties, forms and patterns, copied to `builds/m5-types.png`) and the mod logo `src/main/resources/bettacraft.png`. |
 | `build.py` | Runs all of the above. |
 
 ## Layer / tint concept (runtime)
