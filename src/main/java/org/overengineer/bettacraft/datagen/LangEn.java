@@ -635,10 +635,16 @@ final class LangEn {
         a.accept("tooltip.bettacraft.salvinia", "Small paired, hairy leaves, robust");
         a.accept("tooltip.bettacraft.red_root_floater", "Turns red under strong light, green under weak light");
         a.accept("tooltip.bettacraft.floating_plant", "Use on a tank: floats on the water surface");
-        a.accept("info.bettacraft.duckweed", "A floating plant for the water surface of a tank. Use it on a tank: it floats where you look at the water.\nDuckweed grows fastest and takes up waste from the water. With light (a lit tank light or daylight) and nutrients (the waste of the animals) it forms offshoots until the surface is covered (60 % by default).\nFind it: fill a glass bottle with swamp water (sometimes a bit of duckweed comes up), fishing in swamps.\nTake plants out: right-click the surface with an empty hand; shears + sneak thin the whole tank out by half.");
-        a.accept("info.bettacraft.amazon_frogbit", "A floating plant with round leaves and long roots hanging into the water. Males like to build their bubble nest under a cluster of frogbit most of all.\nGrows with light and nutrients, forms offshoots and takes up waste.\nFind it: the wandering trader sells it, fishing in swamps.\nTake plants out: right-click the surface with an empty hand; shears + sneak thin the whole tank out by half.");
-        a.accept("info.bettacraft.salvinia", "A robust floating fern with small paired, hairy leaves. Medium growth.\nGrows with light and nutrients, forms offshoots and takes up waste.\nFind it: the wandering trader sells it, fishing in swamps.\nTake plants out: right-click the surface with an empty hand; shears + sneak thin the whole tank out by half.");
-        a.accept("info.bettacraft.red_root_floater", "A rare floating plant with small round leaves and red roots. Under strong light (a lit tank light or full daylight) its leaves turn red, under weak light they stay green. Grows slowly.\nFind it: rarely from the wandering trader, rarely when fishing in mangrove swamps.\nTake plants out: right-click the surface with an empty hand; shears + sneak thin the whole tank out by half.");
+        a.accept("info.bettacraft.duckweed", "A floating plant for the water surface of a tank. Use it on a tank: it floats where you look at the water.\nDuckweed grows fastest and takes up waste from the water. With light (a lit tank light or daylight) and nutrients (the waste of the animals) it forms offshoots until the surface is covered (60 % by default).\nFind it: fill a glass bottle with swamp water (sometimes a bit of duckweed comes up), fishing in swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
+        a.accept("info.bettacraft.amazon_frogbit", "A floating plant with round leaves and long roots hanging into the water. Males like to build their bubble nest under a cluster of frogbit most of all.\nGrows with light and nutrients, forms offshoots and takes up waste.\nFind it: the wandering trader sells it, fishing in swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
+        a.accept("info.bettacraft.salvinia", "A robust floating fern with small paired, hairy leaves. Medium growth.\nGrows with light and nutrients, forms offshoots and takes up waste.\nFind it: the wandering trader sells it, fishing in swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
+        a.accept("info.bettacraft.red_root_floater", "A rare floating plant with small round leaves and red roots. Under strong light (a lit tank light or full daylight) its leaves turn red, under weak light they stay green. Grows slowly.\nFind it: rarely from the wandering trader, rarely when fishing in mangrove swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
+        a.accept("item.bettacraft.tank_net", "Aquarium Net");
+        a.accept("tooltip.bettacraft.tank_net", "Right-click a tank: takes out the floating plants you look at");
+        a.accept("tooltip.bettacraft.tank_net.sneak", "Sneak + right-click: thins the tank out by half");
+        a.accept("info.bettacraft.tank_net", "Takes floating plants off the water surface of a tank. Right-click the tank: the plants where you look come out as items, from above as well as from the side through the glass.\nSneak + right-click: thins the whole tank out by half (lily pads stay), like the button on the plants tab of the tank menu.\nAn empty hand also takes plants out, but only looking down at the surface.\nCraft: four string in a square with a stick below on the left.");
+        a.accept("message.bettacraft.plants.none_here", "No floating plants there");
+        a.accept("gui.bettacraft.tab.plants", "Plants");
         a.accept("message.bettacraft.plants.no_water", "The tank needs water for floating plants");
         a.accept("message.bettacraft.plants.full", "No room on the water surface");
         a.accept("message.bettacraft.plants.none", "No floating plants to take out");
@@ -649,8 +655,6 @@ final class LangEn {
         a.accept("log.bettacraft.plant_added", "%s put in %s");
         a.accept("log.bettacraft.plants_thinned", "%s thinned out the floating plants (%s taken)");
         a.accept("log.bettacraft.pellets_on_leaves", "%s portion(s) of food stayed on the leaves and rot");
-        a.accept("gui.bettacraft.plants.open", "Floating plants");
-        a.accept("gui.bettacraft.plants.back", "Back to the water");
         a.accept("gui.bettacraft.plants.thin", "Thin out");
         a.accept("gui.bettacraft.plants.thin_tooltip", "Takes out half of the floating plants (lily pads stay); you get them as items");
         a.accept("gui.bettacraft.plants.count", "Floating plants: %s (at most %s)");
@@ -668,7 +672,7 @@ final class LangEn {
         a.accept("gui.bettacraft.plants.growing", "Growing (light and nutrients)");
         a.accept("gui.bettacraft.plants.uptake", "Take up waste: +%s %% quality per day");
         a.accept("gui.bettacraft.plants.dense", "Dense cover (from %s %%): shade, food on the leaves");
-        a.accept("gui.bettacraft.plants.hint", "Empty hand: take out");
+        a.accept("gui.bettacraft.plants.hint", "Hand or net: take out");
         a.accept("gui.bettacraft.breeding.cond.plants", "Floating plants: a good nest site (faster ready)");
         a.accept("gui.bettacraft.breeding.warn.dense_plants", "Floating plants cover the surface densely: thin them out");
         a.accept("jade.bettacraft.tank.plants", "Floating plants: %s (%s%% cover)");

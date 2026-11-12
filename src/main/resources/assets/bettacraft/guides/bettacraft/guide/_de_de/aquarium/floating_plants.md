@@ -9,6 +9,7 @@ item_ids:
   - bettacraft:amazon_frogbit
   - bettacraft:salvinia
   - bettacraft:red_root_floater
+  - bettacraft:tank_net
 ---
 
 # Schwimmpflanzen
@@ -62,12 +63,15 @@ Es gibt kein Rezept. Schwimmpflanzen findest du in der Natur und ziehst sie dann
 
 ## Herausnehmen
 
-* **Rechtsklick** mit **leerer Hand** auf die Oberfläche: nimmt die Pflanzen heraus, auf die du schaust (du bekommst
-  sie als Items). Wo keine Pflanze schwimmt, öffnet sich wie gewohnt das Aquarium-Menü.
-* Eine **Schere** nimmt die Pflanzen heraus, auf die du schaust; **Schere beim Schleichen** dünnt das ganze Aquarium um
-  die Hälfte aus.
-* Der Tab **Wasser** im [Aquarium-Menü](menu.md) hat eine Seite für die Schwimmpflanzen (Knopf oben rechts): Anzahl,
-  Bedeckung, Licht, Wachstum, Abfallaufnahme und ein Knopf **Ausdünnen**.
+* **Rechtsklick** mit **leerer Hand** beim Blick von oben auf die Oberfläche: nimmt die Pflanzen heraus, auf die du
+  schaust (du bekommst sie als Items). Wo keine Pflanze schwimmt, öffnet sich wie gewohnt das Aquarium-Menü.
+* Der <ItemLink id="bettacraft:tank_net" /> nimmt die Pflanzen heraus, auf die du schaust – aus **jedem Winkel**,
+  auch von der Seite durch das Glas; **Schleichen** mit dem Kescher dünnt das ganze Aquarium um die Hälfte aus
+  (Seerosenblätter bleiben).
+* Der Tab **Pflanzen** im [Aquarium-Menü](menu.md): Anzahl, Bedeckung, Licht, Wachstum, Abfallaufnahme und ein Knopf
+  **Ausdünnen**.
+
+<RecipeFor id="bettacraft:tank_net" />
 * Wird der letzte Block eines Aquariums abgebaut, fallen seine Pflanzen als Items heraus.
 
 ## Nest und dichte Decke

@@ -13,9 +13,9 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.overengineer.bettacraft.BettaCraft;
+import org.overengineer.bettacraft.registry.ModItems;
 import org.overengineer.bettacraft.tank.TankBlock;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
@@ -30,8 +30,9 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  *     surface;</li>
  *     <li>empty main hand (not sneaking) while looking at plants on the surface: takes them out (otherwise the menu opens
  *     as before);</li>
- *     <li>shears: take out the plants looked at; sneaking: thin the whole tank out by half (empty hand + sneaking still
- *     enters the interior).</li>
+ *     <li>aquarium net: takes out the plants looked at from any angle (also from the side through the glass); sneaking:
+ *     thins the whole tank out by half (empty hand + sneaking still enters the interior). Shears have no special use
+ *     on a tank any more.</li>
  * </ul>
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
@@ -56,25 +57,36 @@ public final class FloatingPlantEvents {
             }
             return;
         }
-        boolean shears = stack.is(Tags.Items.TOOLS_SHEAR);
-        if (shears && sneak) {
+        if (stack.is(ModItems.AQUARIUM_NET.get())) {
             handled(e);
-            if (level instanceof ServerLevel server && allowed(player, t)) {
-                List<ItemStack> items = TankPlants.thin(server, c);
-                if (items.isEmpty()) player.displayClientMessage(Component.translatable("message.bettacraft.plants.none"), true);
-                else TankPlants.taken(server, c, player, items, true);
-            }
+            if (level instanceof ServerLevel server && allowed(player, t)) net(server, c, player, sneak);
             return;
         }
         boolean hand = stack.isEmpty() && e.getHand() == InteractionHand.MAIN_HAND && !sneak;
-        if (!shears && !hand) return;
+        if (!hand) return;
         Vec3 at = TankPlants.surfaceHit(t, player.getEyePosition(), player.getViewVector(1.0F));
-        if (at == null || !plantAt(t, at)) return; // nothing there: menu / shears as usual
+        if (at == null || !plantAt(t, at)) return; // nothing there: the menu opens as usual
         handled(e);
         if (level instanceof ServerLevel server && allowed(player, t)) {
             List<ItemStack> items = TankPlants.removeAt(server, c, at.x, at.z);
             if (!items.isEmpty()) TankPlants.taken(server, c, player, items, false);
         }
+    }
+
+    /** The aquarium net: sneaking thins out by half, otherwise takes out the plants looked at (any angle). */
+    private static void net(ServerLevel server, TankBlockEntity c, Player player, boolean sneak) {
+        TankData t = c.getTank();
+        if (sneak) {
+            List<ItemStack> items = TankPlants.thin(server, c);
+            if (items.isEmpty()) player.displayClientMessage(Component.translatable("message.bettacraft.plants.none"), true);
+            else TankPlants.taken(server, c, player, items, true);
+            return;
+        }
+        Vec3 at = TankPlants.netTarget(t, player.getEyePosition(), player.getViewVector(1.0F));
+        List<ItemStack> items = at == null ? List.of() : TankPlants.removeAt(server, c, at.x, at.z, TankPlants.NET_REACH);
+        if (items.isEmpty()) player.displayClientMessage(Component.translatable(t.plants().isEmpty()
+                ? "message.bettacraft.plants.none" : "message.bettacraft.plants.none_here"), true);
+        else TankPlants.taken(server, c, player, items, false);
     }
 
     private static boolean plantAt(TankData t, Vec3 at) {

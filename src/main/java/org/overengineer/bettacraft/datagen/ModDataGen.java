@@ -406,6 +406,7 @@ public final class ModDataGen {
             basicItem(ModItems.SWAMP_WATER_BOTTLE.get());
             basicItem(ModItems.BETTA_PELLETS.get());
             handheldItem(ModItems.MIRROR_STICK.get());
+            handheldItem(ModItems.AQUARIUM_NET.get());
             for (var p : ModItems.FLOATING_PLANTS.values()) basicItem(p.get());
             basicItem(ModItems.MOSQUITO_LARVAE.get());
             basicItem(ModItems.SALT_WATER_BOTTLE.get());
@@ -482,6 +483,17 @@ public final class ModDataGen {
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
                     .save(output, BettaCraft.id("mirror_stick"));
+
+            // M12: aquarium net: a string mesh on a stick
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.AQUARIUM_NET.get())
+                    .pattern(" TT")
+                    .pattern(" TT")
+                    .pattern("S  ")
+                    .define('T', Tags.Items.STRINGS)
+                    .define('S', Tags.Items.RODS_WOODEN)
+                    .unlockedBy("has_tank", has(ModItems.TANK.get()))
+                    .unlockedBy("has_plant", has(ModItems.FLOATING_PLANTS.get(org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED).get()))
+                    .save(output, BettaCraft.id("tank_net"));
 
             // Fish bag (PLAN 4.3): kelp unless #bettacraft:plastic_sheets has entries; COMMON config can force one.
             ICondition plasticEmpty = new TagEmptyCondition(ModTags.PLASTIC_SHEETS);

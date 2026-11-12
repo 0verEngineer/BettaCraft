@@ -41,9 +41,7 @@ public final class FloatingPlantRenderer {
     /** The vanilla lily pad texture (a game asset read at runtime, tinted like the lily pad block). */
     private static final ResourceLocation LILY_PAD = ResourceLocation.withDefaultNamespace("textures/block/lily_pad.png");
     private static final int LILY_TINT = 0xFF3A9A3E;
-    /** Red root floater: green in weak light, red in strong light (greyscale texture, tinted). */
-    private static final int RRF_GREEN = 0xFF86C25E, RRF_RED = 0xFFC8483A;
-    private static final int FROGBIT_ROOTS = 0xFFE6E2D2, SALVINIA_ROOTS = 0xFF7A6142, RRF_ROOTS_PALE = 0xFFD8CBB8, RRF_ROOTS_RED = 0xFFB04436;
+    private static final int FROGBIT_ROOTS = 0xFFE6E2D2, SALVINIA_ROOTS = 0xFF7A6142;
     /** Height of the leaves above the drawn water surface (no z-fighting with the water quad) and the bobbing. */
     private static final float ABOVE = 0.008F, BOB = 0.003F;
 
@@ -116,10 +114,10 @@ public final class FloatingPlantRenderer {
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 2, SALVINIA_ROOTS, light);
             }
             case RED_ROOT_FLOATER -> {
-                int tint = lerpColor(RRF_GREEN, RRF_RED, p.red);
+                int tint = FloatingPlantSim.redRootLeafTint(p.red);
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(RED_ROOT));
                 rosette(pose, vc, p, r, 4 + Math.floorMod(p.id, 3), 0.5F, 0.42F, tint, light);
-                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.5F, 3, lerpColor(RRF_ROOTS_PALE, RRF_ROOTS_RED, p.red), light);
+                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.5F, 3, FloatingPlantSim.redRootRootTint(p.red), light);
             }
             case LILY_PAD -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(LILY_PAD));
@@ -175,13 +173,5 @@ public final class FloatingPlantRenderer {
             vc.addVertex(m, dx, top - length, dz).setColor(argb).setUv(1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
             vc.addVertex(m, dx, top, dz).setColor(argb).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
         }
-    }
-
-    private static int lerpColor(int a, int b, float t) {
-        t = Mth.clamp(t, 0, 1);
-        int r = Math.round(((a >> 16) & 0xFF) * (1 - t) + ((b >> 16) & 0xFF) * t);
-        int g = Math.round(((a >> 8) & 0xFF) * (1 - t) + ((b >> 8) & 0xFF) * t);
-        int bl = Math.round((a & 0xFF) * (1 - t) + (b & 0xFF) * t);
-        return 0xFF000000 | (r << 16) | (g << 8) | bl;
     }
 }

@@ -377,8 +377,57 @@ def mirror_stick():
     return out
 
 
+# ---------------------------------------------------------------- aquarium net (M12)
+
+def tank_net():
+    """Aquarium net held diagonally: an oval wire hoop with a pale string mesh (top right) on a wooden handle."""
+    out = np.zeros((S, S, 4), np.uint8)
+    wood = {"k": (0x2c, 0x1e, 0x12, 255), "L": (0xb0, 0x83, 0x4c, 255), "D": (0x7a, 0x55, 0x2e, 255)}
+    # handle: from (6, 10) down-left to (1, 15), outlined like the mirror stick
+    for i in range(7):
+        x, y = 6 - i, 10 + i
+        for dx, dy in ((-1, 0), (0, 1), (-1, 1), (1, 0), (0, -1)):
+            px, py = x + dx, y + dy
+            if 0 <= px < S and 0 <= py < S and out[py, px, 3] == 0:
+                out[py, px] = wood["k"]
+    for i in range(6):
+        x, y = 6 - i, 10 + i
+        if 0 <= x < S and 0 <= y < S:
+            out[y, x] = wood["L"]
+        if 0 <= x - 1 < S and 0 <= y + 1 < S:
+            out[y + 1, x - 1] = wood["D"] if i < 5 else wood["k"]
+    # hoop: an ellipse along the diagonal, centre (10, 5.5)
+    cx, cy = 10.0, 5.4
+    yy, xx = np.mgrid[0:S, 0:S] + 0.5
+    u = ((xx - cx) + (yy - cy)) / np.sqrt(2)   # along the handle direction (down-right)
+    v = ((xx - cx) - (yy - cy)) / np.sqrt(2)   # across
+    a, b = 4.2, 5.4
+    e = np.sqrt((u / a) ** 2 + (v / b) ** 2)
+    for y in range(S):
+        for x in range(S):
+            ev = e[y, x]
+            if ev > 1.12:
+                continue
+            if ev > 0.88:
+                lit = (cx - xx[y, x]) + (cy - yy[y, x])
+                g = 0xd6 if lit > 1.5 else 0xa9 if lit > -1.5 else 0x6a
+                out[y, x] = (g, g, g + 4, 255) if ev <= 1.0 else (0x2c, 0x2c, 0x31, 255)
+            else:
+                # string mesh: a diagonal grid of pale threads, the holes see-through
+                gx = (x + y) % 4 == 1
+                gy = (x - y) % 4 == 0
+                if gx or gy:
+                    shade = 0xe6 if (x + y) < 15 else 0xbe
+                    out[y, x] = (shade, shade, shade - 10, 230 if gx and gy else 200)
+    # collar where the handle meets the hoop
+    out[9, 6] = (0xa9, 0xa9, 0xad, 255)
+    out[9, 7] = (0x76, 0x76, 0x7c, 255)
+    return out
+
+
 ICONS = {
     "mirror_stick": mirror_stick,
+    "tank_net": tank_net,
     "swamp_water_bottle": swamp_water_bottle,
     "betta_bucket": bucket,
     "fish_bag": fish_bag,

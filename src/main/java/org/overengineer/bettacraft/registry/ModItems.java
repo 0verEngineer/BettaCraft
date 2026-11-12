@@ -27,6 +27,10 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.equipment.MirrorStickItem> MIRROR_STICK = ITEMS.register("mirror_stick",
             () -> new org.overengineer.bettacraft.equipment.MirrorStickItem(new Item.Properties().stacksTo(1)));
 
+    /** M12: takes floating plants off the water surface of a tank (sneaking: thins the tank out by half). */
+    public static final DeferredItem<org.overengineer.bettacraft.tank.plants.AquariumNetItem> AQUARIUM_NET = ITEMS.register("tank_net",
+            () -> new org.overengineer.bettacraft.tank.plants.AquariumNetItem(new Item.Properties().stacksTo(1)));
+
     /** M12: floating plants for the water surface of a tank (no blocks; the lily pad is the vanilla item). */
     public static final java.util.Map<org.overengineer.bettacraft.tank.plants.FloatingPlantType,
             DeferredItem<org.overengineer.bettacraft.tank.plants.FloatingPlantItem>> FLOATING_PLANTS = floatingPlants();

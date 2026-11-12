@@ -21,17 +21,20 @@ version as release notes.
 - Getting them: duckweed sometimes comes up with a bottle of swamp water, fishing in swamps and mangrove swamps
   sometimes brings up a floating plant (the red root floater only in mangrove swamps), the wandering trader sells
   frogbit and salvinia (the red root floater among his rare offers). No crafting recipe; they multiply in the aquarium.
-- Taking them out: right-click the surface with an empty hand (where no plant floats the menu opens as before) or with
-  shears; shears while sneaking, or the new **Thin out** button, thin the whole aquarium out by half. The plants of a
-  broken aquarium drop as items.
-- Water tab of the tank menu: a page for the floating plants (number per species, cover, light, growth, waste uptake);
-  Jade, The One Probe and WTHIT show the number and the cover.
+- **Aquarium net** (four string and a stick): right-click an aquarium to take out the floating plants you look at,
+  from any angle, also from the side through the glass; sneaking with the net thins the whole aquarium out by half
+  (lily pads stay). An empty hand also takes plants out while looking down at the surface (where no plant floats the
+  menu opens as before). The plants of a broken aquarium drop as items.
+- **Plants** tab in the tank menu: number per species, cover, light, growth, waste uptake, the dense cover warning and
+  a **Thin out** button; Jade, The One Probe and WTHIT show the number and the cover.
 - Server settings `floatingPlants.*`: growth speed (0 = off), most cover, dense cover, waste uptake, breeding bonus,
   food on the leaves, plants per tank, the chances of the bottle and of fishing.
 - Handbook page "Floating plants" (English and German) with links from the aquarium, water quality, breeding, food and
   menu pages; JEI information and item tooltips.
 
 ### Changed
+- Tank menu: the tab labels use a smaller font, so seven tabs fit (also the longer German labels); lines of text that
+  would run past the edge of the menu in a longer translation are drawn a little smaller instead.
 - Aquariums from earlier versions get an empty list of floating plants (tank data schema 7). Lily pads in the interior
   stay blocks of the interior; the nest still uses them when there are no plants on the surface.
 

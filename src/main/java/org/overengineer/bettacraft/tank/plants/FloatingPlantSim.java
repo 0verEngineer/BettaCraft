@@ -267,6 +267,38 @@ public final class FloatingPlantSim {
         return out;
     }
 
+    /**
+     * The first plant a view ray passes over or under (aquarium net from any angle, e.g. from the side through the glass):
+     * walks the ray from the eye in small steps while it is between {@code minY} and {@code maxY} (the water of the tank
+     * up to a little above the surface) and returns the first plant whose leaves are within {@code reach} of the ray's
+     * x/z there, or null.
+     */
+    @Nullable
+    public static FloatingPlant firstAlongRay(List<FloatingPlant> plants, double ex, double ey, double ez, double lx, double ly, double lz,
+                                              double minY, double maxY, double maxDist, double reach) {
+        double len = Math.sqrt(lx * lx + ly * ly + lz * lz);
+        if (len < 1e-9 || plants.isEmpty()) return null;
+        lx /= len;
+        ly /= len;
+        lz /= len;
+        for (double k = 0; k <= maxDist; k += 0.05) {
+            double y = ey + ly * k;
+            if (y < minY || y > maxY) continue;
+            double x = ex + lx * k, z = ez + lz * k;
+            FloatingPlant best = null;
+            double bestD = Double.MAX_VALUE;
+            for (FloatingPlant p : plants) {
+                double d = Math.hypot(p.x - x, p.z - z) - p.radius();
+                if (d <= reach && d < bestD) {
+                    best = p;
+                    bestD = d;
+                }
+            }
+            if (best != null) return best;
+        }
+        return null;
+    }
+
     /** Takes out half of the growing plants (rounded up, picked at random; lily pads stay); returns them. */
     public static List<FloatingPlant> thin(List<FloatingPlant> plants, RandomGenerator rnd) {
         List<FloatingPlant> growing = new ArrayList<>();
@@ -362,6 +394,29 @@ public final class FloatingPlantSim {
             // truncated data: keep what was read
         }
         return out;
+    }
+
+    /** Red root floater leaves: green in weak light, red in strong light (tint of the greyscale texture). */
+    public static final int RRF_GREEN = 0xFF86C25E, RRF_RED = 0xFFC8483A;
+    /** Red root floater roots: pale in weak light, red in strong light. */
+    public static final int RRF_ROOTS_PALE = 0xFFD8CBB8, RRF_ROOTS_RED = 0xFFB04436;
+
+    /** Client: ARGB tint of the leaves of a red root floater that is {@code red} (0 = green .. 1 = red). */
+    public static int redRootLeafTint(float red) {
+        return lerpColor(RRF_GREEN, RRF_RED, red);
+    }
+
+    /** Client: ARGB tint of the roots of a red root floater that is {@code red}. */
+    public static int redRootRootTint(float red) {
+        return lerpColor(RRF_ROOTS_PALE, RRF_ROOTS_RED, red);
+    }
+
+    static int lerpColor(int a, int b, float t) {
+        t = Math.max(0, Math.min(1, t));
+        int r = Math.round(((a >> 16) & 0xFF) * (1 - t) + ((b >> 16) & 0xFF) * t);
+        int g = Math.round(((a >> 8) & 0xFF) * (1 - t) + ((b >> 8) & 0xFF) * t);
+        int bl = Math.round((a & 0xFF) * (1 - t) + (b & 0xFF) * t);
+        return 0xFF000000 | (r << 16) | (g << 8) | bl;
     }
 
     /**

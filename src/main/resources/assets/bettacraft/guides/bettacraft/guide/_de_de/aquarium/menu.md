@@ -46,8 +46,12 @@ leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Fi
 Verdunstung und offene obere Blöcke, Heizer und Kühler und der gespeicherte [Strom](../equipment/power.md), wenn der
 Server ihn verlangt.
 
-Der kleine Knopf mit dem Blatt oben rechts öffnet die Seite der [Schwimmpflanzen](floating_plants.md): Anzahl je Art,
-Bedeckung, Licht, Wachstum, Abfallaufnahme, die Warnung bei dichter Decke und der Knopf **Ausdünnen**.
+## Pflanzen
+
+![Der Pflanzen-Tab](../images/menu_plants.png)
+
+Die [Schwimmpflanzen](floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, Abfallaufnahme, die
+Warnung bei dichter Decke und der Knopf **Ausdünnen**.
 
 ## Innenraum
 

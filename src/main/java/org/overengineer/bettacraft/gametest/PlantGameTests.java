@@ -38,6 +38,7 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankBreeding;
 import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.TankEquipment;
+import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankInteractions;
 import org.overengineer.bettacraft.tank.TankMultiblock;
 import org.overengineer.bettacraft.tank.menu.TankActions;
@@ -196,6 +197,75 @@ public final class PlantGameTests {
         h.succeed();
     }
 
+    /**
+     * Several in-game days in the care steps of a tank with a lit tank light, two bettas and a feeder (water quality,
+     * plants and the feeder as the care loop runs them, a quarter day per step): the plants spread up to the cap, the
+     * dense cover warns (menu warning, info overlay line) and food stays on the leaves (log line), the red root floater
+     * turns red.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_plants_days", timeoutTicks = 200)
+    public static void severalDaysWithLightAnimalsAndFeeder(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        double savedCap = ServerConfig.PLANTS_MAX_COVERAGE.get(), savedLeaves = ServerConfig.PLANTS_PELLETS_ON_LEAVES.get();
+        try {
+            ServerConfig.PLANTS_MAX_COVERAGE.set(0.8);
+            ServerConfig.PLANTS_PELLETS_ON_LEAVES.set(1.0);
+            TankBlockEntity c = box(h, 4, 1, 4, 4, 2, 3, 20000);
+            TankData t = c.getTank();
+            for (int x = 4; x < 8; x++) for (int z = 4; z < 7; z++) if (!(x == 4 && z == 4)) litLight(h, new BlockPos(x, 3, z));
+            BlockPos feederPos = new BlockPos(4, 3, 4);
+            h.setBlock(feederPos, ModBlocks.FEEDER.get().defaultBlockState());
+            org.overengineer.bettacraft.equipment.FeederBlockEntity feeder = (org.overengineer.bettacraft.equipment.FeederBlockEntity) h.getBlockEntity(feederPos);
+            feeder.items().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 64), false);
+            for (int i = 0; i < 2; i++) {
+                var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(net.minecraft.util.RandomSource.create(40 + i));
+                ItemStack bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                        org.overengineer.bettacraft.entity.betta.BettaData.create(g, i == 1, 0));
+                var err = TankInhabitants.insert(level, c, bucket, org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false);
+                h.assertTrue(err == null, "insert: " + (err == null ? "" : err.getString()));
+            }
+            BlockPos o = h.absolutePos(new BlockPos(4, 1, 4));
+            TankPlants.add(c, FloatingPlantType.DUCKWEED, o.getX() + 1.2, o.getZ() + 1.5, 0.5F, 0F);
+            TankPlants.add(c, FloatingPlantType.SALVINIA, o.getX() + 2.8, o.getZ() + 1.5, 0.5F, 0F);
+            FloatingPlant rrf = TankPlants.add(c, FloatingPlantType.RED_ROOT_FLOATER, o.getX() + 2.0, o.getZ() + 0.8, 0.5F, 0F);
+            h.assertTrue(TankPlants.light(level, c) == 15, "strong light under the tank lights");
+            double days = 0;
+            int steps = 0;
+            while (days < 30 && !(TankPlants.dense(t) && t.log().stream().anyMatch(e -> e.key().equals("log.bettacraft.pellets_on_leaves")))) {
+                org.overengineer.bettacraft.tank.TankWater.step(level, c, 0.25);
+                TankPlants.step(level, c, 0.25);
+                if (steps % 2 == 0) feeder.feedNow(level, c);
+                days += 0.25;
+                steps++;
+            }
+            h.assertTrue(t.plants().size() > 10, "the plants spread over " + days + " days: " + t.plants().size());
+            h.assertTrue(TankPlants.dense(t), "dense cover after " + days + " days: " + TankPlants.coverage(t));
+            h.assertTrue(TankPlants.coverage(t) < 0.8 + 0.12, "cover stays near the cap: " + TankPlants.coverage(t));
+            h.assertTrue(t.log().stream().anyMatch(e -> e.key().equals("log.bettacraft.plants_full")), "log: surface full");
+            h.assertTrue(t.log().stream().anyMatch(e -> e.key().equals("log.bettacraft.pellets_on_leaves")), "log: food on the leaves");
+            h.assertTrue(TankBreeding.warnings(level, c).contains("dense_plants"), "menu warning for the dense cover");
+            h.assertTrue(rrf.red > 0.9F, "red root floater red under the tank light: " + rrf.red);
+            // the info overlay line (Jade / The One Probe / WTHIT share it)
+            var d = org.overengineer.bettacraft.compat.info.InfoData.tank(level, c.getBlockPos());
+            h.assertTrue(d.getInt("plants") == t.plants().size(), "overlay data: plant count");
+            boolean line = false;
+            for (var l : org.overengineer.bettacraft.compat.info.InfoLines.tank(d, false)) {
+                if (l.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc && tc.getKey().equals("jade.bettacraft.tank.plants")) {
+                    line = String.valueOf(tc.getArgs()[0]).equals(String.valueOf(t.plants().size()))
+                            && String.valueOf(tc.getArgs()[1]).equals(String.valueOf(Math.min(100, Math.round(TankPlants.coverage(t) * 100))));
+                }
+            }
+            h.assertTrue(line, "overlay line \"Floating plants: N (x % cover)\"");
+            // all plants over the water of the tank
+            PlantSurface surf = TankPlants.surface(t);
+            for (FloatingPlant p : t.plants()) h.assertTrue(surf.contains(p.x, p.z), "over the water: " + p.x + "/" + p.z);
+        } finally {
+            ServerConfig.PLANTS_MAX_COVERAGE.set(savedCap);
+            ServerConfig.PLANTS_PELLETS_ON_LEAVES.set(savedLeaves);
+        }
+        h.succeed();
+    }
+
     /** Enclosed in stone (no sky, no lamp) plants neither grow nor take up waste. */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void noGrowthInTheDark(GameTestHelper h) {
@@ -221,7 +291,7 @@ public final class PlantGameTests {
 
     // ------------------------------------------------------------------ taking out
 
-    /** Empty hand takes out the plants looked at (else the menu opens as before), shears + sneak thin by half, and the menu button. */
+    /** Empty hand takes out the plants looked at (else the menu opens as before), net + sneak thins by half, shears do nothing, and the menu button. */
     @GameTest(template = EMPTY)
     public static void takeOutThinAndMenuButton(GameTestHelper h) {
         ServerLevel level = h.getLevel();
@@ -243,10 +313,18 @@ public final class PlantGameTests {
             use(sp, h, top, ItemStack.EMPTY);
             h.assertTrue(sp.containerMenu instanceof TankMenu, "menu opens where no plant floats");
             TankMenu menu = (TankMenu) sp.containerMenu;
-            // shears while sneaking: half of the 15 growing plants (rounded up), the lily pad stays
+            // shears (also sneaking) no longer touch the plants
             sp.setShiftKeyDown(true);
             use(sp, h, top, new ItemStack(Items.SHEARS));
-            h.assertTrue(t.plants().size() == 8, "thinned to 7 + lily pad: " + t.plants().size());
+            h.assertTrue(t.plants().size() == 16, "shears do not thin out: " + t.plants().size());
+            sp.setShiftKeyDown(false);
+            use(sp, h, top, new ItemStack(Items.SHEARS));
+            h.assertTrue(t.plants().size() == 16, "shears do not take out: " + t.plants().size());
+            sp.containerMenu = menu;
+            // the aquarium net while sneaking: half of the 15 growing plants (rounded up), the lily pad stays
+            sp.setShiftKeyDown(true);
+            use(sp, h, top, new ItemStack(ModItems.AQUARIUM_NET.get()));
+            h.assertTrue(t.plants().size() == 8, "net + sneak thins to 7 + lily pad: " + t.plants().size());
             h.assertTrue(t.plants().stream().anyMatch(p -> p.type == FloatingPlantType.LILY_PAD), "lily pad stays");
             h.assertTrue(count(sp, item(FloatingPlantType.SALVINIA)) == 9, "8 more items: " + count(sp, item(FloatingPlantType.SALVINIA)));
             sp.setShiftKeyDown(false);
@@ -269,6 +347,168 @@ public final class PlantGameTests {
         int drops = level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(o).inflate(6),
                 e -> TankPlants.typeOf(e.getItem()) != null).stream().mapToInt(e -> e.getItem().getCount()).sum();
         h.assertTrue(drops == before, "plants drop with the tank: " + drops + " of " + before);
+        h.succeed();
+    }
+
+    /** A player standing beside the tank at (x, eyeY, z) (absolute), looking in {@code yaw} with {@code pitch}. */
+    private static ServerPlayer looking(GameTestHelper h, double x, double eyeY, double z, float yaw, float pitch) {
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
+        sp.teleportTo(h.getLevel(), x, eyeY - sp.getEyeHeight(), z, yaw, pitch);
+        sp.setYRot(yaw);
+        sp.setXRot(pitch);
+        sp.getInventory().selected = 8;
+        return sp;
+    }
+
+    private static void useOnFace(ServerPlayer sp, GameTestHelper h, BlockPos abs, Direction face, ItemStack stack) {
+        sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(abs).relative(face, 0.5), face, abs, false);
+        sp.gameMode.useItemOn(sp, h.getLevel(), stack, InteractionHand.MAIN_HAND, hit);
+    }
+
+    /**
+     * The aquarium net takes plants out from any angle: from the side through the glass (eye below the surface, where
+     * the empty hand opens the menu), from above, and nothing where no plant floats (no menu either); sneaking with it
+     * thins out by half.
+     */
+    @GameTest(template = EMPTY)
+    public static void netTakesPlantsOutFromAnyAngle(GameTestHelper h) {
+        TankBlockEntity c = box(h, 4, 1, 4, 4, 2, 2, 14000);
+        TankData t = c.getTank();
+        BlockPos o = h.absolutePos(new BlockPos(4, 1, 4));
+        // two frogbit near the north glass, one salvinia at the back
+        FloatingPlant a = TankPlants.add(c, FloatingPlantType.FROGBIT, o.getX() + 1.5, o.getZ() + 0.5, 1F, 0F);
+        FloatingPlant b = TankPlants.add(c, FloatingPlantType.FROGBIT, o.getX() + 3.4, o.getZ() + 0.5, 1F, 0F);
+        TankPlants.add(c, FloatingPlantType.SALVINIA, o.getX() + 1.5, o.getZ() + 1.6, 0.6F, 0F);
+        h.assertTrue(a != null && b != null && t.plants().size() == 3, "three plants");
+        double surface = t.waterSurfaceY();
+        h.assertTrue(surface > o.getY() + 1.5, "water up to the second layer: " + surface);
+        // north of the tank, eye a bit below the surface, looking south (yaw 0) at the first frogbit through the glass
+        ServerPlayer sp = looking(h, o.getX() + 1.5, surface - 0.3, o.getZ() - 1.5, 0F, 0F);
+        BlockPos glass = o.above();
+        try {
+            sp.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+            useOnFace(sp, h, glass, Direction.NORTH, ItemStack.EMPTY);
+            h.assertTrue(sp.containerMenu instanceof TankMenu && t.plants().size() == 3, "empty hand from the side: the menu as before");
+            sp.closeContainer();
+            useOnFace(sp, h, glass, Direction.NORTH, new ItemStack(ModItems.AQUARIUM_NET.get()));
+            h.assertTrue(!t.plants().contains(a), "the net took out the frogbit seen from the side");
+            h.assertTrue(t.plants().size() == 2, "only that one: " + t.plants().size());
+            h.assertTrue(count(sp, item(FloatingPlantType.FROGBIT)) == 1, "frogbit into the inventory");
+            h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu with the net");
+            h.assertTrue(sp.getMainHandItem().is(ModItems.AQUARIUM_NET.get()), "the net stays in the hand");
+            // the same spot again: at most the salvinia behind comes out, no menu
+            useOnFace(sp, h, glass, Direction.NORTH, new ItemStack(ModItems.AQUARIUM_NET.get()));
+            h.assertTrue(t.plants().size() >= 1, "the other frogbit stays: " + t.plants().size());
+            h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu with the net");
+        } finally {
+            sp.getServer().getPlayerList().remove(sp);
+        }
+        // from above, looking down at the second frogbit
+        ServerPlayer top = lookingDown(h, b.x, o.getY() + 4.5, b.z);
+        try {
+            use(top, h, h.absolutePos(new BlockPos(7, 2, 4)), new ItemStack(ModItems.AQUARIUM_NET.get()));
+            h.assertTrue(!t.plants().contains(b), "the net from above");
+            // refill and thin out with net + sneak (lily pad stays)
+            for (int i = 0; i < 6; i++) TankPlants.add(c, FloatingPlantType.DUCKWEED, o.getX() + 0.5 + i * 0.5, o.getZ() + 1.0, 0.5F, 0F);
+            TankPlants.add(c, FloatingPlantType.LILY_PAD, o.getX() + 3.5, o.getZ() + 1.5, 1F, 0F);
+            int growing = (int) t.plants().stream().filter(p -> p.type.grows()).count();
+            top.setShiftKeyDown(true);
+            use(top, h, h.absolutePos(new BlockPos(7, 2, 4)), new ItemStack(ModItems.AQUARIUM_NET.get()));
+            int left = (int) t.plants().stream().filter(p -> p.type.grows()).count();
+            h.assertTrue(left == growing / 2, "net + sneak thins by half: " + growing + " -> " + left);
+            h.assertTrue(t.plants().stream().anyMatch(p -> p.type == FloatingPlantType.LILY_PAD), "lily pad stays");
+            h.assertTrue(!(top.containerMenu instanceof TankMenu), "no menu");
+            h.assertTrue(top.level() == h.getLevel(), "sneaking with the net does not enter the interior");
+        } finally {
+            top.getServer().getPlayerList().remove(top);
+        }
+        h.succeed();
+    }
+
+    /** A locked tank of another player: placing, taking out (hand, net), thinning (net, menu button) do nothing. */
+    @GameTest(template = EMPTY)
+    public static void lockedTankKeepsItsPlants(GameTestHelper h) {
+        TankBlockEntity c = box(h, 4, 1, 4, 3, 1, 3, 9000);
+        TankData t = c.getTank();
+        BlockPos o = h.absolutePos(new BlockPos(4, 1, 4));
+        for (int i = 0; i < 6; i++) TankPlants.add(c, FloatingPlantType.SALVINIA, o.getX() + 0.5 + (i % 3), o.getZ() + 0.5 + (i / 3), 0.6F, 0F);
+        t.setOwner(java.util.UUID.randomUUID());
+        t.setLocked(true);
+        BlockPos top = h.absolutePos(new BlockPos(5, 1, 5));
+        ServerPlayer sp = lookingDown(h, o.getX() + 0.5, o.getY() + 3, o.getZ() + 0.5);
+        try {
+            sp.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+            h.assertTrue(!TankInhabitants.canModify(sp, t), "a stranger may not change the tank (no operator)");
+            use(sp, h, top, new ItemStack(item(FloatingPlantType.DUCKWEED), 2));
+            h.assertTrue(t.plants().size() == 6 && sp.getMainHandItem().getCount() == 2, "no plant placed, item kept");
+            use(sp, h, top, ItemStack.EMPTY);
+            h.assertTrue(t.plants().size() == 6, "empty hand takes nothing out");
+            use(sp, h, top, new ItemStack(ModItems.AQUARIUM_NET.get()));
+            h.assertTrue(t.plants().size() == 6, "the net takes nothing out");
+            sp.setShiftKeyDown(true);
+            use(sp, h, top, new ItemStack(ModItems.AQUARIUM_NET.get()));
+            h.assertTrue(t.plants().size() == 6, "the net does not thin out");
+            sp.setShiftKeyDown(false);
+            h.assertTrue(count(sp, item(FloatingPlantType.SALVINIA)) == 0, "no items for the stranger");
+            // the menu button (the menu itself opens for everybody: looking is allowed)
+            TankMenu menu = new TankMenu(1234, sp.getInventory(), c);
+            sp.containerMenu = menu;
+            TankActions.handle(sp, new TankActionPayload(menu.containerId, TankActions.THIN_PLANTS, 0, "", Optional.empty()));
+            h.assertTrue(t.plants().size() == 6, "the menu button does not thin out");
+            // the owner may
+            t.setOwner(sp.getUUID());
+            TankActions.handle(sp, new TankActionPayload(menu.containerId, TankActions.THIN_PLANTS, 0, "", Optional.empty()));
+            h.assertTrue(t.plants().size() == 3, "the owner thins out: " + t.plants().size());
+        } finally {
+            sp.getServer().getPlayerList().remove(sp);
+        }
+        h.succeed();
+    }
+
+    /**
+     * With floating plants on the tank every other right-click works as before: water buckets fill and drain, a betta
+     * bucket and a fish bag put in their fish, pellets feed by hand, an empty hand at a free spot opens the menu; the
+     * plants stay as they are.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void otherInteractionsUnchangedWithPlants(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        TankBlockEntity c = box(h, 4, 1, 4, 3, 2, 3, 12000);
+        TankData t = c.getTank();
+        BlockPos o = h.absolutePos(new BlockPos(4, 1, 4));
+        for (int i = 0; i < 5; i++) TankPlants.add(c, FloatingPlantType.values()[i % 4], o.getX() + 0.6 + i * 0.45, o.getZ() + 0.6, 0.7F, 0F);
+        java.util.Set<Integer> ids = new java.util.HashSet<>();
+        for (FloatingPlant p : t.plants()) ids.add(p.id);
+        BlockPos top = h.absolutePos(new BlockPos(5, 2, 6));
+        // looking down at the back row, where no plant floats
+        ServerPlayer sp = lookingDown(h, o.getX() + 1.5, o.getY() + 4.5, o.getZ() + 2.5);
+        try {
+            sp.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+            long w = t.waterMb();
+            use(sp, h, top, new ItemStack(Items.WATER_BUCKET));
+            h.assertTrue(t.waterMb() == w + 1000 && sp.getMainHandItem().is(Items.BUCKET), "water bucket fills: " + t.waterMb());
+            use(sp, h, top, new ItemStack(Items.BUCKET));
+            h.assertTrue(t.waterMb() == w && sp.getMainHandItem().is(Items.WATER_BUCKET), "bucket drains: " + t.waterMb());
+            var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(net.minecraft.util.RandomSource.create(5));
+            use(sp, h, top, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                    org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
+            h.assertTrue(TankInhabitants.liveInhabitants(level, t).size() == 1, "betta bucket puts the fish in");
+            var tropical = net.minecraft.world.entity.EntityType.TROPICAL_FISH.create(level);
+            ItemStack bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(tropical);
+            tropical.discard();
+            use(sp, h, top, bag);
+            h.assertTrue(TankInhabitants.liveInhabitants(level, t).size() == 2, "fish bag puts its fish in");
+            use(sp, h, top, new ItemStack(ModItems.BETTA_PELLETS.get(), 3));
+            h.assertTrue(sp.getMainHandItem().getCount() == 2, "pellets fed by hand: " + sp.getMainHandItem().getCount());
+            use(sp, h, top, ItemStack.EMPTY);
+            h.assertTrue(sp.containerMenu instanceof TankMenu, "empty hand at a free spot opens the menu");
+            java.util.Set<Integer> after = new java.util.HashSet<>();
+            for (FloatingPlant p : t.plants()) after.add(p.id);
+            h.assertTrue(after.equals(ids), "plants unchanged: " + ids + " -> " + after);
+        } finally {
+            sp.getServer().getPlayerList().remove(sp);
+        }
         h.succeed();
     }
 

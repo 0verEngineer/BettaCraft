@@ -273,4 +273,77 @@ class FloatingPlantSimTest {
         assertEquals(FloatingPlantType.FROGBIT, view.plants().getFirst().type);
         assertFalse(view.plants().get(1).type.movable(), "the lily pad is fixed");
     }
+
+    @Test
+    void redRootFloaterTintIsRedUnderStrongAndGreenUnderWeakLight() {
+        int strong = FloatingPlantSim.redRootLeafTint((float) FloatingPlantSim.redTarget(15));
+        int weak = FloatingPlantSim.redRootLeafTint((float) FloatingPlantSim.redTarget(9));
+        int r = (strong >> 16) & 0xFF, g = (strong >> 8) & 0xFF;
+        assertTrue(r > g + 80, "red leaves under a tank light: " + Integer.toHexString(strong));
+        r = (weak >> 16) & 0xFF;
+        g = (weak >> 8) & 0xFF;
+        assertTrue(g > r + 40, "green leaves under weak light: " + Integer.toHexString(weak));
+        assertEquals(FloatingPlantSim.RRF_GREEN, FloatingPlantSim.redRootLeafTint(0));
+        assertEquals(FloatingPlantSim.RRF_RED, FloatingPlantSim.redRootLeafTint(1));
+        int half = FloatingPlantSim.redRootLeafTint(0.5F);
+        assertTrue(((half >> 16) & 0xFF) > ((FloatingPlantSim.RRF_GREEN >> 16) & 0xFF) && ((half >> 16) & 0xFF) < ((FloatingPlantSim.RRF_RED >> 16) & 0xFF), "in between");
+        assertTrue(((FloatingPlantSim.redRootRootTint(1) >> 16) & 0xFF) > ((FloatingPlantSim.redRootRootTint(1) >> 8) & 0xFF) + 80, "red roots");
+        assertEquals(0xFF, FloatingPlantSim.redRootLeafTint(2F) >>> 24, "clamped, opaque");
+    }
+
+    /**
+     * The client glides between the updates of a drifting plant: drawn every frame (3 frames per tick) while the updates
+     * come in every second with network jitter (18-22 ticks), the drawn position never jumps, never runs backwards and
+     * follows the server within one update.
+     */
+    @Test
+    void glidingIsSmoothWithJitteredUpdates() {
+        double speed = 0.025 / 20; // blocks per tick, the fastest random drift
+        double serverX = 100.0;
+        List<FloatingPlant> client = new ArrayList<>(List.of(new FloatingPlant(3, FloatingPlantType.SALVINIA, serverX, 5, 0.5F, 0)));
+        Random jitter = new Random(7);
+        long tick = 0, nextUpdate = 20;
+        double last = client.getFirst().renderX(0, 20), maxStep = 0, maxLag = 0;
+        for (int frame = 0; frame < 3 * 20 * 60; frame++) { // one minute at 60 fps
+            double time = frame / 3.0;
+            long now = (long) Math.floor(time);
+            serverX = 100.0 + speed * time;
+            if (now >= nextUpdate && now > tick) {
+                // a sync packet arrives: the server position of the last care step (once per second)
+                double sent = 100.0 + speed * (Math.floor(now / 20.0) * 20);
+                List<FloatingPlant> fresh = new ArrayList<>(List.of(new FloatingPlant(3, FloatingPlantType.SALVINIA, sent, 5, 0.5F, 0)));
+                FloatingPlantSim.adopt(client, fresh, now, 20);
+                client = fresh;
+                nextUpdate = now + 18 + jitter.nextInt(5);
+            }
+            tick = now;
+            double x = client.getFirst().renderX(time, 20);
+            double step = x - last;
+            assertTrue(step >= -1e-9, "never backwards: " + step + " at frame " + frame);
+            maxStep = Math.max(maxStep, step);
+            maxLag = Math.max(maxLag, serverX - x);
+            last = x;
+        }
+        assertTrue(maxStep < speed * 2.5, "no jumps: biggest step per frame " + maxStep + " (drift per frame " + speed / 3 + ")");
+        assertTrue(maxLag < speed * 70, "follows the server within about one update: lag " + maxLag);
+        assertTrue(last > 100.0 + speed * 1100, "moved along: " + last);
+    }
+
+    @Test
+    void netFindsThePlantAlongTheViewRay() {
+        List<FloatingPlant> plants = new ArrayList<>();
+        FloatingPlant near = new FloatingPlant(1, FloatingPlantType.FROGBIT, 2.5, 1.2, 1F, 0);
+        FloatingPlant far = new FloatingPlant(2, FloatingPlantType.FROGBIT, 2.5, 3.5, 1F, 0);
+        plants.add(far);
+        plants.add(near);
+        // from the side (north), eye under the surface (y 2.0), looking south through the glass
+        assertEquals(near, FloatingPlantSim.firstAlongRay(plants, 2.5, 1.6, -1.5, 0, 0, 1, 1.0, 2.5, 12, 0.3), "the first plant along the ray");
+        // beside the plants: nothing
+        assertNull(FloatingPlantSim.firstAlongRay(plants, 4.5, 1.6, -1.5, 0, 0, 1, 1.0, 2.5, 12, 0.3));
+        // high above the tank and looking level: the ray is never between the floor and just above the surface
+        assertNull(FloatingPlantSim.firstAlongRay(plants, 2.5, 6.0, -1.5, 0, 0, 1, 1.0, 2.5, 12, 0.3));
+        // slanted from above the far side: the far plant comes first
+        assertEquals(far, FloatingPlantSim.firstAlongRay(plants, 2.5, 3.0, 5.5, 0, -0.5, -1, 1.0, 2.5, 12, 0.3));
+        assertNull(FloatingPlantSim.firstAlongRay(List.of(), 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.3));
+    }
 }

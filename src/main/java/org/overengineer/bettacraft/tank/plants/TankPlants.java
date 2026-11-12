@@ -48,6 +48,8 @@ public final class TankPlants {
     public static final double BONUS_FROM = 0.1;
     /** Reach of a hand taking plants out (blocks around the spot looked at, plus the leaf radius). */
     public static final double TAKE_REACH = 0.2;
+    /** Reach of the aquarium net around the spot looked at (a bit wider than the hand). */
+    public static final double NET_REACH = 0.3;
     /** A plant put in from an item is half grown. */
     public static final float ITEM_SIZE = 0.5F;
     /** Most leaf cover a player can still put a plant into. */
@@ -115,6 +117,23 @@ public final class TankPlants {
         if (k < 0 || k > 12) return null;
         Vec3 p = eye.add(look.scale(k));
         return surface(t).contains(p.x, p.z) ? p : null;
+    }
+
+    /**
+     * Where the aquarium net takes plants out (x, surface, z): where the view ray meets the surface when it does (looking
+     * down from above), otherwise the first plant the ray passes over or under inside the tank (from the side through
+     * the glass, from below). Null when the ray meets no plant.
+     */
+    @Nullable
+    public static Vec3 netTarget(TankData t, Vec3 eye, Vec3 look) {
+        double y = t.waterMb() <= 0 ? t.min().getY() + 1.0 / 16 : t.waterSurfaceY();
+        Vec3 at = surfaceHit(t, eye, look);
+        if (at != null) {
+            for (FloatingPlant p : t.plants()) if (Math.hypot(p.x - at.x, p.z - at.z) <= NET_REACH + p.radius()) return at;
+        }
+        FloatingPlant p = FloatingPlantSim.firstAlongRay(t.plants(), eye.x, eye.y, eye.z, look.x, look.y, look.z,
+                t.min().getY(), y + 0.5, 12, NET_REACH);
+        return p == null ? null : new Vec3(p.x, y, p.z);
     }
 
     // ------------------------------------------------------------------ light
@@ -200,10 +219,11 @@ public final class TankPlants {
         int before = t.plants().size();
         FloatingPlantSim.Growth g = FloatingPlantSim.grow(t.plants(), surface, env, params(), days, rnd, t::nextPlantId);
         if (g.offshoots() > 0 && before > 0) {
-            double cov = FloatingPlantSim.coverage(t.plants(), surface.area());
+            // the same measure that stops the offshoots (every plant counted full-grown): logged once when it reaches the cap
+            double full = FloatingPlantSim.fullCoverage(t.plants(), surface.area());
             double cap = ServerConfig.getOr(ServerConfig.PLANTS_MAX_COVERAGE, 0.6);
-            if (cov >= cap && FloatingPlantSim.coverage(t.plants().subList(0, before), surface.area()) < cap) {
-                TankCare.log(level, c, "log.bettacraft.plants_full", String.valueOf(Math.round(cov * 100)));
+            if (full >= cap && FloatingPlantSim.fullCoverage(t.plants().subList(0, before), surface.area()) < cap) {
+                TankCare.log(level, c, "log.bettacraft.plants_full", String.valueOf(Math.round(Math.min(1.0, full) * 100)));
             }
         }
         double uptake = ServerConfig.getOr(ServerConfig.PLANTS_WASTE_UPTAKE, 0.04);
@@ -271,7 +291,12 @@ public final class TankPlants {
 
     /** Takes the plants out whose leaves are at (x, z); returns their items. */
     public static List<ItemStack> removeAt(ServerLevel level, TankBlockEntity c, double x, double z) {
-        List<FloatingPlant> removed = FloatingPlantSim.removeNear(c.getTank().plants(), x, z, TAKE_REACH);
+        return removeAt(level, c, x, z, TAKE_REACH);
+    }
+
+    /** Takes the plants out whose leaves are within {@code reach} of (x, z); returns their items. */
+    public static List<ItemStack> removeAt(ServerLevel level, TankBlockEntity c, double x, double z, double reach) {
+        List<FloatingPlant> removed = FloatingPlantSim.removeNear(c.getTank().plants(), x, z, reach);
         if (removed.isEmpty()) return List.of();
         c.markTankChanged();
         sync(level, c);
