@@ -91,11 +91,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabOverview = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.overview"), b -> setTab(Tab.OVERVIEW))
                 .bounds(x + 56, y + 3, 50, 12).build());
         tabInhabitants = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.inhabitants"), b -> setTab(Tab.INHABITANTS))
-                .bounds(x + 106, y + 3, 46, 12).build());
+                .bounds(x + 106, y + 3, 42, 12).build());
         tabBreeding = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.breeding"), b -> setTab(Tab.BREEDING))
-                .bounds(x + 152, y + 3, 46, 12).build());
+                .bounds(x + 148, y + 3, 54, 12).build());
         tabLog = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.log"), b -> setTab(Tab.LOG))
-                .bounds(x + 198, y + 3, 43, 12).build());
+                .bounds(x + 202, y + 3, 39, 12).build());
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
             logFilter = LogFilter.values()[(logFilter.ordinal() + 1) % LogFilter.values().length];
             logScroll = 0;

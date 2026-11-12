@@ -34,6 +34,22 @@ final class JadeClientTooltips {
         return Component.literal(p + "%").withStyle(p > 50 ? ChatFormatting.GREEN : p > 25 ? ChatFormatting.GOLD : ChatFormatting.RED);
     }
 
+    /** If the view ray hits a tank block but a betta inside the tank is behind the glass, show that betta instead. */
+    static snownee.jade.api.Accessor<?> retarget(snownee.jade.api.IWailaClientRegistration reg, snownee.jade.api.Accessor<?> accessor) {
+        if (!(accessor instanceof BlockAccessor block) || !(block.getBlock() instanceof org.overengineer.bettacraft.tank.TankBlock)) return accessor;
+        net.minecraft.world.entity.player.Player player = accessor.getPlayer();
+        net.minecraft.world.level.Level level = accessor.getLevel();
+        if (player == null || level == null) return accessor;
+        net.minecraft.world.phys.Vec3 eye = player.getEyePosition();
+        net.minecraft.world.phys.Vec3 end = eye.add(player.getViewVector(1.0F).scale(player.entityInteractionRange() + 3.0));
+        net.minecraft.world.phys.AABB area = new net.minecraft.world.phys.AABB(eye, end).inflate(1.0);
+        net.minecraft.world.phys.EntityHitResult hit = net.minecraft.world.entity.projectile.ProjectileUtil.getEntityHitResult(level, player,
+                eye, end, area, e -> e instanceof BettaEntity && e.isAlive(), 0.0F);
+        if (hit == null) return accessor;
+        return reg.entityAccessor().level(level).player(player).hit(hit).entity(hit.getEntity())
+                .serverConnected(accessor.isServerConnected()).showDetails(accessor.showDetails()).requireVerification().build();
+    }
+
     static final class Tank implements IBlockComponentProvider {
         static final Tank INSTANCE = new Tank();
 
@@ -48,7 +64,7 @@ final class JadeClientTooltips {
             tooltip.add(animals);
             String nest = d.getString("nest");
             if (!"none".equals(nest) && !nest.isEmpty()) {
-                tooltip.add(Component.translatable("jade.bettacraft.tank.nest", Component.translatable("jade.bettacraft.nest." + nest), d.getInt("eggs")));
+                tooltip.add(Component.translatable("jade.bettacraft.tank.nest", Component.translatable("jade.bettacraft.nest." + nest, d.getInt("eggs"))));
             }
             ListTag warn = d.getList("warnings", Tag.TAG_STRING);
             for (int i = 0; i < warn.size(); i++) {

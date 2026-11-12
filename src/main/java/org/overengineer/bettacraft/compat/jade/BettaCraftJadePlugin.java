@@ -29,5 +29,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(JadeClientTooltips.Tank.INSTANCE, TankBlock.class);
         registration.registerEntityComponent(JadeClientTooltips.Betta.INSTANCE, BettaEntity.class);
+        // looking through the glass at a fish shows the fish, not the tank block
+        registration.addRayTraceCallback((hit, accessor, original) -> JadeClientTooltips.retarget(registration, accessor));
     }
 }

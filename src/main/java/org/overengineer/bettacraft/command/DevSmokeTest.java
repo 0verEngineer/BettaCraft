@@ -30,6 +30,51 @@ public final class DevSmokeTest {
 
     private DevSmokeTest() {}
 
+    /** M2: a pair in warm water runs through nest, spawning and fry (simulated in fast steps). */
+    private static void breedingTank(ServerLevel level) {
+        BlockPos b = base.offset(6, 0, 0);
+        TankBlockEntity c = TankMultiblock.getController(level, b);
+        if (c == null) throw new IllegalStateException("breeding tank did not form");
+        // leftovers of an earlier run (the dev world persists)
+        for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank())) e.discard();
+        c.getTank().inhabitants().clear();
+        c.getTank().setNest(null);
+        if (c.getTank().waterMb() < 12000) TankInteractions.changeWater(level, c, 12000 - c.getTank().waterMb());
+        c.getTank().heaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get()));
+        c.getTank().setTargetTemp(27.0F);
+        c.getTank().setWaterTemp(27.0F);
+        var r = net.minecraft.util.RandomSource.create(5);
+        for (int i = 0; i < 2; i++) {
+            var d = org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(r),
+                    i == 1, level.getGameTime());
+            var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(
+                    new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get()), d);
+            var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, bucket,
+                    org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false);
+            if (err != null) LOGGER.warn("[smoketest] breeding insert: {}", err.getString());
+        }
+        int eggs = 0;
+        for (int i = 0; i < 60 && (c.getTank().nest() == null || !c.getTank().nest().hasEggs()); i++) {
+            org.overengineer.bettacraft.tank.TankBreeding.step(level, c, 0.05);
+        }
+        if (c.getTank().nest() == null || !c.getTank().nest().hasEggs()) throw new IllegalStateException("no eggs after 3 days");
+        eggs = c.getTank().nest().eggCount();
+        // take the female out, then let the larvae swim free
+        for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank())) {
+            if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity be && be.isFemale()) {
+                c.getTank().inhabitants().remove(e.getUUID());
+                e.discard();
+            }
+        }
+        for (int i = 0; i < 40 && c.getTank().nest() != null; i++) org.overengineer.bettacraft.tank.TankBreeding.step(level, c, 0.05);
+        long fry = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank()).stream()
+                .filter(e -> e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity be && !be.isAdult()).count();
+        LOGGER.info("[smoketest] breeding: {} eggs -> {} fry, warnings {}", eggs, fry, org.overengineer.bettacraft.tank.TankBreeding.warnings(level, c));
+        if (fry <= 0) throw new IllegalStateException("no fry");
+        for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank())) e.discard();
+        c.getTank().inhabitants().clear();
+    }
+
     @SubscribeEvent
     public static void onTick(ServerTickEvent.Post event) {
         if (!ENABLED) return;
@@ -66,6 +111,13 @@ public final class DevSmokeTest {
                     f.feedNow(level, c);
                 }
                 level.setBlockAndUpdate(base.offset(1, 2, 0), ModBlocks.TANK_LIGHT.get().defaultBlockState());
+            } else if (ticks == 40) {
+                BlockPos b = base.offset(6, 0, 0);
+                for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++)
+                    if (!level.getBlockState(b.offset(x, y, z)).is(ModBlocks.TANK.get()))
+                        level.setBlockAndUpdate(b.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
+            } else if (ticks == 50) {
+                breedingTank(level);
             } else if (ticks == 200) {
                 TankBlockEntity c = TankMultiblock.getController(level, base);
                 var live = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank());

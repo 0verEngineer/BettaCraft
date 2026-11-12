@@ -186,7 +186,7 @@ final class LangEn {
         a.accept("tooltip.bettacraft.culture", "Ready after %s in-game day(s) (keep it in your inventory or a chest)");
         a.accept("tooltip.bettacraft.culture.light", "Ready after %s in-game day(s), needs light to hatch");
         a.accept("tooltip.bettacraft.artemia_cysts", "%s uses left. Craft with a bottle of salt water.");
-        a.accept("pectoral.bettacraft.normal", "normal");
+        a.accept("pectoral.bettacraft.normal", "Normal");
         a.accept("pectoral.bettacraft.dumbo", "Dumbo");
         a.accept("locus.bettacraft.finform", "Fins");
         a.accept("locus.bettacraft.pectoral", "Pectorals");
@@ -235,7 +235,8 @@ final class LangEn {
         a.accept("gui.bettacraft.breeding.nest.none", "No bubble nest. Breeding conditions:");
         a.accept("gui.bettacraft.breeding.nest.building", "The male builds a bubble nest (%s%%)");
         a.accept("gui.bettacraft.breeding.nest.built", "Bubble nest ready, waiting for a female");
-        a.accept("gui.bettacraft.breeding.nest.eggs", "Bubble nest: %s × %s");
+        a.accept("gui.bettacraft.breeding.nest.egg", "Bubble nest with %s eggs");
+        a.accept("gui.bettacraft.breeding.nest.larva", "Bubble nest with %s larvae");
         a.accept("gui.bettacraft.breeding.nest.free_in", "Fry swim free in %s days, care %s%%");
         a.accept("gui.bettacraft.breeding.cond.pair", "Adult male and female in the tank");
         a.accept("gui.bettacraft.breeding.cond.temp", "Water %s-%s °C (now %s °C)");
@@ -256,11 +257,11 @@ final class LangEn {
         a.accept("config.jade.plugin_bettacraft.betta", "Bettacraft betta");
         a.accept("jade.bettacraft.tank.water", "Water %s °C | %s / %s mB");
         a.accept("jade.bettacraft.tank.animals", "Animals: %s (%s adults)");
-        a.accept("jade.bettacraft.tank.nest", "Nest: %s (%s eggs)");
+        a.accept("jade.bettacraft.tank.nest", "Nest: %s");
         a.accept("jade.bettacraft.nest.building", "being built");
         a.accept("jade.bettacraft.nest.built", "ready");
-        a.accept("jade.bettacraft.nest.egg", "eggs");
-        a.accept("jade.bettacraft.nest.larva", "larvae");
+        a.accept("jade.bettacraft.nest.egg", "%s eggs");
+        a.accept("jade.bettacraft.nest.larva", "%s larvae");
         a.accept("jade.bettacraft.sneak", "Sneak for the list of animals");
         a.accept("jade.bettacraft.betta.type", "Betta (%s)");
         a.accept("jade.bettacraft.betta.health", "Health %s, fed %s");

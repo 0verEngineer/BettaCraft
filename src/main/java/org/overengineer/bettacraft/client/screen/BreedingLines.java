@@ -49,8 +49,9 @@ final class BreedingLines {
                 case "building" -> out.add(header("gui.bettacraft.breeding.nest.building", pct));
                 case "built" -> out.add(header("gui.bettacraft.breeding.nest.built"));
                 default -> {
-                    Component stage = Component.translatable(LifeStage.byId(n.getString("stage")).translationKey());
-                    out.add(header("gui.bettacraft.breeding.nest.eggs", n.getInt("eggs"), stage));
+                    LifeStage stage = LifeStage.byId(n.getString("stage"));
+                    out.add(header(stage == LifeStage.LARVA ? "gui.bettacraft.breeding.nest.larva" : "gui.bettacraft.breeding.nest.egg",
+                            n.getInt("eggs")));
                     out.add(Component.translatable("gui.bettacraft.breeding.nest.free_in", f1(n.getFloat("days_left")),
                             Math.round(n.getFloat("care") * 100)).withStyle(ChatFormatting.GRAY));
                 }
@@ -102,7 +103,7 @@ final class BreedingLines {
                 if (outs.size() > 4) line.append(", ...");
                 out.add(line);
                 out.add(Component.literal("   ").append(Component.translatable("gui.bettacraft.breeding.cross",
-                        GenotypeText.pair(father, locus), GenotypeText.pair(mother, locus))).withStyle(ChatFormatting.DARK_GRAY));
+                        GenotypeText.pair(father, locus), GenotypeText.pair(mother, locus))).withStyle(ChatFormatting.GRAY));
             }
             out.add(Component.translatable("gui.bettacraft.breeding.sex_ratio").withStyle(ChatFormatting.GRAY));
         } else {

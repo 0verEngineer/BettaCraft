@@ -32,6 +32,8 @@ import org.overengineer.bettacraft.entity.betta.BettaData;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
 import org.overengineer.bettacraft.genetics.BettaGenome;
+import org.overengineer.bettacraft.genetics.BettaGenotype;
+import org.overengineer.bettacraft.tank.TankCare;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -59,6 +61,7 @@ final class DevClientSmokeTest {
     private static boolean created;
     private static BlockPos tankMin;
     private static BlockPos showMin;
+    private static BlockPos breedMin;
 
     private DevClientSmokeTest() {}
 
@@ -90,33 +93,48 @@ final class DevClientSmokeTest {
         try {
             switch (ticks) {
                 case 60 -> mc.getSingleplayerServer().execute(DevClientSmokeTest::buildScene);
-                case 330 -> shot(mc, "bettacraft_m1_tank");
+                case 330 -> shot(mc, "bettacraft_m2_tank");
                 case 340 -> mc.getSingleplayerServer().execute(() -> {
+                    // close to the breeding tank, looking at the nest (Jade shows the tank)
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 4.2, tankMin.getZ() - 1.8, 0F, 50F);
+                    p.teleportTo(p.serverLevel(), breedMin.getX() + 1.5, breedMin.getY() + 1.2, breedMin.getZ() - 1.6, 0F, 28F);
                 });
-                case 400 -> shot(mc, "bettacraft_m1_top");
-                case 410 -> mc.getSingleplayerServer().execute(() -> {
+                case 420 -> shot(mc, "bettacraft_m2_nest");
+                case 430 -> mc.getSingleplayerServer().execute(() -> {
                     ServerPlayer p = player(mc);
                     p.teleportTo(p.serverLevel(), showMin.getX() + 2.5, showMin.getY() - 1.15, showMin.getZ() - 1.25, 0F, 2F);
                 });
-                case 520 -> shot(mc, "bettacraft_m1_closeup");
+                case 520 -> shot(mc, "bettacraft_m2_stages");
                 case 530 -> mc.getSingleplayerServer().execute(() -> {
+                    // straight at the flaring male (Jade shows the betta)
                     ServerPlayer p = player(mc);
-                    TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankMin);
+                    p.teleportTo(p.serverLevel(), showMin.getX() + 3.5, showMin.getY() + 0.42 - 1.62, showMin.getZ() - 0.7, 0F, 0F);
+                });
+                case 590 -> shot(mc, "bettacraft_m2_jade_betta");
+                case 600 -> mc.getSingleplayerServer().execute(() -> {
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), breedMin.getX() + 1.5, breedMin.getY() + 1.2, breedMin.getZ() - 2.5, 0F, 20F);
+                    TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), breedMin);
                     p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                             buf -> buf.writeBlockPos(c.getBlockPos()));
                 });
-                case 580 -> shot(mc, "bettacraft_m1_menu_overview");
-                case 590 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
-                }
-                case 620 -> shot(mc, "bettacraft_m1_menu_inhabitants");
-                case 630 -> {
+                case 640 -> {
                     if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(2);
                 }
-                case 660 -> shot(mc, "bettacraft_m1_menu_log");
-                case 700 -> {
+                case 670 -> shot(mc, "bettacraft_m2_menu_breeding");
+                case 680 -> {
+                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
+                }
+                case 710 -> shot(mc, "bettacraft_m2_menu_inhabitants");
+                case 720 -> {
+                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(3);
+                }
+                case 750 -> shot(mc, "bettacraft_m2_menu_log");
+                case 760 -> {
+                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(0);
+                }
+                case 790 -> shot(mc, "bettacraft_m2_menu_overview");
+                case 830 -> {
                     LOGGER.info("[smoketest] client world test finished");
                     mc.stop();
                 }
@@ -204,23 +222,60 @@ final class DevClientSmokeTest {
         TankBlockEntity show = TankMultiblock.getController(level, showMin);
         TankInteractions.changeWater(level, show, 5000);
         show.getTank().setSignVisible(false);
+        // showcase: fry, juvenile, subadult, flaring adult male, female in breeding colours (motionless, for a close-up)
         RandomSource sr = RandomSource.create(99);
+        org.overengineer.bettacraft.entity.betta.LifeStage[] stages = {org.overengineer.bettacraft.entity.betta.LifeStage.FRY,
+                org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE, org.overengineer.bettacraft.entity.betta.LifeStage.SUBADULT,
+                org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, org.overengineer.bettacraft.entity.betta.LifeStage.ADULT};
+        java.util.List<java.util.UUID> order = new java.util.ArrayList<>();
+        BettaGenotype showGenes = BettaGenotype.randomDomestic(sr).with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM,
+                new BettaGenotype.AllelePair("halfmoon", "plakat"));
         for (int i = 0; i < 5; i++) {
-            BettaGenome g = BettaGenome.randomDomestic(sr).withShape(BettaGenome.SHAPES.get(i));
-            ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, i == 4, level.getGameTime()));
+            BettaData d = BettaData.create(showGenes, i == 4, level.getGameTime()).withStage(stages[i]);
+            ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
             TankInhabitants.insert(level, show, bucket, ModEntities.BETTA.get(), p, false);
+            order.add(d.fishId());
         }
-        int k = 0;
         for (Entity e : TankInhabitants.liveInhabitants(level, show.getTank())) {
-            if (e instanceof net.minecraft.world.entity.Mob m) {
+            if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity m) {
+                int k = order.indexOf(m.getBettaData().fishId());
                 m.setNoAi(true);
                 m.setNoGravity(true);
                 m.moveTo(showMin.getX() + k + 0.5, showMin.getY() + 0.4, showMin.getZ() + 0.5, 90F, 0F);
                 m.setYBodyRot(90F);
                 m.setYHeadRot(90F);
-                k++;
+                if (k == 3) m.flare(Long.MAX_VALUE / 2);
+                if (k == 4) m.showBreedingMood(Long.MAX_VALUE / 2);
+                if (k == 3) m.setCustomName(Component.literal("Sultan"));
             }
         }
+        // breeding tank: a pair in warm water, run until the female has spawned into the bubble nest
+        breedMin = feet.offset(5, 0, 9);
+        place(level, breedMin, 3, 2, 2);
+        TankBlockEntity breed = TankMultiblock.getController(level, breedMin);
+        TankInteractions.changeWater(level, breed, 12000);
+        breed.getTank().setName("Breeding");
+        breed.getTank().setFront(Direction.NORTH);
+        breed.getTank().setOwner(p.getUUID());
+        breed.getTank().heaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
+        breed.getTank().setTargetTemp(27.0F);
+        breed.getTank().setWaterTemp(27.0F);
+        RandomSource br = RandomSource.create(4321);
+        for (int i = 0; i < 2; i++) {
+            BettaGenotype g = BettaGenotype.randomDomestic(br).with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM,
+                    new BettaGenotype.AllelePair(i == 0 ? "plakat" : "veil", "halfmoon"));
+            ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, i == 1, level.getGameTime()));
+            TankInhabitants.insert(level, breed, bucket, ModEntities.BETTA.get(), p, false);
+        }
+        for (Entity e : TankInhabitants.liveInhabitants(level, breed.getTank())) {
+            if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b) e.setCustomName(Component.literal(b.isFemale() ? "Luna" : "Rex"));
+        }
+        TankCare.feed(level, breed, new ItemStack(ModItems.MOSQUITO_LARVAE.get()), 1);
+        for (int i = 0; i < 60 && (breed.getTank().nest() == null || !breed.getTank().nest().hasEggs()); i++) {
+            org.overengineer.bettacraft.tank.TankBreeding.step(level, breed, 0.05);
+        }
+        org.overengineer.bettacraft.tank.TankBreeding.step(level, breed, 0.3); // larvae
+        breed.markTankChanged();
         p.teleportTo(level, tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 7.0, 0F, 20F);
         LOGGER.info("[smoketest] scene built: {} inhabitants, {}", TankInhabitants.liveInhabitants(level, c.getTank()).size(), c.getTank());
     }
