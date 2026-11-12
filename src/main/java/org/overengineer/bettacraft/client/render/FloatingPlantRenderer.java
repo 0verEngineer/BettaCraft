@@ -40,7 +40,7 @@ public final class FloatingPlantRenderer {
     private static final ResourceLocation ROOTS = BettaCraft.id(DIR + "roots.png");
     /** The vanilla lily pad texture (a game asset read at runtime, tinted like the lily pad block). */
     private static final ResourceLocation LILY_PAD = ResourceLocation.withDefaultNamespace("textures/block/lily_pad.png");
-    private static final int LILY_TINT = 0xFF208030;
+    private static final int LILY_TINT = 0xFF3A9A3E;
     /** Red root floater: green in weak light, red in strong light (greyscale texture, tinted). */
     private static final int RRF_GREEN = 0xFF86C25E, RRF_RED = 0xFFC8483A;
     private static final int FROGBIT_ROOTS = 0xFFE6E2D2, SALVINIA_ROOTS = 0xFF7A6142, RRF_ROOTS_PALE = 0xFFD8CBB8, RRF_ROOTS_RED = 0xFFB04436;

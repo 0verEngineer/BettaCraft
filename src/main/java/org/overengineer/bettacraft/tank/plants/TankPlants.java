@@ -28,7 +28,6 @@ import org.overengineer.bettacraft.equipment.ExternalFilterBlock;
 import org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity;
 import org.overengineer.bettacraft.equipment.FilterFlow;
 import org.overengineer.bettacraft.equipment.FilterHost;
-import org.overengineer.bettacraft.equipment.TankLightBlock;
 import org.overengineer.bettacraft.network.TankPlantsPayload;
 import org.overengineer.bettacraft.registry.ModItems;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -36,7 +35,6 @@ import org.overengineer.bettacraft.tank.TankCare;
 import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.TankEquipment;
 import org.overengineer.bettacraft.tank.TankWater;
-import org.overengineer.bettacraft.tank.WaterQuality;
 
 /**
  * Floating plants of a tank on the server (M12): the care step (drift, growth, waste uptake, sync), placing plants
@@ -367,20 +365,5 @@ public final class TankPlants {
     /** Light quality for the menu: 0 dark, 1 weak, 2 good, 3 strong (red root floater turns red). */
     public static int lightClass(int light) {
         return light < 9 ? 0 : light < 12 ? 1 : light < 14 ? 2 : 3;
-    }
-
-    /** Short state of the quality used in tooltips and the menu ("waste" share in percent). */
-    public static int wastePercent(TankData t) {
-        return Math.round((1 - t.waterQuality()) * 100);
-    }
-
-    /** A lit tank light stands on the tank (for the handbook / menu hints). */
-    public static boolean hasLitLight(Level level, TankData t) {
-        for (BlockPos p : t.openTops()) {
-            if (!level.isLoaded(p)) continue;
-            BlockState s = level.getBlockState(p);
-            if (s.getBlock() instanceof TankLightBlock && s.getValue(TankLightBlock.LIT)) return true;
-        }
-        return false;
     }
 }

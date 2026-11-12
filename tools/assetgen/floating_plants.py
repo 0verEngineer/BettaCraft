@@ -120,8 +120,8 @@ def frogbit_leaf_texture(n=32):
             if abs(dx) < 0.6 and dy < 0:
                 g = g * 0.78  # midrib
             # gloss
-            if math.hypot(dx + rad * 0.35, dy + rad * 0.4) < rad * 0.22:
-                g = g * 0.5 + np.array([0xd8, 0xf0, 0xb0]) * 0.5
+            if math.hypot(dx + rad * 0.38, dy + rad * 0.42) < rad * 0.16:
+                g = g * 0.72 + np.array([0xc8, 0xe8, 0xa0]) * 0.28
             img[y, x, :3] = np.clip(g, 0, 255)
             img[y, x, 3] = 255
     # rim
@@ -139,7 +139,7 @@ def salvinia_texture(n=32):
     """Two pairs of oval, hairy leaves on a short stem (the stem runs along the image's vertical)."""
     img = np.zeros((n, n, 4), np.uint8)
     rng = _rng(1203)
-    base = (0x7e, 0xa8, 0x3c)
+    base = (0x6c, 0x98, 0x38)
 
     def leaf(u, v):
         g = _shade(base, 1.12 - 0.18 * (u + 1) * 0.5)

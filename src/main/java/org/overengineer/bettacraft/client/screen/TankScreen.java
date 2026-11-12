@@ -176,8 +176,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         updateWidgets();
     }
 
+    /** Dev smoke test only: the floating plants page of the water tab (M12). */
+    public void showPlantsPageForTest() {
+        plantsPage = true;
+        setTab(Tab.WATER);
+    }
+
     /** Dev smoke test only. */
     public void selectTabForTest(int index) {
+        plantsPage = false;
         setTab(Tab.values()[index]);
     }
 
@@ -546,7 +553,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 11;
         int cov = Math.round(p.coverage * 100);
         line(g, Component.translatable("gui.bettacraft.plants.coverage", Math.min(100, cov), Math.round(p.maxCoverage * 100)), x, y, TEXT_LIGHT);
-        int bx = 150, bw = 64;
+        int bx = 160, bw = 70;
         g.fill(bx, y + 1, bx + bw, y + 7, 0xFF202020);
         g.fill(bx, y + 1, bx + Math.round(bw * Mth.clamp(p.coverage, 0, 1)), y + 7, p.dense ? 0xFFD0A040 : 0xFF5FB040);
         g.fill(bx + Math.round(bw * p.maxCoverage), y, bx + Math.round(bw * p.maxCoverage) + 1, y + 8, 0xFFE0E0E0);
@@ -560,8 +567,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             for (var t : types) {
                 if (p.counts[t.ordinal()] <= 0) continue;
                 Component name = Component.translatable(org.overengineer.bettacraft.tank.plants.TankPlants.item(t).getDescriptionId());
-                line(g, Component.translatable("gui.bettacraft.plants.species", name, p.counts[t.ordinal()]).withStyle(ChatFormatting.GREEN),
-                        x + col * 114, y, TEXT_LIGHT);
+                MutableComponent sp = Component.translatable("gui.bettacraft.plants.species", name, p.counts[t.ordinal()]).withStyle(ChatFormatting.GREEN);
+                if (t == org.overengineer.bettacraft.tank.plants.FloatingPlantType.RED_ROOT_FLOATER) {
+                    // red under strong light, green under weak light
+                    double red = org.overengineer.bettacraft.tank.plants.FloatingPlantSim.redTarget(p.light);
+                    // drawn in the colour the leaves have in this light (no room for more text)
+                    sp = Component.translatable("gui.bettacraft.plants.species", name, p.counts[t.ordinal()])
+                            .withStyle(red >= 0.75 ? ChatFormatting.RED : red > 0 ? ChatFormatting.GOLD : ChatFormatting.GREEN);
+                }
+                line(g, sp, x + col * 100, y, TEXT_LIGHT);
                 if (++col == 2) {
                     col = 0;
                     y += 11;

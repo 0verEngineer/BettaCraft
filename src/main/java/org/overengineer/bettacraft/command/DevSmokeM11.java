@@ -46,7 +46,7 @@ final class DevSmokeM11 {
         if (old == null) throw new IllegalStateException("M11: no dev world tank");
         if (old.getStyle() != TankStyle.TEXTURED) throw new IllegalStateException("M11: old tank is " + old.getStyle());
         CompoundTag saved = old.saveWithFullMetadata(level.registryAccess());
-        if (saved.getInt("schema") != 6 || !"textured".equals(saved.getString("style"))) throw new IllegalStateException("M11: saved as " + saved.getInt("schema"));
+        if (saved.getInt("schema") < 6 || !"textured".equals(saved.getString("style"))) throw new IllegalStateException("M11: saved as " + saved.getInt("schema"));
         // styles never merge
         BlockPos p = pairPos(base);
         TankBlockEntity a = TankMultiblock.getController(level, p), b = TankMultiblock.getController(level, p.offset(1, 0, 0));
@@ -62,7 +62,7 @@ final class DevSmokeM11 {
         if (info == null || !old.getGlassId().toString().equals(info.getString("glass")) || !"textured".equals(info.getString("style"))) {
             throw new IllegalStateException("M11: info data " + info);
         }
-        LOGGER.info("[smoketest] M11: dev world tank {} ({} blocks) is textured {}, saved as schema 6; textured + clean pair stays two tanks; "
+        LOGGER.info("[smoketest] M11: dev world tank {} ({} blocks) is textured {}, saved as schema 6+; textured + clean pair stays two tanks; "
                 + "recipes and advancement loaded; info glass {}", base, old.getTank().memberCount(), old.getGlassId(), info.getString("glass"));
     }
 }
