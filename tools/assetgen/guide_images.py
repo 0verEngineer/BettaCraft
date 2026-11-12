@@ -8,7 +8,9 @@ exactly at GUI size.
 
 The interior and hologram images are kept as they are (from the M4/M5 screenshots). M9 adds the water care scene, the
 live food breeders and the water tab from the ``bettacraft_m9_*`` screenshots of the same run, M11 the tank styles and the
-mirror stick from ``bettacraft_m11_*`` (also made by ``-Psmoketestm11`` alone).
+mirror stick from ``bettacraft_m11_*`` (also made by ``-Psmoketestm11`` alone), M12 the floating plants from
+``bettacraft_m12_*`` (``-Psmoketestm12``; the German plants page from a run with the client language set to German, saved
+as ``bettacraft_m12_menu_plants_de.png``). ``py guide_images.py m12`` crops only the M12 images.
 """
 from __future__ import annotations
 
@@ -41,6 +43,27 @@ M9_MENUS = {"menu_water": "bettacraft_m9_menu_water"}
 # M11 scene (DevClientSmokeM11): the three tank styles and a male flaring at the mirror stick (world shots without HUD)
 M11_WORLD = {"tank_styles": ("bettacraft_m11_styles", (60, 320, 1220, 570)), "mirror_stick": ("bettacraft_m11_mirror_side", (210, 260, 1070, 730))}
 
+# M12 scene (DevClientSmokeM12): the main plant tank from above, the roots through the glass, the plants page
+M12_WORLD = {"floating_plants": ("bettacraft_m12_overview", (230, 240, 1050, 660)),
+             "floating_plants_roots": ("bettacraft_m12_roots", (0, 330, 1280, 640))}
+M12_MENUS = {"menu_plants": "bettacraft_m12_menu_plants"}
+
+
+def m12(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M12_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name, shot in M12_MENUS.items():
+        for suffix, out in (("", out_en), ("_de", out_de)):
+            src = SHOTS / f"{shot}{suffix}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(MENU_BOX), out / f"{name}.png")
+            else:
+                print("missing", src)
+
 
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
@@ -56,6 +79,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m12"]:
+        m12(out_en, out_de)
+        return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"
         if not src.exists():
@@ -87,6 +113,7 @@ def main() -> int:
             save(Image.open(src).convert("RGB").crop(MENU_BOX), out_en / f"{name}.png")
         else:
             print("missing", src)
+    m12(out_en, out_de)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

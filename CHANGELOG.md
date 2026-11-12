@@ -4,6 +4,37 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.4.0-beta.1] - 2026-11-12
+
+### Added
+- Floating plants for the water surface of aquariums: **duckweed** (tiny leaves, grows fastest), **Amazon frogbit**
+  (round leaves, long roots, the favourite nest site), **salvinia** (paired hairy leaves, robust) and the **red root
+  floater** (red under strong light, green under weak light). Use one on an aquarium and it floats where you look at
+  the water. A vanilla lily pad used on an aquarium becomes a fixed lily pad on the surface.
+- The plants drift slowly over the surface, push each other aside, stay inside the glass and over the water of free
+  shapes (never over a notch or a closed-off step) and keep away from where a filter jet hits the water.
+- With light (a lit tank light or daylight) and nutrients (the waste in the water) they grow, put out offshoots up to
+  60 % cover and take up a little waste. In the dark they do not grow. Dense cover (from 50 %) warns in the menu and the
+  info overlays, shades the plants (slower growth) and lets some of the feeder's food stay on the leaves and rot.
+- The male builds his bubble nest under the densest cluster of floating plants; floating plants (from 10 % cover)
+  make him ready 1.15 times faster.
+- Getting them: duckweed sometimes comes up with a bottle of swamp water, fishing in swamps and mangrove swamps
+  sometimes brings up a floating plant (the red root floater only in mangrove swamps), the wandering trader sells
+  frogbit and salvinia (the red root floater among his rare offers). No crafting recipe; they multiply in the aquarium.
+- Taking them out: right-click the surface with an empty hand (where no plant floats the menu opens as before) or with
+  shears; shears while sneaking, or the new **Thin out** button, thin the whole aquarium out by half. The plants of a
+  broken aquarium drop as items.
+- Water tab of the tank menu: a page for the floating plants (number per species, cover, light, growth, waste uptake);
+  Jade, The One Probe and WTHIT show the number and the cover.
+- Server settings `floatingPlants.*`: growth speed (0 = off), most cover, dense cover, waste uptake, breeding bonus,
+  food on the leaves, plants per tank, the chances of the bottle and of fishing.
+- Handbook page "Floating plants" (English and German) with links from the aquarium, water quality, breeding, food and
+  menu pages; JEI information and item tooltips.
+
+### Changed
+- Aquariums from earlier versions get an empty list of floating plants (tank data schema 7). Lily pads in the interior
+  stay blocks of the interior; the nest still uses them when there are no plants on the surface.
+
 ## [1.3.0-beta.1] - 2026-11-12
 
 ### Added
