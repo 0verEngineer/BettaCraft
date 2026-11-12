@@ -1,0 +1,144 @@
+# Release: builds and tests the tagged version, then creates a GitHub release and (optionally) publishes the jar to
+# Modrinth and CurseForge with mc-publish. It only runs for a pushed tag "v<mod_version>" or when started by hand
+# (Actions > Release > Run workflow). Nothing is published on normal pushes or pull requests.
+#
+# Required repository settings (Settings > Secrets and variables > Actions):
+#   Secrets:   MODRINTH_TOKEN    Modrinth personal access token with the "Create versions" scope
+#              CURSEFORGE_TOKEN  CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
+#   Variables: MODRINTH_PROJECT_ID    id of the Modrinth project (e.g. "AbCd1234")
+#              CURSEFORGE_PROJECT_ID  numeric id of the CurseForge project
+# A platform whose token or project id is missing is skipped. GITHUB_TOKEN is provided by Actions.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish to Modrinth and CurseForge (otherwise only a draft GitHub release)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+      MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
+      CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
+      # publishing happens for tags and for manual runs with "publish" ticked
+      PUBLISH: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish == true }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Read version
+        id: version
+        run: |
+          chmod +x gradlew
+          version=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          case "$version" in
+            *alpha*) echo "type=alpha" >> "$GITHUB_OUTPUT" ;;
+            *beta*|*rc*) echo "type=beta" >> "$GITHUB_OUTPUT" ;;
+            *) echo "type=release" >> "$GITHUB_OUTPUT" ;;
+          esac
+          if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_REF_NAME" != "v$version" ]]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match mod_version $version (expected v$version)"
+            exit 1
+          fi
+
+      - name: Build and unit tests
+        run: ./gradlew build --stacktrace
+
+      - name: GameTests
+        run: ./gradlew runGameTestServer --stacktrace
+
+      - name: Changelog of this version
+        run: |
+          # the section "## [<version>]" of CHANGELOG.md up to the next "## [" heading
+          awk -v v="${{ steps.version.outputs.version }}" '
+            index($0, "## [" v "]") == 1 { on = 1; next }
+            on && /^## \[/ { exit }
+            on && !/^\[[^]]*\]: / { print }' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::CHANGELOG.md has no section ## [${{ steps.version.outputs.version }}]"
+            exit 1
+          fi
+          cat release-notes.md
+
+      - name: GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Bettacraft ${{ steps.version.outputs.version }}
+          body_path: release-notes.md
+          files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+          prerelease: ${{ steps.version.outputs.type != 'release' }}
+          draft: ${{ env.PUBLISH != 'true' }}
+
+      - name: Publish to Modrinth
+        if: env.PUBLISH == 'true' && env.MODRINTH_TOKEN != '' && env.MODRINTH_PROJECT_ID != ''
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ env.MODRINTH_TOKEN }}
+          # optional integrations (Modrinth project ids): Jade, GuideME, JEI, The One Probe, WTHIT and the aquarium mods
+          modrinth-dependencies: |
+            nvQzSEkH(optional)
+            Ck4E7v7R(optional)
+            u6dRKJwZ(optional)
+            Eyw0UxEx(optional)
+            6AQIaxuO(optional)
+            s91ifBqW(optional)
+            BzOTnuqM(optional)
+            Vl1uNAuy(optional)
+            F8BQNPWX(optional)
+          files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+          name: Bettacraft ${{ steps.version.outputs.version }}
+          version: ${{ steps.version.outputs.version }}
+          version-type: ${{ steps.version.outputs.type }}
+          changelog-file: release-notes.md
+          loaders: neoforge
+          game-versions: "1.21.1"
+          java: "21"
+
+      - name: Publish to CurseForge
+        if: env.PUBLISH == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
+          # optional integrations (CurseForge slugs; check them on the project pages before the first release)
+          curseforge-dependencies: |
+            jade(optional)
+            guideme(optional)
+            jei(optional)
+            the-one-probe(optional)
+            wthit-forge(optional)
+            better-fishtanks(optional)
+          files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+          name: Bettacraft ${{ steps.version.outputs.version }}
+          version: ${{ steps.version.outputs.version }}
+          version-type: ${{ steps.version.outputs.type }}
+          changelog-file: release-notes.md
+          loaders: neoforge
+          game-versions: "1.21.1"
+          java: "21"

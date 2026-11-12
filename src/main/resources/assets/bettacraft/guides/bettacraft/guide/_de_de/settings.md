@@ -55,9 +55,10 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
 
 ## Andere Mods
 
-* **Jade:** Der Blick auf ein Aquarium zeigt Name, Temperatur, Wasser und Tiere (schleichen für die Liste), das Nest und
-  Warnungen; der Blick durch das Glas auf einen Betta zeigt Typ, Geschlecht, Gesundheit, Hunger und Stufe. Filter und
-  Schränke zeigen ihre Heizstäbe.
+* **Jade, The One Probe und WTHIT:** Der Blick auf ein Aquarium zeigt Name, Temperatur, Wasser und Tiere (schleichen
+  für die Liste; The One Probe braucht dafür seine Sonde), das Nest, die Filter und Warnungen; der Blick durch das Glas
+  auf einen Betta zeigt Typ, Geschlecht, Gesundheit, Hunger, Stufe und Gene. Filter und Schränke zeigen ihre
+  Heizstäbe und das Aquarium, in das sie pumpen.
 * **JEI:** Info-Seiten für alle Bettacraft-Items.
 * **Sodium und Iris:** Aquarium-Wasser und Miniaturen funktionieren mit beiden.
 * **Better Fish Tanks:** Seine *Fish Bag* setzt Tiere in Bettacraft-Aquarien ein und nimmt sie über das Menü wieder

@@ -1,0 +1,78 @@
+# Build, unit tests, GameTests and the dedicated-server smoke test on every push and pull request.
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build and unit tests
+        run: ./gradlew build --stacktrace
+
+      - name: Generated resources are up to date
+        run: |
+          ./gradlew runData --stacktrace
+          git diff --exit-code -- src/generated || (echo "::error::src/generated differs from runData output, run gradlew runData and commit" && exit 1)
+
+      - name: GameTests
+        run: ./gradlew runGameTestServer --stacktrace
+
+      - name: Dedicated server smoke test (all optional mods)
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          ./gradlew runServer -Psmoketest --stacktrace 2>&1 | tee smoke-all.log
+          grep -q "\[smoketest\] PASSED" smoke-all.log
+
+      - name: Dedicated server smoke test (no optional mods)
+        run: |
+          ./gradlew runServer -Psmoketest -PnoJade -PnoJei -PnoGuideme -PnoCompat -PnoTop -PnoWthit --stacktrace 2>&1 | tee smoke-none.log
+          grep -q "\[smoketest\] PASSED" smoke-none.log
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: bettacraft-jar
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: |
+            run/logs/
+            run/gametest/logs/
+            smoke-*.log
+            build/reports/tests/
+          if-no-files-found: ignore

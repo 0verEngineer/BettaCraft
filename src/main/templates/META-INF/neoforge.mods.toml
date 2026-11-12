@@ -10,6 +10,9 @@ displayName="${mod_name}"
 authors="${mod_authors}"
 displayURL="https://github.com/0verEngineer/BettaCraft"
 logoFile="bettacraft.png"
+# pixel-art logo: no blur when scaled
+logoBlur=false
+credits="Code, generated textures and models: 0verEngineer. Inspired by real betta keeping."
 description='''${mod_description}'''
 
 [[mixins]]
