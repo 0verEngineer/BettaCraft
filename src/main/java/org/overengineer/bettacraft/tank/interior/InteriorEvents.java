@@ -141,6 +141,7 @@ public final class InteriorEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         InteriorPreparation.tick(event.getServer());
+        InteriorBench.tick(event.getServer());
         if (event.getServer().getTickCount() % 5 == 0) {
             InteriorSync.flush(event.getServer());
         }

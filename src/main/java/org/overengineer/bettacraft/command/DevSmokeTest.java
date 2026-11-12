@@ -14,6 +14,7 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
 import org.overengineer.bettacraft.tank.interior.InteriorBench;
 import org.overengineer.bettacraft.tank.interior.InteriorManager;
 import org.overengineer.bettacraft.tank.interior.InteriorRegion;
+import org.overengineer.bettacraft.tank.interior.InteriorWorldOps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,42 @@ public final class DevSmokeTest {
     private static final boolean ENABLED = Boolean.getBoolean("bettacraft.smoketest");
     private static int ticks;
     private static BlockPos base;
+    private static boolean passed;
+    private static int haltAt = -1;
+
+    /** M3: decoration, substrate, a heater rod and a lily pad in the interior; delta sync of one change. */
+    private static void interiorChecks(ServerLevel level, TankBlockEntity c, InteriorRegion r) {
+        var server = level.getServer();
+        ServerLevel in = InteriorManager.interiorLevel(server);
+        // leftovers of an earlier run (the dev world persists)
+        it.unimi.dsi.fastutil.longs.LongOpenHashSet touched = new it.unimi.dsi.fastutil.longs.LongOpenHashSet();
+        InteriorWorldOps.clear(in, r.originX(), InteriorRegion.BASE_Y, r.originZ(), r.originX() + r.sizeX() - 1,
+                InteriorRegion.BASE_Y + r.sizeY() - 1, r.originZ() + r.sizeZ() - 1, touched);
+        r.equipment().markNeedsScan();
+        var err = org.overengineer.bettacraft.decor.DecorItem.place(in, org.overengineer.bettacraft.decor.DecorType.CASTLE, r.toWorld(12, 0, 12),
+                net.minecraft.world.level.block.Rotation.NONE, null);
+        if (err != null) throw new IllegalStateException("castle: " + err.getString());
+        for (int x = 0; x < 8; x++)
+            for (int z = 0; z < 8; z++)
+                org.overengineer.bettacraft.tank.interior.Substrate.set(in, new BlockPos(r.originX() + 30 + x, InteriorRegion.FLOOR_Y, r.originZ() + 2 + z),
+                        net.minecraft.world.level.block.Blocks.GRAVEL.defaultBlockState(), false);
+        for (int y = 0; y < 6; y++) {
+            in.setBlockAndUpdate(r.toWorld(40, y, 20), org.overengineer.bettacraft.registry.ModBlocks.HEATER_SEGMENT.get().defaultBlockState()
+                    .setValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART, y == 0 ? org.overengineer.bettacraft.equipment.SegmentBlock.Part.ANCHOR
+                            : y == 5 ? org.overengineer.bettacraft.equipment.SegmentBlock.Part.TOP : org.overengineer.bettacraft.equipment.SegmentBlock.Part.MIDDLE));
+        }
+        in.setBlockAndUpdate(r.toWorld(20, 28, 8), net.minecraft.world.level.block.Blocks.LILY_PAD.defaultBlockState());
+        var eq = InteriorManager.equipment(server, r);
+        LOGGER.info("[smoketest] interior: heaters {}, floating plants {}, substrate {}, interior heat {} blocks", eq.heaters().size(),
+                eq.floatingPlants().size(), eq.substrateCount(), org.overengineer.bettacraft.tank.TankCare.interiorHeaterBlocks(level, c.getTank()));
+        if (eq.heaters().size() != 1 || eq.floatingPlants().size() != 1 || eq.substrateCount() != 64) throw new IllegalStateException("interior equipment");
+        org.overengineer.bettacraft.tank.interior.InteriorSync.markAllDirty(r.id());
+        int full = org.overengineer.bettacraft.tank.interior.InteriorSync.prepareFull(server, r.id());
+        in.setBlockAndUpdate(r.toWorld(2, 0, 2), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        org.overengineer.bettacraft.tank.interior.InteriorSync.flush(server);
+        LOGGER.info("[smoketest] interior sync: full {} bytes, one-block delta {} bytes", full,
+                org.overengineer.bettacraft.tank.interior.InteriorSync.lastDeltaBytes);
+    }
 
     private DevSmokeTest() {}
 
@@ -93,7 +130,8 @@ public final class DevSmokeTest {
                 InteriorRegion r = InteriorManager.ensureRegion(level, c);
                 LOGGER.info("[smoketest] tank {} formed, water ok, interior region {} built={}", c.getTank(), r.id(), r.built());
                 InteriorBench.runDefault();
-                InteriorBench.realRegions(server);
+                InteriorBench.startRealRegions(server, line -> {});
+                interiorChecks(level, c, r);
                 // M1: bettas from buckets, a heater, a feeder with pellets
                 c.getTank().heaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get()));
                 for (int i = 0; i < 3; i++) {
@@ -118,7 +156,11 @@ public final class DevSmokeTest {
                         level.setBlockAndUpdate(b.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
             } else if (ticks == 50) {
                 breedingTank(level);
-            } else if (ticks == 200) {
+            } else if (!passed && ticks >= 200 && ticks < 2400 && (InteriorBench.realRunning() || ticks % 20 != 0)) {
+                // wait for the asynchronous real-region bench
+            } else if (ticks >= 200 && !passed) {
+                if (InteriorBench.realRunning()) throw new IllegalStateException("real-region bench did not finish");
+                passed = true;
                 TankBlockEntity c = TankMultiblock.getController(level, base);
                 var live = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank());
                 LOGGER.info("[smoketest] {} inhabitants alive, water {} C, crowded {}, log {}", live.size(),
@@ -128,7 +170,8 @@ public final class DevSmokeTest {
                     throw new IllegalStateException("break rule not active");
                 }
                 LOGGER.info("[smoketest] PASSED");
-            } else if (ticks == 210) {
+                haltAt = ticks + 10;
+            } else if (passed && ticks == haltAt) {
                 server.halt(false);
             }
         } catch (RuntimeException e) {

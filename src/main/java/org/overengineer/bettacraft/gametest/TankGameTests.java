@@ -191,11 +191,14 @@ public final class TankGameTests {
         });
     }
 
-    /** Logs the interior cost numbers (M0 spike). Real shells need the interior dimension, which the GameTest server lacks. */
-    @GameTest(template = EMPTY, timeoutTicks = 2000)
+    /** Logs the interior cost numbers: synthetic scenes and real 16x16x16 regions prepared asynchronously (M3). */
+    @GameTest(template = EMPTY, timeoutTicks = 2400)
     public static void interiorCost(GameTestHelper h) {
         InteriorBench.runDefault();
-        InteriorBench.realRegions(h.getLevel().getServer());
-        h.succeed();
+        if (!InteriorBench.startRealRegions(h.getLevel().getServer(), line -> {})) {
+            h.succeed();
+            return;
+        }
+        h.succeedWhen(() -> h.assertFalse(InteriorBench.realRunning(), "real-region bench still running"));
     }
 }

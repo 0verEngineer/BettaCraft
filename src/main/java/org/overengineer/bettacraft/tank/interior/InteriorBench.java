@@ -37,42 +37,88 @@ public final class InteriorBench {
 
     private InteriorBench() {}
 
+    /** Running real-region benchmark (async: the region shell is prepared like for a player). */
+    private static final class RealBench {
+        final java.util.function.Consumer<String> out;
+        final int[] scales = {16, 8};
+        int index = -1;
+        InteriorRegion region;
+        final List<String> lines = new ArrayList<>();
+
+        RealBench(java.util.function.Consumer<String> out) {
+            this.out = out;
+        }
+    }
+
+    private static RealBench running;
+
+    public static boolean realRunning() {
+        return running != null;
+    }
+
     /**
-     * Allocates real regions for a 16x16x16 tank at scale 16 and 8 in the interior dimension, measures shell build and
-     * sync encoding with sample decoration, then removes them again. Returns log lines (empty if the dimension is missing).
+     * Allocates real regions for a 16x16x16 tank at scale 16 and 8 in the interior dimension and prepares them
+     * asynchronously (chunk generation on the world-gen workers, shell written within a tick budget), then measures
+     * sample decoration sync (raw and zlib-compressed size), a one-block delta, and removes them again. Results go to
+     * {@code out} and the log; progress continues in {@link #tick}.
      */
-    public static List<String> realRegions(net.minecraft.server.MinecraftServer server) {
-        List<String> lines = new ArrayList<>();
+    public static boolean startRealRegions(net.minecraft.server.MinecraftServer server, java.util.function.Consumer<String> out) {
+        if (running != null || InteriorManager.interiorLevel(server) == null) return false;
+        running = new RealBench(out);
+        next(server);
+        return true;
+    }
+
+    private static void next(net.minecraft.server.MinecraftServer server) {
+        RealBench b = running;
+        b.index++;
+        if (b.index >= b.scales.length) {
+            running = null;
+            return;
+        }
+        int scale = b.scales[b.index], n = 16 * scale;
+        b.region = InteriorRegions.get(server).allocate(n, n, n, scale, net.minecraft.world.level.Level.OVERWORLD,
+                net.minecraft.core.BlockPos.ZERO, null, null);
+        InteriorPreparation.prepare(server, b.region, null);
+    }
+
+    /** Server tick (after {@link InteriorPreparation#tick}). */
+    public static void tick(net.minecraft.server.MinecraftServer server) {
+        RealBench b = running;
+        if (b == null || b.region == null || !b.region.built()) return;
         net.minecraft.server.level.ServerLevel interior = InteriorManager.interiorLevel(server);
-        if (interior == null) {
-            LOGGER.warn("[bench] interior dimension not present, skipping real region measurement");
-            return lines;
+        InteriorRegion r = b.region;
+        int n = r.sizeX(), scale = r.scale();
+        String prep = InteriorPreparation.lastStats;
+        it.unimi.dsi.fastutil.longs.LongOpenHashSet touched = new it.unimi.dsi.fastutil.longs.LongOpenHashSet();
+        InteriorWorldOps.fill(interior, r.originX(), InteriorRegion.BASE_Y, r.originZ(), r.originX() + n - 1, InteriorRegion.BASE_Y,
+                r.originZ() + n - 1, Blocks.SAND.defaultBlockState(), touched);
+        for (int i = 0; i < 200; i++) {
+            int x = (i * 37) % n, z = (i * 91) % n;
+            InteriorWorldOps.fill(interior, r.originX() + x, InteriorRegion.BASE_Y + 1, r.originZ() + z, r.originX() + x,
+                    InteriorRegion.BASE_Y + scale * 3 - 1, r.originZ() + z, Blocks.SEAGRASS.defaultBlockState(), touched);
         }
-        for (int scale : new int[]{16, 8}) {
-            int n = 16 * scale;
-            InteriorRegion r = InteriorRegions.get(server).allocate(n, n, n, scale, net.minecraft.world.level.Level.OVERWORLD,
-                    net.minecraft.core.BlockPos.ZERO, null, null);
-            long t0 = System.nanoTime();
-            InteriorManager.buildShell(server, r);
-            double buildMs = (System.nanoTime() - t0) / 1e6;
-            for (int x = 0; x < n; x++) for (int z = 0; z < n; z++)
-                interior.setBlock(r.toWorld(x, 0, z), Blocks.SAND.defaultBlockState(), 2);
-            for (int i = 0; i < 200; i++) {
-                int x = (i * 37) % n, z = (i * 91) % n;
-                for (int y = 1; y < scale * 3; y++) interior.setBlock(r.toWorld(x, y, z), Blocks.SEAGRASS.defaultBlockState(), 2);
-            }
-            InteriorSnapshot snap = new InteriorSnapshot();
-            long t1 = System.nanoTime();
-            InteriorSync.encodeRegion(interior, r, snap, Integer.MAX_VALUE);
-            double encMs = (System.nanoTime() - t1) / 1e6;
-            InteriorSnapshot.Stats st = snap.stats();
-            String line = String.format("real region 16x16x16 tank scale %d (%d^3): shell build %.1f ms; sample deco %,d blocks -> sync %,d KiB in %d sections, scan+encode %.1f ms",
-                    scale, n, buildMs, st.nonAir(), st.bytes() / 1024, st.sections(), encMs);
-            LOGGER.info("[bench] {}", line);
-            lines.add(line);
-            InteriorManager.destroyRegionForBench(server, r);
-        }
-        return lines;
+        InteriorSnapshot snap = new InteriorSnapshot();
+        long t1 = System.nanoTime();
+        InteriorSync.encodeRegion(interior, r, snap, Integer.MAX_VALUE);
+        double encMs = (System.nanoTime() - t1) / 1e6;
+        InteriorSnapshot.Stats st = snap.stats();
+        int zipped = InteriorSnapshot.deflatedSize(snap.bytes());
+        // one changed block -> delta of one section
+        InteriorSync.markAllDirty(r.id());
+        InteriorSync.prepareFull(server, r.id());
+        interior.setBlockAndUpdate(r.toWorld(n / 2, 2, n / 2), Blocks.STONE.defaultBlockState());
+        InteriorSync.flush(server);
+        String line = String.format(java.util.Locale.ROOT,
+                "real region 16x16x16 tank scale %d (%d^3): prepare %s; sample deco %,d blocks -> full sync %,d KiB (zlib %,d KiB) in %d sections, "
+                        + "scan+encode %.1f ms; one-block delta %d bytes",
+                scale, n, prep, st.nonAir(), st.bytes() / 1024, zipped / 1024, st.sections(), encMs, InteriorSync.lastDeltaBytes);
+        LOGGER.info("[bench] {}", line);
+        b.lines.add(line);
+        b.out.accept(line);
+        InteriorManager.destroyRegionForBench(server, r);
+        b.region = null;
+        next(server);
     }
 
     public static List<Result> runDefault() {

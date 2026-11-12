@@ -90,15 +90,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int x = leftPos, y = topPos;
         // five tabs across the top (the title moved into the overview: no room for both)
         tabOverview = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.overview"), b -> setTab(Tab.OVERVIEW))
-                .bounds(x + 6, y + 3, 52, 12).build());
+                .bounds(x + 5, y + 3, 53, 12).build());
         tabInhabitants = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.inhabitants"), b -> setTab(Tab.INHABITANTS))
                 .bounds(x + 58, y + 3, 50, 12).build());
         tabBreeding = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.breeding"), b -> setTab(Tab.BREEDING))
-                .bounds(x + 108, y + 3, 44, 12).build());
+                .bounds(x + 108, y + 3, 50, 12).build());
         tabInterior = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.interior"), b -> setTab(Tab.INTERIOR))
-                .bounds(x + 152, y + 3, 52, 12).build());
+                .bounds(x + 158, y + 3, 56, 12).build());
         tabLog = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.log"), b -> setTab(Tab.LOG))
-                .bounds(x + 204, y + 3, 38, 12).build());
+                .bounds(x + 214, y + 3, 27, 12).build());
         interiorEnterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
                 .bounds(x + 176, y + 124, 62, 14).build());
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {

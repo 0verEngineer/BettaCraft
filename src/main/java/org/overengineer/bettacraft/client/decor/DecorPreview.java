@@ -36,8 +36,12 @@ public final class DecorPreview {
 
     private DecorPreview() {}
 
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("bettacraft/decor");
+    private static boolean drawnLogged;
+
     public static void accept(DecorTemplatePayload p) {
         p.template().ifPresent(t -> TEMPLATES.put(p.id(), t));
+        LOGGER.debug("Received decor template {} ({} blocks)", p.id(), p.template().map(t -> t.blocks().size()).orElse(0));
     }
 
     public static void clear() {
@@ -54,7 +58,10 @@ public final class DecorPreview {
         ResourceLocation id = item.type().structure();
         DecorTemplate t = TEMPLATES.get(id);
         if (t == null) {
-            if (REQUESTED.add(id)) PacketDistributor.sendToServer(new DecorTemplatePayload(id, java.util.Optional.empty()));
+            if (REQUESTED.add(id)) {
+                LOGGER.debug("Requesting decor template {}", id);
+                PacketDistributor.sendToServer(new DecorTemplatePayload(id, java.util.Optional.empty()));
+            }
             return;
         }
         BlockPos clicked = hit.getBlockPos();
@@ -80,6 +87,10 @@ public final class DecorPreview {
             ps.popPose();
         }
         buffers.endBatch(rt);
+        if (!drawnLogged) {
+            drawnLogged = true;
+            LOGGER.debug("Decor hologram {}: {} blocks at {}", id, blocks.size(), base);
+        }
     }
 
     /** Multiplies the colour and sets the alpha of everything written through it. */

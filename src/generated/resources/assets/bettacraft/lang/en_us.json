@@ -128,7 +128,7 @@
   "gui.bettacraft.interior.hint_substrate": "Substrate: shift + right-click floor",
   "gui.bettacraft.interior.limit": "Render limit reached: not everything is shown",
   "gui.bettacraft.interior.not_built": "Not created yet - enter it once to build",
-  "gui.bettacraft.interior.size": "Interior %sx%sx%s blocks, scale %s (1 block = %s px)",
+  "gui.bettacraft.interior.size": "Interior %sx%sx%s, scale %s (1 block = %s px)",
   "gui.bettacraft.interior.substrate": "Substrate: %s floor blocks",
   "gui.bettacraft.loading": "Loading...",
   "gui.bettacraft.log.count": "%s entries (scroll for more)",

@@ -37,9 +37,10 @@ public final class BettaCraftCommands {
                             for (InteriorBench.Result r : InteriorBench.runDefault()) {
                                 ctx.getSource().sendSuccess(() -> Component.literal(r.toString()), false);
                             }
-                            for (String line : InteriorBench.realRegions(ctx.getSource().getServer())) {
-                                ctx.getSource().sendSuccess(() -> Component.literal(line), false);
-                            }
+                            var src = ctx.getSource();
+                            boolean started = InteriorBench.startRealRegions(src.getServer(), line -> src.sendSuccess(() -> Component.literal(line), false));
+                            src.sendSuccess(() -> Component.literal(started ? "Real 16x16x16 regions are prepared in the background; results follow"
+                                    : "Real-region bench not started (already running or no interior dimension)"), false);
                             return 1;
                         }))
                         .then(Commands.literal("resync").requires(s -> s.hasPermission(2)).executes(ctx -> {

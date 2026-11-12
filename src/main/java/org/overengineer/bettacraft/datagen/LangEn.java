@@ -59,7 +59,7 @@ final class LangEn {
         a.accept("message.bettacraft.interior.preparing_progress", "Preparing the tank interior... %s%%");
         a.accept("message.bettacraft.interior.no_sleep", "You cannot sleep or set a spawn point inside a tank");
         a.accept("gui.bettacraft.tab.interior", "Interior");
-        a.accept("gui.bettacraft.interior.size", "Interior %sx%sx%s blocks, scale %s (1 block = %s px)");
+        a.accept("gui.bettacraft.interior.size", "Interior %sx%sx%s, scale %s (1 block = %s px)");
         a.accept("gui.bettacraft.interior.not_built", "Not created yet - enter it once to build");
         a.accept("gui.bettacraft.interior.blocks", "Blocks shown: %s of max. %s");
         a.accept("gui.bettacraft.interior.blocks_unknown", "Blocks shown: -");

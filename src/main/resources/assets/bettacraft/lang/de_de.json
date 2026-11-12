@@ -315,7 +315,7 @@
   "message.bettacraft.interior.preparing_progress": "Der Innenraum wird vorbereitet ... %s %%",
   "message.bettacraft.interior.no_sleep": "Im Aquarium kann man nicht schlafen und keinen Spawnpunkt setzen",
   "gui.bettacraft.tab.interior": "Innenraum",
-  "gui.bettacraft.interior.size": "Innenraum %sx%sx%s Blöcke, Maßstab %s (1 Block = %s px)",
+  "gui.bettacraft.interior.size": "Innenraum %sx%sx%s, Maßstab %s (1 Block = %s px)",
   "gui.bettacraft.interior.not_built": "Noch nicht angelegt - einmal betreten, dann entsteht er",
   "gui.bettacraft.interior.blocks": "Angezeigte Blöcke: %s von max. %s",
   "gui.bettacraft.interior.blocks_unknown": "Angezeigte Blöcke: -",

@@ -62,6 +62,9 @@ final class DevClientSmokeTest {
     private static BlockPos tankMin;
     private static BlockPos showMin;
     private static BlockPos breedMin;
+    private static BlockPos bigMin;
+    private static volatile InteriorRegion bigRegion;
+    private static boolean bigDecorated;
 
     private DevClientSmokeTest() {}
 
@@ -91,50 +94,80 @@ final class DevClientSmokeTest {
         if (ticks > 60) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (bigRegion != null && !bigDecorated && bigRegion.built()) {
+                bigDecorated = true;
+                mc.getSingleplayerServer().execute(() -> {
+                    ServerLevel in = InteriorManager.interiorLevel(mc.getSingleplayerServer());
+                    long t0 = System.nanoTime();
+                    decorate(in, bigRegion, 16);
+                    InteriorSync.markAllDirty(bigRegion.id());
+                    LOGGER.info("[smoketest] big tank 16x16x16 decorated in {} ms", (System.nanoTime() - t0) / 1_000_000);
+                });
+            }
             switch (ticks) {
                 case 60 -> mc.getSingleplayerServer().execute(DevClientSmokeTest::buildScene);
-                case 330 -> shot(mc, "bettacraft_m2_tank");
+                case 290 -> mc.getSingleplayerServer().execute(() -> {
+                    // close to the front glass: the miniature decoration
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 2.3, tankMin.getZ() - 2.0, 0F, 32F);
+                });
+                case 330 -> shot(mc, "bettacraft_m3_tank");
                 case 340 -> mc.getSingleplayerServer().execute(() -> {
-                    // close to the breeding tank, looking at the nest (Jade shows the tank)
+                    // the 16x16x16 tank at scale 16 (bench: client meshing off the render thread)
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), breedMin.getX() + 1.5, breedMin.getY() + 1.2, breedMin.getZ() - 1.6, 0F, 28F);
+                    p.teleportTo(p.serverLevel(), bigMin.getX() + 8, bigMin.getY() + 12, bigMin.getZ() - 12, 0F, 30F);
                 });
-                case 420 -> shot(mc, "bettacraft_m2_nest");
-                case 430 -> mc.getSingleplayerServer().execute(() -> {
-                    ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), showMin.getX() + 2.5, showMin.getY() - 1.15, showMin.getZ() - 1.25, 0F, 2F);
-                });
-                case 520 -> shot(mc, "bettacraft_m2_stages");
+                case 520 -> shot(mc, "bettacraft_m3_big_tank");
                 case 530 -> mc.getSingleplayerServer().execute(() -> {
-                    // straight at the flaring male (Jade shows the betta)
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), showMin.getX() + 3.5, showMin.getY() + 0.42 - 1.62, showMin.getZ() - 0.7, 0F, 0F);
+                    p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 7.0, 0F, 20F);
+                    InteriorManager.enter(p, tankMin);
                 });
-                case 590 -> shot(mc, "bettacraft_m2_jade_betta");
                 case 600 -> mc.getSingleplayerServer().execute(() -> {
+                    // inside: overview of the decoration
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), breedMin.getX() + 1.5, breedMin.getY() + 1.2, breedMin.getZ() - 2.5, 0F, 20F);
-                    TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), breedMin);
+                    InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
+                    if (r != null) {
+                        BlockPos eye = r.toWorld(r.sizeX() / 2 + 6, 9, 3);
+                        p.teleportTo(p.serverLevel(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, 20F, 30F);
+                    }
+                });
+                case 660 -> shot(mc, "bettacraft_m3_interior");
+                case 665 -> mc.getSingleplayerServer().execute(() -> {
+                    // holding a dino skull: placement hologram on the floor in front
+                    ServerPlayer p = player(mc);
+                    InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
+                    if (r != null) {
+                        BlockPos eye = r.toWorld(58, 2, 13);
+                        p.teleportTo(p.serverLevel(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, 10F, 62F);
+                    }
+                    p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+                            new ItemStack(ModItems.DECOR.get(org.overengineer.bettacraft.decor.DecorType.DINO_SKULL).get()));
+                });
+                case 690 -> shot(mc, "bettacraft_m3_interior_hologram");
+                case 700 -> mc.getSingleplayerServer().execute(() -> {
+                    ServerPlayer p = player(mc);
+                    p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                    InteriorManager.leave(p);
+                });
+                case 780 -> mc.getSingleplayerServer().execute(() -> {
+                    ServerPlayer p = player(mc);
+                    p.teleportTo(p.serverLevel(), tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 4.0, 0F, 20F);
+                    TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankMin);
                     p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                             buf -> buf.writeBlockPos(c.getBlockPos()));
                 });
-                case 640 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(2);
+                case 820 -> {
+                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(4);
                 }
-                case 670 -> shot(mc, "bettacraft_m2_menu_breeding");
-                case 680 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
-                }
-                case 710 -> shot(mc, "bettacraft_m2_menu_inhabitants");
-                case 720 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(3);
-                }
-                case 750 -> shot(mc, "bettacraft_m2_menu_log");
-                case 760 -> {
+                case 850 -> shot(mc, "bettacraft_m3_menu_interior");
+                case 860 -> {
                     if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(0);
                 }
-                case 790 -> shot(mc, "bettacraft_m2_menu_overview");
-                case 830 -> {
+                case 890 -> shot(mc, "bettacraft_m3_menu_overview");
+                case 920 -> {
+                    LOGGER.info("[smoketest] miniature render-thread time last frame: {} ms",
+                            org.overengineer.bettacraft.client.interior.MiniatureRenderer.lastFrameNanos / 1e6);
                     LOGGER.info("[smoketest] client world test finished");
                     mc.stop();
                 }
@@ -175,6 +208,7 @@ final class DevClientSmokeTest {
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         decorate(in, r, 3);
+        decorItems(in, r);
         InteriorSync.markDirty(r.id());
 
         RandomSource rnd = RandomSource.create(1234);
@@ -276,6 +310,15 @@ final class DevClientSmokeTest {
         }
         org.overengineer.bettacraft.tank.TankBreeding.step(level, breed, 0.3); // larvae
         breed.markTankChanged();
+        // 16x16x16 tank at scale 16, prepared asynchronously like for a player, decorated when ready (see tick)
+        bigMin = feet.offset(-40, 0, 30);
+        place(level, bigMin, 16, 16, 16);
+        TankBlockEntity big = TankMultiblock.getController(level, bigMin);
+        big.getTank().setSignVisible(false);
+        TankInteractions.changeWater(level, big, 16L * 16 * 16 * 1000);
+        InteriorRegion bigR = InteriorManager.regionFor(level, big);
+        org.overengineer.bettacraft.tank.interior.InteriorPreparation.prepare(level.getServer(), bigR, null);
+        bigRegion = bigR;
         p.teleportTo(level, tankMin.getX() + 2.0, tankMin.getY() + 3.5, tankMin.getZ() - 7.0, 0F, 20F);
         LOGGER.info("[smoketest] scene built: {} inhabitants, {}", TankInhabitants.liveInhabitants(level, c.getTank()).size(), c.getTank());
     }
@@ -288,6 +331,41 @@ final class DevClientSmokeTest {
                     level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
                     TankMultiblock.onTankBlockAdded(level, pos, null);
                 }
+    }
+
+    /** M3: decoration structures, a substrate patch, a heater rod and lily pads in the main tank. */
+    private static void decorItems(ServerLevel in, InteriorRegion r) {
+        // clear a stage in the front half and put the decoration structures on it
+        LongOpenHashSet touched = new LongOpenHashSet();
+        InteriorWorldOps.clear(in, r.originX() + 1, InteriorRegion.BASE_Y, r.originZ() + 1, r.originX() + r.sizeX() - 2,
+                InteriorRegion.BASE_Y + r.sizeY() - 1, r.originZ() + 30, touched);
+        InteriorWorldOps.resendChunks(in, touched);
+        org.overengineer.bettacraft.decor.DecorType[] types = {org.overengineer.bettacraft.decor.DecorType.CASTLE,
+                org.overengineer.bettacraft.decor.DecorType.SHIPWRECK, org.overengineer.bettacraft.decor.DecorType.VOLCANO,
+                org.overengineer.bettacraft.decor.DecorType.DINO_SKULL, org.overengineer.bettacraft.decor.DecorType.CAVE,
+                org.overengineer.bettacraft.decor.DecorType.DRIFTWOOD, org.overengineer.bettacraft.decor.DecorType.STONES,
+                org.overengineer.bettacraft.decor.DecorType.HAMMOCK, org.overengineer.bettacraft.decor.DecorType.ALMOND_LEAF,
+                org.overengineer.bettacraft.decor.DecorType.MOSS_BALL};
+        int[][] spots = {{32, 14}, {12, 10}, {52, 12}, {20, 22}, {44, 24}, {8, 24}, {26, 6}, {38, 6}, {16, 4}, {28, 26}};
+        for (int i = 0; i < types.length; i++) {
+            var err = org.overengineer.bettacraft.decor.DecorItem.place(in, types[i], r.toWorld(spots[i][0], 0, spots[i][1]),
+                    net.minecraft.world.level.block.Rotation.NONE, null);
+            if (err != null) LOGGER.warn("[smoketest] decor {}: {}", types[i], err.getString());
+        }
+        for (int y = 0; y < 6; y++) {
+            in.setBlockAndUpdate(r.toWorld(58, y, 4), ModBlocks.HEATER_SEGMENT.get().defaultBlockState()
+                    .setValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART, y == 0 ? org.overengineer.bettacraft.equipment.SegmentBlock.Part.ANCHOR
+                            : y == 5 ? org.overengineer.bettacraft.equipment.SegmentBlock.Part.TOP : org.overengineer.bettacraft.equipment.SegmentBlock.Part.MIDDLE)
+                    .setValue(org.overengineer.bettacraft.equipment.SegmentBlock.SIZE, org.overengineer.bettacraft.equipment.SegmentBlock.Size.LARGE));
+        }
+        for (int[] lp : new int[][]{{20, 14}, {21, 15}, {44, 8}}) {
+            in.setBlockAndUpdate(r.toWorld(lp[0], r.sizeY() - 6, lp[1]), Blocks.LILY_PAD.defaultBlockState());
+        }
+        // substrate pattern on the floor of the front stage (its sand layer was cleared above the floor only)
+        for (int x = 0; x < r.sizeX(); x++)
+            for (int z = 0; z < r.sizeZ(); z++)
+                org.overengineer.bettacraft.tank.interior.Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z),
+                        ((x / 4 + z / 4) % 2 == 0 ? Blocks.GRAVEL : Blocks.RED_SAND).defaultBlockState(), false);
     }
 
     /** Substrate (1/16 of the height), rock boxes and plant columns, written directly into the sections. */
