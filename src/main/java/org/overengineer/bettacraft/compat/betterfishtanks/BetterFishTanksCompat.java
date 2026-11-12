@@ -107,7 +107,7 @@ public final class BetterFishTanksCompat {
             return Component.translatable("message.bettacraft.compat.bft_failed");
         }
         boolean bucket = !(stack.getItem() instanceof FishBagItem);
-        if (bucket) addWater(be, 1000); // the bucket brings its water along
+        if (bucket) fillWater(be, 1000); // the bucket brings its water along
         ItemStack empty = bucket ? new ItemStack(Items.BUCKET) : new ItemStack(ModItems.FISH_BAG.get());
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, empty));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -133,11 +133,31 @@ public final class BetterFishTanksCompat {
         }
     }
 
-    private static void addWater(BlockEntity be, int mb) {
+    /**
+     * Fills water into a BFT tank like their water bucket does: through the fluid tank of the block entity (this also
+     * sets the fluid type; {@code addWater} alone only changes the amount). Returns the amount filled.
+     */
+    public static int fillWater(BlockEntity be, int mb) {
         try {
-            be.getClass().getMethod("addWater", int.class).invoke(be, mb);
-        } catch (ReflectiveOperationException ex) {
-            LOGGER.debug("Better Fish Tanks: addWater not available", ex);
+            Object tank = be.getClass().getMethod("getFluidTank").invoke(be);
+            // the tank may be a private subclass: call the method through the first public class that has it
+            Class<?> cls = tank.getClass();
+            while (cls != null && !java.lang.reflect.Modifier.isPublic(cls.getModifiers())) cls = cls.getSuperclass();
+            if (cls == null) return 0;
+            Method fill = cls.getMethod("fill", net.minecraft.world.level.material.Fluid.class, int.class, boolean.class);
+            return (int) fill.invoke(tank, net.minecraft.world.level.material.Fluids.WATER, mb, false);
+        } catch (ReflectiveOperationException | ClassCastException ex) {
+            LOGGER.warn("Better Fish Tanks: filling water failed: {}", ex.toString());
+            return 0;
+        }
+    }
+
+    /** Water in the BFT tank (mB), or -1 if unknown. */
+    public static int waterAmount(BlockEntity be) {
+        try {
+            return (int) be.getClass().getMethod("getFluidAmount").invoke(be);
+        } catch (ReflectiveOperationException | ClassCastException ex) {
+            return -1;
         }
     }
 }

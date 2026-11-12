@@ -143,11 +143,8 @@ final class DevSmokeM7 {
     private static void bftRelease(ServerLevel level, BlockPos base, FakePlayer fake) {
         BlockPos b = bftTank(base);
         var be = level.getBlockEntity(b);
-        try {
-            be.getClass().getMethod("addWater", int.class).invoke(be, 6000);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("BFT addWater", e);
-        }
+        BetterFishTanksCompat.fillWater(be, 12000 - Math.max(0, BetterFishTanksCompat.waterAmount(be)));
+        if (!level.getFluidState(b).is(net.minecraft.tags.FluidTags.WATER)) throw new IllegalStateException("BFT tank not filled");
         net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(b).expandTowards(2, 1, 1);
         for (BettaEntity old : level.getEntitiesOfClass(BettaEntity.class, box)) old.discard();
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
@@ -156,7 +153,7 @@ final class DevSmokeM7 {
         var err = BetterFishTanksCompat.release(level, b, fake, InteractionHand.MAIN_HAND, bucket);
         if (err != null) throw new IllegalStateException("BFT release: " + err.getString());
         int n = level.getEntitiesOfClass(BettaEntity.class, box).size();
-        LOGGER.info("[smoketest] M7 betta released into the Better Fish Tanks tank: {} betta(s) inside", n);
+        LOGGER.info("[smoketest] M7 betta released into the Better Fish Tanks tank: {} betta(s) inside, {} mB water", n, BetterFishTanksCompat.waterAmount(be));
         if (n != 1) throw new IllegalStateException("betta not in the BFT tank");
     }
 

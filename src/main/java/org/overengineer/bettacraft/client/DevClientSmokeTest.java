@@ -66,6 +66,9 @@ final class DevClientSmokeTest {
     private static volatile InteriorRegion bigRegion;
     private static boolean bigDecorated;
     private static DevClientSmokeM6 m6;
+    private static DevClientSmokeM7 m7;
+    /** -Psmoketestm7: only the M7 compat scene (faster when iterating on it). */
+    private static final boolean M7_ONLY = Boolean.getBoolean("bettacraft.smoketest.m7only");
 
     private DevClientSmokeTest() {}
 
@@ -96,6 +99,15 @@ final class DevClientSmokeTest {
         if (ticks > 60) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M7_ONLY) {
+                if (ticks == 60) m7 = new DevClientSmokeM7();
+                if (m7 != null && m7.tick()) {
+                    m7 = null;
+                    LOGGER.info("[smoketest] client world test finished (M7 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (bigRegion != null && !bigDecorated && bigRegion.built()) {
                 bigDecorated = true;
                 mc.getSingleplayerServer().execute(() -> {
@@ -232,6 +244,10 @@ final class DevClientSmokeTest {
                 default -> {
                     if (m6 != null && m6.tick()) {
                         m6 = null;
+                        m7 = new DevClientSmokeM7(); // M7: aquarium mods
+                    }
+                    if (m7 != null && m7.tick()) {
+                        m7 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

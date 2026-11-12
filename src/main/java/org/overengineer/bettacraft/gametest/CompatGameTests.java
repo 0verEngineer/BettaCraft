@@ -185,17 +185,16 @@ public final class CompatGameTests {
         BlockPos rel = new BlockPos(5, 1, 5);
         h.runAfterDelay(20, () -> {
             BlockEntity be = h.getBlockEntity(rel);
-            try {
-                be.getClass().getMethod("addWater", int.class).invoke(be, 6000);
-            } catch (ReflectiveOperationException e) {
-                throw new GameTestAssertException("addWater: " + e);
-            }
+            h.assertTrue(BetterFishTanksCompat.fillWater(be, 9000) == 9000, "9000 mB into the 18 block BFT tank");
+            h.assertTrue(BetterFishTanksCompat.waterAmount(be) == 9000, "BFT tank holds the water");
+            h.assertTrue(h.getLevel().getFluidState(h.absolutePos(rel)).is(net.minecraft.tags.FluidTags.WATER), "lower layer is water");
             Player p = h.makeMockPlayer(GameType.SURVIVAL);
             ItemStack bucket = bettaBucket(21);
             p.setItemInHand(InteractionHand.MAIN_HAND, bucket);
             Component err = BetterFishTanksCompat.release(h.getLevel(), h.absolutePos(rel), p, InteractionHand.MAIN_HAND, bucket);
             h.assertTrue(err == null, "release failed: " + (err == null ? "" : err.getString()));
             h.assertTrue(p.getMainHandItem().is(Items.BUCKET), "empty bucket back");
+            h.assertTrue(BetterFishTanksCompat.waterAmount(be) == 10000, "the bucket brought 1000 mB");
             AABB box = new AABB(h.absolutePos(new BlockPos(4, 1, 4))).expandTowards(3, 2, 3);
             List<BettaEntity> in = h.getLevel().getEntitiesOfClass(BettaEntity.class, box);
             h.assertTrue(in.size() == 1, "one betta in the BFT tank, found " + in.size());
