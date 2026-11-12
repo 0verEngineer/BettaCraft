@@ -96,6 +96,9 @@ public final class BettaCraftClient {
                 }
             });
         }
+        if (!Boolean.getBoolean("bettacraft.smoketest.world") && !net.neoforged.fml.loading.FMLEnvironment.production) {
+            SmokeFreeze.registerRelease(); // copied smoke worlds: frozen screenshot animals swim again
+        }
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {

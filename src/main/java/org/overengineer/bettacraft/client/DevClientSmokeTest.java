@@ -415,8 +415,7 @@ final class DevClientSmokeTest {
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
             if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity m) {
                 int k = order.indexOf(m.getBettaData().fishId());
-                m.setNoAi(true);
-                m.setNoGravity(true);
+                SmokeFreeze.freeze(m, true);
                 int col = k % perRow, row = k / perRow;
                 m.moveTo(min.getX() + col + 0.5, min.getY() + (1 - row) + 0.38, min.getZ() + 0.5, 90F, 0F);
                 m.setYBodyRot(90F);
@@ -526,8 +525,7 @@ final class DevClientSmokeTest {
         for (Entity e : TankInhabitants.liveInhabitants(level, show.getTank())) {
             if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity m) {
                 int k = order.indexOf(m.getBettaData().fishId());
-                m.setNoAi(true);
-                m.setNoGravity(true);
+                SmokeFreeze.freeze(m, true);
                 m.moveTo(showMin.getX() + k + 0.5, showMin.getY() + 0.4, showMin.getZ() + 0.5, 90F, 0F);
                 m.setYBodyRot(90F);
                 m.setYHeadRot(90F);

@@ -153,7 +153,7 @@ final class DevClientSmokeM7 {
         List<Entity> live = TankInhabitants.liveInhabitants(level, c.getTank());
         for (int i = 0; i < live.size(); i++) {
             Entity e = live.get(i);
-            if (e instanceof Mob m) m.setNoAi(true);
+            if (e instanceof Mob m) SmokeFreeze.freeze(m, false);
             double x = mixMin.getX() + 0.5 + (i % 5);
             double y = mixMin.getY() + 0.35 + (i / 5) * 0.8;
             e.moveTo(x, y, mixMin.getZ() + 0.9, i % 2 == 0 ? -90F : 90F, 0F);

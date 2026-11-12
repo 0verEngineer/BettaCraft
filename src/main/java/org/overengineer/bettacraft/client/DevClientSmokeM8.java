@@ -139,8 +139,7 @@ final class DevClientSmokeM8 {
         int i = 0;
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
             if (!(e instanceof BettaEntity b)) continue;
-            b.setNoAi(true);
-            b.setNoGravity(true);
+            SmokeFreeze.freeze(b, true);
             if (i == 0) b.setCustomName(Component.literal("Indigo"));
             // the first one right on the view ray of the betta shot, the others further back
             b.moveTo(tankMin.getX() + 2.5, tankMin.getY() + 0.3 + i * 0.5, tankMin.getZ() + 0.5 + i * 0.6, i == 0 ? 90F : -90F, 0F);

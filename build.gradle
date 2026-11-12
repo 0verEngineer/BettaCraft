@@ -215,3 +215,21 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// gradlew runClient -Pshaders : loads the jars in run/shader-mods (e.g. Sodium, Iris; not in git) from run/mods;
+// runServer, runData and runClient without the flag remove them again (smoke tests and the server stay without them)
+def shaderModsDir = file('run/shader-mods')
+def runModsDir = file('run/mods')
+def withShaders = project.hasProperty('shaders')
+tasks.matching { it.name in ['runClient', 'runServer', 'runData'] }.configureEach { t ->
+    def isClient = t.name == 'runClient'
+    t.doFirst {
+        runModsDir.mkdirs()
+        def names = (shaderModsDir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }
+        names.each { jar ->
+            def target = new File(runModsDir, jar.name)
+            if (isClient && withShaders) java.nio.file.Files.copy(jar.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            else if (target.exists()) target.delete()
+        }
+    }
+}

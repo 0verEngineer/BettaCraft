@@ -12,7 +12,7 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
     private final BettaEntity fish;
 
     BettaSwimGoal(BettaEntity fish) {
-        super(fish, 1.0, 40);
+        super(fish, 1.0, 20);
         this.fish = fish;
     }
 

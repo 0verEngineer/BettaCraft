@@ -168,8 +168,7 @@ final class DevClientSmokeM10 {
         int i = 0;
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (!(e instanceof BettaEntity b) || i >= spots.length) continue;
-            b.setNoAi(true);
-            b.setNoGravity(true);
+            SmokeFreeze.freeze(b, true);
             b.moveTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 60F + i * 70F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
