@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:cod",
+    "minecraft:salmon",
+    {
+      "id": "#c:foods/raw_fish",
+      "required": false
+    },
+    {
+      "id": "aquaculture:fish_fillet_raw",
+      "required": false
+    }
+  ]
+}

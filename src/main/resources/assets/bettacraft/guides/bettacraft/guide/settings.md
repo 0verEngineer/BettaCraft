@@ -59,6 +59,19 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
   show their heaters.
 * **JEI:** information pages for all Bettacraft items.
 * **Sodium and Iris:** the aquarium water and the miniatures work with both.
+* **Better Fish Tanks:** its *Fish Bag* puts animals into Bettacraft aquariums and takes them out through the menu.
+  The other way round, bettas fit in its bag and its fish tanks; a filled Bettacraft fish bag or a betta bucket
+  releases its animal into a Better Fish Tanks aquarium with a right-click.
+* **Fintastic:** its fish and the *Fishnet* work in both directions; its fish feed feeds bettas, fairy shrimp, daphnia
+  and copepods are live prey, and its water plants (also duckweed and lotus pads) can be placed in the dry interior.
+  Arapaima and coelacanth are too big for an aquarium.
+* **Fish of Thieves:** its fish live in Bettacraft aquariums (battlegill, wrecker and devilfish are predators), and a
+  betta bucket puts a betta on its *Fish Plaque*. Earthworms are live food.
+* **Aquaculture 2:** its small fish are welcome, the large ones (tuna, arapaima, halibut, catfish, carp, ...) are not;
+  the piranha is a predator. Worms are live food, its raw fish and fillets make betta pellets.
+* **Naturalist:** bass, catfish and other small animals are accepted; piranha and anglerfish are predators.
+* **Swamps of other mods** (Biomes O' Plenty, Regions Unexplored, ...): wild bettas spawn in every biome of
+  `#c:is_swamp` through `#bettacraft:betta_spawn_biomes`.
 
 ## Commands
 

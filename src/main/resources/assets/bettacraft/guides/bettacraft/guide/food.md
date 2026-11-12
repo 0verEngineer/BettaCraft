@@ -28,7 +28,7 @@ Bettas need food at least **once a day**. A fish counts as hungry one day after 
    of the water block you click. You get a <ItemLink id="bettacraft:swamp_water_bottle" />.
 2. **Mosquito larvae:** heat the bottle in a furnace, smoker or on a campfire and the larvae hatch. Mining mud in a
    swamp sometimes drops <ItemLink id="bettacraft:mosquito_larvae" /> as well.
-3. **Betta pellets:** cod or salmon, mosquito larvae, bone meal and dried kelp give 8
+3. **Betta pellets:** raw fish (cod, salmon or the fish of other mods), mosquito larvae, bone meal and dried kelp give 8
    <ItemLink id="bettacraft:betta_pellets" />.
 
 <RecipesFor id="bettacraft:mosquito_larvae" />

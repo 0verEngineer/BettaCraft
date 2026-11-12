@@ -177,7 +177,9 @@ final class LangEn {
         a.accept("message.bettacraft.tank.not_inside", "That animal is no longer in this tank");
         a.accept("message.bettacraft.tank.cannot_take", "%s cannot be put into a bucket");
         a.accept("message.bettacraft.tank.need_bucket", "You need an empty bucket in your inventory");
-        a.accept("message.bettacraft.tank.need_bag", "You need an empty fish bag in your inventory");
+        a.accept("message.bettacraft.tank.need_bag", "You need an empty fish bag in your inventory (a Better Fish Tanks fish bag or a Fintastic fishnet works too)");
+        a.accept("message.bettacraft.compat.bft_failed", "This Better Fish Tanks aquarium cannot take the animal (is it built and filled?)");
+        a.accept("message.bettacraft.compat.bft_not_catchable", "%s is not allowed in Better Fish Tanks aquariums");
         a.accept("message.bettacraft.tank.no_bettas", "There are no bettas in this tank to feed");
         a.accept("message.bettacraft.tank.break_blocked", "%s animal(s) still live in this tank (%s). Take them out first.");
         a.accept("message.bettacraft.fish_bag.needs_water", "Release the fish into water");
@@ -308,6 +310,7 @@ final class LangEn {
         a.accept("log.bettacraft.larvae", "%s larvae hatched");
         a.accept("log.bettacraft.fry_free", "%s fry swim free (%s did not survive)");
         a.accept("log.bettacraft.fry_eaten", "%s fry were eaten by %s");
+        a.accept("log.bettacraft.ate_prey", "%s ate %s (live food)");
         a.accept("log.bettacraft.eaten", "%s was eaten by %s");
         a.accept("log.bettacraft.fight", "%s and %s are fighting!");
         a.accept("log.bettacraft.killed_fight", "%s was killed in a fight with %s");

@@ -38,7 +38,7 @@ public final class ProgressionGameTests {
 
     @SuppressWarnings("removal")
     private static ServerPlayer player(GameTestHelper h, double x, double z) {
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         Vec3 at = h.absoluteVec(new Vec3(x, 1, z));
         p.moveTo(at.x, at.y, at.z, 0, 0);
         return p;

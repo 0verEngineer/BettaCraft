@@ -92,6 +92,8 @@ public final class TankView {
     public int adults, hardCap;
     public boolean crowded;
     public boolean hasBucket, hasBag;
+    /** Water the bag button takes: 100 mB for fish bags, 0 for a Fintastic fishnet (M7). */
+    public long bagMb = 100;
     public long minInsertMb;
     public final List<Inhabitant> inhabitants = new ArrayList<>();
     public final List<LogLine> log = new ArrayList<>();
@@ -140,7 +142,9 @@ public final class TankView {
         out.putInt("lights", lights[0]);
         out.putInt("lights_lit", lights[1]);
         out.putBoolean("has_bucket", TankInhabitants.findContainer(player, false) >= 0);
-        out.putBoolean("has_bag", TankInhabitants.findContainer(player, true) >= 0);
+        long bagMb = TankInhabitants.bagWater(player);
+        out.putBoolean("has_bag", bagMb >= 0);
+        out.putLong("bag_mb", Math.max(0, bagMb));
         out.putLong("min_insert", Math.round(org.overengineer.bettacraft.config.ServerConfig.getOr(
                 org.overengineer.bettacraft.config.ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5) * t.capacityMb()));
 
@@ -261,6 +265,7 @@ public final class TankView {
         v.lightsLit = t.getInt("lights_lit");
         v.hasBucket = t.getBoolean("has_bucket");
         v.hasBag = t.getBoolean("has_bag");
+        v.bagMb = t.getLong("bag_mb");
         v.minInsertMb = t.getLong("min_insert");
         ListTag inh = t.getList("inhabitants", Tag.TAG_COMPOUND);
         for (int i = 0; i < inh.size(); i++) v.inhabitants.add(Inhabitant.load(inh.getCompound(i)));

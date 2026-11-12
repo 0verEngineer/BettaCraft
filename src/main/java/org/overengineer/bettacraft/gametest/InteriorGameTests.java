@@ -87,7 +87,7 @@ public final class InteriorGameTests {
     public static void enterAndLeaveBySneaking(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 1, 2, 1, 1, 1, 0);
         InteriorRegion r = region(h, c);
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             Vec3 start = Vec3.atBottomCenterOf(h.absolutePos(new BlockPos(5, 1, 5)));
             p.teleportTo(h.getLevel(), start.x, start.y, start.z, 0, 0);
@@ -115,7 +115,7 @@ public final class InteriorGameTests {
         region(h, c);
         c.getTank().setOwner(java.util.UUID.randomUUID());
         c.getTank().setLocked(true);
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             InteriorManager.enter(p, c.getBlockPos());
             h.assertFalse(InteriorManager.isInterior(p.level()), "locked tank: stranger stays outside");
@@ -131,7 +131,7 @@ public final class InteriorGameTests {
         InteriorRegion r = region(h, c);
         ServerLevel in = interior(h);
         BlockPos floor = new BlockPos(r.originX() + 3, InteriorRegion.FLOOR_Y, r.originZ() + 4);
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.teleportTo(in, floor.getX() + 0.5, floor.getY() + 1, floor.getZ() + 0.5, 0, 0);
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
@@ -166,7 +166,7 @@ public final class InteriorGameTests {
 
     @GameTest(template = EMPTY)
     public static void decorPlacedInWorldAndConsumed(GameTestHelper h) {
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DECOR.get(DecorType.STONES).get(), 2));
@@ -218,7 +218,7 @@ public final class InteriorGameTests {
         InteriorRegion r = region(h, c);
         ServerLevel in = interior(h);
         // first a full encode (as if a client asked), then one block change
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.teleportTo(h.getLevel(), c.getBlockPos().getX(), c.getBlockPos().getY() + 2, c.getBlockPos().getZ(), 0, 0);
             InteriorWorldOps.fill(in, r.originX(), InteriorRegion.BASE_Y, r.originZ(), r.originX() + r.sizeX() - 1, InteriorRegion.BASE_Y,
@@ -254,7 +254,7 @@ public final class InteriorGameTests {
         h.assertTrue(TankCare.interiorHeaterBlocks(h.getLevel(), c.getTank()) == 32, "only the submerged one heats (32), got "
                 + TankCare.interiorHeaterBlocks(h.getLevel(), c.getTank()));
         // breaking a segment by a player removes the whole rod and gives the item back
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.teleportTo(in, low.getX() + 2, low.getY(), low.getZ(), 0, 0);
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
@@ -339,7 +339,7 @@ public final class InteriorGameTests {
         BlockPos foot = r.toWorld(5, 0, 5);
         in.setBlockAndUpdate(foot, Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.FOOT));
         in.setBlockAndUpdate(foot.north(), Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.HEAD));
-        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.teleportTo(in, foot.getX() + 0.5, foot.getY(), foot.getZ() + 2.5, 0, 0);
             p.gameMode.useItemOn(p, in, ItemStack.EMPTY, InteractionHand.MAIN_HAND,

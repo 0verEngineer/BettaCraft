@@ -3,6 +3,38 @@
     "bettacraft:betta_pellets",
     "bettacraft:mosquito_larvae",
     "bettacraft:infusoria",
-    "bettacraft:artemia_nauplii"
+    "bettacraft:artemia_nauplii",
+    {
+      "id": "fintastic:regular_feed",
+      "required": false
+    },
+    {
+      "id": "fintastic:quality_feed",
+      "required": false
+    },
+    {
+      "id": "fintastic:great_feed",
+      "required": false
+    },
+    {
+      "id": "fintastic:premium_feed",
+      "required": false
+    },
+    {
+      "id": "betterfishtanks:pellet_mix",
+      "required": false
+    },
+    {
+      "id": "aquaculture:worm",
+      "required": false
+    },
+    {
+      "id": "fishofthieves:earthworms",
+      "required": false
+    },
+    {
+      "id": "betterfishtanks:raw_minishrimp",
+      "required": false
+    }
   ]
 }

@@ -46,6 +46,8 @@ import org.overengineer.bettacraft.registry.ModTags;
  *     <li><b>Fry eating</b>: adult males eat free-swimming fry with a chance per day.</li>
  *     <li><b>Fights</b>: two adult males fight until one dies (one in-game day by default).</li>
  *     <li><b>Predators</b> ({@code #bettacraft:predators}, e.g. the pufferfish) attack small inhabitants and eat fry.</li>
+ *     <li><b>Live prey</b> ({@code #bettacraft:betta_prey}, e.g. Fintastic artemia and daphnia, M7): hungry bettas eat it
+ *     like live food.</li>
  * </ol>
  */
 public final class TankBreeding {
@@ -126,6 +128,7 @@ public final class TankBreeding {
         fights(level, controller, males, days, now);
         maleEatsFry(level, controller, males, fry, days);
         predators(level, controller, live, days);
+        eatPrey(level, controller, live, bettas);
     }
 
     private static void nest(ServerLevel level, TankBlockEntity controller, TankData tank, int liveCount, List<BettaEntity> males,
@@ -410,6 +413,30 @@ public final class TankBreeding {
             } else {
                 victim.hurt(level.damageSources().mobAttack(predator), 3.0F);
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ live prey (M7)
+
+    /** Hungry bettas eat live prey animals of other mods ({@code #bettacraft:betta_prey}); counts as live food. */
+    private static void eatPrey(ServerLevel level, TankBlockEntity controller, List<Entity> live, List<BettaEntity> bettas) {
+        List<Entity> prey = new ArrayList<>();
+        for (Entity e : live) if (e.isAlive() && e.getType().is(ModTags.BETTA_PREY)) prey.add(e);
+        if (prey.isEmpty()) return;
+        BettaHealth.Params p = BettaCare.params();
+        for (BettaEntity b : bettas) {
+            if (prey.isEmpty()) break;
+            if (!b.isAlive() || !b.health().isHungry(p)
+                    || !org.overengineer.bettacraft.food.BettaFood.canEat(b.lifeStage(), b.stageProgress(), org.overengineer.bettacraft.food.BettaFood.Kind.LIVE)) {
+                continue;
+            }
+            Entity victim = nearest(b, prey);
+            if (victim == null) break;
+            prey.remove(victim);
+            b.health().feed();
+            if (b.isAdult()) b.breeding().condition();
+            TankCare.log(level, controller, "log.bettacraft.ate_prey", TankCare.nameArg(b), TankCare.nameArg(victim));
+            eat(level, controller, victim);
         }
     }
 

@@ -145,7 +145,7 @@ public final class InhabitantGameTests {
     @GameTest(template = EMPTY)
     public static void takeOutWithBucketAndBag(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 1, 2, 2, 2, 2, 6000);
-        ServerPlayer sp = h.makeMockServerPlayerInLevel();
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
             ok(insert(h, c, bettaBucket(3), sp));
             ok(insert(h, c, bettaBucket(4), sp));

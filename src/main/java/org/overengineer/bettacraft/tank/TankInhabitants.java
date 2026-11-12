@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.overengineer.bettacraft.compat.FishContainers;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
@@ -81,10 +83,14 @@ public final class TankInhabitants {
         return null;
     }
 
-    /** Entity type held by a mob bucket or a filled fish bag, or null if the stack is neither. */
+    /**
+     * Entity type held by a mob bucket, a filled fish bag or a filled container of another mod (Better Fish Tanks fish
+     * bag, Fintastic fishnet), or null if the stack is none of these.
+     */
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         if (stack.getItem() instanceof FishBagItem) return FishBagItem.containedType(stack);
+        if (FishContainers.kind(stack) != null) return FishContainers.containedType(stack);
         if (stack.getItem() instanceof MobBucketItem && MOB_BUCKET_TYPE != null) {
             try {
                 return (EntityType<?>) MOB_BUCKET_TYPE.get(stack.getItem());
@@ -111,6 +117,13 @@ public final class TankInhabitants {
 
     // ------------------------------------------------------------------ inserting
 
+    /** Water that comes along with the animal of this (filled) container: bucket 1000 mB, bags 100 mB, nets 0. */
+    public static long carriedWater(ItemStack stack) {
+        if (stack.getItem() instanceof FishBagItem) return BAG_MB;
+        FishContainers.Foreign f = FishContainers.kind(stack);
+        return f != null ? f.waterMb : BUCKET_MB;
+    }
+
     /** Right-click on a tank with a mob bucket or a filled fish bag. PASS if the stack is neither. */
     public static ItemInteractionResult tryInsert(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         EntityType<?> type = containedType(stack);
@@ -122,23 +135,30 @@ public final class TankInhabitants {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
             return ItemInteractionResult.CONSUME;
         }
-        boolean bag = stack.getItem() instanceof FishBagItem;
-        Component error = insert(server, controller, stack, type, player, bag);
+        Component error = insert(server, controller, stack, type, player, carriedWater(stack));
         if (error != null) {
             player.displayClientMessage(error, true);
             return ItemInteractionResult.CONSUME;
         }
-        ItemStack empty = bag ? new ItemStack(ModItems.FISH_BAG.get()) : new ItemStack(Items.BUCKET);
+        ItemStack empty = stack.getItem() instanceof FishBagItem ? new ItemStack(ModItems.FISH_BAG.get())
+                : FishContainers.kind(stack) != null ? FishContainers.emptied(stack) : new ItemStack(Items.BUCKET);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, empty));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
         return ItemInteractionResult.CONSUME;
     }
 
-    /** Spawns the contained animal in the tank; returns an error message or null on success. */
+    /** As {@link #insert(ServerLevel, TankBlockEntity, ItemStack, EntityType, Player, long)} with bucket or bag water. */
     @Nullable
     public static Component insert(ServerLevel level, TankBlockEntity controller, ItemStack stack, EntityType<?> type,
                                    @Nullable Player player, boolean bag) {
+        return insert(level, controller, stack, type, player, bag ? BAG_MB : BUCKET_MB);
+    }
+
+    /** Spawns the contained animal in the tank (adding {@code addMb} water); returns an error message or null on success. */
+    @Nullable
+    public static Component insert(ServerLevel level, TankBlockEntity controller, ItemStack stack, EntityType<?> type,
+                                   @Nullable Player player, long addMb) {
         TankData tank = controller.getTank();
         if (player != null && !canModify(player, tank)) return Component.translatable("message.bettacraft.tank.locked");
         double minFill = ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5);
@@ -152,22 +172,31 @@ public final class TankInhabitants {
         if (live.size() >= maxEntities) return Component.translatable("message.bettacraft.tank.max_entities", maxEntities);
 
         Vec3 spawn = findSpawnPos(level, tank, level.getRandom());
-        @SuppressWarnings("unchecked")
-        EntityType<Entity> anyType = (EntityType<Entity>) type;
-        Consumer<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
-        Entity e = anyType.create(level, config, BlockPos.containing(spawn), MobSpawnType.BUCKET, false, false);
-        if (e == null) return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
+        CompoundTag stored = FishContainers.storedEntity(stack);
+        Entity e;
+        if (stored != null) {
+            e = FishContainers.create(level, stored); // Better Fish Tanks bag / Fintastic net: the complete entity
+        } else {
+            @SuppressWarnings("unchecked")
+            EntityType<Entity> anyType = (EntityType<Entity>) type;
+            Consumer<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
+            e = anyType.create(level, config, BlockPos.containing(spawn), MobSpawnType.BUCKET, false, false);
+        }
+        if (e == null || e.getType() != type) {
+            if (e != null) e.discard();
+            return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
+        }
         Acceptance acc = accepts(type, e);
         if (acc != Acceptance.OK) {
             e.discard();
             return rejection(acc, type);
         }
         if (e instanceof Bucketable b) {
-            b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
+            if (stored == null) b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
             b.setFromBucket(true);
         }
         if (isAdult(e)) {
-            long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + (bag ? BAG_MB : BUCKET_MB));
+            long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);
             int cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
             if (countAdults(live) + 1 > cap) {
                 e.discard();
@@ -177,7 +206,7 @@ public final class TankInhabitants {
         e.moveTo(spawn.x, spawn.y, spawn.z, level.getRandom().nextFloat() * 360F, 0F);
         adopt(e, controller);
         level.addFreshEntityWithPassengers(e);
-        TankInteractions.changeWater(level, controller, bag ? BAG_MB : BUCKET_MB);
+        if (addMb > 0) TankInteractions.changeWater(level, controller, addMb);
         tank.inhabitants().add(e.getUUID());
         TankCare.log(level, controller, "log.bettacraft.inserted", TankCare.nameArg(e));
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.INSERTED);
@@ -359,16 +388,19 @@ public final class TankInhabitants {
         if (e == null || !e.isAlive() || !hasTankRef(e) || !tank.id().equals(e.getData(ModAttachments.TANK_REF.get()).tankId())) {
             return Component.translatable("message.bettacraft.tank.not_inside");
         }
-        long cost = bag ? BAG_MB : BUCKET_MB;
-        if (tank.waterMb() < cost) return Component.translatable("message.bettacraft.tank.not_enough_water");
         if (!(e instanceof Bucketable bucketable)) return Component.translatable("message.bettacraft.tank.cannot_take", e.getName());
         int slot = findContainer(player, bag);
         if (slot < 0) {
             return Component.translatable(bag ? "message.bettacraft.tank.need_bag" : "message.bettacraft.tank.need_bucket");
         }
+        ItemStack container = player.getInventory().getItem(slot);
+        long cost = containerWater(container);
+        if (tank.waterMb() < cost) return Component.translatable("message.bettacraft.tank.not_enough_water");
         release(e);
         ItemStack filled;
-        if (bag) {
+        if (FishContainers.kind(container) != null) {
+            filled = FishContainers.fill(container, e, player); // Better Fish Tanks bag / Fintastic net
+        } else if (bag) {
             filled = FishBagItem.fillWith(e);
         } else {
             filled = bucketable.getBucketItemStack();
@@ -379,20 +411,46 @@ public final class TankInhabitants {
         TankCare.log(level, controller, "log.bettacraft.taken_out", TankCare.nameArg(e));
         tank.inhabitants().remove(e.getUUID());
         e.discard();
-        TankInteractions.changeWater(level, controller, -cost);
+        if (cost > 0) TankInteractions.changeWater(level, controller, -cost);
         level.playSound(null, player.blockPosition(), bucketable.getPickupSound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         reconcile(level, controller);
         return null;
     }
 
-    /** Slot of an empty bucket or empty fish bag in the player's inventory, or -1. */
+    /**
+     * Slot of an empty bucket, or for {@code bag} of an empty fish bag in the player's inventory, or -1. Our fish bag
+     * comes first, then the Better Fish Tanks fish bag, then the Fintastic fishnet (M7).
+     */
     public static int findContainer(Player player, boolean bag) {
         var inv = player.getInventory();
+        if (!bag) {
+            for (int i = 0; i < inv.getContainerSize(); i++) if (inv.getItem(i).is(Items.BUCKET)) return i;
+            return -1;
+        }
+        int best = -1, bestRank = Integer.MAX_VALUE;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack s = inv.getItem(i);
-            if (bag ? (s.getItem() instanceof FishBagItem && !FishBagItem.isFilled(s)) : s.is(Items.BUCKET)) return i;
+            int rank = s.getItem() instanceof FishBagItem && !FishBagItem.isFilled(s) ? 0
+                    : FishContainers.isEmptyContainer(s) ? 1 + FishContainers.kind(s).ordinal() : Integer.MAX_VALUE;
+            if (rank < bestRank) {
+                bestRank = rank;
+                best = i;
+            }
         }
-        return -1;
+        return best;
+    }
+
+    /** Water an (empty) container takes out of the tank together with the animal. */
+    public static long containerWater(ItemStack container) {
+        if (container.is(Items.BUCKET)) return BUCKET_MB;
+        FishContainers.Foreign f = FishContainers.kind(container);
+        return f != null ? f.waterMb : BAG_MB;
+    }
+
+    /** Water the bag button would take (with the container {@link #findContainer} picks), or -1 without one. */
+    public static long bagWater(Player player) {
+        int slot = findContainer(player, true);
+        return slot < 0 ? -1 : containerWater(player.getInventory().getItem(slot));
     }
 
     // ------------------------------------------------------------------ break rule

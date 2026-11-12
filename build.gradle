@@ -92,6 +92,11 @@ repositories {
         forRepository { maven { name = 'BlameJared (JEI)'; url = 'https://maven.blamejared.com' } }
         filter { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
     }
+    // Better Fish Tanks is only published on CurseForge
+    exclusiveContent {
+        forRepository { maven { name = 'CurseMaven'; url = 'https://cursemaven.com' } }
+        filter { includeGroup 'curse.maven' }
+    }
 }
 
 // Plain JUnit 5 tests. They run WITHOUT a Minecraft bootstrap; only classes that do not
@@ -111,6 +116,19 @@ dependencies {
     // JEI (optional): information pages. Not for GameTests, not with -PnoJei.
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     if (!project.hasProperty('noJei') && !gameTests) localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // Aquarium mods (M7, all optional): no compile dependency at all, the compat code works with item/entity ids, NBT
+    // and reflection. In dev they are on the run classpath (client, server and GameTests) unless -PnoCompat is given;
+    // the versions are the ones of ATM10.
+    if (!project.hasProperty('noCompat')) {
+        localRuntime "curse.maven:better-fishtanks-1196541:${bft_file_id}"
+        localRuntime "maven.modrinth:mint-lib:${mint_lib_version}"
+        localRuntime "maven.modrinth:fintastic:${fintastic_version}"
+        localRuntime "maven.modrinth:fish-of-thieves:${fish_of_thieves_version}"
+        localRuntime "maven.modrinth:yacl:${yacl_version}"
+        localRuntime "maven.modrinth:aquaculture:${aquaculture_version}"
+        localRuntime "maven.modrinth:naturalist:${naturalist_version}"
+    }
 
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'

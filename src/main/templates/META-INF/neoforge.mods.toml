@@ -49,3 +49,39 @@ config="${mod_id}.mixins.json"
     versionRange="[19,)"
     ordering="NONE"
     side="BOTH"
+
+# Aquarium mods (M7): two-way compatibility through ids, tags and NBT; nothing is required.
+[[dependencies.${mod_id}]]
+    modId="betterfishtanks"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="fintastic"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="fishofthieves"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="aquaculture"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="naturalist"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"

@@ -224,6 +224,8 @@ public final class DevSmokeTest {
                         level.setBlockAndUpdate(b.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
             } else if (ticks == 50) {
                 breedingTank(level);
+            } else if (ticks == 60) {
+                DevSmokeM7.setup(level, base); // M7: compat tank, Better Fish Tanks tank
             } else if (!passed && ticks >= 200 && ticks < 2400 && (InteriorBench.realRunning() || ticks % 20 != 0)) {
                 // wait for the asynchronous real-region bench
             } else if (ticks >= 200 && !passed) {
@@ -254,6 +256,7 @@ public final class DevSmokeTest {
                     throw new IllegalStateException("break rule not active");
                 }
                 m6Checks(server);
+                DevSmokeM7.check(level, base);
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

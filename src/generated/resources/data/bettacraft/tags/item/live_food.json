@@ -1,5 +1,17 @@
 {
   "values": [
-    "bettacraft:mosquito_larvae"
+    "bettacraft:mosquito_larvae",
+    {
+      "id": "aquaculture:worm",
+      "required": false
+    },
+    {
+      "id": "fishofthieves:earthworms",
+      "required": false
+    },
+    {
+      "id": "betterfishtanks:raw_minishrimp",
+      "required": false
+    }
   ]
 }

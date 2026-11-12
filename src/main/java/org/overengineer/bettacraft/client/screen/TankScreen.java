@@ -229,13 +229,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         fishNameBox.setEditable(has && mod);
         renameButton.active = has && mod;
         bucketButton.active = has && mod && sel.bucketable() && v.hasBucket && v.waterMb >= TankInhabitants.BUCKET_MB;
-        bagButton.active = has && mod && sel.bucketable() && v.hasBag && v.waterMb >= TankInhabitants.BAG_MB;
+        bagButton.active = has && mod && sel.bucketable() && v.hasBag && v.waterMb >= v.bagMb;
         bucketButton.setTooltip(Tooltip.create(takeTooltip(v, sel, false)));
         bagButton.setTooltip(Tooltip.create(takeTooltip(v, sel, true)));
     }
 
     private Component takeTooltip(TankView v, @Nullable TankView.Inhabitant sel, boolean bag) {
-        long cost = bag ? TankInhabitants.BAG_MB : TankInhabitants.BUCKET_MB;
+        long cost = bag ? v.bagMb : TankInhabitants.BUCKET_MB;
         if (sel == null) return Component.translatable("gui.bettacraft.fish.none_selected");
         if (!v.canModify) return Component.translatable("message.bettacraft.tank.locked");
         if (!sel.bucketable()) return Component.translatable("gui.bettacraft.fish.not_bucketable");

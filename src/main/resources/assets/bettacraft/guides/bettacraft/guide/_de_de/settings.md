@@ -60,6 +60,19 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
   Schränke zeigen ihre Heizstäbe.
 * **JEI:** Info-Seiten für alle Bettacraft-Items.
 * **Sodium und Iris:** Aquarium-Wasser und Miniaturen funktionieren mit beiden.
+* **Better Fish Tanks:** Seine *Fish Bag* setzt Tiere in Bettacraft-Aquarien ein und nimmt sie über das Menü wieder
+  heraus. Umgekehrt passen Bettas in seine Tüte und seine Aquarien; eine gefüllte Bettacraft-Fischtüte oder ein
+  Betta-Eimer setzt das Tier per Rechtsklick in ein Better-Fish-Tanks-Aquarium.
+* **Fintastic:** Seine Fische und das *Fischnetz* funktionieren in beide Richtungen; sein Fischfutter füttert Bettas,
+  Feenkrebse, Daphnien und Ruderfußkrebse sind lebende Beute, und seine Wasserpflanzen (auch Wasserlinsen und
+  Lotusblätter) lassen sich im trockenen Innenraum setzen. Arapaima und Quastenflosser sind zu groß für ein Aquarium.
+* **Fish of Thieves:** Seine Fische leben in Bettacraft-Aquarien (Battlegill, Wrecker und Devilfish sind Raubfische),
+  und ein Betta-Eimer setzt einen Betta auf seine *Fish Plaque*. Regenwürmer sind Lebendfutter.
+* **Aquaculture 2:** Seine kleinen Fische sind willkommen, die großen (Thunfisch, Arapaima, Heilbutt, Wels, Karpfen …)
+  nicht; der Piranha ist ein Raubfisch. Würmer sind Lebendfutter, seine rohen Fische und Filets ergeben Betta-Pellets.
+* **Naturalist:** Barsch, Wels und andere kleine Tiere werden angenommen; Piranha und Anglerfisch sind Raubfische.
+* **Sümpfe anderer Mods** (Biomes O' Plenty, Regions Unexplored …): Wildbettas erscheinen in jedem Biom aus
+  `#c:is_swamp` über `#bettacraft:betta_spawn_biomes`.
 
 ## Befehle
 

@@ -40,6 +40,10 @@ public final class BettaCraft {
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         modBus.addListener(ModNetwork::register);
         modBus.addListener(BettaCraft::onCapabilities);
+        // Better Fish Tanks (M7): release our bags and betta buckets into its tanks (reflection, only with the mod)
+        if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.MOD_ID)) {
+            org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.register();
+        }
 
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);

@@ -1,0 +1,96 @@
+{
+  "values": [
+    {
+      "id": "fintastic:duckweed",
+      "required": false
+    },
+    {
+      "id": "fintastic:hornwort",
+      "required": false
+    },
+    {
+      "id": "fintastic:anubias",
+      "required": false
+    },
+    {
+      "id": "fintastic:amazon_sword",
+      "required": false
+    },
+    {
+      "id": "fintastic:tall_amazon_sword",
+      "required": false
+    },
+    {
+      "id": "fintastic:blue_hypnea",
+      "required": false
+    },
+    {
+      "id": "fintastic:mermaid_fan",
+      "required": false
+    },
+    {
+      "id": "fintastic:caulerpa",
+      "required": false
+    },
+    {
+      "id": "fintastic:red_algae",
+      "required": false
+    },
+    {
+      "id": "fintastic:red_algae_fan",
+      "required": false
+    },
+    {
+      "id": "fintastic:red_algae_wall_fan",
+      "required": false
+    },
+    {
+      "id": "fintastic:dragons_breath_algae",
+      "required": false
+    },
+    {
+      "id": "fintastic:aquatic_moss_phyllid",
+      "required": false
+    },
+    {
+      "id": "fintastic:aquatic_moss_carpet",
+      "required": false
+    },
+    {
+      "id": "fintastic:green_algae_carpet",
+      "required": false
+    },
+    {
+      "id": "fintastic:red_algae_carpet",
+      "required": false
+    },
+    {
+      "id": "fintastic:sea_grapes",
+      "required": false
+    },
+    {
+      "id": "fintastic:sea_grapes_plant",
+      "required": false
+    },
+    {
+      "id": "fintastic:stromatolite_growths",
+      "required": false
+    },
+    {
+      "id": "fintastic:fossil_stromatolite_growths",
+      "required": false
+    },
+    {
+      "id": "fintastic:lotus",
+      "required": false
+    },
+    {
+      "id": "fintastic:lotus_flower",
+      "required": false
+    },
+    {
+      "id": "fintastic:lotus_pad",
+      "required": false
+    }
+  ]
+}

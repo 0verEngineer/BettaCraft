@@ -381,7 +381,7 @@ public final class ModDataGen {
                     .save(output.withConditions(plastic), BettaCraft.id("fish_bag_plastic"));
 
             ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BETTA_PELLETS.get(), 8)
-                    .requires(Ingredient.of(Items.COD, Items.SALMON))
+                    .requires(ModTags.PELLET_FISH)
                     .requires(ModItems.MOSQUITO_LARVAE.get())
                     .requires(Items.BONE_MEAL)
                     .requires(Items.DRIED_KELP)
@@ -603,7 +603,11 @@ public final class ModDataGen {
                     ModBlocks.EXTERNAL_FILTER.get());
             tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
-            tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD);
+            tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD)
+                    .addOptional(Compat.rl(Compat.FINTASTIC, "duckweed")).addOptional(Compat.rl(Compat.FINTASTIC, "lotus_pad"));
+            // Fintastic plants may stand in the dry interior like seagrass and kelp (M7)
+            var plants = tag(ModTags.INTERIOR_WATER_PLANTS);
+            for (String p : Compat.FINTASTIC_PLANTS) plants.addOptional(Compat.rl(Compat.FINTASTIC, p));
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
                     net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
         }
@@ -628,6 +632,15 @@ public final class ModDataGen {
                     .addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "plastics"))
                     .addOptionalTag(ResourceLocation.fromNamespaceAndPath("pneumaticcraft", "plastic_sheets"))
                     .addOptional(ResourceLocation.fromNamespaceAndPath("mekanism", "hdpe_sheet"));
+            // raw fish for pellets: cod, salmon and the raw fish of other mods (Aquaculture, Fish of Thieves, ...)
+            tag(ModTags.PELLET_FISH).add(Items.COD, Items.SALMON).addOptionalTag(Tags.Items.FOODS_RAW_FISH)
+                    .addOptional(Compat.rl(Compat.AQUACULTURE, "fish_fillet_raw"));
+            // food of other mods (M7): fish feed and pellets as normal food, worms and shrimp as live food
+            for (var f : Compat.FOOD) tag(ModTags.BETTA_FOOD).addOptional(f);
+            for (var f : Compat.LIVE_FOOD) {
+                tag(ModTags.LIVE_FOOD).addOptional(f);
+                tag(ModTags.BETTA_FOOD).addOptional(f);
+            }
         }
     }
 
@@ -642,17 +655,15 @@ public final class ModDataGen {
             tag(ModTags.C_FISH).add(betta);
             tag(ModTags.C_FISHES).add(betta);
             tag(ModTags.BFT_CATCHABLE).addOptional(BettaCraft.id("betta"));
-            tag(ModTags.TANK_INHABITANTS).add(EntityType.AXOLOTL, EntityType.TADPOLE);
-            // giant fish of other mods
-            tag(ModTags.TANK_BLACKLIST)
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("fintastic", "arapaima"))
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("fintastic", "coelacanth"));
-            tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH)
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("naturalist", "piranha"))
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("naturalist", "anglerfish"))
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("fishofthieves", "battlegill"))
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("fishofthieves", "wrecker"))
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("fishofthieves", "devilfish"));
+            var inhabitants = tag(ModTags.TANK_INHABITANTS).add(EntityType.AXOLOTL, EntityType.TADPOLE);
+            for (var e : Compat.INHABITANTS) inhabitants.addOptional(e);
+            // giant fish of other mods (their hitboxes are small, the animals are not)
+            var blacklist = tag(ModTags.TANK_BLACKLIST);
+            for (var e : Compat.BLACKLIST) blacklist.addOptional(e);
+            var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH);
+            for (var e : Compat.PREDATORS) predators.addOptional(e);
+            var prey = tag(ModTags.BETTA_PREY);
+            for (var e : Compat.PREY) prey.addOptional(e);
         }
     }
 

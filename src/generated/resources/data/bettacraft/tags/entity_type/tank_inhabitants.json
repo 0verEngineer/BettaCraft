@@ -1,6 +1,10 @@
 {
   "values": [
     "minecraft:axolotl",
-    "minecraft:tadpole"
+    "minecraft:tadpole",
+    {
+      "id": "fintastic:pleco",
+      "required": false
+    }
   ]
 }

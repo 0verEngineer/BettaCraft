@@ -11,7 +11,8 @@ navigation:
 ## Tiere einsetzen
 
 Rechtsklicke das Aquarium mit einem **Betta-Eimer**, einem anderen **Fischeimer** oder einer gefüllten **Fischtüte**.
-Das Tier erscheint mit all seinen Daten im Wasser. Das Aquarium muss mindestens halb voll sein.
+Das Tier erscheint mit all seinen Daten im Wasser. Das Aquarium muss mindestens halb voll sein. Eine gefüllte *Fish Bag*
+von Better Fish Tanks (+100 mB) und ein volles *Fischnetz* von Fintastic (ohne Wasser) gehen ebenfalls.
 
 Angenommen werden:
 
@@ -26,7 +27,9 @@ ebenfalls übernommen.
 ## Tiere entnehmen
 
 * **Menü:** Öffne das Aquarium-Menü, wähle das Tier im Tab *Bewohner* und klicke *Eimer* oder *Fischtüte*. Du brauchst
-  einen leeren Eimer bzw. eine leere Fischtüte im Inventar. Ist nicht genug Wasser da, ist der Knopf ausgegraut.
+  einen leeren Eimer bzw. eine leere Fischtüte im Inventar. Ist nicht genug Wasser da, ist der Knopf ausgegraut. Der
+  Knopf *Fischtüte* füllt auch eine leere Fish Bag von Better Fish Tanks (-100 mB) oder ein Fintastic-Fischnetz (ohne
+  Wasser).
 * **Direkt:** Rechtsklicke einen Fisch im Aquarium mit einem Wassereimer, wie überall sonst.
 
 ## Besatz
@@ -43,3 +46,8 @@ Nur **adulte** Tiere zählen. Eier, Larven, Jungfische, Juvenile und Subadulte n
 
 Kugelfische und die Raubfische anderer Mods fressen kleine Fische. Siehe
 [Kämpfe, Flaring und Raubfische](../bettas/fighting.md).
+
+## Lebende Beute
+
+Kleine Beutetiere anderer Mods (`#bettacraft:betta_prey`: Feenkrebse, Daphnien und Ruderfußkrebse von Fintastic) sind
+Lebendfutter: Ein hungriger Betta frisst eines und gilt als mit Lebendfutter gefüttert, was auch die Zucht fördert.

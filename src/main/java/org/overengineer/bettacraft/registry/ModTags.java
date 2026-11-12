@@ -23,6 +23,8 @@ public final class ModTags {
     public static final TagKey<Item> FRY_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("fry_food"));
     /** Live food: conditions adults for breeding (mosquito larvae). */
     public static final TagKey<Item> LIVE_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("live_food"));
+    /** Raw fish for betta pellets: cod, salmon and {@code #c:foods/raw_fish} (fish of other mods, M7). */
+    public static final TagKey<Item> PELLET_FISH = TagKey.create(Registries.ITEM, BettaCraft.id("pellet_fish"));
     /** Plastic from other mods; non-empty switches the fish bag recipe to plastic (PLAN 4.3). */
     public static final TagKey<Item> PLASTIC_SHEETS = TagKey.create(Registries.ITEM, BettaCraft.id("plastic_sheets"));
     public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "buckets/entity_water"));
@@ -33,6 +35,8 @@ public final class ModTags {
     public static final TagKey<EntityType<?>> TANK_INHABITANTS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("tank_inhabitants"));
     /** Kill bettas and other small inhabitants. */
     public static final TagKey<EntityType<?>> PREDATORS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("predators"));
+    /** Live prey of other mods (Fintastic artemia, daphnia, copepods): hungry bettas in a tank eat it as live food (M7). */
+    public static final TagKey<EntityType<?>> BETTA_PREY = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("betta_prey"));
     public static final TagKey<EntityType<?>> C_FISH = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fish"));
     public static final TagKey<EntityType<?>> C_FISHES = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fishes"));
     public static final TagKey<EntityType<?>> BFT_CATCHABLE = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("betterfishtanks", "catchable_fish"));
@@ -46,6 +50,11 @@ public final class ModTags {
     public static final TagKey<Block> ARTEMIA_SAND = TagKey.create(Registries.BLOCK, BettaCraft.id("artemia_sand"));
     /** Floating plants in the interior: the bubble nest is built under them (PLAN 5.4). */
     public static final TagKey<Block> FLOATING_PLANTS = TagKey.create(Registries.BLOCK, BettaCraft.id("floating_plants"));
+    /**
+     * Water plants of other mods that may stand in the dry interior (placed without water, never break), like seagrass
+     * and kelp (PLAN 7.3; Fintastic plants in M7).
+     */
+    public static final TagKey<Block> INTERIOR_WATER_PLANTS = TagKey.create(Registries.BLOCK, BettaCraft.id("interior_water_plants"));
     /** Blocks that cannot become an interior floor substrate (PLAN 7.2). */
     public static final TagKey<Block> SUBSTRATE_BLACKLIST = TagKey.create(Registries.BLOCK, BettaCraft.id("substrate_blacklist"));
 

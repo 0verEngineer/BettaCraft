@@ -1,5 +1,13 @@
 {
   "values": [
-    "minecraft:lily_pad"
+    "minecraft:lily_pad",
+    {
+      "id": "fintastic:duckweed",
+      "required": false
+    },
+    {
+      "id": "fintastic:lotus_pad",
+      "required": false
+    }
   ]
 }

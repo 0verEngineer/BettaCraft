@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "fintastic:artemia",
+      "required": false
+    },
+    {
+      "id": "fintastic:daphnia",
+      "required": false
+    },
+    {
+      "id": "fintastic:copepod",
+      "required": false
+    }
+  ]
+}

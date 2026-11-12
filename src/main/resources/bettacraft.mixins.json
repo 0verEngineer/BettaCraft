@@ -6,8 +6,11 @@
   "mixins": [
     "interior.CoralBlockMixin",
     "interior.CoralMixin",
+    "interior.FloatingPlantItemMixin",
     "interior.FlowingFluidMixin",
     "interior.GameTestServerMixin",
+    "interior.InteriorWaterPlantMixin",
+    "interior.InteriorWaterPlantPlacementMixin",
     "interior.LevelMixin",
     "interior.ServerLevelMixin",
     "interior.WaterPlantPlacementMixin",

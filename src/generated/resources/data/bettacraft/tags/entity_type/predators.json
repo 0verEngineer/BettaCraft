@@ -20,6 +20,22 @@
     {
       "id": "fishofthieves:devilfish",
       "required": false
+    },
+    {
+      "id": "aquaculture:piranha",
+      "required": false
+    },
+    {
+      "id": "fintastic:freshwater_shark",
+      "required": false
+    },
+    {
+      "id": "fintastic:catfish",
+      "required": false
+    },
+    {
+      "id": "fintastic:featherback",
+      "required": false
     }
   ]
 }
