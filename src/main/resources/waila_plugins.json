@@ -1,0 +1,10 @@
+{
+  "bettacraft:main": {
+    "entrypoints": {
+      "common": "org.overengineer.bettacraft.compat.wthit.WthitCommonPlugin",
+      "client": "org.overengineer.bettacraft.compat.wthit.WthitClientPlugin"
+    },
+    "side": "*",
+    "required": ["bettacraft"]
+  }
+}

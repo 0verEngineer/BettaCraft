@@ -37,6 +37,20 @@ config="${mod_id}.mixins.json"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="theoneprobe"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="wthit"
+    type="optional"
+    versionRange="[12,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="guideme"
     type="optional"
     versionRange="[21.1.1,)"

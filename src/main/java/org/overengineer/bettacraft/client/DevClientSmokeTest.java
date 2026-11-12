@@ -67,8 +67,11 @@ final class DevClientSmokeTest {
     private static boolean bigDecorated;
     private static DevClientSmokeM6 m6;
     private static DevClientSmokeM7 m7;
+    private static DevClientSmokeM8 m8;
     /** -Psmoketestm7: only the M7 compat scene (faster when iterating on it). */
     private static final boolean M7_ONLY = Boolean.getBoolean("bettacraft.smoketest.m7only");
+    /** -Psmoketestm8: only the M8 info overlay scene (Jade, The One Probe, WTHIT). */
+    private static final boolean M8_ONLY = Boolean.getBoolean("bettacraft.smoketest.m8only");
 
     private DevClientSmokeTest() {}
 
@@ -96,9 +99,18 @@ final class DevClientSmokeTest {
         ticks++;
         mc.options.pauseOnLostFocus = false;
         if (ticks == 2) mc.getWindow().setWindowed(1280, 960); // larger screenshots (handbook images, menus at GUI scale 4)
-        if (ticks > 60) mc.player.getAbilities().flying = true; // hover at the camera positions
+        if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M8_ONLY) {
+                if (ticks == 60) m8 = new DevClientSmokeM8();
+                if (m8 != null && m8.tick()) {
+                    m8 = null;
+                    LOGGER.info("[smoketest] client world test finished (M8 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M7_ONLY) {
                 if (ticks == 60) m7 = new DevClientSmokeM7();
                 if (m7 != null && m7.tick()) {
@@ -248,6 +260,10 @@ final class DevClientSmokeTest {
                     }
                     if (m7 != null && m7.tick()) {
                         m7 = null;
+                        m8 = new DevClientSmokeM8(); // M8: info overlays
+                    }
+                    if (m8 != null && m8.tick()) {
+                        m8 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

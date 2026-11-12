@@ -46,6 +46,11 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m7only', 'true'
             }
+            // gradlew runClient -Psmoketestm8 : only the M8 scene (Jade / The One Probe / WTHIT overlays)
+            if (project.hasProperty('smoketestm8')) {
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m8only', 'true'
+            }
         }
 
         server {
@@ -121,6 +126,17 @@ dependencies {
     // JEI (optional): information pages. Not for GameTests, not with -PnoJei.
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     if (!project.hasProperty('noJei') && !gameTests) localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // The One Probe and WTHIT (M8, optional): same information as the Jade plugin. On the run classpath in dev unless
+    // -PnoTop / -PnoWthit is given; never for GameTests (they ping the mock players like Jade).
+    compileOnly "maven.modrinth:the-one-probe:${top_version}"
+    if (!project.hasProperty('noTop') && !gameTests) localRuntime "maven.modrinth:the-one-probe:${top_version}"
+    compileOnly "maven.modrinth:wthit:${wthit_version}"
+    compileOnly "maven.modrinth:badpackets:${badpackets_version}"
+    if (!project.hasProperty('noWthit') && !gameTests) {
+        localRuntime "maven.modrinth:wthit:${wthit_version}"
+        localRuntime "maven.modrinth:badpackets:${badpackets_version}"
+    }
 
     // Aquarium mods (M7, all optional): no compile dependency at all, the compat code works with item/entity ids, NBT
     // and reflection. In dev they are on the run classpath (client, server and GameTests) unless -PnoCompat is given;
