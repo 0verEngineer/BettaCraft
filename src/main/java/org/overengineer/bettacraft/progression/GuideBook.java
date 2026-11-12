@@ -75,8 +75,9 @@ public final class GuideBook {
     }
 
     /** Into the inventory, or at the player's feet (owner-only pickup for 60 s) when it is full. */
-    static void deliver(ServerPlayer player, ItemStack book) {
-        if (player.getInventory().add(book)) {
+    public static void deliver(ServerPlayer player, ItemStack book) {
+        // free slot first: in creative Inventory#add "succeeds" with a full inventory and deletes the stack
+        if (player.getInventory().getFreeSlot() >= 0 && player.getInventory().add(book)) {
             player.sendSystemMessage(Component.translatable("message.bettacraft.guide.received").withStyle(ChatFormatting.AQUA));
             return;
         }
