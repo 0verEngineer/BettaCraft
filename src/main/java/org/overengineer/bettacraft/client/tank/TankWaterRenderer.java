@@ -21,7 +21,7 @@ import org.overengineer.bettacraft.tank.TankBlock;
 public final class TankWaterRenderer {
     public static final ResourceLocation STILL = BettaCraft.id("block/tank_water_still");
     /** ARGB; alpha controls how see-through the water is. */
-    private static final int COLOR = 0xA04A90E2;
+    private static final int COLOR = 0x7C4A90E2; // M1: clearer water so the fish colours stay visible
     private static final float INSET = 0.5F / 16F;
 
     private TankWaterRenderer() {}

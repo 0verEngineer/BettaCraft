@@ -26,7 +26,7 @@ public final class BettaTints {
 
     /** Sheen; alpha from the gene strength, softly pulsing. */
     public static int iridescence(BettaGenome g, boolean sick, int tick) {
-        float strength = "high".equals(g.iridescence()) ? 0.8F : 0.45F;
+        float strength = "high".equals(g.iridescence()) ? 0.5F : 0.28F;
         if (sick) strength *= 0.4F;
         strength *= 0.85F + 0.15F * Mth.sin(tick * 0.08F);
         int a = Mth.clamp((int) (strength * 255), 0, 255);

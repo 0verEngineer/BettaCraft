@@ -49,8 +49,34 @@ public final class DevSmokeTest {
                 LOGGER.info("[smoketest] tank {} formed, water ok, interior region {} built={}", c.getTank(), r.id(), r.built());
                 InteriorBench.runDefault();
                 InteriorBench.realRegions(server);
+                // M1: bettas from buckets, a heater, a feeder with pellets
+                c.getTank().heaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get()));
+                for (int i = 0; i < 3; i++) {
+                    var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(level.getRandom());
+                    var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(
+                            new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get()),
+                            org.overengineer.bettacraft.entity.betta.BettaData.create(g, i == 1, level.getGameTime()));
+                    var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, bucket,
+                            org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false);
+                    if (err != null) throw new IllegalStateException("insert failed: " + err.getString());
+                }
+                level.setBlockAndUpdate(base.above(2), ModBlocks.FEEDER.get().defaultBlockState());
+                if (level.getBlockEntity(base.above(2)) instanceof org.overengineer.bettacraft.equipment.FeederBlockEntity f) {
+                    f.items().insertItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.BETTA_PELLETS.get(), 8), false);
+                    f.feedNow(level, c);
+                }
+                level.setBlockAndUpdate(base.offset(1, 2, 0), ModBlocks.TANK_LIGHT.get().defaultBlockState());
+            } else if (ticks == 200) {
+                TankBlockEntity c = TankMultiblock.getController(level, base);
+                var live = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank());
+                LOGGER.info("[smoketest] {} inhabitants alive, water {} C, crowded {}, log {}", live.size(),
+                        c.getTank().waterTemp(), c.isCrowded(), c.getTank().log().size());
+                if (live.size() < 3) throw new IllegalStateException("expected at least 3 bettas (more from earlier runs persist), found " + live.size());
+                if (org.overengineer.bettacraft.tank.TankInhabitants.breakBlockedReason(level, base).isEmpty()) {
+                    throw new IllegalStateException("break rule not active");
+                }
                 LOGGER.info("[smoketest] PASSED");
-            } else if (ticks == 40) {
+            } else if (ticks == 210) {
                 server.halt(false);
             }
         } catch (RuntimeException e) {

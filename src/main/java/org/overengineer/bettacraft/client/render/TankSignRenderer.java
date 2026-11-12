@@ -62,10 +62,18 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
 
         pose.pushPose();
         pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());
+        // local +Z = outward normal of the front face
         pose.mulPose(Axis.YP.rotationDegrees(-front.toYRot()));
+        // black plate slightly behind the text (towards the glass), double-sided
+        org.joml.Matrix4f m = pose.last().pose();
+        com.mojang.blaze3d.vertex.VertexConsumer bg = buffers.getBuffer(net.minecraft.client.renderer.RenderType.textBackground());
+        float hw = plateW / 2, hh = plateH / 2, bz = -0.004F;
+        float[][] quad = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
+        for (int i = 0; i < 4; i++) bg.addVertex(m, quad[i][0], quad[i][1], bz).setColor(0xFF101010).setLight(packed);
+        for (int i = 3; i >= 0; i--) bg.addVertex(m, quad[i][0], quad[i][1], bz).setColor(0xFF101010).setLight(packed);
         pose.scale(scale, -scale, scale);
         font.drawInBatch(text, -textW / 2F, -4.0F, 0xFFFFFFFF, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET,
-                0xFF000000, packed);
+                0, packed);
         pose.popPose();
     }
 

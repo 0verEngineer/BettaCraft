@@ -136,7 +136,7 @@ final class LangEn {
         a.accept("gui.bettacraft.direction.west", "West");
         a.accept("gui.bettacraft.tank.size_water", "%sx%sx%s | Water %s / %s mB (%s%%)");
         a.accept("gui.bettacraft.tank.temperature", "Water %s °C (surroundings %s °C)");
-        a.accept("gui.bettacraft.tank.target", "Target temperature (heaters):");
+        a.accept("gui.bettacraft.tank.target", "Target temperature:");
         a.accept("gui.bettacraft.tank.heaters", "Heaters: %s");
         a.accept("gui.bettacraft.tank.heaters_none", "none");
         a.accept("gui.bettacraft.tank.heaters_ok", "%s blocks for %s water blocks");
@@ -146,7 +146,7 @@ final class LangEn {
         a.accept("gui.bettacraft.tank.light", "Light: %s");
         a.accept("gui.bettacraft.tank.light_state", "%s of %s on");
         a.accept("gui.bettacraft.tank.none", "none");
-        a.accept("gui.bettacraft.tank.inhabitants", "Animals: %s (adults %s, at most %s)");
+        a.accept("gui.bettacraft.tank.inhabitants", "Animals: %s (%s adults, max %s)");
         a.accept("gui.bettacraft.tank.crowded", "Overcrowded!");
         a.accept("gui.bettacraft.tank.fill_hint", "Fill to %s mB to add animals");
         a.accept("gui.bettacraft.tank.enter", "Interior");
@@ -160,11 +160,13 @@ final class LangEn {
         a.accept("gui.bettacraft.fish.health", "Health");
         a.accept("gui.bettacraft.fish.satiation", "Fed");
         a.accept("gui.bettacraft.fish.healthy", "Healthy");
-        a.accept("gui.bettacraft.fish.sick", "Sick!");
+        a.accept("gui.bettacraft.fish.sick", "Sick");
         a.accept("gui.bettacraft.fish.name", "Name");
         a.accept("gui.bettacraft.fish.rename", "Name");
-        a.accept("gui.bettacraft.fish.take_bucket", "Bucket -%s");
-        a.accept("gui.bettacraft.fish.take_bag", "Bag -%s");
+        a.accept("gui.bettacraft.fish.take_bucket", "Bucket");
+        a.accept("gui.bettacraft.fish.take_bag", "Fish bag");
+        a.accept("gui.bettacraft.fish.body", "Body: %s");
+        a.accept("gui.bettacraft.fish.fins", "Fins: %s");
         a.accept("gui.bettacraft.fish.take_bucket_tooltip", "Take out with an empty bucket from your inventory (-%s mB)");
         a.accept("gui.bettacraft.fish.take_bag_tooltip", "Take out with an empty fish bag from your inventory (-%s mB)");
         a.accept("gui.bettacraft.fish.none_selected", "Select an animal");

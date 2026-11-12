@@ -277,7 +277,7 @@ public final class TankInhabitants {
         TankRef ours = new TankRef(controller.getBlockPos(), tank.id());
         Set<UUID> found = new HashSet<>();
         int adults = 0;
-        for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && hasTankRef(e))) {
+        for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;
             if (!ours.equals(e.getData(ModAttachments.TANK_REF.get()))) adopt(e, controller);
             found.add(e.getUUID());
@@ -315,6 +315,11 @@ public final class TankInhabitants {
         }
         controller.setCrowded(isOvercrowded(adults, tank.waterBlocks()));
         if (changed) controller.markTankChanged();
+    }
+
+    /** Small water animals that got into the tank without a bucket (spawn egg, /summon) become inhabitants. */
+    private static boolean adoptable(Entity e) {
+        return e instanceof Mob && e instanceof Bucketable && e.isInWater() && accepts(e.getType(), e) == Acceptance.OK;
     }
 
     /**

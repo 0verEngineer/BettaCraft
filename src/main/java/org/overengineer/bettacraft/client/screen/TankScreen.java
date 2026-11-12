@@ -105,11 +105,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             if (v != null) send(TankActions.SET_FRONT, v.front.getClockWise().get2DDataValue(), "", null);
         }).bounds(x + 170, y + 38, 68, 14).build());
         minusButton = addRenderableWidget(Button.builder(Component.literal("-"), b -> changeTarget(-1))
-                .bounds(x + 150, y + 75, 14, 12).build());
+                .bounds(x + 168, y + 77, 14, 12).build());
         plusButton = addRenderableWidget(Button.builder(Component.literal("+"), b -> changeTarget(1))
-                .bounds(x + 206, y + 75, 14, 12).build());
+                .bounds(x + 224, y + 77, 14, 12).build());
         enterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
-                .bounds(x + 168, y + 121, 70, 14).build());
+                .bounds(x + 186, y + 123, 52, 14).build());
         overview.addAll(List.of(signButton, signPosButton, frontButton, minusButton, plusButton, enterButton));
 
         // ---- inhabitants
@@ -119,13 +119,18 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         renameButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.fish.rename"), b -> {
             if (selected != null) send(TankActions.RENAME_FISH, 0, fishNameBox.getValue(), selected);
         }).bounds(x + 201, y + 108, 37, 14).build());
-        bucketButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.fish.take_bucket", TankInhabitants.BUCKET_MB),
+        bucketButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.fish.take_bucket"),
                 b -> takeOut(false)).bounds(x + 114, y + 124, 62, 14).build());
-        bagButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.fish.take_bag", TankInhabitants.BAG_MB),
+        bagButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.fish.take_bag"),
                 b -> takeOut(true)).bounds(x + 177, y + 124, 61, 14).build());
         inhabitants.addAll(List.of(renameButton, bucketButton, bagButton));
         sentName = null;
         updateWidgets();
+    }
+
+    /** Dev smoke test only. */
+    public void selectTabForTest(int index) {
+        setTab(Tab.values()[index]);
     }
 
     private void setTab(Tab t) {
@@ -327,10 +332,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int tempColor = TankTemperature.isTolerable(v.waterTemp) ? (v.waterTemp >= TankTemperature.OPTIMAL_MIN && v.waterTemp <= TankTemperature.OPTIMAL_MAX ? 0x80FF80 : 0xFFE080) : 0xFF7070;
         line(g, Component.translatable("gui.bettacraft.tank.temperature", fmt(v.waterTemp), fmt(v.ambient)), x, y, tempColor);
         y += 11;
+        y += 1;
         line(g, Component.translatable("gui.bettacraft.tank.target"), x, y + 2, TEXT_LIGHT);
         String t = fmt(v.targetTemp) + " °C";
-        g.drawCenteredString(font, t, 185, y + 2, 0xFFFFFF);
-        y += 15;
+        g.drawCenteredString(font, t, 203, y + 2, 0xFFFFFF);
+        y += 14;
         double water = Math.max(0.001, v.waterMb / 1000.0);
         Component heat;
         if (v.heaterBlocks <= 0) heat = Component.translatable("gui.bettacraft.tank.heaters_none").withStyle(ChatFormatting.GRAY);
@@ -385,9 +391,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         TankView.Inhabitant sel = selectedInhabitant(v);
         if (sel == null) return;
-        int x = 114, y = 20;
+        int x = 114, y = 19;
         g.drawString(font, font.plainSubstrByWidth(inhabitantName(sel).getString(), 124), x, y, 0xFFFFFF, false);
-        y += 10;
+        y += 9;
         if (!sel.betta()) {
             line(g, Component.translatable(sel.typeKey()).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
             y += 10;
@@ -396,17 +402,18 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         line(g, Component.translatable("gui.bettacraft.fish.sex_stage", BettaTooltip.sex(sel.female()),
                 Component.translatable("stage.bettacraft." + sel.stage())), x, y, TEXT_LIGHT);
-        y += 10;
-        bar(g, x, y, Component.translatable("gui.bettacraft.fish.health"), sel.health(), sel.health() > 0.5F ? 0xFF50C050 : 0xFFD04040);
-        y += 10;
+        y += 9;
+        bar(g, x, y, Component.translatable(sel.sick() ? "gui.bettacraft.fish.sick" : "gui.bettacraft.fish.health"), sel.health(),
+                sel.health() > 0.5F ? 0xFF50C050 : 0xFFD04040);
+        y += 9;
         bar(g, x, y, Component.translatable("gui.bettacraft.fish.satiation"), sel.satiation(), 0xFFD0A040);
-        y += 10;
-        line(g, Component.translatable(sel.sick() ? "gui.bettacraft.fish.sick" : "gui.bettacraft.fish.healthy"), x, y, sel.sick() ? 0xFF7070 : 0x80FF80);
         y += 10;
         var gnm = sel.genome();
         for (Component c : List.of(BettaTooltip.shape(gnm),
-                Component.translatable("tooltip.bettacraft.betta.colors", BettaTooltip.color(gnm.bodyColor()), BettaTooltip.color(gnm.finColor())),
-                BettaTooltip.pattern(gnm), Component.translatable("tooltip.bettacraft.betta.iridescence", BettaTooltip.iridescence(gnm)))) {
+                Component.translatable("gui.bettacraft.fish.body", BettaTooltip.color(gnm.bodyColor())),
+                Component.translatable("gui.bettacraft.fish.fins", BettaTooltip.color(gnm.finColor())),
+                Component.translatable("tooltip.bettacraft.betta.pattern", BettaTooltip.pattern(gnm)),
+                Component.translatable("tooltip.bettacraft.betta.iridescence", BettaTooltip.iridescence(gnm)))) {
             String s = font.plainSubstrByWidth(c.getString(), 124);
             g.drawString(font, s, x, y, 0xC8C8C8, false);
             y += 9;

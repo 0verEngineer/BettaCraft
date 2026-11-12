@@ -74,7 +74,7 @@ public final class TankCare {
         return sum;
     }
 
-    static void updateTemperature(ServerLevel level, TankBlockEntity be, double dtDays) {
+    public static void updateTemperature(ServerLevel level, TankBlockEntity be, double dtDays) {
         TankData tank = be.getTank();
         float ambient = ambient(level, tank);
         float eq = TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(tank), tank.waterBlocks());
