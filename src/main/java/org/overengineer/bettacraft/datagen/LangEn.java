@@ -525,7 +525,7 @@ final class LangEn {
         a.accept("message.bettacraft.guide.dropped", "Your inventory is full: the Bettacraft Handbook lies at your feet. For %s seconds only you can pick it up.");
         a.accept("tooltip.bettacraft.hold_shift", "Hold %s for details");
         a.accept("tooltip.bettacraft.shift", "Shift");
-        a.accept("info.bettacraft.tank", "Craft from 6 glass of one kind and 3 iron ingots.\nPlace tanks of the same glass next to each other to build one large tank (a cuboid up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.");
+        a.accept("info.bettacraft.tank", "Craft from 6 glass of one kind and 3 iron ingots.\nPlace tanks of the same glass next to each other to build one large tank of any connected shape (L, T, steps; up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.");
         a.accept("info.bettacraft.betta_bucket", "A betta in a bucket. Use it on a tank to put the fish in (adds 1000 mB water), or on water to release it.\nCatch bettas in swamps with a water bucket or a fish bag.");
         a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nReusable; empty bags stack to 16.");
         a.accept("info.bettacraft.swamp_water_bottle", "Use a glass bottle on water in a swamp.\nSmelt it (furnace, smoker or campfire) to hatch mosquito larvae, or mix it with seagrass or leaves for an infusoria culture.");

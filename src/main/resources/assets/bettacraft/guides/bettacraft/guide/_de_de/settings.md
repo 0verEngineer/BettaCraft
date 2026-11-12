@@ -12,7 +12,8 @@ navigation:
 
 | Option | Standard | |
 |---|---|---|
-| `tank.maxSizeX/Y/Z` | 16 | größtes Aquarium (bis 64) |
+| `tank.maxSizeX/Y/Z` | 16 | größtes Aquarium (bis 64), der umschließende Quader bei freien Formen |
+| `tank.freeShapes` | true | jede zusammenhängende Form (L, T, Stufen); false = nur Quader |
 | `tank.maxEntities` | 64 | Tiere pro Aquarium |
 | `tank.hardCapPerWaterBlock` | 6 | höchstens so viele Adulte pro Wasserblock |
 | `tank.overcrowdedPerWaterBlock` | 2 | ab so vielen Adulten pro Wasserblock gibt es Stress |

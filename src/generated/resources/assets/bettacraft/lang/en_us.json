@@ -506,7 +506,7 @@
   "info.bettacraft.mosquito_larvae": "Live food: one portion feeds up to 4 bettas and gets a breeding pair in the mood twice as fast.\nFrom a smelted bottle of swamp water or a larva tub, sometimes from mud mined in a swamp.",
   "info.bettacraft.salt_water_bottle": "Use a glass bottle on water in an ocean. Mix it with artemia cysts for an artemia hatchery.",
   "info.bettacraft.swamp_water_bottle": "Use a glass bottle on water in a swamp.\nSmelt it (furnace, smoker or campfire) to hatch mosquito larvae, or mix it with seagrass or leaves for an infusoria culture.",
-  "info.bettacraft.tank": "Craft from 6 glass of one kind and 3 iron ingots.\nPlace tanks of the same glass next to each other to build one large tank (a cuboid up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.",
+  "info.bettacraft.tank": "Craft from 6 glass of one kind and 3 iron ingots.\nPlace tanks of the same glass next to each other to build one large tank of any connected shape (L, T, steps; up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.",
   "info.bettacraft.tank_lid": "Lay it on a top block of a tank: that block no longer loses water by evaporation.\nThe feeder and lights cover the block they stand on as well.",
   "info.bettacraft.tank_light": "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15. A redstone signal switches the whole bar off.",
   "iridescence.bettacraft.high": "high",

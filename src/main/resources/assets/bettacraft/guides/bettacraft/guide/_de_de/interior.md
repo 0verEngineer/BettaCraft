@@ -26,7 +26,9 @@ und das Aquarium zeigt es als **Miniatur** hinter dem Glas.
 
 Beim Standard-**Maßstab 16** wird ein Aquarium-Block zu 16x16x16 Innenraum-Blöcken, ein Innenraum-Block ist also ein
 Pixel des Aquariums. Ein 2x1x1-Aquarium hat einen Innenraum von 32x16x16 Blöcken. Server können für neue Aquarien
-Maßstab 8 oder 4 wählen (`interior.defaultScale`); ein Aquarium behält den Maßstab, mit dem es gebaut wurde.
+Maßstab 8 oder 4 wählen (`interior.defaultScale`); ein Aquarium behält den Maßstab, mit dem es gebaut wurde. Bei einem Aquarium mit
+[freier Form](aquarium/shapes.md) umfasst der Innenraum den umschließenden Quader; die Teile außerhalb der Form sind
+abgetrennt.
 
 ## Bauen
 

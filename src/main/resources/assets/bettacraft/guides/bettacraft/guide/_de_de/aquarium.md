@@ -27,8 +27,8 @@ gefärbtes Glas, getöntes Glas und das Glas anderer Mods (`#c:glass_blocks`).
 ## Bauen
 
 * Setze Aquarium-Blöcke nebeneinander: Blöcke aus **demselben Glas** verbinden sich zu einem Aquarium.
-* Ein Aquarium ist ein **Quader**, von 1x1x1 bis 16x16x16 Blöcke (Server können bis 64 erlauben). Ein Block, der keinen
-  Quader ergibt, bildet ein eigenes Aquarium.
+* Ein Aquarium kann **jede Form** haben (L, T, Stufen …), deren Blöcke sich mit einer Fläche berühren, von 1 Block bis
+  zu einem umschließenden Quader von 16x16x16 Blöcken (Server können bis 64 erlauben). Siehe [Formen](aquarium/shapes.md).
 * Zwei Aquarien verbinden sich nur, wenn sie aus demselben Glas sind und denselben [Innenraum-Maßstab](interior.md)
   haben.
 * Dunkle Kantenlinien laufen nur an den Außenkanten des ganzen Aquariums, nie zwischen seinen Blöcken.
@@ -43,10 +43,12 @@ Die Meldung sagt dir, was noch drin ist. Nimm die Tiere zuerst heraus, an Land w
 
 Das Wasser des abgebauten Blocks verschwindet einfach (nichts läuft aus), der Rest des Aquariums behält seinen Anteil.
 Die Innenraum-Blöcke hinter dem abgebauten Block droppen als Items (mehr als 27 Stapel kommen in Truhen verpackt). Wer
-einen Block in der Mitte abbaut, teilt das Aquarium in mehrere kleinere.
+einen Block in der Mitte abbaut, kann das Aquarium in mehrere kleinere teilen; jedes behält das Wasser und den Innenraum
+seiner eigenen Blöcke.
 
 ## Mehr
 
+* [Formen](aquarium/shapes.md)
 * [Wasser](aquarium/water.md)
 * [Bewohner](aquarium/inhabitants.md)
 * [Temperatur](aquarium/temperature.md)

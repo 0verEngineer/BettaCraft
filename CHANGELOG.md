@@ -4,6 +4,28 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.2.0-beta.1] - 2026-11-12
+
+### Added
+- Free aquarium shapes: any set of tank blocks that touch face to face (L, T, U, steps, a tower on a wide tank) forms
+  one aquarium, as long as its bounding box fits the maximum size. A block between two aquariums joins them.
+  `tank.freeShapes = false` keeps aquariums cuboid as before.
+- Dark edge lines along the inner corners of a free shape.
+- Handbook page "Shapes" (English and German).
+
+### Changed
+- Water fills a free shape layer by layer; breaking a block removes only the water of that block, and when an aquarium
+  falls apart every piece keeps the water of its own blocks (before, the rest was split by block count).
+- Fish, food, the bubble nest and new fry stay in the water of the actual shape, never in the empty corner of an L.
+- The feeder, lights and lids work on every open top (also on a lower step), external filters on every outer wall
+  (also in an inner corner), cabinets under every block with no tank block below it. The filter hose follows the
+  wall it hangs on. Evaporation counts only tops the water reaches.
+- The name sign sits on the widest flat part of the front.
+- The interior of a free shape covers its bounding box; the parts outside the shape are walled off and have no floor.
+  On a split every piece keeps the interior of its own blocks; substrate that is no longer on the floor after a merge
+  drops as items.
+- Interior region data schema 3: regions of existing aquariums are full boxes. The tank data itself is unchanged.
+
 ## [1.1.0-beta.1] - 2026-11-12
 
 ### Added

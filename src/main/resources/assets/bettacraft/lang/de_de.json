@@ -406,7 +406,7 @@
   "message.bettacraft.guide.dropped": "Dein Inventar ist voll: Das Bettacraft-Handbuch liegt vor deinen Füßen. %s Sekunden lang kannst nur du es aufheben.",
   "tooltip.bettacraft.hold_shift": "%s halten für Details",
   "tooltip.bettacraft.shift": "Umschalt",
-  "info.bettacraft.tank": "Aus 6 Glas derselben Sorte und 3 Eisenbarren herstellen.\nAquarien aus demselben Glas nebeneinander setzen ergibt ein großes Aquarium (Quader bis 16x16x16).\nMit Wassereimern füllen: 1 Eimer = 1000 mB, ab 50 % dürfen Tiere einziehen.\nRechtsklick: Aquarium-Menü. Umschalt + Rechtsklick: Innenraum betreten und einrichten.",
+  "info.bettacraft.tank": "Aus 6 Glas derselben Sorte und 3 Eisenbarren herstellen.\nAquarien aus demselben Glas nebeneinander setzen ergibt ein großes Aquarium in jeder zusammenhängenden Form (L, T, Stufen; bis 16x16x16).\nMit Wassereimern füllen: 1 Eimer = 1000 mB, ab 50 % dürfen Tiere einziehen.\nRechtsklick: Aquarium-Menü. Umschalt + Rechtsklick: Innenraum betreten und einrichten.",
   "info.bettacraft.betta_bucket": "Ein Betta im Eimer. Auf ein Aquarium anwenden, um ihn einzusetzen (+1000 mB Wasser), oder auf Wasser, um ihn freizulassen.\nBettas fängt man im Sumpf mit einem Wassereimer oder einer Fischtüte.",
   "info.bettacraft.fish_bag": "Rechtsklick auf einen kleinen Fisch fängt ihn. Eine Tüte fasst den Fisch und 100 mB Wasser.\nAuf ein Aquarium anwenden, um den Fisch einzusetzen, oder im Aquarium-Menü einen Fisch entnehmen.\nWiederverwendbar; leere Tüten stapeln sich bis 16.",
   "info.bettacraft.swamp_water_bottle": "Eine Glasflasche auf Wasser in einem Sumpf anwenden.\nIm Ofen, Räucherofen oder am Lagerfeuer schlüpfen daraus Mückenlarven; mit Seegras oder Laub wird ein Infusorien-Ansatz daraus.",

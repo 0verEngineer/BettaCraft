@@ -12,7 +12,8 @@ navigation:
 
 | Option | Default | |
 |---|---|---|
-| `tank.maxSizeX/Y/Z` | 16 | largest aquarium (up to 64) |
+| `tank.maxSizeX/Y/Z` | 16 | largest aquarium (up to 64), the bounding box for free shapes |
+| `tank.freeShapes` | true | any connected shape (L, T, steps); false = cuboids only |
 | `tank.maxEntities` | 64 | animals per aquarium |
 | `tank.hardCapPerWaterBlock` | 6 | adults per water block at most |
 | `tank.overcrowdedPerWaterBlock` | 2 | adults per water block from which the fish get stressed |

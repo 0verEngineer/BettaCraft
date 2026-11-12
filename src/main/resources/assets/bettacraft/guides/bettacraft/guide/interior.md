@@ -25,7 +25,8 @@ aquarium shows it as a **miniature** behind the glass.
 
 At the default **scale 16** one tank block becomes 16x16x16 interior blocks, so one interior block is one pixel of
 the aquarium. A 2x1x1 aquarium has an interior of 32x16x16 blocks. Servers can choose scale 8 or 4 for new aquariums
-(`interior.defaultScale`); an aquarium keeps the scale it was built with.
+(`interior.defaultScale`); an aquarium keeps the scale it was built with. For an aquarium with a
+[free shape](aquarium/shapes.md) the interior covers its bounding box; the parts outside the shape are walled off.
 
 ## Building
 

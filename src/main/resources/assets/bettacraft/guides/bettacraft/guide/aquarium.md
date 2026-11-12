@@ -27,8 +27,8 @@ stained glass, tinted glass and the glass of other mods (`#c:glass_blocks`).
 ## Building
 
 * Place tank blocks next to each other: blocks of the **same glass** join into one aquarium.
-* An aquarium is a **cuboid**, from 1x1x1 up to 16x16x16 blocks (servers can allow up to 64). A block that does not
-  complete a cuboid forms a separate aquarium.
+* An aquarium can have **any shape** (L, T, steps ...) whose blocks touch face to face, from 1 block up to a bounding
+  box of 16x16x16 blocks (servers can allow up to 64). See [Shapes](aquarium/shapes.md).
 * Two aquariums only join if they are made of the same glass and have the same [interior scale](interior.md).
 * Dark edge lines are drawn only on the outer edges of the whole aquarium, never between its blocks.
 * A new aquarium faces the player who placed it; the front (for the name sign) can be changed in the menu.
@@ -41,10 +41,11 @@ or larvae: the message tells you what is still inside. Take the animals out firs
 
 The water in a broken block simply disappears (nothing floods), the rest of the aquarium keeps its share. The interior
 blocks behind the broken block drop as items (more than 27 stacks come packed into chests). Breaking a block in the
-middle splits the aquarium into several smaller ones.
+middle can split the aquarium into several smaller ones; each keeps the water and the interior of its own blocks.
 
 ## More
 
+* [Shapes](aquarium/shapes.md)
 * [Water](aquarium/water.md)
 * [Inhabitants](aquarium/inhabitants.md)
 * [Temperature](aquarium/temperature.md)

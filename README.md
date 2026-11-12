@@ -16,7 +16,8 @@ block.
   pattern colour, iridescence and its colour), dominance, carriers and a small mutation chance. 8 tail shapes,
   short- and long-finned forms, dumbo ears, 43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo,
   Black Orchid, Mustard Gas, ...). Colours, genes and varieties are data-driven and can be changed with datapacks.
-- **Aquariums:** a multiblock tank of any glass, up to 16x16x16 (configurable up to 64). Real vanilla water, filled
+- **Aquariums:** a multiblock tank of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16
+  (configurable up to 64). Real vanilla water, filled
   bucket by bucket from the bottom, rendered clear and without biome tint, also with Sodium and Iris. The animals are
   real entities, so frogs, axolotls and the fish of other mods keep their own behaviour.
 - **Care:** water temperature from the biome and the time of day, heaters and coolers in three sizes, health with
@@ -85,7 +86,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, water quality, evaporation, power, food breeding, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, water quality, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
 | `config/bettacraft-client.toml` | animation and miniature distances, water surface animation, filter sound |
 
