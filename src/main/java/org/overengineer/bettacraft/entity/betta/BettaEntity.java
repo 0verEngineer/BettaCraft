@@ -107,6 +107,7 @@ public class BettaEntity extends AbstractFish {
     public BettaEntity(EntityType<? extends BettaEntity> type, Level level) {
         super(type, level);
         this.data = BettaData.create(BettaGenome.DEFAULT, false, 0);
+        this.moveControl = new BettaMoveControl(this); // smooth curves instead of the vanilla fish's snap turns
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -454,6 +455,7 @@ public class BettaEntity extends AbstractFish {
                 }
                 setDeltaMovement(getDeltaMovement().scale(0.6));
                 getNavigation().stop();
+                if (moveControl instanceof BettaMoveControl bmc) bmc.stopDirect();
             } else {
                 mirrorAt = null;
             }
@@ -461,6 +463,7 @@ public class BettaEntity extends AbstractFish {
             if (tickCount % 5 == 0 && level() instanceof ServerLevel server && insideDecor(server, p)) {
                 setDeltaMovement(getDeltaMovement().scale(0.3).add(0, 0.04, 0));
                 getNavigation().stop();
+                if (moveControl instanceof BettaMoveControl bmc) bmc.stopDirect();
             }
         }
     }

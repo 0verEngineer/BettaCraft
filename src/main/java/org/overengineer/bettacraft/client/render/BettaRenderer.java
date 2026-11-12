@@ -142,7 +142,10 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
     @Override
     protected void setupRotations(BettaEntity fish, PoseStack pose, float bob, float yBodyRot, float partialTick, float scale) {
         super.setupRotations(fish, pose, bob, yBodyRot, partialTick, scale);
-        float f = (fish.isSick() ? 2.0F : 4.3F) * Mth.sin(0.6F * bob);
+        // body wiggle: strong while swimming, a faint sway while hovering (a full wiggle at rest looked like turning)
+        double v = Math.hypot(fish.getX() - fish.xo, fish.getZ() - fish.zo);
+        float swim = (float) Math.min(1.0, v / 0.04);
+        float f = (fish.isSick() ? 2.0F : 1.2F + 3.1F * swim) * Mth.sin(0.6F * bob);
         pose.mulPose(Axis.YP.rotationDegrees(f));
         if (!fish.isInWater()) {
             pose.translate(0.1F, 0.1F, -0.1F);
