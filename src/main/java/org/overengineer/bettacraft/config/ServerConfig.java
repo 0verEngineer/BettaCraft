@@ -3,8 +3,8 @@ package org.overengineer.bettacraft.config;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
- * Per-world game logic (synced to clients). Keys follow PLAN section 11.
- * Many values are not used yet in M0 but are defined now so the file layout stays stable.
+ * Per-world game logic (synced to clients). Keys follow PLAN section 11; the comments are what players and pack
+ * makers read in {@code serverconfig/bettacraft-server.toml}.
  */
 public final class ServerConfig {
     /** When players get the GuideME handbook (PLAN 9). Without GuideME there is no book and the option is ignored. */
@@ -94,12 +94,12 @@ public final class ServerConfig {
         b.pop();
 
         b.comment("Health of bettas").push("health");
-        HEALTH_DAYS_UNTIL_SICK = b.comment("Days without food or with wrong temperature until a fish gets sick").defineInRange("daysUntilSick", 7.0, 0.1, 1000.0);
+        HEALTH_DAYS_UNTIL_SICK = b.comment("Days without food, or with a wrong temperature or overcrowding, until a betta gets sick").defineInRange("daysUntilSick", 7.0, 0.1, 1000.0);
         HEALTH_DAYS_SICK_UNTIL_DEATH = b.comment("Days of sickness until death").defineInRange("daysSickUntilDeath", 14.0, 0.1, 1000.0);
-        HEALTH_BOTH_BAD_MULTIPLIER = b.comment("Timer speed multiplier when food AND temperature are bad").defineInRange("bothBadMultiplier", 2.0, 1.0, 10.0);
+        HEALTH_BOTH_BAD_MULTIPLIER = b.comment("Speed multiplier of all health timers while two or more conditions (food, temperature, stocking) are bad").defineInRange("bothBadMultiplier", 2.0, 1.0, 10.0);
         HEALTH_RECOVERY_PER_DAY = b.comment("Sick days removed per good day").defineInRange("recoveryPerDay", 2.0, 0.0, 100.0);
         b.push("oldAge");
-        HEALTH_OLD_AGE_ENABLED = b.comment("Whether fish die of old age").define("enabled", false);
+        HEALTH_OLD_AGE_ENABLED = b.comment("Whether bettas die of old age").define("enabled", false);
         HEALTH_OLD_AGE_YEARS = b.comment("Lifespan in in-game years").defineInRange("years", 2.0, 0.1, 100.0);
         HEALTH_OLD_AGE_DAYS_PER_YEAR = b.comment("In-game days per year (Serene Seasons default: 96)").defineInRange("daysPerYear", 96, 1, 10000);
         b.pop();
@@ -110,7 +110,7 @@ public final class ServerConfig {
                 .defineInRange("tauDays", 0.1, 0.0, 10.0);
         b.pop();
 
-        b.comment("Breeding in Bettacraft tanks (PLAN 5.4)").push("breeding");
+        b.comment("Breeding in Bettacraft tanks: conditioning, bubble nest, spawning, eggs and fry").push("breeding");
         BREEDING_MIN_TEMP = b.comment("Lowest water temperature for nest building and spawning").defineInRange("minTemp", 26.0, 0.0, 50.0);
         BREEDING_MAX_TEMP = b.comment("Highest water temperature for nest building and spawning").defineInRange("maxTemp", 28.0, 0.0, 50.0);
         BREEDING_READY_DAYS = b.comment("Days a healthy, fed pair needs in breeding conditions before the male starts a nest (live food halves it)")
@@ -128,7 +128,7 @@ public final class ServerConfig {
         BREEDING_MUTATION_CHANCE = b.comment("Chance per allele that it mutates into a random allele").defineInRange("mutationChance", 0.01, 0.0, 1.0);
         b.pop();
 
-        b.comment("Fights and predators (PLAN 5.6, 4.3)").push("combat");
+        b.comment("Fights between males and predators (#bettacraft:predators) in tanks").push("combat");
         COMBAT_MALES_FIGHT = b.comment("Adult males in the same tank fight until one dies").define("malesFight", true);
         COMBAT_FIGHT_DAYS = b.comment("In-game days a fight between two males lasts (until the loser dies)").defineInRange("fightDays", 1.0, 0.01, 100.0);
         COMBAT_PREDATOR_ATTACKS_PER_DAY = b.comment("Attacks per in-game day of a predator (#bettacraft:predators) on small inhabitants")
@@ -143,11 +143,11 @@ public final class ServerConfig {
         b.pop();
 
         b.comment("Duration of the life stages in in-game days").push("stages");
-        STAGE_EGG_DAYS = b.defineInRange("eggDays", 0.5, 0.01, 100.0);
-        STAGE_LARVA_DAYS = b.defineInRange("larvaDays", 0.5, 0.01, 100.0);
-        STAGE_FRY_DAYS = b.defineInRange("fryDays", 2.0, 0.01, 100.0);
-        STAGE_JUVENILE_DAYS = b.defineInRange("juvenileDays", 2.5, 0.01, 100.0);
-        STAGE_SUBADULT_DAYS = b.defineInRange("subadultDays", 3.5, 0.01, 100.0);
+        STAGE_EGG_DAYS = b.comment("Egg in the bubble nest").defineInRange("eggDays", 0.5, 0.01, 100.0);
+        STAGE_LARVA_DAYS = b.comment("Larva hanging in the bubble nest").defineInRange("larvaDays", 0.5, 0.01, 100.0);
+        STAGE_FRY_DAYS = b.comment("Free-swimming fry (needs fry food)").defineInRange("fryDays", 2.0, 0.01, 100.0);
+        STAGE_JUVENILE_DAYS = b.comment("Juvenile").defineInRange("juvenileDays", 2.5, 0.01, 100.0);
+        STAGE_SUBADULT_DAYS = b.comment("Subadult, then the betta is adult").defineInRange("subadultDays", 3.5, 0.01, 100.0);
         b.pop();
 
         b.comment("Tank interior dimension").push("interior");
@@ -160,8 +160,8 @@ public final class ServerConfig {
         INTERIOR_SYNC_RANGE = b.comment("Players within this many blocks of a tank receive its miniature").defineInRange("syncRange", 96, 16, 512);
         b.pop();
 
-        b.push("drops");
-        DROPS_ARTEMIA_FROM_SAND_CHANCE = b.comment("Chance that breaking sand drops artemia cysts").defineInRange("artemiaFromSandChance", 0.02, 0.0, 1.0);
+        b.comment("Drops").push("drops");
+        DROPS_ARTEMIA_FROM_SAND_CHANCE = b.comment("Chance that breaking sand (#bettacraft:artemia_sand) drops artemia cysts").defineInRange("artemiaFromSandChance", 0.02, 0.0, 1.0);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

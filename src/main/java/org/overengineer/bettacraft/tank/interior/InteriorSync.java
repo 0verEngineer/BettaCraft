@@ -265,7 +265,7 @@ public final class InteriorSync {
             e = new Encoded(st.version, snap.toParts(InteriorDataPayload.MAX_PART_BYTES), snap.stats(), truncated);
             st.cache = e;
             lastFullBytes = e.stats.bytes();
-            LOGGER.info("Encoded interior region {} ({}x{}x{}) v{}: {} non-air blocks in {} sections -> {} bytes in {} part(s), {} ms{}",
+            LOGGER.debug("Encoded interior region {} ({}x{}x{}) v{}: {} non-air blocks in {} sections -> {} bytes in {} part(s), {} ms{}",
                     r.id(), r.sizeX(), r.sizeY(), r.sizeZ(), st.version, e.stats.nonAir(), e.stats.sections(), e.stats.bytes(), e.parts.size(),
                     e.stats.encodeNanos() / 1_000_000.0, truncated ? " (TRUNCATED by maxRenderedBlocks)" : "");
         }

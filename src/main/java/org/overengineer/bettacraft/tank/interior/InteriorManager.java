@@ -170,7 +170,7 @@ public final class InteriorManager {
         InteriorWorldOps.resendChunks(level, touched);
         r.setBuilt(true);
         InteriorRegions.get(server).setDirty();
-        LOGGER.info("Built interior region {} ({}x{}x{}, scale {}) {} in {} ms main thread, {} chunks", r.id(), r.sizeX(), r.sizeY(),
+        LOGGER.debug("Built interior region {} ({}x{}x{}, scale {}) {} in {} ms main thread, {} chunks", r.id(), r.sizeX(), r.sizeY(),
                 r.sizeZ(), r.scale(), mode, String.format(java.util.Locale.ROOT, "%.1f", ms), touched.size());
     }
 

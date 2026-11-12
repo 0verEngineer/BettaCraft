@@ -16,12 +16,12 @@ public final class CommonConfig {
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
         b.comment("Natural spawning of wild bettas").push("spawn");
-        SPAWN_WEIGHT = b.defineInRange("weight", 8, 0, 1000);
-        SPAWN_MIN_GROUP = b.defineInRange("minGroupSize", 1, 1, 16);
-        SPAWN_MAX_GROUP = b.defineInRange("maxGroupSize", 2, 1, 16);
+        SPAWN_WEIGHT = b.comment("Spawn weight of wild bettas in #bettacraft:betta_spawn_biomes (swamps); 0 disables natural spawning").defineInRange("weight", 8, 0, 1000);
+        SPAWN_MIN_GROUP = b.comment("Smallest group of wild bettas that spawns together").defineInRange("minGroupSize", 1, 1, 16);
+        SPAWN_MAX_GROUP = b.comment("Largest group of wild bettas that spawns together").defineInRange("maxGroupSize", 2, 1, 16);
         b.pop();
-        b.push("recipes");
-        RECIPE_FISH_BAG = b.comment("Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise kelp")
+        b.comment("Recipes").push("recipes");
+        RECIPE_FISH_BAG = b.comment("Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one")
                 .defineEnum("fishBag", FishBagRecipe.AUTO);
         b.pop();
         SPEC = b.build();
