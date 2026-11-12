@@ -39,6 +39,8 @@ Siehe [Zucht](../breeding.md).
 
 ## Wasser
 
+![Der Wasser-Tab](../images/menu_water.png)
+
 Wasservolumen, die [Wasserqualität](water_quality.md) mit einem Balken (die rote Marke zeigt, ab wann die Bettas
 leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Filter entfernen), das letzte Frischwasser,
 Verdunstung und offene obere Blöcke, Heizer und Kühler und der gespeicherte [Strom](../equipment/power.md), wenn der

@@ -6,7 +6,8 @@ them into ``assets/bettacraft/guides/bettacraft/guide/images/`` (German menus in
 images at a quarter of their pixel size and shrinks them to the page width, so the menu crops at GUI scale 4 show up
 exactly at GUI size.
 
-The interior and hologram images are kept as they are (from the M4/M5 screenshots).
+The interior and hologram images are kept as they are (from the M4/M5 screenshots). M9 adds the water care scene, the
+live food breeders and the water tab from the ``bettacraft_m9_*`` screenshots of the same run.
 """
 from __future__ import annotations
 
@@ -33,6 +34,9 @@ WORLD = {
 # GUI scale 4: the 248x230 tank panel sits at (144, 20); tabs and the content area are its upper 146 rows
 MENU_BOX = (144, 20, 144 + 248 * 4, 20 + 146 * 4)
 MENUS = {"menu_overview": "guide_menu_overview", "menu_inhabitants": "guide_menu_inhabitants", "menu_breeding": "guide_menu_breeding"}
+# M9 scene (DevClientSmokeM9): world shots without HUD and the water tab (English only; German pages fall back to it)
+M9_WORLD = {"water_care": ("bettacraft_m9_scene", (0, 240, 1140, 620)), "live_food": ("bettacraft_m9_breeders", (0, 100, 1060, 520))}
+M9_MENUS = {"menu_water": "bettacraft_m9_menu_water"}
 
 
 def save(im: Image.Image, path: Path) -> None:
@@ -62,6 +66,18 @@ def main() -> int:
                 print("missing", src)
                 continue
             save(Image.open(src).convert("RGB").crop(MENU_BOX), out / f"{name}.png")
+    for name, (shot, box) in M9_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name, shot in M9_MENUS.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(MENU_BOX), out_en / f"{name}.png")
+        else:
+            print("missing", src)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

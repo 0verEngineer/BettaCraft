@@ -39,6 +39,8 @@ See [Breeding](../breeding.md).
 
 ## Water
 
+![The water tab](../images/menu_water.png)
+
 Water volume, the [water quality](water_quality.md) with a bar (the red mark is where the bettas start to suffer), how
 fast it drops and why (animals per water block, how much the filters remove), the last fresh water, evaporation and
 open top blocks, heaters and coolers, and the stored [power](../equipment/power.md) when the server needs it.

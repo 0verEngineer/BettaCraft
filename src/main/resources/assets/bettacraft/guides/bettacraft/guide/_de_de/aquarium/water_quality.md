@@ -10,6 +10,8 @@ item_ids:
 
 # Wasserqualität und Verdunstung
 
+![Ein Aquarium mit Abdeckungen, Licht und Futterautomat obenauf, Kühler und Heizer im Filter; links Larvenbottich und Artemia-Zuchtbecken](../images/water_care.png)
+
 ## Wasserqualität
 
 Jedes Aquarium hat eine **Wasserqualität** von 100 % (sauber) bis 0 %. Der Tab **Wasser** im Aquarium-Menü zeigt sie

@@ -10,6 +10,8 @@ item_ids:
 
 # Water quality and evaporation
 
+![An aquarium with lids, light and feeder on top, a cooler and a heater in the filter; left a larva tub and an artemia hatchery](../images/water_care.png)
+
 ## Water quality
 
 Every aquarium has a **water quality** from 100 % (clean) down to 0 %. The **Water** tab of the tank menu shows it
