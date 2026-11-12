@@ -67,6 +67,21 @@ public final class DevSmokeTest {
 
     private DevSmokeTest() {}
 
+    /** M6: advancements and handbook recipe loaded; the handbook exists exactly when GuideME is installed. */
+    private static void m6Checks(MinecraftServer server) {
+        int adv = 0;
+        for (var a : server.getAdvancements().getAllAdvancements()) {
+            if (a.id().getNamespace().equals(BettaCraft.MOD_ID) && !a.id().getPath().startsWith("recipes/")) adv++;
+        }
+        boolean guideme = org.overengineer.bettacraft.progression.GuideBook.available();
+        boolean book = !org.overengineer.bettacraft.progression.GuideBook.createBook().isEmpty();
+        boolean recipe = server.getRecipeManager().byKey(BettaCraft.id("guide")).isPresent();
+        LOGGER.info("[smoketest] M6: {} advancements, GuideME {}, handbook item {}, handbook recipe {}, giveBook {}", adv, guideme, book,
+                recipe, org.overengineer.bettacraft.progression.GuideBook.mode());
+        if (adv < 20) throw new IllegalStateException("advancements missing");
+        if (guideme != book || guideme != recipe) throw new IllegalStateException("handbook does not match GuideME presence");
+    }
+
     /** M2: a pair in warm water runs through nest, spawning and fry (simulated in fast steps). */
     private static void breedingTank(ServerLevel level) {
         BlockPos b = base.offset(6, 0, 0);
@@ -238,6 +253,7 @@ public final class DevSmokeTest {
                 if (org.overengineer.bettacraft.tank.TankInhabitants.breakBlockedReason(level, base).isEmpty()) {
                     throw new IllegalStateException("break rule not active");
                 }
+                m6Checks(server);
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

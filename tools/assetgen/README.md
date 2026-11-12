@@ -32,6 +32,7 @@ is copied to `builds/m5-types.png`.
 | `gui.py` | `textures/gui/tank.png` (256x256): 248x230 vanilla-style panel, content inset 7..240 x 17..139 (dark fill since M2), player inventory (x 44+18c, y 148+18r, hotbar y 206), icons at (0,232) heater ghost 16x16, (16,232) lock and (26,232) open lock 10x10, (36,232) slot frame 18x18 (since M4 the four old heater slots at x 12, y 148+18i are only drawn while a heater is left in them). M4: `external_filter.png` and `cabinet.png` (176x166, vanilla container layout; side sprites at (176,0) slot frame, (176,18) heater ghost, (176,34) filter ghost). Layout constants are mirrored in the Java screens. |
 | `render.py` | Texture compositing (same order as the runtime) and a side-view software rasterizer. |
 | `preview.py` | Preview sheets in `build/preview/` (forms, patterns, stages, icons, `types.png` = all named varieties, forms and patterns, copied to `builds/m5-types.png`) and the mod logo `src/main/resources/bettacraft.png`. |
+| `guide_images.py` | M6: crops the screenshots of `gradlew runClient -Psmoketestworld` (`run/screenshots/guide_*.png`, window 1280x960) into the handbook images `assets/bettacraft/guides/bettacraft/guide/images/` (tank menu tabs also German, `_de_de/images/`). Not part of `build.py` (needs a client run). |
 | `build.py` | Runs all of the above. |
 
 ## Layer / tint concept (runtime)

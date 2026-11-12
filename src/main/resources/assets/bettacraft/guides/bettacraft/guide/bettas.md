@@ -15,8 +15,10 @@ item_ids:
 Bettas (*Betta splendens*) are small labyrinth fish from the rice paddies and swamps of South-East Asia. In
 Bettacraft they are real animals with genes, a sex, six life stages and needs.
 
-<GameScene zoom="4" interactive={true}>
-  <Entity id="bettacraft:betta" y="0.4" rotationY="90" />
+<GameScene zoom="5" interactive={true}>
+  <Entity id="bettacraft:betta" x="1.2" y="0.5" z="0.5" rotationY="90" data="{betta:{schema:3,sex:male,stage:adult,genome:{finform:[halfmoon,halfmoon],fin_length:[short,short],pectoral:[normal,normal],body_color:[white,white],fin_color:[white,white],pattern:[koi,koi],pattern_color:[red,red],iridescence:[high,high],iridescence_color:[royal_blue,royal_blue]}}}" />
+  <Entity id="bettacraft:betta" x="2.4" y="0.5" z="0.5" rotationY="90" data="{betta:{schema:3,sex:male,stage:adult,genome:{finform:[halfmoon,halfmoon],fin_length:[long,long],pectoral:[normal,normal],body_color:[navy,navy],fin_color:[mustard,mustard],pattern:[none,none],pattern_color:[black,black],iridescence:[high,high],iridescence_color:[royal_blue,royal_blue]}}}" />
+  <Entity id="bettacraft:betta" x="3.6" y="0.5" z="0.5" rotationY="90" data="{betta:{schema:3,sex:female,stage:adult,genome:{finform:[crowntail,crowntail],fin_length:[long,long],pectoral:[normal,normal],body_color:[royal_blue,royal_blue],fin_color:[red,red],pattern:[butterfly,butterfly],pattern_color:[white,white],iridescence:[low,low],iridescence_color:[steel,steel]}}}" />
 </GameScene>
 
 ## Wild bettas

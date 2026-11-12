@@ -65,6 +65,7 @@ final class DevClientSmokeTest {
     private static BlockPos bigMin;
     private static volatile InteriorRegion bigRegion;
     private static boolean bigDecorated;
+    private static DevClientSmokeM6 m6;
 
     private DevClientSmokeTest() {}
 
@@ -91,6 +92,7 @@ final class DevClientSmokeTest {
         if (mc.player == null || mc.getSingleplayerServer() == null) return;
         ticks++;
         mc.options.pauseOnLostFocus = false;
+        if (ticks == 2) mc.getWindow().setWindowed(1280, 960); // larger screenshots (handbook images, menus at GUI scale 4)
         if (ticks > 60) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
@@ -215,10 +217,25 @@ final class DevClientSmokeTest {
                 case 1100 -> {
                     LOGGER.info("[smoketest] miniature render-thread time last frame: {} ms",
                             org.overengineer.bettacraft.client.interior.MiniatureRenderer.lastFrameNanos / 1e6);
-                    LOGGER.info("[smoketest] client world test finished");
-                    mc.stop();
+                    // M6: handbook images, handbook pages and advancements (en, de)
+                    mc.getSingleplayerServer().execute(() -> DevClientSmokeM6.grantAll(player(mc)));
+                    m6 = new DevClientSmokeM6(java.util.List.of(
+                            new DevClientSmokeM6.Spot("tank", tankMin.getX() + 2.0, tankMin.getY() + 2.0, tankMin.getZ() - 2.7, 0F, 24F),
+                            new DevClientSmokeM6.Spot("nest", breedMin.getX() + 1.5, breedMin.getY() + 2.4, breedMin.getZ() + 0.2, 0F, 78F),
+                            new DevClientSmokeM6.Spot("stages", showMin.getX() + 2.5, showMin.getY() - 1.12, showMin.getZ() - 1.5, 0F, 2F),
+                            new DevClientSmokeM6.Spot("forms", formsMin.getX() + 3.0, formsMin.getY() + 1.0 - 1.62, formsMin.getZ() - 3.1, 0F, 0F),
+                            new DevClientSmokeM6.Spot("varieties", typesMin.getX() + 4.0, typesMin.getY() + 1.0 - 1.62, typesMin.getZ() - 4.0, 0F, 0F),
+                            new DevClientSmokeM6.Spot("cabinets", cabMin.getX() + 5.5, cabMin.getY() + 2.2, cabMin.getZ() - 5.0, 0F, 16F),
+                            new DevClientSmokeM6.Spot("external_filter", filterMin.getX() + 1.9, filterMin.getY() + 0.9, filterMin.getZ() - 1.6, 0F, 38F)),
+                            tankMin, typesMin, breedMin);
                 }
-                default -> {}
+                default -> {
+                    if (m6 != null && m6.tick()) {
+                        m6 = null;
+                        LOGGER.info("[smoketest] client world test finished");
+                        mc.stop();
+                    }
+                }
             }
         } catch (RuntimeException ex) {
             LOGGER.error("[smoketest] FAILED", ex);
