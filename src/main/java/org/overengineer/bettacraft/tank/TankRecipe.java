@@ -42,6 +42,7 @@ public class TankRecipe extends ShapedRecipe {
         Item glass = findGlass(input);
         if (glass instanceof BlockItem bi) {
             TankBlockItem.setGlass(result, BuiltInRegistries.BLOCK.getKey(bi.getBlock()));
+            TankBlockItem.setStyle(result, TankStyle.TEXTURED);
         }
         return result;
     }

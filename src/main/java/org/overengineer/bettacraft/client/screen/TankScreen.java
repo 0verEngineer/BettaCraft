@@ -451,6 +451,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
         line(g, Component.translatable("gui.bettacraft.water.volume", v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
         y += 11;
+        // M11: what the tank is made of (glass and style)
+        line(g, org.overengineer.bettacraft.compat.info.InfoLines.glassLine(v.glass, v.style.getSerializedName()), x, y, TEXT_LIGHT);
+        y += 11;
         if (w.qualityEnabled) {
             ChatFormatting col = switch (w.state) {
                 case "clean" -> ChatFormatting.GREEN;

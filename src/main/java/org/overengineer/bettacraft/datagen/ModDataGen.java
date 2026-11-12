@@ -405,6 +405,7 @@ public final class ModDataGen {
             withExistingParent("betta_spawn_egg", mcLoc("item/template_spawn_egg"));
             basicItem(ModItems.SWAMP_WATER_BOTTLE.get());
             basicItem(ModItems.BETTA_PELLETS.get());
+            handheldItem(ModItems.MIRROR_STICK.get());
             basicItem(ModItems.MOSQUITO_LARVAE.get());
             basicItem(ModItems.SALT_WATER_BOTTLE.get());
             basicItem(ModItems.INFUSORIA_CULTURE.get());
@@ -441,6 +442,45 @@ public final class ModDataGen {
                     .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(asTankRecipe(output), BettaCraft.id("tank"));
+
+            // M11: the clean tank (clear vanilla glass without texture): iron nugget in the middle instead of the ingot
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
+                            org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, org.overengineer.bettacraft.tank.TankStyle.CLEAN, 4))
+                    .pattern("GGG")
+                    .pattern("GNG")
+                    .pattern("III")
+                    .define('G', Items.GLASS)
+                    .define('N', Tags.Items.NUGGETS_IRON)
+                    .define('I', Tags.Items.INGOTS_IRON)
+                    .unlockedBy("has_glass", has(Items.GLASS))
+                    .unlockedBy("has_tank", has(ModItems.TANK.get()))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
+                    .save(output, BettaCraft.id("tank_clean"));
+            // M11: one vanilla-glass tank converts between textured and clean (both directions)
+            for (var from : org.overengineer.bettacraft.tank.TankStyle.values()) {
+                var to = from == org.overengineer.bettacraft.tank.TankStyle.CLEAN ? org.overengineer.bettacraft.tank.TankStyle.TEXTURED
+                        : org.overengineer.bettacraft.tank.TankStyle.CLEAN;
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
+                                org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, to, 1))
+                        .requires(net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
+                                net.minecraft.core.component.DataComponentPredicate.builder()
+                                        .expect(ModDataComponents.GLASS.get(), org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS)
+                                        .expect(ModDataComponents.TANK_STYLE.get(), from).build(), ModItems.TANK.get()))
+                        .group("bettacraft:tank_style")
+                        .unlockedBy("has_tank", has(ModItems.TANK.get()))
+                        .save(asStyleRecipe(output, from), BettaCraft.id("tank_" + from.getSerializedName() + "_to_" + to.getSerializedName()));
+            }
+            // M11: mirror stick (optional-features #2): a glass pane silvered with an iron nugget on a stick
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.MIRROR_STICK.get())
+                    .pattern("P")
+                    .pattern("N")
+                    .pattern("S")
+                    .define('P', Tags.Items.GLASS_PANES)
+                    .define('N', Tags.Items.NUGGETS_IRON)
+                    .define('S', Tags.Items.RODS_WOODEN)
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
+                    .unlockedBy("has_tank", has(ModItems.TANK.get()))
+                    .save(output, BettaCraft.id("mirror_stick"));
 
             // Fish bag (PLAN 4.3): kelp unless #bettacraft:plastic_sheets has entries; COMMON config can force one.
             ICondition plasticEmpty = new TagEmptyCondition(ModTags.PLASTIC_SHEETS);
@@ -632,6 +672,21 @@ public final class ModDataGen {
         }
 
         /** Turns the ShapedRecipe produced by the builder into our {@link TankRecipe} type. */
+        private static RecipeOutput asStyleRecipe(RecipeOutput parent, org.overengineer.bettacraft.tank.TankStyle from) {
+            return new RecipeOutput() {
+                @Override
+                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                    parent.accept(id, new org.overengineer.bettacraft.tank.TankStyleRecipe((net.minecraft.world.item.crafting.ShapelessRecipe) recipe, from),
+                            advancement, conditions);
+                }
+
+                @Override
+                public Advancement.Builder advancement() {
+                    return parent.advancement();
+                }
+            };
+        }
+
         private static RecipeOutput asTankRecipe(RecipeOutput parent) {
             return new RecipeOutput() {
                 @Override
@@ -661,7 +716,7 @@ public final class ModDataGen {
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.TANK.get())
                             .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                                    .include(ModDataComponents.GLASS.get()))))));
+                                    .include(ModDataComponents.GLASS.get()).include(ModDataComponents.TANK_STYLE.get()))))));
             dropSelf(ModBlocks.FEEDER.get());
             dropSelf(ModBlocks.TANK_LIGHT.get());
             dropSelf(ModBlocks.TANK_LID.get());

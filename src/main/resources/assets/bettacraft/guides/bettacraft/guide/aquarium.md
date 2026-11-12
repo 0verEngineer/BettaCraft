@@ -13,10 +13,24 @@ item_ids:
 The <ItemLink id="bettacraft:tank" /> is the heart of Bettacraft: a glass block that joins with its neighbours into one
 aquarium of real water.
 
-<RecipeFor id="bettacraft:tank" />
+<RecipesFor id="bettacraft:tank" />
 
 All six glass blocks of the recipe must be the same; the aquarium uses that glass. **Any glass works**, including
 stained glass, tinted glass and the glass of other mods (`#c:glass_blocks`).
+
+## Two styles
+
+* **Textured**: the aquarium shows the texture of its glass like a window, and the textures are **connected**: the
+  frame of the glass texture runs only along the outer edges of the whole aquarium, not between its blocks. This works
+  with the glass of other mods, too.
+* **Clear glass**: perfectly clear glass without any texture, only the thin dark edge lines. Craft it from 6 vanilla
+  glass with an **iron nugget** in the middle instead of the iron ingot (4 aquariums).
+* A single vanilla-glass aquarium converts between both styles in the crafting grid (it turns into the other style).
+* The two styles never join: a clear aquarium next to a textured one stays a separate aquarium.
+* Aquariums from older versions are textured. The style and the glass are shown in Jade, The One Probe, WTHIT and on
+  the water tab of the tank menu.
+
+![Textured and clear aquariums](images/tank_styles.png)
 
 <GameScene zoom="3" interactive={true}>
   <Block id="bettacraft:tank" x="0" p:east="true" p:fill="12" />
@@ -29,8 +43,10 @@ stained glass, tinted glass and the glass of other mods (`#c:glass_blocks`).
 * Place tank blocks next to each other: blocks of the **same glass** join into one aquarium.
 * An aquarium can have **any shape** (L, T, steps ...) whose blocks touch face to face, from 1 block up to a bounding
   box of 16x16x16 blocks (servers can allow up to 64). See [Shapes](aquarium/shapes.md).
-* Two aquariums only join if they are made of the same glass and have the same [interior scale](interior.md).
-* Dark edge lines are drawn only on the outer edges of the whole aquarium, never between its blocks.
+* Two aquariums only join if they are made of the same glass in the same style and have the same
+  [interior scale](interior.md).
+* Thin dark edge lines are drawn only on the outer edges of the whole aquarium, never between its blocks (their width
+  and the connected textures can be changed in the client settings).
 * A new aquarium faces the player who placed it; the front (for the name sign) can be changed in the menu.
 * Pistons cannot push tank blocks; they are as blast resistant as glass.
 

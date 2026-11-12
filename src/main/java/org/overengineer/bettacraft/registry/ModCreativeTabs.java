@@ -34,10 +34,14 @@ public final class ModCreativeTabs {
                     if (glass.value().asItem() == net.minecraft.world.item.Items.AIR) continue;
                     ItemStack s = new ItemStack(ModItems.TANK.get());
                     TankBlockItem.setGlass(s, BuiltInRegistries.BLOCK.getKey(glass.value()));
+                    TankBlockItem.setStyle(s, org.overengineer.bettacraft.tank.TankStyle.TEXTURED);
                     out.accept(s);
                     any = true;
                 }
                 if (!any) out.accept(ModItems.TANK.get());
+                // M11: the clean tank (clear vanilla glass without texture)
+                out.accept(TankBlockItem.of(ModItems.TANK.get(), org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS,
+                        org.overengineer.bettacraft.tank.TankStyle.CLEAN, 1));
                 // equipment
                 out.accept(ModItems.HEATER_SMALL.get());
                 out.accept(ModItems.HEATER_MEDIUM.get());
@@ -57,6 +61,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.FEEDER.get());
                 out.accept(ModItems.TANK_LIGHT.get());
                 out.accept(ModItems.TANK_LID.get());
+                out.accept(ModItems.MIRROR_STICK.get());
                 // food chain (in crafting order)
                 out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
                 out.accept(ModItems.MOSQUITO_LARVAE.get());

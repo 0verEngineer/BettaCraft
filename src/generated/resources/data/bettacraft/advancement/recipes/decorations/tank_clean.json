@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_betta": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:betta_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_glass": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:glass"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_tank": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:tank"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:tank_clean"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_glass",
+      "has_tank",
+      "has_betta"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:tank_clean"
+    ]
+  }
+}

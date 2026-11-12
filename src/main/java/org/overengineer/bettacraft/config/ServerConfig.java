@@ -54,6 +54,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue BREEDING_FEMALE_DAMAGE_PER_DAY;
     public static final ModConfigSpec.DoubleValue BREEDING_MALE_EATS_FRY_PER_DAY;
     public static final ModConfigSpec.DoubleValue BREEDING_MUTATION_CHANCE;
+    public static final ModConfigSpec.DoubleValue BREEDING_MIRROR_BONUS;
 
     // combat (M2)
     public static final ModConfigSpec.BooleanValue COMBAT_MALES_FIGHT;
@@ -157,6 +158,8 @@ public final class ServerConfig {
         BREEDING_MALE_EATS_FRY_PER_DAY = b.comment("Chance per day and free-swimming fry that an adult male in the tank eats it")
                 .defineInRange("maleEatsFryPerDay", 0.3, 0.0, 10.0);
         BREEDING_MUTATION_CHANCE = b.comment("Chance per allele that it mutates into a random allele").defineInRange("mutationChance", 0.01, 0.0, 1.0);
+        BREEDING_MIRROR_BONUS = b.comment("Mirror training: a male that flared at a mirror stick during the last in-game day gets ready for a nest this many times faster (1 = no bonus, the mirror is then purely cosmetic)")
+                .defineInRange("mirrorReadinessBonus", 1.25, 1.0, 4.0);
         b.pop();
 
         b.comment("Fights between males and predators (#bettacraft:predators) in tanks").push("combat");

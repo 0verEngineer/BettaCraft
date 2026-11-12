@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Server-side multiblock logic: forming, merging and splitting tanks.
  * <ul>
- *     <li>Only tank blocks with the <b>same glass</b> connect.</li>
+ *     <li>Only tank blocks with the <b>same glass</b> and the same {@link TankStyle} connect (M11).</li>
  *     <li>M10: any face-connected shape (L, T, steps ...) whose bounding box fits the size limit. A block that would
  *     exceed it stays a separate tank (hint in the action bar). Breaking a block splits the rest into its connected
  *     parts. With {@code tank.freeShapes = false} tanks stay cuboids (M1-M9 behaviour, greedy decomposition).</li>
@@ -61,7 +61,6 @@ public final class TankMultiblock {
     public static void onTankBlockAdded(ServerLevel level, BlockPos pos, @Nullable ServerPlayer player) {
         TankBlockEntity be = getBE(level, pos);
         if (be == null || be.getControllerPos() != null) return;
-        ResourceLocation glass = be.getGlassId();
 
         Map<BlockPos, TankBlockEntity> candidates = new LinkedHashMap<>();
         boolean unloadedNeighbour = false;
@@ -71,7 +70,7 @@ public final class TankMultiblock {
             if (!level.isLoaded(n)) continue;
             TankBlockEntity nbe = getBE(level, n);
             if (nbe == null) continue;
-            if (!glass.equals(nbe.getGlassId())) {
+            if (!be.sameMaterial(nbe)) {
                 otherGlass = true;
                 continue;
             }

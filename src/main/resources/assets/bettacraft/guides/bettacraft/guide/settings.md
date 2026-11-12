@@ -24,7 +24,7 @@ navigation:
 | `health.recoveryPerDay` | 2 | sick days healed per good day |
 | `health.oldAge.enabled` | false | death of old age (`years` 2, `daysPerYear` 96) |
 | `temperature.tauDays` | 0.1 | how fast the water changes its temperature |
-| `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation |
+| `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation, mirror training (`mirrorReadinessBonus` 1.25) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | fry per bottle, days a culture needs |
 | `stages.*Days` | | duration of the life stages |
@@ -43,8 +43,9 @@ navigation:
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 
 The **common config** sets the spawn weight and group size of wild bettas and the fish bag recipe (`recipes.fishBag`:
-AUTO, KELP or PLASTIC). The **client config** has the animation and miniature distances, the water surface glitter and
-the filter sound.
+AUTO, KELP or PLASTIC). The **client config** has the animation and miniature distances, the water surface glitter,
+the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
+(`render.tankEdgeWidth`, in 1/64 block, 0 = none).
 
 ## This handbook
 

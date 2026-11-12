@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "mirror": {
+      "conditions": {
+        "event": "mirror_flare"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.mirror.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:mirror_stick"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.mirror.title"
+    }
+  },
+  "requirements": [
+    [
+      "mirror"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

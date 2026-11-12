@@ -14,6 +14,10 @@ public final class ModRecipes {
 
     public static final Supplier<RecipeSerializer<TankRecipe>> TANK = SERIALIZERS.register("tank", TankRecipe.Serializer::new);
 
+    /** M11: textured vanilla-glass tank to clean tank and back. */
+    public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.tank.TankStyleRecipe>> TANK_STYLE = SERIALIZERS.register("tank_style",
+            org.overengineer.bettacraft.tank.TankStyleRecipe.Serializer::new);
+
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.CabinetRecipe>> CABINET = SERIALIZERS.register("cabinet",
             org.overengineer.bettacraft.equipment.CabinetRecipe.Serializer::new);
 

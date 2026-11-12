@@ -328,7 +328,57 @@ def swamp_water_bottle():
     return grid(BOTTLE_ROWS, BOTTLE)
 
 
+# ---------------------------------------------------------------- mirror stick (M11)
+
+def mirror_stick():
+    """Hand mirror on a stick, held diagonally: round silvered glass in an iron frame (top right), wooden handle."""
+    out = np.zeros((S, S, 4), np.uint8)
+    cx, cy, r = 10.0, 5.5, 4.7
+    yy, xx = np.mgrid[0:S, 0:S] + 0.5
+    d = np.hypot(xx - cx, yy - cy)
+    wood = {"k": (0x2c, 0x1e, 0x12, 255), "L": (0xb0, 0x83, 0x4c, 255), "D": (0x7a, 0x55, 0x2e, 255)}
+    # handle: from (7, 9) down-left to (2, 14), 2 px wide with an outline
+    for i in range(7):
+        x, y = 7 - i, 9 + i
+        if not (0 <= x < S and 0 <= y < S):
+            continue
+        for dx, dy in ((-1, 0), (0, 1), (-1, 1), (1, 0), (0, -1)):
+            px, py = x + dx, y + dy
+            if 0 <= px < S and 0 <= py < S and out[py, px, 3] == 0:
+                out[py, px] = wood["k"]
+    for i in range(6):
+        x, y = 7 - i, 9 + i
+        out[y, x] = wood["L"]
+        if x - 1 >= 0 and y + 1 < S:
+            out[y, x - 1] = wood["D"] if i < 5 else wood["k"]
+    # iron collar where the handle meets the frame
+    out[9, 7] = (0xa9, 0xa9, 0xad, 255)
+    out[8, 8] = (0xd6, 0xd6, 0xd6, 255)
+    # frame and glass
+    for y in range(S):
+        for x in range(S):
+            dv = d[y, x]
+            if dv > r + 0.55:
+                continue
+            if dv > r - 0.35:
+                out[y, x] = (0x2c, 0x2c, 0x31, 255)
+            elif dv > r - 1.35:
+                # iron frame, lighter towards the top left
+                lit = (cx - xx[y, x]) + (cy - yy[y, x])
+                v = 0xd6 if lit > 1.5 else 0xa9 if lit > -1.5 else 0x76
+                out[y, x] = (v, v, v + 4, 255)
+            else:
+                # silvered glass: pale blue with a gradient and a diagonal highlight
+                t = ((xx[y, x] - cx) - (yy[y, x] - cy)) / (2 * r)
+                base = np.array([0xb8, 0xdc, 0xf0]) * (1.0 - 0.25 * (0.5 + t)) + np.array([0x40, 0x60, 0x80]) * 0.25 * (0.5 + t)
+                hl = abs((xx[y, x] - cx) + (yy[y, x] - cy) + 1.2) < 0.75 and (xx[y, x] - cx) < 1.2
+                c = (0xf4, 0xfa, 0xff) if hl else tuple(int(v) for v in base)
+                out[y, x] = (*c, 255)
+    return out
+
+
 ICONS = {
+    "mirror_stick": mirror_stick,
     "swamp_water_bottle": swamp_water_bottle,
     "betta_bucket": bucket,
     "fish_bag": fish_bag,

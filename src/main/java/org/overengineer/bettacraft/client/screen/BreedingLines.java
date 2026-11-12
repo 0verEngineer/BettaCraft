@@ -68,6 +68,9 @@ final class BreedingLines {
                             : Component.translatable("gui.bettacraft.breeding.cond.female_fit")));
             out.add(Component.translatable(c.getBoolean("live_food") ? "gui.bettacraft.breeding.cond.live_yes" : "gui.bettacraft.breeding.cond.live_no")
                     .withStyle(ChatFormatting.GRAY));
+            if (c.getBoolean("mirror")) {
+                out.add(Component.translatable("gui.bettacraft.breeding.cond.mirror").withStyle(ChatFormatting.GRAY));
+            }
             if (c.getFloat("ready") > 0) {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.ready", Math.round(c.getFloat("ready") * 100))
                         .withStyle(ChatFormatting.AQUA));

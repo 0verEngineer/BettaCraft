@@ -1,0 +1,24 @@
+{
+  "type": "bettacraft:tank_style",
+  "category": "misc",
+  "from": "textured",
+  "group": "bettacraft:tank_style",
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "components": {
+        "bettacraft:glass": "minecraft:glass",
+        "bettacraft:tank_style": "textured"
+      },
+      "items": "bettacraft:tank"
+    }
+  ],
+  "result": {
+    "components": {
+      "bettacraft:glass": "minecraft:glass",
+      "bettacraft:tank_style": "clean"
+    },
+    "count": 1,
+    "id": "bettacraft:tank"
+  }
+}

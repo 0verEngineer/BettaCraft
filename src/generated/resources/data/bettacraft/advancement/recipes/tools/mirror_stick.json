@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_betta": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:betta_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_tank": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:tank"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:mirror_stick"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_betta",
+      "has_tank"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:mirror_stick"
+    ]
+  }
+}

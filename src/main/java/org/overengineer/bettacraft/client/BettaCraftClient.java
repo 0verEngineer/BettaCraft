@@ -41,6 +41,20 @@ public final class BettaCraftClient {
     /** Tint of the fish overlay of a bag holding a non-betta animal. */
     private static final int OTHER_FISH_BODY = 0xFFB0B8C0, OTHER_FISH_FINS = 0xFF8A949E;
 
+    private static Object lastTankLook;
+
+    /** Re-meshes all chunks when the tank look settings changed (called from the config screen's reload). */
+    private static void rebuildChunks() {
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        Object look = java.util.List.of(org.overengineer.bettacraft.config.ClientConfig.CONNECTED_GLASS.get(),
+                org.overengineer.bettacraft.config.ClientConfig.TANK_EDGE_WIDTH.get());
+        if (look.equals(lastTankLook)) return;
+        lastTankLook = look;
+        mc.execute(() -> {
+            if (mc.levelRenderer != null && mc.level != null) mc.levelRenderer.allChanged();
+        });
+    }
+
     public BettaCraftClient(IEventBus modBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modBus.addListener(BettaCraftClient::onClientSetup);
@@ -53,6 +67,10 @@ public final class BettaCraftClient {
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
+        // M11: tank look settings (connected glass, edge width) are baked into the chunk meshes: rebuild them on change
+        modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
+            if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();
+        });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
         NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);
 

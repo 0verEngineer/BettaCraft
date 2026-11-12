@@ -15,7 +15,8 @@ import org.overengineer.bettacraft.tank.TankBlock;
 
 /**
  * Our own water for tank blocks (PLAN 3.3): flat surface at the exact fill height, no flow, no slope, fixed colour
- * (no biome tint), only outer faces of the water body, sides 0.5 px inside the glass to avoid z-fighting. Works per
+ * (no biome tint), only outer faces of the water body, 0.5 px inside the glass to avoid z-fighting (M11: inset only
+ * along the normal, so the faces sort behind translucent glass, see {@link TankWaterGeometry}). Works per
  * block from the block states, so any tank shape (M10) renders: each layer has one fill height.
  * Called from the chunk mesher via {@link TankAwareWaterExtensions#renderFluid}; also used by Sodium 0.8.
  */
@@ -27,7 +28,13 @@ public final class TankWaterRenderer {
      */
     private static final int COLOR = 0x8C4A90E2;
     private static final int SIDE_COLOR = 0x5A6CA6DC;
-    private static final float INSET = 0.5F / 16F;
+    private static final float INSET = TankWaterGeometry.INSET;
+
+    /**
+     * Dev smoke test only ("before" pictures of the water seam): the M10 geometry, every face inset on all outer sides,
+     * and no split of the glass. Never set in normal play.
+     */
+    public static volatile boolean m10Look;
 
     private TankWaterRenderer() {}
 
@@ -40,27 +47,18 @@ public final class TankWaterRenderer {
         boolean up = TankBlock.isConnected(state, Direction.UP);
         BlockState above = up ? level.getBlockState(pos.above()) : null;
         boolean waterAbove = above != null && above.getBlock() instanceof TankBlock && above.getValue(TankBlock.FILL) > 0;
-
-        float x0 = TankBlock.isConnected(state, Direction.WEST) ? 0 : INSET;
-        float x1 = TankBlock.isConnected(state, Direction.EAST) ? 1 : 1 - INSET;
-        float z0 = TankBlock.isConnected(state, Direction.NORTH) ? 0 : INSET;
-        float z1 = TankBlock.isConnected(state, Direction.SOUTH) ? 1 : 1 - INSET;
-        float y0 = TankBlock.isConnected(state, Direction.DOWN) ? 0 : INSET;
-        float y1 = waterAbove ? 1 : Math.min(fill / 16F, 1 - INSET);
+        TankWaterGeometry.Body body = TankWaterGeometry.body(TankBlock.connectionMask(state), fill, waterAbove);
+        float x0 = body.x0(), y0 = body.y0(), z0 = body.z0(), x1 = body.x1(), y1 = body.y1(), z1 = body.z1();
 
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
         float[] c = new float[12];
 
         for (Direction d : Direction.values()) {
-            boolean render;
-            if (d == Direction.UP) {
-                render = !waterAbove;
-            } else {
-                render = !TankBlock.isConnected(state, d);
-            }
-            if (!render) continue;
-            BoxFaces.corners(d, x0, y0, z0, x1, y1, z1, c);
+            if (!body.has(d)) continue;
+            // M11: inset only along the normal, full width sideways (see TankWaterGeometry: sorting behind stained glass)
+            if (m10Look) BoxFaces.corners(d, body.x0(), body.y0(), body.z0(), body.x1(), body.y1(), body.z1(), c);
+            else TankWaterGeometry.face(body, d, c);
             int col = d.getAxis() == Direction.Axis.Y ? COLOR : SIDE_COLOR;
             int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
             emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, false);
@@ -77,7 +75,7 @@ public final class TankWaterRenderer {
                 if (!TankBlock.isConnected(state, d)) continue;
                 BlockState n = level.getBlockState(pos.relative(d));
                 if (!(n.getBlock() instanceof TankBlock) || TankBlock.isConnected(n, Direction.UP)) continue;
-                BoxFaces.corners(d, x0, 1 - INSET, z0, x1, 1, z1, c);
+                BoxFaces.corners(d, 0, 1 - INSET, 0, 1, 1, 1, c);
                 int a = (SIDE_COLOR >>> 24) & 0xFF, r = (SIDE_COLOR >> 16) & 0xFF, g = (SIDE_COLOR >> 8) & 0xFF, b = SIDE_COLOR & 0xFF;
                 emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, false);
             }

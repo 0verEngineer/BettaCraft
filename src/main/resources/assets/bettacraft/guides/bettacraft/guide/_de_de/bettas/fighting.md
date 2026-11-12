@@ -4,6 +4,8 @@ navigation:
   icon: minecraft:iron_sword
   parent: bettas.md
   position: 50
+item_ids:
+  - bettacraft:mirror_stick
 ---
 
 # Kämpfe, Flaring und Raubfische
@@ -24,6 +26,18 @@ und Jade warnen sofort („Männchen kämpfen! Trennen!“). Nimm eines der beid
 Sieht ein adultes Männchen ein anderes adultes Männchen im Umkreis von 6 Blöcken, **flart** es: Es spreizt Flossen und
 Kiemendeckel, und seine Farben werden kräftiger. Glas und Wasser versperren die Sicht nicht; zwei Männchen in
 benachbarten Aquarien flaren sich also an, ohne zu kämpfen. Undurchsichtige Blöcke zwischen den Aquarien verhindern es.
+
+### Spiegelstab
+
+<RecipeFor id="bettacraft:mirror_stick" />
+
+Nimm den <ItemLink id="bettacraft:mirror_stick" /> in eine Hand und sieh ein Männchen an: Jedes adulte Männchen bis 6
+Blöcke vor dir, das den Spiegel sehen kann (auch durch das Glas), flart vor seinem Spiegelbild, hält still und dreht sich
+zum Spiegel. Das ist vor allem zum Anschauen, dazu gibt es ein wenig **Spiegeltraining**: Ein Männchen, das am letzten
+Ingame-Tag vor dem Spiegel geflart hat, ist 1,25-mal schneller bereit für ein Schaumnest
+(`breeding.mirrorReadinessBonus`, 1 = rein kosmetisch). Zucht-Tab und Info-Overlays zeigen „Am Spiegel trainiert“.
+
+![Ein Männchen flart vor dem Spiegelstab](../images/mirror_stick.png)
 
 ## Raubfische
 

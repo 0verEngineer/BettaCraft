@@ -18,7 +18,7 @@ public final class ItemHints {
     public static final List<String> ITEMS = List.of("tank", "betta_bucket", "fish_bag", "swamp_water_bottle", "mosquito_larvae",
             "betta_pellets", "salt_water_bottle", "artemia_cysts", "infusoria_culture", "infusoria", "artemia_culture", "artemia_nauplii",
             "heater_small", "heater_medium", "heater_large", "cooler_small", "cooler_medium", "cooler_large", "internal_filter", "external_filter",
-            "feeder", "tank_light", "tank_lid", "cabinet", "larva_tub", "artemia_hatchery",
+            "feeder", "tank_light", "tank_lid", "cabinet", "larva_tub", "artemia_hatchery", "mirror_stick",
             "betta_spawn_egg");
 
     private ItemHints() {}

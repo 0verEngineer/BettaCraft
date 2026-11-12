@@ -34,6 +34,22 @@ public final class InfoLines {
     }
 
     /**
+     * M11: "Glass: Light Blue Stained Glass (textured)" - the localized name of the glass block (the id for glass of a
+     * removed mod) and the style. Used by the overlays and the water tab of the tank menu.
+     */
+    public static Component glassLine(String glassId, String style) {
+        net.minecraft.resources.ResourceLocation id = net.minecraft.resources.ResourceLocation.tryParse(glassId);
+        Component name;
+        if (id != null && net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(id)) {
+            name = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(id).getName();
+        } else {
+            name = Component.literal(glassId);
+        }
+        Component st = Component.translatable(org.overengineer.bettacraft.tank.TankStyle.byId(style).key());
+        return Component.translatable("jade.bettacraft.tank.glass", name.copy().withStyle(ChatFormatting.AQUA), st);
+    }
+
+    /**
      * Tank: name, temperature and water, animals, nest, filters and warnings always; the list of animals with health
      * only with {@code details}.
      */
@@ -41,6 +57,7 @@ public final class InfoLines {
         List<Component> out = new ArrayList<>();
         if (d == null || d.isEmpty()) return out;
         if (!d.getString("name").isEmpty()) out.add(Component.literal(d.getString("name")).withStyle(ChatFormatting.WHITE));
+        if (d.contains("glass")) out.add(glassLine(d.getString("glass"), d.getString("style")));
         out.add(Component.translatable("jade.bettacraft.tank.water", f1(d.getFloat("temp")), d.getLong("water"), d.getLong("cap")));
         MutableComponent animals = Component.translatable("jade.bettacraft.tank.animals", d.getInt("count"), d.getInt("adults"));
         if (d.getBoolean("crowded")) animals.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
@@ -155,6 +172,8 @@ public final class InfoLines {
             else if (d.getBoolean("hungry")) h.append(" ").append(Component.translatable("jade.bettacraft.betta.hungry").withStyle(ChatFormatting.GOLD));
             out.add(h);
         }
+        // M11: mirror training (mirror stick)
+        if (d.getBoolean("trained")) out.add(Component.translatable("jade.bettacraft.betta.trained").withStyle(ChatFormatting.AQUA));
         if (d.contains("genotype", Tag.TAG_COMPOUND)) {
             List<Component> g = GenotypeText.summary(BettaGenotype.load(d.getCompound("genotype")));
             if (details) {

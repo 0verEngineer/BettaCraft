@@ -32,6 +32,25 @@ final class LangEn {
         a.accept("item.bettacraft.heater_medium", "Medium Aquarium Heater");
         a.accept("item.bettacraft.heater_large", "Large Aquarium Heater");
 
+        // M11: tank styles, glass in the overlays, mirror stick
+        a.accept("block.bettacraft.tank.clean", "Clear Glass Tank");
+        a.accept("tooltip.bettacraft.tank.style", "Style: %s");
+        a.accept("gui.bettacraft.tank.style.textured", "textured");
+        a.accept("gui.bettacraft.tank.style.clean", "clear, no texture");
+        a.accept("jade.bettacraft.tank.glass", "Glass: %s (%s)");
+        a.accept("item.bettacraft.mirror_stick", "Mirror Stick");
+        a.accept("tooltip.bettacraft.mirror_stick", "Hold it up in front of a tank: male bettas that see it flare at their reflection");
+        a.accept("info.bettacraft.mirror_stick", "Hold the mirror stick in either hand and look at a male betta (up to 6 blocks, also through the glass): it flares at its reflection, holds still and turns towards the mirror.\nMirror training: a male that flared at the mirror during the last day gets ready for a bubble nest a little faster (server config, 1.25x by default).\nCraft: glass pane, iron nugget and stick, one above the other.");
+        a.accept("gui.bettacraft.breeding.cond.mirror", "~ Male trained at the mirror (gets ready faster)");
+        a.accept("jade.bettacraft.betta.trained", "Trained at the mirror");
+        a.accept("advancements.bettacraft.mirror.title", "Mirror, Mirror");
+        a.accept("advancements.bettacraft.mirror.description", "Make a male betta flare at a mirror stick");
+        a.accept("bettacraft.configuration.connectedGlass", "Connected glass");
+        a.accept("bettacraft.configuration.connectedGlass.tooltip", "Connected glass textures on textured tanks: the frame of the glass texture only along the outer edges of the whole tank (off: every block shows its own frame)");
+        a.accept("bettacraft.configuration.tankEdgeWidth", "Tank edge width");
+        a.accept("bettacraft.configuration.tankEdgeWidth.tooltip", "Width of the dark edge lines along the outer edges of a tank, in 1/64 block (0 = no edge lines)");
+        a.accept("bettacraft.configuration.mirrorReadinessBonus", "Mirror training bonus");
+        a.accept("bettacraft.configuration.mirrorReadinessBonus.tooltip", "Mirror training: a male that flared at a mirror stick during the last in-game day gets ready for a nest this many times faster (1 = no bonus, the mirror is then purely cosmetic)");
         a.accept("tooltip.bettacraft.tank", "Aquarium block. Place several of the same glass next to each other to build a larger tank.");
         a.accept("tooltip.bettacraft.heater.capacity", "Heats up to %s water blocks");
         a.accept("tooltip.bettacraft.heater.usage", "Place it inside the tank interior (heats while under water) or put it into an external filter");
@@ -161,7 +180,7 @@ final class LangEn {
         a.accept("message.bettacraft.tank.not_cuboid", "This block does not complete a cuboid, so it forms a separate tank");
         a.accept("message.bettacraft.tank.too_large", "Connecting would exceed the maximum tank size of %sx%sx%s, so this block forms a separate tank");
         a.accept("message.bettacraft.tank.unloaded", "The neighbouring tank is not completely loaded");
-        a.accept("message.bettacraft.tank.other_glass", "Tanks only connect when they are made of the same glass");
+        a.accept("message.bettacraft.tank.other_glass", "Tanks only connect when they are made of the same glass in the same style");
         a.accept("message.bettacraft.tank.split", "The tank was split into %s tanks");
         a.accept("message.bettacraft.tank.full", "The tank is full");
         a.accept("message.bettacraft.tank.not_enough_water", "There is not enough water in the tank");
@@ -525,7 +544,7 @@ final class LangEn {
         a.accept("message.bettacraft.guide.dropped", "Your inventory is full: the Bettacraft Handbook lies at your feet. For %s seconds only you can pick it up.");
         a.accept("tooltip.bettacraft.hold_shift", "Hold %s for details");
         a.accept("tooltip.bettacraft.shift", "Shift");
-        a.accept("info.bettacraft.tank", "Craft from 6 glass of one kind and 3 iron ingots.\nPlace tanks of the same glass next to each other to build one large tank of any connected shape (L, T, steps; up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.");
+        a.accept("info.bettacraft.tank", "Craft from 6 glass of one kind and 3 iron ingots: the tank shows the texture of that glass, connected across the whole tank.\nClear glass tank: 6 (vanilla) glass, 1 iron nugget in the middle and 3 iron ingots below. A single vanilla-glass tank converts between both styles in the crafting grid.\nPlace tanks of the same glass and style next to each other to build one large tank of any connected shape (L, T, steps; up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.");
         a.accept("info.bettacraft.betta_bucket", "A betta in a bucket. Use it on a tank to put the fish in (adds 1000 mB water), or on water to release it.\nCatch bettas in swamps with a water bucket or a fish bag.");
         a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nReusable; empty bags stack to 16.");
         a.accept("info.bettacraft.swamp_water_bottle", "Use a glass bottle on water in a swamp.\nSmelt it (furnace, smoker or campfire) to hatch mosquito larvae, or mix it with seagrass or leaves for an infusoria culture.");

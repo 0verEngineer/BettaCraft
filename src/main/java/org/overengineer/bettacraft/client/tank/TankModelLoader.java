@@ -30,7 +30,7 @@ public final class TankModelLoader implements IGeometryLoader<TankModelLoader.Ge
                                ModelState modelState, ItemOverrides overrides) {
             TextureAtlasSprite edge = spriteGetter.apply(context.getMaterial("edge"));
             TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial("particle"));
-            return new TankBakedModel(edge, particle, context.getTransforms(), null, null);
+            return new TankBakedModel(edge, particle, context.getTransforms(), null, org.overengineer.bettacraft.tank.TankStyle.TEXTURED, null);
         }
     }
 }

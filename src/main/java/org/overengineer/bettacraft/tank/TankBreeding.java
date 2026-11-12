@@ -145,7 +145,9 @@ public final class TankBreeding {
             }
             female.showBreedingMood(now + HOLD);
             boolean live = male.breeding().isConditioned() || female.breeding().isConditioned();
-            male.breeding().addReady(days * (live ? 2.0 : 1.0));
+            // M11: mirror training of the male (breeding.mirrorReadinessBonus, 1 = off)
+            double mirror = male.breeding().isTrained() ? ServerConfig.getOr(ServerConfig.BREEDING_MIRROR_BONUS, 1.25) : 1.0;
+            male.breeding().addReady(days * (live ? 2.0 : 1.0) * mirror);
             if (male.breeding().ready() >= ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)) {
                 male.breeding().resetReady();
                 BubbleNest nest = new BubbleNest();
@@ -523,6 +525,8 @@ public final class TankBreeding {
         cond.putBoolean("female_fit", female != null && fit(female));
         cond.putFloat("cooldown", female == null ? 0 : (float) female.breeding().cooldown());
         cond.putBoolean("live_food", male != null && male.breeding().isConditioned() || female != null && female.breeding().isConditioned());
+        cond.putBoolean("mirror", male != null && male.breeding().isTrained()
+                && ServerConfig.getOr(ServerConfig.BREEDING_MIRROR_BONUS, 1.25) > 1.0);
         cond.putFloat("ready", male == null ? 0 : (float) Mth.clamp(male.breeding().ready()
                 / Math.max(1e-6, ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)), 0, 1));
         out.put("conditions", cond);

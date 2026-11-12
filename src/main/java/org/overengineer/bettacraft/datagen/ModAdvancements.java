@@ -31,7 +31,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
     /** All ids in tree order (also used by the language files and tests). */
     static final String[] IDS = {"root", "catch_betta", "build_tank", "fill_tank", "insert_betta", "ideal_temperature", "feeder", "recovered",
             "fight", "nest_built", "spawned", "fry_free", "grown_up", "variety_bred", "dynasty", "big_tank", "enter_interior", "decor", "substrate",
-            "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food", "water_change", "cooler", "food_bred"};
+            "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food", "water_change", "cooler", "food_bred", "mirror"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -75,6 +75,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
                 "fed", BettaEventTrigger.Instance.of(Progress.FEEDER));
         simple(inserted, "recovered", Items.GLISTERING_MELON_SLICE, AdvancementType.GOAL,
                 "recovered", BettaEventTrigger.Instance.of(Progress.RECOVERED));
+        // M11: the mirror stick
+        simple(inserted, "mirror", ModItems.MIRROR_STICK.get(), AdvancementType.TASK,
+                "mirror", BettaEventTrigger.Instance.of(Progress.MIRROR));
         simpleHidden(inserted, "fight", Items.IRON_SWORD, "fight", BettaEventTrigger.Instance.of(Progress.FIGHT));
 
         // breeding

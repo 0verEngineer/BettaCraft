@@ -23,6 +23,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FEEDER = ITEMS.registerSimpleBlockItem(ModBlocks.FEEDER);
     public static final DeferredItem<BlockItem> TANK_LIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.TANK_LIGHT);
 
+    /** M11: makes male bettas flare (optional-features #2). */
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.MirrorStickItem> MIRROR_STICK = ITEMS.register("mirror_stick",
+            () -> new org.overengineer.bettacraft.equipment.MirrorStickItem(new Item.Properties().stacksTo(1)));
+
     public static final DeferredItem<BettaBucketItem> BETTA_BUCKET = ITEMS.register("betta_bucket",
             () -> new BettaBucketItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<FishBagItem> FISH_BAG = ITEMS.register("fish_bag",

@@ -19,6 +19,7 @@ public final class Schemas {
             .step(2, Schemas::tankV2toV3)
             .step(3, Schemas::tankV3toV4)
             .step(4, Schemas::tankV4toV5)
+            .step(5, Schemas::tankV5toV6)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -150,6 +151,15 @@ public final class Schemas {
         tank.putFloat("water_quality", q);
         if (tank.getLong("power") < 0) tank.putLong("power", 0L);
         if (!tank.contains("last_fresh_water", Tag.TAG_ANY_NUMERIC)) tank.putLong("last_fresh_water", -1L);
+        return data;
+    }
+
+    /**
+     * M11: tank variants. Every block written before M11 (controller or member) shows the texture of its glass, so it
+     * becomes {@code style: "textured"}; the glass id stays as it is (also ids of removed mods).
+     */
+    static CompoundTag tankV5toV6(CompoundTag data) {
+        if (!data.contains("style", Tag.TAG_STRING)) data.putString("style", "textured");
         return data;
     }
 

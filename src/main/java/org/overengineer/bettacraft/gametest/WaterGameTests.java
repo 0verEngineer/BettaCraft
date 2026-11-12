@@ -391,8 +391,8 @@ public final class WaterGameTests {
         h.assertTrue(t.waterQuality() == 1.0F && t.lastFreshWater() == -1 && t.evaporationCarry() == 0, "defaults after migration");
         h.assertTrue(t.waterMb() == 2000, "water kept");
         CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-        h.assertTrue(saved.getInt("schema") == 5 && !saved.getCompound("tank").contains("evaporation")
-                && saved.getCompound("tank").contains("evaporation_carry"), "saved as v5");
+        h.assertTrue(saved.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion() && !saved.getCompound("tank").contains("evaporation")
+                && saved.getCompound("tank").contains("evaporation_carry"), "saved with the current schema");
         TankWater.step(level, c, 1.0);
         h.assertTrue(t.waterQuality() < 1.0F || !TankWater.qualityEnabled(), "water care runs on the migrated tank");
         h.succeed();

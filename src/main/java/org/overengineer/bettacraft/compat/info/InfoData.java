@@ -46,6 +46,9 @@ public final class InfoData {
         TankData t = c.getTank();
         CompoundTag out = new CompoundTag();
         out.putString("name", t.name());
+        // M11: the glass the tank is made of and its style (textured / clean)
+        out.putString("glass", c.getGlassId().toString());
+        out.putString("style", c.getStyle().getSerializedName());
         out.putFloat("temp", t.waterTemp());
         out.putLong("water", t.waterMb());
         out.putLong("cap", t.capacityMb());
@@ -146,6 +149,8 @@ public final class InfoData {
         out.putBoolean("sick", b.health().isSick());
         out.put("genotype", b.genotype().save());
         out.putInt("generation", b.getBettaData().generation());
+        out.putBoolean("flaring", b.isFlaring());
+        out.putBoolean("trained", b.breeding().isTrained() && !b.isFemale());
         return out;
     }
 }

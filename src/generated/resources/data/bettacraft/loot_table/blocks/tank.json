@@ -15,7 +15,8 @@
             {
               "function": "minecraft:copy_components",
               "include": [
-                "bettacraft:glass"
+                "bettacraft:glass",
+                "bettacraft:tank_style"
               ],
               "source": "block_entity"
             }

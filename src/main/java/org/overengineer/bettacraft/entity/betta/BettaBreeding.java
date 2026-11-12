@@ -8,14 +8,28 @@ import net.minecraft.nbt.CompoundTag;
  *     <li>{@code conditioned}: remaining days of live-food conditioning (mosquito larvae), speeds up readiness.</li>
  *     <li>{@code ready}: time the conditions for breeding have held (male: nest building starts at the threshold).</li>
  *     <li>{@code cooldown}: female rest time after spawning.</li>
+ *     <li>{@code trained} (M11): remaining days of mirror training (a male flared at a mirror stick), speeds up readiness
+ *     by {@code breeding.mirrorReadinessBonus}. Additive key, missing = 0.</li>
  * </ul>
  */
 public final class BettaBreeding {
     public static final double CONDITIONING_DAYS = 2.0;
+    /** Mirror training lasts one in-game day after the last flare at the mirror. */
+    public static final double TRAINING_DAYS = 1.0;
 
     double conditioned;
     double ready;
     double cooldown;
+    double trained;
+
+    /** M11: the male flared at a mirror stick (refreshes the training to a full day). */
+    public void train() {
+        trained = TRAINING_DAYS;
+    }
+
+    public boolean isTrained() {
+        return trained > 0;
+    }
 
     public void condition() {
         conditioned = CONDITIONING_DAYS;
@@ -44,6 +58,7 @@ public final class BettaBreeding {
     public void tick(double days) {
         conditioned = Math.max(0, conditioned - days);
         cooldown = Math.max(0, cooldown - days);
+        trained = Math.max(0, trained - days);
     }
 
     public CompoundTag save() {
@@ -51,6 +66,7 @@ public final class BettaBreeding {
         if (conditioned > 0) t.putDouble("conditioned", conditioned);
         if (ready > 0) t.putDouble("ready", ready);
         if (cooldown > 0) t.putDouble("cooldown", cooldown);
+        if (trained > 0) t.putDouble("trained", trained);
         return t;
     }
 
@@ -59,6 +75,7 @@ public final class BettaBreeding {
         b.conditioned = t.getDouble("conditioned");
         b.ready = t.getDouble("ready");
         b.cooldown = t.getDouble("cooldown");
+        b.trained = t.getDouble("trained");
         return b;
     }
 }

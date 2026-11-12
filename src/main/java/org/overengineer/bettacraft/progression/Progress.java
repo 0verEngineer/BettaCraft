@@ -44,6 +44,8 @@ public final class Progress {
     public static final String WATER_CHANGE = "water_change";
     /** M9: live food taken out of a larva tub or an artemia hatchery. */
     public static final String FOOD_BRED = "food_bred";
+    /** M11: a male betta flared at the player's mirror stick. */
+    public static final String MIRROR = "mirror_flare";
 
     private Progress() {}
 

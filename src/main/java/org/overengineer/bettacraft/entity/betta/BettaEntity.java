@@ -84,6 +84,10 @@ public class BettaEntity extends AbstractFish {
     Vec3 nestSpot;
     long nestUntil;
     long flareUntil, moodUntil;
+    /** M11: a mirror stick this male flares at (transient): it slows down and turns towards it. */
+    @Nullable
+    Vec3 mirrorAt;
+    long mirrorUntil;
     /** Fractional damage (fights, chasing) not applied yet; applied in whole points. */
     double pendingDamage;
     @Nullable
@@ -295,6 +299,17 @@ public class BettaEntity extends AbstractFish {
         this.flareUntil = Math.max(flareUntil, until);
     }
 
+    /**
+     * M11: flare at a mirror stick held at {@code at} (purely cosmetic: flaring, slowing down, facing the mirror) and
+     * refresh the mirror training of the breeding state.
+     */
+    public void flareAtMirror(Vec3 at, long until) {
+        flare(until);
+        this.mirrorAt = at;
+        this.mirrorUntil = until;
+        breeding().train();
+    }
+
     public void showBreedingMood(long until) {
         this.moodUntil = Math.max(moodUntil, until);
     }
@@ -399,6 +414,20 @@ public class BettaEntity extends AbstractFish {
             double cx = c.x, cy = c.y, cz = c.z;
             if (cx != p.x || cy != p.y || cz != p.z) {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
+            }
+            // M11: flaring at a mirror stick: hold still and face the mirror
+            if (mirrorAt != null && level().getGameTime() < mirrorUntil) {
+                double dx = mirrorAt.x - p.x, dz = mirrorAt.z - p.z;
+                if (dx * dx + dz * dz > 1e-4) {
+                    float want = (float) (net.minecraft.util.Mth.atan2(dz, dx) * (180F / Math.PI)) - 90F;
+                    setYRot(net.minecraft.util.Mth.approachDegrees(getYRot(), want, 12F));
+                    setYBodyRot(getYRot());
+                    setYHeadRot(getYRot());
+                }
+                setDeltaMovement(getDeltaMovement().scale(0.6));
+                getNavigation().stop();
+            } else {
+                mirrorAt = null;
             }
             // inside interior decoration (rock, castle ...): swim up and out, and drop a path that leads through it
             if (tickCount % 5 == 0 && level() instanceof ServerLevel server && insideDecor(server, p)) {

@@ -148,6 +148,50 @@ public class TankBlock extends BaseEntityBlock {
         return out;
     }
 
+    /**
+     * M11: in-plane inner corners of all outer faces, for the edge lines: bit {@code side * 4 + cornerIndex(side, a, b)}
+     * is set when the face towards {@code side} continues past both edges {@code a} and {@code b} (both connected, no
+     * concave crease) but not past the corner between them (the block at {@code a + b} is missing or its face towards
+     * {@code side} is not outer) - the inside corner of an L drawn on a flat wall, e.g. the front of a T.
+     */
+    public static int innerCornerMask(BlockGetter level, BlockPos pos, BlockState state, long concave) {
+        int out = 0;
+        for (Direction side : Direction.values()) {
+            if (isConnected(state, side)) continue;
+            for (Direction a : Direction.values()) {
+                if (a.getAxis() == side.getAxis()) continue;
+                for (Direction b : Direction.values()) {
+                    if (b.getAxis() == side.getAxis() || b.getAxis() == a.getAxis() || a.ordinal() > b.ordinal()) continue;
+                    if (!faceContinues(state, side, a, concave) || !faceContinues(state, side, b, concave)) continue;
+                    BlockState na = level.getBlockState(pos.relative(a));
+                    boolean diagonal = na.getBlock() instanceof TankBlock && isConnected(na, b);
+                    if (diagonal) {
+                        BlockState d = level.getBlockState(pos.relative(a).relative(b));
+                        diagonal = d.getBlock() instanceof TankBlock && !isConnected(d, side);
+                    }
+                    if (!diagonal) out |= 1 << (side.ordinal() * 4 + cornerIndex(side, a, b));
+                }
+            }
+        }
+        return out;
+    }
+
+    /** The face towards {@code side} goes on over the edge towards {@code e} (connected there, no concave crease). */
+    public static boolean faceContinues(BlockState state, Direction side, Direction e, long concave) {
+        return isConnected(state, e) && (concave & (1L << (side.ordinal() * 6 + e.ordinal()))) == 0;
+    }
+
+    /**
+     * Index 0..3 of the corner between the in-plane directions {@code a} and {@code b} of a face towards {@code side}:
+     * bit 1 = direction of the first in-plane axis is positive, bit 0 = the second one is.
+     */
+    public static int cornerIndex(Direction side, Direction a, Direction b) {
+        Direction first = a.getAxis().ordinal() < b.getAxis().ordinal() ? a : b;
+        Direction second = first == a ? b : a;
+        return (first.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 2 : 0)
+                | (second.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0);
+    }
+
     // ------------------------------------------------------------------ block entity
 
     @Nullable
@@ -286,6 +330,7 @@ public class TankBlock extends BaseEntityBlock {
         ItemStack stack = super.getCloneItemStack(state, target, level, pos, player);
         if (level.getBlockEntity(pos) instanceof TankBlockEntity be) {
             TankBlockItem.setGlass(stack, be.getGlassId());
+            TankBlockItem.setStyle(stack, be.getStyle());
         }
         return stack;
     }

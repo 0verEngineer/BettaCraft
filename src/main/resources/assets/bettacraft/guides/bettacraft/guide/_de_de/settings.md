@@ -24,7 +24,7 @@ navigation:
 | `health.recoveryPerDay` | 2 | geheilte Krankheitstage pro gutem Tag |
 | `health.oldAge.enabled` | false | Tod durch Altersschwäche (`years` 2, `daysPerYear` 96) |
 | `temperature.tauDays` | 0.1 | wie schnell das Wasser seine Temperatur ändert |
-| `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation |
+| `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation, Spiegeltraining (`mirrorReadinessBonus` 1,25) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | Jungfische pro Flasche, Tage für einen Ansatz |
 | `stages.*Days` | | Dauer der Lebensstufen |
@@ -44,7 +44,8 @@ navigation:
 
 Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fest und das Rezept der Fischtüte
 (`recipes.fishBag`: AUTO, KELP oder PLASTIC). Die **Client-Config** enthält Animations- und Miniatur-Distanz, das
-Glitzern der Wasseroberfläche und das Filtergeräusch.
+Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
+der Kantenlinien (`render.tankEdgeWidth`, in 1/64 Block, 0 = keine).
 
 ## Dieses Handbuch
 

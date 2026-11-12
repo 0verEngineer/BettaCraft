@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "N": {
+      "tag": "c:nuggets/iron"
+    },
+    "P": {
+      "tag": "c:glass_panes"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "P",
+    "N",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:mirror_stick"
+  }
+}

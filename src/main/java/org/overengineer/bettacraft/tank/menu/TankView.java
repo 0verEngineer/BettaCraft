@@ -85,6 +85,9 @@ public final class TankView {
     public String ownerName = "";
     public long waterMb, capacityMb;
     public int sizeX, sizeY, sizeZ;
+    /** M11: glass block id and style of the tank. */
+    public String glass = "minecraft:glass";
+    public org.overengineer.bettacraft.tank.TankStyle style = org.overengineer.bettacraft.tank.TankStyle.TEXTURED;
     public float waterTemp, targetTemp, ambient;
     public double heaterBlocks;
     public int feederFood = -1, feederPerDay;
@@ -206,6 +209,8 @@ public final class TankView {
         out.putLong("water", t.waterMb());
         out.putLong("cap", t.capacityMb());
         out.putIntArray("size", new int[]{t.sizeX(), t.sizeY(), t.sizeZ()});
+        out.putString("glass", controller.getGlassId().toString());
+        out.putString("style", controller.getStyle().getSerializedName());
         out.putFloat("temp", Math.round(t.waterTemp() * 10) / 10.0F);
         out.putFloat("target", t.targetTemp());
         out.putFloat("ambient", Math.round(TankCare.ambient(level, t) * 10) / 10.0F);
@@ -365,6 +370,8 @@ public final class TankView {
         v.ownerName = t.getString("owner_name");
         v.waterMb = t.getLong("water");
         v.capacityMb = t.getLong("cap");
+        v.glass = t.getString("glass");
+        v.style = org.overengineer.bettacraft.tank.TankStyle.byId(t.getString("style"));
         int[] s = t.getIntArray("size");
         if (s.length == 3) {
             v.sizeX = s[0];

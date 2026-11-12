@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "N": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "GNG",
+    "III"
+  ],
+  "result": {
+    "components": {
+      "bettacraft:glass": "minecraft:glass",
+      "bettacraft:tank_style": "clean"
+    },
+    "count": 4,
+    "id": "bettacraft:tank"
+  }
+}

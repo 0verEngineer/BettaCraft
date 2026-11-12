@@ -85,7 +85,7 @@ class SchemaMigrationTest {
         // Frozen v0 example: controller written before the schema field existed.
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],owner:[I;1,2,3,4]}}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
-        assertEquals(5, Schema.read(v1));
+        assertEquals(6, Schema.read(v1));
         assertEquals(16, v1.getCompound("tank").getInt("scale"));
         assertEquals(0L, v1.getCompound("tank").getLong("water_mb"));
         assertEquals("minecraft:glass", v1.getString("glass"));
@@ -104,7 +104,7 @@ class SchemaMigrationTest {
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;1,2,3]}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
         assertFalse(v1.contains("tank"));
-        assertEquals(5, Schema.read(v1));
+        assertEquals(6, Schema.read(v1));
     }
 
     @Test
@@ -113,7 +113,7 @@ class SchemaMigrationTest {
         CompoundTag v1 = snbt("{schema:1,glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],scale:16,water_mb:1000L,region:-1}}");
         CompoundTag v2 = Schemas.TANK_BLOCK_ENTITY.migrate(v1);
         CompoundTag t = v2.getCompound("tank");
-        assertEquals(5, Schema.read(v2));
+        assertEquals(6, Schema.read(v2));
         assertEquals(27.0F, t.getFloat("target_temp"));
         assertEquals(27.0F, t.getFloat("water_temp"));
         assertTrue(t.getBoolean("sign_visible"));
@@ -218,7 +218,7 @@ class SchemaMigrationTest {
                 + "father_genome:{finform:[\"plakat\",\"veil\"]},mother_genome:{finform:[\"crowntail\",\"crowntail\"]},"
                 + "eggs:[{genome:{finform:[\"plakat\",\"plakat\"],body_color:[\"red\",\"red\"]},female:1b},{genome:{},female:0b}]}}}");
         CompoundTag v4 = Schemas.TANK_BLOCK_ENTITY.migrate(v3);
-        assertEquals(5, Schema.read(v4));
+        assertEquals(6, Schema.read(v4));
         CompoundTag nest = v4.getCompound("tank").getCompound("nest");
         assertEquals("round", nest.getCompound("father_genome").getList("finform", 8).getString(0));
         assertEquals("long", nest.getCompound("father_genome").getList("fin_length", 8).getString(1));
@@ -236,7 +236,7 @@ class SchemaMigrationTest {
     @Test
     void currentVersionsAreStable() {
         // Bump these deliberately together with a new step + frozen test.
-        assertEquals(5, Schemas.TANK_BLOCK_ENTITY.currentVersion());
+        assertEquals(6, Schemas.TANK_BLOCK_ENTITY.currentVersion());
         assertEquals(3, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
@@ -256,7 +256,7 @@ class SchemaMigrationTest {
                 + "region:-1,water_quality:1.0f,evaporation:0.0f,zones:{},power:0L,target_temp:27.0f,water_temp:26.0f,legacy_heaters:[\"\",\"\",\"\",\"\"],"
                 + "name:\"M8 tank\",sign_visible:1b,sign_pos:\"top_center\",front:\"south\",locked:0b,inhabitants:[],log:[],custom:\"keep\"}}");
         CompoundTag v5 = Schemas.TANK_BLOCK_ENTITY.migrate(v4);
-        assertEquals(5, Schema.read(v5));
+        assertEquals(6, Schema.read(v5));
         CompoundTag t = v5.getCompound("tank");
         assertFalse(t.contains("evaporation"), "placeholder dropped");
         assertEquals(0.0, t.getDouble("evaporation_carry"));
@@ -276,7 +276,7 @@ class SchemaMigrationTest {
         assertEquals(0.0F, low.getFloat("water_quality"));
         // a member block (no tank data) is only stamped
         CompoundTag member = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:4,glass:\"minecraft:glass\",controller:[I;0,64,0]}"));
-        assertEquals(5, Schema.read(member));
+        assertEquals(6, Schema.read(member));
         assertFalse(member.contains("tank"));
     }
 
@@ -287,7 +287,7 @@ class SchemaMigrationTest {
                 + "region:-1,target_temp:27.0f,water_temp:26.5f,heaters:[\"bettacraft:heater_large\",\"\",\"othermod:gone_heater\","
                 + "\"bettacraft:heater_small\"],name:\"Old tank\",custom:\"keep\"}}");
         CompoundTag v3 = Schemas.TANK_BLOCK_ENTITY.migrate(v2);
-        assertEquals(5, Schema.read(v3));
+        assertEquals(6, Schema.read(v3));
         CompoundTag t = v3.getCompound("tank");
         assertFalse(t.contains("heaters"), "old key is gone");
         net.minecraft.nbt.ListTag l = t.getList("legacy_heaters", net.minecraft.nbt.Tag.TAG_STRING);
@@ -304,7 +304,7 @@ class SchemaMigrationTest {
     @Test
     void tankV2WithoutHeatersIsOnlyStamped() {
         CompoundTag v3 = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:2,glass:\"minecraft:glass\",controller:[I;1,2,3]}"));
-        assertEquals(5, Schema.read(v3));
+        assertEquals(6, Schema.read(v3));
         assertFalse(v3.contains("tank"));
         CompoundTag v3b = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:2,tank:{members:[L;0L]}}"));
         assertFalse(v3b.getCompound("tank").contains("legacy_heaters"));
@@ -368,5 +368,29 @@ class SchemaMigrationTest {
         CompoundTag out = Schemas.INTERIOR_FLOOR.migrate(snbt("{paid:1b}"));
         assertEquals(1, Schema.read(out));
         assertTrue(out.getBoolean("paid"));
+    }
+
+    /** Frozen M10 (v5) controller and member of a free-shape tank: both become textured, everything else stays. */
+    @Test
+    void tankV5BecomesTextured() {
+        CompoundTag v5 = snbt("{schema:5,glass:\"minecraft:light_blue_stained_glass\",controller:[I;0,64,0],tank:{members:[L;0L,1L,2L],scale:16,"
+                + "water_mb:3000L,region:-1,water_quality:0.9f,evaporation_carry:0.0d,power:0L,last_fresh_water:-1L,target_temp:27.0f,"
+                + "water_temp:26.0f,name:\"T\",sign_visible:1b,sign_pos:\"top_center\",front:\"north\",locked:0b,inhabitants:[],log:[],custom:\"keep\"}}");
+        CompoundTag v6 = Schemas.TANK_BLOCK_ENTITY.migrate(v5);
+        assertEquals(6, Schema.read(v6));
+        assertEquals("textured", v6.getString("style"));
+        assertEquals("minecraft:light_blue_stained_glass", v6.getString("glass"), "glass id kept");
+        assertEquals(3000L, v6.getCompound("tank").getLong("water_mb"));
+        assertEquals("keep", v6.getCompound("tank").getString("custom"));
+        CompoundTag member = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:5,glass:\"othermod:gone_glass\",controller:[I;0,64,0]}"));
+        assertEquals("textured", member.getString("style"));
+        assertEquals("othermod:gone_glass", member.getString("glass"), "ids of removed mods are kept");
+        assertFalse(member.contains("tank"));
+        // an explicit style (written by M11) is never touched
+        CompoundTag clean = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:5,glass:\"minecraft:glass\",style:\"clean\"}"));
+        assertEquals("clean", clean.getString("style"));
+        assertEquals(org.overengineer.bettacraft.tank.TankStyle.TEXTURED, org.overengineer.bettacraft.tank.TankStyle.byId(""));
+        assertEquals(org.overengineer.bettacraft.tank.TankStyle.CLEAN, org.overengineer.bettacraft.tank.TankStyle.byId("clean"));
+        assertEquals(org.overengineer.bettacraft.tank.TankStyle.TEXTURED, org.overengineer.bettacraft.tank.TankStyle.byId("futuristic"));
     }
 }

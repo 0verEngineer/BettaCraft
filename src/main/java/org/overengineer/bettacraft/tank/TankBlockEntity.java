@@ -33,6 +33,8 @@ import org.overengineer.bettacraft.registry.ModDataComponents;
 public class TankBlockEntity extends BlockEntity {
     public static final ResourceLocation DEFAULT_GLASS = ResourceLocation.withDefaultNamespace("glass");
     public static final ModelProperty<BlockState> GLASS_STATE = new ModelProperty<>();
+    /** M11: textured (connected glass texture) or clean (clear glass, edge lines only). */
+    public static final ModelProperty<TankStyle> STYLE = new ModelProperty<>();
 
     /** Client-side controllers currently loaded (used by the miniature renderer; never touched on the server). */
     public static final Set<TankBlockEntity> CLIENT_CONTROLLERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -56,6 +58,7 @@ public class TankBlockEntity extends BlockEntity {
     int lastDemand;
 
     private ResourceLocation glass = DEFAULT_GLASS;
+    private TankStyle style = TankStyle.TEXTURED;
     @Nullable
     private BlockPos controllerPos;
     @Nullable
@@ -74,6 +77,20 @@ public class TankBlockEntity extends BlockEntity {
     public void setGlassId(ResourceLocation glass) {
         this.glass = glass;
         setChanged();
+    }
+
+    public TankStyle getStyle() {
+        return style;
+    }
+
+    public void setStyle(TankStyle style) {
+        this.style = style;
+        setChanged();
+    }
+
+    /** Same glass and same style: only such tank blocks connect (M11: the variants never mix). */
+    public boolean sameMaterial(TankBlockEntity other) {
+        return glass.equals(other.glass) && style == other.style;
     }
 
     /** The glass block (falls back to vanilla glass for unknown ids; the id itself is preserved). */
@@ -131,6 +148,7 @@ public class TankBlockEntity extends BlockEntity {
         CompoundTag tag = Schemas.TANK_BLOCK_ENTITY.migrate(rawTag);
         ResourceLocation g = ResourceLocation.tryParse(tag.getString("glass"));
         glass = g == null ? DEFAULT_GLASS : g;
+        style = TankStyle.byId(tag.getString("style"));
         int[] c = tag.getIntArray("controller");
         controllerPos = c.length == 3 ? new BlockPos(c[0], c[1], c[2]) : null;
         if (tag.contains("tank", Tag.TAG_COMPOUND)) {
@@ -154,6 +172,7 @@ public class TankBlockEntity extends BlockEntity {
     private void writeCommon(CompoundTag tag) {
         Schemas.TANK_BLOCK_ENTITY.stamp(tag);
         tag.putString("glass", glass.toString());
+        tag.putString("style", style.getSerializedName());
         if (controllerPos != null) {
             tag.putIntArray("controller", new int[]{controllerPos.getX(), controllerPos.getY(), controllerPos.getZ()});
         }
@@ -177,21 +196,23 @@ public class TankBlockEntity extends BlockEntity {
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         ResourceLocation oldGlass = glass;
+        TankStyle oldStyle = style;
         super.onDataPacket(net, pkt, registries);
-        afterClientUpdate(oldGlass);
+        afterClientUpdate(oldGlass, oldStyle);
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         ResourceLocation oldGlass = glass;
+        TankStyle oldStyle = style;
         super.handleUpdateTag(tag, registries);
-        afterClientUpdate(oldGlass);
+        afterClientUpdate(oldGlass, oldStyle);
     }
 
-    private void afterClientUpdate(ResourceLocation oldGlass) {
+    private void afterClientUpdate(ResourceLocation oldGlass, TankStyle oldStyle) {
         if (level != null && level.isClientSide) {
             updateClientControllerSet();
-            if (!oldGlass.equals(glass)) {
+            if (!oldGlass.equals(glass) || oldStyle != style) {
                 requestModelDataUpdate();
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
             }
@@ -207,24 +228,30 @@ public class TankBlockEntity extends BlockEntity {
         if (g != null) {
             glass = g;
         }
+        TankStyle st = input.get(ModDataComponents.TANK_STYLE.get());
+        if (st != null) {
+            style = st;
+        }
     }
 
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
         components.set(ModDataComponents.GLASS.get(), glass);
+        components.set(ModDataComponents.TANK_STYLE.get(), style);
     }
 
     @Override
     public void removeComponentsFromTag(CompoundTag tag) {
         tag.remove("glass");
+        tag.remove("style");
     }
 
     // ------------------------------------------------------------------ client
 
     @Override
     public ModelData getModelData() {
-        return ModelData.builder().with(GLASS_STATE, getGlassState()).build();
+        return ModelData.builder().with(GLASS_STATE, getGlassState()).with(STYLE, style).build();
     }
 
     @Override
