@@ -95,9 +95,11 @@ repositories {
 neoForge.addModdingDependenciesTo(sourceSets.test)
 
 dependencies {
-    // Jade (optional dependency, PLAN 10). In dev it is on the run classpath unless -PnoJade is given.
+    // Jade (optional dependency, PLAN 10). In dev it is on the run classpath unless -PnoJade is given; never for
+    // GameTests (Jade pings the mock players of the GameTest framework, which cannot receive payloads).
     compileOnly "maven.modrinth:jade:${jade_version}"
-    if (!project.hasProperty('noJade')) localRuntime "maven.modrinth:jade:${jade_version}"
+    boolean gameTests = gradle.startParameter.taskNames.any { it.toLowerCase().contains('gametest') }
+    if (!project.hasProperty('noJade') && !gameTests) localRuntime "maven.modrinth:jade:${jade_version}"
 
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'

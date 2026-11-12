@@ -97,7 +97,7 @@ public final class TankBreeding {
         T best = null;
         double bd = Double.MAX_VALUE;
         for (T t : list) {
-            if (t == from) continue;
+            if (t == from || !t.isAlive()) continue;
             double d = t.distanceToSqr(from);
             if (d < bd) {
                 bd = d;
@@ -318,6 +318,7 @@ public final class TankBreeding {
         double perDay = 6.0 / ServerConfig.getOr(ServerConfig.COMBAT_FIGHT_DAYS, 1.0);
         RandomSource r = level.getRandom();
         for (BettaEntity m : males) {
+            if (!m.isAlive()) continue;
             BettaEntity rival = nearest(m, males);
             if (rival == null) continue;
             m.pursue(rival, now + HOLD);
