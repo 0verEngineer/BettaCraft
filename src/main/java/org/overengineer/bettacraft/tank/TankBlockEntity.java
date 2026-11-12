@@ -44,6 +44,13 @@ public class TankBlockEntity extends BlockEntity {
     final it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<java.util.UUID> missing = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>();
     private boolean crowded;
     long lastCareTick = -1;
+    /** Headroom the fill states were last computed with (transient): recomputed after loading or a config change. */
+    int appliedHeadroom = -1;
+
+    /** Recompute the fill states of the tank on its next tick (as after loading). */
+    public void markFillStatesStale() {
+        appliedHeadroom = -1;
+    }
     /** Log only once per chase / fight (transient). */
     boolean chaseLogged, fightLogged;
     /** Attached external filters and cabinets under the tank (transient cache, see TankEquipment). */

@@ -48,6 +48,30 @@ public final class TankGameTests {
         return c;
     }
 
+    /** Fill states made with another headroom (older world, config change) are recomputed without a water change. */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void fillStatesFollowHeadroomWithoutWaterChange(GameTestHelper h) {
+        for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) {
+            BlockPos p = new BlockPos(4 + x, 1 + y, 4);
+            h.setBlock(p, ModBlocks.TANK.get().defaultBlockState());
+            TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
+        }
+        TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(4, 1, 4)));
+        h.assertTrue(c != null, "tank formed");
+        TankInteractions.changeWater(h.getLevel(), c, c.getTank().capacityMb());
+        BlockPos top = new BlockPos(4, 2, 4);
+        h.runAfterDelay(5, () -> {
+            // as saved with headroom 0: water up to the rim
+            h.setBlock(top, h.getBlockState(top).setValue(TankBlock.FILL, 16));
+            c.markFillStatesStale();
+            h.runAfterDelay(5, () -> {
+                int fill = h.getBlockState(top).getValue(TankBlock.FILL);
+                h.assertTrue(fill == 16 - TankData.headroom(), "top layer recomputed to " + (16 - TankData.headroom()) + ", is " + fill);
+                h.succeed();
+            });
+        });
+    }
+
     @GameTest(template = EMPTY)
     public static void cuboidForms(GameTestHelper h) {
         List<BlockPos> blocks = box(2, 1, 2, 3, 2, 2);

@@ -44,6 +44,13 @@ public final class TankCare {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TankBlockEntity be) {
         if (!(level instanceof ServerLevel server) || !be.isController()) return;
+        // the air gap below the glass (tank.waterHeadroom) is in the fill states: recompute them once after loading and
+        // whenever the config changes, not only on the next change of the water amount
+        int headroom = TankData.headroom();
+        if (be.appliedHeadroom != headroom && server.isLoaded(be.getTank().min()) && server.isLoaded(be.getTank().max())) {
+            be.appliedHeadroom = headroom;
+            TankMultiblock.applyStates(server, be.getTank());
+        }
         long now = level.getGameTime();
         if ((now + pos.asLong()) % INTERVAL != 0) return;
         TankData tank = be.getTank();
