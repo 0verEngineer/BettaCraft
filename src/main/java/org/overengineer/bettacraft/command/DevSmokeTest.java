@@ -202,6 +202,12 @@ public final class DevSmokeTest {
                 interiorChecks(level, c, r);
                 // M1: bettas from buckets, a feeder with pellets; M4: the heater sits in an external filter
                 filterChecks(level, c);
+                // the dev world persists: keep room below tank.maxEntities (64) for the new fish of this run
+                var old = org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank());
+                for (int i = 40; i < old.size(); i++) {
+                    c.getTank().inhabitants().remove(old.get(i).getUUID());
+                    old.get(i).discard();
+                }
                 for (int i = 0; i < 3; i++) {
                     var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(level.getRandom());
                     var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(
@@ -257,6 +263,7 @@ public final class DevSmokeTest {
                 }
                 m6Checks(server);
                 DevSmokeM7.check(level, base);
+                DevSmokeM8.check(level, base, base.offset(-1, 0, 0));
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {
