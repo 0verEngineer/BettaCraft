@@ -1,0 +1,117 @@
+package org.overengineer.bettacraft.tank.interior;
+
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import org.overengineer.bettacraft.equipment.SegmentBlock;
+import org.overengineer.bettacraft.registry.ModBlocks;
+import org.overengineer.bettacraft.registry.ModTags;
+
+/**
+ * What stands in an interior region apart from decoration (PLAN 7.3): heaters (anchor position + capacity), internal
+ * filters, floating plants and the number of substrate floor blocks. Positions are interior-local
+ * ({@link BlockPos#asLong} of local x/y/z). Kept up to date from block updates; after bulk copies (merge/split) the
+ * region is rescanned lazily.
+ */
+public final class InteriorEquipment {
+    /** Anchor of each heater -> capacity in water blocks. */
+    final Long2IntOpenHashMap heaters = new Long2IntOpenHashMap();
+    final LongOpenHashSet filters = new LongOpenHashSet();
+    final LongOpenHashSet floating = new LongOpenHashSet();
+    int substrate;
+    boolean needsScan;
+
+    public Long2IntOpenHashMap heaters() { return heaters; }
+    public LongOpenHashSet filters() { return filters; }
+    public LongOpenHashSet floatingPlants() { return floating; }
+    public int substrateCount() { return substrate; }
+    public boolean needsScan() { return needsScan; }
+    public void markNeedsScan() { needsScan = true; }
+
+    /** Applies one block change at interior-local coordinates. */
+    void onChange(int lx, int ly, int lz, BlockState oldState, BlockState newState) {
+        long key = BlockPos.asLong(lx, ly, lz);
+        remove(key, oldState);
+        add(key, newState);
+    }
+
+    private void remove(long key, BlockState s) {
+        if (isHeaterAnchor(s)) heaters.remove(key);
+        else if (isFilterAnchor(s)) filters.remove(key);
+        else if (s.is(ModTags.FLOATING_PLANTS)) floating.remove(key);
+    }
+
+    private void add(long key, BlockState s) {
+        if (isHeaterAnchor(s)) heaters.put(key, s.getValue(SegmentBlock.SIZE).capacity);
+        else if (isFilterAnchor(s)) filters.add(key);
+        else if (s.is(ModTags.FLOATING_PLANTS)) floating.add(key);
+    }
+
+    static boolean isHeaterAnchor(BlockState s) {
+        return s.is(ModBlocks.HEATER_SEGMENT.get()) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
+    }
+
+    static boolean isFilterAnchor(BlockState s) {
+        return s.is(ModBlocks.FILTER_SEGMENT.get()) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
+    }
+
+    /** Full rescan of the region (interior volume and floor). */
+    public void rescan(ServerLevel interior, InteriorRegion r) {
+        heaters.clear();
+        filters.clear();
+        floating.clear();
+        substrate = 0;
+        needsScan = false;
+        if (!r.built()) return;
+        int x0 = r.originX(), z0 = r.originZ();
+        InteriorWorldOps.forEachBlock(interior, x0, InteriorRegion.BASE_Y, z0, x0 + r.sizeX() - 1, InteriorRegion.BASE_Y + r.sizeY() - 1,
+                z0 + r.sizeZ() - 1, (x, y, z, s) -> add(BlockPos.asLong(x - x0, y - InteriorRegion.BASE_Y, z - z0), s));
+        InteriorWorldOps.forEachBlock(interior, x0, InteriorRegion.FLOOR_Y, z0, x0 + r.sizeX() - 1, InteriorRegion.FLOOR_Y, z0 + r.sizeZ() - 1,
+                (x, y, z, s) -> {
+                    if (s.is(ModBlocks.INTERIOR_FLOOR.get()) && s.getValue(InteriorFloorBlock.SUBSTRATE)) substrate++;
+                });
+    }
+
+    /** Sum of heater capacities whose anchor is below the given interior-local water height. */
+    public int heaterCapacityBelow(double localWaterY) {
+        int sum = 0;
+        for (var e : heaters.long2IntEntrySet()) {
+            if (BlockPos.getY(e.getLongKey()) < localWaterY) sum += e.getIntValue();
+        }
+        return sum;
+    }
+
+    CompoundTag save() {
+        CompoundTag t = new CompoundTag();
+        long[] hk = new long[heaters.size()];
+        int[] hv = new int[heaters.size()];
+        int i = 0;
+        for (var e : heaters.long2IntEntrySet()) {
+            hk[i] = e.getLongKey();
+            hv[i++] = e.getIntValue();
+        }
+        t.putLongArray("heaters", hk);
+        t.putIntArray("heater_capacity", hv);
+        t.putLongArray("filters", filters.toLongArray());
+        t.putLongArray("floating", floating.toLongArray());
+        t.putInt("substrate", substrate);
+        if (needsScan) t.putBoolean("rescan", true);
+        return t;
+    }
+
+    void load(CompoundTag t) {
+        heaters.clear();
+        filters.clear();
+        floating.clear();
+        long[] hk = t.getLongArray("heaters");
+        int[] hv = t.getIntArray("heater_capacity");
+        for (int i = 0; i < hk.length; i++) heaters.put(hk[i], i < hv.length ? hv[i] : 16);
+        for (long l : t.getLongArray("filters")) filters.add(l);
+        for (long l : t.getLongArray("floating")) floating.add(l);
+        substrate = t.getInt("substrate");
+        needsScan = t.getBoolean("rescan");
+    }
+}

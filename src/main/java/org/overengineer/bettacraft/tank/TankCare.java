@@ -67,7 +67,8 @@ public final class TankCare {
         return t;
     }
 
-    public static double heaterBlocks(TankData tank) {
+    /** Heating capacity of the heaters in the equipment slots (M1 slots, still accepted). */
+    public static double slotHeaterBlocks(TankData tank) {
         double sum = 0;
         var c = tank.heaters();
         for (int i = 0; i < c.getContainerSize(); i++) {
@@ -76,10 +77,32 @@ public final class TankCare {
         return sum;
     }
 
+    /**
+     * All heating capacity: equipment slots plus heater rods in the interior (PLAN 6.1 / 7.3), the latter only if
+     * their lowest segment is below the water surface.
+     */
+    public static double heaterBlocks(ServerLevel level, TankData tank) {
+        return slotHeaterBlocks(tank) + interiorHeaterBlocks(level, tank);
+    }
+
+    public static double interiorHeaterBlocks(ServerLevel level, TankData tank) {
+        var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(tank.regionId());
+        if (r == null || !r.built()) return 0;
+        var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+        if (eq.heaters().isEmpty()) return 0;
+        return eq.heaterCapacityBelow(waterLocalHeight(tank, r.scale()));
+    }
+
+    /** Water surface height in interior blocks above the interior floor. */
+    public static double waterLocalHeight(TankData tank, int scale) {
+        double area = (double) tank.sizeX() * tank.sizeZ();
+        return area <= 0 ? 0 : tank.waterMb() / (area * TankData.MB_PER_BLOCK) * scale;
+    }
+
     public static void updateTemperature(ServerLevel level, TankBlockEntity be, double dtDays) {
         TankData tank = be.getTank();
         float ambient = ambient(level, tank);
-        float eq = TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(tank), tank.waterBlocks());
+        float eq = TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(level, tank), tank.waterBlocks());
         double tau = ServerConfig.getOr(ServerConfig.TEMPERATURE_TAU_DAYS, 0.1);
         float next = TankTemperature.approach(tank.waterTemp(), eq, dtDays, tau);
         if (Math.abs(next - tank.waterTemp()) > 1e-4) {

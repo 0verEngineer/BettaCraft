@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -149,7 +150,7 @@ public final class TankBreeding {
                 nest.fatherFishId = male.getBettaData().fishId();
                 nest.fatherName = TankCare.nameArg(male);
                 nest.fatherGenotype = male.genotype();
-                nest.pos = nestSpot(tank, male.position());
+                nest.pos = nestSpot(level, tank, male.position());
                 nest.phase = BubbleNest.Phase.BUILDING;
                 tank.setNest(nest);
                 TankCare.log(level, controller, "log.bettacraft.nest_started", TankCare.nameArg(male));
@@ -232,7 +233,35 @@ public final class TankBreeding {
         }
     }
 
-    /** Nest position: at the water surface where the male is (slightly inside the top water block). */
+    /**
+     * Nest position (PLAN 5.4): at the water surface, preferably under the floating plant of the interior (e.g. a lily
+     * pad) that is closest to the male, otherwise where the male is (slightly inside the top water block).
+     */
+    static Vec3 nestSpot(ServerLevel level, TankData tank, Vec3 near) {
+        Vec3 plant = floatingPlantNear(level, tank, near);
+        return nestSpot(tank, plant != null ? plant : near);
+    }
+
+    /** Tank-world position (x/z) of the floating plant in the interior closest to {@code near}, or null. */
+    @javax.annotation.Nullable
+    public static Vec3 floatingPlantNear(ServerLevel level, TankData tank, Vec3 near) {
+        var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(tank.regionId());
+        if (r == null || !r.built()) return null;
+        var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+        Vec3 best = null;
+        double bestD = Double.MAX_VALUE;
+        double s = r.scale();
+        for (long l : eq.floatingPlants()) {
+            Vec3 p = new Vec3(tank.min().getX() + (BlockPos.getX(l) + 0.5) / s, near.y, tank.min().getZ() + (BlockPos.getZ(l) + 0.5) / s);
+            double d = p.distanceToSqr(near);
+            if (d < bestD) {
+                bestD = d;
+                best = p;
+            }
+        }
+        return best;
+    }
+
     static Vec3 nestSpot(TankData tank, Vec3 near) {
         AABB w = TankCare.waterBox(tank);
         double x = Mth.clamp(near.x, w.minX + 0.3, w.maxX - 0.3);

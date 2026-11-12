@@ -10,17 +10,23 @@ import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.overengineer.bettacraft.config.ClientConfig;
 import org.overengineer.bettacraft.network.InteriorDataPayload;
+import org.overengineer.bettacraft.network.InteriorDeltaPayload;
 import org.overengineer.bettacraft.network.InteriorRequestPayload;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.interior.InteriorSnapshot;
 
-/** Client store of received interior regions; requests regions for nearby tanks. */
+/**
+ * Client store of received interior regions. Requests missing regions of nearby tanks, applies deltas, and checks
+ * every few seconds whether its version is still current (a missed delta triggers a full resync).
+ */
 public final class ClientInteriorCache {
     private static final Int2ObjectOpenHashMap<ClientRegion> REGIONS = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectOpenHashMap<byte[][]> PENDING = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectOpenHashMap<int[]> PENDING_META = new Int2ObjectOpenHashMap<>();
     private static final Int2LongOpenHashMap LAST_REQUEST = new Int2LongOpenHashMap();
+    /** Bytes received for the last full region / delta (bench). */
+    public static volatile int lastFullBytes, lastDeltaBytes;
 
     private ClientInteriorCache() {}
 
@@ -51,16 +57,52 @@ public final class ClientInteriorCache {
             sections.addAll(InteriorSnapshot.decode(b));
             bytes += b.length;
         }
+        lastFullBytes = bytes;
         ClientRegion region = new ClientRegion(p.regionId(), p.version(), p.sizeX(), p.sizeY(), p.sizeZ(), p.scale(), p.truncated(), sections);
         ClientRegion old = REGIONS.put(p.regionId(), region);
-        if (old != null) old.close();
+        if (old != null) {
+            if (old.sizeX == region.sizeX && old.sizeY == region.sizeY && old.sizeZ == region.sizeZ) {
+                // keep showing the old meshes until the new ones are built (no flicker)
+                region.meshes.putAll(old.meshes);
+                region.cellGeneration.putAll(old.cellGeneration);
+                region.lightKey = old.lightKey;
+                region.shaderPack = old.shaderPack;
+                old.meshes.clear();
+                region.markAllDirty();
+            }
+            old.close();
+        }
         if (ClientConfig.LOG_MINIATURE_STATS.get()) {
             MiniatureRenderer.LOGGER.info("Received interior region {} v{}: {} bytes, {} sections, {} blocks, decoded in {} ms",
                     p.regionId(), p.version(), bytes, sections.size(), region.nonAir, (System.nanoTime() - t0) / 1_000_000.0);
         }
     }
 
-    /** Client tick: request missing regions of nearby tanks, drop regions that are no longer needed. */
+    public static void acceptDelta(InteriorDeltaPayload p) {
+        lastDeltaBytes = p.data().length;
+        ClientRegion r = REGIONS.get(p.regionId());
+        if (r == null) return; // full sync will come on request
+        if (r.version != p.fromVersion()) {
+            requestNow(p.regionId(), r.version);
+            return;
+        }
+        r.apply(p.toVersion(), InteriorSnapshot.decode(p.data()));
+    }
+
+    private static void requestNow(int regionId, int known) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) return;
+        for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
+            TankData t = be.getTank();
+            if (t != null && t.regionId() == regionId) {
+                LAST_REQUEST.put(regionId, mc.level.getGameTime());
+                PacketDistributor.sendToServer(new InteriorRequestPayload(regionId, be.getBlockPos(), known));
+                return;
+            }
+        }
+    }
+
+    /** Client tick: request missing regions, re-check versions every 5 s, drop regions that are no longer needed. */
     public static void tick() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
@@ -73,9 +115,10 @@ public final class ClientInteriorCache {
             used.add(t.regionId());
             if (be.getBlockPos().distToCenterSqr(mc.player.position()) > (dist + 16) * (dist + 16)) continue;
             ClientRegion r = REGIONS.get(t.regionId());
-            if (r == null && now - LAST_REQUEST.getOrDefault(t.regionId(), -1000L) > 100) {
+            long last = LAST_REQUEST.getOrDefault(t.regionId(), -1000L);
+            if ((r == null && now - last > 100) || (r != null && now - last > 100 && (now + t.regionId()) % 100 == 0)) {
                 LAST_REQUEST.put(t.regionId(), now);
-                PacketDistributor.sendToServer(new InteriorRequestPayload(t.regionId(), be.getBlockPos(), -1));
+                PacketDistributor.sendToServer(new InteriorRequestPayload(t.regionId(), be.getBlockPos(), r == null ? -1 : r.version));
             }
         }
         var it = REGIONS.int2ObjectEntrySet().iterator();

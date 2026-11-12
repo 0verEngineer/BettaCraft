@@ -99,6 +99,10 @@ public final class TankView {
     /** Breeding tab content ({@link org.overengineer.bettacraft.tank.TankBreeding#describe}). */
     public CompoundTag breeding = new CompoundTag();
     public final List<String> warnings = new ArrayList<>();
+    /** Interior tab (M3): scale, size, synced blocks, equipment. */
+    public int scale, interiorX, interiorY, interiorZ, interiorBlocks = -1, renderLimit, substrate, heatersInside, heaterCapWet, heaterCapDry,
+            filters, floating;
+    public boolean interiorBuilt, interiorTruncated;
 
     public static CompoundTag build(ServerPlayer player, TankBlockEntity controller) {
         ServerLevel level = player.serverLevel();
@@ -126,7 +130,7 @@ public final class TankView {
         out.putFloat("temp", Math.round(t.waterTemp() * 10) / 10.0F);
         out.putFloat("target", t.targetTemp());
         out.putFloat("ambient", Math.round(TankCare.ambient(level, t) * 10) / 10.0F);
-        out.putDouble("heaters", TankCare.heaterBlocks(t));
+        out.putDouble("heaters", TankCare.heaterBlocks(level, t));
         FeederBlockEntity feeder = TankCare.findFeeder(level, t);
         out.putInt("feeder", feeder == null ? -1 : feeder.foodCount());
         out.putInt("feeder_per_day", feeder == null ? 0 : feeder.feedingsPerDay());
@@ -177,7 +181,31 @@ public final class TankView {
         out.put("log", lg);
         CompoundTag breeding = TankBreeding.describe(level, controller);
         out.put("breeding", breeding);
+        out.put("interior", interior(level, t));
         return out;
+    }
+
+    private static CompoundTag interior(ServerLevel level, TankData t) {
+        CompoundTag c = new CompoundTag();
+        c.putInt("scale", t.scale());
+        c.putIntArray("size", new int[]{t.sizeX() * t.scale(), t.sizeY() * t.scale(), t.sizeZ() * t.scale()});
+        c.putInt("limit", org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.INTERIOR_MAX_RENDERED_BLOCKS, 262144));
+        var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
+        if (r == null || !r.built()) return c;
+        c.putBoolean("built", true);
+        c.putInt("blocks", org.overengineer.bettacraft.tank.interior.InteriorSync.syncedBlocks(r.id()));
+        c.putBoolean("truncated", org.overengineer.bettacraft.tank.interior.InteriorSync.truncated(r.id()));
+        var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+        c.putInt("substrate", eq.substrateCount());
+        c.putInt("heaters", eq.heaters().size());
+        int total = 0;
+        for (int v : eq.heaters().values()) total += v;
+        int wet = eq.heaterCapacityBelow(TankCare.waterLocalHeight(t, r.scale()));
+        c.putInt("heat_wet", wet);
+        c.putInt("heat_dry", total - wet);
+        c.putInt("filters", eq.filters().size());
+        c.putInt("floating", eq.floatingPlants().size());
+        return c;
     }
 
     private static float round(float f) {
@@ -228,6 +256,24 @@ public final class TankView {
             for (int k = 0; k < a.size(); k++) args.add(a.getString(k));
             v.log.add(new LogLine(c.getLong("t"), c.getString("k"), args));
         }
+        CompoundTag in = t.getCompound("interior");
+        v.scale = in.getInt("scale");
+        int[] is = in.getIntArray("size");
+        if (is.length == 3) {
+            v.interiorX = is[0];
+            v.interiorY = is[1];
+            v.interiorZ = is[2];
+        }
+        v.renderLimit = in.getInt("limit");
+        v.interiorBuilt = in.getBoolean("built");
+        v.interiorBlocks = in.contains("blocks") ? in.getInt("blocks") : -1;
+        v.interiorTruncated = in.getBoolean("truncated");
+        v.substrate = in.getInt("substrate");
+        v.heatersInside = in.getInt("heaters");
+        v.heaterCapWet = in.getInt("heat_wet");
+        v.heaterCapDry = in.getInt("heat_dry");
+        v.filters = in.getInt("filters");
+        v.floating = in.getInt("floating");
         v.breeding = t.getCompound("breeding");
         ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));

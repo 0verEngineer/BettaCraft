@@ -1,6 +1,7 @@
 {
   "values": [
     "bettacraft:feeder",
-    "bettacraft:tank_light"
+    "bettacraft:tank_light",
+    "bettacraft:filter_segment"
   ]
 }

@@ -35,6 +35,8 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.HEATER_SMALL.get());
                 out.accept(ModItems.HEATER_MEDIUM.get());
                 out.accept(ModItems.HEATER_LARGE.get());
+                out.accept(ModItems.INTERNAL_FILTER.get());
+                for (var d : ModItems.DECOR.values()) out.accept(d.get());
                 // one bucket per body shape (male) plus a wild-type female
                 net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(42);
                 for (String shape : org.overengineer.bettacraft.genetics.BettaGenome.SHAPES) {

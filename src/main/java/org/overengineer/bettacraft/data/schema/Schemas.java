@@ -42,6 +42,12 @@ public final class Schemas {
     /** Tank interior region SavedData (one per server, in the overworld data folder). */
     public static final MigrationChain INTERIOR_REGIONS = MigrationChain.builder("interior_regions")
             .step(0, data -> data) // v0 = written before versioning; identical layout
+            .step(1, Schemas::regionsV1toV2)
+            .build();
+
+    /** Substrate block entity of an interior floor block (M3). */
+    public static final MigrationChain INTERIOR_FLOOR = MigrationChain.builder("interior_floor")
+            .step(0, data -> data)
             .build();
 
     /** Player attachment holding the position to return to when leaving an interior. */
@@ -66,6 +72,24 @@ public final class Schemas {
                 pair.add(net.minecraft.nbt.StringTag.valueOf(v));
                 pair.add(net.minecraft.nbt.StringTag.valueOf(v));
                 g.put(now, pair);
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Interior regions v1 -> v2 (M3): regions gain an {@code equipment} compound (heaters, filters, floating plants,
+     * substrate count). Regions written before M3 get an empty one flagged {@code rescan}, so the equipment already
+     * standing in them is counted from the world the first time it is needed. Everything else is kept.
+     */
+    static CompoundTag regionsV1toV2(CompoundTag data) {
+        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag r = list.getCompound(i);
+            if (!r.contains("equipment", Tag.TAG_COMPOUND)) {
+                CompoundTag eq = new CompoundTag();
+                eq.putBoolean("rescan", true);
+                r.put("equipment", eq);
             }
         }
         return data;

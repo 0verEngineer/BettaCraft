@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "minecraft:logs"
+    },
+    {
+      "tag": "minecraft:logs"
+    },
+    {
+      "item": "minecraft:mangrove_roots"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "bettacraft:decor_driftwood"
+  }
+}

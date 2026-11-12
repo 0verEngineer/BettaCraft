@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bone_block"
+    },
+    {
+      "item": "minecraft:bone_block"
+    },
+    {
+      "item": "minecraft:bone"
+    },
+    {
+      "item": "minecraft:polished_diorite_slab"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_dino_skull"
+  }
+}

@@ -1,13 +1,48 @@
 package org.overengineer.bettacraft.tank.interior;
 
+import com.mojang.serialization.MapCodec;
+import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /**
- * Floor of a tank interior. In M3 a shift-right-click with any block sets the floor texture (substrate) per block;
- * in M0 it is a plain unbreakable block.
+ * Floor of a tank interior (PLAN 7.2). Unbreakable. A shift-right-click with a block sets only that block's look as
+ * substrate on this floor block ({@link #SUBSTRATE} = true, the state is kept in an {@link InteriorFloorBlockEntity});
+ * plain floor blocks have no block entity.
  */
-public class InteriorFloorBlock extends Block {
+public class InteriorFloorBlock extends BaseEntityBlock {
+    public static final MapCodec<InteriorFloorBlock> CODEC = simpleCodec(InteriorFloorBlock::new);
+    public static final BooleanProperty SUBSTRATE = BooleanProperty.create("substrate");
+
     public InteriorFloorBlock(Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(SUBSTRATE, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(SUBSTRATE);
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(SUBSTRATE) ? new InteriorFloorBlockEntity(pos, state) : null;
     }
 }

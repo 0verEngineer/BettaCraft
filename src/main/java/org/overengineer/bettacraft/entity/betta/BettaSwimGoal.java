@@ -35,9 +35,15 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
             Vec3 f = fish.foodTarget;
             return clamp(box, new Vec3(f.x + (r.nextDouble() - 0.5) * 0.6, f.y - r.nextDouble() * 0.8, f.z + (r.nextDouble() - 0.5) * 0.6));
         }
-        // stay within ~5 blocks so paths stay short in large tanks
+        // stay within ~5 blocks so paths stay short in large tanks; avoid interior decoration (PLAN 4.2)
         Vec3 p = fish.position();
-        return clamp(box, new Vec3(p.x + (r.nextDouble() - 0.5) * 10, p.y + (r.nextDouble() - 0.5) * 4, p.z + (r.nextDouble() - 0.5) * 10));
+        Vec3 best = null;
+        for (int attempt = 0; attempt < 8; attempt++) {
+            Vec3 c = clamp(box, new Vec3(p.x + (r.nextDouble() - 0.5) * 10, p.y + (r.nextDouble() - 0.5) * 4, p.z + (r.nextDouble() - 0.5) * 10));
+            if (best == null) best = c;
+            if (fish.pathFreeOfDecor(p, c)) return c;
+        }
+        return fish.pathFreeOfDecor(p, best) ? best : null;
     }
 
     private static Vec3 clamp(AABB box, Vec3 v) {

@@ -3,7 +3,16 @@
   "minVersion": "0.8",
   "package": "org.overengineer.bettacraft.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "interior.CoralBlockMixin",
+    "interior.CoralMixin",
+    "interior.FlowingFluidMixin",
+    "interior.GameTestServerMixin",
+    "interior.LevelMixin",
+    "interior.ServerLevelMixin",
+    "interior.WaterPlantPlacementMixin",
+    "interior.WaterlilyBlockMixin"
+  ],
   "client": [
     "client.ClientLevelMixin"
   ],

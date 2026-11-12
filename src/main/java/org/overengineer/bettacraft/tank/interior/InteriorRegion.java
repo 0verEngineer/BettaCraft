@@ -33,6 +33,8 @@ public final class InteriorRegion {
     @Nullable
     private UUID owner;
     private boolean built;
+    /** Equipment and floating plants inside the region (PLAN 7.3), kept up to date by block updates. */
+    private final InteriorEquipment equipment = new InteriorEquipment();
 
     public InteriorRegion(int id, int sizeX, int sizeY, int sizeZ, int scale, ResourceKey<Level> tankDimension, BlockPos tankMin,
                           @Nullable UUID tankId, @Nullable UUID owner) {
@@ -58,6 +60,7 @@ public final class InteriorRegion {
     @Nullable public UUID owner() { return owner; }
     public boolean built() { return built; }
     void setBuilt(boolean built) { this.built = built; }
+    public InteriorEquipment equipment() { return equipment; }
 
     void retarget(ResourceKey<Level> dim, BlockPos tankMin, @Nullable UUID tankId) {
         this.tankDimension = dim;
@@ -92,6 +95,11 @@ public final class InteriorRegion {
         return lx >= -1 && ly >= -1 && lz >= -1 && lx <= sizeX && ly <= sizeY && lz <= sizeZ;
     }
 
+    /** Local coordinates (interior volume, y = 0 is the first block above the floor) of a world position. */
+    public int localX(int worldX) { return worldX - originX(); }
+    public int localY(int worldY) { return worldY - BASE_Y; }
+    public int localZ(int worldZ) { return worldZ - originZ(); }
+
     /** Region id owning a world position of the interior dimension (grid cell), or -1. */
     public static int idAt(int x, int z) {
         // A cell spans [origin - 512, origin + 1536): enough for the 1024 max interior plus walls.
@@ -111,6 +119,7 @@ public final class InteriorRegion {
         if (tankId != null) t.putUUID("tank_id", tankId);
         if (owner != null) t.putUUID("owner", owner);
         t.putBoolean("built", built);
+        t.put("equipment", equipment.save());
         return t;
     }
 
@@ -126,6 +135,7 @@ public final class InteriorRegion {
                 t.hasUUID("tank_id") ? t.getUUID("tank_id") : null,
                 t.hasUUID("owner") ? t.getUUID("owner") : null);
         r.built = t.getBoolean("built");
+        r.equipment.load(t.getCompound("equipment"));
         return r;
     }
 }

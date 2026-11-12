@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "part=anchor,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "part=anchor,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "part=anchor,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "part=base,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "part=base,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "part=base,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "part=middle,size=large": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "part=middle,size=medium": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "part=middle,size=small": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "part=top,size=large": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "part=top,size=medium": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "part=top,size=small": {
+      "model": "bettacraft:block/heater_segment_top"
+    }
+  }
+}

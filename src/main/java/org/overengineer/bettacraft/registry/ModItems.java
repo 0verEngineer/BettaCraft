@@ -50,11 +50,27 @@ public final class ModItems {
             () -> new ArtemiaCystsItem(new Item.Properties()));
 
     public static final DeferredItem<HeaterItem> HEATER_SMALL = ITEMS.register("heater_small",
-            () -> new HeaterItem(16, new Item.Properties().stacksTo(16)));
+            () -> new HeaterItem(16, org.overengineer.bettacraft.equipment.SegmentBlock.Size.SMALL, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<HeaterItem> HEATER_MEDIUM = ITEMS.register("heater_medium",
-            () -> new HeaterItem(32, new Item.Properties().stacksTo(16)));
+            () -> new HeaterItem(32, org.overengineer.bettacraft.equipment.SegmentBlock.Size.MEDIUM, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<HeaterItem> HEATER_LARGE = ITEMS.register("heater_large",
-            () -> new HeaterItem(64, new Item.Properties().stacksTo(16)));
+            () -> new HeaterItem(64, org.overengineer.bettacraft.equipment.SegmentBlock.Size.LARGE, new Item.Properties().stacksTo(16)));
+
+    /** Internal filter, placed into the tank interior (PLAN 6.2 / 7.3). */
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.InternalFilterItem> INTERNAL_FILTER = ITEMS.register("internal_filter",
+            () -> new org.overengineer.bettacraft.equipment.InternalFilterItem(new Item.Properties().stacksTo(16)));
+
+    /** Decoration structure items (PLAN 7.3), one per {@link org.overengineer.bettacraft.decor.DecorType}. */
+    public static final java.util.Map<org.overengineer.bettacraft.decor.DecorType, DeferredItem<org.overengineer.bettacraft.decor.DecorItem>> DECOR = decor();
+
+    private static java.util.Map<org.overengineer.bettacraft.decor.DecorType, DeferredItem<org.overengineer.bettacraft.decor.DecorItem>> decor() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.decor.DecorType, DeferredItem<org.overengineer.bettacraft.decor.DecorItem>>(
+                org.overengineer.bettacraft.decor.DecorType.class);
+        for (var t : org.overengineer.bettacraft.decor.DecorType.values()) {
+            m.put(t, ITEMS.register(t.itemId(), () -> new org.overengineer.bettacraft.decor.DecorItem(t, new Item.Properties().stacksTo(16))));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);

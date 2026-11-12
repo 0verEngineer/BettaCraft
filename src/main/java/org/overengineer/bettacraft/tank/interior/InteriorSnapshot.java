@@ -14,12 +14,15 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * Compact, palette-based encoding of the non-air blocks of an interior region (PLAN 7.4 "palettierte Sections").
  * <p>
- * Only non-empty 16x16x16 sections are written. Per section: palette of block state ids, then either a sparse list
- * (index, palette entry) or a dense bit-packed array, whichever is smaller. Air is never stored.
- * Section coordinates are relative to the region's origin chunk; y is the world section index.
+ * Only non-empty 16x16x16 sections are written (delta updates also write emptied sections, palette size 0). Per
+ * section: palette of block state ids, then a sparse list (index, palette entry), a dense bit-packed array or a run
+ * length encoding (M3), whichever is smallest. Air is never stored. Section coordinates are relative to the region's
+ * origin chunk; y is the world section index, {@link #FLOOR_SY} marks the floor layer (substrate, y index 0 only).
  */
 public final class InteriorSnapshot {
     public static final int SECTION_VOLUME = 4096;
+    /** Section y of the pseudo section holding the floor substrate of one chunk column (cells at y index 0). */
+    public static final int FLOOR_SY = -1;
 
     /** Decoded section: palette (index 0 = air) and 4096 palette indices (x + z*16 + y*256). */
     public record Section(int sx, int sy, int sz, BlockState[] palette, short[] indices, int nonAir) {}
@@ -34,6 +37,11 @@ public final class InteriorSnapshot {
 
     /** Encodes one section. {@code states[i]} may be null or air for empty cells. */
     public void addSection(int sx, int sy, int sz, BlockState[] states) {
+        addSection(sx, sy, sz, states, false);
+    }
+
+    /** As {@link #addSection(int, int, int, BlockState[])}; {@code keepEmpty} writes empty sections too (delta: "cleared"). */
+    public void addSection(int sx, int sy, int sz, BlockState[] states, boolean keepEmpty) {
         long t0 = System.nanoTime();
         Int2IntOpenHashMap paletteIndex = new Int2IntOpenHashMap();
         IntArrayList palette = new IntArrayList();
@@ -52,7 +60,7 @@ public final class InteriorSnapshot {
             idx[i] = (short) (p + 1);
             count++;
         }
-        if (count == 0) return;
+        if (count == 0 && !keepEmpty) return;
         sectionStarts.add(buf.writerIndex());
         buf.writeVarInt(sx);
         buf.writeVarInt(sy);
@@ -63,7 +71,26 @@ public final class InteriorSnapshot {
         int perLong = 64 / bits;
         int denseBytes = ((SECTION_VOLUME + perLong - 1) / perLong) * 8;
         int sparseBytes = count * (2 + (palette.size() > 127 ? 2 : 1));
-        if (sparseBytes < denseBytes) {
+        int runs = 0;
+        int rleBytes = 0;
+        for (int i = 0; i < SECTION_VOLUME; ) {
+            int j = i;
+            while (j < SECTION_VOLUME && idx[j] == idx[i]) j++;
+            runs++;
+            rleBytes += varIntSize(j - i) + varIntSize(idx[i]);
+            i = j;
+        }
+        if (rleBytes < sparseBytes && rleBytes < denseBytes) {
+            buf.writeByte(2);
+            buf.writeVarInt(runs);
+            for (int i = 0; i < SECTION_VOLUME; ) {
+                int j = i;
+                while (j < SECTION_VOLUME && idx[j] == idx[i]) j++;
+                buf.writeVarInt(j - i);
+                buf.writeVarInt(idx[i]);
+                i = j;
+            }
+        } else if (sparseBytes <= denseBytes) {
             buf.writeByte(0);
             buf.writeVarInt(count);
             for (int i = 0; i < SECTION_VOLUME; i++) {
@@ -135,7 +162,17 @@ public final class InteriorSnapshot {
             short[] idx = new short[SECTION_VOLUME];
             int mode = in.readByte();
             int count = 0;
-            if (mode == 0) {
+            if (mode == 2) {
+                int runs = in.readVarInt();
+                int i = 0;
+                for (int k = 0; k < runs && i < SECTION_VOLUME; k++) {
+                    int len = in.readVarInt();
+                    short v = (short) in.readVarInt();
+                    if (v > pn) v = 0;
+                    for (int e = Math.min(SECTION_VOLUME, i + len); i < e; i++) idx[i] = v;
+                    if (v != 0) count += len;
+                }
+            } else if (mode == 0) {
                 count = in.readVarInt();
                 for (int k = 0; k < count; k++) {
                     int i = in.readShort() & 0xFFFF;
@@ -155,6 +192,32 @@ public final class InteriorSnapshot {
             out.add(new Section(sx, sy, sz, palette, idx, count));
         }
         return out;
+    }
+
+    private static int varIntSize(int v) {
+        int n = 1;
+        while ((v & ~0x7F) != 0) {
+            v >>>= 7;
+            n++;
+        }
+        return n;
+    }
+
+    /** Raw encoded bytes (bench). */
+    public byte[] bytes() {
+        return slice(0, buf.writerIndex());
+    }
+
+    /** Size after zlib compression, as the network compression would roughly see it (bench). */
+    public static int deflatedSize(byte[] data) {
+        java.util.zip.Deflater d = new java.util.zip.Deflater();
+        d.setInput(data);
+        d.finish();
+        byte[] out = new byte[64 * 1024];
+        int total = 0;
+        while (!d.finished()) total += d.deflate(out);
+        d.end();
+        return total;
     }
 
     public static int index(int x, int y, int z) {

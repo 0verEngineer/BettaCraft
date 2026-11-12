@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.client.renderer.RenderType;
 
-/** GPU buffers of one miniature, one per chunk render layer. */
+/** GPU buffers of one miniature cell (2x2x2 sections), one per chunk render layer. */
 final class MiniatureMesh implements AutoCloseable {
     final Map<RenderType, VertexBuffer> buffers = new LinkedHashMap<>();
     long vertexBytes;
     int quads;
+    /** Interior-local bounds of the cell (for frustum culling): min x/y/z, size in blocks. */
+    int minX, minY, minZ, extent;
 
     @Override
     public void close() {

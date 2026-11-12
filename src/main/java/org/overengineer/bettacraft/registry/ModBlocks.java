@@ -45,7 +45,18 @@ public final class ModBlocks {
             .lightLevel(s -> s.getValue(TankLightBlock.LIT) ? 15 : 0)
             .isRedstoneConductor((s, l, p) -> false)));
 
-    /** Floor of a tank interior (substrate textures come in M3). Unbreakable. */
+    /** Heater rod in a tank interior (PLAN 7.3), one block per segment. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> HEATER_SEGMENT = BLOCKS.register("heater_segment",
+            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(true, () -> ModItems.HEATER_SMALL.get(), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE).strength(0.3F).sound(SoundType.GLASS).noLootTable().lightLevel(s -> 3)
+                    .pushReaction(PushReaction.BLOCK)));
+
+    /** Internal filter box in a tank interior (PLAN 7.3). */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> FILTER_SEGMENT = BLOCKS.register("filter_segment",
+            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(false, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
+
+    /** Floor of a tank interior; can carry a substrate look (PLAN 7.2). Unbreakable. */
     public static final DeferredBlock<InteriorFloorBlock> INTERIOR_FLOOR = BLOCKS.register("interior_floor", () -> new InteriorFloorBlock(
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SAND)

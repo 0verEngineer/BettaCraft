@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "bettacraft:block/filter_segment_middle",
+    "side": "bettacraft:block/filter_segment_anchor"
+  }
+}

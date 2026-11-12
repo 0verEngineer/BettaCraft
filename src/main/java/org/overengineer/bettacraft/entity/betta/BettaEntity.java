@@ -376,7 +376,32 @@ public class BettaEntity extends AbstractFish {
             if (cx != p.x || cy != p.y || cz != p.z) {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
             }
+            // inside interior decoration (rock, castle ...): swim up and out, and drop a path that leads through it
+            if (tickCount % 5 == 0 && level() instanceof ServerLevel server && insideDecor(server, p)) {
+                setDeltaMovement(getDeltaMovement().scale(0.3).add(0, 0.04, 0));
+                getNavigation().stop();
+            }
         }
+    }
+
+    private boolean insideDecor(ServerLevel server, Vec3 p) {
+        var c = org.overengineer.bettacraft.tank.TankInhabitants.resolveController(server, this);
+        return c != null && org.overengineer.bettacraft.tank.interior.InteriorObstacles.blocked(server.getServer(), c.getTank(), p);
+    }
+
+    /** True if the straight path from {@code a} to {@code b} does not cross solid interior decoration (samples every 1/8 block). */
+    boolean pathFreeOfDecor(Vec3 a, Vec3 b) {
+        if (!(level() instanceof ServerLevel server)) return true;
+        var c = org.overengineer.bettacraft.tank.TankInhabitants.resolveController(server, this);
+        if (c == null || c.getTank().regionId() < 0) return true;
+        double len = a.distanceTo(b);
+        int steps = Math.max(1, (int) Math.ceil(len * 8));
+        for (int i = 1; i <= steps; i++) {
+            if (org.overengineer.bettacraft.tank.interior.InteriorObstacles.blocked(server.getServer(), c.getTank(), a.lerp(b, i / (double) steps))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -69,6 +69,11 @@ public final class TankAwareWaterExtensions implements IClientFluidTypeExtension
             TankWaterRenderer.render(getter, pos, vertexConsumer, blockState);
             return true;
         }
+        // Dry interior (PLAN 7.3): seagrass/kelp report implicit water; inside the interior dimension it is not drawn.
+        if (!(blockState.getBlock() instanceof net.minecraft.world.level.block.LiquidBlock)) {
+            ClientLevel cl = Minecraft.getInstance().level;
+            if (cl != null && cl.dimension() == org.overengineer.bettacraft.registry.ModDimensions.TANK_INTERIOR) return true;
+        }
         return delegate.renderFluid(fluidState, getter, pos, vertexConsumer, blockState);
     }
 

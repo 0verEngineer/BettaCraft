@@ -1,0 +1,149 @@
+package org.overengineer.bettacraft.equipment;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.HitResult;
+
+/**
+ * One segment of a piece of equipment that stands in the tank interior as a column of blocks (PLAN 7.3): heaters
+ * (1x1xN rod, {@link #SIZE}) and the internal filter (2x2xN box at scale 16). Breaking any segment removes the whole
+ * piece and gives the item back once. Only the {@link Part#ANCHOR} block (lowest, min x/z) counts as the piece.
+ */
+public class SegmentBlock extends Block {
+    public enum Part implements StringRepresentable {
+        /** Lowest block with the smallest x/z: represents the whole piece. */
+        ANCHOR,
+        /** Other blocks of the lowest layer (filter footprint). */
+        BASE,
+        MIDDLE,
+        TOP;
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    public enum Size implements StringRepresentable {
+        SMALL(16, 6), MEDIUM(32, 9), LARGE(64, 12);
+
+        /** Heating capacity in water blocks (same as {@link HeaterItem}). */
+        public final int capacity;
+        /** Rod length in interior blocks at scale 16. */
+        public final int length16;
+
+        Size(int capacity, int length16) {
+            this.capacity = capacity;
+            this.length16 = length16;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
+    public static final EnumProperty<Size> SIZE = EnumProperty.create("size", Size.class);
+
+    private final boolean heater;
+    private final Supplier<? extends Item> filterItem;
+
+    /** @param heater true: heater rod (has {@link #SIZE}); false: internal filter, dropping {@code filterItem}. */
+    public SegmentBlock(boolean heater, Supplier<? extends Item> filterItem, Properties properties) {
+        super(properties);
+        this.heater = heater;
+        this.filterItem = filterItem;
+        BlockState def = stateDefinition.any().setValue(PART, Part.ANCHOR);
+        if (heater) def = def.setValue(SIZE, Size.SMALL);
+        registerDefaultState(def);
+    }
+
+    public boolean isHeater() {
+        return heater;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(PART);
+        // SIZE is on both blocks so the state definition stays static; the filter only uses SMALL.
+        builder.add(SIZE);
+    }
+
+    /** The item this piece gives back. */
+    public ItemStack itemFor(BlockState state) {
+        if (!heater) return new ItemStack(filterItem.get());
+        return new ItemStack(switch (state.getValue(SIZE)) {
+            case SMALL -> org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get();
+            case MEDIUM -> org.overengineer.bettacraft.registry.ModItems.HEATER_MEDIUM.get();
+            case LARGE -> org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get();
+        });
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return itemFor(state);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        return itemFor(state);
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide) {
+            for (BlockPos p : connected(level, pos)) {
+                if (!p.equals(pos)) level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+            if (!player.getAbilities().instabuild) Block.popResource(level, pos, itemFor(state));
+        }
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    /** All blocks of the same piece (connected blocks of this block type), at most 512. */
+    public List<BlockPos> connected(BlockGetter level, BlockPos start) {
+        List<BlockPos> out = new ArrayList<>();
+        ArrayDeque<BlockPos> todo = new ArrayDeque<>();
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        todo.add(start.immutable());
+        seen.add(start.immutable());
+        while (!todo.isEmpty() && out.size() < 512) {
+            BlockPos p = todo.poll();
+            if (!level.getBlockState(p).is(this)) continue;
+            out.add(p);
+            for (Direction d : Direction.values()) {
+                BlockPos n = p.relative(d);
+                if (seen.add(n)) todo.add(n);
+            }
+        }
+        return out;
+    }
+
+    /** Number of interior blocks of a heater rod at the given interior scale (PLAN 7.3: 6/9/12 at scale 16). */
+    public static int heaterLength(Size size, int scale) {
+        return Math.max(2, Math.round(size.length16 * scale / 16F));
+    }
+
+    /** Filter box at the given scale: {footprint, height} (2x2x8 at scale 16). */
+    public static int[] filterShape(int scale) {
+        return new int[]{Math.max(1, 2 * scale / 16), Math.max(2, Math.round(8 * scale / 16F))};
+    }
+}

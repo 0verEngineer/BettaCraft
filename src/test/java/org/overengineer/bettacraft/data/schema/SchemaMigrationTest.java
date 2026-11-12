@@ -182,7 +182,34 @@ class SchemaMigrationTest {
         assertEquals(2, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
-        assertEquals(1, Schemas.INTERIOR_REGIONS.currentVersion());
+        assertEquals(2, Schemas.INTERIOR_REGIONS.currentVersion());
+        assertEquals(1, Schemas.INTERIOR_FLOOR.currentVersion());
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
+    }
+
+    /** Frozen M2 (v1) interior regions SavedData: regions without equipment get a flagged empty one. */
+    @Test
+    void interiorRegionsV1ToV2AddsEquipmentRescan() {
+        CompoundTag v1 = snbt("{schema:1,next_id:3,regions:[{id:1,size:[I;16,16,16],scale:16,tank_dim:\"minecraft:overworld\","
+                + "tank_min:[I;0,64,0],built:1b,custom:\"keep\"},{id:2,size:[I;32,16,16],scale:16,tank_dim:\"minecraft:overworld\","
+                + "tank_min:[I;5,64,0],built:0b,equipment:{substrate:4}}]}");
+        CompoundTag out = Schemas.INTERIOR_REGIONS.migrate(v1);
+        assertEquals(2, Schema.read(out));
+        CompoundTag r1 = out.getList("regions", 10).getCompound(0);
+        assertTrue(r1.getCompound("equipment").getBoolean("rescan"), "old region is rescanned");
+        assertEquals("keep", r1.getString("custom"), "unknown keys kept");
+        assertEquals(16, r1.getInt("scale"));
+        CompoundTag r2 = out.getList("regions", 10).getCompound(1);
+        assertFalse(r2.getCompound("equipment").getBoolean("rescan"), "existing equipment untouched");
+        assertEquals(4, r2.getCompound("equipment").getInt("substrate"));
+        assertEquals(3, out.getInt("next_id"));
+    }
+
+    @Test
+    void interiorFloorStartsAtV1() {
+        assertEquals(1, Schemas.INTERIOR_FLOOR.currentVersion());
+        CompoundTag out = Schemas.INTERIOR_FLOOR.migrate(snbt("{paid:1b}"));
+        assertEquals(1, Schema.read(out));
+        assertTrue(out.getBoolean("paid"));
     }
 }

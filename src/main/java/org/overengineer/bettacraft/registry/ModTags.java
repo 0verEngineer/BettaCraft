@@ -44,6 +44,10 @@ public final class ModTags {
     public static final TagKey<Biome> SALT_WATER_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("salt_water_biomes"));
     /** Mining these blocks may drop artemia cysts. */
     public static final TagKey<Block> ARTEMIA_SAND = TagKey.create(Registries.BLOCK, BettaCraft.id("artemia_sand"));
+    /** Floating plants in the interior: the bubble nest is built under them (PLAN 5.4). */
+    public static final TagKey<Block> FLOATING_PLANTS = TagKey.create(Registries.BLOCK, BettaCraft.id("floating_plants"));
+    /** Blocks that cannot become an interior floor substrate (PLAN 7.2). */
+    public static final TagKey<Block> SUBSTRATE_BLACKLIST = TagKey.create(Registries.BLOCK, BettaCraft.id("substrate_blacklist"));
 
     private ModTags() {}
 }

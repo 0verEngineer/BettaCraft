@@ -68,6 +68,7 @@ import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.overengineer.bettacraft.BettaCraft;
+import org.overengineer.bettacraft.decor.DecorType;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModDataComponents;
@@ -138,6 +139,21 @@ public final class ModDataGen {
             simpleBlock(ModBlocks.INTERIOR_FLOOR.get(), cubeAll(ModBlocks.INTERIOR_FLOOR.get()));
             simpleBlock(ModBlocks.INTERIOR_WALL.get(), models().getBuilder("interior_wall")
                     .texture("particle", modLoc("block/interior_wall")));
+            // interior equipment (M3): one texture per segment part; the heater size does not change the look
+            for (String kind : new String[]{"heater_segment", "filter_segment"}) {
+                var block = kind.equals("heater_segment") ? ModBlocks.HEATER_SEGMENT.get() : ModBlocks.FILTER_SEGMENT.get();
+                getVariantBuilder(block).forAllStates(state -> {
+                    var part = state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART);
+                    String tex = switch (part) {
+                        case ANCHOR, BASE -> "anchor";
+                        case MIDDLE -> "middle";
+                        case TOP -> "top";
+                    };
+                    String side = "block/" + kind + "_" + (tex.equals("top") && kind.equals("filter_segment") ? "middle" : tex);
+                    String top = "block/" + kind + "_" + (tex.equals("top") ? "top" : "middle");
+                    return ConfiguredModel.builder().modelFile(models().cubeColumn(kind + "_" + tex, modLoc(side), modLoc(top))).build();
+                });
+            }
 
             BlockModelBuilder feeder = models().getBuilder("feeder")
                     .texture("side", modLoc("block/feeder_side")).texture("top", modLoc("block/feeder_top"))
@@ -210,6 +226,8 @@ public final class ModDataGen {
             basicItem(ModItems.HEATER_SMALL.get());
             basicItem(ModItems.HEATER_MEDIUM.get());
             basicItem(ModItems.HEATER_LARGE.get());
+            basicItem(ModItems.INTERNAL_FILTER.get());
+            for (var d : ModItems.DECOR.values()) basicItem(d.get());
         }
     }
 
@@ -302,6 +320,53 @@ public final class ModDataGen {
                     .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES).define('D', Tags.Items.DUSTS_GLOWSTONE)
                     .unlockedBy("has_glowstone", has(Tags.Items.DUSTS_GLOWSTONE))
                     .save(output, BettaCraft.id("tank_light"));
+            decorRecipes(output);
+        }
+
+        /** M3: internal filter and the decoration structures (own, plausible recipes). */
+        private void decorRecipes(RecipeOutput output) {
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.INTERNAL_FILTER.get())
+                    .requires(Tags.Items.INGOTS_IRON).requires(Tags.Items.INGOTS_IRON).requires(net.minecraft.tags.ItemTags.WOOL)
+                    .requires(Tags.Items.DUSTS_REDSTONE).requires(Items.IRON_BARS)
+                    .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(output, BettaCraft.id("internal_filter"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CASTLE))
+                    .pattern("W W").pattern("BIB").pattern("BBB")
+                    .define('W', Items.STONE_BRICK_WALL).define('B', Items.STONE_BRICKS).define('I', Items.IRON_BARS)
+                    .unlockedBy("has_stone_bricks", has(Items.STONE_BRICKS)).save(output, BettaCraft.id("decor_castle"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.SHIPWRECK))
+                    .pattern(" SW").pattern("PBP").pattern(" P ")
+                    .define('S', Tags.Items.RODS_WOODEN).define('W', net.minecraft.tags.ItemTags.WOOL).define('P', net.minecraft.tags.ItemTags.PLANKS)
+                    .define('B', Items.BARREL)
+                    .unlockedBy("has_barrel", has(Items.BARREL)).save(output, BettaCraft.id("decor_shipwreck"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.DINO_SKULL))
+                    .requires(Items.BONE_BLOCK).requires(Items.BONE_BLOCK).requires(Items.BONE).requires(Items.POLISHED_DIORITE_SLAB)
+                    .unlockedBy("has_bone_block", has(Items.BONE_BLOCK)).save(output, BettaCraft.id("decor_dino_skull"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.VOLCANO))
+                    .requires(Items.BASALT).requires(Items.BASALT).requires(Items.BLACKSTONE).requires(Items.MAGMA_BLOCK)
+                    .unlockedBy("has_magma", has(Items.MAGMA_BLOCK)).save(output, BettaCraft.id("decor_volcano"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.DRIFTWOOD), 2)
+                    .requires(net.minecraft.tags.ItemTags.LOGS).requires(net.minecraft.tags.ItemTags.LOGS).requires(Items.MANGROVE_ROOTS)
+                    .unlockedBy("has_mangrove_roots", has(Items.MANGROVE_ROOTS)).save(output, BettaCraft.id("decor_driftwood"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.STONES), 2)
+                    .requires(Items.COBBLESTONE).requires(Items.ANDESITE).requires(Items.MOSSY_COBBLESTONE)
+                    .unlockedBy("has_mossy_cobblestone", has(Items.MOSSY_COBBLESTONE)).save(output, BettaCraft.id("decor_stones"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.MOSS_BALL), 4)
+                    .requires(Items.MOSS_BLOCK).requires(Items.SLIME_BALL)
+                    .unlockedBy("has_moss", has(Items.MOSS_BLOCK)).save(output, BettaCraft.id("decor_moss_ball"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.HAMMOCK), 2)
+                    .requires(Items.OAK_LEAVES).requires(Items.OAK_FENCE).requires(Tags.Items.STRINGS)
+                    .unlockedBy("has_leaves", has(Items.OAK_LEAVES)).save(output, BettaCraft.id("decor_hammock"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.ALMOND_LEAF), 2)
+                    .requires(net.minecraft.tags.ItemTags.LEAVES).requires(Items.BROWN_DYE)
+                    .unlockedBy("has_brown_dye", has(Items.BROWN_DYE)).save(output, BettaCraft.id("decor_almond_leaf"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
+                    .pattern("TMT").pattern("T T")
+                    .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
+                    .unlockedBy("has_tuff", has(Items.TUFF)).save(output, BettaCraft.id("decor_cave"));
+        }
+
+        private static net.minecraft.world.item.Item decor(DecorType t) {
+            return ModItems.DECOR.get(t).get();
         }
 
         /** Turns the ShapedRecipe produced by the builder into our {@link TankRecipe} type. */
@@ -376,8 +441,11 @@ public final class ModDataGen {
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
+            tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD);
+            tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
+                    net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
         }
     }
 

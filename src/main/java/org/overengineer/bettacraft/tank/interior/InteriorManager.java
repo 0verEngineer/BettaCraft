@@ -2,19 +2,17 @@ package org.overengineer.bettacraft.tank.interior;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.registry.ModAttachments;
@@ -22,13 +20,15 @@ import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModDimensions;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
+import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankMultiblock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Server logic of the tank interior dimension (PLAN 7): region allocation (lazy, on first entry), shell building,
- * entering/leaving, and keeping interiors consistent when tanks merge or split.
+ * Server logic of the tank interior dimension (PLAN 7): region allocation (lazy, on first entry), shell building
+ * (asynchronously for players, see {@link InteriorPreparation}), entering/leaving with rights, and keeping interiors
+ * consistent when tanks merge, split or break.
  */
 public final class InteriorManager {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/interior");
@@ -50,6 +50,7 @@ public final class InteriorManager {
 
     // ------------------------------------------------------------------ enter / leave
 
+    /** Shift + right-click / menu button: enter the tank's interior (region is prepared first if needed). */
     public static void enter(ServerPlayer player, BlockPos clicked) {
         if (isInterior(player.level())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.interior.nested"), true);
@@ -62,10 +63,26 @@ public final class InteriorManager {
                     ? "message.bettacraft.interior.missing_dimension" : "message.bettacraft.tank.not_formed"), true);
             return;
         }
-        InteriorRegion region = ensureRegion((ServerLevel) player.level(), controller);
+        if (!TankInhabitants.canModify(player, controller.getTank())) {
+            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            return;
+        }
+        InteriorRegion region = regionFor((ServerLevel) player.level(), controller);
+        if (region.built()) {
+            teleportInto(player, region);
+        } else {
+            InteriorPreparation.prepare(player.server, region, player);
+        }
+    }
+
+    /** Teleports into a built region (centre of the floor) and remembers the return point. */
+    static void teleportInto(ServerPlayer player, InteriorRegion region) {
+        ServerLevel interior = interiorLevel(player.server);
+        if (interior == null || isInterior(player.level())) return;
         player.setData(ModAttachments.INTERIOR_RETURN.get(), new InteriorReturn(player.level().dimension(), player.position(),
                 player.getYRot(), player.getXRot(), region.id()));
         BlockPos target = region.toWorld(region.sizeX() / 2, 0, region.sizeZ() / 2);
+        while (target.getY() < InteriorRegion.BASE_Y + region.sizeY() - 2 && !interior.getBlockState(target).isAir()) target = target.above();
         player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, player.getYRot(), player.getXRot());
         player.displayClientMessage(Component.translatable("message.bettacraft.interior.entered",
                 region.sizeX(), region.sizeY(), region.sizeZ()), true);
@@ -86,10 +103,23 @@ public final class InteriorManager {
         player.teleportTo(target, p.x, p.y, p.z, ret.yRot(), ret.xRot());
     }
 
+    /** Whether the player may change blocks inside the region at {@code pos} (tank lock, PLAN 7.1). */
+    public static boolean canBuild(Player player, BlockPos pos) {
+        if (player.hasPermissions(2)) return true;
+        InteriorRegion r = player.getServer() == null ? null : regionAt(player.getServer(), pos);
+        if (r == null) return false;
+        ServerLevel tankLevel = player.getServer().getLevel(r.tankDimension());
+        if (tankLevel != null && tankLevel.isLoaded(r.tankMin())) {
+            TankBlockEntity c = TankMultiblock.getController(tankLevel, r.tankMin());
+            if (c != null && c.getTank().regionId() == r.id()) return TankInhabitants.canModify(player, c.getTank());
+        }
+        return r.owner() == null || r.owner().equals(player.getUUID());
+    }
+
     // ------------------------------------------------------------------ regions
 
-    /** Returns the tank's region, allocating and building it on first use. */
-    public static InteriorRegion ensureRegion(ServerLevel tankLevel, TankBlockEntity controller) {
+    /** The tank's region, allocated if needed but not necessarily built. */
+    public static InteriorRegion regionFor(ServerLevel tankLevel, TankBlockEntity controller) {
         TankData t = controller.getTank();
         InteriorRegions regions = InteriorRegions.get(tankLevel.getServer());
         InteriorRegion r = regions.get(t.regionId());
@@ -100,6 +130,12 @@ public final class InteriorManager {
             r.retarget(tankLevel.dimension(), t.min(), t.id());
             regions.setDirty();
         }
+        return r;
+    }
+
+    /** Returns the tank's region, allocating and building it synchronously on first use (tests, commands). */
+    public static InteriorRegion ensureRegion(ServerLevel tankLevel, TankBlockEntity controller) {
+        InteriorRegion r = regionFor(tankLevel, controller);
         if (!r.built()) buildShell(tankLevel.getServer(), r);
         return r;
     }
@@ -112,27 +148,52 @@ public final class InteriorManager {
         return r;
     }
 
-    /** Places floor, invisible walls and ceiling of a region. */
+    /** Chunk x range [0] .. [1] and z range [2] .. [3] (inclusive) touched by the region's shell. */
+    static int[] shellChunks(InteriorRegion r) {
+        return new int[]{(r.originX() - 1) >> 4, (r.originX() + r.sizeX()) >> 4, (r.originZ() - 1) >> 4, (r.originZ() + r.sizeZ()) >> 4};
+    }
+
+    /** Places floor, invisible walls and ceiling of a region synchronously (loads/generates the chunks on the spot). */
     public static void buildShell(MinecraftServer server, InteriorRegion r) {
         ServerLevel level = interiorLevel(server);
         if (level == null) return;
         long start = System.nanoTime();
         LongSet touched = new LongOpenHashSet();
+        int[] c = shellChunks(r);
+        for (int cx = c[0]; cx <= c[1]; cx++)
+            for (int cz = c[2]; cz <= c[3]; cz++) buildShellChunk(level, r, cx, cz, touched);
+        finishShell(server, level, r, touched, (System.nanoTime() - start) / 1_000_000.0, "sync");
+    }
+
+    static void finishShell(MinecraftServer server, ServerLevel level, InteriorRegion r, LongSet touched, double ms, String mode) {
+        InteriorWorldOps.resendChunks(level, touched);
+        r.setBuilt(true);
+        InteriorRegions.get(server).setDirty();
+        LOGGER.info("Built interior region {} ({}x{}x{}, scale {}) {} in {} ms main thread, {} chunks", r.id(), r.sizeX(), r.sizeY(),
+                r.sizeZ(), r.scale(), mode, String.format(java.util.Locale.ROOT, "%.1f", ms), touched.size());
+    }
+
+    /** The part of the shell (floor, 4 walls, ceiling) inside one chunk column. */
+    static void buildShellChunk(ServerLevel level, InteriorRegion r, int cx, int cz, LongSet touched) {
         int x0 = r.originX(), z0 = r.originZ();
         int x1 = x0 + r.sizeX() - 1, z1 = z0 + r.sizeZ() - 1;
         int fy = InteriorRegion.FLOOR_Y, top = InteriorRegion.BASE_Y + r.sizeY();
         BlockState wall = ModBlocks.INTERIOR_WALL.get().defaultBlockState();
-        InteriorWorldOps.fill(level, x0, fy, z0, x1, fy, z1, ModBlocks.INTERIOR_FLOOR.get().defaultBlockState(), touched);
-        InteriorWorldOps.fill(level, x0 - 1, fy, z0 - 1, x0 - 1, top, z1 + 1, wall, touched);
-        InteriorWorldOps.fill(level, x1 + 1, fy, z0 - 1, x1 + 1, top, z1 + 1, wall, touched);
-        InteriorWorldOps.fill(level, x0, fy, z0 - 1, x1, top, z0 - 1, wall, touched);
-        InteriorWorldOps.fill(level, x0, fy, z1 + 1, x1, top, z1 + 1, wall, touched);
-        InteriorWorldOps.fill(level, x0, top, z0, x1, top, z1, wall, touched);
-        InteriorWorldOps.resendChunks(level, touched);
-        r.setBuilt(true);
-        InteriorRegions.get(server).setDirty();
-        LOGGER.info("Built interior region {} ({}x{}x{}, scale {}) in {} ms, {} chunks", r.id(), r.sizeX(), r.sizeY(), r.sizeZ(),
-                r.scale(), (System.nanoTime() - start) / 1_000_000, touched.size());
+        BlockState floor = ModBlocks.INTERIOR_FLOOR.get().defaultBlockState();
+        int ax = cx << 4, bx = ax + 15, az = cz << 4, bz = az + 15;
+        int[][] boxes = {
+                {x0, fy, z0, x1, fy, z1},
+                {x0 - 1, fy, z0 - 1, x0 - 1, top, z1 + 1},
+                {x1 + 1, fy, z0 - 1, x1 + 1, top, z1 + 1},
+                {x0, fy, z0 - 1, x1, top, z0 - 1},
+                {x0, fy, z1 + 1, x1, top, z1 + 1},
+                {x0, top, z0, x1, top, z1}};
+        for (int i = 0; i < boxes.length; i++) {
+            int[] b = boxes[i];
+            int ix0 = Math.max(b[0], ax), ix1 = Math.min(b[3], bx), iz0 = Math.max(b[2], az), iz1 = Math.min(b[5], bz);
+            if (ix0 > ix1 || iz0 > iz1) continue;
+            InteriorWorldOps.fill(level, ix0, b[1], iz0, ix1, b[4], iz1, i == 0 ? floor : wall, touched);
+        }
     }
 
     /** Removes everything of a region (shell included) and forgets it. */
@@ -146,6 +207,7 @@ public final class InteriorManager {
         }
         InteriorRegions.get(server).remove(r.id());
         InteriorSync.forget(r.id());
+        InteriorPreparation.cancel(r.id());
     }
 
     /** Benchmark helper: removes a region that belongs to no tank. */
@@ -158,7 +220,11 @@ public final class InteriorManager {
     public static void onTanksMerged(ServerLevel tankLevel, List<TankData> olds, TankData merged) {
         MinecraftServer server = tankLevel.getServer();
         InteriorRegions regions = InteriorRegions.get(server);
-        List<TankData> withRegion = olds.stream().filter(t -> regions.get(t.regionId()) != null).toList();
+        List<TankData> withRegion = olds.stream().filter(t -> regions.get(t.regionId()) != null && regions.get(t.regionId()).built()).toList();
+        for (TankData t : olds) {
+            InteriorRegion unbuilt = regions.get(t.regionId());
+            if (unbuilt != null && !unbuilt.built()) destroyRegion(server, unbuilt);
+        }
         merged.setRegionId(-1);
         if (withRegion.isEmpty()) return;
         ServerLevel interior = interiorLevel(server);
@@ -171,13 +237,15 @@ public final class InteriorManager {
         for (TankData old : withRegion) {
             InteriorRegion src = regions.get(old.regionId());
             BlockPos off = old.min().subtract(merged.min());
-            BlockPos dst = target.toWorld(off.getX() * s, off.getY() * s, off.getZ() * s);
-            copyInterior(interior, src, 0, 0, 0, src.sizeX(), src.sizeY(), src.sizeZ(), dst, touched);
-            movePlayers(interior, src, target, off.getX() * s, off.getY() * s, off.getZ() * s);
+            int dx = off.getX() * s, dy = off.getY() * s, dz = off.getZ() * s;
+            copyInterior(interior, src, 0, 0, 0, src.sizeX(), src.sizeY(), src.sizeZ(), target.toWorld(dx, dy, dz), touched);
+            if (dy == 0) copyFloor(interior, src, 0, 0, src.sizeX(), src.sizeZ(), target, dx, dz);
+            movePlayers(interior, src, target, dx, dy, dz);
             destroyRegion(server, src);
         }
         InteriorWorldOps.resendChunks(interior, touched);
-        InteriorSync.markDirty(target.id());
+        target.equipment().markNeedsScan();
+        InteriorSync.markAllDirty(target.id());
     }
 
     public static void onTankSplit(ServerLevel tankLevel, TankData old, List<TankData> pieces) {
@@ -186,6 +254,10 @@ public final class InteriorManager {
         InteriorRegion src = regions.get(old.regionId());
         for (TankData p : pieces) p.setRegionId(-1);
         if (src == null) return;
+        if (!src.built()) {
+            destroyRegion(server, src);
+            return;
+        }
         ServerLevel interior = interiorLevel(server);
         if (interior == null) return;
         int s = old.scale();
@@ -194,17 +266,22 @@ public final class InteriorManager {
             InteriorRegion target = allocate(tankLevel, piece);
             buildShell(server, target);
             BlockPos off = piece.min().subtract(old.min());
-            copyInterior(interior, src, off.getX() * s, off.getY() * s, off.getZ() * s,
-                    piece.sizeX() * s, piece.sizeY() * s, piece.sizeZ() * s, target.toWorld(0, 0, 0), touched);
-            movePlayers(interior, src, target, -off.getX() * s, -off.getY() * s, -off.getZ() * s);
-            InteriorSync.markDirty(target.id());
+            int lx = off.getX() * s, ly = off.getY() * s, lz = off.getZ() * s;
+            copyInterior(interior, src, lx, ly, lz, piece.sizeX() * s, piece.sizeY() * s, piece.sizeZ() * s, target.toWorld(0, 0, 0), touched);
+            if (ly == 0) copyFloor(interior, src, lx, lz, piece.sizeX() * s, piece.sizeZ() * s, target, 0, 0);
+            movePlayers(interior, src, target, -lx, -ly, -lz);
+            target.equipment().markNeedsScan();
+            InteriorSync.markAllDirty(target.id());
         }
         InteriorWorldOps.resendChunks(interior, touched);
         ejectPlayers(interior, src);
         destroyRegion(server, src);
     }
 
-    /** Drops the interior part belonging to one tank block as items at that block and clears it. */
+    /**
+     * Drops the interior part belonging to one tank block as items at that block and clears it (PLAN 4.1). The floor
+     * substrate under the block (bottom layer only) drops too if it was paid for.
+     */
     public static void dropInteriorOfBlock(ServerLevel tankLevel, TankData t, BlockPos pos) {
         MinecraftServer server = tankLevel.getServer();
         InteriorRegion r = InteriorRegions.get(server).get(t.regionId());
@@ -214,25 +291,23 @@ public final class InteriorManager {
         BlockPos off = pos.subtract(t.min());
         BlockPos a = r.toWorld(off.getX() * s, off.getY() * s, off.getZ() * s);
         BlockPos b = a.offset(s - 1, s - 1, s - 1);
-        Object2IntLinkedOpenHashMap<Item> counts = new Object2IntLinkedOpenHashMap<>();
-        InteriorWorldOps.forEachBlock(interior, a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ(), (x, y, z, st) -> {
-            if (isShellBlock(st)) return;
-            Item item = st.getBlock().asItem();
-            if (item != Items.AIR) counts.addTo(item, 1);
-        });
+        List<ItemStack> items = new ArrayList<>();
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        InteriorWorldOps.forEachBlock(interior, a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ(),
+                (x, y, z, st) -> InteriorDrops.collect(interior, m.set(x, y, z).immutable(), st, items));
+        if (off.getY() == 0) {
+            for (int x = a.getX(); x <= b.getX(); x++)
+                for (int z = a.getZ(); z <= b.getZ(); z++) {
+                    ItemStack back = Substrate.clear(interior, new BlockPos(x, InteriorRegion.FLOOR_Y, z));
+                    if (!back.isEmpty()) items.add(back);
+                }
+        }
         LongSet touched = new LongOpenHashSet();
         InteriorWorldOps.clear(interior, a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ(), touched);
         InteriorWorldOps.resendChunks(interior, touched);
-        for (var e : counts.object2IntEntrySet()) {
-            int left = e.getIntValue();
-            int max = e.getKey().getDefaultMaxStackSize();
-            while (left > 0) {
-                int n = Math.min(left, max);
-                Block.popResource(tankLevel, pos, new ItemStack(e.getKey(), n));
-                left -= n;
-            }
-        }
-        InteriorSync.markDirty(r.id());
+        InteriorDrops.drop(tankLevel, pos, items);
+        r.equipment().markNeedsScan();
+        InteriorSync.markAllDirty(r.id());
     }
 
     public static void freeRegion(ServerLevel tankLevel, TankData t) {
@@ -251,6 +326,18 @@ public final class InteriorManager {
         List<InteriorWorldOps.Captured> blocks = InteriorWorldOps.capture(level, a.getX(), a.getY(), a.getZ(),
                 a.getX() + sx - 1, a.getY() + sy - 1, a.getZ() + sz - 1);
         InteriorWorldOps.paste(level, dst, blocks, touched);
+    }
+
+    /** Copies the floor substrate of a source box (local x/z) to the target region at offset dx/dz. */
+    private static void copyFloor(ServerLevel level, InteriorRegion src, int lx, int lz, int sx, int sz, InteriorRegion target, int dx, int dz) {
+        for (int x = 0; x < sx; x++)
+            for (int z = 0; z < sz; z++) {
+                BlockPos from = new BlockPos(src.originX() + lx + x, InteriorRegion.FLOOR_Y, src.originZ() + lz + z);
+                if (level.getBlockEntity(from) instanceof InteriorFloorBlockEntity be) {
+                    BlockPos to = new BlockPos(target.originX() + dx + x, InteriorRegion.FLOOR_Y, target.originZ() + dz + z);
+                    if (target.containsShell(to)) Substrate.set(level, to, be.substrate(), be.paid());
+                }
+            }
     }
 
     private static void movePlayers(ServerLevel level, InteriorRegion from, InteriorRegion to, int dx, int dy, int dz) {
@@ -276,10 +363,24 @@ public final class InteriorManager {
         }
     }
 
-    /** Region a player inside the interior dimension is standing in, or null. */
+    /** Region a position of the interior dimension belongs to (shell included), or null. */
     @Nullable
     public static InteriorRegion regionAt(MinecraftServer server, BlockPos pos) {
         InteriorRegion r = InteriorRegions.get(server).get(InteriorRegion.idAt(pos.getX(), pos.getZ()));
         return r != null && r.containsShell(pos) ? r : null;
+    }
+
+    /** The region's equipment, rescanned first if a bulk change made it stale. */
+    public static InteriorEquipment equipment(MinecraftServer server, InteriorRegion r) {
+        if (r.equipment().needsScan()) {
+            ServerLevel interior = interiorLevel(server);
+            if (interior != null) {
+                long t0 = System.nanoTime();
+                r.equipment().rescan(interior, r);
+                InteriorRegions.get(server).setDirty();
+                LOGGER.debug("Rescanned equipment of region {} in {} ms", r.id(), (System.nanoTime() - t0) / 1e6);
+            }
+        }
+        return r.equipment();
     }
 }
