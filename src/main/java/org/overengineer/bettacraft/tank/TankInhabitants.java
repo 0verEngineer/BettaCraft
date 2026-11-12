@@ -181,6 +181,7 @@ public final class TankInhabitants {
         tank.inhabitants().add(e.getUUID());
         TankCare.log(level, controller, "log.bettacraft.inserted", TankCare.nameArg(e));
         reconcile(level, controller);
+        controller.markTankChanged(); // clients learn the inhabitant count (break rule without flicker)
         return null;
     }
 
