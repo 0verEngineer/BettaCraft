@@ -34,9 +34,9 @@ public final class MiniatureJets {
         return new Vec3(min.getX() + MARGIN + lx * fx, min.getY() + MARGIN + ly * fy, min.getZ() + MARGIN + lz * fz);
     }
 
+    /** Water surface (M10: per layer, correct for free shapes; the client view knows the tank's blocks). */
     static double surfaceY(TankData t) {
-        double area = (double) t.sizeX() * t.sizeZ();
-        double h = area <= 0 ? 0 : t.waterMb() / (area * TankData.MB_PER_BLOCK);
+        double h = t.waterSurfaceY() - t.min().getY();
         return t.min().getY() + Math.min(t.sizeY() - 1.0 / 16, Math.max(1.0 / 16, h));
     }
 
