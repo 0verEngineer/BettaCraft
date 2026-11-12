@@ -1,0 +1,33 @@
+{
+  "parent": "bettacraft:grown_up",
+  "criteria": {
+    "dynasty": {
+      "conditions": {
+        "event": "grown_up",
+        "value": {
+          "min": 5
+        }
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.dynasty.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:golden_apple"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.dynasty.title"
+    }
+  },
+  "requirements": [
+    [
+      "dynasty"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

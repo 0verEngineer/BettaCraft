@@ -25,6 +25,16 @@
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
+    "has_betta": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:betta_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "has_kelp": {
       "conditions": {
         "items": [
@@ -45,7 +55,8 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_kelp"
+      "has_kelp",
+      "has_betta"
     ]
   ],
   "rewards": {

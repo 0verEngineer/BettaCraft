@@ -357,6 +357,17 @@ public class BettaEntity extends AbstractFish {
         lastSimTime = level().getGameTime();
     }
 
+    /** Bucket pickup (vanilla, via AbstractFish): counts as catching a betta (advancement, handbook). */
+    @Override
+    protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+        boolean wasPresent = !isRemoved();
+        net.minecraft.world.InteractionResult r = super.mobInteract(player, hand);
+        if (!level().isClientSide && wasPresent && isRemoved() && r.consumesAction()) {
+            org.overengineer.bettacraft.progression.Progress.onBettaCaught(player);
+        }
+        return r;
+    }
+
     @Override
     public ItemStack getBucketItemStack() {
         return new ItemStack(ModItems.BETTA_BUCKET.get());

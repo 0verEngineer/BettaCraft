@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "fed": {
+      "conditions": {
+        "event": "feeder"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.feeder.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:feeder"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.feeder.title"
+    }
+  },
+  "requirements": [
+    [
+      "fed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

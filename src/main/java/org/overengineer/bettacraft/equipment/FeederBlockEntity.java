@@ -147,6 +147,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
             }
         }
         if (used == 0 && !TankCare.bettas(level, tank.getTank()).isEmpty()) TankCare.log(level, tank, "log.bettacraft.feeder_empty");
+        if (used > 0) org.overengineer.bettacraft.progression.Progress.awardNear(level, tank, org.overengineer.bettacraft.progression.Progress.FEEDER, used);
         return used;
     }
 

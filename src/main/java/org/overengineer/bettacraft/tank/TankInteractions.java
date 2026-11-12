@@ -53,6 +53,7 @@ public final class TankInteractions {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             }
             level.playSound(null, pos, org.overengineer.bettacraft.registry.ModSounds.TANK_FILL.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.TANK_FILLED, (int) (100 * tank.waterMb() / Math.max(1, tank.capacityMb())));
             level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
         } else {
             if (tank.waterMb() < TankData.MB_PER_BLOCK) {

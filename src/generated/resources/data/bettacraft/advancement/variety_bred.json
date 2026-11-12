@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:grown_up",
+  "criteria": {
+    "variety": {
+      "conditions": {
+        "event": "variety_bred"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.variety_bred.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:betta_pellets"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.variety_bred.title"
+    }
+  },
+  "requirements": [
+    [
+      "variety"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

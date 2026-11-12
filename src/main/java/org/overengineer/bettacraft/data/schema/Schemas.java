@@ -68,6 +68,11 @@ public final class Schemas {
             .step(0, data -> data)
             .build();
 
+    /** Player attachment bettacraft:guide_book (M6): whether the handbook was given. */
+    public static final MigrationChain GUIDE_BOOK = MigrationChain.builder("guide_book")
+            .step(0, data -> data)
+            .build();
+
     /**
      * Betta v1 -> v2 (M2): the genome stored one value per locus (the phenotype). Every value becomes a homozygous allele
      * pair ({@code body_color:"red"} -> {@code body_color:["red","red"]}); {@code shape} is renamed to {@code finform}.

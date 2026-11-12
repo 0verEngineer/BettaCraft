@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:root",
+  "criteria": {
+    "built": {
+      "conditions": {
+        "event": "tank_built"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.build_tank.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:tank"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.build_tank.title"
+    }
+  },
+  "requirements": [
+    [
+      "built"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

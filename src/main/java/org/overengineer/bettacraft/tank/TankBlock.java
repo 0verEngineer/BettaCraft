@@ -222,6 +222,7 @@ public class TankBlock extends BaseEntityBlock {
         if (level instanceof ServerLevel server) {
             TankMultiblock.onTankBlockAdded(server, pos, placer instanceof ServerPlayer sp ? sp : null);
             TankBlockEntity c = TankMultiblock.getController(level, pos);
+            if (c != null) org.overengineer.bettacraft.progression.Progress.award(placer instanceof ServerPlayer sp ? sp : null, org.overengineer.bettacraft.progression.Progress.TANK_BUILT, c.getTank().memberCount());
             if (c != null && c.getTank().memberCount() == 1 && placer != null) {
                 // a new tank faces the player who placed it
                 c.getTank().setFront(placer.getDirection().getOpposite());
@@ -296,6 +297,7 @@ public class TankBlock extends BaseEntityBlock {
             } else {
                 sp.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, controller),
                         Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(controller.getBlockPos()));
+                org.overengineer.bettacraft.progression.Progress.onMenuOpened(sp, controller);
             }
         }
         return InteractionResult.CONSUME;

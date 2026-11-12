@@ -1,0 +1,34 @@
+{
+  "parent": "bettacraft:mosquito_larvae",
+  "criteria": {
+    "pellets": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:betta_pellets"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.pellets.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:betta_pellets"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.pellets.title"
+    }
+  },
+  "requirements": [
+    [
+      "pellets"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

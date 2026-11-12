@@ -88,6 +88,10 @@ repositories {
         forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
         filter { includeGroup 'maven.modrinth' }
     }
+    exclusiveContent {
+        forRepository { maven { name = 'BlameJared (JEI)'; url = 'https://maven.blamejared.com' } }
+        filter { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
+    }
 }
 
 // Plain JUnit 5 tests. They run WITHOUT a Minecraft bootstrap; only classes that do not
@@ -100,6 +104,13 @@ dependencies {
     compileOnly "maven.modrinth:jade:${jade_version}"
     boolean gameTests = gradle.startParameter.taskNames.any { it.toLowerCase().contains('gametest') }
     if (!project.hasProperty('noJade') && !gameTests) localRuntime "maven.modrinth:jade:${jade_version}"
+    // GuideME (optional, PLAN 9): the handbook. On the run classpath in dev (also for GameTests: the book tests need the
+    // guide item) unless -PnoGuideme is given.
+    compileOnly "maven.modrinth:guideme:${guideme_version}"
+    if (!project.hasProperty('noGuideme')) localRuntime "maven.modrinth:guideme:${guideme_version}"
+    // JEI (optional): information pages. Not for GameTests, not with -PnoJei.
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    if (!project.hasProperty('noJei') && !gameTests) localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'

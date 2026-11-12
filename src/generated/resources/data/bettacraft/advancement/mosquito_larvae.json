@@ -1,0 +1,34 @@
+{
+  "parent": "bettacraft:swamp_water",
+  "criteria": {
+    "larvae": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:mosquito_larvae"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.mosquito_larvae.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:mosquito_larvae"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.mosquito_larvae.title"
+    }
+  },
+  "requirements": [
+    [
+      "larvae"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

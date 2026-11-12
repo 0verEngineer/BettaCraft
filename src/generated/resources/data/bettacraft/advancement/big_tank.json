@@ -1,0 +1,33 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "big": {
+      "conditions": {
+        "event": "tank_built",
+        "value": {
+          "min": 64
+        }
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.big_tank.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:glass"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.big_tank.title"
+    }
+  },
+  "requirements": [
+    [
+      "big"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

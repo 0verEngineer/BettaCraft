@@ -1,0 +1,37 @@
+{
+  "parent": "bettacraft:swamp_water",
+  "criteria": {
+    "fry_food": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bettacraft:infusoria",
+              "bettacraft:artemia_nauplii"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.fry_food.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:artemia_nauplii"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.fry_food.title"
+    }
+  },
+  "requirements": [
+    [
+      "fry_food"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "entered": {
+      "conditions": {
+        "event": "enter_interior"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.enter_interior.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:decor_castle"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.enter_interior.title"
+    }
+  },
+  "requirements": [
+    [
+      "entered"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

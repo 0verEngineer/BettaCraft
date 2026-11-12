@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:enter_interior",
+  "criteria": {
+    "substrate": {
+      "conditions": {
+        "event": "substrate"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.substrate.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:gravel"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.substrate.title"
+    }
+  },
+  "requirements": [
+    [
+      "substrate"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

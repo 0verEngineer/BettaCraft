@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "nest": {
+      "conditions": {
+        "event": "nest_built"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.nest_built.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:lily_pad"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.nest_built.title"
+    }
+  },
+  "requirements": [
+    [
+      "nest"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -36,6 +36,7 @@ public final class BettaCraft {
         ModCodecs.register(modBus);
         ModAttachments.register(modBus);
         ModCreativeTabs.register(modBus);
+        org.overengineer.bettacraft.progression.ModTriggers.register(modBus);
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         modBus.addListener(ModNetwork::register);
         modBus.addListener(BettaCraft::onCapabilities);

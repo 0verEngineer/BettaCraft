@@ -76,6 +76,7 @@ public class FishBagItem extends Item {
             target.playSound(b.getPickupSound(), 1.0F, 1.0F);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
             target.discard();
+            if (target instanceof BettaEntity) org.overengineer.bettacraft.progression.Progress.onBettaCaught(player);
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }

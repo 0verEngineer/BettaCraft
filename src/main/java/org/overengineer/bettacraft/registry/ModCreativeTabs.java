@@ -20,6 +20,14 @@ public final class ModCreativeTabs {
             .title(Component.translatable("itemGroup.bettacraft"))
             .icon(() -> new ItemStack(ModItems.BETTA_BUCKET.get()))
             .displayItems((params, out) -> {
+                // the handbook first (only with GuideME, M6)
+                ItemStack book = org.overengineer.bettacraft.progression.GuideBook.createBook();
+                if (!book.isEmpty()) out.accept(book);
+                // catching: fish bag and a wild betta
+                out.accept(ModItems.FISH_BAG.get());
+                net.minecraft.util.RandomSource wildRandom = net.minecraft.util.RandomSource.create(7);
+                out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                        org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(wildRandom), true, 0)));
                 // One tank per glass type of #c:glass_blocks (tags are bound when the tab is built).
                 boolean any = false;
                 for (Holder<Block> glass : BuiltInRegistries.BLOCK.getTagOrEmpty(ModTags.TANK_GLASS_BLOCKS)) {
@@ -30,8 +38,7 @@ public final class ModCreativeTabs {
                     any = true;
                 }
                 if (!any) out.accept(ModItems.TANK.get());
-                out.accept(ModItems.FEEDER.get());
-                out.accept(ModItems.TANK_LIGHT.get());
+                // equipment
                 out.accept(ModItems.HEATER_SMALL.get());
                 out.accept(ModItems.HEATER_MEDIUM.get());
                 out.accept(ModItems.HEATER_LARGE.get());
@@ -44,6 +51,19 @@ public final class ModCreativeTabs {
                     if (!"minecraft".equals(id.getNamespace())) continue;
                     out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), id));
                 }
+                out.accept(ModItems.FEEDER.get());
+                out.accept(ModItems.TANK_LIGHT.get());
+                // food chain (in crafting order)
+                out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
+                out.accept(ModItems.MOSQUITO_LARVAE.get());
+                out.accept(ModItems.BETTA_PELLETS.get());
+                out.accept(ModItems.SALT_WATER_BOTTLE.get());
+                out.accept(ModItems.ARTEMIA_CYSTS.get());
+                out.accept(ModItems.INFUSORIA_CULTURE.get());
+                out.accept(ModItems.INFUSORIA.get());
+                out.accept(ModItems.ARTEMIA_CULTURE.get());
+                out.accept(ModItems.ARTEMIA_NAUPLII.get());
+                // decoration
                 for (var d : ModItems.DECOR.values()) out.accept(d.get());
                 // one bucket per fin form (long-finned tails and the plakat forms), then one per named variety (its example fish)
                 net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(42);
@@ -62,19 +82,7 @@ public final class ModCreativeTabs {
                     out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                             org.overengineer.bettacraft.entity.betta.BettaData.create(ph, false, 0)));
                 }
-                out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
-                        org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(r), true, 0)));
-                out.accept(ModItems.FISH_BAG.get());
                 out.accept(ModItems.BETTA_SPAWN_EGG.get());
-                out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
-                out.accept(ModItems.MOSQUITO_LARVAE.get());
-                out.accept(ModItems.BETTA_PELLETS.get());
-                out.accept(ModItems.SALT_WATER_BOTTLE.get());
-                out.accept(ModItems.ARTEMIA_CYSTS.get());
-                out.accept(ModItems.INFUSORIA_CULTURE.get());
-                out.accept(ModItems.INFUSORIA.get());
-                out.accept(ModItems.ARTEMIA_CULTURE.get());
-                out.accept(ModItems.ARTEMIA_NAUPLII.get());
             })
             .build());
 

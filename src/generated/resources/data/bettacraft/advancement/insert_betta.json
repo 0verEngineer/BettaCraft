@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:fill_tank",
+  "criteria": {
+    "inserted": {
+      "conditions": {
+        "event": "inserted"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.insert_betta.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:fish_bag"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.insert_betta.title"
+    }
+  },
+  "requirements": [
+    [
+      "inserted"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

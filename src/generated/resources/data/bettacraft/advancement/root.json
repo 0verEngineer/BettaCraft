@@ -1,0 +1,51 @@
+{
+  "criteria": {
+    "caught": {
+      "conditions": {
+        "event": "catch_betta"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "has_item": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bettacraft:betta_bucket",
+              "bettacraft:fish_bag",
+              "bettacraft:tank",
+              "bettacraft:swamp_water_bottle",
+              "bettacraft:betta_pellets",
+              "bettacraft:mosquito_larvae",
+              "bettacraft:heater_small",
+              "bettacraft:salt_water_bottle"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "minecraft:textures/block/mud.png",
+    "description": {
+      "translate": "advancements.bettacraft.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:betta_bucket"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.bettacraft.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_item",
+      "caught"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

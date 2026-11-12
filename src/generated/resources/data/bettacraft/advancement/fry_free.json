@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:spawned",
+  "criteria": {
+    "fry": {
+      "conditions": {
+        "event": "fry_free"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.fry_free.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:infusoria"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.fry_free.title"
+    }
+  },
+  "requirements": [
+    [
+      "fry"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

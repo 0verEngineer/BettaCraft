@@ -1,0 +1,33 @@
+{
+  "parent": "bettacraft:fry_free",
+  "criteria": {
+    "grown": {
+      "conditions": {
+        "event": "grown_up",
+        "value": {
+          "min": 1
+        }
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.grown_up.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:betta_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.grown_up.title"
+    }
+  },
+  "requirements": [
+    [
+      "grown"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

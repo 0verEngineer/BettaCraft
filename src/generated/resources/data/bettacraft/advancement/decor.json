@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:enter_interior",
+  "criteria": {
+    "decor": {
+      "conditions": {
+        "event": "decor_placed"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.decor.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:decor_shipwreck"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.decor.title"
+    }
+  },
+  "requirements": [
+    [
+      "decor"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

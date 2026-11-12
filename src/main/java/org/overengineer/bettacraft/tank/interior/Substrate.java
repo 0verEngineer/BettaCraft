@@ -72,6 +72,7 @@ public final class Substrate {
         boolean paid = ServerConfig.getOr(ServerConfig.INTERIOR_SUBSTRATE_COSTS_BLOCK, true) && !player.getAbilities().instabuild;
         ItemStack back = set(level, pos, substrate, paid);
         if (paid) stack.shrink(1);
+        org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.SUBSTRATE);
         if (!back.isEmpty() && !player.getInventory().add(back)) player.drop(back, false);
         SoundType sound = substrate.getSoundType(level, pos, player);
         level.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1) / 2, sound.getPitch() * 0.8F);

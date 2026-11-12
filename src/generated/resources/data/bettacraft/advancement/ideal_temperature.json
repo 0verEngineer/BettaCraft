@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "ideal": {
+      "conditions": {
+        "event": "ideal_temperature"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.ideal_temperature.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:heater_medium"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.ideal_temperature.title"
+    }
+  },
+  "requirements": [
+    [
+      "ideal"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

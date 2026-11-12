@@ -99,6 +99,7 @@ public class DecorItem extends Item {
             if (player != null && !level.mayInteract(player, b.pos())) return Component.translatable("message.bettacraft.decor.blocked");
         }
         for (DecorTemplate.Placed b : blocks) level.setBlock(b.pos(), b.state(), Block.UPDATE_ALL);
+        org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.DECOR, interior ? 1 : 0);
         return null;
     }
 

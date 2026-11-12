@@ -1,0 +1,34 @@
+{
+  "parent": "bettacraft:root",
+  "criteria": {
+    "swamp_water": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:swamp_water_bottle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.swamp_water.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:swamp_water_bottle"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.swamp_water.title"
+    }
+  },
+  "requirements": [
+    [
+      "swamp_water"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

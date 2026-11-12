@@ -53,6 +53,7 @@ public final class BettaCraftClient {
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
+        NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);
 
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());

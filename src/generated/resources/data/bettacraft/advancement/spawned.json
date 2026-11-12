@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:nest_built",
+  "criteria": {
+    "spawned": {
+      "conditions": {
+        "event": "spawned"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.spawned.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:frogspawn"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.spawned.title"
+    }
+  },
+  "requirements": [
+    [
+      "spawned"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "recovered": {
+      "conditions": {
+        "event": "recovered"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.recovered.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:glistering_melon_slice"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.recovered.title"
+    }
+  },
+  "requirements": [
+    [
+      "recovered"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

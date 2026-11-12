@@ -7,6 +7,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
  * Many values are not used yet in M0 but are defined now so the file layout stays stable.
  */
 public final class ServerConfig {
+    /** When players get the GuideME handbook (PLAN 9). Without GuideME there is no book and the option is ignored. */
+    public enum GiveBook { ON_JOIN, ON_FIRST_CATCH_OR_CRAFT, NEVER }
+
     public static final ModConfigSpec SPEC;
 
     // tank
@@ -73,6 +76,9 @@ public final class ServerConfig {
 
     // misc
     public static final ModConfigSpec.BooleanValue SIMULATE_UNLOADED_TIME;
+
+    // guide (M6)
+    public static final ModConfigSpec.EnumValue<GiveBook> GUIDE_GIVE_BOOK;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -156,6 +162,12 @@ public final class ServerConfig {
 
         b.push("drops");
         DROPS_ARTEMIA_FROM_SAND_CHANCE = b.comment("Chance that breaking sand drops artemia cysts").defineInRange("artemiaFromSandChance", 0.02, 0.0, 1.0);
+        b.pop();
+
+        b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");
+        GUIDE_GIVE_BOOK = b.comment("When each player gets the handbook, once: ON_JOIN = on the first join, ON_FIRST_CATCH_OR_CRAFT = with the",
+                        "first caught betta or the first crafted Bettacraft item, NEVER = not at all (craft it from a book and betta pellets)")
+                .defineEnum("giveBook", GiveBook.ON_FIRST_CATCH_OR_CRAFT);
         b.pop();
 
         SIMULATE_UNLOADED_TIME = b.comment("If true, time passes for tanks in unloaded chunks (catch-up on load). Default: time stands still.")

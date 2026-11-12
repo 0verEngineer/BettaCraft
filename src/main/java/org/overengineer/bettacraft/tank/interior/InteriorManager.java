@@ -86,6 +86,7 @@ public final class InteriorManager {
         player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, player.getYRot(), player.getXRot());
         player.displayClientMessage(Component.translatable("message.bettacraft.interior.entered",
                 region.sizeX(), region.sizeY(), region.sizeZ()), true);
+        org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.ENTER_INTERIOR);
     }
 
     public static void leave(ServerPlayer player) {

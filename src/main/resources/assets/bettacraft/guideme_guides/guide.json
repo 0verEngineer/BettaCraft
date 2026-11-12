@@ -1,0 +1,14 @@
+{
+  "default_language": "en_us",
+  "item_settings": {
+    "display_name": {
+      "translate": "item.bettacraft.guide"
+    },
+    "tooltip_lines": [
+      {
+        "translate": "item.bettacraft.guide.tooltip",
+        "color": "gray"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "parent": "bettacraft:root",
+  "criteria": {
+    "bucket": {
+      "conditions": {
+        "item": {
+          "items": "bettacraft:betta_bucket"
+        }
+      },
+      "trigger": "minecraft:filled_bucket"
+    },
+    "event": {
+      "conditions": {
+        "event": "catch_betta"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.catch_betta.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:betta_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.catch_betta.title"
+    }
+  },
+  "requirements": [
+    [
+      "bucket",
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -58,6 +58,28 @@ public final class ModAttachments {
                     })
                     .build());
 
+    /** Whether the player already got the GuideME handbook (M6). Survives death and logout. */
+    public static final Supplier<AttachmentType<org.overengineer.bettacraft.progression.GuideBookState>> GUIDE_BOOK = ATTACHMENTS.register("guide_book",
+            () -> AttachmentType.builder(() -> org.overengineer.bettacraft.progression.GuideBookState.NONE)
+                    .serialize(new IAttachmentSerializer<CompoundTag, org.overengineer.bettacraft.progression.GuideBookState>() {
+                        @Override
+                        public org.overengineer.bettacraft.progression.GuideBookState read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
+                            CompoundTag migrated = Schemas.GUIDE_BOOK.migrate(tag);
+                            return org.overengineer.bettacraft.progression.GuideBookState.CODEC.parse(new Dynamic<>(NbtOps.INSTANCE, migrated))
+                                    .result().orElse(org.overengineer.bettacraft.progression.GuideBookState.NONE);
+                        }
+
+                        @Override
+                        public CompoundTag write(org.overengineer.bettacraft.progression.GuideBookState value, HolderLookup.Provider provider) {
+                            if (!value.given()) return null;
+                            Tag t = org.overengineer.bettacraft.progression.GuideBookState.CODEC.encodeStart(NbtOps.INSTANCE, value).result().orElseGet(CompoundTag::new);
+                            CompoundTag tag = t instanceof CompoundTag c ? c : new CompoundTag();
+                            return Schemas.GUIDE_BOOK.stamp(tag);
+                        }
+                    })
+                    .copyOnDeath()
+                    .build());
+
     public static void register(IEventBus bus) {
         ATTACHMENTS.register(bus);
     }

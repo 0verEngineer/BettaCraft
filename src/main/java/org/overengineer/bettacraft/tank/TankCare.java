@@ -261,6 +261,7 @@ public final class TankCare {
     public static void log(ServerLevel level, TankBlockEntity controller, String key, String... args) {
         controller.getTank().addLog(level.getGameTime(), key, args);
         controller.setChanged();
+        org.overengineer.bettacraft.progression.Progress.onTankLog(level, controller, key);
     }
 
     /** Turns a log argument back into a component (see {@link #nameArg}). */

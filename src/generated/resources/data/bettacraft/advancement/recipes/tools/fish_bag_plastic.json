@@ -28,6 +28,16 @@
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
+    "has_betta": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:betta_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "has_plastic": {
       "conditions": {
         "items": [
@@ -48,7 +58,8 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_plastic"
+      "has_plastic",
+      "has_betta"
     ]
   ],
   "rewards": {

@@ -245,6 +245,7 @@ class SchemaMigrationTest {
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
         assertEquals(1, Schemas.EXTERNAL_FILTER.currentVersion());
         assertEquals(1, Schemas.CABINET.currentVersion());
+        assertEquals(1, Schemas.GUIDE_BOOK.currentVersion());
     }
 
     /** Frozen M3 (v2) controller with heaters in the old menu slots: they move to legacy_heaters unchanged. */

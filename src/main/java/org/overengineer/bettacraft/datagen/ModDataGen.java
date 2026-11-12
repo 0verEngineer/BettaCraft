@@ -110,6 +110,7 @@ public final class ModDataGen {
                 Set.of(BettaCraft.MOD_ID)));
         gen.addProvider(event.includeServer(), new LootModifiers(out, lookup));
         gen.addProvider(event.includeServer(), new GeneticsFiles(out));
+        gen.addProvider(event.includeServer(), new net.neoforged.neoforge.common.data.AdvancementProvider(out, lookup, efh, List.of(new ModAdvancements())));
     }
 
     // ------------------------------------------------------------------ genetics (M5): built-in colours, genes, varieties
@@ -357,6 +358,7 @@ public final class ModDataGen {
                     .define('G', Tags.Items.GLASS_BLOCKS)
                     .define('I', Tags.Items.INGOTS_IRON)
                     .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(asTankRecipe(output), BettaCraft.id("tank"));
 
             // Fish bag (PLAN 4.3): kelp unless #bettacraft:plastic_sheets has entries; COMMON config can force one.
@@ -369,11 +371,13 @@ public final class ModDataGen {
                     .pattern(" S ").pattern("K K").pattern(" K ")
                     .define('S', Tags.Items.STRINGS).define('K', Items.DRIED_KELP)
                     .unlockedBy("has_kelp", has(Items.DRIED_KELP))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output.withConditions(kelp), BettaCraft.id("fish_bag_kelp"));
             ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FISH_BAG.get(), 4)
                     .pattern(" S ").pattern("P P").pattern(" P ")
                     .define('S', Tags.Items.STRINGS).define('P', ModTags.PLASTIC_SHEETS)
                     .unlockedBy("has_plastic", has(ModTags.PLASTIC_SHEETS))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output.withConditions(plastic), BettaCraft.id("fish_bag_plastic"));
 
             ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BETTA_PELLETS.get(), 8)
@@ -382,6 +386,7 @@ public final class ModDataGen {
                     .requires(Items.BONE_MEAL)
                     .requires(Items.DRIED_KELP)
                     .unlockedBy("has_larvae", has(ModItems.MOSQUITO_LARVAE.get()))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("betta_pellets"));
 
             Ingredient swamp = Ingredient.of(ModItems.SWAMP_WATER_BOTTLE.get());
@@ -410,6 +415,7 @@ public final class ModDataGen {
                     .pattern("C").pattern("R").pattern("G")
                     .define('C', Tags.Items.INGOTS_COPPER).define('R', Tags.Items.DUSTS_REDSTONE).define('G', Tags.Items.GLASS_PANES)
                     .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("heater_small"));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEATER_MEDIUM.get())
                     .requires(ModItems.HEATER_SMALL.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
@@ -424,11 +430,13 @@ public final class ModDataGen {
                     .pattern(" I ").pattern("IHI")
                     .define('I', Tags.Items.INGOTS_IRON).define('H', Items.HOPPER)
                     .unlockedBy("has_hopper", has(Items.HOPPER))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("feeder"));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK_LIGHT.get(), 3)
                     .pattern("III").pattern("GDG")
                     .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES).define('D', Tags.Items.DUSTS_GLOWSTONE)
                     .unlockedBy("has_glowstone", has(Tags.Items.DUSTS_GLOWSTONE))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("tank_light"));
             decorRecipes(output);
 

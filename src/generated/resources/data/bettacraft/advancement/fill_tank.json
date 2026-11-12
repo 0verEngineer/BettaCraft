@@ -1,0 +1,33 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "filled": {
+      "conditions": {
+        "event": "tank_filled",
+        "value": {
+          "min": 50
+        }
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.fill_tank.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.fill_tank.title"
+    }
+  },
+  "requirements": [
+    [
+      "filled"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

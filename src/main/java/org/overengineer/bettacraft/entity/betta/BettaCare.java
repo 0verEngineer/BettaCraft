@@ -114,6 +114,7 @@ public final class BettaCare {
             need = fish.liveStage.days();
             if (fish.liveStage == LifeStage.ADULT) {
                 TankCare.log(level, controller, "log.bettacraft.grown_up", TankCare.nameArg(fish));
+                org.overengineer.bettacraft.progression.Progress.onGrownUp(level, controller, fish);
                 controller.markTankChanged();
             }
         }
