@@ -46,14 +46,15 @@ public final class TankData {
     private long powerBuffer = 0L;
 
     // Care data (M1).
-    public static final int HEATER_SLOTS = 4;
+    /** Heater slots of the tank menu up to M3; since M4 only taken out / moved into a filter (schema v3). */
+    public static final int LEGACY_HEATER_SLOTS = 4;
     public static final int MAX_NAME_LENGTH = 32;
     public static final int MAX_LOG = 100;
     private float targetTemp = TankTemperature.DEFAULT_TARGET;
     private float waterTemp = TankTemperature.DEFAULT_TARGET;
     @Nullable
-    private SimpleContainer heaters;
-    private final String[] unknownHeaters = new String[HEATER_SLOTS];
+    private SimpleContainer legacyHeaters;
+    private final String[] unknownHeaters = new String[LEGACY_HEATER_SLOTS];
     private String name = "";
     private boolean signVisible = true;
     private SignPosition signPos = SignPosition.TOP_CENTER;
@@ -214,10 +215,17 @@ public final class TankData {
         while (log.size() > MAX_LOG) log.removeFirst();
     }
 
-    /** Heater slots (server side; created lazily so that pure unit tests never touch item registries). */
-    public SimpleContainer heaters() {
-        if (heaters == null) heaters = new SimpleContainer(HEATER_SLOTS);
-        return heaters;
+    /**
+     * Heaters left in the old tank menu slots (server side; created lazily so that pure unit tests never touch item
+     * registries). They still heat, are moved into an attached external filter automatically and can be taken out.
+     */
+    public SimpleContainer legacyHeaters() {
+        if (legacyHeaters == null) legacyHeaters = new SimpleContainer(LEGACY_HEATER_SLOTS);
+        return legacyHeaters;
+    }
+
+    public boolean hasLegacyHeaters() {
+        return legacyHeaters != null && !legacyHeaters.isEmpty();
     }
 
     /** Water blocks (may be fractional): 1000 mB = 1 block. */
@@ -262,12 +270,12 @@ public final class TankData {
         t.putFloat("target_temp", targetTemp);
         t.putFloat("water_temp", waterTemp);
         ListTag hl = new ListTag();
-        for (int i = 0; i < HEATER_SLOTS; i++) {
-            ItemStack st = heaters == null ? ItemStack.EMPTY : heaters.getItem(i);
+        for (int i = 0; i < LEGACY_HEATER_SLOTS; i++) {
+            ItemStack st = legacyHeaters == null ? ItemStack.EMPTY : legacyHeaters.getItem(i);
             String id = st.isEmpty() ? (unknownHeaters[i] == null ? "" : unknownHeaters[i]) : BuiltInRegistries.ITEM.getKey(st.getItem()).toString();
             hl.add(StringTag.valueOf(id));
         }
-        t.put("heaters", hl);
+        t.put("legacy_heaters", hl);
         t.putString("name", name);
         t.putBoolean("sign_visible", signVisible);
         t.putString("sign_pos", signPos.getSerializedName());
@@ -297,14 +305,14 @@ public final class TankData {
         d.powerBuffer = t.getLong("power");
         d.targetTemp = t.contains("target_temp") ? TankTemperature.clampTarget(t.getFloat("target_temp")) : TankTemperature.DEFAULT_TARGET;
         d.waterTemp = t.contains("water_temp") ? t.getFloat("water_temp") : d.targetTemp;
-        ListTag hl = t.getList("heaters", Tag.TAG_STRING);
-        for (int i = 0; i < Math.min(HEATER_SLOTS, hl.size()); i++) {
+        ListTag hl = t.getList("legacy_heaters", Tag.TAG_STRING);
+        for (int i = 0; i < Math.min(LEGACY_HEATER_SLOTS, hl.size()); i++) {
             String id = hl.getString(i);
             if (id.isEmpty()) continue;
             ResourceLocation rl = ResourceLocation.tryParse(id);
             Item item = rl == null ? Items.AIR : BuiltInRegistries.ITEM.get(rl);
             if (item == Items.AIR) d.unknownHeaters[i] = id; // keep ids of removed mods
-            else d.heaters().setItem(i, new ItemStack(item));
+            else d.legacyHeaters().setItem(i, new ItemStack(item));
         }
         d.name = t.getString("name");
         d.signVisible = !t.contains("sign_visible") || t.getBoolean("sign_visible");

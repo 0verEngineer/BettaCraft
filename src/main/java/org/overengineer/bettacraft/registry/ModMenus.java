@@ -16,6 +16,11 @@ public final class ModMenus {
     public static final Supplier<MenuType<TankMenu>> TANK = MENUS.register("tank", () -> IMenuTypeExtension.create(TankMenu::new));
     public static final Supplier<MenuType<FeederMenu>> FEEDER = MENUS.register("feeder", () -> IMenuTypeExtension.create(FeederMenu::new));
 
+    public static final Supplier<MenuType<org.overengineer.bettacraft.equipment.ExternalFilterMenu>> EXTERNAL_FILTER = MENUS.register("external_filter",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.equipment.ExternalFilterMenu::new));
+    public static final Supplier<MenuType<org.overengineer.bettacraft.equipment.CabinetMenu>> CABINET = MENUS.register("cabinet",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.equipment.CabinetMenu::new));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

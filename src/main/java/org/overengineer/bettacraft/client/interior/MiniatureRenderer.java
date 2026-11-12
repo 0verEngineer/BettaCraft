@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
  *     {@code AFTER_TRANSLUCENT_BLOCKS}, skipped during the Iris shadow pass (Iris analysis, M3). Meshes are rebuilt
  *     when an Iris shader pack is switched on or off, because Iris extends the vertex format while a pack is active.</li>
  *     <li>The floor substrate is drawn as a flattened layer just below the interior's floor.</li>
+ *     <li>Internal filters get a water jet at their outlet ({@link MiniatureJets}, M4), in the translucent pass.</li>
  * </ul>
  */
 public final class MiniatureRenderer {
@@ -129,6 +130,7 @@ public final class MiniatureRenderer {
             AABB box = new AABB(min.getX(), min.getY(), min.getZ(), min.getX() + t.sizeX(), min.getY() + t.sizeY(), min.getZ() + t.sizeZ());
             if (box.getCenter().distanceToSqr(cam) > maxDist * maxDist || !event.getFrustum().isVisible(box)) continue;
             draw(event, region, t, cam, opaque ? OPAQUE : List.of(RenderType.translucent()));
+            if (!opaque) MiniatureJets.render(event, be, region, cam);
         }
         long dt = System.nanoTime() - t0;
         lastFrameNanos = opaque ? dt : lastFrameNanos + dt;

@@ -77,7 +77,7 @@ public final class DevSmokeTest {
         c.getTank().inhabitants().clear();
         c.getTank().setNest(null);
         if (c.getTank().waterMb() < 12000) TankInteractions.changeWater(level, c, 12000 - c.getTank().waterMb());
-        c.getTank().heaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get()));
+        c.getTank().legacyHeaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get()));
         c.getTank().setTargetTemp(27.0F);
         c.getTank().setWaterTemp(27.0F);
         var r = net.minecraft.util.RandomSource.create(5);
@@ -133,7 +133,7 @@ public final class DevSmokeTest {
                 InteriorBench.startRealRegions(server, line -> {});
                 interiorChecks(level, c, r);
                 // M1: bettas from buckets, a heater, a feeder with pellets
-                c.getTank().heaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get()));
+                c.getTank().legacyHeaters().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get()));
                 for (int i = 0; i < 3; i++) {
                     var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(level.getRandom());
                     var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(

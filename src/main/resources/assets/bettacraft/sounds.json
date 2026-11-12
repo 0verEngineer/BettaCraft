@@ -1,0 +1,28 @@
+{
+  "block.filter.running": {
+    "subtitle": "subtitles.bettacraft.block.filter.running",
+    "sounds": [
+      {"name": "minecraft:block/bubble_column/upwards_ambient1", "volume": 0.4},
+      {"name": "minecraft:block/bubble_column/upwards_ambient2", "volume": 0.4},
+      {"name": "minecraft:block/bubble_column/upwards_ambient3", "volume": 0.4},
+      {"name": "minecraft:block/bubble_column/upwards_ambient4", "volume": 0.4},
+      {"name": "minecraft:liquid/water", "volume": 0.3, "pitch": 1.3}
+    ]
+  },
+  "block.tank.fill": {
+    "subtitle": "subtitles.bettacraft.block.tank.fill",
+    "sounds": [
+      "minecraft:item/bucket/empty1",
+      "minecraft:item/bucket/empty2",
+      {"name": "minecraft:liquid/splash", "volume": 0.5, "pitch": 1.2}
+    ]
+  },
+  "block.tank.drain": {
+    "subtitle": "subtitles.bettacraft.block.tank.drain",
+    "sounds": [
+      "minecraft:item/bucket/fill1",
+      "minecraft:item/bucket/fill2",
+      "minecraft:item/bucket/fill3"
+    ]
+  }
+}

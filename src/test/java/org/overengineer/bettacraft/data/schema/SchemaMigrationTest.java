@@ -85,7 +85,7 @@ class SchemaMigrationTest {
         // Frozen v0 example: controller written before the schema field existed.
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],owner:[I;1,2,3,4]}}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
-        assertEquals(2, Schema.read(v1));
+        assertEquals(3, Schema.read(v1));
         assertEquals(16, v1.getCompound("tank").getInt("scale"));
         assertEquals(0L, v1.getCompound("tank").getLong("water_mb"));
         assertEquals("minecraft:glass", v1.getString("glass"));
@@ -104,7 +104,7 @@ class SchemaMigrationTest {
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;1,2,3]}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
         assertFalse(v1.contains("tank"));
-        assertEquals(2, Schema.read(v1));
+        assertEquals(3, Schema.read(v1));
     }
 
     @Test
@@ -113,7 +113,7 @@ class SchemaMigrationTest {
         CompoundTag v1 = snbt("{schema:1,glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],scale:16,water_mb:1000L,region:-1}}");
         CompoundTag v2 = Schemas.TANK_BLOCK_ENTITY.migrate(v1);
         CompoundTag t = v2.getCompound("tank");
-        assertEquals(2, Schema.read(v2));
+        assertEquals(3, Schema.read(v2));
         assertEquals(27.0F, t.getFloat("target_temp"));
         assertEquals(27.0F, t.getFloat("water_temp"));
         assertTrue(t.getBoolean("sign_visible"));
@@ -178,13 +178,55 @@ class SchemaMigrationTest {
     @Test
     void currentVersionsAreStable() {
         // Bump these deliberately together with a new step + frozen test.
-        assertEquals(2, Schemas.TANK_BLOCK_ENTITY.currentVersion());
+        assertEquals(3, Schemas.TANK_BLOCK_ENTITY.currentVersion());
         assertEquals(2, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
         assertEquals(2, Schemas.INTERIOR_REGIONS.currentVersion());
         assertEquals(1, Schemas.INTERIOR_FLOOR.currentVersion());
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
+        assertEquals(1, Schemas.EXTERNAL_FILTER.currentVersion());
+        assertEquals(1, Schemas.CABINET.currentVersion());
+    }
+
+    /** Frozen M3 (v2) controller with heaters in the old menu slots: they move to legacy_heaters unchanged. */
+    @Test
+    void tankV2HeaterSlotsBecomeLegacyHeaters() {
+        CompoundTag v2 = snbt("{schema:2,glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],scale:16,water_mb:1000L,"
+                + "region:-1,target_temp:27.0f,water_temp:26.5f,heaters:[\"bettacraft:heater_large\",\"\",\"othermod:gone_heater\","
+                + "\"bettacraft:heater_small\"],name:\"Old tank\",custom:\"keep\"}}");
+        CompoundTag v3 = Schemas.TANK_BLOCK_ENTITY.migrate(v2);
+        assertEquals(3, Schema.read(v3));
+        CompoundTag t = v3.getCompound("tank");
+        assertFalse(t.contains("heaters"), "old key is gone");
+        net.minecraft.nbt.ListTag l = t.getList("legacy_heaters", net.minecraft.nbt.Tag.TAG_STRING);
+        assertEquals(4, l.size(), "all four slots are kept");
+        assertEquals("bettacraft:heater_large", l.getString(0));
+        assertEquals("", l.getString(1));
+        assertEquals("othermod:gone_heater", l.getString(2), "ids of removed mods are kept");
+        assertEquals("bettacraft:heater_small", l.getString(3));
+        assertEquals("Old tank", t.getString("name"));
+        assertEquals("keep", t.getString("custom"));
+        assertEquals(26.5F, t.getFloat("water_temp"));
+    }
+
+    @Test
+    void tankV2WithoutHeatersIsOnlyStamped() {
+        CompoundTag v3 = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:2,glass:\"minecraft:glass\",controller:[I;1,2,3]}"));
+        assertEquals(3, Schema.read(v3));
+        assertFalse(v3.contains("tank"));
+        CompoundTag v3b = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:2,tank:{members:[L;0L]}}"));
+        assertFalse(v3b.getCompound("tank").contains("legacy_heaters"));
+    }
+
+    @Test
+    void newEquipmentChainsStartAtV1() {
+        CompoundTag f = Schemas.EXTERNAL_FILTER.migrate(snbt("{heaters:{Size:2,Items:[]}}"));
+        assertEquals(1, Schema.read(f));
+        assertTrue(f.contains("heaters"));
+        CompoundTag c = Schemas.CABINET.migrate(snbt("{wood:\"biomesoplenty:fir_planks\"}"));
+        assertEquals(1, Schema.read(c));
+        assertEquals("biomesoplenty:fir_planks", c.getString("wood"), "modded wood ids are kept");
     }
 
     /** Frozen M2 (v1) interior regions SavedData: regions without equipment get a flagged empty one. */

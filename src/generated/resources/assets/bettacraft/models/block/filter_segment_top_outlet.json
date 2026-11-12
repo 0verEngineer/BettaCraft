@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "bettacraft:block/filter_segment_middle",
+    "east": "bettacraft:block/filter_segment_middle",
+    "north": "bettacraft:block/filter_segment_outlet",
+    "particle": "bettacraft:block/filter_segment_middle",
+    "south": "bettacraft:block/filter_segment_middle",
+    "up": "bettacraft:block/filter_segment_top",
+    "west": "bettacraft:block/filter_segment_middle"
+  }
+}

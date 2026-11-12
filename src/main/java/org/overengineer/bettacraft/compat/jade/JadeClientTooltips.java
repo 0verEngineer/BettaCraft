@@ -66,6 +66,9 @@ final class JadeClientTooltips {
             if (!"none".equals(nest) && !nest.isEmpty()) {
                 tooltip.add(Component.translatable("jade.bettacraft.tank.nest", Component.translatable("jade.bettacraft.nest." + nest, d.getInt("eggs"))));
             }
+            if (d.getInt("filters_out") + d.getInt("filters_in") > 0) {
+                tooltip.add(Component.translatable("jade.bettacraft.tank.filters", d.getInt("filters_out"), d.getInt("filters_in")));
+            }
             ListTag warn = d.getList("warnings", Tag.TAG_STRING);
             for (int i = 0; i < warn.size(); i++) {
                 tooltip.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getString(i)).withStyle(ChatFormatting.RED));
@@ -92,6 +95,38 @@ final class JadeClientTooltips {
         @Override
         public ResourceLocation getUid() {
             return BettaCraftJadePlugin.TANK;
+        }
+    }
+
+    /** External filter block and cabinet (M4). */
+    static final class Filter implements IBlockComponentProvider {
+        static final Filter INSTANCE = new Filter();
+
+        @Override
+        public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            CompoundTag d = accessor.getServerData().getCompound("bettacraft");
+            if (d.isEmpty()) return;
+            boolean cabinet = d.contains("storage");
+            if (cabinet) {
+                tooltip.add(d.getBoolean("has_filter") ? Component.translatable("jade.bettacraft.cabinet.filter", d.getInt("heaters"))
+                        : Component.translatable("jade.bettacraft.cabinet.no_filter").withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("jade.bettacraft.cabinet.storage", d.getInt("storage")));
+            } else {
+                tooltip.add(Component.translatable("jade.bettacraft.filter.heaters", d.getInt("heaters"), d.getInt("heat")));
+            }
+            if (!d.getBoolean("has_filter")) return;
+            if (d.getBoolean("attached")) {
+                String name = d.getString("tank");
+                tooltip.add(name.isEmpty() ? Component.translatable("jade.bettacraft.filter.tank_unnamed").withStyle(ChatFormatting.AQUA)
+                        : Component.translatable("jade.bettacraft.filter.tank", name).withStyle(ChatFormatting.AQUA));
+            } else {
+                tooltip.add(Component.translatable("jade.bettacraft.filter.no_tank").withStyle(ChatFormatting.GOLD));
+            }
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.FILTER;
         }
     }
 

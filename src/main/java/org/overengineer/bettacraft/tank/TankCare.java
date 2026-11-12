@@ -48,6 +48,7 @@ public final class TankCare {
         long dt = be.lastCareTick < 0 ? INTERVAL : Math.max(0, now - be.lastCareTick);
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastCareTick = now;
+        if (tank.hasLegacyHeaters()) TankEquipment.moveLegacyHeaters(server, be);
         updateTemperature(server, be, dt / 24000.0);
         TankBreeding.step(server, be, dt / 24000.0);
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
@@ -67,10 +68,11 @@ public final class TankCare {
         return t;
     }
 
-    /** Heating capacity of the heaters in the equipment slots (M1 slots, still accepted). */
+    /** Heating capacity of the heaters left in the old menu slots (M1-M3, see {@link TankData#legacyHeaters}). */
     public static double slotHeaterBlocks(TankData tank) {
+        if (!tank.hasLegacyHeaters()) return 0;
         double sum = 0;
-        var c = tank.heaters();
+        var c = tank.legacyHeaters();
         for (int i = 0; i < c.getContainerSize(); i++) {
             if (c.getItem(i).getItem() instanceof HeaterItem h) sum += h.capacityBlocks();
         }
@@ -78,11 +80,30 @@ public final class TankCare {
     }
 
     /**
-     * All heating capacity: equipment slots plus heater rods in the interior (PLAN 6.1 / 7.3), the latter only if
-     * their lowest segment is below the water surface.
+     * All heating capacity (PLAN 6.1): heaters in attached external filters (block next to the tank or filter in a
+     * cabinet below), heater rods in the interior (only if their lowest segment is below the water surface) and
+     * heaters still left in the old menu slots.
      */
     public static double heaterBlocks(ServerLevel level, TankData tank) {
-        return slotHeaterBlocks(tank) + interiorHeaterBlocks(level, tank);
+        return slotHeaterBlocks(tank) + interiorHeaterBlocks(level, tank) + filterHeaterBlocks(level, tank);
+    }
+
+    /** Heating capacity of the heaters in the attached external filters. */
+    public static double filterHeaterBlocks(ServerLevel level, TankData tank) {
+        TankBlockEntity c = controllerOf(level, tank);
+        if (c == null) return 0;
+        double sum = 0;
+        for (var f : TankEquipment.filters(level, c)) sum += f.heaterBlocks();
+        return sum;
+    }
+
+    @Nullable
+    private static TankBlockEntity controllerOf(ServerLevel level, TankData tank) {
+        for (long l : tank.members()) {
+            TankBlockEntity c = TankMultiblock.getController(level, BlockPos.of(l));
+            return c != null && c.getTank() == tank ? c : null;
+        }
+        return null;
     }
 
     public static double interiorHeaterBlocks(ServerLevel level, TankData tank) {

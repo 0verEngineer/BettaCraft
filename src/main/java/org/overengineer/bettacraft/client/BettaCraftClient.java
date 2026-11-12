@@ -51,6 +51,8 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onScreens);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
+        modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
 
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());
@@ -98,11 +100,15 @@ public final class BettaCraftClient {
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
+        event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);
     }
 
     private static void onScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.TANK.get(), TankScreen::new);
         event.register(ModMenus.FEEDER.get(), FeederScreen::new);
+        event.register(ModMenus.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.screen.ExternalFilterScreen::new);
+        event.register(ModMenus.CABINET.get(), org.overengineer.bettacraft.client.screen.CabinetScreen::new);
     }
 
     private static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {

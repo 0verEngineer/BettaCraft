@@ -221,7 +221,7 @@ public final class InhabitantGameTests {
         TankCare.updateTemperature(level, c, 10.0);
         h.assertTrue(Math.abs(t.waterTemp() - ambient) < 0.05, "without heater the water takes the ambient temperature " + ambient + ", got " + t.waterTemp());
         TankCare.updateTemperature(level, c, 0.0);
-        t.heaters().setItem(0, new ItemStack(ModItems.HEATER_SMALL.get())); // 16 blocks >= 8 water blocks
+        t.legacyHeaters().setItem(0, new ItemStack(ModItems.HEATER_SMALL.get())); // 16 blocks >= 8 water blocks
         TankCare.updateTemperature(level, c, 10.0);
         float expected = Math.max(ambient, 30.0F);
         h.assertTrue(Math.abs(t.waterTemp() - expected) < 0.05, "heater reaches the target, got " + t.waterTemp());

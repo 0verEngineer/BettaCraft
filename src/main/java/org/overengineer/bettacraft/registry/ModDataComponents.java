@@ -32,6 +32,10 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<Long>> CULTURE_START = COMPONENTS.registerComponentType("culture_start",
             b -> b.persistent(com.mojang.serialization.Codec.LONG).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG));
 
+    /** The planks a cabinet item/block is made of (id, like {@link #GLASS}). */
+    public static final Supplier<DataComponentType<ResourceLocation>> WOOD = COMPONENTS.registerComponentType("wood",
+            b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }

@@ -11,7 +11,7 @@ import net.minecraft.world.item.context.UseOnContext;
 
 /**
  * Aquarium heater (PLAN 6.1). Placed inside the tank interior it stands as a rod of {@link SegmentBlock}s (M3) and
- * heats while its lowest segment is under water; the M1 equipment slots of the tank menu still accept it.
+ * heats while its lowest segment is under water; or into one of the two heater slots of an external filter (M4).
  * Capacities add up.
  */
 public class HeaterItem extends Item {

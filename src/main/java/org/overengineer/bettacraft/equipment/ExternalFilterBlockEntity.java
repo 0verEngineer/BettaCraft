@@ -1,0 +1,163 @@
+package org.overengineer.bettacraft.equipment;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import org.overengineer.bettacraft.data.schema.Schemas;
+import org.overengineer.bettacraft.registry.ModBlockEntities;
+
+/** External filter block next to a tank (PLAN 6.2): two heater slots; the heaters stay in the item when it is broken. */
+public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvider, FilterHost {
+    /** Client-side filters currently loaded (bubbles and sound; never touched on the server). */
+    public static final java.util.Set<ExternalFilterBlockEntity> CLIENT_LOADED =
+            java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
+    private final ItemStackHandler heaters = new ItemStackHandler(FilterHeaters.SLOTS) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return FilterHeaters.isHeater(stack);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
+
+    public ExternalFilterBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.EXTERNAL_FILTER.get(), pos, state);
+    }
+
+    public ItemStackHandler heaters() {
+        return heaters;
+    }
+
+    // ------------------------------------------------------------------ FilterHost
+
+    @Override
+    public boolean hasFilter() {
+        return true;
+    }
+
+    @Override
+    public ItemStack heater(int slot) {
+        return heaters.getStackInSlot(slot);
+    }
+
+    @Override
+    public boolean insertHeater(ItemStack heater) {
+        for (int i = 0; i < FilterHeaters.SLOTS; i++) {
+            if (heaters.getStackInSlot(i).isEmpty()) {
+                heaters.setStackInSlot(i, heater.copyWithCount(1));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockPos tankBlockPos() {
+        BlockState s = getBlockState();
+        if (!(s.getBlock() instanceof ExternalFilterBlock)) return null;
+        return worldPosition.relative(s.getValue(ExternalFilterBlock.FACING));
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && level.isClientSide) CLIENT_LOADED.add(this);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        CLIENT_LOADED.remove(this);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        CLIENT_LOADED.remove(this);
+    }
+
+    // ------------------------------------------------------------------ menu
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("block.bettacraft.external_filter");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+        return new ExternalFilterMenu(id, inv, this);
+    }
+
+    // ------------------------------------------------------------------ NBT / components
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        Schemas.EXTERNAL_FILTER.stamp(tag);
+        tag.put("heaters", heaters.serializeNBT(registries));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
+        super.loadAdditional(raw, registries);
+        CompoundTag tag = Schemas.EXTERNAL_FILTER.migrate(raw);
+        if (tag.contains("heaters")) {
+            heaters.deserializeNBT(registries, tag.getCompound("heaters"));
+            if (heaters.getSlots() != FilterHeaters.SLOTS) heaters.setSize(FilterHeaters.SLOTS);
+        }
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        ItemContainerContents c = input.get(DataComponents.CONTAINER);
+        if (c != null) {
+            NonNullList<ItemStack> list = NonNullList.withSize(FilterHeaters.SLOTS, ItemStack.EMPTY);
+            c.copyInto(list);
+            for (int i = 0; i < FilterHeaters.SLOTS; i++) heaters.setStackInSlot(i, FilterHeaters.isHeater(list.get(i)) ? list.get(i).copyWithCount(1) : ItemStack.EMPTY);
+        }
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        List<ItemStack> list = new ArrayList<>();
+        boolean any = false;
+        for (int i = 0; i < FilterHeaters.SLOTS; i++) {
+            list.add(heaters.getStackInSlot(i).copy());
+            any |= !heaters.getStackInSlot(i).isEmpty();
+        }
+        if (any) components.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(list));
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        tag.remove("heaters");
+    }
+}

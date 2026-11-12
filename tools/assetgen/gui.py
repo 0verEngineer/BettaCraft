@@ -20,11 +20,23 @@ CONTENT_FILL = (0x2E, 0x33, 0x39, 255)  # dark content area: light text stays re
 
 PANEL = (0, 0, 248, 230)  # x, y, w, h
 CONTENT = (7, 17, 234, 123)  # inset box x 7..240, y 17..139
+# M1-M3 heater slots: since M4 only drawn (from SLOT_FRAME) while an old heater is still in them
 EQUIP_SLOTS = [(12, 148 + 18 * i) for i in range(4)]  # item top-left positions
 INV_X, INV_Y, HOTBAR_Y = 44, 148, 206
 ICON_HEATER = (0, 232)  # 16x16
 ICON_LOCK = (16, 232)  # 10x10
 ICON_UNLOCK = (26, 232)  # 10x10
+SLOT_FRAME = (36, 232)  # 18x18 slot frame
+
+# M4: 176x166 container panels (vanilla layout: title y 6, inventory y 84, hotbar y 142)
+SMALL = (0, 0, 176, 166)
+FILTER_SLOTS = [(71, 35), (89, 35)]
+CABINET_FILTER = (26, 18)
+CABINET_HEATERS = [(17, 44), (35, 44)]  # frames drawn by the screen only while a filter is in the slot
+CABINET_STORAGE = [(98 + 18 * c, 17 + 18 * r) for r in range(3) for c in range(3)]
+SIDE_SLOT_FRAME = (176, 0)  # 18x18
+SIDE_HEATER_GHOST = (176, 18)  # 16x16
+SIDE_FILTER_GHOST = (176, 34)  # 16x16
 
 
 def panel(img, x, y, w, h):
@@ -107,8 +119,6 @@ def tank_gui() -> np.ndarray:
     img = np.zeros((H, W, 4), np.uint8)
     panel(img, *PANEL)
     inset(img, *CONTENT, fill=CONTENT_FILL)
-    for ix, iy in EQUIP_SLOTS:
-        slot(img, ix, iy)
     for r in range(3):
         for c in range(9):
             slot(img, INV_X + 18 * c, INV_Y + 18 * r)
@@ -120,11 +130,59 @@ def tank_gui() -> np.ndarray:
     img[y:y + 10, x:x + 10] = padlock(False)
     x, y = ICON_UNLOCK
     img[y:y + 10, x:x + 10] = padlock(True)
+    x, y = SLOT_FRAME
+    inset(img, x, y, 18, 18)
+    return img
+
+
+def filter_ghost() -> np.ndarray:
+    """Semi-transparent canister silhouette (empty filter slot hint)."""
+    out = np.zeros((16, 16, 4), np.uint8)
+    out[4:15, 4:12] = (0x37, 0x37, 0x37, 0x70)
+    out[2:4, 5:11] = (0x37, 0x37, 0x37, 0x90)
+    out[0:2, 6:8] = (0x37, 0x37, 0x37, 0xA0)
+    out[1, 8:12] = (0x37, 0x37, 0x37, 0xA0)
+    return out
+
+
+def _small_panel() -> np.ndarray:
+    img = np.zeros((H, W, 4), np.uint8)
+    panel(img, *SMALL)
+    for r in range(3):
+        for c in range(9):
+            slot(img, 8 + 18 * c, 84 + 18 * r)
+    for c in range(9):
+        slot(img, 8 + 18 * c, 142)
+    x, y = SIDE_SLOT_FRAME
+    inset(img, x, y, 18, 18)
+    x, y = SIDE_HEATER_GHOST
+    img[y:y + 16, x:x + 16] = heater_ghost()
+    x, y = SIDE_FILTER_GHOST
+    img[y:y + 16, x:x + 16] = filter_ghost()
+    return img
+
+
+def external_filter_gui() -> np.ndarray:
+    img = _small_panel()
+    for ix, iy in FILTER_SLOTS:
+        slot(img, ix, iy)
+    return img
+
+
+def cabinet_gui() -> np.ndarray:
+    img = _small_panel()
+    slot(img, *CABINET_FILTER)
+    for ix, iy in CABINET_STORAGE:
+        slot(img, ix, iy)
+    # a small arrow from the filter down to its heaters
+    x0 = CABINET_FILTER[0] + 7
+    img[36:41, x0:x0 + 2] = DARK
     return img
 
 
 def write_all() -> list:
-    return [save_png(tank_gui(), GUI_TEX / "tank.png")]
+    return [save_png(tank_gui(), GUI_TEX / "tank.png"), save_png(external_filter_gui(), GUI_TEX / "external_filter.png"),
+            save_png(cabinet_gui(), GUI_TEX / "cabinet.png")]
 
 
 if __name__ == "__main__":

@@ -36,6 +36,14 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.HEATER_MEDIUM.get());
                 out.accept(ModItems.HEATER_LARGE.get());
                 out.accept(ModItems.INTERNAL_FILTER.get());
+                out.accept(ModItems.EXTERNAL_FILTER.get());
+                // cabinets: one per vanilla planks (modded planks work the same, see the cabinet recipe)
+                for (Holder<net.minecraft.world.item.Item> planks : BuiltInRegistries.ITEM.getTagOrEmpty(net.minecraft.tags.ItemTags.PLANKS)) {
+                    if (!(planks.value() instanceof net.minecraft.world.item.BlockItem bi)) continue;
+                    var id = BuiltInRegistries.BLOCK.getKey(bi.getBlock());
+                    if (!"minecraft".equals(id.getNamespace())) continue;
+                    out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), id));
+                }
                 for (var d : ModItems.DECOR.values()) out.accept(d.get());
                 // one bucket per body shape (male) plus a wild-type female
                 net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(42);

@@ -44,6 +44,9 @@ public class TankBlockEntity extends BlockEntity {
     long lastCareTick = -1;
     /** Log only once per chase / fight (transient). */
     boolean chaseLogged, fightLogged;
+    /** Attached external filters and cabinets under the tank (transient cache, see TankEquipment). */
+    java.util.List<BlockPos> filterCache = java.util.List.of(), cabinetCache = java.util.List.of();
+    long equipmentScanTime = Long.MIN_VALUE;
 
     private ResourceLocation glass = DEFAULT_GLASS;
     @Nullable

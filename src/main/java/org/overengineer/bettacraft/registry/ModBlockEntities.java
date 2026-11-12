@@ -24,6 +24,14 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.tank.interior.InteriorFloorBlockEntity>> INTERIOR_FLOOR = BLOCK_ENTITIES.register("interior_floor",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.tank.interior.InteriorFloorBlockEntity::new, ModBlocks.INTERIOR_FLOOR.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity>> EXTERNAL_FILTER = BLOCK_ENTITIES.register("external_filter",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity::new, ModBlocks.EXTERNAL_FILTER.get()).build(null));
+
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.CabinetBlockEntity>> CABINET = BLOCK_ENTITIES.register("cabinet",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.CabinetBlockEntity::new, ModBlocks.CABINET.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

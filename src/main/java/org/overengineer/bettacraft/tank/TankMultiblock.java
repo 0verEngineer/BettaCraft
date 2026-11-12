@@ -178,8 +178,8 @@ public final class TankMultiblock {
     }
 
     private static void moveHeaters(ServerLevel level, TankData from, TankData to, BlockPos dropAt) {
-        var src = from.heaters();
-        var dst = to.heaters();
+        var src = from.legacyHeaters();
+        var dst = to.legacyHeaters();
         for (int i = 0; i < src.getContainerSize(); i++) {
             net.minecraft.world.item.ItemStack s = src.removeItemNoUpdate(i);
             if (s.isEmpty()) continue;
@@ -225,7 +225,7 @@ public final class TankMultiblock {
         InteriorManager.dropInteriorOfBlock(level, t, pos);
         if (remaining.isEmpty()) {
             InteriorManager.freeRegion(level, t);
-            net.minecraft.world.Containers.dropContents(level, pos, t.heaters());
+            net.minecraft.world.Containers.dropContents(level, pos, t.legacyHeaters());
             return;
         }
 

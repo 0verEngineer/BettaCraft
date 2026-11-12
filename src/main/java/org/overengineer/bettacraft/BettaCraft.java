@@ -36,6 +36,7 @@ public final class BettaCraft {
         ModCodecs.register(modBus);
         ModAttachments.register(modBus);
         ModCreativeTabs.register(modBus);
+        org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         modBus.addListener(ModNetwork::register);
         modBus.addListener(BettaCraft::onCapabilities);
 
@@ -48,6 +49,9 @@ public final class BettaCraft {
         // hoppers, pipes and other mods insert food into the feeder
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FEEDER.get(),
                 (be, side) -> be.items());
+        // cabinet storage (not the filter slot): the feeder and hoppers use it
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.CABINET.get(),
+                (be, side) -> be.storage());
     }
 
     public static ResourceLocation id(String path) {

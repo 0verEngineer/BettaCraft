@@ -13,7 +13,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.overengineer.bettacraft.equipment.HeaterItem;
 import org.overengineer.bettacraft.network.TankViewPayload;
 import org.overengineer.bettacraft.registry.ModMenus;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -22,7 +21,9 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankMultiblock;
 
 /**
- * Tank menu (PLAN 8): heater equipment slots (M1; heaters move into the interior in M3) plus the player inventory.
+ * Tank menu (PLAN 8): the player inventory and the four old heater slots (M1-M3). Since M4 heaters belong into the
+ * interior or an external filter; heaters still left in the old slots can only be taken out (and are moved into an
+ * attached filter automatically, see {@code TankEquipment#moveLegacyHeaters}).
  * Everything else is shown from a {@link TankView} that is synced only while the menu is open and only when it
  * changed. All actions go through {@link TankActions} and are validated on the server.
  */
@@ -46,12 +47,12 @@ public class TankMenu extends AbstractContainerMenu {
 
     /** Client constructor. */
     public TankMenu(int id, Inventory inv, RegistryFriendlyByteBuf buf) {
-        this(id, inv, buf.readBlockPos(), null, new SimpleContainer(TankData.HEATER_SLOTS));
+        this(id, inv, buf.readBlockPos(), null, new SimpleContainer(TankData.LEGACY_HEATER_SLOTS));
     }
 
     /** Server constructor. */
     public TankMenu(int id, Inventory inv, TankBlockEntity controller) {
-        this(id, inv, controller.getBlockPos(), controller, controller.getTank().heaters());
+        this(id, inv, controller.getBlockPos(), controller, controller.getTank().legacyHeaters());
     }
 
     private TankMenu(int id, Inventory inv, BlockPos pos, @Nullable TankBlockEntity controller, Container heaters) {
@@ -61,7 +62,7 @@ public class TankMenu extends AbstractContainerMenu {
         this.controller = controller;
         this.tankAtOpen = controller == null ? null : controller.getTank();
         this.heaters = heaters;
-        for (int i = 0; i < TankData.HEATER_SLOTS; i++) addSlot(new HeaterSlot(heaters, i, HEATER_X, SLOT_Y + i * 18));
+        for (int i = 0; i < TankData.LEGACY_HEATER_SLOTS; i++) addSlot(new LegacyHeaterSlot(heaters, i, HEATER_X, SLOT_Y + i * 18));
         for (int r = 0; r < 3; r++)
             for (int c = 0; c < 9; c++)
                 addSlot(new Slot(inv, c + r * 9 + 9, INV_X + c * 18, SLOT_Y + r * 18));
@@ -125,25 +126,31 @@ public class TankMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack s = slot.getItem();
         ItemStack copy = s.copy();
-        int heaterEnd = TankData.HEATER_SLOTS;
+        int heaterEnd = TankData.LEGACY_HEATER_SLOTS;
         if (index < heaterEnd) {
-            if (!moveItemStackTo(s, heaterEnd, slots.size(), true)) return ItemStack.EMPTY;
+            if (!canModify() || !moveItemStackTo(s, heaterEnd, slots.size(), true)) return ItemStack.EMPTY;
         } else {
-            if (!(s.getItem() instanceof HeaterItem) || !canModify() || !moveItemStackTo(s, 0, heaterEnd, false)) return ItemStack.EMPTY;
+            return ItemStack.EMPTY; // nothing goes into the old heater slots any more
         }
         if (s.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
         else slot.setChanged();
         return copy;
     }
 
-    private final class HeaterSlot extends Slot {
-        HeaterSlot(Container c, int index, int x, int y) {
+    /** Old heater slot: take-out only, shown only while it holds a heater. */
+    private final class LegacyHeaterSlot extends Slot {
+        LegacyHeaterSlot(Container c, int index, int x, int y) {
             super(c, index, x, y);
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.getItem() instanceof HeaterItem && canModify();
+            return false;
+        }
+
+        @Override
+        public boolean isActive() {
+            return hasItem();
         }
 
         @Override

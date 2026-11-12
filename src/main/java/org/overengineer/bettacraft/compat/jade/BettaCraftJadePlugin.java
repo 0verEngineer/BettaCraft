@@ -18,17 +18,22 @@ import snownee.jade.api.WailaPlugin;
 public class BettaCraftJadePlugin implements IWailaPlugin {
     public static final ResourceLocation TANK = BettaCraft.id("tank");
     public static final ResourceLocation BETTA = BettaCraft.id("betta");
+    public static final ResourceLocation FILTER = BettaCraft.id("filter");
 
     @Override
     public void register(IWailaCommonRegistration registration) {
         registration.registerBlockDataProvider(JadeServerData.Tank.INSTANCE, TankBlockEntity.class);
         registration.registerEntityDataProvider(JadeServerData.Betta.INSTANCE, BettaEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlockEntity.class);
     }
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(JadeClientTooltips.Tank.INSTANCE, TankBlock.class);
         registration.registerEntityComponent(JadeClientTooltips.Betta.INSTANCE, BettaEntity.class);
+        registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlock.class);
         // looking through the glass at a fish shows the fish, not the tank block
         registration.addRayTraceCallback((hit, accessor, original) -> JadeClientTooltips.retarget(registration, accessor));
     }

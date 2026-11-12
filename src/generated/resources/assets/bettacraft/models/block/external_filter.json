@@ -1,0 +1,105 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#bottom"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        12,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        4,
+        12,
+        4
+      ],
+      "to": [
+        12,
+        14,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#port"
+        },
+        "east": {
+          "texture": "#port"
+        },
+        "north": {
+          "texture": "#port"
+        },
+        "south": {
+          "texture": "#port"
+        },
+        "up": {
+          "texture": "#port"
+        },
+        "west": {
+          "texture": "#port"
+        }
+      },
+      "from": [
+        7,
+        12.5,
+        1.5
+      ],
+      "to": [
+        9,
+        14.5,
+        4
+      ]
+    }
+  ],
+  "textures": {
+    "bottom": "bettacraft:block/external_filter_bottom",
+    "particle": "bettacraft:block/external_filter_side",
+    "port": "bettacraft:block/cabinet_trim",
+    "side": "bettacraft:block/external_filter_side",
+    "top": "bettacraft:block/external_filter_top"
+  }
+}

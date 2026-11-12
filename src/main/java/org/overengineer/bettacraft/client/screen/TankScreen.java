@@ -324,9 +324,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        // ghost icons in empty heater slots
-        for (int i = 0; i < TankData.HEATER_SLOTS; i++) {
-            if (!menu.getSlot(i).hasItem()) g.blit(TEXTURE, leftPos + TankMenu.HEATER_X, topPos + TankMenu.SLOT_Y + i * 18, 0, 232, 16, 16);
+        // old heater slots (M1-M3): a slot frame only while a heater is left in it (take-out only since M4)
+        for (int i = 0; i < TankData.LEGACY_HEATER_SLOTS; i++) {
+            if (menu.getSlot(i).hasItem()) g.blit(TEXTURE, leftPos + TankMenu.HEATER_X - 1, topPos + TankMenu.SLOT_Y + i * 18 - 1, 36, 232, 18, 18);
         }
     }
 
@@ -382,11 +382,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         Component feeder = v.feederFood < 0 ? Component.translatable("gui.bettacraft.tank.none").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.tank.feeder_state", v.feederFood, v.feederPerDay)
                 .withStyle(v.feederFood == 0 ? ChatFormatting.GOLD : ChatFormatting.GREEN);
-        line(g, Component.translatable("gui.bettacraft.tank.feeder", feeder), x, y, TEXT_LIGHT);
-        y += 11;
         Component light = v.lights == 0 ? Component.translatable("gui.bettacraft.tank.none").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.tank.light_state", v.lightsLit, v.lights);
-        line(g, Component.translatable("gui.bettacraft.tank.light", light), x, y, TEXT_LIGHT);
+        line(g, Component.translatable("gui.bettacraft.tank.feeder", feeder).append("   ")
+                .append(Component.translatable("gui.bettacraft.tank.light", light)), x, y, TEXT_LIGHT);
+        y += 11;
+        // M4: filters outside (blocks next to the tank, filters in cabinets below) and inside (interior)
+        int outside = v.filterBlocks + v.cabinetFilters;
+        Component filters = outside + v.filters == 0 ? Component.translatable("gui.bettacraft.tank.none").withStyle(ChatFormatting.GRAY)
+                : Component.translatable("gui.bettacraft.tank.filter_state", outside, v.filterHeaters, v.filters).withStyle(ChatFormatting.AQUA);
+        line(g, Component.translatable("gui.bettacraft.tank.filters", filters), x, y, TEXT_LIGHT);
         y += 11;
         MutableComponent inh = Component.translatable("gui.bettacraft.tank.inhabitants", v.inhabitants.size(), v.adults, v.hardCap);
         if (v.crowded) inh.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
@@ -394,6 +399,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 11;
         if (v.waterMb < v.minInsertMb) {
             line(g, Component.translatable("gui.bettacraft.tank.fill_hint", v.minInsertMb).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+        } else if (v.legacyHeaters > 0) {
+            line(g, Component.translatable("gui.bettacraft.tank.legacy_heaters", v.legacyHeaters).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
         }
     }
 

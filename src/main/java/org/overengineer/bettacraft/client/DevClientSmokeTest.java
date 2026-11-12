@@ -203,7 +203,7 @@ final class DevClientSmokeTest {
         c.getTank().setName("Betta Paradise");
         c.getTank().setSignPos(SignPosition.TOP_CENTER);
         c.getTank().setFront(Direction.NORTH);
-        c.getTank().heaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
+        c.getTank().legacyHeaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
         c.getTank().setOwner(p.getUUID());
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
@@ -291,7 +291,7 @@ final class DevClientSmokeTest {
         breed.getTank().setName("Breeding");
         breed.getTank().setFront(Direction.NORTH);
         breed.getTank().setOwner(p.getUUID());
-        breed.getTank().heaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
+        breed.getTank().legacyHeaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
         breed.getTank().setTargetTemp(27.0F);
         breed.getTank().setWaterTemp(27.0F);
         RandomSource br = RandomSource.create(4321);

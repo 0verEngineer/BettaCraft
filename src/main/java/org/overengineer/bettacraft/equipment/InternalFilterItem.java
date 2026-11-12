@@ -10,8 +10,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 
 /**
- * Internal filter (PLAN 6.2 / 7.3): placed in the tank interior as a small box of {@link SegmentBlock}s. In M3 it is
- * placed and counted only; water jet and bubbles follow in M4. Filters have no effect on the simulation (OFFEN-11).
+ * Internal filter (PLAN 6.2 / 7.3): placed in the tank interior as a small box of {@link SegmentBlock}s with the outlet
+ * facing the player. The miniature shows a water jet and bubbles at the outlet (M4). Filters have no effect on the
+ * simulation (OFFEN-11).
  */
 public class InternalFilterItem extends Item {
     public InternalFilterItem(Properties properties) {

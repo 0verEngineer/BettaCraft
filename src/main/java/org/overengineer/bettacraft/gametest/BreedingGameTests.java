@@ -61,7 +61,7 @@ public final class BreedingGameTests {
         if (c == null) throw new GameTestAssertException("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, water);
         // warm water for breeding: a large heater keeps the target temperature
-        c.getTank().heaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
+        c.getTank().legacyHeaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
         c.getTank().setTargetTemp(27.0F);
         c.getTank().setWaterTemp(27.0F);
         return c;
@@ -171,7 +171,7 @@ public final class BreedingGameTests {
     @GameTest(template = EMPTY)
     public static void noNestInColdWater(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 2, 2, 8000);
-        c.getTank().heaters().setItem(0, ItemStack.EMPTY);
+        c.getTank().legacyHeaters().setItem(0, ItemStack.EMPTY);
         adult(h, c, false, 21);
         adult(h, c, true, 22);
         c.getTank().setWaterTemp(22.0F);

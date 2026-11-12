@@ -67,12 +67,47 @@ final class JadeServerData {
                 list.add(i);
             }
             out.put("list", list);
+            int outside = org.overengineer.bettacraft.tank.TankEquipment.filters(level, c).size();
+            var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
+            int inside = r == null || !r.built() ? 0 : org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r).filters().size();
+            out.putInt("filters_out", outside);
+            out.putInt("filters_in", inside);
             data.put("bettacraft", out);
         }
 
         @Override
         public ResourceLocation getUid() {
             return BettaCraftJadePlugin.TANK;
+        }
+    }
+
+    /** External filter block and cabinet (M4): attached tank, heaters, storage. */
+    static final class Filter implements IServerDataProvider<BlockAccessor> {
+        static final Filter INSTANCE = new Filter();
+
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (!(accessor.getLevel() instanceof ServerLevel level)) return;
+            if (!(accessor.getBlockEntity() instanceof org.overengineer.bettacraft.equipment.FilterHost f)) return;
+            CompoundTag out = new CompoundTag();
+            out.putBoolean("has_filter", f.hasFilter());
+            out.putInt("heaters", f.heaterCount());
+            out.putInt("heat", f.heaterBlocks());
+            TankBlockEntity c = org.overengineer.bettacraft.equipment.FilterHost.tankOf(level, f.tankBlockPos());
+            boolean attached = c != null && org.overengineer.bettacraft.tank.TankEquipment.filters(level, c).contains(f);
+            out.putBoolean("attached", attached);
+            if (attached) out.putString("tank", c.getTank().name());
+            if (f instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
+                int n = 0;
+                for (int i = 0; i < cab.storage().getSlots(); i++) n += cab.storage().getStackInSlot(i).getCount();
+                out.putInt("storage", n);
+            }
+            data.put("bettacraft", out);
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.FILTER;
         }
     }
 

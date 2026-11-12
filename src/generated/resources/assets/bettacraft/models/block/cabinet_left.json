@@ -1,0 +1,241 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#wood"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#wood"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#wood"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#wood"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        14,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#wood"
+        },
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#wood"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        }
+      },
+      "from": [
+        -0.5,
+        14,
+        -0.5
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#trim"
+        },
+        "east": {
+          "texture": "#trim"
+        },
+        "north": {
+          "texture": "#trim"
+        },
+        "south": {
+          "texture": "#trim"
+        },
+        "up": {
+          "texture": "#trim"
+        },
+        "west": {
+          "texture": "#trim"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.25
+      ],
+      "to": [
+        16,
+        1.5,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        }
+      },
+      "from": [
+        1,
+        2.5,
+        -0.5
+      ],
+      "to": [
+        7.75,
+        13,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        }
+      },
+      "from": [
+        8.25,
+        2.5,
+        -0.5
+      ],
+      "to": [
+        15,
+        13,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#trim"
+        },
+        "east": {
+          "texture": "#trim"
+        },
+        "north": {
+          "texture": "#trim"
+        },
+        "south": {
+          "texture": "#trim"
+        },
+        "up": {
+          "texture": "#trim"
+        },
+        "west": {
+          "texture": "#trim"
+        }
+      },
+      "from": [
+        6.25,
+        7,
+        -1.25
+      ],
+      "to": [
+        7,
+        10.5,
+        -0.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#trim"
+        },
+        "east": {
+          "texture": "#trim"
+        },
+        "north": {
+          "texture": "#trim"
+        },
+        "south": {
+          "texture": "#trim"
+        },
+        "up": {
+          "texture": "#trim"
+        },
+        "west": {
+          "texture": "#trim"
+        }
+      },
+      "from": [
+        9,
+        7,
+        -1.25
+      ],
+      "to": [
+        9.75,
+        10.5,
+        -0.5
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "bettacraft:block/cabinet_wood",
+    "trim": "bettacraft:block/cabinet_trim",
+    "wood": "bettacraft:block/cabinet_wood"
+  }
+}

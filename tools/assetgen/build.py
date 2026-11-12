@@ -7,6 +7,7 @@ import time
 import blocks
 import breeding
 import decor
+import equipment
 import gui
 import icons
 import model_defs as md
@@ -30,6 +31,7 @@ def main() -> int:
     written += breeding.write_all()
     written += decor.write_all()
     written += blocks.write_all()
+    written += equipment.write_all()
     written += gui.write_all()
     written += md.write_generated(GEN, preview.sample_textures())
     written += preview.write_all()

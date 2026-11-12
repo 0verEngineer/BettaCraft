@@ -53,6 +53,8 @@ public final class EquipmentPlacement {
             height = f[1];
         }
         Block block = heater ? ModBlocks.HEATER_SEGMENT.get() : ModBlocks.FILTER_SEGMENT.get();
+        // the filter outlet points at the player (into the room of the tank)
+        net.minecraft.core.Direction facing = player != null ? player.getDirection().getOpposite() : net.minecraft.core.Direction.NORTH;
         List<BlockPos> cells = new ArrayList<>();
         for (int y = 0; y < height; y++)
             for (int z = 0; z < foot; z++)
@@ -69,7 +71,7 @@ public final class EquipmentPlacement {
             int y = p.getY() - base.getY();
             SegmentBlock.Part part = y == 0 ? (p.getX() == base.getX() && p.getZ() == base.getZ() ? SegmentBlock.Part.ANCHOR : SegmentBlock.Part.BASE)
                     : y == height - 1 ? SegmentBlock.Part.TOP : SegmentBlock.Part.MIDDLE;
-            BlockState s = block.defaultBlockState().setValue(SegmentBlock.PART, part);
+            BlockState s = block.defaultBlockState().setValue(SegmentBlock.PART, part).setValue(SegmentBlock.FACING, facing);
             if (heater) s = s.setValue(SegmentBlock.SIZE, size);
             server.setBlock(p, s, Block.UPDATE_ALL);
         }

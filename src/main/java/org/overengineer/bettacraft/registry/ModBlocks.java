@@ -56,6 +56,17 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.equipment.SegmentBlock(false, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
 
+    /** External filter next to a tank (PLAN 6.2), two heater slots. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.ExternalFilterBlock> EXTERNAL_FILTER = BLOCKS.register("external_filter",
+            () -> new org.overengineer.bettacraft.equipment.ExternalFilterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion()
+                    .isRedstoneConductor((s, l, p) -> false)));
+
+    /** Aquarium cabinet of any planks (PLAN 6.5). */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.CabinetBlock> CABINET = BLOCKS.register("cabinet",
+            () -> new org.overengineer.bettacraft.equipment.CabinetBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD).ignitedByLava()));
+
     /** Floor of a tank interior; can carry a substrate look (PLAN 7.2). Unbreakable. */
     public static final DeferredBlock<InteriorFloorBlock> INTERIOR_FLOOR = BLOCKS.register("interior_floor", () -> new InteriorFloorBlock(
             BlockBehaviour.Properties.of()

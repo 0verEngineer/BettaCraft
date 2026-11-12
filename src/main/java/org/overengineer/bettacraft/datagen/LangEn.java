@@ -29,13 +29,40 @@ final class LangEn {
 
         a.accept("tooltip.bettacraft.tank", "Aquarium block. Place several of the same glass next to each other to build a larger tank.");
         a.accept("tooltip.bettacraft.heater.capacity", "Heats up to %s water blocks");
-        a.accept("tooltip.bettacraft.heater.usage", "Place it inside the tank interior (heats while under water) or into an equipment slot of the tank menu");
+        a.accept("tooltip.bettacraft.heater.usage", "Place it inside the tank interior (heats while under water) or put it into an external filter");
+
+        // M4: external filter, cabinet, sounds
+        a.accept("block.bettacraft.external_filter", "External Filter");
+        a.accept("block.bettacraft.cabinet", "Aquarium Cabinet");
+        a.accept("block.bettacraft.cabinet.with_wood", "%s Aquarium Cabinet");
+        a.accept("tooltip.bettacraft.external_filter.usage", "Place it next to a tank or into a cabinet under the tank. Holds two heaters.");
+        a.accept("tooltip.bettacraft.external_filter.no_heaters", "No heaters inside");
+        a.accept("tooltip.bettacraft.cabinet", "Put a tank on it. Holds an external filter and nine stacks; the feeder takes food from it.");
+        a.accept("message.bettacraft.filter.full", "Both heater slots of this filter are taken");
+        a.accept("gui.bettacraft.filter.heaters_hint", "Two heaters of any size");
+        a.accept("gui.bettacraft.cabinet.filter_heaters", "Heaters in the filter");
+        a.accept("gui.bettacraft.cabinet.no_filter", "Slot for an external filter");
+        a.accept("gui.bettacraft.tank.filters", "Filters: %s");
+        a.accept("gui.bettacraft.tank.filter_state", "%s outside (%s heaters), %s inside");
+        a.accept("gui.bettacraft.tank.legacy_heaters", "%s heater(s) left in the old slots (left): take out or attach a filter");
+        a.accept("log.bettacraft.heaters_moved", "%s heater(s) moved from the old tank slots into the filter");
+        a.accept("subtitles.bettacraft.block.filter.running", "Filter bubbles");
+        a.accept("subtitles.bettacraft.block.tank.fill", "Tank filled");
+        a.accept("subtitles.bettacraft.block.tank.drain", "Tank drained");
+        a.accept("jade.bettacraft.filter.tank", "Pumps into: %s");
+        a.accept("jade.bettacraft.filter.tank_unnamed", "Pumps into the tank");
+        a.accept("jade.bettacraft.filter.no_tank", "Not attached to a tank");
+        a.accept("jade.bettacraft.filter.heaters", "Heaters: %s (%s water blocks)");
+        a.accept("jade.bettacraft.cabinet.filter", "Filter: %s heater(s)");
+        a.accept("jade.bettacraft.cabinet.no_filter", "No filter");
+        a.accept("jade.bettacraft.cabinet.storage", "Storage: %s items");
+        a.accept("jade.bettacraft.tank.filters", "Filters: %s outside, %s inside");
 
         // M3: interior, substrate, equipment and decoration
         a.accept("block.bettacraft.heater_segment", "Aquarium Heater");
         a.accept("block.bettacraft.filter_segment", "Internal Filter");
         a.accept("item.bettacraft.internal_filter", "Internal Filter");
-        a.accept("tooltip.bettacraft.internal_filter.usage", "Place it inside the tank interior. Water jet and bubbles follow in a later version.");
+        a.accept("tooltip.bettacraft.internal_filter.usage", "Place it inside the tank interior; the outlet with the water jet faces you");
         a.accept("item.bettacraft.decor_castle", "Mini Castle");
         a.accept("item.bettacraft.decor_shipwreck", "Shipwreck");
         a.accept("item.bettacraft.decor_dino_skull", "Dinosaur Skull");
@@ -183,9 +210,9 @@ final class LangEn {
         a.accept("gui.bettacraft.tank.heaters_ok", "%s blocks for %s water blocks");
         a.accept("gui.bettacraft.tank.heaters_weak", "only %s blocks for %s water blocks");
         a.accept("gui.bettacraft.tank.feeder", "Feeder: %s");
-        a.accept("gui.bettacraft.tank.feeder_state", "%s food, %sx per day");
+        a.accept("gui.bettacraft.tank.feeder_state", "%s food, %sx/day");
         a.accept("gui.bettacraft.tank.light", "Light: %s");
-        a.accept("gui.bettacraft.tank.light_state", "%s of %s on");
+        a.accept("gui.bettacraft.tank.light_state", "%s/%s on");
         a.accept("gui.bettacraft.tank.none", "none");
         a.accept("gui.bettacraft.tank.inhabitants", "Animals: %s (%s adults, max %s)");
         a.accept("gui.bettacraft.tank.crowded", "Overcrowded!");

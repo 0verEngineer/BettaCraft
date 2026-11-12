@@ -16,6 +16,7 @@ public final class Schemas {
     public static final MigrationChain TANK_BLOCK_ENTITY = MigrationChain.builder("tank_block_entity")
             .step(0, Schemas::tankV0toV1)
             .step(1, Schemas::tankV1toV2)
+            .step(2, Schemas::tankV2toV3)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -36,6 +37,16 @@ public final class Schemas {
 
     /** Feeder block entity. */
     public static final MigrationChain FEEDER = MigrationChain.builder("feeder")
+            .step(0, data -> data)
+            .build();
+
+    /** External filter block entity (M4): two heater slots. */
+    public static final MigrationChain EXTERNAL_FILTER = MigrationChain.builder("external_filter")
+            .step(0, data -> data)
+            .build();
+
+    /** Cabinet block entity (M4): planks, filter slot and storage. */
+    public static final MigrationChain CABINET = MigrationChain.builder("cabinet")
             .step(0, data -> data)
             .build();
 
@@ -90,6 +101,24 @@ public final class Schemas {
                 CompoundTag eq = new CompoundTag();
                 eq.putBoolean("rescan", true);
                 r.put("equipment", eq);
+            }
+        }
+        return data;
+    }
+
+    /**
+     * v2 -> v3 (M4): the four heater slots of the tank menu (M1-M3) are given up; heaters belong into the external
+     * filter now. Their contents move to {@code legacy_heaters} unchanged (ids of removed mods included), so nothing
+     * is lost: the tank moves them into an attached filter by itself, and until then they keep heating and can be
+     * taken out in the tank menu.
+     */
+    static CompoundTag tankV2toV3(CompoundTag data) {
+        if (data.contains("tank", Tag.TAG_COMPOUND)) {
+            CompoundTag tank = data.getCompound("tank");
+            if (tank.contains("heaters", Tag.TAG_LIST)) {
+                net.minecraft.nbt.ListTag old = tank.getList("heaters", Tag.TAG_STRING);
+                tank.remove("heaters");
+                if (!tank.contains("legacy_heaters", Tag.TAG_LIST)) tank.put("legacy_heaters", old);
             }
         }
         return data;

@@ -60,6 +60,12 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.equipment.InternalFilterItem> INTERNAL_FILTER = ITEMS.register("internal_filter",
             () -> new org.overengineer.bettacraft.equipment.InternalFilterItem(new Item.Properties().stacksTo(16)));
 
+    /** External filter (M4) and aquarium cabinet of any planks (M4). */
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.ExternalFilterItem> EXTERNAL_FILTER = ITEMS.register("external_filter",
+            () -> new org.overengineer.bettacraft.equipment.ExternalFilterItem(ModBlocks.EXTERNAL_FILTER.get(), new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.CabinetBlockItem> CABINET = ITEMS.register("cabinet",
+            () -> new org.overengineer.bettacraft.equipment.CabinetBlockItem(ModBlocks.CABINET.get(), new Item.Properties()));
+
     /** Decoration structure items (PLAN 7.3), one per {@link org.overengineer.bettacraft.decor.DecorType}. */
     public static final java.util.Map<org.overengineer.bettacraft.decor.DecorType, DeferredItem<org.overengineer.bettacraft.decor.DecorItem>> DECOR = decor();
 

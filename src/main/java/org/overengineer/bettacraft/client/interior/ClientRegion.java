@@ -26,6 +26,11 @@ public final class ClientRegion {
     /** Section key ({@link SectionPos#asLong} of region-relative sx, world sy, sz) -> section. Replaced, never mutated. */
     private volatile Long2ObjectOpenHashMap<InteriorSnapshot.Section> sections;
     int nonAir;
+    /** Outlets of internal filters (M4), interior-local block coordinates; recomputed when sections change. */
+    volatile List<Outlet> outlets = List.of();
+
+    /** Outlet of an internal filter: centre of the outlet face (interior blocks) and its direction. */
+    public record Outlet(double x, double y, double z, net.minecraft.core.Direction facing) {}
 
     final Long2ObjectOpenHashMap<MiniatureMesh> meshes = new Long2ObjectOpenHashMap<>();
     final LongOpenHashSet dirtyCells = new LongOpenHashSet();
@@ -54,6 +59,7 @@ public final class ClientRegion {
         }
         this.sections = m;
         recount();
+        findOutlets();
         markAllDirty();
     }
 
@@ -79,6 +85,42 @@ public final class ClientRegion {
         sections = m;
         version = newVersion;
         recount();
+        findOutlets();
+    }
+
+    /** Scans the sections that contain an internal filter anchor (cheap: palettes are checked first). */
+    private void findOutlets() {
+        java.util.ArrayList<Outlet> out = new java.util.ArrayList<>();
+        int[] shape = org.overengineer.bettacraft.equipment.SegmentBlock.filterShape(scale);
+        int foot = shape[0], height = shape[1];
+        for (InteriorSnapshot.Section s : sections.values()) {
+            if (s.sy() == InteriorSnapshot.FLOOR_SY) continue;
+            boolean any = false;
+            for (BlockState st : s.palette()) any |= isFilterAnchor(st);
+            if (!any) continue;
+            short[] idx = s.indices();
+            for (int i = 0; i < InteriorSnapshot.SECTION_VOLUME; i++) {
+                BlockState st = s.palette()[idx[i]];
+                if (!isFilterAnchor(st)) continue;
+                int lx = (s.sx() << 4) + (i & 15), ly = (s.sy() << 4) + ((i >> 8) & 15) - InteriorRegion.BASE_Y, lz = (s.sz() << 4) + ((i >> 4) & 15);
+                net.minecraft.core.Direction f = st.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING);
+                double cx = lx + foot / 2.0 + f.getStepX() * (foot / 2.0 + 0.05);
+                double cz = lz + foot / 2.0 + f.getStepZ() * (foot / 2.0 + 0.05);
+                double cy = ly + Math.max(1, height - 1.5);
+                out.add(new Outlet(cx, cy, cz, f));
+                if (out.size() >= 64) break;
+            }
+        }
+        outlets = List.copyOf(out);
+    }
+
+    private static boolean isFilterAnchor(BlockState s) {
+        return s.is(org.overengineer.bettacraft.registry.ModBlocks.FILTER_SEGMENT.get())
+                && s.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART) == org.overengineer.bettacraft.equipment.SegmentBlock.Part.ANCHOR;
+    }
+
+    public List<Outlet> outlets() {
+        return outlets;
     }
 
     private void recount() {

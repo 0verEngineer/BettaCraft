@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/external_filter",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/external_filter"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/external_filter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/external_filter",
+      "y": 270
+    }
+  }
+}

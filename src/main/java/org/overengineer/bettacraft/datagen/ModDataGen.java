@@ -151,6 +151,13 @@ public final class ModDataGen {
                     };
                     String side = "block/" + kind + "_" + (tex.equals("top") && kind.equals("filter_segment") ? "middle" : tex);
                     String top = "block/" + kind + "_" + (tex.equals("top") ? "top" : "middle");
+                    if (kind.equals("filter_segment") && part == org.overengineer.bettacraft.equipment.SegmentBlock.Part.TOP) {
+                        // M4: outlet on the facing side (north in the model, rotated)
+                        ModelFile m = models().cube("filter_segment_top_outlet", modLoc(side), modLoc(top), modLoc("block/filter_segment_outlet"),
+                                modLoc(side), modLoc(side), modLoc(side)).texture("particle", modLoc(side));
+                        return ConfiguredModel.builder().modelFile(m)
+                                .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING).toYRot() + 180) % 360).build();
+                    }
                     return ConfiguredModel.builder().modelFile(models().cubeColumn(kind + "_" + tex, modLoc(side), modLoc(top))).build();
                 });
             }
@@ -168,6 +175,9 @@ public final class ModDataGen {
                     .end();
             simpleBlock(ModBlocks.FEEDER.get(), feeder);
 
+            externalFilter();
+            cabinet();
+
             getVariantBuilder(ModBlocks.TANK_LIGHT.get()).forAllStatesExcept(state -> {
                 boolean neg = state.getValue(TankLightBlock.NEG), pos = state.getValue(TankLightBlock.POS);
                 boolean hanging = state.getValue(TankLightBlock.HANGING), lit = state.getValue(TankLightBlock.LIT);
@@ -175,6 +185,72 @@ public final class ModDataGen {
                 return ConfiguredModel.builder().modelFile(m)
                         .rotationY(state.getValue(TankLightBlock.AXIS) == Direction.Axis.Z ? 90 : 0).build();
             }, TankLightBlock.POWERED);
+        }
+
+        /** M4: canister 3..13 x 0..12 with lid 4..12 x 12..14 and a hose port; model front (north) = towards the tank. */
+        private void externalFilter() {
+            BlockModelBuilder m = models().getBuilder("external_filter")
+                    .texture("side", modLoc("block/external_filter_side")).texture("top", modLoc("block/external_filter_top"))
+                    .texture("bottom", modLoc("block/external_filter_bottom")).texture("particle", modLoc("block/external_filter_side"))
+                    .texture("port", modLoc("block/cabinet_trim"));
+            m.element().from(3, 0, 3).to(13, 12, 13)
+                    .face(Direction.NORTH).uvs(3, 4, 13, 16).texture("#side").end()
+                    .face(Direction.SOUTH).uvs(3, 4, 13, 16).texture("#side").end()
+                    .face(Direction.EAST).uvs(3, 4, 13, 16).texture("#side").end()
+                    .face(Direction.WEST).uvs(3, 4, 13, 16).texture("#side").end()
+                    .face(Direction.UP).uvs(3, 3, 13, 13).texture("#bottom").end()
+                    .face(Direction.DOWN).uvs(3, 3, 13, 13).texture("#bottom").cullface(Direction.DOWN).end()
+                    .end();
+            m.element().from(4, 12, 4).to(12, 14, 12)
+                    .face(Direction.NORTH).uvs(4, 2, 12, 4).texture("#side").end()
+                    .face(Direction.SOUTH).uvs(4, 2, 12, 4).texture("#side").end()
+                    .face(Direction.EAST).uvs(4, 2, 12, 4).texture("#side").end()
+                    .face(Direction.WEST).uvs(4, 2, 12, 4).texture("#side").end()
+                    .face(Direction.UP).uvs(4, 4, 12, 12).texture("#top").end()
+                    .end();
+            // outlet port towards the tank (the hose renderer continues from here)
+            m.element().from(7, 12.5F, 1.5F).to(9, 14.5F, 4).allFaces((d, f) -> f.texture("#port")).end();
+            getVariantBuilder(ModBlocks.EXTERNAL_FILTER.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(m)
+                    .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.ExternalFilterBlock.FACING).toYRot() + 180) % 360).build());
+        }
+
+        /**
+         * M4: cabinet, front = north in the model. Wooden parts use the placeholder {@code block/cabinet_wood}, which the
+         * client swaps for the planks of the cabinet. Joined sides lose the counter-top overhang.
+         */
+        private void cabinet() {
+            ModelFile[] variants = new ModelFile[4];
+            for (int i = 0; i < 4; i++) {
+                boolean left = (i & 1) != 0, right = (i & 2) != 0;
+                String name = "cabinet" + (left && right ? "_both" : left ? "_left" : right ? "_right" : "");
+                BlockModelBuilder m = models().getBuilder(name)
+                        .texture("wood", modLoc("block/cabinet_wood")).texture("trim", modLoc("block/cabinet_trim"))
+                        .texture("particle", modLoc("block/cabinet_wood"));
+                // carcass (full block below the counter top)
+                m.element().from(0, 0, 0).to(16, 14, 16).allFaces((d, f) -> {
+                    f.texture("#wood");
+                    if (d != Direction.UP) f.cullface(d);
+                }).end();
+                // counter top: overhangs at the front and at free sides (left = east, right = west in the model)
+                float x0 = right ? 0 : -0.5F, x1 = left ? 16 : 16.5F;
+                m.element().from(x0, 14, -0.5F).to(x1, 16, 16).allFaces((d, f) -> {
+                    f.texture("#wood");
+                    if (d == Direction.UP || d == Direction.SOUTH || (d == Direction.EAST && left) || (d == Direction.WEST && right)) f.cullface(d);
+                }).end();
+                // plinth and two doors with handles
+                m.element().from(0, 0, -0.25F).to(16, 1.5F, 0).allFaces((d, f) -> f.texture("#trim")).end();
+                m.element().from(1, 2.5F, -0.5F).to(7.75F, 13, 0).allFaces((d, f) -> f.texture("#wood")).end();
+                m.element().from(8.25F, 2.5F, -0.5F).to(15, 13, 0).allFaces((d, f) -> f.texture("#wood")).end();
+                m.element().from(6.25F, 7, -1.25F).to(7, 10.5F, -0.5F).allFaces((d, f) -> f.texture("#trim")).end();
+                m.element().from(9, 7, -1.25F).to(9.75F, 10.5F, -0.5F).allFaces((d, f) -> f.texture("#trim")).end();
+                variants[i] = m;
+            }
+            getVariantBuilder(ModBlocks.CABINET.get()).forAllStates(state -> {
+                int i = (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.LEFT) ? 1 : 0)
+                        | (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.RIGHT) ? 2 : 0);
+                return ConfiguredModel.builder().modelFile(variants[i])
+                        .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING).toYRot() + 180) % 360).build();
+            });
         }
 
         private ModelFile lightModel(boolean neg, boolean pos, boolean hanging, boolean lit) {
@@ -206,6 +282,8 @@ public final class ModDataGen {
             withExistingParent("tank", modLoc("block/tank"));
             withExistingParent("feeder", modLoc("block/feeder"));
             withExistingParent("tank_light", modLoc("block/tank_light_none_on"));
+            withExistingParent("external_filter", modLoc("block/external_filter"));
+            withExistingParent("cabinet", modLoc("block/cabinet"));
             // bucket and filled bag: fish overlay as layer1/layer2 (tinted via ItemColor)
             withExistingParent("betta_bucket", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish")).texture("layer2", modLoc("item/betta_bucket_fish_fins"));
@@ -321,6 +399,35 @@ public final class ModDataGen {
                     .unlockedBy("has_glowstone", has(Tags.Items.DUSTS_GLOWSTONE))
                     .save(output, BettaCraft.id("tank_light"));
             decorRecipes(output);
+
+            // M4: external filter and the cabinet of any planks
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTERNAL_FILTER.get())
+                    .pattern("KHK").pattern("IWI").pattern("IRI")
+                    .define('K', Items.DRIED_KELP).define('H', Items.HOPPER).define('I', Tags.Items.INGOTS_IRON)
+                    .define('W', net.minecraft.tags.ItemTags.WOOL).define('R', Tags.Items.DUSTS_REDSTONE)
+                    .unlockedBy("has_hopper", has(Items.HOPPER))
+                    .save(output, BettaCraft.id("external_filter"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.CABINET.get())
+                    .pattern("SSS").pattern("PCP").pattern("PPP")
+                    .define('S', net.minecraft.tags.ItemTags.WOODEN_SLABS).define('P', net.minecraft.tags.ItemTags.PLANKS)
+                    .define('C', Tags.Items.CHESTS_WOODEN)
+                    .unlockedBy("has_planks", has(net.minecraft.tags.ItemTags.PLANKS))
+                    .save(as(output, org.overengineer.bettacraft.equipment.CabinetRecipe::of), BettaCraft.id("cabinet"));
+        }
+
+        /** Turns the ShapedRecipe produced by the builder into one of our ShapedRecipe subclasses. */
+        private static RecipeOutput as(RecipeOutput parent, java.util.function.Function<ShapedRecipe, Recipe<?>> wrap) {
+            return new RecipeOutput() {
+                @Override
+                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                    parent.accept(id, wrap.apply((ShapedRecipe) recipe), advancement, conditions);
+                }
+
+                @Override
+                public Advancement.Builder advancement() {
+                    return parent.advancement();
+                }
+            };
         }
 
         /** M3: internal filter and the decoration structures (own, plausible recipes). */
@@ -402,11 +509,22 @@ public final class ModDataGen {
                                     .include(ModDataComponents.GLASS.get()))))));
             dropSelf(ModBlocks.FEEDER.get());
             dropSelf(ModBlocks.TANK_LIGHT.get());
+            // M4: the filter keeps its heaters, the cabinet its planks (its contents drop separately)
+            add(ModBlocks.EXTERNAL_FILTER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.EXTERNAL_FILTER.get(), LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1))
+                    .add(LootItem.lootTableItem(ModBlocks.EXTERNAL_FILTER.get())
+                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                    .include(net.minecraft.core.component.DataComponents.CONTAINER))))));
+            add(ModBlocks.CABINET.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CABINET.get(), LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1))
+                    .add(LootItem.lootTableItem(ModBlocks.CABINET.get())
+                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                    .include(ModDataComponents.WOOD.get()))))));
         }
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get());
+            return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get());
         }
     }
 
@@ -441,7 +559,9 @@ public final class ModDataGen {
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
+                    ModBlocks.EXTERNAL_FILTER.get());
+            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD);
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,

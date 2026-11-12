@@ -14,6 +14,9 @@ public final class ModRecipes {
 
     public static final Supplier<RecipeSerializer<TankRecipe>> TANK = SERIALIZERS.register("tank", TankRecipe.Serializer::new);
 
+    public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.CabinetRecipe>> CABINET = SERIALIZERS.register("cabinet",
+            org.overengineer.bettacraft.equipment.CabinetRecipe.Serializer::new);
+
     public static void register(IEventBus bus) {
         SERIALIZERS.register(bus);
     }

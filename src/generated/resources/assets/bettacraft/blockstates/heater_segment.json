@@ -1,39 +1,147 @@
 {
   "variants": {
-    "part=anchor,size=large": {
+    "facing=east,part=anchor,size=large": {
       "model": "bettacraft:block/heater_segment_anchor"
     },
-    "part=anchor,size=medium": {
+    "facing=east,part=anchor,size=medium": {
       "model": "bettacraft:block/heater_segment_anchor"
     },
-    "part=anchor,size=small": {
+    "facing=east,part=anchor,size=small": {
       "model": "bettacraft:block/heater_segment_anchor"
     },
-    "part=base,size=large": {
+    "facing=east,part=base,size=large": {
       "model": "bettacraft:block/heater_segment_anchor"
     },
-    "part=base,size=medium": {
+    "facing=east,part=base,size=medium": {
       "model": "bettacraft:block/heater_segment_anchor"
     },
-    "part=base,size=small": {
+    "facing=east,part=base,size=small": {
       "model": "bettacraft:block/heater_segment_anchor"
     },
-    "part=middle,size=large": {
+    "facing=east,part=middle,size=large": {
       "model": "bettacraft:block/heater_segment_middle"
     },
-    "part=middle,size=medium": {
+    "facing=east,part=middle,size=medium": {
       "model": "bettacraft:block/heater_segment_middle"
     },
-    "part=middle,size=small": {
+    "facing=east,part=middle,size=small": {
       "model": "bettacraft:block/heater_segment_middle"
     },
-    "part=top,size=large": {
+    "facing=east,part=top,size=large": {
       "model": "bettacraft:block/heater_segment_top"
     },
-    "part=top,size=medium": {
+    "facing=east,part=top,size=medium": {
       "model": "bettacraft:block/heater_segment_top"
     },
-    "part=top,size=small": {
+    "facing=east,part=top,size=small": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=north,part=anchor,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=north,part=anchor,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=north,part=anchor,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=north,part=base,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=north,part=base,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=north,part=base,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=north,part=middle,size=large": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=north,part=middle,size=medium": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=north,part=middle,size=small": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=north,part=top,size=large": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=north,part=top,size=medium": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=north,part=top,size=small": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=south,part=anchor,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=south,part=anchor,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=south,part=anchor,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=south,part=base,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=south,part=base,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=south,part=base,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=south,part=middle,size=large": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=south,part=middle,size=medium": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=south,part=middle,size=small": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=south,part=top,size=large": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=south,part=top,size=medium": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=south,part=top,size=small": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=west,part=anchor,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=west,part=anchor,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=west,part=anchor,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=west,part=base,size=large": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=west,part=base,size=medium": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=west,part=base,size=small": {
+      "model": "bettacraft:block/heater_segment_anchor"
+    },
+    "facing=west,part=middle,size=large": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=west,part=middle,size=medium": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=west,part=middle,size=small": {
+      "model": "bettacraft:block/heater_segment_middle"
+    },
+    "facing=west,part=top,size=large": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=west,part=top,size=medium": {
+      "model": "bettacraft:block/heater_segment_top"
+    },
+    "facing=west,part=top,size=small": {
       "model": "bettacraft:block/heater_segment_top"
     }
   }

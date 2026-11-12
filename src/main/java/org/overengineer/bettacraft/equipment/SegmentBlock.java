@@ -62,6 +62,9 @@ public class SegmentBlock extends Block {
 
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
     public static final EnumProperty<Size> SIZE = EnumProperty.create("size", Size.class);
+    /** Internal filter (M4): side of the outlet with the water jet; the heater ignores it. */
+    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
+            net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
     private final boolean heater;
     private final Supplier<? extends Item> filterItem;
@@ -71,7 +74,7 @@ public class SegmentBlock extends Block {
         super(properties);
         this.heater = heater;
         this.filterItem = filterItem;
-        BlockState def = stateDefinition.any().setValue(PART, Part.ANCHOR);
+        BlockState def = stateDefinition.any().setValue(PART, Part.ANCHOR).setValue(FACING, Direction.NORTH);
         if (heater) def = def.setValue(SIZE, Size.SMALL);
         registerDefaultState(def);
     }
@@ -85,6 +88,17 @@ public class SegmentBlock extends Block {
         builder.add(PART);
         // SIZE is on both blocks so the state definition stays static; the filter only uses SMALL.
         builder.add(SIZE);
+        builder.add(FACING);
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, net.minecraft.world.level.block.Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     /** The item this piece gives back. */

@@ -10,7 +10,7 @@ import net.neoforged.fml.ModList;
  * {@code net.irisshaders.iris.api.v0.IrisApi#isShaderPackInUse()} and {@code #isRenderingShadowPass()} via method
  * handles. Without Iris both are false.
  */
-final class IrisCompat {
+public final class IrisCompat {
     private static final Object API;
     private static final MethodHandle PACK_IN_USE, SHADOW_PASS;
 
@@ -36,7 +36,7 @@ final class IrisCompat {
 
     private IrisCompat() {}
 
-    static boolean shaderPackInUse() {
+    public static boolean shaderPackInUse() {
         if (API == null) return false;
         try {
             return (boolean) PACK_IN_USE.invoke(API);
@@ -45,7 +45,7 @@ final class IrisCompat {
         }
     }
 
-    static boolean renderingShadowPass() {
+    public static boolean renderingShadowPass() {
         if (API == null) return false;
         try {
             return (boolean) SHADOW_PASS.invoke(API);

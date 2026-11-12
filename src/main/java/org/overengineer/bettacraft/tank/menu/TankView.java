@@ -103,6 +103,8 @@ public final class TankView {
     public int scale, interiorX, interiorY, interiorZ, interiorBlocks = -1, renderLimit, substrate, heatersInside, heaterCapWet, heaterCapDry,
             filters, floating;
     public boolean interiorBuilt, interiorTruncated;
+    /** M4: external filters (blocks next to the tank / filters in cabinets below), their heaters, cabinets, old slots. */
+    public int filterBlocks, cabinetFilters, cabinets, filterHeaters, filterHeaterBlocks, legacyHeaters;
 
     public static CompoundTag build(ServerPlayer player, TankBlockEntity controller) {
         ServerLevel level = player.serverLevel();
@@ -182,6 +184,23 @@ public final class TankView {
         CompoundTag breeding = TankBreeding.describe(level, controller);
         out.put("breeding", breeding);
         out.put("interior", interior(level, t));
+        CompoundTag eq = new CompoundTag();
+        int blocks = 0, cab = 0, heaters = 0, cap = 0;
+        for (var f : org.overengineer.bettacraft.tank.TankEquipment.filters(level, controller)) {
+            if (f instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity) cab++;
+            else blocks++;
+            heaters += f.heaterCount();
+            cap += f.heaterBlocks();
+        }
+        eq.putInt("filter_blocks", blocks);
+        eq.putInt("cabinet_filters", cab);
+        eq.putInt("cabinets", org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, controller).size());
+        eq.putInt("filter_heaters", heaters);
+        eq.putInt("filter_heat", cap);
+        int legacy = 0;
+        if (t.hasLegacyHeaters()) for (int i = 0; i < t.legacyHeaters().getContainerSize(); i++) if (!t.legacyHeaters().getItem(i).isEmpty()) legacy++;
+        eq.putInt("legacy", legacy);
+        out.put("equipment", eq);
         return out;
     }
 
@@ -274,6 +293,13 @@ public final class TankView {
         v.heaterCapDry = in.getInt("heat_dry");
         v.filters = in.getInt("filters");
         v.floating = in.getInt("floating");
+        CompoundTag eq = t.getCompound("equipment");
+        v.filterBlocks = eq.getInt("filter_blocks");
+        v.cabinetFilters = eq.getInt("cabinet_filters");
+        v.cabinets = eq.getInt("cabinets");
+        v.filterHeaters = eq.getInt("filter_heaters");
+        v.filterHeaterBlocks = eq.getInt("filter_heat");
+        v.legacyHeaters = eq.getInt("legacy");
         v.breeding = t.getCompound("breeding");
         ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));

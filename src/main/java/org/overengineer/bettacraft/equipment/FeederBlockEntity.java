@@ -133,6 +133,19 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
                 used += n;
             }
         }
+        // then food stored in the cabinets under the tank (PLAN 6.5)
+        for (CabinetBlockEntity cab : org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, tank)) {
+            var st = cab.storage();
+            for (int i = 0; i < st.getSlots(); i++) {
+                ItemStack s = st.getStackInSlot(i);
+                if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
+                int n = TankCare.feed(level, tank, s, s.getCount(), fed);
+                if (n > 0) {
+                    st.extractItem(i, n, false);
+                    used += n;
+                }
+            }
+        }
         if (used == 0 && !TankCare.bettas(level, tank.getTank()).isEmpty()) TankCare.log(level, tank, "log.bettacraft.feeder_empty");
         return used;
     }

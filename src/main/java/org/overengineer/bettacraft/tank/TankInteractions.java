@@ -52,7 +52,7 @@ public final class TankInteractions {
             if (!player.getAbilities().instabuild) {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             }
-            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, org.overengineer.bettacraft.registry.ModSounds.TANK_FILL.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
         } else {
             if (tank.waterMb() < TankData.MB_PER_BLOCK) {
@@ -67,7 +67,7 @@ public final class TankInteractions {
             }
             changeWater(server, controller, -TankData.MB_PER_BLOCK);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
-            level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, org.overengineer.bettacraft.registry.ModSounds.TANK_DRAIN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         }
         return ItemInteractionResult.CONSUME;
