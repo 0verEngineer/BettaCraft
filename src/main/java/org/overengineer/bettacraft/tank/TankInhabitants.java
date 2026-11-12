@@ -396,11 +396,15 @@ public final class TankInhabitants {
 
     // ------------------------------------------------------------------ break rule
 
-    /** Reason why the tank block at {@code pos} must not be broken: living inhabitants inside (PLAN 4.1). */
+    /** Reason why the tank block at {@code pos} must not be broken: living inhabitants or eggs inside (PLAN 4.1). */
     public static Optional<Component> breakBlockedReason(Level level, BlockPos pos) {
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) return Optional.empty();
         TankData tank = controller.getTank();
+        BubbleNest nest = tank.nest();
+        if (nest != null && nest.hasEggs()) {
+            return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked_nest", nest.visibleEggCount()));
+        }
         if (level instanceof ServerLevel server) {
             List<Entity> live = liveInhabitants(server, tank);
             if (live.isEmpty()) return Optional.empty();

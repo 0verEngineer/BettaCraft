@@ -135,17 +135,51 @@ class SchemaMigrationTest {
     @Test
     void bettaV0IsStamped() {
         CompoundTag v0 = snbt("{genome:{shape:\"veil\",body_color:\"does_not_exist\"},sex:\"female\",custom:1b}");
-        CompoundTag v1 = Schemas.BETTA.migrate(v0);
-        assertEquals(1, Schema.read(v1));
-        assertEquals("does_not_exist", v1.getCompound("genome").getString("body_color"), "unknown ids are carried along");
-        assertTrue(v1.getBoolean("custom"));
+        CompoundTag v2 = Schemas.BETTA.migrate(v0);
+        assertEquals(2, Schema.read(v2));
+        net.minecraft.nbt.ListTag body = v2.getCompound("genome").getList("body_color", net.minecraft.nbt.Tag.TAG_STRING);
+        assertEquals("does_not_exist", body.getString(0), "unknown ids are carried along");
+        assertEquals("does_not_exist", body.getString(1));
+        assertTrue(v2.getBoolean("custom"));
+    }
+
+    @Test
+    void bettaV1GenomeBecomesHomozygousPairs() {
+        // Frozen v1 example (M1 bucket / entity data): one value per locus.
+        CompoundTag v1 = snbt("{schema:1,genome:{species:\"bettacraft:betta\",shape:\"halfmoon\",pectoral:\"dumbo\",body_color:\"red\","
+                + "fin_color:\"royal_blue\",pattern:\"marble\",pattern_color:\"black\",iridescence:\"high\",iridescence_color:\"turquoise\","
+                + "future_gene:\"x\"},sex:\"male\",stage:\"adult\",generation:0,born:12L,health:{sick:0b}}");
+        CompoundTag v2 = Schemas.BETTA.migrate(v1);
+        assertEquals(2, Schema.read(v2));
+        CompoundTag g = v2.getCompound("genome");
+        assertFalse(g.contains("shape"), "shape is renamed to finform");
+        net.minecraft.nbt.ListTag fin = g.getList("finform", net.minecraft.nbt.Tag.TAG_STRING);
+        assertEquals(2, fin.size());
+        assertEquals("halfmoon", fin.getString(0));
+        assertEquals("halfmoon", fin.getString(1));
+        for (String k : new String[]{"pectoral", "body_color", "fin_color", "pattern", "pattern_color", "iridescence", "iridescence_color"}) {
+            net.minecraft.nbt.ListTag l = g.getList(k, net.minecraft.nbt.Tag.TAG_STRING);
+            assertEquals(2, l.size(), k);
+            assertEquals(l.getString(0), l.getString(1), k + " is homozygous");
+        }
+        assertEquals("x", g.getString("future_gene"), "unknown genome keys are kept");
+        assertEquals("bettacraft:betta", g.getString("species"));
+        assertEquals(12L, v2.getLong("born"));
+        // and the genotype shows exactly the old phenotype
+        var gt = org.overengineer.bettacraft.genetics.BettaGenotype.load(g);
+        var ph = gt.express();
+        assertEquals("halfmoon", ph.shape());
+        assertEquals("dumbo", ph.pectoral());
+        assertEquals("royal_blue", ph.finColor());
+        assertEquals("marble", ph.pattern());
+        assertEquals("x", gt.save().getString("future_gene"), "unknown keys survive a save");
     }
 
     @Test
     void currentVersionsAreStable() {
         // Bump these deliberately together with a new step + frozen test.
         assertEquals(2, Schemas.TANK_BLOCK_ENTITY.currentVersion());
-        assertEquals(1, Schemas.BETTA.currentVersion());
+        assertEquals(2, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
         assertEquals(1, Schemas.INTERIOR_REGIONS.currentVersion());

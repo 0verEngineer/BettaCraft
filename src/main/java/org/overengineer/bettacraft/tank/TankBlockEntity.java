@@ -42,6 +42,8 @@ public class TankBlockEntity extends BlockEntity {
     final it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<java.util.UUID> missing = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>();
     private boolean crowded;
     long lastCareTick = -1;
+    /** Log only once per chase / fight (transient). */
+    boolean chaseLogged, fightLogged;
 
     private ResourceLocation glass = DEFAULT_GLASS;
     @Nullable

@@ -201,6 +201,12 @@ public final class ModDataGen {
             basicItem(ModItems.SWAMP_WATER_BOTTLE.get());
             basicItem(ModItems.BETTA_PELLETS.get());
             basicItem(ModItems.MOSQUITO_LARVAE.get());
+            basicItem(ModItems.SALT_WATER_BOTTLE.get());
+            basicItem(ModItems.INFUSORIA_CULTURE.get());
+            basicItem(ModItems.INFUSORIA.get());
+            basicItem(ModItems.ARTEMIA_CULTURE.get());
+            basicItem(ModItems.ARTEMIA_NAUPLII.get());
+            basicItem(ModItems.ARTEMIA_CYSTS.get());
             basicItem(ModItems.HEATER_SMALL.get());
             basicItem(ModItems.HEATER_MEDIUM.get());
             basicItem(ModItems.HEATER_LARGE.get());
@@ -257,6 +263,20 @@ public final class ModDataGen {
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, BettaCraft.id("mosquito_larvae_smoking"));
             SimpleCookingRecipeBuilder.campfireCooking(swamp, RecipeCategory.FOOD, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 600)
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, BettaCraft.id("mosquito_larvae_campfire"));
+
+            // fry food (M2): cultures become ready after a day (CultureItem)
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.INFUSORIA_CULTURE.get())
+                    .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(Items.SEAGRASS)
+                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get()))
+                    .save(output, BettaCraft.id("infusoria_culture_seagrass"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.INFUSORIA_CULTURE.get())
+                    .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(net.minecraft.tags.ItemTags.LEAVES)
+                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get()))
+                    .save(output, BettaCraft.id("infusoria_culture_leaves"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ARTEMIA_CULTURE.get())
+                    .requires(ModItems.SALT_WATER_BOTTLE.get()).requires(ModItems.ARTEMIA_CYSTS.get())
+                    .unlockedBy("has_cysts", has(ModItems.ARTEMIA_CYSTS.get()))
+                    .save(output, BettaCraft.id("artemia_culture"));
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HEATER_SMALL.get())
                     .pattern("C").pattern("R").pattern("G")
@@ -339,6 +359,9 @@ public final class ModDataGen {
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(0.04F).build()
             }, new ItemStack(ModItems.MOSQUITO_LARVAE.get())));
+            // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
+            add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[0],
+                    new ItemStack(ModItems.ARTEMIA_CYSTS.get())));
         }
     }
 
@@ -354,6 +377,7 @@ public final class ModDataGen {
             tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get());
+            tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
         }
     }
 
@@ -365,7 +389,11 @@ public final class ModDataGen {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(ModTags.BETTA_FOOD).add(ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get());
+            tag(ModTags.BETTA_FOOD).add(ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.INFUSORIA.get(),
+                    ModItems.ARTEMIA_NAUPLII.get());
+            tag(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
+            tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get());
+            tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
             tag(ModTags.PLASTIC_SHEETS)
@@ -408,6 +436,7 @@ public final class ModDataGen {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(ModTags.BETTA_SPAWN_BIOMES).addTag(Tags.Biomes.IS_SWAMP);
+            tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN);
         }
     }
 }

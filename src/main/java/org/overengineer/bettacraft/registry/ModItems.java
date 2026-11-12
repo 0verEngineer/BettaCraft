@@ -11,6 +11,8 @@ import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
 import org.overengineer.bettacraft.equipment.HeaterItem;
+import org.overengineer.bettacraft.food.ArtemiaCystsItem;
+import org.overengineer.bettacraft.food.CultureItem;
 import org.overengineer.bettacraft.tank.TankBlockItem;
 
 public final class ModItems {
@@ -29,9 +31,23 @@ public final class ModItems {
             () -> new DeferredSpawnEggItem(ModEntities.BETTA, 0x6B6A3A, 0x13817F, new Item.Properties()));
 
     public static final DeferredItem<Item> SWAMP_WATER_BOTTLE = ITEMS.register("swamp_water_bottle",
-            () -> new Item(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> SALT_WATER_BOTTLE = ITEMS.register("salt_water_bottle",
+            () -> new Item(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> BETTA_PELLETS = ITEMS.registerSimpleItem("betta_pellets");
     public static final DeferredItem<Item> MOSQUITO_LARVAE = ITEMS.registerSimpleItem("mosquito_larvae");
+
+    // fry food (M2)
+    public static final DeferredItem<Item> INFUSORIA = ITEMS.register("infusoria",
+            () -> new Item(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+    public static final DeferredItem<Item> ARTEMIA_NAUPLII = ITEMS.register("artemia_nauplii",
+            () -> new Item(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+    public static final DeferredItem<CultureItem> INFUSORIA_CULTURE = ITEMS.register("infusoria_culture",
+            () -> new CultureItem(INFUSORIA, false, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<CultureItem> ARTEMIA_CULTURE = ITEMS.register("artemia_culture",
+            () -> new CultureItem(ARTEMIA_NAUPLII, true, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<ArtemiaCystsItem> ARTEMIA_CYSTS = ITEMS.register("artemia_cysts",
+            () -> new ArtemiaCystsItem(new Item.Properties()));
 
     public static final DeferredItem<HeaterItem> HEATER_SMALL = ITEMS.register("heater_small",
             () -> new HeaterItem(16, new Item.Properties().stacksTo(16)));

@@ -19,6 +19,8 @@ import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.entity.betta.BettaHealth;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
 import org.overengineer.bettacraft.genetics.BettaGenome;
+import org.overengineer.bettacraft.genetics.BettaGenotype;
+import org.overengineer.bettacraft.tank.TankBreeding;
 import org.overengineer.bettacraft.tank.SignPosition;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankCare;
@@ -30,10 +32,16 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
  * menu is open ({@link TankMenu#broadcastChanges}).
  */
 public final class TankView {
-    public static final int LOG_LINES = 40;
+    public static final int LOG_LINES = 60;
 
+    /**
+     * @param health   care health (1 healthy, 0.5 sick, 0 dead)
+     * @param hp       wounds: current / max hit points
+     * @param progress growth within the stage (0..1)
+     */
     public record Inhabitant(UUID uuid, String customName, String typeKey, boolean betta, boolean female, String stage,
-                             boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome) {
+                             boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome,
+                             BettaGenotype genotype, float hp, float progress, int generation) {
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
             t.putUUID("id", uuid);
@@ -48,6 +56,10 @@ public final class TankView {
             t.putBoolean("sick", sick);
             t.putBoolean("bucketable", bucketable);
             BettaGenome.CODEC.encodeStart(NbtOps.INSTANCE, genome).result().ifPresent(g -> t.put("genome", g));
+            t.put("genotype", genotype.save());
+            t.putFloat("hp", hp);
+            t.putFloat("progress", progress);
+            t.putInt("gen", generation);
             return t;
         }
 
@@ -55,7 +67,8 @@ public final class TankView {
             BettaGenome g = BettaGenome.CODEC.parse(NbtOps.INSTANCE, t.getCompound("genome")).result().orElse(BettaGenome.DEFAULT);
             return new Inhabitant(t.getUUID("id"), t.getString("name"), t.getString("type"), t.getBoolean("betta"), t.getBoolean("female"),
                     t.getString("stage"), t.getBoolean("adult"), t.getFloat("health"), t.getFloat("sat"), t.getBoolean("sick"),
-                    t.getBoolean("bucketable"), g);
+                    t.getBoolean("bucketable"), g, BettaGenotype.load(t.getCompound("genotype")), t.getFloat("hp"), t.getFloat("progress"),
+                    t.getInt("gen"));
         }
     }
 
@@ -83,6 +96,9 @@ public final class TankView {
     public final List<Inhabitant> inhabitants = new ArrayList<>();
     public final List<LogLine> log = new ArrayList<>();
     public long gameTime;
+    /** Breeding tab content ({@link org.overengineer.bettacraft.tank.TankBreeding#describe}). */
+    public CompoundTag breeding = new CompoundTag();
+    public final List<String> warnings = new ArrayList<>();
 
     public static CompoundTag build(ServerPlayer player, TankBlockEntity controller) {
         ServerLevel level = player.serverLevel();
@@ -132,10 +148,12 @@ public final class TankView {
             if (e instanceof BettaEntity b) {
                 BettaHealth h = b.health();
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), true, b.isFemale(), b.stage(), b.isAdult(),
-                        round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, b.genome());
+                        round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, b.genome(), b.genotype(),
+                        round(b.getHealth() / b.getMaxHealth()), round((float) b.stageProgress()), b.getBettaData().generation());
             } else {
+                float hp = e instanceof net.minecraft.world.entity.LivingEntity le ? round(le.getHealth() / le.getMaxHealth()) : 1F;
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", TankInhabitants.isAdult(e),
-                        1F, 1F, false, e instanceof Bucketable, BettaGenome.DEFAULT);
+                        1F, 1F, false, e instanceof Bucketable, BettaGenome.DEFAULT, BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0);
             }
             inh.add(i.save());
         }
@@ -157,6 +175,8 @@ public final class TankView {
             lg.add(c);
         }
         out.put("log", lg);
+        CompoundTag breeding = TankBreeding.describe(level, controller);
+        out.put("breeding", breeding);
         return out;
     }
 
@@ -208,6 +228,9 @@ public final class TankView {
             for (int k = 0; k < a.size(); k++) args.add(a.getString(k));
             v.log.add(new LogLine(c.getLong("t"), c.getString("k"), args));
         }
+        v.breeding = t.getCompound("breeding");
+        ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
+        for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));
         return v;
     }
 }

@@ -15,6 +15,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -37,21 +38,29 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.genetics.BettaGenome;
+import org.overengineer.bettacraft.genetics.BettaGenotype;
 import org.overengineer.bettacraft.registry.ModDataComponents;
 import org.overengineer.bettacraft.registry.ModItems;
 
 /**
  * The betta (PLAN 5.1). Wild bettas have no needs. Inside a Bettacraft tank (attachment {@code bettacraft:tank_ref})
- * the fish is confined to the tank's water and its health timers run ({@link BettaCare}).
+ * the fish is confined to the tank's water, its health timers run and it grows ({@link BettaCare}); breeding, fights
+ * and predators are handled per tank ({@link org.overengineer.bettacraft.tank.TankBreeding}).
  */
 public class BettaEntity extends AbstractFish {
     /** Genome, sex and stage for the renderer (server -> client). */
     private static final EntityDataAccessor<CompoundTag> DATA_LOOK = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.COMPOUND_TAG);
     private static final EntityDataAccessor<Boolean> DATA_SICK = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Bit 0: flaring, bit 1: breeding colours (female bars). */
+    private static final EntityDataAccessor<Byte> DATA_FLAGS = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.BYTE);
     private static final ResourceLocation SICK_SLOW = BettaCraft.id("sick_slowness");
+    public static final int FLAG_FLARE = 1, FLAG_MOOD = 2;
 
     private BettaData data;
     BettaHealth health = new BettaHealth();
+    BettaBreeding breeding = new BettaBreeding();
+    LifeStage liveStage = LifeStage.ADULT;
+    double stageDays;
     /** Game time up to which the health timers have been simulated (-1 = never). */
     long lastSimTime = -1;
     /** False until the first server tick after loading (catch-up or "time stood still"). */
@@ -64,10 +73,26 @@ public class BettaEntity extends AbstractFish {
     Vec3 foodTarget;
     long foodUntil;
 
+    // behaviour set by the tank simulation (server, transient)
+    @Nullable
+    Entity pursueTarget;
+    long pursueUntil;
+    @Nullable
+    Entity fleeFrom;
+    long fleeUntil;
+    @Nullable
+    Vec3 nestSpot;
+    long nestUntil;
+    long flareUntil, moodUntil;
+    /** Fractional damage (fights, chasing) not applied yet; applied in whole points. */
+    double pendingDamage;
+    @Nullable
+    Entity pendingAttacker;
+
     // client cache of DATA_LOOK
     private BettaGenome lookGenome = BettaGenome.DEFAULT;
     private boolean lookFemale;
-    private String lookStage = BettaData.STAGE_ADULT;
+    private LifeStage lookStage = LifeStage.ADULT;
 
     public BettaEntity(EntityType<? extends BettaEntity> type, Level level) {
         super(type, level);
@@ -83,14 +108,23 @@ public class BettaEntity extends AbstractFish {
         super.defineSynchedData(builder);
         builder.define(DATA_LOOK, new CompoundTag());
         builder.define(DATA_SICK, false);
+        builder.define(DATA_FLAGS, (byte) 0);
     }
 
     @Override
     protected void registerGoals() {
         // Not calling super: AbstractFish's random swim goal is replaced by one that knows the tank.
-        this.goalSelector.addGoal(0, new PanicGoal(this, 1.25));
+        this.goalSelector.addGoal(0, new PanicGoal(this, 1.25) {
+            @Override
+            public boolean canUse() {
+                return pursueTarget == null && super.canUse();
+            }
+        });
+        this.goalSelector.addGoal(1, new BettaBehaviourGoals.Flee(this));
+        this.goalSelector.addGoal(1, new BettaBehaviourGoals.Pursue(this));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 8.0F, 1.6, 1.4,
                 e -> EntitySelector.NO_SPECTATORS.test(e) && tankWater == null));
+        this.goalSelector.addGoal(3, new BettaBehaviourGoals.Nest(this));
         this.goalSelector.addGoal(4, new BettaSwimGoal(this));
     }
 
@@ -100,27 +134,40 @@ public class BettaEntity extends AbstractFish {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData groupData) {
         boolean wild = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
-        BettaGenome genome = wild ? BettaGenome.randomWild(random) : BettaGenome.randomDomestic(random);
-        setBettaData(BettaData.create(genome, random.nextBoolean(), level.getLevel().getGameTime()));
+        BettaGenotype genotype = wild ? BettaGenotype.randomWild(random) : BettaGenotype.randomDomestic(random);
+        setBettaData(BettaData.create(genotype, random.nextBoolean(), level.getLevel().getGameTime()));
         return super.finalizeSpawn(level, difficulty, spawnType, groupData);
     }
 
-    /** Current data including the live health timers (server). */
+    /** Current data including the live health, breeding and growth state (server). */
     public BettaData getBettaData() {
-        return data.withHealth(health);
+        return data.withLive(health, breeding, liveStage, stageDays);
     }
 
     public void setBettaData(BettaData d) {
         this.data = d;
         this.health = d.healthState();
+        this.breeding = d.breedingState();
+        this.liveStage = d.lifeStage().isEntity() ? d.lifeStage() : LifeStage.FRY;
+        this.stageDays = d.stageDays();
         syncLook();
+        refreshDimensions();
+    }
+
+    /** Moves to the next life stage (server). */
+    void setStage(LifeStage s) {
+        this.liveStage = s;
+        this.stageDays = 0;
+        this.data = data.withStage(s);
+        syncLook();
+        refreshDimensions();
     }
 
     void syncLook() {
         CompoundTag look = new CompoundTag();
         BettaGenome.CODEC.encodeStart(NbtOps.INSTANCE, data.genome()).result().ifPresent(t -> look.put("genome", t));
         look.putBoolean("female", data.female());
-        look.putString("stage", data.stage());
+        look.putString("stage", liveStage.id());
         entityData.set(DATA_LOOK, look);
         entityData.set(DATA_SICK, health.isSick());
         AttributeInstance speed = getAttribute(Attributes.MOVEMENT_SPEED);
@@ -140,7 +187,8 @@ public class BettaEntity extends AbstractFish {
             CompoundTag look = entityData.get(DATA_LOOK);
             lookGenome = BettaGenome.CODEC.parse(NbtOps.INSTANCE, look.getCompound("genome")).result().orElse(BettaGenome.DEFAULT);
             lookFemale = look.getBoolean("female");
-            lookStage = look.contains("stage", Tag.TAG_STRING) ? look.getString("stage") : BettaData.STAGE_ADULT;
+            lookStage = look.contains("stage", Tag.TAG_STRING) ? LifeStage.byId(look.getString("stage")) : LifeStage.ADULT;
+            refreshDimensions();
         }
     }
 
@@ -149,30 +197,110 @@ public class BettaEntity extends AbstractFish {
         return level().isClientSide ? lookGenome : data.genome();
     }
 
+    /** Genotype (server only; the client sees it through the tank menu). */
+    public BettaGenotype genotype() {
+        return data.genotype();
+    }
+
     public boolean isFemale() {
         return level().isClientSide ? lookFemale : data.female();
     }
 
+    public LifeStage lifeStage() {
+        LifeStage s = level() != null && level().isClientSide ? lookStage : liveStage;
+        return s == null ? LifeStage.ADULT : s;
+    }
+
     public String stage() {
-        return level().isClientSide ? lookStage : data.stage();
+        return lifeStage().id();
     }
 
     public boolean isAdult() {
-        return BettaData.STAGE_ADULT.equals(stage());
+        return lifeStage() == LifeStage.ADULT;
+    }
+
+    /** Progress 0..1 within the current stage (server). */
+    public double stageProgress() {
+        double d = liveStage.days();
+        return Double.isInfinite(d) || d <= 0 ? 1.0 : Mth.clamp(stageDays / d, 0, 1);
+    }
+
+    @Override
+    public boolean isBaby() {
+        return !isAdult();
+    }
+
+    @Override
+    public float getAgeScale() {
+        return lifeStage().scale();
     }
 
     public boolean isSick() {
         return entityData.get(DATA_SICK);
     }
 
+    public boolean isFlaring() {
+        return (entityData.get(DATA_FLAGS) & FLAG_FLARE) != 0;
+    }
+
+    public boolean isInBreedingMood() {
+        return (entityData.get(DATA_FLAGS) & FLAG_MOOD) != 0;
+    }
+
     public BettaHealth health() {
         return health;
+    }
+
+    public BettaBreeding breeding() {
+        return breeding;
     }
 
     /** Hand-fed food: swim towards {@code spot} until game time {@code until}. */
     public void setFoodTarget(Vec3 spot, long until) {
         this.foodTarget = spot;
         this.foodUntil = until;
+    }
+
+    /** Chase {@code target} (fights, nest defence) for a while. */
+    public void pursue(Entity target, long until) {
+        this.pursueTarget = target;
+        this.pursueUntil = until;
+    }
+
+    public void flee(Entity from, long until) {
+        this.fleeFrom = from;
+        this.fleeUntil = until;
+    }
+
+    /** Stay below the nest (building, guarding, spawning). */
+    public void keepAtNest(Vec3 spot, long until) {
+        this.nestSpot = spot;
+        this.nestUntil = until;
+    }
+
+    public void flare(long until) {
+        this.flareUntil = Math.max(flareUntil, until);
+    }
+
+    public void showBreedingMood(long until) {
+        this.moodUntil = Math.max(moodUntil, until);
+    }
+
+    /**
+     * Adds damage from a fight or chase; whole points are dealt as a hit by {@code attacker} (fractions accumulate so
+     * slow damage over a day stays exact without a red flash every second).
+     */
+    public void addDamage(double amount, @Nullable Entity attacker) {
+        pendingDamage += amount;
+        if (attacker != null) pendingAttacker = attacker;
+        if (pendingDamage >= 1.0) {
+            float dmg = (float) Math.floor(pendingDamage);
+            pendingDamage -= dmg;
+            DamageSource src = pendingAttacker instanceof net.minecraft.world.entity.LivingEntity le
+                    ? damageSources().mobAttack(le) : damageSources().generic();
+            invulnerableTime = 0;
+            hurt(src, dmg);
+        }
     }
 
     public boolean isInTank() {
@@ -228,6 +356,9 @@ public class BettaEntity extends AbstractFish {
         super.tick();
         if (level() instanceof ServerLevel server && isAlive()) {
             BettaCare.serverTick(server, this);
+            long now = server.getGameTime();
+            byte flags = (byte) ((now < flareUntil ? FLAG_FLARE : 0) | (now < moodUntil ? FLAG_MOOD : 0));
+            if (flags != entityData.get(DATA_FLAGS)) entityData.set(DATA_FLAGS, flags);
         }
     }
 
@@ -238,13 +369,32 @@ public class BettaEntity extends AbstractFish {
         if (box != null && !level().isClientSide && isInWater()) {
             // Keep our bettas inside the tank water (walls stop them anyway; this keeps them off the surface).
             Vec3 p = position();
-            double cx = Mth.clamp(p.x, box.minX + 0.2, box.maxX - 0.2);
-            double cy = Mth.clamp(p.y, box.minY + 0.05, Math.max(box.minY + 0.05, box.maxY - 0.3));
-            double cz = Mth.clamp(p.z, box.minZ + 0.2, box.maxZ - 0.2);
+            double m = Math.max(0.05, 0.2 * lifeStage().scale());
+            double cx = Mth.clamp(p.x, box.minX + m, box.maxX - m);
+            double cy = Mth.clamp(p.y, box.minY + 0.05, Math.max(box.minY + 0.05, box.maxY - 0.3 * lifeStage().scale()));
+            double cz = Mth.clamp(p.z, box.minZ + m, box.maxZ - m);
             if (cx != p.x || cy != p.y || cz != p.z) {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
             }
         }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (level() instanceof ServerLevel server && !isRemoved() && !dead) {
+            BettaCare.onDeath(server, this, source);
+        }
+        super.die(source);
+    }
+
+    @Override
+    protected boolean shouldDropLoot() {
+        return tankWater == null && super.shouldDropLoot(); // tank deaths: no drops (PLAN 5.5)
+    }
+
+    @Override
+    public boolean shouldDropExperience() {
+        return tankWater == null && super.shouldDropExperience();
     }
 
     @Override

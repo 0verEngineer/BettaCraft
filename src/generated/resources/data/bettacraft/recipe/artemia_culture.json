@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:salt_water_bottle"
+    },
+    {
+      "item": "bettacraft:artemia_cysts"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:artemia_culture"
+  }
+}

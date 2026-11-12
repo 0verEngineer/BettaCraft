@@ -48,7 +48,7 @@ public final class TankData {
     // Care data (M1).
     public static final int HEATER_SLOTS = 4;
     public static final int MAX_NAME_LENGTH = 32;
-    public static final int MAX_LOG = 64;
+    public static final int MAX_LOG = 100;
     private float targetTemp = TankTemperature.DEFAULT_TARGET;
     private float waterTemp = TankTemperature.DEFAULT_TARGET;
     @Nullable
@@ -61,6 +61,9 @@ public final class TankData {
     private boolean locked;
     private final Set<UUID> inhabitants = new LinkedHashSet<>();
     private final List<LogEntry> log = new ArrayList<>();
+    /** Bubble nest (M2), null if there is none. */
+    @Nullable
+    private BubbleNest nest;
 
     /** Client-side copy only knows box and summary values, not the member set. */
     private boolean clientView;
@@ -203,6 +206,8 @@ public final class TankData {
     public Set<UUID> inhabitants() { return inhabitants; }
     public int inhabitantCount() { return clientView ? clientInhabitants : inhabitants.size(); }
     public List<LogEntry> log() { return log; }
+    @Nullable public BubbleNest nest() { return nest; }
+    public void setNest(@Nullable BubbleNest n) { this.nest = n; }
 
     public void addLog(long time, String key, String... args) {
         log.add(new LogEntry(time, key, List.of(args)));
@@ -232,6 +237,8 @@ public final class TankData {
         locked = o.locked;
         log.clear();
         log.addAll(o.log);
+        // the nest belongs to the part of the tank that contains it (never duplicated on a split)
+        nest = o.nest != null && contains(BlockPos.containing(o.nest.pos())) ? o.nest.copy() : null;
     }
 
     public float waterQuality() { return waterQuality; }
@@ -272,6 +279,7 @@ public final class TankData {
         ListTag lg = new ListTag();
         for (LogEntry e : log) lg.add(e.save());
         t.put("log", lg);
+        if (nest != null) t.put("nest", nest.save());
         return t;
     }
 
@@ -308,6 +316,7 @@ public final class TankData {
         for (Tag u : inh) d.inhabitants.add(NbtUtils.loadUUID(u));
         ListTag lg = t.getList("log", Tag.TAG_COMPOUND);
         for (int i = 0; i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompound(i)));
+        d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.load(t.getCompound("nest")) : null;
         d.recomputeBounds();
         return d;
     }
@@ -327,6 +336,7 @@ public final class TankData {
         t.putString("front", front.getSerializedName());
         t.putFloat("water_temp", waterTemp);
         t.putInt("inhabitants", inhabitants.size());
+        if (nest != null) t.put("nest", nest.saveClientView());
         return t;
     }
 
@@ -349,6 +359,7 @@ public final class TankData {
         d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
         d.waterTemp = t.getFloat("water_temp");
         d.clientInhabitants = t.getInt("inhabitants");
+        d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.loadClientView(t.getCompound("nest")) : null;
         return d;
     }
 

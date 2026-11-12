@@ -16,6 +16,7 @@ DARK = (0x55, 0x55, 0x55, 255)
 BLACK = (0, 0, 0, 255)
 SLOT_FILL = (0x8B, 0x8B, 0x8B, 255)
 SLOT_DARK = (0x37, 0x37, 0x37, 255)
+CONTENT_FILL = (0x2E, 0x33, 0x39, 255)  # dark content area: light text stays readable (M2)
 
 PANEL = (0, 0, 248, 230)  # x, y, w, h
 CONTENT = (7, 17, 234, 123)  # inset box x 7..240, y 17..139
@@ -105,7 +106,7 @@ def padlock(open_: bool) -> np.ndarray:
 def tank_gui() -> np.ndarray:
     img = np.zeros((H, W, 4), np.uint8)
     panel(img, *PANEL)
-    inset(img, *CONTENT)
+    inset(img, *CONTENT, fill=CONTENT_FILL)
     for ix, iy in EQUIP_SLOTS:
         slot(img, ix, iy)
     for r in range(3):

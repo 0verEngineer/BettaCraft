@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cysts": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:artemia_cysts"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:artemia_culture"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cysts"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:artemia_culture"
+    ]
+  }
+}

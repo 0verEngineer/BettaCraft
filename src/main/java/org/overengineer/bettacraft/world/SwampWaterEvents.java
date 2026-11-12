@@ -23,7 +23,8 @@ import org.overengineer.bettacraft.registry.ModItems;
 import org.overengineer.bettacraft.registry.ModTags;
 
 /**
- * A glass bottle used on water whose block lies in a betta spawn biome gives a bottle of swamp water (PLAN 6.3).
+ * A glass bottle used on water whose block lies in a betta spawn biome gives a bottle of swamp water, in an ocean
+ * ({@code #bettacraft:salt_water_biomes}) a bottle of salt water (PLAN 6.3).
  * The biome at the position of the clicked water block decides, found by the same fluid ray trace as vanilla.
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
@@ -41,13 +42,18 @@ public final class SwampWaterEvents {
         BlockHitResult hit = level.clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY, player));
         if (hit.getType() != HitResult.Type.BLOCK) return;
         BlockPos pos = hit.getBlockPos();
-        if (!level.getFluidState(pos).is(FluidTags.WATER) || !level.getBiome(pos).is(ModTags.BETTA_SPAWN_BIOMES)) return;
+        if (!level.getFluidState(pos).is(FluidTags.WATER)) return;
+        var biome = level.getBiome(pos);
+        ItemStack result;
+        if (biome.is(ModTags.SALT_WATER_BIOMES)) result = new ItemStack(ModItems.SALT_WATER_BOTTLE.get());
+        else if (biome.is(ModTags.BETTA_SPAWN_BIOMES)) result = new ItemStack(ModItems.SWAMP_WATER_BOTTLE.get());
+        else return;
         if (!level.mayInteract(player, pos)) return;
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
         if (level.isClientSide) return;
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
-        player.setItemInHand(event.getHand(), ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.SWAMP_WATER_BOTTLE.get())));
+        player.setItemInHand(event.getHand(), ItemUtils.createFilledResult(stack, player, result));
     }
 }

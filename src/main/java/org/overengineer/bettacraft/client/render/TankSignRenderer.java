@@ -18,7 +18,8 @@ import org.overengineer.bettacraft.tank.TankData;
 
 /**
  * Name sign of a tank (PLAN 4.4): black plate with white text, 0.25 blocks high, on the front of the whole tank at
- * one of six positions. Drawn by the controller; shrinks the text when the front is too narrow.
+ * one of six positions. Drawn by the controller; shrinks the text when the front is too narrow. Also draws the bubble
+ * nest with its eggs / larvae (M2).
  */
 public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     private static final float PLATE_HEIGHT = 0.25F;
@@ -29,10 +30,16 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         this.font = ctx.getFont();
     }
 
+    private static final net.minecraft.resources.ResourceLocation NEST = org.overengineer.bettacraft.BettaCraft.id("textures/entity/nest/bubble_nest.png");
+    private static final net.minecraft.resources.ResourceLocation EGGS = org.overengineer.bettacraft.BettaCraft.id("textures/entity/nest/nest_eggs.png");
+    private static final net.minecraft.resources.ResourceLocation LARVAE = org.overengineer.bettacraft.BettaCraft.id("textures/entity/nest/nest_larvae.png");
+
     @Override
     public void render(TankBlockEntity be, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         TankData t = be.getTank();
-        if (t == null || !be.isController() || !t.signVisible() || t.name().isEmpty()) return;
+        if (t == null || !be.isController()) return;
+        if (t.nest() != null) renderNest(be, t.nest(), partialTick, pose, buffers);
+        if (!t.signVisible() || t.name().isEmpty()) return;
         Direction front = t.front();
         BlockPos mn = t.min(), mx = t.max();
         BlockPos origin = be.getBlockPos();
@@ -75,6 +82,47 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         font.drawInBatch(text, -textW / 2F, -4.0F, 0xFFFFFFFF, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET,
                 0, packed);
         pose.popPose();
+    }
+
+    /** Bubble nest at the surface (PLAN 5.4): grows while it is built; eggs / larvae hang below it. */
+    private void renderNest(TankBlockEntity be, org.overengineer.bettacraft.tank.BubbleNest nest, float partialTick, PoseStack pose,
+                            MultiBufferSource buffers) {
+        BlockPos origin = be.getBlockPos();
+        net.minecraft.world.phys.Vec3 p = nest.pos();
+        float size = switch (nest.phase()) {
+            case BUILDING -> 0.25F + 0.45F * (float) Math.min(1.0, nest.progress()
+                    / Math.max(1e-6, org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_NEST_BUILD_DAYS, 0.25)));
+            default -> 0.7F;
+        };
+        int packed = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(p));
+        long time = be.getLevel() == null ? 0 : be.getLevel().getGameTime();
+        pose.pushPose();
+        pose.translate(p.x - origin.getX(), p.y - origin.getY(), p.z - origin.getZ());
+        pose.mulPose(Axis.YP.rotationDegrees(((time + partialTick) * 0.15F) % 360F));
+        com.mojang.blaze3d.vertex.VertexConsumer vc = buffers.getBuffer(net.minecraft.client.renderer.RenderType.entityTranslucent(NEST));
+        flat(pose, vc, size, 0.0F, packed, true);
+        flat(pose, vc, size * 0.92F, -0.025F, packed, false);
+        if (nest.hasEggs()) {
+            boolean larvae = nest.visibleStage() == org.overengineer.bettacraft.entity.betta.LifeStage.LARVA;
+            float eggSize = size * Math.min(1.0F, 0.55F + nest.visibleEggCount() / 40F);
+            com.mojang.blaze3d.vertex.VertexConsumer ev = buffers.getBuffer(net.minecraft.client.renderer.RenderType.entityTranslucent(larvae ? LARVAE : EGGS));
+            flat(pose, ev, eggSize, -0.035F, packed, false);
+            flat(pose, ev, eggSize, -0.034F, packed, true);
+        }
+        pose.popPose();
+    }
+
+    /** Horizontal textured square centred at the origin; up = facing up, else facing down. */
+    private static void flat(PoseStack pose, com.mojang.blaze3d.vertex.VertexConsumer vc, float size, float y, int light, boolean up) {
+        PoseStack.Pose last = pose.last();
+        org.joml.Matrix4f m = last.pose();
+        float h = size / 2;
+        float[][] c = up ? new float[][]{{-h, -h, 0, 0}, {-h, h, 0, 1}, {h, h, 1, 1}, {h, -h, 1, 0}}
+                : new float[][]{{-h, -h, 0, 0}, {h, -h, 1, 0}, {h, h, 1, 1}, {-h, h, 0, 1}};
+        for (float[] v : c) {
+            vc.addVertex(m, v[0], y, v[1]).setColor(0xFFFFFFFF).setUv(v[2], v[3])
+                    .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, 0, up ? 1 : -1, 0);
+        }
     }
 
     @Override

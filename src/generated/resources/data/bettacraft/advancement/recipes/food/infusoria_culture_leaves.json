@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_swamp_water": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:swamp_water_bottle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:infusoria_culture_leaves"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_swamp_water"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:infusoria_culture_leaves"
+    ]
+  }
+}

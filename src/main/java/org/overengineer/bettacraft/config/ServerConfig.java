@@ -37,6 +37,30 @@ public final class ServerConfig {
     // temperature
     public static final ModConfigSpec.DoubleValue TEMPERATURE_TAU_DAYS;
 
+    // breeding (M2)
+    public static final ModConfigSpec.DoubleValue BREEDING_MIN_TEMP;
+    public static final ModConfigSpec.DoubleValue BREEDING_MAX_TEMP;
+    public static final ModConfigSpec.DoubleValue BREEDING_READY_DAYS;
+    public static final ModConfigSpec.DoubleValue BREEDING_NEST_BUILD_DAYS;
+    public static final ModConfigSpec.IntValue BREEDING_MIN_EGGS;
+    public static final ModConfigSpec.IntValue BREEDING_MAX_EGGS;
+    public static final ModConfigSpec.DoubleValue BREEDING_MIN_SURVIVAL;
+    public static final ModConfigSpec.DoubleValue BREEDING_MAX_SURVIVAL;
+    public static final ModConfigSpec.DoubleValue BREEDING_FEMALE_COOLDOWN_DAYS;
+    public static final ModConfigSpec.DoubleValue BREEDING_FEMALE_DAMAGE_PER_DAY;
+    public static final ModConfigSpec.DoubleValue BREEDING_MALE_EATS_FRY_PER_DAY;
+    public static final ModConfigSpec.DoubleValue BREEDING_MUTATION_CHANCE;
+
+    // combat (M2)
+    public static final ModConfigSpec.BooleanValue COMBAT_MALES_FIGHT;
+    public static final ModConfigSpec.DoubleValue COMBAT_FIGHT_DAYS;
+    public static final ModConfigSpec.DoubleValue COMBAT_PREDATOR_ATTACKS_PER_DAY;
+    public static final ModConfigSpec.DoubleValue HEALTH_HEAL_PER_DAY;
+
+    // food (M2)
+    public static final ModConfigSpec.IntValue FOOD_FRY_PER_ITEM;
+    public static final ModConfigSpec.DoubleValue FOOD_CULTURE_DAYS;
+
     // interior
     public static final ModConfigSpec.ConfigValue<Integer> INTERIOR_DEFAULT_SCALE;
     public static final ModConfigSpec.BooleanValue INTERIOR_SUBSTRATE_COSTS_BLOCK;
@@ -78,6 +102,38 @@ public final class ServerConfig {
         b.comment("Water temperature").push("temperature");
         TEMPERATURE_TAU_DAYS = b.comment("Time constant (in-game days) of the exponential approach of the water to its equilibrium temperature")
                 .defineInRange("tauDays", 0.1, 0.0, 10.0);
+        b.pop();
+
+        b.comment("Breeding in Bettacraft tanks (PLAN 5.4)").push("breeding");
+        BREEDING_MIN_TEMP = b.comment("Lowest water temperature for nest building and spawning").defineInRange("minTemp", 26.0, 0.0, 50.0);
+        BREEDING_MAX_TEMP = b.comment("Highest water temperature for nest building and spawning").defineInRange("maxTemp", 28.0, 0.0, 50.0);
+        BREEDING_READY_DAYS = b.comment("Days a healthy, fed pair needs in breeding conditions before the male starts a nest (live food halves it)")
+                .defineInRange("readyDays", 0.25, 0.0, 100.0);
+        BREEDING_NEST_BUILD_DAYS = b.comment("Days the male needs to build the bubble nest").defineInRange("nestBuildDays", 0.25, 0.0, 100.0);
+        BREEDING_MIN_EGGS = b.comment("Minimum eggs per spawning").defineInRange("minEggs", 8, 1, 64);
+        BREEDING_MAX_EGGS = b.comment("Maximum eggs per spawning").defineInRange("maxEggs", 20, 1, 64);
+        BREEDING_MIN_SURVIVAL = b.comment("Share of larvae that become fry with poor care").defineInRange("minSurvival", 0.6, 0.0, 1.0);
+        BREEDING_MAX_SURVIVAL = b.comment("Share of larvae that become fry with perfect care (temperature, stocking, fed male)").defineInRange("maxSurvival", 0.9, 0.0, 1.0);
+        BREEDING_FEMALE_COOLDOWN_DAYS = b.comment("Days before a female can spawn again").defineInRange("femaleCooldownDays", 3.0, 0.0, 100.0);
+        BREEDING_FEMALE_DAMAGE_PER_DAY = b.comment("Health points per day a female loses while the male guards the nest and chases her (bettas have 6)")
+                .defineInRange("femaleDamagePerDay", 2.0, 0.0, 100.0);
+        BREEDING_MALE_EATS_FRY_PER_DAY = b.comment("Chance per day and free-swimming fry that an adult male in the tank eats it")
+                .defineInRange("maleEatsFryPerDay", 0.3, 0.0, 10.0);
+        BREEDING_MUTATION_CHANCE = b.comment("Chance per allele that it mutates into a random allele").defineInRange("mutationChance", 0.01, 0.0, 1.0);
+        b.pop();
+
+        b.comment("Fights and predators (PLAN 5.6, 4.3)").push("combat");
+        COMBAT_MALES_FIGHT = b.comment("Adult males in the same tank fight until one dies").define("malesFight", true);
+        COMBAT_FIGHT_DAYS = b.comment("In-game days a fight between two males lasts (until the loser dies)").defineInRange("fightDays", 1.0, 0.01, 100.0);
+        COMBAT_PREDATOR_ATTACKS_PER_DAY = b.comment("Attacks per in-game day of a predator (#bettacraft:predators) on small inhabitants")
+                .defineInRange("predatorAttacksPerDay", 4.0, 0.0, 1000.0);
+        HEALTH_HEAL_PER_DAY = b.comment("Health points per day a fed, healthy betta in a tank regains (wounds from fights and chasing)")
+                .defineInRange("healPerDay", 2.0, 0.0, 100.0);
+        b.pop();
+
+        b.comment("Food").push("food");
+        FOOD_FRY_PER_ITEM = b.comment("Fry fed by one portion of fry food (infusoria, artemia nauplii)").defineInRange("fryPerItem", 20, 1, 256);
+        FOOD_CULTURE_DAYS = b.comment("Days an infusoria or artemia culture needs to become ready").defineInRange("cultureDays", 1.0, 0.0, 100.0);
         b.pop();
 
         b.comment("Duration of the life stages in in-game days").push("stages");

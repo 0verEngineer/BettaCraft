@@ -22,6 +22,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaTooltip;
+import org.overengineer.bettacraft.genetics.BettaLoci;
+import org.overengineer.bettacraft.genetics.Locus;
+import org.overengineer.bettacraft.genetics.GenotypeText;
 import org.overengineer.bettacraft.network.TankActionPayload;
 import org.overengineer.bettacraft.tank.SignPosition;
 import org.overengineer.bettacraft.tank.TankData;
@@ -31,20 +34,25 @@ import org.overengineer.bettacraft.tank.menu.TankActions;
 import org.overengineer.bettacraft.tank.menu.TankMenu;
 import org.overengineer.bettacraft.tank.menu.TankView;
 
-/** Tank menu screen with the tabs Overview, Inhabitants and Log (PLAN 8). */
+/** Tank menu screen with the tabs Overview, Inhabitants, Breeding and Log (PLAN 8). */
 public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/tank.png");
     private static final int TEXT = 0x404040;
     private static final int TEXT_LIGHT = 0xE0E0E0;
     private static final int CONTENT_X = 7, CONTENT_Y = 17, CONTENT_W = 234, CONTENT_H = 123;
-    private static final int LIST_ROWS = 10, ROW_H = 11, LOG_ROWS = 11;
+    private static final int LIST_ROWS = 10, ROW_H = 11, LOG_ROWS = 10, BREED_ROWS = 12;
 
-    private enum Tab { OVERVIEW, INHABITANTS, LOG }
+    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG }
+
+    /** Log filter: all, breeding (nest, eggs, fry, growth), health (sick, deaths, fights), feeding. */
+    private enum LogFilter { ALL, BREEDING, HEALTH, FEEDING }
 
     private Tab tab = Tab.OVERVIEW;
     private final List<AbstractWidget> overview = new ArrayList<>();
     private final List<AbstractWidget> inhabitants = new ArrayList<>();
-    private Button tabOverview, tabInhabitants, tabLog;
+    private Button tabOverview, tabInhabitants, tabBreeding, tabLog, logFilterButton;
+    private LogFilter logFilter = LogFilter.ALL;
+    private int breedScroll;
     private EditBox nameBox, fishNameBox;
     private Button lockButton, signButton, signPosButton, frontButton, minusButton, plusButton, enterButton;
     private Button renameButton, bucketButton, bagButton;
@@ -54,6 +62,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private UUID selected;
     private UUID nameBoxFish;
     private int listScroll, logScroll;
+    @Nullable
+    private List<Component> pendingTooltip;
 
     public TankScreen(TankMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -79,11 +89,18 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         inhabitants.clear();
         int x = leftPos, y = topPos;
         tabOverview = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.overview"), b -> setTab(Tab.OVERVIEW))
-                .bounds(x + 96, y + 3, 50, 12).build());
+                .bounds(x + 56, y + 3, 50, 12).build());
         tabInhabitants = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.inhabitants"), b -> setTab(Tab.INHABITANTS))
-                .bounds(x + 146, y + 3, 50, 12).build());
+                .bounds(x + 106, y + 3, 46, 12).build());
+        tabBreeding = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.breeding"), b -> setTab(Tab.BREEDING))
+                .bounds(x + 152, y + 3, 46, 12).build());
         tabLog = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.log"), b -> setTab(Tab.LOG))
-                .bounds(x + 196, y + 3, 45, 12).build());
+                .bounds(x + 198, y + 3, 43, 12).build());
+        logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
+            logFilter = LogFilter.values()[(logFilter.ordinal() + 1) % LogFilter.values().length];
+            logScroll = 0;
+            updateWidgets();
+        }).bounds(x + 176, y + 125, 62, 13).build());
 
         // ---- overview
         nameBox = new EditBox(font, x + 11, y + 21, 150, 13, Component.translatable("gui.bettacraft.tank.name"));
@@ -163,7 +180,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         for (AbstractWidget w : inhabitants) w.visible = tab == Tab.INHABITANTS;
         tabOverview.active = tab != Tab.OVERVIEW;
         tabInhabitants.active = tab != Tab.INHABITANTS;
+        tabBreeding.active = tab != Tab.BREEDING;
         tabLog.active = tab != Tab.LOG;
+        logFilterButton.visible = tab == Tab.LOG;
+        logFilterButton.setMessage(Component.translatable("gui.bettacraft.log.filter." + logFilter.name().toLowerCase(java.util.Locale.ROOT)));
         if (v == null) {
             for (AbstractWidget w : overview) w.active = false;
             for (AbstractWidget w : inhabitants) w.active = false;
@@ -280,7 +300,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 return true;
             }
             if (tab == Tab.LOG) {
-                logScroll = Mth.clamp(logScroll - (int) Math.signum(sy), 0, Math.max(0, v.log.size() - LOG_ROWS));
+                logScroll = Mth.clamp(logScroll - (int) Math.signum(sy), 0, Math.max(0, filteredLog(v).size() - LOG_ROWS));
+                return true;
+            }
+            if (tab == Tab.BREEDING) {
+                breedScroll = Mth.clamp(breedScroll - (int) Math.signum(sy), 0, Math.max(0, BreedingLines.build(v).size() - BREED_ROWS));
                 return true;
             }
         }
@@ -300,8 +324,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        pendingTooltip = null;
         super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+        if (pendingTooltip != null) g.renderComponentTooltip(font, pendingTooltip, mouseX, mouseY);
+        else renderTooltip(g, mouseX, mouseY);
     }
 
     @Override
@@ -315,7 +341,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         switch (tab) {
             case OVERVIEW -> drawOverview(g, v);
             case INHABITANTS -> drawInhabitants(g, v, mouseX - leftPos, mouseY - topPos);
-            case LOG -> drawLog(g, v);
+            case BREEDING -> drawBreeding(g, v, mouseX - leftPos, mouseY - topPos);
+            case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
         }
         if (v.locked) g.blit(TEXTURE, 10 + font.width(title), 4, 16, 232, 10, 10);
     }
@@ -400,23 +427,31 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             line(g, Component.translatable("gui.bettacraft.fish.foreign"), x, y, 0xA0A0A0);
             return;
         }
-        line(g, Component.translatable("gui.bettacraft.fish.sex_stage", BettaTooltip.sex(sel.female()),
-                Component.translatable("stage.bettacraft." + sel.stage())), x, y, TEXT_LIGHT);
+        MutableComponent stage = Component.translatable("stage.bettacraft." + sel.stage());
+        if (!sel.adult()) stage = Component.translatable("gui.bettacraft.fish.stage_progress", stage, Math.round(sel.progress() * 100));
+        line(g, Component.translatable("gui.bettacraft.fish.sex_stage", BettaTooltip.sex(sel.female()), stage), x, y, TEXT_LIGHT);
         y += 9;
-        bar(g, x, y, Component.translatable(sel.sick() ? "gui.bettacraft.fish.sick" : "gui.bettacraft.fish.health"), sel.health(),
-                sel.health() > 0.5F ? 0xFF50C050 : 0xFFD04040);
+        float hp = Math.min(sel.health(), sel.hp());
+        bar(g, x, y, Component.translatable(sel.sick() ? "gui.bettacraft.fish.sick" : "gui.bettacraft.fish.health"), hp,
+                hp > 0.5F ? 0xFF50C050 : 0xFFD04040);
         y += 9;
         bar(g, x, y, Component.translatable("gui.bettacraft.fish.satiation"), sel.satiation(), 0xFFD0A040);
         y += 10;
-        var gnm = sel.genome();
-        for (Component c : List.of(BettaTooltip.shape(gnm),
-                Component.translatable("gui.bettacraft.fish.body", BettaTooltip.color(gnm.bodyColor())),
-                Component.translatable("gui.bettacraft.fish.fins", BettaTooltip.color(gnm.finColor())),
-                Component.translatable("tooltip.bettacraft.betta.pattern", BettaTooltip.pattern(gnm)),
-                Component.translatable("tooltip.bettacraft.betta.iridescence", BettaTooltip.iridescence(gnm)))) {
+        var gt = sel.genotype();
+        int top = y;
+        for (Locus l : List.of(BettaLoci.FINFORM, BettaLoci.BODY_COLOR, BettaLoci.FIN_COLOR, BettaLoci.PATTERN, BettaLoci.IRIDESCENCE)) {
+            Component c = GenotypeText.line(gt, l);
             String s = font.plainSubstrByWidth(c.getString(), 124);
             g.drawString(font, s, x, y, 0xC8C8C8, false);
             y += 9;
+        }
+        if (mx >= x && mx < x + 124 && my >= top && my < y) {
+            List<Component> tip = new ArrayList<>();
+            tip.add(Component.translatable("gui.bettacraft.fish.genotype").withStyle(ChatFormatting.YELLOW));
+            for (Locus l : BettaLoci.ALL) tip.add(GenotypeText.line(gt, l));
+            tip.add(Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
+            tip.add(Component.translatable("gui.bettacraft.fish.genotype_hint").withStyle(ChatFormatting.DARK_GRAY));
+            pendingTooltip = tip;
         }
     }
 
@@ -427,19 +462,60 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         g.fill(bx, y + 1, bx + Math.round(bw * Mth.clamp(value, 0, 1)), y + 7, color);
     }
 
-    private void drawLog(GuiGraphics g, TankView v) {
+    private List<TankView.LogLine> filteredLog(TankView v) {
+        if (logFilter == LogFilter.ALL) return v.log;
+        List<TankView.LogLine> out = new ArrayList<>();
+        for (TankView.LogLine l : v.log) if (LogStyle.category(l.key()) == logFilter.ordinal()) out.add(l);
+        return out;
+    }
+
+    private void drawLog(GuiGraphics g, TankView v, int mx, int my) {
         int x = 11, y = 21;
-        if (v.log.isEmpty()) {
+        List<TankView.LogLine> lines = filteredLog(v);
+        if (lines.isEmpty()) {
             line(g, Component.translatable("gui.bettacraft.log.empty"), x, y, 0xA0A0A0);
-            return;
         }
         for (int r = 0; r < LOG_ROWS; r++) {
-            int idx = v.log.size() - 1 - logScroll - r;
+            int idx = lines.size() - 1 - logScroll - r;
             if (idx < 0) break;
-            TankView.LogLine l = v.log.get(idx);
-            Component c = Component.translatable("gui.bettacraft.log.line", l.time() / 24000L, TankActions.logLine(l));
-            g.drawString(font, font.plainSubstrByWidth(c.getString(), 226), x, y + r * 11, 0xE0E0E0, false);
+            TankView.LogLine l = lines.get(idx);
+            int ly = y + r * 10;
+            int color = LogStyle.color(l.key());
+            g.fill(x, ly + 2, x + 3, ly + 5, 0xFF000000 | color);
+            Component c = Component.translatable("gui.bettacraft.log.line", l.time() / 24000L + 1, TankActions.logLine(l));
+            g.drawString(font, font.plainSubstrByWidth(c.getString(), 216), x + 6, ly, color, false);
+            if (my >= ly && my < ly + 10 && mx >= x && mx < x + 226 && font.width(c) > 216) pendingTooltip = List.of(c);
         }
+        scrollbar(g, lines.size(), LOG_ROWS, logScroll, true);
+        g.drawString(font, Component.translatable("gui.bettacraft.log.count", lines.size()), x, 128, 0x909090, false);
+    }
+
+    private void drawBreeding(GuiGraphics g, TankView v, int mx, int my) {
+        int x = 11, y = 20;
+        List<Component> lines = BreedingLines.build(v);
+        breedScroll = Mth.clamp(breedScroll, 0, Math.max(0, lines.size() - BREED_ROWS));
+        for (int r = 0; r < BREED_ROWS; r++) {
+            int idx = breedScroll + r;
+            if (idx >= lines.size()) break;
+            Component c = lines.get(idx);
+            int ly = y + r * 10;
+            g.drawString(font, net.minecraft.locale.Language.getInstance().getVisualOrder(font.substrByWidth(c, 220)), x, ly, TEXT_LIGHT, false);
+            if (my >= ly && my < ly + 10 && mx >= x && mx < x + 226 && font.width(c) > 220) pendingTooltip = List.of(c);
+        }
+        scrollbar(g, lines.size(), BREED_ROWS, breedScroll, false);
+    }
+
+    /** Thin scroll indicator at the right edge of the content area. */
+    private void scrollbar(GuiGraphics g, int total, int rows, int scroll, boolean fromBottom) {
+        if (total <= rows) return;
+        int top = CONTENT_Y + 2, h = CONTENT_H - 4, x = CONTENT_X + CONTENT_W - 4;
+        int bh = Math.max(8, h * rows / total);
+        int maxScroll = total - rows;
+        float f = maxScroll <= 0 ? 0 : scroll / (float) maxScroll;
+        if (fromBottom) f = 1 - f;
+        int by = top + Math.round((h - bh) * f);
+        g.fill(x, top, x + 2, top + h, 0x40000000);
+        g.fill(x, by, x + 2, by + bh, 0xFFA0A0A0);
     }
 
     static String dirKey(Direction d) {

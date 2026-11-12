@@ -82,11 +82,23 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+repositories {
+    // Optional integrations (compileOnly; only loaded at runtime in dev)
+    exclusiveContent {
+        forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
 // Plain JUnit 5 tests. They run WITHOUT a Minecraft bootstrap; only classes that do not
 // touch registries (e.g. CompoundTag, TagParser) may be used there.
 neoForge.addModdingDependenciesTo(sourceSets.test)
 
 dependencies {
+    // Jade (optional dependency, PLAN 10). In dev it is on the run classpath unless -PnoJade is given.
+    compileOnly "maven.modrinth:jade:${jade_version}"
+    if (!project.hasProperty('noJade')) localRuntime "maven.modrinth:jade:${jade_version}"
+
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

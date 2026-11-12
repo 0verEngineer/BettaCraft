@@ -25,6 +25,7 @@ import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
 import org.overengineer.bettacraft.equipment.HeaterItem;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
+import org.overengineer.bettacraft.food.BettaFood;
 import org.overengineer.bettacraft.registry.ModTags;
 
 /**
@@ -35,7 +36,7 @@ public final class TankCare {
     private static final int INTERVAL = 20;
     private static final int RECONCILE_INTERVAL = 40;
     /** One food item (pellet or larvae portion) feeds up to this many fish. */
-    public static final int FISH_PER_FOOD = 4;
+    public static final int FISH_PER_FOOD = BettaFood.FISH_PER_FOOD;
 
     private TankCare() {}
 
@@ -48,6 +49,7 @@ public final class TankCare {
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastCareTick = now;
         updateTemperature(server, be, dt / 24000.0);
+        TankBreeding.step(server, be, dt / 24000.0);
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);
         }
@@ -138,36 +140,62 @@ public final class TankCare {
         return out;
     }
 
+    /** Bettas of the tank that eat this kind of food (fry food for fry, pellets/larvae from juvenile on). */
+    public static List<BettaEntity> eaters(ServerLevel level, TankData tank, BettaFood.Kind kind) {
+        List<BettaEntity> out = new ArrayList<>();
+        for (BettaEntity b : bettas(level, tank)) if (BettaFood.canEat(b.lifeStage(), b.stageProgress(), kind)) out.add(b);
+        return out;
+    }
+
     /**
-     * Feeds the hungriest bettas with up to {@code maxItems} items (one item per {@link #FISH_PER_FOOD} fish).
-     * Returns the number of items used (0 if there is no betta).
+     * Feeds the hungriest bettas that eat this food with up to {@code maxItems} items (one item per
+     * {@link BettaFood#fishPerItem} fish). Returns the number of items used (0 if nobody eats it).
      */
     public static int feed(ServerLevel level, TankBlockEntity controller, ItemStack food, int maxItems) {
-        List<BettaEntity> fish = bettas(level, controller.getTank());
-        if (fish.isEmpty() || maxItems <= 0) return 0;
+        return feed(level, controller, food, maxItems, null);
+    }
+
+    /** As {@link #feed(ServerLevel, TankBlockEntity, ItemStack, int)}; skips and collects the fish fed in this {@code round}. */
+    public static int feed(ServerLevel level, TankBlockEntity controller, ItemStack food, int maxItems, @Nullable java.util.Set<java.util.UUID> round) {
+        BettaFood.Kind kind = BettaFood.kind(food);
+        if (kind == null || maxItems <= 0) return 0;
+        List<BettaEntity> fish = eaters(level, controller.getTank(), kind);
+        if (round != null) fish.removeIf(b -> round.contains(b.getUUID()));
+        if (fish.isEmpty()) return 0;
         fish.sort(Comparator.comparingDouble((BettaEntity b) -> b.health().daysSinceFed()).reversed());
-        int items = Math.min(maxItems, (fish.size() + FISH_PER_FOOD - 1) / FISH_PER_FOOD);
-        int fed = Math.min(fish.size(), items * FISH_PER_FOOD);
-        for (int i = 0; i < fed; i++) fish.get(i).health().feed();
+        int per = BettaFood.fishPerItem(kind);
+        int items = Math.min(maxItems, (fish.size() + per - 1) / per);
+        int fed = Math.min(fish.size(), items * per);
+        for (int i = 0; i < fed; i++) {
+            BettaEntity b = fish.get(i);
+            b.health().feed();
+            if (kind == BettaFood.Kind.LIVE && b.isAdult()) b.breeding().condition();
+            if (round != null) round.add(b.getUUID());
+        }
         log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
         return items;
     }
 
     /** Right-click on the tank with betta food: one item, food sinks down, bettas swim to it. */
     public static ItemInteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand, Vec3 hit) {
-        if (!stack.is(ModTags.BETTA_FOOD)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (BettaFood.kind(stack) == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) return ItemInteractionResult.CONSUME;
         TankData tank = controller.getTank();
-        List<BettaEntity> fish = bettas(server, tank);
+        List<BettaEntity> fish = eaters(server, tank, BettaFood.kind(stack));
         if (fish.isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.no_bettas"), true);
+            player.displayClientMessage(Component.translatable(bettas(server, tank).isEmpty() ? "message.bettacraft.tank.no_bettas"
+                    : "message.bettacraft.tank.nobody_eats", stack.getHoverName()), true);
             return ItemInteractionResult.CONSUME;
         }
         feed(server, controller, stack, 1);
-        if (!player.getAbilities().instabuild) stack.shrink(1);
+        ItemStack remainder = stack.getCraftingRemainingItem();
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+            if (!remainder.isEmpty() && !player.getInventory().add(remainder)) player.drop(remainder, false);
+        }
         AABB water = waterBox(tank);
         Vec3 spot = new Vec3(Math.max(water.minX, Math.min(water.maxX, hit.x)), water.maxY - 0.05,
                 Math.max(water.minZ, Math.min(water.maxZ, hit.z)));

@@ -1,0 +1,8 @@
+{
+  "type": "bettacraft:artemia_sand",
+  "conditions": [],
+  "item": {
+    "count": 1,
+    "id": "bettacraft:artemia_cysts"
+  }
+}

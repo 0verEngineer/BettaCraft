@@ -15,7 +15,7 @@ import org.overengineer.bettacraft.entity.betta.BettaEntity;
  */
 public class BettaModel extends HierarchicalModel<BettaEntity> {
     private final ModelPart root;
-    private final ModelPart body, peduncle, caudal, dorsal, anal;
+    private final ModelPart body, head, peduncle, caudal, dorsal, anal;
     private final ModelPart pecL, pecR, dumboL, dumboR, ventL, ventR;
     private final ModelPart[] fins;
     /** Colour for the next (base) render pass, consumed once; 0 = none. Set by the renderer. */
@@ -24,6 +24,7 @@ public class BettaModel extends HierarchicalModel<BettaEntity> {
     public BettaModel(ModelPart root) {
         this.root = root;
         this.body = root.getChild("body");
+        this.head = body.getChild("head");
         this.peduncle = body.getChild("peduncle");
         this.caudal = peduncle.getChild("caudal");
         this.dorsal = body.getChild("dorsal");
@@ -84,8 +85,27 @@ public class BettaModel extends HierarchicalModel<BettaEntity> {
 
         float finScale = fish.isFemale() ? BettaModelDefinitions.FEMALE_FIN_SCALE : 1.0F;
         float tailScale = fish.isFemale() ? BettaModelDefinitions.FEMALE_TAIL_SCALE : 1.0F;
+        // young fish: fins still short (fry 0.5, juvenile 0.7, subadult 0.85)
+        float young = switch (fish.lifeStage()) {
+            case FRY, EGG, LARVA -> 0.5F;
+            case JUVENILE -> 0.7F;
+            case SUBADULT -> 0.85F;
+            default -> 1.0F;
+        };
+        finScale *= young;
+        tailScale *= young;
         for (ModelPart p : fins) scale(p, finScale, finScale, finScale);
         scale(caudal, tailScale, tailScale, tailScale);
+        if (fish.isFlaring() && !sick) {
+            // flaring: fins spread wide, gill covers open (head slightly wider), quick shivers
+            float shiver = 1.0F + Mth.sin(age * 1.7F) * 0.03F;
+            scale(caudal, 1.0F, 1.22F * shiver, 1.12F);
+            scale(dorsal, 1.0F, 1.3F * shiver, 1.1F);
+            scale(anal, 1.0F, 1.3F * shiver, 1.1F);
+            scale(head, 1.18F, 1.06F, 1.0F);
+            pecL.yRot += 0.35F;
+            pecR.yRot -= 0.35F;
+        }
         if (sick) {
             // clamped fins: folded closer to the body
             scale(caudal, 1.0F, 0.75F, 0.7F);

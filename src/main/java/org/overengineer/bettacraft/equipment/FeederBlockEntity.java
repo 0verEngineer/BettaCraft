@@ -117,17 +117,24 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         if (tank != null) be.feedNow(server, tank);
     }
 
-    /** Feeds the tank with the first food found; returns items used. */
+    /**
+     * Feeds the tank: every fish gets the first suitable food in the slots (fry food for fry, pellets / larvae for the
+     * others, PLAN 6.3). Returns the items used.
+     */
     public int feedNow(ServerLevel level, TankBlockEntity tank) {
+        java.util.Set<java.util.UUID> fed = new java.util.HashSet<>();
+        int used = 0;
         for (int i = 0; i < SLOTS; i++) {
             ItemStack s = items.getStackInSlot(i);
             if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
-            int used = TankCare.feed(level, tank, s, s.getCount());
-            if (used > 0) items.extractItem(i, used, false);
-            return used;
+            int n = TankCare.feed(level, tank, s, s.getCount(), fed);
+            if (n > 0) {
+                items.extractItem(i, n, false);
+                used += n;
+            }
         }
-        if (!TankCare.bettas(level, tank.getTank()).isEmpty()) TankCare.log(level, tank, "log.bettacraft.feeder_empty");
-        return 0;
+        if (used == 0 && !TankCare.bettas(level, tank.getTank()).isEmpty()) TankCare.log(level, tank, "log.bettacraft.feeder_empty");
+        return used;
     }
 
     /** Catch-up feeding (simulateUnloadedTime): consumes fractional portions; false if there was no food. */

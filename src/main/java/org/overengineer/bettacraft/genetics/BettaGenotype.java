@@ -1,0 +1,258 @@
+package org.overengineer.bettacraft.genetics;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.util.RandomSource;
+
+/**
+ * Genotype of a betta (M2): an allele pair per {@link BettaLoci locus} plus the species. The visible fish
+ * ({@link BettaGenome}, used by the renderer) is {@link #express() expressed} from it.
+ * <p>
+ * NBT: {@code {species:"bettacraft:betta", finform:["plakat","veil"], pectoral:[...], ...}}; keys this version does not
+ * know are kept in {@link #extra} and written back unchanged. Pure logic (unit-tested without a Minecraft bootstrap).
+ */
+public final class BettaGenotype {
+    public record AllelePair(String a, String b) {
+        public boolean homozygous() {
+            return a.equals(b);
+        }
+
+        public String expressed(Locus l) {
+            return l.express(a, b);
+        }
+
+        /** The allele that does not show (equals the expressed one when homozygous). */
+        public String hidden(Locus l) {
+            String e = expressed(l);
+            return e.equals(a) ? b : a;
+        }
+    }
+
+    /** One phenotype outcome of a cross and its probability. */
+    public record Outcome(String allele, double probability) {}
+
+    public static final String SPECIES_KEY = "species";
+
+    private final String species;
+    private final Map<Locus, AllelePair> genes;
+    private final CompoundTag extra;
+
+    private BettaGenotype(String species, Map<Locus, AllelePair> genes, CompoundTag extra) {
+        this.species = species;
+        this.genes = genes;
+        this.extra = extra;
+    }
+
+    public String species() {
+        return species;
+    }
+
+    public AllelePair pair(Locus l) {
+        return genes.get(l);
+    }
+
+    // ------------------------------------------------------------------ construction
+
+    /** Homozygous genotype that shows exactly the given phenotype (used for M1 data and creative fish). */
+    public static BettaGenotype homozygous(BettaGenome g) {
+        Map<Locus, AllelePair> m = new LinkedHashMap<>();
+        for (Locus l : BettaLoci.ALL) {
+            String v = phenotypeValue(g, l);
+            m.put(l, new AllelePair(v, v));
+        }
+        return new BettaGenotype(g.species(), m, new CompoundTag());
+    }
+
+    public static BettaGenotype of(String species, Map<Locus, AllelePair> pairs) {
+        Map<Locus, AllelePair> m = new LinkedHashMap<>();
+        BettaGenome def = BettaGenome.DEFAULT;
+        for (Locus l : BettaLoci.ALL) {
+            AllelePair p = pairs.get(l);
+            if (p == null) {
+                String v = phenotypeValue(def, l);
+                p = new AllelePair(v, v);
+            }
+            m.put(l, p);
+        }
+        return new BettaGenotype(species, m, new CompoundTag());
+    }
+
+    public BettaGenotype with(Locus l, AllelePair p) {
+        Map<Locus, AllelePair> m = new LinkedHashMap<>(genes);
+        m.put(l, p);
+        return new BettaGenotype(species, m, extra.copy());
+    }
+
+    static String phenotypeValue(BettaGenome g, Locus l) {
+        return switch (l.id()) {
+            case "finform" -> g.shape();
+            case "pectoral" -> g.pectoral();
+            case "body_color" -> g.bodyColor();
+            case "fin_color" -> g.finColor();
+            case "pattern" -> g.pattern();
+            case "pattern_color" -> g.patternColor();
+            case "iridescence" -> g.iridescence();
+            case "iridescence_color" -> g.iridescenceColor();
+            default -> throw new IllegalArgumentException(l.id());
+        };
+    }
+
+    /** The visible fish. */
+    public BettaGenome express() {
+        return new BettaGenome(species, ex(BettaLoci.FINFORM), ex(BettaLoci.PECTORAL), ex(BettaLoci.BODY_COLOR), ex(BettaLoci.FIN_COLOR),
+                ex(BettaLoci.PATTERN), ex(BettaLoci.PATTERN_COLOR), ex(BettaLoci.IRIDESCENCE), ex(BettaLoci.IRIDESCENCE_COLOR));
+    }
+
+    private String ex(Locus l) {
+        return genes.get(l).expressed(l);
+    }
+
+    // ------------------------------------------------------------------ inheritance
+
+    /**
+     * Offspring of two parents: per locus one random allele of each parent, each allele mutates with
+     * {@code mutationChance} into a random allele of the locus pool.
+     */
+    public static BettaGenotype cross(BettaGenotype mother, BettaGenotype father, RandomSource r, double mutationChance) {
+        Map<Locus, AllelePair> m = new LinkedHashMap<>();
+        for (Locus l : BettaLoci.ALL) {
+            AllelePair pm = mother.pair(l), pf = father.pair(l);
+            String a = r.nextBoolean() ? pm.a() : pm.b();
+            String b = r.nextBoolean() ? pf.a() : pf.b();
+            m.put(l, new AllelePair(mutate(l, a, r, mutationChance), mutate(l, b, r, mutationChance)));
+        }
+        return new BettaGenotype(mother.species, m, new CompoundTag());
+    }
+
+    private static String mutate(Locus l, String allele, RandomSource r, double chance) {
+        if (chance <= 0 || r.nextDouble() >= chance) return allele;
+        List<String> pool = l.alleles();
+        return pool.isEmpty() ? allele : pool.get(r.nextInt(pool.size()));
+    }
+
+    /** Punnett square per locus: phenotype outcomes with probability (without mutations), most likely first. */
+    public static Map<Locus, List<Outcome>> predict(BettaGenotype mother, BettaGenotype father) {
+        Map<Locus, List<Outcome>> out = new LinkedHashMap<>();
+        for (Locus l : BettaLoci.ALL) {
+            AllelePair pm = mother.pair(l), pf = father.pair(l);
+            Map<String, Double> p = new LinkedHashMap<>();
+            for (String a : new String[]{pm.a(), pm.b()}) {
+                for (String b : new String[]{pf.a(), pf.b()}) {
+                    p.merge(l.express(a, b), 0.25, Double::sum);
+                }
+            }
+            List<Outcome> list = new ArrayList<>();
+            p.forEach((k, v) -> list.add(new Outcome(k, v)));
+            list.sort(Comparator.comparingDouble(Outcome::probability).reversed().thenComparing(Outcome::allele));
+            out.put(l, List.copyOf(list));
+        }
+        return out;
+    }
+
+    // ------------------------------------------------------------------ random fish
+
+    /** Wild type: phenotype of {@link BettaGenome#randomWild}; some fish carry a hidden recessive allele. */
+    public static BettaGenotype randomWild(RandomSource r) {
+        BettaGenotype g = homozygous(BettaGenome.randomWild(r));
+        if (r.nextInt(6) == 0) {
+            g = g.with(BettaLoci.FINFORM, new AllelePair("plakat", pick(r, List.of("veil", "halfmoon", "crowntail", "doubletail"))));
+        }
+        if (r.nextInt(8) == 0) g = g.with(BettaLoci.PECTORAL, new AllelePair("normal", "dumbo"));
+        BettaGenome wild = BettaGenome.randomWild(r);
+        String body = g.pair(BettaLoci.BODY_COLOR).a();
+        // a second wild colour; the dominant (darker) one shows, so recompute nothing: the phenotype may change slightly
+        g = g.with(BettaLoci.BODY_COLOR, new AllelePair(body, wild.bodyColor()));
+        return g;
+    }
+
+    /** Any combination (spawn eggs, tests): two random alleles per locus. */
+    public static BettaGenotype randomDomestic(RandomSource r) {
+        Map<Locus, AllelePair> m = new LinkedHashMap<>();
+        for (Locus l : BettaLoci.ALL) {
+            List<String> pool = l.alleles();
+            String a, b;
+            if (l == BettaLoci.PECTORAL) {
+                a = r.nextInt(3) == 0 ? "dumbo" : "normal";
+                b = r.nextInt(3) == 0 ? "dumbo" : "normal";
+            } else if (l == BettaLoci.PATTERN) {
+                a = r.nextInt(2) == 0 ? BettaPatterns.NONE : pick(r, pool);
+                b = r.nextInt(2) == 0 ? BettaPatterns.NONE : pick(r, pool);
+            } else {
+                a = pick(r, pool);
+                b = r.nextInt(3) == 0 ? a : pick(r, pool);
+            }
+            m.put(l, new AllelePair(a, b));
+        }
+        return new BettaGenotype(BettaGenome.SPECIES_BETTA, m, new CompoundTag());
+    }
+
+    private static String pick(RandomSource r, List<String> l) {
+        return l.get(r.nextInt(l.size()));
+    }
+
+    // ------------------------------------------------------------------ NBT
+
+    public CompoundTag save() {
+        CompoundTag t = extra.copy();
+        t.putString(SPECIES_KEY, species);
+        for (Locus l : BettaLoci.ALL) {
+            AllelePair p = genes.get(l);
+            ListTag list = new ListTag();
+            list.add(StringTag.valueOf(p.a()));
+            list.add(StringTag.valueOf(p.b()));
+            t.put(l.id(), list);
+        }
+        return t;
+    }
+
+    public static BettaGenotype load(CompoundTag t) {
+        String species = t.contains(SPECIES_KEY, Tag.TAG_STRING) ? t.getString(SPECIES_KEY) : BettaGenome.SPECIES_BETTA;
+        Map<Locus, AllelePair> m = new LinkedHashMap<>();
+        BettaGenome def = BettaGenome.DEFAULT;
+        CompoundTag extra = t.copy();
+        extra.remove(SPECIES_KEY);
+        for (Locus l : BettaLoci.ALL) {
+            extra.remove(l.id());
+            String d = phenotypeValue(def, l);
+            if (t.contains(l.id(), Tag.TAG_LIST)) {
+                ListTag list = t.getList(l.id(), Tag.TAG_STRING);
+                String a = list.isEmpty() ? d : list.getString(0);
+                String b = list.size() < 2 ? a : list.getString(1);
+                m.put(l, new AllelePair(a, b));
+            } else if (t.contains(l.id(), Tag.TAG_STRING)) {
+                String v = t.getString(l.id());
+                m.put(l, new AllelePair(v, v));
+            } else {
+                m.put(l, new AllelePair(d, d));
+            }
+        }
+        return new BettaGenotype(species, m, extra);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof BettaGenotype g && species.equals(g.species) && genes.equals(g.genes) && extra.equals(g.extra);
+    }
+
+    @Override
+    public int hashCode() {
+        return species.hashCode() * 31 + genes.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder("Genotype[");
+        for (Locus l : BettaLoci.ALL) {
+            AllelePair p = genes.get(l);
+            b.append(l.id()).append('=').append(p.a()).append('/').append(p.b()).append(' ');
+        }
+        return b.append(']').toString();
+    }
+}

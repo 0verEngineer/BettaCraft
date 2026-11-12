@@ -38,17 +38,24 @@ public final class ModCreativeTabs {
                 // one bucket per body shape (male) plus a wild-type female
                 net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(42);
                 for (String shape : org.overengineer.bettacraft.genetics.BettaGenome.SHAPES) {
-                    var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(r).withShape(shape);
+                    var g = org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(r)
+                            .with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM, new org.overengineer.bettacraft.genetics.BettaGenotype.AllelePair(shape, shape));
                     out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                             org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
                 }
                 out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
-                        org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenome.randomWild(r), true, 0)));
+                        org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(r), true, 0)));
                 out.accept(ModItems.FISH_BAG.get());
                 out.accept(ModItems.BETTA_SPAWN_EGG.get());
                 out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
                 out.accept(ModItems.MOSQUITO_LARVAE.get());
                 out.accept(ModItems.BETTA_PELLETS.get());
+                out.accept(ModItems.SALT_WATER_BOTTLE.get());
+                out.accept(ModItems.ARTEMIA_CYSTS.get());
+                out.accept(ModItems.INFUSORIA_CULTURE.get());
+                out.accept(ModItems.INFUSORIA.get());
+                out.accept(ModItems.ARTEMIA_CULTURE.get());
+                out.accept(ModItems.ARTEMIA_NAUPLII.get());
             })
             .build());
 

@@ -2,12 +2,18 @@ package org.overengineer.bettacraft.entity.betta;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
+import org.overengineer.bettacraft.registry.ModTags;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankCare;
 import org.overengineer.bettacraft.tank.TankData;
@@ -15,12 +21,15 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankTemperature;
 
 /**
- * Needs of a betta living in a Bettacraft tank (PLAN 5.5): the entity runs its own timers (and its own catch-up
- * after loading) from game time differences. Outside a tank nothing happens (wild bettas have no needs).
+ * Needs of a betta living in a Bettacraft tank (PLAN 5.3, 5.5, 5.6): the entity runs its own timers (and its own
+ * catch-up after loading) from game time differences: health, growth through the life stages, breeding state, healing,
+ * flaring. Outside a tank nothing happens (wild bettas have no needs).
  */
 public final class BettaCare {
     private static final int INTERVAL = 20;
     private static final double TICKS_PER_DAY = 24000.0;
+    /** Males flare at other adult males within this distance (also through tank glass). */
+    public static final double FLARE_RANGE = 6.0;
 
     private BettaCare() {}
 
@@ -56,10 +65,20 @@ public final class BettaCare {
         if (fish.lastSimTime < 0) fish.lastSimTime = now;
         double days = (now - fish.lastSimTime) / TICKS_PER_DAY;
         fish.lastSimTime = now;
+        if (fish.isAdult() && !fish.isFemale()) updateFlaring(level, fish, now);
         if (days <= 0) return;
+        advance(level, controller, fish, days);
+    }
 
+    /**
+     * Advances the needs of a fish in a tank by {@code days} (also used by GameTests). Health timers, growth (only fed
+     * and at a tolerable temperature), breeding timers and healing of wounds.
+     */
+    public static void advance(ServerLevel level, TankBlockEntity controller, BettaEntity fish, double days) {
+        TankData tank = controller.getTank();
         BettaHealth.Params p = params();
-        BettaHealth.Conditions c = new BettaHealth.Conditions(!TankTemperature.isTolerable(tank.waterTemp()), controller.isCrowded());
+        boolean tempOk = TankTemperature.isTolerable(tank.waterTemp());
+        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, controller.isCrowded() && fish.isAdult());
         boolean wasSick = fish.health.isSick();
         BettaHealth.Event event;
         if (days > 1.0) {
@@ -71,12 +90,33 @@ public final class BettaCare {
             case GOT_SICK -> TankCare.log(level, controller, "log.bettacraft.sick", TankCare.nameArg(fish));
             case RECOVERED -> TankCare.log(level, controller, "log.bettacraft.recovered", TankCare.nameArg(fish));
             case DIED -> {
-                die(level, controller, fish, c, p);
+                dieOfIllness(level, controller, fish, c, p);
                 return;
             }
             default -> {}
         }
         if (wasSick != fish.health.isSick()) fish.syncLook();
+        fish.breeding.tick(days);
+
+        boolean fed = !fish.health.isHungry(p);
+        if (fish.liveStage != LifeStage.ADULT && fed && tempOk && !fish.health.isSick()) grow(level, controller, fish, days);
+        double heal = ServerConfig.getOr(ServerConfig.HEALTH_HEAL_PER_DAY, 2.0);
+        if (fed && !fish.health.isSick() && fish.getHealth() < fish.getMaxHealth() && heal > 0) fish.heal((float) (heal * days));
+    }
+
+    private static void grow(ServerLevel level, TankBlockEntity controller, BettaEntity fish, double days) {
+        fish.stageDays += days;
+        double need = fish.liveStage.days();
+        while (fish.liveStage != LifeStage.ADULT && fish.stageDays >= need) {
+            double rest = fish.stageDays - need;
+            fish.setStage(fish.liveStage.next());
+            fish.stageDays = rest;
+            need = fish.liveStage.days();
+            if (fish.liveStage == LifeStage.ADULT) {
+                TankCare.log(level, controller, "log.bettacraft.grown_up", TankCare.nameArg(fish));
+                controller.markTankChanged();
+            }
+        }
     }
 
     /** Catch-up after unloaded time (only with simulateUnloadedTime): day by day, the feeder feeds virtually. */
@@ -98,7 +138,38 @@ public final class BettaCare {
         return result;
     }
 
-    private static void die(ServerLevel level, TankBlockEntity controller, BettaEntity fish, BettaHealth.Conditions c, BettaHealth.Params p) {
+    // ------------------------------------------------------------------ flaring
+
+    private static void updateFlaring(ServerLevel level, BettaEntity fish, long now) {
+        if (fish.tankWater == null) return;
+        AABB area = fish.getBoundingBox().inflate(FLARE_RANGE);
+        for (BettaEntity other : level.getEntitiesOfClass(BettaEntity.class, area, o -> o != fish && o.isAlive() && o.isAdult() && !o.isFemale())) {
+            if (canSee(level, fish.getEyePosition(), other.getEyePosition())) {
+                fish.flare(now + 60);
+                return;
+            }
+        }
+    }
+
+    /** Line of sight where glass and water do not block (only blocks that occlude the view do). */
+    public static boolean canSee(Level level, Vec3 from, Vec3 to) {
+        Vec3 d = to.subtract(from);
+        double len = d.length();
+        int steps = Math.max(1, (int) Math.ceil(len / 0.25));
+        BlockPos last = null;
+        for (int i = 1; i < steps; i++) {
+            BlockPos p = BlockPos.containing(from.add(d.scale(i / (double) steps)));
+            if (p.equals(last)) continue;
+            last = p;
+            if (!level.isLoaded(p)) return false;
+            if (level.getBlockState(p).canOcclude()) return false;
+        }
+        return true;
+    }
+
+    // ------------------------------------------------------------------ death
+
+    private static void dieOfIllness(ServerLevel level, TankBlockEntity controller, BettaEntity fish, BettaHealth.Conditions c, BettaHealth.Params p) {
         List<Component> causes = new ArrayList<>();
         if (fish.health.isHungry(p)) causes.add(Component.translatable("cause.bettacraft.hunger"));
         if (c.tempBad()) causes.add(Component.translatable("cause.bettacraft.temperature"));
@@ -106,16 +177,50 @@ public final class BettaCare {
         if (causes.isEmpty()) causes.add(Component.translatable("cause.bettacraft.illness"));
         Component cause = causes.getFirst();
         for (int i = 1; i < causes.size(); i++) cause = Component.translatable("cause.bettacraft.and", cause, causes.get(i));
-        Component msg = Component.translatable("message.bettacraft.betta.died", fish.getName(), cause);
-        AABB area = fish.getBoundingBox().inflate(32);
-        for (ServerPlayer sp : level.players()) {
-            if (area.contains(sp.position())) sp.sendSystemMessage(msg);
-        }
+        announce(level, fish, cause);
         String causeKey = c.tempBad() && fish.health.isHungry(p) ? "both" : fish.health.isHungry(p) ? "hunger"
                 : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : "illness";
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + causeKey);
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();
         fish.discard(); // the fish simply vanishes, no drops (PLAN 5.5)
+    }
+
+    /** Death by damage (fight, chasing male, predator, ...): message and tank log. */
+    static void onDeath(ServerLevel level, BettaEntity fish, DamageSource source) {
+        TankBlockEntity controller = TankInhabitants.resolveController(level, fish);
+        if (controller == null) return;
+        Entity attacker = source.getEntity();
+        String causeKey;
+        Component cause;
+        if (attacker instanceof BettaEntity b && fish.isFemale() && !b.isFemale()) {
+            causeKey = "chased";
+            cause = Component.translatable("cause.bettacraft.chased", b.getName());
+        } else if (attacker instanceof BettaEntity b) {
+            causeKey = "fight";
+            cause = Component.translatable("cause.bettacraft.fight", b.getName());
+        } else if (attacker != null && attacker.getType().is(ModTags.PREDATORS)) {
+            causeKey = "predator";
+            cause = Component.translatable("cause.bettacraft.predator", attacker.getName());
+        } else {
+            causeKey = "injuries";
+            cause = Component.translatable("cause.bettacraft.injuries");
+        }
+        announce(level, fish, cause);
+        if (attacker != null && !"injuries".equals(causeKey)) {
+            TankCare.log(level, controller, "log.bettacraft.killed_" + causeKey, TankCare.nameArg(fish), TankCare.nameArg(attacker));
+        } else {
+            TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + causeKey);
+        }
+        controller.getTank().inhabitants().remove(fish.getUUID());
+        controller.markTankChanged();
+    }
+
+    private static void announce(ServerLevel level, Entity fish, Component cause) {
+        Component msg = Component.translatable("message.bettacraft.betta.died", fish.getName(), cause);
+        AABB area = fish.getBoundingBox().inflate(32);
+        for (ServerPlayer sp : level.players()) {
+            if (area.contains(sp.position())) sp.sendSystemMessage(msg);
+        }
     }
 }

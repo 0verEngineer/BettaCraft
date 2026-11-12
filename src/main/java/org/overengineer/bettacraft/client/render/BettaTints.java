@@ -12,6 +12,23 @@ public final class BettaTints {
 
     private BettaTints() {}
 
+    /** Tint for a living fish: sex, sickness, life stage (fry pale and see-through) and flaring (more intense). */
+    public static int forFish(int rgb, org.overengineer.bettacraft.entity.betta.BettaEntity f) {
+        int stage = f.lifeStage().ordinal();
+        float sat = BettaModelDefinitions.STAGE_SATURATION[stage], val = 1.0F;
+        if (f.isFemale()) sat *= BettaModelDefinitions.FEMALE_SATURATION;
+        if (f.isSick()) {
+            sat *= SICK_SATURATION;
+            val *= SICK_BRIGHTNESS;
+        }
+        if (f.isFlaring()) {
+            sat = Math.min(1.0F, sat * 1.25F + 0.05F);
+            val *= 1.08F;
+        }
+        int a = Mth.clamp(Math.round(BettaModelDefinitions.STAGE_ALPHAS[stage] * 255), 0, 255);
+        return (a << 24) | scaleSaturation(rgb, sat, val);
+    }
+
     public static int body(BettaGenome g, boolean female, boolean sick) {
         return adjust(BettaColors.rgb(g.bodyColor()), female, sick);
     }

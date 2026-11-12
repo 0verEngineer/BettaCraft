@@ -5,6 +5,7 @@ import sys
 import time
 
 import blocks
+import breeding
 import gui
 import icons
 import model_defs as md
@@ -25,6 +26,7 @@ def main() -> int:
     written.append(palette.write_json())
     written.append(palette.write_java())
     written += icons.write_all()
+    written += breeding.write_all()
     written += blocks.write_all()
     written += gui.write_all()
     written += md.write_generated(GEN, preview.sample_textures())

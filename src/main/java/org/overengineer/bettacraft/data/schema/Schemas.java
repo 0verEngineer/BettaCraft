@@ -21,7 +21,13 @@ public final class Schemas {
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
     public static final MigrationChain BETTA = MigrationChain.builder("betta")
             .step(0, data -> data) // v0 = written before versioning; identical layout
+            .step(1, Schemas::bettaV1toV2)
             .build();
+
+    /** Loci of the M2 genotype (and the M1 key each one was stored under). */
+    private static final String[][] BETTA_LOCI = {{"finform", "shape"}, {"pectoral", "pectoral"}, {"body_color", "body_color"},
+            {"fin_color", "fin_color"}, {"pattern", "pattern"}, {"pattern_color", "pattern_color"}, {"iridescence", "iridescence"},
+            {"iridescence_color", "iridescence_color"}};
 
     /** Entity attachment bettacraft:tank_ref (controller position + tank id). */
     public static final MigrationChain TANK_REF = MigrationChain.builder("tank_ref")
@@ -42,6 +48,28 @@ public final class Schemas {
     public static final MigrationChain INTERIOR_RETURN = MigrationChain.builder("interior_return")
             .step(0, data -> data)
             .build();
+
+    /**
+     * Betta v1 -> v2 (M2): the genome stored one value per locus (the phenotype). Every value becomes a homozygous allele
+     * pair ({@code body_color:"red"} -> {@code body_color:["red","red"]}); {@code shape} is renamed to {@code finform}.
+     * Missing loci stay missing (defaults apply on load), unknown keys and unknown ids are kept.
+     */
+    static CompoundTag bettaV1toV2(CompoundTag data) {
+        if (!data.contains("genome", Tag.TAG_COMPOUND)) return data;
+        CompoundTag g = data.getCompound("genome");
+        for (String[] locus : BETTA_LOCI) {
+            String now = locus[0], old = locus[1];
+            if (g.contains(old, Tag.TAG_STRING)) {
+                String v = g.getString(old);
+                g.remove(old);
+                net.minecraft.nbt.ListTag pair = new net.minecraft.nbt.ListTag();
+                pair.add(net.minecraft.nbt.StringTag.valueOf(v));
+                pair.add(net.minecraft.nbt.StringTag.valueOf(v));
+                g.put(now, pair);
+            }
+        }
+        return data;
+    }
 
     /**
      * v0 -> v1: tank data written without schema. A controller (has "members") without a fixed interior scale

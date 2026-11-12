@@ -17,6 +17,12 @@ public final class ModTags {
 
     /** Food the feeder and hand feeding accept. */
     public static final TagKey<Item> BETTA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("betta_food"));
+    /** Fry food for the whole fry stage (infusoria). */
+    public static final TagKey<Item> FRY_FOOD_START = TagKey.create(Registries.ITEM, BettaCraft.id("fry_food_start"));
+    /** Fry food for the second half of the fry stage (artemia nauplii). */
+    public static final TagKey<Item> FRY_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("fry_food"));
+    /** Live food: conditions adults for breeding (mosquito larvae). */
+    public static final TagKey<Item> LIVE_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("live_food"));
     /** Plastic from other mods; non-empty switches the fish bag recipe to plastic (PLAN 4.3). */
     public static final TagKey<Item> PLASTIC_SHEETS = TagKey.create(Registries.ITEM, BettaCraft.id("plastic_sheets"));
     public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "buckets/entity_water"));
@@ -25,7 +31,7 @@ public final class ModTags {
     public static final TagKey<EntityType<?>> TANK_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("tank_blacklist"));
     /** Always accepted in tanks (even if larger than the size rule). */
     public static final TagKey<EntityType<?>> TANK_INHABITANTS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("tank_inhabitants"));
-    /** Kill bettas and other small inhabitants (behaviour in M2). */
+    /** Kill bettas and other small inhabitants. */
     public static final TagKey<EntityType<?>> PREDATORS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("predators"));
     public static final TagKey<EntityType<?>> C_FISH = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fish"));
     public static final TagKey<EntityType<?>> C_FISHES = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fishes"));
@@ -33,6 +39,11 @@ public final class ModTags {
 
     /** Biomes with wild bettas; their water gives swamp water bottles. Contains {@code #c:is_swamp}. */
     public static final TagKey<Biome> BETTA_SPAWN_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("betta_spawn_biomes"));
+
+    /** Water in these biomes gives salt water bottles (oceans). */
+    public static final TagKey<Biome> SALT_WATER_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("salt_water_biomes"));
+    /** Mining these blocks may drop artemia cysts. */
+    public static final TagKey<Block> ARTEMIA_SAND = TagKey.create(Registries.BLOCK, BettaCraft.id("artemia_sand"));
 
     private ModTags() {}
 }

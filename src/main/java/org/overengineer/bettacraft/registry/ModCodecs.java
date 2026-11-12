@@ -26,6 +26,9 @@ public final class ModCodecs {
     public static final Supplier<MapCodec<FishBagRecipeCondition>> CONFIG_CONDITION = CONDITIONS.register("config", () -> FishBagRecipeCondition.CODEC);
     public static final Supplier<MapCodec<AddItemLootModifier>> ADD_ITEM = LOOT_MODIFIERS.register("add_item", () -> AddItemLootModifier.CODEC);
 
+    public static final Supplier<MapCodec<org.overengineer.bettacraft.world.ArtemiaSandLootModifier>> ARTEMIA_SAND =
+            LOOT_MODIFIERS.register("artemia_sand", () -> org.overengineer.bettacraft.world.ArtemiaSandLootModifier.CODEC);
+
     public static void register(IEventBus bus) {
         BIOME_MODIFIERS.register(bus);
         CONDITIONS.register(bus);

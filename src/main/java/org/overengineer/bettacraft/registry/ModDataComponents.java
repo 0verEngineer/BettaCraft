@@ -28,6 +28,10 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<ResourceLocation>> BAG_ENTITY = COMPONENTS.registerComponentType("bag_entity",
             b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
 
+    /** Game time a food culture was started (infusoria / artemia). */
+    public static final Supplier<DataComponentType<Long>> CULTURE_START = COMPONENTS.registerComponentType("culture_start",
+            b -> b.persistent(com.mojang.serialization.Codec.LONG).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }
