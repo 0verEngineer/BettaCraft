@@ -63,7 +63,9 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         Vec3 n = p.nozzle();
         Vec3 start = n.add(p.inward().getStepX() * 0.1, 0, p.inward().getStepZ() * 0.1);
         FilterFlow.Path shifted = new FilterFlow.Path(p.bottom(), p.top(), p.inside(), start, p.inward(), p.surfaceY(), true);
-        FlowRenderer.jet(ps, buffers.getBuffer(FlowRenderer.jetType()), shifted.jet(10), p.inward(), origin, jetLight, time,
+        TankBlockEntity c = FilterHost.tankOf(level, ((FilterHost) be).tankBlockPos());
+        double scale = c == null || c.getTank() == null ? 1.0 : FilterFlow.fitScale(c.getTank(), shifted, 1.0);
+        FlowRenderer.jet(ps, buffers.getBuffer(FlowRenderer.jetType()), shifted.jet(10, scale), p.inward(), origin, jetLight, time,
                 p.submerged() ? 0.06F : 0.05F, p.submerged() ? 0.7F : 1.0F);
     }
 

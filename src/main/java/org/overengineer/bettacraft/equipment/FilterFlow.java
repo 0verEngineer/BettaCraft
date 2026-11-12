@@ -52,12 +52,13 @@ public final class FilterFlow {
                 }
                 return out;
             }
+            // parabola down to the surface; even a nozzle just above the water throws the jet a little forward
             double drop = Math.max(0.02, nozzle.y - surfaceY);
             double g = GRAVITY / Math.max(0.2, scale);
-            double tEnd = Math.sqrt(2 * drop / g);
+            double reach = Math.max(SPEED * scale * Math.sqrt(2 * drop / g), 0.45 * scale);
             for (int i = 0; i <= n; i++) {
-                double t = tEnd * i / n;
-                out.add(nozzle.add(dir.scale(SPEED * scale * t)).add(0, -0.5 * g * t * t, 0));
+                double f = i / (double) n;
+                out.add(nozzle.add(dir.scale(reach * f)).add(0, -drop * f * f, 0));
             }
             return out;
         }
@@ -70,6 +71,19 @@ public final class FilterFlow {
     }
 
     private FilterFlow() {}
+
+    /** Largest jet scale (see {@link Path#jet(int, double)}) that keeps a submerged current inside the glass. */
+    public static double fitScale(TankData t, Path p, double wanted) {
+        BlockPos mn = t.min(), mx = t.max();
+        double wall = 1.0 / 16, n;
+        switch (p.inward()) {
+            case NORTH -> n = p.nozzle().z - (mn.getZ() + wall);
+            case SOUTH -> n = mx.getZ() + 1 - wall - p.nozzle().z;
+            case WEST -> n = p.nozzle().x - (mn.getX() + wall);
+            default -> n = mx.getX() + 1 - wall - p.nozzle().x;
+        }
+        return Math.max(0.05, Math.min(wanted, n / 0.9));
+    }
 
     /**
      * Hose path from a filter outside the wall {@code out} (direction pointing away from the tank) of the tank box.

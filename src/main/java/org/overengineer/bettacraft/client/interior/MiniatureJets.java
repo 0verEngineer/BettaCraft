@@ -18,8 +18,9 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
 
 /**
- * Water jets of the internal filters in the miniature (M4): one small ribbon jet per filter outlet, drawn in the
- * translucent pass after the miniature (never in the Iris shadow pass, see {@link MiniatureRenderer}), plus bubbles.
+ * Water jets of the internal filters in the miniature (M4): one small ribbon jet per filter outlet, drawn right after
+ * the opaque miniature and before the tank water (never in the Iris shadow pass, see {@link MiniatureRenderer}), plus
+ * bubbles.
  */
 public final class MiniatureJets {
     private static final float MARGIN = 0.5F / 16F;
@@ -57,6 +58,11 @@ public final class MiniatureJets {
         return Math.max(0.25, Math.min(1.0, 0.35 * 16.0 / Math.max(1, r.scale)));
     }
 
+    /** Jet scale for one outlet: never longer than the way to the glass in front of it. */
+    static double jetScale(ClientRegion r, TankData t, FilterFlow.Path p) {
+        return FilterFlow.fitScale(t, p, jetScale(r));
+    }
+
     static void render(RenderLevelStageEvent event, TankBlockEntity be, ClientRegion region, Vec3 cam) {
         TankData t = be.getTank();
         List<FilterFlow.Path> paths = paths(t, region);
@@ -66,11 +72,11 @@ public final class MiniatureJets {
         RenderType rt = FlowRenderer.jetType();
         PoseStack ps = event.getPoseStack();
         float time = (mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) / 20F;
-        double scale = jetScale(region);
         for (FilterFlow.Path p : paths) {
+            double scale = jetScale(region, t, p);
             int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(p.nozzle()));
             FlowRenderer.jet(ps, buffers.getBuffer(rt), p.jet(8, scale), p.inward(), cam, light, time,
-                    (float) (0.04 * scale + 0.012), p.submerged() ? 0.75F : 1.0F);
+                    (float) (0.05 * scale + 0.018), p.submerged() ? 0.9F : 1.0F);
         }
         buffers.endBatch(rt);
     }
@@ -90,12 +96,12 @@ public final class MiniatureJets {
                             net.minecraft.sounds.SoundSource.BLOCKS, 0.15F, 1.2F + rand.nextFloat() * 0.2F, false);
                 }
                 if (rand.nextInt(3) != 0) continue;
-                List<Vec3> jet = p.jet(4, jetScale(region));
+                List<Vec3> jet = p.jet(4, jetScale(region, t, p));
                 Vec3 at = jet.get(1 + rand.nextInt(jet.size() - 1));
                 if (at.y < p.surfaceY()) {
                     mc.level.addParticle(ParticleTypes.BUBBLE, at.x, at.y, at.z, p.inward().getStepX() * 0.05, 0.02, p.inward().getStepZ() * 0.05);
                 } else if (rand.nextInt(3) == 0) {
-                    Vec3 hit = p.impact();
+                    Vec3 hit = jet.getLast();
                     mc.level.addParticle(ParticleTypes.SPLASH, hit.x, p.surfaceY(), hit.z, 0, 0, 0);
                 }
             }

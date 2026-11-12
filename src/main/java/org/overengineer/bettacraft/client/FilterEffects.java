@@ -13,6 +13,7 @@ import org.overengineer.bettacraft.config.ClientConfig;
 import org.overengineer.bettacraft.equipment.CabinetBlockEntity;
 import org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity;
 import org.overengineer.bettacraft.equipment.FilterFlow;
+import org.overengineer.bettacraft.equipment.FilterHost;
 import org.overengineer.bettacraft.registry.ModSounds;
 
 /**
@@ -40,7 +41,8 @@ final class FilterEffects {
             Vec3 hit = p.impact();
             if (p.submerged()) {
                 if (RAND.nextInt(2) == 0) {
-                    List<Vec3> jet = p.jet(6);
+                    org.overengineer.bettacraft.tank.TankBlockEntity c = FilterHost.tankOf(mc.level, ((FilterHost) be).tankBlockPos());
+                    List<Vec3> jet = p.jet(6, c == null || c.getTank() == null ? 1.0 : FilterFlow.fitScale(c.getTank(), p, 1.0));
                     Vec3 at = jet.get(1 + RAND.nextInt(jet.size() - 1));
                     mc.level.addParticle(ParticleTypes.BUBBLE, at.x, at.y, at.z, p.inward().getStepX() * 0.15, 0.03, p.inward().getStepZ() * 0.15);
                 }

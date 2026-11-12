@@ -182,7 +182,7 @@ final class DevClientSmokeTest {
                 case 1010 -> shot(mc, "bettacraft_m4_external_filter");
                 case 1015 -> mc.getSingleplayerServer().execute(() -> {
                     ServerPlayer p = player(mc);
-                    p.teleportTo(p.serverLevel(), filterMin.getX() + 0.98, filterMin.getY() + 0.62 - 1.62, filterMin.getZ() - 0.2, 47F, 24F);
+                    p.teleportTo(p.serverLevel(), filterMin.getX() - 0.3, filterMin.getY() + 0.58 - 1.62, filterMin.getZ() + 0.4, -90F, 14F);
                 });
                 case 1060 -> shot(mc, "bettacraft_m4_internal_filter");
                 case 1065 -> mc.getSingleplayerServer().execute(() -> {
@@ -438,7 +438,7 @@ final class DevClientSmokeTest {
                             : org.overengineer.bettacraft.equipment.SegmentBlock.Part.BASE)
                             : y == shape[1] - 1 ? org.overengineer.bettacraft.equipment.SegmentBlock.Part.TOP
                             : org.overengineer.bettacraft.equipment.SegmentBlock.Part.MIDDLE;
-                    in.setBlockAndUpdate(r.toWorld(8 + x, 1 + y, 3 + z), ModBlocks.FILTER_SEGMENT.get().defaultBlockState()
+                    in.setBlockAndUpdate(r.toWorld(8 + x, 1 + y, 8 + z), ModBlocks.FILTER_SEGMENT.get().defaultBlockState()
                             .setValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART, part)
                             .setValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING, Direction.NORTH));
                 }
