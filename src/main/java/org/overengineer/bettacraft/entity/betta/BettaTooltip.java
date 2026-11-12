@@ -49,5 +49,9 @@ public final class BettaTooltip {
 
     public static void append(BettaData d, List<Component> tooltip) {
         for (Component c : lines(d)) tooltip.add(c.copy().withStyle(ChatFormatting.GRAY));
+        if (!d.isAdult()) tooltip.add(Component.translatable(d.lifeStage().translationKey()).withStyle(ChatFormatting.DARK_AQUA));
+        if (d.generation() > 0) {
+            tooltip.add(Component.translatable("gui.bettacraft.fish.generation", d.generation()).withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 }

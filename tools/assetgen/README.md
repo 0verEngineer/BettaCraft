@@ -23,7 +23,8 @@ is copied to `builds/m0-preview.png`.
 | `palette.py` | 43 named colours (id, en_us, de_de, hex) -> `build/generated/colors.json` and `src/main/java/.../genetics/BettaColorTable.java`. |
 | `icons.py` | 16x16 item icons (incl. `swamp_water_bottle`) plus greyscale fish overlay layers for the bucket and the bag. |
 | `blocks.py` | Tank block textures, including the animated greyscale water; feeder (`feeder_side/top/bottom`, design in rows 8..15 / uv 3..13) and tank light (`tank_light`, `tank_light_panel_on/off`). |
-| `gui.py` | `textures/gui/tank.png` (256x256): 248x230 vanilla-style panel, content inset 7..240 x 17..139, 4 heater slots (items at x 12, y 148+18i), player inventory (x 44+18c, y 148+18r, hotbar y 206), icons at (0,232) heater ghost 16x16, (16,232) lock and (26,232) open lock 10x10. Layout constants are mirrored in the Java screen. |
+| `breeding.py` | M2: fry food icons (`salt_water_bottle`, `infusoria_culture`, `infusoria`, `artemia_culture`, `artemia_nauplii`, `artemia_cysts`) and the bubble nest textures `entity/nest/bubble_nest`, `nest_eggs`, `nest_larvae` (32x32, drawn as flat discs at the water surface). |
+| `gui.py` | `textures/gui/tank.png` (256x256): 248x230 vanilla-style panel, content inset 7..240 x 17..139 (dark fill since M2), 4 heater slots (items at x 12, y 148+18i), player inventory (x 44+18c, y 148+18r, hotbar y 206), icons at (0,232) heater ghost 16x16, (16,232) lock and (26,232) open lock 10x10. Layout constants are mirrored in the Java screen. |
 | `render.py` | Texture compositing (same order as the runtime) and a side-view software rasterizer. |
 | `preview.py` | Preview sheets in `build/preview/`, `builds/m0-preview.png` and the mod logo `src/main/resources/bettacraft.png`. |
 | `build.py` | Runs all of the above. |
