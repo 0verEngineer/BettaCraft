@@ -148,8 +148,7 @@ public final class TankCare {
 
     /** Water surface height in interior blocks above the interior floor. */
     public static double waterLocalHeight(TankData tank, int scale) {
-        double area = (double) tank.sizeX() * tank.sizeZ();
-        return area <= 0 ? 0 : tank.waterMb() / (area * TankData.MB_PER_BLOCK) * scale;
+        return Math.max(0, tank.waterSurfaceY() - tank.min().getY()) * scale;
     }
 
     public static void updateTemperature(ServerLevel level, TankBlockEntity be, double dtDays) {
@@ -166,24 +165,24 @@ public final class TankCare {
 
     // ------------------------------------------------------------------ geometry
 
-    /** Water volume (inside the glass) as box; height from the water volume of the cuboid. */
+    /**
+     * Bounding box of the water (inside the glass, up to the surface). For free shapes (M10) it also covers the notches;
+     * use {@link TankWaterVolume} to keep things inside the actual water.
+     */
     public static AABB waterBox(TankData tank) {
         BlockPos mn = tank.min(), mx = tank.max();
-        double area = (double) tank.sizeX() * tank.sizeZ();
-        double h = area <= 0 ? 0 : tank.waterMb() / (area * TankData.MB_PER_BLOCK);
         double wall = 1.0 / 16.0;
+        double h = tank.waterSurfaceY() - mn.getY();
         return new AABB(mn.getX() + wall, mn.getY() + wall, mn.getZ() + wall,
                 mx.getX() + 1 - wall, mn.getY() + Math.max(wall * 2, h), mx.getZ() + 1 - wall);
     }
 
-    /** Positions directly above the top layer of the tank. */
+    /**
+     * Positions directly above every open top of the tank (M10: also the lower steps of a free shape; for a cuboid the
+     * top layer). Lids, the feeder and lights sit there.
+     */
     public static List<BlockPos> aboveTop(TankData tank) {
-        List<BlockPos> out = new ArrayList<>();
-        int top = tank.max().getY();
-        for (long l : tank.members()) {
-            if (BlockPos.getY(l) == top) out.add(BlockPos.of(l).above());
-        }
-        return out;
+        return tank.openTops();
     }
 
     @Nullable
@@ -275,9 +274,8 @@ public final class TankCare {
             stack.shrink(1);
             if (!remainder.isEmpty() && !player.getInventory().add(remainder)) player.drop(remainder, false);
         }
-        AABB water = waterBox(tank);
-        Vec3 spot = new Vec3(Math.max(water.minX, Math.min(water.maxX, hit.x)), water.maxY - 0.05,
-                Math.max(water.minZ, Math.min(water.maxZ, hit.z)));
+        // M10: the food lands in the water of the block that was clicked (never in the notch of a free shape)
+        Vec3 spot = new TankWaterVolume(tank).surfacePoint(hit, 1.0 / 16, 0.05);
         server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.copyWithCount(1)), spot.x, spot.y, spot.z, 10, 0.15, 0.02, 0.15, 0.02);
         server.sendParticles(ParticleTypes.BUBBLE, spot.x, spot.y - 0.3, spot.z, 6, 0.2, 0.2, 0.2, 0.01);
         level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.3F, 1.6F);

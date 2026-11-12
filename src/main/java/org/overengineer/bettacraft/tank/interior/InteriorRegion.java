@@ -15,6 +15,10 @@ import net.minecraft.world.level.Level;
  * Layout (world coordinates in {@code bettacraft:tank_interior}):
  * floor at y = {@link #FLOOR_Y}, interior volume y in [{@link #BASE_Y}, BASE_Y + sizeY),
  * x in [originX, originX + sizeX), z in [originZ, originZ + sizeZ); invisible walls one block outside, ceiling on top.
+ * <p>
+ * M10: the region covers the tank's bounding box; {@link #cells} says which tank blocks (cells of scale^3 interior
+ * blocks) belong to the tank. Cells outside the shape are closed off by invisible walls on their faces towards the
+ * shape (and get no floor), so nothing can be built there and the miniature leaves them empty.
  */
 public final class InteriorRegion {
     /** Max interior extent is 64 tank blocks * 16 = 1024; the spacing leaves room for walls and a gap. */
@@ -33,11 +37,18 @@ public final class InteriorRegion {
     @Nullable
     private UUID owner;
     private boolean built;
+    /** Tank blocks of the shape as a bit set over the cell grid (sizeX / scale ...), see {@link org.overengineer.bettacraft.tank.TankShape#encode}. */
+    private byte[] cells;
     /** Equipment and floating plants inside the region (PLAN 7.3), kept up to date by block updates. */
     private final InteriorEquipment equipment = new InteriorEquipment();
 
     public InteriorRegion(int id, int sizeX, int sizeY, int sizeZ, int scale, ResourceKey<Level> tankDimension, BlockPos tankMin,
                           @Nullable UUID tankId, @Nullable UUID owner) {
+        this(id, sizeX, sizeY, sizeZ, scale, tankDimension, tankMin, tankId, owner, null);
+    }
+
+    public InteriorRegion(int id, int sizeX, int sizeY, int sizeZ, int scale, ResourceKey<Level> tankDimension, BlockPos tankMin,
+                          @Nullable UUID tankId, @Nullable UUID owner, @Nullable byte[] cells) {
         this.id = id;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -47,6 +58,37 @@ public final class InteriorRegion {
         this.tankMin = tankMin.immutable();
         this.tankId = tankId;
         this.owner = owner;
+        int cs = Math.max(1, scale);
+        this.cells = cells != null ? cells : org.overengineer.bettacraft.tank.TankShape.fullBox(sizeX / cs, sizeY / cs, sizeZ / cs);
+    }
+
+    /** Cell grid size (tank blocks of the bounding box). */
+    public int cellsX() { return sizeX / Math.max(1, scale); }
+    public int cellsY() { return sizeY / Math.max(1, scale); }
+    public int cellsZ() { return sizeZ / Math.max(1, scale); }
+
+    /** Whether the tank block at cell (cx, cy, cz) (relative to the tank's bounding-box min) belongs to the tank. */
+    public boolean hasCell(int cx, int cy, int cz) {
+        if (cx < 0 || cy < 0 || cz < 0 || cx >= cellsX() || cy >= cellsY() || cz >= cellsZ()) return false;
+        return org.overengineer.bettacraft.tank.TankShape.bit(cells, cellsX(), cellsZ(), cx, cy, cz);
+    }
+
+    /** Whether the interior-local position lies in a cell of the tank's shape. */
+    public boolean inShape(int lx, int ly, int lz) {
+        int s = Math.max(1, scale);
+        return lx >= 0 && ly >= 0 && lz >= 0 && hasCell(lx / s, ly / s, lz / s);
+    }
+
+    /** True if every cell of the bounding box belongs to the tank (a cuboid tank, as before M10). */
+    public boolean fullBox() {
+        for (int y = 0; y < cellsY(); y++)
+            for (int z = 0; z < cellsZ(); z++)
+                for (int x = 0; x < cellsX(); x++) if (!hasCell(x, y, z)) return false;
+        return true;
+    }
+
+    public byte[] cells() {
+        return cells.clone();
     }
 
     public int id() { return id; }
@@ -89,6 +131,11 @@ public final class InteriorRegion {
         return lx >= 0 && ly >= 0 && lz >= 0 && lx < sizeX && ly < sizeY && lz < sizeZ;
     }
 
+    /** Inside the volume and in a cell of the shape (M10). */
+    public boolean containsShapeInterior(BlockPos worldPos) {
+        return containsInterior(worldPos) && inShape(localX(worldPos.getX()), localY(worldPos.getY()), localZ(worldPos.getZ()));
+    }
+
     /** True if the position is inside the region including floor, walls and ceiling. */
     public boolean containsShell(BlockPos worldPos) {
         int lx = worldPos.getX() - originX(), ly = worldPos.getY() - BASE_Y, lz = worldPos.getZ() - originZ();
@@ -120,6 +167,7 @@ public final class InteriorRegion {
         if (owner != null) t.putUUID("owner", owner);
         t.putBoolean("built", built);
         t.put("equipment", equipment.save());
+        t.putByteArray("cells", cells.clone());
         return t;
     }
 
@@ -133,7 +181,8 @@ public final class InteriorRegion {
                 ResourceKey.create(Registries.DIMENSION, dim == null ? Level.OVERWORLD.location() : dim),
                 m.length == 3 ? new BlockPos(m[0], m[1], m[2]) : BlockPos.ZERO,
                 t.hasUUID("tank_id") ? t.getUUID("tank_id") : null,
-                t.hasUUID("owner") ? t.getUUID("owner") : null);
+                t.hasUUID("owner") ? t.getUUID("owner") : null,
+                t.contains("cells", net.minecraft.nbt.Tag.TAG_BYTE_ARRAY) ? t.getByteArray("cells") : null);
         r.built = t.getBoolean("built");
         r.equipment.load(t.getCompound("equipment"));
         return r;

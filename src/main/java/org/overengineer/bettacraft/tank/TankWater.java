@@ -87,10 +87,14 @@ public final class TankWater {
         return !s.isAir() && !(s.getBlock() instanceof TankBlock) && s.isFaceSturdy(level, above, Direction.DOWN);
     }
 
-    /** {open, total} top blocks of the tank (loaded ones only). */
+    /**
+     * {open, total} top blocks of the tank (loaded ones only). M10: only tops above the water count (for a free shape a
+     * closed-off step that is dry does not evaporate); for a cuboid that is every top block.
+     */
     public static int[] openTop(Level level, TankData tank) {
         int open = 0, total = 0;
-        for (BlockPos p : TankCare.aboveTop(tank)) {
+        int surfaceLayer = (int) Math.floor(tank.waterSurfaceY() - 1e-6);
+        for (BlockPos p : TankShape.exposedTops(tank.members(), surfaceLayer)) {
             if (!level.isLoaded(p)) continue;
             total++;
             if (!covers(level, p)) open++;

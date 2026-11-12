@@ -17,6 +17,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue TANK_MAX_SIZE_Y;
     public static final ModConfigSpec.IntValue TANK_MAX_SIZE_Z;
     public static final ModConfigSpec.IntValue TANK_MAX_ENTITIES;
+    public static final ModConfigSpec.BooleanValue TANK_FREE_SHAPES;
     public static final ModConfigSpec.IntValue TANK_HARD_CAP_PER_WATER_BLOCK;
     public static final ModConfigSpec.IntValue TANK_OVERCROWDED_PER_WATER_BLOCK;
     public static final ModConfigSpec.DoubleValue TANK_MIN_FILL_TO_INSERT;
@@ -116,6 +117,7 @@ public final class ServerConfig {
         TANK_MAX_SIZE_X = b.comment("Maximum tank size along X in blocks").defineInRange("maxSizeX", 16, 1, 64);
         TANK_MAX_SIZE_Y = b.comment("Maximum tank size along Y in blocks").defineInRange("maxSizeY", 16, 1, 64);
         TANK_MAX_SIZE_Z = b.comment("Maximum tank size along Z in blocks").defineInRange("maxSizeZ", 16, 1, 64);
+        TANK_FREE_SHAPES = b.comment("Allow any face-connected tank shape (L, T, steps ...) within the maximum size; false = cuboids only (as before 1.2)").define("freeShapes", true);
         TANK_MAX_ENTITIES = b.comment("Maximum number of inhabitant entities per tank").defineInRange("maxEntities", 64, 1, 1024);
         TANK_HARD_CAP_PER_WATER_BLOCK = b.comment("Hard limit of adult animals per water block").defineInRange("hardCapPerWaterBlock", 6, 1, 64);
         TANK_OVERCROWDED_PER_WATER_BLOCK = b.comment("Adults per water block from which health starts to drop").defineInRange("overcrowdedPerWaterBlock", 2, 1, 64);

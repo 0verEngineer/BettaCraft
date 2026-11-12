@@ -32,6 +32,10 @@ import org.overengineer.bettacraft.tank.TankBlockItem;
 /**
  * Tank block model: on every <b>outer</b> face (not connected to the same tank) the glass block's own face quads are
  * emitted with the glass' render type, plus thin dark-grey edge lines only along the outer edges of the whole tank.
+ * M10: free shapes also get lines along their concave edges (the inner corner of an L): on a face whose neighbour
+ * towards an edge is part of the tank, the line is drawn when the block diagonally beyond it (neighbour + face
+ * direction) belongs to the tank too. That needs the neighbour's block state, which {@link #getModelData} reads while
+ * the chunk is meshed (a changed neighbour re-meshes this block, too).
  * Glass from other mods works as long as its model has normal per-face quads (connected textures are not emulated).
  */
 public class TankBakedModel implements IDynamicBakedModel {
@@ -44,6 +48,8 @@ public class TankBakedModel implements IDynamicBakedModel {
     @Nullable
     private final BlockState fixedGlass;
     private final List<BakedQuad>[] edgeCache;
+    /** Per side (6 bits each, side.ordinal() * 6): edge directions with a concave crease. */
+    public static final net.neoforged.neoforge.client.model.data.ModelProperty<Long> CONCAVE = new net.neoforged.neoforge.client.model.data.ModelProperty<>();
     private final Map<ResourceLocation, TankBakedModel> itemVariants;
     private final ItemOverrides overrides;
 
@@ -54,7 +60,7 @@ public class TankBakedModel implements IDynamicBakedModel {
         this.fallbackParticle = fallbackParticle;
         this.transforms = transforms;
         this.fixedGlass = fixedGlass;
-        this.edgeCache = new List[6 * 64];
+        this.edgeCache = new List[6 * 64 * 64];
         this.itemVariants = sharedVariants != null ? sharedVariants : new ConcurrentHashMap<>();
         this.overrides = new ItemOverrides() {
             @Override
@@ -88,7 +94,9 @@ public class TankBakedModel implements IDynamicBakedModel {
             out.addAll(gm.getQuads(glass, side, rand, ModelData.EMPTY, renderType));
         }
         if (renderType == null || renderType == RenderType.cutout()) {
-            out.addAll(edgeQuads(side, mask));
+            Long concave = data.get(CONCAVE);
+            int c = concave == null ? 0 : (int) ((concave >>> (side.ordinal() * 6)) & 63);
+            out.addAll(edgeQuads(side, mask, c));
         }
         return out;
     }
@@ -104,15 +112,27 @@ public class TankBakedModel implements IDynamicBakedModel {
         return List.of(fabulous ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet());
     }
 
-    /** Edge lines on face {@code side} towards every perpendicular direction that is not connected. */
-    private List<BakedQuad> edgeQuads(Direction side, int mask) {
-        int key = side.ordinal() * 64 + mask;
+    @Override
+    public ModelData getModelData(net.minecraft.world.level.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, ModelData modelData) {
+        if (!(state.getBlock() instanceof TankBlock)) return modelData;
+        long concave = TankBlock.concaveMask(level, pos, state);
+        if (concave == 0) return modelData;
+        return modelData.derive().with(CONCAVE, concave).build();
+    }
+
+    /**
+     * Edge lines on face {@code side} towards every perpendicular direction that is not connected, and towards the
+     * connected ones with a concave crease ({@code concave}, bit = direction ordinal).
+     */
+    private List<BakedQuad> edgeQuads(Direction side, int mask, int concave) {
+        int key = (side.ordinal() * 64 + mask) * 64 + concave;
         List<BakedQuad> cached = edgeCache[key];
         if (cached != null) return cached;
         List<BakedQuad> list = new ArrayList<>();
         float[] c = new float[12];
         for (Direction e : Direction.values()) {
-            if (e.getAxis() == side.getAxis() || (mask & (1 << e.ordinal())) != 0) continue;
+            if (e.getAxis() == side.getAxis()) continue;
+            if ((mask & (1 << e.ordinal())) != 0 && (concave & (1 << e.ordinal())) == 0) continue;
             float x0 = 0, y0 = 0, z0 = 0, x1 = 1, y1 = 1, z1 = 1;
             switch (e) {
                 case DOWN -> y1 = LINE;

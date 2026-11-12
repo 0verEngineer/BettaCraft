@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.entity.betta;
 
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -28,7 +27,7 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
     @Nullable
     @Override
     protected Vec3 getPosition() {
-        AABB box = fish.tankWater;
+        var box = fish.tankWater;
         if (box == null) return super.getPosition();
         var r = fish.getRandom();
         if (fish.foodTarget != null && fish.level().getGameTime() < fish.foodUntil) {
@@ -46,10 +45,8 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
         return fish.pathFreeOfDecor(p, best) ? best : null;
     }
 
-    private static Vec3 clamp(AABB box, Vec3 v) {
-        double top = Math.max(box.minY + 0.1, box.maxY - 0.35);
-        return new Vec3(Math.max(box.minX + 0.25, Math.min(box.maxX - 0.25, v.x)),
-                Math.max(box.minY + 0.1, Math.min(top, v.y)),
-                Math.max(box.minZ + 0.25, Math.min(box.maxZ - 0.25, v.z)));
+    /** Inside the actual water of the tank (M10: never in the notch of a free shape). */
+    private static Vec3 clamp(org.overengineer.bettacraft.tank.TankWaterVolume water, Vec3 v) {
+        return water.clamp(v, 0.25 + 1.0 / 16, 0.1 + 1.0 / 16, 0.35);
     }
 }

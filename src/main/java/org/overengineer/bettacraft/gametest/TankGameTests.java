@@ -81,20 +81,21 @@ public final class TankGameTests {
         });
     }
 
+    /** M10: an L connects (free shapes); the fourth block completes it to a 2x1x2. Cuboid-only: see ShapeGameTests. */
     @GameTest(template = EMPTY)
-    public static void nonCuboidStaysSeparateThenMerges(GameTestHelper h) {
+    public static void lShapeConnectsThenCompletes(GameTestHelper h) {
         BlockPos a = new BlockPos(2, 1, 2), b = new BlockPos(3, 1, 2), c = new BlockPos(2, 1, 3), d = new BlockPos(3, 1, 3);
         place(h, List.of(a, b));
         h.runAfterDelay(2, () -> {
             place(h, List.of(c));
             h.runAfterDelay(2, () -> {
-                h.assertTrue(controller(h, c) != controller(h, a), "L-shape must not connect");
-                h.assertTrue(controller(h, c).getTank().memberCount() == 1, "C alone");
+                h.assertTrue(controller(h, c) == controller(h, a), "L-shape connects");
+                h.assertTrue(controller(h, c).getTank().memberCount() == 3 && !controller(h, c).getTank().isCuboid(), "3-block L");
                 place(h, List.of(d));
                 h.runAfterDelay(2, () -> {
                     TankBlockEntity ctl = controller(h, a);
                     for (BlockPos p : List.of(a, b, c, d)) h.assertTrue(controller(h, p) == ctl, "merged 2x1x2");
-                    h.assertTrue(ctl.getTank().memberCount() == 4, "4 members");
+                    h.assertTrue(ctl.getTank().memberCount() == 4 && ctl.getTank().isCuboid(), "4 members, cuboid");
                     h.succeed();
                 });
             });
@@ -168,7 +169,7 @@ public final class TankGameTests {
                 if (seen.add(ctl)) total += ctl.getTank().waterMb();
             }
             h.assertTrue(total == 3000, "remaining water 3000 mB, got " + total);
-            h.assertTrue(seen.size() == 2, "L remainder split into 2 cuboids, got " + seen.size());
+            h.assertTrue(seen.size() == 1, "M10: the L remainder stays one tank, got " + seen.size());
         });
         h.runAfterDelay(100, () -> {
             h.assertTrue(h.getBlockState(new BlockPos(4, 1, 4)).isAir(), "no water came back");

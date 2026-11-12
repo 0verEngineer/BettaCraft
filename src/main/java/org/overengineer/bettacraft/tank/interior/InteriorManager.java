@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -81,12 +82,36 @@ public final class InteriorManager {
         if (interior == null || isInterior(player.level())) return;
         player.setData(ModAttachments.INTERIOR_RETURN.get(), new InteriorReturn(player.level().dimension(), player.position(),
                 player.getYRot(), player.getXRot(), region.id()));
-        BlockPos target = region.toWorld(region.sizeX() / 2, 0, region.sizeZ() / 2);
+        BlockPos target = entryPoint(region);
         while (target.getY() < InteriorRegion.BASE_Y + region.sizeY() - 2 && !interior.getBlockState(target).isAir()) target = target.above();
         player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, player.getYRot(), player.getXRot());
         player.displayClientMessage(Component.translatable("message.bettacraft.interior.entered",
                 region.sizeX(), region.sizeY(), region.sizeZ()), true);
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.ENTER_INTERIOR);
+    }
+
+    /** Middle of the floor; for a free shape (M10) the middle of the bottom cell nearest to the centre. */
+    static BlockPos entryPoint(InteriorRegion region) {
+        if (region.fullBox()) return region.toWorld(region.sizeX() / 2, 0, region.sizeZ() / 2);
+        int s = region.scale();
+        double mx = region.cellsX() / 2.0, mz = region.cellsZ() / 2.0;
+        int bx = -1, by = 0, bz = -1;
+        double best = Double.MAX_VALUE;
+        for (int y = 0; y < region.cellsY() && bx < 0; y++) {
+            for (int z = 0; z < region.cellsZ(); z++)
+                for (int x = 0; x < region.cellsX(); x++) {
+                    if (!region.hasCell(x, y, z)) continue;
+                    double d = (x + 0.5 - mx) * (x + 0.5 - mx) + (z + 0.5 - mz) * (z + 0.5 - mz);
+                    if (d < best) {
+                        best = d;
+                        bx = x;
+                        by = y;
+                        bz = z;
+                    }
+                }
+        }
+        if (bx < 0) return region.toWorld(region.sizeX() / 2, 0, region.sizeZ() / 2);
+        return region.toWorld(bx * s + s / 2, by * s, bz * s + s / 2);
     }
 
     public static void leave(ServerPlayer player) {
@@ -128,7 +153,7 @@ public final class InteriorManager {
             r = allocate(tankLevel, t);
             controller.markTankChanged();
         } else {
-            r.retarget(tankLevel.dimension(), t.min(), t.id());
+            r.retarget(tankLevel.dimension(), t.anchor(), t.id());
             regions.setDirty();
         }
         return r;
@@ -143,8 +168,10 @@ public final class InteriorManager {
 
     private static InteriorRegion allocate(ServerLevel tankLevel, TankData t) {
         int s = t.scale();
+        byte[] cells = org.overengineer.bettacraft.tank.TankShape.encode(t.members(), t.min().getX(), t.min().getY(), t.min().getZ(),
+                t.sizeX(), t.sizeY(), t.sizeZ());
         InteriorRegion r = InteriorRegions.get(tankLevel.getServer()).allocate(t.sizeX() * s, t.sizeY() * s, t.sizeZ() * s, s,
-                tankLevel.dimension(), t.min(), t.id(), t.owner());
+                tankLevel.dimension(), t.anchor(), t.id(), t.owner(), cells);
         t.setRegionId(r.id());
         return r;
     }
@@ -195,6 +222,47 @@ public final class InteriorManager {
             if (ix0 > ix1 || iz0 > iz1) continue;
             InteriorWorldOps.fill(level, ix0, b[1], iz0, ix1, b[4], iz1, i == 0 ? floor : wall, touched);
         }
+        if (!r.fullBox()) buildShapeWalls(level, r, ax, bx, az, bz, wall, touched);
+    }
+
+    /**
+     * M10: closes off the cells of the bounding box that are not part of the tank's shape. Each such cell gets a wall
+     * layer (one block thick, inside the cell) on every face towards a cell of the shape, and wall instead of floor
+     * below it; the rest of it stays air that nobody can reach. Only the part inside the chunk column [ax..bx] x [az..bz].
+     */
+    static void buildShapeWalls(ServerLevel level, InteriorRegion r, int ax, int bx, int az, int bz, BlockState wall, LongSet touched) {
+        int s = r.scale(), x0 = r.originX(), z0 = r.originZ();
+        int cxa = Math.max(0, Math.floorDiv(ax - x0, s)), cxb = Math.min(r.cellsX() - 1, Math.floorDiv(bx - x0, s));
+        int cza = Math.max(0, Math.floorDiv(az - z0, s)), czb = Math.min(r.cellsZ() - 1, Math.floorDiv(bz - z0, s));
+        for (int cy = 0; cy < r.cellsY(); cy++)
+            for (int cz = cza; cz <= czb; cz++)
+                for (int cx = cxa; cx <= cxb; cx++) {
+                    if (r.hasCell(cx, cy, cz)) continue;
+                    int lx = cx * s, ly = cy * s, lz = cz * s;
+                    if (cy == 0) fillClipped(level, r, lx, -1, lz, lx + s - 1, -1, lz + s - 1, ax, bx, az, bz, wall, touched);
+                    for (Direction d : Direction.values()) {
+                        if (!r.hasCell(cx + d.getStepX(), cy + d.getStepY(), cz + d.getStepZ())) continue;
+                        int a0 = lx, a1 = lx + s - 1, b0 = ly, b1 = ly + s - 1, c0 = lz, c1 = lz + s - 1;
+                        switch (d) {
+                            case WEST -> a1 = a0;
+                            case EAST -> a0 = a1;
+                            case DOWN -> b1 = b0;
+                            case UP -> b0 = b1;
+                            case NORTH -> c1 = c0;
+                            case SOUTH -> c0 = c1;
+                        }
+                        fillClipped(level, r, a0, b0, c0, a1, b1, c1, ax, bx, az, bz, wall, touched);
+                    }
+                }
+    }
+
+    /** Fills an interior-local box (y = -1 is the floor layer), clipped to the chunk column. */
+    private static void fillClipped(ServerLevel level, InteriorRegion r, int lx0, int ly0, int lz0, int lx1, int ly1, int lz1,
+                                    int ax, int bx, int az, int bz, BlockState state, LongSet touched) {
+        int wx0 = Math.max(r.originX() + lx0, ax), wx1 = Math.min(r.originX() + lx1, bx);
+        int wz0 = Math.max(r.originZ() + lz0, az), wz1 = Math.min(r.originZ() + lz1, bz);
+        if (wx0 > wx1 || wz0 > wz1) return;
+        InteriorWorldOps.fill(level, wx0, InteriorRegion.BASE_Y + ly0, wz0, wx1, InteriorRegion.BASE_Y + ly1, wz1, state, touched);
     }
 
     /** Removes everything of a region (shell included) and forgets it. */
@@ -235,15 +303,23 @@ public final class InteriorManager {
         buildShell(server, target);
         int s = merged.scale();
         LongSet touched = new LongOpenHashSet();
+        List<ItemStack> lostFloor = new ArrayList<>();
         for (TankData old : withRegion) {
             InteriorRegion src = regions.get(old.regionId());
             BlockPos off = old.min().subtract(merged.min());
             int dx = off.getX() * s, dy = off.getY() * s, dz = off.getZ() * s;
+            // the old region only has blocks in its own cells (the rest is walled off), so the whole box can be copied
             copyInterior(interior, src, 0, 0, 0, src.sizeX(), src.sizeY(), src.sizeZ(), target.toWorld(dx, dy, dz), touched);
-            if (dy == 0) copyFloor(interior, src, 0, 0, src.sizeX(), src.sizeZ(), target, dx, dz);
-            movePlayers(interior, src, target, dx, dy, dz);
+            if (dy == 0) {
+                copyFloor(interior, src, 0, 0, src.sizeX(), src.sizeZ(), target, dx, dz);
+            } else {
+                // M10: the old floor is no floor any more (the tank grew below it): paid substrate comes back as items
+                collectFloor(interior, src, lostFloor);
+            }
+            movePlayers(interior, src, target, dx, dy, dz, null);
             destroyRegion(server, src);
         }
+        if (!lostFloor.isEmpty()) InteriorDrops.drop(tankLevel, merged.anchor(), lostFloor);
         InteriorWorldOps.resendChunks(interior, touched);
         target.equipment().markNeedsScan();
         InteriorSync.markAllDirty(target.id());
@@ -268,9 +344,20 @@ public final class InteriorManager {
             buildShell(server, target);
             BlockPos off = piece.min().subtract(old.min());
             int lx = off.getX() * s, ly = off.getY() * s, lz = off.getZ() * s;
-            copyInterior(interior, src, lx, ly, lz, piece.sizeX() * s, piece.sizeY() * s, piece.sizeZ() * s, target.toWorld(0, 0, 0), touched);
-            if (ly == 0) copyFloor(interior, src, lx, lz, piece.sizeX() * s, piece.sizeZ() * s, target, 0, 0);
-            movePlayers(interior, src, target, -lx, -ly, -lz);
+            if (piece.isCuboid()) {
+                copyInterior(interior, src, lx, ly, lz, piece.sizeX() * s, piece.sizeY() * s, piece.sizeZ() * s, target.toWorld(0, 0, 0), touched);
+                if (ly == 0) copyFloor(interior, src, lx, lz, piece.sizeX() * s, piece.sizeZ() * s, target, 0, 0);
+            } else {
+                // M10: the bounding boxes of the parts of a free shape can overlap, so copy cell by cell
+                for (long m : piece.members()) {
+                    BlockPos c = BlockPos.of(m);
+                    BlockPos co = c.subtract(old.min()), cp = c.subtract(piece.min());
+                    copyInterior(interior, src, co.getX() * s, co.getY() * s, co.getZ() * s, s, s, s,
+                            target.toWorld(cp.getX() * s, cp.getY() * s, cp.getZ() * s), touched);
+                    if (co.getY() == 0 && cp.getY() == 0) copyFloor(interior, src, co.getX() * s, co.getZ() * s, s, s, target, cp.getX() * s, cp.getZ() * s);
+                }
+            }
+            movePlayers(interior, src, target, -lx, -ly, -lz, piece);
             target.equipment().markNeedsScan();
             InteriorSync.markAllDirty(target.id());
         }
@@ -329,6 +416,17 @@ public final class InteriorManager {
         InteriorWorldOps.paste(level, dst, blocks, touched);
     }
 
+    /** Takes all floor substrate of a region out (paid substrate as items). */
+    private static void collectFloor(ServerLevel level, InteriorRegion src, List<ItemStack> out) {
+        for (int x = 0; x < src.sizeX(); x++)
+            for (int z = 0; z < src.sizeZ(); z++) {
+                BlockPos at = new BlockPos(src.originX() + x, InteriorRegion.FLOOR_Y, src.originZ() + z);
+                if (!(level.getBlockEntity(at) instanceof InteriorFloorBlockEntity)) continue;
+                ItemStack back = Substrate.clear(level, at);
+                if (!back.isEmpty()) out.add(back);
+            }
+    }
+
     /** Copies the floor substrate of a source box (local x/z) to the target region at offset dx/dz. */
     private static void copyFloor(ServerLevel level, InteriorRegion src, int lx, int lz, int sx, int sz, InteriorRegion target, int dx, int dz) {
         for (int x = 0; x < sx; x++)
@@ -341,11 +439,16 @@ public final class InteriorManager {
             }
     }
 
-    private static void movePlayers(ServerLevel level, InteriorRegion from, InteriorRegion to, int dx, int dy, int dz) {
+    /**
+     * Moves the players of {@code from} that stand in the part that becomes {@code to}; with {@code piece} (a split, M10)
+     * only those whose tank block belongs to that piece.
+     */
+    private static void movePlayers(ServerLevel level, InteriorRegion from, InteriorRegion to, int dx, int dy, int dz, @Nullable TankData piece) {
         for (ServerPlayer p : new ArrayList<>(level.players())) {
             if (!from.containsShell(p.blockPosition())) continue;
             double lx = p.getX() - from.originX() + dx, ly = p.getY() - InteriorRegion.BASE_Y + dy, lz = p.getZ() - from.originZ() + dz;
             if (lx < 0 || lz < 0 || lx >= to.sizeX() || lz >= to.sizeZ() || ly < 0 || ly >= to.sizeY()) continue;
+            if (piece != null && !to.inShape((int) Math.floor(lx), (int) Math.floor(Math.min(ly, to.sizeY() - 1)), (int) Math.floor(lz))) continue;
             p.teleportTo(level, to.originX() + lx, InteriorRegion.BASE_Y + ly, to.originZ() + lz, p.getYRot(), p.getXRot());
             InteriorReturn ret = p.getData(ModAttachments.INTERIOR_RETURN.get());
             if (ret.isSet()) {

@@ -65,9 +65,9 @@ public class BettaEntity extends AbstractFish {
     long lastSimTime = -1;
     /** False until the first server tick after loading (catch-up or "time stood still"). */
     boolean simStarted;
-    /** Water volume of the tank this fish lives in (server, refreshed regularly); null outside tanks. */
+    /** Water volume of the tank this fish lives in (server, refreshed regularly; M10: the actual shape); null outside tanks. */
     @Nullable
-    AABB tankWater;
+    org.overengineer.bettacraft.tank.TankWaterVolume tankWater;
     /** Hand-fed food sinking here (server); bettas swim towards it until {@link #foodUntil}. */
     @Nullable
     Vec3 foodTarget;
@@ -389,14 +389,14 @@ public class BettaEntity extends AbstractFish {
     @Override
     public void aiStep() {
         super.aiStep();
-        AABB box = tankWater;
-        if (box != null && !level().isClientSide && isInWater()) {
-            // Keep our bettas inside the tank water (walls stop them anyway; this keeps them off the surface).
+        var water = tankWater;
+        if (water != null && !level().isClientSide && isInWater()) {
+            // Keep our bettas inside the tank water (walls stop them anyway; this keeps them off the surface and, in a
+            // free-shape tank, out of the notches).
             Vec3 p = position();
             double m = Math.max(0.05, 0.2 * lifeStage().scale());
-            double cx = Mth.clamp(p.x, box.minX + m, box.maxX - m);
-            double cy = Mth.clamp(p.y, box.minY + 0.05, Math.max(box.minY + 0.05, box.maxY - 0.3 * lifeStage().scale()));
-            double cz = Mth.clamp(p.z, box.minZ + m, box.maxZ - m);
+            Vec3 c = water.clamp(p, m + 1.0 / 16, 1.0 / 16 + 0.05, 0.3 * lifeStage().scale());
+            double cx = c.x, cy = c.y, cz = c.z;
             if (cx != p.x || cy != p.y || cz != p.z) {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
             }

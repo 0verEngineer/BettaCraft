@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.tank.TankData;
+import org.overengineer.bettacraft.tank.TankShape;
 
 /**
  * Geometry of the hose and outlet of an external filter (PLAN 6.2), shared by the client renderer and the bubble
@@ -74,29 +75,49 @@ public final class FilterFlow {
 
     /** Largest jet scale (see {@link Path#jet(int, double)}) that keeps a submerged current inside the glass. */
     public static double fitScale(TankData t, Path p, double wanted) {
-        BlockPos mn = t.min(), mx = t.max();
         double wall = 1.0 / 16, n;
-        switch (p.inward()) {
-            case NORTH -> n = p.nozzle().z - (mn.getZ() + wall);
-            case SOUTH -> n = mx.getZ() + 1 - wall - p.nozzle().z;
-            case WEST -> n = p.nozzle().x - (mn.getX() + wall);
-            default -> n = mx.getX() + 1 - wall - p.nozzle().x;
+        BlockPos at = BlockPos.containing(p.nozzle());
+        if (t.contains(at)) {
+            // M10: up to the glass opposite the outlet in this row of the shape (a notch wall ends the current earlier)
+            BlockPos far = TankShape.walk(t.members(), at, p.inward());
+            switch (p.inward()) {
+                case NORTH -> n = p.nozzle().z - (far.getZ() + wall);
+                case SOUTH -> n = far.getZ() + 1 - wall - p.nozzle().z;
+                case WEST -> n = p.nozzle().x - (far.getX() + wall);
+                default -> n = far.getX() + 1 - wall - p.nozzle().x;
+            }
+        } else {
+            BlockPos mn = t.min(), mx = t.max();
+            switch (p.inward()) {
+                case NORTH -> n = p.nozzle().z - (mn.getZ() + wall);
+                case SOUTH -> n = mx.getZ() + 1 - wall - p.nozzle().z;
+                case WEST -> n = p.nozzle().x - (mn.getX() + wall);
+                default -> n = mx.getX() + 1 - wall - p.nozzle().x;
+            }
         }
         return Math.max(0.05, Math.min(wanted, n / 0.9));
     }
 
     /**
-     * Hose path from a filter outside the wall {@code out} (direction pointing away from the tank) of the tank box.
+     * Hose path from a filter outside the wall {@code out} (direction pointing away from the tank) of the tank block
+     * {@code wallBlock} (M10: the wall the filter hangs on, also the wall of a notch; the hose goes over the rim of
+     * that column).
      *
      * @param lateral position along the wall (x for north/south walls, z for east/west walls), clamped into the wall
      * @param startY  height where the hose starts
      */
     @Nullable
-    public static Path compute(TankData t, Direction out, double lateral, double startY) {
+    public static Path compute(TankData t, BlockPos wallBlock, Direction out, double lateral, double startY) {
         if (!out.getAxis().isHorizontal() || t.sizeX() <= 0) return null;
-        BlockPos mn = t.min(), mx = t.max();
-        double x0 = mn.getX(), x1 = mx.getX() + 1, z0 = mn.getZ(), z1 = mx.getZ() + 1;
-        double yTop = mx.getY() + 1, yBottom = mn.getY();
+        boolean shape = t.contains(wallBlock);
+        BlockPos topBlock = shape ? TankShape.walk(t.members(), wallBlock, Direction.UP) : new BlockPos(wallBlock.getX(), t.max().getY(), wallBlock.getZ());
+        BlockPos lowBlock = shape ? TankShape.walk(t.members(), wallBlock, Direction.DOWN) : new BlockPos(wallBlock.getX(), t.min().getY(), wallBlock.getZ());
+        double x0 = wallBlock.getX(), x1 = wallBlock.getX() + 1, z0 = wallBlock.getZ(), z1 = wallBlock.getZ() + 1;
+        if (!shape) {
+            BlockPos mn = t.min(), mx = t.max();
+            x0 = mn.getX(); x1 = mx.getX() + 1; z0 = mn.getZ(); z1 = mx.getZ() + 1;
+        }
+        double yTop = topBlock.getY() + 1, yBottom = lowBlock.getY();
         boolean alongX = out.getAxis() == Direction.Axis.Z; // north/south wall runs along x
         double lo = alongX ? x0 : z0, hi = alongX ? x1 : z1;
         double lat = Math.max(lo + 0.22, Math.min(hi - 0.22, lateral));
@@ -113,9 +134,7 @@ public final class FilterFlow {
         Vec3 top = alongX ? new Vec3(lat, rim, wallOut) : new Vec3(wallOut, rim, lat);
         Vec3 inside = alongX ? new Vec3(lat, rim, wallIn) : new Vec3(wallIn, rim, lat);
         Vec3 nozzle = inside.add(0, -0.3, 0);
-        double area = (double) t.sizeX() * t.sizeZ();
-        double h = area <= 0 ? 0 : t.waterMb() / (area * TankData.MB_PER_BLOCK);
-        double surface = yBottom + Math.min(t.sizeY() - 1.0 / 16, Math.max(1.0 / 16, h));
+        double surface = Math.min(yTop - 1.0 / 16, Math.max(yBottom + 1.0 / 16, t.waterSurfaceY()));
         return new Path(bottom, top, inside, nozzle, out.getOpposite(), surface, t.waterMb() > 0);
     }
 
@@ -123,7 +142,7 @@ public final class FilterFlow {
     @Nullable
     public static Path forFilterBlock(TankData t, BlockPos pos, Direction facing) {
         double lateral = facing.getAxis() == Direction.Axis.Z ? pos.getX() + 0.5 : pos.getZ() + 0.5;
-        return compute(t, facing.getOpposite(), lateral, pos.getY() + 14 / 16.0);
+        return compute(t, pos.relative(facing), facing.getOpposite(), lateral, pos.getY() + 14 / 16.0);
     }
 
     /** Path of a filter inside the cabinet at {@code pos} (tank above it): up the tank's back wall. */
@@ -131,6 +150,9 @@ public final class FilterFlow {
     public static Path forCabinet(TankData t, BlockPos pos, Direction cabinetFront) {
         Direction back = cabinetFront.getOpposite();
         double lateral = back.getAxis() == Direction.Axis.Z ? pos.getX() + 0.5 : pos.getZ() + 0.5;
-        return compute(t, back, lateral, pos.getY() + 0.75);
+        BlockPos above = pos.above();
+        // M10: the back wall of this row of the shape
+        BlockPos wall = t.contains(above) ? TankShape.walk(t.members(), above, back) : above;
+        return compute(t, wall, back, lateral, pos.getY() + 0.75);
     }
 }

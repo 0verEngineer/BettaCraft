@@ -54,7 +54,7 @@ public final class BettaCare {
             return;
         }
         TankData tank = controller.getTank();
-        fish.tankWater = TankCare.waterBox(tank);
+        fish.tankWater = new org.overengineer.bettacraft.tank.TankWaterVolume(tank);
         if (!fish.simStarted) {
             fish.simStarted = true;
             if (fish.lastSimTime < 0 || !ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) {

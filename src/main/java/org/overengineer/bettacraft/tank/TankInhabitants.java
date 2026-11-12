@@ -261,6 +261,15 @@ public final class TankInhabitants {
         return e.hasData(ModAttachments.TANK_REF.get()) && e.getData(ModAttachments.TANK_REF.get()).isSet();
     }
 
+    /**
+     * Whether an entity is inside the tank's blocks (M10: the actual shape, not the bounding box; a frog sitting on the
+     * water surface right under the open top still counts).
+     */
+    public static boolean inside(TankData tank, Entity e) {
+        BlockPos p = e.blockPosition();
+        return tank.contains(p) || (tank.contains(p.below()) && e.getY() - p.getY() < 0.5);
+    }
+
     public static AABB tankBox(TankData tank) {
         BlockPos mn = tank.min(), mx = tank.max();
         return new AABB(mn.getX(), mn.getY(), mn.getZ(), mx.getX() + 1, mx.getY() + 1, mx.getZ() + 1);
@@ -314,7 +323,7 @@ public final class TankInhabitants {
             found.add(e.getUUID());
             if (isAdult(e)) adults++;
         }
-        for (Entity e : level.getEntities((Entity) null, box.inflate(6), e -> hasTankRef(e) && !box.contains(e.position()))) {
+        for (Entity e : level.getEntities((Entity) null, box.inflate(6), e -> hasTankRef(e) && !inside(tank, e))) {
             if (ours.equals(e.getData(ModAttachments.TANK_REF.get()))) release(e); // left the tank (e.g. teleported)
         }
         boolean changed = false;
@@ -325,7 +334,7 @@ public final class TankInhabitants {
                 continue;
             }
             Entity e = level.getEntity(u);
-            if (e != null && (!e.isAlive() || !box.contains(e.position()))) {
+            if (e != null && (!e.isAlive() || !inside(tank, e))) {
                 controller.missing.removeInt(u);
                 changed = true;
                 continue;

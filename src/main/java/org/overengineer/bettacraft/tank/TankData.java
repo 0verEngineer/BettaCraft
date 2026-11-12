@@ -25,7 +25,8 @@ import net.minecraft.world.item.Items;
 
 /**
  * Data of one tank, held by its controller block entity.
- * The controller stores the <b>set</b> of member blocks (not only a box) so free shapes can come later (M10).
+ * The controller stores the <b>set</b> of member blocks (not only a box): since M10 a tank can have any face-connected
+ * shape (L, T, steps ...). Water fills layer by layer ({@link TankShape}).
  */
 public final class TankData {
     public static final long MB_PER_BLOCK = 1000L;
@@ -71,8 +72,13 @@ public final class TankData {
     @Nullable
     private BubbleNest nest;
 
-    /** Client-side copy only knows box and summary values, not the member set. */
+    /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
+    /** Blocks per layer from minY (cached, the member set never changes after creation). */
+    @Nullable
+    private int[] layerCounts;
+    private long surfaceCacheMb = Long.MIN_VALUE;
+    private double surfaceCache;
     private int clientMemberCount;
     private int clientInhabitants;
 
@@ -121,7 +127,13 @@ public final class TankData {
         return members.contains(pos.asLong());
     }
 
+    public boolean contains(long pos) {
+        return members.contains(pos);
+    }
+
     public void recomputeBounds() {
+        layerCounts = null;
+        surfaceCacheMb = Long.MIN_VALUE;
         minX = minY = minZ = Integer.MAX_VALUE;
         maxX = maxY = maxZ = Integer.MIN_VALUE;
         for (long l : members) {
@@ -147,6 +159,43 @@ public final class TankData {
         return (long) sizeX() * sizeY() * sizeZ() == memberCount();
     }
 
+    /**
+     * The tank's lowest block (y, then z, then x; the controller position). Unlike {@link #min()} it is always a block of
+     * the tank, also for a free shape whose bounding-box corner is empty.
+     */
+    public BlockPos anchor() {
+        long best = 0;
+        boolean any = false;
+        for (long l : members) {
+            if (!any || BlockPos.getY(l) < BlockPos.getY(best) || (BlockPos.getY(l) == BlockPos.getY(best) && (BlockPos.getZ(l) < BlockPos.getZ(best)
+                    || (BlockPos.getZ(l) == BlockPos.getZ(best) && BlockPos.getX(l) < BlockPos.getX(best))))) {
+                best = l;
+                any = true;
+            }
+        }
+        return any ? BlockPos.of(best) : min();
+    }
+
+    /** Blocks per layer, index 0 = {@link #min()} y. */
+    public int[] layerCounts() {
+        if (layerCounts == null) layerCounts = TankShape.layerCounts(members, minY, maxY);
+        return layerCounts;
+    }
+
+    /** Absolute height of the water surface (M10: correct for any shape; bottom of the tank when dry). */
+    public double waterSurfaceY() {
+        if (surfaceCacheMb != waterMb) {
+            surfaceCache = members.isEmpty() ? minY : TankShape.surfaceY(layerCounts(), minY, waterMb);
+            surfaceCacheMb = waterMb;
+        }
+        return surfaceCache;
+    }
+
+    /** Positions directly above the blocks whose top is open (no tank block above): lid, feeder, light, evaporation. */
+    public java.util.List<BlockPos> openTops() {
+        return TankShape.openTops(members);
+    }
+
     // ------------------------------------------------------------------ water
 
     public long capacityMb() {
@@ -166,15 +215,12 @@ public final class TankData {
      * Partial layers are rounded up so that any water is visible.
      */
     public int fillOfLayer(int y) {
-        // Count blocks per layer below y (works for arbitrary shapes, cheap for cuboids).
+        int[] c = layerCounts();
+        int i = y - minY;
+        if (i < 0 || i >= c.length) return 0;
         long below = 0;
-        int layerCount = 0;
-        for (long l : members) {
-            int ly = BlockPos.getY(l);
-            if (ly < y) below++;
-            else if (ly == y) layerCount++;
-        }
-        return fillFor(waterMb, below * MB_PER_BLOCK, layerCount * MB_PER_BLOCK);
+        for (int k = 0; k < i; k++) below += c[k];
+        return fillFor(waterMb, below * MB_PER_BLOCK, c[i] * MB_PER_BLOCK);
     }
 
     /** Pure helper (unit-tested): fill in 1/16 of a layer with the given capacity whose bottom starts at {@code belowMb}. */
@@ -349,6 +395,8 @@ public final class TankData {
         t.putIntArray("min", new int[]{minX, minY, minZ});
         t.putIntArray("max", new int[]{maxX, maxY, maxZ});
         t.putInt("count", members.size());
+        // M10: non-cuboid shapes send their blocks as a bit set over the box (512 bytes for 16^3)
+        if (!members.isEmpty() && !isCuboid()) t.putByteArray("shape", TankShape.encode(members, minX, minY, minZ, sizeX(), sizeY(), sizeZ()));
         t.putInt("scale", scale);
         t.putLong("water_mb", waterMb);
         t.putInt("region", regionId);
@@ -371,6 +419,15 @@ public final class TankData {
             d.maxX = mx[0]; d.maxY = mx[1]; d.maxZ = mx[2];
         }
         d.clientMemberCount = t.getInt("count");
+        if (mn.length == 3 && mx.length == 3) {
+            if (t.contains("shape", Tag.TAG_BYTE_ARRAY)) {
+                d.members.addAll(TankShape.decode(t.getByteArray("shape"), d.minX, d.minY, d.minZ, d.sizeX(), d.sizeY(), d.sizeZ()));
+            } else if ((long) d.sizeX() * d.sizeY() * d.sizeZ() <= 1 << 20) {
+                for (int y = d.minY; y <= d.maxY; y++)
+                    for (int z = d.minZ; z <= d.maxZ; z++)
+                        for (int x = d.minX; x <= d.maxX; x++) d.members.add(BlockPos.asLong(x, y, z));
+            }
+        }
         d.scale = t.getInt("scale");
         d.waterMb = t.getLong("water_mb");
         d.regionId = t.getInt("region");

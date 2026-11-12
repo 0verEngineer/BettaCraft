@@ -33,10 +33,16 @@ public final class InteriorRegions extends SavedData {
 
     public InteriorRegion allocate(int sizeX, int sizeY, int sizeZ, int scale, ResourceKey<Level> dim, BlockPos tankMin,
                                    @Nullable UUID tankId, @Nullable UUID owner) {
+        return allocate(sizeX, sizeY, sizeZ, scale, dim, tankMin, tankId, owner, null);
+    }
+
+    /** As above with the tank's shape (M10, null = full box). */
+    public InteriorRegion allocate(int sizeX, int sizeY, int sizeZ, int scale, ResourceKey<Level> dim, BlockPos tankMin,
+                                   @Nullable UUID tankId, @Nullable UUID owner, @Nullable byte[] cells) {
         // id 0 is skipped so that no region touches the world origin of the dimension
         if (nextId == 0) nextId = 1;
         int id = nextId++;
-        InteriorRegion r = new InteriorRegion(id, sizeX, sizeY, sizeZ, scale, dim, tankMin, tankId, owner);
+        InteriorRegion r = new InteriorRegion(id, sizeX, sizeY, sizeZ, scale, dim, tankMin, tankId, owner, cells);
         regions.put(id, r);
         setDirty();
         return r;

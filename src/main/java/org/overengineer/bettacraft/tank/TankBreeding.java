@@ -265,12 +265,9 @@ public final class TankBreeding {
         return best;
     }
 
+    /** At the surface near {@code near}, in a block that holds the surface (M10: never above a notch or a closed step). */
     static Vec3 nestSpot(TankData tank, Vec3 near) {
-        AABB w = TankCare.waterBox(tank);
-        double x = Mth.clamp(near.x, w.minX + 0.3, w.maxX - 0.3);
-        double z = Mth.clamp(near.z, w.minZ + 0.3, w.maxZ - 0.3);
-        double y = Math.max(w.minY + 0.1, w.maxY - 0.06);
-        return new Vec3(x, y, z);
+        return new TankWaterVolume(tank).surfacePoint(near, 0.3 + 1.0 / 16, 0.06);
     }
 
     private static void abandon(ServerLevel level, TankBlockEntity controller, TankData tank, String key) {
@@ -317,16 +314,15 @@ public final class TankBreeding {
         survivors = Math.min(survivors, room);
         List<BubbleNest.Egg> eggs = new ArrayList<>(n.eggs);
         Collections.shuffle(eggs, new java.util.Random(r.nextLong()));
-        AABB water = TankCare.waterBox(tank);
+        TankWaterVolume water = new TankWaterVolume(tank);
         int spawned = 0;
         for (int i = 0; i < survivors; i++) {
             BubbleNest.Egg egg = eggs.get(i);
             BettaEntity fry = ModEntities.BETTA.get().create(level);
             if (fry == null) continue;
             fry.setBettaData(BettaData.offspring(egg.genotype(), egg.female(), n.motherFishId, n.fatherFishId, n.generation, level.getGameTime()));
-            Vec3 p = new Vec3(Mth.clamp(n.pos.x + (r.nextDouble() - 0.5) * 0.6, water.minX + 0.1, water.maxX - 0.1),
-                    Math.max(water.minY + 0.1, n.pos.y - 0.2 - r.nextDouble() * 0.3),
-                    Mth.clamp(n.pos.z + (r.nextDouble() - 0.5) * 0.6, water.minZ + 0.1, water.maxZ - 0.1));
+            Vec3 p = water.clamp(new Vec3(n.pos.x + (r.nextDouble() - 0.5) * 0.6, n.pos.y - 0.2 - r.nextDouble() * 0.3,
+                    n.pos.z + (r.nextDouble() - 0.5) * 0.6), 0.1 + 1.0 / 16, 0.1 + 1.0 / 16, 0.05);
             fry.moveTo(p.x, p.y, p.z, r.nextFloat() * 360F, 0F);
             TankInhabitants.adopt(fry, controller);
             if (level.addFreshEntity(fry)) {

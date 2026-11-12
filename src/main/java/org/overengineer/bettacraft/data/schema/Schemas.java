@@ -62,6 +62,7 @@ public final class Schemas {
     public static final MigrationChain INTERIOR_REGIONS = MigrationChain.builder("interior_regions")
             .step(0, data -> data) // v0 = written before versioning; identical layout
             .step(1, Schemas::regionsV1toV2)
+            .step(2, Schemas::regionsV2toV3)
             .build();
 
     /** Substrate block entity of an interior floor block (M3). */
@@ -182,6 +183,26 @@ public final class Schemas {
                 eq.putBoolean("rescan", true);
                 r.put("equipment", eq);
             }
+        }
+        return data;
+    }
+
+    /**
+     * Interior regions v2 -> v3 (M10): regions store the tank's shape as {@code cells}, a bit set over the grid of tank
+     * blocks of the bounding box ({@code size / scale} per axis, index {@code (y * cz + z) * cx + x}). Every region
+     * written before M10 belongs to a cuboid tank, so it gets all cells set. Everything else is kept.
+     */
+    static CompoundTag regionsV2toV3(CompoundTag data) {
+        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag r = list.getCompound(i);
+            if (r.contains("cells", Tag.TAG_BYTE_ARRAY)) continue;
+            int[] size = r.getIntArray("size");
+            int scale = Math.max(1, r.getInt("scale"));
+            int cx = size.length == 3 ? Math.max(1, size[0] / scale) : 1;
+            int cy = size.length == 3 ? Math.max(1, size[1] / scale) : 1;
+            int cz = size.length == 3 ? Math.max(1, size[2] / scale) : 1;
+            r.putByteArray("cells", org.overengineer.bettacraft.tank.TankShape.fullBox(cx, cy, cz));
         }
         return data;
     }

@@ -16,7 +16,7 @@ import org.overengineer.bettacraft.equipment.FilterHost;
 
 /**
  * Equipment around a tank (M4): external filter blocks next to the walls (facing a block of the tank) and cabinets
- * directly below the bottom layer (PLAN 6.2 / 6.5). The positions are cached in the controller and rescanned at most
+ * directly below the tank (PLAN 6.2 / 6.5); since M10 along every outer face of a free shape. The positions are cached in the controller and rescanned at most
  * once per second; every use re-checks the block entity.
  */
 public final class TankEquipment {
@@ -31,25 +31,21 @@ public final class TankEquipment {
         c.equipmentScanTime = now;
         TankData t = c.getTank();
         List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>();
-        BlockPos mn = t.min(), mx = t.max();
+        // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
+        // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        for (int y = mn.getY(); y <= mx.getY(); y++) {
-            for (int x = mn.getX(); x <= mx.getX(); x++) {
-                check(level, t, p.set(x, y, mn.getZ() - 1), Direction.SOUTH, filters);
-                check(level, t, p.set(x, y, mx.getZ() + 1), Direction.NORTH, filters);
+        for (long l : t.members()) {
+            BlockPos m = BlockPos.of(l);
+            for (Direction d : Direction.Plane.HORIZONTAL) {
+                if (t.contains(BlockPos.offset(l, d))) continue;
+                check(level, t, p.setWithOffset(m, d), d.getOpposite(), filters);
             }
-            for (int z = mn.getZ(); z <= mx.getZ(); z++) {
-                check(level, t, p.set(mn.getX() - 1, y, z), Direction.EAST, filters);
-                check(level, t, p.set(mx.getX() + 1, y, z), Direction.WEST, filters);
-            }
+            if (t.contains(BlockPos.offset(l, Direction.DOWN))) continue;
+            p.setWithOffset(m, Direction.DOWN);
+            if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
         }
-        int below = mn.getY() - 1;
-        for (int x = mn.getX(); x <= mx.getX(); x++)
-            for (int z = mn.getZ(); z <= mx.getZ(); z++) {
-                p.set(x, below, z);
-                if (!level.isLoaded(p) || !t.contains(p.above())) continue;
-                if (level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
-            }
+        filters.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
+        cabinets.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.filterCache = List.copyOf(filters);
         c.cabinetCache = List.copyOf(cabinets);
     }

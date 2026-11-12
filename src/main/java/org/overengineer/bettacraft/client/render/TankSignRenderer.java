@@ -15,10 +15,11 @@ import net.minecraft.world.phys.AABB;
 import org.overengineer.bettacraft.tank.SignPosition;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
+import org.overengineer.bettacraft.tank.TankShape;
 
 /**
  * Name sign of a tank (PLAN 4.4): black plate with white text, 0.25 blocks high, on the front of the whole tank at
- * one of six positions. Drawn by the controller; shrinks the text when the front is too narrow. Also draws the bubble
+ * one of six positions (M10: on an irregular front, on the widest flat part of the top or bottom row). Drawn by the controller; shrinks the text when the front is too narrow. Also draws the bubble
  * nest with its eggs / larvae (M2).
  */
 public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
@@ -41,14 +42,30 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         if (t.nest() != null) renderNest(be, t.nest(), partialTick, pose, buffers);
         if (!t.signVisible() || t.name().isEmpty()) return;
         Direction front = t.front();
+        SignPosition sp = t.signPos();
+        // M10: on an irregular front the sign sits on the widest flat run of the top (bottom) row
+        TankShape.SignFace face = t.members().isEmpty() ? null : TankShape.signFace(t.members(), front, sp.top());
         BlockPos mn = t.min(), mx = t.max();
         BlockPos origin = be.getBlockPos();
         // front face plane and the "right" direction as seen by a viewer looking at the front
         Direction right = front.getCounterClockWise();
-        double faceWidth = right.getAxis() == Direction.Axis.X ? t.sizeX() : t.sizeZ();
-        double cx = (mn.getX() + mx.getX() + 1) / 2.0, cz = (mn.getZ() + mx.getZ() + 1) / 2.0;
-        double fx = front == Direction.EAST ? mx.getX() + 1 : front == Direction.WEST ? mn.getX() : cx;
-        double fz = front == Direction.SOUTH ? mx.getZ() + 1 : front == Direction.NORTH ? mn.getZ() : cz;
+        double faceWidth, centre, plane, rowTop, rowBottom;
+        if (face != null) {
+            faceWidth = face.width();
+            centre = face.centre();
+            plane = face.plane();
+            rowTop = face.y() + 1;
+            rowBottom = face.y();
+        } else {
+            faceWidth = right.getAxis() == Direction.Axis.X ? t.sizeX() : t.sizeZ();
+            centre = right.getAxis() == Direction.Axis.X ? (mn.getX() + mx.getX() + 1) / 2.0 : (mn.getZ() + mx.getZ() + 1) / 2.0;
+            plane = front == Direction.EAST ? mx.getX() + 1 : front == Direction.WEST ? mn.getX()
+                    : front == Direction.SOUTH ? mx.getZ() + 1 : mn.getZ();
+            rowTop = mx.getY() + 1;
+            rowBottom = mn.getY();
+        }
+        double fx = front.getAxis() == Direction.Axis.X ? plane : centre;
+        double fz = front.getAxis() == Direction.Axis.Z ? plane : centre;
         double out = 0.01;
 
         FormattedCharSequence text = Component.literal(t.name()).getVisualOrderText();
@@ -58,9 +75,8 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         if ((textW + 2) * scale > maxW) scale = maxW / (textW + 2);
         float plateW = (textW + 2) * scale;
         float plateH = 10 * scale;
-        SignPosition sp = t.signPos();
         double along = sp.horizontal() * (faceWidth / 2 - MARGIN - plateW / 2);
-        double y = sp.top() ? mx.getY() + 1 - MARGIN - plateH / 2 : mn.getY() + MARGIN + plateH / 2;
+        double y = sp.top() ? rowTop - MARGIN - plateH / 2 : rowBottom + MARGIN + plateH / 2;
 
         double x = fx + front.getStepX() * out + right.getStepX() * along;
         double z = fz + front.getStepZ() * out + right.getStepZ() * along;

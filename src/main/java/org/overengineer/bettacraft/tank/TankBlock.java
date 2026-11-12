@@ -130,6 +130,24 @@ public class TankBlock extends BaseEntityBlock {
         return mask;
     }
 
+    /**
+     * Concave creases of all outer faces (M10, for the edge lines of free shapes): bit {@code side * 6 + e} is set when the
+     * face towards {@code side} is outer, the neighbour towards {@code e} belongs to the tank and the block beyond it
+     * towards {@code side} does too (the inner corner of an L). Only block states are read.
+     */
+    public static long concaveMask(BlockGetter level, BlockPos pos, BlockState state) {
+        long out = 0;
+        for (Direction side : Direction.values()) {
+            if (isConnected(state, side)) continue;
+            for (Direction e : Direction.values()) {
+                if (e.getAxis() == side.getAxis() || !isConnected(state, e)) continue;
+                BlockState n = level.getBlockState(pos.relative(e));
+                if (n.getBlock() instanceof TankBlock && isConnected(n, side)) out |= 1L << (side.ordinal() * 6 + e.ordinal());
+            }
+        }
+        return out;
+    }
+
     // ------------------------------------------------------------------ block entity
 
     @Nullable

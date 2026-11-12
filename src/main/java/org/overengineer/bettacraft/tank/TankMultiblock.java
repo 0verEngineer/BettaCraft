@@ -28,8 +28,9 @@ import org.slf4j.LoggerFactory;
  * Server-side multiblock logic: forming, merging and splitting tanks.
  * <ul>
  *     <li>Only tank blocks with the <b>same glass</b> connect.</li>
- *     <li>Tanks are cuboids for now. A block that would create a non-cuboid tank stays a separate tank (hint in the
- *     action bar). Breaking a block out of a cuboid splits the rest into cuboids (greedy decomposition).</li>
+ *     <li>M10: any face-connected shape (L, T, steps ...) whose bounding box fits the size limit. A block that would
+ *     exceed it stays a separate tank (hint in the action bar). Breaking a block splits the rest into its connected
+ *     parts. With {@code tank.freeShapes = false} tanks stay cuboids (M1-M9 behaviour, greedy decomposition).</li>
  *     <li>Works across chunk borders as long as the chunks are loaded (unloaded neighbours never connect).</li>
  * </ul>
  */
@@ -89,7 +90,7 @@ public final class TankMultiblock {
             install(level, newTank(List.of(pos), ServerConfig.defaultScale(), player));
             if (player != null) {
                 if (!candidates.isEmpty()) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_cuboid"), true);
+                    player.displayClientMessage(notJoinedMessage(), true);
                 } else if (unloadedNeighbour) {
                     player.displayClientMessage(Component.translatable("message.bettacraft.tank.unloaded"), true);
                 } else if (otherGlass) {
@@ -100,13 +101,24 @@ public final class TankMultiblock {
         }
         merge(level, chosen, pos);
         if (player != null && chosen.size() < candidates.size()) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_cuboid"), true);
+            player.displayClientMessage(notJoinedMessage(), true);
         }
+    }
+
+    public static boolean freeShapes() {
+        return ServerConfig.getOr(ServerConfig.TANK_FREE_SHAPES, true);
+    }
+
+    private static Component notJoinedMessage() {
+        return freeShapes()
+                ? Component.translatable("message.bettacraft.tank.too_large", ServerConfig.maxSize(0), ServerConfig.maxSize(1), ServerConfig.maxSize(2))
+                : Component.translatable("message.bettacraft.tank.not_cuboid");
     }
 
     /**
      * Picks which neighbouring tanks the new block merges with: the largest subset (by block count) of the at most six
-     * neighbouring tanks that together with the block forms a cuboid within the size limit and with one scale.
+     * neighbouring tanks with one scale whose union with the block fits the size limit (and, with free shapes off, is a
+     * cuboid). Every neighbour touches the new block, so the union is always connected.
      */
     private static List<TankBlockEntity> chooseMerge(BlockPos pos, List<TankBlockEntity> candidates) {
         int n = candidates.size();
@@ -124,12 +136,25 @@ public final class TankMultiblock {
             if (count <= bestCount) continue;
             int scale = subset.getFirst().getTank().scale();
             if (subset.stream().anyMatch(c -> c.getTank().scale() != scale)) continue;
-            if (fitsAsCuboid(pos, subset)) {
+            if (freeShapes() ? fitsAsShape(pos, subset) : fitsAsCuboid(pos, subset)) {
                 best = subset;
                 bestCount = count;
             }
         }
         return best;
+    }
+
+    private static boolean fitsAsShape(BlockPos extra, List<TankBlockEntity> tanks) {
+        int minX = extra.getX(), minY = extra.getY(), minZ = extra.getZ();
+        int maxX = minX, maxY = minY, maxZ = minZ;
+        for (TankBlockEntity c : tanks) {
+            TankData t = c.getTank();
+            if (t.contains(extra)) return false;
+            BlockPos mn = t.min(), mx = t.max();
+            minX = Math.min(minX, mn.getX()); minY = Math.min(minY, mn.getY()); minZ = Math.min(minZ, mn.getZ());
+            maxX = Math.max(maxX, mx.getX()); maxY = Math.max(maxY, mx.getY()); maxZ = Math.max(maxZ, mx.getZ());
+        }
+        return TankShape.fits(new int[]{minX, minY, minZ, maxX, maxY, maxZ}, ServerConfig.maxSize(0), ServerConfig.maxSize(1), ServerConfig.maxSize(2));
     }
 
     private static boolean fitsAsCuboid(BlockPos extra, List<TankBlockEntity> tanks) {
@@ -225,7 +250,6 @@ public final class TankMultiblock {
 
         LongSet remaining = new LongOpenHashSet(t.members());
         remaining.remove(pos.asLong());
-        long newWater = t.waterMb() - t.waterMb() / Math.max(1, t.memberCount());
 
         // Interior part of the removed block drops as items, the rest is copied into the pieces' regions.
         InteriorManager.dropInteriorOfBlock(level, t, pos);
@@ -235,9 +259,12 @@ public final class TankMultiblock {
             return;
         }
 
-        List<List<BlockPos>> pieces = decompose(remaining);
+        List<List<BlockPos>> pieces = pieces(remaining);
+        // M10: every piece keeps the water of its own blocks (per layer); the removed block's water is gone
+        List<List<Long>> asLongs = new ArrayList<>();
+        for (List<BlockPos> piece : pieces) asLongs.add(piece.stream().map(BlockPos::asLong).toList());
+        long[] shares = TankShape.splitWater(t.members(), t.waterMb(), asLongs);
         List<TankData> newTanks = new ArrayList<>();
-        long distributed = 0;
         for (int i = 0; i < pieces.size(); i++) {
             List<BlockPos> piece = pieces.get(i);
             TankData nt = TankData.create(piece, t.scale());
@@ -248,9 +275,7 @@ public final class TankMultiblock {
                 moveHeaters(level, t, nt, pos); // the first piece keeps the equipment
                 nt.inhabitants().addAll(t.inhabitants());
             }
-            long share = i == pieces.size() - 1 ? newWater - distributed : newWater * piece.size() / remaining.size();
-            distributed += share;
-            nt.setWaterMb(share);
+            nt.setWaterMb(shares[i]);
             newTanks.add(nt);
         }
         InteriorManager.onTankSplit(level, t, newTanks);
@@ -263,6 +288,28 @@ public final class TankMultiblock {
                 }
             }
         }
+    }
+
+    /**
+     * The tanks the remaining blocks form: their connected parts (M10), each split into cuboids when free shapes are off.
+     * The largest part comes first (it keeps id, equipment, power and the inhabitant list).
+     */
+    public static List<List<BlockPos>> pieces(LongSet remaining) {
+        List<List<BlockPos>> out = new ArrayList<>();
+        for (LongSet comp : TankShape.components(remaining)) {
+            if (freeShapes()) {
+                List<BlockPos> l = new ArrayList<>();
+                for (long p : comp) l.add(BlockPos.of(p));
+                l.sort(Comparator.comparingInt((BlockPos p) -> p.getY()).thenComparingInt(p -> p.getZ()).thenComparingInt(p -> p.getX()));
+                out.add(l);
+            } else {
+                out.addAll(decompose(comp));
+            }
+        }
+        // stable: equal sizes keep the deterministic component order
+        List<List<BlockPos>> sorted = new ArrayList<>(out);
+        sorted.sort(Comparator.comparingInt((List<BlockPos> l) -> -l.size()));
+        return sorted;
     }
 
     /**

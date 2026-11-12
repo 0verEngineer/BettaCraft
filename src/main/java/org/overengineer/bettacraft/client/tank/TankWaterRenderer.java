@@ -15,7 +15,8 @@ import org.overengineer.bettacraft.tank.TankBlock;
 
 /**
  * Our own water for tank blocks (PLAN 3.3): flat surface at the exact fill height, no flow, no slope, fixed colour
- * (no biome tint), only outer faces of the water body, sides 0.5 px inside the glass to avoid z-fighting.
+ * (no biome tint), only outer faces of the water body, sides 0.5 px inside the glass to avoid z-fighting. Works per
+ * block from the block states, so any tank shape (M10) renders: each layer has one fill height.
  * Called from the chunk mesher via {@link TankAwareWaterExtensions#renderFluid}; also used by Sodium 0.8.
  */
 public final class TankWaterRenderer {
@@ -66,6 +67,19 @@ public final class TankWaterRenderer {
             if (d == Direction.UP) {
                 // visible from below the surface too (swimming players)
                 emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, true);
+            }
+        }
+
+        // M10 (free shapes): a connected neighbour of the same layer whose top is closed by glass ends its water just
+        // below the glass; close the thin gap between it and this column, which goes on upwards
+        if (waterAbove && fill >= 16) {
+            for (Direction d : Direction.Plane.HORIZONTAL) {
+                if (!TankBlock.isConnected(state, d)) continue;
+                BlockState n = level.getBlockState(pos.relative(d));
+                if (!(n.getBlock() instanceof TankBlock) || TankBlock.isConnected(n, Direction.UP)) continue;
+                BoxFaces.corners(d, x0, 1 - INSET, z0, x1, 1, z1, c);
+                int a = (SIDE_COLOR >>> 24) & 0xFF, r = (SIDE_COLOR >> 16) & 0xFF, g = (SIDE_COLOR >> 8) & 0xFF, b = SIDE_COLOR & 0xFF;
+                emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, false);
             }
         }
     }

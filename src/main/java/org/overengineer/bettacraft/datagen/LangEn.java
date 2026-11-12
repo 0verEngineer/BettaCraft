@@ -159,6 +159,7 @@ final class LangEn {
 
         // messages
         a.accept("message.bettacraft.tank.not_cuboid", "This block does not complete a cuboid, so it forms a separate tank");
+        a.accept("message.bettacraft.tank.too_large", "Connecting would exceed the maximum tank size of %sx%sx%s, so this block forms a separate tank");
         a.accept("message.bettacraft.tank.unloaded", "The neighbouring tank is not completely loaded");
         a.accept("message.bettacraft.tank.other_glass", "Tanks only connect when they are made of the same glass");
         a.accept("message.bettacraft.tank.split", "The tank was split into %s tanks");
@@ -367,6 +368,8 @@ final class LangEn {
         a.accept("bettacraft.configuration.maxSizeY.tooltip", "Maximum tank size along Y in blocks");
         a.accept("bettacraft.configuration.maxSizeZ", "Maximum size Z");
         a.accept("bettacraft.configuration.maxSizeZ.tooltip", "Maximum tank size along Z in blocks");
+        a.accept("bettacraft.configuration.freeShapes", "Free tank shapes");
+        a.accept("bettacraft.configuration.freeShapes.tooltip", "Allow any face-connected tank shape (L, T, steps ...) within the maximum size; off = cuboids only");
         a.accept("bettacraft.configuration.maxEntities", "Maximum animals");
         a.accept("bettacraft.configuration.maxEntities.tooltip", "Maximum number of inhabitant entities per tank");
         a.accept("bettacraft.configuration.hardCapPerWaterBlock", "Hard limit per water block");

@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -15,12 +14,9 @@ final class BettaBehaviourGoals {
     private BettaBehaviourGoals() {}
 
     static Vec3 clampToTank(BettaEntity fish, Vec3 v) {
-        AABB box = fish.tankWater;
-        if (box == null) return v;
-        double top = Math.max(box.minY + 0.1, box.maxY - 0.3);
-        return new Vec3(Math.max(box.minX + 0.2, Math.min(box.maxX - 0.2, v.x)),
-                Math.max(box.minY + 0.1, Math.min(top, v.y)),
-                Math.max(box.minZ + 0.2, Math.min(box.maxZ - 0.2, v.z)));
+        var water = fish.tankWater;
+        if (water == null) return v;
+        return water.clamp(v, 0.2 + 1.0 / 16, 1.0 / 16 + 0.1, 0.3);
     }
 
     /** Swim at a rival / the female; a quick dart when close. */
