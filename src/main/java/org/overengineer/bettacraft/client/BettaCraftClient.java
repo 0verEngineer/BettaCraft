@@ -64,6 +64,8 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onLayers);
         modBus.addListener(BettaCraftClient::onRenderers);
         modBus.addListener(BettaCraftClient::onScreens);
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent e) -> e.registerReloadListener(
+                (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> org.overengineer.bettacraft.client.render.BettaSkins.clear()));
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);

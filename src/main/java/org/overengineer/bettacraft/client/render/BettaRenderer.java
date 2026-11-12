@@ -27,8 +27,10 @@ import org.overengineer.bettacraft.genetics.BettaGenome;
 import org.overengineer.bettacraft.genetics.BettaPatterns;
 
 /**
- * Renders a betta as greyscale mask layers tinted at runtime with the genome's colours (see tools/assetgen README):
- * body (base pass) -> fins -> pattern -> iridescence -> eyes. Females are slightly paler, sick fish desaturated.
+ * Renders a betta from greyscale mask layers tinted at runtime with the genome's colours (see tools/assetgen README):
+ * body -> fins -> pattern -> bars -> iridescence -> eyes. Females are slightly paler, sick fish desaturated. The layers
+ * are composited into one texture per look ({@link BettaSkins}) and drawn in a single pass, so shader packs neither
+ * z-fight coplanar passes nor drop the translucent ones.
  */
 public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
     public static final Map<BettaModelDefinitions.Shape, ModelLayerLocation> LAYERS = new EnumMap<>(BettaModelDefinitions.Shape.class);
@@ -50,6 +52,8 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         for (String p : BettaModelDefinitions.PATTERNS) PATTERN_TEX.put(p, tex("pattern_" + p));
     }
 
+    /** Iridescence pulse steps per cycle (each step is its own composite). */
+    private static final int SHEEN_STEPS = 6;
     private final Map<BettaModelDefinitions.Shape, BettaModel> models = new EnumMap<>(BettaModelDefinitions.Shape.class);
 
     public BettaRenderer(EntityRendererProvider.Context ctx) {
@@ -57,13 +61,6 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         for (BettaModelDefinitions.Shape s : BettaModelDefinitions.Shape.values()) {
             models.put(s, new BettaModel(ctx.bakeLayer(LAYERS.get(s))));
         }
-        addLayer(new TintLayer(this, f -> FINS, f -> BettaTints.forFish(BettaColors.rgb(f.genome().finColor()), f)));
-        addLayer(new TintLayer(this, f -> PATTERN_TEX.get(f.genome().pattern()), f -> BettaTints.forFish(BettaColors.rgb(f.genome().patternColor()), f)));
-        // breeding colours: females in the mood show vertical bars (PLAN 5.2), dark on light fish and pale on dark fish
-        addLayer(new TintLayer(this, f -> f.isFemale() && f.isInBreedingMood() ? BARS : null, f -> BettaTints.bars(f.genome())));
-        addLayer(new TintLayer(this, f -> "none".equals(f.genome().iridescence()) || !f.isAdult() && f.lifeStage().ordinal() < 3 ? null : IRIDESCENCE,
-                f -> BettaTints.iridescence(f.genome(), f.isSick(), f.tickCount)));
-        addLayer(new TintLayer(this, f -> EYE, f -> 0xFFFFFFFF));
     }
 
     private static ResourceLocation tex(String name) {
@@ -83,24 +80,57 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         this.model = m;
         this.shadowRadius = 0.15F * fish.lifeStage().scale();
         BettaTints.beginFish(fish);
-        m.setPendingBaseColor(BettaTints.forFish(BettaColors.rgb(fish.genome().bodyColor()), fish));
-        super.render(fish, yaw, partialTicks, pose, buffers, light);
-        m.setPendingBaseColor(0);
+        ResourceLocation skin = skin(fish);
         BettaTints.endFish();
+        this.currentSkin = skin != null ? skin : BODY;
+        // the stage alpha (see-through fry) is in the composite itself (shader packs ignore vertex alpha)
+        this.currentAlpha = Math.round(BettaModelDefinitions.STAGE_ALPHAS[fish.lifeStage().ordinal()] * 255);
+        super.render(fish, yaw, partialTicks, pose, buffers, light);
+    }
+
+    private ResourceLocation currentSkin = BODY;
+    private int currentAlpha = 255;
+
+    /** The composited texture of this fish right now (tints depend on sex, stage, health, flaring and the tank). */
+    @Nullable
+    private static ResourceLocation skin(BettaEntity f) {
+        BettaGenome g = f.genome();
+        java.util.List<BettaSkins.Layer> layers = new java.util.ArrayList<>(6);
+        // body and fins carry the stage alpha; the overlays only colour what is there (BettaSkins keeps their coverage)
+        layers.add(new BettaSkins.Layer(BODY, BettaTints.forFish(BettaColors.rgb(g.bodyColor()), f)));
+        layers.add(new BettaSkins.Layer(FINS, BettaTints.forFish(BettaColors.rgb(g.finColor()), f)));
+        boolean fry = f.lifeStage().ordinal() <= 2;
+        if (!fry) {
+            ResourceLocation pattern = PATTERN_TEX.get(g.pattern());
+            if (pattern != null && !pattern.equals(PATTERN_TEX.get(BettaPatterns.NONE))) {
+                layers.add(new BettaSkins.Layer(pattern, BettaTints.forFish(BettaColors.rgb(g.patternColor()), f) | 0xFF000000));
+            }
+            // breeding colours: females in the mood show vertical bars (PLAN 5.2), dark on light fish and pale on dark fish
+            if (f.isFemale() && f.isInBreedingMood()) layers.add(new BettaSkins.Layer(BARS, BettaTints.bars(g)));
+            if (!"none".equals(g.iridescence()) && (f.isAdult() || f.lifeStage().ordinal() >= 3)) {
+                // the sheen pulses with sin(tick * 0.08): sampled in SHEEN_STEPS steps per cycle
+                int period = Math.round((float) (2 * Math.PI / 0.08));
+                int step = Math.floorMod(f.tickCount, period) * SHEEN_STEPS / period;
+                int tick = Math.round((step + 0.5F) * period / SHEEN_STEPS);
+                layers.add(new BettaSkins.Layer(IRIDESCENCE, BettaTints.iridescence(g, f.isSick(), tick)));
+            }
+        }
+        layers.add(new BettaSkins.Layer(EYE, 0xFFFFFFFF));
+        return BettaSkins.get(layers.toArray(new BettaSkins.Layer[0]));
     }
 
     @Override
     public ResourceLocation getTextureLocation(BettaEntity entity) {
-        return BODY;
+        return currentSkin;
     }
 
     @Nullable
     @Override
     protected RenderType getRenderType(BettaEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
-        if (!bodyVisible && !translucent) return glowing ? RenderType.outline(BODY) : null;
-        // fry are see-through (PLAN 5.3)
-        return entity.lifeStage() == org.overengineer.bettacraft.entity.betta.LifeStage.FRY ? RenderType.entityTranslucent(BODY)
-                : RenderType.entityCutoutNoCull(BODY);
+        if (!bodyVisible && !translucent) return glowing ? RenderType.outline(currentSkin) : null;
+        // fry are see-through (PLAN 5.3). With back-face culling: the fins are flat boxes whose front and back faces lie
+        // in one plane; drawn both, shader packs let them z-fight (flickering fins). Culled, each side shows one face.
+        return currentAlpha < 255 ? RenderType.entityTranslucentCull(currentSkin) : RenderType.entityCutout(currentSkin);
     }
 
     @Override
@@ -117,30 +147,6 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         if (!fish.isInWater()) {
             pose.translate(0.1F, 0.1F, -0.1F);
             pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
-        }
-    }
-
-    /** One tinted mask pass on the same model. */
-    private static final class TintLayer extends RenderLayer<BettaEntity, BettaModel> {
-        private final Function<BettaEntity, ResourceLocation> texture;
-        private final ToIntFunction<BettaEntity> color;
-
-        TintLayer(RenderLayerParent<BettaEntity, BettaModel> parent, Function<BettaEntity, ResourceLocation> texture,
-                  ToIntFunction<BettaEntity> color) {
-            super(parent);
-            this.texture = texture;
-            this.color = color;
-        }
-
-        @Override
-        public void render(PoseStack pose, MultiBufferSource buffers, int light, BettaEntity fish, float limbSwing, float limbSwingAmount,
-                           float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-            if (fish.isInvisible()) return;
-            ResourceLocation tex = texture.apply(fish);
-            if (tex == null || (tex.equals(PATTERN_TEX.get(BettaPatterns.NONE)))) return;
-            if (fish.lifeStage().ordinal() <= 2 && tex != EYE && tex != FINS) return; // fry: no pattern / sheen yet
-            VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(tex));
-            getParentModel().renderToBuffer(pose, vc, light, LivingEntityRenderer.getOverlayCoords(fish, 0.0F), color.applyAsInt(fish));
         }
     }
 }
