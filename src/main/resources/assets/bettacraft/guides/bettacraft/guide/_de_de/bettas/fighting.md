@@ -32,8 +32,9 @@ benachbarten Aquarien flaren sich also an, ohne zu kämpfen. Undurchsichtige Bl�
 <RecipeFor id="bettacraft:mirror_stick" />
 
 Nimm den <ItemLink id="bettacraft:mirror_stick" /> in eine Hand und sieh ein Männchen an: Jedes adulte Männchen bis 6
-Blöcke vor dir, das den Spiegel sehen kann (auch durch das Glas), flart vor seinem Spiegelbild, hält still und dreht sich
-zum Spiegel. Das ist vor allem zum Anschauen, dazu gibt es ein wenig **Spiegeltraining**: Ein Männchen, das am letzten
+Blöcke vor dir, das den Spiegel sehen kann (auch durch das Glas), flart vor seinem Spiegelbild, hält still und zeigt
+ihm seine Breitseite: Bettas sehen mit den Augen an den Kopfseiten, darum stellt sich ein imponierendes Männchen quer
+vor seinen Rivalen und pendelt dabei langsam. Das ist vor allem zum Anschauen, dazu gibt es ein wenig **Spiegeltraining**: Ein Männchen, das am letzten
 Ingame-Tag vor dem Spiegel geflart hat, ist 1,25-mal schneller bereit für ein Schaumnest
 (`breeding.mirrorReadinessBonus`, 1 = rein kosmetisch). Zucht-Tab und Info-Overlays zeigen „Am Spiegel trainiert“.
 

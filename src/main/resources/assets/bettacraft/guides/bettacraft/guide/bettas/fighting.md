@@ -31,8 +31,9 @@ other without fighting. Opaque blocks between the tanks stop it.
 <RecipeFor id="bettacraft:mirror_stick" />
 
 Hold the <ItemLink id="bettacraft:mirror_stick" /> in either hand and look at a male: every adult male within 6 blocks
-in front of you that can see the mirror (also through the glass) flares at his reflection, holds still and turns
-towards it. It is mainly for show, and a little **mirror training**: a male that flared at the mirror during the last
+in front of you that can see the mirror (also through the glass) flares at his reflection, holds still and shows
+it his side: bettas see with the eyes on the sides of the head, so a displaying male stands broadside to his rival,
+swaying slowly. It is mainly for show, and a little **mirror training**: a male that flared at the mirror during the last
 in-game day gets ready for a bubble nest 1.25 times faster (`breeding.mirrorReadinessBonus`, 1 = purely cosmetic).
 The breeding tab and the info overlays show "Trained at the mirror".
 

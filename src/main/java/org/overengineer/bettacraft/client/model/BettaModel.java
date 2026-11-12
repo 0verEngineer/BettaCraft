@@ -108,12 +108,13 @@ public class BettaModel extends HierarchicalModel<BettaEntity> {
             // flaring: fins spread wide, gill covers open (head slightly wider), a slow gentle shimmy; eased in and
             // out (the flag toggles often in fights) and slow - the old 5 Hz pulse looked like the fish trembled
             float shiver = 1.0F + Mth.sin(age * 0.45F) * 0.02F * fl;
-            scale(caudal, 1.0F, (1.0F + 0.22F * fl) * shiver, 1.0F + 0.12F * fl);
-            scale(dorsal, 1.0F, (1.0F + 0.3F * fl) * shiver, 1.0F + 0.1F * fl);
-            scale(anal, 1.0F, (1.0F + 0.3F * fl) * shiver, 1.0F + 0.1F * fl);
-            scale(head, 1.0F + 0.18F * fl, 1.0F + 0.06F * fl, 1.0F);
-            pecL.yRot += 0.35F * fl;
-            pecR.yRot -= 0.35F * fl;
+            // (BettaExtents keeps these spread fins inside the glass: keep its flare factors in step)
+            scale(caudal, 1.0F, (1.0F + 0.35F * fl) * shiver, 1.0F + 0.15F * fl);
+            scale(dorsal, 1.0F, (1.0F + 0.5F * fl) * shiver, 1.0F + 0.2F * fl);
+            scale(anal, 1.0F, (1.0F + 0.5F * fl) * shiver, 1.0F + 0.2F * fl);
+            scale(head, 1.0F + 0.3F * fl, 1.0F + 0.08F * fl, 1.0F);
+            pecL.yRot += 0.6F * fl;
+            pecR.yRot -= 0.6F * fl;
         }
         if (sick) {
             // clamped fins: folded closer to the body

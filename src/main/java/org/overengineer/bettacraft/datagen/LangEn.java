@@ -40,7 +40,7 @@ final class LangEn {
         a.accept("jade.bettacraft.tank.glass", "Glass: %s (%s)");
         a.accept("item.bettacraft.mirror_stick", "Mirror Stick");
         a.accept("tooltip.bettacraft.mirror_stick", "Hold it up in front of a tank: male bettas that see it flare at their reflection");
-        a.accept("info.bettacraft.mirror_stick", "Hold the mirror stick in either hand and look at a male betta (up to 6 blocks, also through the glass): it flares at its reflection, holds still and turns towards the mirror.\nMirror training: a male that flared at the mirror during the last day gets ready for a bubble nest a little faster (server config, 1.25x by default).\nCraft: glass pane, iron nugget and stick, one above the other.");
+        a.accept("info.bettacraft.mirror_stick", "Hold the mirror stick in either hand and look at a male betta (up to 6 blocks, also through the glass): it flares at its reflection, holds still and shows the mirror its side (bettas see sideways).\nMirror training: a male that flared at the mirror during the last day gets ready for a bubble nest a little faster (server config, 1.25x by default).\nCraft: glass pane, iron nugget and stick, one above the other.");
         a.accept("gui.bettacraft.breeding.cond.mirror", "~ Male trained at the mirror (gets ready faster)");
         a.accept("jade.bettacraft.betta.trained", "Trained at the mirror");
         a.accept("advancements.bettacraft.mirror.title", "Mirror, Mirror");

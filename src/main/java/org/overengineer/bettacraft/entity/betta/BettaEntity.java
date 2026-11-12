@@ -90,10 +90,15 @@ public class BettaEntity extends AbstractFish {
     Vec3 nestSpot;
     long nestUntil;
     long flareUntil, moodUntil;
-    /** M11: a mirror stick this male flares at (transient): it slows down and turns towards it. */
+    /**
+     * M11: a mirror stick this male flares at (transient): it holds still and shows it its side - bettas see with the
+     * eyes on the sides of the head, so a displaying male stands broadside to its rival, not nose to nose.
+     */
     @Nullable
     Vec3 mirrorAt;
     long mirrorUntil;
+    /** Which side faces the mirror while displaying (+90 or -90 degrees from the direction to it; 0 = not chosen yet). */
+    int mirrorSide;
     /** Fractional damage (fights, chasing) not applied yet; applied in whole points. */
     double pendingDamage;
     @Nullable
@@ -444,12 +449,20 @@ public class BettaEntity extends AbstractFish {
                 setDeltaMovement(fin.x * dm.x < 0 ? 0 : dm.x, fin.y * dm.y < 0 ? 0 : dm.y, fin.z * dm.z < 0 ? 0 : dm.z);
                 p = position();
             }
-            // M11: flaring at a mirror stick: hold still and face the mirror
+            // M11: flaring at a mirror stick: hold still, broadside to the mirror (one eye on it), swaying slowly
             if (mirrorAt != null && level().getGameTime() < mirrorUntil) {
                 double dx = mirrorAt.x - p.x, dz = mirrorAt.z - p.z;
                 if (dx * dx + dz * dz > 1e-4) {
-                    float want = (float) (net.minecraft.util.Mth.atan2(dz, dx) * (180F / Math.PI)) - 90F;
-                    setYRot(net.minecraft.util.Mth.approachDegrees(getYRot(), want, 12F));
+                    float towards = (float) (net.minecraft.util.Mth.atan2(dz, dx) * (180F / Math.PI)) - 90F;
+                    if (mirrorSide == 0) {
+                        // the side that needs the smaller turn
+                        float a = net.minecraft.util.Mth.wrapDegrees(towards + 90F - getYRot());
+                        float b = net.minecraft.util.Mth.wrapDegrees(towards - 90F - getYRot());
+                        mirrorSide = Math.abs(a) <= Math.abs(b) ? 90 : -90;
+                    }
+                    float sway = 15F * net.minecraft.util.Mth.sin(level().getGameTime() * 0.06F + getId());
+                    float want = towards + mirrorSide + sway;
+                    setYRot(net.minecraft.util.Mth.approachDegrees(getYRot(), want, 6F));
                     setYBodyRot(getYRot());
                     setYHeadRot(getYRot());
                 }
@@ -458,6 +471,7 @@ public class BettaEntity extends AbstractFish {
                 if (moveControl instanceof BettaMoveControl bmc) bmc.stopDirect();
             } else {
                 mirrorAt = null;
+                mirrorSide = 0;
             }
             // inside interior decoration (rock, castle ...): swim up and out, and drop a path that leads through it
             if (tickCount % 5 == 0 && level() instanceof ServerLevel server && insideDecor(server, p)) {

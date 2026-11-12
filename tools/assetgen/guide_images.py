@@ -39,7 +39,7 @@ MENUS = {"menu_overview": "guide_menu_overview", "menu_inhabitants": "guide_menu
 M9_WORLD = {"water_care": ("bettacraft_m9_scene", (0, 240, 1140, 620)), "live_food": ("bettacraft_m9_breeders", (0, 100, 1060, 520))}
 M9_MENUS = {"menu_water": "bettacraft_m9_menu_water"}
 # M11 scene (DevClientSmokeM11): the three tank styles and a male flaring at the mirror stick (world shots without HUD)
-M11_WORLD = {"tank_styles": ("bettacraft_m11_styles", (60, 320, 1220, 570)), "mirror_stick": ("bettacraft_m11_mirror_side", (130, 250, 1060, 740))}
+M11_WORLD = {"tank_styles": ("bettacraft_m11_styles", (60, 320, 1220, 570)), "mirror_stick": ("bettacraft_m11_mirror_side", (210, 260, 1070, 730))}
 
 
 def save(im: Image.Image, path: Path) -> None:

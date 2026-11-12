@@ -54,10 +54,10 @@ public final class BettaExtents {
         double nose = (NOSE + MARGIN) * scale, tail = (tail(shape) + MARGIN) * scale, side = (SIDE + MARGIN) * scale;
         double top = (top(shape) + MARGIN) * scale, bottom = (bottom(shape) + MARGIN) * scale;
         if (flaring) {
-            // flaring spreads the fins (BettaModel: caudal 1.12 longer, dorsal and anal 1.3 higher)
-            tail *= 1.12;
-            top *= 1.15;
-            bottom *= 1.3;
+            // flaring spreads the fins (BettaModel: caudal 1.15 longer, dorsal and anal 1.5 higher)
+            tail *= 1.15;
+            top *= 1.35;
+            bottom *= 1.5;
         }
         // per axis the largest push in each direction; if the fish is too big for the water both add up (centred)
         double[] up = new double[3], down = new double[3];

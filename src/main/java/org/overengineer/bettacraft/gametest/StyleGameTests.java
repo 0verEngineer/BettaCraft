@@ -251,6 +251,43 @@ public final class StyleGameTests {
         });
     }
 
+    /**
+     * A male displays broadside to the mirror (bettas see with the eyes on the sides of the head): starting nose to
+     * the mirror it turns about 90 degrees (plus a slow sway) and keeps its spot.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void maleShowsItsSideToTheMirror(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        for (int x = 2; x <= 4; x++) for (int z = 2; z <= 4; z++) add(h, new BlockPos(x, 1, z), GLASS, TankStyle.CLEAN);
+        TankBlockEntity c = controller(h, new BlockPos(2, 1, 2));
+        TankInteractions.changeWater(level, c, 9000);
+        BettaEntity male = insert(h, c, false, 5);
+        male.setNoAi(true);
+        male.setNoGravity(true);
+        Vec3 centre = Vec3.atCenterOf(h.absolutePos(new BlockPos(3, 1, 3)));
+        ServerPlayer p = MockPlayers.serverPlayer(h);
+        p.moveTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
+        p.lookAt(EntityAnchorArgument.Anchor.EYES, centre);
+        p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.MIRROR_STICK.get()));
+        // nose to the mirror (the player is to the north: yaw 180)
+        male.moveTo(centre.x, centre.y, centre.z, 180F, 0F);
+        male.setYBodyRot(180F);
+        Vec3 start = male.position();
+        h.onEachTick(() -> {
+            if (h.getTick() % 10 == 0) MirrorStickItem.flareNear(level, p);
+        });
+        h.runAfterDelay(80, () -> {
+            Vec3 eye = p.getEyePosition();
+            float towards = (float) (net.minecraft.util.Mth.atan2(eye.z - male.getZ(), eye.x - male.getX()) * (180F / Math.PI)) - 90F;
+            float off = Math.abs(net.minecraft.util.Mth.wrapDegrees(male.getYRot() - towards));
+            h.assertTrue(male.isFlaring(), "flares");
+            h.assertTrue(off > 65 && off < 115, "broadside to the mirror: " + off + " degrees off the line to it");
+            h.assertTrue(male.position().distanceTo(start) < 0.3, "holds its spot");
+            p.discard();
+            h.succeed();
+        });
+    }
+
     private static BettaEntity insert(GameTestHelper h, TankBlockEntity c, boolean female, long seed) {
         BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(seed)), female, 0);
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);

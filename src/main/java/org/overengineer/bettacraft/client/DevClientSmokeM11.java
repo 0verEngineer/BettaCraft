@@ -124,14 +124,15 @@ final class DevClientSmokeM11 {
                 new Vec3(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.5, mirrorTank.getZ() + 0.9)));
         then(70, () -> mc.getToasts().clear());
         then(10, () -> shot("mirror"));
-        // the same male from the side while he still flares at the mirror (the flare holds 2 s after the last look)
-        then(1, () -> server(p -> p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY)));
+        // the male shows the mirror its side (bettas see sideways): from the mirror's point of view, without GUI, with
+        // the stick still held up (handbook image)
         then(1, () -> {
             mc.options.hideGui = true;
-            lookAt(mirrorTank.getX() + 3.4, mirrorTank.getY() + 0.62, mirrorTank.getZ() + 0.9,
+            lookAt(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.62, mirrorTank.getZ() + 0.9 - 2.4,
                     new Vec3(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.5, mirrorTank.getZ() + 0.9));
         });
-        then(12, () -> shot("mirror_side"));
+        then(40, () -> shot("mirror_side"));
+        then(1, () -> server(p -> p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY)));
         then(1, () -> server(p -> {
             p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             for (Entity e : TankInhabitants.liveInhabitants(p.serverLevel(), TankMultiblock.getController(p.serverLevel(), mirrorTank).getTank())) {

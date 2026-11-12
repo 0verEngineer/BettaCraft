@@ -766,7 +766,7 @@
   "jade.bettacraft.tank.glass": "Glas: %s (%s)",
   "item.bettacraft.mirror_stick": "Spiegelstab",
   "tooltip.bettacraft.mirror_stick": "Vor ein Aquarium halten: Männchen, die ihn sehen, spreizen vor ihrem Spiegelbild die Flossen",
-  "info.bettacraft.mirror_stick": "Den Spiegelstab in eine Hand nehmen und ein Betta-Männchen ansehen (bis 6 Blöcke, auch durch das Glas): Es spreizt vor seinem Spiegelbild die Flossen, hält still und dreht sich zum Spiegel.\nSpiegeltraining: Ein Männchen, das am letzten Tag vor dem Spiegel geflart hat, ist etwas schneller bereit für ein Schaumnest (Server-Einstellung, standardmäßig 1,25-fach).\nHerstellen: Glasscheibe, Eisennugget und Stock übereinander.",
+  "info.bettacraft.mirror_stick": "Den Spiegelstab in eine Hand nehmen und ein Betta-Männchen ansehen (bis 6 Blöcke, auch durch das Glas): Es spreizt vor seinem Spiegelbild die Flossen, hält still und zeigt dem Spiegel seine Breitseite (Bettas sehen seitlich).\nSpiegeltraining: Ein Männchen, das am letzten Tag vor dem Spiegel geflart hat, ist etwas schneller bereit für ein Schaumnest (Server-Einstellung, standardmäßig 1,25-fach).\nHerstellen: Glasscheibe, Eisennugget und Stock übereinander.",
   "gui.bettacraft.breeding.cond.mirror": "~ Männchen am Spiegel trainiert (schneller bereit)",
   "jade.bettacraft.betta.trained": "Am Spiegel trainiert",
   "advancements.bettacraft.mirror.title": "Spieglein, Spieglein",
