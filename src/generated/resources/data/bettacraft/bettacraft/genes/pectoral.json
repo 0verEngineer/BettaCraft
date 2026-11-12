@@ -1,0 +1,13 @@
+{
+  "alleles": {
+    "dumbo": {
+      "rank": 0,
+      "weight": 2
+    },
+    "normal": {
+      "rank": 10,
+      "weight": 5
+    }
+  },
+  "replace": false
+}

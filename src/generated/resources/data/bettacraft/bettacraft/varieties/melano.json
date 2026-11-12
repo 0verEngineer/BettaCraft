@@ -1,0 +1,26 @@
+{
+  "example": {
+    "body_color": "black",
+    "fin_color": "black",
+    "fin_length": "long",
+    "finform": "doubletail",
+    "iridescence": "none",
+    "iridescence_color": "turquoise",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 48,
+  "when": {
+    "body_color": [
+      "black"
+    ],
+    "fin_color": [
+      "black"
+    ],
+    "pattern": [
+      "none"
+    ]
+  }
+}

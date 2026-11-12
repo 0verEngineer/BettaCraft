@@ -85,7 +85,7 @@ class SchemaMigrationTest {
         // Frozen v0 example: controller written before the schema field existed.
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],owner:[I;1,2,3,4]}}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
-        assertEquals(3, Schema.read(v1));
+        assertEquals(4, Schema.read(v1));
         assertEquals(16, v1.getCompound("tank").getInt("scale"));
         assertEquals(0L, v1.getCompound("tank").getLong("water_mb"));
         assertEquals("minecraft:glass", v1.getString("glass"));
@@ -104,7 +104,7 @@ class SchemaMigrationTest {
         CompoundTag v0 = snbt("{glass:\"minecraft:glass\",controller:[I;1,2,3]}");
         CompoundTag v1 = Schemas.TANK_BLOCK_ENTITY.migrate(v0);
         assertFalse(v1.contains("tank"));
-        assertEquals(3, Schema.read(v1));
+        assertEquals(4, Schema.read(v1));
     }
 
     @Test
@@ -113,7 +113,7 @@ class SchemaMigrationTest {
         CompoundTag v1 = snbt("{schema:1,glass:\"minecraft:glass\",controller:[I;0,64,0],tank:{members:[L;0L],scale:16,water_mb:1000L,region:-1}}");
         CompoundTag v2 = Schemas.TANK_BLOCK_ENTITY.migrate(v1);
         CompoundTag t = v2.getCompound("tank");
-        assertEquals(3, Schema.read(v2));
+        assertEquals(4, Schema.read(v2));
         assertEquals(27.0F, t.getFloat("target_temp"));
         assertEquals(27.0F, t.getFloat("water_temp"));
         assertTrue(t.getBoolean("sign_visible"));
@@ -136,7 +136,7 @@ class SchemaMigrationTest {
     void bettaV0IsStamped() {
         CompoundTag v0 = snbt("{genome:{shape:\"veil\",body_color:\"does_not_exist\"},sex:\"female\",custom:1b}");
         CompoundTag v2 = Schemas.BETTA.migrate(v0);
-        assertEquals(2, Schema.read(v2));
+        assertEquals(3, Schema.read(v2));
         net.minecraft.nbt.ListTag body = v2.getCompound("genome").getList("body_color", net.minecraft.nbt.Tag.TAG_STRING);
         assertEquals("does_not_exist", body.getString(0), "unknown ids are carried along");
         assertEquals("does_not_exist", body.getString(1));
@@ -150,7 +150,7 @@ class SchemaMigrationTest {
                 + "fin_color:\"royal_blue\",pattern:\"marble\",pattern_color:\"black\",iridescence:\"high\",iridescence_color:\"turquoise\","
                 + "future_gene:\"x\"},sex:\"male\",stage:\"adult\",generation:0,born:12L,health:{sick:0b}}");
         CompoundTag v2 = Schemas.BETTA.migrate(v1);
-        assertEquals(2, Schema.read(v2));
+        assertEquals(3, Schema.read(v2));
         CompoundTag g = v2.getCompound("genome");
         assertFalse(g.contains("shape"), "shape is renamed to finform");
         net.minecraft.nbt.ListTag fin = g.getList("finform", net.minecraft.nbt.Tag.TAG_STRING);
@@ -175,11 +175,69 @@ class SchemaMigrationTest {
         assertEquals("x", gt.save().getString("future_gene"), "unknown keys survive a save");
     }
 
+    /** Frozen M2-M4 (v2) betta: "plakat" becomes the roundtail with short fins, all other tails get long fins. */
+    @Test
+    void bettaV2FinformSplitsIntoTailAndFinLength() {
+        CompoundTag v2 = snbt("{schema:2,genome:{species:\"bettacraft:betta\",finform:[\"plakat\",\"halfmoon\"],pectoral:[\"normal\",\"dumbo\"],"
+                + "body_color:[\"red\",\"red\"],fin_color:[\"red\",\"royal_blue\"],pattern:[\"none\",\"marble\"],pattern_color:[\"black\",\"black\"],"
+                + "iridescence:[\"low\",\"high\"],iridescence_color:[\"turquoise\",\"steel\"],future_gene:[\"x\",\"y\"]},sex:\"female\","
+                + "stage:\"juvenile\",stage_days:1.5d,generation:3,born:99L,health:{sick:0b},custom:\"keep\"}");
+        CompoundTag v3 = Schemas.BETTA.migrate(v2);
+        assertEquals(3, Schema.read(v3));
+        CompoundTag g = v3.getCompound("genome");
+        net.minecraft.nbt.ListTag fin = g.getList("finform", net.minecraft.nbt.Tag.TAG_STRING);
+        net.minecraft.nbt.ListTag len = g.getList("fin_length", net.minecraft.nbt.Tag.TAG_STRING);
+        assertEquals("round", fin.getString(0));
+        assertEquals("halfmoon", fin.getString(1));
+        assertEquals("short", len.getString(0), "plakat allele -> short");
+        assertEquals("long", len.getString(1), "halfmoon allele -> long");
+        assertEquals("x", g.getList("future_gene", net.minecraft.nbt.Tag.TAG_STRING).getString(0), "unknown loci are kept");
+        assertEquals("keep", v3.getString("custom"));
+        assertEquals(3, v3.getInt("generation"));
+        // phenotype unchanged: a plakat carrying halfmoon is still a plakat (short-finned roundtail)
+        var ph = org.overengineer.bettacraft.genetics.BettaGenotype.load(g).express();
+        assertEquals("round", ph.shape());
+        assertEquals("short", ph.finLength());
+        // homozygous long-finned fish stay long-finned
+        CompoundTag veil = Schemas.BETTA.migrate(snbt("{schema:2,genome:{finform:[\"veil\",\"veil\"]}}"));
+        var pv = org.overengineer.bettacraft.genetics.BettaGenotype.load(veil.getCompound("genome")).express();
+        assertEquals("veil", pv.shape());
+        assertEquals("long", pv.finLength());
+        // a v2 genome without finform keeps the defaults (wild-type plakat) and gets nothing added
+        CompoundTag none = Schemas.BETTA.migrate(snbt("{schema:2,genome:{body_color:[\"red\",\"red\"]}}"));
+        assertFalse(none.getCompound("genome").contains("fin_length"));
+        // v3 data is not touched again
+        CompoundTag again = Schemas.BETTA.migrate(v3.copy());
+        assertEquals(v3, again);
+    }
+
+    /** Frozen M4 (v3) controller with a bubble nest: the egg and parent genotypes get the fin-form split too. */
+    @Test
+    void tankV3NestGenotypesAreMigrated() {
+        CompoundTag v3 = snbt("{schema:3,tank:{members:[L;0L],scale:16,water_mb:1000L,nest:{pos:[I;0,1,0],"
+                + "father_genome:{finform:[\"plakat\",\"veil\"]},mother_genome:{finform:[\"crowntail\",\"crowntail\"]},"
+                + "eggs:[{genome:{finform:[\"plakat\",\"plakat\"],body_color:[\"red\",\"red\"]},female:1b},{genome:{},female:0b}]}}}");
+        CompoundTag v4 = Schemas.TANK_BLOCK_ENTITY.migrate(v3);
+        assertEquals(4, Schema.read(v4));
+        CompoundTag nest = v4.getCompound("tank").getCompound("nest");
+        assertEquals("round", nest.getCompound("father_genome").getList("finform", 8).getString(0));
+        assertEquals("long", nest.getCompound("father_genome").getList("fin_length", 8).getString(1));
+        assertEquals("long", nest.getCompound("mother_genome").getList("fin_length", 8).getString(0));
+        CompoundTag egg = nest.getList("eggs", 10).getCompound(0).getCompound("genome");
+        assertEquals("short", egg.getList("fin_length", 8).getString(0));
+        assertEquals("red", egg.getList("body_color", 8).getString(0));
+        assertTrue(nest.getList("eggs", 10).getCompound(0).getBoolean("female"));
+        assertFalse(nest.getList("eggs", 10).getCompound(1).getCompound("genome").contains("fin_length"));
+        // a tank without nest is untouched apart from the stamp
+        CompoundTag plain = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:3,tank:{water_mb:5L}}"));
+        assertEquals(5L, plain.getCompound("tank").getLong("water_mb"));
+    }
+
     @Test
     void currentVersionsAreStable() {
         // Bump these deliberately together with a new step + frozen test.
-        assertEquals(3, Schemas.TANK_BLOCK_ENTITY.currentVersion());
-        assertEquals(2, Schemas.BETTA.currentVersion());
+        assertEquals(4, Schemas.TANK_BLOCK_ENTITY.currentVersion());
+        assertEquals(3, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
         assertEquals(2, Schemas.INTERIOR_REGIONS.currentVersion());
@@ -196,7 +254,7 @@ class SchemaMigrationTest {
                 + "region:-1,target_temp:27.0f,water_temp:26.5f,heaters:[\"bettacraft:heater_large\",\"\",\"othermod:gone_heater\","
                 + "\"bettacraft:heater_small\"],name:\"Old tank\",custom:\"keep\"}}");
         CompoundTag v3 = Schemas.TANK_BLOCK_ENTITY.migrate(v2);
-        assertEquals(3, Schema.read(v3));
+        assertEquals(4, Schema.read(v3));
         CompoundTag t = v3.getCompound("tank");
         assertFalse(t.contains("heaters"), "old key is gone");
         net.minecraft.nbt.ListTag l = t.getList("legacy_heaters", net.minecraft.nbt.Tag.TAG_STRING);
@@ -213,7 +271,7 @@ class SchemaMigrationTest {
     @Test
     void tankV2WithoutHeatersIsOnlyStamped() {
         CompoundTag v3 = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:2,glass:\"minecraft:glass\",controller:[I;1,2,3]}"));
-        assertEquals(3, Schema.read(v3));
+        assertEquals(4, Schema.read(v3));
         assertFalse(v3.contains("tank"));
         CompoundTag v3b = Schemas.TANK_BLOCK_ENTITY.migrate(snbt("{schema:2,tank:{members:[L;0L]}}"));
         assertFalse(v3b.getCompound("tank").contains("legacy_heaters"));

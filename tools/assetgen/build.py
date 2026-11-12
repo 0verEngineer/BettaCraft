@@ -10,11 +10,13 @@ import decor
 import equipment
 import gui
 import icons
+import lang_de
 import model_defs as md
 import palette
 import patterns
 import preview
 import uv_template
+import varieties
 from common import GEN, ensure_dirs, rel
 
 
@@ -27,6 +29,9 @@ def main() -> int:
     written += patterns.write_all()
     written.append(palette.write_json())
     written.append(palette.write_java())
+    written.append(varieties.write_java())
+    lang_de.write()
+    written.append(lang_de.DE)
     written += icons.write_all()
     written += breeding.write_all()
     written += decor.write_all()

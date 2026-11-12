@@ -1,0 +1,39 @@
+{
+  "example": {
+    "body_color": "cream",
+    "fin_color": "red",
+    "fin_length": "long",
+    "finform": "veil",
+    "iridescence": "none",
+    "iridescence_color": "turquoise",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 60,
+  "when": {
+    "body_color": [
+      "cellophane",
+      "cream",
+      "pastel",
+      "pink",
+      "platinum",
+      "salmon",
+      "white"
+    ],
+    "fin_color": [
+      "coral",
+      "crimson",
+      "oxblood",
+      "red",
+      "ruby",
+      "wine"
+    ],
+    "pattern": [
+      "fade",
+      "none",
+      "tipped"
+    ]
+  }
+}

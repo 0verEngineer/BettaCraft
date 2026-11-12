@@ -489,6 +489,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         MutableComponent stage = Component.translatable("stage.bettacraft." + sel.stage());
         if (!sel.adult()) stage = Component.translatable("gui.bettacraft.fish.stage_progress", stage, Math.round(sel.progress() * 100));
+        Component type = BettaTooltip.type(sel.genome());
+        String ts = font.plainSubstrByWidth(type.getString(), 124);
+        g.drawString(font, ts, x, y, 0xFFD27A, false);
+        if (mx >= x && mx < x + 124 && my >= y && my < y + 9 && !ts.equals(type.getString())) pendingTooltip = List.of(type);
+        y += 9;
         line(g, Component.translatable("gui.bettacraft.fish.sex_stage", BettaTooltip.sex(sel.female()), stage), x, y, TEXT_LIGHT);
         y += 9;
         float hp = Math.min(sel.health(), sel.hp());
@@ -499,7 +504,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 10;
         var gt = sel.genotype();
         int top = y;
-        for (Locus l : List.of(BettaLoci.FINFORM, BettaLoci.BODY_COLOR, BettaLoci.FIN_COLOR, BettaLoci.PATTERN, BettaLoci.IRIDESCENCE)) {
+        for (Locus l : List.of(BettaLoci.FINFORM, BettaLoci.FIN_LENGTH, BettaLoci.BODY_COLOR, BettaLoci.FIN_COLOR, BettaLoci.PATTERN, BettaLoci.IRIDESCENCE)) {
             Component c = GenotypeText.line(gt, l);
             String s = font.plainSubstrByWidth(c.getString(), 124);
             g.drawString(font, s, x, y, 0xC8C8C8, false);

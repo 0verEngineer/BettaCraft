@@ -17,12 +17,14 @@ public final class Schemas {
             .step(0, Schemas::tankV0toV1)
             .step(1, Schemas::tankV1toV2)
             .step(2, Schemas::tankV2toV3)
+            .step(3, Schemas::tankV3toV4)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
     public static final MigrationChain BETTA = MigrationChain.builder("betta")
             .step(0, data -> data) // v0 = written before versioning; identical layout
             .step(1, Schemas::bettaV1toV2)
+            .step(2, Schemas::bettaV2toV3)
             .build();
 
     /** Loci of the M2 genotype (and the M1 key each one was stored under). */
@@ -86,6 +88,54 @@ public final class Schemas {
             }
         }
         return data;
+    }
+
+    /**
+     * Betta v2 -> v3 (M5): the fin form is split into the tail shape ({@code finform}) and the new {@code fin_length}
+     * locus (short = plakat types, dominant). Per allele: {@code plakat} becomes the tail {@code round} with a
+     * {@code short} fin-length allele, every other tail gets a {@code long} one. Allele order is kept, so carriers stay
+     * carriers and every fish keeps its phenotype ((plakat, veil) -> finform (round, veil), fin_length (short, long)).
+     * A genome without finform gets no fin_length (defaults apply on load); an existing fin_length is left alone.
+     */
+    static CompoundTag bettaV2toV3(CompoundTag data) {
+        if (data.contains("genome", Tag.TAG_COMPOUND)) genomeV2toV3(data.getCompound("genome"));
+        return data;
+    }
+
+    /**
+     * Tank v3 -> v4 (M5): the genotypes kept in the bubble nest (eggs, larvae and both parents) get the same fin-form
+     * split as the betta data ({@link #bettaV2toV3}).
+     */
+    static CompoundTag tankV3toV4(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        if (!tank.contains("nest", Tag.TAG_COMPOUND)) return data;
+        CompoundTag nest = tank.getCompound("nest");
+        for (String k : new String[]{"father_genome", "mother_genome"}) {
+            if (nest.contains(k, Tag.TAG_COMPOUND)) genomeV2toV3(nest.getCompound(k));
+        }
+        net.minecraft.nbt.ListTag eggs = nest.getList("eggs", Tag.TAG_COMPOUND);
+        for (int i = 0; i < eggs.size(); i++) {
+            CompoundTag e = eggs.getCompound(i);
+            if (e.contains("genome", Tag.TAG_COMPOUND)) genomeV2toV3(e.getCompound("genome"));
+        }
+        return data;
+    }
+
+    /** M5 fin-form split of one genotype compound (in place). */
+    static void genomeV2toV3(CompoundTag g) {
+        if (!g.contains("finform", Tag.TAG_LIST)) return;
+        net.minecraft.nbt.ListTag fin = g.getList("finform", Tag.TAG_STRING);
+        net.minecraft.nbt.ListTag tails = new net.minecraft.nbt.ListTag();
+        net.minecraft.nbt.ListTag lengths = new net.minecraft.nbt.ListTag();
+        for (int i = 0; i < fin.size(); i++) {
+            String a = fin.getString(i);
+            boolean plakat = "plakat".equals(a);
+            tails.add(net.minecraft.nbt.StringTag.valueOf(plakat ? "round" : a));
+            lengths.add(net.minecraft.nbt.StringTag.valueOf(plakat ? "short" : "long"));
+        }
+        g.put("finform", tails);
+        if (!g.contains("fin_length")) g.put("fin_length", lengths);
     }
 
     /**

@@ -1,0 +1,31 @@
+{
+  "example": {
+    "body_color": "black",
+    "fin_color": "black",
+    "fin_length": "short",
+    "finform": "halfmoon",
+    "iridescence": "high",
+    "iridescence_color": "steel",
+    "pattern": "dragon",
+    "pattern_color": "platinum",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 75,
+  "when": {
+    "body_color": [
+      "black",
+      "black_orchid",
+      "indigo",
+      "navy"
+    ],
+    "pattern": [
+      "dragon"
+    ],
+    "pattern_color": [
+      "platinum",
+      "silver",
+      "white"
+    ]
+  }
+}

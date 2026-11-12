@@ -1,0 +1,36 @@
+{
+  "example": {
+    "body_color": "orange",
+    "fin_color": "tangerine",
+    "fin_length": "short",
+    "finform": "halfmoon",
+    "iridescence": "low",
+    "iridescence_color": "steel",
+    "pattern": "koi",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 75,
+  "when": {
+    "body_color": [
+      "coral",
+      "gold",
+      "orange",
+      "red",
+      "tangerine",
+      "yellow"
+    ],
+    "pattern": [
+      "koi",
+      "marble"
+    ],
+    "pattern_color": [
+      "black",
+      "black_orchid",
+      "crimson",
+      "orange",
+      "red"
+    ]
+  }
+}

@@ -96,6 +96,13 @@ public class BettaModel extends HierarchicalModel<BettaEntity> {
         tailScale *= young;
         for (ModelPart p : fins) scale(p, finScale, finScale, finScale);
         scale(caudal, tailScale, tailScale, tailScale);
+        if (fish.genome().isShortFinned()) {
+            // plakat types: same mesh, shorter unpaired fins
+            float s = BettaModelDefinitions.SHORT_FIN_SCALE;
+            scale(caudal, 1.0F, BettaModelDefinitions.SHORT_CAUDAL_HEIGHT, BettaModelDefinitions.SHORT_CAUDAL_LENGTH);
+            scale(dorsal, s, s, s);
+            scale(anal, s, s, s);
+        }
         if (fish.isFlaring() && !sick) {
             // flaring: fins spread wide, gill covers open (head slightly wider), quick shivers
             float shiver = 1.0F + Mth.sin(age * 1.7F) * 0.03F;

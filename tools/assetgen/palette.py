@@ -22,7 +22,7 @@ COLORS = [
     ("copper", "Copper", "Kupfer", "#b8693b"),
     ("bronze", "Bronze", "Bronze", "#9c7a3c"),
     ("gold", "Gold", "Gold", "#e0b235"),
-    ("mustard", "Mustard Gas", "Senfgas", "#c9b22c"),
+    ("mustard", "Mustard", "Senfgelb", "#c9b22c"),
     ("yellow", "Yellow", "Gelb", "#f4d03f"),
     ("pineapple", "Pineapple", "Ananas", "#f6e27a"),
     ("cream", "Cream", "Creme", "#f1e6c8"),

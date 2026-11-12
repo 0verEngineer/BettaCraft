@@ -19,6 +19,10 @@ public final class BettaModelDefinitions {
     public static final float ADULT_RENDER_SCALE = 0.5F;
     public static final float FEMALE_FIN_SCALE = 0.8F;
     public static final float FEMALE_TAIL_SCALE = 0.7F;
+    /** Short-finned (plakat) fish: caudal length (z) and height (y) scale, dorsal/anal scale. */
+    public static final float SHORT_CAUDAL_LENGTH = 0.55F;
+    public static final float SHORT_CAUDAL_HEIGHT = 0.62F;
+    public static final float SHORT_FIN_SCALE = 0.62F;
     /** Parts scaled by FEMALE_FIN_SCALE (caudal uses FEMALE_TAIL_SCALE). */
     public static final String[] FIN_PARTS = {"caudal", "dorsal", "anal", "pectoral_left", "pectoral_right", "pectoral_dumbo_left", "pectoral_dumbo_right", "ventral_left", "ventral_right"};
     /** Life stages in order: id, model scale, vertex alpha, colour saturation. */
@@ -28,23 +32,26 @@ public final class BettaModelDefinitions {
     public static final float[] STAGE_SATURATION = {0.0F, 0.1F, 0.25F, 0.55F, 0.85F, 1.0F};
     public static final float FEMALE_SATURATION = 0.85F;
     /** Pattern mask names: texture entity/betta/pattern_<name>.png. */
-    public static final String[] PATTERNS = {"butterfly", "marble", "dragon", "koi", "mask", "tipped", "fade", "grizzle", "bars"};
+    public static final String[] PATTERNS = {"butterfly", "marble", "dragon", "koi", "mask", "tipped", "fade", "grizzle", "bars", "piebald", "dalmatian", "galaxy"};
 
-    public enum Shape { PLAKAT, VEIL, HALFMOON, CROWNTAIL, DOUBLETAIL }
+    public enum Shape { ROUND, SPADE, VEIL, DELTA, HALFMOON, ROSETAIL, CROWNTAIL, DOUBLETAIL }
 
     private BettaModelDefinitions() {}
 
     public static LayerDefinition createBodyLayer(Shape shape) {
         return switch (shape) {
-            case PLAKAT -> createPlakatLayer();
+            case ROUND -> createRoundLayer();
+            case SPADE -> createSpadeLayer();
             case VEIL -> createVeilLayer();
+            case DELTA -> createDeltaLayer();
             case HALFMOON -> createHalfmoonLayer();
+            case ROSETAIL -> createRosetailLayer();
             case CROWNTAIL -> createCrowntailLayer();
             case DOUBLETAIL -> createDoubletailLayer();
         };
     }
 
-    public static LayerDefinition createPlakatLayer() {
+    public static LayerDefinition createRoundLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         PartDefinition body = root.addOrReplaceChild("body",
@@ -60,14 +67,59 @@ public final class BettaModelDefinitions {
                 CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
                 PartPose.offset(0.0F, 0.0F, 4.0F));
         PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
-                CubeListBuilder.create().texOffs(36, 17).addBox(0.0F, -3.5F, 0.0F, 0.0F, 7.0F, 5.0F),
+                CubeListBuilder.create().texOffs(0, 16).addBox(0.0F, -5.0F, 0.0F, 0.0F, 10.0F, 9.0F),
                 PartPose.offset(0.0F, 0.0F, 2.0F));
         PartDefinition dorsal = body.addOrReplaceChild("dorsal",
-                CubeListBuilder.create().texOffs(52, 0).addBox(0.0F, -2.0F, 0.0F, 0.0F, 3.0F, 5.0F),
-                PartPose.offset(0.0F, -2.0F, 1.0F));
+                CubeListBuilder.create().texOffs(16, 48).addBox(0.0F, -4.0F, 0.0F, 0.0F, 5.0F, 7.0F),
+                PartPose.offset(0.0F, -2.0F, -1.0F));
         PartDefinition anal = body.addOrReplaceChild("anal",
-                CubeListBuilder.create().texOffs(28, 29).addBox(0.0F, -1.0F, 0.0F, 0.0F, 3.0F, 7.0F),
-                PartPose.offset(0.0F, 2.0F, -1.0F));
+                CubeListBuilder.create().texOffs(0, 43).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                PartPose.offset(0.0F, 2.0F, -2.0F));
+        PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
+                CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
+                PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.15F, 0.55F, 0.0F));
+        PartDefinition pectoral_right = body.addOrReplaceChild("pectoral_right",
+                CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
+                PartPose.offsetAndRotation(-1.5F, 0.5F, -3.5F, 0.15F, -0.55F, 0.0F));
+        PartDefinition pectoral_dumbo_left = body.addOrReplaceChild("pectoral_dumbo_left",
+                CubeListBuilder.create().texOffs(34, 0).addBox(0.0F, -1.5F, 0.0F, 0.0F, 4.0F, 5.0F),
+                PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.25F, 0.55F, 0.0F));
+        PartDefinition pectoral_dumbo_right = body.addOrReplaceChild("pectoral_dumbo_right",
+                CubeListBuilder.create().texOffs(34, 0).addBox(0.0F, -1.5F, 0.0F, 0.0F, 4.0F, 5.0F),
+                PartPose.offsetAndRotation(-1.5F, 0.5F, -3.5F, 0.25F, -0.55F, 0.0F));
+        PartDefinition ventral_left = body.addOrReplaceChild("ventral_left",
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -0.5F, 0.0F, 0.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.75F, 2.0F, -3.5F, 0.55F, 0.2F, 0.0F));
+        PartDefinition ventral_right = body.addOrReplaceChild("ventral_right",
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -0.5F, 0.0F, 0.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(-0.75F, 2.0F, -3.5F, 0.55F, -0.2F, 0.0F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    }
+
+    public static LayerDefinition createSpadeLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        PartDefinition body = root.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -2.0F, -4.0F, 3.0F, 4.0F, 8.0F),
+                PartPose.offset(0.0F, 20.0F, 0.0F));
+        PartDefinition head = body.addOrReplaceChild("head",
+                CubeListBuilder.create().texOffs(22, 0).addBox(-1.5F, -2.0F, -3.0F, 3.0F, 4.0F, 3.0F),
+                PartPose.offset(0.0F, 0.0F, -4.0F));
+        PartDefinition snout = head.addOrReplaceChild("snout",
+                CubeListBuilder.create().texOffs(42, 0).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 2.0F, 1.0F),
+                PartPose.offset(0.0F, 0.0F, -3.0F));
+        PartDefinition peduncle = body.addOrReplaceChild("peduncle",
+                CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
+                PartPose.offset(0.0F, 0.0F, 4.0F));
+        PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
+                CubeListBuilder.create().texOffs(0, 26).addBox(0.0F, -5.0F, 0.0F, 0.0F, 10.0F, 9.0F),
+                PartPose.offset(0.0F, 0.0F, 2.0F));
+        PartDefinition dorsal = body.addOrReplaceChild("dorsal",
+                CubeListBuilder.create().texOffs(16, 48).addBox(0.0F, -4.0F, 0.0F, 0.0F, 5.0F, 7.0F),
+                PartPose.offset(0.0F, -2.0F, -1.0F));
+        PartDefinition anal = body.addOrReplaceChild("anal",
+                CubeListBuilder.create().texOffs(0, 43).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                PartPose.offset(0.0F, 2.0F, -2.0F));
         PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
                 CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
                 PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.15F, 0.55F, 0.0F));
@@ -105,13 +157,58 @@ public final class BettaModelDefinitions {
                 CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
                 PartPose.offset(0.0F, 0.0F, 4.0F));
         PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
-                CubeListBuilder.create().texOffs(16, 12).addBox(0.0F, -3.0F, 0.0F, 0.0F, 9.0F, 10.0F),
+                CubeListBuilder.create().texOffs(36, 25).addBox(0.0F, -3.0F, 0.0F, 0.0F, 9.0F, 10.0F),
                 PartPose.offset(0.0F, 0.0F, 2.0F));
         PartDefinition dorsal = body.addOrReplaceChild("dorsal",
-                CubeListBuilder.create().texOffs(14, 29).addBox(0.0F, -4.0F, 0.0F, 0.0F, 5.0F, 7.0F),
+                CubeListBuilder.create().texOffs(16, 48).addBox(0.0F, -4.0F, 0.0F, 0.0F, 5.0F, 7.0F),
                 PartPose.offset(0.0F, -2.0F, -1.0F));
         PartDefinition anal = body.addOrReplaceChild("anal",
-                CubeListBuilder.create().texOffs(46, 26).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                CubeListBuilder.create().texOffs(0, 43).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                PartPose.offset(0.0F, 2.0F, -2.0F));
+        PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
+                CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
+                PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.15F, 0.55F, 0.0F));
+        PartDefinition pectoral_right = body.addOrReplaceChild("pectoral_right",
+                CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
+                PartPose.offsetAndRotation(-1.5F, 0.5F, -3.5F, 0.15F, -0.55F, 0.0F));
+        PartDefinition pectoral_dumbo_left = body.addOrReplaceChild("pectoral_dumbo_left",
+                CubeListBuilder.create().texOffs(34, 0).addBox(0.0F, -1.5F, 0.0F, 0.0F, 4.0F, 5.0F),
+                PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.25F, 0.55F, 0.0F));
+        PartDefinition pectoral_dumbo_right = body.addOrReplaceChild("pectoral_dumbo_right",
+                CubeListBuilder.create().texOffs(34, 0).addBox(0.0F, -1.5F, 0.0F, 0.0F, 4.0F, 5.0F),
+                PartPose.offsetAndRotation(-1.5F, 0.5F, -3.5F, 0.25F, -0.55F, 0.0F));
+        PartDefinition ventral_left = body.addOrReplaceChild("ventral_left",
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -0.5F, 0.0F, 0.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.75F, 2.0F, -3.5F, 0.55F, 0.2F, 0.0F));
+        PartDefinition ventral_right = body.addOrReplaceChild("ventral_right",
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -0.5F, 0.0F, 0.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(-0.75F, 2.0F, -3.5F, 0.55F, -0.2F, 0.0F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    }
+
+    public static LayerDefinition createDeltaLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        PartDefinition body = root.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -2.0F, -4.0F, 3.0F, 4.0F, 8.0F),
+                PartPose.offset(0.0F, 20.0F, 0.0F));
+        PartDefinition head = body.addOrReplaceChild("head",
+                CubeListBuilder.create().texOffs(22, 0).addBox(-1.5F, -2.0F, -3.0F, 3.0F, 4.0F, 3.0F),
+                PartPose.offset(0.0F, 0.0F, -4.0F));
+        PartDefinition snout = head.addOrReplaceChild("snout",
+                CubeListBuilder.create().texOffs(42, 0).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 2.0F, 1.0F),
+                PartPose.offset(0.0F, 0.0F, -3.0F));
+        PartDefinition peduncle = body.addOrReplaceChild("peduncle",
+                CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
+                PartPose.offset(0.0F, 0.0F, 4.0F));
+        PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
+                CubeListBuilder.create().texOffs(18, 15).addBox(0.0F, -6.0F, 0.0F, 0.0F, 12.0F, 9.0F),
+                PartPose.offset(0.0F, 0.0F, 2.0F));
+        PartDefinition dorsal = body.addOrReplaceChild("dorsal",
+                CubeListBuilder.create().texOffs(16, 42).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 7.0F),
+                PartPose.offset(0.0F, -2.0F, -1.0F));
+        PartDefinition anal = body.addOrReplaceChild("anal",
+                CubeListBuilder.create().texOffs(46, 42).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
                 PartPose.offset(0.0F, 2.0F, -2.0F));
         PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
                 CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
@@ -153,10 +250,55 @@ public final class BettaModelDefinitions {
                 CubeListBuilder.create().texOffs(44, 0).addBox(0.0F, -7.0F, 0.0F, 0.0F, 14.0F, 8.0F),
                 PartPose.offset(0.0F, 0.0F, 2.0F));
         PartDefinition dorsal = body.addOrReplaceChild("dorsal",
-                CubeListBuilder.create().texOffs(0, 24).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 7.0F),
+                CubeListBuilder.create().texOffs(16, 42).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 7.0F),
                 PartPose.offset(0.0F, -2.0F, -1.0F));
         PartDefinition anal = body.addOrReplaceChild("anal",
-                CubeListBuilder.create().texOffs(30, 23).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                CubeListBuilder.create().texOffs(46, 42).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                PartPose.offset(0.0F, 2.0F, -2.0F));
+        PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
+                CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
+                PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.15F, 0.55F, 0.0F));
+        PartDefinition pectoral_right = body.addOrReplaceChild("pectoral_right",
+                CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
+                PartPose.offsetAndRotation(-1.5F, 0.5F, -3.5F, 0.15F, -0.55F, 0.0F));
+        PartDefinition pectoral_dumbo_left = body.addOrReplaceChild("pectoral_dumbo_left",
+                CubeListBuilder.create().texOffs(34, 0).addBox(0.0F, -1.5F, 0.0F, 0.0F, 4.0F, 5.0F),
+                PartPose.offsetAndRotation(1.5F, 0.5F, -3.5F, 0.25F, 0.55F, 0.0F));
+        PartDefinition pectoral_dumbo_right = body.addOrReplaceChild("pectoral_dumbo_right",
+                CubeListBuilder.create().texOffs(34, 0).addBox(0.0F, -1.5F, 0.0F, 0.0F, 4.0F, 5.0F),
+                PartPose.offsetAndRotation(-1.5F, 0.5F, -3.5F, 0.25F, -0.55F, 0.0F));
+        PartDefinition ventral_left = body.addOrReplaceChild("ventral_left",
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -0.5F, 0.0F, 0.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.75F, 2.0F, -3.5F, 0.55F, 0.2F, 0.0F));
+        PartDefinition ventral_right = body.addOrReplaceChild("ventral_right",
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -0.5F, 0.0F, 0.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(-0.75F, 2.0F, -3.5F, 0.55F, -0.2F, 0.0F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    }
+
+    public static LayerDefinition createRosetailLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        PartDefinition body = root.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -2.0F, -4.0F, 3.0F, 4.0F, 8.0F),
+                PartPose.offset(0.0F, 20.0F, 0.0F));
+        PartDefinition head = body.addOrReplaceChild("head",
+                CubeListBuilder.create().texOffs(22, 0).addBox(-1.5F, -2.0F, -3.0F, 3.0F, 4.0F, 3.0F),
+                PartPose.offset(0.0F, 0.0F, -4.0F));
+        PartDefinition snout = head.addOrReplaceChild("snout",
+                CubeListBuilder.create().texOffs(42, 0).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 2.0F, 1.0F),
+                PartPose.offset(0.0F, 0.0F, -3.0F));
+        PartDefinition peduncle = body.addOrReplaceChild("peduncle",
+                CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
+                PartPose.offset(0.0F, 0.0F, 4.0F));
+        PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
+                CubeListBuilder.create().texOffs(22, 0).addBox(0.0F, -7.5F, 0.0F, 0.0F, 15.0F, 9.0F),
+                PartPose.offset(0.0F, 0.0F, 2.0F));
+        PartDefinition dorsal = body.addOrReplaceChild("dorsal",
+                CubeListBuilder.create().texOffs(18, 28).addBox(0.0F, -6.0F, 0.0F, 0.0F, 7.0F, 8.0F),
+                PartPose.offset(0.0F, -2.0F, -1.5F));
+        PartDefinition anal = body.addOrReplaceChild("anal",
+                CubeListBuilder.create().texOffs(34, 36).addBox(0.0F, -1.0F, 0.0F, 0.0F, 6.0F, 8.0F),
                 PartPose.offset(0.0F, 2.0F, -2.0F));
         PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
                 CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
@@ -195,13 +337,13 @@ public final class BettaModelDefinitions {
                 CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
                 PartPose.offset(0.0F, 0.0F, 4.0F));
         PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
-                CubeListBuilder.create().texOffs(22, 0).addBox(0.0F, -6.5F, 0.0F, 0.0F, 13.0F, 9.0F),
+                CubeListBuilder.create().texOffs(0, 3).addBox(0.0F, -6.5F, 0.0F, 0.0F, 13.0F, 9.0F),
                 PartPose.offset(0.0F, 0.0F, 2.0F));
         PartDefinition dorsal = body.addOrReplaceChild("dorsal",
-                CubeListBuilder.create().texOffs(46, 21).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 7.0F),
+                CubeListBuilder.create().texOffs(50, 37).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 7.0F),
                 PartPose.offset(0.0F, -2.0F, -1.0F));
         PartDefinition anal = body.addOrReplaceChild("anal",
-                CubeListBuilder.create().texOffs(46, 14).addBox(0.0F, -1.0F, 0.0F, 0.0F, 6.0F, 8.0F),
+                CubeListBuilder.create().texOffs(18, 35).addBox(0.0F, -1.0F, 0.0F, 0.0F, 6.0F, 8.0F),
                 PartPose.offset(0.0F, 2.0F, -2.0F));
         PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
                 CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),
@@ -240,13 +382,13 @@ public final class BettaModelDefinitions {
                 CubeListBuilder.create().texOffs(34, 0).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 2.0F),
                 PartPose.offset(0.0F, 0.0F, 4.0F));
         PartDefinition caudal = peduncle.addOrReplaceChild("caudal",
-                CubeListBuilder.create().texOffs(0, 4).addBox(0.0F, -6.5F, 0.0F, 0.0F, 13.0F, 8.0F),
+                CubeListBuilder.create().texOffs(40, 14).addBox(0.0F, -6.5F, 0.0F, 0.0F, 13.0F, 8.0F),
                 PartPose.offset(0.0F, 0.0F, 2.0F));
         PartDefinition dorsal = body.addOrReplaceChild("dorsal",
-                CubeListBuilder.create().texOffs(0, 17).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 8.0F),
+                CubeListBuilder.create().texOffs(0, 37).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 8.0F),
                 PartPose.offset(0.0F, -2.0F, -2.0F));
         PartDefinition anal = body.addOrReplaceChild("anal",
-                CubeListBuilder.create().texOffs(14, 23).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
+                CubeListBuilder.create().texOffs(30, 42).addBox(0.0F, -1.0F, 0.0F, 0.0F, 5.0F, 8.0F),
                 PartPose.offset(0.0F, 2.0F, -2.0F));
         PartDefinition pectoral_left = body.addOrReplaceChild("pectoral_left",
                 CubeListBuilder.create().texOffs(42, 0).addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 3.0F),

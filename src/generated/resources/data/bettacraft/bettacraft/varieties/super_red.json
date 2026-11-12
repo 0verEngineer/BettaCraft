@@ -1,0 +1,30 @@
+{
+  "example": {
+    "body_color": "red",
+    "fin_color": "red",
+    "fin_length": "long",
+    "finform": "halfmoon",
+    "iridescence": "none",
+    "iridescence_color": "turquoise",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 50,
+  "when": {
+    "body_color": [
+      "crimson",
+      "red",
+      "ruby"
+    ],
+    "fin_color": [
+      "crimson",
+      "red",
+      "ruby"
+    ],
+    "pattern": [
+      "none"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "example": {
+    "body_color": "olive",
+    "fin_color": "oxblood",
+    "fin_length": "short",
+    "finform": "round",
+    "iridescence": "low",
+    "iridescence_color": "teal",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": false,
+  "priority": 100,
+  "when": {
+    "body_color": [
+      "bronze",
+      "chocolate",
+      "cinnamon",
+      "copper",
+      "olive",
+      "oxblood",
+      "smoke"
+    ],
+    "fin_length": [
+      "short"
+    ],
+    "finform": [
+      "round"
+    ],
+    "pattern": [
+      "fade",
+      "none"
+    ],
+    "pectoral": [
+      "normal"
+    ]
+  }
+}

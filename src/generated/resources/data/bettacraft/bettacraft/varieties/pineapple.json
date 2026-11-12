@@ -1,0 +1,34 @@
+{
+  "example": {
+    "body_color": "pineapple",
+    "fin_color": "yellow",
+    "fin_length": "long",
+    "finform": "spade",
+    "iridescence": "none",
+    "iridescence_color": "turquoise",
+    "pattern": "dragon",
+    "pattern_color": "cinnamon",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 56,
+  "when": {
+    "body_color": [
+      "gold",
+      "mustard",
+      "pineapple",
+      "yellow"
+    ],
+    "pattern": [
+      "dragon",
+      "grizzle"
+    ],
+    "pattern_color": [
+      "black",
+      "bronze",
+      "chocolate",
+      "cinnamon",
+      "copper"
+    ]
+  }
+}

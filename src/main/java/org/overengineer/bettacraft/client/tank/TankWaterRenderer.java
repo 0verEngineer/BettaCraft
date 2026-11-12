@@ -20,8 +20,12 @@ import org.overengineer.bettacraft.tank.TankBlock;
  */
 public final class TankWaterRenderer {
     public static final ResourceLocation STILL = BettaCraft.id("block/tank_water_still");
-    /** ARGB; alpha controls how see-through the water is. */
-    private static final int COLOR = 0x7C4A90E2; // M1: clearer water so the fish colours stay visible
+    /**
+     * ARGB; alpha controls how see-through the water is. M5: the side faces (looked through at the fish) are clearer and
+     * less saturated than the surface, so the fish keep their colours (BettaTints compensates the rest).
+     */
+    private static final int COLOR = 0x8C4A90E2;
+    private static final int SIDE_COLOR = 0x5A6CA6DC;
     private static final float INSET = 0.5F / 16F;
 
     private TankWaterRenderer() {}
@@ -45,7 +49,6 @@ public final class TankWaterRenderer {
 
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
-        int a = (COLOR >>> 24) & 0xFF, r = (COLOR >> 16) & 0xFF, g = (COLOR >> 8) & 0xFF, b = COLOR & 0xFF;
         float[] c = new float[12];
 
         for (Direction d : Direction.values()) {
@@ -57,6 +60,8 @@ public final class TankWaterRenderer {
             }
             if (!render) continue;
             BoxFaces.corners(d, x0, y0, z0, x1, y1, z1, c);
+            int col = d.getAxis() == Direction.Axis.Y ? COLOR : SIDE_COLOR;
+            int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
             emit(vc, d, c, ox, oy, oz, sprite, r, g, b, a, light, false);
             if (d == Direction.UP) {
                 // visible from below the surface too (swimming players)

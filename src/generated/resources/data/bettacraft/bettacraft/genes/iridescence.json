@@ -1,0 +1,17 @@
+{
+  "alleles": {
+    "high": {
+      "rank": 20,
+      "weight": 3
+    },
+    "low": {
+      "rank": 10,
+      "weight": 4
+    },
+    "none": {
+      "rank": 0,
+      "weight": 3
+    }
+  },
+  "replace": false
+}

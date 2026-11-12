@@ -19,8 +19,8 @@ class BettaGenotypeTest {
 
     @Test
     void dominanceDecidesThePhenotype() {
-        BettaGenotype g = with(BASE, BettaLoci.FINFORM, "veil", "plakat");
-        assertEquals("plakat", g.express().shape(), "plakat (wild type) is dominant");
+        BettaGenotype g = with(BASE, BettaLoci.FINFORM, "veil", "round");
+        assertEquals("round", g.express().shape(), "roundtail (wild type) is dominant");
         g = with(g, BettaLoci.PECTORAL, "dumbo", "normal");
         assertEquals("normal", g.express().pectoral(), "dumbo is recessive");
         g = with(g, BettaLoci.PECTORAL, "dumbo", "dumbo");
@@ -42,11 +42,11 @@ class BettaGenotypeTest {
 
     @Test
     void punnettSquareOfTwoCarriers() {
-        BettaGenotype carrier = with(BASE, BettaLoci.FINFORM, "plakat", "halfmoon");
+        BettaGenotype carrier = with(BASE, BettaLoci.FINFORM, "round", "halfmoon");
         Map<Locus, List<BettaGenotype.Outcome>> p = BettaGenotype.predict(carrier, carrier);
         List<BettaGenotype.Outcome> fins = p.get(BettaLoci.FINFORM);
         assertEquals(2, fins.size());
-        assertEquals("plakat", fins.get(0).allele());
+        assertEquals("round", fins.get(0).allele());
         assertEquals(0.75, fins.get(0).probability(), 1e-9);
         assertEquals("halfmoon", fins.get(1).allele());
         assertEquals(0.25, fins.get(1).probability(), 1e-9);
@@ -56,7 +56,7 @@ class BettaGenotypeTest {
 
     @Test
     void crossFollowsTheSquare() {
-        BettaGenotype carrier = with(BASE, BettaLoci.FINFORM, "plakat", "halfmoon");
+        BettaGenotype carrier = with(BASE, BettaLoci.FINFORM, "round", "halfmoon");
         RandomSource r = RandomSource.create(1234);
         Map<String, Integer> count = new HashMap<>();
         int n = 8000;
@@ -64,7 +64,7 @@ class BettaGenotypeTest {
             BettaGenotype child = BettaGenotype.cross(carrier, carrier, r, 0.0);
             count.merge(child.express().shape(), 1, Integer::sum);
             BettaGenotype.AllelePair pair = child.pair(BettaLoci.FINFORM);
-            assertTrue(List.of("plakat", "halfmoon").contains(pair.a()) && List.of("plakat", "halfmoon").contains(pair.b()));
+            assertTrue(List.of("round", "halfmoon").contains(pair.a()) && List.of("round", "halfmoon").contains(pair.b()));
         }
         double halfmoon = count.getOrDefault("halfmoon", 0) / (double) n;
         assertEquals(0.25, halfmoon, 0.03, "a quarter of the offspring of two carriers show the recessive trait");

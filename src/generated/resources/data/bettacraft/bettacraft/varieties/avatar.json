@@ -1,0 +1,37 @@
+{
+  "example": {
+    "body_color": "teal",
+    "fin_color": "turquoise",
+    "fin_length": "short",
+    "finform": "halfmoon",
+    "iridescence": "high",
+    "iridescence_color": "emerald",
+    "pattern": "galaxy",
+    "pattern_color": "mint",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 46,
+  "when": {
+    "body_color": [
+      "black",
+      "black_orchid",
+      "cobalt",
+      "emerald",
+      "green",
+      "indigo",
+      "navy",
+      "royal_blue",
+      "sky",
+      "steel",
+      "teal",
+      "turquoise"
+    ],
+    "iridescence": [
+      "high"
+    ],
+    "pattern": [
+      "galaxy"
+    ]
+  }
+}

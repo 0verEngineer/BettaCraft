@@ -1,0 +1,23 @@
+{
+  "example": {
+    "body_color": "white",
+    "fin_color": "white",
+    "fin_length": "short",
+    "finform": "halfmoon",
+    "iridescence": "high",
+    "iridescence_color": "royal_blue",
+    "pattern": "koi",
+    "pattern_color": "red",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 80,
+  "when": {
+    "iridescence": [
+      "high"
+    ],
+    "pattern": [
+      "koi"
+    ]
+  }
+}

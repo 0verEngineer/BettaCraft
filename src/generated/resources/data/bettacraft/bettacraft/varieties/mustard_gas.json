@@ -1,0 +1,43 @@
+{
+  "example": {
+    "body_color": "navy",
+    "fin_color": "mustard",
+    "fin_length": "long",
+    "finform": "halfmoon",
+    "iridescence": "high",
+    "iridescence_color": "royal_blue",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 65,
+  "when": {
+    "body_color": [
+      "black",
+      "black_orchid",
+      "cobalt",
+      "emerald",
+      "green",
+      "indigo",
+      "navy",
+      "royal_blue",
+      "steel",
+      "teal"
+    ],
+    "fin_color": [
+      "gold",
+      "mustard",
+      "orange",
+      "pineapple",
+      "tangerine",
+      "yellow"
+    ],
+    "pattern": [
+      "butterfly",
+      "fade",
+      "none",
+      "tipped"
+    ]
+  }
+}

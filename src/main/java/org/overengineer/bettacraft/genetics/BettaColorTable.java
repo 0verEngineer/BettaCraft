@@ -18,7 +18,7 @@ public final class BettaColorTable {
             new Entry("copper", 0xB8693B, "Copper", "Kupfer"),
             new Entry("bronze", 0x9C7A3C, "Bronze", "Bronze"),
             new Entry("gold", 0xE0B235, "Gold", "Gold"),
-            new Entry("mustard", 0xC9B22C, "Mustard Gas", "Senfgas"),
+            new Entry("mustard", 0xC9B22C, "Mustard", "Senfgelb"),
             new Entry("yellow", 0xF4D03F, "Yellow", "Gelb"),
             new Entry("pineapple", 0xF6E27A, "Pineapple", "Ananas"),
             new Entry("cream", 0xF1E6C8, "Cream", "Creme"),

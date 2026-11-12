@@ -109,6 +109,38 @@ public final class ModDataGen {
                         new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)))),
                 Set.of(BettaCraft.MOD_ID)));
         gen.addProvider(event.includeServer(), new LootModifiers(out, lookup));
+        gen.addProvider(event.includeServer(), new GeneticsFiles(out));
+    }
+
+    // ------------------------------------------------------------------ genetics (M5): built-in colours, genes, varieties
+
+    /** data/bettacraft/bettacraft/{colors,genes,varieties}/*.json from the built-in tables (see GeneticsData). */
+    static final class GeneticsFiles implements net.minecraft.data.DataProvider {
+        private final PackOutput.PathProvider colors, genes, varieties;
+
+        GeneticsFiles(PackOutput out) {
+            colors = out.createPathProvider(PackOutput.Target.DATA_PACK, "bettacraft/colors");
+            genes = out.createPathProvider(PackOutput.Target.DATA_PACK, "bettacraft/genes");
+            varieties = out.createPathProvider(PackOutput.Target.DATA_PACK, "bettacraft/varieties");
+        }
+
+        @Override
+        public CompletableFuture<?> run(net.minecraft.data.CachedOutput cache) {
+            var d = org.overengineer.bettacraft.genetics.GeneticsData.defaults();
+            List<CompletableFuture<?>> all = new java.util.ArrayList<>();
+            d.colors().values().forEach(c -> all.add(net.minecraft.data.DataProvider.saveStable(cache,
+                    org.overengineer.bettacraft.genetics.GeneticsData.colorJson(c), colors.json(BettaCraft.id(c.id())))));
+            org.overengineer.bettacraft.genetics.GeneticsData.DEFAULT_GENES.forEach((locus, list) -> all.add(net.minecraft.data.DataProvider.saveStable(cache,
+                    org.overengineer.bettacraft.genetics.GeneticsData.genesJson(list), genes.json(BettaCraft.id(locus)))));
+            d.varieties().forEach(v -> all.add(net.minecraft.data.DataProvider.saveStable(cache,
+                    org.overengineer.bettacraft.genetics.GeneticsData.varietyJson(v), varieties.json(BettaCraft.id(v.id())))));
+            return CompletableFuture.allOf(all.toArray(CompletableFuture[]::new));
+        }
+
+        @Override
+        public String getName() {
+            return "Bettacraft genetics";
+        }
     }
 
     // ------------------------------------------------------------------ lang (en_us; de_de is maintained by hand)

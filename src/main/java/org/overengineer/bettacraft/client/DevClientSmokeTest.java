@@ -305,7 +305,7 @@ final class DevClientSmokeTest {
                 org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, org.overengineer.bettacraft.entity.betta.LifeStage.ADULT};
         java.util.List<java.util.UUID> order = new java.util.ArrayList<>();
         BettaGenotype showGenes = BettaGenotype.randomDomestic(sr).with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM,
-                new BettaGenotype.AllelePair("halfmoon", "plakat"));
+                new BettaGenotype.AllelePair("halfmoon", "round"));
         for (int i = 0; i < 5; i++) {
             BettaData d = BettaData.create(showGenes, i == 4, level.getGameTime()).withStage(stages[i]);
             ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
@@ -345,7 +345,7 @@ final class DevClientSmokeTest {
         RandomSource br = RandomSource.create(4321);
         for (int i = 0; i < 2; i++) {
             BettaGenotype g = BettaGenotype.randomDomestic(br).with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM,
-                    new BettaGenotype.AllelePair(i == 0 ? "plakat" : "veil", "halfmoon"));
+                    new BettaGenotype.AllelePair(i == 0 ? "round" : "veil", "halfmoon"));
             ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, i == 1, level.getGameTime()));
             TankInhabitants.insert(level, breed, bucket, ModEntities.BETTA.get(), p, false);
         }

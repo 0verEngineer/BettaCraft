@@ -141,7 +141,7 @@ final class JadeClientTooltips {
             if (!b.isAdult() && d.contains("progress")) {
                 stage = Component.translatable("gui.bettacraft.fish.stage_progress", stage, Math.round(d.getFloat("progress") * 100));
             }
-            tooltip.add(Component.translatable("jade.bettacraft.betta.type", BettaTooltip.shape(b.genome())));
+            tooltip.add(Component.translatable("jade.bettacraft.betta.type", BettaTooltip.type(b.genome())).withStyle(ChatFormatting.GOLD));
             tooltip.add(Component.translatable("gui.bettacraft.fish.sex_stage", BettaTooltip.sex(b.isFemale()), stage));
             if (d.isEmpty()) return;
             if (d.getBoolean("in_tank")) {

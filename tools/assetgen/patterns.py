@@ -208,13 +208,64 @@ def p_grizzle():
 
 
 def p_bars():
-    """Vertical breeding bars (females), body sides only."""
+    """Vertical breeding bars (females), body sides only. Strong alpha: the renderer picks a dark or a pale
+    tint against the body colour, so the bars stay visible on dark and on light fish."""
     m = meta()
     z, _ = _zy()
     side = np.isin(m.face, ["west", "east"]) & m.body & np.isin(m.key, ["body", "peduncle"])
     bar = (np.floor(z + 3) % 2 == 0)
-    a = np.where(bar, np.where((m.ft > 0.15) & (m.ft < 0.9), 0.85, 0.5), 0.0)
-    return np.where(side, a, 0)
+    a = np.where(bar, np.where((m.ft > 0.12) & (m.ft < 0.92), 1.0, 0.7), 0.0)
+    # faint bar across the gill cover
+    gill = (m.key == "head") & np.isin(m.face, ["west", "east"]) & (np.abs(z + 4.5) < 0.6) & (m.ft > 0.2)
+    return np.where(side, a, np.where(gill, 0.6, 0.0))
+
+
+def p_piebald():
+    """Pale face: the head and the front of the body lose their colour, the border wobbles."""
+    m = meta()
+    z, y = _zy()
+    edge = -1.5 + 2.2 * (fbm(z, y, 0.5, 801) - 0.5) + 0.25 * y
+    a = np.where(np.isin(m.key, ["head", "snout"]), 1.0, 0.0)
+    a = np.where((m.key == "body") & (z < edge), 1.0, a)
+    a = np.where((m.key == "body") & (z >= edge) & (z < edge + 0.9), 0.5, a)
+    # pale ventral/pectoral fins near the face
+    a = np.where(m.fin & np.isin(m.fin_kind, ["pectoral", "ventral"]), 0.8, a)
+    return a * m.cover
+
+
+def _spots(seed, cell, radius, density):
+    """Round spots on a jittered grid in model space (z, y); same pixels on both fin faces."""
+    z, y = _zy()
+    gz, gy = np.floor(z / cell), np.floor(y / cell)
+    out = np.zeros_like(z)
+    for dz in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            cz, cy = gz + dz, gy + dy
+            pz = (cz + 0.2 + 0.6 * _hash(cz, cy, seed=seed)) * cell
+            py = (cy + 0.2 + 0.6 * _hash(cz, cy, seed=seed + 1)) * cell
+            on = _hash(cz, cy, seed=seed + 2) < density
+            r = radius * (0.7 + 0.6 * _hash(cz, cy, seed=seed + 3))
+            d = np.hypot(z - pz, y - py)
+            out = np.maximum(out, np.where(on & (d < r), 1.0, np.where(on & (d < r + 0.45), 0.5, 0.0)))
+    return out
+
+
+def p_dalmatian():
+    """Dalmatian: small dark spots, mostly on the (pale) fins, a few on the body."""
+    m = meta()
+    s = _spots(901, 1.9, 0.62, 0.75)
+    body = _spots(911, 2.4, 0.55, 0.35)
+    return np.where(m.fin, s, np.where(m.body & (m.key != "snout"), body, 0.0))
+
+
+def p_galaxy():
+    """Galaxy: fine bright speckles all over body and fin bases (strongest on the flanks)."""
+    m = meta()
+    r = texel_random(951)
+    side = np.isin(m.face, ["west", "east"])
+    body_a = np.where(side, np.where(r < 0.26, 1.0, 0.0), np.where(r < 0.12, 0.8, 0.0))
+    fin_a = np.where((r < 0.18) & (m.fin_t < 0.7), 0.9, 0.0)
+    return np.where(m.body & (m.key != "snout"), body_a, np.where(m.fin, fin_a, 0.0))
 
 
 PATTERNS = {
@@ -227,6 +278,9 @@ PATTERNS = {
     "fade": p_fade,
     "grizzle": p_grizzle,
     "bars": p_bars,
+    "piebald": p_piebald,
+    "dalmatian": p_dalmatian,
+    "galaxy": p_galaxy,
 }
 
 

@@ -1,0 +1,44 @@
+{
+  "example": {
+    "body_color": "royal_blue",
+    "fin_color": "red",
+    "fin_length": "long",
+    "finform": "crowntail",
+    "iridescence": "low",
+    "iridescence_color": "steel",
+    "pattern": "butterfly",
+    "pattern_color": "white",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 62,
+  "when": {
+    "body_color": [
+      "cobalt",
+      "indigo",
+      "navy",
+      "royal_blue",
+      "sky",
+      "steel",
+      "turquoise"
+    ],
+    "fin_color": [
+      "coral",
+      "crimson",
+      "oxblood",
+      "red",
+      "ruby",
+      "wine"
+    ],
+    "pattern": [
+      "butterfly",
+      "tipped"
+    ],
+    "pattern_color": [
+      "cream",
+      "pastel",
+      "platinum",
+      "white"
+    ]
+  }
+}

@@ -34,8 +34,23 @@ public class CabinetBlockItem extends BlockItem {
     }
 
     static Component nameFor(ResourceLocation wood) {
-        Block b = BuiltInRegistries.BLOCK.get(wood);
-        return Component.translatable("block.bettacraft.cabinet.with_wood", (b == Blocks.AIR ? Blocks.OAK_PLANKS : b).getName());
+        return Component.translatable("block.bettacraft.cabinet.with_wood", woodName(wood));
+    }
+
+    private static final java.util.regex.Pattern PLANKS_SUFFIX = java.util.regex.Pattern.compile("(?i)\s*(holz)?(planks|bretter|planken)$");
+
+    /**
+     * Name of the wood, not of the planks: "Oak" / "Eichenholz". Vanilla woods have translations ({@code wood.minecraft.oak});
+     * other mods fall back to their planks name without "Planks" / "bretter" in the current language.
+     */
+    public static Component woodName(ResourceLocation planks) {
+        Block b = BuiltInRegistries.BLOCK.get(planks);
+        if (b == Blocks.AIR) b = Blocks.OAK_PLANKS;
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
+        String base = id.getPath().endsWith("_planks") ? id.getPath().substring(0, id.getPath().length() - "_planks".length()) : id.getPath();
+        String full = net.minecraft.locale.Language.getInstance().getOrDefault(b.getDescriptionId());
+        String stripped = PLANKS_SUFFIX.matcher(full).replaceAll("").trim();
+        return Component.translatableWithFallback("wood." + id.getNamespace() + "." + base, stripped.isEmpty() ? full : stripped);
     }
 
     @Override

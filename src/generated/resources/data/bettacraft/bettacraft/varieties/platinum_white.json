@@ -1,0 +1,29 @@
+{
+  "example": {
+    "body_color": "white",
+    "fin_color": "platinum",
+    "fin_length": "long",
+    "finform": "crowntail",
+    "iridescence": "low",
+    "iridescence_color": "platinum",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 50,
+  "when": {
+    "body_color": [
+      "platinum",
+      "white"
+    ],
+    "fin_color": [
+      "platinum",
+      "white"
+    ],
+    "pattern": [
+      "galaxy",
+      "none"
+    ]
+  }
+}

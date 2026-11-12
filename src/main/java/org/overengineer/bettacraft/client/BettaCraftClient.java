@@ -60,6 +60,10 @@ public final class BettaCraftClient {
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
             ClientInteriorCache.clear();
             org.overengineer.bettacraft.client.decor.DecorPreview.clear();
+            // back to the built-in genetics (the next server sends its own); not while our integrated server still runs
+            if (net.minecraft.client.Minecraft.getInstance().getSingleplayerServer() == null) {
+                org.overengineer.bettacraft.genetics.GeneticsData.reset();
+            }
         });
         if (Boolean.getBoolean("bettacraft.smoketest.world")) {
             DevClientSmokeTest.register();

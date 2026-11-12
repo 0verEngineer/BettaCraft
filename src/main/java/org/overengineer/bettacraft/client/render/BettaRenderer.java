@@ -53,14 +53,14 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
     private final Map<BettaModelDefinitions.Shape, BettaModel> models = new EnumMap<>(BettaModelDefinitions.Shape.class);
 
     public BettaRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx, new BettaModel(ctx.bakeLayer(LAYERS.get(BettaModelDefinitions.Shape.PLAKAT))), 0.15F);
+        super(ctx, new BettaModel(ctx.bakeLayer(LAYERS.get(BettaModelDefinitions.Shape.ROUND))), 0.15F);
         for (BettaModelDefinitions.Shape s : BettaModelDefinitions.Shape.values()) {
             models.put(s, new BettaModel(ctx.bakeLayer(LAYERS.get(s))));
         }
         addLayer(new TintLayer(this, f -> FINS, f -> BettaTints.forFish(BettaColors.rgb(f.genome().finColor()), f)));
         addLayer(new TintLayer(this, f -> PATTERN_TEX.get(f.genome().pattern()), f -> BettaTints.forFish(BettaColors.rgb(f.genome().patternColor()), f)));
-        // breeding colours: females in the mood show dark vertical bars (PLAN 5.2)
-        addLayer(new TintLayer(this, f -> f.isFemale() && f.isInBreedingMood() ? BARS : null, f -> 0xA0281E1A));
+        // breeding colours: females in the mood show vertical bars (PLAN 5.2), dark on light fish and pale on dark fish
+        addLayer(new TintLayer(this, f -> f.isFemale() && f.isInBreedingMood() ? BARS : null, f -> BettaTints.bars(f.genome())));
         addLayer(new TintLayer(this, f -> "none".equals(f.genome().iridescence()) || !f.isAdult() && f.lifeStage().ordinal() < 3 ? null : IRIDESCENCE,
                 f -> BettaTints.iridescence(f.genome(), f.isSick(), f.tickCount)));
         addLayer(new TintLayer(this, f -> EYE, f -> 0xFFFFFFFF));
@@ -74,7 +74,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         for (BettaModelDefinitions.Shape s : BettaModelDefinitions.Shape.values()) {
             if (s.name().equalsIgnoreCase(g.shape())) return s;
         }
-        return BettaModelDefinitions.Shape.PLAKAT;
+        return BettaModelDefinitions.Shape.ROUND; // unknown (datapack) tail shapes
     }
 
     @Override
@@ -82,9 +82,11 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         BettaModel m = models.get(shapeOf(fish.genome()));
         this.model = m;
         this.shadowRadius = 0.15F * fish.lifeStage().scale();
+        BettaTints.beginFish(fish);
         m.setPendingBaseColor(BettaTints.forFish(BettaColors.rgb(fish.genome().bodyColor()), fish));
         super.render(fish, yaw, partialTicks, pose, buffers, light);
         m.setPendingBaseColor(0);
+        BettaTints.endFish();
     }
 
     @Override

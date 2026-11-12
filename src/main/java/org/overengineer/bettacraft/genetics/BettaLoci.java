@@ -1,55 +1,39 @@
 package org.overengineer.bettacraft.genetics;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.ToIntFunction;
 
 /**
- * The loci of the betta genotype (PLAN 5.2) and their dominance rules. Ids are stored as strings (NBT key = locus id).
+ * The loci of the betta genotype (PLAN 5.2, M5: nine loci). Ids are stored as strings (NBT key = locus id). The
+ * built-in dominance ranks and frequencies are in {@link GeneticsData#DEFAULT_GENES}; datapacks may change them.
  * <ul>
- *     <li>finform: plakat (wild type) &gt; veil &gt; halfmoon &gt; crowntail &gt; doubletail</li>
+ *     <li>finform (tail shape): round (wild type) &gt; spade &gt; veil &gt; delta &gt; halfmoon &gt; rosetail &gt; crowntail &gt; doubletail</li>
+ *     <li>fin_length: short (plakat, wild type) &gt; long</li>
  *     <li>pectoral: normal &gt; dumbo (recessive)</li>
  *     <li>colours: darker colours dominate lighter ones (rank from the luminance of the tint)</li>
- *     <li>pattern: marble &gt; dragon &gt; mask &gt; koi &gt; grizzle &gt; butterfly &gt; none &gt; fade, bars, tipped</li>
+ *     <li>pattern: marble &gt; dragon &gt; mask &gt; koi &gt; galaxy &gt; grizzle &gt; piebald &gt; dalmatian &gt; butterfly &gt; none
+ *     &gt; fade, bars, tipped</li>
  *     <li>iridescence: high &gt; low &gt; none</li>
  * </ul>
  */
 public final class BettaLoci {
     private BettaLoci() {}
 
-    private static final ToIntFunction<String> COLOR_RANK = id -> {
-        if (!BettaColors.isKnown(id)) return -1;
-        int rgb = BettaColors.rgb(id);
-        double luma = 0.299 * ((rgb >> 16) & 0xFF) + 0.587 * ((rgb >> 8) & 0xFF) + 0.114 * (rgb & 0xFF);
-        return 1000 - (int) Math.round(luma);
-    };
-
-    public static final Locus FINFORM = new Locus("finform", () -> BettaGenome.SHAPES,
-            Locus.table(Map.of("plakat", 4, "veil", 3, "halfmoon", 2, "crowntail", 1, "doubletail", 0)),
-            BettaPatterns::shapeTranslationKey);
-    public static final Locus PECTORAL = new Locus("pectoral", () -> List.of("normal", "dumbo"),
-            Locus.table(Map.of("normal", 1, "dumbo", 0)), a -> "pectoral.bettacraft." + a);
-    public static final Locus BODY_COLOR = new Locus("body_color", BettaColors::ids, COLOR_RANK, BettaColors::translationKey);
-    public static final Locus FIN_COLOR = new Locus("fin_color", BettaColors::ids, COLOR_RANK, BettaColors::translationKey);
-    public static final Locus PATTERN = new Locus("pattern", BettaLoci::patternPool,
-            Locus.table(Map.of("marble", 8, "dragon", 7, "mask", 6, "koi", 5, "grizzle", 4, "butterfly", 3, "none", 2,
-                    "fade", 1, "bars", 1, "tipped", 1)), BettaPatterns::translationKey);
-    public static final Locus PATTERN_COLOR = new Locus("pattern_color", BettaColors::ids, COLOR_RANK, BettaColors::translationKey);
-    public static final Locus IRIDESCENCE = new Locus("iridescence", () -> BettaGenome.IRIDESCENCE,
-            Locus.table(Map.of("high", 2, "low", 1, "none", 0)), a -> "iridescence.bettacraft." + a);
-    public static final Locus IRIDESCENCE_COLOR = new Locus("iridescence_color", BettaColors::iridescentIds, COLOR_RANK,
-            BettaColors::translationKey);
+    public static final Locus FINFORM = new Locus("finform", Locus.Kind.GENE);
+    public static final Locus FIN_LENGTH = new Locus("fin_length", Locus.Kind.GENE);
+    public static final Locus PECTORAL = new Locus("pectoral", Locus.Kind.GENE);
+    public static final Locus BODY_COLOR = new Locus("body_color", Locus.Kind.COLOR);
+    public static final Locus FIN_COLOR = new Locus("fin_color", Locus.Kind.COLOR);
+    public static final Locus PATTERN = new Locus("pattern", Locus.Kind.GENE);
+    public static final Locus PATTERN_COLOR = new Locus("pattern_color", Locus.Kind.COLOR);
+    public static final Locus IRIDESCENCE = new Locus("iridescence", Locus.Kind.GENE);
+    public static final Locus IRIDESCENCE_COLOR = new Locus("iridescence_color", Locus.Kind.SHEEN);
 
     /** All loci in display / storage order. */
-    public static final List<Locus> ALL = List.of(FINFORM, PECTORAL, BODY_COLOR, FIN_COLOR, PATTERN, PATTERN_COLOR, IRIDESCENCE,
+    public static final List<Locus> ALL = List.of(FINFORM, FIN_LENGTH, PECTORAL, BODY_COLOR, FIN_COLOR, PATTERN, PATTERN_COLOR, IRIDESCENCE,
             IRIDESCENCE_COLOR);
 
-    private static List<String> patternPool() {
-        List<String> l = new ArrayList<>(BettaPatterns.ids());
-        l.add(BettaPatterns.NONE);
-        return l;
-    }
+    /** Loci whose alleles are defined by gene files ({@code genes/<locus>.json}). */
+    public static final List<Locus> GENES = List.of(FINFORM, FIN_LENGTH, PECTORAL, PATTERN, IRIDESCENCE);
 
     public static Locus byId(String id) {
         for (Locus l : ALL) if (l.id().equals(id)) return l;

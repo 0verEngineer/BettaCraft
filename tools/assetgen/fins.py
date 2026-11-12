@@ -21,17 +21,23 @@ SS = 8  # supersampling for polygon coverage
 # Normalised outlines (x: 0 = front/base side .. 1 = back, y: 0 = top .. 1 = bottom).
 OUTLINES = {
     ("caudal", "plakat"): [(0, .30), (.30, .06), (.65, 0), (.92, .12), (1, .5), (.92, .88), (.65, 1), (.30, .94), (0, .70)],
+    ("caudal", "round"): [(0, .20), (.30, .03), (.60, 0), (.86, .10), (1, .5), (.86, .90), (.60, 1), (.30, .97), (0, .80)],
+    ("caudal", "spade"): [(0, .22), (.30, .04), (.58, .10), (.82, .32), (1, .5), (.82, .68), (.58, .90), (.30, .96), (0, .78)],
+    ("caudal", "delta"): [(0, .36), (.55, .12), (.92, 0), (1, .08), (1, .92), (.92, 1), (.55, .88), (0, .64)],
+    ("caudal", "rosetail"): None,  # generated: halfmoon with a ruffled outer edge (see _rosetail)
     ("caudal", "veil"): [(0, .16), (.25, 0), (.55, .02), (.80, .22), (.96, .55), (1, .90), (.85, 1), (.6, .86), (.32, .68), (.1, .55), (0, .5)],
     ("caudal", "halfmoon"): [(0, 0), (.45, 0), (.80, .07), (1, .30), (1, .70), (.80, .93), (.45, 1), (0, 1)],
     ("caudal", "crowntail"): [(0, .06), (.45, 0), (.85, .12), (1, .5), (.85, .88), (.45, 1), (0, .94)],
     ("caudal", "doubletail"): [(0, .04), (.45, 0), (.85, .06), (1, .22), (.95, .40), (.38, .5), (.95, .60), (1, .78), (.85, .94), (.45, 1), (0, .96)],
     ("dorsal", "plakat"): [(0, 1), (.05, .5), (.3, .05), (.7, 0), (1, .35), (1, .8), (.9, 1)],
     ("dorsal", "veil"): [(0, 1), (.08, .55), (.3, .15), (.55, 0), (.85, .12), (1, .5), (1, .95), (.9, 1)],
+    ("dorsal", "rosetail"): [(0, 1), (.03, .40), (.18, .06), (.42, .02), (.55, 0), (.70, .06), (.82, .02), (.95, .12), (1, .30), (1, 1)],
     ("dorsal", "halfmoon"): [(0, 1), (.04, .45), (.2, .08), (.5, 0), (.85, .03), (1, .25), (1, 1)],
     ("dorsal", "crowntail"): [(0, 1), (.04, .45), (.2, .08), (.5, 0), (.85, .03), (1, .25), (1, 1)],
     ("dorsal", "doubletail"): [(0, 1), (.03, .35), (.2, .04), (.55, 0), (.9, .05), (1, .3), (1, 1)],
     ("anal", "plakat"): [(0, 0), (1, 0), (1, .55), (.85, 1), (.5, .85), (.15, .45), (0, .15)],
     ("anal", "veil"): [(0, 0), (1, 0), (1, .35), (.92, 1), (.62, .88), (.28, .55), (0, .22)],
+    ("anal", "rosetail"): [(0, 0), (1, 0), (1, .92), (.88, 1), (.74, .92), (.58, .98), (.42, .84), (.15, .5), (0, .2)],
     ("anal", "halfmoon"): [(0, 0), (1, 0), (1, .95), (.82, 1), (.5, .88), (.15, .5), (0, .2)],
     ("anal", "crowntail"): [(0, 0), (1, 0), (1, .95), (.82, 1), (.5, .88), (.15, .5), (0, .2)],
     ("anal", "doubletail"): [(0, 0), (1, 0), (1, .95), (.82, 1), (.5, .9), (.15, .55), (0, .2)],
@@ -39,6 +45,18 @@ OUTLINES = {
     ("pectoral", "dumbo"): [(0, .12), (.35, 0), (.8, .1), (1, .5), (.85, .92), (.45, 1), (0, .8)],
     ("ventral", "normal"): [(0, 0), (1, 0), (.95, .45), (.75, 1), (.4, .75), (.1, .3)],
 }
+
+def _rosetail():
+    """Over-180 degree caudal with a ruffled (overlapping-ray) outer edge."""
+    pts = [(0, 0), (.42, 0)]
+    n = 24
+    for k in range(n + 1):
+        y = k / n
+        x = .80 + .14 * math.sin(math.pi * y) + .06 * abs(math.sin(y * math.pi * 5))
+        pts.append((min(x, 1.0), y))
+    pts += [(.42, 1), (0, 1)]
+    return pts
+
 
 # Which side of the d x h grid is attached to the body.
 BASE_SIDE = {"caudal": "left", "dorsal": "bottom", "anal": "top", "pectoral": "left", "ventral": "top"}
@@ -105,7 +123,8 @@ def _angle_range(mask, O):
 @lru_cache(maxsize=None)
 def fin_fields(kind: str, style: str, d: int, h: int, center_row: float | None = None):
     O = _origin(kind, style, d, h, center_row)
-    full = _coverage(OUTLINES[(kind, style)], d, h) >= 0.5
+    outline = OUTLINES[(kind, style)] or _rosetail()
+    full = _coverage(outline, d, h, smooth=0 if style == "rosetail" and kind == "caudal" else 2) >= 0.5
     spikes = None
     if style == "crowntail" and kind in ("caudal", "dorsal", "anal"):
         # reduced webbing: every texel line (rows for the caudal, columns for dorsal/anal) is cut

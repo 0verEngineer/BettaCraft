@@ -1,0 +1,37 @@
+{
+  "alleles": {
+    "crowntail": {
+      "rank": 30,
+      "weight": 6
+    },
+    "delta": {
+      "rank": 50,
+      "weight": 6
+    },
+    "doubletail": {
+      "rank": 20,
+      "weight": 4
+    },
+    "halfmoon": {
+      "rank": 40,
+      "weight": 8
+    },
+    "rosetail": {
+      "rank": 35,
+      "weight": 3
+    },
+    "round": {
+      "rank": 80,
+      "weight": 10
+    },
+    "spade": {
+      "rank": 70,
+      "weight": 6
+    },
+    "veil": {
+      "rank": 60,
+      "weight": 8
+    }
+  },
+  "replace": false
+}

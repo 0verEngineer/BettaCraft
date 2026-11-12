@@ -92,22 +92,17 @@ public final class BettaGenotype {
 
     static String phenotypeValue(BettaGenome g, Locus l) {
         return switch (l.id()) {
-            case "finform" -> g.shape();
-            case "pectoral" -> g.pectoral();
-            case "body_color" -> g.bodyColor();
-            case "fin_color" -> g.finColor();
-            case "pattern" -> g.pattern();
-            case "pattern_color" -> g.patternColor();
-            case "iridescence" -> g.iridescence();
-            case "iridescence_color" -> g.iridescenceColor();
+            case "finform", "fin_length", "pectoral", "body_color", "fin_color", "pattern", "pattern_color", "iridescence",
+                 "iridescence_color" -> g.value(l.id());
             default -> throw new IllegalArgumentException(l.id());
         };
     }
 
     /** The visible fish. */
     public BettaGenome express() {
-        return new BettaGenome(species, ex(BettaLoci.FINFORM), ex(BettaLoci.PECTORAL), ex(BettaLoci.BODY_COLOR), ex(BettaLoci.FIN_COLOR),
-                ex(BettaLoci.PATTERN), ex(BettaLoci.PATTERN_COLOR), ex(BettaLoci.IRIDESCENCE), ex(BettaLoci.IRIDESCENCE_COLOR));
+        return new BettaGenome(species, ex(BettaLoci.FINFORM), ex(BettaLoci.FIN_LENGTH), ex(BettaLoci.PECTORAL), ex(BettaLoci.BODY_COLOR),
+                ex(BettaLoci.FIN_COLOR), ex(BettaLoci.PATTERN), ex(BettaLoci.PATTERN_COLOR), ex(BettaLoci.IRIDESCENCE),
+                ex(BettaLoci.IRIDESCENCE_COLOR));
     }
 
     private String ex(Locus l) {
@@ -133,8 +128,7 @@ public final class BettaGenotype {
 
     private static String mutate(Locus l, String allele, RandomSource r, double chance) {
         if (chance <= 0 || r.nextDouble() >= chance) return allele;
-        List<String> pool = l.alleles();
-        return pool.isEmpty() ? allele : pool.get(r.nextInt(pool.size()));
+        return l.alleles().isEmpty() ? allele : l.pick(r);
     }
 
     /** Punnett square per locus: phenotype outcomes with probability (without mutations), most likely first. */
@@ -158,36 +152,27 @@ public final class BettaGenotype {
 
     // ------------------------------------------------------------------ random fish
 
-    /** Wild type: phenotype of {@link BettaGenome#randomWild}; some fish carry a hidden recessive allele. */
+    /** Wild type: phenotype of {@link BettaGenome#randomWild}; some fish carry hidden recessive alleles. */
     public static BettaGenotype randomWild(RandomSource r) {
         BettaGenotype g = homozygous(BettaGenome.randomWild(r));
         if (r.nextInt(6) == 0) {
-            g = g.with(BettaLoci.FINFORM, new AllelePair("plakat", pick(r, List.of("veil", "halfmoon", "crowntail", "doubletail"))));
+            g = g.with(BettaLoci.FINFORM, new AllelePair("round", pick(r, List.of("spade", "veil", "delta", "halfmoon", "crowntail", "doubletail"))));
         }
+        if (r.nextInt(5) == 0) g = g.with(BettaLoci.FIN_LENGTH, new AllelePair(BettaGenome.SHORT, BettaGenome.LONG));
         if (r.nextInt(8) == 0) g = g.with(BettaLoci.PECTORAL, new AllelePair("normal", "dumbo"));
         BettaGenome wild = BettaGenome.randomWild(r);
         String body = g.pair(BettaLoci.BODY_COLOR).a();
-        // a second wild colour; the dominant (darker) one shows, so recompute nothing: the phenotype may change slightly
+        // a second wild colour; the dominant (darker) one shows
         g = g.with(BettaLoci.BODY_COLOR, new AllelePair(body, wild.bodyColor()));
         return g;
     }
 
-    /** Any combination (spawn eggs, tests): two random alleles per locus. */
+    /** Any combination (spawn eggs, tests): two random alleles per locus, weighted by the gene frequencies. */
     public static BettaGenotype randomDomestic(RandomSource r) {
         Map<Locus, AllelePair> m = new LinkedHashMap<>();
         for (Locus l : BettaLoci.ALL) {
-            List<String> pool = l.alleles();
-            String a, b;
-            if (l == BettaLoci.PECTORAL) {
-                a = r.nextInt(3) == 0 ? "dumbo" : "normal";
-                b = r.nextInt(3) == 0 ? "dumbo" : "normal";
-            } else if (l == BettaLoci.PATTERN) {
-                a = r.nextInt(2) == 0 ? BettaPatterns.NONE : pick(r, pool);
-                b = r.nextInt(2) == 0 ? BettaPatterns.NONE : pick(r, pool);
-            } else {
-                a = pick(r, pool);
-                b = r.nextInt(3) == 0 ? a : pick(r, pool);
-            }
+            String a = l.pick(r);
+            String b = r.nextInt(3) == 0 ? a : l.pick(r);
             m.put(l, new AllelePair(a, b));
         }
         return new BettaGenotype(BettaGenome.SPECIES_BETTA, m, new CompoundTag());

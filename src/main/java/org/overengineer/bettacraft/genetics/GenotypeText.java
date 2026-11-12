@@ -10,7 +10,7 @@ public final class GenotypeText {
     private GenotypeText() {}
 
     public static Component allele(Locus l, String allele) {
-        return Component.translatable(l.key(allele));
+        return GeneticsData.get().name(l, allele);
     }
 
     /** "Expressed / hidden" of one locus. */
@@ -26,8 +26,8 @@ public final class GenotypeText {
         return Component.translatable("gui.bettacraft.genotype.line", Component.translatable(BettaLoci.translationKey(l)), pair(g, l));
     }
 
-    /** Short summary for Jade: shape, body colour and pattern genotypes. */
+    /** Short summary for Jade: tail, fin length, body colour and pattern genotypes. */
     public static List<Component> summary(BettaGenotype g) {
-        return List.of(line(g, BettaLoci.FINFORM), line(g, BettaLoci.BODY_COLOR), line(g, BettaLoci.PATTERN));
+        return List.of(line(g, BettaLoci.FINFORM), line(g, BettaLoci.FIN_LENGTH), line(g, BettaLoci.BODY_COLOR), line(g, BettaLoci.PATTERN));
     }
 }

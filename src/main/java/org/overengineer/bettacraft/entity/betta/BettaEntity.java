@@ -225,6 +225,19 @@ public class BettaEntity extends AbstractFish {
         return Double.isInfinite(d) || d <= 0 ? 1.0 : Mth.clamp(stageDays / d, 0, 1);
     }
 
+    /**
+     * Young fish are tiny (fry 1/4 size): a slightly larger target for the crosshair (bucket, fish bag, Jade) without
+     * changing the collision box.
+     */
+    @Override
+    public float getPickRadius() {
+        return switch (lifeStage()) {
+            case FRY, EGG, LARVA -> 0.18F;
+            case JUVENILE -> 0.1F;
+            default -> 0.0F;
+        };
+    }
+
     @Override
     public boolean isBaby() {
         return !isAdult();

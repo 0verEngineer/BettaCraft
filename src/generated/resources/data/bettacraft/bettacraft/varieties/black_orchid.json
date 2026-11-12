@@ -1,0 +1,44 @@
+{
+  "example": {
+    "body_color": "black_orchid",
+    "fin_color": "black",
+    "fin_length": "long",
+    "finform": "halfmoon",
+    "iridescence": "high",
+    "iridescence_color": "royal_blue",
+    "pattern": "butterfly",
+    "pattern_color": "royal_blue",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 70,
+  "when": {
+    "body_color": [
+      "black",
+      "black_orchid"
+    ],
+    "fin_color": [
+      "black",
+      "black_orchid",
+      "indigo",
+      "navy",
+      "purple",
+      "violet"
+    ],
+    "iridescence": [
+      "high"
+    ],
+    "iridescence_color": [
+      "lavender",
+      "royal_blue",
+      "sky",
+      "steel",
+      "turquoise"
+    ],
+    "pattern": [
+      "butterfly",
+      "none",
+      "tipped"
+    ]
+  }
+}

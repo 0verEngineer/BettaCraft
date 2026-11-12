@@ -1,0 +1,36 @@
+{
+  "example": {
+    "body_color": "chocolate",
+    "fin_color": "orange",
+    "fin_length": "long",
+    "finform": "delta",
+    "iridescence": "low",
+    "iridescence_color": "steel",
+    "pattern": "none",
+    "pattern_color": "black",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 58,
+  "when": {
+    "body_color": [
+      "bronze",
+      "chocolate",
+      "cinnamon",
+      "copper"
+    ],
+    "fin_color": [
+      "gold",
+      "mustard",
+      "orange",
+      "pineapple",
+      "tangerine",
+      "yellow"
+    ],
+    "pattern": [
+      "fade",
+      "none",
+      "tipped"
+    ]
+  }
+}

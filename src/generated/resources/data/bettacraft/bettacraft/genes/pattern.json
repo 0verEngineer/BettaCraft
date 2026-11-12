@@ -1,0 +1,57 @@
+{
+  "alleles": {
+    "bars": {
+      "rank": 10,
+      "weight": 0
+    },
+    "butterfly": {
+      "rank": 30,
+      "weight": 6
+    },
+    "dalmatian": {
+      "rank": 40,
+      "weight": 3
+    },
+    "dragon": {
+      "rank": 80,
+      "weight": 5
+    },
+    "fade": {
+      "rank": 10,
+      "weight": 4
+    },
+    "galaxy": {
+      "rank": 55,
+      "weight": 4
+    },
+    "grizzle": {
+      "rank": 50,
+      "weight": 4
+    },
+    "koi": {
+      "rank": 60,
+      "weight": 5
+    },
+    "marble": {
+      "rank": 90,
+      "weight": 5
+    },
+    "mask": {
+      "rank": 70,
+      "weight": 4
+    },
+    "none": {
+      "rank": 20,
+      "weight": 24
+    },
+    "piebald": {
+      "rank": 45,
+      "weight": 3
+    },
+    "tipped": {
+      "rank": 10,
+      "weight": 4
+    }
+  },
+  "replace": false
+}

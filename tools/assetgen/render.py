@@ -27,6 +27,7 @@ class Fish:
     irid_colour: str = "#4fc3d9"
     dumbo: bool = False
     female: bool = False
+    short: bool = False  # fin_length short = plakat types
     stage: str = "adult"
     extra_rot: dict = field(default_factory=dict)
 
@@ -82,7 +83,7 @@ def render_side(f: Fish, tex: np.ndarray | None = None, ppu: int = 4, scale: flo
     if tex is None:
         tex = composite_texture(f)
     plist = md.parts(f.shape)
-    scales = md.female_scales(plist) if f.female else {}
+    scales = md.fish_scales(plist, f.female, f.short)
     mats = md.world_matrices(plist, scales, f.extra_rot)
     zmin, zmax, ymin, ymax = bounds
     W, H = int(round((zmax - zmin) * ppu)), int(round((ymax - ymin) * ppu))

@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "3";
+    public static final String VERSION = "4";
 
     private ModNetwork() {}
 
@@ -24,7 +24,14 @@ public final class ModNetwork {
         r.playToServer(InteriorRequestPayload.TYPE, InteriorRequestPayload.STREAM_CODEC, ModNetwork::onInteriorRequest);
         r.playToClient(TankViewPayload.TYPE, TankViewPayload.STREAM_CODEC, ModNetwork::onTankView);
         r.playToServer(TankActionPayload.TYPE, TankActionPayload.STREAM_CODEC, ModNetwork::onTankAction);
+        r.playToClient(GeneticsSyncPayload.TYPE, GeneticsSyncPayload.STREAM_CODEC, ModNetwork::onGenetics);
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+    }
+
+    private static void onGenetics(GeneticsSyncPayload payload, IPayloadContext ctx) {
+        // common code (no client classes): on an integrated server both sides share the same data anyway
+        ctx.enqueueWork(() -> org.overengineer.bettacraft.genetics.GeneticsData.set(
+                org.overengineer.bettacraft.genetics.GeneticsData.fromNbt(payload.data())));
     }
 
     private static void onInteriorData(InteriorDataPayload payload, IPayloadContext ctx) {

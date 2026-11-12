@@ -45,13 +45,22 @@ public final class ModCreativeTabs {
                     out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), id));
                 }
                 for (var d : ModItems.DECOR.values()) out.accept(d.get());
-                // one bucket per body shape (male) plus a wild-type female
+                // one bucket per fin form (long-finned tails and the plakat forms), then one per named variety (its example fish)
                 net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(42);
-                for (String shape : org.overengineer.bettacraft.genetics.BettaGenome.SHAPES) {
-                    var g = org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(r)
-                            .with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM, new org.overengineer.bettacraft.genetics.BettaGenotype.AllelePair(shape, shape));
+                for (String length : java.util.List.of(org.overengineer.bettacraft.genetics.BettaGenome.LONG, org.overengineer.bettacraft.genetics.BettaGenome.SHORT)) {
+                    for (String shape : org.overengineer.bettacraft.genetics.BettaGenome.SHAPES) {
+                        var g = org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(r)
+                                .with(org.overengineer.bettacraft.genetics.BettaLoci.FINFORM, new org.overengineer.bettacraft.genetics.BettaGenotype.AllelePair(shape, shape))
+                                .with(org.overengineer.bettacraft.genetics.BettaLoci.FIN_LENGTH, new org.overengineer.bettacraft.genetics.BettaGenotype.AllelePair(length, length));
+                        out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                                org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
+                    }
+                }
+                for (var v : org.overengineer.bettacraft.genetics.GeneticsData.get().varieties()) {
+                    if (v.example().isEmpty()) continue;
+                    var ph = org.overengineer.bettacraft.genetics.BettaGenome.of(v.example(), org.overengineer.bettacraft.genetics.BettaGenome.DEFAULT);
                     out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
-                            org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
+                            org.overengineer.bettacraft.entity.betta.BettaData.create(ph, false, 0)));
                 }
                 out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                         org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(r), true, 0)));

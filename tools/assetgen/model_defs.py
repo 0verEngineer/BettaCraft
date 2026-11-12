@@ -27,14 +27,23 @@ import numpy as np
 
 TEX_W = TEX_H = 64
 
-SHAPES = ["plakat", "veil", "halfmoon", "crowntail", "doubletail"]
+# Tail (caudal fin) shapes = alleles of the finform locus. Every shape exists long-finned; short-finned
+# fish (fin_length locus, "plakat" types) use the same mesh with the unpaired fins scaled down at render time.
+SHAPES = ["round", "spade", "veil", "delta", "halfmoon", "rosetail", "crowntail", "doubletail"]
 SHAPE_NAMES = {
-    "plakat": ("Plakat", "Plakat"),
+    "round": ("Roundtail", "Rundschwanz"),
+    "spade": ("Spadetail", "Spatenschwanz"),
     "veil": ("Veiltail", "Schleierschwanz"),
+    "delta": ("Delta", "Delta"),
     "halfmoon": ("Halfmoon", "Halbmond"),
+    "rosetail": ("Rosetail", "Rosenschwanz"),
     "crowntail": ("Crowntail", "Kronenschwanz"),
     "doubletail": ("Doubletail", "Doppelschwanz"),
 }
+# Short fins (plakat types): ModelPart scales of the caudal (z = length, y = height) and of dorsal/anal.
+SHORT_CAUDAL_LENGTH = 0.55
+SHORT_CAUDAL_HEIGHT = 0.62
+SHORT_FIN_SCALE = 0.62
 
 # Pivot of the top-level "body" part (model space, y=24 is the bottom of the entity box).
 BODY_OFFSET = (0.0, 20.0, 0.0)
@@ -75,22 +84,34 @@ class Part:
     variant: str | None = None  # "normal"/"dumbo" for the two pectoral sets
 
 
-# Per-shape fin sizes. caudal: (d, h, y0)  dorsal/anal: (z_pivot, d, h)
+# Per-shape caudal size (d, h, y0) and the style of its dorsal/anal fins (shared UV regions).
 SHAPE_FINS = {
-    "plakat": {"caudal": (5, 7, -3.5), "dorsal": (1.0, 5, 3), "anal": (-1.0, 7, 3)},
-    "veil": {"caudal": (10, 9, -3.0), "dorsal": (-1.0, 7, 5), "anal": (-2.0, 8, 5)},
-    "halfmoon": {"caudal": (8, 14, -7.0), "dorsal": (-1.0, 7, 6), "anal": (-2.0, 8, 5)},
-    "crowntail": {"caudal": (9, 13, -6.5), "dorsal": (-1.0, 7, 6), "anal": (-2.0, 8, 6)},
-    "doubletail": {"caudal": (8, 13, -6.5), "dorsal": (-2.0, 8, 6), "anal": (-2.0, 8, 5)},
+    "round": {"caudal": (9, 10, -5.0), "fins": "veil"},
+    "spade": {"caudal": (9, 10, -5.0), "fins": "veil"},
+    "veil": {"caudal": (10, 9, -3.0), "fins": "veil"},
+    "delta": {"caudal": (9, 12, -6.0), "fins": "halfmoon"},
+    "halfmoon": {"caudal": (8, 14, -7.0), "fins": "halfmoon"},
+    "rosetail": {"caudal": (9, 15, -7.5), "fins": "rosetail"},
+    "crowntail": {"caudal": (9, 13, -6.5), "fins": "crowntail"},
+    "doubletail": {"caudal": (8, 13, -6.5), "fins": "doubletail"},
+}
+# Dorsal/anal per fin style: (z_pivot, d, h)
+FIN_STYLES = {
+    "veil": {"dorsal": (-1.0, 7, 5), "anal": (-2.0, 8, 5)},
+    "halfmoon": {"dorsal": (-1.0, 7, 6), "anal": (-2.0, 8, 5)},
+    "rosetail": {"dorsal": (-1.5, 8, 7), "anal": (-2.0, 8, 6)},
+    "crowntail": {"dorsal": (-1.0, 7, 6), "anal": (-2.0, 8, 6)},
+    "doubletail": {"dorsal": (-2.0, 8, 6), "anal": (-2.0, 8, 5)},
 }
 
 
 def parts(shape: str) -> list[Part]:
     """All parts of one body shape, parents before children."""
     f = SHAPE_FINS[shape]
+    style = f["fins"]
     cd, ch, cy0 = f["caudal"]
-    dz, dd, dh = f["dorsal"]
-    az, ad, ah = f["anal"]
+    dz, dd, dh = FIN_STYLES[style]["dorsal"]
+    az, ad, ah = FIN_STYLES[style]["anal"]
     fs, ts = FEMALE_FIN_SCALE, FEMALE_TAIL_SCALE
     pec_rot = 0.55
     return [
@@ -101,9 +122,9 @@ def parts(shape: str) -> list[Part]:
         Part("caudal", "peduncle", (0, 0, 2), (0, 0, 0), (0.0, cy0, 0.0, 0, ch, cd),
              f"caudal_{shape}", "fin", "caudal", shape, ts),
         Part("dorsal", "body", (0, -2.0, dz), (0, 0, 0), (0.0, -dh + 1.0, 0.0, 0, dh, dd),
-             f"dorsal_{shape}", "fin", "dorsal", shape, fs),
+             f"dorsal_{style}", "fin", "dorsal", style, fs),
         Part("anal", "body", (0, 2.0, az), (0, 0, 0), (0.0, -1.0, 0.0, 0, ah, ad),
-             f"anal_{shape}", "fin", "anal", shape, fs),
+             f"anal_{style}", "fin", "anal", style, fs),
         Part("pectoral_left", "body", (1.5, 0.5, -3.5), (0.15, pec_rot, 0), (0.0, -1.0, 0.0, 0, 2, 3),
              "pectoral", "fin", "pectoral", "normal", fs, "normal"),
         Part("pectoral_right", "body", (-1.5, 0.5, -3.5), (0.15, -pec_rot, 0), (0.0, -1.0, 0.0, 0, 2, 3),
@@ -232,7 +253,8 @@ def world_matrices(plist: list[Part], scales: dict[str, float] | None = None,
         r = np.add(p.rot, extra_rot.get(p.name, (0, 0, 0)))
         R = np.eye(4)
         R[:3, :3] = _rot(*r)
-        S = np.diag([scales.get(p.name, 1.0)] * 3 + [1.0])
+        sc = scales.get(p.name, 1.0)
+        S = np.diag(list(sc) + [1.0] if isinstance(sc, tuple) else [sc] * 3 + [1.0])
         local = M @ R @ S
         mats[p.name] = (mats[p.parent] @ local) if p.parent else local
     return mats
@@ -240,6 +262,22 @@ def world_matrices(plist: list[Part], scales: dict[str, float] | None = None,
 
 def female_scales(plist: list[Part]) -> dict[str, float]:
     return {p.name: p.female_scale for p in plist if p.female_scale != 1.0}
+
+
+def fish_scales(plist: list[Part], female: bool, short: bool) -> dict:
+    """Per-part (x, y, z) scales like BettaModel.setupAnim: female fins/tail, short-finned (plakat) fins."""
+    out = {}
+    for p in plist:
+        s = np.array([1.0, 1.0, 1.0])
+        if female and p.female_scale != 1.0:
+            s *= p.female_scale
+        if short and p.fin_kind == "caudal":
+            s *= [1.0, SHORT_CAUDAL_HEIGHT, SHORT_CAUDAL_LENGTH]
+        elif short and p.fin_kind in ("dorsal", "anal"):
+            s *= SHORT_FIN_SCALE
+        if (s != 1.0).any():
+            out[p.name] = tuple(float(v) for v in s)
+    return out
 
 
 # ---------------------------------------------------------------- Java export
@@ -275,6 +313,10 @@ def java_source(package: str = "org.overengineer.bettacraft.client.model") -> st
         f"    public static final float ADULT_RENDER_SCALE = {_f(ADULT_RENDER_SCALE)};",
         f"    public static final float FEMALE_FIN_SCALE = {_f(FEMALE_FIN_SCALE)};",
         f"    public static final float FEMALE_TAIL_SCALE = {_f(FEMALE_TAIL_SCALE)};",
+        "    /** Short-finned (plakat) fish: caudal length (z) and height (y) scale, dorsal/anal scale. */",
+        f"    public static final float SHORT_CAUDAL_LENGTH = {_f(SHORT_CAUDAL_LENGTH)};",
+        f"    public static final float SHORT_CAUDAL_HEIGHT = {_f(SHORT_CAUDAL_HEIGHT)};",
+        f"    public static final float SHORT_FIN_SCALE = {_f(SHORT_FIN_SCALE)};",
         "    /** Parts scaled by FEMALE_FIN_SCALE (caudal uses FEMALE_TAIL_SCALE). */",
         "    public static final String[] FIN_PARTS = {" + ", ".join(
             f'"{p.name}"' for p in parts(SHAPES[0]) if p.region == "fin") + "};",

@@ -14,6 +14,7 @@ import icons
 import model_defs as md
 import palette as pal
 import patterns as pt
+import varieties as vt
 from common import LOGO, PREVIEW, REVIEW_DIR, hex_f, save_png, to_image
 from render import Fish, composite_texture, render_side
 
@@ -36,6 +37,22 @@ def fish_image(f: Fish, ppu=4, bounds=(-9.0, 17.0, 12.0, 28.0), scale=1.0) -> Im
     stage = next(s for s in md.LIFE_STAGES if s["id"] == f.stage)
     arr[..., 3] *= stage["alpha"]
     return to_image(arr)
+
+
+def form_name(shape: str, short: bool, dumbo: bool = False, lang: int = 0) -> str:
+    """Same rule as BettaTypes#form (en = 0, de = 1)."""
+    n = md.SHAPE_NAMES[shape][lang]
+    if short:
+        n = "Plakat" if shape == "round" else (f"{n} Plakat" if lang == 0 else f"{n}-Plakat")
+    return f"{n} Dumbo" if dumbo else n
+
+
+def fish_from_genome(g: dict, female=False) -> Fish:
+    irid = {"none": 0.0, "low": 0.5, "high": 1.0}[g["iridescence"]]
+    return Fish(shape=g["finform"], body=pal.hex_of(g["body_color"]), fins=pal.hex_of(g["fin_color"]),
+                pattern=None if g["pattern"] == "none" else g["pattern"], pattern_colour=pal.hex_of(g["pattern_color"]),
+                iridescence=irid, irid_colour=pal.hex_of(g["iridescence_color"]), dumbo=g["pectoral"] == "dumbo",
+                short=g["fin_length"] == "short", female=female)
 
 
 def random_fish(rng: np.random.Generator, shape: str) -> Fish:
@@ -68,27 +85,28 @@ def _caption(f: Fish) -> tuple[str, str]:
 
 # ---------------------------------------------------------------- sheets
 
-def sheet_shapes(cols=20, ppu=4) -> Image.Image:
+def sheet_shapes(cols=12, ppu=4) -> Image.Image:
     cell_w, cell_h = int(26 * ppu), int(16 * ppu)
-    label_w, cap_h, pad = 130, 26, 6
+    label_w, cap_h, pad = 170, 26, 6
     title_h = 34
     W = label_w + cols * (cell_w + pad) + pad
-    H = title_h + len(md.SHAPES) * (cell_h + cap_h + pad) + pad
+    H = title_h + len(vt.PREVIEW_FORMS) * (cell_h + cap_h + pad) + pad
     img = Image.new("RGBA", (W, H), BG)
     dr = ImageDraw.Draw(img)
-    dr.text((10, 8), "Bettacraft M0 - 5 body shapes x 20 random fish (side view, 4x, runtime layer compositing)",
+    dr.text((10, 8), f"Bettacraft - {len(md.SHAPES)} tail shapes long-finned + plakat (short-finned) forms x {cols} random fish",
             fill=TEXT, font=font(16))
     f_small = font(10)
-    for r, shape in enumerate(md.SHAPES):
+    for r, (shape, length) in enumerate(vt.PREVIEW_FORMS):
         rng = np.random.default_rng(1000 + r)
-        females = set(rng.choice(cols, size=3, replace=False).tolist())
+        females = set(rng.choice(cols, size=2, replace=False).tolist())
         y = title_h + r * (cell_h + cap_h + pad)
         dr.rectangle([0, y - 2, W, y + cell_h + cap_h], fill=BG2 if r % 2 else BG)
-        en, de = md.SHAPE_NAMES[shape]
-        dr.text((10, y + cell_h // 2 - 12), en, fill=TEXT, font=font(16))
-        dr.text((10, y + cell_h // 2 + 8), de, fill=DIM, font=font(11))
+        short = length == "short"
+        dr.text((10, y + cell_h // 2 - 12), form_name(shape, short), fill=TEXT, font=font(16))
+        dr.text((10, y + cell_h // 2 + 8), form_name(shape, short, lang=1), fill=DIM, font=font(11))
         for c in range(cols):
             f = random_fish(rng, shape)
+            f.short = short
             f.female = c in females
             x = label_w + pad + c * (cell_w + pad)
             img.alpha_composite(fish_image(f, ppu=ppu), (x, y))
@@ -98,11 +116,70 @@ def sheet_shapes(cols=20, ppu=4) -> Image.Image:
     return img
 
 
+def sheet_types(ppu=6) -> Image.Image:
+    """M5 review sheet: every named variety (its example fish), the forms and the patterns."""
+    cell_w, cell_h, pad, cap = int(26 * ppu), int(16 * ppu), 10, 40
+    cols = 4
+    title_h = 40
+    rows_v = (len(vt.VARIETIES) + cols - 1) // cols
+    forms = vt.PREVIEW_FORMS + [("halfmoon", "dumbo")]
+    small = int(26 * 4), int(16 * 4)
+    fcols = 7
+    rows_f = (len(forms) + fcols - 1) // fcols
+    pats = [p for p in pt.PATTERNS if p != "bars"] + ["bars"]
+    rows_p = (len(pats) + 1 + fcols - 1) // fcols
+    W = max(cols * (cell_w + pad), fcols * (small[0] + 14)) + pad
+    H = title_h + rows_v * (cell_h + cap + pad) + 40 + rows_f * (small[1] + 34) + 40 + rows_p * (small[1] + 34) + 10
+    img = Image.new("RGBA", (W, H), BG)
+    dr = ImageDraw.Draw(img)
+    dr.text((10, 10), f"Bettacraft M5 - {len(vt.VARIETIES)} named varieties (example fish, English / German name)",
+            fill=TEXT, font=font(18))
+    for i, v in enumerate(vt.VARIETIES):
+        r, c = divmod(i, cols)
+        x, y = pad + c * (cell_w + pad), title_h + r * (cell_h + cap + pad)
+        dr.rectangle([x - 4, y - 4, x + cell_w + 4, y + cell_h + cap - 4], fill=BG2)
+        g = v[6]
+        img.alpha_composite(fish_image(fish_from_genome(g), ppu=ppu), (x, y))
+        form = form_name(g["finform"], g["fin_length"] == "short", g["pectoral"] == "dumbo")
+        form_de = form_name(g["finform"], g["fin_length"] == "short", g["pectoral"] == "dumbo", 1)
+        en = f"{v[4]} {form}" if v[2] else v[4]
+        de = f"{form_de} ({v[5]})" if v[2] else v[5]
+        dr.text((x + 2, y + cell_h + 2), en, fill=TEXT, font=font(13))
+        dr.text((x + 2, y + cell_h + 18), de, fill=DIM, font=font(11))
+    y = title_h + rows_v * (cell_h + cap + pad) + 8
+    dr.text((10, y), "Forms: finform (tail) x fin length (long / short = plakat), dumbo pectorals", fill=TEXT, font=font(16))
+    y += 28
+    base = dict(vt.VARIETIES[5][6])  # mustard gas colours
+    for i, (shape, length) in enumerate(forms):
+        r, c = divmod(i, fcols)
+        x, yy = pad + c * (small[0] + 14), y + r * (small[1] + 34)
+        g = dict(base, finform=shape, fin_length="short" if length == "short" else "long",
+                 pectoral="dumbo" if length == "dumbo" else "normal")
+        img.alpha_composite(fish_image(fish_from_genome(g), ppu=4), (x, yy))
+        dr.text((x + 2, yy + small[1] + 2), form_name(shape, length == "short", length == "dumbo"), fill=TEXT, font=font(11))
+        dr.text((x + 2, yy + small[1] + 15), form_name(shape, length == "short", length == "dumbo", 1), fill=DIM, font=font(10))
+    y += rows_f * (small[1] + 34) + 8
+    dr.text((10, y), "Patterns (red halfmoon, white pattern colour; bars = female breeding colours)", fill=TEXT, font=font(16))
+    y += 28
+    for i, p in enumerate([None] + pats):
+        r, c = divmod(i, fcols)
+        x, yy = pad + c * (small[0] + 14), y + r * (small[1] + 34)
+        f = Fish(shape="halfmoon", body="#c8202a", fins="#c8202a", pattern=p, pattern_colour="#f4f3ee",
+                 female=p == "bars")
+        if p == "bars":
+            f.pattern_colour = "#281e1a"
+            f.body = "#ef6d12"
+            f.fins = "#ef6d12"
+        img.alpha_composite(fish_image(f, ppu=4), (x, yy))
+        dr.text((x + 2, yy + small[1] + 2), p or "solid", fill=TEXT, font=font(11))
+    return img
+
+
 def sheet_patterns(ppu=5) -> Image.Image:
     names = [None] + list(pt.PATTERNS)
     cell_w, cell_h, pad, label_w = int(26 * ppu), int(16 * ppu), 8, 130
     rows = [("halfmoon", "#1d3f8f", "#1d3f8f", "#f4f3ee"), ("crowntail", "#c8202a", "#c8202a", "#1c1b20"),
-            ("plakat", "#f4d03f", "#f4d03f", "#13817f")]
+            ("round", "#f4d03f", "#f4d03f", "#13817f")]
     W = label_w + len(names) * (cell_w + pad) + pad
     H = 34 + len(rows) * (cell_h + 22 + pad)
     img = Image.new("RGBA", (W, H), BG)
@@ -341,9 +418,11 @@ def write_all() -> list:
     out.append(save_png(make_logo(), PREVIEW / "logo.png"))
     comb = combined(shapes, patterns, stages, icon_sheet)
     REVIEW_DIR.mkdir(parents=True, exist_ok=True)
-    out.append(save_png(comb, PREVIEW / "m0-preview.png"))
-    shutil.copyfile(PREVIEW / "m0-preview.png", REVIEW_DIR / "m0-preview.png")
-    out.append(REVIEW_DIR / "m0-preview.png")
+    out.append(save_png(comb, PREVIEW / "preview.png"))
+    types = sheet_types()
+    out.append(save_png(types, PREVIEW / "types.png"))
+    shutil.copyfile(PREVIEW / "types.png", REVIEW_DIR / "m5-types.png")
+    out.append(REVIEW_DIR / "m5-types.png")
     return out
 
 

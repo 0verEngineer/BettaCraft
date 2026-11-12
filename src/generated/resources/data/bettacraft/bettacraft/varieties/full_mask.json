@@ -1,0 +1,23 @@
+{
+  "example": {
+    "body_color": "royal_blue",
+    "fin_color": "royal_blue",
+    "fin_length": "long",
+    "finform": "rosetail",
+    "iridescence": "high",
+    "iridescence_color": "turquoise",
+    "pattern": "mask",
+    "pattern_color": "turquoise",
+    "pectoral": "normal"
+  },
+  "include_form": true,
+  "priority": 55,
+  "when": {
+    "iridescence": [
+      "high"
+    ],
+    "pattern": [
+      "mask"
+    ]
+  }
+}

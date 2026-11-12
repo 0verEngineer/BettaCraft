@@ -5,6 +5,11 @@ import org.overengineer.bettacraft.genetics.BettaColorTable;
 
 /** English texts (en_us is generated from this; de_de.json is maintained by hand, LangCompletenessTest checks it). */
 final class LangEn {
+    /** Vanilla woods: id, English name (de_de: same keys by hand). */
+    static final String[][] WOODS = {{"oak", "Oak"}, {"spruce", "Spruce"}, {"birch", "Birch"}, {"jungle", "Jungle"}, {"acacia", "Acacia"},
+            {"dark_oak", "Dark Oak"}, {"mangrove", "Mangrove"}, {"cherry", "Cherry"}, {"bamboo", "Bamboo"}, {"crimson", "Crimson"},
+            {"warped", "Warped"}};
+
     private LangEn() {}
 
     static void addAll(BiConsumer<String, String> a) {
@@ -106,24 +111,45 @@ final class LangEn {
 
         // genetics
         for (BettaColorTable.Entry e : BettaColorTable.COLORS) a.accept("color.bettacraft." + e.id(), e.en());
-        a.accept("shape.bettacraft.plakat", "Plakat");
+        a.accept("shape.bettacraft.round", "Roundtail");
+        a.accept("shape.bettacraft.spade", "Spadetail");
         a.accept("shape.bettacraft.veil", "Veiltail");
+        a.accept("shape.bettacraft.delta", "Delta");
         a.accept("shape.bettacraft.halfmoon", "Halfmoon");
+        a.accept("shape.bettacraft.rosetail", "Rosetail");
         a.accept("shape.bettacraft.crowntail", "Crowntail");
         a.accept("shape.bettacraft.doubletail", "Doubletail");
-        a.accept("pattern.bettacraft.none", "none");
+        a.accept("fin_length.bettacraft.short", "short (plakat)");
+        a.accept("fin_length.bettacraft.long", "long");
+        a.accept("form.bettacraft.plakat", "Plakat");
+        a.accept("form.bettacraft.short", "%s Plakat");
+        a.accept("pattern.bettacraft.none", "solid");
         a.accept("pattern.bettacraft.butterfly", "Butterfly");
         a.accept("pattern.bettacraft.marble", "Marble");
-        a.accept("pattern.bettacraft.dragon", "Dragon scale");
+        a.accept("pattern.bettacraft.dragon", "Dragon Scale");
         a.accept("pattern.bettacraft.koi", "Koi");
         a.accept("pattern.bettacraft.mask", "Mask");
         a.accept("pattern.bettacraft.tipped", "Tipped");
         a.accept("pattern.bettacraft.fade", "Fade");
         a.accept("pattern.bettacraft.grizzle", "Grizzle");
         a.accept("pattern.bettacraft.bars", "Bars");
+        a.accept("pattern.bettacraft.piebald", "Piebald");
+        a.accept("pattern.bettacraft.dalmatian", "Dalmatian");
+        a.accept("pattern.bettacraft.galaxy", "Galaxy");
         a.accept("iridescence.bettacraft.none", "none");
         a.accept("iridescence.bettacraft.low", "low");
         a.accept("iridescence.bettacraft.high", "high");
+        // M5: type names (BettaTypes)
+        a.accept("type.bettacraft.full", "%2$s %1$s");
+        a.accept("type.bettacraft.solid", "Solid %s");
+        a.accept("type.bettacraft.bicolor", "%s/%s Bicolor");
+        a.accept("type.bettacraft.patterned", "%s %s");
+        a.accept("type.bettacraft.metallic", "Metallic %s");
+        for (org.overengineer.bettacraft.genetics.BettaVarietyTable.Entry e : org.overengineer.bettacraft.genetics.BettaVarietyTable.VARIETIES) {
+            a.accept("variety.bettacraft." + e.id(), e.en());
+        }
+        // M5: cabinet wood names (other mods: their planks name without "Planks")
+        for (String[] w : WOODS) a.accept("wood.minecraft." + w[0], w[1]);
         a.accept("stage.bettacraft.egg", "Egg");
         a.accept("stage.bettacraft.larva", "Larva");
         a.accept("stage.bettacraft.fry", "Fry");
@@ -256,7 +282,8 @@ final class LangEn {
         a.accept("tooltip.bettacraft.artemia_cysts", "%s uses left. Craft with a bottle of salt water.");
         a.accept("pectoral.bettacraft.normal", "Normal");
         a.accept("pectoral.bettacraft.dumbo", "Dumbo");
-        a.accept("locus.bettacraft.finform", "Fins");
+        a.accept("locus.bettacraft.finform", "Tail");
+        a.accept("locus.bettacraft.fin_length", "Fin length");
         a.accept("locus.bettacraft.pectoral", "Pectorals");
         a.accept("locus.bettacraft.body_color", "Body");
         a.accept("locus.bettacraft.fin_color", "Fin colour");
