@@ -29,6 +29,17 @@ public final class BettaCraftClient {
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> ClientInteriorCache.clear());
+        if (Boolean.getBoolean("bettacraft.smoketest.world")) {
+            DevClientSmokeTest.register();
+        } else if (Boolean.getBoolean("bettacraft.smoketest")) {
+            // dev only: quit as soon as the title screen opens (models/textures baked without crash)
+            NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ScreenEvent.Opening e) -> {
+                if (e.getNewScreen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
+                    org.slf4j.LoggerFactory.getLogger("bettacraft/smoketest").info("[smoketest] client reached title screen");
+                    net.minecraft.client.Minecraft.getInstance().stop();
+                }
+            });
+        }
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {

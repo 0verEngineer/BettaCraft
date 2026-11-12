@@ -64,6 +64,23 @@ public final class TankGameTests {
         });
     }
 
+    /** Placing a 3x3x3 block by block (like a player, layer by layer) must end as one tank. */
+    @GameTest(template = EMPTY)
+    public static void blockByBlockBuildsOneTank(GameTestHelper h) {
+        List<BlockPos> blocks = new ArrayList<>();
+        for (int y = 1; y <= 3; y++) for (int z = 2; z <= 4; z++) for (int x = 2; x <= 4; x++) blocks.add(new BlockPos(x, y, z));
+        for (BlockPos p : blocks) {
+            h.setBlock(p, ModBlocks.TANK.get().defaultBlockState());
+            TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
+        }
+        h.runAfterDelay(2, () -> {
+            TankBlockEntity c = controller(h, blocks.get(0));
+            h.assertTrue(c.getTank().memberCount() == 27, "one 3x3x3 tank, got " + c.getTank());
+            for (BlockPos p : blocks) h.assertTrue(controller(h, p) == c, "same controller");
+            h.succeed();
+        });
+    }
+
     @GameTest(template = EMPTY)
     public static void nonCuboidStaysSeparateThenMerges(GameTestHelper h) {
         BlockPos a = new BlockPos(2, 1, 2), b = new BlockPos(3, 1, 2), c = new BlockPos(2, 1, 3), d = new BlockPos(3, 1, 3);

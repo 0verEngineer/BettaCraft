@@ -37,12 +37,18 @@ neoForge {
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
+            if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
+            // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits
+            if (project.hasProperty('smoketestworld')) systemProperty 'bettacraft.smoketest.world', 'true'
         }
 
         server {
             server()
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // gradlew runServer -Psmoketest : builds a tank, measures the interior and stops the server
+            if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
         }
 
         gameTestServer {

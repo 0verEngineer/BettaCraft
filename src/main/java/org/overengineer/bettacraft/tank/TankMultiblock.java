@@ -104,18 +104,32 @@ public final class TankMultiblock {
         }
     }
 
-    /** Picks which neighbouring tanks the new block merges with: all if possible, else the largest that fits. */
+    /**
+     * Picks which neighbouring tanks the new block merges with: the largest subset (by block count) of the at most six
+     * neighbouring tanks that together with the block forms a cuboid within the size limit and with one scale.
+     */
     private static List<TankBlockEntity> chooseMerge(BlockPos pos, List<TankBlockEntity> candidates) {
-        if (candidates.isEmpty()) return List.of();
-        int scale = candidates.getFirst().getTank().scale();
-        boolean sameScale = candidates.stream().allMatch(c -> c.getTank().scale() == scale);
-        if (sameScale && fitsAsCuboid(pos, candidates)) return candidates;
-        List<TankBlockEntity> sorted = new ArrayList<>(candidates);
-        sorted.sort(Comparator.comparingInt((TankBlockEntity c) -> c.getTank().memberCount()).reversed());
-        for (TankBlockEntity c : sorted) {
-            if (fitsAsCuboid(pos, List.of(c))) return List.of(c);
+        int n = candidates.size();
+        List<TankBlockEntity> best = List.of();
+        long bestCount = -1;
+        for (int mask = 1; mask < (1 << n); mask++) {
+            List<TankBlockEntity> subset = new ArrayList<>();
+            long count = 0;
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    subset.add(candidates.get(i));
+                    count += candidates.get(i).getTank().memberCount();
+                }
+            }
+            if (count <= bestCount) continue;
+            int scale = subset.getFirst().getTank().scale();
+            if (subset.stream().anyMatch(c -> c.getTank().scale() != scale)) continue;
+            if (fitsAsCuboid(pos, subset)) {
+                best = subset;
+                bestCount = count;
+            }
         }
-        return List.of();
+        return best;
     }
 
     private static boolean fitsAsCuboid(BlockPos extra, List<TankBlockEntity> tanks) {
