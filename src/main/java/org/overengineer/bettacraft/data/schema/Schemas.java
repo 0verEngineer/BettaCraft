@@ -18,6 +18,7 @@ public final class Schemas {
             .step(1, Schemas::tankV1toV2)
             .step(2, Schemas::tankV2toV3)
             .step(3, Schemas::tankV3toV4)
+            .step(4, Schemas::tankV4toV5)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -44,6 +45,11 @@ public final class Schemas {
 
     /** External filter block entity (M4): two heater slots. */
     public static final MigrationChain EXTERNAL_FILTER = MigrationChain.builder("external_filter")
+            .step(0, data -> data)
+            .build();
+
+    /** Larva tub and artemia hatchery (M9): water, slots and progress. */
+    public static final MigrationChain CULTURE_TUB = MigrationChain.builder("culture_tub")
             .step(0, data -> data)
             .build();
 
@@ -124,6 +130,25 @@ public final class Schemas {
             CompoundTag e = eggs.getCompound(i);
             if (e.contains("genome", Tag.TAG_COMPOUND)) genomeV2toV3(e.getCompound("genome"));
         }
+        return data;
+    }
+
+    /**
+     * Tank v4 -> v5 (M9): water quality, evaporation and power get logic. The M0 placeholder {@code evaporation} (a float
+     * that was always 0) is dropped in favour of {@code evaporation_carry} (evaporated mB not yet taken from the water, starts
+     * at 0); a missing or invalid {@code water_quality} becomes 1.0 (clean, so existing tanks do not start dirty), a
+     * negative {@code power} buffer 0, and {@code last_fresh_water} -1 (never). Everything else is kept.
+     */
+    static CompoundTag tankV4toV5(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        tank.remove("evaporation");
+        if (!tank.contains("evaporation_carry", Tag.TAG_ANY_NUMERIC)) tank.putDouble("evaporation_carry", 0.0);
+        float q = tank.contains("water_quality", Tag.TAG_ANY_NUMERIC) ? tank.getFloat("water_quality") : 1.0F;
+        if (Float.isNaN(q) || q < 0 || q > 1) q = Float.isNaN(q) || q > 1 ? 1.0F : 0.0F;
+        tank.putFloat("water_quality", q);
+        if (tank.getLong("power") < 0) tank.putLong("power", 0L);
+        if (!tank.contains("last_fresh_water", Tag.TAG_ANY_NUMERIC)) tank.putLong("last_fresh_water", -1L);
         return data;
     }
 

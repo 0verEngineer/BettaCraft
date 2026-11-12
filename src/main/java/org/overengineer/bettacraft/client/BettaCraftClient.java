@@ -46,6 +46,7 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onClientSetup);
         modBus.addListener(BettaCraftClient::onRegisterGeometryLoaders);
         modBus.addListener(BettaCraftClient::onItemColors);
+        modBus.addListener(BettaCraftClient::onBlockColors);
         modBus.addListener(BettaCraftClient::onLayers);
         modBus.addListener(BettaCraftClient::onRenderers);
         modBus.addListener(BettaCraftClient::onScreens);
@@ -94,6 +95,16 @@ public final class BettaCraftClient {
             if (d == null) return tint == 1 ? OTHER_FISH_BODY : OTHER_FISH_FINS;
             return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
         }, ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get());
+        event.register((stack, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, ModItems.LARVA_TUB.get());
+        event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
+    }
+
+    /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
+    static final int LARVA_WATER = 0xFF6A7C3A, HATCHERY_WATER = 0xFF4E93C8;
+
+    private static void onBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.LARVA_TUB.get());
+        event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());
     }
 
     private static void onLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

@@ -11,20 +11,23 @@ import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModTags;
 
 /**
- * What stands in an interior region apart from decoration (PLAN 7.3): heaters (anchor position + capacity), internal
- * filters, floating plants and the number of substrate floor blocks. Positions are interior-local
+ * What stands in an interior region apart from decoration (PLAN 7.3): heaters and coolers (M9) (anchor position +
+ * capacity), internal filters, floating plants and the number of substrate floor blocks. Positions are interior-local
  * ({@link BlockPos#asLong} of local x/y/z). Kept up to date from block updates; after bulk copies (merge/split) the
  * region is rescanned lazily.
  */
 public final class InteriorEquipment {
     /** Anchor of each heater -> capacity in water blocks. */
     final Long2IntOpenHashMap heaters = new Long2IntOpenHashMap();
+    /** Anchor of each cooler (M9) -> capacity in water blocks. */
+    final Long2IntOpenHashMap coolers = new Long2IntOpenHashMap();
     final LongOpenHashSet filters = new LongOpenHashSet();
     final LongOpenHashSet floating = new LongOpenHashSet();
     int substrate;
     boolean needsScan;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
+    public Long2IntOpenHashMap coolers() { return coolers; }
     public LongOpenHashSet filters() { return filters; }
     public LongOpenHashSet floatingPlants() { return floating; }
     public int substrateCount() { return substrate; }
@@ -40,18 +43,24 @@ public final class InteriorEquipment {
 
     private void remove(long key, BlockState s) {
         if (isHeaterAnchor(s)) heaters.remove(key);
+        else if (isCoolerAnchor(s)) coolers.remove(key);
         else if (isFilterAnchor(s)) filters.remove(key);
         else if (s.is(ModTags.FLOATING_PLANTS)) floating.remove(key);
     }
 
     private void add(long key, BlockState s) {
         if (isHeaterAnchor(s)) heaters.put(key, s.getValue(SegmentBlock.SIZE).capacity);
+        else if (isCoolerAnchor(s)) coolers.put(key, s.getValue(SegmentBlock.SIZE).capacity);
         else if (isFilterAnchor(s)) filters.add(key);
         else if (s.is(ModTags.FLOATING_PLANTS)) floating.add(key);
     }
 
     static boolean isHeaterAnchor(BlockState s) {
         return s.is(ModBlocks.HEATER_SEGMENT.get()) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
+    }
+
+    static boolean isCoolerAnchor(BlockState s) {
+        return s.is(ModBlocks.COOLER_SEGMENT.get()) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
     }
 
     static boolean isFilterAnchor(BlockState s) {
@@ -61,6 +70,7 @@ public final class InteriorEquipment {
     /** Full rescan of the region (interior volume and floor). */
     public void rescan(ServerLevel interior, InteriorRegion r) {
         heaters.clear();
+        coolers.clear();
         filters.clear();
         floating.clear();
         substrate = 0;
@@ -77,11 +87,27 @@ public final class InteriorEquipment {
 
     /** Sum of heater capacities whose anchor is below the given interior-local water height. */
     public int heaterCapacityBelow(double localWaterY) {
+        return capacityBelow(heaters, localWaterY);
+    }
+
+    /** Sum of cooler capacities whose anchor is below the given interior-local water height. */
+    public int coolerCapacityBelow(double localWaterY) {
+        return capacityBelow(coolers, localWaterY);
+    }
+
+    private static int capacityBelow(Long2IntOpenHashMap map, double localWaterY) {
         int sum = 0;
-        for (var e : heaters.long2IntEntrySet()) {
+        for (var e : map.long2IntEntrySet()) {
             if (BlockPos.getY(e.getLongKey()) < localWaterY) sum += e.getIntValue();
         }
         return sum;
+    }
+
+    /** Internal filters whose anchor is below the water surface (they clean the water, M9). */
+    public int filtersBelow(double localWaterY) {
+        int n = 0;
+        for (long l : filters) if (BlockPos.getY(l) < localWaterY) n++;
+        return n;
     }
 
     CompoundTag save() {
@@ -95,6 +121,15 @@ public final class InteriorEquipment {
         }
         t.putLongArray("heaters", hk);
         t.putIntArray("heater_capacity", hv);
+        long[] ck = new long[coolers.size()];
+        int[] cv = new int[coolers.size()];
+        i = 0;
+        for (var e : coolers.long2IntEntrySet()) {
+            ck[i] = e.getLongKey();
+            cv[i++] = e.getIntValue();
+        }
+        t.putLongArray("coolers", ck);
+        t.putIntArray("cooler_capacity", cv);
         t.putLongArray("filters", filters.toLongArray());
         t.putLongArray("floating", floating.toLongArray());
         t.putInt("substrate", substrate);
@@ -104,11 +139,15 @@ public final class InteriorEquipment {
 
     void load(CompoundTag t) {
         heaters.clear();
+        coolers.clear();
         filters.clear();
         floating.clear();
         long[] hk = t.getLongArray("heaters");
         int[] hv = t.getIntArray("heater_capacity");
         for (int i = 0; i < hk.length; i++) heaters.put(hk[i], i < hv.length ? hv[i] : 16);
+        long[] ck = t.getLongArray("coolers"); // M9; absent in older regions (there were no coolers)
+        int[] cv = t.getIntArray("cooler_capacity");
+        for (int i = 0; i < ck.length; i++) coolers.put(ck[i], i < cv.length ? cv[i] : 16);
         for (long l : t.getLongArray("filters")) filters.add(l);
         for (long l : t.getLongArray("floating")) floating.add(l);
         substrate = t.getInt("substrate");

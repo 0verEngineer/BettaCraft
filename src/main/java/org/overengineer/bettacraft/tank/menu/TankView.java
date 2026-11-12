@@ -107,6 +107,81 @@ public final class TankView {
     public boolean interiorBuilt, interiorTruncated;
     /** M4: external filters (blocks next to the tank / filters in cabinets below), their heaters, cabinets, old slots. */
     public int filterBlocks, cabinetFilters, cabinets, filterHeaters, filterHeaterBlocks, legacyHeaters;
+    /** M9: coolers, water quality, evaporation and power. */
+    public double coolerBlocks;
+    public int filterCoolers, coolersInside, coolerCapWet;
+    public final Water water = new Water();
+
+    /** Water tab (M9). */
+    public static final class Water {
+        public boolean qualityEnabled = true, evaporationEnabled = true;
+        public float quality = 1, badBelow = 0.35F;
+        public String state = "clean";
+        public double declinePerDay, filterShare, animalsPerBlock, filterCapacity, evaporationPerDay;
+        public int openTop, totalTop, internalFilters;
+        public long lastFreshWater = -1;
+        public boolean heaterPower, filterPower, lightPower, heatPowered = true, filterPowered = true, lightPowered = true;
+        public long buffer, bufferCap;
+        public int demand;
+
+        CompoundTag save() {
+            CompoundTag t = new CompoundTag();
+            t.putBoolean("q_on", qualityEnabled);
+            t.putBoolean("e_on", evaporationEnabled);
+            t.putFloat("q", quality);
+            t.putFloat("bad", badBelow);
+            t.putString("state", state);
+            t.putDouble("decline", declinePerDay);
+            t.putDouble("filter_share", filterShare);
+            t.putDouble("animals", animalsPerBlock);
+            t.putDouble("filter_cap", filterCapacity);
+            t.putDouble("evap", evaporationPerDay);
+            t.putInt("open", openTop);
+            t.putInt("top", totalTop);
+            t.putInt("internal_filters", internalFilters);
+            t.putLong("fresh", lastFreshWater);
+            t.putBoolean("p_heat", heaterPower);
+            t.putBoolean("p_filter", filterPower);
+            t.putBoolean("p_light", lightPower);
+            t.putBoolean("ok_heat", heatPowered);
+            t.putBoolean("ok_filter", filterPowered);
+            t.putBoolean("ok_light", lightPowered);
+            t.putLong("buffer", buffer);
+            t.putLong("buffer_cap", bufferCap);
+            t.putInt("demand", demand);
+            return t;
+        }
+
+        void load(CompoundTag t) {
+            qualityEnabled = t.getBoolean("q_on");
+            evaporationEnabled = t.getBoolean("e_on");
+            quality = t.getFloat("q");
+            badBelow = t.getFloat("bad");
+            state = t.getString("state");
+            declinePerDay = t.getDouble("decline");
+            filterShare = t.getDouble("filter_share");
+            animalsPerBlock = t.getDouble("animals");
+            filterCapacity = t.getDouble("filter_cap");
+            evaporationPerDay = t.getDouble("evap");
+            openTop = t.getInt("open");
+            totalTop = t.getInt("top");
+            internalFilters = t.getInt("internal_filters");
+            lastFreshWater = t.getLong("fresh");
+            heaterPower = t.getBoolean("p_heat");
+            filterPower = t.getBoolean("p_filter");
+            lightPower = t.getBoolean("p_light");
+            heatPowered = t.getBoolean("ok_heat");
+            filterPowered = t.getBoolean("ok_filter");
+            lightPowered = t.getBoolean("ok_light");
+            buffer = t.getLong("buffer");
+            bufferCap = t.getLong("buffer_cap");
+            demand = t.getInt("demand");
+        }
+
+        public boolean anyPower() {
+            return heaterPower || filterPower || lightPower;
+        }
+    }
 
     public static CompoundTag build(ServerPlayer player, TankBlockEntity controller) {
         ServerLevel level = player.serverLevel();
@@ -135,6 +210,7 @@ public final class TankView {
         out.putFloat("target", t.targetTemp());
         out.putFloat("ambient", Math.round(TankCare.ambient(level, t) * 10) / 10.0F);
         out.putDouble("heaters", TankCare.heaterBlocks(level, t));
+        out.putDouble("coolers", TankCare.coolerBlocks(level, t));
         FeederBlockEntity feeder = TankCare.findFeeder(level, t);
         out.putInt("feeder", feeder == null ? -1 : feeder.foodCount());
         out.putInt("feeder_per_day", feeder == null ? 0 : feeder.feedingsPerDay());
@@ -189,13 +265,15 @@ public final class TankView {
         out.put("breeding", breeding);
         out.put("interior", interior(level, t));
         CompoundTag eq = new CompoundTag();
-        int blocks = 0, cab = 0, heaters = 0, cap = 0;
+        int blocks = 0, cab = 0, heaters = 0, cap = 0, coolers = 0;
         for (var f : org.overengineer.bettacraft.tank.TankEquipment.filters(level, controller)) {
             if (f instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity) cab++;
             else blocks++;
             heaters += f.heaterCount();
             cap += f.heaterBlocks();
+            coolers += f.coolerCount();
         }
+        eq.putInt("filter_coolers", coolers);
         eq.putInt("filter_blocks", blocks);
         eq.putInt("cabinet_filters", cab);
         eq.putInt("cabinets", org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, controller).size());
@@ -205,7 +283,43 @@ public final class TankView {
         if (t.hasLegacyHeaters()) for (int i = 0; i < t.legacyHeaters().getContainerSize(); i++) if (!t.legacyHeaters().getItem(i).isEmpty()) legacy++;
         eq.putInt("legacy", legacy);
         out.put("equipment", eq);
+        out.put("water_care", water(level, controller, live).save());
         return out;
+    }
+
+    /** M9: the water tab. */
+    private static Water water(ServerLevel level, TankBlockEntity c, List<Entity> live) {
+        TankData t = c.getTank();
+        Water w = new Water();
+        var p = org.overengineer.bettacraft.tank.TankWater.params();
+        w.qualityEnabled = org.overengineer.bettacraft.tank.TankWater.qualityEnabled();
+        w.evaporationEnabled = org.overengineer.bettacraft.tank.TankWater.evaporationEnabled();
+        w.quality = t.waterQuality();
+        w.badBelow = (float) p.badBelow();
+        w.state = org.overengineer.bettacraft.tank.WaterQuality.state(t.waterQuality(), p).name().toLowerCase(java.util.Locale.ROOT);
+        double animals = org.overengineer.bettacraft.tank.TankWater.animals(live);
+        double blocks = t.waterBlocks();
+        w.animalsPerBlock = blocks <= 0 ? 0 : animals / blocks;
+        w.filterCapacity = org.overengineer.bettacraft.tank.TankWater.filterBlocks(level, c);
+        w.filterShare = org.overengineer.bettacraft.tank.WaterQuality.filterShare(w.filterCapacity, blocks, p);
+        w.declinePerDay = !w.qualityEnabled || t.waterMb() <= 0 ? 0
+                : org.overengineer.bettacraft.tank.WaterQuality.wastePerDay(animals, blocks, p) * (1 - w.filterShare);
+        w.internalFilters = org.overengineer.bettacraft.tank.TankWater.internalFilters(level, t);
+        int[] top = org.overengineer.bettacraft.tank.TankWater.openTop(level, t);
+        w.openTop = top[0];
+        w.totalTop = top[1];
+        w.evaporationPerDay = org.overengineer.bettacraft.tank.TankWater.evaporationPerDay(level, t);
+        w.lastFreshWater = t.lastFreshWater();
+        w.heaterPower = org.overengineer.bettacraft.tank.TankPower.heaterRequired();
+        w.filterPower = org.overengineer.bettacraft.tank.TankPower.filterRequired();
+        w.lightPower = org.overengineer.bettacraft.tank.TankPower.lightRequired();
+        w.heatPowered = c.heatPowered();
+        w.filterPowered = c.filterPowered();
+        w.lightPowered = c.lightPowered();
+        w.buffer = t.powerBuffer();
+        w.bufferCap = org.overengineer.bettacraft.tank.TankPower.capacity();
+        w.demand = c.lastDemand();
+        return w;
     }
 
     private static CompoundTag interior(ServerLevel level, TankData t) {
@@ -228,6 +342,8 @@ public final class TankView {
         c.putInt("heat_dry", total - wet);
         c.putInt("filters", eq.filters().size());
         c.putInt("floating", eq.floatingPlants().size());
+        c.putInt("coolers", eq.coolers().size());
+        c.putInt("cool_wet", eq.coolerCapacityBelow(TankCare.waterLocalHeight(t, r.scale())));
         return c;
     }
 
@@ -259,6 +375,7 @@ public final class TankView {
         v.targetTemp = t.getFloat("target");
         v.ambient = t.getFloat("ambient");
         v.heaterBlocks = t.getDouble("heaters");
+        v.coolerBlocks = t.getDouble("coolers");
         v.feederFood = t.getInt("feeder");
         v.feederPerDay = t.getInt("feeder_per_day");
         v.lights = t.getInt("lights");
@@ -298,6 +415,8 @@ public final class TankView {
         v.heaterCapDry = in.getInt("heat_dry");
         v.filters = in.getInt("filters");
         v.floating = in.getInt("floating");
+        v.coolersInside = in.getInt("coolers");
+        v.coolerCapWet = in.getInt("cool_wet");
         CompoundTag eq = t.getCompound("equipment");
         v.filterBlocks = eq.getInt("filter_blocks");
         v.cabinetFilters = eq.getInt("cabinet_filters");
@@ -305,6 +424,8 @@ public final class TankView {
         v.filterHeaters = eq.getInt("filter_heaters");
         v.filterHeaterBlocks = eq.getInt("filter_heat");
         v.legacyHeaters = eq.getInt("legacy");
+        v.filterCoolers = eq.getInt("filter_coolers");
+        v.water.load(t.getCompound("water_care"));
         v.breeding = t.getCompound("breeding");
         ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));

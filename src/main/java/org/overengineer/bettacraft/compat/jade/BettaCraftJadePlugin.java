@@ -19,6 +19,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
     public static final ResourceLocation TANK = BettaCraft.id("tank");
     public static final ResourceLocation BETTA = BettaCraft.id("betta");
     public static final ResourceLocation FILTER = BettaCraft.id("filter");
+    public static final ResourceLocation CULTURE = BettaCraft.id("culture");
 
     @Override
     public void register(IWailaCommonRegistration registration) {
@@ -26,6 +27,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerEntityDataProvider(JadeServerData.Betta.INSTANCE, BettaEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlockEntity.class);
     }
 
     @Override
@@ -34,6 +36,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerEntityComponent(JadeClientTooltips.Betta.INSTANCE, BettaEntity.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlock.class);
         // looking through the glass at a fish shows the fish, not the tank block
         registration.addRayTraceCallback((hit, accessor, original) -> JadeClientTooltips.retarget(registration, accessor));
     }

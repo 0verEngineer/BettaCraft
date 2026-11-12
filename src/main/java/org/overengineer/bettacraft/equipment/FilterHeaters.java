@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
 /**
- * Heaters inside an external filter (PLAN 6.1/6.2: two slots, any size). The placed filter keeps them in its block
+ * Heaters and coolers (M9) inside an external filter (PLAN 6.1/6.2: two slots, any size and any mix). The placed filter keeps them in its block
  * entity; the filter item (dropped block, or the filter in a cabinet slot) keeps them in {@code minecraft:container}.
  */
 public final class FilterHeaters {
@@ -16,12 +16,23 @@ public final class FilterHeaters {
 
     private FilterHeaters() {}
 
+    /** Fits into a filter slot: a heater or a cooler. */
     public static boolean isHeater(ItemStack stack) {
         return stack.getItem() instanceof HeaterItem;
     }
 
+    public static boolean isCooler(ItemStack stack) {
+        return stack.getItem() instanceof HeaterItem h && h.cooling();
+    }
+
+    /** Heating capacity (water blocks); 0 for coolers. */
     public static int capacity(ItemStack heater) {
-        return heater.getItem() instanceof HeaterItem h ? h.capacityBlocks() : 0;
+        return heater.getItem() instanceof HeaterItem h && !h.cooling() ? h.capacityBlocks() : 0;
+    }
+
+    /** Cooling capacity (water blocks); 0 for heaters. */
+    public static int coolingCapacity(ItemStack cooler) {
+        return cooler.getItem() instanceof HeaterItem h && h.cooling() ? h.capacityBlocks() : 0;
     }
 
     /** The two heater slots of a filter item (empty stacks for free slots). */
@@ -43,6 +54,13 @@ public final class FilterHeaters {
     public static int capacityOfItem(ItemStack filterItem) {
         int sum = 0;
         for (ItemStack s : read(filterItem)) sum += capacity(s);
+        return sum;
+    }
+
+    /** Sum of the cooling capacity (water blocks) of the coolers in a filter item. */
+    public static int coolingOfItem(ItemStack filterItem) {
+        int sum = 0;
+        for (ItemStack s : read(filterItem)) sum += coolingCapacity(s);
         return sum;
     }
 }

@@ -29,6 +29,8 @@ import net.minecraft.world.item.Items;
  */
 public final class TankData {
     public static final long MB_PER_BLOCK = 1000L;
+    /** Evaporation is taken from the water in steps of this many mB (fewer block updates). */
+    public static final double EVAPORATION_BATCH_MB = 10.0;
 
     private UUID id = UUID.randomUUID();
     private final LongSet members = new LongOpenHashSet();
@@ -39,11 +41,14 @@ public final class TankData {
     @Nullable
     private UUID owner;
 
-    // Prepared for later milestones (PLAN 2), no logic yet.
+    // Water care and power (M9; prepared in M0). zones: prepared for a divider (optional-features), no logic.
     private float waterQuality = 1.0F;
-    private float evaporation = 0.0F;
+    /** Evaporated water (mB) not yet taken from {@link #waterMb}: collected up to {@link #EVAPORATION_BATCH_MB} (M9). */
+    private double evaporationCarry = 0.0;
     private CompoundTag zones = new CompoundTag();
     private long powerBuffer = 0L;
+    /** Game time of the last fresh water poured in (-1 = never). */
+    private long lastFreshWater = -1L;
 
     // Care data (M1).
     /** Heater slots of the tank menu up to M3; since M4 only taken out / moved into a filter (schema v3). */
@@ -243,6 +248,8 @@ public final class TankData {
         signPos = o.signPos;
         front = o.front;
         locked = o.locked;
+        waterQuality = o.waterQuality;
+        lastFreshWater = o.lastFreshWater;
         log.clear();
         log.addAll(o.log);
         // the nest belongs to the part of the tank that contains it (never duplicated on a split)
@@ -250,8 +257,13 @@ public final class TankData {
     }
 
     public float waterQuality() { return waterQuality; }
-    public float evaporation() { return evaporation; }
+    public void setWaterQuality(float q) { this.waterQuality = WaterQuality.clamp(q); }
+    public double evaporationCarry() { return evaporationCarry; }
+    public void setEvaporationCarry(double c) { this.evaporationCarry = Math.max(0, Math.min(EVAPORATION_BATCH_MB, c)); }
     public long powerBuffer() { return powerBuffer; }
+    public void setPowerBuffer(long fe) { this.powerBuffer = Math.max(0, fe); }
+    public long lastFreshWater() { return lastFreshWater; }
+    public void setLastFreshWater(long t) { this.lastFreshWater = t; }
 
     // ------------------------------------------------------------------ NBT
 
@@ -264,9 +276,10 @@ public final class TankData {
         t.putInt("region", regionId);
         if (owner != null) t.putUUID("owner", owner);
         t.putFloat("water_quality", waterQuality);
-        t.putFloat("evaporation", evaporation);
+        t.putDouble("evaporation_carry", evaporationCarry);
         t.put("zones", zones.copy());
         t.putLong("power", powerBuffer);
+        t.putLong("last_fresh_water", lastFreshWater);
         t.putFloat("target_temp", targetTemp);
         t.putFloat("water_temp", waterTemp);
         ListTag hl = new ListTag();
@@ -299,10 +312,11 @@ public final class TankData {
         d.waterMb = t.getLong("water_mb");
         d.regionId = t.contains("region", Tag.TAG_ANY_NUMERIC) ? t.getInt("region") : -1;
         d.owner = t.hasUUID("owner") ? t.getUUID("owner") : null;
-        if (t.contains("water_quality")) d.waterQuality = t.getFloat("water_quality");
-        if (t.contains("evaporation")) d.evaporation = t.getFloat("evaporation");
+        d.waterQuality = t.contains("water_quality", Tag.TAG_ANY_NUMERIC) ? WaterQuality.clamp(t.getFloat("water_quality")) : 1.0F;
+        d.setEvaporationCarry(t.getDouble("evaporation_carry"));
         d.zones = t.getCompound("zones").copy();
-        d.powerBuffer = t.getLong("power");
+        d.powerBuffer = Math.max(0, t.getLong("power"));
+        d.lastFreshWater = t.contains("last_fresh_water", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_fresh_water") : -1L;
         d.targetTemp = t.contains("target_temp") ? TankTemperature.clampTarget(t.getFloat("target_temp")) : TankTemperature.DEFAULT_TARGET;
         d.waterTemp = t.contains("water_temp") ? t.getFloat("water_temp") : d.targetTemp;
         ListTag hl = t.getList("legacy_heaters", Tag.TAG_STRING);

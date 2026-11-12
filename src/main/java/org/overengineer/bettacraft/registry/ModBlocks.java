@@ -47,13 +47,19 @@ public final class ModBlocks {
 
     /** Heater rod in a tank interior (PLAN 7.3), one block per segment. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> HEATER_SEGMENT = BLOCKS.register("heater_segment",
-            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(true, () -> ModItems.HEATER_SMALL.get(), BlockBehaviour.Properties.of()
+            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.HEATER, () -> ModItems.HEATER_SMALL.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE).strength(0.3F).sound(SoundType.GLASS).noLootTable().lightLevel(s -> 3)
+                    .pushReaction(PushReaction.BLOCK)));
+
+    /** Cooler rod in a tank interior (M9), one block per segment. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> COOLER_SEGMENT = BLOCKS.register("cooler_segment",
+            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.COOLER, () -> ModItems.COOLER_SMALL.get(), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE).strength(0.3F).sound(SoundType.GLASS).noLootTable().lightLevel(s -> 2)
                     .pushReaction(PushReaction.BLOCK)));
 
     /** Internal filter box in a tank interior (PLAN 7.3). */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> FILTER_SEGMENT = BLOCKS.register("filter_segment",
-            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(false, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
+            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.FILTER, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
 
     /** External filter next to a tank (PLAN 6.2), two heater slots. */
@@ -66,6 +72,23 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.CabinetBlock> CABINET = BLOCKS.register("cabinet",
             () -> new org.overengineer.bettacraft.equipment.CabinetBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD).ignitedByLava()));
+
+    /** Glass lid on top of a tank (M9): stops evaporation from the block below. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.TankLidBlock> TANK_LID = BLOCKS.register("tank_lid",
+            () -> new org.overengineer.bettacraft.equipment.TankLidBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion()
+                    .isRedstoneConductor((s, l, p) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)));
+
+    /** Larva tub (M9): breeds mosquito larvae under the open sky. */
+    public static final DeferredBlock<org.overengineer.bettacraft.food.CultureTubBlock> LARVA_TUB = BLOCKS.register("larva_tub",
+            () -> new org.overengineer.bettacraft.food.CultureTubBlock(org.overengineer.bettacraft.food.CultureTubBlock.Kind.LARVAE, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD).noOcclusion().ignitedByLava()));
+
+    /** Artemia hatchery (M9): hatches artemia nauplii in salt water with light. */
+    public static final DeferredBlock<org.overengineer.bettacraft.food.CultureTubBlock> ARTEMIA_HATCHERY = BLOCKS.register("artemia_hatchery",
+            () -> new org.overengineer.bettacraft.food.CultureTubBlock(org.overengineer.bettacraft.food.CultureTubBlock.Kind.ARTEMIA, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(1.0F).sound(SoundType.GLASS).noOcclusion()
+                    .isRedstoneConductor((s, l, p) -> false)));
 
     /** Floor of a tank interior; can carry a substrate look (PLAN 7.2). Unbreakable. */
     public static final DeferredBlock<InteriorFloorBlock> INTERIOR_FLOOR = BLOCKS.register("interior_floor", () -> new InteriorFloorBlock(

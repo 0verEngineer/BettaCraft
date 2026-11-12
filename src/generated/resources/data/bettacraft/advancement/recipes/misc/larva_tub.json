@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_larvae": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:mosquito_larvae"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_swamp_water": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:swamp_water_bottle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:larva_tub"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_larvae",
+      "has_swamp_water"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:larva_tub"
+    ]
+  }
+}

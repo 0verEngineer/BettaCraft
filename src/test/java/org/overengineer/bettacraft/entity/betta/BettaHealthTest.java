@@ -138,4 +138,31 @@ class BettaHealthTest {
         assertEquals(h.foodStress(), c.foodStress(), 1e-9);
         assertEquals(h.tempStress(), c.tempStress(), 1e-9);
     }
+
+    /** M9: bad water is a fourth stress like the temperature; with hunger it doubles all counters. */
+    @Test
+    void badWaterMakesSickAndRecovers() {
+        BettaHealth.Conditions dirty = new BettaHealth.Conditions(false, false, true);
+        BettaHealth h = new BettaHealth();
+        double t = daysUntil(h, dirty, BettaHealth.Event.GOT_SICK, 30, true);
+        assertEquals(7.0, t, EPS, "sick after 7 days of bad water");
+        assertTrue(h.waterStress() > 6.9);
+        assertEquals(BettaHealth.Event.RECOVERED, h.step(0.5, GOOD, P));
+        assertEquals(0.0, h.waterStress(), 1e-9);
+        BettaHealth both = new BettaHealth();
+        assertEquals(3.5, daysUntil(both, new BettaHealth.Conditions(true, false, true), BettaHealth.Event.GOT_SICK, 30, true), EPS,
+                "temperature and water bad: twice as fast");
+        BettaHealth saved = BettaHealth.load(dirtyFish().save());
+        assertEquals(2.0, saved.waterStress(), 1e-9, "saved");
+        assertEquals(0.0, BettaHealth.load(new net.minecraft.nbt.CompoundTag()).waterStress(), 1e-9, "older fish have none");
+    }
+
+    private static BettaHealth dirtyFish() {
+        BettaHealth h = new BettaHealth();
+        h.feed();
+        h.step(1.0, new BettaHealth.Conditions(false, false, true), P);
+        h.feed();
+        h.step(1.0, new BettaHealth.Conditions(false, false, true), P);
+        return h;
+    }
 }

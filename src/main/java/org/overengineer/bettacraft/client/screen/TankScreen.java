@@ -34,7 +34,7 @@ import org.overengineer.bettacraft.tank.menu.TankActions;
 import org.overengineer.bettacraft.tank.menu.TankMenu;
 import org.overengineer.bettacraft.tank.menu.TankView;
 
-/** Tank menu screen with the tabs Overview, Inhabitants, Breeding, Interior (M3) and Log (PLAN 8). */
+/** Tank menu screen with the tabs Overview, Inhabitants, Breeding, Water (M9), Interior (M3) and Log (PLAN 8). */
 public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/tank.png");
     private static final int TEXT = 0x404040;
@@ -42,7 +42,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int CONTENT_X = 7, CONTENT_Y = 17, CONTENT_W = 234, CONTENT_H = 123;
     private static final int LIST_ROWS = 10, ROW_H = 11, LOG_ROWS = 10, BREED_ROWS = 12;
 
-    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR }
+    /** Order of the constants = index of {@link #selectTabForTest}; the buttons are drawn in a different order. */
+    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER }
 
     /** Log filter: all, breeding (nest, eggs, fry, growth), health (sick, deaths, fights), feeding. */
     private enum LogFilter { ALL, BREEDING, HEALTH, FEEDING }
@@ -50,7 +51,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private Tab tab = Tab.OVERVIEW;
     private final List<AbstractWidget> overview = new ArrayList<>();
     private final List<AbstractWidget> inhabitants = new ArrayList<>();
-    private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, logFilterButton, interiorEnterButton;
+    private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, tabWater, logFilterButton, interiorEnterButton;
     private LogFilter logFilter = LogFilter.ALL;
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
@@ -88,17 +89,19 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         overview.clear();
         inhabitants.clear();
         int x = leftPos, y = topPos;
-        // five tabs across the top (the title moved into the overview: no room for both)
+        // six tabs across the top (the title moved into the overview: no room for both)
         tabOverview = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.overview"), b -> setTab(Tab.OVERVIEW))
-                .bounds(x + 5, y + 3, 53, 12).build());
+                .bounds(x + 5, y + 3, 46, 12).build());
         tabInhabitants = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.inhabitants"), b -> setTab(Tab.INHABITANTS))
-                .bounds(x + 58, y + 3, 50, 12).build());
+                .bounds(x + 51, y + 3, 46, 12).build());
         tabBreeding = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.breeding"), b -> setTab(Tab.BREEDING))
-                .bounds(x + 108, y + 3, 50, 12).build());
+                .bounds(x + 97, y + 3, 40, 12).build());
+        tabWater = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.water"), b -> setTab(Tab.WATER))
+                .bounds(x + 137, y + 3, 38, 12).build());
         tabInterior = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.interior"), b -> setTab(Tab.INTERIOR))
-                .bounds(x + 158, y + 3, 56, 12).build());
+                .bounds(x + 175, y + 3, 44, 12).build());
         tabLog = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tab.log"), b -> setTab(Tab.LOG))
-                .bounds(x + 214, y + 3, 27, 12).build());
+                .bounds(x + 219, y + 3, 22, 12).build());
         interiorEnterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
                 .bounds(x + 176, y + 124, 62, 14).build());
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
@@ -188,6 +191,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabBreeding.active = tab != Tab.BREEDING;
         tabLog.active = tab != Tab.LOG;
         tabInterior.active = tab != Tab.INTERIOR;
+        tabWater.active = tab != Tab.WATER;
         interiorEnterButton.visible = tab == Tab.INTERIOR;
         logFilterButton.visible = tab == Tab.LOG;
         logFilterButton.setMessage(Component.translatable("gui.bettacraft.log.filter." + logFilter.name().toLowerCase(java.util.Locale.ROOT)));
@@ -351,6 +355,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             case BREEDING -> drawBreeding(g, v, mouseX - leftPos, mouseY - topPos);
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
+            case WATER -> drawWater(g, v);
         }
         if (v.locked && tab == Tab.OVERVIEW) g.blit(TEXTURE, 228, 125, 16, 232, 10, 10);
     }
@@ -373,11 +378,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         g.drawCenteredString(font, t, 203, y + 2, 0xFFFFFF);
         y += 14;
         double water = Math.max(0.001, v.waterMb / 1000.0);
+        // M9: below the ambient temperature the coolers matter, above it the heaters
+        boolean cooling = v.targetTemp < v.ambient;
+        double cap = cooling ? v.coolerBlocks : v.heaterBlocks;
         Component heat;
-        if (v.heaterBlocks <= 0) heat = Component.translatable("gui.bettacraft.tank.heaters_none").withStyle(ChatFormatting.GRAY);
-        else if (v.heaterBlocks + 1e-6 >= water) heat = Component.translatable("gui.bettacraft.tank.heaters_ok", (int) v.heaterBlocks, fmt((float) water)).withStyle(ChatFormatting.GREEN);
-        else heat = Component.translatable("gui.bettacraft.tank.heaters_weak", (int) v.heaterBlocks, fmt((float) water)).withStyle(ChatFormatting.GOLD);
-        line(g, Component.translatable("gui.bettacraft.tank.heaters", heat), x, y, TEXT_LIGHT);
+        if (cap <= 0) heat = Component.translatable("gui.bettacraft.tank.heaters_none").withStyle(ChatFormatting.GRAY);
+        else if (cap + 1e-6 >= water) heat = Component.translatable("gui.bettacraft.tank.heaters_ok", (int) cap, fmt((float) water)).withStyle(ChatFormatting.GREEN);
+        else heat = Component.translatable("gui.bettacraft.tank.heaters_weak", (int) cap, fmt((float) water)).withStyle(ChatFormatting.GOLD);
+        line(g, Component.translatable(cooling ? "gui.bettacraft.tank.coolers" : "gui.bettacraft.tank.heaters", heat), x, y, TEXT_LIGHT);
         y += 11;
         Component feeder = v.feederFood < 0 ? Component.translatable("gui.bettacraft.tank.none").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.tank.feeder_state", v.feederFood, v.feederPerDay)
@@ -397,11 +405,101 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (v.crowded) inh.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
         line(g, inh, x, y, TEXT_LIGHT);
         y += 11;
+        Component unpowered = unpowered(v);
         if (v.waterMb < v.minInsertMb) {
             line(g, Component.translatable("gui.bettacraft.tank.fill_hint", v.minInsertMb).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+        } else if (v.water.qualityEnabled && v.water.quality < org.overengineer.bettacraft.tank.WaterQuality.POOR_BELOW) {
+            line(g, Component.translatable(v.water.quality < v.water.badBelow ? "gui.bettacraft.water.warn_bad" : "gui.bettacraft.water.warn_poor",
+                    Math.round(v.water.quality * 100)).withStyle(v.water.quality < v.water.badBelow ? ChatFormatting.RED : ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+        } else if (unpowered != null) {
+            line(g, unpowered, x, y, TEXT_LIGHT);
         } else if (v.legacyHeaters > 0) {
             line(g, Component.translatable("gui.bettacraft.tank.legacy_heaters", v.legacyHeaters).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
         }
+    }
+
+    /** Warning line if some equipment lacks power (M9), else null. */
+    @Nullable
+    private static Component unpowered(TankView v) {
+        TankView.Water w = v.water;
+        List<Component> off = new ArrayList<>();
+        if (w.heaterPower && !w.heatPowered) off.add(Component.translatable("gui.bettacraft.water.power_heat"));
+        if (w.filterPower && !w.filterPowered) off.add(Component.translatable("gui.bettacraft.water.power_filter"));
+        if (w.lightPower && !w.lightPowered) off.add(Component.translatable("gui.bettacraft.water.power_light"));
+        if (off.isEmpty()) return null;
+        MutableComponent list = off.getFirst().copy();
+        for (int i = 1; i < off.size(); i++) list.append(", ").append(off.get(i));
+        return Component.translatable("gui.bettacraft.water.no_power", list).withStyle(ChatFormatting.RED);
+    }
+
+    /** M9: water quality, water changes, evaporation, temperature equipment and power. */
+    private void drawWater(GuiGraphics g, TankView v) {
+        TankView.Water w = v.water;
+        int x = 11, y = 20;
+        int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
+        line(g, Component.translatable("gui.bettacraft.water.volume", v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
+        y += 11;
+        if (w.qualityEnabled) {
+            ChatFormatting col = switch (w.state) {
+                case "clean" -> ChatFormatting.GREEN;
+                case "good" -> ChatFormatting.DARK_GREEN;
+                case "poor" -> ChatFormatting.GOLD;
+                default -> ChatFormatting.RED;
+            };
+            Component label = Component.translatable("gui.bettacraft.water.quality", Math.round(w.quality * 100),
+                    Component.translatable("gui.bettacraft.water.state." + w.state).withStyle(col));
+            g.drawString(font, label, x, y, TEXT_LIGHT, false);
+            int bx = 160, bw = 70;
+            g.fill(bx, y + 1, bx + bw, y + 7, 0xFF202020);
+            int color = w.quality < w.badBelow ? 0xFFD04040 : w.quality < org.overengineer.bettacraft.tank.WaterQuality.POOR_BELOW ? 0xFFD0A040 : 0xFF50A0E0;
+            g.fill(bx, y + 1, bx + Math.round(bw * Mth.clamp(w.quality, 0, 1)), y + 7, color);
+            g.fill(bx + Math.round(bw * w.badBelow), y, bx + Math.round(bw * w.badBelow) + 1, y + 8, 0xFFFF6060);
+            y += 11;
+            line(g, Component.translatable("gui.bettacraft.water.decline", fmt((float) (w.declinePerDay * 100)), fmt((float) w.animalsPerBlock)), x, y, TEXT_LIGHT);
+            y += 11;
+            int outside = v.filterBlocks + v.cabinetFilters;
+            Component filters = outside + w.internalFilters == 0 ? Component.translatable("gui.bettacraft.water.no_filter").withStyle(ChatFormatting.GOLD)
+                    : Component.translatable("gui.bettacraft.water.filters", outside, w.internalFilters, (int) w.filterCapacity,
+                    Math.round(w.filterShare * 100)).withStyle(ChatFormatting.AQUA);
+            line(g, filters, x, y, TEXT_LIGHT);
+            y += 11;
+        } else {
+            line(g, Component.translatable("gui.bettacraft.water.quality_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+            y += 11;
+        }
+        Component fresh = w.lastFreshWater < 0 ? Component.translatable("gui.bettacraft.water.fresh_never")
+                : Component.translatable("gui.bettacraft.water.fresh", w.lastFreshWater / 24000L + 1);
+        line(g, fresh.copy().withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+        y += 11;
+        Component evap;
+        if (!w.evaporationEnabled) evap = Component.translatable("gui.bettacraft.water.evaporation_off").withStyle(ChatFormatting.GRAY);
+        else if (w.openTop == 0) evap = Component.translatable("gui.bettacraft.water.covered").withStyle(ChatFormatting.GREEN);
+        else evap = Component.translatable("gui.bettacraft.water.evaporation", fmt((float) w.evaporationPerDay), w.openTop, w.totalTop)
+                    .withStyle(ChatFormatting.GOLD);
+        line(g, evap, x, y, TEXT_LIGHT);
+        y += 11;
+        line(g, Component.translatable("gui.bettacraft.water.temp_equipment", (int) v.heaterBlocks, (int) v.coolerBlocks), x, y, TEXT_LIGHT);
+        y += 11;
+        if (!w.anyPower()) {
+            line(g, Component.translatable("gui.bettacraft.water.power_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+        } else {
+            line(g, Component.translatable("gui.bettacraft.water.power", String.format(java.util.Locale.ROOT, "%,d", w.buffer),
+                    String.format(java.util.Locale.ROOT, "%,d", w.bufferCap), w.demand), x, y, TEXT_LIGHT);
+            y += 11;
+            MutableComponent groups = Component.empty();
+            groups.append(powerGroup("power_heat", w.heaterPower, w.heatPowered)).append("  ")
+                    .append(powerGroup("power_filter", w.filterPower, w.filterPowered)).append("  ")
+                    .append(powerGroup("power_light", w.lightPower, w.lightPowered));
+            line(g, groups, x, y, TEXT_LIGHT);
+        }
+        y += 13;
+        line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    private static Component powerGroup(String key, boolean required, boolean ok) {
+        MutableComponent c = Component.translatable("gui.bettacraft.water." + key);
+        if (!required) return c.append(": ").append(Component.translatable("gui.bettacraft.water.power_free")).withStyle(ChatFormatting.GRAY);
+        return c.append(ok ? " ✔" : " ✘").withStyle(ok ? ChatFormatting.GREEN : ChatFormatting.RED);
     }
 
     private void drawInterior(GuiGraphics g, TankView v, int mx, int my) {
@@ -424,6 +522,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             y += 11;
             MutableComponent heat = Component.translatable("gui.bettacraft.interior.heaters", v.heatersInside, v.heaterCapWet);
             if (v.heaterCapDry > 0) heat.append(" ").append(Component.translatable("gui.bettacraft.interior.heaters_dry", v.heaterCapDry).withStyle(ChatFormatting.GOLD));
+            if (v.coolersInside > 0) heat.append("  ").append(Component.translatable("gui.bettacraft.interior.coolers", v.coolersInside, v.coolerCapWet));
             line(g, heat, x, y, TEXT_LIGHT);
             y += 11;
             line(g, Component.translatable("gui.bettacraft.interior.filters", v.filters, v.floating), x, y, TEXT_LIGHT);

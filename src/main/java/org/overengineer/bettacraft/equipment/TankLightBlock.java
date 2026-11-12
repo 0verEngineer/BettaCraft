@@ -23,7 +23,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 /**
  * Aquarium light bar (PLAN 6.4). Segments connect only along their long axis into one continuous bar. Light level
  * 15; a redstone signal on any segment switches the whole bar off. Placed on a tank / glass edge, or hanging from a
- * ceiling (placed against the underside of a block).
+ * ceiling (placed against the underside of a block). With {@code power.lightRequiresEnergy} (M9) a bar on a tank only
+ * shines while the tank has FE for it.
  */
 public class TankLightBlock extends Block {
     public static final MapCodec<TankLightBlock> CODEC = simpleCodec(TankLightBlock::new);
@@ -123,16 +124,26 @@ public class TankLightBlock extends Block {
         }
     }
 
-    /** Recomputes LIT for the whole bar this segment belongs to (lit unless any segment is powered). */
+    /**
+     * Recomputes LIT for the whole bar this segment belongs to (lit unless any segment gets redstone, and, with
+     * {@code power.lightRequiresEnergy}, only while the tank under it has FE).
+     */
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         List<BlockPos> bar = bar(level, pos, state);
         boolean anyPowered = false;
         for (BlockPos p : bar) anyPowered |= level.getBlockState(p).getValue(POWERED);
+        boolean lit = !anyPowered && org.overengineer.bettacraft.tank.TankPower.lightHasPower(level, bar);
         for (BlockPos p : bar) {
             BlockState s = level.getBlockState(p);
-            if (s.getValue(LIT) == anyPowered) level.setBlock(p, s.setValue(LIT, !anyPowered), Block.UPDATE_CLIENTS);
+            if (s.getValue(LIT) != lit) level.setBlock(p, s.setValue(LIT, lit), Block.UPDATE_CLIENTS);
         }
+    }
+
+    /** Whether redstone switches off the bar this segment belongs to. */
+    public static boolean barSwitchedOff(Level level, BlockPos pos, BlockState state) {
+        for (BlockPos p : bar(level, pos, state)) if (level.getBlockState(p).getValue(POWERED)) return true;
+        return false;
     }
 
     public static List<BlockPos> bar(Level level, BlockPos pos, BlockState state) {

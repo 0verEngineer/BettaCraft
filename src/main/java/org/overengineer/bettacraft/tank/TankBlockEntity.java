@@ -47,6 +47,13 @@ public class TankBlockEntity extends BlockEntity {
     /** Attached external filters and cabinets under the tank (transient cache, see TankEquipment). */
     java.util.List<BlockPos> filterCache = java.util.List.of(), cabinetCache = java.util.List.of();
     long equipmentScanTime = Long.MIN_VALUE;
+    /**
+     * M9 power state of the equipment (transient, recomputed every care step by {@link TankPower}): whether heaters /
+     * coolers, filters and lights have the FE they need (always true while the config does not require power).
+     */
+    boolean heatPowered = true, filterPowered = true, lightPowered = true;
+    /** FE per tick the equipment needed in the last care step (for the menu and the info overlays). */
+    int lastDemand;
 
     private ResourceLocation glass = DEFAULT_GLASS;
     @Nullable
@@ -102,6 +109,11 @@ public class TankBlockEntity extends BlockEntity {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
+
+    public boolean heatPowered() { return heatPowered; }
+    public boolean filterPowered() { return filterPowered; }
+    public boolean lightPowered() { return lightPowered; }
+    public int lastDemand() { return lastDemand; }
 
     public boolean isCrowded() {
         return crowded;

@@ -472,6 +472,26 @@ def heater_segment(part: str) -> np.ndarray:
     return np.clip(img, 0, 1)
 
 
+def cooler_segment(part: str) -> np.ndarray:
+    """M9: glass tube with ice-blue cooling fins; the top segment is the cap with a blue LED."""
+    img = np.zeros((16, 16, 4))
+    n = _noise(9 if part != "top" else 10, (16, 16))
+    if part == "top":
+        img[..., :3] = 0.16 + 0.04 * n[..., None]
+        img[2:5, 6:10, :3] = np.array([0.25, 0.7, 1.0])
+        img[..., 3] = 1
+        return img
+    glass = np.array([0.8, 0.9, 0.95])
+    img[..., :3] = glass * (0.92 + 0.06 * n[..., None])
+    img[:, 0:2, :3] = glass * 1.05
+    yy = np.arange(16)
+    fin = (yy % 3) == 0
+    img[:, 6:10, :3] = np.array([0.25, 0.5, 0.75])
+    img[fin, 4:12, :3] = np.array([0.55, 0.82, 0.96])
+    img[..., 3] = 1
+    return np.clip(img, 0, 1)
+
+
 def filter_segment(part: str) -> np.ndarray:
     """Dark grey filter housing with intake slots; the top has the outlet."""
     img = np.zeros((16, 16, 4))
@@ -512,6 +532,7 @@ def write_all() -> list:
         sheet.append(iso_icon(v, 64, 2))
     for part in ("anchor", "middle", "top"):
         out.append(save_png(heater_segment(part), BLOCK_TEX / f"heater_segment_{part}.png"))
+        out.append(save_png(cooler_segment(part), BLOCK_TEX / f"cooler_segment_{part}.png"))
         out.append(save_png(filter_segment(part), BLOCK_TEX / f"filter_segment_{part}.png"))
     # preview sheet (debug)
     PREVIEW.mkdir(parents=True, exist_ok=True)

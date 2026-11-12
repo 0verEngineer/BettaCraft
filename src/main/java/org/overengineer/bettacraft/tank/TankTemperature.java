@@ -5,8 +5,8 @@ package org.overengineer.bettacraft.tank;
  * <ul>
  *     <li>Ambient temperature from the vanilla biome temperature: snow 0.0 = 5 C, taiga 0.25 = 12 C, swamp/plains 0.8 =
  *     25 C, desert 2.0 = 32 C (piecewise linear), plus +-2 C between noon and midnight.</li>
- *     <li>Heaters can only heat. With enough capacity the water goes to the target temperature, with too little
- *     capacity only the matching fraction of the way.</li>
+ *     <li>Heaters can only heat, coolers (M9) can only cool. With enough capacity the water goes to the target
+ *     temperature, with too little capacity only the matching fraction of the way.</li>
  *     <li>The water approaches its equilibrium exponentially with time constant {@code tauDays}.</li>
  * </ul>
  */
@@ -46,9 +46,28 @@ public final class TankTemperature {
 
     /** Temperature the water settles at. {@code heaterBlocks} = summed heater capacity in water blocks. */
     public static float equilibrium(float ambient, float target, double heaterBlocks, double waterBlocks) {
-        if (target <= ambient || heaterBlocks <= 0) return ambient;
-        double coverage = waterBlocks <= 0 ? 1.0 : Math.min(1.0, heaterBlocks / waterBlocks);
-        return (float) (ambient + (target - ambient) * coverage);
+        return equilibrium(ambient, target, heaterBlocks, 0, waterBlocks);
+    }
+
+    /**
+     * Temperature the water settles at with heaters and coolers (capacities in water blocks): heaters pull it up
+     * towards a target above the ambient temperature, coolers down towards a target below it.
+     */
+    public static float equilibrium(float ambient, float target, double heaterBlocks, double coolerBlocks, double waterBlocks) {
+        double capacity = target > ambient ? heaterBlocks : target < ambient ? coolerBlocks : 0;
+        if (capacity <= 0) return ambient;
+        return (float) (ambient + (target - ambient) * coverage(capacity, waterBlocks));
+    }
+
+    /** Share (0..1) of the water that equipment with this capacity (water blocks) can handle. */
+    public static double coverage(double capacityBlocks, double waterBlocks) {
+        if (capacityBlocks <= 0) return 0;
+        return waterBlocks <= 0 ? 1.0 : Math.min(1.0, capacityBlocks / waterBlocks);
+    }
+
+    /** Whether heaters (true) or coolers (false) work at this ambient temperature and target; null if neither. */
+    public static Boolean heating(float ambient, float target) {
+        return target > ambient ? Boolean.TRUE : target < ambient ? Boolean.FALSE : null;
     }
 
     public static float approach(float current, float equilibrium, double dtDays, double tauDays) {

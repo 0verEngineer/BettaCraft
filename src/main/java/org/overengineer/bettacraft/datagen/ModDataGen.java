@@ -173,8 +173,9 @@ public final class ModDataGen {
             simpleBlock(ModBlocks.INTERIOR_WALL.get(), models().getBuilder("interior_wall")
                     .texture("particle", modLoc("block/interior_wall")));
             // interior equipment (M3): one texture per segment part; the heater size does not change the look
-            for (String kind : new String[]{"heater_segment", "filter_segment"}) {
-                var block = kind.equals("heater_segment") ? ModBlocks.HEATER_SEGMENT.get() : ModBlocks.FILTER_SEGMENT.get();
+            for (String kind : new String[]{"heater_segment", "cooler_segment", "filter_segment"}) {
+                var block = kind.equals("heater_segment") ? ModBlocks.HEATER_SEGMENT.get() : kind.equals("cooler_segment") ? ModBlocks.COOLER_SEGMENT.get()
+                        : ModBlocks.FILTER_SEGMENT.get();
                 getVariantBuilder(block).forAllStates(state -> {
                     var part = state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART);
                     String tex = switch (part) {
@@ -210,6 +211,8 @@ public final class ModDataGen {
 
             externalFilter();
             cabinet();
+            tankLid();
+            cultureTubs();
 
             getVariantBuilder(ModBlocks.TANK_LIGHT.get()).forAllStatesExcept(state -> {
                 boolean neg = state.getValue(TankLightBlock.NEG), pos = state.getValue(TankLightBlock.POS);
@@ -286,6 +289,77 @@ public final class ModDataGen {
             });
         }
 
+        /** M9: thin glass lid with an iron frame, lying on the block below. */
+        private void tankLid() {
+            BlockModelBuilder m = models().getBuilder("tank_lid").renderType("cutout")
+                    .texture("glass", mcLoc("block/glass")).texture("frame", mcLoc("block/iron_block")).texture("particle", mcLoc("block/glass"));
+            m.element().from(0, 0, 0).to(16, 1, 16)
+                    .face(Direction.UP).texture("#glass").end()
+                    .face(Direction.DOWN).texture("#glass").cullface(Direction.DOWN).end()
+                    .face(Direction.NORTH).uvs(0, 15, 16, 16).texture("#frame").end()
+                    .face(Direction.SOUTH).uvs(0, 15, 16, 16).texture("#frame").end()
+                    .face(Direction.EAST).uvs(0, 15, 16, 16).texture("#frame").end()
+                    .face(Direction.WEST).uvs(0, 15, 16, 16).texture("#frame").end()
+                    .end();
+            // handle in the middle
+            m.element().from(6, 1, 7.5F).to(10, 1.5F, 8.5F).allFaces((d, f) -> f.texture("#frame")).end();
+            simpleBlock(ModBlocks.TANK_LID.get(), m);
+        }
+
+        /**
+         * M9: larva tub (wooden staves, 1..15 x 0..10) and artemia hatchery (glass box on a grey base, 2..14 x 0..13).
+         * The water surface rises with {@code water} (tinted water texture), {@code ready} shows the animals on it.
+         */
+        private void cultureTubs() {
+            for (boolean hatchery : new boolean[]{false, true}) {
+                var block = hatchery ? ModBlocks.ARTEMIA_HATCHERY.get() : ModBlocks.LARVA_TUB.get();
+                String name = hatchery ? "artemia_hatchery" : "larva_tub";
+                getVariantBuilder(block).forAllStates(state -> {
+                    int w = state.getValue(org.overengineer.bettacraft.food.CultureTubBlock.WATER);
+                    boolean ready = state.getValue(org.overengineer.bettacraft.food.CultureTubBlock.READY);
+                    return ConfiguredModel.builder().modelFile(tubModel(name, hatchery, w, ready && w > 0)).build();
+                });
+            }
+        }
+
+        private ModelFile tubModel(String name, boolean hatchery, int water, boolean ready) {
+            String id = name + (water > 0 ? "_water" + water : "") + (ready ? "_ready" : "");
+            BlockModelBuilder m = models().getBuilder(id).renderType("translucent")
+                    .texture("water", mcLoc("block/water_still"))
+                    .texture("food", modLoc(hatchery ? "block/culture_nauplii" : "block/culture_larvae"));
+            float x0 = hatchery ? 2 : 1, x1 = hatchery ? 14 : 15, base = hatchery ? 3 : 1, top = hatchery ? 13 : 10;
+            if (hatchery) {
+                m.texture("side", mcLoc("block/glass")).texture("base", modLoc("block/artemia_hatchery_base")).texture("particle", mcLoc("block/glass"));
+                m.element().from(x0, 0, x0).to(x1, base, x1).allFaces((d, f) -> {
+                    f.texture("#base");
+                    if (d == Direction.DOWN) f.cullface(d);
+                }).end();
+            } else {
+                m.texture("side", modLoc("block/larva_tub_side")).texture("base", modLoc("block/larva_tub_bottom"))
+                        .texture("particle", modLoc("block/larva_tub_side"));
+                m.element().from(x0 + 1, 0, x0 + 1).to(x1 - 1, base, x1 - 1).allFaces((d, f) -> {
+                    f.texture("#base");
+                    if (d == Direction.DOWN) f.cullface(d);
+                }).end();
+            }
+            // four walls, 1 px thick
+            float wy0 = hatchery ? base : 0;
+            m.element().from(x0, wy0, x0).to(x1, top, x0 + 1).allFaces((d, f) -> f.texture("#side")).end();
+            m.element().from(x0, wy0, x1 - 1).to(x1, top, x1).allFaces((d, f) -> f.texture("#side")).end();
+            m.element().from(x0, wy0, x0 + 1).to(x0 + 1, top, x1 - 1).allFaces((d, f) -> f.texture("#side")).end();
+            m.element().from(x1 - 1, wy0, x0 + 1).to(x1, top, x1 - 1).allFaces((d, f) -> f.texture("#side")).end();
+            if (water > 0) {
+                float h = base + (top - 1 - base) * water / 4F;
+                m.element().from(x0 + 1, h - 0.01F, x0 + 1).to(x1 - 1, h, x1 - 1)
+                        .face(Direction.UP).uvs(x0 + 1, x0 + 1, x1 - 1, x1 - 1).texture("#water").tintindex(0).end().end();
+                if (ready) {
+                    m.element().from(x0 + 1, h + 0.05F, x0 + 1).to(x1 - 1, h + 0.06F, x1 - 1)
+                            .face(Direction.UP).uvs(x0 + 1, x0 + 1, x1 - 1, x1 - 1).texture("#food").end().end();
+                }
+            }
+            return m;
+        }
+
         private ModelFile lightModel(boolean neg, boolean pos, boolean hanging, boolean lit) {
             String ends = neg && pos ? "both" : neg ? "neg" : pos ? "pos" : "none";
             String name = "tank_light_" + ends + (hanging ? "_hanging" : "") + (lit ? "_on" : "_off");
@@ -317,6 +391,9 @@ public final class ModDataGen {
             withExistingParent("tank_light", modLoc("block/tank_light_none_on"));
             withExistingParent("external_filter", modLoc("block/external_filter"));
             withExistingParent("cabinet", modLoc("block/cabinet"));
+            withExistingParent("tank_lid", modLoc("block/tank_lid"));
+            withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
+            withExistingParent("artemia_hatchery", modLoc("block/artemia_hatchery_water3"));
             // bucket and filled bag: fish overlay as layer1/layer2 (tinted via ItemColor)
             withExistingParent("betta_bucket", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish")).texture("layer2", modLoc("item/betta_bucket_fish_fins"));
@@ -337,6 +414,9 @@ public final class ModDataGen {
             basicItem(ModItems.HEATER_SMALL.get());
             basicItem(ModItems.HEATER_MEDIUM.get());
             basicItem(ModItems.HEATER_LARGE.get());
+            basicItem(ModItems.COOLER_SMALL.get());
+            basicItem(ModItems.COOLER_MEDIUM.get());
+            basicItem(ModItems.COOLER_LARGE.get());
             basicItem(ModItems.INTERNAL_FILTER.get());
             for (var d : ModItems.DECOR.values()) basicItem(d.get());
         }
@@ -439,6 +519,40 @@ public final class ModDataGen {
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("tank_light"));
             decorRecipes(output);
+
+            // M9: coolers (snow instead of copper, sizes like the heaters), lid, live food breeders
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.COOLER_SMALL.get())
+                    .pattern("S").pattern("R").pattern("G")
+                    .define('S', Items.SNOWBALL).define('R', Tags.Items.DUSTS_REDSTONE).define('G', Tags.Items.GLASS_PANES)
+                    .unlockedBy("has_heater", has(ModItems.HEATER_SMALL.get()))
+                    .unlockedBy("has_snowball", has(Items.SNOWBALL))
+                    .save(output, BettaCraft.id("cooler_small"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COOLER_MEDIUM.get())
+                    .requires(ModItems.COOLER_SMALL.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
+                    .unlockedBy("has_cooler", has(ModItems.COOLER_SMALL.get()))
+                    .save(output, BettaCraft.id("cooler_medium"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COOLER_LARGE.get())
+                    .requires(ModItems.COOLER_MEDIUM.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
+                    .unlockedBy("has_cooler", has(ModItems.COOLER_MEDIUM.get()))
+                    .save(output, BettaCraft.id("cooler_large"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK_LID.get(), 3)
+                    .pattern("N N").pattern("PPP")
+                    .define('N', Tags.Items.NUGGETS_IRON).define('P', Tags.Items.GLASS_PANES)
+                    .unlockedBy("has_tank", has(ModItems.TANK.get()))
+                    .save(output, BettaCraft.id("tank_lid"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LARVA_TUB.get())
+                    .pattern("P P").pattern("PIP").pattern("SSS")
+                    .define('P', net.minecraft.tags.ItemTags.PLANKS).define('I', Tags.Items.NUGGETS_IRON)
+                    .define('S', net.minecraft.tags.ItemTags.WOODEN_SLABS)
+                    .unlockedBy("has_larvae", has(ModItems.MOSQUITO_LARVAE.get()))
+                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get()))
+                    .save(output, BettaCraft.id("larva_tub"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ARTEMIA_HATCHERY.get())
+                    .pattern("G G").pattern("G G").pattern("IRI")
+                    .define('G', Tags.Items.GLASS_BLOCKS).define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE)
+                    .unlockedBy("has_cysts", has(ModItems.ARTEMIA_CYSTS.get()))
+                    .unlockedBy("has_salt_water", has(ModItems.SALT_WATER_BOTTLE.get()))
+                    .save(output, BettaCraft.id("artemia_hatchery"));
 
             // M4: external filter and the cabinet of any planks
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTERNAL_FILTER.get())
@@ -549,6 +663,9 @@ public final class ModDataGen {
                                     .include(ModDataComponents.GLASS.get()))))));
             dropSelf(ModBlocks.FEEDER.get());
             dropSelf(ModBlocks.TANK_LIGHT.get());
+            dropSelf(ModBlocks.TANK_LID.get());
+            dropSelf(ModBlocks.LARVA_TUB.get());
+            dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
             // M4: the filter keeps its heaters, the cabinet its planks (its contents drop separately)
             add(ModBlocks.EXTERNAL_FILTER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.EXTERNAL_FILTER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
@@ -564,7 +681,8 @@ public final class ModDataGen {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get());
+            return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
+                    ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get());
         }
     }
 
@@ -600,8 +718,8 @@ public final class ModDataGen {
             tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
-                    ModBlocks.EXTERNAL_FILTER.get());
-            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get());
+                    ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.ARTEMIA_HATCHERY.get());
+            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD)
                     .addOptional(Compat.rl(Compat.FINTASTIC, "duckweed")).addOptional(Compat.rl(Compat.FINTASTIC, "lotus_pad"));
@@ -624,6 +742,8 @@ public final class ModDataGen {
             tag(ModTags.BETTA_FOOD).add(ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.INFUSORIA.get(),
                     ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
+            // M9: organic matter for the larva tub
+            tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get());
             tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());

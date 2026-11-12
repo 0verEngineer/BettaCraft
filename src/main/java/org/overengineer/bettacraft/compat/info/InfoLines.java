@@ -52,6 +52,21 @@ public final class InfoLines {
         if (d.getInt("filters_out") + d.getInt("filters_in") > 0) {
             out.add(Component.translatable("jade.bettacraft.tank.filters", d.getInt("filters_out"), d.getInt("filters_in")));
         }
+        // M9: water quality, evaporation and power
+        if (d.contains("quality")) {
+            String st = d.getString("quality_state");
+            ChatFormatting col = "bad".equals(st) ? ChatFormatting.RED : "poor".equals(st) ? ChatFormatting.GOLD : ChatFormatting.GREEN;
+            out.add(Component.translatable("jade.bettacraft.tank.quality", Math.round(d.getFloat("quality") * 100),
+                    Component.translatable("gui.bettacraft.water.state." + st).withStyle(col)));
+        }
+        if (details && d.getDouble("evaporation") > 0) {
+            out.add(Component.translatable("jade.bettacraft.tank.evaporation", f1((float) d.getDouble("evaporation"))).withStyle(ChatFormatting.GRAY));
+        }
+        if (d.contains("power")) {
+            MutableComponent p = Component.translatable("jade.bettacraft.tank.power", d.getLong("power"), d.getLong("power_cap"), d.getInt("demand"));
+            if (d.getBoolean("unpowered")) p.append(" ").append(Component.translatable("jade.bettacraft.no_power").withStyle(ChatFormatting.RED));
+            out.add(p);
+        }
         ListTag warn = d.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < warn.size(); i++) {
             out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getString(i)).withStyle(ChatFormatting.RED));
@@ -87,13 +102,35 @@ public final class InfoLines {
         } else {
             out.add(Component.translatable("jade.bettacraft.filter.heaters", d.getInt("heaters"), d.getInt("heat")));
         }
+        if (d.getInt("coolers") > 0) out.add(Component.translatable("jade.bettacraft.filter.coolers", d.getInt("coolers"), d.getInt("cool")));
         if (!d.getBoolean("has_filter")) return out;
         if (d.getBoolean("attached")) {
             String name = d.getString("tank");
             out.add(name.isEmpty() ? Component.translatable("jade.bettacraft.filter.tank_unnamed").withStyle(ChatFormatting.AQUA)
                     : Component.translatable("jade.bettacraft.filter.tank", name).withStyle(ChatFormatting.AQUA));
+            if (d.getBoolean("unpowered")) out.add(Component.translatable("jade.bettacraft.no_power").withStyle(ChatFormatting.RED));
         } else {
             out.add(Component.translatable("jade.bettacraft.filter.no_tank").withStyle(ChatFormatting.GOLD));
+        }
+        return out;
+    }
+
+    /** Larva tub and artemia hatchery (M9). */
+    public static List<Component> culture(CompoundTag d) {
+        List<Component> out = new ArrayList<>();
+        if (d == null || d.isEmpty()) return out;
+        boolean artemia = d.getBoolean("artemia");
+        out.add(Component.translatable("jade.bettacraft.culture.water", d.getInt("water"),
+                org.overengineer.bettacraft.food.CultureTubBlockEntity.WATER_CAPACITY));
+        out.add(Component.translatable(artemia ? "jade.bettacraft.culture.cysts" : "jade.bettacraft.culture.organic", d.getInt("uses")));
+        if (artemia) out.add(Component.translatable("jade.bettacraft.culture.bottles", d.getInt("bottles")));
+        out.add(Component.translatable("jade.bettacraft.culture.progress", Math.round(d.getFloat("progress") * 100)));
+        if (d.getInt("ready") > 0) {
+            out.add(Component.translatable(artemia ? "jade.bettacraft.culture.ready_nauplii" : "jade.bettacraft.culture.ready_larvae", d.getInt("ready"))
+                    .withStyle(ChatFormatting.GREEN));
+        }
+        if (d.contains("blocked")) {
+            out.add(Component.translatable("message.bettacraft.culture.blocked." + d.getString("blocked")).withStyle(ChatFormatting.GOLD));
         }
         return out;
     }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cooler": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:cooler_medium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:cooler_large"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cooler"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:cooler_large"
+    ]
+  }
+}

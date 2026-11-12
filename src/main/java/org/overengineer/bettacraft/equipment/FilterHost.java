@@ -9,7 +9,8 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
 
 /**
  * An external filter attached to a tank (PLAN 6.2): either the filter block next to the tank or a filter in the slot
- * of a cabinet under the tank. Holds up to two heaters. The water flow is purely visual (OFFEN-11/17).
+ * of a cabinet under the tank. Holds up to two heaters or coolers (M9). Since M9 it cleans the water (water quality);
+ * the water flow itself is still only visual (OFFEN-11/17).
  */
 public interface FilterHost {
     /** Whether a filter is present (a cabinet may have an empty filter slot). */
@@ -32,6 +33,21 @@ public interface FilterHost {
         return sum;
     }
 
+    default int coolerBlocks() {
+        if (!hasFilter()) return 0;
+        int sum = 0;
+        for (int i = 0; i < FilterHeaters.SLOTS; i++) sum += FilterHeaters.coolingCapacity(heater(i));
+        return sum;
+    }
+
+    default int coolerCount() {
+        if (!hasFilter()) return 0;
+        int n = 0;
+        for (int i = 0; i < FilterHeaters.SLOTS; i++) if (FilterHeaters.isCooler(heater(i))) n++;
+        return n;
+    }
+
+    /** Heaters and coolers in the slots. */
     default int heaterCount() {
         if (!hasFilter()) return 0;
         int n = 0;

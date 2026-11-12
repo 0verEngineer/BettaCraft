@@ -22,8 +22,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.HitResult;
 
 /**
- * One segment of a piece of equipment that stands in the tank interior as a column of blocks (PLAN 7.3): heaters
- * (1x1xN rod, {@link #SIZE}) and the internal filter (2x2xN box at scale 16). Breaking any segment removes the whole
+ * One segment of a piece of equipment that stands in the tank interior as a column of blocks (PLAN 7.3): heaters and
+ * coolers (M9) (1x1xN rod, {@link #SIZE}) and the internal filter (2x2xN box at scale 16). Breaking any segment removes the whole
  * piece and gives the item back once. Only the {@link Part#ANCHOR} block (lowest, min x/z) counts as the piece.
  */
 public class SegmentBlock extends Block {
@@ -41,10 +41,13 @@ public class SegmentBlock extends Block {
         }
     }
 
+    /** What the piece is: heater rod, cooler rod (M9) or internal filter. */
+    public enum Kind { HEATER, COOLER, FILTER }
+
     public enum Size implements StringRepresentable {
         SMALL(16, 6), MEDIUM(32, 9), LARGE(64, 12);
 
-        /** Heating capacity in water blocks (same as {@link HeaterItem}). */
+        /** Heating (or cooling) capacity in water blocks (same as {@link HeaterItem}). */
         public final int capacity;
         /** Rod length in interior blocks at scale 16. */
         public final int length16;
@@ -66,21 +69,28 @@ public class SegmentBlock extends Block {
     public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
             net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-    private final boolean heater;
+    private final Kind kind;
     private final Supplier<? extends Item> filterItem;
 
-    /** @param heater true: heater rod (has {@link #SIZE}); false: internal filter, dropping {@code filterItem}. */
-    public SegmentBlock(boolean heater, Supplier<? extends Item> filterItem, Properties properties) {
+    /** @param kind heater or cooler rod (has {@link #SIZE}), or the internal filter, dropping {@code filterItem}. */
+    public SegmentBlock(Kind kind, Supplier<? extends Item> filterItem, Properties properties) {
         super(properties);
-        this.heater = heater;
+        this.kind = kind;
         this.filterItem = filterItem;
-        BlockState def = stateDefinition.any().setValue(PART, Part.ANCHOR).setValue(FACING, Direction.NORTH);
-        if (heater) def = def.setValue(SIZE, Size.SMALL);
-        registerDefaultState(def);
+        registerDefaultState(stateDefinition.any().setValue(PART, Part.ANCHOR).setValue(FACING, Direction.NORTH).setValue(SIZE, Size.SMALL));
+    }
+
+    public Kind kind() {
+        return kind;
     }
 
     public boolean isHeater() {
-        return heater;
+        return kind == Kind.HEATER;
+    }
+
+    /** Heater or cooler rod (has a size). */
+    public boolean isRod() {
+        return kind != Kind.FILTER;
     }
 
     @Override
@@ -103,11 +113,12 @@ public class SegmentBlock extends Block {
 
     /** The item this piece gives back. */
     public ItemStack itemFor(BlockState state) {
-        if (!heater) return new ItemStack(filterItem.get());
+        if (kind == Kind.FILTER) return new ItemStack(filterItem.get());
+        boolean cool = kind == Kind.COOLER;
         return new ItemStack(switch (state.getValue(SIZE)) {
-            case SMALL -> org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get();
-            case MEDIUM -> org.overengineer.bettacraft.registry.ModItems.HEATER_MEDIUM.get();
-            case LARGE -> org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get();
+            case SMALL -> cool ? org.overengineer.bettacraft.registry.ModItems.COOLER_SMALL.get() : org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get();
+            case MEDIUM -> cool ? org.overengineer.bettacraft.registry.ModItems.COOLER_MEDIUM.get() : org.overengineer.bettacraft.registry.ModItems.HEATER_MEDIUM.get();
+            case LARGE -> cool ? org.overengineer.bettacraft.registry.ModItems.COOLER_LARGE.get() : org.overengineer.bettacraft.registry.ModItems.HEATER_LARGE.get();
         });
     }
 

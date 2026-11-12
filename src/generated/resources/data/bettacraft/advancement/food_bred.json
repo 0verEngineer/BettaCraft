@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:mosquito_larvae",
+  "criteria": {
+    "bred": {
+      "conditions": {
+        "event": "food_bred"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.food_bred.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:larva_tub"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.food_bred.title"
+    }
+  },
+  "requirements": [
+    [
+      "bred"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

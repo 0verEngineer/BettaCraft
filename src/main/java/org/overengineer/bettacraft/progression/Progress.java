@@ -40,6 +40,10 @@ public final class Progress {
     public static final String ENTER_INTERIOR = "enter_interior";
     public static final String DECOR = "decor_placed";
     public static final String SUBSTRATE = "substrate";
+    /** M9: fresh water poured into a tank with used water (value = quality afterwards in %). */
+    public static final String WATER_CHANGE = "water_change";
+    /** M9: live food taken out of a larva tub or an artemia hatchery. */
+    public static final String FOOD_BRED = "food_bred";
 
     private Progress() {}
 

@@ -46,6 +46,21 @@ final class JadeServerData {
         }
     }
 
+    /** Larva tub and artemia hatchery (M9). */
+    static final class Culture implements IServerDataProvider<BlockAccessor> {
+        static final Culture INSTANCE = new Culture();
+
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (accessor.getLevel() instanceof ServerLevel level) put(data, InfoData.culture(level, accessor.getBlockEntity()));
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.CULTURE;
+        }
+    }
+
     static final class Betta implements IServerDataProvider<EntityAccessor> {
         static final Betta INSTANCE = new Betta();
 

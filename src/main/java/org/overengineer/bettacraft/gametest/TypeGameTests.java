@@ -219,7 +219,7 @@ public final class TypeGameTests {
         }
         h.assertTrue("crowntail".equals(n.eggs().get(1).genotype().pair(BettaLoci.FINFORM).b())
                 && "long".equals(n.eggs().get(1).genotype().pair(BettaLoci.FIN_LENGTH).b()), "carrier allele kept");
-        h.assertTrue(c.saveWithFullMetadata(level.registryAccess()).getInt("schema") == 4, "saved as v4");
+        h.assertTrue(c.saveWithFullMetadata(level.registryAccess()).getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "saved as the current version");
         h.succeed();
     }
 }

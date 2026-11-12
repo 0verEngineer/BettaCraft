@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cysts": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:artemia_cysts"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_salt_water": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:salt_water_bottle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:artemia_hatchery"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cysts",
+      "has_salt_water"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:artemia_hatchery"
+    ]
+  }
+}

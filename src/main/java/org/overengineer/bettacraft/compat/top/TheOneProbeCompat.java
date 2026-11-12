@@ -87,6 +87,8 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
             } else if (state.getBlock() instanceof ExternalFilterBlock || state.getBlock() instanceof CabinetBlock) {
                 CompoundTag d = InfoData.filter(server, level.getBlockEntity(data.getPos()));
                 add(info, InfoLines.filter(d));
+            } else if (state.getBlock() instanceof org.overengineer.bettacraft.food.CultureTubBlock) {
+                add(info, InfoLines.culture(InfoData.culture(server, level.getBlockEntity(data.getPos()))));
             }
         }
     }

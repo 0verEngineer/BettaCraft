@@ -26,8 +26,13 @@ import org.overengineer.bettacraft.tank.interior.InteriorRegion;
 public final class EquipmentPlacement {
     private EquipmentPlacement() {}
 
-    /** @param size heater size, or null for the internal filter. */
+    /** Internal filter ({@code size == null}) or heater of this size. */
     public static InteractionResult place(UseOnContext ctx, SegmentBlock.Size size) {
+        return place(ctx, size == null ? SegmentBlock.Kind.FILTER : SegmentBlock.Kind.HEATER, size);
+    }
+
+    /** @param size rod size of a heater or cooler (ignored for the internal filter). */
+    public static InteractionResult place(UseOnContext ctx, SegmentBlock.Kind kind, SegmentBlock.Size size) {
         Level level = ctx.getLevel();
         Player player = ctx.getPlayer();
         if (!InteriorManager.isInterior(level)) {
@@ -42,7 +47,7 @@ public final class EquipmentPlacement {
         BlockPos base = place.getClickedPos();
         InteriorRegion r = InteriorManager.regionAt(server.getServer(), base);
         if (r == null || (player != null && !InteriorManager.canBuild(player, base))) return InteractionResult.FAIL;
-        boolean heater = size != null;
+        boolean heater = kind != SegmentBlock.Kind.FILTER;
         int foot, height;
         if (heater) {
             foot = 1;
@@ -52,7 +57,11 @@ public final class EquipmentPlacement {
             foot = f[0];
             height = f[1];
         }
-        Block block = heater ? ModBlocks.HEATER_SEGMENT.get() : ModBlocks.FILTER_SEGMENT.get();
+        Block block = switch (kind) {
+            case HEATER -> ModBlocks.HEATER_SEGMENT.get();
+            case COOLER -> ModBlocks.COOLER_SEGMENT.get();
+            case FILTER -> ModBlocks.FILTER_SEGMENT.get();
+        };
         // the filter outlet points at the player (into the room of the tank)
         net.minecraft.core.Direction facing = player != null ? player.getDirection().getOpposite() : net.minecraft.core.Direction.NORTH;
         List<BlockPos> cells = new ArrayList<>();

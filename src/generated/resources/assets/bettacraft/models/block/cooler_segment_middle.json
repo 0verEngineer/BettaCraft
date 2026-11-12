@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "bettacraft:block/cooler_segment_middle",
+    "side": "bettacraft:block/cooler_segment_middle"
+  }
+}

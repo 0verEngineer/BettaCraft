@@ -48,7 +48,13 @@ public final class TankInteractions {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.full"), true);
                 return ItemInteractionResult.CONSUME;
             }
+            float qualityBefore = tank.waterQuality();
+            boolean hadWater = tank.waterMb() > 0;
             changeWater(server, controller, TankData.MB_PER_BLOCK);
+            if (hadWater && qualityBefore < WaterQuality.GOOD_FROM && tank.waterQuality() > qualityBefore) {
+                org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WATER_CHANGE,
+                        Math.round(tank.waterQuality() * 100));
+            }
             if (!player.getAbilities().instabuild) {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             }
@@ -74,10 +80,19 @@ public final class TankInteractions {
         return ItemInteractionResult.CONSUME;
     }
 
-    /** Adds (or removes, if negative) water and updates the block states bottom-up. */
+    /**
+     * Adds (or removes, if negative) water and updates the block states bottom-up. Added water is fresh water: it
+     * dilutes the waste (M9 water quality, a water change = draining and refilling); removing water keeps the quality.
+     */
     public static void changeWater(ServerLevel level, TankBlockEntity controller, long deltaMb) {
         TankData tank = controller.getTank();
-        tank.setWaterMb(tank.waterMb() + deltaMb);
+        long before = tank.waterMb();
+        tank.setWaterMb(before + deltaMb);
+        long added = tank.waterMb() - before;
+        if (added > 0) {
+            tank.setWaterQuality(WaterQuality.mix(tank.waterQuality(), before, added));
+            tank.setLastFreshWater(level.getGameTime());
+        }
         TankMultiblock.applyStates(level, tank);
         controller.markTankChanged();
     }

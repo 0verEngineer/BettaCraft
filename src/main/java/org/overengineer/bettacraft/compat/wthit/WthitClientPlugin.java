@@ -25,6 +25,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         registrar.body(new Tank(), TankBlock.class);
         registrar.body(new Filter(), ExternalFilterBlock.class);
         registrar.body(new Filter(), CabinetBlock.class);
+        registrar.body(new Culture(), org.overengineer.bettacraft.food.CultureTubBlock.class);
         registrar.body(new Betta(), BettaEntity.class);
         // looking through the glass at a fish shows the fish, not the tank block
         registrar.redirect(new Tank(), TankBlock.class);
@@ -51,6 +52,13 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             InfoLines.filter(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+        }
+    }
+
+    static final class Culture implements IBlockComponentProvider {
+        @Override
+        public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            InfoLines.culture(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
 

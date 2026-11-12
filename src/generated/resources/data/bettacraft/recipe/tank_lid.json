@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "tag": "c:nuggets/iron"
+    },
+    "P": {
+      "tag": "c:glass_panes"
+    }
+  },
+  "pattern": [
+    "N N",
+    "PPP"
+  ],
+  "result": {
+    "count": 3,
+    "id": "bettacraft:tank_lid"
+  }
+}

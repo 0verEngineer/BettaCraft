@@ -56,6 +56,19 @@ public final class ModItems {
     public static final DeferredItem<HeaterItem> HEATER_LARGE = ITEMS.register("heater_large",
             () -> new HeaterItem(64, org.overengineer.bettacraft.equipment.SegmentBlock.Size.LARGE, new Item.Properties().stacksTo(16)));
 
+    /** Coolers (M9): the counterpart of the heaters, same sizes. */
+    public static final DeferredItem<HeaterItem> COOLER_SMALL = ITEMS.register("cooler_small",
+            () -> new HeaterItem(16, org.overengineer.bettacraft.equipment.SegmentBlock.Size.SMALL, true, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<HeaterItem> COOLER_MEDIUM = ITEMS.register("cooler_medium",
+            () -> new HeaterItem(32, org.overengineer.bettacraft.equipment.SegmentBlock.Size.MEDIUM, true, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<HeaterItem> COOLER_LARGE = ITEMS.register("cooler_large",
+            () -> new HeaterItem(64, org.overengineer.bettacraft.equipment.SegmentBlock.Size.LARGE, true, new Item.Properties().stacksTo(16)));
+
+    /** Lid (M9) and the live food breeders (M9). */
+    public static final DeferredItem<BlockItem> TANK_LID = ITEMS.registerSimpleBlockItem(ModBlocks.TANK_LID);
+    public static final DeferredItem<BlockItem> LARVA_TUB = ITEMS.registerSimpleBlockItem(ModBlocks.LARVA_TUB);
+    public static final DeferredItem<BlockItem> ARTEMIA_HATCHERY = ITEMS.registerSimpleBlockItem(ModBlocks.ARTEMIA_HATCHERY);
+
     /** Internal filter, placed into the tank interior (PLAN 6.2 / 7.3). */
     public static final DeferredItem<org.overengineer.bettacraft.equipment.InternalFilterItem> INTERNAL_FILTER = ITEMS.register("internal_filter",
             () -> new org.overengineer.bettacraft.equipment.InternalFilterItem(new Item.Properties().stacksTo(16)));

@@ -28,6 +28,8 @@ public final class WthitCommonPlugin implements IWailaCommonPlugin {
         registrar.blockData(tank, TankBlockEntity.class);
         registrar.blockData(filter, ExternalFilterBlockEntity.class);
         registrar.blockData(filter, CabinetBlockEntity.class);
+        IDataProvider<BlockEntity> culture = (data, accessor, config) -> put(data, InfoData.culture(accessor.getLevel(), accessor.getTarget()));
+        registrar.blockData(culture, org.overengineer.bettacraft.food.CultureTubBlockEntity.class);
         registrar.entityData(betta, BettaEntity.class);
     }
 }

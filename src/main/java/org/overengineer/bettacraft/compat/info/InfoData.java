@@ -22,6 +22,8 @@ import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.TankEquipment;
 import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankMultiblock;
+import org.overengineer.bettacraft.tank.TankPower;
+import org.overengineer.bettacraft.tank.TankWater;
 import org.overengineer.bettacraft.tank.interior.InteriorManager;
 import org.overengineer.bettacraft.tank.interior.InteriorRegions;
 
@@ -77,6 +79,34 @@ public final class InfoData {
         var r = InteriorRegions.get(level.getServer()).get(t.regionId());
         out.putInt("filters_out", TankEquipment.filters(level, c).size());
         out.putInt("filters_in", r == null || !r.built() ? 0 : InteriorManager.equipment(level.getServer(), r).filters().size());
+        // M9: water quality, evaporation, power
+        if (TankWater.qualityEnabled()) {
+            out.putFloat("quality", t.waterQuality());
+            out.putString("quality_state", TankWater.state(t).name().toLowerCase(java.util.Locale.ROOT));
+        }
+        out.putDouble("evaporation", TankWater.evaporationPerDay(level, t));
+        if (TankPower.anyRequired()) {
+            out.putLong("power", t.powerBuffer());
+            out.putLong("power_cap", TankPower.capacity());
+            out.putInt("demand", c.lastDemand());
+            out.putBoolean("unpowered", (TankPower.heaterRequired() && !c.heatPowered()) || (TankPower.filterRequired() && !c.filterPowered())
+                    || (TankPower.lightRequired() && !c.lightPowered()));
+        }
+        return out;
+    }
+
+    /** Larva tub / artemia hatchery (M9): water, ingredient, progress, food, what is missing. */
+    public static CompoundTag culture(ServerLevel level, BlockEntity be) {
+        if (!(be instanceof org.overengineer.bettacraft.food.CultureTubBlockEntity tub)) return null;
+        CompoundTag out = new CompoundTag();
+        out.putBoolean("artemia", tub.artemia());
+        out.putInt("water", tub.water());
+        out.putInt("uses", tub.ingredientUses());
+        out.putInt("bottles", tub.items().getStackInSlot(org.overengineer.bettacraft.food.CultureTubBlockEntity.BOTTLES).getCount());
+        out.putFloat("progress", (float) tub.progress());
+        out.putInt("ready", tub.items().getStackInSlot(org.overengineer.bettacraft.food.CultureTubBlockEntity.OUTPUT).getCount());
+        String b = tub.blocker(level);
+        if (b != null) out.putString("blocked", b);
         return out;
     }
 
@@ -85,12 +115,17 @@ public final class InfoData {
         if (!(be instanceof FilterHost f)) return null;
         CompoundTag out = new CompoundTag();
         out.putBoolean("has_filter", f.hasFilter());
-        out.putInt("heaters", f.heaterCount());
+        out.putInt("heaters", f.heaterCount() - f.coolerCount());
         out.putInt("heat", f.heaterBlocks());
+        out.putInt("coolers", f.coolerCount());
+        out.putInt("cool", f.coolerBlocks());
         TankBlockEntity c = FilterHost.tankOf(level, f.tankBlockPos());
         boolean attached = c != null && TankEquipment.filters(level, c).contains(f);
         out.putBoolean("attached", attached);
-        if (attached) out.putString("tank", c.getTank().name());
+        if (attached) {
+            out.putString("tank", c.getTank().name());
+            if (TankPower.filterRequired()) out.putBoolean("unpowered", !c.filterPowered());
+        }
         if (f instanceof CabinetBlockEntity cab) {
             int n = 0;
             for (int i = 0; i < cab.storage().getSlots(); i++) n += cab.storage().getStackInSlot(i).getCount();

@@ -37,6 +37,8 @@ public final class TankCare {
     private static final int RECONCILE_INTERVAL = 40;
     /** One food item (pellet or larvae portion) feeds up to this many fish. */
     public static final int FISH_PER_FOOD = BettaFood.FISH_PER_FOOD;
+    /** A fish fed again within this many days was not hungry: its portion rots in the water (M9 overfeeding). */
+    public static final double OVERFED_DAYS = 0.5;
 
     private TankCare() {}
 
@@ -49,7 +51,9 @@ public final class TankCare {
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastCareTick = now;
         if (tank.hasLegacyHeaters()) TankEquipment.moveLegacyHeaters(server, be);
+        TankPower.step(server, be, dt);
         updateTemperature(server, be, dt / 24000.0);
+        TankWater.step(server, be, dt / 24000.0);
         TankBreeding.step(server, be, dt / 24000.0);
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);
@@ -80,12 +84,40 @@ public final class TankCare {
     }
 
     /**
-     * All heating capacity (PLAN 6.1): heaters in attached external filters (block next to the tank or filter in a
-     * cabinet below), heater rods in the interior (only if their lowest segment is below the water surface) and
-     * heaters still left in the old menu slots.
+     * All heating capacity that works now (PLAN 6.1): heaters in attached external filters (block next to the tank or
+     * filter in a cabinet below), heater rods in the interior (only if their lowest segment is below the water surface)
+     * and heaters still left in the old menu slots. 0 while the heaters lack power (M9, {@link TankPower}).
      */
     public static double heaterBlocks(ServerLevel level, TankData tank) {
+        TankBlockEntity c = controllerOf(level, tank);
+        return c != null && !c.heatPowered ? 0 : rawHeaterBlocks(level, tank);
+    }
+
+    /** Heating capacity of all installed heaters, powered or not. */
+    public static double rawHeaterBlocks(ServerLevel level, TankData tank) {
         return slotHeaterBlocks(tank) + interiorHeaterBlocks(level, tank) + filterHeaterBlocks(level, tank);
+    }
+
+    /** Cooling capacity that works now (M9): coolers in attached filters and cooler rods under water in the interior. */
+    public static double coolerBlocks(ServerLevel level, TankData tank) {
+        TankBlockEntity c = controllerOf(level, tank);
+        return c != null && !c.heatPowered ? 0 : rawCoolerBlocks(level, tank);
+    }
+
+    /** Cooling capacity of all installed coolers, powered or not. */
+    public static double rawCoolerBlocks(ServerLevel level, TankData tank) {
+        double sum = interiorCoolerBlocks(level, tank);
+        TankBlockEntity c = controllerOf(level, tank);
+        if (c != null) for (var f : TankEquipment.filters(level, c)) sum += f.coolerBlocks();
+        return sum;
+    }
+
+    public static double interiorCoolerBlocks(ServerLevel level, TankData tank) {
+        var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(tank.regionId());
+        if (r == null || !r.built()) return 0;
+        var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+        if (eq.coolers().isEmpty()) return 0;
+        return eq.coolerCapacityBelow(waterLocalHeight(tank, r.scale()));
     }
 
     /** Heating capacity of the heaters in the attached external filters. */
@@ -123,7 +155,7 @@ public final class TankCare {
     public static void updateTemperature(ServerLevel level, TankBlockEntity be, double dtDays) {
         TankData tank = be.getTank();
         float ambient = ambient(level, tank);
-        float eq = TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(level, tank), tank.waterBlocks());
+        float eq = TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(level, tank), coolerBlocks(level, tank), tank.waterBlocks());
         double tau = ServerConfig.getOr(ServerConfig.TEMPERATURE_TAU_DAYS, 0.1);
         float next = TankTemperature.approach(tank.waterTemp(), eq, dtDays, tau);
         if (Math.abs(next - tank.waterTemp()) > 1e-4) {
@@ -210,13 +242,16 @@ public final class TankCare {
         int per = BettaFood.fishPerItem(kind);
         int items = Math.min(maxItems, (fish.size() + per - 1) / per);
         int fed = Math.min(fish.size(), items * per);
+        int overfed = 0;
         for (int i = 0; i < fed; i++) {
             BettaEntity b = fish.get(i);
+            if (b.health().daysSinceFed() < OVERFED_DAYS) overfed++;
             b.health().feed();
             if (kind == BettaFood.Kind.LIVE && b.isAdult()) b.breeding().condition();
             if (round != null) round.add(b.getUUID());
         }
         log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
+        TankWater.overfed(level, controller, overfed);
         return items;
     }
 

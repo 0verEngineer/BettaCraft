@@ -31,7 +31,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
     /** All ids in tree order (also used by the language files and tests). */
     static final String[] IDS = {"root", "catch_betta", "build_tank", "fill_tank", "insert_betta", "ideal_temperature", "feeder", "recovered",
             "fight", "nest_built", "spawned", "fry_free", "grown_up", "variety_bred", "dynasty", "big_tank", "enter_interior", "decor", "substrate",
-            "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food"};
+            "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food", "water_change", "cooler", "food_bred"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -63,8 +63,14 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
                 "filled", BettaEventTrigger.Instance.atLeast(Progress.TANK_FILLED, 50));
         AdvancementHolder inserted = simple(filled, "insert_betta", ModItems.FISH_BAG.get(), AdvancementType.TASK,
                 "inserted", BettaEventTrigger.Instance.of(Progress.INSERTED));
-        simple(inserted, "ideal_temperature", ModItems.HEATER_MEDIUM.get(), AdvancementType.TASK,
+        AdvancementHolder ideal = simple(inserted, "ideal_temperature", ModItems.HEATER_MEDIUM.get(), AdvancementType.TASK,
                 "ideal", BettaEventTrigger.Instance.of(Progress.IDEAL_TEMPERATURE));
+        // M9: water change and coolers
+        simple(inserted, "water_change", Items.WATER_BUCKET, AdvancementType.TASK,
+                "changed", BettaEventTrigger.Instance.of(Progress.WATER_CHANGE));
+        simple(ideal, "cooler", ModItems.COOLER_MEDIUM.get(), AdvancementType.TASK,
+                "cooler", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
+                        ModItems.COOLER_SMALL.get(), ModItems.COOLER_MEDIUM.get(), ModItems.COOLER_LARGE.get())));
         simple(inserted, "feeder", ModItems.FEEDER.get(), AdvancementType.TASK,
                 "fed", BettaEventTrigger.Instance.of(Progress.FEEDER));
         simple(inserted, "recovered", Items.GLISTERING_MELON_SLICE, AdvancementType.GOAL,
@@ -106,6 +112,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
                 "larvae", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.MOSQUITO_LARVAE.get()));
         simple(larvae, "pellets", ModItems.BETTA_PELLETS.get(), AdvancementType.TASK,
                 "pellets", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.BETTA_PELLETS.get()));
+        // M9: live food from the larva tub or the artemia hatchery
+        simple(larvae, "food_bred", ModItems.LARVA_TUB.get(), AdvancementType.GOAL,
+                "bred", BettaEventTrigger.Instance.of(Progress.FOOD_BRED));
         simple(swamp, "fry_food", ModItems.ARTEMIA_NAUPLII.get(), AdvancementType.TASK,
                 "fry_food", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
                         ModItems.INFUSORIA.get(), ModItems.ARTEMIA_NAUPLII.get())));

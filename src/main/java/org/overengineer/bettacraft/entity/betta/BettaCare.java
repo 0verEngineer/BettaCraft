@@ -78,7 +78,8 @@ public final class BettaCare {
         TankData tank = controller.getTank();
         BettaHealth.Params p = params();
         boolean tempOk = TankTemperature.isTolerable(tank.waterTemp());
-        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, controller.isCrowded() && fish.isAdult());
+        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, controller.isCrowded() && fish.isAdult(),
+                org.overengineer.bettacraft.tank.TankWater.isBad(tank));
         boolean wasSick = fish.health.isSick();
         BettaHealth.Event event;
         if (days > 1.0) {
@@ -175,12 +176,13 @@ public final class BettaCare {
         if (fish.health.isHungry(p)) causes.add(Component.translatable("cause.bettacraft.hunger"));
         if (c.tempBad()) causes.add(Component.translatable("cause.bettacraft.temperature"));
         if (c.crowdBad()) causes.add(Component.translatable("cause.bettacraft.overcrowding"));
+        if (c.waterBad()) causes.add(Component.translatable("cause.bettacraft.water_quality"));
         if (causes.isEmpty()) causes.add(Component.translatable("cause.bettacraft.illness"));
         Component cause = causes.getFirst();
         for (int i = 1; i < causes.size(); i++) cause = Component.translatable("cause.bettacraft.and", cause, causes.get(i));
         announce(level, fish, cause);
         String causeKey = c.tempBad() && fish.health.isHungry(p) ? "both" : fish.health.isHungry(p) ? "hunger"
-                : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : "illness";
+                : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : c.waterBad() ? "water_quality" : "illness";
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + causeKey);
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();

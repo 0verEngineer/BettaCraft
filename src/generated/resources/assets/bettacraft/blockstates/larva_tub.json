@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "ready=false,water=0": {
+      "model": "bettacraft:block/larva_tub"
+    },
+    "ready=false,water=1": {
+      "model": "bettacraft:block/larva_tub_water1"
+    },
+    "ready=false,water=2": {
+      "model": "bettacraft:block/larva_tub_water2"
+    },
+    "ready=false,water=3": {
+      "model": "bettacraft:block/larva_tub_water3"
+    },
+    "ready=false,water=4": {
+      "model": "bettacraft:block/larva_tub_water4"
+    },
+    "ready=true,water=0": {
+      "model": "bettacraft:block/larva_tub"
+    },
+    "ready=true,water=1": {
+      "model": "bettacraft:block/larva_tub_water1_ready"
+    },
+    "ready=true,water=2": {
+      "model": "bettacraft:block/larva_tub_water2_ready"
+    },
+    "ready=true,water=3": {
+      "model": "bettacraft:block/larva_tub_water3_ready"
+    },
+    "ready=true,water=4": {
+      "model": "bettacraft:block/larva_tub_water4_ready"
+    }
+  }
+}

@@ -32,6 +32,11 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.CabinetBlockEntity>> CABINET = BLOCK_ENTITIES.register("cabinet",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.CabinetBlockEntity::new, ModBlocks.CABINET.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.food.CultureTubBlockEntity>> CULTURE_TUB = BLOCK_ENTITIES.register("culture_tub",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.food.CultureTubBlockEntity::new, ModBlocks.LARVA_TUB.get(),
+                    ModBlocks.ARTEMIA_HATCHERY.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

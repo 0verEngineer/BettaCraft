@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "ready=false,water=0": {
+      "model": "bettacraft:block/artemia_hatchery"
+    },
+    "ready=false,water=1": {
+      "model": "bettacraft:block/artemia_hatchery_water1"
+    },
+    "ready=false,water=2": {
+      "model": "bettacraft:block/artemia_hatchery_water2"
+    },
+    "ready=false,water=3": {
+      "model": "bettacraft:block/artemia_hatchery_water3"
+    },
+    "ready=false,water=4": {
+      "model": "bettacraft:block/artemia_hatchery_water4"
+    },
+    "ready=true,water=0": {
+      "model": "bettacraft:block/artemia_hatchery"
+    },
+    "ready=true,water=1": {
+      "model": "bettacraft:block/artemia_hatchery_water1_ready"
+    },
+    "ready=true,water=2": {
+      "model": "bettacraft:block/artemia_hatchery_water2_ready"
+    },
+    "ready=true,water=3": {
+      "model": "bettacraft:block/artemia_hatchery_water3_ready"
+    },
+    "ready=true,water=4": {
+      "model": "bettacraft:block/artemia_hatchery_water4_ready"
+    }
+  }
+}

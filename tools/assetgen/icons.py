@@ -243,9 +243,15 @@ HEATER = {
 }
 
 
-def heater(length: int) -> np.ndarray:
+# M9: coolers use the same rod with cooling fins in ice blue and a blue LED
+COOLER = {**HEATER, "outline": (46, 74, 110, 255), "coil": (120, 196, 240, 255), "coil_dark": (52, 118, 186, 255),
+          "led": (70, 190, 255, 255)}
+
+
+def heater(length: int, pal: dict | None = None) -> np.ndarray:
     """Diagonal heater rod, bottom-left glass end -> top-right cap. length = rod length in
-    diagonal steps (pixels along the diagonal)."""
+    diagonal steps (pixels along the diagonal). pal = colours (HEATER, or COOLER for M9 coolers)."""
+    HEATER = pal or globals()["HEATER"]  # noqa: N806 - same names as the module palette
     img = np.zeros((S, S, 4), np.uint8)
     # the rod is centred on the anti-diagonal x + y = c; along-axis coordinate a = x - y
     c = 15
@@ -331,6 +337,9 @@ ICONS = {
     "heater_small": lambda: heater(6),
     "heater_medium": lambda: heater(8),
     "heater_large": lambda: heater(10),
+    "cooler_small": lambda: heater(6, COOLER),
+    "cooler_medium": lambda: heater(8, COOLER),
+    "cooler_large": lambda: heater(10, COOLER),
 }
 
 

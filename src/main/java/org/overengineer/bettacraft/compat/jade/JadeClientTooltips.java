@@ -58,6 +58,21 @@ final class JadeClientTooltips {
         }
     }
 
+    /** Larva tub and artemia hatchery (M9). */
+    static final class Culture implements IBlockComponentProvider {
+        static final Culture INSTANCE = new Culture();
+
+        @Override
+        public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            InfoLines.culture(accessor.getServerData().getCompound(InfoData.KEY)).forEach(tooltip::add);
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.CULTURE;
+        }
+    }
+
     static final class Betta implements IEntityComponentProvider {
         static final Betta INSTANCE = new Betta();
 

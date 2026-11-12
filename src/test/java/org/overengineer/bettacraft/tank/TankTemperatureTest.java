@@ -58,4 +58,20 @@ class TankTemperatureTest {
         assertEquals(20.0F, TankTemperature.clampTarget(5));
         assertEquals(32.0F, TankTemperature.clampTarget(50));
     }
+
+    /** M9: coolers only cool, heaters only heat; each scales with its capacity. */
+    @Test
+    void coolersOnlyCool() {
+        assertEquals(27.0F, TankTemperature.equilibrium(32, 27, 0, 16, 16), 1e-4, "enough cooling");
+        assertEquals(29.5F, TankTemperature.equilibrium(32, 27, 0, 8, 16), 1e-4, "half capacity, half way");
+        assertEquals(32.0F, TankTemperature.equilibrium(32, 27, 64, 0, 16), 1e-4, "heaters do not cool");
+        assertEquals(12.0F, TankTemperature.equilibrium(12, 27, 0, 64, 16), 1e-4, "coolers do not heat");
+        assertEquals(27.0F, TankTemperature.equilibrium(12, 27, 16, 16, 16), 1e-4, "both installed: the heater works in the cold");
+        assertEquals(27.0F, TankTemperature.equilibrium(32, 27, 16, 16, 16), 1e-4, "and the cooler in the heat");
+        assertEquals(Boolean.TRUE, TankTemperature.heating(12, 27));
+        assertEquals(Boolean.FALSE, TankTemperature.heating(32, 27));
+        assertEquals(null, TankTemperature.heating(27, 27));
+        assertEquals(0.5, TankTemperature.coverage(8, 16), 1e-9);
+        assertEquals(0.0, TankTemperature.coverage(0, 16), 1e-9);
+    }
 }

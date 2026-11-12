@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
  * <ul>
  *     <li><b>Food:</b> {@code foodStress} counts the time since the last meal. A fish counts as hungry ("food bad")
  *     once more than {@link Params#hungryAfterDays} have passed since it was fed.</li>
- *     <li><b>Temperature / overcrowding:</b> their stress counters grow while the condition is bad and shrink by
+ *     <li><b>Temperature / overcrowding / water quality (M9):</b> their stress counters grow while the condition is bad and shrink by
  *     {@link Params#recoveryPerDay} per good day.</li>
  *     <li>If two or more conditions are bad at once, all counters run {@link Params#bothBadMultiplier} times as fast.</li>
  *     <li>A counter reaching {@link Params#daysUntilSick} makes the fish sick. While sick, sick days accumulate as long
@@ -25,8 +25,12 @@ public final class BettaHealth {
         public static final Params DEFAULT = new Params(7, 14, 2, 2, 1);
     }
 
-    public record Conditions(boolean tempBad, boolean crowdBad) {
-        public static final Conditions GOOD = new Conditions(false, false);
+    public record Conditions(boolean tempBad, boolean crowdBad, boolean waterBad) {
+        public static final Conditions GOOD = new Conditions(false, false, false);
+
+        public Conditions(boolean tempBad, boolean crowdBad) {
+            this(tempBad, crowdBad, false);
+        }
     }
 
     public enum Event { NONE, GOT_SICK, RECOVERED, DIED }
@@ -35,6 +39,7 @@ public final class BettaHealth {
     double foodStress;
     double tempStress;
     double crowdStress;
+    double waterStress;
     boolean sick;
     double sickDays;
 
@@ -67,16 +72,18 @@ public final class BettaHealth {
 
     private Event stepOnce(double dt, Conditions c, Params p) {
         boolean foodBad = isHungry(p);
-        int bad = (foodBad ? 1 : 0) + (c.tempBad() ? 1 : 0) + (c.crowdBad() ? 1 : 0);
+        int bad = (foodBad ? 1 : 0) + (c.tempBad() ? 1 : 0) + (c.crowdBad() ? 1 : 0) + (c.waterBad() ? 1 : 0);
         double m = bad >= 2 ? p.bothBadMultiplier() : 1.0;
 
         daysSinceFed += dt;
         foodStress += dt * m;
         tempStress = c.tempBad() ? tempStress + dt * m : Math.max(0, tempStress - dt * p.recoveryPerDay());
         crowdStress = c.crowdBad() ? crowdStress + dt * m : Math.max(0, crowdStress - dt * p.recoveryPerDay());
+        waterStress = c.waterBad() ? waterStress + dt * m : Math.max(0, waterStress - dt * p.recoveryPerDay());
 
         if (!sick) {
-            if (foodStress >= p.daysUntilSick() || tempStress >= p.daysUntilSick() || crowdStress >= p.daysUntilSick()) {
+            if (foodStress >= p.daysUntilSick() || tempStress >= p.daysUntilSick() || crowdStress >= p.daysUntilSick()
+                    || waterStress >= p.daysUntilSick()) {
                 sick = true;
                 sickDays = 0;
                 return Event.GOT_SICK;
@@ -93,6 +100,7 @@ public final class BettaHealth {
                 sickDays = 0;
                 tempStress = 0;
                 crowdStress = 0;
+                waterStress = 0;
                 return Event.RECOVERED;
             }
         }
@@ -104,7 +112,7 @@ public final class BettaHealth {
     /** 1 = healthy, 0.5 = just got sick, 0 = dead. */
     public float healthFraction(Params p) {
         if (sick) return (float) (0.5 * (1 - Math.min(1, sickDays / p.daysSickUntilDeath())));
-        double worst = Math.max(foodStress, Math.max(tempStress, crowdStress));
+        double worst = Math.max(Math.max(foodStress, waterStress), Math.max(tempStress, crowdStress));
         return (float) (1 - 0.5 * Math.min(1, worst / p.daysUntilSick()));
     }
 
@@ -119,6 +127,7 @@ public final class BettaHealth {
     public double foodStress() { return foodStress; }
     public double tempStress() { return tempStress; }
     public double crowdStress() { return crowdStress; }
+    public double waterStress() { return waterStress; }
 
     // ------------------------------------------------------------------ NBT
 
@@ -128,6 +137,7 @@ public final class BettaHealth {
         t.putDouble("food_stress", foodStress);
         t.putDouble("temp_stress", tempStress);
         t.putDouble("crowd_stress", crowdStress);
+        t.putDouble("water_stress", waterStress);
         t.putBoolean("sick", sick);
         t.putDouble("sick_days", sickDays);
         return t;
@@ -139,6 +149,7 @@ public final class BettaHealth {
         h.foodStress = t.getDouble("food_stress");
         h.tempStress = t.getDouble("temp_stress");
         h.crowdStress = t.getDouble("crowd_stress");
+        h.waterStress = t.getDouble("water_stress"); // M9; 0 for older fish
         h.sick = t.getBoolean("sick");
         h.sickDays = t.getDouble("sick_days");
         return h;

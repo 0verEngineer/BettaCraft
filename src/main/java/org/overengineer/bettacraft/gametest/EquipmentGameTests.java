@@ -172,7 +172,7 @@ public final class EquipmentGameTests {
                 h.assertTrue(t.log().stream().anyMatch(e -> e.key().equals("log.bettacraft.heaters_moved")), "logged");
                 // saved again: schema 3, no old key
                 CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-                h.assertTrue(saved.getInt("schema") == 4 && !saved.getCompound("tank").contains("heaters"), "saved as v4");
+                h.assertTrue(saved.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion() && !saved.getCompound("tank").contains("heaters"), "saved as the current version");
                 h.succeed();
             });
         });

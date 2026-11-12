@@ -27,6 +27,8 @@ public final class ModTags {
     public static final TagKey<Item> PELLET_FISH = TagKey.create(Registries.ITEM, BettaCraft.id("pellet_fish"));
     /** Plastic from other mods; non-empty switches the fish bag recipe to plastic (PLAN 4.3). */
     public static final TagKey<Item> PLASTIC_SHEETS = TagKey.create(Registries.ITEM, BettaCraft.id("plastic_sheets"));
+    /** Organic matter the larva tub turns into mosquito larvae (M9): leaves, wheat, rotten flesh, bone meal. */
+    public static final TagKey<Item> LARVA_TUB_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("larva_tub_food"));
     public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "buckets/entity_water"));
 
     /** Never accepted in tanks. */

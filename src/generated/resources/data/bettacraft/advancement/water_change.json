@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "changed": {
+      "conditions": {
+        "event": "water_change"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.water_change.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.water_change.title"
+    }
+  },
+  "requirements": [
+    [
+      "changed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

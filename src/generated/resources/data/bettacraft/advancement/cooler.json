@@ -1,0 +1,38 @@
+{
+  "parent": "bettacraft:ideal_temperature",
+  "criteria": {
+    "cooler": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bettacraft:cooler_small",
+              "bettacraft:cooler_medium",
+              "bettacraft:cooler_large"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.cooler.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:cooler_medium"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.cooler.title"
+    }
+  },
+  "requirements": [
+    [
+      "cooler"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

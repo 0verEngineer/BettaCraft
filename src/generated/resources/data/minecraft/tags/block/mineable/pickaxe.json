@@ -3,6 +3,7 @@
     "bettacraft:feeder",
     "bettacraft:tank_light",
     "bettacraft:filter_segment",
-    "bettacraft:external_filter"
+    "bettacraft:external_filter",
+    "bettacraft:artemia_hatchery"
   ]
 }

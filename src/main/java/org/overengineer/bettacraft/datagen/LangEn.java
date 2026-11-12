@@ -40,13 +40,13 @@ final class LangEn {
         a.accept("block.bettacraft.external_filter", "External Filter");
         a.accept("block.bettacraft.cabinet", "Aquarium Cabinet");
         a.accept("block.bettacraft.cabinet.with_wood", "%s Aquarium Cabinet");
-        a.accept("tooltip.bettacraft.external_filter.usage", "Place it next to a tank or into a cabinet under the tank. Holds two heaters.");
+        a.accept("tooltip.bettacraft.external_filter.usage", "Place it next to a tank or into a cabinet under the tank. Cleans the water, holds two heaters or coolers.");
         a.accept("tooltip.bettacraft.external_filter.no_heaters", "No heaters inside");
         a.accept("tooltip.bettacraft.cabinet", "Put a tank on it. Holds an external filter and nine stacks; the feeder takes food from it.");
-        a.accept("message.bettacraft.filter.full", "Both heater slots of this filter are taken");
-        a.accept("gui.bettacraft.filter.heaters_hint", "Two heaters of any size");
+        a.accept("message.bettacraft.filter.full", "Both slots of this filter are taken");
+        a.accept("gui.bettacraft.filter.heaters_hint", "Two heaters or coolers of any size");
         a.accept("gui.bettacraft.cabinet.filter", "Filter");
-        a.accept("gui.bettacraft.cabinet.heaters", "Heaters");
+        a.accept("gui.bettacraft.cabinet.heaters", "Heaters / coolers");
         a.accept("gui.bettacraft.tank.filters", "Filters: %s");
         a.accept("gui.bettacraft.tank.filter_state", "%s outside (heaters: %s), %s inside");
         a.accept("gui.bettacraft.tank.legacy_heaters", "%s heater(s) left in the old slots (left): take out or attach a filter");
@@ -525,7 +525,7 @@ final class LangEn {
         a.accept("info.bettacraft.betta_bucket", "A betta in a bucket. Use it on a tank to put the fish in (adds 1000 mB water), or on water to release it.\nCatch bettas in swamps with a water bucket or a fish bag.");
         a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nReusable; empty bags stack to 16.");
         a.accept("info.bettacraft.swamp_water_bottle", "Use a glass bottle on water in a swamp.\nSmelt it (furnace, smoker or campfire) to hatch mosquito larvae, or mix it with seagrass or leaves for an infusoria culture.");
-        a.accept("info.bettacraft.mosquito_larvae", "Live food: one portion feeds up to 4 bettas and gets a breeding pair in the mood twice as fast.\nFrom a smelted bottle of swamp water, sometimes from mud mined in a swamp.");
+        a.accept("info.bettacraft.mosquito_larvae", "Live food: one portion feeds up to 4 bettas and gets a breeding pair in the mood twice as fast.\nFrom a smelted bottle of swamp water or a larva tub, sometimes from mud mined in a swamp.");
         a.accept("info.bettacraft.betta_pellets", "Everyday food: one pellet feeds up to 4 bettas (juveniles and older).\nRight-click a tank with it or put it into a feeder.");
         a.accept("info.bettacraft.salt_water_bottle", "Use a glass bottle on water in an ocean. Mix it with artemia cysts for an artemia hatchery.");
         a.accept("info.bettacraft.artemia_cysts", "Dried brine shrimp eggs, a rare find when you mine sand.\nOne item lasts for 16 hatcheries.");
@@ -536,8 +536,8 @@ final class LangEn {
         a.accept("info.bettacraft.heater_small", "Heats up to 16 water blocks towards the target temperature of the tank (default 27 °C).\nPlace it in the tank interior (under water) or into an external filter. Heaters add up.");
         a.accept("info.bettacraft.heater_medium", "Heats up to 32 water blocks. Place it in the tank interior or into an external filter.");
         a.accept("info.bettacraft.heater_large", "Heats up to 64 water blocks. Place it in the tank interior or into an external filter.");
-        a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet. It only looks nice; the flow has no effect.");
-        a.accept("info.bettacraft.external_filter", "Place it next to a tank (facing it) or put it into a cabinet under the tank.\nHolds two heaters of any size, which then heat the tank.");
+        a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality).");
+        a.accept("info.bettacraft.external_filter", "Place it next to a tank (facing it) or put it into a cabinet under the tank.\nKeeps 32 water blocks clean and holds two heaters or coolers of any size.");
         a.accept("info.bettacraft.feeder", "Place it on top of a tank and fill it with food (also by hopper).\nFeeds 1 to 3 times a day, picks fry food for fry and takes food from cabinets under the tank.");
         a.accept("info.bettacraft.tank_light", "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15. A redstone signal switches the whole bar off.");
         a.accept("info.bettacraft.cabinet", "Made from any planks. Put a tank on it.\nHolds an external filter (with two heaters) and nine stacks the feeder can use.");
@@ -593,5 +593,145 @@ final class LangEn {
         a.accept("advancements.bettacraft.pellets.description", "Craft betta pellets");
         a.accept("advancements.bettacraft.fry_food.title", "Microscopic Menu");
         a.accept("advancements.bettacraft.fry_food.description", "Culture infusoria or hatch artemia nauplii for fry");
+
+        m9(a);
+    }
+
+    /** M9: water quality, evaporation, coolers, power, lid, larva tub and artemia hatchery. */
+    private static void m9(BiConsumer<String, String> a) {
+        a.accept("block.bettacraft.cooler_segment", "Aquarium Cooler");
+        a.accept("block.bettacraft.tank_lid", "Aquarium Lid");
+        a.accept("block.bettacraft.larva_tub", "Larva Tub");
+        a.accept("block.bettacraft.artemia_hatchery", "Artemia Hatchery");
+        a.accept("item.bettacraft.cooler_small", "Small Aquarium Cooler");
+        a.accept("item.bettacraft.cooler_medium", "Medium Aquarium Cooler");
+        a.accept("item.bettacraft.cooler_large", "Large Aquarium Cooler");
+        a.accept("tooltip.bettacraft.cooler.capacity", "Cools up to %s water blocks");
+        a.accept("tooltip.bettacraft.cooler.usage", "Place it inside the tank interior (cools while under water) or put it into an external filter");
+        a.accept("info.bettacraft.cooler_small", "Cools up to 16 water blocks towards the target temperature of the tank when it is warmer around the tank (deserts, the Nether).\nPlace it in the tank interior (under water) or into an external filter. Coolers add up.");
+        a.accept("info.bettacraft.cooler_medium", "Cools up to 32 water blocks. Place it in the tank interior or into an external filter.");
+        a.accept("info.bettacraft.cooler_large", "Cools up to 64 water blocks. Place it in the tank interior or into an external filter.");
+        a.accept("info.bettacraft.tank_lid", "Lay it on a top block of a tank: that block no longer loses water by evaporation.\nThe feeder and lights cover the block they stand on as well.");
+        a.accept("info.bettacraft.larva_tub", "Breeds mosquito larvae under the open sky.\nFill it with a water bucket (or a pipe) and add organic matter: leaves, wheat, rotten flesh or bone meal (also by hopper).\nA batch takes about 2 days, faster at night, in swamps and in the rain. Harvest with a glass bottle or let a hopper below take the larvae.");
+        a.accept("info.bettacraft.artemia_hatchery", "Hatches artemia nauplii in the light (level 9 or more).\nPour in salt water bottles, add artemia cysts and glass bottles (also by hopper; emptied salt water bottles are reused).\nA batch takes 1 day. Take the nauplii with an empty hand or let a hopper below take them.");
+
+        a.accept("gui.bettacraft.tab.water", "Water");
+        a.accept("gui.bettacraft.tank.coolers", "Coolers: %s");
+        a.accept("gui.bettacraft.interior.coolers", "Coolers: %s (%s blocks)");
+        a.accept("gui.bettacraft.water.volume", "Water: %s / %s mB (%s%%)");
+        a.accept("gui.bettacraft.water.quality", "Water quality: %s%% (%s)");
+        a.accept("gui.bettacraft.water.state.clean", "clean");
+        a.accept("gui.bettacraft.water.state.good", "good");
+        a.accept("gui.bettacraft.water.state.poor", "poor");
+        a.accept("gui.bettacraft.water.state.bad", "bad");
+        a.accept("gui.bettacraft.water.decline", "Loses %s%% per day (%s animals per water block)");
+        a.accept("gui.bettacraft.water.no_filter", "No filter: the water fouls fast");
+        a.accept("gui.bettacraft.water.filters", "Filters: %s outside, %s inside, %s blocks, remove %s%%");
+        a.accept("gui.bettacraft.water.quality_off", "Water quality is switched off (config)");
+        a.accept("gui.bettacraft.water.fresh_never", "No fresh water poured in yet");
+        a.accept("gui.bettacraft.water.fresh", "Last fresh water: day %s");
+        a.accept("gui.bettacraft.water.evaporation_off", "Evaporation is switched off (config)");
+        a.accept("gui.bettacraft.water.covered", "Covered: no evaporation");
+        a.accept("gui.bettacraft.water.evaporation", "Evaporates %s mB per day (%s of %s top blocks open)");
+        a.accept("gui.bettacraft.water.temp_equipment", "Heaters: %s blocks, coolers: %s blocks");
+        a.accept("gui.bettacraft.water.power_off", "Power: not needed (config)");
+        a.accept("gui.bettacraft.water.power", "Power: %s / %s FE, needs %s FE/t");
+        a.accept("gui.bettacraft.water.power_heat", "Heating");
+        a.accept("gui.bettacraft.water.power_filter", "Filters");
+        a.accept("gui.bettacraft.water.power_light", "Light");
+        a.accept("gui.bettacraft.water.power_free", "free");
+        a.accept("gui.bettacraft.water.no_power", "No power: %s");
+        a.accept("gui.bettacraft.water.warn_poor", "Poor water (%s%%): change some water soon");
+        a.accept("gui.bettacraft.water.warn_bad", "Bad water (%s%%): the bettas suffer, change water!");
+        a.accept("gui.bettacraft.water.hint", "Water change: drain with buckets, pour fresh water in.");
+
+        a.accept("log.bettacraft.water_poor", "Water quality is poor (%s%%)");
+        a.accept("log.bettacraft.water_bad", "Water quality is bad (%s%%): the bettas suffer");
+        a.accept("log.bettacraft.water_low", "Water evaporated down to %s mB: top it up");
+        a.accept("cause.bettacraft.water_quality", "bad water");
+
+        a.accept("jade.bettacraft.tank.quality", "Water quality: %s%% (%s)");
+        a.accept("jade.bettacraft.tank.evaporation", "Evaporates %s mB/day");
+        a.accept("jade.bettacraft.tank.power", "Power: %s / %s FE (%s FE/t)");
+        a.accept("jade.bettacraft.no_power", "no power!");
+        a.accept("jade.bettacraft.filter.coolers", "Coolers: %s (%s water blocks)");
+        a.accept("jade.bettacraft.culture.water", "Water: %s / %s mB");
+        a.accept("jade.bettacraft.culture.organic", "Organic matter: %s");
+        a.accept("jade.bettacraft.culture.cysts", "Cysts: %s uses");
+        a.accept("jade.bettacraft.culture.bottles", "Glass bottles: %s");
+        a.accept("jade.bettacraft.culture.progress", "Batch: %s%%");
+        a.accept("jade.bettacraft.culture.ready_larvae", "Ready: %s mosquito larvae");
+        a.accept("jade.bettacraft.culture.ready_nauplii", "Ready: %s bottles of nauplii");
+
+        a.accept("message.bettacraft.culture.needs_salt_water", "The hatchery needs salt water: pour in salt water bottles");
+        a.accept("message.bettacraft.culture.full_water", "There is no room for more water");
+        a.accept("message.bettacraft.culture.status", "Water %s/%s mB, ingredient %s, batch %s%%, ready %s");
+        a.accept("message.bettacraft.culture.blocked.water", "(needs water)");
+        a.accept("message.bettacraft.culture.blocked.salt_water", "(needs salt water)");
+        a.accept("message.bettacraft.culture.blocked.organic", "(needs organic matter)");
+        a.accept("message.bettacraft.culture.blocked.cysts", "(needs artemia cysts)");
+        a.accept("message.bettacraft.culture.blocked.bottles", "(needs glass bottles)");
+        a.accept("message.bettacraft.culture.blocked.full", "(full: take the food out)");
+        a.accept("message.bettacraft.culture.blocked.dark", "(too dark)");
+        a.accept("message.bettacraft.culture.blocked.sky", "(needs the open sky)");
+
+        a.accept("advancements.bettacraft.water_change.title", "Fresh Start");
+        a.accept("advancements.bettacraft.water_change.description", "Change water: pour fresh water into a tank with used water");
+        a.accept("advancements.bettacraft.cooler.title", "Keep Cool");
+        a.accept("advancements.bettacraft.cooler.description", "Get an aquarium cooler for hot places");
+        a.accept("advancements.bettacraft.food_bred.title", "Larva Farmer");
+        a.accept("advancements.bettacraft.food_bred.description", "Take live food out of a larva tub or an artemia hatchery");
+
+        // config screen
+        a.accept("bettacraft.configuration.waterQuality", "Water quality");
+        a.accept("bettacraft.configuration.waterQuality.tooltip", "Waste of the animals and of uneaten food lowers the water quality, filters slow that down, a water change brings it back");
+        a.accept("bettacraft.configuration.qualityEnabled", "Water quality on");
+        a.accept("bettacraft.configuration.qualityEnabled.tooltip", "Whether the water quality changes at all and stresses bettas when it is bad");
+        a.accept("bettacraft.configuration.baseDeclinePerDay", "Loss per day");
+        a.accept("bettacraft.configuration.baseDeclinePerDay.tooltip", "Water quality lost per in-game day in every tank, even without animals (0.01 = 1%)");
+        a.accept("bettacraft.configuration.declinePerAnimalPerDay", "Loss per animal");
+        a.accept("bettacraft.configuration.declinePerAnimalPerDay.tooltip", "Additional water quality lost per in-game day for each animal per water block");
+        a.accept("bettacraft.configuration.declinePerOverfedPortion", "Loss per overfed portion");
+        a.accept("bettacraft.configuration.declinePerOverfedPortion.tooltip", "Water quality lost per water block for each portion a fish gets that is not hungry (fed again within half a day)");
+        a.accept("bettacraft.configuration.filterEfficiency", "Filter efficiency");
+        a.accept("bettacraft.configuration.filterEfficiency.tooltip", "Share of the waste that a filter removes when it is large enough for the tank");
+        a.accept("bettacraft.configuration.externalFilterBlocks", "External filter capacity");
+        a.accept("bettacraft.configuration.externalFilterBlocks.tooltip", "Water blocks one external filter (block or in a cabinet) keeps clean");
+        a.accept("bettacraft.configuration.internalFilterBlocks", "Internal filter capacity");
+        a.accept("bettacraft.configuration.internalFilterBlocks.tooltip", "Water blocks one internal filter (in the interior) keeps clean");
+        a.accept("bettacraft.configuration.badBelow", "Bad below");
+        a.accept("bettacraft.configuration.badBelow.tooltip", "Below this water quality bettas are stressed (like by a wrong temperature)");
+        a.accept("bettacraft.configuration.evaporation", "Evaporation");
+        a.accept("bettacraft.configuration.evaporation.tooltip", "Open tanks slowly lose water; a lid, the feeder or a light covers a top block");
+        a.accept("bettacraft.configuration.evaporationEnabled", "Evaporation on");
+        a.accept("bettacraft.configuration.evaporationEnabled.tooltip", "Whether open tanks lose water");
+        a.accept("bettacraft.configuration.mbPerBlockPerDay", "mB per block and day");
+        a.accept("bettacraft.configuration.mbPerBlockPerDay.tooltip", "Water (mB) one uncovered top block loses per in-game day at 25 C (warmer water evaporates faster)");
+        a.accept("bettacraft.configuration.power", "Power");
+        a.accept("bettacraft.configuration.power.tooltip", "Heaters, coolers, filters and lights can need Forge Energy (FE), stored in the tank");
+        a.accept("bettacraft.configuration.heaterRequiresEnergy", "Heaters need power");
+        a.accept("bettacraft.configuration.heaterRequiresEnergy.tooltip", "Heaters and coolers only work while the tank has enough FE");
+        a.accept("bettacraft.configuration.filterRequiresEnergy", "Filters need power");
+        a.accept("bettacraft.configuration.filterRequiresEnergy.tooltip", "Filters only clean the water while the tank has enough FE");
+        a.accept("bettacraft.configuration.lightRequiresEnergy", "Lights need power");
+        a.accept("bettacraft.configuration.lightRequiresEnergy.tooltip", "Lights on a tank only shine while the tank has enough FE");
+        a.accept("bettacraft.configuration.heaterFePerBlock", "Heater FE per water block");
+        a.accept("bettacraft.configuration.heaterFePerBlock.tooltip", "FE per tick a heater or cooler needs for each water block it heats or cools");
+        a.accept("bettacraft.configuration.filterFePerTick", "Filter FE per tick");
+        a.accept("bettacraft.configuration.filterFePerTick.tooltip", "FE per tick of each filter");
+        a.accept("bettacraft.configuration.lightFePerTick", "Light FE per tick");
+        a.accept("bettacraft.configuration.lightFePerTick.tooltip", "FE per tick of each lit light block on a tank");
+        a.accept("bettacraft.configuration.bufferFe", "FE storage per tank");
+        a.accept("bettacraft.configuration.bufferFe.tooltip", "FE a tank can store");
+        a.accept("bettacraft.configuration.foodBreeding", "Food breeding");
+        a.accept("bettacraft.configuration.foodBreeding.tooltip", "Larva tub (mosquito larvae) and artemia hatchery (artemia nauplii)");
+        a.accept("bettacraft.configuration.larvaTubDays", "Larva tub days");
+        a.accept("bettacraft.configuration.larvaTubDays.tooltip", "In-game days a larva tub needs for one batch (faster at night, in swamps and in the rain)");
+        a.accept("bettacraft.configuration.larvaTubYield", "Larvae per batch");
+        a.accept("bettacraft.configuration.larvaTubYield.tooltip", "Mosquito larvae per batch (uses one piece of organic matter and 250 mB of water)");
+        a.accept("bettacraft.configuration.hatcheryDays", "Hatchery days");
+        a.accept("bettacraft.configuration.hatcheryDays.tooltip", "In-game days an artemia hatchery needs for one batch (needs light)");
+        a.accept("bettacraft.configuration.hatcheryYield", "Nauplii per batch");
+        a.accept("bettacraft.configuration.hatcheryYield.tooltip", "Bottles of artemia nauplii per batch (uses one use of cysts, 250 mB of salt water and one glass bottle per bottle)");
     }
 }

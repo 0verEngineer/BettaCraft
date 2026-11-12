@@ -42,6 +42,9 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.HEATER_SMALL.get());
                 out.accept(ModItems.HEATER_MEDIUM.get());
                 out.accept(ModItems.HEATER_LARGE.get());
+                out.accept(ModItems.COOLER_SMALL.get());
+                out.accept(ModItems.COOLER_MEDIUM.get());
+                out.accept(ModItems.COOLER_LARGE.get());
                 out.accept(ModItems.INTERNAL_FILTER.get());
                 out.accept(ModItems.EXTERNAL_FILTER.get());
                 // cabinets: one per vanilla planks (modded planks work the same, see the cabinet recipe)
@@ -53,6 +56,7 @@ public final class ModCreativeTabs {
                 }
                 out.accept(ModItems.FEEDER.get());
                 out.accept(ModItems.TANK_LIGHT.get());
+                out.accept(ModItems.TANK_LID.get());
                 // food chain (in crafting order)
                 out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
                 out.accept(ModItems.MOSQUITO_LARVAE.get());
@@ -63,6 +67,8 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.INFUSORIA.get());
                 out.accept(ModItems.ARTEMIA_CULTURE.get());
                 out.accept(ModItems.ARTEMIA_NAUPLII.get());
+                out.accept(ModItems.LARVA_TUB.get());
+                out.accept(ModItems.ARTEMIA_HATCHERY.get());
                 // decoration
                 for (var d : ModItems.DECOR.values()) out.accept(d.get());
                 // one bucket per fin form (long-finned tails and the plakat forms), then one per named variety (its example fish)
