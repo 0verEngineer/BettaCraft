@@ -78,6 +78,11 @@ public final class TankWater {
         return n;
     }
 
+    /** M14: with the bioload of the shrimp, crayfish and snails (stocking.*PerFish of them count as one fish). */
+    public static double animals(List<Entity> live, TankData tank) {
+        return animals(live) + org.overengineer.bettacraft.critters.TankCritters.bioload(tank);
+    }
+
     // ------------------------------------------------------------------ cover / evaporation
 
     /** Whether something on top of a tank block keeps the water from evaporating: a lid, the feeder, a light or a full block. */
@@ -117,7 +122,7 @@ public final class TankWater {
         TankData tank = c.getTank();
         if (qualityEnabled() && tank.waterMb() > 0) {
             float before = tank.waterQuality();
-            float q = WaterQuality.step(before, days, animals(TankInhabitants.liveInhabitants(level, tank)), tank.waterBlocks(),
+            float q = WaterQuality.step(before, days, animals(TankInhabitants.liveInhabitants(level, tank), tank), tank.waterBlocks(),
                     filterBlocks(level, c), params());
             if (q != before) {
                 tank.setWaterQuality(q);
@@ -151,8 +156,11 @@ public final class TankWater {
 
     /** Fish fed although they were not hungry: the food rots (M9 overfeeding). */
     public static void overfed(ServerLevel level, TankBlockEntity c, int portions) {
-        if (!qualityEnabled() || portions <= 0) return;
+        if (portions <= 0) return;
         TankData tank = c.getTank();
+        // M14: shrimp, crayfish and snails eat the leftovers first
+        portions = org.overengineer.bettacraft.critters.TankCritters.eatLeftovers(tank, portions);
+        if (!qualityEnabled() || portions <= 0) return;
         tank.setWaterQuality(WaterQuality.overfed(tank.waterQuality(), portions, tank.waterBlocks(), filterBlocks(level, c), params()));
         c.setChanged();
     }

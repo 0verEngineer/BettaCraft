@@ -1,0 +1,25 @@
+---
+navigation:
+  title: Stocking
+  icon: bettacraft:tank
+  parent: invertebrates.md
+  position: 70
+---
+
+# Stocking
+
+The stocking limits of an aquarium count fish: from 2 adults per water block the bettas get stressed, at most 6 per
+water block fit in (`tank.overcrowdedPerWaterBlock`, `tank.hardCapPerWaterBlock`). Small animals count in fractions:
+
+| Animals | count as one fish | Config |
+|---|---|---|
+| snails | 50 | `stocking.snailsPerFish` |
+| shrimp | 25 | `stocking.shrimpPerFish` |
+| dwarf crayfish | 12 | `stocking.crayfishPerFish` |
+| dwarf clawed frogs | 1 | `stocking.frogsPerFish` |
+
+* Only adults count, like the bettas; the young do not.
+* The water gets their waste too (in the same fractions, young at half).
+* Independent of the stocking a tank holds at most 200 shrimp, crayfish and snails (`invertebrates.maxCrittersPerTank`);
+  there they stop breeding.
+* The overview of the [tank menu](../aquarium/menu.md) and Jade, The One Probe and WTHIT show the stocking.

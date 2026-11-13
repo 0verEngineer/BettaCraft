@@ -46,7 +46,7 @@ public class FishBagItem extends Item {
     }
 
     public static boolean isFilled(ItemStack stack) {
-        return stack.has(ModDataComponents.BAG_ENTITY.get());
+        return stack.has(ModDataComponents.BAG_ENTITY.get()) || stack.has(ModDataComponents.CRITTERS.get());
     }
 
     @Nullable
@@ -85,6 +85,7 @@ public class FishBagItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (stack.has(ModDataComponents.CRITTERS.get())) return releaseCritters(level, player, hand, stack);
         EntityType<?> type = containedType(stack);
         if (type == null) return InteractionResultHolder.pass(stack);
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
@@ -107,8 +108,28 @@ public class FishBagItem extends Item {
         return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, empty), level.isClientSide);
     }
 
+    /** M14: shrimp, crayfish or snails let go into open water (they are gone). */
+    private InteractionResultHolder<ItemStack> releaseCritters(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (!level.getFluidState(hit.getBlockPos()).is(FluidTags.WATER)) {
+            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            return InteractionResultHolder.fail(stack);
+        }
+        if (!level.isClientSide) {
+            level.playSound(null, hit.getBlockPos(), SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 0.8F, 1.3F);
+            player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
+        }
+        return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())), level.isClientSide);
+    }
+
     @Override
     public Component getName(ItemStack stack) {
+        var critters = stack.get(ModDataComponents.CRITTERS.get());
+        if (critters != null && !critters.isEmpty()) {
+            return Component.translatable("item.bettacraft.fish_bag.critters", critters.size(),
+                    org.overengineer.bettacraft.critters.CritterTooltip.bagName(critters));
+        }
         EntityType<?> type = containedType(stack);
         if (type == null) return super.getName(stack);
         Component inner = stack.has(DataComponents.CUSTOM_NAME) ? stack.get(DataComponents.CUSTOM_NAME) : type.getDescription();
@@ -118,7 +139,10 @@ public class FishBagItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         BettaData data = stack.get(ModDataComponents.FISH_DATA.get());
-        if (data != null) {
+        var critters = stack.get(ModDataComponents.CRITTERS.get());
+        if (critters != null && !critters.isEmpty()) {
+            org.overengineer.bettacraft.critters.CritterTooltip.append(critters, tooltip);
+        } else if (data != null) {
             BettaTooltip.append(data, tooltip);
         } else if (!isFilled(stack)) {
             tooltip.add(Component.translatable("tooltip.bettacraft.fish_bag.empty").withStyle(ChatFormatting.GRAY));

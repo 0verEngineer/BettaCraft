@@ -76,6 +76,7 @@ public final class InteriorSync {
         if (regionId >= 0) {
             state(regionId).all = true;
             InteriorObstacles.forget(regionId);
+            InteriorGround.forget(regionId);
         }
     }
 
@@ -87,6 +88,7 @@ public final class InteriorSync {
     public static void forget(int regionId) {
         STATES.remove(regionId);
         InteriorObstacles.forget(regionId);
+        InteriorGround.forget(regionId);
     }
 
     public static void clearAll() {
@@ -125,6 +127,7 @@ public final class InteriorSync {
             state(id).dirty.add(sectionKey(sx, pos.getY() >> 4, sz));
             r.equipment().onChange(r.localX(pos.getX()), r.localY(pos.getY()), r.localZ(pos.getZ()), oldState, newState);
             InteriorObstacles.invalidate(id, r.localX(pos.getX()), r.localY(pos.getY()), r.localZ(pos.getZ()));
+            InteriorGround.invalidate(id, r.localX(pos.getX()), r.localZ(pos.getZ())); // M14: where the small animals walk
             // M13: the root of an aquarium plant vanished (not by a player breaking it): forget the plant
             if (oldState.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock
                     && oldState.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.PART).ordinal() <= org.overengineer.bettacraft.plants.PlantPart.ROOT.ordinal()

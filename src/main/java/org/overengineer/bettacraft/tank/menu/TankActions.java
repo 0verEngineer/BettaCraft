@@ -31,6 +31,10 @@ public final class TankActions {
     public static final int ENTER_INTERIOR = 8;
     /** M12: thin the floating plants out by half (the plants go to the player). */
     public static final int THIN_PLANTS = 9;
+    /** M14: take one small animal of a kind (text = species:variety; value 1 = the worst grade) into a fish bag. */
+    public static final int TAKE_CRITTER = 10;
+    /** M14: take the apple snail clutches off the glass. */
+    public static final int REMOVE_CLUTCHES = 11;
 
     public static final int MAX_FISH_NAME = 32;
 
@@ -86,6 +90,19 @@ public final class TankActions {
                     var items = org.overengineer.bettacraft.tank.plants.TankPlants.thin(player.serverLevel(), controller);
                     if (items.isEmpty()) error = Component.translatable("message.bettacraft.plants.none");
                     else org.overengineer.bettacraft.tank.plants.TankPlants.taken(player.serverLevel(), controller, player, items, true);
+                }
+            }
+            case TAKE_CRITTER -> error = org.overengineer.bettacraft.critters.TankCritters.takeOut(player.serverLevel(), controller, player,
+                    p.text(), p.value() == 1);
+            case REMOVE_CLUTCHES -> {
+                if (!modify) error = locked();
+                else {
+                    int n = org.overengineer.bettacraft.critters.TankCritters.removeClutches(player.serverLevel(), controller);
+                    if (n == 0) error = Component.translatable("message.bettacraft.critters.no_clutches");
+                    else {
+                        TankCare.log(player.serverLevel(), controller, "log.bettacraft.clutch_removed", TankCare.nameArg(player));
+                        player.displayClientMessage(Component.translatable("message.bettacraft.critters.clutch_removed").withStyle(ChatFormatting.GREEN), true);
+                    }
                 }
             }
             case ENTER_INTERIOR -> {

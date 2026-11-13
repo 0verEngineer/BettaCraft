@@ -130,6 +130,25 @@ public final class ServerConfig {
     // misc
     public static final ModConfigSpec.BooleanValue SIMULATE_UNLOADED_TIME;
 
+    // M14: shrimp, crayfish, snails, dwarf clawed frogs, algae, stocking
+    public static final ModConfigSpec.IntValue CRITTERS_MAX_PER_TANK;
+    public static final ModConfigSpec.DoubleValue CRITTERS_SHRIMP_BREEDING;
+    public static final ModConfigSpec.DoubleValue CRITTERS_CRAYFISH_BREEDING;
+    public static final ModConfigSpec.DoubleValue CRITTERS_SNAIL_BREEDING;
+    public static final ModConfigSpec.BooleanValue CRITTERS_BETTAS_HUNT;
+    public static final ModConfigSpec.DoubleValue CRITTERS_BIOFILM;
+    public static final ModConfigSpec.DoubleValue CRITTERS_NET_CHANCE;
+    public static final ModConfigSpec.IntValue CRITTERS_NET_COOLDOWN;
+    public static final ModConfigSpec.DoubleValue CRITTERS_MUD_CHANCE;
+    public static final ModConfigSpec.DoubleValue FROGS_FOOD_SHARE;
+    public static final ModConfigSpec.DoubleValue FROGS_AIR_MINUTES;
+    public static final ModConfigSpec.IntValue STOCKING_SNAILS_PER_FISH;
+    public static final ModConfigSpec.IntValue STOCKING_SHRIMP_PER_FISH;
+    public static final ModConfigSpec.IntValue STOCKING_CRAYFISH_PER_FISH;
+    public static final ModConfigSpec.DoubleValue STOCKING_FROGS_PER_FISH;
+    public static final ModConfigSpec.DoubleValue ALGAE_GROWTH_SPEED;
+    public static final ModConfigSpec.DoubleValue ALGAE_CLEANER_STRENGTH;
+
     // guide (M6)
     public static final ModConfigSpec.EnumValue<GiveBook> GUIDE_GIVE_BOOK;
 
@@ -322,6 +341,55 @@ public final class ServerConfig {
         CULTURE_ARTEMIA_DAYS = b.comment("In-game days an artemia hatchery needs for one batch (needs light)").defineInRange("hatcheryDays", 1.0, 0.01, 100.0);
         CULTURE_ARTEMIA_YIELD = b.comment("Bottles of artemia nauplii per batch (uses one use of cysts, 250 mB of salt water and one glass bottle per bottle)")
                 .defineInRange("hatcheryYield", 2, 1, 64);
+        b.pop();
+
+        b.comment("Shrimp, dwarf crayfish and snails: small animals that live in a tank as data (no entities)").push("invertebrates");
+        CRITTERS_MAX_PER_TANK = b.comment("Most shrimp, crayfish and snails one tank holds (they stop breeding there)")
+                .defineInRange("maxCrittersPerTank", 200, 1, 2000);
+        CRITTERS_SHRIMP_BREEDING = b.comment("Breeding speed of the Neocaridina shrimp (1 = normal, 0 = they never breed)")
+                .defineInRange("shrimpBreeding", 1.0, 0.0, 10.0);
+        CRITTERS_CRAYFISH_BREEDING = b.comment("Breeding speed of the dwarf crayfish (1 = normal, 0 = they never breed)")
+                .defineInRange("crayfishBreeding", 1.0, 0.0, 10.0);
+        CRITTERS_SNAIL_BREEDING = b.comment("Breeding speed of the snails that breed in fresh water (apple, ramshorn, bladder, trumpet and",
+                        "assassin snails; nerites never breed in fresh water)")
+                .defineInRange("snailBreeding", 1.0, 0.0, 10.0);
+        CRITTERS_BETTAS_HUNT = b.comment("Whether bettas hunt young shrimp and crayfish (now and then an adult shrimp); plants and Java moss hide them")
+                .define("bettasHuntShrimp", true);
+        CRITTERS_BIOFILM = b.comment("Food (portions per day) one water block grows on its own as biofilm for the small animals; plants and",
+                        "algae add to it, leftovers of the fish food too")
+                .defineInRange("biofilmPerWaterBlock", 0.03, 0.0, 10.0);
+        CRITTERS_NET_CHANCE = b.comment("Chance that the aquarium net catches something alive in fitting water (river, swamp, mangrove,",
+                        "beach, jungle, lush caves); the catch goes into an empty fish bag")
+                .defineInRange("netCatchChance", 0.3, 0.0, 1.0);
+        CRITTERS_NET_COOLDOWN = b.comment("Ticks the aquarium net needs before the next try in open water")
+                .defineInRange("netCooldownTicks", 40, 0, 1200);
+        CRITTERS_MUD_CHANCE = b.comment("Chance that a shovel on mud in a swamp turns up a Malaysian trumpet snail (into an empty fish bag)")
+                .defineInRange("mudSnailChance", 0.08, 0.0, 1.0);
+        b.pop();
+
+        b.comment("Dwarf clawed frogs (entities): they breathe at the surface and are slow eaters").push("frogs");
+        FROGS_FOOD_SHARE = b.comment("Chance that a frog gets its share of the food while bettas are in the tank (they snatch it away);",
+                        "sneak + right-click with food feeds the frogs directly")
+                .defineInRange("frogFoodShareWithBettas", 0.4, 0.0, 1.0);
+        FROGS_AIR_MINUTES = b.comment("Real minutes a frog can stay under water before it has to breathe at the surface")
+                .defineInRange("frogAirMinutes", 2.0, 0.25, 60.0);
+        b.pop();
+
+        b.comment("Stocking: how many small animals count as one fish for the stocking limits (tank.hardCapPerWaterBlock ...)").push("stocking");
+        STOCKING_SNAILS_PER_FISH = b.comment("Snails that count as one fish").defineInRange("snailsPerFish", 50, 1, 10000);
+        STOCKING_SHRIMP_PER_FISH = b.comment("Shrimp that count as one fish").defineInRange("shrimpPerFish", 25, 1, 10000);
+        STOCKING_CRAYFISH_PER_FISH = b.comment("Dwarf crayfish that count as one fish (they are twice the size of a shrimp)")
+                .defineInRange("crayfishPerFish", 12, 1, 10000);
+        STOCKING_FROGS_PER_FISH = b.comment("Dwarf clawed frogs that count as one fish").defineInRange("frogsPerFish", 1.0, 0.1, 100.0);
+        b.pop();
+
+        b.comment("Green algae on the inside of the glass").push("algae");
+        ALGAE_GROWTH_SPEED = b.comment("How fast algae grow on the glass with light and waste (1 face fully green in about 4 days at 0.25;",
+                        "0 = no algae)")
+                .defineInRange("algaeGrowthSpeed", 0.25, 0.0, 10.0);
+        ALGAE_CLEANER_STRENGTH = b.comment("How much algae the snails and shrimp graze (1 = normal: a few nerites keep a tank clean, 0 = they",
+                        "eat none)")
+                .defineInRange("cleanerStrength", 1.0, 0.0, 10.0);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

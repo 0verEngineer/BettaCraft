@@ -41,6 +41,8 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         if (t == null || !be.isController()) return;
         if (t.nest() != null) renderNest(be, t.nest(), partialTick, pose, buffers);
         FloatingPlantRenderer.render(be, t, partialTick, pose, buffers); // M12
+        CritterRenderer.render(be, t, partialTick, pose, buffers); // M14
+        AlgaeRenderer.render(be, t, pose, buffers); // M14
         if (!t.signVisible() || t.name().isEmpty()) return;
         Direction front = t.front();
         SignPosition sp = t.signPos();

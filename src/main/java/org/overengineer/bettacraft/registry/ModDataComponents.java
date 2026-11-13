@@ -44,6 +44,14 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<Integer>> PLANT_STAGE = COMPONENTS.registerComponentType("plant_stage",
             b -> b.persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT));
 
+    /**
+     * M14: shrimp, crayfish or snails in a fish bag (each one a compound like {@code Critter#saveAnimal}); a bag with this
+     * component counts as filled.
+     */
+    public static final Supplier<DataComponentType<java.util.List<net.minecraft.nbt.CompoundTag>>> CRITTERS = COMPONENTS.registerComponentType("critters",
+            b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC.listOf())
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG.apply(net.minecraft.network.codec.ByteBufCodecs.list(64))));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }

@@ -82,9 +82,17 @@ public final class FloatingPlantEvents {
             else TankPlants.taken(server, c, player, items, true);
             return;
         }
+        // M14: a shrimp, crayfish, snail, body, clutch or moult the net is aimed at comes first (nearer than the plants)
+        var aimed = org.overengineer.bettacraft.critters.TankCritters.aimed(t, player.getEyePosition(), player.getViewVector(1.0F));
         Vec3 at = TankPlants.netTarget(t, player.getEyePosition(), player.getViewVector(1.0F));
+        if (aimed != null && (at == null || aimed.distance() <= player.getEyePosition().distanceTo(at) + 0.05)) {
+            Component msg = org.overengineer.bettacraft.critters.TankCritters.net(server, c, player, aimed);
+            if (msg != null) player.displayClientMessage(msg, true);
+            return;
+        }
         List<ItemStack> items = at == null ? List.of() : TankPlants.removeAt(server, c, at.x, at.z, TankPlants.NET_REACH);
-        if (items.isEmpty()) player.displayClientMessage(Component.translatable(t.plants().isEmpty()
+        if (items.isEmpty()) player.displayClientMessage(Component.translatable(!t.critters().isEmpty() && t.plants().isEmpty()
+                ? "message.bettacraft.critters.none_here" : t.plants().isEmpty()
                 ? "message.bettacraft.plants.none" : "message.bettacraft.plants.none_here"), true);
         else TankPlants.taken(server, c, player, items, false);
     }

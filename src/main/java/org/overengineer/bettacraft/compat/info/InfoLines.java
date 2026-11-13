@@ -69,6 +69,17 @@ public final class InfoLines {
         if (d.getInt("filters_out") + d.getInt("filters_in") > 0) {
             out.add(Component.translatable("jade.bettacraft.tank.filters", d.getInt("filters_out"), d.getInt("filters_in")));
         }
+        // M14: shrimp, crayfish, snails and the algae
+        int[] cr = d.getIntArray("critters");
+        if (cr.length == 4 && cr[0] + cr[1] + cr[2] > 0) {
+            MutableComponent l = Component.translatable("jade.bettacraft.tank.critters", cr[0], cr[1], cr[2]);
+            if (cr[3] > 0) l.append(" ").append(Component.translatable("jade.bettacraft.tank.critters_young", cr[3]));
+            out.add(l.withStyle(ChatFormatting.GOLD));
+            if (details) out.add(Component.translatable("jade.bettacraft.tank.stocking", f1(d.getFloat("stock"))).withStyle(ChatFormatting.GRAY));
+        }
+        if (d.getFloat("algae") >= 0.1F) {
+            out.add(Component.translatable("jade.bettacraft.tank.algae", Math.round(d.getFloat("algae") * 100)).withStyle(ChatFormatting.DARK_GREEN));
+        }
         // M12: floating plants
         if (d.getInt("plants") > 0) {
             out.add(Component.translatable("jade.bettacraft.tank.plants", d.getInt("plants"), Math.min(100, Math.round(d.getFloat("plant_cover") * 100)))

@@ -198,7 +198,8 @@ public final class TankInhabitants {
         if (isAdult(e)) {
             long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);
             int cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
-            if (countAdults(live) + 1 > cap) {
+            // M14: the small animals and the frogs count by config (stocking.*PerFish)
+            if (stocking(live, tank) + weight(e) > cap + 1e-6) {
                 e.discard();
                 return Component.translatable("message.bettacraft.tank.crowded_full", cap);
             }
@@ -292,6 +293,26 @@ public final class TankInhabitants {
         return !(e instanceof LivingEntity le) || !le.isBaby();
     }
 
+    /** How much one inhabitant counts for the stocking: adults 1, frogs 1 / stocking.frogsPerFish, young 0. */
+    public static double weight(Entity e) {
+        if (!isAdult(e)) return 0;
+        if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) {
+            return 1.0 / Math.max(0.1, ServerConfig.getOr(ServerConfig.STOCKING_FROGS_PER_FISH, 1.0));
+        }
+        return 1.0;
+    }
+
+    /** M14: stocking of a tank in fish: adult inhabitants (frogs by config) plus the small animals (stocking.*PerFish). */
+    public static double stocking(List<Entity> live, TankData tank) {
+        double s = 0;
+        for (Entity e : live) s += weight(e);
+        return s + org.overengineer.bettacraft.critters.TankCritters.stock(tank);
+    }
+
+    public static double stocking(ServerLevel level, TankData tank) {
+        return stocking(liveInhabitants(level, tank), tank);
+    }
+
     public static int countAdults(List<Entity> list) {
         int n = 0;
         for (Entity e : list) if (isAdult(e)) n++;
@@ -305,8 +326,13 @@ public final class TankInhabitants {
 
     /** Overcrowded from 2 adults per water block (default); one betta per block is fine. */
     public static boolean isOvercrowded(int adults, double waterBlocks) {
+        return isOvercrowded((double) adults, waterBlocks);
+    }
+
+    /** M14: with the stocking in fish (small animals count in fractions). */
+    public static boolean isOvercrowded(double stock, double waterBlocks) {
         int per = ServerConfig.getOr(ServerConfig.TANK_OVERCROWDED_PER_WATER_BLOCK, 2);
-        return adults >= 2 && adults >= per * waterBlocks - 1e-6;
+        return stock >= 2 - 1e-6 && stock >= per * waterBlocks - 1e-6;
     }
 
     // ------------------------------------------------------------------ reconciliation
@@ -321,12 +347,12 @@ public final class TankInhabitants {
         AABB box = tankBox(tank);
         TankRef ours = new TankRef(controller.getBlockPos(), tank.id());
         Set<UUID> found = new HashSet<>();
-        int adults = 0;
+        double adults = org.overengineer.bettacraft.critters.TankCritters.stock(tank);
         for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;
             if (!ours.equals(e.getData(ModAttachments.TANK_REF.get()))) adopt(e, controller);
             found.add(e.getUUID());
-            if (isAdult(e)) adults++;
+            adults += weight(e);
         }
         for (Entity e : level.getEntities((Entity) null, box.inflate(6), e -> hasTankRef(e) && !inside(tank, e))) {
             if (ours.equals(e.getData(ModAttachments.TANK_REF.get()))) release(e); // left the tank (e.g. teleported)
@@ -480,12 +506,16 @@ public final class TankInhabitants {
         }
         if (level instanceof ServerLevel server) {
             List<Entity> live = liveInhabitants(server, tank);
-            if (live.isEmpty()) return Optional.empty();
+            if (live.isEmpty()) {
+                // M14: shrimp, crayfish and snails keep the tank too
+                Component c = org.overengineer.bettacraft.critters.TankCritters.breakBlocked(tank);
+                return c == null ? Optional.empty() : Optional.of(c);
+            }
             Component names = live.getFirst().getName();
             for (int i = 1; i < Math.min(3, live.size()); i++) names = Component.translatable("cause.bettacraft.and", names, live.get(i).getName());
             return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked", live.size(), names));
         }
         // client: use the synced count so the block does not flicker away
-        return tank.inhabitantCount() > 0 ? Optional.of(Component.empty()) : Optional.empty();
+        return tank.inhabitantCount() > 0 || org.overengineer.bettacraft.critters.TankCritters.alive(tank) > 0 ? Optional.of(Component.empty()) : Optional.empty();
     }
 }

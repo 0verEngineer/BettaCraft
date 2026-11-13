@@ -76,6 +76,11 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m13only', 'true'
             }
+            // gradlew runClient -Psmoketestm14 : only the M14 scene (shrimp, crayfish, snails, frogs, algae)
+            if (project.hasProperty('smoketestm14')) {
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m14only', 'true'
+            }
             // gradlew runClient -Psmoketestm8 : only the M8 scene (Jade / The One Probe / WTHIT overlays)
             if (project.hasProperty('smoketestm8')) {
                 systemProperty 'bettacraft.smoketest.world', 'true'

@@ -74,6 +74,13 @@ public final class TankData {
     /** M12: floating plants on the water surface (absolute x/z) and the next free plant id. */
     private final List<org.overengineer.bettacraft.tank.plants.FloatingPlant> plants = new ArrayList<>();
     private int nextPlantId = 1;
+    /** M14: shrimp, crayfish and snails (data animals, absolute positions), their clutches and moults, the food pool. */
+    private final List<org.overengineer.bettacraft.critters.Critter> critters = new ArrayList<>();
+    private final List<org.overengineer.bettacraft.critters.CritterObject> critterObjects = new ArrayList<>();
+    private int nextCritterId = 1;
+    private double critterFood;
+    /** M14: algae on the inside of the side glass, per block four faces (south, west, north, east). */
+    private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<float[]> algae = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -282,6 +289,15 @@ public final class TankData {
     /** M12: the floating plants of the surface (server: the simulation; client: the latest update). */
     public List<org.overengineer.bettacraft.tank.plants.FloatingPlant> plants() { return plants; }
     public int nextPlantId() { return nextPlantId++; }
+    /** M14: the shrimp, crayfish and snails (server: the simulation; client: the latest update). */
+    public List<org.overengineer.bettacraft.critters.Critter> critters() { return critters; }
+    /** M14: apple snail clutches and crayfish moults. */
+    public List<org.overengineer.bettacraft.critters.CritterObject> critterObjects() { return critterObjects; }
+    public int nextCritterId() { return nextCritterId++; }
+    public double critterFood() { return critterFood; }
+    public void setCritterFood(double f) { this.critterFood = Math.max(0, Double.isFinite(f) ? f : 0); }
+    /** M14: algae per block and side face (server: 0..1; client: stage / 4). */
+    public it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<float[]> algae() { return algae; }
 
     /** Whether the column of (x, z) belongs to this tank (any layer). */
     public boolean containsColumn(double x, double z) {
@@ -333,6 +349,15 @@ public final class TankData {
         plants.clear();
         nextPlantId = Math.max(nextPlantId, o.nextPlantId);
         for (var p : o.plants) if (containsColumn(p.x, p.z)) plants.add(p.copy());
+        // M14: the small animals, clutches and moults inside this part stay, so do the algae on its glass
+        critters.clear();
+        critterObjects.clear();
+        nextCritterId = Math.max(nextCritterId, o.nextCritterId);
+        for (var c : o.critters) if (contains(BlockPos.containing(c.x, c.y + 0.01, c.z))) critters.add(c.copy(c.id));
+        for (var c : o.critterObjects) if (contains(BlockPos.containing(c.x, c.y, c.z))) critterObjects.add(c.copy(c.id));
+        critterFood = o.critterFood * (o.memberCount() <= 0 ? 1 : Math.min(1.0, memberCount() / (double) o.memberCount()));
+        algae.clear();
+        for (var e : o.algae.long2ObjectEntrySet()) if (members.contains(e.getLongKey())) algae.put(e.getLongKey(), e.getValue().clone());
     }
 
     public float waterQuality() { return waterQuality; }
@@ -384,6 +409,23 @@ public final class TankData {
         for (var p : plants) pl.add(p.save());
         t.put("plants", pl);
         t.putInt("next_plant_id", nextPlantId);
+        ListTag cl = new ListTag();
+        for (var c : critters) cl.add(c.save());
+        t.put("critters", cl);
+        ListTag ol = new ListTag();
+        for (var o : critterObjects) ol.add(o.save());
+        t.put("critter_objects", ol);
+        t.putInt("next_critter_id", nextCritterId);
+        t.putDouble("critter_food", critterFood);
+        ListTag al = new ListTag();
+        for (var e : algae.long2ObjectEntrySet()) {
+            CompoundTag a = new CompoundTag();
+            a.putLong("p", e.getLongKey());
+            float[] v = e.getValue();
+            a.putIntArray("a", new int[]{Math.round(v[0] * 1000), Math.round(v[1] * 1000), Math.round(v[2] * 1000), Math.round(v[3] * 1000)});
+            al.add(a);
+        }
+        t.put("algae", al);
         return t;
     }
 
@@ -431,6 +473,39 @@ public final class TankData {
             maxId = Math.max(maxId, p.id);
         }
         d.nextPlantId = Math.max(maxId + 1, t.contains("next_plant_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_plant_id") : 1);
+        // M14 (schema 8): small animals, clutches, moults, food pool, algae
+        int maxCritter = 0;
+        ListTag cl = t.getList("critters", Tag.TAG_COMPOUND);
+        for (int i = 0; i < cl.size(); i++) {
+            var c = org.overengineer.bettacraft.critters.Critter.load(cl.getCompound(i));
+            if (c == null) continue;
+            d.critters.add(c);
+            maxCritter = Math.max(maxCritter, c.id);
+        }
+        ListTag ol = t.getList("critter_objects", Tag.TAG_COMPOUND);
+        for (int i = 0; i < ol.size(); i++) {
+            var o = org.overengineer.bettacraft.critters.CritterObject.load(ol.getCompound(i));
+            if (o == null) continue;
+            d.critterObjects.add(o);
+            maxCritter = Math.max(maxCritter, o.id);
+        }
+        d.nextCritterId = Math.max(maxCritter + 1, t.contains("next_critter_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_critter_id") : 1);
+        d.setCritterFood(t.getDouble("critter_food"));
+        ListTag al = t.getList("algae", Tag.TAG_COMPOUND);
+        for (int i = 0; i < al.size(); i++) {
+            CompoundTag a = al.getCompound(i);
+            int[] v = a.getIntArray("a");
+            if (v.length != 4) continue;
+            long p = a.getLong("p");
+            if (!d.members.contains(p)) continue;
+            float[] lv = new float[4];
+            boolean any = false;
+            for (int k = 0; k < 4; k++) {
+                lv[k] = Math.max(0, Math.min(1, v[k] / 1000F));
+                any |= lv[k] > 0;
+            }
+            if (any) d.algae.put(p, lv);
+        }
         d.recomputeBounds();
         return d;
     }
@@ -454,6 +529,9 @@ public final class TankData {
         t.putInt("inhabitants", inhabitants.size());
         if (nest != null) t.put("nest", nest.saveClientView());
         if (!plants.isEmpty()) t.putByteArray("plants", org.overengineer.bettacraft.tank.plants.FloatingPlantSim.encode(plants, minX, minZ));
+        if (!critters.isEmpty() || !critterObjects.isEmpty()) t.putByteArray("critters",
+                org.overengineer.bettacraft.critters.CritterSync.encode(critters, critterObjects, minX, minY, minZ, 0L));
+        if (!algae.isEmpty()) t.putByteArray("algae", org.overengineer.bettacraft.tank.algae.AlgaeSim.encode(algae, minX, minY, minZ));
         return t;
     }
 
@@ -487,6 +565,12 @@ public final class TankData {
         d.clientInhabitants = t.getInt("inhabitants");
         d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.loadClientView(t.getCompound("nest")) : null;
         if (t.contains("plants", Tag.TAG_BYTE_ARRAY)) d.plants.addAll(org.overengineer.bettacraft.tank.plants.FloatingPlantSim.decode(t.getByteArray("plants"), d.minX, d.minZ));
+        if (t.contains("critters", Tag.TAG_BYTE_ARRAY)) {
+            var dec = org.overengineer.bettacraft.critters.CritterSync.decode(t.getByteArray("critters"), d.minX, d.minY, d.minZ);
+            d.critters.addAll(dec.critters());
+            d.critterObjects.addAll(dec.objects());
+        }
+        if (t.contains("algae", Tag.TAG_BYTE_ARRAY)) d.algae.putAll(org.overengineer.bettacraft.tank.algae.AlgaeSim.decode(t.getByteArray("algae"), d.minX, d.minY, d.minZ));
         return d;
     }
 

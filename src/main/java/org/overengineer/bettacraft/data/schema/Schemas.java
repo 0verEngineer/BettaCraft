@@ -21,6 +21,7 @@ public final class Schemas {
             .step(4, Schemas::tankV4toV5)
             .step(5, Schemas::tankV5toV6)
             .step(6, Schemas::tankV6toV7)
+            .step(7, Schemas::tankV7toV8)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -175,6 +176,21 @@ public final class Schemas {
         CompoundTag tank = data.getCompound("tank");
         if (!tank.contains("plants", Tag.TAG_LIST)) tank.put("plants", new net.minecraft.nbt.ListTag());
         if (!tank.contains("next_plant_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_plant_id", 1);
+        return data;
+    }
+
+    /**
+     * M14: the controller gets empty lists of small animals (shrimp, crayfish, snails), of their clutches and moults, an
+     * empty food pool and no algae.
+     */
+    static CompoundTag tankV7toV8(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        if (!tank.contains("critters", Tag.TAG_LIST)) tank.put("critters", new net.minecraft.nbt.ListTag());
+        if (!tank.contains("critter_objects", Tag.TAG_LIST)) tank.put("critter_objects", new net.minecraft.nbt.ListTag());
+        if (!tank.contains("next_critter_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_critter_id", 1);
+        if (!tank.contains("critter_food", Tag.TAG_ANY_NUMERIC)) tank.putDouble("critter_food", 0.0);
+        if (!tank.contains("algae", Tag.TAG_LIST)) tank.put("algae", new net.minecraft.nbt.ListTag());
         return data;
     }
 

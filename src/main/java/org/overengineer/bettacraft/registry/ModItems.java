@@ -29,7 +29,17 @@ public final class ModItems {
 
     /** M12: takes floating plants off the water surface of a tank (sneaking: thins the tank out by half). */
     public static final DeferredItem<org.overengineer.bettacraft.tank.plants.AquariumNetItem> AQUARIUM_NET = ITEMS.register("tank_net",
-            () -> new org.overengineer.bettacraft.tank.plants.AquariumNetItem(new Item.Properties().stacksTo(1)));
+            () -> new org.overengineer.bettacraft.tank.plants.AquariumNetItem(new Item.Properties().durability(250)));
+
+    /** M14: cleans algae off the glass of a tank (sneaking: the whole side). */
+    public static final DeferredItem<org.overengineer.bettacraft.tank.algae.AlgaeScraperItem> ALGAE_SCRAPER = ITEMS.register("algae_scraper",
+            () -> new org.overengineer.bettacraft.tank.algae.AlgaeScraperItem(new Item.Properties().durability(200)));
+    /** M14: a dwarf clawed frog in a bucket of water (like the betta bucket). */
+    public static final DeferredItem<net.minecraft.world.item.MobBucketItem> FROG_BUCKET = ITEMS.register("dwarf_frog_bucket",
+            () -> new net.minecraft.world.item.MobBucketItem(ModEntities.DWARF_FROG.get(), net.minecraft.world.level.material.Fluids.WATER,
+                    net.minecraft.sounds.SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<DeferredSpawnEggItem> FROG_SPAWN_EGG = ITEMS.register("dwarf_frog_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.DWARF_FROG, 0x6E6450, 0x3A3428, new Item.Properties()));
 
     /** M12: floating plants for the water surface of a tank (no blocks; the lily pad is the vanilla item). */
     public static final java.util.Map<org.overengineer.bettacraft.tank.plants.FloatingPlantType,

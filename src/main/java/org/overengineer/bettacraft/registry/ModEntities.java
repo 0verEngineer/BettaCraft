@@ -24,6 +24,14 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .build(BettaCraft.id("betta").toString()));
 
+    /** M14: African dwarf clawed frog (Hymenochirus), about 3.5 cm. */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.entity.frog.DwarfFrogEntity>> DWARF_FROG = ENTITIES.register("dwarf_clawed_frog",
+            () -> EntityType.Builder.of(org.overengineer.bettacraft.entity.frog.DwarfFrogEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.3F, 0.15F)
+                    .eyeHeight(0.1F)
+                    .clientTrackingRange(4)
+                    .build(BettaCraft.id("dwarf_clawed_frog").toString()));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
         bus.addListener(ModEntities::onAttributes);
@@ -32,6 +40,7 @@ public final class ModEntities {
 
     private static void onAttributes(EntityAttributeCreationEvent event) {
         event.put(BETTA.get(), BettaEntity.createAttributes().build());
+        event.put(DWARF_FROG.get(), org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.createAttributes().build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {

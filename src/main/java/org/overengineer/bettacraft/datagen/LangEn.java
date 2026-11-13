@@ -13,6 +13,7 @@ final class LangEn {
     private LangEn() {}
 
     static void addAll(BiConsumer<String, String> a) {
+        LangM14.addAll(a); // M14
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -548,7 +549,7 @@ final class LangEn {
         a.accept("tooltip.bettacraft.shift", "Shift");
         a.accept("info.bettacraft.tank", "Craft from 6 glass of one kind and 3 iron ingots: the tank shows the texture of that glass, connected across the whole tank.\nClear glass tank: 6 (vanilla) glass, 1 iron nugget in the middle and 3 iron ingots below. A single vanilla-glass tank converts between both styles in the crafting grid.\nPlace tanks of the same glass and style next to each other to build one large tank of any connected shape (L, T, steps; up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.");
         a.accept("info.bettacraft.betta_bucket", "A betta in a bucket. Use it on a tank to put the fish in (adds 1000 mB water), or on water to release it.\nCatch bettas in swamps with a water bucket or a fish bag.");
-        a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nReusable; empty bags stack to 16.");
+        a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nA bag also holds up to 16 shrimp, crayfish or snails of one species (aquarium net, tank menu).\nReusable; empty bags stack to 16.");
         a.accept("info.bettacraft.swamp_water_bottle", "Use a glass bottle on water in a swamp.\nSmelt it (furnace, smoker or campfire) to hatch mosquito larvae, or mix it with seagrass or leaves for an infusoria culture.");
         a.accept("info.bettacraft.mosquito_larvae", "Live food: one portion feeds up to 4 bettas and gets a breeding pair in the mood twice as fast.\nFrom a smelted bottle of swamp water or a larva tub, sometimes from mud mined in a swamp.");
         a.accept("info.bettacraft.betta_pellets", "Everyday food: one pellet feeds up to 4 bettas (juveniles and older).\nRight-click a tank with it or put it into a feeder.");
@@ -641,9 +642,9 @@ final class LangEn {
         a.accept("info.bettacraft.salvinia", "A robust floating fern with small paired, hairy leaves. Medium growth.\nGrows with light and nutrients, forms offshoots and takes up waste.\nFind it: the wandering trader sells it, fishing in swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
         a.accept("info.bettacraft.red_root_floater", "A rare floating plant with small round leaves and red roots. Under strong light (a lit tank light or full daylight) its leaves turn red, under weak light they stay green. Grows slowly.\nFind it: rarely from the wandering trader, rarely when fishing in mangrove swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
         a.accept("item.bettacraft.tank_net", "Aquarium Net");
-        a.accept("tooltip.bettacraft.tank_net", "Right-click a tank: takes out the floating plants you look at");
+        a.accept("tooltip.bettacraft.tank_net", "Right-click a tank: takes out the floating plant or small animal you look at");
         a.accept("tooltip.bettacraft.tank_net.sneak", "Sneak + right-click: thins the tank out by half");
-        a.accept("info.bettacraft.tank_net", "Takes floating plants off the water surface of a tank. Right-click the tank: the plants where you look come out as items, from above as well as from the side through the glass.\nSneak + right-click: thins the whole tank out by half (lily pads stay), like the button on the plants tab of the tank menu.\nAn empty hand also takes plants out, but only looking down at the surface.\nCraft: four string in a square with a stick below on the left.");
+        a.accept("info.bettacraft.tank_net", "Takes floating plants off the water surface of a tank and small animals out of it. Right-click the tank: the plant (or the shrimp, crayfish, snail, clutch or shed shell) where you look comes out, from above as well as from the side through the glass. Animals go into a fish bag.\nSneak + right-click: thins the floating plants out by half (lily pads stay), like the button on the plants tab of the tank menu.\nIn open water (rivers, swamps, mangroves, beaches, jungle, caves) it catches shrimp, snails and frogs into an empty fish bag; that wears it a little.\nCraft: four string in a square with a stick below on the left.");
         a.accept("message.bettacraft.plants.none_here", "No floating plants there");
         a.accept("gui.bettacraft.tab.plants", "Plants");
         a.accept("message.bettacraft.plants.no_water", "The tank needs water for floating plants");

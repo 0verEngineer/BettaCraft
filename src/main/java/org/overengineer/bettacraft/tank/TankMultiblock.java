@@ -207,6 +207,13 @@ public final class TankMultiblock {
                 q.red = p.red;
                 merged.plants().add(q);
             }
+            // M14: the small animals, clutches, moults, food and algae of the other tanks join too
+            if (t != main) {
+                for (var k : t.critters()) merged.critters().add(k.copy(merged.nextCritterId()));
+                for (var o : t.critterObjects()) merged.critterObjects().add(o.copy(merged.nextCritterId()));
+                merged.setCritterFood(merged.critterFood() + t.critterFood());
+                for (var e : t.algae().long2ObjectEntrySet()) merged.algae().put(e.getLongKey(), e.getValue().clone());
+            }
         }
         InteriorManager.onTanksMerged(level, olds, merged);
         install(level, merged);
@@ -297,6 +304,23 @@ public final class TankMultiblock {
             if (!kept) lost.add(p);
         }
         org.overengineer.bettacraft.tank.plants.TankPlants.dropAll(level, lost, pos);
+        // M14: small animals in the removed block (a forced break) move into the largest piece
+        java.util.Set<Integer> kept = new java.util.HashSet<>();
+        for (TankData nt : newTanks) for (var k : nt.critters()) kept.add(k.id);
+        TankData first = newTanks.getFirst();
+        for (var k : t.critters()) {
+            if (kept.contains(k.id)) continue;
+            var moved = k.copy(first.nextCritterId());
+            BlockPos a = first.anchor();
+            moved.x = a.getX() + 0.5;
+            moved.y = a.getY() + 0.05;
+            moved.z = a.getZ() + 0.5;
+            moved.tx = moved.x;
+            moved.ty = moved.y;
+            moved.tz = moved.z;
+            moved.face = org.overengineer.bettacraft.critters.Critter.FLOOR;
+            first.critters().add(moved);
+        }
 
         if (newTanks.size() > 1) {
             for (ServerPlayer p : level.players()) {

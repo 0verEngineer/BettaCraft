@@ -160,6 +160,7 @@ public final class InteriorEvents {
         InteriorSync.clearAll();
         InteriorPreparation.clearAll();
         InteriorObstacles.clearAll();
+        InteriorGround.clearAll();
         DecorItem.clearCache();
         SNEAK_TICKS.clear();
     }

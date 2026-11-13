@@ -65,7 +65,10 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onRenderers);
         modBus.addListener(BettaCraftClient::onScreens);
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent e) -> e.registerReloadListener(
-                (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> org.overengineer.bettacraft.client.render.BettaSkins.clear()));
+                (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> {
+                    org.overengineer.bettacraft.client.render.BettaSkins.clear();
+                    org.overengineer.bettacraft.client.render.CritterRenderer.reset(); // M14: baked again on the next frame
+                }));
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
@@ -116,6 +119,13 @@ public final class BettaCraftClient {
     private static void onItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tint) -> {
             if (tint == 0) return 0xFFFFFFFF;
+            // M14: a bag of shrimp, crayfish or snails shows the colour of the first one
+            var critters = stack.get(ModDataComponents.CRITTERS.get());
+            if (critters != null && !critters.isEmpty()) {
+                var k = org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
+                int rgb = k == null ? 0x8A8070 : k.genes.rgb(k.species);
+                return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.3F));
+            }
             BettaData d = stack.getItem() instanceof BettaBucketItem ? BettaBucketItem.data(stack) : stack.get(ModDataComponents.FISH_DATA.get());
             if (d == null) return tint == 1 ? OTHER_FISH_BODY : OTHER_FISH_FINS;
             return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
@@ -152,10 +162,18 @@ public final class BettaCraftClient {
         for (BettaModelDefinitions.Shape s : BettaModelDefinitions.Shape.values()) {
             event.registerLayerDefinition(BettaRenderer.LAYERS.get(s), () -> BettaModelDefinitions.createBodyLayer(s));
         }
+        // M14: shrimp, crayfish, snails (drawn by the tank) and the dwarf clawed frog
+        for (var m : org.overengineer.bettacraft.critters.CritterSpecies.Model.values()) {
+            event.registerLayerDefinition(org.overengineer.bettacraft.client.render.CritterRenderer.LAYERS.get(m),
+                    () -> org.overengineer.bettacraft.client.model.CritterModelDefinitions.create(org.overengineer.bettacraft.client.render.CritterRenderer.name(m)));
+        }
+        event.registerLayerDefinition(org.overengineer.bettacraft.client.render.CritterRenderer.FROG_LAYER,
+                org.overengineer.bettacraft.client.model.CritterModelDefinitions::createFrogLayer);
     }
 
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
+        event.registerEntityRenderer(ModEntities.DWARF_FROG.get(), org.overengineer.bettacraft.client.render.DwarfFrogRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
         event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);

@@ -24,7 +24,9 @@ public final class ItemHints {
             "java_fern", "anubias_nana", "bucephalandra_green_wavy", "bucephalandra_brownie_red", "bucephalandra_blue",
             "bucephalandra_mini_needle", "java_moss", "cryptocoryne_wendtii_green", "cryptocoryne_wendtii_brown", "cryptocoryne_flamingo",
             "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "monte_carlo", "red_tiger_lotus",
-            "betta_spawn_egg");
+            "betta_spawn_egg",
+            // M14: algae, frogs
+            "algae_scraper", "dwarf_frog_bucket", "dwarf_frog_spawn_egg");
 
     private ItemHints() {}
 

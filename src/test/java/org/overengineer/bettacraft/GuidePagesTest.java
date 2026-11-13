@@ -152,6 +152,6 @@ class GuidePagesTest {
     /** Items a player can hold (not technical blocks, not the guide itself). */
     private static boolean isPlayerItem(String id) {
         String p = id.substring(id.indexOf(':') + 1);
-        return !(p.equals("betta") || p.equals("guide") || p.startsWith("interior_") || p.endsWith("_segment"));
+        return !(p.equals("betta") || p.equals("dwarf_clawed_frog") || p.equals("guide") || p.startsWith("interior_") || p.endsWith("_segment"));
     }
 }

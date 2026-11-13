@@ -21,7 +21,9 @@ public final class TankInteractions {
 
     public static ItemInteractionResult useItemOn(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand,
                                                   net.minecraft.world.phys.BlockHitResult hit) {
-        ItemInteractionResult r = TankInhabitants.tryInsert(stack, level, pos, player, hand);
+        ItemInteractionResult r = org.overengineer.bettacraft.critters.TankCritters.tryInsert(stack, level, pos, player, hand); // M14
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = TankInhabitants.tryInsert(stack, level, pos, player, hand);
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = TankCare.handFeed(stack, level, pos, player, hand, hit.getLocation());
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;

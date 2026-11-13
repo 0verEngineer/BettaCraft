@@ -57,6 +57,13 @@ public class TankBlockEntity extends BlockEntity {
     boolean chaseLogged, fightLogged;
     /** M13: care steps in which a female hid in the aquarium plants from the male (GameTests, menu). */
     public int femaleHidSteps;
+    /** M14: the "frogs have no air" log line was written (transient). */
+    public boolean frogAirLogged;
+    /** M14: signature of the algae stages the clients have (transient; a change sends the tank view). */
+    public long algaeSignature = Long.MIN_VALUE;
+    /** M14: game time of the last death log line per species (transient: several deaths in a row are one line). */
+    public final java.util.Map<org.overengineer.bettacraft.critters.CritterSpecies, Long> critterDeathLog = new java.util.EnumMap<>(
+            org.overengineer.bettacraft.critters.CritterSpecies.class);
     /** Attached external filters and cabinets under the tank (transient cache, see TankEquipment). */
     java.util.List<BlockPos> filterCache = java.util.List.of(), cabinetCache = java.util.List.of();
     long equipmentScanTime = Long.MIN_VALUE;
@@ -169,6 +176,9 @@ public class TankBlockEntity extends BlockEntity {
             tank = TankData.loadClientView(tag.getCompound("tank_view"));
             // M12: floating plants glide to their new place instead of jumping
             if (old != null && level != null) org.overengineer.bettacraft.tank.plants.FloatingPlantSim.adopt(old.plants(), tank.plants(),
+                    level.getGameTime(), org.overengineer.bettacraft.tank.plants.TankPlants.SYNC_TICKS);
+            // M14: the small animals too
+            if (old != null && level != null) org.overengineer.bettacraft.critters.CritterSync.adopt(old.critters(), tank.critters(),
                     level.getGameTime(), org.overengineer.bettacraft.tank.plants.TankPlants.SYNC_TICKS);
         } else {
             tank = null;

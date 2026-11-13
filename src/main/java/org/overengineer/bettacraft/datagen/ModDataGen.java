@@ -453,6 +453,9 @@ public final class ModDataGen {
             basicItem(ModItems.BETTA_PELLETS.get());
             handheldItem(ModItems.MIRROR_STICK.get());
             handheldItem(ModItems.AQUARIUM_NET.get());
+            handheldItem(ModItems.ALGAE_SCRAPER.get()); // M14
+            basicItem(ModItems.FROG_BUCKET.get());
+            withExistingParent("dwarf_frog_spawn_egg", mcLoc("item/template_spawn_egg"));
             for (var p : ModItems.FLOATING_PLANTS.values()) basicItem(p.get());
             basicItem(ModItems.MOSQUITO_LARVAE.get());
             basicItem(ModItems.SALT_WATER_BOTTLE.get());
@@ -546,6 +549,16 @@ public final class ModDataGen {
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
                     .unlockedBy("has_plant", has(ModItems.FLOATING_PLANTS.get(org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED).get()))
                     .save(output, BettaCraft.id("tank_net"));
+
+            // M14: algae scraper: an iron blade on a stick
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.ALGAE_SCRAPER.get())
+                    .pattern("  I")
+                    .pattern(" S ")
+                    .pattern("S  ")
+                    .define('I', Tags.Items.INGOTS_IRON)
+                    .define('S', Tags.Items.RODS_WOODEN)
+                    .unlockedBy("has_tank", has(ModItems.TANK.get()))
+                    .save(output, BettaCraft.id("algae_scraper"));
 
             // Fish bag (PLAN 4.3): kelp unless #bettacraft:plastic_sheets has entries; COMMON config can force one.
             ICondition plasticEmpty = new TagEmptyCondition(ModTags.PLASTIC_SHEETS);

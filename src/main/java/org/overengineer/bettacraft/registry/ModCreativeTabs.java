@@ -63,6 +63,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.TANK_LID.get());
                 out.accept(ModItems.MIRROR_STICK.get());
                 out.accept(ModItems.AQUARIUM_NET.get());
+                out.accept(ModItems.ALGAE_SCRAPER.get());
                 // floating plants (M12)
                 for (var p : ModItems.FLOATING_PLANTS.values()) out.accept(p.get());
                 for (var p : ModItems.AQUATIC_PLANTS.values()) out.accept(p.get());
@@ -98,6 +99,21 @@ public final class ModCreativeTabs {
                             org.overengineer.bettacraft.entity.betta.BettaData.create(ph, false, 0)));
                 }
                 out.accept(ModItems.BETTA_SPAWN_EGG.get());
+                // M14: small animals in fish bags (one bag per species and colour), the frog
+                java.util.random.RandomGenerator cr = new java.util.Random(14);
+                for (var sp : org.overengineer.bettacraft.critters.CritterSpecies.values()) {
+                    out.accept(org.overengineer.bettacraft.critters.TankCritters.bagOf(sp, sp.breeds() ? 2 : 1,
+                            () -> org.overengineer.bettacraft.critters.CritterGenes.WILD, cr, true));
+                    for (int l = 0; l < sp.loci().length; l++) {
+                        int locus = l;
+                        out.accept(org.overengineer.bettacraft.critters.TankCritters.bagOf(sp, 2,
+                                () -> org.overengineer.bettacraft.critters.CritterGenes.pure(locus, 0.5F), cr, true));
+                    }
+                }
+                out.accept(org.overengineer.bettacraft.critters.TankCritters.bagOf(org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, 2,
+                        () -> org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.9F), cr, true)); // Painted Fire Red
+                out.accept(ModItems.FROG_BUCKET.get());
+                out.accept(ModItems.FROG_SPAWN_EGG.get());
             })
             .build());
 

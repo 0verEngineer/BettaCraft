@@ -40,7 +40,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int TEXT = 0x404040;
     private static final int TEXT_LIGHT = 0xE0E0E0;
     private static final int CONTENT_X = 7, CONTENT_Y = 17, CONTENT_W = 234, CONTENT_H = 123;
-    private static final int LIST_ROWS = 10, ROW_H = 11, LOG_ROWS = 10, BREED_ROWS = 12;
+    private static final int LIST_ROWS = 9, ROW_H = 11, LOG_ROWS = 10, BREED_ROWS = 12;
     /** Bars of the water quality and the plant cover (right of their line). */
     private static final int BAR_X = 168, BAR_W = 66;
     /** Left edge of the overview's interior button: the last two overview lines end before it. */
@@ -63,6 +63,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     /** M13: the plants tab shows the aquarium plants of the interior instead of the floating plants. */
     private boolean aquaticPage;
     private Button plantPageButton;
+    /** M14: the animals tab shows the shrimp, crayfish and snails instead of the fish and frogs. */
+    private boolean critterPage;
+    private Button critterPageButton, critterTakeButton, clutchButton;
+    @Nullable
+    private String selectedGroup;
+    private int groupScroll;
     private LogFilter logFilter = LogFilter.ALL;
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
@@ -174,6 +180,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         bagButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.fish.take_bag"),
                 b -> takeOut(true)).bounds(x + 177, y + 124, 61, 14).build());
         inhabitants.addAll(List.of(renameButton, bucketButton, bagButton));
+        // M14: second page of the animals tab (shrimp, crayfish, snails)
+        critterPageButton = addRenderableWidget(new FitButton(x + 10, y + 124, 100, 14, Component.empty(), b -> {
+            critterPage = !critterPage;
+            updateWidgets();
+        }));
+        critterTakeButton = addRenderableWidget(new FitButton(x + 114, y + 124, 62, 14, Component.translatable("gui.bettacraft.critters.take"), b -> {
+            if (selectedGroup != null) send(TankActions.TAKE_CRITTER, hasShiftDown() ? 1 : 0, selectedGroup, null);
+        }));
+        clutchButton = addRenderableWidget(new FitButton(x + 177, y + 124, 61, 14, Component.translatable("gui.bettacraft.critters.clutches"),
+                b -> send(TankActions.REMOVE_CLUTCHES, 0, "", null)));
         sentName = null;
         updateWidgets();
     }
@@ -297,7 +313,21 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private void updateWidgets() {
         TankView v = view();
         for (AbstractWidget w : overview) w.visible = tab == Tab.OVERVIEW;
-        for (AbstractWidget w : inhabitants) w.visible = tab == Tab.INHABITANTS;
+        for (AbstractWidget w : inhabitants) w.visible = tab == Tab.INHABITANTS && !critterPage;
+        critterPageButton.visible = tab == Tab.INHABITANTS;
+        critterTakeButton.visible = tab == Tab.INHABITANTS && critterPage;
+        clutchButton.visible = tab == Tab.INHABITANTS && critterPage && v != null && v.critters.clutches > 0;
+        if (v != null) {
+            critterPageButton.setMessage(critterPage ? Component.translatable("gui.bettacraft.critters.page_fish", v.inhabitants.size())
+                    : Component.translatable("gui.bettacraft.critters.page", v.critters.total));
+            if (selectedGroup == null || v.critters.groups.stream().noneMatch(gr -> gr.key().equals(selectedGroup))) {
+                selectedGroup = v.critters.groups.isEmpty() ? null : v.critters.groups.getFirst().key();
+            }
+            critterTakeButton.active = v.canModify && selectedGroup != null && (v.hasBag || v.critters.total > 0);
+            critterTakeButton.setTooltip(Tooltip.create(Component.translatable(!v.canModify ? "message.bettacraft.tank.locked"
+                    : "gui.bettacraft.critters.take_tooltip")));
+            clutchButton.active = v.canModify;
+        }
         tabOverview.active = tab != Tab.OVERVIEW;
         tabInhabitants.active = tab != Tab.INHABITANTS;
         tabBreeding.active = tab != Tab.BREEDING;
@@ -408,7 +438,17 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
         TankView v = view();
-        if (tab == Tab.INHABITANTS && v != null) {
+        if (tab == Tab.INHABITANTS && v != null && critterPage) {
+            int lx = leftPos + 10, ly = topPos + 20;
+            if (mx >= lx && mx < lx + 100 && my >= ly && my < ly + LIST_ROWS * ROW_H) {
+                int idx = groupScroll + (int) ((my - ly) / ROW_H);
+                if (idx >= 0 && idx < v.critters.groups.size()) {
+                    selectedGroup = v.critters.groups.get(idx).key();
+                    updateWidgets();
+                    return true;
+                }
+            }
+        } else if (tab == Tab.INHABITANTS && v != null) {
             int lx = leftPos + 10, ly = topPos + 20;
             if (mx >= lx && mx < lx + 100 && my >= ly && my < ly + LIST_ROWS * ROW_H) {
                 int idx = listScroll + (int) ((my - ly) / ROW_H);
@@ -426,6 +466,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     public boolean mouseScrolled(double mx, double my, double sx, double sy) {
         TankView v = view();
         if (v != null && my < topPos + CONTENT_Y + CONTENT_H) {
+            if (tab == Tab.INHABITANTS && critterPage) {
+                groupScroll = Mth.clamp(groupScroll - (int) Math.signum(sy), 0, Math.max(0, v.critters.groups.size() - LIST_ROWS));
+                return true;
+            }
             if (tab == Tab.INHABITANTS) {
                 listScroll = Mth.clamp(listScroll - (int) Math.signum(sy), 0, Math.max(0, v.inhabitants.size() - LIST_ROWS));
                 return true;
@@ -470,7 +514,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         switch (tab) {
             case OVERVIEW -> drawOverview(g, v);
-            case INHABITANTS -> drawInhabitants(g, v, mouseX - leftPos, mouseY - topPos);
+            case INHABITANTS -> {
+                if (critterPage) drawCritters(g, v, mouseX - leftPos, mouseY - topPos);
+                else drawInhabitants(g, v, mouseX - leftPos, mouseY - topPos);
+            }
             case BREEDING -> drawBreeding(g, v);
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
@@ -541,7 +588,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 : Component.translatable("gui.bettacraft.tank.filter_state", outside, v.filterHeaters, v.filters).withStyle(ChatFormatting.AQUA);
         line(g, Component.translatable("gui.bettacraft.tank.filters", filters), x, y, TEXT_LIGHT);
         y += 10;
-        MutableComponent inh = Component.translatable("gui.bettacraft.tank.inhabitants", v.inhabitants.size(), v.adults, v.hardCap);
+        MutableComponent inh = v.critters.total > 0
+                ? Component.translatable("gui.bettacraft.tank.stocking", v.inhabitants.size(), v.critters.total, fmt((float) v.stock), v.hardCap)
+                : Component.translatable("gui.bettacraft.tank.inhabitants", v.inhabitants.size(), v.adults, v.hardCap);
         if (v.crowded) inh.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
         // the last two lines end left of the interior button (and the lock symbol)
         int room = ENTER_X - (v.locked ? 15 : 3) - x;
@@ -790,6 +839,33 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         return 0xFF000000 | (r << 16) | (gg << 8) | b;
     }
 
+    /** Dev smoke test only: the page of the small animals in the animals tab (M14). */
+    public void showCrittersPageForTest() {
+        critterPage = true;
+        setTab(Tab.INHABITANTS);
+    }
+
+    /** Dev smoke test only: the fish page of the animals tab with the first frog selected (M14); false without a frog. */
+    public boolean showFrogForTest() {
+        TankView v = view();
+        if (v == null) return false;
+        for (TankView.Inhabitant i : v.inhabitants) {
+            if (!i.frog()) continue;
+            critterPage = false;
+            selected = i.uuid();
+            setTab(Tab.INHABITANTS);
+            return true;
+        }
+        return false;
+    }
+
+    /** Dev smoke test only: presses "take one" of the small animals page (false when it is not there). */
+    public boolean pressTakeCritterForTest() {
+        if (tab != Tab.INHABITANTS || !critterPage || !critterTakeButton.visible || !critterTakeButton.active) return false;
+        critterTakeButton.onPress();
+        return true;
+    }
+
     /** Dev smoke test only: the aquarium plants page of the plants tab. */
     public void showAquaticPageForTest() {
         aquaticPage = true;
@@ -883,6 +959,25 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         Component header = sel.customName().isEmpty() ? Component.translatable(sel.typeKey()) : Component.literal(sel.customName());
         g.drawString(font, font.plainSubstrByWidth(header.getString(), 124), x, y, 0xFFFFFF, false);
         y += 9;
+        if (sel.frog()) {
+            // M14: dwarf clawed frog: health, food, air
+            line(g, Component.translatable(sel.typeKey()).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+            y += 10;
+            bar(g, x, y, Component.translatable("gui.bettacraft.fish.health"), sel.hp(), sel.hp() > 0.5F ? 0xFF50C050 : 0xFFD04040);
+            y += 9;
+            bar(g, x, y, Component.translatable("gui.bettacraft.fish.satiation"), sel.satiation(), 0xFFD0A040);
+            y += 9;
+            bar(g, x, y, Component.translatable("gui.bettacraft.frog.air"), sel.air(), 0xFF60A0E0);
+            y += 11;
+            if (sel.noAir()) {
+                fitLine(g, Component.translatable("gui.bettacraft.frog.no_air").withStyle(ChatFormatting.RED), x, y, TEXT_LIGHT, 124);
+                y += 10;
+            }
+            fitLine(g, Component.translatable("gui.bettacraft.frog.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0, 124);
+            y += 9;
+            fitLine(g, Component.translatable("gui.bettacraft.frog.hint2").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0, 124);
+            return;
+        }
         if (!sel.betta()) {
             line(g, Component.translatable(sel.typeKey()).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
             y += 10;
@@ -919,6 +1014,87 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             tip.add(Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
             tip.add(Component.translatable("gui.bettacraft.fish.genotype_hint").withStyle(ChatFormatting.DARK_GRAY));
             pendingTooltip = tip;
+        }
+    }
+
+    /** M14: shrimp, crayfish and snails (second page of the animals tab): the kinds on the left, details and the tank on the right. */
+    private void drawCritters(GuiGraphics g, TankView v, int mx, int my) {
+        TankView.Critters c = v.critters;
+        int lx = 10, ly = 20;
+        g.fill(lx - 1, ly - 1, lx + 100, ly + LIST_ROWS * ROW_H, 0x60000000);
+        if (c.groups.isEmpty()) {
+            fitLine(g, Component.translatable("gui.bettacraft.critters.empty"), lx + 2, ly + 2, 0xA0A0A0, 96);
+            fitLine(g, Component.translatable("gui.bettacraft.critters.empty_hint").withStyle(ChatFormatting.GRAY), lx + 2, ly + 13, 0xA0A0A0, 96);
+        }
+        for (int r = 0; r < LIST_ROWS; r++) {
+            int idx = groupScroll + r;
+            if (idx >= c.groups.size()) break;
+            TankView.CritterGroup gr = c.groups.get(idx);
+            int y = ly + r * ROW_H;
+            if (gr.key().equals(selectedGroup)) g.fill(lx, y, lx + 99, y + ROW_H, 0x80FFFFFF);
+            else if (mx >= lx && mx < lx + 100 && my >= y && my < y + ROW_H) g.fill(lx, y, lx + 99, y + ROW_H, 0x30FFFFFF);
+            g.fill(lx + 2, y + 2, lx + 8, y + 8, 0xFF000000 | lighten(gr.rgb()));
+            // in the list the colour species show only their variety (the header names the species)
+            var sp = org.overengineer.bettacraft.critters.CritterSpecies.values()[gr.species()];
+            MutableComponent name = sp.loci().length == 0 ? Component.translatable(sp.translationKey())
+                    : "wild".equals(gr.variety()) ? org.overengineer.bettacraft.critters.TankCritters.name(sp, gr.variety())
+                    : Component.translatable("variety.bettacraft." + sp.id() + "." + gr.variety());
+            String count = " " + (gr.adults() + gr.young());
+            int room = 88 - font.width(count);
+            fitLine(g, name, lx + 10, y + 2, 0xFFFFFF, room);
+            g.drawString(font, count, lx + 98 - font.width(count), y + 2, 0xC8C8C8, false);
+        }
+        int x = 114, y = 19, w = 124;
+        TankView.CritterGroup sel = null;
+        for (TankView.CritterGroup gr : c.groups) if (gr.key().equals(selectedGroup)) sel = gr;
+        if (sel != null) {
+            var sp = org.overengineer.bettacraft.critters.CritterSpecies.values()[sel.species()];
+            fitLine(g, org.overengineer.bettacraft.critters.TankCritters.name(sp, sel.variety()).withStyle(ChatFormatting.YELLOW), x, y, 0xFFFFFF, w);
+            y += 10;
+            Component sexes = sp.hasSexes() ? Component.translatable("gui.bettacraft.critters.sexes", sel.females(), sel.males())
+                    : Component.translatable("gui.bettacraft.critters.hermaphrodite", sel.adults());
+            MutableComponent l1 = sexes.copy();
+            if (sel.young() > 0) l1.append(", ").append(Component.translatable("gui.bettacraft.critters.young", sel.young()));
+            fitLine(g, l1, x, y, TEXT_LIGHT, w);
+            y += 10;
+            if (sp.hasGrade()) {
+                fitLine(g, Component.translatable("gui.bettacraft.critters.grade", Math.round(sel.gradeAvg() * 100), Math.round(sel.gradeMin() * 100),
+                        Math.round(sel.gradeMax() * 100)), x, y, TEXT_LIGHT, w);
+                y += 10;
+            }
+            Component breed = !sp.breeds() ? Component.translatable("gui.bettacraft.critters.no_breeding").withStyle(ChatFormatting.GRAY)
+                    : sel.berried() > 0 ? Component.translatable(sp.breeding() == org.overengineer.bettacraft.critters.CritterSpecies.Breeding.PAIR_CLUTCH
+                    ? "gui.bettacraft.critters.gravid" : "gui.bettacraft.critters.berried", sel.berried()).withStyle(ChatFormatting.GREEN)
+                    : Component.translatable("gui.bettacraft.critters.breeds." + sp.breeding().name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.GRAY);
+            fitLine(g, breed, x, y, TEXT_LIGHT, w);
+            y += 12;
+        }
+        // the whole tank
+        fitLine(g, Component.translatable("gui.bettacraft.critters.total", c.total, c.max, fmt((float) c.stock)), x, y, TEXT_LIGHT, w);
+        y += 10;
+        ChatFormatting ac = c.algae < 0.15 ? ChatFormatting.GREEN : c.algae < 0.5 ? ChatFormatting.GOLD : ChatFormatting.RED;
+        fitLine(g, Component.translatable("gui.bettacraft.critters.algae", Math.round(c.algae * 100)).withStyle(ac), x, y, TEXT_LIGHT, w);
+        y += 10;
+        fitLine(g, Component.translatable("gui.bettacraft.critters.cleaners", fmt((float) c.grazing), fmt((float) c.algaeGrowth)),
+                x, y, TEXT_LIGHT, w);
+        y += 10;
+        if (c.total > 0) {
+            ChatFormatting fc = c.foodDays >= 1 ? ChatFormatting.GREEN : c.foodDays >= 0.6 ? ChatFormatting.GOLD : ChatFormatting.RED;
+            String fk = c.foodDays >= 1 ? "plenty" : c.foodDays >= 0.6 ? "short" : "hungry";
+            fitLine(g, Component.translatable("gui.bettacraft.critters.food", Component.translatable("gui.bettacraft.critters.food." + fk).withStyle(fc)),
+                    x, y, TEXT_LIGHT, w);
+            y += 10;
+            MutableComponent hide = Component.translatable("gui.bettacraft.critters.hiding", Math.round(c.hiding * 100));
+            if (c.hunting) hide.append(" ").append(Component.translatable("gui.bettacraft.critters.hunting").withStyle(ChatFormatting.GOLD));
+            fitLine(g, hide, x, y, TEXT_LIGHT, w);
+            y += 10;
+        }
+        if (c.clutches > 0 && y < 118) {
+            fitLine(g, Component.translatable("gui.bettacraft.critters.clutch_count", c.clutches).withStyle(ChatFormatting.LIGHT_PURPLE), x, y, TEXT_LIGHT, w);
+            y += 10;
+        }
+        if (c.dead > 0 && y < 118) {
+            fitLine(g, Component.translatable("gui.bettacraft.critters.dead", c.dead).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
         }
     }
 

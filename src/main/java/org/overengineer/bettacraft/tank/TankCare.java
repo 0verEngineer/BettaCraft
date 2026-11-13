@@ -70,6 +70,9 @@ public final class TankCare {
         TankWater.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.tank.plants.TankPlants.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.plants.InteriorPlants.step(server, be, dt / 24000.0);
+        org.overengineer.bettacraft.tank.algae.TankAlgae.step(server, be, dt / 24000.0); // M14
+        org.overengineer.bettacraft.critters.TankCritters.step(server, be, dt / 24000.0); // M14
+        TankFrogs.step(server, be); // M14
         TankBreeding.step(server, be, dt / 24000.0);
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);
@@ -252,10 +255,16 @@ public final class TankCare {
         if (kind == null || maxItems <= 0) return 0;
         List<BettaEntity> fish = eaters(level, controller.getTank(), kind);
         if (round != null) fish.removeIf(b -> round.contains(b.getUUID()));
-        if (fish.isEmpty()) return 0;
+        // M14: the frogs (slow eaters) and the shrimp, crayfish and snails (they eat what sinks to the floor)
+        List<org.overengineer.bettacraft.entity.frog.DwarfFrogEntity> frogs = TankFrogs.eats(kind) ? TankFrogs.frogs(level, controller.getTank())
+                : new ArrayList<>();
+        if (round != null) frogs.removeIf(f -> round.contains(f.getUUID()));
+        boolean critters = org.overengineer.bettacraft.critters.TankCritters.wantFood(controller.getTank());
+        if (fish.isEmpty() && frogs.isEmpty() && !critters) return 0;
         fish.sort(Comparator.comparingDouble((BettaEntity b) -> b.health().daysSinceFed()).reversed());
         int per = BettaFood.fishPerItem(kind);
-        int items = Math.min(maxItems, (fish.size() + per - 1) / per);
+        int mouths = fish.size() + frogs.size() + (critters ? 1 : 0);
+        int items = Math.min(maxItems, (mouths + per - 1) / per);
         int fed = Math.min(fish.size(), items * per);
         int overfed = 0;
         for (int i = 0; i < fed; i++) {
@@ -265,7 +274,13 @@ public final class TankCare {
             if (kind == BettaFood.Kind.LIVE && b.isAdult()) b.breeding().condition();
             if (round != null) round.add(b.getUUID());
         }
-        log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
+        if (fed > 0) log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
+        int left = items * per - fed;
+        int frogsFed = TankFrogs.feed(level, controller, kind, Math.min(left, frogs.size()), !fish.isEmpty(), false);
+        if (round != null) for (var f : frogs) if (f.daysSinceFed() <= 1e-6) round.add(f.getUUID());
+        left -= frogsFed;
+        // what is left sinks to the floor: the small animals eat it (or a little of what the bettas ate as crumbs)
+        org.overengineer.bettacraft.critters.TankCritters.addFood(controller.getTank(), left > 0 ? left : fed * org.overengineer.bettacraft.critters.TankCritters.CRUMBS);
         TankWater.overfed(level, controller, overfed);
         return items;
     }
@@ -279,12 +294,14 @@ public final class TankCare {
         if (controller == null) return ItemInteractionResult.CONSUME;
         TankData tank = controller.getTank();
         List<BettaEntity> fish = eaters(server, tank, BettaFood.kind(stack));
-        if (fish.isEmpty()) {
+        boolean others = (TankFrogs.eats(BettaFood.kind(stack)) && !TankFrogs.frogs(server, tank).isEmpty())
+                || org.overengineer.bettacraft.critters.TankCritters.wantFood(tank);
+        if (fish.isEmpty() && !others) {
             player.displayClientMessage(Component.translatable(bettas(server, tank).isEmpty() ? "message.bettacraft.tank.no_bettas"
                     : "message.bettacraft.tank.nobody_eats", stack.getHoverName()), true);
             return ItemInteractionResult.CONSUME;
         }
-        feed(server, controller, stack, 1);
+        if (feed(server, controller, stack, 1) <= 0) return ItemInteractionResult.CONSUME;
         ItemStack remainder = stack.getCraftingRemainingItem();
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);

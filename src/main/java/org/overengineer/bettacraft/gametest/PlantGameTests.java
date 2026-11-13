@@ -652,8 +652,8 @@ public final class PlantGameTests {
         // fillbiome does nothing when a chunk of the box is not loaded: load them first
         for (int x = water.getX() - 4; x <= water.getX() + 4; x += 4) for (int z = water.getZ() - 4; z <= water.getZ() + 4; z += 4) level.getChunk(x >> 4, z >> 4);
         var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
-        // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells), inside the loaded template
-        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + (water.getY() - 1) + " " + (water.getZ() - 4) + " "
+        // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells, also the cell below), inside the loaded template
+        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + Math.max(level.getMinBuildHeight(), water.getY() - 5) + " " + (water.getZ() - 4) + " "
                 + (water.getX() + 4) + " " + (water.getY() + 4) + " " + (water.getZ() + 4) + " minecraft:swamp");
     }
 
@@ -694,7 +694,7 @@ public final class PlantGameTests {
         FloatingPlant p = TankPlants.add(c, FloatingPlantType.DUCKWEED, o.getX() + 1, o.getZ() + 1, 0.5F, 0F);
         h.assertTrue(p != null && p.id >= 1, "new plants get ids");
         CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-        h.assertTrue(saved.getInt("schema") == 7, "saved as v7: " + saved.getInt("schema"));
+        h.assertTrue(saved.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "saved in the current schema: " + saved.getInt("schema"));
         h.assertTrue(saved.getCompound("tank").getList("plants", 10).size() == 1, "plant saved");
         h.succeed();
     }
