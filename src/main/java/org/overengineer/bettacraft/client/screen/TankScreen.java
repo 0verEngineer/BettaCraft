@@ -43,6 +43,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int LIST_ROWS = 10, ROW_H = 11, LOG_ROWS = 10, BREED_ROWS = 12;
     /** Bars of the water quality and the plant cover (right of their line). */
     private static final int BAR_X = 168, BAR_W = 66;
+    /** Left edge of the overview's interior button: the last two overview lines end before it. */
+    private static final int ENTER_X = 176;
 
     /** Order of the constants = index of {@link #selectTabForTest}; the buttons are drawn in a different order. */
     private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS }
@@ -116,8 +118,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabPlants = tabs[4];
         tabInterior = tabs[5];
         tabLog = tabs[6];
-        interiorEnterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
-                .bounds(x + 176, y + 124, 62, 14).build());
+        interiorEnterButton = addRenderableWidget(new FitButton(x + 176, y + 124, 62, 14, Component.translatable("gui.bettacraft.tank.enter"),
+                b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         thinButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.plants.thin"), b -> send(TankActions.THIN_PLANTS, 0, "", null))
                 .bounds(x + 166, y + 124, 72, 14).build());
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
@@ -135,22 +137,22 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         lockButton = addRenderableWidget(Button.builder(Component.empty(), b -> send(TankActions.TOGGLE_LOCK, 0, "", null))
                 .bounds(x + 164, y + 20, 74, 15).build());
         overview.add(lockButton);
-        signButton = addRenderableWidget(Button.builder(Component.empty(), b -> send(TankActions.TOGGLE_SIGN, 0, "", null))
-                .bounds(x + 10, y + 38, 62, 14).build());
-        signPosButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
+        // sign, sign position and front side share the row; labels that are still too long are drawn smaller, not scrolled
+        signButton = addRenderableWidget(new FitButton(x + 10, y + 38, 62, 14, Component.empty(), b -> send(TankActions.TOGGLE_SIGN, 0, "", null)));
+        signPosButton = addRenderableWidget(new FitButton(x + 74, y + 38, 82, 14, Component.empty(), b -> {
             TankView v = view();
             if (v != null) send(TankActions.SET_SIGN_POS, v.signPos.next().ordinal(), "", null);
-        }).bounds(x + 74, y + 38, 94, 14).build());
-        frontButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
+        }));
+        frontButton = addRenderableWidget(new FitButton(x + 158, y + 38, 80, 14, Component.empty(), b -> {
             TankView v = view();
             if (v != null) send(TankActions.SET_FRONT, v.front.getClockWise().get2DDataValue(), "", null);
-        }).bounds(x + 170, y + 38, 68, 14).build());
+        }));
         minusButton = addRenderableWidget(Button.builder(Component.literal("-"), b -> changeTarget(-1))
                 .bounds(x + 168, y + 77, 14, 12).build());
         plusButton = addRenderableWidget(Button.builder(Component.literal("+"), b -> changeTarget(1))
                 .bounds(x + 224, y + 77, 14, 12).build());
-        enterButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.tank.enter"), b -> send(TankActions.ENTER_INTERIOR, 0, "", null))
-                .bounds(x + 186, y + 123, 52, 14).build());
+        enterButton = addRenderableWidget(new FitButton(x + ENTER_X, y + 123, 238 - ENTER_X, 14, Component.translatable("gui.bettacraft.tank.enter"),
+                b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         overview.addAll(List.of(signButton, signPosButton, frontButton, minusButton, plusButton, enterButton));
 
         // ---- inhabitants
@@ -177,6 +179,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     /** Dev smoke test only. */
     public void selectTabForTest(int index) {
         setTab(Tab.values()[index]);
+    }
+
+    /** Dev smoke test only: scrolls the breeding tab (clamped to its rows when drawn). */
+    public void scrollBreedingForTest(int rows) {
+        breedScroll = rows;
     }
 
     /** Dev smoke test only: presses the "Thin out" button of the plants tab like a click (false when it is not active). */
@@ -229,6 +236,28 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             g.pose().translate(getX() + getWidth() / 2.0F, getY() + (getHeight() - 8 * s) / 2.0F + 0.5F, 0);
             g.pose().scale(s, s, 1);
             g.drawString(font, seq, -font.width(seq) / 2, 0, color, true);
+            g.pose().popPose();
+        }
+    }
+
+    /** A button whose label is drawn smaller when it does not fit (instead of vanilla's scrolling text), centred. */
+    public static final class FitButton extends Button {
+        FitButton(int x, int y, int w, int h, Component label, OnPress onPress) {
+            super(x, y, w, h, label, onPress, DEFAULT_NARRATION);
+        }
+
+        @Override
+        public void renderString(GuiGraphics g, net.minecraft.client.gui.Font font, int color) {
+            int room = getWidth() - 4, w = font.width(getMessage());
+            if (w <= room) {
+                super.renderString(g, font, color);
+                return;
+            }
+            float s = Math.max(0.5F, room / (float) w);
+            g.pose().pushPose();
+            g.pose().translate(getX() + getWidth() / 2.0F, getY() + (getHeight() - 8 * s) / 2.0F + 0.5F, 0);
+            g.pose().scale(s, s, 1);
+            g.drawString(font, getMessage(), -w / 2, 0, color, true);
             g.pose().popPose();
         }
     }
@@ -395,7 +424,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 return true;
             }
             if (tab == Tab.BREEDING) {
-                breedScroll = Mth.clamp(breedScroll - (int) Math.signum(sy), 0, Math.max(0, BreedingLines.build(v).size() - BREED_ROWS));
+                breedScroll = Mth.clamp(breedScroll - (int) Math.signum(sy), 0, Math.max(0, breedRows(v).size() - BREED_ROWS));
                 return true;
             }
         }
@@ -431,13 +460,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         switch (tab) {
             case OVERVIEW -> drawOverview(g, v);
             case INHABITANTS -> drawInhabitants(g, v, mouseX - leftPos, mouseY - topPos);
-            case BREEDING -> drawBreeding(g, v, mouseX - leftPos, mouseY - topPos);
+            case BREEDING -> drawBreeding(g, v);
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
             case WATER -> drawWater(g, v);
             case PLANTS -> drawPlants(g, v);
         }
-        if (v.locked && tab == Tab.OVERVIEW) g.blit(TEXTURE, 228, 125, 16, 232, 10, 10);
+        // lock symbol left of the interior button (not on its label)
+        if (v.locked && tab == Tab.OVERVIEW) g.blit(TEXTURE, ENTER_X - 12, 125, 16, 232, 10, 10);
     }
 
     /** A line of text that ends inside the content area (a longer translation is drawn a little smaller). */
@@ -499,19 +529,20 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 10;
         MutableComponent inh = Component.translatable("gui.bettacraft.tank.inhabitants", v.inhabitants.size(), v.adults, v.hardCap);
         if (v.crowded) inh.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
-        line(g, inh, x, y, TEXT_LIGHT);
+        // the last two lines end left of the interior button (and the lock symbol)
+        int room = ENTER_X - (v.locked ? 15 : 3) - x;
+        fitLine(g, inh, x, y, TEXT_LIGHT, room);
         y += 10;
         Component unpowered = unpowered(v);
         if (v.waterMb < v.minInsertMb) {
-            line(g, Component.translatable("gui.bettacraft.tank.fill_hint", v.minInsertMb).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+            fitLine(g, Component.translatable("gui.bettacraft.tank.fill_hint", v.minInsertMb).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, room);
         } else if (v.water.qualityEnabled && v.water.quality < org.overengineer.bettacraft.tank.WaterQuality.POOR_BELOW) {
-            line(g, Component.translatable(v.water.quality < v.water.badBelow ? "gui.bettacraft.water.warn_bad" : "gui.bettacraft.water.warn_poor",
-                    Math.round(v.water.quality * 100)).withStyle(v.water.quality < v.water.badBelow ? ChatFormatting.RED : ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+            fitLine(g, Component.translatable(v.water.quality < v.water.badBelow ? "gui.bettacraft.water.warn_bad" : "gui.bettacraft.water.warn_poor",
+                    Math.round(v.water.quality * 100)).withStyle(v.water.quality < v.water.badBelow ? ChatFormatting.RED : ChatFormatting.GOLD), x, y, TEXT_LIGHT, room);
         } else if (unpowered != null) {
-            // left of the interior button
-            g.drawString(font, net.minecraft.locale.Language.getInstance().getVisualOrder(font.substrByWidth(unpowered, 172)), x, y, TEXT_LIGHT, false);
+            fitLine(g, unpowered, x, y, TEXT_LIGHT, room);
         } else if (v.legacyHeaters > 0) {
-            line(g, Component.translatable("gui.bettacraft.tank.legacy_heaters", v.legacyHeaters).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
+            fitLine(g, Component.translatable("gui.bettacraft.tank.legacy_heaters", v.legacyHeaters).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, room);
         }
     }
 
@@ -820,19 +851,44 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         g.drawString(font, Component.translatable("gui.bettacraft.log.count", lines.size()), x, 128, 0x909090, false);
     }
 
-    private void drawBreeding(GuiGraphics g, TankView v, int mx, int my) {
+    /** A row of the breeding tab: a piece of a wrapped line and its indent. */
+    private record BreedRow(net.minecraft.util.FormattedCharSequence text, int indent) {}
+
+    /** Text width of the breeding tab (left of the scroll bar). */
+    private static final int BREED_W = 222;
+
+    /**
+     * The lines of the breeding tab wrapped to the content width (long genotype lines, mostly in German): the
+     * continuation rows are indented a little further than the line they belong to.
+     */
+    private List<BreedRow> breedRows(TankView v) {
+        List<BreedRow> rows = new ArrayList<>();
+        for (Component c : BreedingLines.build(v)) {
+            if (font.width(c) <= BREED_W) {
+                rows.add(new BreedRow(c.getVisualOrderText(), 0));
+                continue;
+            }
+            String plain = c.getString();
+            int lead = 0;
+            while (lead < plain.length() && plain.charAt(lead) == ' ') lead++;
+            int indent = font.width(plain.substring(0, lead)) + 8;
+            List<net.minecraft.util.FormattedCharSequence> parts = font.split(c, BREED_W - indent);
+            for (int i = 0; i < parts.size(); i++) rows.add(new BreedRow(parts.get(i), i == 0 ? 0 : indent));
+        }
+        return rows;
+    }
+
+    private void drawBreeding(GuiGraphics g, TankView v) {
         int x = 11, y = 20;
-        List<Component> lines = BreedingLines.build(v);
-        breedScroll = Mth.clamp(breedScroll, 0, Math.max(0, lines.size() - BREED_ROWS));
+        List<BreedRow> rows = breedRows(v);
+        breedScroll = Mth.clamp(breedScroll, 0, Math.max(0, rows.size() - BREED_ROWS));
         for (int r = 0; r < BREED_ROWS; r++) {
             int idx = breedScroll + r;
-            if (idx >= lines.size()) break;
-            Component c = lines.get(idx);
-            int ly = y + r * 10;
-            g.drawString(font, net.minecraft.locale.Language.getInstance().getVisualOrder(font.substrByWidth(c, 220)), x, ly, TEXT_LIGHT, false);
-            if (my >= ly && my < ly + 10 && mx >= x && mx < x + 226 && font.width(c) > 220) pendingTooltip = List.of(c);
+            if (idx >= rows.size()) break;
+            BreedRow row = rows.get(idx);
+            g.drawString(font, row.text(), x + row.indent(), y + r * 10, TEXT_LIGHT, false);
         }
-        scrollbar(g, lines.size(), BREED_ROWS, breedScroll, false);
+        scrollbar(g, rows.size(), BREED_ROWS, breedScroll, false);
     }
 
     /** Thin scroll indicator at the right edge of the content area. */

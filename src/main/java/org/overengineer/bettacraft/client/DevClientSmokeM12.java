@@ -116,6 +116,22 @@ final class DevClientSmokeM12 {
                     }
                 });
                 then(20, () -> shot("menu_tabs_" + code.substring(0, 2) + "_gui" + sc));
+                // the overview (button row, interior button) and the breeding tab (wrapped genotype lines)
+                then(1, () -> {
+                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
+                });
+                then(20, () -> shot("menu_overview_" + code.substring(0, 2) + "_gui" + sc));
+                then(1, () -> {
+                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
+                });
+                then(20, () -> shot("menu_breeding_" + code.substring(0, 2) + "_gui" + sc));
+                then(1, () -> {
+                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.scrollBreedingForTest(Integer.MAX_VALUE);
+                });
+                then(20, () -> shot("menu_breeding_" + code.substring(0, 2) + "_gui" + sc + "_end"));
+                then(1, () -> {
+                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.scrollBreedingForTest(0);
+                });
             }
             then(1, () -> {
                 if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);

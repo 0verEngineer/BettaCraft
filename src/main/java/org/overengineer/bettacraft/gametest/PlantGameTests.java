@@ -641,8 +641,10 @@ public final class PlantGameTests {
         double saved = ServerConfig.PLANTS_BOTTLE_CHANCE.get();
         BlockPos water = h.absolutePos(new BlockPos(20, 1, 20));
         var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
-        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 8) + " " + water.getY() + " " + (water.getZ() - 8) + " "
-                + (water.getX() + 8) + " " + (water.getY() + 8) + " " + (water.getZ() + 8) + " minecraft:swamp");
+        // only the water block and the air above it: a box of +-8 blocks could reach into a chunk that is not loaded,
+        // then fillbiome does nothing at all and the test failed now and then (in plains)
+        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + water.getX() + " " + water.getY() + " " + water.getZ() + " "
+                + water.getX() + " " + (water.getY() + 3) + " " + water.getZ() + " minecraft:swamp");
         h.setBlock(new BlockPos(20, 1, 20), Blocks.WATER);
         ServerPlayer sp = lookingDown(h, water.getX() + 0.5, water.getY() + 2.6, water.getZ() + 0.5);
         try {
