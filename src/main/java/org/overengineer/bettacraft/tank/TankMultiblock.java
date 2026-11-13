@@ -201,13 +201,15 @@ public final class TankMultiblock {
         List<TankData> olds = new ArrayList<>();
         List<BlockPos> all = new ArrayList<>();
         long water = 0, power = 0;
-        double waste = 0;
+        double waste = 0, salt = 0, calcium = 0;
         TankData main = null;
         for (TankBlockEntity c : controllers) {
             TankData t = c.getTank();
             olds.add(t);
             water += t.waterMb();
             waste += (1 - t.waterQuality()) * t.waterMb();
+            salt += t.salinity() * (double) t.waterMb();
+            calcium += t.calcium() * (double) t.waterMb();
             power += t.powerBuffer();
             for (long l : t.members()) all.add(BlockPos.of(l));
             if (main == null || t.memberCount() > main.memberCount()) main = t;
@@ -227,6 +229,9 @@ public final class TankMultiblock {
         merged.setWaterMb(water);
         // M9: the water mixes, the stored FE adds up
         merged.setWaterQuality(water <= 0 ? main.waterQuality() : (float) (1 - waste / water));
+        // M20: salt and calcium mix by volume too
+        merged.setSalinity(water <= 0 ? main.salinity() : (float) (salt / water));
+        merged.setCalcium(water <= 0 ? main.calcium() : (float) (calcium / water));
         merged.setPowerBuffer(Math.min(power, TankPower.capacity()));
         // equipment of all merged tanks moves into the new one; what does not fit drops
         for (TankData t : olds) {

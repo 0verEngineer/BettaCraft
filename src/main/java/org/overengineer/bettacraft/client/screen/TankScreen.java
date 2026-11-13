@@ -672,8 +672,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
         line(g, Component.translatable("gui.bettacraft.water.volume", v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
         y += 11;
-        // M11: what the tank is made of (glass and style)
-        line(g, org.overengineer.bettacraft.compat.info.InfoLines.glassLine(v.glass, v.style.getSerializedName()), x, y, TEXT_LIGHT);
+        // M11: what the tank is made of (glass and style); M20: in salt or brackish water the salt values instead
+        if (w.salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM) fitLine(g, salinityLine(w), x, y, TEXT_LIGHT, 226);
+        else line(g, org.overengineer.bettacraft.compat.info.InfoLines.glassLine(v.glass, v.style.getSerializedName()), x, y, TEXT_LIGHT);
         y += 11;
         if (w.qualityEnabled) {
             ChatFormatting col = switch (w.state) {
@@ -729,7 +730,34 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             line(g, groups, x, y, TEXT_LIGHT);
         }
         y += 13;
-        line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+        if (w.reefLine()) fitLine(g, reefLine(w), x, y, TEXT_LIGHT, 226); // M20: skimmers, pumps, live rock
+        else line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    /** M20: "Salinity 35.0 ppt (sea water) · calcium 420 mg/L · nitrate 5 mg/L". */
+    static Component salinityLine(TankView.Water w) {
+        var kind = org.overengineer.bettacraft.tank.Salinity.kind(w.salinity);
+        ChatFormatting col = kind == org.overengineer.bettacraft.tank.Salinity.Kind.MARINE ? ChatFormatting.AQUA : ChatFormatting.YELLOW;
+        MutableComponent c = Component.translatable("gui.bettacraft.reef.salinity", String.format(java.util.Locale.ROOT, "%.1f", w.salinity),
+                Component.translatable("gui.bettacraft.reef.kind." + kind.name().toLowerCase(java.util.Locale.ROOT)).withStyle(col));
+        if (kind == org.overengineer.bettacraft.tank.Salinity.Kind.MARINE) {
+            ChatFormatting ca = w.calcium < 300 ? ChatFormatting.RED : w.calcium < 380 ? ChatFormatting.GOLD : ChatFormatting.GREEN;
+            int no3 = org.overengineer.bettacraft.tank.Salinity.nitrate(w.quality);
+            c.append(Component.translatable("gui.bettacraft.reef.calcium", Math.round(w.calcium)).withStyle(ca))
+                    .append(Component.translatable("gui.bettacraft.reef.nitrate", no3).withStyle(no3 > 40 ? ChatFormatting.RED : no3 > 20 ? ChatFormatting.GOLD : ChatFormatting.GREEN));
+        }
+        return c;
+    }
+
+    /** M20: "Skimmers 1 · flow pumps 2 (flow 85 %) · live rock 1,024 · light for corals 100 %". */
+    static Component reefLine(TankView.Water w) {
+        boolean salt = org.overengineer.bettacraft.tank.Salinity.marine(w.salinity);
+        MutableComponent c = Component.translatable("gui.bettacraft.reef.skimmers", w.skimmers)
+                .withStyle(w.skimmers > 0 && !salt ? ChatFormatting.GRAY : ChatFormatting.WHITE);
+        c.append(Component.translatable("gui.bettacraft.reef.pumps", w.pumps, Math.round(Math.min(3, w.flow) * 100)));
+        if (w.liveRock > 0) c.append(Component.translatable("gui.bettacraft.reef.live_rock", String.format(java.util.Locale.ROOT, "%,d", w.liveRock)));
+        c.append(Component.translatable("gui.bettacraft.reef.spectrum", Math.round(w.spectrum * 100)));
+        return c;
     }
 
     /** M12: the floating plants tab. */
@@ -1207,7 +1235,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                         Math.round(sel.gradeMax() * 100)), x, y, TEXT_LIGHT, w);
                 y += 10;
             }
-            Component breed = !sp.breeds() ? Component.translatable("gui.bettacraft.critters.no_breeding").withStyle(ChatFormatting.GRAY)
+            Component breed = !sp.breeds() ? Component.translatable(sp.marine() ? "gui.bettacraft.critters.no_breeding_reef" : "gui.bettacraft.critters.no_breeding").withStyle(ChatFormatting.GRAY)
                     : sel.berried() > 0 ? Component.translatable(sp.breeding() == org.overengineer.bettacraft.critters.CritterSpecies.Breeding.PAIR_CLUTCH
                     ? "gui.bettacraft.critters.gravid" : "gui.bettacraft.critters.berried", sel.berried()).withStyle(ChatFormatting.GREEN)
                     : Component.translatable("gui.bettacraft.critters.breeds." + sp.breeding().name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.GRAY);

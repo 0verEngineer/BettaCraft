@@ -250,6 +250,8 @@ public final class DevSmokeTest {
                 DevSmokeM18.setup(level, base); // M18: a red light bar, a betta of every stage (stocking in fractions)
             } else if (ticks == 150) {
                 DevSmokeM19.setup(level, base); // M19: a shoal of cardinals, corys, a pleco, a clutch, a breeding box; breeding guppies
+            } else if (ticks == 160) {
+                DevSmokeM20.setup(level, base); // M20: a reef tank with sea water, skimmer, corals, clownfish, chromis, reef critters
             } else if (!passed && ticks >= 200 && ticks < 2400 && (InteriorBench.realRunning() || ticks % 20 != 0)) {
                 // wait for the asynchronous real-region bench
             } else if (ticks >= 200 && !passed) {
@@ -291,6 +293,7 @@ public final class DevSmokeTest {
                 DevSmokeM16.check(level, base);
                 DevSmokeM18.check(level, base);
                 DevSmokeM19.check(level, base);
+                DevSmokeM20.check(level, base);
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

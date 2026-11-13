@@ -103,6 +103,12 @@ public final class PlantShapes {
             case RIBBON -> b.ribbons();
             case CARPET -> b.carpet();
             case BULB -> b.bulb();
+            case POLYPS -> b.polyps();
+            case DISC -> b.discs();
+            case TOADSTOOL -> b.toadstool();
+            case BRANCH -> b.branches();
+            case DOME -> b.dome();
+            case ANEMONE -> b.anemone();
         }
         return new Shape(new ArrayList<>(b.map.values()), s.stages());
     }
@@ -122,7 +128,8 @@ public final class PlantShapes {
             this.u = u;
             this.headroom = headroom;
             this.stages = s.stages();
-            this.minY = s.form().rooted() ? 0 : -(int) Math.round(3 * u);
+            // M20: corals sit on their rock (only the polyp mats creep a little down its sides)
+            this.minY = s.form().rooted() || (s.marine() && s.form() != PlantSpecies.Form.POLYPS) ? 0 : -(int) Math.round(3 * u);
         }
 
         static long key(int x, int y, int z) {
@@ -432,6 +439,183 @@ public final class PlantShapes {
                         }
                 }
             }
+        }
+
+        // ------------------------------------------------------------------ M20 corals
+
+        /** Zoanthids / star polyps: a creeping mat over the rock, coloured oral discs (TOP) dotted in it. */
+        void polyps() {
+            int n = Math.max(5, (int) Math.round(70 * u * u));
+            int maxR = Math.max(2, len(6)), maxUp = Math.max(1, len(2));
+            List<int[]> cells = new ArrayList<>();
+            cells.add(new int[]{0, 0, 0});
+            int tries = 0;
+            while (cells.size() < n && tries++ < n * 40) {
+                int[] c = cells.get(r.nextInt(cells.size()));
+                int roll = r.nextInt(10);
+                int dx = 0, dy = 0, dz = 0;
+                if (roll < 8) {
+                    int[] d = DIRS[roll % 4];
+                    dx = d[0];
+                    dz = d[1];
+                } else if (roll == 8) dy = 1;
+                else dy = -1;
+                int x = c[0] + dx, y = c[1] + dy, z = c[2] + dz;
+                if (x * x + z * z > maxR * maxR || y > maxUp || y < minY || map.containsKey(key(x, y, z))) continue;
+                int born = 1 + cells.size() * stages / n;
+                if (add(x, y, z, r.nextInt(3) == 0 ? PlantPart.TOP : PlantPart.LEAF, born)) cells.add(new int[]{x, y, z});
+            }
+        }
+
+        /** Mushroom corals: a few flat discs on short stalks, the oldest in the middle. */
+        void discs() {
+            int count = between(3, 5);
+            int rad = Math.max(1, len(2.6));
+            List<int[]> spots = new ArrayList<>();
+            spots.add(new int[]{0, 0});
+            for (int i = 1; i < count; i++) {
+                double a = r.nextDouble() * Math.PI * 2, d = len(betweenD(3.5, 5.5));
+                spots.add(new int[]{(int) Math.round(Math.cos(a) * d), (int) Math.round(Math.sin(a) * d)});
+            }
+            for (int i = 0; i < spots.size(); i++) {
+                int[] sp = spots.get(i);
+                int b0 = 1 + i * Math.max(1, stages - 2) / spots.size();
+                int h = Math.max(1, len(between(1, 2)));
+                // a short stalk from the root out to the disc (the discs fan out over the rock)
+                int steps = Math.max(1, (int) Math.ceil(Math.sqrt(sp[0] * sp[0] + sp[1] * sp[1] + h * h) * 2));
+                for (int k = 1; k <= steps; k++) {
+                    double t = k / (double) steps;
+                    add((int) Math.round(sp[0] * t), (int) Math.round((h - 1) * t), (int) Math.round(sp[1] * t), PlantPart.STEM, b0);
+                }
+                int rr = i == 0 ? rad : Math.max(1, rad - r.nextInt(2));
+                for (int dx = -rr; dx <= rr; dx++)
+                    for (int dz = -rr; dz <= rr; dz++) {
+                        double d2 = dx * dx + dz * dz;
+                        if (d2 > rr * rr + 0.6) continue;
+                        int born = Math.min(stages, b0 + (int) Math.round(Math.sqrt(d2) / Math.max(1, rr) * 2));
+                        add(sp[0] + dx, h, sp[1] + dz, d2 < 1.1 ? PlantPart.TOP : PlantPart.LEAF, born);
+                    }
+            }
+        }
+
+        /** Leather coral: a thick stalk and a wide domed cap with polyps on top. */
+        void toadstool() {
+            double f = fit(14);
+            int stalk = Math.max(2, (int) Math.round(len(between(6, 8)) * f));
+            int rad = Math.max(2, (int) Math.round(len(between(5, 6)) * f));
+            int thick = u >= 0.75 ? 1 : 0;
+            for (int y = 0; y < stalk; y++) {
+                int born = 1 + y * Math.max(1, stages / 2) / stalk;
+                for (int dx = -thick; dx <= thick; dx++)
+                    for (int dz = -thick; dz <= thick; dz++) if (y > 0 || dx != 0 || dz != 0) add(dx, y, dz, PlantPart.STEM, born);
+            }
+            int lean = r.nextInt(4);
+            int[] d = DIRS[lean];
+            for (int dx = -rad; dx <= rad; dx++)
+                for (int dz = -rad; dz <= rad; dz++) {
+                    double d2 = dx * dx + dz * dz;
+                    if (d2 > rad * rad + 0.5) continue;
+                    double k = Math.sqrt(d2) / rad;
+                    int born = Math.min(stages, stages / 2 + 1 + (int) Math.floor(k * (stages - stages / 2)));
+                    // a smooth cap (neighbours differ by one block at most): the rim droops, the whole cap tilts a little
+                    int y = stalk + (int) Math.round(-Math.max(0, k - 0.7) * 3 + (dx * d[0] + dz * d[1]) / (double) Math.max(1, rad) * 0.6);
+                    add(dx, y, dz, PlantPart.LEAF, born);
+                    if (k < 0.75 && r.nextInt(3) == 0) add(dx, y + 1, dz, PlantPart.TOP, Math.min(stages, born + 1));
+                }
+        }
+
+        /**
+         * Branching stony corals: Acropora (many thin branches with pale tips) and the hammer coral (a few stout
+         * skeleton branches with fleshy, hammer-shaped heads).
+         */
+        void branches() {
+            boolean hammer = s == PlantSpecies.HAMMER_CORAL;
+            double f = fit(hammer ? 10 : 16);
+            int trunks = hammer ? between(3, 5) : between(4, 6);
+            int top = headroom - 1;
+            for (int i = 0; i < trunks; i++) {
+                double yaw = r.nextDouble() * Math.PI * 2 + i * 2.39996;
+                double elev = Math.toRadians(hammer ? betweenD(55, 75) : betweenD(50, 80));
+                int length = Math.max(2, (int) Math.round(len(hammer ? between(5, 8) : between(9, 15)) * f));
+                int b0 = 1 + i * Math.max(1, stages / 2) / trunks;
+                branch(0, 0, 0, yaw, elev, length, b0, hammer ? 0 : 2, hammer, top);
+            }
+        }
+
+        private void branch(double x, double y, double z, double yaw, double elev, int length, int b0, int depth, boolean hammer, int top) {
+            double step = 0.5;
+            int lastX = (int) Math.round(x), lastY = (int) Math.round(y), lastZ = (int) Math.round(z), lastBorn = b0;
+            for (double d = 0; d < length; d += step) {
+                double nx = x + Math.cos(yaw) * Math.cos(elev) * step, nz = z + Math.sin(yaw) * Math.cos(elev) * step, ny = y + Math.sin(elev) * step;
+                if ((int) Math.round(ny) >= top - (hammer ? 2 : 0)) break;
+                x = nx;
+                y = ny;
+                z = nz;
+                elev = Math.min(Math.toRadians(85), elev + Math.toRadians(hammer ? 1.5 : 2.5) * step);
+                boolean tip = d >= length - 1.5;
+                int born = Math.max(lastBorn, birth(b0, stages, d / length));
+                if (!add((int) Math.round(x), (int) Math.round(y), (int) Math.round(z), hammer ? PlantPart.STEM : tip ? PlantPart.TOP : PlantPart.LEAF, born)) break;
+                lastX = (int) Math.round(x);
+                lastY = (int) Math.round(y);
+                lastZ = (int) Math.round(z);
+                lastBorn = born;
+                if (depth > 0 && d > 2 && r.nextInt(hammer ? 12 : 7) == 0) {
+                    branch(x, y, z, yaw + (r.nextBoolean() ? 1 : -1) * betweenD(0.6, 1.2), elev - 0.3, Math.max(2, (int) ((length - d) * 0.8)),
+                            Math.min(stages, born + 1), depth - 1, hammer, top);
+                }
+            }
+            if (hammer) {
+                // the fleshy head: a lump of tentacles, wider than high
+                int hr = Math.max(1, len(1.6));
+                int born = lastBorn;
+                for (int dx = -hr; dx <= hr; dx++)
+                    for (int dz = -hr; dz <= hr; dz++)
+                        for (int dy = 0; dy <= hr; dy++) {
+                            if (dx * dx + dz * dz + dy * dy * 2 > hr * hr + 1) continue;
+                            add(lastX + dx, lastY + dy, lastZ + dz, dy == hr || dx * dx + dz * dz >= hr * hr ? PlantPart.TOP : PlantPart.LEAF, born);
+                        }
+            }
+        }
+
+        /** Lobophyllia: a dome growing outwards from the root, its ridges (TOP) in a meandering pattern. */
+        void dome() {
+            double f = fit(8);
+            int rad = Math.max(2, (int) Math.round(len(between(5, 7)) * f));
+            double phase = r.nextDouble() * 6;
+            for (int dx = -rad; dx <= rad; dx++)
+                for (int dz = -rad; dz <= rad; dz++)
+                    for (int dy = 0; dy <= rad; dy++) {
+                        double d2 = dx * dx + dz * dz + dy * dy * 1.6;
+                        if (d2 > rad * rad + 0.5) continue;
+                        double k = Math.sqrt(d2) / rad;
+                        int born = Math.min(stages, 1 + (int) Math.floor(k * stages));
+                        boolean ridge = Math.sin(dx * 0.9 + Math.sin(dz * 0.7 + phase) * 1.8) > 0.55;
+                        add(dx, dy, dz, ridge ? PlantPart.TOP : PlantPart.LEAF, born);
+                    }
+        }
+
+        /** Bubble tip anemone: a short foot, an oral disc and a ring of tentacles with bubble tips. */
+        void anemone() {
+            double f = fit(8);
+            int disc = Math.max(1, (int) Math.round(len(3.5) * f));
+            int foot = Math.max(1, len(2));
+            for (int y = 1; y <= foot; y++) add(0, y, 0, PlantPart.LEAF, 1);
+            for (int dx = -disc; dx <= disc; dx++)
+                for (int dz = -disc; dz <= disc; dz++) {
+                    double d2 = dx * dx + dz * dz;
+                    if (d2 > disc * disc + 0.6) continue;
+                    double k = Math.sqrt(d2) / disc;
+                    int born = 1 + (int) Math.floor(k * (stages / 2.0));
+                    add(dx, foot, dz, PlantPart.LEAF, born);
+                    // tentacles stand on the disc, longer outside, swollen tips
+                    if ((dx + dz) % 2 == 0 && d2 >= 1) {
+                        int h = Math.max(1, (int) Math.round(len(betweenD(2, 4)) * f * (0.6 + 0.4 * k)));
+                        for (int y = 1; y <= h; y++) {
+                            add(dx + (k > 0.7 && y == h ? Integer.signum(dx) : 0), foot + y, dz + (k > 0.7 && y == h ? Integer.signum(dz) : 0),
+                                    y == h ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, born + 1 + y * (stages / 2) / Math.max(1, h)));
+                        }
+                    }
+                }
         }
     }
 

@@ -42,13 +42,18 @@ public final class CritterLife {
      * @param hunting whether bettas hunt at all (config)
      */
     public record Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
-                      Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting) {
+                      Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed) {
+        public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
+                   Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting) {
+            this(quality, qualityEnabled, temp, bettas, hiding, cap, breed, air, hunting, 0, 1);
+        }
+
         public double breed(CritterSpecies s) {
             return breed.getOrDefault(s.group(), 1.0);
         }
     }
 
-    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR }
+    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY }
 
     /** What happened in a step (for the tank log and the GameTests). */
     public static final class Result {
@@ -166,6 +171,13 @@ public final class CritterLife {
                 double hr = 0.25 * (c.hunger - 3);
                 rate += hr;
                 if (cause == null || hr > rate - hr) cause = Cause.HUNGER;
+            }
+            // M20: the wrong salinity (freshwater shrimp in salt water, reef animals in fresh water)
+            double sr = 3 * org.overengineer.bettacraft.tank.Salinity.shockPerDay(org.overengineer.bettacraft.reef.SaltTolerance.critter(c.species),
+                    env.salinity(), env.saltSpeed());
+            if (sr > 0) {
+                rate += sr;
+                if (cause == null || sr > rate - sr) cause = Cause.SALINITY;
             }
             if (c.soft()) rate *= 1.5;
             if (rate > 0 && rnd.nextDouble() < 1 - Math.exp(-rate * days)) die(c, cause == null ? Cause.WATER : cause, r);

@@ -78,7 +78,7 @@ public class TankBlockEntity extends BlockEntity {
     public final java.util.Map<org.overengineer.bettacraft.critters.CritterSpecies, Long> critterDeathLog = new java.util.EnumMap<>(
             org.overengineer.bettacraft.critters.CritterSpecies.class);
     /** Attached external filters and cabinets under the tank (transient cache, see TankEquipment). */
-    java.util.List<BlockPos> filterCache = java.util.List.of(), cabinetCache = java.util.List.of();
+    java.util.List<BlockPos> filterCache = java.util.List.of(), cabinetCache = java.util.List.of(), skimmerCache = java.util.List.of();
     long equipmentScanTime = Long.MIN_VALUE;
     /**
      * M9 power state of the equipment (transient, recomputed every care step by {@link TankPower}): whether heaters /

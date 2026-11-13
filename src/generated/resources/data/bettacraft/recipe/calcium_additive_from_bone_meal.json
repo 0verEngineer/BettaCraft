@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "item": "bettacraft:sea_salt"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "bettacraft:calcium_additive"
+  }
+}

@@ -116,6 +116,7 @@ class PlantShapesTest {
     @Test
     void redSpeciesGetRedderWithLight() {
         for (PlantSpecies s : PlantSpecies.values()) {
+            if (s.red() == PlantSpecies.Red.CORAL) continue; // M20: corals glow instead (CoralTest)
             if (s.red() == PlantSpecies.Red.NONE) {
                 assertEquals(PlantColors.color(s, PlantPart.LEAF, 0), PlantColors.color(s, PlantPart.LEAF, 3), s + " stays the same");
                 continue;

@@ -60,15 +60,21 @@ public final class TankWater {
 
     /** All filters that work in the water: external filters (blocks and cabinets) and internal filters under water. */
     public static int filterCount(ServerLevel level, TankBlockEntity c) {
-        return TankEquipment.filters(level, c).size() + internalFilters(level, c.getTank());
+        // M20: protein skimmers and flow pumps run on the same power as the filters
+        return TankEquipment.filters(level, c).size() + internalFilters(level, c.getTank())
+                + org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c) + org.overengineer.bettacraft.reef.TankReef.pumps(level, c.getTank());
     }
 
     /** Water blocks the filters keep clean (0 without power when filters need it). */
     public static double filterBlocks(ServerLevel level, TankBlockEntity c) {
-        if (!c.filterPowered) return 0;
+        // M20: live rock cleans salt water without power
+        double rock = org.overengineer.bettacraft.reef.TankReef.liveRockBlocks(level, c.getTank());
+        if (!c.filterPowered) return rock;
         int ext = TankEquipment.filters(level, c).size(), in = internalFilters(level, c.getTank());
         return ext * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_EXTERNAL_FILTER_BLOCKS, 32)
-                + in * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_INTERNAL_FILTER_BLOCKS, 16);
+                + in * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_INTERNAL_FILTER_BLOCKS, 16)
+                // M20: in salt water the protein skimmers and the live rock clean too
+                + org.overengineer.bettacraft.reef.TankReef.skimmerBlocks(level, c) + rock;
     }
 
     /** Bioload: adult animals count 1, young bettas a quarter. */
@@ -148,7 +154,12 @@ public final class TankWater {
             if (whole > 0) {
                 long lost = Math.min(whole, tank.waterMb());
                 float q = WaterQuality.concentrate(tank.waterQuality(), tank.waterMb(), lost);
+                // M20: the salt and the calcium stay behind
+                float salt = Salinity.concentrate(tank.salinity(), tank.waterMb(), lost, Salinity.MAX);
+                float ca = Salinity.concentrate(tank.calcium(), tank.waterMb(), lost, 2000F);
                 TankInteractions.changeWater(level, c, -lost);
+                tank.setSalinity(salt);
+                tank.setCalcium(ca);
                 if (qualityEnabled()) tank.setWaterQuality(q);
                 carry -= whole;
                 long min = Math.round(ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5) * tank.capacityMb());

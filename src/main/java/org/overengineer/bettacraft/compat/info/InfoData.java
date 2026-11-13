@@ -108,6 +108,8 @@ public final class InfoData {
         // M14: shrimp, crayfish, snails (adults and young) and the algae on the glass
         out.putIntArray("critters", org.overengineer.bettacraft.critters.TankCritters.counts(t));
         out.putFloat("algae", (float) org.overengineer.bettacraft.tank.algae.TankAlgae.mean(t));
+        if (t.salinity() > 0) out.putFloat("salinity", t.salinity()); // M20
+        if (t.calcium() > 0) out.putFloat("calcium", t.calcium());
         out.putFloat("stock", (float) org.overengineer.bettacraft.tank.TankInhabitants.stocking(level, t));
         // M9: water quality, evaporation, power
         if (TankWater.qualityEnabled()) {

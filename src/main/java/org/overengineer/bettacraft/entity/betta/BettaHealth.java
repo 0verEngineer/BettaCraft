@@ -25,11 +25,23 @@ public final class BettaHealth {
         public static final Params DEFAULT = new Params(7, 14, 2, 2, 1);
     }
 
-    public record Conditions(boolean tempBad, boolean crowdBad, boolean waterBad) {
-        public static final Conditions GOOD = new Conditions(false, false, false);
+    /**
+     * @param salt M20: salt shock per day from the wrong salinity (0 = the salinity is fine; 1 = deadly within a day,
+     *             see {@link org.overengineer.bettacraft.tank.Salinity#shockPerDay})
+     */
+    public record Conditions(boolean tempBad, boolean crowdBad, boolean waterBad, double salt) {
+        public static final Conditions GOOD = new Conditions(false, false, false, 0);
 
         public Conditions(boolean tempBad, boolean crowdBad) {
-            this(tempBad, crowdBad, false);
+            this(tempBad, crowdBad, false, 0);
+        }
+
+        public Conditions(boolean tempBad, boolean crowdBad, boolean waterBad) {
+            this(tempBad, crowdBad, waterBad, 0);
+        }
+
+        public boolean saltBad() {
+            return salt > 0;
         }
     }
 
@@ -40,6 +52,8 @@ public final class BettaHealth {
     double tempStress;
     double crowdStress;
     double waterStress;
+    /** M20: salt shock (0..1); at 1 the animal dies, it fades with {@link Params#recoveryPerDay} in the right water. */
+    double saltShock;
     boolean sick;
     double sickDays;
 
@@ -72,8 +86,11 @@ public final class BettaHealth {
 
     private Event stepOnce(double dt, Conditions c, Params p) {
         boolean foodBad = isHungry(p);
-        int bad = (foodBad ? 1 : 0) + (c.tempBad() ? 1 : 0) + (c.crowdBad() ? 1 : 0) + (c.waterBad() ? 1 : 0);
+        int bad = (foodBad ? 1 : 0) + (c.tempBad() ? 1 : 0) + (c.crowdBad() ? 1 : 0) + (c.waterBad() ? 1 : 0) + (c.saltBad() ? 1 : 0);
         double m = bad >= 2 ? p.bothBadMultiplier() : 1.0;
+        // M20: the wrong salinity is a shock of its own (faster than the other stresses; a sea fish in fresh water dies in hours)
+        saltShock = c.saltBad() ? saltShock + dt * c.salt() : Math.max(0, saltShock - dt * p.recoveryPerDay());
+        if (saltShock >= 1) return Event.DIED;
 
         daysSinceFed += dt;
         foodStress += dt * m;
@@ -113,7 +130,8 @@ public final class BettaHealth {
     public float healthFraction(Params p) {
         if (sick) return (float) (0.5 * (1 - Math.min(1, sickDays / p.daysSickUntilDeath())));
         double worst = Math.max(Math.max(foodStress, waterStress), Math.max(tempStress, crowdStress));
-        return (float) (1 - 0.5 * Math.min(1, worst / p.daysUntilSick()));
+        float f = (float) (1 - 0.5 * Math.min(1, worst / p.daysUntilSick()));
+        return saltShock > 0 ? Math.min(f, (float) (1 - Math.min(1, saltShock))) : f;
     }
 
     /** 1 = just fed, 0 = gets sick from hunger now. */
@@ -128,6 +146,7 @@ public final class BettaHealth {
     public double tempStress() { return tempStress; }
     public double crowdStress() { return crowdStress; }
     public double waterStress() { return waterStress; }
+    public double saltShock() { return saltShock; }
 
     // ------------------------------------------------------------------ NBT
 
@@ -138,6 +157,7 @@ public final class BettaHealth {
         t.putDouble("temp_stress", tempStress);
         t.putDouble("crowd_stress", crowdStress);
         t.putDouble("water_stress", waterStress);
+        if (saltShock > 0) t.putDouble("salt_shock", saltShock);
         t.putBoolean("sick", sick);
         t.putDouble("sick_days", sickDays);
         return t;
@@ -156,6 +176,7 @@ public final class BettaHealth {
         h.tempStress = days(t, "temp_stress");
         h.crowdStress = days(t, "crowd_stress");
         h.waterStress = days(t, "water_stress"); // M9; 0 for older fish
+        h.saltShock = Math.min(1, days(t, "salt_shock")); // M20
         h.sick = t.getBoolean("sick");
         h.sickDays = days(t, "sick_days");
         return h;

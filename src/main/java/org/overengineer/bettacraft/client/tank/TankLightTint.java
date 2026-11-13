@@ -68,8 +68,25 @@ public final class TankLightTint {
         COLORS.keySet().retainAll(seen);
     }
 
-    /** Blended colour of the lit lights on top of the tank (0 = none or only white ones). */
+    /**
+     * Blended colour of the lit lights on top of the tank (0 = none or only white ones); M20: the salinity (whole ppt,
+     * 0..60) rides in the top byte, the water renderer turns salt water clear blue ({@link #salt}).
+     */
     public static int compute(ClientLevel level, TankData t) {
+        return lights(level, t) | (Math.min(60, Math.round(t.salinity())) << 24);
+    }
+
+    /** M20: the salinity part of a value of {@link #colorAt} (ppt). */
+    public static int salt(int value) {
+        return value >>> 24;
+    }
+
+    /** M20: the light colour part of a value of {@link #colorAt} (RGB, 0 = none). */
+    public static int rgb(int value) {
+        return value & 0xFFFFFF;
+    }
+
+    private static int lights(ClientLevel level, TankData t) {
         List<BlockPos> tops = TOPS.computeIfAbsent(t, TankData::openTops);
         List<DyeColor> lit = new ArrayList<>();
         for (BlockPos p : tops) {
@@ -93,7 +110,13 @@ public final class TankLightTint {
     /** Current colour of a tank by its controller (0 = none); for the smoke tests. */
     public static int colorOf(BlockPos controller) {
         Integer v = COLORS.get(controller.asLong());
-        return v == null ? 0 : v;
+        return v == null ? 0 : rgb(v);
+    }
+
+    /** M20: salinity the water of a tank is drawn with (whole ppt); for the smoke tests. */
+    public static int saltOf(BlockPos controller) {
+        Integer v = COLORS.get(controller.asLong());
+        return v == null ? 0 : salt(v);
     }
 
     public static float strength() {

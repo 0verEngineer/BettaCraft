@@ -320,9 +320,57 @@ def gourami():
     return p, [body, fil, caudal(p, 8, 12, "round"), dorsal_fin(p, 0.38, 13, 4, "long", lean=-4)] + pectorals(p, 0.24, 4, 3)
 
 
+def clown():
+    """M20 ocellaris clownfish: a stout oval body, rounded fins, a notched (two-part) dorsal fin."""
+    p = fusiform_plan("clown", depth=10.0, width=5.0, mid=6.5, peak=0.4, head=0.6, ped_frac=0.45)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.13, up=0.3)
+    body.boxes.append(anal_fin(p, 0.62, 5, 4, "oval"))
+    body.boxes += pair("pelvic", "pelvic", (0.9, p.bottom(0.42) + 0.6, p.snout + 0.42 * 24), (0, 3, 3), (14, 18, 0), "oval")
+    soft = dorsal_fin(p, 0.56, 6, 4, "oval", name="dorsal2", lean=-4)
+    return p, [body, caudal(p, 7, 10, "round"), dorsal_fin(p, 0.3, 6, 4, "tri", lean=-6), soft] + pectorals(p, 0.24, 4, 3)
+
+
+def tang():
+    """M20 yellow tang: a tall, flat disc with a pointed snout and long dorsal and anal fins."""
+    p = fusiform_plan("tang", depth=18.0, width=3.5, mid=9.5, peak=0.45, head=0.45, ped_frac=0.2, snout=-14, ped=8)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.2, up=0.32)
+    body.boxes.append(box("snout", "head", (0, -9.0, -15.0), (2, 2, 2)))
+    body.boxes.append(anal_fin(p, 0.42, 11, 5, "long_anal"))
+    body.boxes.append(box("spine", "spine", (0, -9.5, p.ped - 2.5), (1, 1, 2)))
+    return p, [body, caudal(p, 6, 11, "fork"), dorsal_fin(p, 0.28, 15, 6, "long", lean=-2)] + pectorals(p, 0.28, 4, 3)
+
+
+def goby():
+    """M20 watchman goby: a long bottom fish with eyes on top, a tall first dorsal fin and a rounded tail."""
+    p = Plan("goby", -16, 10, 6.0, 5.0, 0.85, 0.5, 0.3, flat_belly=True, belly=0.0, nseg=9)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.1, up=0.0, size=2, inset=0.9)
+    body.boxes.append(anal_fin(p, 0.6, 6, 3, "oval"))
+    body.boxes.append(box("pelvic_disc", "pelvic", (0, -0.4, p.snout + 0.3 * 26), (3, 0, 3), fin="pec_flat"))
+    second = dorsal_fin(p, 0.55, 8, 4, "long", name="dorsal2", lean=-4)
+    return p, [body, caudal(p, 7, 8, "round"), dorsal_fin(p, 0.28, 5, 7, "sail", lean=-10), second] + pectorals(p, 0.22, 4, 3, up=0.75)
+
+
+def damsel():
+    """M20 damselfish and chromis: a compact oval body, long dorsal fin, forked tail."""
+    p = fusiform_plan("damsel", depth=11.0, width=4.0, mid=7.0, peak=0.4, head=0.55, ped_frac=0.32)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.12, up=0.3)
+    body.boxes.append(anal_fin(p, 0.58, 7, 4, "anal"))
+    body.boxes += pair("pelvic", "pelvic", (0.8, p.bottom(0.42) + 0.6, p.snout + 0.42 * 24), (0, 3, 3), (14, 18, 0), "oval")
+    return p, [body, caudal(p, 8, 12, "fork"), dorsal_fin(p, 0.3, 11, 5, "long", lean=-4)] + pectorals(p, 0.24, 4, 3)
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
+    "clown": clown, "tang": tang, "goby": goby, "damsel": damsel,
 }
 
 
@@ -568,6 +616,63 @@ def looks(species, variety, female):
         return platy_look(var, female)
     if sp == "dwarf_gourami":
         return gourami_look(var, female)
+    if sp == "ocellaris_clownfish":
+        black = var == "black"
+
+        def body(t, v, x, z, y):
+            for c, half in ((0.2, 0.05), (0.5, 0.06), (0.88, 0.035)):
+                d = abs(t - c - (v - 0.5) * 0.05)
+                if d < half:
+                    return C("#f8f8f4")
+                if d < half + 0.025:
+                    return C("#141414")
+            if black:
+                return C("#e8701e") if t < 0.17 else C("#1a1616")
+            return mix(C("#f06a10"), C("#ff8a2a"), v * 0.6)
+
+        def fins(part, a, b, t, v, z, y):
+            edge = (part in ("tail", "dorsal", "dorsal2", "anal", "pelvic") and (abs(b) > 0.78 if part == "tail" else (b + 1) / 2 > 0.8 or a > 0.85))
+            if edge:
+                return C("#141414")
+            return C("#1e1a1a") if black else C("#f07a1e")
+        return Look(body, fins)
+    if sp == "yellow_tang":
+        def body(t, v, x, z, y):
+            if t > 0.86 and 0.42 < v < 0.58:
+                return C("#f8f8f0")  # the white scalpel at the tail base
+            return mix(C("#f6d20e"), C("#ffe63a"), v * 0.5)
+        return Look(body, lambda part, a, b, t, v, z, y: C("#f6d414") if part != "pectoral" else C("#f8e870"))
+    if sp == "yellow_watchman_goby":
+        rnd = np.random.default_rng(2005)
+        spots = rnd.random((64, 64))
+
+        def body(t, v, x, z, y):
+            k = spots[int(abs(z) * 2.3 + abs(x) * 1.1) % 64, int((y + 20) * 2.9) % 64]
+            if k > 0.86 and t < 0.92:
+                return C("#5a8ee0")
+            return mix(C("#e8c21e"), C("#f6dc5a"), v)
+
+        def fins(part, a, b, t, v, z, y):
+            k = spots[int(a * 31) % 64, int((b + 1) * 17) % 64]
+            if part in ("dorsal", "dorsal2") and k > 0.8:
+                return C("#5a8ee0")
+            return C("#f0cc2a")
+        return Look(body, fins)
+    if sp == "green_chromis":
+        def body(t, v, x, z, y):
+            return mix(C("#5ec8a0"), C("#9ae8d0"), v)
+        return Look(body, clear("#b8e8dc"))
+    if sp == "yellowtail_damsel":
+        def body(t, v, x, z, y):
+            if t > 0.78:
+                return C("#f4d018")
+            return mix(C("#1c3ad8"), C("#3a6af0"), v)
+
+        def fins(part, a, b, t, v, z, y):
+            if part == "tail" or (part in ("dorsal", "anal") and a > 0.6):
+                return C("#f4d018")
+            return C("#2a4ae0") if part != "pectoral" else C("#c8d0e8")
+        return Look(body, fins)
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
 
 
@@ -886,6 +991,10 @@ SPECIES = [
     ("endler_guppy", "livebearer", ["wild", "tiger", "black_bar"], True),
     ("platy", "platy", ["wild", "red", "sunset", "mickey_mouse", "blue"], True),
     ("dwarf_gourami", "gourami", ["wild", "powder_blue", "flame"], True),
+    # M20 reef fish
+    ("ocellaris_clownfish", "clown", ["wild", "black"], False), ("yellow_tang", "tang", ["wild"], False),
+    ("yellow_watchman_goby", "goby", ["wild"], False), ("green_chromis", "damsel", ["wild"], False),
+    ("yellowtail_damsel", "damsel", ["wild"], False),
 ]
 
 

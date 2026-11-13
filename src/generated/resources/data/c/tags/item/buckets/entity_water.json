@@ -20,6 +20,11 @@
     "bettacraft:guppy_bucket",
     "bettacraft:endler_guppy_bucket",
     "bettacraft:platy_bucket",
-    "bettacraft:dwarf_gourami_bucket"
+    "bettacraft:dwarf_gourami_bucket",
+    "bettacraft:ocellaris_clownfish_bucket",
+    "bettacraft:yellow_tang_bucket",
+    "bettacraft:yellow_watchman_goby_bucket",
+    "bettacraft:green_chromis_bucket",
+    "bettacraft:yellowtail_damsel_bucket"
   ]
 }

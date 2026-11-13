@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/protein_skimmer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/protein_skimmer"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/protein_skimmer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/protein_skimmer",
+      "y": 270
+    }
+  }
+}

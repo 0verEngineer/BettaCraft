@@ -5,6 +5,10 @@
     "bettacraft:filter_segment",
     "bettacraft:external_filter",
     "bettacraft:artemia_hatchery",
-    "bettacraft:spawning_cave"
+    "bettacraft:spawning_cave",
+    "bettacraft:protein_skimmer",
+    "bettacraft:reef_rock",
+    "bettacraft:live_rock",
+    "bettacraft:flow_pump_segment"
   ]
 }

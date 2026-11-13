@@ -36,7 +36,8 @@ import org.overengineer.bettacraft.registry.ModItems;
  * ramshorns likelier, sand or stone at the bottom trumpet snails and nerites. The catch goes into an empty fish bag.
  */
 public final class NetCatching {
-    public enum Water { RIVER, SWAMP, MANGROVE, BEACH, JUNGLE, CAVE, NONE }
+    /** M20: WARM_OCEAN (the coral reefs) and LUKEWARM_OCEAN for the reef animals. */
+    public enum Water { RIVER, SWAMP, MANGROVE, BEACH, JUNGLE, CAVE, WARM_OCEAN, LUKEWARM_OCEAN, NONE }
 
     /** One entry of the table: a species (null = dwarf clawed frog) and its weight. */
     public record Catch(@Nullable CritterSpecies species, double weight) {}
@@ -66,6 +67,9 @@ public final class NetCatching {
         if (b.is(Biomes.LUSH_CAVES)) return Water.CAVE;
         if (b.is(BiomeTags.IS_RIVER)) return Water.RIVER;
         if (b.is(BiomeTags.IS_BEACH)) return Water.BEACH;
+        // M20: the reef animals in warm and lukewarm oceans
+        if (b.is(Biomes.WARM_OCEAN)) return Water.WARM_OCEAN;
+        if (b.is(Biomes.LUKEWARM_OCEAN) || b.is(Biomes.DEEP_LUKEWARM_OCEAN)) return Water.LUKEWARM_OCEAN;
         if (b.is(BiomeTags.IS_JUNGLE)) return Water.JUNGLE;
         if (pos.getY() < level.getSeaLevel() - 8 && !level.canSeeSky(pos.above())) return Water.CAVE;
         return Water.NONE;
@@ -100,6 +104,17 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.ZEBRA_NERITE, 30 * ner));
                 out.add(new Catch(CritterSpecies.HORNED_NERITE, 25 * ner));
                 out.add(new Catch(CritterSpecies.OLIVE_NERITE, 30 * ner));
+                out.add(new Catch(CritterSpecies.HERMIT_CRAB, 15 * ner)); // M20
+            }
+            case WARM_OCEAN -> {
+                out.add(new Catch(CritterSpecies.TURBO_SNAIL, 30 * ner));
+                out.add(new Catch(CritterSpecies.HERMIT_CRAB, 30 * ner));
+                out.add(new Catch(CritterSpecies.CLEANER_SHRIMP, 20));
+            }
+            case LUKEWARM_OCEAN -> {
+                out.add(new Catch(CritterSpecies.TURBO_SNAIL, 30 * ner));
+                out.add(new Catch(CritterSpecies.HERMIT_CRAB, 35 * ner));
+                out.add(new Catch(CritterSpecies.CLEANER_SHRIMP, 5));
             }
             case JUNGLE -> {
                 out.add(new Catch(CritterSpecies.APPLE_SNAIL, 30));
@@ -124,6 +139,8 @@ public final class NetCatching {
             case SWAMP -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.SWAMP;
             case JUNGLE -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.JUNGLE;
             case MANGROVE -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.MANGROVE;
+            case WARM_OCEAN -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.WARM_OCEAN;
+            case LUKEWARM_OCEAN -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.LUKEWARM_OCEAN;
             default -> null;
         };
         if (fw == null) return out;
@@ -226,7 +243,18 @@ public final class NetCatching {
         double chance = ServerConfig.getOr(ServerConfig.CRITTERS_NET_CHANCE, 0.3) * (plants ? 1.2 : 1.0);
         // M19: in jungle, swamp and river water some catches are tankmate fish of the region
         var fish = fishTable(w);
-        if (!fish.isEmpty() && rnd.nextDouble() < chance && rnd.nextDouble() < ServerConfig.getOr(ServerConfig.TANKMATES_NET_SHARE, 0.4)) {
+        boolean ocean = w == Water.WARM_OCEAN || w == Water.LUKEWARM_OCEAN;
+        // M20: on a reef the net sometimes brings up a coral frag or an anemone (soft corals that break off)
+        if (w == Water.WARM_OCEAN && rnd.nextDouble() < chance * ServerConfig.getOr(ServerConfig.REEF_NET_SHARE, 0.4) * 0.25) {
+            var frags = List.of(org.overengineer.bettacraft.plants.PlantSpecies.ZOANTHUS, org.overengineer.bettacraft.plants.PlantSpecies.MUSHROOM_CORAL,
+                    org.overengineer.bettacraft.plants.PlantSpecies.BUBBLE_TIP_ANEMONE, org.overengineer.bettacraft.plants.PlantSpecies.GREEN_STAR_POLYPS);
+            ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(frags.get((int) Math.floorMod(rnd.nextLong(), (long) frags.size())), 0);
+            player.displayClientMessage(Component.translatable("message.bettacraft.net.frag", frag.getHoverName()), true);
+            if (!player.getInventory().add(frag)) player.drop(frag, false);
+            return true;
+        }
+        double share = ocean ? ServerConfig.getOr(ServerConfig.REEF_NET_SHARE, 0.4) : ServerConfig.getOr(ServerConfig.TANKMATES_NET_SHARE, 0.4);
+        if (!fish.isEmpty() && rnd.nextDouble() < chance && rnd.nextDouble() < share) {
             var s = rollFish(fish, rnd);
             if (s != null) {
                 int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;

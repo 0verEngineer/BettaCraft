@@ -234,7 +234,7 @@ public final class TankCritters {
         if (TankInhabitants.stocking(level, t) >= TankInhabitants.hardCap(t.waterBlocks()) - 1e-6) cap = Math.min(cap, alive(t));
         CritterLife.Env env = new CritterLife.Env(dry ? 0F : t.waterQuality(), TankWater.qualityEnabled() || dry, t.waterTemp(), adults,
                 hiding(level, t), cap, breeding(), Double.isFinite(terrain.airTop()),
-                ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true));
+                ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true), t.salinity(), org.overengineer.bettacraft.reef.SaltTolerance.speed());
         double[] pool = {t.critterFood()};
         CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, rnd, t::nextCritterId);
         t.setCritterFood(pool[0]);
@@ -405,6 +405,14 @@ public final class TankCritters {
             if (k.alive()) add += weight(k);
         }
         if (fresh.isEmpty()) return Component.translatable("message.bettacraft.critters.unknown");
+        // M20: no freshwater shrimp into the reef tank (and no reef animals into fresh water)
+        for (Critter k : fresh) {
+            var range = org.overengineer.bettacraft.reef.SaltTolerance.critter(k.species);
+            if (org.overengineer.bettacraft.reef.SaltTolerance.refuse(range, t)) {
+                return Component.translatable(org.overengineer.bettacraft.reef.SaltTolerance.refuseKey(range),
+                        Component.translatable(k.species.translationKey()), org.overengineer.bettacraft.reef.ReefItems.fmt(t.salinity()));
+            }
+        }
         long waterAfter = Math.min(t.capacityMb(), t.waterMb() + addMb);
         int cap = TankInhabitants.hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
         double stock = TankInhabitants.stocking(level, t);
@@ -419,7 +427,7 @@ public final class TankCritters {
             CritterMovement.pick(placed, terrain, rnd);
             t.critters().add(placed);
         }
-        if (addMb > 0) TankInteractions.changeWater(level, c, addMb);
+        if (addMb > 0) TankInteractions.changeWater(level, c, addMb, c.getTank().salinity()); // M20
         Critter first = fresh.getFirst();
         TankCare.log(level, c, "log.bettacraft.critters_inserted", String.valueOf(fresh.size()), "@" + first.species.translationKey());
         TankInhabitants.reconcile(level, c);

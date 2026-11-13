@@ -64,6 +64,8 @@ public final class CritterRenderer {
             case BLADDER -> "bladder";
             case TRUMPET -> "trumpet";
             case ASSASSIN -> "assassin";
+            case HERMIT -> "hermit"; // M20
+            case TURBO -> "turbo";
         };
     }
 
@@ -126,6 +128,9 @@ public final class CritterRenderer {
                 default -> 0x8A2A1C; // the wild red-brown ones have a red body
             };
             case BLADDER_SNAIL -> 0x9A8A70;
+            case TURBO_SNAIL -> 0x7A7058;
+            case HERMIT_CRAB -> 0x3A6AD0; // the blue legs
+            case CLEANER_SHRIMP -> 0xF4F0E8;
             case TRUMPET_SNAIL -> 0x8A7A68;
             case ASSASSIN_SNAIL -> 0x6E6A50;
             default -> 0x8A8070;
@@ -248,7 +253,8 @@ public final class CritterRenderer {
             ModelPart p = e.getValue();
             if (!p.visible) continue;
             int tint = switch (e.getKey()) {
-                case "body", "shell", "claws" -> body;
+                case "shell" -> k.species == CritterSpecies.HERMIT_CRAB ? (alive ? 0x8A6E52 : dead(0x8A6E52)) : body; // M20: the borrowed shell
+                case "body", "claws" -> body;
                 case "legs", "antennae" -> alive ? pale(body) : dead(pale(body));
                 case "eyes" -> EYE;
                 case "eggs" -> k.species.isCrayfish() ? 0x3A2620 : CritterGenes.mix(0xE8C440, body, 0.25F);

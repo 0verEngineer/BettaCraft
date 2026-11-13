@@ -155,6 +155,9 @@ public final class AquaticGameTests {
             TankBlockEntity c = tank(h, 1 + (i % 5) * 6, 1, 1 + (i / 5) * 6, 3, 2, 3, 16000);
             ItemStack stack = container(h, s);
             EntityType<?> type = TankInhabitants.containedType(stack);
+            // M20: the reef fish go into sea water
+            var salt = org.overengineer.bettacraft.reef.SaltTolerance.of(s.type());
+            if (salt != null && salt.marine()) c.getTank().setSalinity(35F);
             h.assertTrue(type == s.type(), s.id() + ": container holds " + type);
             Component err = TankInhabitants.insert(h.getLevel(), c, stack, type, null, TankInhabitants.carriedWater(stack));
             List<Entity> live = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());

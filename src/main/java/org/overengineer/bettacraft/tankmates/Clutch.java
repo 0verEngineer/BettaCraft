@@ -84,6 +84,7 @@ public final class Clutch {
         double base = switch (s.breeding()) {
             case GLASS_EGGS -> 1.0;
             case CAVE -> 1.0;
+            case ANEMONE -> 1.5; // M20: clownfish eggs take a week in nature
             case SCATTER -> 0.3;
             case FOAM_NEST -> 0.3;
             default -> 0;
@@ -96,6 +97,7 @@ public final class Clutch {
         double base = switch (s.breeding()) {
             case GLASS_EGGS -> 0.5;
             case CAVE -> 1.0;
+            case ANEMONE -> 1.0;
             case SCATTER -> 0.6;
             case FOAM_NEST -> 0.5;
             default -> 0;

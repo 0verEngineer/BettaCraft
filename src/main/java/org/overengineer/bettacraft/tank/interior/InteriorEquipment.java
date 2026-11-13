@@ -30,6 +30,9 @@ public final class InteriorEquipment {
     final LongOpenHashSet mopBlocks = new LongOpenHashSet();
     /** Bumped whenever a cave or mop block changes (cached cave/mop clusters). */
     int spawningVersion;
+    /** M20: anchors of the flow pumps and the number of live rock blocks (biological filter in salt water). */
+    final LongOpenHashSet pumps = new LongOpenHashSet();
+    int liveRock;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -39,6 +42,15 @@ public final class InteriorEquipment {
     public LongOpenHashSet caveBlocks() { return caveBlocks; }
     public LongOpenHashSet mopBlocks() { return mopBlocks; }
     public int spawningVersion() { return spawningVersion; }
+    public LongOpenHashSet pumps() { return pumps; }
+    public int liveRock() { return liveRock; }
+
+    /** M20: flow pumps whose anchor is below the water surface. */
+    public int pumpsBelow(double localWaterY) {
+        int n = 0;
+        for (long l : pumps) if (BlockPos.getY(l) < localWaterY) n++;
+        return n;
+    }
     public boolean needsScan() { return needsScan; }
     public void markNeedsScan() { needsScan = true; }
 
@@ -53,6 +65,8 @@ public final class InteriorEquipment {
         if (isHeaterAnchor(s)) heaters.remove(key);
         else if (isCoolerAnchor(s)) coolers.remove(key);
         else if (isFilterAnchor(s)) filters.remove(key);
+        else if (isPumpAnchor(s)) pumps.remove(key);
+        else if (s.is(ModBlocks.LIVE_ROCK.get())) liveRock = Math.max(0, liveRock - 1);
         else if (s.is(ModTags.FLOATING_PLANTS)) floating.remove(key);
         else if (s.is(ModBlocks.SPAWNING_CAVE.get())) {
             caveBlocks.remove(key);
@@ -67,6 +81,8 @@ public final class InteriorEquipment {
         if (isHeaterAnchor(s)) heaters.put(key, s.getValue(SegmentBlock.SIZE).capacity);
         else if (isCoolerAnchor(s)) coolers.put(key, s.getValue(SegmentBlock.SIZE).capacity);
         else if (isFilterAnchor(s)) filters.add(key);
+        else if (isPumpAnchor(s)) pumps.add(key);
+        else if (s.is(ModBlocks.LIVE_ROCK.get())) liveRock++;
         else if (s.is(ModTags.FLOATING_PLANTS)) floating.add(key);
         else if (s.is(ModBlocks.SPAWNING_CAVE.get())) {
             caveBlocks.add(key);
@@ -89,6 +105,10 @@ public final class InteriorEquipment {
         return s.is(ModBlocks.FILTER_SEGMENT.get()) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
     }
 
+    static boolean isPumpAnchor(BlockState s) {
+        return s.is(ModBlocks.PUMP_SEGMENT.get()) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
+    }
+
     /** Full rescan of the region (interior volume and floor). */
     public void rescan(ServerLevel interior, InteriorRegion r) {
         heaters.clear();
@@ -97,6 +117,8 @@ public final class InteriorEquipment {
         floating.clear();
         caveBlocks.clear();
         mopBlocks.clear();
+        pumps.clear();
+        liveRock = 0;
         spawningVersion++;
         substrate = 0;
         needsScan = false;
@@ -160,6 +182,8 @@ public final class InteriorEquipment {
         t.putInt("substrate", substrate);
         t.putLongArray("caves", caveBlocks.toLongArray()); // M19
         t.putLongArray("mops", mopBlocks.toLongArray());
+        t.putLongArray("pumps", pumps.toLongArray()); // M20
+        t.putInt("live_rock", liveRock);
         if (needsScan) t.putBoolean("rescan", true);
         return t;
     }
@@ -181,6 +205,9 @@ public final class InteriorEquipment {
         mopBlocks.clear();
         for (long l : t.getLongArray("caves")) caveBlocks.add(l);
         for (long l : t.getLongArray("mops")) mopBlocks.add(l);
+        pumps.clear();
+        for (long l : t.getLongArray("pumps")) pumps.add(l);
+        liveRock = Math.max(0, t.getInt("live_rock"));
         spawningVersion++;
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");

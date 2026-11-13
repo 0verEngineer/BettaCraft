@@ -92,6 +92,9 @@ public final class TankData {
     private long lastCoolChange = -1L;
     /** M19: glass faces the tankmate grazers (otocinclus, bristlenose) eat per day (transient, set by the care step). */
     private double fishGrazing;
+    /** M20: salt (ppt, sea water 35) and calcium (mg/L) of the water; 0 = fresh water (all tanks before M20). */
+    private float salinity;
+    private float calcium;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -327,6 +330,12 @@ public final class TankData {
     public void setLastCoolChange(long t) { this.lastCoolChange = t; }
     public double fishGrazing() { return fishGrazing; }
     public void setFishGrazing(double g) { this.fishGrazing = Double.isFinite(g) ? Math.max(0, g) : 0; }
+    public float salinity() { return salinity; }
+    public void setSalinity(float ppt) { this.salinity = Salinity.clampSalinity(ppt); }
+    public float calcium() { return calcium; }
+    public void setCalcium(float ca) { this.calcium = Salinity.clampCalcium(ca); }
+    /** M20: whether this is a salt water tank (from {@link Salinity#MARINE_FROM} ppt). */
+    public boolean marine() { return Salinity.marine(salinity); }
 
     /** Whether the column of (x, z) belongs to this tank (any layer). */
     public boolean containsColumn(double x, double z) {
@@ -394,6 +403,8 @@ public final class TankData {
         // the breeding box hangs in the block of the old tank's anchor: the part that keeps that block keeps the box
         breedingBox = o.breedingBox && contains(o.anchor());
         lastCoolChange = o.lastCoolChange;
+        salinity = o.salinity;
+        calcium = o.calcium;
     }
 
     public float waterQuality() { return waterQuality; }
@@ -472,6 +483,8 @@ public final class TankData {
         t.putLong("fresh_window_mb", freshWindowMb);
         if (!Float.isNaN(freshWindowTemp)) t.putFloat("fresh_window_temp", freshWindowTemp);
         t.putLong("last_cool_change", lastCoolChange);
+        t.putFloat("salinity", salinity);
+        t.putFloat("calcium", calcium);
         return t;
     }
 
@@ -574,6 +587,8 @@ public final class TankData {
         d.freshWindowMb = Math.max(0, t.getLong("fresh_window_mb"));
         d.freshWindowTemp = t.contains("fresh_window_temp", Tag.TAG_ANY_NUMERIC) ? t.getFloat("fresh_window_temp") : Float.NaN;
         d.lastCoolChange = t.contains("last_cool_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_cool_change") : -1L;
+        d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
+        d.calcium = Salinity.clampCalcium(t.getFloat("calcium"));
         d.recomputeBounds();
         return d;
     }
@@ -607,6 +622,7 @@ public final class TankData {
             t.put("clutches", tc);
         }
         if (breedingBox) t.putBoolean("breeding_box", true);
+        if (salinity > 0) t.putFloat("salinity", salinity);
         return t;
     }
 
@@ -653,6 +669,7 @@ public final class TankData {
             if (c != null) d.clutches.add(c);
         }
         d.breedingBox = t.getBoolean("breeding_box");
+        d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
         return d;
     }
 

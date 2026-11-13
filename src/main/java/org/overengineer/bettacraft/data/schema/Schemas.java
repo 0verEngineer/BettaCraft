@@ -23,6 +23,7 @@ public final class Schemas {
             .step(6, Schemas::tankV6toV7)
             .step(7, Schemas::tankV7toV8)
             .step(8, Schemas::tankV8toV9)
+            .step(9, Schemas::tankV9toV10)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -203,6 +204,15 @@ public final class Schemas {
         if (!tank.contains("next_clutch_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_clutch_id", 1);
         if (!tank.contains("breeding_box", Tag.TAG_ANY_NUMERIC)) tank.putBoolean("breeding_box", false);
         if (!tank.contains("last_cool_change", Tag.TAG_ANY_NUMERIC)) tank.putLong("last_cool_change", -1L);
+        return data;
+    }
+
+    /** M20: salt water: every tank of an older world is a freshwater tank (salinity 0, no calcium). */
+    static CompoundTag tankV9toV10(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        if (!tank.contains("salinity", Tag.TAG_ANY_NUMERIC)) tank.putFloat("salinity", 0.0F);
+        if (!tank.contains("calcium", Tag.TAG_ANY_NUMERIC)) tank.putFloat("calcium", 0.0F);
         return data;
     }
 

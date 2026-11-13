@@ -547,7 +547,8 @@ public final class CritterGameTests {
                 for (String id : cs[1].split(",")) h.assertTrue(seen.contains(CritterSpecies.byId(id)), cs[0] + " has " + id + ": " + seen);
                 for (CritterSpecies s : seen) {
                     boolean ok = cs[1].contains(s.id()) || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE
-                            || s == CritterSpecies.TRUMPET_SNAIL || s == CritterSpecies.DWARF_CRAYFISH || s == CritterSpecies.RAMSHORN;
+                            || s == CritterSpecies.TRUMPET_SNAIL || s == CritterSpecies.DWARF_CRAYFISH || s == CritterSpecies.RAMSHORN
+                            || s == CritterSpecies.HERMIT_CRAB && cs[0].equals("minecraft:beach"); // M20: hermit crabs at the beach
                     h.assertTrue(ok, cs[0] + " should not give " + s);
                 }
                 if (cs[0].equals("minecraft:mangrove_swamp")) h.assertTrue(!seen.contains(CritterSpecies.NEOCARIDINA), "no shrimp in mangroves");

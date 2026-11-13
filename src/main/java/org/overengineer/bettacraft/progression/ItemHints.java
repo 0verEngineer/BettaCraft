@@ -28,7 +28,10 @@ public final class ItemHints {
             // M14: algae, frogs
             "algae_scraper", "dwarf_frog_bucket", "dwarf_frog_spawn_egg",
             // M19: breeding the tankmates (the fish themselves: info.bettacraft.tankmate.<species>)
-            "breeding_box", "fry_powder", "algae_wafer", "spawning_cave", "spawning_mop");
+            "breeding_box", "fry_powder", "algae_wafer", "spawning_cave", "spawning_mop",
+            // M20: salt water, reef technique, corals
+            "sea_water_bucket", "sea_salt", "calcium_additive", "flow_pump", "protein_skimmer", "reef_rock", "live_rock",
+            "zoanthus", "green_star_polyps", "mushroom_coral", "leather_coral", "hammer_coral", "lobophyllia", "acropora", "bubble_tip_anemone");
 
     private ItemHints() {}
 

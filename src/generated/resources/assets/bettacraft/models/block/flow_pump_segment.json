@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "bettacraft:block/flow_pump_segment_side",
+    "east": "bettacraft:block/flow_pump_segment_side",
+    "north": "bettacraft:block/flow_pump_segment_outlet",
+    "particle": "bettacraft:block/flow_pump_segment_side",
+    "south": "bettacraft:block/flow_pump_segment_side",
+    "up": "bettacraft:block/flow_pump_segment_side",
+    "west": "bettacraft:block/flow_pump_segment_side"
+  }
+}

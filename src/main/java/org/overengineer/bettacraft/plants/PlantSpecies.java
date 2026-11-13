@@ -31,15 +31,47 @@ public enum PlantSpecies {
     VALLISNERIA("vallisneria", Form.RIBBON, 2.5, 8, Light.MID, Red.NONE, "ribbon", 0x6AA040, 0x84B850, 0, 0x6AA040, 0x6A8A3A),
     MONTE_CARLO("monte_carlo", Form.CARPET, 3, 6, Light.HIGH, Red.NONE, "mat", 0x62A83A, 0x7CC046, 0, 0x62A83A, 0x62A83A),
     // tuber: on substrate, medium, floating leaves at the surface
-    TIGER_LOTUS("red_tiger_lotus", Form.BULB, 6, 8, Light.MID, Red.RED, "lotus", 0x6A3A30, 0x7A4234, 0xAE2A30, 0x7A5A3A, 0x6A4A2A);
+    TIGER_LOTUS("red_tiger_lotus", Form.BULB, 6, 8, Light.MID, Red.RED, "lotus", 0x6A3A30, 0x7A4234, 0xAE2A30, 0x7A5A3A, 0x6A4A2A),
+    // M20 corals and the anemone of the reef tank: on reef rock, salt water only; colours: tissue, tips, glow under actinic light
+    // soft corals: no calcium, gentle to medium flow, the polyps spread over the rock
+    ZOANTHUS("zoanthus", Form.POLYPS, 5, 6, Light.MID, Red.CORAL, "polyp", 0x3E8A5A, 0xF07830, 0xFFB04A, 0x4A5A3A, 0x4A5A3A),
+    GREEN_STAR_POLYPS("green_star_polyps", Form.POLYPS, 4, 6, Light.MID, Red.CORAL, "polyp", 0x6A2E6E, 0x5AE05A, 0x9AFF6A, 0x5A2A5A, 0x5A2A5A),
+    MUSHROOM_CORAL("mushroom_coral", Form.DISC, 8, 6, Light.LOW, Red.CORAL, "disc", 0x9A2E52, 0xC85A7A, 0xFF5AA8, 0x7A3A4A, 0x7A3A4A),
+    LEATHER_CORAL("leather_coral", Form.TOADSTOOL, 10, 8, Light.MID, Red.CORAL, "polyp", 0xC8B888, 0xE0D8A8, 0xE8FFB0, 0xB0A27A, 0xB0A27A),
+    // stony corals (LPS, SPS): they build a skeleton of calcium and need more light and flow
+    HAMMER_CORAL("hammer_coral", Form.BRANCH, 12, 8, Light.MID, Red.CORAL, "tentacle", 0x3E8A74, 0xA8F0C0, 0x5AFFD8, 0xA89A80, 0xA89A80),
+    LOBOPHYLLIA("lobophyllia", Form.DOME, 15, 8, Light.MID, Red.CORAL, "brain", 0xA8402A, 0x4E9A4A, 0xFF6A3A, 0x8A3A2A, 0x8A3A2A),
+    ACROPORA("acropora", Form.BRANCH, 14, 8, Light.HIGH, Red.CORAL, "branch", 0x5A62C0, 0xA8C0FF, 0x7AA8FF, 0x7A7AA8, 0x7A7AA8),
+    // the host anemone of the clownfish (Entacmaea quadricolor): tentacles with bubble tips on a sticky foot
+    BUBBLE_TIP_ANEMONE("bubble_tip_anemone", Form.ANEMONE, 6, 6, Light.MID, Red.CORAL, "tentacle", 0xB8503A, 0xF08A5A, 0xFF9A6A, 0xC89878, 0xC89878);
 
     /** Growth form: decides the shape ({@link PlantShapes}), where it may be planted and how it spreads. */
     public enum Form {
-        EPIPHYTE, MOSS, ROSETTE, STEM, RIBBON, CARPET, BULB;
+        EPIPHYTE, MOSS, ROSETTE, STEM, RIBBON, CARPET, BULB,
+        /** M20: coral forms (on reef rock): a mat of polyps, mushroom discs, a leather toadstool, branches, a dome, an anemone. */
+        POLYPS, DISC, TOADSTOOL, BRANCH, DOME, ANEMONE;
 
         /** Needs substrate (the interior floor with a substrate, sand, gravel, dirt ...). */
         public boolean rooted() {
             return this == ROSETTE || this == STEM || this == RIBBON || this == CARPET || this == BULB;
+        }
+
+        /** M20: a coral (or the anemone): glued onto reef rock, lives in salt water. */
+        public boolean coral() {
+            return ordinal() >= POLYPS.ordinal();
+        }
+    }
+
+    /** M20: how much water movement a coral wants (relative to the strong flow of {@code TankReef#flow}). */
+    public enum Flow {
+        LOW(0.15, 1.6), MID(0.35, 2.2), HIGH(0.7, 3.0);
+
+        /** Full growth from this flow on; above {@code max} the tissue is torn and the coral stops growing. */
+        public final double need, max;
+
+        Flow(double need, double max) {
+            this.need = need;
+            this.max = max;
         }
     }
 
@@ -64,7 +96,9 @@ public enum PlantSpecies {
         /** Only the young tips turn red with more light (Rotala). */
         TIPS,
         /** Stays whitish pink and gets brighter and pinker in strong light. */
-        FLAMINGO
+        FLAMINGO,
+        /** M20 corals: 0 = bleached, 1 = pale, 2 = healthy colours, 3 = glowing under actinic light. */
+        CORAL
     }
 
     private final String id;
@@ -116,14 +150,39 @@ public enum PlantSpecies {
     /** Grey leaf texture name ({@code textures/block/plant_leaf_<name>}). */
     public String leafTexture() { return leafTexture; }
 
-    /** Spreads by itself once fully grown: side shoots (stem plants) or runners. */
+    /** Spreads by itself once fully grown: side shoots (stem plants) or runners; M20: polyps and mushrooms over the rock. */
     public boolean spreads() {
-        return form == Form.STEM || form == Form.RIBBON || form == Form.CARPET || this == CRYPT_GREEN || this == CRYPT_BROWN;
+        return form == Form.STEM || form == Form.RIBBON || form == Form.CARPET || this == CRYPT_GREEN || this == CRYPT_BROWN
+                || form == Form.POLYPS || form == Form.DISC;
+    }
+
+    /** M20: a coral or the anemone (salt water, reef rock). */
+    public boolean marine() {
+        return form.coral();
+    }
+
+    /** M20: stony corals build a calcium skeleton (they need calcium and use it up). */
+    public boolean stony() {
+        return this == HAMMER_CORAL || this == LOBOPHYLLIA || this == ACROPORA;
+    }
+
+    /** M20: the flow a coral wants. */
+    public Flow flow() {
+        return switch (this) {
+            case ZOANTHUS, MUSHROOM_CORAL, LOBOPHYLLIA -> Flow.LOW;
+            case ACROPORA -> Flow.HIGH;
+            default -> Flow.MID;
+        };
+    }
+
+    /** M20: the host anemone of the clownfish. */
+    public boolean anemone() {
+        return form == Form.ANEMONE;
     }
 
     /** Stages one trim with shears takes off. */
     public int trimStages() {
-        return form == Form.STEM || form == Form.RIBBON || form == Form.CARPET || form == Form.MOSS ? 2 : 1;
+        return form == Form.STEM || form == Form.RIBBON || form == Form.CARPET || form == Form.MOSS || form == Form.POLYPS ? 2 : 1;
     }
 
     /** Lowest stage trimming leaves (the plant stays alive). */
@@ -135,7 +194,8 @@ public enum PlantSpecies {
     public int cuttingsPerTrim(int stagesCut) {
         return switch (form) {
             case STEM -> 1 + stagesCut;
-            case RIBBON, CARPET, MOSS -> stagesCut;
+            case RIBBON, CARPET, MOSS, POLYPS -> stagesCut;
+            case BRANCH -> 1 + stagesCut / 2; // M20: frags of the branch tips
             default -> 1;
         };
     }

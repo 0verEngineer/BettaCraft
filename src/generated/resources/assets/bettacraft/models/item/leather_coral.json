@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/plant_toadstool",
+    "layer1": "bettacraft:item/plant_toadstool_detail"
+  }
+}

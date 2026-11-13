@@ -22,6 +22,7 @@ baust, mit Wasser füllst, von innen einrichtest und in denen du Bettas mit echt
 * [Zucht](breeding.md): Schaumnester, Eier, Jungfische und was die Eltern brauchen.
 * [Kleintiere](invertebrates.md): Garnelen, Zwergkrebse, Schnecken, Zwergkrallenfrösche und die Algen am Glas.
 * [Beifische](tankmates.md): Salmler, Bärblinge, Panzerwelse, Harnischwelse, Schmerlen, Lebendgebärende und der Zwergfadenfisch, jeder mit seiner eigenen Zucht.
+* [Meerwasserbecken](saltwater.md): Salzwasser, Eiweißabschäumer, Strömungspumpe, Korallen auf Riffgestein, Clownfische und andere Rifftiere.
 * [Innenraum](interior.md): ins Aquarium hineingehen und es Block für Block einrichten.
 * [Einstellungen und andere Mods](settings.md): Config-Optionen, Jade, JEI und Befehle.
 

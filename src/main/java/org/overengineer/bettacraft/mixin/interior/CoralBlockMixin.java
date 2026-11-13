@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class CoralBlockMixin {
     @Inject(method = "scanForWater", at = @At("HEAD"), cancellable = true)
     private void bettacraft$wetInterior(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (level instanceof Level l && InteriorManager.isInterior(l)) cir.setReturnValue(true);
+        // M20: with saltwater.vanillaCoralsNeedSalt they only live in salt water tanks
+        if (level instanceof Level l && InteriorManager.isInterior(l)) cir.setReturnValue(org.overengineer.bettacraft.reef.Corals.vanillaCoralLives(l, pos));
     }
 }

@@ -95,7 +95,11 @@ public final class TankWaterRenderer {
     /** M18: the colour of the water mixed with the colour of the tank's lights ({@code light} RGB, 0 = none). */
     public static int color(boolean surface, int light) {
         int base = surface ? COLOR : SIDE_COLOR;
-        return light == 0 ? base : org.overengineer.bettacraft.equipment.TankLightColors.tintWater(base, light, TankLightTint.strength());
+        // M20: salt water is a clearer, more turquoise blue (the salinity rides in the top byte of the light value)
+        int salt = TankLightTint.salt(light);
+        if (salt > 0) base = 0xFF000000 | org.overengineer.bettacraft.tank.Salinity.waterColor(base & 0xFFFFFF, salt);
+        int rgb = TankLightTint.rgb(light);
+        return rgb == 0 ? base : org.overengineer.bettacraft.equipment.TankLightColors.tintWater(base, rgb, TankLightTint.strength());
     }
 
     /** All water faces of one tank block; M18: {@code light} = RGB of the tank's coloured lights (0 = none). */

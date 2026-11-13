@@ -139,6 +139,11 @@ public final class InteriorPlants {
     /** Why a species cannot grow on {@code support} (clicked on {@code face}), or null if it can. */
     @Nullable
     public static String supportProblem(PlantSpecies s, ServerLevel level, BlockPos supportPos, BlockState support, Direction face) {
+        if (s.marine()) {
+            // M20: corals are glued onto reef rock (on top or at the side; polyp mats also hang from overhangs)
+            if (!support.is(ModTags.REEF_SURFACES) || face == Direction.DOWN && s.form() != PlantSpecies.Form.POLYPS) return "needs_reef_rock";
+            return null;
+        }
         switch (s.form()) {
             case EPIPHYTE -> {
                 if (face == Direction.DOWN || !support.is(ModTags.EPIPHYTE_SURFACES)) return "needs_hardscape";
@@ -235,11 +240,22 @@ public final class InteriorPlants {
     // ------------------------------------------------------------------ growth (care loop)
 
     /** Conditions in a tank for its aquarium plants. */
-    public record Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade) {
+    /**
+     * @param salinity M20: ppt of the water; {@code flow}, {@code calcium}, {@code spectrum} (share of the light the
+     *                 corals use), {@code quality} (water quality) and {@code glow} (actinic light) matter for the corals
+     */
+    public record Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade,
+                      double salinity, double flow, double calcium, double spectrum, double quality, boolean glow, double coralTemp) {
+        public Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade) {
+            this(light, effectiveLight, nutrients, temperature, waterLocal, shade, 0, 0, 0, 0.6, 0.9, false, 0);
+        }
+
         /** Growth factor of a plant (0..1): light for its need, nutrients, temperature, under water. */
         public double rate(InteriorPlant p) {
             if (p.y + 0.5 >= waterLocal) return 0; // dry: no growth
-            return lightFactor(effectiveLight, p.species.light()) * nutrients * temperature;
+            if (p.species.marine()) return org.overengineer.bettacraft.reef.Corals.rate(this, p.species, effectiveLight);
+            // M20: freshwater plants stop growing in brackish and salt water
+            return lightFactor(effectiveLight, p.species.light()) * nutrients * temperature * org.overengineer.bettacraft.reef.Corals.freshFactor(salinity);
         }
     }
 
@@ -268,8 +284,14 @@ public final class InteriorPlants {
         double shade = TankPlants.coverage(t) + surfaceCover(t, r);
         boolean dense = shade >= ServerConfig.getOr(ServerConfig.PLANTS_DENSE_FROM, 0.5);
         float q = TankWater.qualityEnabled() ? t.waterQuality() : 0.9F;
+        // M20: the reef values only matter in salt water (no lookups for a freshwater tank)
+        boolean salt = t.salinity() > 0 || !r.plants().isEmpty() && r.plants().all().stream().anyMatch(p -> p.species.marine());
+        double flow = salt ? org.overengineer.bettacraft.reef.TankReef.flow(level, c) : 0;
+        double spectrum = salt ? org.overengineer.bettacraft.reef.TankReef.spectrum(level, t) : 0.6;
+        boolean glow = salt && org.overengineer.bettacraft.reef.TankReef.glows(level, t);
         return new Env(light, Math.max(0, light - (dense ? 3 : 0)), nutrientFactor(q), temperatureFactor(t.waterTemp()),
-                t.waterMb() <= 0 ? 0 : TankCare.waterLocalHeight(t, r.scale()), shade);
+                t.waterMb() <= 0 ? 0 : TankCare.waterLocalHeight(t, r.scale()), shade, t.salinity(), flow, t.calcium(), spectrum, q, glow,
+                org.overengineer.bettacraft.reef.Corals.temperatureFactor(t.waterTemp()));
     }
 
     /** Share of the water surface (interior blocks) covered by plant blocks at the surface (stem tops, lotus pads). */
@@ -309,6 +331,8 @@ public final class InteriorPlants {
                     while (p.progress >= 1 && p.target < p.species.stages()) {
                         p.target++;
                         p.progress -= 1;
+                        // M20: a stony coral builds its skeleton from the calcium of the water
+                        if (p.species.stony()) org.overengineer.bettacraft.reef.Corals.useCalcium(t);
                         if (p.target == p.species.stages()) {
                             p.progress = 0;
                             TankCare.log(level, c, "log.bettacraft.aquatic_grown", "@" + item(p.species, 0).getDescriptionId());
@@ -325,7 +349,8 @@ public final class InteriorPlants {
             }
             if (p.species.tinted()) {
                 // smoothed over about two days, with hysteresis: the tint level only moves when clearly off
-                double want = redTarget / (double) PlantColors.MAX_TINT;
+                // M20: corals: bleached / pale / healthy / glowing from their conditions
+                double want = (p.species.marine() ? org.overengineer.bettacraft.reef.Corals.tint(env, p.species) : redTarget) / (double) PlantColors.MAX_TINT;
                 p.redness += (want - p.redness) * Math.min(1.0, days / 2.0);
                 int tint = p.tint;
                 if (Math.abs(p.redness * PlantColors.MAX_TINT - tint) > 0.6) tint = (int) Math.round(p.redness * PlantColors.MAX_TINT);

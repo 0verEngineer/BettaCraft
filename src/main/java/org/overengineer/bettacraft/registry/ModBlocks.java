@@ -140,6 +140,29 @@ public final class ModBlocks {
                     .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
                     .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY)));
 
+    // ------------------------------------------------------------------ M20 reef tanks
+
+    /** M20: flow pump in a tank interior (a small box with a jet like the internal filter): water movement for the corals. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> PUMP_SEGMENT = BLOCKS.register("flow_pump_segment",
+            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.PUMP, () -> ModItems.FLOW_PUMP.get(), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
+
+    /** M20: protein skimmer hanging on a tank like the external filter: cleans salt water (no effect in fresh water). */
+    public static final DeferredBlock<org.overengineer.bettacraft.reef.ProteinSkimmerBlock> PROTEIN_SKIMMER = BLOCKS.register("protein_skimmer",
+            () -> new org.overengineer.bettacraft.reef.ProteinSkimmerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion()
+                    .isRedstoneConductor((s, l, p) -> false)));
+
+    /** M20: porous reef rock (aragonite) for the rock work of a reef tank; corals are glued onto it. */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> REEF_ROCK = BLOCKS.register("reef_rock",
+            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(1.2F, 3.0F).sound(SoundType.CALCITE).requiresCorrectToolForDrops()));
+
+    /** M20: live rock: reef rock with coralline algae and bacteria; in salt water it cleans like a filter. */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> LIVE_ROCK = BLOCKS.register("live_rock",
+            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_MAGENTA)
+                    .strength(1.2F, 3.0F).sound(SoundType.CALCITE).requiresCorrectToolForDrops()));
+
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }

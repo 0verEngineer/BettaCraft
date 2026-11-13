@@ -46,6 +46,21 @@ public final class PlantColors {
                 case LEAF, CUTTING -> brighter(lerp(s.leaf, s.redColor, 0.1 + 0.6 * f), 1.0 + 0.08 * f);
                 default -> lerp(base, s.redColor, 0.3 * f);
             };
+            case CORAL -> coral(s, p, base, tint);
+        };
+    }
+
+    /** Bleached skeleton white of a coral that lost its algae. */
+    public static final int BLEACHED = 0xE8E4D8;
+
+    /** M20: coral colours: bleached (0), pale (1), healthy (2), glowing under actinic light (3). */
+    static int coral(PlantSpecies s, PlantPart p, int base, int tint) {
+        boolean skeleton = p == PlantPart.STEM && s.stony();
+        return switch (Math.max(0, Math.min(MAX_TINT, tint))) {
+            case 0 -> skeleton ? lerp(base, BLEACHED, 0.6) : lerp(base, BLEACHED, 0.82);
+            case 1 -> lerp(base, BLEACHED, 0.4);
+            case 2 -> base;
+            default -> skeleton ? base : p == PlantPart.TOP ? brighter(lerp(s.top, s.redColor, 0.7), 1.12) : lerp(base, s.redColor, 0.35);
         };
     }
 
@@ -62,7 +77,8 @@ public final class PlantColors {
             case RIBBON -> PlantPart.RIBBON;
             case CARPET -> PlantPart.MAT;
             case MOSS -> PlantPart.MOSS;
-            case ROSETTE -> PlantPart.LEAF;
+            case ROSETTE, POLYPS, BRANCH, DOME, ANEMONE -> PlantPart.LEAF;
+            case DISC, TOADSTOOL -> PlantPart.STEM;
         };
     }
 

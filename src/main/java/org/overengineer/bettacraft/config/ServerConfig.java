@@ -10,6 +10,9 @@ public final class ServerConfig {
     /** When players get the GuideME handbook (PLAN 9). Without GuideME there is no book and the option is ignored. */
     public enum GiveBook { ON_JOIN, ON_FIRST_CATCH_OR_CRAFT, NEVER }
 
+    /** M20: how the salinity of a tank affects animals of other mods and vanilla fish. */
+    public enum ForeignSalinity { LENIENT, REALISTIC }
+
     /** M16: what a tadpole in a tank does when it would turn into a frog. */
     public enum Tadpoles { LEAVE_AS_FROG, STAY_TADPOLE }
     /** M17: what happens to an animal that grew too big for a tank (inhabitants.maxHitbox) while it lived in it. */
@@ -193,6 +196,20 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue TANKMATES_COOL_CHANGE_SHARE;
     public static final ModConfigSpec.DoubleValue TANKMATES_COOL_CHANGE_DROP;
     public static final ModConfigSpec.DoubleValue TANKMATES_NET_SHARE;
+
+    // M20: salt water and reef tanks
+    public static final ModConfigSpec.DoubleValue SALT_SHOCK_SPEED;
+    public static final ModConfigSpec.BooleanValue SALT_REFUSE_DEADLY;
+    public static final ModConfigSpec.BooleanValue SALT_OCEAN_BUCKETS;
+    public static final ModConfigSpec.EnumValue<ForeignSalinity> SALT_FOREIGN;
+    public static final ModConfigSpec.BooleanValue SALT_VANILLA_CORALS;
+    public static final ModConfigSpec.IntValue REEF_SKIMMER_BLOCKS;
+    public static final ModConfigSpec.DoubleValue REEF_LIVE_ROCK_BLOCKS;
+    public static final ModConfigSpec.IntValue REEF_PUMP_BLOCKS;
+    public static final ModConfigSpec.DoubleValue REEF_CORAL_GROWTH;
+    public static final ModConfigSpec.DoubleValue REEF_CALCIUM_PER_STAGE;
+    public static final ModConfigSpec.DoubleValue REEF_CALCIUM_DOSE;
+    public static final ModConfigSpec.DoubleValue REEF_NET_SHARE;
 
     // guide (M6)
     public static final ModConfigSpec.EnumValue<GiveBook> GUIDE_GIVE_BOOK;
@@ -511,6 +528,32 @@ public final class ServerConfig {
         TANKMATES_NET_SHARE = b.comment("Share of the catches of the aquarium net in jungle, swamp and river water that are tankmate fish",
                         "instead of small animals (0 = no fish)").defineInRange("netFishShare", 0.4, 0.0, 1.0);
         b.pop();
+        b.pop();
+
+        b.comment("M20: salt water tanks: salinity, protein skimmers, flow pumps, live rock, corals").push("saltwater");
+        SALT_SHOCK_SPEED = b.comment("How fast the wrong salinity harms animals (1 = a freshwater fish dies within a few hours in sea water,",
+                        "a few ppt too much only stress it; 0 = salinity does no harm)").defineInRange("salinityShock", 1.0, 0.0, 20.0);
+        SALT_REFUSE_DEADLY = b.comment("Refuse to put an animal into water whose salinity would kill it (a message tells why)")
+                .define("refuseDeadlyWater", true);
+        SALT_OCEAN_BUCKETS = b.comment("An empty bucket filled in an ocean or at a beach gives a bucket of sea water (for reef tanks; it pours",
+                        "like water)").define("oceanWaterIsSalty", true);
+        SALT_FOREIGN = b.comment("Fish and water animals of vanilla and other mods: LENIENT = the salinity does not matter to them,",
+                        "REALISTIC = vanilla sea animals (cod, tropical fish, pufferfish, squid) need salt water, axolotls and tadpoles",
+                        "fresh water, salmon both; animals of other mods stay lenient").defineEnum("foreignAnimals", ForeignSalinity.LENIENT);
+        SALT_VANILLA_CORALS = b.comment("Vanilla corals and coral fans in a tank interior die in fresh water (off: they live in every tank, as",
+                        "before)").define("vanillaCoralsNeedSalt", false);
+        REEF_SKIMMER_BLOCKS = b.comment("Water blocks one protein skimmer keeps clean in salt water (it does nothing in fresh water)")
+                .defineInRange("skimmerBlocks", 48, 0, 4096);
+        REEF_LIVE_ROCK_BLOCKS = b.comment("Water blocks that live rock keeps clean in salt water, per tank block of live rock (16x16x16 interior",
+                        "blocks at scale 16)").defineInRange("liveRockBlocks", 24.0, 0.0, 4096.0);
+        REEF_PUMP_BLOCKS = b.comment("Water blocks one flow pump moves enough for the corals that need strong flow")
+                .defineInRange("pumpFlowBlocks", 24, 1, 4096);
+        REEF_CORAL_GROWTH = b.comment("How fast the corals grow (1 = normal, 0 = they do not grow)").defineInRange("coralGrowthSpeed", 1.0, 0.0, 20.0);
+        REEF_CALCIUM_PER_STAGE = b.comment("Calcium (mg/L in one water block) a stony coral uses per growth stage; in bigger tanks it is shared",
+                        "by more water").defineInRange("calciumPerStage", 40.0, 0.0, 10000.0);
+        REEF_CALCIUM_DOSE = b.comment("Calcium (mg/L in one water block) one calcium additive adds").defineInRange("calciumPerDose", 200.0, 0.0, 10000.0);
+        REEF_NET_SHARE = b.comment("Share of the catches of the aquarium net in warm and lukewarm oceans that are reef fish instead of small",
+                        "animals (0 = no fish)").defineInRange("reefNetFishShare", 0.4, 0.0, 1.0);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

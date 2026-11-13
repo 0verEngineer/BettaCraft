@@ -195,6 +195,12 @@ public final class TankInhabitants {
         }
         Acceptance pre = accepts(type, null);
         if (pre != Acceptance.OK) return rejection(pre, type);
+        // M20: an animal that would die quickly in this water (freshwater fish into salt water and the other way round)
+        var salt = org.overengineer.bettacraft.reef.SaltTolerance.of(type);
+        if (org.overengineer.bettacraft.reef.SaltTolerance.refuse(salt, tank)) {
+            return Component.translatable(org.overengineer.bettacraft.reef.SaltTolerance.refuseKey(salt), type.getDescription(),
+                    org.overengineer.bettacraft.reef.ReefItems.fmt(tank.salinity()));
+        }
         List<Entity> live = liveInhabitants(level, tank);
         int maxEntities = ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64);
         if (live.size() >= maxEntities) return Component.translatable("message.bettacraft.tank.max_entities", maxEntities);
@@ -247,7 +253,7 @@ public final class TankInhabitants {
             if (!e.isRemoved()) e.discard();
             return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
         }
-        if (addMb > 0) TankInteractions.changeWater(level, controller, addMb);
+        if (addMb > 0) TankInteractions.changeWater(level, controller, addMb, tank.salinity()); // M20: the animal comes in water of its tank
         tank.inhabitants().add(e.getUUID());
         TankCare.log(level, controller, "log.bettacraft.inserted", TankCare.nameArg(e));
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.INSERTED);

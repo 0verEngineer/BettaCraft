@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.EntityType;
+import org.overengineer.bettacraft.tank.Salinity;
 
 /**
  * M19: the tankmate fish. Real entities like the bettas ({@link org.overengineer.bettacraft.entity.tankmate.TankmateEntity},
@@ -73,27 +74,48 @@ public enum TankmateSpecies {
     // ---------------------------------------------------------------- livebearers
     GUPPY(d("guppy", "Poecilia reticulata", Model.LIVEBEARER, Group.LIVEBEARER, Breeding.LIVEBEARER, Zone.UPPER)
             .size(0.33).temp(22, 28).breed(23, 28).quality(0.4).shoal(3).stock(0.35).brood(5, 16).growth(0.6)
-            .eats(0.6).bettaTarget().dimorphic().egg(0x8A8E70, 0xE84A30).native_(Water.RIVER, 12).trader(Trade.COMMON)
+            .eats(0.6).bettaTarget().dimorphic().egg(0x8A8E70, 0xE84A30).native_(Water.RIVER, 12).trader(Trade.COMMON).salt(Salinity.Range.BRACKISH)
             .varieties("wild", "red", "blue_grass", "green_cobra", "tuxedo")),
     ENDLER_GUPPY(d("endler_guppy", "Poecilia wingei", Model.LIVEBEARER, Group.LIVEBEARER, Breeding.LIVEBEARER, Zone.UPPER)
             .size(0.22).temp(23, 30).breed(24, 29).quality(0.4).shoal(3).stock(0.22).brood(4, 12).growth(0.6)
-            .eats(0.5).dimorphic().egg(0x88907A, 0xF08A20).native_(Water.RIVER, 6).native_(Water.JUNGLE, 4).trader(Trade.COMMON)
+            .eats(0.5).dimorphic().egg(0x88907A, 0xF08A20).native_(Water.RIVER, 6).native_(Water.JUNGLE, 4).trader(Trade.COMMON).salt(Salinity.Range.BRACKISH)
             .varieties("wild", "tiger", "black_bar")),
     PLATY(d("platy", "Xiphophorus maculatus", Model.PLATY, Group.LIVEBEARER, Breeding.LIVEBEARER, Zone.MID)
             .size(0.42).temp(20, 27).breed(22, 26).quality(0.4).shoal(3).stock(0.5).brood(8, 25).growth(0.7)
-            .eats(0.6).dimorphic().egg(0x8A8A60, 0xE85020).native_(Water.RIVER, 10).trader(Trade.COMMON)
+            .eats(0.6).dimorphic().egg(0x8A8A60, 0xE85020).native_(Water.RIVER, 10).trader(Trade.COMMON).salt(Salinity.Range.BRACKISH)
             .varieties("wild", "red", "sunset", "mickey_mouse", "blue")),
     // ---------------------------------------------------------------- gourami (foam nest like the bettas)
     DWARF_GOURAMI(d("dwarf_gourami", "Trichogaster lalius", Model.GOURAMI, Group.GOURAMI, Breeding.FOAM_NEST, Zone.UPPER)
             .size(0.55).temp(24, 29).breed(26, 29).quality(0.5).shoal(1).stock(1.0).brood(20, 50).growth(1.0)
             .eats(0.7).territorial().bettaTarget().dimorphic().egg(0x3A70C0, 0xD04030).native_(Water.SWAMP, 10).trader(Trade.COMMON)
-            .varieties("wild", "powder_blue", "flame"));
+            .varieties("wild", "powder_blue", "flame")),
+    // ---------------------------------------------------------------- M20 reef fish (salt water)
+    // the clownfish pair lives in its host anemone and lays its eggs at the anemone's foot; the male guards them
+    OCELLARIS_CLOWNFISH(d("ocellaris_clownfish", "Amphiprion ocellaris", Model.CLOWN, Group.CLOWNFISH, Breeding.ANEMONE, Zone.MID)
+            .size(0.45).temp(24, 28).breed(25, 28).quality(0.5).shoal(1).stock(1.0).brood(15, 40).growth(1.6)
+            .eats(0.3).egg(0xF07818, 0xF8F8F8).native_(Water.WARM_OCEAN, 12).trader(Trade.COMMON).salt(Salinity.Range.MARINE)
+            .varieties("wild", "black")),
+    YELLOW_TANG(d("yellow_tang", "Zebrasoma flavescens", Model.TANG, Group.TANG, Breeding.NONE, Zone.MID)
+            .size(0.75).hitbox(0.5, 0.45).temp(24, 28).breed(25, 27).quality(0.6).shoal(1).stock(2.5).brood(0, 0).growth(2.0)
+            .eats(0.2).algae(1.0).egg(0xF8E020, 0xE8C810).native_(Water.WARM_OCEAN, 5).trader(Trade.RARE).salt(Salinity.Range.MARINE)),
+    YELLOW_WATCHMAN_GOBY(d("yellow_watchman_goby", "Cryptocentrus cinctus", Model.GOBY, Group.GOBY, Breeding.NONE, Zone.BOTTOM)
+            .size(0.42).temp(22, 28).breed(25, 27).quality(0.5).shoal(1).stock(0.6).brood(0, 0).growth(1.4)
+            .eats(0.3).egg(0xF0D040, 0x6A88C8).native_(Water.WARM_OCEAN, 8).native_(Water.LUKEWARM_OCEAN, 6).trader(Trade.COMMON)
+            .salt(Salinity.Range.MARINE)),
+    GREEN_CHROMIS(d("green_chromis", "Chromis viridis", Model.DAMSEL, Group.DAMSEL, Breeding.NONE, Zone.MID)
+            .size(0.38).temp(24, 28).breed(25, 27).quality(0.5).shoal(5).stock(0.5).brood(0, 0).growth(1.2)
+            .eats(0.4).egg(0x7AD8B0, 0x48A8C8).native_(Water.WARM_OCEAN, 14).native_(Water.LUKEWARM_OCEAN, 10).trader(Trade.COMMON)
+            .salt(Salinity.Range.MARINE)),
+    YELLOWTAIL_DAMSEL(d("yellowtail_damsel", "Chrysiptera parasema", Model.DAMSEL, Group.DAMSEL, Breeding.NONE, Zone.LOW)
+            .size(0.33).temp(23, 28).breed(25, 27).quality(0.4).shoal(1).stock(0.45).brood(0, 0).growth(1.1)
+            .eats(0.5).egg(0x2A5AE0, 0xF0D020).native_(Water.WARM_OCEAN, 10).native_(Water.LUKEWARM_OCEAN, 12).trader(Trade.COMMON)
+            .salt(Salinity.Range.HARDY_MARINE));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
-    public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI }
+    public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL }
 
     /** Family group (handbook, overlays, menu). */
-    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI }
+    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -106,7 +128,9 @@ public enum TankmateSpecies {
         LIVEBEARER,
         /** The male builds a foam nest at the surface like a betta and guards it (dwarf gourami). */
         FOAM_NEST,
-        /** Practically never breeds in a tank (clown loach). */
+        /** M20: the clownfish pair spawns at the foot of its host anemone; the male guards the eggs. */
+        ANEMONE,
+        /** Practically never breeds in a tank (clown loach, the other reef fish). */
         NONE
     }
 
@@ -127,7 +151,7 @@ public enum TankmateSpecies {
     }
 
     /** Kinds of open water for the net (M14 {@code NetCatching.Water}): rough analogues of the native regions. */
-    public enum Water { RIVER, SWAMP, JUNGLE, MANGROVE }
+    public enum Water { RIVER, SWAMP, JUNGLE, MANGROVE, WARM_OCEAN, LUKEWARM_OCEAN }
 
     /** Wandering trader: among the usual offers, among the rare ones, or not at all. */
     public enum Trade { COMMON, RARE, NONE }
@@ -183,6 +207,10 @@ public enum TankmateSpecies {
     public int eggColor2() { return def.egg2; }
     public List<String> varieties() { return def.varieties; }
     public Trade trade() { return def.trade; }
+    /** M20: the salinity the species lives in (fresh water, brackish-tolerant livebearers, sea water). */
+    public Salinity.Range salinity() { return def.salt; }
+    /** M20: a reef fish (salt water). */
+    public boolean marine() { return def.salt.marine(); }
 
     /** Net catch weight in this kind of water (0 = not native there). */
     public double nativeWeight(Water w) {
@@ -294,6 +322,7 @@ public enum TankmateSpecies {
         final List<Water> waters = new java.util.ArrayList<>();
         final List<Double> weights = new java.util.ArrayList<>();
         Trade trade = Trade.NONE;
+        Salinity.Range salt = Salinity.Range.FRESH;
 
         Def(String id, String latin, Model model, Group group, Breeding breeding, Zone zone) {
             this.id = id;
@@ -308,6 +337,9 @@ public enum TankmateSpecies {
             this.length = length;
             if (width < 0) {
                 double h = switch (model) {
+                    case TANG -> 0.7;
+                    case CLOWN, DAMSEL -> 0.5;
+                    case GOBY -> 0.3;
                     case CORY -> 0.42;
                     case PLECO -> 0.3;
                     case KUHLI -> 0.18;
@@ -347,6 +379,7 @@ public enum TankmateSpecies {
         Def egg(int a, int b) { egg1 = a; egg2 = b; return this; }
         Def varieties(String... v) { varieties = List.of(v); return this; }
         Def trader(Trade t) { trade = t; return this; }
+        Def salt(Salinity.Range r) { salt = r; return this; }
 
         Def native_(Water w, double weight) {
             waters.add(w);

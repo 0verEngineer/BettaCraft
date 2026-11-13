@@ -42,7 +42,8 @@ public class SegmentBlock extends Block {
     }
 
     /** What the piece is: heater rod, cooler rod (M9) or internal filter. */
-    public enum Kind { HEATER, COOLER, FILTER }
+    /** M20: PUMP = flow pump (a small box with an outlet like the internal filter). */
+    public enum Kind { HEATER, COOLER, FILTER, PUMP }
 
     public enum Size implements StringRepresentable {
         SMALL(16, 6), MEDIUM(32, 9), LARGE(64, 12);
@@ -90,7 +91,7 @@ public class SegmentBlock extends Block {
 
     /** Heater or cooler rod (has a size). */
     public boolean isRod() {
-        return kind != Kind.FILTER;
+        return kind == Kind.HEATER || kind == Kind.COOLER;
     }
 
     @Override
@@ -113,7 +114,7 @@ public class SegmentBlock extends Block {
 
     /** The item this piece gives back. */
     public ItemStack itemFor(BlockState state) {
-        if (kind == Kind.FILTER) return new ItemStack(filterItem.get());
+        if (kind == Kind.FILTER || kind == Kind.PUMP) return new ItemStack(filterItem.get());
         boolean cool = kind == Kind.COOLER;
         return new ItemStack(switch (state.getValue(SIZE)) {
             case SMALL -> cool ? org.overengineer.bettacraft.registry.ModItems.COOLER_SMALL.get() : org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get();
@@ -176,5 +177,10 @@ public class SegmentBlock extends Block {
     /** Filter box at the given scale: {footprint, height} (2x2x8 at scale 16). */
     public static int[] filterShape(int scale) {
         return new int[]{Math.max(1, 2 * scale / 16), Math.max(2, Math.round(8 * scale / 16F))};
+    }
+
+    /** M20: flow pump box at the given scale: {footprint, height} (2x2x2 at scale 16). */
+    public static int[] pumpShape(int scale) {
+        return new int[]{Math.max(1, 2 * scale / 16), Math.max(1, 2 * scale / 16)};
     }
 }

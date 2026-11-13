@@ -92,6 +92,13 @@ public final class InfoLines {
             out.add(l.withStyle(ChatFormatting.GOLD));
             if (details) out.add(Component.translatable("jade.bettacraft.tank.stocking", f1(d.getFloat("stock"))).withStyle(ChatFormatting.GRAY));
         }
+        // M20: salt water
+        if (d.getFloat("salinity") >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM) {
+            var kind = org.overengineer.bettacraft.tank.Salinity.kind(d.getFloat("salinity"));
+            out.add(Component.translatable("jade.bettacraft.tank.salinity", String.format(java.util.Locale.ROOT, "%.1f", d.getFloat("salinity")),
+                    Component.translatable("gui.bettacraft.reef.kind." + kind.name().toLowerCase(java.util.Locale.ROOT)), Math.round(d.getFloat("calcium")))
+                    .withStyle(ChatFormatting.AQUA));
+        }
         if (d.getFloat("algae") >= 0.1F) {
             out.add(Component.translatable("jade.bettacraft.tank.algae", Math.round(d.getFloat("algae") * 100)).withStyle(ChatFormatting.DARK_GREEN));
         }

@@ -63,6 +63,10 @@ navigation:
 | `tankmates.behaviour.fryEatenPerDay`, `eggsEatenPerDay` | 0,5, 1,5 | wie schnell die Erwachsenen Jungfische jagen und Eier fressen (Pflanzen und Mops schützen) |
 | `tankmates.behaviour.shoalStress`, `bettaAggression`, `clownLoachSnailsPerDay` | true, 1, 0,5 | Stress im zu kleinen Schwarm, Betta-Männchen gegen Guppy- und Fadenfisch-Männchen, Schnecken je Prachtschmerle |
 | `tankmates.behaviour.bottomFoodShare`, `tankmateStockingFactor`, `netFishShare` | 0,6, 1, 0,4 | Futter für die Bodenfische, Besatz-Anteil der Beifische, Anteil Fische im Kescher |
+| `saltwater.salinityShock`, `refuseDeadlyWater` | 1, true | [Meerwasserbecken](saltwater.md): wie schnell der falsche Salzgehalt Tieren schadet (0 = nie); Tiere ablehnen, die das Wasser töten würde |
+| `saltwater.oceanWaterIsSalty`, `foreignAnimals`, `vanillaCoralsNeedSalt` | true, LENIENT, false | Meerwassereimer aus dem Ozean; Salz und Tiere aus Vanilla / anderen Mods (LENIENT oder REALISTIC); Vanilla-Korallen sterben im Süßwasser |
+| `saltwater.skimmerBlocks`, `liveRockBlocks`, `pumpFlowBlocks` | 48, 24, 24 | Wasserblöcke, die ein Eiweißabschäumer und ein Tankblock Lebendgestein im Salzwasser sauber halten, Wasserblöcke, die eine Strömungspumpe bewegt |
+| `saltwater.coralGrowthSpeed`, `calciumPerStage`, `calciumPerDose`, `reefNetFishShare` | 1, 40, 200, 0,4 | Wachstum der Korallen, Kalzium, das eine Steinkoralle je Stufe verbraucht und ein Zusatz hinzufügt (mg/L in einem Wasserblock), Anteil Rifffische im Kescher |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
 | `simulateUnloadedTime` | false | Zeit läuft in nicht geladenen Chunks weiter |
 

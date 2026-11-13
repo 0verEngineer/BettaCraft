@@ -135,7 +135,7 @@ public final class TankmateBreeding {
         for (var e : by.entrySet()) {
             switch (e.getKey().breeding()) {
                 case GLASS_EGGS -> glassEggs(level, c, e.getKey(), e.getValue(), days, full);
-                case CAVE -> cave(level, c, e.getKey(), e.getValue(), days, now, full);
+                case CAVE, ANEMONE -> cave(level, c, e.getKey(), e.getValue(), days, now, full); // M20: clownfish at their anemone
                 case SCATTER -> scatter(level, c, e.getKey(), e.getValue(), days, full);
                 case LIVEBEARER -> livebearer(level, c, e.getKey(), e.getValue(), days, full);
                 case FOAM_NEST -> foam(level, c, e.getKey(), e.getValue(), days, now, full);
@@ -393,10 +393,13 @@ public final class TankmateBreeding {
     /** The adult pleco males (of every cave species) get a cave each, in UUID order; the others are chased off. */
     private static void caves(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, long now) {
         List<TankmateEntity> males = new ArrayList<>();
+        List<TankmateEntity> clowns = new ArrayList<>();
         for (TankmateEntity m : mates) {
             m.setCave(null, Vec3.ZERO);
             if (m.species().breeding() == TankmateSpecies.Breeding.CAVE && m.isAdult() && !m.isFemale()) males.add(m);
+            if (m.species().breeding() == TankmateSpecies.Breeding.ANEMONE) clowns.add(m);
         }
+        if (!clowns.isEmpty()) anemones(level, c, clowns);
         if (males.isEmpty()) return;
         List<TankmateSpots.Spot> caves = TankmateSpots.caves(level.getServer(), c.getTank());
         // a male guarding a clutch keeps his cave
@@ -423,6 +426,36 @@ public final class TankmateBreeding {
         }
     }
 
+    /**
+     * M20: clownfish move into the host anemones: the pair (the biggest female and male) of each anemone lives in it,
+     * the young as well; adults without an anemone of their own are chased off by the owners.
+     */
+    private static void anemones(ServerLevel level, TankBlockEntity c, List<TankmateEntity> clowns) {
+        List<TankmateSpots.Spot> spots = TankmateSpots.anemones(level.getServer(), c.getTank());
+        if (spots.isEmpty()) return;
+        // the males guarding eggs keep their anemone
+        List<Vec3> homes = new ArrayList<>();
+        for (TankmateSpots.Spot sp : spots) homes.add(sp.pos());
+        int[] females = new int[homes.size()], males = new int[homes.size()];
+        clowns.sort(java.util.Comparator.comparing((TankmateEntity m) -> !m.isAdult()).thenComparingInt(Entity::getId));
+        for (TankmateEntity m : clowns) {
+            int best = -1;
+            for (int i = 0; i < homes.size(); i++) {
+                if (m.isAdult() && (m.isFemale() ? females[i] : males[i]) > 0) continue;
+                if (best < 0 || m.distanceToSqr(homes.get(i)) < m.distanceToSqr(homes.get(best))) best = i;
+            }
+            if (best < 0) {
+                if (m.isAdult()) m.setChased(true);
+                continue;
+            }
+            if (m.isAdult()) {
+                if (m.isFemale()) females[best]++;
+                else males[best]++;
+            }
+            m.setCave(homes.get(best), Vec3.ZERO);
+        }
+    }
+
     private static void cave(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list, double days, long now, boolean full) {
         TankData t = c.getTank();
         List<TankmateEntity> females = adults(list, true, true);
@@ -446,16 +479,21 @@ public final class TankmateBreeding {
             TankmateEntity f = null;
             for (TankmateEntity x : females) if (x.breeding().cooldown() <= 0 && (f == null || x.distanceToSqr(cave) < f.distanceToSqr(cave))) f = x;
             if (f == null) continue;
+            boolean anemone = s.breeding() == TankmateSpecies.Breeding.ANEMONE;
+            // M20: a clownfish female spawns only in her own anemone (the pair shares it)
+            if (anemone && (f.cave() == null || f.cave().distanceToSqr(cave) > 1e-4)) continue;
             f.holdAt(cave, now + HOLD);
             m.holdAt(cave, now + HOLD);
             m.breeding().resetReady();
             int n = brood(s, f, r);
-            Clutch k = new Clutch(t.nextClutchId(), s, Clutch.Kind.CAVE, cave.x, cave.y, cave.z, n, f.genes(), m.genes());
+            Vec3 at = anemone ? TankmateSpots.anemoneFoot(level.getServer(), t, cave) : cave;
+            Clutch k = new Clutch(t.nextClutchId(), s, Clutch.Kind.CAVE, at.x, at.y, at.z, n, f.genes(), m.genes());
             k.guardian = m.getUUID();
             k.generation = Math.max(f.generation(), m.generation()) + 1;
             t.clutches().add(k);
             f.breeding().setCooldown(3.0);
-            TankCare.log(level, c, "log.bettacraft.tm.spawned_cave", TankCare.nameArg(f), TankCare.nameArg(m), String.valueOf(n));
+            TankCare.log(level, c, anemone ? "log.bettacraft.tm.spawned_anemone" : "log.bettacraft.tm.spawned_cave", TankCare.nameArg(f),
+                    TankCare.nameArg(m), String.valueOf(n));
             c.markTankChanged();
         }
     }
@@ -846,6 +884,7 @@ public final class TankmateBreeding {
             d.putInt("gravid", gravid);
             switch (s.breeding()) {
                 case CAVE -> d.putInt("caves", TankmateSpots.caves(level.getServer(), t).size());
+                case ANEMONE -> d.putInt("anemones", TankmateSpots.anemones(level.getServer(), t).size());
                 case SCATTER -> {
                     d.putInt("mops", TankmateSpots.mops(level.getServer(), t).size());
                     d.putFloat("plants", (float) TankmateSpots.plantShare(level.getServer(), t, s.broadLeafSpawner()));

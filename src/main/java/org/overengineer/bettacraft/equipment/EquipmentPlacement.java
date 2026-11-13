@@ -47,11 +47,15 @@ public final class EquipmentPlacement {
         BlockPos base = place.getClickedPos();
         InteriorRegion r = InteriorManager.regionAt(server.getServer(), base);
         if (r == null || (player != null && !InteriorManager.canBuild(player, base))) return InteractionResult.FAIL;
-        boolean heater = kind != SegmentBlock.Kind.FILTER;
+        boolean heater = kind == SegmentBlock.Kind.HEATER || kind == SegmentBlock.Kind.COOLER;
         int foot, height;
         if (heater) {
             foot = 1;
             height = SegmentBlock.heaterLength(size, r.scale());
+        } else if (kind == SegmentBlock.Kind.PUMP) {
+            int[] f = SegmentBlock.pumpShape(r.scale());
+            foot = f[0];
+            height = f[1];
         } else {
             int[] f = SegmentBlock.filterShape(r.scale());
             foot = f[0];
@@ -61,6 +65,7 @@ public final class EquipmentPlacement {
             case HEATER -> ModBlocks.HEATER_SEGMENT.get();
             case COOLER -> ModBlocks.COOLER_SEGMENT.get();
             case FILTER -> ModBlocks.FILTER_SEGMENT.get();
+            case PUMP -> ModBlocks.PUMP_SEGMENT.get();
         };
         // the filter outlet points at the player (into the room of the tank)
         net.minecraft.core.Direction facing = player != null ? player.getDirection().getOpposite() : net.minecraft.core.Direction.NORTH;

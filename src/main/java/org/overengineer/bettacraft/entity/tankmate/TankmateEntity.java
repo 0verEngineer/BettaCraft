@@ -115,6 +115,10 @@ public class TankmateEntity extends AbstractFish {
             case KUHLI -> 0.45;
             case LOACH -> 0.6;
             case GOURAMI -> 0.45;
+            case CLOWN -> 0.55; // M20
+            case TANG -> 0.7;
+            case GOBY -> 0.4;
+            case DAMSEL -> 0.7;
         };
         double hp = s.length() >= 0.6 ? 6.0 : s.length() >= 0.35 ? 4.0 : 3.0;
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, hp).add(Attributes.MOVEMENT_SPEED, speed);

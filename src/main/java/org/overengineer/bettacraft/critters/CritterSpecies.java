@@ -33,13 +33,21 @@ public enum CritterSpecies {
     TRUMPET_SNAIL("trumpet_snail", Group.SNAIL, Model.TRUMPET, 0.17, 0.012, false, Breeding.SELF, 0.06, 0, 1, 2, 3.0, 18, 32, 0.3, 0.01, 0.1,
             new String[0], 0x6E5A40),
     ASSASSIN_SNAIL("assassin_snail", Group.SNAIL, Model.ASSASSIN, 0.17, 0.02, false, Breeding.PAIR, 0.05, 0, 1, 1, 6.0, 20, 30, 0.3, 0.01, 0.0,
-            new String[0], 0xD0A030);
+            new String[0], 0xD0A030),
+    // M20 reef animals (salt water; they do not breed in a tank): the cleaner shrimp picks parasites off the fish,
+    // blue-leg hermit crabs and turbo snails are the clean-up crew of a reef tank (algae, leftovers)
+    CLEANER_SHRIMP("cleaner_shrimp", Group.SHRIMP, Model.SHRIMP, 0.45, 0.07, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 23, 28, 0.55, 0.05, 0.05,
+            new String[0], 0xD8302A),
+    HERMIT_CRAB("hermit_crab", Group.SNAIL, Model.HERMIT, 0.2, 0.045, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 22, 28, 0.35, 0.03, 0.8,
+            new String[0], 0x3A6AD0),
+    TURBO_SNAIL("turbo_snail", Group.SNAIL, Model.TURBO, 0.3, 0.025, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 22, 28, 0.4, 0.03, 2.5,
+            new String[0], 0x6A6A3E);
 
     /** Stocking group: how many of them count as one fish ({@code stocking.*PerFish}). */
     public enum Group { SHRIMP, CRAYFISH, SNAIL }
 
     /** Body plan of the renderer (and of tools/assetgen/critters.py). */
-    public enum Model { SHRIMP, CRAYFISH, NERITE, APPLE, RAMSHORN, BLADDER, TRUMPET, ASSASSIN }
+    public enum Model { SHRIMP, CRAYFISH, NERITE, APPLE, RAMSHORN, BLADDER, TRUMPET, ASSASSIN, HERMIT, TURBO }
 
     public enum Breeding {
         /** No eggs, no young in fresh water (nerites). */
@@ -132,6 +140,8 @@ public enum CritterSpecies {
     public boolean burrows() { return this == TRUMPET_SNAIL; }
     /** Animals with a colour line also have a grade (colour density) that is bred up over generations. */
     public boolean hasGrade() { return loci.length > 0; }
+    /** M20: a reef animal (salt water). */
+    public boolean marine() { return org.overengineer.bettacraft.reef.SaltTolerance.critter(this).marine(); }
 
     public String translationKey() {
         return "critter.bettacraft." + id;

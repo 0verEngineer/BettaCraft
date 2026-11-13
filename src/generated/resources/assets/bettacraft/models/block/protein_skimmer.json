@@ -1,0 +1,146 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#port",
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            5.0,
+            4.0,
+            11.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            5.0,
+            4.0,
+            11.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        5,
+        0,
+        2
+      ],
+      "to": [
+        11,
+        12,
+        8
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#port",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            4.0
+          ]
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            4.0
+          ]
+        }
+      },
+      "from": [
+        4,
+        12,
+        1
+      ],
+      "to": [
+        12,
+        16,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#port"
+        },
+        "east": {
+          "texture": "#port"
+        },
+        "north": {
+          "texture": "#port"
+        },
+        "south": {
+          "texture": "#port"
+        },
+        "up": {
+          "texture": "#port"
+        },
+        "west": {
+          "texture": "#port"
+        }
+      },
+      "from": [
+        6,
+        13,
+        0
+      ],
+      "to": [
+        10,
+        16,
+        1
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "bettacraft:block/protein_skimmer_side",
+    "port": "bettacraft:block/cabinet_trim",
+    "side": "bettacraft:block/protein_skimmer_side",
+    "top": "bettacraft:block/protein_skimmer_top"
+  }
+}

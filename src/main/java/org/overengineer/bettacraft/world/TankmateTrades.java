@@ -30,11 +30,11 @@ public final class TankmateTrades {
         event.getRareTrades().add(listing(TankmateSpecies.Trade.RARE));
     }
 
-    static net.minecraft.world.entity.npc.VillagerTrades.ItemListing listing(TankmateSpecies.Trade kind) {
+    public static net.minecraft.world.entity.npc.VillagerTrades.ItemListing listing(TankmateSpecies.Trade kind) {
         return (trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             java.util.List<TankmateSpecies> pool = new java.util.ArrayList<>();
-            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind) pool.add(s);
+            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && !s.marine()) pool.add(s); // M20: reef fish in ReefTrades
             if (pool.isEmpty()) return null;
             return offer(pool.get(rnd.nextInt(pool.size())), rnd);
         };

@@ -165,6 +165,31 @@ public final class TankmateSpots {
     }
 
     /** Plant blocks per water block (share of the volume) of one leaf kind. */
+    /**
+     * M20: host anemones of the clownfish (bubble tip anemones grown past the planted frag), each at the middle of its
+     * tentacles in tank-world coordinates; the eggs go to its foot.
+     */
+    public static List<Spot> anemones(MinecraftServer server, TankData t) {
+        InteriorRegion r = region(server, t);
+        if (r == null) return List.of();
+        List<Spot> out = new ArrayList<>();
+        for (InteriorPlant p : r.plants().all()) {
+            if (!p.species.anemone() || p.stage < 1) continue;
+            double up = Math.max(2, 4.0 * r.scale() / 16);
+            out.add(new Spot(toWorld(t, r, p.x + 0.5, p.y + up, p.z + 0.5), p.blocks, Vec3.ZERO));
+        }
+        return out;
+    }
+
+    /** M20: the foot of a host anemone (where the clownfish glue their eggs) for the spot of {@link #anemones}. */
+    public static Vec3 anemoneFoot(MinecraftServer server, TankData t, Vec3 spot) {
+        InteriorRegion r = region(server, t);
+        if (r == null) return spot;
+        double up = Math.max(2, 4.0 * r.scale() / 16);
+        double fy = (t.sizeY() - 2 * TankTerrain.MARGIN) / r.sizeY();
+        return new Vec3(spot.x + 0.06, spot.y - (up - 0.6) * fy, spot.z);
+    }
+
     public static double plantShare(MinecraftServer server, TankData t, boolean broad) {
         InteriorRegion r = region(server, t);
         if (r == null) return 0;

@@ -177,6 +177,22 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> SPAWNING_CAVE = ITEMS.registerSimpleBlockItem(ModBlocks.SPAWNING_CAVE);
     public static final DeferredItem<BlockItem> SPAWNING_MOP = ITEMS.registerSimpleBlockItem(ModBlocks.SPAWNING_MOP);
 
+    // ------------------------------------------------------------------ M20 reef tanks
+
+    /** M20: sea water (from an ocean with an empty bucket, or water + sea salt); pours like water, salts a tank. */
+    public static final DeferredItem<org.overengineer.bettacraft.reef.SeaWaterBucketItem> SEA_WATER_BUCKET = ITEMS.register("sea_water_bucket",
+            () -> new org.overengineer.bettacraft.reef.SeaWaterBucketItem(new Item.Properties().stacksTo(1).craftRemainder(net.minecraft.world.item.Items.BUCKET)));
+    /** M20: one portion salts a bucket of water to sea water (right-click a tank). */
+    public static final DeferredItem<Item> SEA_SALT = ITEMS.register("sea_salt", () -> new org.overengineer.bettacraft.reef.ReefItem(new Item.Properties(), "sea_salt"));
+    /** M20: raises the calcium of a reef tank for the stony corals (right-click a tank). */
+    public static final DeferredItem<Item> CALCIUM_ADDITIVE = ITEMS.register("calcium_additive", () -> new org.overengineer.bettacraft.reef.ReefItem(new Item.Properties(), "calcium_additive"));
+    /** M20: flow pump for the tank interior. */
+    public static final DeferredItem<org.overengineer.bettacraft.reef.FlowPumpItem> FLOW_PUMP = ITEMS.register("flow_pump",
+            () -> new org.overengineer.bettacraft.reef.FlowPumpItem(new Item.Properties()));
+    public static final DeferredItem<BlockItem> PROTEIN_SKIMMER = ITEMS.registerSimpleBlockItem(ModBlocks.PROTEIN_SKIMMER);
+    public static final DeferredItem<BlockItem> REEF_ROCK = ITEMS.registerSimpleBlockItem(ModBlocks.REEF_ROCK);
+    public static final DeferredItem<BlockItem> LIVE_ROCK = ITEMS.registerSimpleBlockItem(ModBlocks.LIVE_ROCK);
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }

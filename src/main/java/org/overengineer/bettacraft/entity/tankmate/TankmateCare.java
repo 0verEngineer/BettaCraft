@@ -63,7 +63,8 @@ public final class TankmateCare {
         TankmateSpecies s = fish.species();
         BettaHealth.Params p = BettaCare.params();
         boolean tempOk = s.tolerates(tank.waterTemp());
-        boolean waterBad = TankWater.qualityEnabled() && tank.waterQuality() < s.minQuality();
+        double salt = org.overengineer.bettacraft.reef.SaltTolerance.shock(s.salinity(), tank); // M20
+        boolean waterBad = TankWater.qualityEnabled() && tank.waterQuality() < s.minQuality() || salt >= org.overengineer.bettacraft.tank.Salinity.STRESS_FROM;
         int stress = fish.stress & (STRESS_SHOAL | STRESS_CHASED);
         boolean crowded = controller.isCrowded() && fish.isAdult();
         if (crowded) stress |= STRESS_CROWDED;
@@ -71,7 +72,7 @@ public final class TankmateCare {
         if (waterBad) stress |= STRESS_WATER;
         fish.stress = stress;
         boolean social = ServerConfig.getOr(ServerConfig.TANKMATES_SHOAL_STRESS, true) && (stress & STRESS_SHOAL) != 0;
-        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, crowded || social || (stress & STRESS_CHASED) != 0, waterBad);
+        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, crowded || social || (stress & STRESS_CHASED) != 0, waterBad, salt);
         // grazers find their food on the glass
         if (s.grazer() && fish.health.daysSinceFed() > 0.3 && org.overengineer.bettacraft.tank.algae.TankAlgae.mean(tank) >= GRAZING_FROM) {
             fish.health.feed();
@@ -92,6 +93,7 @@ public final class TankmateCare {
         boolean fed = !fish.health.isHungry(p);
         if (fish.stage != LifeStage.ADULT && fed && tempOk && !fish.health.isSick()) grow(level, controller, fish, days);
         double heal = ServerConfig.getOr(ServerConfig.HEALTH_HEAL_PER_DAY, 2.0);
+        if (org.overengineer.bettacraft.reef.ReefCare.cleaners(controller.getTank())) heal *= 1.5; // M20: a cleaner shrimp picks the wounds clean
         if (fed && !fish.health.isSick() && fish.getHealth() < fish.getMaxHealth() && heal > 0) fish.heal((float) (heal * days));
         int flags = 0;
         if (fish.health.isSick()) flags |= TankmateEntity.FLAG_SICK;
@@ -118,7 +120,7 @@ public final class TankmateCare {
     }
 
     private static void dieOfIllness(ServerLevel level, TankBlockEntity controller, TankmateEntity fish, BettaHealth.Conditions c, BettaHealth.Params p) {
-        String key = fish.health.isHungry(p) ? "hunger" : c.tempBad() ? "temperature" : c.waterBad() ? "water_quality"
+        String key = c.saltBad() ? "salinity" : fish.health.isHungry(p) ? "hunger" : c.tempBad() ? "temperature" : c.waterBad() ? "water_quality"
                 : (fish.stress & STRESS_SHOAL) != 0 ? "lonely" : c.crowdBad() ? "overcrowding" : "illness";
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + key);
         controller.getTank().inhabitants().remove(fish.getUUID());

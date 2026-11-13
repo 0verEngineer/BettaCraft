@@ -220,6 +220,43 @@ def frog() -> list[Group]:
     return groups
 
 
+def hermit() -> list[Group]:
+    """M20 blue-leg hermit crab: a borrowed spiral shell at the back, the front of the crab with claws, legs and eye stalks."""
+    shell = Group("shell", cubes=[
+        c("w1", (0, -2.8, 2.6), (6.4, 4.6, 7.0), (0, 0, 0), "bands"),
+        c("w2", (0, -5.6, 3.4), (5.2, 2.6, 5.6), (0, 0, 0), "bands"),
+        c("w3", (0, -7.3, 4.2), (3.6, 1.6, 3.8), (0, 0, 0), "bands"),
+        c("apex", (0, -8.4, 4.8), (1.8, 1.0, 2.0), (0, 0, 0), "bands"),
+        c("mouth", (0, -2.2, -0.9), (5.0, 3.8, 1.0), (0, 0, 0), "dark"),
+    ])
+    body = Group("body", cubes=[c("front", (0, -2.0, -2.0), (3.6, 2.6, 2.4), (0, 0, 0), "speckle")])
+    claws = Group("claws", cubes=[
+        c("claw_big", (1.4, -1.6, -4.4), (2.0, 1.8, 2.8), (0, -10, 0), "speckle"),
+        c("claw_small", (-1.4, -1.4, -4.0), (1.4, 1.3, 2.2), (0, 10, 0), "speckle"),
+    ])
+    legs = Group("legs", cubes=[])
+    for i, z in enumerate((-3.0, -2.0, -1.0)):
+        legs.cubes += pairs(c(f"leg{i}", (2.2, -1.0, z), (0.5, 2.2, 0.5), (0, 0, 36)), f"leg{i}")
+    ant = Group("antennae", pivot=(0, -3.0, -3.4), cubes=[])
+    ant.cubes += pairs(Cube("long", (0.5, -3.0, -3.4), (0.2, 0.2, 5.0), (-20, 20, 0)), "long")
+    eyes = Group("eyes", cubes=pairs(c("eye", (0.7, -3.6, -3.4), (0.6, 1.4, 0.6)), "eye"))
+    return [shell, body, claws, legs, ant, eyes]
+
+
+def turbo() -> list[Group]:
+    """M20 turbo snail: a round, high shell with spiral ridges (Turbo fluctuosa)."""
+    shell = Group("shell", cubes=[
+        c("w1", (0, -2.6, 0.8), (10.0, 3.6, 10.5), (0, 0, 0), "rings"),
+        c("w2", (0, -5.8, 1.2), (9.4, 3.2, 9.6), (0, 0, 0), "rings"),
+        c("w3", (0, -8.6, 1.6), (7.2, 2.6, 7.4), (0, 0, 0), "rings"),
+        c("w4", (0, -10.6, 2.0), (4.6, 1.8, 4.8), (0, 0, 0), "rings"),
+        c("apex", (0, -11.9, 2.2), (2.0, 1.0, 2.2), (0, 0, 0), "rings"),
+    ])
+    foot, tent = snail_foot(12.0, 7.5, -6.6, 4.5, -7.4, thick=1.1)
+    eyes = Group("eyes", cubes=pairs(c("eye", (1.1, -1.9, -7.6), (0.5, 0.5, 0.5)), "eye"))
+    return [shell, foot, tent, eyes]
+
+
 MODELS = {
     "shrimp": shrimp,
     "crayfish": crayfish,
@@ -230,6 +267,8 @@ MODELS = {
     "trumpet": trumpet,
     "assassin": assassin,
     "frog": frog,
+    "hermit": hermit,
+    "turbo": turbo,
 }
 
 

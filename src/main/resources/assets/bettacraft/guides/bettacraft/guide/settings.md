@@ -63,6 +63,10 @@ navigation:
 | `tankmates.behaviour.fryEatenPerDay`, `eggsEatenPerDay` | 0.5, 1.5 | how fast the adults hunt fry and eat eggs (plants and mops protect them) |
 | `tankmates.behaviour.shoalStress`, `bettaAggression`, `clownLoachSnailsPerDay` | true, 1, 0.5 | stress in small shoals, male bettas against guppy and gourami males, snails eaten by clown loaches |
 | `tankmates.behaviour.bottomFoodShare`, `tankmateStockingFactor`, `netFishShare` | 0.6, 1, 0.4 | food for the bottom fish, how much tankmates count for the stocking, share of fish in the net |
+| `saltwater.salinityShock`, `refuseDeadlyWater` | 1, true | [reef tanks](saltwater.md): how fast the wrong salinity harms animals (0 = never); refuse animals the water would kill |
+| `saltwater.oceanWaterIsSalty`, `foreignAnimals`, `vanillaCoralsNeedSalt` | true, LENIENT, false | sea water buckets from the ocean; salt and animals of vanilla / other mods (LENIENT or REALISTIC); vanilla corals die in fresh water |
+| `saltwater.skimmerBlocks`, `liveRockBlocks`, `pumpFlowBlocks` | 48, 24, 24 | water blocks a protein skimmer and a tank block of live rock keep clean in salt water, water blocks a flow pump moves |
+| `saltwater.coralGrowthSpeed`, `calciumPerStage`, `calciumPerDose`, `reefNetFishShare` | 1, 40, 200, 0.4 | coral growth, calcium a stony coral uses per stage and one additive adds (mg/L in one water block), share of reef fish in the net |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 

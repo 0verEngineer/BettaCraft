@@ -235,6 +235,7 @@ public final class ModDataGen {
             // M19: spawning cave (fired clay) and spawning mop (wool strands, crossed planes)
             simpleBlock(ModBlocks.SPAWNING_CAVE.get(), cubeAll(ModBlocks.SPAWNING_CAVE.get()));
             simpleBlock(ModBlocks.SPAWNING_MOP.get(), models().cross("spawning_mop", modLoc("block/spawning_mop")).renderType("cutout"));
+            reef();
 
             BlockModelBuilder feeder = models().getBuilder("feeder")
                     .texture("side", modLoc("block/feeder_side")).texture("top", modLoc("block/feeder_top"))
@@ -261,6 +262,39 @@ public final class ModDataGen {
                 return ConfiguredModel.builder().modelFile(m)
                         .rotationY(state.getValue(TankLightBlock.AXIS) == Direction.Axis.Z ? 90 : 0).build();
             }, TankLightBlock.POWERED, TankLightBlock.COLOR); // M18: the colour is a tint of the panel (BettaCraftClient)
+        }
+
+        /** M20: reef rock, live rock, the flow pump in the interior and the protein skimmer on the tank. */
+        private void reef() {
+            simpleBlock(ModBlocks.REEF_ROCK.get(), cubeAll(ModBlocks.REEF_ROCK.get()));
+            simpleBlock(ModBlocks.LIVE_ROCK.get(), cubeAll(ModBlocks.LIVE_ROCK.get()));
+            ModelFile side = models().cube("flow_pump_segment", modLoc("block/flow_pump_segment_side"), modLoc("block/flow_pump_segment_side"),
+                    modLoc("block/flow_pump_segment_outlet"), modLoc("block/flow_pump_segment_side"), modLoc("block/flow_pump_segment_side"),
+                    modLoc("block/flow_pump_segment_side")).texture("particle", modLoc("block/flow_pump_segment_side"));
+            getVariantBuilder(ModBlocks.PUMP_SEGMENT.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(side)
+                    .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING).toYRot() + 180) % 360).build());
+            // skimmer: reaction tube 5..11 x 0..12 x 2..8 and the collection cup 4..12 x 12..16 x 1..9, a hook over the glass
+            BlockModelBuilder m = models().getBuilder("protein_skimmer")
+                    .texture("side", modLoc("block/protein_skimmer_side")).texture("top", modLoc("block/protein_skimmer_top"))
+                    .texture("particle", modLoc("block/protein_skimmer_side")).texture("port", modLoc("block/cabinet_trim"));
+            m.element().from(5, 0, 2).to(11, 12, 8)
+                    .face(Direction.NORTH).uvs(5, 4, 11, 16).texture("#side").end()
+                    .face(Direction.SOUTH).uvs(5, 4, 11, 16).texture("#side").end()
+                    .face(Direction.EAST).uvs(5, 4, 11, 16).texture("#side").end()
+                    .face(Direction.WEST).uvs(5, 4, 11, 16).texture("#side").end()
+                    .face(Direction.DOWN).uvs(5, 5, 11, 11).texture("#port").cullface(Direction.DOWN).end()
+                    .end();
+            m.element().from(4, 12, 1).to(12, 16, 9)
+                    .face(Direction.NORTH).uvs(4, 0, 12, 4).texture("#side").end()
+                    .face(Direction.SOUTH).uvs(4, 0, 12, 4).texture("#side").end()
+                    .face(Direction.EAST).uvs(4, 0, 12, 4).texture("#side").end()
+                    .face(Direction.WEST).uvs(4, 0, 12, 4).texture("#side").end()
+                    .face(Direction.UP).uvs(4, 4, 12, 12).texture("#top").end()
+                    .face(Direction.DOWN).uvs(4, 4, 12, 12).texture("#port").end()
+                    .end();
+            m.element().from(6, 13, 0).to(10, 16, 1).allFaces((d, fb) -> fb.texture("#port")).end();
+            getVariantBuilder(ModBlocks.PROTEIN_SKIMMER.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(m)
+                    .rotationY(((int) state.getValue(org.overengineer.bettacraft.reef.ProteinSkimmerBlock.FACING).toYRot() + 180) % 360).build());
         }
 
         /** M4: canister 3..13 x 0..12 with lid 4..12 x 12..14 and a hose port; model front (north) = towards the tank. */
@@ -489,6 +523,14 @@ public final class ModDataGen {
             basicItem(ModItems.ALGAE_WAFER.get());
             withExistingParent("spawning_cave", modLoc("block/spawning_cave"));
             withExistingParent("spawning_mop", mcLoc("item/generated")).texture("layer0", modLoc("block/spawning_mop"));
+            // M20: reef tanks
+            basicItem(ModItems.SEA_WATER_BUCKET.get());
+            basicItem(ModItems.SEA_SALT.get());
+            basicItem(ModItems.CALCIUM_ADDITIVE.get());
+            basicItem(ModItems.FLOW_PUMP.get());
+            withExistingParent("protein_skimmer", modLoc("block/protein_skimmer"));
+            withExistingParent("reef_rock", modLoc("block/reef_rock"));
+            withExistingParent("live_rock", modLoc("block/live_rock"));
             // M13: aquarium plants: two grey layers per growth form, tinted per species (ItemColor)
             for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
                 String form = e.getKey().form().name().toLowerCase(java.util.Locale.ROOT);
@@ -796,6 +838,7 @@ public final class ModDataGen {
             ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ALGAE_WAFER.get(), 4)
                     .requires(Items.DRIED_KELP).requires(Items.DRIED_KELP).requires(ModItems.BETTA_PELLETS.get())
                     .unlockedBy("has_dried_kelp", has(Items.DRIED_KELP)).save(output, BettaCraft.id("algae_wafer"));
+            reefRecipes(output);
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -839,6 +882,58 @@ public final class ModDataGen {
 
     // ------------------------------------------------------------------ loot
 
+    /** M20: salt, sea water, calcium, skimmer, pump, rock and coral frags from vanilla corals. */
+    static void reefRecipes(RecipeOutput output) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SEA_SALT.get())
+                .requires(ModItems.SEA_WATER_BUCKET.get())
+                .unlockedBy("has_sea_water", hasIt(ModItems.SEA_WATER_BUCKET.get())).save(output, BettaCraft.id("sea_salt"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SEA_WATER_BUCKET.get())
+                .requires(Items.WATER_BUCKET).requires(ModItems.SEA_SALT.get())
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("sea_water_bucket"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CALCIUM_ADDITIVE.get(), 4)
+                .requires(Items.CALCITE).requires(ModItems.SEA_SALT.get())
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("calcium_additive"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CALCIUM_ADDITIVE.get(), 2)
+                .requires(Items.BONE_MEAL).requires(Items.BONE_MEAL).requires(Items.BONE_MEAL).requires(ModItems.SEA_SALT.get())
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("calcium_additive_from_bone_meal"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PROTEIN_SKIMMER.get())
+                .pattern("GIG").pattern("G G").pattern("IRI")
+                .define('G', Tags.Items.GLASS_PANES).define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("protein_skimmer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLOW_PUMP.get())
+                .pattern(" I ").pattern("IRI").pattern(" K ")
+                .define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('K', Items.BLACK_DYE)
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("flow_pump"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.REEF_ROCK.get(), 4)
+                .pattern("CS").pattern("SC")
+                .define('C', Items.CALCITE).define('S', net.minecraft.tags.ItemTags.SAND)
+                .unlockedBy("has_calcite", hasIt(Items.CALCITE)).save(output, BettaCraft.id("reef_rock"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.LIVE_ROCK.get(), 8)
+                .pattern("RRR").pattern("RCR").pattern("RRR")
+                .define('R', ModItems.REEF_ROCK.get())
+                .define('C', net.minecraft.world.item.crafting.Ingredient.of(Items.TUBE_CORAL, Items.BRAIN_CORAL, Items.BUBBLE_CORAL, Items.FIRE_CORAL,
+                        Items.HORN_CORAL, Items.TUBE_CORAL_FAN, Items.BRAIN_CORAL_FAN, Items.BUBBLE_CORAL_FAN, Items.FIRE_CORAL_FAN, Items.HORN_CORAL_FAN))
+                .unlockedBy("has_reef_rock", hasIt(ModItems.REEF_ROCK.get())).save(output, BettaCraft.id("live_rock"));
+        // frags from the corals of the ocean: tube -> star polyps, brain -> Lobophyllia, bubble -> hammer, fire -> Acropora, horn -> leather
+        var map = new java.util.LinkedHashMap<net.minecraft.world.item.Item, org.overengineer.bettacraft.plants.PlantSpecies>();
+        map.put(Items.TUBE_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.GREEN_STAR_POLYPS);
+        map.put(Items.BRAIN_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.LOBOPHYLLIA);
+        map.put(Items.BUBBLE_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.HAMMER_CORAL);
+        map.put(Items.FIRE_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.ACROPORA);
+        map.put(Items.HORN_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.LEATHER_CORAL);
+        for (var e : map.entrySet()) {
+            var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(e.getKey()).getPath();
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.AQUATIC_PLANTS.get(e.getValue()).get(), 2)
+                    .requires(e.getKey()).requires(ModItems.REEF_ROCK.get())
+                    .unlockedBy("has_" + id, hasIt(e.getKey())).save(output, BettaCraft.id("frag_from_" + id));
+        }
+    }
+
+    private static net.minecraft.advancements.Criterion<net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance> hasIt(
+            net.minecraft.world.level.ItemLike item) {
+        return net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(item);
+    }
+
     static final class BlockLoot extends BlockLootSubProvider {
         BlockLoot(HolderLookup.Provider registries) {
             super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
@@ -864,6 +959,9 @@ public final class ModDataGen {
             dropSelf(ModBlocks.TANK_LID.get());
             dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
             dropSelf(ModBlocks.SPAWNING_MOP.get());
+            dropSelf(ModBlocks.PROTEIN_SKIMMER.get()); // M20
+            dropSelf(ModBlocks.REEF_ROCK.get());
+            dropSelf(ModBlocks.LIVE_ROCK.get());
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
             // M4: the filter keeps its heaters, the cabinet its planks (its contents drop separately)
@@ -883,7 +981,7 @@ public final class ModDataGen {
         protected Iterable<Block> getKnownBlocks() {
             return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
                     ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get(), ModBlocks.SPAWNING_CAVE.get(),
-                    ModBlocks.SPAWNING_MOP.get());
+                    ModBlocks.SPAWNING_MOP.get(), ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get());
         }
     }
 
@@ -958,6 +1056,14 @@ public final class ModDataGen {
                             net.minecraft.world.level.block.Blocks.MUD, net.minecraft.world.level.block.Blocks.SOUL_SAND,
                             net.minecraft.world.level.block.Blocks.SOUL_SOIL, net.minecraft.world.level.block.Blocks.SUSPICIOUS_SAND,
                             net.minecraft.world.level.block.Blocks.SUSPICIOUS_GRAVEL);
+            // M20: corals are glued onto reef rock, live rock and coral blocks (also dead ones)
+            tag(ModTags.REEF_SURFACES).add(ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get()).addTag(BlockTags.CORAL_BLOCKS)
+                    .add(net.minecraft.world.level.block.Blocks.DEAD_TUBE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_BRAIN_CORAL_BLOCK,
+                            net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,
+                            net.minecraft.world.level.block.Blocks.DEAD_HORN_CORAL_BLOCK);
+            tag(ModTags.EPIPHYTE_SURFACES).add(ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get(),
+                    ModBlocks.PUMP_SEGMENT.get());
             var plantBlocks = tag(BlockTags.SWORD_EFFICIENT);
             for (var b : ModBlocks.AQUATIC_PLANTS.values()) plantBlocks.add(b.get());
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
@@ -1039,7 +1145,7 @@ public final class ModDataGen {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(ModTags.BETTA_SPAWN_BIOMES).addTag(Tags.Biomes.IS_SWAMP);
-            tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN);
+            tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN).addTag(Tags.Biomes.IS_BEACH); // M20: beaches too
         }
     }
 }

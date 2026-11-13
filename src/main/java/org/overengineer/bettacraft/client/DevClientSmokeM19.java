@@ -197,6 +197,7 @@ final class DevClientSmokeM19 {
         for (TankmateSpecies s : TankmateSpecies.values()) {
             BlockPos min = base.offset(-20 + i * GALLERY_SPACING, 0, 14);
             TankBlockEntity g = tank(level, p, min, 2, 2, 2, (float) Mth.clamp((s.tempMin() + s.tempMax()) / 2, 22, 28));
+            if (s.marine()) g.getTank().setSalinity(35F); // M20: the reef fish in sea water
             InteriorRegion gr = region(level, g);
             plants(level, gr, false);
             if (s.breeding() == TankmateSpecies.Breeding.CAVE) decor(level, gr, DecorType.SPAWNING_CAVE, 10, 14, Rotation.CLOCKWISE_90);

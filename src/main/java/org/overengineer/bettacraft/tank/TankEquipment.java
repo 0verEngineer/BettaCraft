@@ -30,7 +30,7 @@ public final class TankEquipment {
         if (last != Long.MIN_VALUE && now >= last && now - last < RESCAN_TICKS) return;
         c.equipmentScanTime = now;
         TankData t = c.getTank();
-        List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>();
+        List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>();
         // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
         // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
@@ -55,21 +55,36 @@ public final class TankEquipment {
             if (d == Direction.DOWN) {
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
             } else {
-                check(level, t, p, d.getOpposite(), filters);
+                check(level, t, p, d.getOpposite(), filters, skimmers);
             }
         }
         filters.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         cabinets.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.filterCache = List.copyOf(filters);
         c.cabinetCache = List.copyOf(cabinets);
+        skimmers.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
+        c.skimmerCache = List.copyOf(skimmers);
     }
 
-    private static void check(Level level, TankData t, BlockPos p, Direction towardsTank, List<BlockPos> out) {
+    private static void check(Level level, TankData t, BlockPos p, Direction towardsTank, List<BlockPos> out, List<BlockPos> skimmers) {
         if (!level.isLoaded(p)) return;
         BlockState s = level.getBlockState(p);
         if (s.getBlock() instanceof ExternalFilterBlock && s.getValue(ExternalFilterBlock.FACING) == towardsTank && t.contains(p.relative(towardsTank))) {
             out.add(p.immutable());
+        } else if (s.getBlock() instanceof org.overengineer.bettacraft.reef.ProteinSkimmerBlock
+                && s.getValue(org.overengineer.bettacraft.reef.ProteinSkimmerBlock.FACING) == towardsTank && t.contains(p.relative(towardsTank))) {
+            skimmers.add(p.immutable()); // M20
         }
+    }
+
+    /** M20: protein skimmers hanging on the tank. */
+    public static List<BlockPos> skimmers(Level level, TankBlockEntity c) {
+        scanIfNeeded(level, c);
+        List<BlockPos> out = new ArrayList<>();
+        for (BlockPos p : c.skimmerCache) {
+            if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.reef.ProteinSkimmerBlock) out.add(p);
+        }
+        return out;
     }
 
     /** Forget the cached positions (after placing / breaking equipment, so a test or menu sees it at once). */

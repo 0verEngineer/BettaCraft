@@ -29,7 +29,10 @@ public final class TankInteractions {
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = TankCare.handFeed(stack, level, pos, player, hand, hit.getLocation());
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
-        boolean fill = stack.is(Items.WATER_BUCKET);
+        r = org.overengineer.bettacraft.reef.ReefItems.useOnTank(stack, level, pos, player, hand); // M20: sea salt, calcium
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        boolean sea = stack.is(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
+        boolean fill = stack.is(Items.WATER_BUCKET) || sea;
         boolean drain = stack.is(Items.BUCKET);
         if (!fill && !drain) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -54,7 +57,7 @@ public final class TankInteractions {
             }
             float qualityBefore = tank.waterQuality();
             boolean hadWater = tank.waterMb() > 0;
-            changeWater(server, controller, TankData.MB_PER_BLOCK);
+            changeWater(server, controller, TankData.MB_PER_BLOCK, sea ? Salinity.SEA : 0.0F);
             if (hadWater && qualityBefore < WaterQuality.GOOD_FROM && tank.waterQuality() > qualityBefore) {
                 org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WATER_CHANGE,
                         Math.round(tank.waterQuality() * 100));
@@ -76,8 +79,11 @@ public final class TankInteractions {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.keep_water", Math.round(minFill * 100)), true);
                 return ItemInteractionResult.CONSUME;
             }
+            boolean salty = tank.marine();
             changeWater(server, controller, -TankData.MB_PER_BLOCK);
-            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
+            // M20: salt water comes out as a bucket of sea water
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(salty
+                    ? org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get() : Items.WATER_BUCKET)));
             level.playSound(null, pos, org.overengineer.bettacraft.registry.ModSounds.TANK_DRAIN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         }
@@ -89,11 +95,26 @@ public final class TankInteractions {
      * dilutes the waste (M9 water quality, a water change = draining and refilling); removing water keeps the quality.
      */
     public static void changeWater(ServerLevel level, TankBlockEntity controller, long deltaMb) {
+        changeWater(level, controller, deltaMb, 0.0F);
+    }
+
+    /**
+     * M20: adds water of salinity {@code addedPpt} (removing ignores it): salt and calcium mix by volume (sea water
+     * brings its calcium), the waste is diluted like with fresh water.
+     */
+    public static void changeWater(ServerLevel level, TankBlockEntity controller, long deltaMb, float addedPpt) {
         TankData tank = controller.getTank();
         long before = tank.waterMb();
         tank.setWaterMb(before + deltaMb);
         long added = tank.waterMb() - before;
         if (added > 0) {
+            float salinityBefore = tank.salinity();
+            tank.setSalinity(Salinity.mix(salinityBefore, before, addedPpt, added));
+            tank.setCalcium(Salinity.mixCalcium(tank.calcium(), before, Salinity.calciumOf(addedPpt), added));
+            if (Salinity.kind(salinityBefore) != Salinity.kind(tank.salinity()) && before > 0) {
+                TankCare.log(level, controller, "log.bettacraft.salinity_" + Salinity.kind(tank.salinity()).name().toLowerCase(java.util.Locale.ROOT),
+                        String.format(java.util.Locale.ROOT, "%.1f", tank.salinity()));
+            }
             tank.setWaterQuality(WaterQuality.mix(tank.waterQuality(), before, added));
             tank.setLastFreshWater(level.getGameTime());
             // M19: fresh water has the ambient temperature; a large cool water change sets off the corydoras

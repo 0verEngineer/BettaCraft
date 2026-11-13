@@ -440,9 +440,24 @@ public final class TankView {
         public boolean heaterPower, filterPower, lightPower, heatPowered = true, filterPowered = true, lightPowered = true;
         public long buffer, bufferCap;
         public int demand;
+        /** M20: salinity (ppt), calcium (mg/L), skimmers, flow pumps, flow (1 = strong), live rock blocks, light spectrum for corals. */
+        public float salinity, calcium;
+        public int skimmers, pumps, liveRock;
+        public double flow, spectrum;
+
+        public boolean reefLine() {
+            return salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM || skimmers > 0 || pumps > 0 || liveRock > 0;
+        }
 
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
+            t.putFloat("salinity", salinity);
+            t.putFloat("calcium", calcium);
+            t.putInt("skimmers", skimmers);
+            t.putInt("pumps", pumps);
+            t.putInt("live_rock", liveRock);
+            t.putDouble("flow", flow);
+            t.putDouble("spectrum", spectrum);
             t.putBoolean("q_on", qualityEnabled);
             t.putBoolean("e_on", evaporationEnabled);
             t.putFloat("q", quality);
@@ -470,6 +485,13 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
+            salinity = t.getFloat("salinity");
+            calcium = t.getFloat("calcium");
+            skimmers = t.getInt("skimmers");
+            pumps = t.getInt("pumps");
+            liveRock = t.getInt("live_rock");
+            flow = t.getDouble("flow");
+            spectrum = t.getDouble("spectrum");
             qualityEnabled = t.getBoolean("q_on");
             evaporationEnabled = t.getBoolean("e_on");
             quality = t.getFloat("q");
@@ -668,6 +690,14 @@ public final class TankView {
         w.buffer = t.powerBuffer();
         w.bufferCap = org.overengineer.bettacraft.tank.TankPower.capacity();
         w.demand = c.lastDemand();
+        // M20: salt water values and the reef technique
+        w.salinity = t.salinity();
+        w.calcium = t.calcium();
+        w.skimmers = org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c);
+        w.pumps = org.overengineer.bettacraft.reef.TankReef.pumps(level, t);
+        w.liveRock = org.overengineer.bettacraft.reef.TankReef.liveRock(level, t);
+        w.flow = org.overengineer.bettacraft.reef.TankReef.flow(level, c);
+        w.spectrum = org.overengineer.bettacraft.reef.TankReef.spectrum(level, t);
         return w;
     }
 
