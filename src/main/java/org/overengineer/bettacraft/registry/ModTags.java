@@ -22,6 +22,8 @@ public final class ModTags {
     /** Fry food for the second half of the fry stage (artemia nauplii). */
     public static final TagKey<Item> FRY_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("fry_food"));
     /** Live food: conditions adults for breeding (mosquito larvae). */
+    /** M19: sinking food only the bottom fish eat (algae wafers). */
+    public static final TagKey<Item> BOTTOM_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("bottom_food"));
     public static final TagKey<Item> LIVE_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("live_food"));
     /** Raw fish for betta pellets: cod, salmon and {@code #c:foods/raw_fish} (fish of other mods, M7). */
     public static final TagKey<Item> PELLET_FISH = TagKey.create(Registries.ITEM, BettaCraft.id("pellet_fish"));

@@ -69,6 +69,9 @@ public class TankBlockEntity extends BlockEntity {
     public int femaleHidSteps;
     /** M14: the "frogs have no air" log line was written (transient). */
     public boolean frogAirLogged;
+    /** M19: log once per episode (male bettas chasing tankmates, a clown loach eating snails, a shoal that is too small). */
+    public boolean tankmateChaseLogged, tankmateSnailLogged;
+    public final java.util.Set<String> tankmateLogged = new java.util.HashSet<>();
     /** M14: signature of the algae stages the clients have (transient; a change sends the tank view). */
     public long algaeSignature = Long.MIN_VALUE;
     /** M14: game time of the last death log line per species (transient: several deaths in a row are one line). */

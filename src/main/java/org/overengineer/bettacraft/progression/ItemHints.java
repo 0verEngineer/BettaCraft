@@ -26,7 +26,9 @@ public final class ItemHints {
             "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "monte_carlo", "red_tiger_lotus",
             "betta_spawn_egg",
             // M14: algae, frogs
-            "algae_scraper", "dwarf_frog_bucket", "dwarf_frog_spawn_egg");
+            "algae_scraper", "dwarf_frog_bucket", "dwarf_frog_spawn_egg",
+            // M19: breeding the tankmates (the fish themselves: info.bettacraft.tankmate.<species>)
+            "breeding_box", "fry_powder", "algae_wafer", "spawning_cave", "spawning_mop");
 
     private ItemHints() {}
 
@@ -35,6 +37,11 @@ public final class ItemHints {
         var id = BuiltInRegistries.ITEM.getKey(item);
         if (!BettaCraft.MOD_ID.equals(id.getNamespace())) return null;
         if (item instanceof DecorItem) return "info.bettacraft.decor";
+        // M19: bucket and spawn egg of a tankmate share the care sheet of the species
+        if (item instanceof org.overengineer.bettacraft.tankmates.TankmateBucketItem b) return "info.bettacraft.tankmate." + b.species().id();
+        for (var e : org.overengineer.bettacraft.registry.ModItems.TANKMATE_SPAWN_EGGS.entrySet()) {
+            if (e.getValue().get() == item) return "info.bettacraft.tankmate." + e.getKey().id();
+        }
         return ITEMS.contains(id.getPath()) ? "info.bettacraft." + id.getPath() : null;
     }
 

@@ -42,7 +42,8 @@ public final class TankAlgae {
     public static double grazingPerDay(TankData t) {
         double s = 0;
         for (Critter k : t.critters()) if (k.alive()) s += k.species.algaePerDay() * (k.adult() ? 1.0 : 0.4);
-        return s * ServerConfig.getOr(ServerConfig.ALGAE_CLEANER_STRENGTH, 1.0);
+        // M19: otocinclus and bristlenoses (set by the tankmates' step, already with the cleaner strength)
+        return s * ServerConfig.getOr(ServerConfig.ALGAE_CLEANER_STRENGTH, 1.0) + t.fishGrazing();
     }
 
     /** Mean algae level of the wet glass, 0..1. */

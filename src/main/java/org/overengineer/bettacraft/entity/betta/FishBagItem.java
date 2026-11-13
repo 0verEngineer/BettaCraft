@@ -46,7 +46,7 @@ public class FishBagItem extends Item {
     }
 
     public static boolean isFilled(ItemStack stack) {
-        return stack.has(ModDataComponents.BAG_ENTITY.get()) || stack.has(ModDataComponents.CRITTERS.get());
+        return stack.has(ModDataComponents.BAG_ENTITY.get()) || stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get());
     }
 
     @Nullable
@@ -115,7 +115,7 @@ public class FishBagItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.has(ModDataComponents.CRITTERS.get())) return releaseCritters(level, player, hand, stack);
+        if (stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return releaseCritters(level, player, hand, stack);
         EntityType<?> type = containedType(stack);
         if (type == null) return InteractionResultHolder.pass(stack);
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
@@ -125,7 +125,11 @@ public class FishBagItem extends Item {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
             return InteractionResultHolder.fail(stack);
         }
-        if (level instanceof ServerLevel server) {
+        if (level instanceof ServerLevel server && stack.has(ModDataComponents.TANKMATE_GROUP.get())) {
+            // M19: a group of tankmates swims off
+            org.overengineer.bettacraft.tankmates.TankmateItems.release(server, stack, pos, player);
+            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 1.0F, 1.0F);
+        } else if (level instanceof ServerLevel server) {
             net.minecraft.nbt.CompoundTag stored = storedEntity(stack);
             Entity e;
             if (stored != null) { // M16: a water animal without a bucket, with its full data
@@ -170,6 +174,8 @@ public class FishBagItem extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
+        Component tm = org.overengineer.bettacraft.tankmates.TankmateItems.bagName(stack); // M19
+        if (tm != null) return tm;
         var critters = stack.get(ModDataComponents.CRITTERS.get());
         if (critters != null && !critters.isEmpty()) {
             return Component.translatable("item.bettacraft.fish_bag.critters", critters.size(),
@@ -187,6 +193,8 @@ public class FishBagItem extends Item {
         var critters = stack.get(ModDataComponents.CRITTERS.get());
         if (critters != null && !critters.isEmpty()) {
             org.overengineer.bettacraft.critters.CritterTooltip.append(critters, tooltip);
+        } else if (org.overengineer.bettacraft.tankmates.TankmateItems.appendBag(stack, tooltip)) {
+            // M19: tankmates (one or a group) or a clutch
         } else if (data != null) {
             BettaTooltip.append(data, tooltip);
         } else if (!isFilled(stack)) {

@@ -1,5 +1,25 @@
 {
   "values": [
-    "bettacraft:betta_bucket"
+    "bettacraft:betta_bucket",
+    "bettacraft:neon_tetra_bucket",
+    "bettacraft:cardinal_tetra_bucket",
+    "bettacraft:ember_tetra_bucket",
+    "bettacraft:glowlight_tetra_bucket",
+    "bettacraft:harlequin_rasbora_bucket",
+    "bettacraft:mosquito_rasbora_bucket",
+    "bettacraft:pygmy_cory_bucket",
+    "bettacraft:panda_cory_bucket",
+    "bettacraft:sterbai_cory_bucket",
+    "bettacraft:green_gold_cory_bucket",
+    "bettacraft:leopard_frog_pleco_bucket",
+    "bettacraft:zebra_pleco_bucket",
+    "bettacraft:bristlenose_pleco_bucket",
+    "bettacraft:otocinclus_bucket",
+    "bettacraft:kuhli_loach_bucket",
+    "bettacraft:clown_loach_bucket",
+    "bettacraft:guppy_bucket",
+    "bettacraft:endler_guppy_bucket",
+    "bettacraft:platy_bucket",
+    "bettacraft:dwarf_gourami_bucket"
   ]
 }

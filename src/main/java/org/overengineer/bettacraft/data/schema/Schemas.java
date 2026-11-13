@@ -22,6 +22,7 @@ public final class Schemas {
             .step(5, Schemas::tankV5toV6)
             .step(6, Schemas::tankV6toV7)
             .step(7, Schemas::tankV7toV8)
+            .step(8, Schemas::tankV8toV9)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -191,6 +192,17 @@ public final class Schemas {
         if (!tank.contains("next_critter_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_critter_id", 1);
         if (!tank.contains("critter_food", Tag.TAG_ANY_NUMERIC)) tank.putDouble("critter_food", 0.0);
         if (!tank.contains("algae", Tag.TAG_LIST)) tank.put("algae", new net.minecraft.nbt.ListTag());
+        return data;
+    }
+
+    /** M19: tankmate clutches, the breeding box and the water change bookkeeping (empty / none). */
+    static CompoundTag tankV8toV9(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        if (!tank.contains("clutches", Tag.TAG_LIST)) tank.put("clutches", new net.minecraft.nbt.ListTag());
+        if (!tank.contains("next_clutch_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_clutch_id", 1);
+        if (!tank.contains("breeding_box", Tag.TAG_ANY_NUMERIC)) tank.putBoolean("breeding_box", false);
+        if (!tank.contains("last_cool_change", Tag.TAG_ANY_NUMERIC)) tank.putLong("last_cool_change", -1L);
         return data;
     }
 

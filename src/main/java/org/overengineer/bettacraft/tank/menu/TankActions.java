@@ -35,6 +35,8 @@ public final class TankActions {
     public static final int TAKE_CRITTER = 10;
     /** M14: take the apple snail clutches off the glass. */
     public static final int REMOVE_CLUTCHES = 11;
+    /** M19: takes the breeding box out of the tank (the young in it swim free). */
+    public static final int REMOVE_BREEDING_BOX = 12;
 
     public static final int MAX_FISH_NAME = 32;
 
@@ -104,6 +106,10 @@ public final class TankActions {
                         player.displayClientMessage(Component.translatable("message.bettacraft.critters.clutch_removed").withStyle(ChatFormatting.GREEN), true);
                     }
                 }
+            }
+            case REMOVE_BREEDING_BOX -> {
+                if (!modify) error = locked();
+                else error = org.overengineer.bettacraft.tankmates.TankmateItems.removeBox(player.serverLevel(), controller, player);
             }
             case ENTER_INTERIOR -> {
                 player.closeContainer();

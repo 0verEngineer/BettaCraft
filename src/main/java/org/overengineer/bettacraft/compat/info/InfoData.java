@@ -73,12 +73,32 @@ public final class InfoData {
                 i.putString("stage", b.stage());
                 i.putFloat("health", Math.min(b.health().healthFraction(p), b.getHealth() / b.getMaxHealth()));
                 i.putBoolean("sick", b.health().isSick());
+            } else if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
+                i.putString("sex", m.isFemale() ? "female" : "male");
+                i.putString("stage", m.lifeStage().id());
+                i.putFloat("health", Math.min(m.health().healthFraction(p), m.getHealth() / m.getMaxHealth()));
+                i.putBoolean("sick", m.health().isSick());
             } else if (e instanceof LivingEntity le) {
                 i.putFloat("health", le.getHealth() / le.getMaxHealth());
             }
             list.add(i);
         }
         out.put("list", list);
+        // M19: the tankmates by species, their eggs and young in clutches and in the breeding box
+        java.util.Map<String, Integer> mates = new java.util.LinkedHashMap<>();
+        for (Entity e : live) if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) mates.merge(m.species().translationKey(), 1, Integer::sum);
+        ListTag tm = new ListTag();
+        for (var e : mates.entrySet()) {
+            CompoundTag x = new CompoundTag();
+            x.putString("k", e.getKey());
+            x.putInt("n", e.getValue());
+            tm.add(x);
+        }
+        if (!tm.isEmpty()) out.put("tankmates", tm);
+        int eggs = 0;
+        for (var k : t.clutches()) if (k.kind != org.overengineer.bettacraft.tankmates.Clutch.Kind.BOX && k.hasYoung()) eggs += k.count;
+        out.putInt("tm_eggs", eggs);
+        out.putInt("tm_box", t.breedingBox() ? org.overengineer.bettacraft.tankmates.TankmateBreeding.boxFry(t) : -1);
         var r = InteriorRegions.get(level.getServer()).get(t.regionId());
         out.putInt("filters_out", TankEquipment.filters(level, c).size());
         out.putInt("filters_in", r == null || !r.built() ? 0 : InteriorManager.equipment(level.getServer(), r).filters().size());

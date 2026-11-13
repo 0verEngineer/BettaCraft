@@ -152,6 +152,8 @@ class GuidePagesTest {
     /** Items a player can hold (not technical blocks, not the guide itself). */
     private static boolean isPlayerItem(String id) {
         String p = id.substring(id.indexOf(':') + 1);
+        // M19: the tankmate entities (their buckets and spawn eggs are items with pages)
+        if (org.overengineer.bettacraft.tankmates.TankmateSpecies.byId(p) != null) return false;
         return !(p.equals("betta") || p.equals("dwarf_clawed_frog") || p.equals("guide") || p.startsWith("interior_") || p.endsWith("_segment"));
     }
 }

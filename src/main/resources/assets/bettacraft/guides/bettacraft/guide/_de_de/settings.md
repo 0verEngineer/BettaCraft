@@ -57,6 +57,12 @@ navigation:
 | `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | Kleintiere pro Fisch |
 | `stocking.eggStocking`, `larvaStocking`, `fryStocking`, `juvenileStocking`, `subadultStocking` | 0, 0, 0,02, 0,1, 0,3 | wie viel eines Fischs ein Jungtier zählt (Juvenil auch für Jungtiere anderer Mods und junge Kleintiere) |
 | `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | Algen am Glas (0 = keine), wie viel die Putzkolonne frisst |
+| `tankmates.breeding.tankmateBreedingSpeed`, `clutchSpeed`, `gestationDays` | 1, 1, 3 | [Beifische](tankmates.md): wie bereitwillig sie laichen, wie schnell Eier sich entwickeln, Tragzeit der Lebendgebärenden |
+| `tankmates.breeding.maxFryPerClutch`, `breedingBoxCapacity` | 20, 20 | Jungfische, die aus einem Gelege frei schwimmen, Junge im Ablaichkasten |
+| `tankmates.breeding.waterChangeCools`, `coolChangeShare`, `coolChangeDrop` | true, 0,25, 1,5 | frisches Wasser kühlt das Becken; der kühle Wasserwechsel, der die Panzerwelse laichen lässt |
+| `tankmates.behaviour.fryEatenPerDay`, `eggsEatenPerDay` | 0,5, 1,5 | wie schnell die Erwachsenen Jungfische jagen und Eier fressen (Pflanzen und Mops schützen) |
+| `tankmates.behaviour.shoalStress`, `bettaAggression`, `clownLoachSnailsPerDay` | true, 1, 0,5 | Stress im zu kleinen Schwarm, Betta-Männchen gegen Guppy- und Fadenfisch-Männchen, Schnecken je Prachtschmerle |
+| `tankmates.behaviour.bottomFoodShare`, `tankmateStockingFactor`, `netFishShare` | 0,6, 1, 0,4 | Futter für die Bodenfische, Besatz-Anteil der Beifische, Anteil Fische im Kescher |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
 | `simulateUnloadedTime` | false | Zeit läuft in nicht geladenen Chunks weiter |
 

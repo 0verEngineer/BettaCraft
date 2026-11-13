@@ -57,6 +57,12 @@ navigation:
 | `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | small animals per fish |
 | `stocking.eggStocking`, `larvaStocking`, `fryStocking`, `juvenileStocking`, `subadultStocking` | 0, 0, 0.02, 0.1, 0.3 | how much of a fish one young animal counts (juvenile also for young animals of other mods and young small animals) |
 | `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | algae on the glass (0 = none), how much the crew grazes |
+| `tankmates.breeding.tankmateBreedingSpeed`, `clutchSpeed`, `gestationDays` | 1, 1, 3 | [tankmates](tankmates.md): how readily they spawn, how fast eggs develop, days a livebearer carries |
+| `tankmates.breeding.maxFryPerClutch`, `breedingBoxCapacity` | 20, 20 | fry that swim free from one clutch, young in a breeding box |
+| `tankmates.breeding.waterChangeCools`, `coolChangeShare`, `coolChangeDrop` | true, 0.25, 1.5 | fresh water cools the tank; the cool water change that sets the corydoras off |
+| `tankmates.behaviour.fryEatenPerDay`, `eggsEatenPerDay` | 0.5, 1.5 | how fast the adults hunt fry and eat eggs (plants and mops protect them) |
+| `tankmates.behaviour.shoalStress`, `bettaAggression`, `clownLoachSnailsPerDay` | true, 1, 0.5 | stress in small shoals, male bettas against guppy and gourami males, snails eaten by clown loaches |
+| `tankmates.behaviour.bottomFoodShare`, `tankmateStockingFactor`, `netFishShare` | 0.6, 1, 0.4 | food for the bottom fish, how much tankmates count for the stocking, share of fish in the net |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 

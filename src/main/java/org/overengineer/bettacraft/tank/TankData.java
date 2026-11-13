@@ -81,6 +81,17 @@ public final class TankData {
     private double critterFood;
     /** M14: algae on the inside of the side glass, per block four faces (south, west, north, east). */
     private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<float[]> algae = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+    /** M19 (schema 9): eggs, larvae and boxed young of the tankmates, the breeding box, the last cool water change. */
+    private final List<org.overengineer.bettacraft.tankmates.Clutch> clutches = new ArrayList<>();
+    private int nextClutchId = 1;
+    private boolean breedingBox;
+    /** Water change bookkeeping: start of the current window, fresh water added in it, temperature before it. */
+    private long freshWindowStart = -1L;
+    private long freshWindowMb;
+    private float freshWindowTemp = Float.NaN;
+    private long lastCoolChange = -1L;
+    /** M19: glass faces the tankmate grazers (otocinclus, bristlenose) eat per day (transient, set by the care step). */
+    private double fishGrazing;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -304,6 +315,19 @@ public final class TankData {
     /** M14: algae per block and side face (server: 0..1; client: stage / 4). */
     public it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<float[]> algae() { return algae; }
 
+    public List<org.overengineer.bettacraft.tankmates.Clutch> clutches() { return clutches; }
+    public int nextClutchId() { return nextClutchId++; }
+    public boolean breedingBox() { return breedingBox; }
+    public void setBreedingBox(boolean b) { this.breedingBox = b; }
+    public long freshWindowStart() { return freshWindowStart; }
+    public long freshWindowMb() { return freshWindowMb; }
+    public float freshWindowTemp() { return freshWindowTemp; }
+    public void setFreshWindow(long start, long mb, float temp) { freshWindowStart = start; freshWindowMb = mb; freshWindowTemp = temp; }
+    public long lastCoolChange() { return lastCoolChange; }
+    public void setLastCoolChange(long t) { this.lastCoolChange = t; }
+    public double fishGrazing() { return fishGrazing; }
+    public void setFishGrazing(double g) { this.fishGrazing = Double.isFinite(g) ? Math.max(0, g) : 0; }
+
     /** Whether the column of (x, z) belongs to this tank (any layer). */
     public boolean containsColumn(double x, double z) {
         int bx = (int) Math.floor(x), bz = (int) Math.floor(z);
@@ -363,6 +387,13 @@ public final class TankData {
         critterFood = o.critterFood * (o.memberCount() <= 0 ? 1 : Math.min(1.0, memberCount() / (double) o.memberCount()));
         algae.clear();
         for (var e : o.algae.long2ObjectEntrySet()) if (members.contains(e.getLongKey())) algae.put(e.getLongKey(), e.getValue().clone());
+        // M19: the clutches inside this part stay; the breeding box and the water change history go with the settings
+        clutches.clear();
+        nextClutchId = Math.max(nextClutchId, o.nextClutchId);
+        for (var c : o.clutches) if (contains(BlockPos.containing(c.x, c.y, c.z))) clutches.add(c.copy(c.id));
+        // the breeding box hangs in the block of the old tank's anchor: the part that keeps that block keeps the box
+        breedingBox = o.breedingBox && contains(o.anchor());
+        lastCoolChange = o.lastCoolChange;
     }
 
     public float waterQuality() { return waterQuality; }
@@ -431,6 +462,16 @@ public final class TankData {
             al.add(a);
         }
         t.put("algae", al);
+        // M19 (schema 9)
+        ListTag tc = new ListTag();
+        for (var c : clutches) tc.add(c.save());
+        t.put("clutches", tc);
+        t.putInt("next_clutch_id", nextClutchId);
+        t.putBoolean("breeding_box", breedingBox);
+        t.putLong("fresh_window_start", freshWindowStart);
+        t.putLong("fresh_window_mb", freshWindowMb);
+        if (!Float.isNaN(freshWindowTemp)) t.putFloat("fresh_window_temp", freshWindowTemp);
+        t.putLong("last_cool_change", lastCoolChange);
         return t;
     }
 
@@ -518,6 +559,21 @@ public final class TankData {
             }
             if (any) d.algae.put(p, lv);
         }
+        // M19 (schema 9): tankmate clutches, breeding box, water changes
+        ListTag tc = t.getList("clutches", Tag.TAG_COMPOUND);
+        int maxClutch = 0;
+        for (int i = 0; i < tc.size(); i++) {
+            var c = org.overengineer.bettacraft.tankmates.Clutch.load(tc.getCompound(i));
+            if (c == null) continue;
+            d.clutches.add(c);
+            maxClutch = Math.max(maxClutch, c.id);
+        }
+        d.nextClutchId = Math.max(maxClutch + 1, t.contains("next_clutch_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_clutch_id") : 1);
+        d.breedingBox = t.getBoolean("breeding_box");
+        d.freshWindowStart = t.contains("fresh_window_start", Tag.TAG_ANY_NUMERIC) ? t.getLong("fresh_window_start") : -1L;
+        d.freshWindowMb = Math.max(0, t.getLong("fresh_window_mb"));
+        d.freshWindowTemp = t.contains("fresh_window_temp", Tag.TAG_ANY_NUMERIC) ? t.getFloat("fresh_window_temp") : Float.NaN;
+        d.lastCoolChange = t.contains("last_cool_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_cool_change") : -1L;
         d.recomputeBounds();
         return d;
     }
@@ -545,6 +601,12 @@ public final class TankData {
         if (!critters.isEmpty() || !critterObjects.isEmpty()) t.putByteArray("critters",
                 org.overengineer.bettacraft.critters.CritterSync.encode(critters, critterObjects, minX, minY, minZ, 0L));
         if (!algae.isEmpty()) t.putByteArray("algae", org.overengineer.bettacraft.tank.algae.AlgaeSim.encode(algae, minX, minY, minZ));
+        if (!clutches.isEmpty()) {
+            ListTag tc = new ListTag();
+            for (var c : clutches) tc.add(c.saveClientView());
+            t.put("clutches", tc);
+        }
+        if (breedingBox) t.putBoolean("breeding_box", true);
         return t;
     }
 
@@ -585,6 +647,12 @@ public final class TankData {
             d.critterObjects.addAll(dec.objects());
         }
         if (t.contains("algae", Tag.TAG_BYTE_ARRAY)) d.algae.putAll(org.overengineer.bettacraft.tank.algae.AlgaeSim.decode(t.getByteArray("algae"), d.minX, d.minY, d.minZ));
+        ListTag tc = t.getList("clutches", Tag.TAG_COMPOUND);
+        for (int i = 0; i < tc.size(); i++) {
+            var c = org.overengineer.bettacraft.tankmates.Clutch.loadClientView(tc.getCompound(i));
+            if (c != null) d.clutches.add(c);
+        }
+        d.breedingBox = t.getBoolean("breeding_box");
         return d;
     }
 

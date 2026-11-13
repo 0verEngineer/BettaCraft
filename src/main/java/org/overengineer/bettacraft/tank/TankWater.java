@@ -74,7 +74,14 @@ public final class TankWater {
     /** Bioload: adult animals count 1, young bettas a quarter. */
     public static double animals(List<Entity> live) {
         double n = 0;
-        for (Entity e : live) n += e instanceof BettaEntity b && !b.isAdult() ? 0.25 : 1.0;
+        for (Entity e : live) {
+            if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
+                // M19: by the species' size (a neon a third of a betta), the young a quarter of that
+                n += m.species().stock() * (m.isAdult() ? 1.0 : 0.25);
+                continue;
+            }
+            n += e instanceof BettaEntity b && !b.isAdult() ? 0.25 : 1.0;
+        }
         return n;
     }
 

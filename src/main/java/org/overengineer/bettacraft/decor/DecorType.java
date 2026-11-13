@@ -19,7 +19,11 @@ public enum DecorType {
     MOSS_BALL(1, 1, 1),
     HAMMOCK(3, 6, 2),
     ALMOND_LEAF(3, 1, 2),
-    CAVE(6, 5, 4);
+    CAVE(6, 5, 4),
+    /** M19: a clay tube for the plecos to breed in (blocks {@code bettacraft:spawning_cave}). */
+    SPAWNING_CAVE(14, 7, 7),
+    /** M19: green wool strands on a stone, for the egg scatterers (blocks {@code bettacraft:spawning_mop}). */
+    SPAWNING_MOP(5, 8, 5);
 
     public final int sizeX, sizeY, sizeZ;
 

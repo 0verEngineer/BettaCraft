@@ -137,10 +137,19 @@ public final class BettaCraftClient {
                 int rgb = k == null ? 0x8A8070 : k.genes.rgb(k.species);
                 return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.3F));
             }
+            // M19: a bag of tankmates in the species' colours (a clutch: cream eggs)
+            if (stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return tint == 1 ? 0xFFEFE4C4 : 0xFFD8C8A0;
+            var tm = org.overengineer.bettacraft.tankmates.TankmateItems.bagSpecies(stack);
+            if (tm != null) return 0xFF000000 | (tint == 1 ? tm.eggColor1() : tm.eggColor2());
             BettaData d = stack.getItem() instanceof BettaBucketItem ? BettaBucketItem.data(stack) : stack.get(ModDataComponents.FISH_DATA.get());
             if (d == null) return tint == 1 ? OTHER_FISH_BODY : OTHER_FISH_FINS;
             return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
         }, ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get());
+        // M19: tankmate buckets in the species' colours
+        for (var e : ModItems.TANKMATE_BUCKETS.entrySet()) {
+            var sp = e.getKey();
+            event.register((stack, tint) -> tint == 0 ? 0xFFFFFFFF : 0xFF000000 | (tint == 1 ? sp.eggColor1() : sp.eggColor2()), e.getValue().get());
+        }
         event.register((stack, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, ModItems.LARVA_TUB.get());
         // M13: aquarium plants: leaves (layer 0) and rhizome / stem (layer 1) in the colours of the species (red ones as in good light)
         for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
@@ -187,11 +196,17 @@ public final class BettaCraftClient {
         }
         event.registerLayerDefinition(org.overengineer.bettacraft.client.render.CritterRenderer.FROG_LAYER,
                 org.overengineer.bettacraft.client.model.CritterModelDefinitions::createFrogLayer);
+        // M19: one mesh per tankmate body plan
+        for (var e : org.overengineer.bettacraft.client.render.TankmateRenderer.LAYERS.entrySet()) {
+            String model = org.overengineer.bettacraft.client.render.TankmateRenderer.name(e.getKey());
+            event.registerLayerDefinition(e.getValue(), () -> org.overengineer.bettacraft.client.model.TankmateModelDefinitions.create(model));
+        }
     }
 
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
         event.registerEntityRenderer(ModEntities.DWARF_FROG.get(), org.overengineer.bettacraft.client.render.DwarfFrogRenderer::new);
+        for (var t : ModEntities.TANKMATES.values()) event.registerEntityRenderer(t.get(), org.overengineer.bettacraft.client.render.TankmateRenderer::new); // M19
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
         event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);

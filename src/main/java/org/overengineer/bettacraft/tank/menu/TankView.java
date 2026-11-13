@@ -41,7 +41,21 @@ public final class TankView {
      */
     public record Inhabitant(UUID uuid, String customName, String typeKey, boolean betta, boolean female, String stage,
                              boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome,
-                             BettaGenotype genotype, float hp, float progress, int generation, boolean frog, float air, boolean noAir) {
+                             BettaGenotype genotype, float hp, float progress, int generation, boolean frog, float air, boolean noAir,
+                             CompoundTag tankmate) {
+        /** M19: without the tankmate details (bettas, frogs, other animals). */
+        public Inhabitant(UUID uuid, String customName, String typeKey, boolean betta, boolean female, String stage,
+                          boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome,
+                          BettaGenotype genotype, float hp, float progress, int generation, boolean frog, float air, boolean noAir) {
+            this(uuid, customName, typeKey, betta, female, stage, adult, health, satiation, sick, bucketable, genome, genotype, hp, progress,
+                    generation, frog, air, noAir, new CompoundTag());
+        }
+
+        /** M19: a tankmate (the details are in {@link #tankmate}). */
+        public boolean isTankmate() {
+            return tankmate.contains("species");
+        }
+
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
             t.putUUID("id", uuid);
@@ -65,6 +79,7 @@ public final class TankView {
                 t.putFloat("air", air);
                 t.putBoolean("no_air", noAir);
             }
+            if (!tankmate.isEmpty()) t.put("tm", tankmate);
             return t;
         }
 
@@ -73,11 +88,29 @@ public final class TankView {
             return new Inhabitant(t.getUUID("id"), t.getString("name"), t.getString("type"), t.getBoolean("betta"), t.getBoolean("female"),
                     t.getString("stage"), t.getBoolean("adult"), t.getFloat("health"), t.getFloat("sat"), t.getBoolean("sick"),
                     t.getBoolean("bucketable"), g, BettaGenotype.load(t.getCompound("genotype")), t.getFloat("hp"), t.getFloat("progress"),
-                    t.getInt("gen"), t.getBoolean("frog"), t.getFloat("air"), t.getBoolean("no_air"));
+                    t.getInt("gen"), t.getBoolean("frog"), t.getFloat("air"), t.getBoolean("no_air"), t.getCompound("tm"));
         }
     }
 
     public record LogLine(long time, String key, List<String> args) {}
+
+    /** M19: what the animals tab shows of a tankmate. */
+    static CompoundTag tankmateDetails(TankData t, org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
+        var s = m.species();
+        CompoundTag d = new CompoundTag();
+        d.putString("species", s.id());
+        d.putString("variety", m.variety());
+        d.putString("genes", m.genes().text());
+        d.putInt("shoal", m.shoalSize());
+        d.putInt("stress", m.stressBits());
+        d.putBoolean("guard", m.isGuarding());
+        d.putBoolean("cave", m.cave() != null);
+        d.putFloat("gravid", m.isGravid() ? (float) Math.min(1.0, m.gravidDays() / Math.max(1e-6,
+                org.overengineer.bettacraft.tankmates.TankmateBreeding.gestationDays())) : -1F);
+        d.putFloat("temp", t.waterTemp());
+        d.putFloat("stock", (float) org.overengineer.bettacraft.tank.TankInhabitants.weight(m));
+        return d;
+    }
 
     public BlockPos pos = BlockPos.ZERO;
     public String name = "";
@@ -529,6 +562,13 @@ public final class TankView {
                         f.daysSinceFed() > org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.STARVE_DAYS, true, BettaGenome.DEFAULT,
                         BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0, true,
                         round(f.breath() / (float) org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.maxBreath()), !f.airAvailable());
+            } else if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
+                // M19: tankmates have needs like the bettas, plus their shoal, temperature range and breeding state
+                BettaHealth h = m.health();
+                i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, m.isFemale(), m.lifeStage().id(), m.isAdult(),
+                        round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, BettaGenome.DEFAULT,
+                        BettaGenotype.homozygous(BettaGenome.DEFAULT), round(m.getHealth() / m.getMaxHealth()), round((float) m.stageProgress()),
+                        m.generation(), false, 0F, false, tankmateDetails(t, m));
             } else {
                 float hp = e instanceof net.minecraft.world.entity.LivingEntity le ? round(le.getHealth() / le.getMaxHealth()) : 1F;
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", TankInhabitants.isAdult(e),
@@ -564,6 +604,11 @@ public final class TankView {
         }
         out.put("log", lg);
         CompoundTag breeding = TankBreeding.describe(level, controller);
+        // M19: the tankmates' breeding, the breeding box
+        breeding.put("tankmates", org.overengineer.bettacraft.tankmates.TankmateBreeding.describe(level, controller));
+        breeding.putBoolean("box", t.breedingBox());
+        breeding.putInt("box_fry", org.overengineer.bettacraft.tankmates.TankmateBreeding.boxFry(t));
+        breeding.putInt("box_cap", org.overengineer.bettacraft.tankmates.TankmateBreeding.boxCapacity());
         out.put("breeding", breeding);
         out.put("interior", interior(level, t));
         CompoundTag eq = new CompoundTag();

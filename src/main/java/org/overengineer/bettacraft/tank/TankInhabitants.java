@@ -359,6 +359,7 @@ public final class TankInhabitants {
 
     public static boolean isAdult(Entity e) {
         if (e instanceof BettaEntity b) return b.isAdult();
+        if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return m.isAdult();
         return !(e instanceof LivingEntity le) || !le.isBaby();
     }
 
@@ -369,6 +370,10 @@ public final class TankInhabitants {
      */
     public static double weight(Entity e) {
         if (e instanceof BettaEntity b) return b.lifeStage().stocking();
+        // M19: tankmates by their species (a neon 0.35 ... a clown loach 2.5) and their stage like the bettas
+        if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
+            return m.species().stock() * ServerConfig.getOr(ServerConfig.TANKMATES_STOCKING, 1.0) * m.lifeStage().stocking();
+        }
         double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity
                 ? 1.0 / Math.max(0.1, ServerConfig.getOr(ServerConfig.STOCKING_FROGS_PER_FISH, 1.0)) : 1.0;
         return isAdult(e) ? w : w * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();
@@ -643,6 +648,13 @@ public final class TankInhabitants {
         BubbleNest nest = tank.nest();
         if (nest != null && nest.hasEggs()) {
             return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked_nest", nest.visibleEggCount()));
+        }
+        // M19: eggs and young of the tankmates (clutches, the breeding box) keep the tank too
+        int young = 0;
+        for (var k : tank.clutches()) if (k.hasYoung()) young += k.count;
+        if (young > 0) return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked_clutch", young));
+        if (tank.breedingBox()) {
+            return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked_box"));
         }
         if (level instanceof ServerLevel server) {
             List<Entity> live = liveInhabitants(server, tank);

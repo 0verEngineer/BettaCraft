@@ -32,6 +32,37 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .build(BettaCraft.id("dwarf_clawed_frog").toString()));
 
+    /** M19: one entity type per tankmate species (same class, size and attributes per species). */
+    public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
+            Supplier<EntityType<org.overengineer.bettacraft.entity.tankmate.TankmateEntity>>> TANKMATES = tankmates();
+    private static final java.util.Map<EntityType<?>, org.overengineer.bettacraft.tankmates.TankmateSpecies> SPECIES_BY_TYPE =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
+            Supplier<EntityType<org.overengineer.bettacraft.entity.tankmate.TankmateEntity>>> tankmates() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.tankmates.TankmateSpecies,
+                Supplier<EntityType<org.overengineer.bettacraft.entity.tankmate.TankmateEntity>>>(org.overengineer.bettacraft.tankmates.TankmateSpecies.class);
+        for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+            m.put(sp, ENTITIES.register(sp.id(), () -> {
+                EntityType<org.overengineer.bettacraft.entity.tankmate.TankmateEntity> type = EntityType.Builder
+                        .of(org.overengineer.bettacraft.entity.tankmate.TankmateEntity::new, MobCategory.WATER_AMBIENT)
+                        .sized(sp.hitboxWidth(), sp.hitboxHeight())
+                        .eyeHeight(sp.hitboxHeight() * 0.6F)
+                        .clientTrackingRange(4)
+                        .build(BettaCraft.id(sp.id()).toString());
+                SPECIES_BY_TYPE.put(type, sp);
+                return type;
+            }));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    /** The tankmate species of an entity type of ours, or null. */
+    @javax.annotation.Nullable
+    public static org.overengineer.bettacraft.tankmates.TankmateSpecies tankmateSpecies(EntityType<?> type) {
+        return SPECIES_BY_TYPE.get(type);
+    }
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
         bus.addListener(ModEntities::onAttributes);
@@ -41,6 +72,7 @@ public final class ModEntities {
     private static void onAttributes(EntityAttributeCreationEvent event) {
         event.put(BETTA.get(), BettaEntity.createAttributes().build());
         event.put(DWARF_FROG.get(), org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.createAttributes().build());
+        for (var e : TANKMATES.entrySet()) event.put(e.getValue().get(), org.overengineer.bettacraft.entity.tankmate.TankmateEntity.createAttributes(e.getKey()).build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {

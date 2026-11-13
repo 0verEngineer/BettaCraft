@@ -232,6 +232,9 @@ public final class ModDataGen {
             }
 
             aquaticPlants();
+            // M19: spawning cave (fired clay) and spawning mop (wool strands, crossed planes)
+            simpleBlock(ModBlocks.SPAWNING_CAVE.get(), cubeAll(ModBlocks.SPAWNING_CAVE.get()));
+            simpleBlock(ModBlocks.SPAWNING_MOP.get(), models().cross("spawning_mop", modLoc("block/spawning_mop")).renderType("cutout"));
 
             BlockModelBuilder feeder = models().getBuilder("feeder")
                     .texture("side", modLoc("block/feeder_side")).texture("top", modLoc("block/feeder_top"))
@@ -474,6 +477,18 @@ public final class ModDataGen {
             basicItem(ModItems.COOLER_LARGE.get());
             basicItem(ModItems.INTERNAL_FILTER.get());
             for (var d : ModItems.DECOR.values()) basicItem(d.get());
+            // M19: tankmates (bucket with the betta's fish overlay, tinted per species), spawn eggs, breeding items
+            for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+                withExistingParent(sp.bucketId(), mcLoc("item/generated"))
+                        .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish"))
+                        .texture("layer2", modLoc("item/betta_bucket_fish_fins"));
+                withExistingParent(sp.spawnEggId(), mcLoc("item/template_spawn_egg"));
+            }
+            basicItem(ModItems.BREEDING_BOX.get());
+            basicItem(ModItems.FRY_POWDER.get());
+            basicItem(ModItems.ALGAE_WAFER.get());
+            withExistingParent("spawning_cave", modLoc("block/spawning_cave"));
+            withExistingParent("spawning_mop", mcLoc("item/generated")).texture("layer0", modLoc("block/spawning_mop"));
             // M13: aquarium plants: two grey layers per growth form, tinted per species (ItemColor)
             for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
                 String form = e.getKey().form().name().toLowerCase(java.util.Locale.ROOT);
@@ -756,6 +771,31 @@ public final class ModDataGen {
             ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.ALMOND_LEAF), 2)
                     .requires(net.minecraft.tags.ItemTags.LEAVES).requires(Items.BROWN_DYE)
                     .unlockedBy("has_brown_dye", has(Items.BROWN_DYE)).save(output, BettaCraft.id("decor_almond_leaf"));
+            // M19: spawning cave (fired clay tube) and spawning mop (green wool on a stone)
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_CAVE))
+                    .pattern("CCC").pattern("C  ").pattern("CCC")
+                    .define('C', ModItems.SPAWNING_CAVE.get())
+                    .unlockedBy("has_spawning_cave", has(ModItems.SPAWNING_CAVE.get())).save(output, BettaCraft.id("decor_spawning_cave"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_MOP))
+                    .requires(ModItems.SPAWNING_MOP.get()).requires(ModItems.SPAWNING_MOP.get()).requires(ModItems.SPAWNING_MOP.get())
+                    .requires(Items.COBBLESTONE)
+                    .unlockedBy("has_spawning_mop", has(ModItems.SPAWNING_MOP.get())).save(output, BettaCraft.id("decor_spawning_mop"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModItems.SPAWNING_CAVE.get(), 8)
+                    .requires(Items.TERRACOTTA).requires(Items.TERRACOTTA).requires(Items.CLAY_BALL)
+                    .unlockedBy("has_terracotta", has(Items.TERRACOTTA)).save(output, BettaCraft.id("spawning_cave"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, ModItems.SPAWNING_MOP.get(), 4)
+                    .requires(Items.GREEN_WOOL).requires(Tags.Items.STRINGS)
+                    .unlockedBy("has_green_wool", has(Items.GREEN_WOOL)).save(output, BettaCraft.id("spawning_mop"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREEDING_BOX.get())
+                    .pattern("P P").pattern("PSP").pattern("PPP")
+                    .define('P', Tags.Items.GLASS_PANES).define('S', Tags.Items.STRINGS)
+                    .unlockedBy("has_glass_pane", has(Tags.Items.GLASS_PANES)).save(output, BettaCraft.id("breeding_box"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FRY_POWDER.get(), 3)
+                    .requires(ModItems.BETTA_PELLETS.get()).requires(ModItems.BETTA_PELLETS.get()).requires(Items.BONE_MEAL)
+                    .unlockedBy("has_pellets", has(ModItems.BETTA_PELLETS.get())).save(output, BettaCraft.id("fry_powder"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ALGAE_WAFER.get(), 4)
+                    .requires(Items.DRIED_KELP).requires(Items.DRIED_KELP).requires(ModItems.BETTA_PELLETS.get())
+                    .unlockedBy("has_dried_kelp", has(Items.DRIED_KELP)).save(output, BettaCraft.id("algae_wafer"));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -822,6 +862,8 @@ public final class ModDataGen {
                                             .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
                                                     .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             dropSelf(ModBlocks.TANK_LID.get());
+            dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
+            dropSelf(ModBlocks.SPAWNING_MOP.get());
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
             // M4: the filter keeps its heaters, the cabinet its planks (its contents drop separately)
@@ -840,7 +882,8 @@ public final class ModDataGen {
         @Override
         protected Iterable<Block> getKnownBlocks() {
             return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
-                    ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get());
+                    ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get(), ModBlocks.SPAWNING_CAVE.get(),
+                    ModBlocks.SPAWNING_MOP.get());
         }
     }
 
@@ -886,6 +929,7 @@ public final class ModDataGen {
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
                     ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.ARTEMIA_HATCHERY.get());
             tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.SPAWNING_CAVE.get()); // M19
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
@@ -934,9 +978,11 @@ public final class ModDataGen {
             tag(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
             // M9: organic matter for the larva tub
             tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
-            tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get());
+            tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry
+            tag(ModTags.BOTTOM_FOOD).add(ModItems.ALGAE_WAFER.get());
             tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
+            for (var b : ModItems.TANKMATE_BUCKETS.values()) tag(ModTags.ENTITY_WATER_BUCKETS).add(b.get());
             var aq = tag(ModTags.AQUATIC_PLANT_ITEMS);
             for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
@@ -966,6 +1012,10 @@ public final class ModDataGen {
             EntityType<?> betta = ModEntities.BETTA.get();
             tag(ModTags.C_FISH).add(betta);
             tag(ModTags.C_FISHES).add(betta);
+            for (var t : ModEntities.TANKMATES.values()) { // M19
+                tag(ModTags.C_FISH).add(t.get());
+                tag(ModTags.C_FISHES).add(t.get());
+            }
             tag(ModTags.BFT_CATCHABLE).addOptional(BettaCraft.id("betta"));
             var inhabitants = tag(ModTags.TANK_INHABITANTS).add(EntityType.AXOLOTL, EntityType.TADPOLE);
             for (var e : Compat.INHABITANTS) inhabitants.addOptional(e);

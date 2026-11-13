@@ -21,6 +21,7 @@ from any glass, fill with water, decorate from the inside and use to breed betta
 * [Food](food.md): swamp water, mosquito larvae, pellets and food for fry.
 * [Breeding](breeding.md): bubble nests, eggs, fry and what the parents need.
 * [Small animals](invertebrates.md): shrimp, dwarf crayfish, snails, dwarf clawed frogs and the algae on the glass.
+* [Tankmates](tankmates.md): tetras, rasboras, corydoras, plecos, loaches, livebearers and the dwarf gourami, with their own way of breeding.
 * [Interior](interior.md): step into a tank and decorate it block by block.
 * [Settings and other mods](settings.md): config options, Jade, JEI and commands.
 

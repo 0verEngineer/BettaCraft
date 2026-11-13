@@ -23,6 +23,8 @@ public final class TankInteractions {
                                                   net.minecraft.world.phys.BlockHitResult hit) {
         ItemInteractionResult r = org.overengineer.bettacraft.critters.TankCritters.tryInsert(stack, level, pos, player, hand); // M14
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = org.overengineer.bettacraft.tankmates.TankmateItems.useOnTank(stack, level, pos, player, hand); // M19: groups, clutches, breeding box
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = TankInhabitants.tryInsert(stack, level, pos, player, hand);
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = TankCare.handFeed(stack, level, pos, player, hand, hit.getLocation());
@@ -94,6 +96,8 @@ public final class TankInteractions {
         if (added > 0) {
             tank.setWaterQuality(WaterQuality.mix(tank.waterQuality(), before, added));
             tank.setLastFreshWater(level.getGameTime());
+            // M19: fresh water has the ambient temperature; a large cool water change sets off the corydoras
+            org.overengineer.bettacraft.tankmates.TankmateBreeding.onFreshWater(level, controller, before, added);
         }
         TankMultiblock.applyStates(level, tank);
         controller.markTankChanged();

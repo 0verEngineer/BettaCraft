@@ -52,6 +52,18 @@ public final class ModDataComponents {
             b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC.listOf())
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG.apply(net.minecraft.network.codec.ByteBufCodecs.list(64))));
 
+    /**
+     * M19: several tankmates of one species in a fish bag (each one the bucket data of a fish, key "tankmate"); the bag
+     * also has {@link #BAG_ENTITY} (the species' entity type).
+     */
+    public static final Supplier<DataComponentType<java.util.List<net.minecraft.nbt.CompoundTag>>> TANKMATE_GROUP = COMPONENTS.registerComponentType("tankmate_group",
+            b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC.listOf())
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG.apply(net.minecraft.network.codec.ByteBufCodecs.list(64))));
+
+    /** M19: a clutch of tankmate eggs (or larvae) taken out of a tank with the net, in a fish bag ({@code Clutch#save}). */
+    public static final Supplier<DataComponentType<net.minecraft.nbt.CompoundTag>> TANKMATE_CLUTCH = COMPONENTS.registerComponentType("tankmate_clutch",
+            b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }

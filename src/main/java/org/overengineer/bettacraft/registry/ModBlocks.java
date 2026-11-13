@@ -128,6 +128,18 @@ public final class ModBlocks {
         return java.util.Collections.unmodifiableMap(m);
     }
 
+    /** M19: fired clay of a spawning cave (decoration for the tank interior; plecos breed in it). */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> SPAWNING_CAVE = BLOCKS.register("spawning_cave",
+            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_ORANGE)
+                    .strength(0.8F).sound(SoundType.DECORATED_POT)));
+
+    /** M19: wool strands of a spawning mop (tetras and rasboras spawn into it; the adults do not reach the eggs). */
+    public static final DeferredBlock<org.overengineer.bettacraft.tankmates.SpawningMopBlock> SPAWNING_MOP = BLOCKS.register("spawning_mop",
+            () -> new org.overengineer.bettacraft.tankmates.SpawningMopBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GREEN)
+                    .strength(0.2F).sound(SoundType.WOOL).noCollission().noOcclusion()
+                    .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
+                    .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY)));
+
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }

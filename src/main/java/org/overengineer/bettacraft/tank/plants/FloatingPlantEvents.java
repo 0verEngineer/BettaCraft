@@ -85,6 +85,13 @@ public final class FloatingPlantEvents {
         // M14: a shrimp, crayfish, snail, body, clutch or moult the net is aimed at comes first (nearer than the plants)
         var aimed = org.overengineer.bettacraft.critters.TankCritters.aimed(t, player.getEyePosition(), player.getViewVector(1.0F));
         Vec3 at = TankPlants.netTarget(t, player.getEyePosition(), player.getViewVector(1.0F));
+        // M19: a clutch of tankmate eggs (glass, plants, cave, foam nest) the net is aimed at, if nothing is nearer
+        var clutch = org.overengineer.bettacraft.tankmates.TankmateItems.aimed(t, player.getEyePosition(), player.getViewVector(1.0F));
+        if (clutch != null && (aimed == null || clutch.distance() <= aimed.distance()) && (at == null || clutch.distance() <= player.getEyePosition().distanceTo(at) + 0.05)) {
+            Component msg = org.overengineer.bettacraft.tankmates.TankmateItems.net(server, c, player, clutch.clutch());
+            if (msg != null) player.displayClientMessage(msg, true);
+            return;
+        }
         if (aimed != null && (at == null || aimed.distance() <= player.getEyePosition().distanceTo(at) + 0.05)) {
             Component msg = org.overengineer.bettacraft.critters.TankCritters.net(server, c, player, aimed);
             if (msg != null) player.displayClientMessage(msg, true);

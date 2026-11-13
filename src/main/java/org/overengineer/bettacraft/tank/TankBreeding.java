@@ -504,6 +504,7 @@ public final class TankBreeding {
         if (predator && live.stream().anyMatch(e -> !e.getType().is(ModTags.PREDATORS) && e.getBbWidth() <= PREY_MAX_WIDTH)) out.add("predator");
         if (org.overengineer.bettacraft.tank.plants.TankPlants.dense(tank)) out.add("dense_plants"); // M12
         else if (org.overengineer.bettacraft.plants.InteriorPlants.overgrown(level.getServer(), tank)) out.add("overgrown"); // M13
+        out.addAll(org.overengineer.bettacraft.tankmates.TankmateBreeding.warnings(level, controller)); // M19
         return out;
     }
 

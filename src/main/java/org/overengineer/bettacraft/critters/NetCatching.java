@@ -116,6 +116,38 @@ public final class NetCatching {
         return out;
     }
 
+    /** M19: the tankmates native to this kind of water (rough analogues of their regions) with their weights. */
+    public static java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies, Double> fishTable(Water w) {
+        java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies, Double> out = new java.util.LinkedHashMap<>();
+        org.overengineer.bettacraft.tankmates.TankmateSpecies.Water fw = switch (w) {
+            case RIVER -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.RIVER;
+            case SWAMP -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.SWAMP;
+            case JUNGLE -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.JUNGLE;
+            case MANGROVE -> org.overengineer.bettacraft.tankmates.TankmateSpecies.Water.MANGROVE;
+            default -> null;
+        };
+        if (fw == null) return out;
+        for (var s : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+            double wt = s.nativeWeight(fw);
+            if (wt > 0) out.put(s, wt);
+        }
+        return out;
+    }
+
+    @Nullable
+    public static org.overengineer.bettacraft.tankmates.TankmateSpecies rollFish(java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies, Double> table,
+                                                                                 RandomGenerator rnd) {
+        double total = 0;
+        for (double v : table.values()) total += v;
+        if (total <= 0) return null;
+        double x = rnd.nextDouble() * total;
+        for (var e : table.entrySet()) {
+            x -= e.getValue();
+            if (x < 0) return e.getKey();
+        }
+        return table.keySet().iterator().next();
+    }
+
     @Nullable
     public static Catch roll(List<Catch> table, RandomGenerator rnd) {
         double total = 0;
@@ -192,6 +224,18 @@ public final class NetCatching {
         boolean plants = plantsNear(level, water);
         List<Catch> table = table(w, plants, hardBottom(level, water), level.getBiome(water).is(Biomes.LUSH_CAVES));
         double chance = ServerConfig.getOr(ServerConfig.CRITTERS_NET_CHANCE, 0.3) * (plants ? 1.2 : 1.0);
+        // M19: in jungle, swamp and river water some catches are tankmate fish of the region
+        var fish = fishTable(w);
+        if (!fish.isEmpty() && rnd.nextDouble() < chance && rnd.nextDouble() < ServerConfig.getOr(ServerConfig.TANKMATES_NET_SHARE, 0.4)) {
+            var s = rollFish(fish, rnd);
+            if (s != null) {
+                int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;
+                ItemStack bag = org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(s, n,
+                        () -> org.overengineer.bettacraft.tankmates.TankmateGenes.wild(s, 0.08, rnd), rnd, false);
+                give(player, bag, Component.translatable(s.translationKey()));
+                return true;
+            }
+        }
         Catch c = table.isEmpty() || rnd.nextDouble() >= chance ? null : roll(table, rnd);
         if (c == null) {
             player.displayClientMessage(Component.translatable(table.isEmpty() ? "message.bettacraft.net.nothing_here" : "message.bettacraft.net.empty"), true);

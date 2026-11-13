@@ -118,6 +118,23 @@ public final class ModCreativeTabs {
                         () -> org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.9F), cr, true)); // Painted Fire Red
                 out.accept(ModItems.FROG_BUCKET.get());
                 out.accept(ModItems.FROG_SPAWN_EGG.get());
+                // M19: tankmates (a shoal or a pair in a fish bag, every variety; bucket and spawn egg), their breeding items
+                out.accept(ModItems.BREEDING_BOX.get());
+                out.accept(ModItems.FRY_POWDER.get());
+                out.accept(ModItems.ALGAE_WAFER.get());
+                out.accept(ModItems.SPAWNING_CAVE.get());
+                out.accept(ModItems.SPAWNING_MOP.get());
+                java.util.random.RandomGenerator tr = new java.util.Random(19);
+                for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+                    int n = sp.shoaling() ? Math.max(6, sp.shoal()) : 2;
+                    for (String v : sp.varieties()) {
+                        out.accept(org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(sp, n,
+                                () -> org.overengineer.bettacraft.tankmates.TankmateGenes.pure(sp, v), tr, true));
+                    }
+                    out.accept(org.overengineer.bettacraft.tankmates.TankmateBucketItem.withFish(new ItemStack(ModItems.TANKMATE_BUCKETS.get(sp).get()), sp,
+                            org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp), false, org.overengineer.bettacraft.entity.betta.LifeStage.ADULT));
+                    out.accept(ModItems.TANKMATE_SPAWN_EGGS.get(sp).get());
+                }
             })
             .build());
 

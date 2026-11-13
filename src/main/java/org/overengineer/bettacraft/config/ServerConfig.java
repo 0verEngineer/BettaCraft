@@ -176,6 +176,24 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue ALGAE_GROWTH_SPEED;
     public static final ModConfigSpec.DoubleValue ALGAE_CLEANER_STRENGTH;
 
+    // M19: tankmates
+    public static final ModConfigSpec.DoubleValue TANKMATES_BREEDING_SPEED;
+    public static final ModConfigSpec.DoubleValue TANKMATES_CLUTCH_SPEED;
+    public static final ModConfigSpec.DoubleValue TANKMATES_GESTATION_DAYS;
+    public static final ModConfigSpec.IntValue TANKMATES_MAX_FRY;
+    public static final ModConfigSpec.IntValue TANKMATES_BOX_CAPACITY;
+    public static final ModConfigSpec.DoubleValue TANKMATES_FRY_EATEN;
+    public static final ModConfigSpec.DoubleValue TANKMATES_EGGS_EATEN;
+    public static final ModConfigSpec.BooleanValue TANKMATES_SHOAL_STRESS;
+    public static final ModConfigSpec.DoubleValue TANKMATES_STOCKING;
+    public static final ModConfigSpec.DoubleValue TANKMATES_BETTA_AGGRESSION;
+    public static final ModConfigSpec.DoubleValue TANKMATES_LOACH_SNAILS;
+    public static final ModConfigSpec.DoubleValue TANKMATES_BOTTOM_SHARE;
+    public static final ModConfigSpec.BooleanValue TANKMATES_WATER_CHANGE_COOLS;
+    public static final ModConfigSpec.DoubleValue TANKMATES_COOL_CHANGE_SHARE;
+    public static final ModConfigSpec.DoubleValue TANKMATES_COOL_CHANGE_DROP;
+    public static final ModConfigSpec.DoubleValue TANKMATES_NET_SHARE;
+
     // guide (M6)
     public static final ModConfigSpec.EnumValue<GiveBook> GUIDE_GIVE_BOOK;
 
@@ -455,6 +473,44 @@ public final class ServerConfig {
         ALGAE_CLEANER_STRENGTH = b.comment("How much algae the snails and shrimp graze (1 = normal: a few nerites keep a tank clean, 0 = they",
                         "eat none)")
                 .defineInRange("cleanerStrength", 1.0, 0.0, 10.0);
+        b.pop();
+
+        b.comment("M19: tankmate fish (tetras, rasboras, corydoras, plecos, otocinclus, loaches, livebearers, dwarf gourami)").push("tankmates");
+        b.comment("Breeding").push("breeding");
+        TANKMATES_BREEDING_SPEED = b.comment("How readily the tankmates spawn or get pregnant (1 = normal, 0 = never)")
+                .defineInRange("tankmateBreedingSpeed", 1.0, 0.0, 20.0);
+        TANKMATES_CLUTCH_SPEED = b.comment("How fast eggs and larvae develop (2 = twice as fast; corydoras eggs need 1.5 days at 1)")
+                .defineInRange("clutchSpeed", 1.0, 0.05, 20.0);
+        TANKMATES_GESTATION_DAYS = b.comment("Days a guppy, endler or platy female carries her young")
+                .defineInRange("gestationDays", 3.0, 0.1, 60.0);
+        TANKMATES_MAX_FRY = b.comment("Most fry that swim free from one clutch (the rest do not make it; tank.maxEntities still applies)")
+                .defineInRange("maxFryPerClutch", 20, 1, 200);
+        TANKMATES_BOX_CAPACITY = b.comment("Young livebearers that fit into a breeding box").defineInRange("breedingBoxCapacity", 20, 1, 200);
+        TANKMATES_WATER_CHANGE_COOLS = b.comment("Fresh water has the ambient temperature: a water change cools a heated tank down a little")
+                .define("waterChangeCools", true);
+        TANKMATES_COOL_CHANGE_SHARE = b.comment("Share of the tank volume of fresh water (within a quarter of a day) that counts as a large water change",
+                        "for the corydoras").defineInRange("coolChangeShare", 0.25, 0.01, 1.0);
+        TANKMATES_COOL_CHANGE_DROP = b.comment("Degrees the water change must cool the tank by to set the corydoras off")
+                .defineInRange("coolChangeDrop", 1.5, 0.0, 20.0);
+        b.pop();
+        b.comment("Eating and getting along").push("behaviour");
+        TANKMATES_FRY_EATEN = b.comment("How fast the adults (bettas and tankmates) hunt the fry of the tankmates; plants, moss and floating",
+                        "plants hide them (0 = never)").defineInRange("fryEatenPerDay", 0.5, 0.0, 20.0);
+        TANKMATES_EGGS_EATEN = b.comment("How fast the adults eat eggs they can reach (scattered eggs, eggs on the glass); a spawning mop and",
+                        "dense plants protect them (0 = never)").defineInRange("eggsEatenPerDay", 1.5, 0.0, 50.0);
+        TANKMATES_SHOAL_STRESS = b.comment("Shoaling fish in a group smaller than their species' minimum are stressed (and get sick after a while)")
+                .define("shoalStress", true);
+        TANKMATES_BETTA_AGGRESSION = b.comment("How hard male bettas go for male guppies and dwarf gouramis (hit points per day; 0 = peaceful)")
+                .defineInRange("bettaAggression", 1.0, 0.0, 20.0);
+        TANKMATES_LOACH_SNAILS = b.comment("Snails one clown loach eats per day (not the big apple snails; nerites are hard to crack)")
+                .defineInRange("clownLoachSnailsPerDay", 0.5, 0.0, 50.0);
+        TANKMATES_BOTTOM_SHARE = b.comment("Chance that a bottom fish (corydoras, pleco, otocinclus, loach) gets its share of food that sinks past",
+                        "faster fish; algae wafers go to the bottom fish directly").defineInRange("bottomFoodShare", 0.6, 0.0, 1.0);
+        TANKMATES_STOCKING = b.comment("Multiplies how much each tankmate counts for the stocking (a neon 0.35, a bristlenose 1.2, a clown loach",
+                        "2.5 fish at 1)").defineInRange("tankmateStockingFactor", 1.0, 0.0, 10.0);
+        TANKMATES_NET_SHARE = b.comment("Share of the catches of the aquarium net in jungle, swamp and river water that are tankmate fish",
+                        "instead of small animals (0 = no fish)").defineInRange("netFishShare", 0.4, 0.0, 1.0);
+        b.pop();
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

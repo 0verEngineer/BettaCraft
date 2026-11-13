@@ -69,6 +69,21 @@ public final class InfoLines {
         if (d.getInt("filters_out") + d.getInt("filters_in") > 0) {
             out.add(Component.translatable("jade.bettacraft.tank.filters", d.getInt("filters_out"), d.getInt("filters_in")));
         }
+        // M19: tankmates by species, their clutches and the breeding box
+        ListTag tm = d.getList("tankmates", Tag.TAG_COMPOUND);
+        if (!tm.isEmpty()) {
+            MutableComponent list = Component.empty();
+            for (int i = 0; i < Math.min(3, tm.size()); i++) {
+                if (i > 0) list.append(", ");
+                list.append(tm.getCompound(i).getInt("n") + " ").append(Component.translatable(tm.getCompound(i).getString("k")));
+            }
+            if (tm.size() > 3) list.append(", …");
+            out.add(Component.translatable("jade.bettacraft.tank.tankmates", list).withStyle(ChatFormatting.AQUA));
+        }
+        if (d.getInt("tm_eggs") > 0) out.add(Component.translatable("jade.bettacraft.tank.tm_eggs", d.getInt("tm_eggs")).withStyle(ChatFormatting.YELLOW));
+        if (d.getInt("tm_box") >= 0 && d.contains("tm_box")) {
+            out.add(Component.translatable("jade.bettacraft.tank.tm_box", d.getInt("tm_box")).withStyle(ChatFormatting.GRAY));
+        }
         // M14: shrimp, crayfish, snails and the algae
         int[] cr = d.getIntArray("critters");
         if (cr.length == 4 && cr[0] + cr[1] + cr[2] > 0) {

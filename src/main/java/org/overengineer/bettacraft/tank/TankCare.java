@@ -75,6 +75,7 @@ public final class TankCare {
         org.overengineer.bettacraft.critters.TankCritters.step(server, be, dt / 24000.0); // M14
         TankFrogs.step(server, be); // M14
         TankBreeding.step(server, be, dt / 24000.0);
+        org.overengineer.bettacraft.tankmates.TankmateBreeding.step(server, be, dt / 24000.0); // M19
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);
         }
@@ -254,17 +255,22 @@ public final class TankCare {
     public static int feed(ServerLevel level, TankBlockEntity controller, ItemStack food, int maxItems, @Nullable java.util.Set<java.util.UUID> round) {
         BettaFood.Kind kind = BettaFood.kind(food);
         if (kind == null || maxItems <= 0) return 0;
-        List<BettaEntity> fish = eaters(level, controller.getTank(), kind);
+        // M19: algae wafers sink straight to the bottom fish (the bettas do not eat them)
+        boolean wafer = org.overengineer.bettacraft.tankmates.TankmateFeeding.bottomFood(food);
+        List<BettaEntity> fish = wafer ? new ArrayList<>() : eaters(level, controller.getTank(), kind);
         if (round != null) fish.removeIf(b -> round.contains(b.getUUID()));
+        List<org.overengineer.bettacraft.entity.tankmate.TankmateEntity> mates =
+                org.overengineer.bettacraft.tankmates.TankmateFeeding.eaters(level, controller.getTank(), kind, wafer);
+        if (round != null) mates.removeIf(m -> round.contains(m.getUUID()));
         // M14: the frogs (slow eaters) and the shrimp, crayfish and snails (they eat what sinks to the floor)
-        List<org.overengineer.bettacraft.entity.frog.DwarfFrogEntity> frogs = TankFrogs.eats(kind) ? TankFrogs.frogs(level, controller.getTank())
+        List<org.overengineer.bettacraft.entity.frog.DwarfFrogEntity> frogs = TankFrogs.eats(kind) && !wafer ? TankFrogs.frogs(level, controller.getTank())
                 : new ArrayList<>();
         if (round != null) frogs.removeIf(f -> round.contains(f.getUUID()));
         boolean critters = org.overengineer.bettacraft.critters.TankCritters.wantFood(controller.getTank());
-        if (fish.isEmpty() && frogs.isEmpty() && !critters) return 0;
+        if (fish.isEmpty() && mates.isEmpty() && frogs.isEmpty() && !critters) return 0;
         fish.sort(Comparator.comparingDouble((BettaEntity b) -> b.health().daysSinceFed()).reversed());
         int per = BettaFood.fishPerItem(kind);
-        int mouths = fish.size() + frogs.size() + (critters ? 1 : 0);
+        int mouths = fish.size() + mates.size() + frogs.size() + (critters ? 1 : 0);
         int items = Math.min(maxItems, (mouths + per - 1) / per);
         int fed = Math.min(fish.size(), items * per);
         int overfed = 0;
@@ -277,6 +283,7 @@ public final class TankCare {
         }
         if (fed > 0) log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
         int left = items * per - fed;
+        left -= org.overengineer.bettacraft.tankmates.TankmateFeeding.feed(level, controller, mates, kind, Math.min(left, mates.size()), !fish.isEmpty(), wafer, round);
         int frogsFed = TankFrogs.feed(level, controller, kind, Math.min(left, frogs.size()), !fish.isEmpty(), false);
         if (round != null) for (var f : frogs) if (f.daysSinceFed() <= 1e-6) round.add(f.getUUID());
         left -= frogsFed;
@@ -294,9 +301,12 @@ public final class TankCare {
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) return ItemInteractionResult.CONSUME;
         TankData tank = controller.getTank();
-        List<BettaEntity> fish = eaters(server, tank, BettaFood.kind(stack));
-        boolean others = (TankFrogs.eats(BettaFood.kind(stack)) && !TankFrogs.frogs(server, tank).isEmpty())
-                || org.overengineer.bettacraft.critters.TankCritters.wantFood(tank);
+        boolean wafer = org.overengineer.bettacraft.tankmates.TankmateFeeding.bottomFood(stack);
+        List<BettaEntity> fish = wafer ? new ArrayList<>() : eaters(server, tank, BettaFood.kind(stack));
+        List<org.overengineer.bettacraft.entity.tankmate.TankmateEntity> mates =
+                org.overengineer.bettacraft.tankmates.TankmateFeeding.eaters(server, tank, BettaFood.kind(stack), wafer);
+        boolean others = (TankFrogs.eats(BettaFood.kind(stack)) && !wafer && !TankFrogs.frogs(server, tank).isEmpty())
+                || !mates.isEmpty() || org.overengineer.bettacraft.critters.TankCritters.wantFood(tank);
         if (fish.isEmpty() && !others) {
             player.displayClientMessage(Component.translatable(bettas(server, tank).isEmpty() ? "message.bettacraft.tank.no_bettas"
                     : "message.bettacraft.tank.nobody_eats", stack.getHoverName()), true);
@@ -315,6 +325,7 @@ public final class TankCare {
         level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.3F, 1.6F);
         long until = level.getGameTime() + 120;
         for (BettaEntity b : fish) b.setFoodTarget(spot, until);
+        for (var m : mates) m.setFoodTarget(spot, until); // M19
         return ItemInteractionResult.CONSUME;
     }
 

@@ -345,6 +345,38 @@ def cave() -> Voxels:
     return v
 
 
+def spawning_cave() -> Voxels:
+    """M19: fired clay tube for the plecos, 8 long, 5 wide, 4 high, open at the front (x = 0), closed at the back."""
+    v = Voxels()
+    for x in range(8):
+        for z in range(5):
+            v.set(x, 0, z, "bettacraft:spawning_cave")
+        for y in (1, 2):
+            v.set(x, y, 0, "bettacraft:spawning_cave")
+            v.set(x, y, 4, "bettacraft:spawning_cave")
+        for z in (1, 2, 3):
+            v.set(x, 3, z, "bettacraft:spawning_cave")
+    for y in (1, 2):
+        for z in (1, 2, 3):
+            v.set(7, y, z, "bettacraft:spawning_cave")
+    return v
+
+
+def spawning_mop() -> Voxels:
+    """M19: a tuft of green wool strands tied to a stone, 3x3, 6 high."""
+    v = Voxels()
+    v.set(1, 0, 1, "cobblestone")
+    for y in range(1, 6):
+        v.set(1, y, 1, "bettacraft:spawning_mop")
+    for (x, z) in ((0, 1), (2, 1), (1, 0), (1, 2)):
+        for y in range(2, 6):
+            v.set(x, y, z, "bettacraft:spawning_mop")
+    for (x, z) in ((0, 0), (2, 2), (0, 2), (2, 0)):
+        for y in range(3, 6):
+            v.set(x, y, z, "bettacraft:spawning_mop")
+    return v
+
+
 DECOR = {
     "castle": castle,
     "shipwreck": shipwreck,
@@ -356,6 +388,8 @@ DECOR = {
     "hammock": hammock,
     "almond_leaf": almond_leaf,
     "cave": cave,
+    "spawning_cave": spawning_cave,
+    "spawning_mop": spawning_mop,
 }
 
 # ---------------------------------------------------------------- icons from the voxels
@@ -369,7 +403,7 @@ COLORS = {
     "stripped_oak_log": "#b29257", "stripped_dark_oak_log": "#6b5234", "stripped_oak_wood": "#b29257",
     "mangrove_roots": "#5a4630", "cobblestone": "#828282", "andesite": "#8e8f8f", "mossy_cobblestone": "#6f8a5c",
     "moss_block": "#5a7b2e", "oak_leaves": "#4f8a2a", "brown_carpet": "#7a4f2c", "orange_carpet": "#d0752a",
-    "moss_carpet": "#5d7f30", "stone": "#7f7f7f",
+    "moss_carpet": "#5d7f30", "stone": "#7f7f7f", "spawning_cave": "#b0623a", "spawning_mop": "#3e9a3a",
 }
 
 

@@ -139,6 +139,44 @@ public final class ModItems {
         return java.util.Collections.unmodifiableMap(m);
     }
 
+    // ------------------------------------------------------------------ M19 tankmates
+
+    /** A tankmate in a bucket of water, one per species (vanilla mob bucket; the fish overlay tinted per species). */
+    public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
+            DeferredItem<org.overengineer.bettacraft.tankmates.TankmateBucketItem>> TANKMATE_BUCKETS = tankmateBuckets();
+    public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies, DeferredItem<DeferredSpawnEggItem>> TANKMATE_SPAWN_EGGS = tankmateEggs();
+
+    private static java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
+            DeferredItem<org.overengineer.bettacraft.tankmates.TankmateBucketItem>> tankmateBuckets() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.tankmates.TankmateSpecies,
+                DeferredItem<org.overengineer.bettacraft.tankmates.TankmateBucketItem>>(org.overengineer.bettacraft.tankmates.TankmateSpecies.class);
+        for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+            m.put(sp, ITEMS.register(sp.bucketId(), () -> new org.overengineer.bettacraft.tankmates.TankmateBucketItem(sp, new Item.Properties().stacksTo(1))));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    private static java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies, DeferredItem<DeferredSpawnEggItem>> tankmateEggs() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.tankmates.TankmateSpecies, DeferredItem<DeferredSpawnEggItem>>(
+                org.overengineer.bettacraft.tankmates.TankmateSpecies.class);
+        for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+            m.put(sp, ITEMS.register(sp.spawnEggId(), () -> new DeferredSpawnEggItem(ModEntities.TANKMATES.get(sp), sp.eggColor1(), sp.eggColor2(),
+                    new Item.Properties())));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    /** M19: hangs inside the glass of a tank; young livebearers born into it are safe until they are juveniles. */
+    public static final DeferredItem<org.overengineer.bettacraft.tankmates.BreedingBoxItem> BREEDING_BOX = ITEMS.register("breeding_box",
+            () -> new org.overengineer.bettacraft.tankmates.BreedingBoxItem(new Item.Properties().stacksTo(16)));
+    /** M19: fine powder food for the fry of every species (the whole fry stage). */
+    public static final DeferredItem<Item> FRY_POWDER = ITEMS.registerSimpleItem("fry_powder");
+    /** M19: sinking algae wafers: only the bottom fish (corydoras, plecos, otocinclus, loaches) and the small animals eat them. */
+    public static final DeferredItem<Item> ALGAE_WAFER = ITEMS.registerSimpleItem("algae_wafer");
+    /** M19: the blocks of the spawning cave and the spawning mop (decoration; also placeable one by one in the interior). */
+    public static final DeferredItem<BlockItem> SPAWNING_CAVE = ITEMS.registerSimpleBlockItem(ModBlocks.SPAWNING_CAVE);
+    public static final DeferredItem<BlockItem> SPAWNING_MOP = ITEMS.registerSimpleBlockItem(ModBlocks.SPAWNING_MOP);
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }

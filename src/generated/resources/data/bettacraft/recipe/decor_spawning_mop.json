@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:spawning_mop"
+    },
+    {
+      "item": "bettacraft:spawning_mop"
+    },
+    {
+      "item": "bettacraft:spawning_mop"
+    },
+    {
+      "item": "minecraft:cobblestone"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_spawning_mop"
+  }
+}

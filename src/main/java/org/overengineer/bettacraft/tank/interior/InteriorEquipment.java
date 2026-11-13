@@ -25,12 +25,20 @@ public final class InteriorEquipment {
     final LongOpenHashSet floating = new LongOpenHashSet();
     int substrate;
     boolean needsScan;
+    /** M19: blocks of the spawning caves and of the spawning mops (the tankmates find caves and mops from them). */
+    final LongOpenHashSet caveBlocks = new LongOpenHashSet();
+    final LongOpenHashSet mopBlocks = new LongOpenHashSet();
+    /** Bumped whenever a cave or mop block changes (cached cave/mop clusters). */
+    int spawningVersion;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
     public LongOpenHashSet filters() { return filters; }
     public LongOpenHashSet floatingPlants() { return floating; }
     public int substrateCount() { return substrate; }
+    public LongOpenHashSet caveBlocks() { return caveBlocks; }
+    public LongOpenHashSet mopBlocks() { return mopBlocks; }
+    public int spawningVersion() { return spawningVersion; }
     public boolean needsScan() { return needsScan; }
     public void markNeedsScan() { needsScan = true; }
 
@@ -46,6 +54,13 @@ public final class InteriorEquipment {
         else if (isCoolerAnchor(s)) coolers.remove(key);
         else if (isFilterAnchor(s)) filters.remove(key);
         else if (s.is(ModTags.FLOATING_PLANTS)) floating.remove(key);
+        else if (s.is(ModBlocks.SPAWNING_CAVE.get())) {
+            caveBlocks.remove(key);
+            spawningVersion++;
+        } else if (s.is(ModBlocks.SPAWNING_MOP.get())) {
+            mopBlocks.remove(key);
+            spawningVersion++;
+        }
     }
 
     private void add(long key, BlockState s) {
@@ -53,6 +68,13 @@ public final class InteriorEquipment {
         else if (isCoolerAnchor(s)) coolers.put(key, s.getValue(SegmentBlock.SIZE).capacity);
         else if (isFilterAnchor(s)) filters.add(key);
         else if (s.is(ModTags.FLOATING_PLANTS)) floating.add(key);
+        else if (s.is(ModBlocks.SPAWNING_CAVE.get())) {
+            caveBlocks.add(key);
+            spawningVersion++;
+        } else if (s.is(ModBlocks.SPAWNING_MOP.get())) {
+            mopBlocks.add(key);
+            spawningVersion++;
+        }
     }
 
     static boolean isHeaterAnchor(BlockState s) {
@@ -73,6 +95,9 @@ public final class InteriorEquipment {
         coolers.clear();
         filters.clear();
         floating.clear();
+        caveBlocks.clear();
+        mopBlocks.clear();
+        spawningVersion++;
         substrate = 0;
         needsScan = false;
         if (!r.built()) return;
@@ -133,6 +158,8 @@ public final class InteriorEquipment {
         t.putLongArray("filters", filters.toLongArray());
         t.putLongArray("floating", floating.toLongArray());
         t.putInt("substrate", substrate);
+        t.putLongArray("caves", caveBlocks.toLongArray()); // M19
+        t.putLongArray("mops", mopBlocks.toLongArray());
         if (needsScan) t.putBoolean("rescan", true);
         return t;
     }
@@ -150,6 +177,11 @@ public final class InteriorEquipment {
         for (int i = 0; i < ck.length; i++) coolers.put(ck[i], i < cv.length ? cv[i] : 16);
         for (long l : t.getLongArray("filters")) filters.add(l);
         for (long l : t.getLongArray("floating")) floating.add(l);
+        caveBlocks.clear();
+        mopBlocks.clear();
+        for (long l : t.getLongArray("caves")) caveBlocks.add(l);
+        for (long l : t.getLongArray("mops")) mopBlocks.add(l);
+        spawningVersion++;
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");
     }
