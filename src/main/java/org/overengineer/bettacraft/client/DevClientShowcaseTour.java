@@ -128,8 +128,10 @@ final class DevClientShowcaseTour {
             mc.options.enableVsync().set(false);
             mc.getWindow().updateVsync(false);
         });
-        String[] names = {"plants_row", "plants_row_far", "overview"};
-        double[][] spots = {{50, 3 * ROW - 3.4, 1.9, 16}, {50, 3 * ROW - 22, 6, 14}, {70, -20, 40, 50}};
+        // the plant row: Rotala (12th tank, x ~ 67) close up, Rotala and Vallisneria (15th, x ~ 85) from 15 blocks, and the
+        // whole showcase from above (the plant row further away than 24 blocks)
+        String[] names = {"rotala_near", "plants_mid", "overview"};
+        double[][] spots = {{68, 3 * ROW - 3.4, 1.9, 16}, {76, 3 * ROW - 15, 4, 12}, {70, -20, 40, 50}};
         int saved = org.overengineer.bettacraft.config.ClientConfig.MINIATURE_PLANT_MESH_DISTANCE.get();
         for (int i = 0; i < spots.length; i++) {
             double[] s = spots[i];
