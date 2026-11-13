@@ -75,7 +75,12 @@ AUTO, KELP or PLASTIC), which overlay mod shows the Bettacraft lines (`compat.ov
 installed one of Jade, WTHIT and The One Probe, so two overlay mods do not show every aquarium twice; JADE, TOP, WTHIT or
 ALL) and switches for single features (`features.*`): `interiorPathfinding` (frogs walk around the decoration, small
 animals go under overhangs and into caves, plecos swim into their spawning cave; off = straight lines) and `plantMeshes`
-(the new look of Rotala, Vallisneria and Anubias in the interior and the miniature, a prototype; off = the leaf blocks). The **client config** has the animation and miniature distances, the distance up to which the
+(the new look of Rotala, Vallisneria and Anubias in the interior and the miniature, a prototype; off = the leaf blocks),
+since 1.13.2 `smoothSwimming` (fish turn in curves and tilt smoothly, kuhli loaches undulate and hide by day, plecos stand
+up only on the glass), `greenNeonTetra` (the green neon at the trader and in the net), `snailColors` (individual shades of
+the racer nerites, mostly gold apple snails with bands, red ramshorns), `detailedDecor` (the big skull and shipwreck),
+`breakProtection` (the switch in the tank menu) and `clipOnFeeder`. The server config `tank.protectFromExplosionsAndPistons`
+decides whether the break protection also stops explosions and pistons. The **client config** has the animation and miniature distances, the distance up to which the
 miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 24; further away pixels, 0 = always
 pixels), the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines

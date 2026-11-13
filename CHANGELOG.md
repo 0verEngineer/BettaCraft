@@ -4,6 +4,56 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.13.2-beta.1] - 2026-11-14
+
+Polish after the showcase tour: smoother fish, the green neon, more snail colours, break protection, a clip-on feeder and
+bigger decoration. Every new part has its own switch in the common config (`features.*`).
+
+### Added
+- **Green Neon Tetra** (*Paracheirodon simulans*), also sold as Blue Neon: a tetra of its own with a green (wild) or blue
+  stripe over almost the whole body and hardly any red; blue is recessive. Trader, aquarium net in jungle water,
+  handbook page, JEI care sheet (`features.greenNeonTetra`).
+- **Break protection** in the tank menu (owner and operators only, off for new tanks): while it is on nobody can break
+  the aquarium, not even the owner or in creative mode - the glass, lid, light and feeders on it, the clip-on feeder and
+  the cabinet under it. Explosions and pistons leave it alone too (server config `tank.protectFromExplosionsAndPistons`,
+  on by default) (`features.breakProtection`).
+- **Clip-on feeder**: a small feeder that hangs on the side of the glass at the top edge, for tanks whose top is taken by
+  the light. One stack of food, 1-3 feedings a day (right-click with an empty hand), no hopper, no evaporation cover.
+  Recipe, handbook page, JEI (`features.clipOnFeeder`).
+- **Snail colours** (`features.snailColors`): the red racer nerite and the new **yellow racer nerite** get an individual
+  shade each (orange, red, deep red, red with yellow lines; yellow, golden, yellow with dark lines; brightness and line
+  spacing vary), named in the bag tooltip. Apple snails are mostly **gold** now (a stronger yellow) at the trader and in
+  the net, wild brown is rare; every one has its own brightness, gold and wild ones sometimes dark bands. Ramshorn snails
+  get a fourth colour, **red**. Snails of older worlds keep their look.
+- **Detailed dino skull and shipwreck**, about twice as big: the skull with eye sockets, nostrils, teeth and an open lower
+  jaw, the wreck with a planked hull, bowsprit, stern castle, a hole in its side and a broken mast with its yard, lying
+  tilted. Placed ones stay as they are (`features.detailedDecor`; off: the old small shapes).
+- Handbook start page: "Bettacraft by 0verEngineer" (the byline smaller and grey).
+
+### Changed
+- **Smooth swimming** (`features.smoothSwimming`): the fish tilt and right themselves smoothly instead of flipping above
+  a speed threshold, the tail beat no longer jumps when the speed changes, the body follows the turns smoothly
+  (tankmates, bettas and the dwarf frog); tankmates turn in curves and keep some speed while turning. Kuhli loaches
+  undulate slowly like eels, glide calmly along the bottom and lie still or hide under the decoration by day.
+- Real trade names: **Pacific Cleaner Shrimp** (Weißband-Putzergarnele, *Lysmata amboinensis*) and **Mexican Turbo
+  Snail** (ids unchanged).
+- The showcase: every tank stands on a cabinet with an external filter (the wood changes row by row), power is off in
+  its config, every tank has the break protection on, a row per colour of the small animals and one of the tankmate
+  colour forms.
+
+### Fixed
+- Plecos and otocinclus stood upright in the middle of the water on their way to the glass; they now turn upright
+  smoothly only once they are there.
+- Cabinets showed pink, purple or blue edges (the overhang of the counter top reached past the planks texture into
+  neighbouring textures of the atlas).
+
+### Development
+- Upgrade test from 1.13.1-beta.1: `bash tools/upgrade/build_reference.sh` builds a reference world with the old version
+  and a manifest of everything in it; `gradlew smoketestUpgrade` loads a copy twice and compares every tank, animal,
+  small animal, interior, piece of equipment and chest item, and fails on errors in the log.
+- Client smoke `-Psmoketestm21_5`; GameTests for the glass cleaners, the break protection, the clip-on feeder and the
+  decoration; the bucket variants A and C are gone (B stays).
+
 ## [1.13.1-beta.1] - 2026-11-14
 
 Real plant leaves in the miniature too, and fixes to the new plant look.

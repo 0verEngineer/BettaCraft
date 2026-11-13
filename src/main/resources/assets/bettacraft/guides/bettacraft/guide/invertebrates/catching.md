@@ -18,7 +18,7 @@ again; the net wears a little. With a chance (30 %, more near plants) something 
 |---|---|
 | River | Neocaridina (wild form), ramshorn (red-brown), bladder snail, rarely a trumpet or an assassin snail |
 | Swamp | ramshorn (red-brown), bladder snail, Malaysian trumpet snail, rarely a dwarf clawed frog |
-| Mangrove swamp | nerites (zebra, horned, olive), rarely the **red nerite** or an assassin snail |
+| Mangrove swamp | nerites (zebra, horned, olive), rarely the **red** or **yellow racer nerite** or an assassin snail |
 | Beach (brackish water) | nerites |
 | Jungle water | apple snail (wild colour), rarely a dwarf clawed frog or a wild dwarf crayfish |
 | Lush caves, deep cave water | Malaysian trumpet snail, ramshorn (lush caves), rarely an assassin snail |

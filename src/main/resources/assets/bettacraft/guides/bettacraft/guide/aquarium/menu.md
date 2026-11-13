@@ -20,6 +20,11 @@ navigation:
   can make it bigger or smaller with the client config `render.signScale`, 0.5 to 2); long names get a smaller font. The name also shows in the menu and in Jade when the sign is off.
 * **Lock**: the player who placed the aquarium is its owner. When it is locked, only the owner and operators can
   change it (water, animals, settings, interior); everyone can still look.
+* **Break protection** (the button between the name and the lock; owner and operators only, off for a new aquarium):
+  while it is on **nobody can break the aquarium**, not even the owner and not in creative mode: the glass, the lid, the
+  light and the feeders on it, the clip-on feeder on its glass and the cabinet under it. Trying it shows "Break
+  protection is on". Explosions and pistons leave it alone too (server config `tank.protectFromExplosionsAndPistons`,
+  on by default). Config switch of the whole feature: `features.breakProtection`.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
 * Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
   and the button to enter the interior. The last line warns about poor water or missing power.

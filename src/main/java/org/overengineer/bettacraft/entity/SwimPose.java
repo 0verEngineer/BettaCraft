@@ -18,6 +18,8 @@ import net.minecraft.world.entity.Entity;
  */
 public final class SwimPose {
     private float swimO, swim, phaseO, phase, pitchO, pitch, glassO, glass, yawO, yaw;
+    /** Eased movement (the synced positions arrive in uneven steps). */
+    private double svy, sh;
     private boolean started;
 
     /**
@@ -42,7 +44,9 @@ public final class SwimPose {
         pitchO = pitch;
         glassO = glass;
         yawO = yaw;
-        float wantSwim = (float) Mth.clamp(h / 0.03, 0, 1);
+        svy += (vy - svy) * 0.25;
+        sh += (h - sh) * 0.25;
+        float wantSwim = (float) Mth.clamp(sh / 0.03, 0, 1);
         swim += (wantSwim - swim) * 0.2F;
         phase += freqSlow + freqFast * swim;
         // keep the numbers small (sin is periodic; both old and new phase move together)
@@ -52,12 +56,13 @@ public final class SwimPose {
         }
         float wantPitch = 0;
         if (maxPitch > 0 && e.isInWater() && !onGlass) {
-            float raw = (float) Math.toDegrees(Math.atan2(vy, Math.max(h, 0.015)));
+            float raw = (float) Math.toDegrees(Math.atan2(svy, Math.max(sh, 0.015)));
             // fades in with the speed instead of a hard threshold
-            float weight = (float) Mth.clamp((h + Math.abs(vy) - 0.002) / 0.012, 0, 1);
+            float weight = (float) Mth.clamp((sh + Math.abs(svy) - 0.002) / 0.012, 0, 1);
             wantPitch = Mth.clamp(raw, -maxPitch, maxPitch) * weight * weight * (3 - 2 * weight);
         }
-        pitch += (wantPitch - pitch) * 0.15F;
+        // eased, and at most 4 degrees a tick
+        pitch += Mth.clamp((wantPitch - pitch) * 0.15F, -4F, 4F);
         glass = Mth.approach(glass, onGlass ? 1F : 0F, 0.08F);
         yaw += Mth.wrapDegrees(e.getYRot() - yaw) * 0.35F;
     }

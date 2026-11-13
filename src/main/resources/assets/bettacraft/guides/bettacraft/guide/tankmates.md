@@ -38,6 +38,7 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 |---|---|---|---|---|
 | [Neon Tetra](tankmates/neon_tetra.md) | 20–27 | 6 | too cool | Scatters its eggs (fine plants, spawning mop) |
 | [Cardinal Tetra](tankmates/cardinal_tetra.md) | 24–30 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
+| [Green Neon Tetra](tankmates/green_neon_tetra.md) (green, Blue Neon) | 24–30 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
 | [Ember Tetra](tankmates/ember_tetra.md) | 22–29 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
 | [Glowlight Tetra](tankmates/glowlight_tetra.md) | 23–28 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
 | [Harlequin Rasbora](tankmates/harlequin_rasbora.md) | 22–28 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |

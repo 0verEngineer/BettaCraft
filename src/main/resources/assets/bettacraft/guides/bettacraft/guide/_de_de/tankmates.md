@@ -41,6 +41,7 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 |---|---|---|---|---|
 | [Neonsalmler](tankmates/neon_tetra.md) | 20–27 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 | [Roter Neon](tankmates/cardinal_tetra.md) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| [Grüner Neon](tankmates/green_neon_tetra.md) (grün, Blauer Neon) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 | [Feuersalmler](tankmates/ember_tetra.md) | 22–29 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 | [Glühlichtsalmler](tankmates/glowlight_tetra.md) | 23–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 | [Keilfleckbärbling](tankmates/harlequin_rasbora.md) | 22–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |

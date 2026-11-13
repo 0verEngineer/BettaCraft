@@ -18,7 +18,7 @@ kommt in eine **leere Fischtüte** aus deinem Inventar. Ohne leere Tüte entwisc
 |---|---|
 | Fluss | Neocaridina (Wildform), Posthornschnecke (rot-braun), Blasenschnecke, selten eine Turmdeckel- oder Raubschnecke |
 | Sumpf | Posthornschnecke (rot-braun), Blasenschnecke, Turmdeckelschnecke, selten ein Zwergkrallenfrosch |
-| Mangrovensumpf | Rennschnecken (Zebra, Geweih, Oliv), selten die **Rote Rennschnecke** oder eine Raubschnecke |
+| Mangrovensumpf | Rennschnecken (Zebra, Geweih, Oliv), selten die **Rote** oder **Gelbe Rennschnecke** oder eine Raubschnecke |
 | Strand (Brackwasser) | Rennschnecken |
 | Dschungelgewässer | Apfelschnecke (Wildfarbe), selten ein Zwergkrallenfrosch oder ein wilder Zwergkrebs |
 | Üppige Höhle, tiefes Höhlenwasser | Turmdeckelschnecke, Posthornschnecke (üppige Höhle), selten eine Raubschnecke |

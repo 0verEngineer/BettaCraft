@@ -76,7 +76,12 @@ AUTO = nur die erste vorhandene von Jade, WTHIT und The One Probe, damit zwei Ov
 zeigen; JADE, TOP, WTHIT oder ALL) und Schalter für einzelne Funktionen (`features.*`): `interiorPathfinding` (Frösche
 laufen um die Deko herum, Kleintiere gehen unter Überhänge und in Höhlen, Harnischwelse schwimmen in ihre Laichhöhle; aus
 = geradeaus) und `plantMeshes` (die neue Optik von Rotala, Vallisneria und Anubias im Innenraum und in der Miniatur, ein
-Prototyp; aus = die Blattblöcke). Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
+Prototyp; aus = die Blattblöcke), seit 1.13.2 `smoothSwimming` (Fische wenden im Bogen und neigen sich weich, Dornaugen
+schlängeln sich und verstecken sich tagsüber, Harnischwelse stellen sich erst an der Scheibe auf), `greenNeonTetra` (der
+Grüne Neon beim Händler und im Kescher), `snailColors` (eigene Farbtöne der Rennschnecken, meist goldene Apfelschnecken
+mit Bändern, rote Posthörner), `detailedDecor` (der große Schädel und das große Wrack), `breakProtection` (der Schalter
+im Becken-Menü) und `clipOnFeeder`. Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
+auch Explosionen und Kolben abhält. Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
 der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
 0 = immer Pixel), das
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite

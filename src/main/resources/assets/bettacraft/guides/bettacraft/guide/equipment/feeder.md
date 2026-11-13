@@ -27,5 +27,7 @@ pipes of other mods can fill it.
 * When its own slots are empty it takes food from the [cabinets](cabinet.md) under the aquarium.
 * The tank log notes every feeding and "The feeder is empty".
 
+No room on top (a one-block tank with a light)? The [clip-on feeder](clip_feeder.md) hangs on the side of the glass.
+
 One pellet or one portion of mosquito larvae feeds up to 4 fish, one bottle of fry food 20 fry. Overfeeding does no
 harm. See [Food](../food.md).

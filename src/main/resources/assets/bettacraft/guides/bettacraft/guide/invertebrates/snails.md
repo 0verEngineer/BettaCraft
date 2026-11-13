@@ -15,17 +15,34 @@ keep the glass clean.
 
 | Snail | Breeding | Special |
 |---|---|---|
-| **Nerites**: zebra, horned, olive, red nerite | no eggs, **never breed** in fresh water | the best algae eaters; the horned nerite has small horns |
-| **Apple snail** (*Pomacea*): wild brown, gold, blue, purple, ivory | pink clutch **above the water line** on the glass | large; a betta nips at its feelers now and then (only a look) |
-| **Ramshorn** (*Planorbella*): red-brown, **pink**, **blue** | slowly, one snail is enough | colours inherited like the shrimp colours (Mendel + grade) |
+| **Nerites**: zebra, horned, olive, red and yellow racer nerite | no eggs, **never breed** in fresh water | the best algae eaters; the horned nerite has small horns; every racer nerite has its own shade |
+| **Apple snail** (*Pomacea diffusa*): **gold** (the usual one), wild brown, blue, purple, ivory | pink clutch **above the water line** on the glass | large; a betta nips at its feelers now and then (only a look) |
+| **Ramshorn** (*Planorbella*): red-brown, **pink**, **blue**, **red** | slowly, one snail is enough | colours inherited like the shrimp colours (Mendel + grade) |
 | **Bladder snail** | slowly, one is enough | tiny, see-through brown |
 | **Malaysian trumpet snail** | slowly, one is enough | digs into the substrate by day, comes out at night |
 | **Assassin snail** (*Clea helena*) | very rarely, in pairs | eats other snails (nerites only rarely, their shell is hard): the natural fix for too many snails |
 
+## Racer nerites: every one a little different
+
+![Red and yellow racer nerites](../images/critters_racer_nerites.png)
+
+The **red racer nerite** (*Vittina waigiensis*, "Red Racer") and its yellow form, the **yellow racer nerite**, never breed
+in fresh water, so their colour cannot be bred: every one gets its own when it is caught, bought or made. The red ones are
+orange, red or deep red, some red with thin yellow lines; the yellow ones yellow or golden yellow, some with dark lines.
+On top of that the brightness and the spacing of the lines vary from snail to snail. The tooltip of the fish bag names the
+shade. Snails from worlds before 1.13.2 keep the colour they had.
+
+## Apple snails: mostly gold
+
+Almost every apple snail in the shops is **gold**: at the trader and in the net most are gold now (a stronger yellow
+than before), the wild brown ones are rare. Every snail has its own brightness, and gold and wild brown ones sometimes
+carry **dark bands** on the shell. The colours are inherited as before (recessive, like the shrimp colours); the shade and
+the bands are not.
+
 ## Ramshorn colours
 
-Pink and blue ramshorns do not live in the wild. Wild red-brown ramshorns sometimes carry pink or blue hidden: two
-carriers give a quarter pink (or blue) young, and **pink x pink breeds true**. A rare trader brings them too.
+Pink, blue and the strong **red** (Red Ramshorn, brighter than the wild red-brown) do not live in the wild. Wild red-brown ramshorns sometimes carry pink or blue hidden: two
+carriers give a quarter pink (or blue, or red) young, and **pink x pink breeds true**. A rare trader brings them too.
 
 ## Apple snail clutches
 

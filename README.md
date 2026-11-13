@@ -37,20 +37,22 @@ block.
   glass), divide rhizomes, take plants out by their root. They clean the water, hide the female after spawning and
   give a small breeding bonus. Found by fishing in jungles, rivers and swamps, in swamp water, on moss next to water
   and from the wandering trader.
-- **Small animals:** Neocaridina shrimp in eleven colours, the orange dwarf crayfish (CPO), nerites, apple snails,
-  ramshorns (red-brown, pink, blue), bladder, trumpet and assassin snails crawl over the floor, the decoration, the
+- **Small animals:** Neocaridina shrimp in eleven colours, the orange dwarf crayfish (CPO), nerites (the red and yellow
+  racer nerites each in their own shade), apple snails (mostly gold, some with bands), ramshorns (red-brown, pink, blue,
+  red), bladder, trumpet and assassin snails crawl over the floor, the decoration, the
   plants and the glass. Mendel colours plus a grade bred up by selection (Red Cherry to Painted Fire Red), breeding by
   type (eggs under the tail, apple snail clutches above the water line, nerites never), bettas hunt the young and
   plants hide them. Dwarf clawed frogs breathe at the surface and are slow eaters. Algae grow on the glass, the
   cleaning crew and the algae scraper keep it clean. Caught with the aquarium net by biome.
-- **Tankmates:** twenty popular aquarium fish as real animals with their own models: tetras (neon, cardinal, ember,
-  glowlight), rasboras (harlequin, mosquito rasbora), corydoras (pygmy, panda, sterbai, green gold), plecos (L134
+- **Tankmates:** twenty-one popular aquarium fish as real animals with their own models: tetras (neon, cardinal, green
+  neon in green and blue, ember, glowlight), rasboras (harlequin, mosquito rasbora), corydoras (pygmy, panda, sterbai, green gold), plecos (L134
   leopard frog, L046 zebra, bristlenose), otocinclus, kuhli and clown loaches, guppies, endlers, platys (colour
   varieties) and the dwarf gourami. Shoals, temperature and water ranges per species, bettas chase guppy and gourami
   males, everybody hunts fry and eggs, clown loaches eat snails, otocinclus graze algae. Every species breeds its own
   way: corydoras glue eggs to the glass after a cool water change, plecos spawn in a cave and the male guards, egg
   scatterers need fine plants or a spawning mop, livebearers bear live young (breeding box), the dwarf gourami builds
-  a foam nest. Caught with the aquarium net by biome or bought from the wandering trader.
+  a foam nest. Caught with the aquarium net by biome or bought from the wandering trader. They swim in smooth curves;
+  kuhli loaches undulate like eels and hide by day.
 - **Reef tanks:** sea water from the ocean or with sea salt, salinity that mixes and concentrates, freshwater animals
   die in salt water and reef animals in fresh water (nerites and livebearers tolerate brackish water). Protein
   skimmer, flow pump, reef rock and live rock, actinic light. Eight corals and the bubble tip anemone grow on reef
@@ -78,11 +80,12 @@ block.
   heaters, internal filters and floating plants. Several players can build in the same interior at once; nobody can
   break the aquarium while someone is inside. Leave by sneaking and looking up (a small hint shows how).
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood (they hold the
-  external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below) and a
-  connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
+  external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below), a small
+  clip-on feeder for the side of the glass and a connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
-  interior and log; name sign on the glass (its size is a client setting) and a lock for the owner.
-- **Handbook and progression:** 70 handbook pages in English and German (with GuideME) and 29 advancements.
+  interior and log; name sign on the glass (its size is a client setting), a lock for the owner and a break protection
+  that stops everyone (also the owner, creative, explosions and pistons) from breaking the aquarium.
+- **Handbook and progression:** 72 handbook pages in English and German (with GuideME) and 29 advancements.
 - **Languages:** English and German.
 
 ## Requirements

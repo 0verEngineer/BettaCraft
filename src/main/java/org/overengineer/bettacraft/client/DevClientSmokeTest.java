@@ -81,6 +81,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM20 m20;
     private static DevClientSmokeM21 m21;
     private static DevClientSmokeM211 m211;
+    private static DevClientSmokeM215 m215;
+    /** -Psmoketestm21_5: only the M21.5 scene (smooth swimming, colours, cabinets, decor, clip-on feeder, protection, handbook). */
+    private static final boolean M21_5_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_5only");
     /** -Psmoketestm21_1: only the M21.1 scene (plant meshes outside, Rotala stems, Vallisneria ribbons, lily pads). */
     private static final boolean M21_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_1only");
     /** -Psmoketestm21: only the M21 scene (plant prototype old/new, new fish buckets). */
@@ -141,6 +144,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M21_5_ONLY) {
+                if (ticks == 60) m215 = new DevClientSmokeM215();
+                if (m215 != null && m215.tick()) {
+                    m215 = null;
+                    LOGGER.info("[smoketest] client world test finished (M21.5 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M21_1_ONLY) {
                 if (ticks == 60) m211 = new DevClientSmokeM211();
                 if (m211 != null && m211.tick()) {
@@ -472,6 +484,10 @@ final class DevClientSmokeTest {
                     }
                     if (m211 != null && m211.tick()) {
                         m211 = null;
+                        m215 = new DevClientSmokeM215(); // M21.5: polish
+                    }
+                    if (m215 != null && m215.tick()) {
+                        m215 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

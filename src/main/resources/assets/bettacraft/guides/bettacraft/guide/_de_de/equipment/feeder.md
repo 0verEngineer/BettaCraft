@@ -27,5 +27,7 @@ und Rohre anderer Mods können ihn befüllen.
 * Sind seine eigenen Plätze leer, nimmt er Futter aus den [Schränken](cabinet.md) unter dem Aquarium.
 * Das Log des Aquariums notiert jede Fütterung und „Der Futterautomat ist leer“.
 
+Kein Platz oben (ein Becken von einem Block Höhe mit Licht)? Der [Klemm-Futterautomat](clip_feeder.md) hängt seitlich an der Scheibe.
+
 Ein Pellet oder eine Portion Mückenlarven füttert bis zu 4 Fische, eine Flasche Jungfischfutter 20 Jungfische.
 Überfüttern schadet nicht. Siehe [Futter](../food.md).

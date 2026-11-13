@@ -343,14 +343,15 @@ def dino_skull_big() -> Voxels:
     v.set(9, 1, 2, up)
     v.set(9, 1, 5, up)
     # teeth: lower ones point up, upper ones hang down (pointed dripstone), staggered
-    for x in (2, 4, 6):
+    # teeth: white pegs pointing up from the lower jaw, half blocks hanging from the upper one, staggered
+    for x in (2, 4, 6, 8):
         for z in (1, 6):
-            v.set(x, 2, z, "pointed_dripstone[thickness=tip,vertical_direction=up]")
+            v.set(x, 2, z, "white_candle[candles=1,lit=false]")
     for x in (1, 3, 5, 7):
         for z in (1, 6):
-            v.set(x, 2, z, "pointed_dripstone[thickness=tip,vertical_direction=down]")
-    v.set(0, 2, 3, "pointed_dripstone[thickness=tip,vertical_direction=down]")
-    v.set(0, 2, 4, "pointed_dripstone[thickness=tip,vertical_direction=down]")
+            v.set(x, 2, z, "smooth_quartz_slab[type=top]")
+    v.set(0, 2, 3, "smooth_quartz_slab[type=top]")
+    v.set(0, 2, 4, "smooth_quartz_slab[type=top]")
     # upper jaw and snout
     for x in range(0, 11):
         for z in range(1, 7):
@@ -549,7 +550,7 @@ COLORS = {
     "stripped_oak_log": "#b29257", "stripped_dark_oak_log": "#6b5234", "stripped_oak_wood": "#b29257",
     "mangrove_roots": "#5a4630", "cobblestone": "#828282", "andesite": "#8e8f8f", "mossy_cobblestone": "#6f8a5c",
     "moss_block": "#5a7b2e", "oak_leaves": "#4f8a2a", "brown_carpet": "#7a4f2c", "orange_carpet": "#d0752a",
-    "moss_carpet": "#5d7f30", "stone": "#7f7f7f", "pointed_dripstone": "#e8e2d0", "black_concrete": "#101014",
+    "moss_carpet": "#5d7f30", "stone": "#7f7f7f", "pointed_dripstone": "#e8e2d0", "white_candle": "#f0f0e8", "black_concrete": "#101014",
     "smooth_quartz_slab": "#ece6dc", "stripped_dark_oak_log": "#6b5234", "spruce_trapdoor": "#6a4c2c", "white_carpet": "#e8e8e8", "spawning_cave": "#b0623a", "spawning_mop": "#3e9a3a",
 }
 
