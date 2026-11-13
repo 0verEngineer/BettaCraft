@@ -101,6 +101,9 @@ public final class TankView {
         d.putString("species", s.id());
         d.putString("variety", m.variety());
         d.putString("genes", m.genes().text());
+        // M21.6: the guppy and endler genome (with features.livebearerGenetics)
+        var lb = m.livebearerGenome();
+        if (lb != null) d.put("lb", lb.save());
         d.putInt("shoal", m.shoalSize());
         d.putInt("stress", m.stressBits());
         d.putBoolean("guard", m.isGuarding());

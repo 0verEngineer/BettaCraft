@@ -16,7 +16,8 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
 /**
  * M19: the wandering trader sells tankmates in fish bags: a shoal (six of a shoaling species, males and females) or a
  * pair, among his usual offers the common species, among the rare ones the others (L-numbers, glowlights, clown loaches).
- * Bred varieties (albino bristlenoses, coloured guppies and platys) come now and then.
+ * Bred varieties (albino bristlenoses, coloured guppies and platys) come now and then. M21.6: guppies and endlers come
+ * wild-caught or as one of the named strains (Red Cobra, Blue Moscow, Full Gold, Tuxedo Koi, Endler Tiger, ...).
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class TankmateTrades {
@@ -44,8 +45,31 @@ public final class TankmateTrades {
     public static MerchantOffer offer(TankmateSpecies s, RandomGenerator rnd) {
         int n = Math.min(TankmateItems.MAX_PER_BAG, s.shoaling() ? Math.max(6, s.shoal()) : 2);
         int price = Math.max(2, (int) Math.round(2 + s.stock() * n * 0.8 + (s.trade() == TankmateSpecies.Trade.RARE ? 3 : 0)));
-        String variety = s.varieties().size() > 1 && rnd.nextInt(3) == 0 ? s.variety(1 + rnd.nextInt(s.varieties().size() - 1)) : s.variety(0);
-        var bag = TankmateItems.groupBag(s, n, () -> TankmateGenes.pure(s, variety), rnd, true);
+        java.util.function.Supplier<TankmateGenes> genes;
+        if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+            // M21.6: guppies and endlers: wild-caught ones (each its own genes) or a pure-bred named strain
+            var strains = traderStrains(s);
+            if (rnd.nextInt(5) < 3 && !strains.isEmpty()) {
+                var st = strains.get(rnd.nextInt(strains.size()));
+                genes = () -> TankmateGenes.strain(s, st);
+                price += 2;
+            } else {
+                genes = () -> TankmateGenes.wild(s, 0.08, rnd);
+            }
+        } else {
+            String variety = s.varieties().size() > 1 && rnd.nextInt(3) == 0 ? s.variety(1 + rnd.nextInt(s.varieties().size() - 1)) : s.variety(0);
+            genes = () -> TankmateGenes.pure(s, variety);
+        }
+        var bag = TankmateItems.groupBag(s, n, genes, rnd, true);
         return new MerchantOffer(new ItemCost(Items.EMERALD, Math.min(64, price)), Optional.empty(), bag, 3, 1, 0.05F);
+    }
+
+    /** M21.6: the named strains the trader sells of a guppy or endler species. */
+    public static java.util.List<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain> traderStrains(TankmateSpecies s) {
+        java.util.List<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain> out = new java.util.ArrayList<>();
+        for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(s == TankmateSpecies.ENDLER_GUPPY)) {
+            if (st.source == org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.Source.TRADER) out.add(st);
+        }
+        return out;
     }
 }

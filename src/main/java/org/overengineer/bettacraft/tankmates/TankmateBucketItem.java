@@ -56,6 +56,15 @@ public class TankmateBucketItem extends MobBucketItem {
         append(species, data(stack), tooltip);
     }
 
+    /** M21.6: the strain (or hybrid, or description) of a guppy or endler in a bucket or bag, null without the genetics. */
+    @Nullable
+    public static Component livebearerName(TankmateSpecies s, CompoundTag fish) {
+        if (!TankmateGenes.livebearer(s) || !org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) return null;
+        TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
+        if (g.lb() == null) return null;
+        return org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(g.lb().express(fish.getBoolean("female"))).withStyle(ChatFormatting.GOLD);
+    }
+
     /** Tooltip lines of one tankmate: latin name, sex and stage, variety (shared with the fish bag). */
     public static void append(TankmateSpecies s, @Nullable CompoundTag fish, List<Component> tooltip) {
         tooltip.add(Component.literal(s.latin()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
@@ -64,7 +73,10 @@ public class TankmateBucketItem extends MobBucketItem {
         Component sex = org.overengineer.bettacraft.entity.betta.BettaTooltip.sex(fish.getBoolean("female"));
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.sex_stage", sex, Component.translatable(stage.translationKey()))
                 .withStyle(ChatFormatting.GRAY));
-        if (s.varieties().size() > 1) {
+        Component lb = livebearerName(s, fish);
+        if (lb != null) {
+            tooltip.add(lb);
+        } else if (s.varieties().size() > 1) {
             TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
             tooltip.add(Component.translatable(s.varietyKey(g.phenotype(s))).withStyle(ChatFormatting.GOLD));
         }

@@ -27,9 +27,14 @@ Kleiner als der Guppy, Männchen mit neongrünen und orangen Flecken. Meist bett
 | Besatz | 0,22 Fisch |
 | Zucht | lebendgebärend, 24–29 °C |
 
-## Farbformen
+## Genetik und Zuchtformen
 
-Farbformen: Wildform, Tiger, Black Bar. Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Farbe (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge tragen manchmal eine Zuchtform verdeckt; das Menü zeigt die Gene im Tooltip.
+Endler haben eigene Allele: Peacock (die Wildform), Tiger, Black Bar und Japan Blue auf dem Y-Chromosom (nur vom
+Vater an seine Söhne), Schwerter, orange oder gelbe Schwänze mit farbigen Rändern. Zuchtformen: Endler Wildform,
+Tiger, Black Bar, Japan Blue, Gelbschwanz. Sie kreuzen sich mit Guppys, die Jungen sind Hybride. Alles dazu:
+[Guppy-Genetik](guppy_genetics.md).
+
+Mit `features.livebearerGenetics` aus zeigen sich die alten festen Farbformen: Wildform, Tiger, Black Bar.
 
 ## Zucht
 

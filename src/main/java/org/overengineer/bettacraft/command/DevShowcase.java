@@ -258,6 +258,30 @@ public final class DevShowcase {
                 at = at.east(2 + GAP);
             }
         }
+        // M21.6: the named guppy and endler strains (two males and a female each, pure-bred) and a hybrid tank
+        at = startRow(level, "Guppys und Endler: Zuchtformen");
+        for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.values()) {
+            TankmateSpecies s = st.endler ? TankmateSpecies.ENDLER_GUPPY : TankmateSpecies.GUPPY;
+            TankBlockEntity c = tank(level, at, 2, 1, 2, 0F, true);
+            region(level, c, Blocks.GRAVEL.defaultBlockState());
+            for (int i = 0; i < 3; i++) fish(level, c, s, TankmateGenes.strain(s, st), i == 2, r);
+            name(level, at, de(st.translationKey()));
+            at = at.east(2 + GAP);
+        }
+        {
+            TankBlockEntity c = tank(level, at, 2, 1, 2, 0F, true);
+            region(level, c, Blocks.GRAVEL.defaultBlockState());
+            java.util.Random hr = new java.util.Random(216);
+            var cobra = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.RED_COBRA.genome();
+            var tiger = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.ENDLER_TIGER.genome();
+            for (int i = 0; i < 4; i++) {
+                boolean female = i == 3;
+                fish(level, c, TankmateSpecies.GUPPY, new TankmateGenes("wild", "wild",
+                        org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome.cross(cobra, tiger, female, hr, 0)), female, r);
+            }
+            name(level, at, "Hybride Red Cobra x Endler Tiger");
+            at = at.east(2 + GAP);
+        }
         // 4: aquarium plants, grown, strong light
         at = startRow(level, "Pflanzen (starkes Licht)");
         for (PlantSpecies s : PlantSpecies.values()) {

@@ -133,6 +133,11 @@ public final class InfoLines {
                 MutableComponent line = Component.literal("  ");
                 if (e.contains("sex")) line.append("female".equals(e.getString("sex")) ? "♀ " : "♂ ");
                 line.append(TankCare.argComponent(e.getString("name")));
+                if (e.contains("lb", Tag.TAG_COMPOUND)) {
+                    var lb = org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome.load(e.getCompound("lb"), e.getBoolean("endler"));
+                    line.append(" ").append(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(lb.express("female".equals(e.getString("sex"))))
+                            .withStyle(ChatFormatting.GOLD));
+                }
                 if (e.contains("stage") && !LifeStage.ADULT.id().equals(e.getString("stage"))) {
                     line.append(" (").append(Component.translatable(LifeStage.byId(e.getString("stage")).translationKey())).append(")");
                 }

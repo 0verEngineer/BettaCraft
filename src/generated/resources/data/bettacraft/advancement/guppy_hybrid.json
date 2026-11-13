@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:guppy_strain",
+  "criteria": {
+    "hybrid": {
+      "conditions": {
+        "event": "lb_hybrid"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.guppy_hybrid.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:sea_pickle"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.guppy_hybrid.title"
+    }
+  },
+  "requirements": [
+    [
+      "hybrid"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

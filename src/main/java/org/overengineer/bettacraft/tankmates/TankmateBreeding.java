@@ -137,7 +137,7 @@ public final class TankmateBreeding {
                 case GLASS_EGGS -> glassEggs(level, c, e.getKey(), e.getValue(), days, full);
                 case CAVE, ANEMONE -> cave(level, c, e.getKey(), e.getValue(), days, now, full); // M20: clownfish at their anemone
                 case SCATTER -> scatter(level, c, e.getKey(), e.getValue(), days, full);
-                case LIVEBEARER -> livebearer(level, c, e.getKey(), e.getValue(), days, full);
+                case LIVEBEARER -> livebearer(level, c, e.getKey(), e.getValue(), by, days, full);
                 case FOAM_NEST -> foam(level, c, e.getKey(), e.getValue(), days, now, full);
                 case NONE -> {}
             }
@@ -548,12 +548,20 @@ public final class TankmateBreeding {
         }
     }
 
-    /** Livebearers: a female with a male becomes pregnant; the young come after {@link #gestationDays}. */
-    private static void livebearer(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list, double days, boolean full) {
+    /**
+     * Livebearers: a female with a male becomes pregnant; the young come after {@link #gestationDays}. M21.6: with the
+     * livebearer genetics a guppy female also takes an endler male and the other way round (real: they cross freely),
+     * her own kind three times as likely; the young are hybrids of her species.
+     */
+    private static void livebearer(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list,
+                                   Map<TankmateSpecies, List<TankmateEntity>> by, double days, boolean full) {
         if (full) return;
         TankData t = c.getTank();
         if (!s.breedingTemp(t.waterTemp())) return;
-        List<TankmateEntity> males = adults(list, false, false);
+        List<TankmateEntity> males = new ArrayList<>();
+        for (TankmateEntity m : adults(list, false, false)) for (int i = 0; i < 3; i++) males.add(m);
+        TankmateSpecies other = hybridPartner(s);
+        if (other != null && by.containsKey(other)) males.addAll(adults(by.get(other), false, false));
         if (males.isEmpty()) return;
         RandomSource r = level.getRandom();
         for (TankmateEntity f : adults(list, true, true)) {
@@ -561,8 +569,16 @@ public final class TankmateBreeding {
             if (r.nextDouble() >= chance(0.8 * speed(), days)) continue;
             TankmateEntity m = males.get(r.nextInt(males.size()));
             f.setGravid(0, m.genes());
-            TankCare.log(level, c, "log.bettacraft.tm.gravid", TankCare.nameArg(f));
+            if (m.species() == s) TankCare.log(level, c, "log.bettacraft.tm.gravid", TankCare.nameArg(f));
+            else TankCare.log(level, c, "log.bettacraft.tm.gravid_hybrid", TankCare.nameArg(f), TankCare.nameArg(m));
         }
+    }
+
+    /** M21.6: the species a guppy or an endler crosses with (with features.livebearerGenetics), or null. */
+    @Nullable
+    public static TankmateSpecies hybridPartner(TankmateSpecies s) {
+        if (!org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) return null;
+        return s == TankmateSpecies.GUPPY ? TankmateSpecies.ENDLER_GUPPY : s == TankmateSpecies.ENDLER_GUPPY ? TankmateSpecies.GUPPY : null;
     }
 
     /** The dwarf gourami: a foam nest like the bettas', the male guards it and chases the female away after spawning. */
@@ -739,10 +755,12 @@ public final class TankmateBreeding {
         TankWaterVolume w = new TankWaterVolume(t);
         int made = 0;
         for (int i = 0; i < n; i++) {
-            TankmateGenes g = TankmateGenes.cross(k.mother, k.father, r::nextLong);
+            // M21.6: the sex first, the X and Y of the livebearer genome depend on it
+            boolean female = r.nextBoolean();
+            TankmateGenes g = TankmateGenes.cross(k.mother, k.father, female, r::nextLong);
             Vec3 p = w.clamp(new Vec3(k.x + (r.nextDouble() - 0.5) * 0.3, k.y - 0.05 - r.nextDouble() * 0.15, k.z + (r.nextDouble() - 0.5) * 0.3),
                     0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
-            if (spawn(level, c, k.species, g, r.nextBoolean(), stage, k.generation, p) != null) made++;
+            if (spawn(level, c, k.species, g, female, stage, k.generation, p) != null) made++;
         }
         TankCare.log(level, c, k.kind == Clutch.Kind.BOX ? "log.bettacraft.tm.box_released" : "log.bettacraft.tm.fry_free",
                 "@" + k.species.translationKey(), String.valueOf(made));
@@ -793,7 +811,8 @@ public final class TankmateBreeding {
             TankWaterVolume w = new TankWaterVolume(t);
             for (int i = 0; i < free; i++) {
                 Vec3 p = w.clamp(f.position().add((r.nextDouble() - 0.5) * 0.3, 0.05, (r.nextDouble() - 0.5) * 0.3), 0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
-                if (spawn(level, c, s, TankmateGenes.cross(f.genes(), father, r::nextLong), r.nextBoolean(), LifeStage.FRY, f.generation() + 1, p) != null) made++;
+                boolean female = r.nextBoolean();
+                if (spawn(level, c, s, TankmateGenes.cross(f.genes(), father, female, r::nextLong), female, LifeStage.FRY, f.generation() + 1, p) != null) made++;
             }
             TankCare.log(level, c, boxed > 0 ? "log.bettacraft.tm.born_box" : "log.bettacraft.tm.born", TankCare.nameArg(f),
                     String.valueOf(made + boxed), String.valueOf(boxed));

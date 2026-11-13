@@ -27,9 +27,14 @@ Smaller than the guppy, males with neon-green and orange patches. Fine with bett
 | Stocking | 0.22 fish |
 | Breeding | Bears live young, 24–29 °C |
 
-## Varieties
+## Genetics and strains
 
-Varieties: Wild type, Tiger, Black Bar. The wild type is dominant, the bred varieties are recessive: only two equal alleles show the colour (carriers look wild). Of two different bred varieties the one listed first shows. Wild fish now and then carry a bred variety hidden; the menu shows the genes in a tooltip.
+Endlers have their own alleles: peacock (the wild type), tiger, black bar and japan blue on the Y chromosome (from the
+father to his sons only), swords, orange or yellow tails with coloured edges. Strains: Endler Wild Type, Tiger, Black
+Bar, Japan Blue, Yellow Tail. They cross with guppies, the young are hybrids. Everything about it:
+[Guppy Genetics](guppy_genetics.md).
+
+With `features.livebearerGenetics` off the old fixed varieties show: Wild type, Tiger, Black Bar.
 
 ## Breeding
 

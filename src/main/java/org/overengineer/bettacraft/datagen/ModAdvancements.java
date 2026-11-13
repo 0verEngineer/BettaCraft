@@ -31,7 +31,8 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
     /** All ids in tree order (also used by the language files and tests). */
     static final String[] IDS = {"root", "catch_betta", "build_tank", "fill_tank", "insert_betta", "ideal_temperature", "feeder", "recovered",
             "fight", "nest_built", "spawned", "fry_free", "grown_up", "variety_bred", "dynasty", "big_tank", "enter_interior", "decor", "substrate",
-            "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food", "water_change", "cooler", "food_bred", "mirror"};
+            "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food", "water_change", "cooler", "food_bred", "mirror",
+            "guppy_strain", "guppy_collection", "guppy_hybrid"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -93,6 +94,20 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
                 "variety", BettaEventTrigger.Instance.of(Progress.VARIETY));
         simple(grown, "dynasty", Items.GOLDEN_APPLE, AdvancementType.CHALLENGE,
                 "dynasty", BettaEventTrigger.Instance.atLeast(Progress.GROWN_UP, DYNASTY_GENERATION));
+
+        // M21.6: guppy and endler strains: any one, all of them (the advancement shows how many), a hybrid
+        var guppy = ModItems.TANKMATE_BUCKETS.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.GUPPY).get();
+        AdvancementHolder strain = simple(inserted, "guppy_strain", guppy, AdvancementType.GOAL,
+                "strain", BettaEventTrigger.Instance.of(Progress.LB_STRAIN));
+        Advancement.Builder all = Advancement.Builder.advancement().parent(strain)
+                .display(new ItemStack(ModItems.TANKMATE_BUCKETS.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY).get()),
+                        title("guppy_collection"), desc("guppy_collection"), null, AdvancementType.CHALLENGE, true, true, false);
+        for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.values()) {
+            all.addCriterion(st.id(), BettaEventTrigger.Instance.of(Progress.LB_STRAIN + "_" + st.id()));
+        }
+        all.requirements(AdvancementRequirements.Strategy.AND).save(out, id("guppy_collection"));
+        simple(strain, "guppy_hybrid", Items.SEA_PICKLE, AdvancementType.GOAL,
+                "hybrid", BettaEventTrigger.Instance.of(Progress.LB_HYBRID));
 
         // tank building and the interior
         simple(tank, "big_tank", Items.GLASS, AdvancementType.GOAL,

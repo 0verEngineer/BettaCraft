@@ -46,6 +46,10 @@ public final class Progress {
     public static final String FOOD_BRED = "food_bred";
     /** M11: a male betta flared at the player's mirror stick. */
     public static final String MIRROR = "mirror_flare";
+    /** M21.6: a bred guppy or endler of a named strain grew up ({@code lb_strain}, and {@code lb_strain_<id>} per strain). */
+    public static final String LB_STRAIN = "lb_strain";
+    /** M21.6: a bred endler x guppy hybrid grew up. */
+    public static final String LB_HYBRID = "lb_hybrid";
 
     private Progress() {}
 
@@ -105,6 +109,21 @@ public final class Progress {
             var v = BettaTypes.variety(fish.getBettaData().genome());
             if (v != null && v.includeForm()) awardNear(level, controller, VARIETY, generation);
         }
+    }
+
+    /** M21.6: a guppy or endler in a tank became adult: a bred one of a named strain or a hybrid counts for the breeding progress. */
+    public static void onTankmateGrownUp(ServerLevel level, TankBlockEntity controller, org.overengineer.bettacraft.entity.tankmate.TankmateEntity fish) {
+        if (fish.generation() <= 0) return;
+        var p = fish.livebearerPhenotype();
+        if (p == null) return;
+        if (p.hybrid()) {
+            awardNear(level, controller, LB_HYBRID, fish.generation());
+            return;
+        }
+        var strain = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(p);
+        if (strain == null) return;
+        awardNear(level, controller, LB_STRAIN, fish.generation());
+        awardNear(level, controller, LB_STRAIN + "_" + strain.id(), fish.generation());
     }
 
     /** A player caught a betta with a bucket or a fish bag. */

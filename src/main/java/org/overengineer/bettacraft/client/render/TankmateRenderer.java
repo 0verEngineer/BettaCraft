@@ -32,12 +32,23 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         }
     }
 
+    /** M21.6: the guppy and endler model of the livebearer genetics (one part per tail shape). */
+    public static final ModelLayerLocation GUPPY_LAYER = new ModelLayerLocation(BettaCraft.id("tankmate_guppy"), "main");
+
     private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
     private final Map<TankmateSpecies.Model, TankmateModel> models = new EnumMap<>(TankmateSpecies.Model.class);
+    private final org.overengineer.bettacraft.client.model.GuppyModel guppyModel;
 
     public TankmateRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new TankmateModel(ctx.bakeLayer(LAYERS.get(TankmateSpecies.Model.TETRA))), 0.08F);
         for (TankmateSpecies.Model m : TankmateSpecies.Model.values()) models.put(m, new TankmateModel(ctx.bakeLayer(LAYERS.get(m))));
+        guppyModel = new org.overengineer.bettacraft.client.model.GuppyModel(ctx.bakeLayer(GUPPY_LAYER));
+    }
+
+    /** M21.6: a male old enough to show his colours and his big tail (subadult and adult). */
+    public static boolean adultLook(TankmateEntity fish) {
+        var st = fish.lifeStage();
+        return !fish.isFemale() && (st == org.overengineer.bettacraft.entity.betta.LifeStage.ADULT || st == org.overengineer.bettacraft.entity.betta.LifeStage.SUBADULT);
     }
 
     public static String name(TankmateSpecies.Model m) {
@@ -61,18 +72,39 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     /** The model is 32 px = 2 blocks long at scale 1: scale to the species' length, the stage and the sex. */
     public static float scaleOf(TankmateEntity fish) {
         TankmateSpecies s = fish.species();
-        return (float) (s.length() / (TankmateModelDefinitions.LENGTH / 16.0)) * fish.lifeStage().scale() * sexScale(s, fish.isFemale());
+        return (float) (s.length() / (TankmateModelDefinitions.LENGTH / 16.0)) * fish.lifeStage().scale() * sexScale(s, fish.isFemale()) * hybridScale(fish);
+    }
+
+    /** M21.6: hybrids are between the guppy and the endler in size (by their endler share). */
+    public static float hybridScale(TankmateEntity fish) {
+        var p = fish.livebearerPhenotype();
+        if (p == null) return 1F;
+        double len = TankmateSpecies.GUPPY.length() + (TankmateSpecies.ENDLER_GUPPY.length() - TankmateSpecies.GUPPY.length()) * p.endler();
+        return (float) (len / fish.species().length());
     }
 
     @Override
     public void render(TankmateEntity fish, float yaw, float partialTicks, PoseStack pose, MultiBufferSource buffers, int light) {
-        this.model = models.get(fish.species().model());
+        var lb = fish.livebearerPhenotype();
+        if (lb != null) {
+            // M21.6: the genetics model with the expressed tail shape
+            boolean adult = adultLook(fish);
+            guppyModel.prepare(lb.tail(), GuppyLook.tailScale(lb, adult), !adult);
+            this.model = guppyModel;
+        } else {
+            this.model = models.get(fish.species().model());
+        }
         this.shadowRadius = 0.1F * (float) fish.species().length() * fish.lifeStage().scale();
         super.render(fish, yaw, partialTicks, pose, buffers, light);
     }
 
     @Override
     public ResourceLocation getTextureLocation(TankmateEntity fish) {
+        var lb = fish.livebearerPhenotype();
+        if (lb != null) {
+            ResourceLocation skin = BettaSkins.get(GuppyLook.layers(lb, adultLook(fish), fish.isGravid()));
+            if (skin != null) return skin;
+        }
         return texture(fish.species(), fish.variety(), fish.isFemale());
     }
 

@@ -78,6 +78,12 @@ public final class InfoData {
                 i.putString("stage", m.lifeStage().id());
                 i.putFloat("health", Math.min(m.health().healthFraction(p), m.getHealth() / m.getMaxHealth()));
                 i.putBoolean("sick", m.health().isSick());
+                // M21.6: guppies and endlers with their genes: the genome, the client names the strain
+                var lb = m.livebearerGenome();
+                if (lb != null) {
+                    i.put("lb", lb.save());
+                    i.putBoolean("endler", m.species() == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY);
+                }
             } else if (e instanceof LivingEntity le) {
                 i.putFloat("health", le.getHealth() / le.getMaxHealth());
             }

@@ -218,6 +218,9 @@ public final class BettaCraftClient {
             String model = org.overengineer.bettacraft.client.render.TankmateRenderer.name(e.getKey());
             event.registerLayerDefinition(e.getValue(), () -> org.overengineer.bettacraft.client.model.TankmateModelDefinitions.create(model));
         }
+        // M21.6: the guppy and endler model of the livebearer genetics
+        event.registerLayerDefinition(org.overengineer.bettacraft.client.render.TankmateRenderer.GUPPY_LAYER,
+                org.overengineer.bettacraft.client.model.GuppyModelDefinitions::createLayer);
     }
 
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {

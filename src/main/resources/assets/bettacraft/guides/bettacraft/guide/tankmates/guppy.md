@@ -27,9 +27,15 @@ Males with big colourful tails, females bigger and grey. Male bettas go for male
 | Stocking | 0.35 fish |
 | Breeding | Bears live young, 23–28 °C |
 
-## Varieties
+## Genetics and strains
 
-Varieties: Wild type, Red, Blue Grass, Green Cobra, Tuxedo. The wild type is dominant, the bred varieties are recessive: only two equal alleles show the colour (carriers look wild). Of two different bred varieties the one listed first shows. Wild fish now and then carry a bred variety hidden; the menu shows the genes in a tooltip.
+Every guppy has its own genes for the tail shape, the body and tail colour, the tail pattern and the patterns on its
+X and Y chromosome: the Y patterns (cobra, japan blue, red tail, ...) go only from the father to his sons. Females are
+grey with small tails but carry the genes. Fish whose look matches a known strain get its name: Red Cobra, Blue
+Moscow, Full Gold, Tuxedo Koi, Japan Blue, Blue Grass and many more. Guppies cross with endlers (hybrids). Everything
+about it: [Guppy Genetics](guppy_genetics.md).
+
+With `features.livebearerGenetics` off the old fixed varieties show: Wild type, Red, Blue Grass, Green Cobra, Tuxedo.
 
 ## Breeding
 

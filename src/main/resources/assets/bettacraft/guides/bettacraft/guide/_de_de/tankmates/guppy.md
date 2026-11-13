@@ -27,9 +27,16 @@ Männchen mit großen bunten Schwänzen, Weibchen größer und grau. Betta-Männ
 | Besatz | 0,35 Fisch |
 | Zucht | lebendgebärend, 23–28 °C |
 
-## Farbformen
+## Genetik und Zuchtformen
 
-Farbformen: Wildform, Rot, Blue Grass, Green Cobra, Tuxedo (Halbschwarz). Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Farbe (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge tragen manchmal eine Zuchtform verdeckt; das Menü zeigt die Gene im Tooltip.
+Jeder Guppy hat eigene Gene für die Schwanzform, Körper- und Schwanzfarbe, das Schwanzmuster und die Muster auf
+seinem X- und Y-Chromosom: Die Y-Muster (Cobra, Japan Blue, Red Tail, …) gehen nur vom Vater an seine Söhne.
+Weibchen sind grau mit kleinen Schwänzen, tragen die Gene aber mit. Fische, deren Aussehen einer bekannten
+Zuchtform entspricht, bekommen ihren Namen: Red Cobra, Blue Moskau, Full Gold, Tuxedo Koi, Japan Blue, Blue Grass
+und viele mehr. Guppys kreuzen sich mit Endlern (Hybride). Alles dazu: [Guppy-Genetik](guppy_genetics.md).
+
+Mit `features.livebearerGenetics` aus zeigen sich die alten festen Farbformen: Wildform, Rot, Blue Grass, Green
+Cobra, Tuxedo.
 
 ## Zucht
 

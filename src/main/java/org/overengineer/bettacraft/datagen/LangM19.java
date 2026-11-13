@@ -77,7 +77,7 @@ final class LangM19 {
         a.accept("entity.bettacraft.guppy", "Guppy");
         a.accept("item.bettacraft.guppy_bucket", "Bucket of Guppy");
         a.accept("item.bettacraft.guppy_spawn_egg", "Guppy Spawn Egg");
-        a.accept("info.bettacraft.tankmate.guppy", "Guppy (Poecilia reticulata) from Venezuela and Trinidad, today wild in warm waters worldwide.\nMales with big colourful tails, females bigger and grey. Male bettas go for male guppies.\nShoal of 3 or more, 22–28 °C, water: hardy. Counts 0.35 fish in the stocking.\nBears live young.\nCatch: aquarium net in rivers, wandering trader.");
+        a.accept("info.bettacraft.tankmate.guppy", "Guppy (Poecilia reticulata) from Venezuela and Trinidad, today wild in warm waters worldwide.\nMales with big colourful tails, females bigger and grey. Male bettas go for male guppies.\nShoal of 3 or more, 22–28 °C, water: hardy. Counts 0.35 fish in the stocking.\nBears live young.\nGenetics: every guppy has its own genes for the tail shape (delta, triangle, swords, lyre, spade, round, flag), the body colour (gold, albino, blond, blue, black), the tail colour and pattern, and patterns on the X and Y chromosome (cobra, tuxedo, moscow, japan blue, red tail, red head): the Y patterns go only from the father to the sons. Females are grey but carry the genes. Named strains: Red Cobra, Blue Moscow, Full Gold, Tuxedo Koi and more. Crosses with endlers (hybrids).\nCatch: aquarium net in rivers, wandering trader.");
         a.accept("variety.bettacraft.guppy.wild", "Wild type");
         a.accept("variety.bettacraft.guppy.red", "Red");
         a.accept("variety.bettacraft.guppy.blue_grass", "Blue Grass");
@@ -86,7 +86,7 @@ final class LangM19 {
         a.accept("entity.bettacraft.endler_guppy", "Endler Guppy");
         a.accept("item.bettacraft.endler_guppy_bucket", "Bucket of Endler Guppy");
         a.accept("item.bettacraft.endler_guppy_spawn_egg", "Endler Guppy Spawn Egg");
-        a.accept("info.bettacraft.tankmate.endler_guppy", "Endler Guppy (Poecilia wingei) from the Laguna de Patos in Venezuela.\nSmaller than the guppy, males with neon-green and orange patches. Fine with bettas in most cases.\nShoal of 3 or more, 23–30 °C, water: hardy. Counts 0.22 fish in the stocking.\nBears live young.\nCatch: aquarium net in rivers, jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.endler_guppy", "Endler Guppy (Poecilia wingei) from the Laguna de Patos in Venezuela.\nSmaller than the guppy, males with neon-green and orange patches. Fine with bettas in most cases.\nShoal of 3 or more, 23–30 °C, water: hardy. Counts 0.22 fish in the stocking.\nBears live young.\nGenetics: own alleles (peacock, tiger, black bar and japan blue on the Y chromosome, swords, orange or yellow tails); crosses with guppies, the young are hybrids.\nCatch: aquarium net in rivers, jungle water, wandering trader.");
         a.accept("variety.bettacraft.endler_guppy.wild", "Wild type");
         a.accept("variety.bettacraft.endler_guppy.tiger", "Tiger");
         a.accept("variety.bettacraft.endler_guppy.black_bar", "Black Bar");

@@ -271,8 +271,15 @@ public final class NetCatching {
             var s = rollFish(fish, rnd);
             if (s != null) {
                 int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;
-                ItemStack bag = org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(s, n,
-                        () -> org.overengineer.bettacraft.tankmates.TankmateGenes.wild(s, 0.08, rnd), rnd, false);
+                java.util.function.Supplier<org.overengineer.bettacraft.tankmates.TankmateGenes> genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.wild(s, 0.08, rnd);
+                // M21.6: now and then a group of feral fancy guppies (escaped strains) instead of wild ones
+                var feral = org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()
+                        ? org.overengineer.bettacraft.world.TankmateTrades.traderStrains(s) : java.util.List.<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain>of();
+                if (!feral.isEmpty() && rnd.nextInt(12) == 0) {
+                    var st = feral.get(rnd.nextInt(feral.size()));
+                    genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.strain(s, st);
+                }
+                ItemStack bag = org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(s, n, genes, rnd, false);
                 give(player, bag, Component.translatable(s.translationKey()));
                 return true;
             }

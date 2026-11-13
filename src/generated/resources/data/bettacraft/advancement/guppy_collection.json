@@ -1,0 +1,273 @@
+{
+  "parent": "bettacraft:guppy_strain",
+  "criteria": {
+    "albino_full_red": {
+      "conditions": {
+        "event": "lb_strain_albino_full_red"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "black_moscow": {
+      "conditions": {
+        "event": "lb_strain_black_moscow"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "blue_grass": {
+      "conditions": {
+        "event": "lb_strain_blue_grass"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "blue_mosaic": {
+      "conditions": {
+        "event": "lb_strain_blue_mosaic"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "blue_moscow": {
+      "conditions": {
+        "event": "lb_strain_blue_moscow"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "endler_black_bar": {
+      "conditions": {
+        "event": "lb_strain_endler_black_bar"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "endler_japan_blue": {
+      "conditions": {
+        "event": "lb_strain_endler_japan_blue"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "endler_tiger": {
+      "conditions": {
+        "event": "lb_strain_endler_tiger"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "endler_wild": {
+      "conditions": {
+        "event": "lb_strain_endler_wild"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "endler_yellow_tail": {
+      "conditions": {
+        "event": "lb_strain_endler_yellow_tail"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "full_black": {
+      "conditions": {
+        "event": "lb_strain_full_black"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "full_gold": {
+      "conditions": {
+        "event": "lb_strain_full_gold"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "full_red": {
+      "conditions": {
+        "event": "lb_strain_full_red"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "green_cobra": {
+      "conditions": {
+        "event": "lb_strain_green_cobra"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "green_moscow": {
+      "conditions": {
+        "event": "lb_strain_green_moscow"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "japan_blue": {
+      "conditions": {
+        "event": "lb_strain_japan_blue"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "leopard": {
+      "conditions": {
+        "event": "lb_strain_leopard"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "lyretail": {
+      "conditions": {
+        "event": "lb_strain_lyretail"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "platinum_white": {
+      "conditions": {
+        "event": "lb_strain_platinum_white"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "red_cobra": {
+      "conditions": {
+        "event": "lb_strain_red_cobra"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "red_double_sword": {
+      "conditions": {
+        "event": "lb_strain_red_double_sword"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "red_mosaic": {
+      "conditions": {
+        "event": "lb_strain_red_mosaic"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "tuxedo": {
+      "conditions": {
+        "event": "lb_strain_tuxedo"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "tuxedo_blue": {
+      "conditions": {
+        "event": "lb_strain_tuxedo_blue"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "tuxedo_koi": {
+      "conditions": {
+        "event": "lb_strain_tuxedo_koi"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "wild_guppy": {
+      "conditions": {
+        "event": "lb_strain_wild_guppy"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "yellow_cobra": {
+      "conditions": {
+        "event": "lb_strain_yellow_cobra"
+      },
+      "trigger": "bettacraft:event"
+    },
+    "yellow_grass": {
+      "conditions": {
+        "event": "lb_strain_yellow_grass"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.guppy_collection.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:endler_guppy_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.guppy_collection.title"
+    }
+  },
+  "requirements": [
+    [
+      "tuxedo_koi"
+    ],
+    [
+      "albino_full_red"
+    ],
+    [
+      "red_cobra"
+    ],
+    [
+      "green_cobra"
+    ],
+    [
+      "yellow_cobra"
+    ],
+    [
+      "blue_moscow"
+    ],
+    [
+      "green_moscow"
+    ],
+    [
+      "black_moscow"
+    ],
+    [
+      "tuxedo"
+    ],
+    [
+      "tuxedo_blue"
+    ],
+    [
+      "japan_blue"
+    ],
+    [
+      "full_red"
+    ],
+    [
+      "red_mosaic"
+    ],
+    [
+      "blue_mosaic"
+    ],
+    [
+      "blue_grass"
+    ],
+    [
+      "yellow_grass"
+    ],
+    [
+      "leopard"
+    ],
+    [
+      "full_gold"
+    ],
+    [
+      "platinum_white"
+    ],
+    [
+      "full_black"
+    ],
+    [
+      "red_double_sword"
+    ],
+    [
+      "lyretail"
+    ],
+    [
+      "wild_guppy"
+    ],
+    [
+      "endler_tiger"
+    ],
+    [
+      "endler_black_bar"
+    ],
+    [
+      "endler_japan_blue"
+    ],
+    [
+      "endler_yellow_tail"
+    ],
+    [
+      "endler_wild"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

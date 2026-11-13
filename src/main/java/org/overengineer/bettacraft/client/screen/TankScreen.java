@@ -546,8 +546,19 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         pendingTooltip = null;
         super.render(g, mouseX, mouseY, partialTick);
-        if (pendingTooltip != null) g.renderComponentTooltip(font, pendingTooltip, mouseX, mouseY);
-        else renderTooltip(g, mouseX, mouseY);
+        if (pendingTooltip != null) {
+            if (geneTooltipForTest) g.renderComponentTooltip(font, pendingTooltip, leftPos + 96, topPos + 22);
+            else g.renderComponentTooltip(font, pendingTooltip, mouseX, mouseY);
+        } else {
+            renderTooltip(g, mouseX, mouseY);
+        }
+    }
+
+    /** M21.6 dev smoke test only: shows the gene tooltip of the selected tankmate as if the mouse were on its name. */
+    private boolean geneTooltipForTest;
+
+    public void showGeneTooltipForTest(boolean on) {
+        geneTooltipForTest = on;
     }
 
     @Override
@@ -1146,11 +1157,28 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (s == null) return;
         Component sub = s.varieties().size() > 1 ? Component.translatable(s.varietyKey(d.getString("variety"))).withStyle(ChatFormatting.GOLD)
                 : Component.literal(s.latin()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
+        // M21.6: guppies and endlers with their genes: the strain, a tooltip with every locus
+        org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome lb = d.contains("lb", net.minecraft.nbt.Tag.TAG_COMPOUND)
+                ? org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome.load(d.getCompound("lb"), s == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY)
+                : null;
+        if (lb != null) sub = org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(lb.express(sel.female())).withStyle(ChatFormatting.GOLD);
         fitLine(g, sub, x, y, 0xFFD27A, 124);
-        if (mx >= x && mx < x + 124 && my >= y && my < y + 9) {
-            pendingTooltip = List.of(Component.literal(s.latin()).withStyle(ChatFormatting.ITALIC),
-                    Component.translatable("gui.bettacraft.tm.genes", d.getString("genes")).withStyle(ChatFormatting.GRAY),
-                    Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
+        if (geneTooltipForTest || mx >= x && mx < x + 124 && my >= y && my < y + 9) {
+            if (lb != null) {
+                var ph = lb.express(sel.female());
+                List<Component> tip = new ArrayList<>();
+                tip.add(Component.literal(s.latin()).withStyle(ChatFormatting.ITALIC));
+                tip.add(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(ph).withStyle(ChatFormatting.GOLD));
+                tip.add(Component.empty().append(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.summary(ph)).withStyle(ChatFormatting.YELLOW));
+                tip.addAll(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.lines(lb, sel.female()));
+                tip.add(Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
+                tip.add(Component.translatable(sel.female() ? "gui.bettacraft.lb.female_hint" : "gui.bettacraft.lb.male_hint").withStyle(ChatFormatting.DARK_GRAY));
+                pendingTooltip = tip;
+            } else {
+                pendingTooltip = List.of(Component.literal(s.latin()).withStyle(ChatFormatting.ITALIC),
+                        Component.translatable("gui.bettacraft.tm.genes", d.getString("genes")).withStyle(ChatFormatting.GRAY),
+                        Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
+            }
         }
         y += 9;
         MutableComponent stage = Component.translatable("stage.bettacraft." + sel.stage());

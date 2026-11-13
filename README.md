@@ -46,8 +46,9 @@ block.
   cleaning crew and the algae scraper keep it clean. Caught with the aquarium net by biome.
 - **Tankmates:** twenty-one popular aquarium fish as real animals with their own models: tetras (neon, cardinal, green
   neon in green and blue, ember, glowlight), rasboras (harlequin, mosquito rasbora), corydoras (pygmy, panda, sterbai, green gold), plecos (L134
-  leopard frog, L046 zebra, bristlenose), otocinclus, kuhli and clown loaches, guppies, endlers, platys (colour
-  varieties) and the dwarf gourami. Shoals, temperature and water ranges per species, bettas chase guppy and gourami
+  leopard frog, L046 zebra, bristlenose), otocinclus, kuhli and clown loaches, guppies and endlers (real genetics:
+  tail shapes, body and tail colours, X and Y patterns, 28 named strains, hybrids), platys (colour varieties) and the
+  dwarf gourami. Shoals, temperature and water ranges per species, bettas chase guppy and gourami
   males, everybody hunts fry and eggs, clown loaches eat snails, otocinclus graze algae. Every species breeds its own
   way: corydoras glue eggs to the glass after a cool water change, plecos spawn in a cave and the male guards, egg
   scatterers need fine plants or a spawning mop, livebearers bear live young (breeding box), the dwarf gourami builds

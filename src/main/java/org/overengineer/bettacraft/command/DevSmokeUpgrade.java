@@ -134,7 +134,7 @@ public final class DevSmokeUpgrade {
         JsonObject now = snapshot(server, level, expected);
         Map<Long, JsonObject> got = new TreeMap<>();
         for (JsonElement e : now.getAsJsonArray("tanks")) got.put(e.getAsJsonObject().get("pos").getAsLong(), e.getAsJsonObject());
-        int animals = 0, critters = 0, equipment = 0;
+        int animals = 0, critters = 0, equipment = 0, converted = 0;
         for (JsonElement e : expected.getAsJsonArray("tanks")) {
             JsonObject want = e.getAsJsonObject();
             long pos = want.get("pos").getAsLong();
@@ -165,8 +165,18 @@ public final class DevSmokeUpgrade {
                 }
                 if (!wa.has("type")) continue; // the old version had not loaded it either
                 animals++;
-                for (String k : new String[]{"type", "variety", "female", "stage", "genome"}) {
+                for (String k : new String[]{"type", "variety", "female", "stage", "genome", "lb", "strain"}) {
                     if (wa.has(k) && !wa.get(k).equals(ha.get(k))) problems.add(where + ": animal " + wa.get("uuid").getAsString() + " " + k + " " + wa.get(k) + " -> " + ha.get(k));
+                }
+                // M21.6: guppies and endlers of an older version (no genome yet) get the genome of their variety
+                if (ha.has("lb_expected") && !wa.has("lb")) {
+                    converted++;
+                    if (!ha.get("lb_expected").equals(ha.get("lb"))) {
+                        problems.add(where + ": animal " + wa.get("uuid").getAsString() + " genome " + ha.get("lb") + ", expected " + ha.get("lb_expected"));
+                    }
+                    if (ha.has("strain_expected") && !ha.get("strain_expected").equals(ha.get("strain"))) {
+                        problems.add(where + ": animal " + wa.get("uuid").getAsString() + " strain " + ha.get("strain") + ", expected " + ha.get("strain_expected"));
+                    }
                 }
             }
             if (!haveA.isEmpty()) problems.add(where + ": new animals " + haveA.keySet());
@@ -189,6 +199,8 @@ public final class DevSmokeUpgrade {
         }
         LOGGER.info("[smoketest] upgrade stage {}: compared {} tanks, {} animals, {} small animals, {} equipment blocks, {} items in chests: {} difference(s)",
                 STAGE, expected.getAsJsonArray("tanks").size(), animals, critters, equipment, items, problems.size());
+        LOGGER.info("[smoketest] upgrade stage {}: {} guppies and endlers converted from their old variety", STAGE, converted);
+        if (STAGE == 1 && converted < 16) problems.add("only " + converted + " old guppies and endlers converted (the reference has every old variety)");
     }
 
     private static String diff(JsonObject a, JsonObject b) {
@@ -252,6 +264,21 @@ public final class DevSmokeUpgrade {
                     a.addProperty("variety", m.variety());
                     a.addProperty("female", m.isFemale());
                     a.addProperty("stage", m.lifeStage().name());
+                    // M21.6: the guppy and endler genome, its strain and what the old variety should have become
+                    var lb = m.genes().lb();
+                    if (lb != null) {
+                        a.addProperty("lb", lb.toString());
+                        var strain = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(lb.express(m.isFemale()));
+                        a.addProperty("strain", strain == null ? "" : strain.id());
+                        boolean endler = m.species() == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY;
+                        a.addProperty("lb_expected", org.overengineer.bettacraft.genetics.livebearer.LivebearerLegacy.convert(endler, m.genes().a(),
+                                m.genes().b(), m.variety()).toString());
+                        if (!m.isFemale() && m.genes().pure()) {
+                            var want = (endler ? org.overengineer.bettacraft.genetics.livebearer.LivebearerLegacy.ENDLER_STRAINS
+                                    : org.overengineer.bettacraft.genetics.livebearer.LivebearerLegacy.GUPPY_STRAINS).get(m.variety());
+                            if (want != null) a.addProperty("strain_expected", want.id());
+                        }
+                    }
                 } else if (e instanceof BettaEntity b) {
                     a.addProperty("genome", b.genome().toString());
                     a.addProperty("female", b.isFemale());

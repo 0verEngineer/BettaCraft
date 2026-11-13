@@ -136,9 +136,17 @@ public final class ModCreativeTabs {
                 java.util.random.RandomGenerator tr = new java.util.Random(19);
                 for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
                     int n = sp.shoaling() ? Math.max(6, sp.shoal()) : 2;
-                    for (String v : sp.varieties()) {
-                        out.accept(org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(sp, n,
-                                () -> org.overengineer.bettacraft.tankmates.TankmateGenes.pure(sp, v), tr, true));
+                    if (org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(sp) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+                        // M21.6: a pair of every named strain
+                        for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(sp == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY)) {
+                            out.accept(org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(sp, 2,
+                                    () -> org.overengineer.bettacraft.tankmates.TankmateGenes.strain(sp, st), tr, true));
+                        }
+                    } else {
+                        for (String v : sp.varieties()) {
+                            out.accept(org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(sp, n,
+                                    () -> org.overengineer.bettacraft.tankmates.TankmateGenes.pure(sp, v), tr, true));
+                        }
                     }
                     out.accept(org.overengineer.bettacraft.tankmates.TankmateBucketItem.withFish(new ItemStack(ModItems.TANKMATE_BUCKETS.get(sp).get()), sp,
                             org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp), false, org.overengineer.bettacraft.entity.betta.LifeStage.ADULT));

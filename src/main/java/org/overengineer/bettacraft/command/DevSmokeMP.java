@@ -326,7 +326,19 @@ public final class DevSmokeMP {
         var mates = org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(server.overworld(), c.getTank());
         long albino = mates.stream().filter(m -> "albino".equals(m.variety())).count();
         int eggs = c.getTank().clutches().stream().mapToInt(k -> k.count).sum();
-        check(name + ": " + a[1] + " tankmates (server " + mates.size() + ")", Integer.parseInt(a[1]) == mates.size() && mates.size() == 5);
+        check(name + ": " + a[1] + " tankmates (server " + mates.size() + ")", Integer.parseInt(a[1]) == mates.size() && mates.size() == 7);
+        // M21.6: the guppy strains the client sees (from the synced genome) = the server's
+        java.util.List<String> strains = new java.util.ArrayList<>();
+        for (var m : mates) {
+            var ph = m.livebearerPhenotype();
+            if (ph == null) continue;
+            var st = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(ph);
+            strains.add(st == null ? "none" : st.id());
+        }
+        java.util.Collections.sort(strains);
+        String want = String.join(",", strains);
+        check(name + ": guppy strains " + (a.length > 5 ? a[5] : "?") + " (server " + want + ")", a.length > 5 && a[5].equals(want)
+                && want.equals("full_gold,tuxedo_koi"));
         check(name + ": " + a[2] + " albino bristlenose (server " + albino + ")", Integer.parseInt(a[2]) == albino && albino == 1);
         check(name + ": " + a[3] + " clutches with " + a[4] + " eggs (server " + c.getTank().clutches().size() + ", " + eggs + ")",
                 Integer.parseInt(a[3]) == c.getTank().clutches().size() && Integer.parseInt(a[4]) == eggs && eggs > 0);
@@ -732,6 +744,14 @@ public final class DevSmokeMP {
             var pl = org.overengineer.bettacraft.tankmates.TankmateSpecies.BRISTLENOSE_PLECO;
             org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, pl, org.overengineer.bettacraft.tankmates.TankmateGenes.pure(pl, "albino"), false,
                     org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0, w.box().getCenter().add(0, -0.5, 0.2));
+            // M21.6: two guppies with their genes (the clients must see the strains)
+            var gp = org.overengineer.bettacraft.tankmates.TankmateSpecies.GUPPY;
+            org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, gp, org.overengineer.bettacraft.tankmates.TankmateGenes.strain(gp,
+                    org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.TUXEDO_KOI), false, org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0,
+                    w.box().getCenter().add(0.2, 0.1, 0));
+            org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, gp, org.overengineer.bettacraft.tankmates.TankmateGenes.strain(gp,
+                    org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.FULL_GOLD), true, org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0,
+                    w.box().getCenter().add(-0.2, 0.1, 0));
             var k = new org.overengineer.bettacraft.tankmates.Clutch(c.getTank().nextClutchId(), org.overengineer.bettacraft.tankmates.TankmateSpecies.PANDA_CORY,
                     org.overengineer.bettacraft.tankmates.Clutch.Kind.GLASS, min.getX() + 1.0, min.getY() + 0.5, min.getZ() + 1.0 / 16 + 0.004, 10,
                     org.overengineer.bettacraft.tankmates.TankmateGenes.wild(org.overengineer.bettacraft.tankmates.TankmateSpecies.PANDA_CORY),

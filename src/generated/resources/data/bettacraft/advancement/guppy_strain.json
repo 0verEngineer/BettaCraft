@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "strain": {
+      "conditions": {
+        "event": "lb_strain"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.guppy_strain.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:guppy_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.guppy_strain.title"
+    }
+  },
+  "requirements": [
+    [
+      "strain"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

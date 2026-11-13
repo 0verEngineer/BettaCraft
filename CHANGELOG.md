@@ -4,6 +4,45 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.13.3-beta.1] - 2026-11-14
+
+Guppy and endler genetics: real genes per fish instead of fixed varieties (`features.livebearerGenetics`).
+
+### Added
+- **Guppy and endler genetics**, modelled on real guppy genetics: every guppy and endler has its own genes for the
+  **tail shape** (delta, triangle, double sword, top and bottom sword, lyretail, spade, round, flag), the **body
+  colour** (wild grey, gold, albino, blond, pink white, blue, black; each its own recessive gene, dark is dominant), the
+  **tail colour** (red, blue, yellow, green, black, white, orange) and the **tail pattern** (mosaic, grass, leopard,
+  spots). The **patterns** sit on the sex chromosomes: Cobra, Tuxedo, Moscow on the X and the Y, Japan Blue, Red Tail
+  and Red Head and the wild spotting on the Y - **Y patterns go only from the father to his sons**. The young inherit at
+  birth (one allele of each parent; the sex is decided first). Females are grey with small tails but carry every gene.
+- Endlers have their own alleles (peacock, tiger, black bar, japan blue on the Y, swords, orange or yellow tails with
+  coloured edges) and **cross with guppies**: the young are **hybrids** of the mother's species, between the two in
+  size and look, with the endler share of their ancestry.
+- **28 named strains** like the betta varieties: Red, Green and Yellow Cobra, Blue, Green and Black Moscow, Full Gold,
+  Tuxedo Koi, Half Black Red and Blue, Japan Blue, Full Red, Albino Full Red, Red and Blue Mosaic, Blue and Yellow
+  Grass, Leopard, Platinum White, Full Black, Red Double Sword, Lyretail, Wild Guppy, Endler Wild Type, Tiger, Black
+  Bar, Japan Blue and Yellow Tail. Advancements **Line Breeder** (a bred strain), **Guppy Collection** (every strain,
+  with progress) and **Crossbreed** (a hybrid).
+- The look is composited from one greyscale mask per gene (generated in `tools/assetgen/guppies.py`) on a new guppy
+  model with one part per tail shape; works with shader packs like the bettas.
+- Tank menu: the strain on the animals tab, every gene in the tooltip (shown and hidden allele, X and Y, endler share);
+  bucket and bag tooltips name the strain; Jade / The One Probe / WTHIT list it; JEI care sheets explain the genetics.
+- The wandering trader sells wild-caught guppies and endlers and pure-bred strains; the aquarium net brings wild fish
+  (some carry a bred allele hidden) and now and then feral fancy guppies. The creative tab has a pair of every strain.
+- Handbook page **Guppy Genetics** (en, de) with the genes, the X and Y, the tail shapes, every strain and the hybrids.
+
+### Changed
+- Guppies and endlers of older worlds keep their look: the old varieties become matching genomes when loaded (Wild ->
+  Wild Guppy, Red -> Full Red, Blue Grass, Green Cobra, Tuxedo -> Half Black Red; endler Wild, Tiger, Black Bar). The
+  variety alleles are kept and still inherited: with `features.livebearerGenetics` off the old fixed varieties show.
+
+### Development
+- Unit tests for the inheritance (dominance, Mendel ratios, Y only to sons, X zig-zag, hybrids, strains, old
+  varieties, NBT); GameTests for births (Red Cobra x Full Gold, endler x guppy), the conversion on load, the trader and
+  the switch; client smoke `-Psmoketestm21_6`; the upgrade test checks the conversion of every old variety and that the
+  genomes survive save and reload.
+
 ## [1.13.2-beta.1] - 2026-11-14
 
 Polish after the showcase tour: smoother fish, the green neon, more snail colours, break protection, a clip-on feeder and

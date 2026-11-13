@@ -115,6 +115,7 @@ public final class TankmateCare {
             if (fish.stage == LifeStage.ADULT) {
                 TankCare.log(level, controller, "log.bettacraft.grown_up", TankCare.nameArg(fish));
                 controller.markTankChanged();
+                org.overengineer.bettacraft.progression.Progress.onTankmateGrownUp(level, controller, fish);
             }
         }
     }

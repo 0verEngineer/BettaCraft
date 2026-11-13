@@ -157,7 +157,15 @@ final class DevClientSmokeMP {
                     var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, min);
                     int clutches = c == null || c.getTank() == null ? -1 : c.getTank().clutches().size();
                     int eggs = c == null || c.getTank() == null ? -1 : c.getTank().clutches().stream().mapToInt(k -> k.count).sum();
-                    send("tankmates " + mates.size() + " " + albino + " " + clutches + " " + eggs);
+                    java.util.List<String> strains = new java.util.ArrayList<>();
+                    for (var m : mates) {
+                        var ph = m.livebearerPhenotype();
+                        if (ph == null) continue;
+                        var st = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(ph);
+                        strains.add(st == null ? "none" : st.id());
+                    }
+                    java.util.Collections.sort(strains);
+                    send("tankmates " + mates.size() + " " + albino + " " + clutches + " " + eggs + " " + (strains.isEmpty() ? "-" : String.join(",", strains)));
                 });
             }
             case "reef" -> {

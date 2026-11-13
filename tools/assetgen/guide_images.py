@@ -314,6 +314,37 @@ def m21_5(out_en: Path) -> None:
             print("missing", src)
 
 
+# M21.6 scene (DevClientSmokeM216, -Psmoketestm21_6): 2x2 display tanks of guppies and endlers, combined into grids.
+# ``py guide_images.py m21_6``.
+M21_6_BOX = (300, 150, 980, 740)
+M21_6_GRIDS = {
+    "tm_guppy_strains": (["strains_guppy_1", "strains_guppy_2", "strains_guppy_4", "strains_endler_1"], 2),
+    "tm_guppy_pairs": (["pairs_1", "females_1"], 2),
+    "tm_guppy_tails": (["tails_1", "tails_2", "tails_3"], 3),
+    "tm_guppy_hybrids": (["hybrids_1", "hybrids_2"], 2),
+    "tm_guppy": (["strains_guppy_1"], 1),
+    "tm_endler_guppy": (["strains_endler_1"], 1),
+}
+
+
+def m21_6(out_en: Path) -> None:
+    for name, (shots, cols) in M21_6_GRIDS.items():
+        tiles = []
+        for shot in shots:
+            src = SHOTS / f"bettacraft_m21_6_{shot}.png"
+            if not src.exists():
+                print("missing", src)
+                return
+            tiles.append(Image.open(src).convert("RGB").crop(M21_6_BOX))
+        w, h = tiles[0].size
+        rows = (len(tiles) + cols - 1) // cols
+        sheet = Image.new("RGB", (w * cols, h * rows))
+        for i, t in enumerate(tiles):
+            sheet.paste(t, ((i % cols) * w, (i // cols) * h))
+        width = 960
+        save(sheet.resize((width, round(sheet.height * width / sheet.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -328,6 +359,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m21_6"]:
+        m21_6(out_en)
+        return 0
     if sys.argv[1:] == ["m21_5"]:
         m21_5(out_en)
         return 0

@@ -289,7 +289,22 @@ public final class TankmateItems {
         int females = 0;
         for (CompoundTag f : fish) if (f.getCompound(TankmateEntity.KEY).getBoolean("female")) females++;
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.group", fish.size() - females, females).withStyle(ChatFormatting.GRAY));
-        if (s.varieties().size() > 1) {
+        if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+            // M21.6: the strains in the bag
+            java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
+            java.util.Map<String, Component> names = new java.util.HashMap<>();
+            for (CompoundTag f : fish) {
+                Component n = TankmateBucketItem.livebearerName(s, f.getCompound(TankmateEntity.KEY));
+                if (n == null) continue;
+                v.merge(n.getString(), 1, Integer::sum);
+                names.putIfAbsent(n.getString(), n);
+            }
+            int lines = 0;
+            for (var e : v.entrySet()) {
+                if (lines++ >= 6) break;
+                tooltip.add(Component.literal(e.getValue() + " × ").append(names.get(e.getKey())).withStyle(ChatFormatting.GOLD));
+            }
+        } else if (s.varieties().size() > 1) {
             java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
             for (CompoundTag f : fish) v.merge(TankmateGenes.load(f.getCompound(TankmateEntity.KEY).getCompound("genes"), s).phenotype(s), 1, Integer::sum);
             for (var e : v.entrySet()) tooltip.add(Component.literal(e.getValue() + " × ").append(Component.translatable(s.varietyKey(e.getKey())))
