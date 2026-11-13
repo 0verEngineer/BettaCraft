@@ -171,14 +171,17 @@ public final class CritterGameTests {
         for (Critter k : red.getTank().critters()) {
             if (k.generation == 1) h.assertTrue(k.genes.shows(0), "red x red gives red young");
         }
+        // M17: an early F1 son can already mate with his red mother (a backcross, also "generation 1"): its young are
+        // red/red or red/blue. So: every young carries red from the mother, every one that carries blue is wild-coloured
         long f1 = 0;
         for (Critter k : mix.getTank().critters()) {
             if (k.generation != 1) continue;
+            h.assertTrue(k.genes.carries(0), "every young carries red from the mother");
+            if (!k.genes.carries(1)) continue;
             f1++;
             h.assertTrue("wild".equals(k.genes.variety(CritterSpecies.NEOCARIDINA)), "F1 of red x blue is wild-coloured");
-            h.assertTrue(k.genes.carries(0) && k.genes.carries(1), "and carries both");
         }
-        h.assertTrue(f1 > 0, "F1 hatched");
+        h.assertTrue(f1 > 0, "F1 hatched (wild, carrying both)");
         // the young grow up
         days(h, red, 4, true);
         h.assertTrue(red.getTank().critters().stream().anyMatch(k -> k.generation == 1 && k.adult()), "the young grew up");
