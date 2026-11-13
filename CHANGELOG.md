@@ -16,13 +16,15 @@ Fixes, path finding in the interior, glass fish buckets and a first look at real
 - **New plant look (prototype)**: Rotala, Vallisneria and Anubias are drawn with real leaves inside the interior (round
   leaves on thin stems, long ribbons, broad oval leaves on a rhizome); Rotala and Vallisneria sway in the water like
   kelp. The blocks of the plant stay (shears, breaking, growth and the miniature work as before), the miniature keeps
-  the block look. Works with Sodium and Iris shader packs. Switch: `features.plantMeshes` (common config).
+  the block look. Works with Sodium and Iris shader packs, and the leaves cast shadows with a shader pack. A plant is
+  drawn anew as soon as one of its blocks changes (shears, growth, breaking), in the next frame; nothing is rebuilt on
+  a timer. Switch: `features.plantMeshes` (common config).
 - **Config `compat.overlayProvider`** (common config): AUTO (default) gives the Bettacraft lines only to the first
   installed overlay mod of Jade, WTHIT and The One Probe, JADE / TOP / WTHIT pick one, ALL shows them in every one.
 - **Showcase world** for development: `gradlew buildShowcase` builds the world "Bettacraft Schaukasten" with every
   betta variety, tankmate, small animal, plant, floating plant, coral, reef animal, decoration, the equipment, the 16
-  light colours, the glass types and shapes, a reef and a brackish tank, all with signs; `gradlew runClient
-  -Pshowcasetour` takes screenshots of it.
+  light colours, the glass types and shapes, a reef and a brackish tank, every tank named on its glass (no signs);
+  `gradlew runClient -Pshowcasetour` takes screenshots of it.
 
 ### Changed
 - **Fish bucket icons**: the fish now swims in a glass bucket of water (smaller, fully inside, with a water line and a

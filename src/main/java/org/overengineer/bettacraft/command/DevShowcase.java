@@ -19,9 +19,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -56,7 +53,9 @@ import org.overengineer.bettacraft.plants.PlantSpecies;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
 import org.overengineer.bettacraft.registry.ModItems;
+import org.overengineer.bettacraft.tank.SignPosition;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
+import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.TankEquipment;
 import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankInteractions;
@@ -77,7 +76,7 @@ import org.slf4j.LoggerFactory;
 /**
  * M21: builds the showcase world "Bettacraft Schaukasten" ({@code gradlew buildShowcase}: a dedicated server without a
  * window on a fresh flat world in {@code run/saves}, {@code -Dbettacraft.showcase=true}). Rows of tanks grouped by theme,
- * a sign in front of every tank (translated names) and a sign at the start of every row: every betta variety, every
+ * every tank named on its glass (German names, no vanilla signs) and a small named dry tank at the start of every row: every betta variety, every
  * tankmate, every small animal and the frog, every aquarium plant (grown, under strong light), every floating plant,
  * every decoration, the equipment (filters, heaters, coolers, lid and feeder, skimmer, pump), the 16 light colours, the
  * glass types, styles and free shapes, every coral and reef animal in its own salt water tank, a reef tank and a
@@ -91,7 +90,7 @@ public final class DevShowcase {
     private static int ticks;
     private static int haltAt = -1;
     private static int builtAt = -1;
-    private static int tanks, animals, plants;
+    private static int tanks, animals, plants, named;
     private static BlockPos origin;
     private static int row;
     private static final List<ChunkPos> forced = new ArrayList<>();
@@ -137,7 +136,7 @@ public final class DevShowcase {
                 LOGGER.info("[showcase] saving");
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 server.saveEverything(false, true, true);
-                LOGGER.info("[showcase] SHOWCASE BUILT: {} tanks, {} animals, {} plants", tanks, animals, plants);
+                LOGGER.info("[showcase] SHOWCASE BUILT: {} tanks ({} named), {} animals, {} plants", tanks, named, animals, plants);
                 haltAt = ticks + 20;
             } else if (ticks == haltAt) {
                 server.halt(false);
@@ -187,37 +186,37 @@ public final class DevShowcase {
     private static void build(ServerLevel level) {
         RandomSource r = RandomSource.create(21);
         // 1: bettas, one tank per named variety
-        BlockPos at = startRow(level, "Bettas", "Zuchtformen");
+        BlockPos at = startRow(level, "Bettas (Zuchtformen)");
         for (var v : BettaVarietyTable.VARIETIES) {
             TankBlockEntity c = tank(level, at, 2, 2, 2, 0F, true);
             betta(level, c, v.example(), false);
             betta(level, c, v.example(), true);
-            sign(level, at, Component.translatable("variety.bettacraft." + v.id()));
+            name(level, at, de("variety.bettacraft." + v.id()));
             at = at.east(2 + GAP);
         }
         // 2: tankmates (fresh water), a small group each
-        at = startRow(level, "Beifische", "Süßwasser");
+        at = startRow(level, "Beifische (Süßwasser)");
         for (TankmateSpecies s : TankmateSpecies.values()) {
             if (s.marine()) continue;
             TankBlockEntity c = tank(level, at, 2, 2, 2, 0F, true);
             fish(level, c, s, Math.min(4, Math.max(2, s.shoal())), r);
-            sign(level, at, Component.translatable(s.translationKey()));
+            name(level, at, de(s.translationKey()));
             at = at.east(2 + GAP);
         }
         // 3: small animals (fresh water) and the frog
-        at = startRow(level, "Kleintiere", "Garnelen, Krebse,", "Schnecken, Frosch");
+        at = startRow(level, "Kleintiere und Frosch");
         for (CritterSpecies s : CritterSpecies.values()) {
             if (s.marine()) continue;
             TankBlockEntity c = tank(level, at, 2, 1, 2, 0F, true);
             critters(level, c, s, 6);
-            sign(level, at, Component.translatable(s.translationKey()));
+            name(level, at, de(s.translationKey()));
             at = at.east(2 + GAP);
         }
         TankBlockEntity frogs = tank(level, at, 2, 2, 2, 0F, true);
         for (int i = 0; i < 2; i++) frog(level, frogs);
-        sign(level, at, Component.translatable("entity.bettacraft.dwarf_frog"));
+        name(level, at, de("entity.bettacraft.dwarf_frog"));
         // 4: aquarium plants, grown, strong light
-        at = startRow(level, "Aquarienpflanzen", "starkes Licht:", "rote Arten rot");
+        at = startRow(level, "Pflanzen (starkes Licht)");
         for (PlantSpecies s : PlantSpecies.values()) {
             if (s.marine()) continue;
             TankBlockEntity c = tank(level, at, 2, 2, 2, 0F, true);
@@ -231,7 +230,7 @@ public final class DevShowcase {
             }
             if (InteriorPlants.plantAt(in, ir, s, 16, y, 16, s.stages(), 3000L + s.ordinal()) != null) plants++;
             InteriorPlants.settleTint(level, c);
-            sign(level, at, Component.translatable("item.bettacraft." + s.id()));
+            name(level, at, de("item.bettacraft." + s.id()));
             at = at.east(2 + GAP);
         }
         // 5: floating plants
@@ -244,7 +243,7 @@ public final class DevShowcase {
                         r.nextFloat() * 6.28F);
             }
             c.markTankChanged();
-            sign(level, at, Component.translatable("item.bettacraft." + t.id()));
+            name(level, at, de("item.bettacraft." + t.id()));
             at = at.east(2 + GAP);
         }
         // 6: decoration
@@ -256,32 +255,32 @@ public final class DevShowcase {
             Component err = DecorItem.place(in, d, new BlockPos(ir.originX() + 16 - d.sizeX / 2, InteriorRegion.BASE_Y, ir.originZ() + 16 - d.sizeZ / 2),
                     Rotation.NONE, null);
             if (err != null) LOGGER.warn("[showcase] decor {}: {}", d, err.getString());
-            sign(level, at, Component.translatable("item.bettacraft.decor_" + d.id()));
+            name(level, at, de("item.bettacraft.decor_" + d.id()));
             at = at.east(2 + GAP);
         }
         // 7: equipment
-        at = startRow(level, "Technik", "Filter, Heizer,", "Kühler, Pumpe");
+        at = startRow(level, "Technik");
         equipment(level, at, r);
         // 8: the 16 light colours (at night they light the water)
         at = startRow(level, "Lichtfarben");
         for (DyeColor color : DyeColor.values()) {
             tank(level, at, 2, 1, 1, 0F, true);
             light(level, at, 2, 1, 0, color);
-            sign(level, at, Component.translatable("color.minecraft." + color.getName()));
+            name(level, at, "Licht " + COLORS_DE[color.ordinal()]);
             at = at.east(2 + GAP);
         }
         // 9: glass types, styles and free shapes
         at = startRow(level, "Glas und Formen");
         glassAndShapes(level, at);
         // 10: salt water: a reef tank, a brackish tank, every coral and reef animal on its own
-        at = startRow(level, "Meerwasser", "Riff, Brackwasser,", "Korallen, Rifftiere");
+        at = startRow(level, "Meer- und Brackwasser");
         reef(level, at, r);
         at = at.east(5 + GAP);
         TankBlockEntity brack = tank(level, at, 3, 2, 2, 12F, true);
         fish(level, brack, TankmateSpecies.GUPPY, 4, r);
         fish(level, brack, TankmateSpecies.PLATY, 3, r);
         critters(level, brack, CritterSpecies.ZEBRA_NERITE, 3);
-        sign(level, at, Component.literal("Brackwasser"), Component.literal("12 ‰"));
+        name(level, at, "Brackwasser (12 ‰)");
         at = at.east(3 + GAP);
         for (PlantSpecies s : PlantSpecies.values()) {
             if (!s.marine()) continue;
@@ -292,7 +291,7 @@ public final class DevShowcase {
             rock(in, ir, 16, 16, 7, 6, ModBlocks.REEF_ROCK.get().defaultBlockState());
             coral(in, ir, s, 16, 16, 4000L + s.ordinal());
             if (s == PlantSpecies.BUBBLE_TIP_ANEMONE) fish(level, c, TankmateSpecies.OCELLARIS_CLOWNFISH, 2, r);
-            sign(level, at, Component.translatable("item.bettacraft." + s.id()));
+            name(level, at, de("item.bettacraft." + s.id()));
             at = at.east(2 + GAP);
         }
         for (TankmateSpecies s : TankmateSpecies.values()) {
@@ -302,7 +301,7 @@ public final class DevShowcase {
             InteriorRegion ir = region(level, c, Blocks.SAND.defaultBlockState());
             rock(InteriorManager.interiorLevel(level.getServer()), ir, 16, 20, 6, 5, ModBlocks.LIVE_ROCK.get().defaultBlockState());
             fish(level, c, s, Math.min(4, Math.max(1, s.shoal())), r);
-            sign(level, at, Component.translatable(s.translationKey()));
+            name(level, at, de(s.translationKey()));
             at = at.east(2 + GAP);
         }
         for (CritterSpecies s : CritterSpecies.values()) {
@@ -312,19 +311,20 @@ public final class DevShowcase {
             InteriorRegion ir = region(level, c, Blocks.SAND.defaultBlockState());
             rock(InteriorManager.interiorLevel(level.getServer()), ir, 16, 20, 5, 4, ModBlocks.LIVE_ROCK.get().defaultBlockState());
             critters(level, c, s, 4);
-            sign(level, at, Component.translatable(s.translationKey()));
+            name(level, at, de(s.translationKey()));
             at = at.east(2 + GAP);
         }
     }
 
-    private static BlockPos startRow(ServerLevel level, String... title) {
+    private static BlockPos startRow(ServerLevel level, String title) {
         BlockPos start = origin.offset(0, 0, row * ROW);
         row++;
-        // a path in front of the row and the title sign at its start
-        for (int x = -3; x < 130; x++) for (int z = -3; z <= -2; z++) level.setBlockAndUpdate(start.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
-        Component[] lines = new Component[title.length];
-        for (int i = 0; i < title.length; i++) lines[i] = Component.literal(title[i]).withStyle(i == 0 ? net.minecraft.ChatFormatting.BOLD : net.minecraft.ChatFormatting.RESET);
-        sign(level, start.west(2), lines);
+        // a path in front of the row and, at its start, a small dry tank named after the row (no vanilla signs: the
+        // tanks carry their names on the glass)
+        for (int x = -7; x < 130; x++) for (int z = -3; z <= -2; z++) level.setBlockAndUpdate(start.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
+        BlockPos header = start.offset(-5, 0, 0);
+        tank(level, header, 2, 1, 1, 0F, false);
+        name(level, header, row + ": " + title);
         return start;
     }
 
@@ -414,18 +414,52 @@ public final class DevShowcase {
         }
     }
 
-    private static void sign(ServerLevel level, BlockPos tankMin, Component... lines) {
-        BlockPos at = tankMin.north(2);
-        level.setBlockAndUpdate(at.below(), Blocks.SMOOTH_STONE.defaultBlockState());
-        level.setBlockAndUpdate(at, Blocks.OAK_SIGN.defaultBlockState().setValue(StandingSignBlock.ROTATION, 8));
-        if (level.getBlockEntity(at) instanceof SignBlockEntity s) {
-            SignText t = new SignText();
-            for (int i = 0; i < Math.min(4, lines.length); i++) t = t.setMessage(i, lines[i]);
-            s.setText(t, true);
-            s.setWaxed(true);
-            s.setChanged();
-            level.sendBlockUpdated(at, s.getBlockState(), s.getBlockState(), Block.UPDATE_ALL);
+    /** German colour names (the server has no vanilla de_de). */
+    private static final String[] COLORS_DE = {"Weiß", "Orange", "Magenta", "Hellblau", "Gelb", "Hellgrün", "Rosa", "Grau", "Hellgrau", "Türkis",
+            "Violett", "Blau", "Braun", "Grün", "Rot", "Schwarz"};
+    private static Map<String, String> german;
+
+    /** The German name of a key from the mod's de_de.json (the showcase is for the German user), else English, else the key. */
+    private static String de(String key) {
+        if (german == null) {
+            german = new java.util.HashMap<>();
+            try (var in = DevShowcase.class.getResourceAsStream("/assets/bettacraft/lang/de_de.json")) {
+                if (in != null) {
+                    var json = com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+                    for (var e : json.entrySet()) german.put(e.getKey(), e.getValue().getAsString());
+                }
+            } catch (java.io.IOException | RuntimeException e) {
+                LOGGER.warn("[showcase] de_de.json not readable: {}", e.toString());
+            }
         }
+        String v = german.get(key);
+        return v != null ? v : net.minecraft.locale.Language.getInstance().getOrDefault(key, key.substring(key.lastIndexOf('.') + 1));
+    }
+
+    private static String glassName(String id) {
+        if (id.equals("glass")) return "Glas";
+        if (id.equals("tinted_glass")) return "Getöntes Glas";
+        return "Glas " + COLORS_DE[DyeColor.byName(id.replace("_stained_glass", ""), DyeColor.WHITE).ordinal()];
+    }
+
+    /**
+     * Names the tank at {@code tankMin} (M21 follow-up: instead of a vanilla sign in front of it): the name plate on the
+     * glass, top centre of the front, at eye height from the path. At most {@link TankData#MAX_NAME_LENGTH} characters.
+     */
+    private static void name(ServerLevel level, BlockPos tankMin, String name) {
+        TankBlockEntity c = TankMultiblock.getController(level, tankMin);
+        if (c == null) {
+            LOGGER.warn("[showcase] no tank at {} for the name {}", tankMin, name);
+            return;
+        }
+        // too long: without the hint in brackets ("Otocinclus (Ohrgitter-Harnischwels)" -> "Otocinclus")
+        if (name.length() > TankData.MAX_NAME_LENGTH && name.indexOf(" (") > 0) name = name.substring(0, name.indexOf(" ("));
+        if (name.length() > TankData.MAX_NAME_LENGTH) LOGGER.warn("[showcase] name too long ({}): {}", name.length(), name);
+        c.getTank().setName(name);
+        c.getTank().setSignVisible(true);
+        c.getTank().setSignPos(SignPosition.TOP_CENTER);
+        c.markTankChanged();
+        named++;
     }
 
     private static void betta(ServerLevel level, TankBlockEntity c, Map<String, String> example, boolean female) {
@@ -489,7 +523,7 @@ public final class DevShowcase {
             f.insertHeater(new ItemStack(ModItems.HEATER_MEDIUM.get()));
         }
         TankEquipment.invalidate(a);
-        sign(level, at, Component.translatable("block.bettacraft.external_filter"), Component.literal("+ Heizer"));
+        name(level, at, de("block.bettacraft.external_filter") + " + Heizer");
         at = at.east(2 + GAP + 1);
         // external filter with a cooler
         TankBlockEntity b = tank(level, at, 2, 2, 2, 0F, true);
@@ -497,7 +531,7 @@ public final class DevShowcase {
         level.setBlockAndUpdate(ef, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.EAST));
         if (level.getBlockEntity(ef) instanceof ExternalFilterBlockEntity f) f.insertHeater(new ItemStack(ModItems.COOLER_MEDIUM.get()));
         TankEquipment.invalidate(b);
-        sign(level, at, Component.translatable("block.bettacraft.external_filter"), Component.literal("+ Kühler"));
+        name(level, at, de("block.bettacraft.external_filter") + " + Kühler");
         at = at.east(2 + GAP + 1);
         // a cabinet under the tank with a filter and a heater in it
         for (int x = 0; x < 2; x++) {
@@ -517,24 +551,24 @@ public final class DevShowcase {
         }
         TankBlockEntity cab = tank(level, at.above(), 2, 2, 2, 0F, true);
         TankEquipment.invalidate(cab);
-        sign(level, at, Component.translatable("block.bettacraft.cabinet"));
+        name(level, at.above(), de("block.bettacraft.cabinet") + " + Filter");
         at = at.east(2 + GAP);
         // internal filter, heaters and coolers in the interior
         TankBlockEntity d = tank(level, at, 2, 2, 2, 0F, true);
         segment(level, d, SegmentBlock.Kind.FILTER, null, 4, 26);
-        sign(level, at, Component.translatable("item.bettacraft.internal_filter"));
+        name(level, at, de("item.bettacraft.internal_filter"));
         at = at.east(2 + GAP);
         TankBlockEntity e = tank(level, at, 3, 2, 2, 0F, true);
         segment(level, e, SegmentBlock.Kind.HEATER, SegmentBlock.Size.SMALL, 6, 28);
         segment(level, e, SegmentBlock.Kind.HEATER, SegmentBlock.Size.MEDIUM, 20, 28);
         segment(level, e, SegmentBlock.Kind.HEATER, SegmentBlock.Size.LARGE, 34, 28);
-        sign(level, at, Component.literal("Heizstäbe"), Component.literal("klein, mittel, groß"));
+        name(level, at, "Heizstäbe: klein, mittel, groß");
         at = at.east(3 + GAP);
         TankBlockEntity f = tank(level, at, 3, 2, 2, 0F, true);
         segment(level, f, SegmentBlock.Kind.COOLER, SegmentBlock.Size.SMALL, 6, 28);
         segment(level, f, SegmentBlock.Kind.COOLER, SegmentBlock.Size.MEDIUM, 20, 28);
         segment(level, f, SegmentBlock.Kind.COOLER, SegmentBlock.Size.LARGE, 34, 28);
-        sign(level, at, Component.literal("Kühler"), Component.literal("klein, mittel, groß"));
+        name(level, at, "Kühler: klein, mittel, groß");
         at = at.east(3 + GAP);
         // lid, feeder and light on top
         TankBlockEntity g = tank(level, at, 3, 2, 2, 0F, true);
@@ -542,7 +576,7 @@ public final class DevShowcase {
         level.setBlockAndUpdate(at.offset(0, 2, 0), ModBlocks.TANK_LIGHT.get().defaultBlockState());
         level.setBlockAndUpdate(at.offset(1, 2, 0), ModBlocks.FEEDER.get().defaultBlockState());
         TankEquipment.invalidate(g);
-        sign(level, at, Component.translatable("block.bettacraft.tank_lid"), Component.translatable("block.bettacraft.feeder"));
+        name(level, at, "Abdeckung, " + de("block.bettacraft.feeder") + ", Licht");
         at = at.east(3 + GAP + 1);
         // protein skimmer and flow pump (salt water)
         TankBlockEntity h = tank(level, at, 2, 2, 2, 35F, true);
@@ -557,7 +591,7 @@ public final class DevShowcase {
             in.setBlock(pumpAt.offset(x, y, z), s, 3);
         }
         TankEquipment.invalidate(h);
-        sign(level, at, Component.translatable("block.bettacraft.protein_skimmer"), Component.translatable("item.bettacraft.flow_pump"));
+        name(level, at, "Abschäumer + " + de("item.bettacraft.flow_pump"));
     }
 
     private static void glassAndShapes(ServerLevel level, BlockPos at) {
@@ -567,14 +601,14 @@ public final class DevShowcase {
         glass.add(ResourceLocation.withDefaultNamespace("tinted_glass"));
         for (ResourceLocation g : glass) {
             tank(level, cuboid(at, 2, 1, 2), at, 0F, true, g, TankStyle.TEXTURED);
-            sign(level, at, Component.translatable("block.minecraft." + g.getPath()));
+            name(level, at, glassName(g.getPath()));
             at = at.east(2 + GAP);
         }
         tank(level, cuboid(at, 2, 2, 2), at, 0F, true, ResourceLocation.withDefaultNamespace("glass"), TankStyle.CLEAN);
-        sign(level, at, Component.literal("Stil: klar"), Component.literal("(clean)"));
+        name(level, at, "Stil: klar (clean)");
         at = at.east(2 + GAP);
         tank(level, cuboid(at, 2, 2, 2), at, 0F, true, ResourceLocation.withDefaultNamespace("glass"), TankStyle.TEXTURED);
-        sign(level, at, Component.literal("Stil: texturiert"), Component.literal("(textured)"));
+        name(level, at, "Stil: texturiert (textured)");
         at = at.east(2 + GAP);
         // free shapes: an L, a T, a step
         List<BlockPos> l = new ArrayList<>();
@@ -583,19 +617,19 @@ public final class DevShowcase {
             for (int z = 1; z < 3; z++) l.add(at.offset(0, y, z));
         }
         tank(level, l, at, 0F, true, null, null);
-        sign(level, at, Component.literal("Form: L"));
+        name(level, at, "Form: L");
         at = at.east(3 + GAP);
         List<BlockPos> t = new ArrayList<>();
         for (int x = 0; x < 3; x++) t.add(at.offset(x, 0, 0));
         for (int z = 1; z < 3; z++) t.add(at.offset(1, 0, z));
         tank(level, t, at, 0F, true, null, null);
-        sign(level, at, Component.literal("Form: T"));
+        name(level, at, "Form: T");
         at = at.east(3 + GAP);
         List<BlockPos> s = new ArrayList<>(cuboid(at, 3, 1, 2));
         s.add(at.offset(0, 1, 0));
         s.add(at.offset(0, 1, 1));
         tank(level, s, at, 0F, true, null, null);
-        sign(level, at, Component.literal("Form: Stufe"));
+        name(level, at, "Form: Stufe");
     }
 
     private static void reef(ServerLevel level, BlockPos at, RandomSource r) {
@@ -636,6 +670,6 @@ public final class DevShowcase {
         critters(level, c, CritterSpecies.CLEANER_SHRIMP, 2);
         critters(level, c, CritterSpecies.HERMIT_CRAB, 3);
         critters(level, c, CritterSpecies.TURBO_SNAIL, 2);
-        sign(level, at, Component.literal("Riffbecken"), Component.literal("35 ‰"));
+        name(level, at, "Riffbecken (35 ‰)");
     }
 }

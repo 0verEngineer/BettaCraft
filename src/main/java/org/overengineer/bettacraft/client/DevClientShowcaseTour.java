@@ -89,8 +89,9 @@ final class DevClientShowcaseTour {
         then(1, () -> server(p -> p.getAbilities().flying = true));
         for (int row = 0; row < ROWS; row++) {
             int rr = row;
-            // close enough to see the animals: one or two tanks per picture, from the path in front of the row
-            for (int n = 0, x = -1; x < ROW_LENGTH[row] + 4; n++, x += 8) {
+            // close enough to see the animals and read the name plates: the named dry tank at the start of the row,
+            // then one tank in the middle of each picture (2 wide, 6 apart), from the path in front of the row
+            for (int n = 0, x = -4; x < ROW_LENGTH[row] + 4; n++, x = n == 1 ? 1 : x + 6) {
                 int nn = n, xx = x;
                 then(1, () -> look(xx, rr * ROW - 3.4, 1.9, 0F, 16F));
                 then(n == 0 ? 100 : 45, () -> shot("showcase_" + rr + "_" + (nn < 10 ? "0" : "") + nn));
