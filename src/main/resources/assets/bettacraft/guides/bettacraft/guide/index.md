@@ -5,7 +5,7 @@ navigation:
   position: 0
 ---
 
-# Bettacraft
+# Bettacraft <Small>by 0verEngineer</Small>
 
 Welcome to the handbook of **Bettacraft**: betta fish (Siamese fighting fish) and aquariums you can build
 from any glass, fill with water, decorate from the inside and use to breed bettas with real genetics.

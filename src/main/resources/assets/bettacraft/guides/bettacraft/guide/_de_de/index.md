@@ -5,7 +5,7 @@ navigation:
   position: 0
 ---
 
-# Bettacraft
+# Bettacraft <Small>by 0verEngineer</Small>
 
 Willkommen im Handbuch von **Bettacraft**: Bettas (Siamesische Kampffische) und Aquarien, die du aus beliebigem Glas
 baust, mit Wasser füllst, von innen einrichtest und in denen du Bettas mit echter Genetik züchtest.

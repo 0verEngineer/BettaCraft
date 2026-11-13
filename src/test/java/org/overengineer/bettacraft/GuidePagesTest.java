@@ -93,8 +93,9 @@ class GuidePagesTest {
         extra.removeAll(en);
         assertTrue(missing.isEmpty(), "German pages missing: " + missing);
         assertTrue(extra.isEmpty(), "German pages without English page: " + extra);
-        assertTrue(Files.exists(Path.of(System.getProperty("bettacraft.projectDir", "."))
-                .resolve("src/main/resources/assets/bettacraft/guideme_guides/guide.json")), "guide.json missing");
+        // M21.5: the guide is registered from code (GuideMEClientCompat), a data-driven guide.json would clash with it
+        assertTrue(!Files.exists(Path.of(System.getProperty("bettacraft.projectDir", "."))
+                .resolve("src/main/resources/assets/bettacraft/guideme_guides/guide.json")), "guide.json must not exist any more");
     }
 
     @Test

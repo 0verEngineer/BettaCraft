@@ -57,6 +57,8 @@ public final class BettaCraftClient {
 
     public BettaCraftClient(IEventBus modBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        // M21.5: the handbook is registered from code (own <Small> tag for the byline on the start page)
+        if (org.overengineer.bettacraft.progression.GuideBook.available()) org.overengineer.bettacraft.compat.guideme.GuideMEClientCompat.register();
         modBus.addListener(BettaCraftClient::onClientSetup);
         modBus.addListener(BettaCraftClient::onRegisterGeometryLoaders);
         modBus.addListener(BettaCraftClient::onItemColors);
