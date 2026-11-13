@@ -121,12 +121,17 @@ public class CabinetBakedModel extends BakedModelWrapper<BakedModel> {
         for (int i = 0; i < 4; i++) {
             int o = i * stride + 4; // position (3) + colour (1), then uv0
             float u = Float.intBitsToFloat(v[o]), w = Float.intBitsToFloat(v[o + 1]);
-            float fu = (u - src.getU0()) / (src.getU1() - src.getU0());
-            float fv = (w - src.getV0()) / (src.getV1() - src.getV0());
+            // M21.5: clamped to the planks texture (UVs past the placeholder used to land on neighbouring atlas textures)
+            float fu = clamp01((u - src.getU0()) / (src.getU1() - src.getU0()));
+            float fv = clamp01((w - src.getV0()) / (src.getV1() - src.getV0()));
             v[o] = Float.floatToRawIntBits(target.getU0() + fu * (target.getU1() - target.getU0()));
             v[o + 1] = Float.floatToRawIntBits(target.getV0() + fv * (target.getV1() - target.getV0()));
         }
         return new BakedQuad(v, q.getTintIndex(), q.getDirection(), target, q.isShade(), q.hasAmbientOcclusion());
+    }
+
+    static float clamp01(float f) {
+        return f < 0 ? 0 : f > 1 ? 1 : f;
     }
 
     @Override

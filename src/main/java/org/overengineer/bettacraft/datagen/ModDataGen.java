@@ -337,22 +337,18 @@ public final class ModDataGen {
                         .texture("wood", modLoc("block/cabinet_wood")).texture("trim", modLoc("block/cabinet_trim"))
                         .texture("particle", modLoc("block/cabinet_wood"));
                 // carcass (full block below the counter top)
-                m.element().from(0, 0, 0).to(16, 14, 16).allFaces((d, f) -> {
-                    f.texture("#wood");
-                    if (d != Direction.UP) f.cullface(d);
-                }).end();
+                // M21.5: every face gets explicit UVs clamped to the texture (the auto UVs of the overhangs reached past
+                // the 16 px of the texture and showed neighbouring atlas textures: pink, purple, blue edges)
+                box(m, 0, 0, 0, 16, 14, 16, "#wood", d -> d != Direction.UP);
                 // counter top: overhangs at the front and at free sides (left = east, right = west in the model)
                 float x0 = right ? 0 : -0.5F, x1 = left ? 16 : 16.5F;
-                m.element().from(x0, 14, -0.5F).to(x1, 16, 16).allFaces((d, f) -> {
-                    f.texture("#wood");
-                    if (d == Direction.UP || d == Direction.SOUTH || (d == Direction.EAST && left) || (d == Direction.WEST && right)) f.cullface(d);
-                }).end();
+                box(m, x0, 14, -0.5F, x1, 16, 16, "#wood", d -> d == Direction.UP || d == Direction.SOUTH || (d == Direction.EAST && left) || (d == Direction.WEST && right));
                 // plinth and two doors with handles
-                m.element().from(0, 0, -0.25F).to(16, 1.5F, 0).allFaces((d, f) -> f.texture("#trim")).end();
-                m.element().from(1, 2.5F, -0.5F).to(7.75F, 13, 0).allFaces((d, f) -> f.texture("#wood")).end();
-                m.element().from(8.25F, 2.5F, -0.5F).to(15, 13, 0).allFaces((d, f) -> f.texture("#wood")).end();
-                m.element().from(6.25F, 7, -1.25F).to(7, 10.5F, -0.5F).allFaces((d, f) -> f.texture("#trim")).end();
-                m.element().from(9, 7, -1.25F).to(9.75F, 10.5F, -0.5F).allFaces((d, f) -> f.texture("#trim")).end();
+                box(m, 0, 0, -0.25F, 16, 1.5F, 0, "#trim", d -> false);
+                box(m, 1, 2.5F, -0.5F, 7.75F, 13, 0, "#wood", d -> false);
+                box(m, 8.25F, 2.5F, -0.5F, 15, 13, 0, "#wood", d -> false);
+                box(m, 6.25F, 7, -1.25F, 7, 10.5F, -0.5F, "#trim", d -> false);
+                box(m, 9, 7, -1.25F, 9.75F, 10.5F, -0.5F, "#trim", d -> false);
                 variants[i] = m;
             }
             getVariantBuilder(ModBlocks.CABINET.get()).forAllStates(state -> {
@@ -361,6 +357,24 @@ public final class ModDataGen {
                 return ConfiguredModel.builder().modelFile(variants[i])
                         .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING).toYRot() + 180) % 360).build();
             });
+        }
+
+        /** M21.5: a box element with the vanilla default UVs, clamped to 0..16 (faces that reach past the block). */
+        private static void box(BlockModelBuilder m, float x0, float y0, float z0, float x1, float y1, float z1, String tex,
+                                java.util.function.Predicate<Direction> cull) {
+            m.element().from(x0, y0, z0).to(x1, y1, z1).allFaces((d, f) -> {
+                float[] uv = switch (d) {
+                    case DOWN -> new float[] {x0, 16 - z1, x1, 16 - z0};
+                    case UP -> new float[] {x0, z0, x1, z1};
+                    case NORTH -> new float[] {16 - x1, 16 - y1, 16 - x0, 16 - y0};
+                    case SOUTH -> new float[] {x0, 16 - y1, x1, 16 - y0};
+                    case WEST -> new float[] {z0, 16 - y1, z1, 16 - y0};
+                    case EAST -> new float[] {16 - z1, 16 - y1, 16 - z0, 16 - y0};
+                };
+                for (int k = 0; k < 4; k++) uv[k] = Math.max(0, Math.min(16, uv[k]));
+                f.texture(tex).uvs(uv[0], uv[1], uv[2], uv[3]);
+                if (cull.test(d)) f.cullface(d);
+            }).end();
         }
 
         /** M9: thin glass lid with an iron frame, lying on the block below. */
