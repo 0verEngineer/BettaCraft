@@ -21,6 +21,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_DETAILED_DECOR;
     public static final ModConfigSpec.BooleanValue FEATURE_BREAK_PROTECTION;
     public static final ModConfigSpec.BooleanValue FEATURE_CLIP_FEEDER;
+    public static final ModConfigSpec.BooleanValue FEATURE_LIVEBEARER_GENETICS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -55,6 +56,10 @@ public final class CommonConfig {
                 + "(off: the switch is hidden and does nothing)").define("breakProtection", true);
         FEATURE_CLIP_FEEDER = b.comment("Clip-on feeder: a small automatic feeder that hangs on the side of the glass (for tanks whose top is taken by a light) "
                 + "(off: it cannot be placed and placed ones do not feed)").define("clipOnFeeder", true);
+        // M21.6
+        FEATURE_LIVEBEARER_GENETICS = b.comment("Guppy and endler genetics: every guppy and endler has its own genes (tail shape, body and tail colour, "
+                + "patterns on the X and Y chromosome) that are inherited at birth, named strains, endler x guppy hybrids "
+                + "(off: the old fixed varieties; the genes are kept)").define("livebearerGenetics", true);
         b.pop();
         SPEC = b.build();
     }
@@ -98,6 +103,10 @@ public final class CommonConfig {
 
     public static boolean clipFeeder() {
         return getOr(FEATURE_CLIP_FEEDER, true);
+    }
+
+    public static boolean livebearerGenetics() {
+        return getOr(FEATURE_LIVEBEARER_GENETICS, true);
     }
 
     private CommonConfig() {}
