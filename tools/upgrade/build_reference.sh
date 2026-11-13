@@ -15,8 +15,11 @@ REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 WT="${UPGRADE_WORKTREE:-$REPO/../bettacraft-upgrade-ref}"
 if [ -d "$WT" ]; then git -C "$REPO" worktree remove --force "$WT" || rm -rf "$WT"; fi
 git -C "$REPO" worktree add --detach "$WT" "$COMMIT"
-cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$WT/src/main/java/org/overengineer/bettacraft/command/"
-SHOW="$WT/src/main/java/org/overengineer/bettacraft/command/DevShowcase.java"
+# the dev code is in src/main up to 1.13.x and in the dev source set src/dev from 1.14.0 (M22) on
+CMD="$WT/src/main/java/org/overengineer/bettacraft/command"
+if [ -f "$WT/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" ]; then CMD="$WT/src/dev/java/org/overengineer/bettacraft/command"; fi
+cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
+SHOW="$CMD/DevShowcase.java"
 # extra row after the last showcase row; manifest right after the world is saved
 python - "$SHOW" <<'PY'
 import sys

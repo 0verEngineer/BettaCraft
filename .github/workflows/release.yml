@@ -7,7 +7,7 @@
 #   4. Modrinth and CurseForge with mc-publish, each only if its token secret AND its project id variable are set
 #      (channel alpha / beta / release from the version). Without them the step is skipped, nothing fails.
 # Started by hand (Actions > Release > Run workflow) it is a dry run: tests, jar check and release notes, the jar as a
-# workflow artifact, no GitHub release and no upload. Setup of the secrets and variables: RELEASING.md (local, not in git).
+# workflow artifact, no GitHub release and no upload. Setup: the secrets and variables below.
 #
 # Repository settings (Settings > Secrets and variables > Actions):
 #   Secrets:   MODRINTH_TOKEN          Modrinth personal access token (scopes: Create versions, Read projects)
@@ -160,8 +160,8 @@ jobs:
         with:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
-          # optional integrations (CurseForge slugs; check them on the project pages before the first upload, see
-          # RELEASING.md): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fish Tanks
+          # optional integrations (CurseForge slugs; check them on the project pages before the first upload, a wrong
+          # slug fails the upload): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fish Tanks
           curseforge-dependencies: |
             jade(optional)
             guideme(optional)

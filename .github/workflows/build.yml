@@ -6,8 +6,8 @@
 # Full when started by hand with "full" ticked (Actions > Build > Run workflow) and before every release (release.yml
 # calls this workflow with full: true): additionally the server smoke without any optional mod, with The One Probe and
 # WTHIT, and the GameTests with the power mods of -Ppower (pinned Modrinth jars, tools/ci/power-mods.json).
-# Not in CI: client smoke tests (need a window / GPU), -Paquatic and -Pshaders (jars not all downloadable, see
-# RELEASING.md), the multiplayer test, buildShowcase and smoketestUpgrade (need local worlds). Run them locally.
+# Not in CI: client smoke tests (need a window / GPU), -Paquatic and -Pshaders (not all jars have a pinned official
+# download, several licences forbid redistribution), the multiplayer test, buildShowcase and smoketestUpgrade (need local worlds). Run them locally.
 name: Build
 
 on:
