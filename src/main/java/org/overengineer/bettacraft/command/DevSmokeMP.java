@@ -351,7 +351,7 @@ public final class DevSmokeMP {
         if (r != null) for (var p : r.plants().all()) if (p.species.marine()) coral += p.blocks;
         check(name + ": salinity " + a[1] + "/10 ppt (server " + salt10 + ")", Integer.parseInt(a[1]) == salt10 && salt10 >= 340);
         check(name + ": water drawn with " + a[2] + " ppt", Integer.parseInt(a[2]) == Math.round(c.getTank().salinity()));
-        check(name + ": " + a[3] + " clownfish (server " + fish + ")", Integer.parseInt(a[3]) == fish && fish == 2);
+        check(name + ": " + a[3] + " clownfish (server " + fish + ")", Integer.parseInt(a[3]) == fish && fish >= 2);
         check(name + ": " + a[4] + " coral blocks in the miniature (server " + coral + ")", Integer.parseInt(a[4]) == coral && coral > 1);
     }
 
@@ -762,6 +762,11 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.plants.InteriorPlants.plantAt(in, r, org.overengineer.bettacraft.plants.PlantSpecies.ZOANTHUS, 14, 1, 14, 4, 2020L);
             var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
             var sp = org.overengineer.bettacraft.tankmates.TankmateSpecies.OCELLARIS_CLOWNFISH;
+            // the dev world keeps the fish of the last run: start with an empty tank (M21)
+            for (var old : org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(level, c.getTank())) {
+                c.getTank().inhabitants().remove(old.getUUID());
+                old.discard();
+            }
             for (int i = 0; i < 2; i++) {
                 org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, sp, org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp), i == 0,
                         org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0, w.box().getCenter().add(i * 0.3 - 0.15, 0, 0));

@@ -90,6 +90,7 @@ public final class DevShowcase {
     private static final int GAP = 4, ROW = 9;
     private static int ticks;
     private static int haltAt = -1;
+    private static int builtAt = -1;
     private static int tanks, animals, plants;
     private static BlockPos origin;
     private static int row;
@@ -104,12 +105,35 @@ public final class DevShowcase {
         ServerLevel level = server.overworld();
         ticks++;
         try {
-            if (ticks == 20) {
+            if (ticks == 5) {
                 prepare(server, level);
+            } else if (builtAt < 0 && ticks > 5) {
+                // the animals are entities: build only once the entity sections of every chunk are loaded (an entity
+                // added to a chunk whose entities are still loading is lost)
+                boolean ready = true;
+                for (ChunkPos cp : forced) {
+                    level.getChunk(cp.x, cp.z);
+                    ready &= level.areEntitiesLoaded(cp.toLong());
+                }
+                if (!ready && ticks < 1200) return;
+                builtAt = ticks;
                 build(level);
                 LOGGER.info("[showcase] built {} rows, {} tanks, {} animals, {} plants at {}", row, tanks, animals, plants, origin);
-            } else if (ticks == 400) {
+            } else if (builtAt > 0 && ticks == builtAt + 40) {
+                int live = 0, any = 0;
+                for (var e : level.getAllEntities()) {
+                    any++;
+                    if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity || e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity) live++;
+                }
+                LOGGER.info("[showcase] tick {}: {} fish of {} entities", ticks, live, any);
+            } else if (builtAt > 0 && ticks == builtAt + 400) {
                 // the care loop ran for a while: settle the plant colours under their lights, then save
+                int live = 0;
+                for (var e : level.getAllEntities()) {
+                    if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity || e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity
+                            || e instanceof DwarfFrogEntity) live++;
+                }
+                LOGGER.info("[showcase] {} fish and frogs alive in the world", live);
                 LOGGER.info("[showcase] saving");
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 server.saveEverything(false, true, true);
