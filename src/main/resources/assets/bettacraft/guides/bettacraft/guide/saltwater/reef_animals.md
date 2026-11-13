@@ -28,9 +28,9 @@ item_ids:
 | Yellow Watchman Goby (*Cryptocentrus cinctus*) | 28–40 | 22–28 | alone | 0.6 | sits on the bottom |
 | Green Chromis (*Chromis viridis*) | 28–40 | 24–28 | 5+ | 0.5 | a shoal above the corals |
 | Yellowtail Damsel (*Chrysiptera parasema*) | 20–42 | 23–28 | alone | 0.45 | hardy, a good first fish |
-| Cleaner Shrimp (*Lysmata amboinensis*) | 28–40 | 23–28 | – | shrimp | the fish heal half again as fast |
+| Pacific Cleaner Shrimp (*Lysmata amboinensis*) | 28–40 | 23–28 | – | shrimp | the fish heal half again as fast |
 | Blue-Leg Hermit Crab (*Clibanarius tricolor*) | 20–42 | 22–28 | – | snail | grazes algae, eats leftovers |
-| Turbo Snail (*Turbo fluctuosa*) | 28–40 | 22–28 | – | snail | the best algae grazer of the reef |
+| Mexican Turbo Snail (*Turbo fluctuosa*) | 28–40 | 22–28 | – | snail | the best algae grazer of the reef |
 
 The reef fish are fish like the [tankmates](../tankmates.md) (bucket, fish bag, menu, health), the shrimp, crabs and
 snails [small animals](../invertebrates.md) (fish bag, the small animals page of the menu). None of them goes into fresh

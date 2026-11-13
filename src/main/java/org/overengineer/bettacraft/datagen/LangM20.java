@@ -118,9 +118,9 @@ final class LangM20 {
         a.accept("tankmate.bettacraft.group.goby", "Gobies");
         a.accept("tankmate.bettacraft.group.damsel", "Damselfish");
         a.accept("tankmate.bettacraft.breeding.anemone", "Spawns at its anemone, the male guards");
-        a.accept("critter.bettacraft.cleaner_shrimp", "Cleaner Shrimp");
+        a.accept("critter.bettacraft.cleaner_shrimp", "Pacific Cleaner Shrimp");
         a.accept("critter.bettacraft.hermit_crab", "Blue-Leg Hermit Crab");
-        a.accept("critter.bettacraft.turbo_snail", "Turbo Snail");
+        a.accept("critter.bettacraft.turbo_snail", "Mexican Turbo Snail");
         a.accept("bettacraft.configuration.saltwater", "Salt water");
         a.accept("bettacraft.configuration.saltwater.tooltip", "Salinity, protein skimmers, flow pumps, live rock, corals");
         a.accept("bettacraft.configuration.salinityShock", "Salt shock");

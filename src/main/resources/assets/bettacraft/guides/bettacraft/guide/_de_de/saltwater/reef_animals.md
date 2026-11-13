@@ -28,9 +28,9 @@ item_ids:
 | Gelbe Wächtergrundel (*Cryptocentrus cinctus*) | 28–40 | 22–28 | einzeln | 0,6 | sitzt am Boden |
 | Grünes Schwalbenschwänzchen (*Chromis viridis*) | 28–40 | 24–28 | ab 5 | 0,5 | ein Schwarm über den Korallen |
 | Gelbschwanz-Demoiselle (*Chrysiptera parasema*) | 20–42 | 23–28 | einzeln | 0,45 | robust, ein guter erster Fisch |
-| Putzergarnele (*Lysmata amboinensis*) | 28–40 | 23–28 | – | Garnele | die Fische heilen anderthalbmal so schnell |
+| Weißband-Putzergarnele (*Lysmata amboinensis*) | 28–40 | 23–28 | – | Garnele | die Fische heilen anderthalbmal so schnell |
 | Blaubein-Einsiedlerkrebs (*Clibanarius tricolor*) | 20–42 | 22–28 | – | Schnecke | weidet Algen, frisst Reste |
-| Turboschnecke (*Turbo fluctuosa*) | 28–40 | 22–28 | – | Schnecke | der beste Algenfresser des Riffs |
+| Mexikanische Turboschnecke (*Turbo fluctuosa*) | 28–40 | 22–28 | – | Schnecke | der beste Algenfresser des Riffs |
 
 Die Rifffische sind Fische wie die [Beifische](../tankmates.md) (Eimer, Fischtüte, Menü, Gesundheit), die Garnelen, Krebse
 und Schnecken [Kleintiere](../invertebrates.md) (Fischtüte, die Kleintier-Seite des Menüs). Keiner von ihnen kommt ins
