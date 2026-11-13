@@ -34,7 +34,7 @@ import org.overengineer.bettacraft.tank.TankPower;
 /**
  * Forge Energy: the FE values of the server config, and real cables and pipes of other mods delivering FE to a tank
  * block, a cabinet, an external filter and a light (only with {@code gradlew runGameTestServer -Ppower}, which loads
- * EnderIO, Mekanism, Powah, Flux Networks and Pipez; without them those tests pass without doing anything).
+ * EnderIO, Mekanism, Powah, Flux Networks and, locally only, Pipez; without them those tests pass without doing anything).
  * Mekanism cable networks do not run in the GameTest server (not even between a Mekanism cable and a Powah cell) and
  * Flux Networks needs a network made in its GUI: both are checked by hand. Every test has its own batch because the
  * config is global.
@@ -248,6 +248,28 @@ public final class PowerGameTests {
             saved.apply();
             h.assertTrue(viaFilter > 0, "EnderIO conduit delivers through the external filter, buffer " + viaFilter);
             h.assertTrue(viaLight > 0, "FE into the light reaches the tank below, buffer " + viaLight);
+            h.succeed();
+        });
+    }
+
+    /** EnderIO energy conduits (from an EnderIO creative power block) into a cabinet under the tank. */
+    @GameTest(template = EMPTY, timeoutTicks = 200, batch = "bettacraft_power_enderio_cabinet")
+    public static void enderioConduitFeedsACabinet(GameTestHelper h) {
+        if (!loaded("enderio")) {
+            h.succeed();
+            return;
+        }
+        PowerConfig saved = PowerConfig.current();
+        ServerConfig.POWER_FILTER.set(true);
+        h.setBlock(new BlockPos(4, 1, 2), ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
+        TankBlockEntity c = tank(h, 4, 2, 2, 1, 1, 1);
+        h.setBlock(new BlockPos(1, 1, 2), block("enderio:creative_power"));
+        conduit(h, new BlockPos(2, 1, 2));
+        conduit(h, new BlockPos(3, 1, 2));
+        h.runAfterDelay(80, () -> {
+            long got = c.getTank().powerBuffer();
+            saved.apply();
+            h.assertTrue(got > 0, "EnderIO conduit delivers through the cabinet, buffer " + got);
             h.succeed();
         });
     }
