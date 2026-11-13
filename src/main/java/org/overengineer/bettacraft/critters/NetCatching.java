@@ -98,6 +98,7 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.HORNED_NERITE, 20 * ner));
                 out.add(new Catch(CritterSpecies.OLIVE_NERITE, 25 * ner));
                 out.add(new Catch(CritterSpecies.RED_NERITE, 5));
+                if (org.overengineer.bettacraft.config.CommonConfig.snailColors()) out.add(new Catch(CritterSpecies.YELLOW_NERITE, 4)); // M21.5
                 out.add(new Catch(CritterSpecies.ASSASSIN_SNAIL, 4));
             }
             case BEACH -> {
@@ -180,6 +181,14 @@ public final class NetCatching {
 
     /** Wild genes: the colour lines are hidden in a few animals (bred out later). */
     public static CritterGenes wildGenes(CritterSpecies s, RandomGenerator rnd) {
+        boolean colors = org.overengineer.bettacraft.config.CommonConfig.snailColors();
+        if (colors && s == CritterSpecies.APPLE_SNAIL) {
+            // M21.5: like in the trade, nearly every apple snail is gold; wild brown is rare, now and then another colour
+            double x = rnd.nextDouble();
+            if (x < 0.7) return CritterGenes.pure(0, 0.3F + rnd.nextFloat() * 0.25F);
+            if (x < 0.88) return CritterGenes.wild(s.loci().length, 0.15, rnd);
+            return CritterGenes.pure(1 + rnd.nextInt(3), 0.3F);
+        }
         double carrier = switch (s) {
             case NEOCARIDINA -> 0.06;
             case DWARF_CRAYFISH -> 0.15;
@@ -187,7 +196,9 @@ public final class NetCatching {
             case APPLE_SNAIL -> 0.08;
             default -> 0;
         };
-        return CritterGenes.wild(s.loci().length, carrier, rnd);
+        // without M21.5's snail colours no ramshorn carries the new red
+        int loci = !colors && s == CritterSpecies.RAMSHORN ? 2 : s.loci().length;
+        return CritterGenes.wild(loci, carrier, rnd);
     }
 
     /** The filled bag for a catch (a frog, or 1-3 small animals). */
@@ -203,7 +214,8 @@ public final class NetCatching {
         int n = switch (s.group()) {
             case SHRIMP -> 1 + rnd.nextInt(3);
             case CRAYFISH -> 1;
-            case SNAIL -> s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE ? 1 : 1 + rnd.nextInt(2);
+            case SNAIL -> s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE
+                    || s == CritterSpecies.YELLOW_NERITE ? 1 : 1 + rnd.nextInt(2);
         };
         return TankCritters.bagOf(s, n, () -> wildGenes(s, rnd), rnd, true);
     }

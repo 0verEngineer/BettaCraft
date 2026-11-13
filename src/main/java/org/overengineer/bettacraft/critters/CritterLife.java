@@ -203,6 +203,7 @@ public final class CritterLife {
                             o.x + (rnd.nextDouble() - 0.5) * 0.2, o.y, o.z + (rnd.nextDouble() - 0.5) * 0.2);
                     k.age = 0;
                     k.generation = o.generation;
+                    k.look = CritterLooks.random(k.species, rnd); // M21.5
                     list.add(k);
                     r.born(k);
                 }
@@ -386,6 +387,7 @@ public final class CritterLife {
         k.age = 0;
         k.generation = mother.generation + 1;
         k.yaw = (float) (rnd.nextDouble() * 360);
+        k.look = CritterLooks.random(k.species, rnd); // M21.5
         r.born(k);
         return k;
     }

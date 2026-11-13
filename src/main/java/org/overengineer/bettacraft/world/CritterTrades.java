@@ -31,15 +31,26 @@ public final class CritterTrades {
     public static void onWandererTrades(WandererTradesEvent event) {
         event.getGenericTrades().add(offer(5, 4, (r, rnd) -> TankCritters.bagOf(CritterSpecies.DWARF_CRAYFISH, 2,
                 () -> CritterGenes.pure(0, 0.25F + rnd.nextFloat() * 0.25F), rnd, true)));
-        event.getGenericTrades().add(offer(3, 4, (r, rnd) -> TankCritters.bagOf(CritterSpecies.APPLE_SNAIL, 1,
-                () -> CritterGenes.pure(rnd.nextBoolean() ? 0 : 1, 0.3F), rnd, true)));
+        event.getGenericTrades().add(offer(3, 4, (r, rnd) -> TankCritters.bagOf(CritterSpecies.APPLE_SNAIL, 1, () -> {
+            // M21.5: mostly gold (as in the shops), the other colours now and then
+            if (!org.overengineer.bettacraft.config.CommonConfig.snailColors()) return CritterGenes.pure(rnd.nextBoolean() ? 0 : 1, 0.3F);
+            double x = rnd.nextDouble();
+            return CritterGenes.pure(x < 0.7 ? 0 : x < 0.8 ? 1 : x < 0.9 ? 2 : 3, 0.3F + rnd.nextFloat() * 0.2F);
+        }, rnd, true)));
         event.getRareTrades().add(offer(6, 3, (r, rnd) -> {
             int line = SHRIMP_LINES[rnd.nextInt(SHRIMP_LINES.length)];
             float grade = 0.15F + rnd.nextFloat() * 0.35F;
             return TankCritters.bagOf(CritterSpecies.NEOCARIDINA, 2, () -> CritterGenes.pure(line, grade), rnd, true);
         }));
         event.getRareTrades().add(offer(4, 3, (r, rnd) -> TankCritters.bagOf(CritterSpecies.RAMSHORN, 2,
-                () -> CritterGenes.pure(rnd.nextBoolean() ? 0 : 1, 0.3F), rnd, false)));
+                () -> CritterGenes.pure(rnd.nextInt(org.overengineer.bettacraft.config.CommonConfig.snailColors() ? 3 : 2), 0.3F), rnd, false)));
+        // M21.5: racer nerites, red or yellow, every one its own shade
+        event.getRareTrades().add((trader, random) -> {
+            if (!org.overengineer.bettacraft.config.CommonConfig.snailColors()) return null;
+            RandomGenerator rnd = random::nextLong;
+            CritterSpecies s = random.nextBoolean() ? CritterSpecies.RED_NERITE : CritterSpecies.YELLOW_NERITE;
+            return new MerchantOffer(new ItemCost(Items.EMERALD, 4), Optional.empty(), TankCritters.bagOf(s, 2, () -> CritterGenes.WILD, rnd, false), 3, 1, 0.05F);
+        });
         event.getRareTrades().add(offer(4, 2, (r, rnd) -> TankCritters.bagOf(CritterSpecies.ASSASSIN_SNAIL, 1, () -> CritterGenes.WILD, rnd, false)));
         event.getRareTrades().add((trader, random) -> {
             var frog = org.overengineer.bettacraft.registry.ModEntities.DWARF_FROG.get().create(trader.level());

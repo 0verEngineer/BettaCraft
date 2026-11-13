@@ -36,7 +36,7 @@ public final class SaltTolerance {
 
     public static Range critter(CritterSpecies s) {
         return switch (s) {
-            case ZEBRA_NERITE, HORNED_NERITE, OLIVE_NERITE, RED_NERITE -> Range.NERITE;
+            case ZEBRA_NERITE, HORNED_NERITE, OLIVE_NERITE, RED_NERITE, YELLOW_NERITE -> Range.NERITE;
             case CLEANER_SHRIMP, TURBO_SNAIL -> Range.MARINE;
             case HERMIT_CRAB -> Range.HARDY_MARINE;
             default -> Range.FRESH;

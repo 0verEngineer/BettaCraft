@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Compact client format of the small animals of a tank (M14): per animal 18 bytes (id, species, flags, surface, colour,
- * grade, size, position relative to the tank in 1/512 block, heading), per clutch or moult 10 bytes. Sent with the tank's
+ * Compact client format of the small animals of a tank (M14): per animal 20 bytes (id, species, flags, surface, colour,
+ * grade, size, look (M21.5), position relative to the tank in 1/512 block, heading), per clutch or moult 10 bytes. Sent with the tank's
  * client view and every care step while the tank has animals; clients glide them to the new spot.
  */
 public final class CritterSync {
@@ -21,7 +21,7 @@ public final class CritterSync {
 
     public static byte[] encode(List<Critter> critters, List<CritterObject> objects, int minX, int minY, int minZ, long now) {
         int n = Math.min(critters.size(), 0xFFFF), m = Math.min(objects.size(), 0xFFFF);
-        ByteBuffer b = ByteBuffer.allocate(4 + n * 18 + m * 10);
+        ByteBuffer b = ByteBuffer.allocate(4 + n * 20 + m * 10);
         b.putShort((short) n);
         for (int i = 0; i < n; i++) {
             Critter c = critters.get(i);
@@ -35,6 +35,7 @@ public final class CritterSync {
             b.put((byte) (color == CritterGenes.CHOCOLATE ? 120 : color));
             b.put((byte) Math.round(c.genes.grade() * 255));
             b.put((byte) Math.round(c.size() * 255));
+            b.putShort((short) c.look);
             b.putShort(rel(c.x, minX));
             b.putShort(rel(c.y, minY));
             b.putShort(rel(c.z, minZ));
@@ -73,6 +74,7 @@ public final class CritterSync {
                 int color = b.get();
                 float grade = (b.get() & 0xFF) / 255F;
                 float size = (b.get() & 0xFF) / 255F;
+                int look = b.getShort() & 0xFFFF;
                 double x = minX + b.getShort() / UNIT, y = minY + b.getShort() / UNIT, z = minZ + b.getShort() / UNIT;
                 float yaw = (b.get() & 0xFF) / 256F * 360F;
                 if (sp >= all.length) continue;
@@ -82,6 +84,7 @@ public final class CritterSync {
                 c.clientColor = color == 120 ? CritterGenes.CHOCOLATE : color;
                 c.clientGrade = grade;
                 c.clientSize = size;
+                c.look = look;
                 c.clientFlags = (byte) f;
                 c.buried = (f & F_BURIED) != 0;
                 c.dead = (f & F_DEAD) != 0 ? 0 : -1;

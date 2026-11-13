@@ -331,6 +331,7 @@ public final class TankCritters {
         Critter k = new Critter(t.nextCritterId(), s, s.hasSexes() && female, genes, spot[0], spot[1], spot[2]);
         k.age = age;
         k.yaw = level.getRandom().nextFloat() * 360F;
+        k.look = CritterLooks.random(s, random(level)); // M21.5
         CritterMovement.pick(k, terrain, random(level)); // off it goes, exploring the new tank
         t.critters().add(k);
         c.markTankChanged();
@@ -360,6 +361,7 @@ public final class TankCritters {
             boolean female = pairs ? i % 2 == 0 : rnd.nextBoolean();
             Critter k = new Critter(0, s, s.hasSexes() && female, genes.get(), 0, 0, 0);
             k.age = s.juvenileDays() + rnd.nextDouble();
+            k.look = CritterLooks.random(s, rnd); // M21.5: every racer nerite / apple snail its own shade
             out.add(k.saveAnimal());
         }
         return bag(out);

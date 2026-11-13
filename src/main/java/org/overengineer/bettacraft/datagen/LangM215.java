@@ -7,6 +7,15 @@ final class LangM215 {
     private LangM215() {}
 
     static void addAll(BiConsumer<String, String> a) {
+        a.accept("critter.bettacraft.yellow_nerite", "Yellow Racer Nerite");
+        a.accept("critter.bettacraft.look.orange", "orange");
+        a.accept("critter.bettacraft.look.red", "red");
+        a.accept("critter.bettacraft.look.deep_red", "deep red");
+        a.accept("critter.bettacraft.look.red_lines", "red with yellow lines");
+        a.accept("critter.bettacraft.look.yellow", "yellow");
+        a.accept("critter.bettacraft.look.golden", "golden yellow");
+        a.accept("critter.bettacraft.look.yellow_lines", "yellow with dark lines");
+        a.accept("variety.bettacraft.ramshorn.red", "Red");
         a.accept("bettacraft.configuration.smoothSwimming", "Smooth swimming");
         a.accept("bettacraft.configuration.smoothSwimming.tooltip", "Smooth swimming: fish turn in curves, tilt and right themselves smoothly, kuhli loaches undulate slowly like eels and hide by day, plecos and otocinclus only stand upright once they reach the glass (off: the old, jerkier movement)");
         a.accept("bettacraft.configuration.greenNeonTetra", "Green neon tetra");

@@ -107,15 +107,26 @@ public final class CritterRenderer {
     // ------------------------------------------------------------------ colours
 
     public static int bodyColor(Critter k) {
+        return look(k).body();
+    }
+
+    /** M21.5: the shell colour with the individual look (racer nerites, apple snails) and the lines over it. */
+    public static org.overengineer.bettacraft.critters.CritterLooks.Look look(Critter k) {
         int c = CritterGenes.rgb(k.species, k.clientColor, k.clientGrade);
         if (k.species.nerite() || k.species == CritterSpecies.ASSASSIN_SNAIL) c = k.species.wildColor();
-        return c;
+        return org.overengineer.bettacraft.critters.CritterLooks.of(k.species, k.clientColor, c, k.look);
     }
+
+    /** M21.5: overlays of the shell (thin or wide lines of a racer nerite, the bands of an apple snail). */
+    private static final Map<org.overengineer.bettacraft.critters.CritterLooks.Lines, net.minecraft.resources.ResourceLocation> LINES = Map.of(
+            org.overengineer.bettacraft.critters.CritterLooks.Lines.FINE, BettaCraft.id("textures/entity/critters/nerite_lines_fine.png"),
+            org.overengineer.bettacraft.critters.CritterLooks.Lines.WIDE, BettaCraft.id("textures/entity/critters/nerite_lines_wide.png"),
+            org.overengineer.bettacraft.critters.CritterLooks.Lines.BANDS, BettaCraft.id("textures/entity/critters/apple_bands.png"));
 
     /** Colour of the soft body of a snail (foot, head, feelers). */
     public static int skinColor(Critter k) {
         return switch (k.species) {
-            case ZEBRA_NERITE, HORNED_NERITE, OLIVE_NERITE, RED_NERITE -> 0x6E6A60;
+            case ZEBRA_NERITE, HORNED_NERITE, OLIVE_NERITE, RED_NERITE, YELLOW_NERITE -> 0x6E6A60;
             case APPLE_SNAIL -> switch (k.clientColor) {
                 case 0, 3 -> 0xD8C8A0; // gold, ivory: pale body
                 case 1 -> 0x50607A; // blue
@@ -125,6 +136,7 @@ public final class CritterRenderer {
             case RAMSHORN -> switch (k.clientColor) {
                 case 0 -> 0xE07890; // pink: pink body
                 case 1 -> 0x6A7890;
+                case 2 -> 0xB0180E; // M21.5: red, a bright red body
                 default -> 0x8A2A1C; // the wild red-brown ones have a red body
             };
             case BLADDER_SNAIL -> 0x9A8A70;
@@ -243,7 +255,8 @@ public final class CritterRenderer {
         if (eggs != null) eggs.visible = berried && alive;
         if (horns != null) horns.visible = k.species == CritterSpecies.HORNED_NERITE;
         // tints
-        int body = bodyColor(k);
+        var lk = look(k);
+        int body = lk.body();
         if (soft) body = CritterGenes.mix(body, 0xF4ECE0, 0.45F);
         if (!alive) body = dead(body);
         int skin = alive ? skinColor(k) : dead(skinColor(k));
@@ -263,6 +276,14 @@ public final class CritterRenderer {
                 default -> body;
             };
             p.render(pose, vc, light, ov, argb(tint));
+        }
+        // M21.5: lines or bands over the shell (same model part, an overlay texture with its own colour)
+        if (lk.kind() != org.overengineer.bettacraft.critters.CritterLooks.Lines.NONE) {
+            ModelPart shell = group(m, "shell");
+            if (shell != null && shell.visible) {
+                int lc = alive ? lk.lines() : dead(lk.lines());
+                shell.render(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(LINES.get(lk.kind()))), light, ov, argb(lc));
+            }
         }
     }
 

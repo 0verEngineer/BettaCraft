@@ -386,6 +386,49 @@ def texture(groups: list[Group], name: str, seed: int, size: int) -> np.ndarray:
     return img
 
 
+def overlay(groups: list[Group], size: int, kind: str, seed: int) -> np.ndarray:
+    """M21.5: lines over the shell of a racer nerite (``fine`` / ``wide``) or the bands of an apple snail (``bands``):
+    the same box-UV layout as the model texture, white with shading where a line is, transparent elsewhere (tinted with
+    the colour of the lines at runtime and drawn over the shell)."""
+    rng = np.random.default_rng(seed)
+    img = np.zeros((size, size, 4))
+    shell = [g for g in groups if g.name == "shell"]
+    for cu in (cu for g in shell for cu in g.cubes):
+        w, h, d = cu.size
+        cx, cy, cz = cu.center
+        x0, y0, z0 = cx - w / 2, cy - h / 2, cz - d / 2
+        W, D, H = int(math.ceil(w)), int(math.ceil(d)), int(math.ceil(h))
+        rects = [
+            ("top", cu.u + D, cu.v, W, D, lambda a, b: (x0 + a, y0, z0 + b)),
+            ("bottom", cu.u + D + W, cu.v, W, D, lambda a, b: (x0 + a, y0 + h, z0 + b)),
+            ("east", cu.u, cu.v + D, D, H, lambda a, b: (x0 + w, y0 + b, z0 + a)),
+            ("north", cu.u + D, cu.v + D, W, H, lambda a, b: (x0 + a, y0 + b, z0)),
+            ("west", cu.u + D + W, cu.v + D, D, H, lambda a, b: (x0, y0 + b, z0 + d - a)),
+            ("south", cu.u + 2 * D + W, cu.v + D, W, H, lambda a, b: (x0 + w - a, y0 + b, z0 + d)),
+        ]
+        for face, u0, v0, fw, fh, fn in rects:
+            shade = {"top": 1.0, "bottom": 0.6, "north": 0.86, "south": 0.86, "east": 0.78, "west": 0.78}[face]
+            for j in range(max(1, fh)):
+                for i in range(max(1, fw)):
+                    uu, vv = u0 + i, v0 + j
+                    if not (0 <= uu < size and 0 <= vv < size):
+                        continue
+                    a = (i + 0.5) * (w if face in ("top", "bottom", "north", "south") else d) / max(1, fw)
+                    b = (j + 0.5) * (d if face in ("top", "bottom") else h) / max(1, fh)
+                    px, py, pz = fn(a, b)
+                    if kind == "fine":
+                        on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 3.4 + 0.7) > 0.72
+                    elif kind == "wide":
+                        on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 1.9 + 0.4) > 0.55
+                    else:  # apple snail bands around the whorls
+                        on = math.sin(-py * 0.95 + pz * 0.18) > 0.72
+                    if not on or face == "bottom":
+                        continue
+                    img[vv, uu, :3] = max(0.0, min(1.0, 0.95 * shade + (rng.random() - 0.5) * 0.06))
+                    img[vv, uu, 3] = 1.0
+    return img
+
+
 # ---------------------------------------------------------------------------------------------------------- Java
 
 def f(v: float) -> str:
@@ -542,6 +585,12 @@ def write_all() -> list:
         sizes[name] = pack(groups)
         models[name] = groups
         written.append(save_png(texture(groups, name, 1400 + i, sizes[name]), CRIT_TEX / f"{name}.png"))
+        # M21.5: overlays for the individual looks
+        if name == "nerite":
+            written.append(save_png(overlay(groups, sizes[name], "fine", 2150), CRIT_TEX / "nerite_lines_fine.png"))
+            written.append(save_png(overlay(groups, sizes[name], "wide", 2151), CRIT_TEX / "nerite_lines_wide.png"))
+        if name == "apple":
+            written.append(save_png(overlay(groups, sizes[name], "bands", 2152), CRIT_TEX / "apple_bands.png"))
     written.append(write_java(models, sizes))
     for st in range(1, 5):
         written.append(save_png(algae(st), ALGAE_TEX / f"algae_{st}.png"))

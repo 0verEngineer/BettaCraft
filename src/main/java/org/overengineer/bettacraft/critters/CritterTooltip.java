@@ -48,6 +48,8 @@ public final class CritterTooltip {
     public static MutableComponent line(Critter k) {
         String sex = !k.species.hasSexes() ? "⚥ " : k.female ? "♀ " : "♂ ";
         MutableComponent c = Component.literal(sex).append(TankCritters.name(k));
+        String look = CritterLooks.nameKey(k.species, k.look); // M21.5: the shade of a racer nerite
+        if (look != null) c.append(Component.literal(", ")).append(Component.translatable(look));
         if (k.species.hasGrade()) c.append(Component.translatable("tooltip.bettacraft.critters.grade", Math.round(k.genes.grade() * 100)));
         if (!k.adult()) c.append(Component.translatable("tooltip.bettacraft.critters.young"));
         if (k.berried()) c.append(Component.translatable("tooltip.bettacraft.critters.eggs"));

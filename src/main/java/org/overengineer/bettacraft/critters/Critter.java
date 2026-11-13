@@ -34,6 +34,8 @@ public final class Critter {
     public double sinceMolt = 10;
     /** Days since the animal died (-1: alive); the body lies there and is eaten or rots. */
     public double dead = -1;
+    /** M21.5: the individual look of racer nerites and apple snails ({@link CritterLooks}); 0 = the classic look. */
+    public int look;
 
     public double x, y, z;
     public float yaw;
@@ -126,6 +128,7 @@ public final class Critter {
         c.ty = ty;
         c.tz = tz;
         c.buried = buried;
+        c.look = look;
         return c;
     }
 
@@ -156,6 +159,7 @@ public final class Critter {
         }
         if (species.isCrayfish()) t.putDouble("molt", sinceMolt);
         if (dead >= 0) t.putDouble("dead", dead);
+        if (look != 0) t.putInt("look", look);
         return t;
     }
 
@@ -190,6 +194,7 @@ public final class Critter {
         c.father = t.contains("father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("father")) : null;
         c.sinceMolt = finite(t.contains("molt", Tag.TAG_ANY_NUMERIC) ? t.getDouble("molt") : 10, 10);
         c.dead = finite(t.contains("dead", Tag.TAG_ANY_NUMERIC) ? t.getDouble("dead") : -1, -1);
+        c.look = t.getInt("look") & 0xFFFF; // M21.5: missing in older worlds -> 0, the look they had
         return c;
     }
 

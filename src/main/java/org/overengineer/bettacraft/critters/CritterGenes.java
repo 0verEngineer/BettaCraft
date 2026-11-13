@@ -164,12 +164,13 @@ public record CritterGenes(int a, int b, float grade) {
             case "neocaridina:green" -> 0x2E7A40;
             case "neocaridina:black" -> 0x1C1A24;
             case "dwarf_crayfish:orange" -> 0xF06A1A;
-            case "apple_snail:gold" -> 0xE8B828;
+            case "apple_snail:gold" -> org.overengineer.bettacraft.config.CommonConfig.snailColors() ? 0xF4C414 : 0xE8B828; // M21.5: a stronger yellow
             case "apple_snail:blue" -> 0x5A7CB0;
             case "apple_snail:purple" -> 0x6A3A72;
             case "apple_snail:ivory" -> 0xEEE6D2;
             case "ramshorn:pink" -> 0xEC9AB2;
             case "ramshorn:blue" -> 0x6E92D0;
+            case "ramshorn:red" -> 0xC8160E; // M21.5: Red Ramshorn
             default -> species.wildColor();
         };
     }

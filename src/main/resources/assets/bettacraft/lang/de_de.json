@@ -1618,5 +1618,14 @@
   "bettacraft.configuration.breakProtection": "Bruchschutz",
   "bettacraft.configuration.breakProtection.tooltip": "Schalter „Bruchschutz“ im Becken-Menü: niemand kann ein geschütztes Becken, seinen Deckel, das Licht, die Futterautomaten und den Schrank darunter abbauen (aus: der Schalter ist ausgeblendet und wirkt nicht)",
   "bettacraft.configuration.clipOnFeeder": "Klemm-Futterautomat",
-  "bettacraft.configuration.clipOnFeeder.tooltip": "Klemm-Futterautomat: ein kleiner Futterautomat, der seitlich an der Scheibe hängt (für Becken, deren Oberseite das Licht belegt) (aus: er lässt sich nicht setzen und gesetzte füttern nicht)"
+  "bettacraft.configuration.clipOnFeeder.tooltip": "Klemm-Futterautomat: ein kleiner Futterautomat, der seitlich an der Scheibe hängt (für Becken, deren Oberseite das Licht belegt) (aus: er lässt sich nicht setzen und gesetzte füttern nicht)",
+  "critter.bettacraft.yellow_nerite": "Gelbe Rennschnecke",
+  "critter.bettacraft.look.orange": "orange",
+  "critter.bettacraft.look.red": "rot",
+  "critter.bettacraft.look.deep_red": "tiefrot",
+  "critter.bettacraft.look.red_lines": "rot mit gelben Linien",
+  "critter.bettacraft.look.yellow": "gelb",
+  "critter.bettacraft.look.golden": "goldgelb",
+  "critter.bettacraft.look.yellow_lines": "gelb mit dunklen Linien",
+  "variety.bettacraft.ramshorn.red": "Rot"
 }

@@ -24,10 +24,13 @@ public enum CritterSpecies {
             new String[0], 0x5E6A2E),
     RED_NERITE("red_nerite", Group.SNAIL, Model.NERITE, 0.16, 0.024, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 20, 28, 0.35, 0.02, 2.0,
             new String[0], 0xC4421E),
+    // M21.5: the yellow form of the racer nerite in the trade, its own entry (no breeding in fresh water, every one its own shade)
+    YELLOW_NERITE("yellow_nerite", Group.SNAIL, Model.NERITE, 0.16, 0.024, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 20, 28, 0.35, 0.02, 2.0,
+            new String[0], 0xE4BE2C),
     APPLE_SNAIL("apple_snail", Group.SNAIL, Model.APPLE, 0.4, 0.03, true, Breeding.PAIR_CLUTCH, 0.15, 3.0, 5, 10, 4.0, 20, 30, 0.3, 0.08, 1.5,
             new String[]{"gold", "blue", "purple", "ivory"}, 0x6B5030),
     RAMSHORN("ramshorn", Group.SNAIL, Model.RAMSHORN, 0.12, 0.018, true, Breeding.SELF, 0.1, 0, 1, 2, 3.0, 15, 30, 0.3, 0.015, 0.6,
-            new String[]{"pink", "blue"}, 0x8A3A22),
+            new String[]{"pink", "blue", "red"}, 0x8A3A22), // M21.5: red (Red Ramshorn), stronger than the wild red-brown
     BLADDER_SNAIL("bladder_snail", Group.SNAIL, Model.BLADDER, 0.07, 0.02, true, Breeding.SELF, 0.1, 0, 1, 2, 2.0, 10, 30, 0.25, 0.008, 0.3,
             new String[0], 0xA08058),
     TRUMPET_SNAIL("trumpet_snail", Group.SNAIL, Model.TRUMPET, 0.17, 0.012, false, Breeding.SELF, 0.06, 0, 1, 2, 3.0, 18, 32, 0.3, 0.01, 0.1,
