@@ -212,6 +212,18 @@ public final class TankCare {
         for (BlockPos p : aboveTop(tank)) {
             if (level.isLoaded(p) && level.getBlockEntity(p) instanceof FeederBlockEntity f) return f;
         }
+        // M21.5: a clip-on feeder on the side of a top block
+        if (org.overengineer.bettacraft.config.CommonConfig.clipFeeder()) {
+            for (long l : tank.members()) {
+                BlockPos p = BlockPos.of(l);
+                if (tank.contains(p.above())) continue;
+                for (net.minecraft.core.Direction d : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                    BlockPos n = p.relative(d);
+                    if (!level.isLoaded(n) || !(level.getBlockEntity(n) instanceof org.overengineer.bettacraft.equipment.ClipFeederBlockEntity f)) continue;
+                    if (f.tankPos().equals(p)) return f;
+                }
+            }
+        }
         return null;
     }
 

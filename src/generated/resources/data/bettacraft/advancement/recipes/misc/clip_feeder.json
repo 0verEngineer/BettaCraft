@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_betta": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:betta_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_feeder": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:feeder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:clip_feeder"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_feeder",
+      "has_betta"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:clip_feeder"
+    ]
+  }
+}

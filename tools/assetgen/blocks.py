@@ -173,6 +173,31 @@ def feeder_bottom() -> np.ndarray:
     return img
 
 
+def clip_feeder_front() -> np.ndarray:
+    """M21.5: front of the clip-on feeder (model u 5..11, v 0..9): brushed metal, a small window with pellets, a dial
+    with three marks (1-3 feedings) and the clip at the top."""
+    img = _metal(405, 0x8e)
+    img[0, :, :3] = 0xc0  # the clip over the glass rim
+    img[1, :, :3] = 0x64
+    for x in (5, 10):
+        img[2:9, x, :3] = 0x5a
+    pel = [(0xc0, 0x70, 0x3e), (0x9a, 0x4f, 0x28), (0xe2, 0xa0, 0x70), (0x6e, 0x34, 0x18)]
+    rng = _rng(406)
+    for y in range(2, 6):
+        for x in range(6, 10):
+            if y == 2 or y == 5 or x in (6, 9):
+                _put(img, x, y, (0x2c, 0x2c, 0x31))
+            elif y == 3:
+                _put(img, x, y, (0xb8, 0xd8, 0xe4))
+            else:
+                _put(img, x, y, pel[int(rng.integers(0, 4))])
+    for x in (6, 7, 9):  # the dial: three marks, the knob
+        _put(img, x, 7, (0xe0, 0xe0, 0xe4))
+    _put(img, 8, 7, (0x30, 0x30, 0x34))
+    img[8, 5:11, :3] = 0x48
+    return img
+
+
 # ---------------------------------------------------------------- tank light (bar along X, 3 px wide, 2 px high)
 
 def tank_light() -> np.ndarray:
@@ -219,6 +244,7 @@ def all_blocks():
         "feeder_side": feeder_side(),
         "feeder_top": feeder_top(),
         "feeder_bottom": feeder_bottom(),
+        "clip_feeder_front": clip_feeder_front(),  # M21.5
         "tank_light": tank_light(),
         "tank_light_panel_on": _panel(True),
         "tank_light_panel_off": _panel(False),

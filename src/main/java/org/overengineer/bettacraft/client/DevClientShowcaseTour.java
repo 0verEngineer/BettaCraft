@@ -26,8 +26,11 @@ import org.slf4j.LoggerFactory;
 final class DevClientShowcaseTour {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     /** Must match DevShowcase: origin = spawn + (3, 0, 6), rows 9 blocks apart, the tanks 6 blocks apart. */
-    private static final int ROWS = 10, ROW = 9;
-    private static final int[] ROW_LENGTH = {96, 120, 72, 102, 30, 72, 60, 96, 140, 150};
+    private static final int ROW = 9;
+    /** M21.5: the tanks stand on cabinets, one block higher: the camera too. */
+    private static final double EYE = 2.9;
+    /** M21.5: the plant row (Rotala, Vallisneria) after the two new colour rows. */
+    private static final int PLANT_ROW = 5;
 
     private record Step(int delay, Runnable action) {}
 
@@ -107,19 +110,50 @@ final class DevClientShowcaseTour {
             bench();
             return;
         }
-        for (int row = 0; row < ROWS; row++) {
-            int rr = row;
-            // close enough to see the animals and read the name plates: the named dry tank at the start of the row,
-            // then one tank in the middle of each picture (2 wide, 6 apart), from the path in front of the row
-            for (int n = 0, x = -4; x < ROW_LENGTH[row] + 4; n++, x = n == 1 ? 1 : x + 6) {
-                int nn = n, xx = x;
-                then(1, () -> look(xx, rr * ROW - 3.4, 1.9, 0F, 16F));
-                then(n == 0 ? 100 : 45, () -> shot("showcase_" + rr + "_" + (nn < 10 ? "0" : "") + nn));
+        // M21.5: the rows and their lengths are read from the world (the tanks of a row, scanned on the server)
+        then(1, () -> {
+            int[] lengths = rowLengths();
+            LOGGER.info("[smoketest] showcase tour: {} rows, lengths {}", lengths.length, java.util.Arrays.toString(lengths));
+            for (int row = 0; row < lengths.length; row++) {
+                int rr = row;
+                // close enough to see the animals and read the name plates: the named dry tank at the start of the row,
+                // then one tank in the middle of each picture (2 wide, 6 apart), from the path in front of the row
+                for (int n = 0, x = -4; x < lengths[row] + 4; n++, x = n == 1 ? 1 : x + 6) {
+                    int nn = n, xx = x;
+                    then(1, () -> look(xx, rr * ROW - 3.4, EYE, 0F, 16F));
+                    then(n == 0 ? 100 : 45, () -> shot("showcase_" + (rr < 10 ? "0" : "") + rr + "_" + (nn < 10 ? "0" : "") + nn));
+                }
             }
-        }
-        // the whole showcase from above
-        then(1, () -> look(70, -20, 40, 0F, 50F));
-        then(160, () -> shot("showcase_overview"));
+            // the whole showcase from above
+            then(1, () -> look(70, -20, 44, 0F, 50F));
+            then(160, () -> shot("showcase_overview"));
+        });
+    }
+
+    /** M21.5: per row (9 blocks apart from the origin) the x of its last tank block (scanned on the server). */
+    private int[] rowLengths() {
+        var server = mc.getSingleplayerServer();
+        return server.submit(() -> {
+            var level = server.overworld();
+            var spawn = level.getSharedSpawnPos();
+            int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
+            java.util.List<Integer> out = new java.util.ArrayList<>();
+            for (int row = 0; row < 30; row++) {
+                int last = -1;
+                for (int x = 0; x < 200; x++)
+                    for (int y = 0; y < 4 && last < x; y++)
+                        for (int z = 0; z < 3; z++) {
+                            var p = new net.minecraft.core.BlockPos(spawn.getX() + 3 + x, ground + y, spawn.getZ() + 6 + row * ROW + z);
+                            if (level.getBlockState(p).is(org.overengineer.bettacraft.registry.ModBlocks.TANK.get())) {
+                                last = x;
+                                break;
+                            }
+                        }
+                if (last < 0) break;
+                out.add(last);
+            }
+            return out.stream().mapToInt(Integer::intValue).toArray();
+        }).join();
     }
 
     private void bench() {
@@ -131,7 +165,7 @@ final class DevClientShowcaseTour {
         // the plant row: Rotala (12th tank, x ~ 67) close up, Rotala and Vallisneria (15th, x ~ 85) from 15 blocks, and the
         // whole showcase from above (the plant row further away than 24 blocks)
         String[] names = {"rotala_near", "plants_mid", "overview"};
-        double[][] spots = {{68, 3 * ROW - 3.4, 1.9, 16}, {76, 3 * ROW - 15, 4, 12}, {70, -20, 40, 50}};
+        double[][] spots = {{68, PLANT_ROW * ROW - 3.4, EYE, 16}, {76, PLANT_ROW * ROW - 15, 5, 12}, {70, -20, 44, 50}};
         int saved = org.overengineer.bettacraft.config.ClientConfig.MINIATURE_PLANT_MESH_DISTANCE.get();
         for (int i = 0; i < spots.length; i++) {
             double[] s = spots[i];

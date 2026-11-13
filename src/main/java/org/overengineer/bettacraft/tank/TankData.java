@@ -66,6 +66,8 @@ public final class TankData {
     private SignPosition signPos = SignPosition.TOP_CENTER;
     private Direction front = Direction.SOUTH;
     private boolean locked;
+    /** M21.5: break protection: nobody can break the tank or the equipment on and under it (off for new tanks). */
+    private boolean breakProtected;
     private final Set<UUID> inhabitants = new LinkedHashSet<>();
     private final List<LogEntry> log = new ArrayList<>();
     /** Bubble nest (M2), null if there is none. */
@@ -297,6 +299,8 @@ public final class TankData {
     public void setFront(Direction d) { if (d.getAxis().isHorizontal()) this.front = d; }
     public boolean locked() { return locked; }
     public void setLocked(boolean l) { this.locked = l; }
+    public boolean breakProtected() { return breakProtected; }
+    public void setBreakProtected(boolean b) { this.breakProtected = b; }
     public Set<UUID> inhabitants() { return inhabitants; }
     public int inhabitantCount() { return clientView ? clientInhabitants : inhabitants.size(); }
     /** M15: players in the tank's interior (server: as last counted, client: as synced). */
@@ -377,6 +381,7 @@ public final class TankData {
         signPos = o.signPos;
         front = o.front;
         locked = o.locked;
+        breakProtected = o.breakProtected;
         waterQuality = o.waterQuality;
         lastFreshWater = o.lastFreshWater;
         log.clear();
@@ -445,6 +450,7 @@ public final class TankData {
         t.putString("sign_pos", signPos.getSerializedName());
         t.putString("front", front.getSerializedName());
         t.putBoolean("locked", locked);
+        if (breakProtected) t.putBoolean("break_protected", true);
         ListTag inh = new ListTag();
         for (UUID u : inhabitants) inh.add(NbtUtils.createUUID(u));
         t.put("inhabitants", inh);
@@ -519,6 +525,7 @@ public final class TankData {
         Direction f = Direction.byName(t.getString("front"));
         d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
         d.locked = t.getBoolean("locked");
+        d.breakProtected = t.getBoolean("break_protected"); // M21.5: missing in older worlds = off
         ListTag inh = t.getList("inhabitants", Tag.TAG_INT_ARRAY);
         // M17: a malformed UUID threw here, vanilla then dropped the whole block entity and the tank was lost
         for (Tag u : inh) if (u instanceof net.minecraft.nbt.IntArrayTag ia && ia.size() == 4) d.inhabitants.add(NbtUtils.loadUUID(u));

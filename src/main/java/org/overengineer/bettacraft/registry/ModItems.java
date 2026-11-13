@@ -21,6 +21,7 @@ public final class ModItems {
     public static final DeferredItem<TankBlockItem> TANK = ITEMS.register("tank",
             () -> new TankBlockItem(ModBlocks.TANK.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> FEEDER = ITEMS.registerSimpleBlockItem(ModBlocks.FEEDER);
+    public static final DeferredItem<BlockItem> CLIP_FEEDER = ITEMS.registerSimpleBlockItem(ModBlocks.CLIP_FEEDER); // M21.5
     /** M18: in 16 colours (block state component, see TankLightItem). */
     public static final DeferredItem<org.overengineer.bettacraft.equipment.TankLightItem> TANK_LIGHT = ITEMS.register("tank_light",
             () -> new org.overengineer.bettacraft.equipment.TankLightItem(ModBlocks.TANK_LIGHT.get(), new Item.Properties()));

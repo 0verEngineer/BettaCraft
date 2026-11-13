@@ -1,6 +1,7 @@
 {
   "values": [
     "bettacraft:feeder",
+    "bettacraft:clip_feeder",
     "bettacraft:tank_light",
     "bettacraft:filter_segment",
     "bettacraft:external_filter",

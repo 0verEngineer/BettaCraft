@@ -81,6 +81,12 @@ import org.slf4j.LoggerFactory;
  * every decoration, the equipment (filters, heaters, coolers, lid and feeder, skimmer, pump), the 16 light colours, the
  * glass types, styles and free shapes, every coral and reef animal in its own salt water tank, a reef tank and a
  * brackish tank. The animals live normally (not frozen). Then the world is saved and the server stops.
+ * <p>
+ * M21.5: every tank stands on cabinets with an external filter in the front one (the doors face the path, the wood
+ * changes from row to row), so the tanks are one block higher, at eye level; power is off in the world's server config;
+ * every tank has the break protection on; a row per colour of the small animals with colour genetics (ramshorn,
+ * apple snail, shrimp, crayfish) and the racer nerites with their individual shades, and the colour forms of the
+ * tankmates (green and blue neon, guppies, endlers, platies, ...).
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevShowcase {
@@ -93,6 +99,10 @@ public final class DevShowcase {
     private static int tanks, animals, plants, named;
     private static BlockPos origin;
     private static int row;
+    /** M21.5: the wood of the cabinets in the current row. */
+    private static ResourceLocation rowWood = ResourceLocation.withDefaultNamespace("oak_planks");
+    private static final String[] WOODS = {"oak_planks", "spruce_planks", "birch_planks", "jungle_planks", "acacia_planks", "dark_oak_planks",
+            "mangrove_planks", "cherry_planks", "bamboo_planks", "crimson_planks", "warped_planks", "pale_oak_planks"};
     private static final List<ChunkPos> forced = new ArrayList<>();
 
     private DevShowcase() {}
@@ -156,13 +166,19 @@ public final class DevShowcase {
         rules.getRule(GameRules.RULE_DO_TRADER_SPAWNING).set(false, server);
         level.setDayTime(6000);
         level.setWeatherParameters(120000, 0, false, false);
+        // M21.5: power off in this world (filters, heaters and pumps run without FE)
+        for (var v : List.of(org.overengineer.bettacraft.config.ServerConfig.POWER_HEATER, org.overengineer.bettacraft.config.ServerConfig.POWER_FILTER,
+                org.overengineer.bettacraft.config.ServerConfig.POWER_LIGHT)) {
+            v.set(false);
+            v.save();
+        }
         BlockPos spawn = level.getSharedSpawnPos();
         int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, spawn.getX(), spawn.getZ());
         origin = new BlockPos(spawn.getX() + 3, ground, spawn.getZ() + 6);
         level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
         // keep the whole showcase loaded while it is built (the animals are entities)
-        for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 110 >> 4) + 1; cx++)
-            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 12 * ROW + 10 >> 4) + 1; cz++) {
+        for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
+            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 14 * ROW + 10 >> 4) + 1; cz++) {
                 level.setChunkForced(cx, cz, true);
                 forced.add(new ChunkPos(cx, cz));
             }
@@ -215,6 +231,31 @@ public final class DevShowcase {
         TankBlockEntity frogs = tank(level, at, 2, 2, 2, 0F, true);
         for (int i = 0; i < 2; i++) frog(level, frogs);
         name(level, at, de("entity.bettacraft.dwarf_frog"));
+        // M21.5: a tank per colour of every small animal with colour genetics, the racer nerites with their shades
+        at = startRow(level, "Kleintiere: Farben");
+        for (CritterSpecies s : CritterSpecies.values()) {
+            if (s.loci().length == 0 && !org.overengineer.bettacraft.critters.CritterLooks.has(s)) continue;
+            for (int l = -1; l < s.loci().length; l++) {
+                TankBlockEntity c = tank(level, at, 2, 1, 2, 0F, true);
+                CritterGenes g = l < 0 ? CritterGenes.WILD : CritterGenes.pure(l, s == CritterSpecies.NEOCARIDINA ? 0.5F : 0.6F);
+                critters(level, c, s, s.nerite() ? 8 : 5, g);
+                String v = de("variety.bettacraft." + s.id() + "." + (l < 0 ? "wild" : g.variety(s)));
+                name(level, at, s.nerite() ? de(s.translationKey()) : de(s.translationKey()) + ": " + v);
+                at = at.east(2 + GAP);
+            }
+        }
+        // M21.5: the colour forms of the tankmates (pure lines, a few of each)
+        at = startRow(level, "Beifische: Farbformen");
+        for (TankmateSpecies s : TankmateSpecies.values()) {
+            if (s.varieties().size() <= 1) continue;
+            for (String v : s.varieties()) {
+                TankBlockEntity c = tank(level, at, 2, 2, 2, s.marine() ? 35F : 0F, true);
+                if (s.marine()) reefLight(level, at, 2);
+                for (int i = 0; i < Math.min(4, Math.max(2, s.shoal())); i++) fish(level, c, s, TankmateGenes.pure(s, v), i % 2 == 0, r);
+                name(level, at, de("variety.bettacraft." + s.id() + "." + v));
+                at = at.east(2 + GAP);
+            }
+        }
         // 4: aquarium plants, grown, strong light
         at = startRow(level, "Pflanzen (starkes Licht)");
         for (PlantSpecies s : PlantSpecies.values()) {
@@ -317,11 +358,15 @@ public final class DevShowcase {
     }
 
     private static BlockPos startRow(ServerLevel level, String title) {
-        BlockPos start = origin.offset(0, 0, row * ROW);
+        // M21.5: the tanks stand on cabinets: the row is one block higher, the cabinets on the ground
+        BlockPos start = origin.offset(0, 1, row * ROW);
+        String wood = WOODS[row % WOODS.length];
+        rowWood = net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(ResourceLocation.withDefaultNamespace(wood))
+                ? ResourceLocation.withDefaultNamespace(wood) : ResourceLocation.withDefaultNamespace("oak_planks");
         row++;
         // a path in front of the row and, at its start, a small dry tank named after the row (no vanilla signs: the
         // tanks carry their names on the glass)
-        for (int x = -7; x < 130; x++) for (int z = -3; z <= -2; z++) level.setBlockAndUpdate(start.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
+        for (int x = -7; x < 150; x++) for (int z = -3; z <= -2; z++) level.setBlockAndUpdate(start.offset(x, -2, z), Blocks.SMOOTH_STONE.defaultBlockState());
         BlockPos header = start.offset(-5, 0, 0);
         tank(level, header, 2, 1, 1, 0F, false);
         name(level, header, row + ": " + title);
@@ -335,6 +380,7 @@ public final class DevShowcase {
     }
 
     private static TankBlockEntity tank(ServerLevel level, List<BlockPos> blocks, BlockPos min, float salt, boolean water, ResourceLocation glass, TankStyle style) {
+        cabinets(level, blocks);
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
             if (level.getBlockEntity(pos) instanceof TankBlockEntity be) {
@@ -351,9 +397,40 @@ public final class DevShowcase {
         c.getTank().setWaterTemp(salt > 20 ? 26F : 25F);
         c.getTank().setTargetTemp(salt > 20 ? 26F : 25F);
         c.getTank().setWaterQuality(1F);
+        c.getTank().setBreakProtected(true); // M21.5: nobody breaks the showcase by accident
         c.markTankChanged();
         tanks++;
         return c;
+    }
+
+    /**
+     * M21.5: cabinets of the row's wood under every block of the bottom layer that stands on air (doors to the path,
+     * north), an external filter with a medium heater in the front left one.
+     */
+    private static void cabinets(ServerLevel level, List<BlockPos> blocks) {
+        int minY = Integer.MAX_VALUE;
+        for (BlockPos p : blocks) minY = Math.min(minY, p.getY());
+        List<BlockPos> placed = new ArrayList<>();
+        for (BlockPos p : blocks) {
+            if (p.getY() != minY) continue;
+            BlockPos cp = p.below();
+            if (!level.getBlockState(cp).isAir()) continue;
+            level.setBlockAndUpdate(cp, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
+            if (level.getBlockEntity(cp) instanceof CabinetBlockEntity cab) cab.setWood(rowWood);
+            placed.add(cp);
+        }
+        if (placed.isEmpty()) return;
+        BlockPos front = placed.getFirst();
+        for (BlockPos cp : placed) {
+            if (cp.getZ() < front.getZ() || cp.getZ() == front.getZ() && cp.getX() < front.getX()) front = cp;
+        }
+        if (level.getBlockEntity(front) instanceof CabinetBlockEntity cab) {
+            ItemStack f = new ItemStack(ModItems.EXTERNAL_FILTER.get());
+            FilterHeaters.write(f, List.of(new ItemStack(ModItems.HEATER_MEDIUM.get()), ItemStack.EMPTY));
+            cab.items().setStackInSlot(CabinetBlockEntity.FILTER_SLOT, f);
+            cab.setChanged();
+        }
+        for (BlockPos cp : placed) level.setBlockAndUpdate(cp, Block.updateFromNeighbourShapes(level.getBlockState(cp), level, cp));
     }
 
     private static List<BlockPos> cuboid(BlockPos min, int sx, int sy, int sz) {
@@ -471,14 +548,18 @@ public final class DevShowcase {
     }
 
     private static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, int n, RandomSource r) {
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) fish(level, c, s, TankmateGenes.wild(s), i % 2 == 0, r);
+    }
+
+    private static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female, RandomSource r) {
+        {
             TankWaterVolume w = new TankWaterVolume(c.getTank());
             Vec3 p = w.clamp(new Vec3(w.box().minX + r.nextDouble() * (w.box().maxX - w.box().minX), w.box().minY + 0.3 + r.nextDouble() * 0.5,
                     w.box().minZ + r.nextDouble() * (w.box().maxZ - w.box().minZ)), 0.35, 0.1, 0.2);
-            var e = TankmateBreeding.spawn(level, c, s, TankmateGenes.wild(s), i % 2 == 0, LifeStage.ADULT, 0, p);
+            var e = TankmateBreeding.spawn(level, c, s, genes, female, LifeStage.ADULT, 0, p);
             if (e == null) {
                 LOGGER.warn("[showcase] {} not spawned", s.id());
-                continue;
+                return;
             }
             e.health().feed();
             animals++;
@@ -486,7 +567,11 @@ public final class DevShowcase {
     }
 
     private static void critters(ServerLevel level, TankBlockEntity c, CritterSpecies s, int n) {
-        for (int i = 0; i < n; i++) if (TankCritters.add(level, c, s, CritterGenes.WILD, i % 2 == 0, s.juvenileDays() + 1) != null) animals++;
+        critters(level, c, s, n, CritterGenes.WILD);
+    }
+
+    private static void critters(ServerLevel level, TankBlockEntity c, CritterSpecies s, int n, CritterGenes g) {
+        for (int i = 0; i < n; i++) if (TankCritters.add(level, c, s, g, i % 2 == 0, s.juvenileDays() + 1) != null) animals++;
     }
 
     private static void frog(ServerLevel level, TankBlockEntity c) {
@@ -517,6 +602,7 @@ public final class DevShowcase {
         // external filter with a small and a medium heater
         TankBlockEntity a = tank(level, at, 2, 2, 2, 0F, true);
         BlockPos ef = at.west();
+        level.setBlockAndUpdate(ef.below(), Blocks.POLISHED_ANDESITE.defaultBlockState());
         level.setBlockAndUpdate(ef, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.EAST));
         if (level.getBlockEntity(ef) instanceof ExternalFilterBlockEntity f) {
             f.insertHeater(new ItemStack(ModItems.HEATER_SMALL.get()));
@@ -528,31 +614,34 @@ public final class DevShowcase {
         // external filter with a cooler
         TankBlockEntity b = tank(level, at, 2, 2, 2, 0F, true);
         ef = at.west();
+        level.setBlockAndUpdate(ef.below(), Blocks.POLISHED_ANDESITE.defaultBlockState());
         level.setBlockAndUpdate(ef, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.EAST));
         if (level.getBlockEntity(ef) instanceof ExternalFilterBlockEntity f) f.insertHeater(new ItemStack(ModItems.COOLER_MEDIUM.get()));
         TankEquipment.invalidate(b);
         name(level, at, de("block.bettacraft.external_filter") + " + Kühler");
         at = at.east(2 + GAP + 1);
-        // a cabinet under the tank with a filter and a heater in it
-        for (int x = 0; x < 2; x++) {
-            BlockPos cp = at.offset(x, 0, 0);
-            level.setBlockAndUpdate(cp, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
-            if (x == 0 && level.getBlockEntity(cp) instanceof CabinetBlockEntity cab) {
-                ItemStack f = new ItemStack(ModItems.EXTERNAL_FILTER.get());
-                FilterHeaters.write(f, List.of(new ItemStack(ModItems.HEATER_MEDIUM.get()), ItemStack.EMPTY));
-                cab.items().setStackInSlot(CabinetBlockEntity.FILTER_SLOT, f);
-                cab.storage().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 24), false);
-                cab.setChanged();
-            }
+        // a cabinet under the tank with a filter, a heater and food in its storage (M21.5: every tank has its cabinet now)
+        TankBlockEntity cab = tank(level, at, 2, 2, 2, 0F, true);
+        if (level.getBlockEntity(at.below()) instanceof CabinetBlockEntity cb) {
+            cb.storage().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 24), false);
+            cb.setChanged();
         }
-        for (int x = 0; x < 2; x++) {
-            BlockPos cp = at.offset(x, 0, 0);
-            level.setBlockAndUpdate(cp, Block.updateFromNeighbourShapes(level.getBlockState(cp), level, cp));
-        }
-        TankBlockEntity cab = tank(level, at.above(), 2, 2, 2, 0F, true);
         TankEquipment.invalidate(cab);
-        name(level, at.above(), de("block.bettacraft.cabinet") + " + Filter");
+        name(level, at, de("block.bettacraft.cabinet") + " + Filter + Futter");
         at = at.east(2 + GAP);
+        // M21.5: a one-block tank with a light on top and a clip-on feeder on its glass
+        TankBlockEntity clip = tank(level, at, 1, 1, 1, 0F, true);
+        light(level, at, 1, 1, 0, DyeColor.WHITE);
+        level.setBlockAndUpdate(at.north(), ModBlocks.CLIP_FEEDER.get().defaultBlockState()
+                .setValue(org.overengineer.bettacraft.equipment.ClipFeederBlock.FACING, Direction.NORTH));
+        if (level.getBlockEntity(at.north()) instanceof org.overengineer.bettacraft.equipment.ClipFeederBlockEntity cf) {
+            cf.items().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 32), false);
+            cf.setChanged();
+        }
+        betta(level, clip, BettaVarietyTable.VARIETIES.getFirst().example(), false);
+        TankEquipment.invalidate(clip);
+        name(level, at, de("block.bettacraft.clip_feeder"));
+        at = at.east(1 + GAP + 1);
         // internal filter, heaters and coolers in the interior
         TankBlockEntity d = tank(level, at, 2, 2, 2, 0F, true);
         segment(level, d, SegmentBlock.Kind.FILTER, null, 4, 26);
@@ -580,6 +669,7 @@ public final class DevShowcase {
         at = at.east(3 + GAP + 1);
         // protein skimmer and flow pump (salt water)
         TankBlockEntity h = tank(level, at, 2, 2, 2, 35F, true);
+        level.setBlockAndUpdate(at.offset(-1, 0, 1), Blocks.POLISHED_ANDESITE.defaultBlockState());
         level.setBlockAndUpdate(at.offset(-1, 1, 1), ModBlocks.PROTEIN_SKIMMER.get().defaultBlockState().setValue(ProteinSkimmerBlock.FACING, Direction.EAST));
         reefLight(level, at, 2);
         InteriorRegion ir = region(level, h, Blocks.SAND.defaultBlockState());
@@ -654,6 +744,7 @@ public final class DevShowcase {
                     .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 4).setValue(TankLightBlock.LIT, true)
                     .setValue(TankLightBlock.COLOR, x % 2 == 0 ? DyeColor.BLUE : DyeColor.WHITE));
         }
+        for (int y = 0; y < 2; y++) level.setBlockAndUpdate(at.offset(-1, y, 1), Blocks.POLISHED_ANDESITE.defaultBlockState());
         level.setBlockAndUpdate(at.offset(-1, 2, 1), ModBlocks.PROTEIN_SKIMMER.get().defaultBlockState().setValue(ProteinSkimmerBlock.FACING, Direction.EAST));
         BlockPos pumpAt = ir.toWorld(76, 20, 44);
         for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {

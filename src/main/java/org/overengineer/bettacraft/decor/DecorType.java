@@ -11,8 +11,9 @@ import org.overengineer.bettacraft.BettaCraft;
  */
 public enum DecorType {
     CASTLE(8, 12, 8),
-    SHIPWRECK(8, 5, 4),
-    DINO_SKULL(6, 4, 4),
+    /** M21.5: the detailed versions (the small old ones: {@code _small}, with features.detailedDecor off). */
+    SHIPWRECK(13, 10, 5),
+    DINO_SKULL(12, 8, 6),
     VOLCANO(7, 6, 7),
     DRIFTWOOD(6, 3, 3),
     STONES(3, 2, 3),
@@ -43,6 +44,7 @@ public enum DecorType {
     }
 
     public ResourceLocation structure() {
-        return BettaCraft.id("decor/" + id());
+        boolean small = (this == SHIPWRECK || this == DINO_SKULL) && !org.overengineer.bettacraft.config.CommonConfig.detailedDecor();
+        return BettaCraft.id("decor/" + id() + (small ? "_small" : ""));
     }
 }

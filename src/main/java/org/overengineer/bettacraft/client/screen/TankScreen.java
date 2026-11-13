@@ -75,6 +75,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private LogFilter logFilter = LogFilter.ALL;
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
+    private Button protectButton;
     private Button lockButton, signButton, signPosButton, frontButton, minusButton, plusButton, enterButton;
     private Button renameButton, bucketButton, bagButton;
     private String sentName;
@@ -158,7 +159,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }).bounds(x + 176, y + 125, 62, 13).build());
 
         // ---- overview
-        nameBox = new EditBox(font, x + 11, y + 21, 150, 13, Component.translatable("gui.bettacraft.tank.name"));
+        nameBox = new EditBox(font, x + 11, y + 21, 96, 13, Component.translatable("gui.bettacraft.tank.name"));
         nameBox.setMaxLength(TankData.MAX_NAME_LENGTH);
         nameBox.setHint(Component.translatable("gui.bettacraft.tank.name_hint").withStyle(ChatFormatting.DARK_GRAY));
         nameBox.setResponder(s -> nameDirtyTicks = 15);
@@ -166,6 +167,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         lockButton = addRenderableWidget(Button.builder(Component.empty(), b -> send(TankActions.TOGGLE_LOCK, 0, "", null))
                 .bounds(x + 164, y + 20, 74, 15).build());
         overview.add(lockButton);
+        // M21.5: break protection, between the name and the lock
+        protectButton = addRenderableWidget(new FitButton(x + 110, y + 20, 52, 15, Component.empty(), b -> send(TankActions.TOGGLE_PROTECT, 0, "", null)));
+        overview.add(protectButton);
         // sign, sign position and front side share the row; labels that are still too long are drawn smaller, not scrolled
         signButton = addRenderableWidget(new FitButton(x + 10, y + 38, 62, 14, Component.empty(), b -> send(TankActions.TOGGLE_SIGN, 0, "", null)));
         signPosButton = addRenderableWidget(new FitButton(x + 74, y + 38, 82, 14, Component.empty(), b -> {
@@ -395,6 +399,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         nameBox.active = mod;
         lockButton.active = v.isOwner || v.ownerName.isEmpty() || minecraft.player.hasPermissions(2);
         lockButton.setMessage(Component.translatable(v.locked ? "gui.bettacraft.tank.locked" : "gui.bettacraft.tank.unlocked"));
+        protectButton.visible = v.protectionFeature && tab == Tab.OVERVIEW;
+        protectButton.active = lockButton.active;
+        protectButton.setMessage(Component.translatable(v.breakProtected ? "gui.bettacraft.tank.protect_on" : "gui.bettacraft.tank.protect_off")
+                .withStyle(v.breakProtected ? ChatFormatting.GOLD : ChatFormatting.WHITE));
+        protectButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.protect_tooltip")));
         lockButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.lock_tooltip",
                 v.ownerName.isEmpty() ? Component.translatable("gui.bettacraft.tank.no_owner") : Component.literal(v.ownerName))));
         signButton.setMessage(Component.translatable(v.signVisible ? "gui.bettacraft.tank.sign_on" : "gui.bettacraft.tank.sign_off"));

@@ -59,6 +59,7 @@ public final class ModCreativeTabs {
                     out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), id));
                 }
                 out.accept(ModItems.FEEDER.get());
+                out.accept(ModItems.CLIP_FEEDER.get());
                 out.accept(ModItems.TANK_LIGHT.get());
                 // M18: the coloured lights
                 for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {

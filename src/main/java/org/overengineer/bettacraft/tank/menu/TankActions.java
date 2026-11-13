@@ -38,6 +38,9 @@ public final class TankActions {
     /** M19: takes the breeding box out of the tank (the young in it swim free). */
     public static final int REMOVE_BREEDING_BOX = 12;
 
+    /** M21.5: break protection on/off (owner or OP). */
+    public static final int TOGGLE_PROTECT = 13;
+
     public static final int MAX_FISH_NAME = 32;
 
     private TankActions() {}
@@ -75,6 +78,7 @@ public final class TankActions {
                     tank.setLocked(!tank.locked());
                 }
             }
+            case TOGGLE_PROTECT -> error = org.overengineer.bettacraft.tank.TankProtection.toggle(player, controller);
             case SET_TARGET -> {
                 if (!modify) error = locked();
                 else tank.setTargetTemp(p.value() / 2.0F);

@@ -24,6 +24,10 @@ public enum TankmateSpecies {
     CARDINAL_TETRA(d("cardinal_tetra", "Paracheirodon axelrodi", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.32).temp(24, 30).breed(26, 28).quality(0.65).shoal(6).stock(0.4).brood(20, 50).growth(1.1)
             .eats(0.5).egg(0x2A78E0, 0xE02A20).native_(Water.JUNGLE, 22).trader(Trade.COMMON)),
+    // M21.5: the green neon (Paracheirodon simulans), green or blue stripe over almost the whole body, hardly any red
+    GREEN_NEON_TETRA(d("green_neon_tetra", "Paracheirodon simulans", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
+            .size(0.22).temp(24, 30).breed(26, 29).quality(0.7).shoal(6).stock(0.25).brood(15, 40).growth(0.9)
+            .eats(0.4).egg(0x2AD0B8, 0x2A60E0).native_(Water.JUNGLE, 12).trader(Trade.COMMON).varieties("wild", "blue")),
     EMBER_TETRA(d("ember_tetra", "Hyphessobrycon amandae", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.17).temp(22, 29).breed(25, 28).quality(0.55).shoal(6).stock(0.2).brood(15, 40).growth(0.9)
             .eats(0.3).egg(0xF07028, 0xC04018).native_(Water.JUNGLE, 18).trader(Trade.COMMON)),
@@ -211,6 +215,11 @@ public enum TankmateSpecies {
     public Salinity.Range salinity() { return def.salt; }
     /** M20: a reef fish (salt water). */
     public boolean marine() { return def.salt.marine(); }
+
+    /** M21.5: new species can be switched off (features.*): then neither the trader nor the net brings them. */
+    public boolean available() {
+        return this != GREEN_NEON_TETRA || org.overengineer.bettacraft.config.CommonConfig.greenNeon();
+    }
 
     /** Net catch weight in this kind of water (0 = not native there). */
     public double nativeWeight(Water w) {

@@ -34,7 +34,7 @@ public final class TankmateTrades {
         return (trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             java.util.List<TankmateSpecies> pool = new java.util.ArrayList<>();
-            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && !s.marine()) pool.add(s); // M20: reef fish in ReefTrades
+            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && !s.marine() && s.available()) pool.add(s); // M20: reef fish in ReefTrades
             if (pool.isEmpty()) return null;
             return offer(pool.get(rnd.nextInt(pool.size())), rnd);
         };

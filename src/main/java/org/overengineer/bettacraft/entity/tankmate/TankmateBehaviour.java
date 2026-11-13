@@ -43,6 +43,8 @@ final class TankmateBehaviour {
     int behaviourFlags;
     /** M21.5: resting in a sheltered spot (under decoration) it reaches along a path. */
     boolean sheltered;
+    /** M21.5: ticks on the way to the glass or the resting spot. */
+    private int travel;
 
     TankmateBehaviour(TankmateEntity fish) {
         this.fish = fish;
@@ -133,13 +135,24 @@ final class TankmateBehaviour {
                 }
                 if (target != null) move().swimTo(target.x, target.y, target.z, speed);
             } else if (mode == Mode.REST || mode == Mode.GLASS) {
-                if (fish.position().distanceToSqr(target) > 0.004) {
+                // M21.5: on the glass it counts as arrived a little earlier (the buoyancy kept small fish hovering just off the
+                // spot), then it is held there
+                double arrive = mode == Mode.GLASS && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0.0225 : 0.004;
+                if (fish.position().distanceToSqr(target) > arrive) {
                     // M21.5: a kuhli loach creeps into its shelter around the decoration
                     Vec3 to = sheltered ? steer(server, w, target) : target;
-                    move().swimTo(to.x, to.y, to.z, sheltered ? 0.35 : 0.4);
+                    // M21.5: a little faster while still far away (on the way to the glass it took minutes)
+                    double far = fish.position().distanceTo(target);
+                    double sp = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() && far > 0.6 ? 0.8 : 0.4;
+                    move().swimTo(to.x, to.y, to.z, sheltered ? Math.min(sp, 0.5) : sp);
+                    // M21.5: the time on the glass (or resting) starts once it is there (the way does not use it up)
+                    if (sp > 0.4 || arrive > 0.004) {
+                        if (++travel < 900) ticks++;
+                    }
                 } else {
                     move().stop();
-                    fish.setDeltaMovement(fish.getDeltaMovement().scale(0.3));
+                    if (arrive > 0.004) fish.setDeltaMovement(target.subtract(fish.position()).scale(0.15));
+                    else fish.setDeltaMovement(fish.getDeltaMovement().scale(0.3));
                     if (mode == Mode.GLASS && glassFace >= 0) {
                         faceGlass();
                         // M21.5: upright only once it is on the glass (it used to stand up on the way already)
@@ -159,6 +172,7 @@ final class TankmateBehaviour {
         behaviourFlags = 0;
         glassFace = -1;
         sheltered = false;
+        travel = 0;
         RandomSource r = r();
         boolean night = !server.isDay();
         double restChance = s.nocturnal() ? (night ? 0.15 : 0.75) : 0.3;

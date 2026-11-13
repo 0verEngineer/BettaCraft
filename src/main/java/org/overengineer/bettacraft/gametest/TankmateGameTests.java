@@ -584,7 +584,7 @@ public final class TankmateGameTests {
         List<TankBlockEntity> tanks = new ArrayList<>();
         int i = 0;
         for (TankmateSpecies s : TankmateSpecies.values()) {
-            int x = 1 + (i % 5) * 6, z = 1 + (i / 5) * 7;
+            int x = 1 + (i % 6) * 5, z = 1 + (i / 6) * 7; // M21.5: 6 a row (26 species)
             TankBlockEntity c = tank(h, x, 2, z, 3, 2, 3, 18000, (float) ((s.tempMin() + s.tempMax()) / 2));
             if (s.marine()) c.getTank().setSalinity(35F); // M20: the reef fish in sea water
             for (int k = 0; k < Math.max(2, Math.min(4, s.shoal())); k++) add(h, c, s, k % 2 == 0);

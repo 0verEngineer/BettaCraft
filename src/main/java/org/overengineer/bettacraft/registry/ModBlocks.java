@@ -36,6 +36,11 @@ public final class ModBlocks {
             .sound(SoundType.METAL)
             .noOcclusion()));
 
+    /** M21.5: clip-on feeder on the side of the glass (top edge). */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.ClipFeederBlock> CLIP_FEEDER = BLOCKS.register("clip_feeder",
+            () -> new org.overengineer.bettacraft.equipment.ClipFeederBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.DESTROY)));
+
     /** Light bar for tanks: light level 15, switched off by redstone. */
     public static final DeferredBlock<TankLightBlock> TANK_LIGHT = BLOCKS.register("tank_light", () -> new TankLightBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.METAL)

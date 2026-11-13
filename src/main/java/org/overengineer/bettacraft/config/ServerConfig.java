@@ -19,6 +19,7 @@ public final class ServerConfig {
     public enum Outgrown { BAG_IN_FRONT, KEEP }
 
     public static final ModConfigSpec SPEC;
+    public static final ModConfigSpec.BooleanValue PROTECT_FROM_EXPLOSIONS_AND_PISTONS;
 
     // tank
     public static final ModConfigSpec.IntValue TANK_MAX_SIZE_X;
@@ -227,6 +228,9 @@ public final class ServerConfig {
         TANK_OVERCROWDED_PER_WATER_BLOCK = b.comment("Adults per water block from which health starts to drop").defineInRange("overcrowdedPerWaterBlock", 2, 1, 64);
         TANK_MIN_FILL_TO_INSERT = b.comment("Minimum fill fraction before inhabitants can be inserted").defineInRange("minFillToInsert", 0.5, 0.0, 1.0);
         TANK_WATER_HEADROOM = b.comment("Air gap below the top glass of a full tank in 1/16 block (the top layer holds the same water, it only looks less full); 0 = water up to the rim").defineInRange("waterHeadroom", 1, 0, 8);
+        // M21.5
+        PROTECT_FROM_EXPLOSIONS_AND_PISTONS = b.comment("Break protection (switch in the tank menu) also stops explosions and pistons (false: it only stops players breaking the tank)")
+                .define("protectFromExplosionsAndPistons", true);
         b.pop();
 
         b.comment("Which animals live in tanks (M16). Order: deny, allow, tag #bettacraft:tank_blacklist, tag #bettacraft:tank_inhabitants,",

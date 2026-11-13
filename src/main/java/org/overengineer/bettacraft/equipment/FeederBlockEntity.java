@@ -31,17 +31,22 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     public static final int SLOTS = 9;
     private static final long[][] SCHEDULE = {{1000}, {1000, 11000}, {1000, 7000, 13000}};
 
-    private final ItemStackHandler items = new ItemStackHandler(SLOTS) {
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return stack.is(ModTags.BETTA_FOOD);
-        }
+    /** Slots of this feeder (9; the M21.5 clip-on feeder 1). */
+    protected final int slots;
+    private final ItemStackHandler items;
+    private ItemStackHandler handler(int n) {
+        return new ItemStackHandler(n) {
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack) {
+                return stack.is(ModTags.BETTA_FOOD);
+            }
 
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-        }
-    };
+            @Override
+            protected void onContentsChanged(int slot) {
+                setChanged();
+            }
+        };
+    }
     private int feedingsPerDay = 1;
     private long lastEvent = Long.MIN_VALUE;
     private double virtualCredit;
@@ -64,7 +69,13 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     };
 
     public FeederBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.FEEDER.get(), pos, state);
+        this(ModBlockEntities.FEEDER.get(), pos, state, SLOTS);
+    }
+
+    protected FeederBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
+        super(type, pos, state);
+        this.slots = slots;
+        this.items = handler(slots);
     }
 
     public ItemStackHandler items() {
@@ -82,10 +93,11 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
 
     public int foodCount() {
         int n = 0;
-        for (int i = 0; i < SLOTS; i++) n += items.getStackInSlot(i).getCount();
+        for (int i = 0; i < slots; i++) n += items.getStackInSlot(i).getCount();
         return n;
     }
 
+    /** The tank this feeder feeds (the one below it; the clip-on feeder: the one it hangs on). */
     @Nullable
     public TankBlockEntity tankBelow() {
         return level == null ? null : TankMultiblock.getController(level, worldPosition.below());
@@ -102,8 +114,14 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         return (day - 1) * 4 + (times.length - 1);
     }
 
+    /** M21.5: whether this feeder works (the clip-on feeder can be switched off). */
+    protected boolean active() {
+        return true;
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, FeederBlockEntity be) {
         if (!(level instanceof ServerLevel server) || (level.getGameTime() + pos.asLong()) % 20 != 0) return;
+        if (!be.active()) return;
         long key = eventKey(level.getDayTime(), be.feedingsPerDay);
         if (be.lastEvent == Long.MIN_VALUE || key < be.lastEvent) {
             be.lastEvent = key; // fresh feeder or time set backwards: wait for the next feeding time
@@ -124,7 +142,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     public int feedNow(ServerLevel level, TankBlockEntity tank) {
         java.util.Set<java.util.UUID> fed = new java.util.HashSet<>();
         int used = 0;
-        for (int i = 0; i < SLOTS; i++) {
+        for (int i = 0; i < slots; i++) {
             ItemStack s = items.getStackInSlot(i);
             if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
             int n = TankCare.feed(level, tank, s, s.getCount(), fed);
@@ -150,7 +168,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         int stuck = org.overengineer.bettacraft.tank.plants.TankPlants.pelletsOnLeaves(tank.getTank(), used, level.getRandom()::nextLong);
         if (stuck > 0) {
             int left = stuck;
-            for (int i = 0; i < SLOTS && left > 0; i++) {
+            for (int i = 0; i < slots && left > 0; i++) {
                 ItemStack s = items.getStackInSlot(i);
                 if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
                 left -= items.extractItem(i, left, false).getCount();
@@ -170,7 +188,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         if (!(portions > 0)) return true;
         while (virtualCredit < portions - 1e-9) {
             int slot = -1;
-            for (int i = 0; i < SLOTS && slot < 0; i++) if (!items.getStackInSlot(i).isEmpty()) slot = i;
+            for (int i = 0; i < slots && slot < 0; i++) if (!items.getStackInSlot(i).isEmpty()) slot = i;
             if (slot < 0) return false;
             items.extractItem(slot, 1, false);
             virtualCredit += 1.0;

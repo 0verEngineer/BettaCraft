@@ -248,6 +248,149 @@ def dino_skull() -> Voxels:
     return v
 
 
+def shipwreck_big() -> Voxels:
+    """M21.5: the detailed shipwreck (about twice the old one): a hull of planks in two colours with a keel, a pointed
+    bow with a bowsprit, a raised stern castle, a hole in the side facing the player, a broken leaning mast with its
+    yard and rags of the sail, barrels on the deck; the whole ship lies tilted on its side."""
+    v = Voxels()
+    rnd = random.Random(2105)
+    plank = lambda: "spruce_planks" if rnd.random() > 0.25 else "dark_oak_planks"
+    for x in range(2, 13):
+        v.set(x, 0, 3, "stripped_dark_oak_log[axis=x]")  # keel
+        for z in (2, 3, 4):
+            v.set(x, 1, z, "dark_oak_planks")
+        for z in (1, 5):
+            v.set(x, 2, z, "spruce_planks")
+            v.set(x, 3, z, "dark_oak_planks" if x % 2 else "spruce_planks")  # planks: two colours in strakes
+            if rnd.random() > 0.18:
+                v.set(x, 4, z, "stripped_spruce_log[axis=x]")  # the rail, broken in places
+    # bow: narrowing to the stem, a bowsprit forward
+    for y in (1, 2, 3):
+        v.set(1, y, 3, "spruce_planks")
+        v.set(1, y, 2, "spruce_stairs[facing=east]" if y < 3 else "spruce_slab[type=bottom]")
+        v.set(1, y, 4, "spruce_stairs[facing=east]" if y < 3 else "spruce_slab[type=bottom]")
+    v.set(0, 2, 3, "spruce_stairs[facing=east]")
+    v.set(1, 4, 3, "stripped_spruce_log[axis=x]")
+    v.set(0, 4, 3, "stripped_spruce_log[axis=x]")
+    # lower deck with an open hatch, barrels
+    for x in range(3, 10):
+        for z in (2, 3, 4):
+            if not (x in (5, 6) and z == 3):
+                v.set(x, 3, z, "spruce_slab[type=top]")
+    v.set(4, 4, 3, "barrel[facing=up]")
+    v.set(8, 4, 4, "barrel[facing=north]")
+    # stern castle: walls and a deck one higher, a small window
+    for x in (10, 11, 12):
+        for z in (1, 5):
+            v.set(x, 5, z, plank())
+    for z in range(1, 6):
+        v.set(12, 2, z, "spruce_planks")
+        v.set(12, 3, z, "spruce_planks")
+        v.set(12, 4, z, "dark_oak_planks")
+        v.set(12, 5, z, "spruce_planks")
+    v.remove(12, 4, 3)
+    v.set(12, 4, 3, "spruce_trapdoor[facing=west,half=top,open=true]")
+    for x in (10, 11):
+        for z in range(2, 5):
+            v.set(x, 5, z, "spruce_slab[type=bottom]")
+    # the hole in the hull (side facing the player, z = 1), dark planks splintered around it
+    for x in (6, 7, 8):
+        for y in (2, 3):
+            v.remove(x, y, 1)
+    v.set(5, 3, 1, "spruce_slab[type=top]")
+    v.set(9, 2, 1, "spruce_stairs[facing=west,half=top]")
+    # broken mast, leaning back, with the yard and rags of the sail
+    for y in range(4, 7):
+        v.set(7, y, 3, "stripped_spruce_log[axis=y]")
+    v.set(8, 7, 3, "stripped_spruce_log[axis=y]")
+    v.set(8, 8, 3, "stripped_spruce_log[axis=y]")
+    for z in range(1, 6):
+        v.set(9, 8, z, "stripped_spruce_log[axis=z]")
+    v.set(9, 7, 2, "white_wool")
+    v.set(9, 6, 2, "white_wool")
+    v.set(9, 7, 4, "white_wool")
+    v.set(10, 6, 4, "white_carpet")
+    # listing to one side: the far side (z = 5) lies one lower than the side facing the player
+    tilted = Voxels()
+    for (x, y, z), st in v.blocks.items():
+        dy = 1 if z <= 2 else 0
+        tilted.set(x, y + dy, z, st)
+    # fill the steps under the near side, so the hull does not float
+    for x in range(2, 13):
+        if (x, 1, 2) in v.blocks:
+            tilted.set(x, 1, 2, "dark_oak_planks")
+        if (x, 2, 1) in v.blocks:
+            tilted.set(x, 2, 1, "spruce_planks")
+    return tilted
+
+
+def dino_skull_big() -> Voxels:
+    """M21.5: the detailed dino skull (about twice the old one), seen from the side: a long snout with nostrils at its
+    tip, deep eye sockets, a rounded cranium, a row of teeth in the upper jaw and a lower jaw that is a little open with
+    its own teeth."""
+    v = Voxels()
+    bone, up = "bone_block[axis=x]", "bone_block[axis=y]"
+    # lower jaw (a U: two branches joined at the chin)
+    for x in range(2, 10):
+        v.set(x, 0, 2, bone)
+        v.set(x, 0, 5, bone)
+    for z in range(2, 6):
+        v.set(1, 0, z, bone)
+        v.set(1, 1, z, "smooth_quartz_slab[type=bottom]")
+    for x in range(1, 10):
+        v.set(x, 1, 1, "smooth_quartz_slab[type=bottom]" if x > 1 else bone)
+        v.set(x, 1, 6, "smooth_quartz_slab[type=bottom]" if x > 1 else bone)
+    v.set(9, 1, 2, up)
+    v.set(9, 1, 5, up)
+    # teeth: lower ones point up, upper ones hang down (pointed dripstone), staggered
+    for x in (2, 4, 6):
+        for z in (1, 6):
+            v.set(x, 2, z, "pointed_dripstone[thickness=tip,vertical_direction=up]")
+    for x in (1, 3, 5, 7):
+        for z in (1, 6):
+            v.set(x, 2, z, "pointed_dripstone[thickness=tip,vertical_direction=down]")
+    v.set(0, 2, 3, "pointed_dripstone[thickness=tip,vertical_direction=down]")
+    v.set(0, 2, 4, "pointed_dripstone[thickness=tip,vertical_direction=down]")
+    # upper jaw and snout
+    for x in range(0, 11):
+        for z in range(1, 7):
+            v.set(x, 3, z, bone)
+    for x in range(0, 12):
+        for z in range(1, 7):
+            v.set(x, 4, z, bone)
+    # nostrils at the tip of the snout (seen from the front and from above)
+    for z in (2, 5):
+        v.remove(0, 4, z)
+        v.set(0, 4, z, "black_concrete")
+    v.set(1, 5, 2, "bone_block[axis=z]")
+    v.set(1, 5, 5, "bone_block[axis=z]")
+    # face and cranium
+    for x in range(3, 12):
+        for z in range(1, 7):
+            v.set(x, 5, z, bone)
+    for x in range(4, 12):
+        for z in range(1, 7):
+            v.set(x, 6, z, bone)
+    for x in range(6, 12):
+        for z in range(2, 6):
+            v.set(x, 7, z, up)
+    v.set(11, 7, 1, up)
+    v.set(11, 7, 6, up)
+    # eye sockets: open on both sides, dark deep inside
+    for x in (6, 7):
+        for y in (5, 6):
+            for z in (1, 6):
+                v.remove(x, y, z)
+            v.set(x, y, 2, "black_concrete")
+            v.set(x, y, 5, "black_concrete")
+    # a ridge over the eyes, the back of the skull
+    v.set(5, 7, 2, "smooth_quartz_slab[type=bottom]")
+    v.set(5, 7, 5, "smooth_quartz_slab[type=bottom]")
+    for z in range(2, 6):
+        v.set(11, 3, z, up)
+    return v
+
+
 def volcano() -> Voxels:
     """Volcano cone 7x7, 6 high, glowing crater."""
     v = Voxels()
@@ -379,8 +522,11 @@ def spawning_mop() -> Voxels:
 
 DECOR = {
     "castle": castle,
-    "shipwreck": shipwreck,
-    "dino_skull": dino_skull,
+    # M21.5: the detailed versions; the old small ones stay as *_small (features.detailedDecor = false)
+    "shipwreck": shipwreck_big,
+    "dino_skull": dino_skull_big,
+    "shipwreck_small": shipwreck,
+    "dino_skull_small": dino_skull,
     "volcano": volcano,
     "driftwood": driftwood,
     "stones": stones,
@@ -403,7 +549,8 @@ COLORS = {
     "stripped_oak_log": "#b29257", "stripped_dark_oak_log": "#6b5234", "stripped_oak_wood": "#b29257",
     "mangrove_roots": "#5a4630", "cobblestone": "#828282", "andesite": "#8e8f8f", "mossy_cobblestone": "#6f8a5c",
     "moss_block": "#5a7b2e", "oak_leaves": "#4f8a2a", "brown_carpet": "#7a4f2c", "orange_carpet": "#d0752a",
-    "moss_carpet": "#5d7f30", "stone": "#7f7f7f", "spawning_cave": "#b0623a", "spawning_mop": "#3e9a3a",
+    "moss_carpet": "#5d7f30", "stone": "#7f7f7f", "pointed_dripstone": "#e8e2d0", "black_concrete": "#101014",
+    "smooth_quartz_slab": "#ece6dc", "stripped_dark_oak_log": "#6b5234", "spruce_trapdoor": "#6a4c2c", "white_carpet": "#e8e8e8", "spawning_cave": "#b0623a", "spawning_mop": "#3e9a3a",
 }
 
 
@@ -558,7 +705,7 @@ def write_all() -> list:
     for name, f in DECOR.items():
         v = f()
         sx, sy, sz = v.size()
-        assert max(sx, sz) <= (12 if name == "spawning_cave" else 8), f"{name}: footprint {sx}x{sz} exceeds 8x8"
+        assert max(sx, sz) <= (14 if name in ("spawning_cave", "shipwreck", "dino_skull") else 8), f"{name}: footprint {sx}x{sz} too big"
         p = STRUCT_DIR / f"{name}.nbt"
         p.write_bytes(structure_nbt(v))
         out.append(p)

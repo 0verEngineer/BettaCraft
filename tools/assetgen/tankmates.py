@@ -453,6 +453,20 @@ def looks(species, variety, female):
                 return C("#e02a24") if v < 0.85 else C("#f04a3a")
             return C("#e8e8e4")
         return Look(body, clear("#dcdcd4"))
+    if sp == "green_neon_tetra":
+        # M21.5: a green (wild) or blue stripe over almost the whole body, a pale belly, only a trace of red at the rear
+        blue = var == "blue"
+
+        def body(t, v, x, z, y):
+            if v < 0.30:
+                return mix(C("#6a6650"), C("#868060"), v / 0.30)
+            if v < 0.50 and 0.04 < t < 0.97:
+                lo, hi = ("#2a72f0", "#58a8ff") if blue else ("#22c8a8", "#5af0d0")
+                return mix(C(lo), C(hi), (v - 0.30) / 0.20)
+            if t > 0.72 and 0.78 < v < 0.9 and t < 0.95:
+                return C("#c84a3a")
+            return C("#ecece6")
+        return Look(body, clear("#dcdcd4"))
     if sp == "ember_tetra":
         def body(t, v, x, z, y):
             base = mix(C("#f07a2a"), C("#ff9a4a"), v)
@@ -995,6 +1009,8 @@ SPECIES = [
     ("ocellaris_clownfish", "clown", ["wild", "black"], False), ("yellow_tang", "tang", ["wild"], False),
     ("yellow_watchman_goby", "goby", ["wild"], False), ("green_chromis", "damsel", ["wild"], False),
     ("yellowtail_damsel", "damsel", ["wild"], False),
+    # M21.5 (at the end: the texture seeds of the others stay)
+    ("green_neon_tetra", "tetra", ["wild", "blue"], False),
 ]
 
 

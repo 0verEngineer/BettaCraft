@@ -21,6 +21,10 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.FeederBlockEntity::new, ModBlocks.FEEDER.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.ClipFeederBlockEntity>> CLIP_FEEDER = BLOCK_ENTITIES.register("clip_feeder",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.ClipFeederBlockEntity::new, ModBlocks.CLIP_FEEDER.get()).build(null));
+
+    @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.tank.interior.InteriorFloorBlockEntity>> INTERIOR_FLOOR = BLOCK_ENTITIES.register("interior_floor",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.tank.interior.InteriorFloorBlockEntity::new, ModBlocks.INTERIOR_FLOOR.get()).build(null));
 

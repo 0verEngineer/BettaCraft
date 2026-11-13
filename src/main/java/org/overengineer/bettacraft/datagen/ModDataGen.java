@@ -249,6 +249,7 @@ public final class ModDataGen {
                     .face(Direction.DOWN).uvs(3, 3, 13, 13).texture("#bottom").cullface(Direction.DOWN).end()
                     .end();
             simpleBlock(ModBlocks.FEEDER.get(), feeder);
+            clipFeeder();
 
             externalFilter();
             cabinet();
@@ -377,6 +378,30 @@ public final class ModDataGen {
             }).end();
         }
 
+        /**
+         * M21.5: clip-on feeder, facing north = it hangs on the north side of the tank (the glass at +z): a small box at
+         * the top edge and the clip that reaches over the glass rim into the tank block.
+         */
+        private void clipFeeder() {
+            BlockModelBuilder m = models().getBuilder("clip_feeder")
+                    .texture("front", modLoc("block/clip_feeder_front")).texture("side", modLoc("block/feeder_side"))
+                    .texture("top", modLoc("block/feeder_top")).texture("bottom", modLoc("block/feeder_bottom"))
+                    .texture("particle", modLoc("block/feeder_side"));
+            m.element().from(5, 7, 11.5F).to(11, 15.5F, 15.75F)
+                    .face(Direction.NORTH).uvs(5, 1, 11, 9.5F).texture("#front").end()
+                    .face(Direction.SOUTH).uvs(5, 1, 11, 9.5F).texture("#side").end()
+                    .face(Direction.EAST).uvs(11.5F, 1, 15.75F, 9.5F).texture("#side").end()
+                    .face(Direction.WEST).uvs(0.25F, 1, 4.5F, 9.5F).texture("#side").end()
+                    .face(Direction.UP).uvs(5, 11.5F, 11, 15.75F).texture("#top").end()
+                    .face(Direction.DOWN).uvs(5, 0.25F, 11, 4.5F).texture("#bottom").end()
+                    .end();
+            // the clip: over the rim and a little way down the inside of the glass
+            m.element().from(6, 15.5F, 11.5F).to(10, 16.5F, 17.25F).allFaces((d, f) -> f.texture("#side").uvs(6, 0, 10, 1)).end();
+            m.element().from(6, 14, 16.25F).to(10, 15.5F, 17.25F).allFaces((d, f) -> f.texture("#side").uvs(6, 0, 10, 1)).end();
+            getVariantBuilder(ModBlocks.CLIP_FEEDER.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(m)
+                    .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.ClipFeederBlock.FACING).toYRot() + 180) % 360).build());
+        }
+
         /** M9: thin glass lid with an iron frame, lying on the block below. */
         private void tankLid() {
             BlockModelBuilder m = models().getBuilder("tank_lid").renderType("cutout")
@@ -486,6 +511,7 @@ public final class ModDataGen {
         protected void registerModels() {
             withExistingParent("tank", modLoc("block/tank"));
             withExistingParent("feeder", modLoc("block/feeder"));
+            withExistingParent("clip_feeder", modLoc("block/clip_feeder"));
             // M18: a flat icon: the housing and the panel with its light cone (layer 1, tinted in the light colour)
             withExistingParent("tank_light", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/tank_light")).texture("layer1", modLoc("item/tank_light_glow"));
@@ -705,6 +731,13 @@ public final class ModDataGen {
                     .unlockedBy("has_hopper", has(Items.HOPPER))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("feeder"));
+            // M21.5: the clip-on feeder: iron, a glass window, the clip from nuggets
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CLIP_FEEDER.get())
+                    .pattern("NIN").pattern(" G ")
+                    .define('N', Tags.Items.NUGGETS_IRON).define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES)
+                    .unlockedBy("has_feeder", has(ModItems.FEEDER.get()))
+                    .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
+                    .save(output, BettaCraft.id("clip_feeder"));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK_LIGHT.get(), 3)
                     .pattern("III").pattern("GDG")
                     .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES).define('D', Tags.Items.DUSTS_GLOWSTONE)
@@ -963,6 +996,7 @@ public final class ModDataGen {
                             .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
                                     .include(ModDataComponents.GLASS.get()).include(ModDataComponents.TANK_STYLE.get()))))));
             dropSelf(ModBlocks.FEEDER.get());
+            dropSelf(ModBlocks.CLIP_FEEDER.get());
             // M18: coloured lights drop in their colour (white ones as the plain item, so they stack with old ones)
             add(ModBlocks.TANK_LIGHT.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.TANK_LIGHT.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
@@ -994,7 +1028,7 @@ public final class ModDataGen {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
+            return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
                     ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get(), ModBlocks.SPAWNING_CAVE.get(),
                     ModBlocks.SPAWNING_MOP.get(), ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get());
         }
@@ -1039,7 +1073,7 @@ public final class ModDataGen {
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
             tag(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
                     ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.ARTEMIA_HATCHERY.get());
             tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.SPAWNING_CAVE.get()); // M19

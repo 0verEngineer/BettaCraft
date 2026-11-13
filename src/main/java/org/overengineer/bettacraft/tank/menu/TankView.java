@@ -118,6 +118,8 @@ public final class TankView {
     public SignPosition signPos = SignPosition.TOP_CENTER;
     public Direction front = Direction.SOUTH;
     public boolean locked;
+    /** M21.5: break protection on, and whether the feature is switched on at all. */
+    public boolean breakProtected, protectionFeature;
     public boolean canModify = true;
     public boolean isOwner;
     public String ownerName = "";
@@ -532,6 +534,8 @@ public final class TankView {
         out.putString("sign_pos", t.signPos().getSerializedName());
         out.putString("front", t.front().getSerializedName());
         out.putBoolean("locked", t.locked());
+        out.putBoolean("break_protected", t.breakProtected());
+        out.putBoolean("protection_feature", org.overengineer.bettacraft.config.CommonConfig.breakProtection());
         out.putBoolean("can_modify", TankInhabitants.canModify(player, t));
         out.putBoolean("owner", player.getUUID().equals(t.owner()));
         String ownerName = "";
@@ -739,6 +743,8 @@ public final class TankView {
         Direction f = Direction.byName(t.getString("front"));
         v.front = f == null ? Direction.SOUTH : f;
         v.locked = t.getBoolean("locked");
+        v.breakProtected = t.getBoolean("break_protected");
+        v.protectionFeature = t.getBoolean("protection_feature");
         v.canModify = t.getBoolean("can_modify");
         v.isOwner = t.getBoolean("owner");
         v.ownerName = t.getString("owner_name");
