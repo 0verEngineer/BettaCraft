@@ -14,9 +14,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.overengineer.bettacraft.client.interior.IrisCompat;
 import org.overengineer.bettacraft.client.interior.PlantMeshRenderer;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
+import org.overengineer.bettacraft.plants.InteriorPlant;
 import org.overengineer.bettacraft.plants.InteriorPlants;
 import org.overengineer.bettacraft.plants.PlantSpecies;
 import org.overengineer.bettacraft.registry.ModBlocks;
@@ -34,7 +36,9 @@ import org.slf4j.LoggerFactory;
  * M21 part of the dev client smoke test: the plant prototype. A 3x2x2 tank under a light with Rotala, Vallisneria and
  * Anubias (on a rock), grown. Screenshots {@code bettacraft_m21_*}: the tank from outside (the miniature keeps the
  * blocks), inside the interior with the new look ({@code plants_new_*}) and the same views with
- * {@code features.plantMeshes} off ({@code plants_old_*}); the new fish buckets in the hotbar.
+ * {@code features.plantMeshes} off ({@code plants_old_*}); a shear cut on a Rotala that must show in its mesh in the next
+ * frame ({@code plants_cut_before/after}; with a shader pack also: the meshes are drawn in the shadow pass); the new fish
+ * buckets in the hotbar.
  */
 final class DevClientSmokeM21 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -55,6 +59,8 @@ final class DevClientSmokeM21 {
     private int wait;
     private volatile InteriorRegion region;
     private final boolean saved = CommonConfig.plantMeshes();
+    private BlockPos cutRoot;
+    private int cutBefore, buildsBefore;
 
     DevClientSmokeM21() {
         then(1, () -> server(this::build));
@@ -81,6 +87,62 @@ final class DevClientSmokeM21 {
                 });
             }
         }
+        // M21 follow-up: a shear cut shows in the mesh in the next frame (no periodic rebuild any more); with a shader
+        // pack the meshes are drawn in the shadow pass too
+        then(1, () -> setMeshes(true));
+        // with a shader pack: the same view without and with the shadows of the meshes
+        then(1, () -> server(p -> {
+            InteriorRegion r = region;
+            if (r == null || !IrisCompat.shaderPackInUse()) return;
+            View v = VIEWS.getFirst();
+            BlockPos at = r.toWorld(v.x(), v.y(), v.z());
+            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, v.yaw(), v.pitch());
+        }));
+        then(80, () -> PlantMeshRenderer.shadows = false);
+        then(40, () -> {
+            if (IrisCompat.shaderPackInUse()) shot("plants_shadow_off");
+            PlantMeshRenderer.shadows = true;
+        });
+        then(40, () -> {
+            if (IrisCompat.shaderPackInUse()) shot("plants_shadow_on");
+        });
+        then(1, () -> server(p -> {
+            InteriorRegion r = region;
+            if (r == null) return;
+            BlockPos at = r.toWorld(VIEWS.get(1).x(), VIEWS.get(1).y(), VIEWS.get(1).z());
+            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, VIEWS.get(1).yaw(), VIEWS.get(1).pitch());
+        }));
+        then(100, () -> {
+            if (IrisCompat.shaderPackInUse()) {
+                LOGGER.info("[smoketest] M21 plant shadows: {} shadow passes, {} plants in the last one", PlantMeshRenderer.shadowPasses,
+                        PlantMeshRenderer.lastShadowDrawn);
+                if (PlantMeshRenderer.lastShadowDrawn == 0) LOGGER.error("[smoketest] M21 plant meshes not drawn in the shadow pass");
+            }
+            shot("plants_cut_before");
+            cutRoot = region.toWorld(7, 0, 24);
+            cutBefore = PlantMeshRenderer.meshBlocks(cutRoot);
+            buildsBefore = PlantMeshRenderer.builds;
+            PlantMeshRenderer.maxRebuildDelay = 0;
+            server(p -> {
+                InteriorRegion r = region;
+                ServerLevel in = InteriorManager.interiorLevel(p.server);
+                for (InteriorPlant pl : r.plants().all()) {
+                    if (pl.species == PlantSpecies.ROTALA && pl.x == 7 && pl.y == 0 && pl.z == 24) {
+                        int n = InteriorPlants.trim(in, r, pl, null, null, null);
+                        LOGGER.info("[smoketest] M21 shear cut on the server: rotala at {} to stage {} ({} cuttings)", cutRoot, pl.stage, n);
+                    }
+                }
+            });
+        });
+        then(10, () -> {
+            int after = PlantMeshRenderer.meshBlocks(cutRoot);
+            LOGGER.info("[smoketest] M21 shear cut: mesh blocks {} -> {}, {} meshes built, at most {} frame(s) after the block change, {} waiting",
+                    cutBefore, after, PlantMeshRenderer.builds - buildsBefore, PlantMeshRenderer.maxRebuildDelay, PlantMeshRenderer.pendingRebuilds());
+            if (after < 0 || after >= cutBefore || PlantMeshRenderer.maxRebuildDelay > 1 || PlantMeshRenderer.pendingRebuilds() > 0) {
+                LOGGER.error("[smoketest] M21 shear cut not in the plant mesh in time");
+            }
+            shot("plants_cut_after");
+        });
         then(1, () -> setMeshes(saved));
         then(1, () -> server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), base.getX() + 1.5, base.getY() + 1.0, base.getZ() - 3.0, 0F, 10F);

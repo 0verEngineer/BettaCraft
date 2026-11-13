@@ -112,8 +112,9 @@ Rezepte gibt es keine. Man findet Pflanzen in der Welt und zieht dann selbst nac
 **Rotala**, **Vallisneria** und **Anubias** sehen im Innenraum neu aus: echte runde, bandförmige und breite Blätter
 statt Blattblöcken; Rotala und Vallisneria wiegen sich im Wasser wie Seetang. Die Blöcke sind weiter da (du kannst sie
 mit der Schere schneiden und abbauen wie bisher), sie werden nur anders gezeichnet; die Miniatur außen am Aquarium
-behält die Block-Optik, damit die Pflanzen dort sichtbar bleiben. `features.plantMeshes` in der Common-Config schaltet
-zur alten Optik zurück.
+behält die Block-Optik, damit die Pflanzen dort sichtbar bleiben. Ein Schnitt mit der Schere, Wachstum oder ein
+abgebauter Block zeigen sich sofort an der Pflanze; mit einem Shaderpack werfen die Blätter Schatten.
+`features.plantMeshes` in der Common-Config schaltet zur alten Optik zurück.
 
 ![Rotala, Vallisneria und Anubias in der neuen Optik](../images/plants_mesh.png)
 

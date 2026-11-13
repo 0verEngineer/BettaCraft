@@ -108,8 +108,9 @@ There are no crafting recipes. Find plants in the world, then grow your own:
 **Rotala**, **Vallisneria** and **Anubias** have a new look inside the interior: real round, ribbon-shaped and broad
 leaves instead of leaf blocks; Rotala and Vallisneria sway in the water like kelp. The blocks are still there (you can
 cut them with shears and break them as before), they are only drawn differently; the miniature outside the aquarium
-keeps the block look so the plants stay visible there. `features.plantMeshes` in the common config switches back to the
-old look.
+keeps the block look so the plants stay visible there. A cut with the shears, growth or a broken block shows on the
+plant at once; with a shader pack the leaves cast shadows. `features.plantMeshes` in the common config switches back to
+the old look.
 
 ![Rotala, Vallisneria and Anubias with the new look](../images/plants_mesh.png)
 

@@ -79,6 +79,13 @@ public final class BettaCraftClient {
         // M21: plant prototype (Rotala, Vallisneria, Anubias with real leaves in the interior)
         modBus.addListener(org.overengineer.bettacraft.client.interior.PlantMeshModel::onModifyBakingResult);
         NeoForge.EVENT_BUS.addListener(org.overengineer.bettacraft.client.interior.PlantMeshRenderer::onRenderStage);
+        // M21 follow-up: plant meshes follow their chunks (rebuilt when one arrives again, forgotten when it leaves)
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.ChunkEvent.Load e) -> {
+            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(e.getChunk().getPos().x, e.getChunk().getPos().z);
+        });
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.ChunkEvent.Unload e) -> {
+            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkUnload(e.getChunk().getPos().x, e.getChunk().getPos().z);
+        });
         // M11: tank look settings (connected glass, edge width) are baked into the chunk meshes: rebuild them on change
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
             if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();

@@ -37,9 +37,19 @@ import org.overengineer.bettacraft.plants.PlantSpecies;
  * M21 plant prototype: Rotala (stems with round leaves that sway in the current like kelp), Vallisneria (long ribbons
  * that sway and twist) and Anubias (thick rhizome, petioles, broad ovate leaves) drawn with real leaf shapes in the
  * tank interior. The blocks of the plant stay (invisible, {@link PlantMeshModel}); from its root this renderer collects
- * the blocks of the plant, builds a mesh in the plant's own coordinates (again every few seconds, so growth and the
- * shears show) and draws it every frame with the sway. Roots are noted by the chunk renderer while it asks the model for
- * its data, so plants in existing worlds work without a block entity. Never in the Iris shadow pass.
+ * the blocks of the plant, builds a mesh in the plant's own coordinates and draws it every frame with the sway. Roots are
+ * noted by the chunk renderer while it asks the model for its data, so plants in existing worlds work without a block
+ * entity.
+ * <p>
+ * M21 follow-up: a mesh is rebuilt only when a block of its plant (or next to it) changes on the client (shears, growth,
+ * breaking, placing; {@code ClientLevelMixin} on {@code sendBlockUpdated}) or its chunk is loaded again, in the next
+ * frame; light changes (client light engine, light packets, a recompiled section) only refresh its light values
+ * ({@link PlantMeshIndex}). No periodic rebuild. A plant whose root block is gone is dropped at once.
+ * <p>
+ * With an Iris shader pack the meshes are also drawn in the shadow pass (they cast shadows): Iris renders the terrain
+ * layers of its shadow pass through {@code renderSectionLayer}, which fires {@code AFTER_CUTOUT_BLOCKS} with the shadow
+ * model-view matrix; there the meshes are drawn without rebuilding anything, into their own buffer (Iris picks the
+ * shadow program for the entity render type). Without Iris that stage never sees a shadow pass.
  */
 public final class PlantMeshRenderer {
     /** Set by {@link PlantMeshModel} for the miniature builder: there the plant keeps its block model. */
@@ -49,14 +59,23 @@ public final class PlantMeshRenderer {
     private static final ResourceLocation TEX_RIBBON = BettaCraft.id("textures/block/plant_mesh/ribbon.png");
     private static final ResourceLocation TEX_STEM = BettaCraft.id("textures/block/plant_mesh/stem.png");
     private static final ResourceLocation[] TEXTURES = {TEX_ROUND, TEX_OVATE, TEX_RIBBON, TEX_STEM};
-    private static final int REBUILD_TICKS = 100, RELIGHT_TICKS = 20, MAX_BLOCKS = 2000, REACH = 10;
-    private static final double DRAW_DISTANCE = 80;
+    private static final int MAX_BLOCKS = 2000, REACH = 10, BUILDS_PER_FRAME = 6;
+    private static final double DRAW_DISTANCE = 80, SHADOW_DISTANCE = 64;
 
     private static final Set<Long> ROOTS = ConcurrentHashMap.newKeySet();
+    /** Sections the chunk compiler rebuilt with plant blocks in them (worker threads): their plants get a relight. */
+    private static final Set<Long> COMPILED_SECTIONS = ConcurrentHashMap.newKeySet();
     private static final Long2ObjectOpenHashMap<Mesh> MESHES = new Long2ObjectOpenHashMap<>();
+    static final PlantMeshIndex INDEX = new PlantMeshIndex();
     private static ClientLevel meshLevel;
-    /** Plants drawn in the last frame (smoke tests). */
-    public static int lastDrawn;
+    private static MultiBufferSource.BufferSource shadowBuffers;
+    /** Frames drawn (main pass); block changes remember it to measure how soon the mesh follows. */
+    private static long frame;
+    /** Plants drawn in the last frame / in the last shadow pass (smoke tests). */
+    public static int lastDrawn, lastShadowDrawn;
+    /** Meshes built in total, and the most frames between a block change of a plant and its new mesh (smoke tests). */
+    public static int builds;
+    public static long maxRebuildDelay;
 
     private PlantMeshRenderer() {}
 
@@ -68,6 +87,64 @@ public final class PlantMeshRenderer {
         ROOTS.add(pos.asLong());
     }
 
+    /** The chunk compiler meshed a plant block (any thread): the plants of that section refresh their light. */
+    static void noteCompiled(BlockPos pos) {
+        COMPILED_SECTIONS.add(net.minecraft.core.SectionPos.asLong(pos));
+    }
+
+    // ------------------------------------------------------------------ invalidation (client thread)
+
+    private static boolean prototype(BlockState s) {
+        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshPrototype();
+    }
+
+    /** {@code ClientLevel.sendBlockUpdated}: every block change on the client (packets, prediction, shears, growth). */
+    public static void onBlockChanged(ClientLevel level, BlockPos pos, BlockState old, BlockState now) {
+        boolean was = prototype(old), is = prototype(now);
+        if (!was && !is) return;
+        if (level != meshLevel && meshLevel != null) return;
+        long key = pos.asLong();
+        boolean rootNow = is && now.getValue(AquaticPlantBlock.PART) == PlantPart.ROOT;
+        if (was && old.getValue(AquaticPlantBlock.PART) == PlantPart.ROOT && !rootNow) {
+            // the root is gone: the plant goes with it
+            ROOTS.remove(key);
+            INDEX.remove(key);
+            MESHES.remove(key);
+        }
+        if (rootNow) ROOTS.add(key);
+        INDEX.blockChanged(pos.getX(), pos.getY(), pos.getZ(), frame);
+    }
+
+    /** Light of a section changed (client light engine or a light packet): only the light values are read again. */
+    public static void onSectionLight(int sx, int sy, int sz) {
+        INDEX.sectionChanged(sx, sy, sz, false, frame);
+    }
+
+    /** A chunk arrived (again): the plants reaching into it are built again (their blocks may differ). */
+    public static void onChunkLoad(int cx, int cz) {
+        INDEX.chunkChanged(cx, cz, true, frame);
+    }
+
+    /** A chunk left the client: its plants are forgotten (the chunk compiler notes them again when it comes back). */
+    public static void onChunkUnload(int cx, int cz) {
+        for (long k : INDEX.rootsInChunk(cx, cz, BlockPos::getX, BlockPos::getZ)) {
+            INDEX.remove(k);
+            MESHES.remove(k);
+        }
+        ROOTS.removeIf(k -> BlockPos.getX(k) >> 4 == cx && BlockPos.getZ(k) >> 4 == cz);
+    }
+
+    /** Blocks in the mesh of the plant at {@code root}, or -1 without a mesh (smoke tests). */
+    public static int meshBlocks(BlockPos root) {
+        Mesh m = MESHES.get(root.asLong());
+        return m == null ? -1 : m.blocks;
+    }
+
+    /** Plants waiting for a rebuild (smoke tests). */
+    public static int pendingRebuilds() {
+        return INDEX.dirtyCount();
+    }
+
     /** Roots known right now (smoke tests). */
     public static int knownRoots() {
         return ROOTS.size();
@@ -75,7 +152,9 @@ public final class PlantMeshRenderer {
 
     public static void clear() {
         ROOTS.clear();
+        COMPILED_SECTIONS.clear();
         MESHES.clear();
+        INDEX.clear();
         meshLevel = null;
     }
 
@@ -94,7 +173,7 @@ public final class PlantMeshRenderer {
         final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap lightIndex = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
         int[] lights = new int[0];
         AABB box;
-        long built, lit;
+        int blocks;
         double swayPerBlock, swayMax;
         float phase;
 
@@ -494,7 +573,7 @@ public final class PlantMeshRenderer {
         }
     }
 
-    private static Mesh build(ClientLevel level, BlockPos root, PlantSpecies sp, long now) {
+    private static Mesh build(ClientLevel level, BlockPos root, PlantSpecies sp) {
         // the plant: every block of this species connected to the root, other roots stop the search
         Long2ObjectOpenHashMap<BlockState> blocks = new Long2ObjectOpenHashMap<>();
         ArrayDeque<BlockPos> q = new ArrayDeque<>();
@@ -534,8 +613,9 @@ public final class PlantMeshRenderer {
         }
         m.box = new AABB(root.getX() + minX, root.getY() + minY, root.getZ() + minZ, root.getX() + maxX, root.getY() + maxY, root.getZ() + maxZ)
                 .inflate(m.swayMax + 1.5);
-        m.built = now;
-        m.lit = Long.MIN_VALUE;
+        m.blocks = blocks.size();
+        INDEX.put(root.asLong(), root.getX() + minX, root.getY() + minY, root.getZ() + minZ, root.getX() + maxX - 1, root.getY() + maxY - 1,
+                root.getZ() + maxZ - 1);
         m.phase = (float) ((root.getX() * 0.37 + root.getZ() * 0.61) % (Math.PI * 2));
         return m;
     }
@@ -543,52 +623,98 @@ public final class PlantMeshRenderer {
     // ------------------------------------------------------------------ drawing
 
     public static void onRenderStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
+        RenderLevelStageEvent.Stage stage = event.getStage();
+        if (stage == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) {
+            if (shadows && IrisCompat.renderingShadowPass()) renderShadow(event);
+            return;
+        }
+        if (stage != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         if (level == null || IrisCompat.renderingShadowPass()) return;
         if (level != meshLevel) {
             MESHES.clear();
+            INDEX.clear();
             if (meshLevel != null) ROOTS.clear();
             meshLevel = level;
         }
+        frame++;
         lastDrawn = 0;
+        if (!COMPILED_SECTIONS.isEmpty()) {
+            for (Long k : COMPILED_SECTIONS.toArray(new Long[0])) {
+                COMPILED_SECTIONS.remove(k);
+                INDEX.sectionChanged(net.minecraft.core.SectionPos.x(k), net.minecraft.core.SectionPos.y(k), net.minecraft.core.SectionPos.z(k), false, frame);
+            }
+        }
         if (!active() || ROOTS.isEmpty()) return;
-        long now = level.getGameTime();
-        float time = now + event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        float time = level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
         Vec3 cam = event.getCamera().getPosition();
         PoseStack ps = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        int budget = 3;
+        int budget = BUILDS_PER_FRAME;
         for (Long key : ROOTS.toArray(new Long[0])) {
             BlockPos pos = BlockPos.of(key);
             if (pos.distToCenterSqr(cam) > DRAW_DISTANCE * DRAW_DISTANCE) continue;
             BlockState s = level.getBlockState(pos);
-            if (!(s.getBlock() instanceof AquaticPlantBlock pb) || !pb.species().meshPrototype() || s.getValue(AquaticPlantBlock.PART) != PlantPart.ROOT) {
+            if (!prototype(s) || s.getValue(AquaticPlantBlock.PART) != PlantPart.ROOT) {
                 if (level.isLoaded(pos)) {
                     ROOTS.remove(key);
+                    INDEX.remove(key);
                     MESHES.remove((long) key);
                 }
                 continue;
             }
             Mesh m = MESHES.get((long) key);
-            if (m == null || now - m.built > REBUILD_TICKS && budget > 0) {
-                if (budget-- <= 0 && m == null) continue;
-                m = build(level, pos, pb.species(), now);
+            long since = m == null ? -1 : INDEX.dirtySince(key);
+            if ((m == null || since >= 0) && budget > 0) {
+                budget--;
+                m = build(level, pos, ((AquaticPlantBlock) s.getBlock()).species());
                 MESHES.put((long) key, m);
+                builds++;
+                if (since >= 0) maxRebuildDelay = Math.max(maxRebuildDelay, frame - since);
             }
-            if (!event.getFrustum().isVisible(m.box)) continue;
-            if (now - m.lit > RELIGHT_TICKS || m.lights.length != m.lightPos.size()) {
+            if (m == null) continue;
+            if (INDEX.takeRelight(key) || m.lights.length != m.lightPos.size()) {
                 int[] l = new int[m.lightPos.size()];
                 for (int i = 0; i < l.length; i++) l[i] = LevelRenderer.getLightColor(level, BlockPos.of(m.lightPos.getLong(i)));
                 m.lights = l;
-                m.lit = now;
             }
+            if (!event.getFrustum().isVisible(m.box)) continue;
             draw(m, pos, cam, ps, buffers, time);
             lastDrawn++;
         }
         for (ResourceLocation t : TEXTURES) buffers.endBatch(RenderType.entityCutoutNoCull(t));
     }
+
+    /**
+     * The Iris shadow pass ({@code AFTER_CUTOUT_BLOCKS} while Iris renders the shadow map): the meshes built for the main
+     * pass, transformed by the shadow model-view matrix of the event (the pass's own render-system model-view is the
+     * identity, like for the entities Iris draws there). The main camera's frustum does not apply, only the distance.
+     */
+    private static void renderShadow(RenderLevelStageEvent event) {
+        lastShadowDrawn = 0;
+        Minecraft mc = Minecraft.getInstance();
+        ClientLevel level = mc.level;
+        if (level == null || level != meshLevel || !active() || MESHES.isEmpty()) return;
+        if (shadowBuffers == null) shadowBuffers = MultiBufferSource.immediate(new com.mojang.blaze3d.vertex.ByteBufferBuilder(1 << 18));
+        float time = level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        Vec3 cam = event.getCamera().getPosition();
+        PoseStack ps = new PoseStack();
+        ps.mulPose(event.getModelViewMatrix());
+        for (var e : MESHES.long2ObjectEntrySet()) {
+            BlockPos pos = BlockPos.of(e.getLongKey());
+            if (pos.distToCenterSqr(cam) > SHADOW_DISTANCE * SHADOW_DISTANCE) continue;
+            draw(e.getValue(), pos, cam, ps, shadowBuffers, time);
+            lastShadowDrawn++;
+        }
+        shadowBuffers.endBatch();
+        shadowPasses++;
+    }
+
+    /** Shadow passes the meshes were drawn in (smoke tests). */
+    public static int shadowPasses;
+    /** Off: the meshes cast no shadow, as before (the smoke test's before/after picture). */
+    public static boolean shadows = true;
 
     private static void draw(Mesh m, BlockPos root, Vec3 cam, PoseStack ps, MultiBufferSource buffers, float time) {
         ps.pushPose();

@@ -36,7 +36,10 @@ public final class PlantMeshModel extends BakedModelWrapper<BakedModel> {
     public ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData data) {
         ModelData d = super.getModelData(level, pos, state, data);
         if (level instanceof RegionBlockGetter) return d.derive().with(PlantMeshRenderer.MINIATURE, Boolean.TRUE).build();
-        if (state.getBlock() instanceof AquaticPlantBlock && state.getValue(AquaticPlantBlock.PART) == PlantPart.ROOT) PlantMeshRenderer.noteRoot(pos);
+        if (state.getBlock() instanceof AquaticPlantBlock) {
+            if (state.getValue(AquaticPlantBlock.PART) == PlantPart.ROOT) PlantMeshRenderer.noteRoot(pos);
+            PlantMeshRenderer.noteCompiled(pos); // the section was compiled again (e.g. its light changed): relight its plants
+        }
         return d;
     }
 
