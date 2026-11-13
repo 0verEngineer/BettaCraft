@@ -237,6 +237,7 @@ public final class DevShowcase {
             if (s.loci().length == 0 && !org.overengineer.bettacraft.critters.CritterLooks.has(s)) continue;
             for (int l = -1; l < s.loci().length; l++) {
                 TankBlockEntity c = tank(level, at, 2, 1, 2, 0F, true);
+                region(level, c, Blocks.SAND.defaultBlockState());
                 CritterGenes g = l < 0 ? CritterGenes.WILD : CritterGenes.pure(l, s == CritterSpecies.NEOCARIDINA ? 0.5F : 0.6F);
                 critters(level, c, s, s.nerite() ? 8 : 5, g);
                 String v = de("variety.bettacraft." + s.id() + "." + (l < 0 ? "wild" : g.variety(s)));
@@ -250,6 +251,7 @@ public final class DevShowcase {
             if (s.varieties().size() <= 1) continue;
             for (String v : s.varieties()) {
                 TankBlockEntity c = tank(level, at, 2, 2, 2, s.marine() ? 35F : 0F, true);
+                region(level, c, (s.marine() ? Blocks.SAND : Blocks.GRAVEL).defaultBlockState());
                 if (s.marine()) reefLight(level, at, 2);
                 for (int i = 0; i < Math.min(4, Math.max(2, s.shoal())); i++) fish(level, c, s, TankmateGenes.pure(s, v), i % 2 == 0, r);
                 name(level, at, de("variety.bettacraft." + s.id() + "." + v));
@@ -627,7 +629,7 @@ public final class DevShowcase {
             cb.setChanged();
         }
         TankEquipment.invalidate(cab);
-        name(level, at, de("block.bettacraft.cabinet") + " + Filter + Futter");
+        name(level, at, "Schrank + Filter + Futter");
         at = at.east(2 + GAP);
         // M21.5: a one-block tank with a light on top and a clip-on feeder on its glass
         TankBlockEntity clip = tank(level, at, 1, 1, 1, 0F, true);

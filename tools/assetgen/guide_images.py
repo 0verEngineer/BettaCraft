@@ -295,6 +295,25 @@ def m21_1(out_en: Path) -> None:
             print("missing", src)
 
 
+# M21.5 scene (DevClientSmokeM215, -Psmoketestm21_5): green neon, racer nerites, clip-on feeder, skull and wreck.
+# ``py guide_images.py m21_5``.
+M21_5_WORLD = {"tm_green_neon_tetra": ("bettacraft_m21_5_green_neon", (180, 300, 1100, 620)),
+               "critters_racer_nerites": ("bettacraft_m21_5_snails", (180, 330, 1100, 650)),
+               "clip_feeder": ("bettacraft_m21_5_clip_feeder", (300, 220, 980, 660)),
+               "decor_skull_wreck": ("bettacraft_m21_5_decor_inside", (200, 220, 1220, 840))}
+
+
+def m21_5(out_en: Path) -> None:
+    for name, (shot, box) in M21_5_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = 960
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -309,6 +328,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m21_5"]:
+        m21_5(out_en)
+        return 0
     if sys.argv[1:] == ["m21_1"]:
         m21_1(out_en)
         return 0
