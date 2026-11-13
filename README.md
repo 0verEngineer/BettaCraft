@@ -51,7 +51,8 @@ block.
 - **Water animals of all mods:** every small water animal of vanilla and of other mods lives in the aquariums (fish,
   axolotls, tadpoles, squids, seahorses, sea slugs, starfish ...); too big ones, bosses, hostile mobs and land animals
   are refused with a message that says why. Rules by size, tags and config lists; the fish bag holds animals without a
-  bucket too. Tadpoles leave as frogs when they grow up. No aquarium can be placed inside an aquarium's interior.
+  bucket too. Tadpoles leave as frogs when they grow up, and animals that outgrow the aquarium wait in a fish bag in
+  front of it. No aquarium can be placed inside an aquarium's interior.
 - **Fights and predators:** two adult males fight (they flare at each other first, or at a mirror stick), pufferfish,
   axolotls and the predators of other mods hunt small fish.
 - **Interior:** sneak and right-click an aquarium with an empty hand to step inside a void dimension at 16 blocks per
@@ -111,9 +112,9 @@ The handbook (GuideME) and the JEI pages explain everything else.
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, stocking, algae, evaporation, power, food breeding, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, stocking, algae, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
-| `config/bettacraft-client.toml` | animation and miniature distances, water surface animation, filter sound |
+| `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, interior leave hint, filter sound |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
 Config). By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
@@ -128,7 +129,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
   `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior` (blocks).
 - **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`),
-  `inhabitants.maxHitbox`, `inhabitants.refuseHostile`, `inhabitants.tadpoles`; `/bettacraft wateranimals` writes a table
+  `inhabitants.maxHitbox`, `inhabitants.refuseHostile`, `inhabitants.tadpoles`, `inhabitants.outgrown`; `/bettacraft wateranimals` writes a table
   of every water animal of the loaded mods and whether aquariums take it.
 - **Datapacks:** `data/<namespace>/bettacraft/colors/*.json`, `.../genes/<locus>.json` and `.../varieties/*.json`
   add or change colours, allele ranks and frequencies, and named varieties.

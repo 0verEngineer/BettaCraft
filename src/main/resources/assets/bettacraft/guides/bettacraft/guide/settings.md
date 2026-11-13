@@ -22,13 +22,16 @@ navigation:
 | `inhabitants.maxHitbox` | 0.8 | largest animal (hitbox width and height in blocks) |
 | `inhabitants.refuseHostile` | true | no hostile mobs in aquariums |
 | `inhabitants.tadpoles` | LEAVE_AS_FROG | a grown tadpole hops out as a frog; STAY_TADPOLE = it stays a tadpole |
+| `inhabitants.outgrown` | BAG_IN_FRONT | an animal that grew bigger than `maxHitbox` in the aquarium waits in a fish bag in front of it; KEEP = it stays |
 | `health.daysUntilSick` | 7 | days of hunger or wrong temperature until sick |
 | `health.daysSickUntilDeath` | 14 | sick days until death |
 | `health.bothBadMultiplier` | 2 | faster stress with two bad conditions |
 | `health.recoveryPerDay` | 2 | sick days healed per good day |
+| `health.hungryAfterDays` | 1 | days after a meal until a betta is hungry again |
 | `health.oldAge.enabled` | false | death of old age (`years` 2, `daysPerYear` 96) |
 | `temperature.tauDays` | 0.1 | how fast the water changes its temperature |
-| `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation, mirror training (`mirrorReadinessBonus` 1.25) |
+| `temperature.toleratedMin`, `toleratedMax` | 24, 30 | water temperatures bettas tolerate (°C); the best range is `breeding.minTemp` to `maxTemp` |
+| `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation, mirror training (`mirrorReadinessBonus` 1.25), days live food keeps a fish conditioned (`conditioningDays` 2) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | fry per bottle, days a culture needs |
 | `stages.*Days` | | duration of the life stages |
@@ -37,19 +40,20 @@ navigation:
 | `interior.maxRenderedBlocks` | 262144 | limit of the miniature |
 | `interior.leaveSneakTicks` | 60 | how long to sneak (and look up) to leave |
 | `interior.leaveLookUpDegrees` | 60 | how steeply up you have to look while sneaking to leave (0 = sneaking alone) |
+| `interior.syncRange`, `preparationBudgetMs` | 96, 8 | players this close get the miniature; server time per tick for building new interiors |
 | `drops.artemiaFromSandChance` | 0.02 | artemia cysts from sand |
 | `waterQuality.qualityEnabled` | true | water quality on (loss per day 0.01, per animal 0.04, per overfed portion 0.01, filters remove 0.8, bad below 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
 | `evaporation.evaporationEnabled` | true | open tanks lose water (`mbPerBlockPerDay` 20) |
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE use and storage |
-| `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2) |
+| `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2); at most 16 per batch |
 | `invertebrates.maxCrittersPerTank` | 200 | shrimp, crayfish and snails per aquarium |
 | `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | breeding speed (0 = never) |
 | `invertebrates.bettasHuntShrimp` | true | bettas hunt young shrimp and crayfish |
 | `invertebrates.biofilmPerWaterBlock` | 0.03 | food a water block grows on its own |
 | `invertebrates.netCatchChance`, `netCooldownTicks`, `mudSnailChance` | 0.3, 40, 0.08 | catching in open water, snails in mud |
-| `frogs.frogFoodShareWithBettas`, `frogAirMinutes` | 0.4, 2 | frogs: their share of the food, air under water |
+| `frogs.frogFoodShareWithBettas`, `frogAirMinutes`, `frogStarveDays` | 0.4, 2, 4 | frogs: their share of the food, air under water, days without food until they starve |
 | `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | small animals per fish |
 | `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | algae on the glass (0 = none), how much the crew grazes |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
@@ -59,7 +63,8 @@ The **common config** sets the spawn weight and group size of wild bettas and th
 AUTO, KELP or PLASTIC). The **client config** has the animation and miniature distances, the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
 (`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none), the size of the name sign
-(`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks) and the leave hint in the interior
+(`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks), the distance up to which the name sign, nest,
+floating plants, small animals and algae are drawn (`render.tankDetailDistance`, 48) and the leave hint in the interior
 (`hud.interiorLeaveHint`).
 
 ## This handbook

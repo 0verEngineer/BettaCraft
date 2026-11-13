@@ -22,13 +22,16 @@ navigation:
 | `inhabitants.maxHitbox` | 0.8 | größtes Tier (Hitbox-Breite und -Höhe in Blöcken) |
 | `inhabitants.refuseHostile` | true | keine feindlichen Mobs im Aquarium |
 | `inhabitants.tadpoles` | LEAVE_AS_FROG | eine große Kaulquappe hüpft als Frosch hinaus; STAY_TADPOLE = sie bleibt Kaulquappe |
+| `inhabitants.outgrown` | BAG_IN_FRONT | ein Tier, das im Aquarium größer als `maxHitbox` geworden ist, wartet in einer Fischtüte davor; KEEP = es bleibt |
 | `health.daysUntilSick` | 7 | Tage Hunger oder falsche Temperatur bis krank |
 | `health.daysSickUntilDeath` | 14 | Krankheitstage bis zum Tod |
 | `health.bothBadMultiplier` | 2 | schnellerer Stress bei zwei schlechten Bedingungen |
 | `health.recoveryPerDay` | 2 | geheilte Krankheitstage pro gutem Tag |
+| `health.hungryAfterDays` | 1 | Tage nach einer Mahlzeit, bis ein Betta wieder hungrig ist |
 | `health.oldAge.enabled` | false | Tod durch Altersschwäche (`years` 2, `daysPerYear` 96) |
 | `temperature.tauDays` | 0.1 | wie schnell das Wasser seine Temperatur ändert |
-| `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation, Spiegeltraining (`mirrorReadinessBonus` 1,25) |
+| `temperature.toleratedMin`, `toleratedMax` | 24, 30 | Wassertemperaturen, die Bettas vertragen (°C); am besten ist `breeding.minTemp` bis `maxTemp` |
+| `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation, Spiegeltraining (`mirrorReadinessBonus` 1,25), Tage, die Lebendfutter einen Fisch konditioniert hält (`conditioningDays` 2) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | Jungfische pro Flasche, Tage für einen Ansatz |
 | `stages.*Days` | | Dauer der Lebensstufen |
@@ -37,19 +40,20 @@ navigation:
 | `interior.maxRenderedBlocks` | 262144 | Limit der Miniatur |
 | `interior.leaveSneakTicks` | 60 | wie lange man zum Verlassen schleichen (und nach oben schauen) muss |
 | `interior.leaveLookUpDegrees` | 60 | wie steil man beim Schleichen nach oben schauen muss, um hinauszukommen (0 = Schleichen allein) |
+| `interior.syncRange`, `preparationBudgetMs` | 96, 8 | Spieler so nah bekommen die Miniatur; Serverzeit pro Tick für den Bau neuer Innenräume |
 | `drops.artemiaFromSandChance` | 0.02 | Artemia-Zysten aus Sand |
 | `waterQuality.qualityEnabled` | true | Wasserqualität an (Verlust pro Tag 0.01, pro Tier 0.04, pro Überfütterung 0.01, Filter entfernen 0.8, schlecht unter 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | Wasserblöcke, die ein Filter sauber hält |
 | `evaporation.evaporationEnabled` | true | offene Aquarien verlieren Wasser (`mbPerBlockPerDay` 20) |
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | Ausrüstung braucht FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE-Verbrauch und -Speicher |
-| `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2) |
+| `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2); höchstens 16 pro Ansatz |
 | `invertebrates.maxCrittersPerTank` | 200 | Garnelen, Krebse und Schnecken pro Aquarium |
 | `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | Vermehrungstempo (0 = nie) |
 | `invertebrates.bettasHuntShrimp` | true | Bettas jagen junge Garnelen und Krebse |
 | `invertebrates.biofilmPerWaterBlock` | 0.03 | Futter, das ein Wasserblock von selbst bildet |
 | `invertebrates.netCatchChance`, `netCooldownTicks`, `mudSnailChance` | 0.3, 40, 0.08 | Fangen in offenem Wasser, Schnecken im Schlamm |
-| `frogs.frogFoodShareWithBettas`, `frogAirMinutes` | 0.4, 2 | Frösche: ihr Anteil am Futter, Luft unter Wasser |
+| `frogs.frogFoodShareWithBettas`, `frogAirMinutes`, `frogStarveDays` | 0.4, 2, 4 | Frösche: ihr Anteil am Futter, Luft unter Wasser, Tage ohne Futter bis sie hungern |
 | `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | Kleintiere pro Fisch |
 | `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | Algen am Glas (0 = keine), wie viel die Putzkolonne frisst |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
@@ -59,8 +63,9 @@ Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fe
 (`recipes.fishBag`: AUTO, KELP oder PLASTIC). Die **Client-Config** enthält Animations- und Miniatur-Distanz, das
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
 der Kantenlinien (`render.tankEdgeWidth`, in Pixeln zu 1/16 Block, 0,1 bis 1, Standard 0,25; 0 = keine), die Größe des
-Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 Blöcken) und den Verlassen-Hinweis im
-Innenraum (`hud.interiorLeaveHint`).
+Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 Blöcken), die Entfernung, bis zu der
+Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere und Algen gezeichnet werden (`render.tankDetailDistance`, 48), und
+den Verlassen-Hinweis im Innenraum (`hud.interiorLeaveHint`).
 
 ## Dieses Handbuch
 

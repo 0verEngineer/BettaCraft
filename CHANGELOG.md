@@ -4,6 +4,45 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.9.0-beta.1] - 2026-11-14
+
+Hardening release: a review of the whole code, with a test for every bug found.
+
+### Added
+- **More settings** (server): `inhabitants.outgrown` (an animal of another mod that grew too big in an aquarium waits
+  in a fish bag in front of it; `KEEP` = it stays), `health.hungryAfterDays`, `temperature.toleratedMin` /
+  `toleratedMax`, `breeding.conditioningDays`, `frogs.frogStarveDays`, `interior.preparationBudgetMs`; (client)
+  `render.tankDetailDistance` (name sign, nest, floating plants, small animals and algae). English and German labels,
+  handbook page "Settings".
+
+### Changed
+- The menu colour of the water temperature and the "ideal temperature" advancement use the breeding range
+  (`breeding.minTemp` / `maxTemp`) instead of a fixed 26-28 °C.
+- `foodBreeding.larvaTubYield` and `hatcheryYield` go up to 16 (the output slot holds 16); a batch only starts when it
+  fits completely.
+- Less network traffic: the bubble nest, the small animals and the floating plants are only sent to nearby players when
+  something visible changed; a refused menu action sends nothing.
+
+### Fixed
+- Substrate taken out of the interior floor came back after the aquarium was extended or split and could be taken out
+  again (item duplication).
+- A tank whose data could not be read (a broken inhabitant id) was lost and its other blocks never formed a tank
+  again; corrupt numbers (NaN, negative days) in tanks, bettas and small animals are repaired when loading.
+- Joining a small aquarium with eggs to a bigger one deleted the eggs.
+- A client could make the server send the whole interior again every tick, and make it load chunks.
+- Leaving and entering worlds or interiors kept old client worlds in memory.
+- Machines that break blocks for a player (fake players) could break an aquarium while a player was in its interior; a
+  player who died inside kept it locked; the lock and trusted building also work while the aquarium's chunk would
+  otherwise unload.
+- Very large interiors could stay at "preparing ... %" for ever; players who walked away are no longer pulled in.
+- Furnaces, hoppers and machines in the interior stopped working after the aquarium was extended or split.
+- With `simulateUnloadedTime`, an empty feeder still fed the fish.
+- Two heater or filter rods side by side in the interior were removed together but only one came back.
+- A fish bag or a bucket was emptied when its animal could not be created; Better Fish Tanks tanks keep the name and
+  data of a bagged squid.
+- A name typed in the tank menu just before closing it (or resizing the window) was lost.
+- Animals of other mods that grew past `inhabitants.maxHitbox` inside an aquarium stayed there.
+
 ## [1.8.0-beta.1] - 2026-11-14
 
 ### Added
