@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# M21.5 upgrade test: (re)builds the reference world "Bettacraft Referenz 1.13.1" in run/saves with the OLD version.
+#
+#   bash tools/upgrade/build_reference.sh [commit] [world name]
+#
+# Default commit 909d12a (1.13.1-beta.1, branch m21.1-plant-exterior, the version the user plays). It makes a
+# temporary git worktree of that commit (outside the repo), copies DevUpgradeReference.java into it, hooks it into that
+# version's DevShowcase (an extra row after the showcase rows, the manifest after saving), runs its buildShowcase (a
+# dedicated server without a window) and moves the world to run/saves/<world name> of this repo. The world folder then
+# holds bettacraft_reference.json, which `gradlew smoketestUpgrade` compares against.
+set -euo pipefail
+COMMIT="${1:-909d12a}"
+NAME="${2:-Bettacraft Referenz 1.13.1}"
+REPO="$(cd "$(dirname "$0")/../.." && pwd)"
+WT="${UPGRADE_WORKTREE:-$REPO/../bettacraft-upgrade-ref}"
+if [ -d "$WT" ]; then git -C "$REPO" worktree remove --force "$WT" || rm -rf "$WT"; fi
+git -C "$REPO" worktree add --detach "$WT" "$COMMIT"
+cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$WT/src/main/java/org/overengineer/bettacraft/command/"
+SHOW="$WT/src/main/java/org/overengineer/bettacraft/command/DevShowcase.java"
+# extra row after the last showcase row; manifest right after the world is saved
+python - "$SHOW" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p, encoding='utf-8').read()
+a = s.index('    private static BlockPos startRow(')
+end = s.rindex('    }\n', 0, a)
+s = s[:end] + '        DevUpgradeReference.extras(level, origin.offset(0, 0, row * ROW));\n' + s[end:]
+s = s.replace('server.saveEverything(false, true, true);', 'server.saveEverything(false, true, true);\n                DevUpgradeReference.manifest(server, level);', 1)
+open(p, 'w', encoding='utf-8').write(s)
+PY
+# its own run directory (nothing is shared with this repo's run/)
+(cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q)
+grep -q "MANIFEST WRITTEN" "$WT/build/showcase/server.log" || { echo "no manifest, see $WT/build/showcase/server.log"; exit 1; }
+rm -rf "$REPO/run/saves/$NAME"
+mkdir -p "$REPO/run/saves"
+cp -r "$WT/run/saves/Bettacraft Schaukasten" "$REPO/run/saves/$NAME"
+rm -f "$REPO/run/saves/$NAME/session.lock"
+echo "commit $COMMIT built $(date)" > "$REPO/run/saves/$NAME/bettacraft_reference_version.txt"
+git -C "$REPO" worktree remove --force "$WT"
+echo "reference world: $REPO/run/saves/$NAME"
