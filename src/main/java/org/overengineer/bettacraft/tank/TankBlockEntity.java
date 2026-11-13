@@ -55,6 +55,8 @@ public class TankBlockEntity extends BlockEntity {
     }
     /** Log only once per chase / fight (transient). */
     boolean chaseLogged, fightLogged;
+    /** M13: care steps in which a female hid in the aquarium plants from the male (GameTests, menu). */
+    public int femaleHidSteps;
     /** Attached external filters and cabinets under the tank (transient cache, see TankEquipment). */
     java.util.List<BlockPos> filterCache = java.util.List.of(), cabinetCache = java.util.List.of();
     long equipmentScanTime = Long.MIN_VALUE;

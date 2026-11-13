@@ -49,3 +49,4 @@ shown. Very large builds stop at a limit (`interior.maxRenderedBlocks`); the int
 
 * [Substrate](interior/substrate.md)
 * [Decoration](interior/decor.md)
+* [Aquarium plants](interior/plants.md): cuttings that grow into plants of many blocks

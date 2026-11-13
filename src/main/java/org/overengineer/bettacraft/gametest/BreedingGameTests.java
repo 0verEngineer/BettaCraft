@@ -266,6 +266,48 @@ public final class BreedingGameTests {
         h.succeed();
     }
 
+    /**
+     * M13: dense aquarium plants are hiding spots. After spawning the male chases the female; with plants of more than
+     * 8 % of the water volume (and interiorPlants.hidingSpots = 1) she always escapes and keeps her health, without
+     * plants hiding (0) she is chased as before. A well planted tank also gives the breeding bonus.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 300, batch = "bettacraft_aquatic_hiding")
+    public static void denseAquariumPlantsHideTheFemale(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        double saved = ServerConfig.AQUATIC_HIDING.get();
+        try {
+            TankBlockEntity c = tank(h, 3, 2, 2, 12000);
+            BettaEntity male = adult(h, c, false, 41);
+            BettaEntity female = adult(h, c, true, 42);
+            TankData t = c.getTank();
+            ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
+            var r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(level, c);
+            for (int x = 1; x < r.sizeX() - 1; x += 4)
+                for (int z = 1; z < r.sizeZ() - 1; z += 4) {
+                    org.overengineer.bettacraft.plants.InteriorPlants.plantAt(in, r, org.overengineer.bettacraft.plants.PlantSpecies.ROTALA, x, 0, z, 8, x * 31L + z);
+                }
+            double share = org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t);
+            h.assertTrue(share >= org.overengineer.bettacraft.plants.InteriorPlants.HIDING_FULL_AT, "densely planted: " + share);
+            h.assertTrue(org.overengineer.bettacraft.plants.InteriorPlants.breedingBonus(level.getServer(), t) > 1.0, "breeding bonus");
+            for (int i = 0; i < 40 && (t.nest() == null || !t.nest().hasEggs()); i++) TankBreeding.step(level, c, 0.05);
+            h.assertTrue(t.nest() != null && t.nest().hasEggs(), "eggs laid");
+            ServerConfig.AQUATIC_HIDING.set(1.0);
+            female.setHealth(female.getMaxHealth());
+            float hp = female.getHealth();
+            c.femaleHidSteps = 0;
+            for (int i = 0; i < 8; i++) TankBreeding.step(level, c, 0.05);
+            h.assertTrue(c.femaleHidSteps >= 8, "she hid in every step: " + c.femaleHidSteps);
+            h.assertTrue(female.getHealth() >= hp, "not hurt while hidden (" + hp + " -> " + female.getHealth() + ")");
+            ServerConfig.AQUATIC_HIDING.set(0.0);
+            for (int i = 0; i < 10 && female.getHealth() >= hp; i++) TankBreeding.step(level, c, 0.1);
+            h.assertTrue(female.getHealth() < hp, "without hiding spots she is chased (" + hp + " -> " + female.getHealth() + ")");
+            male.discard();
+        } finally {
+            ServerConfig.AQUATIC_HIDING.set(saved);
+        }
+        h.succeed();
+    }
+
     /** No nest without breeding conditions (cold water). */
     @GameTest(template = EMPTY)
     public static void noNestInColdWater(GameTestHelper h) {

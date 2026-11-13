@@ -125,6 +125,12 @@ public final class InteriorSync {
             state(id).dirty.add(sectionKey(sx, pos.getY() >> 4, sz));
             r.equipment().onChange(r.localX(pos.getX()), r.localY(pos.getY()), r.localZ(pos.getZ()), oldState, newState);
             InteriorObstacles.invalidate(id, r.localX(pos.getX()), r.localY(pos.getY()), r.localZ(pos.getZ()));
+            // M13: the root of an aquarium plant vanished (not by a player breaking it): forget the plant
+            if (oldState.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock
+                    && oldState.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.PART).ordinal() <= org.overengineer.bettacraft.plants.PlantPart.ROOT.ordinal()
+                    && newState.getBlock() != oldState.getBlock()) {
+                org.overengineer.bettacraft.plants.InteriorPlants.onRootGone(r, r.localX(pos.getX()), r.localY(pos.getY()), r.localZ(pos.getZ()));
+            }
             InteriorRegions.get(level.getServer()).setDirty();
         } else if (pos.getY() == InteriorRegion.FLOOR_Y && r.localX(pos.getX()) >= 0 && r.localX(pos.getX()) < r.sizeX()
                 && r.localZ(pos.getZ()) >= 0 && r.localZ(pos.getZ()) < r.sizeZ()) {

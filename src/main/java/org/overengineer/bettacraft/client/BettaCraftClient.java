@@ -121,6 +121,14 @@ public final class BettaCraftClient {
             return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
         }, ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get());
         event.register((stack, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, ModItems.LARVA_TUB.get());
+        // M13: aquarium plants: leaves (layer 0) and rhizome / stem (layer 1) in the colours of the species (red ones as in good light)
+        for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
+            var s = e.getKey();
+            event.register((stack, tint) -> 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(s,
+                    tint == 0 ? org.overengineer.bettacraft.plants.PlantPart.LEAF
+                            : org.overengineer.bettacraft.plants.PlantColors.rootLooksLike(s.form()) == org.overengineer.bettacraft.plants.PlantPart.STEM
+                            ? org.overengineer.bettacraft.plants.PlantPart.STEM : org.overengineer.bettacraft.plants.PlantPart.RHIZOME, 2), e.getValue().get());
+        }
         event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
     }
 
@@ -129,6 +137,14 @@ public final class BettaCraftClient {
 
     private static void onBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.LARVA_TUB.get());
+        // M13: aquarium plants: grey textures tinted per species, part and redness (also in the miniature)
+        for (var b : org.overengineer.bettacraft.registry.ModBlocks.AQUATIC_PLANTS.values()) {
+            event.register((state, level, pos, tint) -> {
+                if (tint != 0 || !(state.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock p)) return 0xFFFFFFFF;
+                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(p.species(), state.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.PART),
+                        state.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.TINT));
+            }, b.get());
+        }
         event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());
     }
 

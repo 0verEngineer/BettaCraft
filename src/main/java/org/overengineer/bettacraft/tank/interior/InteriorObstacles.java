@@ -93,7 +93,11 @@ public final class InteriorObstacles {
                 }
                 for (int y = y0; y < y0 + g.cell; y++) {
                     BlockState s = chunk.getBlockState(p.set(x, y, z));
-                    if (!s.isAir() && !InteriorManager.isShellBlock(s) && !s.getCollisionShape(interior, p).isEmpty()) return SOLID;
+                    if (s.isAir() || InteriorManager.isShellBlock(s)) continue;
+                    // M13: aquarium plants have no collision (players walk through) but bettas swim around them
+                    if (s.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock
+                            && s.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.PART).obstacle()) return SOLID;
+                    if (!s.getCollisionShape(interior, p).isEmpty()) return SOLID;
                 }
             }
         return FREE;

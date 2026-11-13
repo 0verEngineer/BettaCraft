@@ -1,0 +1,75 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "#tex"
+  },
+  "elements": [
+    {
+      "from": [
+        0.8,
+        0,
+        8
+      ],
+      "to": [
+        15.2,
+        16,
+        8
+      ],
+      "shade": false,
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "axis": "y",
+        "angle": 45,
+        "rescale": true
+      },
+      "faces": {
+        "north": {
+          "texture": "#tex",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#tex",
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        0.8
+      ],
+      "to": [
+        8,
+        16,
+        15.2
+      ],
+      "shade": false,
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "axis": "y",
+        "angle": 45,
+        "rescale": true
+      },
+      "faces": {
+        "east": {
+          "texture": "#tex",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#tex",
+          "tintindex": 0
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout_mipped"
+}

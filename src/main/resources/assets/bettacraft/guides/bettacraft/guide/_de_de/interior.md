@@ -51,3 +51,4 @@ dann „Render-Limit erreicht“.
 
 * [Bodengrund](interior/substrate.md)
 * [Deko](interior/decor.md)
+* [Aquarienpflanzen](interior/plants.md): Stecklinge, die zu Pflanzen aus vielen Blöcken wachsen

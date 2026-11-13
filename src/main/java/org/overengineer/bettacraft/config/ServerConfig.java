@@ -90,6 +90,15 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue PLANTS_MAX_PER_TANK;
     public static final ModConfigSpec.DoubleValue PLANTS_BOTTLE_CHANCE;
     public static final ModConfigSpec.DoubleValue PLANTS_FISHING_CHANCE;
+    public static final ModConfigSpec.DoubleValue AQUATIC_GROWTH_SPEED;
+    public static final ModConfigSpec.DoubleValue AQUATIC_WASTE_UPTAKE;
+    public static final ModConfigSpec.DoubleValue AQUATIC_BREEDING_BONUS;
+    public static final ModConfigSpec.DoubleValue AQUATIC_HIDING;
+    public static final ModConfigSpec.IntValue AQUATIC_MAX_PER_TANK;
+    public static final ModConfigSpec.BooleanValue AQUATIC_SPREAD;
+    public static final ModConfigSpec.DoubleValue AQUATIC_FISHING_CHANCE;
+    public static final ModConfigSpec.DoubleValue AQUATIC_BOTTLE_CHANCE;
+    public static final ModConfigSpec.DoubleValue AQUATIC_MOSS_CHANCE;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_BASE_DECLINE;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_PER_ANIMAL;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_PER_OVERFED;
@@ -256,6 +265,33 @@ public final class ServerConfig {
                 .defineInRange("bottleDuckweedChance", 0.15, 0.0, 1.0);
         PLANTS_FISHING_CHANCE = b.comment("Chance that fishing in a swamp or mangrove swamp brings up a floating plant instead of the catch")
                 .defineInRange("fishingChance", 0.06, 0.0, 1.0);
+        b.pop();
+
+        b.comment("Aquarium plants in the tank interior (M13: Java fern, Anubias, Bucephalandra, Java moss, Cryptocoryne, Amazon sword,",
+                "stem plants, Vallisneria, Monte Carlo, tiger lotus). They grow from a cutting into plants of many blocks with light,",
+                "nutrients (the waste in the water) and a fitting temperature, also while nobody is in the interior.").push("interiorPlants");
+        AQUATIC_GROWTH_SPEED = b.comment("Growth speed of aquarium plants (1 = normal, 0 = they never grow or spread)")
+                .defineInRange("plantGrowthSpeed", 1.0, 0.0, 50.0);
+        AQUATIC_WASTE_UPTAKE = b.comment("Water quality per in-game day the plants take up per tank block of plant mass (4096 plant blocks",
+                        "at scale 16) and water block, while they have light (0 = plants do not clean the water)")
+                .defineInRange("plantWasteUptake", 0.5, 0.0, 10.0);
+        AQUATIC_BREEDING_BONUS = b.comment("A well planted tank (plants of at least 3% of the water volume) makes a male ready for a nest",
+                        "this many times faster (1 = off)")
+                .defineInRange("plantBreedingBonus", 1.1, 1.0, 4.0);
+        AQUATIC_HIDING = b.comment("Share of the chases after spawning a female escapes by hiding in dense plants (reached at 8% of",
+                        "the water volume; 0 = plants give no hiding spots)")
+                .defineInRange("hidingSpots", 0.6, 0.0, 1.0);
+        AQUATIC_MAX_PER_TANK = b.comment("Most aquarium plants (roots) one tank interior holds; side shoots and runners stop there")
+                .defineInRange("maxPlantsPerTank", 48, 1, 1024);
+        AQUATIC_SPREAD = b.comment("Whether full-grown stem plants, Vallisneria, Monte Carlo and Cryptocoryne form side shoots and runners")
+                .define("plantsSpread", true);
+        AQUATIC_FISHING_CHANCE = b.comment("Chance that fishing in a jungle, river or swamp brings up an aquarium plant instead of the catch")
+                .defineInRange("plantFishingChance", 0.05, 0.0, 1.0);
+        AQUATIC_BOTTLE_CHANCE = b.comment("Chance that filling a glass bottle with swamp water also brings up a cutting (Cryptocoryne,",
+                        "Ludwigia, Rotala)")
+                .defineInRange("bottleCuttingChance", 0.05, 0.0, 1.0);
+        AQUATIC_MOSS_CHANCE = b.comment("Chance that shears on a moss block next to water give Java moss")
+                .defineInRange("mossChance", 0.5, 0.0, 1.0);
         b.pop();
 
         b.comment("Evaporation: open tanks slowly lose water. A lid, the feeder or a light on a top block covers that block.").push("evaporation");

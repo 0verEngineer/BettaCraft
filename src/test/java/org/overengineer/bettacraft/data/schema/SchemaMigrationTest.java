@@ -240,7 +240,7 @@ class SchemaMigrationTest {
         assertEquals(3, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
-        assertEquals(3, Schemas.INTERIOR_REGIONS.currentVersion());
+        assertEquals(4, Schemas.INTERIOR_REGIONS.currentVersion());
         assertEquals(1, Schemas.INTERIOR_FLOOR.currentVersion());
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
         assertEquals(1, Schemas.EXTERNAL_FILTER.currentVersion());
@@ -338,6 +338,32 @@ class SchemaMigrationTest {
         assertEquals(3, out.getInt("next_id"));
     }
 
+    /** Frozen M12 (v3) interior regions SavedData: regions get an empty aquarium plant index (M13), the rest stays. */
+    @Test
+    void interiorRegionsV3ToV4AddsEmptyPlantIndex() {
+        CompoundTag v3 = snbt("{schema:3,next_id:2,regions:[{id:1,size:[I;32,16,16],scale:16,tank_dim:\"minecraft:overworld\","
+                + "tank_min:[I;0,64,0],built:1b,equipment:{substrate:2,floating:[L;5L]},cells:[B;3B],custom:\"keep\"}]}");
+        CompoundTag out = Schemas.INTERIOR_REGIONS.migrate(v3);
+        assertEquals(4, Schema.read(out));
+        CompoundTag r1 = out.getList("regions", 10).getCompound(0);
+        assertTrue(r1.contains("plants", 10), "plant index added");
+        assertEquals(0, r1.getCompound("plants").getList("list", 10).size(), "no aquarium plants in old regions");
+        assertEquals("keep", r1.getString("custom"));
+        assertEquals(3, r1.getByteArray("cells")[0]);
+        var region = org.overengineer.bettacraft.tank.interior.InteriorRegion.load(r1);
+        assertTrue(region.plants().isEmpty());
+        assertEquals(2, region.equipment().substrateCount());
+        // a region with plants survives save / load
+        region.plants().add(org.overengineer.bettacraft.plants.PlantSpecies.ROTALA, 3, 0, 4, 99L, 5).room = 14;
+        var again = org.overengineer.bettacraft.tank.interior.InteriorRegion.load(region.save());
+        assertEquals(1, again.plants().size());
+        var p = again.plants().all().getFirst();
+        assertEquals(org.overengineer.bettacraft.plants.PlantSpecies.ROTALA, p.species);
+        assertEquals(5, p.stage);
+        assertEquals(14, p.room);
+        assertEquals(99L, p.seed);
+    }
+
     /** Frozen M9 (v2) interior regions SavedData: every old region belongs to a cuboid tank and gets all shape cells. */
     @Test
     void interiorRegionsV2ToV3AddsFullShapeCells() {
@@ -345,8 +371,7 @@ class SchemaMigrationTest {
                 + "tank_min:[I;0,64,0],built:1b,equipment:{substrate:2},custom:\"keep\"},{id:2,size:[I;24,8,8],scale:8,"
                 + "tank_dim:\"minecraft:the_nether\",tank_min:[I;5,64,0],built:0b,equipment:{}}]}");
         CompoundTag out = Schemas.INTERIOR_REGIONS.migrate(v2);
-        assertEquals(3, Schema.read(out));
-        assertEquals(3, Schemas.INTERIOR_REGIONS.currentVersion());
+        assertEquals(Schemas.INTERIOR_REGIONS.currentVersion(), Schema.read(out));
         CompoundTag r1 = out.getList("regions", 10).getCompound(0);
         byte[] cells = r1.getByteArray("cells");
         assertEquals(1, cells.length, "2x1x3 = 6 cells in one byte");

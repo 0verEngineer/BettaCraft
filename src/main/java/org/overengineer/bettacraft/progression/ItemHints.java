@@ -20,6 +20,10 @@ public final class ItemHints {
             "heater_small", "heater_medium", "heater_large", "cooler_small", "cooler_medium", "cooler_large", "internal_filter", "external_filter",
             "feeder", "tank_light", "tank_lid", "cabinet", "larva_tub", "artemia_hatchery", "mirror_stick",
             "tank_net", "duckweed", "amazon_frogbit", "salvinia", "red_root_floater",
+            // M13: the aquarium plants
+            "java_fern", "anubias_nana", "bucephalandra_green_wavy", "bucephalandra_brownie_red", "bucephalandra_blue",
+            "bucephalandra_mini_needle", "java_moss", "cryptocoryne_wendtii_green", "cryptocoryne_wendtii_brown", "cryptocoryne_flamingo",
+            "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "monte_carlo", "red_tiger_lotus",
             "betta_spawn_egg");
 
     private ItemHints() {}

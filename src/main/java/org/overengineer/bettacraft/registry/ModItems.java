@@ -46,6 +46,19 @@ public final class ModItems {
         return java.util.Collections.unmodifiableMap(m);
     }
 
+    /** M13: aquarium plants for the tank interior (cuttings; a plant taken out keeps its stage in a component). */
+    public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies,
+            DeferredItem<org.overengineer.bettacraft.plants.AquaticPlantItem>> AQUATIC_PLANTS = aquaticPlants();
+
+    private static java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredItem<org.overengineer.bettacraft.plants.AquaticPlantItem>> aquaticPlants() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.plants.PlantSpecies, DeferredItem<org.overengineer.bettacraft.plants.AquaticPlantItem>>(
+                org.overengineer.bettacraft.plants.PlantSpecies.class);
+        for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
+            m.put(sp, ITEMS.register(sp.id(), () -> new org.overengineer.bettacraft.plants.AquaticPlantItem(sp, new Item.Properties())));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
     public static final DeferredItem<BettaBucketItem> BETTA_BUCKET = ITEMS.register("betta_bucket",
             () -> new BettaBucketItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<FishBagItem> FISH_BAG = ITEMS.register("fish_bag",

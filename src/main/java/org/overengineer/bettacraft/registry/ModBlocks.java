@@ -112,6 +112,22 @@ public final class ModBlocks {
                     .isViewBlocking((s, l, p) -> false)
                     .pushReaction(PushReaction.BLOCK)));
 
+    /** M13: aquarium plants of the tank interior, one block per species (parts and redness as states). */
+    public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies,
+            DeferredBlock<org.overengineer.bettacraft.plants.AquaticPlantBlock>> AQUATIC_PLANTS = aquaticPlants();
+
+    private static java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredBlock<org.overengineer.bettacraft.plants.AquaticPlantBlock>> aquaticPlants() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.plants.PlantSpecies, DeferredBlock<org.overengineer.bettacraft.plants.AquaticPlantBlock>>(
+                org.overengineer.bettacraft.plants.PlantSpecies.class);
+        for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
+            m.put(sp, BLOCKS.register(sp.id(), () -> new org.overengineer.bettacraft.plants.AquaticPlantBlock(sp, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT).strength(0.2F).sound(SoundType.WET_GRASS).noCollission().noOcclusion().noLootTable()
+                    .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
+                    .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY))));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }

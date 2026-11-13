@@ -65,6 +65,7 @@ public final class Schemas {
             .step(0, data -> data) // v0 = written before versioning; identical layout
             .step(1, Schemas::regionsV1toV2)
             .step(2, Schemas::regionsV2toV3)
+            .step(3, Schemas::regionsV3toV4)
             .build();
 
     /** Substrate block entity of an interior floor block (M3). */
@@ -227,6 +228,23 @@ public final class Schemas {
             int cy = size.length == 3 ? Math.max(1, size[1] / scale) : 1;
             int cz = size.length == 3 ? Math.max(1, size[2] / scale) : 1;
             r.putByteArray("cells", org.overengineer.bettacraft.tank.TankShape.fullBox(cx, cy, cz));
+        }
+        return data;
+    }
+
+    /**
+     * Interior regions v3 -> v4 (M13): regions get a {@code plants} index (aquarium plants: species, root, stage, seed,
+     * growth progress). Older regions have no aquarium plants, so they get an empty index. Everything else is kept.
+     */
+    static CompoundTag regionsV3toV4(CompoundTag data) {
+        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag r = list.getCompound(i);
+            if (r.contains("plants", Tag.TAG_COMPOUND)) continue;
+            CompoundTag plants = new CompoundTag();
+            plants.put("list", new net.minecraft.nbt.ListTag());
+            plants.putInt("next_id", 1);
+            r.put("plants", plants);
         }
         return data;
     }

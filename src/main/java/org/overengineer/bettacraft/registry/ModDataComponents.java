@@ -40,6 +40,10 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<ResourceLocation>> WOOD = COMPONENTS.registerComponentType("wood",
             b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
 
+    /** M13: growth stage of an aquarium plant taken out of a tank interior (missing = a cutting). */
+    public static final Supplier<DataComponentType<Integer>> PLANT_STAGE = COMPONENTS.registerComponentType("plant_stage",
+            b -> b.persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }

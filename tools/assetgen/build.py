@@ -10,6 +10,7 @@ import cultures
 import decor
 import decor_icons
 import equipment
+import aquatic_plants
 import floating_plants
 import gui
 import icons
@@ -42,6 +43,7 @@ def main() -> int:
     written += blocks.write_all()
     written += equipment.write_all()
     written += floating_plants.write_all()
+    written += aquatic_plants.write_all()
     written += cultures.write_all()
     written += gui.write_all()
     written += md.write_generated(GEN, preview.sample_textures())

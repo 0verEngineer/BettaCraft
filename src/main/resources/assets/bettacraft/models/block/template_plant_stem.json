@@ -1,0 +1,82 @@
+{
+  "textures": {
+    "particle": "#tex"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tex",
+          "tintindex": 0,
+          "uv": [
+            6,
+            0,
+            10,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#tex",
+          "tintindex": 0,
+          "uv": [
+            6,
+            0,
+            10,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#tex",
+          "tintindex": 0,
+          "uv": [
+            6,
+            0,
+            10,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#tex",
+          "tintindex": 0,
+          "uv": [
+            6,
+            0,
+            10,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#tex",
+          "tintindex": 0,
+          "uv": [
+            6,
+            6,
+            10,
+            10
+          ]
+        },
+        "down": {
+          "texture": "#tex",
+          "tintindex": 0,
+          "uv": [
+            6,
+            6,
+            10,
+            10
+          ]
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout_mipped"
+}

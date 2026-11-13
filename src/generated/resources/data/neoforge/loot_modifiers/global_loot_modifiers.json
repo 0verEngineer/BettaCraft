@@ -2,7 +2,8 @@
   "entries": [
     "bettacraft:mud_mosquito_larvae",
     "bettacraft:sand_artemia_cysts",
-    "bettacraft:fishing_floating_plants"
+    "bettacraft:fishing_floating_plants",
+    "bettacraft:fishing_aquatic_plants"
   ],
   "replace": false
 }

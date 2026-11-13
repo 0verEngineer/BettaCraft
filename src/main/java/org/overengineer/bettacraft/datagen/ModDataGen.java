@@ -164,6 +164,41 @@ public final class ModDataGen {
             super(out, BettaCraft.MOD_ID, efh);
         }
 
+        private void aquaticPlants() {
+            for (var e : ModBlocks.AQUATIC_PLANTS.entrySet()) {
+                var s = e.getKey();
+                java.util.Map<String, ModelFile> made = new java.util.HashMap<>();
+                getVariantBuilder(e.getValue().get()).forAllStates(state -> {
+                    var look = e.getValue().get().looks(state);
+                    String name = plantModel(s, look);
+                    ModelFile m = made.computeIfAbsent(name, n -> {
+                        String template = switch (look) {
+                            case CUTTING -> "template_plant_cutting";
+                            case STEM -> "template_plant_stem";
+                            case RHIZOME -> "template_plant_rhizome";
+                            case RIBBON -> "template_plant_ribbon";
+                            case PAD -> "template_plant_pad";
+                            case MAT -> "template_plant_mat";
+                            default -> "template_plant_leaf";
+                        };
+                        String tex = switch (look) {
+                            case CUTTING -> "plant_cutting";
+                            case STEM -> "plant_stem";
+                            case RHIZOME -> "plant_rhizome";
+                            case RIBBON -> "plant_ribbon";
+                            case PAD -> "plant_pad";
+                            case MAT -> "plant_mat";
+                            case MOSS -> "plant_moss";
+                            default -> "plant_leaf_" + s.leafTexture();
+                        };
+                        return models().withExistingParent(n, modLoc("block/" + template)).texture("tex", modLoc("block/" + tex))
+                                .renderType("cutout_mipped");
+                    });
+                    return ConfiguredModel.builder().modelFile(m).build();
+                });
+            }
+        }
+
         @Override
         protected void registerStatesAndModels() {
             // block/tank.json is hand-written (custom geometry loader bettacraft:tank)
@@ -195,6 +230,8 @@ public final class ModDataGen {
                     return ConfiguredModel.builder().modelFile(models().cubeColumn(kind + "_" + tex, modLoc(side), modLoc(top))).build();
                 });
             }
+
+            aquaticPlants();
 
             BlockModelBuilder feeder = models().getBuilder("feeder")
                     .texture("side", modLoc("block/feeder_side")).texture("top", modLoc("block/feeder_top"))
@@ -380,6 +417,15 @@ public final class ModDataGen {
         }
     }
 
+    /** M13: models of the aquarium plant blocks (grey textures, tinted by the block colour handler). */
+    static String plantModel(org.overengineer.bettacraft.plants.PlantSpecies s, org.overengineer.bettacraft.plants.PlantPart look) {
+        return s.id() + "_" + switch (look) {
+            case LEAF, TOP -> "leaf";
+            case ROOT -> "leaf";
+            default -> look.getSerializedName();
+        };
+    }
+
     static final class ItemModels extends ItemModelProvider {
         ItemModels(PackOutput out, ExistingFileHelper efh) {
             super(out, BettaCraft.MOD_ID, efh);
@@ -423,6 +469,12 @@ public final class ModDataGen {
             basicItem(ModItems.COOLER_LARGE.get());
             basicItem(ModItems.INTERNAL_FILTER.get());
             for (var d : ModItems.DECOR.values()) basicItem(d.get());
+            // M13: aquarium plants: two grey layers per growth form, tinted per species (ItemColor)
+            for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
+                String form = e.getKey().form().name().toLowerCase(java.util.Locale.ROOT);
+                withExistingParent(e.getKey().id(), mcLoc("item/generated")).texture("layer0", modLoc("item/plant_" + form))
+                        .texture("layer1", modLoc("item/plant_" + form + "_detail"));
+            }
         }
     }
 
@@ -776,6 +828,10 @@ public final class ModDataGen {
             add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
                     LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
             }));
+            // M13: fishing in jungles, rivers and swamps sometimes brings up an aquarium plant
+            add("fishing_aquatic_plants", new org.overengineer.bettacraft.world.AquaticPlantFishingModifier(new LootItemCondition[]{
+                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
+            }));
         }
     }
 
@@ -799,6 +855,27 @@ public final class ModDataGen {
             // Fintastic plants may stand in the dry interior like seagrass and kelp (M7)
             var plants = tag(ModTags.INTERIOR_WATER_PLANTS);
             for (String p : Compat.FINTASTIC_PLANTS) plants.addOptional(Compat.rl(Compat.FINTASTIC, p));
+            // M13: where aquarium plants grow
+            tag(ModTags.EPIPHYTE_SURFACES).addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.LOGS).addTag(BlockTags.PLANKS)
+                    .addTag(BlockTags.STONE_BRICKS).addTag(Tags.Blocks.COBBLESTONES).addTag(BlockTags.WOODEN_SLABS).addTag(BlockTags.WOODEN_STAIRS)
+                    .addTag(BlockTags.WOODEN_FENCES).addTag(BlockTags.WALLS).addTag(BlockTags.SLABS).addTag(BlockTags.STAIRS)
+                    .add(net.minecraft.world.level.block.Blocks.MOSSY_COBBLESTONE, net.minecraft.world.level.block.Blocks.SMOOTH_STONE,
+                            net.minecraft.world.level.block.Blocks.BONE_BLOCK, net.minecraft.world.level.block.Blocks.MAGMA_BLOCK,
+                            net.minecraft.world.level.block.Blocks.BLACKSTONE, net.minecraft.world.level.block.Blocks.BASALT,
+                            net.minecraft.world.level.block.Blocks.POLISHED_BASALT, net.minecraft.world.level.block.Blocks.SMOOTH_BASALT,
+                            net.minecraft.world.level.block.Blocks.MUD_BRICKS, net.minecraft.world.level.block.Blocks.PACKED_MUD,
+                            net.minecraft.world.level.block.Blocks.SANDSTONE, net.minecraft.world.level.block.Blocks.RED_SANDSTONE,
+                            net.minecraft.world.level.block.Blocks.CALCITE, net.minecraft.world.level.block.Blocks.DRIPSTONE_BLOCK,
+                            net.minecraft.world.level.block.Blocks.MOSS_BLOCK, net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS,
+                            net.minecraft.world.level.block.Blocks.MUDDY_MANGROVE_ROOTS, net.minecraft.world.level.block.Blocks.BAMBOO_BLOCK)
+                    .addTag(BlockTags.TERRACOTTA);
+            tag(ModTags.PLANT_SUBSTRATE).addTag(BlockTags.SAND).addTag(BlockTags.DIRT).addTag(Tags.Blocks.GRAVELS)
+                    .add(net.minecraft.world.level.block.Blocks.GRAVEL, net.minecraft.world.level.block.Blocks.CLAY,
+                            net.minecraft.world.level.block.Blocks.MUD, net.minecraft.world.level.block.Blocks.SOUL_SAND,
+                            net.minecraft.world.level.block.Blocks.SOUL_SOIL, net.minecraft.world.level.block.Blocks.SUSPICIOUS_SAND,
+                            net.minecraft.world.level.block.Blocks.SUSPICIOUS_GRAVEL);
+            var plantBlocks = tag(BlockTags.SWORD_EFFICIENT);
+            for (var b : ModBlocks.AQUATIC_PLANTS.values()) plantBlocks.add(b.get());
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
                     net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
         }
@@ -820,6 +897,8 @@ public final class ModDataGen {
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get());
             tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
+            var aq = tag(ModTags.AQUATIC_PLANT_ITEMS);
+            for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
             tag(ModTags.PLASTIC_SHEETS)
                     .addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "plastics"))

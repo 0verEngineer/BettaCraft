@@ -148,7 +148,8 @@ public final class TankBreeding {
             // M11: mirror training of the male (breeding.mirrorReadinessBonus, 1 = off)
             double mirror = male.breeding().isTrained() ? ServerConfig.getOr(ServerConfig.BREEDING_MIRROR_BONUS, 1.25) : 1.0;
             // M12: floating plants on the surface (breeding.floatingPlants.breedingBonus, 1 = off)
-            double plants = org.overengineer.bettacraft.tank.plants.TankPlants.breedingBonus(tank);
+            double plants = org.overengineer.bettacraft.tank.plants.TankPlants.breedingBonus(tank)
+                    * org.overengineer.bettacraft.plants.InteriorPlants.breedingBonus(level.getServer(), tank); // M13: aquarium plants
             male.breeding().addReady(days * (live ? 2.0 : 1.0) * mirror * plants);
             if (male.breeding().ready() >= ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)) {
                 male.breeding().resetReady();
@@ -214,11 +215,18 @@ public final class TankBreeding {
                 n.careTime += days;
                 if (male != null) {
                     male.keepAtNest(n.pos, now + HOLD);
-                    BettaEntity target = nearest(male, females);
+                    // M13: dense aquarium plants are hiding spots: a hidden female is not chased in this step
+                    double hide = org.overengineer.bettacraft.plants.InteriorPlants.hiding(level.getServer(), tank);
+                    List<BettaEntity> seen = new ArrayList<>();
+                    for (BettaEntity f : females) {
+                        if (hide > 0 && r.nextDouble() < hide) controller.femaleHidSteps++;
+                        else seen.add(f);
+                    }
+                    BettaEntity target = nearest(male, seen);
                     if (target != null) {
                         male.pursue(target, now + HOLD);
                         male.flare(now + HOLD);
-                        for (BettaEntity f : females) {
+                        for (BettaEntity f : seen) {
                             f.flee(male, now + HOLD);
                             f.addDamage(ServerConfig.getOr(ServerConfig.BREEDING_FEMALE_DAMAGE_PER_DAY, 2.0) * days, male);
                         }
@@ -467,6 +475,7 @@ public final class TankBreeding {
         if (males >= 2 && ServerConfig.getOr(ServerConfig.COMBAT_MALES_FIGHT, true)) out.add("fight");
         if (predator && live.stream().anyMatch(e -> !e.getType().is(ModTags.PREDATORS) && e.getBbWidth() <= PREY_MAX_WIDTH)) out.add("predator");
         if (org.overengineer.bettacraft.tank.plants.TankPlants.dense(tank)) out.add("dense_plants"); // M12
+        else if (org.overengineer.bettacraft.plants.InteriorPlants.overgrown(level.getServer(), tank)) out.add("overgrown"); // M13
         return out;
     }
 
@@ -534,6 +543,8 @@ public final class TankBreeding {
         cond.putBoolean("mirror", male != null && male.breeding().isTrained()
                 && ServerConfig.getOr(ServerConfig.BREEDING_MIRROR_BONUS, 1.25) > 1.0);
         cond.putBoolean("plants", org.overengineer.bettacraft.tank.plants.TankPlants.breedingBonus(tank) > 1.0);
+        cond.putBoolean("aquatic", org.overengineer.bettacraft.plants.InteriorPlants.breedingBonus(level.getServer(), tank) > 1.0); // M13
+        cond.putFloat("hiding", (float) org.overengineer.bettacraft.plants.InteriorPlants.hiding(level.getServer(), tank)); // M13
         cond.putFloat("ready", male == null ? 0 : (float) Mth.clamp(male.breeding().ready()
                 / Math.max(1e-6, ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)), 0, 1));
         out.put("conditions", cond);

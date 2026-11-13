@@ -638,14 +638,25 @@ public final class PlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_plants_bottle")
     public static void swampBottleSometimesBringsDuckweed(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        double saved = ServerConfig.PLANTS_BOTTLE_CHANCE.get();
         BlockPos water = h.absolutePos(new BlockPos(20, 1, 20));
-        var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
-        // only the water block and the air above it: a box of +-8 blocks could reach into a chunk that is not loaded,
-        // then fillbiome does nothing at all and the test failed now and then (in plains)
-        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + water.getX() + " " + water.getY() + " " + water.getZ() + " "
-                + water.getX() + " " + (water.getY() + 3) + " " + water.getZ() + " minecraft:swamp");
         h.setBlock(new BlockPos(20, 1, 20), Blocks.WATER);
+        fillSwamp(level, water);
+        // the biome change can need a moment (and a second try) right after the template was placed (M13: was flaky)
+        h.runAfterDelay(10, () -> {
+            if (!level.getBiome(water).is(net.minecraft.world.level.biome.Biomes.SWAMP)) fillSwamp(level, water);
+            bottleCheck(h, level, water);
+        });
+    }
+
+    private static void fillSwamp(ServerLevel level, BlockPos water) {
+        var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
+        // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells), inside the loaded template
+        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + (water.getY() - 1) + " " + (water.getZ() - 4) + " "
+                + (water.getX() + 4) + " " + (water.getY() + 4) + " " + (water.getZ() + 4) + " minecraft:swamp");
+    }
+
+    private static void bottleCheck(GameTestHelper h, ServerLevel level, BlockPos water) {
+        double saved = ServerConfig.PLANTS_BOTTLE_CHANCE.get();
         ServerPlayer sp = lookingDown(h, water.getX() + 0.5, water.getY() + 2.6, water.getZ() + 0.5);
         try {
             ServerConfig.PLANTS_BOTTLE_CHANCE.set(1.0);

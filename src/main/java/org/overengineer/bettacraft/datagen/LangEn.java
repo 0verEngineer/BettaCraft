@@ -621,6 +621,7 @@ final class LangEn {
 
         m9(a);
         m12(a);
+        m13(a);
     }
 
     /** M9: water quality, evaporation, coolers, power, lid, larva tub and artemia hatchery. */
@@ -696,6 +697,131 @@ final class LangEn {
         a.accept("bettacraft.configuration.bottleDuckweedChance.tooltip", "Chance that filling a glass bottle with swamp water also brings up duckweed");
         a.accept("bettacraft.configuration.fishingChance", "Floating plants from fishing");
         a.accept("bettacraft.configuration.fishingChance.tooltip", "Chance that fishing in a swamp or mangrove swamp brings up a floating plant instead of the catch");
+    }
+
+
+
+    /** M13: aquarium plants. */
+    private static void m13(BiConsumer<String, String> a) {
+        a.accept("item.bettacraft.java_fern", "Java Fern");
+        a.accept("block.bettacraft.java_fern", "Java Fern");
+        a.accept("info.bettacraft.java_fern", "A robust fern with long, lance-shaped fronds on a creeping rhizome.\nPlant it in a tank interior on stone or wood (rocks, roots, decoration). From a cutting it grows into a plant of many blocks, about 12 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in jungles and rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Break a rhizome piece to divide it (half of it as an item).");
+        a.accept("item.bettacraft.anubias_nana", "Anubias Nana");
+        a.accept("block.bettacraft.anubias_nana", "Anubias Nana");
+        a.accept("info.bettacraft.anubias_nana", "Dark green, leathery leaves on short stalks; grows very slowly.\nPlant it in a tank interior on stone or wood (rocks, roots, decoration). From a cutting it grows into a plant of many blocks, about 25 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in jungles and rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Break a rhizome piece to divide it (half of it as an item).");
+        a.accept("item.bettacraft.bucephalandra_green_wavy", "Bucephalandra 'Green Wavy'");
+        a.accept("block.bettacraft.bucephalandra_green_wavy", "Bucephalandra 'Green Wavy'");
+        a.accept("info.bettacraft.bucephalandra_green_wavy", "Small wavy green leaves on a compact rhizome.\nPlant it in a tank interior on stone or wood (rocks, roots, decoration). From a cutting it grows into a plant of many blocks, about 20 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in jungles and rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Break a rhizome piece to divide it (half of it as an item).");
+        a.accept("item.bettacraft.bucephalandra_brownie_red", "Bucephalandra 'Brownie Red'");
+        a.accept("block.bettacraft.bucephalandra_brownie_red", "Bucephalandra 'Brownie Red'");
+        a.accept("info.bettacraft.bucephalandra_brownie_red", "Brown leaves that turn red under strong light.\nPlant it in a tank interior on stone or wood (rocks, roots, decoration). From a cutting it grows into a plant of many blocks, about 22 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: rarely when fishing in jungles and rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Break a rhizome piece to divide it (half of it as an item).");
+        a.accept("item.bettacraft.bucephalandra_blue", "Bucephalandra 'Blue'");
+        a.accept("block.bettacraft.bucephalandra_blue", "Bucephalandra 'Blue'");
+        a.accept("info.bettacraft.bucephalandra_blue", "Dark leaves with a bluish shimmer.\nPlant it in a tank interior on stone or wood (rocks, roots, decoration). From a cutting it grows into a plant of many blocks, about 22 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: rarely when fishing in jungles and rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Break a rhizome piece to divide it (half of it as an item).");
+        a.accept("item.bettacraft.bucephalandra_mini_needle", "Bucephalandra 'Mini Needle'");
+        a.accept("block.bettacraft.bucephalandra_mini_needle", "Bucephalandra 'Mini Needle'");
+        a.accept("info.bettacraft.bucephalandra_mini_needle", "Narrow, needle-like leaves; stays small.\nPlant it in a tank interior on stone or wood (rocks, roots, decoration). From a cutting it grows into a plant of many blocks, about 20 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in jungles and rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Break a rhizome piece to divide it (half of it as an item).");
+        a.accept("item.bettacraft.java_moss", "Java Moss");
+        a.accept("block.bettacraft.java_moss", "Java Moss");
+        a.accept("info.bettacraft.java_moss", "Fine moss that spreads in a cushion over stone, wood and the floor.\nPlant it in a tank interior on any solid block. From a cutting it grows into a plant of many blocks, about 6 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: shears on a moss block next to water (lush caves); cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
+        a.accept("item.bettacraft.cryptocoryne_wendtii_green", "Cryptocoryne Wendtii (Green)");
+        a.accept("block.bettacraft.cryptocoryne_wendtii_green", "Cryptocoryne Wendtii (Green)");
+        a.accept("info.bettacraft.cryptocoryne_wendtii_green", "A rosette of green, slightly wavy leaves; sends out runners now and then.\nPlant it in a tank interior on substrate (the interior floor with a substrate, sand, gravel or dirt). From a cutting it grows into a plant of many blocks, about 9 days to full size with little light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in swamps, sometimes in a bottle of swamp water; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
+        a.accept("item.bettacraft.cryptocoryne_wendtii_brown", "Cryptocoryne Wendtii (Brown)");
+        a.accept("block.bettacraft.cryptocoryne_wendtii_brown", "Cryptocoryne Wendtii (Brown)");
+        a.accept("info.bettacraft.cryptocoryne_wendtii_brown", "Brown-red wavy leaves, redder under strong light; sends out runners now and then.\nPlant it in a tank interior on substrate (the interior floor with a substrate, sand, gravel or dirt). From a cutting it grows into a plant of many blocks, about 9 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in swamps, sometimes in a bottle of swamp water; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
+        a.accept("item.bettacraft.cryptocoryne_flamingo", "Cryptocoryne 'Flamingo'");
+        a.accept("block.bettacraft.cryptocoryne_flamingo", "Cryptocoryne 'Flamingo'");
+        a.accept("info.bettacraft.cryptocoryne_flamingo", "A rare crypt with whitish pink leaves that get brighter and pinker in strong light; slow.\nPlant it in a tank interior on substrate (the interior floor with a substrate, sand, gravel or dirt). From a cutting it grows into a plant of many blocks, about 14 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: rarely from the wandering trader; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
+        a.accept("item.bettacraft.amazon_sword", "Amazon Sword");
+        a.accept("block.bettacraft.amazon_sword", "Amazon Sword");
+        a.accept("info.bettacraft.amazon_sword", "A large rosette of long, sword-shaped leaves: the centre piece of a big tank.\nPlant it in a tank interior on substrate (the interior floor with a substrate, sand, gravel or dirt). From a cutting it grows into a plant of many blocks, about 7 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: the wandering trader; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
+        a.accept("item.bettacraft.rotala_rotundifolia", "Rotala Rotundifolia");
+        a.accept("block.bettacraft.rotala_rotundifolia", "Rotala Rotundifolia");
+        a.accept("info.bettacraft.rotala_rotundifolia", "A fast stem plant with small round leaves; the tips turn pink-red under strong light.\nPlant it in a tank interior on substrate; grows up to the water surface. From a cutting it grows into a plant of many blocks, about 2.5 days to full size with strong light (a lit tank light), nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in swamps, sometimes in a bottle of swamp water; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Full-grown it forms side shoots; at the surface it shades the tank.");
+        a.accept("item.bettacraft.ludwigia_repens", "Ludwigia Repens");
+        a.accept("block.bettacraft.ludwigia_repens", "Ludwigia Repens");
+        a.accept("info.bettacraft.ludwigia_repens", "A fast stem plant with copper-red leaves, redder under strong light.\nPlant it in a tank interior on substrate; grows up to the water surface. From a cutting it grows into a plant of many blocks, about 3 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in swamps, sometimes in a bottle of swamp water; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Full-grown it forms side shoots; at the surface it shades the tank.");
+        a.accept("item.bettacraft.alternanthera_reineckii", "Alternanthera Reineckii");
+        a.accept("block.bettacraft.alternanthera_reineckii", "Alternanthera Reineckii");
+        a.accept("info.bettacraft.alternanthera_reineckii", "A stem plant with deep red leaves; needs strong light.\nPlant it in a tank interior on substrate; grows up to the water surface. From a cutting it grows into a plant of many blocks, about 3.5 days to full size with strong light (a lit tank light), nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: the wandering trader; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Full-grown it forms side shoots; at the surface it shades the tank.");
+        a.accept("item.bettacraft.vallisneria", "Vallisneria");
+        a.accept("block.bettacraft.vallisneria", "Vallisneria");
+        a.accept("info.bettacraft.vallisneria", "Long ribbon leaves up to the surface; spreads quickly by runners.\nPlant it in a tank interior on substrate; grows up to the water surface. From a cutting it grows into a plant of many blocks, about 2.5 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: the wandering trader; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Full-grown it sends out runners.");
+        a.accept("item.bettacraft.monte_carlo", "Monte Carlo");
+        a.accept("block.bettacraft.monte_carlo", "Monte Carlo");
+        a.accept("info.bettacraft.monte_carlo", "A carpet of tiny round leaves on the floor; spreads by runners; needs strong light.\nPlant it in a tank interior on substrate. From a cutting it grows into a plant of many blocks, about 3 days to full size with strong light (a lit tank light), nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: the wandering trader; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. Full-grown it sends out runners.");
+        a.accept("item.bettacraft.red_tiger_lotus", "Red Tiger Lotus");
+        a.accept("block.bettacraft.red_tiger_lotus", "Red Tiger Lotus");
+        a.accept("info.bettacraft.red_tiger_lotus", "Large red, mottled leaves from a tuber; grown up it sends floating leaves to the surface.\nPlant it in a tank interior on substrate. From a cutting it grows into a plant of many blocks, about 6 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: rarely from the wandering trader; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. The floating leaves shade the tank like floating plants.");
+        a.accept("item.bettacraft.aquatic_plant.cutting", "Cutting: plant it in a tank interior");
+        a.accept("item.bettacraft.aquatic_plant.grown", "Grown plant (%s %% of full size)");
+        a.accept("item.bettacraft.aquatic_plant.form.epiphyte", "Grows on stone and wood (also decoration)");
+        a.accept("item.bettacraft.aquatic_plant.form.moss", "Grows on any solid block");
+        a.accept("item.bettacraft.aquatic_plant.form.rosette", "Rosette: plant it on substrate");
+        a.accept("item.bettacraft.aquatic_plant.form.stem", "Stem plant: on substrate, grows up to the surface");
+        a.accept("item.bettacraft.aquatic_plant.form.ribbon", "Ribbon leaves: on substrate, spreads by runners");
+        a.accept("item.bettacraft.aquatic_plant.form.carpet", "Carpet: on substrate, spreads by runners");
+        a.accept("item.bettacraft.aquatic_plant.form.bulb", "Tuber: on substrate, floating leaves at the surface");
+        a.accept("message.bettacraft.aquatic.only_interior", "Aquarium plants grow only inside a tank interior (sneak + right-click a tank)");
+        a.accept("message.bettacraft.aquatic.occupied", "There is no room here");
+        a.accept("message.bettacraft.aquatic.needs_hardscape", "Needs stone or wood to grow on (rocks, roots, decoration)");
+        a.accept("message.bettacraft.aquatic.needs_solid", "Needs a solid block to grow on");
+        a.accept("message.bettacraft.aquatic.needs_substrate", "Needs substrate: the floor with a substrate, sand, gravel or dirt");
+        a.accept("message.bettacraft.aquatic.full", "This tank holds no more plants");
+        a.accept("message.bettacraft.aquatic.too_close", "Too close to another plant");
+        a.accept("message.bettacraft.aquatic.none", "No aquarium plants in this tank");
+        a.accept("message.bettacraft.aquatic.none_here", "No aquarium plant there");
+        a.accept("message.bettacraft.aquatic.too_small", "Too small to trim");
+        a.accept("message.bettacraft.aquatic.trimmed", "Trimmed: %s cutting(s) of %s");
+        a.accept("message.bettacraft.aquatic.taken_out", "Plant taken out");
+        a.accept("message.bettacraft.aquatic.divided", "Rhizome divided: a new plant");
+        a.accept("message.bettacraft.aquatic.moss_found", "Java moss!");
+        a.accept("message.bettacraft.aquatic.cutting_in_bottle", "A cutting came up with the water: %s");
+        a.accept("log.bettacraft.aquatic_planted", "%s planted %s");
+        a.accept("log.bettacraft.aquatic_grown", "%s is fully grown");
+        a.accept("log.bettacraft.aquatic_side_shoot", "%s formed a side shoot");
+        a.accept("log.bettacraft.aquatic_runner", "%s sent out a runner");
+        a.accept("log.bettacraft.aquatic_trimmed", "%s trimmed %s (%s cuttings)");
+        a.accept("log.bettacraft.aquatic_taken_out", "%s took out %s");
+        a.accept("log.bettacraft.aquatic_divided", "%s divided %s");
+        a.accept("gui.bettacraft.breeding.warn.overgrown", "Plants overgrow the surface: trim them (shears)");
+        a.accept("gui.bettacraft.breeding.cond.aquatic", "Well planted: hiding spots, faster ready");
+        a.accept("bettacraft.configuration.interiorPlants", "Aquarium plants");
+        a.accept("bettacraft.configuration.interiorPlants.tooltip", "Aquarium plants in the tank interior: growth, waste uptake, hiding spots and how to find them");
+        a.accept("bettacraft.configuration.plantGrowthSpeed", "Growth speed");
+        a.accept("bettacraft.configuration.plantGrowthSpeed.tooltip", "Growth speed of aquarium plants (1 = normal, 0 = they never grow or spread)");
+        a.accept("bettacraft.configuration.plantWasteUptake", "Waste uptake");
+        a.accept("bettacraft.configuration.plantWasteUptake.tooltip", "Water quality per in-game day taken up per tank block of plant mass (4096 plant blocks at scale 16) and water block, with light (0 = off)");
+        a.accept("bettacraft.configuration.plantBreedingBonus", "Breeding bonus of plants");
+        a.accept("bettacraft.configuration.plantBreedingBonus.tooltip", "A well planted tank (plants of at least 3% of the water volume) makes a male ready for a nest this many times faster (1 = off)");
+        a.accept("bettacraft.configuration.hidingSpots", "Hiding spots");
+        a.accept("bettacraft.configuration.hidingSpots.tooltip", "Share of the chases after spawning a female escapes by hiding in dense plants (reached at 8% of the water volume; 0 = off)");
+        a.accept("bettacraft.configuration.maxPlantsPerTank", "Most plants per tank");
+        a.accept("bettacraft.configuration.maxPlantsPerTank.tooltip", "Most aquarium plants (roots) one tank interior holds; side shoots and runners stop there");
+        a.accept("bettacraft.configuration.plantsSpread", "Side shoots and runners");
+        a.accept("bettacraft.configuration.plantsSpread.tooltip", "Whether full-grown stem plants, Vallisneria, Monte Carlo and Cryptocoryne form side shoots and runners");
+        a.accept("bettacraft.configuration.plantFishingChance", "Aquarium plants from fishing");
+        a.accept("bettacraft.configuration.plantFishingChance.tooltip", "Chance that fishing in a jungle, river or swamp brings up an aquarium plant instead of the catch");
+        a.accept("bettacraft.configuration.bottleCuttingChance", "Cuttings from swamp water");
+        a.accept("bettacraft.configuration.bottleCuttingChance.tooltip", "Chance that filling a glass bottle with swamp water also brings up a cutting (Cryptocoryne, Ludwigia, Rotala)");
+        a.accept("bettacraft.configuration.mossChance", "Java moss from moss blocks");
+        a.accept("bettacraft.configuration.mossChance.tooltip", "Chance that shears on a moss block next to water give Java moss");
+        a.accept("gui.bettacraft.plants.page_aquatic", "Interior plants");
+        a.accept("gui.bettacraft.plants.page_floating", "Floating plants");
+        a.accept("gui.bettacraft.aquatic.count", "Aquarium plants: %s (at most %s)");
+        a.accept("gui.bettacraft.aquatic.none", "No aquarium plants: plant cuttings in the interior");
+        a.accept("gui.bettacraft.aquatic.none_built", "No interior yet: sneak + right-click to enter");
+        a.accept("gui.bettacraft.aquatic.mass", "Plant mass: %s blocks (%s %% of the water)");
+        a.accept("gui.bettacraft.aquatic.more", "... and %s more species");
+        a.accept("gui.bettacraft.aquatic.temp", "No growth: %s °C (needs 20-30 °C)");
+        a.accept("gui.bettacraft.aquatic.growing", "Growing: %s, full-grown: %s");
+        a.accept("gui.bettacraft.aquatic.dark", "too dark: %s");
+        a.accept("gui.bettacraft.aquatic.dry", "dry: %s");
+        a.accept("gui.bettacraft.aquatic.hiding", "Hiding spots: %s %%");
+        a.accept("gui.bettacraft.aquatic.bonus", "Breeding bonus ✔");
+        a.accept("gui.bettacraft.aquatic.overgrown", "Plants at the surface: %s %% shade, trim them");
+        a.accept("gui.bettacraft.aquatic.hint", "Shears: trim (also from outside)");
     }
 
     private static void m9(BiConsumer<String, String> a) {

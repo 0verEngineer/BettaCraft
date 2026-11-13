@@ -41,6 +41,8 @@ public final class InteriorRegion {
     private byte[] cells;
     /** Equipment and floating plants inside the region (PLAN 7.3), kept up to date by block updates. */
     private final InteriorEquipment equipment = new InteriorEquipment();
+    /** Aquarium plants of the region (M13): growth data, the blocks follow them. */
+    private final org.overengineer.bettacraft.plants.PlantIndex plants = new org.overengineer.bettacraft.plants.PlantIndex();
 
     public InteriorRegion(int id, int sizeX, int sizeY, int sizeZ, int scale, ResourceKey<Level> tankDimension, BlockPos tankMin,
                           @Nullable UUID tankId, @Nullable UUID owner) {
@@ -103,6 +105,7 @@ public final class InteriorRegion {
     public boolean built() { return built; }
     void setBuilt(boolean built) { this.built = built; }
     public InteriorEquipment equipment() { return equipment; }
+    public org.overengineer.bettacraft.plants.PlantIndex plants() { return plants; }
 
     void retarget(ResourceKey<Level> dim, BlockPos tankMin, @Nullable UUID tankId) {
         this.tankDimension = dim;
@@ -168,6 +171,7 @@ public final class InteriorRegion {
         t.putBoolean("built", built);
         t.put("equipment", equipment.save());
         t.putByteArray("cells", cells.clone());
+        t.put("plants", plants.saveAll());
         return t;
     }
 
@@ -185,6 +189,7 @@ public final class InteriorRegion {
                 t.contains("cells", net.minecraft.nbt.Tag.TAG_BYTE_ARRAY) ? t.getByteArray("cells") : null);
         r.built = t.getBoolean("built");
         r.equipment.load(t.getCompound("equipment"));
+        r.plants.load(t.getCompound("plants"));
         return r;
     }
 }

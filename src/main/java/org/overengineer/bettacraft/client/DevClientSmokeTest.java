@@ -72,6 +72,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM10 m10;
     private static DevClientSmokeM11 m11;
     private static DevClientSmokeM12 m12;
+    private static DevClientSmokeM13 m13;
+    /** -Psmoketestm13: only the M13 scene (aquarium plants). */
+    private static final boolean M13_ONLY = Boolean.getBoolean("bettacraft.smoketest.m13only");
     /** -Psmoketestm12: only the M12 scene (floating plants). */
     private static final boolean M12_ONLY = Boolean.getBoolean("bettacraft.smoketest.m12only");
     /** -Psmoketestm11: only the M11 scene (tank styles, connected glass, edges, water seam, mirror stick). */
@@ -114,6 +117,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M13_ONLY) {
+                if (ticks == 60) m13 = new DevClientSmokeM13();
+                if (m13 != null && m13.tick()) {
+                    m13 = null;
+                    LOGGER.info("[smoketest] client world test finished (M13 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M12_ONLY) {
                 if (ticks == 60) m12 = new DevClientSmokeM12();
                 if (m12 != null && m12.tick()) {
@@ -328,6 +340,10 @@ final class DevClientSmokeTest {
                     }
                     if (m12 != null && m12.tick()) {
                         m12 = null;
+                        m13 = new DevClientSmokeM13(); // M13: aquarium plants
+                    }
+                    if (m13 != null && m13.tick()) {
+                        m13 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

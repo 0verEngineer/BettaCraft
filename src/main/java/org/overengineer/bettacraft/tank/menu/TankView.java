@@ -116,6 +116,94 @@ public final class TankView {
     public final Water water = new Water();
     /** M12: floating plants (water tab, plants page). */
     public final Plants plants = new Plants();
+    /** M13: aquarium plants of the interior (second page of the plants tab). */
+    public final Aquatic aquatic = new Aquatic();
+
+    /** Aquarium plants of the interior: count per species, mass, light, growth, uptake, hiding spots, shade. */
+    public static final class Aquatic {
+        public int[] counts = new int[org.overengineer.bettacraft.plants.PlantSpecies.values().length];
+        /** Highest tint level per species (red species: the colour they show). */
+        public int[] tints = new int[org.overengineer.bettacraft.plants.PlantSpecies.values().length];
+        public int total, maxPlants, blocks, light, growing, fullGrown, dark, dry;
+        public float share, surfaceCover, growthSpeed, hiding, temp;
+        public double uptakePerDay;
+        public boolean bonus, overgrown, built;
+
+        CompoundTag save() {
+            CompoundTag t = new CompoundTag();
+            t.putIntArray("counts", counts);
+            t.putIntArray("tints", tints);
+            t.putIntArray("n", new int[]{total, maxPlants, blocks, light, growing, fullGrown, dark, dry});
+            t.putFloat("share", share);
+            t.putFloat("surface", surfaceCover);
+            t.putFloat("speed", growthSpeed);
+            t.putFloat("hiding", hiding);
+            t.putFloat("temp", temp);
+            t.putDouble("uptake", uptakePerDay);
+            t.putBoolean("bonus", bonus);
+            t.putBoolean("overgrown", overgrown);
+            t.putBoolean("built", built);
+            return t;
+        }
+
+        void load(CompoundTag t) {
+            int[] c = t.getIntArray("counts");
+            if (c.length == counts.length) counts = c;
+            int[] ti = t.getIntArray("tints");
+            if (ti.length == tints.length) tints = ti;
+            int[] n = t.getIntArray("n");
+            if (n.length == 8) {
+                total = n[0];
+                maxPlants = n[1];
+                blocks = n[2];
+                light = n[3];
+                growing = n[4];
+                fullGrown = n[5];
+                dark = n[6];
+                dry = n[7];
+            }
+            share = t.getFloat("share");
+            surfaceCover = t.getFloat("surface");
+            growthSpeed = t.getFloat("speed");
+            hiding = t.getFloat("hiding");
+            temp = t.getFloat("temp");
+            uptakePerDay = t.getDouble("uptake");
+            bonus = t.getBoolean("bonus");
+            overgrown = t.getBoolean("overgrown");
+            built = t.getBoolean("built");
+        }
+    }
+
+    private static Aquatic aquatic(ServerLevel level, TankBlockEntity c) {
+        TankData t = c.getTank();
+        Aquatic a = new Aquatic();
+        a.maxPlants = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.AQUATIC_MAX_PER_TANK, 48);
+        a.growthSpeed = (float) org.overengineer.bettacraft.plants.InteriorPlants.growthSpeed();
+        a.temp = t.waterTemp();
+        var r = org.overengineer.bettacraft.plants.InteriorPlants.region(level.getServer(), t);
+        a.light = org.overengineer.bettacraft.tank.plants.TankPlants.light(level, c);
+        if (r == null) return a;
+        a.built = true;
+        var env = org.overengineer.bettacraft.plants.InteriorPlants.env(level, c, r);
+        a.light = env.light();
+        for (var p : r.plants().all()) {
+            a.counts[p.species.ordinal()]++;
+            a.tints[p.species.ordinal()] = Math.max(a.tints[p.species.ordinal()], p.tint);
+            a.blocks += p.blocks;
+            if (p.y + 0.5 >= env.waterLocal()) a.dry++;
+            else if (org.overengineer.bettacraft.plants.InteriorPlants.lightFactor(env.effectiveLight(), p.species.light()) <= 0) a.dark++;
+            else if (p.fullGrown()) a.fullGrown++;
+            else if (env.rate(p) > 0) a.growing++;
+        }
+        a.total = r.plants().size();
+        a.share = (float) org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t);
+        a.surfaceCover = (float) org.overengineer.bettacraft.plants.InteriorPlants.surfaceCover(t, r);
+        a.hiding = (float) org.overengineer.bettacraft.plants.InteriorPlants.hiding(level.getServer(), t);
+        a.bonus = org.overengineer.bettacraft.plants.InteriorPlants.breedingBonus(level.getServer(), t) > 1.0;
+        a.overgrown = org.overengineer.bettacraft.plants.InteriorPlants.overgrown(level.getServer(), t);
+        a.uptakePerDay = org.overengineer.bettacraft.plants.InteriorPlants.uptakePerDay(level, c, r);
+        return a;
+    }
 
     /** Floating plants of the tank: count per species, cover, light, growth and waste uptake. */
     public static final class Plants {
@@ -351,6 +439,7 @@ public final class TankView {
         out.put("equipment", eq);
         out.put("water_care", water(level, controller, live).save());
         out.put("plants", plants(level, controller).save());
+        out.put("aquatic", aquatic(level, controller).save());
         return out;
     }
 
@@ -496,6 +585,7 @@ public final class TankView {
         v.filterCoolers = eq.getInt("filter_coolers");
         v.water.load(t.getCompound("water_care"));
         v.plants.load(t.getCompound("plants"));
+        v.aquatic.load(t.getCompound("aquatic"));
         v.breeding = t.getCompound("breeding");
         ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));

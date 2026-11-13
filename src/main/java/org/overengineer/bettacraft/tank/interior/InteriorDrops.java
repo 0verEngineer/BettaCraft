@@ -41,6 +41,8 @@ public final class InteriorDrops {
     /** Collects the item(s) for one interior block (does not remove it). */
     public static void collect(ServerLevel level, BlockPos pos, BlockState s, List<ItemStack> out) {
         if (s.isAir() || InteriorManager.isShellBlock(s)) return;
+        // M13: aquarium plants come out as whole plants from the plant index (see InteriorManager#dropInteriorOfBlock)
+        if (s.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock) return;
         if (s.getBlock() instanceof SegmentBlock seg) {
             if (s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR) out.add(seg.itemFor(s));
             return;

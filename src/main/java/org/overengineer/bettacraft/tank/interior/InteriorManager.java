@@ -317,6 +317,8 @@ public final class InteriorManager {
                 collectFloor(interior, src, lostFloor);
             }
             movePlayers(interior, src, target, dx, dy, dz, null);
+            // M13: the aquarium plants move along with their blocks
+            for (var pl : src.plants().all()) target.plants().adopt(pl, pl.x + dx, pl.y + dy, pl.z + dz);
             destroyRegion(server, src);
         }
         if (!lostFloor.isEmpty()) InteriorDrops.drop(tankLevel, merged.anchor(), lostFloor);
@@ -358,6 +360,13 @@ public final class InteriorManager {
                 }
             }
             movePlayers(interior, src, target, -lx, -ly, -lz, piece);
+            // M13: aquarium plants go with the piece their root lies in (cell of the old tank -> cell of the piece)
+            for (var pl : src.plants().all()) {
+                BlockPos cell = old.min().offset(Math.floorDiv(pl.x, s), Math.floorDiv(pl.y, s), Math.floorDiv(pl.z, s));
+                if (!piece.members().contains(cell.asLong())) continue;
+                BlockPos d = old.min().subtract(piece.min());
+                target.plants().adopt(pl, pl.x + d.getX() * s, pl.y + d.getY() * s, pl.z + d.getZ() * s);
+            }
             target.equipment().markNeedsScan();
             InteriorSync.markAllDirty(target.id());
         }
@@ -389,6 +398,14 @@ public final class InteriorManager {
                     ItemStack back = Substrate.clear(interior, new BlockPos(x, InteriorRegion.FLOOR_Y, z));
                     if (!back.isEmpty()) items.add(back);
                 }
+        }
+        // M13: aquarium plants rooted in this block come out as whole plants (with their stage)
+        for (var pl : new ArrayList<>(r.plants().all())) {
+            BlockPos root = r.toWorld(pl.x, pl.y, pl.z);
+            if (root.getX() < a.getX() || root.getY() < a.getY() || root.getZ() < a.getZ() || root.getX() > b.getX() || root.getY() > b.getY()
+                    || root.getZ() > b.getZ()) continue;
+            r.plants().remove(pl);
+            items.add(org.overengineer.bettacraft.plants.InteriorPlants.item(pl.species, pl.stage));
         }
         LongSet touched = new LongOpenHashSet();
         InteriorWorldOps.clear(interior, a.getX(), a.getY(), a.getZ(), b.getX(), b.getY(), b.getZ(), touched);

@@ -60,6 +60,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private final List<AbstractWidget> inhabitants = new ArrayList<>();
     private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, tabWater, tabPlants, logFilterButton, interiorEnterButton;
     private Button thinButton;
+    /** M13: the plants tab shows the aquarium plants of the interior instead of the floating plants. */
+    private boolean aquaticPage;
+    private Button plantPageButton;
     private LogFilter logFilter = LogFilter.ALL;
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
@@ -122,6 +125,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         thinButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.plants.thin"), b -> send(TankActions.THIN_PLANTS, 0, "", null))
                 .bounds(x + 166, y + 124, 72, 14).build());
+        plantPageButton = addRenderableWidget(new FitButton(x + 92, y + 124, 72, 14, Component.empty(), b -> {
+            aquaticPage = !aquaticPage;
+            updateWidgets();
+        }));
         logFilterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
             logFilter = LogFilter.values()[(logFilter.ordinal() + 1) % LogFilter.values().length];
             logScroll = 0;
@@ -173,6 +180,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** Dev smoke test only: the floating plants tab (M12). */
     public void showPlantsPageForTest() {
+        aquaticPage = false;
         setTab(Tab.PLANTS);
     }
 
@@ -297,7 +305,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabInterior.active = tab != Tab.INTERIOR;
         tabWater.active = tab != Tab.WATER;
         tabPlants.active = tab != Tab.PLANTS;
-        thinButton.visible = tab == Tab.PLANTS;
+        thinButton.visible = tab == Tab.PLANTS && !aquaticPage;
+        plantPageButton.visible = tab == Tab.PLANTS;
+        plantPageButton.setX(leftPos + (aquaticPage ? 166 : 92));
+        plantPageButton.setMessage(Component.translatable(aquaticPage ? "gui.bettacraft.plants.page_floating" : "gui.bettacraft.plants.page_aquatic"));
         interiorEnterButton.visible = tab == Tab.INTERIOR;
         logFilterButton.visible = tab == Tab.LOG;
         logFilterButton.setMessage(Component.translatable("gui.bettacraft.log.filter." + logFilter.name().toLowerCase(java.util.Locale.ROOT)));
@@ -464,7 +475,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
             case WATER -> drawWater(g, v);
-            case PLANTS -> drawPlants(g, v);
+            case PLANTS -> {
+                if (aquaticPage) drawAquatic(g, v);
+                else drawPlants(g, v);
+            }
         }
         // lock symbol left of the interior button (not on its label)
         if (v.locked && tab == Tab.OVERVIEW) g.blit(TEXTURE, ENTER_X - 12, 125, 16, 232, 10, 10);
@@ -687,7 +701,99 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     .withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT);
         }
         fitLine(g, Component.translatable("gui.bettacraft.plants.hint").withStyle(ChatFormatting.GRAY), x, 128, 0xA0A0A0,
-                thinButton.getX() - leftPos - 4 - x);
+                plantPageButton.getX() - leftPos - 4 - x);
+    }
+
+    /** M13: the aquarium plants of the interior (second page of the plants tab). */
+    private void drawAquatic(GuiGraphics g, TankView v) {
+        TankView.Aquatic a = v.aquatic;
+        int x = 11, y = 20;
+        int right = 238 - x;
+        fitLine(g, Component.translatable("gui.bettacraft.aquatic.count", a.total, a.maxPlants), x, y, TEXT_LIGHT, right);
+        y += 11;
+        if (a.total == 0) {
+            fitLine(g, Component.translatable(a.built ? "gui.bettacraft.aquatic.none" : "gui.bettacraft.aquatic.none_built").withStyle(ChatFormatting.GRAY),
+                    x, y, TEXT_LIGHT, right);
+            y += 11;
+        } else {
+            fitLine(g, Component.translatable("gui.bettacraft.aquatic.mass", String.format(java.util.Locale.ROOT, "%,d", a.blocks),
+                    fmt(a.share * 100)), x, y, TEXT_LIGHT, right);
+            y += 11;
+            var species = org.overengineer.bettacraft.plants.PlantSpecies.values();
+            int col = 0, rows = 0, shown = 0, kinds = 0;
+            for (var s : species) if (a.counts[s.ordinal()] > 0) kinds++;
+            for (var s : species) {
+                int n = a.counts[s.ordinal()];
+                if (n <= 0) continue;
+                if (rows >= 3 && col == 0 && kinds - shown > 2) {
+                    fitLine(g, Component.translatable("gui.bettacraft.aquatic.more", kinds - shown).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, right);
+                    y += 11;
+                    break;
+                }
+                Component name = Component.translatable(org.overengineer.bettacraft.plants.InteriorPlants.item(s, 0).getDescriptionId());
+                MutableComponent sp = Component.translatable("gui.bettacraft.plants.species", name, n);
+                int color = org.overengineer.bettacraft.plants.PlantColors.color(s,
+                        s.red() == org.overengineer.bettacraft.plants.PlantSpecies.Red.TIPS ? org.overengineer.bettacraft.plants.PlantPart.TOP
+                                : org.overengineer.bettacraft.plants.PlantPart.LEAF, a.tints[s.ordinal()]);
+                // drawn in the colour the leaves have now, lightened for the dark background
+                fitLine(g, sp, x + col * 112, y, lighten(color), 108);
+                shown++;
+                if (++col == 2) {
+                    col = 0;
+                    rows++;
+                    y += 11;
+                }
+            }
+            if (col != 0) y += 11;
+        }
+        int lc = org.overengineer.bettacraft.tank.plants.TankPlants.lightClass(a.light);
+        String[] lk = {"dark", "weak", "good", "strong"};
+        ChatFormatting[] lcol = {ChatFormatting.RED, ChatFormatting.GOLD, ChatFormatting.GREEN, ChatFormatting.AQUA};
+        fitLine(g, Component.translatable("gui.bettacraft.plants.light", a.light,
+                Component.translatable("gui.bettacraft.plants.light." + lk[lc]).withStyle(lcol[lc])), x, y, TEXT_LIGHT, right);
+        y += 11;
+        if (a.total > 0) {
+            Component growth;
+            if (a.growthSpeed <= 0) growth = Component.translatable("gui.bettacraft.plants.growth_off").withStyle(ChatFormatting.GRAY);
+            else if (a.temp < 18 || a.temp > 32) growth = Component.translatable("gui.bettacraft.aquatic.temp", fmt(a.temp)).withStyle(ChatFormatting.GOLD);
+            else {
+                MutableComponent m = Component.translatable("gui.bettacraft.aquatic.growing", a.growing, a.fullGrown).withStyle(ChatFormatting.GREEN);
+                if (a.dark > 0) m.append(" ").append(Component.translatable("gui.bettacraft.aquatic.dark", a.dark).withStyle(ChatFormatting.GOLD));
+                if (a.dry > 0) m.append(" ").append(Component.translatable("gui.bettacraft.aquatic.dry", a.dry).withStyle(ChatFormatting.GOLD));
+                growth = m;
+            }
+            fitLine(g, growth, x, y, TEXT_LIGHT, right);
+            y += 11;
+            if (a.uptakePerDay > 0) {
+                fitLine(g, Component.translatable("gui.bettacraft.plants.uptake", fmt((float) (a.uptakePerDay * 100))).withStyle(ChatFormatting.AQUA),
+                        x, y, TEXT_LIGHT, right);
+                y += 11;
+            }
+            MutableComponent hide = Component.translatable("gui.bettacraft.aquatic.hiding", Math.round(a.hiding * 100));
+            if (a.bonus) hide.append("  ").append(Component.translatable("gui.bettacraft.aquatic.bonus").withStyle(ChatFormatting.GREEN));
+            fitLine(g, hide, x, y, TEXT_LIGHT, right);
+            y += 11;
+            if (a.overgrown && y < 118) {
+                fitLine(g, Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.aquatic.overgrown", Math.round(a.surfaceCover * 100)))
+                        .withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, right);
+            }
+        }
+        fitLine(g, Component.translatable("gui.bettacraft.aquatic.hint").withStyle(ChatFormatting.GRAY), x, 128, 0xA0A0A0,
+                plantPageButton.getX() - leftPos - 4 - x);
+    }
+
+    private static int lighten(int rgb) {
+        int r = (rgb >> 16) & 0xFF, gg = (rgb >> 8) & 0xFF, b = rgb & 0xFF;
+        r = r + (255 - r) * 2 / 5;
+        gg = gg + (255 - gg) * 2 / 5;
+        b = b + (255 - b) * 2 / 5;
+        return 0xFF000000 | (r << 16) | (gg << 8) | b;
+    }
+
+    /** Dev smoke test only: the aquarium plants page of the plants tab. */
+    public void showAquaticPageForTest() {
+        aquaticPage = true;
+        setTab(Tab.PLANTS);
     }
 
     private static Component powerGroup(String key, boolean required, boolean ok) {

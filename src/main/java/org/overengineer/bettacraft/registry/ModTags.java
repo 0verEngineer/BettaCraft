@@ -60,5 +60,12 @@ public final class ModTags {
     /** Blocks that cannot become an interior floor substrate (PLAN 7.2). */
     public static final TagKey<Block> SUBSTRATE_BLACKLIST = TagKey.create(Registries.BLOCK, BettaCraft.id("substrate_blacklist"));
 
+    /** M13: blocks epiphytes (Java fern, Anubias, Bucephalandra) grow on: stone and wood, as in the decoration. */
+    public static final TagKey<Block> EPIPHYTE_SURFACES = TagKey.create(Registries.BLOCK, BettaCraft.id("epiphyte_surfaces"));
+    /** M13: blocks rooted aquarium plants grow in besides the interior floor with a substrate: sand, gravel, dirt ... */
+    public static final TagKey<Block> PLANT_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("plant_substrate"));
+    /** M13: all aquarium plant items. */
+    public static final TagKey<Item> AQUATIC_PLANT_ITEMS = TagKey.create(Registries.ITEM, BettaCraft.id("aquatic_plants"));
+
     private ModTags() {}
 }

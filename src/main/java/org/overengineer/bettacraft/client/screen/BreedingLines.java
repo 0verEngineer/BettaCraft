@@ -71,6 +71,9 @@ final class BreedingLines {
             if (c.getBoolean("mirror")) {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.mirror").withStyle(ChatFormatting.GRAY));
             }
+            if (c.getBoolean("aquatic")) {
+                out.add(Component.translatable("gui.bettacraft.breeding.cond.aquatic").withStyle(ChatFormatting.GRAY));
+            }
             if (c.getBoolean("plants")) {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.plants").withStyle(ChatFormatting.GRAY));
             }

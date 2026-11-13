@@ -65,6 +65,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.AQUARIUM_NET.get());
                 // floating plants (M12)
                 for (var p : ModItems.FLOATING_PLANTS.values()) out.accept(p.get());
+                for (var p : ModItems.AQUATIC_PLANTS.values()) out.accept(p.get());
                 // food chain (in crafting order)
                 out.accept(ModItems.SWAMP_WATER_BOTTLE.get());
                 out.accept(ModItems.MOSQUITO_LARVAE.get());
