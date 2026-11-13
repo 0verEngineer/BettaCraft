@@ -194,12 +194,6 @@ public final class InteriorSync {
                 continue;
             }
             List<ServerPlayer> viewers = viewers(server, r);
-            if (viewers.isEmpty()) {
-                // M17: nobody watches: only bump the version (the next request encodes it once), no delta encoding
-                full(st);
-                st.countsValid = false;
-                continue;
-            }
             if (st.all || !st.countsValid || st.dirty.size() > MAX_DELTA_SECTIONS) {
                 full(st);
             } else if (!delta(interior, r, st, viewers)) {
