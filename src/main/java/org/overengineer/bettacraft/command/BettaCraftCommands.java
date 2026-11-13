@@ -52,6 +52,21 @@ public final class BettaCraftCommands {
                             int count = n;
                             ctx.getSource().sendSuccess(() -> Component.literal("Resyncing " + count + " interior region(s)"), true);
                             return n;
-                        }))));
+                        })))
+                // M16: every water animal of the loaded mods and whether tanks take it (table in bettacraft-water-animals.tsv)
+                .then(Commands.literal("wateranimals").requires(s -> s.hasPermission(2)).executes(ctx -> {
+                    var src = ctx.getSource();
+                    var all = org.overengineer.bettacraft.compat.AquaticSpecies.discover(src.getLevel());
+                    var lines = org.overengineer.bettacraft.compat.AquaticSpecies.table(all);
+                    java.nio.file.Path file = src.getServer().getServerDirectory().resolve("bettacraft-water-animals.tsv");
+                    try {
+                        java.nio.file.Files.write(file, lines, java.nio.charset.StandardCharsets.UTF_8);
+                    } catch (java.io.IOException e) {
+                        src.sendFailure(Component.literal("Cannot write " + file + ": " + e.getMessage()));
+                    }
+                    long ok = all.stream().filter(org.overengineer.bettacraft.compat.AquaticSpecies.Species::accepted).count();
+                    src.sendSuccess(() -> Component.translatable("command.bettacraft.wateranimals", all.size(), ok, all.size() - ok, file.toString()), false);
+                    return (int) ok;
+                })));
     }
 }

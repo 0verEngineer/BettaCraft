@@ -58,11 +58,13 @@ public final class TankInhabitants {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/inhabitants");
     public static final long BUCKET_MB = TankData.MB_PER_BLOCK;
     public static final long BAG_MB = 100L;
+    /** Default of {@code inhabitants.maxHitbox}. */
     public static final float MAX_HITBOX = 0.8F;
     /** Reconciliations an inhabitant may be missing (e.g. entity section not loaded yet) before it is forgotten. */
     private static final int MISSING_LIMIT = 6;
 
-    public enum Acceptance { OK, BLACKLISTED, TOO_BIG, NOT_BUCKETABLE }
+    /** M16: BOSS, HOSTILE and NOT_AQUATIC added; NOT_BUCKETABLE is no longer used (the fish bag holds any water animal). */
+    public enum Acceptance { OK, BLACKLISTED, TOO_BIG, NOT_BUCKETABLE, BOSS, HOSTILE, NOT_AQUATIC }
 
     @Nullable
     private static final Field MOB_BUCKET_TYPE = findBucketTypeField();
@@ -101,14 +103,38 @@ public final class TankInhabitants {
         return null;
     }
 
-    /** Acceptance rules: blacklist tag, then whitelist tag, then "bucketable and hitbox at most 0.8 x 0.8". */
+    /**
+     * Acceptance rules (M16, {@link InhabitantRules}): config deny and allow lists, blacklist tag, whitelist tag, bosses,
+     * hitbox at most {@code inhabitants.maxHitbox} (0.8), no hostile mobs, and (with an instance) a water animal.
+     */
     public static Acceptance accepts(EntityType<?> type, @Nullable Entity instance) {
-        if (type.is(ModTags.TANK_BLACKLIST)) return Acceptance.BLACKLISTED;
-        if (type.is(ModTags.TANK_INHABITANTS)) return Acceptance.OK;
         EntityDimensions d = type.getDimensions();
-        if (d.width() > MAX_HITBOX || d.height() > MAX_HITBOX) return Acceptance.TOO_BIG;
-        if (instance != null && !(instance instanceof Bucketable)) return Acceptance.NOT_BUCKETABLE;
-        return Acceptance.OK;
+        String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
+        var facts = new InhabitantRules.Facts(id, d.width(), d.height(), type.is(ModTags.TANK_BLACKLIST), type.is(ModTags.TANK_INHABITANTS),
+                type.is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
+                instance == null ? null : isWaterAnimal(instance));
+        return InhabitantRules.decide(facts, rules());
+    }
+
+    /** The config side of the acceptance rules (defaults before the server config is loaded). */
+    public static InhabitantRules.Settings rules() {
+        return new InhabitantRules.Settings(ServerConfig.getOr(ServerConfig.INHABITANTS_ALLOW, List.of()),
+                ServerConfig.getOr(ServerConfig.INHABITANTS_DENY, List.of()),
+                ServerConfig.getOr(ServerConfig.INHABITANTS_MAX_HITBOX, (double) MAX_HITBOX),
+                ServerConfig.getOr(ServerConfig.INHABITANTS_REFUSE_HOSTILE, true));
+    }
+
+    /**
+     * M16: whether an animal lives in water: fish and other water animals, axolotls, tadpoles, the water spawn categories,
+     * and everything that breathes under water (bettas, frogs of other mods). A butterfly from a bug net is none.
+     */
+    public static boolean isWaterAnimal(Entity e) {
+        if (e instanceof net.minecraft.world.entity.animal.WaterAnimal || e instanceof net.minecraft.world.entity.animal.AbstractFish
+                || e instanceof net.minecraft.world.entity.animal.axolotl.Axolotl || e instanceof net.minecraft.world.entity.animal.frog.Tadpole) {
+            return true;
+        }
+        if (org.overengineer.bettacraft.compat.AquaticSpecies.waterCategory(e.getType().getCategory())) return true;
+        return e instanceof LivingEntity le && le.canBreatheUnderwater();
     }
 
     public static boolean canModify(Player player, TankData tank) {
@@ -173,6 +199,7 @@ public final class TankInhabitants {
 
         Vec3 spawn = findSpawnPos(level, tank, level.getRandom());
         CompoundTag stored = FishContainers.storedEntity(stack);
+        if (stored == null) stored = FishBagItem.storedEntity(stack); // M16: a water animal without a bucket in our fish bag
         Entity e;
         if (stored != null) {
             e = FishContainers.create(level, stored); // Better Fish Tanks bag / Fintastic net: the complete entity
@@ -180,7 +207,7 @@ public final class TankInhabitants {
             @SuppressWarnings("unchecked")
             EntityType<Entity> anyType = (EntityType<Entity>) type;
             Consumer<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
-            e = anyType.create(level, config, BlockPos.containing(spawn), MobSpawnType.BUCKET, false, false);
+            e = createFromBucket(level, anyType, config, spawn);
         }
         if (e == null || e.getType() != type) {
             if (e != null) e.discard();
@@ -221,9 +248,43 @@ public final class TankInhabitants {
         return null;
     }
 
-    private static Component rejection(Acceptance a, EntityType<?> type) {
+    /**
+     * Creates the animal of a bucket like the bucket would (with {@code finalizeSpawn}). M16: some mods swap an animal for
+     * one of their own while it spawns (Fintastic replaces vanilla cod and salmon, at a random spot nearby, or not at all);
+     * then the original is created again without that step and whatever joined the level meanwhile is removed, so the
+     * animal from the bucket is the one that lives in the tank.
+     */
+    @Nullable
+    static Entity createFromBucket(ServerLevel level, EntityType<Entity> type, Consumer<Entity> config, Vec3 spawn) {
+        List<Entity> joined = new ArrayList<>();
+        Entity e;
+        ForeignAnimals.capture(joined);
+        try {
+            e = type.create(level, config, BlockPos.containing(spawn), MobSpawnType.BUCKET, false, false);
+        } finally {
+            ForeignAnimals.capture(null);
+        }
+        if (e != null && e.isRemoved()) {
+            LOGGER.info("{} was replaced while spawning ({}); putting the original into the tank",
+                    net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type), joined.stream().map(j -> j.getType().toShortString()).toList());
+            joined.forEach(Entity::discard);
+            e = type.create(level);
+            if (e != null) {
+                config.accept(e);
+                e.moveTo(spawn.x, spawn.y, spawn.z, 0, 0);
+            }
+        }
+        return e;
+    }
+
+    /** The message for a refused animal (M16: one per reason). */
+    public static Component rejection(Acceptance a, EntityType<?> type) {
         return switch (a) {
             case TOO_BIG -> Component.translatable("message.bettacraft.tank.too_big", type.getDescription());
+            case BOSS -> Component.translatable("message.bettacraft.tank.boss", type.getDescription());
+            case HOSTILE -> Component.translatable("message.bettacraft.tank.hostile", type.getDescription());
+            case NOT_AQUATIC -> Component.translatable("message.bettacraft.tank.not_aquatic", type.getDescription());
+            case BLACKLISTED -> Component.translatable("message.bettacraft.tank.blacklisted", type.getDescription());
             default -> Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
         };
     }
@@ -390,7 +451,9 @@ public final class TankInhabitants {
 
     /** Small water animals that got into the tank without a bucket (spawn egg, /summon) become inhabitants. */
     private static boolean adoptable(Entity e) {
-        return e instanceof Mob && e instanceof Bucketable && e.isInWater() && accepts(e.getType(), e) == Acceptance.OK;
+        // M16: also water animals without a bucket (a squid from a spawn egg)
+        return e instanceof Mob && (e instanceof Bucketable || isWaterAnimal(e)) && !(e instanceof net.minecraft.world.entity.player.Player)
+                && e.isInWater() && accepts(e.getType(), e) == Acceptance.OK;
     }
 
     /**
@@ -428,7 +491,9 @@ public final class TankInhabitants {
         if (e == null || !e.isAlive() || !hasTankRef(e) || !tank.id().equals(e.getData(ModAttachments.TANK_REF.get()).tankId())) {
             return Component.translatable("message.bettacraft.tank.not_inside");
         }
-        if (!(e instanceof Bucketable bucketable)) return Component.translatable("message.bettacraft.tank.cannot_take", e.getName());
+        // M16: water animals without a bucket (squids ...) go into bags, nets and Better Fish Tanks bags with their full data
+        Bucketable bucketable = e instanceof Bucketable b ? b : null;
+        if (bucketable == null && !bag) return Component.translatable("message.bettacraft.tank.cannot_take", e.getName());
         int slot = findContainer(player, bag);
         if (slot < 0) {
             return Component.translatable(bag ? "message.bettacraft.tank.need_bag" : "message.bettacraft.tank.need_bucket");
@@ -446,13 +511,14 @@ public final class TankInhabitants {
             filled = bucketable.getBucketItemStack();
             bucketable.saveToBucketTag(filled);
         }
+        net.minecraft.sounds.SoundEvent pickup = bucketable != null ? bucketable.getPickupSound() : SoundEvents.BUCKET_FILL_FISH;
         if (!player.getAbilities().instabuild) player.getInventory().getItem(slot).shrink(1);
         if (!player.getInventory().add(filled)) player.drop(filled, false);
         TankCare.log(level, controller, "log.bettacraft.taken_out", TankCare.nameArg(e));
         tank.inhabitants().remove(e.getUUID());
         e.discard();
         if (cost > 0) TankInteractions.changeWater(level, controller, -cost);
-        level.playSound(null, player.blockPosition(), bucketable.getPickupSound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+        level.playSound(null, player.blockPosition(), pickup, SoundSource.NEUTRAL, 1.0F, 1.0F);
         reconcile(level, controller);
         return null;
     }

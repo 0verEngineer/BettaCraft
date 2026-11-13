@@ -32,6 +32,13 @@ public final class TankEvents {
         DRY.add(new Pending(level.dimension(), pos.immutable()));
     }
 
+    /** M16: tank blocks set into the interior dimension without the item; broken (and dropped) at the end of the tick. */
+    private static final List<Pending> NOT_HERE = new ArrayList<>();
+
+    static void removeLater(ServerLevel level, BlockPos pos) {
+        NOT_HERE.add(new Pending(level.dimension(), pos.immutable()));
+    }
+
     /**
      * Shift + right-click on a tank with a filled container (betta bucket, fish bag, any mob bucket, Better Fish Tanks
      * bag, Fintastic net) inserts the animal like a normal click. Without this, sneaking skips the block and the item
@@ -76,6 +83,14 @@ public final class TankEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         CATCHING.clear();
+        if (!NOT_HERE.isEmpty()) {
+            List<Pending> todo = new ArrayList<>(NOT_HERE);
+            NOT_HERE.clear();
+            for (Pending p : todo) {
+                ServerLevel level = event.getServer().getLevel(p.dim());
+                if (level != null && level.getBlockState(p.pos()).getBlock() instanceof TankBlock) level.destroyBlock(p.pos(), true);
+            }
+        }
         if (DRY.isEmpty()) return;
         List<Pending> todo = new ArrayList<>(DRY);
         DRY.clear();

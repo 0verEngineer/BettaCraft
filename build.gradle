@@ -254,11 +254,15 @@ idea {
 // of each run before it starts and removed again from runs without the flag:
 //   -Pshaders : run/shader-mods (Sodium, Iris ...)                    for runClient
 //   -Ppower   : run/power-mods  (EnderIO, Mekanism, Powah, Flux ...)  for runClient, runServer and runGameTestServer
+//   -Paquatic : run/aquatic-mods (M16: every mod of the ATM10 pack with water animals that is not already on the run
+//               classpath as an aquarium mod, plus their libraries)  for runClient, runServer and runGameTestServer;
+//               needs the aquarium mods (not with -PnoCompat: Critters and Companions uses their YACL)
 def runModsDir = file('run/mods')
 def gameTestModsDir = file('run/gametest/mods')
 def extraMods = [
         [dir: file('run/shader-mods'), on: project.hasProperty('shaders'), tasks: ['runClient']],
         [dir: file('run/power-mods'), on: project.hasProperty('power'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/aquatic-mods'), on: project.hasProperty('aquatic'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
 ]
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = file('run/config/fml.toml')
@@ -327,8 +331,8 @@ tasks.register('runMultiplayerTest') {
         logs.deleteDir()
         logs.mkdirs()
         def runDir = file('run')
-        // the extra mods of -Pshaders / -Ppower are not part of this test
-        ['run/shader-mods', 'run/power-mods'].each { d ->
+        // the extra mods of -Pshaders / -Ppower / -Paquatic are not part of this test
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()

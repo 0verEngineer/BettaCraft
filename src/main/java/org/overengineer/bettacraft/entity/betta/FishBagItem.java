@@ -56,24 +56,54 @@ public class FishBagItem extends Item {
         return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
     }
 
+    /** M16: custom data key of the full entity data of a water animal without a bucket (squid, glow squid ...). */
+    public static final String STORED_KEY = "BettacraftEntity";
+
     /** A filled bag holding {@code e} (the entity itself is not removed). */
     public static ItemStack fillWith(Entity e) {
         ItemStack bag = new ItemStack(ModItems.FISH_BAG.get());
-        if (e instanceof Bucketable b) b.saveToBucketTag(bag);
+        if (e instanceof Bucketable b) {
+            b.saveToBucketTag(bag);
+        } else {
+            // M16: no bucket format: the whole entity, like the Better Fish Tanks bag
+            net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
+            String id = e.getEncodeId();
+            if (id != null) t.putString("id", id);
+            e.saveWithoutId(t);
+            net.minecraft.nbt.CompoundTag data = new net.minecraft.nbt.CompoundTag();
+            data.put(STORED_KEY, t);
+            bag.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
+        }
         bag.set(ModDataComponents.BAG_ENTITY.get(), BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()));
         bag.set(DataComponents.MAX_STACK_SIZE, 1);
         return bag;
     }
 
-    /** Catch a small water animal (same size rules as the tank). */
+    /** The full entity data (with {@code id}) of a water animal without a bucket in this bag, or null (M16). */
+    @Nullable
+    public static net.minecraft.nbt.CompoundTag storedEntity(ItemStack stack) {
+        if (!(stack.getItem() instanceof FishBagItem) || !stack.has(ModDataComponents.BAG_ENTITY.get())) return null;
+        CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
+        if (cd == null || !cd.contains(STORED_KEY)) return null;
+        net.minecraft.nbt.CompoundTag t = cd.copyTag().getCompound(STORED_KEY);
+        return t.contains("id", net.minecraft.nbt.Tag.TAG_STRING) ? t : null;
+    }
+
+    /** Catch a small water animal (same size rules as the tank; M16: also water animals without a bucket, e.g. squids). */
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
-        if (isFilled(stack) || !target.isAlive() || !(target instanceof Bucketable b)) return InteractionResult.PASS;
-        if (TankInhabitants.accepts(target.getType(), target) != TankInhabitants.Acceptance.OK) return InteractionResult.PASS;
+        if (isFilled(stack) || !target.isAlive() || target instanceof Player) return InteractionResult.PASS;
+        if (!(target instanceof Bucketable) && !TankInhabitants.isWaterAnimal(target)) return InteractionResult.PASS;
+        if (TankInhabitants.accepts(target.getType(), target) != TankInhabitants.Acceptance.OK) {
+            if (!player.level().isClientSide && TankInhabitants.isWaterAnimal(target)) {
+                player.displayClientMessage(TankInhabitants.rejection(TankInhabitants.accepts(target.getType(), target), target.getType()), true);
+            }
+            return InteractionResult.PASS;
+        }
         if (!player.level().isClientSide) {
             TankInhabitants.release(target);
             ItemStack filled = fillWith(target);
-            target.playSound(b.getPickupSound(), 1.0F, 1.0F);
+            target.playSound(target instanceof Bucketable b ? b.getPickupSound() : SoundEvents.BUCKET_FILL_FISH, 1.0F, 1.0F);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
             target.discard();
             if (target instanceof BettaEntity) org.overengineer.bettacraft.progression.Progress.onBettaCaught(player);
@@ -96,7 +126,17 @@ public class FishBagItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
         if (level instanceof ServerLevel server) {
-            Entity e = type.spawn(server, stack, player, pos, MobSpawnType.BUCKET, false, false);
+            net.minecraft.nbt.CompoundTag stored = storedEntity(stack);
+            Entity e;
+            if (stored != null) { // M16: a water animal without a bucket, with its full data
+                e = org.overengineer.bettacraft.compat.FishContainers.create(server, stored);
+                if (e != null) {
+                    e.moveTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, player.getYRot(), 0);
+                    server.addFreshEntity(e);
+                }
+            } else {
+                e = type.spawn(server, stack, player, pos, MobSpawnType.BUCKET, false, false);
+            }
             if (e instanceof Bucketable b) {
                 b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
                 b.setFromBucket(true);

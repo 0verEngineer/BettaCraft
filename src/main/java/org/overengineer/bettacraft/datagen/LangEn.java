@@ -221,6 +221,24 @@ final class LangEn {
         // tank log
         a.accept("log.bettacraft.inserted", "%s was put in");
         a.accept("log.bettacraft.taken_out", "%s was taken out");
+        a.accept("command.bettacraft.wateranimals", "Found %s water animals: %s may live in tanks, %s may not. Table: %s");
+        a.accept("message.bettacraft.tank.boss", "%s is a boss and does not belong in an aquarium");
+        a.accept("message.bettacraft.tank.hostile", "%s is hostile and cannot live in an aquarium");
+        a.accept("message.bettacraft.tank.not_aquatic", "%s is not a water animal");
+        a.accept("message.bettacraft.tank.blacklisted", "%s does not belong in an aquarium");
+        a.accept("message.bettacraft.interior.no_tank", "No aquarium inside an aquarium: tanks cannot be placed here");
+        a.accept("log.bettacraft.tadpole_left", "%s grew into a frog and hopped out");
+        a.accept("bettacraft.configuration.inhabitants", "Animals in tanks");
+        a.accept("bettacraft.configuration.allow", "Always allowed");
+        a.accept("bettacraft.configuration.allow.tooltip", "Entity ids that always go into tanks, whatever their size: \"modid:name\", or \"modid:*\" for all animals of a mod");
+        a.accept("bettacraft.configuration.deny", "Never allowed");
+        a.accept("bettacraft.configuration.deny.tooltip", "Entity ids that never go into tanks (wins over everything else): \"modid:name\", \"modid:*\"");
+        a.accept("bettacraft.configuration.maxHitbox", "Largest animal");
+        a.accept("bettacraft.configuration.maxHitbox.tooltip", "Largest hitbox width and height in blocks of an animal in a tank (unless it is always allowed)");
+        a.accept("bettacraft.configuration.refuseHostile", "No hostile mobs");
+        a.accept("bettacraft.configuration.refuseHostile.tooltip", "Refuse hostile mobs (spawn category monster, e.g. the Cataclysm lionfish) unless they are always allowed");
+        a.accept("bettacraft.configuration.tadpoles", "Tadpoles growing up");
+        a.accept("bettacraft.configuration.tadpoles.tooltip", "A tadpole in a tank that grows up: LEAVE_AS_FROG = the frog hops out in front of the tank, STAY_TADPOLE = it stays a tadpole while it lives in a tank");
         a.accept("log.bettacraft.fed", "%s fish fed with %s");
         a.accept("log.bettacraft.feeder_empty", "The feeder is empty");
         a.accept("log.bettacraft.sick", "%s is sick");

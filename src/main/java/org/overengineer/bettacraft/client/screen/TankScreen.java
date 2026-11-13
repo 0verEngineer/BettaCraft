@@ -382,7 +382,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         fishNameBox.setEditable(has && mod);
         renameButton.active = has && mod;
         bucketButton.active = has && mod && sel.bucketable() && v.hasBucket && v.waterMb >= TankInhabitants.BUCKET_MB;
-        bagButton.active = has && mod && sel.bucketable() && v.hasBag && v.waterMb >= v.bagMb;
+        bagButton.active = has && mod && v.hasBag && v.waterMb >= v.bagMb;
         bucketButton.setTooltip(Tooltip.create(takeTooltip(v, sel, false)));
         bagButton.setTooltip(Tooltip.create(takeTooltip(v, sel, true)));
     }
@@ -391,7 +391,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         long cost = bag ? v.bagMb : TankInhabitants.BUCKET_MB;
         if (sel == null) return Component.translatable("gui.bettacraft.fish.none_selected");
         if (!v.canModify) return Component.translatable("message.bettacraft.tank.locked");
-        if (!sel.bucketable()) return Component.translatable("gui.bettacraft.fish.not_bucketable");
+        if (!bag && !sel.bucketable()) return Component.translatable("gui.bettacraft.fish.not_bucketable"); // M16: bags take every animal
         if (!(bag ? v.hasBag : v.hasBucket)) return Component.translatable(bag ? "message.bettacraft.tank.need_bag" : "message.bettacraft.tank.need_bucket");
         if (v.waterMb < cost) return Component.translatable("message.bettacraft.tank.not_enough_water");
         return Component.translatable(bag ? "gui.bettacraft.fish.take_bag_tooltip" : "gui.bettacraft.fish.take_bucket_tooltip", cost);

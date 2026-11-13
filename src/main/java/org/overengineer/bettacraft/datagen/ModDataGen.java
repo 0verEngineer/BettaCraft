@@ -863,6 +863,9 @@ public final class ModDataGen {
                     ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.ARTEMIA_HATCHERY.get());
             tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
+            // M16: no tank inside a tank
+            tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
+                    .addOptional(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.TANK_BLOCK);
             tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD)
                     .addOptional(Compat.rl(Compat.FINTASTIC, "duckweed")).addOptional(Compat.rl(Compat.FINTASTIC, "lotus_pad"));
             // Fintastic plants may stand in the dry interior like seagrass and kelp (M7)
@@ -943,9 +946,11 @@ public final class ModDataGen {
             var inhabitants = tag(ModTags.TANK_INHABITANTS).add(EntityType.AXOLOTL, EntityType.TADPOLE);
             for (var e : Compat.INHABITANTS) inhabitants.addOptional(e);
             // giant fish of other mods (their hitboxes are small, the animals are not)
-            var blacklist = tag(ModTags.TANK_BLACKLIST);
+            // M16: the vanilla frog is no tank animal (lives on land, the tadpole grows into it and hops out)
+            var blacklist = tag(ModTags.TANK_BLACKLIST).add(EntityType.FROG);
             for (var e : Compat.BLACKLIST) blacklist.addOptional(e);
-            var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH);
+            // M16: axolotls hunt small fish and fry
+            var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH, EntityType.AXOLOTL);
             for (var e : Compat.PREDATORS) predators.addOptional(e);
             var prey = tag(ModTags.BETTA_PREY);
             for (var e : Compat.PREY) prey.addOptional(e);

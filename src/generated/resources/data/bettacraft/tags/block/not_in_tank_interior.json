@@ -1,0 +1,9 @@
+{
+  "values": [
+    "bettacraft:tank",
+    {
+      "id": "betterfishtanks:fish_tank_block",
+      "required": false
+    }
+  ]
+}

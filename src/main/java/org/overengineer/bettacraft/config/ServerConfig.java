@@ -10,6 +10,9 @@ public final class ServerConfig {
     /** When players get the GuideME handbook (PLAN 9). Without GuideME there is no book and the option is ignored. */
     public enum GiveBook { ON_JOIN, ON_FIRST_CATCH_OR_CRAFT, NEVER }
 
+    /** M16: what a tadpole in a tank does when it would turn into a frog. */
+    public enum Tadpoles { LEAVE_AS_FROG, STAY_TADPOLE }
+
     public static final ModConfigSpec SPEC;
 
     // tank
@@ -22,6 +25,13 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue TANK_OVERCROWDED_PER_WATER_BLOCK;
     public static final ModConfigSpec.DoubleValue TANK_MIN_FILL_TO_INSERT;
     public static final ModConfigSpec.IntValue TANK_WATER_HEADROOM;
+
+    // animals of other mods in tanks (M16)
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> INHABITANTS_ALLOW;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> INHABITANTS_DENY;
+    public static final ModConfigSpec.DoubleValue INHABITANTS_MAX_HITBOX;
+    public static final ModConfigSpec.BooleanValue INHABITANTS_REFUSE_HOSTILE;
+    public static final ModConfigSpec.EnumValue<Tadpoles> INHABITANTS_TADPOLES;
 
     // health
     public static final ModConfigSpec.DoubleValue HEALTH_DAYS_UNTIL_SICK;
@@ -167,6 +177,21 @@ public final class ServerConfig {
         TANK_OVERCROWDED_PER_WATER_BLOCK = b.comment("Adults per water block from which health starts to drop").defineInRange("overcrowdedPerWaterBlock", 2, 1, 64);
         TANK_MIN_FILL_TO_INSERT = b.comment("Minimum fill fraction before inhabitants can be inserted").defineInRange("minFillToInsert", 0.5, 0.0, 1.0);
         TANK_WATER_HEADROOM = b.comment("Air gap below the top glass of a full tank in 1/16 block (the top layer holds the same water, it only looks less full); 0 = water up to the rim").defineInRange("waterHeadroom", 1, 0, 8);
+        b.pop();
+
+        b.comment("Which animals live in tanks (M16). Order: deny, allow, tag #bettacraft:tank_blacklist, tag #bettacraft:tank_inhabitants,",
+                "bosses (#c:bosses), size, hostile mobs, no water animal").push("inhabitants");
+        INHABITANTS_ALLOW = b.comment("Entity ids that always go into tanks, whatever their size: \"modid:name\", \"modid:*\" for all animals of a mod")
+                .defineListAllowEmpty("allow", java.util.List.of(), () -> "modid:name", org.overengineer.bettacraft.tank.InhabitantRules::validPattern);
+        INHABITANTS_DENY = b.comment("Entity ids that never go into tanks (wins over everything): \"modid:name\", \"modid:*\"")
+                .defineListAllowEmpty("deny", java.util.List.of(), () -> "modid:name", org.overengineer.bettacraft.tank.InhabitantRules::validPattern);
+        INHABITANTS_MAX_HITBOX = b.comment("Largest hitbox width and height in blocks of an animal in a tank (unless listed in allow or the tag)")
+                .defineInRange("maxHitbox", 0.8, 0.1, 4.0);
+        INHABITANTS_REFUSE_HOSTILE = b.comment("Refuse hostile mobs (spawn category monster, e.g. the Cataclysm lionfish) unless they are allowed")
+                .define("refuseHostile", true);
+        INHABITANTS_TADPOLES = b.comment("A tadpole in a tank that grows up: LEAVE_AS_FROG = the frog hops out in front of the tank, STAY_TADPOLE = it",
+                        "never grows up while it lives in a tank")
+                .defineEnum("tadpoles", Tadpoles.LEAVE_AS_FROG);
         b.pop();
 
         b.comment("Health of bettas").push("health");

@@ -64,4 +64,17 @@ final class MockPlayers {
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
         return player;
     }
+
+    /**
+     * M16: whether a fishing catch was replaced by another mod's loot modifier after ours (Critters and Companions turns
+     * 15 % of all catches into koi or clams): every item comes from a mod other than Minecraft or Bettacraft.
+     */
+    static boolean replacedByOtherMod(java.util.List<net.minecraft.world.item.ItemStack> loot) {
+        if (loot.isEmpty()) return false;
+        for (var s : loot) {
+            String ns = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(s.getItem()).getNamespace();
+            if (ns.equals("minecraft") || ns.equals(org.overengineer.bettacraft.BettaCraft.MOD_ID)) return false;
+        }
+        return true;
+    }
 }

@@ -588,10 +588,16 @@ public final class PlantGameTests {
                         + (at.getX() + 8) + " " + (at.getY() + 8) + " " + (at.getZ() + 8) + " " + biome);
                 h.assertTrue(level.getBiome(at).is(net.minecraft.resources.ResourceLocation.parse(biome)), "biome set: " + level.getBiome(at));
                 int plants = 0, rolls = 200;
-                for (int i = 0; i < rolls; i++) {
+                for (int i = 0, n = rolls; i < n; i++) {
                     LootParams params = new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(at))
                             .withParameter(LootContextParams.TOOL, new ItemStack(Items.FISHING_ROD)).create(LootContextParamSets.FISHING);
-                    for (ItemStack s : table.getRandomItems(params)) {
+                    var loot = table.getRandomItems(params);
+                    // M16: other mods replace some catches after us (Critters and Companions: 15 % koi or clams)
+                    if (MockPlayers.replacedByOtherMod(loot)) {
+                        rolls--;
+                        continue;
+                    }
+                    for (ItemStack s : loot) {
                         FloatingPlantType t = TankPlants.typeOf(s);
                         if (t != null && t != FloatingPlantType.LILY_PAD) { // vanilla junk has lily pads anyway
                             plants++;

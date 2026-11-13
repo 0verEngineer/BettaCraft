@@ -1,5 +1,6 @@
 {
   "values": [
+    "minecraft:frog",
     {
       "id": "fintastic:arapaima",
       "required": false
@@ -70,6 +71,38 @@
     },
     {
       "id": "aquaculture:blackfish",
+      "required": false
+    },
+    {
+      "id": "fintastic:gourami",
+      "required": false
+    },
+    {
+      "id": "livingthings:mantaray",
+      "required": false
+    },
+    {
+      "id": "sushigocrafting:tuna",
+      "required": false
+    },
+    {
+      "id": "cataclysm:the_baby_leviathan",
+      "required": false
+    },
+    {
+      "id": "cataclysm:modern_remnant",
+      "required": false
+    },
+    {
+      "id": "cataclysm:netherite_ministrosity",
+      "required": false
+    },
+    {
+      "id": "crittersandcompanions:otter",
+      "required": false
+    },
+    {
+      "id": "shiny:shiny_frog",
       "required": false
     }
   ]

@@ -1,6 +1,7 @@
 {
   "values": [
     "minecraft:pufferfish",
+    "minecraft:axolotl",
     {
       "id": "naturalist:piranha",
       "required": false
@@ -35,6 +36,22 @@
     },
     {
       "id": "fintastic:featherback",
+      "required": false
+    },
+    {
+      "id": "shiny:shiny_pufferfish",
+      "required": false
+    },
+    {
+      "id": "shiny:shiny_axolotl",
+      "required": false
+    },
+    {
+      "id": "deeperdarker:angler_fish",
+      "required": false
+    },
+    {
+      "id": "cataclysm:lionfish",
       "required": false
     }
   ]

@@ -448,10 +448,15 @@ public final class AquaticPlantGameTests {
                 h.assertTrue(level.getBiome(at).is(net.minecraft.resources.ResourceLocation.parse(biome)), "biome set: " + level.getBiome(at));
                 java.util.Set<PlantSpecies> seen = java.util.EnumSet.noneOf(PlantSpecies.class);
                 int plants = 0, rolls = 300;
-                for (int i = 0; i < rolls; i++) {
+                for (int i = 0, n = rolls; i < n; i++) {
                     LootParams params = new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(at))
                             .withParameter(LootContextParams.TOOL, new ItemStack(Items.FISHING_ROD)).create(LootContextParamSets.FISHING);
-                    for (ItemStack s : table.getRandomItems(params)) {
+                    var loot = table.getRandomItems(params);
+                    if (MockPlayers.replacedByOtherMod(loot)) { // M16: e.g. Critters and Companions koi and clams
+                        rolls--;
+                        continue;
+                    }
+                    for (ItemStack s : loot) {
                         if (s.getItem() instanceof AquaticPlantItem p) {
                             plants++;
                             seen.add(p.species());

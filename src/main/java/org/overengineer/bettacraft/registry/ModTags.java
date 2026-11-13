@@ -51,6 +51,8 @@ public final class ModTags {
     /** Mining these blocks may drop artemia cysts. */
     public static final TagKey<Block> ARTEMIA_SAND = TagKey.create(Registries.BLOCK, BettaCraft.id("artemia_sand"));
     /** Floating plants in the interior: the bubble nest is built under them (PLAN 5.4). */
+    /** M16: blocks that cannot be placed in the interior dimension (no tank inside a tank): our tank, Better Fish Tanks. */
+    public static final TagKey<Block> NOT_IN_TANK_INTERIOR = TagKey.create(Registries.BLOCK, BettaCraft.id("not_in_tank_interior"));
     public static final TagKey<Block> FLOATING_PLANTS = TagKey.create(Registries.BLOCK, BettaCraft.id("floating_plants"));
     /**
      * Water plants of other mods that may stand in the dry interior (placed without water, never break), like seagrass

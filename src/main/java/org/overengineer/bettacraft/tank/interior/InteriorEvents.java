@@ -135,6 +135,15 @@ public final class InteriorEvents {
 
     @SubscribeEvent
     public static void onPlace(BlockEvent.EntityPlaceEvent event) {
+        // M16: no tank inside a tank, whoever places it (players, fake players of machines, other entities)
+        if (event.getLevel() instanceof Level level && InteriorManager.isInterior(level)
+                && event.getPlacedBlock().is(org.overengineer.bettacraft.registry.ModTags.NOT_IN_TANK_INTERIOR)) {
+            event.setCanceled(true);
+            if (event.getEntity() instanceof Player p && !level.isClientSide) {
+                p.displayClientMessage(Component.translatable("message.bettacraft.interior.no_tank").withStyle(ChatFormatting.GOLD), true);
+            }
+            return;
+        }
         if (event.getLevel() instanceof Level level && InteriorManager.isInterior(level) && event.getEntity() instanceof Player p) {
             if (!InteriorManager.canBuild(p, event.getPos())) event.setCanceled(true);
             else resetLeave(p);

@@ -264,6 +264,14 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        // M16: no tank inside a tank (players, deployers and other block placers that use the item)
+        if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(context.getLevel())) {
+            if (!context.getLevel().isClientSide && context.getPlayer() != null) {
+                context.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.interior.no_tank")
+                        .withStyle(net.minecraft.ChatFormatting.GOLD), true);
+            }
+            return null;
+        }
         return defaultBlockState();
     }
 
@@ -274,14 +282,16 @@ public class TankBlock extends BaseEntityBlock {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (!level.isClientSide && !oldState.is(this)) {
             // Fallback for placements without setPlacedBy (commands, structures): form the tank next tick.
-            level.scheduleTick(pos, this, 1);
+            // M16: in the interior dimension it is broken again at the end of the tick (no tank inside a tank)
+            if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)) TankEvents.removeLater((ServerLevel) level, pos);
+            else level.scheduleTick(pos, this, 1);
         }
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level instanceof ServerLevel server) {
+        if (level instanceof ServerLevel server && !org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)) {
             TankMultiblock.onTankBlockAdded(server, pos, placer instanceof ServerPlayer sp ? sp : null);
             TankBlockEntity c = TankMultiblock.getController(level, pos);
             if (c != null) org.overengineer.bettacraft.progression.Progress.award(placer instanceof ServerPlayer sp ? sp : null, org.overengineer.bettacraft.progression.Progress.TANK_BUILT, c.getTank().memberCount());
@@ -295,6 +305,11 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)) {
+            // M16: put there without the item (commands, structure tools, schematics): break it again and drop it
+            level.destroyBlock(pos, true);
+            return;
+        }
         if (level.getBlockEntity(pos) instanceof TankBlockEntity be && be.getControllerPos() == null) {
             TankMultiblock.onTankBlockAdded(level, pos, null);
         }
