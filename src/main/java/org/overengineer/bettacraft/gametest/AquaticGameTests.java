@@ -158,12 +158,15 @@ public final class AquaticGameTests {
             h.assertTrue(type == s.type(), s.id() + ": container holds " + type);
             Component err = TankInhabitants.insert(h.getLevel(), c, stack, type, null, TankInhabitants.carriedWater(stack));
             List<Entity> live = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
-            if (s.accepted()) {
-                if (err != null) throw new GameTestAssertException(s.id() + " should go in: " + err.getString());
+            // the size can depend on the variant the bucket gives (Fintastic gouramis): OK and TOO_BIG may swap, nothing else
+            boolean sizeOnly = err != null && err.getString().equals(TankInhabitants.rejection(TankInhabitants.Acceptance.TOO_BIG, type).getString());
+            boolean variable = s.accepted() || s.acceptance() == TankInhabitants.Acceptance.TOO_BIG;
+            if (err == null) {
+                h.assertTrue(variable, s.id() + " (" + s.acceptance() + ") must be refused");
                 h.assertTrue(live.size() == 1 && live.getFirst().getType() == s.type(), s.id() + ": one inside, got " + live);
                 placed.add(new Placed(s, c, live.getFirst().getUUID()));
             } else {
-                h.assertTrue(err != null, s.id() + " (" + s.acceptance() + ") must be refused");
+                if (s.accepted() && !sizeOnly) throw new GameTestAssertException(s.id() + " should go in: " + err.getString());
                 h.assertTrue(!err.getString().isBlank(), s.id() + ": refusal has a message");
                 h.assertTrue(live.isEmpty(), s.id() + ": nothing inside after the refusal");
                 LOGGER.info("[aquatic] {} refused: {}", s.id(), err.getString());

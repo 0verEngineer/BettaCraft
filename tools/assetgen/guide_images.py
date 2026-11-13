@@ -152,6 +152,21 @@ def m15(out_en: Path, out_de: Path) -> None:
             print("missing", src)
 
 
+# M16 scene (DevClientSmokeM16, -Psmoketestm16 -Paquatic -PnoTop -PnoWthit): a tank with water animals of other mods and
+# a close-up. ``py guide_images.py m16``.
+M16_WORLD = {"foreign_animals": ("bettacraft_m16_mixed_tank", (170, 215, 1110, 595)),
+             "foreign_animals_closeup": ("bettacraft_m16_mixed_left", (0, 120, 1280, 760))}
+
+
+def m16(out_en: Path) -> None:
+    for name, (shot, box) in M16_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -177,6 +192,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m15"]:
         m15(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m16"]:
+        m16(out_en)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"
@@ -213,6 +231,7 @@ def main() -> int:
     m13(out_en)
     m14(out_en, out_de)
     m15(out_en, out_de)
+    m16(out_en)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

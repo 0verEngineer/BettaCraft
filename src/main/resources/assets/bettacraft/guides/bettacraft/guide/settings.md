@@ -18,6 +18,10 @@ navigation:
 | `tank.hardCapPerWaterBlock` | 6 | adults per water block at most |
 | `tank.overcrowdedPerWaterBlock` | 2 | adults per water block from which the fish get stressed |
 | `tank.minFillToInsert` | 0.5 | fill needed to put animals in |
+| `inhabitants.allow`, `inhabitants.deny` | empty | animals always / never allowed in aquariums (`modid:name`, `modid:*`) |
+| `inhabitants.maxHitbox` | 0.8 | largest animal (hitbox width and height in blocks) |
+| `inhabitants.refuseHostile` | true | no hostile mobs in aquariums |
+| `inhabitants.tadpoles` | LEAVE_AS_FROG | a grown tadpole hops out as a frog; STAY_TADPOLE = it stays a tadpole |
 | `health.daysUntilSick` | 7 | days of hunger or wrong temperature until sick |
 | `health.daysSickUntilDeath` | 14 | sick days until death |
 | `health.bothBadMultiplier` | 2 | faster stress with two bad conditions |
@@ -94,10 +98,15 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 * **Aquaculture 2:** its small fish are welcome, the large ones (tuna, arapaima, halibut, catfish, carp, ...) are not;
   the piranha is a predator. Worms are live food, its raw fish and fillets make betta pellets.
 * **Naturalist:** bass, catfish and other small animals are accepted; piranha and anglerfish are predators.
+* **Every other mod with water animals** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
+  Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, ...): its small water animals go into aquariums, large
+  and hostile ones are refused. See [Animals of other mods](aquarium/other_animals.md).
 * **Swamps of other mods** (Biomes O' Plenty, Regions Unexplored, ...): wild bettas spawn in every biome of
   `#c:is_swamp` through `#bettacraft:betta_spawn_biomes`.
 
 ## Commands
 
 * `/bettacraft interior leave`: leave an interior.
-* Operators: `/bettacraft interior resync` (send all miniatures again), `/bettacraft interior bench` (measure).
+* Operators: `/bettacraft interior resync` (send all miniatures again), `/bettacraft interior bench` (measure),
+  `/bettacraft wateranimals` (every water animal of the loaded mods and whether aquariums take it, as a table in
+  `bettacraft-water-animals.tsv`).

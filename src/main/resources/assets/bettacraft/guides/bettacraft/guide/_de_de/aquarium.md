@@ -68,6 +68,7 @@ seiner eigenen Blöcke.
 * [Formen](aquarium/shapes.md)
 * [Wasser](aquarium/water.md)
 * [Bewohner](aquarium/inhabitants.md)
+* [Tiere anderer Mods](aquarium/other_animals.md)
 * [Schwimmpflanzen](aquarium/floating_plants.md)
 * [Temperatur](aquarium/temperature.md)
 * [Aquarium-Menü, Namensschild und Sperre](aquarium/menu.md)

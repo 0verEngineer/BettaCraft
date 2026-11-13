@@ -86,6 +86,11 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m15only', 'true'
             }
+            // gradlew runClient -Psmoketestm16 : only the M16 scene (water animals of other mods, refusals, no tank in a tank)
+            if (project.hasProperty('smoketestm16')) {
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m16only', 'true'
+            }
             // gradlew runClient -Psmoketestm8 : only the M8 scene (Jade / The One Probe / WTHIT overlays)
             if (project.hasProperty('smoketestm8')) {
                 systemProperty 'bettacraft.smoketest.world', 'true'

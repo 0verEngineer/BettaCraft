@@ -42,8 +42,8 @@ Ingame-Tag vor dem Spiegel geflart hat, ist 1,25-mal schneller bereit für ein S
 
 ## Raubfische
 
-Tiere im Entity-Tag `#bettacraft:predators` jagen im Aquarium: der Vanilla-**Kugelfisch** und, falls installiert,
-Piranha und Anglerfisch (Naturalist) sowie Battlegill, Wrecker und Devilfish (Fish of Thieves). Etwa viermal am Tag
+Tiere im Entity-Tag `#bettacraft:predators` jagen im Aquarium: der Vanilla-**Kugelfisch** und der **Axolotl** und,
+falls installiert, Piranha und Anglerfisch (Naturalist), der Anglerfisch von Deeper Darker sowie Battlegill, Wrecker und Devilfish (Fish of Thieves). Etwa viermal am Tag
 (`combat.predatorAttacksPerDay`) greift ein Raubfisch das kleinste Tier an: Junge Bettas und winzige Tiere werden
 gefressen, Adulte verletzt (der Kugelfisch vergiftet sie). Der Zucht-Tab warnt „Ein Raubfisch jagt die kleinen
 Fische!“.

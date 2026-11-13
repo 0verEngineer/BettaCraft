@@ -139,7 +139,7 @@ final class DevClientSmokeM7 {
         for (String id : FOREIGN) {
             Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
             if (item == Items.AIR) continue;
-            ItemStack stack = new ItemStack(item);
+            ItemStack stack = org.overengineer.bettacraft.command.DevSmokeM7.foreignBucket(item);
             var err = TankInhabitants.insert(level, c, stack, TankInhabitants.containedType(stack), p, 0L);
             if (err != null) LOGGER.warn("[smoketest] M7 {}: {}", id, err.getString());
             else in.add(id);

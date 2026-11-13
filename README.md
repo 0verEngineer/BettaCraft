@@ -48,8 +48,12 @@ block.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
   female out after spawning and the male once the fry swim, or they get hurt or eaten. Fry need infusoria and
   artemia nauplii, which you culture yourself.
-- **Fights and predators:** two adult males fight (they flare at each other first, or at a mirror stick), pufferfish
-  and the predators of other mods hunt small fish.
+- **Water animals of all mods:** every small water animal of vanilla and of other mods lives in the aquariums (fish,
+  axolotls, tadpoles, squids, seahorses, sea slugs, starfish ...); too big ones, bosses, hostile mobs and land animals
+  are refused with a message that says why. Rules by size, tags and config lists; the fish bag holds animals without a
+  bucket too. Tadpoles leave as frogs when they grow up. No aquarium can be placed inside an aquarium's interior.
+- **Fights and predators:** two adult males fight (they flare at each other first, or at a mirror stick), pufferfish,
+  axolotls and the predators of other mods hunt small fish.
 - **Interior:** sneak and right-click an aquarium with an empty hand to step inside a void dimension at 16 blocks per
   tank block (4 or 8 configurable) and build with any block. The result is shown in the aquarium as a miniature.
   Floor textures (substrate), decoration structures (castle, shipwreck, skull, volcano, driftwood, cave, ...),
@@ -60,7 +64,7 @@ block.
   connecting light bar that redstone switches off.
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting) and a lock for the owner.
-- **Handbook and progression:** 40 handbook pages in English and German (with GuideME) and 29 advancements.
+- **Handbook and progression:** 42 handbook pages in English and German (with GuideME) and 29 advancements.
 - **Languages:** English and German.
 
 ## Requirements
@@ -86,6 +90,7 @@ No other mod is required.
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
+| any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |
 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift).
@@ -121,11 +126,14 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   `#bettacraft:betta_food`, `#bettacraft:live_food`, `#bettacraft:fry_food`, `#bettacraft:fry_food_start`,
   `#bettacraft:pellet_fish`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
   `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
-  `#bettacraft:plant_substrate` (blocks).
+  `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior` (blocks).
+- **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`),
+  `inhabitants.maxHitbox`, `inhabitants.refuseHostile`, `inhabitants.tadpoles`; `/bettacraft wateranimals` writes a table
+  of every water animal of the loaded mods and whether aquariums take it.
 - **Datapacks:** `data/<namespace>/bettacraft/colors/*.json`, `.../genes/<locus>.json` and `.../varieties/*.json`
   add or change colours, allele ranks and frequencies, and named varieties.
-- **Commands:** `/bettacraft interior leave` for everyone; operators: `/bettacraft interior resync` and
-  `/bettacraft interior bench`.
+- **Commands:** `/bettacraft interior leave` for everyone; operators: `/bettacraft interior resync`,
+  `/bettacraft interior bench` and `/bettacraft wateranimals`.
 
 ## Building from source
 

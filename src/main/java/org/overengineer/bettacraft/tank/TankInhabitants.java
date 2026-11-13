@@ -108,9 +108,11 @@ public final class TankInhabitants {
      * hitbox at most {@code inhabitants.maxHitbox} (0.8), no hostile mobs, and (with an instance) a water animal.
      */
     public static Acceptance accepts(EntityType<?> type, @Nullable Entity instance) {
+        // M16: the size of the animal itself when there is one (variants of other mods differ in size), else of the type
         EntityDimensions d = type.getDimensions();
+        float w = instance != null ? instance.getBbWidth() : d.width(), h = instance != null ? instance.getBbHeight() : d.height();
         String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
-        var facts = new InhabitantRules.Facts(id, d.width(), d.height(), type.is(ModTags.TANK_BLACKLIST), type.is(ModTags.TANK_INHABITANTS),
+        var facts = new InhabitantRules.Facts(id, w, h, type.is(ModTags.TANK_BLACKLIST), type.is(ModTags.TANK_INHABITANTS),
                 type.is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
                 instance == null ? null : isWaterAnimal(instance));
         return InhabitantRules.decide(facts, rules());
@@ -213,14 +215,15 @@ public final class TankInhabitants {
             if (e != null) e.discard();
             return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
         }
+        if (e instanceof Bucketable b) {
+            if (stored == null) b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
+            b.setFromBucket(true);
+        }
+        // M16: after the bucket data, which can change the size (Fintastic gouramis: giant, three-spot or dwarf variant)
         Acceptance acc = accepts(type, e);
         if (acc != Acceptance.OK) {
             e.discard();
             return rejection(acc, type);
-        }
-        if (e instanceof Bucketable b) {
-            if (stored == null) b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
-            b.setFromBucket(true);
         }
         if (isAdult(e)) {
             long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);

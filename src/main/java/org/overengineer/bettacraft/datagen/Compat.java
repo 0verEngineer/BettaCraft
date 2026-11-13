@@ -34,9 +34,10 @@ public final class Compat {
             rl(AQUACULTURE, "gar"), rl(AQUACULTURE, "catfish"), rl(AQUACULTURE, "bayad"), rl(AQUACULTURE, "capitaine"),
             rl(AQUACULTURE, "tambaqui"), rl(AQUACULTURE, "carp"), rl(AQUACULTURE, "pollock"),
             rl(AQUACULTURE, "atlantic_cod"), rl(AQUACULTURE, "pink_salmon"), rl(AQUACULTURE, "blackfish"),
-            // M16: the giant gourami (grows to 70 cm), manta ray, tuna; land and lava pets of Cataclysm in buckets (the baby
-            // leviathan follows and teleports to its owner); the otter of Critters and Companions and the frogs (no tank animals)
-            rl(FINTASTIC, "gourami"), rl(LIVING_THINGS, "mantaray"), rl(SUSHI, "tuna"),
+            // M16: manta ray, tuna; land and lava pets of Cataclysm in buckets (the baby leviathan follows and teleports to its
+            // owner); the otter of Critters and Companions and the frogs (no tank animals). Fintastic gouramis go by the size
+            // of their variant (the giant gourami is too big, three-spot and dwarf gouramis fit).
+            rl(LIVING_THINGS, "mantaray"), rl(SUSHI, "tuna"),
             rl(CATACLYSM, "the_baby_leviathan"), rl(CATACLYSM, "modern_remnant"), rl(CATACLYSM, "netherite_ministrosity"),
             rl(CRITTERS, "otter"), rl(SHINY, "shiny_frog"));
 

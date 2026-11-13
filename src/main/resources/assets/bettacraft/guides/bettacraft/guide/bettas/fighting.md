@@ -41,7 +41,7 @@ The breeding tab and the info overlays show "Trained at the mirror".
 
 ## Predators
 
-Animals in the entity tag `#bettacraft:predators` hunt in the aquarium: the vanilla **pufferfish**, and if installed
-piranha and anglerfish (Naturalist) and battlegill, wrecker and devilfish (Fish of Thieves). About four times a day
+Animals in the entity tag `#bettacraft:predators` hunt in the aquarium: the vanilla **pufferfish** and the **axolotl**, and if
+installed piranha and anglerfish (Naturalist), the angler fish of Deeper Darker and battlegill, wrecker and devilfish (Fish of Thieves). About four times a day
 (`combat.predatorAttacksPerDay`) a predator attacks the smallest animal: young bettas and tiny animals are eaten, adults
 take damage (the pufferfish poisons them). The breeding tab warns "A predator hunts the small fish!".

@@ -45,6 +45,9 @@ the aquarium. A 2x1x1 aquarium has an interior of 32x16x16 blocks. Servers can c
 * **Lily pads** (`#bettacraft:floating_plants`) can be placed anywhere and float. Bettas build their bubble nest under
   them.
 * Beds and respawn anchors cannot be used inside.
+* **No tank inside a tank:** aquarium blocks (also the fish tanks of Better Fish Tanks, block tag
+  `#bettacraft:not_in_tank_interior`) cannot be placed in here, neither by hand nor by machines; one set with a command
+  or a building tool breaks at once and drops as an item.
 * Bettas swim around solid decoration. Other animals swim through it.
 * [Heaters](equipment/heaters.md) and [internal filters](equipment/filters.md) are placed in here.
 

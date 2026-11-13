@@ -14,11 +14,11 @@ Right-click the aquarium with a **betta bucket**, any other **fish bucket** or a
 appears in the water with all its data. The aquarium must be at least half full. A filled *Fish Bag* of Better Fish
 Tanks (+100 mB) and a full *Fishnet* of Fintastic (no water) work as well.
 
-Accepted are:
-
-1. animals in the entity tag `#bettacraft:tank_inhabitants` (axolotl, tadpole),
-2. every small water animal that fits in a bucket (hitbox up to 0.8 x 0.8),
-3. never animals in `#bettacraft:tank_blacklist` (giant fish of other mods).
+Accepted is every **small water animal** (hitbox up to 0.8 x 0.8), also of other mods: fish, axolotls, tadpoles,
+squids (with a fish bag, they have no bucket) and more. Refused are animals that are too big, bosses, hostile mobs, land
+animals and the animals in `#bettacraft:tank_blacklist` (giant fish of other mods); the message says why. The animals in
+`#bettacraft:tank_inhabitants` (e.g. the Fintastic pleco) are always welcome. Details and settings:
+[Animals of other mods](other_animals.md).
 
 Other animals keep their own behaviour and have **no needs** in the aquarium; only bettas get hungry, need warmth and
 breed. Small water animals that get into the aquarium without a bucket (spawn egg, command) are adopted as well.
@@ -26,7 +26,7 @@ breed. Small water animals that get into the aquarium without a bucket (spawn eg
 ## Taking animals out
 
 * **Menu:** open the tank menu, select the animal on the *Animals* tab and click *Bucket* or *Fish bag*. You need an
-  empty bucket or fish bag in your inventory. The button is greyed out if there is not enough water. The *Fish bag*
+  empty bucket or fish bag in your inventory. A fish bag takes every animal, a bucket only those with a bucket. The button is greyed out if there is not enough water. The *Fish bag*
   button also fills an empty Better Fish Tanks fish bag (-100 mB) or a Fintastic fishnet (no water).
 * **Directly:** right-click a fish in the aquarium with a water bucket, like anywhere else.
 
@@ -42,7 +42,7 @@ Only **adult** animals count. Eggs, larvae, fry, juveniles and subadults do not.
 
 ## Predators
 
-Pufferfish and the predator fish of other mods eat small fish. See [Fights, flaring and predators](../bettas/fighting.md).
+Pufferfish, axolotls and the predator fish of other mods eat small fish. See [Fights, flaring and predators](../bettas/fighting.md).
 
 ## Live prey
 

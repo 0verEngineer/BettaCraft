@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Tanks bag, a betta in a Better Fish Tanks tank, a betta on the Fish of Thieves plaque and Fintastic plants placed in the
  * dry interior. Every step only runs if its mod is loaded, so the test passes with and without them.
  */
-final class DevSmokeM7 {
+public final class DevSmokeM7 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     static final List<String> MODS = List.of("betterfishtanks", "fintastic", "fishofthieves", "aquaculture", "naturalist",
             "terrablender", "regions_unexplored", "biomesoplenty");
@@ -59,6 +59,21 @@ final class DevSmokeM7 {
             "fintastic:gourami_bucket", "naturalist:bass_bucket");
 
     private DevSmokeM7() {}
+
+    /**
+     * A filled bucket of another mod for the smoke tests. M16: Fintastic gouramis go by the size of their variant and an
+     * empty-data bucket gets a random one (sometimes the giant gourami, which is too big): this one holds a dwarf gourami.
+     */
+    public static ItemStack foreignBucket(Item item) {
+        ItemStack stack = new ItemStack(item);
+        if ("fintastic:gourami_bucket".equals(BuiltInRegistries.ITEM.getKey(item).toString())) {
+            net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
+            t.putInt("VariantModel", 1);
+            t.putInt("VariantSkin", 11);
+            stack.set(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA, net.minecraft.world.item.component.CustomData.of(t));
+        }
+        return stack;
+    }
 
     private static boolean loaded(String mod) {
         return ModList.get().isLoaded(mod);
@@ -101,7 +116,7 @@ final class DevSmokeM7 {
         for (String id : BUCKETS) {
             Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
             if (item == Items.AIR) continue;
-            ItemStack stack = new ItemStack(item);
+            ItemStack stack = foreignBucket(item);
             var err = TankInhabitants.insert(level, c, stack, TankInhabitants.containedType(stack), fake, 0L);
             if (err != null) throw new IllegalStateException(id + ": " + err.getString());
             inserted.add(id);

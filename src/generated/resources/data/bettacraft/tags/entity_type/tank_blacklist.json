@@ -74,10 +74,6 @@
       "required": false
     },
     {
-      "id": "fintastic:gourami",
-      "required": false
-    },
-    {
       "id": "livingthings:mantaray",
       "required": false
     },

@@ -14,11 +14,11 @@ Rechtsklicke das Aquarium mit einem **Betta-Eimer**, einem anderen **Fischeimer*
 Das Tier erscheint mit all seinen Daten im Wasser. Das Aquarium muss mindestens halb voll sein. Eine gefüllte *Fish Bag*
 von Better Fish Tanks (+100 mB) und ein volles *Fischnetz* von Fintastic (ohne Wasser) gehen ebenfalls.
 
-Angenommen werden:
-
-1. Tiere im Entity-Tag `#bettacraft:tank_inhabitants` (Axolotl, Kaulquappe),
-2. jedes kleine Wassertier, das in einen Eimer passt (Hitbox bis 0,8 x 0,8),
-3. nie Tiere in `#bettacraft:tank_blacklist` (Riesenfische anderer Mods).
+Angenommen wird jedes **kleine Wassertier** (Hitbox bis 0,8 x 0,8), auch aus anderen Mods: Fische, Axolotl, Kaulquappen,
+Tintenfische (mit der Fischtüte, sie haben keinen Eimer) und mehr. Abgelehnt werden zu große Tiere, Bosse, feindliche
+Mobs, Landtiere und die Tiere in `#bettacraft:tank_blacklist` (Riesenfische anderer Mods); die Meldung nennt den Grund.
+Die Tiere in `#bettacraft:tank_inhabitants` (z. B. der Fintastic-Pleco) sind immer willkommen. Einzelheiten und
+Einstellungen: [Tiere anderer Mods](other_animals.md).
 
 Andere Tiere behalten ihr eigenes Verhalten und haben im Aquarium **keine Bedürfnisse**; nur Bettas werden hungrig,
 brauchen Wärme und vermehren sich. Kleine Wassertiere, die ohne Eimer ins Aquarium kommen (Spawn-Ei, Befehl), werden
@@ -27,7 +27,8 @@ ebenfalls übernommen.
 ## Tiere entnehmen
 
 * **Menü:** Öffne das Aquarium-Menü, wähle das Tier im Tab *Bewohner* und klicke *Eimer* oder *Fischtüte*. Du brauchst
-  einen leeren Eimer bzw. eine leere Fischtüte im Inventar. Ist nicht genug Wasser da, ist der Knopf ausgegraut. Der
+  einen leeren Eimer bzw. eine leere Fischtüte im Inventar. Eine Fischtüte nimmt jedes Tier, ein Eimer nur Tiere mit
+  Eimer. Ist nicht genug Wasser da, ist der Knopf ausgegraut. Der
   Knopf *Fischtüte* füllt auch eine leere Fish Bag von Better Fish Tanks (-100 mB) oder ein Fintastic-Fischnetz (ohne
   Wasser).
 * **Direkt:** Rechtsklicke einen Fisch im Aquarium mit einem Wassereimer, wie überall sonst.
@@ -44,7 +45,7 @@ Nur **adulte** Tiere zählen. Eier, Larven, Jungfische, Juvenile und Subadulte n
 
 ## Raubfische
 
-Kugelfische und die Raubfische anderer Mods fressen kleine Fische. Siehe
+Kugelfische, Axolotl und die Raubfische anderer Mods fressen kleine Fische. Siehe
 [Kämpfe, Flaring und Raubfische](../bettas/fighting.md).
 
 ## Lebende Beute

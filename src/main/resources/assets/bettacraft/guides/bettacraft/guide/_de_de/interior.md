@@ -47,6 +47,9 @@ abgetrennt.
 * **Seerosen** (`#bettacraft:floating_plants`) lassen sich überall setzen und schweben. Unter ihnen bauen Bettas ihr
   Schaumnest.
 * Betten und Seelenanker lassen sich im Innenraum nicht benutzen.
+* **Kein Aquarium im Aquarium:** Aquarium-Blöcke (auch die Fish Tanks von Better Fish Tanks, Block-Tag
+  `#bettacraft:not_in_tank_interior`) lassen sich hier nicht setzen, weder von Hand noch von Maschinen. Per Befehl oder
+  Bauwerkzeug gesetzt, zerbricht der Block sofort und fällt als Item heraus.
 * Bettas schwimmen um feste Deko herum. Andere Tiere schwimmen hindurch.
 * [Heizstäbe](equipment/heaters.md) und [Innenfilter](equipment/filters.md) werden hier aufgestellt.
 

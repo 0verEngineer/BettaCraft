@@ -18,6 +18,10 @@ navigation:
 | `tank.hardCapPerWaterBlock` | 6 | höchstens so viele Adulte pro Wasserblock |
 | `tank.overcrowdedPerWaterBlock` | 2 | ab so vielen Adulten pro Wasserblock gibt es Stress |
 | `tank.minFillToInsert` | 0.5 | Füllung, ab der Tiere eingesetzt werden dürfen |
+| `inhabitants.allow`, `inhabitants.deny` | leer | Tiere, die immer / nie in Aquarien dürfen (`modid:name`, `modid:*`) |
+| `inhabitants.maxHitbox` | 0.8 | größtes Tier (Hitbox-Breite und -Höhe in Blöcken) |
+| `inhabitants.refuseHostile` | true | keine feindlichen Mobs im Aquarium |
+| `inhabitants.tadpoles` | LEAVE_AS_FROG | eine große Kaulquappe hüpft als Frosch hinaus; STAY_TADPOLE = sie bleibt Kaulquappe |
 | `health.daysUntilSick` | 7 | Tage Hunger oder falsche Temperatur bis krank |
 | `health.daysSickUntilDeath` | 14 | Krankheitstage bis zum Tod |
 | `health.bothBadMultiplier` | 2 | schnellerer Stress bei zwei schlechten Bedingungen |
@@ -95,10 +99,15 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
 * **Aquaculture 2:** Seine kleinen Fische sind willkommen, die großen (Thunfisch, Arapaima, Heilbutt, Wels, Karpfen …)
   nicht; der Piranha ist ein Raubfisch. Würmer sind Lebendfutter, seine rohen Fische und Filets ergeben Betta-Pellets.
 * **Naturalist:** Barsch, Wels und andere kleine Tiere werden angenommen; Piranha und Anglerfisch sind Raubfische.
+* **Jede andere Mod mit Wassertieren** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
+  Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, …): Ihre kleinen Wassertiere gehen ins Aquarium, große und
+  feindliche werden abgelehnt. Siehe [Tiere anderer Mods](aquarium/other_animals.md).
 * **Sümpfe anderer Mods** (Biomes O' Plenty, Regions Unexplored …): Wildbettas erscheinen in jedem Biom aus
   `#c:is_swamp` über `#bettacraft:betta_spawn_biomes`.
 
 ## Befehle
 
 * `/bettacraft interior leave`: einen Innenraum verlassen.
-* Operatoren: `/bettacraft interior resync` (alle Miniaturen neu senden), `/bettacraft interior bench` (Messung).
+* Operatoren: `/bettacraft interior resync` (alle Miniaturen neu senden), `/bettacraft interior bench` (Messung),
+  `/bettacraft wateranimals` (jedes Wassertier der geladenen Mods und ob Aquarien es nehmen, als Tabelle in
+  `bettacraft-water-animals.tsv`).

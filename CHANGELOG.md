@@ -4,6 +4,48 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.8.0-beta.1] - 2026-11-14
+
+### Added
+- **Water animals of all mods in aquariums:** every small water animal of vanilla and of other mods can live in a
+  Bettacraft aquarium, with its own bucket or with a fish bag. Bettacraft looks at the animal itself (no list per mod):
+  fish, axolotls, tadpoles, squids and glow squids, seahorses, sea slugs, starfish, isopods and more. Tested with every
+  mod of the ATM10 pack that has water animals (Alex's Caves, Aquaculture, Critters and Companions, Deeper Darker,
+  DragN's Just Bettas, Fintastic, Fish of Thieves, Ice and Fire, L_Ender's Cataclysm, Living Things, Naturalist, Shiny,
+  Sushi Go Crafting, The Undergarden): 150 kinds, 70 of them go in.
+- **Clear refusals:** too big (`inhabitants.maxHitbox`, 0.8 blocks; the size of the animal itself, so the variants of
+  other mods count: a dwarf gourami fits, a giant gourami does not), bosses (`#c:bosses`), hostile mobs
+  (`inhabitants.refuseHostile`), animals that are no water animals (bugs in buckets) and the blacklist each have their
+  own message. `inhabitants.allow` and `inhabitants.deny` (`modid:name`, `modid:*`) win over everything.
+- The **fish bag** holds water animals without a bucket (squids) with all their data; the tank menu takes every animal
+  out with a fish bag.
+- **Tadpoles** that grow up in an aquarium leave it as frogs and land in front of the tank (log entry);
+  `inhabitants.tadpoles = STAY_TADPOLE` keeps them tadpoles.
+- **No tank inside a tank:** aquarium blocks cannot be placed in the interior dimension (by hand, by machines, by
+  commands or building tools: then it breaks and drops), with a message. Block tag `#bettacraft:not_in_tank_interior`
+  (also the Better Fish Tanks tank).
+- `/bettacraft wateranimals` (operators) writes a table of every water animal of the loaded mods and whether
+  aquariums take it (`bettacraft-water-animals.tsv`).
+- Handbook page "Animals of other mods" (English, German).
+
+### Changed
+- Axolotls, the shiny pufferfish and axolotl (Shiny), the Otherside angler fish (Deeper Darker) and the Cataclysm
+  lionfish are predators. The manta ray (Living Things), the tuna (Sushi Go Crafting), frogs, the otter (Critters and
+  Companions) and the pets of L_Ender's Cataclysm are blacklisted.
+
+### Fixed
+- A vanilla cod or salmon from a bucket vanished (or turned up next to the aquarium as another fish) when Fintastic
+  was installed: Fintastic swaps them while they spawn. The animal from the bucket now lives in the aquarium as it is.
+
+### Tests
+- GameTests over every water animal found at runtime: each one is put into its own tank (bucket or fish bag), lives
+  200 ticks in it and is taken out again, or is refused with a message (vanilla only without other mods, 150 kinds
+  with `-Paquatic`, a new dev group with every water animal mod of ATM10); the inventory, the rules and config lists,
+  a glow squid in a fish bag, tadpoles growing up (both settings), no tank in the interior.
+- Server smoke test: one of every accepted kind in a mixed tank for the rest of the run, every refused kind refused.
+- Client smoke scene M16: a mixed tank of foreign animals, the animals tab, a refused dolphin, the "no tank inside a
+  tank" message.
+
 ## [1.7.0-beta.1] - 2026-11-14
 
 ### Changed
