@@ -78,8 +78,12 @@ public final class PathfindingGameTests {
     /** Whether the interior block at the tank-world position is not air (exact, not the coarse obstacle grid). */
     private static boolean solidAt(GameTestHelper h, TankBlockEntity c, InteriorRegion r, Vec3 p) {
         var t = c.getTank();
-        int s = r.scale();
-        int lx = (int) Math.floor((p.x - t.min().getX()) * s), ly = (int) Math.floor((p.y - t.min().getY()) * s), lz = (int) Math.floor((p.z - t.min().getZ()) * s);
+        // M21.1: the same mapping as the miniature and TankTerrain (0.5 px gap to the glass, interior squeezed into the
+        // rest); scaling by r.scale() alone put spots right beside a pillar into it (the flaky crayfish test)
+        double m = TankTerrain.MARGIN;
+        double fx = (t.sizeX() - 2 * m) / r.sizeX(), fy = (t.sizeY() - 2 * m) / r.sizeY(), fz = (t.sizeZ() - 2 * m) / r.sizeZ();
+        int lx = (int) Math.floor((p.x - t.min().getX() - m) / fx), ly = (int) Math.floor((p.y - t.min().getY() - m) / fy),
+                lz = (int) Math.floor((p.z - t.min().getZ() - m) / fz);
         if (lx < 0 || ly < 0 || lz < 0 || lx >= r.sizeX() || ly >= r.sizeY() || lz >= r.sizeZ()) return false;
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         BlockPos bp = r.toWorld(lx, ly, lz);

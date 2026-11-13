@@ -30,7 +30,8 @@ give the male a good place for his bubble nest.
 | <ItemImage id="bettacraft:red_root_floater" /> | <ItemLink id="bettacraft:red_root_floater" /> | small round leaves and red roots; **red under strong light**, green under weak light; rare and slow |
 
 A vanilla **lily pad** used on an aquarium becomes a small lily pad on the surface. It stays where you put it and does
-not multiply.
+not multiply. Put onto another lily pad, it slides a little aside so they only overlap at the edges; where floating
+plants overlap, every plant lies a hair higher or lower than the others, so they do not flicker.
 
 ## Getting them
 

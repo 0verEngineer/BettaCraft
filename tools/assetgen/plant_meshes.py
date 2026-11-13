@@ -10,6 +10,11 @@ base (v = 1). Cut-out alpha (binary), so they work in the cutout pipeline and wi
 * ``ribbon``      - Vallisneria: a long strap, tileable along v, fine parallel veins.
 * ``stem``        - stems, petioles and the rhizome (tileable).
 
+M21.1, the miniature outside the tank (1/16 scale, from the block atlas with mipmaps): ``*_mini`` variants of the leaves
+and the ribbon. The shape grown by 2 px, the colour flatter and a little lighter, and the colour bled into the transparent
+texels, so the mipmap levels neither darken the rim nor eat the thin leaves (the alpha of the smaller mip levels stays
+above the cut-out threshold where the leaf is).
+
 Run from the repo root:  py tools/assetgen/plant_meshes.py
 """
 from __future__ import annotations
@@ -95,9 +100,34 @@ def stem():
     return _finish(v, np.ones((16, 16)))
 
 
+def _mini(img, grow: int = 2, flat: float = 0.5, lift: float = 0.06):
+    """The miniature variant: alpha dilated by ``grow`` texels, shading flattened towards the mean, colour bled out."""
+    a = img[..., 3] > 0.5
+    v = img[..., 0].copy()
+    mean = v[a].mean() if a.any() else 0.8
+    v = np.where(a, mean + (v - mean) * flat + lift, 0)
+    grown = a.copy()
+    for _ in range(grow):
+        g = grown.copy()
+        g[1:, :] |= grown[:-1, :]
+        g[:-1, :] |= grown[1:, :]
+        g[:, 1:] |= grown[:, :-1]
+        g[:, :-1] |= grown[:, 1:]
+        grown = g
+    # bleed: every texel outside the leaf gets the mean colour (mipmaps average colour with transparent texels too)
+    v = np.where(a, v, mean + lift)
+    out = np.zeros_like(img)
+    out[..., 0] = out[..., 1] = out[..., 2] = np.clip(v, 0, 1)
+    out[..., 3] = grown.astype(np.float64)
+    return out
+
+
 def write_all() -> list:
-    return [save_png(leaf_round(), OUT / "leaf_round.png"), save_png(leaf_ovate(), OUT / "leaf_ovate.png"),
-            save_png(ribbon(), OUT / "ribbon.png"), save_png(stem(), OUT / "stem.png")]
+    lr, lo, rb = leaf_round(), leaf_ovate(), ribbon()
+    return [save_png(lr, OUT / "leaf_round.png"), save_png(lo, OUT / "leaf_ovate.png"),
+            save_png(rb, OUT / "ribbon.png"), save_png(stem(), OUT / "stem.png"),
+            save_png(_mini(lr), OUT / "leaf_round_mini.png"), save_png(_mini(lo), OUT / "leaf_ovate_mini.png"),
+            save_png(_mini(rb, grow=1), OUT / "ribbon_mini.png")]
 
 
 if __name__ == "__main__":

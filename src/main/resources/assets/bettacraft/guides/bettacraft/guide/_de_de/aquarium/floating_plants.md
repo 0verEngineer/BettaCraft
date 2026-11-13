@@ -30,7 +30,9 @@ Ableger, nehmen Abfallstoffe aus dem Wasser auf und bieten dem Männchen einen g
 | <ItemImage id="bettacraft:red_root_floater" /> | <ItemLink id="bettacraft:red_root_floater" /> | kleine runde Blätter und rote Wurzeln; **rot unter starkem Licht**, grün unter schwachem; selten und langsam |
 
 Ein normales **Seerosenblatt** auf einem Aquarium wird zu einem kleinen Seerosenblatt auf der Oberfläche. Es bleibt,
-wo du es hingesetzt hast, und vermehrt sich nicht.
+wo du es hingesetzt hast, und vermehrt sich nicht. Auf ein anderes Seerosenblatt gesetzt, rutscht es ein Stück zur
+Seite, so dass sie sich nur am Rand überlappen; wo Schwimmpflanzen übereinander liegen, liegt jede ein winziges Stück
+höher oder tiefer als die anderen, damit nichts flimmert.
 
 ## Wo man sie bekommt
 

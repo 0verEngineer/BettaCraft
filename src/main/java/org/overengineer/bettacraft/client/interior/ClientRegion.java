@@ -44,6 +44,10 @@ public final class ClientRegion {
     long waveStart, waveWorkerNanos, waveUploadNanos;
     int waveCells;
     boolean limitReached;
+    /** M21.1: the plant meshes of the miniature ({@link MiniaturePlants}), made the first time they are shown. */
+    MiniaturePlants.State plants;
+    /** The meshes stand in for the plant voxels in this frame (set by the opaque pass, read by the translucent one). */
+    boolean plantMeshesShown;
 
     ClientRegion(int id, int version, int sizeX, int sizeY, int sizeZ, int scale, boolean truncated, List<InteriorSnapshot.Section> list) {
         this.id = id;
@@ -86,6 +90,7 @@ public final class ClientRegion {
         version = newVersion;
         recount();
         findOutlets();
+        MiniaturePlants.sectionsChanged(this, changed);
     }
 
     /** Scans the sections that contain an internal filter anchor (cheap: palettes are checked first). */

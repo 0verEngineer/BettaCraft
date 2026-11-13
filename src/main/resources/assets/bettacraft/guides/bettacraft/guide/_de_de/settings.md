@@ -75,8 +75,10 @@ Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fe
 AUTO = nur die erste vorhandene von Jade, WTHIT und The One Probe, damit zwei Overlay-Mods nicht jedes Aquarium doppelt
 zeigen; JADE, TOP, WTHIT oder ALL) und Schalter für einzelne Funktionen (`features.*`): `interiorPathfinding` (Frösche
 laufen um die Deko herum, Kleintiere gehen unter Überhänge und in Höhlen, Harnischwelse schwimmen in ihre Laichhöhle; aus
-= geradeaus) und `plantMeshes` (die neue Optik von Rotala, Vallisneria und Anubias im Innenraum, ein Prototyp; aus = die
-Blattblöcke). Die **Client-Config** enthält Animations- und Miniatur-Distanz, das
+= geradeaus) und `plantMeshes` (die neue Optik von Rotala, Vallisneria und Anubias im Innenraum und in der Miniatur, ein
+Prototyp; aus = die Blattblöcke). Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
+der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
+0 = immer Pixel), das
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
 der Kantenlinien (`render.tankEdgeWidth`, in Pixeln zu 1/16 Block, 0,1 bis 1, Standard 0,25; 0 = keine), die Größe des
 Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 Blöcken), die Entfernung, bis zu der

@@ -44,6 +44,16 @@ public final class FloatingPlantRenderer {
     private static final int FROGBIT_ROOTS = 0xFFE6E2D2, SALVINIA_ROOTS = 0xFF7A6142;
     /** Height of the leaves above the drawn water surface (no z-fighting with the water quad) and the bobbing. */
     private static final float ABOVE = 0.008F, BOB = 0.003F;
+    /**
+     * M21.1: every plant of a tank floats at a height of its own (steps of {@link #LAYER}, {@link #LAYERS} of them; the
+     * leaves of one plant use {@link #LEAF_STEP} steps below that), so two overlapping plants never lie at the same
+     * height and flicker (z-fighting). The order comes from the position for the fixed lily pads and from the id for the
+     * drifting plants (their order must not change while they drift).
+     */
+    static final float LAYER = 0.003F, LEAF_STEP = 0.0004F;
+    static final int LAYERS = 12;
+    /** Off: every plant at the same height again (the smoke test's before/after picture). */
+    public static boolean layered = true;
 
     private FloatingPlantRenderer() {}
 
@@ -67,6 +77,10 @@ public final class FloatingPlantRenderer {
         int layer = TankPlants.surfaceLayer(t);
         boolean dry = t.waterMb() <= 0;
         BlockPos.MutableBlockPos col = new BlockPos.MutableBlockPos();
+        List<FloatingPlant> order = new java.util.ArrayList<>(t.plants());
+        order.sort(java.util.Comparator.comparingLong(FloatingPlantRenderer::orderKey));
+        java.util.IdentityHashMap<FloatingPlant, Integer> rank = new java.util.IdentityHashMap<>();
+        for (int i = 0; i < order.size(); i++) rank.put(order.get(i), i);
         for (FloatingPlant p : t.plants()) {
             double x = p.renderX(time, TankPlants.SYNC_TICKS), z = p.renderZ(time, TankPlants.SYNC_TICKS);
             col.set(Mth.floor(x), layer, Mth.floor(z));
@@ -74,11 +88,24 @@ public final class FloatingPlantRenderer {
             float bob = p.type.movable() ? (float) Math.sin(time * 0.07 + p.id * 1.7) * BOB : 0;
             int light = LevelRenderer.getLightColor(level, col);
             pose.pushPose();
-            pose.translate(x - origin.getX(), y - origin.getY() + ABOVE + BOB + bob, z - origin.getZ());
+            float above = layered ? layerOffset(rank.getOrDefault(p, 0)) : 0;
+            pose.translate(x - origin.getX(), y - origin.getY() + ABOVE + BOB + bob + above, z - origin.getZ());
             pose.mulPose(Axis.YP.rotation(p.rot));
             drawPlant(pose, buffers, p, light, dry);
             pose.popPose();
         }
+    }
+
+    /** Sort key of a plant for its height layer: the position for fixed plants, the id for drifting ones. */
+    static long orderKey(FloatingPlant p) {
+        if (p.type.movable()) return p.id;
+        long gx = Math.round(p.x * 64), gz = Math.round(p.z * 64);
+        return Long.MIN_VALUE / 2 + (gx * 0x9E3779B1L + gz * 0x85EBCA77L & 0xFFFFFFFFFFL);
+    }
+
+    /** Height of the plant with this rank above the others (a few thousandths of a block). */
+    static float layerOffset(int rank) {
+        return Math.floorMod(rank, LAYERS) * LAYER;
     }
 
     /** Height of the water as it is drawn in that column (fill of the block state), the floor when dry. */
@@ -100,7 +127,7 @@ public final class FloatingPlantRenderer {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(DUCKWEED));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 // a second, smaller patch turned against the first: looks less like a square
-                flat(pose, vc, r * 0.35F, -r * 0.2F, r * 0.7F, 0.0015F, 0xFFFFFFFF, light, 0.9F);
+                flat(pose, vc, r * 0.35F, -r * 0.2F, r * 0.7F, LEAF_STEP * 3, 0xFFFFFFFF, light, 0.9F);
             }
             case FROGBIT -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(FROGBIT));
@@ -110,7 +137,7 @@ public final class FloatingPlantRenderer {
             case SALVINIA -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(SALVINIA));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
-                flat(pose, vc, r * 0.25F, r * 0.3F, r * 0.75F, 0.0015F, 0xFFFFFFFF, light, 1.4F);
+                flat(pose, vc, r * 0.25F, r * 0.3F, r * 0.75F, LEAF_STEP * 3, 0xFFFFFFFF, light, 1.4F);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 2, SALVINIA_ROOTS, light);
             }
             case RED_ROOT_FLOATER -> {
@@ -135,9 +162,9 @@ public final class FloatingPlantRenderer {
             float d = r * spread * (0.85F + 0.15F * (float) Math.sin(p.id + i * 2.3));
             float cx = Mth.cos(a) * d, cz = Mth.sin(a) * d;
             // overlapping leaves at slightly different heights (no z-fighting)
-            flat(pose, vc, cx, cz, lr, i * 0.0008F, tint, light, a + (float) Math.PI / 2);
+            flat(pose, vc, cx, cz, lr, i * LEAF_STEP, tint, light, a + (float) Math.PI / 2);
         }
-        flat(pose, vc, 0, 0, lr * 0.8F, leaves * 0.0008F, tint, light, p.id * 0.9F);
+        flat(pose, vc, 0, 0, lr * 0.8F, leaves * LEAF_STEP, tint, light, p.id * 0.9F);
     }
 
     private static void flat(PoseStack pose, VertexConsumer vc, float cx, float cz, float h, float y, int argb, int light) {

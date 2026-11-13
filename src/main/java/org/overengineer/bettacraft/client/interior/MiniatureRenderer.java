@@ -67,7 +67,7 @@ public final class MiniatureRenderer {
     private static final List<RenderType> OPAQUE = List.of(RenderType.solid(), RenderType.cutoutMipped(), RenderType.cutout());
     private static final List<RenderType> LAYERS = List.of(RenderType.solid(), RenderType.cutoutMipped(), RenderType.cutout(), RenderType.translucent());
     /** Keeps the miniature 0.5 px inside the glass. */
-    private static final float MARGIN = 0.5F / 16F;
+    static final float MARGIN = 0.5F / 16F;
     private static final int MAX_IN_FLIGHT = 6;
     private static final long UPLOAD_BUDGET_NANOS = 3_000_000L;
 
@@ -83,8 +83,8 @@ public final class MiniatureRenderer {
     /** Render-thread time spent on miniatures in the last frame (scheduling + uploads + draws), for the bench. */
     public static volatile long lastFrameNanos;
 
-    private record Result(int regionId, long cell, int generation, Map<RenderType, MeshData> data, List<ByteBufferBuilder> memory,
-                          int quads, int blocks, long workerNanos, int minX, int minY, int minZ) {
+    private record Result(int regionId, long cell, int generation, Map<RenderType, MeshData> data, Map<RenderType, MeshData> plantData,
+                          List<ByteBufferBuilder> memory, int quads, int blocks, long workerNanos, int minX, int minY, int minZ) {
         void free() {
             for (ByteBufferBuilder m : memory) m.close();
         }
@@ -112,6 +112,7 @@ public final class MiniatureRenderer {
         Vec3 cam = event.getCamera().getPosition();
         double maxDist = ClientConfig.MINIATURE_RENDER_DISTANCE.get();
         if (opaque) {
+            MiniaturePlants.beginFrame();
             uploadResults();
             boolean pack = IrisCompat.shaderPackInUse();
             for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
@@ -138,12 +139,23 @@ public final class MiniatureRenderer {
             if (region == null || region.meshes.isEmpty()) continue;
             BlockPos min = t.min();
             AABB box = new AABB(min.getX(), min.getY(), min.getZ(), min.getX() + t.sizeX(), min.getY() + t.sizeY(), min.getZ() + t.sizeZ());
-            if (box.getCenter().distanceToSqr(cam) > maxDist * maxDist || !event.getFrustum().isVisible(box)) continue;
-            draw(event, region, t, cam, opaque ? OPAQUE : List.of(RenderType.translucent()));
+            double distSq = box.getCenter().distanceToSqr(cam);
+            if (distSq > maxDist * maxDist || !event.getFrustum().isVisible(box)) {
+                if (opaque) region.plantMeshesShown = false;
+                continue;
+            }
+            // M21.1: close enough, the plants with real leaves instead of their voxels (once every plant has its mesh)
+            if (opaque) region.plantMeshesShown = MiniaturePlants.prepare(mc.level, region, t, distSq);
+            draw(event, region, t, cam, opaque ? OPAQUE : List.of(RenderType.translucent()), region.plantMeshesShown);
+            if (opaque && region.plantMeshesShown) {
+                MiniaturePlants.draw(event.getPoseStack(), cam, region, t, mc.renderBuffers().bufferSource(),
+                        mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false));
+            }
             // jets: before the translucent terrain, so the tank water is blended over the part below the surface
             // (drawn after it, the water's depth would hide it); never in the Iris shadow pass
             if (opaque && !IrisCompat.renderingShadowPass()) MiniatureJets.render(event, be, region, cam);
         }
+        if (opaque) MiniaturePlants.endFrame(mc.renderBuffers().bufferSource());
         long dt = System.nanoTime() - t0;
         lastFrameNanos = opaque ? dt : lastFrameNanos + dt;
     }
@@ -213,7 +225,7 @@ public final class MiniatureRenderer {
                     DONE.add(build(id, cell, gen, map, getter));
                 } catch (Throwable e) {
                     LOGGER.error("Miniature mesh job failed for region {} cell {}", id, cell, e);
-                    DONE.add(new Result(id, cell, gen, Map.of(), List.of(), 0, 0, 0, 0, 0, 0));
+                    DONE.add(new Result(id, cell, gen, Map.of(), Map.of(), List.of(), 0, 0, 0, 0, 0, 0));
                 }
             });
         }
@@ -227,6 +239,9 @@ public final class MiniatureRenderer {
         PoseStack ps = new PoseStack();
         Map<RenderType, ByteBufferBuilder> memory = new IdentityHashMap<>();
         Map<RenderType, BufferBuilder> builders = new IdentityHashMap<>();
+        // M21.1: the mesh plants into buffers of their own (left out while the tank shows their meshes)
+        Map<RenderType, ByteBufferBuilder> plantMemory = new IdentityHashMap<>();
+        Map<RenderType, BufferBuilder> plantBuilders = new IdentityHashMap<>();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int cx = SectionPos.x(cell), cy = SectionPos.y(cell), cz = SectionPos.z(cell);
         int blocks = 0;
@@ -257,11 +272,13 @@ public final class MiniatureRenderer {
                     BakedModel model = brd.getBlockModel(state);
                     ModelData md = model.getModelData(getter, pos, state, ModelData.EMPTY);
                     rand.setSeed(state.getSeed(pos));
+                    boolean plant = !floor && MiniaturePlants.meshBlock(state);
                     for (RenderType rt : model.getRenderTypes(state, rand, md)) {
                         RenderType layer = LAYERS.contains(rt) ? rt : RenderType.translucent();
-                        BufferBuilder bb = builders.computeIfAbsent(layer, k -> {
-                            ByteBufferBuilder mem = new ByteBufferBuilder(1 << 16);
-                            memory.put(k, mem);
+                        Map<RenderType, ByteBufferBuilder> mems = plant ? plantMemory : memory;
+                        BufferBuilder bb = (plant ? plantBuilders : builders).computeIfAbsent(layer, k -> {
+                            ByteBufferBuilder mem = new ByteBufferBuilder(plant ? 1 << 12 : 1 << 16);
+                            mems.put(k, mem);
                             return new BufferBuilder(mem, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
                         });
                         ps.pushPose();
@@ -282,16 +299,21 @@ public final class MiniatureRenderer {
             }
         }
         Map<RenderType, MeshData> data = new IdentityHashMap<>();
+        Map<RenderType, MeshData> plantData = new IdentityHashMap<>();
         int quads = 0;
         for (RenderType layer : LAYERS) {
-            BufferBuilder bb = builders.get(layer);
-            if (bb == null) continue;
-            MeshData d = bb.build();
-            if (d == null) continue;
-            data.put(layer, d);
-            quads += d.drawState().vertexCount() / 4;
+            for (int pass = 0; pass < 2; pass++) {
+                BufferBuilder bb = (pass == 0 ? builders : plantBuilders).get(layer);
+                if (bb == null) continue;
+                MeshData d = bb.build();
+                if (d == null) continue;
+                (pass == 0 ? data : plantData).put(layer, d);
+                quads += d.drawState().vertexCount() / 4;
+            }
         }
-        return new Result(regionId, cell, gen, data, new ArrayList<>(memory.values()), quads, blocks, System.nanoTime() - t0,
+        List<ByteBufferBuilder> mem = new ArrayList<>(memory.values());
+        mem.addAll(plantMemory.values());
+        return new Result(regionId, cell, gen, data, plantData, mem, quads, blocks, System.nanoTime() - t0,
                 cx * 32, cy * 32 - InteriorRegion.BASE_Y, cz * 32);
     }
 
@@ -310,22 +332,24 @@ public final class MiniatureRenderer {
                 if (region.cellGeneration.get(r.cell) != r.generation) continue; // superseded by a newer job
                 MiniatureMesh old = region.meshes.remove(r.cell);
                 if (old != null) old.close();
-                if (!r.data.isEmpty()) {
+                if (!r.data.isEmpty() || !r.plantData.isEmpty()) {
                     MiniatureMesh mesh = new MiniatureMesh();
                     mesh.minX = r.minX;
                     mesh.minY = r.minY;
                     mesh.minZ = r.minZ;
                     mesh.extent = 32;
-                    for (RenderType layer : LAYERS) {
-                        MeshData d = r.data.get(layer);
-                        if (d == null) continue;
-                        mesh.quads += d.drawState().vertexCount() / 4;
-                        mesh.vertexBytes += d.vertexBuffer().remaining();
-                        VertexBuffer vb = new VertexBuffer(VertexBuffer.Usage.STATIC);
-                        vb.bind();
-                        vb.upload(d); // closes the mesh data
-                        VertexBuffer.unbind();
-                        mesh.buffers.put(layer, vb);
+                    for (int pass = 0; pass < 2; pass++) {
+                        for (RenderType layer : LAYERS) {
+                            MeshData d = (pass == 0 ? r.data : r.plantData).get(layer);
+                            if (d == null) continue;
+                            mesh.quads += d.drawState().vertexCount() / 4;
+                            mesh.vertexBytes += d.vertexBuffer().remaining();
+                            VertexBuffer vb = new VertexBuffer(VertexBuffer.Usage.STATIC);
+                            vb.bind();
+                            vb.upload(d); // closes the mesh data
+                            VertexBuffer.unbind();
+                            (pass == 0 ? mesh.buffers : mesh.plantBuffers).put(layer, vb);
+                        }
                     }
                     region.meshes.put(r.cell, mesh);
                 }
@@ -361,7 +385,7 @@ public final class MiniatureRenderer {
 
     // ------------------------------------------------------------------ drawing
 
-    private static void draw(RenderLevelStageEvent event, ClientRegion region, TankData t, Vec3 cam, List<RenderType> layers) {
+    private static void draw(RenderLevelStageEvent event, ClientRegion region, TankData t, Vec3 cam, List<RenderType> layers, boolean noPlants) {
         BlockPos min = t.min();
         float fx = (t.sizeX() - 2 * MARGIN) / region.sizeX;
         float fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
@@ -373,7 +397,7 @@ public final class MiniatureRenderer {
         for (RenderType rt : layers) {
             boolean any = false;
             for (MiniatureMesh m : region.meshes.values()) {
-                if (m.buffers.containsKey(rt)) {
+                if (m.buffers.containsKey(rt) || !noPlants && m.plantBuffers.containsKey(rt)) {
                     any = true;
                     break;
                 }
@@ -387,13 +411,20 @@ public final class MiniatureRenderer {
                 shader.apply();
                 for (MiniatureMesh m : region.meshes.values()) {
                     VertexBuffer vb = m.buffers.get(rt);
-                    if (vb == null) continue;
+                    VertexBuffer pb = noPlants ? null : m.plantBuffers.get(rt);
+                    if (vb == null && pb == null) continue;
                     double x0 = min.getX() + m.minX * fx, y0 = min.getY() + Math.max(-1, m.minY) * fy, z0 = min.getZ() + m.minZ * fz;
                     if (!event.getFrustum().isVisible(new AABB(x0, y0, z0, x0 + m.extent * fx + 0.1, y0 + (m.extent + 1) * fy + 0.1, z0 + m.extent * fz + 0.1))) {
                         continue;
                     }
-                    vb.bind();
-                    vb.draw();
+                    if (vb != null) {
+                        vb.bind();
+                        vb.draw();
+                    }
+                    if (pb != null) {
+                        pb.bind();
+                        pb.draw();
+                    }
                 }
                 shader.clear();
                 VertexBuffer.unbind();

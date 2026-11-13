@@ -105,14 +105,18 @@ There are no crafting recipes. Find plants in the world, then grow your own:
 
 ## New look (prototype)
 
-**Rotala**, **Vallisneria** and **Anubias** have a new look inside the interior: real round, ribbon-shaped and broad
-leaves instead of leaf blocks; Rotala and Vallisneria sway in the water like kelp. The blocks are still there (you can
-cut them with shears and break them as before), they are only drawn differently; the miniature outside the aquarium
-keeps the block look so the plants stay visible there. A cut with the shears, growth or a broken block shows on the
-plant at once; with a shader pack the leaves cast shadows. `features.plantMeshes` in the common config switches back to
-the old look.
+**Rotala**, **Vallisneria** and **Anubias** have a new look: real round, ribbon-shaped and broad leaves instead of leaf
+blocks, inside the interior and in the miniature outside the aquarium; Rotala and Vallisneria sway in the water like
+kelp, outside just like inside. Every Rotala shoot has its stem (side shoots too), and every Vallisneria leaf is one
+ribbon from the ground up to the surface and along it. The blocks are still there (you can cut them with shears and
+break them as before), they are only drawn differently. A cut with the shears, growth or a broken block shows on the
+plant at once; with a shader pack the leaves cast shadows. From further away than 24 blocks the miniature shows the
+plants as pixels again (`render.miniaturePlantMeshDistance` in the client config, 0 = always pixels).
+`features.plantMeshes` in the common config switches back to the old look.
 
 ![Rotala, Vallisneria and Anubias with the new look](../images/plants_mesh.png)
+
+![The same plants in the miniature outside the aquarium](../images/plants_mesh_outside.png)
 
 All values can be changed in the server config (`interiorPlants.*`): growth speed (0 = no growth), waste uptake,
 breeding bonus, hiding spots, most plants per aquarium, side shoots and runners, the chances of fishing, swamp water

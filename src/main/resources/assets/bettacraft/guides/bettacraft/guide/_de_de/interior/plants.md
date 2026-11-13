@@ -109,14 +109,18 @@ Rezepte gibt es keine. Man findet Pflanzen in der Welt und zieht dann selbst nac
 
 ## Neue Optik (Prototyp)
 
-**Rotala**, **Vallisneria** und **Anubias** sehen im Innenraum neu aus: echte runde, bandförmige und breite Blätter
-statt Blattblöcken; Rotala und Vallisneria wiegen sich im Wasser wie Seetang. Die Blöcke sind weiter da (du kannst sie
-mit der Schere schneiden und abbauen wie bisher), sie werden nur anders gezeichnet; die Miniatur außen am Aquarium
-behält die Block-Optik, damit die Pflanzen dort sichtbar bleiben. Ein Schnitt mit der Schere, Wachstum oder ein
-abgebauter Block zeigen sich sofort an der Pflanze; mit einem Shaderpack werfen die Blätter Schatten.
-`features.plantMeshes` in der Common-Config schaltet zur alten Optik zurück.
+**Rotala**, **Vallisneria** und **Anubias** sehen neu aus: echte runde, bandförmige und breite Blätter statt
+Blattblöcken, im Innenraum und in der Miniatur außen am Aquarium; Rotala und Vallisneria wiegen sich im Wasser wie
+Seetang, außen genauso wie innen. Jeder Rotala-Trieb hat seinen Stängel (auch Seitentriebe), und jedes
+Vallisneria-Blatt ist ein Band vom Boden bis zur Oberfläche und an ihr entlang. Die Blöcke sind weiter da (du kannst sie
+mit der Schere schneiden und abbauen wie bisher), sie werden nur anders gezeichnet. Ein Schnitt mit der Schere,
+Wachstum oder ein abgebauter Block zeigen sich sofort an der Pflanze; mit einem Shaderpack werfen die Blätter Schatten.
+Ab 24 Blöcken Entfernung zeigt die Miniatur die Pflanzen wieder als Pixel (`render.miniaturePlantMeshDistance` in der
+Client-Config, 0 = immer Pixel). `features.plantMeshes` in der Common-Config schaltet zur alten Optik zurück.
 
 ![Rotala, Vallisneria und Anubias in der neuen Optik](../images/plants_mesh.png)
+
+![Dieselben Pflanzen in der Miniatur außen am Aquarium](../images/plants_mesh_outside.png)
 
 Alle Werte lassen sich in der Server-Config ändern (`interiorPlants.*`): Wachstumstempo (0 = kein Wachstum),
 Abfallaufnahme, Zuchtbonus, Verstecke, höchstens Pflanzen pro Aquarium, Seitentriebe und Ausläufer, die Chancen beim

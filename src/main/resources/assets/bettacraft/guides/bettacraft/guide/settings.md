@@ -75,7 +75,9 @@ AUTO, KELP or PLASTIC), which overlay mod shows the Bettacraft lines (`compat.ov
 installed one of Jade, WTHIT and The One Probe, so two overlay mods do not show every aquarium twice; JADE, TOP, WTHIT or
 ALL) and switches for single features (`features.*`): `interiorPathfinding` (frogs walk around the decoration, small
 animals go under overhangs and into caves, plecos swim into their spawning cave; off = straight lines) and `plantMeshes`
-(the new look of Rotala, Vallisneria and Anubias in the interior, a prototype; off = the leaf blocks). The **client config** has the animation and miniature distances, the water surface glitter,
+(the new look of Rotala, Vallisneria and Anubias in the interior and the miniature, a prototype; off = the leaf blocks). The **client config** has the animation and miniature distances, the distance up to which the
+miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 24; further away pixels, 0 = always
+pixels), the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
 (`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none), the size of the name sign
 (`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks), the distance up to which the name sign, nest,

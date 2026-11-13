@@ -11,6 +11,8 @@ public final class ClientConfig {
     public static final ModConfigSpec.BooleanValue WATER_SURFACE_ANIMATION;
     public static final ModConfigSpec.IntValue MINIATURE_RENDER_DISTANCE;
     public static final ModConfigSpec.IntValue TANK_DETAIL_DISTANCE;
+    /** M21.1: up to this distance the miniature shows the plant meshes (Rotala, Vallisneria, Anubias), further away voxels. */
+    public static final ModConfigSpec.IntValue MINIATURE_PLANT_MESH_DISTANCE;
     public static final ModConfigSpec.BooleanValue LOG_MINIATURE_STATS;
     public static final ModConfigSpec.BooleanValue CONNECTED_GLASS;
     public static final ModConfigSpec.DoubleValue TANK_EDGE_WIDTH;
@@ -27,6 +29,8 @@ public final class ClientConfig {
         ANIMATION_DISTANCE = b.comment("Fish further away than this (blocks) are not animated").defineInRange("animationDistance", 48, 8, 256);
         WATER_SURFACE_ANIMATION = b.comment("Animated glitter on the tank water surface").define("waterSurfaceAnimation", true);
         MINIATURE_RENDER_DISTANCE = b.comment("Distance (blocks) up to which tank interiors are rendered as miniature").defineInRange("miniatureRenderDistance", 64, 8, 512);
+        MINIATURE_PLANT_MESH_DISTANCE = b.comment("Distance (blocks) up to which the miniature of a tank shows the plants with real leaves (like inside, features.plantMeshes); further away they are drawn as pixels again. 0 = always as pixels")
+                .defineInRange("miniaturePlantMeshDistance", 24, 0, 256);
         TANK_DETAIL_DISTANCE = b.comment("Distance (blocks) up to which the name sign, bubble nest, floating plants, small animals and algae of a tank are drawn")
                 .defineInRange("tankDetailDistance", 48, 8, 256);
         CONNECTED_GLASS = b.comment("Connected glass textures on textured tanks: the frame of the glass texture only along the outer edges of the whole tank (off: every block shows its own frame)")

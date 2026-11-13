@@ -568,6 +568,9 @@ final class LangEn {
         a.accept("bettacraft.configuration.waterSurfaceAnimation.tooltip", "Animated glitter on the tank water surface");
         a.accept("bettacraft.configuration.miniatureRenderDistance", "Miniature render distance");
         a.accept("bettacraft.configuration.miniatureRenderDistance.tooltip", "Distance (blocks) up to which tank interiors are rendered as miniature");
+        a.accept("bettacraft.configuration.miniaturePlantMeshDistance", "Real plant leaves in miniatures up to");
+        a.accept("bettacraft.configuration.miniaturePlantMeshDistance.tooltip",
+                "Distance (blocks) up to which the miniature of a tank shows the plants with real leaves like inside (Rotala, Vallisneria, Anubias; needs features.plantMeshes). Further away they are drawn as pixels again. 0 = always as pixels");
         a.accept("bettacraft.configuration.logMiniatureStats", "Log miniature statistics");
         a.accept("bettacraft.configuration.logMiniatureStats.tooltip", "Write mesh build and sync statistics of tank miniatures to the log (for debugging)");
         a.accept("bettacraft.configuration.sound", "Sounds");

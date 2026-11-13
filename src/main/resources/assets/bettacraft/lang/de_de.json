@@ -633,6 +633,8 @@
   "bettacraft.configuration.waterSurfaceAnimation.tooltip": "Animiertes Glitzern auf der Wasseroberfläche des Aquariums",
   "bettacraft.configuration.miniatureRenderDistance": "Miniatur-Sichtweite",
   "bettacraft.configuration.miniatureRenderDistance.tooltip": "Entfernung (Blöcke), bis zu der Innenräume als Miniatur gezeichnet werden",
+  "bettacraft.configuration.miniaturePlantMeshDistance": "Echte Pflanzenblätter in Miniaturen bis",
+  "bettacraft.configuration.miniaturePlantMeshDistance.tooltip": "Entfernung (Blöcke), bis zu der die Miniatur eines Beckens die Pflanzen mit echten Blättern wie innen zeigt (Rotala, Vallisneria, Anubias; braucht features.plantMeshes). Weiter weg werden sie wieder als Pixel gezeichnet. 0 = immer als Pixel",
   "bettacraft.configuration.logMiniatureStats": "Miniatur-Statistik ins Log",
   "bettacraft.configuration.logMiniatureStats.tooltip": "Schreibt Bau- und Übertragungsstatistiken der Miniaturen ins Log (zur Fehlersuche)",
   "bettacraft.configuration.sound": "Geräusche",

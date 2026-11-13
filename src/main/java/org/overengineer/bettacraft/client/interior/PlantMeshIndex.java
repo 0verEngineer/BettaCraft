@@ -76,6 +76,11 @@ public final class PlantMeshIndex {
         return boxChanged(x0 - 1, Integer.MIN_VALUE, z0 - 1, x0 + 16, Integer.MAX_VALUE, z0 + 16, rebuildToo, frame);
     }
 
+    /** Blocks in the box (inclusive) changed: plants within one block of it need a rebuild. Returns how many were marked. */
+    public synchronized int areaChanged(int x0, int y0, int z0, int x1, int y1, int z1, long frame) {
+        return boxChanged(x0 - 1, y0 - 1, z0 - 1, x1 + 1, y1 + 1, z1 + 1, true, frame);
+    }
+
     private int boxChanged(int x0, int y0, int z0, int x1, int y1, int z1, boolean rebuildToo, long frame) {
         int n = 0;
         for (var e : boxes.long2ObjectEntrySet()) {

@@ -80,6 +80,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM19 m19;
     private static DevClientSmokeM20 m20;
     private static DevClientSmokeM21 m21;
+    private static DevClientSmokeM211 m211;
+    /** -Psmoketestm21_1: only the M21.1 scene (plant meshes outside, Rotala stems, Vallisneria ribbons, lily pads). */
+    private static final boolean M21_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_1only");
     /** -Psmoketestm21: only the M21 scene (plant prototype old/new, new fish buckets). */
     private static final boolean M21_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21only");
     /** -Psmoketestm20: only the M20 scene (reef tank, corals, reef animals, water colours, menus, items). */
@@ -138,6 +141,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M21_1_ONLY) {
+                if (ticks == 60) m211 = new DevClientSmokeM211();
+                if (m211 != null && m211.tick()) {
+                    m211 = null;
+                    LOGGER.info("[smoketest] client world test finished (M21.1 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M21_ONLY) {
                 if (ticks == 60) m21 = new DevClientSmokeM21();
                 if (m21 != null && m21.tick()) {
@@ -456,6 +468,10 @@ final class DevClientSmokeTest {
                     }
                     if (m21 != null && m21.tick()) {
                         m21 = null;
+                        m211 = new DevClientSmokeM211(); // M21.1: plant meshes outside, stems, ribbons, lily pads
+                    }
+                    if (m211 != null && m211.tick()) {
+                        m211 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

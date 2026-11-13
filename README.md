@@ -70,8 +70,8 @@ block.
   axolotls and the predators of other mods hunt small fish.
 - **Path finding:** frogs walk around the interior decoration, small animals go under overhangs and into caves,
   plecos swim into their spawning cave (`features.interiorPathfinding`).
-- **New plant look (prototype):** Rotala, Vallisneria and Anubias with real leaves that sway in the water inside the
-  interior (`features.plantMeshes`).
+- **New plant look (prototype):** Rotala, Vallisneria and Anubias with real leaves that sway in the water, inside the
+  interior and in the miniature outside (from 24 blocks on as blocks again; `features.plantMeshes`).
 - **Interior:** sneak and right-click an aquarium with an empty hand to step inside a void dimension at 16 blocks per
   tank block (4 or 8 configurable) and build with any block. The result is shown in the aquarium as a miniature.
   Floor textures (substrate), decoration structures (castle, shipwreck, skull, volcano, driftwood, cave, ...),

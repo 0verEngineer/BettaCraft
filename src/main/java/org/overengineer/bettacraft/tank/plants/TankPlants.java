@@ -278,7 +278,8 @@ public final class TankPlants {
         Vec3 at = surfaceHit(t, player.getEyePosition(), player.getViewVector(1.0F));
         if (at == null) at = new org.overengineer.bettacraft.tank.TankWaterVolume(t).surfacePoint(clicked, 0.3, 0.0);
         float rot = level.getRandom().nextFloat() * Mth.TWO_PI;
-        FloatingPlant p = add(c, type, at.x, at.z, type.grows() ? ITEM_SIZE : 1.0F, rot);
+        double[] xz = type == FloatingPlantType.LILY_PAD ? FloatingPlantSim.awayFromPads(t.plants(), at.x, at.z, type.radius(1.0)) : new double[] {at.x, at.z};
+        FloatingPlant p = add(c, type, xz[0], xz[1], type.grows() ? ITEM_SIZE : 1.0F, rot);
         if (p == null) {
             player.displayClientMessage(Component.translatable("message.bettacraft.plants.full"), true);
             return false;

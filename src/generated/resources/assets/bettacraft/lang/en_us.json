@@ -319,6 +319,8 @@
   "bettacraft.configuration.minSurvival.tooltip": "Share of larvae that become fry with poor care",
   "bettacraft.configuration.minTemp": "Minimum temperature",
   "bettacraft.configuration.minTemp.tooltip": "Lowest water temperature for nest building and spawning",
+  "bettacraft.configuration.miniaturePlantMeshDistance": "Real plant leaves in miniatures up to",
+  "bettacraft.configuration.miniaturePlantMeshDistance.tooltip": "Distance (blocks) up to which the miniature of a tank shows the plants with real leaves like inside (Rotala, Vallisneria, Anubias; needs features.plantMeshes). Further away they are drawn as pixels again. 0 = always as pixels",
   "bettacraft.configuration.miniatureRenderDistance": "Miniature render distance",
   "bettacraft.configuration.miniatureRenderDistance.tooltip": "Distance (blocks) up to which tank interiors are rendered as miniature",
   "bettacraft.configuration.mirrorReadinessBonus": "Mirror training bonus",

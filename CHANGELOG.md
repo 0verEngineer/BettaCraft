@@ -4,6 +4,34 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.13.1-beta.1] - 2026-11-14
+
+Real plant leaves in the miniature too, and fixes to the new plant look.
+
+### Added
+- **Plant leaves outside**: the miniature outside the aquarium now shows Rotala, Vallisneria and Anubias with the same
+  real leaves as the interior (scaled down, swaying the same way) instead of their blocks; the leaves are a little
+  larger and stronger outside and use mipmapped textures, so they do not flicker. Further away than 24 blocks the
+  miniature shows the blocks again (client config `render.miniaturePlantMeshDistance`, 0 = always blocks). Rebuilt only
+  when the plant changes; with a shader pack the leaves outside cast shadows too.
+
+### Fixed
+- Rotala: side shoots and shoots next to the main stem had leaves floating in the water without a stem; every shoot is
+  now worked out as a chain (also through leaves of a neighbouring shoot and back to the main shoot), every leaf sits on
+  a stem.
+- Vallisneria: the part of a leaf running along the surface was drawn as a separate piece in the air; every leaf is now
+  one continuous ribbon from the ground round the bend and along the surface, and sways as one.
+- Floating plants (lily pads and the others) flickered where they overlapped (z-fighting): every plant of an aquarium
+  now lies at a height of its own, a few thousandths of a block apart; a lily pad put onto another one slides a little
+  aside.
+- GameTest `smallAnimalsWalkUnderAnOverhang` failed now and then: its stone check did not map positions like the
+  miniature does.
+
+### Development
+- `gradlew runClient -Psmoketestm21_1`: the M21.1 scene (plants outside near and far, LOD, shear cut, shadows with
+  `-Pshaders`, Rotala and Vallisneria inside, floating plants from above); `-Pshowcasebench`: frame times of the plant
+  meshes outside in the showcase world.
+
 ## [1.13.0-beta.1] - 2026-11-14
 
 Fixes, path finding in the interior, glass fish buckets and a first look at real plant leaves.

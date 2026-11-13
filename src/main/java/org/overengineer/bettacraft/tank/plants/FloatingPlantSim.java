@@ -39,6 +39,46 @@ public final class FloatingPlantSim {
     private FloatingPlantSim() {}
 
     /**
+     * M21.1: a lily pad put down onto others is pushed a little away from them (at most about its radius), so pads lie
+     * side by side with only a small overlap instead of on top of each other. Pure (unit tested).
+     */
+    public static double[] awayFromPads(List<FloatingPlant> plants, double x, double z, double radius) {
+        double minD = radius * 1.5;
+        double ox = x, oz = z;
+        for (int it = 0; it < 6; it++) {
+            boolean moved = false;
+            for (FloatingPlant q : plants) {
+                if (q.type != FloatingPlantType.LILY_PAD) continue;
+                double dx = x - q.x, dz = z - q.z, d = Math.sqrt(dx * dx + dz * dz);
+                if (d >= minD) continue;
+                double push;
+                if (d < 1e-4) {
+                    // right on top: away in a direction of its own
+                    double ang = (q.id * 2.399963) % (Math.PI * 2);
+                    dx = Math.cos(ang);
+                    dz = Math.sin(ang);
+                    push = Math.min(minD, radius);
+                } else {
+                    dx /= d;
+                    dz /= d;
+                    push = Math.min(minD - d, radius);
+                }
+                x += dx * push;
+                z += dz * push;
+                moved = true;
+            }
+            if (!moved) break;
+        }
+        // never further than one radius from where the player aimed
+        double mx = x - ox, mz = z - oz, m = Math.sqrt(mx * mx + mz * mz);
+        if (m > radius) {
+            x = ox + mx / m * radius;
+            z = oz + mz / m * radius;
+        }
+        return new double[] {x, z};
+    }
+
+    /**
      * @param growthSpeed multiplier on the growth of the species (0 = no growth)
      * @param maxCoverage share of the surface above which no offshoots form
      * @param shadeFrom   coverage from which the cover counts as dense (warning, shading)

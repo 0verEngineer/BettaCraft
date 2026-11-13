@@ -39,7 +39,7 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             // client smoke tests and gradlew runClient -Pbackground : the window opens without focus (does not take the
             // keyboard or capture the mouse) and on a secondary monitor if there is one (BackgroundWindowMixin)
-            if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' }) {
+            if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }) {
                 systemProperty 'bettacraft.background', 'true'
             }
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
@@ -108,10 +108,21 @@ neoForge {
             }
             // gradlew runClient -Pshowcasetour : screenshot tour of the showcase world (after gradlew buildShowcase)
             if (project.hasProperty('showcasetour')) systemProperty 'bettacraft.showcase.tour', 'true'
+            // gradlew runClient -Pshowcasebench : frame-time bench of the plant meshes outside in the showcase world (M21.1)
+            if (project.hasProperty('showcasebench')) {
+                systemProperty 'bettacraft.showcase.tour', 'true'
+                systemProperty 'bettacraft.showcase.bench', 'true'
+            }
             // gradlew runClient -Psmoketestm21 : only the M21 scene (plant prototype old/new, fish buckets)
             if (project.hasProperty('smoketestm21')) {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21only', 'true'
+            }
+            // gradlew runClient -Psmoketestm21_1 : only the M21.1 scene (plant meshes outside near/far, LOD, Rotala stems,
+            // Vallisneria ribbons along the surface, lily pads without z-fighting; add -Pshaders for the shadows outside)
+            if (project.hasProperty('smoketestm21_1')) {
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m21_1only', 'true'
             }
             // gradlew runClient -Psmoketestm8 : only the M8 scene (Jade / The One Probe / WTHIT overlays; add -Ptop / -Pwthit)
             if (project.hasProperty('smoketestm8')) {
@@ -294,7 +305,7 @@ def extraMods = [
 ]
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = file('run/config/fml.toml')
-def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' }
+def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }
 tasks.matching { it.name == 'runClient' }.configureEach { t ->
     t.doFirst {
         if (fmlToml.exists()) {
