@@ -1062,7 +1062,7 @@
   "gui.bettacraft.critters.page": "Kleintiere (%s)",
   "gui.bettacraft.critters.page_fish": "Fische & Frösche (%s)",
   "gui.bettacraft.critters.take": "In Tüte",
-  "gui.bettacraft.critters.take_tooltip": "Ein Tier in eine Fischtüte (die beste Güte; mit Umschalt die schlechteste)",
+  "gui.bettacraft.critters.take_tooltip": "Ein Tier in eine Fischtüte (die beste Güte; mit Umschalt die schlechteste; mit Strg eine volle Tüte)",
   "gui.bettacraft.critters.clutches": "Gelege weg",
   "gui.bettacraft.critters.empty": "Keine Kleintiere",
   "gui.bettacraft.critters.empty_hint": "Mit dem Kescher fangen",

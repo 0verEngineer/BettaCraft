@@ -186,7 +186,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             updateWidgets();
         }));
         critterTakeButton = addRenderableWidget(new FitButton(x + 114, y + 124, 62, 14, Component.translatable("gui.bettacraft.critters.take"), b -> {
-            if (selectedGroup != null) send(TankActions.TAKE_CRITTER, hasShiftDown() ? 1 : 0, selectedGroup, null);
+            if (selectedGroup != null) send(TankActions.TAKE_CRITTER, hasControlDown() ? 2 : hasShiftDown() ? 1 : 0, selectedGroup, null);
         }));
         clutchButton = addRenderableWidget(new FitButton(x + 177, y + 124, 61, 14, Component.translatable("gui.bettacraft.critters.clutches"),
                 b -> send(TankActions.REMOVE_CLUTCHES, 0, "", null)));

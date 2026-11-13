@@ -541,7 +541,7 @@
   "gui.bettacraft.critters.page_fish": "Fish & frogs (%s)",
   "gui.bettacraft.critters.sexes": "♀ %s  ♂ %s",
   "gui.bettacraft.critters.take": "Into bag",
-  "gui.bettacraft.critters.take_tooltip": "One animal into a fish bag (the best grade; with Shift the worst)",
+  "gui.bettacraft.critters.take_tooltip": "One animal into a fish bag (the best grade; with Shift the worst; with Ctrl a full bag)",
   "gui.bettacraft.critters.total": "%s of %s small animals, stocking +%s",
   "gui.bettacraft.critters.young": "%s young",
   "gui.bettacraft.direction.east": "East",

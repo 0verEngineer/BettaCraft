@@ -21,5 +21,5 @@ water block fit in (`tank.overcrowdedPerWaterBlock`, `tank.hardCapPerWaterBlock`
 * Only adults count, like the bettas; the young do not.
 * The water gets their waste too (in the same fractions, young at half).
 * Independent of the stocking a tank holds at most 200 shrimp, crayfish and snails (`invertebrates.maxCrittersPerTank`);
-  there they stop breeding.
+  there they stop breeding. They also stop when the whole stocking (fish and small animals) reaches the hard cap.
 * The overview of the [tank menu](../aquarium/menu.md) and Jade, The One Probe and WTHIT show the stocking.

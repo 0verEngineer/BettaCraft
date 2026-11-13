@@ -93,7 +93,7 @@ public final class TankActions {
                 }
             }
             case TAKE_CRITTER -> error = org.overengineer.bettacraft.critters.TankCritters.takeOut(player.serverLevel(), controller, player,
-                    p.text(), p.value() == 1);
+                    p.text(), p.value() == 1, p.value() == 2 ? org.overengineer.bettacraft.critters.TankCritters.MAX_PER_BAG : 1);
             case REMOVE_CLUTCHES -> {
                 if (!modify) error = locked();
                 else {

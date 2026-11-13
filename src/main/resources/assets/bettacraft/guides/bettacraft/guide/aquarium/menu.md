@@ -35,7 +35,7 @@ buttons to take it out with a bucket or a fish bag. A dwarf clawed frog shows it
 The button **Small animals** switches to the [shrimp, crayfish and snails](../invertebrates.md): every kind (species
 and colour) with its count, sexes, young, females with eggs and grade; for the whole aquarium the stocking, the algae
 on the glass, how much the cleaning crew grazes, the food and the hiding spots. **Into bag** takes the animal with the
-best grade into a fish bag (Shift: the worst), **Clutches off** takes the apple snail clutches off the glass.
+best grade into a fish bag (Shift: the worst, Ctrl: a full bag of 16), **Clutches off** takes the apple snail clutches off the glass.
 
 ![The small animals page](../images/menu_critters.png)
 

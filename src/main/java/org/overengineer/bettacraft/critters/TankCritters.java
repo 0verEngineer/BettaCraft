@@ -220,8 +220,11 @@ public final class TankCritters {
         int adults = 0;
         for (BettaEntity b : bettas) if (b.isAdult()) adults++;
         boolean dry = t.waterMb() <= 0;
+        // breeding stops at the limit of the tank, and when the stocking (fish + small animals) is at the hard cap
+        int cap = maxPerTank();
+        if (TankInhabitants.stocking(level, t) >= TankInhabitants.hardCap(t.waterBlocks()) - 1e-6) cap = Math.min(cap, alive(t));
         CritterLife.Env env = new CritterLife.Env(dry ? 0F : t.waterQuality(), TankWater.qualityEnabled() || dry, t.waterTemp(), adults,
-                hiding(level, t), maxPerTank(), breeding(), Double.isFinite(terrain.airTop()),
+                hiding(level, t), cap, breeding(), Double.isFinite(terrain.airTop()),
                 ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true));
         double[] pool = {t.critterFood()};
         CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, rnd, t::nextCritterId);
@@ -428,6 +431,21 @@ public final class TankCritters {
      */
     @Nullable
     public static Component takeOut(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst) {
+        return takeOut(level, c, player, group, worst, 1);
+    }
+
+    /** As {@link #takeOut(ServerLevel, TankBlockEntity, Player, String, boolean)} up to {@code count} animals (a full bag). */
+    @Nullable
+    public static Component takeOut(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst, int count) {
+        for (int i = 0; i < Math.max(1, count); i++) {
+            Component e = takeOne(level, c, player, group, worst);
+            if (e != null) return i == 0 ? e : null; // the first one failed: say why; later ones: the bag is full or none left
+        }
+        return null;
+    }
+
+    @Nullable
+    private static Component takeOne(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst) {
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) return Component.translatable("message.bettacraft.tank.locked");
         Critter best = null;

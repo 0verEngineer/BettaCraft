@@ -36,7 +36,7 @@ Futter und Luft.
 Der Knopf **Kleintiere** wechselt zu den [Garnelen, Krebsen und Schnecken](../invertebrates.md): jede Sorte (Art und
 Farbe) mit Anzahl, Geschlechtern, Jungtieren, Weibchen mit Eiern und Güte; für das ganze Aquarium der Besatz, die Algen
 am Glas, wie viel die Putzkolonne frisst, das Futter und die Verstecke. **In Tüte** holt das Tier mit der besten Güte in
-eine Fischtüte (Umschalt: das schlechteste), **Gelege weg** nimmt die Gelege der Apfelschnecken vom Glas.
+eine Fischtüte (Umschalt: das schlechteste, Strg: eine volle Tüte mit 16), **Gelege weg** nimmt die Gelege der Apfelschnecken vom Glas.
 
 ![Die Seite Kleintiere](../images/menu_critters.png)
 

@@ -190,8 +190,11 @@ public final class CritterGameTests {
     public static void neritesNeverAppleClutchAboveTheWater(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 2, 2, 3, 2, 2, 12000);
         for (int i = 0; i < 6; i++) add(h, c, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, i % 2 == 0);
-        add(h, c, CritterSpecies.APPLE_SNAIL, CritterGenes.pure(0, 0.4F), true);
+        Critter mother = add(h, c, CritterSpecies.APPLE_SNAIL, CritterGenes.pure(0, 0.4F), true);
         add(h, c, CritterSpecies.APPLE_SNAIL, CritterGenes.pure(0, 0.4F), false);
+        // ready to lay (the chance per day to get there is unit-tested): she has to find the glass and climb above the water
+        mother.eggs = 0;
+        mother.father = CritterGenes.pure(0, 0.4F);
         TankData t = c.getTank();
         h.assertTrue(TankFrogs.hasAir(t), "the default air gap is there");
         // the nerites go up the glass (a few minutes of walking)
@@ -384,6 +387,15 @@ public final class CritterGameTests {
             h.assertTrue(err != null, "the tank is full of shrimp: no betta fits");
             var err2 = TankCritters.insert(level, c, new ArrayList<>(List.of(adultTag(CritterSpecies.NEOCARIDINA))), null, 0L);
             h.assertTrue(err2 != null, "no more adult shrimp either");
+            // at the hard cap the colony stops breeding
+            int before = c.getTank().critters().size();
+            for (int i = 0; i < 5 * 24; i++) {
+                c.getTank().setCritterFood(50);
+                c.getTank().setWaterTemp(25F);
+                TankCritters.step(level, c, 1.0 / 24);
+            }
+            h.assertTrue(!logged(c.getTank(), "log.bettacraft.critters_born"), "no young at the hard cap");
+            h.assertTrue(c.getTank().critters().size() <= before, "not more animals");
             ServerConfig.STOCKING_SHRIMP_PER_FISH.set(25);
             h.assertTrue(TankCritters.insert(level, c, new ArrayList<>(List.of(adultTag(CritterSpecies.NEOCARIDINA))), null, 0L) == null, "with 25 per fish it fits");
         } finally {
@@ -445,6 +457,11 @@ public final class CritterGameTests {
         h.assertTrue(count(t, CritterSpecies.NEOCARIDINA) == 1, "the net caught one: " + count(t, CritterSpecies.NEOCARIDINA) + " left");
         List<CompoundTag> after = sp.getInventory().items.stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull).findFirst().orElse(null);
         h.assertTrue(after != null && after.size() == 2, "into the same bag (same species)");
+        // Ctrl in the menu: a full bag at once (here the last one)
+        h.assertTrue(TankCritters.takeOut(level, c, sp, "neocaridina:" + t.critters().getFirst().genes.variety(CritterSpecies.NEOCARIDINA), false,
+                TankCritters.MAX_PER_BAG) == null, "bulk take-out");
+        h.assertTrue(count(t, CritterSpecies.NEOCARIDINA) == 0, "all out");
+        h.assertTrue(TankInhabitants.breakBlockedReason(level, front).isEmpty(), "an empty tank can be broken again");
         h.succeed();
     }
 
