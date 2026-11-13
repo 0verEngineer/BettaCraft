@@ -55,6 +55,7 @@ navigation:
 | `invertebrates.netCatchChance`, `netCooldownTicks`, `mudSnailChance` | 0.3, 40, 0.08 | catching in open water, snails in mud |
 | `frogs.frogFoodShareWithBettas`, `frogAirMinutes`, `frogStarveDays` | 0.4, 2, 4 | frogs: their share of the food, air under water, days without food until they starve |
 | `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | small animals per fish |
+| `stocking.eggStocking`, `larvaStocking`, `fryStocking`, `juvenileStocking`, `subadultStocking` | 0, 0, 0.02, 0.1, 0.3 | how much of a fish one young animal counts (juvenile also for young animals of other mods and young small animals) |
 | `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | algae on the glass (0 = none), how much the crew grazes |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
@@ -64,8 +65,9 @@ AUTO, KELP or PLASTIC). The **client config** has the animation and miniature di
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
 (`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none), the size of the name sign
 (`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks), the distance up to which the name sign, nest,
-floating plants, small animals and algae are drawn (`render.tankDetailDistance`, 48) and the leave hint in the interior
-(`hud.interiorLeaveHint`).
+floating plants, small animals and algae are drawn (`render.tankDetailDistance`, 48), how strongly coloured lights tint
+the water (`render.lightTint`, 0 to 1, default 0.6; 0 = the colour only shows at the lamp) and the leave hint in the
+interior (`hud.interiorLeaveHint`).
 
 ## This handbook
 

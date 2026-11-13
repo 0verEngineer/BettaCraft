@@ -25,3 +25,25 @@ Das <ItemLink id="bettacraft:tank_light" /> leuchtet mit Lichtstufe 15.
 * Es ist standardmäßig an. Ein **Redstone-Signal** an irgendeinem Teil der Leiste schaltet die ganze Leiste aus, zum
   Beispiel mit einem Tageslichtsensor.
 * Das Aquarium-Menü zeigt, wie viele Lichter an sind („Licht: 4/4 an“).
+
+## Farben
+
+![Aquarien unter Lichtern in sechs Farben bei Nacht](../images/light_colors.png)
+
+Das Licht gibt es in den **16 Farbstoff-Farben**. Weiß ist das Licht wie bisher (Lichter älterer Welten bleiben weiß).
+
+* **Rechtsklick mit einem Farbstoff** auf ein Licht: Die ganze Leiste nimmt die Farbe an, für einen einzigen Farbstoff.
+* Oder herstellen: ein Licht (beliebige Farbe) mit einem Farbstoff, oder acht Lichter um einen Farbstoff. Weißer
+  Farbstoff macht es wieder weiß.
+* Die Farbe **tönt das Wasser** des Aquariums darunter (mehrere Farben auf einem Aquarium mischen sich, weiße machen sie
+  blasser), und das Leuchtfeld der Lampe strahlt in ihr. Schwarz gibt ein violettes „Schwarzlicht“.
+* Die Farbe ist **nur Optik**: Die Lichtstufe bleibt 15, Pflanzen, die Rote Wurzelflosse und die Algen bekommen genau
+  so viel Licht wie unter einer weißen Lampe.
+* Wie stark das Wasser getönt wird, ist eine Client-Einstellung (`render.lightTint`, 0 bis 1, Standard 0,6).
+* Mit einem **Shaderpack** (Iris) bleibt das Wasser getönt. Packs mit farbigem Blocklicht (Complementary: Option
+  „Colored Lighting“) geben auch dem Licht der Lampe ihre Farbe; die Lampe nimmt dafür die Lichtfarbe der brennenden
+  Kerze gleicher Farbe.
+
+![Mit Complementary und der Option „Colored Lighting“](../images/light_shader.png)
+
+![Die 16 Lichter](../images/light_items.png)

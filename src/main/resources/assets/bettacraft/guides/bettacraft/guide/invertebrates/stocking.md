@@ -18,7 +18,8 @@ water block fit in (`tank.overcrowdedPerWaterBlock`, `tank.hardCapPerWaterBlock`
 | dwarf crayfish | 12 | `stocking.crayfishPerFish` |
 | dwarf clawed frogs | 1 | `stocking.frogsPerFish` |
 
-* Only adults count, like the bettas; the young do not.
+* The young count at the share of a juvenile betta (`stocking.juvenileStocking`, 0.1) of that: 25 young shrimp are
+  a tenth of a fish. Young bettas: see [Inhabitants](../aquarium/inhabitants.md).
 * The water gets their waste too (in the same fractions, young at half).
 * Independent of the stocking a tank holds at most 200 shrimp, crayfish and snails (`invertebrates.maxCrittersPerTank`);
   there they stop breeding. They also stop when the whole stocking (fish and small animals) reaches the hard cap.

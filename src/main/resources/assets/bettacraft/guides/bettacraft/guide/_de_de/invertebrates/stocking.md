@@ -19,7 +19,8 @@ zählen anteilig:
 | Zwergkrebse | 12 | `stocking.crayfishPerFish` |
 | Zwergkrallenfrösche | 1 | `stocking.frogsPerFish` |
 
-* Es zählen nur Erwachsene, wie bei den Bettas; Jungtiere nicht.
+* Jungtiere zählen mit dem Anteil eines juvenilen Bettas (`stocking.juvenileStocking`, 0,1) davon: 25 junge Garnelen
+  sind ein Zehntel Fisch. Junge Bettas: siehe [Bewohner](../aquarium/inhabitants.md).
 * Auch ihr Abfall belastet das Wasser (im selben Verhältnis, Jungtiere zur Hälfte).
 * Unabhängig vom Besatz hält ein Becken höchstens 200 Garnelen, Krebse und Schnecken
   (`invertebrates.maxCrittersPerTank`); dort hört die Vermehrung auf. Sie hört auch auf, wenn der ganze Besatz (Fische

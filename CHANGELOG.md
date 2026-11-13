@@ -4,6 +4,29 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.10.0-beta.1] - 2026-11-14
+
+Young fish in the stocking and coloured aquarium lights.
+
+### Added
+- **Coloured aquarium lights:** the light comes in the 16 dye colours. Right-click a light with a dye to colour the
+  whole bar (one dye), or craft a light with a dye (eight lights around a dye give eight). The colour tints the water
+  of the aquarium under it (several colours mix, white makes it paler) and the panel glows in it; black is a violet
+  "black light". Optics only: the light level stays 15 and plants, the red root floater and algae get the same light.
+  Lights drop and pick-block in their colour. How strongly the water is tinted is a client setting
+  (`render.lightTint`, 0.6). With a shader pack (Iris) the water stays tinted, and packs with coloured block light
+  (Complementary "Colored Lighting") light the surroundings in the colour of the lamp.
+- **Young animals count in fractions for the stocking:** fry 0.02, juveniles 0.1, subadults 0.3 of a fish, eggs and
+  larvae 0 (server settings `stocking.eggStocking`, `larvaStocking`, `fryStocking`, `juvenileStocking`,
+  `subadultStocking`). Young animals of other mods count like a juvenile, young shrimp, crayfish and snails at the
+  juvenile share of their own share. Hover over the animals line of the menu overview for the parts; the animals tab
+  shows how much each young betta counts.
+
+### Changed
+- A juvenile or fry no longer fits into an aquarium that is full (at `tank.hardCapPerWaterBlock`). Only adults get
+  stressed by overcrowding, as before.
+- Existing lights stay white; nothing to convert.
+
 ## [1.9.0-beta.1] - 2026-11-14
 
 Hardening release: a review of the whole code, with a test for every bug found.

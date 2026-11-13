@@ -32,12 +32,29 @@ breed. Small water animals that get into the aquarium without a bucket (spawn eg
 
 ## Stocking
 
-Only **adult** animals count. Eggs, larvae, fry, juveniles and subadults do not.
+The stocking counts **fish**. Adults count fully, the young only a little (they are small and eat little):
+
+| Stage | counts as | Config |
+|---|---|---|
+| egg, larva (in the nest) | 0 | `stocking.eggStocking`, `larvaStocking` |
+| fry | 0.02 | `stocking.fryStocking` |
+| juvenile | 0.1 | `stocking.juvenileStocking` |
+| subadult | 0.3 | `stocking.subadultStocking` |
+| adult | 1 | |
+
+A clutch of 20 young bettas is therefore 0.4 fish as fry, 2 fish as juveniles and 6 as subadults: a big brood needs a
+bigger aquarium as it grows. Young animals of other mods (a baby axolotl) count like a juvenile, small animals have
+their own shares ([Stocking of the small animals](../invertebrates/stocking.md)). Hover over the animals line of the
+[menu](menu.md) overview to see the parts; the *Animals* tab shows for each young betta how much it counts (hover over
+its stage).
+
+![The parts of the stocking in the menu: adults, young, small animals](../images/menu_stocking.png)
 
 * One adult per water block is fine.
 * From **2 adults per water block** the aquarium is overcrowded: the bettas get stressed and eventually sick
   (see [Health](../bettas/health.md)). The menu shows "Overcrowded!".
-* At most **6 adults per water block** fit in at all.
+* At most **6 fish per water block** fit in at all (young in their fractions: no juvenile fits into a full aquarium).
+  Only adults get stressed by overcrowding.
 * An aquarium holds at most 64 animals in total, young ones included (`tank.maxEntities`).
 
 ## Predators

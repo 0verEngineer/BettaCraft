@@ -35,12 +35,29 @@ ebenfalls übernommen.
 
 ## Besatz
 
-Nur **adulte** Tiere zählen. Eier, Larven, Jungfische, Juvenile und Subadulte nicht.
+Der Besatz zählt **Fische**. Adulte zählen voll, Jungtiere nur wenig (sie sind klein und fressen wenig):
+
+| Stufe | zählt als | Config |
+|---|---|---|
+| Ei, Larve (im Nest) | 0 | `stocking.eggStocking`, `larvaStocking` |
+| Jungfisch | 0,02 | `stocking.fryStocking` |
+| Juvenil | 0,1 | `stocking.juvenileStocking` |
+| Subadult | 0,3 | `stocking.subadultStocking` |
+| Adult | 1 | |
+
+Ein Gelege von 20 jungen Bettas sind als Jungfische also 0,4 Fische, als Juvenile 2 und als Subadulte 6: Eine große
+Brut braucht beim Wachsen ein größeres Aquarium. Jungtiere anderer Mods (ein Axolotl-Baby) zählen wie ein Juveniler,
+Kleintiere haben eigene Anteile ([Besatz der Kleintiere](../invertebrates/stocking.md)). Fahre in der Übersicht des
+[Menüs](menu.md) über die Tiere-Zeile, dann siehst du die Anteile; der Tab *Tiere* zeigt für jeden jungen Betta, wie
+viel er zählt (über seine Stufe fahren).
+
+![Die Anteile des Besatzes im Menü: Erwachsene, Jungtiere, Kleintiere](../images/menu_stocking.png)
 
 * Ein Adulter pro Wasserblock ist in Ordnung.
 * Ab **2 Adulten pro Wasserblock** ist das Aquarium überbesetzt: Die Bettas geraten in Stress und werden irgendwann krank
   (siehe [Gesundheit](../bettas/health.md)). Das Menü zeigt „Überbesetzt!“.
-* Höchstens **6 Adulte pro Wasserblock** passen überhaupt hinein.
+* Höchstens **6 Fische pro Wasserblock** passen überhaupt hinein (Jungtiere anteilig: in ein volles Aquarium passt kein
+  Juveniler mehr). Unter Überbesatz leiden nur die Adulten.
 * Ein Aquarium fasst insgesamt höchstens 64 Tiere, Jungtiere eingerechnet (`tank.maxEntities`).
 
 ## Raubfische

@@ -22,8 +22,8 @@ block.
   bucket by bucket from the bottom, rendered clear and without biome tint, also with Sodium and Iris. The animals are
   real entities, so frogs, axolotls and the fish of other mods keep their own behaviour.
 - **Care:** water temperature from the biome and the time of day, heaters and coolers in three sizes, health with
-  hunger, temperature, overcrowding and water quality stress, sickness and recovery; a tank log tells you what
-  happened.
+  hunger, temperature, overcrowding (young fish count in fractions) and water quality stress, sickness and recovery;
+  a tank log tells you what happened.
 - **Water quality and evaporation:** waste of the animals and overfeeding foul the water, filters keep it clean,
   water changes with buckets (or pipes) bring it back; open aquariums slowly evaporate, a lid stops that.
 - **Floating plants:** duckweed, Amazon frogbit, salvinia and the red root floater drift on the water surface of an
@@ -62,7 +62,7 @@ block.
   break the aquarium while someone is inside. Leave by sneaking and looking up (a small hint shows how).
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood (they hold the
   external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below) and a
-  connecting light bar that redstone switches off.
+  connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting) and a lock for the owner.
 - **Handbook and progression:** 42 handbook pages in English and German (with GuideME) and 29 advancements.
@@ -114,7 +114,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 |---|---|
 | `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, stocking, algae, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
-| `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, interior leave hint, filter sound |
+| `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
 Config). By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
