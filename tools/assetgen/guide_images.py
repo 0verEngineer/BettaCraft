@@ -269,6 +269,19 @@ def m20(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M21 scene (DevClientSmokeM21, -Psmoketestm21): the plant prototype inside the interior. ``py guide_images.py m21``.
+M21_WORLD = {"plants_mesh": ("bettacraft_m21_plants_new_wide", (0, 60, 1280, 900))}
+
+
+def m21(out_en: Path) -> None:
+    for name, (shot, box) in M21_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box).resize((960, 630), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -283,6 +296,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m21"]:
+        m21(out_en)
+        return 0
     if sys.argv[1:] == ["m12"]:
         m12(out_en, out_de)
         return 0

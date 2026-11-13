@@ -68,6 +68,10 @@ block.
   front of it. No aquarium can be placed inside an aquarium's interior.
 - **Fights and predators:** two adult males fight (they flare at each other first, or at a mirror stick), pufferfish,
   axolotls and the predators of other mods hunt small fish.
+- **Path finding:** frogs walk around the interior decoration, small animals go under overhangs and into caves,
+  plecos swim into their spawning cave (`features.interiorPathfinding`).
+- **New plant look (prototype):** Rotala, Vallisneria and Anubias with real leaves that sway in the water inside the
+  interior (`features.plantMeshes`).
 - **Interior:** sneak and right-click an aquarium with an empty hand to step inside a void dimension at 16 blocks per
   tank block (4 or 8 configurable) and build with any block. The result is shown in the aquarium as a miniature.
   Floor textures (substrate), decoration structures (castle, shipwreck, skull, volcano, driftwood, cave, ...),
@@ -98,7 +102,7 @@ No other mod is required.
 |---|---|
 | [GuideME](https://modrinth.com/mod/guideme) | the in-game handbook (given once per player, see `guide.giveBook`) |
 | [JEI](https://modrinth.com/mod/jei) | information pages for every Bettacraft item |
-| [Jade](https://modrinth.com/mod/jade), [The One Probe](https://modrinth.com/mod/the-one-probe), [WTHIT](https://modrinth.com/mod/wthit) | aquarium (name, glass and style, temperature, water, animals, nest, filters, warnings), betta behind the glass (type, sex, health, hunger, stage, genes), filter and cabinet. Sneak for details; The One Probe needs its probe for the extended view. |
+| [Jade](https://modrinth.com/mod/jade), [The One Probe](https://modrinth.com/mod/the-one-probe), [WTHIT](https://modrinth.com/mod/wthit) | aquarium (name, glass and style, temperature, water, animals, nest, filters, warnings), betta behind the glass (type, sex, health, hunger, stage, genes), filter and cabinet. Sneak for details; The One Probe needs its probe for the extended view.; with several overlay mods only the first shows them, see `compat.overlayProvider` |
 | Better Fish Tanks | its fish bag puts animals into and takes them out of Bettacraft aquariums; bettas live in its tanks |
 | [Fintastic](https://modrinth.com/mod/fintastic) | fish and fishnet in both directions, live prey, fish food, water plants in the interior |
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
@@ -126,7 +130,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 | File | Content |
 |---|---|
 | `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
-| `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
+| `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`), feature switches (`features.*`) |
 | `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >

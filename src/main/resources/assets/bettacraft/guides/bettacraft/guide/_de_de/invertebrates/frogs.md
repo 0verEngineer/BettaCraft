@@ -14,7 +14,8 @@ item_ids:
 ![Ein Zwergkrallenfrosch holt an der Oberfläche Luft](../images/critters_frog.png)
 
 Der Afrikanische Zwergkrallenfrosch (*Hymenochirus*, etwa 3,5 cm) ist wie die Bettas ein echtes Tier im Becken. Er läuft
-und paddelt am Grund und schwimmt etwa alle zwei Minuten **zum Luftholen an die Oberfläche**.
+und paddelt am Grund und schwimmt etwa alle zwei Minuten **zum Luftholen an die Oberfläche**. Er findet seinen Weg um
+die Deko des Innenraums herum (Steine, Wurzeln, Pflanzen, Höhlen), statt durch sie hindurchzulaufen.
 
 ## Luft
 

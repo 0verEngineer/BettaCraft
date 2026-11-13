@@ -14,7 +14,8 @@ item_ids:
 ![A dwarf clawed frog breathing at the surface](../images/critters_frog.png)
 
 The African dwarf clawed frog (*Hymenochirus*, about 3.5 cm) is a real animal in the tank like the bettas. It walks and
-paddles along the bottom and every two minutes or so swims up to **breathe at the surface**.
+paddles along the bottom and every two minutes or so swims up to **breathe at the surface**. It finds its way around
+the decoration of the interior (rocks, roots, plants, caves) instead of walking through it.
 
 ## Air
 

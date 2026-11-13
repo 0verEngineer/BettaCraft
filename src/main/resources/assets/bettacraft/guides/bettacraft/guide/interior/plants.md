@@ -103,6 +103,16 @@ There are no crafting recipes. Find plants in the world, then grow your own:
   faster (1.1x).
 * Bettas swim around the plants like around decoration.
 
+## New look (prototype)
+
+**Rotala**, **Vallisneria** and **Anubias** have a new look inside the interior: real round, ribbon-shaped and broad
+leaves instead of leaf blocks; Rotala and Vallisneria sway in the water like kelp. The blocks are still there (you can
+cut them with shears and break them as before), they are only drawn differently; the miniature outside the aquarium
+keeps the block look so the plants stay visible there. `features.plantMeshes` in the common config switches back to the
+old look.
+
+![Rotala, Vallisneria and Anubias with the new look](../images/plants_mesh.png)
+
 All values can be changed in the server config (`interiorPlants.*`): growth speed (0 = no growth), waste uptake,
 breeding bonus, hiding spots, most plants per aquarium, side shoots and runners, the chances of fishing, swamp water
 and moss.

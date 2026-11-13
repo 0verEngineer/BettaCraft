@@ -4,6 +4,37 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.13.0-beta.1] - 2026-11-14
+
+Fixes, path finding in the interior, glass fish buckets and a first look at real plant leaves.
+
+### Added
+- **Path finding in the interior**: dwarf clawed frogs find their way around the decoration (rocks, roots, plants,
+  caves) instead of walking through it; shrimp, crayfish and snails walk under overhangs and into caves of the
+  decoration and back out; a pleco male swims through the mouth into his spawning cave instead of stopping at it. A*
+  on the interior blocks in cells of two tank pixels. Switch: `features.interiorPathfinding` (common config).
+- **New plant look (prototype)**: Rotala, Vallisneria and Anubias are drawn with real leaves inside the interior (round
+  leaves on thin stems, long ribbons, broad oval leaves on a rhizome); Rotala and Vallisneria sway in the water like
+  kelp. The blocks of the plant stay (shears, breaking, growth and the miniature work as before), the miniature keeps
+  the block look. Works with Sodium and Iris shader packs. Switch: `features.plantMeshes` (common config).
+- **Config `compat.overlayProvider`** (common config): AUTO (default) gives the Bettacraft lines only to the first
+  installed overlay mod of Jade, WTHIT and The One Probe, JADE / TOP / WTHIT pick one, ALL shows them in every one.
+- **Showcase world** for development: `gradlew buildShowcase` builds the world "Bettacraft Schaukasten" with every
+  betta variety, tankmate, small animal, plant, floating plant, coral, reef animal, decoration, the equipment, the 16
+  light colours, the glass types and shapes, a reef and a brackish tank, all with signs; `gradlew runClient
+  -Pshowcasetour` takes screenshots of it.
+
+### Changed
+- **Fish bucket icons**: the fish now swims in a glass bucket of water (smaller, fully inside, with a water line and a
+  reflection) instead of sticking out of an iron bucket; also the tankmate and frog buckets.
+
+### Fixed
+- With two overlay mods (e.g. Jade and The One Probe) every aquarium, filter and betta was shown twice.
+
+### Development
+- The dev client starts with Jade only; The One Probe and WTHIT come with `-Ptop` / `-Pwthit` (`-PnoTop` and
+  `-PnoWthit` still work). The CI server smoke test runs with both.
+
 ## [1.12.0-beta.1] - 2026-11-14
 
 Reef tanks: salt water, corals and the animals of the coral reef.

@@ -109,6 +109,8 @@ public final class BettaCraftClient {
         });
         if (Boolean.getBoolean("bettacraft.smoketest.world")) {
             DevClientSmokeTest.register();
+        } else if (Boolean.getBoolean("bettacraft.showcase.tour")) {
+            DevClientShowcaseTour.register(); // M21: gradlew runClient -Pshowcasetour: screenshots of the showcase world
         } else if (Boolean.getBoolean("bettacraft.smoketest.mp")) {
             DevClientSmokeMP.register(); // gradlew runMultiplayerTest: joins the dedicated test server as Dev1 / Dev2
         } else if (Boolean.getBoolean("bettacraft.smoketest")) {

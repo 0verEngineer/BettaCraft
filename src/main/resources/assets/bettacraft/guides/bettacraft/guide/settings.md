@@ -71,7 +71,11 @@ navigation:
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 
 The **common config** sets the spawn weight and group size of wild bettas and the fish bag recipe (`recipes.fishBag`:
-AUTO, KELP or PLASTIC). The **client config** has the animation and miniature distances, the water surface glitter,
+AUTO, KELP or PLASTIC), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`: AUTO = only the first
+installed one of Jade, WTHIT and The One Probe, so two overlay mods do not show every aquarium twice; JADE, TOP, WTHIT or
+ALL) and switches for single features (`features.*`): `interiorPathfinding` (frogs walk around the decoration, small
+animals go under overhangs and into caves, plecos swim into their spawning cave; off = straight lines) and `plantMeshes`
+(the new look of Rotala, Vallisneria and Anubias in the interior, a prototype; off = the leaf blocks). The **client config** has the animation and miniature distances, the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
 (`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none), the size of the name sign
 (`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks), the distance up to which the name sign, nest,
@@ -94,7 +98,7 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 
 ## Other mods
 
-* **Jade, The One Probe and WTHIT:** looking at an aquarium shows its name, temperature, water and animals (sneak for
+* **Jade, The One Probe and WTHIT:** (with several of them only the first one, see `compat.overlayProvider`) looking at an aquarium shows its name, temperature, water and animals (sneak for
   the list; The One Probe needs its probe for that), the nest, filters and warnings; looking at a betta through the
   glass shows its type, sex, health, hunger, stage and genes. Filters and cabinets show their heaters and coolers and
   the aquarium they pump into; aquariums show the water quality and the stored power, larva tubs and hatcheries their

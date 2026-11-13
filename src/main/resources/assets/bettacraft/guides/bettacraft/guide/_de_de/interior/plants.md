@@ -107,6 +107,16 @@ Rezepte gibt es keine. Man findet Pflanzen in der Welt und zieht dann selbst nac
   nestbereit (1,1-fach).
 * Bettas schwimmen um die Pflanzen herum wie um Deko.
 
+## Neue Optik (Prototyp)
+
+**Rotala**, **Vallisneria** und **Anubias** sehen im Innenraum neu aus: echte runde, bandförmige und breite Blätter
+statt Blattblöcken; Rotala und Vallisneria wiegen sich im Wasser wie Seetang. Die Blöcke sind weiter da (du kannst sie
+mit der Schere schneiden und abbauen wie bisher), sie werden nur anders gezeichnet; die Miniatur außen am Aquarium
+behält die Block-Optik, damit die Pflanzen dort sichtbar bleiben. `features.plantMeshes` in der Common-Config schaltet
+zur alten Optik zurück.
+
+![Rotala, Vallisneria und Anubias in der neuen Optik](../images/plants_mesh.png)
+
 Alle Werte lassen sich in der Server-Config ändern (`interiorPlants.*`): Wachstumstempo (0 = kein Wachstum),
 Abfallaufnahme, Zuchtbonus, Verstecke, höchstens Pflanzen pro Aquarium, Seitentriebe und Ausläufer, die Chancen beim
 Angeln, im Sumpfwasser und am Moos.
