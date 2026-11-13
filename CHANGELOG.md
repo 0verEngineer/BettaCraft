@@ -4,6 +4,40 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.5.0-beta.1] - 2026-11-13
+
+### Added
+- **Aquarium plants** for the interior of an aquarium, 17 of them: Java fern, Anubias nana, Bucephalandra "Green Wavy",
+  "Brownie Red" (red), "Blue" (bluish) and "Mini Needle", Java moss, Cryptocoryne wendtii green and brown,
+  Cryptocoryne "Flamingo" (whitish pink), Amazon sword, Rotala rotundifolia (red tips), Ludwigia repens (red),
+  Alternanthera reineckii (deep red), Vallisneria, Monte Carlo and the red tiger lotus.
+- Plant a **cutting** (smaller than a block) inside the interior: epiphytes on stone and wood (also the decoration),
+  Java moss on any solid block, the others on substrate (the floor with a substrate, sand, gravel, dirt, mud, clay).
+  Over the days it grows into a plant of **many blocks** (fronds, leaves, stems, ribbons, a carpet, floating leaves),
+  each plant a little different. Buceps take about 20 days to full size, the Java fern 12, stem plants and
+  Vallisneria 2-3 days.
+- Plants grow with light at the surface, the waste in the water as nutrients and 20-30 °C, **also while nobody is in
+  the interior**: the aquarium keeps track of every plant and writes the blocks of a new stage when it is due, the
+  miniature follows (also for other players in multiplayer). Red plants get redder in strong light; the Flamingo
+  crypt gets brighter and pinker.
+- Stem plants grow up to the surface and run along it, form side shoots; Vallisneria, Monte Carlo and the crypts
+  send out runners; the tiger lotus sends floating leaves up. Plants at the surface shade the aquarium together with
+  dense floating plants (warning in the menu).
+- **Shears** trim a plant inside the interior, or **from outside on the glass**: the plant you look at in the
+  miniature; you get cuttings. Breaking a rhizome piece divides an epiphyte, breaking the root takes the whole plant
+  out (the item keeps its size). Plants follow when aquariums are joined or split and drop when their block is broken.
+- Plants take up waste while they have light, are **hiding spots** for the female after spawning (the male chases her
+  less often) and a well planted aquarium makes the male ready a little faster. Bettas swim around them.
+- Getting them: fishing in jungles and rivers (epiphytes; "Blue" and "Brownie Red" rare), fishing in swamps and
+  swamp water bottles (Cryptocoryne, Ludwigia, Rotala), shears on a moss block next to water (Java moss), the
+  wandering trader (sword, Vallisneria, Monte Carlo, Alternanthera; rarely the tiger lotus and the Flamingo crypt).
+- Second page of the **Plants** tab in the tank menu: the aquarium plants per species (in their colour), plant mass,
+  light, growth, waste uptake, hiding spots, breeding bonus and the shade warning.
+- Server settings `interiorPlants.*`, handbook page "Aquarium plants" (English and German), JEI information.
+
+### Changed
+- Interior regions are saved as schema 4 (with an empty plant index for older worlds).
+
 ## [1.4.0-beta.1] - 2026-11-12
 
 ### Added

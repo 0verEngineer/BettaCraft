@@ -308,6 +308,7 @@ public final class AquaticPlantGameTests {
             sp.teleportTo(level, eye.x, eye.y - sp.getEyeHeight(), eye.z, 0F, 0F);
             sp.setYRot(0F);
             sp.setXRot(0F);
+            sp.setYHeadRot(0F); // the view vector of a living entity follows its head
             sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
             BlockPos glass = BlockPos.containing(point.x, point.y, t.min().getZ());
             sp.gameMode.useItemOn(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND,
@@ -318,6 +319,7 @@ public final class AquaticPlantGameTests {
             h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu");
             // looking at an empty part of the tank: nothing happens
             sp.teleportTo(level, t.min().getX() + 0.2, eye.y - sp.getEyeHeight(), eye.z, 0F, 0F);
+            sp.setYHeadRot(0F);
             sp.gameMode.useItemOn(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND,
                     new BlockHitResult(new Vec3(t.min().getX() + 0.2, eye.y, t.min().getZ()), Direction.NORTH, t.min(), false));
             h.assertTrue(p.stage == 4 && !(sp.containerMenu instanceof TankMenu), "empty spot: no trim, no menu");
@@ -439,6 +441,7 @@ public final class AquaticPlantGameTests {
             var table = level.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
             for (String biome : new String[]{"minecraft:jungle", "minecraft:river", "minecraft:swamp", "minecraft:plains"}) {
                 BlockPos at = h.absolutePos(new BlockPos(16, 2, 16));
+                for (int x = at.getX() - 4; x <= at.getX() + 4; x += 4) for (int z = at.getZ() - 4; z <= at.getZ() + 4; z += 4) level.getChunk(x >> 4, z >> 4);
                 var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
                 level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (at.getX() - 4) + " " + (at.getY() - 1) + " " + (at.getZ() - 4) + " "
                         + (at.getX() + 4) + " " + (at.getY() + 4) + " " + (at.getZ() + 4) + " " + biome);
@@ -534,6 +537,8 @@ public final class AquaticPlantGameTests {
     }
 
     private static void fillSwamp(ServerLevel level, BlockPos water) {
+        // fillbiome does nothing when a chunk of the box is not loaded: load them first
+        for (int x = water.getX() - 4; x <= water.getX() + 4; x += 4) for (int z = water.getZ() - 4; z <= water.getZ() + 4; z += 4) level.getChunk(x >> 4, z >> 4);
         var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
         // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells), inside the loaded template
         level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + (water.getY() - 1) + " " + (water.getZ() - 4) + " "

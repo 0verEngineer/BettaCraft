@@ -67,6 +67,34 @@ def m12(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M13 scene (DevClientSmokeM13, -Psmoketestm13 -PnoTop -PnoWthit): the planted tank, inside it, red plants in strong and
+# weak light (side by side). ``py guide_images.py m13`` crops only these.
+M13_WORLD = {"aquatic_plants": ("bettacraft_m13_overview", (240, 330, 1045, 690)),
+             "aquatic_plants_interior": ("bettacraft_m13_interior", (0, 100, 1280, 900))}
+
+
+def m13(out_en: Path) -> None:
+    for name, (shot, box) in M13_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    strong, weak = SHOTS / "bettacraft_m13_stems.png", SHOTS / "bettacraft_m13_weak_light.png"
+    if strong.exists() and weak.exists():
+        a = Image.open(strong).convert("RGB").crop((370, 290, 1280, 800))
+        b = Image.open(weak).convert("RGB").crop((230, 370, 1060, 640))
+        h = 360
+        a = a.resize((round(a.width * h / a.height), h), Image.LANCZOS)
+        b = b.resize((round(b.width * h / b.height), h), Image.LANCZOS)
+        im = Image.new("RGB", (a.width + b.width + 8, h), (24, 24, 24))
+        im.paste(a, (0, 0))
+        im.paste(b, (a.width + 8, 0))
+        save(im, out_en / "aquatic_plants_red.png")
+    else:
+        print("missing", strong, weak)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -83,6 +111,9 @@ def main() -> int:
     out_de.mkdir(parents=True, exist_ok=True)
     if sys.argv[1:] == ["m12"]:
         m12(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m13"]:
+        m13(out_en)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"
@@ -116,6 +147,7 @@ def main() -> int:
         else:
             print("missing", src)
     m12(out_en, out_de)
+    m13(out_en)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

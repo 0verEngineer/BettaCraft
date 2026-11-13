@@ -649,6 +649,8 @@ public final class PlantGameTests {
     }
 
     private static void fillSwamp(ServerLevel level, BlockPos water) {
+        // fillbiome does nothing when a chunk of the box is not loaded: load them first
+        for (int x = water.getX() - 4; x <= water.getX() + 4; x += 4) for (int z = water.getZ() - 4; z <= water.getZ() + 4; z += 4) level.getChunk(x >> 4, z >> 4);
         var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
         // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells), inside the loaded template
         level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + (water.getY() - 1) + " " + (water.getZ() - 4) + " "

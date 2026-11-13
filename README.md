@@ -30,6 +30,13 @@ block.
   aquarium (lily pads stay put). With light and nutrients they grow, put out offshoots and take up waste; the red root
   floater turns red under strong light; the male builds his nest under them. Found in swamp water bottles, by fishing
   in swamps and from the wandering trader; an empty hand or the aquarium net take them out again.
+- **Aquarium plants:** 17 plants for the interior (Java fern, Anubias, four Bucephalandras, Java moss, Cryptocorynes
+  incl. the pink "Flamingo", Amazon sword, Rotala, Ludwigia, Alternanthera, Vallisneria, Monte Carlo, red tiger lotus).
+  A cutting smaller than a block grows over the days into a plant of many blocks, also while nobody is inside, and the
+  miniature grows along; red plants get redder in strong light. Trim with shears (inside or from outside on the
+  glass), divide rhizomes, take plants out by their root. They clean the water, hide the female after spawning and
+  give a small breeding bonus. Found by fishing in jungles, rivers and swamps, in swamp water, on moss next to water
+  and from the wandering trader.
 - **Power (optional):** a server can make heaters, coolers, filters and lights need Forge Energy from any FE mod.
 - **Live food breeding:** a larva tub for mosquito larvae and an artemia hatchery for nauplii, both with hoppers.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
@@ -92,7 +99,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, water quality, floating plants, evaporation, power, food breeding, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, health timers, temperature, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
 | `config/bettacraft-client.toml` | animation and miniature distances, water surface animation, filter sound |
 
@@ -105,8 +112,9 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 - **Tags:** `#bettacraft:betta_spawn_biomes`, `#bettacraft:salt_water_biomes` (biomes); `#bettacraft:tank_inhabitants`,
   `#bettacraft:tank_blacklist`, `#bettacraft:predators`, `#bettacraft:betta_prey` (entity types);
   `#bettacraft:betta_food`, `#bettacraft:live_food`, `#bettacraft:fry_food`, `#bettacraft:fry_food_start`,
-  `#bettacraft:pellet_fish`, `#bettacraft:plastic_sheets` (items); `#bettacraft:floating_plants`,
-  `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand` (blocks).
+  `#bettacraft:pellet_fish`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
+  `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
+  `#bettacraft:plant_substrate` (blocks).
 - **Datapacks:** `data/<namespace>/bettacraft/colors/*.json`, `.../genes/<locus>.json` and `.../varieties/*.json`
   add or change colours, allele ranks and frequencies, and named varieties.
 - **Commands:** `/bettacraft interior leave` for everyone; operators: `/bettacraft interior resync` and
