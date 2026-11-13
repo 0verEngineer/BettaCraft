@@ -115,9 +115,11 @@ public class TankMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         if (controller == null) return true;
         if (controller.isRemoved() || !controller.isController() || controller.getTank() != tankAtOpen) return false;
+        // M17: level and distance first; looking the controller up in another dimension could load a chunk there
+        if (player.level() != controller.getLevel()) return false;
+        if (!TankInhabitants.tankBox(controller.getTank()).inflate(8).contains(player.position())) return false;
         TankBlockEntity c = TankMultiblock.getController(player.level(), controllerPos);
-        if (c != controller) return false;
-        return TankInhabitants.tankBox(controller.getTank()).inflate(8).contains(player.position());
+        return c == controller;
     }
 
     @Override

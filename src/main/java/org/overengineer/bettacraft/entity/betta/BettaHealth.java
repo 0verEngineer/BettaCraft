@@ -143,15 +143,21 @@ public final class BettaHealth {
         return t;
     }
 
+    /** M17: NaN, infinite or negative days (corrupt data) froze a fish: it never got sick, recovered or died. */
+    static double days(CompoundTag t, String key) {
+        double v = t.getDouble(key);
+        return Double.isFinite(v) ? Math.max(0, v) : 0;
+    }
+
     public static BettaHealth load(CompoundTag t) {
         BettaHealth h = new BettaHealth();
-        h.daysSinceFed = t.getDouble("days_since_fed");
-        h.foodStress = t.getDouble("food_stress");
-        h.tempStress = t.getDouble("temp_stress");
-        h.crowdStress = t.getDouble("crowd_stress");
-        h.waterStress = t.getDouble("water_stress"); // M9; 0 for older fish
+        h.daysSinceFed = days(t, "days_since_fed");
+        h.foodStress = days(t, "food_stress");
+        h.tempStress = days(t, "temp_stress");
+        h.crowdStress = days(t, "crowd_stress");
+        h.waterStress = days(t, "water_stress"); // M9; 0 for older fish
         h.sick = t.getBoolean("sick");
-        h.sickDays = t.getDouble("sick_days");
+        h.sickDays = days(t, "sick_days");
         return h;
     }
 

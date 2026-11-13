@@ -175,4 +175,14 @@ class PlantShapesTest {
         assertEquals(12, PlantSpecies.JAVA_FERN.daysToFull(), 1e-9);
         assertTrue(PlantSpecies.ROTALA.daysToFull() <= 3);
     }
+
+    /** M17 review: shapes are cached; the cached shape equals a fresh one and is the same object the second time. */
+    @Test
+    void cachedShapesEqualFreshOnes() {
+        for (PlantSpecies s : PlantSpecies.values()) {
+            PlantShapes.Shape a = PlantShapes.of(s, 77, 16, 30);
+            assertEquals(PlantShapes.build(s, 77, 16, 30).all(), a.all(), s + " cached = fresh");
+            org.junit.jupiter.api.Assertions.assertSame(a, PlantShapes.of(s, 77, 16, 30), s + " from the cache");
+        }
+    }
 }

@@ -46,6 +46,16 @@ public class TankBlockEntity extends BlockEntity {
     long lastCareTick = -1;
     /** Headroom the fill states were last computed with (transient): recomputed after loading or a config change. */
     int appliedHeadroom = -1;
+    /** M17: ticks after loading until this block checks once that its controller still knows it (orphan repair). */
+    int orphanCheck = 40;
+    /** M17: last critter / floating plant payloads (sent only when they change). */
+    public final SyncGate critterSync = new SyncGate(), plantSync = new SyncGate();
+    /** M17: outer faces of the tank for the equipment scan (outside position and direction), for {@link #equipmentFacesOf}. */
+    long[] equipmentFaces = new long[0];
+    byte[] equipmentFaceDirs = new byte[0];
+    TankData equipmentFacesOf;
+    /** M17: what the clients last got of the nest (see TankBreeding#syncNest). */
+    long nestSignature = Long.MIN_VALUE;
     /** Whether power was needed when the energy capabilities were last announced (transient, null = not yet). */
     Boolean appliedPower;
 

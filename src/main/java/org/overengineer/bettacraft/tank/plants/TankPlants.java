@@ -238,6 +238,7 @@ public final class TankPlants {
     public static void sync(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         byte[] data = FloatingPlantSim.encode(t.plants(), t.min().getX(), t.min().getZ());
+        if (!c.plantSync.changed(data, level.getGameTime())) return; // M17: plants at rest send nothing
         PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(c.getBlockPos()), new TankPlantsPayload(c.getBlockPos(), data));
     }
 

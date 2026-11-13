@@ -439,7 +439,8 @@ public final class TankData {
         if (t.hasUUID("id")) d.id = t.getUUID("id");
         for (long l : t.getLongArray("members")) d.members.add(l);
         d.scale = t.getInt("scale");
-        d.waterMb = t.getLong("water_mb");
+        if (d.scale != 4 && d.scale != 8 && d.scale != 16) d.scale = 16; // M17: corrupt scale
+        d.waterMb = Math.max(0, t.getLong("water_mb"));
         d.regionId = t.contains("region", Tag.TAG_ANY_NUMERIC) ? t.getInt("region") : -1;
         d.owner = t.hasUUID("owner") ? t.getUUID("owner") : null;
         d.waterQuality = t.contains("water_quality", Tag.TAG_ANY_NUMERIC) ? WaterQuality.clamp(t.getFloat("water_quality")) : 1.0F;
@@ -448,7 +449,7 @@ public final class TankData {
         d.powerBuffer = Math.max(0, t.getLong("power"));
         d.lastFreshWater = t.contains("last_fresh_water", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_fresh_water") : -1L;
         d.targetTemp = t.contains("target_temp") ? TankTemperature.clampTarget(t.getFloat("target_temp")) : TankTemperature.DEFAULT_TARGET;
-        d.waterTemp = t.contains("water_temp") ? t.getFloat("water_temp") : d.targetTemp;
+        d.waterTemp = t.contains("water_temp") && Float.isFinite(t.getFloat("water_temp")) ? t.getFloat("water_temp") : d.targetTemp;
         ListTag hl = t.getList("legacy_heaters", Tag.TAG_STRING);
         for (int i = 0; i < Math.min(LEGACY_HEATER_SLOTS, hl.size()); i++) {
             String id = hl.getString(i);
@@ -465,10 +466,16 @@ public final class TankData {
         d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
         d.locked = t.getBoolean("locked");
         ListTag inh = t.getList("inhabitants", Tag.TAG_INT_ARRAY);
-        for (Tag u : inh) d.inhabitants.add(NbtUtils.loadUUID(u));
+        // M17: a malformed UUID threw here, vanilla then dropped the whole block entity and the tank was lost
+        for (Tag u : inh) if (u instanceof net.minecraft.nbt.IntArrayTag ia && ia.size() == 4) d.inhabitants.add(NbtUtils.loadUUID(u));
         ListTag lg = t.getList("log", Tag.TAG_COMPOUND);
-        for (int i = 0; i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompound(i)));
-        d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.load(t.getCompound("nest")) : null;
+        for (int i = Math.max(0, lg.size() - MAX_LOG); i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompound(i)));
+        try {
+            d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.load(t.getCompound("nest")) : null;
+        } catch (RuntimeException e) { // M17: a broken nest must not take the tank with it
+            org.slf4j.LoggerFactory.getLogger("bettacraft/tank").warn("Dropped an unreadable bubble nest of tank {}", d.id, e);
+            d.nest = null;
+        }
         ListTag pl = t.getList("plants", Tag.TAG_COMPOUND);
         int maxId = 0;
         for (int i = 0; i < pl.size(); i++) {

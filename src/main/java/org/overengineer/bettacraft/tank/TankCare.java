@@ -43,6 +43,7 @@ public final class TankCare {
     private TankCare() {}
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TankBlockEntity be) {
+        if (be.orphanCheck > 0 && --be.orphanCheck == 0 && level instanceof ServerLevel s) TankMultiblock.repairOrphan(s, pos, be);
         if (!(level instanceof ServerLevel server) || !be.isController()) return;
         // the air gap below the glass (tank.waterHeadroom) is in the fill states: recompute them once after loading and
         // whenever the config changes, not only on the next change of the water amount

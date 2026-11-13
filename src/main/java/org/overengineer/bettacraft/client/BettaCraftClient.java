@@ -86,7 +86,12 @@ public final class BettaCraftClient {
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());
         NeoForge.EVENT_BUS.addListener(org.overengineer.bettacraft.client.decor.DecorPreview::onRenderStage);
+        // M17: block entities of a dropped client level (dimension change, interior, disconnect) leave the static sets
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.LevelEvent.Unload e) -> {
+            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.util.ClientBlockEntitySets.purgeLevel(e.getLevel());
+        });
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
+            org.overengineer.bettacraft.util.ClientBlockEntitySets.purgeLevel(null);
             ClientInteriorCache.clear();
             org.overengineer.bettacraft.client.decor.DecorPreview.clear();
             // back to the built-in genetics (the next server sends its own); not while our integrated server still runs

@@ -92,6 +92,15 @@ public final class MiniatureRenderer {
 
     private MiniatureRenderer() {}
 
+    /** M17 (logout): finished meshes nobody will upload any more give their native memory back now, not in the next world. */
+    public static void drainResults() {
+        Result r;
+        while ((r = DONE.poll()) != null) {
+            inFlight = Math.max(0, inFlight - 1);
+            r.free();
+        }
+    }
+
     public static void onRenderStage(RenderLevelStageEvent event) {
         RenderLevelStageEvent.Stage stage = event.getStage();
         boolean opaque = stage == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES;

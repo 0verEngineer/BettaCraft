@@ -28,6 +28,15 @@ public final class TankEvents {
 
     private TankEvents() {}
 
+    /** M17: nothing pending may run in the next world of the same game (integrated server). */
+    @net.neoforged.bus.api.SubscribeEvent
+    public static void onServerStopped(net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+        DRY.clear();
+        NOT_HERE.clear();
+        CATCHING.clear();
+        ForeignAnimals.clear();
+    }
+
     static void dryLater(ServerLevel level, BlockPos pos) {
         DRY.add(new Pending(level.dimension(), pos.immutable()));
     }

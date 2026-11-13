@@ -367,7 +367,8 @@ public class TankBakedModel implements IDynamicBakedModel {
             edgeCache.clear();
             edgeCacheWidth = width;
         }
-        long key = (((long) side.ordinal() * 64 + mask) * 64 + concave) * 16 + corners;
+        // M17: the width is part of the key: a meshing thread that still used the old width cannot leave stale quads
+        long key = ((((long) side.ordinal() * 64 + mask) * 64 + concave) * 16 + corners) | ((long) width << 32);
         List<BakedQuad> cached = edgeCache.get(key);
         if (cached != null) return cached;
         float line = width / 1000F / 16F;

@@ -235,9 +235,11 @@ public class CultureTubBlockEntity extends BlockEntity {
         if (water < WATER_PER_BATCH) return artemia() ? "salt_water" : "water";
         if (items.getStackInSlot(INPUT).isEmpty()) return artemia() ? "cysts" : "organic";
         ItemStack out = items.getStackInSlot(OUTPUT);
-        if (!out.isEmpty() && out.getCount() + 1 > OUTPUT_MAX) return "full";
+        // M17: a whole batch must fit (before, a batch near the full mark used its food and water for fewer items)
+        int y = Math.min(batchYield(), OUTPUT_MAX);
+        if (!out.isEmpty() && out.getCount() + y > OUTPUT_MAX) return "full";
         if (artemia()) {
-            if (items.getStackInSlot(BOTTLES).isEmpty()) return "bottles";
+            if (items.getStackInSlot(BOTTLES).getCount() < y) return "bottles";
             if (level.getMaxLocalRawBrightness(worldPosition.above()) < MIN_LIGHT) return "dark";
         } else if (!level.canSeeSky(worldPosition.above())) {
             return "sky";

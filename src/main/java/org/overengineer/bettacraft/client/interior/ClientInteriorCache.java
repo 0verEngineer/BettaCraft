@@ -36,6 +36,7 @@ public final class ClientInteriorCache {
     }
 
     public static void accept(InteriorDataPayload p) {
+        if (p.parts() < 1 || p.parts() > 1024) return; // M17: malformed data
         int[] meta = PENDING_META.get(p.regionId());
         byte[][] parts = PENDING.get(p.regionId());
         if (meta == null || meta[0] != p.version() || parts == null || parts.length != p.parts()) {
@@ -94,7 +95,7 @@ public final class ClientInteriorCache {
         if (mc.level == null) return;
         for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
             TankData t = be.getTank();
-            if (t != null && t.regionId() == regionId) {
+            if (t != null && t.regionId() == regionId && be.getLevel() == mc.level) { // M17: not a stale block entity
                 LAST_REQUEST.put(regionId, mc.level.getGameTime());
                 PacketDistributor.sendToServer(new InteriorRequestPayload(regionId, be.getBlockPos(), known));
                 return;
@@ -140,5 +141,6 @@ public final class ClientInteriorCache {
         PENDING.clear();
         PENDING_META.clear();
         LAST_REQUEST.clear();
+        MiniatureRenderer.drainResults();
     }
 }

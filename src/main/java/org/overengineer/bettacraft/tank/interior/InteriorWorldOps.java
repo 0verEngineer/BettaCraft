@@ -107,7 +107,7 @@ public final class InteriorWorldOps {
             section.setBlockState(p.getX() & 15, p.getY() & 15, p.getZ() & 15, c.state(), false);
             if (c.blockEntity() != null) {
                 BlockEntity be = BlockEntity.loadStatic(p, c.state(), c.blockEntity(), level.registryAccess());
-                if (be != null) chunk.setBlockEntity(be);
+                if (be != null) chunk.addAndRegisterBlockEntity(be); // M17: registers the ticker too (furnaces, hoppers, machines kept still)
             }
             chunk.setUnsaved(true);
             touchedChunks.add(ChunkPos.asLong(p.getX() >> 4, p.getZ() >> 4));

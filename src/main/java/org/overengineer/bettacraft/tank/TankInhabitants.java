@@ -241,7 +241,12 @@ public final class TankInhabitants {
                 .clamp(spawn, half, 1.0 / 16 + 0.01, Math.min(0.3, e.getBbHeight()));
         e.moveTo(spawn.x, spawn.y, spawn.z, level.getRandom().nextFloat() * 360F, 0F);
         adopt(e, controller);
-        level.addFreshEntityWithPassengers(e);
+        // M17: the animal must really join the level (a UUID clash or another mod cancelling the join): otherwise the
+        // container stays full instead of losing the animal
+        if (!level.tryAddFreshEntityWithPassengers(e) || !e.isAddedToLevel() || e.isRemoved()) {
+            if (!e.isRemoved()) e.discard();
+            return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
+        }
         if (addMb > 0) TankInteractions.changeWater(level, controller, addMb);
         tank.inhabitants().add(e.getUUID());
         TankCare.log(level, controller, "log.bettacraft.inserted", TankCare.nameArg(e));
@@ -412,8 +417,14 @@ public final class TankInhabitants {
         TankRef ours = new TankRef(controller.getBlockPos(), tank.id());
         Set<UUID> found = new HashSet<>();
         double adults = org.overengineer.bettacraft.critters.TankCritters.stock(tank);
+        boolean evict = ServerConfig.getOr(ServerConfig.INHABITANTS_OUTGROWN, ServerConfig.Outgrown.BAG_IN_FRONT) == ServerConfig.Outgrown.BAG_IN_FRONT;
         for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;
+            // M17: a young animal of a big species that grew past inhabitants.maxHitbox in the tank goes out in a bag
+            if (evict && accepts(e.getType(), e) == Acceptance.TOO_BIG) {
+                evictOutgrown(level, controller, e);
+                continue;
+            }
             if (!ours.equals(e.getData(ModAttachments.TANK_REF.get()))) adopt(e, controller);
             found.add(e.getUUID());
             adults += weight(e);
@@ -450,6 +461,25 @@ public final class TankInhabitants {
         }
         controller.setCrowded(isOvercrowded(adults, tank.waterBlocks()));
         if (changed) controller.markTankChanged();
+    }
+
+    /**
+     * M17: puts an inhabitant that grew too big into a filled fish bag (bucket data or its full data) that drops in front
+     * of the tank, like a frog that grew from a tadpole. The bag comes from nothing: a kelp bag, the animal is kept.
+     */
+    static void evictOutgrown(ServerLevel level, TankBlockEntity controller, Entity e) {
+        TankData tank = controller.getTank();
+        release(e);
+        ItemStack bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(e);
+        Vec3 at = ForeignAnimals.inFront(level, tank);
+        net.minecraft.world.entity.item.ItemEntity item = new net.minecraft.world.entity.item.ItemEntity(level, at.x, at.y, at.z, bag);
+        item.setDefaultPickUpDelay();
+        level.addFreshEntity(item);
+        TankCare.log(level, controller, "log.bettacraft.outgrown", TankCare.nameArg(e));
+        LOGGER.info("{} outgrew tank {} and was bagged in front of it", e.getType().getDescriptionId(), tank.id());
+        tank.inhabitants().remove(e.getUUID());
+        e.discard();
+        controller.markTankChanged();
     }
 
     /** Small water animals that got into the tank without a bucket (spawn egg, /summon) become inhabitants. */

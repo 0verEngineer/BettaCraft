@@ -40,6 +40,8 @@ public final class InteriorSync {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/interior-sync");
     /** More dirty sections than this in one flush: send the region in full instead. */
     static final int MAX_DELTA_SECTIONS = 96;
+    /** M17: ticks between two full sends a client may ask for (per player and region). */
+    public static final int REQUEST_COOLDOWN = 40;
 
     private record Encoded(int version, List<byte[]> parts, InteriorSnapshot.Stats stats, boolean truncated) {}
 
@@ -53,6 +55,8 @@ public final class InteriorSync {
         boolean countsValid;
         boolean truncated;
         Encoded cache;
+        /** M17: game time of the last full send per player that asked for it (requests are rate-limited). */
+        final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<java.util.UUID> lastRequested = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 
         int total() {
             int t = 0;
@@ -64,6 +68,8 @@ public final class InteriorSync {
     private static final Int2ObjectOpenHashMap<State> STATES = new Int2ObjectOpenHashMap<>();
     /** Bytes of the last delta / full sync sent (bench, menu). */
     public static volatile int lastDeltaBytes, lastFullBytes;
+    /** Full sends to single players so far (M17 tests of the request limit). */
+    public static volatile int fullSends;
 
     private InteriorSync() {}
 
@@ -93,6 +99,11 @@ public final class InteriorSync {
 
     public static void clearAll() {
         STATES.clear();
+    }
+
+    /** M17: a player logged out: forget their request times. */
+    public static void forgetPlayer(java.util.UUID player) {
+        for (State st : STATES.values()) st.lastRequested.removeLong(player);
     }
 
     public static int version(int regionId) {
@@ -183,6 +194,12 @@ public final class InteriorSync {
                 continue;
             }
             List<ServerPlayer> viewers = viewers(server, r);
+            if (viewers.isEmpty()) {
+                // M17: nobody watches: only bump the version (the next request encodes it once), no delta encoding
+                full(st);
+                st.countsValid = false;
+                continue;
+            }
             if (st.all || !st.countsValid || st.dirty.size() > MAX_DELTA_SECTIONS) {
                 full(st);
             } else if (!delta(interior, r, st, viewers)) {
@@ -252,10 +269,18 @@ public final class InteriorSync {
         if (r == null || !r.built() || player.level().dimension() != r.tankDimension()) return;
         double range = ServerConfig.getOr(ServerConfig.INTERIOR_SYNC_RANGE, 96) + 32;
         if (player.blockPosition().distSqr(req.controller()) > range * range) return;
+        // M17: never load a chunk for a client request (getBlockEntity loads it synchronously on the server)
+        if (!player.level().isLoaded(req.controller())) return;
         TankBlockEntity c = TankMultiblock.getController(player.level(), req.controller());
         if (c == null || c.getTank().regionId() != r.id()) return;
         State st = state(r.id());
         if (req.knownVersion() == st.version && !st.all && st.dirty.isEmpty()) return;
+        // M17: one full send per player and region per REQUEST_COOLDOWN ticks; a client asking again and again (or with a
+        // made-up version) cannot make the server send megabytes every tick. Changes still arrive through flush().
+        long now = server.overworld().getGameTime();
+        long last = st.lastRequested.getOrDefault(player.getUUID(), Long.MIN_VALUE);
+        if (last != Long.MIN_VALUE && now - last >= 0 && now - last < REQUEST_COOLDOWN) return;
+        st.lastRequested.put(player.getUUID(), now);
         send(server, r, player);
     }
 
@@ -279,6 +304,7 @@ public final class InteriorSync {
                     e.stats.encodeNanos() / 1_000_000.0, truncated ? " (TRUNCATED by maxRenderedBlocks)" : "");
         }
         if (player == null) return;
+        fullSends++;
         for (int i = 0; i < e.parts.size(); i++) {
             PacketDistributor.sendToPlayer(player, new InteriorDataPayload(r.id(), e.version, i, e.parts.size(),
                     r.sizeX(), r.sizeY(), r.sizeZ(), r.scale(), e.truncated, e.parts.get(i)));
@@ -323,6 +349,8 @@ public final class InteriorSync {
                 BlockPos p = be.getBlockPos();
                 if (p.getY() != InteriorRegion.FLOOR_Y || !(be instanceof InteriorFloorBlockEntity f)) continue;
                 if (p.getX() < x0 || p.getX() > x1 || p.getZ() < z0 || p.getZ() > z1) continue;
+                if (!f.getBlockState().is(org.overengineer.bettacraft.registry.ModBlocks.INTERIOR_FLOOR.get())
+                        || !f.getBlockState().getValue(InteriorFloorBlock.SUBSTRATE)) continue; // M17: stale block entity
                 buf[InteriorSnapshot.index(p.getX() & 15, 0, p.getZ() & 15)] = f.substrate();
             }
             snap.addSection(sx, sy, sz, buf, keepEmpty);

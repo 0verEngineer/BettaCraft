@@ -165,18 +165,23 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
 
     /** Catch-up feeding (simulateUnloadedTime): consumes fractional portions; false if there was no food. */
     public boolean consumeVirtualPortion(double portions) {
-        virtualCredit += portions;
-        while (virtualCredit >= 1.0) {
+        // M17: the credit is food already taken from the slots (one item feeds several portions); before, an empty
+        // feeder still fed 3 of 4 portions because the credit was counted the other way round
+        if (!(portions > 0)) return true;
+        while (virtualCredit < portions - 1e-9) {
             int slot = -1;
             for (int i = 0; i < SLOTS && slot < 0; i++) if (!items.getStackInSlot(i).isEmpty()) slot = i;
-            if (slot < 0) {
-                virtualCredit = 0;
-                return false;
-            }
+            if (slot < 0) return false;
             items.extractItem(slot, 1, false);
-            virtualCredit -= 1.0;
+            virtualCredit += 1.0;
         }
-        return foodCount() > 0 || virtualCredit > 0;
+        virtualCredit -= portions;
+        return true;
+    }
+
+    /** Food already taken from the slots for catch-up feeding (portions of one item). */
+    public double virtualCredit() {
+        return virtualCredit;
     }
 
     // ------------------------------------------------------------------ menu
@@ -211,6 +216,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         items.deserializeNBT(registries, tag.getCompound("items"));
         feedingsPerDay = Math.max(1, Math.min(3, tag.getInt("feedings")));
         lastEvent = tag.contains("last_event") ? tag.getLong("last_event") : Long.MIN_VALUE;
-        virtualCredit = tag.getDouble("credit");
+        double credit = tag.getDouble("credit");
+        virtualCredit = Double.isFinite(credit) ? Math.max(0, Math.min(1, credit)) : 0;
     }
 }

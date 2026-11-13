@@ -42,6 +42,11 @@ public class DwarfFrogEntity extends AbstractFish {
     /** Days without food after which a frog starts to starve. */
     public static final double STARVE_DAYS = 4.0;
 
+    /** M17: frogs.frogStarveDays (default {@link #STARVE_DAYS}). */
+    public static double starveDays() {
+        return org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.FROGS_STARVE_DAYS, STARVE_DAYS);
+    }
+
     /** Ticks of air left (in a tank; a wild frog never runs out). */
     int breath = -1;
     /** Game time of the last meal ({@link #NEVER}: counts as just fed when it comes into a tank). */
@@ -126,7 +131,7 @@ public class DwarfFrogEntity extends AbstractFish {
 
     /** Satiation 0..1 for the menu (1 = just fed, 0 = starving). */
     public float satiation() {
-        return (float) Mth.clamp(1 - daysSinceFed() / STARVE_DAYS, 0, 1);
+        return (float) Mth.clamp(1 - daysSinceFed() / starveDays(), 0, 1);
     }
 
     @Override
@@ -179,7 +184,7 @@ public class DwarfFrogEntity extends AbstractFish {
             drown = 0;
         }
         // starving
-        if (daysSinceFed() > STARVE_DAYS && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
+        if (daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
     }
 
     private void setBreathing(boolean b) {

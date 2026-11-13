@@ -110,12 +110,16 @@ public final class TankActions {
                 InteriorManager.enter(player, controller.getBlockPos());
                 return;
             }
-            default -> {}
+            default -> {
+                return; // M17: unknown action ids do nothing at all
+            }
         }
         if (error != null) {
             player.displayClientMessage(error.copy().withStyle(ChatFormatting.RED), true);
+        } else {
+            // M17: only a change goes to the clients near the tank (a refused action sent the whole tank view to all)
+            controller.markTankChanged();
         }
-        controller.markTankChanged();
         menu.requestSync();
     }
 

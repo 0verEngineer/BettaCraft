@@ -56,7 +56,7 @@ public final class InteriorGameTests {
 
     private InteriorGameTests() {}
 
-    private static TankBlockEntity tank(GameTestHelper h, int x, int y, int z, int sx, int sy, int sz, long water) {
+    static TankBlockEntity tank(GameTestHelper h, int x, int y, int z, int sx, int sy, int sz, long water) {
         for (int a = 0; a < sx; a++)
             for (int b = 0; b < sy; b++)
                 for (int c = 0; c < sz; c++) {
@@ -70,13 +70,13 @@ public final class InteriorGameTests {
         return c;
     }
 
-    private static ServerLevel interior(GameTestHelper h) {
+    static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
         if (l == null) throw new GameTestAssertException("interior dimension not loaded in the GameTest server");
         return l;
     }
 
-    private static InteriorRegion region(GameTestHelper h, TankBlockEntity c) {
+    static InteriorRegion region(GameTestHelper h, TankBlockEntity c) {
         interior(h);
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         h.assertTrue(r.built(), "region built");

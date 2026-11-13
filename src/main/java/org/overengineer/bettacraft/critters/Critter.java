@@ -156,6 +156,10 @@ public final class Critter {
         return t;
     }
 
+    static double finite(double v, double fallback) {
+        return Double.isFinite(v) ? v : fallback;
+    }
+
     /** Null for an unknown species. */
     @Nullable
     public static Critter load(CompoundTag t) {
@@ -175,13 +179,14 @@ public final class Critter {
         CritterSpecies s = CritterSpecies.byIdOrNull(t.getString("species"));
         if (s == null) return null;
         Critter c = new Critter(id, s, t.getBoolean("female"), CritterGenes.load(t.getCompound("genes")), x, y, z);
-        c.generation = t.getInt("gen");
-        c.age = t.contains("age", Tag.TAG_ANY_NUMERIC) ? t.getDouble("age") : s.juvenileDays();
-        c.hunger = Math.max(0, t.getDouble("hunger"));
-        c.eggs = t.contains("eggs", Tag.TAG_ANY_NUMERIC) ? t.getDouble("eggs") : -1;
+        c.generation = Math.max(0, t.getInt("gen"));
+        // M17: NaN or infinite numbers (hand-edited or corrupt data) fall back to defaults (NaN broke sorting and hunger death)
+        c.age = Math.max(0, finite(t.contains("age", Tag.TAG_ANY_NUMERIC) ? t.getDouble("age") : s.juvenileDays(), s.juvenileDays()));
+        c.hunger = Math.max(0, finite(t.getDouble("hunger"), 0));
+        c.eggs = finite(t.contains("eggs", Tag.TAG_ANY_NUMERIC) ? t.getDouble("eggs") : -1, -1);
         c.father = t.contains("father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("father")) : null;
-        c.sinceMolt = t.contains("molt", Tag.TAG_ANY_NUMERIC) ? t.getDouble("molt") : 10;
-        c.dead = t.contains("dead", Tag.TAG_ANY_NUMERIC) ? t.getDouble("dead") : -1;
+        c.sinceMolt = finite(t.contains("molt", Tag.TAG_ANY_NUMERIC) ? t.getDouble("molt") : 10, 10);
+        c.dead = finite(t.contains("dead", Tag.TAG_ANY_NUMERIC) ? t.getDouble("dead") : -1, -1);
         return c;
     }
 

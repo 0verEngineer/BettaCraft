@@ -165,4 +165,18 @@ class BettaHealthTest {
         h.step(1.0, new BettaHealth.Conditions(false, false, true), P);
         return h;
     }
+
+    /** M17 review: NaN days froze a sick fish (it never died nor recovered); they load as 0 now. */
+    @Test
+    void corruptDaysLoadAsZero() {
+        net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
+        t.putBoolean("sick", true);
+        t.putDouble("sick_days", Double.NaN);
+        t.putDouble("food_stress", -3);
+        t.putDouble("days_since_fed", Double.POSITIVE_INFINITY);
+        BettaHealth h = BettaHealth.load(t);
+        assertTrue(h.isSick());
+        double d = daysUntil(h, COLD, BettaHealth.Event.DIED, 1000, false);
+        assertFalse(Double.isNaN(d), "a sick fish in the cold dies eventually");
+    }
 }

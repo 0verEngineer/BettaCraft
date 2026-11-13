@@ -118,7 +118,7 @@ public final class Progress {
         TankData t = controller.getTank();
         award(player, TANK_BUILT, t.memberCount());
         if (!org.overengineer.bettacraft.tank.TankCare.bettas(player.serverLevel(), t).isEmpty()
-                && t.waterTemp() >= TankTemperature.OPTIMAL_MIN && t.waterTemp() <= TankTemperature.OPTIMAL_MAX) {
+                && TankTemperature.isOptimal(t.waterTemp())) {
             award(player, IDEAL_TEMPERATURE);
         }
         if (!TankEquipment.filters(player.level(), controller).isEmpty()) award(player, FILTER);

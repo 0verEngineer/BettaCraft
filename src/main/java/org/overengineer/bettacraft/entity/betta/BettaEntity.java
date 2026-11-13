@@ -210,8 +210,21 @@ public class BettaEntity extends AbstractFish {
 
     /** Genome as known on this side (server: authoritative, client: synced). */
     public BettaGenome genome() {
-        return level().isClientSide ? lookGenome : data.genome();
+        if (level().isClientSide) return lookGenome;
+        // M17: expressing the genotype every tick (aiStep, extents) allocated a genome per fish and tick; it only
+        // changes with the data or the genetics (datapack reload)
+        org.overengineer.bettacraft.genetics.GeneticsData g = org.overengineer.bettacraft.genetics.GeneticsData.get();
+        if (expressedFor != data || expressedWith != g || expressed == null) {
+            expressed = data.genome();
+            expressedFor = data;
+            expressedWith = g;
+        }
+        return expressed;
     }
+
+    private BettaGenome expressed;
+    private BettaData expressedFor;
+    private org.overengineer.bettacraft.genetics.GeneticsData expressedWith;
 
     /** Genotype (server only; the client sees it through the tank menu). */
     public BettaGenotype genotype() {

@@ -12,6 +12,8 @@ public final class ServerConfig {
 
     /** M16: what a tadpole in a tank does when it would turn into a frog. */
     public enum Tadpoles { LEAVE_AS_FROG, STAY_TADPOLE }
+    /** M17: what happens to an animal that grew too big for a tank (inhabitants.maxHitbox) while it lived in it. */
+    public enum Outgrown { BAG_IN_FRONT, KEEP }
 
     public static final ModConfigSpec SPEC;
 
@@ -32,12 +34,19 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue INHABITANTS_MAX_HITBOX;
     public static final ModConfigSpec.BooleanValue INHABITANTS_REFUSE_HOSTILE;
     public static final ModConfigSpec.EnumValue<Tadpoles> INHABITANTS_TADPOLES;
+    public static final ModConfigSpec.EnumValue<Outgrown> INHABITANTS_OUTGROWN;
 
     // health
     public static final ModConfigSpec.DoubleValue HEALTH_DAYS_UNTIL_SICK;
     public static final ModConfigSpec.DoubleValue HEALTH_DAYS_SICK_UNTIL_DEATH;
     public static final ModConfigSpec.DoubleValue HEALTH_BOTH_BAD_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue HEALTH_RECOVERY_PER_DAY;
+    public static final ModConfigSpec.DoubleValue HEALTH_HUNGRY_AFTER_DAYS;
+    public static final ModConfigSpec.DoubleValue TEMPERATURE_TOLERATED_MIN;
+    public static final ModConfigSpec.DoubleValue TEMPERATURE_TOLERATED_MAX;
+    public static final ModConfigSpec.DoubleValue BREEDING_CONDITIONING_DAYS;
+    public static final ModConfigSpec.DoubleValue FROGS_STARVE_DAYS;
+    public static final ModConfigSpec.IntValue INTERIOR_PREPARATION_BUDGET_MS;
     public static final ModConfigSpec.BooleanValue HEALTH_OLD_AGE_ENABLED;
     public static final ModConfigSpec.DoubleValue HEALTH_OLD_AGE_YEARS;
     public static final ModConfigSpec.IntValue HEALTH_OLD_AGE_DAYS_PER_YEAR;
@@ -192,11 +201,16 @@ public final class ServerConfig {
         INHABITANTS_TADPOLES = b.comment("A tadpole in a tank that grows up: LEAVE_AS_FROG = the frog hops out in front of the tank, STAY_TADPOLE = it",
                         "never grows up while it lives in a tank")
                 .defineEnum("tadpoles", Tadpoles.LEAVE_AS_FROG);
+        INHABITANTS_OUTGROWN = b.comment("An animal of another mod that grew bigger than maxHitbox while it lived in a tank (a young animal of a big",
+                        "species): BAG_IN_FRONT = it is put into a fish bag that drops in front of the tank, KEEP = it stays")
+                .defineEnum("outgrown", Outgrown.BAG_IN_FRONT);
         b.pop();
 
         b.comment("Health of bettas").push("health");
         HEALTH_DAYS_UNTIL_SICK = b.comment("Days without food, or with a wrong temperature or overcrowding, until a betta gets sick").defineInRange("daysUntilSick", 7.0, 0.1, 1000.0);
         HEALTH_DAYS_SICK_UNTIL_DEATH = b.comment("Days of sickness until death").defineInRange("daysSickUntilDeath", 14.0, 0.1, 1000.0);
+        HEALTH_HUNGRY_AFTER_DAYS = b.comment("Days after a meal until a betta is hungry again (and eats from the feeder or the player's hand)")
+                .defineInRange("hungryAfterDays", 1.0, 0.1, 30.0);
         HEALTH_BOTH_BAD_MULTIPLIER = b.comment("Speed multiplier of all health timers while two or more conditions (food, temperature, stocking) are bad").defineInRange("bothBadMultiplier", 2.0, 1.0, 10.0);
         HEALTH_RECOVERY_PER_DAY = b.comment("Sick days removed per good day").defineInRange("recoveryPerDay", 2.0, 0.0, 100.0);
         b.push("oldAge");
@@ -209,11 +223,17 @@ public final class ServerConfig {
         b.comment("Water temperature").push("temperature");
         TEMPERATURE_TAU_DAYS = b.comment("Time constant (in-game days) of the exponential approach of the water to its equilibrium temperature")
                 .defineInRange("tauDays", 0.1, 0.0, 10.0);
+        TEMPERATURE_TOLERATED_MIN = b.comment("Lowest water temperature (C) bettas tolerate; colder water stresses them (the best range is breeding.minTemp to maxTemp)")
+                .defineInRange("toleratedMin", 24.0, 0.0, 50.0);
+        TEMPERATURE_TOLERATED_MAX = b.comment("Highest water temperature (C) bettas tolerate; warmer water stresses them")
+                .defineInRange("toleratedMax", 30.0, 0.0, 50.0);
         b.pop();
 
         b.comment("Breeding in Bettacraft tanks: conditioning, bubble nest, spawning, eggs and fry").push("breeding");
         BREEDING_MIN_TEMP = b.comment("Lowest water temperature for nest building and spawning").defineInRange("minTemp", 26.0, 0.0, 50.0);
         BREEDING_MAX_TEMP = b.comment("Highest water temperature for nest building and spawning").defineInRange("maxTemp", 28.0, 0.0, 50.0);
+        BREEDING_CONDITIONING_DAYS = b.comment("Days a betta stays conditioned (ready for breeding sooner) after a portion of live food")
+                .defineInRange("conditioningDays", 2.0, 0.0, 100.0);
         BREEDING_READY_DAYS = b.comment("Days a healthy, fed pair needs in breeding conditions before the male starts a nest (live food halves it)")
                 .defineInRange("readyDays", 0.25, 0.0, 100.0);
         BREEDING_NEST_BUILD_DAYS = b.comment("Days the male needs to build the bubble nest").defineInRange("nestBuildDays", 0.25, 0.0, 100.0);
@@ -263,6 +283,8 @@ public final class ServerConfig {
         INTERIOR_LEAVE_LOOK_UP = b.comment("While sneaking you also have to look up at least this many degrees above the horizon to leave the interior (0 = sneaking alone is enough)")
                 .defineInRange("leaveLookUpDegrees", 60, 0, 89);
         INTERIOR_SYNC_RANGE = b.comment("Players within this many blocks of a tank receive its miniature").defineInRange("syncRange", 96, 16, 512);
+        INTERIOR_PREPARATION_BUDGET_MS = b.comment("Server time per tick (ms) for building new interiors in the background (more = ready sooner, less = smoother ticks)")
+                .defineInRange("preparationBudgetMs", 8, 1, 50);
         b.pop();
 
         b.comment("Drops").push("drops");
@@ -366,10 +388,10 @@ public final class ServerConfig {
         b.comment("Breeding live food: larva tub (mosquito larvae) and artemia hatchery (artemia nauplii)").push("foodBreeding");
         CULTURE_LARVA_DAYS = b.comment("In-game days a larva tub needs for one batch (faster at night, in swamps and in the rain)")
                 .defineInRange("larvaTubDays", 2.0, 0.01, 100.0);
-        CULTURE_LARVA_YIELD = b.comment("Mosquito larvae per batch (uses one piece of organic matter and 250 mB of water)").defineInRange("larvaTubYield", 3, 1, 64);
+        CULTURE_LARVA_YIELD = b.comment("Mosquito larvae per batch (uses one piece of organic matter and 250 mB of water)").defineInRange("larvaTubYield", 3, 1, 16);
         CULTURE_ARTEMIA_DAYS = b.comment("In-game days an artemia hatchery needs for one batch (needs light)").defineInRange("hatcheryDays", 1.0, 0.01, 100.0);
         CULTURE_ARTEMIA_YIELD = b.comment("Bottles of artemia nauplii per batch (uses one use of cysts, 250 mB of salt water and one glass bottle per bottle)")
-                .defineInRange("hatcheryYield", 2, 1, 64);
+                .defineInRange("hatcheryYield", 2, 1, 16);
         b.pop();
 
         b.comment("Shrimp, dwarf crayfish and snails: small animals that live in a tank as data (no entities)").push("invertebrates");
@@ -402,6 +424,8 @@ public final class ServerConfig {
                 .defineInRange("frogFoodShareWithBettas", 0.4, 0.0, 1.0);
         FROGS_AIR_MINUTES = b.comment("Real minutes a frog can stay under water before it has to breathe at the surface")
                 .defineInRange("frogAirMinutes", 2.0, 0.25, 60.0);
+        FROGS_STARVE_DAYS = b.comment("Days without food after which a frog starts to starve (loses health now and then)")
+                .defineInRange("frogStarveDays", 4.0, 0.5, 100.0);
         b.pop();
 
         b.comment("Stocking: how many small animals count as one fish for the stocking limits (tank.hardCapPerWaterBlock ...)").push("stocking");

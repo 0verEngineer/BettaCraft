@@ -34,15 +34,29 @@ public final class TankEquipment {
         // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
         // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        for (long l : t.members()) {
-            BlockPos m = BlockPos.of(l);
-            for (Direction d : Direction.Plane.HORIZONTAL) {
-                if (t.contains(BlockPos.offset(l, d))) continue;
-                check(level, t, p.setWithOffset(m, d), d.getOpposite(), filters);
+        // M17: the outer faces are worked out once per tank (its members never change), not every second for every member
+        if (c.equipmentFacesOf != t) {
+            it.unimi.dsi.fastutil.longs.LongArrayList faces = new it.unimi.dsi.fastutil.longs.LongArrayList();
+            it.unimi.dsi.fastutil.bytes.ByteArrayList dirs = new it.unimi.dsi.fastutil.bytes.ByteArrayList();
+            for (long l : t.members()) {
+                for (Direction d : Direction.values()) {
+                    if (d == Direction.UP || t.contains(BlockPos.offset(l, d))) continue;
+                    faces.add(BlockPos.offset(l, d));
+                    dirs.add((byte) d.get3DDataValue());
+                }
             }
-            if (t.contains(BlockPos.offset(l, Direction.DOWN))) continue;
-            p.setWithOffset(m, Direction.DOWN);
-            if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
+            c.equipmentFaces = faces.toLongArray();
+            c.equipmentFaceDirs = dirs.toByteArray();
+            c.equipmentFacesOf = t;
+        }
+        for (int i = 0; i < c.equipmentFaces.length; i++) {
+            Direction d = Direction.from3DDataValue(c.equipmentFaceDirs[i]);
+            p.set(c.equipmentFaces[i]);
+            if (d == Direction.DOWN) {
+                if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
+            } else {
+                check(level, t, p, d.getOpposite(), filters);
+            }
         }
         filters.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         cabinets.sort(java.util.Comparator.comparingLong(BlockPos::asLong));

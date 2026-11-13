@@ -76,7 +76,17 @@ public final class TankTemperature {
     }
 
     public static boolean isTolerable(float celsius) {
-        return celsius >= TOLERANCE_MIN && celsius <= TOLERANCE_MAX;
+        // M17: temperature.toleratedMin / toleratedMax (the constants are the defaults)
+        double min = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TEMPERATURE_TOLERATED_MIN, (double) TOLERANCE_MIN);
+        double max = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TEMPERATURE_TOLERATED_MAX, (double) TOLERANCE_MAX);
+        return celsius >= min && celsius <= max;
+    }
+
+    /** M17: the best range is the breeding range (breeding.minTemp / maxTemp; the menu colour and the advancement used fixed 26-28 C). */
+    public static boolean isOptimal(float celsius) {
+        double min = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_MIN_TEMP, (double) OPTIMAL_MIN);
+        double max = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_MAX_TEMP, (double) OPTIMAL_MAX);
+        return celsius >= min && celsius <= max;
     }
 
     public static float clampTarget(float t) {

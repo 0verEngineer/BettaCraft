@@ -116,7 +116,7 @@ public record BettaData(BettaGenotype genotype, boolean female, String stage, do
         UUID id = t.hasUUID("fish_id") ? t.getUUID("fish_id") : UUID.randomUUID();
         Optional<UUID> mother = t.hasUUID("mother") ? Optional.of(t.getUUID("mother")) : Optional.empty();
         Optional<UUID> father = t.hasUUID("father") ? Optional.of(t.getUUID("father")) : Optional.empty();
-        return new BettaData(genotype, female, stage, t.getDouble("stage_days"), id, mother, father, t.getInt("generation"),
+        return new BettaData(genotype, female, stage, BettaHealth.days(t, "stage_days"), id, mother, father, Math.max(0, t.getInt("generation")),
                 t.getLong("born"), t.getCompound("health").copy(), t.getCompound("breeding").copy(), t);
     }
 

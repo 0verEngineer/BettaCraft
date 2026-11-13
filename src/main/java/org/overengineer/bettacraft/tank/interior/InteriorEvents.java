@@ -38,6 +38,13 @@ public final class InteriorEvents {
 
     private InteriorEvents() {}
 
+    /** M17: a player who logs out while holding the leave keys must not resume the timer later; request times go too. */
+    @SubscribeEvent
+    public static void onLoggedOut(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        SNEAK_TICKS.remove(event.getEntity().getUUID());
+        if (!event.getEntity().level().isClientSide) InteriorSync.forgetPlayer(event.getEntity().getUUID());
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || !InteriorManager.isInterior(player.level())) {
@@ -107,7 +114,17 @@ public final class InteriorEvents {
 
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
-        if (!(event.getLevel() instanceof Level level) || !InteriorManager.isInterior(level)) return;
+        if (!(event.getLevel() instanceof Level level)) return;
+        // M17: machines that break blocks through a fake player and then remove them themselves (they fire this event,
+        // but never call onDestroyedByPlayer) must not break a tank while a player is in its interior either
+        if (!InteriorManager.isInterior(level) && event.getPlayer() instanceof net.neoforged.neoforge.common.util.FakePlayer
+                && event.getState().getBlock() instanceof org.overengineer.bettacraft.tank.TankBlock
+                && level instanceof net.minecraft.server.level.ServerLevel sl) {
+            org.overengineer.bettacraft.tank.TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(sl, event.getPos());
+            if (c != null && !InteriorManager.playersInside(sl.getServer(), c.getTank()).isEmpty()) event.setCanceled(true);
+            return;
+        }
+        if (!InteriorManager.isInterior(level)) return;
         if (InteriorManager.isShellBlock(event.getState()) || !InteriorManager.canBuild(event.getPlayer(), event.getPos())) {
             event.setCanceled(true);
             return;

@@ -61,6 +61,8 @@ public final class BetterFishTanksCompat {
 
     /** Our containers that hold an animal: a filled fish bag or a betta bucket. */
     private static boolean isOurFilledContainer(ItemStack stack) {
+        // M17: a bag of shrimp or snails (critters) is not an animal BFT can take; the click goes on as usual
+        if (stack.has(org.overengineer.bettacraft.registry.ModDataComponents.CRITTERS.get())) return false;
         return (stack.getItem() instanceof FishBagItem && FishBagItem.isFilled(stack)) || stack.getItem() instanceof BettaBucketItem;
     }
 
@@ -85,7 +87,15 @@ public final class BetterFishTanksCompat {
         @SuppressWarnings("unchecked")
         EntityType<Entity> anyType = (EntityType<Entity>) type;
         Consumer<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
-        Entity e = anyType.create(level, config, pos, MobSpawnType.BUCKET, false, false);
+        // M17: an animal without a bucket (squid) is stored with its full data in our bag: keep name, health, age ...
+        net.minecraft.nbt.CompoundTag stored = FishBagItem.storedEntity(stack);
+        Entity e;
+        if (stored != null) {
+            e = org.overengineer.bettacraft.compat.FishContainers.create(level, stored);
+            if (e != null) e.moveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0);
+        } else {
+            e = anyType.create(level, config, pos, MobSpawnType.BUCKET, false, false);
+        }
         if (e == null) return Component.translatable("message.bettacraft.compat.bft_failed");
         if (e instanceof Bucketable b) {
             b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
@@ -98,7 +108,7 @@ public final class BetterFishTanksCompat {
         boolean released;
         try {
             released = (boolean) be.getClass().getMethod("releaseEntityInside", Entity.class).invoke(be, e);
-        } catch (ReflectiveOperationException | ClassCastException ex) {
+        } catch (ReflectiveOperationException | RuntimeException ex) {
             LOGGER.warn("Better Fish Tanks: releaseEntityInside failed", ex);
             released = false;
         }
@@ -128,7 +138,7 @@ public final class BetterFishTanksCompat {
         if (isCatchable == null) return true;
         try {
             return (boolean) isCatchable.invoke(null, e);
-        } catch (ReflectiveOperationException | ClassCastException ex) {
+        } catch (ReflectiveOperationException | RuntimeException ex) {
             return true;
         }
     }
@@ -146,7 +156,7 @@ public final class BetterFishTanksCompat {
             if (cls == null) return 0;
             Method fill = cls.getMethod("fill", net.minecraft.world.level.material.Fluid.class, int.class, boolean.class);
             return (int) fill.invoke(tank, net.minecraft.world.level.material.Fluids.WATER, mb, false);
-        } catch (ReflectiveOperationException | ClassCastException ex) {
+        } catch (ReflectiveOperationException | RuntimeException ex) {
             LOGGER.warn("Better Fish Tanks: filling water failed: {}", ex.toString());
             return 0;
         }
@@ -156,7 +166,7 @@ public final class BetterFishTanksCompat {
     public static int waterAmount(BlockEntity be) {
         try {
             return (int) be.getClass().getMethod("getFluidAmount").invoke(be);
-        } catch (ReflectiveOperationException | ClassCastException ex) {
+        } catch (ReflectiveOperationException | RuntimeException ex) {
             return -1;
         }
     }

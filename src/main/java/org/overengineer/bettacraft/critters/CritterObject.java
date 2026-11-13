@@ -81,13 +81,13 @@ public final class CritterObject {
         if (!Double.isFinite(o.x) || !Double.isFinite(o.y) || !Double.isFinite(o.z)) return null;
         o.face = t.getByte("face");
         o.yaw = t.getFloat("yaw");
-        o.age = t.getDouble("age");
+        o.age = Math.max(0, Critter.finite(t.getDouble("age"), 0)); // M17: no NaN / negative ages
         o.mother = t.contains("mother", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("mother")) : null;
         o.father = t.contains("father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("father")) : null;
-        o.count = t.getInt("count");
-        o.generation = t.getInt("gen");
+        o.count = Math.max(0, Math.min(1000, t.getInt("count"))); // M17: a corrupt count cannot hatch thousands
+        o.generation = Math.max(0, t.getInt("gen"));
         o.species = CritterSpecies.byId(t.getString("species"));
-        o.size = t.contains("size") ? t.getFloat("size") : 1F;
+        o.size = t.contains("size") && Float.isFinite(t.getFloat("size")) ? t.getFloat("size") : 1F;
         return o;
     }
 }

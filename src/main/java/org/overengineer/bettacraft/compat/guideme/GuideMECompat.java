@@ -17,7 +17,12 @@ public final class GuideMECompat {
     }
 
     public static boolean isBook(ItemStack stack, ResourceLocation guideId) {
-        return stack.getItem() instanceof guideme.internal.item.GuideItem && guideId.equals(guideme.internal.item.GuideItem.getGuideId(stack));
+        // M17: GuideItem is GuideME internal; if a GuideME update moves it, fall back to "not our book" instead of crashing
+        try {
+            return stack.getItem() instanceof guideme.internal.item.GuideItem && guideId.equals(guideme.internal.item.GuideItem.getGuideId(stack));
+        } catch (LinkageError e) {
+            return false;
+        }
     }
 
     /** Opens the guide (on the client directly, on the server via GuideME's packet). */

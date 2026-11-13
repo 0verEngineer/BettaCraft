@@ -135,10 +135,16 @@ public class SegmentBlock extends Block {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide) {
+            // M17: two pieces placed side by side touch and are removed together; every piece (its anchor block) gives
+            // its own item back, not only the one that was hit
+            List<ItemStack> drops = new ArrayList<>();
             for (BlockPos p : connected(level, pos)) {
+                BlockState s = level.getBlockState(p);
+                if (s.is(this) && s.getValue(PART) == Part.ANCHOR) drops.add(itemFor(s));
                 if (!p.equals(pos)) level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
-            if (!player.getAbilities().instabuild) Block.popResource(level, pos, itemFor(state));
+            if (drops.isEmpty()) drops.add(itemFor(state));
+            if (!player.getAbilities().instabuild) for (ItemStack d : drops) Block.popResource(level, pos, d);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }

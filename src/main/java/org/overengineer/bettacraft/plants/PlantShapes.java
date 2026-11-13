@@ -67,6 +67,32 @@ public final class PlantShapes {
      *                 kept below it
      */
     public static Shape of(PlantSpecies s, long seed, int scale, int headroom) {
+        // M17: shapes are pure functions of these four values and immutable; removing a plant asked for the shapes of
+        // all plants of the species once per removed block (thousands of random walks for a tall stem plant)
+        Key key = new Key(s, seed, scale, headroom);
+        synchronized (CACHE) {
+            Shape cached = CACHE.get(key);
+            if (cached != null) return cached;
+        }
+        Shape shape = build(s, seed, scale, headroom);
+        synchronized (CACHE) {
+            CACHE.put(key, shape);
+        }
+        return shape;
+    }
+
+    private record Key(PlantSpecies s, long seed, int scale, int headroom) {}
+
+    /** At most this many shapes are kept (a few KB each). */
+    static final int CACHE_SIZE = 1024;
+    private static final java.util.LinkedHashMap<Key, Shape> CACHE = new java.util.LinkedHashMap<>(256, 0.75F, true) {
+        @Override
+        protected boolean removeEldestEntry(java.util.Map.Entry<Key, Shape> eldest) {
+            return size() > CACHE_SIZE;
+        }
+    };
+
+    static Shape build(PlantSpecies s, long seed, int scale, int headroom) {
         Builder b = new Builder(s, seed, Math.max(4, Math.min(16, scale)) / 16.0, Math.max(1, headroom));
         b.add(0, 0, 0, PlantPart.ROOT, 1);
         switch (s.form()) {

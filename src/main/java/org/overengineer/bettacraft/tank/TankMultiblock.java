@@ -104,6 +104,29 @@ public final class TankMultiblock {
         }
     }
 
+    /**
+     * M17: a tank block whose controller does not know it any more (the controller's data could not be loaded, or a block
+     * was removed while the controller's chunk was unloaded) used to stay "not formed" forever. Once after loading, each
+     * block checks that and forms a tank again with its neighbours (like a newly placed block). True if it repaired.
+     */
+    public static boolean repairOrphan(ServerLevel level, BlockPos pos, TankBlockEntity be) {
+        if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level) || be.isRemoved()) return false;
+        BlockPos cp = be.getControllerPos();
+        if (cp != null) {
+            if (be.isController()) return false;
+            if (!cp.equals(pos)) {
+                if (!level.isLoaded(cp)) return false; // checked again on the next load
+                TankBlockEntity c = getBE(level, cp);
+                if (c != null && c.isController() && c.getTank().contains(pos)) return false;
+            }
+            LOGGER.warn("Tank block at {} pointed to controller {} that does not know it: forming it again", pos, cp);
+            be.setController(null, null);
+            be.setChanged();
+        }
+        onTankBlockAdded(level, pos, null);
+        return be.getControllerPos() != null;
+    }
+
     public static boolean freeShapes() {
         return ServerConfig.getOr(ServerConfig.TANK_FREE_SHAPES, true);
     }
@@ -193,6 +216,14 @@ public final class TankMultiblock {
         TankData merged = TankData.create(all, main.scale());
         merged.setId(main.id());
         merged.copySettingsFrom(main);
+        // M17: the nest of a smaller tank (eggs, larvae) used to vanish when it was joined to a bigger one. Keep the
+        // main tank's nest, otherwise the other tanks' nest with eggs first (only one nest fits in a tank).
+        if (merged.nest() == null || !merged.nest().hasEggs()) {
+            for (TankData t : olds) {
+                if (t == main || t.nest() == null) continue;
+                if (merged.nest() == null || (t.nest().hasEggs() && !merged.nest().hasEggs())) merged.setNest(t.nest().copy());
+            }
+        }
         merged.setWaterMb(water);
         // M9: the water mixes, the stored FE adds up
         merged.setWaterQuality(water <= 0 ? main.waterQuality() : (float) (1 - waste / water));
@@ -308,6 +339,7 @@ public final class TankMultiblock {
         java.util.Set<Integer> kept = new java.util.HashSet<>();
         for (TankData nt : newTanks) for (var k : nt.critters()) kept.add(k.id);
         TankData first = newTanks.getFirst();
+        for (TankData nt : newTanks) if (nt.memberCount() > first.memberCount()) first = nt; // M17: really the largest piece
         for (var k : t.critters()) {
             if (kept.contains(k.id)) continue;
             var moved = k.copy(first.nextCritterId());

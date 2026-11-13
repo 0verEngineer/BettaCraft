@@ -34,6 +34,10 @@ public final class ForeignAnimals {
     /** Frogs that just grew from a tadpole in a tank and where they land. */
     private static final Map<UUID, Vec3> FROGS_OUT = new HashMap<>();
 
+    static void clear() {
+        FROGS_OUT.clear();
+    }
+
     private ForeignAnimals() {}
 
     @SubscribeEvent

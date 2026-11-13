@@ -40,6 +40,16 @@ public class InteriorFloorBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
+    /**
+     * M17: turning the substrate off keeps the same block, so vanilla keeps the block entity (with its paid substrate).
+     * A merge or split then copied that stale substrate into the new region and it could be taken out a second time.
+     */
+    @Override
+    protected void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
+        if (newState.is(this) && !newState.getValue(SUBSTRATE)) level.removeBlockEntity(pos);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

@@ -356,13 +356,15 @@ public final class CritterLife {
     /** A partner for {@code c}: an adult of the same species (the other sex, any for hermaphrodites), or null. */
     @Nullable
     public static Critter mate(List<Critter> list, Critter c, RandomGenerator rnd) {
-        List<Critter> ok = new ArrayList<>();
+        // M17: reservoir sampling, no list per female and step
+        Critter pick = null;
+        int n = 0;
         for (Critter o : list) {
             if (o == c || !o.alive() || !o.adult() || o.species != c.species) continue;
             if (c.species.hasSexes() && o.female == c.female) continue;
-            ok.add(o);
+            if (rnd.nextInt(++n) == 0) pick = o;
         }
-        return ok.isEmpty() ? null : ok.get(rnd.nextInt(ok.size()));
+        return pick;
     }
 
     private static Critter young(Critter mother, CritterGenes father, IntSupplier ids, RandomGenerator rnd, Result r) {

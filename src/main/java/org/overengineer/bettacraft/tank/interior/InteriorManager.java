@@ -449,7 +449,8 @@ public final class InteriorManager {
         for (int x = 0; x < sx; x++)
             for (int z = 0; z < sz; z++) {
                 BlockPos from = new BlockPos(src.originX() + lx + x, InteriorRegion.FLOOR_Y, src.originZ() + lz + z);
-                if (level.getBlockEntity(from) instanceof InteriorFloorBlockEntity be) {
+                InteriorFloorBlockEntity be = Substrate.active(level, from); // M17: not a stale one
+                if (be != null) {
                     BlockPos to = new BlockPos(target.originX() + dx + x, InteriorRegion.FLOOR_Y, target.originZ() + dz + z);
                     if (target.containsShell(to)) Substrate.set(level, to, be.substrate(), be.paid());
                 }
@@ -490,19 +491,23 @@ public final class InteriorManager {
         InteriorRegion r = t.regionId() < 0 ? null : InteriorRegions.get(server).get(t.regionId());
         if (in == null || r == null || !r.built()) return List.of();
         List<ServerPlayer> out = new ArrayList<>();
-        for (ServerPlayer p : in.players()) if (!p.isSpectator() && r.containsShell(p.blockPosition())) out.add(p);
+        // M17: a player who died inside (death screen) does not keep the tank locked
+        for (ServerPlayer p : in.players()) if (!p.isSpectator() && p.isAlive() && r.containsShell(p.blockPosition())) out.add(p);
         return out;
     }
 
     /** M15: per region the players inside it, sent to the tank's clients (they keep the client from breaking it). */
     private static final it.unimi.dsi.fastutil.ints.Int2IntMap OCCUPANTS = new it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap();
+    /** M17: holds the chunk of an occupied tank (renewed every 10 ticks while players are inside). */
+    public static final net.minecraft.server.level.TicketType<net.minecraft.world.level.ChunkPos> OCCUPIED_TICKET =
+            net.minecraft.server.level.TicketType.create("bettacraft_occupied_tank", java.util.Comparator.comparingLong(net.minecraft.world.level.ChunkPos::toLong), 60);
 
     public static void updateOccupants(MinecraftServer server) {
         ServerLevel in = interiorLevel(server);
         it.unimi.dsi.fastutil.ints.Int2IntMap now = new it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap();
         if (in != null) {
             for (ServerPlayer p : in.players()) {
-                if (p.isSpectator()) continue;
+                if (p.isSpectator() || !p.isAlive()) continue;
                 InteriorRegion r = regionAt(server, p.blockPosition());
                 if (r != null) now.mergeInt(r.id(), 1, Integer::sum);
             }
@@ -511,12 +516,18 @@ public final class InteriorManager {
         ids.addAll(OCCUPANTS.keySet());
         for (int id : ids) {
             int n = now.getOrDefault(id, 0);
-            if (n == OCCUPANTS.getOrDefault(id, 0)) continue;
             InteriorRegion r = InteriorRegions.get(server).get(id);
             ServerLevel tankLevel = r == null ? null : server.getLevel(r.tankDimension());
+            // M17: keep the tank's chunk loaded (not ticking) while someone is inside: the lock and trust checks read
+            // the tank itself; with its chunk unloaded only the owner could build and the occupant count went stale
+            if (tankLevel != null && n > 0) {
+                net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(r.tankMin());
+                tankLevel.getChunkSource().addRegionTicket(OCCUPIED_TICKET, cp, 0, cp);
+            }
             if (tankLevel != null && tankLevel.isLoaded(r.tankMin())) {
                 TankBlockEntity c = TankMultiblock.getController(tankLevel, r.tankMin());
-                if (c != null && c.getTank().regionId() == id) {
+                // M17: compared with the tank itself: a tank whose chunk was unloaded meanwhile comes back with 0
+                if (c != null && c.getTank().regionId() == id && c.getTank().occupants() != n) {
                     c.getTank().setOccupants(n);
                     c.markTankChanged();
                 }

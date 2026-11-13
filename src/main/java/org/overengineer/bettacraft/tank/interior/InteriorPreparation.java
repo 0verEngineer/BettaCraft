@@ -32,6 +32,14 @@ public final class InteriorPreparation {
     public static final TicketType<ChunkPos> TICKET = TicketType.create("bettacraft_interior", Comparator.comparingLong(ChunkPos::toLong), 300);
     /** Main-thread budget per tick for writing shell chunks. */
     private static final long BUDGET_NANOS = 8_000_000L;
+    /**
+     * M17: chunks requested at once. Before, every shell chunk got its ticket once at the start; with more chunks than the
+     * workers generate within the ticket lifespan (300 ticks, e.g. a 64-block tank: ~4400 chunks), the tickets ran out,
+     * unwritten chunks unloaded and the job waited forever ("preparing x %"). Now a window of chunks ahead is ticketed
+     * and refreshed until it is written.
+     */
+    static final int WINDOW = 256;
+    private static final int REFRESH_TICKS = 100;
 
     private static final class Job {
         final InteriorRegion region;
@@ -39,7 +47,9 @@ public final class InteriorPreparation {
         final LongArrayList chunks = new LongArrayList();
         final LongSet touched = new LongOpenHashSet();
         int nextChunk;
-        boolean ticketsAdded;
+        /** Chunks [nextChunk, ticketedTo) hold a ticket; refreshed every REFRESH_TICKS. */
+        int ticketedTo;
+        int lastRefresh = Integer.MIN_VALUE;
         final long startNanos = System.nanoTime();
         long mainThreadNanos;
         int ticks;
@@ -57,6 +67,12 @@ public final class InteriorPreparation {
     public static volatile String lastStats = "";
 
     private InteriorPreparation() {}
+
+    /** Test hook (M17): chunks holding a ticket of the job (-1 without job). */
+    public static int ticketedChunks(int regionId) {
+        Job j = JOBS.get(regionId);
+        return j == null ? -1 : j.ticketedTo - j.nextChunk;
+    }
 
     public static boolean isPreparing(int regionId) {
         return JOBS.containsKey(regionId);
@@ -89,6 +105,8 @@ public final class InteriorPreparation {
             return;
         }
         long tickStart = System.nanoTime();
+        long budget = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.INTERIOR_PREPARATION_BUDGET_MS,
+                (int) (BUDGET_NANOS / 1_000_000)) * 1_000_000L; // M17: configurable
         List<Integer> done = new ArrayList<>();
         for (Job job : JOBS.values()) {
             job.ticks++;
@@ -98,13 +116,17 @@ public final class InteriorPreparation {
                 continue;
             }
             long t0 = System.nanoTime();
-            if (!job.ticketsAdded) {
-                for (long c : job.chunks) level.getChunkSource().addRegionTicket(TICKET, new ChunkPos(c), 0, new ChunkPos(c));
-                job.ticketsAdded = true;
+            int windowEnd = Math.min(job.chunks.size(), job.nextChunk + WINDOW);
+            boolean refresh = job.ticks - job.lastRefresh >= REFRESH_TICKS;
+            for (int i = refresh ? job.nextChunk : Math.max(job.nextChunk, job.ticketedTo); i < windowEnd; i++) {
+                ChunkPos cp = new ChunkPos(job.chunks.getLong(i));
+                level.getChunkSource().addRegionTicket(TICKET, cp, 0, cp); // adding it again renews its lifespan
             }
+            if (refresh) job.lastRefresh = job.ticks;
+            job.ticketedTo = Math.max(job.ticketedTo, windowEnd);
             boolean finished = true;
             while (job.nextChunk < job.chunks.size()) {
-                if (System.nanoTime() - tickStart > BUDGET_NANOS) {
+                if (System.nanoTime() - tickStart > budget) {
                     finished = false;
                     break;
                 }
@@ -140,7 +162,11 @@ public final class InteriorPreparation {
     private static void teleport(MinecraftServer server, Job job) {
         for (UUID u : job.players) {
             ServerPlayer p = server.getPlayerList().getPlayer(u);
-            if (p != null && p.isAlive() && !InteriorManager.isInterior(p.level())) InteriorManager.teleportInto(p, job.region);
+            // M17: only players still at the tank (a big interior can take a while; who walked off is not pulled in)
+            if (p != null && p.isAlive() && !InteriorManager.isInterior(p.level()) && p.level().dimension() == job.region.tankDimension()
+                    && p.blockPosition().distSqr(job.region.tankMin()) <= 64 * 64) {
+                InteriorManager.teleportInto(p, job.region);
+            }
         }
     }
 }

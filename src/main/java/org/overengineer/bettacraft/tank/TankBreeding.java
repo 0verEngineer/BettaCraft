@@ -184,7 +184,7 @@ public final class TankBreeding {
                     n.progress = 0;
                     TankCare.log(level, controller, "log.bettacraft.nest_built", TankCare.nameArg(male));
                 }
-                controller.markTankChanged();
+                syncNest(controller);
             }
             case BUILT -> {
                 if (male == null) {
@@ -243,9 +243,37 @@ public final class TankBreeding {
                     TankCare.log(level, controller, "log.bettacraft.larvae", String.valueOf(n.eggs.size()));
                 }
                 if (n.progress >= LifeStage.EGG.days() + LifeStage.LARVA.days()) release(level, controller, n, liveCount, r);
-                controller.markTankChanged();
+                syncNest(controller);
             }
         }
+    }
+
+    /**
+     * M17: the tank view (with plants, small animals and algae) went to every player near the tank on each care step
+     * while a nest was built or held eggs, for days. Now only when what the clients show of the nest changes: phase,
+     * position, egg count, stage, and the size of a growing nest in 32 steps.
+     */
+    static void syncNest(TankBlockEntity controller) {
+        long sig = nestSignature(controller.getTank().nest());
+        if (sig != controller.nestSignature) {
+            controller.nestSignature = sig;
+            controller.markTankChanged();
+        } else {
+            controller.setChanged();
+        }
+    }
+
+    static long nestSignature(@Nullable BubbleNest n) {
+        if (n == null) return 0;
+        long h = 1 + n.phase().ordinal();
+        h = h * 31 + n.eggCount();
+        h = h * 31 + (n.phase() == BubbleNest.Phase.EGGS ? n.stage().ordinal() : 0);
+        h = h * 31 + Double.hashCode(n.pos().x) * 7L + Double.hashCode(n.pos().y) * 13L + Double.hashCode(n.pos().z);
+        if (n.phase() == BubbleNest.Phase.BUILDING) {
+            double days = Math.max(1e-6, ServerConfig.getOr(ServerConfig.BREEDING_NEST_BUILD_DAYS, 0.25));
+            h = h * 31 + (long) Math.floor(Math.min(1.0, n.progress() / days) * 32);
+        }
+        return h;
     }
 
     /**

@@ -304,6 +304,8 @@ public final class TankCritters {
     public static void sync(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         byte[] data = CritterSync.encode(t.critters(), t.critterObjects(), t.min().getX(), t.min().getY(), t.min().getZ(), level.getGameTime());
+        // M17: nothing moved or changed (resting snails, buried crayfish): no packet; at least every 10 s anyway
+        if (!c.critterSync.changed(data, level.getGameTime())) return;
         PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(c.getBlockPos()), new TankCrittersPayload(c.getBlockPos(), data));
     }
 

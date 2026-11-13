@@ -34,6 +34,21 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     }
 
 
+    /**
+     * M17: the sign face was worked out from all tank members every frame; the client tank data is replaced on every
+     * update, so the result is kept per data object (weakly) and front / top row.
+     */
+    private static final java.util.Map<TankData, Object[]> FACES = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+
+    static TankShape.SignFace signFace(TankData t, Direction front, boolean top) {
+        if (t.members().isEmpty()) return null;
+        Object[] c = FACES.get(t);
+        if (c != null && c[0] == front && (Boolean) c[1] == top) return (TankShape.SignFace) c[2];
+        TankShape.SignFace face = TankShape.signFace(t.members(), front, top);
+        FACES.put(t, new Object[]{front, top, face});
+        return face;
+    }
+
     @Override
     public void render(TankBlockEntity be, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         TankData t = be.getTank();
@@ -46,7 +61,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         Direction front = t.front();
         SignPosition sp = t.signPos();
         // M10: on an irregular front the sign sits on the widest flat run of the top (bottom) row
-        TankShape.SignFace face = t.members().isEmpty() ? null : TankShape.signFace(t.members(), front, sp.top());
+        TankShape.SignFace face = signFace(t, front, sp.top());
         BlockPos mn = t.min(), mx = t.max();
         BlockPos origin = be.getBlockPos();
         // front face plane and the "right" direction as seen by a viewer looking at the front
@@ -128,6 +143,6 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
 
     @Override
     public int getViewDistance() {
-        return 48;
+        return org.overengineer.bettacraft.config.ClientConfig.TANK_DETAIL_DISTANCE.get(); // M17: configurable (was 48)
     }
 }

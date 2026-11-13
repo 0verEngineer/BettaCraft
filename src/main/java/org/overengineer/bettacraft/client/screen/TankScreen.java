@@ -100,8 +100,21 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         PacketDistributor.sendToServer(new TankActionPayload(menu.containerId, action, value, text, Optional.ofNullable(target)));
     }
 
+    /** Sends a name edit that is still waiting for the debounce; returns the sent name or null. */
+    private String flushName() {
+        if (nameBox == null || nameDirtyTicks <= 0 || sentName == null) return null;
+        String v = nameBox.getValue();
+        nameDirtyTicks = -1;
+        if (v.equals(sentName)) return null;
+        sentName = v;
+        send(TankActions.SET_NAME, 0, v, null);
+        return v;
+    }
+
     @Override
     protected void init() {
+        // M17: a resize calls init again; a name typed just before must neither be lost nor overwritten by the old one
+        String pendingName = flushName();
         super.init();
         overview.clear();
         inhabitants.clear();
@@ -192,6 +205,17 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 b -> send(TankActions.REMOVE_CLUTCHES, 0, "", null)));
         sentName = null;
         updateWidgets();
+        if (pendingName != null && nameBox != null) {
+            nameBox.setValue(pendingName);
+            sentName = pendingName;
+        }
+    }
+
+    @Override
+    public void onClose() {
+        // M17: closing sends the close packet before removed() runs, so an edit flushed there arrived too late
+        flushName();
+        super.onClose();
     }
 
     /** Dev smoke test only: the floating plants tab (M12). */
@@ -413,9 +437,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Override
     public void removed() {
         // flush a pending name edit
-        if (nameDirtyTicks > 0 && sentName != null && !nameBox.getValue().equals(sentName)) {
-            send(TankActions.SET_NAME, 0, nameBox.getValue(), null);
-        }
+        flushName(); // fallback (e.g. another screen replaced this one)
         super.removed();
     }
 
@@ -556,7 +578,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
         line(g, Component.translatable("gui.bettacraft.tank.size_water", v.sizeX, v.sizeY, v.sizeZ, v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
         y += 11;
-        int tempColor = TankTemperature.isTolerable(v.waterTemp) ? (v.waterTemp >= TankTemperature.OPTIMAL_MIN && v.waterTemp <= TankTemperature.OPTIMAL_MAX ? 0x80FF80 : 0xFFE080) : 0xFF7070;
+        int tempColor = TankTemperature.isTolerable(v.waterTemp) ? (TankTemperature.isOptimal(v.waterTemp) ? 0x80FF80 : 0xFFE080) : 0xFF7070;
         line(g, Component.translatable("gui.bettacraft.tank.temperature", fmt(v.waterTemp), fmt(v.ambient)), x, y, tempColor);
         y += 11;
         y += 1;

@@ -132,10 +132,15 @@ public class FishBagItem extends Item {
                 e = org.overengineer.bettacraft.compat.FishContainers.create(server, stored);
                 if (e != null) {
                     e.moveTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, player.getYRot(), 0);
-                    server.addFreshEntity(e);
+                    if (!server.addFreshEntity(e)) e = null;
                 }
             } else {
                 e = type.spawn(server, stack, player, pos, MobSpawnType.BUCKET, false, false);
+            }
+            if (e == null) {
+                // M17: the animal could not be created (removed mod, another mod cancelled the spawn): keep the bag filled
+                player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
+                return InteractionResultHolder.fail(stack);
             }
             if (e instanceof Bucketable b) {
                 b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());

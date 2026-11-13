@@ -41,6 +41,13 @@ public final class Substrate {
         return s.is(ModBlocks.INTERIOR_FLOOR.get());
     }
 
+    /** M17: the substrate block entity at a floor position, only if the floor really shows a substrate (older worlds can hold stale ones). */
+    @org.jetbrains.annotations.Nullable
+    public static InteriorFloorBlockEntity active(net.minecraft.world.level.BlockGetter level, BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        return isFloor(s) && s.getValue(InteriorFloorBlock.SUBSTRATE) && level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity be ? be : null;
+    }
+
     /** Handles a shift + right-click on a floor block. Returns true if it was consumed. */
     public static boolean use(ServerPlayer player, InteractionHand hand, BlockPos pos) {
         ServerLevel level = player.serverLevel();
@@ -100,6 +107,7 @@ public final class Substrate {
         ItemStack back = level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity be && be.paid()
                 ? new ItemStack(be.substrate().getBlock()) : ItemStack.EMPTY;
         level.setBlock(pos, floor.setValue(InteriorFloorBlock.SUBSTRATE, false), Block.UPDATE_CLIENTS);
+        level.removeBlockEntity(pos); // M17: no stale (paid) substrate left behind
         return back;
     }
 }

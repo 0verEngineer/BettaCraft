@@ -153,6 +153,7 @@ public final class InteriorSnapshot {
         while (in.isReadable()) {
             int sx = in.readVarInt(), sy = in.readVarInt(), sz = in.readVarInt();
             int pn = in.readVarInt();
+            if (pn < 0 || pn > SECTION_VOLUME) break; // M17: malformed data (a section has at most 4096 states)
             BlockState[] palette = new BlockState[pn + 1];
             palette[0] = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
             for (int i = 0; i < pn; i++) {
@@ -168,7 +169,8 @@ public final class InteriorSnapshot {
                 for (int k = 0; k < runs && i < SECTION_VOLUME; k++) {
                     int len = in.readVarInt();
                     short v = (short) in.readVarInt();
-                    if (v > pn) v = 0;
+                    if (v > pn || v < 0) v = 0; // M17: negative indices broke the mesher later
+                    if (len < 0) break;
                     for (int e = Math.min(SECTION_VOLUME, i + len); i < e; i++) idx[i] = v;
                     if (v != 0) count += len;
                 }
@@ -176,16 +178,19 @@ public final class InteriorSnapshot {
                 count = in.readVarInt();
                 for (int k = 0; k < count; k++) {
                     int i = in.readShort() & 0xFFFF;
-                    idx[i] = (short) (in.readVarInt() + 1);
+                    int v = in.readVarInt() + 1;
+                    if (i < SECTION_VOLUME && v > 0 && v <= pn) idx[i] = (short) v; // M17: bounds checked
                 }
             } else {
                 int bits = in.readByte();
+                if (bits < 1 || bits > 16) break; // M17: malformed data
                 int perLong = 64 / bits;
                 long mask = (1L << bits) - 1;
                 long[] packed = new long[(SECTION_VOLUME + perLong - 1) / perLong];
                 for (int k = 0; k < packed.length; k++) packed[k] = in.readLong();
                 for (int i = 0; i < SECTION_VOLUME; i++) {
                     idx[i] = (short) ((packed[i / perLong] >>> ((i % perLong) * bits)) & mask);
+                    if (idx[i] > pn) idx[i] = 0;
                     if (idx[i] != 0) count++;
                 }
             }

@@ -32,7 +32,7 @@ public final class BettaBreeding {
     }
 
     public void condition() {
-        conditioned = CONDITIONING_DAYS;
+        conditioned = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_CONDITIONING_DAYS, CONDITIONING_DAYS);
     }
 
     public boolean isConditioned() {
@@ -72,10 +72,10 @@ public final class BettaBreeding {
 
     public static BettaBreeding load(CompoundTag t) {
         BettaBreeding b = new BettaBreeding();
-        b.conditioned = t.getDouble("conditioned");
-        b.ready = t.getDouble("ready");
-        b.cooldown = t.getDouble("cooldown");
-        b.trained = t.getDouble("trained");
+        b.conditioned = BettaHealth.days(t, "conditioned");
+        b.ready = BettaHealth.days(t, "ready");
+        b.cooldown = BettaHealth.days(t, "cooldown");
+        b.trained = BettaHealth.days(t, "trained");
         return b;
     }
 }
