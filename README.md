@@ -173,6 +173,31 @@ Probe and WTHIT with `-Ptop` and `-Pwthit` (config `compat.overlayProvider` pick
 lines; AUTO = only the first of Jade, WTHIT, The One Probe). Textures, models and the logo come from the procedural generator in `tools/assetgen` (Python, see its
 README); the generated files are committed, so the Gradle build does not need Python.
 
+Development-only code (smoke tests, the showcase world, GameTests) lives in the source set `src/dev`: every `run*` task
+loads it, the jar does not contain it.
+
+## Continuous integration and releases
+
+[![Build](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml)
+
+- **Build** (`.github/workflows/build.yml`, every push to `master` and every pull request): `gradlew build` (unit tests
+  and `verifyReleaseJar`), the changelog section, `runData` must not change `src/generated`, GameTests and a dedicated
+  server smoke test. Started by hand with *full* (and before every release) it also runs the server smoke without any
+  optional mod and with The One Probe and WTHIT, and the GameTests with the power mods of `-Ppower` (pinned Modrinth
+  jars, `tools/ci/power-mods.json`, fetched and SHA-512 checked by `tools/ci/fetch_mods.py`).
+- **Release** (`.github/workflows/release.yml`, a pushed tag `v<mod_version>`): the full test set, the jar of the tag,
+  `verifyReleaseJar`, the top section of `CHANGELOG.md` as release notes, a GitHub release (a prerelease for `-alpha`,
+  `-beta` and `-rc` versions) and, once the tokens and project ids are set, the upload to Modrinth and CurseForge.
+- The same checks locally:
+
+```
+./gradlew verifyReleaseJar      # the jar holds only Bettacraft classes and namespaces, no dev / GameTest code, version ok
+./gradlew releaseNotes          # build/release-notes.md from the top section of CHANGELOG.md (must be mod_version)
+```
+
+Client smoke tests, the multiplayer test, `buildShowcase`, `smoketestUpgrade`, `-Paquatic` and `-Pshaders` only run
+locally (they need a window, local worlds or mod jars that cannot all be downloaded in CI).
+
 ## License
 
 MIT, see [LICENSE](LICENSE). This covers the code, the asset generator and all assets, so modpacks may include the mod

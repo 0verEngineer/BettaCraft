@@ -4,6 +4,30 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.14.0-beta.1] - 2026-11-14
+
+Build pipeline and releases. No gameplay changes.
+
+### Changed
+- The released jar no longer contains the development code (smoke tests, the showcase world builder, GameTests and
+  their template): about 100 classes less. It now contains the licence text (`LICENSE_bettacraft`).
+
+### Development
+- Development-only code moved into its own source set `src/dev`, loaded by every `gradlew run*` task (also
+  `buildShowcase`, `smoketestUpgrade`, `runMultiplayerTest`) but not packed into the jar.
+- `gradlew verifyReleaseJar` (part of `check`): only Bettacraft classes, `assets/bettacraft`, `data/bettacraft`, tags of
+  other namespaces and the NeoForge loot modifier list; no dev, smoke or GameTest classes, no tool sources, no file over
+  2 MB; every mixin of the mixin config present; the version in `neoforge.mods.toml` is `mod_version` and, with
+  `-PexpectedVersion`, the tag. `gradlew releaseNotes` writes the top section of this changelog to
+  `build/release-notes.md` and fails if it is not the section of `mod_version`.
+- GitHub Actions: the build workflow runs on pushes to `master` and pull requests (build, unit tests, jar check,
+  release notes, `runData` unchanged, GameTests, one server smoke test); the full set (smoke without optional mods and
+  with The One Probe and WTHIT, GameTests with the power mods) runs by hand and before every release. The power mods
+  come from Modrinth at pinned versions with SHA-512 checks (`tools/ci/power-mods.json`, `tools/ci/fetch_mods.py`).
+- The release workflow for `v*` tags: the tag must match `mod_version`, the jar is checked, the release notes come from
+  this changelog, a GitHub release (a prerelease for betas) gets the jar and its SHA-256; Modrinth and CurseForge
+  (channel beta for betas) only once their token and project id are set.
+
 ## [1.13.4-beta.1] - 2026-11-14
 
 Stone cabinets (`features.stoneCabinets`).
