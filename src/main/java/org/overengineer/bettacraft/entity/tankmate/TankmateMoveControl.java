@@ -14,6 +14,8 @@ final class TankmateMoveControl extends MoveControl {
     private final TankmateEntity fish;
     /** M21: follows the height of the target closely (the way into a cave). */
     boolean precise;
+    /** M21.5: turn rate (degrees per tick) eased like a real fish's, so it swims curves instead of turning on the spot. */
+    private float yawVel;
 
     TankmateMoveControl(TankmateEntity fish) {
         super(fish);
@@ -25,6 +27,7 @@ final class TankmateMoveControl extends MoveControl {
         if (fish.isEyeInFluid(FluidTags.WATER)) fish.setDeltaMovement(fish.getDeltaMovement().add(0, 0.005, 0));
         if (operation != Operation.MOVE_TO) {
             fish.setSpeed(0);
+            yawVel *= 0.7F;
             if (fish.isInWater()) fish.setDeltaMovement(fish.getDeltaMovement().multiply(0.8, 0.6, 0.8));
             return;
         }
@@ -42,12 +45,30 @@ final class TankmateMoveControl extends MoveControl {
         double horiz = dx * dx + dz * dz;
         if (horiz > 1e-5) {
             float want = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90F;
-            float turn = speedModifier > 1.1 ? 26F : 10F;
-            fish.setYRot(rotlerp(fish.getYRot(), want, turn));
-            fish.yBodyRot = fish.getYRot();
-            fish.yHeadRot = fish.getYRot();
-            float off = Math.abs(Mth.wrapDegrees(want - fish.getYRot())) * Mth.DEG_TO_RAD;
-            speed *= Math.max(0.2F, Mth.cos(off));
+            boolean fast = speedModifier > 1.1;
+            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+                // M21.5: the turn rate accelerates and brakes (no snapping), the fish keeps some speed while it turns: a curve
+                float maxTurn = fast ? 18F : precise ? 12F : 7F;
+                float diff = Mth.wrapDegrees(want - fish.getYRot());
+                float wantVel = Mth.clamp(diff * 0.3F, -maxTurn, maxTurn);
+                yawVel += Mth.clamp(wantVel - yawVel, -2.5F, 2.5F);
+                fish.setYRot(fish.getYRot() + yawVel);
+                fish.yBodyRot = fish.getYRot();
+                fish.yHeadRot = fish.getYRot();
+                float off = Math.abs(Mth.wrapDegrees(want - fish.getYRot())) * Mth.DEG_TO_RAD;
+                speed *= (float) Mth.clamp(0.55 + 0.45 * Mth.cos(off), precise ? 0.2 : 0.35, 1.0);
+                // close to the target it may turn on the spot (nothing to curve around)
+                if (d < 0.25) speed *= 0.6F + 0.4F * Mth.cos(off * 0.5F);
+            } else {
+                float turn = fast ? 26F : 10F;
+                fish.setYRot(rotlerp(fish.getYRot(), want, turn));
+                fish.yBodyRot = fish.getYRot();
+                fish.yHeadRot = fish.getYRot();
+                float off = Math.abs(Mth.wrapDegrees(want - fish.getYRot())) * Mth.DEG_TO_RAD;
+                speed *= Math.max(0.2F, Mth.cos(off));
+            }
+        } else {
+            yawVel *= 0.7F;
         }
         fish.setSpeed(Mth.lerp(0.15F, fish.getSpeed(), speed));
         // vertical: also when the target is straight above or below (a cory dropping to the bottom)

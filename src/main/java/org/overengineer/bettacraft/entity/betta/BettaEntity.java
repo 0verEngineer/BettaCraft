@@ -422,6 +422,9 @@ public class BettaEntity extends AbstractFish {
 
     // ------------------------------------------------------------------ ticking
 
+    /** M21.5: the smoothed swimming pose on the client. */
+    public final org.overengineer.bettacraft.entity.SwimPose swimPose = new org.overengineer.bettacraft.entity.SwimPose();
+
     @Override
     public void tick() {
         super.tick();
@@ -429,6 +432,12 @@ public class BettaEntity extends AbstractFish {
             // fins spread and fold smoothly (~8 ticks) instead of jumping when the synced flare flag toggles
             flareAmountO = flareAmount;
             flareAmount = net.minecraft.util.Mth.approach(flareAmount, isFlaring() ? 1F : 0F, 0.125F);
+            // M21.5: eased swimming speed and body yaw (the wiggle followed the raw last-tick speed, the body the synced yaw steps)
+            swimPose.tick(this, 0.6F, 0F, 0F, false);
+            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+                yBodyRot = swimPose.yaw();
+                yHeadRot = yBodyRot;
+            }
         }
         if (level() instanceof ServerLevel server && isAlive()) {
             BettaCare.serverTick(server, this);

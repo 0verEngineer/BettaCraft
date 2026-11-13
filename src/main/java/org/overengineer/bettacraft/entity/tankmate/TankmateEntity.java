@@ -307,6 +307,17 @@ public class TankmateEntity extends AbstractFish {
         setFlags(careFlags | behaviourFlags);
     }
 
+    /** M21.5 GameTests: swim to the glass now (false if there is no free spot). */
+    public boolean swimToGlassForTest() {
+        return behaviour.glassNow();
+    }
+
+    /** M21.5 GameTests: the behaviour target (null if none). */
+    @Nullable
+    public Vec3 behaviourTarget() {
+        return behaviour.target;
+    }
+
     /** Behaviour tests and smoke scenes: stop and stay where it is. */
     public void freezeBehaviour() {
         behaviour.freeze();
@@ -469,10 +480,22 @@ public class TankmateEntity extends AbstractFish {
 
     // ------------------------------------------------------------------ ticking
 
+    /** M21.5: the smoothed swimming pose on the client (pitch, tail beat, body yaw, the turn onto the glass). */
+    public final org.overengineer.bettacraft.entity.SwimPose swimPose = new org.overengineer.bettacraft.entity.SwimPose();
+
     @Override
     public void tick() {
         super.tick();
         if (level() instanceof ServerLevel server && isAlive()) TankmateCare.serverTick(server, this);
+        if (level().isClientSide) {
+            boolean eel = species.model() == TankmateSpecies.Model.KUHLI;
+            // an eel-like kuhli loach undulates slowly; the other fish beat faster the faster they swim
+            swimPose.tick(this, eel ? 0.16F : 0.45F, eel ? 0.32F : 1.1F, eel ? 12F : 35F, flag(FLAG_GLASS) && isInWater());
+            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+                yBodyRot = swimPose.yaw();
+                yHeadRot = yBodyRot;
+            }
+        }
     }
 
     @Override

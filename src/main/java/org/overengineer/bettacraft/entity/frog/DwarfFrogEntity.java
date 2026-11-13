@@ -138,10 +138,20 @@ public class DwarfFrogEntity extends AbstractFish {
         return (float) Mth.clamp(1 - daysSinceFed() / starveDays(), 0, 1);
     }
 
+    /** M21.5: the smoothed body yaw on the client (no 1.4° steps of the synced yaw). */
+    public final org.overengineer.bettacraft.entity.SwimPose swimPose = new org.overengineer.bettacraft.entity.SwimPose();
+
     @Override
     public void tick() {
         super.tick();
         if (level() instanceof ServerLevel server && isAlive()) serverTick(server);
+        if (level().isClientSide) {
+            swimPose.tick(this, 0.5F, 0F, 0F, false);
+            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+                yBodyRot = swimPose.yaw();
+                yHeadRot = yBodyRot;
+            }
+        }
     }
 
     private void serverTick(ServerLevel server) {

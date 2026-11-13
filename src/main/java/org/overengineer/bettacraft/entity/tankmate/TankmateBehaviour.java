@@ -41,6 +41,8 @@ final class TankmateBehaviour {
     private long leaderAt = -1000;
     private Vec3 offset = Vec3.ZERO;
     int behaviourFlags;
+    /** M21.5: resting in a sheltered spot (under decoration) it reaches along a path. */
+    boolean sheltered;
 
     TankmateBehaviour(TankmateEntity fish) {
         this.fish = fish;
@@ -132,11 +134,17 @@ final class TankmateBehaviour {
                 if (target != null) move().swimTo(target.x, target.y, target.z, speed);
             } else if (mode == Mode.REST || mode == Mode.GLASS) {
                 if (fish.position().distanceToSqr(target) > 0.004) {
-                    move().swimTo(target.x, target.y, target.z, 0.4);
+                    // M21.5: a kuhli loach creeps into its shelter around the decoration
+                    Vec3 to = sheltered ? steer(server, w, target) : target;
+                    move().swimTo(to.x, to.y, to.z, sheltered ? 0.35 : 0.4);
                 } else {
                     move().stop();
                     fish.setDeltaMovement(fish.getDeltaMovement().scale(0.3));
-                    if (mode == Mode.GLASS && glassFace >= 0) faceGlass();
+                    if (mode == Mode.GLASS && glassFace >= 0) {
+                        faceGlass();
+                        // M21.5: upright only once it is on the glass (it used to stand up on the way already)
+                        behaviourFlags = TankmateEntity.FLAG_GLASS;
+                    }
                 }
             }
             apply();
@@ -150,9 +158,20 @@ final class TankmateBehaviour {
     private void decide(ServerLevel server, TankWaterVolume w, TankmateSpecies s) {
         behaviourFlags = 0;
         glassFace = -1;
+        sheltered = false;
         RandomSource r = r();
         boolean night = !server.isDay();
         double restChance = s.nocturnal() ? (night ? 0.15 : 0.75) : 0.3;
+        if (eel(s)) {
+            // M21.5: kuhli loaches: by day mostly lying still, often half hidden under the decoration; at night calm gliding
+            if (r.nextDouble() < (night ? 0.2 : 0.85)) {
+                if (!night && r.nextDouble() < 0.7 && shelter(server, w, 500 + r.nextInt(700))) return;
+                rest(server, w, (night ? 100 : 300) + r.nextInt(night ? 200 : 500));
+                return;
+            }
+            glide(server, w);
+            return;
+        }
         switch (s.zone()) {
             case BOTTOM -> {
                 if (s.airGulper() && r.nextInt(30) == 0) {
@@ -228,6 +247,42 @@ final class TankmateBehaviour {
         rest(server, w, 60);
     }
 
+    /** M21.5: the eel-like kuhli loach (smooth swimming on). */
+    private static boolean eel(TankmateSpecies s) {
+        return s.model() == TankmateSpecies.Model.KUHLI && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming();
+    }
+
+    /** M21.5: a calm, long glide along the bottom, mostly ahead (few changes of direction). */
+    private void glide(ServerLevel server, TankWaterVolume w) {
+        RandomSource r = r();
+        double heading = fish.getYRot() * Mth.DEG_TO_RAD;
+        for (int i = 0; i < 10; i++) {
+            double ang = i < 7 ? heading + (r.nextDouble() - 0.5) * (Math.PI / 2) : r.nextDouble() * Math.PI * 2;
+            double dist = 0.8 + r.nextDouble() * 1.4;
+            Vec3 t = onGround(server, w, fish.getX() - Math.sin(ang) * dist, fish.getZ() + Math.cos(ang) * dist);
+            if (t.distanceToSqr(fish.position()) < 0.16 || !pathFree(server, fish.position(), t)) continue;
+            go(t, 0.4, Mode.CRUISE);
+            ticks = 90 + r.nextInt(90);
+            return;
+        }
+        rest(server, w, 120);
+    }
+
+    /** M21.5: rests in a sheltered spot under decoration nearby (reached along a path); false if there is none. */
+    private boolean shelter(ServerLevel server, TankWaterVolume w, int duration) {
+        TankTerrain t = terrain(server);
+        if (t == null) return false;
+        double[] spot = t.shelter(fish.getX(), fish.getY(), fish.getZ(), 2.0, new java.util.Random(r().nextLong()));
+        if (spot == null) return false;
+        Vec3 c = clamp(w, new Vec3(spot[0], spot[1] + 0.01, spot[2]));
+        target = new Vec3(c.x, Math.max(w.box().minY, spot[1] + 0.01), c.z);
+        mode = Mode.REST;
+        ticks = duration;
+        sheltered = true;
+        behaviourFlags = TankmateEntity.FLAG_REST;
+        return true;
+    }
+
     private void rest(ServerLevel server, TankWaterVolume w, int duration) {
         target = onGround(server, w, fish.getX(), fish.getZ());
         mode = Mode.REST;
@@ -284,7 +339,8 @@ final class TankmateBehaviour {
             mode = Mode.GLASS;
             glassFace = dir;
             ticks = 200 + r.nextInt(400);
-            behaviourFlags = TankmateEntity.FLAG_GLASS;
+            // M21.5: FLAG_GLASS (upright) only on arrival (see tick); legacy: at once
+            behaviourFlags = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0 : TankmateEntity.FLAG_GLASS;
             return true;
         }
         return false;
@@ -434,6 +490,12 @@ final class TankmateBehaviour {
     }
 
     /** Smoke tests and GameTests: rest or cling right where the fish is. */
+    /** GameTests: start the swim to the glass now. */
+    boolean glassNow() {
+        if (!(fish.level() instanceof ServerLevel server) || fish.tankWater == null) return false;
+        return glass(server, fish.tankWater);
+    }
+
     void freeze() {
         target = fish.position();
         mode = Mode.REST;

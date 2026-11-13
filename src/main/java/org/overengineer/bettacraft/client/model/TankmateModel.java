@@ -54,18 +54,38 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     @Override
     public void setupAnim(TankmateEntity fish, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         root.getAllParts().forEach(ModelPart::resetPose);
-        double v = Math.sqrt(fish.getDeltaMovement().horizontalDistanceSqr());
-        float swim = (float) Math.min(1.0, v / 0.03);
+        boolean smooth = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming();
+        float pt = ageInTicks - (float) Math.floor(ageInTicks); // the partial tick (age = tickCount + partial)
+        float swim;
+        float phase;
+        if (smooth) {
+            // M21.5: eased speed and an accumulated phase (the old phase = age * speed-dependent frequency jumped)
+            swim = fish.swimPose.swim(pt);
+            phase = fish.swimPose.phase(pt);
+        } else {
+            double v = Math.sqrt(fish.getDeltaMovement().horizontalDistanceSqr());
+            swim = (float) Math.min(1.0, v / 0.03);
+            phase = ageInTicks * (0.45F + 1.1F * swim) + fish.getId() * 1.7F;
+        }
         boolean rest = fish.flag(TankmateEntity.FLAG_REST) || fish.flag(TankmateEntity.FLAG_GLASS);
-        float phase = ageInTicks * (0.45F + 1.1F * swim) + fish.getId() * 1.7F;
         float amp = rest ? 0.06F : 0.12F + 0.35F * swim;
         if (tail != null) tail.yRot = Mth.sin(phase) * amp;
         if (dorsal != null) dorsal.xRot = rest ? -0.1F : 0.05F * Mth.sin(phase * 0.5F);
         float flutter = Mth.sin(ageInTicks * 0.9F + fish.getId()) * (rest ? 0.12F : 0.3F);
         if (pecR != null) pecR.yRot = flutter;
         if (pecL != null) pecL.yRot = -flutter;
-        for (int i = 0; i < segments.size(); i++) {
-            segments.get(i).yRot = Mth.sin(phase * 0.8F - (i + 1) * 0.9F) * (rest ? 0.08F : 0.18F + 0.15F * swim);
+        if (smooth && !segments.isEmpty()) {
+            // M21.5: an eel's body wave: slow, long, travelling from the head to the tail; small bends per segment
+            // (the segments are nested, the bends add up along the body)
+            float segAmp = rest ? 0.035F : 0.07F + 0.06F * swim;
+            for (int i = 0; i < segments.size(); i++) {
+                segments.get(i).yRot = Mth.sin(phase - (i + 1) * 0.75F) * segAmp * (0.6F + 0.4F * i / Math.max(1, segments.size() - 1));
+            }
+            if (tail != null) tail.yRot = Mth.sin(phase - (segments.size() + 1) * 0.75F) * (rest ? 0.05F : 0.12F + 0.1F * swim);
+        } else {
+            for (int i = 0; i < segments.size(); i++) {
+                segments.get(i).yRot = Mth.sin(phase * 0.8F - (i + 1) * 0.9F) * (rest ? 0.08F : 0.18F + 0.15F * swim);
+            }
         }
         if (filaments != null) filaments.xRot = 0.15F * Mth.sin(ageInTicks * 0.12F + fish.getId());
         boolean f = fish.isFemale();

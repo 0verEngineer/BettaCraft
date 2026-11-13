@@ -92,8 +92,37 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     @Override
     protected void setupRotations(TankmateEntity fish, PoseStack pose, float bob, float yBodyRot, float partialTick, float scale) {
         super.setupRotations(fish, pose, bob, yBodyRot, partialTick, scale);
+        if (!org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+            legacyRotations(fish, pose, bob);
+            return;
+        }
+        if (!fish.isInWater()) {
+            pose.translate(0.05F, 0.05F, -0.05F);
+            pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            return;
+        }
+        var sp = fish.swimPose;
+        float g = sp.glass(partialTick);
+        float swim = sp.swim(partialTick);
+        boolean eel = fish.species().model() == TankmateSpecies.Model.KUHLI;
+        boolean rest = fish.flag(TankmateEntity.FLAG_REST);
+        // M21.5: the whole body sways with the beat (an eel hardly: its body wave does that), less when upright on the glass
+        float sway = (eel ? 0.4F : rest ? 0.6F : 1.0F + 2.8F * swim) * Mth.sin(sp.phase(partialTick) * (eel ? 1.0F : 1.2F)) * (1 - g);
+        pose.mulPose(Axis.YP.rotationDegrees(sway));
+        if (g > 0) {
+            // M21.5: turned upright onto the glass smoothly (nose up, belly against the wall in front of it)
+            float len = (float) fish.species().length() * fish.lifeStage().scale();
+            float toGlass = (float) Math.max(0, fish.sideMargin() - 1.0 / 16 - 0.012);
+            pose.translate(0, len * 0.5F * g, -toGlass * g);
+            pose.mulPose(Axis.XP.rotationDegrees(90F * g));
+        }
+        float pitch = sp.pitch(partialTick) * (1 - g);
+        if (pitch != 0) pose.mulPose(Axis.XP.rotationDegrees(pitch));
+    }
+
+    /** Up to M21: raw last-tick movement, thresholds (features.smoothSwimming off). */
+    private static void legacyRotations(TankmateEntity fish, PoseStack pose, float bob) {
         if (fish.flag(TankmateEntity.FLAG_GLASS) && fish.isInWater()) {
-            // upright on the glass: nose up, belly against the wall in front of it
             float len = (float) fish.species().length() * fish.lifeStage().scale();
             float toGlass = (float) Math.max(0, fish.sideMargin() - 1.0 / 16 - 0.012);
             pose.translate(0, len * 0.5F, -toGlass);
