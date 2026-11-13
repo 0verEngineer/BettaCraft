@@ -118,6 +118,12 @@ final class DevClientSmokeMP {
                 tank = pos(s[1]);
                 then(40, () -> sendState(s[0]));
             }
+            case "aqua" -> {
+                // M13: how many aquarium plant blocks the miniature of the tank shows on this client
+                String[] s = args.split(",", 2);
+                tank = pos(s[1]);
+                then(40, () -> sendAquatic(s[0]));
+            }
             case "use" -> use("sneak".equals(args));
             case "menu" -> menu();
             case "motion" -> {
@@ -190,6 +196,23 @@ final class DevClientSmokeMP {
         int fish = mc.level.getEntitiesOfClass(BettaEntity.class, box).size();
         send(String.format(Locale.ROOT, "state %s %d %d %d %.4f %.4f %d", phase, t.waterMb(), n, ids, cx, cz, fish));
         shot("state" + phase);
+    }
+
+    /** M13: {@code aqua <phase> <plant blocks> <version>}: aquarium plant blocks in this client's copy of the tank interior. */
+    private static void sendAquatic(String phase) {
+        TankData t = clientTank();
+        var region = t == null || t.regionId() < 0 ? null : org.overengineer.bettacraft.client.interior.ClientInteriorCache.get(t.regionId());
+        if (region == null) {
+            send("error aqua " + phase + ": no miniature on the client for " + tank);
+            return;
+        }
+        int n = 0;
+        int sx = t.sizeX() * t.scale(), sy = t.sizeY() * t.scale(), sz = t.sizeZ() * t.scale();
+        for (int x = 0; x < sx; x++)
+            for (int y = 0; y < sy; y++)
+                for (int z = 0; z < sz; z++) if (region.get(x, y, z).getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock) n++;
+        send(String.format(Locale.ROOT, "aqua %s %d", phase, n));
+        shot("aqua" + phase);
     }
 
     /** Right-click like a player: the use key, with the crosshair where the server turned the player. */

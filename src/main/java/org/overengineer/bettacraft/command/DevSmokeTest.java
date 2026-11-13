@@ -240,6 +240,8 @@ public final class DevSmokeTest {
                 DevSmokeM11.setup(level, base); // M11: a textured and a clean tank side by side
             } else if (ticks == 100) {
                 DevSmokeM12.setup(level, base); // M12: a tank with one floating plant of every species
+            } else if (ticks == 110) {
+                DevSmokeM13.setup(level, base); // M13: aquarium plants in a tank interior
             } else if (!passed && ticks >= 200 && ticks < 2400 && (InteriorBench.realRunning() || ticks % 20 != 0)) {
                 // wait for the asynchronous real-region bench
             } else if (ticks >= 200 && !passed) {
@@ -276,6 +278,7 @@ public final class DevSmokeTest {
                 DevSmokeM10.check(level, base);
                 DevSmokeM11.check(level, base);
                 DevSmokeM12.check(level, base);
+                DevSmokeM13.check(level, base);
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

@@ -43,6 +43,7 @@ import org.overengineer.bettacraft.registry.ModEntities;
 import org.overengineer.bettacraft.registry.ModItems;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
+import org.overengineer.bettacraft.tank.interior.InteriorManager;
 import org.overengineer.bettacraft.tank.TankEquipment;
 import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankInteractions;
@@ -118,11 +119,12 @@ public final class DevSmokeMP {
         switch (a[0]) {
             case "state" -> compareState(name, a);
             case "motion" -> checkMotion(name, a);
+            case "aqua" -> checkAquatic(name, a);
             case "menu" -> check(name + ": tank menu (" + text.substring(5) + ")", "ok".equals(a[1]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
-        reports.put(name + ":" + a[0] + (a.length > 1 && "state".equals(a[0]) ? a[1] : ""), text);
+        reports.put(name + ":" + a[0] + (a.length > 1 && ("state".equals(a[0]) || "aqua".equals(a[0])) ? a[1] : ""), text);
     }
 
     /** {@code state <phase> <water> <plants> <idsum> <cx> <cz> <fish>}: what the client sees = the server state now. */
@@ -152,6 +154,18 @@ public final class DevSmokeMP {
         check(phase + ": plants " + n + " (server " + sn + "), ids " + ids + " (server " + sids + ")", n == sn && ids == sids);
         check(phase + ": plant centre " + f(cx) + "/" + f(cz) + " (server " + f(sx) + "/" + f(sz) + ")", n == 0 || Math.hypot(cx - sx, cz - sz) < 0.35);
         check(phase + ": fish " + fish + " (server " + sfish + ")", fish == sfish);
+    }
+
+    /** M13 {@code aqua <phase> <plant blocks>}: the miniature on the client shows the aquarium plants of the server. */
+    private static void checkAquatic(String name, String[] a) {
+        int n = Integer.parseInt(a[2]);
+        var r = org.overengineer.bettacraft.plants.InteriorPlants.region(server, main().getTank());
+        int sn = r == null ? -1 : r.plants().blocks();
+        check("aqua " + a[1] + " " + name + ": miniature shows " + n + " aquarium plant blocks (server " + sn + ")", n == sn);
+        if ("2".equals(a[1])) {
+            int before = Integer.parseInt(reports.getOrDefault(name + ":aqua1", "aqua 1 0").split(" ")[2]);
+            check("aqua " + name + ": the plants grew in the miniature: " + before + " -> " + n + " blocks", n > before + 20);
+        }
     }
 
     /** {@code motion <frames> <moved plants> <plants> <biggest step per frame> <mean distance> <backward jumps>}. */
@@ -370,6 +384,26 @@ public final class DevSmokeMP {
                 () -> reports.containsKey(P1 + ":state2") && reports.containsKey(P2 + ":state2"), 20 * 30));
         steps.add(new Step("motion", () -> say("motion", "all", "160," + tankArg()),
                 () -> reports.containsKey(P1 + ":motion") && reports.containsKey(P2 + ":motion"), 20 * 40));
+        // M13: aquarium plants in the interior grow while nobody is inside; both miniatures follow
+        steps.add(new Step("aquarium plants", () -> {
+            TankBlockEntity c = main();
+            var r = InteriorManager.ensureRegion(server.overworld(), c);
+            ServerLevel in = InteriorManager.interiorLevel(server);
+            for (var pl : new ArrayList<>(r.plants().all())) org.overengineer.bettacraft.plants.InteriorPlants.remove(in, r, pl, false);
+            org.overengineer.bettacraft.plants.InteriorPlants.plantAt(in, r, org.overengineer.bettacraft.plants.PlantSpecies.ROTALA, 34, 0, 20, 0, 21L);
+            org.overengineer.bettacraft.plants.InteriorPlants.plantAt(in, r, org.overengineer.bettacraft.plants.PlantSpecies.AMAZON_SWORD, 20, 0, 24, 0, 22L);
+            org.overengineer.bettacraft.plants.InteriorPlants.plantAt(in, r, org.overengineer.bettacraft.plants.PlantSpecies.VALLISNERIA, 50, 0, 30, 0, 23L);
+        }, () -> stepTicks >= 80, 100));
+        steps.add(new Step("cuttings seen", () -> say("aqua", "all", "1," + tankArg()),
+                () -> reports.containsKey(P1 + ":aqua1") && reports.containsKey(P2 + ":aqua1"), 20 * 30));
+        steps.add(new Step("plants grow", () -> {
+            TankBlockEntity c = main();
+            var r = org.overengineer.bettacraft.plants.InteriorPlants.region(server, c.getTank());
+            for (int i = 0; i < 8; i++) org.overengineer.bettacraft.plants.InteriorPlants.grow(server.overworld(), c, r, 0.5);
+            LOGGER.info("[smoketest] MP aquarium plants grown: {}", r.plants().all());
+        }, () -> stepTicks >= 60, 100));
+        steps.add(new Step("grown plants seen", () -> say("aqua", "all", "2," + tankArg()),
+                () -> reports.containsKey(P1 + ":aqua2") && reports.containsKey(P2 + ":aqua2"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);
