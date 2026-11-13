@@ -12,6 +12,9 @@ public final class CommonConfig {
     public static final ModConfigSpec.IntValue SPAWN_MIN_GROUP;
     public static final ModConfigSpec.IntValue SPAWN_MAX_GROUP;
     public static final ModConfigSpec.EnumValue<FishBagRecipe> RECIPE_FISH_BAG;
+    public static final ModConfigSpec.EnumValue<org.overengineer.bettacraft.compat.info.OverlayProvider.Choice> OVERLAY_PROVIDER;
+    public static final ModConfigSpec.BooleanValue FEATURE_PATHFINDING;
+    public static final ModConfigSpec.BooleanValue FEATURE_PLANT_MESHES;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -24,6 +27,17 @@ public final class CommonConfig {
         RECIPE_FISH_BAG = b.comment("Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one")
                 .defineEnum("fishBag", FishBagRecipe.AUTO);
         b.pop();
+        b.comment("Integration with other mods").push("compat");
+        OVERLAY_PROVIDER = b.comment("Which overlay mod shows the Bettacraft lines (tank, betta, filter, culture): AUTO = only the first installed one "
+                        + "in the order Jade, WTHIT, The One Probe (no doubled boxes with two overlay mods); JADE, TOP or WTHIT = only that one; ALL = every installed one")
+                .defineEnum("overlayProvider", org.overengineer.bettacraft.compat.info.OverlayProvider.Choice.AUTO);
+        b.pop();
+        b.comment("Switches for single features (M21 on; older features follow in a later version)").push("features");
+        FEATURE_PATHFINDING = b.comment("Path finding in the tank interior: dwarf frogs walk around decoration, small animals go under overhangs and into caves, "
+                + "plecos swim into their spawning cave (off: straight lines like before)").define("interiorPathfinding", true);
+        FEATURE_PLANT_MESHES = b.comment("New look of Rotala, Vallisneria and Anubias in the tank interior (prototype): real leaves that sway in the water "
+                + "instead of leaf blocks; the miniature outside keeps the block look (off: the old leaf blocks everywhere)").define("plantMeshes", true);
+        b.pop();
         SPEC = b.build();
     }
 
@@ -34,6 +48,14 @@ public final class CommonConfig {
         } catch (IllegalStateException e) {
             return fallback;
         }
+    }
+
+    public static boolean pathfinding() {
+        return getOr(FEATURE_PATHFINDING, true);
+    }
+
+    public static boolean plantMeshes() {
+        return getOr(FEATURE_PLANT_MESHES, true);
     }
 
     private CommonConfig() {}

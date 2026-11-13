@@ -66,6 +66,10 @@ public class DwarfFrogEntity extends AbstractFish {
     long noAirSince = -1;
     /** Ticks until the next drowning damage. */
     int drown;
+    /** M21: the tank (server, refreshed with {@link #tankWater}) and the way around the decoration. */
+    @Nullable
+    TankData tank;
+    final org.overengineer.bettacraft.tank.interior.PathFollower path = new org.overengineer.bettacraft.tank.interior.PathFollower();
 
     public DwarfFrogEntity(EntityType<? extends DwarfFrogEntity> type, Level level) {
         super(type, level);
@@ -145,8 +149,10 @@ public class DwarfFrogEntity extends AbstractFish {
             TankBlockEntity c = TankInhabitants.resolveController(server, this);
             if (c == null) {
                 tankWater = null;
+                tank = null;
             } else {
                 TankData t = c.getTank();
+                tank = t;
                 tankWater = new TankWaterVolume(t);
                 airAvailable = org.overengineer.bettacraft.tank.TankFrogs.hasAir(t);
                 if (lastFed == NEVER) lastFed = server.getGameTime();
@@ -207,8 +213,11 @@ public class DwarfFrogEntity extends AbstractFish {
         if (surfacing) {
             Vec3 p = position();
             Vec3 up = w.clamp(new Vec3(p.x, w.surface() - getBbHeight() + 0.02, p.z), 0.2, 0.05, 0.0);
-            moveControl.setWantedPosition(up.x, w.surface() - getBbHeight() + 0.03, up.z, 1.0);
-            setDeltaMovement(getDeltaMovement().add(0, 0.012, 0));
+            up = new Vec3(up.x, w.surface() - getBbHeight() + 0.03, up.z);
+            // M21: from under an overhang or out of a cave around the decoration
+            Vec3 n = steer(up, w);
+            moveControl.setWantedPosition(n.x, n.y, n.z, 1.0);
+            if (n == up) setDeltaMovement(getDeltaMovement().add(0, 0.012, 0));
             return;
         }
         if (target == null || --targetTicks <= 0 || position().distanceToSqr(target) < 0.02) {
@@ -218,11 +227,45 @@ public class DwarfFrogEntity extends AbstractFish {
                 moveControl.setWantedPosition(getX(), getY(), getZ(), 0);
                 return;
             }
-            Vec3 p = position().add(random.nextGaussian() * 0.8, 0, random.nextGaussian() * 0.8);
-            target = w.clamp(new Vec3(p.x, floor + 0.02, p.z), 0.2, 0.05, 0.2);
+            target = null;
+            for (int i = 0; i < 6 && target == null; i++) {
+                Vec3 p = position().add(random.nextGaussian() * 0.8, 0, random.nextGaussian() * 0.8);
+                Vec3 t = w.clamp(new Vec3(p.x, floor + 0.02, p.z), 0.2, 0.05, 0.2);
+                // M21: never a spot inside the decoration
+                if (i < 5 && tank != null && level() instanceof ServerLevel server
+                        && org.overengineer.bettacraft.tank.interior.InteriorObstacles.blocked(server.getServer(), tank, t.add(0, 0.05, 0))) continue;
+                target = t;
+            }
             targetTicks = 60 + random.nextInt(80);
+            path.clear();
         }
-        if (target != null) moveControl.setWantedPosition(target.x, target.y, target.z, 0.5);
+        if (target != null) {
+            Vec3 n = steer(target, w);
+            if (path.failed()) {
+                target = null; // no way there: rest and pick another spot
+                targetTicks = 10;
+                return;
+            }
+            moveControl.setWantedPosition(n.x, n.y, n.z, 0.5);
+        }
+    }
+
+    /** M21: the next point on the way to {@code goal} around the interior decoration (the goal itself without one). */
+    private Vec3 steer(Vec3 goal, TankWaterVolume w) {
+        if (tank == null || !(level() instanceof ServerLevel server)) return goal;
+        return path.next(server.getServer(), tank, position(), goal, w.surface() + 0.1, 0.06, server.getGameTime(), 0.2, true);
+    }
+
+    /** GameTests: walk to this spot (for a long time). */
+    public void goToForTest(Vec3 spot) {
+        target = spot;
+        targetTicks = 100000;
+        path.clear();
+    }
+
+    /** GameTests: the waypoints left on the frog's way. */
+    public int pathLeftForTest() {
+        return path.remaining();
     }
 
     @Override

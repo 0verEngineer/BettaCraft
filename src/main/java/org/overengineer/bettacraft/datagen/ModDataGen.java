@@ -482,7 +482,8 @@ public final class ModDataGen {
             withExistingParent("artemia_hatchery", modLoc("block/artemia_hatchery_water3"));
             // bucket and filled bag: fish overlay as layer1/layer2 (tinted via ItemColor)
             withExistingParent("betta_bucket", mcLoc("item/generated"))
-                    .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish")).texture("layer2", modLoc("item/betta_bucket_fish_fins"));
+                    .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish")).texture("layer2", modLoc("item/betta_bucket_fish_fins"))
+                    .texture("layer3", modLoc("item/betta_bucket_glass")); // M21: the glass in front of the fish
             ModelFile filledBag = withExistingParent("fish_bag_filled", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/fish_bag")).texture("layer1", modLoc("item/fish_bag_fish")).texture("layer2", modLoc("item/fish_bag_fish_fins"));
             withExistingParent("fish_bag", mcLoc("item/generated")).texture("layer0", modLoc("item/fish_bag"))
@@ -515,7 +516,7 @@ public final class ModDataGen {
             for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
                 withExistingParent(sp.bucketId(), mcLoc("item/generated"))
                         .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish"))
-                        .texture("layer2", modLoc("item/betta_bucket_fish_fins"));
+                        .texture("layer2", modLoc("item/betta_bucket_fish_fins")).texture("layer3", modLoc("item/betta_bucket_glass"));
                 withExistingParent(sp.spawnEggId(), mcLoc("item/template_spawn_egg"));
             }
             basicItem(ModItems.BREEDING_BOX.get());

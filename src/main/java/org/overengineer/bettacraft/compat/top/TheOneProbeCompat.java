@@ -50,6 +50,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
         // looking through the glass at a fish shows the fish, not the tank block
         probe.registerBlockDisplayOverride((mode, info, player, level, state, data) -> {
             if (!(state.getBlock() instanceof TankBlock)) return false;
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) return false;
             EntityHitResult hit = InfoTarget.bettaBehindGlass(level, player);
             if (hit == null || !(hit.getEntity() instanceof BettaEntity b)) return false;
             IProbeInfo head = info.horizontal();
@@ -81,6 +82,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
         @Override
         public void addProbeInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, BlockState state, IProbeHitData data) {
             if (!(level instanceof ServerLevel server)) return;
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) return;
             if (state.getBlock() instanceof TankBlock) {
                 if (InfoTarget.bettaBehindGlass(level, player) != null) return; // the display override shows the fish
                 add(info, InfoLines.tank(InfoData.tank(server, data.getPos()), mode != ProbeMode.NORMAL));
@@ -101,7 +103,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
 
         @Override
         public void addProbeEntityInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, Entity entity, IProbeHitEntityData data) {
-            if (entity instanceof BettaEntity b) betta(info, mode, b);
+            if (entity instanceof BettaEntity b && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) betta(info, mode, b);
         }
     }
 }

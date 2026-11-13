@@ -46,16 +46,16 @@ jobs:
       - name: GameTests
         run: ./gradlew runGameTestServer --stacktrace
 
-      - name: Dedicated server smoke test (all optional mods)
+      - name: Dedicated server smoke test (all optional mods, also The One Probe and WTHIT)
         run: |
           mkdir -p run
           echo "eula=true" > run/eula.txt
-          ./gradlew runServer -Psmoketest --stacktrace 2>&1 | tee smoke-all.log
+          ./gradlew runServer -Psmoketest -Ptop -Pwthit --stacktrace 2>&1 | tee smoke-all.log
           grep -q "\[smoketest\] PASSED" smoke-all.log
 
       - name: Dedicated server smoke test (no optional mods)
         run: |
-          ./gradlew runServer -Psmoketest -PnoJade -PnoJei -PnoGuideme -PnoCompat -PnoTop -PnoWthit --stacktrace 2>&1 | tee smoke-none.log
+          ./gradlew runServer -Psmoketest -PnoJade -PnoJei -PnoGuideme -PnoCompat --stacktrace 2>&1 | tee smoke-none.log
           grep -q "\[smoketest\] PASSED" smoke-none.log
 
       - name: Upload jar

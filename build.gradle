@@ -196,13 +196,14 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     if (!project.hasProperty('noJei') && !gameTests) localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
-    // The One Probe and WTHIT (M8, optional): same information as the Jade plugin. On the run classpath in dev unless
-    // -PnoTop / -PnoWthit is given; never for GameTests (they ping the mock players like Jade).
+    // The One Probe and WTHIT (M8, optional): same information as the Jade plugin. M21: no longer on the run classpath by
+    // default (two overlay mods showed every tank twice); -Ptop / -Pwthit add them (-PnoTop / -PnoWthit still accepted, they
+    // win). Never for GameTests (they ping the mock players like Jade). Config compat.overlayProvider picks the overlay.
     compileOnly "maven.modrinth:the-one-probe:${top_version}"
-    if (!project.hasProperty('noTop') && !gameTests) localRuntime "maven.modrinth:the-one-probe:${top_version}"
+    if (project.hasProperty('top') && !project.hasProperty('noTop') && !gameTests) localRuntime "maven.modrinth:the-one-probe:${top_version}"
     compileOnly "maven.modrinth:wthit:${wthit_version}"
     compileOnly "maven.modrinth:badpackets:${badpackets_version}"
-    if (!project.hasProperty('noWthit') && !gameTests) {
+    if (project.hasProperty('wthit') && !project.hasProperty('noWthit') && !gameTests) {
         localRuntime "maven.modrinth:wthit:${wthit_version}"
         localRuntime "maven.modrinth:badpackets:${badpackets_version}"
     }

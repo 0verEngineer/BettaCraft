@@ -27,7 +27,11 @@ public final class InteriorObstacles {
         final Long2LongOpenHashMap ticketTime = new Long2LongOpenHashMap();
 
         Grid(InteriorRegion r) {
-            cell = Math.max(1, r.scale() / 4);
+            this(r, Math.max(1, r.scale() / 4));
+        }
+
+        Grid(InteriorRegion r, int cell) {
+            this.cell = cell;
             nx = (r.sizeX() + cell - 1) / cell;
             ny = (r.sizeY() + cell - 1) / cell;
             nz = (r.sizeZ() + cell - 1) / cell;
@@ -36,11 +40,22 @@ public final class InteriorObstacles {
     }
 
     private static final Int2ObjectOpenHashMap<Grid> GRIDS = new Int2ObjectOpenHashMap<>();
+    /** M21: the finer grid of the path finding ({@link InteriorPaths}): an eighth of a tank block (two tank pixels). */
+    private static final Int2ObjectOpenHashMap<Grid> FINE = new Int2ObjectOpenHashMap<>();
+
+    /** Cell size of the path finding grid in interior blocks. */
+    public static int fineCell(InteriorRegion r) {
+        return Math.max(1, r.scale() / 8);
+    }
 
     private InteriorObstacles() {}
 
     static void invalidate(int regionId, int lx, int ly, int lz) {
-        Grid g = GRIDS.get(regionId);
+        invalidate(GRIDS.get(regionId), lx, ly, lz);
+        invalidate(FINE.get(regionId), lx, ly, lz);
+    }
+
+    private static void invalidate(Grid g, int lx, int ly, int lz) {
         if (g == null) return;
         int cx = lx / g.cell, cy = ly / g.cell, cz = lz / g.cell;
         if (cx >= 0 && cy >= 0 && cz >= 0 && cx < g.nx && cy < g.ny && cz < g.nz) g.cells[(cy * g.nz + cz) * g.nx + cx] = UNKNOWN;
@@ -48,10 +63,30 @@ public final class InteriorObstacles {
 
     public static void forget(int regionId) {
         GRIDS.remove(regionId);
+        FINE.remove(regionId);
     }
 
     public static void clearAll() {
         GRIDS.clear();
+        FINE.clear();
+    }
+
+    /**
+     * M21: whether the cell (cx, cy, cz) of the path finding grid ({@link #fineCell}) is solid. Cells outside the interior
+     * count as solid, cells in chunks that are not loaded yet as free.
+     */
+    static boolean fineSolid(ServerLevel interior, InteriorRegion r, int cx, int cy, int cz) {
+        Grid g = FINE.get(r.id());
+        int cell = fineCell(r);
+        if (g == null || g.cell != cell || g.nx != (r.sizeX() + cell - 1) / cell || g.ny != (r.sizeY() + cell - 1) / cell
+                || g.nz != (r.sizeZ() + cell - 1) / cell) {
+            g = new Grid(r, cell);
+            FINE.put(r.id(), g);
+        }
+        if (cx < 0 || cy < 0 || cz < 0 || cx >= g.nx || cy >= g.ny || cz >= g.nz) return true;
+        int i = (cy * g.nz + cz) * g.nx + cx;
+        if (g.cells[i] == UNKNOWN) g.cells[i] = compute(interior, r, g, cx, cy, cz);
+        return g.cells[i] == SOLID;
     }
 
     /** Whether a world position inside the tank lies in solid interior decoration. */

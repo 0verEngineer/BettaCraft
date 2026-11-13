@@ -482,7 +482,6 @@ ICONS = {
     "mirror_stick": mirror_stick,
     "tank_net": tank_net,
     "swamp_water_bottle": swamp_water_bottle,
-    "betta_bucket": bucket,
     "fish_bag": fish_bag,
     "betta_pellets": pellets,
     "mosquito_larvae": mosquito_larvae,
@@ -497,7 +496,7 @@ ICONS = {
 
 def all_icons() -> dict[str, np.ndarray]:
     out = {k: f() for k, f in ICONS.items()}
-    out["betta_bucket_fish"], out["betta_bucket_fish_fins"] = fish_layers(FISH_BUCKET)
+    # the bucket and its fish layers: buckets.py (M21: variants A, B, C)
     out["fish_bag_fish"], out["fish_bag_fish_fins"] = fish_layers(FISH_BAG)
     return out
 

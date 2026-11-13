@@ -546,7 +546,7 @@ def write_all() -> list:
     for st in range(1, 5):
         written.append(save_png(algae(st), ALGAE_TEX / f"algae_{st}.png"))
     written.append(save_png(scraper_icon(), ITEM_TEX / "algae_scraper.png"))
-    written.append(save_png(frog_bucket_icon(), ITEM_TEX / "dwarf_frog_bucket.png"))
+    # the frog bucket: buckets.py (M21, in the style of the active bucket variant)
     return written
 
 

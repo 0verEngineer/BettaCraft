@@ -155,12 +155,14 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 ./gradlew build                 # jar in build/libs, runs the unit tests
 ./gradlew runGameTestServer     # GameTests
 ./gradlew runData               # regenerate src/generated (recipes, tags, models, en_us, advancements)
-./gradlew runClient             # dev client with Jade, JEI, GuideME, The One Probe, WTHIT and the aquarium mods
+./gradlew runClient             # dev client with Jade, JEI, GuideME and the aquarium mods
+./gradlew buildShowcase         # (re)builds the showcase world "Bettacraft Schaukasten" in run/saves (no window)
 ./gradlew runMultiplayerTest    # dedicated server + two background clients (Dev1, Dev2) play a scripted session
 ```
 
-Leave optional mods out of the dev runtime with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoTop`, `-PnoWthit` and
-`-PnoCompat`. Textures, models and the logo come from the procedural generator in `tools/assetgen` (Python, see its
+Leave optional mods out of the dev runtime with `-PnoJade`, `-PnoJei`, `-PnoGuideme` and `-PnoCompat`; add The One
+Probe and WTHIT with `-Ptop` and `-Pwthit` (config `compat.overlayProvider` picks which overlay shows the Bettacraft
+lines; AUTO = only the first of Jade, WTHIT, The One Probe). Textures, models and the logo come from the procedural generator in `tools/assetgen` (Python, see its
 README); the generated files are committed, so the Gradle build does not need Python.
 
 ## License

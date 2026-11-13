@@ -80,7 +80,8 @@ final class TankmateBehaviour {
         if (hold != null) {
             double d = fish.position().distanceTo(hold);
             if (d > 0.08) {
-                go(hold, d > 0.6 ? 0.9 : 0.5, Mode.HOLD);
+                // M21: into the cave through its mouth (not through the wall), around the decoration
+                go(steer(server, w, hold), d > 0.6 ? 0.9 : 0.5, Mode.HOLD);
             } else {
                 mode = Mode.HOLD;
                 move().stop();
@@ -330,6 +331,7 @@ final class TankmateBehaviour {
         this.speed = speed;
         this.mode = m;
         if (ticks <= 0) ticks = 40;
+        move().precise = m == Mode.HOLD; // M21: on the way into the cave it holds its height (no drifting over the roof)
         move().swimTo(t.x, t.y, t.z, speed);
     }
 
@@ -415,6 +417,20 @@ final class TankmateBehaviour {
             if (InteriorObstacles.blocked(server.getServer(), c.getTank(), a.lerp(b, i / (double) steps))) return false;
         }
         return true;
+    }
+
+    private final org.overengineer.bettacraft.tank.interior.PathFollower path = new org.overengineer.bettacraft.tank.interior.PathFollower();
+
+    /** M21: the next point on the way to {@code goal} around the interior decoration (the goal itself without one). */
+    private Vec3 steer(ServerLevel server, TankWaterVolume w, Vec3 goal) {
+        TankBlockEntity c = TankInhabitants.resolveController(server, fish);
+        if (c == null) return goal;
+        return path.next(server.getServer(), c.getTank(), fish.position(), goal, w.surface(), 0.08, server.getGameTime(), fish.sideMargin(), true);
+    }
+
+    /** GameTests: waypoints left on the way to the cave. */
+    int pathLeft() {
+        return path.remaining();
     }
 
     /** Smoke tests and GameTests: rest or cling right where the fish is. */

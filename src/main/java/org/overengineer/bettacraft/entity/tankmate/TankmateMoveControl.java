@@ -12,6 +12,8 @@ import net.minecraft.world.entity.ai.control.MoveControl;
  */
 final class TankmateMoveControl extends MoveControl {
     private final TankmateEntity fish;
+    /** M21: follows the height of the target closely (the way into a cave). */
+    boolean precise;
 
     TankmateMoveControl(TankmateEntity fish) {
         super(fish);
@@ -50,6 +52,10 @@ final class TankmateMoveControl extends MoveControl {
         fish.setSpeed(Mth.lerp(0.15F, fish.getSpeed(), speed));
         // vertical: also when the target is straight above or below (a cory dropping to the bottom)
         double vy = Mth.clamp(dy, -1, 1) * Math.max(0.02, speed) * 0.12;
+        if (precise) {
+            vy = Mth.clamp(dy * 0.25, -0.03, 0.03);
+            fish.setDeltaMovement(fish.getDeltaMovement().multiply(1, 0.5, 1));
+        }
         fish.setDeltaMovement(fish.getDeltaMovement().add(0, vy, 0));
     }
 

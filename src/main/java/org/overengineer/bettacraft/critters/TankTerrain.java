@@ -77,6 +77,67 @@ public final class TankTerrain implements CritterMovement.Terrain {
         return Math.max(low + MARGIN * 0.5, y);
     }
 
+    /** M21: the floor under an overhang or in a cave at the height y (see {@link CritterMovement.Terrain#groundAt}). */
+    @Override
+    public double groundAt(double x, double y, double z) {
+        if (region == null || server == null || !org.overengineer.bettacraft.config.CommonConfig.pathfinding()) return ground(x, z);
+        int bx = (int) Math.floor(x), bz = (int) Math.floor(z);
+        int ix = bx - minX, iz = bz - minZ;
+        if (ix < 0 || iz < 0 || ix >= sx || iz >= sz) return Double.NaN;
+        int low = lowest[iz * sx + ix];
+        if (low == Integer.MAX_VALUE) return Double.NaN;
+        double fx = (sx - 2 * MARGIN) / region.sizeX(), fy = (t.sizeY() - 2 * MARGIN) / region.sizeY(), fz = (sz - 2 * MARGIN) / region.sizeZ();
+        int lx = (int) Math.floor((x - minX - MARGIN) / fx), lz = (int) Math.floor((z - minZ - MARGIN) / fz);
+        lx = Math.max(0, Math.min(region.sizeX() - 1, lx));
+        lz = Math.max(0, Math.min(region.sizeZ() - 1, lz));
+        int from16 = (int) Math.floor((y - t.min().getY() - MARGIN) / fy * 16);
+        int f16 = InteriorGround.floor16(server, region, lx, lz, from16);
+        if (f16 < 0) return ground(x, z);
+        double g = t.min().getY() + MARGIN + f16 / 16.0 * fy;
+        return Math.max(low + MARGIN * 0.5, g);
+    }
+
+    /** M21: a way on the floor around the decoration ({@link org.overengineer.bettacraft.tank.interior.InteriorPaths#walk}). */
+    @Override
+    public java.util.List<double[]> walkPath(double x, double y, double z, double tx, double ty, double tz) {
+        if (region == null || server == null) return null;
+        var way = org.overengineer.bettacraft.tank.interior.InteriorPaths.walk(server, t, new net.minecraft.world.phys.Vec3(x, y, z),
+                new net.minecraft.world.phys.Vec3(tx, ty, tz), surface);
+        if (way == null) return null;
+        java.util.List<double[]> out = new java.util.ArrayList<>(way.size());
+        for (int i = 0; i < way.size(); i++) {
+            var v = way.get(i);
+            boolean last = i == way.size() - 1;
+            double wx = last ? tx : v.x, wz = last ? tz : v.z;
+            double g = groundAt(wx, v.y + 0.07, wz);
+            out.add(new double[] {wx, Double.isFinite(g) ? g : v.y, wz});
+        }
+        return out;
+    }
+
+    /** M21: a spot on the floor with decoration or leaves above it (under an overhang, in a cave) near (x, z). */
+    @Override
+    public double[] shelter(double x, double y, double z, double reach, java.util.random.RandomGenerator rnd) {
+        if (region == null || server == null || !org.overengineer.bettacraft.config.CommonConfig.pathfinding()) return null;
+        for (int i = 0; i < 16; i++) {
+            double sx2 = x + (rnd.nextDouble() * 2 - 1) * reach, sz2 = z + (rnd.nextDouble() * 2 - 1) * reach;
+            double top = ground(sx2, sz2);
+            if (!Double.isFinite(top)) continue;
+            // the floor under the rock: scan down from just above the animal (or from the top of the substrate)
+            double g = groundAt(sx2, Math.min(top - 0.01, Math.max(y, lowestFloor(sx2, sz2)) + 0.12), sz2);
+            if (!Double.isFinite(g) || top - g < 0.12) continue;
+            return new double[] {sx2, g, sz2};
+        }
+        return null;
+    }
+
+    private double lowestFloor(double x, double z) {
+        int ix = (int) Math.floor(x) - minX, iz = (int) Math.floor(z) - minZ;
+        if (ix < 0 || iz < 0 || ix >= sx || iz >= sz) return t.min().getY();
+        int low = lowest[iz * sx + ix];
+        return low == Integer.MAX_VALUE ? t.min().getY() : low;
+    }
+
     @Override
     public double surface() {
         return surface;

@@ -38,12 +38,14 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
     static final class Tank implements IBlockComponentProvider {
         @Override
         public ITargetRedirector.Result redirect(ITargetRedirector redirect, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return redirect.toSelf();
             EntityHitResult hit = InfoTarget.bettaBehindGlass(accessor.getLevel(), accessor.getPlayer());
             return hit == null ? redirect.toSelf() : redirect.to(hit);
         }
 
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.tank(accessor.getData().raw().getCompound(InfoData.KEY), details(accessor.getPlayer())).forEach(tooltip::addLine);
         }
     }
@@ -51,6 +53,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
     static final class Filter implements IBlockComponentProvider {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.filter(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
@@ -58,6 +61,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
     static final class Culture implements IBlockComponentProvider {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.culture(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
@@ -65,6 +69,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
     static final class Betta implements IEntityComponentProvider {
         @Override
         public void appendBody(ITooltip tooltip, IEntityAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             if (!(accessor.getEntity() instanceof BettaEntity b)) return;
             InfoLines.betta(b, accessor.getData().raw().getCompound(InfoData.KEY), details(accessor.getPlayer())).forEach(tooltip::addLine);
         }

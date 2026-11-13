@@ -550,6 +550,16 @@ final class LangEn {
         a.accept("bettacraft.configuration.recipes.tooltip", "Recipes");
         a.accept("bettacraft.configuration.fishBag", "Fish bag recipe");
         a.accept("bettacraft.configuration.fishBag.tooltip", "Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one");
+        a.accept("bettacraft.configuration.compat", "Other mods");
+        a.accept("bettacraft.configuration.compat.tooltip", "Integration with other mods");
+        a.accept("bettacraft.configuration.overlayProvider", "Overlay mod");
+        a.accept("bettacraft.configuration.overlayProvider.tooltip", "Which overlay mod shows the Bettacraft lines (tank, betta, filter, culture): AUTO = only the first installed one in the order Jade, WTHIT, The One Probe (no doubled boxes with two overlay mods); JADE, TOP or WTHIT = only that one; ALL = every installed one");
+        a.accept("bettacraft.configuration.features", "Features");
+        a.accept("bettacraft.configuration.features.tooltip", "Switches for single features (M21 on; older features follow in a later version)");
+        a.accept("bettacraft.configuration.interiorPathfinding", "Path finding in the interior");
+        a.accept("bettacraft.configuration.interiorPathfinding.tooltip", "Path finding in the tank interior: dwarf frogs walk around decoration, small animals go under overhangs and into caves, plecos swim into their spawning cave (off: straight lines like before)");
+        a.accept("bettacraft.configuration.plantMeshes", "New plant look (prototype)");
+        a.accept("bettacraft.configuration.plantMeshes.tooltip", "New look of Rotala, Vallisneria and Anubias in the tank interior (prototype): real leaves that sway in the water instead of leaf blocks; the miniature outside keeps the block look (off: the old leaf blocks everywhere)");
         a.accept("bettacraft.configuration.render", "Rendering");
         a.accept("bettacraft.configuration.render.tooltip", "Rendering of tanks, fish and interior miniatures");
         a.accept("bettacraft.configuration.animationDistance", "Animation distance");

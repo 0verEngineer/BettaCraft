@@ -78,6 +78,43 @@ public final class InteriorGround {
         return m.top[i];
     }
 
+    /**
+     * M21: the walkable surface of the column (lx, lz) at or below the interior height {@code from16} (1/16 interior
+     * block above the floor): under an overhang or in a cave the floor there, not the top of the rock above. Not cached
+     * (a short scan of one column); -1 when the chunk is not loaded.
+     */
+    public static int floor16(MinecraftServer server, InteriorRegion r, int lx, int lz, int from16) {
+        if (lx < 0 || lz < 0 || lx >= r.sizeX() || lz >= r.sizeZ()) return 0;
+        ServerLevel interior = InteriorManager.interiorLevel(server);
+        if (interior == null || !r.built()) return 0;
+        int x = r.originX() + lx, z = r.originZ() + lz;
+        LevelChunk chunk = interior.getChunkSource().getChunkNow(x >> 4, z >> 4);
+        if (chunk == null) return -1;
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        int start = Math.min(r.sizeY() - 1, Math.max(0, Math.floorDiv(from16, 16)));
+        for (int ly = start; ly >= 0; ly--) {
+            p.set(x, InteriorRegion.BASE_Y + ly, z);
+            int top = surface(interior, chunk, p, ly);
+            if (top >= 0) return top;
+        }
+        return 0;
+    }
+
+    /** Top of the walkable surface of one block in 1/16 above the interior floor, -1 when it is passable. */
+    private static int surface(ServerLevel interior, LevelChunk chunk, BlockPos.MutableBlockPos p, int ly) {
+        BlockState s = chunk.getBlockState(p);
+        if (s.isAir()) return -1;
+        if (InteriorManager.isShellBlock(s)) return (ly + 1) * 16;
+        if (s.getBlock() instanceof AquaticPlantBlock) {
+            PlantPart part = s.getValue(AquaticPlantBlock.PART);
+            if (part == PlantPart.CUTTING) return -1;
+            return ly * 16 + (part == PlantPart.MAT ? 6 : 16);
+        }
+        VoxelShape shape = s.getCollisionShape(interior, p);
+        if (shape.isEmpty()) return -1;
+        return ly * 16 + (int) Math.round(Math.max(1, Math.min(16, shape.max(Direction.Axis.Y) * 16)));
+    }
+
     private static int compute(ServerLevel interior, InteriorRegion r, Map m, int lx, int lz) {
         int x = r.originX() + lx, z = r.originZ() + lz;
         LevelChunk chunk = interior.getChunkSource().getChunkNow(x >> 4, z >> 4);

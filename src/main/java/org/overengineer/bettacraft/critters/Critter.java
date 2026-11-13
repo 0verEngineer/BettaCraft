@@ -49,6 +49,9 @@ public final class Critter {
     /** Glass the animal walks to (face and block), 0 when it walks on the floor. */
     byte goalFace;
     int goalBx, goalBy, goalBz;
+    /** M21: the way on the floor to the target ({x, y, z} per waypoint), null when it walks straight. */
+    @javax.annotation.Nullable
+    java.util.List<double[]> path;
     /** Server time until the feelers stay pulled in (a betta nipped at them). */
     public long retractUntil;
 

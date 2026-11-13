@@ -23,6 +23,7 @@ final class JadeClientTooltips {
     /** If the view ray hits a tank block but a betta inside the tank is behind the glass, show that betta instead. */
     static Accessor<?> retarget(IWailaClientRegistration reg, Accessor<?> accessor) {
         if (!(accessor instanceof BlockAccessor block) || !(block.getBlock() instanceof TankBlock)) return accessor;
+        if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return accessor;
         EntityHitResult hit = InfoTarget.bettaBehindGlass(accessor.getLevel(), accessor.getPlayer());
         if (hit == null) return accessor;
         return reg.entityAccessor().level(accessor.getLevel()).player(accessor.getPlayer()).hit(hit).entity(hit.getEntity())
@@ -34,6 +35,7 @@ final class JadeClientTooltips {
 
         @Override
         public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
             InfoLines.tank(accessor.getServerData().getCompound(InfoData.KEY), accessor.showDetails()).forEach(tooltip::add);
         }
 
@@ -49,6 +51,7 @@ final class JadeClientTooltips {
 
         @Override
         public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
             InfoLines.filter(accessor.getServerData().getCompound(InfoData.KEY)).forEach(tooltip::add);
         }
 
@@ -64,6 +67,7 @@ final class JadeClientTooltips {
 
         @Override
         public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
             InfoLines.culture(accessor.getServerData().getCompound(InfoData.KEY)).forEach(tooltip::add);
         }
 
@@ -78,6 +82,7 @@ final class JadeClientTooltips {
 
         @Override
         public void appendTooltip(ITooltip tooltip, EntityAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
             if (!(accessor.getEntity() instanceof BettaEntity b)) return;
             InfoLines.betta(b, accessor.getServerData().getCompound(InfoData.KEY), accessor.showDetails()).forEach(tooltip::add);
         }

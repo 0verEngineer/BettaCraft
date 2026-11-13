@@ -129,7 +129,7 @@ public final class BettaCraftClient {
     /** Fish overlay of bucket and bag in the fish's own colours (tint 1 = body, 2 = fins). */
     private static void onItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tint) -> {
-            if (tint == 0) return 0xFFFFFFFF;
+            if (tint == 0 || tint >= 3) return 0xFFFFFFFF; // container and (M21) the glass in front of the fish
             // M14: a bag of shrimp, crayfish or snails shows the colour of the first one
             var critters = stack.get(ModDataComponents.CRITTERS.get());
             if (critters != null && !critters.isEmpty()) {
@@ -148,7 +148,7 @@ public final class BettaCraftClient {
         // M19: tankmate buckets in the species' colours
         for (var e : ModItems.TANKMATE_BUCKETS.entrySet()) {
             var sp = e.getKey();
-            event.register((stack, tint) -> tint == 0 ? 0xFFFFFFFF : 0xFF000000 | (tint == 1 ? sp.eggColor1() : sp.eggColor2()), e.getValue().get());
+            event.register((stack, tint) -> tint == 0 || tint >= 3 ? 0xFFFFFFFF : 0xFF000000 | (tint == 1 ? sp.eggColor1() : sp.eggColor2()), e.getValue().get());
         }
         event.register((stack, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, ModItems.LARVA_TUB.get());
         // M13: aquarium plants: leaves (layer 0) and rhizome / stem (layer 1) in the colours of the species (red ones as in good light)

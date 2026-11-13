@@ -51,6 +51,26 @@ public final class CritterMovement {
 
         /** Highest y above the water line an apple snail can reach on the glass (NaN: no air gap). */
         double airTop();
+
+        /**
+         * M21: the walkable floor at (x, z) at or below height {@code y} (under an overhang, in a cave: the floor there, not
+         * the top of the rock above). Without path finding the top, like {@link #ground}.
+         */
+        default double groundAt(double x, double y, double z) {
+            return ground(x, z);
+        }
+
+        /** M21: a walking way on the floor to (tx, ty, tz) as waypoints {x, y, z} (null: none, or no path finding). */
+        @javax.annotation.Nullable
+        default java.util.List<double[]> walkPath(double x, double y, double z, double tx, double ty, double tz) {
+            return null;
+        }
+
+        /** M21: a sheltered spot {x, y, z} on the floor (under an overhang, in a cave) within {@code reach}, or null. */
+        @javax.annotation.Nullable
+        default double[] shelter(double x, double y, double z, double reach, RandomGenerator rnd) {
+            return null;
+        }
     }
 
     // ------------------------------------------------------------------ helpers
@@ -106,6 +126,28 @@ public final class CritterMovement {
         return standable(t, x, g, z, margin(s)) ? g : Double.NaN;
     }
 
+    /** M21: like {@link #groundFor(Terrain, CritterSpecies, double, double)} at the height of the animal (under overhangs). */
+    public static double groundFor(Terrain t, CritterSpecies s, double x, double y, double z) {
+        double g = t.groundAt(x, y + climb(s), z);
+        if (!Double.isFinite(g)) return Double.NaN;
+        return standable(t, x, g, z, margin(s)) ? g : Double.NaN;
+    }
+
+    /** M21: how often an animal heads for a sheltered spot (under an overhang, in a cave) when it picks a new one. */
+    public static double shelterChance(CritterSpecies s) {
+        return switch (s.group()) {
+            case CRAYFISH -> 0.4;
+            case SHRIMP -> 0.2;
+            case SNAIL -> 0.08;
+        };
+    }
+
+    /** Whether the animal stands under cover (decoration or leaves above it). */
+    public static boolean covered(Terrain t, Critter c) {
+        double top = t.ground(c.x, c.z);
+        return Double.isFinite(top) && top > c.y + 0.08;
+    }
+
     private static boolean dry(Terrain t) {
         double s = t.surface();
         return !Double.isFinite(s) || s <= t.minY() + 0.07;
@@ -133,7 +175,7 @@ public final class CritterMovement {
         if (!c.alive()) {
             // the body sinks to the floor
             c.face = Critter.FLOOR;
-            double g = t.ground(c.x, c.z);
+            double g = t.groundAt(c.x, c.y + 0.01, c.z);
             if (Double.isFinite(g)) c.y = Math.max(g, c.y - 0.15);
             return;
         }
@@ -164,11 +206,15 @@ public final class CritterMovement {
     }
 
     private static void floor(Critter c, Terrain t, RandomGenerator rnd) {
-        double g0 = t.ground(c.x, c.z);
+        double g0 = t.groundAt(c.x, c.y + climb(c.species), c.z);
         if (Double.isFinite(g0) && Math.abs(c.y - g0) > 1e-3 && c.idle > 0) c.y = g0 < c.y ? Math.max(g0, c.y - 0.2) : Math.min(g0, c.y + climb(c.species));
         if (c.idle > 0) {
             c.idle--;
             if (c.species.isShrimp() && rnd.nextDouble() < 0.4) c.yaw += (float) (rnd.nextGaussian() * 25);
+            return;
+        }
+        if (c.path != null) {
+            followPath(c, t, rnd);
             return;
         }
         double dx = c.tx - c.x, dz = c.tz - c.z, d = Math.sqrt(dx * dx + dz * dz);
@@ -184,8 +230,8 @@ public final class CritterMovement {
         double v = speed(c), step = Math.min(d, v);
         double nx = c.x + dx / d * step, nz = c.z + dz / d * step;
         // where it stands now is too close to the glass (it came off it, or the water went down): it may walk out of there
-        boolean stuck = !Double.isFinite(groundFor(t, c.species, c.x, c.z));
-        double g = stuck ? t.ground(nx, nz) : groundFor(t, c.species, nx, nz);
+        boolean stuck = !Double.isFinite(groundFor(t, c.species, c.x, c.y, c.z));
+        double g = stuck ? t.groundAt(nx, c.y + climb(c.species), nz) : groundFor(t, c.species, nx, c.y, nz);
         if (!Double.isFinite(g)) {
             c.idle = 1;
             c.goalFace = 0;
@@ -208,6 +254,36 @@ public final class CritterMovement {
         c.z = nz;
         c.y = dy < -0.2 ? Math.max(g, c.y - 0.2) : g; // down a step: drops (a little at a time)
         c.yaw = yawOf(dx, dz);
+    }
+
+    /** M21: one second along the waypoints of {@link Critter#path} (under overhangs, into caves). */
+    private static void followPath(Critter c, Terrain t, RandomGenerator rnd) {
+        double budget = speed(c);
+        while (budget > 1e-4 && !c.path.isEmpty()) {
+            double[] n = c.path.get(0);
+            double dx = n[0] - c.x, dz = n[2] - c.z, d = Math.sqrt(dx * dx + dz * dz);
+            if (d <= budget) {
+                c.x = n[0];
+                c.z = n[2];
+                c.y = n[1];
+                c.path.remove(0);
+                budget -= d;
+                if (d > 1e-4) c.yaw = yawOf(dx, dz);
+                continue;
+            }
+            c.x += dx / d * budget;
+            c.z += dz / d * budget;
+            double g = t.groundAt(c.x, Math.max(c.y, n[1]) + climb(c.species), c.z);
+            c.y = Double.isFinite(g) && Math.abs(g - c.y) < 0.6 ? g : c.y + (n[1] - c.y) * Math.min(1, budget / d);
+            c.yaw = yawOf(dx, dz);
+            budget = 0;
+        }
+        if (c.path.isEmpty()) {
+            c.path = null;
+            c.tx = c.x;
+            c.tz = c.z;
+            rest(c, rnd);
+        }
     }
 
     private static void swim(Critter c, Terrain t, RandomGenerator rnd) {
@@ -348,9 +424,30 @@ public final class CritterMovement {
             case CRAYFISH -> 1.2;
             case SNAIL -> 0.4;
         };
+        c.path = null;
+        // M21: now and then under an overhang or into a cave (a way around the decoration)
+        if (rnd.nextDouble() < shelterChance(c.species)) {
+            double[] s = t.shelter(c.x, c.y, c.z, reach * 1.5, rnd);
+            java.util.List<double[]> way = s == null ? null : t.walkPath(c.x, c.y, c.z, s[0], s[1], s[2]);
+            if (way != null && !way.isEmpty()) {
+                c.path = new java.util.ArrayList<>(way);
+                c.tx = s[0];
+                c.tz = s[2];
+                c.goalFace = 0;
+                return;
+            }
+        }
+        boolean covered = covered(t, c);
         for (int i = 0; i < 10; i++) {
             double x = c.x + (rnd.nextDouble() * 2 - 1) * reach, z = c.z + (rnd.nextDouble() * 2 - 1) * reach;
-            if (Double.isFinite(groundFor(t, c.species, x, z))) {
+            double g = covered ? groundFor(t, c.species, x, c.y, z) : groundFor(t, c.species, x, z);
+            if (!Double.isFinite(g) && covered) g = groundFor(t, c.species, x, z);
+            if (Double.isFinite(g)) {
+                // out of a cave or from under an overhang: the way around the rock
+                if (covered) {
+                    java.util.List<double[]> way = t.walkPath(c.x, c.y, c.z, x, g, z);
+                    if (way != null && !way.isEmpty()) c.path = new java.util.ArrayList<>(way);
+                }
                 c.tx = x;
                 c.tz = z;
                 c.goalFace = 0;

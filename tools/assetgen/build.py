@@ -17,6 +17,7 @@ import reef
 import floating_plants
 import gui
 import icons
+import buckets
 import lang_de
 import model_defs as md
 import palette
@@ -40,6 +41,7 @@ def main() -> int:
     lang_de.write()
     written.append(lang_de.DE)
     written += icons.write_all()
+    written += buckets.write_all()  # M21
     written += breeding.write_all()
     written += decor.write_all()
     written += decor_icons.write_all()
