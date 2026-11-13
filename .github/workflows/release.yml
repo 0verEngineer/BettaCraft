@@ -1,39 +1,59 @@
-# Release: builds and tests the tagged version, then creates a GitHub release and (optionally) publishes the jar to
-# Modrinth and CurseForge with mc-publish. It only runs for a pushed tag "v<mod_version>" or when started by hand
-# (Actions > Release > Run workflow). Nothing is published on normal pushes or pull requests.
+# Release of a pushed tag "v<mod_version>" (e.g. v1.14.0-beta.1):
+#   1. the full test set of build.yml (build, unit tests, GameTests, all server smoke variants, -Ppower GameTests)
+#   2. the jar is built again from the tag and checked (verifyReleaseJar -PexpectedVersion=<tag without v>: no dev /
+#      smoke / GameTest classes, no foreign assets, mods.toml version = tag), the release notes are the top section of
+#      CHANGELOG.md (releaseNotes; it must be the section of this version)
+#   3. GitHub release with the jar and its SHA-256 (prerelease for -alpha / -beta / -rc versions)
+#   4. Modrinth and CurseForge with mc-publish, each only if its token secret AND its project id variable are set
+#      (channel alpha / beta / release from the version). Without them the step is skipped, nothing fails.
+# Started by hand (Actions > Release > Run workflow) it is a dry run: tests, jar check and release notes, the jar as a
+# workflow artifact, no GitHub release and no upload. Setup of the secrets and variables: RELEASING.md (local, not in git).
 #
-# Required repository settings (Settings > Secrets and variables > Actions):
-#   Secrets:   MODRINTH_TOKEN    Modrinth personal access token with the "Create versions" scope
-#              CURSEFORGE_TOKEN  CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
-#   Variables: MODRINTH_PROJECT_ID    id of the Modrinth project (e.g. "AbCd1234")
-#              CURSEFORGE_PROJECT_ID  numeric id of the CurseForge project
-# A platform whose token or project id is missing is skipped. GITHUB_TOKEN is provided by Actions.
+# Repository settings (Settings > Secrets and variables > Actions):
+#   Secrets:   MODRINTH_TOKEN          Modrinth personal access token (scopes: Create versions, Read projects)
+#              CURSEFORGE_TOKEN        CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
+#   Variables: MODRINTH_PROJECT_ID     id of the Modrinth project (8 characters, e.g. "AbCd1234")
+#              CURSEFORGE_PROJECT_ID   numeric id of the CurseForge project
 name: Release
 
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
-    inputs:
-      publish:
-        description: "Publish to Modrinth and CurseForge (otherwise only a draft GitHub release)"
-        type: boolean
-        default: false
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
+  checks:
+    name: Full test set
+    uses: ./.github/workflows/build.yml
+    with:
+      full: true
+
   release:
+    name: Release
+    needs: checks
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
+    permissions:
+      contents: write
     env:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
+      GRADLE_ARGS: --no-configuration-cache --stacktrace --console=plain
       MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
       CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
-      # publishing happens for tags and for manual runs with "publish" ticked
-      PUBLISH: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish == true }}
+      IS_TAG: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,58 +69,72 @@ jobs:
         with:
           cache-read-only: true
 
-      - name: Read version
+      - name: Version and channel
         id: version
         run: |
-          chmod +x gradlew
-          version=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          version=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '\r')
           echo "version=$version" >> "$GITHUB_OUTPUT"
           case "$version" in
-            *alpha*) echo "type=alpha" >> "$GITHUB_OUTPUT" ;;
-            *beta*|*rc*) echo "type=beta" >> "$GITHUB_OUTPUT" ;;
-            *) echo "type=release" >> "$GITHUB_OUTPUT" ;;
+            *-alpha*) type=alpha ;;
+            *-beta*|*-rc*) type=beta ;;
+            *-*) echo "::error::unknown pre-release suffix in $version (use -alpha.n, -beta.n or -rc.n)"; exit 1 ;;
+            *) type=release ;;
           esac
-          if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_REF_NAME" != "v$version" ]]; then
-            echo "::error::tag $GITHUB_REF_NAME does not match mod_version $version (expected v$version)"
-            exit 1
+          echo "type=$type" >> "$GITHUB_OUTPUT"
+          if [ "$IS_TAG" = true ]; then
+            if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+              echo "::error::tag $GITHUB_REF_NAME does not match mod_version $version (expected v$version)"
+              exit 1
+            fi
+            echo "expected=-PexpectedVersion=$version" >> "$GITHUB_OUTPUT"
           fi
+          echo "Bettacraft $version, channel $type, tag: $IS_TAG"
 
-      - name: Build and unit tests
-        run: ./gradlew build --stacktrace
-
-      - name: GameTests
-        run: ./gradlew runGameTestServer --stacktrace
-
-      - name: Changelog of this version
+      - name: Build, check the jar, release notes
         run: |
-          # the section "## [<version>]" of CHANGELOG.md up to the next "## [" heading
-          awk -v v="${{ steps.version.outputs.version }}" '
-            index($0, "## [" v "]") == 1 { on = 1; next }
-            on && /^## \[/ { exit }
-            on && !/^\[[^]]*\]: / { print }' CHANGELOG.md > release-notes.md
-          if [ ! -s release-notes.md ]; then
-            echo "::error::CHANGELOG.md has no section ## [${{ steps.version.outputs.version }}]"
-            exit 1
-          fi
-          cat release-notes.md
+          chmod +x gradlew
+          # the tests ran in the checks job; here only the jar of the tag, its check and the notes
+          ./gradlew assemble verifyReleaseJar releaseNotes ${{ steps.version.outputs.expected }} $GRADLE_ARGS
+          cat build/verifyReleaseJar.txt
+          jar="build/libs/bettacraft-${{ steps.version.outputs.version }}.jar"
+          test -f "$jar"
+          (cd build/libs && sha256sum "$(basename "$jar")" > "$(basename "$jar").sha256")
+          cat build/libs/*.sha256
+          echo "----- release notes -----"
+          cat build/release-notes.md
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: bettacraft-${{ steps.version.outputs.version }}
+          path: |
+            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
+            build/release-notes.md
+          if-no-files-found: error
 
       - name: GitHub release
+        if: env.IS_TAG == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
           name: Bettacraft ${{ steps.version.outputs.version }}
-          body_path: release-notes.md
-          files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+          body_path: build/release-notes.md
+          files: |
+            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
           prerelease: ${{ steps.version.outputs.type != 'release' }}
-          draft: ${{ env.PUBLISH != 'true' }}
+          make_latest: ${{ steps.version.outputs.type == 'release' }}
+          fail_on_unmatched_files: true
 
       - name: Publish to Modrinth
-        if: env.PUBLISH == 'true' && env.MODRINTH_TOKEN != '' && env.MODRINTH_PROJECT_ID != ''
+        if: env.IS_TAG == 'true' && env.MODRINTH_TOKEN != '' && env.MODRINTH_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
           modrinth-token: ${{ env.MODRINTH_TOKEN }}
-          # optional integrations (Modrinth project ids): Jade, GuideME, JEI, The One Probe, WTHIT and the aquarium mods
+          # optional integrations (Modrinth project ids, checked against the Modrinth API in M22): Jade, GuideME, JEI,
+          # The One Probe, WTHIT, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist
           modrinth-dependencies: |
             nvQzSEkH(optional)
             Ck4E7v7R(optional)
@@ -115,18 +149,19 @@ jobs:
           name: Bettacraft ${{ steps.version.outputs.version }}
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ steps.version.outputs.type }}
-          changelog-file: release-notes.md
+          changelog-file: build/release-notes.md
           loaders: neoforge
           game-versions: "1.21.1"
           java: "21"
 
       - name: Publish to CurseForge
-        if: env.PUBLISH == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
+        if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
-          # optional integrations (CurseForge slugs; check them on the project pages before the first release)
+          # optional integrations (CurseForge slugs; check them on the project pages before the first upload, see
+          # RELEASING.md): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fish Tanks
           curseforge-dependencies: |
             jade(optional)
             guideme(optional)
@@ -138,7 +173,7 @@ jobs:
           name: Bettacraft ${{ steps.version.outputs.version }}
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ steps.version.outputs.type }}
-          changelog-file: release-notes.md
+          changelog-file: build/release-notes.md
           loaders: neoforge
           game-versions: "1.21.1"
           java: "21"

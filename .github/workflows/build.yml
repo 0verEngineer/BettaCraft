@@ -1,22 +1,55 @@
-# Build, unit tests, GameTests and the dedicated-server smoke test on every push and pull request.
+# Build and tests.
+#
+# Lean on every push to master and on pull requests (private repository: Actions minutes are limited):
+#   build (compile, unit tests, verifyReleaseJar), CHANGELOG top section, runData output unchanged, GameTests,
+#   one dedicated-server smoke test (aquarium mods, Jade, JEI, GuideME on the server).
+# Full when started by hand with "full" ticked (Actions > Build > Run workflow) and before every release (release.yml
+# calls this workflow with full: true): additionally the server smoke without any optional mod, with The One Probe and
+# WTHIT, and the GameTests with the power mods of -Ppower (pinned Modrinth jars, tools/ci/power-mods.json).
+# Not in CI: client smoke tests (need a window / GPU), -Paquatic and -Pshaders (jars not all downloadable, see
+# RELEASING.md), the multiplayer test, buildShowcase and smoketestUpgrade (need local worlds). Run them locally.
 name: Build
 
 on:
   push:
-    branches: ["**"]
-    tags-ignore: ["v*"]
+    branches: [master]
+    paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes"]
   pull_request:
+    branches: [master]
+    paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes"]
   workflow_dispatch:
+    inputs:
+      full:
+        description: "Full test set (smoke without/with all optional mods, GameTests with the power mods)"
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      full:
+        type: boolean
+        default: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+  # github.workflow is the caller's name when release.yml calls this workflow, so the release never cancels a build
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+defaults:
+  run:
+    # explicit bash: -e and -o pipefail (a failing gradlew in "... | tee" fails the step)
+    shell: bash
+
+env:
+  # the run tasks are not configuration-cache compatible; no daemon on a throw-away runner
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+  GRADLE_ARGS: --no-configuration-cache --stacktrace --console=plain
 
 jobs:
   build:
+    name: Build, unit tests, GameTests, server smoke
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -29,50 +62,119 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Set up Gradle
+      - name: Set up Gradle (cache, wrapper validation)
         uses: gradle/actions/setup-gradle@v4
+        with:
+          # only master writes the cache; pull requests and tags read it
+          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      - name: Build and unit tests
-        run: ./gradlew build --stacktrace
-
-      - name: Generated resources are up to date
+      - name: Build, unit tests, release jar check, release notes
         run: |
-          ./gradlew runData --stacktrace
-          git diff --exit-code -- src/generated || (echo "::error::src/generated differs from runData output, run gradlew runData and commit" && exit 1)
+          chmod +x gradlew
+          ./gradlew build releaseNotes $GRADLE_ARGS
+
+      - name: Generated resources are up to date (runData)
+        run: |
+          ./gradlew runData $GRADLE_ARGS
+          if [ -n "$(git status --porcelain -- src/generated)" ]; then
+            git status --porcelain -- src/generated | head -50
+            echo "::error::src/generated differs from the runData output: run gradlew runData and commit the result"
+            exit 1
+          fi
 
       - name: GameTests
-        run: ./gradlew runGameTestServer --stacktrace
+        run: ./gradlew runGameTestServer $GRADLE_ARGS
 
-      - name: Dedicated server smoke test (all optional mods, also The One Probe and WTHIT)
+      - name: Dedicated server smoke test (aquarium mods, Jade, JEI, GuideME)
         run: |
           mkdir -p run
           echo "eula=true" > run/eula.txt
-          ./gradlew runServer -Psmoketest -Ptop -Pwthit --stacktrace 2>&1 | tee smoke-all.log
-          grep -q "\[smoketest\] PASSED" smoke-all.log
-
-      - name: Dedicated server smoke test (no optional mods)
-        run: |
-          ./gradlew runServer -Psmoketest -PnoJade -PnoJei -PnoGuideme -PnoCompat --stacktrace 2>&1 | tee smoke-none.log
-          grep -q "\[smoketest\] PASSED" smoke-none.log
+          ./gradlew runServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-default.log
+          grep -q "\[smoketest\] PASSED" smoke-default.log
 
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
           name: bettacraft-jar
-          path: build/libs/*.jar
+          path: |
+            build/libs/*.jar
+            build/release-notes.md
+          retention-days: 14
           if-no-files-found: error
 
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: logs
+          name: logs-build
           path: |
             run/logs/
             run/gametest/logs/
+            run/data/logs/
             smoke-*.log
-            build/reports/tests/
+            build/reports/
+            build/verifyReleaseJar.txt
+          retention-days: 7
+          if-no-files-found: ignore
+
+  extended:
+    name: ${{ matrix.name }}
+    needs: build
+    if: inputs.full == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Server smoke without optional mods
+            id: smoke-none
+            run: ./gradlew runServer -Psmoketest -PnoJade -PnoJei -PnoGuideme -PnoCompat
+            check: smoke
+          - name: Server smoke with The One Probe and WTHIT
+            id: smoke-top-wthit
+            run: ./gradlew runServer -Psmoketest -Ptop -Pwthit
+            check: smoke
+          - name: GameTests with the power mods (-Ppower)
+            id: gametest-power
+            fetch: tools/ci/power-mods.json
+            run: ./gradlew runGameTestServer -Ppower
+            check: exit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Fetch pinned optional mods (Modrinth, SHA-512 checked)
+        if: matrix.fetch
+        run: python3 tools/ci/fetch_mods.py "${{ matrix.fetch }}"
+
+      - name: ${{ matrix.name }}
+        run: |
+          chmod +x gradlew
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          ${{ matrix.run }} $GRADLE_ARGS 2>&1 | tee "${{ matrix.id }}.log"
+          if [ "${{ matrix.check }}" = smoke ]; then grep -q "\[smoketest\] PASSED" "${{ matrix.id }}.log"; fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.id }}
+          path: |
+            run/logs/
+            run/gametest/logs/
+            ${{ matrix.id }}.log
+          retention-days: 7
           if-no-files-found: ignore

@@ -1,0 +1,51 @@
+{
+  "comment": "Optional dev mods of the -Ppower group for CI (tools/ci/fetch_mods.py): pinned Modrinth versions, downloaded from cdn.modrinth.com and checked by SHA-512. Flux Networks (CurseForge only) stays local. Licences as stated on Modrinth.",
+  "target": "run/power-mods",
+  "mods": [
+    {
+      "slug": "mekanism",
+      "version_number": "10.7.19.85",
+      "license": "MIT",
+      "file": "Mekanism-1.21.1-10.7.19.85.jar",
+      "url": "https://cdn.modrinth.com/data/Ce6I4WUE/versions/5KzzycBT/Mekanism-1.21.1-10.7.19.85.jar",
+      "sha512": "66745825330a98f3e4a5ea3a44aff8b00870f715c144edc38dd2f61b4240589600b58ae89efac3b54dbb5aa430b1059dac1a28fd71cac5cc9002bbeb5ba3f22b",
+      "size": 11976009
+    },
+    {
+      "slug": "powah",
+      "version_number": "6.2.10-neoforge",
+      "license": "LGPL-3.0-only",
+      "file": "Powah-6.2.10.jar",
+      "url": "https://cdn.modrinth.com/data/KZO4S4DO/versions/1prWLuga/Powah-6.2.10.jar",
+      "sha512": "41d616d3d944faaee2cde4d15b3fc35cdd154690169f43d8436e6432df50db90355ca5fef78bd0f7864d97d9a14039280c8fb78d8c3e1d407618c7ccff47d97f",
+      "size": 2737991
+    },
+    {
+      "slug": "cloth-config",
+      "version_number": "15.0.140+neoforge",
+      "license": "LGPL-3.0-only",
+      "file": "cloth-config-15.0.140-neoforge.jar",
+      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/izKINKFg/cloth-config-15.0.140-neoforge.jar",
+      "sha512": "aaf9b010955b8cd294e5a92f069985b18729fd5e2cf22d351f1dff9680f15488688803ec41e77e941cbde130ceb535014ca4c868047d80ab69c2d508e216654d",
+      "size": 1163890
+    },
+    {
+      "slug": "enderio",
+      "version_number": "v8.2.12-beta",
+      "license": "Unlicense",
+      "file": "enderio-8.2.12-beta.jar",
+      "url": "https://cdn.modrinth.com/data/49ZofO4f/versions/2bHl1dCW/enderio-8.2.12-beta.jar",
+      "sha512": "c4415c1e835fa7eaf7f4528fd685412151968b092e9be91528add11dd981943ba6243eee41ff73923df64d59d8f907901cb006edcb5c02783e73ab656524c995",
+      "size": 6598496
+    },
+    {
+      "slug": "pipez",
+      "version_number": "neoforge-1.21.1-1.2.31",
+      "license": "LicenseRef-All-Rights-Reserved",
+      "file": "pipez-neoforge-1.21.1-1.2.31.jar",
+      "url": "https://cdn.modrinth.com/data/iRmWy6ga/versions/BPGKb8pi/pipez-neoforge-1.21.1-1.2.31.jar",
+      "sha512": "7291230b62104b73b04564d6d39ba18d11134a5713ee79242c7ae8885d07c4efb5f5d0ab75b8ff9aba3119ed8163d0c5488ad603a2db21b92dc35715b723ce5e",
+      "size": 456599
+    }
+  ]
+}
