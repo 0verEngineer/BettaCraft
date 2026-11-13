@@ -297,6 +297,12 @@ public class TankmateEntity extends AbstractFish {
         return half + 1.0 / 16 + 0.005;
     }
 
+    /** Smoke scenes: shows a pose (resting, on the glass) while the fish is frozen (its behaviour does not run then). */
+    public void setPoseForSmoke(int behaviourFlags) {
+        behaviour.behaviourFlags = behaviourFlags;
+        setFlags(careFlags | behaviourFlags);
+    }
+
     /** Behaviour tests and smoke scenes: stop and stay where it is. */
     public void freezeBehaviour() {
         behaviour.freeze();

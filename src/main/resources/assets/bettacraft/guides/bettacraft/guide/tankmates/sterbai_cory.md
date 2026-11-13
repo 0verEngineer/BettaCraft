@@ -11,6 +11,8 @@ item_ids:
 
 # Sterbai Cory
 
+![Sterbai Cory](../images/tm_sterbai_cory.png)
+
 Dark with white dots and orange pectoral fins; one of the few corys for warm betta tanks.
 
 | | |

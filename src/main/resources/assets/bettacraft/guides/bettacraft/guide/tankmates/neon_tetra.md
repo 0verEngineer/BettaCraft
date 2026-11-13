@@ -11,6 +11,8 @@ item_ids:
 
 # Neon Tetra
 
+![Neon Tetra](../images/tm_neon_tetra.png)
+
 A blue neon stripe over a red rear half: the classic shoal fish.
 
 | | |

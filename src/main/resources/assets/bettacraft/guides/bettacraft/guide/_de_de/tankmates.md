@@ -13,6 +13,8 @@ Zwanzig beliebte Aquarienfische können ein Becken mit den Bettas teilen (oder o
 Endler und Platy und der **Zwergfadenfisch**. Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
 schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede Art vermehrt sich so wie in der Natur.
 
+![Ein Gesellschaftsbecken mit Beifischen](images/tm_community.png)
+
 * [Pflege](tankmates/care.md): Schwärme, Temperatur, Wasser, Futter, Besatz, Bettas und andere Beifische.
 * [Zucht](tankmates/breeding.md): Eier am Glas, Höhlen, Freilaicher, Lebendgebärende, Schaumnester; Ablaichkasten,
   Laichhöhle und Laichmop, Staubfutter.
@@ -30,6 +32,8 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
   erreicht.
 * Das [Tank-Menü](aquarium/menu.md) zeigt jeden Fisch mit Schwarm, Temperatur und Zuchtstand, der Tab Zucht die Gelege
   jeder Art; Jade, The One Probe und WTHIT listen die Beifische.
+
+![Der Tiere-Tab mit einem Roten Neon](images/menu_tankmates.png)
 
 ## Alle Arten
 

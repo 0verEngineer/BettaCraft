@@ -4,6 +4,42 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.11.0-beta.1] - 2026-11-14
+
+Tankmates: twenty popular aquarium fish, each with its own way of breeding.
+
+### Added
+- **Tankmate fish** as real animals like the bettas: neon, cardinal, ember and glowlight tetras; harlequin and mosquito
+  rasboras (*Boraras brigittae*, also sold as chili rasbora); pygmy, panda, sterbai and green gold corydoras
+  (*C. melanotaenia*); the L134 leopard frog pleco, the L046 zebra pleco and the bristlenose (also albino and super red);
+  otocinclus; kuhli and clown loaches; guppies, endlers and platys in several colour varieties; the dwarf gourami. Own
+  models and textures, scaled to their real size. They swim in the zone of the water their species likes, shoal with
+  their kind, forage and rest on the bottom, plecos and otocinclus stick to the glass, a pleco looks out of its cave.
+- **Care like the bettas**: hunger, a temperature range per species, water quality per species, and stress - a shoal
+  smaller than the species' minimum, overcrowding, being chased. The menu shows each fish with its shoal, temperature
+  range, stress and breeding state; Jade, The One Probe and WTHIT list the tankmates, their eggs and the breeding box.
+- **Breeding per species** (accelerated game time, settings in `tankmates.breeding`): corydoras glue eggs to the glass
+  after a **cool water change** (fresh water now has the ambient temperature and cools a heated tank); plecos spawn in
+  a **spawning cave** and the male guards the clutch; tetras, rasboras and kuhli loaches **scatter eggs** into
+  fine-leaved plants or a **spawning mop** (harlequins under broad leaves) and the adults eat what they reach;
+  guppies, endlers and platys bear **live young** (into a **breeding box** if one hangs in the tank); the dwarf gourami
+  builds a **foam nest** like a betta. Clown loaches do not breed. Colour varieties are inherited (wild type dominant).
+- **Getting along**: male bettas chase male guppies and male dwarf gouramis, gourami males fight each other, pleco males
+  without a cave are chased off, every adult hunts fry and eats eggs (plants, moss, floating plants and the spawning
+  mop protect them), clown loaches eat snails, otocinclus and bristlenoses graze the algae on the glass.
+- **Items**: breeding box, spawning cave and spawning mop (decoration and their blocks), fry powder for the fry of every
+  species, algae wafers that only the bottom fish eat. A bucket and a spawn egg per species; one fish bag holds a whole
+  shoal. Eggs are taken out with the aquarium net into a fish bag and raised in another tank.
+- **Getting them**: the aquarium net in jungle water (South American species), swamps (South-East Asian species) and
+  rivers (livebearers, bristlenoses); the wandering trader sells shoals and pairs.
+- Handbook section "Tankmates" (English, German) with a page per species, care and breeding; JEI information per
+  species; settings `tankmates.*` with English and German labels.
+
+### Changed
+- Tank data schema 9 (clutches, breeding box, water change history); older tanks are converted on load.
+- A water change cools a heated tank a little (`tankmates.breeding.waterChangeCools`, on by default).
+- Infusoria and the new fry powder feed the fry of every species; tankmate eggs and young keep a tank from being broken.
+
 ## [1.10.0-beta.1] - 2026-11-14
 
 Young fish in the stocking and coloured aquarium lights.

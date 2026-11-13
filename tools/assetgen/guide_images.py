@@ -193,6 +193,55 @@ def m18(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M19 scene (DevClientSmokeM19, -Psmoketestm19 -PnoJade -PnoTop -PnoWthit): a close-up of every tankmate species, the
+# community tank, the breeding (eggs on the glass, a cave, the breeding box, a foam nest) and the menus (en, de).
+# ``py guide_images.py m19``.
+M19_SPECIES = ["neon_tetra", "cardinal_tetra", "ember_tetra", "glowlight_tetra", "harlequin_rasbora", "mosquito_rasbora", "pygmy_cory",
+               "panda_cory", "sterbai_cory", "green_gold_cory", "leopard_frog_pleco", "zebra_pleco", "bristlenose_pleco", "otocinclus",
+               "kuhli_loach", "clown_loach", "guppy", "endler_guppy", "platy", "dwarf_gourami"]
+M19_BOTTOM = {"pygmy_cory", "panda_cory", "sterbai_cory", "green_gold_cory", "leopard_frog_pleco", "zebra_pleco", "bristlenose_pleco",
+              "otocinclus", "kuhli_loach"}
+M19_WORLD = {"tm_community": ("bettacraft_m19_community", (250, 150, 1040, 620)),
+             "tm_care": ("bettacraft_m19_community_close", (0, 170, 1280, 830))}
+M19_BREEDING = [("bettacraft_m19_eggs_glass", (300, 250, 980, 760)), ("bettacraft_m19_cave", (300, 250, 980, 760)),
+                ("bettacraft_m19_breeding_box", (300, 120, 980, 630)), ("bettacraft_m19_foam_nest", (300, 450, 980, 960))]
+M19_MENUS = {"menu_tankmates": ("bettacraft_m19_menu_animals", MENU_BOX), "menu_tankmate_breeding": ("bettacraft_m19_menu_breeding", MENU_BOX)}
+
+
+def m19(out_en: Path, out_de: Path) -> None:
+    for sp in M19_SPECIES:
+        src = SHOTS / f"bettacraft_m19_tm_{sp}.png"
+        if src.exists():
+            # bottom fish: the camera looks down at them from just above the sand (they sit higher in the picture)
+            box = (160, 40, 1120, 680) if sp in M19_BOTTOM else (160, 160, 1120, 800)
+            save(Image.open(src).convert("RGB").crop(box).resize((720, 480), Image.LANCZOS), out_en / f"tm_{sp}.png")
+        else:
+            print("missing", src)
+    for name, (shot, box) in M19_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    parts = []
+    for shot, box in M19_BREEDING:
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            parts.append(Image.open(src).convert("RGB").crop(box).resize((340, 255), Image.LANCZOS))
+    if len(parts) == 4:
+        strip = Image.new("RGB", (340 * 4, 255))
+        for i, p in enumerate(parts):
+            strip.paste(p, (340 * i, 0))
+        save(strip, out_en / "tm_breeding.png")
+    for name, (shot, box) in M19_MENUS.items():
+        for suffix, out in (("", out_en), ("_de", out_de)):
+            src = SHOTS / f"{shot}{suffix}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(box), out / f"{name}.png")
+            else:
+                print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -224,6 +273,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m18"]:
         m18(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m19"]:
+        m19(out_en, out_de)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"

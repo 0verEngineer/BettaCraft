@@ -346,34 +346,34 @@ def cave() -> Voxels:
 
 
 def spawning_cave() -> Voxels:
-    """M19: fired clay tube for the plecos, 8 long, 5 wide, 4 high, open at the front (x = 0), closed at the back."""
+    """M19: fired clay tube for the plecos, 12 long, 6 wide, 6 high (inside 4 x 4), open at the front (x = 0), closed at the back."""
     v = Voxels()
-    for x in range(8):
-        for z in range(5):
+    for x in range(12):
+        for z in range(1, 5):
             v.set(x, 0, z, "bettacraft:spawning_cave")
-        for y in (1, 2):
+            v.set(x, 5, z, "bettacraft:spawning_cave")
+        for y in range(1, 5):
             v.set(x, y, 0, "bettacraft:spawning_cave")
-            v.set(x, y, 4, "bettacraft:spawning_cave")
-        for z in (1, 2, 3):
-            v.set(x, 3, z, "bettacraft:spawning_cave")
-    for y in (1, 2):
-        for z in (1, 2, 3):
-            v.set(7, y, z, "bettacraft:spawning_cave")
+            v.set(x, y, 5, "bettacraft:spawning_cave")
+    for y in range(1, 5):
+        for z in range(1, 5):
+            v.set(11, y, z, "bettacraft:spawning_cave")
     return v
 
 
 def spawning_mop() -> Voxels:
-    """M19: a tuft of green wool strands tied to a stone, 3x3, 6 high."""
+    """M19: a tuft of green wool strands tied to a stone, 5x5, 10 high."""
     v = Voxels()
-    v.set(1, 0, 1, "cobblestone")
-    for y in range(1, 6):
-        v.set(1, y, 1, "bettacraft:spawning_mop")
-    for (x, z) in ((0, 1), (2, 1), (1, 0), (1, 2)):
-        for y in range(2, 6):
-            v.set(x, y, z, "bettacraft:spawning_mop")
-    for (x, z) in ((0, 0), (2, 2), (0, 2), (2, 0)):
-        for y in range(3, 6):
-            v.set(x, y, z, "bettacraft:spawning_mop")
+    v.set(2, 0, 2, "cobblestone")
+    rnd = random.Random(1919)
+    for x in range(5):
+        for z in range(5):
+            d = abs(x - 2) + abs(z - 2)
+            if d > 3:
+                continue
+            top = 9 - d - rnd.randint(0, 1)
+            for y in range(1 + max(0, d - 1), top + 1):
+                v.set(x, y, z, "bettacraft:spawning_mop")
     return v
 
 
@@ -558,7 +558,7 @@ def write_all() -> list:
     for name, f in DECOR.items():
         v = f()
         sx, sy, sz = v.size()
-        assert max(sx, sz) <= 8, f"{name}: footprint {sx}x{sz} exceeds 8x8"
+        assert max(sx, sz) <= (12 if name == "spawning_cave" else 8), f"{name}: footprint {sx}x{sz} exceeds 8x8"
         p = STRUCT_DIR / f"{name}.nbt"
         p.write_bytes(structure_nbt(v))
         out.append(p)

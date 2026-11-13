@@ -248,6 +248,8 @@ public final class DevSmokeTest {
                 DevSmokeM16.setup(level, base); // M16: one of every water animal of the loaded mods, no tank in a tank
             } else if (ticks == 140) {
                 DevSmokeM18.setup(level, base); // M18: a red light bar, a betta of every stage (stocking in fractions)
+            } else if (ticks == 150) {
+                DevSmokeM19.setup(level, base); // M19: a shoal of cardinals, corys, a pleco, a clutch, a breeding box; breeding guppies
             } else if (!passed && ticks >= 200 && ticks < 2400 && (InteriorBench.realRunning() || ticks % 20 != 0)) {
                 // wait for the asynchronous real-region bench
             } else if (ticks >= 200 && !passed) {
@@ -288,6 +290,7 @@ public final class DevSmokeTest {
                 DevSmokeM14.check(level, base);
                 DevSmokeM16.check(level, base);
                 DevSmokeM18.check(level, base);
+                DevSmokeM19.check(level, base);
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

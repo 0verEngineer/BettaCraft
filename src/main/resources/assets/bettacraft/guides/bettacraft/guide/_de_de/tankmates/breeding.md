@@ -21,6 +21,10 @@ Jede Art vermehrt sich auf ihre Weise. Was alle brauchen: ein **gesundes, gefüt
 Nachwuchs). Lebendfutter (Mückenlarven) macht sie schneller laichbereit. Der Tab Zucht im [Tank-Menü](../aquarium/menu.md)
 zeigt die Bedingungen und die Gelege jeder Art im Becken.
 
+![Panzerwels-Eier am Glas, ein Harnischwels in seiner Höhle und ein Ablaichkasten](../images/tm_breeding.png)
+
+![Der Tab Zucht mit Guppys und einem Ablaichkasten](../images/menu_tankmate_breeding.png)
+
 ## Eier am Glas: Panzerwelse, Otocinclus
 
 * **Panzerwelse laichen nach einem kühlen Wasserwechsel**: Ersetze innerhalb eines Vierteltags mindestens ein Viertel

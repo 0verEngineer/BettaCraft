@@ -11,6 +11,8 @@ item_ids:
 
 # Mosquito Rasbora
 
+![Mosquito Rasbora](../images/tm_mosquito_rasbora.png)
+
 One of the smallest aquarium fish (about 2 cm), red with a dark line. Also sold as chili rasbora - it is the same species.
 
 | | |

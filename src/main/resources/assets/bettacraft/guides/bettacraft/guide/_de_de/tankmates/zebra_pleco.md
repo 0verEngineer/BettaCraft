@@ -11,6 +11,8 @@ item_ids:
 
 # L046 Zebra-Harnischwels
 
+![L046 Zebra-Harnischwels](../images/tm_zebra_pleco.png)
+
 Schwarz-weiß gestreift, braucht sehr warmes, sauberes Wasser und eine Höhle. Frisst Fleischiges, keine Algen.
 
 | | |

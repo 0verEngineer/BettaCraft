@@ -11,6 +11,8 @@ item_ids:
 
 # Roter Neon
 
+![Roter Neon](../images/tm_cardinal_tetra.png)
+
 Wie der Neon, aber das Rot reicht über den ganzen Bauch; mag es wärmer und passt gut zu Bettas.
 
 | | |

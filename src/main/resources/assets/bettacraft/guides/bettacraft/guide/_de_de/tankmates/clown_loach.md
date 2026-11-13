@@ -11,6 +11,8 @@ item_ids:
 
 # Prachtschmerle
 
+![Prachtschmerle](../images/tm_clown_loach.png)
+
 Orange mit drei schwarzen Bändern, wird groß, will eine Gruppe und frisst Schnecken. Vermehrt sich nicht im Aquarium.
 
 | | |

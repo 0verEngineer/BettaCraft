@@ -11,6 +11,8 @@ item_ids:
 
 # Endler Guppy
 
+![Endler Guppy](../images/tm_endler_guppy.png)
+
 Smaller than the guppy, males with neon-green and orange patches. Fine with bettas in most cases.
 
 | | |

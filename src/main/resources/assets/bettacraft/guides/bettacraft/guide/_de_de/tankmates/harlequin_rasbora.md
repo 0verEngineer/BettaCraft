@@ -11,6 +11,8 @@ item_ids:
 
 # Keilfleckbärbling
 
+![Keilfleckbärbling](../images/tm_harlequin_rasbora.png)
+
 Kupferfarben mit schwarzem Keilfleck; laicht kopfüber unter breite Blätter.
 
 | | |

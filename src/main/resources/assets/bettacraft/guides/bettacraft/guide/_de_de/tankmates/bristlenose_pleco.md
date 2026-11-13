@@ -11,6 +11,8 @@ item_ids:
 
 # Antennenwels
 
+![Antennenwels](../images/tm_bristlenose_pleco.png)
+
 Der beste Algenfresser unter den Beifischen; Männchen tragen Antennen auf der Schnauze. Auch als Albino und Super Red.
 
 | | |

@@ -11,6 +11,8 @@ item_ids:
 
 # Glühlichtsalmler
 
+![Glühlichtsalmler](../images/tm_glowlight_tetra.png)
+
 Durchscheinend mit einer orangeroten Leuchtlinie von der Schnauze bis zum Schwanz.
 
 | | |

@@ -11,6 +11,8 @@ item_ids:
 
 # Green Gold Cory
 
+![Green Gold Cory](../images/tm_green_gold_cory.png)
+
 Gold-green with a dark side stripe and yellow-orange fins.
 
 | | |

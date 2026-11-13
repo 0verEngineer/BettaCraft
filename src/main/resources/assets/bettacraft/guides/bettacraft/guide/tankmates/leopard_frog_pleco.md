@@ -11,6 +11,8 @@ item_ids:
 
 # L134 Leopard Frog Pleco
 
+![L134 Leopard Frog Pleco](../images/tm_leopard_frog_pleco.png)
+
 A small pleco with yellow and black bands. Lives in caves and on the glass, eats algae a little and needs warm water.
 
 | | |

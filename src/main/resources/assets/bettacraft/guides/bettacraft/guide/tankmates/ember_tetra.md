@@ -11,6 +11,8 @@ item_ids:
 
 # Ember Tetra
 
+![Ember Tetra](../images/tm_ember_tetra.png)
+
 A tiny, glowing orange tetra, peaceful and good with bettas.
 
 | | |

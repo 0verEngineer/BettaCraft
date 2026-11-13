@@ -11,6 +11,8 @@ navigation:
 Beifische haben dieselben Gesundheits-Timer wie die Bettas: Hunger, die falsche Temperatur, schlechtes Wasser und Stress
 machen sie nach einigen Tagen krank (Standard 7), und kranke Fische sterben, wenn sich nichts ändert.
 
+![Neonsalmler und Panzerwelse in einem bepflanzten Becken](../images/tm_care.png)
+
 ## Schwärme
 
 * Salmler, Bärblinge, Panzerwelse, Otocinclus, Dornaugen und Prachtschmerlen sind **Schwarmfische**. In einer Gruppe

@@ -146,6 +146,20 @@ final class DevClientSmokeMP {
                     send("light " + col + " " + Integer.toHexString(org.overengineer.bettacraft.client.tank.TankLightTint.colorOf(controller)));
                 });
             }
+            case "tankmates" -> {
+                // M19: the tankmates (entities with their variety) and the clutches (tank view) of the small tank on this client
+                BlockPos min = pos(args);
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var box = new net.minecraft.world.phys.AABB(min).expandTowards(2, 2, 2);
+                    var mates = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box);
+                    long albino = mates.stream().filter(m -> "albino".equals(m.variety())).count();
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, min);
+                    int clutches = c == null || c.getTank() == null ? -1 : c.getTank().clutches().size();
+                    int eggs = c == null || c.getTank() == null ? -1 : c.getTank().clutches().stream().mapToInt(k -> k.count).sum();
+                    send("tankmates " + mates.size() + " " + albino + " " + clutches + " " + eggs);
+                });
+            }
             case "place" -> then(12, () -> {
                 // M15: right-click where the server turned the player (in a tank interior)
                 Minecraft mc = Minecraft.getInstance();

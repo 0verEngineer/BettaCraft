@@ -13,6 +13,8 @@ Twenty popular aquarium fish can share a tank with the bettas (or live without t
 gourami**. They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
 kind, rest on the bottom or stick to the glass, and every species breeds the way it does in nature.
 
+![A community tank with tankmates](images/tm_community.png)
+
 * [Care](tankmates/care.md): shoals, temperature, water, food, stocking, bettas and other tankmates.
 * [Breeding](tankmates/breeding.md): eggs on the glass, caves, egg scatterers, livebearers, foam nests; the breeding
   box, the spawning cave and mop, fry powder.
@@ -27,6 +29,8 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 * **Male bettas chase male guppies and dwarf gouramis**. Every adult eats the fry and the eggs it can reach.
 * The [tank menu](aquarium/menu.md) shows each fish with its shoal, temperature and breeding state, the breeding tab
   the clutches of every species; Jade, The One Probe and WTHIT list the tankmates.
+
+![The animals tab with a cardinal tetra](images/menu_tankmates.png)
 
 ## All species
 

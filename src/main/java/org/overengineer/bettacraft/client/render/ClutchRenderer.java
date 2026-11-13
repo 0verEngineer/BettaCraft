@@ -62,10 +62,11 @@ public final class ClutchRenderer {
             case CAVE -> 2;
             default -> 1;
         };
+        // a little bigger than in nature (2 mm corydoras eggs would be a quarter of a pixel)
         float e = switch (k.kind) {
-            case GLASS -> 0.011F;
-            case CAVE -> 0.010F;
-            default -> 0.006F;
+            case GLASS -> 0.016F;
+            case CAVE -> 0.014F;
+            default -> 0.009F;
         };
         float spread = switch (k.kind) {
             case GLASS -> 0.045F + 0.004F * n;

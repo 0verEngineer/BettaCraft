@@ -11,6 +11,8 @@ navigation:
 Tankmates have the same health timers as the bettas: hunger, the wrong temperature, bad water and stress make them sick
 after a few days (7 by default), and sick fish die if nothing changes.
 
+![Neon tetras and corydoras in a planted tank](../images/tm_care.png)
+
 ## Shoals
 
 * Tetras, rasboras, corydoras, otocinclus, kuhli and clown loaches are **shoaling fish**. In a group smaller than the

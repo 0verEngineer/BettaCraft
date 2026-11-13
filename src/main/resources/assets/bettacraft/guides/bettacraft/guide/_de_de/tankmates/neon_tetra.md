@@ -11,6 +11,8 @@ item_ids:
 
 # Neonsalmler
 
+![Neonsalmler](../images/tm_neon_tetra.png)
+
 Ein blauer Neonstreifen über einer roten hinteren Körperhälfte: der klassische Schwarmfisch.
 
 | | |

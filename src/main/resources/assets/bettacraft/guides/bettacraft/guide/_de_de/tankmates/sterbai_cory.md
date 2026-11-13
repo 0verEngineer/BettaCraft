@@ -11,6 +11,8 @@ item_ids:
 
 # Sterbai-Panzerwels
 
+![Sterbai-Panzerwels](../images/tm_sterbai_cory.png)
+
 Dunkel mit weißen Punkten und orangen Brustflossen; einer der wenigen Panzerwelse für warme Betta-Becken.
 
 | | |

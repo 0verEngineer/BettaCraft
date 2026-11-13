@@ -11,6 +11,8 @@ item_ids:
 
 # Moskitobärbling
 
+![Moskitobärbling](../images/tm_mosquito_rasbora.png)
+
 Einer der kleinsten Aquarienfische (etwa 2 cm), rot mit dunkler Linie. Auch als Chili-Rasbora im Handel - es ist dieselbe Art.
 
 | | |

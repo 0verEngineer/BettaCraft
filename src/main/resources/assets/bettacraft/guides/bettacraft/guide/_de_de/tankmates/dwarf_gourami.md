@@ -11,6 +11,8 @@ item_ids:
 
 # Zwergfadenfisch
 
+![Zwergfadenfisch](../images/tm_dwarf_gourami.png)
+
 Blau-rot gestreifte Männchen mit langen Fühlern; ein Labyrinthfisch wie der Betta - Fadenfisch- und Betta-Männchen kämpfen.
 
 | | |

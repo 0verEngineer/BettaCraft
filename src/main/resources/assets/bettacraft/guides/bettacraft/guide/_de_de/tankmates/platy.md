@@ -11,6 +11,8 @@ item_ids:
 
 # Platy
 
+![Platy](../images/tm_platy.png)
+
 Ein robuster, friedlicher Lebendgebärender in vielen Farben.
 
 | | |

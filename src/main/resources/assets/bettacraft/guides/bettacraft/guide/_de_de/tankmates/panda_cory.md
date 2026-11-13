@@ -11,6 +11,8 @@ item_ids:
 
 # Panda-Panzerwels
 
+![Panda-Panzerwels](../images/tm_panda_cory.png)
+
 Cremeweiß mit schwarzer Augenmaske, schwarzer Rückenflosse und Fleck an der Schwanzwurzel. Mag es kühl.
 
 | | |

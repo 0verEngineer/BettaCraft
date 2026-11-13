@@ -11,6 +11,8 @@ item_ids:
 
 # Guppy
 
+![Guppy](../images/tm_guppy.png)
+
 Males with big colourful tails, females bigger and grey. Male bettas go for male guppies.
 
 | | |

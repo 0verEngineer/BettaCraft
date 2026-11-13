@@ -11,6 +11,8 @@ item_ids:
 
 # Dornauge
 
+![Dornauge](../images/tm_kuhli_loach.png)
+
 Ein aalartiges, gebändertes Dornauge, das tagsüber versteckt ruht und nachts den Boden absucht.
 
 | | |

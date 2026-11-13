@@ -11,6 +11,8 @@ item_ids:
 
 # Bristlenose Pleco
 
+![Bristlenose Pleco](../images/tm_bristlenose_pleco.png)
+
 The best algae eater of the tankmates; males grow bristles on the snout. Also albino and super red.
 
 | | |

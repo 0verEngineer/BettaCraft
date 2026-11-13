@@ -11,6 +11,8 @@ item_ids:
 
 # Pygmäen-Panzerwels
 
+![Pygmäen-Panzerwels](../images/tm_pygmy_cory.png)
+
 Ein winziger Panzerwels, der oft im lockeren Schwarm im freien Wasser schwebt.
 
 | | |

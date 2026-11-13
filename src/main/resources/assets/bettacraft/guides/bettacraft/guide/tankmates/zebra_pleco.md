@@ -11,6 +11,8 @@ item_ids:
 
 # L046 Zebra Pleco
 
+![L046 Zebra Pleco](../images/tm_zebra_pleco.png)
+
 Black and white stripes, very warm, clean water and a cave. Eats meaty food, not algae.
 
 | | |

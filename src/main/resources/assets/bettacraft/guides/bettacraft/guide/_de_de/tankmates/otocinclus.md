@@ -11,6 +11,8 @@ item_ids:
 
 # Otocinclus (Ohrgitter-Harnischwels)
 
+![Otocinclus (Ohrgitter-Harnischwels)](../images/tm_otocinclus.png)
+
 Ein winziger Saugwels, der Glas und Blätter in kleiner Gruppe sauber weidet.
 
 | | |

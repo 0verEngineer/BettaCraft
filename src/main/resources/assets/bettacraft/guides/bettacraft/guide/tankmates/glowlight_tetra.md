@@ -11,6 +11,8 @@ item_ids:
 
 # Glowlight Tetra
 
+![Glowlight Tetra](../images/tm_glowlight_tetra.png)
+
 Translucent with a glowing orange-red line from snout to tail.
 
 | | |

@@ -21,6 +21,10 @@ of their species (the breeding tab lists it) and room in the tank (a full tank g
 larvae) gets them ready faster. The breeding tab of the [tank menu](../aquarium/menu.md) shows the conditions and the
 clutches of every species in the tank.
 
+![Corydoras eggs on the glass, a pleco in its cave and a breeding box](../images/tm_breeding.png)
+
+![The breeding tab with guppies and a breeding box](../images/menu_tankmate_breeding.png)
+
 ## Eggs on the glass: corydoras, otocinclus
 
 * **Corydoras spawn after a cool water change**: replace at least a quarter of the water within a quarter of a day with

@@ -11,6 +11,8 @@ item_ids:
 
 # Platy
 
+![Platy](../images/tm_platy.png)
+
 A sturdy, peaceful livebearer in many colours.
 
 | | |

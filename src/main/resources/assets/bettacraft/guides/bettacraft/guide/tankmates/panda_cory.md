@@ -11,6 +11,8 @@ item_ids:
 
 # Panda Cory
 
+![Panda Cory](../images/tm_panda_cory.png)
+
 Cream with a black eye mask, black dorsal fin and a spot at the tail base. Likes it cool.
 
 | | |

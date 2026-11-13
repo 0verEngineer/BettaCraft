@@ -901,6 +901,20 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         return false;
     }
 
+    /** Dev smoke test only: the fish page of the animals tab with the first tankmate of this species selected (M19). */
+    public boolean showTankmateForTest(String species) {
+        TankView v = view();
+        if (v == null) return false;
+        for (TankView.Inhabitant i : v.inhabitants) {
+            if (!i.isTankmate() || !species.equals(i.tankmate().getString("species"))) continue;
+            critterPage = false;
+            selected = i.uuid();
+            setTab(Tab.INHABITANTS);
+            return true;
+        }
+        return false;
+    }
+
     /** Dev smoke test only: presses "take one" of the small animals page (false when it is not there). */
     public boolean pressTakeCritterForTest() {
         if (tab != Tab.INHABITANTS || !critterPage || !critterTakeButton.visible || !critterTakeButton.active) return false;

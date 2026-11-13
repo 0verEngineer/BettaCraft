@@ -119,7 +119,8 @@ final class DevSmokeM14 {
         long shrimp = t.critters().stream().filter(k -> k.alive() && k.species == CritterSpecies.NEOCARIDINA).count();
         // save / load
         CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-        if (saved.getInt("schema") != 8) throw new IllegalStateException("M14: tank saved as schema " + saved.getInt("schema"));
+        // M19: the current schema (8 when M14 was written, 9 since the tankmate clutches)
+        if (saved.getInt("schema") != org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion()) throw new IllegalStateException("M14: tank saved as schema " + saved.getInt("schema"));
         TankData back = TankData.load(saved.getCompound("tank"));
         if (back.critters().size() != t.critters().size() || back.critterObjects().size() != t.critterObjects().size()) {
             throw new IllegalStateException("M14: save/load lost animals");

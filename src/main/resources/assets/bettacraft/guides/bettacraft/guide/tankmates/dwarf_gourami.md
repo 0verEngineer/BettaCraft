@@ -11,6 +11,8 @@ item_ids:
 
 # Dwarf Gourami
 
+![Dwarf Gourami](../images/tm_dwarf_gourami.png)
+
 Blue and red striped males with long feelers; a labyrinth fish like the betta - male gouramis and male bettas fight.
 
 | | |

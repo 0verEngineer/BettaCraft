@@ -11,6 +11,8 @@ item_ids:
 
 # Endler-Guppy
 
+![Endler-Guppy](../images/tm_endler_guppy.png)
+
 Kleiner als der Guppy, Männchen mit neongrünen und orangen Flecken. Meist betta-tauglich.
 
 | | |

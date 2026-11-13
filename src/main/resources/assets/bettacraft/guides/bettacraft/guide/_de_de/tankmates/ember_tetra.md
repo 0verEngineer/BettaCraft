@@ -11,6 +11,8 @@ item_ids:
 
 # Feuersalmler
 
+![Feuersalmler](../images/tm_ember_tetra.png)
+
 Ein winziger, orange leuchtender Salmler, friedlich und betta-tauglich.
 
 | | |

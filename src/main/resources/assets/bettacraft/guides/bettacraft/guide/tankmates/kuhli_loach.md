@@ -11,6 +11,8 @@ item_ids:
 
 # Kuhli Loach
 
+![Kuhli Loach](../images/tm_kuhli_loach.png)
+
 An eel-like banded loach that rests in hiding by day and roams the bottom at night.
 
 | | |

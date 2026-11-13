@@ -11,6 +11,8 @@ item_ids:
 
 # Guppy
 
+![Guppy](../images/tm_guppy.png)
+
 Männchen mit großen bunten Schwänzen, Weibchen größer und grau. Betta-Männchen gehen auf Guppy-Männchen los.
 
 | | |

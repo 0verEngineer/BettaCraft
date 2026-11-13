@@ -11,6 +11,8 @@ item_ids:
 
 # Pygmy Cory
 
+![Pygmy Cory](../images/tm_pygmy_cory.png)
+
 A tiny cory that often hovers in a loose shoal in the middle of the water.
 
 | | |

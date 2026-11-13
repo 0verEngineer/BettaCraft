@@ -11,6 +11,8 @@ item_ids:
 
 # L134 Leopard-Frosch-Wels
 
+![L134 Leopard-Frosch-Wels](../images/tm_leopard_frog_pleco.png)
+
 Ein kleiner Harnischwels mit gelb-schwarzen Bändern. Lebt in Höhlen und am Glas, frisst etwas Algen und braucht warmes Wasser.
 
 | | |

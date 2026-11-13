@@ -11,6 +11,8 @@ item_ids:
 
 # Clown Loach
 
+![Clown Loach](../images/tm_clown_loach.png)
+
 Orange with three black bands, gets big, wants a group and eats snails. Does not breed in tanks.
 
 | | |

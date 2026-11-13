@@ -11,6 +11,8 @@ item_ids:
 
 # Gelbflossen-Panzerwels
 
+![Gelbflossen-Panzerwels](../images/tm_green_gold_cory.png)
+
 Goldgrün mit dunklem Seitenband und gelb-orangen Flossen.
 
 | | |

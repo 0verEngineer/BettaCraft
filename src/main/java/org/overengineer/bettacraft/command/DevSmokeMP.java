@@ -133,6 +133,7 @@ public final class DevSmokeMP {
                 check(name + ": the dyed light is " + a[1] + " on the client (server red)", "red".equals(a[1]));
                 check(name + ": the water of the tank is tinted (" + a[2] + ")", !"0".equals(a[2]));
             }
+            case "tankmates" -> checkTankmates(name, a);
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -308,6 +309,27 @@ public final class DevSmokeMP {
     }
 
     // ------------------------------------------------------------------ the stage
+
+    /** M19: the small tank with the tankmates (west of the main tank, in the cleared area). */
+    private static BlockPos tankmatesMin() {
+        return base.offset(-5, 0, 6);
+    }
+
+    /** {@code tankmates <count> <albinos> <clutches> <eggs>}: the tankmates and clutches of the small tank on the client = server. */
+    private static void checkTankmates(String name, String[] a) {
+        TankBlockEntity c = TankMultiblock.getController(server.overworld(), tankmatesMin());
+        if (c == null) {
+            fail(name + ": tankmate tank gone");
+            return;
+        }
+        var mates = org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(server.overworld(), c.getTank());
+        long albino = mates.stream().filter(m -> "albino".equals(m.variety())).count();
+        int eggs = c.getTank().clutches().stream().mapToInt(k -> k.count).sum();
+        check(name + ": " + a[1] + " tankmates (server " + mates.size() + ")", Integer.parseInt(a[1]) == mates.size() && mates.size() == 5);
+        check(name + ": " + a[2] + " albino bristlenose (server " + albino + ")", Integer.parseInt(a[2]) == albino && albino == 1);
+        check(name + ": " + a[3] + " clutches with " + a[4] + " eggs (server " + c.getTank().clutches().size() + ", " + eggs + ")",
+                Integer.parseInt(a[3]) == c.getTank().clutches().size() && Integer.parseInt(a[4]) == eggs && eggs > 0);
+    }
 
     private static TankBlockEntity main() {
         TankBlockEntity c = TankMultiblock.getController(server.overworld(), mainMin);
@@ -663,6 +685,39 @@ public final class DevSmokeMP {
             BlockPos c = main().getBlockPos();
             say("light", "all", l.getX() + "," + l.getY() + "," + l.getZ() + ";" + c.getX() + "," + c.getY() + "," + c.getZ());
         }, () -> reports.containsKey(P1 + ":light") && reports.containsKey(P2 + ":light"), 20 * 30));
+        steps.add(new Step("tankmates", () -> {
+            // M19: a small tank with four neons, an albino bristlenose and a clutch of eggs on the glass: both clients see them
+            BlockPos min = tankmatesMin();
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the tankmate tank formed", c != null);
+            if (c == null) return;
+            TankInteractions.changeWater(level, c, 8000 - c.getTank().waterMb());
+            c.getTank().setWaterTemp(26F);
+            c.getTank().setTargetTemp(26F);
+            var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
+            var sp = org.overengineer.bettacraft.tankmates.TankmateSpecies.NEON_TETRA;
+            for (int i = 0; i < 4; i++) {
+                org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, sp, org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp), i % 2 == 0,
+                        org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0, w.box().getCenter().add(i * 0.2 - 0.3, -0.3, 0));
+            }
+            var pl = org.overengineer.bettacraft.tankmates.TankmateSpecies.BRISTLENOSE_PLECO;
+            org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, pl, org.overengineer.bettacraft.tankmates.TankmateGenes.pure(pl, "albino"), false,
+                    org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0, w.box().getCenter().add(0, -0.5, 0.2));
+            var k = new org.overengineer.bettacraft.tankmates.Clutch(c.getTank().nextClutchId(), org.overengineer.bettacraft.tankmates.TankmateSpecies.PANDA_CORY,
+                    org.overengineer.bettacraft.tankmates.Clutch.Kind.GLASS, min.getX() + 1.0, min.getY() + 0.5, min.getZ() + 1.0 / 16 + 0.004, 10,
+                    org.overengineer.bettacraft.tankmates.TankmateGenes.wild(org.overengineer.bettacraft.tankmates.TankmateSpecies.PANDA_CORY),
+                    org.overengineer.bettacraft.tankmates.TankmateGenes.wild(org.overengineer.bettacraft.tankmates.TankmateSpecies.PANDA_CORY));
+            k.face = 0;
+            k.cover = 1.0;
+            c.getTank().clutches().add(k);
+            c.markTankChanged();
+            say("tankmates", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":tankmates") && reports.containsKey(P2 + ":tankmates"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

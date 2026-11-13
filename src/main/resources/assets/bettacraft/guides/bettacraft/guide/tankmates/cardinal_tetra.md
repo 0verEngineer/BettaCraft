@@ -11,6 +11,8 @@ item_ids:
 
 # Cardinal Tetra
 
+![Cardinal Tetra](../images/tm_cardinal_tetra.png)
+
 Like the neon, but the red runs the whole length of the belly; likes it warmer, good with bettas.
 
 | | |

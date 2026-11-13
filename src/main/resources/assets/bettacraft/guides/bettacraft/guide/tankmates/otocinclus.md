@@ -11,6 +11,8 @@ item_ids:
 
 # Otocinclus
 
+![Otocinclus](../images/tm_otocinclus.png)
+
 A tiny sucker catfish that grazes the glass and the leaves clean, in a small group.
 
 | | |

@@ -41,6 +41,14 @@ final class BreedingLines {
             out.add(Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.breeding.warn." + w))
                     .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
         }
+        // M19: a tank without bettas but with tankmates shows their breeding only
+        int[] bs = b.getIntArray("stages");
+        int bettas = 0;
+        for (int x : bs) bettas += x;
+        if (bettas == 0 && !b.contains("nest", Tag.TAG_COMPOUND) && !b.getList("tankmates", Tag.TAG_COMPOUND).isEmpty()) {
+            tankmates(b, out);
+            return out;
+        }
         // nest
         if (b.contains("nest", Tag.TAG_COMPOUND)) {
             CompoundTag n = b.getCompound("nest");

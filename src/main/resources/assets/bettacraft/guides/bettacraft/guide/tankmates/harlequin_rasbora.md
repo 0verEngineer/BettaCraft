@@ -11,6 +11,8 @@ item_ids:
 
 # Harlequin Rasbora
 
+![Harlequin Rasbora](../images/tm_harlequin_rasbora.png)
+
 Copper body with a black wedge; spawns upside down under broad leaves.
 
 | | |

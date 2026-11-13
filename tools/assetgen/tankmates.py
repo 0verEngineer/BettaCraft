@@ -201,7 +201,7 @@ def rasbora():
 
 
 def cory():
-    p = Plan("cory", -15, 9, 10.0, 6.0, 0.5, 0.36, 0.42, flat_belly=True, belly=0.0, nseg=9)
+    p = Plan("cory", -15, 9, 10.0, 6.0, 0.72, 0.42, 0.33, flat_belly=True, belly=0.0, nseg=9)
     body = Group("body", (0, 0, 0))
     body.boxes += p.segments()
     body.boxes += eyes(p, 0.16, up=0.15)
@@ -209,7 +209,7 @@ def cory():
     body.boxes.append(box("adipose", "adipose", (0, p.top(0.88) - 0.5, p.snout + 0.88 * 24), (0, 2, 2), fin="round_small"))
     body.boxes.append(anal_fin(p, 0.7, 4, 3, "oval"))
     body.boxes += pair("pelvic", "pelvic", (1.8, -0.6, p.snout + 0.52 * 24), (3, 0, 3), (0, 20, -10), "pec_flat")
-    return p, [body, caudal(p, 8, 11, "fork"), dorsal_fin(p, 0.4, 5, 7, "tri", lean=-12)] + pectorals(p, 0.3, 5, 3, spread=30, droop=10, up=0.92,
+    return p, [body, caudal(p, 8, 11, "fork"), dorsal_fin(p, 0.36, 5, 5, "tri", lean=-16)] + pectorals(p, 0.3, 5, 3, spread=30, droop=10, up=0.92,
                                                                                                     horizontal=True)
 
 
