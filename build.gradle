@@ -22,6 +22,21 @@ base {
     archivesName = mod_id
 }
 
+// M22: development-only code in its own source set src/dev (smoke tests DevSmoke* / DevClientSmoke*, the showcase world,
+// GameTests and their template). It is part of the mod in every gradlew run* task (same packages, merged into the one mod
+// bettacraft by the mods block below), but not of the jar: the released jar holds only src/main (verifyReleaseJar checks).
+sourceSets {
+    dev {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    devImplementation.extendsFrom implementation
+    devCompileOnly.extendsFrom compileOnly
+    devRuntimeOnly.extendsFrom runtimeOnly
+}
+
 // Minecraft 1.21.1 ships Java 21. The foojay resolver (settings.gradle) downloads it if missing.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -181,6 +196,8 @@ neoForge {
         }
 
         configureEach {
+            // the dev source set (and through it main) is on the class path of every run
+            sourceSet = sourceSets.dev
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.INFO
         }
@@ -189,12 +206,14 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.dev)
         }
     }
 }
 
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    devRuntimeClasspath.extendsFrom localRuntime
 }
 
 repositories {
@@ -217,6 +236,7 @@ repositories {
 // Plain JUnit 5 tests. They run WITHOUT a Minecraft bootstrap; only classes that do not
 // touch registries (e.g. CompoundTag, TagParser) may be used there.
 neoForge.addModdingDependenciesTo(sourceSets.test)
+neoForge.addModdingDependenciesTo(sourceSets.dev)
 
 dependencies {
     // Jade (optional dependency, PLAN 10). In dev it is on the run classpath unless -PnoJade is given; never for
@@ -580,3 +600,140 @@ tasks.register('smoketestUpgrade') {
         logger.lifecycle("UPGRADE TEST PASSED (${worldName})")
     }
 }
+
+// ---- M22: release checks (the same ones the release workflow runs) --------------------------------------------------
+
+// MIT: the licence text goes into the jar
+def licenseModId = mod_id
+tasks.named('jar', Jar).configure {
+    from('LICENSE') { rename { "LICENSE_${licenseModId}" } }
+}
+
+// gradlew verifyReleaseJar [-PexpectedVersion=1.2.3] : checks build/libs/bettacraft-<version>.jar before it is released:
+//  - only allowed entries: our classes, assets/bettacraft, data/bettacraft, tags of other namespaces (c, minecraft, mods we
+//    support), the NeoForge loot modifier list, mods.toml, mixin config, logo, WTHIT plugin list, licence
+//  - no development code: nothing of the dev source set (smoke tests, showcase, GameTests), no Dev*Smoke* / SmokeFreeze /
+//    gametest classes, no GameTest templates, no source files of the asset tools (.bbmodel, .py ...), no file over 2 MB
+//  - every mixin of bettacraft.mixins.json is in the jar
+//  - the version in neoforge.mods.toml is mod_version (and -PexpectedVersion, e.g. the tag without "v", if given)
+def verifyVersion = mod_version
+def verifyModId = mod_id
+def verifyExpected = providers.gradleProperty('expectedVersion')
+def verifyDevClasses = sourceSets.dev.output.classesDirs
+def verifyJar = tasks.named('jar', Jar).flatMap { it.archiveFile }
+tasks.register('verifyReleaseJar') {
+    group = 'verification'
+    description = 'Checks the release jar: no dev/smoke/GameTest classes, no foreign assets, version matches'
+    dependsOn 'jar', 'devClasses'
+    inputs.file(verifyJar)
+    inputs.files(verifyDevClasses)
+    inputs.property('expectedVersion', verifyExpected.orElse(''))
+    def report = layout.buildDirectory.file('verifyReleaseJar.txt')
+    outputs.file(report)
+    doLast {
+        def jarFile = verifyJar.get().asFile
+        def problems = []
+        // classes of the dev source set, as jar paths
+        def devNames = [] as Set
+        verifyDevClasses.files.each { root ->
+            if (root.isDirectory()) root.eachFileRecurse { f ->
+                if (f.isFile() && f.name.endsWith('.class')) devNames << root.toPath().relativize(f.toPath()).toString().replace('\\', '/')
+            }
+        }
+        def allowed = [
+                ~/^META-INF\/(MANIFEST\.MF|neoforge\.mods\.toml)$/,
+                ~/^(bettacraft\.mixins\.json|bettacraft\.png|waila_plugins\.json|pack\.mcmeta|LICENSE_bettacraft)$/,
+                ~/^org\/overengineer\/bettacraft\/.+\.class$/,
+                ~/^assets\/bettacraft\/.+\.(json|png|mcmeta|md|nbt|ogg|txt)$/,
+                ~/^data\/bettacraft\/.+\.(json|nbt|mcfunction)$/,
+                ~/^data\/[a-z0-9_.-]+\/tags\/.+\.json$/,
+                ~/^data\/neoforge\/loot_modifiers\/global_loot_modifiers\.json$/,
+        ]
+        def forbidden = [
+                (~/(^|\/)Dev(Smoke|ClientSmoke|ClientShowcase|ClientHooks|Showcase|Upgrade)[^\/]*\.class$/): 'development class',
+                (~/(^|\/)SmokeFreeze[^\/]*\.class$/)                                    : 'smoke test helper',
+                (~/^org\/overengineer\/bettacraft\/gametest\//)                          : 'GameTest class',
+                (~/GameTests?(\$[^\/]*)?\.class$/)                                       : 'GameTest class',
+                (~/^data\/bettacraft\/structure\/empty_[^\/]*\.nbt$/)                     : 'GameTest template',
+                (~/\.(bbmodel|py|pyc|blend|psd|xcf|kra|java|sh|bat|jar|zip)$/)          : 'source or archive file',
+        ]
+        def toml = null
+        def mixinsJson = null
+        def classes = [] as Set
+        def count = 0
+        new java.util.zip.ZipFile(jarFile).withCloseable { zip ->
+            zip.entries().each { e ->
+                if (e.directory) return
+                count++
+                def n = e.name
+                if (n.endsWith('.class')) classes << n
+                if (!allowed.any { n ==~ it }) problems << "not allowed in the jar: ${n}".toString()
+                forbidden.each { re, what -> if (n =~ re) problems << "${what}: ${n}".toString() }
+                if (devNames.contains(n)) problems << "class of the dev source set: ${n}".toString()
+                if (e.size > 2L * 1024 * 1024) problems << "bigger than 2 MB: ${n} (${e.size} bytes)".toString()
+                if (n == 'META-INF/neoforge.mods.toml') toml = zip.getInputStream(e).getText('UTF-8')
+                if (n == "${verifyModId}.mixins.json".toString()) mixinsJson = zip.getInputStream(e).getText('UTF-8')
+            }
+        }
+        if (toml == null) problems << 'META-INF/neoforge.mods.toml missing'
+        else {
+            def m = toml =~ /(?m)^version="([^"]*)"/
+            def inJar = m.find() ? m.group(1) : null
+            if (inJar != verifyVersion) problems << "neoforge.mods.toml has version ${inJar}, mod_version is ${verifyVersion}".toString()
+            if (toml.contains('${')) problems << 'neoforge.mods.toml has an unexpanded placeholder'
+        }
+        def expected = verifyExpected.getOrElse('')
+        if (!expected.isEmpty() && expected != verifyVersion) {
+            problems << "expected version ${expected} (tag), but mod_version is ${verifyVersion}".toString()
+        }
+        if (jarFile.name != "${verifyModId}-${verifyVersion}.jar".toString()) problems << "unexpected jar name ${jarFile.name}".toString()
+        if (mixinsJson == null) problems << "${verifyModId}.mixins.json missing".toString()
+        else {
+            def cfg = new groovy.json.JsonSlurper().parseText(mixinsJson)
+            def pkg = cfg.package.replace('.', '/')
+            ((cfg.mixins ?: []) + (cfg.client ?: []) + (cfg.server ?: [])).each { String mx ->
+                if (!classes.contains("${pkg}/${mx.replace('.', '/')}.class".toString())) problems << "mixin ${mx} of the mixin config is not in the jar".toString()
+            }
+        }
+        def out = report.get().asFile
+        out.parentFile.mkdirs()
+        out.write("${jarFile.name}: ${count} files, ${classes.size()} classes, ${problems.size()} problem(s)\n" + problems.collect { "  ${it}\n" }.join(''), 'UTF-8')
+        if (!problems.isEmpty()) throw new GradleException("verifyReleaseJar: ${problems.size()} problem(s) in ${jarFile.name}:\n  " + problems.take(40).join('\n  '))
+        logger.lifecycle("verifyReleaseJar: ${jarFile.name} OK (${count} files, ${classes.size()} classes, version ${verifyVersion})")
+    }
+}
+
+// gradlew releaseNotes : the section of mod_version at the top of CHANGELOG.md ("## [<version>] - <date>" up to the next
+// "## [" heading, without link references) -> build/release-notes.md, the body of the GitHub release and the changelog of
+// the Modrinth / CurseForge upload. Fails if the first version section of CHANGELOG.md is not the one of mod_version.
+def notesVersion = mod_version
+def notesChangelog = file('CHANGELOG.md')
+tasks.register('releaseNotes') {
+    group = 'build'
+    description = 'Extracts the CHANGELOG.md section of mod_version (must be the top one) into build/release-notes.md'
+    inputs.file(notesChangelog)
+    inputs.property('version', notesVersion)
+    def out = layout.buildDirectory.file('release-notes.md')
+    outputs.file(out)
+    doLast {
+        def lines = notesChangelog.readLines('UTF-8')
+        def heads = lines.findIndexValues { it.startsWith('## [') }.collect { it as int }.findAll { !lines[it].toLowerCase().startsWith('## [unreleased]') }
+        if (heads.isEmpty()) throw new GradleException('CHANGELOG.md has no "## [<version>]" section')
+        int first = heads[0]
+        if (!lines[first].startsWith("## [${notesVersion}]".toString())) {
+            throw new GradleException("the top section of CHANGELOG.md is \"${lines[first]}\", expected \"## [${notesVersion}] - <date>\"")
+        }
+        def next = lines.findIndexOf(first + 1) { it.startsWith('## [') }
+        int end = next < 0 ? lines.size() : next
+        def body = new ArrayList(lines.subList(first + 1, end).findAll { !(it ==~ /^\[[^\]]+\]: .*/) })
+        while (!body.isEmpty() && body.first().trim().isEmpty()) body.remove(0)
+        while (!body.isEmpty() && body.last().trim().isEmpty()) body.remove(body.size() - 1)
+        if (body.isEmpty()) throw new GradleException("the CHANGELOG.md section ${notesVersion} is empty")
+        def f = out.get().asFile
+        f.parentFile.mkdirs()
+        f.write(body.join('\n') + '\n', 'UTF-8')
+        logger.lifecycle("releaseNotes: ${body.size()} lines of ${notesVersion} -> ${f}")
+    }
+}
+
+tasks.named('check').configure { dependsOn 'verifyReleaseJar' }

@@ -117,23 +117,10 @@ public final class BettaCraftClient {
                 org.overengineer.bettacraft.genetics.GeneticsData.reset();
             }
         });
-        if (Boolean.getBoolean("bettacraft.smoketest.world")) {
-            DevClientSmokeTest.register();
-        } else if (Boolean.getBoolean("bettacraft.showcase.tour")) {
-            DevClientShowcaseTour.register(); // M21: gradlew runClient -Pshowcasetour: screenshots of the showcase world
-        } else if (Boolean.getBoolean("bettacraft.smoketest.mp")) {
-            DevClientSmokeMP.register(); // gradlew runMultiplayerTest: joins the dedicated test server as Dev1 / Dev2
-        } else if (Boolean.getBoolean("bettacraft.smoketest")) {
-            // dev only: quit as soon as the title screen opens (models/textures baked without crash)
-            NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ScreenEvent.Opening e) -> {
-                if (e.getNewScreen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
-                    org.slf4j.LoggerFactory.getLogger("bettacraft/smoketest").info("[smoketest] client reached title screen");
-                    net.minecraft.client.Minecraft.getInstance().stop();
-                }
-            });
-        }
-        if (!Boolean.getBoolean("bettacraft.smoketest.world") && !net.neoforged.fml.loading.FMLEnvironment.production) {
-            SmokeFreeze.registerRelease(); // copied smoke worlds: frozen screenshot animals swim again
+        // M22: the client smoke tests, the showcase tour and the multiplayer test client live in the dev source set
+        // (src/dev), which is not part of the released jar; DevClientHooks is only found in development runs
+        if (!net.neoforged.fml.loading.FMLEnvironment.production) {
+            org.overengineer.bettacraft.util.DevHooks.init("org.overengineer.bettacraft.client.DevClientHooks");
         }
     }
 
