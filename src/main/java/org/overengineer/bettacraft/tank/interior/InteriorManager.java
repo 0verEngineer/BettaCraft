@@ -484,6 +484,52 @@ public final class InteriorManager {
         }
     }
 
+    /** M15: the players standing in the tank's interior right now (the tank must not be broken meanwhile). */
+    public static List<ServerPlayer> playersInside(MinecraftServer server, TankData t) {
+        ServerLevel in = interiorLevel(server);
+        InteriorRegion r = t.regionId() < 0 ? null : InteriorRegions.get(server).get(t.regionId());
+        if (in == null || r == null || !r.built()) return List.of();
+        List<ServerPlayer> out = new ArrayList<>();
+        for (ServerPlayer p : in.players()) if (!p.isSpectator() && r.containsShell(p.blockPosition())) out.add(p);
+        return out;
+    }
+
+    /** M15: per region the players inside it, sent to the tank's clients (they keep the client from breaking it). */
+    private static final it.unimi.dsi.fastutil.ints.Int2IntMap OCCUPANTS = new it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap();
+
+    public static void updateOccupants(MinecraftServer server) {
+        ServerLevel in = interiorLevel(server);
+        it.unimi.dsi.fastutil.ints.Int2IntMap now = new it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap();
+        if (in != null) {
+            for (ServerPlayer p : in.players()) {
+                if (p.isSpectator()) continue;
+                InteriorRegion r = regionAt(server, p.blockPosition());
+                if (r != null) now.mergeInt(r.id(), 1, Integer::sum);
+            }
+        }
+        it.unimi.dsi.fastutil.ints.IntSet ids = new it.unimi.dsi.fastutil.ints.IntOpenHashSet(now.keySet());
+        ids.addAll(OCCUPANTS.keySet());
+        for (int id : ids) {
+            int n = now.getOrDefault(id, 0);
+            if (n == OCCUPANTS.getOrDefault(id, 0)) continue;
+            InteriorRegion r = InteriorRegions.get(server).get(id);
+            ServerLevel tankLevel = r == null ? null : server.getLevel(r.tankDimension());
+            if (tankLevel != null && tankLevel.isLoaded(r.tankMin())) {
+                TankBlockEntity c = TankMultiblock.getController(tankLevel, r.tankMin());
+                if (c != null && c.getTank().regionId() == id) {
+                    c.getTank().setOccupants(n);
+                    c.markTankChanged();
+                }
+            }
+            if (n == 0) OCCUPANTS.remove(id);
+            else OCCUPANTS.put(id, n);
+        }
+    }
+
+    static void clearOccupants() {
+        OCCUPANTS.clear();
+    }
+
     /** Region a position of the interior dimension belongs to (shell included), or null. */
     @Nullable
     public static InteriorRegion regionAt(MinecraftServer server, BlockPos pos) {

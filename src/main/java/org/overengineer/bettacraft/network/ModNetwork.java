@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "6";
+    public static final String VERSION = "7";
 
     private ModNetwork() {}
 
@@ -27,6 +27,7 @@ public final class ModNetwork {
         r.playToClient(GeneticsSyncPayload.TYPE, GeneticsSyncPayload.STREAM_CODEC, ModNetwork::onGenetics);
         r.playToClient(TankPlantsPayload.TYPE, TankPlantsPayload.STREAM_CODEC, ModNetwork::onTankPlants);
         r.playToClient(TankCrittersPayload.TYPE, TankCrittersPayload.STREAM_CODEC, ModNetwork::onTankCritters);
+        r.playToClient(InteriorLeavePayload.TYPE, InteriorLeavePayload.STREAM_CODEC, ModNetwork::onInteriorLeave); // M15
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
     }
 
@@ -70,6 +71,12 @@ public final class ModNetwork {
     private static void onTankCritters(TankCrittersPayload payload, IPayloadContext ctx) {
         if (FMLEnvironment.dist.isClient()) {
             ctx.enqueueWork(() -> org.overengineer.bettacraft.client.render.CritterRenderer.accept(payload));
+        }
+    }
+
+    private static void onInteriorLeave(InteriorLeavePayload payload, IPayloadContext ctx) {
+        if (FMLEnvironment.dist.isClient()) {
+            ctx.enqueueWork(() -> org.overengineer.bettacraft.client.interior.InteriorLeaveHud.accept(payload));
         }
     }
 

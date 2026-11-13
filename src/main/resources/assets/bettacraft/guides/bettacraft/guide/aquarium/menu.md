@@ -16,8 +16,8 @@ navigation:
 ![The overview tab](../images/menu_overview.png)
 
 * **Name** (up to 32 characters) and the **name sign**: on or off, its position (top or bottom, left, centre or
-  right) and the **front** of the aquarium it is drawn on. The sign is black with white text; long names get a smaller
-  font. The name also shows in the menu and in Jade when the sign is off.
+  right) and the **front** of the aquarium it is drawn on. The sign is black with white text, 0.12 blocks high (each player
+  can make it bigger or smaller with the client config `render.signScale`, 0.5 to 2); long names get a smaller font. The name also shows in the menu and in Jade when the sign is off.
 * **Lock**: the player who placed the aquarium is its owner. When it is locked, only the owner and operators can
   change it (water, animals, settings, interior); everyone can still look.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).

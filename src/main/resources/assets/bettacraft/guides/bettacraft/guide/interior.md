@@ -17,8 +17,17 @@ aquarium shows it as a **miniature** behind the glass.
 
 * **Enter:** **sneak + right-click** the aquarium with an empty hand, or use the *Interior* button in the tank menu.
   The first time the room has to be prepared ("Preparing the tank interior... 40 %"), that takes a moment.
-* **Leave:** hold **sneak for 3 seconds**, or use `/bettacraft interior leave`. You return to where you stood.
-* If you log out inside, you stay inside. Several players can be in the same interior.
+* **Leave:** **sneak and look steeply up** (at the ceiling) for **3 seconds**, or use `/bettacraft interior leave`. You
+  return to where you stood. Sneaking alone does not count, so you can sneak to set substrate without being thrown out;
+  placing or breaking a block starts the 3 seconds over. A small hint at the bottom left of the screen reminds you
+  ("Sneak + look up: leave") and fills a bar while you hold it; the client config `hud.interiorLeaveHint` turns the
+  hint off (the bar still shows).
+* If you log out inside, you stay inside. Several players can be in the same interior at the same time; each sees what
+  the others build, and the miniature outside follows.
+* While anyone is inside, the aquarium **cannot be broken**: not by hand (any of its blocks), not by explosions, and
+  pistons cannot move tank blocks anyway. The message names who is inside.
+
+![The leave hint at the bottom left of the screen](images/interior_leave_hint.png)
 * For a locked aquarium only the owner and operators may enter and build.
 
 ## Size

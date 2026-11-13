@@ -53,12 +53,13 @@ block.
 - **Interior:** sneak and right-click an aquarium with an empty hand to step inside a void dimension at 16 blocks per
   tank block (4 or 8 configurable) and build with any block. The result is shown in the aquarium as a miniature.
   Floor textures (substrate), decoration structures (castle, shipwreck, skull, volcano, driftwood, cave, ...),
-  heaters, internal filters and floating plants.
+  heaters, internal filters and floating plants. Several players can build in the same interior at once; nobody can
+  break the aquarium while someone is inside. Leave by sneaking and looking up (a small hint shows how).
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood (they hold the
   external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below) and a
   connecting light bar that redstone switches off.
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
-  interior and log; name sign on the glass and a lock for the owner.
+  interior and log; name sign on the glass (its size is a client setting) and a lock for the owner.
 - **Handbook and progression:** 40 handbook pages in English and German (with GuideME) and 29 advancements.
 - **Languages:** English and German.
 

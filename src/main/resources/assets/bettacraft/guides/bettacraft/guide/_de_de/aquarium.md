@@ -55,8 +55,8 @@ gefärbtes Glas, getöntes Glas und das Glas anderer Mods (`#c:glass_blocks`).
 
 ## Abbauen
 
-Aquarium-Blöcke baust du wie Glas ab, **außer solange Tiere darin leben** oder das Schaumnest noch Eier oder Larven hat:
-Die Meldung sagt dir, was noch drin ist. Nimm die Tiere zuerst heraus, an Land würden sie sterben.
+Aquarium-Blöcke baust du wie Glas ab, **außer solange Tiere darin leben**, das Schaumnest noch Eier oder Larven hat
+oder ein Spieler in seinem [Innenraum](interior.md) ist: Die Meldung sagt dir, was noch drin ist. Nimm die Tiere zuerst heraus, an Land würden sie sterben.
 
 Das Wasser des abgebauten Blocks verschwindet einfach (nichts läuft aus), der Rest des Aquariums behält seinen Anteil.
 Die Innenraum-Blöcke hinter dem abgebauten Block droppen als Items (mehr als 27 Stapel kommen in Truhen verpackt). Wer

@@ -16,7 +16,8 @@ den [Innenraum](../interior.md).)
 ![Der Übersicht-Tab](../images/menu_overview.png)
 
 * **Name** (bis 32 Zeichen) und **Namensschild**: an oder aus, seine Position (oben oder unten, links, Mitte oder
-  rechts) und die **Vorderseite** des Aquariums, auf der es sitzt. Das Schild ist schwarz mit weißer Schrift; lange
+  rechts) und die **Vorderseite** des Aquariums, auf der es sitzt. Das Schild ist schwarz mit weißer Schrift und 0,12 Blöcke
+  hoch (jeder Spieler kann es mit der Client-Config `render.signScale` größer oder kleiner stellen, 0,5 bis 2); lange
   Namen bekommen eine kleinere Schrift. Der Name steht auch bei ausgeschaltetem Schild im Menü und in Jade.
 * **Sperre**: Wer das Aquarium gesetzt hat, ist sein Besitzer. Ist es gesperrt, dürfen nur Besitzer und Operatoren es
   ändern (Wasser, Tiere, Einstellungen, Innenraum); ansehen dürfen es alle.

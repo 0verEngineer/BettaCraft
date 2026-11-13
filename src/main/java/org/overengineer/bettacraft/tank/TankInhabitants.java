@@ -495,11 +495,25 @@ public final class TankInhabitants {
 
     // ------------------------------------------------------------------ break rule
 
-    /** Reason why the tank block at {@code pos} must not be broken: living inhabitants or eggs inside (PLAN 4.1). */
+    /**
+     * Reason why the tank block at {@code pos} must not be broken: a player in its interior (M15), living inhabitants or
+     * eggs inside (PLAN 4.1).
+     */
     public static Optional<Component> breakBlockedReason(Level level, BlockPos pos) {
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) return Optional.empty();
         TankData tank = controller.getTank();
+        // M15: nobody may break a tank while a player is in its interior (every block of it, also of a free shape)
+        if (level instanceof ServerLevel sl) {
+            List<ServerPlayer> inside = org.overengineer.bettacraft.tank.interior.InteriorManager.playersInside(sl.getServer(), tank);
+            if (!inside.isEmpty()) {
+                Component names = inside.getFirst().getDisplayName();
+                for (int i = 1; i < Math.min(3, inside.size()); i++) names = Component.translatable("cause.bettacraft.and", names, inside.get(i).getDisplayName());
+                return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked_interior", names));
+            }
+        } else if (tank.occupants() > 0) {
+            return Optional.of(Component.empty());
+        }
         BubbleNest nest = tank.nest();
         if (nest != null && nest.hasEggs()) {
             return Optional.of(Component.translatable("message.bettacraft.tank.break_blocked_nest", nest.visibleEggCount()));

@@ -72,6 +72,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue INTERIOR_SUBSTRATE_COSTS_BLOCK;
     public static final ModConfigSpec.IntValue INTERIOR_MAX_RENDERED_BLOCKS;
     public static final ModConfigSpec.IntValue INTERIOR_LEAVE_SNEAK_TICKS;
+    /** M15: how steeply up a player has to look (degrees above the horizon) while sneaking to leave the interior. */
+    public static final ModConfigSpec.IntValue INTERIOR_LEAVE_LOOK_UP;
     public static final ModConfigSpec.IntValue INTERIOR_SYNC_RANGE;
 
     // drops
@@ -233,6 +235,8 @@ public final class ServerConfig {
         INTERIOR_MAX_RENDERED_BLOCKS = b.comment("Maximum number of non-air interior blocks synced/rendered as miniature per tank")
                 .defineInRange("maxRenderedBlocks", 262144, 0, 16777216);
         INTERIOR_LEAVE_SNEAK_TICKS = b.comment("Ticks you have to hold sneak to leave the interior").defineInRange("leaveSneakTicks", 60, 10, 1200);
+        INTERIOR_LEAVE_LOOK_UP = b.comment("While sneaking you also have to look up at least this many degrees above the horizon to leave the interior (0 = sneaking alone is enough)")
+                .defineInRange("leaveLookUpDegrees", 60, 0, 89);
         INTERIOR_SYNC_RANGE = b.comment("Players within this many blocks of a tank receive its miniature").defineInRange("syncRange", 96, 16, 512);
         b.pop();
 

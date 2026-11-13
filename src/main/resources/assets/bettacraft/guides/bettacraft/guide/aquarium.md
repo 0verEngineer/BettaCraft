@@ -52,8 +52,8 @@ stained glass, tinted glass and the glass of other mods (`#c:glass_blocks`).
 
 ## Breaking
 
-You can break tank blocks like glass, **except while animals live in the aquarium** or the bubble nest still holds eggs
-or larvae: the message tells you what is still inside. Take the animals out first, they would die on land.
+You can break tank blocks like glass, **except while animals live in the aquarium**, the bubble nest still holds eggs
+or larvae, or a player is in its [interior](interior.md): the message tells you what is still inside. Take the animals out first, they would die on land.
 
 The water in a broken block simply disappears (nothing floods), the rest of the aquarium keeps its share. The interior
 blocks behind the broken block drop as items (more than 27 stacks come packed into chests). Breaking a block in the

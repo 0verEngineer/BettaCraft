@@ -31,7 +31,8 @@ navigation:
 | `interior.defaultScale` | 16 | 4, 8 oder 16 Innenraum-Blöcke pro Aquarium-Block (neue Aquarien) |
 | `interior.substrateCostsBlock` | true | Bodengrund kostet einen Block |
 | `interior.maxRenderedBlocks` | 262144 | Limit der Miniatur |
-| `interior.leaveSneakTicks` | 60 | wie lange man zum Verlassen schleichen muss |
+| `interior.leaveSneakTicks` | 60 | wie lange man zum Verlassen schleichen (und nach oben schauen) muss |
+| `interior.leaveLookUpDegrees` | 60 | wie steil man beim Schleichen nach oben schauen muss, um hinauszukommen (0 = Schleichen allein) |
 | `drops.artemiaFromSandChance` | 0.02 | Artemia-Zysten aus Sand |
 | `waterQuality.qualityEnabled` | true | Wasserqualität an (Verlust pro Tag 0.01, pro Tier 0.04, pro Überfütterung 0.01, Filter entfernen 0.8, schlecht unter 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | Wasserblöcke, die ein Filter sauber hält |
@@ -53,7 +54,9 @@ navigation:
 Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fest und das Rezept der Fischtüte
 (`recipes.fishBag`: AUTO, KELP oder PLASTIC). Die **Client-Config** enthält Animations- und Miniatur-Distanz, das
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
-der Kantenlinien (`render.tankEdgeWidth`, in Pixeln zu 1/16 Block, 0,1 bis 1, Standard 0,25; 0 = keine).
+der Kantenlinien (`render.tankEdgeWidth`, in Pixeln zu 1/16 Block, 0,1 bis 1, Standard 0,25; 0 = keine), die Größe des
+Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 Blöcken) und den Verlassen-Hinweis im
+Innenraum (`hud.interiorLeaveHint`).
 
 ## Dieses Handbuch
 

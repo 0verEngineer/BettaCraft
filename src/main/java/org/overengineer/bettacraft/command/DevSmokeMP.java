@@ -77,8 +77,8 @@ import org.slf4j.LoggerFactory;
 public final class DevSmokeMP {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     private static final boolean ENABLED = Boolean.getBoolean("bettacraft.smoketest.mp");
-    /** Whole test: 7 minutes (the clients need about a minute to start). */
-    private static final int TIMEOUT_TICKS = 20 * 60 * 7;
+    /** Whole test: 10 minutes (the clients need about a minute to start). */
+    private static final int TIMEOUT_TICKS = 20 * 60 * 10;
     static final String P1 = "Dev1", P2 = "Dev2";
     static final String PREFIX = "bcmp:";
 
@@ -96,6 +96,9 @@ public final class DevSmokeMP {
     private static long waterBefore;
     private static int plantsBefore, growingBefore;
     private static boolean savedEvaporation;
+    // M15: where Dev1 / Dev2 stood when they entered the L tank (they must come back there)
+    private static final Map<String, net.minecraft.world.phys.Vec3> entered = new HashMap<>();
+    private static int cobbleBefore = -1;
 
     private DevSmokeMP() {}
 
@@ -121,11 +124,14 @@ public final class DevSmokeMP {
             case "motion" -> checkMotion(name, a);
             case "aqua" -> checkAquatic(name, a);
             case "critters" -> checkCritters(name, a);
+            case "seen" -> checkSeen(name, a);
+            case "mini" -> checkMini(name, a);
+            case "mine" -> checkMine(name, a);
             case "menu" -> check(name + ": tank menu (" + text.substring(5) + ")", "ok".equals(a[1]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
-        reports.put(name + ":" + a[0] + (a.length > 1 && ("state".equals(a[0]) || "aqua".equals(a[0]) || "critters".equals(a[0])) ? a[1] : ""), text);
+        reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine").contains(a[0]) ? a[1] : ""), text);
     }
 
     /** {@code state <phase> <water> <plants> <idsum> <cx> <cz> <fish>}: what the client sees = the server state now. */
@@ -219,6 +225,51 @@ public final class DevSmokeMP {
                 if (s0 != null && Math.abs(s0[0] - k.x) + Math.abs(s0[1] - k.y) + Math.abs(s0[2] - k.z) > 0.02) moved++;
             }
             check(phase + ": " + moved + " of " + sn + " animals walked since the first look", moved >= Math.max(1, sn / 3));
+        }
+    }
+
+    // ------------------------------------------------------------------ M15: two players in one interior
+
+    /** Interior blocks of the given kind in the L tank's region (server). */
+    private static int countInRegion(net.minecraft.world.level.block.Block block) {
+        var r = lRegion();
+        ServerLevel in = InteriorManager.interiorLevel(server);
+        if (r == null || in == null) return -1;
+        int n = 0;
+        for (BlockPos q : BlockPos.betweenClosed(r.toWorld(0, 0, 0), r.toWorld(r.sizeX() - 1, r.sizeY() - 1, r.sizeZ() - 1))) {
+            if (in.getBlockState(q).is(block)) n++;
+        }
+        return n;
+    }
+
+    /** {@code seen <phase> <cobblestone> <planks>}: blocks this client sees in the interior it stands in = the server's. */
+    private static void checkSeen(String name, String[] a) {
+        int cob = Integer.parseInt(a[2]), pl = Integer.parseInt(a[3]);
+        int sc = countInRegion(Blocks.COBBLESTONE), sp = countInRegion(Blocks.OAK_PLANKS);
+        check("seen " + a[1] + " " + name + ": inside the interior " + cob + " cobblestone (from Dev1, server " + sc + ") and " + pl
+                + " planks (from Dev2, server " + sp + ")", cob == sc && pl == sp && sc >= 3 && sp >= 3);
+    }
+
+    /** {@code mini <phase> <cobblestone> <planks>}: the miniature of the L tank outside shows the blocks built inside. */
+    private static void checkMini(String name, String[] a) {
+        int cob = Integer.parseInt(a[2]), pl = Integer.parseInt(a[3]);
+        int sc = countInRegion(Blocks.COBBLESTONE), sp = countInRegion(Blocks.OAK_PLANKS);
+        check("mini " + a[1] + " " + name + ": the miniature outside shows " + cob + " cobblestone (server " + sc + ") and " + pl + " planks (server "
+                + sp + ")", cob == sc && pl == sp && sc > 0 && sp > 0);
+    }
+
+    /** {@code mine <phase> <tank block still there> <message names Dev1>}: breaking the L tank from outside. */
+    private static void checkMine(String name, String[] a) {
+        boolean still = "1".equals(a[2]), named = "1".equals(a[3]);
+        TankBlockEntity lc = TankMultiblock.getController(server.overworld(), lMin.offset(0, 0, 1));
+        int members = lc == null ? 0 : lc.getTank().memberCount();
+        boolean there = server.overworld().getBlockState(lMin).is(ModBlocks.TANK.get());
+        if ("1".equals(a[1])) {
+            check("mine 1 " + name + ": breaking the L tank from outside while Dev1 is inside is refused (block there: server " + there + ", client "
+                    + still + ", " + members + " tank blocks)", there && still && members == 8);
+            check("mine 1 " + name + ": the refusal names the player inside", named);
+        } else {
+            check("mine 2 " + name + ": with nobody inside the block breaks (still there: server " + there + ", client " + still + ")", !there && !still);
         }
     }
 
@@ -331,6 +382,34 @@ public final class DevSmokeMP {
         LOGGER.info("[smoketest] MP stage at {}: main tank {} blocks, {} mB, {} plants, {} animals; L tank {} blocks, {} plants", base,
                 t.memberCount(), t.waterMb(), t.plants().size(), TankInhabitants.liveInhabitants(level, t).size(),
                 lc.getTank().memberCount(), lc.getTank().plants().size());
+    }
+
+    @javax.annotation.Nullable
+    private static org.overengineer.bettacraft.tank.interior.InteriorRegion lRegion() {
+        TankBlockEntity lc = TankMultiblock.getController(server.overworld(), lMin.offset(0, 0, 1));
+        return lc == null ? null : org.overengineer.bettacraft.tank.interior.InteriorRegions.get(server).get(lc.getTank().regionId());
+    }
+
+    private static String lArg() {
+        return lMin.getX() + "," + lMin.getY() + "," + (lMin.getZ() + 1);
+    }
+
+    private static boolean inInterior(String name) {
+        ServerPlayer p = player(name);
+        return p != null && InteriorManager.isInterior(p.level());
+    }
+
+    /** Puts a player in the interior at (px, pz) on the floor, turned so the crosshair hits (tx, topY, tz). */
+    private static void aim(String name, double px, double pz, double tx, double topY, double tz) {
+        ServerPlayer p = player(name);
+        ServerLevel in = InteriorManager.interiorLevel(server);
+        if (p == null || in == null) return;
+        int base = org.overengineer.bettacraft.tank.interior.InteriorRegion.BASE_Y;
+        double eye = base + 1.62;
+        double dx = tx - px, dz = tz - pz, d = Math.sqrt(dx * dx + dz * dz);
+        float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
+        float pitch = (float) Math.toDegrees(Math.atan2(eye - topY, d));
+        p.teleportTo(in, px, base, pz, yaw, pitch);
     }
 
     /** Dev1 in front of the north glass, eye a little below the water surface, looking south at the tank. */
@@ -489,6 +568,88 @@ public final class DevSmokeMP {
         steps.add(new Step("animals walk", () -> { }, () -> stepTicks >= 160, 200));
         steps.add(new Step("animals seen again", () -> say("critters", "all", "2," + tankArg()),
                 () -> reports.containsKey(P1 + ":critters2") && reports.containsKey(P2 + ":critters2"), 20 * 30));
+        // M15: Dev1 and Dev2 in the interior of the L tank at the same time: they build, each sees the other's blocks, the
+        // miniature outside follows, nobody can break the tank meanwhile, and both come out in front of it
+        steps.add(new Step("enter the L tank", () -> {
+            entered.clear();
+            for (String n : List.of(P1, P2)) {
+                ServerPlayer p = player(n);
+                if (p == null) continue;
+                p.teleportTo(server.overworld(), lMin.getX() + (n.equals(P1) ? 1.5 : 0.5), lMin.getY(), lMin.getZ() - 1.5, 0F, 20F);
+                entered.put(n, p.position());
+                InteriorManager.enter(p, lMin.offset(0, 0, 1));
+            }
+        }, () -> inInterior(P1) && inInterior(P2), 20 * 30));
+        for (int round = 0; round < 3; round++) {
+            final int k = round;
+            steps.add(new Step("build together " + (round + 1), () -> {
+                var r = lRegion();
+                if (k == 0) {
+                    check("both players are in the L tank's interior", r != null && inInterior(P1) && inInterior(P2));
+                    hand(P1, new ItemStack(Items.COBBLESTONE, 8));
+                    hand(P2, new ItemStack(Items.OAK_PLANKS, 8));
+                    cobbleBefore = countInRegion(Blocks.COBBLESTONE);
+                }
+                if (r == null) return;
+                int base = org.overengineer.bettacraft.tank.interior.InteriorRegion.BASE_Y;
+                // farthest first, so the crosshair passes over the blocks already there
+                double tx = r.originX() + 11.5 - k;
+                aim(P1, r.originX() + 8.5, r.originZ() + 20.5, tx, base, r.originZ() + 20.5);
+                aim(P2, r.originX() + 8.5, r.originZ() + 40.5, tx, base, r.originZ() + 40.5);
+                say("place", "all", "");
+            }, () -> stepTicks >= 50, 80));
+        }
+        steps.add(new Step("both see both", () -> {
+            int c = countInRegion(Blocks.COBBLESTONE), pl = countInRegion(Blocks.OAK_PLANKS);
+            check("built at the same time: Dev1 placed " + (c - Math.max(0, cobbleBefore)) + " cobblestone, Dev2 " + pl + " planks",
+                    c - Math.max(0, cobbleBefore) == 3 && pl == 3);
+            say("seen", "all", "1");
+        }, () -> reports.containsKey(P1 + ":seen1") && reports.containsKey(P2 + ":seen1"), 20 * 30));
+        steps.add(new Step("Dev2 sneaks looking down", () -> say("sneak", P2, "60,100"),
+                () -> reports.containsKey(P2 + ":sneak"), 20 * 20));
+        steps.add(new Step("Dev2 leaves", () -> {
+            check("sneaking while looking at the floor does not take Dev2 out", inInterior(P2));
+            say("sneak", P2, "-80,110");
+        }, () -> !inInterior(P2), 20 * 20));
+        steps.add(new Step("Dev2 sees the miniature", () -> {
+            ServerPlayer p = player(P2);
+            var back = entered.get(P2);
+            check("Dev2 is back in front of the tank (" + (p == null ? "?" : p.position()) + ", entered at " + back + ")",
+                    p != null && back != null && p.level() == server.overworld() && p.position().distanceTo(back) < 0.6);
+            say("mini", P2, "1," + lArg());
+        }, () -> reports.containsKey(P2 + ":mini1"), 20 * 30));
+        steps.add(new Step("Dev1 builds on", () -> {
+            var r = lRegion();
+            if (r == null) return;
+            int base = org.overengineer.bettacraft.tank.interior.InteriorRegion.BASE_Y;
+            // on top of the farthest cobblestone
+            aim(P1, r.originX() + 8.5, r.originZ() + 20.5, r.originX() + 11.5, base + 1, r.originZ() + 20.5);
+            say("place", P1, "");
+        }, () -> stepTicks >= 50, 80));
+        steps.add(new Step("miniature follows", () -> say("mini", P2, "2," + lArg()), () -> reports.containsKey(P2 + ":mini2"), 20 * 30));
+        steps.add(new Step("break from outside", () -> {
+            int c = countInRegion(Blocks.COBBLESTONE) - Math.max(0, cobbleBefore);
+            check("Dev1 built on alone: " + c + " cobblestone", c == 4);
+            ServerPlayer p = player(P2);
+            if (p != null) {
+                hand(P2, ItemStack.EMPTY);
+                // in front of the north-west block of the L, looking at its north face
+                p.teleportTo(server.overworld(), lMin.getX() + 0.5, lMin.getY(), lMin.getZ() - 1.5, 0F, 36F);
+            }
+            say("mine", P2, "1," + lMin.getX() + "," + lMin.getY() + "," + lMin.getZ());
+        }, () -> reports.containsKey(P2 + ":mine1"), 20 * 30));
+        steps.add(new Step("Dev1 leaves", () -> say("sneak", P1, "-80,110"), () -> !inInterior(P1), 20 * 20));
+        steps.add(new Step("both out", () -> {
+            ServerPlayer p = player(P1);
+            var back = entered.get(P1);
+            check("Dev1 is back in front of the tank (" + (p == null ? "?" : p.position()) + ", entered at " + back + ")",
+                    p != null && back != null && p.level() == server.overworld() && p.position().distanceTo(back) < 0.6);
+            TankBlockEntity lc = TankMultiblock.getController(server.overworld(), lMin.offset(0, 0, 1));
+            check("nobody is in the L tank any more", lc != null && InteriorManager.playersInside(server, lc.getTank()).isEmpty());
+            hand(P1, ItemStack.EMPTY);
+        }, () -> stepTicks >= 30, 60));
+        steps.add(new Step("break when empty", () -> say("mine", P2, "2," + lMin.getX() + "," + lMin.getY() + "," + lMin.getZ()),
+                () -> reports.containsKey(P2 + ":mine2"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

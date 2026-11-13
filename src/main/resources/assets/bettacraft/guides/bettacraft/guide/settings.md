@@ -31,7 +31,8 @@ navigation:
 | `interior.defaultScale` | 16 | 4, 8 or 16 interior blocks per tank block (new aquariums) |
 | `interior.substrateCostsBlock` | true | substrate costs a block |
 | `interior.maxRenderedBlocks` | 262144 | limit of the miniature |
-| `interior.leaveSneakTicks` | 60 | how long to sneak to leave |
+| `interior.leaveSneakTicks` | 60 | how long to sneak (and look up) to leave |
+| `interior.leaveLookUpDegrees` | 60 | how steeply up you have to look while sneaking to leave (0 = sneaking alone) |
 | `drops.artemiaFromSandChance` | 0.02 | artemia cysts from sand |
 | `waterQuality.qualityEnabled` | true | water quality on (loss per day 0.01, per animal 0.04, per overfed portion 0.01, filters remove 0.8, bad below 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
@@ -53,7 +54,9 @@ navigation:
 The **common config** sets the spawn weight and group size of wild bettas and the fish bag recipe (`recipes.fishBag`:
 AUTO, KELP or PLASTIC). The **client config** has the animation and miniature distances, the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
-(`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none).
+(`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none), the size of the name sign
+(`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks) and the leave hint in the interior
+(`hud.interiorLeaveHint`).
 
 ## This handbook
 

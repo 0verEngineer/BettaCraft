@@ -123,9 +123,9 @@ def _disc_alpha(r, edge=0.1):
     return np.clip((r - d) / edge, 0, 1), d
 
 
-def bubble_nest():
+def bubble_nest(seed=77, base_alpha=0.45, count=70):
     """Foam: packed small bubbles, white rims with a highlight, translucent centres; ragged outline."""
-    rng = _rng(77)
+    rng = _rng(seed)
     img = np.zeros((N, N, 4), np.float64)
     alpha_disc, d = _disc_alpha(0.46, 0.08)
     # ragged outline: modulate the radius by angle
@@ -133,10 +133,10 @@ def bubble_nest():
     ang = np.arctan2((yy + 0.5) / N - 0.5, (xx + 0.5) / N - 0.5)
     rag = 0.40 + 0.05 * np.sin(ang * 5 + 1.3) + 0.03 * np.sin(ang * 11 + 0.4)
     inside = d < rag
-    base = np.where(inside, 0.45, 0.0) * alpha_disc
+    base = np.where(inside, base_alpha, 0.0) * alpha_disc
     img[..., :3] = 0.86
     img[..., 3] = base
-    for _ in range(70):
+    for _ in range(count):
         cx, cy = rng.uniform(4, N - 4, 2)
         r = rng.uniform(1.2, 3.2)
         dd = np.hypot(xx + 0.5 - cx, yy + 0.5 - cy)
@@ -206,7 +206,24 @@ def nest_larvae():
     return img
 
 
-NEST = {"bubble_nest": bubble_nest, "nest_eggs": nest_eggs, "nest_larvae": nest_larvae}
+def nest_foam():
+    """M15: the denser inner foam of the domed nest (more bubbles, less see-through), same ragged outline."""
+    return bubble_nest(seed=78, base_alpha=0.68, count=110)
+
+
+def nest_beads():
+    """M15: 4x4 swatches for the 3D eggs and larvae in the domed nest (each cube samples one texel): row 0 egg cream,
+    egg amber, larva head, larva tail; the rows below are slightly darker shades of the same."""
+    img = np.zeros((4, 4, 4), np.float64)
+    cols = [(1.0, 0.95, 0.74), (0.90, 0.70, 0.30), (0.13, 0.11, 0.09), (0.66, 0.60, 0.50)]
+    for y in range(4):
+        for x, (r, g, b) in enumerate(cols):
+            k = 1.0 - 0.08 * y
+            img[y, x] = (r * k, g * k, b * k, 1.0)
+    return img
+
+
+NEST = {"bubble_nest": bubble_nest, "nest_eggs": nest_eggs, "nest_larvae": nest_larvae, "nest_beads": nest_beads, "nest_foam": nest_foam}
 
 
 def write_all() -> list:

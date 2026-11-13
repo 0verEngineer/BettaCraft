@@ -81,6 +81,11 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m14only', 'true'
             }
+            // gradlew runClient -Psmoketestm15 : only the M15 scene (name sign, domed bubble nest, interior leave hint)
+            if (project.hasProperty('smoketestm15')) {
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m15only', 'true'
+            }
             // gradlew runClient -Psmoketestm8 : only the M8 scene (Jade / The One Probe / WTHIT overlays)
             if (project.hasProperty('smoketestm8')) {
                 systemProperty 'bettacraft.smoketest.world', 'true'
@@ -367,14 +372,14 @@ tasks.register('runMultiplayerTest') {
             dir
         }
         def procs = []
-        def deadline = System.currentTimeMillis() + 12 * 60 * 1000L
+        def deadline = System.currentTimeMillis() + 14 * 60 * 1000L
         try {
             def server = start('server', cmd(srv, 'server', ['-Dbettacraft.smoketest.mp=true'], []), runDir)
             procs << server
             def serverLog = new File(logs, 'server.log')
             while (!(serverLog.exists() && serverLog.getText('UTF-8').contains('Done ('))) {
                 if (!server.isAlive()) throw new GradleException("the server stopped while starting, see ${serverLog}")
-                if (System.currentTimeMillis() > deadline - 9 * 60 * 1000L) throw new GradleException('the server did not start in 3 minutes')
+                if (System.currentTimeMillis() > deadline - 11 * 60 * 1000L) throw new GradleException('the server did not start in 3 minutes')
                 Thread.sleep(1000)
             }
             logger.lifecycle("server is up on port ${port}")

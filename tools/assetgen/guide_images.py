@@ -130,6 +130,28 @@ def m14(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M15 scene (DevClientSmokeM15, -Psmoketestm15 -PnoTop -PnoWthit): the domed bubble nest from the side through the glass
+# and the leave hint at the bottom left of the interior (English, German). ``py guide_images.py m15``.
+M15_WORLD = {"nest_side": ("bettacraft_m15_nest_side", (240, 300, 1040, 560))}
+M15_HINT = ("bettacraft_m15_interior_hint", "bettacraft_m15_interior_hint_de")
+HINT_BOX = (0, 700, 760, 960)
+
+
+def m15(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M15_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for shot, out in zip(M15_HINT, (out_en, out_de)):
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(HINT_BOX), out / "interior_leave_hint.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -152,6 +174,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m14"]:
         m14(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m15"]:
+        m15(out_en, out_de)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"
@@ -187,6 +212,7 @@ def main() -> int:
     m12(out_en, out_de)
     m13(out_en)
     m14(out_en, out_de)
+    m15(out_en, out_de)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

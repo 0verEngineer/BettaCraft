@@ -64,6 +64,10 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onLayers);
         modBus.addListener(BettaCraftClient::onRenderers);
         modBus.addListener(BettaCraftClient::onScreens);
+        // M15: how to leave a tank interior, bottom left
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) -> e.registerBelow(
+                net.neoforged.neoforge.client.gui.VanillaGuiLayers.CHAT, org.overengineer.bettacraft.BettaCraft.id("interior_leave_hint"),
+                org.overengineer.bettacraft.client.interior.InteriorLeaveHud::render));
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent e) -> e.registerReloadListener(
                 (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> {
                     org.overengineer.bettacraft.client.render.BettaSkins.clear();

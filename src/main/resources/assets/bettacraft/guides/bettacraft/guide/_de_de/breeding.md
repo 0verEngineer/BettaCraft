@@ -29,7 +29,11 @@ hat zwei Eier mehr. Die Filterströmung spielt keine Rolle.
 Das Männchen baut an der Wasseroberfläche ein **Schaumnest**, das dauert noch einmal einen Vierteltag. Am liebsten baut
 es unter Schwimmpflanzen: Setze [Schwimmpflanzen](aquarium/floating_plants.md) auf die Oberfläche (Amazonas-Froschbiss
 mag es am liebsten), dann entsteht das Nest unter der dichtesten Gruppe; ohne sie unter der **Seerose** im
-[Innenraum](interior.md), die ihm am nächsten ist. Schwimmpflanzen machen es außerdem etwas schneller bereit. Ein fertiges Nest ohne Weibchen zerfällt nach 3 Tagen.
+[Innenraum](interior.md), die ihm am nächsten ist. Schwimmpflanzen machen es außerdem etwas schneller bereit. Ein fertiges Nest ohne Weibchen zerfällt nach 3 Tagen. Das Nest ist ein gewölbter
+Schaumhaufen, der etwas unter die Oberfläche reicht, so siehst du es auch durch die Seitenscheibe; die Eier sitzen an
+seiner Unterseite, die Larven hängen daran.
+
+![Das gewölbte Schaumnest von der Seite durchs Glas](images/nest_side.png)
 
 ## 3. Laichen
 

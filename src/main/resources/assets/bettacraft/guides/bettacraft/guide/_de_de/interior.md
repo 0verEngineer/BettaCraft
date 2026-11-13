@@ -18,8 +18,17 @@ und das Aquarium zeigt es als **Miniatur** hinter dem Glas.
 * **Betreten:** **Schleichen + Rechtsklick** mit leerer Hand auf das Aquarium, oder der Knopf *Innenraum* im
   Aquarium-Menü. Beim ersten Mal wird der Raum vorbereitet („Der Innenraum wird vorbereitet ... 40 %“), das dauert einen
   Moment.
-* **Verlassen:** **3 Sekunden schleichen** oder `/bettacraft interior leave`. Du kehrst dorthin zurück, wo du standest.
-* Wer sich im Innenraum ausloggt, bleibt dort. Mehrere Spieler können gleichzeitig im selben Innenraum sein.
+* **Verlassen:** **3 Sekunden schleichen und dabei steil nach oben schauen** (an die Decke) oder
+  `/bettacraft interior leave`. Du kehrst dorthin zurück, wo du standest. Schleichen allein zählt nicht, so kannst du
+  schleichend Bodengrund setzen, ohne hinauszufliegen; Setzen oder Abbauen eines Blocks lässt die 3 Sekunden neu
+  beginnen. Ein kleiner Hinweis unten links erinnert daran („Schleichen + nach oben schauen: verlassen“) und füllt beim
+  Halten einen Balken; die Client-Config `hud.interiorLeaveHint` schaltet den Hinweis ab (der Balken bleibt).
+* Wer sich im Innenraum ausloggt, bleibt dort. Mehrere Spieler können gleichzeitig im selben Innenraum sein; jeder sieht,
+  was die anderen bauen, und die Miniatur draußen folgt.
+* Solange jemand drin ist, lässt sich das Aquarium **nicht abbauen**: weder von Hand (keiner seiner Blöcke) noch durch
+  Explosionen, und Kolben bewegen Aquarium-Blöcke ohnehin nicht. Die Meldung nennt, wer drin ist.
+
+![Der Verlassen-Hinweis unten links](images/interior_leave_hint.png)
 * Bei einem gesperrten Aquarium dürfen nur Besitzer und Operatoren hinein und bauen.
 
 ## Größe

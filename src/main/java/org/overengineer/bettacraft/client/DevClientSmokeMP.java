@@ -60,6 +60,8 @@ final class DevClientSmokeMP {
     private static final Map<Integer, double[]> lastPos = new HashMap<>();
     private static final Map<Integer, double[]> firstPos = new HashMap<>();
     private static int frames, jumps;
+    // M15: the latest action bar message
+    private static String lastOverlay = "";
     private static double maxStep;
 
     private DevClientSmokeMP() {}
@@ -80,6 +82,7 @@ final class DevClientSmokeMP {
         });
         NeoForge.EVENT_BUS.addListener((ClientChatReceivedEvent.System e) -> {
             String text = e.getMessage().getString();
+            if (e.isOverlay()) lastOverlay = text; // M15: the action bar (e.g. why a block cannot be broken)
             if (!text.startsWith(PREFIX)) return;
             e.setCanceled(true);
             onScript(text.substring(PREFIX.length()));
@@ -131,6 +134,24 @@ final class DevClientSmokeMP {
                 then(40, () -> sendAquatic(s[0]));
             }
             case "use" -> use("sneak".equals(args));
+            case "place" -> then(12, () -> {
+                // M15: right-click where the server turned the player (in a tank interior)
+                Minecraft mc = Minecraft.getInstance();
+                HitResult hit = mc.hitResult;
+                LOGGER.info("[mp] {} places {} on {}", name(), mc.player.getMainHandItem(),
+                        hit instanceof BlockHitResult b ? mc.level.getBlockState(b.getBlockPos()) + " at " + b.getBlockPos() + " " + b.getDirection() : hit);
+                KeyMapping.click(mc.options.keyUse.getKey());
+            });
+            case "seen" -> then(30, () -> sendSeen(args));
+            case "mini" -> {
+                String[] s = args.split(",", 2);
+                then(60, () -> sendMini(s[0], pos(s[1])));
+            }
+            case "sneak" -> sneak(args);
+            case "mine" -> {
+                String[] s = args.split(",", 2);
+                mine(s[0], pos(s[1]));
+            }
             case "menu" -> menu();
             case "motion" -> {
                 String[] s = args.split(",", 2);
@@ -246,6 +267,93 @@ final class DevClientSmokeMP {
                 for (int z = 0; z < sz; z++) if (region.get(x, y, z).getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock) n++;
         send(String.format(Locale.ROOT, "aqua %s %d", phase, n));
         shot("aqua" + phase);
+    }
+
+    // ------------------------------------------------------------------ M15: two players in one interior
+
+    /** Cobblestone (Dev1) and planks (Dev2) this client sees around itself in the interior. */
+    private static void sendSeen(String phase) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || mc.player == null || mc.level.dimension() != org.overengineer.bettacraft.registry.ModDimensions.TANK_INTERIOR) {
+            send("error seen " + phase + ": not in a tank interior");
+            return;
+        }
+        int cob = 0, pl = 0;
+        BlockPos at = mc.player.blockPosition();
+        for (BlockPos q : BlockPos.betweenClosed(at.offset(-48, -2, -48), at.offset(48, 16, 48))) {
+            var st = mc.level.getBlockState(q);
+            if (st.is(net.minecraft.world.level.block.Blocks.COBBLESTONE)) cob++;
+            else if (st.is(net.minecraft.world.level.block.Blocks.OAK_PLANKS)) pl++;
+        }
+        send("seen " + phase + " " + cob + " " + pl);
+        shot("interior_seen" + phase);
+    }
+
+    /** Cobblestone and planks in this client's miniature of the tank at {@code at}. */
+    private static void sendMini(String phase, BlockPos at) {
+        Minecraft mc = Minecraft.getInstance();
+        TankBlockEntity c = mc.level == null ? null : org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, at);
+        TankData t = c == null ? null : c.getTank();
+        var region = t == null || t.regionId() < 0 ? null : org.overengineer.bettacraft.client.interior.ClientInteriorCache.get(t.regionId());
+        if (region == null) {
+            send("error mini " + phase + ": no miniature on the client for " + at);
+            return;
+        }
+        int cob = 0, pl = 0;
+        int sx = t.sizeX() * t.scale(), sy = t.sizeY() * t.scale(), sz = t.sizeZ() * t.scale();
+        for (int x = 0; x < sx; x++)
+            for (int y = 0; y < sy; y++)
+                for (int z = 0; z < sz; z++) {
+                    var st = region.get(x, y, z);
+                    if (st.is(net.minecraft.world.level.block.Blocks.COBBLESTONE)) cob++;
+                    else if (st.is(net.minecraft.world.level.block.Blocks.OAK_PLANKS)) pl++;
+                }
+        send("mini " + phase + " " + cob + " " + pl);
+        shot("miniature" + phase);
+    }
+
+    /** Holds sneak with the given pitch for some ticks (to leave a tank interior: look up); screenshots of the hint. */
+    private static void sneak(String args) {
+        Minecraft mc = Minecraft.getInstance();
+        String[] s = args.split(",");
+        float pitch = Float.parseFloat(s[0]);
+        int ticks = Integer.parseInt(s[1]);
+        then(10, () -> mc.player.setXRot(pitch));
+        then(10, () -> shot("leave_hint_" + (pitch < 0 ? "up" : "down")));
+        then(1, () -> mc.options.keyShift.setDown(true));
+        then(Math.min(40, ticks / 2), () -> {
+            mc.player.setXRot(pitch);
+            shot("leave_progress_" + (pitch < 0 ? "up" : "down"));
+        });
+        then(Math.max(1, ticks - Math.min(40, ticks / 2)), () -> mc.options.keyShift.setDown(false));
+        then(5, () -> send("sneak " + (mc.level != null && mc.level.dimension() == org.overengineer.bettacraft.registry.ModDimensions.TANK_INTERIOR ? "inside" : "outside")));
+    }
+
+    /** Mines the block at {@code at} like a player (start, keep hitting) and reports whether it is still there. */
+    private static void mine(String phase, BlockPos at) {
+        Minecraft mc = Minecraft.getInstance();
+        lastOverlay = "";
+        then(20, () -> {
+            HitResult hit = mc.hitResult;
+            LOGGER.info("[mp] {} mines {} (crosshair on {})", name(), at, hit instanceof BlockHitResult b ? b.getBlockPos() + " " + b.getDirection() : hit);
+            if (!(hit instanceof BlockHitResult b) || !b.getBlockPos().equals(at)) send("error mine: the crosshair is not on " + at + ": " + hit);
+            mc.gameMode.startDestroyBlock(at, net.minecraft.core.Direction.NORTH);
+        });
+        for (int i = 0; i < 40; i++) {
+            then(1, () -> {
+                if (mc.level.getBlockState(at).getBlock() instanceof TankBlock) {
+                    mc.gameMode.continueDestroyBlock(at, net.minecraft.core.Direction.NORTH);
+                    mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                }
+            });
+        }
+        then(1, () -> mc.gameMode.stopDestroyBlock());
+        then(1, () -> shot("mine" + phase));
+        then(30, () -> {
+            boolean still = mc.level.getBlockState(at).getBlock() instanceof TankBlock;
+            LOGGER.info("[mp] {} action bar: {}", name(), lastOverlay);
+            send("mine " + phase + " " + (still ? 1 : 0) + " " + (lastOverlay.contains("Dev1") ? 1 : 0));
+        });
     }
 
     /** Right-click like a player: the use key, with the crosshair where the server turned the player. */

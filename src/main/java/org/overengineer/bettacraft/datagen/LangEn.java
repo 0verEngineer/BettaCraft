@@ -14,6 +14,7 @@ final class LangEn {
 
     static void addAll(BiConsumer<String, String> a) {
         LangM14.addAll(a); // M14
+        LangM15.addAll(a); // M15
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -121,7 +122,7 @@ final class LangEn {
         a.accept("gui.bettacraft.interior.heaters_dry", "+%s dry");
         a.accept("gui.bettacraft.interior.filters", "Internal filters: %s, floating plants: %s");
         a.accept("gui.bettacraft.interior.decor", "Decoration (hover for details)");
-        a.accept("gui.bettacraft.interior.hint_enter", "Enter: shift + right-click. Leave: sneak 3 s");
+        a.accept("gui.bettacraft.interior.hint_enter", "Enter: shift + right-click. Leave: sneak + look up");
         a.accept("gui.bettacraft.interior.hint_substrate", "Substrate: shift + right-click floor");
         a.accept("tooltip.bettacraft.fish_bag.empty", "Right-click a small fish to catch it. Holds the fish and 100 mB of water.");
         a.accept("tooltip.bettacraft.betta.sex_shape", "%s, %s");
@@ -207,7 +208,7 @@ final class LangEn {
         a.accept("message.bettacraft.betta.died", "%s died (%s)");
         a.accept("message.bettacraft.interior.nested", "You cannot enter a tank from inside a tank interior");
         a.accept("message.bettacraft.interior.missing_dimension", "The tank interior dimension is missing");
-        a.accept("message.bettacraft.interior.entered", "Tank interior %sx%sx%s - hold sneak to leave");
+        a.accept("message.bettacraft.interior.entered", "Tank interior %sx%sx%s - sneak and look up to leave");
         a.accept("message.bettacraft.interior.leaving", "Leaving in %s s...");
         a.accept("message.bettacraft.interior.invalid", "This tank interior no longer exists");
         a.accept("cause.bettacraft.hunger", "hunger");
@@ -485,7 +486,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.maxRenderedBlocks", "Maximum rendered blocks");
         a.accept("bettacraft.configuration.maxRenderedBlocks.tooltip", "Maximum number of non-air interior blocks synced/rendered as miniature per tank");
         a.accept("bettacraft.configuration.leaveSneakTicks", "Sneak ticks to leave");
-        a.accept("bettacraft.configuration.leaveSneakTicks.tooltip", "Ticks you have to hold sneak to leave the interior");
+        a.accept("bettacraft.configuration.leaveSneakTicks.tooltip", "Ticks you have to sneak (and look up) to leave the interior");
         a.accept("bettacraft.configuration.syncRange", "Sync range");
         a.accept("bettacraft.configuration.syncRange.tooltip", "Players within this many blocks of a tank receive its miniature");
         a.accept("bettacraft.configuration.drops", "Drops");

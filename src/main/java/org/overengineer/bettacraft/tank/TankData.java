@@ -92,6 +92,8 @@ public final class TankData {
     private int surfaceCacheHeadroom;
     private int clientMemberCount;
     private int clientInhabitants;
+    /** M15: players in the interior right now (not saved; kept up to date by InteriorManager, sent to clients). */
+    private int occupants;
 
     public record LogEntry(long time, String key, List<String> args) {
         CompoundTag save() {
@@ -283,6 +285,9 @@ public final class TankData {
     public void setLocked(boolean l) { this.locked = l; }
     public Set<UUID> inhabitants() { return inhabitants; }
     public int inhabitantCount() { return clientView ? clientInhabitants : inhabitants.size(); }
+    /** M15: players in the tank's interior (server: as last counted, client: as synced). */
+    public int occupants() { return occupants; }
+    public void setOccupants(int n) { this.occupants = n; }
     public List<LogEntry> log() { return log; }
     @Nullable public BubbleNest nest() { return nest; }
     public void setNest(@Nullable BubbleNest n) { this.nest = n; }
@@ -527,6 +532,7 @@ public final class TankData {
         t.putString("front", front.getSerializedName());
         t.putFloat("water_temp", waterTemp);
         t.putInt("inhabitants", inhabitants.size());
+        if (occupants > 0) t.putInt("occupants", occupants);
         if (nest != null) t.put("nest", nest.saveClientView());
         if (!plants.isEmpty()) t.putByteArray("plants", org.overengineer.bettacraft.tank.plants.FloatingPlantSim.encode(plants, minX, minZ));
         if (!critters.isEmpty() || !critterObjects.isEmpty()) t.putByteArray("critters",
@@ -563,6 +569,7 @@ public final class TankData {
         d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
         d.waterTemp = t.getFloat("water_temp");
         d.clientInhabitants = t.getInt("inhabitants");
+        d.occupants = t.getInt("occupants");
         d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.loadClientView(t.getCompound("nest")) : null;
         if (t.contains("plants", Tag.TAG_BYTE_ARRAY)) d.plants.addAll(org.overengineer.bettacraft.tank.plants.FloatingPlantSim.decode(t.getByteArray("plants"), d.minX, d.minZ));
         if (t.contains("critters", Tag.TAG_BYTE_ARRAY)) {

@@ -29,7 +29,11 @@ eggs more. The filter flow does not matter.
 The male builds a **bubble nest** at the water surface, which takes another quarter of a day. He likes to build it
 under floating plants: put [floating plants](aquarium/floating_plants.md) onto the surface (Amazon frogbit is his
 favourite) and the nest appears under the densest cluster; without them under the **lily pad** in the
-[interior](interior.md) nearest to him. Floating plants also make him ready a little faster. A finished nest without a female falls apart after 3 days.
+[interior](interior.md) nearest to him. Floating plants also make him ready a little faster. A finished nest without a female falls apart after 3 days. The nest is a domed heap of foam that
+reaches a little below the surface, so you can see it through the side glass too; the eggs sit in its underside, the
+larvae hang from it.
+
+![The domed bubble nest seen through the side glass](images/nest_side.png)
 
 ## 3. Spawning
 

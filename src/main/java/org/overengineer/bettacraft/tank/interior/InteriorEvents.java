@@ -51,27 +51,58 @@ public final class InteriorEvents {
             player.displayClientMessage(Component.translatable("message.bettacraft.interior.invalid"), true);
             return;
         }
-        sneakTick(player, player.isShiftKeyDown());
+        leaveTick(player);
     }
 
-    /** One tick of the "hold sneak to leave" timer (PLAN 7.1). Returns true if the player left. */
+    /**
+     * M15: one tick of the leave timer with the player's own input: it counts while the player sneaks AND looks steeply
+     * up ({@code interior.leaveLookUpDegrees}), so sneaking to set substrate does not take you out. True if the player left.
+     */
+    public static boolean leaveTick(ServerPlayer player) {
+        return sneakTick(player, player.isShiftKeyDown() && looksUp(player));
+    }
+
+    /** Whether the player looks up steeply enough to leave (pitch at most minus {@code interior.leaveLookUpDegrees}). */
+    public static boolean looksUp(Player player) {
+        int deg = ServerConfig.getOr(ServerConfig.INTERIOR_LEAVE_LOOK_UP, 60);
+        return deg <= 0 || player.getXRot() <= -deg;
+    }
+
+    /** One tick of the "hold to leave" timer (PLAN 7.1); the client shows the progress (M15). Returns true if the player left. */
     public static boolean sneakTick(ServerPlayer player, boolean sneaking) {
+        int needed = ServerConfig.getOr(ServerConfig.INTERIOR_LEAVE_SNEAK_TICKS, 60);
         if (!sneaking) {
-            SNEAK_TICKS.remove(player.getUUID());
+            resetLeave(player);
             return false;
         }
-        int needed = ServerConfig.getOr(ServerConfig.INTERIOR_LEAVE_SNEAK_TICKS, 60);
         int t = SNEAK_TICKS.merge(player.getUUID(), 1, Integer::sum);
         if (t >= needed) {
             SNEAK_TICKS.remove(player.getUUID());
+            progress(player, 0, needed);
             InteriorManager.leave(player);
             return true;
         }
-        if (t % 10 == 0) {
-            int secondsLeft = (int) Math.ceil((needed - t) / 20.0);
-            player.displayClientMessage(Component.translatable("message.bettacraft.interior.leaving", secondsLeft), true);
-        }
+        progress(player, t, needed);
         return false;
+    }
+
+    /** M15: placing or breaking something (any use of a block) starts the leave timer over. */
+    public static void resetLeave(Player player) {
+        if (player instanceof ServerPlayer sp && SNEAK_TICKS.remove(sp.getUUID()) != null) {
+            progress(sp, 0, ServerConfig.getOr(ServerConfig.INTERIOR_LEAVE_SNEAK_TICKS, 60));
+        }
+    }
+
+    /** Ticks the leave timer has counted for this player (0 = not holding). */
+    public static int leaveTicks(Player player) {
+        return SNEAK_TICKS.getOrDefault(player.getUUID(), 0);
+    }
+
+    private static void progress(ServerPlayer player, int ticks, int needed) {
+        if (player.connection != null) {
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player,
+                    new org.overengineer.bettacraft.network.InteriorLeavePayload(ticks, needed));
+        }
     }
 
     @SubscribeEvent
@@ -79,14 +110,34 @@ public final class InteriorEvents {
         if (!(event.getLevel() instanceof Level level) || !InteriorManager.isInterior(level)) return;
         if (InteriorManager.isShellBlock(event.getState()) || !InteriorManager.canBuild(event.getPlayer(), event.getPos())) {
             event.setCanceled(true);
+            return;
         }
+        resetLeave(event.getPlayer());
+    }
+
+    /** M15: starting to mine a block in the interior resets the leave timer too. */
+    @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (!event.getLevel().isClientSide && InteriorManager.isInterior(event.getLevel())) resetLeave(event.getEntity());
+    }
+
+    /** M15: explosions leave the blocks of a tank alone while a player is in its interior. */
+    @SubscribeEvent
+    public static void onDetonate(net.neoforged.neoforge.event.level.ExplosionEvent.Detonate event) {
+        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        java.util.Map<org.overengineer.bettacraft.tank.TankBlockEntity, Boolean> occupied = new java.util.HashMap<>();
+        event.getAffectedBlocks().removeIf(pos -> {
+            if (!(level.getBlockState(pos).getBlock() instanceof org.overengineer.bettacraft.tank.TankBlock)) return false;
+            org.overengineer.bettacraft.tank.TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, pos);
+            return c != null && occupied.computeIfAbsent(c, k -> !InteriorManager.playersInside(level.getServer(), k.getTank()).isEmpty());
+        });
     }
 
     @SubscribeEvent
     public static void onPlace(BlockEvent.EntityPlaceEvent event) {
-        if (event.getLevel() instanceof Level level && InteriorManager.isInterior(level) && event.getEntity() instanceof Player p
-                && !InteriorManager.canBuild(p, event.getPos())) {
-            event.setCanceled(true);
+        if (event.getLevel() instanceof Level level && InteriorManager.isInterior(level) && event.getEntity() instanceof Player p) {
+            if (!InteriorManager.canBuild(p, event.getPos())) event.setCanceled(true);
+            else resetLeave(p);
         }
     }
 
@@ -101,6 +152,7 @@ public final class InteriorEvents {
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
         Player player = event.getEntity();
+        if (!level.isClientSide) resetLeave(player); // M15: building starts the leave timer over
         if (state.getBlock() instanceof BedBlock || state.getBlock() instanceof RespawnAnchorBlock) {
             event.setUseBlock(TriState.FALSE);
             if (!level.isClientSide) {
@@ -145,6 +197,7 @@ public final class InteriorEvents {
         if (event.getServer().getTickCount() % 5 == 0) {
             InteriorSync.flush(event.getServer());
         }
+        if (event.getServer().getTickCount() % 10 == 0) InteriorManager.updateOccupants(event.getServer()); // M15
     }
 
     @SubscribeEvent
@@ -163,5 +216,6 @@ public final class InteriorEvents {
         InteriorGround.clearAll();
         DecorItem.clearCache();
         SNEAK_TICKS.clear();
+        InteriorManager.clearOccupants();
     }
 }

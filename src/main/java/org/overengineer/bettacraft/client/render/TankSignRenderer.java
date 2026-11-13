@@ -18,28 +18,27 @@ import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.TankShape;
 
 /**
- * Name sign of a tank (PLAN 4.4): black plate with white text, 0.25 blocks high, on the front of the whole tank at
+ * Name sign of a tank (PLAN 4.4): black plate with white text, 0.12 blocks high (M15, before 0.25; times the client config
+ * {@code render.signScale}), on the front of the whole tank at
  * one of six positions (M10: on an irregular front, on the widest flat part of the top or bottom row). Drawn by the controller; shrinks the text when the front is too narrow. Also draws the bubble
  * nest with its eggs / larvae (M2) and the floating plants on the surface (M12, {@link FloatingPlantRenderer}).
  */
 public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
-    private static final float PLATE_HEIGHT = 0.25F;
-    private static final float MARGIN = 0.08F;
+    /** Height of the plate at {@code render.signScale} 1 (M15: was 0.25). */
+    public static final float PLATE_HEIGHT = 0.12F;
+    private static final float MARGIN = 0.06F;
     private final Font font;
 
     public TankSignRenderer(BlockEntityRendererProvider.Context ctx) {
         this.font = ctx.getFont();
     }
 
-    private static final net.minecraft.resources.ResourceLocation NEST = org.overengineer.bettacraft.BettaCraft.id("textures/entity/nest/bubble_nest.png");
-    private static final net.minecraft.resources.ResourceLocation EGGS = org.overengineer.bettacraft.BettaCraft.id("textures/entity/nest/nest_eggs.png");
-    private static final net.minecraft.resources.ResourceLocation LARVAE = org.overengineer.bettacraft.BettaCraft.id("textures/entity/nest/nest_larvae.png");
 
     @Override
     public void render(TankBlockEntity be, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         TankData t = be.getTank();
         if (t == null || !be.isController()) return;
-        if (t.nest() != null) renderNest(be, t.nest(), partialTick, pose, buffers);
+        if (t.nest() != null) NestRenderer.render(be, t.nest(), partialTick, pose, buffers); // M15: domed
         FloatingPlantRenderer.render(be, t, partialTick, pose, buffers); // M12
         CritterRenderer.render(be, t, partialTick, pose, buffers); // M14
         AlgaeRenderer.render(be, t, pose, buffers); // M14
@@ -73,7 +72,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
 
         FormattedCharSequence text = Component.literal(t.name()).getVisualOrderText();
         int textW = font.width(text);
-        float scale = PLATE_HEIGHT / 10F;
+        float scale = plateHeight() / 10F;
         float maxW = (float) Math.max(0.2, faceWidth - 2 * MARGIN);
         if ((textW + 2) * scale > maxW) scale = maxW / (textW + 2);
         float plateW = (textW + 2) * scale;
@@ -103,45 +102,15 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         pose.popPose();
     }
 
-    /** Bubble nest at the surface (PLAN 5.4): grows while it is built; eggs / larvae hang below it. */
-    private void renderNest(TankBlockEntity be, org.overengineer.bettacraft.tank.BubbleNest nest, float partialTick, PoseStack pose,
-                            MultiBufferSource buffers) {
-        BlockPos origin = be.getBlockPos();
-        net.minecraft.world.phys.Vec3 p = nest.pos();
-        float size = switch (nest.phase()) {
-            case BUILDING -> 0.25F + 0.45F * (float) Math.min(1.0, nest.progress()
-                    / Math.max(1e-6, org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_NEST_BUILD_DAYS, 0.25)));
-            default -> 0.7F;
-        };
-        int packed = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(p));
-        long time = be.getLevel() == null ? 0 : be.getLevel().getGameTime();
-        pose.pushPose();
-        pose.translate(p.x - origin.getX(), p.y - origin.getY(), p.z - origin.getZ());
-        pose.mulPose(Axis.YP.rotationDegrees(((time + partialTick) * 0.15F) % 360F));
-        com.mojang.blaze3d.vertex.VertexConsumer vc = buffers.getBuffer(net.minecraft.client.renderer.RenderType.entityTranslucent(NEST));
-        flat(pose, vc, size, 0.0F, packed, true);
-        flat(pose, vc, size * 0.92F, -0.025F, packed, false);
-        if (nest.hasEggs()) {
-            boolean larvae = nest.visibleStage() == org.overengineer.bettacraft.entity.betta.LifeStage.LARVA;
-            float eggSize = size * Math.min(1.0F, 0.55F + nest.visibleEggCount() / 40F);
-            com.mojang.blaze3d.vertex.VertexConsumer ev = buffers.getBuffer(net.minecraft.client.renderer.RenderType.entityTranslucent(larvae ? LARVAE : EGGS));
-            flat(pose, ev, eggSize, -0.035F, packed, false);
-            flat(pose, ev, eggSize, -0.034F, packed, true);
+    /** Plate height in blocks with the client's {@code render.signScale}. */
+    public static float plateHeight() {
+        double f;
+        try {
+            f = org.overengineer.bettacraft.config.ClientConfig.SIGN_SCALE.get();
+        } catch (IllegalStateException e) {
+            f = 1.0;
         }
-        pose.popPose();
-    }
-
-    /** Horizontal textured square centred at the origin; up = facing up, else facing down. */
-    private static void flat(PoseStack pose, com.mojang.blaze3d.vertex.VertexConsumer vc, float size, float y, int light, boolean up) {
-        PoseStack.Pose last = pose.last();
-        org.joml.Matrix4f m = last.pose();
-        float h = size / 2;
-        float[][] c = up ? new float[][]{{-h, -h, 0, 0}, {-h, h, 0, 1}, {h, h, 1, 1}, {h, -h, 1, 0}}
-                : new float[][]{{-h, -h, 0, 0}, {h, -h, 1, 0}, {h, h, 1, 1}, {-h, h, 0, 1}};
-        for (float[] v : c) {
-            vc.addVertex(m, v[0], y, v[1]).setColor(0xFFFFFFFF).setUv(v[2], v[3])
-                    .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, 0, up ? 1 : -1, 0);
-        }
+        return (float) (PLATE_HEIGHT * Math.max(0.5, Math.min(2.0, f)));
     }
 
     @Override

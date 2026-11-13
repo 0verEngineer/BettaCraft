@@ -4,6 +4,32 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.7.0-beta.1] - 2026-11-14
+
+### Changed
+- **Name sign** half as high as before (0.12 blocks); each player sets its size with the client config
+  `render.signScale` (0.5 to 2).
+- **Leaving the interior:** sneak **and look steeply up** for 3 seconds (`interior.leaveLookUpDegrees`, default 60°,
+  0 = sneaking alone as before). Sneaking to set substrate no longer takes you out, and placing or breaking a block
+  starts the time over. A small hint at the bottom left ("Sneak + look up: leave") shows while you are inside and fills
+  a bar while you hold it (client config `hud.interiorLeaveHint` turns the hint off).
+- **Bubble nest** is now a domed heap of foam in several layers that reaches below the surface, so it can be seen through
+  the side glass; the eggs sit in its underside as small beads, the larvae hang from it.
+
+### Fixed
+- An aquarium could be broken (any block of it, also by an explosion) while a player was in its interior. Now it is
+  refused with a message that names who is inside; clients learn about it too, so the block does not flicker away.
+- Handbook menu images show the current buttons again.
+
+### Tests
+- GameTests: breaking a free-shape tank by hand and by an explosion while a player is inside, the leave rule (looking
+  down or a little up never leaves, placing / breaking / letting go start over) and the look-up rule switched off.
+- Multiplayer test: Dev1 and Dev2 enter the same interior, build at the same time and see each other's blocks, the
+  miniature outside follows, breaking the tank from outside is refused while one is inside, both leave by sneaking and
+  looking up (looking down does not) and come out in front of the tank, then the block can be broken.
+- Client smoke scene M15: the name sign at three sizes, the domed nest with eggs and with larvae from above, the side
+  and below, shrimp lying flat seen from the side, the leave hint (English, German, off, while leaving).
+
 ## [1.6.0-beta.1] - 2026-11-13
 
 ### Added
