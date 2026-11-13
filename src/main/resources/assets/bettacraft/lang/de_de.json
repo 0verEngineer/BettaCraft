@@ -1591,5 +1591,8 @@
   "bettacraft.configuration.calciumPerDose": "Kalzium je Portion",
   "bettacraft.configuration.calciumPerDose.tooltip": "Kalzium (mg/L in einem Wasserblock), das ein Kalzium-Zusatz hinzufügt",
   "bettacraft.configuration.reefNetFishShare": "Rifffische im Kescher",
-  "bettacraft.configuration.reefNetFishShare.tooltip": "Anteil der Fänge des Keschers in warmen und lauwarmen Ozeanen, die Rifffische statt Kleintiere sind (0 = keine Fische)"
+  "bettacraft.configuration.reefNetFishShare.tooltip": "Anteil der Fänge des Keschers in warmen und lauwarmen Ozeanen, die Rifffische statt Kleintiere sind (0 = keine Fische)",
+  "gui.bettacraft.tm.in_anemone": "Lebt in seiner Anemone",
+  "gui.bettacraft.tm.temp_salt": "%s–%s °C, %s–%s ‰",
+  "gui.bettacraft.breeding.tm.kind.anemone": "An der Anemone"
 }

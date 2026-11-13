@@ -4,6 +4,43 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.12.0-beta.1] - 2026-11-14
+
+Reef tanks: salt water, corals and the animals of the coral reef.
+
+### Added
+- **Salt water**: a tank becomes a reef tank with **sea water** - an empty bucket filled in an ocean or at a beach gives
+  a bucket of sea water (`saltwater.oceanWaterIsSalty`), or salt the water with **sea salt** (right-click; sneaking adds
+  all it needs for 35 ppt). The tank mixes by volume (sea and fresh water give brackish water), evaporation leaves the
+  salt behind (top up with fresh water), draining a reef tank fills buckets of sea water. Salt water is drawn a clearer
+  turquoise. The menu shows salinity, calcium and nitrate; Jade, The One Probe and WTHIT show the salt.
+- **Animals live in their water**: bettas, the tankmates, shrimp, crayfish, most snails and the dwarf clawed frogs need
+  fresh water; guppies, endlers and platys tolerate brackish water up to 18 ppt, nerites up to 30 ppt. The wrong water
+  gives a salt shock (a freshwater fish in sea water dies within hours, a little too much salt only stresses), and the
+  tank refuses an animal whose water would kill it (`saltwater.salinityShock`, `saltwater.refuseDeadlyWater`). Animals
+  of vanilla and other mods do not care by default; `saltwater.foreignAnimals = REALISTIC` makes cod, tropical fish,
+  pufferfish and squid need salt water and axolotls and tadpoles fresh water.
+- **Reef technique**: the **protein skimmer** hangs on the tank like the external filter and cleans salt water (no
+  effect in fresh water); the **flow pump** stands in the interior and moves the water for the corals; **reef rock** and
+  **live rock** (cleans salt water without power) for the rock work; **actinic light**: blue, light blue, cyan or purple
+  aquarium lights mixed with white give the corals the most light and make them glow; **calcium additive**.
+- **Corals** grow on reef rock in the interior like the aquarium plants: zoanthids, green star polyps, mushroom coral and
+  leather coral (soft), hammer coral, Lobophyllia and Acropora (stony: they use up calcium and need clean water), and the
+  bubble tip anemone. They need salt water, light, flow and 23-29 °C, bleach in the wrong water or the dark and glow
+  under actinic light; frags with shears, from vanilla corals (crafted with reef rock), the net on a reef and the
+  wandering trader. Optionally vanilla corals die in fresh water (`saltwater.vanillaCoralsNeedSalt`, off).
+- **Reef animals**: ocellaris clownfish (orange and black), yellow tang, yellow watchman goby, green chromis and
+  yellowtail damsel as fish with their own models; cleaner shrimp (the fish heal faster), blue-leg hermit crabs and
+  turbo snails as small animals. **Clownfish** move into their anemone and a pair lays its eggs at the anemone's foot,
+  the male guards them; the other reef animals do not breed in a tank. Caught with the aquarium net in warm and
+  lukewarm oceans (hermit crabs also at beaches) or bought from the wandering trader.
+- Handbook section "Reef tanks" (English, German): salt water, technique, corals, reef animals; JEI information; settings
+  `saltwater.*` with English and German labels.
+
+### Changed
+- Tank data schema 10 (salinity, calcium); every older tank is a freshwater tank and stays as it was.
+- Aquarium plants stop growing in brackish and salt water.
+
 ## [1.11.0-beta.1] - 2026-11-14
 
 Tankmates: twenty popular aquarium fish, each with its own way of breeding.

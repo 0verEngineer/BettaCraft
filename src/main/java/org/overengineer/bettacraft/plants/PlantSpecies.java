@@ -43,7 +43,7 @@ public enum PlantSpecies {
     LOBOPHYLLIA("lobophyllia", Form.DOME, 15, 8, Light.MID, Red.CORAL, "brain", 0xA8402A, 0x4E9A4A, 0xFF6A3A, 0x8A3A2A, 0x8A3A2A),
     ACROPORA("acropora", Form.BRANCH, 14, 8, Light.HIGH, Red.CORAL, "branch", 0x5A62C0, 0xA8C0FF, 0x7AA8FF, 0x7A7AA8, 0x7A7AA8),
     // the host anemone of the clownfish (Entacmaea quadricolor): tentacles with bubble tips on a sticky foot
-    BUBBLE_TIP_ANEMONE("bubble_tip_anemone", Form.ANEMONE, 6, 6, Light.MID, Red.CORAL, "tentacle", 0xB8503A, 0xF08A5A, 0xFF9A6A, 0xC89878, 0xC89878);
+    BUBBLE_TIP_ANEMONE("bubble_tip_anemone", Form.ANEMONE, 6, 6, Light.MID, Red.CORAL, "tentacle", 0xC24A56, 0xF4A6B8, 0xFF7AA6, 0xD8A890, 0xD8A890);
 
     /** Growth form: decides the shape ({@link PlantShapes}), where it may be planted and how it spreads. */
     public enum Form {

@@ -42,6 +42,8 @@ grows stage by stage over the days when the conditions are right:
 
 ## Colours
 
+![Acropora bleached, pale, healthy and glowing under actinic light](../images/reef_coral_colors.png)
+
 A coral shows how it is doing: in good conditions it has its colours, under **actinic light** it glows; when the conditions
 are poor it turns **pale**, and in the wrong water, too warm or too cold or in the dark it **bleaches** white (and stops
 growing). The colour follows over about two days.

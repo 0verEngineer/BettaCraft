@@ -177,7 +177,8 @@ final class BreedingLines {
                 if ("box".equals(c.getString("kind"))) continue;
                 String stage = c.getInt("stage") == 0 ? "eggs" : "larvae";
                 out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.breeding.tm.clutch." + stage,
-                        Component.translatable("gui.bettacraft.breeding.tm.kind." + c.getString("kind")), c.getInt("count"), f1(c.getFloat("days"))))
+                        Component.translatable("gui.bettacraft.breeding.tm.kind." + (s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.ANEMONE
+                                ? "anemone" : c.getString("kind"))), c.getInt("count"), f1(c.getFloat("days"))))
                         .withStyle(ChatFormatting.AQUA));
             }
         }

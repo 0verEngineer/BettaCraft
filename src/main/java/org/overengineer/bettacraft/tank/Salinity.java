@@ -137,7 +137,7 @@ public final class Salinity {
     }
 
     /** Clear blue of a reef tank. */
-    public static final int SEA_COLOR = 0x1E9AE0;
+    public static final int SEA_COLOR = 0x26D2F2;
 
     static int lerp(int a, int b, double t) {
         int r = (int) Math.round(((a >> 16) & 0xFF) * (1 - t) + ((b >> 16) & 0xFF) * t);

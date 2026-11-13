@@ -134,6 +134,7 @@ public final class DevSmokeMP {
                 check(name + ": the water of the tank is tinted (" + a[2] + ")", !"0".equals(a[2]));
             }
             case "tankmates" -> checkTankmates(name, a);
+            case "reef" -> checkReef(name, a);
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -329,6 +330,29 @@ public final class DevSmokeMP {
         check(name + ": " + a[2] + " albino bristlenose (server " + albino + ")", Integer.parseInt(a[2]) == albino && albino == 1);
         check(name + ": " + a[3] + " clutches with " + a[4] + " eggs (server " + c.getTank().clutches().size() + ", " + eggs + ")",
                 Integer.parseInt(a[3]) == c.getTank().clutches().size() && Integer.parseInt(a[4]) == eggs && eggs > 0);
+    }
+
+    /** M20: the small reef tank (west of the tankmate tank). */
+    private static BlockPos reefMin() {
+        return base.offset(-9, 0, 6);
+    }
+
+    /** {@code reef <salinity x10> <salt drawn> <reef fish> <coral blocks>}: salinity, water colour, clownfish and coral blocks = server. */
+    private static void checkReef(String name, String[] a) {
+        TankBlockEntity c = TankMultiblock.getController(server.overworld(), reefMin());
+        if (c == null) {
+            fail(name + ": reef tank gone");
+            return;
+        }
+        int salt10 = Math.round(c.getTank().salinity() * 10);
+        long fish = org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(server.overworld(), c.getTank()).size();
+        var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(server).get(c.getTank().regionId());
+        int coral = 0;
+        if (r != null) for (var p : r.plants().all()) if (p.species.marine()) coral += p.blocks;
+        check(name + ": salinity " + a[1] + "/10 ppt (server " + salt10 + ")", Integer.parseInt(a[1]) == salt10 && salt10 >= 340);
+        check(name + ": water drawn with " + a[2] + " ppt", Integer.parseInt(a[2]) == Math.round(c.getTank().salinity()));
+        check(name + ": " + a[3] + " clownfish (server " + fish + ")", Integer.parseInt(a[3]) == fish && fish == 2);
+        check(name + ": " + a[4] + " coral blocks in the miniature (server " + coral + ")", Integer.parseInt(a[4]) == coral && coral > 1);
     }
 
     private static TankBlockEntity main() {
@@ -718,6 +742,33 @@ public final class DevSmokeMP {
             c.markTankChanged();
             say("tankmates", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":tankmates") && reports.containsKey(P2 + ":tankmates"), 20 * 30));
+        steps.add(new Step("reef", () -> {
+            // M20: a small reef tank: sea water, a coral on reef rock in the interior, a clownfish pair; both clients see the salt
+            BlockPos min = reefMin();
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the reef tank formed", c != null);
+            if (c == null) return;
+            TankInteractions.changeWater(level, c, 8000 - c.getTank().waterMb(), org.overengineer.bettacraft.tank.Salinity.SEA);
+            c.getTank().setWaterTemp(26F);
+            c.getTank().setTargetTemp(26F);
+            var r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(level, c);
+            ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(server);
+            for (int x = 10; x < 18; x++) for (int z = 10; z < 18; z++) in.setBlock(r.toWorld(x, 0, z), ModBlocks.REEF_ROCK.get().defaultBlockState(), 3);
+            org.overengineer.bettacraft.plants.InteriorPlants.plantAt(in, r, org.overengineer.bettacraft.plants.PlantSpecies.ZOANTHUS, 14, 1, 14, 4, 2020L);
+            var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
+            var sp = org.overengineer.bettacraft.tankmates.TankmateSpecies.OCELLARIS_CLOWNFISH;
+            for (int i = 0; i < 2; i++) {
+                org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, sp, org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp), i == 0,
+                        org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0, w.box().getCenter().add(i * 0.3 - 0.15, 0, 0));
+            }
+            c.markTankChanged();
+            say("reef", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":reef") && reports.containsKey(P2 + ":reef"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

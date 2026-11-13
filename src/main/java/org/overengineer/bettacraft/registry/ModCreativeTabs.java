@@ -83,6 +83,14 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.ARTEMIA_NAUPLII.get());
                 out.accept(ModItems.LARVA_TUB.get());
                 out.accept(ModItems.ARTEMIA_HATCHERY.get());
+                // M20: salt water and the reef technique
+                out.accept(ModItems.SEA_WATER_BUCKET.get());
+                out.accept(ModItems.SEA_SALT.get());
+                out.accept(ModItems.CALCIUM_ADDITIVE.get());
+                out.accept(ModItems.PROTEIN_SKIMMER.get());
+                out.accept(ModItems.FLOW_PUMP.get());
+                out.accept(ModItems.REEF_ROCK.get());
+                out.accept(ModItems.LIVE_ROCK.get());
                 // decoration
                 for (var d : ModItems.DECOR.values()) out.accept(d.get());
                 // one bucket per fin form (long-finned tails and the plakat forms), then one per named variety (its example fish)

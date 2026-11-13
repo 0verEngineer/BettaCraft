@@ -695,7 +695,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             line(g, Component.translatable("gui.bettacraft.water.decline", fmt((float) (w.declinePerDay * 100)), fmt((float) w.animalsPerBlock)), x, y, TEXT_LIGHT);
             y += 11;
             int outside = v.filterBlocks + v.cabinetFilters;
-            Component filters = outside + w.internalFilters == 0 ? Component.translatable("gui.bettacraft.water.no_filter").withStyle(ChatFormatting.GOLD)
+            // M20: a reef tank cleaned by its skimmer and live rock alone has no "no filter" warning
+            Component filters = outside + w.internalFilters == 0 && w.filterCapacity <= 0
+                    ? Component.translatable("gui.bettacraft.water.no_filter").withStyle(ChatFormatting.GOLD)
                     : Component.translatable("gui.bettacraft.water.filters", outside, w.internalFilters, (int) w.filterCapacity,
                     Math.round(w.filterShare * 100)).withStyle(ChatFormatting.AQUA);
             line(g, filters, x, y, TEXT_LIGHT);
@@ -1164,8 +1166,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         y += 9;
         boolean temp = (stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_TEMP) == 0;
-        fitLine(g, Component.translatable("gui.bettacraft.tm.temp", f1(s.tempMin()), f1(s.tempMax()))
-                .withStyle(temp ? ChatFormatting.GREEN : ChatFormatting.RED), x, y, TEXT_LIGHT, 124);
+        // M20: the reef fish with their salinity
+        Component tl = s.marine() ? Component.translatable("gui.bettacraft.tm.temp_salt", f1(s.tempMin()), f1(s.tempMax()),
+                Math.round(s.salinity().min()), Math.round(s.salinity().max())) : Component.translatable("gui.bettacraft.tm.temp", f1(s.tempMin()), f1(s.tempMax()));
+        fitLine(g, tl.copy().withStyle(temp ? ChatFormatting.GREEN : ChatFormatting.RED), x, y, TEXT_LIGHT, 124);
         y += 9;
         List<Component> notes = new ArrayList<>();
         if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_WATER) != 0)
@@ -1177,7 +1181,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (d.getFloat("gravid") >= 0) notes.add(Component.translatable("gui.bettacraft.tm.gravid", Math.round(d.getFloat("gravid") * 100))
                 .withStyle(ChatFormatting.LIGHT_PURPLE));
         if (d.getBoolean("guard")) notes.add(Component.translatable("gui.bettacraft.tm.guarding").withStyle(ChatFormatting.AQUA));
-        else if (d.getBoolean("cave")) notes.add(Component.translatable("gui.bettacraft.tm.has_cave").withStyle(ChatFormatting.AQUA));
+        else if (d.getBoolean("cave")) notes.add(Component.translatable(s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.ANEMONE
+                ? "gui.bettacraft.tm.in_anemone" : "gui.bettacraft.tm.has_cave").withStyle(ChatFormatting.AQUA));
         notes.add(Component.translatable(s.breedingKey()).withStyle(ChatFormatting.GRAY));
         for (Component c : notes) {
             if (y > 128) break;

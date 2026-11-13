@@ -21,6 +21,8 @@ item_ids:
 * Right-click a tank with **sea salt**: one portion salts one bucket (1000 mB) of its water to sea water; **sneak** to put
   in as much as it takes to reach 35 ‰.
 
+![Sea water, brackish water and fresh water side by side](../images/reef_water_colors.png)
+
 ## Mixing
 
 The tank mixes what you pour in by volume: two buckets of sea water and two of fresh water give 17.5 ‰ (brackish water).
@@ -47,6 +49,8 @@ axolotls and tadpoles fresh water.
   (from calcite or bone meal and sea salt) bring it back.
 * **Nitrate** (NO₃) is the waste in the water as reefers know it: the menu shows it next to the salt. Stony corals slow down
   from 40 mg/L and stop at 60; a protein skimmer and live rock keep it low.
+
+![The water tab of a reef tank](../images/menu_reef_water.png)
 
 The water tab of the [tank menu](../aquarium/menu.md) shows salt, calcium and nitrate instead of the glass line, and in
 the last line the skimmers, the flow pumps with their flow, the live rock and how much of the light the corals can use.

@@ -42,6 +42,8 @@ Stein setzen. Eine Koralle wächst über die Tage Stufe für Stufe, wenn die Bed
 
 ## Farben
 
+![Acropora gebleicht, blass, gesund und leuchtend unter aktinischem Licht](../images/reef_coral_colors.png)
+
 Eine Koralle zeigt, wie es ihr geht: unter guten Bedingungen hat sie ihre Farben, unter **aktinischem Licht** leuchtet sie;
 bei schlechten Bedingungen wird sie **blass**, im falschen Wasser, zu warm oder zu kalt oder im Dunkeln **bleicht** sie weiß
 aus (und wächst nicht mehr). Die Farbe folgt über etwa zwei Tage.

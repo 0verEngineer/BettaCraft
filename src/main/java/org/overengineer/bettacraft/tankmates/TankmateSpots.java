@@ -175,7 +175,7 @@ public final class TankmateSpots {
         List<Spot> out = new ArrayList<>();
         for (InteriorPlant p : r.plants().all()) {
             if (!p.species.anemone() || p.stage < 1) continue;
-            double up = Math.max(2, 4.0 * r.scale() / 16);
+            double up = Math.max(2, 7.0 * r.scale() / 16);
             out.add(new Spot(toWorld(t, r, p.x + 0.5, p.y + up, p.z + 0.5), p.blocks, Vec3.ZERO));
         }
         return out;
@@ -185,7 +185,7 @@ public final class TankmateSpots {
     public static Vec3 anemoneFoot(MinecraftServer server, TankData t, Vec3 spot) {
         InteriorRegion r = region(server, t);
         if (r == null) return spot;
-        double up = Math.max(2, 4.0 * r.scale() / 16);
+        double up = Math.max(2, 7.0 * r.scale() / 16);
         double fy = (t.sizeY() - 2 * TankTerrain.MARGIN) / r.sizeY();
         return new Vec3(spot.x + 0.06, spot.y - (up - 0.6) * fy, spot.z);
     }

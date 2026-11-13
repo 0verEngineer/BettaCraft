@@ -160,6 +160,32 @@ final class DevClientSmokeMP {
                     send("tankmates " + mates.size() + " " + albino + " " + clutches + " " + eggs);
                 });
             }
+            case "reef" -> {
+                // M20: salinity of the tank view, the salt the water is drawn with, the reef fish and the coral blocks of the miniature
+                BlockPos min = pos(args);
+                then(80, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, min);
+                    TankData t = c == null ? null : c.getTank();
+                    if (t == null) {
+                        send("error reef: no tank view for " + min);
+                        return;
+                    }
+                    var box = new net.minecraft.world.phys.AABB(min).expandTowards(2, 2, 2);
+                    int fish = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box).size();
+                    int coral = 0;
+                    var region = t.regionId() < 0 ? null : org.overengineer.bettacraft.client.interior.ClientInteriorCache.get(t.regionId());
+                    if (region != null) {
+                        int sx = t.sizeX() * t.scale(), sy = t.sizeY() * t.scale(), sz = t.sizeZ() * t.scale();
+                        for (int x = 0; x < sx; x++) for (int y = 0; y < sy; y++) for (int z = 0; z < sz; z++) {
+                            var sp = org.overengineer.bettacraft.plants.InteriorPlants.speciesOf(region.get(x, y, z));
+                            if (sp != null && sp.marine()) coral++;
+                        }
+                    }
+                    send("reef " + Math.round(t.salinity() * 10) + " " + org.overengineer.bettacraft.client.tank.TankLightTint.saltOf(c.getBlockPos()) + " "
+                            + fish + " " + coral);
+                });
+            }
             case "place" -> then(12, () -> {
                 // M15: right-click where the server turned the player (in a tank interior)
                 Minecraft mc = Minecraft.getInstance();

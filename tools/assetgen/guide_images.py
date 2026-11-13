@@ -242,6 +242,33 @@ def m19(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M20 scene (DevClientSmokeM20, -Psmoketestm20 -PnoJade -PnoTop -PnoWthit): the reef tank, its corals and clownfish, the
+# skimmer and the lights, the water colours, the coral colours and the water tab of the menu. ``py guide_images.py m20``.
+M20_WORLD = {"reef_tank": ("bettacraft_m20_reef_tank", (250, 150, 1040, 620)),
+             "reef_clownfish": ("bettacraft_m20_reef_clownfish", (0, 120, 1280, 760)),
+             "reef_corals": ("bettacraft_m20_reef_corals", (120, 60, 1280, 740)),
+             "reef_technique": ("bettacraft_m20_reef_technique", (80, 40, 960, 660)),
+             "reef_water_colors": ("bettacraft_m20_water_colors", (100, 160, 1180, 640)),
+             "reef_coral_colors": ("bettacraft_m20_coral_colors", (40, 300, 1240, 560))}
+M20_MENUS = {"menu_reef_water": ("bettacraft_m20_menu_water", MENU_BOX)}
+
+
+def m20(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M20_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name, (shot, box) in M20_MENUS.items():
+        for suffix, out in (("", out_en), ("_de", out_de)):
+            src = SHOTS / f"{shot}{suffix}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(box), out / f"{name}.png")
+            else:
+                print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -276,6 +303,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m19"]:
         m19(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m20"]:
+        m20(out_en, out_de)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"

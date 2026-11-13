@@ -51,6 +51,11 @@ block.
   way: corydoras glue eggs to the glass after a cool water change, plecos spawn in a cave and the male guards, egg
   scatterers need fine plants or a spawning mop, livebearers bear live young (breeding box), the dwarf gourami builds
   a foam nest. Caught with the aquarium net by biome or bought from the wandering trader.
+- **Reef tanks:** sea water from the ocean or with sea salt, salinity that mixes and concentrates, freshwater animals
+  die in salt water and reef animals in fresh water (nerites and livebearers tolerate brackish water). Protein
+  skimmer, flow pump, reef rock and live rock, actinic light. Eight corals and the bubble tip anemone grow on reef
+  rock in the interior with light, flow and calcium, bleach or glow, and give frags. Clownfish (they spawn at their
+  anemone), yellow tang, watchman goby, green chromis, yellowtail damsel, cleaner shrimp, hermit crabs, turbo snails.
 - **Power (optional):** a server can make heaters, coolers, filters and lights need Forge Energy from any FE mod.
 - **Live food breeding:** a larva tub for mosquito larvae and an artemia hatchery for nauplii, both with hoppers.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
@@ -73,7 +78,7 @@ block.
   connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting) and a lock for the owner.
-- **Handbook and progression:** 65 handbook pages in English and German (with GuideME) and 29 advancements.
+- **Handbook and progression:** 70 handbook pages in English and German (with GuideME) and 29 advancements.
 - **Languages:** English and German.
 
 ## Requirements
@@ -120,7 +125,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, evaporation, power, food breeding, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic) |
 | `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound |
 

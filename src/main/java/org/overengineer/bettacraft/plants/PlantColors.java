@@ -57,10 +57,10 @@ public final class PlantColors {
     static int coral(PlantSpecies s, PlantPart p, int base, int tint) {
         boolean skeleton = p == PlantPart.STEM && s.stony();
         return switch (Math.max(0, Math.min(MAX_TINT, tint))) {
-            case 0 -> skeleton ? lerp(base, BLEACHED, 0.6) : lerp(base, BLEACHED, 0.82);
-            case 1 -> lerp(base, BLEACHED, 0.4);
+            case 0 -> skeleton ? lerp(base, BLEACHED, 0.7) : lerp(base, BLEACHED, 0.9);
+            case 1 -> lerp(base, BLEACHED, 0.55);
             case 2 -> base;
-            default -> skeleton ? base : p == PlantPart.TOP ? brighter(lerp(s.top, s.redColor, 0.7), 1.12) : lerp(base, s.redColor, 0.35);
+            default -> skeleton ? base : p == PlantPart.TOP ? brighter(lerp(s.top, s.redColor, 0.75), 1.2) : brighter(lerp(base, s.redColor, 0.45), 1.12);
         };
     }
 

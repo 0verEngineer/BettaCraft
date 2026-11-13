@@ -81,6 +81,9 @@ final class LangM20 {
         a.accept("gui.bettacraft.reef.live_rock", " · live rock %s");
         a.accept("gui.bettacraft.reef.spectrum", " · coral light %s%%");
         a.accept("gui.bettacraft.breeding.tm.anemones", "Host anemones: %s");
+        a.accept("gui.bettacraft.breeding.tm.kind.anemone", "At the anemone");
+        a.accept("gui.bettacraft.tm.in_anemone", "Lives in its anemone");
+        a.accept("gui.bettacraft.tm.temp_salt", "%s–%s °C, %s–%s ‰");
         a.accept("gui.bettacraft.critters.no_breeding_reef", "Do not breed in a tank");
         a.accept("gui.bettacraft.aquatic.coral_bleached", "bleached");
         a.accept("jade.bettacraft.tank.salinity", "Salt: %s ‰ (%s), calcium %s mg/L");

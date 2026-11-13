@@ -88,12 +88,12 @@ final class DevClientSmokeM20 {
         then(1, () -> look(reef.getX() - 1.8, reef.getY() + 3.6, reef.getZ() - 2.2, -35F, 38F));
         then(40, () -> shot("reef_technique"));
         // 2. water colours and coral colours
-        then(1, () -> look(colors.getX() + 5.0, colors.getY() + 1.4, colors.getZ() - 4.5, 0F, 8F));
+        then(1, () -> look(colors.getX() + 5.0, colors.getY() + 3.2, colors.getZ() - 6.0, 0F, 22F));
         then(40, () -> {
             shot("water_colors");
             checkColors();
         });
-        then(1, () -> look(corals.getX() + 6.0, corals.getY() + 1.2, corals.getZ() - 3.0, 0F, 10F));
+        then(1, () -> look(corals.getX() + 5.5, corals.getY() + 1.4, corals.getZ() - 6.0, 0F, 8F));
         then(40, () -> shot("coral_colors"));
         // 3. inside the reef
         then(1, () -> server(p -> {
@@ -115,7 +115,7 @@ final class DevClientSmokeM20 {
         }));
         String lang = mc.options.languageCode;
         menu(5, "menu_water", lang, null);
-        menu(6, "menu_corals", lang, s -> s.showPlantsPageForTest());
+        menu(6, "menu_corals", lang, s -> s.showAquaticPageForTest());
         menu(1, "menu_reef_animals", lang, s -> s.showTankmateForTest("ocellaris_clownfish"));
         menu(2, "menu_breeding", lang, null);
         // 5. items
@@ -161,11 +161,11 @@ final class DevClientSmokeM20 {
         reefRegion = r;
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         // the rock work: a ridge of reef rock along the back, live rock islands in front
-        rock(in, r, 40, 34, 14, 18, false);
-        rock(in, r, 16, 36, 10, 12, true);
-        rock(in, r, 66, 34, 10, 14, true);
-        rock(in, r, 22, 14, 6, 6, true);
-        rock(in, r, 58, 14, 7, 8, false);
+        rock(in, r, 40, 36, 11, 10, false);
+        rock(in, r, 16, 36, 9, 7, true);
+        rock(in, r, 66, 34, 9, 8, true);
+        rock(in, r, 22, 16, 5, 4, true);
+        rock(in, r, 58, 16, 6, 5, false);
         // corals on top of the rocks (full grown), the anemone on the front island
         long seed = 2020;
         coral(in, r, PlantSpecies.ACROPORA, 40, 34, seed++);
@@ -206,17 +206,23 @@ final class DevClientSmokeM20 {
             c.markTankChanged();
         }
         // fresh, brackish and sea water side by side, the same light
-        colors = base.offset(9, 0, 0);
+        colors = base.offset(0, 0, -26);
+        // seen from the north the first tank is on the right: fresh water right, sea water left; a white wall behind them
         float[] salts = {0F, 12F, 35F};
         for (int i = 0; i < 3; i++) {
-            TankBlockEntity t = tank(level, p, colors.offset(i * 4, 0, 0), 2, 2, 2, 26F, salts[i]);
+            tank(level, p, colors.offset(i * 4, 0, 0), 2, 2, 2, 26F, salts[i]);
             light(level, colors.offset(i * 4, 0, 0), 2, 2, 0, DyeColor.WHITE);
         }
+        for (int x = -2; x < 12; x++) for (int y = -1; y < 4; y++) {
+            level.setBlockAndUpdate(colors.offset(x, y, 3), Blocks.WHITE_CONCRETE.defaultBlockState());
+        }
+        for (int x = -2; x < 12; x++) for (int z = 0; z < 3; z++) level.setBlockAndUpdate(colors.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState());
         // Acropora: bleached (fresh water), pale, healthy (white light), glowing (actinic)
-        corals = base.offset(9, 0, 8);
+        corals = base.offset(0, 0, -14);
         int[] tints = {0, 1, 2, 3};
         for (int i = 0; i < 4; i++) {
-            TankBlockEntity t = tank(level, p, corals.offset(i * 3, 0, 0), 2, 2, 2, 26F, 35F);
+            // seen from the north: bleached on the left ... glowing on the right
+            TankBlockEntity t = tank(level, p, corals.offset((3 - i) * 3, 0, 0), 2, 2, 2, 26F, 35F);
             InteriorRegion cr = region(level, t, Blocks.SAND.defaultBlockState());
             rock(in, cr, 16, 16, 7, 6, false);
             InteriorPlant a = coral(in, cr, PlantSpecies.ACROPORA, 16, 16, 77L + i);
@@ -225,7 +231,7 @@ final class DevClientSmokeM20 {
                 a.redness = tints[i] / 3.0;
                 InteriorPlants.apply(in, cr, a);
             }
-            light(level, corals.offset(i * 3, 0, 0), 2, 2, 0, i == 3 ? DyeColor.BLUE : DyeColor.WHITE);
+            light(level, corals.offset((3 - i) * 3, 0, 0), 2, 2, 0, i == 3 ? DyeColor.BLUE : DyeColor.WHITE);
         }
     }
 
@@ -245,7 +251,7 @@ final class DevClientSmokeM20 {
                 case OCELLARIS_CLOWNFISH -> {
                     Vec3 a = spots.isEmpty() ? new Vec3(w.box().minX + 1.3, w.box().minY + 0.8, w.box().minZ + 0.6) : spots.getFirst().pos();
                     x = a.x + (m.isFemale() ? -0.22 : 0.18);
-                    y = a.y + (m.isFemale() ? 0.12 : 0.02);
+                    y = a.y + (m.isFemale() ? 0.16 : 0.06);
                     z = a.z - 0.15;
                     yaw = m.isFemale() ? -70F : 110F;
                 }
@@ -346,8 +352,10 @@ final class DevClientSmokeM20 {
         for (int x = -rad; x <= rad; x++)
             for (int z = -rad; z <= rad; z++) {
                 double d = Math.sqrt(x * x + z * z) / rad;
-                if (d > 1.0) continue;
-                int top = (int) Math.round(h * (1 - d * d * 0.7));
+                // a rough outline and surface (not a smooth dome)
+                double noise = Math.sin(x * 1.7 + z * 0.9) * 0.18 + Math.sin(x * 0.6 - z * 1.3) * 0.15;
+                if (d > 1.0 + noise * 0.5) continue;
+                int top = (int) Math.round(h * Math.max(0.15, 1 - d * d * 0.8 + noise));
                 for (int y = 0; y < top; y++) {
                     boolean l = live ? (x * 3 + y + z * 5) % 4 != 0 : (x + y * 2 + z) % 5 == 0;
                     in.setBlock(r.toWorld(cx + x, y, cz + z), (l ? ModBlocks.LIVE_ROCK : ModBlocks.REEF_ROCK).get().defaultBlockState(), 2);

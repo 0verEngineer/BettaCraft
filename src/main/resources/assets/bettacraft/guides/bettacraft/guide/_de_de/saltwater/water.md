@@ -21,6 +21,8 @@ item_ids:
 * Rechtsklick mit **Meersalz** auf ein Aquarium: eine Portion salzt einen Eimer (1000 mB) seines Wassers zu Meerwasser auf;
   **Schleichen** gibt so viel hinein, wie bis 35 ‰ fehlt.
 
+![Meerwasser, Brackwasser und Süßwasser nebeneinander](../images/reef_water_colors.png)
+
 ## Mischen
 
 Das Becken mischt, was man hineingießt, nach Menge: zwei Eimer Meerwasser und zwei Eimer Süßwasser ergeben 17,5 ‰
@@ -48,6 +50,8 @@ Kugelfisch und Tintenfisch Salzwasser, Axolotl und Kaulquappen Süßwasser.
   **Kalzium-Zusatz** (aus Calcit oder Knochenmehl und Meersalz) füllen es wieder auf.
 * **Nitrat** (NO₃) ist der Abfall im Wasser, wie Meerwasseraquarianer ihn messen: das Menü zeigt es neben dem Salz.
   Steinkorallen werden ab 40 mg/L langsamer und hören bei 60 auf; Eiweißabschäumer und Lebendgestein halten es niedrig.
+
+![Der Wasser-Tab eines Meerwasserbeckens](../images/menu_reef_water.png)
 
 Der Wasser-Tab im [Aquarium-Menü](../aquarium/menu.md) zeigt Salz, Kalzium und Nitrat statt der Glas-Zeile, und in der
 letzten Zeile die Abschäumer, die Strömungspumpen mit ihrer Strömung, das Lebendgestein und wie viel vom Licht die Korallen
