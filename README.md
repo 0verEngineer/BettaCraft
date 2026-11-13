@@ -80,7 +80,7 @@ block.
   Floor textures (substrate), decoration structures (castle, shipwreck, skull, volcano, driftwood, cave, ...),
   heaters, internal filters and floating plants. Several players can build in the same interior at once; nobody can
   break the aquarium while someone is inside. Leave by sneaking and looking up (a small hint shows how).
-- **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood (they hold the
+- **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood or stone (they hold the
   external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below), a small
   clip-on feeder for the side of the glass and a connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,

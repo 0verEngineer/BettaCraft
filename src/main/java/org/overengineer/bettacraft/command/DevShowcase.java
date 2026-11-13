@@ -381,7 +381,44 @@ public final class DevShowcase {
             name(level, at, de(s.translationKey()));
             at = at.east(2 + GAP);
         }
+        // M21.7: cabinets of stone: a small tank on a cabinet of every vanilla stone with slabs, then the first stones of
+        // other mods that the recipes know a slab for
+        at = startRow(level, "Steinschränke");
+        List<ResourceLocation> stones = new ArrayList<>();
+        for (var p : org.overengineer.bettacraft.equipment.CabinetStones.VANILLA) stones.add(blockOf(p.stone()));
+        int modded = 0;
+        for (var p : org.overengineer.bettacraft.equipment.CabinetStones.all(level.getRecipeManager(), level.registryAccess())) {
+            if (!p.stoneId().getNamespace().equals("minecraft") && modded++ < 6) stones.add(blockOf(p.stone()));
+        }
+        for (ResourceLocation id : stones) {
+            rowWood = id;
+            tank(level, at, 1, 1, 1, 0F, true);
+            String de = STONES_DE.get(id.getPath());
+            name(level, at, de != null && id.getNamespace().equals("minecraft") ? de
+                    : net.minecraft.locale.Language.getInstance().getOrDefault(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(id).getDescriptionId(), id.getPath()));
+            at = at.east(3);
+        }
+        LOGGER.info("[showcase] stone cabinets: {} stones ({} of other mods)", stones.size(), Math.min(modded, 6));
     }
+
+    private static ResourceLocation blockOf(net.minecraft.world.item.Item item) {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(((net.minecraft.world.item.BlockItem) item).getBlock());
+    }
+
+    /** M21.7: German names of the vanilla cabinet stones (the server only knows the English ones). */
+    private static final java.util.Map<String, String> STONES_DE = java.util.Map.ofEntries(
+            java.util.Map.entry("stone", "Stein"), java.util.Map.entry("cobblestone", "Bruchstein"), java.util.Map.entry("mossy_cobblestone", "Bemooster Bruchstein"),
+            java.util.Map.entry("smooth_stone", "Glatter Stein"), java.util.Map.entry("stone_bricks", "Steinziegel"), java.util.Map.entry("mossy_stone_bricks", "Bemooste Steinziegel"),
+            java.util.Map.entry("granite", "Granit"), java.util.Map.entry("polished_granite", "Polierter Granit"), java.util.Map.entry("diorite", "Diorit"),
+            java.util.Map.entry("polished_diorite", "Polierter Diorit"), java.util.Map.entry("andesite", "Andesit"), java.util.Map.entry("polished_andesite", "Polierter Andesit"),
+            java.util.Map.entry("cobbled_deepslate", "Bruchtiefenschiefer"), java.util.Map.entry("polished_deepslate", "Polierter Tiefenschiefer"),
+            java.util.Map.entry("deepslate_bricks", "Tiefenschieferziegel"), java.util.Map.entry("deepslate_tiles", "Tiefenschieferfliesen"), java.util.Map.entry("tuff", "Tuffstein"),
+            java.util.Map.entry("polished_tuff", "Polierter Tuffstein"), java.util.Map.entry("tuff_bricks", "Tuffsteinziegel"), java.util.Map.entry("blackstone", "Schwarzstein"),
+            java.util.Map.entry("polished_blackstone", "Polierter Schwarzstein"), java.util.Map.entry("polished_blackstone_bricks", "Polierte Schwarzsteinziegel"),
+            java.util.Map.entry("sandstone", "Sandstein"), java.util.Map.entry("cut_sandstone", "Geschnittener Sandstein"), java.util.Map.entry("smooth_sandstone", "Glatter Sandstein"),
+            java.util.Map.entry("red_sandstone", "Roter Sandstein"), java.util.Map.entry("cut_red_sandstone", "Geschn. roter Sandstein"),
+            java.util.Map.entry("smooth_red_sandstone", "Glatter roter Sandstein"), java.util.Map.entry("bricks", "Ziegelsteine"), java.util.Map.entry("nether_bricks", "Netherziegel"),
+            java.util.Map.entry("red_nether_bricks", "Rote Netherziegel"), java.util.Map.entry("quartz_block", "Quarzblock"), java.util.Map.entry("smooth_quartz", "Glatter Quarzblock"));
 
     private static BlockPos startRow(ServerLevel level, String title) {
         // M21.5: the tanks stand on cabinets: the row is one block higher, the cabinets on the ground

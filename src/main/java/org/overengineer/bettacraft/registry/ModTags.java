@@ -75,7 +75,7 @@ public final class ModTags {
 
     /** M21.7: stone blocks a cabinet can be made of (five of them, three of their slabs and a chest); modpacks can add to it. */
     public static final TagKey<Item> CABINET_STONES = TagKey.create(Registries.ITEM, BettaCraft.id("cabinet_stones"));
-    /** M21.7: never a cabinet stone (metal and storage blocks, ores, glass, purpur, prismarine, concrete, mud bricks ...). */
+    /** M21.7: never a cabinet stone (copper, ores, glass, purpur, prismarine, concrete, mud bricks ...). */
     public static final TagKey<Item> CABINET_EXCLUDED = TagKey.create(Registries.ITEM, BettaCraft.id("cabinet_excluded"));
 
     private ModTags() {}

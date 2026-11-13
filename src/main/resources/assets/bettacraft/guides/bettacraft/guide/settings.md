@@ -79,7 +79,7 @@ animals go under overhangs and into caves, plecos swim into their spawning cave;
 since 1.13.2 `smoothSwimming` (fish turn in curves and tilt smoothly, kuhli loaches undulate and hide by day, plecos stand
 up only on the glass), `greenNeonTetra` (the green neon at the trader and in the net), `snailColors` (individual shades of
 the racer nerites, mostly gold apple snails with bands, red ramshorns), `detailedDecor` (the big skull and shipwreck),
-`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties). The server config `tank.protectFromExplosionsAndPistons`
+`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted). The server config `tank.protectFromExplosionsAndPistons`
 decides whether the break protection also stops explosions and pistons. The **client config** has the animation and miniature distances, the distance up to which the
 miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 24; further away pixels, 0 = always
 pixels), the water surface glitter,

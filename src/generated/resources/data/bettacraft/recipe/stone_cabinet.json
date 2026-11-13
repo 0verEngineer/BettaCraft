@@ -214,6 +214,9 @@
     "PPP"
   ],
   "result": {
+    "components": {
+      "bettacraft:wood": "minecraft:stone_bricks"
+    },
     "count": 1,
     "id": "bettacraft:cabinet"
   }

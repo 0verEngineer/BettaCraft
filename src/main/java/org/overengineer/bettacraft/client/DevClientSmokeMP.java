@@ -194,6 +194,19 @@ final class DevClientSmokeMP {
                             + fish + " " + coral);
                 });
             }
+            case "cabinets" -> {
+                // M21.7: the material of the two cabinets on this client and the sound of the stone one
+                BlockPos at = pos(args);
+                then(40, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    String[] w = new String[2];
+                    for (int i = 0; i < 2; i++) {
+                        w[i] = mc.level.getBlockEntity(at.offset(0, 0, i)) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab ? cab.woodId().toString() : "none";
+                    }
+                    var sound = mc.level.getBlockState(at).getSoundType(mc.level, at, mc.player);
+                    send("cabinets " + w[0] + " " + w[1] + " " + (sound == net.minecraft.world.level.block.SoundType.DEEPSLATE_BRICKS ? "deepslate_bricks" : "other"));
+                });
+            }
             case "place" -> then(12, () -> {
                 // M15: right-click where the server turned the player (in a tank interior)
                 Minecraft mc = Minecraft.getInstance();

@@ -83,6 +83,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM211 m211;
     private static DevClientSmokeM215 m215;
     private static DevClientSmokeM216 m216;
+    private static DevClientSmokeM217 m217;
+    /** -Psmoketestm21_7: only the M21.7 scene (stone cabinets). */
+    private static final boolean M21_7_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_7only");
     /** -Psmoketestm21_6: only the M21.6 scene (guppy and endler genetics). */
     private static final boolean M21_6_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_6only");
     /** -Psmoketestm21_5: only the M21.5 scene (smooth swimming, colours, cabinets, decor, clip-on feeder, protection, handbook). */
@@ -147,6 +150,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M21_7_ONLY) {
+                if (ticks == 60) m217 = new DevClientSmokeM217();
+                if (m217 != null && m217.tick()) {
+                    m217 = null;
+                    LOGGER.info("[smoketest] client world test finished (M21.7 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M21_6_ONLY) {
                 if (ticks == 60) m216 = new DevClientSmokeM216();
                 if (m216 != null && m216.tick()) {
@@ -504,6 +516,10 @@ final class DevClientSmokeTest {
                     }
                     if (m216 != null && m216.tick()) {
                         m216 = null;
+                        m217 = new DevClientSmokeM217(); // M21.7: stone cabinets
+                    }
+                    if (m217 != null && m217.tick()) {
+                        m217 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

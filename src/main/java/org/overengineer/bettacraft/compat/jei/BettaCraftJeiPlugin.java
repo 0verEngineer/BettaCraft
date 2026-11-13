@@ -46,6 +46,19 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         return false;
     }
 
+    /** M21.7 dev smoke test: opens JEI's crafting page of the stone cabinet. False if JEI is not ready or it is missing. */
+    public static boolean showStoneCabinet() {
+        var rt = runtime;
+        if (rt == null) return false;
+        var focus = rt.getJeiHelpers().getFocusFactory().createFocus(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK,
+                new ItemStack(ModItems.CABINET.get()));
+        var recipes = rt.getRecipeManager().createRecipeLookup(mezz.jei.api.constants.RecipeTypes.CRAFTING).limitFocus(List.of(focus)).get()
+                .filter(r -> r.value() instanceof org.overengineer.bettacraft.equipment.StoneCabinetRecipe).toList();
+        if (recipes.isEmpty()) return false;
+        rt.getRecipesGui().showRecipes(rt.getRecipeManager().getRecipeCategory(mezz.jei.api.constants.RecipeTypes.CRAFTING), recipes, List.of());
+        return true;
+    }
+
     @Override
     public ResourceLocation getPluginUid() {
         return BettaCraft.id("jei");

@@ -41,9 +41,9 @@ import org.overengineer.bettacraft.registry.ModTags;
  * <ul>
  *     <li>A stone is a full block item in {@code #bettacraft:cabinet_stones} (stones, cobblestones, stone bricks, sandstone,
  *     the deepslate, blackstone and tuff families, bricks, nether bricks, quartz, terracotta; modpacks can add to it) or,
- *     for blocks of other mods, one that is mined with a pickaxe and sounds like stone. Never: {@code #bettacraft:cabinet_excluded}
- *     (metal and storage blocks, ores, glass, purpur, end stone, prismarine, concrete, mud bricks), planks, blocks with a
- *     block entity and blocks that are not full cubes.</li>
+ *     for blocks of other mods, one that is mined with a pickaxe, sounds like stone and is no storage block ({@code #c:storage_blocks}).
+ *     Never: {@code #bettacraft:cabinet_excluded} (copper, ores, glass, purpur, end stone, prismarine, concrete, mud bricks),
+ *     planks, blocks with a block entity and blocks that are not full cubes.</li>
  *     <li>The slab of a stone is found through the game's own recipes, so it works with every mod: the crafting recipe
  *     "three blocks in a row -> slabs" first, else a stonecutter recipe block -> slab whose name fits the block
  *     ({@code stone_bricks -> stone_brick_slab}; the stonecutter also turns stone into stone brick slabs, that one does
@@ -111,6 +111,8 @@ public final class CabinetStones {
         Block b = bi.getBlock();
         if (b instanceof EntityBlock || !fullCube(b.defaultBlockState())) return false;
         if (stack.is(ModTags.CABINET_STONES)) return true;
+        // metal and other storage blocks (not in the exclusion tag: mods put the quartz block into #c:storage_blocks)
+        if (stack.is(net.neoforged.neoforge.common.Tags.Items.STORAGE_BLOCKS)) return false;
         ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
         if (id.getNamespace().equals("minecraft")) return false; // vanilla: only what the tag says
         BlockState s = b.defaultBlockState();

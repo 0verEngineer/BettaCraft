@@ -137,6 +137,13 @@ class GuidePagesTest {
                 }
                 for (Matcher m = ID_ATTR.matcher(text); m.find(); ) {
                     String id = m.group(1);
+                    // M21.7: <Recipe id="..."> names a recipe (a generated recipe file), not an item
+                    if (text.lastIndexOf("<Recipe ", m.start()) >= 0 && text.lastIndexOf("<Recipe ", m.start()) > text.lastIndexOf('>', m.start())) {
+                        Path recipe = Path.of(System.getProperty("bettacraft.projectDir", ".")).resolve("src/generated/resources/data/bettacraft/recipe/"
+                                + id.substring(id.indexOf(':') + 1) + ".json");
+                        if (!Files.exists(recipe)) problems.add(where + ": unknown recipe " + id);
+                        continue;
+                    }
                     if (id.startsWith("bettacraft:") && !ids.contains(id)) problems.add(where + ": unknown id " + id);
                 }
             }

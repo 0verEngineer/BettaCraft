@@ -345,6 +345,30 @@ def m21_6(out_en: Path) -> None:
         save(sheet.resize((width, round(sheet.height * width / sheet.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M21.7 scene (DevClientSmokeM217, -Psmoketestm21_7): stone cabinets, strips of the row stacked into one picture.
+# ``py guide_images.py m21_7``.
+M21_7_STRIPS = {"cabinets_stone": [("counters", (60, 300, 1280, 560)), ("row_0", (0, 290, 1280, 580)), ("row_7", (0, 290, 1280, 580))]}
+
+
+def m21_7(out_en: Path) -> None:
+    for name, strips in M21_7_STRIPS.items():
+        tiles = []
+        for shot, box in strips:
+            src = SHOTS / f"bettacraft_m21_7_{shot}.png"
+            if not src.exists():
+                print("missing", src)
+                return
+            t = Image.open(src).convert("RGB").crop(box)
+            tiles.append(t.resize((1280, round(t.height * 1280 / t.width)), Image.LANCZOS))
+        sheet = Image.new("RGB", (1280, sum(t.height for t in tiles)))
+        y = 0
+        for t in tiles:
+            sheet.paste(t, (0, y))
+            y += t.height
+        width = 960
+        save(sheet.resize((width, round(sheet.height * width / sheet.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -359,6 +383,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m21_7"]:
+        m21_7(out_en)
+        return 0
     if sys.argv[1:] == ["m21_6"]:
         m21_6(out_en)
         return 0

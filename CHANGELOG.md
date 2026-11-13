@@ -4,6 +4,36 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.13.4-beta.1] - 2026-11-14
+
+Stone cabinets (`features.stoneCabinets`).
+
+### Added
+- **Aquarium cabinets of stone**: `SSS / PCP / PPP` with five blocks of one stone (P), three **slabs of the same stone**
+  (S) and a wooden chest (C). Every stone with its own slabs works - stone, cobblestone, granite, diorite, andesite and
+  their polished forms, deepslate, tuff, blackstone, sandstone, bricks, nether bricks, quartz, terracotta of mods with
+  terracotta slabs and the stones of other mods: the slab is found through the game's own recipes (crafting or
+  stonecutter), stones of other mods are recognised by the tag `#bettacraft:cabinet_stones` (modpacks can add to it) or
+  by being mined with a pickaxe and sounding like stone. Not: metal and copper blocks, glass, purpur, end stone,
+  prismarine, concrete, mud bricks, ores (`#bettacraft:cabinet_excluded`).
+- The cabinet takes the look of its stone like a wooden one takes its planks, is named after it ("Stone Bricks Aquarium
+  Cabinet") and is mined like it: pickaxe (by hand only the contents drop), hardness, blast resistance and sound of the
+  stone. Otherwise it is the same cabinet (filter, heaters, storage, joined counters).
+- JEI shows the recipe with stone, slabs and cabinet cycling together; creative tab and handbook (en, de) show a
+  selection of stones.
+
+### Changed
+- Wooden cabinets are unchanged; cabinets of older worlds load as before.
+
+### Development
+- GameTests: the slab of every vanilla stone from the recipes, cabinets of stone, cobblestone, stone bricks, deepslate,
+  sandstone, bricks, nether bricks, quartz and the stones of other mods in the dev runtime; none of iron, gold, copper
+  (also with copper slabs), glass, purpur, end stone, prismarine, mud bricks, concrete, terracotta without slabs, mixed
+  stones or slabs of another stone; the stone survives placing and breaking, pickaxe, hardness, blast resistance and
+  sound; the switch. Client smoke `-Psmoketestm21_7`, a showcase row of stone cabinets.
+- The M19 GameTest `livebearersBearYoungIntoTheBreedingBox` waits up to 15 days for a pregnancy (was flaky); the upgrade
+  test accepts small animals born while the world loads (every old one must still be there).
+
 ## [1.13.3-beta.1] - 2026-11-14
 
 Guppy and endler genetics: real genes per fish instead of fixed varieties (`features.livebearerGenetics`).

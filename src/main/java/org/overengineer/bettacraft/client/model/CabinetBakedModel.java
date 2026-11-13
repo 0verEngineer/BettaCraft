@@ -130,8 +130,11 @@ public class CabinetBakedModel extends BakedModelWrapper<BakedModel> {
         return new BakedQuad(v, q.getTintIndex(), q.getDirection(), target, q.isShade(), q.hasAmbientOcclusion());
     }
 
+    /** M21.7: a quarter texel inside the sprite (a UV exactly on its edge can pick a texel of the neighbouring atlas texture). */
+    private static final float INSET = 1F / 64F;
+
     static float clamp01(float f) {
-        return f < 0 ? 0 : f > 1 ? 1 : f;
+        return f < INSET ? INSET : f > 1 - INSET ? 1 - INSET : f;
     }
 
     @Override
@@ -153,6 +156,22 @@ public class CabinetBakedModel extends BakedModelWrapper<BakedModel> {
     @Override
     public TextureAtlasSprite getParticleIcon(ModelData data) {
         return woodSprite(woodOf(data));
+    }
+
+    /**
+     * M21.7: the item is drawn with this model (BakedModelWrapper hands the render passes to the wrapped model, so the
+     * icons of every cabinet showed the placeholder texture instead of their planks or stone).
+     */
+    @Override
+    public List<BakedModel> getRenderPasses(ItemStack stack, boolean fabulous) {
+        return List.of(this);
+    }
+
+    /** M21.7: the display transform of the wrapped model, but this model draws (the wrapper used to return the original). */
+    @Override
+    public BakedModel applyTransform(net.minecraft.world.item.ItemDisplayContext context, com.mojang.blaze3d.vertex.PoseStack pose, boolean leftHand) {
+        originalModel.applyTransform(context, pose, leftHand);
+        return this;
     }
 
     @Override

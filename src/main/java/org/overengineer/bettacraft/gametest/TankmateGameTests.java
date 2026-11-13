@@ -229,12 +229,15 @@ public final class TankmateGameTests {
         days(h, c, 1, 0.25, 29.5F);
         h.assertTrue(clutches(t, null) == 0, "no eggs without a water change");
         float ambient = TankCare.ambient(level, t);
-        t.setWaterTemp(29.5F);
+        // M21.7: at least 4 C above the fresh water (the ambient temperature of the test spot varies: at 26.9 C a change
+        // from 29.5 C cooled by only 1.3 C and the test failed now and then)
+        float start = Math.max(29.5F, ambient + 4F);
+        t.setWaterTemp(start);
         TankInteractions.changeWater(level, c, -4000);
         TankInteractions.changeWater(level, c, 4000);
         float after = t.waterTemp();
-        h.assertTrue(ambient < 27.5F, "the test world is cooler than the tank: " + ambient);
-        h.assertTrue(after < 29.5F - 1.5F, "the fresh water cooled the tank: " + after);
+        h.assertTrue(ambient < start - 3F, "the test world is cooler than the tank: " + ambient);
+        h.assertTrue(after < start - 1.5F, "the fresh water cooled the tank: " + after + " from " + start);
         h.assertTrue(TankmateBreeding.coolChangeRecent(level, t), "a cool water change");
         h.assertTrue(logged(t, "log.bettacraft.tm.cool_change"), "logged");
         for (int i = 0; i < 12 && clutches(t, Clutch.Kind.GLASS) == 0; i++) days(h, c, 0.1, 0.1, after);

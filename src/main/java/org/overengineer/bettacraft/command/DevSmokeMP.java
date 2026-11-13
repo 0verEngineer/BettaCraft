@@ -135,6 +135,8 @@ public final class DevSmokeMP {
             }
             case "tankmates" -> checkTankmates(name, a);
             case "reef" -> checkReef(name, a);
+            case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
+                    a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -794,6 +796,22 @@ public final class DevSmokeMP {
             c.markTankChanged();
             say("reef", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":reef") && reports.containsKey(P2 + ":reef"), 20 * 30));
+        steps.add(new Step("cabinets", () -> {
+            // M21.7: a cabinet of deepslate bricks next to a cherry one (west of the reef tank): both clients see the stone
+            BlockPos at = base.offset(-12, 0, 6);
+            ServerLevel level = server.overworld();
+            String[] woods = {"deepslate_bricks", "cherry_planks"};
+            for (int i = 0; i < 2; i++) {
+                BlockPos q = at.offset(0, 0, i);
+                level.setBlockAndUpdate(q, ModBlocks.CABINET.get().defaultBlockState()
+                        .setValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING, net.minecraft.core.Direction.NORTH));
+                if (level.getBlockEntity(q) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
+                    cab.setWood(net.minecraft.resources.ResourceLocation.withDefaultNamespace(woods[i]));
+                    level.sendBlockUpdated(q, level.getBlockState(q), level.getBlockState(q), 3);
+                }
+            }
+            say("cabinets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> reports.containsKey(P1 + ":cabinets") && reports.containsKey(P2 + ":cabinets"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

@@ -136,6 +136,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_6only', 'true'
             }
+            // gradlew runClient -Psmoketestm21_7 : only the M21.7 scene (stone cabinets near/far, also of other mods' stones,
+            // joined counters, items, JEI recipe, handbook page; add -Pshaders for Complementary)
+            if (project.hasProperty('smoketestm21_7')) {
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m21_7only', 'true'
+            }
             // gradlew runClient -Psmoketestm8 : only the M8 scene (Jade / The One Probe / WTHIT overlays; add -Ptop / -Pwthit)
             if (project.hasProperty('smoketestm8')) {
                 systemProperty 'bettacraft.smoketest.world', 'true'

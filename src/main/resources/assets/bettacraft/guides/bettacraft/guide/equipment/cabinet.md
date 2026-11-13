@@ -24,3 +24,21 @@ The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **
 * **Nine storage slots** for food and other things. Hoppers can use them, and the [feeder](feeder.md) on the aquarium
   takes food from the cabinets under it.
 * Broken, the cabinet drops its contents like a chest and keeps its wood.
+
+## Stone cabinets
+
+![Cabinets of different stones with aquariums](../images/cabinets_stone.png)
+
+A cabinet can also be made of **stone**: five blocks of one stone, three **slabs of the same stone** and a wooden chest
+(stone bricks with stone brick slabs, sandstone with sandstone slabs ...). Every stone with its own slabs works: stone,
+cobblestone, granite, diorite, andesite, deepslate, tuff, blackstone, sandstone, bricks, nether bricks, quartz, terracotta
+with slabs and the stones of other mods. Metal and copper blocks, glass, purpur, end stone, prismarine, concrete and mud
+bricks do not.
+
+<Recipe id="bettacraft:stone_cabinet" />
+
+* The stone cabinet looks like its stone and can do the same as a wooden one (filter, heaters, storage, joined counters).
+* It is mined like its stone: with a **pickaxe** (by hand it drops nothing but its contents), as hard and as blast
+  resistant as the stone.
+* Modpacks can add stones with the item tag `#bettacraft:cabinet_stones` and rule some out with
+  `#bettacraft:cabinet_excluded`. The setting `features.stoneCabinets` switches the stone recipe off.

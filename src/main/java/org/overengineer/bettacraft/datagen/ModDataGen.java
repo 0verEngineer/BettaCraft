@@ -334,7 +334,8 @@ public final class ModDataGen {
             for (int i = 0; i < 4; i++) {
                 boolean left = (i & 1) != 0, right = (i & 2) != 0;
                 String name = "cabinet" + (left && right ? "_both" : left ? "_left" : right ? "_right" : "");
-                BlockModelBuilder m = models().getBuilder(name)
+                // M21.7: parent block/block for the display transforms of the item (it lay flat, back to the viewer)
+                BlockModelBuilder m = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")))
                         .texture("wood", modLoc("block/cabinet_wood")).texture("trim", modLoc("block/cabinet_trim"))
                         .texture("particle", modLoc("block/cabinet_wood"));
                 // carcass (full block below the counter top)
@@ -372,6 +373,15 @@ public final class ModDataGen {
                     case WEST -> new float[] {z0, 16 - y1, z1, 16 - y0};
                     case EAST -> new float[] {16 - z1, 16 - y1, 16 - z0, 16 - y0};
                 };
+                // M21.7: a face that lies wholly outside the 16 px (the sides of the doors and handles in front of the
+                // carcass, z < 0) is moved into the texture instead of being squashed onto its edge (a zero-wide UV on the
+                // edge of the sprite showed a line of the neighbouring atlas texture: blue handles, coloured door seams)
+                for (int k = 0; k < 2; k++) {
+                    float lo = Math.min(uv[k], uv[k + 2]), hi = Math.max(uv[k], uv[k + 2]);
+                    float shift = hi - lo <= 16 && lo < 0 ? 16 * (float) Math.ceil(-lo / 16) : hi - lo <= 16 && hi > 16 ? -16 * (float) Math.ceil((hi - 16) / 16) : 0;
+                    uv[k] += shift;
+                    uv[k + 2] += shift;
+                }
                 for (int k = 0; k < 4; k++) uv[k] = Math.max(0, Math.min(16, uv[k]));
                 f.texture(tex).uvs(uv[0], uv[1], uv[2], uv[3]);
                 if (cull.test(d)) f.cullface(d);
@@ -1158,7 +1168,9 @@ public final class ModDataGen {
                             Items.SMOOTH_BASALT, Items.DRIPSTONE_BLOCK, Items.BRICKS, Items.NETHER_BRICKS, Items.CRACKED_NETHER_BRICKS,
                             Items.CHISELED_NETHER_BRICKS, Items.RED_NETHER_BRICKS, Items.QUARTZ_BLOCK, Items.QUARTZ_BRICKS, Items.SMOOTH_QUARTZ,
                             Items.CHISELED_QUARTZ_BLOCK, Items.QUARTZ_PILLAR);
-            tag(ModTags.CABINET_EXCLUDED).addTag(Tags.Items.STORAGE_BLOCKS).addTag(Tags.Items.ORES).addTag(Tags.Items.GLASS_BLOCKS)
+            // (#c:storage_blocks is checked in CabinetStones for stones outside #bettacraft:cabinet_stones: some mods
+            // tag the quartz block as a storage block)
+            tag(ModTags.CABINET_EXCLUDED).addTag(Tags.Items.ORES).addTag(Tags.Items.GLASS_BLOCKS)
                     .addTag(Tags.Items.CONCRETES).addTag(Tags.Items.OBSIDIANS).addTag(Tags.Items.END_STONES).addTag(Tags.Items.GLAZED_TERRACOTTAS)
                     .add(Items.PURPUR_BLOCK, Items.PURPUR_PILLAR, Items.END_STONE_BRICKS, Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE,
                             Items.MUD_BRICKS, Items.PACKED_MUD, Items.COPPER_BLOCK, Items.EXPOSED_COPPER, Items.WEATHERED_COPPER, Items.OXIDIZED_COPPER,

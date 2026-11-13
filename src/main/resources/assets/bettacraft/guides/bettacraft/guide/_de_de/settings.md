@@ -80,7 +80,7 @@ Prototyp; aus = die Blattblöcke), seit 1.13.2 `smoothSwimming` (Fische wenden i
 schlängeln sich und verstecken sich tagsüber, Harnischwelse stellen sich erst an der Scheibe auf), `greenNeonTetra` (der
 Grüne Neon beim Händler und im Kescher), `snailColors` (eigene Farbtöne der Rennschnecken, meist goldene Apfelschnecken
 mit Bändern, rote Posthörner), `detailedDecor` (der große Schädel und das große Wrack), `breakProtection` (der Schalter
-im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
+im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
 auch Explosionen und Kolben abhält. Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
 der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
 0 = immer Pixel), das

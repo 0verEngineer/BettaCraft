@@ -32,8 +32,13 @@ public class StoneCabinetRecipe extends ShapedRecipe {
         super(group, category, pattern, result, showNotification);
     }
 
+    /** The shown result is a cabinet of stone bricks (JEI without the extension, recipe book, handbook); {@link #assemble} sets the real stone. */
     public static StoneCabinetRecipe of(ShapedRecipe base) {
-        return new StoneCabinetRecipe(base.getGroup(), base.category(), base.pattern, base.getResultItem(null), base.showNotification());
+        ItemStack shown = base.getResultItem(null).copy();
+        if (!shown.has(org.overengineer.bettacraft.registry.ModDataComponents.WOOD.get())) {
+            CabinetBlockItem.setWood(shown, net.minecraft.resources.ResourceLocation.withDefaultNamespace("stone_bricks"));
+        }
+        return new StoneCabinetRecipe(base.getGroup(), base.category(), base.pattern, shown, base.showNotification());
     }
 
     @Override
