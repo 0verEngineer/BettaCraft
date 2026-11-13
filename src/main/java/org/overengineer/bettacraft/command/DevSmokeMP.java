@@ -128,6 +128,11 @@ public final class DevSmokeMP {
             case "mini" -> checkMini(name, a);
             case "mine" -> checkMine(name, a);
             case "menu" -> check(name + ": tank menu (" + text.substring(5) + ")", "ok".equals(a[1]));
+            case "light" -> {
+                // M18: the bar was dyed red on the server: the client has the colour and tints the water with it
+                check(name + ": the dyed light is " + a[1] + " on the client (server red)", "red".equals(a[1]));
+                check(name + ": the water of the tank is tinted (" + a[2] + ")", !"0".equals(a[2]));
+            }
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -650,6 +655,14 @@ public final class DevSmokeMP {
         }, () -> stepTicks >= 30, 60));
         steps.add(new Step("break when empty", () -> say("mine", P2, "2," + lMin.getX() + "," + lMin.getY() + "," + lMin.getZ()),
                 () -> reports.containsKey(P2 + ":mine2"), 20 * 30));
+        steps.add(new Step("dye the light", () -> {
+            // M18: one dye on the bar on the server; both clients see the colour (block state) and tint the water
+            BlockPos l = mainMin.offset(1, 3, 1);
+            int n = TankLightBlock.dyeBar(server.overworld(), l, server.overworld().getBlockState(l), net.minecraft.world.item.DyeColor.RED, false);
+            check("the whole bar of 4 lights was dyed red (" + n + ")", n == 4);
+            BlockPos c = main().getBlockPos();
+            say("light", "all", l.getX() + "," + l.getY() + "," + l.getZ() + ";" + c.getX() + "," + c.getY() + "," + c.getZ());
+        }, () -> reports.containsKey(P1 + ":light") && reports.containsKey(P2 + ":light"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

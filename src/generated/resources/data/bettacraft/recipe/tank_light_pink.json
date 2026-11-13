@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "bettacraft:tank_light_dye",
+  "ingredients": [
+    {
+      "item": "bettacraft:tank_light"
+    },
+    {
+      "item": "minecraft:pink_dye"
+    }
+  ],
+  "result": {
+    "components": {
+      "minecraft:block_state": {
+        "color": "pink"
+      }
+    },
+    "count": 1,
+    "id": "bettacraft:tank_light"
+  }
+}

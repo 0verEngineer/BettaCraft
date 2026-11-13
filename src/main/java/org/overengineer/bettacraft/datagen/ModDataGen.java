@@ -257,7 +257,7 @@ public final class ModDataGen {
                 ModelFile m = lightModel(neg, pos, hanging, lit);
                 return ConfiguredModel.builder().modelFile(m)
                         .rotationY(state.getValue(TankLightBlock.AXIS) == Direction.Axis.Z ? 90 : 0).build();
-            }, TankLightBlock.POWERED);
+            }, TankLightBlock.POWERED, TankLightBlock.COLOR); // M18: the colour is a tint of the panel (BettaCraftClient)
         }
 
         /** M4: canister 3..13 x 0..12 with lid 4..12 x 12..14 and a hose port; model front (north) = towards the tank. */
@@ -407,7 +407,7 @@ public final class ModDataGen {
                     .texture("panel", modLoc(lit ? "block/tank_light_panel_on" : "block/tank_light_panel_off"))
                     .texture("particle", modLoc("block/tank_light"))
                     .element().from(a0, y0, 6.5F).to(a1, y0 + 2, 9.5F)
-                    .face(Direction.DOWN).uvs(a0, 6.5F, a1, 9.5F).texture("#panel").emissivity(lit ? 15 : 0, lit ? 15 : 0).end()
+                    .face(Direction.DOWN).uvs(a0, 6.5F, a1, 9.5F).texture("#panel").tintindex(0).emissivity(lit ? 15 : 0, lit ? 15 : 0).end()
                     .face(Direction.UP).uvs(a0, 6.5F, a1, 9.5F).texture("#housing").end()
                     .face(Direction.NORTH).uvs(16 - a1, 14, 16 - a0, 16).texture("#housing").end()
                     .face(Direction.SOUTH).uvs(a0, 14, a1, 16).texture("#housing").end()
@@ -435,7 +435,9 @@ public final class ModDataGen {
         protected void registerModels() {
             withExistingParent("tank", modLoc("block/tank"));
             withExistingParent("feeder", modLoc("block/feeder"));
-            withExistingParent("tank_light", modLoc("block/tank_light_none_on"));
+            // M18: a flat icon: the housing and the panel with its light cone (layer 1, tinted in the light colour)
+            withExistingParent("tank_light", mcLoc("item/generated"))
+                    .texture("layer0", modLoc("item/tank_light")).texture("layer1", modLoc("item/tank_light_glow"));
             withExistingParent("external_filter", modLoc("block/external_filter"));
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -637,6 +639,21 @@ public final class ModDataGen {
                     .unlockedBy("has_glowstone", has(Tags.Items.DUSTS_GLOWSTONE))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .save(output, BettaCraft.id("tank_light"));
+            // M18: coloured lights: one light (any colour) + dye, or eight lights around a dye (like stained glass)
+            for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {
+                net.minecraft.world.item.Item dye = net.minecraft.world.item.DyeItem.byColor(c);
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 1))
+                        .requires(ModItems.TANK_LIGHT.get()).requires(dye)
+                        .group("bettacraft:tank_light_dye")
+                        .unlockedBy("has_light", has(ModItems.TANK_LIGHT.get()))
+                        .save(output, BettaCraft.id("tank_light_" + c.getName()));
+                ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 8))
+                        .pattern("LLL").pattern("LDL").pattern("LLL")
+                        .define('L', ModItems.TANK_LIGHT.get()).define('D', dye)
+                        .group("bettacraft:tank_light_dye8")
+                        .unlockedBy("has_light", has(ModItems.TANK_LIGHT.get()))
+                        .save(output, BettaCraft.id("tank_light_" + c.getName() + "_8"));
+            }
             decorRecipes(output);
 
             // M9: coolers (snow instead of copper, sizes like the heaters), lid, live food breeders
@@ -796,7 +813,14 @@ public final class ModDataGen {
                             .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
                                     .include(ModDataComponents.GLASS.get()).include(ModDataComponents.TANK_STYLE.get()))))));
             dropSelf(ModBlocks.FEEDER.get());
-            dropSelf(ModBlocks.TANK_LIGHT.get());
+            // M18: coloured lights drop in their colour (white ones as the plain item, so they stack with old ones)
+            add(ModBlocks.TANK_LIGHT.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.TANK_LIGHT.get(), LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1))
+                    .add(LootItem.lootTableItem(ModBlocks.TANK_LIGHT.get())
+                            .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(ModBlocks.TANK_LIGHT.get()).copy(TankLightBlock.COLOR)
+                                    .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.TANK_LIGHT.get())
+                                            .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                                    .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             dropSelf(ModBlocks.TANK_LID.get());
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());

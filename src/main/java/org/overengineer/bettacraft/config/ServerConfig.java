@@ -167,6 +167,12 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue STOCKING_SHRIMP_PER_FISH;
     public static final ModConfigSpec.IntValue STOCKING_CRAYFISH_PER_FISH;
     public static final ModConfigSpec.DoubleValue STOCKING_FROGS_PER_FISH;
+    // M18: young animals count in fractions of a fish
+    public static final ModConfigSpec.DoubleValue STOCKING_EGG;
+    public static final ModConfigSpec.DoubleValue STOCKING_LARVA;
+    public static final ModConfigSpec.DoubleValue STOCKING_FRY;
+    public static final ModConfigSpec.DoubleValue STOCKING_JUVENILE;
+    public static final ModConfigSpec.DoubleValue STOCKING_SUBADULT;
     public static final ModConfigSpec.DoubleValue ALGAE_GROWTH_SPEED;
     public static final ModConfigSpec.DoubleValue ALGAE_CLEANER_STRENGTH;
 
@@ -434,6 +440,12 @@ public final class ServerConfig {
         STOCKING_CRAYFISH_PER_FISH = b.comment("Dwarf crayfish that count as one fish (they are twice the size of a shrimp)")
                 .defineInRange("crayfishPerFish", 12, 1, 10000);
         STOCKING_FROGS_PER_FISH = b.comment("Dwarf clawed frogs that count as one fish").defineInRange("frogsPerFish", 1.0, 0.1, 100.0);
+        STOCKING_EGG = b.comment("M18: how much of a fish one egg in the bubble nest counts").defineInRange("eggStocking", 0.0, 0.0, 1.0);
+        STOCKING_LARVA = b.comment("How much of a fish one larva in the bubble nest counts").defineInRange("larvaStocking", 0.0, 0.0, 1.0);
+        STOCKING_FRY = b.comment("How much of a fish one fry counts").defineInRange("fryStocking", 0.02, 0.0, 1.0);
+        STOCKING_JUVENILE = b.comment("How much of a fish one juvenile counts (also young animals of other mods, and young",
+                "shrimp, crayfish and snails in their share of a fish)").defineInRange("juvenileStocking", 0.1, 0.0, 1.0);
+        STOCKING_SUBADULT = b.comment("How much of a fish one subadult counts").defineInRange("subadultStocking", 0.3, 0.0, 1.0);
         b.pop();
 
         b.comment("Green algae on the inside of the glass").push("algae");

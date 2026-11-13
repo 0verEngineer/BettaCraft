@@ -1,3 +1,7 @@
 {
-  "parent": "bettacraft:block/tank_light_none_on"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/tank_light",
+    "layer1": "bettacraft:item/tank_light_glow"
+  }
 }

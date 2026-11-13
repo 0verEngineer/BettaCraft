@@ -18,7 +18,8 @@
   ],
   "client": [
     "client.BackgroundWindowMixin",
-    "client.ClientLevelMixin"
+    "client.ClientLevelMixin",
+    "client.IrisBlockIdsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

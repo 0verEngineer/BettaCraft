@@ -380,10 +380,11 @@ public final class CritterGameTests {
         try {
             TankBlockEntity c = tank(h, 2, 2, 2, 1, 1, 1, 1000);
             for (int i = 0; i < 25; i++) add(h, c, CritterSpecies.NEOCARIDINA, CritterGenes.WILD, i % 2 == 0);
-            for (int i = 0; i < 10; i++) TankCritters.add(level, c, CritterSpecies.NEOCARIDINA, CritterGenes.WILD, true, 0); // young: not counted
-            h.assertTrue(Math.abs(TankInhabitants.stocking(level, c.getTank()) - 1.0) < 1e-6, "25 adult shrimp = one fish");
+            // M18: young ones count at the share of a juvenile betta (0.1) of their share of a fish
+            for (int i = 0; i < 10; i++) TankCritters.add(level, c, CritterSpecies.NEOCARIDINA, CritterGenes.WILD, true, 0);
+            h.assertTrue(Math.abs(TankInhabitants.stocking(level, c.getTank()) - 1.04) < 1e-6, "25 adult shrimp = one fish, 10 young 0.04");
             ServerConfig.STOCKING_SHRIMP_PER_FISH.set(5);
-            h.assertTrue(Math.abs(TankInhabitants.stocking(level, c.getTank()) - 5.0) < 1e-6, "5 per fish: five fish");
+            h.assertTrue(Math.abs(TankInhabitants.stocking(level, c.getTank()) - 5.2) < 1e-6, "5 per fish: five fish (+ 0.2 young)");
             ServerConfig.TANK_HARD_CAP_PER_WATER_BLOCK.set(5);
             BettaData d = BettaData.create(BettaGenome.DEFAULT, false, level.getGameTime());
             var err = TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), null, 0L);

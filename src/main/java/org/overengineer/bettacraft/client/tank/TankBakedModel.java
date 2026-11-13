@@ -55,6 +55,8 @@ public class TankBakedModel implements IDynamicBakedModel {
     public static final ModelProperty<Long> CONCAVE = new ModelProperty<>();
     /** Per side (4 bits each, side.ordinal() * 4): in-plane inner corners ({@link TankBlock#innerCornerMask}). */
     public static final ModelProperty<Integer> CORNERS = new ModelProperty<>();
+    /** M18: RGB of the tank's coloured lights for the water drawn by the model (shader packs); absent = no tint. */
+    public static final ModelProperty<Integer> LIGHT = new ModelProperty<>();
 
     private final TextureAtlasSprite edge;
     private final TextureAtlasSprite fallbackParticle;
@@ -70,7 +72,7 @@ public class TankBakedModel implements IDynamicBakedModel {
     /** Bits 24..27 of {@link #CORNERS}: {@link TankWaterRenderer#gapMask}. */
     private static final int GAP_SHIFT = 24;
     /** Water quads drawn by the model while a shader pack is in use, by (fill, connection mask, water above, gaps). */
-    private final Map<Integer, List<BakedQuad>> waterCache = new ConcurrentHashMap<>();
+    private final Map<Long, List<BakedQuad>> waterCache = new ConcurrentHashMap<>();
     /** Connected / cut glass quads: original quad -> (hidden slots, water behind it) -> the pieces. */
     private final Map<BakedQuad, Map<Integer, BakedQuad[]>> glassCache = new ConcurrentHashMap<>();
     /** Frame width (fraction of the face) per glass sprite. */
@@ -185,8 +187,11 @@ public class TankBakedModel implements IDynamicBakedModel {
         int corners = TankBlock.innerCornerMask(level, pos, state, concave);
         if (state.getValue(TankBlock.FILL) > 0 && TankWaterRenderer.waterAbove(level, pos, state)) corners |= WATER_ABOVE_BIT;
         corners |= TankWaterRenderer.gapMask(level, pos, state) << GAP_SHIFT;
-        if (concave == 0 && corners == 0) return modelData;
-        return modelData.derive().with(CONCAVE, concave).with(CORNERS, corners).build();
+        int light = state.getValue(TankBlock.FILL) > 0 ? TankLightTint.colorAt(level, pos) : 0;
+        if (concave == 0 && corners == 0 && light == 0) return modelData;
+        var b = modelData.derive().with(CONCAVE, concave).with(CORNERS, corners);
+        if (light != 0) b.with(LIGHT, light);
+        return b.build();
     }
 
     // ------------------------------------------------------------------ water (shader packs)
@@ -202,12 +207,16 @@ public class TankBakedModel implements IDynamicBakedModel {
         int bits = cd == null ? 0 : cd;
         boolean above = (bits & WATER_ABOVE_BIT) != 0;
         int gaps = (bits >>> GAP_SHIFT) & 15;
-        int key = state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12;
+        Integer ld = data.get(LIGHT);
+        int light = ld == null ? 0 : ld;
+        // M18: the light colour (and the tint strength it was mixed with) is part of the key
+        long key = (state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12)
+                | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 40);
         return waterCache.computeIfAbsent(key, k -> {
             var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
             List<BakedQuad> list = new ArrayList<>();
-            TankWaterRenderer.faces(state, above, gaps, (d, c, col, rev) ->
+            TankWaterRenderer.faces(state, above, gaps, light, (d, c, col, rev) ->
                     list.add(bakeWater(d, c, col, rev, d.getAxis() == Direction.Axis.Y ? still : sideSprite)));
             return List.copyOf(list);
         });

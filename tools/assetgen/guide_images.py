@@ -167,6 +167,32 @@ def m16(out_en: Path) -> None:
             print("missing", src)
 
 
+# M18 scene (DevClientSmokeM18, -Psmoketestm18 -PnoJade -PnoTop -PnoWthit): six aquariums under coloured lights at night,
+# the 16 lights in the creative tab, the stocking tooltip of a tank with young bettas (en, de); with a copy of the row
+# from a shader run (Complementary "Colored Lighting") as bettacraft_m18_shader_row_night.png also that.
+# ``py guide_images.py m18``.
+M18_WORLD = {"light_colors": ("bettacraft_m18_row_night", (60, 380, 1180, 540)),
+             "light_items": ("bettacraft_m18_items", (270, 270, 1045, 640)),
+             "light_shader": ("bettacraft_m18_shader_row_night", (60, 380, 1180, 560))}
+M18_MENUS = {"menu_stocking": ("bettacraft_m18_menu_stocking", (150, 20, 1245, 740))}
+
+
+def m18(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M18_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name, (shot, box) in M18_MENUS.items():
+        for suffix, out in (("", out_en), ("_de", out_de)):
+            src = SHOTS / f"{shot}{suffix}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(box), out / f"{name}.png")
+            else:
+                print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -195,6 +221,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m16"]:
         m16(out_en)
+        return 0
+    if sys.argv[1:] == ["m18"]:
+        m18(out_en, out_de)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"
@@ -232,6 +261,7 @@ def main() -> int:
     m14(out_en, out_de)
     m15(out_en, out_de)
     m16(out_en)
+    m18(out_en, out_de)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

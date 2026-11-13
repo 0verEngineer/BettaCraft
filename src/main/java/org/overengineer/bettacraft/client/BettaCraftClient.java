@@ -85,6 +85,8 @@ public final class BettaCraftClient {
 
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());
+        // M18: colour of the tank lights for the water (their shader light colour: IrisBlockIdsMixin)
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> org.overengineer.bettacraft.client.tank.TankLightTint.tick());
         NeoForge.EVENT_BUS.addListener(org.overengineer.bettacraft.client.decor.DecorPreview::onRenderStage);
         // M17: block entities of a dropped client level (dimension change, interior, disconnect) leave the static sets
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.LevelEvent.Unload e) -> {
@@ -149,6 +151,9 @@ public final class BettaCraftClient {
                             ? org.overengineer.bettacraft.plants.PlantPart.STEM : org.overengineer.bettacraft.plants.PlantPart.RHIZOME, 2), e.getValue().get());
         }
         event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
+        // M18: the panel of the aquarium light in its colour
+        event.register((stack, tint) -> tint == 1 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
+                org.overengineer.bettacraft.equipment.TankLightItem.colorOf(stack), true) : 0xFFFFFFFF, ModItems.TANK_LIGHT.get());
     }
 
     /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
@@ -165,6 +170,10 @@ public final class BettaCraftClient {
             }, b.get());
         }
         event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());
+        // M18: the panel of the aquarium light in its colour (darker while off)
+        event.register((state, level, pos, tint) -> tint == 0 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
+                state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.COLOR), state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT))
+                : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TANK_LIGHT.get());
     }
 
     private static void onLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

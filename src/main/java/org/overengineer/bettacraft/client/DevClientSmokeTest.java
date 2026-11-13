@@ -76,6 +76,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM14 m14;
     private static DevClientSmokeM15 m15;
     private static DevClientSmokeM16 m16;
+    private static DevClientSmokeM18 m18;
+    /** -Psmoketestm18: only the M18 scene (coloured lights, young bettas in the stocking). */
+    private static final boolean M18_ONLY = Boolean.getBoolean("bettacraft.smoketest.m18only");
     /** -Psmoketestm16: only the M16 scene (water animals of other mods, refusals, no tank inside a tank). */
     private static final boolean M16_ONLY = Boolean.getBoolean("bettacraft.smoketest.m16only");
     /** -Psmoketestm15: only the M15 scene (name sign, domed nest, interior leave hint). */
@@ -126,6 +129,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M18_ONLY) {
+                if (ticks == 60) m18 = new DevClientSmokeM18();
+                if (m18 != null && m18.tick()) {
+                    m18 = null;
+                    LOGGER.info("[smoketest] client world test finished (M18 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M16_ONLY) {
                 if (ticks == 60) m16 = new DevClientSmokeM16();
                 if (m16 != null && m16.tick()) {
@@ -392,6 +404,10 @@ final class DevClientSmokeTest {
                     }
                     if (m16 != null && m16.tick()) {
                         m16 = null;
+                        m18 = new DevClientSmokeM18(); // M18: coloured lights, young bettas in the stocking
+                    }
+                    if (m18 != null && m18.tick()) {
+                        m18 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

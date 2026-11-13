@@ -59,7 +59,7 @@ public final class TankWaterRenderer {
         int light = LevelRenderer.getLightColor(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
-        faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), (d, c, col, rev) -> {
+        faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), (d, c, col, rev) -> {
             int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
             emit(vc, d, c, ox, oy, oz, d.getAxis() == Direction.Axis.Y ? still : side, r, g, b, a, light, rev);
         });
@@ -89,6 +89,17 @@ public final class TankWaterRenderer {
 
     /** All water faces of one tank block, in block coordinates (0..1). */
     public static void faces(BlockState state, boolean waterAbove, int gapMask, FaceSink sink) {
+        faces(state, waterAbove, gapMask, 0, sink);
+    }
+
+    /** M18: the colour of the water mixed with the colour of the tank's lights ({@code light} RGB, 0 = none). */
+    public static int color(boolean surface, int light) {
+        int base = surface ? COLOR : SIDE_COLOR;
+        return light == 0 ? base : org.overengineer.bettacraft.equipment.TankLightColors.tintWater(base, light, TankLightTint.strength());
+    }
+
+    /** All water faces of one tank block; M18: {@code light} = RGB of the tank's coloured lights (0 = none). */
+    public static void faces(BlockState state, boolean waterAbove, int gapMask, int light, FaceSink sink) {
         int fill = state.getValue(TankBlock.FILL);
         if (fill <= 0) return;
         TankWaterGeometry.Body body = TankWaterGeometry.body(TankBlock.connectionMask(state), fill, waterAbove);
@@ -98,7 +109,7 @@ public final class TankWaterRenderer {
             // M11: inset only along the normal, full width sideways (see TankWaterGeometry: sorting behind stained glass)
             if (m10Look) BoxFaces.corners(d, body.x0(), body.y0(), body.z0(), body.x1(), body.y1(), body.z1(), c);
             else TankWaterGeometry.face(body, d, c);
-            int col = d.getAxis() == Direction.Axis.Y ? COLOR : SIDE_COLOR;
+            int col = color(d.getAxis() == Direction.Axis.Y, light);
             sink.face(d, c, col, false);
             // visible from below the surface too (swimming players)
             if (d == Direction.UP) sink.face(d, c, col, true);
@@ -107,7 +118,7 @@ public final class TankWaterRenderer {
             if ((gapMask & (1 << d.get2DDataValue())) == 0) continue;
             // as wide as the water of this block (inset at the outer sides, like the faces)
             BoxFaces.corners(d, body.x0(), 1 - INSET, body.z0(), body.x1(), 1, body.z1(), c);
-            sink.face(d, c, SIDE_COLOR, false);
+            sink.face(d, c, color(false, light), false);
         }
     }
 

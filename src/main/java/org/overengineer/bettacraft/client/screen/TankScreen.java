@@ -224,6 +224,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         setTab(Tab.PLANTS);
     }
 
+    /** Dev smoke test only (M18): gui position of the animals line of the overview, where the stocking tooltip shows. */
+    public int[] stockingLineForTest() {
+        return new int[]{stockLineX, stockLineY};
+    }
+
+    private int stockLineX, stockLineY;
+
     /** Dev smoke test only. */
     public void selectTabForTest(int index) {
         setTab(Tab.values()[index]);
@@ -535,7 +542,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             return;
         }
         switch (tab) {
-            case OVERVIEW -> drawOverview(g, v);
+            case OVERVIEW -> drawOverview(g, v, mouseX - leftPos, mouseY - topPos);
             case INHABITANTS -> {
                 if (critterPage) drawCritters(g, v, mouseX - leftPos, mouseY - topPos);
                 else drawInhabitants(g, v, mouseX - leftPos, mouseY - topPos);
@@ -573,7 +580,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         g.pose().popPose();
     }
 
-    private void drawOverview(GuiGraphics g, TankView v) {
+    private void drawOverview(GuiGraphics g, TankView v, int mx, int my) {
         int x = 11, y = 56;
         int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
         line(g, Component.translatable("gui.bettacraft.tank.size_water", v.sizeX, v.sizeY, v.sizeZ, v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
@@ -610,13 +617,19 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 : Component.translatable("gui.bettacraft.tank.filter_state", outside, v.filterHeaters, v.filters).withStyle(ChatFormatting.AQUA);
         line(g, Component.translatable("gui.bettacraft.tank.filters", filters), x, y, TEXT_LIGHT);
         y += 10;
+        // M18: as soon as anything counts in fractions (small animals, young, nest), the line shows the stocking
+        boolean fractions = v.critters.total > 0 || v.stockYoung > 1e-6 || v.stockNest > 1e-6;
         MutableComponent inh = v.critters.total > 0
-                ? Component.translatable("gui.bettacraft.tank.stocking", v.inhabitants.size(), v.critters.total, fmt((float) v.stock), v.hardCap)
+                ? Component.translatable("gui.bettacraft.tank.stocking", v.inhabitants.size(), v.critters.total, fmt2(v.stock), v.hardCap)
+                : fractions ? Component.translatable("gui.bettacraft.tank.stocking_fish", v.inhabitants.size(), fmt2(v.stock), v.hardCap)
                 : Component.translatable("gui.bettacraft.tank.inhabitants", v.inhabitants.size(), v.adults, v.hardCap);
         if (v.crowded) inh.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
         // the last two lines end left of the interior button (and the lock symbol)
         int room = ENTER_X - (v.locked ? 15 : 3) - x;
         fitLine(g, inh, x, y, TEXT_LIGHT, room);
+        if (mx >= x && mx < x + room && my >= y && my < y + 9) pendingTooltip = stockingTooltip(v);
+        stockLineX = leftPos + x + 20;
+        stockLineY = topPos + y + 4;
         y += 10;
         Component unpowered = unpowered(v);
         if (v.waterMb < v.minInsertMb) {
@@ -950,6 +963,25 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         return String.format(java.util.Locale.ROOT, "%.1f", f);
     }
 
+    /** M18: two decimals below 10 (a few fry count 0.02 each), one above. */
+    static String fmt2(double d) {
+        return String.format(java.util.Locale.ROOT, d < 10 - 0.005 ? "%.2f" : "%.1f", d);
+    }
+
+    /** M18: the parts of the stocking (hover over the animals line of the overview). */
+    private static List<Component> stockingTooltip(TankView v) {
+        List<Component> tip = new ArrayList<>();
+        tip.add(Component.translatable("gui.bettacraft.stock.title", fmt2(v.stock), v.hardCap));
+        tip.add(Component.translatable("gui.bettacraft.stock.adults", v.adults, fmt2(v.stockAdults)).withStyle(ChatFormatting.GRAY));
+        if (v.young > 0) tip.add(Component.translatable("gui.bettacraft.stock.young", v.young, fmt2(v.stockYoung)).withStyle(ChatFormatting.GRAY));
+        if (v.critters.total > 0) tip.add(Component.translatable("gui.bettacraft.stock.critters", v.critters.total, fmt2(v.stockCritters)).withStyle(ChatFormatting.GRAY));
+        if (v.stockNest > 1e-6) tip.add(Component.translatable("gui.bettacraft.stock.nest", fmt2(v.stockNest)).withStyle(ChatFormatting.GRAY));
+        tip.add(Component.translatable("gui.bettacraft.stock.hint", fmt2(org.overengineer.bettacraft.entity.betta.LifeStage.FRY.stocking()),
+                fmt2(org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking()), fmt2(org.overengineer.bettacraft.entity.betta.LifeStage.SUBADULT.stocking()))
+                .withStyle(ChatFormatting.DARK_GRAY));
+        return tip;
+    }
+
     private Component inhabitantName(TankView.Inhabitant i) {
         if (!i.customName().isEmpty()) return Component.literal(i.customName());
         // M5: unnamed bettas are listed by their type
@@ -1014,6 +1046,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (mx >= x && mx < x + 124 && my >= y && my < y + 9 && !ts.equals(type.getString())) pendingTooltip = List.of(type);
         y += 9;
         line(g, Component.translatable("gui.bettacraft.fish.sex_stage", BettaTooltip.sex(sel.female()), stage), x, y, TEXT_LIGHT);
+        if (mx >= x && mx < x + 124 && my >= y && my < y + 9) {
+            // M18: how much this betta counts for the stocking (fry 0.02, juvenile 0.1, subadult 0.3 by default)
+            pendingTooltip = List.of(Component.translatable("gui.bettacraft.fish.counts", fmt2(org.overengineer.bettacraft.entity.betta.LifeStage.byId(sel.stage()).stocking())));
+        }
         y += 9;
         float hp = Math.min(sel.health(), sel.hp());
         bar(g, x, y, Component.translatable(sel.sick() ? "gui.bettacraft.fish.sick" : "gui.bettacraft.fish.health"), hp,

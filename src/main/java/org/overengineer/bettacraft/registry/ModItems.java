@@ -21,7 +21,9 @@ public final class ModItems {
     public static final DeferredItem<TankBlockItem> TANK = ITEMS.register("tank",
             () -> new TankBlockItem(ModBlocks.TANK.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> FEEDER = ITEMS.registerSimpleBlockItem(ModBlocks.FEEDER);
-    public static final DeferredItem<BlockItem> TANK_LIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.TANK_LIGHT);
+    /** M18: in 16 colours (block state component, see TankLightItem). */
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.TankLightItem> TANK_LIGHT = ITEMS.register("tank_light",
+            () -> new org.overengineer.bettacraft.equipment.TankLightItem(ModBlocks.TANK_LIGHT.get(), new Item.Properties()));
 
     /** M11: makes male bettas flare (optional-features #2). */
     public static final DeferredItem<org.overengineer.bettacraft.equipment.MirrorStickItem> MIRROR_STICK = ITEMS.register("mirror_stick",

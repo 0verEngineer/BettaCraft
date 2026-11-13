@@ -425,7 +425,60 @@ def tank_net():
     return out
 
 
+# ---------------------------------------------------------------- tank light (M18: item icon in its colour)
+
+LIGHT_HOUSING = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "kkkkkkkkkkkkkkkk",
+    "kHHHHHHHHHHHHHHk",
+    "kMMMMMMMMMMMMMMk",
+    "kDDDDDDDDDDDDDDk",
+    "kk............kk",
+    ".kkkkkkkkkkkkkk.",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+]
+
+LIGHT_GLOW = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "..PPPPPPPPPPPP..",
+    "................",
+    ".aaaaaaaaaaaaaa.",
+    ".bbbbbbbbbbbbbb.",
+    "cccccccccccccccc",
+    "dddddddddddddddd",
+    "................",
+    "................",
+]
+
+
+def tank_light_icon():
+    """Anthracite light bar from the front, slightly below: housing (layer 0, untinted)."""
+    return grid(LIGHT_HOUSING, {"k": "#16161a", "H": "#5c5c62", "M": "#3c3c42", "D": "#2a2a2e"})
+
+
+def tank_light_glow():
+    """The LED panel and the light cone under it (layer 1, white, tinted by the light colour)."""
+    return grid(LIGHT_GLOW, {"P": "#ffffff", "a": "#ffffffa0", "b": "#ffffff70", "c": "#ffffff48", "d": "#ffffff24"})
+
+
 ICONS = {
+    "tank_light": tank_light_icon,
+    "tank_light_glow": tank_light_glow,
     "mirror_stick": mirror_stick,
     "tank_net": tank_net,
     "swamp_water_bottle": swamp_water_bottle,

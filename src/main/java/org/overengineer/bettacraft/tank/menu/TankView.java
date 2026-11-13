@@ -127,6 +127,9 @@ public final class TankView {
     public final Critters critters = new Critters();
     /** M14: stocking in fish (adults, frogs and small animals by config). */
     public double stock;
+    /** M18: parts of the stocking: adult and young inhabitants, small animals, eggs and larvae in the nest. */
+    public double stockAdults, stockYoung, stockCritters, stockNest;
+    public int young;
 
     /** One kind of small animal in the tank: species and variety with its counts and grades. */
     public record CritterGroup(int species, String variety, int rgb, int adults, int young, int females, int males, int berried,
@@ -537,7 +540,13 @@ public final class TankView {
         out.put("inhabitants", inh);
         out.putInt("adults", TankInhabitants.countAdults(live));
         out.putInt("hard_cap", TankInhabitants.hardCap(t.waterBlocks()));
-        out.putDouble("stock", TankInhabitants.stocking(live, t));
+        TankInhabitants.Stocking st = TankInhabitants.breakdown(live, t);
+        out.putDouble("stock", st.total());
+        out.putDouble("stock_adults", st.adults());
+        out.putDouble("stock_young", st.young());
+        out.putDouble("stock_critters", st.critters());
+        out.putDouble("stock_nest", st.nest());
+        out.putInt("young", live.size() - TankInhabitants.countAdults(live));
         out.put("critters", critters(level, controller).save());
         out.putBoolean("crowded", controller.isCrowded());
 
@@ -686,6 +695,11 @@ public final class TankView {
         v.adults = t.getInt("adults");
         v.hardCap = t.getInt("hard_cap");
         v.stock = t.getDouble("stock");
+        v.stockAdults = t.getDouble("stock_adults");
+        v.stockYoung = t.getDouble("stock_young");
+        v.stockCritters = t.getDouble("stock_critters");
+        v.stockNest = t.getDouble("stock_nest");
+        v.young = t.getInt("young");
         v.critters.load(t.getCompound("critters"));
         v.crowded = t.getBoolean("crowded");
         ListTag lg = t.getList("log", Tag.TAG_COMPOUND);

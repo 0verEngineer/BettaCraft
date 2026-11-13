@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bettacraft:tank_light_dye8",
+  "key": {
+    "D": {
+      "item": "minecraft:lime_dye"
+    },
+    "L": {
+      "item": "bettacraft:tank_light"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "LDL",
+    "LLL"
+  ],
+  "result": {
+    "components": {
+      "minecraft:block_state": {
+        "color": "lime"
+      }
+    },
+    "count": 8,
+    "id": "bettacraft:tank_light"
+  }
+}

@@ -225,7 +225,7 @@ public final class TankInhabitants {
             e.discard();
             return rejection(acc, type);
         }
-        if (isAdult(e)) {
+        if (weight(e) > 0) { // M18: the young count in fractions too
             long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);
             int cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
             // M14: the small animals and the frogs count by config (stocking.*PerFish)
@@ -362,20 +362,47 @@ public final class TankInhabitants {
         return !(e instanceof LivingEntity le) || !le.isBaby();
     }
 
-    /** How much one inhabitant counts for the stocking: adults 1, frogs 1 / stocking.frogsPerFish, young 0. */
+    /**
+     * How much one inhabitant counts for the stocking: adults 1, frogs 1 / stocking.frogsPerFish. M18: young bettas by
+     * their life stage ({@link org.overengineer.bettacraft.entity.betta.LifeStage#stocking}: fry 0.02, juvenile 0.1,
+     * subadult 0.3), young animals of other mods (and vanilla) like a juvenile betta.
+     */
     public static double weight(Entity e) {
-        if (!isAdult(e)) return 0;
-        if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) {
-            return 1.0 / Math.max(0.1, ServerConfig.getOr(ServerConfig.STOCKING_FROGS_PER_FISH, 1.0));
-        }
-        return 1.0;
+        if (e instanceof BettaEntity b) return b.lifeStage().stocking();
+        double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity
+                ? 1.0 / Math.max(0.1, ServerConfig.getOr(ServerConfig.STOCKING_FROGS_PER_FISH, 1.0)) : 1.0;
+        return isAdult(e) ? w : w * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();
     }
 
-    /** M14: stocking of a tank in fish: adult inhabitants (frogs by config) plus the small animals (stocking.*PerFish). */
+    /**
+     * M14: stocking of a tank in fish: inhabitants (frogs by config, M18: the young in fractions), the small animals
+     * (stocking.*PerFish) and (M18) the eggs and larvae in the bubble nest (0 by default).
+     */
     public static double stocking(List<Entity> live, TankData tank) {
-        double s = 0;
-        for (Entity e : live) s += weight(e);
-        return s + org.overengineer.bettacraft.critters.TankCritters.stock(tank);
+        return breakdown(live, tank).total();
+    }
+
+    /** M18: the stocking in its parts (shown in the menu): adult and young inhabitants, small animals, the nest. */
+    public record Stocking(double adults, double young, double critters, double nest) {
+        public double total() {
+            return adults + young + critters + nest;
+        }
+    }
+
+    public static Stocking breakdown(List<Entity> live, TankData tank) {
+        double adults = 0, young = 0;
+        for (Entity e : live) {
+            if (isAdult(e)) adults += weight(e);
+            else young += weight(e);
+        }
+        return new Stocking(adults, young, org.overengineer.bettacraft.critters.TankCritters.stock(tank), nestStocking(tank));
+    }
+
+    /** M18: eggs and larvae in the bubble nest (stocking.eggStocking / larvaStocking, 0 by default). */
+    public static double nestStocking(TankData tank) {
+        BubbleNest n = tank.nest();
+        if (n == null || !n.hasEggs()) return 0;
+        return n.eggCount() * n.stage().stocking();
     }
 
     public static double stocking(ServerLevel level, TankData tank) {
@@ -416,7 +443,7 @@ public final class TankInhabitants {
         AABB box = tankBox(tank);
         TankRef ours = new TankRef(controller.getBlockPos(), tank.id());
         Set<UUID> found = new HashSet<>();
-        double adults = org.overengineer.bettacraft.critters.TankCritters.stock(tank);
+        double adults = org.overengineer.bettacraft.critters.TankCritters.stock(tank) + nestStocking(tank);
         boolean evict = ServerConfig.getOr(ServerConfig.INHABITANTS_OUTGROWN, ServerConfig.Outgrown.BAG_IN_FRONT) == ServerConfig.Outgrown.BAG_IN_FRONT;
         for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;

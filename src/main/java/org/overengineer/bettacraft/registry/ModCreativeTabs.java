@@ -60,6 +60,10 @@ public final class ModCreativeTabs {
                 }
                 out.accept(ModItems.FEEDER.get());
                 out.accept(ModItems.TANK_LIGHT.get());
+                // M18: the coloured lights
+                for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {
+                    if (c != net.minecraft.world.item.DyeColor.WHITE) out.accept(org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 1));
+                }
                 out.accept(ModItems.TANK_LID.get());
                 out.accept(ModItems.MIRROR_STICK.get());
                 out.accept(ModItems.AQUARIUM_NET.get());

@@ -11,6 +11,27 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "block": "bettacraft:tank_light",
+              "conditions": [
+                {
+                  "condition": "minecraft:inverted",
+                  "term": {
+                    "block": "bettacraft:tank_light",
+                    "condition": "minecraft:block_state_property",
+                    "properties": {
+                      "color": "white"
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:copy_state",
+              "properties": [
+                "color"
+              ]
+            }
+          ],
           "name": "bettacraft:tank_light"
         }
       ],

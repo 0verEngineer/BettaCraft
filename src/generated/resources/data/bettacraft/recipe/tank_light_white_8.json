@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bettacraft:tank_light_dye8",
+  "key": {
+    "D": {
+      "item": "minecraft:white_dye"
+    },
+    "L": {
+      "item": "bettacraft:tank_light"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "LDL",
+    "LLL"
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:tank_light"
+  }
+}

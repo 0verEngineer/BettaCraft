@@ -15,6 +15,7 @@ final class LangEn {
     static void addAll(BiConsumer<String, String> a) {
         LangM14.addAll(a); // M14
         LangM15.addAll(a); // M15
+        LangM18.addAll(a); // M18
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -602,7 +603,7 @@ final class LangEn {
         a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality).");
         a.accept("info.bettacraft.external_filter", "Place it next to a tank (facing it) or put it into a cabinet under the tank.\nKeeps 32 water blocks clean and holds two heaters or coolers of any size.");
         a.accept("info.bettacraft.feeder", "Place it on top of a tank and fill it with food (also by hopper).\nFeeds 1 to 3 times a day, picks fry food for fry and takes food from cabinets under the tank.");
-        a.accept("info.bettacraft.tank_light", "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15. A redstone signal switches the whole bar off.");
+        a.accept("info.bettacraft.tank_light", "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15. A redstone signal switches the whole bar off.\nDye it (right-click dyes the whole bar, or in the crafting grid): 16 colours tint the water, the plants get the same light.");
         a.accept("info.bettacraft.cabinet", "Made from any planks. Put a tank on it.\nHolds an external filter (with two heaters) and nine stacks the feeder can use.");
         a.accept("info.bettacraft.betta_spawn_egg", "Spawns a betta with random domestic genes.");
         a.accept("info.bettacraft.decor", "A decoration structure: places a small build facing you.\nWorks in a tank interior (it then shows up in the tank in miniature) and anywhere in the world.");

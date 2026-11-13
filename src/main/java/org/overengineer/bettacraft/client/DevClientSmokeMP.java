@@ -134,6 +134,18 @@ final class DevClientSmokeMP {
                 then(40, () -> sendAquatic(s[0]));
             }
             case "use" -> use("sneak".equals(args));
+            case "light" -> {
+                // M18: the colour of the dyed light and the tint of its tank's water on this client
+                String[] s = args.split(";", 2);
+                BlockPos light = pos(s[0]), controller = pos(s[1]);
+                then(40, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var st = mc.level.getBlockState(light);
+                    String col = st.getBlock() instanceof org.overengineer.bettacraft.equipment.TankLightBlock
+                            ? st.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.COLOR).getName() : "none";
+                    send("light " + col + " " + Integer.toHexString(org.overengineer.bettacraft.client.tank.TankLightTint.colorOf(controller)));
+                });
+            }
             case "place" -> then(12, () -> {
                 // M15: right-click where the server turned the player (in a tank interior)
                 Minecraft mc = Minecraft.getInstance();

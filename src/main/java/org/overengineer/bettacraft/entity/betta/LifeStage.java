@@ -5,7 +5,7 @@ import org.overengineer.bettacraft.config.ServerConfig;
 
 /**
  * The six life stages (PLAN 5.3). Eggs and larvae are data in the bubble nest; from fry on the fish is a real entity,
- * rendered and sized with {@link #scale()}. Only adults count for the stocking limits.
+ * rendered and sized with {@link #scale()}. M18: the young count in fractions of a fish for the stocking ({@link #stocking()}).
  */
 public enum LifeStage {
     EGG(0.06F, 0.5),
@@ -44,6 +44,21 @@ public enum LifeStage {
             case JUVENILE -> ServerConfig.getOr(ServerConfig.STAGE_JUVENILE_DAYS, defaultDays);
             case SUBADULT -> ServerConfig.getOr(ServerConfig.STAGE_SUBADULT_DAYS, defaultDays);
             case ADULT -> Double.POSITIVE_INFINITY;
+        };
+    }
+
+    /**
+     * M18: how much of a fish one animal of this stage counts for the stocking (config {@code stocking.*Stocking}:
+     * eggs and larvae 0, fry 0.02, juveniles 0.1, subadults 0.3, adults 1).
+     */
+    public double stocking() {
+        return switch (this) {
+            case EGG -> ServerConfig.getOr(ServerConfig.STOCKING_EGG, 0.0);
+            case LARVA -> ServerConfig.getOr(ServerConfig.STOCKING_LARVA, 0.0);
+            case FRY -> ServerConfig.getOr(ServerConfig.STOCKING_FRY, 0.02);
+            case JUVENILE -> ServerConfig.getOr(ServerConfig.STOCKING_JUVENILE, 0.1);
+            case SUBADULT -> ServerConfig.getOr(ServerConfig.STOCKING_SUBADULT, 0.3);
+            case ADULT -> 1.0;
         };
     }
 

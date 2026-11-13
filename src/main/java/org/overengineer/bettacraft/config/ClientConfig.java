@@ -18,6 +18,8 @@ public final class ClientConfig {
     public static final ModConfigSpec.DoubleValue SIGN_SCALE;
     /** M15: the small hint "sneak + look up: leave" at the bottom left while in a tank interior. */
     public static final ModConfigSpec.BooleanValue INTERIOR_LEAVE_HINT;
+    /** M18: how strongly coloured tank lights tint the water (0 = not at all). */
+    public static final ModConfigSpec.DoubleValue LIGHT_TINT;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -33,6 +35,8 @@ public final class ClientConfig {
                 .defineInRange("tankEdgeWidth", 0.25, 0.0, 1.0);
         SIGN_SCALE = b.comment("Size of the tank name sign: factor on the default text height of 0.12 blocks (0.5 to 2)")
                 .defineInRange("signScale", 1.0, 0.5, 2.0);
+        LIGHT_TINT = b.comment("How strongly coloured aquarium lights tint the water of their tank: 0 = not at all (the light colour only shows at the lamp), 1 = water in the light colour")
+                .defineInRange("lightTint", 0.6, 0.0, 1.0);
         LOG_MINIATURE_STATS = b.comment("Write mesh build and sync statistics of tank miniatures to the log (for debugging)").define("logMiniatureStats", false);
         b.pop();
         b.comment("On-screen hints").push("hud");

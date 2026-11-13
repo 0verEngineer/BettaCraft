@@ -81,11 +81,20 @@ public final class TankCritters {
         };
     }
 
-    /** Stocking of the small animals in fish (only adults count, like the bettas). */
+    /**
+     * Stocking of the small animals in fish: adults 1 / stocking.*PerFish, M18: the young at the share of a juvenile betta
+     * (stocking.juvenileStocking, 0.1 by default) of that.
+     */
     public static double stock(TankData t) {
         double s = 0;
-        for (Critter c : t.critters()) if (c.alive() && c.adult()) s += 1.0 / Math.max(1e-6, perFish(c.species.group()));
+        for (Critter c : t.critters()) if (c.alive()) s += weight(c);
         return s;
+    }
+
+    /** M18: how much of a fish one small animal counts. */
+    public static double weight(Critter c) {
+        double w = 1.0 / Math.max(1e-6, perFish(c.species.group()));
+        return c.adult() ? w : w * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();
     }
 
     /** Bioload of the small animals (in fish): all living ones, young at half. */
@@ -393,7 +402,7 @@ public final class TankCritters {
             Critter k = Critter.loadAnimal(a, 0, 0, 0, 0);
             if (k == null) continue;
             fresh.add(k);
-            if (k.adult() && k.alive()) add += 1.0 / perFish(k.species.group());
+            if (k.alive()) add += weight(k);
         }
         if (fresh.isEmpty()) return Component.translatable("message.bettacraft.critters.unknown");
         long waterAfter = Math.min(t.capacityMb(), t.waterMb() + addMb);
