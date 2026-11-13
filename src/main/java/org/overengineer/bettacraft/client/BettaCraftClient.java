@@ -47,7 +47,7 @@ public final class BettaCraftClient {
     private static void rebuildChunks() {
         var mc = net.minecraft.client.Minecraft.getInstance();
         Object look = java.util.List.of(org.overengineer.bettacraft.config.ClientConfig.CONNECTED_GLASS.get(),
-                org.overengineer.bettacraft.config.ClientConfig.TANK_EDGE_WIDTH.get());
+                org.overengineer.bettacraft.config.ClientConfig.TANK_EDGE_WIDTH.get(), org.overengineer.bettacraft.config.CommonConfig.plantMeshes());
         if (look.equals(lastTankLook)) return;
         lastTankLook = look;
         mc.execute(() -> {
@@ -76,9 +76,14 @@ public final class BettaCraftClient {
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
+        // M21: plant prototype (Rotala, Vallisneria, Anubias with real leaves in the interior)
+        modBus.addListener(org.overengineer.bettacraft.client.interior.PlantMeshModel::onModifyBakingResult);
+        NeoForge.EVENT_BUS.addListener(org.overengineer.bettacraft.client.interior.PlantMeshRenderer::onRenderStage);
         // M11: tank look settings (connected glass, edge width) are baked into the chunk meshes: rebuild them on change
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
             if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();
+            // M21: features.plantMeshes switches the plant blocks of the interior between blocks and meshes
+            if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) rebuildChunks();
         });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
         NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);
@@ -95,6 +100,7 @@ public final class BettaCraftClient {
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
             org.overengineer.bettacraft.util.ClientBlockEntitySets.purgeLevel(null);
             ClientInteriorCache.clear();
+            org.overengineer.bettacraft.client.interior.PlantMeshRenderer.clear();
             org.overengineer.bettacraft.client.decor.DecorPreview.clear();
             // back to the built-in genetics (the next server sends its own); not while our integrated server still runs
             if (net.minecraft.client.Minecraft.getInstance().getSingleplayerServer() == null) {
