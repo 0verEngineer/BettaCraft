@@ -39,6 +39,14 @@ navigation:
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | Ausrüstung braucht FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE-Verbrauch und -Speicher |
 | `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2) |
+| `invertebrates.maxCrittersPerTank` | 200 | Garnelen, Krebse und Schnecken pro Aquarium |
+| `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | Vermehrungstempo (0 = nie) |
+| `invertebrates.bettasHuntShrimp` | true | Bettas jagen junge Garnelen und Krebse |
+| `invertebrates.biofilmPerWaterBlock` | 0.03 | Futter, das ein Wasserblock von selbst bildet |
+| `invertebrates.netCatchChance`, `netCooldownTicks`, `mudSnailChance` | 0.3, 40, 0.08 | Fangen in offenem Wasser, Schnecken im Schlamm |
+| `frogs.frogFoodShareWithBettas`, `frogAirMinutes` | 0.4, 2 | Frösche: ihr Anteil am Futter, Luft unter Wasser |
+| `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | Kleintiere pro Fisch |
+| `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | Algen am Glas (0 = keine), wie viel die Putzkolonne frisst |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
 | `simulateUnloadedTime` | false | Zeit läuft in nicht geladenen Chunks weiter |
 

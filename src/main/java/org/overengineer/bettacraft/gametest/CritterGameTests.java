@@ -229,7 +229,8 @@ public final class CritterGameTests {
         h.assertTrue(count(t, CritterSpecies.ZEBRA_NERITE) == 6, "still six nerites");
         // the menu button takes clutches off
         t.critterObjects().add(CritterObject.load(clutch.save()));
-        h.assertTrue(TankCritters.removeClutches(h.getLevel(), c) == 1, "clutch removed");
+        h.assertTrue(TankCritters.removeClutches(h.getLevel(), c) >= 1, "clutch removed");
+        h.assertTrue(t.critterObjects().stream().noneMatch(o -> o.kind == CritterObject.Kind.CLUTCH), "no clutch left");
         h.succeed();
     }
 
@@ -300,9 +301,9 @@ public final class CritterGameTests {
         h.assertTrue(hideBare < 0.05, "no hiding spots in a bare tank: " + hideBare);
         h.assertTrue(hidePlanted > 0.5, "dense plants and moss hide them: " + hidePlanted);
         for (TankBlockEntity c : List.of(bare, planted)) {
-            for (int i = 0; i < 20; i++) TankCritters.add(level, c, CritterSpecies.NEOCARIDINA, CritterGenes.WILD, i % 2 == 0, 0);
+            for (int i = 0; i < 40; i++) TankCritters.add(level, c, CritterSpecies.NEOCARIDINA, CritterGenes.WILD, i % 2 == 0, 0);
         }
-        for (int i = 0; i < 48; i++) {
+        for (int i = 0; i < 60; i++) {
             for (TankBlockEntity c : List.of(bare, planted)) {
                 c.getTank().setCritterFood(50);
                 c.getTank().setWaterQuality(1F);
@@ -310,8 +311,8 @@ public final class CritterGameTests {
             }
         }
         long leftBare = count(bare.getTank(), CritterSpecies.NEOCARIDINA), leftPlanted = count(planted.getTank(), CritterSpecies.NEOCARIDINA);
-        h.assertTrue(leftBare < 12, "the betta ate young shrimp: " + leftBare + " of 20 left");
-        h.assertTrue(leftPlanted > leftBare + 4, "more survive in the plants: " + leftPlanted + " vs " + leftBare);
+        h.assertTrue(leftBare < 22, "the betta ate young shrimp: " + leftBare + " of 40 left");
+        h.assertTrue(leftPlanted > leftBare + 5, "more survive in the plants: " + leftPlanted + " vs " + leftBare);
         h.assertTrue(logged(bare.getTank(), "log.bettacraft.critter_eaten_young"), "logged");
         h.succeed();
     }

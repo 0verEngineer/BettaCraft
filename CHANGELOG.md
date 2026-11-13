@@ -4,6 +4,49 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.6.0-beta.1] - 2026-11-13
+
+### Added
+- **Small animals** for the aquarium, eleven species: the dwarf shrimp **Neocaridina** (Red Cherry, Sakura, Fire Red,
+  Painted Fire Red, Blue Dream, Yellow, Orange, Green Jade, Black Rose, Chocolate, wild form), the dwarf crayfish
+  **CPO** (orange and the brown-grey wild form), **nerites** (zebra, horned, olive, red), **apple snails** (wild brown,
+  gold, blue, purple, ivory), **ramshorns** (red-brown, pink, blue), **bladder**, **Malaysian trumpet** and **assassin
+  snails**. They walk over the floor, the decoration and the plants of the interior, climb the glass (snails up the
+  stones too), shrimp swim short jumps; trumpet snails dig into the substrate by day. Up to 200 per aquarium, drawn as
+  small animated models.
+- **Genetics:** every colour is a recessive allele at its own locus, mixed colours fall back to the wild form, plus a
+  **grade** (colour density) that you breed up by selection: a red line goes from Red Cherry to Painted Fire Red. Pink
+  and blue ramshorns come out of wild red-brown carriers and breed true.
+- **Breeding** by type: shrimp and crayfish carry their eggs under the tail, fully formed young hatch; an apple snail
+  lays a pink **clutch above the water line** (needs the air gap; take it off with the net or the menu button);
+  ramshorn, bladder and trumpet snails slowly, one is enough; assassin snails rarely; **nerites never** in fresh water.
+  Breeding needs food, water that is not bad and the right temperature and stops at the limit.
+- Food for them grows in the tank (biofilm, more with plants and algae) and comes from the leftovers of the fish food
+  (overfeeding hardly fouls the water any more). Too many animals for the food: some starve.
+- Shrimp are sensitive to bad water (below 45 %) and 18-28 °C, crayfish like 15-26 °C and moult (the shed shell lies
+  there, the crayfish is soft for a while). **Bettas hunt the young** (now and then an adult shrimp); dense plants and
+  Java moss hide them. Assassin snails eat other snails (nerites rarely), crayfish clean up dead animals.
+- **Dwarf clawed frogs**: a new animal (bucket, fish bag, spawn egg). They paddle along the bottom and swim up to
+  breathe: without air above the water they drown slowly. Slow eaters of larvae, artemia and pellets: with bettas they
+  often miss out, sneak + right-click with food feeds them directly.
+- **Algae** on the inside of the glass in four stages: they grow with light, waste and time, the cleaning crew of snails
+  (nerites best) and shrimp grazes them; three nerites keep a 4x2x2 aquarium clean. The new **algae scraper** cleans a
+  glass face (sneaking: the whole side).
+- **Catching:** the aquarium net catches small animals in open water by biome (rivers, swamps, mangroves, beaches,
+  jungle water, lush caves) into an empty fish bag; a shovel on mud in a swamp now and then finds a trumpet snail; the
+  wandering trader sells crayfish and apple snails, rarely shrimp of a colour line, coloured ramshorns, an assassin
+  snail or a frog. In an aquarium the net catches the animal (or clutch, shed shell) you look at.
+- **Stocking:** 50 snails, 25 shrimp, 12 crayfish or 1 frog count as one fish (config `stocking.*`).
+- Tank menu: a **Small animals** page in the animals tab (every kind with sexes, young, eggs and grade, the algae, the
+  food, the hiding spots; take one out into a fish bag, the best or with Shift the worst), frog details (health, food,
+  air), the stocking in the overview. Jade, The One Probe and WTHIT show the small animals and the algae.
+- Server settings `invertebrates.*`, `frogs.*`, `stocking.*`, `algae.*`, handbook section "Small animals" with seven
+  pages (English and German), JEI information.
+
+### Changed
+- Aquariums are saved as schema 8 (with no small animals and no algae for older worlds). The aquarium net now has a
+  durability (it wears in open water). Living small animals keep an aquarium from being broken, like the bettas.
+
 ## [1.5.0-beta.1] - 2026-11-13
 
 ### Added

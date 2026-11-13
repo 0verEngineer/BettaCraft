@@ -65,7 +65,9 @@ There is no crafting recipe. You find floating plants in the wild and then grow 
 * **Right-click** the surface with an **empty hand** while looking down at it: takes out the plants where you look
   (you get them as items). Where no plant floats the tank menu opens as usual.
 * The <ItemLink id="bettacraft:tank_net" /> takes out the plants where you look from **any angle**, also from the
-  side through the glass; **sneaking** with the net thins the whole aquarium out by half (lily pads stay).
+  side through the glass; **sneaking** with the net thins the whole aquarium out by half (lily pads stay). Aimed at a
+  shrimp, crayfish, snail, clutch or shed shell it takes that out instead, and in open water it
+  [catches small animals](../invertebrates/catching.md).
 * The **Plants** tab of the [tank menu](menu.md): number, cover, light, growth, waste uptake and a **Thin out** button.
 
 <RecipeFor id="bettacraft:tank_net" />

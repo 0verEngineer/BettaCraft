@@ -1069,7 +1069,7 @@
   "gui.bettacraft.critters.sexes": "♀ %s  ♂ %s",
   "gui.bettacraft.critters.hermaphrodite": "%s adult (Zwitter)",
   "gui.bettacraft.critters.young": "%s Jungtiere",
-  "gui.bettacraft.critters.grade": "Güte: Ø %s %% (%s-%s)",
+  "gui.bettacraft.critters.grade": "Güte: Mittel %s %% (%s-%s)",
   "gui.bettacraft.critters.no_breeding": "Vermehren sich nicht im Süßwasser",
   "gui.bettacraft.critters.berried": "%s tragen Eier",
   "gui.bettacraft.critters.gravid": "%s legebereit",

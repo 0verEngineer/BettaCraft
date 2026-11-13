@@ -531,7 +531,7 @@
   "gui.bettacraft.critters.food.hungry": "too little",
   "gui.bettacraft.critters.food.plenty": "plenty",
   "gui.bettacraft.critters.food.short": "short",
-  "gui.bettacraft.critters.grade": "Grade: avg %s%% (%s-%s)",
+  "gui.bettacraft.critters.grade": "Grade: mean %s%% (%s-%s)",
   "gui.bettacraft.critters.gravid": "%s ready to lay",
   "gui.bettacraft.critters.hermaphrodite": "%s adults (hermaphrodites)",
   "gui.bettacraft.critters.hiding": "Hiding spots: %s%%",

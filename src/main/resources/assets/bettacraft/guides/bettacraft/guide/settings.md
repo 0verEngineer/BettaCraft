@@ -39,6 +39,14 @@ navigation:
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE use and storage |
 | `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2) |
+| `invertebrates.maxCrittersPerTank` | 200 | shrimp, crayfish and snails per aquarium |
+| `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | breeding speed (0 = never) |
+| `invertebrates.bettasHuntShrimp` | true | bettas hunt young shrimp and crayfish |
+| `invertebrates.biofilmPerWaterBlock` | 0.03 | food a water block grows on its own |
+| `invertebrates.netCatchChance`, `netCooldownTicks`, `mudSnailChance` | 0.3, 40, 0.08 | catching in open water, snails in mud |
+| `frogs.frogFoodShareWithBettas`, `frogAirMinutes` | 0.4, 2 | frogs: their share of the food, air under water |
+| `stocking.snailsPerFish`, `shrimpPerFish`, `crayfishPerFish`, `frogsPerFish` | 50, 25, 12, 1 | small animals per fish |
+| `algae.algaeGrowthSpeed`, `cleanerStrength` | 0.25, 1 | algae on the glass (0 = none), how much the crew grazes |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 

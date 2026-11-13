@@ -6,6 +6,7 @@ import time
 
 import blocks
 import breeding
+import critters
 import cultures
 import decor
 import decor_icons
@@ -44,6 +45,7 @@ def main() -> int:
     written += equipment.write_all()
     written += floating_plants.write_all()
     written += aquatic_plants.write_all()
+    written += critters.write_all()
     written += cultures.write_all()
     written += gui.write_all()
     written += md.write_generated(GEN, preview.sample_textures())

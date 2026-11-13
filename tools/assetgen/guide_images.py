@@ -95,6 +95,41 @@ def m13(out_en: Path) -> None:
         print("missing", strong, weak)
 
 
+# M14 scene (DevClientSmokeM14, -Psmoketestm14 -PnoTop -PnoWthit): the colony tank, close-ups, the frog, algae before
+# and after (side by side) and the small animals page of the menu (English, German). ``py guide_images.py m14``.
+M14_WORLD = {"critters_tank": ("bettacraft_m14_overview", (230, 300, 1050, 690)),
+             "critters_closeup": ("bettacraft_m14_closeup", (0, 230, 1280, 740)),
+             "critters_snails": ("bettacraft_m14_snails", (60, 80, 1280, 940)),
+             "critters_frog": ("bettacraft_m14_frog", (0, 220, 1150, 900))}
+M14_MENUS = {"menu_critters": ("bettacraft_m14_menu_critters", "bettacraft_m14_menu_critters_de")}
+
+
+def m14(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M14_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    before, after = SHOTS / "bettacraft_m14_algae_before.png", SHOTS / "bettacraft_m14_algae_after.png"
+    if before.exists() and after.exists():
+        a = Image.open(before).convert("RGB").crop((205, 300, 1075, 600))
+        b = Image.open(after).convert("RGB").crop((205, 300, 1075, 600))
+        im = Image.new("RGB", (a.width, a.height * 2 + 8), (24, 24, 24))
+        im.paste(a, (0, 0))
+        im.paste(b, (0, a.height + 8))
+        save(im, out_en / "critters_algae.png")
+    else:
+        print("missing", before, after)
+    for name, shots in M14_MENUS.items():
+        for shot, out in zip(shots, (out_en, out_de)):
+            src = SHOTS / f"{shot}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(MENU_BOX), out / f"{name}.png")
+            else:
+                print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -114,6 +149,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m13"]:
         m13(out_en)
+        return 0
+    if sys.argv[1:] == ["m14"]:
+        m14(out_en, out_de)
         return 0
     for name, box in WORLD.items():
         src = SHOTS / f"guide_{name}.png"
@@ -148,6 +186,7 @@ def main() -> int:
             print("missing", src)
     m12(out_en, out_de)
     m13(out_en)
+    m14(out_en, out_de)
     for kept in ("interior", "hologram"):
         p = out_en / f"{kept}.png"
         if p.exists() and Image.open(p).mode != "P":

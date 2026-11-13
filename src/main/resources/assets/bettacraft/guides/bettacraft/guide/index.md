@@ -20,6 +20,7 @@ from any glass, fill with water, decorate from the inside and use to breed betta
 * [Equipment](equipment.md): heaters, filters, feeder, light and cabinet.
 * [Food](food.md): swamp water, mosquito larvae, pellets and food for fry.
 * [Breeding](breeding.md): bubble nests, eggs, fry and what the parents need.
+* [Small animals](invertebrates.md): shrimp, dwarf crayfish, snails, dwarf clawed frogs and the algae on the glass.
 * [Interior](interior.md): step into a tank and decorate it block by block.
 * [Settings and other mods](settings.md): config options, Jade, JEI and commands.
 
@@ -30,7 +31,7 @@ from any glass, fill with water, decorate from the inside and use to breed betta
 | Comfort temperature | 24 to 30 °C, ideal and for breeding 26 to 28 °C |
 | Food | 1 pellet or 1 portion of larvae feeds up to 4 bettas |
 | Getting sick | 7 days without food or 7 days at a wrong temperature |
-| Stocking | from 2 adults per water block the fish get stressed, at most 6 |
+| Stocking | from 2 adults per water block the fish get stressed, at most 6; 25 shrimp or 50 snails count as one fish |
 | Growing up | about 9 in-game days from egg to adult |
 
 Hold the open-guide key while hovering over a Bettacraft item to jump to its page.

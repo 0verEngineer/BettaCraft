@@ -266,9 +266,9 @@ public final class CritterRenderer {
             // a pink cluster of eggs on the glass: the egg group of the shrimp model, much larger
             ModelPart eggs = group(CritterSpecies.Model.SHRIMP, "eggs");
             if (eggs == null) return;
-            float s = 0.09F;
-            pose.translate(0, 0.012F, 0);
-            pose.scale(s * 2.4F, -s * 1.6F, -s * 2.0F);
+            // about 0.1 blocks wide and 0.12 high on the glass, 0.06 thick
+            pose.translate(0, -0.06F, 0); // the egg group floats above its origin in the model: down onto the glass
+            pose.scale(0.72F, -0.85F, -0.65F);
             vc = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
             boolean was = eggs.visible;
             eggs.visible = true;

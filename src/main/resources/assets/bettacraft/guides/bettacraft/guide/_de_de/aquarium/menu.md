@@ -28,9 +28,17 @@ den [Innenraum](../interior.md).)
 
 Die Liste aller Tiere mit Name, Typ, Geschlecht und Stufe. Zum ausgewählten Fisch: Gesundheits- und Satt-Balken,
 Fortschritt der Stufe, der Genotyp (Schwanzform, Körper, Flossen, Muster; alle neun Loci im Tooltip), die Generation,
-ein Namensfeld und die Knöpfe zum Entnehmen mit Eimer oder Fischtüte.
+ein Namensfeld und die Knöpfe zum Entnehmen mit Eimer oder Fischtüte. Ein Zwergkrallenfrosch zeigt Gesundheit,
+Futter und Luft.
 
 ![Der Tiere-Tab](../images/menu_inhabitants.png)
+
+Der Knopf **Kleintiere** wechselt zu den [Garnelen, Krebsen und Schnecken](../invertebrates.md): jede Sorte (Art und
+Farbe) mit Anzahl, Geschlechtern, Jungtieren, Weibchen mit Eiern und Güte; für das ganze Aquarium der Besatz, die Algen
+am Glas, wie viel die Putzkolonne frisst, das Futter und die Verstecke. **In Tüte** holt das Tier mit der besten Güte in
+eine Fischtüte (Umschalt: das schlechteste), **Gelege weg** nimmt die Gelege der Apfelschnecken vom Glas.
+
+![Die Seite Kleintiere](../images/menu_critters.png)
 
 ## Zucht
 

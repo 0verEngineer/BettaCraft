@@ -110,7 +110,7 @@ final class LangM14 {
         a.accept("gui.bettacraft.critters.sexes", "♀ %s  ♂ %s");
         a.accept("gui.bettacraft.critters.hermaphrodite", "%s adults (hermaphrodites)");
         a.accept("gui.bettacraft.critters.young", "%s young");
-        a.accept("gui.bettacraft.critters.grade", "Grade: avg %s%% (%s-%s)");
+        a.accept("gui.bettacraft.critters.grade", "Grade: mean %s%% (%s-%s)");
         a.accept("gui.bettacraft.critters.no_breeding", "Do not breed in fresh water");
         a.accept("gui.bettacraft.critters.berried", "%s carrying eggs");
         a.accept("gui.bettacraft.critters.gravid", "%s ready to lay");

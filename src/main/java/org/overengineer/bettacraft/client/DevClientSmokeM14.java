@@ -69,10 +69,9 @@ final class DevClientSmokeM14 {
     DevClientSmokeM14() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(60, () -> server(this::arrange));
-        // the colony from the front, slightly from above
-        then(40, () -> server(this::placeFrog));
-        then(60, () -> look(base.getX() + 2.0, base.getY() + 2.2, base.getZ() - 3.0, 0F, 18F));
+        // the colony from the front, slightly from above (the chunks load first, then the animals are put in place)
+        then(20, () -> look(base.getX() + 2.0, base.getY() + 2.2, base.getZ() - 3.0, 0F, 18F));
+        then(80, () -> server(this::arrange));
         then(100, () -> {
             logClient();
             shot("overview");

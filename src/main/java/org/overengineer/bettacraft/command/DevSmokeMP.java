@@ -120,11 +120,12 @@ public final class DevSmokeMP {
             case "state" -> compareState(name, a);
             case "motion" -> checkMotion(name, a);
             case "aqua" -> checkAquatic(name, a);
+            case "critters" -> checkCritters(name, a);
             case "menu" -> check(name + ": tank menu (" + text.substring(5) + ")", "ok".equals(a[1]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
-        reports.put(name + ":" + a[0] + (a.length > 1 && ("state".equals(a[0]) || "aqua".equals(a[0])) ? a[1] : ""), text);
+        reports.put(name + ":" + a[0] + (a.length > 1 && ("state".equals(a[0]) || "aqua".equals(a[0]) || "critters".equals(a[0])) ? a[1] : ""), text);
     }
 
     /** {@code state <phase> <water> <plants> <idsum> <cx> <cz> <fish>}: what the client sees = the server state now. */
@@ -165,6 +166,59 @@ public final class DevSmokeMP {
         if ("2".equals(a[1])) {
             int before = Integer.parseInt(reports.getOrDefault(name + ":aqua1", "aqua 1 0").split(" ")[2]);
             check("aqua " + name + ": the plants grew in the miniature: " + before + " -> " + n + " blocks", n > before + 20);
+        }
+    }
+
+    /** M14: server positions of the small animals when the clients first looked (id -> x, y, z). */
+    private static final java.util.Map<Integer, double[]> critterStart = new java.util.HashMap<>();
+    private static final java.util.Map<String, double[]> clientCentre = new java.util.HashMap<>();
+
+    /**
+     * M14 {@code critters <phase> <count> <idsum> <cx> <cy> <cz> <algae faces>}: the client shows the same shrimp and
+     * snails as the server (count, ids, where they are) and the same algae; in phase 2 they have walked, and both
+     * clients agree with each other.
+     */
+    private static void checkCritters(String name, String[] a) {
+        TankData t = main().getTank();
+        int n = Integer.parseInt(a[2]);
+        long ids = Long.parseLong(a[3]);
+        double cx = Double.parseDouble(a[4]), cy = Double.parseDouble(a[5]), cz = Double.parseDouble(a[6]);
+        int algae = Integer.parseInt(a[7]);
+        long sids = 0;
+        double sx = 0, sy = 0, sz = 0;
+        for (var k : t.critters()) {
+            sids += k.id;
+            sx += k.x;
+            sy += k.y;
+            sz += k.z;
+        }
+        int sn = t.critters().size();
+        if (sn > 0) {
+            sx /= sn;
+            sy /= sn;
+            sz /= sn;
+        }
+        int salgae = 0;
+        for (var e : t.algae().values()) for (float v : e) if (org.overengineer.bettacraft.tank.algae.AlgaeSim.stage(v) > 0) salgae++;
+        String phase = "critters " + a[1] + " " + name;
+        check(phase + ": " + n + " small animals (server " + sn + "), ids " + ids + " (server " + sids + ")", n == sn && ids == sids && n > 0);
+        check(phase + ": where they are " + f(cx) + "/" + f(cy) + "/" + f(cz) + " (server " + f(sx) + "/" + f(sy) + "/" + f(sz) + ")",
+                Math.abs(cx - sx) + Math.abs(cy - sy) + Math.abs(cz - sz) < 0.25);
+        check(phase + ": algae on " + algae + " glass faces (server " + salgae + ")", algae == salgae && algae > 0);
+        clientCentre.put(a[1] + name, new double[]{cx, cy, cz});
+        double[] other = clientCentre.get(a[1] + (name.equals(P1) ? P2 : P1));
+        if (other != null) {
+            check(phase + ": both clients see them in the same place", Math.abs(other[0] - cx) + Math.abs(other[1] - cy) + Math.abs(other[2] - cz) < 0.2);
+        }
+        if ("1".equals(a[1])) {
+            if (critterStart.isEmpty()) for (var k : t.critters()) critterStart.put(k.id, new double[]{k.x, k.y, k.z});
+        } else {
+            int moved = 0;
+            for (var k : t.critters()) {
+                double[] s0 = critterStart.get(k.id);
+                if (s0 != null && Math.abs(s0[0] - k.x) + Math.abs(s0[1] - k.y) + Math.abs(s0[2] - k.z) > 0.02) moved++;
+            }
+            check(phase + ": " + moved + " of " + sn + " animals walked since the first look", moved >= Math.max(1, sn / 3));
         }
     }
 
@@ -404,6 +458,37 @@ public final class DevSmokeMP {
         }, () -> stepTicks >= 60, 100));
         steps.add(new Step("grown plants seen", () -> say("aqua", "all", "2," + tankArg()),
                 () -> reports.containsKey(P1 + ":aqua2") && reports.containsKey(P2 + ":aqua2"), 20 * 30));
+        // M14: shrimp, snails and algae in the stage tank: both clients see the same animals in the same places, walking
+        steps.add(new Step("small animals", () -> {
+            TankBlockEntity c = main();
+            TankData t = c.getTank();
+            t.critters().clear();
+            t.critterObjects().clear();
+            ServerLevel lv = server.overworld();
+            for (int i = 0; i < 6; i++) {
+                org.overengineer.bettacraft.critters.TankCritters.add(lv, c, org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA,
+                        org.overengineer.bettacraft.critters.CritterGenes.pure(i % 3, 0.5F), i % 2 == 0, 5);
+            }
+            org.overengineer.bettacraft.critters.TankCritters.add(lv, c, org.overengineer.bettacraft.critters.CritterSpecies.ZEBRA_NERITE,
+                    org.overengineer.bettacraft.critters.CritterGenes.WILD, true, 5);
+            org.overengineer.bettacraft.critters.TankCritters.add(lv, c, org.overengineer.bettacraft.critters.CritterSpecies.APPLE_SNAIL,
+                    org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.4F), true, 6);
+            org.overengineer.bettacraft.critters.TankCritters.add(lv, c, org.overengineer.bettacraft.critters.CritterSpecies.DWARF_CRAYFISH,
+                    org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.5F), false, 6);
+            int i = 0;
+            for (var face : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(t)) {
+                if (i++ % 2 == 0) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(t.algae(), face.pos(), face.dir(), 0.7F);
+            }
+            org.overengineer.bettacraft.tank.algae.TankAlgae.syncIfChanged(c);
+            c.markTankChanged();
+            org.overengineer.bettacraft.critters.TankCritters.sync(lv, c);
+            critterStart.clear();
+        }, () -> stepTicks >= 60, 100));
+        steps.add(new Step("animals seen", () -> say("critters", "all", "1," + tankArg()),
+                () -> reports.containsKey(P1 + ":critters1") && reports.containsKey(P2 + ":critters1"), 20 * 30));
+        steps.add(new Step("animals walk", () -> { }, () -> stepTicks >= 160, 200));
+        steps.add(new Step("animals seen again", () -> say("critters", "all", "2," + tankArg()),
+                () -> reports.containsKey(P1 + ":critters2") && reports.containsKey(P2 + ":critters2"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

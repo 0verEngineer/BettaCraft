@@ -67,7 +67,8 @@ Es gibt kein Rezept. Schwimmpflanzen findest du in der Natur und ziehst sie dann
   schaust (du bekommst sie als Items). Wo keine Pflanze schwimmt, öffnet sich wie gewohnt das Aquarium-Menü.
 * Der <ItemLink id="bettacraft:tank_net" /> nimmt die Pflanzen heraus, auf die du schaust – aus **jedem Winkel**,
   auch von der Seite durch das Glas; **Schleichen** mit dem Kescher dünnt das ganze Aquarium um die Hälfte aus
-  (Seerosenblätter bleiben).
+  (Seerosenblätter bleiben). Auf eine Garnele, einen Krebs, eine Schnecke, ein Gelege oder einen abgelegten Panzer
+  gezielt, holt er diese heraus, und in offenem Wasser [fängt er Kleintiere](../invertebrates/catching.md).
 * Der Tab **Pflanzen** im [Aquarium-Menü](menu.md): Anzahl, Bedeckung, Licht, Wachstum, Abfallaufnahme und ein Knopf
   **Ausdünnen**.
 

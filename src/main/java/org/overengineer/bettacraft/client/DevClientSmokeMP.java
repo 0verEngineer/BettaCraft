@@ -118,6 +118,12 @@ final class DevClientSmokeMP {
                 tank = pos(s[1]);
                 then(40, () -> sendState(s[0]));
             }
+            case "critters" -> {
+                // M14: the shrimp and snails of the tank on this client (the latest synced positions) and the algae
+                String[] s = args.split(",", 2);
+                tank = pos(s[1]);
+                then(30, () -> sendCritters(s[0]));
+            }
             case "aqua" -> {
                 // M13: how many aquarium plant blocks the miniature of the tank shows on this client
                 String[] s = args.split(",", 2);
@@ -196,6 +202,33 @@ final class DevClientSmokeMP {
         int fish = mc.level.getEntitiesOfClass(BettaEntity.class, box).size();
         send(String.format(Locale.ROOT, "state %s %d %d %d %.4f %.4f %d", phase, t.waterMb(), n, ids, cx, cz, fish));
         shot("state" + phase);
+    }
+
+    /** M14: {@code critters <phase> <count> <idsum> <cx> <cy> <cz> <algae faces>} as this client has them. */
+    private static void sendCritters(String phase) {
+        TankData t = clientTank();
+        if (t == null) {
+            send("error critters " + phase + ": no tank on the client at " + tank);
+            return;
+        }
+        long ids = 0;
+        double x = 0, y = 0, z = 0;
+        for (var k : t.critters()) {
+            ids += k.id;
+            x += k.x;
+            y += k.y;
+            z += k.z;
+        }
+        int n = t.critters().size();
+        if (n > 0) {
+            x /= n;
+            y /= n;
+            z /= n;
+        }
+        int algae = 0;
+        for (var e : t.algae().values()) for (float v : e) if (v > 0) algae++;
+        send(String.format(Locale.ROOT, "critters %s %d %d %.4f %.4f %.4f %d", phase, n, ids, x, y, z, algae));
+        shot("critters" + phase);
     }
 
     /** M13: {@code aqua <phase> <plant blocks> <version>}: aquarium plant blocks in this client's copy of the tank interior. */
