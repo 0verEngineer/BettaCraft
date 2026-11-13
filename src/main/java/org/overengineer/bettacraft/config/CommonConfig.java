@@ -22,6 +22,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_BREAK_PROTECTION;
     public static final ModConfigSpec.BooleanValue FEATURE_CLIP_FEEDER;
     public static final ModConfigSpec.BooleanValue FEATURE_LIVEBEARER_GENETICS;
+    public static final ModConfigSpec.BooleanValue FEATURE_STONE_CABINETS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -60,6 +61,10 @@ public final class CommonConfig {
         FEATURE_LIVEBEARER_GENETICS = b.comment("Guppy and endler genetics: every guppy and endler has its own genes (tail shape, body and tail colour, "
                 + "patterns on the X and Y chromosome) that are inherited at birth, named strains, endler x guppy hybrids "
                 + "(off: the old fixed varieties; the genes are kept)").define("livebearerGenetics", true);
+        // M21.7
+        FEATURE_STONE_CABINETS = b.comment("Stone cabinets: the aquarium cabinet can also be crafted from stone (also of other mods) with the slabs "
+                + "of the same stone; it looks like that stone and is mined with a pickaxe (off: no new ones can be crafted; placed ones stay)")
+                .define("stoneCabinets", true);
         b.pop();
         SPEC = b.build();
     }
@@ -107,6 +112,10 @@ public final class CommonConfig {
 
     public static boolean livebearerGenetics() {
         return getOr(FEATURE_LIVEBEARER_GENETICS, true);
+    }
+
+    public static boolean stoneCabinets() {
+        return getOr(FEATURE_STONE_CABINETS, true);
     }
 
     private CommonConfig() {}

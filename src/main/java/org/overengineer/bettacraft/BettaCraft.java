@@ -40,6 +40,9 @@ public final class BettaCraft {
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         modBus.addListener(ModNetwork::register);
         modBus.addListener(BettaCraft::onCapabilities);
+        // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
+                org.overengineer.bettacraft.equipment.CabinetStones.clear());
         // Better Fish Tanks (M7): release our bags and betta buckets into its tanks (reflection, only with the mod)
         if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.MOD_ID)) {
             org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.register();

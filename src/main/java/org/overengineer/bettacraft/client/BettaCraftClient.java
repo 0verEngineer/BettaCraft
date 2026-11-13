@@ -78,6 +78,7 @@ public final class BettaCraftClient {
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RecipesUpdatedEvent e) -> org.overengineer.bettacraft.equipment.CabinetStones.clear());
         // M21: plant prototype (Rotala, Vallisneria, Anubias with real leaves in the interior)
         modBus.addListener(org.overengineer.bettacraft.client.interior.PlantMeshModel::onModifyBakingResult);
         NeoForge.EVENT_BUS.addListener(org.overengineer.bettacraft.client.interior.PlantMeshRenderer::onRenderStage);

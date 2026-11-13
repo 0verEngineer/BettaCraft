@@ -58,6 +58,14 @@ public final class ModCreativeTabs {
                     if (!"minecraft".equals(id.getNamespace())) continue;
                     out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), id));
                 }
+                // M21.7: a selection of stone cabinets (every stone with its own slabs works, see the stone cabinet recipe)
+                if (org.overengineer.bettacraft.config.CommonConfig.stoneCabinets()) {
+                    for (var stone : org.overengineer.bettacraft.equipment.CabinetStones.SELECTION) {
+                        if (!(stone instanceof net.minecraft.world.item.BlockItem bi)) continue;
+                        out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()),
+                                BuiltInRegistries.BLOCK.getKey(bi.getBlock())));
+                    }
+                }
                 out.accept(ModItems.FEEDER.get());
                 out.accept(ModItems.CLIP_FEEDER.get());
                 out.accept(ModItems.TANK_LIGHT.get());

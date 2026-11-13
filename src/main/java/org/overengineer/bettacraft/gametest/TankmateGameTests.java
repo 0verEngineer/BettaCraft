@@ -341,7 +341,8 @@ public final class TankmateGameTests {
             add(h, c, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "red"), false, LifeStage.ADULT);
         }
         for (TankBlockEntity c : List.of(open, boxed)) {
-            for (int i = 0; i < 20 && mates(h, c, null).stream().noneMatch(TankmateEntity::isGravid); i++) days(h, c, 0.25, 0.25, 25F);
+            // M21.7: up to 15 days (was 5: about 2 % of the runs had no pregnancy by chance)
+            for (int i = 0; i < 60 && mates(h, c, null).stream().noneMatch(TankmateEntity::isGravid); i++) days(h, c, 0.25, 0.25, 25F);
             h.assertTrue(mates(h, c, null).stream().anyMatch(TankmateEntity::isGravid), "a pregnant female");
             days(h, c, TankmateBreeding.gestationDays() + 0.25, 0.25, 25F);
             h.assertTrue(logged(c.getTank(), c == open ? "log.bettacraft.tm.born" : "log.bettacraft.tm.born_box"), "she gave birth");

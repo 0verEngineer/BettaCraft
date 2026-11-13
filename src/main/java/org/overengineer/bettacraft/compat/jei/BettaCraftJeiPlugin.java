@@ -51,6 +51,12 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         return BettaCraft.id("jei");
     }
 
+    /** M21.7: the stone cabinet recipe with matching stones, slabs and cabinets. */
+    @Override
+    public void registerVanillaCategoryExtensions(mezz.jei.api.registration.IVanillaCategoryExtensionRegistration registration) {
+        registration.getCraftingCategory().addExtension(org.overengineer.bettacraft.equipment.StoneCabinetRecipe.class, new StoneCabinetJei());
+    }
+
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         for (String path : ItemHints.ITEMS) {

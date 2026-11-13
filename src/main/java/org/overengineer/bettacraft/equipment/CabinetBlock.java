@@ -33,6 +33,10 @@ import net.minecraft.world.phys.HitResult;
  * is retextured with them on the client). Neighbouring cabinets facing the same way join into one counter
  * ({@link #LEFT} / {@link #RIGHT} as seen from the front). One slot for an external filter (with two heaters), nine
  * storage slots; the feeder of the tank above takes food from it.
+ * <p>
+ * M21.7: a cabinet of stone ({@link CabinetStones#isStoneMaterial}) is mined like its stone: pickaxe, hardness, blast
+ * resistance, sound and map colour come from the stone block; without the right tool it drops nothing (its contents
+ * still drop). Wooden cabinets keep the properties of this block.
  */
 public class CabinetBlock extends BaseEntityBlock {
     public static final MapCodec<CabinetBlock> CODEC = simpleCodec(CabinetBlock::new);
@@ -120,6 +124,38 @@ public class CabinetBlock extends BaseEntityBlock {
             level.updateNeighbourForOutputSignal(pos, this);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    // ------------------------------------------------------------------ M21.7: stone cabinets behave like their stone
+
+    @Override
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        BlockState stone = CabinetStones.stoneOf(level, pos);
+        return stone != null ? stone.getDestroyProgress(player, level, pos) : super.getDestroyProgress(state, player, level, pos);
+    }
+
+    @Override
+    public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
+        BlockState stone = CabinetStones.stoneOf(level, pos);
+        return stone != null ? stone.canHarvestBlock(level, pos, player) : super.canHarvestBlock(state, level, pos, player);
+    }
+
+    @Override
+    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.level.Explosion explosion) {
+        BlockState stone = CabinetStones.stoneOf(level, pos);
+        return stone != null ? stone.getExplosionResistance(level, pos, explosion) : super.getExplosionResistance(state, level, pos, explosion);
+    }
+
+    @Override
+    public net.minecraft.world.level.block.SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable net.minecraft.world.entity.Entity entity) {
+        BlockState stone = CabinetStones.stoneOf(level, pos);
+        return stone != null ? stone.getSoundType(level, pos, entity) : super.getSoundType(state, level, pos, entity);
+    }
+
+    @Override
+    public net.minecraft.world.level.material.MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.level.material.MapColor defaultColor) {
+        BlockState stone = CabinetStones.stoneOf(level, pos);
+        return stone != null ? stone.getMapColor(level, pos) : super.getMapColor(state, level, pos, defaultColor);
     }
 
     @Override

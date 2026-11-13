@@ -73,5 +73,10 @@ public final class ModTags {
     /** M13: all aquarium plant items. */
     public static final TagKey<Item> AQUATIC_PLANT_ITEMS = TagKey.create(Registries.ITEM, BettaCraft.id("aquatic_plants"));
 
+    /** M21.7: stone blocks a cabinet can be made of (five of them, three of their slabs and a chest); modpacks can add to it. */
+    public static final TagKey<Item> CABINET_STONES = TagKey.create(Registries.ITEM, BettaCraft.id("cabinet_stones"));
+    /** M21.7: never a cabinet stone (metal and storage blocks, ores, glass, purpur, prismarine, concrete, mud bricks ...). */
+    public static final TagKey<Item> CABINET_EXCLUDED = TagKey.create(Registries.ITEM, BettaCraft.id("cabinet_excluded"));
+
     private ModTags() {}
 }

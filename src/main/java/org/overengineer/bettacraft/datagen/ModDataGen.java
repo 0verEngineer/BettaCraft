@@ -808,6 +808,16 @@ public final class ModDataGen {
                     .define('C', Tags.Items.CHESTS_WOODEN)
                     .unlockedBy("has_planks", has(net.minecraft.tags.ItemTags.PLANKS))
                     .save(as(output, org.overengineer.bettacraft.equipment.CabinetRecipe::of), BettaCraft.id("cabinet"));
+            // M21.7: the cabinet of stone; the ingredient lists hold the vanilla stones and their slabs in the same order
+            // (JEI, the recipe book and the handbook cycle through matching pairs), the recipe itself checks any stone
+            var stones = org.overengineer.bettacraft.equipment.CabinetStones.VANILLA;
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.CABINET.get())
+                    .pattern("SSS").pattern("PCP").pattern("PPP")
+                    .define('S', net.minecraft.world.item.crafting.Ingredient.of(stones.stream().map(p -> p.slab()).toArray(net.minecraft.world.level.ItemLike[]::new)))
+                    .define('P', net.minecraft.world.item.crafting.Ingredient.of(stones.stream().map(p -> p.stone()).toArray(net.minecraft.world.level.ItemLike[]::new)))
+                    .define('C', Tags.Items.CHESTS_WOODEN)
+                    .unlockedBy("has_cobblestone", has(Items.COBBLESTONE))
+                    .save(as(output, org.overengineer.bettacraft.equipment.StoneCabinetRecipe::of), BettaCraft.id("stone_cabinet"));
         }
 
         /** Turns the ShapedRecipe produced by the builder into one of our ShapedRecipe subclasses. */
@@ -1137,6 +1147,27 @@ public final class ModDataGen {
             tag(ModTags.BOTTOM_FOOD).add(ModItems.ALGAE_WAFER.get());
             tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
+            // M21.7: stones of the stone cabinet (modpacks add to it) and what never counts as one
+            tag(ModTags.CABINET_STONES).addTag(Tags.Items.STONES).addTag(Tags.Items.COBBLESTONES).addTag(net.minecraft.tags.ItemTags.STONE_BRICKS)
+                    .addTag(Tags.Items.SANDSTONE_BLOCKS).addTag(net.minecraft.tags.ItemTags.TERRACOTTA)
+                    .add(Items.SMOOTH_STONE, Items.POLISHED_GRANITE, Items.POLISHED_DIORITE, Items.POLISHED_ANDESITE, Items.COBBLED_DEEPSLATE,
+                            Items.POLISHED_DEEPSLATE, Items.DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES,
+                            Items.CRACKED_DEEPSLATE_TILES, Items.CHISELED_DEEPSLATE, Items.TUFF, Items.POLISHED_TUFF, Items.TUFF_BRICKS, Items.CHISELED_TUFF,
+                            Items.CHISELED_TUFF_BRICKS, Items.CALCITE, Items.BLACKSTONE, Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_BRICKS,
+                            Items.CRACKED_POLISHED_BLACKSTONE_BRICKS, Items.CHISELED_POLISHED_BLACKSTONE, Items.BASALT, Items.POLISHED_BASALT,
+                            Items.SMOOTH_BASALT, Items.DRIPSTONE_BLOCK, Items.BRICKS, Items.NETHER_BRICKS, Items.CRACKED_NETHER_BRICKS,
+                            Items.CHISELED_NETHER_BRICKS, Items.RED_NETHER_BRICKS, Items.QUARTZ_BLOCK, Items.QUARTZ_BRICKS, Items.SMOOTH_QUARTZ,
+                            Items.CHISELED_QUARTZ_BLOCK, Items.QUARTZ_PILLAR);
+            tag(ModTags.CABINET_EXCLUDED).addTag(Tags.Items.STORAGE_BLOCKS).addTag(Tags.Items.ORES).addTag(Tags.Items.GLASS_BLOCKS)
+                    .addTag(Tags.Items.CONCRETES).addTag(Tags.Items.OBSIDIANS).addTag(Tags.Items.END_STONES).addTag(Tags.Items.GLAZED_TERRACOTTAS)
+                    .add(Items.PURPUR_BLOCK, Items.PURPUR_PILLAR, Items.END_STONE_BRICKS, Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE,
+                            Items.MUD_BRICKS, Items.PACKED_MUD, Items.COPPER_BLOCK, Items.EXPOSED_COPPER, Items.WEATHERED_COPPER, Items.OXIDIZED_COPPER,
+                            Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.WEATHERED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WAXED_COPPER_BLOCK,
+                            Items.WAXED_EXPOSED_COPPER, Items.WAXED_WEATHERED_COPPER, Items.WAXED_OXIDIZED_COPPER, Items.WAXED_CUT_COPPER,
+                            Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.CHISELED_COPPER,
+                            Items.EXPOSED_CHISELED_COPPER, Items.WEATHERED_CHISELED_COPPER, Items.OXIDIZED_CHISELED_COPPER, Items.WAXED_CHISELED_COPPER,
+                            Items.WAXED_EXPOSED_CHISELED_COPPER, Items.WAXED_WEATHERED_CHISELED_COPPER, Items.WAXED_OXIDIZED_CHISELED_COPPER,
+                            Items.MAGMA_BLOCK, Items.GILDED_BLACKSTONE, Items.REINFORCED_DEEPSLATE);
             for (var b : ModItems.TANKMATE_BUCKETS.values()) tag(ModTags.ENTITY_WATER_BUCKETS).add(b.get());
             var aq = tag(ModTags.AQUATIC_PLANT_ITEMS);
             for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());

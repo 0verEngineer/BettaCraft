@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.registry.ModDataComponents;
 
-/** Cabinet item: remembers its planks ({@code bettacraft:wood}) and is named after them ("Oak Cabinet"). */
+/** Cabinet item: remembers its planks or stone ({@code bettacraft:wood}) and is named after them ("Oak Cabinet"). */
 public class CabinetBlockItem extends BlockItem {
     public CabinetBlockItem(Block block, Properties properties) {
         super(block, properties);
@@ -46,6 +46,8 @@ public class CabinetBlockItem extends BlockItem {
     public static Component woodName(ResourceLocation planks) {
         Block b = BuiltInRegistries.BLOCK.get(planks);
         if (b == Blocks.AIR) b = Blocks.OAK_PLANKS;
+        // M21.7: a stone cabinet carries the name of its stone ("Stone Bricks", "Steinziegel")
+        if (CabinetStones.isStoneMaterial(b)) return Component.translatable(b.getDescriptionId());
         ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
         String base = id.getPath().endsWith("_planks") ? id.getPath().substring(0, id.getPath().length() - "_planks".length()) : id.getPath();
         String full = net.minecraft.locale.Language.getInstance().getOrDefault(b.getDescriptionId());

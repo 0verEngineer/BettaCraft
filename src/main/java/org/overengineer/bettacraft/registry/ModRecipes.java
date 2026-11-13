@@ -21,6 +21,10 @@ public final class ModRecipes {
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.CabinetRecipe>> CABINET = SERIALIZERS.register("cabinet",
             org.overengineer.bettacraft.equipment.CabinetRecipe.Serializer::new);
 
+    /** M21.7: the cabinet of any stone (with the slabs of the same stone). */
+    public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.StoneCabinetRecipe>> STONE_CABINET = SERIALIZERS.register("stone_cabinet",
+            org.overengineer.bettacraft.equipment.StoneCabinetRecipe.Serializer::new);
+
     public static void register(IEventBus bus) {
         SERIALIZERS.register(bus);
     }

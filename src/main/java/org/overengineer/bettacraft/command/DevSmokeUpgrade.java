@@ -180,7 +180,8 @@ public final class DevSmokeUpgrade {
                 }
             }
             if (!haveA.isEmpty()) problems.add(where + ": new animals " + haveA.keySet());
-            if (!want.get("critters").equals(have.get("critters"))) problems.add(where + ": small animals " + want.get("critters") + " -> " + have.get("critters"));
+            String lostOrNew = critterDiff(want.getAsJsonArray("critters"), have.getAsJsonArray("critters"));
+            if (lostOrNew != null) problems.add(where + ": small animals " + lostOrNew);
             critters += want.getAsJsonArray("critters").size();
             if (want.has("interior") && !want.get("interior").equals(have.get("interior"))) {
                 problems.add(where + ": interior " + diff(want.getAsJsonObject("interior"), have.getAsJsonObject("interior")));
@@ -201,6 +202,32 @@ public final class DevSmokeUpgrade {
                 STAGE, expected.getAsJsonArray("tanks").size(), animals, critters, equipment, items, problems.size());
         LOGGER.info("[smoketest] upgrade stage {}: {} guppies and endlers converted from their old variety", STAGE, converted);
         if (STAGE == 1 && converted < 16) problems.add("only " + converted + " old guppies and endlers converted (the reference has every old variety)");
+    }
+
+    /**
+     * M21.7: every small animal of the reference must still be there (same species, variety, sex and genes); new ones
+     * are fine if they are of a species that already lived in the tank (the snails keep breeding while the world loads,
+     * a predatory snail can hatch in the 40 ticks). Null if that holds, otherwise what is missing or new.
+     */
+    private static String critterDiff(JsonArray want, JsonArray have) {
+        List<String> left = new ArrayList<>();
+        if (have != null) for (JsonElement e : have) left.add(e.getAsString());
+        List<String> missing = new ArrayList<>();
+        Set<String> species = new java.util.HashSet<>();
+        for (JsonElement e : want) {
+            String k = e.getAsString();
+            species.add(k.substring(0, k.indexOf('|') < 0 ? k.length() : k.indexOf('|')));
+            if (!left.remove(k)) missing.add(k);
+        }
+        List<String> foreign = new ArrayList<>();
+        int born = 0;
+        for (String k : left) {
+            if (species.contains(k.substring(0, k.indexOf('|') < 0 ? k.length() : k.indexOf('|')))) born++;
+            else foreign.add(k);
+        }
+        if (born > 0) LOGGER.info("[smoketest] upgrade: {} small animal(s) born while loading (allowed)", born);
+        if (missing.isEmpty() && foreign.isEmpty()) return null;
+        return "missing " + missing + ", new of another species " + foreign;
     }
 
     private static String diff(JsonObject a, JsonObject b) {
