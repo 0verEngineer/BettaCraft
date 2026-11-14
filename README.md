@@ -95,7 +95,9 @@ block.
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting), a lock for the owner and a break protection
   that stops everyone (also the owner, creative, explosions and pistons) from breaking the aquarium.
-- **Handbook and progression:** 73 handbook pages in English and German (with GuideME) and 29 advancements.
+- **Handbook and progression:** 149 handbook pages in English and German (with GuideME): chapters and sub-chapters that
+  fold open, a page for every animal, plant, coral and device with where to get it (generated from the game data), and
+  31 advancements (listed on the page Progress).
 - **Languages:** English and German.
 
 ## Requirements

@@ -4,6 +4,41 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.14.3-beta.1] - 2026-11-14
+
+The handbook is complete: chapters and sub-chapters that fold open, a page for every animal, plant, coral and device,
+and where to get each of them, written from the game's own data.
+
+### Added
+- **Navigation at any depth**: the handbook's navigation shows chapters, sub-chapters and pages (GuideME itself only
+  showed two levels, so most pages were only reachable through links or the item key). Every row with sub-pages folds
+  open and closed; when a page opens, the chapters above it open and the navigation scrolls to it.
+- **New structure** with twelve chapters: First steps, Aquarium, Equipment (with tools and containers), Bettas,
+  Tankmates (tetras, rasboras, corydoras, plecos, loaches, livebearers as sub-chapters), Small animals (snails as a
+  sub-chapter), Reef tanks (technique, corals, reef fish, reef invertebrates, seahorses), **Plants** (new chapter:
+  epiphytes and moss, rosettes and bulbs, stem plants, runners and carpets, floating plants, care and cuttings), Food and
+  live food, Interior and decoration, **Progress** (all advancements), Settings and other mods.
+- **A page for every species**: all 28 tankmates and reef fish, the 16 small animals, the dwarf clawed frog, the 17
+  aquarium plants, the 8 corals and the 4 floating plants, each with a picture, real name and origin, a profile (values
+  from the game: temperature, water, shoal, stocking, breeding, light, flow, calcium, growth, cuttings), care notes and
+  **Obtaining**: every way to get it with place and chance (aquarium net per biome, fishing, swamp water bottle, shears,
+  shovel, block drops, spawns, wandering trader with count and price, breeding, cuttings, recipes).
+- **Own pages for the devices and tools**: tank lid, aquarium net, fish bag and buckets, algae scraper, mirror stick,
+  breeding box, protein skimmer, flow pump, reef rock and live rock, larva tub, artemia hatchery; every item and block
+  opens its page with the guide key in JEI or EMI.
+- **"Where to find what"**: one page with every catch of the net per biome, the fishing finds, the other finds and every
+  offer of the wandering trader.
+- Overview tables on every group page (species with their key values, linked).
+
+### Changed
+- The "Obtaining" sections, profiles, species tables, "Where to find what" and the advancements list are **generated
+  from the game data** (`gradlew updateGuide`); a test fails when the book and the game differ. The fishing tables, the
+  coral frags of the net and every wandering trader offer now live in data tables that the game and the handbook share
+  (behaviour unchanged).
+- The German handbook shows German pages after a language switch in the dev smoke test (the switch now reloads the
+  resources like the language screen does).
+- Settings page: the floating plant and aquarium plant options are listed.
+
 ## [1.14.2-beta.1] - 2026-11-14
 
 A new look for every aquarium plant and coral, swaying water plants in the miniature, and every container empties
