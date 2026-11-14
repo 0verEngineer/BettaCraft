@@ -86,6 +86,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM217 m217;
     private static DevClientSmokeM218 m218;
     private static DevClientSmokeM221 m221;
+    private static DevClientSmokeM222 m222;
+    /** -Psmoketestm22_2: only the M22.2 scene (species gallery for the handbook, the handbook with its navigation en + de). */
+    private static final boolean M22_2_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_2only");
     /** -Psmoketestm22_1: only the M22.1 scene (every plant and coral with its shape, swaying water plants, emptying containers). */
     private static final boolean M22_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_1only");
     /** -Psmoketestm21_8: only the M21.8 scene (seahorses, cyst stacks, clear glass icon). */
@@ -156,6 +159,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M22_2_ONLY) {
+                if (ticks == 60) m222 = new DevClientSmokeM222();
+                if (m222 != null && m222.tick()) {
+                    m222 = null;
+                    LOGGER.info("[smoketest] client world test finished (M22.2 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M22_1_ONLY) {
                 if (ticks == 60) m221 = new DevClientSmokeM221();
                 if (m221 != null && m221.tick()) {
@@ -552,6 +564,10 @@ final class DevClientSmokeTest {
                     }
                     if (m221 != null && m221.tick()) {
                         m221 = null;
+                        m222 = new DevClientSmokeM222(); // M22.2: species gallery and the handbook en + de
+                    }
+                    if (m222 != null && m222.tick()) {
+                        m222 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }
