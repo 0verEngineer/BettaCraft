@@ -529,6 +529,27 @@ def m26b(out_en: Path, out_de: Path) -> None:
             print("missing", src)
 
 
+# M27 part b (DevClientSmokeM27, -Psmoketestm27): the dashboard on the 3 x 2 wall (en, de) and the editor
+M27_DASH = ("bettacraft_m27_dashboard", "bettacraft_m27_dashboard_de", (380, 240, 900, 580))
+M27_EDITOR = ("bettacraft_m27_editor", (0, 0, 1280, 960))
+
+
+def m27(out_en: Path, out_de: Path) -> None:
+    en, de, box = M27_DASH
+    for shot, out in ((en, out_en), (de, out_de)):
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out / "monitor_dashboard.png")
+        else:
+            print("missing", src)
+    shot, box = M27_EDITOR
+    src = SHOTS / f"{shot}.png"
+    if src.exists():
+        save(Image.open(src).convert("RGB").crop(box), out_en / "monitor_editor.png")
+    else:
+        print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -543,6 +564,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m27"]:
+        m27(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m26"]:
         m26(out_en, out_de)
         return 0
