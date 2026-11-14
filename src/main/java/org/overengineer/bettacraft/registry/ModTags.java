@@ -50,6 +50,27 @@ public final class ModTags {
     /** Biomes with wild bettas; their water gives swamp water bottles. Contains {@code #c:is_swamp}. */
     public static final TagKey<Biome> BETTA_SPAWN_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("betta_spawn_biomes"));
 
+    // M25.1: the waters of the wild animals, the net and fishing by biome (see world/BiomeWaters); vanilla biomes, the
+    // common tags and the biomes of known biome mods (optional entries), for modpacks to extend in one place
+    /** Coral reefs: the reef fish, the reef net catches. Also every biome in both {@code #c:is_ocean} and {@code #c:is_hot}. */
+    public static final TagKey<Biome> WARM_OCEAN_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("warm_ocean_waters"));
+    /** Seahorses and the lukewarm ocean animals. */
+    public static final TagKey<Biome> LUKEWARM_OCEAN_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("lukewarm_ocean_waters"));
+    /** Nerites, racer nerites and the mangrove plants. Checked before the swamps. */
+    public static final TagKey<Biome> MANGROVE_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("mangrove_waters"));
+    /** Trumpet snails and ramshorns of the lush caves. Also every biome in both {@code #c:is_lush} and {@code #c:is_cave}. */
+    public static final TagKey<Biome> LUSH_CAVE_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("lush_cave_waters"));
+    /** Swamps ({@code #c:is_swamp}). */
+    public static final TagKey<Biome> SWAMP_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("swamp_waters"));
+    /** Rivers ({@code #minecraft:is_river}). */
+    public static final TagKey<Biome> RIVER_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("river_waters"));
+    /** Beaches, brackish water ({@code #minecraft:is_beach}). */
+    public static final TagKey<Biome> BEACH_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("beach_waters"));
+    /** Jungle water ({@code #minecraft:is_jungle}). */
+    public static final TagKey<Biome> JUNGLE_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("jungle_waters"));
+    /** The wild corals grow here (world generation, new chunks). Contains {@code #bettacraft:warm_ocean_waters}. */
+    public static final TagKey<Biome> CORAL_REEF_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("coral_reef_biomes"));
+
     /** Water in these biomes gives salt water bottles (oceans). */
     public static final TagKey<Biome> SALT_WATER_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("salt_water_biomes"));
     /** Mining these blocks may drop artemia cysts. */

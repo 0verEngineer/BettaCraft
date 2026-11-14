@@ -16,6 +16,18 @@ public final class Compat {
     public static final String SHINY = "shiny", DEEPER_DARKER = "deeperdarker", CATACLYSM = "cataclysm", CRITTERS = "crittersandcompanions",
             LIVING_THINGS = "livingthings", SUSHI = "sushigocrafting", ALEXS_CAVES = "alexscaves";
 
+    /**
+     * M25.1: biomes of biome mods in our water tags where their own tags don't already say it (rivers, beaches, swamps
+     * and jungles mostly come through the common tags). Read from the jars: Regions Unexplored 0.6.3 and Twilight Forest
+     * 4.8 (ATM10AA), Oh The Biomes We've Gone 2.5.1 (ATM10), Biomes O' Plenty 19 and Terralith 2.5 (1.20.1, same ids).
+     */
+    public static final String RU = "regions_unexplored", BWG = "biomeswevegone", BOP = "biomesoplenty", TF = "twilightforest";
+    public static final List<ResourceLocation> WARM_OCEAN_BIOMES = List.of(rl(RU, "rocky_reef"));
+    public static final List<ResourceLocation> MANGROVE_BIOMES = List.of(rl(BWG, "white_mangrove_marshes"));
+    public static final List<ResourceLocation> SWAMP_BIOMES = List.of(rl(TF, "swamp"));
+    public static final List<ResourceLocation> RIVER_BIOMES = List.of(rl(TF, "stream"));
+    public static final List<ResourceLocation> JUNGLE_BIOMES = List.of(rl(RU, "tropics"), rl(BOP, "tropics"));
+
     /** Predators: kill bettas and small inhabitants (PLAN 4.3). */
     public static final List<ResourceLocation> PREDATORS = List.of(
             rl(NATURALIST, "piranha"), rl(NATURALIST, "anglerfish"),

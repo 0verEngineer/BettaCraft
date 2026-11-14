@@ -5,7 +5,6 @@ import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.phys.AABB;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -102,14 +100,7 @@ public final class Wildlife {
 
     /** The kind of water of a biome for the spawns (the biome alone; caves are left out). */
     public static NetCatching.Water water(Holder<Biome> b) {
-        if (b.is(Biomes.MANGROVE_SWAMP)) return NetCatching.Water.MANGROVE;
-        if (b.is(Biomes.SWAMP) || b.is(net.neoforged.neoforge.common.Tags.Biomes.IS_SWAMP)) return NetCatching.Water.SWAMP;
-        if (b.is(BiomeTags.IS_RIVER)) return NetCatching.Water.RIVER;
-        if (b.is(BiomeTags.IS_BEACH)) return NetCatching.Water.BEACH;
-        if (b.is(Biomes.WARM_OCEAN)) return NetCatching.Water.WARM_OCEAN;
-        if (b.is(Biomes.LUKEWARM_OCEAN) || b.is(Biomes.DEEP_LUKEWARM_OCEAN)) return NetCatching.Water.LUKEWARM_OCEAN;
-        if (b.is(BiomeTags.IS_JUNGLE)) return NetCatching.Water.JUNGLE;
-        return NetCatching.Water.NONE;
+        return BiomeWaters.water(b, false); // M25.1: biome tags, also biome mods
     }
 
     /** Spawn weight of a tankmate in this water ({@code spawn.wildFishWeight} tenths of its net weight), 0 = not there. */

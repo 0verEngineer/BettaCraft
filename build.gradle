@@ -240,12 +240,14 @@ neoForge {
             // gradlew runServer -Psmoketestmp : the multiplayer test stage, waits for the clients Dev1 and Dev2 (normally
             // started together with the clients by gradlew runMultiplayerTest)
             if (project.hasProperty('smoketestmp')) systemProperty 'bettacraft.smoketest.mp', 'true'
+            if (project.hasProperty('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1: -Pbiomes
         }
 
         gameTestServer {
             type = 'gameTestServer'
             gameDirectory = project.file('run/gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            if (project.hasProperty('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1
         }
 
         data {
@@ -413,12 +415,16 @@ idea {
 //   -Paquatic : run/aquatic-mods (M16: every mod of the ATM10 pack with water animals that is not already on the run
 //               classpath as an aquarium mod, plus their libraries)  for runClient, runServer and runGameTestServer;
 //               needs the aquarium mods (not with -PnoCompat: Critters and Companions uses their YACL)
+//   -Pbiomes  : run/biome-mods (M25.1: Regions Unexplored + Lithostitched + TerraBlender from ATM10AA, Oh The Biomes
+//               We've Gone + Oh The Trees You'll Grow + CorgiLib + GeckoLib from ATM10) for runClient, runServer and
+//               runGameTestServer; the GameTest biomeModBiomesMapToTheirWaters and the server smoke then require them
 def runModsDir = file('run/mods')
 def gameTestModsDir = file('run/gametest/mods')
 def extraMods = [
         [dir: file('run/shader-mods'), on: project.hasProperty('shaders'), tasks: ['runClient']],
         [dir: file('run/power-mods'), on: project.hasProperty('power'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/aquatic-mods'), on: project.hasProperty('aquatic'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/biome-mods'), on: project.hasProperty('biomes'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
 ]
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = file('run/config/fml.toml')
@@ -438,11 +444,13 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestSe
     def plan = extraMods.collect { g -> [jars: (g.dir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }, add: g.on && t.name in g.tasks] }
     t.doFirst {
         target.mkdirs()
+        // a library in two groups (TerraBlender, GeckoLib) stays when one of them is on
+        def wanted = plan.findAll { it.add }.collectMany { g -> g.jars*.name } as Set
         plan.each { g ->
             g.jars.each { jar ->
                 def dst = new File(target, jar.name)
                 if (g.add) java.nio.file.Files.copy(jar.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
-                else if (dst.exists()) dst.delete()
+                else if (dst.exists() && !(jar.name in wanted)) dst.delete()
             }
         }
     }
@@ -487,8 +495,8 @@ tasks.register('runMultiplayerTest') {
         logs.deleteDir()
         logs.mkdirs()
         def runDir = file('run')
-        // the extra mods of -Pshaders / -Ppower / -Paquatic are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods'].each { d ->
+        // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes are not part of this test
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()

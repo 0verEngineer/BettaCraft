@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -61,18 +59,16 @@ public final class NetCatching {
 
     /** The kind of water at {@code pos}. */
     public static Water water(ServerLevel level, BlockPos pos) {
-        Holder<Biome> b = level.getBiome(pos);
-        if (b.is(Biomes.MANGROVE_SWAMP)) return Water.MANGROVE;
-        if (b.is(Biomes.SWAMP) || b.is(net.neoforged.neoforge.common.Tags.Biomes.IS_SWAMP)) return Water.SWAMP;
-        if (b.is(Biomes.LUSH_CAVES)) return Water.CAVE;
-        if (b.is(BiomeTags.IS_RIVER)) return Water.RIVER;
-        if (b.is(BiomeTags.IS_BEACH)) return Water.BEACH;
-        // M20: the reef animals in warm and lukewarm oceans
-        if (b.is(Biomes.WARM_OCEAN)) return Water.WARM_OCEAN;
-        if (b.is(Biomes.LUKEWARM_OCEAN) || b.is(Biomes.DEEP_LUKEWARM_OCEAN)) return Water.LUKEWARM_OCEAN;
-        if (b.is(BiomeTags.IS_JUNGLE)) return Water.JUNGLE;
-        if (pos.getY() < level.getSeaLevel() - 8 && !level.canSeeSky(pos.above())) return Water.CAVE;
-        return Water.NONE;
+        return water(level.getBiome(pos), pos.getY() < level.getSeaLevel() - 8 && !level.canSeeSky(pos.above()));
+    }
+
+    /**
+     * The kind of water of a biome (M25.1: by the biome tags of {@link org.overengineer.bettacraft.world.BiomeWaters},
+     * also the biomes of biome mods); {@code deep}: deep under ground without sky, cave water where no biome water is.
+     */
+    public static Water water(Holder<Biome> b, boolean deep) {
+        Water w = org.overengineer.bettacraft.world.BiomeWaters.water(b, true);
+        return w == Water.NONE && deep ? Water.CAVE : w;
     }
 
     /** What can be caught in this water (weights). */
@@ -260,7 +256,7 @@ public final class NetCatching {
         RandomGenerator rnd = random(level);
         Water w = water(level, water);
         boolean plants = plantsNear(level, water);
-        Outcome o = decide(w, plants, hardBottom(level, water), level.getBiome(water).is(Biomes.LUSH_CAVES), netChance(),
+        Outcome o = decide(w, plants, hardBottom(level, water), org.overengineer.bettacraft.world.BiomeWaters.lushCave(level.getBiome(water)), netChance(),
                 ServerConfig.getOr(ServerConfig.TANKMATES_NET_SHARE, 0.4), ServerConfig.getOr(ServerConfig.REEF_NET_SHARE, 0.4), plantShare(),
                 org.overengineer.bettacraft.sources.PlantTables.net(w), rnd);
         // M20: on a reef the net sometimes brings up a coral frag or an anemone (soft corals that break off)

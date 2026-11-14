@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -17,7 +16,6 @@ import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.registry.ModCodecs;
-import org.overengineer.bettacraft.registry.ModTags;
 import org.overengineer.bettacraft.tank.plants.FloatingPlantType;
 import org.overengineer.bettacraft.tank.plants.TankPlants;
 
@@ -39,8 +37,8 @@ public class FloatingPlantFishingModifier extends LootModifier {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return loot;
         Holder<Biome> biome = context.getLevel().getBiome(BlockPos.containing(origin));
-        boolean mangrove = biome.is(Biomes.MANGROVE_SWAMP);
-        if (!mangrove && !biome.is(ModTags.BETTA_SPAWN_BIOMES)) return loot;
+        boolean mangrove = BiomeWaters.mangrove(biome); // M25.1: biome tags, also biome mods
+        if (!mangrove && !BiomeWaters.swampOrBettaBiome(biome)) return loot;
         double chance = ServerConfig.getOr(ServerConfig.PLANTS_FISHING_CHANCE, 0.06);
         if (context.getRandom().nextDouble() >= chance) return loot;
         var r = context.getRandom();

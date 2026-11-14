@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:mangrove_swamp",
+    {
+      "id": "biomeswevegone:white_mangrove_marshes",
+      "required": false
+    }
+  ]
+}

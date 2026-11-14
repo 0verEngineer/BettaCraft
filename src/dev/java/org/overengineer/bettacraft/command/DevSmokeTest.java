@@ -294,6 +294,14 @@ public final class DevSmokeTest {
                 DevSmokeM18.check(level, base);
                 DevSmokeM19.check(level, base);
                 DevSmokeM20.check(level, base);
+                // M25.1: -Pbiomes, the biomes of biome mods map to their waters
+                if (DevBiomeMods.present()) {
+                    var problems = DevBiomeMods.problems(server.registryAccess());
+                    if (!problems.isEmpty()) throw new IllegalStateException("biome mods: " + problems);
+                    LOGGER.info("[smoketest] biome mods: their biomes map to their waters, wild corals on the rocky reef");
+                } else if (DevBiomeMods.REQUIRED) {
+                    throw new IllegalStateException("-Pbiomes but the biome mods are not loaded");
+                }
                 LOGGER.info("[smoketest] PASSED");
                 haltAt = ticks + 10;
             } else if (passed && ticks == haltAt) {

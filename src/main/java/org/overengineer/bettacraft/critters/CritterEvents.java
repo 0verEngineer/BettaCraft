@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -82,7 +81,7 @@ public final class CritterEvents {
         // shovel on mud in a swamp: a trumpet snail now and then
         if (stack.getItem() instanceof ShovelItem && level.getBlockState(pos).is(Blocks.MUD) && level instanceof ServerLevel server) {
             var biome = level.getBiome(pos);
-            if (!biome.is(Biomes.SWAMP) && !biome.is(Biomes.MANGROVE_SWAMP) && !biome.is(net.neoforged.neoforge.common.Tags.Biomes.IS_SWAMP)) return;
+            if (!org.overengineer.bettacraft.world.BiomeWaters.swamp(biome) && !org.overengineer.bettacraft.world.BiomeWaters.mangrove(biome)) return;
             if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
             player.getCooldowns().addCooldown(stack.getItem(), 20);
             if (server.getRandom().nextDouble() >= ServerConfig.getOr(ServerConfig.CRITTERS_MUD_CHANCE, 0.08)) return;

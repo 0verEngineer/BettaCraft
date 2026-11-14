@@ -7,10 +7,8 @@ import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -21,7 +19,6 @@ import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.plants.InteriorPlants;
 import org.overengineer.bettacraft.plants.PlantSpecies;
 import org.overengineer.bettacraft.registry.ModCodecs;
-import org.overengineer.bettacraft.registry.ModTags;
 
 /**
  * Fishing sometimes brings up an aquarium plant instead of the catch (M13, chance in the server config
@@ -44,10 +41,11 @@ public class AquaticPlantFishingModifier extends LootModifier {
 
     @Nullable
     public static Water water(Holder<Biome> biome) {
-        if (biome.is(Biomes.MANGROVE_SWAMP)) return Water.MANGROVE;
-        if (biome.is(ModTags.BETTA_SPAWN_BIOMES)) return Water.SWAMP;
-        if (biome.is(BiomeTags.IS_JUNGLE)) return Water.JUNGLE;
-        if (biome.is(BiomeTags.IS_RIVER)) return Water.RIVER;
+        // M25.1: biome tags, also biome mods
+        if (BiomeWaters.mangrove(biome)) return Water.MANGROVE;
+        if (BiomeWaters.swampOrBettaBiome(biome)) return Water.SWAMP;
+        if (BiomeWaters.jungle(biome)) return Water.JUNGLE;
+        if (BiomeWaters.river(biome)) return Water.RIVER;
         return null;
     }
 

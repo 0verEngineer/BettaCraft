@@ -125,8 +125,11 @@ public final class ModDataGen {
                     ctx.register(BETTA_SPAWNS, new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)));
                     // M22.3: wild tankmates, frogs and small animals; the wild corals on the warm ocean reefs
                     ctx.register(WILDLIFE_SPAWNS, new org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier());
+                    // M25.1: #bettacraft:coral_reef_biomes or both #c:is_ocean and #c:is_hot (like BiomeWaters.coralReef)
+                    var biomes = ctx.lookup(Registries.BIOME);
                     ctx.register(WILD_CORALS, new net.neoforged.neoforge.common.world.BiomeModifiers.AddFeaturesBiomeModifier(
-                            net.minecraft.core.HolderSet.direct(ctx.lookup(Registries.BIOME).getOrThrow(net.minecraft.world.level.biome.Biomes.WARM_OCEAN)),
+                            new net.neoforged.neoforge.registries.holdersets.OrHolderSet<>(biomes.getOrThrow(ModTags.CORAL_REEF_BIOMES),
+                                    new net.neoforged.neoforge.registries.holdersets.AndHolderSet<>(biomes.getOrThrow(Tags.Biomes.IS_OCEAN), biomes.getOrThrow(Tags.Biomes.IS_HOT))),
                             net.minecraft.core.HolderSet.direct(ctx.lookup(Registries.PLACED_FEATURE).getOrThrow(WILD_CORAL_PLACED)),
                             net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION));
                 }),
@@ -1405,6 +1408,21 @@ public final class ModDataGen {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(ModTags.BETTA_SPAWN_BIOMES).addTag(Tags.Biomes.IS_SWAMP);
+            // M25.1: the waters by biome (BiomeWaters): vanilla, the common tags and known biome mods (optional)
+            var warm = tag(ModTags.WARM_OCEAN_WATERS).add(net.minecraft.world.level.biome.Biomes.WARM_OCEAN);
+            Compat.WARM_OCEAN_BIOMES.forEach(warm::addOptional);
+            tag(ModTags.LUKEWARM_OCEAN_WATERS).add(net.minecraft.world.level.biome.Biomes.LUKEWARM_OCEAN, net.minecraft.world.level.biome.Biomes.DEEP_LUKEWARM_OCEAN);
+            var mangrove = tag(ModTags.MANGROVE_WATERS).add(net.minecraft.world.level.biome.Biomes.MANGROVE_SWAMP);
+            Compat.MANGROVE_BIOMES.forEach(mangrove::addOptional);
+            tag(ModTags.LUSH_CAVE_WATERS).add(net.minecraft.world.level.biome.Biomes.LUSH_CAVES);
+            var swamp = tag(ModTags.SWAMP_WATERS).add(net.minecraft.world.level.biome.Biomes.SWAMP).addTag(Tags.Biomes.IS_SWAMP);
+            Compat.SWAMP_BIOMES.forEach(swamp::addOptional);
+            var river = tag(ModTags.RIVER_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_RIVER);
+            Compat.RIVER_BIOMES.forEach(river::addOptional);
+            tag(ModTags.BEACH_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_BEACH);
+            var jungle = tag(ModTags.JUNGLE_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_JUNGLE);
+            Compat.JUNGLE_BIOMES.forEach(jungle::addOptional);
+            tag(ModTags.CORAL_REEF_BIOMES).addTag(ModTags.WARM_OCEAN_WATERS);
             tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN).addTag(Tags.Biomes.IS_BEACH); // M20: beaches too
         }
     }

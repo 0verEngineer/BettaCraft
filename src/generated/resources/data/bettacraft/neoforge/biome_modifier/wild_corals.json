@@ -1,6 +1,23 @@
 {
   "type": "neoforge:add_features",
-  "biomes": "minecraft:warm_ocean",
+  "biomes": {
+    "type": "neoforge:or",
+    "values": [
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:coral_reef_biomes"
+        ]
+      },
+      {
+        "type": "neoforge:and",
+        "values": [
+          "#c:is_ocean",
+          "#c:is_hot"
+        ]
+      }
+    ]
+  },
   "features": "bettacraft:wild_coral",
   "step": "vegetal_decoration"
 }
