@@ -15,4 +15,4 @@ Plants that spread over the ground with **runners**: Vallisneria with long ribbo
 | | Plant | Growth form | Light | Full size |
 |---|---|---|---|---|
 | <ItemImage id="bettacraft:vallisneria" /> | [Vallisneria](vallisneria.md) | ribbons with runners | medium | about 2.5 days |
-| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](monte_carlo.md) | carpet | strong | about 3 days |
+| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](monte_carlo.md) | carpet | very strong | about 3 days |

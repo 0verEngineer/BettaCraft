@@ -20,7 +20,7 @@ item_ids:
 |---|---|
 | Wuchsform | Stängelpflanze |
 | Wächst auf | Bodengrund (Sand, Kies, Erde, Innenboden) |
-| Licht | viel |
+| Licht | sehr viel (LED-Panel oder Hochleistungs-LED) |
 | Volle Größe | nach etwa 3,5 Tagen |
 | Breitet sich aus | Seitentriebe |
 | Ableger pro Schnitt | 3 |

@@ -1,0 +1,40 @@
+---
+navigation:
+  title: Luftpumpe
+  icon: bettacraft:air_pump
+  parent: equipment.md
+  position: 32
+item_ids:
+  - bettacraft:air_pump
+  - bettacraft:air_hose
+---
+
+# Luftpumpe
+
+<GameScene zoom="4" interactive={true}>
+  <Block id="bettacraft:air_pump" p:facing="north" />
+</GameScene>
+
+Die <ItemLink id="bettacraft:air_pump" /> ist eine kleine Membranpumpe. Stell sie **neben ein Aquarium** (an jede
+Seite) oder **oben darauf**: ihr Luftschlauch führt über den Glasrand ins Wasser. Sie treibt die
+[Ausströmersteine](air_stone.md) und die [Schwammfilter](sponge_filter.md) im [Innenraum](../interior.md) dieses
+Aquariums.
+
+* Eine Pumpe treibt **4 Ausströmer oder Schwammfilter** mit voller Stärke. Bei mehr teilen sie sich die Luft und
+  sprudeln weniger (eine zweite Pumpe hilft).
+* Sie summt leise, solange sie läuft, und steht still, wenn im Aquarium nichts Luft braucht.
+* **Leistungsregler:** Rechtsklick (oder Schleichen + Mausrad, während du sie ansiehst) stellt 0 bis 100 % ein.
+  Weniger Leistung gibt weniger Luft, braucht weniger Energie und ist leiser (siehe [Leistungsregler](regulator.md)).
+* **Energie:** ohne Strom-Mods läuft sie einfach. Ein Server kann FE verlangen (`aeration.airPumpRequiresEnergy`):
+  2 FE/t je Ausströmer, geliefert wie bei der übrigen Technik (siehe [Strom](power.md)).
+
+Der <ItemLink id="bettacraft:air_hose" /> ist nur ein Bauteil (getrockneter Seetang oder Schleimbälle).
+
+Ausströmer und Schwammfilter bringen **Sauerstoff** ins Wasser, siehe [Sauerstoff](../aquarium/oxygen.md).
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:air_pump" />
+<RecipesFor id="bettacraft:air_hose" />

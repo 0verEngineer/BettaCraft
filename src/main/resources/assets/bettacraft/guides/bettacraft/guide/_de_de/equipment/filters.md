@@ -39,6 +39,16 @@ Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Str�
 
 Das Aquarium-Menü zeigt „Filter: 1 außen (Heizstäbe: 2), 1 innen“.
 
+## Weitere Innenfilter, Jungfische und der Leistungsregler
+
+* Der [Schwammfilter](sponge_filter.md) (luftbetrieben, schonend für Jungfische) und der [Eckfilter](corner_filter.md)
+  sind weitere Innenfilter.
+* Filter mit Motor (Innen-, Eck-, Außen- und Schrankfilter) **saugen Jungfische ein**, wenn kein
+  [Ansaugschutz](intake_sponge.md) angebracht ist.
+* Jeder Filter hat einen [Leistungsregler](regulator.md) (0 bis 100 %): weniger Leistung reinigt weniger, braucht
+  weniger Energie und ist leiser. Filterauslässe bringen auch etwas **Sauerstoff** ins Wasser (siehe
+  [Sauerstoff](../aquarium/oxygen.md)).
+
 ## Bezug
 
 Herstellung:

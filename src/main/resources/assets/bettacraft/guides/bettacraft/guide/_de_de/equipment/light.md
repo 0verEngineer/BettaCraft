@@ -24,6 +24,25 @@ Das <ItemLink id="bettacraft:tank_light" /> leuchtet mit Lichtstufe 15.
   Beispiel mit einem Tageslichtsensor.
 * Das Aquarium-Menü zeigt, wie viele Lichter an sind („Licht: 4/4 an“).
 
+## Drei Stufen
+
+Die Lichtleiste ist die **schwächste von drei Stufen**: [LED-Panel](led_panel.md) (Licht 15 + 2,5) und
+[Hochleistungs-LED](high_power_led.md) (Licht 15 + 5) geben auf dem Teil des Aquariums, den sie abdecken, mehr Licht.
+Stärkeres Licht macht rote Pflanzen **röter** (das tiefste Rot nur unter Panel oder Hochleistungs-LED), lässt die
+**Starklichtpflanzen** (Monte Carlo, Alternanthera) mit voller Geschwindigkeit wachsen (unter der Leiste langsamer)
+und lässt ohne CO2 und Dünger mehr **Algen** wachsen. Der Reiter **Technik** des Aquarium-Menüs zeigt die Lichter und
+die Lichtstärke.
+
+## Dimmer und Tageslicht-Timer
+
+Im Reiter **Technik** des Aquarium-Menüs:
+
+* **Dimmer** 0 bis 100 %: das Licht des Aquariums leuchtet schwächer (Lichtstufe und Licht für die Pflanzen).
+* **Tageslicht-Timer:** an zur An-Zeit, aus zur Aus-Zeit (Standard 08:00 bis 20:00), jeweils über eine Stunde wie ein
+  Sonnenauf- und -untergang. +/- verschiebt eine Zeit um 30 Minuten (Schleichen: eine Stunde).
+
+Ein Server kann beides abschalten (`features.lightTimer`) und die stärkeren Stufen (`features.ledTiers`).
+
 ## Farben
 
 ![Aquarien unter Lichtern in sechs Farben bei Nacht](../images/light_colors.png)

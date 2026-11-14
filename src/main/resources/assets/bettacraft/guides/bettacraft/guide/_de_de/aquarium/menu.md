@@ -66,6 +66,14 @@ leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Fi
 Verdunstung und offene obere Blöcke, Heizer und Kühler und der gespeicherte [Strom](../equipment/power.md), wenn der
 Server ihn verlangt.
 
+## Technik
+
+Der [Sauerstoff](oxygen.md) mit Balken (der weiße Strich ist die Sättigung), wohin er strebt und warum (Austausch und
+Verbrauch), die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
+[Schwammfilter](../equipment/sponge_filter.md), wie viel CO2 die Belüftung austreibt, wie viele Motorfilter keinen
+[Ansaugschutz](../equipment/intake_sponge.md) haben, die Lichter des Aquariums mit der Lichtstärke und **Dimmer** und
+**Tageslicht-Timer** mit ihren Knöpfen (siehe [Licht](../equipment/light.md)).
+
 ## Pflanzen
 
 ![Der Pflanzen-Tab](../images/menu_plants.png)

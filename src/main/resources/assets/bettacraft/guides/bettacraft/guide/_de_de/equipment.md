@@ -23,7 +23,10 @@ navigation:
 | [Kühler](equipment/coolers.md) | kühlen das Wasser in heißen Gegenden |
 | [Innen- und Außenfilter](equipment/filters.md) | halten das Wasser sauber; der Außenfilter fasst zwei Heizer oder Kühler |
 | [Futterautomat](equipment/feeder.md) | füttert die Fische bis zu dreimal am Tag |
-| [Licht](equipment/light.md) | eine Lichtleiste, per Redstone schaltbar |
+| [Licht](equipment/light.md) | drei Stufen: Lichtleiste, [LED-Panel](equipment/led_panel.md), [Hochleistungs-LED](equipment/high_power_led.md); Dimmer und Tageslicht-Timer |
+| [Luftpumpe](equipment/air_pump.md) und [Ausströmer](equipment/air_stone.md) | Blasensäulen und Sauerstoff |
+| [Schwammfilter](equipment/sponge_filter.md), [Eckfilter](equipment/corner_filter.md), [Ansaugschutz](equipment/intake_sponge.md) | weitere Innenfilter; der Schwamm schützt die Jungfische |
+| [Leistungsregler](equipment/regulator.md) | 0 bis 100 % für Filter, Pumpen und Ausströmer |
 | [Schrank](equipment/cabinet.md) | Unterbau für das Aquarium mit Platz für Filter und Futter |
 | [Abdeckung](equipment/tank_lid.md) | verhindert, dass das Wasser verdunstet |
 | [Werkzeuge und Behälter](equipment/tools.md) | Kescher, Fischbeutel, Algenschaber, Spiegelstab, Ablaichkasten |

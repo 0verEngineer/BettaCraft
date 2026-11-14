@@ -30,9 +30,9 @@ Aquarium sieht man sie als Teil der Miniatur hinter dem Glas. Jede Pflanze sieht
 | <ItemImage id="bettacraft:amazon_sword" /> | [Amazonas-Schwertpflanze](plants/amazon_sword.md) | Rosettenpflanze | mittel | etwa 7 Tage |
 | <ItemImage id="bettacraft:rotala_rotundifolia" /> | [Rotala rotundifolia](plants/rotala_rotundifolia.md) | Stängelpflanze | viel | etwa 2,5 Tage |
 | <ItemImage id="bettacraft:ludwigia_repens" /> | [Ludwigia repens](plants/ludwigia_repens.md) | Stängelpflanze | mittel | etwa 3 Tage |
-| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera reineckii](plants/alternanthera_reineckii.md) | Stängelpflanze | viel | etwa 3,5 Tage |
+| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera reineckii](plants/alternanthera_reineckii.md) | Stängelpflanze | sehr viel | etwa 3,5 Tage |
 | <ItemImage id="bettacraft:vallisneria" /> | [Vallisneria](plants/vallisneria.md) | Bänder mit Ausläufern | mittel | etwa 2,5 Tage |
-| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](plants/monte_carlo.md) | Bodendecker | viel | etwa 3 Tage |
+| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](plants/monte_carlo.md) | Bodendecker | sehr viel | etwa 3 Tage |
 | <ItemImage id="bettacraft:red_tiger_lotus" /> | [Roter Tigerlotus](plants/red_tiger_lotus.md) | Knolle mit Schwimmblättern | mittel | etwa 6 Tage |
 
 ## In diesem Kapitel

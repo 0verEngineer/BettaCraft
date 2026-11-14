@@ -30,9 +30,9 @@ part of the miniature behind the glass. Every plant looks a little different.
 | <ItemImage id="bettacraft:amazon_sword" /> | [Amazon Sword](plants/amazon_sword.md) | rosette | medium | about 7 days |
 | <ItemImage id="bettacraft:rotala_rotundifolia" /> | [Rotala Rotundifolia](plants/rotala_rotundifolia.md) | stem plant | strong | about 2.5 days |
 | <ItemImage id="bettacraft:ludwigia_repens" /> | [Ludwigia Repens](plants/ludwigia_repens.md) | stem plant | medium | about 3 days |
-| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera Reineckii](plants/alternanthera_reineckii.md) | stem plant | strong | about 3.5 days |
+| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera Reineckii](plants/alternanthera_reineckii.md) | stem plant | very strong | about 3.5 days |
 | <ItemImage id="bettacraft:vallisneria" /> | [Vallisneria](plants/vallisneria.md) | ribbons with runners | medium | about 2.5 days |
-| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](plants/monte_carlo.md) | carpet | strong | about 3 days |
+| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](plants/monte_carlo.md) | carpet | very strong | about 3 days |
 | <ItemImage id="bettacraft:red_tiger_lotus" /> | [Red Tiger Lotus](plants/red_tiger_lotus.md) | bulb with floating leaves | medium | about 6 days |
 
 ## In this chapter

@@ -61,6 +61,14 @@ Water volume, the [water quality](water_quality.md) with a bar (the red mark is 
 fast it drops and why (animals per water block, how much the filters remove), the last fresh water, evaporation and
 open top blocks, heaters and coolers, and the stored [power](../equipment/power.md) when the server needs it.
 
+## Devices
+
+The [oxygen](oxygen.md) with a bar (the white mark is saturation), what it tends to and why (exchange and use), the
+[air pumps](../equipment/air_pump.md), [air stones](../equipment/air_stone.md) and
+[sponge filters](../equipment/sponge_filter.md), how much CO2 the aeration drives out, how many motor filters have no
+[intake sponge](../equipment/intake_sponge.md), the lights of the aquarium with the light strength, and the
+**dimmer** and the **daylight timer** with their buttons (see [Light](../equipment/light.md)).
+
 ## Plants
 
 ![The plants tab](../images/menu_plants.png)

@@ -20,7 +20,7 @@ Monte Carlo (*Micranthemum tweediei*) from Argentina: a carpet of tiny round lea
 |---|---|
 | Growth form | carpet |
 | Grows on | substrate (sand, gravel, dirt, the interior floor) |
-| Light | strong |
+| Light | very strong (an LED panel or a high-power LED) |
 | Full size | after about 3 days |
 | Spreads | runners |
 | Cuttings per trim | 2 |

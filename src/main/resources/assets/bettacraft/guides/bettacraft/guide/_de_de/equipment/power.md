@@ -21,5 +21,9 @@ einschalten (`power.heaterRequiresEnergy`, `power.filterRequiresEnergy`, `power.
 * Ohne genug FE bleibt die Gruppe stehen: Heizer und Kühler ändern die Temperatur nicht mehr, Filter reinigen das Wasser
   nicht mehr, Lichter auf dem Aquarium gehen aus. Zuerst bekommen die Filter Strom, dann Heizer und Kühler, dann Lichter.
 
+**Luftpumpen** laufen ohne Strom, solange der Server `aeration.airPumpRequiresEnergy` nicht einschaltet: dann brauchen
+sie 2 FE pro Tick für jeden angetriebenen Ausströmer oder Schwammfilter (Kabel an die Pumpe oder ans Aquarium). Jedes
+Gerät braucht bei kleinerem [Leistungsregler](regulator.md) weniger FE.
+
 Der Tab **Wasser** im Aquarium-Menü zeigt die gespeicherte FE, den Bedarf und welche Gruppe ohne Strom ist; auch die
 Übersicht warnt. Lichter, die nicht auf einem Aquarium stehen (an einer Decke hängen), leuchten immer.

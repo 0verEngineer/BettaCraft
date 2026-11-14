@@ -16,4 +16,4 @@ Stem plants grow fast from the **substrate** up to the surface and along it, the
 |---|---|---|---|---|
 | <ItemImage id="bettacraft:rotala_rotundifolia" /> | [Rotala Rotundifolia](rotala_rotundifolia.md) | stem plant | strong | about 2.5 days |
 | <ItemImage id="bettacraft:ludwigia_repens" /> | [Ludwigia Repens](ludwigia_repens.md) | stem plant | medium | about 3 days |
-| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera Reineckii](alternanthera_reineckii.md) | stem plant | strong | about 3.5 days |
+| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera Reineckii](alternanthera_reineckii.md) | stem plant | very strong | about 3.5 days |

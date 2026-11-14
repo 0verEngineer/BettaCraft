@@ -261,12 +261,12 @@ public final class AquaticPlantGameTests {
         h.succeed();
     }
 
-    /** Red species follow the light: red under the lit tank light. */
+    /** Red species follow the light: red under strong light (M23: the deepest red under a high-power LED, the bar gives one step less). */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void redPlantsTurnRedInStrongLight(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         TankBlockEntity c = tank(h, 2, 1, 2, 2, 1, 1, 2000);
-        light(h, new BlockPos(2, 2, 2));
+        for (int x = 2; x <= 3; x++) h.setBlock(new BlockPos(x, 2, 2), ModBlocks.HIGH_POWER_LED.get().defaultBlockState().setValue(TankLightBlock.LIT, true));
         InteriorRegion r = region(h, c);
         ServerLevel in = interior(h);
         InteriorPlant p = InteriorPlants.plantAt(in, r, PlantSpecies.LUDWIGIA, 8, 0, 8, 4, 3L);

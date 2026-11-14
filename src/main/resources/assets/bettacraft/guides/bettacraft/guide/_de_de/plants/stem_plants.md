@@ -16,4 +16,4 @@ Stängelpflanzen wachsen schnell aus dem **Bodengrund** bis zur Oberfläche und 
 |---|---|---|---|---|
 | <ItemImage id="bettacraft:rotala_rotundifolia" /> | [Rotala rotundifolia](rotala_rotundifolia.md) | Stängelpflanze | viel | etwa 2,5 Tage |
 | <ItemImage id="bettacraft:ludwigia_repens" /> | [Ludwigia repens](ludwigia_repens.md) | Stängelpflanze | mittel | etwa 3 Tage |
-| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera reineckii](alternanthera_reineckii.md) | Stängelpflanze | viel | etwa 3,5 Tage |
+| <ItemImage id="bettacraft:alternanthera_reineckii" /> | [Alternanthera reineckii](alternanthera_reineckii.md) | Stängelpflanze | sehr viel | etwa 3,5 Tage |

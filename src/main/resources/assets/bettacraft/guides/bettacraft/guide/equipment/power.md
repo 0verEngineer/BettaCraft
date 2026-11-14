@@ -20,5 +20,9 @@ default). Power means **Forge Energy (FE)** and comes from any mod that makes FE
 * Without enough FE the group stops: heaters and coolers no longer change the temperature, filters stop cleaning the
   water, lights on the aquarium go dark. Filters get the power first, then heaters and coolers, then lights.
 
+**Air pumps** run without power unless the server switches `aeration.airPumpRequiresEnergy` on: then they need 2 FE
+per tick for every air stone or sponge filter they drive (connect the cable to the pump or to the aquarium). Every
+device uses less FE at a lower [power regulator](regulator.md) setting.
+
 The **Water** tab of the tank menu shows the stored FE, how much the aquarium needs and which group is unpowered; the
 overview warns as well. Lights that are not on an aquarium (hanging from a ceiling) always shine.

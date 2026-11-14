@@ -24,6 +24,24 @@ The <ItemLink id="bettacraft:tank_light" /> gives light level 15.
   daylight sensor.
 * The tank menu shows how many lights are on ("Light: 4/4 on").
 
+## Three tiers
+
+The light bar is the **weakest of three tiers**: [LED panel](led_panel.md) (light 15 + 2.5) and
+[high-power LED](high_power_led.md) (light 15 + 5) give more light on the part of the aquarium they cover. Stronger
+light makes red plants **redder** (the deepest red only under a panel or a high-power LED), lets the **strong-light
+plants** (Monte Carlo, Alternanthera) grow at full speed (under the bar they grow slower) and, without CO2 and
+fertiliser, grows more **algae**. The tab **Devices** of the tank menu shows the lights and the light strength.
+
+## Dimmer and daylight timer
+
+In the tab **Devices** of the tank menu:
+
+* **Dimmer** 0 to 100 %: the lights of the aquarium shine dimmer (light level and the light for the plants).
+* **Daylight timer:** on at the on time, off at the off time (default 08:00 to 20:00), each over an hour like a sunrise
+  and a sunset. +/- moves a time by 30 minutes (sneak: an hour).
+
+A server can switch both off (`features.lightTimer`) and the stronger tiers (`features.ledTiers`).
+
 ## Colours
 
 ![Aquariums under lights of six colours at night](../images/light_colors.png)

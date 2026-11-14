@@ -20,7 +20,7 @@ Monte Carlo (*Micranthemum tweediei*) aus Argentinien: ein Teppich winziger rund
 |---|---|
 | Wuchsform | Bodendecker |
 | Wächst auf | Bodengrund (Sand, Kies, Erde, Innenboden) |
-| Licht | viel |
+| Licht | sehr viel (LED-Panel oder Hochleistungs-LED) |
 | Volle Größe | nach etwa 3 Tagen |
 | Breitet sich aus | Ausläufer |
 | Ableger pro Schnitt | 2 |

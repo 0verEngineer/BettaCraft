@@ -15,4 +15,4 @@ Pflanzen, die sich mit **Ausläufern** über den Boden ausbreiten: die Vallisner
 | | Pflanze | Wuchsform | Licht | Volle Größe |
 |---|---|---|---|---|
 | <ItemImage id="bettacraft:vallisneria" /> | [Vallisneria](vallisneria.md) | Bänder mit Ausläufern | mittel | etwa 2,5 Tage |
-| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](monte_carlo.md) | Bodendecker | viel | etwa 3 Tage |
+| <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](monte_carlo.md) | Bodendecker | sehr viel | etwa 3 Tage |

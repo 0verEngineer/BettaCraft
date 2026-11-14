@@ -20,7 +20,7 @@ item_ids:
 |---|---|
 | Growth form | stem plant |
 | Grows on | substrate (sand, gravel, dirt, the interior floor) |
-| Light | strong |
+| Light | very strong (an LED panel or a high-power LED) |
 | Full size | after about 3.5 days |
 | Spreads | side shoots |
 | Cuttings per trim | 3 |
