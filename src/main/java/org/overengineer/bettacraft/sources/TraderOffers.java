@@ -54,7 +54,21 @@ public final class TraderOffers {
         }
     }
 
-    public record Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, VillagerTrades.ItemListing listing) {}
+    /**
+     * One offer. The listing is made on first use ({@link #listing()}, the same object afterwards): the table itself can be
+     * read without the item registry (handbook generator, unit tests).
+     */
+    public record Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, Supplier<VillagerTrades.ItemListing> factory) {
+        Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, VillagerTrades.ItemListing listing) {
+            this(id, slot, uses, products, () -> listing);
+        }
+
+        public VillagerTrades.ItemListing listing() {
+            return LISTINGS.computeIfAbsent(id, k -> factory.get());
+        }
+    }
+
+    private static final java.util.Map<String, VillagerTrades.ItemListing> LISTINGS = new java.util.concurrent.ConcurrentHashMap<>();
 
     /** Colour lines of the Neocaridina the trader brings (loci of {@link CritterSpecies#NEOCARIDINA}). */
     private static final int[] SHRIMP_LINES = {0, 1, 2, 3, 4, 5};
@@ -176,12 +190,12 @@ public final class TraderOffers {
 
     private static Offer plant(Slot slot, PlantSpecies sp, int count, int emeralds, int uses) {
         return new Offer("plant_" + sp.id(), slot, uses, () -> List.of(new Product(Target.plant(sp), count, emeralds)),
-                (trader, random) -> new BasicItemListing(emeralds, InteriorPlants.item(sp, 0).copyWithCount(count), uses, 1).getOffer(trader, random));
+                () -> new BasicItemListing(emeralds, InteriorPlants.item(sp, 0).copyWithCount(count), uses, 1));
     }
 
     private static Offer floating(Slot slot, FloatingPlantType t, int count, int emeralds, int uses) {
         return new Offer("floating_" + t.id(), slot, uses, () -> List.of(new Product(Target.floating(t), count, emeralds)),
-                (trader, random) -> new BasicItemListing(emeralds, TankPlants.item(t).copyWithCount(count), uses, 1).getOffer(trader, random));
+                () -> new BasicItemListing(emeralds, TankPlants.item(t).copyWithCount(count), uses, 1));
     }
 
     /** A reef fish of this kind of offer (a pair, or a shoal for the chromis). */
