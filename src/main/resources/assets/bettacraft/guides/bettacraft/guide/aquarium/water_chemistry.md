@@ -15,29 +15,41 @@ Besides temperature, quality and nitrate, the water of an aquarium has three sim
 **Water** of the tank menu shows them in its second line (hover over it for what drives them and which animals the
 water does not suit); the [TDS meter and the pH drop test](../equipment/water_tests.md) measure them at the tank.
 
-* **TDS** (total dissolved solids, ppm): the minerals in the water. **Tap water has about 250 ppm**, [reverse osmosis
-  water](../equipment/reverse_osmosis.md) 0. Food and waste of the animals raise it slowly (`chemistry.tdsPerDay`, 1.5 ppm a day in a normally stocked
-  tank), evaporation leaves it behind (topping off with tap water raises it), water changes bring it back.
+* **TDS** (total dissolved solids, ppm): the minerals in the water. **Normal water has about 250 ppm** (any water of
+  the world: a water bucket, a water source, rain; everything but [reverse osmosis water](../equipment/reverse_osmosis.md)
+  with 0 and [sea water](water_fluids.md)). Food and waste of the animals raise it slowly (`chemistry.tdsPerDay`,
+  0.6 ppm a day in a normally stocked tank); evaporation leaves the minerals behind, so every top-off with normal
+  water brings new ones (in hard water part of them settles as lime scale); water changes bring it back.
   <ItemLink id="bettacraft:remineralising_salt" /> raises it on purpose: one portion adds 400 ppm to a bucket of
   water; sneaking adds as much as brings the aquarium to 150 ppm.
-* **pH** (5 to 9): tap water has 7.5. The pH drifts within about a day to what the aquarium holds:
-  * soil on the floor (dirt, mud, podzol, moss ... `#bettacraft:acid_substrate`) pulls it towards 6.2;
+* **pH** (5 to 9): normal water has 7.5. The pH drifts within about a day to what the aquarium holds:
+  * [active soil](../interior/active_soil.md) on the floor pulls it towards 6.2; plain soil (dirt, mud, podzol,
+    moss ... `#bettacraft:acid_substrate`) only half as strongly;
   * limestone (calcite, dripstone, dead coral, Create's limestone ... `#bettacraft:limestone`) pulls it towards 8.2,
     as substrate fully, as rocks in the aquarium half;
   * peat in the [multiblock filter](../equipment/filter_media.md), driftwood (logs and roots in the aquarium,
     `#bettacraft:driftwood`), <ItemLink id="bettacraft:almond_leaf" /> and [CO2](../equipment/co2.md) lower it;
   * soft water (low TDS) is barely buffered and turns slightly acidic on its own.
 * **Hardness** is no value of its own: **soft, medium hard or hard** from the TDS and the substrate (soil softens,
-  limestone hardens). Tap water is medium hard.
+  active soil the most, limestone hardens). Normal water is medium hard (hard from about 400 ppm).
+
+## Topping off and water changes
+
+* **Only topping off** the evaporated water with normal water lets the TDS climb slowly for months (with the
+  animals' waste to well over 400 ppm in a year): the water gets hard, as in the real hobby.
+* With **regular partial water changes** besides (by bucket or with the
+  [water change controller](../equipment/water_change.md)), the TDS settles a little above the normal water's and stays
+  there: about 290 to 320 ppm with 25 % every 14 days, closer still with weekly changes.
+* Soft-water animals: top off with reverse osmosis water (it brings no minerals) or use [active soil](../interior/active_soil.md).
 
 Almond leaves colour the water with tannins (one leaf per water block colours it fully); they fade within about a
 week (`chemistry.leafHalfLifeDays`). Dry jungle leaves in a smoker, furnace or on a campfire to get them.
 
 ## The animals
 
-Every animal has its range of pH and TDS; **tap water suits all of them** but the
+Every animal has its range of pH and TDS; **normal water suits all of them** but the
 [bee shrimp](../invertebrates/caridina.md) (they need soft water: reverse osmosis water, remineralised a little, and
-soil), so nothing changes for aquariums of older versions. A little out of the range the animals are only stressed (the menu warns, small animals breed slower); far
+active soil), so nothing changes for aquariums of older versions. A little out of the range the animals are only stressed (the menu warns, small animals breed slower); far
 out (half a pH unit or 50 ppm beyond the range) the water counts as bad for them: they get sick and in the end die.
 
 | Animals | pH | TDS (ppm) |

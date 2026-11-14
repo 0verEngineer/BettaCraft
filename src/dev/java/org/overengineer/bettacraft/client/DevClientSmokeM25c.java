@@ -33,7 +33,8 @@ import org.slf4j.LoggerFactory;
  * M25 part c client smoke ({@code -Psmoketestm25c}): a soft water tank with the Caridina lines (crystal red A to SSS,
  * crystal black, Blue Bolt, Wine Red, Orange Eye Blue Tiger, the wild form), a hard water tank with cardinal shrimp and
  * Tylomelania, a reef tank with the dosing pump. Screenshots {@code bettacraft_m25_caridina}, {@code _sulawesi},
- * {@code _dosing_pump} (+ {@code _de}). Checks (errors in the log): the pump doses the reef tank.
+ * {@code _dosing_pump} (+ {@code _de}). Checks (errors in the log): the pump doses the reef tank; part d: the soft water tank
+ * stands on active soil.
  */
 final class DevClientSmokeM25c {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -88,6 +89,17 @@ final class DevClientSmokeM25c {
         TankBlockEntity soft = tank(level, p, base, 4, 2, 2);
         soft.getTank().setTds(150F);
         soft.getTank().setPh(6.3F);
+        // M25 part d: the soft water tank stands on active soil
+        {
+            ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
+            var r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(level, soft);
+            for (int x = 0; x < r.sizeX(); x++)
+                for (int z = 0; z < r.sizeZ(); z++)
+                    org.overengineer.bettacraft.tank.interior.Substrate.set(in, new BlockPos(r.originX() + x, org.overengineer.bettacraft.tank.interior.InteriorRegion.FLOOR_Y,
+                            r.originZ() + z), ModBlocks.ACTIVE_SOIL.get().defaultBlockState(), false);
+            var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+            if (eq == null || eq.activeSoil() != r.sizeX() * r.sizeZ()) LOGGER.error("[smoketest] M25d active soil not counted: {}", eq == null ? "-" : eq.activeSoil());
+        }
         TankBlockEntity hard = tank(level, p, base.offset(6, 0, 0), 3, 2, 2);
         hard.getTank().setTds(260F);
         hard.getTank().setPh(8.0F);

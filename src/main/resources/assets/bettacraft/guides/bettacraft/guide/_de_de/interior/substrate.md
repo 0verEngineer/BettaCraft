@@ -19,7 +19,10 @@ Der Boden eines Innenraums besteht aus besonderen Bodenblöcken. Gib jedem davon
 Jeder belegte Bodenblock **kostet einen Block**; beim Ersetzen oder Entfernen bekommst du ihn zurück. Server können den
 Bodengrund kostenlos machen (`interior.substrateCostsBlock = false`).
 
-Nur volle Blöcke mit normalem Modell und ohne Block-Entity gehen. Der Block-Tag `#bettacraft:substrate_blacklist`
+Der Bodengrund bestimmt auch die [Wasserchemie](../aquarium/water_chemistry.md): [Aktivboden](active_soil.md) hält das
+Wasser weich und sauer, einfache Erde ein wenig, Kalkstein (Kalzit, Tropfstein) macht es hart.
+
+Nur volle Blöcke mit normalem Modell und ohne Block-Entity gehen (und der Aktivboden der Mod). Der Block-Tag `#bettacraft:substrate_blacklist`
 schließt weitere Blöcke aus.
 
 Im Aquarium erscheint der Bodengrund als dünne Schicht ganz unten. Der Innenraum-Tab im Menü zählt die belegten

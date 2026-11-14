@@ -23,7 +23,7 @@ item_ids:
 ![Rohre, eine Wasserpumpe und ein Multiblock-Filter an einem Aquarium](../images/pipes.png)
 
 Rohre tragen **Wasser mit allen Werten**: Temperatur, Salz, Qualität und Nitrat reisen mit (später auch Osmosewasser,
-Meerwasser und Lebendfutter-Suspension). Wasser aus einem Eimer oder einer Wasserquelle ist frisches Leitungswasser.
+Meerwasser und Lebendfutter-Suspension). Wasser aus einem Eimer oder einer Wasserquelle ist frisches normales Wasser.
 
 * <ItemLink id="bettacraft:glass_pipe" />: günstig, trägt **50 mB pro Tick**.
 * <ItemLink id="bettacraft:stainless_steel_pipe" />: trägt **250 mB pro Tick**. Ein Netz aus beiden Sorten trägt, was

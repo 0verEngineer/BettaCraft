@@ -15,29 +15,41 @@ Neben Temperatur, Qualität und Nitrat hat das Wasser eines Aquariums drei einfa
 **Wasser** des Beckenmenüs zeigt sie in seiner zweiten Zeile (mit der Maus darüber: was sie bewegt und welchen Tieren
 das Wasser nicht passt); der [TDS-Messstift und der pH-Tropfentest](../equipment/water_tests.md) messen sie am Becken.
 
-* **TDS** (gelöste Stoffe, ppm): die Mineralien im Wasser. **Leitungswasser hat etwa 250 ppm**, [Osmosewasser](../equipment/reverse_osmosis.md) 0.
-  Futter und Abfall der Tiere heben ihn langsam (`chemistry.tdsPerDay`, 1,5 ppm am Tag in einem normal besetzten
-  Becken), Verdunstung lässt ihn zurück (Nachfüllen mit Leitungswasser hebt ihn), Wasserwechsel bringen ihn zurück.
+* **TDS** (gelöste Stoffe, ppm): die Mineralien im Wasser. **Normales Wasser hat etwa 250 ppm** (jedes Wasser der
+  Welt: Wassereimer, Wasserquelle, Regen; alles außer [Osmosewasser](../equipment/reverse_osmosis.md) mit 0 und
+  [Meerwasser](water_fluids.md)). Futter und Abfall der Tiere heben ihn langsam (`chemistry.tdsPerDay`, 0,6 ppm am Tag
+  in einem normal besetzten Becken); die Verdunstung lässt die Mineralien zurück, jedes Nachfüllen mit normalem Wasser
+  bringt also neue (in hartem Wasser setzt sich ein Teil als Kalk ab); Wasserwechsel bringen ihn zurück.
   <ItemLink id="bettacraft:remineralising_salt" /> hebt ihn gezielt: eine Portion bringt 400 ppm in einen Eimer
   Wasser; schleichend kommt so viel hinein, dass das Aquarium 150 ppm erreicht.
-* **pH** (5 bis 9): Leitungswasser hat 7,5. Der pH bewegt sich in etwa einem Tag dorthin, wo das Aquarium ihn hält:
-  * Soil am Boden (Erde, Schlamm, Podsol, Moos ... `#bettacraft:acid_substrate`) zieht ihn Richtung 6,2;
+* **pH** (5 bis 9): normales Wasser hat 7,5. Der pH bewegt sich in etwa einem Tag dorthin, wo das Aquarium ihn hält:
+  * [Aktivboden](../interior/active_soil.md) am Boden zieht ihn Richtung 6,2; einfache Erde (Erde, Schlamm, Podsol,
+    Moos ... `#bettacraft:acid_substrate`) nur halb so stark;
   * Kalkstein (Kalzit, Tropfsteinblock, tote Koralle, Kalkstein von Create ... `#bettacraft:limestone`) zieht ihn
     Richtung 8,2, als Bodengrund ganz, als Steine im Aquarium halb;
   * Torf im [Multiblock-Filter](../equipment/filter_media.md), Wurzeln (Stämme und Wurzeln im Aquarium,
     `#bettacraft:driftwood`), <ItemLink id="bettacraft:almond_leaf" /> und [CO2](../equipment/co2.md) senken ihn;
   * weiches Wasser (wenig TDS) ist kaum gepuffert und wird von selbst leicht sauer.
-* **Härte** ist kein eigener Wert: **weich, mittelhart oder hart** aus TDS und Bodengrund (Soil macht weich,
-  Kalkstein hart). Leitungswasser ist mittelhart.
+* **Härte** ist kein eigener Wert: **weich, mittelhart oder hart** aus TDS und Bodengrund (Erde macht weich,
+  Aktivboden am stärksten, Kalkstein hart). Normales Wasser ist mittelhart (hart ab etwa 400 ppm).
+
+## Nachfüllen und Wasserwechsel
+
+* Füllt man **nur das Verdunstete** mit normalem Wasser nach, steigt der TDS über Monate langsam an (mit dem Abfall
+  der Tiere in einem Jahr auf deutlich über 400 ppm): Das Wasser wird hart, wie im echten Hobby.
+* Mit **regelmäßigen Teilwasserwechseln** dazu (per Eimer oder mit der
+  [Wasserwechsel-Steuerung](../equipment/water_change.md)) pendelt sich der TDS etwas über dem normalen Wasser ein und
+  bleibt dort: etwa 290 bis 320 ppm bei 25 % alle 14 Tage, mit wöchentlichen Wechseln noch näher.
+* Weichwassertiere: mit Osmosewasser nachfüllen (es bringt keine Mineralien) oder [Aktivboden](../interior/active_soil.md) nutzen.
 
 Seemandelbaumblätter färben das Wasser mit Gerbstoffen (ein Blatt je Wasserblock färbt es ganz); sie verblassen in
 etwa einer Woche (`chemistry.leafHalfLifeDays`). Dschungellaub im Räucherofen, Ofen oder auf dem Lagerfeuer trocknen.
 
 ## Die Tiere
 
-Jedes Tier hat seinen Bereich für pH und TDS; **Leitungswasser passt allen** außer den
+Jedes Tier hat seinen Bereich für pH und TDS; **normales Wasser passt allen** außer den
 [Bienengarnelen](../invertebrates/caridina.md) (sie brauchen weiches Wasser: Osmosewasser, leicht aufgehärtet, und
-Soil), für Aquarien älterer Versionen ändert sich also nichts. Etwas außerhalb sind die Tiere nur gestresst (das Menü warnt, Kleintiere vermehren sich langsamer);
+Aktivboden), für Aquarien älterer Versionen ändert sich also nichts. Etwas außerhalb sind die Tiere nur gestresst (das Menü warnt, Kleintiere vermehren sich langsamer);
 weit außerhalb (ein halber pH-Schritt oder 50 ppm jenseits des Bereichs) gilt das Wasser für sie als schlecht: sie
 werden krank und sterben am Ende.
 

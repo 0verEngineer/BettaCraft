@@ -21,7 +21,7 @@ item_ids:
 </GameScene>
 
 The <ItemLink id="bettacraft:ro_unit" /> makes **reverse osmosis water**: water with nothing dissolved (TDS 0, pH 6.8).
-Soft-water fish and shrimp need it; mixed with tap water or [remineralising salt](../aquarium/water_chemistry.md) it
+Soft-water fish and shrimp need it; mixed with normal water or [remineralising salt](../aquarium/water_chemistry.md) it
 gives any hardness you want.
 
 * **Water in**: through pipes on any side, a bucket of water (or sea water: the membrane holds the salt back) or a

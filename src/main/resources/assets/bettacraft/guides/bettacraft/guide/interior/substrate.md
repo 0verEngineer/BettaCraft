@@ -18,7 +18,10 @@ The floor of an interior consists of special floor blocks. Give each of them the
 Each covered floor block **costs one block**; you get it back when you replace or remove the substrate. Servers can make
 substrate free (`interior.substrateCostsBlock = false`).
 
-Only full blocks with a normal model and without a block entity can be used. The block tag
+The substrate also sets the [water chemistry](../aquarium/water_chemistry.md): [active soil](active_soil.md) keeps the
+water soft and acidic, plain soil a little, limestone (calcite, dripstone) makes it hard.
+
+Only full blocks with a normal model and without a block entity can be used (and the mod's own active soil). The block tag
 `#bettacraft:substrate_blacklist` excludes more blocks.
 
 In the aquarium the substrate shows as a thin layer at the bottom. The interior tab of the menu counts the covered

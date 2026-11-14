@@ -21,7 +21,7 @@ item_ids:
 </GameScene>
 
 Die <ItemLink id="bettacraft:ro_unit" /> macht **Osmosewasser**: Wasser ohne gelöste Stoffe (TDS 0, pH 6,8).
-Weichwasserfische und -garnelen brauchen es; mit Leitungswasser oder [Aufhärtesalz](../aquarium/water_chemistry.md)
+Weichwasserfische und -garnelen brauchen es; mit normalem Wasser oder [Aufhärtesalz](../aquarium/water_chemistry.md)
 gemischt ergibt es jede gewünschte Härte.
 
 * **Wasser hinein**: über Rohre an jeder Seite, einen Wassereimer (oder Meerwasser: Die Membran hält das Salz zurück)

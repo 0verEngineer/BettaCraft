@@ -13,7 +13,7 @@ navigation:
 Die Bienengarnelen (*Caridina* cf. *cantonensis* und die Tigergarnelen) aus den weichen Waldbächen Südchinas sind die
 Juwelen der Garnelenhaltung: weiß mit roten oder schwarzen Bändern oder leuchtend blau. Sie sind so klein wie die
 [Neocaridina](neocaridina.md), aber viel anspruchsvoller: Sie **brauchen weiches, leicht saures Wasser** und leben
-nicht in Leitungswasser. Sie sind eine eigene Art und **kreuzen sich nicht mit den Neocaridina**.
+nicht in normalem Wasser. Sie sind eine eigene Art und **kreuzen sich nicht mit den Neocaridina**.
 
 ## Steckbrief
 
@@ -55,12 +55,13 @@ nicht in Leitungswasser. Sie sind eine eigene Art und **kreuzen sich nicht mit d
 
 ## Das richtige Wasser
 
-* **pH 5,5 bis 6,8 und TDS 100 bis 200 ppm.** Leitungswasser (pH 7,5, 250 ppm) ist schlecht für sie: Sie werden krank
+* **pH 5,5 bis 6,8 und TDS 100 bis 200 ppm.** Normales Wasser (pH 7,5, 250 ppm) ist schlecht für sie: Sie werden krank
   und sterben.
 * Mit [Osmosewasser](../equipment/reverse_osmosis.md) (TDS 0) anfangen und es mit
-  [Aufhärtesalz](../aquarium/water_chemistry.md) auf etwa 150 ppm bringen (Schleichen: genau 150). **Soil** am Boden
-  (Erde, Schlamm, Podsol …), Torf im Filter, Wurzeln und Seemandelbaumblätter senken den pH.
-* Mit Osmosewasser nachfüllen, nicht mit Leitungswasser: Die Verdunstung lässt die Mineralien zurück, der TDS steigt.
+  [Aufhärtesalz](../aquarium/water_chemistry.md) auf etwa 150 ppm bringen (Schleichen: genau 150). [Aktivboden](../interior/active_soil.md)
+  am Boden hält den pH bei etwa 6,3 und das Wasser weich; Torf im Filter, Wurzeln und Seemandelbaumblätter helfen auch
+  (einfache Erde nur halb so viel).
+* Mit Osmosewasser nachfüllen, nicht mit normalem Wasser: Die Verdunstung lässt die Mineralien zurück, der TDS steigt.
 * Kühler als die Neocaridina: 18 bis 26 °C. Empfindlich gegen schlechtes Wasser und zu viel [CO2](../equipment/co2.md).
 
 ## Zucht

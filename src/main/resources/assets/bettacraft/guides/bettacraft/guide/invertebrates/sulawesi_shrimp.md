@@ -31,7 +31,7 @@ its tank best with the [Tylomelania snails](tylomelania.md) of the same lakes.
 
 ## The right water
 
-* **pH 7.5 to 8.6 and TDS 150 to 350 ppm**, 25 to 31 °C. Tap water just fits (pH 7.5 is the lower end):
+* **pH 7.5 to 8.6 and TDS 150 to 350 ppm**, 25 to 31 °C. Normal water just fits (pH 7.5 is the lower end):
   **limestone** on the floor or as rocks (calcite, dripstone, dead coral ...) raises the pH and keeps it there.
 * No soil, peat, driftwood or almond leaves: they make the water too acidic. Keep the [CO2](../equipment/co2.md) low.
 * Sensitive to bad water: change it often.

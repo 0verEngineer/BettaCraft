@@ -54,11 +54,12 @@ water. They are a species of their own and **do not cross with the Neocaridina**
 
 ## The right water
 
-* **pH 5.5 to 6.8 and TDS 100 to 200 ppm.** Tap water (pH 7.5, 250 ppm) is bad for them: they get sick and die.
+* **pH 5.5 to 6.8 and TDS 100 to 200 ppm.** Normal water (pH 7.5, 250 ppm) is bad for them: they get sick and die.
 * Start with [reverse osmosis water](../equipment/reverse_osmosis.md) (TDS 0) and bring it to about 150 ppm with
-  [remineralising salt](../aquarium/water_chemistry.md) (sneak: exactly 150). **Soil** on the floor (dirt, mud,
-  podzol ...), peat in the filter, driftwood and almond leaves bring the pH down.
-* Top off with reverse osmosis water, not with tap water: evaporation leaves the minerals behind and the TDS creeps up.
+  [remineralising salt](../aquarium/water_chemistry.md) (sneak: exactly 150). [Active soil](../interior/active_soil.md)
+  on the floor holds the pH near 6.3 and the water soft; peat in the filter, driftwood and almond leaves help too (plain
+  dirt only half as much).
+* Top off with reverse osmosis water, not with normal water: evaporation leaves the minerals behind and the TDS creeps up.
 * Cooler than the Neocaridina: 18 to 26 °C. Sensitive to bad water and to too much [CO2](../equipment/co2.md).
 
 ## Breeding

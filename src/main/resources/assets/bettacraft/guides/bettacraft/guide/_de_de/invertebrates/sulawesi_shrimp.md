@@ -31,7 +31,7 @@ Wasser**. Am besten teilt sie ihr Becken mit den [Tylomelania-Schnecken](tylomel
 
 ## Das richtige Wasser
 
-* **pH 7,5 bis 8,6 und TDS 150 bis 350 ppm**, 25 bis 31 °C. Leitungswasser passt gerade (pH 7,5 ist die untere
+* **pH 7,5 bis 8,6 und TDS 150 bis 350 ppm**, 25 bis 31 °C. Normales Wasser passt gerade (pH 7,5 ist die untere
   Grenze): **Kalkstein** am Boden oder als Steine (Kalzit, Tropfstein, tote Korallen …) hebt den pH und hält ihn dort.
 * Kein Soil, Torf, keine Wurzeln oder Seemandelbaumblätter: Sie machen das Wasser zu sauer. Das
   [CO2](../equipment/co2.md) niedrig halten.

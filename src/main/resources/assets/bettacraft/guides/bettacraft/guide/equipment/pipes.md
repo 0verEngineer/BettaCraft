@@ -23,7 +23,7 @@ item_ids:
 ![Pipes, a water pump and a multiblock filter on an aquarium](../images/pipes.png)
 
 Pipes carry **water with all its values**: temperature, salt, quality and nitrate travel with it (and later RO water,
-sea water and live food suspensions). Water from a bucket or a water source is fresh tap water.
+sea water and live food suspensions). Water from a bucket or a water source is fresh normal water.
 
 * <ItemLink id="bettacraft:glass_pipe" />: cheap, carries **50 mB per tick**.
 * <ItemLink id="bettacraft:stainless_steel_pipe" />: carries **250 mB per tick**. A network of both kinds carries what
