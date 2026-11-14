@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.network.RegulatorPayload;
  * sponge). The value comes live from the block (state or synced block entity); changes go to the server.
  */
 public class RegulatorScreen extends Screen {
-    private static final int W = 200, H = 110;
+    private static final int W = 260, H = 110;
     private final BlockPos pos;
     private int left, top;
 
@@ -42,7 +42,7 @@ public class RegulatorScreen extends Screen {
         for (int i = 0; i < quick.length; i++) {
             int v = quick[i];
             addRenderableWidget(Button.builder(Component.literal(v * 10 + " %"), b -> send(v, false))
-                    .bounds(left + 10 + i * 62, top + 74, 56, 18).build());
+                    .bounds(left + 10 + i * ((W - 20) / 3), top + 74, (W - 20) / 3 - 6, 18).build());
         }
     }
 

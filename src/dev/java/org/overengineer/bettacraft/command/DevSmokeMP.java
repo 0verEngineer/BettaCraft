@@ -151,6 +151,8 @@ public final class DevSmokeMP {
                 String want = OUTLETS_EXPECTED;
                 check(name + ": cabinet outlets " + (a.length > 1 ? a[1] : "?") + " (server " + want + ")", a.length > 1 && want.equals(a[1]));
             }
+            case "aeration" -> check(name + ": air pump runs, bubbling stones and LED panel halves " + (a.length > 1 ? a[1] : "?") + " (server true,2,2)",
+                    a.length > 1 && "true,2,2".equals(a[1]));
             case "outletmenu" -> check(name + ": cabinet menu with the outlet button (" + (a.length > 1 ? a[1] : "?") + ")", a.length > 1 && "ok".equals(a[1]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
@@ -946,6 +948,40 @@ public final class DevSmokeMP {
             BlockPos at = base.offset(-12, 0, 6);
             say("outlets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> reports.containsKey(P1 + ":outletsright,front") && reports.containsKey(P2 + ":outletsright,front"), 20 * 30));
+        // M23: a small tank with an air pump, two air stones in the interior and an LED panel on top: both clients see the pump
+        // run, the stones bubble in the miniature and both halves of the panel; then Dev1 turns the pump to 50 % (regulator)
+        steps.add(new Step("aeration", () -> {
+            BlockPos min = base.offset(-18, 0, 12);
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the aeration tank formed", c != null);
+            if (c == null) return;
+            org.overengineer.bettacraft.tank.TankInteractions.changeWater(level, c, c.getTank().capacityMb(), 0F);
+            level.setBlockAndUpdate(min.offset(-1, 0, 0), ModBlocks.AIR_PUMP.get().defaultBlockState());
+            for (int z = 0; z < 2; z++) level.setBlockAndUpdate(min.offset(0, 2, z), ModBlocks.LED_PANEL.get().defaultBlockState()
+                    .setValue(org.overengineer.bettacraft.equipment.LedPanelBlock.PARTNER_POS, z == 0).setValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT, true));
+            var r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(level, c);
+            ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(server);
+            in.setBlock(r.toWorld(6, 0, 6), ModBlocks.AIR_STONE.get().defaultBlockState(), 3);
+            in.setBlock(r.toWorld(20, 0, 20), ModBlocks.AIR_STONE.get().defaultBlockState(), 3);
+            org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+            org.overengineer.bettacraft.tank.TankAeration.step(level, c, 0.01);
+            say("aeration", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":aeration") && reports.containsKey(P2 + ":aeration"), 20 * 40));
+        steps.add(new Step("regulator", () -> {
+            BlockPos min = base.offset(-18, 0, 12);
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            // the stage hangs in the air: a block to stand on beside the pump
+            server.overworld().setBlockAndUpdate(new BlockPos(min.getX() - 2, min.getY() - 1, min.getZ() - 2), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
+            p.resetFallDistance();
+            p.teleportTo(server.overworld(), min.getX() - 1.5, min.getY(), min.getZ() - 1.5, 0F, 30F);
+            say("regulate", P1, (min.getX() - 1) + "," + min.getY() + "," + min.getZ());
+        }, () -> server.overworld().getBlockEntity(base.offset(-19, 0, 12)) instanceof org.overengineer.bettacraft.equipment.AirPumpBlockEntity a && a.power() == 5, 20 * 30));
         steps.add(new Step("seahorses", () -> {
             // M21.8: a small seahorse tank with a pair (the male with a full brood pouch); the cyst stack size is changed live
             // to 32 (both clients must follow), each player gets a stack of 20 jars and a used jar

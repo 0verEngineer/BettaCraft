@@ -178,7 +178,7 @@ public final class DevShowcase {
         level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
         // keep the whole showcase loaded while it is built (the animals are entities)
         for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
-            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 16 * ROW + 10 >> 4) + 1; cz++) {
+            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 17 * ROW + 10 >> 4) + 1; cz++) {
                 level.setChunkForced(cx, cz, true);
                 forced.add(new ChunkPos(cx, cz));
             }
@@ -456,6 +456,42 @@ public final class DevShowcase {
             org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
             name(level, at, sidesDe[side.ordinal()]);
             at = at.east(3 + GAP);
+        }
+        // M23: the three light tiers over red and strong-light plants; air pumps with air stones (bubble columns), a sponge filter
+        at = startRow(level, "Belüftung und LED-Stufen");
+        String[] tiersDe = {"Lichtleiste", "LED-Panel", "Hochleistungs-LED"};
+        for (int tier = 0; tier < 3; tier++) {
+            TankBlockEntity c = tank(level, at, 4, 2, 2, 0F, true);
+            for (int x = 0; x < 4; x++)
+                for (int z = 0; z < 2; z++) {
+                    BlockPos lp = at.offset(x, 2, z);
+                    var st = switch (tier) {
+                        case 0 -> z == 1 ? null : ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
+                                .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 3);
+                        case 1 -> ModBlocks.LED_PANEL.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
+                                .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 3)
+                                .setValue(org.overengineer.bettacraft.equipment.LedPanelBlock.PARTNER_POS, z == 0);
+                        default -> ModBlocks.HIGH_POWER_LED.get().defaultBlockState().setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 3)
+                                .setValue(org.overengineer.bettacraft.equipment.HighPowerLedBlock.NORTH, z > 0)
+                                .setValue(org.overengineer.bettacraft.equipment.HighPowerLedBlock.SOUTH, z < 1);
+                    };
+                    if (st != null) level.setBlockAndUpdate(lp, st.setValue(TankLightBlock.LIT, true));
+                }
+            InteriorRegion lr = region(level, c, Blocks.GRAVEL.defaultBlockState());
+            ServerLevel lin = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
+            org.overengineer.bettacraft.plants.InteriorPlants.plantAt(lin, lr, org.overengineer.bettacraft.plants.PlantSpecies.ALTERNANTHERA, 44, 0, 20, 6, 7L + tier);
+            org.overengineer.bettacraft.plants.InteriorPlants.plantAt(lin, lr, org.overengineer.bettacraft.plants.PlantSpecies.LUDWIGIA, 52, 0, 18, 6, 9L + tier);
+            for (int k = 0; k < 3; k++) org.overengineer.bettacraft.plants.InteriorPlants.plantAt(lin, lr, org.overengineer.bettacraft.plants.PlantSpecies.MONTE_CARLO, 6 + k * 10, 0, 8, 5, 21L + k);
+            org.overengineer.bettacraft.plants.InteriorPlants.settleTint(level, c);
+            plants += 5;
+            // an air pump at the west wall with two to four air stones
+            level.setBlockAndUpdate(at.offset(-1, 0, 0), ModBlocks.AIR_PUMP.get().defaultBlockState()
+                    .setValue(org.overengineer.bettacraft.equipment.AirPumpBlock.FACING, Direction.EAST));
+            for (int k = 0; k < 2 + tier; k++) lin.setBlock(lr.toWorld(10 + k * 10, 0, 20 - k * 3), ModBlocks.AIR_STONE.get().defaultBlockState(), 3);
+            org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+            org.overengineer.bettacraft.tank.TankAeration.step(level, c, 0.01);
+            name(level, at, tiersDe[tier]);
+            at = at.east(4 + GAP);
         }
     }
 

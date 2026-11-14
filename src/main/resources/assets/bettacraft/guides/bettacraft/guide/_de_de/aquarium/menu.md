@@ -68,6 +68,8 @@ Server ihn verlangt.
 
 ## Technik
 
+![Der Reiter Technik](../images/menu_devices.png)
+
 Der [Sauerstoff](oxygen.md) mit Balken (der weiße Strich ist die Sättigung), wohin er strebt und warum (Austausch und
 Verbrauch), die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
 [Schwammfilter](../equipment/sponge_filter.md), wie viel CO2 die Belüftung austreibt, wie viele Motorfilter keinen

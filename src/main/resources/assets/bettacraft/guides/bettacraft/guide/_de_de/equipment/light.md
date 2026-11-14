@@ -26,6 +26,8 @@ Das <ItemLink id="bettacraft:tank_light" /> leuchtet mit Lichtstufe 15.
 
 ## Drei Stufen
 
+![Hochleistungs-LED, LED-Panel und Lichtleiste (von links)](../images/light_tiers.png)
+
 Die Lichtleiste ist die **schwächste von drei Stufen**: [LED-Panel](led_panel.md) (Licht 15 + 2,5) und
 [Hochleistungs-LED](high_power_led.md) (Licht 15 + 5) geben auf dem Teil des Aquariums, den sie abdecken, mehr Licht.
 Stärkeres Licht macht rote Pflanzen **röter** (das tiefste Rot nur unter Panel oder Hochleistungs-LED), lässt die

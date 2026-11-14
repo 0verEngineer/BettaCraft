@@ -18,6 +18,8 @@ Place the <ItemLink id="bettacraft:air_stone" /> in the [interior](../interior.m
 decoration. As soon as an [air pump](air_pump.md) at the aquarium drives it, a **column of fine bubbles** rises from
 it to the water surface, inside and in the miniature of the aquarium outside, and it bubbles quietly.
 
+![Bubble columns inside the aquarium, on the right the sponge filter](../images/air_stone_interior.png)
+
 * It brings a lot of **oxygen** into the water: one stone at full strength exchanges the oxygen of about 30 water
   blocks per day (see [Oxygen](../aquarium/oxygen.md)).
 * Strong aeration also **drives out CO2**; that will matter once CO2 can be dosed for the plants.

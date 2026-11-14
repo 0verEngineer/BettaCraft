@@ -163,6 +163,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestm23')) {
+                // gradlew runClient -Psmoketestm23 : only the M23 scene (three tanks under light bar, LED panel and high-power LED,
+                // air pump with air stones, sponge and corner filter: bubble columns in the miniature and inside, the daylight timer
+                // at night, the tank menu tab Devices en + de, the regulator screen, the filter menu, the handbook en + de;
+                // add -Pshaders for Complementary)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m23only', 'true'
+            }
             if (project.hasProperty('smoketestm22_4')) {
                 // gradlew runClient -Psmoketestm22_4 : only the M22.4 scene (four tanks on cabinets with the four outlet sides of
                 // the filter, the cabinet menu with the outlet button en + de, a cabinet item with its side, the handbook pages

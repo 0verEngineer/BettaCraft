@@ -28,7 +28,7 @@ public class AirBubbleParticle extends TextureSheetParticle {
         this.phase = random.nextDouble() * Math.PI * 2;
         double rise = Math.max(0.05, top - y);
         this.lifetime = (int) Math.min(600, Math.max(4, rise / this.yd * 1.4));
-        this.alpha = 0.85F;
+
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AirBubbleParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return ParticleRenderType.PARTICLE_SHEET_OPAQUE; // like Minecraft's bubble: drawn before the tank water, seen through it
     }
 
     public record Provider(SpriteSet sprites) implements ParticleProvider<ModParticles.AirBubble> {

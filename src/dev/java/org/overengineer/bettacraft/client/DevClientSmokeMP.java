@@ -245,6 +245,25 @@ final class DevClientSmokeMP {
                     send("outlets " + w[0] + "," + w[1]);
                 });
             }
+            case "aeration" -> {
+                // M23: the air pump runs on this client, the miniature shows both air stones bubbling, both halves of the panel
+                BlockPos at = pos(args);
+                then(80, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    boolean runs = mc.level.getBlockEntity(at.offset(-1, 0, 0)) instanceof org.overengineer.bettacraft.equipment.AirPumpBlockEntity pump && pump.running();
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, at);
+                    var region = c == null || c.getTank() == null ? null : org.overengineer.bettacraft.client.interior.ClientInteriorCache.get(c.getTank().regionId());
+                    int bubblers = region == null ? -1 : region.bubblers().size();
+                    int panels = 0;
+                    for (int z = 0; z < 2; z++) if (mc.level.getBlockState(at.offset(0, 2, z)).getBlock() instanceof org.overengineer.bettacraft.equipment.LedPanelBlock) panels++;
+                    send("aeration " + runs + "," + bubblers + "," + panels);
+                });
+            }
+            case "regulate" -> then(20, () -> {
+                // M23: Dev1 sets the air pump to 50 % like the regulator screen does
+                LOGGER.info("[mp] sending the regulator for {}", pos(args));
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(new org.overengineer.bettacraft.network.RegulatorPayload(pos(args), 5, false));
+            });
             case "outletmenu" -> {
                 // M22.4: Dev1 opens the cabinet menu with a right-click on the cabinet's front and presses the outlet button
                 // like the tank menu step: a right-click (use key) on the cabinet the server turned the player to

@@ -969,7 +969,7 @@
   "gui.bettacraft.devices.air": "Air pumps %s (%s running) · air stones %s · sponge filters %s",
   "gui.bettacraft.devices.co2": "Aeration drives out CO2: %s %% (matters once CO2 is dosed)",
   "gui.bettacraft.devices.dimmer": "Dimmer",
-  "gui.bettacraft.devices.fry_risk": "%s motor filters without intake sponge: they suck in fry",
+  "gui.bettacraft.devices.fry_risk": "Motor filters without intake sponge: %s (they suck in fry)",
   "gui.bettacraft.devices.fry_safe": "Every motor filter has an intake sponge: safe for fry",
   "gui.bettacraft.devices.light_class.dark": "dark",
   "gui.bettacraft.devices.light_class.good": "good",

@@ -51,7 +51,7 @@ final class LangM23 {
         a.accept("gui.bettacraft.devices.no_pump", "No air pump · air stones %s, sponge filters %s");
         a.accept("gui.bettacraft.devices.air", "Air pumps %s (%s running) · air stones %s · sponge filters %s");
         a.accept("gui.bettacraft.devices.co2", "Aeration drives out CO2: %s %% (matters once CO2 is dosed)");
-        a.accept("gui.bettacraft.devices.fry_risk", "%s motor filters without intake sponge: they suck in fry");
+        a.accept("gui.bettacraft.devices.fry_risk", "Motor filters without intake sponge: %s (they suck in fry)");
         a.accept("gui.bettacraft.devices.fry_safe", "Every motor filter has an intake sponge: safe for fry");
         a.accept("gui.bettacraft.devices.lights", "Lights: %s bars, %s panels, %s high-power · light %s (%s)");
         a.accept("gui.bettacraft.devices.light_class.dark", "dark");

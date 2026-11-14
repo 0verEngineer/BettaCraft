@@ -90,7 +90,7 @@ public final class MiniatureJets {
         if (t.waterMb() <= 0) return;
         double surface = surfaceY(t);
         double fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
-        float size = (float) Math.max(0.012, Math.min(0.05, 0.6 * fy));
+        float size = (float) Math.max(0.02, Math.min(0.06, 0.9 * fy));
         for (ClientRegion.Bubbler b : region.bubblers()) {
             Vec3 w = toWorld(t, region, b.x(), b.y(), b.z());
             if (w.y >= surface || w.distanceToSqr(cam) > 32 * 32) continue;

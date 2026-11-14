@@ -51,7 +51,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES }
 
     /** Scale of the tab labels: seven tabs fit into the 236 px of the menu (also the longer German labels). */
-    public static final float TAB_LABEL_SCALE = 0.75F;
+    /** Scale of the tab labels: 0.75, smaller when the eight labels (M23) would not fit otherwise (set in init). */
+    public static float TAB_LABEL_SCALE = 0.75F;
 
     /** Log filter: all, breeding (nest, eggs, fry, growth), health (sick, deaths, fights), feeding. */
     private enum LogFilter { ALL, BREEDING, HEALTH, FEEDING }
@@ -141,6 +142,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         String[] keys = {"overview", "inhabitants", "breeding", "water", "devices", "plants", "interior", "log"};
         int[] labels = new int[order.length];
         for (int i = 0; i < order.length; i++) labels[i] = font.width(Component.translatable("gui.bettacraft.tab." + keys[i]));
+        int labelSum = 0;
+        for (int l : labels) labelSum += l;
+        TAB_LABEL_SCALE = labelSum <= 0 ? 0.75F : Math.max(0.55F, Math.min(0.75F, (236 - 6F * order.length) / labelSum));
         int[] widths = tabWidths(labels, TAB_LABEL_SCALE, 236);
         int tx = x + 5;
         Button[] tabs = new Button[order.length];

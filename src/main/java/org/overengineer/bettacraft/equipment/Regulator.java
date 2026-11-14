@@ -82,7 +82,8 @@ public final class Regulator {
         if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return;
         Level level = player.level();
         if (player.distanceToSqr(pos.getCenter()) > 64) return;
-        if (!player.mayBuild() || !level.mayInteract(player, pos)) return;
+        // like a lever: no spawn protection check (turning a knob is not building), but spectators and adventure players cannot
+        if (!player.mayBuild() || player.isSpectator() || !level.getWorldBorder().isWithinBounds(pos)) return;
         Device d = find(level, pos);
         if (d == null) return;
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)

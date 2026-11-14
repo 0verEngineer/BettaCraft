@@ -36,19 +36,6 @@ public class DeviceSegmentBlock extends SegmentBlock {
         builder.add(POWER, SPONGE, ACTIVE);
     }
 
-    /** M23: inside the interior a sponge filter that gets air sends bursts of big bubbles out of its lift tube (client). */
-    @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, net.minecraft.util.RandomSource random) {
-        if (kind() != Kind.SPONGE_FILTER || state.getValue(PART) != Part.TOP) return;
-        Regulator.Device d = Regulator.find(level, pos);
-        if (d == null) return;
-        BlockState a = level.getBlockState(d.pos());
-        if (!a.is(this) || !a.getValue(ACTIVE)) return;
-        int scale = Math.max(1, pos.getY() - d.pos().getY() + 1);
-        int[] shape = SegmentBlock.shape(Kind.SPONGE_FILTER, 16);
-        org.overengineer.bettacraft.util.ClientHooks.sponge.burst(level, d.pos(), shape[0], scale);
-    }
-
     /** Right-click with an empty hand: the power regulator (client screen). */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {

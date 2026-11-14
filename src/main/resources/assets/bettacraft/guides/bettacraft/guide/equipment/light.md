@@ -26,6 +26,8 @@ The <ItemLink id="bettacraft:tank_light" /> gives light level 15.
 
 ## Three tiers
 
+![High-power LED, LED panel and light bar (from the left)](../images/light_tiers.png)
+
 The light bar is the **weakest of three tiers**: [LED panel](led_panel.md) (light 15 + 2.5) and
 [high-power LED](high_power_led.md) (light 15 + 5) give more light on the part of the aquarium they cover. Stronger
 light makes red plants **redder** (the deepest red only under a panel or a high-power LED), lets the **strong-light

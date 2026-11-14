@@ -15,6 +15,8 @@ item_ids:
   <Block id="bettacraft:air_pump" p:facing="north" />
 </GameScene>
 
+![Eine Luftpumpe neben einem Aquarium: ihr Schlauch geht über den Rand, drei Ausströmer und ein Schwammfilter sprudeln](../images/aeration.png)
+
 Die <ItemLink id="bettacraft:air_pump" /> ist eine kleine Membranpumpe. Stell sie **neben ein Aquarium** (an jede
 Seite) oder **oben darauf**: ihr Luftschlauch führt über den Glasrand ins Wasser. Sie treibt die
 [Ausströmersteine](air_stone.md) und die [Schwammfilter](sponge_filter.md) im [Innenraum](../interior.md) dieses

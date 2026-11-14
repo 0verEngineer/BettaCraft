@@ -16,6 +16,8 @@ Filter, [Ausströmer](air_stone.md), [Luftpumpen](air_pump.md) und Strömungspum
   Strömungspumpe) öffnet ein kleines Regler-Fenster. Außenfilter und Schrankfilter haben einen Knopf in ihrem Menü
   (Klick +10 %, Schleichen + Klick -10 %).
 
+![Der Regler einer Luftpumpe](../images/regulator.png)
+
 Weniger Leistung heißt:
 
 * **weniger Wirkung:** ein Filter mit 50 % reinigt halb so viel Wasser, eine Strömungspumpe bewegt halb so viel, ein

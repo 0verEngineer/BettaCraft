@@ -15,6 +15,8 @@ Filters, [air stones](air_stone.md), [air pumps](air_pump.md) and flow pumps can
   opens a small regulator window. External filters and cabinet filters have a button in their menu (click +10 %,
   sneak + click -10 %).
 
+![The regulator of an air pump](../images/regulator.png)
+
 Less power means:
 
 * **less effect:** a filter at 50 % cleans half as much water, a flow pump moves half as much, an air stone brings

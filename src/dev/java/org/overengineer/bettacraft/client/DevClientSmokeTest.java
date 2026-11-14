@@ -89,6 +89,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM222 m222;
     private static DevClientSmokeM223 m223;
     private static DevClientSmokeM224 m224;
+    /** -Psmoketestm23: only the M23 scene (aeration, internal filters, light tiers, timer, menus, handbook). */
+    private static final boolean M23_ONLY = Boolean.getBoolean("bettacraft.smoketest.m23only");
+    private static DevClientSmokeM23 m23;
     /** -Psmoketestm22_4: only the M22.4 scene (the four outlet sides of the cabinet filter, the cabinet menu, the handbook plant sources). */
     private static final boolean M22_4_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_4only");
     /** -Psmoketestm22_3: only the M22.3 scene (wild fish and small animals, wild corals, magnifier, single animals, bucket tooltips). */
@@ -165,6 +168,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M23_ONLY) {
+                if (ticks == 60) m23 = new DevClientSmokeM23();
+                if (m23 != null && m23.tick()) {
+                    m23 = null;
+                    LOGGER.info("[smoketest] client world test finished (M23 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M22_4_ONLY) {
                 if (ticks == 60) m224 = new DevClientSmokeM224();
                 if (m224 != null && m224.tick()) {
@@ -600,6 +612,10 @@ final class DevClientSmokeTest {
                     }
                     if (m224 != null && m224.tick()) {
                         m224 = null;
+                        m23 = new DevClientSmokeM23(); // M23: aeration, internal filters, light tiers and timer
+                    }
+                    if (m23 != null && m23.tick()) {
+                        m23 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

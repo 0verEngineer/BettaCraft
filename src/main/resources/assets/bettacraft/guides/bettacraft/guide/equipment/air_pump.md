@@ -15,6 +15,8 @@ item_ids:
   <Block id="bettacraft:air_pump" p:facing="north" />
 </GameScene>
 
+![An air pump beside an aquarium: its hose goes over the rim, three air stones and a sponge filter bubble](../images/aeration.png)
+
 The <ItemLink id="bettacraft:air_pump" /> is a small membrane pump. Place it **next to an aquarium** (at any side) or
 **on its top**: its air hose runs over the glass rim into the water. It drives the [air stones](air_stone.md) and the
 [sponge filters](sponge_filter.md) in the [interior](../interior.md) of that aquarium.

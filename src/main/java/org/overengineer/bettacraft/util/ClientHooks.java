@@ -24,14 +24,6 @@ public final class ClientHooks {
     /** Client tick of an air pump (hum). */
     public static volatile Consumer<org.overengineer.bettacraft.equipment.AirPumpBlockEntity> pumpTick = b -> {};
 
-    /** Burst of bubbles out of a sponge filter's lift tube in the interior (anchor, footprint, height). */
-    @FunctionalInterface
-    public interface SpongeBurst {
-        void burst(net.minecraft.world.level.Level level, BlockPos anchor, int foot, int height);
-    }
-
-    public static volatile SpongeBurst sponge = (l, a, f, h) -> {};
-
     public static void openRegulator(BlockPos pos) {
         regulator.accept(pos.immutable());
     }

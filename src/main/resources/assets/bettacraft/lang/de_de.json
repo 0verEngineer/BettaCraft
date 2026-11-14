@@ -1971,7 +1971,7 @@
   "gui.bettacraft.devices.no_pump": "Keine Luftpumpe · Ausströmer %s, Schwammfilter %s",
   "gui.bettacraft.devices.air": "Luftpumpen %s (%s laufen) · Ausströmer %s · Schwammfilter %s",
   "gui.bettacraft.devices.co2": "Belüftung treibt CO2 aus: %s %% (wichtig, sobald CO2 dosiert wird)",
-  "gui.bettacraft.devices.fry_risk": "%s Motorfilter ohne Ansaugschutz: sie saugen Jungfische ein",
+  "gui.bettacraft.devices.fry_risk": "Motorfilter ohne Ansaugschutz: %s (sie saugen Jungfische ein)",
   "gui.bettacraft.devices.fry_safe": "Jeder Motorfilter hat einen Ansaugschutz: sicher für Jungfische",
   "gui.bettacraft.devices.lights": "Licht: %s Leisten, %s Panels, %s Hochleistung · Licht %s (%s)",
   "gui.bettacraft.devices.light_class.dark": "dunkel",
