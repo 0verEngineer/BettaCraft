@@ -26,6 +26,17 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_SEAHORSES;
     public static final ModConfigSpec.BooleanValue FEATURE_SWAYING_FOREIGN_PLANTS;
     public static final ModConfigSpec.BooleanValue SWAYING_AUTO;
+    // M22.3
+    public static final ModConfigSpec.IntValue SPAWN_FISH_WEIGHT;
+    public static final ModConfigSpec.IntValue SPAWN_CRITTER_WEIGHT;
+    public static final ModConfigSpec.BooleanValue FEATURE_WILD_FISH;
+    public static final ModConfigSpec.BooleanValue FEATURE_WILD_CRITTERS;
+    public static final ModConfigSpec.BooleanValue FEATURE_WILD_CORALS;
+    public static final ModConfigSpec.BooleanValue FEATURE_WILD_COLORS;
+    public static final ModConfigSpec.BooleanValue FEATURE_MUTATIONS;
+    public static final ModConfigSpec.BooleanValue FEATURE_MAGNIFIER;
+    public static final ModConfigSpec.BooleanValue FEATURE_BIG_CONTAINERS;
+    public static final ModConfigSpec.BooleanValue FEATURE_ANIMAL_LIST;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> SWAYING_EXCLUDE;
 
     static {
@@ -34,6 +45,12 @@ public final class CommonConfig {
         SPAWN_WEIGHT = b.comment("Spawn weight of wild bettas in #bettacraft:betta_spawn_biomes (swamps); 0 disables natural spawning").defineInRange("weight", 8, 0, 1000);
         SPAWN_MIN_GROUP = b.comment("Smallest group of wild bettas that spawns together").defineInRange("minGroupSize", 1, 1, 16);
         SPAWN_MAX_GROUP = b.comment("Largest group of wild bettas that spawns together").defineInRange("maxGroupSize", 2, 1, 16);
+        // M22.3
+        SPAWN_FISH_WEIGHT = b.comment("Spawn weight of the wild tankmate fish and dwarf clawed frogs in their biomes, in tenths of their net catch weight",
+                "(jungle: tetras, corydoras, plecos, otocinclus; swamps: rasboras, loaches, dwarf gourami, frogs; rivers: livebearers;",
+                "warm and lukewarm oceans: reef fish and seahorses); 0 disables them (features.wildFish)").defineInRange("wildFishWeight", 5, 0, 1000);
+        SPAWN_CRITTER_WEIGHT = b.comment("Spawn weight of wild shrimp, crayfish, snails and hermit crabs crawling on the bottom of rivers, swamps,",
+                "mangroves, beaches, jungle water and warm oceans; 0 disables them (features.wildCritters)").defineInRange("wildCritterWeight", 6, 0, 1000);
         b.pop();
         b.comment("Recipes").push("recipes");
         RECIPE_FISH_BAG = b.comment("Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one")
@@ -77,6 +94,25 @@ public final class CommonConfig {
         // M21.8
         FEATURE_SEAHORSES = b.comment("Seahorses (lined seahorse Hippocampus erectus, dwarf seahorse H. zosterae) at the wandering trader and in the "
                 + "aquarium net in warm and lukewarm oceans (off: no new ones; seahorses already caught stay)").define("seahorses", true);
+        // M22.3
+        FEATURE_WILD_FISH = b.comment("Wild tankmate fish, seahorses and dwarf clawed frogs spawn in their biomes, rarely and in small shoals",
+                "(off: only the net, the trader and breeding bring them)").define("wildFish", true);
+        FEATURE_WILD_CRITTERS = b.comment("Wild shrimp, crayfish, snails and hermit crabs crawl on the bottom of rivers, swamps, mangroves, beaches,",
+                "jungle water and warm oceans; caught with the net, a fish bag or a bucket, and they can be let go again (off: they do not",
+                "spawn, and let go into the world they are gone like before)").define("wildCritters", true);
+        FEATURE_WILD_CORALS = b.comment("Every Bettacraft coral and the bubble tip anemone grow in the warm ocean coral reefs (new chunks); shears",
+                "cut a frag off them (off: no new ones in new chunks; corals already there stay)").define("wildCorals", true);
+        FEATURE_WILD_COLORS = b.comment("Now and then a wild animal shows a bred colour openly (wildlife.beautifulWildChance)",
+                "(off: wild animals are wild-coloured, bred colours only hidden)").define("wildColors", true);
+        FEATURE_MUTATIONS = b.comment("Spontaneous mutations also for shrimp, crayfish, snails and the tankmates without their own genetics",
+                "(wildlife.otherMutationChance; off: only bettas, guppies and endlers mutate)").define("mutations", true);
+        FEATURE_MAGNIFIER = b.comment("Magnifier: the hidden genes of a new animal are unknown until it is analysed in a tank (off: every animal",
+                "shows its genes like before)").define("magnifier", true);
+        FEATURE_BIG_CONTAINERS = b.comment("Several animals of one species per bucket and fish bag by their size (a bucket: 32 shrimp, 24 rasboras,",
+                "1 betta; a bag half of that), shrimp and snails also in a plain bucket (off: one fish per bucket, bags as before)")
+                .define("bigContainers", true);
+        FEATURE_ANIMAL_LIST = b.comment("List of every single shrimp, crayfish and snail in the tank menu (sex, age, colour density, genes) to take",
+                "out exactly that one, and the sex choice for the quick take-out (off: only the kinds like before)").define("animalList", true);
         b.pop();
         b.comment("Swaying water plants in the tank miniature (M22.1, features.swayingForeignPlants)").push("swaying");
         SWAYING_AUTO = b.comment("Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, "
@@ -146,6 +182,16 @@ public final class CommonConfig {
     public static boolean stoneCabinets() {
         return getOr(FEATURE_STONE_CABINETS, true);
     }
+
+    // M22.3
+    public static boolean wildFish() { return getOr(FEATURE_WILD_FISH, true); }
+    public static boolean wildCritters() { return getOr(FEATURE_WILD_CRITTERS, true); }
+    public static boolean wildCorals() { return getOr(FEATURE_WILD_CORALS, true); }
+    public static boolean wildColors() { return getOr(FEATURE_WILD_COLORS, true); }
+    public static boolean mutations() { return getOr(FEATURE_MUTATIONS, true); }
+    public static boolean magnifier() { return getOr(FEATURE_MAGNIFIER, true); }
+    public static boolean bigContainers() { return getOr(FEATURE_BIG_CONTAINERS, true); }
+    public static boolean animalList() { return getOr(FEATURE_ANIMAL_LIST, true); }
 
     private CommonConfig() {}
 }

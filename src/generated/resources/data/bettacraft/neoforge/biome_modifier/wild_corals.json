@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "minecraft:warm_ocean",
+  "features": "bettacraft:wild_coral",
+  "step": "vegetal_decoration"
+}

@@ -42,7 +42,15 @@ public final class TankView {
     public record Inhabitant(UUID uuid, String customName, String typeKey, boolean betta, boolean female, String stage,
                              boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome,
                              BettaGenotype genotype, float hp, float progress, int generation, boolean frog, float air, boolean noAir,
-                             CompoundTag tankmate) {
+                             CompoundTag tankmate, boolean analysed, boolean genesVisible) {
+        /** M22.3: without the analysis state (animals without hidden genes). */
+        public Inhabitant(UUID uuid, String customName, String typeKey, boolean betta, boolean female, String stage,
+                          boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome,
+                          BettaGenotype genotype, float hp, float progress, int generation, boolean frog, float air, boolean noAir, CompoundTag tankmate) {
+            this(uuid, customName, typeKey, betta, female, stage, adult, health, satiation, sick, bucketable, genome, genotype, hp, progress,
+                    generation, frog, air, noAir, tankmate, true, true);
+        }
+
         /** M19: without the tankmate details (bettas, frogs, other animals). */
         public Inhabitant(UUID uuid, String customName, String typeKey, boolean betta, boolean female, String stage,
                           boolean adult, float health, float satiation, boolean sick, boolean bucketable, BettaGenome genome,
@@ -80,6 +88,8 @@ public final class TankView {
                 t.putBoolean("no_air", noAir);
             }
             if (!tankmate.isEmpty()) t.put("tm", tankmate);
+            t.putBoolean("analysed", analysed);
+            t.putBoolean("genes_visible", genesVisible);
             return t;
         }
 
@@ -88,7 +98,8 @@ public final class TankView {
             return new Inhabitant(t.getUUID("id"), t.getString("name"), t.getString("type"), t.getBoolean("betta"), t.getBoolean("female"),
                     t.getString("stage"), t.getBoolean("adult"), t.getFloat("health"), t.getFloat("sat"), t.getBoolean("sick"),
                     t.getBoolean("bucketable"), g, BettaGenotype.load(t.getCompound("genotype")), t.getFloat("hp"), t.getFloat("progress"),
-                    t.getInt("gen"), t.getBoolean("frog"), t.getFloat("air"), t.getBoolean("no_air"), t.getCompound("tm"));
+                    t.getInt("gen"), t.getBoolean("frog"), t.getFloat("air"), t.getBoolean("no_air"), t.getCompound("tm"),
+                    !t.contains("analysed") || t.getBoolean("analysed"), !t.contains("genes_visible") || t.getBoolean("genes_visible"));
         }
     }
 
@@ -100,10 +111,14 @@ public final class TankView {
         CompoundTag d = new CompoundTag();
         d.putString("species", s.id());
         d.putString("variety", m.variety());
-        d.putString("genes", m.genes().text());
-        // M21.6: the guppy and endler genome (with features.livebearerGenetics)
+        boolean known = org.overengineer.bettacraft.genetics.GeneVisibility.visible(m.analysed()); // M22.3: the alleles only once analysed
+        d.putString("genes", known ? m.genes().text() : "");
+        // M21.6: the guppy and endler genome (with features.livebearerGenetics); M22.3: the whole genome only once analysed
         var lb = m.livebearerGenome();
-        if (lb != null) d.put("lb", lb.save());
+        if (lb != null) {
+            d.put("lb", lb.save());
+            if (!known) d.putBoolean("lb_hidden", true);
+        }
         d.putInt("shoal", m.shoalSize());
         d.putInt("stress", m.stressBits());
         d.putBoolean("guard", m.isGuarding());
@@ -139,6 +154,8 @@ public final class TankView {
     public int adults, hardCap;
     public boolean crowded;
     public boolean hasBucket, hasBag;
+    /** M22.3: the player carries a magnifier; the hidden genes need it at all. */
+    public boolean hasMagnifier, genesFree;
     /** Water the bag button takes: 100 mB for fish bags, 0 for a Fintastic fishnet (M7). */
     public long bagMb = 100;
     public long minInsertMb;
@@ -178,9 +195,42 @@ public final class TankView {
         }
     }
 
+    /**
+     * M22.3: one small animal of the tank for the single-animal list: its id (to take exactly this one out), kind, sex,
+     * age, colour density and genes (empty while they are not analysed).
+     */
+    public record CritterInfo(int id, int species, String variety, boolean female, boolean adult, float ageDays, float grade, String genes,
+                              boolean analysed, boolean berried, String lookKey, int rgb) {
+        public String key() {
+            return org.overengineer.bettacraft.critters.CritterSpecies.values()[species].id() + ":" + variety;
+        }
+
+        CompoundTag save() {
+            CompoundTag c = new CompoundTag();
+            c.putIntArray("n", new int[]{id, species, rgb});
+            c.putString("v", variety);
+            c.putByte("f", (byte) ((female ? 1 : 0) | (adult ? 2 : 0) | (analysed ? 4 : 0) | (berried ? 8 : 0)));
+            c.putFloat("age", ageDays);
+            c.putFloat("g", grade);
+            if (!genes.isEmpty()) c.putString("genes", genes);
+            if (!lookKey.isEmpty()) c.putString("look", lookKey);
+            return c;
+        }
+
+        static CritterInfo load(CompoundTag c) {
+            int[] n = c.getIntArray("n");
+            if (n.length != 3 || n[1] < 0 || n[1] >= org.overengineer.bettacraft.critters.CritterSpecies.values().length) return null;
+            byte f = c.getByte("f");
+            return new CritterInfo(n[0], n[1], c.getString("v"), (f & 1) != 0, (f & 2) != 0, c.getFloat("age"), c.getFloat("g"), c.getString("genes"),
+                    (f & 4) != 0, (f & 8) != 0, c.getString("look"), n[2]);
+        }
+    }
+
     /** M14: the small animals for the menu. */
     public static final class Critters {
         public final List<CritterGroup> groups = new ArrayList<>();
+        /** M22.3: every living animal (with {@code features.animalList}), sorted by kind and grade. */
+        public final List<CritterInfo> animals = new ArrayList<>();
         public int total, max, dead, clutches, molts;
         public double stock, algae, algaeGrowth, grazing, foodDays, hiding;
         public boolean hunting;
@@ -198,6 +248,9 @@ public final class TankView {
                 l.add(c);
             }
             t.put("groups", l);
+            ListTag a = new ListTag();
+            for (CritterInfo k : animals) a.add(k.save());
+            t.put("animals", a);
             t.putIntArray("n", new int[]{total, max, dead, clutches, molts});
             t.putDouble("stock", stock);
             t.putDouble("algae", algae);
@@ -217,6 +270,11 @@ public final class TankView {
                 int[] n = c.getIntArray("n");
                 if (n.length != 7 || n[0] < 0 || n[0] >= species) continue;
                 groups.add(new CritterGroup(n[0], c.getString("v"), n[1], n[2], n[3], n[4], n[5], n[6], c.getFloat("ga"), c.getFloat("gx"), c.getFloat("gn")));
+            }
+            ListTag a = t.getList("animals", Tag.TAG_COMPOUND);
+            for (int i = 0; i < a.size(); i++) {
+                CritterInfo k = CritterInfo.load(a.getCompound(i));
+                if (k != null) animals.add(k);
             }
             int[] n = t.getIntArray("n");
             if (n.length == 5) {
@@ -268,6 +326,19 @@ public final class TankView {
             }
             out.groups.add(new CritterGroup(first.species.ordinal(), first.genes.variety(first.species), first.genes.rgb(first.species), adults, young,
                     females, males, berried, sum / e.size(), mx, mn));
+            if (org.overengineer.bettacraft.config.CommonConfig.animalList()) {
+                // M22.3: every animal of the kind, the best first
+                List<org.overengineer.bettacraft.critters.Critter> each = new ArrayList<>(e);
+                each.sort(java.util.Comparator.comparing((org.overengineer.bettacraft.critters.Critter k) -> !k.adult())
+                        .thenComparing(k -> -k.genes.grade()).thenComparingInt(k -> k.id));
+                for (var k : each) {
+                    boolean known = org.overengineer.bettacraft.genetics.GeneVisibility.visible(k.analysed);
+                    String look = org.overengineer.bettacraft.critters.CritterLooks.nameKey(k.species, k.look);
+                    out.animals.add(new CritterInfo(k.id, k.species.ordinal(), k.genes.variety(k.species), k.female && k.species.hasSexes(), k.adult(),
+                            (float) k.age, k.genes.grade(), known && k.species.loci().length > 0 ? k.genes.genotypeText(k.species) : "", k.analysed,
+                            k.berried(), look == null ? "" : look, k.genes.rgb(k.species)));
+                }
+            }
         }
         out.total = org.overengineer.bettacraft.critters.TankCritters.alive(t);
         out.max = org.overengineer.bettacraft.critters.TankCritters.maxPerTank();
@@ -566,7 +637,15 @@ public final class TankView {
         int[] lights = TankCare.lights(level, t);
         out.putInt("lights", lights[0]);
         out.putInt("lights_lit", lights[1]);
-        out.putBoolean("has_bucket", TankInhabitants.findContainer(player, false) >= 0);
+        // M22.3: also a bucket of water, of the same species or of small animals (the server picks the fitting one)
+        boolean anyBucket = TankInhabitants.findContainer(player, false) >= 0;
+        for (var st : player.getInventory().items) {
+            if (org.overengineer.bettacraft.containers.AnimalContainers.waterBucket(st) || st.getItem() instanceof org.overengineer.bettacraft.tankmates.TankmateBucketItem
+                    || st.getItem() instanceof org.overengineer.bettacraft.containers.CritterBucketItem) anyBucket = true;
+        }
+        out.putBoolean("has_bucket", anyBucket);
+        out.putBoolean("has_magnifier", !org.overengineer.bettacraft.genetics.MagnifierItem.find(player).isEmpty());
+        out.putBoolean("genes_free", org.overengineer.bettacraft.genetics.GeneVisibility.free());
         long bagMb = TankInhabitants.bagWater(player);
         out.putBoolean("has_bag", bagMb >= 0);
         out.putLong("bag_mb", Math.max(0, bagMb));
@@ -583,8 +662,10 @@ public final class TankView {
             if (e instanceof BettaEntity b) {
                 BettaHealth h = b.health();
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), true, b.isFemale(), b.stage(), b.isAdult(),
-                        round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, b.genome(), b.genotype(),
-                        round(b.getHealth() / b.getMaxHealth()), round((float) b.stageProgress()), b.getBettaData().generation(), false, 0F, false);
+                        round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, b.genome(),
+                        org.overengineer.bettacraft.genetics.GeneVisibility.visible(b.getBettaData().analysed()) ? b.genotype() : BettaGenotype.homozygous(b.genome()),
+                        round(b.getHealth() / b.getMaxHealth()), round((float) b.stageProgress()), b.getBettaData().generation(), false, 0F, false,
+                        new CompoundTag(), b.getBettaData().analysed(), org.overengineer.bettacraft.genetics.GeneVisibility.visible(b.getBettaData().analysed()));
             } else if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity f) {
                 // M14: frogs have needs (food, air at the surface)
                 float hp = round(f.getHealth() / f.getMaxHealth());
@@ -598,7 +679,7 @@ public final class TankView {
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, m.isFemale(), m.lifeStage().id(), m.isAdult(),
                         round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, BettaGenome.DEFAULT,
                         BettaGenotype.homozygous(BettaGenome.DEFAULT), round(m.getHealth() / m.getMaxHealth()), round((float) m.stageProgress()),
-                        m.generation(), false, 0F, false, tankmateDetails(t, m));
+                        m.generation(), false, 0F, false, tankmateDetails(t, m), m.analysed(), org.overengineer.bettacraft.genetics.GeneVisibility.visible(m.analysed()));
             } else {
                 float hp = e instanceof net.minecraft.world.entity.LivingEntity le ? round(le.getHealth() / le.getMaxHealth()) : 1F;
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", TankInhabitants.isAdult(e),
@@ -772,6 +853,8 @@ public final class TankView {
         v.lights = t.getInt("lights");
         v.lightsLit = t.getInt("lights_lit");
         v.hasBucket = t.getBoolean("has_bucket");
+        v.hasMagnifier = t.getBoolean("has_magnifier");
+        v.genesFree = t.getBoolean("genes_free");
         v.hasBag = t.getBoolean("has_bag");
         v.bagMb = t.getLong("bag_mb");
         v.minInsertMb = t.getLong("min_insert");

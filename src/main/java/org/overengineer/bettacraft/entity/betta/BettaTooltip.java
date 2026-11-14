@@ -61,5 +61,11 @@ public final class BettaTooltip {
         if (d.generation() > 0) {
             tooltip.add(Component.translatable("gui.bettacraft.fish.generation", d.generation()).withStyle(ChatFormatting.DARK_GRAY));
         }
+        // M22.3: the genes behind the look, once analysed with the magnifier
+        if (org.overengineer.bettacraft.genetics.GeneVisibility.visible(d.analysed())) {
+            for (Component c : org.overengineer.bettacraft.genetics.GenotypeText.summary(d.genotype())) tooltip.add(c.copy().withStyle(ChatFormatting.DARK_GRAY));
+        } else {
+            tooltip.add(Component.translatable("tooltip.bettacraft.genes.unknown").withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 }

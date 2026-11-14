@@ -32,6 +32,14 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .build(BettaCraft.id("dwarf_clawed_frog").toString()));
 
+    /** M22.3: a shrimp, crayfish, snail or hermit crab living in the world (one type, the species is data). */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.entity.critter.WildCritterEntity>> WILD_CRITTER = ENTITIES.register("wild_critter",
+            () -> EntityType.Builder.of(org.overengineer.bettacraft.entity.critter.WildCritterEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.2F, 0.1F)
+                    .eyeHeight(0.05F)
+                    .clientTrackingRange(4)
+                    .build(BettaCraft.id("wild_critter").toString()));
+
     /** M19: one entity type per tankmate species (same class, size and attributes per species). */
     public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
             Supplier<EntityType<org.overengineer.bettacraft.entity.tankmate.TankmateEntity>>> TANKMATES = tankmates();
@@ -72,12 +80,22 @@ public final class ModEntities {
     private static void onAttributes(EntityAttributeCreationEvent event) {
         event.put(BETTA.get(), BettaEntity.createAttributes().build());
         event.put(DWARF_FROG.get(), org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.createAttributes().build());
+        event.put(WILD_CRITTER.get(), org.overengineer.bettacraft.entity.critter.WildCritterEntity.createAttributes().build()); // M22.3
         for (var e : TANKMATES.entrySet()) event.put(e.getValue().get(), org.overengineer.bettacraft.entity.tankmate.TankmateEntity.createAttributes(e.getKey()).build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(BETTA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        // M22.3: the wild tankmates, frogs and small animals (rare, never in a tank)
+        for (var t : TANKMATES.values()) {
+            event.register(t.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    org.overengineer.bettacraft.world.Wildlife::checkFish, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        }
+        event.register(DWARF_FROG.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                org.overengineer.bettacraft.world.Wildlife::checkFish, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(WILD_CRITTER.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.OCEAN_FLOOR,
+                org.overengineer.bettacraft.world.Wildlife::checkCritter, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     private ModEntities() {}

@@ -73,6 +73,7 @@ public final class TankmateItems {
 
     @Nullable
     public static TankmateSpecies bagSpecies(ItemStack stack) {
+        if (stack.getItem() instanceof TankmateBucketItem b) return b.species(); // M22.3
         EntityType<?> t = FishBagItem.containedType(stack);
         return t == null ? null : TankmateSpecies.of(t);
     }
@@ -90,7 +91,8 @@ public final class TankmateItems {
     /** Group bags, clutch bags and the breeding box on a tank; PASS for anything else. */
     public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         boolean box = stack.is(ModItems.BREEDING_BOX.get());
-        boolean group = stack.getItem() instanceof FishBagItem && stack.has(ModDataComponents.TANKMATE_GROUP.get());
+        // M22.3: a bucket with several fish of one species too
+        boolean group = (stack.getItem() instanceof FishBagItem || stack.getItem() instanceof TankmateBucketItem) && stack.has(ModDataComponents.TANKMATE_GROUP.get());
         boolean clutch = stack.getItem() instanceof FishBagItem && stack.has(ModDataComponents.TANKMATE_CLUTCH.get());
         if (!box && !group && !clutch) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
@@ -139,7 +141,7 @@ public final class TankmateItems {
             LifeStage st = k.age >= k.totalDays() * 0.5 ? LifeStage.FRY : LifeStage.FRY;
             for (int i = 0; i < k.count; i++) {
                 Vec3 p = new TankWaterVolume(t).clamp(k.pos().add((r.nextDouble() - 0.5) * 0.3, -0.1, (r.nextDouble() - 0.5) * 0.3), 0.1, 0.1, 0.05);
-                if (TankmateBreeding.spawn(level, c, k.species, TankmateGenes.cross(k.mother, k.father, r::nextLong), r.nextBoolean(), st, k.generation, p) != null) freed++;
+                if (TankmateBreeding.spawn(level, c, k.species, org.overengineer.bettacraft.world.Wildlife.mutate(k.species, TankmateGenes.cross(k.mother, k.father, r::nextLong), r::nextLong), r.nextBoolean(), st, k.generation, p) != null) freed++;
             }
         }
         ItemStack item = new ItemStack(ModItems.BREEDING_BOX.get());
@@ -157,19 +159,21 @@ public final class TankmateItems {
         if (s == null) return Component.translatable("message.bettacraft.tank.rejected", stack.getHoverName());
         EntityType<?> type = ModEntities.TANKMATES.get(s).get();
         List<CompoundTag> fish = new ArrayList<>(bagFish(stack));
+        boolean bucket = stack.getItem() instanceof TankmateBucketItem; // M22.3: the water of a bucket comes along
         int in = 0;
         Component error = null;
         while (!fish.isEmpty()) {
             ItemStack single = new ItemStack(ModItems.FISH_BAG.get());
             single.set(ModDataComponents.BAG_ENTITY.get(), BuiltInRegistries.ENTITY_TYPE.getKey(type));
             single.set(DataComponents.BUCKET_ENTITY_DATA, CustomData.of(fish.getFirst()));
-            error = TankInhabitants.insert(level, c, single, type, player, in == 0 ? TankInhabitants.BAG_MB : 0L);
+            error = TankInhabitants.insert(level, c, single, type, player, in == 0 ? (bucket ? TankInhabitants.BUCKET_MB : TankInhabitants.BAG_MB) : 0L);
             if (error != null) break;
             fish.removeFirst();
             in++;
         }
         if (in > 0) level.playSound(null, c.getBlockPos(), SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 1.0F, 1.0F);
-        ItemStack rest = fish.isEmpty() ? new ItemStack(ModItems.FISH_BAG.get()) : groupBag(s, fish);
+        ItemStack rest = fish.isEmpty() ? new ItemStack(bucket ? net.minecraft.world.item.Items.BUCKET : ModItems.FISH_BAG.get())
+                : org.overengineer.bettacraft.containers.AnimalContainers.withFish(stack, s, fish);
         player.setItemInHand(hand, player.getAbilities().instabuild && fish.isEmpty() ? stack : rest);
         if (error != null && in == 0) return error;
         if (!fish.isEmpty()) return Component.translatable("message.bettacraft.tankmates.some_in", in, fish.size()).withStyle(ChatFormatting.GOLD);
@@ -283,12 +287,18 @@ public final class TankmateItems {
         List<CompoundTag> fish = bagFish(stack);
         if (fish.size() <= 1) {
             TankmateBucketItem.append(s, fish.isEmpty() ? null : fish.getFirst().getCompound(TankmateEntity.KEY), tooltip);
+            if (!fish.isEmpty()) TankmateBucketItem.genesLine(s, fish.getFirst(), tooltip); // M22.3
             return true;
         }
         tooltip.add(Component.literal(s.latin()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         int females = 0;
         for (CompoundTag f : fish) if (f.getCompound(TankmateEntity.KEY).getBoolean("female")) females++;
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.group", fish.size() - females, females).withStyle(ChatFormatting.GRAY));
+        if (org.overengineer.bettacraft.config.CommonConfig.bigContainers()) {
+            // M22.3: every fish with all its traits (sex, stage, colour, genes when analysed)
+            TankmateBucketItem.appendEach(s, fish, tooltip);
+            return true;
+        }
         if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
             // M21.6: the strains in the bag
             java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
@@ -313,8 +323,8 @@ public final class TankmateItems {
         return true;
     }
 
-    /** Releases a group bag into open water: every fish swims off. */
-    public static int release(ServerLevel level, ItemStack stack, BlockPos pos, Player player) {
+    /** Releases a group bag (or bucket) into open water: every fish swims off. */
+    public static int release(ServerLevel level, ItemStack stack, BlockPos pos, @Nullable Player player) {
         TankmateSpecies s = bagSpecies(stack);
         if (s == null) return 0;
         int n = 0;
@@ -322,7 +332,7 @@ public final class TankmateItems {
             TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(level);
             if (e == null) continue;
             e.moveTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4, pos.getY() + 0.2, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4,
-                    player.getYRot(), 0);
+                    player == null ? level.random.nextFloat() * 360F : player.getYRot(), 0);
             e.loadFromBucketTag(f);
             e.setFromBucket(true);
             if (level.addFreshEntity(e)) n++;

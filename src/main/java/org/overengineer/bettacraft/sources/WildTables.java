@@ -52,6 +52,21 @@ public final class WildTables {
     /** Mud broken in a swamp ({@code #bettacraft:betta_spawn_biomes}) drops mosquito larvae (loot modifier, datagen). */
     public static final float MUD_LARVAE_CHANCE = 0.04F;
 
+    /**
+     * M22.3: the wild coral colonies of the warm ocean reefs (one species per colony; the common soft corals more often than
+     * the stony ones). Shears cut a frag off them.
+     */
+    public static final WeightedTable<PlantSpecies> WILD_CORALS = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.ZOANTHUS, 16)
+            .add(PlantSpecies.GREEN_STAR_POLYPS, 14)
+            .add(PlantSpecies.MUSHROOM_CORAL, 16)
+            .add(PlantSpecies.LEATHER_CORAL, 12)
+            .add(PlantSpecies.HAMMER_CORAL, 10)
+            .add(PlantSpecies.LOBOPHYLLIA, 10)
+            .add(PlantSpecies.ACROPORA, 10)
+            .add(PlantSpecies.BUBBLE_TIP_ANEMONE, 12)
+            .build();
+
     /** M20: share of the net's catch chance on a reef that brings up a frag (times {@code reef.netShare}). */
     public static final double NET_FRAG_FACTOR = 0.25;
 }

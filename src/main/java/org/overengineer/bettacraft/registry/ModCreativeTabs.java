@@ -100,6 +100,9 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.FLOW_PUMP.get());
                 out.accept(ModItems.REEF_ROCK.get());
                 out.accept(ModItems.LIVE_ROCK.get());
+                // M22.3: the magnifier, the wild corals of the reefs
+                out.accept(ModItems.MAGNIFIER.get());
+                for (var c : ModItems.WILD_CORALS.values()) out.accept(c.get());
                 // decoration
                 for (var d : ModItems.DECOR.values()) out.accept(d.get());
                 // one bucket per fin form (long-finned tails and the plakat forms), then one per named variety (its example fish)
@@ -133,6 +136,10 @@ public final class ModCreativeTabs {
                 }
                 out.accept(org.overengineer.bettacraft.critters.TankCritters.bagOf(org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, 2,
                         () -> org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.9F), cr, true)); // Painted Fire Red
+                // M22.3: shrimp in a plain bucket
+                out.accept(org.overengineer.bettacraft.containers.AnimalContainers.critterBucket(org.overengineer.bettacraft.critters.TankCritters.bagOf(
+                        org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, 10, () -> org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.4F), cr, true)
+                        .get(org.overengineer.bettacraft.registry.ModDataComponents.CRITTERS.get())));
                 out.accept(ModItems.FROG_BUCKET.get());
                 out.accept(ModItems.FROG_SPAWN_EGG.get());
                 // M19: tankmates (a shoal or a pair in a fish bag, every variety; bucket and spawn egg), their breeding items

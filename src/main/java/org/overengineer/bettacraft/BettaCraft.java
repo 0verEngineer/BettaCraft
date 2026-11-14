@@ -40,6 +40,8 @@ public final class BettaCraft {
         org.overengineer.bettacraft.progression.ModTriggers.register(modBus);
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         modBus.addListener(ModNetwork::register);
+        // M22.3: spontaneous mutations of the small animals (wildlife.otherMutationChance)
+        org.overengineer.bettacraft.critters.CritterGenes.MUTATION = org.overengineer.bettacraft.world.Wildlife::mutationChance;
         modBus.addListener(BettaCraft::onCapabilities);
         // M22.1: the sea water bucket in a cauldron and from a dispenser like a water bucket
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(BettaCraft::containerSetup));

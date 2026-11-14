@@ -367,9 +367,13 @@ public final class TankCritters {
         return bag(out);
     }
 
-    /** Right-click on a tank with a bag of small animals: they go in (with the 100 mB of the bag). PASS for other stacks. */
+    /**
+     * Right-click on a tank with a bag of small animals: they go in (with the 100 mB of the bag; M22.3: a critter bucket
+     * with its 1000 mB). PASS for other stacks.
+     */
     public static ItemInteractionResult tryInsert(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        List<CompoundTag> animals = bagged(stack);
+        List<CompoundTag> animals = org.overengineer.bettacraft.containers.AnimalContainers.critters(stack);
+        boolean bucket = stack.getItem() instanceof org.overengineer.bettacraft.containers.CritterBucketItem;
         if (animals == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
@@ -378,12 +382,13 @@ public final class TankCritters {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
             return ItemInteractionResult.CONSUME;
         }
-        Component error = insert(server, c, animals, player, TankInhabitants.BAG_MB);
+        Component error = insert(server, c, animals, player, bucket ? TankInhabitants.BUCKET_MB : TankInhabitants.BAG_MB);
         if (error != null) {
             player.displayClientMessage(error, true);
             return ItemInteractionResult.CONSUME;
         }
-        player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())));
+        player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, bucket ? new ItemStack(net.minecraft.world.item.Items.BUCKET)
+                : new ItemStack(ModItems.FISH_BAG.get())));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 0.8F, 1.3F);
         return ItemInteractionResult.CONSUME;
     }
@@ -458,63 +463,70 @@ public final class TankCritters {
     /** As {@link #takeOut(ServerLevel, TankBlockEntity, Player, String, boolean)} up to {@code count} animals (a full bag). */
     @Nullable
     public static Component takeOut(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst, int count) {
+        return takeOut(level, c, player, group, worst, count, SEX_ANY, false);
+    }
+
+    /** M22.3: the sex to take out (any, only males, only females). */
+    public static final int SEX_ANY = 0, SEX_MALE = 1, SEX_FEMALE = 2;
+
+    /**
+     * M22.3: up to {@code count} animals of a kind, of the chosen sex, into fish bags or ({@code bucket}) buckets: the best
+     * grade first (or the worst).
+     */
+    @Nullable
+    public static Component takeOut(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst, int count, int sex, boolean bucket) {
         for (int i = 0; i < Math.max(1, count); i++) {
-            Component e = takeOne(level, c, player, group, worst);
+            Component e = takeOne(level, c, player, group, worst, sex, bucket);
             if (e != null) return i == 0 ? e : null; // the first one failed: say why; later ones: the bag is full or none left
         }
         return null;
     }
 
+    /** M22.3: takes exactly the animal with this id (the single-animal list of the menu). */
     @Nullable
-    private static Component takeOne(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst) {
+    public static Component takeOutById(ServerLevel level, TankBlockEntity c, Player player, int id, boolean bucket) {
+        TankData t = c.getTank();
+        if (!TankInhabitants.canModify(player, t)) return Component.translatable("message.bettacraft.tank.locked");
+        for (Critter k : t.critters()) {
+            if (k.id == id && k.alive()) return catchOne(level, c, player, k, bucket);
+        }
+        return Component.translatable("message.bettacraft.critters.none_of_kind");
+    }
+
+    @Nullable
+    private static Component takeOne(ServerLevel level, TankBlockEntity c, Player player, String group, boolean worst, int sex, boolean bucket) {
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) return Component.translatable("message.bettacraft.tank.locked");
         Critter best = null;
         for (Critter k : t.critters()) {
             if (!k.alive() || !groupKey(k).equals(group)) continue;
+            if (sex == SEX_MALE && (k.female || !k.species.hasSexes()) || sex == SEX_FEMALE && (!k.female || !k.species.hasSexes())) continue;
             if (best == null || (best.adult() != k.adult() ? k.adult()
                     : worst ? k.genes.grade() < best.genes.grade() : k.genes.grade() > best.genes.grade())) best = k;
         }
-        if (best == null) return Component.translatable("message.bettacraft.critters.none_of_kind");
-        return catchOne(level, c, player, best);
+        if (best == null) return Component.translatable(sex == SEX_ANY ? "message.bettacraft.critters.none_of_kind" : "message.bettacraft.critters.none_of_sex");
+        return catchOne(level, c, player, best, bucket);
     }
 
     /** Puts {@code k} into a bag of the player (see {@link #takeOut}); null on success, else the reason. */
     @Nullable
     public static Component catchOne(ServerLevel level, TankBlockEntity c, Player player, Critter k) {
+        return catchOne(level, c, player, k, false);
+    }
+
+    /**
+     * M22.3: puts {@code k} into a bag or a bucket of the player ({@link org.overengineer.bettacraft.containers.AnimalContainers}:
+     * one of the same species with room, a bucket of water that suits it, an empty bucket or bag); null on success.
+     */
+    @Nullable
+    public static Component catchOne(ServerLevel level, TankBlockEntity c, Player player, Critter k, boolean bucket) {
         TankData t = c.getTank();
-        var inv = player.getInventory();
-        int same = -1;
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            List<CompoundTag> in = bagged(inv.getItem(i));
-            if (in == null || in.size() >= MAX_PER_BAG) continue;
-            Critter first = Critter.loadAnimal(in.getFirst(), 0, 0, 0, 0);
-            if (first != null && first.species == k.species) {
-                same = i;
-                break;
-            }
-        }
-        if (same >= 0) {
-            ItemStack bag = inv.getItem(same);
-            List<CompoundTag> l = new ArrayList<>(bagged(bag));
-            l.add(k.saveAnimal());
-            bag.set(ModDataComponents.CRITTERS.get(), List.copyOf(l));
-        } else {
-            int slot = -1;
-            for (int i = 0; i < inv.getContainerSize(); i++) {
-                ItemStack s = inv.getItem(i);
-                if (s.getItem() instanceof FishBagItem && !FishBagItem.isFilled(s)) {
-                    slot = i;
-                    break;
-                }
-            }
-            if (slot < 0) return Component.translatable("message.bettacraft.tank.need_bag");
-            if (t.waterMb() < TankInhabitants.BAG_MB) return Component.translatable("message.bettacraft.tank.not_enough_water");
-            if (!player.getAbilities().instabuild) inv.getItem(slot).shrink(1);
-            ItemStack filled = bag(List.of(k.saveAnimal()));
-            if (!inv.add(filled)) player.drop(filled, false);
-            TankInteractions.changeWater(level, c, -TankInhabitants.BAG_MB);
-        }
+        var found = org.overengineer.bettacraft.containers.AnimalContainers.findForCritter(player, k.species, bucket);
+        if (found == null) return Component.translatable(bucket ? "message.bettacraft.tank.need_bucket" : "message.bettacraft.tank.need_bag");
+        long cost = found.waterMb();
+        if (cost > 0 && t.waterMb() < cost) return Component.translatable("message.bettacraft.tank.not_enough_water");
+        org.overengineer.bettacraft.containers.AnimalContainers.putCritter(player, found, k.saveAnimal(), bucket);
+        if (cost > 0) TankInteractions.changeWater(level, c, -cost);
         t.critters().remove(k);
         TankCare.log(level, c, "log.bettacraft.critter_taken", TankCare.nameArg(player), "@" + k.species.translationKey());
         level.playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.NEUTRAL, 0.7F, 1.4F);

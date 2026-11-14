@@ -168,6 +168,22 @@ public final class ModBlocks {
             () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_MAGENTA)
                     .strength(1.2F, 3.0F).sound(SoundType.CALCITE).requiresCorrectToolForDrops()));
 
+    /** M22.3: the corals of the mod growing wild in warm ocean reefs (full size, waterlogged; shears cut a frag). */
+    public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies,
+            DeferredBlock<org.overengineer.bettacraft.reef.WildCoralBlock>> WILD_CORALS = wildCorals();
+
+    private static java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredBlock<org.overengineer.bettacraft.reef.WildCoralBlock>> wildCorals() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.plants.PlantSpecies, DeferredBlock<org.overengineer.bettacraft.reef.WildCoralBlock>>(
+                org.overengineer.bettacraft.plants.PlantSpecies.class);
+        for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
+            if (!sp.form().coral()) continue;
+            m.put(sp, BLOCKS.register("wild_" + sp.id(), () -> new org.overengineer.bettacraft.reef.WildCoralBlock(sp, BlockBehaviour.Properties.of()
+                    .mapColor(net.minecraft.world.level.material.MapColor.COLOR_PINK).noCollission().instabreak().randomTicks()
+                    .sound(net.minecraft.world.level.block.SoundType.WET_GRASS).pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY))));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }

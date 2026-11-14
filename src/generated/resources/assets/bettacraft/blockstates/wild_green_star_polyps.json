@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "trimmed=false,waterlogged=false": {
+      "model": "bettacraft:block/wild_green_star_polyps"
+    },
+    "trimmed=false,waterlogged=true": {
+      "model": "bettacraft:block/wild_green_star_polyps"
+    },
+    "trimmed=true,waterlogged=false": {
+      "model": "bettacraft:block/wild_green_star_polyps"
+    },
+    "trimmed=true,waterlogged=true": {
+      "model": "bettacraft:block/wild_green_star_polyps"
+    }
+  }
+}

@@ -86,6 +86,13 @@ public final class ModDataGen {
     private ModDataGen() {}
 
     public static final ResourceKey<BiomeModifier> BETTA_SPAWNS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BettaCraft.id("betta_spawns"));
+    // M22.3
+    public static final ResourceKey<BiomeModifier> WILDLIFE_SPAWNS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BettaCraft.id("wildlife_spawns"));
+    public static final ResourceKey<BiomeModifier> WILD_CORALS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BettaCraft.id("wild_corals"));
+    public static final ResourceKey<net.minecraft.world.level.levelgen.feature.ConfiguredFeature<?, ?>> WILD_CORAL_CONFIGURED =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, BettaCraft.id("wild_coral"));
+    public static final ResourceKey<net.minecraft.world.level.levelgen.placement.PlacedFeature> WILD_CORAL_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE, BettaCraft.id("wild_coral"));
 
     @SubscribeEvent
     public static void gather(GatherDataEvent event) {
@@ -105,8 +112,23 @@ public final class ModDataGen {
         gen.addProvider(event.includeServer(), new EntityTagsGen(out, lookup, efh));
         gen.addProvider(event.includeServer(), new BiomeTagsGen(out, lookup, efh));
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(out, lookup, new RegistrySetBuilder()
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> ctx.register(BETTA_SPAWNS,
-                        new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)))),
+                .add(Registries.CONFIGURED_FEATURE, ctx -> ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
+                        org.overengineer.bettacraft.registry.ModCodecs.WILD_CORAL.get(), net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration.NONE)))
+                .add(Registries.PLACED_FEATURE, ctx -> ctx.register(WILD_CORAL_PLACED, new net.minecraft.world.level.levelgen.placement.PlacedFeature(
+                        ctx.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(WILD_CORAL_CONFIGURED), List.of(
+                        net.minecraft.world.level.levelgen.placement.RarityFilter.onAverageOnceEvery(2),
+                        net.minecraft.world.level.levelgen.placement.InSquarePlacement.spread(),
+                        net.minecraft.world.level.levelgen.placement.HeightmapPlacement.onHeightmap(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG),
+                        net.minecraft.world.level.levelgen.placement.BiomeFilter.biome()))))
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> {
+                    ctx.register(BETTA_SPAWNS, new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)));
+                    // M22.3: wild tankmates, frogs and small animals; the wild corals on the warm ocean reefs
+                    ctx.register(WILDLIFE_SPAWNS, new org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier());
+                    ctx.register(WILD_CORALS, new net.neoforged.neoforge.common.world.BiomeModifiers.AddFeaturesBiomeModifier(
+                            net.minecraft.core.HolderSet.direct(ctx.lookup(Registries.BIOME).getOrThrow(net.minecraft.world.level.biome.Biomes.WARM_OCEAN)),
+                            net.minecraft.core.HolderSet.direct(ctx.lookup(Registries.PLACED_FEATURE).getOrThrow(WILD_CORAL_PLACED)),
+                            net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION));
+                }),
                 Set.of(BettaCraft.MOD_ID)));
         gen.addProvider(event.includeServer(), new LootModifiers(out, lookup));
         gen.addProvider(event.includeServer(), new GeneticsFiles(out));
@@ -199,8 +221,26 @@ public final class ModDataGen {
             }
         }
 
+        /** M22.3: the wild corals of the reefs: a mat, discs, a dome, a toadstool or a bushy cross, coloured sprites. */
+        private void wildCorals() {
+            for (var e : ModBlocks.WILD_CORALS.entrySet()) {
+                String id = "wild_" + e.getKey().id();
+                String shape = org.overengineer.bettacraft.reef.WildCoralBlock.shape(e.getKey());
+                ModelFile m = switch (shape) {
+                    case "mat" -> models().withExistingParent(id, modLoc("block/template_wild_coral_mat")).texture("tex", modLoc("block/" + id))
+                            .texture("cross", modLoc("block/" + id + "_cross"));
+                    case "toadstool" -> models().withExistingParent(id, modLoc("block/template_wild_coral_toadstool")).texture("tex", modLoc("block/" + id))
+                            .texture("stem", modLoc("block/" + id + "_stem"));
+                    case "disc", "dome" -> models().withExistingParent(id, modLoc("block/template_wild_coral_" + shape)).texture("tex", modLoc("block/" + id));
+                    default -> models().cross(id, modLoc("block/" + id)).renderType("cutout");
+                };
+                getVariantBuilder(e.getValue().get()).forAllStates(state -> ConfiguredModel.builder().modelFile(m).build());
+            }
+        }
+
         @Override
         protected void registerStatesAndModels() {
+            wildCorals(); // M22.3
             // block/tank.json is hand-written (custom geometry loader bettacraft:tank)
             ModelFile tank = models().getExistingFile(modLoc("block/tank"));
             getMultipartBuilder(ModBlocks.TANK.get()).part().modelFile(tank).addModel().end();
@@ -583,6 +623,19 @@ public final class ModDataGen {
             withExistingParent("protein_skimmer", modLoc("block/protein_skimmer"));
             withExistingParent("reef_rock", modLoc("block/reef_rock"));
             withExistingParent("live_rock", modLoc("block/live_rock"));
+            // M22.3: the critter bucket (a shrimp in the water, tinted per animal), the magnifier, the wild corals
+            withExistingParent("critter_bucket", mcLoc("item/generated"))
+                    .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/critter_bucket_animal"))
+                    .texture("layer2", modLoc("item/critter_bucket_animal_legs")).texture("layer3", modLoc("item/betta_bucket_glass"));
+            handheldItem(ModItems.MAGNIFIER.get());
+            for (var e : ModItems.WILD_CORALS.entrySet()) {
+                String id = "wild_" + e.getKey().id();
+                if ("cross".equals(org.overengineer.bettacraft.reef.WildCoralBlock.shape(e.getKey()))) {
+                    withExistingParent(id, mcLoc("item/generated")).texture("layer0", modLoc("block/" + id));
+                } else {
+                    withExistingParent(id, modLoc("block/" + id));
+                }
+            }
             // M13: aquarium plants: two grey layers per growth form, tinted per species (ItemColor)
             for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
                 String form = e.getKey().form().name().toLowerCase(java.util.Locale.ROOT);
@@ -973,6 +1026,15 @@ public final class ModDataGen {
                 .pattern(" I ").pattern("IRI").pattern(" K ")
                 .define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('K', Items.BLACK_DYE)
                 .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("flow_pump"));
+        // M22.3: the magnifier: a glass pane in a ring of copper (or gold) on a stick
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
+                .pattern(" C ").pattern("CGC").pattern(" S ")
+                .define('C', Tags.Items.INGOTS_COPPER).define('G', Tags.Items.GLASS_PANES).define('S', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_copper", hasIt(Items.COPPER_INGOT)).save(output, BettaCraft.id("magnifier"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
+                .pattern(" C ").pattern("CGC").pattern(" S ")
+                .define('C', Tags.Items.INGOTS_GOLD).define('G', Tags.Items.GLASS_PANES).define('S', Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_gold", hasIt(Items.GOLD_INGOT)).save(output, BettaCraft.id("magnifier_from_gold"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.REEF_ROCK.get(), 4)
                 .pattern("CS").pattern("SC")
                 .define('C', Items.CALCITE).define('S', net.minecraft.tags.ItemTags.SAND)
@@ -1034,6 +1096,8 @@ public final class ModDataGen {
             dropSelf(ModBlocks.LIVE_ROCK.get());
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
+            // M22.3: wild corals only with silk touch (like vanilla corals); shears cut frags off them
+            for (var b : ModBlocks.WILD_CORALS.values()) dropWhenSilkTouch(b.get());
             // M4: the filter keeps its heaters, the cabinet its planks (its contents drop separately)
             add(ModBlocks.EXTERNAL_FILTER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.EXTERNAL_FILTER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
@@ -1051,7 +1115,11 @@ public final class ModDataGen {
         protected Iterable<Block> getKnownBlocks() {
             return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
                     ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get(), ModBlocks.SPAWNING_CAVE.get(),
-                    ModBlocks.SPAWNING_MOP.get(), ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get());
+                    ModBlocks.SPAWNING_MOP.get(), ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get())
+                    .stream().collect(java.util.stream.Collectors.collectingAndThen(java.util.stream.Collectors.toList(), l -> {
+                        for (var b : ModBlocks.WILD_CORALS.values()) l.add(b.get());
+                        return l;
+                    }));
         }
     }
 
@@ -1163,6 +1231,8 @@ public final class ModDataGen {
             tag(ModTags.BOTTOM_FOOD).add(ModItems.ALGAE_WAFER.get());
             tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
+            // M22.3: a bucket of sea water is a bucket of water for the recipes and machines of other mods (convention tag)
+            tag(Tags.Items.BUCKETS_WATER).add(ModItems.SEA_WATER_BUCKET.get());
             // M21.7: stones of the stone cabinet (modpacks add to it) and what never counts as one
             tag(ModTags.CABINET_STONES).addTag(Tags.Items.STONES).addTag(Tags.Items.COBBLESTONES).addTag(net.minecraft.tags.ItemTags.STONE_BRICKS)
                     .addTag(Tags.Items.SANDSTONE_BLOCKS).addTag(net.minecraft.tags.ItemTags.TERRACOTTA)

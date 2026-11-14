@@ -67,6 +67,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     /** M14: the animals tab shows the shrimp, crayfish and snails instead of the fish and frogs. */
     private boolean critterPage;
     private Button critterPageButton, critterTakeButton, clutchButton;
+    /** M22.3: sex and container of the quick take-out, the magnifier button, the single animals of a kind. */
+    private Button sexButton, containerButton, analyseButton;
+    private int critterSex;
+    private boolean critterBucket;
+    @Nullable
+    private Integer selectedCritter;
+    private boolean critterExpanded = true;
+    private static final int CRITTER_ROWS = 8;
     /** M19: takes the breeding box out (breeding tab). */
     private Button boxButton;
     @Nullable
@@ -201,12 +209,33 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 b -> takeOut(true)).bounds(x + 177, y + 124, 61, 14).build());
         inhabitants.addAll(List.of(renameButton, bucketButton, bagButton));
         // M14: second page of the animals tab (shrimp, crayfish, snails)
-        critterPageButton = addRenderableWidget(new FitButton(x + 10, y + 124, 100, 14, Component.empty(), b -> {
+        critterPageButton = addRenderableWidget(new FitButton(x + 10, y + 124, 64, 14, Component.empty(), b -> {
             critterPage = !critterPage;
             updateWidgets();
         }));
         critterTakeButton = addRenderableWidget(new FitButton(x + 114, y + 124, 62, 14, Component.translatable("gui.bettacraft.critters.take"), b -> {
-            if (selectedGroup != null) send(TankActions.TAKE_CRITTER, hasControlDown() ? 2 : hasShiftDown() ? 1 : 0, selectedGroup, null);
+            if (selectedCritter != null) {
+                send(TankActions.TAKE_CRITTER_ONE, selectedCritter, critterBucket ? "bucket" : "bag", null); // M22.3: exactly this one
+            } else if (selectedGroup != null) {
+                send(TankActions.TAKE_CRITTER, TankActions.critterValue(hasControlDown() ? 2 : hasShiftDown() ? 1 : 0, critterSex, critterBucket), selectedGroup, null);
+            }
+        }));
+        // M22.3: sex and container of the take-out, under the list of the small animals
+        sexButton = addRenderableWidget(new FitButton(x + 10, y + 108, 49, 13, Component.empty(), b -> {
+            critterSex = (critterSex + 1) % 3;
+            updateWidgets();
+        }));
+        containerButton = addRenderableWidget(new FitButton(x + 60, y + 108, 50, 13, Component.empty(), b -> {
+            critterBucket = !critterBucket;
+            updateWidgets();
+        }));
+        // M22.3: the magnifier on the selected fish or small animal
+        analyseButton = addRenderableWidget(new FitButton(x + 75, y + 124, 35, 14, Component.translatable("gui.bettacraft.magnifier.analyse"), b -> {
+            if (critterPage) {
+                if (selectedCritter != null) send(TankActions.ANALYSE, selectedCritter, "critter", null);
+            } else if (selected != null) {
+                send(TankActions.ANALYSE, 0, "", selected);
+            }
         }));
         clutchButton = addRenderableWidget(new FitButton(x + 177, y + 124, 61, 14, Component.translatable("gui.bettacraft.critters.clutches"),
                 b -> send(TankActions.REMOVE_CLUTCHES, 0, "", null)));
@@ -357,6 +386,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         critterPageButton.visible = tab == Tab.INHABITANTS;
         critterTakeButton.visible = tab == Tab.INHABITANTS && critterPage;
         clutchButton.visible = tab == Tab.INHABITANTS && critterPage && v != null && v.critters.clutches > 0;
+        // M22.3
+        boolean list = org.overengineer.bettacraft.config.CommonConfig.animalList();
+        sexButton.visible = tab == Tab.INHABITANTS && critterPage && list && selectedCritter == null;
+        containerButton.visible = tab == Tab.INHABITANTS && critterPage && org.overengineer.bettacraft.config.CommonConfig.bigContainers();
+        if (!containerButton.visible) critterBucket = false;
+        analyseButton.visible = tab == Tab.INHABITANTS && v != null && !v.genesFree;
+        sexButton.setMessage(Component.translatable("gui.bettacraft.critters.sex." + (critterSex == 1 ? "male" : critterSex == 2 ? "female" : "any")));
+        containerButton.setMessage(Component.translatable(critterBucket ? "gui.bettacraft.critters.into_bucket" : "gui.bettacraft.critters.into_bag"));
+        sexButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.critters.sex_tooltip")));
+        containerButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.critters.container_tooltip")));
         boxButton.visible = tab == Tab.BREEDING && v != null && v.breeding.getBoolean("box");
         if (v != null) boxButton.active = v.canModify;
         if (v != null) {
@@ -365,9 +404,22 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             if (selectedGroup == null || v.critters.groups.stream().noneMatch(gr -> gr.key().equals(selectedGroup))) {
                 selectedGroup = v.critters.groups.isEmpty() ? null : v.critters.groups.getFirst().key();
             }
+            if (selectedCritter != null && v.critters.animals.stream().noneMatch(k -> k.id() == selectedCritter)) selectedCritter = null;
             critterTakeButton.active = v.canModify && selectedGroup != null && (v.hasBag || v.critters.total > 0);
             critterTakeButton.setTooltip(Tooltip.create(Component.translatable(!v.canModify ? "message.bettacraft.tank.locked"
-                    : "gui.bettacraft.critters.take_tooltip")));
+                    : selectedCritter != null ? "gui.bettacraft.critters.take_one_tooltip" : "gui.bettacraft.critters.take_tooltip")));
+            // M22.3: the magnifier on the selected animal
+            boolean target;
+            if (critterPage) {
+                TankView.CritterInfo ci = selectedCritterInfo(v);
+                target = ci != null && !ci.analysed();
+            } else {
+                TankView.Inhabitant si = selectedInhabitant(v);
+                target = si != null && (si.betta() || si.isTankmate()) && !si.analysed();
+            }
+            analyseButton.active = target && v.hasMagnifier;
+            analyseButton.setTooltip(Tooltip.create(Component.translatable(!target ? "gui.bettacraft.magnifier.nothing"
+                    : v.hasMagnifier ? "gui.bettacraft.magnifier.tooltip" : "message.bettacraft.magnifier.need")));
             clutchButton.active = v.canModify;
         }
         tabOverview.active = tab != Tab.OVERVIEW;
@@ -428,7 +480,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         fishNameBox.active = has && mod;
         fishNameBox.setEditable(has && mod);
         renameButton.active = has && mod;
-        bucketButton.active = has && mod && sel.bucketable() && v.hasBucket && v.waterMb >= TankInhabitants.BUCKET_MB;
+        bucketButton.active = has && mod && sel.bucketable() && v.hasBucket; // M22.3: water buckets and buckets of the same species too
         bagButton.active = has && mod && v.hasBag && v.waterMb >= v.bagMb;
         bucketButton.setTooltip(Tooltip.create(takeTooltip(v, sel, false)));
         bagButton.setTooltip(Tooltip.create(takeTooltip(v, sel, true)));
@@ -485,10 +537,19 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         TankView v = view();
         if (tab == Tab.INHABITANTS && v != null && critterPage) {
             int lx = leftPos + 10, ly = topPos + 20;
-            if (mx >= lx && mx < lx + 100 && my >= ly && my < ly + LIST_ROWS * ROW_H) {
+            if (mx >= lx && mx < lx + 100 && my >= ly && my < ly + CRITTER_ROWS * ROW_H) {
                 int idx = groupScroll + (int) ((my - ly) / ROW_H);
-                if (idx >= 0 && idx < v.critters.groups.size()) {
-                    selectedGroup = v.critters.groups.get(idx).key();
+                List<CritterRow> rows = critterRows(v);
+                if (idx >= 0 && idx < rows.size()) {
+                    CritterRow r = rows.get(idx);
+                    if (r.animal() != null) {
+                        selectedCritter = r.animal().id(); // M22.3: exactly this animal
+                    } else {
+                        if (r.group().key().equals(selectedGroup) && selectedCritter == null) critterExpanded = !critterExpanded;
+                        else critterExpanded = true;
+                        selectedGroup = r.group().key();
+                        selectedCritter = null;
+                    }
                     updateWidgets();
                     return true;
                 }
@@ -512,7 +573,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         TankView v = view();
         if (v != null && my < topPos + CONTENT_Y + CONTENT_H) {
             if (tab == Tab.INHABITANTS && critterPage) {
-                groupScroll = Mth.clamp(groupScroll - (int) Math.signum(sy), 0, Math.max(0, v.critters.groups.size() - LIST_ROWS));
+                groupScroll = Mth.clamp(groupScroll - (int) Math.signum(sy), 0, Math.max(0, critterRows(v).size() - CRITTER_ROWS));
                 return true;
             }
             if (tab == Tab.INHABITANTS) {
@@ -1134,6 +1195,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 10;
         var gt = sel.genotype();
         int top = y;
+        if (!sel.genesVisible()) {
+            // M22.3: the hidden genes need the magnifier
+            fitLine(g, Component.translatable("gui.bettacraft.fish.genes_unknown").withStyle(ChatFormatting.GRAY), x, y, 0xC8C8C8, 124);
+            y += 9;
+            fitLine(g, Component.translatable("gui.bettacraft.fish.genes_unknown_hint").withStyle(ChatFormatting.DARK_GRAY), x, y, 0xA0A0A0, 124);
+            return;
+        }
         for (Locus l : List.of(BettaLoci.FINFORM, BettaLoci.BODY_COLOR, BettaLoci.FIN_COLOR, BettaLoci.PATTERN)) {
             Component c = GenotypeText.line(gt, l);
             String s = font.plainSubstrByWidth(c.getString(), 124);
@@ -1170,13 +1238,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 tip.add(Component.literal(s.latin()).withStyle(ChatFormatting.ITALIC));
                 tip.add(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(ph).withStyle(ChatFormatting.GOLD));
                 tip.add(Component.empty().append(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.summary(ph)).withStyle(ChatFormatting.YELLOW));
-                tip.addAll(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.lines(lb, sel.female()));
+                if (d.getBoolean("lb_hidden")) tip.add(Component.translatable("gui.bettacraft.fish.genes_unknown").withStyle(ChatFormatting.GRAY)); // M22.3
+                else tip.addAll(org.overengineer.bettacraft.genetics.livebearer.LivebearerText.lines(lb, sel.female()));
                 tip.add(Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
                 tip.add(Component.translatable(sel.female() ? "gui.bettacraft.lb.female_hint" : "gui.bettacraft.lb.male_hint").withStyle(ChatFormatting.DARK_GRAY));
                 pendingTooltip = tip;
             } else {
                 pendingTooltip = List.of(Component.literal(s.latin()).withStyle(ChatFormatting.ITALIC),
-                        Component.translatable("gui.bettacraft.tm.genes", d.getString("genes")).withStyle(ChatFormatting.GRAY),
+                        d.getString("genes").isEmpty() ? Component.translatable("gui.bettacraft.fish.genes_unknown").withStyle(ChatFormatting.GRAY) // M22.3
+                                : Component.translatable("gui.bettacraft.tm.genes", d.getString("genes")).withStyle(ChatFormatting.GRAY),
                         Component.translatable("gui.bettacraft.fish.generation", sel.generation()).withStyle(ChatFormatting.GRAY));
             }
         }
@@ -1240,21 +1310,78 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         return String.format(java.util.Locale.ROOT, "%.1f", d);
     }
 
+    /** M22.3: a row of the list of small animals: a kind, or (under the selected kind) one animal of it. */
+    private record CritterRow(TankView.CritterGroup group, @Nullable TankView.CritterInfo animal) {}
+
+    private List<CritterRow> critterRows(TankView v) {
+        List<CritterRow> rows = new ArrayList<>();
+        boolean list = org.overengineer.bettacraft.config.CommonConfig.animalList();
+        for (TankView.CritterGroup gr : v.critters.groups) {
+            rows.add(new CritterRow(gr, null));
+            if (list && critterExpanded && gr.key().equals(selectedGroup)) {
+                for (TankView.CritterInfo k : v.critters.animals) if (k.key().equals(gr.key())) rows.add(new CritterRow(gr, k));
+            }
+        }
+        return rows;
+    }
+
+    @Nullable
+    private TankView.CritterInfo selectedCritterInfo(TankView v) {
+        if (selectedCritter == null) return null;
+        for (TankView.CritterInfo k : v.critters.animals) if (k.id() == selectedCritter) return k;
+        return null;
+    }
+
+    /** Dev smoke test only (M22.3): selects the kind and its first animal in the list of small animals. */
+    public void selectFirstCritterForTest() {
+        TankView v = view();
+        if (v == null || v.critters.groups.isEmpty()) return;
+        selectedGroup = v.critters.groups.getFirst().key();
+        critterExpanded = true;
+        for (TankView.CritterInfo k : v.critters.animals) {
+            if (k.key().equals(selectedGroup)) {
+                selectedCritter = k.id();
+                break;
+            }
+        }
+        updateWidgets();
+    }
+
     /** M14: shrimp, crayfish and snails (second page of the animals tab): the kinds on the left, details and the tank on the right. */
     private void drawCritters(GuiGraphics g, TankView v, int mx, int my) {
         TankView.Critters c = v.critters;
         int lx = 10, ly = 20;
-        g.fill(lx - 1, ly - 1, lx + 100, ly + LIST_ROWS * ROW_H, 0x60000000);
+        g.fill(lx - 1, ly - 1, lx + 100, ly + CRITTER_ROWS * ROW_H, 0x60000000);
         if (c.groups.isEmpty()) {
             fitLine(g, Component.translatable("gui.bettacraft.critters.empty"), lx + 2, ly + 2, 0xA0A0A0, 96);
             fitLine(g, Component.translatable("gui.bettacraft.critters.empty_hint").withStyle(ChatFormatting.GRAY), lx + 2, ly + 13, 0xA0A0A0, 96);
         }
-        for (int r = 0; r < LIST_ROWS; r++) {
+        List<CritterRow> rows = critterRows(v);
+        boolean list = org.overengineer.bettacraft.config.CommonConfig.animalList();
+        for (int r = 0; r < CRITTER_ROWS; r++) {
             int idx = groupScroll + r;
-            if (idx >= c.groups.size()) break;
-            TankView.CritterGroup gr = c.groups.get(idx);
+            if (idx >= rows.size()) break;
+            CritterRow row = rows.get(idx);
+            TankView.CritterGroup gr = row.group();
             int y = ly + r * ROW_H;
-            if (gr.key().equals(selectedGroup)) g.fill(lx, y, lx + 99, y + ROW_H, 0x80FFFFFF);
+            if (row.animal() != null) {
+                // M22.3: one animal: sex, young, grade, genes (or "?")
+                TankView.CritterInfo k = row.animal();
+                if (selectedCritter != null && selectedCritter == k.id()) g.fill(lx, y, lx + 99, y + ROW_H, 0x80FFFFFF);
+                else if (mx >= lx && mx < lx + 100 && my >= y && my < y + ROW_H) g.fill(lx, y, lx + 99, y + ROW_H, 0x30FFFFFF);
+                g.fill(lx + 6, y + 3, lx + 10, y + 7, 0xFF000000 | lighten(k.rgb()));
+                var sp = org.overengineer.bettacraft.critters.CritterSpecies.values()[k.species()];
+                MutableComponent t = Component.literal(!sp.hasSexes() ? "⚥" : k.female() ? "♀" : "♂");
+                if (!k.adult()) t.append(" ").append(Component.translatable("gui.bettacraft.critters.young_short"));
+                if (sp.hasGrade()) t.append(" " + Math.round(k.grade() * 100) + "%");
+                if (sp.loci().length > 0) t.append(" ").append(k.genes().isEmpty() ? Component.literal("?").withStyle(ChatFormatting.GRAY)
+                        : Component.literal(k.genes()).withStyle(ChatFormatting.AQUA));
+                if (k.berried()) t.append(" ").append(Component.literal("•").withStyle(ChatFormatting.LIGHT_PURPLE));
+                fitLine(g, t, lx + 12, y + 2, 0xE0E0E0, 86);
+                continue;
+            }
+            if (gr.key().equals(selectedGroup) && selectedCritter == null) g.fill(lx, y, lx + 99, y + ROW_H, 0x80FFFFFF);
+            else if (gr.key().equals(selectedGroup)) g.fill(lx, y, lx + 99, y + ROW_H, 0x40FFFFFF);
             else if (mx >= lx && mx < lx + 100 && my >= y && my < y + ROW_H) g.fill(lx, y, lx + 99, y + ROW_H, 0x30FFFFFF);
             g.fill(lx + 2, y + 2, lx + 8, y + 8, 0xFF000000 | lighten(gr.rgb()));
             // in the list the colour species show only their variety (the header names the species)
@@ -1270,6 +1397,37 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int x = 114, y = 19, w = 124;
         TankView.CritterGroup sel = null;
         for (TankView.CritterGroup gr : c.groups) if (gr.key().equals(selectedGroup)) sel = gr;
+        TankView.CritterInfo one = selectedCritterInfo(v);
+        if (one != null) {
+            // M22.3: one animal: sex and age, colour density, look, genes, eggs
+            var sp = org.overengineer.bettacraft.critters.CritterSpecies.values()[one.species()];
+            fitLine(g, org.overengineer.bettacraft.critters.TankCritters.name(sp, one.variety()).withStyle(ChatFormatting.YELLOW), x, y, 0xFFFFFF, w);
+            y += 10;
+            Component sex = !sp.hasSexes() ? Component.translatable("gui.bettacraft.critters.hermaphrodite_one") : BettaTooltip.sex(one.female());
+            fitLine(g, Component.translatable("gui.bettacraft.critters.one_age", sex, Component.translatable(one.adult() ? "gui.bettacraft.critters.adult"
+                    : "gui.bettacraft.critters.young_one"), f1(one.ageDays())), x, y, TEXT_LIGHT, w);
+            y += 10;
+            if (sp.hasGrade()) {
+                fitLine(g, Component.translatable("gui.bettacraft.critters.one_grade", Math.round(one.grade() * 100)), x, y, TEXT_LIGHT, w);
+                y += 10;
+            }
+            if (!one.lookKey().isEmpty()) {
+                fitLine(g, Component.translatable(one.lookKey()).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, w);
+                y += 10;
+            }
+            if (sp.loci().length > 0) {
+                Component genes = one.genes().isEmpty() ? Component.translatable("gui.bettacraft.critters.genes_unknown").withStyle(ChatFormatting.GRAY)
+                        : Component.translatable("gui.bettacraft.critters.genes", one.genes()).withStyle(ChatFormatting.AQUA);
+                fitLine(g, genes, x, y, TEXT_LIGHT, w);
+                y += 10;
+            }
+            if (one.berried()) {
+                fitLine(g, Component.translatable("gui.bettacraft.critters.one_eggs").withStyle(ChatFormatting.LIGHT_PURPLE), x, y, TEXT_LIGHT, w);
+                y += 10;
+            }
+            y += 2;
+            sel = null;
+        }
         if (sel != null) {
             var sp = org.overengineer.bettacraft.critters.CritterSpecies.values()[sel.species()];
             fitLine(g, org.overengineer.bettacraft.critters.TankCritters.name(sp, sel.variety()).withStyle(ChatFormatting.YELLOW), x, y, 0xFFFFFF, w);

@@ -47,7 +47,8 @@ public final class ContainerRules {
 
     /** True if the stack holds animals (an animal bucket, a filled bag of fish, critters or a clutch). */
     public static boolean holdsAnimals(ItemStack stack) {
-        return stack.getItem() instanceof MobBucketItem || stack.getItem() instanceof FishBagItem && FishBagItem.isFilled(stack);
+        return stack.getItem() instanceof MobBucketItem || stack.getItem() instanceof FishBagItem && FishBagItem.isFilled(stack)
+                || stack.getItem() instanceof CritterBucketItem && CritterBucketItem.animals(stack) != null; // M22.3
     }
 
     /** The player confirmed emptying the container in their hand; the release runs now on the server. */

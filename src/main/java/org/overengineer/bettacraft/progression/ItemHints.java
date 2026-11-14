@@ -31,7 +31,9 @@ public final class ItemHints {
             "breeding_box", "fry_powder", "algae_wafer", "spawning_cave", "spawning_mop",
             // M20: salt water, reef technique, corals
             "sea_water_bucket", "sea_salt", "calcium_additive", "flow_pump", "protein_skimmer", "reef_rock", "live_rock",
-            "zoanthus", "green_star_polyps", "mushroom_coral", "leather_coral", "hammer_coral", "lobophyllia", "acropora", "bubble_tip_anemone");
+            "zoanthus", "green_star_polyps", "mushroom_coral", "leather_coral", "hammer_coral", "lobophyllia", "acropora", "bubble_tip_anemone",
+            // M22.3: the magnifier, small animals in a bucket
+            "magnifier", "critter_bucket");
 
     private ItemHints() {}
 
@@ -40,6 +42,8 @@ public final class ItemHints {
         var id = BuiltInRegistries.ITEM.getKey(item);
         if (!BettaCraft.MOD_ID.equals(id.getNamespace())) return null;
         if (item instanceof DecorItem) return "info.bettacraft.decor";
+        // M22.3: the wild corals of the reefs share one text
+        if (item instanceof net.minecraft.world.item.BlockItem bi && bi.getBlock() instanceof org.overengineer.bettacraft.reef.WildCoralBlock) return "info.bettacraft.wild_coral";
         // M19: bucket and spawn egg of a tankmate share the care sheet of the species
         if (item instanceof org.overengineer.bettacraft.tankmates.TankmateBucketItem b) return "info.bettacraft.tankmate." + b.species().id();
         for (var e : org.overengineer.bettacraft.registry.ModItems.TANKMATE_SPAWN_EGGS.entrySet()) {

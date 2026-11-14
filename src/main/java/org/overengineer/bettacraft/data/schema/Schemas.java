@@ -31,6 +31,7 @@ public final class Schemas {
             .step(0, data -> data) // v0 = written before versioning; identical layout
             .step(1, Schemas::bettaV1toV2)
             .step(2, Schemas::bettaV2toV3)
+            .step(3, Schemas::bettaV3toV4)
             .build();
 
     /** Loci of the M2 genotype (and the M1 key each one was stored under). */
@@ -105,6 +106,15 @@ public final class Schemas {
                 g.put(now, pair);
             }
         }
+        return data;
+    }
+
+    /**
+     * Betta v3 -> v4 (M22.3): the hidden genes need the magnifier now; every betta of an older world counts as analysed
+     * (nobody loses what the menu showed before). New bettas start without the flag (= not analysed).
+     */
+    static CompoundTag bettaV3toV4(CompoundTag data) {
+        if (!data.contains("analysed")) data.putBoolean("analysed", true);
         return data;
     }
 

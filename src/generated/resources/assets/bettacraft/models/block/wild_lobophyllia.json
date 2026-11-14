@@ -1,0 +1,6 @@
+{
+  "parent": "bettacraft:block/template_wild_coral_dome",
+  "textures": {
+    "tex": "bettacraft:block/wild_lobophyllia"
+  }
+}

@@ -40,6 +40,15 @@ public final class TankActions {
 
     /** M21.5: break protection on/off (owner or OP). */
     public static final int TOGGLE_PROTECT = 13;
+    /** M22.3: takes exactly one small animal (value = its id; text "bucket" or "bag"). */
+    public static final int TAKE_CRITTER_ONE = 14;
+    /** M22.3: analyses one animal with the magnifier (target = a fish; or text "critter" and value = the id of a small animal). */
+    public static final int ANALYSE = 15;
+
+    /** M22.3: bits of the value of {@link #TAKE_CRITTER}: 0-1 how many (one best, one worst, a full container), 2-3 the sex, 4 a bucket. */
+    public static int critterValue(int mode, int sex, boolean bucket) {
+        return (mode & 3) | (sex & 3) << 2 | (bucket ? 16 : 0);
+    }
 
     public static final int MAX_FISH_NAME = 32;
 
@@ -98,8 +107,20 @@ public final class TankActions {
                     else org.overengineer.bettacraft.tank.plants.TankPlants.taken(player.serverLevel(), controller, player, items, true);
                 }
             }
-            case TAKE_CRITTER -> error = org.overengineer.bettacraft.critters.TankCritters.takeOut(player.serverLevel(), controller, player,
-                    p.text(), p.value() == 1, p.value() == 2 ? org.overengineer.bettacraft.critters.TankCritters.MAX_PER_BAG : 1);
+            case TAKE_CRITTER -> {
+                int mode = p.value() & 3, sex = (p.value() >> 2) & 3;
+                boolean bucket = (p.value() & 16) != 0;
+                int full = 1;
+                if (mode == 2) {
+                    var s = org.overengineer.bettacraft.critters.CritterSpecies.byIdOrNull(p.text().contains(":") ? p.text().substring(0, p.text().indexOf(':')) : p.text());
+                    full = s == null ? 1 : Math.max(1, bucket ? org.overengineer.bettacraft.containers.AnimalContainers.bucket(s)
+                            : org.overengineer.bettacraft.containers.AnimalContainers.bag(s));
+                }
+                error = org.overengineer.bettacraft.critters.TankCritters.takeOut(player.serverLevel(), controller, player, p.text(), mode == 1, full, sex, bucket);
+            }
+            case TAKE_CRITTER_ONE -> error = org.overengineer.bettacraft.critters.TankCritters.takeOutById(player.serverLevel(), controller, player, p.value(),
+                    "bucket".equals(p.text()));
+            case ANALYSE -> error = analyse(player, controller, p);
             case REMOVE_CLUTCHES -> {
                 if (!modify) error = locked();
                 else {
@@ -131,6 +152,36 @@ public final class TankActions {
             controller.markTankChanged();
         }
         menu.requestSync();
+    }
+
+    /** M22.3: the magnifier on one animal of the tank (one use). */
+    private static Component analyse(ServerPlayer player, TankBlockEntity controller, TankActionPayload p) {
+        if (org.overengineer.bettacraft.genetics.GeneVisibility.free()) return Component.translatable("message.bettacraft.magnifier.free");
+        var magnifier = org.overengineer.bettacraft.genetics.MagnifierItem.find(player);
+        if (magnifier.isEmpty()) return Component.translatable("message.bettacraft.magnifier.need");
+        TankData tank = controller.getTank();
+        boolean done = false;
+        if ("critter".equals(p.text())) {
+            for (var k : tank.critters()) {
+                if (k.id != p.value() || !k.alive()) continue;
+                if (k.analysed) return Component.translatable("message.bettacraft.magnifier.already");
+                k.analysed = true;
+                done = true;
+            }
+        } else if (p.target().isPresent()) {
+            Entity e = player.serverLevel().getEntity(p.target().get());
+            if (e == null || !TankInhabitants.hasTankRef(e) || !tank.id().equals(e.getData(ModAttachments.TANK_REF.get()).tankId())) {
+                return Component.translatable("message.bettacraft.tank.not_inside");
+            }
+            if (!org.overengineer.bettacraft.genetics.MagnifierItem.analyse(e)) return Component.translatable("message.bettacraft.magnifier.already");
+            done = true;
+        }
+        if (!done) return Component.translatable("message.bettacraft.critters.none_of_kind");
+        org.overengineer.bettacraft.genetics.MagnifierItem.wear(player, magnifier, null);
+        player.serverLevel().playSound(null, controller.getBlockPos(), net.minecraft.sounds.SoundEvents.SPYGLASS_USE, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.2F);
+        player.displayClientMessage(Component.translatable("message.bettacraft.magnifier.analysed", 1).withStyle(ChatFormatting.GREEN), true);
+        TankCare.log(player.serverLevel(), controller, "log.bettacraft.analysed", TankCare.nameArg(player), "1");
+        return null;
     }
 
     private static Component locked() {

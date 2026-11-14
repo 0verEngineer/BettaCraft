@@ -53,6 +53,14 @@ public final class CritterTooltip {
         if (k.species.hasGrade()) c.append(Component.translatable("tooltip.bettacraft.critters.grade", Math.round(k.genes.grade() * 100)));
         if (!k.adult()) c.append(Component.translatable("tooltip.bettacraft.critters.young"));
         if (k.berried()) c.append(Component.translatable("tooltip.bettacraft.critters.eggs"));
+        // M22.3: the genes (colour alleles) once analysed with the magnifier
+        if (k.species.loci().length > 0) {
+            if (org.overengineer.bettacraft.genetics.GeneVisibility.visible(k.analysed)) {
+                c.append(Component.translatable("tooltip.bettacraft.genes.short", k.genes.genotypeText(k.species)));
+            } else {
+                c.append(Component.translatable("tooltip.bettacraft.genes.unknown_short"));
+            }
+        }
         return c;
     }
 }

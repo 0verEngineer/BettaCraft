@@ -41,7 +41,10 @@ public final class ModNetwork {
 
     private static void onServerSettings(ServerSettingsPayload payload, IPayloadContext ctx) {
         // common code: on an integrated server both sides read the same config anyway
-        ctx.enqueueWork(() -> org.overengineer.bettacraft.food.ArtemiaCystsItem.setClientOverride(payload.cystStack()));
+        ctx.enqueueWork(() -> {
+            org.overengineer.bettacraft.food.ArtemiaCystsItem.setClientOverride(payload.cystStack());
+            org.overengineer.bettacraft.genetics.GeneVisibility.setClientFree(payload.genesFree());
+        });
     }
 
     private static void onGenetics(GeneticsSyncPayload payload, IPayloadContext ctx) {

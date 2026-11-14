@@ -24,6 +24,11 @@ public record CritterGenes(int a, int b, float grade) {
     public static final float AVERAGE_GRADE = 0.25F;
     public static final float GRADE_NOISE = 0.06F;
     public static final float GRADE_PULL = 0.08F;
+    /**
+     * M22.3: chance per allele and birth that it flips (a new colour allele, or back to the wild one); set by the mod to
+     * {@code wildlife.otherMutationChance} (0 in unit tests).
+     */
+    public static volatile java.util.function.DoubleSupplier MUTATION = () -> 0;
 
     public CritterGenes {
         grade = Math.max(0, Math.min(1, grade));
@@ -66,6 +71,13 @@ public record CritterGenes(int a, int b, float grade) {
         }
         float mean = (mother.grade + father.grade) / 2F;
         float g = mean + GRADE_PULL * (AVERAGE_GRADE - mean) + (float) (rnd.nextGaussian() * GRADE_NOISE);
+        double m = loci > 0 ? MUTATION.getAsDouble() : 0;
+        if (m > 0) { // M22.3: spontaneous mutation
+            for (int i = 0; i < loci; i++) {
+                if (rnd.nextDouble() < m) ca ^= 1 << i;
+                if (rnd.nextDouble() < m) cb ^= 1 << i;
+            }
+        }
         return new CritterGenes(ca, cb, g);
     }
 

@@ -36,6 +36,8 @@ public final class Critter {
     public double dead = -1;
     /** M21.5: the individual look of racer nerites and apple snails ({@link CritterLooks}); 0 = the classic look. */
     public int look;
+    /** M22.3: the hidden genes were analysed with the magnifier ({@link org.overengineer.bettacraft.genetics.GeneVisibility}). */
+    public boolean analysed;
 
     public double x, y, z;
     public float yaw;
@@ -129,6 +131,7 @@ public final class Critter {
         c.tz = tz;
         c.buried = buried;
         c.look = look;
+        c.analysed = analysed;
         return c;
     }
 
@@ -160,6 +163,7 @@ public final class Critter {
         if (species.isCrayfish()) t.putDouble("molt", sinceMolt);
         if (dead >= 0) t.putDouble("dead", dead);
         if (look != 0) t.putInt("look", look);
+        org.overengineer.bettacraft.genetics.GeneVisibility.write(t, analysed); // M22.3
         return t;
     }
 
@@ -195,6 +199,7 @@ public final class Critter {
         c.sinceMolt = finite(t.contains("molt", Tag.TAG_ANY_NUMERIC) ? t.getDouble("molt") : 10, 10);
         c.dead = finite(t.contains("dead", Tag.TAG_ANY_NUMERIC) ? t.getDouble("dead") : -1, -1);
         c.look = t.getInt("look") & 0xFFFF; // M21.5: missing in older worlds -> 0, the look they had
+        c.analysed = org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t); // M22.3: older worlds: analysed
         return c;
     }
 

@@ -216,6 +216,17 @@ public final class CritterRenderer {
         return g == null ? null : g.get(name);
     }
 
+    /** M22.3: one animal at the origin of the pose (a wild one in the world), standing on the floor. */
+    public static void drawOne(PoseStack pose, MultiBufferSource buffers, Critter k, double time, int light, boolean hurt) {
+        if (MODELS.isEmpty()) bake();
+        drawCritter(pose, buffers, k, time, light);
+    }
+
+    /** M22.3: the texture of a body plan. */
+    public static ResourceLocation texture(CritterSpecies.Model m) {
+        return BettaCraft.id("textures/entity/critters/" + name(m) + ".png");
+    }
+
     private static void drawCritter(PoseStack pose, MultiBufferSource buffers, Critter k, double time, int light) {
         CritterSpecies.Model m = k.species.model();
         ModelPart root = MODELS.get(m);

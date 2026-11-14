@@ -23,7 +23,9 @@ public final class TankInteractions {
                                                   net.minecraft.world.phys.BlockHitResult hit) {
         // M21.5: a clip-on feeder in the hand goes onto the side of the glass (no tank menu)
         if (stack.is(org.overengineer.bettacraft.registry.ModItems.CLIP_FEEDER.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-        ItemInteractionResult r = org.overengineer.bettacraft.critters.TankCritters.tryInsert(stack, level, pos, player, hand); // M14
+        ItemInteractionResult r = org.overengineer.bettacraft.genetics.MagnifierItem.useOnTank(stack, level, pos, player, hand); // M22.3
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = org.overengineer.bettacraft.critters.TankCritters.tryInsert(stack, level, pos, player, hand); // M14
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.tankmates.TankmateItems.useOnTank(stack, level, pos, player, hand); // M19: groups, clutches, breeding box
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;

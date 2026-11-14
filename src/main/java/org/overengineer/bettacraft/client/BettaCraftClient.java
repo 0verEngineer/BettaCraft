@@ -165,6 +165,15 @@ public final class BettaCraftClient {
             if (d == null) return tint == 1 ? OTHER_FISH_BODY : OTHER_FISH_FINS;
             return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
         }, ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get());
+        // M22.3: the critter bucket shows the first animal's colour (layer 1 body, layer 2 legs and feelers)
+        event.register((stack, tint) -> {
+            if (tint == 0 || tint >= 3) return 0xFFFFFFFF;
+            var critters = stack.get(ModDataComponents.CRITTERS.get());
+            var k = critters == null || critters.isEmpty() ? null : org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
+            int rgb = k == null ? 0xC8A070 : k.genes.rgb(k.species);
+            if (k != null && (k.species.nerite() || k.species == org.overengineer.bettacraft.critters.CritterSpecies.ASSASSIN_SNAIL)) rgb = k.species.wildColor();
+            return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.35F));
+        }, ModItems.CRITTER_BUCKET.get());
         // M19: tankmate buckets in the species' colours
         for (var e : ModItems.TANKMATE_BUCKETS.entrySet()) {
             var sp = e.getKey();
@@ -229,6 +238,7 @@ public final class BettaCraftClient {
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
         event.registerEntityRenderer(ModEntities.DWARF_FROG.get(), org.overengineer.bettacraft.client.render.DwarfFrogRenderer::new);
+        event.registerEntityRenderer(ModEntities.WILD_CRITTER.get(), org.overengineer.bettacraft.client.render.WildCritterRenderer::new); // M22.3
         for (var t : ModEntities.TANKMATES.values()) event.registerEntityRenderer(t.get(), org.overengineer.bettacraft.client.render.TankmateRenderer::new); // M19
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);

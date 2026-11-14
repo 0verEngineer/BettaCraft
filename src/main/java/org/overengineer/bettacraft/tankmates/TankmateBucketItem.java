@@ -43,6 +43,7 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
         fish.put("genes", genes.save());
         fish.putBoolean("female", female);
         fish.putString("stage", stage.id());
+        org.overengineer.bettacraft.genetics.GeneVisibility.write(fish, false); // M22.3: a new animal: genes unknown
         CompoundTag t = new CompoundTag();
         t.put(TankmateEntity.KEY, fish);
         t.putFloat("Health", 4.0F);
@@ -52,7 +53,63 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        if (stack.has(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get())) {
+            TankmateItems.appendBag(stack, tooltip); // M22.3: several fish
+            return;
+        }
         append(species, data(stack), tooltip);
+        CompoundTag d = data(stack);
+        if (d != null) genesLine(species, d, tooltip);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        var g = stack.get(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get());
+        if (g != null && g.size() > 1) return Component.translatable("item.bettacraft.bucket.group", g.size(), Component.translatable(species.translationKey()));
+        return super.getName(stack);
+    }
+
+    /** Lines shown per container before "... and N more". */
+    public static final int LINES = 8;
+
+    /** M22.3: one line per fish: sex, stage, colour, the genes when analysed (else a note), gravid. */
+    public static void appendEach(TankmateSpecies s, List<CompoundTag> fish, List<Component> tooltip) {
+        int i = 0;
+        for (CompoundTag f : fish) {
+            if (i++ >= LINES) {
+                tooltip.add(Component.translatable("tooltip.bettacraft.critters.more", fish.size() - LINES).withStyle(ChatFormatting.DARK_GRAY));
+                break;
+            }
+            tooltip.add(line(s, f.getCompound(TankmateEntity.KEY)).withStyle(ChatFormatting.GRAY));
+        }
+    }
+
+    /** One fish of a container (its "tankmate" data). */
+    public static net.minecraft.network.chat.MutableComponent line(TankmateSpecies s, CompoundTag fish) {
+        var stage = org.overengineer.bettacraft.entity.betta.LifeStage.byId(fish.getString("stage"));
+        boolean female = fish.getBoolean("female");
+        net.minecraft.network.chat.MutableComponent c = Component.literal(female ? "♀ " : "♂ ").append(Component.translatable(stage.translationKey()));
+        TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
+        Component lb = livebearerName(s, fish);
+        if (lb != null) c.append(", ").append(lb.copy().withStyle(ChatFormatting.GRAY));
+        else if (s.varieties().size() > 1) c.append(", ").append(Component.translatable(s.varietyKey(g.phenotype(s))));
+        if (org.overengineer.bettacraft.genetics.GeneVisibility.visible(org.overengineer.bettacraft.genetics.GeneVisibility.analysed(fish))) {
+            if (s.varieties().size() > 1 && lb == null) c.append(Component.translatable("tooltip.bettacraft.genes.short", g.text()));
+        } else {
+            c.append(Component.translatable("tooltip.bettacraft.genes.unknown_short"));
+        }
+        if (fish.getDouble("gravid") > 0) c.append(Component.translatable("tooltip.bettacraft.critters.eggs"));
+        return c;
+    }
+
+    /** M22.3: the genes of one fish in a bucket (or a note that they are not analysed). */
+    public static void genesLine(TankmateSpecies s, CompoundTag bucketData, List<Component> tooltip) {
+        CompoundTag fish = bucketData.getCompound(TankmateEntity.KEY);
+        if (!org.overengineer.bettacraft.genetics.GeneVisibility.visible(org.overengineer.bettacraft.genetics.GeneVisibility.analysed(fish))) {
+            tooltip.add(Component.translatable("tooltip.bettacraft.genes.unknown").withStyle(ChatFormatting.DARK_GRAY));
+        } else if (s.varieties().size() > 1 && livebearerName(s, fish) == null) {
+            tooltip.add(Component.translatable("tooltip.bettacraft.genes", TankmateGenes.load(fish.getCompound("genes"), s).text()).withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 
     /** M21.6: the strain (or hybrid, or description) of a guppy or endler in a bucket or bag, null without the genetics. */

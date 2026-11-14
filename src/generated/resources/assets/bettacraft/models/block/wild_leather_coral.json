@@ -1,0 +1,7 @@
+{
+  "parent": "bettacraft:block/template_wild_coral_toadstool",
+  "textures": {
+    "stem": "bettacraft:block/wild_leather_coral_stem",
+    "tex": "bettacraft:block/wild_leather_coral"
+  }
+}

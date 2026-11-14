@@ -195,6 +195,23 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> REEF_ROCK = ITEMS.registerSimpleBlockItem(ModBlocks.REEF_ROCK);
     public static final DeferredItem<BlockItem> LIVE_ROCK = ITEMS.registerSimpleBlockItem(ModBlocks.LIVE_ROCK);
 
+    // ------------------------------------------------------------------ M22.3 wildlife
+
+    /** M22.3: shrimp, crayfish and snails of one species in a plain bucket of water. */
+    public static final DeferredItem<org.overengineer.bettacraft.containers.CritterBucketItem> CRITTER_BUCKET = ITEMS.register("critter_bucket",
+            () -> new org.overengineer.bettacraft.containers.CritterBucketItem(new Item.Properties().stacksTo(1).craftRemainder(net.minecraft.world.item.Items.BUCKET)));
+    /** M22.3: analyses the hidden genes of the animals in a tank (64 uses, repaired with glass panes). */
+    public static final DeferredItem<org.overengineer.bettacraft.genetics.MagnifierItem> MAGNIFIER = ITEMS.register("magnifier",
+            () -> new org.overengineer.bettacraft.genetics.MagnifierItem(new Item.Properties().durability(64)));
+    /** M22.3: the wild corals as blocks (silk touch), for reefs of one's own. */
+    public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredItem<BlockItem>> WILD_CORALS = wildCoralItems();
+
+    private static java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredItem<BlockItem>> wildCoralItems() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.plants.PlantSpecies, DeferredItem<BlockItem>>(org.overengineer.bettacraft.plants.PlantSpecies.class);
+        for (var e : ModBlocks.WILD_CORALS.entrySet()) m.put(e.getKey(), ITEMS.registerSimpleBlockItem(e.getValue()));
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }

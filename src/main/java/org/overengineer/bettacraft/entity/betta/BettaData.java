@@ -85,6 +85,17 @@ public record BettaData(BettaGenotype genotype, boolean female, String stage, do
         return new BettaData(genotype, female, s.id(), days, fishId, mother, father, generation, bornTime, h.save(), b.save(), raw);
     }
 
+    /** M22.3: the hidden genes were analysed with the magnifier (kept in {@code raw}; older bettas: migrated to true). */
+    public boolean analysed() {
+        return raw.getBoolean("analysed");
+    }
+
+    public BettaData withAnalysed(boolean a) {
+        CompoundTag r = raw.copy();
+        r.putBoolean("analysed", a);
+        return new BettaData(genotype, female, stage, stageDays, fishId, mother, father, generation, bornTime, health, breeding, r);
+    }
+
     public BettaData withStage(LifeStage s) {
         return new BettaData(genotype, female, s.id(), 0, fishId, mother, father, generation, bornTime, health, breeding, raw);
     }

@@ -132,11 +132,25 @@ class SchemaMigrationTest {
         assertEquals("east", t.getString("front"));
     }
 
+    /** M22.3: every betta of an older world counts as analysed (magnifier); a new one (v4 without the flag) does not. */
+    @Test
+    void bettaV3CountsAsAnalysed() {
+        CompoundTag v3 = snbt("{schema:3,genome:{finform:[\"halfmoon\",\"veil\"]},sex:\"male\",stage:\"adult\",generation:2}");
+        CompoundTag v4 = Schemas.BETTA.migrate(v3);
+        assertEquals(4, Schema.read(v4));
+        assertTrue(v4.getBoolean("analysed"));
+        assertTrue(org.overengineer.bettacraft.entity.betta.BettaData.load(v3).analysed());
+        assertFalse(org.overengineer.bettacraft.entity.betta.BettaData.load(snbt("{schema:4,sex:\"male\"}")).analysed());
+        var fresh = org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenome.DEFAULT, false, 0);
+        assertFalse(org.overengineer.bettacraft.entity.betta.BettaData.load(fresh.save()).analysed(), "a new betta keeps its genes hidden");
+        assertTrue(org.overengineer.bettacraft.entity.betta.BettaData.load(fresh.withAnalysed(true).save()).analysed(), "the analysis is kept");
+    }
+
     @Test
     void bettaV0IsStamped() {
         CompoundTag v0 = snbt("{genome:{shape:\"veil\",body_color:\"does_not_exist\"},sex:\"female\",custom:1b}");
         CompoundTag v2 = Schemas.BETTA.migrate(v0);
-        assertEquals(3, Schema.read(v2));
+        assertEquals(4, Schema.read(v2));
         net.minecraft.nbt.ListTag body = v2.getCompound("genome").getList("body_color", net.minecraft.nbt.Tag.TAG_STRING);
         assertEquals("does_not_exist", body.getString(0), "unknown ids are carried along");
         assertEquals("does_not_exist", body.getString(1));
@@ -150,7 +164,7 @@ class SchemaMigrationTest {
                 + "fin_color:\"royal_blue\",pattern:\"marble\",pattern_color:\"black\",iridescence:\"high\",iridescence_color:\"turquoise\","
                 + "future_gene:\"x\"},sex:\"male\",stage:\"adult\",generation:0,born:12L,health:{sick:0b}}");
         CompoundTag v2 = Schemas.BETTA.migrate(v1);
-        assertEquals(3, Schema.read(v2));
+        assertEquals(4, Schema.read(v2));
         CompoundTag g = v2.getCompound("genome");
         assertFalse(g.contains("shape"), "shape is renamed to finform");
         net.minecraft.nbt.ListTag fin = g.getList("finform", net.minecraft.nbt.Tag.TAG_STRING);
@@ -183,7 +197,7 @@ class SchemaMigrationTest {
                 + "iridescence:[\"low\",\"high\"],iridescence_color:[\"turquoise\",\"steel\"],future_gene:[\"x\",\"y\"]},sex:\"female\","
                 + "stage:\"juvenile\",stage_days:1.5d,generation:3,born:99L,health:{sick:0b},custom:\"keep\"}");
         CompoundTag v3 = Schemas.BETTA.migrate(v2);
-        assertEquals(3, Schema.read(v3));
+        assertEquals(4, Schema.read(v3));
         CompoundTag g = v3.getCompound("genome");
         net.minecraft.nbt.ListTag fin = g.getList("finform", net.minecraft.nbt.Tag.TAG_STRING);
         net.minecraft.nbt.ListTag len = g.getList("fin_length", net.minecraft.nbt.Tag.TAG_STRING);
@@ -237,7 +251,7 @@ class SchemaMigrationTest {
     void currentVersionsAreStable() {
         // Bump these deliberately together with a new step + frozen test.
         assertEquals(10, Schemas.TANK_BLOCK_ENTITY.currentVersion());
-        assertEquals(3, Schemas.BETTA.currentVersion());
+        assertEquals(4, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
         assertEquals(4, Schemas.INTERIOR_REGIONS.currentVersion());

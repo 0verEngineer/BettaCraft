@@ -136,6 +136,38 @@ public final class Sources {
         out.add(src(Source.Kind.BLOCK_DROP, Target.item("artemia_cysts"), Where.SAND, def(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE), "#c:sands"));
         int weight = def(CommonConfig.SPAWN_WEIGHT), min = def(CommonConfig.SPAWN_MIN_GROUP), max = Math.max(min, def(CommonConfig.SPAWN_MAX_GROUP));
         out.add(new Source(Source.Kind.SPAWN, Target.BETTA, Where.SWAMP, weight, weight, min, max, 0, false, null, null));
+        wildlife(out);
+    }
+
+    /** M22.3: the wild tankmates, frogs and small animals (spawns per water) and the wild corals of the reefs (shears). */
+    private static void wildlife(List<Source> out) {
+        for (NetCatching.Water w : NetCatching.Water.values()) {
+            Where where = NET_WATERS.get(w);
+            if (where == null || w == NetCatching.Water.CAVE) continue;
+            for (TankmateSpecies s : TankmateSpecies.values()) {
+                int weight = org.overengineer.bettacraft.world.Wildlife.fishWeight(s, w);
+                if (weight <= 0) continue;
+                int[] g = org.overengineer.bettacraft.world.Wildlife.group(s);
+                out.add(new Source(Source.Kind.SPAWN, Target.tankmate(s), where, weight, weight, g[0], g[1], 0, false,
+                        s.seahorse() ? "features.seahorses" : s == TankmateSpecies.GREEN_NEON_TETRA ? "features.greenNeonTetra" : "features.wildFish", null));
+            }
+            int frog = org.overengineer.bettacraft.world.Wildlife.frogWeight(w);
+            if (frog > 0) out.add(new Source(Source.Kind.SPAWN, Target.FROG, where, frog, frog, 1, 2, 0, false, "features.wildFish", null));
+            int critters = org.overengineer.bettacraft.world.Wildlife.critterWeight(w);
+            if (critters <= 0) continue;
+            var table = org.overengineer.bettacraft.world.Wildlife.critterTable(w, false, false);
+            double total = 0;
+            for (var c : table) total += c.weight();
+            for (var c : table) {
+                int wt = (int) Math.max(1, Math.round(critters * c.weight() / total));
+                out.add(new Source(Source.Kind.SPAWN, Target.critter(c.species()), where, wt, wt, 2, 5, 0, false,
+                        c.species() == CritterSpecies.YELLOW_NERITE ? "features.snailColors" : "features.wildCritters", null));
+            }
+        }
+        for (var e : WildTables.WILD_CORALS.entries()) {
+            out.add(new Source(Source.Kind.SHEARS, Target.plant(e.value()), Where.WARM_OCEAN, 1.0, 1.0, 1, 1, 0, false, "features.wildCorals",
+                    "bettacraft:wild_" + e.value().id()));
+        }
     }
 
     private static Source src(Source.Kind kind, String target, Where where, double chance) {

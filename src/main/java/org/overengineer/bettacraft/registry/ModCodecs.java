@@ -23,6 +23,14 @@ public final class ModCodecs {
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, BettaCraft.MOD_ID);
 
     public static final Supplier<MapCodec<BettaSpawnsBiomeModifier>> BETTA_SPAWNS = BIOME_MODIFIERS.register("betta_spawns", () -> BettaSpawnsBiomeModifier.CODEC);
+    /** M22.3: the wild tankmates, frogs and small animals. */
+    public static final Supplier<MapCodec<org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier>> WILDLIFE_SPAWNS =
+            BIOME_MODIFIERS.register("wildlife_spawns", () -> org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier.CODEC);
+    /** M22.3: the wild corals of the warm ocean reefs. */
+    public static final DeferredRegister<net.minecraft.world.level.levelgen.feature.Feature<?>> FEATURES =
+            DeferredRegister.create(net.minecraft.core.registries.Registries.FEATURE, BettaCraft.MOD_ID);
+    public static final Supplier<org.overengineer.bettacraft.reef.WildCoralFeature> WILD_CORAL = FEATURES.register("wild_coral",
+            org.overengineer.bettacraft.reef.WildCoralFeature::new);
     public static final Supplier<MapCodec<FishBagRecipeCondition>> CONFIG_CONDITION = CONDITIONS.register("config", () -> FishBagRecipeCondition.CODEC);
     public static final Supplier<MapCodec<AddItemLootModifier>> ADD_ITEM = LOOT_MODIFIERS.register("add_item", () -> AddItemLootModifier.CODEC);
 
@@ -39,6 +47,7 @@ public final class ModCodecs {
 
     public static void register(IEventBus bus) {
         BIOME_MODIFIERS.register(bus);
+        FEATURES.register(bus);
         CONDITIONS.register(bus);
         LOOT_MODIFIERS.register(bus);
     }

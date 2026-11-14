@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "trimmed=false,waterlogged=false": {
+      "model": "bettacraft:block/wild_bubble_tip_anemone"
+    },
+    "trimmed=false,waterlogged=true": {
+      "model": "bettacraft:block/wild_bubble_tip_anemone"
+    },
+    "trimmed=true,waterlogged=false": {
+      "model": "bettacraft:block/wild_bubble_tip_anemone"
+    },
+    "trimmed=true,waterlogged=true": {
+      "model": "bettacraft:block/wild_bubble_tip_anemone"
+    }
+  }
+}

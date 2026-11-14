@@ -151,7 +151,9 @@ public class TankmateEntity extends AbstractFish {
                                         @Nullable SpawnGroupData groupData) {
         if (spawnType != MobSpawnType.BUCKET) {
             female = random.nextBoolean();
-            genes = TankmateGenes.wild(species, 0.08, random::nextLong);
+            // M22.3: wild ones (natural spawns): rarely a bred colour openly; they despawn far from players like vanilla fish
+            wild = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
+            genes = wild ? org.overengineer.bettacraft.world.Wildlife.tankmate(species, random::nextLong) : TankmateGenes.wild(species, 0.08, random::nextLong);
             // spawn eggs and commands: a random bred variety now and then
             if (spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.COMMAND) {
                 if (TankmateGenes.livebearer(species) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
@@ -182,6 +184,23 @@ public class TankmateEntity extends AbstractFish {
 
     public TankmateGenes genes() {
         return genes;
+    }
+
+    /** M22.3: the hidden genes were analysed with the magnifier. */
+    private boolean analysed;
+    /** M22.3: spawned wild in the world (despawns far from players like vanilla fish). */
+    private boolean wild;
+
+    public boolean analysed() {
+        return analysed;
+    }
+
+    public void setAnalysed(boolean analysed) {
+        this.analysed = analysed;
+    }
+
+    public boolean isWild() {
+        return wild;
     }
 
     public String variety() {
@@ -470,6 +489,7 @@ public class TankmateEntity extends AbstractFish {
         t.put("breeding", breeding.save());
         t.putDouble("gravid", gravidDays);
         if (gravidFather != null) t.put("gravid_father", gravidFather.save());
+        org.overengineer.bettacraft.genetics.GeneVisibility.write(t, analysed); // M22.3
         return t;
     }
 
@@ -487,6 +507,7 @@ public class TankmateEntity extends AbstractFish {
         if (!Double.isFinite(gravidDays)) gravidDays = -1;
         gravidFather = t.contains("gravid_father", Tag.TAG_COMPOUND) ? TankmateGenes.load(t.getCompound("gravid_father"), species) : null;
         if (gravidDays >= 0 && gravidFather == null) gravidFather = TankmateGenes.wild(species);
+        analysed = org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t); // M22.3: older worlds: analysed
         syncLook();
         refreshDimensions();
     }
@@ -496,6 +517,7 @@ public class TankmateEntity extends AbstractFish {
         super.addAdditionalSaveData(tag);
         tag.put(KEY, saveTankmate());
         tag.putLong("last_sim", lastSimTime);
+        if (wild) tag.putBoolean("wild", true); // M22.3
     }
 
     @Override
@@ -504,6 +526,7 @@ public class TankmateEntity extends AbstractFish {
         if (tag.contains(KEY, Tag.TAG_COMPOUND)) loadTankmate(tag.getCompound(KEY));
         lastSimTime = tag.contains("last_sim") ? tag.getLong("last_sim") : -1;
         simStarted = false;
+        wild = tag.getBoolean("wild");
     }
 
     @Override
@@ -516,6 +539,7 @@ public class TankmateEntity extends AbstractFish {
     @Override
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        wild = false; // M22.3: caught once, it stays
         if (tag.contains(KEY, Tag.TAG_COMPOUND)) loadTankmate(tag.getCompound(KEY));
         lastSimTime = level().getGameTime(); // time in a bucket or bag stands still
     }
@@ -592,7 +616,8 @@ public class TankmateEntity extends AbstractFish {
 
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return false;
+        // M22.3: only wild ones that nobody caught, named or put into a tank
+        return wild && !fromBucket() && !hasCustomName() && !org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(this);
     }
 
     @Override

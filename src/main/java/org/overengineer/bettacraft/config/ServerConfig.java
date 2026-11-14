@@ -220,6 +220,13 @@ public final class ServerConfig {
     // guide (M6)
     public static final ModConfigSpec.EnumValue<GiveBook> GUIDE_GIVE_BOOK;
 
+    // M22.3 wild animals, wild colours, mutations, the magnifier
+    public static final ModConfigSpec.DoubleValue WILD_BEAUTIFUL_CHANCE;
+    public static final ModConfigSpec.DoubleValue WILD_MUTATION_CHANCE;
+    public static final ModConfigSpec.BooleanValue GENES_ALWAYS_VISIBLE;
+    public static final ModConfigSpec.IntValue WILD_FISH_NEARBY;
+    public static final ModConfigSpec.IntValue WILD_CRITTERS_NEARBY;
+
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
@@ -580,6 +587,23 @@ public final class ServerConfig {
         SEAHORSE_HARASSED = b.comment("Fast or pushy reef fish (tangs, damselfish, chromis, clownfish) stress seahorses").define("harassedByFastFish", true);
         SEAHORSE_POUCH_DAYS = b.comment("Days a male seahorse carries the eggs in his brood pouch before the fry are born")
                 .defineInRange("pouchDays", 4.0, 0.05, 100.0);
+        b.pop();
+
+        b.comment("M22.3: wild animals in the world, their colours, mutations and the magnifier").push("wildlife");
+        WILD_BEAUTIFUL_CHANCE = b.comment("Chance that a wild animal (spawned in the world or caught with the net) shows a bred colour openly (pure-bred);",
+                        "most are wild-coloured, some carry a bred colour hidden (features.wildColors)")
+                .defineInRange("beautifulWildChance", 0.03, 0.0, 1.0);
+        WILD_MUTATION_CHANCE = b.comment("Chance per gene and birth that a shrimp, crayfish, snail or a tankmate without its own genetics mutates",
+                        "(bettas: breeding.mutationChance, guppies and endlers 0.4 %; features.mutations)")
+                .defineInRange("otherMutationChance", 0.003, 0.0, 1.0);
+        GENES_ALWAYS_VISIBLE = b.comment("Hidden genes of every animal are always visible, without analysing them with the magnifier")
+                .define("genesAlwaysVisible", false);
+        WILD_FISH_NEARBY = b.comment("Wild tankmate fish and frogs only spawn while fewer than this many of them live within 32 blocks",
+                        "(keeps them rare, in small shoals; features.wildFish)")
+                .defineInRange("wildFishNearby", 6, 0, 256);
+        WILD_CRITTERS_NEARBY = b.comment("Wild shrimp, crayfish, snails and hermit crabs only spawn while fewer than this many of them live within",
+                        "32 blocks (features.wildCritters)")
+                .defineInRange("wildCrittersNearby", 8, 0, 256);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

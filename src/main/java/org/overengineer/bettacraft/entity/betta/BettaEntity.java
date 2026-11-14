@@ -150,7 +150,8 @@ public class BettaEntity extends AbstractFish {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData groupData) {
         boolean wild = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
-        BettaGenotype genotype = wild ? BettaGenotype.randomWild(random) : BettaGenotype.randomDomestic(random);
+        // M22.3: now and then a wild betta shows bred colours openly
+        BettaGenotype genotype = wild ? org.overengineer.bettacraft.world.Wildlife.betta(random) : BettaGenotype.randomDomestic(random);
         setBettaData(BettaData.create(genotype, random.nextBoolean(), level.getLevel().getGameTime()));
         return super.finalizeSpawn(level, difficulty, spawnType, groupData);
     }

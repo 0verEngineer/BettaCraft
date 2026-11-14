@@ -182,7 +182,9 @@ public final class InfoData {
         out.putFloat("satiation", b.health().satiation(p));
         out.putBoolean("hungry", b.health().isHungry(p));
         out.putBoolean("sick", b.health().isSick());
-        out.put("genotype", b.genotype().save());
+        // M22.3: the genotype only once analysed with the magnifier
+        if (org.overengineer.bettacraft.genetics.GeneVisibility.visible(b.getBettaData().analysed())) out.put("genotype", b.genotype().save());
+        else out.putBoolean("genes_unknown", true);
         out.putInt("generation", b.getBettaData().generation());
         out.putBoolean("flaring", b.isFlaring());
         out.putBoolean("trained", b.breeding().isTrained() && !b.isFemale());

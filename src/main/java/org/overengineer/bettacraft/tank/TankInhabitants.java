@@ -565,26 +565,45 @@ public final class TankInhabitants {
         // M16: water animals without a bucket (squids ...) go into bags, nets and Better Fish Tanks bags with their full data
         Bucketable bucketable = e instanceof Bucketable b ? b : null;
         if (bucketable == null && !bag) return Component.translatable("message.bettacraft.tank.cannot_take", e.getName());
-        int slot = findContainer(player, bag);
-        if (slot < 0) {
-            return Component.translatable(bag ? "message.bettacraft.tank.need_bag" : "message.bettacraft.tank.need_bucket");
+        // M22.3: a bucket or bag of the same species with room, a bucket of water that suits the animal, then an empty one
+        var tm = e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m ? m.species() : null;
+        var range = org.overengineer.bettacraft.reef.SaltTolerance.of(e);
+        var ours = org.overengineer.bettacraft.containers.AnimalContainers.findForFish(player, tm, range, !bag);
+        int slot;
+        long cost;
+        if (ours != null) {
+            slot = ours.slot();
+            cost = ours.waterMb();
+        } else {
+            slot = findContainer(player, bag);
+            if (slot < 0) {
+                boolean wrongWater = !bag && hasWaterBucket(player);
+                return Component.translatable(wrongWater ? (range != null && range.marine() ? "message.bettacraft.container.needs_sea_water"
+                        : "message.bettacraft.container.needs_fresh_water") : bag ? "message.bettacraft.tank.need_bag" : "message.bettacraft.tank.need_bucket");
+            }
+            cost = containerWater(player.getInventory().getItem(slot));
         }
         ItemStack container = player.getInventory().getItem(slot);
-        long cost = containerWater(container);
         if (tank.waterMb() < cost) return Component.translatable("message.bettacraft.tank.not_enough_water");
         release(e);
-        ItemStack filled;
-        if (FishContainers.kind(container) != null) {
-            filled = FishContainers.fill(container, e, player); // Better Fish Tanks bag / Fintastic net
-        } else if (bag) {
-            filled = FishBagItem.fillWith(e);
-        } else {
-            filled = bucketable.getBucketItemStack();
-            bucketable.saveToBucketTag(filled);
-        }
         net.minecraft.sounds.SoundEvent pickup = bucketable != null ? bucketable.getPickupSound() : SoundEvents.BUCKET_FILL_FISH;
-        if (!player.getAbilities().instabuild) player.getInventory().getItem(slot).shrink(1);
-        if (!player.getInventory().add(filled)) player.drop(filled, false);
+        if (ours != null && ours.mode() == org.overengineer.bettacraft.containers.AnimalContainers.Mode.ADD && tm != null) {
+            ItemStack tmp = bucketable.getBucketItemStack();
+            bucketable.saveToBucketTag(tmp);
+            org.overengineer.bettacraft.containers.AnimalContainers.addFish(player, slot, tm,
+                    tmp.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
+        } else {
+            ItemStack filled;
+            if (FishContainers.kind(container) != null) {
+                filled = FishContainers.fill(container, e, player); // Better Fish Tanks bag / Fintastic net
+            } else if (bag) {
+                filled = FishBagItem.fillWith(e);
+            } else {
+                filled = bucketable.getBucketItemStack();
+                bucketable.saveToBucketTag(filled);
+            }
+            org.overengineer.bettacraft.containers.AnimalContainers.give(player, slot, filled);
+        }
         TankCare.log(level, controller, "log.bettacraft.taken_out", TankCare.nameArg(e));
         tank.inhabitants().remove(e.getUUID());
         e.discard();
@@ -615,6 +634,12 @@ public final class TankInhabitants {
             }
         }
         return best;
+    }
+
+    /** M22.3: a bucket of water (plain or sea water) in the inventory. */
+    static boolean hasWaterBucket(Player player) {
+        for (ItemStack s : player.getInventory().items) if (org.overengineer.bettacraft.containers.AnimalContainers.waterBucket(s)) return true;
+        return false;
     }
 
     /** Water an (empty) container takes out of the tank together with the animal. */

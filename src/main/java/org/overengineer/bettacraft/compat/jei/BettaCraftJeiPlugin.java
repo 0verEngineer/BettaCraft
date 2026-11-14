@@ -87,6 +87,10 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         List<ItemStack> decor = new ArrayList<>();
         for (var d : ModItems.DECOR.values()) decor.add(new ItemStack(d.get()));
         info(registration, decor, "info.bettacraft.decor");
+        // M22.3: the wild corals of the reefs
+        List<ItemStack> wild = new ArrayList<>();
+        for (var c : ModItems.WILD_CORALS.values()) wild.add(new ItemStack(c.get()));
+        info(registration, wild, "info.bettacraft.wild_coral");
         // M19: a care sheet per tankmate species (bucket and spawn egg)
         for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
             info(registration, List.of(new ItemStack(ModItems.TANKMATE_BUCKETS.get(sp).get()), new ItemStack(ModItems.TANKMATE_SPAWN_EGGS.get(sp).get())),

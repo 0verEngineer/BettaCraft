@@ -179,9 +179,15 @@ public class FishBagItem extends Item {
         if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) {
             return org.overengineer.bettacraft.containers.ContainerRules.waiting(stack);
         }
-        if (!level.isClientSide) {
+        if (level instanceof ServerLevel server) {
             level.playSound(null, hit.getBlockPos(), SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 0.8F, 1.3F);
-            player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
+            var critters = stack.get(ModDataComponents.CRITTERS.get());
+            if (critters != null && !critters.isEmpty()) {
+                // M22.3: they live in the world now (crawl off as wild animals)
+                org.overengineer.bettacraft.entity.critter.WildCritterEntity.release(server, critters, hit.getBlockPos(), player);
+            } else {
+                player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
+            }
         }
         return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())), level.isClientSide);
     }

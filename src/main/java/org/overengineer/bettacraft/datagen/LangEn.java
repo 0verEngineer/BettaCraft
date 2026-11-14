@@ -23,6 +23,7 @@ final class LangEn {
         LangM217.addAll(a); // M21.7
         LangM218.addAll(a); // M21.8
         LangM221.addAll(a); // M22.1
+        LangM223.addAll(a); // M22.3
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -607,7 +608,7 @@ final class LangEn {
         a.accept("tooltip.bettacraft.shift", "Shift");
         a.accept("info.bettacraft.tank", "Craft from 6 glass of one kind and 3 iron ingots: the tank shows the texture of that glass, connected across the whole tank.\nClear glass tank: 6 (vanilla) glass, 1 iron nugget in the middle and 3 iron ingots below. A single vanilla-glass tank converts between both styles in the crafting grid.\nPlace tanks of the same glass and style next to each other to build one large tank of any connected shape (L, T, steps; up to 16x16x16).\nFill it with water buckets: 1 bucket = 1000 mB, from 50% on animals can move in.\nRight-click: tank menu. Shift + right-click: enter the interior to decorate it.");
         a.accept("info.bettacraft.betta_bucket", "A betta in a bucket. Use it on a tank to put the fish in (adds 1000 mB water), or on water to release it.\nCatch bettas in swamps with a water bucket or a fish bag.");
-        a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nIt takes every small water animal, also of other mods and those without a bucket (squids).\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nA bag also holds up to 16 shrimp, crayfish or snails of one species (aquarium net, tank menu).\nReusable; empty bags stack to 16.");
+        a.accept("info.bettacraft.fish_bag", "Right-click a small fish to catch it. A bag holds the fish and 100 mB of water.\nIt takes every small water animal, also of other mods and those without a bucket (squids).\nUse it on a tank to put the fish in, or take a fish out in the tank menu.\nA bag holds several animals of one species, half of what a bucket holds (e.g. 16 shrimp, 12 rasboras, 1 betta).\nReusable; empty bags stack to 16.");
         a.accept("info.bettacraft.swamp_water_bottle", "Use a glass bottle on water in a swamp.\nSmelt it (furnace, smoker or campfire) to hatch mosquito larvae, or mix it with seagrass or leaves for an infusoria culture.");
         a.accept("info.bettacraft.mosquito_larvae", "Live food: one portion feeds up to 4 bettas and gets a breeding pair in the mood twice as fast.\nFrom a smelted bottle of swamp water or a larva tub, sometimes from mud mined in a swamp.");
         a.accept("info.bettacraft.betta_pellets", "Everyday food: one pellet feeds up to 4 bettas (juveniles and older).\nRight-click a tank with it or put it into a feeder.");

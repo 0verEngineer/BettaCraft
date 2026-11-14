@@ -809,7 +809,7 @@ public final class TankmateBreeding {
         for (int i = 0; i < n; i++) {
             // M21.6: the sex first, the X and Y of the livebearer genome depend on it
             boolean female = r.nextBoolean();
-            TankmateGenes g = TankmateGenes.cross(k.mother, k.father, female, r::nextLong);
+            TankmateGenes g = org.overengineer.bettacraft.world.Wildlife.mutate(k.species, TankmateGenes.cross(k.mother, k.father, female, r::nextLong), r::nextLong);
             Vec3 p = w.clamp(new Vec3(k.x + (r.nextDouble() - 0.5) * 0.3, k.y - 0.05 - r.nextDouble() * 0.15, k.z + (r.nextDouble() - 0.5) * 0.3),
                     0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
             if (spawn(level, c, k.species, g, female, stage, k.generation, p) != null) made++;
@@ -864,7 +864,8 @@ public final class TankmateBreeding {
             for (int i = 0; i < free; i++) {
                 Vec3 p = w.clamp(f.position().add((r.nextDouble() - 0.5) * 0.3, 0.05, (r.nextDouble() - 0.5) * 0.3), 0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
                 boolean female = r.nextBoolean();
-                if (spawn(level, c, s, TankmateGenes.cross(f.genes(), father, female, r::nextLong), female, LifeStage.FRY, f.generation() + 1, p) != null) made++;
+                TankmateGenes g = org.overengineer.bettacraft.world.Wildlife.mutate(s, TankmateGenes.cross(f.genes(), father, female, r::nextLong), r::nextLong);
+                if (spawn(level, c, s, g, female, LifeStage.FRY, f.generation() + 1, p) != null) made++;
             }
             if (s.seahorse()) {
                 // M21.8: the male pumps the fry out of his pouch

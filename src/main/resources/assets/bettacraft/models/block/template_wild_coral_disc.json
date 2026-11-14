@@ -1,0 +1,137 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "#tex"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        8,
+        2,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tex"
+        },
+        "south": {
+          "texture": "#tex"
+        },
+        "east": {
+          "texture": "#tex"
+        },
+        "west": {
+          "texture": "#tex"
+        },
+        "up": {
+          "texture": "#tex"
+        },
+        "down": {
+          "texture": "#tex"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        6
+      ],
+      "to": [
+        14,
+        3,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tex"
+        },
+        "south": {
+          "texture": "#tex"
+        },
+        "east": {
+          "texture": "#tex"
+        },
+        "west": {
+          "texture": "#tex"
+        },
+        "up": {
+          "texture": "#tex"
+        },
+        "down": {
+          "texture": "#tex"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        9
+      ],
+      "to": [
+        9,
+        1.5,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tex"
+        },
+        "south": {
+          "texture": "#tex"
+        },
+        "east": {
+          "texture": "#tex"
+        },
+        "west": {
+          "texture": "#tex"
+        },
+        "up": {
+          "texture": "#tex"
+        },
+        "down": {
+          "texture": "#tex"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        0,
+        1
+      ],
+      "to": [
+        13,
+        1,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tex"
+        },
+        "south": {
+          "texture": "#tex"
+        },
+        "east": {
+          "texture": "#tex"
+        },
+        "west": {
+          "texture": "#tex"
+        },
+        "up": {
+          "texture": "#tex"
+        },
+        "down": {
+          "texture": "#tex"
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}

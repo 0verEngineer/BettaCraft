@@ -577,7 +577,14 @@ public final class TankBreeding {
         cond.putFloat("ready", male == null ? 0 : (float) Mth.clamp(male.breeding().ready()
                 / Math.max(1e-6, ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)), 0, 1));
         out.put("conditions", cond);
-        if (mother != null && father != null) {
+        // M22.3: the prediction shows the hidden genes: only once both parents (in the tank) are analysed
+        boolean known = org.overengineer.bettacraft.genetics.GeneVisibility.free()
+                || (male == null || male.getBettaData().analysed()) && (female == null || female.getBettaData().analysed());
+        if (mother != null && father != null && !known) {
+            out.putString("mother", motherName);
+            out.putString("father", fatherName);
+            out.putBoolean("prediction_hidden", true);
+        } else if (mother != null && father != null) {
             out.putString("mother", motherName);
             out.putString("father", fatherName);
             out.put("mother_genome", mother.save());

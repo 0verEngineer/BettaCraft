@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "trimmed=false,waterlogged=false": {
+      "model": "bettacraft:block/wild_leather_coral"
+    },
+    "trimmed=false,waterlogged=true": {
+      "model": "bettacraft:block/wild_leather_coral"
+    },
+    "trimmed=true,waterlogged=false": {
+      "model": "bettacraft:block/wild_leather_coral"
+    },
+    "trimmed=true,waterlogged=true": {
+      "model": "bettacraft:block/wild_leather_coral"
+    }
+  }
+}

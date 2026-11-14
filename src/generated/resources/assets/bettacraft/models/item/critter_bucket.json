@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/betta_bucket",
+    "layer1": "bettacraft:item/critter_bucket_animal",
+    "layer2": "bettacraft:item/critter_bucket_animal_legs",
+    "layer3": "bettacraft:item/betta_bucket_glass"
+  }
+}

@@ -218,7 +218,7 @@ public final class NetCatching {
             case SNAIL -> s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE
                     || s == CritterSpecies.YELLOW_NERITE ? 1 : 1 + rnd.nextInt(2);
         };
-        return TankCritters.bagOf(s, n, () -> wildGenes(s, rnd), rnd, true);
+        return TankCritters.bagOf(s, n, () -> org.overengineer.bettacraft.world.Wildlife.critter(s, rnd), rnd, true); // M22.3: rarely a colour
     }
 
     /** Plants (seagrass, kelp, lily pads, ...) in the water around {@code pos}. */
@@ -265,7 +265,7 @@ public final class NetCatching {
         if (o.fish() != null) {
             var s = o.fish();
             int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;
-            java.util.function.Supplier<org.overengineer.bettacraft.tankmates.TankmateGenes> genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.wild(s, 0.08, rnd);
+            java.util.function.Supplier<org.overengineer.bettacraft.tankmates.TankmateGenes> genes = () -> org.overengineer.bettacraft.world.Wildlife.tankmate(s, rnd); // M22.3
             // M21.6: now and then a group of feral fancy guppies (escaped strains) instead of wild ones
             var feral = org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()
                     ? org.overengineer.bettacraft.world.TankmateTrades.traderStrains(s) : java.util.List.<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain>of();

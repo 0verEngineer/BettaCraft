@@ -217,6 +217,7 @@ public final class InfoLines {
         }
         // M11: mirror training (mirror stick)
         if (d.getBoolean("trained")) out.add(Component.translatable("jade.bettacraft.betta.trained").withStyle(ChatFormatting.AQUA));
+        if (d.getBoolean("genes_unknown") && details) out.add(Component.translatable("tooltip.bettacraft.genes.unknown").withStyle(ChatFormatting.GRAY)); // M22.3
         if (d.contains("genotype", Tag.TAG_COMPOUND)) {
             List<Component> g = GenotypeText.summary(BettaGenotype.load(d.getCompound("genotype")));
             if (details) {

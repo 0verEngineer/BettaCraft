@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "trimmed=false,waterlogged=false": {
+      "model": "bettacraft:block/wild_zoanthus"
+    },
+    "trimmed=false,waterlogged=true": {
+      "model": "bettacraft:block/wild_zoanthus"
+    },
+    "trimmed=true,waterlogged=false": {
+      "model": "bettacraft:block/wild_zoanthus"
+    },
+    "trimmed=true,waterlogged=true": {
+      "model": "bettacraft:block/wild_zoanthus"
+    }
+  }
+}

@@ -99,7 +99,12 @@ final class BreedingLines {
             if (fry > 0) out.add(Component.translatable("gui.bettacraft.breeding.fry_food").withStyle(ChatFormatting.GRAY));
         }
         // parents + prediction
-        if (b.contains("prediction", Tag.TAG_LIST)) {
+        if (b.getBoolean("prediction_hidden")) {
+            // M22.3: the parents' genes are not analysed yet
+            out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getString("father")),
+                    TankCare.argComponent(b.getString("mother"))));
+            out.add(Component.translatable("gui.bettacraft.breeding.prediction_hidden").withStyle(ChatFormatting.GRAY));
+        } else if (b.contains("prediction", Tag.TAG_LIST)) {
             out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getString("father")),
                     TankCare.argComponent(b.getString("mother"))));
             BettaGenotype father = BettaGenotype.load(b.getCompound("father_genome"));

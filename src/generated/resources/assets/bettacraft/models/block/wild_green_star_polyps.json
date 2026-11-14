@@ -1,0 +1,7 @@
+{
+  "parent": "bettacraft:block/template_wild_coral_mat",
+  "textures": {
+    "cross": "bettacraft:block/wild_green_star_polyps_cross",
+    "tex": "bettacraft:block/wild_green_star_polyps"
+  }
+}

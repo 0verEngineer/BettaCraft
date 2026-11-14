@@ -1,0 +1,6 @@
+{
+  "parent": "bettacraft:block/template_wild_coral_disc",
+  "textures": {
+    "tex": "bettacraft:block/wild_mushroom_coral"
+  }
+}

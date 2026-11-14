@@ -27,6 +27,17 @@ public class AnimalBucketItem extends MobBucketItem {
         super(type, fluid, emptySound, properties);
     }
 
+    /** M22.3: a bucket with several fish of one species lets all of them go. */
+    @Override
+    public void checkExtraContent(@javax.annotation.Nullable Player player, Level level, ItemStack stack, BlockPos pos) {
+        if (level instanceof net.minecraft.server.level.ServerLevel server && stack.has(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get())) {
+            org.overengineer.bettacraft.tankmates.TankmateItems.release(server, stack, pos, player);
+            level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.ENTITY_PLACE, pos);
+            return;
+        }
+        super.checkExtraContent(player, level, stack, pos);
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

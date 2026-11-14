@@ -291,9 +291,23 @@ public class DwarfFrogEntity extends AbstractFish {
         }
     }
 
+    /** M22.3: spawned wild in the world (despawns far from players like vanilla fish). */
+    private boolean wild;
+
+    public boolean isWild() {
+        return wild;
+    }
+
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+                                                                   net.minecraft.world.entity.MobSpawnType spawnType, @javax.annotation.Nullable net.minecraft.world.entity.SpawnGroupData groupData) {
+        wild = spawnType == net.minecraft.world.entity.MobSpawnType.NATURAL || spawnType == net.minecraft.world.entity.MobSpawnType.CHUNK_GENERATION;
+        return super.finalizeSpawn(level, difficulty, spawnType, groupData);
+    }
+
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return false;
+        return wild && !fromBucket() && !hasCustomName() && !org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(this);
     }
 
     @Override
@@ -320,12 +334,14 @@ public class DwarfFrogEntity extends AbstractFish {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.put("frog", saveFrog());
+        if (wild) tag.putBoolean("wild", true); // M22.3
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         loadFrog(tag.getCompound("frog"));
+        wild = tag.getBoolean("wild");
     }
 
     private CompoundTag saveFrog() {
@@ -351,6 +367,7 @@ public class DwarfFrogEntity extends AbstractFish {
     @Override
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        wild = false;
         if (tag.contains("frog")) loadFrog(tag.getCompound("frog"));
     }
 
