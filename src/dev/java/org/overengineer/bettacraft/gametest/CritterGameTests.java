@@ -152,8 +152,20 @@ public final class CritterGameTests {
     // ------------------------------------------------------------------ breeding and genetics
 
     /** A red pair breeds red young (berried female, young grow up); red x blue gives wild-coloured young that carry both. */
-    @GameTest(template = EMPTY, timeoutTicks = 400)
+    @GameTest(template = EMPTY, timeoutTicks = 400, batch = "bettacraft_critters_no_mutations")
     public static void shrimpBreedTrueAndMixedColoursFallBack(GameTestHelper h) {
+        // M22.4: without the spontaneous mutations of M22.3 (0.3 % per gene and birth: with six colour genes and twenty young
+        // a mutated one now and then made this test flaky); the mutations have their own test (WildlifeGameTests)
+        boolean mutations = org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.get();
+        org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(false);
+        try {
+            shrimpBreedTrue(h);
+        } finally {
+            org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(mutations);
+        }
+    }
+
+    private static void shrimpBreedTrue(GameTestHelper h) {
         TankBlockEntity red = tank(h, 2, 2, 2, 3, 2, 2, 12000);
         add(h, red, CritterSpecies.NEOCARIDINA, CritterGenes.pure(0, 0.5F), true);
         add(h, red, CritterSpecies.NEOCARIDINA, CritterGenes.pure(0, 0.5F), false);
