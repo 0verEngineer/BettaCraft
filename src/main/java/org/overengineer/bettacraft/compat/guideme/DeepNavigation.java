@@ -33,7 +33,8 @@ public final class DeepNavigation {
     private static boolean failed;
     private static Field rowsF, navTreeF, screenF, nodeF, paragraphF, expandedF, parentF, hasChildrenF, topF, bottomF;
     private static Constructor<?> rowCtor;
-    private static Method updateLayoutM;
+    private static Method updateLayoutM, setScrollM;
+    private static Field scrollF;
 
     private DeepNavigation() {}
 
@@ -48,6 +49,9 @@ public final class DeepNavigation {
             screenF = field(bar, "screen");
             updateLayoutM = bar.getDeclaredMethod("updateLayout");
             updateLayoutM.setAccessible(true);
+            setScrollM = bar.getDeclaredMethod("setScrollOffset", int.class);
+            setScrollM.setAccessible(true);
+            scrollF = field(bar, "scrollOffset");
             nodeF = field(row, "node");
             paragraphF = field(row, "paragraph");
             expandedF = field(row, "expanded");
@@ -141,6 +145,8 @@ public final class DeepNavigation {
                 bottomF.setInt(row, bounds.bottom());
                 y = bounds.bottom();
             }
+            // rows folded away: keep the scroll position inside the shorter list
+            setScrollM.invoke(navbar, scrollF.getInt(navbar));
             return true;
         } catch (ReflectiveOperationException | RuntimeException e) {
             failed = true;
@@ -172,21 +178,58 @@ public final class DeepNavigation {
         }
     }
 
+    private static Object navbar(Object guideScreen) throws ReflectiveOperationException {
+        for (Field f : guideScreen.getClass().getDeclaredFields()) {
+            if (f.getType().getSimpleName().equals("GuideNavBar")) {
+                f.setAccessible(true);
+                return f.get(guideScreen);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * After a page was loaded (a link, the search, the item key): the chapters and sub-chapters above it fold open and the
+     * navigation scrolls to its row, so the bar always shows where the reader is. Nothing else is folded.
+     */
+    @SuppressWarnings("unchecked")
+    public static void reveal(Object guideScreen) {
+        if (failed) return;
+        try {
+            Object navbar = navbar(guideScreen);
+            if (navbar == null || !init(navbar)) return;
+            List<Object> rows = (List<Object>) rowsF.get(navbar);
+            ResourceLocation current = currentPage(guideScreen);
+            if (rows.isEmpty() || current == null) return;
+            Object row = null;
+            for (Object r : rows) {
+                NavigationNode node = (NavigationNode) nodeF.get(r);
+                if (!node.children().isEmpty() && contains(node, current)) expandedF.setBoolean(r, true);
+                if (current.equals(node.pageId())) row = r;
+            }
+            updateLayoutM.invoke(navbar);
+            if (row != null) {
+                int top = topF.getInt(row), bottom = bottomF.getInt(row), scroll = scrollF.getInt(navbar);
+                int height = ((net.minecraft.client.gui.components.AbstractWidget) navbar).getHeight();
+                if (top < scroll || bottom > scroll + height) setScrollM.invoke(navbar, Math.max(0, top - height / 3));
+            }
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            LOG.debug("reveal failed: {}", e.toString());
+        }
+    }
+
     /** Dev smoke: opens (or closes) every row of the navigation bar of the open guide screen. */
     @SuppressWarnings("unchecked")
     public static boolean expandAll(Object guideScreen, boolean open, java.util.function.Predicate<ResourceLocation> which) {
         try {
-            Field nb = null;
-            for (Field f : guideScreen.getClass().getDeclaredFields()) if (f.getType().getSimpleName().equals("GuideNavBar")) nb = f;
-            if (nb == null) return false;
-            nb.setAccessible(true);
-            Object navbar = nb.get(guideScreen);
-            if (!init(navbar)) return false;
+            Object navbar = navbar(guideScreen);
+            if (navbar == null || !init(navbar)) return false;
             for (Object row : (List<Object>) rowsF.get(navbar)) {
                 NavigationNode node = (NavigationNode) nodeF.get(row);
                 if (!node.children().isEmpty()) expandedF.setBoolean(row, open && (node.pageId() == null || which.test(node.pageId())));
             }
             updateLayoutM.invoke(navbar);
+            setScrollM.invoke(navbar, 0);
             return true;
         } catch (ReflectiveOperationException | RuntimeException e) {
             LOG.warn("expandAll failed: {}", e.toString());

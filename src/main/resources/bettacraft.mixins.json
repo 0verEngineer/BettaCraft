@@ -21,6 +21,7 @@
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
     "client.GuideNavBarMixin",
+    "client.GuideScreenMixin",
     "client.GuideNavBarRowMixin",
     "client.IrisBlockIdsMixin"
   ],
