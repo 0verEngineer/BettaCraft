@@ -515,6 +515,8 @@ public final class CritterGameTests {
 
     // ------------------------------------------------------------------ sources
 
+    private static final int SWINGS = 60;
+
     /** The net in rivers, swamps, mangroves, beaches, jungle water and lush caves catches what lives there; plains water nothing. */
     @GameTest(template = EMPTY, batch = "bettacraft_critters_net", timeoutTicks = 200)
     public static void netCatchesByBiome(GameTestHelper h) {
@@ -545,26 +547,32 @@ public final class CritterGameTests {
                 sp.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.AQUARIUM_NET.get()));
                 Set<CritterSpecies> seen = EnumSet.noneOf(CritterSpecies.class);
                 int frogs = 0, catches = 0;
-                for (int i = 0; i < 25; i++) {
+                // M22.5: 60 swings (was 25: a species with a quarter of the weight was missing about once in 800 per water,
+                // and the test checks six waters; failed once in 65 local runs)
+                // (the filled bags are taken out after every swing: 60 of them do not fit into the inventory)
+                for (int i = 0; i < SWINGS; i++) {
                     sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
                     NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
-                }
-                for (ItemStack s : sp.getInventory().items) {
-                    List<CompoundTag> l = TankCritters.bagged(s);
-                    if (l != null) {
-                        catches++;
-                        for (CompoundTag tag : l) seen.add(Critter.loadAnimal(tag, 0, 0, 0, 0).species);
-                    } else if (s.getItem() instanceof FishBagItem && FishBagItem.containedType(s) == ModEntities.DWARF_FROG.get()) {
-                        frogs++;
-                        catches++;
+                    for (int slot = 0; slot < sp.getInventory().items.size(); slot++) {
+                        ItemStack s = sp.getInventory().items.get(slot);
+                        List<CompoundTag> l = TankCritters.bagged(s);
+                        if (l != null) {
+                            catches += s.getCount();
+                            for (CompoundTag tag : l) seen.add(Critter.loadAnimal(tag, 0, 0, 0, 0).species);
+                            sp.getInventory().items.set(slot, ItemStack.EMPTY);
+                        } else if (s.getItem() instanceof FishBagItem && FishBagItem.containedType(s) == ModEntities.DWARF_FROG.get()) {
+                            frogs += s.getCount();
+                            catches += s.getCount();
+                            sp.getInventory().items.set(slot, ItemStack.EMPTY);
+                        }
                     }
                 }
-                h.assertTrue(sp.getOffhandItem().getDamageValue() == 25, "the net wears: " + sp.getOffhandItem().getDamageValue());
+                h.assertTrue(sp.getOffhandItem().getDamageValue() == SWINGS, "the net wears: " + sp.getOffhandItem().getDamageValue());
                 if (cs[1].isEmpty()) {
                     h.assertTrue(catches == 0, "nothing in " + cs[0]);
                     continue;
                 }
-                h.assertTrue(catches == 25, cs[0] + ": a catch every time with chance 1: " + catches);
+                h.assertTrue(catches == SWINGS, cs[0] + ": a catch every time with chance 1: " + catches);
                 for (String id : cs[1].split(",")) h.assertTrue(seen.contains(CritterSpecies.byId(id)), cs[0] + " has " + id + ": " + seen);
                 for (CritterSpecies s : seen) {
                     boolean ok = cs[1].contains(s.id()) || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE
