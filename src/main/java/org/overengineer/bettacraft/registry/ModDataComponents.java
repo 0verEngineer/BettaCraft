@@ -44,6 +44,10 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<String>> OUTLET_SIDE = COMPONENTS.registerComponentType("outlet_side",
             b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8));
 
+    /** M24: the values (temperature, salt, quality, nitrate) of water in pipes and other mods' tanks. */
+    public static final Supplier<DataComponentType<org.overengineer.bettacraft.tank.WaterValues>> WATER_VALUES = COMPONENTS.registerComponentType("water",
+            b -> b.persistent(org.overengineer.bettacraft.tank.WaterValues.CODEC).networkSynchronized(org.overengineer.bettacraft.tank.WaterValues.STREAM_CODEC));
+
     /** M13: growth stage of an aquarium plant taken out of a tank interior (missing = a cutting). */
     public static final Supplier<DataComponentType<Integer>> PLANT_STAGE = COMPONENTS.registerComponentType("plant_stage",
             b -> b.persistent(com.mojang.serialization.Codec.INT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT));

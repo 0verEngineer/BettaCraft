@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/nozzle",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/nozzle"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/nozzle",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/nozzle",
+      "y": 270
+    }
+  }
+}

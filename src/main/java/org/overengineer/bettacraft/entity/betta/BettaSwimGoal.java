@@ -66,6 +66,22 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
             Vec3 f = fish.foodTarget;
             return clamp(box, new Vec3(f.x + (r.nextDouble() - 0.5) * 0.6, f.y - r.nextDouble() * 0.8, f.z + (r.nextDouble() - 0.5) * 0.6));
         }
+        // M24: now and then a swim into the current of an outlet of the interior pipes
+        if (r.nextFloat() < 0.15F && fish.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(sl, net.minecraft.core.BlockPos.containing(fish.position()));
+            if (c != null) {
+                var cur = org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.currents(sl, c);
+                if (!cur.isEmpty()) {
+                    var k = cur.get(r.nextInt(cur.size()));
+                    if (k.strength() >= 0.5) {
+                        double along = 0.6 + r.nextDouble() * 1.8, side = (r.nextDouble() - 0.5) * 0.8;
+                        Vec3 t = clamp(box, new Vec3(k.x() + k.dx() * along - k.dz() * side, fish.getY() + (r.nextDouble() - 0.5) * 0.4,
+                                k.z() + k.dz() * along + k.dx() * side));
+                        if (fish.pathFreeOfDecor(fish.position(), t)) return t;
+                    }
+                }
+            }
+        }
         // Cruise: 1.5 to 5 blocks, mostly roughly ahead (fewer turns), mostly at the same depth (a depth change now and
         // then), never through interior decoration (PLAN 4.2). Targets cut short by the glass are only a fallback.
         Vec3 p = fish.position();

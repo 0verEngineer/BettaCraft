@@ -42,7 +42,10 @@ public final class TankCurrents {
     public static List<Current> of(Level level, TankBlockEntity c) {
         List<Current> out = new ArrayList<>();
         TankData t = c.getTank();
-        if (t == null || t.waterMb() <= 0 || !c.filterPowered() || !CommonConfig.cabinetOutletSide()) return out;
+        if (t == null || t.waterMb() <= 0) return out;
+        // M24: the outlets of the interior pipes act where they sit
+        if (level instanceof net.minecraft.server.level.ServerLevel s) out.addAll(org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.currents(s, c));
+        if (!c.filterPowered() || !CommonConfig.cabinetOutletSide()) return out;
         for (FilterHost f : TankEquipment.filters(level, c)) {
             FilterFlow.Path path = path(t, f);
             if (path == null || !path.wet()) continue;

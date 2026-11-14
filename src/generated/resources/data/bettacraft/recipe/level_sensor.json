@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "P": {
+      "item": "bettacraft:glass_pipe"
+    },
+    "S": {
+      "tag": "c:ingots/stainless_steel"
+    }
+  },
+  "pattern": [
+    "C",
+    "S",
+    "P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:level_sensor"
+  }
+}

@@ -21,6 +21,10 @@ public final class ModMenus {
     public static final Supplier<MenuType<org.overengineer.bettacraft.equipment.CabinetMenu>> CABINET = MENUS.register("cabinet",
             () -> IMenuTypeExtension.create(org.overengineer.bettacraft.equipment.CabinetMenu::new));
 
+    /** M24: the crucible. */
+    public static final Supplier<MenuType<org.overengineer.bettacraft.crucible.CrucibleMenu>> CRUCIBLE = MENUS.register("crucible",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.crucible.CrucibleMenu::new));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

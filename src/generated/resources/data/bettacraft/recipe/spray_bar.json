@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:interior_pipe"
+    },
+    {
+      "item": "bettacraft:interior_pipe"
+    },
+    {
+      "item": "bettacraft:interior_pipe"
+    },
+    {
+      "tag": "c:nuggets/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:spray_bar"
+  }
+}

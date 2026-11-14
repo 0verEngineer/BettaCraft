@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "enderio"
+    }
+  ],
+  "type": "enderio:alloy_smelting",
+  "energy": 4800,
+  "experience": 0.3,
+  "inputs": [
+    {
+      "count": 3,
+      "tag": "c:ingots/iron"
+    },
+    {
+      "count": 1,
+      "tag": "c:gems/quartz"
+    },
+    {
+      "count": 1,
+      "tag": "minecraft:coals"
+    }
+  ],
+  "output": {
+    "count": 3,
+    "id": "bettacraft:stainless_steel_ingot"
+  }
+}

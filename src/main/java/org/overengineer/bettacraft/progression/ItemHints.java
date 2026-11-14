@@ -35,7 +35,11 @@ public final class ItemHints {
             // M22.3: the magnifier, small animals in a bucket
             "magnifier", "critter_bucket",
             // M23: aeration, internal filters, light tiers
-            "air_pump", "air_hose", "air_stone", "sponge_filter", "corner_filter", "intake_sponge", "led_panel", "high_power_led");
+            "air_pump", "air_hose", "air_stone", "sponge_filter", "corner_filter", "intake_sponge", "led_panel", "high_power_led",
+            // M24: stainless steel, pipes, the multiblock filter, the water devices
+            "stainless_steel_ingot", "crucible", "glass_pipe", "stainless_steel_pipe", "water_pump", "bulkhead", "interior_pipe", "intake_strainer",
+            "lily_pipe", "nozzle", "spray_bar", "filter_chamber", "filter_pump_head", "filter_inlet", "filter_outlet", "filter_foam", "ceramic_rings",
+            "activated_carbon", "filter_peat", "reservoir", "level_sensor", "water_change_controller");
 
     private ItemHints() {}
 

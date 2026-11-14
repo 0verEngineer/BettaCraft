@@ -39,6 +39,9 @@ public final class InteriorEquipment {
     final LongOpenHashSet airStones = new LongOpenHashSet();
     final Long2IntOpenHashMap power = new Long2IntOpenHashMap();
     final LongOpenHashSet intakeSponges = new LongOpenHashSet();
+    /** M24: plumbing pieces (bulkhead connection, pipes, outlets) -> {@code Plumb} code; bumped version on every change but the outlets' activity. */
+    final Long2IntOpenHashMap plumbing = new Long2IntOpenHashMap();
+    int plumbingVersion;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -53,6 +56,8 @@ public final class InteriorEquipment {
     public LongOpenHashSet corners() { return corners; }
     public LongOpenHashSet spongeFilters() { return spongeFilters; }
     public LongOpenHashSet airStones() { return airStones; }
+    public Long2IntOpenHashMap plumbing() { return plumbing; }
+    public int plumbingVersion() { return plumbingVersion; }
 
     /** M23: regulator 0..10 of the device at this local position. */
     public int powerOf(long key) {
@@ -104,6 +109,13 @@ public final class InteriorEquipment {
     /** Applies one block change at interior-local coordinates. */
     void onChange(int lx, int ly, int lz, BlockState oldState, BlockState newState) {
         long key = BlockPos.asLong(lx, ly, lz);
+        // M24: plumbing (an outlet that only switches its activity changes nothing here)
+        int oc = org.overengineer.bettacraft.plumbing.interior.PlumbingBlock.code(oldState), nc = org.overengineer.bettacraft.plumbing.interior.PlumbingBlock.code(newState);
+        if (oc != nc) {
+            if (nc != 0) plumbing.put(key, nc);
+            else plumbing.remove(key);
+            plumbingVersion++;
+        }
         remove(key, oldState);
         add(key, newState);
     }
@@ -187,6 +199,8 @@ public final class InteriorEquipment {
         mopBlocks.clear();
         pumps.clear();
         clearM23();
+        plumbing.clear();
+        plumbingVersion++;
         liveRock = 0;
         spawningVersion++;
         substrate = 0;
@@ -194,7 +208,12 @@ public final class InteriorEquipment {
         if (!r.built()) return;
         int x0 = r.originX(), z0 = r.originZ();
         InteriorWorldOps.forEachBlock(interior, x0, InteriorRegion.BASE_Y, z0, x0 + r.sizeX() - 1, InteriorRegion.BASE_Y + r.sizeY() - 1,
-                z0 + r.sizeZ() - 1, (x, y, z, s) -> add(BlockPos.asLong(x - x0, y - InteriorRegion.BASE_Y, z - z0), s));
+                z0 + r.sizeZ() - 1, (x, y, z, s) -> {
+                    long k = BlockPos.asLong(x - x0, y - InteriorRegion.BASE_Y, z - z0);
+                    add(k, s);
+                    int pc = org.overengineer.bettacraft.plumbing.interior.PlumbingBlock.code(s);
+                    if (pc != 0) plumbing.put(k, pc);
+                });
         InteriorWorldOps.forEachBlock(interior, x0, InteriorRegion.FLOOR_Y, z0, x0 + r.sizeX() - 1, InteriorRegion.FLOOR_Y, z0 + r.sizeZ() - 1,
                 (x, y, z, s) -> {
                     if (s.is(ModBlocks.INTERIOR_FLOOR.get()) && s.getValue(InteriorFloorBlock.SUBSTRATE)) substrate++;
@@ -267,6 +286,16 @@ public final class InteriorEquipment {
         }
         t.putLongArray("power_keys", pk);
         t.putIntArray("power_values", pv);
+        // M24
+        long[] qk = new long[plumbing.size()];
+        int[] qv = new int[plumbing.size()];
+        int q = 0;
+        for (var e : plumbing.long2IntEntrySet()) {
+            qk[q] = e.getLongKey();
+            qv[q++] = e.getIntValue();
+        }
+        t.putLongArray("plumbing_keys", qk);
+        t.putIntArray("plumbing_codes", qv);
         if (needsScan) t.putBoolean("rescan", true);
         return t;
     }
@@ -299,6 +328,11 @@ public final class InteriorEquipment {
         long[] pk = t.getLongArray("power_keys");
         int[] pv = t.getIntArray("power_values");
         for (int i = 0; i < pk.length && i < pv.length; i++) power.put(pk[i], pv[i]);
+        plumbing.clear();
+        long[] qk = t.getLongArray("plumbing_keys");
+        int[] qv = t.getIntArray("plumbing_codes");
+        for (int i = 0; i < qk.length && i < qv.length; i++) plumbing.put(qk[i], qv[i]);
+        plumbingVersion++;
         spawningVersion++;
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");

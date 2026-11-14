@@ -1,0 +1,25 @@
+{
+  "type": "bettacraft:crucible",
+  "ingredients": [
+    {
+      "count": 3,
+      "tag": "c:ingots/iron"
+    },
+    {
+      "count": 1,
+      "tag": "minecraft:coals"
+    },
+    {
+      "count": 1,
+      "tag": "c:gems/quartz"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "result": {
+    "count": 3,
+    "id": "bettacraft:stainless_steel_ingot"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "bettacraft:block/water_pump_side",
+    "east": "bettacraft:block/water_pump_side",
+    "north": "bettacraft:block/water_pump_front",
+    "particle": "bettacraft:block/water_pump_side",
+    "south": "bettacraft:block/water_pump_back",
+    "up": "bettacraft:block/water_pump_side",
+    "west": "bettacraft:block/water_pump_side"
+  }
+}

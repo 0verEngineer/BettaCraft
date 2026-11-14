@@ -16,6 +16,8 @@ public final class ModTags {
     public static final TagKey<Item> TANK_GLASS_ITEMS = Tags.Items.GLASS_BLOCKS;
 
     /** Food the feeder and hand feeding accept. */
+    /** M24: stainless steel (ours; the steel of other mods, #c:ingots/steel, is no stainless steel). */
+    public static final TagKey<Item> STAINLESS_STEEL_INGOTS = TagKey.create(Registries.ITEM, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "ingots/stainless_steel"));
     public static final TagKey<Item> BETTA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("betta_food"));
     /** Fry food for the whole fry stage (infusoria). */
     public static final TagKey<Item> FRY_FOOD_START = TagKey.create(Registries.ITEM, BettaCraft.id("fry_food_start"));

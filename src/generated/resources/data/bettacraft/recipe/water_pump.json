@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "bettacraft:glass_pipe"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "S": {
+      "tag": "c:ingots/stainless_steel"
+    }
+  },
+  "pattern": [
+    " S ",
+    "PRP",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:water_pump"
+  }
+}

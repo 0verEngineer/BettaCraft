@@ -30,6 +30,8 @@ public final class TankmateCare {
     public static final int STRESS_FLOW = 32, STRESS_NO_POSTS = 64;
     /** M23: too little oxygen in the water. */
     public static final int STRESS_OXYGEN = 128;
+    /** M24: much nitrate (they breed less; only from the lethal level it is bad water). */
+    public static final int STRESS_NITRATE = 256;
     /** Algae on the glass (mean share) from which grazers find enough to eat. */
     public static final double GRAZING_FROM = 0.04;
 
@@ -78,6 +80,7 @@ public final class TankmateCare {
         // M23: low oxygen (the dwarf gourami breathes air like the bettas)
         boolean lowO2 = org.overengineer.bettacraft.tank.TankAeration.lowFor(tank, org.overengineer.bettacraft.tank.TankAeration.labyrinth(fish));
         if (lowO2) stress |= STRESS_OXYGEN;
+        if (org.overengineer.bettacraft.tank.TankNitrate.high(tank)) stress |= STRESS_NITRATE;
         if (s.seahorse()) {
             // M21.8: strong flow, nothing to hold on to
             if (org.overengineer.bettacraft.tankmates.Seahorses.flowTooStrong(org.overengineer.bettacraft.tankmates.Seahorses.flowAt(level, controller, fish.getX(), fish.getZ()))) stress |= STRESS_FLOW;

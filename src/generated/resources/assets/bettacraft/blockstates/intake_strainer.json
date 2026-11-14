@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/intake_strainer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/intake_strainer"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/intake_strainer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/intake_strainer",
+      "y": 270
+    }
+  }
+}

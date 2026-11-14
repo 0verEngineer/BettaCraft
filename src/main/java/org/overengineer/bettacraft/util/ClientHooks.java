@@ -27,4 +27,16 @@ public final class ClientHooks {
     public static void openRegulator(BlockPos pos) {
         regulator.accept(pos.immutable());
     }
+
+    /** M24: the water change controller and the multiblock filter screens. */
+    public static volatile Consumer<BlockPos> waterChanger = p -> {};
+    public static volatile Consumer<BlockPos> filter = p -> {};
+
+    public static void openWaterChanger(BlockPos pos) {
+        waterChanger.accept(pos.immutable());
+    }
+
+    public static void openFilter(BlockPos pos) {
+        filter.accept(pos.immutable());
+    }
 }

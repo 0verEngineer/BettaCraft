@@ -41,6 +41,12 @@ public final class Regulator {
         }
 
         default void setSponge(boolean on) {}
+
+        /** M24: a line about what the device does now (the regulator screen), or null. */
+        @Nullable
+        default Component note() {
+            return null;
+        }
     }
 
     /** The device at this position (for a multi-block piece its anchor), or null. */
@@ -55,6 +61,7 @@ public final class Regulator {
         if (s.getBlock() instanceof AirStoneBlock) return new StoneDevice(level, pos.immutable());
         var be = level.getBlockEntity(pos);
         if (be instanceof AirPumpBlockEntity pump) return new PumpDevice(pump);
+        if (be instanceof Device d) return d; // M24: water pump, filter pump head
         if (be instanceof FilterHost f && f.hasFilter()) return new FilterDevice(be, f);
         return null;
     }

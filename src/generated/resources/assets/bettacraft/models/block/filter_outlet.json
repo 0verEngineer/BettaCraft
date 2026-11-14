@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "bettacraft:block/filter_chamber_top",
+    "east": "bettacraft:block/filter_chamber_top",
+    "north": "bettacraft:block/filter_outlet",
+    "particle": "bettacraft:block/filter_chamber_top",
+    "south": "bettacraft:block/filter_chamber_top",
+    "up": "bettacraft:block/filter_chamber_top",
+    "west": "bettacraft:block/filter_chamber_top"
+  }
+}

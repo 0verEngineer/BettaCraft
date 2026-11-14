@@ -17,6 +17,8 @@ public final class ServerConfig {
     public enum Tadpoles { LEAVE_AS_FROG, STAY_TADPOLE }
     /** M17: what happens to an animal that grew too big for a tank (inhabitants.maxHitbox) while it lived in it. */
     public enum Outgrown { BAG_IN_FRONT, KEEP }
+    /** M24: how often the water must be changed (nitrate rises slowly): EASY 25 % every 20 days, NORMAL every 14, REALISTIC every 7. */
+    public enum WaterChangeDifficulty { OFF, EASY, NORMAL, REALISTIC }
 
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue PROTECT_FROM_EXPLOSIONS_AND_PISTONS;
@@ -249,6 +251,25 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue FILTER_FRY_INTAKE;
     public static final ModConfigSpec.DoubleValue LIGHT_PANEL_BOOST;
     public static final ModConfigSpec.DoubleValue LIGHT_HIGH_POWER_BOOST;
+    // M24: nitrate and water changes, pipes and pumps, the crucible, the multiblock external filter
+    public static final ModConfigSpec.EnumValue<WaterChangeDifficulty> WATER_CHANGE_DIFFICULTY;
+    public static final ModConfigSpec.DoubleValue NITRATE_STRESS_FROM;
+    public static final ModConfigSpec.DoubleValue NITRATE_LETHAL_FROM;
+    public static final ModConfigSpec.DoubleValue NITRATE_PLANT_UPTAKE;
+    public static final ModConfigSpec.DoubleValue NITRATE_REFERENCE_STOCKING;
+    public static final ModConfigSpec.IntValue PIPE_GLASS_RATE;
+    public static final ModConfigSpec.IntValue PIPE_STEEL_RATE;
+    public static final ModConfigSpec.IntValue PIPE_PUMP_RATE;
+    public static final ModConfigSpec.BooleanValue POWER_PUMPS;
+    public static final ModConfigSpec.IntValue POWER_PUMP_FE;
+    public static final ModConfigSpec.IntValue CRUCIBLE_TICKS;
+    public static final ModConfigSpec.IntValue CRUCIBLE_FE;
+    public static final ModConfigSpec.IntValue MEDIA_SPONGE_BLOCKS;
+    public static final ModConfigSpec.IntValue MEDIA_CERAMIC_BLOCKS;
+    public static final ModConfigSpec.IntValue MEDIA_CARBON_BLOCKS;
+    public static final ModConfigSpec.IntValue MEDIA_PEAT_BLOCKS;
+    public static final ModConfigSpec.DoubleValue MEDIA_DIRT_PER_DAY;
+    public static final ModConfigSpec.IntValue MULTIBLOCK_FILTER_MAX_CHAMBERS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -521,6 +542,44 @@ public final class ServerConfig {
                 .defineInRange("panelBoost", 2.5, 0.0, 15.0);
         LIGHT_HIGH_POWER_BOOST = b.comment("Extra light of a high-power LED over the light bar (light 15 + this, on the share of the tank it covers)")
                 .defineInRange("highPowerBoost", 5.0, 0.0, 15.0);
+        b.pop();
+
+        // M24
+        b.comment("Water changes (M24): nitrate (dissolved waste) rises slowly even with a good filter; only water changes and plants lower it").push("waterchange");
+        WATER_CHANGE_DIFFICULTY = b.comment("How often the water must be changed: OFF = never (no nitrate), EASY = 25 % about every 20 days, NORMAL = 25 % about",
+                "every 14 days, REALISTIC = 25 % about every 7 days (for a normally stocked tank without plants; more fish need more, plants less)")
+                .defineEnum("difficulty", WaterChangeDifficulty.NORMAL);
+        NITRATE_STRESS_FROM = b.comment("From this nitrate (mg/L) the fish breed less, the algae grow faster and the tank log warns (the recommended water",
+                "changes keep a normally stocked tank below 40)").defineInRange("nitrateStressFrom", 50.0, 1.0, 10000.0);
+        NITRATE_LETHAL_FROM = b.comment("From this nitrate (mg/L) the water counts as bad: the animals get sick and in the end die (only after many weeks",
+                "without a water change)").defineInRange("nitrateLethalFrom", 120.0, 1.0, 10000.0);
+        NITRATE_PLANT_UPTAKE = b.comment("How much nitrate a densely planted tank in good light takes up, times the nitrate a normally stocked tank makes",
+                "(1.2: dense plants keep such a tank clean on their own)").defineInRange("plantUptake", 1.2, 0.0, 100.0);
+        NITRATE_REFERENCE_STOCKING = b.comment("Adult fish per water block of a normally stocked tank (more fish make nitrate faster, fewer slower)")
+                .defineInRange("referenceFishPerBlock", 0.5, 0.01, 100.0);
+        b.pop();
+        b.comment("Pipes and pumps (M24, features.pipes): they carry water with all its values (temperature, salt, quality, nitrate)").push("pipes");
+        PIPE_GLASS_RATE = b.comment("mB per tick a glass pipe network carries").defineInRange("glassPipeRate", 50, 1, 1000000);
+        PIPE_STEEL_RATE = b.comment("mB per tick a stainless steel pipe network carries (a network of both kinds carries what its weakest pipe carries)")
+                .defineInRange("steelPipeRate", 250, 1, 1000000);
+        PIPE_PUMP_RATE = b.comment("mB per tick a water pump moves at 100 %").defineInRange("pumpRate", 200, 1, 1000000);
+        POWER_PUMPS = b.comment("Water pumps, the pump head of the multiblock filter, the water change controller and the level sensor need FE",
+                "(off: they run without power)").define("pumpsRequireEnergy", false);
+        POWER_PUMP_FE = b.comment("FE per tick of a running water pump or filter pump head at 100 % (a water change costs this per 100 mB)")
+                .defineInRange("pumpFePerTick", 8, 0, 100000);
+        b.pop();
+        b.comment("Crucible (M24, features.stainlessSteel): stainless steel from iron, coal, nether quartz and blaze powder").push("crucible");
+        CRUCIBLE_TICKS = b.comment("Ticks one melt takes").defineInRange("meltTicks", 200, 1, 100000);
+        CRUCIBLE_FE = b.comment("FE per tick the crucible uses instead of fuel while FE is available (power mods)").defineInRange("fePerTick", 20, 0, 100000);
+        b.pop();
+        b.comment("Multiblock external filter (M24, features.multiblockFilter): water blocks one filter chamber keeps clean with its medium").push("multiblockFilter");
+        MEDIA_SPONGE_BLOCKS = b.comment("Water blocks a chamber with a filter sponge (mechanical) keeps clean").defineInRange("spongeBlocks", 12, 0, 10000);
+        MEDIA_CERAMIC_BLOCKS = b.comment("Water blocks a chamber with ceramic rings (bacteria) keeps clean").defineInRange("ceramicBlocks", 24, 0, 10000);
+        MEDIA_CARBON_BLOCKS = b.comment("Water blocks a chamber with activated carbon keeps clean (it is used up, not cleaned)").defineInRange("carbonBlocks", 16, 0, 10000);
+        MEDIA_PEAT_BLOCKS = b.comment("Water blocks a chamber with filter peat keeps clean (peat softens the water later, M25)").defineInRange("peatBlocks", 6, 0, 10000);
+        MEDIA_DIRT_PER_DAY = b.comment("How fast the media clog per day in a normally stocked tank (1 = clogged; sponges fastest, ceramic at half the rate)")
+                .defineInRange("dirtPerDay", 0.04, 0.0, 100.0);
+        MULTIBLOCK_FILTER_MAX_CHAMBERS = b.comment("Most filter chambers one multiblock filter may have").defineInRange("maxChambers", 16, 1, 64);
         b.pop();
 
         b.comment("Breeding live food: larva tub (mosquito larvae) and artemia hatchery (artemia nauplii)").push("foodBreeding");

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/spray_bar",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/spray_bar"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/spray_bar",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/spray_bar",
+      "y": 270
+    }
+  }
+}

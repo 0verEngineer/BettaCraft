@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "fill=0": {
+      "model": "bettacraft:block/reservoir"
+    },
+    "fill=1": {
+      "model": "bettacraft:block/reservoir"
+    },
+    "fill=2": {
+      "model": "bettacraft:block/reservoir"
+    },
+    "fill=3": {
+      "model": "bettacraft:block/reservoir"
+    },
+    "fill=4": {
+      "model": "bettacraft:block/reservoir_full"
+    },
+    "fill=5": {
+      "model": "bettacraft:block/reservoir_full"
+    },
+    "fill=6": {
+      "model": "bettacraft:block/reservoir_full"
+    },
+    "fill=7": {
+      "model": "bettacraft:block/reservoir_full"
+    },
+    "fill=8": {
+      "model": "bettacraft:block/reservoir_full"
+    }
+  }
+}

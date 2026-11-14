@@ -120,12 +120,54 @@ public final class TankInteractions {
                         String.format(java.util.Locale.ROOT, "%.1f", tank.salinity()));
             }
             tank.setWaterQuality(WaterQuality.mix(tank.waterQuality(), before, added));
+            tank.setNitrate(TankNitrate.mix(tank.nitrate(), before, 0F, added)); // M24: fresh water has no nitrate
             tank.setLastFreshWater(level.getGameTime());
+            if (before > 0) tank.setLastWaterChange(level.getGameTime());
             // M19: fresh water has the ambient temperature; a large cool water change sets off the corydoras
             org.overengineer.bettacraft.tankmates.TankmateBreeding.onFreshWater(level, controller, before, added);
         }
         TankMultiblock.applyStates(level, tank);
         controller.markTankChanged();
+    }
+
+    /**
+     * M24: adds (or removes, negative) water that carries values ({@link WaterValues}, from a pipe or another tank): all
+     * values mix by volume. Without values it is tap water ({@link #changeWater}, fresh: dilutes, counts as a water change).
+     */
+    public static void addWater(ServerLevel level, TankBlockEntity controller, long deltaMb, @javax.annotation.Nullable WaterValues v) {
+        if (v == null || deltaMb <= 0) {
+            changeWater(level, controller, deltaMb, 0.0F);
+            return;
+        }
+        TankData tank = controller.getTank();
+        long before = tank.waterMb();
+        tank.setWaterMb(before + deltaMb);
+        long added = tank.waterMb() - before;
+        if (added > 0) {
+            float salinityBefore = tank.salinity();
+            tank.setSalinity(Salinity.mix(salinityBefore, before, v.salinity(), added));
+            tank.setCalcium(Salinity.mixCalcium(tank.calcium(), before, v.calcium(), added));
+            if (Salinity.kind(salinityBefore) != Salinity.kind(tank.salinity()) && before > 0) {
+                TankCare.log(level, controller, "log.bettacraft.salinity_" + Salinity.kind(tank.salinity()).name().toLowerCase(java.util.Locale.ROOT),
+                        String.format(java.util.Locale.ROOT, "%.1f", tank.salinity()));
+            }
+            double total = before + added;
+            tank.setWaterQuality(before <= 0 ? v.quality() : (float) ((tank.waterQuality() * (double) before + v.quality() * (double) added) / total));
+            tank.setNitrate(TankNitrate.mix(tank.nitrate(), before, v.nitrate(), added));
+            tank.setWaterTemp(before <= 0 ? v.temp() : (float) ((tank.waterTemp() * (double) before + v.temp() * (double) added) / total));
+            if (!Float.isNaN(tank.oxygen()) && before <= 0) tank.setOxygen(Float.NaN);
+        }
+        TankMultiblock.applyStates(level, tank);
+        controller.markTankChanged();
+    }
+
+    /**
+     * M24: tops off evaporated water (level sensor): mixes like {@link #addWater} but is no water change (tap water has the
+     * temperature of the place and no nitrate; the salt that stayed behind is diluted back to where it was).
+     */
+    public static void topOff(ServerLevel level, TankBlockEntity controller, long mb, @javax.annotation.Nullable WaterValues v) {
+        if (mb <= 0) return;
+        addWater(level, controller, mb, v != null ? v : WaterValues.tap(TankCare.ambient(level, controller.getTank())));
     }
 
     public static void showInfo(ServerPlayer player, BlockPos pos) {

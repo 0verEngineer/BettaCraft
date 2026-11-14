@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#s"
+        },
+        "east": {
+          "texture": "#s"
+        },
+        "north": {
+          "texture": "#n"
+        },
+        "south": {
+          "texture": "#s"
+        },
+        "up": {
+          "texture": "#s"
+        },
+        "west": {
+          "texture": "#s"
+        }
+      },
+      "from": [
+        0,
+        6,
+        6
+      ],
+      "to": [
+        16,
+        10,
+        10
+      ]
+    }
+  ],
+  "textures": {
+    "n": "bettacraft:block/nozzle",
+    "particle": "bettacraft:block/plumbing_steel",
+    "s": "bettacraft:block/plumbing_steel"
+  }
+}

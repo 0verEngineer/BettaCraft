@@ -38,7 +38,8 @@ public final class TankAlgae {
         // M23: strong LEDs without CO2 and fertiliser (M25) grow more algae
         return AlgaeSim.growthPerDay(speed(), (int) Math.round(Math.min(15, strong)), t.waterQuality(), TankWater.qualityEnabled(),
                 org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t), TankPlants.coverage(t))
-                * org.overengineer.bettacraft.tank.TankLighting.algaeBoost(strong);
+                * org.overengineer.bettacraft.tank.TankLighting.algaeBoost(strong)
+                * org.overengineer.bettacraft.tank.TankNitrate.algaeFactor(t); // M24: nitrate feeds the algae
     }
 
     /** Faces the cleaning crew grazes clean per day (snails best, nerites most, shrimp a little; young less). */

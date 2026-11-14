@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/bulkhead"
+    },
+    "facing=north": {
+      "model": "bettacraft:block/bulkhead"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/bulkhead"
+    },
+    "facing=west": {
+      "model": "bettacraft:block/bulkhead"
+    }
+  }
+}

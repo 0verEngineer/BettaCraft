@@ -50,6 +50,13 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_LED_TIERS;
     public static final ModConfigSpec.BooleanValue FEATURE_LIGHT_TIMER;
     public static final ModConfigSpec.BooleanValue SOUNDS_USE_VANILLA;
+    // M24
+    public static final ModConfigSpec.BooleanValue FEATURE_STAINLESS_STEEL;
+    public static final ModConfigSpec.BooleanValue FEATURE_PIPES;
+    public static final ModConfigSpec.BooleanValue FEATURE_INTERIOR_PIPES;
+    public static final ModConfigSpec.BooleanValue FEATURE_MULTIBLOCK_FILTER;
+    public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
+    public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -148,6 +155,18 @@ public final class CommonConfig {
                 "redder, lets the strong-light plants grow and brings more algae (off: the new lights count like the light bar)").define("ledTiers", true);
         FEATURE_LIGHT_TIMER = b.comment("Dimmer and daylight timer with sunrise and sunset for the lights of a tank (tank menu, tab Devices) (off: lights are on",
                 "at full strength like before)").define("lightTimer", true);
+        // M24
+        FEATURE_STAINLESS_STEEL = b.comment("Crucible and stainless steel (also from the machines of Mekanism, EnderIO, Create and Thermal) (off: the crucible",
+                "does not melt)").define("stainlessSteel", true);
+        FEATURE_PIPES = b.comment("Glass and stainless steel pipes and the water pump: they carry water with its values between tanks, filters and the",
+                "tanks and pipes of other mods (off: pipes carry nothing and pumps stand still)").define("pipes", true);
+        FEATURE_INTERIOR_PIPES = b.comment("Bulkhead in the tank floor and pipes, intake strainer, lily pipe, nozzle and spray bar in the tank interior; their",
+                "current acts where they sit (off: they cannot be placed and the bulkheads stay closed)").define("interiorPipes", true);
+        FEATURE_MULTIBLOCK_FILTER = b.comment("Multiblock external filter from filter chambers, a pump head and connectors, with filter media that clog and",
+                "must be cleaned (off: it does not clean)").define("multiblockFilter", true);
+        FEATURE_AUTO_WATER_CHANGE = b.comment("Water change controller: changes a part of the water by itself at an interval (off: it does nothing)")
+                .define("autoWaterChange", true);
+        FEATURE_TOP_OFF = b.comment("Top-off: a level sensor tops off evaporated water from a reservoir or a pipe (off: it does nothing)").define("topOff", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -244,6 +263,13 @@ public final class CommonConfig {
     public static boolean ledTiers() { return getOr(FEATURE_LED_TIERS, true); }
     public static boolean lightTimer() { return getOr(FEATURE_LIGHT_TIMER, true); }
     public static boolean vanillaSounds() { return getOr(SOUNDS_USE_VANILLA, false); }
+    // M24
+    public static boolean stainlessSteel() { return getOr(FEATURE_STAINLESS_STEEL, true); }
+    public static boolean pipes() { return getOr(FEATURE_PIPES, true); }
+    public static boolean interiorPipes() { return getOr(FEATURE_INTERIOR_PIPES, true); }
+    public static boolean multiblockFilter() { return getOr(FEATURE_MULTIBLOCK_FILTER, true); }
+    public static boolean autoWaterChange() { return getOr(FEATURE_AUTO_WATER_CHANGE, true); }
+    public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
 
     private CommonConfig() {}
 }

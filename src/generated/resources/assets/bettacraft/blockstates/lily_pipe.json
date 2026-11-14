@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/lily_pipe",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/lily_pipe"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/lily_pipe",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/lily_pipe",
+      "y": 270
+    }
+  }
+}

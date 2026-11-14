@@ -25,8 +25,17 @@ public final class ModRecipes {
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.StoneCabinetRecipe>> STONE_CABINET = SERIALIZERS.register("stone_cabinet",
             org.overengineer.bettacraft.equipment.StoneCabinetRecipe.Serializer::new);
 
+    // M24: the crucible (stainless steel)
+    public static final DeferredRegister<net.minecraft.world.item.crafting.RecipeType<?>> TYPES =
+            DeferredRegister.create(Registries.RECIPE_TYPE, BettaCraft.MOD_ID);
+    public static final Supplier<net.minecraft.world.item.crafting.RecipeType<org.overengineer.bettacraft.crucible.CrucibleRecipe>> CRUCIBLE_TYPE =
+            TYPES.register("crucible", () -> net.minecraft.world.item.crafting.RecipeType.simple(BettaCraft.id("crucible")));
+    public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.crucible.CrucibleRecipe>> CRUCIBLE = SERIALIZERS.register("crucible",
+            org.overengineer.bettacraft.crucible.CrucibleRecipe.Serializer::new);
+
     public static void register(IEventBus bus) {
         SERIALIZERS.register(bus);
+        TYPES.register(bus);
     }
 
     private ModRecipes() {}

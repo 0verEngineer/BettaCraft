@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/level_sensor",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/level_sensor"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/level_sensor",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/level_sensor",
+      "y": 270
+    }
+  }
+}

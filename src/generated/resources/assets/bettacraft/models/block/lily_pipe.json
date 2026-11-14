@@ -1,0 +1,105 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#g"
+        },
+        "east": {
+          "texture": "#g"
+        },
+        "north": {
+          "texture": "#g"
+        },
+        "south": {
+          "texture": "#g"
+        },
+        "up": {
+          "texture": "#g"
+        },
+        "west": {
+          "texture": "#g"
+        }
+      },
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        14,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#g"
+        },
+        "east": {
+          "texture": "#g"
+        },
+        "north": {
+          "texture": "#g"
+        },
+        "south": {
+          "texture": "#g"
+        },
+        "up": {
+          "texture": "#g"
+        },
+        "west": {
+          "texture": "#g"
+        }
+      },
+      "from": [
+        7,
+        12,
+        3
+      ],
+      "to": [
+        9,
+        14,
+        7
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#g"
+        },
+        "east": {
+          "texture": "#g"
+        },
+        "north": {
+          "texture": "#g"
+        },
+        "south": {
+          "texture": "#g"
+        },
+        "up": {
+          "texture": "#g"
+        },
+        "west": {
+          "texture": "#g"
+        }
+      },
+      "from": [
+        5,
+        11,
+        1
+      ],
+      "to": [
+        11,
+        15,
+        3
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "g": "bettacraft:block/plumbing_glass",
+    "particle": "bettacraft:block/plumbing_glass"
+  }
+}

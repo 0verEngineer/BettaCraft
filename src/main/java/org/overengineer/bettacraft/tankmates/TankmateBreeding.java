@@ -59,8 +59,11 @@ public final class TankmateBreeding {
     // ------------------------------------------------------------------ config
 
     static double speed() {
-        return ServerConfig.getOr(ServerConfig.TANKMATES_BREEDING_SPEED, 1.0);
+        return ServerConfig.getOr(ServerConfig.TANKMATES_BREEDING_SPEED, 1.0) * nitrateFactor;
     }
+
+    /** M24: too much nitrate halves the breeding of the tank being stepped (set for the duration of {@link #step}). */
+    private static double nitrateFactor = 1.0;
 
     public static double gestationDays() {
         return ServerConfig.getOr(ServerConfig.TANKMATES_GESTATION_DAYS, 3.0);
@@ -114,6 +117,15 @@ public final class TankmateBreeding {
     /** One step of {@code days} (also used by GameTests with longer steps). */
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
         if (days <= 0) return;
+        nitrateFactor = org.overengineer.bettacraft.tank.TankNitrate.breedingFactor(c.getTank());
+        try {
+            stepTank(level, c, days);
+        } finally {
+            nitrateFactor = 1.0;
+        }
+    }
+
+    private static void stepTank(ServerLevel level, TankBlockEntity c, double days) {
         TankData t = c.getTank();
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
         List<TankmateEntity> mates = tankmates(live);

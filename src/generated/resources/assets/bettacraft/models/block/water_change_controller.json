@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#front"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        12,
+        14
+      ]
+    }
+  ],
+  "textures": {
+    "front": "bettacraft:block/water_change_controller_front",
+    "particle": "bettacraft:block/water_change_controller_side",
+    "side": "bettacraft:block/water_change_controller_side"
+  }
+}

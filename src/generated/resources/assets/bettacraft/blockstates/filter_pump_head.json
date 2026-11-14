@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "bettacraft:block/filter_pump_head"
+    },
+    "active=true": {
+      "model": "bettacraft:block/filter_pump_head_on"
+    }
+  }
+}

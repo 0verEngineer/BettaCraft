@@ -218,6 +218,55 @@ public final class ModBlocks {
                     .mapColor(MapColor.METAL).strength(1.0F).sound(SoundType.METAL).noOcclusion()
                     .lightLevel(TankLightBlock::lightLevel).isRedstoneConductor((s, l, p) -> false)));
 
+    // ------------------------------------------------------------------ M24 pipes, stainless steel, multiblock filter, water changes
+
+    /** M24: the crucible for stainless steel. */
+    public static final DeferredBlock<org.overengineer.bettacraft.crucible.CrucibleBlock> CRUCIBLE = BLOCKS.register("crucible",
+            () -> new org.overengineer.bettacraft.crucible.CrucibleBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NETHER).strength(2.5F, 6.0F).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops().noOcclusion()
+                    .lightLevel(s -> s.getValue(org.overengineer.bettacraft.crucible.CrucibleBlock.LIT) ? 9 : 0)));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.PipeBlock> GLASS_PIPE = BLOCKS.register("glass_pipe",
+            () -> new org.overengineer.bettacraft.plumbing.PipeBlock(false, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.PipeBlock> STAINLESS_STEEL_PIPE = BLOCKS.register("stainless_steel_pipe",
+            () -> new org.overengineer.bettacraft.plumbing.PipeBlock(true, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.WaterPumpBlock> WATER_PUMP = BLOCKS.register("water_pump",
+            () -> new org.overengineer.bettacraft.plumbing.WaterPumpBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL)));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.WaterDeviceBlock> RESERVOIR = BLOCKS.register("reservoir",
+            () -> new org.overengineer.bettacraft.plumbing.WaterDeviceBlock(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.Kind.RESERVOIR,
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.0F).sound(SoundType.GLASS).noOcclusion()));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.WaterDeviceBlock> LEVEL_SENSOR = BLOCKS.register("level_sensor",
+            () -> new org.overengineer.bettacraft.plumbing.WaterDeviceBlock(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.Kind.LEVEL_SENSOR,
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.0F).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.WaterDeviceBlock> WATER_CHANGE_CONTROLLER = BLOCKS.register("water_change_controller",
+            () -> new org.overengineer.bettacraft.plumbing.WaterDeviceBlock(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.Kind.WATER_CHANGER,
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5F).sound(SoundType.METAL).noOcclusion()));
+    // the plumbing of the tank interior
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> BULKHEAD = plumbing("bulkhead", org.overengineer.bettacraft.plumbing.interior.Plumb.PORT);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTERIOR_PIPE = plumbing("interior_pipe", org.overengineer.bettacraft.plumbing.interior.Plumb.PIPE);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTAKE_STRAINER = plumbing("intake_strainer", org.overengineer.bettacraft.plumbing.interior.Plumb.STRAINER);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> LILY_PIPE = plumbing("lily_pipe", org.overengineer.bettacraft.plumbing.interior.Plumb.LILY);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> NOZZLE = plumbing("nozzle", org.overengineer.bettacraft.plumbing.interior.Plumb.NOZZLE);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> SPRAY_BAR = plumbing("spray_bar", org.overengineer.bettacraft.plumbing.interior.Plumb.SPRAY_BAR);
+    // the multiblock external filter
+    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_CHAMBER = filterPart("filter_chamber", org.overengineer.bettacraft.filter.FilterPartBlock.Part.CHAMBER);
+    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_PUMP_HEAD = filterPart("filter_pump_head", org.overengineer.bettacraft.filter.FilterPartBlock.Part.PUMP_HEAD);
+    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_INLET = filterPart("filter_inlet", org.overengineer.bettacraft.filter.FilterPartBlock.Part.INLET);
+    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_OUTLET = filterPart("filter_outlet", org.overengineer.bettacraft.filter.FilterPartBlock.Part.OUTLET);
+
+    private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
+        return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)
+                .isRedstoneConductor((s, l, p) -> false)));
+    }
+
+    private static DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> filterPart(String id, org.overengineer.bettacraft.filter.FilterPartBlock.Part part) {
+        return BLOCKS.register(id, () -> new org.overengineer.bettacraft.filter.FilterPartBlock(part, BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+    }
+
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }

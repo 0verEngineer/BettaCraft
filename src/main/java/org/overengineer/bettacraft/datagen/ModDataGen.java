@@ -315,6 +315,7 @@ public final class ModDataGen {
                         .rotationY(state.getValue(TankLightBlock.AXIS) == Direction.Axis.Z ? 90 : 0).build();
             }, TankLightBlock.POWERED, TankLightBlock.COLOR, TankLightBlock.DIM); // M18: the colour is a tint of the panel (BettaCraftClient)
             DataGenM23.blockStates(this); // M23
+            DataGenM24.blockStates(this); // M24
         }
 
         /** M20: reef rock, live rock, the flow pump in the interior and the protein skimmer on the tank. */
@@ -582,6 +583,7 @@ public final class ModDataGen {
                     .texture("layer0", modLoc("item/tank_light")).texture("layer1", modLoc("item/tank_light_glow"));
             withExistingParent("external_filter", modLoc("block/external_filter"));
             DataGenM23.itemModels(this); // M23
+            DataGenM24.itemModels(this); // M24
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
             withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
@@ -978,6 +980,7 @@ public final class ModDataGen {
                     .unlockedBy("has_dried_kelp", has(Items.DRIED_KELP)).save(output, BettaCraft.id("algae_wafer"));
             reefRecipes(output);
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
+            DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -1123,6 +1126,7 @@ public final class ModDataGen {
             }
             dropSelf(ModBlocks.REEF_ROCK.get());
             dropSelf(ModBlocks.LIVE_ROCK.get());
+            for (Block b : m24Blocks()) dropSelf(b); // M24
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
             // M22.3: wild corals only with silk touch (like vanilla corals); shears cut frags off them
@@ -1148,9 +1152,18 @@ public final class ModDataGen {
                     ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get())
                     .stream().collect(java.util.stream.Collectors.collectingAndThen(java.util.stream.Collectors.toList(), l -> {
                         for (var b : ModBlocks.WILD_CORALS.values()) l.add(b.get());
+                        l.addAll(m24Blocks());
                         return l;
                     }));
         }
+    }
+
+    /** M24: the new blocks (each drops itself). */
+    static List<Block> m24Blocks() {
+        return List.of(ModBlocks.CRUCIBLE.get(), ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.WATER_PUMP.get(),
+                ModBlocks.RESERVOIR.get(), ModBlocks.LEVEL_SENSOR.get(), ModBlocks.WATER_CHANGE_CONTROLLER.get(), ModBlocks.BULKHEAD.get(),
+                ModBlocks.INTERIOR_PIPE.get(), ModBlocks.INTAKE_STRAINER.get(), ModBlocks.LILY_PIPE.get(), ModBlocks.NOZZLE.get(), ModBlocks.SPRAY_BAR.get(),
+                ModBlocks.FILTER_CHAMBER.get(), ModBlocks.FILTER_PUMP_HEAD.get(), ModBlocks.FILTER_INLET.get(), ModBlocks.FILTER_OUTLET.get());
     }
 
     /** Mud mined in a betta biome sometimes drops mosquito larvae (PLAN 6.3). */
@@ -1198,6 +1211,7 @@ public final class ModDataGen {
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.SPAWNING_CAVE.get()); // M19
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get(),
                     ModBlocks.CORNER_FILTER_SEGMENT.get()); // M23
+            for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
@@ -1263,6 +1277,9 @@ public final class ModDataGen {
             tag(ModTags.BOTTOM_FOOD).add(ModItems.ALGAE_WAFER.get());
             tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
+            // M24: our stainless steel (never the steel of other mods: #c:ingots/steel stays theirs)
+            tag(ModTags.STAINLESS_STEEL_INGOTS).add(ModItems.STAINLESS_STEEL_INGOT.get());
+            tag(Tags.Items.INGOTS).addTag(ModTags.STAINLESS_STEEL_INGOTS);
             // M22.3: a bucket of sea water is a bucket of water for the recipes and machines of other mods (convention tag)
             tag(Tags.Items.BUCKETS_WATER).add(ModItems.SEA_WATER_BUCKET.get());
             // M21.7: stones of the stone cabinet (modpacks add to it) and what never counts as one

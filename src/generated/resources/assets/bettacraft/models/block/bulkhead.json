@@ -1,0 +1,74 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#s"
+        },
+        "east": {
+          "texture": "#s"
+        },
+        "north": {
+          "texture": "#s"
+        },
+        "south": {
+          "texture": "#s"
+        },
+        "up": {
+          "texture": "#s"
+        },
+        "west": {
+          "texture": "#s"
+        }
+      },
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        2,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#g"
+        },
+        "east": {
+          "texture": "#g"
+        },
+        "north": {
+          "texture": "#g"
+        },
+        "south": {
+          "texture": "#g"
+        },
+        "up": {
+          "texture": "#g"
+        },
+        "west": {
+          "texture": "#g"
+        }
+      },
+      "from": [
+        6,
+        2,
+        6
+      ],
+      "to": [
+        10,
+        8,
+        10
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "g": "bettacraft:block/plumbing_glass",
+    "particle": "bettacraft:block/plumbing_steel",
+    "s": "bettacraft:block/plumbing_steel"
+  }
+}

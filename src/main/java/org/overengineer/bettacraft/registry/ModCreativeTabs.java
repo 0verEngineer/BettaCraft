@@ -86,6 +86,12 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.SPONGE_FILTER.get());
                 out.accept(ModItems.CORNER_FILTER.get());
                 out.accept(ModItems.INTAKE_SPONGE.get());
+                // M24: stainless steel, pipes, the multiblock filter and the water devices
+                for (var it : java.util.List.of(ModItems.STAINLESS_STEEL_INGOT, ModItems.CRUCIBLE, ModItems.GLASS_PIPE, ModItems.STAINLESS_STEEL_PIPE,
+                        ModItems.WATER_PUMP, ModItems.BULKHEAD, ModItems.INTERIOR_PIPE, ModItems.INTAKE_STRAINER, ModItems.LILY_PIPE, ModItems.NOZZLE,
+                        ModItems.SPRAY_BAR, ModItems.FILTER_CHAMBER, ModItems.FILTER_PUMP_HEAD, ModItems.FILTER_INLET, ModItems.FILTER_OUTLET,
+                        ModItems.FILTER_FOAM, ModItems.CERAMIC_RINGS, ModItems.ACTIVATED_CARBON, ModItems.FILTER_PEAT, ModItems.RESERVOIR,
+                        ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER)) out.accept(it.get());
                 out.accept(ModItems.TANK_LID.get());
                 out.accept(ModItems.MIRROR_STICK.get());
                 out.accept(ModItems.AQUARIUM_NET.get());

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "N": {
+      "item": "minecraft:nether_brick"
+    }
+  },
+  "pattern": [
+    "N N",
+    "NCN",
+    "NNN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:crucible"
+  }
+}

@@ -150,7 +150,7 @@ public final class TankBreeding {
             // M12: floating plants on the surface (breeding.floatingPlants.breedingBonus, 1 = off)
             double plants = org.overengineer.bettacraft.tank.plants.TankPlants.breedingBonus(tank)
                     * org.overengineer.bettacraft.plants.InteriorPlants.breedingBonus(level.getServer(), tank); // M13: aquarium plants
-            male.breeding().addReady(days * (live ? 2.0 : 1.0) * mirror * plants);
+            male.breeding().addReady(days * (live ? 2.0 : 1.0) * mirror * plants * TankNitrate.breedingFactor(tank)); // M24: much nitrate
             if (male.breeding().ready() >= ServerConfig.getOr(ServerConfig.BREEDING_READY_DAYS, 0.25)) {
                 male.breeding().resetReady();
                 BubbleNest nest = new BubbleNest();

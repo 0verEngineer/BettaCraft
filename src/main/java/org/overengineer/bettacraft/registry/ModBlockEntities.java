@@ -49,6 +49,29 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.AirPumpBlockEntity>> AIR_PUMP = BLOCK_ENTITIES.register("air_pump",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.AirPumpBlockEntity::new, ModBlocks.AIR_PUMP.get()).build(null));
 
+    // M24
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.crucible.CrucibleBlockEntity>> CRUCIBLE = BLOCK_ENTITIES.register("crucible",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.crucible.CrucibleBlockEntity::new, ModBlocks.CRUCIBLE.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.WaterPumpBlockEntity>> WATER_PUMP = BLOCK_ENTITIES.register("water_pump",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.WaterPumpBlockEntity::new, ModBlocks.WATER_PUMP.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.ReservoirBlockEntity>> RESERVOIR = BLOCK_ENTITIES.register("reservoir",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.ReservoirBlockEntity::new, ModBlocks.RESERVOIR.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity>> LEVEL_SENSOR = BLOCK_ENTITIES.register("level_sensor",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity::new, ModBlocks.LEVEL_SENSOR.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity>> WATER_CHANGER = BLOCK_ENTITIES.register("water_change_controller",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity::new, ModBlocks.WATER_CHANGE_CONTROLLER.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterChamberBlockEntity>> FILTER_CHAMBER = BLOCK_ENTITIES.register("filter_chamber",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterChamberBlockEntity::new, ModBlocks.FILTER_CHAMBER.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity>> FILTER_PUMP_HEAD = BLOCK_ENTITIES.register("filter_pump_head",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity::new, ModBlocks.FILTER_PUMP_HEAD.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

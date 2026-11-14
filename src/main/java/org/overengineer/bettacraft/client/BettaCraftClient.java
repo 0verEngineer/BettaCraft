@@ -253,6 +253,7 @@ public final class BettaCraftClient {
         event.register(ModMenus.TANK.get(), TankScreen::new);
         event.register(ModMenus.FEEDER.get(), FeederScreen::new);
         event.register(ModMenus.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.screen.ExternalFilterScreen::new);
+        event.register(ModMenus.CRUCIBLE.get(), org.overengineer.bettacraft.client.screen.CrucibleScreen::new); // M24
         event.register(ModMenus.CABINET.get(), org.overengineer.bettacraft.client.screen.CabinetScreen::new);
     }
 

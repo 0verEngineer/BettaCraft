@@ -117,7 +117,7 @@ public final class BettaCraft {
         // any tank block, an attached external filter, a cabinet under the tank or a light on it; only offered while the
         // server config needs power (no misleading energy bars in info mods otherwise)
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.TANK.get(),
-                (be, side) -> new org.overengineer.bettacraft.tank.TankFluid(be.getLevel(), be.getBlockPos()));
+                (be, side) -> new org.overengineer.bettacraft.tank.TankFluid(be.getLevel(), be.getBlockPos(), side)); // M24: a bulkhead from below
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.TANK.get(),
                 (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.getBlockPos()) : null);
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.EXTERNAL_FILTER.get(),
@@ -128,6 +128,24 @@ public final class BettaCraft {
                 (level, pos, state, be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired()
                         ? new org.overengineer.bettacraft.tank.TankPower.Storage(level, pos.below()) : null, ModBlocks.TANK_LIGHT.get(),
                 ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get()); // M23: the stronger lights too
+        // M24: pipes carry water (no block entity: the network does it), the reservoir holds it; FE for the water devices
+        event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                (level, pos, state, be, side) -> new org.overengineer.bettacraft.plumbing.PipeFluid(level, pos, side),
+                ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.RESERVOIR.get(),
+                (be, side) -> be.water());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.CRUCIBLE.get(),
+                (be, side) -> be.automation(side));
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CRUCIBLE.get(),
+                (be, side) -> org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() ? be.energy() : null);
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.WATER_PUMP.get(),
+                (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.FILTER_PUMP_HEAD.get(),
+                (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.WATER_CHANGER.get(),
+                (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.LEVEL_SENSOR.get(),
+                (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
         // M23: the air pump forwards FE to the tank it serves
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.AIR_PUMP.get(),
                 (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be::tankBlockPos) : null);

@@ -646,6 +646,10 @@ public final class TankView {
         public float salinity, calcium;
         public int skimmers, pumps, liveRock;
         public double flow, spectrum;
+        /** M24: nitrate (mg/L), its change per day, the levels and the water change interval of the difficulty (0 = off). */
+        public float nitrate;
+        public double nitrateRate, nitrateStress = 50, nitrateLethal = 120;
+        public int nitrateInterval;
 
         public boolean reefLine() {
             return salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM || skimmers > 0 || pumps > 0 || liveRock > 0;
@@ -683,10 +687,20 @@ public final class TankView {
             t.putLong("buffer", buffer);
             t.putLong("buffer_cap", bufferCap);
             t.putInt("demand", demand);
+            t.putFloat("no3", nitrate);
+            t.putDouble("no3_rate", nitrateRate);
+            t.putDouble("no3_stress", nitrateStress);
+            t.putDouble("no3_lethal", nitrateLethal);
+            t.putInt("no3_interval", nitrateInterval);
             return t;
         }
 
         void load(CompoundTag t) {
+            nitrate = t.getFloat("no3");
+            nitrateRate = t.getDouble("no3_rate");
+            nitrateStress = t.getDouble("no3_stress");
+            nitrateLethal = t.getDouble("no3_lethal");
+            nitrateInterval = t.getInt("no3_interval");
             salinity = t.getFloat("salinity");
             calcium = t.getFloat("calcium");
             skimmers = t.getInt("skimmers");
@@ -913,6 +927,12 @@ public final class TankView {
         w.liveRock = org.overengineer.bettacraft.reef.TankReef.liveRock(level, t);
         w.flow = org.overengineer.bettacraft.reef.TankReef.flow(level, c);
         w.spectrum = org.overengineer.bettacraft.reef.TankReef.spectrum(level, t);
+        // M24: nitrate and the water changes
+        w.nitrate = t.nitrate();
+        w.nitrateRate = org.overengineer.bettacraft.tank.TankNitrate.ratePerDay(level, c);
+        w.nitrateStress = org.overengineer.bettacraft.tank.TankNitrate.stressFrom();
+        w.nitrateLethal = org.overengineer.bettacraft.tank.TankNitrate.lethalFrom();
+        w.nitrateInterval = org.overengineer.bettacraft.tank.TankNitrate.intervalDays(org.overengineer.bettacraft.tank.TankNitrate.difficulty());
         return w;
     }
 

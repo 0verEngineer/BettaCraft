@@ -41,6 +41,8 @@ public final class TankWater {
 
     /** Whether the water of this tank stresses its bettas. */
     public static boolean isBad(TankData tank) {
+        // M24: very much nitrate (months without a water change) is bad water too
+        if (TankNitrate.lethal(tank)) return true;
         return qualityEnabled() && WaterQuality.isBad(tank.waterQuality(), params());
     }
 
@@ -92,6 +94,7 @@ public final class TankWater {
     public static int filterCount(ServerLevel level, TankBlockEntity c) {
         // M20: protein skimmers and flow pumps run on the same power as the filters
         return TankEquipment.filters(level, c).size() + internalFilters(level, c.getTank())
+                + (int) org.overengineer.bettacraft.filter.MultiblockFilter.serving(level, c)[0] // M24
                 + org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c) + org.overengineer.bettacraft.reef.TankReef.pumps(level, c.getTank());
     }
 
@@ -101,7 +104,9 @@ public final class TankWater {
         double rock = org.overengineer.bettacraft.reef.TankReef.liveRockBlocks(level, c.getTank());
         // M23: the sponge filters run on the air pump (its own FE), by the air they get
         double sponge = TankAeration.runningSpongeFilters(level, c);
-        if (!c.filterPowered) return rock + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12);
+        // M24: the multiblock filters (their pump head has its own power)
+        double multi = org.overengineer.bettacraft.filter.MultiblockFilter.serving(level, c)[1];
+        if (!c.filterPowered) return rock + multi + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12);
         // M23: every filter by its power regulator, the corner filters too
         double ext = 0;
         for (var f : TankEquipment.filters(level, c)) ext += f.powerShare();
@@ -111,7 +116,7 @@ public final class TankWater {
                 + in[1] * (double) ServerConfig.getOr(ServerConfig.FILTER_CORNER_BLOCKS, 20)
                 + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12)
                 // M20: in salt water the protein skimmers and the live rock clean too
-                + org.overengineer.bettacraft.reef.TankReef.skimmerBlocks(level, c) + rock;
+                + org.overengineer.bettacraft.reef.TankReef.skimmerBlocks(level, c) + rock + multi;
     }
 
     /** Bioload: adult animals count 1, young bettas a quarter. */
@@ -194,9 +199,11 @@ public final class TankWater {
                 // M20: the salt and the calcium stay behind
                 float salt = Salinity.concentrate(tank.salinity(), tank.waterMb(), lost, Salinity.MAX);
                 float ca = Salinity.concentrate(tank.calcium(), tank.waterMb(), lost, 2000F);
+                float no3 = TankNitrate.concentrate(tank.nitrate(), tank.waterMb(), lost); // M24
                 TankInteractions.changeWater(level, c, -lost);
                 tank.setSalinity(salt);
                 tank.setCalcium(ca);
+                tank.setNitrate(no3);
                 if (qualityEnabled()) tank.setWaterQuality(q);
                 carry -= whole;
                 long min = Math.round(ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5) * tank.capacityMb());

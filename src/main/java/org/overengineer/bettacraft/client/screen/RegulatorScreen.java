@@ -73,6 +73,8 @@ public class RegulatorScreen extends Screen {
         if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.getBlockEntity(d.pos()) instanceof AirPumpBlockEntity pump) {
             note = pump.running() ? Component.translatable("gui.bettacraft.regulator.pump_running", pump.driven()).withStyle(ChatFormatting.GREEN)
                     : Component.translatable("gui.bettacraft.regulator.pump_idle").withStyle(ChatFormatting.GOLD);
+        } else if (d.note() != null) {
+            note = d.note().copy().withStyle(ChatFormatting.AQUA); // M24
         } else if (d.takesSponge()) {
             note = d.hasSponge() ? Component.translatable("gui.bettacraft.regulator.sponge_on").withStyle(ChatFormatting.GREEN)
                     : Component.translatable("gui.bettacraft.regulator.sponge_off").withStyle(ChatFormatting.GOLD);

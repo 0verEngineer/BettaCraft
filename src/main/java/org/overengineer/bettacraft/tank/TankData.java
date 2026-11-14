@@ -99,6 +99,10 @@ public final class TankData {
     private float calcium;
     /** M23: dissolved oxygen in mg/L (NaN = not known yet: the first care step starts at saturation). */
     private float oxygen = Float.NaN;
+    /** M24: nitrate (dissolved waste) in mg/L; 0 for every tank of an earlier version. */
+    private float nitrate;
+    /** M24: game time of the last water change (bucket, pipe or controller; -1 = none yet) and the share changed then. */
+    private long lastWaterChange = -1L;
     /** M23: light settings of the tank: dimmer 0..100 %, daylight timer with on/off time (minutes of the day, 6:00 = 360). */
     private int lightDimmer = 100;
     private boolean lightTimer;
@@ -342,6 +346,11 @@ public final class TankData {
     public void setFishGrazing(double g) { this.fishGrazing = Double.isFinite(g) ? Math.max(0, g) : 0; }
     // M23
     public float oxygen() { return oxygen; }
+    // M24
+    public float nitrate() { return nitrate; }
+    public void setNitrate(float mgl) { this.nitrate = Float.isFinite(mgl) ? Math.max(0F, Math.min(1000F, mgl)) : 0F; }
+    public long lastWaterChange() { return lastWaterChange; }
+    public void setLastWaterChange(long t) { this.lastWaterChange = t; }
     public void setOxygen(float mgl) { this.oxygen = Float.isNaN(mgl) ? Float.NaN : Math.max(0F, Math.min(25F, mgl)); }
     public int lightDimmer() { return lightDimmer; }
     public void setLightDimmer(int pct) { this.lightDimmer = Math.max(0, Math.min(100, pct)); }
@@ -429,6 +438,8 @@ public final class TankData {
         salinity = o.salinity;
         calcium = o.calcium;
         oxygen = o.oxygen; // M23
+        nitrate = o.nitrate; // M24
+        lastWaterChange = o.lastWaterChange;
         lightDimmer = o.lightDimmer;
         lightTimer = o.lightTimer;
         lightOn = o.lightOn;
@@ -516,6 +527,9 @@ public final class TankData {
         t.putFloat("calcium", calcium);
         // M23 (no schema step: absent = unknown oxygen and the light settings of earlier versions)
         if (!Float.isNaN(oxygen)) t.putFloat("oxygen", oxygen);
+        // M24 (no schema step: absent = nitrate 0, no water change yet)
+        t.putFloat("nitrate", nitrate);
+        t.putLong("last_water_change", lastWaterChange);
         t.putInt("light_dimmer", lightDimmer);
         t.putBoolean("light_timer", lightTimer);
         t.putInt("light_on", lightOn);
@@ -626,6 +640,8 @@ public final class TankData {
         d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
         d.calcium = Salinity.clampCalcium(t.getFloat("calcium"));
         d.oxygen = t.contains("oxygen", Tag.TAG_ANY_NUMERIC) ? t.getFloat("oxygen") : Float.NaN;
+        d.setNitrate(t.getFloat("nitrate"));
+        d.lastWaterChange = t.contains("last_water_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_water_change") : -1L;
         d.lightDimmer = t.contains("light_dimmer", Tag.TAG_ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getInt("light_dimmer"))) : 100;
         d.lightTimer = t.getBoolean("light_timer");
         d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;

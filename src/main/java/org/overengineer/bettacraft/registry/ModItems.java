@@ -230,6 +230,41 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.equipment.TankLightItem> HIGH_POWER_LED = ITEMS.register("high_power_led",
             () -> new org.overengineer.bettacraft.equipment.TankLightItem(ModBlocks.HIGH_POWER_LED.get(), new Item.Properties()));
 
+    // ------------------------------------------------------------------ M24 pipes, stainless steel, multiblock filter, water changes
+
+    /** M24: stainless steel (#c:ingots/stainless_steel; steel of other mods is no stainless steel). */
+    public static final DeferredItem<Item> STAINLESS_STEEL_INGOT = ITEMS.registerSimpleItem("stainless_steel_ingot");
+    public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE);
+    public static final DeferredItem<BlockItem> GLASS_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.GLASS_PIPE);
+    public static final DeferredItem<BlockItem> STAINLESS_STEEL_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.STAINLESS_STEEL_PIPE);
+    public static final DeferredItem<BlockItem> WATER_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_PUMP);
+    public static final DeferredItem<BlockItem> RESERVOIR = ITEMS.registerSimpleBlockItem(ModBlocks.RESERVOIR);
+    public static final DeferredItem<BlockItem> LEVEL_SENSOR = ITEMS.registerSimpleBlockItem(ModBlocks.LEVEL_SENSOR);
+    public static final DeferredItem<BlockItem> WATER_CHANGE_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_CHANGE_CONTROLLER);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> BULKHEAD = plumbing(ModBlocks.BULKHEAD, org.overengineer.bettacraft.plumbing.interior.Plumb.PORT);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTERIOR_PIPE = plumbing(ModBlocks.INTERIOR_PIPE, org.overengineer.bettacraft.plumbing.interior.Plumb.PIPE);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTAKE_STRAINER = plumbing(ModBlocks.INTAKE_STRAINER, org.overengineer.bettacraft.plumbing.interior.Plumb.STRAINER);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> LILY_PIPE = plumbing(ModBlocks.LILY_PIPE, org.overengineer.bettacraft.plumbing.interior.Plumb.LILY);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> NOZZLE = plumbing(ModBlocks.NOZZLE, org.overengineer.bettacraft.plumbing.interior.Plumb.NOZZLE);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> SPRAY_BAR = plumbing(ModBlocks.SPRAY_BAR, org.overengineer.bettacraft.plumbing.interior.Plumb.SPRAY_BAR);
+    public static final DeferredItem<BlockItem> FILTER_CHAMBER = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_CHAMBER);
+    public static final DeferredItem<BlockItem> FILTER_PUMP_HEAD = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_PUMP_HEAD);
+    public static final DeferredItem<BlockItem> FILTER_INLET = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_INLET);
+    public static final DeferredItem<BlockItem> FILTER_OUTLET = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_OUTLET);
+    public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> FILTER_FOAM = media("filter_foam", org.overengineer.bettacraft.filter.FilterMedium.SPONGE);
+    public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> CERAMIC_RINGS = media("ceramic_rings", org.overengineer.bettacraft.filter.FilterMedium.CERAMIC);
+    public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> ACTIVATED_CARBON = media("activated_carbon", org.overengineer.bettacraft.filter.FilterMedium.CARBON);
+    public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> FILTER_PEAT = media("filter_peat", org.overengineer.bettacraft.filter.FilterMedium.PEAT);
+
+    private static DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> plumbing(
+            net.neoforged.neoforge.registries.DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> block, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
+        return ITEMS.register(block.getId().getPath(), () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingItem(block.get(), kind, new Item.Properties()));
+    }
+
+    private static DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> media(String id, org.overengineer.bettacraft.filter.FilterMedium m) {
+        return ITEMS.register(id, () -> new org.overengineer.bettacraft.filter.FilterMediaItem(m, new Item.Properties()));
+    }
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }

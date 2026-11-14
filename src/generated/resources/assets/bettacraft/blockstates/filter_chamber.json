@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "medium=carbon": {
+      "model": "bettacraft:block/filter_chamber_carbon"
+    },
+    "medium=ceramic": {
+      "model": "bettacraft:block/filter_chamber_ceramic"
+    },
+    "medium=none": {
+      "model": "bettacraft:block/filter_chamber_none"
+    },
+    "medium=peat": {
+      "model": "bettacraft:block/filter_chamber_peat"
+    },
+    "medium=sponge": {
+      "model": "bettacraft:block/filter_chamber_sponge"
+    }
+  }
+}

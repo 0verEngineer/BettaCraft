@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:glass_pipe"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:interior_pipe"
+  }
+}

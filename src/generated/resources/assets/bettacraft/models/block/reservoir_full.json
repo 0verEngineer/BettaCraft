@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "bettacraft:block/reservoir_top",
+    "side": "bettacraft:block/reservoir_side_full"
+  }
+}

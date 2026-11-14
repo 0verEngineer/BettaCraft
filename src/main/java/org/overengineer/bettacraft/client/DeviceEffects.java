@@ -52,6 +52,11 @@ public final class DeviceEffects {
         org.overengineer.bettacraft.util.ClientHooks.regulator = pos -> Minecraft.getInstance().setScreen(
                 new org.overengineer.bettacraft.client.screen.RegulatorScreen(pos));
         org.overengineer.bettacraft.util.ClientHooks.bubbles = DeviceEffects::stoneTick;
+        // M24
+        org.overengineer.bettacraft.util.ClientHooks.waterChanger = pos -> Minecraft.getInstance().setScreen(
+                new org.overengineer.bettacraft.client.screen.WaterChangerScreen(pos));
+        org.overengineer.bettacraft.util.ClientHooks.filter = pos -> Minecraft.getInstance().setScreen(
+                new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(pos));
     }
 
     /** Dev smoke test: running sponge filters found around the player in a tank interior. */

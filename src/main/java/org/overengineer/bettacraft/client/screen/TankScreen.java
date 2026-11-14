@@ -99,6 +99,18 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private int listScroll, logScroll;
     @Nullable
     private List<Component> pendingTooltip;
+    /** M24: tooltip of the nitrate line in the water tab and its y. */
+    private Component nitrateTip;
+    private int nitrateTipY;
+
+    private static String toText(net.minecraft.util.FormattedCharSequence s) {
+        StringBuilder b = new StringBuilder();
+        s.accept((i, style, cp) -> {
+            b.appendCodePoint(cp);
+            return true;
+        });
+        return b.toString();
+    }
 
     public TankScreen(TankMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -678,7 +690,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             case BREEDING -> drawBreeding(g, v);
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
-            case WATER -> drawWater(g, v);
+            case WATER -> {
+                drawWater(g, v);
+                // M24: what the nitrate means (hover over its line)
+                int mx = mouseX - leftPos, my = mouseY - topPos;
+                if (nitrateTip != null && mx >= 11 && mx <= 237 && my >= nitrateTipY - 1 && my < nitrateTipY + 10) {
+                    pendingTooltip = new java.util.ArrayList<>();
+                    for (var l : font.split(nitrateTip, 220)) pendingTooltip.add(Component.literal(toText(l)));
+                }
+            }
             case DEVICES -> drawDevices(g, v);
             case PLANTS -> {
                 if (aquaticPage) drawAquatic(g, v);
@@ -830,7 +850,26 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         Component fresh = w.lastFreshWater < 0 ? Component.translatable("gui.bettacraft.water.fresh_never")
                 : Component.translatable("gui.bettacraft.water.fresh", w.lastFreshWater / 24000L + 1);
-        line(g, fresh.copy().withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+        // M24: nitrate (dissolved waste) and when the water was last changed, in one line
+        if (w.nitrateInterval > 0) {
+            var st = org.overengineer.bettacraft.tank.TankNitrate.state(w.nitrate, w.nitrateStress, w.nitrateLethal);
+            ChatFormatting col = switch (st) {
+                case LOW -> ChatFormatting.GREEN;
+                case RISING -> ChatFormatting.YELLOW;
+                case HIGH -> ChatFormatting.GOLD;
+                case LETHAL -> ChatFormatting.RED;
+            };
+            Component trend = w.nitrateRate < -1e-6 ? Component.translatable("gui.bettacraft.water.nitrate_falling")
+                    : Component.translatable("gui.bettacraft.water.nitrate_rate", fmt((float) w.nitrateRate));
+            Component no3 = Component.translatable("gui.bettacraft.water.nitrate", Math.round(w.nitrate),
+                    Component.translatable("gui.bettacraft.water.nitrate." + st.name().toLowerCase(java.util.Locale.ROOT)).withStyle(col), trend);
+            fitLine(g, no3.copy().append(Component.literal(" · ").append(fresh).withStyle(ChatFormatting.GRAY)), x, y, TEXT_LIGHT, 226);
+            nitrateTip = Component.translatable("gui.bettacraft.water.nitrate_tooltip", w.nitrateInterval, Math.round(w.nitrateStress), Math.round(w.nitrateLethal));
+            nitrateTipY = y;
+        } else {
+            line(g, fresh.copy().withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+            nitrateTip = null;
+        }
         y += 11;
         Component evap;
         if (!w.evaporationEnabled) evap = Component.translatable("gui.bettacraft.water.evaporation_off").withStyle(ChatFormatting.GRAY);
@@ -936,7 +975,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 Component.translatable("gui.bettacraft.reef.kind." + kind.name().toLowerCase(java.util.Locale.ROOT)).withStyle(col));
         if (kind == org.overengineer.bettacraft.tank.Salinity.Kind.MARINE) {
             ChatFormatting ca = w.calcium < 300 ? ChatFormatting.RED : w.calcium < 380 ? ChatFormatting.GOLD : ChatFormatting.GREEN;
-            int no3 = org.overengineer.bettacraft.tank.Salinity.nitrate(w.quality);
+            int no3 = w.nitrateInterval > 0 ? Math.round(w.nitrate) : org.overengineer.bettacraft.tank.Salinity.nitrate(w.quality); // M24: its own value
             c.append(Component.translatable("gui.bettacraft.reef.calcium", Math.round(w.calcium)).withStyle(ca))
                     .append(Component.translatable("gui.bettacraft.reef.nitrate", no3).withStyle(no3 > 40 ? ChatFormatting.RED : no3 > 20 ? ChatFormatting.GOLD : ChatFormatting.GREEN));
         }
@@ -1417,6 +1456,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             notes.add(Component.translatable("gui.bettacraft.tm.no_posts").withStyle(ChatFormatting.RED));
         if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_OXYGEN) != 0)
             notes.add(Component.translatable("gui.bettacraft.tm.oxygen").withStyle(ChatFormatting.RED)); // M23
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_NITRATE) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.nitrate").withStyle(ChatFormatting.GOLD)); // M24
         if (d.getBoolean("hitched")) notes.add(Component.translatable("gui.bettacraft.tm.hitched").withStyle(ChatFormatting.AQUA));
         if (d.getFloat("gravid") >= 0) notes.add(Component.translatable(s.seahorse() ? "gui.bettacraft.tm.pouch" : "gui.bettacraft.tm.gravid",
                 Math.round(d.getFloat("gravid") * 100)).withStyle(ChatFormatting.LIGHT_PURPLE));

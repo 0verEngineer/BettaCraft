@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "thermal:smelter",
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron",
+      "count": 3
+    },
+    {
+      "tag": "c:gems/quartz",
+      "count": 1
+    },
+    {
+      "tag": "minecraft:coals",
+      "count": 1
+    }
+  ],
+  "result": [
+    {
+      "item": "bettacraft:stainless_steel_ingot",
+      "count": 3
+    }
+  ],
+  "energy": 8000
+}

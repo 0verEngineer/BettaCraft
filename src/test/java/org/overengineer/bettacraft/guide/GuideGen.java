@@ -60,6 +60,38 @@ public final class GuideGen {
         this.lang = readLang(german);
         this.itemPages = itemPages(german);
         this.recipesByResult = recipes();
+        this.crucible = crucibleRecipes();
+    }
+
+    /** M24: result item id -> melts of the crucible ("3 × ... + ... → 3"), read from the recipe files. */
+    private final Map<String, List<String>> crucible;
+
+    private static final Map<String, String> TAG_ITEMS = Map.of("c:ingots/iron", "minecraft:iron_ingot", "minecraft:coals", "minecraft:coal",
+            "c:gems/quartz", "minecraft:quartz");
+
+    private static Map<String, List<String>> crucibleRecipes() {
+        Map<String, List<String>> out = new TreeMap<>();
+        Path d = project().resolve("src/generated/resources/data/bettacraft/recipe");
+        if (!Files.isDirectory(d)) return out;
+        try (Stream<Path> s = Files.walk(d)) {
+            for (Path p : s.filter(f -> f.toString().endsWith(".json")).sorted().toList()) {
+                JsonObject o = JsonParser.parseString(Files.readString(p)).getAsJsonObject();
+                if (!o.has("type") || !"bettacraft:crucible".equals(o.get("type").getAsString())) continue;
+                StringBuilder b = new StringBuilder();
+                for (JsonElement e : o.getAsJsonArray("ingredients")) {
+                    JsonObject i = e.getAsJsonObject();
+                    String item = i.has("item") ? i.get("item").getAsString() : TAG_ITEMS.getOrDefault(i.get("tag").getAsString(), "minecraft:barrier");
+                    if (!b.isEmpty()) b.append(" + ");
+                    b.append(i.has("count") ? i.get("count").getAsInt() : 1).append(" × <ItemLink id=\"").append(item).append("\" />");
+                }
+                JsonObject r = o.getAsJsonObject("result");
+                b.append(" → ").append(r.has("count") ? r.get("count").getAsInt() : 1);
+                out.computeIfAbsent(r.get("id").getAsString(), k -> new ArrayList<>()).add(b.toString());
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return out;
     }
 
     // ================================================================== catalogue
@@ -157,7 +189,15 @@ public final class GuideGen {
                 for (String l : sourceLines(Target.item(path), e.getKey())) {
                     b.append("* ").append(several ? "<ItemLink id=\"" + id + "\" />: " : "").append(l).append(".\n");
                 }
-                if (recipesByResult.containsKey(id)) recipes.append("<RecipesFor id=\"").append(id).append("\" />\n");
+                // M24: melted in the crucible (and in the machines of other mods)
+                for (String l : crucible.getOrDefault(id, List.of())) {
+                    b.append("* ").append(several ? "<ItemLink id=\"" + id + "\" />: " : "")
+                            .append(link(t("Crucible", "Schmelztiegel"), "equipment/crucible.md", e.getKey())).append(": ").append(l).append(".\n");
+                }
+                if (crucible.containsKey(id)) b.append("* ").append(t("Also in the metallurgic infuser (Mekanism), the alloy smelter (EnderIO), heated "
+                        + "mixing (Create) and the induction smelter (Thermal), when installed", "Auch im metallurgischen Infusor (Mekanism), im Legierungsofen "
+                        + "(EnderIO), beim beheizten Mischen (Create) und im Induktionsschmelzer (Thermal), wenn installiert")).append(".\n");
+                else if (recipesByResult.containsKey(id)) recipes.append("<RecipesFor id=\"").append(id).append("\" />\n");
             }
             if (!recipes.isEmpty()) {
                 if (!b.isEmpty()) b.append('\n');
@@ -831,7 +871,8 @@ public final class GuideGen {
                 for (Path p : s.filter(f -> f.toString().endsWith(".json")).toList()) {
                     JsonObject o = JsonParser.parseString(Files.readString(p)).getAsJsonObject();
                     JsonElement r = o.get("result");
-                    String id = r == null ? null : r.isJsonObject() ? (r.getAsJsonObject().has("id") ? r.getAsJsonObject().get("id").getAsString() : null) : r.getAsString();
+                    String id = r == null ? null : r.isJsonObject() ? (r.getAsJsonObject().has("id") ? r.getAsJsonObject().get("id").getAsString() : null)
+                            : r.isJsonPrimitive() ? r.getAsString() : null; // M24: the Thermal recipe has a list of results
                     if (id != null) out.computeIfAbsent(id, k -> new ArrayList<>()).add(p.getFileName().toString());
                 }
             } catch (IOException e) {
