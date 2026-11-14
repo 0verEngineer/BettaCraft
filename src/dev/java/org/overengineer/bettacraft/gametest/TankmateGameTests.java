@@ -463,9 +463,12 @@ public final class TankmateGameTests {
     public static void netInTheJungleAndTheTrader(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         double chance = ServerConfig.CRITTERS_NET_CHANCE.get(), share = ServerConfig.TANKMATES_NET_SHARE.get();
+        double plantShare = ServerConfig.AQUATIC_NET_SHARE.get();
         try {
             ServerConfig.CRITTERS_NET_CHANCE.set(1.0);
             ServerConfig.TANKMATES_NET_SHARE.set(1.0);
+            // M22.5: no plants (since M22.4 a fifth of the jungle catches was a plant, so one run in five had no fish)
+            ServerConfig.AQUATIC_NET_SHARE.set(0.0);
             var table = NetCatching.fishTable(NetCatching.Water.JUNGLE);
             h.assertTrue(table.containsKey(TankmateSpecies.NEON_TETRA) && table.containsKey(TankmateSpecies.LEOPARD_FROG_PLECO), "amazon species");
             h.assertTrue(!table.containsKey(TankmateSpecies.HARLEQUIN_RASBORA), "no asian rasboras in the jungle");
@@ -493,6 +496,7 @@ public final class TankmateGameTests {
         } finally {
             ServerConfig.CRITTERS_NET_CHANCE.set(chance);
             ServerConfig.TANKMATES_NET_SHARE.set(share);
+            ServerConfig.AQUATIC_NET_SHARE.set(plantShare);
         }
         var offer = TankmateTrades.offer(TankmateSpecies.CARDINAL_TETRA, new java.util.Random(4)::nextLong);
         h.assertTrue(TankmateItems.bagFish(offer.getResult()).size() == 6, "six cardinals for sale");
