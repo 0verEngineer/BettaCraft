@@ -201,7 +201,7 @@ public final class TankMultiblock {
         List<TankData> olds = new ArrayList<>();
         List<BlockPos> all = new ArrayList<>();
         long water = 0, power = 0;
-        double waste = 0, salt = 0, calcium = 0;
+        double waste = 0, salt = 0, calcium = 0, tds = 0, hplus = 0, tannin = 0;
         TankData main = null;
         for (TankBlockEntity c : controllers) {
             TankData t = c.getTank();
@@ -210,6 +210,9 @@ public final class TankMultiblock {
             waste += (1 - t.waterQuality()) * t.waterMb();
             salt += t.salinity() * (double) t.waterMb();
             calcium += t.calcium() * (double) t.waterMb();
+            tds += t.tds() * (double) t.waterMb(); // M25
+            hplus += Math.pow(10, -t.ph()) * (double) t.waterMb();
+            tannin += t.tannin() * (double) t.waterMb();
             power += t.powerBuffer();
             for (long l : t.members()) all.add(BlockPos.of(l));
             if (main == null || t.memberCount() > main.memberCount()) main = t;
@@ -232,6 +235,11 @@ public final class TankMultiblock {
         // M20: salt and calcium mix by volume too
         merged.setSalinity(water <= 0 ? main.salinity() : (float) (salt / water));
         merged.setCalcium(water <= 0 ? main.calcium() : (float) (calcium / water));
+        if (water > 0) { // M25: TDS and tannins by volume, the pH as the acid (logarithmic)
+            merged.setTds((float) (tds / water));
+            merged.setPh((float) -Math.log10(hplus / water));
+            merged.setTannin((float) (tannin / water));
+        }
         merged.setPowerBuffer(Math.min(power, TankPower.capacity()));
         // equipment of all merged tanks moves into the new one; what does not fit drops
         for (TankData t : olds) {

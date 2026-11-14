@@ -27,6 +27,7 @@ A tiny sucker catfish that grazes the glass and the leaves clean, in a small gro
 | Temperature | 21–27 °C |
 | Breeding temperature | 22–26 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 5.8–8.0, TDS 0–500 ppm |
 | Shoal | from 5 fish |
 | Swims | on the glass and the bottom |
 | Stocking | counts as 0.3 fish |

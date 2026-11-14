@@ -25,6 +25,7 @@ The lined seahorse (*Hippocampus erectus*) from the western Atlantic, from Nova 
 | Temperature | 18–27 °C |
 | Breeding temperature | 21–25 °C |
 | Water | sea water, also strong brackish water, sensitive |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | alone or as a pair |
 | Swims | in the lower water |
 | Stocking | counts as 1.5 fish |

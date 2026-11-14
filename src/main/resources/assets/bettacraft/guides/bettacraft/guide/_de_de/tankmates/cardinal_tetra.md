@@ -27,6 +27,7 @@ Wie der Neon, aber das Rot reicht über den ganzen Bauch; mag es wärmer und pas
 | Temperatur | 24–30 °C |
 | Zuchttemperatur | 26–28 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 5,0–7,8, TDS 0–450 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 0,4 Fisch |

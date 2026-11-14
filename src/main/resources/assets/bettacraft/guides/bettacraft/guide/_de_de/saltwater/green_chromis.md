@@ -24,6 +24,7 @@ Das Grüne Schwalbenschwänzchen (*Chromis viridis*) aus dem Indopazifik: kleine
 | Größe im Spiel | etwa 4,5 cm (0,38 Blöcke) |
 | Temperatur | 24–28 °C |
 | Wasser | Meerwasser, normal |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | ab 5 Tieren |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 0,5 Fisch |

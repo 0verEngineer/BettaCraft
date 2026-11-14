@@ -650,6 +650,16 @@ public final class TankView {
         public float nitrate;
         public double nitrateRate, nitrateStress = 50, nitrateLethal = 120;
         public int nitrateInterval;
+        /**
+         * M25: water chemistry (feature on), TDS, pH and the pH it drifts to, the hardness, what drives the pH (shares 0..1:
+         * soil, limestone, peat, almond leaves, driftwood), the CO2 and the animals the water does not suit
+         * ("translation key|bad" or "|stress").
+         */
+        public boolean chemOn;
+        public float tds = 250F, ph = 7.5F, co2 = 3F;
+        public double phTarget = 7.5, acid, alkaline, peat, tannin, wood;
+        public String hardness = "medium";
+        public List<String> chemOff = new ArrayList<>();
 
         public boolean reefLine() {
             return salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM || skimmers > 0 || pumps > 0 || liveRock > 0;
@@ -692,6 +702,21 @@ public final class TankView {
             t.putDouble("no3_stress", nitrateStress);
             t.putDouble("no3_lethal", nitrateLethal);
             t.putInt("no3_interval", nitrateInterval);
+            // M25
+            t.putBoolean("chem_on", chemOn);
+            t.putFloat("tds", tds);
+            t.putFloat("ph", ph);
+            t.putFloat("co2", co2);
+            t.putDouble("ph_target", phTarget);
+            t.putString("hardness", hardness);
+            t.putDouble("acid", acid);
+            t.putDouble("alkaline", alkaline);
+            t.putDouble("peat", peat);
+            t.putDouble("tannin", tannin);
+            t.putDouble("wood", wood);
+            net.minecraft.nbt.ListTag off = new net.minecraft.nbt.ListTag();
+            for (String s : chemOff) off.add(net.minecraft.nbt.StringTag.valueOf(s));
+            t.put("chem_off", off);
             return t;
         }
 
@@ -701,6 +726,19 @@ public final class TankView {
             nitrateStress = t.getDouble("no3_stress");
             nitrateLethal = t.getDouble("no3_lethal");
             nitrateInterval = t.getInt("no3_interval");
+            chemOn = t.getBoolean("chem_on"); // M25
+            tds = t.getFloat("tds");
+            ph = t.getFloat("ph");
+            co2 = t.getFloat("co2");
+            phTarget = t.getDouble("ph_target");
+            hardness = t.getString("hardness");
+            acid = t.getDouble("acid");
+            alkaline = t.getDouble("alkaline");
+            peat = t.getDouble("peat");
+            tannin = t.getDouble("tannin");
+            wood = t.getDouble("wood");
+            chemOff = new ArrayList<>();
+            for (net.minecraft.nbt.Tag x : t.getList("chem_off", net.minecraft.nbt.Tag.TAG_STRING)) chemOff.add(x.getAsString());
             salinity = t.getFloat("salinity");
             calcium = t.getFloat("calcium");
             skimmers = t.getInt("skimmers");
@@ -933,7 +971,40 @@ public final class TankView {
         w.nitrateStress = org.overengineer.bettacraft.tank.TankNitrate.stressFrom();
         w.nitrateLethal = org.overengineer.bettacraft.tank.TankNitrate.lethalFrom();
         w.nitrateInterval = org.overengineer.bettacraft.tank.TankNitrate.intervalDays(org.overengineer.bettacraft.tank.TankNitrate.difficulty());
+        chemistry(level, c, live, w); // M25
         return w;
+    }
+
+    /** M25: the water chemistry part of the water tab. */
+    private static void chemistry(ServerLevel level, TankBlockEntity c, List<Entity> live, Water w) {
+        TankData t = c.getTank();
+        w.chemOn = org.overengineer.bettacraft.chem.TankChemistry.enabled();
+        w.tds = t.tds();
+        w.ph = t.ph();
+        w.co2 = t.co2();
+        if (!w.chemOn) return;
+        var d = org.overengineer.bettacraft.chem.TankChemistry.drivers(level, c);
+        w.phTarget = org.overengineer.bettacraft.chem.TankChemistry.phTarget(t, d);
+        w.hardness = org.overengineer.bettacraft.chem.TankChemistry.hardness(t, d).name().toLowerCase(java.util.Locale.ROOT);
+        w.acid = d.acid();
+        w.alkaline = d.alkaline();
+        w.peat = d.peat();
+        w.tannin = d.tannin();
+        w.wood = d.wood();
+        java.util.Map<String, Boolean> off = new java.util.LinkedHashMap<>();
+        for (Entity e : live) {
+            var r = org.overengineer.bettacraft.chem.ChemTolerance.of(e);
+            var fit = org.overengineer.bettacraft.chem.TankChemistry.fit(t, r);
+            if (fit == org.overengineer.bettacraft.chem.ChemTolerance.Fit.OK) continue;
+            String key = e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m ? m.species().translationKey() : e.getType().getDescriptionId();
+            off.merge(key, fit == org.overengineer.bettacraft.chem.ChemTolerance.Fit.BAD, Boolean::logicalOr);
+        }
+        for (var k : t.critters()) {
+            if (!k.alive()) continue;
+            var fit = org.overengineer.bettacraft.chem.TankChemistry.fit(t, org.overengineer.bettacraft.chem.ChemTolerance.critter(k.species));
+            if (fit != org.overengineer.bettacraft.chem.ChemTolerance.Fit.OK) off.merge(k.species.translationKey(), fit == org.overengineer.bettacraft.chem.ChemTolerance.Fit.BAD, Boolean::logicalOr);
+        }
+        for (var e : off.entrySet()) w.chemOff.add(e.getKey() + (e.getValue() ? "|bad" : "|stress"));
     }
 
     private static CompoundTag interior(ServerLevel level, TankData t) {

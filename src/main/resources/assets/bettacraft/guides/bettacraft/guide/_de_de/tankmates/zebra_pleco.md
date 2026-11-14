@@ -27,6 +27,7 @@ Schwarz-weiß gestreift, braucht sehr warmes, sauberes Wasser und eine Höhle. F
 | Temperatur | 26–31 °C |
 | Zuchttemperatur | 28–31 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 5,8–8,0, TDS 0–550 ppm |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | am Boden |
 | Besatz | zählt als 0,9 Fisch |

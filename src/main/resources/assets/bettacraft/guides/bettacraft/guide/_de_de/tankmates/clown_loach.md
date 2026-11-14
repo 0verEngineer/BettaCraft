@@ -26,6 +26,7 @@ Orange mit drei schwarzen Bändern, wird groß, will eine Gruppe und frisst Schn
 | Größe im Spiel | etwa 11 cm (0,9 Blöcke) |
 | Temperatur | 25–30 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 5,8–8,0, TDS 0–550 ppm |
 | Schwarm | ab 5 Tieren |
 | Schwimmt | im unteren Wasser |
 | Besatz | zählt als 2,5 Fisch |

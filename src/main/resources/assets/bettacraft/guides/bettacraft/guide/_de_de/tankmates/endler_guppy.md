@@ -27,6 +27,7 @@ Kleiner als der Guppy, Männchen mit neongrünen und orangen Flecken. Meist bett
 | Temperatur | 23–30 °C |
 | Zuchttemperatur | 24–29 °C |
 | Wasser | Süß- oder Brackwasser, robust |
+| Wasserchemie | pH 6,8–8,6, TDS 100–800 ppm |
 | Schwarm | ab 3 Tieren |
 | Schwimmt | nahe der Oberfläche |
 | Besatz | zählt als 0,22 Fisch |

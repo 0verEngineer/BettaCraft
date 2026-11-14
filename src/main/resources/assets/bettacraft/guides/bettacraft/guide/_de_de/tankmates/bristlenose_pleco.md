@@ -27,6 +27,7 @@ Der beste Algenfresser unter den Beifischen; Männchen tragen Antennen auf der S
 | Temperatur | 21–28 °C |
 | Zuchttemperatur | 23–27 °C |
 | Wasser | Süßwasser, robust |
+| Wasserchemie | pH 5,8–8,0, TDS 0–550 ppm |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | an der Scheibe und am Boden |
 | Besatz | zählt als 1,2 Fisch |

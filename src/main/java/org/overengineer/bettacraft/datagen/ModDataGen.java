@@ -584,6 +584,7 @@ public final class ModDataGen {
             withExistingParent("external_filter", modLoc("block/external_filter"));
             DataGenM23.itemModels(this); // M23
             DataGenM24.itemModels(this); // M24
+            DataGenM25.itemModels(this); // M25
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
             withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
@@ -981,6 +982,7 @@ public final class ModDataGen {
             reefRecipes(output);
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
+            DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -1255,6 +1257,15 @@ public final class ModDataGen {
                     ModBlocks.PUMP_SEGMENT.get());
             var plantBlocks = tag(BlockTags.SWORD_EFFICIENT);
             for (var b : ModBlocks.AQUATIC_PLANTS.values()) plantBlocks.add(b.get());
+            // M25: water chemistry
+            tag(ModTags.ACID_SUBSTRATE).addTag(BlockTags.DIRT).add(net.minecraft.world.level.block.Blocks.SOUL_SOIL);
+            tag(ModTags.LIMESTONE).add(net.minecraft.world.level.block.Blocks.CALCITE, net.minecraft.world.level.block.Blocks.DRIPSTONE_BLOCK,
+                            net.minecraft.world.level.block.Blocks.DEAD_TUBE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_BRAIN_CORAL_BLOCK,
+                            net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,
+                            net.minecraft.world.level.block.Blocks.DEAD_HORN_CORAL_BLOCK)
+                    .addOptional(Compat.rl("create", "limestone")).addOptional(Compat.rl("create", "cut_limestone"))
+                    .addOptional(Compat.rl("create", "polished_cut_limestone")).addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "stones/limestone"));
+            tag(ModTags.DRIFTWOOD).addTag(BlockTags.LOGS).add(net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS);
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
                     net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
         }

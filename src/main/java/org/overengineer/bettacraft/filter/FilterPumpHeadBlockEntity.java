@@ -106,9 +106,14 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
                     TankBlockEntity t = tankOf(level, s);
                     if (t != null) {
                         served = t.getBlockPos();
-                        for (FilterChamberBlockEntity c : ch) clean += c.kind().blocks() * c.kind().efficiency(c.dirt());
+                        double peat = 0;
+                        for (FilterChamberBlockEntity c : ch) {
+                            double b = c.kind().blocks() * c.kind().efficiency(c.dirt());
+                            clean += b;
+                            if (c.kind() == FilterMedium.PEAT) peat += b; // M25: peat softens the water
+                        }
                         clean *= share;
-                        MultiblockFilter.serve(level, served, worldPosition, clean);
+                        MultiblockFilter.serve(level, served, worldPosition, clean, peat * share);
                         clog(level, t, ch, PipeNetwork.WINDOW / 24000.0);
                     }
                 }

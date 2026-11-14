@@ -27,6 +27,7 @@ An eel-like banded loach that rests in hiding by day and roams the bottom at nig
 | Temperature | 24–30 °C |
 | Breeding temperature | 25–28 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.0–7.8, TDS 0–450 ppm |
 | Shoal | from 5 fish |
 | Swims | on the bottom |
 | Stocking | counts as 0.4 fish |

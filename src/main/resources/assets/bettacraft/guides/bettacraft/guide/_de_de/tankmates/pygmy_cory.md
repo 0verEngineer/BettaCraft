@@ -27,6 +27,7 @@ Ein winziger Panzerwels, der oft im lockeren Schwarm im freien Wasser schwebt.
 | Temperatur | 22–27 °C |
 | Zuchttemperatur | 22–26 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,8–8,0, TDS 0–500 ppm |
 | Schwarm | ab 8 Tieren |
 | Schwimmt | im unteren Wasser |
 | Besatz | zählt als 0,2 Fisch |

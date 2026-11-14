@@ -20,6 +20,7 @@ Der Blaubein-Einsiedlerkrebs (*Clibanarius tricolor*) aus der Karibik: ein klein
 | Größe im Spiel | etwa 2,5 cm (0,2 Blöcke) |
 | Temperatur | 22–28 °C |
 | Wasser | Meerwasser, auch starkes Brackwasser, normal |
+| Wasserchemie | pH 7,8–8,6 |
 | Vermehrung | vermehrt sich nicht im Aquarium |
 | Algen | weidet 0,8 Scheiben am Tag ab |
 | Klettert an der Scheibe | ja |

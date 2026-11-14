@@ -200,10 +200,13 @@ public final class TankWater {
                 float salt = Salinity.concentrate(tank.salinity(), tank.waterMb(), lost, Salinity.MAX);
                 float ca = Salinity.concentrate(tank.calcium(), tank.waterMb(), lost, 2000F);
                 float no3 = TankNitrate.concentrate(tank.nitrate(), tank.waterMb(), lost); // M24
+                float tds = org.overengineer.bettacraft.chem.WaterChemistry.concentrate(tank.tds(), tank.waterMb(), lost,
+                        org.overengineer.bettacraft.chem.WaterChemistry.TDS_MAX); // M25: the minerals stay behind too
                 TankInteractions.changeWater(level, c, -lost);
                 tank.setSalinity(salt);
                 tank.setCalcium(ca);
                 tank.setNitrate(no3);
+                tank.setTds(tds);
                 if (qualityEnabled()) tank.setWaterQuality(q);
                 carry -= whole;
                 long min = Math.round(ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5) * tank.capacityMb());

@@ -196,6 +196,7 @@ public final class InteriorManager {
     static void finishShell(MinecraftServer server, ServerLevel level, InteriorRegion r, LongSet touched, double ms, String mode) {
         InteriorWorldOps.resendChunks(level, touched);
         r.setBuilt(true);
+        r.equipment().markNeedsScan(); // M25: count the floor of the new shell (water chemistry)
         InteriorRegions.get(server).setDirty();
         LOGGER.debug("Built interior region {} ({}x{}x{}, scale {}) {} in {} ms main thread, {} chunks", r.id(), r.sizeX(), r.sizeY(),
                 r.sizeZ(), r.scale(), mode, String.format(java.util.Locale.ROOT, "%.1f", ms), touched.size());

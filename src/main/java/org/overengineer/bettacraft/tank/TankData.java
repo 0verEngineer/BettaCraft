@@ -101,6 +101,12 @@ public final class TankData {
     private float oxygen = Float.NaN;
     /** M24: nitrate (dissolved waste) in mg/L; 0 for every tank of an earlier version. */
     private float nitrate;
+    /**
+     * M25: water chemistry ({@link org.overengineer.bettacraft.chem.TankChemistry}): TDS (ppm), pH, the tannins of almond
+     * leaves (0..1) and dissolved CO2 (mg/L, dosed by the CO2 devices). Tanks of earlier versions start with tap water.
+     */
+    private float tds = org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS, ph = org.overengineer.bettacraft.chem.WaterChemistry.TAP_PH;
+    private float tannin, co2 = org.overengineer.bettacraft.chem.WaterChemistry.CO2_AIR;
     /** M24: game time of the last water change (bucket, pipe or controller; -1 = none yet) and the share changed then. */
     private long lastWaterChange = -1L;
     /** M23: light settings of the tank: dimmer 0..100 %, daylight timer with on/off time (minutes of the day, 6:00 = 360). */
@@ -350,6 +356,18 @@ public final class TankData {
     public float nitrate() { return nitrate; }
     public void setNitrate(float mgl) { this.nitrate = Float.isFinite(mgl) ? Math.max(0F, Math.min(1000F, mgl)) : 0F; }
     public long lastWaterChange() { return lastWaterChange; }
+    // M25
+    public float tds() { return tds; }
+    public void setTds(float ppm) { this.tds = org.overengineer.bettacraft.chem.WaterChemistry.clampTds(ppm); }
+    public float ph() { return ph; }
+    public void setPh(float v) { this.ph = org.overengineer.bettacraft.chem.WaterChemistry.clampPh(v); }
+    public float tannin() { return tannin; }
+    public void setTannin(float v) { this.tannin = Float.isFinite(v) ? Math.max(0F, Math.min(1F, v)) : 0F; }
+    public float co2() { return co2; }
+    public void setCo2(float mgl) {
+        this.co2 = Float.isFinite(mgl) ? Math.max(0F, Math.min(org.overengineer.bettacraft.chem.WaterChemistry.CO2_MAX, mgl))
+                : org.overengineer.bettacraft.chem.WaterChemistry.CO2_AIR;
+    }
     public void setLastWaterChange(long t) { this.lastWaterChange = t; }
     public void setOxygen(float mgl) { this.oxygen = Float.isNaN(mgl) ? Float.NaN : Math.max(0F, Math.min(25F, mgl)); }
     public int lightDimmer() { return lightDimmer; }
@@ -439,6 +457,10 @@ public final class TankData {
         calcium = o.calcium;
         oxygen = o.oxygen; // M23
         nitrate = o.nitrate; // M24
+        tds = o.tds; // M25
+        ph = o.ph;
+        tannin = o.tannin;
+        co2 = o.co2;
         lastWaterChange = o.lastWaterChange;
         lightDimmer = o.lightDimmer;
         lightTimer = o.lightTimer;
@@ -530,6 +552,11 @@ public final class TankData {
         // M24 (no schema step: absent = nitrate 0, no water change yet)
         t.putFloat("nitrate", nitrate);
         t.putLong("last_water_change", lastWaterChange);
+        // M25 (no schema step: absent = tap water)
+        t.putFloat("tds", tds);
+        t.putFloat("ph", ph);
+        if (tannin > 0) t.putFloat("tannin", tannin);
+        t.putFloat("co2", co2);
         t.putInt("light_dimmer", lightDimmer);
         t.putBoolean("light_timer", lightTimer);
         t.putInt("light_on", lightOn);
@@ -642,6 +669,10 @@ public final class TankData {
         d.oxygen = t.contains("oxygen", Tag.TAG_ANY_NUMERIC) ? t.getFloat("oxygen") : Float.NaN;
         d.setNitrate(t.getFloat("nitrate"));
         d.lastWaterChange = t.contains("last_water_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_water_change") : -1L;
+        if (t.contains("tds", Tag.TAG_ANY_NUMERIC)) d.setTds(t.getFloat("tds")); // M25
+        d.setPh(t.contains("ph", Tag.TAG_ANY_NUMERIC) ? t.getFloat("ph") : org.overengineer.bettacraft.chem.WaterChemistry.startPh(d.salinity));
+        d.setTannin(t.getFloat("tannin"));
+        if (t.contains("co2", Tag.TAG_ANY_NUMERIC)) d.setCo2(t.getFloat("co2"));
         d.lightDimmer = t.contains("light_dimmer", Tag.TAG_ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getInt("light_dimmer"))) : 100;
         d.lightTimer = t.getBoolean("light_timer");
         d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;

@@ -27,6 +27,7 @@ Cremeweiß mit schwarzer Augenmaske, schwarzer Rückenflosse und Fleck an der Sc
 | Temperatur | 20–26 °C |
 | Zuchttemperatur | 21–25 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,8–8,0, TDS 0–500 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | am Boden |
 | Besatz | zählt als 0,45 Fisch |

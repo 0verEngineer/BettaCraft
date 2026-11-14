@@ -246,6 +246,7 @@ public final class GuideGen {
         tb.row(t("Temperature", "Temperatur"), range(s.tempMin(), s.tempMax()) + " °C");
         if (s.breeding() != TankmateSpecies.Breeding.NONE) tb.row(t("Breeding temperature", "Zuchttemperatur"), range(s.breedMin(), s.breedMax()) + " °C");
         tb.row(t("Water", "Wasser"), salinity(s.salinity()) + ", " + sensitivity(s.minQuality(), 0.45, 0.55));
+        tb.row(t("Water chemistry", "Wasserchemie"), chem(org.overengineer.bettacraft.chem.ChemTolerance.tankmate(s))); // M25
         tb.row(t("Shoal", "Schwarm"), s.shoaling() ? t("from " + s.shoal() + " fish", "ab " + s.shoal() + " Tieren") : t("alone or as a pair", "einzeln oder als Paar"));
         tb.row(t("Swims", "Schwimmt"), zone(s.zone()));
         tb.row(t("Stocking", "Besatz"), t("counts as " + num(s.stock()) + " fish", "zählt als " + num(s.stock()) + " Fisch"));
@@ -285,6 +286,7 @@ public final class GuideGen {
         tb.row(t("Size in the game", "Größe im Spiel"), size(s.length()));
         tb.row(t("Temperature", "Temperatur"), range(s.minTemp(), s.maxTemp()) + " °C");
         tb.row(t("Water", "Wasser"), salinity(SaltTolerance.critter(s)) + ", " + sensitivity(s.badWater(), 0.3, 0.4));
+        tb.row(t("Water chemistry", "Wasserchemie"), chem(org.overengineer.bettacraft.chem.ChemTolerance.critter(s))); // M25
         tb.row(t("Breeding", "Vermehrung"), switch (s.breeding()) {
             case NONE -> s.marine() ? t("does not breed in a tank", "vermehrt sich nicht im Aquarium")
                     : t("no young in fresh water", "keine Jungen im Süßwasser");
@@ -708,6 +710,17 @@ public final class GuideGen {
         double cm = Math.round(blocks * 12 * 2) / 2.0;
         return t("about " + num(cm) + " cm (" + num(Math.round(blocks * 100) / 100.0) + " blocks)", "etwa " + num(cm) + " cm (" + num(Math.round(blocks * 100) / 100.0)
                 + " Blöcke)");
+    }
+
+    /** M25: "pH 6.0–8.0, TDS 0–600 ppm" (salt water: only the pH). */
+    private String chem(org.overengineer.bettacraft.chem.ChemTolerance.Range r) {
+        String ph = "pH " + ph(r.phMin()) + "–" + ph(r.phMax());
+        return r.marine() ? ph : ph + ", TDS " + range(r.tdsMin(), r.tdsMax()) + " ppm";
+    }
+
+    private String ph(double v) {
+        String s = String.format(Locale.ROOT, "%.1f", v);
+        return de ? s.replace('.', ',') : s;
     }
 
     private String range(double a, double b) {

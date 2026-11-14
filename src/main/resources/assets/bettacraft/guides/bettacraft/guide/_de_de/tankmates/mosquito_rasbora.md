@@ -27,6 +27,7 @@ Einer der kleinsten Aquarienfische (etwa 2 cm), rot mit dunkler Linie. Auch als 
 | Temperatur | 22–28 °C |
 | Zuchttemperatur | 25–28 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 5,0–7,8, TDS 0–450 ppm |
 | Schwarm | ab 8 Tieren |
 | Schwimmt | nahe der Oberfläche |
 | Besatz | zählt als 0,12 Fisch |

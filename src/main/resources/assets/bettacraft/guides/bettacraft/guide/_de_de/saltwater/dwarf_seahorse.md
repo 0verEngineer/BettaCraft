@@ -25,6 +25,7 @@ Das Zwergseepferdchen (*Hippocampus zosterae*) aus den Seegraswiesen Floridas, d
 | Temperatur | 21–28 °C |
 | Zuchttemperatur | 24–27 °C |
 | Wasser | Meerwasser, auch starkes Brackwasser, empfindlich |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | im unteren Wasser |
 | Besatz | zählt als 0,3 Fisch |

@@ -26,6 +26,7 @@ Orange with three black bands, gets big, wants a group and eats snails. Does not
 | Size in the game | about 11 cm (0.9 blocks) |
 | Temperature | 25–30 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 5.8–8.0, TDS 0–550 ppm |
 | Shoal | from 5 fish |
 | Swims | in the lower water |
 | Stocking | counts as 2.5 fish |

@@ -20,6 +20,7 @@ The zebra nerite (*Neritina natalensis*) from the mangroves and river mouths of 
 | Size in the game | about 2 cm (0.17 blocks) |
 | Temperature | 20–28 °C |
 | Water | fresh, brackish or sea water, normal |
+| Water chemistry | pH 6.8–8.6, TDS 100–700 ppm |
 | Breeding | no young in fresh water |
 | Algae | grazes 2 glass faces a day |
 | Climbs the glass | yes |

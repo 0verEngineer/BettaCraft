@@ -27,6 +27,7 @@ Dunkel mit weißen Punkten und orangen Brustflossen; einer der wenigen Panzerwel
 | Temperatur | 24–30 °C |
 | Zuchttemperatur | 24–28 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,8–8,0, TDS 0–500 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | am Boden |
 | Besatz | zählt als 0,6 Fisch |

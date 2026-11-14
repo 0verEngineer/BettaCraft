@@ -258,6 +258,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue NITRATE_PLANT_UPTAKE;
     public static final ModConfigSpec.DoubleValue NITRATE_REFERENCE_STOCKING;
     public static final ModConfigSpec.IntValue PIPE_GLASS_RATE;
+    // M25: water chemistry
+    public static final ModConfigSpec.DoubleValue CHEM_TDS_PER_DAY;
+    public static final ModConfigSpec.DoubleValue CHEM_REMINERAL_PPM;
+    public static final ModConfigSpec.DoubleValue CHEM_LEAF_TANNIN;
+    public static final ModConfigSpec.DoubleValue CHEM_LEAF_HALF_LIFE;
     public static final ModConfigSpec.IntValue PIPE_STEEL_RATE;
     public static final ModConfigSpec.IntValue PIPE_PUMP_RATE;
     public static final ModConfigSpec.BooleanValue POWER_PUMPS;
@@ -557,6 +562,14 @@ public final class ServerConfig {
                 "(1.2: dense plants keep such a tank clean on their own)").defineInRange("plantUptake", 1.2, 0.0, 100.0);
         NITRATE_REFERENCE_STOCKING = b.comment("Adult fish per water block of a normally stocked tank (more fish make nitrate faster, fewer slower)")
                 .defineInRange("referenceFishPerBlock", 0.5, 0.01, 100.0);
+        b.pop();
+        // M25
+        b.comment("Water chemistry (M25, features.waterChemistry): TDS, pH and hardness of the water").push("chemistry");
+        CHEM_TDS_PER_DAY = b.comment("TDS (ppm) a normally stocked tank gains per day from food and waste (water changes bring it back to the tap",
+                "water's 250)").defineInRange("tdsPerDay", 1.5, 0.0, 1000.0);
+        CHEM_REMINERAL_PPM = b.comment("TDS (ppm) one remineralising salt adds to 1000 mB of water").defineInRange("remineraliserPpm", 400.0, 1.0, 100000.0);
+        CHEM_LEAF_TANNIN = b.comment("Water blocks one almond leaf colours fully with its tannins (they lower the pH)").defineInRange("leafBlocks", 1.0, 0.01, 1000.0);
+        CHEM_LEAF_HALF_LIFE = b.comment("Days until half of the tannins of the almond leaves have faded").defineInRange("leafHalfLifeDays", 7.0, 0.1, 1000.0);
         b.pop();
         b.comment("Pipes and pumps (M24, features.pipes): they carry water with all its values (temperature, salt, quality, nitrate)").push("pipes");
         PIPE_GLASS_RATE = b.comment("mB per tick a glass pipe network carries").defineInRange("glassPipeRate", 50, 1, 1000000);

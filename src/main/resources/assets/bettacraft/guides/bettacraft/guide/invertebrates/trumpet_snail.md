@@ -20,6 +20,7 @@ The Malaysian trumpet snail (*Melanoides tuberculata*) from Africa and South Asi
 | Size in the game | about 2 cm (0.17 blocks) |
 | Temperature | 18–32 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 6.2–8.6, TDS 50–800 ppm |
 | Breeding | hermaphrodite: one animal is enough, 1–2 young |
 | Growing up | about 3 days |
 | Algae | grazes 0.1 glass faces a day |

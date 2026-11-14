@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.05,
+  "ingredient": {
+    "item": "minecraft:jungle_leaves"
+  },
+  "result": {
+    "count": 1,
+    "id": "bettacraft:almond_leaf"
+  }
+}

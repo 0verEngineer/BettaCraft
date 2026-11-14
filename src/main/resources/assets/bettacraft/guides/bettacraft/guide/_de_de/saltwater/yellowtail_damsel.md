@@ -24,6 +24,7 @@ Der Gelbschwanz-Demoiselle (*Chrysiptera parasema*) aus dem westlichen Pazifik: 
 | Größe im Spiel | etwa 4 cm (0,33 Blöcke) |
 | Temperatur | 23–28 °C |
 | Wasser | Meerwasser, auch starkes Brackwasser, robust |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | im unteren Wasser |
 | Besatz | zählt als 0,45 Fisch |

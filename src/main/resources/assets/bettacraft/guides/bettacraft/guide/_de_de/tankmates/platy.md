@@ -27,6 +27,7 @@ Ein robuster, friedlicher Lebendgebärender in vielen Farben.
 | Temperatur | 20–27 °C |
 | Zuchttemperatur | 22–26 °C |
 | Wasser | Süß- oder Brackwasser, robust |
+| Wasserchemie | pH 6,8–8,6, TDS 100–800 ppm |
 | Schwarm | ab 3 Tieren |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 0,5 Fisch |

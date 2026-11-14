@@ -20,6 +20,7 @@ and now and then catches a weak, starving small animal.
 | Size in the game | about 4 cm (0.34 blocks) |
 | Temperature | 15–26 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 6.5–8.5, TDS 100–600 ppm |
 | Breeding | male and female; the female carries the eggs, the young hatch fully formed, 3–6 young |
 | Growing up | about 4 days |
 | Climbs the glass | no |

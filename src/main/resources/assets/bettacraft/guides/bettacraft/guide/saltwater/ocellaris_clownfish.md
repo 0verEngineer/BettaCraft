@@ -25,6 +25,7 @@ The false percula clownfish (*Amphiprion ocellaris*) from the coral reefs of the
 | Temperature | 24–28 °C |
 | Breeding temperature | 25–28 °C |
 | Water | sea water, normal |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | alone or as a pair |
 | Swims | in the middle |
 | Stocking | counts as 1 fish |

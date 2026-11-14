@@ -35,6 +35,7 @@ navigation:
 | [Cabinet](equipment/cabinet.md) | stand for the aquarium with room for a filter and food |
 | [Tank lid](equipment/tank_lid.md) | stops the water from evaporating |
 | [Tools and containers](equipment/tools.md) | aquarium net, fish bag, algae scraper, mirror stick, breeding box |
+| [TDS meter and pH drop test](equipment/water_tests.md) | measure the [water chemistry](aquarium/water_chemistry.md) |
 
 By default none of the equipment needs power; a server can switch that on (see [Power](equipment/power.md)).
 

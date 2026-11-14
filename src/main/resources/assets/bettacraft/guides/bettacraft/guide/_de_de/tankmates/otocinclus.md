@@ -27,6 +27,7 @@ Ein winziger Saugwels, der Glas und Blätter in kleiner Gruppe sauber weidet.
 | Temperatur | 21–27 °C |
 | Zuchttemperatur | 22–26 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 5,8–8,0, TDS 0–500 ppm |
 | Schwarm | ab 5 Tieren |
 | Schwimmt | an der Scheibe und am Boden |
 | Besatz | zählt als 0,3 Fisch |

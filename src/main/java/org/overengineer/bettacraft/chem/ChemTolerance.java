@@ -1,0 +1,112 @@
+package org.overengineer.bettacraft.chem;
+
+import java.util.Locale;
+import javax.annotation.Nullable;
+import net.minecraft.world.entity.Entity;
+import org.overengineer.bettacraft.critters.CritterSpecies;
+import org.overengineer.bettacraft.tankmates.TankmateSpecies;
+
+/**
+ * M25: the pH and TDS each animal lives in. Every range holds tap water (pH 7.5, TDS 250), so the tanks of earlier
+ * versions stay fine. Bettas and most tankmates are tolerant; the soft-water fish of the Amazon and of South East Asia
+ * also take very soft, acidic water, the livebearers and the snails want medium to hard water (minerals for the shells),
+ * the Neocaridina are tolerant. Salt water animals only care about the pH (the alkalinity holds it).
+ * <p>
+ * Out of the range ({@link Range#distance}, pH units plus 100 ppm TDS per unit): below {@link #BAD_FROM} the animals are
+ * only stressed (shown in the menu, critters breed slower), from it the water counts as bad for them (sick, in the end
+ * dead, like bad water quality).
+ * <p>
+ * Part c of M25 adds the Caridina ({@link #CARIDINA}) and Sulawesi animals ({@link #SULAWESI}) to {@link #critter}.
+ */
+public final class ChemTolerance {
+    private ChemTolerance() {}
+
+    /** From this distance out of the range the water counts as bad for the animal. */
+    public static final double BAD_FROM = 0.5;
+
+    /** A range of pH and TDS (ppm, inclusive). {@code marine}: only the pH counts. */
+    public record Range(float phMin, float phMax, float tdsMin, float tdsMax, boolean marine) {
+        public static final Range TOLERANT = fresh(6.0, 8.4, 0, 700);
+        public static final Range MARINE = new Range(7.8F, 8.6F, 0, 0, true);
+
+        public static Range fresh(double phMin, double phMax, double tdsMin, double tdsMax) {
+            return new Range((float) phMin, (float) phMax, (float) tdsMin, (float) tdsMax, false);
+        }
+
+        /** pH units outside of the range (0 inside). */
+        public double phDistance(double ph) {
+            return ph < phMin ? phMin - ph : ph > phMax ? ph - phMax : 0;
+        }
+
+        /** ppm outside of the range (0 inside; always 0 for salt water animals). */
+        public double tdsDistance(double tds) {
+            if (marine) return 0;
+            return tds < tdsMin ? tdsMin - tds : tds > tdsMax ? tds - tdsMax : 0;
+        }
+
+        /** How far out of the range, in "pH units" (100 ppm TDS count as one). */
+        public double distance(double ph, double tds) {
+            return phDistance(ph) + tdsDistance(tds) / 100.0;
+        }
+
+        public boolean contains(double ph, double tds) {
+            return distance(ph, tds) <= 1e-6;
+        }
+
+        /** "pH 6.0–8.0 · TDS 0–600 ppm" (salt water: only the pH). */
+        public String describe() {
+            String ph = String.format(Locale.ROOT, "pH %.1f–%.1f", phMin, phMax);
+            return marine ? ph : ph + String.format(Locale.ROOT, " · TDS %d–%d ppm", Math.round(tdsMin), Math.round(tdsMax));
+        }
+    }
+
+    /** What the water does to an animal. */
+    public enum Fit { OK, STRESS, BAD }
+
+    public static Fit fit(double distance) {
+        return distance <= 1e-6 ? Fit.OK : distance < BAD_FROM ? Fit.STRESS : Fit.BAD;
+    }
+
+    public static final Range BETTA = Range.fresh(6.0, 8.0, 0, 600);
+    /** Caridina (bee shrimp, Taiwan bees; part c): soft, acidic water (pH 5.5-6.8, TDS 100-200). */
+    public static final Range CARIDINA = Range.fresh(5.5, 6.8, 100, 200);
+    /** Sulawesi shrimp and Tylomelania (part c): hard, warm, alkaline water of the ancient lakes. */
+    public static final Range SULAWESI = Range.fresh(7.5, 8.6, 150, 350);
+    /** Soft-water fish (tetras, rasboras, kuhli loaches): they take very soft, acidic water. */
+    public static final Range SOFT = Range.fresh(5.0, 7.8, 0, 450);
+    /** Livebearers: medium to hard water. */
+    public static final Range LIVEBEARER = Range.fresh(6.8, 8.6, 100, 800);
+    /** Snails: medium to hard water for the shells. */
+    public static final Range SNAIL = Range.fresh(6.8, 8.6, 100, 700);
+
+    public static Range critter(CritterSpecies s) {
+        if (s.marine()) return Range.MARINE;
+        return switch (s) {
+            case NEOCARIDINA -> Range.fresh(6.2, 8.2, 80, 500);
+            case DWARF_CRAYFISH -> Range.fresh(6.5, 8.5, 100, 600);
+            case RAMSHORN, BLADDER_SNAIL, TRUMPET_SNAIL -> Range.fresh(6.2, 8.6, 50, 800);
+            default -> s.isSnail() ? SNAIL : Range.TOLERANT;
+        };
+    }
+
+    public static Range tankmate(TankmateSpecies s) {
+        if (s.salinity().marine()) return Range.MARINE;
+        return switch (s) {
+            case NEON_TETRA, CARDINAL_TETRA, GREEN_NEON_TETRA, EMBER_TETRA, GLOWLIGHT_TETRA, HARLEQUIN_RASBORA, MOSQUITO_RASBORA,
+                    KUHLI_LOACH -> SOFT;
+            case PYGMY_CORY, PANDA_CORY, STERBAI_CORY, GREEN_GOLD_CORY, OTOCINCLUS -> Range.fresh(5.8, 8.0, 0, 500);
+            case LEOPARD_FROG_PLECO, ZEBRA_PLECO, BRISTLENOSE_PLECO, CLOWN_LOACH -> Range.fresh(5.8, 8.0, 0, 550);
+            case GUPPY, ENDLER_GUPPY, PLATY -> LIVEBEARER;
+            case DWARF_GOURAMI -> Range.fresh(6.0, 8.0, 0, 500);
+            default -> Range.TOLERANT;
+        };
+    }
+
+    /** The range of an animal of ours (bettas, tankmates), or null (frogs and animals of other mods: no chemistry). */
+    @Nullable
+    public static Range of(Entity e) {
+        if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) return BETTA;
+        if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return tankmate(m.species());
+        return null;
+    }
+}

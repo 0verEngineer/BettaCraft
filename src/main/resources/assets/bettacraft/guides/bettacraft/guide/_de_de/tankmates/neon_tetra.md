@@ -27,6 +27,7 @@ Ein blauer Neonstreifen über einer roten hinteren Körperhälfte: der klassisch
 | Temperatur | 20–27 °C |
 | Zuchttemperatur | 22–25 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 5,0–7,8, TDS 0–450 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 0,35 Fisch |

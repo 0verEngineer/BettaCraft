@@ -20,6 +20,7 @@ The ramshorn snail (*Planorbella* sp.) from the still waters of North America: a
 | Size in the game | about 1.5 cm (0.12 blocks) |
 | Temperature | 15–30 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 6.2–8.6, TDS 50–800 ppm |
 | Breeding | hermaphrodite: one animal is enough, 1–2 young |
 | Growing up | about 3 days |
 | Algae | grazes 0.6 glass faces a day |

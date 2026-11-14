@@ -20,6 +20,7 @@ Die Olivgrüne Rennschnecke (*Neritina reclivata*) von den Küsten Floridas und 
 | Größe im Spiel | etwa 2 cm (0,18 Blöcke) |
 | Temperatur | 20–28 °C |
 | Wasser | Süß-, Brack- oder Meerwasser, normal |
+| Wasserchemie | pH 6,8–8,6, TDS 100–700 ppm |
 | Vermehrung | keine Jungen im Süßwasser |
 | Algen | weidet 2 Scheiben am Tag ab |
 | Klettert an der Scheibe | ja |

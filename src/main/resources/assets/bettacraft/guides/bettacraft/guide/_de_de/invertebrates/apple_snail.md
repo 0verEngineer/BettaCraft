@@ -20,6 +20,7 @@ Die Paradiesschnecke (*Pomacea diffusa*) aus dem Amazonasbecken: eine große Sch
 | Größe im Spiel | etwa 5 cm (0,4 Blöcke) |
 | Temperatur | 20–30 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 6,8–8,6, TDS 100–700 ppm |
 | Vermehrung | Männchen und Weibchen; ein rosa Gelege an der Scheibe über der Wasserlinie, 5–10 Junge |
 | Heranwachsen | etwa 4 Tage |
 | Algen | weidet 1,5 Scheiben am Tag ab |

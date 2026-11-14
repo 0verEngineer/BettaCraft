@@ -27,6 +27,7 @@ A tiny cory that often hovers in a loose shoal in the middle of the water.
 | Temperature | 22–27 °C |
 | Breeding temperature | 22–26 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.8–8.0, TDS 0–500 ppm |
 | Shoal | from 8 fish |
 | Swims | in the lower water |
 | Stocking | counts as 0.2 fish |

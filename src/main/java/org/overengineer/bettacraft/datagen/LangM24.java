@@ -54,7 +54,7 @@ final class LangM24 {
         a.accept("tooltip.bettacraft.media.sponge", "Mechanical: holds back dirt; clogs fastest (wash it in a water cauldron)");
         a.accept("tooltip.bettacraft.media.ceramic", "Biological: home of the bacteria, cleans the most; clogs slowly (wash it in a water cauldron)");
         a.accept("tooltip.bettacraft.media.carbon", "Chemical: clears the water; used up after a while");
-        a.accept("tooltip.bettacraft.media.peat", "Softens the water (pH: coming later); used up slowly");
+        a.accept("tooltip.bettacraft.media.peat", "Softens the water and lowers the pH; used up slowly");
         a.accept("gui.bettacraft.water_pump.running", "Pumps %s mB/t");
         a.accept("gui.bettacraft.water_pump.idle", "Stands still: no water behind it, nothing in front takes it, redstone, 0 %% or no FE");
         a.accept("gui.bettacraft.mb_filter.flow", "Flow %s mB/t · cleans %s water blocks");
@@ -134,7 +134,7 @@ final class LangM24 {
         a.accept("info.bettacraft.filter_foam", "Filter medium (mechanical): 12 water blocks per chamber. Clogs fastest; a clogged sponge also slows the flow. Wash it in a water cauldron.");
         a.accept("info.bettacraft.ceramic_rings", "Filter medium (biological): 24 water blocks per chamber, home of the bacteria. Clogs slowly; wash it in a water cauldron.");
         a.accept("info.bettacraft.activated_carbon", "Filter medium (chemical): 16 water blocks per chamber. Used up after a while: replace it. Smelted from charcoal.");
-        a.accept("info.bettacraft.filter_peat", "Filter medium: 6 water blocks per chamber; softens the water (pH comes in a later version). Used up slowly.");
+        a.accept("info.bettacraft.filter_peat", "Filter medium: 6 water blocks per chamber; softens the water and lowers the pH. Used up slowly.");
         a.accept("info.bettacraft.reservoir", "Holds 16 buckets of water for the top-off and the water change controller. Fill it with buckets or pipes; any water mixes in. A comparator reads how full it is.");
         a.accept("info.bettacraft.level_sensor", "Next to a tank (or a multiblock filter): tops off evaporated water from a reservoir, pipe, other mod's tank or water source next to it. Fresh water only: in a reef tank the salt stays behind, so fresh water keeps the salinity where it was.\nRight-click: target level 100 to 50 %.");
         a.accept("info.bettacraft.water_change_controller", "Next to a tank: changes a share of the water at an interval (screen: every 1 to 60 days, 5 to 50 %). The old water goes down the drain, fresh water comes from a reservoir, pipe or water source next to it.");

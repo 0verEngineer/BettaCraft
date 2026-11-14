@@ -27,6 +27,7 @@ Smaller than the guppy, males with neon-green and orange patches. Fine with bett
 | Temperature | 23–30 °C |
 | Breeding temperature | 24–29 °C |
 | Water | fresh or brackish water, hardy |
+| Water chemistry | pH 6.8–8.6, TDS 100–800 ppm |
 | Shoal | from 3 fish |
 | Swims | near the surface |
 | Stocking | counts as 0.22 fish |

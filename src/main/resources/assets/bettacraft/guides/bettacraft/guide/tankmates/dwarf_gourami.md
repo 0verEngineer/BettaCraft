@@ -27,6 +27,7 @@ Blue and red striped males with long feelers; a labyrinth fish like the betta - 
 | Temperature | 24–29 °C |
 | Breeding temperature | 26–29 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 6.0–8.0, TDS 0–500 ppm |
 | Shoal | alone or as a pair |
 | Swims | near the surface |
 | Stocking | counts as 1 fish |

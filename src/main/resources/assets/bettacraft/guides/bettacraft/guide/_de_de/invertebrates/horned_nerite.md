@@ -20,6 +20,7 @@ Die Geweihschnecke (*Clithon corona*) aus den Brackwasserflüssen Südostasiens:
 | Größe im Spiel | etwa 1,5 cm (0,13 Blöcke) |
 | Temperatur | 20–28 °C |
 | Wasser | Süß-, Brack- oder Meerwasser, normal |
+| Wasserchemie | pH 6,8–8,6, TDS 100–700 ppm |
 | Vermehrung | keine Jungen im Süßwasser |
 | Algen | weidet 1,6 Scheiben am Tag ab |
 | Klettert an der Scheibe | ja |

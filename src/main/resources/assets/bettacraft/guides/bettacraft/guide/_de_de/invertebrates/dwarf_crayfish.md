@@ -20,6 +20,7 @@ Tiere schnell weg und fängt ab und zu ein schwaches, hungerndes Kleintier.
 | Größe im Spiel | etwa 4 cm (0,34 Blöcke) |
 | Temperatur | 15–26 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 6,5–8,5, TDS 100–600 ppm |
 | Vermehrung | Männchen und Weibchen; das Weibchen trägt die Eier, die Jungen schlüpfen fertig entwickelt, 3–6 Junge |
 | Heranwachsen | etwa 4 Tage |
 | Klettert an der Scheibe | nein |

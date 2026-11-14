@@ -24,6 +24,7 @@ Der Gelbe Segelflossendoktor (*Zebrasoma flavescens*) von den Riffen Hawaiis: ei
 | Größe im Spiel | etwa 9 cm (0,75 Blöcke) |
 | Temperatur | 24–28 °C |
 | Wasser | Meerwasser, empfindlich |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 2,5 Fisch |

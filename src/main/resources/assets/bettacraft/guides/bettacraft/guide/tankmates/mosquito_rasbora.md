@@ -27,6 +27,7 @@ One of the smallest aquarium fish (about 2 cm), red with a dark line. Also sold 
 | Temperature | 22–28 °C |
 | Breeding temperature | 25–28 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 5.0–7.8, TDS 0–450 ppm |
 | Shoal | from 8 fish |
 | Swims | near the surface |
 | Stocking | counts as 0.12 fish |

@@ -25,6 +25,7 @@ Der Falsche Clownfisch (*Amphiprion ocellaris*) von den Korallenriffen des östl
 | Temperatur | 24–28 °C |
 | Zuchttemperatur | 25–28 °C |
 | Wasser | Meerwasser, normal |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 1 Fisch |

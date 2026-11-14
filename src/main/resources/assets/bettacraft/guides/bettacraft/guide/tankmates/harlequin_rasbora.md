@@ -27,6 +27,7 @@ Copper body with a black wedge; spawns upside down under broad leaves.
 | Temperature | 22–28 °C |
 | Breeding temperature | 26–28 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.0–7.8, TDS 0–450 ppm |
 | Shoal | from 6 fish |
 | Swims | in the middle |
 | Stocking | counts as 0.45 fish |

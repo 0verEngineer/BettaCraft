@@ -22,6 +22,7 @@ Garnelen verdirbt Überfüttern das Wasser kaum.
 | Größe im Spiel | etwa 2,5 cm (0,2 Blöcke) |
 | Temperatur | 18–28 °C |
 | Wasser | Süßwasser, empfindlich |
+| Wasserchemie | pH 6,2–8,2, TDS 80–500 ppm |
 | Vermehrung | Männchen und Weibchen; das Weibchen trägt die Eier, die Jungen schlüpfen fertig entwickelt, 3–8 Junge |
 | Heranwachsen | etwa 3 Tage |
 | Algen | weidet 0,08 Scheiben am Tag ab |

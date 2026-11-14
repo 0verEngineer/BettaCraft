@@ -27,6 +27,7 @@ Ein kleiner Harnischwels mit gelb-schwarzen Bändern. Lebt in Höhlen und am Gla
 | Temperatur | 25–30 °C |
 | Zuchttemperatur | 27–30 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,8–8,0, TDS 0–550 ppm |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | an der Scheibe und am Boden |
 | Besatz | zählt als 1 Fisch |

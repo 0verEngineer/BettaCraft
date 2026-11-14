@@ -20,6 +20,7 @@ The Mexican turbo snail (*Turbo fluctuosa*) from the Gulf of California: a large
 | Size in the game | about 3.5 cm (0.3 blocks) |
 | Temperature | 22–28 °C |
 | Water | sea water, sensitive |
+| Water chemistry | pH 7.8–8.6 |
 | Breeding | does not breed in a tank |
 | Algae | grazes 2.5 glass faces a day |
 | Climbs the glass | yes |

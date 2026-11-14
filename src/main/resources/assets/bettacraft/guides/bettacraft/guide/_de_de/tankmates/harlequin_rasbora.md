@@ -27,6 +27,7 @@ Kupferfarben mit schwarzem Keilfleck; laicht kopfüber unter breite Blätter.
 | Temperatur | 22–28 °C |
 | Zuchttemperatur | 26–28 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,0–7,8, TDS 0–450 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 0,45 Fisch |

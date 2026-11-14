@@ -27,6 +27,7 @@ Goldgrün mit dunklem Seitenband und gelb-orangen Flossen.
 | Temperatur | 22–27 °C |
 | Zuchttemperatur | 23–26 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,8–8,0, TDS 0–500 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | am Boden |
 | Besatz | zählt als 0,55 Fisch |

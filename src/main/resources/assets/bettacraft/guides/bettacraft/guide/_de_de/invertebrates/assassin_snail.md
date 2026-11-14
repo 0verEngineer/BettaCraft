@@ -20,6 +20,7 @@ Die Raubturmdeckelschnecke (*Clea helena*) aus Südostasien: ein gelb-braun geb�
 | Größe im Spiel | etwa 2 cm (0,17 Blöcke) |
 | Temperatur | 20–30 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 6,8–8,6, TDS 100–700 ppm |
 | Vermehrung | Männchen und Weibchen, selten ein Junges, 1–1 Junge |
 | Heranwachsen | etwa 6 Tage |
 | Klettert an der Scheibe | nein |

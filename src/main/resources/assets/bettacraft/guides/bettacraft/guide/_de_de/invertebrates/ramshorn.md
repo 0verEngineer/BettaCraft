@@ -20,6 +20,7 @@ Die Posthornschnecke (*Planorbella* sp.) aus den stillen Gewässern Nordamerikas
 | Größe im Spiel | etwa 1,5 cm (0,12 Blöcke) |
 | Temperatur | 15–30 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 6,2–8,6, TDS 50–800 ppm |
 | Vermehrung | Zwitter: ein Tier genügt, 1–2 Junge |
 | Heranwachsen | etwa 3 Tage |
 | Algen | weidet 0,6 Scheiben am Tag ab |

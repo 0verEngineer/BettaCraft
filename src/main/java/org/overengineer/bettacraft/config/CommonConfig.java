@@ -55,6 +55,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_PIPES;
     public static final ModConfigSpec.BooleanValue FEATURE_INTERIOR_PIPES;
     public static final ModConfigSpec.BooleanValue FEATURE_MULTIBLOCK_FILTER;
+    public static final ModConfigSpec.BooleanValue FEATURE_WATER_CHEMISTRY;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -167,6 +168,9 @@ public final class CommonConfig {
         FEATURE_AUTO_WATER_CHANGE = b.comment("Water change controller: changes a part of the water by itself at an interval (off: it does nothing)")
                 .define("autoWaterChange", true);
         FEATURE_TOP_OFF = b.comment("Top-off: a level sensor tops off evaporated water from a reservoir or a pipe (off: it does nothing)").define("topOff", true);
+        // M25
+        FEATURE_WATER_CHEMISTRY = b.comment("Water chemistry: TDS, pH and hardness from the substrate, peat, almond leaves, wood, food and water changes;",
+                "every animal has its range (off: the values stand still and no animal minds them)").define("waterChemistry", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -270,6 +274,8 @@ public final class CommonConfig {
     public static boolean multiblockFilter() { return getOr(FEATURE_MULTIBLOCK_FILTER, true); }
     public static boolean autoWaterChange() { return getOr(FEATURE_AUTO_WATER_CHANGE, true); }
     public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
+    // M25
+    public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }
 
     private CommonConfig() {}
 }

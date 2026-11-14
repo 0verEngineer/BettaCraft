@@ -20,6 +20,7 @@ The spike-topped apple snail (*Pomacea diffusa*) from the Amazon basin: a large 
 | Size in the game | about 5 cm (0.4 blocks) |
 | Temperature | 20–30 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 6.8–8.6, TDS 100–700 ppm |
 | Breeding | male and female; a pink clutch on the glass above the water line, 5–10 young |
 | Growing up | about 4 days |
 | Algae | grazes 1.5 glass faces a day |

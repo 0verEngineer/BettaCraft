@@ -24,6 +24,7 @@ The yellowtail damselfish (*Chrysiptera parasema*) from the western Pacific: a b
 | Size in the game | about 4 cm (0.33 blocks) |
 | Temperature | 23–28 °C |
 | Water | sea water, also strong brackish water, hardy |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | alone or as a pair |
 | Swims | in the lower water |
 | Stocking | counts as 0.45 fish |

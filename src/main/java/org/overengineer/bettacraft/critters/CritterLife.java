@@ -42,7 +42,19 @@ public final class CritterLife {
      * @param hunting whether bettas hunt at all (config)
      */
     public record Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
-                      Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage) {
+                      Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage,
+                      double ph, double tds) {
+        /** M23 and M24: without water chemistry (NaN: nobody minds it). */
+        public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
+                   Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage) {
+            this(quality, qualityEnabled, temp, bettas, hiding, cap, breed, air, hunting, salinity, saltSpeed, oxygenShortage, Double.NaN, Double.NaN);
+        }
+
+        /** M25: how far the water is out of the species' pH / TDS range (0 without chemistry). */
+        public double chemDistance(CritterSpecies s) {
+            return Double.isNaN(ph) ? 0 : org.overengineer.bettacraft.chem.ChemTolerance.critter(s).distance(ph, tds);
+        }
+
         /** M22 and earlier: without an oxygen shortage. */
         public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
                    Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed) {
@@ -59,7 +71,7 @@ public final class CritterLife {
         }
     }
 
-    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN }
+    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN, CHEMISTRY }
 
     /** What happened in a step (for the tank log and the GameTests). */
     public static final class Result {
@@ -191,6 +203,13 @@ public final class CritterLife {
                 rate += sr;
                 if (cause == null || sr > rate - sr) cause = Cause.SALINITY;
             }
+            // M25: pH / TDS far out of the species' range (a little out only slows the breeding)
+            double cd = env.chemDistance(c.species);
+            if (cd >= org.overengineer.bettacraft.chem.ChemTolerance.BAD_FROM) {
+                double cr = chemRate(cd);
+                rate += cr;
+                if (cause == null || cr > rate - cr) cause = Cause.CHEMISTRY;
+            }
             if (c.soft()) rate *= 1.5;
             if (rate > 0 && rnd.nextDouble() < 1 - Math.exp(-rate * days)) die(c, cause == null ? Cause.WATER : cause, r);
         }
@@ -314,9 +333,21 @@ public final class CritterLife {
         return null;
     }
 
-    /** Whether conditions allow a brood: fed, water not bad, temperature in the range. */
+    /** M25: death rate per day of water this far out of the pH / TDS range (from {@link org.overengineer.bettacraft.chem.ChemTolerance#BAD_FROM}). */
+    public static double chemRate(double distance) {
+        return distance < org.overengineer.bettacraft.chem.ChemTolerance.BAD_FROM ? 0 : 0.1 + 0.3 * (distance - org.overengineer.bettacraft.chem.ChemTolerance.BAD_FROM);
+    }
+
+    /** Whether conditions allow a brood: fed, water not bad, temperature in the range (M25: and pH / TDS). */
     public static double fitness(Critter c, Env env) {
         if (c.hunger >= 1) return 0;
+        double cd = env.chemDistance(c.species);
+        if (cd >= org.overengineer.bettacraft.chem.ChemTolerance.BAD_FROM) return 0;
+        if (cd > 1e-6) return Math.min(0.5, fitnessBase(c, env));
+        return fitnessBase(c, env);
+    }
+
+    private static double fitnessBase(Critter c, Env env) {
         float t = env.temp();
         if (t < c.species.minTemp() + 1 || t > c.species.maxTemp() - 1) return 0;
         if (env.qualityEnabled() && env.quality() < c.species.badWater() + 0.1F) return 0.2;

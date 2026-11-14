@@ -25,6 +25,7 @@ Das Gestreifte Seepferdchen (*Hippocampus erectus*) aus dem westlichen Atlantik,
 | Temperatur | 18–27 °C |
 | Zuchttemperatur | 21–25 °C |
 | Wasser | Meerwasser, auch starkes Brackwasser, empfindlich |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | im unteren Wasser |
 | Besatz | zählt als 1,5 Fisch |

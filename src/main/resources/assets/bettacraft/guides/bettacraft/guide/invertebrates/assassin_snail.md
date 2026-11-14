@@ -20,6 +20,7 @@ The assassin snail (*Clea helena*) from South-East Asia: a yellow and brown band
 | Size in the game | about 2 cm (0.17 blocks) |
 | Temperature | 20–30 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 6.8–8.6, TDS 100–700 ppm |
 | Breeding | male and female, rarely one young at a time, 1–1 young |
 | Growing up | about 6 days |
 | Climbs the glass | no |

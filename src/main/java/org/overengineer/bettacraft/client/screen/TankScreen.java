@@ -102,6 +102,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     /** M24: tooltip of the nitrate line in the water tab and its y. */
     private Component nitrateTip;
     private int nitrateTipY;
+    /** M25: tooltip of the water chemistry line in the water tab and its y. */
+    private List<Component> chemTip;
+    private int chemTipY;
 
     private static String toText(net.minecraft.util.FormattedCharSequence s) {
         StringBuilder b = new StringBuilder();
@@ -698,6 +701,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     pendingTooltip = new java.util.ArrayList<>();
                     for (var l : font.split(nitrateTip, 220)) pendingTooltip.add(Component.literal(toText(l)));
                 }
+                // M25: what the water chemistry is made of and whom it does not suit
+                if (chemTip != null && mx >= 11 && mx <= 237 && my >= chemTipY - 1 && my < chemTipY + 10) pendingTooltip = new java.util.ArrayList<>(chemTip);
             }
             case DEVICES -> drawDevices(g, v);
             case PLANTS -> {
@@ -814,8 +819,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
         line(g, Component.translatable("gui.bettacraft.water.volume", v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
         y += 11;
-        // M11: what the tank is made of (glass and style); M20: in salt or brackish water the salt values instead
-        if (w.salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM) fitLine(g, salinityLine(w), x, y, TEXT_LIGHT, 226);
+        // M11: what the tank is made of (glass and style); M20: in salt or brackish water the salt values instead;
+        // M25: with water chemistry its values (salt water: the pH after the salt), the glass moves to the last line
+        boolean salty = w.salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM;
+        chemTip = null;
+        if (w.chemOn) {
+            fitLine(g, salty ? salinityLine(w).copy().append(Component.literal(" · pH " + org.overengineer.bettacraft.chem.ChemItem.ph(w.ph)).withStyle(phColor(w)))
+                    : chemLine(w), x, y, TEXT_LIGHT, 226);
+            chemTip = chemTooltip(w, salty);
+            chemTipY = y;
+        } else if (salty) fitLine(g, salinityLine(w), x, y, TEXT_LIGHT, 226);
         else line(g, org.overengineer.bettacraft.compat.info.InfoLines.glassLine(v.glass, v.style.getSerializedName()), x, y, TEXT_LIGHT);
         y += 11;
         if (w.qualityEnabled) {
@@ -894,7 +907,55 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
         y += 13;
         if (w.reefLine()) fitLine(g, reefLine(w), x, y, TEXT_LIGHT, 226); // M20: skimmers, pumps, live rock
+        else if (w.chemOn) line(g, org.overengineer.bettacraft.compat.info.InfoLines.glassLine(v.glass, v.style.getSerializedName()), x, y, TEXT_LIGHT); // M25
         else line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    /** M25: "TDS 250 ppm (medium hard) · pH 7.5 (neutral, steady)", red when the water does not suit an animal. */
+    private static Component chemLine(TankView.Water w) {
+        MutableComponent hard = Component.translatable("gui.bettacraft.chem.hardness." + w.hardness);
+        MutableComponent c = Component.translatable("gui.bettacraft.water.chem", Math.round(w.tds), hard,
+                Component.literal(org.overengineer.bettacraft.chem.ChemItem.ph(w.ph)).withStyle(phColor(w)),
+                org.overengineer.bettacraft.chem.ChemItem.trend(w.ph, w.phTarget));
+        if (!w.chemOff.isEmpty()) c.append(Component.literal(" (!)").withStyle(anyBad(w) ? ChatFormatting.RED : ChatFormatting.GOLD));
+        return c;
+    }
+
+    private static boolean anyBad(TankView.Water w) {
+        for (String s : w.chemOff) if (s.endsWith("|bad")) return true;
+        return false;
+    }
+
+    private static ChatFormatting phColor(TankView.Water w) {
+        return w.ph < 6.5 ? ChatFormatting.GOLD : w.ph <= 7.5 ? ChatFormatting.GREEN : ChatFormatting.AQUA;
+    }
+
+    /** M25: the drivers of the pH, the CO2 and the animals the water does not suit. */
+    private static List<Component> chemTooltip(TankView.Water w, boolean salty) {
+        List<Component> out = new ArrayList<>();
+        out.add(Component.translatable("gui.bettacraft.water.chem_tip.values", Math.round(w.tds), org.overengineer.bettacraft.chem.ChemItem.ph(w.ph),
+                org.overengineer.bettacraft.chem.ChemItem.ph(w.phTarget), fmt(w.co2)).withStyle(ChatFormatting.WHITE));
+        List<Component> drivers = new ArrayList<>();
+        if (w.acid > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.soil", Math.round(w.acid * 100)));
+        if (w.alkaline > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.lime", Math.round(w.alkaline * 100)));
+        if (w.peat > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.peat", Math.round(w.peat * 100)));
+        if (w.tannin > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.leaves", Math.round(w.tannin * 100)));
+        if (w.wood > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.wood", Math.round(w.wood * 100)));
+        if (salty) out.add(Component.translatable("gui.bettacraft.water.chem_tip.salt").withStyle(ChatFormatting.GRAY));
+        if (drivers.isEmpty()) out.add(Component.translatable("gui.bettacraft.water.chem_tip.nothing").withStyle(ChatFormatting.GRAY));
+        else {
+            MutableComponent l = Component.translatable("gui.bettacraft.water.chem_tip.drivers").withStyle(ChatFormatting.GRAY);
+            for (int i = 0; i < drivers.size(); i++) l.append(i == 0 ? " " : ", ").append(drivers.get(i));
+            out.add(l);
+        }
+        for (String s : w.chemOff) {
+            int bar = s.indexOf('|');
+            boolean bad = s.endsWith("|bad");
+            out.add(Component.translatable(bad ? "gui.bettacraft.water.chem_tip.bad" : "gui.bettacraft.water.chem_tip.stress",
+                    Component.translatable(bar < 0 ? s : s.substring(0, bar))).withStyle(bad ? ChatFormatting.RED : ChatFormatting.GOLD));
+        }
+        out.add(Component.translatable("gui.bettacraft.water.chem_tip.measure").withStyle(ChatFormatting.DARK_GRAY));
+        return out;
     }
 
     /** M23: tab Devices: oxygen and aeration, fry and the intake sponges, the lights with dimmer and daylight timer. */
@@ -1458,6 +1519,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             notes.add(Component.translatable("gui.bettacraft.tm.oxygen").withStyle(ChatFormatting.RED)); // M23
         if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_NITRATE) != 0)
             notes.add(Component.translatable("gui.bettacraft.tm.nitrate").withStyle(ChatFormatting.GOLD)); // M24
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_CHEMISTRY) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.chemistry").withStyle(ChatFormatting.GOLD)); // M25
         if (d.getBoolean("hitched")) notes.add(Component.translatable("gui.bettacraft.tm.hitched").withStyle(ChatFormatting.AQUA));
         if (d.getFloat("gravid") >= 0) notes.add(Component.translatable(s.seahorse() ? "gui.bettacraft.tm.pouch" : "gui.bettacraft.tm.gravid",
                 Math.round(d.getFloat("gravid") * 100)).withStyle(ChatFormatting.LIGHT_PURPLE));

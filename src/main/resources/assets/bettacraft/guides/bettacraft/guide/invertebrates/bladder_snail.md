@@ -20,6 +20,7 @@ The bladder snail (*Physella acuta*), found in still water all over the world: t
 | Size in the game | about 1 cm (0.07 blocks) |
 | Temperature | 10–30 °C |
 | Water | fresh water, hardy |
+| Water chemistry | pH 6.2–8.6, TDS 50–800 ppm |
 | Breeding | hermaphrodite: one animal is enough, 1–2 young |
 | Growing up | about 2 days |
 | Algae | grazes 0.3 glass faces a day |

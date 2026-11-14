@@ -128,17 +128,17 @@ public final class MultiblockFilter {
 
     // ------------------------------------------------------------------ which filters serve which tank
 
-    private record Serving(double blocks, long time) {}
+    private record Serving(double blocks, double peat, long time) {}
 
     private static final Map<Level, Map<BlockPos, Map<BlockPos, Serving>>> SERVING = new WeakHashMap<>();
     /** A filter counts for its tank this long after its last run. */
     public static final long SERVE_TICKS = 40;
 
     /** The pump head reports: it cleans {@code blocks} water blocks of the tank with this controller now. */
-    static void serve(Level level, BlockPos controller, BlockPos head, double blocks) {
+    static void serve(Level level, BlockPos controller, BlockPos head, double blocks, double peat) {
         synchronized (SERVING) {
             SERVING.computeIfAbsent(level, k -> new HashMap<>()).computeIfAbsent(controller.immutable(), k -> new HashMap<>())
-                    .put(head.immutable(), new Serving(blocks, level.getGameTime()));
+                    .put(head.immutable(), new Serving(blocks, peat, level.getGameTime()));
         }
     }
 
@@ -164,6 +164,20 @@ public final class MultiblockFilter {
                 b += s.blocks;
             }
             return new double[]{n, b};
+        }
+    }
+
+    /** M25: water blocks the peat of the multiblock filters running for this tank softens now. */
+    public static double peat(Level level, TankBlockEntity c) {
+        if (!CommonConfig.multiblockFilter()) return 0;
+        synchronized (SERVING) {
+            var m = SERVING.get(level);
+            var e = m == null ? null : m.get(c.getBlockPos());
+            if (e == null) return 0;
+            double p = 0;
+            long now = level.getGameTime();
+            for (Serving s : e.values()) if (now - s.time <= SERVE_TICKS && now >= s.time) p += s.peat;
+            return p;
         }
     }
 

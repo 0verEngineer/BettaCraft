@@ -81,7 +81,8 @@ public final class BettaCare {
         double salt = org.overengineer.bettacraft.reef.SaltTolerance.shock(org.overengineer.bettacraft.reef.SaltTolerance.BETTA, tank);
         BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, controller.isCrowded() && fish.isAdult(),
                 org.overengineer.bettacraft.tank.TankWater.isBad(tank) || salt >= org.overengineer.bettacraft.tank.Salinity.STRESS_FROM
-                        || org.overengineer.bettacraft.tank.TankAeration.lowFor(tank, true), salt); // M23: labyrinth fish hardly mind low oxygen
+                        || org.overengineer.bettacraft.tank.TankAeration.lowFor(tank, true) // M23: labyrinth fish hardly mind low oxygen
+                        || org.overengineer.bettacraft.chem.TankChemistry.bad(tank, org.overengineer.bettacraft.chem.ChemTolerance.BETTA), salt); // M25: pH / TDS far out of the betta's range
         boolean wasSick = fish.health.isSick();
         BettaHealth.Event event;
         if (days > 1.0) {
@@ -180,13 +181,16 @@ public final class BettaCare {
         if (fish.health.isHungry(p)) causes.add(Component.translatable("cause.bettacraft.hunger"));
         if (c.tempBad()) causes.add(Component.translatable("cause.bettacraft.temperature"));
         if (c.crowdBad()) causes.add(Component.translatable("cause.bettacraft.overcrowding"));
-        if (c.waterBad()) causes.add(Component.translatable("cause.bettacraft.water_quality"));
+        boolean chem = org.overengineer.bettacraft.chem.TankChemistry.bad(controller.getTank(), org.overengineer.bettacraft.chem.ChemTolerance.BETTA); // M25
+        boolean quality = c.waterBad() && (!chem || org.overengineer.bettacraft.tank.TankWater.isBad(controller.getTank()));
+        if (chem) causes.add(Component.translatable("cause.bettacraft.water_chemistry"));
+        if (quality) causes.add(Component.translatable("cause.bettacraft.water_quality"));
         if (causes.isEmpty()) causes.add(Component.translatable("cause.bettacraft.illness"));
         Component cause = causes.getFirst();
         for (int i = 1; i < causes.size(); i++) cause = Component.translatable("cause.bettacraft.and", cause, causes.get(i));
         announce(level, fish, cause);
         String causeKey = c.saltBad() ? "salinity" : c.tempBad() && fish.health.isHungry(p) ? "both" : fish.health.isHungry(p) ? "hunger"
-                : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : c.waterBad() ? "water_quality" : "illness";
+                : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : chem && !quality ? "water_chemistry" : c.waterBad() ? "water_quality" : "illness";
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + causeKey);
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();

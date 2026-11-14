@@ -20,6 +20,7 @@ Die Turmdeckelschnecke (*Melanoides tuberculata*) aus Afrika und Südasien: ein 
 | Größe im Spiel | etwa 2 cm (0,17 Blöcke) |
 | Temperatur | 18–32 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 6,2–8,6, TDS 50–800 ppm |
 | Vermehrung | Zwitter: ein Tier genügt, 1–2 Junge |
 | Heranwachsen | etwa 3 Tage |
 | Algen | weidet 0,1 Scheiben am Tag ab |

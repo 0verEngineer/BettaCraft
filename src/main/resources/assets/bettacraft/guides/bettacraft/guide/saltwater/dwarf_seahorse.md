@@ -25,6 +25,7 @@ The dwarf seahorse (*Hippocampus zosterae*) from the seagrass meadows of Florida
 | Temperature | 21–28 °C |
 | Breeding temperature | 24–27 °C |
 | Water | sea water, also strong brackish water, sensitive |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | alone or as a pair |
 | Swims | in the lower water |
 | Stocking | counts as 0.3 fish |

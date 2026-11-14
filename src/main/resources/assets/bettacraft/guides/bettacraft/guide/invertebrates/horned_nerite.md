@@ -20,6 +20,7 @@ The horned nerite (*Clithon corona*) from the brackish rivers of South-East Asia
 | Size in the game | about 1.5 cm (0.13 blocks) |
 | Temperature | 20–28 °C |
 | Water | fresh, brackish or sea water, normal |
+| Water chemistry | pH 6.8–8.6, TDS 100–700 ppm |
 | Breeding | no young in fresh water |
 | Algae | grazes 1.6 glass faces a day |
 | Climbs the glass | yes |

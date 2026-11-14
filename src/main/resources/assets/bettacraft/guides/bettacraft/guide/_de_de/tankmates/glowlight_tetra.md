@@ -27,6 +27,7 @@ Durchscheinend mit einer orangeroten Leuchtlinie von der Schnauze bis zum Schwan
 | Temperatur | 23–28 °C |
 | Zuchttemperatur | 25–28 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,0–7,8, TDS 0–450 ppm |
 | Schwarm | ab 6 Tieren |
 | Schwimmt | in der Mitte |
 | Besatz | zählt als 0,35 Fisch |

@@ -42,6 +42,11 @@ public final class InteriorEquipment {
     /** M24: plumbing pieces (bulkhead connection, pipes, outlets) -> {@code Plumb} code; bumped version on every change but the outlets' activity. */
     final Long2IntOpenHashMap plumbing = new Long2IntOpenHashMap();
     int plumbingVersion;
+    /**
+     * M25 water chemistry: floor blocks (all, with soil, with limestone), limestone rocks and driftwood blocks in the
+     * volume. Absent in regions of earlier versions: they are counted by a rescan.
+     */
+    int floorBlocks, acidFloor, limeFloor, limeRocks, driftwood;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -57,6 +62,24 @@ public final class InteriorEquipment {
     public LongOpenHashSet spongeFilters() { return spongeFilters; }
     public LongOpenHashSet airStones() { return airStones; }
     public Long2IntOpenHashMap plumbing() { return plumbing; }
+    // M25
+    public int floorBlocks() { return floorBlocks; }
+    public int acidFloor() { return acidFloor; }
+    public int limeFloor() { return limeFloor; }
+    public int limeRocks() { return limeRocks; }
+    public int driftwood() { return driftwood; }
+
+    /** M25: a floor block's substrate changed ({@code null} = none): the soil / limestone counts follow. */
+    public void onSubstrate(@javax.annotation.Nullable BlockState old, @javax.annotation.Nullable BlockState neu) {
+        if (old != null) {
+            if (old.is(ModTags.ACID_SUBSTRATE)) acidFloor = Math.max(0, acidFloor - 1);
+            else if (old.is(ModTags.LIMESTONE)) limeFloor = Math.max(0, limeFloor - 1);
+        }
+        if (neu != null) {
+            if (neu.is(ModTags.ACID_SUBSTRATE)) acidFloor++;
+            else if (neu.is(ModTags.LIMESTONE)) limeFloor++;
+        }
+    }
     public int plumbingVersion() { return plumbingVersion; }
 
     /** M23: regulator 0..10 of the device at this local position. */
@@ -121,6 +144,8 @@ public final class InteriorEquipment {
     }
 
     private void remove(long key, BlockState s) {
+        if (s.is(ModTags.LIMESTONE)) limeRocks = Math.max(0, limeRocks - 1); // M25
+        else if (s.is(ModTags.DRIFTWOOD)) driftwood = Math.max(0, driftwood - 1);
         if (s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER)) {
             power.remove(key);
             intakeSponges.remove(key);
@@ -144,6 +169,8 @@ public final class InteriorEquipment {
     }
 
     private void add(long key, BlockState s) {
+        if (s.is(ModTags.LIMESTONE)) limeRocks++; // M25
+        else if (s.is(ModTags.DRIFTWOOD)) driftwood++;
         boolean device = s.is(ModBlocks.AIR_STONE.get()) || s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER)
                 && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
         if (device) {
@@ -204,6 +231,7 @@ public final class InteriorEquipment {
         liveRock = 0;
         spawningVersion++;
         substrate = 0;
+        floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = 0;
         needsScan = false;
         if (!r.built()) return;
         int x0 = r.originX(), z0 = r.originZ();
@@ -216,7 +244,11 @@ public final class InteriorEquipment {
                 });
         InteriorWorldOps.forEachBlock(interior, x0, InteriorRegion.FLOOR_Y, z0, x0 + r.sizeX() - 1, InteriorRegion.FLOOR_Y, z0 + r.sizeZ() - 1,
                 (x, y, z, s) -> {
-                    if (s.is(ModBlocks.INTERIOR_FLOOR.get()) && s.getValue(InteriorFloorBlock.SUBSTRATE)) substrate++;
+                    if (!s.is(ModBlocks.INTERIOR_FLOOR.get())) return;
+                    floorBlocks++;
+                    if (!s.getValue(InteriorFloorBlock.SUBSTRATE)) return;
+                    substrate++;
+                    if (interior.getBlockEntity(new BlockPos(x, y, z)) instanceof InteriorFloorBlockEntity be) onSubstrate(null, be.substrate());
                 });
     }
 
@@ -268,6 +300,7 @@ public final class InteriorEquipment {
         t.putLongArray("filters", filters.toLongArray());
         t.putLongArray("floating", floating.toLongArray());
         t.putInt("substrate", substrate);
+        t.putIntArray("chem", new int[]{floorBlocks, acidFloor, limeFloor, limeRocks, driftwood}); // M25
         t.putLongArray("caves", caveBlocks.toLongArray()); // M19
         t.putLongArray("mops", mopBlocks.toLongArray());
         t.putLongArray("pumps", pumps.toLongArray()); // M20
@@ -336,5 +369,16 @@ public final class InteriorEquipment {
         spawningVersion++;
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");
+        int[] chem = t.getIntArray("chem"); // M25: regions of earlier versions count the soil, limestone and wood once
+        if (chem.length == 5) {
+            floorBlocks = chem[0];
+            acidFloor = chem[1];
+            limeFloor = chem[2];
+            limeRocks = chem[3];
+            driftwood = chem[4];
+        } else {
+            floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = 0;
+            needsScan = true;
+        }
     }
 }

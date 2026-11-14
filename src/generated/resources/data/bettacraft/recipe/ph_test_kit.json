@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:glass_bottle"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "tag": "c:dyes/red"
+    },
+    {
+      "tag": "c:dyes/yellow"
+    },
+    {
+      "tag": "c:dyes/blue"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:ph_test_kit"
+  }
+}

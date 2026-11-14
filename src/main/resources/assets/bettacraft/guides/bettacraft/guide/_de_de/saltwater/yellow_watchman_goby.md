@@ -24,6 +24,7 @@ Die Gelbe Wächtergrundel (*Cryptocentrus cinctus*) aus den Lagunen des westlich
 | Größe im Spiel | etwa 5 cm (0,42 Blöcke) |
 | Temperatur | 22–28 °C |
 | Wasser | Meerwasser, normal |
+| Wasserchemie | pH 7,8–8,6 |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | am Boden |
 | Besatz | zählt als 0,6 Fisch |

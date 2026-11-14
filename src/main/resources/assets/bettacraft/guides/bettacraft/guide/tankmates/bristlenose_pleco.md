@@ -27,6 +27,7 @@ The best algae eater of the tankmates; males grow bristles on the snout. Also al
 | Temperature | 21–28 °C |
 | Breeding temperature | 23–27 °C |
 | Water | fresh water, hardy |
+| Water chemistry | pH 5.8–8.0, TDS 0–550 ppm |
 | Shoal | alone or as a pair |
 | Swims | on the glass and the bottom |
 | Stocking | counts as 1.2 fish |

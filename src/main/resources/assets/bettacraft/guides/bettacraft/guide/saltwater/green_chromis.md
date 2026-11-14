@@ -24,6 +24,7 @@ The blue-green chromis (*Chromis viridis*) from the Indo-Pacific: small, shimmer
 | Size in the game | about 4.5 cm (0.38 blocks) |
 | Temperature | 24–28 °C |
 | Water | sea water, normal |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | from 5 fish |
 | Swims | in the middle |
 | Stocking | counts as 0.5 fish |

@@ -27,6 +27,7 @@ Gold-green with a dark side stripe and yellow-orange fins.
 | Temperature | 22–27 °C |
 | Breeding temperature | 23–26 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.8–8.0, TDS 0–500 ppm |
 | Shoal | from 6 fish |
 | Swims | on the bottom |
 | Stocking | counts as 0.55 fish |

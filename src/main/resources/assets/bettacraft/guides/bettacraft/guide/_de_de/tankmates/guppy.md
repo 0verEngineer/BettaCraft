@@ -27,6 +27,7 @@ Männchen mit großen bunten Schwänzen, Weibchen größer und grau. Betta-Männ
 | Temperatur | 22–28 °C |
 | Zuchttemperatur | 23–28 °C |
 | Wasser | Süß- oder Brackwasser, robust |
+| Wasserchemie | pH 6,8–8,6, TDS 100–800 ppm |
 | Schwarm | ab 3 Tieren |
 | Schwimmt | nahe der Oberfläche |
 | Besatz | zählt als 0,35 Fisch |

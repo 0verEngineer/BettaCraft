@@ -20,6 +20,7 @@ The Pacific cleaner shrimp (*Lysmata amboinensis*) from the Indo-Pacific: red an
 | Size in the game | about 5.5 cm (0.45 blocks) |
 | Temperature | 23–28 °C |
 | Water | sea water, sensitive |
+| Water chemistry | pH 7.8–8.6 |
 | Breeding | does not breed in a tank |
 | Algae | grazes 0.05 glass faces a day |
 | Climbs the glass | yes |

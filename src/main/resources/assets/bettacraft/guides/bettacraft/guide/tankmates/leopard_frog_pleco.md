@@ -27,6 +27,7 @@ A small pleco with yellow and black bands. Lives in caves and on the glass, eats
 | Temperature | 25–30 °C |
 | Breeding temperature | 27–30 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.8–8.0, TDS 0–550 ppm |
 | Shoal | alone or as a pair |
 | Swims | on the glass and the bottom |
 | Stocking | counts as 1 fish |

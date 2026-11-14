@@ -24,6 +24,7 @@ The yellow watchman goby (*Cryptocentrus cinctus*) from the lagoons of the weste
 | Size in the game | about 5 cm (0.42 blocks) |
 | Temperature | 22–28 °C |
 | Water | sea water, normal |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | alone or as a pair |
 | Swims | on the bottom |
 | Stocking | counts as 0.6 fish |

@@ -27,6 +27,7 @@ A sturdy, peaceful livebearer in many colours.
 | Temperature | 20–27 °C |
 | Breeding temperature | 22–26 °C |
 | Water | fresh or brackish water, hardy |
+| Water chemistry | pH 6.8–8.6, TDS 100–800 ppm |
 | Shoal | from 3 fish |
 | Swims | in the middle |
 | Stocking | counts as 0.5 fish |

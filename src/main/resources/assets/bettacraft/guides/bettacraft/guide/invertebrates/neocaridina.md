@@ -22,6 +22,7 @@ shrimp, overfeeding hardly fouls the water.
 | Size in the game | about 2.5 cm (0.2 blocks) |
 | Temperature | 18–28 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 6.2–8.2, TDS 80–500 ppm |
 | Breeding | male and female; the female carries the eggs, the young hatch fully formed, 3–8 young |
 | Growing up | about 3 days |
 | Algae | grazes 0.08 glass faces a day |

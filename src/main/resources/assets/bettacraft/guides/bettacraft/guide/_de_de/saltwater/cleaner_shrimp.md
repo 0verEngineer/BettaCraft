@@ -20,6 +20,7 @@ Die Weißband-Putzergarnele (*Lysmata amboinensis*) aus dem Indopazifik: rot-wei
 | Größe im Spiel | etwa 5,5 cm (0,45 Blöcke) |
 | Temperatur | 23–28 °C |
 | Wasser | Meerwasser, empfindlich |
+| Wasserchemie | pH 7,8–8,6 |
 | Vermehrung | vermehrt sich nicht im Aquarium |
 | Algen | weidet 0,05 Scheiben am Tag ab |
 | Klettert an der Scheibe | ja |

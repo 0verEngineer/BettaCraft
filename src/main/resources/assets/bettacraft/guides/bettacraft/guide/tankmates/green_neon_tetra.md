@@ -29,6 +29,7 @@ parents give blue young, a green fish can carry blue hidden).
 | Temperature | 24–30 °C |
 | Breeding temperature | 26–29 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 5.0–7.8, TDS 0–450 ppm |
 | Shoal | from 6 fish |
 | Swims | in the middle |
 | Stocking | counts as 0.25 fish |

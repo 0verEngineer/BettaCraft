@@ -96,8 +96,19 @@ public final class Substrate {
         if (!floor.getValue(InteriorFloorBlock.SUBSTRATE)) {
             level.setBlock(pos, floor.setValue(InteriorFloorBlock.SUBSTRATE, true), Block.UPDATE_CLIENTS);
         }
+        BlockState before = floor.getValue(InteriorFloorBlock.SUBSTRATE) && level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity o ? o.substrate() : null;
         if (level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity be) be.set(substrate, paid);
+        chemistry(level, pos, before, substrate); // M25
         return back;
+    }
+
+    /** M25: the region's soil / limestone counts follow a substrate change. */
+    private static void chemistry(ServerLevel level, BlockPos pos, @org.jetbrains.annotations.Nullable BlockState old, @org.jetbrains.annotations.Nullable BlockState neu) {
+        InteriorRegion r = InteriorManager.regionAt(level.getServer(), pos);
+        if (r != null) {
+            r.equipment().onSubstrate(old, neu);
+            InteriorRegions.get(level.getServer()).setDirty();
+        }
     }
 
     /** Removes the substrate. Returns the paid block (or empty). */
@@ -106,6 +117,7 @@ public final class Substrate {
         if (!isFloor(floor) || !floor.getValue(InteriorFloorBlock.SUBSTRATE)) return ItemStack.EMPTY;
         ItemStack back = level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity be && be.paid()
                 ? new ItemStack(be.substrate().getBlock()) : ItemStack.EMPTY;
+        if (level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity be) chemistry(level, pos, be.substrate(), null); // M25
         level.setBlock(pos, floor.setValue(InteriorFloorBlock.SUBSTRATE, false), Block.UPDATE_CLIENTS);
         level.removeBlockEntity(pos); // M17: no stale (paid) substrate left behind
         return back;

@@ -27,6 +27,7 @@ Dark with white dots and orange pectoral fins; one of the few corys for warm bet
 | Temperature | 24–30 °C |
 | Breeding temperature | 24–28 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.8–8.0, TDS 0–500 ppm |
 | Shoal | from 6 fish |
 | Swims | on the bottom |
 | Stocking | counts as 0.6 fish |

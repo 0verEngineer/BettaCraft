@@ -27,6 +27,7 @@ Black and white stripes, very warm, clean water and a cave. Eats meaty food, not
 | Temperature | 26–31 °C |
 | Breeding temperature | 28–31 °C |
 | Water | fresh water, sensitive |
+| Water chemistry | pH 5.8–8.0, TDS 0–550 ppm |
 | Shoal | alone or as a pair |
 | Swims | on the bottom |
 | Stocking | counts as 0.9 fish |

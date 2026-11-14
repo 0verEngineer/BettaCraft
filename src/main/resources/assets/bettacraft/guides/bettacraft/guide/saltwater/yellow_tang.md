@@ -24,6 +24,7 @@ The yellow tang (*Zebrasoma flavescens*) from the reefs of Hawaii: a bright yell
 | Size in the game | about 9 cm (0.75 blocks) |
 | Temperature | 24–28 °C |
 | Water | sea water, sensitive |
+| Water chemistry | pH 7.8–8.6 |
 | Shoal | alone or as a pair |
 | Swims | in the middle |
 | Stocking | counts as 2.5 fish |

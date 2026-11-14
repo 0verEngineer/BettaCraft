@@ -284,6 +284,17 @@ public final class DevSmokeUpgrade {
             if (t.nitrate() > 0.5F) problems.add("tank " + c.getBlockPos().toShortString() + ": nitrate " + t.nitrate() + " instead of 0");
             if (t.lastWaterChange() >= 0) problems.add("tank " + c.getBlockPos().toShortString() + ": a water change noted");
             m24Checked++;
+            // M25: tanks of earlier versions hold tap water and no animal of ours minds it
+            if (Math.abs(t.tds() - org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS) > 5 || Math.abs(t.ph() - org.overengineer.bettacraft.chem.WaterChemistry.startPh(t.salinity())) > 0.1)
+                problems.add("tank " + c.getBlockPos().toShortString() + ": TDS " + t.tds() + " / pH " + t.ph() + " instead of tap water");
+            for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, t)) {
+                if (org.overengineer.bettacraft.chem.TankChemistry.off(t, org.overengineer.bettacraft.chem.ChemTolerance.of(e)))
+                    problems.add("tank " + c.getBlockPos().toShortString() + ": the water does not suit " + e.getName().getString());
+            }
+            for (var k : t.critters()) {
+                if (k.alive() && org.overengineer.bettacraft.chem.TankChemistry.off(t, org.overengineer.bettacraft.chem.ChemTolerance.critter(k.species)))
+                    problems.add("tank " + c.getBlockPos().toShortString() + ": the water does not suit " + k.species.id());
+            }
         }
         JsonObject o = new JsonObject();
         o.addProperty("pos", c.getBlockPos().asLong());

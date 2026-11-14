@@ -27,6 +27,7 @@ Blau-rot gestreifte Männchen mit langen Fühlern; ein Labyrinthfisch wie der Be
 | Temperatur | 24–29 °C |
 | Zuchttemperatur | 26–29 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 6,0–8,0, TDS 0–500 ppm |
 | Schwarm | einzeln oder als Paar |
 | Schwimmt | nahe der Oberfläche |
 | Besatz | zählt als 1 Fisch |

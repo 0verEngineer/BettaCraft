@@ -27,6 +27,7 @@ Cream with a black eye mask, black dorsal fin and a spot at the tail base. Likes
 | Temperature | 20–26 °C |
 | Breeding temperature | 21–25 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.8–8.0, TDS 0–500 ppm |
 | Shoal | from 6 fish |
 | Swims | on the bottom |
 | Stocking | counts as 0.45 fish |

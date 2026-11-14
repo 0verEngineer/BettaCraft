@@ -20,6 +20,7 @@ Die Blasenschnecke (*Physella acuta*), weltweit in stillen Gewässern zu Hause: 
 | Größe im Spiel | etwa 1 cm (0,07 Blöcke) |
 | Temperatur | 10–30 °C |
 | Wasser | Süßwasser, robust |
+| Wasserchemie | pH 6,2–8,6, TDS 50–800 ppm |
 | Vermehrung | Zwitter: ein Tier genügt, 1–2 Junge |
 | Heranwachsen | etwa 2 Tage |
 | Algen | weidet 0,3 Scheiben am Tag ab |

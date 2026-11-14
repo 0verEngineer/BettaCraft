@@ -27,6 +27,7 @@ Ein aalartiges, gebändertes Dornauge, das tagsüber versteckt ruht und nachts d
 | Temperatur | 24–30 °C |
 | Zuchttemperatur | 25–28 °C |
 | Wasser | Süßwasser, normal |
+| Wasserchemie | pH 5,0–7,8, TDS 0–450 ppm |
 | Schwarm | ab 5 Tieren |
 | Schwimmt | am Boden |
 | Besatz | zählt als 0,4 Fisch |

@@ -20,7 +20,7 @@ Was in die Kammern des [Multiblock-Filters](multiblock_filter.md) kommt:
 | <ItemLink id="bettacraft:filter_foam" /> | 12 Wasserblöcke (mechanisch) | setzt sich am schnellsten zu; ein verstopfter Schwamm bremst auch den Durchfluss |
 | <ItemLink id="bettacraft:ceramic_rings" /> | 24 Wasserblöcke (Bakterien) | setzt sich halb so schnell zu |
 | <ItemLink id="bettacraft:activated_carbon" /> | 16 Wasserblöcke (chemisch) | verbraucht sich, dann ersetzen |
-| <ItemLink id="bettacraft:filter_peat" /> | 6 Wasserblöcke; macht das Wasser weich (pH kommt später) | verbraucht sich langsam |
+| <ItemLink id="bettacraft:filter_peat" /> | 6 Wasserblöcke; macht das Wasser weich und senkt den [pH](../aquarium/water_chemistry.md) | verbraucht sich langsam |
 
 Medien verschmutzen, während der Filter läuft, schneller mit mehr Fischen (`multiblockFilter.dirtPerDay`). Tooltip und
 Filter-Fenster zeigen den Schmutz; ein verstopfter Schwamm oder verstopfte Keramik reinigt noch ein Fünftel.

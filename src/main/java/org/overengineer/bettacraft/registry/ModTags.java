@@ -75,6 +75,12 @@ public final class ModTags {
     public static final TagKey<Block> EPIPHYTE_SURFACES = TagKey.create(Registries.BLOCK, BettaCraft.id("epiphyte_surfaces"));
     /** M13: blocks rooted aquarium plants grow in besides the interior floor with a substrate: sand, gravel, dirt ... */
     public static final TagKey<Block> PLANT_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("plant_substrate"));
+    /** M25: substrate that lowers the pH and softens the water (soil, mud). */
+    public static final TagKey<Block> ACID_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("acid_substrate"));
+    /** M25: limestone: as substrate or rocks in the tank it raises the pH and hardens the water. */
+    public static final TagKey<Block> LIMESTONE = TagKey.create(Registries.BLOCK, BettaCraft.id("limestone"));
+    /** M25: driftwood in the tank (logs, roots): releases tannins, lowers the pH a little. */
+    public static final TagKey<Block> DRIFTWOOD = TagKey.create(Registries.BLOCK, BettaCraft.id("driftwood"));
     /** M20: where corals and the anemone can be glued on (reef rock, live rock, coral blocks). */
     public static final TagKey<Block> REEF_SURFACES = TagKey.create(Registries.BLOCK, BettaCraft.id("reef_surfaces"));
     /** M13: all aquarium plant items. */

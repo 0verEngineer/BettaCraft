@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "cookingtime": 600,
+  "experience": 0.05,
+  "ingredient": {
+    "item": "minecraft:jungle_leaves"
+  },
+  "result": {
+    "count": 1,
+    "id": "bettacraft:almond_leaf"
+  }
+}

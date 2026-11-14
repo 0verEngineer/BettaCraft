@@ -256,6 +256,16 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> ACTIVATED_CARBON = media("activated_carbon", org.overengineer.bettacraft.filter.FilterMedium.CARBON);
     public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> FILTER_PEAT = media("filter_peat", org.overengineer.bettacraft.filter.FilterMedium.PEAT);
 
+    // M25: water chemistry
+    public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> TDS_METER = chem("tds_meter", org.overengineer.bettacraft.chem.ChemItem.Kind.TDS_METER, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> PH_TEST_KIT = chem("ph_test_kit", org.overengineer.bettacraft.chem.ChemItem.Kind.PH_TEST, new Item.Properties().durability(50));
+    public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> REMINERALISING_SALT = chem("remineralising_salt", org.overengineer.bettacraft.chem.ChemItem.Kind.REMINERALISER, new Item.Properties());
+    public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> ALMOND_LEAF = chem("almond_leaf", org.overengineer.bettacraft.chem.ChemItem.Kind.ALMOND_LEAF, new Item.Properties());
+
+    private static DeferredItem<org.overengineer.bettacraft.chem.ChemItem> chem(String id, org.overengineer.bettacraft.chem.ChemItem.Kind kind, Item.Properties props) {
+        return ITEMS.register(id, () -> new org.overengineer.bettacraft.chem.ChemItem(kind, props));
+    }
+
     private static DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> plumbing(
             net.neoforged.neoforge.registries.DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> block, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return ITEMS.register(block.getId().getPath(), () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingItem(block.get(), kind, new Item.Properties()));

@@ -27,6 +27,7 @@ Males with big colourful tails, females bigger and grey. Male bettas go for male
 | Temperature | 22–28 °C |
 | Breeding temperature | 23–28 °C |
 | Water | fresh or brackish water, hardy |
+| Water chemistry | pH 6.8–8.6, TDS 100–800 ppm |
 | Shoal | from 3 fish |
 | Swims | near the surface |
 | Stocking | counts as 0.35 fish |

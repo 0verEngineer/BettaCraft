@@ -35,6 +35,7 @@ navigation:
 | [Schrank](equipment/cabinet.md) | Unterbau für das Aquarium mit Platz für Filter und Futter |
 | [Abdeckung](equipment/tank_lid.md) | verhindert, dass das Wasser verdunstet |
 | [Werkzeuge und Behälter](equipment/tools.md) | Kescher, Fischbeutel, Algenschaber, Spiegelstab, Ablaichkasten |
+| [TDS-Messstift und pH-Tropfentest](equipment/water_tests.md) | messen die [Wasserchemie](aquarium/water_chemistry.md) |
 
 Standardmäßig braucht keine Ausrüstung Strom; ein Server kann das einschalten (siehe [Strom](equipment/power.md)).
 

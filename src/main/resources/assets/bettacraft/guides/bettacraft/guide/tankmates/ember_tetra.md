@@ -27,6 +27,7 @@ A tiny, glowing orange tetra, peaceful and good with bettas.
 | Temperature | 22–29 °C |
 | Breeding temperature | 25–28 °C |
 | Water | fresh water, normal |
+| Water chemistry | pH 5.0–7.8, TDS 0–450 ppm |
 | Shoal | from 6 fish |
 | Swims | in the middle |
 | Stocking | counts as 0.2 fish |

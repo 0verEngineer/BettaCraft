@@ -20,6 +20,7 @@ Die Mexikanische Turboschnecke (*Turbo fluctuosa*) aus dem Golf von Kalifornien:
 | Größe im Spiel | etwa 3,5 cm (0,3 Blöcke) |
 | Temperatur | 22–28 °C |
 | Wasser | Meerwasser, empfindlich |
+| Wasserchemie | pH 7,8–8,6 |
 | Vermehrung | vermehrt sich nicht im Aquarium |
 | Algen | weidet 2,5 Scheiben am Tag ab |
 | Klettert an der Scheibe | ja |

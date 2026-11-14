@@ -92,6 +92,8 @@ public final class ModCreativeTabs {
                         ModItems.SPRAY_BAR, ModItems.FILTER_CHAMBER, ModItems.FILTER_PUMP_HEAD, ModItems.FILTER_INLET, ModItems.FILTER_OUTLET,
                         ModItems.FILTER_FOAM, ModItems.CERAMIC_RINGS, ModItems.ACTIVATED_CARBON, ModItems.FILTER_PEAT, ModItems.RESERVOIR,
                         ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER)) out.accept(it.get());
+                // M25: water chemistry
+                for (var it : java.util.List.of(ModItems.TDS_METER, ModItems.PH_TEST_KIT, ModItems.REMINERALISING_SALT, ModItems.ALMOND_LEAF)) out.accept(it.get());
                 out.accept(ModItems.TANK_LID.get());
                 out.accept(ModItems.MIRROR_STICK.get());
                 out.accept(ModItems.AQUARIUM_NET.get());

@@ -20,6 +20,7 @@ The blue-leg hermit crab (*Clibanarius tricolor*) from the Caribbean: a small cr
 | Size in the game | about 2.5 cm (0.2 blocks) |
 | Temperature | 22–28 °C |
 | Water | sea water, also strong brackish water, normal |
+| Water chemistry | pH 7.8–8.6 |
 | Breeding | does not breed in a tank |
 | Algae | grazes 0.8 glass faces a day |
 | Climbs the glass | yes |
