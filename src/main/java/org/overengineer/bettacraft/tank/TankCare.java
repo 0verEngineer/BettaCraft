@@ -84,6 +84,7 @@ public final class TankCare {
         org.overengineer.bettacraft.tankmates.TankmateBreeding.step(server, be, dt / 24000.0); // M19
         org.overengineer.bettacraft.reef.ReefCare.step(server, be, dt / 24000.0); // M20: salt shock of frogs and foreign animals
         org.overengineer.bettacraft.reef.ReefDosing.step(server, be, dt / 24000.0); // M25 part c: magnesium and trace elements
+        org.overengineer.bettacraft.monitor.TankHistory.onCare(server, be); // M27: one point per hour for the monitors' graphs
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);
         }

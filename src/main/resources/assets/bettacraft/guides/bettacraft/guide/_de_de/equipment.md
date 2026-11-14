@@ -38,6 +38,7 @@ navigation:
 | [TDS-Messstift und pH-Tropfentest](equipment/water_tests.md) | messen die [Wasserchemie](aquarium/water_chemistry.md) |
 | [CO2-Düngung](equipment/co2.md) | Bio-CO2, CO2-Flasche mit Magnetventil, Abfüllstation: schnelleres Pflanzenwachstum |
 | [Osmoseanlage](equipment/reverse_osmosis.md) | Osmosewasser (nichts gelöst) für weiches Wasser |
+| [Monitor](equipment/monitor.md) | Bildschirme bis 8 x 5 Blöcke mit den Werten aller Becken in der Nähe |
 | [Dosierpumpe](saltwater/dosing_pump.md) | dosiert Kalzium, Alkalinität, Magnesium und Spurenelemente in Riffbecken |
 
 Standardmäßig braucht keine Ausrüstung Strom; ein Server kann das einschalten (siehe [Strom](equipment/power.md)).

@@ -49,7 +49,8 @@ class LangCompletenessTest {
             "gui.bettacraft.dumbo", "gui.bettacraft.fish.generation", "gui.bettacraft.fish.name", "gui.bettacraft.fish.rename",
             "gui.bettacraft.reef.nitrate", "gui.bettacraft.tank.title", "jade.bettacraft.betta.type", "jade.bettacraft.tank.nest",
             "lb.bettacraft.albino.albino", "lb.bettacraft.blond.blond", "lb.bettacraft.gold.gold", "pectoral.bettacraft.dumbo",
-            "pectoral.bettacraft.normal", "stage.bettacraft.adult", "stage.bettacraft.subadult");
+            "pectoral.bettacraft.normal", "stage.bettacraft.adult", "stage.bettacraft.subadult",
+            "block.bettacraft.monitor", "monitor.bettacraft.value.co2");
     private static final Pattern NO_WORDS = Pattern.compile("%(\\d+\\$)?[sd]|\\b(TDS|ppm|pH|FE|KH|Ca|NO|mB|t)\\b");
 
     private static int placeholders(String s) {

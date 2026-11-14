@@ -259,6 +259,7 @@ public final class BettaCraftClient {
         event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
         event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);
         event.registerBlockEntityRenderer(ModBlockEntities.AIR_PUMP.get(), org.overengineer.bettacraft.client.render.AirHoseRenderer::new); // M23
+        event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get(), org.overengineer.bettacraft.client.render.MonitorRenderer::new); // M27
     }
 
     private static void onScreens(RegisterMenuScreensEvent event) {

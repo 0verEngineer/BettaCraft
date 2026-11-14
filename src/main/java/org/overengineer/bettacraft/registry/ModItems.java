@@ -306,6 +306,7 @@ public final class ModItems {
 
     // M26 part b: the food maker and its foods
     public static final DeferredItem<BlockItem> FOOD_MAKER = ITEMS.registerSimpleBlockItem(ModBlocks.FOOD_MAKER);
+    public static final DeferredItem<BlockItem> MONITOR = ITEMS.registerSimpleBlockItem(ModBlocks.MONITOR); // M27
     /** Flakes: float at the surface (the midwater fish like them, the bottom fish hardly get any). */
     public static final DeferredItem<Item> FISH_FLAKES = ITEMS.registerSimpleItem("fish_flakes");
     /** Granules: sink slowly (the bottom fish get their share). */

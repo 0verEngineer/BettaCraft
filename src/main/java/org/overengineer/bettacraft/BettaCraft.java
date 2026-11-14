@@ -147,6 +147,9 @@ public final class BettaCraft {
         // pipes and AE2 / RS buses, interfaces and pattern providers use it without special code
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FOOD_MAKER.get(),
                 (be, side) -> be.automation());
+        // M27: every block of a monitor screen takes FE into the screen's buffer while a power option is on
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.MONITOR.get(),
+                (be, side) -> org.overengineer.bettacraft.monitor.MonitorSync.powerRequired() ? be.screenEnergy() : null);
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.FOOD_MAKER.get(),
                 (be, side) -> org.overengineer.bettacraft.food.FoodMakerBlockEntity.powered() ? be.energy() : null);
         // M9 tank water from pipes (fresh water in, used water out) and FE for the equipment (power.* config):

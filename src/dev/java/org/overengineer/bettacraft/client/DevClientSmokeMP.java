@@ -259,6 +259,49 @@ final class DevClientSmokeMP {
                     send("aeration " + runs + "," + bubblers + "," + panels);
                 });
             }
+            case "monitor" -> {
+                // M27: the screen formed on this client (the top left block is the controller), the automatic layout came with
+                // the block entity, the tank's data with the bundled monitor payload
+                BlockPos at = pos(args);
+                then(100, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    if (!(mc.level.getBlockEntity(at) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m)) {
+                        send("monitor none");
+                        return;
+                    }
+                    // other stages' tanks are in range too: the automatic layout has two tiles per tank, at most four on 2x1
+                    var t = m.clientTanks.stream().filter(k -> "MPTank".equals(k.name)).findFirst().orElse(null);
+                    boolean tiles = m.layout().auto && m.layout().tiles.size() == Math.min(4, 2 * m.clientTanks.size());
+                    send("monitor " + m.width() + "x" + m.height() + "," + (tiles ? "auto" : "layout" + m.layout().tiles.size() + "/" + m.clientTanks.size())
+                            + "," + (t == null ? "-" : t.name) + "," + (t != null && t.live) + " " + (t == null ? "NaN" : String.format(java.util.Locale.ROOT, "%.2f",
+                            t.value(org.overengineer.bettacraft.monitor.MonitorValue.TEMPERATURE))));
+                });
+            }
+            case "monitorlayout" -> then(20, () -> {
+                // M27: Dev1 sends a layout like the editor of part b will: one pH tile of the tank
+                Minecraft mc = Minecraft.getInstance();
+                BlockPos at = pos(args);
+                var t = mc.level.getBlockEntity(at) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m
+                        ? m.clientTanks.stream().filter(k -> "MPTank".equals(k.name)).findFirst().orElse(null) : null;
+                if (t == null) {
+                    send("error monitor layout: no screen data");
+                    return;
+                }
+                var l = new org.overengineer.bettacraft.monitor.DashboardLayout();
+                l.auto = false;
+                l.tiles.add(org.overengineer.bettacraft.monitor.DashboardTile.value(l.nextId++, 0, 0, 8, 4, t.id,
+                        org.overengineer.bettacraft.monitor.MonitorValue.PH, false));
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(new org.overengineer.bettacraft.network.MonitorLayoutPayload(at, l.save()));
+            });
+            case "monitorseen" -> then(20, () -> {
+                Minecraft mc = Minecraft.getInstance();
+                BlockPos at = pos(args);
+                if (!(mc.level.getBlockEntity(at) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m)) {
+                    send("monitorseen none");
+                    return;
+                }
+                send("monitorseen " + m.layout().tiles.size() + "," + m.layout().auto + "," + (m.layout().tiles.isEmpty() ? "-" : m.layout().tiles.get(0).value().id));
+            });
             case "plumbing" -> {
                 // M24: the pipe between reservoir and pump joins both, the controller's settings reached this client
                 BlockPos at = pos(args);

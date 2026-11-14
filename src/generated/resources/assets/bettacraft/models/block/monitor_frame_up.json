@@ -1,0 +1,44 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bezel"
+        },
+        "east": {
+          "texture": "#bezel"
+        },
+        "north": {
+          "texture": "#bezel"
+        },
+        "south": {
+          "texture": "#bezel"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#bezel"
+        },
+        "west": {
+          "texture": "#bezel"
+        }
+      },
+      "from": [
+        0,
+        15,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        1
+      ]
+    }
+  ],
+  "textures": {
+    "back": "bettacraft:block/monitor_back",
+    "bezel": "bettacraft:block/monitor_bezel",
+    "particle": "bettacraft:block/monitor_side",
+    "screen": "bettacraft:block/monitor_screen",
+    "side": "bettacraft:block/monitor_side"
+  }
+}

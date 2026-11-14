@@ -21,6 +21,7 @@ import co2_osmosis
 import reef_dosing
 import live_food
 import food_maker
+import monitor
 import floating_plants
 import gui
 import icons
@@ -64,6 +65,7 @@ def main() -> int:
     written += reef_dosing.write_all()  # M25 part c
     written += live_food.write_all()  # M26 part a
     written += food_maker.write_all()  # M26 part b
+    written += monitor.write_all()  # M27
     written += critters.write_all()
     written += tankmates.write_all()
     written += cultures.write_all()

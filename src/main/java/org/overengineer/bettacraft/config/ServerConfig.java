@@ -179,6 +179,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue DIET_VARIETY_RECOVERY;
     public static final ModConfigSpec.DoubleValue DIET_POOR_FED_DAYS;
     public static final ModConfigSpec.DoubleValue DIET_SHRIMP_FOOD_FACTOR;
+    // M27: the monitors
+    public static final ModConfigSpec.IntValue MONITOR_RANGE;
+    public static final ModConfigSpec.IntValue MONITOR_FE_PER_BLOCK;
 
     // misc
     public static final ModConfigSpec.BooleanValue SIMULATE_UNLOADED_TIME;
@@ -717,6 +720,13 @@ public final class ServerConfig {
                 .defineInRange("poorFoodFedDays", 0.5, 0.0, 10.0);
         DIET_SHRIMP_FOOD_FACTOR = b.comment("Shrimp food gives the shrimp, crayfish and snails this many times the food of a leftover pellet")
                 .defineInRange("shrimpFoodFactor", 2.0, 0.1, 20.0);
+        b.pop();
+
+        b.comment("M27: the monitors (features.monitors): screens of monitor blocks that show every tank in range").push("monitor");
+        MONITOR_RANGE = b.comment("Blocks from a monitor within which it finds the tanks (nearest point of the tank)")
+                .defineInRange("range", 32, 4, 128);
+        MONITOR_FE_PER_BLOCK = b.comment("FE per tick of each monitor block while a power option is on (power.* or pipes.pumpsRequireEnergy)")
+                .defineInRange("fePerBlock", 1, 0, 10000);
         b.pop();
 
         b.comment("Shrimp, dwarf crayfish and snails: small animals that live in a tank as data (no entities)").push("invertebrates");

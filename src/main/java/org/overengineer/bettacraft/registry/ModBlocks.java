@@ -299,6 +299,11 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.food.FoodMakerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(2.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    /** M27: a monitor block; next to each other they join into screens that show the tanks in range. */
+    public static final DeferredBlock<org.overengineer.bettacraft.monitor.MonitorBlock> MONITOR = BLOCKS.register("monitor",
+            () -> new org.overengineer.bettacraft.monitor.MonitorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(1.5F, 6.0F).sound(SoundType.METAL).pushReaction(PushReaction.BLOCK)));
+
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)

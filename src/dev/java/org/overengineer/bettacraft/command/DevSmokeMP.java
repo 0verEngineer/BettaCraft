@@ -156,6 +156,15 @@ public final class DevSmokeMP {
             case "plumbing" -> check(name + ": pipe joins pump and reservoir, controller interval and share " + (a.length > 1 ? a[1] : "?") + " (server true,9,25)",
                     a.length > 1 && "true,9,25".equals(a[1])); // M24
             case "outletmenu" -> check(name + ": cabinet menu with the outlet button (" + (a.length > 1 ? a[1] : "?") + ")", a.length > 1 && "ok".equals(a[1]));
+            case "monitor" -> { // M27
+                float temp = TankMultiblock.getController(server.overworld(), monitorMin()) instanceof TankBlockEntity mc ? mc.getTank().waterTemp() : Float.NaN;
+                check(name + ": monitor screen, layout, tank name and live " + (a.length > 1 ? a[1] : "?") + " (server 2x1,auto,MPTank,true)",
+                        a.length > 1 && "2x1,auto,MPTank,true".equals(a[1]));
+                check(name + ": monitor temperature " + (a.length > 2 ? a[2] : "?") + " (server " + f(temp) + ")",
+                        a.length > 2 && Math.abs(Float.parseFloat(a[2]) - temp) < 0.3F);
+            }
+            case "monitorseen" -> check(name + ": the layout from Dev1 " + (a.length > 1 ? a[1] : "?") + " (server 1,false,ph)",
+                    a.length > 1 && "1,false,ph".equals(a[1])); // M27
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -601,6 +610,10 @@ public final class DevSmokeMP {
 
     // ------------------------------------------------------------------ the scenario
 
+    private static BlockPos monitorMin() {
+        return base.offset(-34, 0, 12);
+    }
+
     private static ServerPlayer player(String name) {
         return server.getPlayerList().getPlayerByName(name);
     }
@@ -1024,6 +1037,42 @@ public final class DevSmokeMP {
         }, () -> server.overworld().getBlockEntity(base.offset(-27, 0, 13)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity wc
                 && wc.intervalDays() == 3 && wc.share() == 30 && wc.enabled() && wc.last() >= 0
                 && TankMultiblock.getController(server.overworld(), base.offset(-26, 0, 12)) instanceof TankBlockEntity c && c.getTank().nitrate() < 39.9F, 20 * 30));
+        // M27: a 2x1 monitor screen next to a named tank: both clients get the screen, its automatic layout and the tank's
+        // values (only viewers get data, bundled); then Dev1 sends a layout like the editor (part b) and both see it
+        steps.add(new Step("monitor", () -> {
+            BlockPos min = monitorMin();
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the monitor tank formed", c != null);
+            if (c == null) return;
+            TankInteractions.changeWater(level, c, 8000 - c.getTank().waterMb(), 0F);
+            c.getTank().setName("MPTank");
+            c.getTank().setWaterTemp(24.5F);
+            c.getTank().setTargetTemp(24.5F);
+            c.markTankChanged();
+            var s = ModBlocks.MONITOR.get().defaultBlockState().setValue(org.overengineer.bettacraft.monitor.MonitorBlock.FACING, net.minecraft.core.Direction.NORTH);
+            level.setBlockAndUpdate(min.offset(1, 0, -3), s);
+            level.setBlockAndUpdate(min.offset(0, 0, -3), s);
+            say("monitor", "all", (min.getX() + 1) + "," + min.getY() + "," + (min.getZ() - 3));
+        }, () -> reports.containsKey(P1 + ":monitor") && reports.containsKey(P2 + ":monitor"), 20 * 40));
+        steps.add(new Step("monitor layout", () -> {
+            BlockPos at = monitorMin().offset(1, 0, -3);
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            server.overworld().setBlockAndUpdate(at.offset(0, -1, -3), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
+            p.resetFallDistance();
+            p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 2.5, 0F, 10F);
+            say("monitorlayout", P1, at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> server.overworld().getBlockEntity(monitorMin().offset(1, 0, -3)) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m
+                && !m.layout().auto && m.layout().tiles.size() == 1, 20 * 30));
+        steps.add(new Step("monitor layout seen", () -> {
+            BlockPos at = monitorMin().offset(1, 0, -3);
+            say("monitorseen", "all", at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> reports.containsKey(P1 + ":monitorseen") && reports.containsKey(P2 + ":monitorseen"), 20 * 30));
         steps.add(new Step("seahorses", () -> {
             // M21.8: a small seahorse tank with a pair (the male with a full brood pouch); the cyst stack size is changed live
             // to 32 (both clients must follow), each player gets a stack of 20 jars and a used jar

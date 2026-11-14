@@ -33,6 +33,7 @@ final class LangEn {
         LangM25d.addAll(a); // M25 part d
         LangM26.addAll(a); // M26 part a
         LangM26b.addAll(a); // M26 part b
+        LangM27.addAll(a); // M27
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");

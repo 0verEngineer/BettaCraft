@@ -323,6 +323,7 @@ public final class ModDataGen {
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
             DataGenM26.blockStates(this); // M26 part a
+            DataGenM27.blockStates(this); // M27
             simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
@@ -596,6 +597,7 @@ public final class ModDataGen {
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
             DataGenM26.itemModels(this); // M26 part a
+            DataGenM27.itemModels(this); // M27
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -998,6 +1000,7 @@ public final class ModDataGen {
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM26.recipes(output, hasIt(ModItems.TANK.get())); // M26 part a
+            DataGenM27.recipes(output, hasIt(ModItems.TANK.get())); // M27
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1155,6 +1158,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.RO_UNIT.get());
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
+            for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropSelf(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
@@ -1190,6 +1194,7 @@ public final class ModDataGen {
                         l.addAll(DataGenM25b.blocks()); // M25
                         l.addAll(DataGenM25c.blocks());
                         l.addAll(DataGenM26.blocks()); // M26 part a
+                        l.addAll(DataGenM27.blocks()); // M27
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
                         return l;
                     }));
@@ -1259,6 +1264,7 @@ public final class ModDataGen {
             DataGenM25b.blockTags(this::tag); // M25
             DataGenM25c.blockTags(this::tag);
             DataGenM26.blockTags(this::tag); // M26 part a
+            DataGenM27.blockTags(this::tag); // M27
             tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             tag(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);

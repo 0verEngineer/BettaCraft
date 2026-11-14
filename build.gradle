@@ -171,6 +171,11 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.readmeonly', 'true'
                 if (project.hasProperty('readmeroom')) systemProperty 'bettacraft.readme.roomonly', 'true'
             }
+            if (project.hasProperty('smoketestm27')) {
+                // gradlew runClient -Psmoketestm27 : only the M27 scene (a 3x2 monitor wall and a single monitor between two tanks, en + de)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m27only', 'true'
+            }
             if (project.hasProperty('smoketestm26_1')) {
                 // gradlew runClient -Psmoketestm26_1 : only the M26.1 scene (the NeoForge mod list with the wide Bettacraft logo)
                 systemProperty 'bettacraft.smoketest.world', 'true'

@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "9";
+    public static final String VERSION = "10";
 
     private ModNetwork() {}
 
@@ -34,7 +34,17 @@ public final class ModNetwork {
         r.playToClient(InteriorLeavePayload.TYPE, InteriorLeavePayload.STREAM_CODEC, ModNetwork::onInteriorLeave); // M15
         r.playToClient(ServerSettingsPayload.TYPE, ServerSettingsPayload.STREAM_CODEC, ModNetwork::onServerSettings); // M21.8
         r.playToServer(EmptyConfirmPayload.TYPE, EmptyConfirmPayload.STREAM_CODEC, ModNetwork::onEmptyConfirm); // M22.1
+        r.playToClient(MonitorDataPayload.TYPE, MonitorDataPayload.STREAM_CODEC, ModNetwork::onMonitorData); // M27
+        r.playToServer(MonitorLayoutPayload.TYPE, MonitorLayoutPayload.STREAM_CODEC, (p, ctx) -> ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.monitor.MonitorBlockEntity.applyLayout(sp, p.pos(), p.layout());
+        })); // M27 (the editor of part b)
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+    }
+
+    private static void onMonitorData(MonitorDataPayload payload, IPayloadContext ctx) {
+        if (FMLEnvironment.dist.isClient()) {
+            ctx.enqueueWork(() -> org.overengineer.bettacraft.client.render.MonitorRenderer.accept(payload));
+        }
     }
 
     private static void onEmptyConfirm(EmptyConfirmPayload payload, IPayloadContext ctx) {
