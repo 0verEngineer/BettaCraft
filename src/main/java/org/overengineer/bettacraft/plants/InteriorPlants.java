@@ -149,6 +149,8 @@ public final class InteriorPlants {
                 if (face == Direction.DOWN || !support.is(ModTags.EPIPHYTE_SURFACES)) return "needs_hardscape";
             }
             case MOSS -> {
+                // M28: Riccia is tied onto stone or wood
+                if (s.onlyOnHardscape() && (face == Direction.DOWN || !support.is(ModTags.EPIPHYTE_SURFACES))) return "needs_hardscape";
                 if (support.isAir() || support.getBlock() instanceof AquaticPlantBlock || !support.isFaceSturdy(level, supportPos, face)) return "needs_solid";
             }
             default -> {
@@ -279,7 +281,9 @@ public final class InteriorPlants {
             if (p.y + 0.5 >= waterLocal) return 0; // dry: no growth
             if (p.species.marine()) return org.overengineer.bettacraft.reef.Corals.rate(at(p), p.species, effectiveLight);
             // M20: freshwater plants stop growing in brackish and salt water
-            return lightFactor(effectiveLight, PlantSpecies.Light.need(p.species.light())) * nutrients * temperature * org.overengineer.bettacraft.reef.Corals.freshFactor(salinity);
+            // M28: the Marimo does not mind cool water
+            double temp = p.species.rolls() ? Math.max(0.8, temperature) : temperature;
+            return lightFactor(effectiveLight, PlantSpecies.Light.need(p.species.light())) * nutrients * temp * org.overengineer.bettacraft.reef.Corals.freshFactor(salinity);
         }
     }
 
@@ -437,11 +441,12 @@ public final class InteriorPlants {
             if (p.target != p.stage && !due.contains(p)) due.add(p);
         }
         uptake(level, c, r, env, activeMass, days);
-        if (due.isEmpty() && shoots.isEmpty()) return 0;
+        int rolled = rollAll(level, c, r, days);
+        if (due.isEmpty() && shoots.isEmpty()) return rolled;
         ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
-        if (interior == null) return 0;
+        if (interior == null) return rolled;
         long t0 = System.nanoTime();
-        int changed = 0;
+        int changed = rolled;
         for (InteriorPlant p : due) {
             if (!r.plants().all().contains(p)) continue;
             if (apply(interior, r, p)) changed++;
@@ -459,7 +464,102 @@ public final class InteriorPlants {
         return changed;
     }
 
+    // ------------------------------------------------------------------ M28: rolling Marimo balls
+
+    /** M28: rolls per in-game day of a Marimo in the current of an outlet (more where it is stronger). */
+    public static final double MARIMO_ROLLS_IN_CURRENT = 4.0;
+    /** M28: rolls per in-game day of a Marimo elsewhere in a tank with a running filter (the water moves a little). */
+    public static final double MARIMO_ROLLS_FILTERED = 0.3;
+
+    /**
+     * M28: the Marimo balls of a tank roll over the floor ({@code features.marimoRolling}): in the current of a filter or
+     * pipe outlet ({@code TankCurrents}) along it, now and then; elsewhere, with a running filter, rarely and to a random
+     * side; in still water never. Returns the number of balls that moved.
+     */
+    static int rollAll(ServerLevel level, TankBlockEntity c, InteriorRegion r, double days) {
+        if (!org.overengineer.bettacraft.config.CommonConfig.marimoRolling() || days <= 0 || c.getTank().waterMb() <= 0) return 0;
+        List<InteriorPlant> balls = null;
+        for (InteriorPlant p : r.plants().all()) {
+            if (p.species.rolls() && p.stage > 0) {
+                if (balls == null) balls = new ArrayList<>();
+                balls.add(p);
+            }
+        }
+        if (balls == null) return 0;
+        ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
+        if (interior == null) return 0;
+        var currents = org.overengineer.bettacraft.tank.TankCurrents.cached(level, c);
+        // moving water: an outlet current, or a running filter on the tank
+        boolean filtered = !currents.isEmpty() || c.filterPowered() && !org.overengineer.bettacraft.tank.TankEquipment.filters(level, c).isEmpty();
+        var rnd = interior.getRandom();
+        int moved = 0;
+        for (InteriorPlant p : balls) {
+            var w = org.overengineer.bettacraft.tankmates.TankmateSpots.toWorld(c.getTank(), r, p.x + 0.5, p.y + 0.5, p.z + 0.5);
+            double[] along = currentAt(currents, w.x, w.z);
+            double perDay = along != null ? MARIMO_ROLLS_IN_CURRENT * along[2] : filtered ? MARIMO_ROLLS_FILTERED : 0;
+            if (perDay <= 0 || rnd.nextDouble() >= Math.min(1.0, perDay * days)) continue;
+            int dx, dz;
+            if (along != null && rnd.nextInt(4) != 0) {
+                // mostly along the current (the larger of its two directions), sometimes a little to the side
+                if (Math.abs(along[0]) >= Math.abs(along[1])) {
+                    dx = (int) Math.signum(along[0]);
+                    dz = 0;
+                } else {
+                    dx = 0;
+                    dz = (int) Math.signum(along[1]);
+                }
+            } else {
+                int[] d = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}[rnd.nextInt(4)];
+                dx = d[0];
+                dz = d[1];
+            }
+            if (roll(interior, r, p, dx, dz)) moved++;
+        }
+        return moved;
+    }
+
+    /** The direction (x, z) and strength (0..1) of the strongest outlet current at a world position, or null outside every current. */
+    @Nullable
+    static double[] currentAt(List<org.overengineer.bettacraft.tank.TankCurrents.Current> currents, double x, double z) {
+        double[] best = null;
+        for (var cur : currents) {
+            double f = org.overengineer.bettacraft.tank.TankCurrents.factor(List.of(cur), x, z) - 1;
+            if (f <= 1e-6) continue;
+            double s = Math.min(1.0, f / org.overengineer.bettacraft.tank.TankCurrents.JET_BOOST);
+            if (best == null || s > best[2]) best = new double[]{cur.dx(), cur.dz(), s};
+        }
+        return best;
+    }
+
+    /**
+     * M28: rolls a Marimo one block to the side when there is room: the root block next to it free with something solid
+     * below (and no other plant's root too close); the ball keeps its stage and shape. Returns whether it moved.
+     */
+    public static boolean roll(ServerLevel interior, InteriorRegion r, InteriorPlant p, int dx, int dz) {
+        int nx = p.x + dx, nz = p.z + dz;
+        BlockPos to = r.toWorld(nx, p.y, nz);
+        if (!r.containsShapeInterior(to) || tooClose(r, nx, p.y, nz, p)) return false;
+        interior.getChunk(to.getX() >> 4, to.getZ() >> 4);
+        BlockState here = interior.getBlockState(to);
+        // the ball's own blocks may stand there (it rolls into itself)
+        if (!here.isAir() && !(here.is(block(p.species)) && ownerOf(r, to, p.species) == p)) return false;
+        BlockPos below = to.below();
+        if (supportProblem(p.species, interior, below, interior.getBlockState(below), Direction.UP) != null) return false;
+        int stage = p.stage, target = p.target;
+        remove(interior, r, p, false);
+        p.x = nx;
+        p.z = nz;
+        r.plants().all().add(p);
+        p.stage = 0;
+        p.target = target;
+        interior.setBlock(to, state(p.species, PlantPart.CUTTING, p.tint), Block.UPDATE_CLIENTS);
+        if (!apply(interior, r, p)) return false;
+        LOGGER.debug("Marimo {} rolled from stage {} by {},{}", p, stage, dx, dz);
+        return true;
+    }
+
     /** Waste uptake by the plant mass while there is light (server config interiorPlants.wasteUptake). */
+
     static void uptake(ServerLevel level, TankBlockEntity c, InteriorRegion r, Env env, double activeBlocks, double days) {
         TankData t = c.getTank();
         double k = ServerConfig.getOr(ServerConfig.AQUATIC_WASTE_UPTAKE, 0.5);

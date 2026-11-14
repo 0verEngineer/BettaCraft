@@ -1,4 +1,4 @@
-"""M12 assets: floating plants (duckweed, Amazon frogbit, salvinia, red root floater).
+"""M12 assets: floating plants (duckweed, Amazon frogbit, salvinia, red root floater; M28: water lettuce, hornwort, Riccia).
 
 Item icons (16x16, vanilla-like pixel art with a dark outline) and the textures the tank renderer draws on the water
 surface (``textures/entity/plants``): leaf quads and root strips. Everything is procedural and deterministic (fixed
@@ -208,6 +208,94 @@ def roots_texture(w=16, h=32):
     return img
 
 
+# ---------------------------------------------------------------- M28: water lettuce, hornwort, floating Riccia
+
+def water_lettuce_leaf_texture(n=16):
+    """One spatulate, velvety water lettuce leaf (stem end at the bottom, v = 1): pale green with parallel ribs."""
+    img = np.zeros((n, n, 4), np.uint8)
+    rng = _rng(2831)
+    for y in range(n):
+        t = 1 - (y + 0.5) / n                # 0 at the stem end .. 1 at the tip
+        half = (0.18 + 0.32 * min(1.0, t * 1.6) ** 0.7) * n * (1.0 if t < 0.85 else 1 - (t - 0.85) * 2.2)
+        for x in range(n):
+            dx = x + 0.5 - n / 2
+            if abs(dx) > half:
+                continue
+            g = np.array([0x8c, 0xbc, 0x5a], np.float64) * (1.08 - 0.12 * abs(dx) / max(half, 1))
+            if int(abs(dx) + 0.5) % 3 == 0 and t > 0.15:
+                g = g * 0.86                 # the ribs running out to the tip
+            g = g + rng.normal(0, 4)
+            img[y, x, :3] = np.clip(g, 0, 255)
+            img[y, x, 3] = 255
+    return img
+
+
+def hornwort_texture(n=16):
+    """Hornwort seen from above: a few shoots with whorls of stiff, forked dark leaves (tinted at runtime: greyscale)."""
+    img = np.zeros((n, n, 4), np.uint8)
+    rng = _rng(2832)
+    for k in range(3):
+        ang = k * math.tau / 3 + rng.random() * 0.6
+        for i in range(2, 8):
+            cx, cy = n / 2 + math.cos(ang) * i, n / 2 + math.sin(ang) * i
+            for j in range(6):
+                a = j * math.tau / 6 + i
+                for d in (1, 2):
+                    x, y = int(cx + math.cos(a) * d), int(cy + math.sin(a) * d)
+                    if 0 <= x < n and 0 <= y < n:
+                        img[y, x] = (200 - 20 * d, 200 - 20 * d, 200 - 20 * d, 255)
+            x, y = int(cx), int(cy)
+            img[y, x] = (150, 150, 150, 255)
+    return img
+
+
+def hornwort_shoots_texture(w=16, h=64):
+    """Hornwort shoots hanging down into the water: stems with dense whorls of needle leaves (greyscale, tinted)."""
+    img = np.zeros((h, w, 4), np.uint8)
+    rng = _rng(2833)
+    for x0 in (3.5, 8.0, 12.5):
+        length = int(h * (0.7 + 0.3 * rng.random()))
+        phase = rng.random() * math.tau
+        for y in range(length):
+            x = x0 + 0.8 * math.sin(y * 0.12 + phase)
+            ix = int(round(x))
+            if 0 <= ix < w:
+                img[y, ix] = (150, 150, 150, 255)
+            if y % 3 == 0:
+                for side in (-1, 1):
+                    for d in range(1, 4):
+                        xx = int(round(x + side * d))
+                        yy = y + d // 2
+                        if 0 <= xx < w and yy < h:
+                            v = 210 - 15 * d
+                            img[yy, xx] = (v, v, v, 255)
+    return img
+
+
+def riccia_texture(n=16):
+    """Floating Riccia: a dense, bright green cushion of forked thalli."""
+    img = np.zeros((n, n, 4), np.uint8)
+    rng = _rng(2834)
+    base = (0x86, 0xc8, 0x46)
+
+    def thallus(x, y, ang, ln, depth):
+        for i in range(ln):
+            ix, iy = int(round(x)), int(round(y))
+            if 0 <= ix < n and 0 <= iy < n:
+                img[iy, ix, :3] = np.clip(_shade(base, 0.9 + 0.25 * i / max(1, ln)), 0, 255)
+                img[iy, ix, 3] = 255
+            x += math.cos(ang)
+            y += math.sin(ang)
+        if depth < 2:
+            thallus(x, y, ang + 0.55, max(2, ln - 1), depth + 1)
+            thallus(x, y, ang - 0.55, max(2, ln - 1), depth + 1)
+
+    for k in range(7):
+        a = k * math.tau / 7 + rng.random() * 0.4
+        thallus(n / 2 + math.cos(a), n / 2 + math.sin(a), a, 3, 0)
+    return _outline(img, (0x4a, 0x7a, 0x26, 255))
+
+
 # ---------------------------------------------------------------- item icons
 
 def _icon_base():
@@ -289,12 +377,47 @@ def red_root_floater_icon():
     return img
 
 
+def water_lettuce_icon():
+    img = _icon_base()
+    col = (0x8c, 0xc2, 0x5c)
+    for k, (ang, ln) in enumerate(((math.pi * 0.5, 5.8), (math.pi * 0.85, 5.2), (math.pi * 0.15, 5.2), (math.pi * 1.15, 4.4), (-math.pi * 0.15, 4.4))):
+        cx, cy = 8 + math.cos(ang) * ln * 0.55, 8.5 - math.sin(ang) * ln * 0.55
+        _ellipse(img, cx, cy, ln * 0.55, 2.2, -ang, lambda u, v, k=k: _shade(col, (1.15 if u > 0.3 else 1.0) * (0.92 if k % 2 else 1.0)))
+    img = _outline(img, (0x34, 0x58, 0x1e, 255))
+    for x0, length in ((6, 3), (8, 4), (10, 3)):
+        for k in range(length):
+            y = 12 + k
+            if y < S and img[y, x0, 3] == 0:
+                img[y, x0] = (0xe0, 0xe4, 0xd4, 255)
+    return img
+
+
+def hornwort_icon():
+    img = _icon_base()
+    stem = (0x3e, 0x6e, 0x2a)
+    leaf = (0x56, 0x92, 0x38)
+    for y in range(1, 15):
+        x = 8 + int(round(math.sin(y * 0.45) * 1.2))
+        img[y, x] = (*stem, 255)
+        if y % 3 == 1:
+            for side in (-1, 1):
+                for d in range(1, 4):
+                    xx, yy = x + side * d, y + (1 if d == 3 else 0)
+                    if 0 <= xx < S and yy < S:
+                        img[yy, xx] = (*leaf, 255)
+    return _outline(img, (0x22, 0x3c, 0x16, 255))
+
+
 TEXTURES = {
     "duckweed": duckweed_texture,
     "frogbit_leaf": frogbit_leaf_texture,
     "salvinia": salvinia_texture,
     "red_root_floater_leaf": red_root_floater_leaf_texture,
     "roots": roots_texture,
+    "water_lettuce_leaf": water_lettuce_leaf_texture,
+    "hornwort": hornwort_texture,
+    "hornwort_shoots": hornwort_shoots_texture,
+    "riccia": riccia_texture,
 }
 
 ICONS = {
@@ -302,6 +425,8 @@ ICONS = {
     "amazon_frogbit": frogbit_icon,
     "salvinia": salvinia_icon,
     "red_root_floater": red_root_floater_icon,
+    "water_lettuce": water_lettuce_icon,
+    "hornwort": hornwort_icon,
 }
 
 

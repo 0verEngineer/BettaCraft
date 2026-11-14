@@ -89,7 +89,7 @@ final class DevClientSmokeM222 {
             if (s.isSnail() || s.marine()) subjects.add(new Subject(s.id(), Kind.CRITTER, s));
         }
         for (PlantSpecies p : PlantSpecies.values()) subjects.add(new Subject(p.id(), p.marine() ? Kind.CORAL : Kind.PLANT, p));
-        for (FloatingPlantType t : FloatingPlantType.values()) if (t.grows()) subjects.add(new Subject(t.id(), Kind.FLOATING, t));
+        for (FloatingPlantType t : FloatingPlantType.values()) if (t.grows() && !t.plantItem()) subjects.add(new Subject(t.id(), Kind.FLOATING, t));
         for (Subject s : subjects) allIds.add(s.id());
         // M28: -Pgallery=id,id,...: only these subjects (the seeds stay those of the full gallery), no handbook pictures
         if (!ONLY.isEmpty()) subjects.removeIf(s -> !ONLY.contains(s.id()));

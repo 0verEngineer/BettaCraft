@@ -19,6 +19,7 @@ M22.1: every other plant and coral (``M22_1`` below: leaves of each species, mos
 
 M28 part a: the puckered coffeefolia leaf, the lobed Hygrophila pinnatifida leaf, the feathery whorl leaf (Myriophyllum,
 Limnophila), the crisped Downoi leaf and the white marbled Anubias "Pinto" leaf (the only coloured one: tinted white).
+M28 part b: the forked thalli of Riccia and the velvet of the Marimo ball.
 
 Run from the repo root:  py tools/assetgen/plant_meshes.py
 """
@@ -486,7 +487,53 @@ def leaf_crisp():
     return img
 
 
-M28 = {"leaf_coffee": (leaf_coffee, 2), "leaf_lobed": (leaf_lobed, 2), "leaf_feather": (leaf_feather, 2), "leaf_crisp": (leaf_crisp, 2)}
+# ---------------------------------------------------------------------------- M28 part b
+
+def riccia():
+    """Riccia fluitans: a small star of narrow, forked (dichotomous) thalli from the middle, each fork a little shorter."""
+    r = _rng(2821)
+    a = np.zeros((N, N), bool)
+    v = np.zeros((N, N))
+
+    def fork(x, y, ang, length, width, depth):
+        steps = int(length)
+        for i in range(steps):
+            for w in range(-int(width), int(width) + 1):
+                ix = int(round(x + math.cos(ang + math.pi / 2) * w * 0.7))
+                iy = int(round(y - math.sin(ang + math.pi / 2) * w * 0.7))
+                if 0 <= ix < N and 0 <= iy < N:
+                    a[iy, ix] = True
+                    v[iy, ix] = 0.78 + 0.1 * (i / max(1, steps)) - 0.08 * (w == 0) + r.normal(0, 0.02)
+            x += math.cos(ang)
+            y -= math.sin(ang)
+            ang += r.normal(0, 0.06)
+        if depth < 3:
+            spread = r.uniform(0.35, 0.6)
+            fork(x, y, ang + spread, length * 0.72, max(1.0, width * 0.85), depth + 1)
+            fork(x, y, ang - spread, length * 0.72, max(1.0, width * 0.85), depth + 1)
+
+    for k in range(5):
+        fork(N / 2, N / 2, k * math.tau / 5 + r.normal(0, 0.2), 10, 2.0, 0)
+    return _finish(v, a)
+
+
+def marimo():
+    """The Marimo ball's velvet: dense, fine, tileable fur of short filaments (opaque, tiled over the sphere)."""
+    r = _rng(2822)
+    v = np.full((N, N), 0.70)
+    for _ in range(900):
+        x, y = r.random() * N, r.random() * N
+        ang = r.random() * math.tau
+        ln = r.integers(2, 6)
+        shade = r.normal(0, 0.09)
+        for i in range(ln):
+            ix, iy = int(x + math.cos(ang) * i) % N, int(y + math.sin(ang) * i) % N
+            v[iy, ix] = np.clip(0.72 + shade + 0.03 * i, 0.45, 0.95)
+    return _finish(v, np.ones((N, N)))
+
+
+M28 = {"leaf_coffee": (leaf_coffee, 2), "leaf_lobed": (leaf_lobed, 2), "leaf_feather": (leaf_feather, 2), "leaf_crisp": (leaf_crisp, 2),
+       "riccia": (riccia, 2)}
 
 
 def write_m28() -> list:
@@ -498,6 +545,7 @@ def write_m28() -> list:
     pinto = leaf_pinto()
     out.append(save_png(pinto, OUT / "leaf_pinto.png"))
     out.append(save_png(_mini_rgb(pinto), OUT / "leaf_pinto_mini.png"))
+    out.append(save_png(marimo(), OUT / "marimo.png"))
     return out
 
 

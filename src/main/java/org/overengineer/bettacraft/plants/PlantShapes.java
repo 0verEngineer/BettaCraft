@@ -72,15 +72,15 @@ public final class PlantShapes {
 
     /**
      * Version of the generator a new plant gets (stored per plant, {@link InteriorPlant#shapeVersion}): 1 = up to M22,
-     * 2 = M22.1 (Vallisneria keeps its ribbons apart). A plant keeps the version it started with, so its blocks never
-     * change shape in an existing world.
+     * 2 = M22.1 (Vallisneria keeps its ribbons apart), 3 = M28 (the hammer coral grows as a low clump of heads, the discs
+     * of the mushroom coral keep apart). A plant keeps the version it started with, so its blocks never change shape in an
+     * existing world.
      */
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     /** The shape of a plant with the generator of {@code version} (older plants keep theirs). */
     public static Shape of(PlantSpecies s, long seed, int scale, int headroom, int version) {
-        // only the Vallisneria changed with version 2
-        int v = s.form() == PlantSpecies.Form.RIBBON ? Math.max(1, Math.min(VERSION, version)) : 1;
+        int v = effectiveVersion(s, version);
         // M17: shapes are pure functions of these values and immutable; removing a plant asked for the shapes of
         // all plants of the species once per removed block (thousands of random walks for a tall stem plant)
         Key key = new Key(s, seed, scale, headroom, v);
@@ -93,6 +93,16 @@ public final class PlantShapes {
             CACHE.put(key, shape);
         }
         return shape;
+    }
+
+    /**
+     * The generator version that changes anything for this species: the Vallisneria changed with version 2, the hammer
+     * and the mushroom coral with version 3; every other species is the same in all versions (1).
+     */
+    static int effectiveVersion(PlantSpecies s, int version) {
+        if (s.form() == PlantSpecies.Form.RIBBON) return Math.max(1, Math.min(2, version));
+        if (s == PlantSpecies.HAMMER_CORAL || s == PlantSpecies.MUSHROOM_CORAL) return version >= 3 ? 3 : 1;
+        return 1;
     }
 
     private record Key(PlantSpecies s, long seed, int scale, int headroom, int version) {}
@@ -299,8 +309,37 @@ public final class PlantShapes {
         }
 
         void moss() {
-            int n = Math.max(6, (int) Math.round(110 * u * u));
+            if (s == PlantSpecies.MARIMO) {
+                ball();
+                return;
+            }
+            // M28: the other mosses: Christmas moss wide and flat, flame moss in upright tufts, Riccia a dense cushion;
+            // Java moss as before (the same random numbers)
+            double amount = 110;
             int maxR = Math.max(2, len(7)), maxUp = Math.max(1, len(4));
+            int horizontal = 12, up = 13;
+            switch (s) {
+                case CHRISTMAS_MOSS -> {
+                    amount = 130;
+                    maxR = Math.max(2, len(9));
+                    maxUp = Math.max(1, len(3));
+                }
+                case FLAME_MOSS -> {
+                    amount = 100;
+                    maxR = Math.max(2, len(4));
+                    maxUp = Math.max(1, len(9));
+                    horizontal = 7;
+                }
+                case RICCIA -> {
+                    amount = 150;
+                    maxR = Math.max(2, len(6));
+                    maxUp = Math.max(1, len(3));
+                    horizontal = 10;
+                }
+                default -> {}
+            }
+            int n = Math.max(6, (int) Math.round(amount * u * u));
+            boolean tufts = s == PlantSpecies.FLAME_MOSS;
             List<int[]> cells = new ArrayList<>();
             cells.add(new int[]{0, 0, 0});
             int tries = 0;
@@ -308,20 +347,44 @@ public final class PlantShapes {
                 int[] c = cells.get(r.nextInt(cells.size()));
                 int roll = r.nextInt(14);
                 int dx = 0, dy = 0, dz = 0;
-                if (roll < 12) {
+                if (roll < horizontal) {
                     int[] d = DIRS[roll % 4];
                     dx = d[0];
                     dz = d[1];
-                } else if (roll < 13) dy = 1;
+                } else if (roll < up) dy = 1;
                 else dy = -1;
                 int x = c[0] + dx, y = c[1] + dy, z = c[2] + dz;
                 if (x * x + z * z > maxR * maxR || y > maxUp || y < minY) continue;
-                // denser near the root, flatter further out
-                if (y > 0 && x * x + z * z > (maxR * maxR) / 2) continue;
+                // denser near the root, flatter further out (flame moss: the tufts stand anywhere on the cushion)
+                if (y > 0 && !tufts && x * x + z * z > (maxR * maxR) / 2) continue;
+                if (tufts && y > 1 && dy == 0) continue; // a tuft grows up, not sideways
                 if (map.containsKey(key(x, y, z))) continue;
                 int born = 1 + cells.size() * stages / n;
                 if (add(x, y, z, PlantPart.MOSS, born)) cells.add(new int[]{x, y, z});
             }
+        }
+
+        /**
+         * M28: the Marimo: a ball resting on its root block. Stage s is the ball of radius r(s) touching the root from
+         * above; the balls of the stages are nested (they all touch at the root), so it grows block by block.
+         */
+        void ball() {
+            double full = Math.max(1.5, betweenD(3.4, 4.6) * u);
+            // a little off the root to one side (every ball a little different)
+            double ox = betweenD(-0.35, 0.35), oz = betweenD(-0.35, 0.35);
+            int ri = (int) Math.ceil(full) + 1;
+            for (int dx = -ri; dx <= ri; dx++)
+                for (int dz = -ri; dz <= ri; dz++)
+                    for (int dy = 0; dy <= 2 * ri; dy++) {
+                        for (int st = 1; st <= stages; st++) {
+                            double rs = 0.9 + (full - 0.9) * st / stages;
+                            double ey = dy - rs, ex = dx - ox * st / stages, ez = dz - oz * st / stages;
+                            if (ex * ex + ey * ey + ez * ez <= rs * rs + 0.3) {
+                                add(dx, dy, dz, PlantPart.MOSS, st);
+                                break;
+                            }
+                        }
+                    }
         }
 
         void rosette() {
@@ -335,6 +398,19 @@ public final class PlantShapes {
                 case CRYPT_FLAMINGO -> {
                     leaves = between(6, 10); stalkA = 2; stalkB = 3; bladeA = 4; bladeB = 6; halfW = 1;
                     stalkElev = 80; e0 = 62; e1 = 25; nominal = 10;
+                }
+                // M28: a smaller red sword, the tiny parva, the grass-like Sagittaria
+                case ECHINODORUS_RED_DIAMOND -> {
+                    leaves = between(8, 12); stalkA = 3; stalkB = 5; bladeA = 6; bladeB = 9; halfW = 2;
+                    stalkElev = 78; e0 = 55; e1 = 18; nominal = 15;
+                }
+                case CRYPT_PARVA -> {
+                    leaves = between(6, 9); stalkA = 1; stalkB = 2; bladeA = 3; bladeB = 5; halfW = 0;
+                    stalkElev = 82; e0 = 74; e1 = 52; nominal = 7;
+                }
+                case SAGITTARIA -> {
+                    leaves = between(7, 11); stalkA = 1; stalkB = 1; bladeA = 6; bladeB = 10; halfW = 0;
+                    stalkElev = 86; e0 = 80; e1 = 50; nominal = 12;
                 }
                 default -> {
                     leaves = between(7, 12); stalkA = 2; stalkB = 4; bladeA = 4; bladeB = 7; halfW = 1;
@@ -507,7 +583,15 @@ public final class PlantShapes {
         }
 
         void carpet() {
-            int n = Math.max(4, (int) Math.round(42 * u * u));
+            // M28: Hemianthus "Cuba" denser with a cushion layer, Eleocharis tufts of needles, Staurogyne short upright
+            // shoots, Marsilea a few leaflets standing higher; Monte Carlo as before (the same random numbers)
+            double amount = switch (s) {
+                case HC_CUBA -> 56;
+                case ELEOCHARIS -> 30;
+                case STAUROGYNE -> 34;
+                default -> 42;
+            };
+            int n = Math.max(4, (int) Math.round(amount * u * u));
             int maxR = Math.max(1, len(4));
             List<int[]> cells = new ArrayList<>();
             cells.add(new int[]{0, 0});
@@ -519,9 +603,43 @@ public final class PlantShapes {
                 if (x * x + z * z > maxR * maxR + 1 || map.containsKey(key(x, 0, z))) continue;
                 if (add(x, 0, z, PlantPart.MAT, 1 + cells.size() * stages / n)) cells.add(new int[]{x, z});
             }
+            if (s == PlantSpecies.MONTE_CARLO) return;
+            double f = fit(10);
+            for (int[] c : cells) {
+                int born = Math.min(stages, birthOf(c[0], 0, c[1]) + 1);
+                switch (s) {
+                    case HC_CUBA -> {
+                        if (r.nextInt(3) == 0) add(c[0], 1, c[1], PlantPart.MAT, born);
+                    }
+                    case ELEOCHARIS -> {
+                        if (r.nextInt(3) == 0) continue;
+                        int h = Math.max(2, (int) Math.round(len(between(4, 9)) * f));
+                        for (int y = 1; y <= h; y++) add(c[0], y, c[1], y >= h - 1 ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, born + y * 2 / h));
+                    }
+                    case STAUROGYNE -> {
+                        if (r.nextInt(2) == 0) continue;
+                        int h = Math.max(1, (int) Math.round(len(between(2, 3)) * f));
+                        for (int y = 1; y <= h; y++) add(c[0], y, c[1], y == h ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, born + y - 1));
+                    }
+                    case MARSILEA -> {
+                        if (r.nextInt(4) == 0) add(c[0], 1, c[1], PlantPart.LEAF, born);
+                    }
+                    default -> {}
+                }
+            }
+        }
+
+        /** The birth stage of a block already added (the last stage if there is none). */
+        int birthOf(int x, int y, int z) {
+            Voxel v = map.get(key(x, y, z));
+            return v == null ? stages : v.birth();
         }
 
         void bulb() {
+            if (s == PlantSpecies.APONOGETON) {
+                aponogeton();
+                return;
+            }
             double f = fit(9);
             int leaves = between(4, 6);
             for (int k = 0; k < leaves; k++) {
@@ -555,6 +673,37 @@ public final class PlantShapes {
             }
         }
 
+        /**
+         * M28: Aponogeton ulvaceus: long, undulate leaves rising from the tuber and arching over, a flower spike on a long
+         * stalk up to the surface once grown.
+         */
+        void aponogeton() {
+            double f = fit(26);
+            int leaves = between(5, 8);
+            for (int k = 0; k < leaves; k++) {
+                int b0 = 1 + k * Math.max(1, stages - 3) / leaves;
+                int b1 = Math.min(stages, b0 + 3);
+                double yaw = r.nextDouble() * Math.PI * 2;
+                leaf(0, 0, 0, yaw, Math.max(1, (int) Math.round(len(between(2, 3)) * f)), betweenD(70, 82),
+                        Math.max(3, (int) Math.round(len(between(12, 20)) * f)), betweenD(55, 72), 15, u < 0.75 ? 0 : 1, b0, b1, true);
+            }
+            int top = headroom - 1;
+            if (top >= len(10)) {
+                int[] d = DIRS[r.nextInt(4)];
+                int x = d[0], z = d[1];
+                for (int h = 0; h < top; h++) {
+                    if (h > 0 && h % 7 == 0) {
+                        x += d[0];
+                        z += d[1];
+                    }
+                    add(x, h, z, PlantPart.STEM, stages - 1);
+                }
+                // the spike lies on the surface (the flowers stand just above it)
+                int spike = Math.max(1, len(3));
+                for (int k = 0; k <= spike; k++) add(x + d[0] * k, top, z + d[1] * k, PlantPart.TOP, stages);
+            }
+        }
+
         // ------------------------------------------------------------------ M20 corals
 
         /** Zoanthids / star polyps: a creeping mat over the rock, coloured oral discs (TOP) dotted in it. */
@@ -583,6 +732,10 @@ public final class PlantShapes {
 
         /** Mushroom corals: a few flat discs on short stalks, the oldest in the middle. */
         void discs() {
+            if (version >= 3) {
+                discsApart();
+                return;
+            }
             int count = between(3, 6);
             int rad = Math.max(1, len(3.6));
             List<int[]> spots = new ArrayList<>();
@@ -602,6 +755,54 @@ public final class PlantShapes {
                     add((int) Math.round(sp[0] * t), (int) Math.round((h - 1) * t), (int) Math.round(sp[1] * t), PlantPart.STEM, b0);
                 }
                 int rr = i == 0 ? rad : Math.max(1, rad - r.nextInt(2));
+                for (int dx = -rr; dx <= rr; dx++)
+                    for (int dz = -rr; dz <= rr; dz++) {
+                        double d2 = dx * dx + dz * dz;
+                        if (d2 > rr * rr + 0.6) continue;
+                        int born = Math.min(stages, b0 + (int) Math.round(Math.sqrt(d2) / Math.max(1, rr) * 2));
+                        add(sp[0] + dx, h, sp[1] + dz, d2 < 1.1 ? PlantPart.TOP : PlantPart.LEAF, born);
+                    }
+            }
+        }
+
+        /**
+         * M28 (version 3): the mushroom discs keep apart: each disc a little smaller, its place chosen so it does not
+         * overlap the discs before it (with a gap of about a block), the stalks of different heights; a disc that finds
+         * no free place is left out. So the discs no longer melt into one large pink area.
+         */
+        void discsApart() {
+            int count = between(3, 6);
+            int rad = Math.max(1, len(2.8));
+            List<int[]> spots = new ArrayList<>();
+            spots.add(new int[]{0, 0, rad, Math.max(1, len(1))});
+            for (int i = 1; i < count; i++) {
+                int rr = Math.max(1, rad - r.nextInt(2));
+                for (int tries = 0; tries < 12; tries++) {
+                    double a = r.nextDouble() * Math.PI * 2, d = len(betweenD(5, 10));
+                    int x = (int) Math.round(Math.cos(a) * d), z = (int) Math.round(Math.sin(a) * d);
+                    boolean free = true;
+                    for (int[] o : spots) {
+                        double gap = Math.sqrt((x - o[0]) * (x - o[0]) + (z - o[1]) * (z - o[1]));
+                        if (gap < rr + o[2] + Math.max(0.6, 1.6 * u)) {
+                            free = false;
+                            break;
+                        }
+                    }
+                    if (free) {
+                        spots.add(new int[]{x, z, rr, Math.max(1, len(between(1, 3)))});
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < spots.size(); i++) {
+                int[] sp = spots.get(i);
+                int b0 = 1 + i * Math.max(1, stages - 2) / spots.size();
+                int h = sp[3], rr = sp[2];
+                int steps = Math.max(1, (int) Math.ceil(Math.sqrt(sp[0] * sp[0] + sp[1] * sp[1] + h * h) * 2));
+                for (int k = 1; k <= steps; k++) {
+                    double t = k / (double) steps;
+                    add((int) Math.round(sp[0] * t), (int) Math.round((h - 1) * t), (int) Math.round(sp[1] * t), PlantPart.STEM, b0);
+                }
                 for (int dx = -rr; dx <= rr; dx++)
                     for (int dz = -rr; dz <= rr; dz++) {
                         double d2 = dx * dx + dz * dz;
@@ -644,6 +845,10 @@ public final class PlantShapes {
          */
         void branches() {
             boolean hammer = s == PlantSpecies.HAMMER_CORAL;
+            if (hammer && version >= 3) {
+                hammerClump();
+                return;
+            }
             double f = fit(hammer ? 16 : 26);
             int trunks = hammer ? between(4, 6) : between(5, 7);
             int top = headroom - 1;
@@ -691,7 +896,65 @@ public final class PlantShapes {
             }
         }
 
+        /**
+         * M28 (version 3): the hammer coral as it grows on the reef: a low, wide clump. Short skeleton branches fan out
+         * flat from the base and mostly fork once; each end carries a fleshy head of tentacles, the heads close together
+         * (the colony is wider than high, no tall stems with heads on top like a tree).
+         */
+        void hammerClump() {
+            double f = fit(9);
+            int trunks = between(5, 7);
+            int top = headroom - 1;
+            for (int i = 0; i < trunks; i++) {
+                double yaw = r.nextDouble() * 0.6 + i * Math.PI * 2 / trunks;
+                double elev = Math.toRadians(betweenD(22, 48));
+                int length = Math.max(2, (int) Math.round(len(between(3, 6)) * f));
+                int b0 = 1 + i * Math.max(1, stages / 2) / trunks;
+                stub(0, 0, 0, yaw, elev, length, b0, top, r.nextInt(3) == 0 ? 0 : 1);
+            }
+            // a head in the middle, on the base
+            head(0, Math.max(1, len(1.5)), 0, Math.max(1, len(2.2)), 2);
+        }
+
+        /** A short skeleton branch of {@link #hammerClump}: it may fork once, every end gets a head. */
+        private void stub(double x, double y, double z, double yaw, double elev, int length, int b0, int top, int forks) {
+            double step = 0.5;
+            int lastX = (int) Math.round(x), lastY = (int) Math.round(y), lastZ = (int) Math.round(z), born = b0;
+            for (double d = 0; d < length; d += step) {
+                double ny = y + Math.sin(elev) * step;
+                if ((int) Math.round(ny) >= top - 3) break;
+                x += Math.cos(yaw) * Math.cos(elev) * step;
+                z += Math.sin(yaw) * Math.cos(elev) * step;
+                y = ny;
+                born = Math.max(born, birth(b0, stages - 1, d / (length + 3.0)));
+                if (!add((int) Math.round(x), (int) Math.round(y), (int) Math.round(z), PlantPart.STEM, born)) break;
+                lastX = (int) Math.round(x);
+                lastY = (int) Math.round(y);
+                lastZ = (int) Math.round(z);
+            }
+            if (forks > 0 && length > 2) {
+                double side = betweenD(0.5, 0.9);
+                stub(lastX, lastY, lastZ, yaw + side, elev, Math.max(2, length / 2 + 1), Math.min(stages, born + 1), top, 0);
+                stub(lastX, lastY, lastZ, yaw - side, elev + 0.15, Math.max(2, length / 2), Math.min(stages, born + 1), top, 0);
+                return;
+            }
+            head(lastX, lastY, lastZ, Math.max(1, len(betweenD(1.8, 2.4))), born);
+        }
+
+        /** A fleshy, flat head of tentacles at the end of a branch (wider than high). */
+        private void head(int cx, int cy, int cz, int hr, int born) {
+            for (int dx = -hr; dx <= hr; dx++)
+                for (int dz = -hr; dz <= hr; dz++)
+                    for (int dy = 0; dy <= hr; dy++) {
+                        double e = dx * dx + dz * dz + dy * dy * 2.5;
+                        if (e > hr * hr + 1) continue;
+                        boolean outside = dy == hr || e > hr * hr - 1.5;
+                        add(cx + dx, cy + dy, cz + dz, outside ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, born + 1 + dy));
+                    }
+        }
+
         /** Lobophyllia: a dome growing outwards from the root, its ridges (TOP) in a meandering pattern. */
+
         void dome() {
             double f = fit(12);
             int rad = Math.max(2, (int) Math.round(len(between(8, 10)) * f));

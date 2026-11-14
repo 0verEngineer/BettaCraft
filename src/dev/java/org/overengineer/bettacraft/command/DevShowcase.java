@@ -311,7 +311,7 @@ public final class DevShowcase {
                         r.nextFloat() * 6.28F);
             }
             c.markTankChanged();
-            name(level, at, de("item.bettacraft." + t.id()));
+            name(level, at, de(TankPlants.item(t).getDescriptionId()));
             at = at.east(2 + GAP);
         }
         // 6: decoration

@@ -22,7 +22,7 @@ class M28PlantsTest {
     void newSpeciesAreAppended() {
         // the ordinal seeds the shapes: the 25 species before M28 keep theirs
         assertEquals(24, PlantSpecies.BUBBLE_TIP_ANEMONE.ordinal());
-        for (PlantSpecies s : PlantSpecies.values()) assertEquals(NEW.contains(s), s.newerThanConfigLists(), s.toString());
+        for (PlantSpecies s : PlantSpecies.values()) assertEquals(NEW.contains(s) || M28bPlantsTest.NEW.contains(s), s.newerThanConfigLists(), s.toString());
         for (PlantSpecies s : NEW) assertTrue(!s.marine() && s.meshed(), s.toString());
     }
 
@@ -69,7 +69,9 @@ class M28PlantsTest {
     @Test
     void needsAreWhereTheyBelong() {
         for (PlantSpecies s : PlantSpecies.values()) {
-            if (s.needsCo2() || s.softWater()) assertTrue(NEW.contains(s) && s.form() == PlantSpecies.Form.STEM, s + ": only the new stem plants");
+            // part b: Hemianthus "Cuba" also needs CO2
+            if (s == PlantSpecies.HC_CUBA) assertTrue(s.needsCo2() && !s.softWater() && s.light() == PlantSpecies.Light.VERY_HIGH, s.toString());
+            else if (s.needsCo2() || s.softWater()) assertTrue(NEW.contains(s) && s.form() == PlantSpecies.Form.STEM, s + ": only the new stem plants");
             if (s.alsoOnHardscape()) assertTrue(s.form().rooted(), s.toString());
         }
     }

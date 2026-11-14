@@ -165,7 +165,7 @@ public final class PlantSourceGameTests {
             if (!book) problems.add(p.id() + ": the handbook names no net or fishing source");
         }
         for (FloatingPlantType f : FloatingPlantType.values()) {
-            if (!f.grows()) continue;
+            if (!f.grows() || f.plantItem()) continue; // M28: floating Riccia is the aquarium plant (checked above)
             boolean wild = WildTables.FISHING_FLOATING_SWAMP.contains(f) || WildTables.FISHING_FLOATING_MANGROVE.contains(f);
             if (!wild) problems.add(f.id() + ": in no fishing table");
         }

@@ -65,7 +65,30 @@ public enum PlantSpecies {
     POGOSTEMON_DOWNOI("pogostemon_helferi", Form.STEM, 6, 6, Light.HIGH, Red.NONE, "fine", 0x7AB04A, 0x94C45A, 0, 0x6A9A40, 0x6A9A40),
     LIMNOPHILA_SESSILIFLORA("limnophila_sessiliflora", Form.STEM, 2.5, 8, Light.MID, Red.NONE, "fine", 0x78B246, 0x96C85A, 0, 0x6A9A3E, 0x6A9A3E),
     MYRIOPHYLLUM_RED("myriophyllum_red", Form.STEM, 3, 8, Light.HIGH, Red.RED, "fine", 0x8A5A44, 0x9A6048, 0xC83A3A, 0x7A4A3A, 0x7A4A3A),
-    BACOPA_CAROLINIANA("bacopa_caroliniana", Form.STEM, 4, 8, Light.MID, Red.TIPS, "fine", 0x6A9A44, 0x84AA4E, 0xB4683A, 0x6A8A3E, 0x6A8A3E);
+    BACOPA_CAROLINIANA("bacopa_caroliniana", Form.STEM, 4, 8, Light.MID, Red.TIPS, "fine", 0x6A9A44, 0x84AA4E, 0xB4683A, 0x6A8A3E, 0x6A8A3E),
+    // M28 part b: carpets, mosses, rosettes and tubers (appended like part a)
+    /** Dwarf baby tears: the finest carpet, strong light and CO2. */
+    HC_CUBA("hemianthus_callitrichoides", Form.CARPET, 4, 6, Light.VERY_HIGH, Red.NONE, "mat", 0x5EAE36, 0x7ECC48, 0, 0x5E9A36, 0x5E9A36),
+    /** Hairgrass: a lawn of upright needles. */
+    ELEOCHARIS("eleocharis_acicularis", Form.CARPET, 3.5, 6, Light.MID, Red.NONE, "needle", 0x5E9A36, 0x80B44A, 0, 0x5A8A34, 0x5A8A34),
+    STAUROGYNE("staurogyne_repens", Form.CARPET, 4.5, 6, Light.MID, Red.NONE, "fine", 0x4E8A34, 0x6AA444, 0, 0x4E7A30, 0x4E7A30),
+    /** Water clover: four small leaflets on every stalk, undemanding. */
+    MARSILEA("marsilea_hirsuta", Form.CARPET, 6, 6, Light.LOW, Red.NONE, "mat", 0x4E9238, 0x68AA46, 0, 0x4E7A30, 0x4E7A30),
+    CHRISTMAS_MOSS("christmas_moss", Form.MOSS, 8, 6, Light.LOW, Red.NONE, "moss", 0x3E7028, 0x548A32, 0, 0x3E7028, 0x3E7028),
+    FLAME_MOSS("flame_moss", Form.MOSS, 8, 6, Light.LOW, Red.NONE, "moss", 0x3A6A28, 0x5A8C34, 0, 0x3A6A28, 0x3A6A28),
+    /** Crystalwort: a bright cushion tied onto stone or wood, or floating ({@code FloatingPlantType#RICCIA}). */
+    RICCIA("riccia_fluitans", Form.MOSS, 4, 6, Light.HIGH, Red.NONE, "moss", 0x7CBE3E, 0x9AD650, 0, 0x7CBE3E, 0x7CBE3E),
+    /** A ball of algae (Aegagropila linnaei): grows very slowly, never minds the cold and rolls with the current. */
+    MARIMO("marimo", Form.MOSS, 60, 6, Light.LOW, Red.NONE, "moss", 0x2E6A2A, 0x3E7E32, 0, 0x2E6A2A, 0x2E6A2A),
+    ECHINODORUS_RED_DIAMOND("echinodorus_red_diamond", Form.ROSETTE, 8, 8, Light.MID, Red.RED, "broad", 0x6A5A36, 0x7A5E3A, 0xB0283A, 0x6A4A34, 0x6A4A34),
+    /** The smallest crypt: a slow lawn of narrow leaves. */
+    CRYPT_PARVA("cryptocoryne_parva", Form.ROSETTE, 16, 6, Light.LOW, Red.NONE, "broad", 0x3E7A2E, 0x58943A, 0, 0x4A6A30, 0x4A6A30),
+    /** Dwarf sagittaria: grass-like leaves, spreads by runners. */
+    SAGITTARIA("sagittaria_subulata", Form.ROSETTE, 4, 6, Light.LOW, Red.NONE, "ribbon", 0x5A9A3A, 0x76B248, 0, 0x5A8A38, 0x5A8A38),
+    /** A tuber with long, undulate leaves and a flower spike at the surface. */
+    APONOGETON("aponogeton_ulvaceus", Form.BULB, 6, 8, Light.MID, Red.NONE, "wavy", 0x6AA640, 0x88BC52, 0xF2EEDA, 0x6A8A3E, 0x7A6A42),
+    /** The green tiger lotus (Nymphaea lotus): green leaves with brown spots. */
+    NYMPHAEA_GREEN("nymphaea_lotus_green", Form.BULB, 6, 8, Light.MID, Red.NONE, "lotus", 0x4E8A34, 0x6AA040, 0, 0x6A7A3A, 0x6A5A32);
 
     /** Growth form: decides the shape ({@link PlantShapes}), where it may be planted and how it spreads. */
     public enum Form {
@@ -195,7 +218,7 @@ public enum PlantSpecies {
     /** Spreads by itself once fully grown: side shoots (stem plants) or runners; M20: polyps and mushrooms over the rock. */
     public boolean spreads() {
         return form == Form.STEM || form == Form.RIBBON || form == Form.CARPET || this == CRYPT_GREEN || this == CRYPT_BROWN
-                || form == Form.POLYPS || form == Form.DISC;
+                || form == Form.POLYPS || form == Form.DISC || this == CRYPT_PARVA || this == SAGITTARIA;
     }
 
     /** M20: a coral or the anemone (salt water, reef rock). */
@@ -233,7 +256,7 @@ public enum PlantSpecies {
      */
     public boolean needsCo2() {
         return switch (this) {
-            case LUDWIGIA_SUPER_RED, ROTALA_HRA, ROTALA_WALLICHII, POGOSTEMON_DOWNOI, MYRIOPHYLLUM_RED -> true;
+            case LUDWIGIA_SUPER_RED, ROTALA_HRA, ROTALA_WALLICHII, POGOSTEMON_DOWNOI, MYRIOPHYLLUM_RED, HC_CUBA -> true;
             default -> false;
         };
     }
@@ -244,6 +267,19 @@ public enum PlantSpecies {
     /** M28: wants soft, slightly acidic water ({@code features.waterChemistry}): slower in hard or alkaline water. */
     public boolean softWater() {
         return this == ROTALA_WALLICHII || this == MYRIOPHYLLUM_RED;
+    }
+
+    /** M28 part b: Riccia is tied onto stone or wood only (the other mosses grow on any solid block). */
+    public boolean onlyOnHardscape() {
+        return this == RICCIA;
+    }
+
+    /**
+     * M28 part b: the Marimo ball: grows even in cold water and rolls over the floor with the current
+     * ({@code InteriorPlants#roll}).
+     */
+    public boolean rolls() {
+        return this == MARIMO;
     }
 
     /** M28: the species that came after the plant tables became config lists (M22.4); see {@code PlantTables}. */

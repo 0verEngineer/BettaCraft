@@ -33,7 +33,7 @@ class PlantSourcesTest {
     private static Map<String, String> plants() {
         Map<String, String> out = new LinkedHashMap<>();
         for (PlantSpecies p : PlantSpecies.values()) out.put(Target.plant(p), p.id());
-        for (FloatingPlantType f : FloatingPlantType.values()) if (f.grows()) out.put(Target.floating(f), f.id());
+        for (FloatingPlantType f : FloatingPlantType.values()) if (f.grows() && !f.plantItem()) out.put(Target.floating(f), f.id());
         return out;
     }
 

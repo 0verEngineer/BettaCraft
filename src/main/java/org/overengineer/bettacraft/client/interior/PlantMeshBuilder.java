@@ -99,6 +99,20 @@ final class PlantMeshBuilder {
             case LIMNOPHILA_SESSILIFLORA -> stems(PlantTex.FEATHER, 1.2F, 0.8F, 0.5F, 3);
             case MYRIOPHYLLUM_RED -> stems(PlantTex.FEATHER, 1.1F, 0.75F, 0.5F, 3);
             case BACOPA_CAROLINIANA -> stems(PlantTex.ROUND, 1.25F, 0.95F, 0.5F);
+            // M28 part b
+            case HC_CUBA -> tinyCarpet();
+            case ELEOCHARIS -> hairgrass();
+            case STAUROGYNE -> staurogyne();
+            case MARSILEA -> clover();
+            case CHRISTMAS_MOSS -> christmasMoss();
+            case FLAME_MOSS -> flameMoss();
+            case RICCIA -> riccia();
+            case MARIMO -> marimo();
+            case ECHINODORUS_RED_DIAMOND -> rosette(PlantTex.SWORD, 0.32F, 1.5F, 2.8F, 0.025, 0.5);
+            case CRYPT_PARVA -> rosette(PlantTex.NARROW, 0.15F, 0.55F, 0.9F, 0.02, 0.3);
+            case SAGITTARIA -> rosette(PlantTex.NARROW, 0.06F, 0.5F, 0.8F, 0.03, 0.45);
+            case APONOGETON -> aponogeton();
+            case NYMPHAEA_GREEN -> lotus();
         }
     }
 
@@ -1027,7 +1041,322 @@ final class PlantMeshBuilder {
         m.swayMax = 0.1;
     }
 
+    // ------------------------------------------------------------------ M28 part b: carpets
+
+    /** Thin runners from a block of a carpet to its neighbours (same layer) and down to the block below it. */
+    private void runners(int x, int y, int z) {
+        for (int[] d : new int[][] {{1, 0}, {0, 1}}) {
+            if (has(x + d[0], y, z + d[1])) {
+                use(x, y, z, PlantPart.STEM);
+                tube(new Vector3f(x + 0.5F, y + 0.08F, z + 0.5F), new Vector3f(x + d[0] + 0.5F, y + 0.08F, z + d[1] + 0.5F), 0.04F * style.stem());
+            }
+        }
+        if (y > 0) {
+            // down to the block below (or to the floor, when it is gone)
+            use(x, y, z, PlantPart.STEM);
+            tube(new Vector3f(x + 0.5F, y - 0.92F, z + 0.5F), new Vector3f(x + 0.5F, y + 0.08F, z + 0.5F), 0.04F * style.stem());
+        }
+    }
+
+    /** Hemianthus "Cuba": the tiniest round leaves, four to a block, on the carpet and its cushion layer. */
+    void tinyCarpet() {
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            runners(x, y, z);
+            use(x, y, z, PlantPart.MAT);
+            for (int i = 0; i < 4; i++) {
+                float a = (hash(x, y, z, 10 + i) + i / 4F) * 6.28F;
+                Vector3f base = new Vector3f(x + 0.5F, y + 0.08F, z + 0.5F);
+                Vector3f dir = new Vector3f((float) Math.cos(a), 0.5F + hash(x, y, z, 20 + i) * 0.4F, (float) Math.sin(a));
+                Vector3f top = new Vector3f(base).add(new Vector3f(dir).normalize().mul(0.18F));
+                tube(base, top, 0.025F * style.stem());
+                leaf(PlantTex.ROUND, top, new Vector3f(dir.x, dir.y * 0.5F, dir.z), new Vector3f((float) -Math.sin(a), 0, (float) Math.cos(a)),
+                        0.4F * style.leafLong(), 0.34F * style.leafWide(), 0.06F);
+            }
+        }
+        m.swayPerBlock = 0.02;
+        m.swayMax = 0.08;
+    }
+
+    /** Eleocharis: runners over the floor, from them tufts of thin upright needles (a few short ones on every block). */
+    void hairgrass() {
+        Long2IntOpenHashMap topY = new Long2IntOpenHashMap();
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            long ck = col(x, z);
+            if (!topY.containsKey(ck) || y > topY.get(ck)) topY.put(ck, y);
+            if (y == 0) runners(x, y, z);
+        }
+        for (long ck : topY.keySet()) {
+            int x = colX(ck), z = colZ(ck), top = topY.get(ck);
+            int n = top == 0 ? 2 : 5;
+            for (int i = 0; i < n; i++) {
+                float a = (hash(x, 0, z, 30 + i) + i / (float) n) * 6.28F;
+                float lean = 0.08F + hash(x, 0, z, 40 + i) * 0.22F;
+                float h = top == 0 ? 0.45F + hash(x, 0, z, 50 + i) * 0.4F : top + 0.5F + hash(x, 0, z, 50 + i) * 0.8F;
+                Vector3f base = new Vector3f(x + 0.5F + (float) Math.cos(a) * 0.08F, 0.04F, z + 0.5F + (float) Math.sin(a) * 0.08F);
+                List<Vector3f> pts = new ArrayList<>();
+                for (int j = 0; j <= 4; j++) {
+                    float t = j / 4F;
+                    float out = lean * t * t * Math.max(1, h * 0.4F);
+                    pts.add(new Vector3f(base.x + (float) Math.cos(a) * out, base.y + h * t, base.z + (float) Math.sin(a) * out));
+                }
+                use(x, Math.min(top, Math.round(h * 0.7F)), z, top == 0 ? PlantPart.MAT : PlantPart.LEAF);
+                blade(PlantTex.NEEDLE, pts, 0.3F * style.leafWide(), (hash(x, 0, z, 60 + i) - 0.5F) * 0.6F, a);
+            }
+        }
+        m.swayPerBlock = 0.03;
+        m.swayMax = 0.25;
+    }
+
+    /** Staurogyne repens: short upright shoots with pairs of lanceolate leaves, low leaves over the rest of the carpet. */
+    void staurogyne() {
+        Long2IntOpenHashMap topY = new Long2IntOpenHashMap();
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            long ck = col(x, z);
+            if (!topY.containsKey(ck) || y > topY.get(ck)) topY.put(ck, y);
+            if (y == 0) runners(x, y, z);
+        }
+        for (long ck : topY.keySet()) {
+            int x = colX(ck), z = colZ(ck), top = topY.get(ck);
+            float yaw0 = hash(x, 0, z, 70) * 6.28F;
+            Vector3f foot = new Vector3f(x + 0.5F, 0.06F, z + 0.5F);
+            Vector3f tip = new Vector3f(x + 0.5F, top + 0.55F, z + 0.5F);
+            if (top > 0) {
+                use(x, 0, z, PlantPart.STEM);
+                tube(PlantTex.STEM, foot, tip, 0.07F * style.stem(), 0.05F * style.stem(), 4);
+            }
+            // a pair of leaves on every level, crossed with the one below; the top a little crown
+            for (int y = 0; y <= top; y++) {
+                boolean crown = y == top;
+                use(x, y, z, crown && top > 0 ? PlantPart.TOP : PlantPart.LEAF);
+                int pairs = crown ? 2 : 1;
+                for (int j = 0; j < pairs * 2; j++) {
+                    double b = yaw0 + y * Math.PI / 2 + j * Math.PI / pairs + (crown ? 0.3 : 0);
+                    Vector3f at = new Vector3f(x + 0.5F, y == 0 ? 0.12F : y + 0.35F, z + 0.5F);
+                    Vector3f d = new Vector3f((float) Math.cos(b), crown ? 0.75F : 0.35F, (float) Math.sin(b));
+                    leaf(PlantTex.LANCE, at, d, new Vector3f((float) -Math.sin(b), 0, (float) Math.cos(b)), (crown ? 0.7F : 0.85F) * style.leafLong(),
+                            0.36F * style.leafWide(), 0.1F);
+                }
+            }
+        }
+        m.swayPerBlock = 0.025;
+        m.swayMax = 0.15;
+    }
+
+    /** Marsilea: runners, on every block a thin stalk with four leaflets like a clover (higher on the raised blocks). */
+    void clover() {
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            if (y == 0) runners(x, y, z);
+            boolean raised = y > 0;
+            Vector3f base = new Vector3f(x + 0.5F, raised ? y - 0.92F : 0.08F, z + 0.5F);
+            Vector3f top = new Vector3f(x + 0.5F + (hash(x, y, z, 80) - 0.5F) * 0.2F, y + 0.25F + hash(x, y, z, 81) * 0.25F,
+                    z + 0.5F + (hash(x, y, z, 82) - 0.5F) * 0.2F);
+            use(x, y, z, PlantPart.STEM);
+            tube(base, top, 0.03F * style.stem());
+            use(x, y, z, raised ? PlantPart.LEAF : PlantPart.MAT);
+            float yaw = hash(x, y, z, 83) * 6.28F;
+            for (int i = 0; i < 4; i++) {
+                double a = yaw + i * Math.PI / 2;
+                Vector3f d = new Vector3f((float) Math.cos(a), 0.12F, (float) Math.sin(a));
+                leaf(PlantTex.ROUND, top, d, new Vector3f((float) -Math.sin(a), 0, (float) Math.cos(a)), 0.4F * style.leafLong(),
+                        0.42F * style.leafWide(), 0.04F);
+            }
+        }
+        m.swayPerBlock = 0.02;
+        m.swayMax = 0.1;
+    }
+
+    // ------------------------------------------------------------------ M28 part b: mosses
+
+    /** Christmas moss: flat, triangular fronds in tiers (feathery leaves lying almost level) over a cushion of sprigs. */
+    void christmasMoss() {
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            use(x, y, z, PlantPart.MOSS);
+            float yaw = hash(x, y, z, 1) * 6.28F;
+            Vector3f at = new Vector3f(x + 0.5F, y + 0.45F, z + 0.5F);
+            cross(PlantTex.MOSS, at, 1.2F * style.leafWide(), yaw, false);
+            for (int i = 0; i < 2; i++) {
+                double a = yaw + i * Math.PI + 0.4;
+                Vector3f d = new Vector3f((float) Math.cos(a), -0.08F, (float) Math.sin(a));
+                leaf(PlantTex.FEATHER, new Vector3f(at).sub(0, 0.15F, 0), d, new Vector3f((float) -Math.sin(a), 0, (float) Math.cos(a)),
+                        1.4F * style.leafLong(), 1.1F * style.leafWide(), 0.05F);
+            }
+        }
+        m.swayPerBlock = 0.012;
+        m.swayMax = 0.2;
+    }
+
+    /** Flame moss: upright, twisted sprigs like little flames on the top of every column, sprigs below. */
+    void flameMoss() {
+        Long2IntOpenHashMap topY = new Long2IntOpenHashMap();
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            long ck = col(x, z);
+            if (!topY.containsKey(ck) || y > topY.get(ck)) topY.put(ck, y);
+        }
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            use(x, y, z, PlantPart.MOSS);
+            float yaw = hash(x, y, z, 1) * 6.28F;
+            if (y == topY.get(col(x, z))) {
+                // the flame: a twisted blade standing up from the block
+                List<Vector3f> pts = new ArrayList<>();
+                float lean = (hash(x, y, z, 5) - 0.5F) * 0.5F;
+                for (int j = 0; j <= 3; j++) {
+                    float t = j / 3F;
+                    pts.add(new Vector3f(x + 0.5F + (float) Math.cos(yaw) * lean * t * t, y + 0.1F + 1.5F * t, z + 0.5F + (float) Math.sin(yaw) * lean * t * t));
+                }
+                blade(PlantTex.MOSS, pts, 0.9F * style.leafWide(), 2.2F, yaw);
+            } else {
+                cross(PlantTex.MOSS, new Vector3f(x + 0.5F, y + 0.5F, z + 0.5F), 1.3F * style.leafWide(), yaw, false);
+            }
+        }
+        m.swayPerBlock = 0.015;
+        m.swayMax = 0.25;
+    }
+
+    /** Riccia: a dense cushion of small, forked thalli (flat stars of the Riccia texture). */
+    void riccia() {
+        for (var e : blocks.long2ObjectEntrySet()) {
+            long k = e.getLongKey();
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            use(x, y, z, PlantPart.MOSS);
+            float yaw = hash(x, y, z, 1) * 6.28F;
+            Vector3f at = new Vector3f(x + 0.3F + hash(x, y, z, 2) * 0.4F, y + 0.5F, z + 0.3F + hash(x, y, z, 3) * 0.4F);
+            cross(PlantTex.RICCIA, at, (1.3F + hash(x, y, z, 4) * 0.4F) * style.leafWide(), yaw, true);
+        }
+        m.swayPerBlock = 0.01;
+        m.swayMax = 0.12;
+    }
+
+    /** Marimo: a velvety ball (a sphere of the Marimo texture) with a few loose filaments standing off it. */
+    void marimo() {
+        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = 0, minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+        for (long k : blocks.keySet()) {
+            minX = Math.min(minX, BlockPos.getX(k));
+            maxX = Math.max(maxX, BlockPos.getX(k));
+            maxY = Math.max(maxY, BlockPos.getY(k));
+            minZ = Math.min(minZ, BlockPos.getZ(k));
+            maxZ = Math.max(maxZ, BlockPos.getZ(k));
+        }
+        float rad = Math.max(0.45F, Math.max((maxY + 1) / 2F, Math.max(maxX - minX + 1, maxZ - minZ + 1) / 2F) * 0.95F);
+        Vector3f c = new Vector3f((minX + maxX + 1) / 2F, rad + 0.02F, (minZ + maxZ + 1) / 2F);
+        int lat = 7, lon = 12;
+        int color = colorOf(0, 0, 0, PlantPart.MOSS), dark = lerpColor(color, 0xFF000000, 0.25F);
+        for (int i = 0; i < lat; i++) {
+            double t0 = Math.PI * i / lat, t1 = Math.PI * (i + 1) / lat;
+            for (int j = 0; j < lon; j++) {
+                double p0 = Math.PI * 2 * j / lon, p1 = Math.PI * 2 * (j + 1) / lon;
+                Vector3f na = sphere(t0, p0), nb = sphere(t0, p1), nc = sphere(t1, p1), nd = sphere(t1, p0);
+                Vector3f mid = new Vector3f(na).add(nc).normalize();
+                Vector3f at = new Vector3f(mid).mul(rad).add(c);
+                use(Math.round(at.x - 0.5F), Math.max(0, Math.min(maxY, Math.round(at.y - 0.5F))), Math.round(at.z - 0.5F), PlantPart.MOSS);
+                // darker underneath (it lies in its own shadow)
+                int ca = lerpColor(dark, color, (na.y + 1) / 2), cc = lerpColor(dark, color, (nc.y + 1) / 2);
+                // a third of the (tileable) texture per quad: inside the tile, so the block atlas outside needs no repeat
+                float u0 = (j % 3) / 3F, u1 = u0 + 1 / 3F, v0 = (i % 3) / 3F, v1 = v0 + 1 / 3F;
+                quad4(PlantTex.MARIMO, new Vector3f(na).mul(rad).add(c), new Vector3f(nb).mul(rad).add(c), new Vector3f(nc).mul(rad).add(c),
+                        new Vector3f(nd).mul(rad).add(c), u0, v0, u1, v0, u1, v1, u0, v1, na, nb, nc, nd, ca, ca, cc, cc);
+            }
+        }
+        // loose filaments: small sprigs on the upper half
+        for (int i = 0; i < 14; i++) {
+            double t = Math.acos(1 - hash(i, 0, 0, 90) * 1.2), p = hash(i, 0, 0, 91) * Math.PI * 2;
+            Vector3f n = sphere(t, p);
+            Vector3f at = new Vector3f(n).mul(rad * 1.02F).add(c);
+            use(Math.round(at.x - 0.5F), Math.max(0, Math.min(maxY, Math.round(at.y - 0.5F))), Math.round(at.z - 0.5F), PlantPart.MOSS);
+            cross(PlantTex.MOSS, at, 0.5F * style.leafWide(), (float) p, false);
+        }
+        m.swayPerBlock = 0;
+        m.swayMax = 0;
+    }
+
+    private static Vector3f sphere(double theta, double phi) {
+        return new Vector3f((float) (Math.sin(theta) * Math.cos(phi)), (float) Math.cos(theta), (float) (Math.sin(theta) * Math.sin(phi)));
+    }
+
+    // ------------------------------------------------------------------ M28 part b: Aponogeton
+
+    /**
+     * Aponogeton ulvaceus: the tuber, long undulate leaves from it and, when grown, the flower spike on its long stalk:
+     * white flowers on a short spike lying at the surface.
+     */
+    void aponogeton() {
+        Long2ObjectOpenHashMap<PlantPart> parts = parts();
+        long root = PlantSkeleton.key(0, 0, 0);
+        use(0, 0, 0, PlantPart.RHIZOME);
+        tube(PlantTex.STEM, new Vector3f(0.5F, 0F, 0.5F), new Vector3f(0.5F, 0.4F, 0.5F), 0.42F, 0.34F, 8);
+        tube(PlantTex.STEM, new Vector3f(0.5F, 0.4F, 0.5F), new Vector3f(0.5F, 0.7F, 0.5F), 0.34F, 0.12F, 8);
+        PlantSkeleton.Tree toSpike = PlantSkeleton.tree(parts, k -> k == root, k -> {
+            PlantPart p = parts.get(k);
+            return p == PlantPart.STEM || p == PlantPart.TOP || p == PlantPart.ROOT;
+        });
+        LongOpenHashSet stalk = new LongOpenHashSet(), spikes = new LongOpenHashSet();
+        for (LongArrayList spike : PlantSkeleton.clusters(parts, k -> parts.get(k) == PlantPart.TOP)) {
+            if (spike.size() < 2) continue;
+            long first = 0;
+            int best = Integer.MAX_VALUE;
+            for (long k : spike) {
+                if (!toSpike.contains(k)) continue;
+                int n = toSpike.path(k).size();
+                if (n < best) {
+                    best = n;
+                    first = k;
+                }
+            }
+            // only the spike on its stalk (leaf tips are TOP blocks too, but no stalk leads to them)
+            if (best == Integer.MAX_VALUE || best < 4) continue;
+            LongArrayList path = toSpike.path(first);
+            spikes.addAll(spike);
+            List<Vector3f> pts = new ArrayList<>();
+            pts.add(new Vector3f(0.5F, 0.6F, 0.5F));
+            for (int j = 1; j < path.size(); j++) {
+                long k = path.getLong(j);
+                if (parts.get(k) != PlantPart.STEM) continue;
+                pts.add(c(k));
+                stalk.add(k);
+            }
+            pts.add(c(first));
+            pts = smooth(pts, 2);
+            use(path.getLong(Math.max(0, path.size() - 2)), PlantPart.STEM);
+            tubes(PlantTex.STEM, pts, 0.08F * style.stem(), 0.06F * style.stem(), 4);
+            // the spike: along its blocks, a little above the water, white flowers on it
+            Vector3f a = c(first), b = a;
+            for (long k : spike) if (c(k).distanceSquared(a) > b.distanceSquared(a)) b = c(k);
+            a = new Vector3f(a).add(0, 0.45F, 0);
+            b = new Vector3f(b).add(0, 0.6F, 0);
+            use(first, PlantPart.TOP);
+            tube(PlantTex.STEM, c(first), a, 0.06F * style.stem(), 0.06F * style.stem(), 4);
+            tube(PlantTex.STEM, a, b, 0.07F * style.stem(), 0.05F * style.stem(), 4);
+            curColor = 0xFF000000 | saturate(0xF4F0DC, style.saturate());
+            int n = Math.max(3, Math.round(a.distance(b) * 2.5F));
+            for (int i = 0; i <= n; i++) {
+                Vector3f at = new Vector3f(a).lerp(b, i / (float) n);
+                cross(PlantTex.TUFT, at, 0.42F * style.detail(), i * 1.3F, false);
+            }
+        }
+        // the leaves from the tuber (the flower stalk is no leaf)
+        LongOpenHashSet skip = new LongOpenHashSet(stalk);
+        skip.addAll(spikes);
+        PlantSkeleton.Tree tree = PlantSkeleton.tree(parts, k -> k == root, k -> !skip.contains(k));
+        leaves(parts, tree, skip, PlantTex.WAVY, 0.12F, 0.9F, 1.7F, 0.05F, new Vector3f(0.5F, 0.55F, 0.5F));
+        m.swayPerBlock = 0.02;
+        m.swayMax = 0.4;
+    }
+
     // ------------------------------------------------------------------ tiger lotus
+
 
     /** Tiger lotus: the bulb, mottled leaves under water, floating leaves on long petioles at the surface. */
     void lotus() {

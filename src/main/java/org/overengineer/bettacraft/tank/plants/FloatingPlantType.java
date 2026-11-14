@@ -17,7 +17,20 @@ public enum FloatingPlantType {
     /** Rote Wurzelflosse (Phyllanthus fluitans): red under strong light, green under weak light, slow. */
     RED_ROOT_FLOATER("red_root_floater", 0.2, 0.6, 1.2, 0.9, 0.3),
     /** Vanilla lily pad put onto a tank: fixed, does not move or grow. */
-    LILY_PAD("lily_pad", 0.3, 0.0, 0.4, 0.9, 0.0);
+    LILY_PAD("lily_pad", 0.3, 0.0, 0.4, 0.9, 0.0),
+    // M28 part b (appended: the ordinal is sent to the clients)
+    /** Muschelblume (Pistia stratiotes): velvety rosettes of upright leaves, long feathery roots, takes up much waste. */
+    WATER_LETTUCE("water_lettuce", 0.3, 0.8, 1.5, 0.9, 0.5),
+    /**
+     * Hornkraut (Ceratophyllum demersum): rootless shoots that float free just under the surface, their whorls of stiff
+     * leaves hanging deep into the water column; grows fast and takes up the most waste.
+     */
+    HORNWORT("hornwort", 0.2, 1.3, 1.6, 0.6, 0.95),
+    /**
+     * Riccia fluitans floating: a bright cushion just at the surface, a nest site bettas like. Its item is the aquarium
+     * plant {@code riccia_fluitans} (tied onto stone or wood in the interior, or put onto the surface).
+     */
+    RICCIA("riccia_fluitans", 0.2, 1.1, 1.0, 1.0, 0.0);
 
     private final String id;
     private final double radius, growth, uptake, nest, roots;
@@ -51,6 +64,12 @@ public enum FloatingPlantType {
 
     /** Drifts with the water (all but the lily pad). */
     public boolean movable() { return this != LILY_PAD; }
+
+    /**
+     * M28: the item is an aquarium plant of the interior ({@code PlantSpecies} with the same id), no floating plant item
+     * of its own (Riccia).
+     */
+    public boolean plantItem() { return this == RICCIA; }
 
     /** Grows and forms offshoots (all but the lily pad). */
     public boolean grows() { return this != LILY_PAD; }

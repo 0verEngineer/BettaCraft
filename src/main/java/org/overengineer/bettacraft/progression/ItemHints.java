@@ -29,6 +29,10 @@ public final class ItemHints {
             "bucephalandra_kedagang", "bucephalandra_theia", "bucephalandra_godzilla", "bucephalandra_pink_lady", "bucephalandra_mini_pink",
             "bucephalandra_snow_white", "ludwigia_super_red", "rotala_hra", "rotala_wallichii", "hygrophila_pinnatifida", "pogostemon_helferi",
             "limnophila_sessiliflora", "myriophyllum_red", "bacopa_caroliniana",
+            // M28 part b: carpets, mosses, rosettes and tubers, floating plants
+            "hemianthus_callitrichoides", "eleocharis_acicularis", "staurogyne_repens", "marsilea_hirsuta", "christmas_moss", "flame_moss",
+            "riccia_fluitans", "marimo", "echinodorus_red_diamond", "cryptocoryne_parva", "sagittaria_subulata", "aponogeton_ulvaceus",
+            "nymphaea_lotus_green", "water_lettuce", "hornwort",
             "betta_spawn_egg",
             // M14: algae, frogs
             "algae_scraper", "dwarf_frog_bucket", "dwarf_frog_spawn_egg",

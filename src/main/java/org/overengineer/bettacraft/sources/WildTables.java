@@ -46,6 +46,10 @@ public final class WildTables {
             .add(PlantSpecies.ANUBIAS_ROUND_LEAF, 5)
             .add(PlantSpecies.ANUBIAS_WHITE, 2)
             .add(PlantSpecies.ANUBIAS_PINTO, 2)
+            // M28 part b: the red sword and Staurogyne of South America, the green lotus of tropical Africa
+            .add(PlantSpecies.ECHINODORUS_RED_DIAMOND, 4)
+            .add(PlantSpecies.NYMPHAEA_GREEN, 4)
+            .add(PlantSpecies.STAUROGYNE, 3)
             .build();
 
     /** M22.4: fishing in rivers: the epiphytes and, rarely, Vallisneria (river ribbons) and Monte Carlo from the banks. */
@@ -63,6 +67,15 @@ public final class WildTables {
             .add(PlantSpecies.BUCE_SNOW_WHITE, 1)
             .add(PlantSpecies.HYGROPHILA_PINNATIFIDA, 4)
             .add(PlantSpecies.POGOSTEMON_DOWNOI, 3)
+            // M28 part b: Sagittaria and the parva from the banks, Aponogeton (Madagascar), the mosses on the stones and
+            // rarely Hemianthus "Cuba" and a Marimo ball
+            .add(PlantSpecies.SAGITTARIA, 4)
+            .add(PlantSpecies.CRYPT_PARVA, 3)
+            .add(PlantSpecies.APONOGETON, 3)
+            .add(PlantSpecies.CHRISTMAS_MOSS, 3)
+            .add(PlantSpecies.FLAME_MOSS, 3)
+            .add(PlantSpecies.HC_CUBA, 1)
+            .add(PlantSpecies.MARIMO, 1)
             .build();
 
     /**
@@ -81,6 +94,10 @@ public final class WildTables {
             .add(PlantSpecies.ROTALA_HRA, 3)
             .add(PlantSpecies.ROTALA_WALLICHII, 3)
             .add(PlantSpecies.MYRIOPHYLLUM_RED, 3)
+            // M28 part b: water clover, Riccia and hairgrass of the shallow swamps
+            .add(PlantSpecies.MARSILEA, 4)
+            .add(PlantSpecies.RICCIA, 4)
+            .add(PlantSpecies.ELEOCHARIS, 3)
             .build();
 
     /** M22.4: fishing in mangrove swamps: the M13 swamp table (crypts and stem plants). */
@@ -103,6 +120,13 @@ public final class WildTables {
             .add(PlantSpecies.BUCE_KEDAGANG, 6)
             .add(PlantSpecies.BUCE_THEIA, 6)
             .add(PlantSpecies.POGOSTEMON_DOWNOI, 5)
+            // M28 part b
+            .add(PlantSpecies.SAGITTARIA, 6)
+            .add(PlantSpecies.CHRISTMAS_MOSS, 6)
+            .add(PlantSpecies.FLAME_MOSS, 5)
+            .add(PlantSpecies.CRYPT_PARVA, 4)
+            .add(PlantSpecies.HC_CUBA, 2)
+            .add(PlantSpecies.MARIMO, 2)
             .build();
 
     public static final WeightedTable<PlantSpecies> NET_PLANTS_JUNGLE = WeightedTable.<PlantSpecies>builder()
@@ -114,6 +138,9 @@ public final class WildTables {
             .add(PlantSpecies.ANUBIAS_COFFEEFOLIA, 8)
             .add(PlantSpecies.ANUBIAS_ROUND_LEAF, 8)
             .add(PlantSpecies.ANUBIAS_PETITE, 6)
+            // M28 part b
+            .add(PlantSpecies.STAUROGYNE, 6)
+            .add(PlantSpecies.ECHINODORUS_RED_DIAMOND, 5)
             .build();
 
     public static final WeightedTable<PlantSpecies> NET_PLANTS_SWAMP = WeightedTable.<PlantSpecies>builder()
@@ -128,6 +155,12 @@ public final class WildTables {
             .add(PlantSpecies.BACOPA_CAROLINIANA, 10)
             .add(PlantSpecies.ROTALA_HRA, 5)
             .add(PlantSpecies.MYRIOPHYLLUM_RED, 5)
+            // M28 part b
+            .add(PlantSpecies.MARSILEA, 8)
+            .add(PlantSpecies.ELEOCHARIS, 6)
+            .add(PlantSpecies.RICCIA, 6)
+            .add(PlantSpecies.APONOGETON, 3)
+            .add(PlantSpecies.NYMPHAEA_GREEN, 3)
             .build();
 
     /** M22.4: the default net plant table of a water (empty where the net brings up no plants). */
@@ -148,6 +181,9 @@ public final class WildTables {
             .add(FloatingPlantType.DUCKWEED, 45)
             .add(FloatingPlantType.SALVINIA, 30)
             .add(FloatingPlantType.FROGBIT, 25)
+            // M28 part b (after the old weights: the rolls below 100 pick as before)
+            .add(FloatingPlantType.HORNWORT, 14)
+            .add(FloatingPlantType.WATER_LETTUCE, 12)
             .build();
 
     /** Floating plants from fishing in a mangrove swamp (M12): also the red root floater. */
@@ -156,6 +192,9 @@ public final class WildTables {
             .add(FloatingPlantType.SALVINIA, 25)
             .add(FloatingPlantType.FROGBIT, 25)
             .add(FloatingPlantType.RED_ROOT_FLOATER, 15)
+            // M28 part b
+            .add(FloatingPlantType.WATER_LETTUCE, 12)
+            .add(FloatingPlantType.HORNWORT, 8)
             .build();
 
     /**

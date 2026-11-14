@@ -19,7 +19,9 @@ enum PlantTex {
     TENTACLE("tentacle", false), TUFT("tuft", true), BUBBLE("bubble", true),
     // M28 part a (appended: the layers of a mesh are indexed by the ordinal); PINTO is coloured, the mesh tints it white
     COFFEE("leaf_coffee", true), LOBED("leaf_lobed", true), FEATHER("leaf_feather", true), CRISP("leaf_crisp", true),
-    PINTO("leaf_pinto", true);
+    PINTO("leaf_pinto", true),
+    // M28 part b: the forked thalli of Riccia, the velvet of the Marimo ball (opaque, tiled over the sphere)
+    RICCIA("riccia", true), MARIMO("marimo", false);
 
     static final PlantTex[] ALL = values();
 

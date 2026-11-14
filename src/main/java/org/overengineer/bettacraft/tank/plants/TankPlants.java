@@ -72,6 +72,11 @@ public final class TankPlants {
     /** The item of a species (the vanilla lily pad for {@link FloatingPlantType#LILY_PAD}). */
     public static ItemStack item(FloatingPlantType type) {
         if (type == FloatingPlantType.LILY_PAD) return new ItemStack(Items.LILY_PAD);
+        if (type.plantItem()) {
+            // M28: floating Riccia comes back as the aquarium plant
+            var plant = ModItems.AQUATIC_PLANTS.get(org.overengineer.bettacraft.plants.PlantSpecies.byIdOrNull(type.id()));
+            return plant == null ? ItemStack.EMPTY : new ItemStack(plant.get());
+        }
         var item = ModItems.FLOATING_PLANTS.get(type);
         return item == null ? ItemStack.EMPTY : new ItemStack(item.get());
     }
@@ -81,6 +86,11 @@ public final class TankPlants {
     public static FloatingPlantType typeOf(ItemStack stack) {
         if (stack.getItem() instanceof FloatingPlantItem p) return p.type();
         if (stack.is(Items.LILY_PAD)) return FloatingPlantType.LILY_PAD;
+        // M28: an aquarium plant that also floats (Riccia); a grown one floats like a cutting
+        if (stack.getItem() instanceof org.overengineer.bettacraft.plants.AquaticPlantItem a) {
+            FloatingPlantType t = FloatingPlantType.byIdOrNull(a.species().id());
+            if (t != null && t.plantItem()) return t;
+        }
         return null;
     }
 

@@ -66,6 +66,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_FOOD_MAKER;
     public static final ModConfigSpec.BooleanValue FEATURE_FOOD_VARIETY;
     public static final ModConfigSpec.BooleanValue FEATURE_MONITORS;
+    public static final ModConfigSpec.BooleanValue FEATURE_MARIMO_ROLLING;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -203,6 +204,9 @@ public final class CommonConfig {
         // M27
         FEATURE_MONITORS = b.comment("Monitors: screens of monitor blocks that show the values of every tank in range, with graphs of the last",
                 "days (off: the screens stay dark and record nothing)").define("monitors", true);
+        // M28
+        FEATURE_MARIMO_ROLLING = b.comment("Marimo balls roll slowly over the tank floor with the current of filters and outlets (off: they stay where they",
+                "were put)").define("marimoRolling", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -318,6 +322,8 @@ public final class CommonConfig {
     public static boolean foodMaker() { return getOr(FEATURE_FOOD_MAKER, true); }
     public static boolean foodVariety() { return getOr(FEATURE_FOOD_VARIETY, true); }
     public static boolean monitors() { return getOr(FEATURE_MONITORS, true); }
+    // M28
+    public static boolean marimoRolling() { return getOr(FEATURE_MARIMO_ROLLING, true); }
 
     private CommonConfig() {}
 }

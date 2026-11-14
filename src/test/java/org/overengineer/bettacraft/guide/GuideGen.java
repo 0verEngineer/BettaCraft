@@ -135,7 +135,8 @@ public final class GuideGen {
         for (TankmateSpecies s : TankmateSpecies.values()) out.put(Target.tankmate(s), s.id());
         for (CritterSpecies s : CritterSpecies.values()) out.put(Target.critter(s), s.id());
         for (PlantSpecies p : PlantSpecies.values()) out.put(Target.plant(p), p.id());
-        for (FloatingPlantType t : FloatingPlantType.values()) if (t.grows()) out.put(Target.floating(t), t.id());
+        // M28: floating Riccia is the aquarium plant (its page)
+        for (FloatingPlantType t : FloatingPlantType.values()) if (t.grows() && !t.plantItem()) out.put(Target.floating(t), t.id());
         return out;
     }
 
@@ -325,10 +326,12 @@ public final class GuideGen {
 
     private String plantProfile(PlantSpecies p) {
         Table tb = new Table();
-        tb.row(t("Growth form", "Wuchsform"), form(p.form()));
+        tb.row(t("Growth form", "Wuchsform"), p.rolls() ? t("ball of algae (lies loose)", "Algenkugel (liegt lose)") : form(p.form()));
         tb.row(t("Grows on", "Wächst auf"), p.marine() ? t("reef rock, live rock", "Riffgestein, lebendem Gestein") : switch (p.form()) {
             case EPIPHYTE -> t("stone and wood (also decoration)", "Stein und Holz (auch Deko)");
-            case MOSS -> t("any solid block", "jedem festen Block");
+            case MOSS -> p.onlyOnHardscape() ? t("stone and wood (also decoration); or floating on the surface", "Stein und Holz (auch Deko); oder schwimmend an der Oberfläche")
+                    : p.rolls() ? t("the floor or any solid block (it lies there and rolls with the current)", "dem Boden oder jedem festen Block (liegt dort und rollt mit der Strömung)")
+                    : t("any solid block", "jedem festen Block");
             default -> p.alsoOnHardscape() ? t("substrate (sand, gravel, dirt, the interior floor), also stone and wood",
                     "Bodengrund (Sand, Kies, Erde, Innenboden), auch Stein und Holz")
                     : t("substrate (sand, gravel, dirt, the interior floor)", "Bodengrund (Sand, Kies, Erde, Innenboden)");
@@ -364,6 +367,13 @@ public final class GuideGen {
                 "nötig: ohne CO2 wächst sie mit " + Math.round(PlantSpecies.NO_CO2_GROWTH * 100) + " % Geschwindigkeit"));
         if (p.softWater()) tb.row(t("Water chemistry", "Wasserchemie"), t("soft water: best up to pH 7 and 300 TDS, slower in hard water",
                 "weiches Wasser: am besten bis pH 7 und 300 TDS, langsamer in hartem Wasser"));
+        // M28 part b: Riccia floats too, the Marimo rolls and minds no cool water
+        if (p.onlyOnHardscape()) tb.row(t("Floating", "Schwimmend"), t("yes: use it on a tank from outside", "ja: von außen auf ein Aquarium anwenden"));
+        if (p.rolls()) {
+            tb.row(t("Temperature", "Temperatur"), t("also cool water (from 5 °C)", "auch kühles Wasser (ab 5 °C)"));
+            tb.row(t("Rolls", "Rollt"), t("with the current of filters and outlets (config `features.marimoRolling`)",
+                    "mit der Strömung von Filtern und Auslässen (Einstellung `features.marimoRolling`)"));
+        }
         return tb.render();
     }
 
@@ -385,7 +395,8 @@ public final class GuideGen {
         tb.row(t("Waste uptake", "Nimmt Abfall auf"), "×" + num(f.uptake()));
         tb.row(t("Nest site", "Nestplatz"), f.nestFavour() >= 1.0 ? t("the favourite", "der liebste") : f.nestFavour() >= 0.8 ? t("good", "gut")
                 : t("so-so", "mäßig"));
-        tb.row(t("Roots", "Wurzeln"), f.rootLength() >= 0.25 ? t("long", "lang") : f.rootLength() >= 0.12 ? t("medium", "mittel") : t("short", "kurz"));
+        tb.row(t("Roots", "Wurzeln"), f == FloatingPlantType.HORNWORT ? t("none: its shoots hang deep into the water", "keine: die Triebe hängen tief ins Wasser")
+                : f.rootLength() >= 0.25 ? t("long", "lang") : f.rootLength() >= 0.12 ? t("medium", "mittel") : t("short", "kurz"));
         return tb.render();
     }
 
@@ -554,7 +565,9 @@ public final class GuideGen {
         Table tb = new Table("", t("Plant", "Pflanze"), t("Growth", "Wachstum"), t("Nest site", "Nestplatz"));
         for (FloatingPlantType f : FloatingPlantType.values()) {
             if (!f.grows()) continue;
-            tb.row("<ItemImage id=\"bettacraft:" + f.id() + "\" />", link(lang("item.bettacraft." + f.id()), page(Target.floating(f)), page, false),
+            // M28: floating Riccia links to its plant page
+            String to = f.plantItem() ? page(Target.plant(PlantSpecies.byId(f.id()))) : page(Target.floating(f));
+            tb.row("<ItemImage id=\"bettacraft:" + f.id() + "\" />", link(lang("item.bettacraft." + f.id()), to, page, false),
                     f.growthPerDay() >= 1.2 ? t("very fast", "sehr schnell") : f.growthPerDay() >= 0.9 ? t("fast", "schnell") : t("medium", "mittel"),
                     f.nestFavour() >= 1.0 ? t("the favourite", "der liebste") : f.nestFavour() >= 0.8 ? t("good", "gut") : t("so-so", "mäßig"));
         }

@@ -53,7 +53,7 @@ public final class ModItems {
         var m = new java.util.EnumMap<org.overengineer.bettacraft.tank.plants.FloatingPlantType,
                 DeferredItem<org.overengineer.bettacraft.tank.plants.FloatingPlantItem>>(org.overengineer.bettacraft.tank.plants.FloatingPlantType.class);
         for (var t : org.overengineer.bettacraft.tank.plants.FloatingPlantType.values()) {
-            if (!t.grows()) continue;
+            if (!t.grows() || t.plantItem()) continue; // M28: floating Riccia is the aquarium plant item
             m.put(t, ITEMS.register(t.id(), () -> new org.overengineer.bettacraft.tank.plants.FloatingPlantItem(t, new Item.Properties())));
         }
         return java.util.Collections.unmodifiableMap(m);
