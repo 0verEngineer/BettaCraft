@@ -43,3 +43,5 @@ Das Zwergseepferdchen (*Hippocampus zosterae*) aus den Seegraswiesen Floridas, d
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.seahorses`).
 * **Fahrender Händler** (seltene Angebote): 2 für 5 Smaragde; eins von 3 in diesem Angebot (Config `features.seahorses`).
 * **[Zucht](seahorses.md)**: Bruttasche: das Männchen trägt die Eier.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

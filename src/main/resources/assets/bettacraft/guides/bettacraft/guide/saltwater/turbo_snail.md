@@ -37,3 +37,5 @@ The Mexican turbo snail (*Turbo fluctuosa*) from the Gulf of California: a large
 * **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 11–13 % per swing (about 1 in 7–9 swings), 1–2 at a time.
 * **Wild** in warm oceans (coral reefs), in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wild** in lukewarm oceans, in groups of 2–5 (spawn weight 3) (config `features.wildCritters`).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

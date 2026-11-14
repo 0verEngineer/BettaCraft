@@ -43,3 +43,5 @@ Der Gelbschwanz-Demoiselle (*Chrysiptera parasema*) aus dem westlichen Pazifik: 
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 5) (Config `features.wildFish`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 6) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 4 in diesem Angebot.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -23,7 +23,7 @@ Stein setzen. Eine Koralle wächst über die Tage Stufe für Stufe, wenn die Bed
 ## Wilde Korallen
 
 Alle Korallen der Mod und die Blasenanemone wachsen auch **wild an den Riffen warmer Ozeane**, als große Kolonien
-zwischen den Vanilla-Korallen (neue Chunks). Rechtsklick mit der **Schere** auf eine Kolonie: Ein Ableger für dein
+zwischen den Vanilla-Korallen (neue Chunks; auch in warmen Ozeanen von Biome-Mods, `#bettacraft:coral_reef_biomes`). Rechtsklick mit der **Schere** auf eine Kolonie: Ein Ableger für dein
 Meerwasserbecken fällt ab, und die Kolonie wächst nach einer Weile nach. Abgebaut lässt eine Kolonie nichts fallen (mit
 Behutsamkeit: sich selbst, für ein eigenes Riff unter Wasser). Config-Schalter: `features.wildCorals`.
 

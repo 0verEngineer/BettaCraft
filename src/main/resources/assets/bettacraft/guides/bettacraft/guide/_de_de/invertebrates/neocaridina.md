@@ -75,3 +75,5 @@ Garnelen verdirbt Überfüttern das Wasser kaum.
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

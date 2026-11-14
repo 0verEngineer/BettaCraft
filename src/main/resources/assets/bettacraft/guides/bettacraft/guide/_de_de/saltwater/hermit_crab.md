@@ -41,3 +41,5 @@ Der Blaubein-Einsiedlerkrebs (*Clibanarius tricolor*) aus der Karibik: ein klein
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 2–5 (Spawn-Gewicht 3) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 3 für 5 Smaragde; eins von 2 in diesem Angebot.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

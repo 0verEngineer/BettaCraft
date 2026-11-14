@@ -75,3 +75,5 @@ water. They are a species of their own and **do not cross with the Neocaridina**
 * **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.caridina`).
 * **Wandering trader** (rare offers): 2 for 8 emeralds (config `features.caridina`).
 * **Breeding** in the aquarium (male and female).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

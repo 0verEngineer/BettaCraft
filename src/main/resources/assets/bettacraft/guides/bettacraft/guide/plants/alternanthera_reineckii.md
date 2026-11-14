@@ -38,3 +38,5 @@ item_ids:
 * **Fishing** in swamps: 0.25 % per catch (about 1 in 401 catches), instead of the fish.
 * **Wandering trader** (usual offers): 1 for 2 emeralds.
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

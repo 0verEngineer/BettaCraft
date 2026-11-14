@@ -38,3 +38,5 @@ item_ids:
 * **Angeln** in Mangrovensümpfen: 1,2 % pro Fang (etwa 1 von 85 Fängen), statt des Fischs.
 * **Glasflasche** mit Wasser gefüllt in Sümpfen: 1,1 % pro Flasche, zusätzlich zum Wasser.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

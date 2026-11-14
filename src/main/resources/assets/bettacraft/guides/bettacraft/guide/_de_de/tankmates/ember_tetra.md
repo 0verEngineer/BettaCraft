@@ -44,3 +44,5 @@ Bei 25–28 °C streut ein Paar 15–40 Eier in feinblättrige Pflanzen, Javamoo
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 9) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

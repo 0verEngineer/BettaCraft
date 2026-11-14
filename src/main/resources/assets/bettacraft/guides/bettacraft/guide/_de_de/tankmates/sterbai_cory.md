@@ -50,3 +50,5 @@ Ein kühler Wasserwechsel löst das Laichen aus: mindestens ein Viertel des Wass
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 7) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 5 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

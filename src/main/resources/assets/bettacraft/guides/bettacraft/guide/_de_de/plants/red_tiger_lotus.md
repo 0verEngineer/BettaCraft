@@ -39,3 +39,5 @@ Der Rote Tigerlotus (*Nymphaea zenkeri*) aus Westafrika: eine Knolle mit gefleck
 * **Angeln** in Sümpfen: 0,21 % pro Fang (etwa 1 von 481 Fängen), statt des Fischs.
 * **Fahrender Händler** (seltene Angebote): 1 für 4 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

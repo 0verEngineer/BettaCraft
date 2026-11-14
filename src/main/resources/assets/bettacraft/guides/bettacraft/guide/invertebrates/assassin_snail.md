@@ -41,3 +41,5 @@ The assassin snail (*Clea helena*) from South-East Asia: a yellow and brown band
 * **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 1 for 4 emeralds.
 * **Breeding** in the aquarium (male and female).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -37,3 +37,5 @@ Die Amazonas-Schwertpflanze (*Echinodorus grisebachii* „Bleherae“) aus Süda
 * **Angeln** in Dschungelgewässern: 0,43 % pro Fang (etwa 1 von 230 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 1 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

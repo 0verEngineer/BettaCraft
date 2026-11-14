@@ -43,3 +43,5 @@ The yellowtail damselfish (*Chrysiptera parasema*) from the western Pacific: a b
 * **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 5) (config `features.wildFish`).
 * **Wild** in lukewarm oceans, in groups of 1–1 (spawn weight 6) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 2 for 3 emeralds; one of 4 in this offer.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

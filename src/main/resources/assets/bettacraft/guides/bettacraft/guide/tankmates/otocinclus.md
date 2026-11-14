@@ -52,3 +52,5 @@ Rarely, at 22–26 °C: a few eggs on the glass and leaves (6–18).
 * **Wild** in jungle water, in groups of 3–5 (spawn weight 5) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 3 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

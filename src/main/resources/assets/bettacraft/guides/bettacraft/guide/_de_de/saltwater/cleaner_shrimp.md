@@ -38,3 +38,5 @@ Die Weißband-Putzergarnele (*Lysmata amboinensis*) aus dem Indopazifik: rot-wei
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 1 für 5 Smaragde; eins von 2 in diesem Angebot.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

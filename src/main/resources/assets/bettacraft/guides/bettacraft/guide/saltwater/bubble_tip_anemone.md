@@ -40,3 +40,5 @@ The bubble tip anemone (*Entacmaea quadricolor*) from the Indo-Pacific: a sea an
 * **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **Frags**: shears on a grown coral give 1 cutting per trim.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

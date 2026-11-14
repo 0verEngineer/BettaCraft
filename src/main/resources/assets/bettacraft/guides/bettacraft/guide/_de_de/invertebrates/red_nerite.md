@@ -36,3 +36,5 @@ Die Rote Rennschnecke (*Vittina waigiensis*, „Red Racer“) aus Indonesien: or
 * **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 1,8–2,2 % pro Schwung (etwa 1 von 46–55 Schwüngen).
 * **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 2 für 4 Smaragde; eins von 2 in diesem Angebot (Config `features.snailColors`).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

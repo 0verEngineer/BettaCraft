@@ -36,3 +36,5 @@ Javamoos (*Taxiphyllum barbieri*) aus Südostasien: feine grüne Triebe, die Ste
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,9–1,1 % pro Schwung (etwa 1 von 93–111 Schwüngen) (Config `features.plantNetCatches`).
 * **Schere** an einem Moosblock neben Wasser: 50 % pro Schnitt.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

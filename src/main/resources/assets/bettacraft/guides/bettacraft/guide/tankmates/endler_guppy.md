@@ -56,3 +56,5 @@ At 24–29 °C a female with a male gets pregnant and gives birth to 4–12 youn
 * **Wild** in jungle water, in groups of 3–3 (spawn weight 2) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 3+ emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Bears live young.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

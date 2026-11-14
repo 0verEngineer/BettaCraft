@@ -56,3 +56,5 @@ Bettas gehen auf ihn los.
 * **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (übliche Angebote): 2 für 5 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

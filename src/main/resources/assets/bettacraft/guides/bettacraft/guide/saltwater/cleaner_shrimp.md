@@ -38,3 +38,5 @@ The Pacific cleaner shrimp (*Lysmata amboinensis*) from the Indo-Pacific: red an
 * **Wild** in warm oceans (coral reefs), in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wild** in lukewarm oceans, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 1 for 5 emeralds; one of 2 in this offer.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

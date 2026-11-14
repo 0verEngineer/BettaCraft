@@ -74,3 +74,5 @@ shrimp, overfeeding hardly fouls the water.
 * **Wild** in rivers, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 2 for 6 emeralds.
 * **Breeding** in the aquarium (male and female).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

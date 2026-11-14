@@ -35,3 +35,5 @@ Rote Wurzelflosse (*Phyllanthus fluitans*) aus Südamerika: runde Blätter und r
 * **Angeln** in Mangrovensümpfen: 0,9 % pro Fang (etwa 1 von 111 Fängen), statt des Fischs.
 * **Fahrender Händler** (seltene Angebote): 2 für 3 Smaragde.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

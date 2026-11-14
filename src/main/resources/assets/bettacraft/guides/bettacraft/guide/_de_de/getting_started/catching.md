@@ -38,7 +38,8 @@ Fischtüte.
 Garnelen, Krebse, Schnecken und Einsiedlerkrebse krabbeln am Grund von Flüssen, Sümpfen, Mangroven, Stränden,
 Dschungelgewässern und Ozeanen. Rechtsklick mit Kescher, Fischtüte oder Wassereimer fängt eins; lässt du es wieder
 frei, krabbelt es davon. Alle Korallen der Mod wachsen an den Riffen warmer Ozeane zwischen den Vanilla-Korallen: Die
-[Schere schneidet einen Ableger](../saltwater/corals.md) von einer Kolonie.
+[Schere schneidet einen Ableger](../saltwater/corals.md) von einer Kolonie. Biome-Mods zählen mit: Ihre Sümpfe, Flüsse,
+Mangroven und warmen Ozeane sind dieselben Gewässer (siehe die [Biom-Tags](../settings.md)).
 
 Die meisten Wildtiere sind wildfarben, manche tragen eine Zuchtfarbe verdeckt, und etwa 3 von 100 zeigen eine offen
 (Config `wildlife.beautifulWildChance`). Was ein neues Tier verdeckt trägt, zeigt die [Lupe](../equipment/magnifier.md).

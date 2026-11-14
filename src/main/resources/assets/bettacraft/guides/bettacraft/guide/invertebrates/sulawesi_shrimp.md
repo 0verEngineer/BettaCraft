@@ -48,3 +48,5 @@ its tank best with the [Tylomelania snails](tylomelania.md) of the same lakes.
 * **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.sulawesi`).
 * **Wandering trader** (rare offers): 2 for 7 emeralds; one of 2 in this offer (config `features.sulawesi`).
 * **Breeding** in the aquarium (male and female).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

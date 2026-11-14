@@ -37,3 +37,5 @@ The Amazon sword (*Echinodorus grisebachii* "Bleherae") from South America: a bi
 * **Fishing** in jungle water: 0.43 % per catch (about 1 in 230 catches), instead of the fish.
 * **Wandering trader** (usual offers): 1 for 1 emerald.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

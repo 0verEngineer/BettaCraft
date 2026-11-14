@@ -43,3 +43,5 @@ The blue-green chromis (*Chromis viridis*) from the Indo-Pacific: small, shimmer
 * **Wild** in warm oceans (coral reefs), in groups of 3–5 (spawn weight 7) (config `features.wildFish`).
 * **Wild** in lukewarm oceans, in groups of 3–5 (spawn weight 5) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 4 in this offer.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

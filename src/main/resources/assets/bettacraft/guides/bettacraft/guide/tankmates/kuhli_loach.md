@@ -50,3 +50,5 @@ At 25–28 °C a pair scatters 15–50 eggs into fine-leaved plants, java moss o
 * **Wild** in swamps, in groups of 3–5 (spawn weight 6) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

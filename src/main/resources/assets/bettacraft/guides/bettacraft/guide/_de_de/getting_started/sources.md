@@ -10,7 +10,8 @@ navigation:
 
 Alles, was die Welt für deine Aquarien hergibt, mit der Chance pro Versuch (Standardwerte der Config). Die Seite wird aus
 den Tabellen des Spiels selbst geschrieben und passt deshalb immer zum Spiel. Jede Tier- und Pflanzenseite hat dieselbe
-Liste für ihre Art unter **Bezug**.
+Liste für ihre Art unter **Bezug**. Die Biome von Biome-Mods zählen mit: ihre Sümpfe, Flüsse, Riffe und so weiter (siehe
+die [Biom-Tags](../settings.md)).
 
 * **Kescher**: in offenem Wasser (nicht im Aquarium) schwingen, mit einem leeren Fischbeutel im Inventar; siehe
   [Tiere fangen](catching.md). Pflanzen in der Nähe und harter Boden (Sand, Kies, Stein) machen manche Fänge

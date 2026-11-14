@@ -39,3 +39,5 @@ Die Blasenschnecke (*Physella acuta*), weltweit in stillen Gewässern zu Hause: 
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Vermehrung** im Aquarium (ein Tier genügt).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -57,3 +57,5 @@ Braucht eine **Laichhöhle** (Deko) und 23–27 °C. Jedes Männchen besetzt ein
 * **Wild** in Dschungelgewässern, in Gruppen von 1–1 (Spawn-Gewicht 5) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

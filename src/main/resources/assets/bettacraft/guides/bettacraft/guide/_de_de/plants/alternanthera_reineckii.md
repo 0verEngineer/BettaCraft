@@ -38,3 +38,5 @@ item_ids:
 * **Angeln** in Sümpfen: 0,25 % pro Fang (etwa 1 von 401 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 1 für 2 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 3 Ableger pro Schnitt; sie breitet sich auch selbst aus (Seitentriebe).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

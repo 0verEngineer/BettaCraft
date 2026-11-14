@@ -37,3 +37,5 @@ Die Olivgrüne Rennschnecke (*Neritina reclivata*) von den Küsten Floridas und 
 * **[Kescher](../equipment/tank_net.md)** an Stränden: 9–11 % pro Schwung (etwa 1 von 9–11 Schwüngen), 1–2 auf einmal.
 * **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Wild** an Stränden, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

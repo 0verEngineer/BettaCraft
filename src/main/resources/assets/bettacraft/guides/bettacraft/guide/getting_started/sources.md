@@ -10,7 +10,8 @@ navigation:
 
 Everything the world gives you for your aquariums, with the chance of each try (default config values). The page is
 written from the game's own tables, so it always matches the game. Every animal and plant page has the same list for
-its species under **Obtaining**.
+its species under **Obtaining**. The biomes of biome mods count too: their swamps, rivers, reefs and so on (see the
+[biome tags](../settings.md)).
 
 * **Aquarium net**: swing it at open water (not a tank) with an empty fish bag in your inventory; see
   [Catching animals](catching.md). Plants nearby and a hard bottom (sand, gravel, stone) make some catches likelier: the

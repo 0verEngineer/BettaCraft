@@ -54,3 +54,5 @@ other fish eat the eggs they reach; in a spawning mop most are safe.
 * **Wild** in jungle water, in groups of 3–6 (spawn weight 6) (config `features.greenNeonTetra`).
 * **Wandering trader** (usual offers): 6 for 3 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

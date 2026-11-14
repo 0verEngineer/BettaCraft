@@ -41,6 +41,8 @@ Grüne Sternpolypen (*Pachyclavularia violacea*) aus dem Indopazifik: eine viole
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (über das Gestein).
 
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).
+
 Herstellung:
 
 <RecipesFor id="bettacraft:green_star_polyps" />

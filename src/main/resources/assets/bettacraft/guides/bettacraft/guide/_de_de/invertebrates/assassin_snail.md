@@ -41,3 +41,5 @@ Die Raubturmdeckelschnecke (*Clea helena*) aus Südostasien: ein gelb-braun geb�
 * **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 1 für 4 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

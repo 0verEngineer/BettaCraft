@@ -36,3 +36,5 @@ Monte Carlo (*Micranthemum tweediei*) aus Argentinien: ein Teppich winziger rund
 * **Angeln** in Flüssen: 0,18 % pro Fang (etwa 1 von 570 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 2 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -39,3 +39,5 @@ die Deko des Innenraums herum (Steine, Wurzeln, Pflanzen, Höhlen), statt durch 
 * **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.wildFish`).
 * **Wild** in Dschungelgewässern, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildFish`).
 * **Fahrender Händler** (seltene Angebote): 1 für 6 Smaragde.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

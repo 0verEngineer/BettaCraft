@@ -53,3 +53,5 @@ Like a betta: at 26–29 °C the male builds a foam nest at the surface (floatin
 * **Wild** in swamps, in groups of 1–1 (spawn weight 5) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Builds a foam nest.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

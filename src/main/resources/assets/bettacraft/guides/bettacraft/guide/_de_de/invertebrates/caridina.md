@@ -77,3 +77,5 @@ nicht in normalem Wasser. Sie sind eine eigene Art und **kreuzen sich nicht mit 
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.caridina`).
 * **Fahrender Händler** (seltene Angebote): 2 für 8 Smaragde (Config `features.caridina`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

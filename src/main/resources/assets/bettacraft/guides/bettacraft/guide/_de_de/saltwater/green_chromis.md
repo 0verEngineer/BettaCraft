@@ -43,3 +43,5 @@ Das Grüne Schwalbenschwänzchen (*Chromis viridis*) aus dem Indopazifik: kleine
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 3–5 (Spawn-Gewicht 7) (Config `features.wildFish`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 3–5 (Spawn-Gewicht 5) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 4 in diesem Angebot.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

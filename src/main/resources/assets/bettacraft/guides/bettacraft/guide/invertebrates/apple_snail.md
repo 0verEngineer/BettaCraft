@@ -40,3 +40,5 @@ The spike-topped apple snail (*Pomacea diffusa*) from the Amazon basin: a large 
 * **Wild** in jungle water, in groups of 2–5 (spawn weight 5) (config `features.wildCritters`).
 * **Wandering trader** (usual offers): 1 for 3 emeralds.
 * **Breeding** in the aquarium (male and female).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

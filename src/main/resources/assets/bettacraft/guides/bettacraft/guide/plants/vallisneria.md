@@ -36,3 +36,5 @@ Vallisneria (*Vallisneria spiralis*), eelgrass from warm waters worldwide: long 
 * **Fishing** in rivers: 0.44 % per catch (about 1 in 228 catches), instead of the fish.
 * **Wandering trader** (usual offers): 2 for 1 emerald.
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

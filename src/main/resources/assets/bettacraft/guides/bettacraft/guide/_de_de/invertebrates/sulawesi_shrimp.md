@@ -49,3 +49,5 @@ Wasser**. Am besten teilt sie ihr Becken mit den [Tylomelania-Schnecken](tylomel
 * **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.sulawesi`).
 * **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 2 in diesem Angebot (Config `features.sulawesi`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -44,3 +44,5 @@ Bei 26–28 °C streut ein Paar 15–40 Eier in breite Blätter (Cryptocorynen, 
 * **Wild** in Sümpfen, in Gruppen von 3–6 (Spawn-Gewicht 13) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

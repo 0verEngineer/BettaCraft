@@ -36,3 +36,5 @@ Monte Carlo (*Micranthemum tweediei*) from Argentina: a carpet of tiny round lea
 * **Fishing** in rivers: 0.18 % per catch (about 1 in 570 catches), instead of the fish.
 * **Wandering trader** (usual offers): 2 for 1 emerald.
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

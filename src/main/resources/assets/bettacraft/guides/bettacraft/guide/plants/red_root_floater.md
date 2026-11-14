@@ -35,3 +35,5 @@ The red root floater (*Phyllanthus fluitans*) from South America: round leaves a
 * **Fishing** in mangrove swamps: 0.9 % per catch (about 1 in 111 catches), instead of the fish.
 * **Wandering trader** (rare offers): 2 for 3 emeralds.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

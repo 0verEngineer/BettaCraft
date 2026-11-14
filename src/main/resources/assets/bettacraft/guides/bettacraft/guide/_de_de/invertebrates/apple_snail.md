@@ -40,3 +40,5 @@ Die Paradiesschnecke (*Pomacea diffusa*) aus dem Amazonasbecken: eine große Sch
 * **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 5) (Config `features.wildCritters`).
 * **Fahrender Händler** (übliche Angebote): 1 für 3 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

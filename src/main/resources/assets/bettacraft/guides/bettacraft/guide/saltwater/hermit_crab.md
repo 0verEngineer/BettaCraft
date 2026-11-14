@@ -41,3 +41,5 @@ The blue-leg hermit crab (*Clibanarius tricolor*) from the Caribbean: a small cr
 * **Wild** in warm oceans (coral reefs), in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wild** in lukewarm oceans, in groups of 2–5 (spawn weight 3) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 3 for 5 emeralds; one of 2 in this offer.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

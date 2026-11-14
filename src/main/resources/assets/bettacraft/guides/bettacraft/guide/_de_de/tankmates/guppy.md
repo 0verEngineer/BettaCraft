@@ -60,3 +60,5 @@ Bei 23–28 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 * **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 6) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4+ Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: lebendgebärend.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

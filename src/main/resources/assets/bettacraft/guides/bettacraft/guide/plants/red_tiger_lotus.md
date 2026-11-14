@@ -39,3 +39,5 @@ The red tiger lotus (*Nymphaea zenkeri*) from West Africa: a bulb with mottled r
 * **Fishing** in swamps: 0.21 % per catch (about 1 in 481 catches), instead of the fish.
 * **Wandering trader** (rare offers): 1 for 4 emeralds.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

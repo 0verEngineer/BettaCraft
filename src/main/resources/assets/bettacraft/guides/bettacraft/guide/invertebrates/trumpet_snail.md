@@ -43,3 +43,5 @@ The Malaysian trumpet snail (*Melanoides tuberculata*) from Africa and South Asi
 * **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wild** in swamps, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Breeding** in the aquarium (one animal is enough).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

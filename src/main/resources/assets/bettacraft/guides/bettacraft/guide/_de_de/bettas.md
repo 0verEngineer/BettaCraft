@@ -48,6 +48,8 @@ senkrechte Querstreifen. Das Geschlecht steht als ♂ und ♀ im Aquarium-Menü 
 * **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 8).
 * **[Zucht](bettas/breeding.md)**: Schaumnest, Eier und Jungfische im Aquarium.
 
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](settings.md)).
+
 ## In diesem Kapitel
 
 <SubPages icons={true} />

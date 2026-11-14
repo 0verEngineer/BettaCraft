@@ -50,3 +50,5 @@ Practically never breeds in a tank.
 * **Wild** in swamps, in groups of 3–5 (spawn weight 2) (config `features.wildFish`).
 * **Wild** in jungle water, in groups of 3–5 (spawn weight 2) (config `features.wildFish`).
 * **Wandering trader** (rare offers): 6 for 17 emeralds; one of 5 in this offer.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

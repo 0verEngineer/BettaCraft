@@ -35,3 +35,5 @@ Schwimmfarn (*Salvinia natans*) aus den stillen Gewässern Europas und Asiens: k
 * **Angeln** in Mangrovensümpfen: 1,5 % pro Fang (etwa 1 von 67 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 3 für 1 Smaragd.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

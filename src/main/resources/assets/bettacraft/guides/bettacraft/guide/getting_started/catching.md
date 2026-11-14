@@ -37,7 +37,8 @@ bucket of water (sea water for the reef fish) or a fish bag.
 Shrimp, crayfish, snails and hermit crabs crawl on the bottom of rivers, swamps, mangroves, beaches, jungle water and
 the oceans. Right-click one with the net, a fish bag or a bucket of water to catch it; let it go again and it crawls
 off. Every coral of the mod grows on the warm ocean reefs among the vanilla corals: [shears cut a frag](../saltwater/corals.md)
-off a colony.
+off a colony. Biome mods count too: their swamps, rivers, mangroves and warm oceans are the same waters (see the
+[biome tags](../settings.md)).
 
 Most wild animals are wild-coloured, some carry a bred colour hidden, and about 3 in 100 show one openly
 (config `wildlife.beautifulWildChance`). What a new animal carries hidden shows the [magnifier](../equipment/magnifier.md).

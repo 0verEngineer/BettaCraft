@@ -36,3 +36,5 @@ Vallisnerie (*Vallisneria spiralis*), Wasserschraube aus warmen Gewässern weltw
 * **Angeln** in Flüssen: 0,44 % pro Fang (etwa 1 von 228 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 2 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

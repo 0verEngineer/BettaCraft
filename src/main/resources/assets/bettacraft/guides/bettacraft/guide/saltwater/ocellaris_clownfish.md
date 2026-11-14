@@ -44,3 +44,5 @@ The false percula clownfish (*Amphiprion ocellaris*) from the coral reefs of the
 * **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 6) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **[Breeding](reef_animals.md)**: Spawns at its anemone, the male guards.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

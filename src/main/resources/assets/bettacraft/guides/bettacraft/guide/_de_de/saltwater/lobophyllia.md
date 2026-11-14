@@ -40,6 +40,8 @@ item_ids:
 * **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
 
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).
+
 Herstellung:
 
 <RecipesFor id="bettacraft:lobophyllia" />

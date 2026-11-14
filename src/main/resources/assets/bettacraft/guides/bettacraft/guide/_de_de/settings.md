@@ -159,8 +159,31 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
 * **Jede andere Mod mit Wassertieren** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
   Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, …): Ihre kleinen Wassertiere gehen ins Aquarium, große und
   feindliche werden abgelehnt. Siehe [Tiere anderer Mods](settings/other_animals.md).
-* **Sümpfe anderer Mods** (Biomes O' Plenty, Regions Unexplored …): Wildbettas erscheinen in jedem Biom aus
-  `#c:is_swamp` über `#bettacraft:betta_spawn_biomes`.
+* **Biome-Mods** (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Terralith, Twilight Forest …): Die
+  Wildtiere, der Kescher, das Angeln und die wilden Korallen richten sich nach Biom-Tags von Bettacraft, daher zählen
+  Sümpfe, Flüsse, Mangroven, Riffe und üppige Höhlen von Biome-Mods mit. Wildbettas erscheinen in
+  `#bettacraft:betta_spawn_biomes` (`#c:is_swamp`).
+
+### Biom-Tags für Modpacks
+
+Biome kommen per Datapack in diese Tags (oder mit `"replace": true` als eigene Liste). Geprüft wird in dieser
+Reihenfolge; der erste passende Tag entscheidet.
+
+| Tag | Gewässer | Standard |
+|---|---|---|
+| `#bettacraft:mangrove_waters` | Mangrovensumpf | `minecraft:mangrove_swamp`, die White Mangrove Marshes von Oh The Biomes We've Gone |
+| `#bettacraft:swamp_waters` | Sumpf | `minecraft:swamp`, `#c:is_swamp`, der Sumpf des Twilight Forest |
+| `#bettacraft:lush_cave_waters` | Üppige Höhlen (Kescher) | `minecraft:lush_caves`; außerdem jedes Biom, das in `#c:is_lush` und in `#c:is_cave` ist |
+| `#bettacraft:river_waters` | Fluss | `#minecraft:is_river`, der Bach des Twilight Forest |
+| `#bettacraft:beach_waters` | Strand | `#minecraft:is_beach` |
+| `#bettacraft:warm_ocean_waters` | Warmer Ozean (Riff) | `minecraft:warm_ocean`, das Rocky Reef von Regions Unexplored; außerdem jedes Biom, das in `#c:is_ocean` und in `#c:is_hot` ist |
+| `#bettacraft:lukewarm_ocean_waters` | Lauwarmer Ozean | `minecraft:lukewarm_ocean`, `minecraft:deep_lukewarm_ocean` |
+| `#bettacraft:jungle_waters` | Dschungelgewässer | `#minecraft:is_jungle`, die Tropics von Regions Unexplored und Biomes O' Plenty |
+| `#bettacraft:coral_reef_biomes` | Wilde Korallen (neue Chunks) | `#bettacraft:warm_ocean_waters`; außerdem `#c:is_ocean` und `#c:is_hot` |
+
+Pflanzen werden in `#bettacraft:swamp_waters` und `#bettacraft:betta_spawn_biomes` geangelt. Spawns und Korallen
+werden beim Laden der Welt festgelegt, ein geänderter Tag braucht einen Neustart. Einträge anderer Mods sind optional:
+Ohne die Mod werden sie übersprungen.
 
 ## Befehle
 

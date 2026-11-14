@@ -43,3 +43,5 @@ Die Gelbe Wächtergrundel (*Cryptocentrus cinctus*) aus den Lagunen des westlich
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 4) (Config `features.wildFish`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 3) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 4 in diesem Angebot.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

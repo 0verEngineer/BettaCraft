@@ -39,3 +39,5 @@ the decoration of the interior (rocks, roots, plants, caves) instead of walking 
 * **Wild** in swamps, in groups of 1–2 (spawn weight 3) (config `features.wildFish`).
 * **Wild** in jungle water, in groups of 1–2 (spawn weight 4) (config `features.wildFish`).
 * **Wandering trader** (rare offers): 1 for 6 emeralds.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

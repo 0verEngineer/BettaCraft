@@ -35,3 +35,5 @@ Salvinia (*Salvinia natans*), a floating fern from the still waters of Europe an
 * **Fishing** in mangrove swamps: 1.5 % per catch (about 1 in 67 catches), instead of the fish.
 * **Wandering trader** (usual offers): 3 for 1 emerald.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -54,3 +54,5 @@ the net). For half a day after the moult the crayfish is **soft**: more sensitiv
 * **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wandering trader** (usual offers): 2 for 5 emeralds.
 * **Breeding** in the aquarium (male and female).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

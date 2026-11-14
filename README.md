@@ -15,7 +15,8 @@ block.
 - **Wild animals and corals:** the tankmates live wild, rarely and in small shoals, in the waters they come from
   (jungle, swamp, river, warm and lukewarm ocean), shrimp, crayfish, snails and hermit crabs crawl over the bottom as
   small animals you catch with the net, a bag or a bucket, and every coral grows on the warm ocean reefs (shears cut a
-  frag). About 3 in 100 wild animals show a bred colour openly; every animal can mutate.
+  frag). About 3 in 100 wild animals show a bred colour openly; every animal can mutate. The waters are biome tags
+  (`#bettacraft:*_waters`), so the swamps, rivers, mangroves and reefs of biome mods count too.
 - **Magnifier:** the hidden genes of a new animal are unknown until it is analysed in an aquarium (right-click the
   aquarium, or the Analyse button of the menu); the result stays with the animal.
 - **Genetics:** nine loci with two alleles each (tail shape, fin length, pectorals, body colour, fin colour, pattern,

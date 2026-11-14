@@ -4,6 +4,25 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.18.1-beta.1] - 2026-11-14
+
+Biome mods: wild animals, net catches, fishing and the wild corals also in the biomes of biome mods.
+
+### Added
+- **Biome tags** for the waters of the wild animals, the aquarium net, fishing and the mud snails:
+  `#bettacraft:warm_ocean_waters`, `lukewarm_ocean_waters`, `mangrove_waters`, `lush_cave_waters`, `swamp_waters`,
+  `river_waters`, `beach_waters` and `jungle_waters`, and `#bettacraft:coral_reef_biomes` for the wild corals. Defaults:
+  the vanilla biomes, the common tags (`#c:is_swamp`, `#minecraft:is_river`, ...; a warm ocean is also every biome in
+  both `#c:is_ocean` and `#c:is_hot`, a lush cave every biome in both `#c:is_lush` and `#c:is_cave`) and biomes of
+  Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty and Twilight Forest as optional entries. Modpacks can
+  extend them in one place; the handbook page "Settings and other mods" lists them.
+
+### Changed
+- Reef fish, seahorses, the reef animals, racer nerites, trumpet snails of the lush caves and the wild corals were
+  bound to the vanilla warm ocean, lukewarm ocean, mangrove swamp and lush caves; they now live in the matching biomes
+  of biome mods too (for example the rocky reef of Regions Unexplored). Vanilla worlds stay exactly as before.
+- Handbook: the Obtaining sections say that the biomes of biome mods count too.
+
 ## [1.18.0-beta.1] - 2026-11-14
 
 Water chemistry: TDS, pH and hardness of the water with a range for every animal, CO2 dosing for the plants, a reverse

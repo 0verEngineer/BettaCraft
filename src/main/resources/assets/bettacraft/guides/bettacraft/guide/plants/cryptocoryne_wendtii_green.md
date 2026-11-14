@@ -37,3 +37,5 @@ item_ids:
 * **Fishing** in mangrove swamps: 1.6 % per catch (about 1 in 61 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 1.5 % per bottle, along with the water.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; it also spreads by itself (runners).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

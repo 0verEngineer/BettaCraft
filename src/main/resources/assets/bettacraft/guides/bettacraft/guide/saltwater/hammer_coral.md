@@ -40,6 +40,8 @@ The hammer coral (*Euphyllia ancora*) from the Indo-Pacific: a stony coral (LPS)
 * **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Frags**: shears on a grown coral give 1 cutting per trim.
 
+The biomes of biome mods count too ([biome tags](../settings.md)).
+
 Crafting:
 
 <RecipesFor id="bettacraft:hammer_coral" />

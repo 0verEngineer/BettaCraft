@@ -40,3 +40,5 @@ Die Blasenanemone (*Entacmaea quadricolor*) aus dem Indopazifik: eine Seeanemone
 * **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

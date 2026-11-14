@@ -46,3 +46,5 @@ The lined seahorse (*Hippocampus erectus*) from the western Atlantic, from Nova 
 * **Wild** in lukewarm oceans, in groups of 1–1 (spawn weight 2) (config `features.seahorses`).
 * **Wandering trader** (rare offers): 2 for 7 emeralds; one of 3 in this offer (config `features.seahorses`).
 * **[Breeding](seahorses.md)**: Brood pouch: the male carries the eggs.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

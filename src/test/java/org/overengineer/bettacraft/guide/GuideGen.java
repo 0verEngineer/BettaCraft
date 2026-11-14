@@ -380,6 +380,11 @@ public final class GuideGen {
         if (prop != null) lines.add(prop);
         StringBuilder b = new StringBuilder();
         for (String l : lines) b.append("* ").append(l).append(".\n");
+        // M25.1: the waters are biome tags, the biomes of biome mods count too
+        if (sources.stream().anyMatch(s -> s.target().equals(target) && biome(s.where()))) {
+            b.append('\n').append(t("The biomes of biome mods count too (", "Die Biome von Biome-Mods zählen mit (")).append(link(t("biome tags", "Biom-Tags"),
+                    "settings.md", page, false)).append(").\n");
+        }
         String item = Target.itemPath(target);
         boolean recipe = item != null && recipesByResult.containsKey("bettacraft:" + item);
         if (recipe) {
@@ -636,6 +641,11 @@ public final class GuideGen {
             case "critter" -> lang(CritterSpecies.byId(id).translationKey());
             default -> lang.containsKey("item.bettacraft." + id) ? lang("item.bettacraft." + id) : lang("block.bettacraft." + id);
         };
+    }
+
+    /** M25.1: a place given by biome tags (also the biomes of biome mods). */
+    private static boolean biome(Where w) {
+        return w != null && w != Where.CAVE && w != Where.NEAR_WATER && w != Where.SAND;
     }
 
     private String where(Where w) {

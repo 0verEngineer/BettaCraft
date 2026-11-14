@@ -54,3 +54,5 @@ anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 6) (Config `features.greenNeonTetra`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

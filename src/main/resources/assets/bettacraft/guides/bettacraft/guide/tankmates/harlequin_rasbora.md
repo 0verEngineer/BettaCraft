@@ -44,3 +44,5 @@ At 26–28 °C a pair scatters 15–40 eggs into broad leaves (crypts, anubias, 
 * **Wild** in swamps, in groups of 3–6 (spawn weight 13) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

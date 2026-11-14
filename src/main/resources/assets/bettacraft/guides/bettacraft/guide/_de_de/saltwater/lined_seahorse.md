@@ -46,3 +46,5 @@ Das Gestreifte Seepferdchen (*Hippocampus erectus*) aus dem westlichen Atlantik,
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.seahorses`).
 * **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 3 in diesem Angebot (Config `features.seahorses`).
 * **[Zucht](seahorses.md)**: Bruttasche: das Männchen trägt die Eier.
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

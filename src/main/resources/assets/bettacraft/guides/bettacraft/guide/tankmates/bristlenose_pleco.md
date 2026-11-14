@@ -57,3 +57,5 @@ Needs a **spawning cave** (decoration) and 23–27 °C. Every male claims a cave
 * **Wild** in jungle water, in groups of 1–1 (spawn weight 5) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Spawns in a cave, the male guards.
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

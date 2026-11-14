@@ -46,6 +46,8 @@ breeding mood. The sex is shown with ♂ and ♀ in the tank menu and in Jade.
 * **Wild** in swamps, in groups of 1–2 (spawn weight 8).
 * **[Breeding](bettas/breeding.md)**: bubble nest, eggs and fry in the aquarium.
 
+The biomes of biome mods count too ([biome tags](settings.md)).
+
 ## In this chapter
 
 <SubPages icons={true} />

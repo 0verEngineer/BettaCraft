@@ -42,3 +42,5 @@ The ramshorn snail (*Planorbella* sp.) from the still waters of North America: a
 * **Wild** in swamps, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 2 for 4 emeralds.
 * **Breeding** in the aquarium (one animal is enough).
+
+The biomes of biome mods count too ([biome tags](../settings.md)).

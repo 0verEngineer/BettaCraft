@@ -52,3 +52,5 @@ Selten, bei 22–26 °C: einzelne Eier an Glas und Blättern (6–18).
 * **Wild** in Dschungelgewässern, in Gruppen von 3–5 (Spawn-Gewicht 5) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).
+
+Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

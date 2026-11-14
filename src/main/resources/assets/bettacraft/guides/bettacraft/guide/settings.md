@@ -158,8 +158,29 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 * **Every other mod with water animals** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
   Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, ...): its small water animals go into aquariums, large
   and hostile ones are refused. See [Animals of other mods](settings/other_animals.md).
-* **Swamps of other mods** (Biomes O' Plenty, Regions Unexplored, ...): wild bettas spawn in every biome of
-  `#c:is_swamp` through `#bettacraft:betta_spawn_biomes`.
+* **Biome mods** (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Terralith, Twilight Forest, ...): the
+  wild animals, the net, fishing and the wild corals go by biome tags of Bettacraft, so the swamps, rivers, mangroves,
+  reefs and lush caves of biome mods count too. Wild bettas spawn in `#bettacraft:betta_spawn_biomes` (`#c:is_swamp`).
+
+### Biome tags for modpacks
+
+Add biomes to these tags with a data pack (or `"replace": true` for a list of your own). The checks run in this order;
+the first that fits decides.
+
+| Tag | Water | Default |
+|---|---|---|
+| `#bettacraft:mangrove_waters` | Mangrove swamp | `minecraft:mangrove_swamp`, Oh The Biomes We've Gone white mangrove marshes |
+| `#bettacraft:swamp_waters` | Swamp | `minecraft:swamp`, `#c:is_swamp`, the Twilight Forest swamp |
+| `#bettacraft:lush_cave_waters` | Lush caves (net) | `minecraft:lush_caves`; also every biome in both `#c:is_lush` and `#c:is_cave` |
+| `#bettacraft:river_waters` | River | `#minecraft:is_river`, the Twilight Forest stream |
+| `#bettacraft:beach_waters` | Beach | `#minecraft:is_beach` |
+| `#bettacraft:warm_ocean_waters` | Warm ocean (reef) | `minecraft:warm_ocean`, the Regions Unexplored rocky reef; also every biome in both `#c:is_ocean` and `#c:is_hot` |
+| `#bettacraft:lukewarm_ocean_waters` | Lukewarm ocean | `minecraft:lukewarm_ocean`, `minecraft:deep_lukewarm_ocean` |
+| `#bettacraft:jungle_waters` | Jungle water | `#minecraft:is_jungle`, the tropics of Regions Unexplored and Biomes O' Plenty |
+| `#bettacraft:coral_reef_biomes` | Wild corals (new chunks) | `#bettacraft:warm_ocean_waters`; also `#c:is_ocean` and `#c:is_hot` |
+
+Plants are fished in `#bettacraft:swamp_waters` and `#bettacraft:betta_spawn_biomes`. Spawns and corals are set when
+the world loads, a changed tag needs a restart. Entries of other mods are optional: without the mod they are skipped.
 
 ## Commands
 
