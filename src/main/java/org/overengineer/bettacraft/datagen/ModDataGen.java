@@ -1067,7 +1067,7 @@ public final class ModDataGen {
             add("mud_mosquito_larvae", new AddItemLootModifier(new LootItemCondition[]{
                     LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
-                    LootItemRandomChanceCondition.randomChance(0.04F).build()
+                    LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
             }, new ItemStack(ModItems.MOSQUITO_LARVAE.get())));
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
             add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[0],

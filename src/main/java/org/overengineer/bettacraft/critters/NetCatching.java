@@ -252,41 +252,34 @@ public final class NetCatching {
         RandomGenerator rnd = random(level);
         Water w = water(level, water);
         boolean plants = plantsNear(level, water);
-        List<Catch> table = table(w, plants, hardBottom(level, water), level.getBiome(water).is(Biomes.LUSH_CAVES));
-        double chance = ServerConfig.getOr(ServerConfig.CRITTERS_NET_CHANCE, 0.3) * (plants ? 1.2 : 1.0);
-        // M19: in jungle, swamp and river water some catches are tankmate fish of the region
-        var fish = fishTable(w);
-        boolean ocean = w == Water.WARM_OCEAN || w == Water.LUKEWARM_OCEAN;
+        Outcome o = decide(w, plants, hardBottom(level, water), level.getBiome(water).is(Biomes.LUSH_CAVES), netChance(),
+                ServerConfig.getOr(ServerConfig.TANKMATES_NET_SHARE, 0.4), ServerConfig.getOr(ServerConfig.REEF_NET_SHARE, 0.4), rnd);
         // M20: on a reef the net sometimes brings up a coral frag or an anemone (soft corals that break off)
-        if (w == Water.WARM_OCEAN && rnd.nextDouble() < chance * ServerConfig.getOr(ServerConfig.REEF_NET_SHARE, 0.4) * 0.25) {
-            var frags = List.of(org.overengineer.bettacraft.plants.PlantSpecies.ZOANTHUS, org.overengineer.bettacraft.plants.PlantSpecies.MUSHROOM_CORAL,
-                    org.overengineer.bettacraft.plants.PlantSpecies.BUBBLE_TIP_ANEMONE, org.overengineer.bettacraft.plants.PlantSpecies.GREEN_STAR_POLYPS);
-            ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(frags.get((int) Math.floorMod(rnd.nextLong(), (long) frags.size())), 0);
+        if (o.frag() != null) {
+            ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(o.frag(), 0);
             player.displayClientMessage(Component.translatable("message.bettacraft.net.frag", frag.getHoverName()), true);
             if (!player.getInventory().add(frag)) player.drop(frag, false);
             return true;
         }
-        double share = ocean ? ServerConfig.getOr(ServerConfig.REEF_NET_SHARE, 0.4) : ServerConfig.getOr(ServerConfig.TANKMATES_NET_SHARE, 0.4);
-        if (!fish.isEmpty() && rnd.nextDouble() < chance && rnd.nextDouble() < share) {
-            var s = rollFish(fish, rnd);
-            if (s != null) {
-                int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;
-                java.util.function.Supplier<org.overengineer.bettacraft.tankmates.TankmateGenes> genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.wild(s, 0.08, rnd);
-                // M21.6: now and then a group of feral fancy guppies (escaped strains) instead of wild ones
-                var feral = org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()
-                        ? org.overengineer.bettacraft.world.TankmateTrades.traderStrains(s) : java.util.List.<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain>of();
-                if (!feral.isEmpty() && rnd.nextInt(12) == 0) {
-                    var st = feral.get(rnd.nextInt(feral.size()));
-                    genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.strain(s, st);
-                }
-                ItemStack bag = org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(s, n, genes, rnd, false);
-                give(player, bag, Component.translatable(s.translationKey()));
-                return true;
+        // M19: in jungle, swamp and river water some catches are tankmate fish of the region
+        if (o.fish() != null) {
+            var s = o.fish();
+            int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;
+            java.util.function.Supplier<org.overengineer.bettacraft.tankmates.TankmateGenes> genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.wild(s, 0.08, rnd);
+            // M21.6: now and then a group of feral fancy guppies (escaped strains) instead of wild ones
+            var feral = org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()
+                    ? org.overengineer.bettacraft.world.TankmateTrades.traderStrains(s) : java.util.List.<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain>of();
+            if (!feral.isEmpty() && rnd.nextInt(12) == 0) {
+                var st = feral.get(rnd.nextInt(feral.size()));
+                genes = () -> org.overengineer.bettacraft.tankmates.TankmateGenes.strain(s, st);
             }
+            ItemStack bag = org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(s, n, genes, rnd, false);
+            give(player, bag, Component.translatable(s.translationKey()));
+            return true;
         }
-        Catch c = table.isEmpty() || rnd.nextDouble() >= chance ? null : roll(table, rnd);
+        Catch c = o.critter();
         if (c == null) {
-            player.displayClientMessage(Component.translatable(table.isEmpty() ? "message.bettacraft.net.nothing_here" : "message.bettacraft.net.empty"), true);
+            player.displayClientMessage(Component.translatable(o.nothingHere() ? "message.bettacraft.net.nothing_here" : "message.bettacraft.net.empty"), true);
             return true;
         }
         ItemStack bag = catchItem(level, c, rnd);
@@ -294,6 +287,75 @@ public final class NetCatching {
         Component name = c.species() == null ? Component.translatable("entity.bettacraft.dwarf_clawed_frog") : Component.translatable(c.species().translationKey());
         give(player, bag, name);
         return true;
+    }
+
+    /** M22.2: the chance of a catch per swing in fitting water ({@code critters.netChance}). */
+    public static double netChance() {
+        return ServerConfig.getOr(ServerConfig.CRITTERS_NET_CHANCE, 0.3);
+    }
+
+    /**
+     * M22.2: what one swing of the net brings up, without side effects (the game and the handbook use the same rules):
+     * first a coral frag on a reef, then a fish of the region, then a small animal of the table. Nothing set = an empty
+     * net ({@code nothingHere}: this water holds nothing at all).
+     */
+    public record Outcome(@Nullable org.overengineer.bettacraft.plants.PlantSpecies frag, @Nullable org.overengineer.bettacraft.tankmates.TankmateSpecies fish,
+                          @Nullable Catch critter, boolean nothingHere) {}
+
+    public static Outcome decide(Water w, boolean plants, boolean hardBottom, boolean lush, double netChance, double tankShare, double reefShare,
+                                 RandomGenerator rnd) {
+        List<Catch> table = table(w, plants, hardBottom, lush);
+        double chance = netChance * (plants ? 1.2 : 1.0);
+        var fish = fishTable(w);
+        boolean ocean = w == Water.WARM_OCEAN || w == Water.LUKEWARM_OCEAN;
+        if (w == Water.WARM_OCEAN && rnd.nextDouble() < chance * reefShare * org.overengineer.bettacraft.sources.WildTables.NET_FRAG_FACTOR) {
+            var frags = org.overengineer.bettacraft.sources.WildTables.NET_REEF_FRAGS;
+            return new Outcome(frags.get((int) Math.floorMod(rnd.nextLong(), (long) frags.size())), null, null, false);
+        }
+        double share = ocean ? reefShare : tankShare;
+        if (!fish.isEmpty() && rnd.nextDouble() < chance && rnd.nextDouble() < share) {
+            var s = rollFish(fish, rnd);
+            if (s != null) return new Outcome(null, s, null, false);
+        }
+        Catch c = table.isEmpty() || rnd.nextDouble() >= chance ? null : roll(table, rnd);
+        return new Outcome(null, null, c, table.isEmpty());
+    }
+
+    /**
+     * M22.2: the exact chances of {@link #decide} per swing: keys are {@link org.overengineer.bettacraft.plants.PlantSpecies}
+     * (frags), {@link org.overengineer.bettacraft.tankmates.TankmateSpecies} (fish), {@link CritterSpecies} and the string
+     * {@code "frog"} for the dwarf clawed frog.
+     */
+    public static java.util.Map<Object, Double> odds(Water w, boolean plants, boolean hardBottom, boolean lush, double netChance, double tankShare,
+                                                      double reefShare) {
+        java.util.Map<Object, Double> out = new java.util.LinkedHashMap<>();
+        List<Catch> table = table(w, plants, hardBottom, lush);
+        double chance = netChance * (plants ? 1.2 : 1.0);
+        var fish = fishTable(w);
+        boolean ocean = w == Water.WARM_OCEAN || w == Water.LUKEWARM_OCEAN;
+        double left = 1.0;
+        if (w == Water.WARM_OCEAN) {
+            double pf = Math.min(1, chance * reefShare * org.overengineer.bettacraft.sources.WildTables.NET_FRAG_FACTOR);
+            var frags = org.overengineer.bettacraft.sources.WildTables.NET_REEF_FRAGS;
+            for (var f : frags) out.merge(f, pf / frags.size(), Double::sum);
+            left -= pf;
+        }
+        double share = ocean ? reefShare : tankShare;
+        if (!fish.isEmpty()) {
+            double pFish = Math.min(1, chance) * Math.min(1, share);
+            double total = 0;
+            for (double v : fish.values()) total += v;
+            if (total > 0) {
+                for (var e : fish.entrySet()) out.merge(e.getKey(), left * pFish * e.getValue() / total, Double::sum);
+                left *= 1 - pFish;
+            }
+        }
+        double total = 0;
+        for (Catch c : table) total += c.weight();
+        if (total > 0) {
+            for (Catch c : table) out.merge(c.species() == null ? "frog" : c.species(), left * Math.min(1, chance) * c.weight() / total, Double::sum);
+        }
+        return out;
     }
 
     /** Puts a catch into an empty fish bag of the player; without one it gets away. */

@@ -65,23 +65,18 @@ public class AquaticPlantFishingModifier extends LootModifier {
     }
 
     /**
-     * Which plant comes up. Jungle / river: Java fern 30, Anubias 30, Bucephalandra "Green Wavy" 15, "Mini Needle" 13,
-     * "Blue" 6, "Brownie Red" 6. Swamp: Cryptocoryne green 35, brown 25, Ludwigia 20, Rotala 20.
+     * Which plant comes up (M22.2: from the tables {@link org.overengineer.bettacraft.sources.WildTables#FISHING_PLANTS_TROPICAL}
+     * and {@link org.overengineer.bettacraft.sources.WildTables#FISHING_PLANTS_SWAMP}). Jungle / river: Java fern 30,
+     * Anubias 30, Bucephalandra "Green Wavy" 15, "Mini Needle" 13, "Blue" 6, "Brownie Red" 6. Swamp: Cryptocoryne green
+     * 35, brown 25, Ludwigia 20, Rotala 20.
      */
     public static PlantSpecies pick(Water w, RandomGenerator rnd) {
-        int roll = rnd.nextInt(100);
-        if (w == Water.SWAMP) {
-            if (roll < 35) return PlantSpecies.CRYPT_GREEN;
-            if (roll < 60) return PlantSpecies.CRYPT_BROWN;
-            if (roll < 80) return PlantSpecies.LUDWIGIA;
-            return PlantSpecies.ROTALA;
-        }
-        if (roll < 30) return PlantSpecies.JAVA_FERN;
-        if (roll < 60) return PlantSpecies.ANUBIAS_NANA;
-        if (roll < 75) return PlantSpecies.BUCE_GREEN_WAVY;
-        if (roll < 88) return PlantSpecies.BUCE_MINI_NEEDLE;
-        if (roll < 94) return PlantSpecies.BUCE_BLUE;
-        return PlantSpecies.BUCE_BROWNIE_RED;
+        return table(w).pick(rnd);
+    }
+
+    public static org.overengineer.bettacraft.sources.WeightedTable<PlantSpecies> table(Water w) {
+        return w == Water.SWAMP ? org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_SWAMP
+                : org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_TROPICAL;
     }
 
     @Override

@@ -51,18 +51,14 @@ public class FloatingPlantFishingModifier extends LootModifier {
         return loot;
     }
 
-    /** Which plant comes up: duckweed 45, salvinia 30, frogbit 25; in a mangrove swamp 35 / 25 / 25 and 15 red root floater. */
+    /**
+     * Which plant comes up: duckweed 45, salvinia 30, frogbit 25; in a mangrove swamp 35 / 25 / 25 and 15 red root floater
+     * (M22.2: the tables {@link org.overengineer.bettacraft.sources.WildTables#FISHING_FLOATING_SWAMP} and
+     * {@link org.overengineer.bettacraft.sources.WildTables#FISHING_FLOATING_MANGROVE}).
+     */
     public static FloatingPlantType pick(boolean mangrove, RandomGenerator rnd) {
-        int roll = rnd.nextInt(100);
-        if (mangrove) {
-            if (roll < 35) return FloatingPlantType.DUCKWEED;
-            if (roll < 60) return FloatingPlantType.SALVINIA;
-            if (roll < 85) return FloatingPlantType.FROGBIT;
-            return FloatingPlantType.RED_ROOT_FLOATER;
-        }
-        if (roll < 45) return FloatingPlantType.DUCKWEED;
-        if (roll < 75) return FloatingPlantType.SALVINIA;
-        return FloatingPlantType.FROGBIT;
+        return (mangrove ? org.overengineer.bettacraft.sources.WildTables.FISHING_FLOATING_MANGROVE
+                : org.overengineer.bettacraft.sources.WildTables.FISHING_FLOATING_SWAMP).pick(rnd);
     }
 
     @Override

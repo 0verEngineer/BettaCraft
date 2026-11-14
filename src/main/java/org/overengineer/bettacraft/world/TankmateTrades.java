@@ -5,10 +5,6 @@ import java.util.random.RandomGenerator;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.village.WandererTradesEvent;
-import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.tankmates.TankmateGenes;
 import org.overengineer.bettacraft.tankmates.TankmateItems;
 import org.overengineer.bettacraft.tankmates.TankmateSpecies;
@@ -19,17 +15,11 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * Bred varieties (albino bristlenoses, coloured guppies and platys) come now and then. M21.6: guppies and endlers come
  * wild-caught or as one of the named strains (Red Cobra, Blue Moscow, Full Gold, Tuxedo Koi, Endler Tiger, ...).
  */
-@EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class TankmateTrades {
     private TankmateTrades() {}
 
-    @SubscribeEvent
-    public static void onWandererTrades(WandererTradesEvent event) {
-        // two offers among the usual ones, one among the rare ones; each picks a species of its kind
-        event.getGenericTrades().add(listing(TankmateSpecies.Trade.COMMON));
-        event.getGenericTrades().add(listing(TankmateSpecies.Trade.COMMON));
-        event.getRareTrades().add(listing(TankmateSpecies.Trade.RARE));
-    }
+    // M22.2: the offers themselves are in org.overengineer.bettacraft.sources.TraderOffers (two among the usual ones, one
+    // among the rare ones; each picks a species of its kind)
 
     public static net.minecraft.world.entity.npc.VillagerTrades.ItemListing listing(TankmateSpecies.Trade kind) {
         return (trader, random) -> {
@@ -43,8 +33,8 @@ public final class TankmateTrades {
 
     /** A shoal (six or the species' minimum) or a pair of one species, now and then of a bred variety. */
     public static MerchantOffer offer(TankmateSpecies s, RandomGenerator rnd) {
-        int n = Math.min(TankmateItems.MAX_PER_BAG, s.shoaling() ? Math.max(6, s.shoal()) : 2);
-        int price = Math.max(2, (int) Math.round(2 + s.stock() * n * 0.8 + (s.trade() == TankmateSpecies.Trade.RARE ? 3 : 0)));
+        int n = count(s);
+        int price = basePrice(s);
         java.util.function.Supplier<TankmateGenes> genes;
         if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
             // M21.6: guppies and endlers: wild-caught ones (each its own genes) or a pure-bred named strain
@@ -62,6 +52,22 @@ public final class TankmateTrades {
         }
         var bag = TankmateItems.groupBag(s, n, genes, rnd, true);
         return new MerchantOffer(new ItemCost(Items.EMERALD, Math.min(64, price)), Optional.empty(), bag, 3, 1, 0.05F);
+    }
+
+    /** M22.2: how many fish one offer brings: a shoal (six or the species' minimum) or a pair. */
+    public static int count(TankmateSpecies s) {
+        return Math.min(TankmateItems.MAX_PER_BAG, s.shoaling() ? Math.max(6, s.shoal()) : 2);
+    }
+
+    /** M22.2: the price of an offer of wild fish (a named strain costs 2 emeralds more). */
+    public static int basePrice(TankmateSpecies s) {
+        int n = count(s);
+        return Math.max(2, (int) Math.round(2 + s.stock() * n * 0.8 + (s.trade() == TankmateSpecies.Trade.RARE ? 3 : 0)));
+    }
+
+    /** M22.2: whether offers of this species are sometimes a named strain (2 emeralds more). */
+    public static boolean sellsStrains(TankmateSpecies s) {
+        return TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics() && !traderStrains(s).isEmpty();
     }
 
     /** M21.6: the named strains the trader sells of a guppy or endler species. */
