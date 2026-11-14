@@ -114,7 +114,8 @@ class GuidePagesTest {
                 if (!TITLE.matcher(fm).find()) problems.add(where + ": navigation title missing");
                 Matcher pm = PARENT.matcher(fm);
                 if (pm.find() && !en.contains(pm.group(1))) problems.add(where + ": unknown parent " + pm.group(1));
-                if (!page.equals("index.md") && !pm.reset().find()) problems.add(where + ": no parent");
+                // M22.2: pages without a parent are the chapters: top-level pages only
+                if (!pm.reset().find() && page.contains("/")) problems.add(where + ": no parent (only top-level chapter pages may be roots)");
                 for (Matcher m = ITEM_ID.matcher(fm); m.find(); ) {
                     String id = m.group(1);
                     String prev = itemPage.put(id, page);
@@ -155,6 +156,122 @@ class GuidePagesTest {
             }
         }
         assertTrue(problems.isEmpty(), "guide problems:\n" + String.join("\n", problems));
+    }
+
+    private static String body(String text) {
+        if (!text.startsWith("---")) return text;
+        int end = text.indexOf("\n---", 3);
+        return end < 0 ? text : text.substring(end + 4);
+    }
+
+    private static String fmValue(String fm, String key) {
+        Matcher m = Pattern.compile("(?m)^\\s+" + key + ":\\s*(.+?)\\s*$").matcher(fm);
+        return m.find() ? m.group(1) : null;
+    }
+
+    private static final Pattern H2 = Pattern.compile("(?m)^## ");
+    private static final Pattern TAG_ID = Pattern.compile("<(ItemLink|ItemImage|RecipesFor|RecipeFor|Recipe)\\s+id=\"([^\"]+)\"");
+
+    /** Sorted multiset of a pattern's group in the body (outside the frontmatter). */
+    private static List<String> all(Pattern p, String body, int group) {
+        List<String> out = new ArrayList<>();
+        for (Matcher m = p.matcher(body); m.find(); ) out.add(group == 0 ? m.group() : m.group(group));
+        out.sort(null);
+        return out;
+    }
+
+    /**
+     * M22.2: the navigation is one tree (chapters, sub-chapters, pages) without cycles; every page that has children links
+     * every child (a markdown link or {@code <SubPages />}); the German page matches the English one (parent, position,
+     * icon, item ids, images, links, item tags, number of sections).
+     */
+    @Test
+    void navigationTreeAndLanguagesMatch() throws IOException {
+        Path root = root();
+        TreeSet<String> en = new TreeSet<>(pages(root, false));
+        List<String> problems = new ArrayList<>();
+        Map<String, String> parents = new HashMap<>();
+        Map<String, List<String>> children = new HashMap<>();
+        for (String page : en) {
+            String text = Files.readString(root.resolve(page), StandardCharsets.UTF_8).replace("\n\n", "\n");
+            String parent = fmValue(frontmatter(text), "parent");
+            if (parent != null) {
+                parents.put(page, parent);
+                children.computeIfAbsent(parent, k -> new ArrayList<>()).add(page);
+            }
+        }
+        for (String page : en) {
+            java.util.Set<String> seen = new java.util.HashSet<>();
+            for (String p = page; p != null; p = parents.get(p)) {
+                if (!seen.add(p)) {
+                    problems.add(page + ": navigation cycle");
+                    break;
+                }
+            }
+        }
+        for (String lang : new String[]{"", "_de_de/"}) {
+            for (var e : children.entrySet()) {
+                String text = Files.readString(root.resolve(lang + e.getKey()), StandardCharsets.UTF_8).replace("\n\n", "\n");
+                if (text.contains("<SubPages")) continue;
+                java.util.Set<String> linked = new java.util.HashSet<>();
+                for (Matcher m = LINK.matcher(text); m.find(); ) if (m.group(1).isEmpty()) linked.add(resolve(e.getKey(), m.group(2)));
+                for (String c : e.getValue()) if (!linked.contains(c)) problems.add(lang + e.getKey() + ": does not link its sub page " + c + " (link it or use <SubPages />)");
+            }
+        }
+        for (String page : en) {
+            String a = Files.readString(root.resolve(page), StandardCharsets.UTF_8).replace("\n\n", "\n");
+            Path dePath = root.resolve("_de_de/" + page);
+            if (!Files.exists(dePath)) continue;
+            String b = Files.readString(dePath, StandardCharsets.UTF_8).replace("\n\n", "\n");
+            String fa = frontmatter(a), fb = frontmatter(b);
+            for (String key : new String[]{"parent", "position", "icon"}) {
+                if (!java.util.Objects.equals(fmValue(fa, key), fmValue(fb, key))) problems.add(page + ": en/de differ in navigation " + key);
+            }
+            if (!all(ITEM_ID, fa, 1).equals(all(ITEM_ID, fb, 1))) problems.add(page + ": en/de differ in item_ids");
+            String ba = body(a), bb = body(b);
+            List<String> la = new ArrayList<>(), lb = new ArrayList<>();
+            for (Matcher m = LINK.matcher(ba); m.find(); ) la.add(m.group(1) + resolve(page, m.group(2)));
+            for (Matcher m = LINK.matcher(bb); m.find(); ) lb.add(m.group(1) + resolve(page, m.group(2)));
+            la.sort(null);
+            lb.sort(null);
+            if (!new TreeSet<>(la).equals(new TreeSet<>(lb))) {
+                TreeSet<String> onlyEn = new TreeSet<>(la), onlyDe = new TreeSet<>(lb);
+                onlyEn.removeAll(lb);
+                onlyDe.removeAll(la);
+                problems.add(page + ": en/de link different pages or images: only en " + onlyEn + ", only de " + onlyDe);
+            }
+            if (!new TreeSet<>(all(TAG_ID, ba, 2)).equals(new TreeSet<>(all(TAG_ID, bb, 2)))) problems.add(page + ": en/de differ in item tags (ItemLink, ItemImage, Recipe)");
+            int ha = all(H2, ba, 0).size(), hb = all(H2, bb, 0).size();
+            if (ha != hb) problems.add(page + ": en has " + ha + " sections, de " + hb);
+            // a recipe shown twice on one page (hand-written and in the generated Obtaining section)
+            for (String body : new String[]{ba, bb}) {
+                List<String> rec = new ArrayList<>();
+                for (Matcher m = TAG_ID.matcher(body); m.find(); ) if (m.group(1).startsWith("Recipe")) rec.add(m.group(2));
+                if (new TreeSet<>(rec).size() != rec.size()) problems.add(page + ": a recipe is shown twice " + rec);
+            }
+        }
+        assertTrue(problems.isEmpty(), "guide navigation / language problems:\n" + String.join("\n", problems));
+    }
+
+    /** M22.2: every animal and plant of the mod has its own page (the catalogue of the handbook generator). */
+    @Test
+    void everySpeciesHasItsPage() throws IOException {
+        Path root = root();
+        List<String> problems = new ArrayList<>();
+        for (boolean german : new boolean[]{false, true}) {
+            var gen = new org.overengineer.bettacraft.guide.GuideGen(german);
+            for (String target : org.overengineer.bettacraft.guide.GuideGen.speciesTargets().keySet()) {
+                String page = gen.page(target);
+                if (page == null || !Files.exists(root.resolve((german ? "_de_de/" : "") + page))) {
+                    problems.add((german ? "de" : "en") + ": " + target + " has no page " + page);
+                }
+            }
+            // every source of the game data leads to a page
+            for (var s : org.overengineer.bettacraft.sources.Sources.all()) {
+                if (gen.page(s.target()) == null) problems.add((german ? "de" : "en") + ": source of " + s.target() + " has no page");
+            }
+        }
+        assertTrue(problems.isEmpty(), "missing pages:\n" + String.join("\n", problems));
     }
 
     /** Items a player can hold (not technical blocks, not the guide itself). */

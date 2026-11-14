@@ -163,6 +163,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestm22_2')) {
+                // gradlew runClient -Psmoketestm22_2 : only the M22.2 scene (a gallery of every reef fish, seahorse, snail, reef
+                // invertebrate, plant, coral and floating plant for the handbook; the handbook with its navigation folded open,
+                // species pages and "Where to find what" in English and German)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m22_2only', 'true'
+            }
             // gradlew runClient -Psmoketestm22_1 : only the M22.1 scene (every plant and coral with its new shape inside and outside,
             // old/new, near/far, kelp and seagrass swaying outside, polyps closing, the confirm screen for emptying animals;
             // add -Pshaders for Complementary)
@@ -303,6 +310,24 @@ test {
         .withPropertyName('langSources')
     testLogging {
         events 'failed', 'skipped'
+        exceptionFormat 'full'
+    }
+}
+
+// M22.2: writes the generated parts of the handbook (profiles, "Obtaining", species tables, "Where to find what",
+// advancements) from the game data; `gradlew test` (GuideGenTest) fails while the book and the data differ.
+tasks.register('updateGuide', Test) {
+    group = 'bettacraft'
+    description = 'Writes the generated handbook sections from the game data (M22.2)'
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    systemProperty 'bettacraft.projectDir', project.projectDir.absolutePath
+    systemProperty 'bettacraft.updateGuide', 'true'
+    filter { includeTestsMatching 'org.overengineer.bettacraft.guide.GuideGenTest' }
+    outputs.upToDateWhen { false }
+    testLogging {
+        events 'failed'
         exceptionFormat 'full'
     }
 }
