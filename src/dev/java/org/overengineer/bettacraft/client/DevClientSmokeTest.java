@@ -102,6 +102,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeReadme readme;
     private static DevClientSmokeM25c m25c;
     private static final boolean M26_ONLY = Boolean.getBoolean("bettacraft.smoketest.m26only");
+    /** -Psmoketestm26_1: only the M26.1 scene (the mod list with the wide logo). */
+    private static final boolean M26_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m26_1only");
+    private static DevClientSmokeM261 m26_1;
     private static DevClientSmokeM26 m26;
     private static DevClientSmokeM25 m25;
     private static DevClientSmokeM24 m24;
@@ -186,6 +189,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M26_1_ONLY) {
+                if (ticks == 60) m26_1 = new DevClientSmokeM261();
+                if (m26_1 != null && m26_1.tick()) {
+                    m26_1 = null;
+                    LOGGER.info("[smoketest] client world test finished (M26.1 only)");
                     mc.stop();
                 }
                 return;

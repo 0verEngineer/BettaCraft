@@ -15,7 +15,7 @@ import model_defs as md
 import palette as pal
 import patterns as pt
 import varieties as vt
-from common import LOGO, PREVIEW, REVIEW_DIR, hex_f, save_png, to_image
+from common import LOGO, PREVIEW, ROOT, REVIEW_DIR, hex_f, save_png, to_image
 from render import Fish, composite_texture, render_side
 
 BG = (38, 62, 78, 255)
@@ -372,6 +372,58 @@ def make_logo(size=256) -> Image.Image:
     return img
 
 
+def make_banner(w=512, h=128) -> Image.Image:
+    """The wide logo (4:1) for the NeoForge mod list (logoFile) and the top of the mod page: the water, bubbles, sand and
+    halfmoon betta of the square icon, the betta on the left, the title on the right, a few plant stalks."""
+    top, bot = np.array([62, 156, 196]), np.array([18, 52, 92])
+    t = np.linspace(0, 1, h)[:, None, None]
+    bg = np.ones((h, w, 4))
+    bg[..., :3] = np.broadcast_to((top * (1 - t) + bot * t) / 255.0, (h, w, 3))
+    bg[..., :3] = np.floor(bg[..., :3] * 24) / 24
+    img = to_image(bg)
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, w - 1, h - 1], radius=h // 8, fill=255)
+    over = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    dr = ImageDraw.Draw(over)
+    # light shafts from the surface (pixel bands)
+    for x0 in (150, 260, 400):
+        for y in range(0, h - 20, 4):
+            sx = x0 + y // 3
+            dr.rectangle([sx, y, sx + 15, y + 3], fill=(150, 215, 240, 28))
+    rng = np.random.default_rng(78)
+    for _ in range(14):
+        r = int(rng.integers(2, 6))
+        x, y = int(rng.integers(12, w - 12)), int(rng.integers(8, h - 40))
+        dr.ellipse([x - r, y - r, x + r, y + r], outline=(200, 235, 250, 150), width=2)
+        dr.rectangle([x - r // 2, y - r // 2, x - r // 2 + 1, y - r // 2 + 1], fill=(240, 250, 255, 200))
+    img.alpha_composite(over)
+    dr = ImageDraw.Draw(img)
+    # plant stalks (pixel columns with leaves), behind the sand
+    for x, hh, col in ((22, 70, (46, 140, 64, 255)), (36, 52, (70, 168, 80, 255)), (486, 76, (46, 140, 64, 255)),
+                       (470, 50, (70, 168, 80, 255)), (140, 40, (58, 150, 70, 255))):
+        for y in range(h - 12 - hh, h - 8, 4):
+            sway = int(2 * np.sin(y / 9.0 + x))
+            dr.rectangle([x + sway, y, x + sway + 3, y + 3], fill=col)
+            if (y // 4) % 3 == 0:
+                side = 4 if (y // 12) % 2 == 0 else -8
+                dr.rectangle([x + sway + side, y, x + sway + side + 7, y + 3], fill=col)
+    for x in range(0, w, 4):
+        sh = 9 + int(3 * np.sin(x / 19.0) + 2 * np.sin(x / 7.3))
+        dr.rectangle([x, h - sh, x + 3, h], fill=(212, 190, 140, 255))
+        if (x // 4) % 7 == 0:
+            dr.rectangle([x, h - sh, x + 3, h - sh + 3], fill=(232, 214, 170, 255))
+    f = Fish(shape="halfmoon", body="#1f4fb5", fins="#c8202a", pattern="butterfly", pattern_colour="#f4f3ee",
+             iridescence=1.0, irid_colour="#2ec4c4")
+    fish = fish_image(f, ppu=5, bounds=(-8.5, 14.5, 12.0, 28.0))
+    fx = 40
+    img.alpha_composite(fish, (fx, (h - fish.height) // 2 - 6))
+    title = pixel_text("BETTACRAFT", 6, (250, 250, 245, 255), (20, 34, 60, 255))
+    tx = fx + fish.width + (w - 24 - fx - fish.width - title.width) // 2
+    img.alpha_composite(title, (tx, (h - title.height) // 2 - 8))
+    img.putalpha(Image.fromarray(np.minimum(np.asarray(img)[..., 3], np.asarray(mask)), "L"))
+    return img
+
+
 # ---------------------------------------------------------------- bbmodel sample textures
 
 def sample_textures() -> dict[str, bytes]:
@@ -406,6 +458,15 @@ def combined(shapes, patterns, stages, icon_sheet) -> Image.Image:
     return out.crop((0, 0, W, y - 6))
 
 
+def write_banner() -> list:
+    """The wide logo: src/main/resources/bettacraft_logo.png (logoFile of neoforge.mods.toml) and a 2x copy for the mod
+    page (docs/images/bettacraft-banner.png)."""
+    banner = make_banner()
+    docs = ROOT / "docs" / "images" / "bettacraft-banner.png"
+    return [save_png(banner, LOGO.with_name("bettacraft_logo.png")),
+            save_png(banner.resize((banner.width * 2, banner.height * 2), Image.NEAREST), docs)]
+
+
 def write_all() -> list:
     PREVIEW.mkdir(parents=True, exist_ok=True)
     shapes = sheet_shapes()
@@ -416,6 +477,7 @@ def write_all() -> list:
            save_png(stages, PREVIEW / "preview_stages.png"), save_png(icon_sheet, PREVIEW / "preview_icons.png")]
     out.append(save_png(make_logo(), LOGO))
     out.append(save_png(make_logo(), PREVIEW / "logo.png"))
+    out += write_banner()
     comb = combined(shapes, patterns, stages, icon_sheet)
     REVIEW_DIR.mkdir(parents=True, exist_ok=True)
     out.append(save_png(comb, PREVIEW / "preview.png"))

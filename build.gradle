@@ -171,6 +171,11 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.readmeonly', 'true'
                 if (project.hasProperty('readmeroom')) systemProperty 'bettacraft.readme.roomonly', 'true'
             }
+            if (project.hasProperty('smoketestm26_1')) {
+                // gradlew runClient -Psmoketestm26_1 : only the M26.1 scene (the NeoForge mod list with the wide Bettacraft logo)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m26_1only', 'true'
+            }
             if (project.hasProperty('smoketestm26')) {
                 // gradlew runClient -Psmoketestm26 : only the M26 part a scene (tubifex dish, daphnia barrel, live food pump feeding a
                 // tank through glass pipes, its window en + de)
@@ -720,7 +725,7 @@ tasks.named('jar', Jar).configure {
 
 // gradlew verifyReleaseJar [-PexpectedVersion=1.2.3] : checks build/libs/bettacraft-<version>.jar before it is released:
 //  - only allowed entries: our classes, assets/bettacraft, data/bettacraft, tags of other namespaces (c, minecraft, mods we
-//    support), the NeoForge loot modifier list, mods.toml, mixin config, logo, WTHIT plugin list, licence
+//    support), the NeoForge loot modifier list, mods.toml, mixin config, icon and logo, WTHIT plugin list, licence
 //  - no development code: nothing of the dev source set (smoke tests, showcase, GameTests), no Dev*Smoke* / SmokeFreeze /
 //    gametest classes, no GameTest templates, no source files of the asset tools (.bbmodel, .py ...), no file over 2 MB
 //  - every mixin of bettacraft.mixins.json is in the jar
@@ -751,7 +756,7 @@ tasks.register('verifyReleaseJar') {
         }
         def allowed = [
                 ~/^META-INF\/(MANIFEST\.MF|neoforge\.mods\.toml)$/,
-                ~/^(bettacraft\.mixins\.json|bettacraft\.png|waila_plugins\.json|pack\.mcmeta|LICENSE_bettacraft)$/,
+                ~/^(bettacraft\.mixins\.json|bettacraft(_logo)?\.png|waila_plugins\.json|pack\.mcmeta|LICENSE_bettacraft)$/,
                 ~/^org\/overengineer\/bettacraft\/.+\.class$/,
                 ~/^assets\/bettacraft\/.+\.(json|png|mcmeta|md|nbt|ogg|txt)$/,
                 ~/^data\/bettacraft\/.+\.(json|nbt|mcfunction)$/,

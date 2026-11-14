@@ -9,11 +9,16 @@ version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
 displayURL="https://github.com/0verEngineer/BettaCraft"
-logoFile="bettacraft.png"
-# pixel-art logo: no blur when scaled
+# wide pixel-art banner (tools/assetgen/preview.py make_banner) in the mod list; the square icon bettacraft.png stays the
+# mod / project icon. No blur when scaled.
+logoFile="bettacraft_logo.png"
 logoBlur=false
 credits="Code, generated textures and models: 0verEngineer. Inspired by real betta keeping."
 description='''${mod_description}'''
+
+# Catalogue and similar mod lists: the square icon next to the name
+[modproperties.${mod_id}]
+    catalogueImageIcon="bettacraft.png"
 
 [[mixins]]
 config="${mod_id}.mixins.json"
