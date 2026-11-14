@@ -80,6 +80,9 @@ zeigt die Bedingungen und die Gelege jeder Art im Becken.
 
 ## Bezug
 
+* <ItemLink id="bettacraft:fry_powder" />: **[Futtermaschine](../food/food_maker.md)**: 1 × <ItemLink id="minecraft:egg" /> + 1 × <ItemLink id="minecraft:wheat" /> → 8.
+* <ItemLink id="bettacraft:algae_wafer" />: **[Futtermaschine](../food/food_maker.md)**: 2 × <ItemLink id="minecraft:dried_kelp" /> + 1 × <ItemLink id="minecraft:carrot" /> + 1 × <ItemLink id="minecraft:wheat" /> → 8.
+
 Herstellung:
 
 <RecipesFor id="bettacraft:fry_powder" />

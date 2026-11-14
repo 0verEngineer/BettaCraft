@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
  * M26 part a client smoke ({@code -Psmoketestm26}): a tubifex dish, a daphnia barrel with a live food pump that feeds a
  * tank through glass pipes, an artemia hatchery and a larva tub for comparison. Screenshots {@code bettacraft_m26_cultures},
  * {@code _pump} (its window) and {@code _pump_de}. Checks (errors in the log): the pump reaches the tank and pumps.
+ * Part b: the food maker with a hopper on top ({@code _maker}) and its window with flakes in the making ({@code _maker_menu},
+ * {@code _maker_menu_de}).
  */
 final class DevClientSmokeM26 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -58,6 +60,30 @@ final class DevClientSmokeM26 {
         });
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("pump_de"));
+        then(1, () -> quickLanguage(lang));
+        then(1, () -> mc.setScreen(null));
+        // part b: the food maker
+        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> look(base.getX() + 12.3, base.getY() + 1.5, base.getZ() - 1.3, 45F, 28F));
+        then(60, () -> shot("maker"));
+        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> server(p -> {
+            BlockPos at = base.offset(10, 0, 0);
+            if (p.serverLevel().getBlockEntity(at) instanceof org.overengineer.bettacraft.food.FoodMakerBlockEntity m) {
+                for (int i = 0; i < 120; i++) m.tick(p.serverLevel(), at, p.serverLevel().getBlockState(at));
+                if (m.status() != org.overengineer.bettacraft.food.FoodMakerBlockEntity.WORKING) LOGGER.error("[smoketest] M26 the food maker does not work: {}", m.status());
+                LOGGER.info("[smoketest] M26 food maker progress {} of {}", m.progress(), org.overengineer.bettacraft.food.FoodMakerBlockEntity.batchTicks());
+                p.openMenu(m, at);
+            } else LOGGER.error("[smoketest] M26 no food maker");
+        }));
+        then(30, () -> {
+            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.FoodMakerScreen s)) LOGGER.error("[smoketest] M26 no food maker screen");
+            else LOGGER.info("[smoketest] M26 food maker window: progress {} of {}, drive {} of {}, status {}", s.getMenu().progress(), s.getMenu().batchTicks(),
+                    s.getMenu().drive(), s.getMenu().driveMax(), s.getMenu().status());
+            shot("maker_menu");
+        });
+        then(1, () -> quickLanguage("de_de"));
+        then(20, () -> shot("maker_menu_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> mc.setScreen(null));
     }
@@ -94,6 +120,18 @@ final class DevClientSmokeM26 {
         if (level.getBlockEntity(base.offset(0, 0, 1)) instanceof org.overengineer.bettacraft.food.CultureTubBlockEntity h) h.setWater(750);
         if (level.getBlockEntity(base.offset(7, 0, 0)) instanceof org.overengineer.bettacraft.food.CultureTubBlockEntity t) t.setWater(750);
         level.setBlockAndUpdate(base.offset(2, 2, 0), Blocks.LIGHT.defaultBlockState());
+        // part b: the food maker (front to the camera, the crank on the right), flakes in the making
+        level.setBlockAndUpdate(base.offset(10, 0, 0), ModBlocks.FOOD_MAKER.get().defaultBlockState());
+        if (level.getBlockEntity(base.offset(10, 0, 0)) instanceof org.overengineer.bettacraft.food.FoodMakerBlockEntity m) {
+            m.items().setStackInSlot(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SALMON, 6));
+            m.items().setStackInSlot(1, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.WHEAT, 12));
+            m.items().setStackInSlot(2, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.KELP, 8));
+            m.items().setStackInSlot(3, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SUGAR, 8));
+            m.items().setStackInSlot(org.overengineer.bettacraft.food.FoodMakerBlockEntity.OUTPUT,
+                    new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.FISH_FLAKES.get(), 24));
+            m.setSpring(org.overengineer.bettacraft.food.FoodMakerBlockEntity.springMax() * 5 / 8);
+            for (int i = 0; i < 2; i++) m.wind(null); // the crank turns
+        }
         var d = org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(
                 net.minecraft.util.RandomSource.create(26)), false, 0);
         var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new net.minecraft.world.item.ItemStack(

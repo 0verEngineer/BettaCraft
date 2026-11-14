@@ -77,6 +77,9 @@ clutches of every species in the tank.
 
 ## Obtaining
 
+* <ItemLink id="bettacraft:fry_powder" />: **[Food maker](../food/food_maker.md)**: 1 × <ItemLink id="minecraft:egg" /> + 1 × <ItemLink id="minecraft:wheat" /> → 8.
+* <ItemLink id="bettacraft:algae_wafer" />: **[Food maker](../food/food_maker.md)**: 2 × <ItemLink id="minecraft:dried_kelp" /> + 1 × <ItemLink id="minecraft:carrot" /> + 1 × <ItemLink id="minecraft:wheat" /> → 8.
+
 Crafting:
 
 <RecipesFor id="bettacraft:fry_powder" />

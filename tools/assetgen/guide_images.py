@@ -508,6 +508,27 @@ def m26(out_en: Path, out_de: Path) -> None:
             print("missing", src)
 
 
+# M26 part b (same scene): the food maker at the tank, its window with flakes in the making (en, de)
+M26B_WORLD = {"food_maker": ("bettacraft_m26_maker", (380, 70, 1100, 620))}
+M26B_MENU = ("bettacraft_m26_maker_menu", "bettacraft_m26_maker_menu_de", (464, 314, 816, 646))
+
+
+def m26b(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M26B_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    en, de, box = M26B_MENU
+    for shot, out in ((en, out_en), (de, out_de)):
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out / "food_maker_menu.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -524,6 +545,9 @@ def main() -> int:
     out_de.mkdir(parents=True, exist_ok=True)
     if sys.argv[1:] == ["m26"]:
         m26(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m26b"]:
+        m26b(out_en, out_de)
         return 0
     if sys.argv[1:] == ["m25c"]:
         m25c(out_en, out_de)

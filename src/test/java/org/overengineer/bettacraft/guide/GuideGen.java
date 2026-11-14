@@ -60,23 +60,29 @@ public final class GuideGen {
         this.lang = readLang(german);
         this.itemPages = itemPages(german);
         this.recipesByResult = recipes();
-        this.crucible = crucibleRecipes();
+        this.crucible = machineRecipes("bettacraft:crucible");
+        this.foodMaker = machineRecipes("bettacraft:food_maker");
     }
+
+    /** M26 part b: result item id -> batches of the food maker. */
+    private final Map<String, List<String>> foodMaker;
 
     /** M24: result item id -> melts of the crucible ("3 × ... + ... → 3"), read from the recipe files. */
     private final Map<String, List<String>> crucible;
 
     private static final Map<String, String> TAG_ITEMS = Map.of("c:ingots/iron", "minecraft:iron_ingot", "minecraft:coals", "minecraft:coal",
-            "c:gems/quartz", "minecraft:quartz");
+            "c:gems/quartz", "minecraft:quartz", "bettacraft:pellet_fish", "minecraft:cod", "bettacraft:food_vegetables", "minecraft:carrot",
+            "bettacraft:freezing_ice", "minecraft:ice");
 
-    private static Map<String, List<String>> crucibleRecipes() {
+    /** Recipes of one of the mod's machines (crucible, food maker) by result, read from the recipe files. */
+    private static Map<String, List<String>> machineRecipes(String type) {
         Map<String, List<String>> out = new TreeMap<>();
         Path d = project().resolve("src/generated/resources/data/bettacraft/recipe");
         if (!Files.isDirectory(d)) return out;
         try (Stream<Path> s = Files.walk(d)) {
             for (Path p : s.filter(f -> f.toString().endsWith(".json")).sorted().toList()) {
                 JsonObject o = JsonParser.parseString(Files.readString(p)).getAsJsonObject();
-                if (!o.has("type") || !"bettacraft:crucible".equals(o.get("type").getAsString())) continue;
+                if (!o.has("type") || !type.equals(o.get("type").getAsString())) continue;
                 StringBuilder b = new StringBuilder();
                 for (JsonElement e : o.getAsJsonArray("ingredients")) {
                     JsonObject i = e.getAsJsonObject();
@@ -193,6 +199,11 @@ public final class GuideGen {
                 for (String l : crucible.getOrDefault(id, List.of())) {
                     b.append("* ").append(several ? "<ItemLink id=\"" + id + "\" />: " : "")
                             .append(link(t("Crucible", "Schmelztiegel"), "equipment/crucible.md", e.getKey())).append(": ").append(l).append(".\n");
+                }
+                // M26 part b: made in the food maker
+                for (String l : foodMaker.getOrDefault(id, List.of())) {
+                    b.append("* ").append(several ? "<ItemLink id=\"" + id + "\" />: " : "")
+                            .append(link(t("Food maker", "Futtermaschine"), "food/food_maker.md", e.getKey())).append(": ").append(l).append(".\n");
                 }
                 if (crucible.containsKey(id)) b.append("* ").append(t("Also in the metallurgic infuser (Mekanism), the alloy smelter (EnderIO), heated "
                         + "mixing (Create) and the induction smelter (Thermal), when installed", "Auch im metallurgischen Infusor (Mekanism), im Legierungsofen "
@@ -893,6 +904,8 @@ public final class GuideGen {
             try (Stream<Path> s = Files.walk(d)) {
                 for (Path p : s.filter(f -> f.toString().endsWith(".json")).toList()) {
                     JsonObject o = JsonParser.parseString(Files.readString(p)).getAsJsonObject();
+                    // M26 part b: the food maker's batches are listed as text (GuideME shows no recipes of that type)
+                    if (o.has("type") && "bettacraft:food_maker".equals(o.get("type").getAsString())) continue;
                     JsonElement r = o.get("result");
                     String id = r == null ? null : r.isJsonObject() ? (r.getAsJsonObject().has("id") ? r.getAsJsonObject().get("id").getAsString() : null)
                             : r.isJsonPrimitive() ? r.getAsString() : null; // M24: the Thermal recipe has a list of results

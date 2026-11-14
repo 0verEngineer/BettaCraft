@@ -38,14 +38,23 @@ Bettas need food at least **once a day**. A fish counts as hungry one day after 
 | Mosquito larvae | up to 4 bettas | live food: a breeding pair gets in the mood twice as fast |
 | [Tubifex](food/tubifex_dish.md) | up to 4 bettas | live food: conditions twice as long as the others |
 | [Daphnia](food/daphnia_barrel.md) | up to 4 bettas | live food, also for tankmates, frogs and seahorses |
+| [Fish flakes](food/food_variety.md) | up to 4 bettas | float: a favourite of the midwater fish, hardly reach the bottom fish |
+| [Food granules](food/food_variety.md) | up to 4 bettas | sink: the bottom fish get their share |
+| [Frozen food](food/food_variety.md) | up to 4 bettas | eaten like live food, keeps; a favourite of bettas, bottom fish and seahorses |
+| [Shrimp food](food/food_variety.md) | the small animals | only shrimp, crayfish and snails eat it |
 | [Infusoria, artemia nauplii](food/fry_food.md) | 20 fry | only for fry |
+
+The [food maker](food/food_maker.md) makes pellets, flakes, granules, algae wafers, fry powder, shrimp food and frozen food
+from vanilla ingredients. Different foods suit different species differently, and a **varied diet** helps the fish
+recover faster (see [Food variety](food/food_variety.md)).
 
 ## Feeding
 
 * **By hand:** right-click the aquarium with the food. The food particles sink and the bettas swim to them. The
   hungriest fish eat first. If nobody in the aquarium eats that food, you get a message and keep it.
 * **Automatically:** an [aquarium feeder](equipment/feeder.md) on the aquarium feeds 1 to 3 times a day. The animals
-  prefer live food: the feeder gives live food first and the rest only to those that have not eaten yet.
+  prefer live food: the feeder gives live food first and the rest only to those that have not eaten yet. Its slots take
+  turns, so several foods in it give a varied diet.
 * **Live food through pipes:** a [live food pump](food/live_food_pump.md) next to a breeder pumps live food into the
   tanks on a schedule.
 
@@ -59,6 +68,7 @@ Overfeeding does no harm.
 
 * <ItemLink id="bettacraft:swamp_water_bottle" />: **Glass bottle** filled with water in swamps.
 * <ItemLink id="bettacraft:mosquito_larvae" />: **Breaking mud** in swamps: 4 % per block.
+* <ItemLink id="bettacraft:betta_pellets" />: **[Food maker](food/food_maker.md)**: 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 12.
 
 Crafting:
 

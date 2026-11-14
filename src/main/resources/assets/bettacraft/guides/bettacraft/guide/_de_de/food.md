@@ -38,7 +38,15 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
 | Mückenlarven | bis zu 4 Bettas | Lebendfutter: Ein Zuchtpaar kommt doppelt so schnell in Stimmung |
 | [Tubifex](food/tubifex_dish.md) | bis zu 4 Bettas | Lebendfutter: konditioniert doppelt so lange wie das übrige |
 | [Daphnien](food/daphnia_barrel.md) | bis zu 4 Bettas | Lebendfutter, auch für Beifische, Frösche und Seepferdchen |
+| [Flockenfutter](food/food_variety.md) | bis zu 4 Bettas | schwimmt: Lieblingsfutter der Fische im freien Wasser, erreicht die Bodenfische kaum |
+| [Granulatfutter](food/food_variety.md) | bis zu 4 Bettas | sinkt: die Bodenfische bekommen ihren Anteil |
+| [Frostfutter](food/food_variety.md) | bis zu 4 Bettas | wird wie Lebendfutter gefressen, hält sich; Lieblingsfutter von Bettas, Bodenfischen und Seepferdchen |
+| [Garnelenfutter](food/food_variety.md) | die Kleintiere | nur Garnelen, Krebse und Schnecken fressen es |
 | [Infusorien, Artemia-Nauplien](food/fry_food.md) | 20 Jungfische | nur für Jungfische |
+
+Die [Futtermaschine](food/food_maker.md) stellt Pellets, Flocken, Granulat, Futtertabletten, Staubfutter, Garnelenfutter
+und Frostfutter aus Vanilla-Zutaten her. Verschiedene Futter passen unterschiedlich gut zu den Arten, und
+**abwechslungsreiches Futter** hilft den Fischen, sich schneller zu erholen (siehe [Futtervielfalt](food/food_variety.md)).
 
 ## Füttern
 
@@ -46,6 +54,7 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
   hungrigsten Fische fressen zuerst. Frisst niemand im Aquarium dieses Futter, bekommst du eine Meldung und behältst es.
 * **Automatisch:** Ein [Futterautomat](equipment/feeder.md) auf dem Aquarium füttert 1- bis 3-mal am Tag. Die Tiere
   mögen Lebendfutter lieber: der Automat gibt zuerst Lebendfutter und den Rest nur denen, die noch nichts bekommen haben.
+  Seine Plätze wechseln sich ab, so geben mehrere Futtersorten darin Abwechslung.
 * **Lebendfutter durch Rohre:** Eine [Lebendfutter-Pumpe](food/live_food_pump.md) neben einer Zuchtanlage pumpt nach
   Zeitplan Lebendfutter in die Becken.
 
@@ -59,6 +68,7 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
 
 * <ItemLink id="bettacraft:swamp_water_bottle" />: **Glasflasche** mit Wasser gefüllt in Sümpfen.
 * <ItemLink id="bettacraft:mosquito_larvae" />: **Schlamm abbauen** in Sümpfen: 4 % pro Block.
+* <ItemLink id="bettacraft:betta_pellets" />: **[Futtermaschine](food/food_maker.md)**: 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 12.
 
 Herstellung:
 
