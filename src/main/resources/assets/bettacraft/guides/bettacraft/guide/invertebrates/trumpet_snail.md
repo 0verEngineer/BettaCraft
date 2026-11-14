@@ -39,4 +39,6 @@ The Malaysian trumpet snail (*Melanoides tuberculata*) from Africa and South Asi
 * **[Aquarium net](../equipment/tank_net.md)** in lush caves: 20–27 % per swing, 1–2 at a time.
 * **Shovel** on mud in swamps: 8 % per try, into an empty fish bag.
 * **Shovel** on mud in mangrove swamps: 8 % per try, into an empty fish bag.
+* **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
+* **Wild** in swamps, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Breeding** in the aquarium (one animal is enough).

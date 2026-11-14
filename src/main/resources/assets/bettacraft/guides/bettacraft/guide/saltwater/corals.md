@@ -20,6 +20,13 @@ grows stage by stage over the days when the conditions are right:
 * Stony corals: **calcium** (full from 380 mg/L, nothing below 250; each growth stage uses some) and **clean water**
   (little nitrate).
 
+## Wild corals
+
+Every coral of the mod and the bubble tip anemone also grow **wild on the warm ocean reefs**, as big colonies among the
+vanilla corals (new chunks). Right-click a colony with **shears**: a frag comes off for your reef tank, and the colony
+grows back after a while. Broken, a colony drops nothing (silk touch: itself, for a reef of your own under water).
+Config switch: `features.wildCorals`.
+
 ## Species
 
 | | Coral | Light | Flow | Calcium | Full size |

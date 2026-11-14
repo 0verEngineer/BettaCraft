@@ -36,4 +36,7 @@ The blue-leg hermit crab (*Clibanarius tricolor*) from the Caribbean: a small cr
 * **[Aquarium net](../equipment/tank_net.md)** at beaches: 4.5–5.4 % per swing, 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 9.6–12 % per swing, 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 13–16 % per swing, 1–2 at a time.
+* **Wild** at beaches, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
+* **Wild** in warm oceans (coral reefs), in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
+* **Wild** in lukewarm oceans, in groups of 2–5 (spawn weight 3) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 3 for 5 emeralds; one of 2 in this offer.

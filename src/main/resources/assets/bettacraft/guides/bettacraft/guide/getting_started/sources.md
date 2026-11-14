@@ -56,6 +56,79 @@ its species under **Obtaining**.
 * [Mosquito Larvae](../food.md): breaking mud in swamps (4 %).
 * [Artemia Cysts](../food/fry_food.md): breaking sand (2 %).
 * [Betta](../bettas.md): spawns in swamps (spawn weight 8).
+* [Green Gold Cory](../tankmates/green_gold_cory.md): spawns in rivers (spawn weight 3).
+* [Bristlenose Pleco](../tankmates/bristlenose_pleco.md): spawns in rivers (spawn weight 2).
+* [Otocinclus](../tankmates/otocinclus.md): spawns in rivers (spawn weight 2).
+* [Guppy](../tankmates/guppy.md): spawns in rivers (spawn weight 6).
+* [Endler Guppy](../tankmates/endler_guppy.md): spawns in rivers (spawn weight 3).
+* [Platy](../tankmates/platy.md): spawns in rivers (spawn weight 5).
+* [Neocaridina Shrimp](../invertebrates/neocaridina.md): spawns in rivers (spawn weight 2).
+* [Ramshorn Snail](../invertebrates/ramshorn.md): spawns in rivers (spawn weight 2).
+* [Bladder Snail](../invertebrates/bladder_snail.md): spawns in rivers (spawn weight 1).
+* [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md): spawns in rivers (spawn weight 1).
+* [Assassin Snail](../invertebrates/assassin_snail.md): spawns in rivers (spawn weight 1).
+* [Harlequin Rasbora](../tankmates/harlequin_rasbora.md): spawns in swamps (spawn weight 13).
+* [Mosquito Rasbora](../tankmates/mosquito_rasbora.md): spawns in swamps (spawn weight 11).
+* [Kuhli Loach](../tankmates/kuhli_loach.md): spawns in swamps (spawn weight 6).
+* [Clown Loach](../tankmates/clown_loach.md): spawns in swamps (spawn weight 2).
+* [Dwarf Gourami](../tankmates/dwarf_gourami.md): spawns in swamps (spawn weight 5).
+* [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md): spawns in swamps (spawn weight 3).
+* [Ramshorn Snail](../invertebrates/ramshorn.md): spawns in swamps (spawn weight 2).
+* [Bladder Snail](../invertebrates/bladder_snail.md): spawns in swamps (spawn weight 2).
+* [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md): spawns in swamps (spawn weight 2).
+* [Zebra Nerite](../invertebrates/zebra_nerite.md): spawns in mangrove swamps (spawn weight 2).
+* [Horned Nerite](../invertebrates/horned_nerite.md): spawns in mangrove swamps (spawn weight 1).
+* [Olive Nerite](../invertebrates/olive_nerite.md): spawns in mangrove swamps (spawn weight 2).
+* [Red Nerite](../invertebrates/red_nerite.md): spawns in mangrove swamps (spawn weight 1).
+* [Yellow Racer Nerite](../invertebrates/yellow_nerite.md): spawns in mangrove swamps (spawn weight 1).
+* [Assassin Snail](../invertebrates/assassin_snail.md): spawns in mangrove swamps (spawn weight 1).
+* [Zebra Nerite](../invertebrates/zebra_nerite.md): spawns at beaches (spawn weight 2).
+* [Horned Nerite](../invertebrates/horned_nerite.md): spawns at beaches (spawn weight 2).
+* [Olive Nerite](../invertebrates/olive_nerite.md): spawns at beaches (spawn weight 2).
+* [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md): spawns at beaches (spawn weight 1).
+* [Neon Tetra](../tankmates/neon_tetra.md): spawns in jungle water (spawn weight 15).
+* [Cardinal Tetra](../tankmates/cardinal_tetra.md): spawns in jungle water (spawn weight 11).
+* [Green Neon Tetra](../tankmates/green_neon_tetra.md): spawns in jungle water (spawn weight 6).
+* [Ember Tetra](../tankmates/ember_tetra.md): spawns in jungle water (spawn weight 9).
+* [Glowlight Tetra](../tankmates/glowlight_tetra.md): spawns in jungle water (spawn weight 8).
+* [Pygmy Cory](../tankmates/pygmy_cory.md): spawns in jungle water (spawn weight 7).
+* [Panda Cory](../tankmates/panda_cory.md): spawns in jungle water (spawn weight 8).
+* [Sterbai Cory](../tankmates/sterbai_cory.md): spawns in jungle water (spawn weight 7).
+* [Green Gold Cory](../tankmates/green_gold_cory.md): spawns in jungle water (spawn weight 4).
+* [L134 Leopard Frog Pleco](../tankmates/leopard_frog_pleco.md): spawns in jungle water (spawn weight 3).
+* [L046 Zebra Pleco](../tankmates/zebra_pleco.md): spawns in jungle water (spawn weight 1).
+* [Bristlenose Pleco](../tankmates/bristlenose_pleco.md): spawns in jungle water (spawn weight 5).
+* [Otocinclus](../tankmates/otocinclus.md): spawns in jungle water (spawn weight 5).
+* [Clown Loach](../tankmates/clown_loach.md): spawns in jungle water (spawn weight 2).
+* [Endler Guppy](../tankmates/endler_guppy.md): spawns in jungle water (spawn weight 2).
+* [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md): spawns in jungle water (spawn weight 4).
+* [Apple Snail](../invertebrates/apple_snail.md): spawns in jungle water (spawn weight 5).
+* [Dwarf Crayfish (CPO)](../invertebrates/dwarf_crayfish.md): spawns in jungle water (spawn weight 1).
+* [Ocellaris Clownfish](../saltwater/ocellaris_clownfish.md): spawns in warm oceans (coral reefs) (spawn weight 6).
+* [Yellow Tang](../saltwater/yellow_tang.md): spawns in warm oceans (coral reefs) (spawn weight 3).
+* [Yellow Watchman Goby](../saltwater/yellow_watchman_goby.md): spawns in warm oceans (coral reefs) (spawn weight 4).
+* [Green Chromis](../saltwater/green_chromis.md): spawns in warm oceans (coral reefs) (spawn weight 7).
+* [Yellowtail Damsel](../saltwater/yellowtail_damsel.md): spawns in warm oceans (coral reefs) (spawn weight 5).
+* [Lined Seahorse](../saltwater/lined_seahorse.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Dwarf Seahorse](../saltwater/dwarf_seahorse.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Mexican Turbo Snail](../saltwater/turbo_snail.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Yellow Watchman Goby](../saltwater/yellow_watchman_goby.md): spawns in lukewarm oceans (spawn weight 3).
+* [Green Chromis](../saltwater/green_chromis.md): spawns in lukewarm oceans (spawn weight 5).
+* [Yellowtail Damsel](../saltwater/yellowtail_damsel.md): spawns in lukewarm oceans (spawn weight 6).
+* [Lined Seahorse](../saltwater/lined_seahorse.md): spawns in lukewarm oceans (spawn weight 2).
+* [Mexican Turbo Snail](../saltwater/turbo_snail.md): spawns in lukewarm oceans (spawn weight 3).
+* [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md): spawns in lukewarm oceans (spawn weight 3).
+* [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md): spawns in lukewarm oceans (spawn weight 1).
+* [Zoanthids](../saltwater/zoanthus.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Green Star Polyps](../saltwater/green_star_polyps.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Mushroom Coral](../saltwater/mushroom_coral.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Leather Coral](../saltwater/leather_coral.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Hammer Coral](../saltwater/hammer_coral.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Lobophyllia](../saltwater/lobophyllia.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Acropora](../saltwater/acropora.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Bubble Tip Anemone](../saltwater/bubble_tip_anemone.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 
 ## Wandering trader: usual offers
 

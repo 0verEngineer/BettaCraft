@@ -37,5 +37,7 @@ Die Posthornschnecke (*Planorbella* sp.) aus den stillen Gewässern Nordamerikas
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 7,8–9,3 % pro Schwung, 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 8,8–12 % pro Schwung, 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 6,8–11 % pro Schwung, 1–2 auf einmal.
+* **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
+* **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 2 für 4 Smaragde.
 * **Vermehrung** im Aquarium (ein Tier genügt).

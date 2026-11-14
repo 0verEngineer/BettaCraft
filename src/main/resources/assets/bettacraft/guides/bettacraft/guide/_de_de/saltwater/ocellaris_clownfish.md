@@ -40,5 +40,6 @@ Der Falsche Clownfisch (*Amphiprion ocellaris*) von den Korallenriffen des östl
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,5–3 % pro Schwung.
+* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 6) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
 * **[Zucht](reef_animals.md)**: Laicht an seiner Anemone, das Männchen bewacht.

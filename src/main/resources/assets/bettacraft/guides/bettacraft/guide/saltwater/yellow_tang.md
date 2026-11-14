@@ -39,4 +39,5 @@ The yellow tang (*Zebrasoma flavescens*) from the reefs of Hawaii: a bright yell
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 1–1.2 % per swing.
+* **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 3) (config `features.wildFish`).
 * **Wandering trader** (rare offers): 2 for 9 emeralds; one of 3 in this offer.

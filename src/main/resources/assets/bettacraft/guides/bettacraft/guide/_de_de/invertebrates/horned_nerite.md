@@ -34,3 +34,5 @@ Die Geweihschnecke (*Clithon corona*) aus den Brackwasserflüssen Südostasiens:
 
 * **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 7,2–9 % pro Schwung, 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** an Stränden: 7,5–9 % pro Schwung, 1–2 auf einmal.
+* **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
+* **Wild** an Stränden, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).

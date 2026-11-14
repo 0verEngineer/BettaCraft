@@ -27,6 +27,23 @@ kommt in eine **leere Fischtüte** aus deinem Inventar. Ohne leere Tüte entwisc
 * Sand, Kies oder Stein am Grund: mehr Turmdeckelschnecken und Rennschnecken.
 * Wilde Tiere tragen manchmal eine Farbe versteckt (rosa Posthorn, rote Garnelen, orange Krebse): herauszüchten.
 
+## Wilde Tiere in der Welt
+
+Die Beifische leben auch wild, selten und in kleinen Schwärmen, in den Gewässern ihrer Herkunft: Salmler,
+Panzerwelse, Harnischwelse und Otocinclus in Dschungelgewässern, Bärblinge, Dornaugen, Prachtschmerlen, der
+Zwergfadenfisch und Zwergkrallenfrösche in Sümpfen, Guppys, Endler und Platys in Flüssen, die Rifffische und
+Seepferdchen in warmen und lauwarmen Ozeanen. Fang sie mit einem Wassereimer (Meerwasser für die Rifffische) oder einer
+Fischtüte.
+
+Garnelen, Krebse, Schnecken und Einsiedlerkrebse krabbeln am Grund von Flüssen, Sümpfen, Mangroven, Stränden,
+Dschungelgewässern und Ozeanen. Rechtsklick mit Kescher, Fischtüte oder Wassereimer fängt eins; lässt du es wieder
+frei, krabbelt es davon. Alle Korallen der Mod wachsen an den Riffen warmer Ozeane zwischen den Vanilla-Korallen: Die
+[Schere schneidet einen Ableger](../saltwater/corals.md) von einer Kolonie.
+
+Die meisten Wildtiere sind wildfarben, manche tragen eine Zuchtfarbe verdeckt, und etwa 3 von 100 zeigen eine offen
+(Config `wildlife.beautifulWildChance`). Was ein neues Tier verdeckt trägt, zeigt die [Lupe](../equipment/magnifier.md).
+Alle Spawns mit Gewicht: [Was gibt es wo](sources.md).
+
 ## Andere Wege
 
 * Eine **Schaufel an Schlamm** im Sumpf findet ab und zu eine Turmdeckelschnecke.

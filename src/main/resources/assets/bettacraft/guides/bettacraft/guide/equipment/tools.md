@@ -9,7 +9,7 @@ navigation:
 # Tools and containers
 
 The things you carry around: the aquarium net to catch animals and take things out of a tank, the fish bag and the
-buckets to carry animals, the algae scraper for the glass, the mirror stick for the males and the breeding box for
+buckets to carry animals, the magnifier for the hidden genes, the algae scraper for the glass, the mirror stick for the males and the breeding box for
 livebearer fry.
 
 ## In this chapter

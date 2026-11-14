@@ -39,4 +39,6 @@ Das Grüne Schwalbenschwänzchen (*Chromis viridis*) aus dem Indopazifik: kleine
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,9–3,5 % pro Schwung, 1–4 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 3,8–4,5 % pro Schwung, 1–4 auf einmal.
+* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 3–5 (Spawn-Gewicht 7) (Config `features.wildFish`).
+* **Wild** in lauwarmen Ozeanen, in Gruppen von 3–5 (Spawn-Gewicht 5) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 4 in diesem Angebot.

@@ -36,5 +36,6 @@ The spike-topped apple snail (*Pomacea diffusa*) from the Amazon basin: a large 
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 18–21 % per swing.
+* **Wild** in jungle water, in groups of 2–5 (spawn weight 5) (config `features.wildCritters`).
 * **Wandering trader** (usual offers): 1 for 3 emeralds.
 * **Breeding** in the aquarium (male and female).

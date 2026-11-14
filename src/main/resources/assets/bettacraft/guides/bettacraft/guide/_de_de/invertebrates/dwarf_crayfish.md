@@ -52,5 +52,6 @@ Bettas gehen auf ihn los.
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 3,1–3,6 % pro Schwung.
+* **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (übliche Angebote): 2 für 5 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).

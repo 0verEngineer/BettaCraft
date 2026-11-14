@@ -37,5 +37,7 @@ The ramshorn snail (*Planorbella* sp.) from the still waters of North America: a
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 7.8–9.3 % per swing, 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 8.8–12 % per swing, 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in lush caves: 6.8–11 % per swing, 1–2 at a time.
+* **Wild** in rivers, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
+* **Wild** in swamps, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 2 for 4 emeralds.
 * **Breeding** in the aquarium (one animal is enough).

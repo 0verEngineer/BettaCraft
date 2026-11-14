@@ -40,5 +40,6 @@ At 25–28 °C a pair scatters 8–25 eggs into fine-leaved plants, java moss or
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 3.7–4.4 % per swing, 1–4 at a time.
+* **Wild** in swamps, in groups of 3–6 (spawn weight 11) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 8 for 3 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).

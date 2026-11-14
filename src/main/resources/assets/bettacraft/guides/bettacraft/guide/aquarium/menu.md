@@ -32,15 +32,19 @@ navigation:
 ## Animals
 
 The list of all animals with name, type, sex and stage. The details of the selected fish: health and fed bars, stage
-progress, the genotype (tail, body, fins, pattern; all nine loci in the tooltip), the generation, a name field and the
-buttons to take it out with a bucket or a fish bag. A dwarf clawed frog shows its health, its food and its air.
+progress, the genotype (tail, body, fins, pattern; all nine loci in the tooltip) once it is analysed with the
+[magnifier](../equipment/magnifier.md) (button **Analyse**), the generation, a name field and the buttons to take it out
+with a bucket or a fish bag. A dwarf clawed frog shows its health, its food and its air.
 
 ![The animals tab](../images/menu_inhabitants.png)
 
 The button **Small animals** switches to the [shrimp, crayfish and snails](../invertebrates.md): every kind (species
 and colour) with its count, sexes, young, females with eggs and grade; for the whole aquarium the stocking, the algae
-on the glass, how much the cleaning crew grazes, the food and the hiding spots. **Into bag** takes the animal with the
-best grade into a fish bag (Shift: the worst, Ctrl: a full bag of 16), **Clutches off** takes the apple snail clutches off the glass.
+on the glass, how much the cleaning crew grazes, the food and the hiding spots. Click a kind to fold open the list of
+its animals: every single one with its sex, age, grade and genes (once analysed); select one to see it in detail,
+**Analyse** it or **Take out** exactly that one. With a kind selected, **Take out** takes the animal with the best grade
+(Shift: the worst, Ctrl: a full bag or bucket) of the chosen sex (button under the list: any, males, females), into a
+fish bag or a bucket (the second button). **Clutches off** takes the apple snail clutches off the glass.
 
 ![The small animals page](../images/menu_critters.png)
 

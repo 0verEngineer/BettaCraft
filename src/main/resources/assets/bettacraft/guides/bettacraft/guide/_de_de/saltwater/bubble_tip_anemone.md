@@ -6,6 +6,7 @@ navigation:
   position: 80
 item_ids:
   - bettacraft:bubble_tip_anemone
+  - bettacraft:wild_bubble_tip_anemone
 ---
 
 # Blasenanemone
@@ -36,5 +37,6 @@ Die Blasenanemone (*Entacmaea quadricolor*) aus dem Indopazifik: eine Seeanemone
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,75–0,9 % pro Schwung.
+* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.

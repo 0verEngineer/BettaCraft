@@ -46,5 +46,6 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1–1.3 % per swing, 1–4 at a time.
+* **Wild** in jungle water, in groups of 3–6 (spawn weight 8) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).

@@ -47,5 +47,7 @@ Selten, bei 22–26 °C: einzelne Eier an Glas und Blättern (6–18).
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,1–1,4 % pro Schwung, 1–4 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,66–0,79 % pro Schwung, 1–4 auf einmal.
+* **Wild** in Flüssen, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.wildFish`).
+* **Wild** in Dschungelgewässern, in Gruppen von 3–5 (Spawn-Gewicht 5) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).

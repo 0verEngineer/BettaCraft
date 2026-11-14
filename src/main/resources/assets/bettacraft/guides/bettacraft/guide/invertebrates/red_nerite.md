@@ -33,4 +33,5 @@ The red racer nerite (*Vittina waigiensis*, "Red Racer") from Indonesia: orange,
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.8–2.2 % per swing.
+* **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 2 for 4 emeralds; one of 2 in this offer (config `features.snailColors`).

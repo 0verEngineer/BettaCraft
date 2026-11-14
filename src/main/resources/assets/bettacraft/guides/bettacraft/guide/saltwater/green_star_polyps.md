@@ -6,6 +6,7 @@ navigation:
   position: 20
 item_ids:
   - bettacraft:green_star_polyps
+  - bettacraft:wild_green_star_polyps
 ---
 
 # Green Star Polyps
@@ -36,6 +37,7 @@ Green star polyps (*Pachyclavularia violacea*) from the Indo-Pacific: a purple m
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.75–0.9 % per swing.
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **Frags**: shears on a grown coral give 2 cuttings per trim; it also spreads by itself (over the rock).
 

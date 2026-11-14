@@ -20,6 +20,13 @@ Stein setzen. Eine Koralle wächst über die Tage Stufe für Stufe, wenn die Bed
 * Steinkorallen: **Kalzium** (voll ab 380 mg/L, nichts unter 250; jede Wachstumsstufe verbraucht etwas) und **sauberes
   Wasser** (wenig Nitrat).
 
+## Wilde Korallen
+
+Alle Korallen der Mod und die Blasenanemone wachsen auch **wild an den Riffen warmer Ozeane**, als große Kolonien
+zwischen den Vanilla-Korallen (neue Chunks). Rechtsklick mit der **Schere** auf eine Kolonie: Ein Ableger für dein
+Meerwasserbecken fällt ab, und die Kolonie wächst nach einer Weile nach. Abgebaut lässt eine Kolonie nichts fallen (mit
+Behutsamkeit: sich selbst, für ein eigenes Riff unter Wasser). Config-Schalter: `features.wildCorals`.
+
 ## Arten
 
 | | Koralle | Licht | Strömung | Kalzium | Volle Größe |

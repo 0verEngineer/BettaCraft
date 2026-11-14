@@ -46,9 +46,9 @@ public class WildCoralFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         for (int tries = 0; tries < 48 && placed < want; tries++) {
             int x = origin.getX() + r.nextInt(RADIUS * 2 + 1) - RADIUS, z = origin.getZ() + r.nextInt(RADIUS * 2 + 1) - RADIUS;
-            int top = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG, x, z);
-            // the reef stands on the sea floor: look for a coral top in water from a few blocks above it down
-            for (int y = top + 8; y >= top - 2; y--) {
+            // the spot lies on the sea floor (placement heightmap): look for a coral top in water a few blocks above and below
+            int top = origin.getY();
+            for (int y = top + 8; y >= top - 6; y--) {
                 p.set(x, y, z);
                 if (!level.getBlockState(p).is(net.minecraft.world.level.block.Blocks.WATER) || !level.getFluidState(p).is(FluidTags.WATER)) continue;
                 BlockState below = level.getBlockState(p.below());

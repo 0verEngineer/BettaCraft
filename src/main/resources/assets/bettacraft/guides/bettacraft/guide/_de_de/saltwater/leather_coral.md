@@ -6,6 +6,7 @@ navigation:
   position: 40
 item_ids:
   - bettacraft:leather_coral
+  - bettacraft:wild_leather_coral
 ---
 
 # Lederkoralle
@@ -35,6 +36,7 @@ Die Pilzlederkoralle (*Sarcophyton* sp.) aus dem Indopazifik: ein fester Stamm m
 
 ## Bezug
 
+* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
 
 Herstellung:

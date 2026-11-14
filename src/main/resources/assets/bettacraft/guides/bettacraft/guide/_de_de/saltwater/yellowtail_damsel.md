@@ -39,4 +39,6 @@ Der Gelbschwanz-Demoiselle (*Chrysiptera parasema*) aus dem westlichen Pazifik: 
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,1–2,5 % pro Schwung.
 * **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 4,5–5,4 % pro Schwung.
+* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 5) (Config `features.wildFish`).
+* **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 6) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 4 in diesem Angebot.

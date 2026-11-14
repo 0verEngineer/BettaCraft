@@ -46,5 +46,6 @@ Needs a **spawning cave** (decoration) and 28–31 °C. Every male claims a cave
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.16 % per swing.
+* **Wild** in jungle water, in groups of 1–1 (spawn weight 1) (config `features.wildFish`).
 * **Wandering trader** (rare offers): 2 for 6 emeralds; one of 5 in this offer.
 * **[Breeding](breeding.md)**: Spawns in a cave, the male guards.

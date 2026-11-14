@@ -46,5 +46,6 @@ Braucht eine **Laichhöhle** (Deko) und 28–31 °C. Jedes Männchen besetzt ein
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,13–0,16 % pro Schwung.
+* **Wild** in Dschungelgewässern, in Gruppen von 1–1 (Spawn-Gewicht 1) (Config `features.wildFish`).
 * **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde; eins von 5 in diesem Angebot.
 * **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.

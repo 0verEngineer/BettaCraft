@@ -294,11 +294,6 @@ public final class TankmateItems {
         int females = 0;
         for (CompoundTag f : fish) if (f.getCompound(TankmateEntity.KEY).getBoolean("female")) females++;
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.group", fish.size() - females, females).withStyle(ChatFormatting.GRAY));
-        if (org.overengineer.bettacraft.config.CommonConfig.bigContainers()) {
-            // M22.3: every fish with all its traits (sex, stage, colour, genes when analysed)
-            TankmateBucketItem.appendEach(s, fish, tooltip);
-            return true;
-        }
         if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
             // M21.6: the strains in the bag
             java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
@@ -320,6 +315,8 @@ public final class TankmateItems {
             for (var e : v.entrySet()) tooltip.add(Component.literal(e.getValue() + " × ").append(Component.translatable(s.varietyKey(e.getKey())))
                     .withStyle(ChatFormatting.GOLD));
         }
+        // M22.3: then every fish with all its traits (sex, stage, colour, genes when analysed)
+        TankmateBucketItem.appendEach(s, fish, tooltip);
         return true;
     }
 

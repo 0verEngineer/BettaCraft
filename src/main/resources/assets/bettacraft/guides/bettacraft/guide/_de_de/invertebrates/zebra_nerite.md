@@ -34,3 +34,5 @@ Die Zebra-Rennschnecke (*Neritina natalensis*) aus den Mangroven und Flussmündu
 
 * **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 9–11 % pro Schwung, 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** an Stränden: 9–11 % pro Schwung, 1–2 auf einmal.
+* **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
+* **Wild** an Stränden, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).

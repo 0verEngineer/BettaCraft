@@ -36,4 +36,6 @@ die Deko des Innenraums herum (Steine, Wurzeln, Pflanzen, Höhlen), statt durch 
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,5 % pro Schwung.
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 4,9–5,7 % pro Schwung.
+* **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.wildFish`).
+* **Wild** in Dschungelgewässern, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildFish`).
 * **Fahrender Händler** (seltene Angebote): 1 für 6 Smaragde.

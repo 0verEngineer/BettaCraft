@@ -57,6 +57,79 @@ Liste für ihre Art unter **Bezug**.
 * [Mückenlarven](../food.md): Schlamm abbauen in Sümpfen (4 %).
 * [Artemia-Zysten](../food/fry_food.md): Sand abbauen (2 %).
 * [Betta](../bettas.md): spawnt in Sümpfen (Spawn-Gewicht 8).
+* [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md): spawnt in Flüssen (Spawn-Gewicht 3).
+* [Antennenwels](../tankmates/bristlenose_pleco.md): spawnt in Flüssen (Spawn-Gewicht 2).
+* [Otocinclus (Ohrgitter-Harnischwels)](../tankmates/otocinclus.md): spawnt in Flüssen (Spawn-Gewicht 2).
+* [Guppy](../tankmates/guppy.md): spawnt in Flüssen (Spawn-Gewicht 6).
+* [Endler-Guppy](../tankmates/endler_guppy.md): spawnt in Flüssen (Spawn-Gewicht 3).
+* [Platy](../tankmates/platy.md): spawnt in Flüssen (Spawn-Gewicht 5).
+* [Neocaridina-Garnele](../invertebrates/neocaridina.md): spawnt in Flüssen (Spawn-Gewicht 2).
+* [Posthornschnecke](../invertebrates/ramshorn.md): spawnt in Flüssen (Spawn-Gewicht 2).
+* [Blasenschnecke](../invertebrates/bladder_snail.md): spawnt in Flüssen (Spawn-Gewicht 1).
+* [Turmdeckelschnecke](../invertebrates/trumpet_snail.md): spawnt in Flüssen (Spawn-Gewicht 1).
+* [Raubschnecke](../invertebrates/assassin_snail.md): spawnt in Flüssen (Spawn-Gewicht 1).
+* [Keilfleckbärbling](../tankmates/harlequin_rasbora.md): spawnt in Sümpfen (Spawn-Gewicht 13).
+* [Moskitobärbling](../tankmates/mosquito_rasbora.md): spawnt in Sümpfen (Spawn-Gewicht 11).
+* [Dornauge](../tankmates/kuhli_loach.md): spawnt in Sümpfen (Spawn-Gewicht 6).
+* [Prachtschmerle](../tankmates/clown_loach.md): spawnt in Sümpfen (Spawn-Gewicht 2).
+* [Zwergfadenfisch](../tankmates/dwarf_gourami.md): spawnt in Sümpfen (Spawn-Gewicht 5).
+* [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md): spawnt in Sümpfen (Spawn-Gewicht 3).
+* [Posthornschnecke](../invertebrates/ramshorn.md): spawnt in Sümpfen (Spawn-Gewicht 2).
+* [Blasenschnecke](../invertebrates/bladder_snail.md): spawnt in Sümpfen (Spawn-Gewicht 2).
+* [Turmdeckelschnecke](../invertebrates/trumpet_snail.md): spawnt in Sümpfen (Spawn-Gewicht 2).
+* [Zebra-Rennschnecke](../invertebrates/zebra_nerite.md): spawnt in Mangrovensümpfen (Spawn-Gewicht 2).
+* [Geweihschnecke](../invertebrates/horned_nerite.md): spawnt in Mangrovensümpfen (Spawn-Gewicht 1).
+* [Oliv-Rennschnecke](../invertebrates/olive_nerite.md): spawnt in Mangrovensümpfen (Spawn-Gewicht 2).
+* [Rote Rennschnecke](../invertebrates/red_nerite.md): spawnt in Mangrovensümpfen (Spawn-Gewicht 1).
+* [Gelbe Rennschnecke](../invertebrates/yellow_nerite.md): spawnt in Mangrovensümpfen (Spawn-Gewicht 1).
+* [Raubschnecke](../invertebrates/assassin_snail.md): spawnt in Mangrovensümpfen (Spawn-Gewicht 1).
+* [Zebra-Rennschnecke](../invertebrates/zebra_nerite.md): spawnt an Stränden (Spawn-Gewicht 2).
+* [Geweihschnecke](../invertebrates/horned_nerite.md): spawnt an Stränden (Spawn-Gewicht 2).
+* [Oliv-Rennschnecke](../invertebrates/olive_nerite.md): spawnt an Stränden (Spawn-Gewicht 2).
+* [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md): spawnt an Stränden (Spawn-Gewicht 1).
+* [Neonsalmler](../tankmates/neon_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 15).
+* [Roter Neon](../tankmates/cardinal_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 11).
+* [Grüner Neon](../tankmates/green_neon_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 6).
+* [Feuersalmler](../tankmates/ember_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 9).
+* [Glühlichtsalmler](../tankmates/glowlight_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 8).
+* [Pygmäen-Panzerwels](../tankmates/pygmy_cory.md): spawnt in Dschungelgewässern (Spawn-Gewicht 7).
+* [Panda-Panzerwels](../tankmates/panda_cory.md): spawnt in Dschungelgewässern (Spawn-Gewicht 8).
+* [Sterbai-Panzerwels](../tankmates/sterbai_cory.md): spawnt in Dschungelgewässern (Spawn-Gewicht 7).
+* [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
+* [L134 Leopard-Frosch-Wels](../tankmates/leopard_frog_pleco.md): spawnt in Dschungelgewässern (Spawn-Gewicht 3).
+* [L046 Zebra-Harnischwels](../tankmates/zebra_pleco.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
+* [Antennenwels](../tankmates/bristlenose_pleco.md): spawnt in Dschungelgewässern (Spawn-Gewicht 5).
+* [Otocinclus (Ohrgitter-Harnischwels)](../tankmates/otocinclus.md): spawnt in Dschungelgewässern (Spawn-Gewicht 5).
+* [Prachtschmerle](../tankmates/clown_loach.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
+* [Endler-Guppy](../tankmates/endler_guppy.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
+* [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
+* [Apfelschnecke](../invertebrates/apple_snail.md): spawnt in Dschungelgewässern (Spawn-Gewicht 5).
+* [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
+* [Falscher Clownfisch](../saltwater/ocellaris_clownfish.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 6).
+* [Gelber Segelflossendoktor](../saltwater/yellow_tang.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 3).
+* [Gelbe Wächtergrundel](../saltwater/yellow_watchman_goby.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 4).
+* [Grünes Schwalbenschwänzchen](../saltwater/green_chromis.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 7).
+* [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 5).
+* [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Zwergseepferdchen](../saltwater/dwarf_seahorse.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Mexikanische Turboschnecke](../saltwater/turbo_snail.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Gelbe Wächtergrundel](../saltwater/yellow_watchman_goby.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 3).
+* [Grünes Schwalbenschwänzchen](../saltwater/green_chromis.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 5).
+* [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 6).
+* [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 2).
+* [Mexikanische Turboschnecke](../saltwater/turbo_snail.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 3).
+* [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 3).
+* [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 1).
+* [Krustenanemonen (Zoanthus)](../saltwater/zoanthus.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Grüne Sternpolypen](../saltwater/green_star_polyps.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Scheibenanemone](../saltwater/mushroom_coral.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Lederkoralle](../saltwater/leather_coral.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Hammerkoralle](../saltwater/hammer_coral.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Lobophyllia](../saltwater/lobophyllia.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Acropora](../saltwater/acropora.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Blasenanemone](../saltwater/bubble_tip_anemone.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
 
 ## Fahrender Händler: übliche Angebote
 

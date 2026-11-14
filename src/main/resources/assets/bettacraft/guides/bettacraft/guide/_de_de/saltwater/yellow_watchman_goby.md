@@ -39,4 +39,6 @@ Die Gelbe Wächtergrundel (*Cryptocentrus cinctus*) aus den Lagunen des westlich
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 1,7–2 % pro Schwung.
 * **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 2,3–2,7 % pro Schwung.
+* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 4) (Config `features.wildFish`).
+* **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 3) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 4 in diesem Angebot.

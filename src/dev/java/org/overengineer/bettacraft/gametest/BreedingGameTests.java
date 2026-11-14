@@ -113,7 +113,7 @@ public final class BreedingGameTests {
         h.assertTrue("koi".equals(b.genome().pattern()) && "red".equals(b.genome().bodyColor()), "phenotype unchanged");
         h.assertTrue(b.isFemale() && b.isAdult() && b.getBettaData().generation() == 2, "other data kept");
         CompoundTag saved = b.getBettaData().save();
-        h.assertTrue(saved.getInt("schema") == 3 && saved.getCompound("genome").getList("finform", 8).size() == 2, "saved as v3");
+        h.assertTrue(saved.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.BETTA.currentVersion() && saved.getCompound("genome").getList("finform", 8).size() == 2, "saved in the current version");
         h.succeed();
     }
 

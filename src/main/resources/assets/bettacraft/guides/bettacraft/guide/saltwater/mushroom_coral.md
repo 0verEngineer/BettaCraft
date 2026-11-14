@@ -6,6 +6,7 @@ navigation:
   position: 30
 item_ids:
   - bettacraft:mushroom_coral
+  - bettacraft:wild_mushroom_coral
 ---
 
 # Mushroom Coral
@@ -36,5 +37,6 @@ Mushroom corals (disc anemones, *Discosoma* sp.) from the Indo-Pacific and the C
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.75–0.9 % per swing.
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **Frags**: shears on a grown coral give 1 cutting per trim; it also spreads by itself (over the rock).

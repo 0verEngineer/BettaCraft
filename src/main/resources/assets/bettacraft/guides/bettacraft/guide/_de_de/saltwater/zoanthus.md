@@ -6,6 +6,7 @@ navigation:
   position: 10
 item_ids:
   - bettacraft:zoanthus
+  - bettacraft:wild_zoanthus
 ---
 
 # Krustenanemonen (Zoanthus)
@@ -36,5 +37,6 @@ Krustenanemonen (*Zoanthus* sp.) von tropischen Riffen weltweit: Kolonien kleine
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,75–0,9 % pro Schwung.
+* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (über das Gestein).

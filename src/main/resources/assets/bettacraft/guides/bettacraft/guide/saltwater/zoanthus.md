@@ -6,6 +6,7 @@ navigation:
   position: 10
 item_ids:
   - bettacraft:zoanthus
+  - bettacraft:wild_zoanthus
 ---
 
 # Zoanthids
@@ -36,5 +37,6 @@ Zoanthids (*Zoanthus* sp.), button polyps from tropical reefs worldwide: colonie
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.75–0.9 % per swing.
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **Frags**: shears on a grown coral give 2 cuttings per trim; it also spreads by itself (over the rock).

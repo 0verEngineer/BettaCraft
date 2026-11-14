@@ -6,6 +6,7 @@ navigation:
   position: 50
 item_ids:
   - bettacraft:hammer_coral
+  - bettacraft:wild_hammer_coral
 ---
 
 # Hammer Coral
@@ -35,6 +36,7 @@ The hammer coral (*Euphyllia ancora*) from the Indo-Pacific: a stony coral (LPS)
 
 ## Obtaining
 
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Frags**: shears on a grown coral give 1 cutting per trim.
 
 Crafting:

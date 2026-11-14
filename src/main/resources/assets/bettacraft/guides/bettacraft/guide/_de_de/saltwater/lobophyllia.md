@@ -6,6 +6,7 @@ navigation:
   position: 60
 item_ids:
   - bettacraft:lobophyllia
+  - bettacraft:wild_lobophyllia
 ---
 
 # Lobophyllia
@@ -35,6 +36,7 @@ item_ids:
 
 ## Bezug
 
+* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
 
 Herstellung:

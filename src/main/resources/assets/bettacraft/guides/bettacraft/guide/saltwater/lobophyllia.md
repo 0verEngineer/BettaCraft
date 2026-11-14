@@ -6,6 +6,7 @@ navigation:
   position: 60
 item_ids:
   - bettacraft:lobophyllia
+  - bettacraft:wild_lobophyllia
 ---
 
 # Lobophyllia
@@ -35,6 +36,7 @@ item_ids:
 
 ## Obtaining
 
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Frags**: shears on a grown coral give 1 cutting per trim.
 
 Crafting:

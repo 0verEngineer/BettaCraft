@@ -34,16 +34,21 @@ den [Innenraum](../interior.md).)
 ## Tiere
 
 Die Liste aller Tiere mit Name, Typ, Geschlecht und Stufe. Zum ausgewählten Fisch: Gesundheits- und Satt-Balken,
-Fortschritt der Stufe, der Genotyp (Schwanzform, Körper, Flossen, Muster; alle neun Loci im Tooltip), die Generation,
-ein Namensfeld und die Knöpfe zum Entnehmen mit Eimer oder Fischtüte. Ein Zwergkrallenfrosch zeigt Gesundheit,
+Fortschritt der Stufe, der Genotyp (Schwanzform, Körper, Flossen, Muster; alle neun Loci im Tooltip), sobald er mit der
+[Lupe](../equipment/magnifier.md) analysiert ist (Knopf **Analysieren**), die Generation, ein Namensfeld und die Knöpfe
+zum Entnehmen mit Eimer oder Fischtüte. Ein Zwergkrallenfrosch zeigt Gesundheit,
 Futter und Luft.
 
 ![Der Tiere-Tab](../images/menu_inhabitants.png)
 
 Der Knopf **Kleintiere** wechselt zu den [Garnelen, Krebsen und Schnecken](../invertebrates.md): jede Sorte (Art und
 Farbe) mit Anzahl, Geschlechtern, Jungtieren, Weibchen mit Eiern und Güte; für das ganze Aquarium der Besatz, die Algen
-am Glas, wie viel die Putzkolonne frisst, das Futter und die Verstecke. **In Tüte** holt das Tier mit der besten Güte in
-eine Fischtüte (Umschalt: das schlechteste, Strg: eine volle Tüte mit 16), **Gelege weg** nimmt die Gelege der Apfelschnecken vom Glas.
+am Glas, wie viel die Putzkolonne frisst, das Futter und die Verstecke. Ein Klick auf eine Sorte klappt die Liste ihrer
+Tiere auf: jedes einzelne mit Geschlecht, Alter, Güte und Genen (sobald analysiert); wähle eins, um es genau zu sehen,
+es zu **Analysieren** oder genau dieses zu **Entnehmen**. Mit einer gewählten Sorte holt **Entnehmen** das Tier mit der
+besten Güte (Umschalt: das schlechteste, Strg: eine volle Tüte bzw. einen vollen Eimer) des gewählten Geschlechts (Knopf
+unter der Liste: beliebig, Männchen, Weibchen) in eine Fischtüte oder einen Eimer (der zweite Knopf). **Gelege weg**
+nimmt die Gelege der Apfelschnecken vom Glas.
 
 ![Die Seite Kleintiere](../images/menu_critters.png)
 

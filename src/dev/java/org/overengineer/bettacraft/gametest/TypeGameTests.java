@@ -180,7 +180,7 @@ public final class TypeGameTests {
         h.assertTrue(b.genome().isShortFinned() && "round".equals(b.genome().shape()), "still a plakat");
         h.assertTrue("mustard_gas".equals(BettaTypes.variety(b.genome()).id()), "named Mustard Gas");
         h.assertTrue(b.getBettaData().generation() == 4, "other data kept");
-        h.assertTrue(b.getBettaData().save().getInt("schema") == 3, "saved as v3");
+        h.assertTrue(b.getBettaData().save().getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.BETTA.currentVersion(), "saved in the current version");
         h.succeed();
     }
 

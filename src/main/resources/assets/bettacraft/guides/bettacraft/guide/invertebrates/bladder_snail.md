@@ -35,4 +35,6 @@ The bladder snail (*Physella acuta*), found in still water all over the world: t
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 6.5–7.7 % per swing, 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 8.8–12 % per swing, 1–2 at a time.
+* **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
+* **Wild** in swamps, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Breeding** in the aquarium (one animal is enough).

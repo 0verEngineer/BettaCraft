@@ -362,13 +362,13 @@ public final class GuideGen {
                         : bold(t("Glass bottle", "Glasflasche")) + t(" filled with water ", " mit Wasser gefüllt ") + where(s.where()) + ": "
                         + chance(s.chance(), s.chanceMax()) + t(" per bottle, along with the water", " pro Flasche, zusätzlich zum Wasser"));
                 case SHEARS -> lines.add(bold(t("Shears", "Schere")) + t(" on a " + block(s.block()) + " ", " an einem " + block(s.block()) + " ") + where(s.where()) + ": "
-                        + chance(s.chance(), s.chanceMax()) + t(" per cut", " pro Schnitt"));
+                        + chance(s.chance(), s.chanceMax()) + t(" per cut", " pro Schnitt") + cond);
                 case SHOVEL -> lines.add(bold(t("Shovel", "Schaufel")) + t(" on " + block(s.block()) + " ", " auf " + block(s.block()) + " ") + where(s.where()) + ": "
                         + chance(s.chance(), s.chanceMax()) + t(" per try, into an empty fish bag", " pro Versuch, in einen leeren Fischbeutel"));
                 case BLOCK_DROP -> lines.add(bold(t("Breaking " + block(s.block()), block(s.block()) + " abbauen"))
                         + (s.where() == Where.SAND ? "" : " " + where(s.where())) + ": " + chance(s.chance(), s.chanceMax()) + t(" per block", " pro Block"));
                 case SPAWN -> lines.add(bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ", in groups of " + s.min() + "–" + s.max() + " (spawn weight "
-                        + (int) s.chance() + ")", " " + where(s.where()) + ", in Gruppen von " + s.min() + "–" + s.max() + " (Spawn-Gewicht " + (int) s.chance() + ")"));
+                        + (int) s.chance() + ")", " " + where(s.where()) + ", in Gruppen von " + s.min() + "–" + s.max() + " (Spawn-Gewicht " + (int) s.chance() + ")") + cond);
                 case TRADER_USUAL, TRADER_RARE -> {
                     String slot = s.kind() == Source.Kind.TRADER_USUAL ? t("usual offers", "übliche Angebote") : t("rare offers", "seltene Angebote");
                     String price = s.min() + t(" for ", " für ") + s.emeralds() + (s.moreSometimes() ? "+" : "") + " " + t(s.emeralds() == 1 ? "emerald" : "emeralds",
@@ -618,7 +618,7 @@ public final class GuideGen {
             case "minecraft:mud" -> t("mud", "Schlamm");
             case "minecraft:moss_block" -> t("moss block", "Moosblock");
             case "#c:sands" -> t("sand", "Sand");
-            default -> id;
+            default -> id.startsWith("bettacraft:wild_") ? t("wild coral colony", "wilden Korallenstock") : id; // M22.3
         };
     }
 

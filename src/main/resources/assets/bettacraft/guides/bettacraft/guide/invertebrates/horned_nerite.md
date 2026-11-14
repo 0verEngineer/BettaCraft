@@ -34,3 +34,5 @@ The horned nerite (*Clithon corona*) from the brackish rivers of South-East Asia
 
 * **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 7.2–9 % per swing, 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** at beaches: 7.5–9 % per swing, 1–2 at a time.
+* **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
+* **Wild** at beaches, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).

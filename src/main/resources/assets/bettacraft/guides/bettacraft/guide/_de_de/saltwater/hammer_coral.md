@@ -6,6 +6,7 @@ navigation:
   position: 50
 item_ids:
   - bettacraft:hammer_coral
+  - bettacraft:wild_hammer_coral
 ---
 
 # Hammerkoralle
@@ -35,6 +36,7 @@ Die Hammerkoralle (*Euphyllia ancora*) aus dem Indopazifik: eine Steinkoralle (L
 
 ## Bezug
 
+* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
 
 Herstellung:

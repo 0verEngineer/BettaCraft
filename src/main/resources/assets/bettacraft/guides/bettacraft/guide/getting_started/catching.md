@@ -27,6 +27,22 @@ again; the net wears a little. With a chance (30 %, more near plants) something 
 * Sand, gravel or stone at the bottom: more trumpet snails and nerites.
 * Wild animals sometimes carry a colour hidden (pink ramshorns, red shrimp, orange crayfish): breed it out.
 
+## Wild animals in the world
+
+The tankmate fish also live wild, rarely and in small shoals, in the waters they come from: tetras, corydoras, plecos
+and otocinclus in jungle water, rasboras, kuhli and clown loaches, the dwarf gourami and dwarf clawed frogs in swamps,
+guppies, endlers and platys in rivers, the reef fish and seahorses in warm and lukewarm oceans. Catch them with a
+bucket of water (sea water for the reef fish) or a fish bag.
+
+Shrimp, crayfish, snails and hermit crabs crawl on the bottom of rivers, swamps, mangroves, beaches, jungle water and
+the oceans. Right-click one with the net, a fish bag or a bucket of water to catch it; let it go again and it crawls
+off. Every coral of the mod grows on the warm ocean reefs among the vanilla corals: [shears cut a frag](../saltwater/corals.md)
+off a colony.
+
+Most wild animals are wild-coloured, some carry a bred colour hidden, and about 3 in 100 show one openly
+(config `wildlife.beautifulWildChance`). What a new animal carries hidden shows the [magnifier](../equipment/magnifier.md).
+All spawns with their weights: [Where to find what](sources.md).
+
 ## Other ways
 
 * A **shovel on mud** in a swamp now and then turns up a Malaysian trumpet snail.

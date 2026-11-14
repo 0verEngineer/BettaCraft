@@ -36,5 +36,7 @@ Die Raubturmdeckelschnecke (*Clea helena*) aus Südostasien: ein gelb-braun geb�
 * **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 1,4–1,7 % pro Schwung.
 * **[Kescher](../equipment/tank_net.md)** in tiefem Höhlenwasser: 3,5–4,2 % pro Schwung.
 * **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 2,7–2,9 % pro Schwung.
+* **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
+* **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 1 für 4 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).

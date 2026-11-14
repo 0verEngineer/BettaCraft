@@ -34,3 +34,5 @@ Die Mexikanische Turboschnecke (*Turbo fluctuosa*) aus dem Golf von Kalifornien:
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 9,6–12 % pro Schwung, 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 11–13 % pro Schwung, 1–2 auf einmal.
+* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
+* **Wild** in lauwarmen Ozeanen, in Gruppen von 2–5 (Spawn-Gewicht 3) (Config `features.wildCritters`).
