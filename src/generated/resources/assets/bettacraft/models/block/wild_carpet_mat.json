@@ -1,0 +1,9 @@
+{
+  "parent": "bettacraft:block/template_wild_carpet",
+  "textures": {
+    "accent": "bettacraft:block/wild_carpet_mat_accent",
+    "leaf": "bettacraft:block/wild_carpet_mat",
+    "mat": "bettacraft:block/plant_leaf_mat",
+    "top": "bettacraft:block/wild_carpet_mat_top"
+  }
+}

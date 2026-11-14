@@ -1,0 +1,752 @@
+{
+  "variants": {
+    "species=amazon_sword,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=amazon_sword,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=amazon_sword,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=amazon_sword,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=aponogeton_ulvaceus,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 270
+      }
+    ],
+    "species=aponogeton_ulvaceus,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 270
+      }
+    ],
+    "species=aponogeton_ulvaceus,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=aponogeton_ulvaceus,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_flamingo,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_flamingo,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_flamingo,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_flamingo,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_parva,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_parva,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_parva,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_parva,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_brown,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_brown,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_brown,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_brown,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_green,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_green,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_green,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=cryptocoryne_wendtii_green,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=echinodorus_red_diamond,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=echinodorus_red_diamond,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad",
+        "y": 270
+      }
+    ],
+    "species=echinodorus_red_diamond,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=echinodorus_red_diamond,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=nymphaea_lotus_green,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 270
+      }
+    ],
+    "species=nymphaea_lotus_green,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 270
+      }
+    ],
+    "species=nymphaea_lotus_green,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 270
+      }
+    ],
+    "species=nymphaea_lotus_green,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 270
+      }
+    ],
+    "species=red_tiger_lotus,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 270
+      }
+    ],
+    "species=red_tiger_lotus,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus",
+        "y": 270
+      }
+    ],
+    "species=red_tiger_lotus,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 270
+      }
+    ],
+    "species=red_tiger_lotus,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_lotus_trimmed",
+        "y": 270
+      }
+    ],
+    "species=sagittaria_subulata,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_grass"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass",
+        "y": 270
+      }
+    ],
+    "species=sagittaria_subulata,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_grass"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass",
+        "y": 270
+      }
+    ],
+    "species=sagittaria_subulata,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed",
+        "y": 270
+      }
+    ],
+    "species=sagittaria_subulata,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_grass_trimmed",
+        "y": 270
+      }
+    ],
+    "species=vallisneria,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon",
+        "y": 270
+      }
+    ],
+    "species=vallisneria,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon",
+        "y": 270
+      }
+    ],
+    "species=vallisneria,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed",
+        "y": 270
+      }
+    ],
+    "species=vallisneria,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_rosette_ribbon_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

@@ -235,4 +235,172 @@ public final class WildTables {
 
     /** M20: share of the net's catch chance on a reef that brings up a frag (times {@code reef.netShare}). */
     public static final double NET_FRAG_FACTOR = 0.25;
+
+    // ------------------------------------------------------------------ M28.1 wild plants in the world
+
+    /**
+     * M28.1: the waters where aquarium and floating plants grow wild ({@code plants/wild/WildPlantFeature}), by their real
+     * origin. The biomes are the tags of {@link org.overengineer.bettacraft.world.BiomeWaters} (biome mods count too).
+     */
+    public enum PlantWater {
+        /** Jungle water: the shade plants of tropical streams (Anubias, Bucephalandra, Java fern), crypts, swords, lotus. */
+        JUNGLE(Where.JUNGLE),
+        /** Swamps: stem plants, carpets and lotus of shallow, sunny swamps; the floating plants of still water. */
+        SWAMP(Where.SWAMP),
+        /** Rivers: Vallisneria, Sagittaria, hairgrass and the mosses of running water. */
+        RIVER(Where.RIVER),
+        /** Mangrove swamps: the brackish-tolerant crypts, Java fern and moss; many floating plants in the calm. */
+        MANGROVE(Where.MANGROVE),
+        /** Cold lakes and frozen rivers: the Marimo balls, hairgrass and hornwort. */
+        COLD(Where.COLD_WATER),
+        /** The pools of the lush caves: Java moss and its relatives on the stone. */
+        LUSH_CAVES(Where.LUSH_CAVES);
+
+        private final Where where;
+
+        PlantWater(Where where) {
+            this.where = where;
+        }
+
+        public Where where() {
+            return where;
+        }
+    }
+
+    /**
+     * M28.1: the aquarium plants growing wild under water (one species per group). Strong-light and soft-water species are
+     * rarer (weights 1-3), the robust ones common. Every freshwater species stands in at least one table (test
+     * {@code WildPlantSourcesTest}).
+     */
+    public static WeightedTable<PlantSpecies> wildPlants(PlantWater w) {
+        return switch (w) {
+            case JUNGLE -> WILD_PLANTS_JUNGLE;
+            case SWAMP -> WILD_PLANTS_SWAMP;
+            case RIVER -> WILD_PLANTS_RIVER;
+            case MANGROVE -> WILD_PLANTS_MANGROVE;
+            case COLD -> WILD_PLANTS_COLD;
+            case LUSH_CAVES -> WILD_PLANTS_LUSH_CAVES;
+        };
+    }
+
+    /** M28.1: the floating plants on the calm water surface (like lily pads); none in the dark cave pools. */
+    public static WeightedTable<FloatingPlantType> wildFloating(PlantWater w) {
+        return switch (w) {
+            case JUNGLE -> WILD_FLOATING_JUNGLE;
+            case SWAMP -> WILD_FLOATING_SWAMP;
+            case RIVER -> WILD_FLOATING_RIVER;
+            case MANGROVE -> WILD_FLOATING_MANGROVE;
+            case COLD -> WILD_FLOATING_COLD;
+            case LUSH_CAVES -> WeightedTable.empty();
+        };
+    }
+
+    public static final WeightedTable<PlantSpecies> WILD_PLANTS_JUNGLE = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.JAVA_FERN, 10)
+            .add(PlantSpecies.ANUBIAS_NANA, 10)
+            .add(PlantSpecies.ANUBIAS_ROUND_LEAF, 6)
+            .add(PlantSpecies.ANUBIAS_PETITE, 5)
+            .add(PlantSpecies.ANUBIAS_COFFEEFOLIA, 4)
+            .add(PlantSpecies.ANUBIAS_PINTO, 2)
+            .add(PlantSpecies.ANUBIAS_WHITE, 2)
+            .add(PlantSpecies.BUCE_GREEN_WAVY, 6)
+            .add(PlantSpecies.BUCE_MINI_NEEDLE, 4)
+            .add(PlantSpecies.BUCE_BROWNIE_RED, 4)
+            .add(PlantSpecies.BUCE_THEIA, 4)
+            .add(PlantSpecies.BUCE_BLUE, 3)
+            .add(PlantSpecies.BUCE_KEDAGANG, 3)
+            .add(PlantSpecies.BUCE_GODZILLA, 3)
+            .add(PlantSpecies.BUCE_PINK_LADY, 2)
+            .add(PlantSpecies.BUCE_MINI_PINK, 2)
+            .add(PlantSpecies.BUCE_SNOW_WHITE, 2)
+            .add(PlantSpecies.CRYPT_GREEN, 8)
+            .add(PlantSpecies.CRYPT_BROWN, 6)
+            .add(PlantSpecies.CRYPT_PARVA, 4)
+            .add(PlantSpecies.CRYPT_FLAMINGO, 2)
+            .add(PlantSpecies.AMAZON_SWORD, 6)
+            .add(PlantSpecies.ECHINODORUS_RED_DIAMOND, 3)
+            .add(PlantSpecies.HYGROPHILA_PINNATIFIDA, 4)
+            .add(PlantSpecies.APONOGETON, 4)
+            .add(PlantSpecies.TIGER_LOTUS, 3)
+            .add(PlantSpecies.POGOSTEMON_DOWNOI, 2)
+            .add(PlantSpecies.ROTALA_WALLICHII, 1)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_PLANTS_SWAMP = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.ROTALA, 3)
+            .add(PlantSpecies.LUDWIGIA, 8)
+            .add(PlantSpecies.LIMNOPHILA_SESSILIFLORA, 8)
+            .add(PlantSpecies.BACOPA_CAROLINIANA, 8)
+            .add(PlantSpecies.MARSILEA, 6)
+            .add(PlantSpecies.STAUROGYNE, 4)
+            .add(PlantSpecies.NYMPHAEA_GREEN, 4)
+            .add(PlantSpecies.TIGER_LOTUS, 3)
+            .add(PlantSpecies.ROTALA_HRA, 2)
+            .add(PlantSpecies.LUDWIGIA_SUPER_RED, 2)
+            .add(PlantSpecies.MONTE_CARLO, 2)
+            .add(PlantSpecies.HC_CUBA, 1)
+            .add(PlantSpecies.ALTERNANTHERA, 1)
+            .add(PlantSpecies.MYRIOPHYLLUM_RED, 1)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_PLANTS_RIVER = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.VALLISNERIA, 10)
+            .add(PlantSpecies.SAGITTARIA, 10)
+            .add(PlantSpecies.ELEOCHARIS, 6)
+            .add(PlantSpecies.JAVA_MOSS, 6)
+            .add(PlantSpecies.CHRISTMAS_MOSS, 4)
+            .add(PlantSpecies.FLAME_MOSS, 4)
+            .add(PlantSpecies.AMAZON_SWORD, 3)
+            .add(PlantSpecies.RICCIA, 2)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_PLANTS_MANGROVE = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.CRYPT_GREEN, 6)
+            .add(PlantSpecies.CRYPT_BROWN, 4)
+            .add(PlantSpecies.JAVA_FERN, 6)
+            .add(PlantSpecies.JAVA_MOSS, 6)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_PLANTS_COLD = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.MARIMO, 10)
+            .add(PlantSpecies.ELEOCHARIS, 4)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_PLANTS_LUSH_CAVES = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.JAVA_MOSS, 10)
+            .add(PlantSpecies.CHRISTMAS_MOSS, 4)
+            .add(PlantSpecies.FLAME_MOSS, 4)
+            .build();
+
+    public static final WeightedTable<FloatingPlantType> WILD_FLOATING_SWAMP = WeightedTable.<FloatingPlantType>builder()
+            .add(FloatingPlantType.DUCKWEED, 10)
+            .add(FloatingPlantType.SALVINIA, 6)
+            .add(FloatingPlantType.FROGBIT, 6)
+            .add(FloatingPlantType.HORNWORT, 4)
+            .add(FloatingPlantType.RICCIA, 2)
+            .build();
+
+    public static final WeightedTable<FloatingPlantType> WILD_FLOATING_MANGROVE = WeightedTable.<FloatingPlantType>builder()
+            .add(FloatingPlantType.DUCKWEED, 6)
+            .add(FloatingPlantType.WATER_LETTUCE, 6)
+            .add(FloatingPlantType.SALVINIA, 6)
+            .add(FloatingPlantType.FROGBIT, 4)
+            .add(FloatingPlantType.RED_ROOT_FLOATER, 4)
+            .build();
+
+    public static final WeightedTable<FloatingPlantType> WILD_FLOATING_JUNGLE = WeightedTable.<FloatingPlantType>builder()
+            .add(FloatingPlantType.WATER_LETTUCE, 6)
+            .add(FloatingPlantType.SALVINIA, 3)
+            .add(FloatingPlantType.RED_ROOT_FLOATER, 3)
+            .build();
+
+    /** Rivers run: only now and then hornwort or duckweed in a calm bay. */
+    public static final WeightedTable<FloatingPlantType> WILD_FLOATING_RIVER = WeightedTable.<FloatingPlantType>builder()
+            .add(FloatingPlantType.HORNWORT, 3)
+            .add(FloatingPlantType.DUCKWEED, 2)
+            .build();
+
+    public static final WeightedTable<FloatingPlantType> WILD_FLOATING_COLD = WeightedTable.<FloatingPlantType>builder()
+            .add(FloatingPlantType.HORNWORT, 6)
+            .build();
 }

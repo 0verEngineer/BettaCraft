@@ -1,0 +1,344 @@
+{
+  "variants": {
+    "species=christmas_moss,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_moss"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 270
+      }
+    ],
+    "species=christmas_moss,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_moss"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 270
+      }
+    ],
+    "species=christmas_moss,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 270
+      }
+    ],
+    "species=christmas_moss,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 270
+      }
+    ],
+    "species=flame_moss,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_moss"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 270
+      }
+    ],
+    "species=flame_moss,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_moss"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 270
+      }
+    ],
+    "species=flame_moss,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 270
+      }
+    ],
+    "species=flame_moss,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 270
+      }
+    ],
+    "species=java_moss,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_moss"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 270
+      }
+    ],
+    "species=java_moss,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_moss"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss",
+        "y": 270
+      }
+    ],
+    "species=java_moss,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 270
+      }
+    ],
+    "species=java_moss,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_moss_trimmed",
+        "y": 270
+      }
+    ],
+    "species=marimo,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_marimo"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo",
+        "y": 270
+      }
+    ],
+    "species=marimo,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_marimo"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo",
+        "y": 270
+      }
+    ],
+    "species=marimo,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed",
+        "y": 270
+      }
+    ],
+    "species=marimo,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_marimo_trimmed",
+        "y": 270
+      }
+    ],
+    "species=riccia_fluitans,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_riccia"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia",
+        "y": 270
+      }
+    ],
+    "species=riccia_fluitans,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_riccia"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia",
+        "y": 270
+      }
+    ],
+    "species=riccia_fluitans,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed",
+        "y": 270
+      }
+    ],
+    "species=riccia_fluitans,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_moss_riccia_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

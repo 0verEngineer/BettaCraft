@@ -7,7 +7,7 @@ import java.util.Locale;
  * much the bubble nest likes them and the length of the roots (rendering). {@link #LILY_PAD} is the vanilla lily pad on
  * a tank surface: it stays where it was put and never multiplies.
  */
-public enum FloatingPlantType {
+public enum FloatingPlantType implements net.minecraft.util.StringRepresentable {
     /** Wasserlinse: tiny leaves in small patches, grows fastest (the starter plant from swamp water). */
     DUCKWEED("duckweed", 0.17, 1.6, 0.9, 0.5, 0.06),
     /** Froschbiss: round leaves, long roots hanging into the water, the favourite nest site. */
@@ -46,6 +46,10 @@ public enum FloatingPlantType {
 
     /** Item id path (and save name). The lily pad uses the vanilla item. */
     public String id() { return id; }
+
+    /** M28.1: the type as a block state value of the wild floating plants. */
+    @Override
+    public String getSerializedName() { return id; }
 
     /** Radius (blocks) of a fully grown plant. */
     public double maxRadius() { return radius; }

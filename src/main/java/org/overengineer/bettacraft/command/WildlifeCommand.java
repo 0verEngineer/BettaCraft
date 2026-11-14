@@ -87,6 +87,13 @@ public final class WildlifeCommand {
         String biomeId = biome.unwrapKey().map(k -> k.location().toString()).orElse("?");
         NetCatching.Water spawn = Wildlife.water(biome), net = BiomeWaters.water(biome, true);
         say(src, Component.translatable("command.bettacraft.wildlife.biome", biomeId, waterName(spawn), waterName(net)));
+        // M28.1 part b: the water of the wild plants here (new chunks)
+        var plants = BiomeWaters.plantWater(biome);
+        say(src, plants == null ? Component.translatable("command.bettacraft.wildlife.plants.none")
+                : Component.translatable("command.bettacraft.wildlife.plants", Component.translatable("command.bettacraft.wildlife.plants."
+                + plants.name().toLowerCase(java.util.Locale.ROOT)), org.overengineer.bettacraft.sources.WildTables.wildPlants(plants).entries().size(),
+                org.overengineer.bettacraft.sources.WildTables.wildFloating(plants).entries().size(),
+                org.overengineer.bettacraft.config.CommonConfig.wildPlants() ? "" : " (features.wildPlants: off)"));
         // the animals of the mod in the spawn list and their share of the group
         int total = 0, oursTotal = 0;
         for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) total += d.getWeight().asInt();

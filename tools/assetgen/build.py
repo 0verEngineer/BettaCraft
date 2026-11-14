@@ -23,6 +23,7 @@ import live_food
 import food_maker
 import monitor
 import floating_plants
+import wild_plants
 import gui
 import icons
 import buckets
@@ -56,6 +57,7 @@ def main() -> int:
     written += blocks.write_all()
     written += equipment.write_all()
     written += floating_plants.write_all()
+    written += wild_plants.write_all()  # M28.1: after the floating plants (it composes their textures)
     written += aquatic_plants.write_all()
     written += reef.write_all()  # M20
     written += aeration.write_all()  # M23

@@ -37,6 +37,11 @@ public class AquariumNetItem extends Item {
         if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
         BlockPos pos = hit.getBlockPos();
         if (level.getBlockState(pos).getBlock() instanceof TankBlock) return InteractionResultHolder.pass(stack);
+        // M28.1: a wild floating plant on the water is scooped up
+        if (level.getBlockState(pos).getBlock() instanceof org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock) {
+            if (level instanceof ServerLevel) org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock.scoop(level, pos, player);
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        }
         if (!level.getFluidState(pos).is(FluidTags.WATER)) return InteractionResultHolder.pass(stack);
         if (level instanceof ServerLevel server) {
             boolean used = org.overengineer.bettacraft.critters.NetCatching.tryCatch(server, player, hand, pos);

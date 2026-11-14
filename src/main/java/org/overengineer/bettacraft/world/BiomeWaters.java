@@ -55,6 +55,31 @@ public final class BiomeWaters {
         return b.is(ModTags.CORAL_REEF_BIOMES) || b.is(Tags.Biomes.IS_OCEAN) && b.is(Tags.Biomes.IS_HOT);
     }
 
+    /**
+     * M28.1: cold fresh water ({@code #bettacraft:cold_waters}, or a land biome in {@code #c:is_cold/overworld}: no ocean,
+     * no beach).
+     */
+    public static boolean coldWater(Holder<Biome> b) {
+        return b.is(ModTags.COLD_WATERS) || b.is(Tags.Biomes.IS_COLD_OVERWORLD) && !b.is(Tags.Biomes.IS_OCEAN) && !b.is(Tags.Biomes.IS_BEACH)
+                && !b.is(net.minecraft.tags.BiomeTags.IS_OCEAN);
+    }
+
+    /**
+     * M28.1: the water of the wild plants in a biome, or null where none grow (oceans, beaches, plains ...). Mangroves before
+     * swamps, the lush caves, the cold waters before the rivers (a frozen river is cold), the jungle last.
+     */
+    @javax.annotation.Nullable
+    public static org.overengineer.bettacraft.sources.WildTables.PlantWater plantWater(Holder<Biome> b) {
+        if (mangrove(b)) return org.overengineer.bettacraft.sources.WildTables.PlantWater.MANGROVE;
+        if (swamp(b)) return org.overengineer.bettacraft.sources.WildTables.PlantWater.SWAMP;
+        if (lushCave(b)) return org.overengineer.bettacraft.sources.WildTables.PlantWater.LUSH_CAVES;
+        if (coldWater(b)) return org.overengineer.bettacraft.sources.WildTables.PlantWater.COLD;
+        if (river(b)) return org.overengineer.bettacraft.sources.WildTables.PlantWater.RIVER;
+        if (beach(b) || b.is(Tags.Biomes.IS_OCEAN)) return null;
+        if (jungle(b)) return org.overengineer.bettacraft.sources.WildTables.PlantWater.JUNGLE;
+        return null;
+    }
+
     /** Swamps for the fishing of plants: the swamp waters and the betta biomes. */
     public static boolean swampOrBettaBiome(Holder<Biome> b) {
         return swamp(b) || b.is(ModTags.BETTA_SPAWN_BIOMES);

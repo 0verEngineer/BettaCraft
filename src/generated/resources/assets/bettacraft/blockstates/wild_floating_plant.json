@@ -1,0 +1,123 @@
+{
+  "variants": {
+    "type=amazon_frogbit": [
+      {
+        "model": "bettacraft:block/wild_floating_amazon_frogbit"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_amazon_frogbit",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_amazon_frogbit",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_amazon_frogbit",
+        "y": 270
+      }
+    ],
+    "type=duckweed": [
+      {
+        "model": "bettacraft:block/wild_floating_duckweed"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_duckweed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_duckweed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_duckweed",
+        "y": 270
+      }
+    ],
+    "type=hornwort": [
+      {
+        "model": "bettacraft:block/wild_floating_hornwort"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_hornwort",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_hornwort",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_hornwort",
+        "y": 270
+      }
+    ],
+    "type=red_root_floater": [
+      {
+        "model": "bettacraft:block/wild_floating_red_root_floater"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_red_root_floater",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_red_root_floater",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_red_root_floater",
+        "y": 270
+      }
+    ],
+    "type=riccia_fluitans": [
+      {
+        "model": "bettacraft:block/wild_floating_riccia_fluitans"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_riccia_fluitans",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_riccia_fluitans",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_riccia_fluitans",
+        "y": 270
+      }
+    ],
+    "type=salvinia": [
+      {
+        "model": "bettacraft:block/wild_floating_salvinia"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_salvinia",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_salvinia",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_salvinia",
+        "y": 270
+      }
+    ],
+    "type=water_lettuce": [
+      {
+        "model": "bettacraft:block/wild_floating_water_lettuce"
+      },
+      {
+        "model": "bettacraft:block/wild_floating_water_lettuce",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_floating_water_lettuce",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_floating_water_lettuce",
+        "y": 270
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "bettacraft:block/template_wild_epiphyte_short",
+  "textures": {
+    "accent": "bettacraft:block/wild_epiphyte_frond_accent",
+    "leaf": "bettacraft:block/wild_epiphyte_frond",
+    "rhizome": "bettacraft:block/plant_rhizome",
+    "top": "bettacraft:block/wild_epiphyte_frond_top"
+  }
+}

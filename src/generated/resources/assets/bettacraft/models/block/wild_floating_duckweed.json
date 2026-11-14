@@ -1,0 +1,6 @@
+{
+  "parent": "bettacraft:block/template_wild_floating",
+  "textures": {
+    "tex": "bettacraft:block/wild_floating_duckweed"
+  }
+}

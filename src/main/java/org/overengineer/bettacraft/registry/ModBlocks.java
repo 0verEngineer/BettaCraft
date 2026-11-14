@@ -184,6 +184,40 @@ public final class ModBlocks {
         return java.util.Collections.unmodifiableMap(m);
     }
 
+    /**
+     * M28.1: the aquarium plants growing wild in the world, one block per growth form with the species as state (shears
+     * cut a cutting, it grows back; no items).
+     */
+    public static final java.util.Map<org.overengineer.bettacraft.plants.wild.WildPlantKind,
+            DeferredBlock<org.overengineer.bettacraft.plants.wild.WildPlantBlock>> WILD_PLANTS = wildPlants();
+
+    private static java.util.Map<org.overengineer.bettacraft.plants.wild.WildPlantKind, DeferredBlock<org.overengineer.bettacraft.plants.wild.WildPlantBlock>> wildPlants() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.plants.wild.WildPlantKind, DeferredBlock<org.overengineer.bettacraft.plants.wild.WildPlantBlock>>(
+                org.overengineer.bettacraft.plants.wild.WildPlantKind.class);
+        for (var k : org.overengineer.bettacraft.plants.wild.WildPlantKind.values()) {
+            m.put(k, BLOCKS.register(k.id(), () -> {
+                var p = BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().randomTicks()
+                        .sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY).noLootTable();
+                if (k != org.overengineer.bettacraft.plants.wild.WildPlantKind.MOSS && k != org.overengineer.bettacraft.plants.wild.WildPlantKind.CARPET) {
+                    p = p.offsetType(BlockBehaviour.OffsetType.XZ);
+                }
+                return switch (k) {
+                    case EPIPHYTE -> new org.overengineer.bettacraft.plants.wild.WildPlantBlock.Epiphyte(p);
+                    case MOSS -> new org.overengineer.bettacraft.plants.wild.WildPlantBlock.Moss(p);
+                    case ROSETTE -> new org.overengineer.bettacraft.plants.wild.WildPlantBlock.Rosette(p);
+                    case STEM -> new org.overengineer.bettacraft.plants.wild.WildPlantBlock.Stem(p);
+                    case CARPET -> new org.overengineer.bettacraft.plants.wild.WildPlantBlock.Carpet(p);
+                };
+            }));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    /** M28.1: a patch of a floating plant on calm water (like a lily pad; the type as state, no item). */
+    public static final DeferredBlock<org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock> WILD_FLOATING_PLANT = BLOCKS.register(
+            "wild_floating_plant", () -> new org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT).instabreak().sound(SoundType.LILY_PAD).noOcclusion().noLootTable().pushReaction(PushReaction.DESTROY)));
+
     // ------------------------------------------------------------------ M23 aeration, internal filters, LED tiers
 
     /** M23: air-driven sponge filter in a tank interior (needs an air pump). */

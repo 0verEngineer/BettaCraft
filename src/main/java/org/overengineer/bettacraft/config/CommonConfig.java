@@ -71,6 +71,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_SPAWN_PASS;
+    public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
+    public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -84,6 +86,10 @@ public final class CommonConfig {
                 "warm and lukewarm oceans: reef fish and seahorses); 0 disables them (features.wildFish)").defineInRange("wildFishWeight", 5, 0, 1000);
         SPAWN_CRITTER_WEIGHT = b.comment("Spawn weight of wild shrimp, crayfish, snails and hermit crabs crawling on the bottom of rivers, swamps,",
                 "mangroves, beaches, jungle water and warm oceans; 0 disables them (features.wildCritters)").defineInRange("wildCritterWeight", 6, 0, 1000);
+        // M28.1
+        WILD_PLANT_FREQUENCY = b.comment("How often wild aquarium and floating plants grow in new chunks: a factor on the chance of a group per chunk",
+                "(1 = default, about one small group in every two or three chunks with water of their kind; 0 = none; features.wildPlants)")
+                .defineInRange("wildPlantFrequency", 1.0, 0.0, 10.0);
         b.pop();
         b.comment("Recipes").push("recipes");
         RECIPE_FISH_BAG = b.comment("Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one")
@@ -185,6 +191,9 @@ public final class CommonConfig {
         FEATURE_WILD_SPAWN_PASS = b.comment("Own spawn pass for the wild animals: now and then a few wild fish, frogs or small animals spawn in fitting water near",
                 "each player, outside the vanilla water-ambient mob cap that cod, salmon, tropical fish and the fish of other mods fill",
                 "(limits: wildlife.spawnPass*; off: only the vanilla spawning)").define("wildSpawnPass", true);
+        FEATURE_WILD_PLANTS = b.comment("Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks; jungle water,",
+                "swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand",
+                "or with the net (spawn.wildPlantFrequency; off: no new ones in new chunks, plants already there stay)").define("wildPlants", true);
         // M25
         FEATURE_WATER_CHEMISTRY = b.comment("Water chemistry: TDS, pH and hardness from the substrate, peat, almond leaves, wood, food and water changes;",
                 "every animal has its range (off: the values stand still and no animal minds them)").define("waterChemistry", true);
@@ -319,6 +328,8 @@ public final class CommonConfig {
     public static boolean autoWaterChange() { return getOr(FEATURE_AUTO_WATER_CHANGE, true); }
     public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
     public static boolean wildSpawnPass() { return getOr(FEATURE_WILD_SPAWN_PASS, true); } // M28.1
+    public static boolean wildPlants() { return getOr(FEATURE_WILD_PLANTS, true); }
+    public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }
     public static boolean co2() { return getOr(FEATURE_CO2, true); }

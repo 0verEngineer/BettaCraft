@@ -86,6 +86,11 @@ public final class ModTags {
     public static final TagKey<Biome> RIVER_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("river_waters"));
     /** Beaches, brackish water ({@code #minecraft:is_beach}). */
     public static final TagKey<Biome> BEACH_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("beach_waters"));
+    /**
+     * M28.1: cold fresh water (the wild Marimo balls): frozen rivers and the lakes of taigas and snowy plains. Also every
+     * land biome in {@code #c:is_cold/overworld} ({@link org.overengineer.bettacraft.world.BiomeWaters#coldWater}).
+     */
+    public static final TagKey<Biome> COLD_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("cold_waters"));
     /** Jungle water ({@code #minecraft:is_jungle}). */
     public static final TagKey<Biome> JUNGLE_WATERS = TagKey.create(Registries.BIOME, BettaCraft.id("jungle_waters"));
     /** The wild corals grow here (world generation, new chunks). Contains {@code #bettacraft:warm_ocean_waters}. */

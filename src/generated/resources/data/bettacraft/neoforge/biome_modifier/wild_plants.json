@@ -1,0 +1,62 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:or",
+    "values": [
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:jungle_waters"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:swamp_waters"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:river_waters"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:mangrove_waters"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:cold_waters"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:lush_cave_waters"
+        ]
+      },
+      {
+        "type": "neoforge:and",
+        "values": [
+          "#c:is_lush",
+          "#c:is_cave"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#c:is_cold/overworld"
+        ]
+      }
+    ]
+  },
+  "features": [
+    "bettacraft:wild_plants",
+    "bettacraft:wild_cave_plants"
+  ],
+  "step": "vegetal_decoration"
+}

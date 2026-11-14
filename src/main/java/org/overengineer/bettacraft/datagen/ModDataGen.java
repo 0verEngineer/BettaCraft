@@ -113,15 +113,22 @@ public final class ModDataGen {
         gen.addProvider(event.includeServer(), new DataGenM25b.FluidTagsGen(out, lookup, efh)); // M25
         gen.addProvider(event.includeServer(), new BiomeTagsGen(out, lookup, efh));
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(out, lookup, new RegistrySetBuilder()
-                .add(Registries.CONFIGURED_FEATURE, ctx -> ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
-                        org.overengineer.bettacraft.registry.ModCodecs.WILD_CORAL.get(), net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration.NONE)))
-                .add(Registries.PLACED_FEATURE, ctx -> ctx.register(WILD_CORAL_PLACED, new net.minecraft.world.level.levelgen.placement.PlacedFeature(
+                .add(Registries.CONFIGURED_FEATURE, ctx -> {
+                    ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
+                            org.overengineer.bettacraft.registry.ModCodecs.WILD_CORAL.get(), net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration.NONE));
+                    DataGenM281.configuredFeatures(ctx); // M28.1
+                })
+                .add(Registries.PLACED_FEATURE, ctx -> {
+                    DataGenM281.placedFeatures(ctx); // M28.1
+                    ctx.register(WILD_CORAL_PLACED, new net.minecraft.world.level.levelgen.placement.PlacedFeature(
                         ctx.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(WILD_CORAL_CONFIGURED), List.of(
                         net.minecraft.world.level.levelgen.placement.RarityFilter.onAverageOnceEvery(2),
                         net.minecraft.world.level.levelgen.placement.InSquarePlacement.spread(),
                         net.minecraft.world.level.levelgen.placement.HeightmapPlacement.onHeightmap(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG),
-                        net.minecraft.world.level.levelgen.placement.BiomeFilter.biome()))))
+                        net.minecraft.world.level.levelgen.placement.BiomeFilter.biome())));
+                })
                 .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> {
+                    DataGenM281.biomeModifiers(ctx); // M28.1: wild aquarium and floating plants
                     ctx.register(BETTA_SPAWNS, new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)));
                     // M22.3: wild tankmates, frogs and small animals; the wild corals on the warm ocean reefs
                     ctx.register(WILDLIFE_SPAWNS, new org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier());
@@ -325,6 +332,7 @@ public final class ModDataGen {
             DataGenM26.blockStates(this); // M26 part a
             DataGenM27.blockStates(this); // M27
             DataGenM28.blockStates(this); // M28 part c
+            DataGenM281.blockStates(this); // M28.1
             simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
@@ -1456,6 +1464,10 @@ public final class ModDataGen {
             var jungle = tag(ModTags.JUNGLE_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_JUNGLE);
             Compat.JUNGLE_BIOMES.forEach(jungle::addOptional);
             tag(ModTags.CORAL_REEF_BIOMES).addTag(ModTags.WARM_OCEAN_WATERS);
+            // M28.1: cold fresh water (the wild Marimo): frozen rivers and the lakes of taigas and snowy plains
+            tag(ModTags.COLD_WATERS).add(net.minecraft.world.level.biome.Biomes.FROZEN_RIVER, net.minecraft.world.level.biome.Biomes.SNOWY_PLAINS,
+                    net.minecraft.world.level.biome.Biomes.SNOWY_TAIGA, net.minecraft.world.level.biome.Biomes.TAIGA,
+                    net.minecraft.world.level.biome.Biomes.OLD_GROWTH_PINE_TAIGA, net.minecraft.world.level.biome.Biomes.OLD_GROWTH_SPRUCE_TAIGA);
             tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN).addTag(Tags.Biomes.IS_BEACH); // M20: beaches too
         }
     }

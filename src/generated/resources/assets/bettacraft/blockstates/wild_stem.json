@@ -1,0 +1,752 @@
+{
+  "variants": {
+    "species=alternanthera_reineckii,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=alternanthera_reineckii,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=alternanthera_reineckii,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=alternanthera_reineckii,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bacopa_caroliniana,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=bacopa_caroliniana,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=bacopa_caroliniana,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bacopa_caroliniana,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=hygrophila_pinnatifida,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_lobed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed",
+        "y": 270
+      }
+    ],
+    "species=hygrophila_pinnatifida,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_lobed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed",
+        "y": 270
+      }
+    ],
+    "species=hygrophila_pinnatifida,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed",
+        "y": 270
+      }
+    ],
+    "species=hygrophila_pinnatifida,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_lobed_trimmed",
+        "y": 270
+      }
+    ],
+    "species=limnophila_sessiliflora,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 270
+      }
+    ],
+    "species=limnophila_sessiliflora,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 270
+      }
+    ],
+    "species=limnophila_sessiliflora,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 270
+      }
+    ],
+    "species=limnophila_sessiliflora,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_repens,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_repens,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_repens,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_repens,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_super_red,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_super_red,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_super_red,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=ludwigia_super_red,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=myriophyllum_red,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 270
+      }
+    ],
+    "species=myriophyllum_red,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery",
+        "y": 270
+      }
+    ],
+    "species=myriophyllum_red,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 270
+      }
+    ],
+    "species=myriophyllum_red,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_feathery_trimmed",
+        "y": 270
+      }
+    ],
+    "species=pogostemon_helferi,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=pogostemon_helferi,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=pogostemon_helferi,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=pogostemon_helferi,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=rotala_hra,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=rotala_hra,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=rotala_hra,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=rotala_hra,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=rotala_rotundifolia,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=rotala_rotundifolia,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=rotala_rotundifolia,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=rotala_rotundifolia,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=rotala_wallichii,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=rotala_wallichii,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine",
+        "y": 270
+      }
+    ],
+    "species=rotala_wallichii,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=rotala_wallichii,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_stem_fine_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

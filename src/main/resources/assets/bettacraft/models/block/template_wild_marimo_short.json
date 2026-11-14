@@ -1,0 +1,84 @@
+{
+  "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "#moss"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        10,
+        5,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            11,
+            10,
+            16
+          ],
+          "texture": "#moss",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [
+            5,
+            11,
+            10,
+            16
+          ],
+          "texture": "#moss",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [
+            5,
+            11,
+            10,
+            16
+          ],
+          "texture": "#moss",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [
+            5,
+            11,
+            10,
+            16
+          ],
+          "texture": "#moss",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [
+            5,
+            5,
+            10,
+            10
+          ],
+          "texture": "#moss",
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            10,
+            10
+          ],
+          "texture": "#moss",
+          "tintindex": 0,
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}

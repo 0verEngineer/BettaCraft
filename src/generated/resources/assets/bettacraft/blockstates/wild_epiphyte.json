@@ -1,0 +1,1160 @@
+{
+  "variants": {
+    "species=anubias_barteri_round_leaf,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_barteri_round_leaf,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_barteri_round_leaf,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_barteri_round_leaf,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_coffeefolia,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_coffeefolia,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_coffeefolia,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_coffeefolia,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana_petite,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana_petite,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana_petite,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_nana_petite,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_pinto,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_pinto,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_pinto,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_pinto,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_white,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_white,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad",
+        "y": 270
+      }
+    ],
+    "species=anubias_white,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=anubias_white,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_broad_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_blue,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_blue,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_blue,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_blue,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_brownie_red,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_brownie_red,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_brownie_red,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_brownie_red,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_godzilla,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_godzilla,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_godzilla,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_godzilla,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_green_wavy,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_green_wavy,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_green_wavy,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_green_wavy,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_kedagang,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_kedagang,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_kedagang,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_kedagang,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_needle,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_needle,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_needle,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_needle,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_needle_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_pink,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_pink,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_pink,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_mini_pink,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_pink_lady,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_pink_lady,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_pink_lady,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_pink_lady,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_snow_white,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_snow_white,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_snow_white,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_snow_white,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_theia,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_theia,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_theia,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=bucephalandra_theia,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_wavy_trimmed",
+        "y": 270
+      }
+    ],
+    "species=java_fern,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond",
+        "y": 270
+      }
+    ],
+    "species=java_fern,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond",
+        "y": 270
+      }
+    ],
+    "species=java_fern,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed",
+        "y": 270
+      }
+    ],
+    "species=java_fern,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_epiphyte_frond_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

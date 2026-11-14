@@ -31,6 +31,11 @@ public final class ModCodecs {
             DeferredRegister.create(net.minecraft.core.registries.Registries.FEATURE, BettaCraft.MOD_ID);
     public static final Supplier<org.overengineer.bettacraft.reef.WildCoralFeature> WILD_CORAL = FEATURES.register("wild_coral",
             org.overengineer.bettacraft.reef.WildCoralFeature::new);
+    /** M28.1: wild aquarium and floating plants in their waters, and the cave pools of the lush caves. */
+    public static final Supplier<org.overengineer.bettacraft.plants.wild.WildPlantFeature> WILD_PLANTS = FEATURES.register("wild_plants",
+            () -> new org.overengineer.bettacraft.plants.wild.WildPlantFeature(false));
+    public static final Supplier<org.overengineer.bettacraft.plants.wild.WildPlantFeature> WILD_CAVE_PLANTS = FEATURES.register("wild_cave_plants",
+            () -> new org.overengineer.bettacraft.plants.wild.WildPlantFeature(true));
     public static final Supplier<MapCodec<FishBagRecipeCondition>> CONFIG_CONDITION = CONDITIONS.register("config", () -> FishBagRecipeCondition.CODEC);
     public static final Supplier<MapCodec<AddItemLootModifier>> ADD_ITEM = LOOT_MODIFIERS.register("add_item", () -> AddItemLootModifier.CODEC);
 

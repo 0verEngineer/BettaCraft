@@ -44,5 +44,25 @@ final class LangM281 {
         a.accept("command.bettacraft.wildlife.water.warm_ocean", "warm ocean");
         a.accept("command.bettacraft.wildlife.water.lukewarm_ocean", "lukewarm ocean");
         a.accept("command.bettacraft.wildlife.water.none", "none");
+        // M28.1 part b: wild aquarium and floating plants
+        a.accept("command.bettacraft.wildlife.plants", "Wild plants here (new chunks): %s, %s aquarium plants and %s floating plants%s");
+        a.accept("command.bettacraft.wildlife.plants.none", "No wild plants of Bettacraft grow in this biome.");
+        a.accept("command.bettacraft.wildlife.plants.jungle", "jungle water");
+        a.accept("command.bettacraft.wildlife.plants.swamp", "swamp");
+        a.accept("command.bettacraft.wildlife.plants.river", "river");
+        a.accept("command.bettacraft.wildlife.plants.mangrove", "mangrove swamp");
+        a.accept("command.bettacraft.wildlife.plants.cold", "cold water");
+        a.accept("command.bettacraft.wildlife.plants.lush_caves", "lush cave pools");
+        a.accept("block.bettacraft.wild_epiphyte", "Wild Epiphyte");
+        a.accept("block.bettacraft.wild_moss", "Wild Moss");
+        a.accept("block.bettacraft.wild_rosette", "Wild Rosette Plant");
+        a.accept("block.bettacraft.wild_stem", "Wild Stem Plants");
+        a.accept("block.bettacraft.wild_carpet", "Wild Carpet Plant");
+        a.accept("block.bettacraft.wild_floating_plant", "Wild Floating Plants");
+        a.accept("message.bettacraft.wild_plant.trimmed", "This plant was cut just now; it has to grow back first");
+        a.accept("bettacraft.configuration.wildPlants", "Wild aquarium and floating plants");
+        a.accept("bettacraft.configuration.wildPlants.tooltip", "Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks: jungle water, swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand or with the net (off: no new ones in new chunks)");
+        a.accept("bettacraft.configuration.wildPlantFrequency", "Wild plant frequency");
+        a.accept("bettacraft.configuration.wildPlantFrequency.tooltip", "A factor on the chance of a wild plant group per chunk (1 = about one small group in every two or three chunks with water of their kind; 0 = none)");
     }
 }

@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
  * block textures are grey and tinted per species, part and redness) and the leaf texture. Sizes are in interior
  * blocks at scale 16 (one interior block = one pixel of the tank, about 0.6 mm), see {@link PlantShapes}.
  */
-public enum PlantSpecies {
+public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
     // epiphytes: on stone and wood (decor too), very slow to slow
     JAVA_FERN("java_fern", Form.EPIPHYTE, 12, 8, Light.LOW, Red.NONE, "frond", 0x3E7A2E, 0x5C9A3A, 0, 0x3A6228, 0x5A4A2E),
     ANUBIAS_NANA("anubias_nana", Form.EPIPHYTE, 25, 6, Light.LOW, Red.NONE, "broad", 0x2C5A28, 0x4A8436, 0, 0x3C6629, 0x4E5A30),
@@ -185,6 +185,10 @@ public enum PlantSpecies {
 
     /** Item and block id path. */
     public String id() { return id; }
+
+    /** M28.1: the species as a block state value of the wild plants ({@code plants/wild}). */
+    @Override
+    public String getSerializedName() { return id; }
 
     public Form form() { return form; }
 

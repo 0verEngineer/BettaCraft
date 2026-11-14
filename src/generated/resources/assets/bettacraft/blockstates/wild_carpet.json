@@ -1,0 +1,344 @@
+{
+  "variants": {
+    "species=eleocharis_acicularis,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_needle"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle",
+        "y": 270
+      }
+    ],
+    "species=eleocharis_acicularis,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_needle"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle",
+        "y": 270
+      }
+    ],
+    "species=eleocharis_acicularis,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed",
+        "y": 270
+      }
+    ],
+    "species=eleocharis_acicularis,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_needle_trimmed",
+        "y": 270
+      }
+    ],
+    "species=hemianthus_callitrichoides,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 270
+      }
+    ],
+    "species=hemianthus_callitrichoides,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 270
+      }
+    ],
+    "species=hemianthus_callitrichoides,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 270
+      }
+    ],
+    "species=hemianthus_callitrichoides,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 270
+      }
+    ],
+    "species=marsilea_hirsuta,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_clover"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover",
+        "y": 270
+      }
+    ],
+    "species=marsilea_hirsuta,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_clover"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover",
+        "y": 270
+      }
+    ],
+    "species=marsilea_hirsuta,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed",
+        "y": 270
+      }
+    ],
+    "species=marsilea_hirsuta,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_clover_trimmed",
+        "y": 270
+      }
+    ],
+    "species=monte_carlo,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 270
+      }
+    ],
+    "species=monte_carlo,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat",
+        "y": 270
+      }
+    ],
+    "species=monte_carlo,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 270
+      }
+    ],
+    "species=monte_carlo,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_mat_trimmed",
+        "y": 270
+      }
+    ],
+    "species=staurogyne_repens,trimmed=false,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine",
+        "y": 270
+      }
+    ],
+    "species=staurogyne_repens,trimmed=false,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_fine"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine",
+        "y": 270
+      }
+    ],
+    "species=staurogyne_repens,trimmed=true,waterlogged=false": [
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed",
+        "y": 270
+      }
+    ],
+    "species=staurogyne_repens,trimmed=true,waterlogged=true": [
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_carpet_fine_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

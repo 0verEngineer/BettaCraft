@@ -219,6 +219,20 @@ public final class BettaCraftClient {
                         state.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.TINT));
             }, b.get());
         }
+        // M28.1: the wild plants: leaves (0), stalks / stems / rhizome (1) and young leaves (2) in the colours of the species
+        for (var b : org.overengineer.bettacraft.registry.ModBlocks.WILD_PLANTS.values()) {
+            event.register((state, level, pos, tint) -> {
+                if (!(state.getBlock() instanceof org.overengineer.bettacraft.plants.wild.WildPlantBlock w)) return 0xFFFFFFFF;
+                var s = w.species(state);
+                var part = switch (tint) {
+                    case 0 -> org.overengineer.bettacraft.plants.PlantPart.LEAF;
+                    case 1 -> w.kind() == org.overengineer.bettacraft.plants.wild.WildPlantKind.EPIPHYTE
+                            ? org.overengineer.bettacraft.plants.PlantPart.RHIZOME : org.overengineer.bettacraft.plants.PlantPart.STEM;
+                    default -> org.overengineer.bettacraft.plants.PlantPart.TOP;
+                };
+                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(s, part, org.overengineer.bettacraft.plants.wild.WildPlantBlock.WILD_TINT);
+            }, b.get());
+        }
         event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());
         event.register((state, level, pos, tint) -> tint == 0 ? TUBIFEX_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TUBIFEX_DISH.get()); // M26
         event.register((state, level, pos, tint) -> tint == 0 ? DAPHNIA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.DAPHNIA_BARREL.get());

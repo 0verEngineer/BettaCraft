@@ -1,0 +1,6 @@
+{
+  "parent": "bettacraft:block/template_wild_moss",
+  "textures": {
+    "moss": "bettacraft:block/wild_moss"
+  }
+}
