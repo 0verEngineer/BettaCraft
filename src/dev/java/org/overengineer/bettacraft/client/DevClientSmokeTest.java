@@ -106,6 +106,9 @@ final class DevClientSmokeTest {
     private static final boolean M26_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m26_1only");
     private static DevClientSmokeM261 m26_1;
     private static DevClientSmokeM26 m26;
+    /** -Psmoketestm28: only the M28 part a scene (the new plants inside and outside, white Bucephalandras by light). */
+    private static final boolean M28_ONLY = Boolean.getBoolean("bettacraft.smoketest.m28only");
+    private static DevClientSmokeM28 m28;
     /** -Psmoketestm27: only the M27 scene (monitor screens). */
     private static final boolean M27_ONLY = Boolean.getBoolean("bettacraft.smoketest.m27only");
     private static DevClientSmokeM27 m27;
@@ -192,6 +195,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M28_ONLY) {
+                if (ticks == 60) m28 = new DevClientSmokeM28();
+                if (m28 != null && m28.tick()) {
+                    m28 = null;
+                    LOGGER.info("[smoketest] client world test finished (M28 only)");
                     mc.stop();
                 }
                 return;

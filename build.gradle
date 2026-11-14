@@ -234,6 +234,15 @@ neoForge {
                 // species pages and "Where to find what" in English and German)
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m22_2only', 'true'
+                // M28: -Pgallery=id,id,... only these species (no handbook pictures)
+                if (project.hasProperty('gallery')) systemProperty 'bettacraft.smoketest.gallery', project.property('gallery')
+            }
+            if (project.hasProperty('smoketestm28')) {
+                // gradlew runClient -Psmoketestm28 : only the M28 part a scene (the new Anubias, Bucephalandras and stem plants inside
+                // and outside, near and far; the white and pink Bucephalandras under the light bar and under a high-power LED;
+                // add -Pshaders for Complementary)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m28only', 'true'
             }
             // gradlew runClient -Psmoketestm22_1 : only the M22.1 scene (every plant and coral with its new shape inside and outside,
             // old/new, near/far, kelp and seagrass swaying outside, polyps closing, the confirm screen for emptying animals;

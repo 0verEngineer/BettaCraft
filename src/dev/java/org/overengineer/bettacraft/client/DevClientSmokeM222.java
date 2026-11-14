@@ -72,6 +72,10 @@ final class DevClientSmokeM222 {
     private final Deque<Step> steps = new ArrayDeque<>();
     private final List<Subject> subjects = new ArrayList<>();
     private final List<BlockPos> tanks = new ArrayList<>();
+    /** Every subject of the full gallery (the seed of a plant is its place in it). */
+    private final List<String> allIds = new ArrayList<>();
+    private static final java.util.Set<String> ONLY = java.util.Set.of(System.getProperty("bettacraft.smoketest.gallery", "").split(","))
+            .stream().filter(x -> !x.isBlank()).collect(java.util.stream.Collectors.toSet());
     private final String lang = mc.options.languageCode;
     private BlockPos base;
     private int wait;
@@ -86,6 +90,9 @@ final class DevClientSmokeM222 {
         }
         for (PlantSpecies p : PlantSpecies.values()) subjects.add(new Subject(p.id(), p.marine() ? Kind.CORAL : Kind.PLANT, p));
         for (FloatingPlantType t : FloatingPlantType.values()) if (t.grows()) subjects.add(new Subject(t.id(), Kind.FLOATING, t));
+        for (Subject s : subjects) allIds.add(s.id());
+        // M28: -Pgallery=id,id,...: only these subjects (the seeds stay those of the full gallery), no handbook pictures
+        if (!ONLY.isEmpty()) subjects.removeIf(s -> !ONLY.contains(s.id()));
 
         then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 820, 0F, 10F)));
         then(30, () -> server(this::build));
@@ -110,6 +117,7 @@ final class DevClientSmokeM222 {
         }
         then(1, () -> server(p -> p.setGameMode(net.minecraft.world.level.GameType.CREATIVE)));
         then(1, () -> mc.options.fov().set(fov));
+        if (!ONLY.isEmpty()) return;
         // the handbook, English then German
         guide("en");
         then(1, () -> language("de_de"));
@@ -168,7 +176,7 @@ final class DevClientSmokeM222 {
                     }
                     int y = 0;
                     while (y < reg.sizeY() && !in.getBlockState(reg.toWorld(cx, y, z)).isAir()) y++;
-                    InteriorPlant pl = InteriorPlants.plantAt(in, reg, sp, cx, y, z, sp.stages(), 22200L + i);
+                    InteriorPlant pl = InteriorPlants.plantAt(in, reg, sp, cx, y, z, sp.stages(), 22200L + allIds.indexOf(s.id()));
                     if (pl == null) {
                         LOGGER.error("[smoketest] M22.2 {} not planted", sp.id());
                     } else if (sp.marine()) {

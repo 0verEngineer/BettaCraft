@@ -50,7 +50,7 @@ public enum PlantSpecies {
     /** White marbled leaves: the mesh draws them with a coloured texture of its own ({@code leaf_pinto}). */
     ANUBIAS_PINTO("anubias_pinto", Form.EPIPHYTE, 32, 6, Light.LOW, Red.NONE, "broad", 0x9CBC8A, 0xC8DCB8, 0, 0x5A7A48, 0x4E5A30),
     ANUBIAS_WHITE("anubias_white", Form.EPIPHYTE, 30, 6, Light.MID, Red.NONE, "broad", 0xC6D4B2, 0xEEF0E4, 0, 0xB4C29C, 0x5A5A3A),
-    ANUBIAS_COFFEEFOLIA("anubias_coffeefolia", Form.EPIPHYTE, 25, 6, Light.LOW, Red.NONE, "broad", 0x2C5026, 0x7E4C32, 0, 0x3A5A28, 0x4E4A30),
+    ANUBIAS_COFFEEFOLIA("anubias_coffeefolia", Form.EPIPHYTE, 25, 6, Light.LOW, Red.NONE, "broad", 0x2C5026, 0x56602E, 0, 0x3A5A28, 0x4E4A30),
     ANUBIAS_ROUND_LEAF("anubias_barteri_round_leaf", Form.EPIPHYTE, 28, 8, Light.LOW, Red.NONE, "broad", 0x2E5C2A, 0x4C8838, 0, 0x3C6629, 0x4E5A30),
     BUCE_KEDAGANG("bucephalandra_kedagang", Form.EPIPHYTE, 22, 6, Light.LOW, Red.NONE, "wavy", 0x2A4E40, 0x3E6E5C, 0, 0x3A4E3A, 0x3E4436),
     BUCE_THEIA("bucephalandra_theia", Form.EPIPHYTE, 20, 6, Light.LOW, Red.NONE, "wavy", 0x4E7A3E, 0x6E9A4A, 0, 0x4A603A, 0x4E4A30),
