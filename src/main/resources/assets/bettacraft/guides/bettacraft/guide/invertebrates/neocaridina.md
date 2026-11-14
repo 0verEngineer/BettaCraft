@@ -69,7 +69,7 @@ shrimp, overfeeding hardly fouls the water.
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 10–12 % per swing, 1–3 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 9.7–11 % per swing (about 1 in 9–10 swings), 1–3 at a time.
 * **Wild** in rivers, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 2 for 6 emeralds.
 * **Breeding** in the aquarium (male and female).

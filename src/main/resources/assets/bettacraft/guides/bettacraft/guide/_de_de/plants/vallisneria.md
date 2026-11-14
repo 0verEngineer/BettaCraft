@@ -32,5 +32,7 @@ Vallisnerie (*Vallisneria spiralis*), Wasserschraube aus warmen Gewässern weltw
 
 ## Bezug
 
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 2,7–3,2 % pro Schwung (etwa 1 von 31–37 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Flüssen: 0,44 % pro Fang (etwa 1 von 228 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 2 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).

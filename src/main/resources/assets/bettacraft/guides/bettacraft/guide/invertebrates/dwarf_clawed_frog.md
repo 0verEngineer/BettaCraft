@@ -34,8 +34,8 @@ the decoration of the interior (rocks, roots, plants, caves) instead of walking 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.5 % per swing.
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 4.9–5.7 % per swing.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.4 % per swing (about 1 in 73 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 4.6–5.3 % per swing (about 1 in 19–22 swings).
 * **Wild** in swamps, in groups of 1–2 (spawn weight 3) (config `features.wildFish`).
 * **Wild** in jungle water, in groups of 1–2 (spawn weight 4) (config `features.wildFish`).
 * **Wandering trader** (rare offers): 1 for 6 emeralds.

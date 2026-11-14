@@ -36,6 +36,7 @@ item_ids:
 
 ## Obtaining
 
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.09–0.11 % per swing (about 1 in 926–1111 swings).
 * **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
 * **Frags**: shears on a grown coral give 1 cutting per trim.
 

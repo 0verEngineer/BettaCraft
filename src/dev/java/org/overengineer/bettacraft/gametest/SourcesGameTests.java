@@ -88,19 +88,38 @@ public final class SourcesGameTests {
         return FloatingPlantType.FROGBIT;
     }
 
+    /**
+     * The fishing tables pick like the old roll chains where they did not change (floating plants, the mangrove swamp and
+     * the swamp water bottle); M22.4: the jungle, river and swamp tables start with the old ones and add the new plants
+     * after them (rolls past the old weights).
+     */
     @GameTest(template = EMPTY)
     public static void fishingTablesPickLikeBefore(GameTestHelper h) {
         for (int r = 0; r < 100; r++) {
             for (boolean swamp : new boolean[]{false, true}) {
-                var w = swamp ? AquaticPlantFishingModifier.Water.SWAMP : AquaticPlantFishingModifier.Water.TROPICAL;
-                PlantSpecies now = AquaticPlantFishingModifier.pick(w, roll(r)), before = oldAquatic(swamp, r);
-                h.assertTrue(now == before, "aquatic " + w + " roll " + r + ": " + now + " instead of " + before);
+                PlantSpecies before = oldAquatic(swamp, r);
+                if (swamp) {
+                    h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.MANGROVE, roll(r)) == before, "mangrove roll " + r);
+                    h.assertTrue(org.overengineer.bettacraft.sources.WildTables.BOTTLE_CUTTINGS.pick(roll(r)) == before, "bottle roll " + r);
+                    h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.SWAMP, roll(r)) == before, "swamp roll " + r);
+                } else {
+                    for (var w : new AquaticPlantFishingModifier.Water[]{AquaticPlantFishingModifier.Water.JUNGLE, AquaticPlantFishingModifier.Water.RIVER}) {
+                        PlantSpecies now = AquaticPlantFishingModifier.pick(w, roll(r));
+                        h.assertTrue(now == before, "aquatic " + w + " roll " + r + ": " + now + " instead of " + before);
+                    }
+                }
                 FloatingPlantType f = FloatingPlantFishingModifier.pick(swamp, roll(r)), fb = oldFloating(swamp, r);
                 h.assertTrue(f == fb, "floating mangrove=" + swamp + " roll " + r + ": " + f + " instead of " + fb);
             }
         }
-        h.assertTrue(AquaticPlantFishingModifier.table(AquaticPlantFishingModifier.Water.SWAMP).total() == 100, "swamp weights sum to 100");
-        h.assertTrue(AquaticPlantFishingModifier.table(AquaticPlantFishingModifier.Water.TROPICAL).total() == 100, "tropical weights sum to 100");
+        h.assertTrue(AquaticPlantFishingModifier.table(AquaticPlantFishingModifier.Water.MANGROVE).total() == 100, "mangrove weights sum to 100");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.JUNGLE, roll(100)) == PlantSpecies.AMAZON_SWORD, "jungle: sword after the epiphytes");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.JUNGLE, roll(112)) == PlantSpecies.TIGER_LOTUS, "jungle: tiger lotus");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.RIVER, roll(100)) == PlantSpecies.VALLISNERIA, "river: Vallisneria");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.RIVER, roll(111)) == PlantSpecies.MONTE_CARLO, "river: Monte Carlo");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.SWAMP, roll(100)) == PlantSpecies.ALTERNANTHERA, "swamp: Alternanthera");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.SWAMP, roll(106)) == PlantSpecies.TIGER_LOTUS, "swamp: tiger lotus");
+        h.assertTrue(AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.SWAMP, roll(111)) == PlantSpecies.CRYPT_FLAMINGO, "swamp: Flamingo");
         h.succeed();
     }
 
@@ -167,12 +186,13 @@ public final class SourcesGameTests {
         for (NetCatching.Water w : NetCatching.Water.values()) {
             for (boolean plants : new boolean[]{false, true}) {
                 boolean hard = plants, lush = w == NetCatching.Water.CAVE && plants;
-                Map<Object, Double> odds = NetCatching.odds(w, plants, hard, lush, 0.3, 0.4, 0.4);
+                var plantTable = org.overengineer.bettacraft.sources.WildTables.netPlants(w);
+                Map<Object, Double> odds = NetCatching.odds(w, plants, hard, lush, 0.3, 0.4, 0.4, 0.2, plantTable);
                 Map<Object, Integer> hits = new java.util.HashMap<>();
                 int n = 120_000;
                 for (int i = 0; i < n; i++) {
-                    var o = NetCatching.decide(w, plants, hard, lush, 0.3, 0.4, 0.4, rnd);
-                    Object k = o.frag() != null ? o.frag() : o.fish() != null ? o.fish() : o.critter() != null
+                    var o = NetCatching.decide(w, plants, hard, lush, 0.3, 0.4, 0.4, 0.2, plantTable, rnd);
+                    Object k = o.frag() != null ? o.frag() : o.plant() != null ? o.plant() : o.fish() != null ? o.fish() : o.critter() != null
                             ? (o.critter().species() == null ? "frog" : o.critter().species()) : null;
                     if (k != null) hits.merge(k, 1, Integer::sum);
                 }

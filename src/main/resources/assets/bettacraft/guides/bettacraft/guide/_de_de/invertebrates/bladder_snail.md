@@ -33,8 +33,8 @@ Die Blasenschnecke (*Physella acuta*), weltweit in stillen Gewässern zu Hause: 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 6,5–7,7 % pro Schwung, 1–2 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 8,8–12 % pro Schwung, 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 6,1–7,2 % pro Schwung (etwa 1 von 14–16 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 8,3–11 % pro Schwung (etwa 1 von 9–12 Schwüngen), 1–2 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Vermehrung** im Aquarium (ein Tier genügt).

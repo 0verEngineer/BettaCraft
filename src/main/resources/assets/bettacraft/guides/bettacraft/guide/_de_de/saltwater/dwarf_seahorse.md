@@ -38,7 +38,7 @@ Das Zwergseepferdchen (*Hippocampus zosterae*) aus den Seegraswiesen Floridas, d
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,83–0,99 % pro Schwung (Config `features.seahorses`).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,83–0,99 % pro Schwung (etwa 1 von 101–120 Schwüngen) (Config `features.seahorses`).
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.seahorses`).
 * **Fahrender Händler** (seltene Angebote): 2 für 5 Smaragde; eins von 3 in diesem Angebot (Config `features.seahorses`).
 * **[Zucht](seahorses.md)**: Bruttasche: das Männchen trägt die Eier.

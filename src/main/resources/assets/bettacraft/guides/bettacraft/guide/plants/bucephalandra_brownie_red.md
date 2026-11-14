@@ -33,5 +33,6 @@ item_ids:
 
 ## Obtaining
 
-* **Fishing** in jungles and rivers: 0.3 % per catch, instead of the fish.
+* **Fishing** in jungle water: 0.26 % per catch (about 1 in 383 catches), instead of the fish.
+* **Fishing** in rivers: 0.26 % per catch (about 1 in 380 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; breaking a rhizome piece divides it.

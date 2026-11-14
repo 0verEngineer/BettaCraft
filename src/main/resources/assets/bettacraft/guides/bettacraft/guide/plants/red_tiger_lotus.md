@@ -33,5 +33,9 @@ The red tiger lotus (*Nymphaea zenkeri*) from West Africa: a bulb with mottled r
 
 ## Obtaining
 
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.2–1.4 % per swing (about 1 in 69–83 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1.2–1.4 % per swing (about 1 in 69–83 swings) (config `features.plantNetCatches`).
+* **Fishing** in jungle water: 0.22 % per catch (about 1 in 460 catches), instead of the fish.
+* **Fishing** in swamps: 0.21 % per catch (about 1 in 481 catches), instead of the fish.
 * **Wandering trader** (rare offers): 1 for 4 emeralds.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.

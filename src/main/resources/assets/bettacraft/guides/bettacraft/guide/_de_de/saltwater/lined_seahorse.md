@@ -39,8 +39,8 @@ Das Gestreifte Seepferdchen (*Hippocampus erectus*) aus dem westlichen Atlantik,
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,62–0,74 % pro Schwung (Config `features.seahorses`).
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 1,5–1,8 % pro Schwung (Config `features.seahorses`).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,62–0,74 % pro Schwung (etwa 1 von 134–160 Schwüngen) (Config `features.seahorses`).
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 1,5–1,8 % pro Schwung (etwa 1 von 56–67 Schwüngen) (Config `features.seahorses`).
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.seahorses`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.seahorses`).
 * **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 3 in diesem Angebot (Config `features.seahorses`).

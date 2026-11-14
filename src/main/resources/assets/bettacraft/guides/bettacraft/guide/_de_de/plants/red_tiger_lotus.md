@@ -33,5 +33,9 @@ Der Rote Tigerlotus (*Nymphaea zenkeri*) aus Westafrika: eine Knolle mit gefleck
 
 ## Bezug
 
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,2–1,4 % pro Schwung (etwa 1 von 69–83 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,2–1,4 % pro Schwung (etwa 1 von 69–83 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Dschungelgewässern: 0,22 % pro Fang (etwa 1 von 460 Fängen), statt des Fischs.
+* **Angeln** in Sümpfen: 0,21 % pro Fang (etwa 1 von 481 Fängen), statt des Fischs.
 * **Fahrender Händler** (seltene Angebote): 1 für 4 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.

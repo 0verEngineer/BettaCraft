@@ -54,6 +54,8 @@ navigation:
 | `interiorPlants.plantGrowthSpeed`, `plantWasteUptake`, `plantBreedingBonus`, `hidingSpots` | 1, 0.5, 1.1, 0.6 | [Aquarienpflanzen](plants.md): Wachstum (0 = keins), Abfallaufnahme, Nestbonus im bepflanzten Becken, Verstecke |
 | `interiorPlants.maxPlantsPerTank`, `plantsSpread` | 48, true | Pflanzen pro Aquarium, Seitentriebe und Ausläufer |
 | `interiorPlants.plantFishingChance`, `bottleCuttingChance`, `mossChance` | 0.05, 0.05, 0.5 | eine Pflanze beim Angeln, ein Ableger im Sumpfwasser, Javamoos von der Schere am Moos |
+| `interiorPlants.netPlantShare`, `netPlantsRiver`, `netPlantsJungle`, `netPlantsSwamp` | 0,2, Listen | Anteil der [Kescher](equipment/tank_net.md)-Fänge in Flüssen, Dschungelgewässern und Sümpfen, der eine Pflanze ist, und die Pflanzen je Gewässer (`pflanzen_id=Gewicht`) |
+| `interiorPlants.fishingPlantsJungle`, `fishingPlantsRiver`, `fishingPlantsSwamp`, `fishingPlantsMangrove` | Listen | die Pflanzen beim Angeln je Gewässer (`pflanzen_id=Gewicht`; siehe [Was gibt es wo](getting_started/sources.md)) |
 | `invertebrates.maxCrittersPerTank` | 200 | Garnelen, Krebse und Schnecken pro Aquarium |
 | `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | Vermehrungstempo (0 = nie) |
 | `invertebrates.bettasHuntShrimp` | true | Bettas jagen junge Garnelen und Krebse |
@@ -89,7 +91,7 @@ nie wippen: `swaying.exclude` mit Block-IDs, `#Tags` oder `modid:*`), seit 1.13.
 schlängeln sich und verstecken sich tagsüber, Harnischwelse stellen sich erst an der Scheibe auf), `greenNeonTetra` (der
 Grüne Neon beim Händler und im Kescher), `snailColors` (eigene Farbtöne der Rennschnecken, meist goldene Apfelschnecken
 mit Bändern, rote Posthörner), `detailedDecor` (der große Schädel und das große Wrack), `breakProtection` (der Schalter
-im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar) und seit 1.14.1 `seahorses` ([Seepferdchen](saltwater/seahorses.md); aus = keine aus Kescher und Händler). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
+im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar) und seit 1.14.1 `seahorses` ([Seepferdchen](saltwater/seahorses.md); aus = keine aus Kescher und Händler) und seit 1.15.1 `plantNetCatches` (Aquarienpflanzen aus dem [Kescher](equipment/tank_net.md); aus = Pflanzen nur vom Angeln, aus Flaschen, mit der Schere und vom Händler) und `cabinetOutletSide` (die [Auslass-Seite](equipment/cabinet.md) des Schrankfilters; aus = immer die Rückwand, gleichmäßige Strömung). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
 auch Explosionen und Kolben abhält. Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
 der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
 0 = immer Pixel), die Pflanzen-Optik und die wippenden Wasserpflanzen nur für diesen Spieler (`render.plantMeshes`,

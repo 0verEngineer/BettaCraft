@@ -32,7 +32,7 @@ Amazon frogbit (*Limnobium laevigatum*) from Central and South America: round le
 
 ## Obtaining
 
-* **Fishing** in swamps: 1.5 % per catch, instead of the fish.
-* **Fishing** in mangrove swamps: 1.5 % per catch, instead of the fish.
+* **Fishing** in swamps: 1.5 % per catch (about 1 in 67 catches), instead of the fish.
+* **Fishing** in mangrove swamps: 1.5 % per catch (about 1 in 67 catches), instead of the fish.
 * **Wandering trader** (usual offers): 2 for 1 emerald.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.

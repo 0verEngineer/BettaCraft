@@ -33,10 +33,10 @@ Die Turmdeckelschnecke (*Melanoides tuberculata*) aus Afrika und Südasien: ein 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1–2 % pro Schwung, 1–2 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 7,3–11 % pro Schwung, 1–2 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in tiefem Höhlenwasser: 26–34 % pro Schwung, 1–2 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 20–27 % pro Schwung, 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,97–1,9 % pro Schwung (etwa 1 von 53–103 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 6,9–11 % pro Schwung (etwa 1 von 9–15 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in tiefem Höhlenwasser: 26–34 % pro Schwung (etwa 1 von 3–4 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 20–27 % pro Schwung (etwa 1 von 4–5 Schwüngen), 1–2 auf einmal.
 * **Schaufel** auf Schlamm in Sümpfen: 8 % pro Versuch, in einen leeren Fischbeutel.
 * **Schaufel** auf Schlamm in Mangrovensümpfen: 8 % pro Versuch, in einen leeren Fischbeutel.
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).

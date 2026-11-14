@@ -36,6 +36,7 @@ item_ids:
 
 ## Bezug
 
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,09–0,11 % pro Schwung (etwa 1 von 926–1111 Schwüngen).
 * **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
 

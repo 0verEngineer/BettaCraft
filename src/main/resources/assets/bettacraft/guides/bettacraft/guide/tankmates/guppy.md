@@ -54,7 +54,7 @@ At 23–28 °C a female with a male gets pregnant and gives birth to 5–16 youn
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 3.4–4.1 % per swing, 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 3.2–3.8 % per swing (about 1 in 26–31 swings), 1–4 at a time.
 * **Wild** in rivers, in groups of 3–3 (spawn weight 6) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 6 for 4+ emeralds; one of 16 in this offer.
 * **[Breeding](breeding.md)**: Bears live young.

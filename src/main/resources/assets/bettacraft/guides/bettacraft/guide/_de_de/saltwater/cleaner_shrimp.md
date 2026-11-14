@@ -32,8 +32,8 @@ Die Weißband-Putzergarnele (*Lysmata amboinensis*) aus dem Indopazifik: rot-wei
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 6,4–7,4 % pro Schwung, 1–3 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 1,9–2,2 % pro Schwung, 1–3 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 6,4–7,4 % pro Schwung (etwa 1 von 13–16 Schwüngen), 1–3 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 1,9–2,2 % pro Schwung (etwa 1 von 45–53 Schwüngen), 1–3 auf einmal.
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 1 für 5 Smaragde; eins von 2 in diesem Angebot.

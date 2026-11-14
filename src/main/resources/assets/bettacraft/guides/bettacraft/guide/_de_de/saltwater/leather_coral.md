@@ -36,6 +36,7 @@ Die Pilzlederkoralle (*Sarcophyton* sp.) aus dem Indopazifik: ein fester Stamm m
 
 ## Bezug
 
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,24–0,29 % pro Schwung (etwa 1 von 347–417 Schwüngen).
 * **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 1 Ableger pro Schnitt.
 

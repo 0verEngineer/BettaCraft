@@ -28,7 +28,9 @@ rather than a busy community tank.
   it lies on the bottom and is stressed (`seahorses.needHitchingPosts`). Vanilla seagrass and kelp count as well; a meadow
   of seagrass with a few kelp stems is ideal.
 * **Low flow**: they are poor swimmers. Flow pumps and strong filters stress them (`seahorses.maxFlow`, default 0.6; one
-  external filter in a tank of 16 water blocks gives 0.5). In strong flow they hardly let go of their post.
+  external filter in a tank of 16 water blocks gives 0.5). In strong flow they hardly let go of their post. Right in front
+  of a filter outlet the water moves almost twice as fast: point the outlet away from their posts (a cabinet filter can
+  use another [outlet side](../equipment/cabinet.md)).
 * **Live food, often**: seahorses have no stomach. They only eat **artemia nauplii** and **mosquito larvae** (no pellets,
   wafers or infusoria) and want to be fed **twice a day** (`seahorses.feedingsPerDay`). Next to fast eaters (bettas,
   midwater fish) they only get their share now and then.

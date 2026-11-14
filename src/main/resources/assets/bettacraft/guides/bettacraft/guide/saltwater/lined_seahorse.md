@@ -39,8 +39,8 @@ The lined seahorse (*Hippocampus erectus*) from the western Atlantic, from Nova 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.62–0.74 % per swing (config `features.seahorses`).
-* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 1.5–1.8 % per swing (config `features.seahorses`).
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.62–0.74 % per swing (about 1 in 134–160 swings) (config `features.seahorses`).
+* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 1.5–1.8 % per swing (about 1 in 56–67 swings) (config `features.seahorses`).
 * **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 2) (config `features.seahorses`).
 * **Wild** in lukewarm oceans, in groups of 1–1 (spawn weight 2) (config `features.seahorses`).
 * **Wandering trader** (rare offers): 2 for 7 emeralds; one of 3 in this offer (config `features.seahorses`).

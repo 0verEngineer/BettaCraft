@@ -32,5 +32,8 @@ The Amazon sword (*Echinodorus grisebachii* "Bleherae") from South America: a bi
 
 ## Obtaining
 
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.6–0.72 % per swing (about 1 in 139–167 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 2.7–3.2 % per swing (about 1 in 31–37 swings) (config `features.plantNetCatches`).
+* **Fishing** in jungle water: 0.43 % per catch (about 1 in 230 catches), instead of the fish.
 * **Wandering trader** (usual offers): 1 for 1 emerald.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.

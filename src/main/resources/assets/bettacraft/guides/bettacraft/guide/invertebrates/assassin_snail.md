@@ -32,10 +32,10 @@ The assassin snail (*Clea helena*) from South-East Asia: a yellow and brown band
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.78 % per swing.
-* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.4–1.7 % per swing.
-* **[Aquarium net](../equipment/tank_net.md)** in deep cave water: 3.5–4.2 % per swing.
-* **[Aquarium net](../equipment/tank_net.md)** in lush caves: 2.7–2.9 % per swing.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.73 % per swing (about 1 in 137 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.4–1.7 % per swing (about 1 in 58–69 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in deep cave water: 3.5–4.2 % per swing (about 1 in 24–28 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in lush caves: 2.7–2.9 % per swing (about 1 in 34–37 swings).
 * **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wandering trader** (rare offers): 1 for 4 emeralds.

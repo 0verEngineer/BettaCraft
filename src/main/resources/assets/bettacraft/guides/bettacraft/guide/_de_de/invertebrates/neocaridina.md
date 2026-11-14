@@ -70,7 +70,7 @@ Garnelen verdirbt Überfüttern das Wasser kaum.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 10–12 % pro Schwung, 1–3 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 9,7–11 % pro Schwung (etwa 1 von 9–10 Schwüngen), 1–3 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
 * **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).

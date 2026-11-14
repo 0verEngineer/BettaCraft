@@ -49,8 +49,8 @@ Bei 24–29 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,7–2,1 % pro Schwung, 1–4 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,26–0,31 % pro Schwung, 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,6–1,9 % pro Schwung (etwa 1 von 52–62 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,25–0,29 % pro Schwung (etwa 1 von 342–406 Schwüngen), 1–4 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 3) (Config `features.wildFish`).
 * **Wild** in Dschungelgewässern, in Gruppen von 3–3 (Spawn-Gewicht 2) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3+ Smaragde; eins von 16 in diesem Angebot.

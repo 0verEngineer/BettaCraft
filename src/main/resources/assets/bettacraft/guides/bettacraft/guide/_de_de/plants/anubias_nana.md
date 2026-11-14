@@ -32,5 +32,6 @@ item_ids:
 
 ## Bezug
 
-* **Angeln** in Dschungeln und Flüssen: 1,5 % pro Fang, statt des Fischs.
+* **Angeln** in Dschungelgewässern: 1,3 % pro Fang (etwa 1 von 77 Fängen), statt des Fischs.
+* **Angeln** in Flüssen: 1,3 % pro Fang (etwa 1 von 76 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.

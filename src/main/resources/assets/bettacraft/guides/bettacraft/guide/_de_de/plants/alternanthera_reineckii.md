@@ -32,5 +32,9 @@ item_ids:
 
 ## Bezug
 
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,6–0,72 % pro Schwung (etwa 1 von 139–167 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,2–1,4 % pro Schwung (etwa 1 von 69–83 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,2–1,4 % pro Schwung (etwa 1 von 69–83 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Sümpfen: 0,25 % pro Fang (etwa 1 von 401 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 1 für 2 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 3 Ableger pro Schnitt; sie breitet sich auch selbst aus (Seitentriebe).

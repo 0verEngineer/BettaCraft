@@ -49,7 +49,7 @@ anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,79–0,94 % pro Schwung, 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,74–0,88 % pro Schwung (etwa 1 von 114–135 Schwüngen), 1–4 auf einmal.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 6) (Config `features.greenNeonTetra`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

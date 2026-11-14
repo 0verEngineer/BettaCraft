@@ -54,6 +54,8 @@ navigation:
 | `interiorPlants.plantGrowthSpeed`, `plantWasteUptake`, `plantBreedingBonus`, `hidingSpots` | 1, 0.5, 1.1, 0.6 | [aquarium plants](plants.md): growth (0 = none), waste uptake, nest bonus in a planted tank, hiding spots |
 | `interiorPlants.maxPlantsPerTank`, `plantsSpread` | 48, true | plants per aquarium, side shoots and runners |
 | `interiorPlants.plantFishingChance`, `bottleCuttingChance`, `mossChance` | 0.05, 0.05, 0.5 | a plant from fishing, a cutting in swamp water, Java moss from shears on moss |
+| `interiorPlants.netPlantShare`, `netPlantsRiver`, `netPlantsJungle`, `netPlantsSwamp` | 0.2, lists | share of the [net's](equipment/tank_net.md) catches in rivers, jungle water and swamps that is a plant, and the plants per water (`plant_id=weight`) |
+| `interiorPlants.fishingPlantsJungle`, `fishingPlantsRiver`, `fishingPlantsSwamp`, `fishingPlantsMangrove` | lists | the plants fishing brings up per water (`plant_id=weight`; see [Where to find what](getting_started/sources.md)) |
 | `invertebrates.maxCrittersPerTank` | 200 | shrimp, crayfish and snails per aquarium |
 | `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | breeding speed (0 = never) |
 | `invertebrates.bettasHuntShrimp` | true | bettas hunt young shrimp and crayfish |
@@ -89,7 +91,7 @@ animals go under overhangs and into caves, plecos swim into their spawning cave;
 since 1.13.2 `smoothSwimming` (fish turn in curves and tilt smoothly, kuhli loaches undulate and hide by day, plecos stand
 up only on the glass), `greenNeonTetra` (the green neon at the trader and in the net), `snailColors` (individual shades of
 the racer nerites, mostly gold apple snails with bands, red ramshorns), `detailedDecor` (the big skull and shipwreck),
-`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted) and since 1.14.1 `seahorses` ([seahorses](saltwater/seahorses.md); off = none from the net and the trader). The server config `tank.protectFromExplosionsAndPistons`
+`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted) and since 1.14.1 `seahorses` ([seahorses](saltwater/seahorses.md); off = none from the net and the trader) and since 1.15.1 `plantNetCatches` (aquarium plants from the [net](equipment/tank_net.md); off = plants only from fishing, bottles, shears and the trader) and `cabinetOutletSide` (the [outlet side](equipment/cabinet.md) of the cabinet filter; off = always the back wall, even flow). The server config `tank.protectFromExplosionsAndPistons`
 decides whether the break protection also stops explosions and pistons. The **client config** has the animation and miniature distances, the distance up to which the
 miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 24; further away pixels, 0 = always
 pixels), the plant look and the swaying water plants for this player alone (`render.plantMeshes`, `render.swayingPlants`;

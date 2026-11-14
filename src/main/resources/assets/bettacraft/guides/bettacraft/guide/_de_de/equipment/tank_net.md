@@ -16,7 +16,9 @@ Der Kescher wirkt an zwei Orten:
 
 * **In offenem Wasser** (Flüsse, Sümpfe, Dschungel, Mangroven, Strände, Höhlen, warme und lauwarme Ozeane) fängt er
   Kleintiere und Fische in einen **leeren Fischbeutel** aus deinem Inventar; siehe [Tiere fangen](../getting_started/catching.md)
-  und [Was gibt es wo](../getting_started/sources.md).
+  und [Was gibt es wo](../getting_started/sources.md). Ab und zu bringt er eine **Aquarienpflanze** vom Grund von Flüssen,
+  Dschungelgewässern und Sümpfen mit (Vallisneria, Monte Carlo, Amazonas-Schwertpflanze, Alternanthera, Tigerlotus,
+  Cryptocorynen, Javamoos; ohne Beutel) und am Riff ein Stück Koralle.
 * **Am Aquarium** nimmt er Schwimmpflanzen dort heraus, wo du hinsiehst, aus jedem Winkel (im Schleichen wird die ganze
   Oberfläche um die Hälfte ausgedünnt), und auf eine Garnele, einen Krebs, eine Schnecke, ein Gelege oder eine leere
   Haut gerichtet nimmt er diese heraus.

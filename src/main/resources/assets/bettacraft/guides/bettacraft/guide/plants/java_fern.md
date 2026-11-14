@@ -32,5 +32,6 @@ Java fern (*Microsorum pteropus*) from the streams of South-East Asia: long, fir
 
 ## Obtaining
 
-* **Fishing** in jungles and rivers: 1.5 % per catch, instead of the fish.
+* **Fishing** in jungle water: 1.3 % per catch (about 1 in 77 catches), instead of the fish.
+* **Fishing** in rivers: 1.3 % per catch (about 1 in 76 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; breaking a rhizome piece divides it.

@@ -38,7 +38,7 @@ The dwarf seahorse (*Hippocampus zosterae*) from the seagrass meadows of Florida
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.83–0.99 % per swing (config `features.seahorses`).
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.83–0.99 % per swing (about 1 in 101–120 swings) (config `features.seahorses`).
 * **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 2) (config `features.seahorses`).
 * **Wandering trader** (rare offers): 2 for 5 emeralds; one of 3 in this offer (config `features.seahorses`).
 * **[Breeding](seahorses.md)**: Brood pouch: the male carries the eggs.

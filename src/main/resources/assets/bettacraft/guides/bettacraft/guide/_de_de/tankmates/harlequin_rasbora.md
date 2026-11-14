@@ -39,7 +39,7 @@ Bei 26–28 °C streut ein Paar 15–40 Eier in breite Blätter (Cryptocorynen, 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 4,2–5 % pro Schwung, 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 3,9–4,6 % pro Schwung (etwa 1 von 22–26 Schwüngen), 1–4 auf einmal.
 * **Wild** in Sümpfen, in Gruppen von 3–6 (Spawn-Gewicht 13) (Config `features.wildFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

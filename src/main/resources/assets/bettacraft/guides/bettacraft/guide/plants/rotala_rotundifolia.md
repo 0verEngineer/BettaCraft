@@ -33,6 +33,7 @@ item_ids:
 
 ## Obtaining
 
-* **Fishing** in swamps and mangrove swamps: 0.94 % per catch, instead of the fish.
+* **Fishing** in swamps: 0.83 % per catch (about 1 in 120 catches), instead of the fish.
+* **Fishing** in mangrove swamps: 0.94 % per catch (about 1 in 106 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 0.85 % per bottle, along with the water.
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).

@@ -467,13 +467,20 @@ public final class AquaticPlantGameTests {
                     case "minecraft:plains" -> h.assertTrue(plants == 0, "nothing in plains: " + plants);
                     case "minecraft:swamp" -> {
                         h.assertTrue(plants == rolls, "swamp: every catch a plant");
-                        h.assertTrue(seen.equals(java.util.EnumSet.of(PlantSpecies.CRYPT_GREEN, PlantSpecies.CRYPT_BROWN, PlantSpecies.LUDWIGIA,
-                                PlantSpecies.ROTALA)), "swamp plants: " + seen);
+                        // M22.4: and rarely Alternanthera, the tiger lotus and the Flamingo
+                        h.assertTrue(seen.containsAll(java.util.EnumSet.of(PlantSpecies.CRYPT_GREEN, PlantSpecies.CRYPT_BROWN, PlantSpecies.LUDWIGIA,
+                                PlantSpecies.ROTALA)) && seen.stream().allMatch(org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_SWAMP::contains),
+                                "swamp plants: " + seen);
                     }
                     default -> {
                         h.assertTrue(plants == rolls, biome + ": every catch a plant");
+                        // M22.4: jungle also the sword and the tiger lotus, rivers Vallisneria and Monte Carlo
+                        var plantTable = biome.equals("minecraft:jungle") ? org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_JUNGLE
+                                : org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_RIVER;
                         h.assertTrue(seen.contains(PlantSpecies.JAVA_FERN) && seen.contains(PlantSpecies.ANUBIAS_NANA) && seen.contains(PlantSpecies.BUCE_BLUE)
-                                && seen.stream().allMatch(s -> s.form() == PlantSpecies.Form.EPIPHYTE), biome + " epiphytes: " + seen);
+                                && seen.stream().allMatch(plantTable::contains), biome + " epiphytes: " + seen);
+                        h.assertTrue(seen.contains(biome.equals("minecraft:jungle") ? PlantSpecies.AMAZON_SWORD : PlantSpecies.VALLISNERIA),
+                                biome + ": the new plant comes up too: " + seen);
                     }
                 }
             }

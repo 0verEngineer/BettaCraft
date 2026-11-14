@@ -29,7 +29,9 @@ brauchen sie ein ruhiges eigenes Meerwasserbecken statt eines belebten Gesellsch
   Seegraswiese mit ein paar Tangstängeln ist ideal.
 * **Wenig Strömung**: Sie schwimmen schlecht. Strömungspumpen und starke Filter setzen sie unter Stress
   (`seahorses.maxFlow`, Standard 0,6; ein Außenfilter in einem Becken mit 16 Wasserblöcken gibt 0,5). Bei starker Strömung
-  lassen sie ihren Haltepunkt kaum noch los.
+  lassen sie ihren Haltepunkt kaum noch los. Direkt vor einem Filterauslass strömt das Wasser fast doppelt so stark: den
+  Auslass von ihren Haltepunkten weg richten (ein Schrankfilter kann eine andere [Auslass-Seite](../equipment/cabinet.md)
+  nutzen).
 * **Lebendfutter, oft**: Seepferdchen haben keinen Magen. Sie fressen nur **Artemia-Nauplien** und **Mückenlarven** (keine
   Pellets, Tabletten oder Infusorien) und wollen **zweimal am Tag** gefüttert werden (`seahorses.feedingsPerDay`). Neben
   schnellen Fressern (Bettas, Fische im freien Wasser) bekommen sie nur ab und zu ihren Anteil.

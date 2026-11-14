@@ -355,9 +355,9 @@ public final class GuideGen {
             String cond = s.condition() == null ? "" : t(" (config `" + s.condition() + "`)", " (Config `" + s.condition() + "`)");
             switch (s.kind()) {
                 case NET -> lines.add(link(t("Aquarium net", "Kescher"), "equipment/tank_net.md", page) + " " + where(s.where()) + ": "
-                        + chance(s.chance(), s.chanceMax()) + t(" per swing", " pro Schwung") + count(s) + cond);
+                        + chance(s.chance(), s.chanceMax()) + t(" per swing", " pro Schwung") + oneIn(s, t("swings", "Schwüngen")) + count(s) + cond);
                 case FISHING -> lines.add(bold(t("Fishing", "Angeln")) + " " + where(s.where()) + ": " + chance(s.chance(), s.chanceMax())
-                        + t(" per catch, instead of the fish", " pro Fang, statt des Fischs"));
+                        + t(" per catch", " pro Fang") + oneIn(s, t("catches", "Fängen")) + t(", instead of the fish", ", statt des Fischs") + cond);
                 case BOTTLE -> lines.add(s.chance() >= 1 ? bold(t("Glass bottle", "Glasflasche")) + t(" filled with water ", " mit Wasser gefüllt ") + where(s.where())
                         : bold(t("Glass bottle", "Glasflasche")) + t(" filled with water ", " mit Wasser gefüllt ") + where(s.where()) + ": "
                         + chance(s.chance(), s.chanceMax()) + t(" per bottle, along with the water", " pro Flasche, zusätzlich zum Wasser"));
@@ -689,6 +689,14 @@ public final class GuideGen {
     private String chance(double lo, double hi) {
         String a = percent(lo), b = percent(hi);
         return a.equals(b) ? a : a.replace(" %", "") + "–" + b;
+    }
+
+    /** M22.4: " (about 1 in 40 swings)" for the net and fishing (a range when plants nearby or a hard bottom raise it). */
+    private String oneIn(Source s, String what) {
+        if (s.chanceMax() <= 0 || s.chanceMax() >= 0.5) return "";
+        long a = Math.round(1 / s.chanceMax()), b = s.chance() > 0 ? Math.round(1 / s.chance()) : a;
+        String n = a == b ? String.valueOf(a) : a + "–" + b;
+        return t(" (about 1 in " + n + " " + what + ")", " (etwa 1 von " + n + " " + what + ")");
     }
 
     private String count(Source s) {

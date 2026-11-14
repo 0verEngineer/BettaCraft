@@ -18,11 +18,28 @@ Der <ItemLink id="bettacraft:cabinet" /> ist ein Unterbau für das Aquarium aus 
 * Nebeneinander stehende Schränke, die in dieselbe Richtung zeigen, verbinden sich zu einem langen Schrank mit
   durchgehender Arbeitsplatte.
 * **Filterplatz:** Lege einen [Außenfilter](filters.md) hinein. Ein Schrank direkt unter dem Aquarium zählt dann als
-  angeschlossener Außenfilter; der Schlauch läuft an der Rückwand hoch. Die zwei Heizstab-Plätze im Schrank-Menü sind
-  die Heizstab-Plätze dieses Filters.
+  angeschlossener Außenfilter; der Schlauch läuft an der Wand seiner **Auslass-Seite** hoch (siehe unten; an der
+  Rückwand, wenn du keine andere wählst). Die zwei Heizstab-Plätze im Schrank-Menü sind die Heizstab-Plätze dieses Filters.
 * **Neun Lagerplätze** für Futter und anderes. Trichter können sie benutzen, und der [Futterautomat](feeder.md) auf dem
   Aquarium nimmt Futter aus den Schränken darunter.
-* Abgebaut droppt der Schrank seinen Inhalt wie eine Truhe und behält sein Holz.
+* Abgebaut droppt der Schrank seinen Inhalt wie eine Truhe und behält sein Holz und seine Auslass-Seite.
+
+## Auslass-Seite
+
+![Die vier Auslass-Seiten: hinten, links, rechts und vorne](../images/cabinet_outlets.png)
+
+Der Knopf **„Auslass: hinten“** im Schrank-Menü wählt die Beckenwand, an der der Filterschlauch hochgeht, von der
+Schranktür aus gesehen: **hinten** (Standard), **links**, **rechts** oder **vorne** (unüblich, geht aber). Jeder Schrank
+hat seine eigene Seite, auch mehrere Schränke unter einem großen Becken. Klick: nächste Seite, Schleichen + Klick: vorige.
+
+* Schlauch, Auslass, Wasserstrahl und Blasen wandern an diese Wand.
+* Die **Strömung** kommt von dort: Schwimmpflanzen treiben vom Auslass weg, und vor ihm strömt das Wasser stärker als im
+  übrigen Becken (bis fast doppelt so stark wie die Strömung des Beckens, über acht Blöcke schwächer werdend).
+  [Seepferdchen](../saltwater/seahorses.md) dort leiden früher unter der Strömung, also den Auslass auf die andere Seite
+  ihrer Haltepunkte legen; Korallen vor ihm bekommen mehr Strömung (gut für Acropora, zu viel für Scheibenanemonen).
+* Abgebaut und neu gesetzt behält der Schrank die Seite (sein Item zeigt sie an). Schränke aus älteren Welten bleiben an
+  der Rückwand. Die Einstellung `features.cabinetOutletSide` schaltet den Knopf ab (dann nutzt jeder Schrank die Rückwand,
+  und die Strömung ist wieder gleichmäßig).
 
 ## Steinschränke
 

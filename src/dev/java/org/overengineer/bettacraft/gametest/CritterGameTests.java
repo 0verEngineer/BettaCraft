@@ -502,9 +502,11 @@ public final class CritterGameTests {
         ServerLevel level = h.getLevel();
         double saved = ServerConfig.CRITTERS_NET_CHANCE.get();
         double fishShare = ServerConfig.TANKMATES_NET_SHARE.get(); // M19: only small animals here (the fish: TankmateGameTests)
+        double plantShare = ServerConfig.AQUATIC_NET_SHARE.get(); // M22.4: and no plants (PlantSourceGameTests)
         try {
             ServerConfig.CRITTERS_NET_CHANCE.set(1.0);
             ServerConfig.TANKMATES_NET_SHARE.set(0.0);
+            ServerConfig.AQUATIC_NET_SHARE.set(0.0);
             BlockPos water = h.absolutePos(new BlockPos(16, 2, 16));
             h.setBlock(new BlockPos(16, 2, 16), Blocks.WATER);
             ServerPlayer sp = player(h);
@@ -564,6 +566,7 @@ public final class CritterGameTests {
             h.assertTrue(sp.getInventory().items.stream().allMatch(ItemStack::isEmpty), "no bag, no catch");
         } finally {
             ServerConfig.CRITTERS_NET_CHANCE.set(saved);
+            ServerConfig.AQUATIC_NET_SHARE.set(plantShare);
             ServerConfig.TANKMATES_NET_SHARE.set(fishShare);
         }
         h.succeed();
