@@ -184,12 +184,14 @@ public final class CritterGameTests {
             if (k.generation == 1) h.assertTrue(k.genes.shows(0), "red x red gives red young");
         }
         // M17: an early F1 son can already mate with his red mother (a backcross, also "generation 1"): its young are
-        // red/red or red/blue. So: every young carries red from the mother, every one that carries blue is wild-coloured
+        // red/red or red/wild and blue/wild or wild/wild. So: every young carries red from the mother, every one that
+        // carries blue and red only once is wild-coloured. M22.5: a backcross young red/red with one blue shows red (it
+        // was counted as F1 and failed the test now and then, 1 of 20 local runs)
         long f1 = 0;
         for (Critter k : mix.getTank().critters()) {
             if (k.generation != 1) continue;
             h.assertTrue(k.genes.carries(0), "every young carries red from the mother");
-            if (!k.genes.carries(1)) continue;
+            if (!k.genes.carries(1) || k.genes.shows(0)) continue;
             f1++;
             h.assertTrue("wild".equals(k.genes.variety(CritterSpecies.NEOCARIDINA)), "F1 of red x blue is wild-coloured");
         }
@@ -287,7 +289,10 @@ public final class CritterGameTests {
             t.setCritterFood(50);
             TankCritters.step(h.getLevel(), c, 1.0 / 24);
         }
-        h.assertTrue(count(t, CritterSpecies.NEOCARIDINA) < 10, "shrimp died: " + count(t, CritterSpecies.NEOCARIDINA) + " left");
+        // M22.5: only the 15 shrimp put in (a brood born late in the three days could lift the count to 10 or more:
+        // 1 of 20 local runs failed with "14 left")
+        long left = t.critters().stream().filter(k -> k.alive() && k.species == CritterSpecies.NEOCARIDINA && k.generation == 0).count();
+        h.assertTrue(left < 10, "shrimp died: " + left + " of 15 left (" + count(t, CritterSpecies.NEOCARIDINA) + " with young)");
         h.assertTrue(count(t, CritterSpecies.BLADDER_SNAIL) >= 10, "bladder snails live: " + count(t, CritterSpecies.BLADDER_SNAIL));
         h.assertTrue(logged(t, "log.bettacraft.critters_died"), "death logged");
         h.succeed();
