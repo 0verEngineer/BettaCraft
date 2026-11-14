@@ -37,6 +37,9 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
   `tank/plants/`, reef `reef/` (corals, dosing pump, skimmer). Leaf / polyp meshes `client/interior/PlantMesh*`.
 - **Equipment and tech**: `equipment/` (filters, cabinets, lights, feeders, air pump), `filter/` (multiblock filter),
   `plumbing/` (pipes, pumps, reservoir, water changer), `co2/`, `osmosis/`, `chem/` (TDS, pH, hardness), `crucible/`.
+- **Food** `food/`: food kinds by tags (`BettaFood`), live food breeders and cultures, the live food pump (`LiveFood`,
+  fluid `bettacraft:live_food`), the food maker (`FoodMakerBlockEntity`, recipes `bettacraft:food_maker`) and food
+  variety (`FoodDiet`: food groups and diets as item tags, the diet memory in `BettaHealth`).
 - **Menu**: `client/screen/TankScreen` (tabs) + `tank/menu/`. Info overlays (Jade/TOP/WTHIT) share `compat/info`.
   Other mods only through ids, tags and reflection (`compat/`, `datagen/Compat.java`), no compile dependencies.
 - **Config**: `config/ServerConfig`, `CommonConfig` (`features.*` switches), `ClientConfig`; every option needs an en
@@ -72,7 +75,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   local ATM10 instance): `-Pshaders` (`run/shader-mods`: Sodium, Iris; Complementary in `run/shaderpacks`), `-Ppower`
   (`run/power-mods`), `-Paquatic` (`run/aquatic-mods`), `-Pbiomes` (`run/biome-mods`: biome mods such as Regions Unexplored and Oh The
   Biomes We've Gone; servers then use the world `run/world_biomes`; the biome tags `#bettacraft:*_waters` map their
-  biomes to the wild animals, see `world/` and the GameTest `biomeModBiomesMapToTheirWaters`). Leave runtime mods out
+  biomes to the wild animals, see `world/` and the GameTest `biomeModBiomesMapToTheirWaters`), `-Pstorage`
+  (`run/storage-mods`: Applied Energistics 2 and Refined Storage; `StorageGameTests` move items with their buses). Leave runtime mods out
   with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoCompat`; add `-Ptop`, `-Pwthit`. `-Pbackground` makes a plain
   `runClient` a background window.
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the

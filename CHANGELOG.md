@@ -4,6 +4,46 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.19.0-beta.1] - 2026-11-14
+
+Live food and fish food: tubifex and daphnia cultures, a live food pump that feeds tanks through pipes, a food maker
+for flakes, granules, frozen food and more, and food variety that matters to the fish.
+
+### Added
+- **Tubifex dish** (`features.liveFoodCultures`, `liveFood.*`): tubifex worms in mud and stale water, fed with mulm
+  (washed out of dirty filter media in a water cauldron) or the waste water of a tank through a pipe. The water goes stale
+  and evaporates; worms from a stale dish carry germs (a little bad-water stress). Tubifex condition a breeding fish
+  twice as long as other live food. Mining mud in a swamp sometimes drops a few.
+- **Daphnia barrel**: water fleas in a barrel of water with yeast or green water (swamp water with bone meal ripened in
+  the light); they need light, collapse when crowded or in the hot sun. A bottle of swamp water sometimes brings a few.
+- **Live food pump** (`features.liveFoodPump`): next to any breeder it pumps the live food as the fluid
+  `bettacraft:live_food` through the pipes (or straight into a tank next to it) on a schedule: doses per day, portions
+  per dose and "Dose now" in its window. A tank only takes it when somebody there eats it.
+- **Food maker** (`features.foodMaker`, `foodMaking.*`): makes pellets, fish flakes, food granules, algae wafers, fry
+  powder, shrimp food and frozen mosquito larvae, artemia and daphnia from vanilla ingredients and live food, in
+  batches. The product is chosen in its window or left on automatic. Without power it runs on a spring: sneak +
+  right-click with an empty hand winds it (the crank turns, the ratchet clicks), a full spring works one in-game day;
+  while a power option is on it takes FE instead. The recipes are data (`bettacraft:food_maker`) and shown in JEI.
+- New foods: **fish flakes** (float; the midwater fish like them), **food granules** (sink to the bottom fish),
+  **frozen food** (eaten like live food, keeps, cannot be pumped) and **shrimp food** (only for shrimp, crayfish and
+  snails, twice the food of a leftover pellet).
+- **Food variety** (`features.foodVariety`, `diet.*`): every food belongs to a food group and every fish remembers
+  what it ate in the last 3 days. Three groups make a varied diet: the fish recovers one and a half times as fast from
+  stress and sickness, a betta shows stronger colours. Each kind of eater (bettas, midwater fish, bottom fish, grazers,
+  seahorses) has favourite food (it conditions for breeding) and food that suits it badly (hungry again sooner); all
+  item tags (`#bettacraft:food_groups/*`, `#bettacraft:diet/*/favourite` and `/poor`). The tank menu shows the variety
+  on the food bar.
+- Dev: the group `-Pstorage` (Applied Energistics 2 and Refined Storage) with GameTests in which their buses fill and
+  empty the food maker.
+
+### Changed
+- The feeder gives live food first, and its slots take turns: each feeding starts after the slot that fed first last
+  time, so several foods in it give a varied diet.
+- The food maker, the feeder and the reservoir offer plain item and fluid handlers: hoppers, pipes of other mods and
+  the buses, interfaces and autocrafting of AE2 and Refined Storage work with them without special code.
+- Handbook: pages for the tubifex dish, the daphnia barrel, the live food pump, the food maker and food variety; the
+  food table, the feeder, the filter media (mulm), the pipes and the settings pages are updated.
+
 ## [1.18.1-beta.1] - 2026-11-14
 
 Biome mods: wild animals, net catches, fishing and the wild corals also in the biomes of biome mods.

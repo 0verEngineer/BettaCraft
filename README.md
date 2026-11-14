@@ -86,8 +86,18 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
 - Optional Forge Energy for the equipment, power regulator, own procedural sounds.
 
+### Food and live food
+- **Live food cultures:** tubifex worms in a dish with mud and mulm (or the waste water of a tank), daphnia in a barrel
+  with yeast or green water and light, mosquito larvae and artemia; they grow, go stale, crash when crowded or hot. A
+  **live food pump** feeds them through the pipes into the tanks on a schedule.
+- **Food maker:** pellets, flakes, granules, algae wafers, fry powder, shrimp food and frozen food from wheat, kelp, fish,
+  spider eyes, sugar, eggs, vegetables and live food; runs on a hand-wound spring (a day per spring) or on FE. Hoppers,
+  AE2 and Refined Storage fill and empty it, the feeder and the reservoir.
+- **Food variety:** favourite and poorly suited food for every kind of eater; a varied diet helps the fish recover and
+  makes the bettas' colours stronger. All data-driven (item tags).
+
 ### Handbook, progression, languages
-- 178 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
+- 183 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
   get it (generated from the game data), 31 advancements, JEI pages and tooltips.
 - Every larger feature has a switch (`features.*`) so modpacks can turn it off.
 
@@ -152,7 +162,8 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   `jungle_waters`, `#bettacraft:coral_reef_biomes` (biomes); `#bettacraft:tank_inhabitants`,
   `#bettacraft:tank_blacklist`, `#bettacraft:predators`, `#bettacraft:betta_prey` (entity types);
   `#bettacraft:betta_food`, `#bettacraft:live_food`, `#bettacraft:fry_food`, `#bettacraft:fry_food_start`,
-  `#bettacraft:pellet_fish`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
+  `#bettacraft:pellet_fish`, `#bettacraft:frozen_food`, `#bettacraft:critter_food`, `#bettacraft:sinking_food`,
+  `#bettacraft:food_groups/*`, `#bettacraft:diet/*/favourite` and `/poor`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
   `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
   `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior`, `#bettacraft:swaying_plants` (blocks).
 - **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`),
@@ -204,7 +215,7 @@ loads it, the jar does not contain it.
 ./gradlew releaseNotes          # build/release-notes.md from the top section of CHANGELOG.md (must be mod_version)
 ```
 
-Client smoke tests, the multiplayer test, `buildShowcase`, `smoketestUpgrade`, `-Paquatic`, `-Pbiomes` and `-Pshaders` only run
+Client smoke tests, the multiplayer test, `buildShowcase`, `smoketestUpgrade`, `-Paquatic`, `-Pbiomes`, `-Pstorage` (AE2 and Refined Storage) and `-Pshaders` only run
 locally (they need a window, local worlds or mod jars that cannot all be downloaded in CI).
 
 ## License
