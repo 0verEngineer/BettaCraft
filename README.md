@@ -41,8 +41,9 @@ block.
   A cutting smaller than a block grows over the days into a plant of many blocks, also while nobody is inside, and the
   miniature grows along; red plants get redder in strong light. Trim with shears (inside or from outside on the
   glass), divide rhizomes, take plants out by their root. They clean the water, hide the female after spawning and
-  give a small breeding bonus. Found by fishing in jungles, rivers and swamps, in swamp water, on moss next to water
-  and from the wandering trader. Every plant and coral is drawn with real leaves, polyps and tentacles that move in the
+  give a small breeding bonus. Found with the aquarium net on the bottom of rivers, jungle water and swamps, by fishing
+  in jungles, rivers and swamps, in swamp water, on moss next to water and from the wandering trader: no plant comes
+  only from the trader. Every plant and coral is drawn with real leaves, polyps and tentacles that move in the
   water, inside and in the miniature outside (each player can switch back to the block look: `render.plantMeshes`);
   zoanthids and star polyps close when a fish swims by. Kelp, seagrass and corals sway in the miniature too.
 - **Containers:** every bucket, bag and bottle empties everywhere: into the world and the sea, cauldrons, every tank and
@@ -98,7 +99,7 @@ block.
   heaters, internal filters and floating plants. Several players can build in the same interior at once; nobody can
   break the aquarium while someone is inside. Leave by sneaking and looking up (a small hint shows how).
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood or stone (they hold the
-  external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below), a small
+  external filter, its hose going up the back, left, right or front wall, and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below), a small
   clip-on feeder for the side of the glass and a connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
 - **Tank menu:** overview with target temperature, inhabitants with genotype, every single shrimp, crayfish and snail
   (take out exactly one, or the best of a sex into a bag or a bucket), breeding tab with Punnett squares,

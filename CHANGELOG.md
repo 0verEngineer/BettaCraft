@@ -4,6 +4,41 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.15.1-beta.1] - 2026-11-14
+
+No plant comes only from the wandering trader any more, the handbook shows every way to get a plant with its chance,
+and the filter in a cabinet can send its hose up any side of the tank.
+
+### Added
+- **Plants from the aquarium net**: now and then the net brings up an aquarium plant from the bottom (a fifth of its
+  catches in fitting water): in **rivers** Vallisneria, Monte Carlo, Java moss, Alternanthera and the Amazon sword, in
+  **jungle water** the Amazon sword, Alternanthera, the red tiger lotus and Java moss, in **swamps** Monte Carlo,
+  Alternanthera, the tiger lotus, the green and brown Cryptocoryne and, rarely, the "Flamingo"
+  (`features.plantNetCatches`, `interiorPlants.netPlantShare`).
+- **More plants from fishing**, rarely: the Amazon sword and the tiger lotus in jungles, Vallisneria and Monte Carlo in
+  rivers, Alternanthera, the tiger lotus and the Cryptocoryne "Flamingo" in swamps.
+- On a reef the net now and then also brings up a piece of the leather coral and the stony corals (hammer coral,
+  lobophyllia, acropora).
+- The plant tables of the net and of fishing are server config lists (`interiorPlants.netPlants*`,
+  `interiorPlants.fishingPlants*`, entries `plant_id=weight`) for modpacks.
+- **Outlet side of the cabinet filter**: the new button "Outlet: back / left / right / front" in the cabinet menu
+  chooses the tank wall the hose of the filter in the cabinet goes up (each cabinet its own; back is the default). Hose,
+  outlet, water jet, bubbles and the current follow it: floating plants drift away from the outlet, and right in front
+  of an outlet the water moves almost twice as fast as in the rest of the tank, which stresses seahorses there sooner
+  and gives corals there more flow. Broken and placed again, the cabinet keeps its side (shown in its tooltip); cabinets
+  of older worlds keep the back wall (`features.cabinetOutletSide`).
+
+### Changed
+- The Amazon sword, Alternanthera, Vallisneria, Monte Carlo, the Cryptocoryne "Flamingo" and the red tiger lotus were
+  only sold by the wandering trader; the trader still has them.
+- Fishing in a mangrove swamp brings up the crypts and stem plants as before, the swamp water bottle its cuttings as
+  before; the jungle and river tables keep the epiphytes and add the new plants after them.
+- Handbook: the Obtaining section of every plant names every way with its place and chance, now also as "about 1 in N
+  swings / catches"; the cabinet page explains the outlet side, the seahorse page the current in front of an outlet; the
+  info texts (JEI, EMI and the shift tooltip) name the same sources as the data (a test checks it).
+- A test over every plant, floating plant and coral fails if one of them comes only from the trader (also for future
+  species).
+
 ## [1.15.0-beta.1] - 2026-11-14
 
 Wild animals and corals in the world, rare beautiful wild colours, a magnifier for the hidden genes, single small
