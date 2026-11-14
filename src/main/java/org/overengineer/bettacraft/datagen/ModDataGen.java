@@ -318,6 +318,7 @@ public final class ModDataGen {
             DataGenM23.blockStates(this); // M23
             DataGenM24.blockStates(this); // M24
             DataGenM25b.blockStates(this); // M25 part b
+            DataGenM25c.blockStates(this); // M25 part c
         }
 
         /** M20: reef rock, live rock, the flow pump in the interior and the protein skimmer on the tank. */
@@ -588,6 +589,7 @@ public final class ModDataGen {
             DataGenM24.itemModels(this); // M24
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
+            DataGenM25c.itemModels(this);
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
             withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
@@ -987,6 +989,7 @@ public final class ModDataGen {
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
+            DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -1137,6 +1140,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.BIO_CO2.get());
             dropSelf(ModBlocks.CO2_STATION.get());
             dropSelf(ModBlocks.RO_UNIT.get());
+            dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CO2_CYLINDER.get())
@@ -1169,6 +1173,7 @@ public final class ModDataGen {
                         for (var b : ModBlocks.WILD_CORALS.values()) l.add(b.get());
                         l.addAll(m24Blocks());
                         l.addAll(DataGenM25b.blocks()); // M25
+                        l.addAll(DataGenM25c.blocks());
                         return l;
                     }));
         }
@@ -1229,6 +1234,7 @@ public final class ModDataGen {
                     ModBlocks.CORNER_FILTER_SEGMENT.get()); // M23
             for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
             DataGenM25b.blockTags(this::tag); // M25
+            DataGenM25c.blockTags(this::tag);
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())

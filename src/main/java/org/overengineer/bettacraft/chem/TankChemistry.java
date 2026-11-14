@@ -70,7 +70,9 @@ public final class TankChemistry {
     }
 
     public static WaterChemistry.Inputs inputs(TankData t, Drivers d) {
-        return new WaterChemistry.Inputs(t.tds(), t.salinity(), WaterChemistry.SEA_KH, d.acid(), d.alkaline(), d.peat(), d.tannin(), d.wood(), t.co2());
+        // M25 part c: the alkalinity of the tank buffers salt water (with features.reefDosing off: that of sea water)
+        double kh = org.overengineer.bettacraft.reef.ReefDosing.enabled() ? t.kh() : WaterChemistry.SEA_KH;
+        return new WaterChemistry.Inputs(t.tds(), t.salinity(), kh, d.acid(), d.alkaline(), d.peat(), d.tannin(), d.wood(), t.co2());
     }
 
     /** The pH this tank drifts to. */

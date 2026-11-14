@@ -86,6 +86,8 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.BLADDER_SNAIL, 25 * p));
                 out.add(new Catch(CritterSpecies.TRUMPET_SNAIL, 4 * hard));
                 out.add(new Catch(CritterSpecies.ASSASSIN_SNAIL, 3));
+                // M25 part c: wild bee shrimp in soft, plant-rich streams (rare; rarer over sand and stone)
+                if (CritterSpecies.CARIDINA.available()) out.add(new Catch(CritterSpecies.CARIDINA, (hardBottom ? 1.5 : 5) * p));
             }
             case SWAMP -> {
                 out.add(new Catch(CritterSpecies.RAMSHORN, 30 * p));
@@ -98,7 +100,7 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.HORNED_NERITE, 20 * ner));
                 out.add(new Catch(CritterSpecies.OLIVE_NERITE, 25 * ner));
                 out.add(new Catch(CritterSpecies.RED_NERITE, 5));
-                if (org.overengineer.bettacraft.config.CommonConfig.snailColors()) out.add(new Catch(CritterSpecies.YELLOW_NERITE, 4)); // M21.5
+                if (CritterSpecies.YELLOW_NERITE.available()) out.add(new Catch(CritterSpecies.YELLOW_NERITE, 4)); // M21.5
                 out.add(new Catch(CritterSpecies.ASSASSIN_SNAIL, 4));
             }
             case BEACH -> {
@@ -121,6 +123,11 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.APPLE_SNAIL, 30));
                 out.add(new Catch(null, 8));
                 out.add(new Catch(CritterSpecies.DWARF_CRAYFISH, 5));
+                // M25 part c: the animals of the ancient lakes of Sulawesi over stone and sand (rare)
+                if (CritterSpecies.SULAWESI_SHRIMP.available()) {
+                    out.add(new Catch(CritterSpecies.SULAWESI_SHRIMP, 2 * hard));
+                    out.add(new Catch(CritterSpecies.TYLOMELANIA, 2.5 * hard));
+                }
             }
             case CAVE -> {
                 out.add(new Catch(CritterSpecies.TRUMPET_SNAIL, 30 * hard));
@@ -192,6 +199,7 @@ public final class NetCatching {
         }
         double carrier = switch (s) {
             case NEOCARIDINA -> 0.06;
+            case CARIDINA -> 0.05; // M25 part c
             case DWARF_CRAYFISH -> 0.15;
             case RAMSHORN -> 0.2;
             case APPLE_SNAIL -> 0.08;
@@ -216,7 +224,7 @@ public final class NetCatching {
             case SHRIMP -> 1 + rnd.nextInt(3);
             case CRAYFISH -> 1;
             case SNAIL -> s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE
-                    || s == CritterSpecies.YELLOW_NERITE ? 1 : 1 + rnd.nextInt(2);
+                    || s == CritterSpecies.YELLOW_NERITE || s == CritterSpecies.TYLOMELANIA ? 1 : 1 + rnd.nextInt(2);
         };
         return TankCritters.bagOf(s, n, () -> org.overengineer.bettacraft.world.Wildlife.critter(s, rnd), rnd, true); // M22.3: rarely a colour
     }

@@ -199,6 +199,14 @@ def assassin() -> list[Group]:
     return [shell, foot, tent, eyes]
 
 
+def tylomelania() -> list[Group]:
+    """M25c: the rabbit snail of Sulawesi: a long cone shell that lies back at a low angle, a big foot, long feelers."""
+    shell = Group("shell", cubes=cone("w", [5.4, 4.8, 4.2, 3.6, 3.0, 2.4, 1.8, 1.2], (-2.6, 1.6), 1.05, 1.55, 52, "bands"))
+    foot, tent = snail_foot(9.0, 3.8, -4.6, 3.6, -5.6, thick=1.0)
+    eyes = Group("eyes", cubes=pairs(c("eye", (0.7, -1.5, -5.6), (0.4, 0.4, 0.4)), "eye"))
+    return [shell, foot, tent, eyes]
+
+
 def frog() -> list[Group]:
     """Entity model of the dwarf clawed frog, ground at y = 0 (the Java code adds the entity offset)."""
     body = Group("body", cubes=[c("trunk", (0, -2.2, 0.6), (6.0, 3.0, 8.0), (-4, 0, 0), "frog")])
@@ -269,6 +277,7 @@ MODELS = {
     "frog": frog,
     "hermit": hermit,
     "turbo": turbo,
+    "tylomelania": tylomelania,  # M25c
 }
 
 
@@ -386,13 +395,13 @@ def texture(groups: list[Group], name: str, seed: int, size: int) -> np.ndarray:
     return img
 
 
-def overlay(groups: list[Group], size: int, kind: str, seed: int) -> np.ndarray:
+def overlay(groups: list[Group], size: int, kind: str, seed: int, group: str = "shell") -> np.ndarray:
     """M21.5: lines over the shell of a racer nerite (``fine`` / ``wide``) or the bands of an apple snail (``bands``):
     the same box-UV layout as the model texture, white with shading where a line is, transparent elsewhere (tinted with
     the colour of the lines at runtime and drawn over the shell)."""
     rng = np.random.default_rng(seed)
     img = np.zeros((size, size, 4))
-    shell = [g for g in groups if g.name == "shell"]
+    shell = [g for g in groups if g.name == group]
     for cu in (cu for g in shell for cu in g.cubes):
         w, h, d = cu.size
         cx, cy, cz = cu.center
@@ -420,6 +429,22 @@ def overlay(groups: list[Group], size: int, kind: str, seed: int) -> np.ndarray:
                         on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 3.4 + 0.7) > 0.72
                     elif kind == "wide":
                         on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 1.9 + 0.4) > 0.55
+                    elif kind.startswith("bee"):  # M25c: white bands of a bee shrimp; a higher banding grade is whiter
+                        level = int(kind[3:])  # 0 = A .. 3 = SSS
+                        if cu.name in ("rostrum",):
+                            on = level >= 2
+                        elif cu.name == "tail":
+                            on = level >= 1 and px * px > 1.2
+                        elif cu.name == "carapace":
+                            # the head stays coloured on the low grades, a red/black "hinomaru" spot on SSS
+                            spot = (pz + 3.4) ** 2 + (py + 4.2) ** 2 < 2.2
+                            on = (math.sin(pz * 1.6 + 1.0) > (0.55 - level * 0.45)) and not (level >= 2 and spot)
+                        else:
+                            on = math.sin(pz * 2.4 + 0.6) > (0.35 - level * 0.42)
+                    elif kind == "tiger":  # M25c: thin dark stripes across the segments
+                        on = math.sin(pz * 3.1 + 0.4) > 0.78 and face != "north" and face != "south"
+                    elif kind == "dots":  # M25c: the white dots of the cardinal shrimp
+                        on = rng.random() < 0.09 and face in ("top", "east", "west")
                     else:  # apple snail bands around the whorls
                         on = math.sin(-py * 0.95 + pz * 0.18) > 0.72
                     if not on or face == "bottom":
@@ -591,6 +616,11 @@ def write_all() -> list:
             written.append(save_png(overlay(groups, sizes[name], "wide", 2151), CRIT_TEX / "nerite_lines_wide.png"))
         if name == "apple":
             written.append(save_png(overlay(groups, sizes[name], "bands", 2152), CRIT_TEX / "apple_bands.png"))
+        if name == "shrimp":  # M25c: bee shrimp bands by banding grade, tiger stripes, cardinal dots
+            for lv, g in enumerate(("a", "s", "ss", "sss")):
+                written.append(save_png(overlay(groups, sizes[name], f"bee{lv}", 2530 + lv, "body"), CRIT_TEX / f"shrimp_bee_{g}.png"))
+            written.append(save_png(overlay(groups, sizes[name], "tiger", 2535, "body"), CRIT_TEX / "shrimp_tiger.png"))
+            written.append(save_png(overlay(groups, sizes[name], "dots", 2536, "body"), CRIT_TEX / "shrimp_dots.png"))
     written.append(write_java(models, sizes))
     for st in range(1, 5):
         written.append(save_png(algae(st), ALGAE_TEX / f"algae_{st}.png"))

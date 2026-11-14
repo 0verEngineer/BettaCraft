@@ -202,8 +202,11 @@ public final class TankWater {
                 float no3 = TankNitrate.concentrate(tank.nitrate(), tank.waterMb(), lost); // M24
                 float tds = org.overengineer.bettacraft.chem.WaterChemistry.concentrate(tank.tds(), tank.waterMb(), lost,
                         org.overengineer.bettacraft.chem.WaterChemistry.TDS_MAX); // M25: the minerals stay behind too
+                org.overengineer.bettacraft.reef.ReefDosing.Snapshot reef = org.overengineer.bettacraft.reef.ReefDosing.Snapshot.of(tank); // M25 part c
+                long had = tank.waterMb();
                 TankInteractions.changeWater(level, c, -lost);
                 tank.setSalinity(salt);
+                reef.concentrate(tank, had, lost); // the alkalinity and magnesium stay behind too
                 tank.setCalcium(ca);
                 tank.setNitrate(no3);
                 tank.setTds(tds);

@@ -163,8 +163,7 @@ public class WildCritterEntity extends WaterAnimal {
         if (hasCustomName()) return super.getName();
         if (level().isClientSide) {
             Critter d = drawn();
-            String v = d.clientColor == CritterGenes.WILD_COLOR ? "wild" : d.clientColor == CritterGenes.CHOCOLATE ? "chocolate"
-                    : new CritterGenes(1 << Math.max(0, d.clientColor), 1 << Math.max(0, d.clientColor), d.clientGrade).variety(d.species);
+            String v = CritterGenes.varietyOf(d.species, d.clientColor, d.clientGrade); // M25 part c: also Wine Red
             return TankCritters.name(d.species, v);
         }
         return TankCritters.name(animal);

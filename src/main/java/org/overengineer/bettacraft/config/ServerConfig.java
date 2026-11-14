@@ -267,6 +267,10 @@ public final class ServerConfig {
             CO2_CYLINDER_DAYS;
     public static final ModConfigSpec.IntValue CO2_STATION_TICKS, CO2_STATION_FE, CO2_FOREIGN_MB;
     public static final ModConfigSpec.DoubleValue RO_RATE, RO_BOOST, RO_WASTE, RO_MEMBRANE, RO_PREFILTER;
+    // M25 part c: reef dosing
+    public static final ModConfigSpec.DoubleValue DOSING_CA_PER_ML, DOSING_KH_PER_ML, DOSING_MG_PER_ML, DOSING_TRACE_PER_ML, DOSING_MG_DROP,
+            DOSING_TRACE_USE;
+    public static final ModConfigSpec.IntValue DOSING_CANISTER_ML, DOSING_MAX_ML;
     public static final ModConfigSpec.IntValue RO_FE;
     public static final ModConfigSpec.IntValue PIPE_STEEL_RATE;
     public static final ModConfigSpec.IntValue PIPE_PUMP_RATE;
@@ -604,6 +608,20 @@ public final class ServerConfig {
                 .defineInRange("roWastePerPart", 3.0, 0.0, 100.0);
         RO_MEMBRANE = b.comment("Buckets of reverse osmosis water a membrane makes before it is worn out").defineInRange("roMembraneBuckets", 128.0, 1.0, 100000.0);
         RO_PREFILTER = b.comment("Buckets of reverse osmosis water a prefilter cartridge lasts").defineInRange("roPrefilterBuckets", 32.0, 1.0, 100000.0);
+        b.pop();
+        b.comment("Reef dosing (M25, features.reefDosing): alkalinity, magnesium and trace elements of salt water and the dosing pump").push("dosing");
+        DOSING_CA_PER_ML = b.comment("Calcium (mg/L in one water block) one mL of calcium solution adds (a bigger tank needs more)")
+                .defineInRange("calciumPerMl", 2.0, 0.0, 10000.0);
+        DOSING_KH_PER_ML = b.comment("Alkalinity (dKH in one water block) one mL of alkalinity solution adds (2 mg/L calcium match 0.07 dKH)")
+                .defineInRange("alkalinityPerMl", 0.07, 0.0, 1000.0);
+        DOSING_MG_PER_ML = b.comment("Magnesium (mg/L in one water block) one mL of magnesium solution adds").defineInRange("magnesiumPerMl", 4.0, 0.0, 10000.0);
+        DOSING_TRACE_PER_ML = b.comment("Trace elements (share of the full level in one water block) one mL of trace element solution adds")
+                .defineInRange("tracePerMl", 0.15, 0.0, 100.0);
+        DOSING_MG_DROP = b.comment("Magnesium (mg/L) a salt water tank loses per day besides what the stony corals use (it falls out with the",
+                "calcium; 0 = only the corals use it)").defineInRange("magnesiumDropPerDay", 1.0, 0.0, 1000.0);
+        DOSING_TRACE_USE = b.comment("Trace elements (share of the full level) a salt water tank uses up per day").defineInRange("traceUsePerDay", 0.04, 0.0, 1.0);
+        DOSING_CANISTER_ML = b.comment("mL of solution in one canister of the dosing pump").defineInRange("canisterMl", 500, 1, 1000000);
+        DOSING_MAX_ML = b.comment("Most mL per day one channel of the dosing pump can be set to").defineInRange("maxMlPerDay", 100, 1, 100000);
         b.pop();
         b.comment("Pipes and pumps (M24, features.pipes): they carry water with all its values (temperature, salt, quality, nitrate)").push("pipes");
         PIPE_GLASS_RATE = b.comment("mB per tick a glass pipe network carries").defineInRange("glassPipeRate", 50, 1, 1000000);

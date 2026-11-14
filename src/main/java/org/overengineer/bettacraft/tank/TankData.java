@@ -107,6 +107,12 @@ public final class TankData {
      */
     private float tds = org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS, ph = org.overengineer.bettacraft.chem.WaterChemistry.TAP_PH;
     private float tannin, co2 = org.overengineer.bettacraft.chem.WaterChemistry.CO2_AIR;
+    /**
+     * M25 part c ("Balling light"): alkalinity (dKH), magnesium (mg/L) and trace elements (0..1) of the water. They follow
+     * the salt (sea water 8 dKH, 1300 mg/L, 0.5; {@link #setSalinity} moves them along), stony corals use them up, the
+     * dosing pump adds them. Tanks of earlier versions get the values of their salinity.
+     */
+    private float kh = org.overengineer.bettacraft.chem.WaterChemistry.TAP_KH, magnesium = org.overengineer.bettacraft.chem.WaterChemistry.TAP_MG, trace;
     /** M24: game time of the last water change (bucket, pipe or controller; -1 = none yet) and the share changed then. */
     private long lastWaterChange = -1L;
     /** M23: light settings of the tank: dimmer 0..100 %, daylight timer with on/off time (minutes of the day, 6:00 = 360). */
@@ -380,7 +386,28 @@ public final class TankData {
     public void setLightOff(int minutes) { this.lightOff = Math.floorMod(minutes, 24 * 60); }
 
     public float salinity() { return salinity; }
-    public void setSalinity(float ppt) { this.salinity = Salinity.clampSalinity(ppt); }
+    public void setSalinity(float ppt) {
+        float before = salinity;
+        this.salinity = Salinity.clampSalinity(ppt);
+        // M25 part c: salt brings the alkalinity, magnesium and trace elements of sea water (and taking it away the reverse)
+        if (salinity != before) {
+            kh = org.overengineer.bettacraft.chem.WaterChemistry.clampKh(kh + org.overengineer.bettacraft.chem.WaterChemistry.khOf(salinity)
+                    - org.overengineer.bettacraft.chem.WaterChemistry.khOf(before));
+            magnesium = org.overengineer.bettacraft.chem.WaterChemistry.clampMagnesium(magnesium + org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(salinity)
+                    - org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(before));
+            trace = org.overengineer.bettacraft.chem.WaterChemistry.clampTrace(trace + org.overengineer.bettacraft.chem.WaterChemistry.traceOf(salinity)
+                    - org.overengineer.bettacraft.chem.WaterChemistry.traceOf(before));
+        }
+    }
+    /** M25 part c: alkalinity in dKH. */
+    public float kh() { return kh; }
+    public void setKh(float v) { this.kh = org.overengineer.bettacraft.chem.WaterChemistry.clampKh(v); }
+    /** M25 part c: magnesium in mg/L. */
+    public float magnesium() { return magnesium; }
+    public void setMagnesium(float v) { this.magnesium = org.overengineer.bettacraft.chem.WaterChemistry.clampMagnesium(v); }
+    /** M25 part c: trace elements 0..1 (from 0.4 the corals show their stronger colours). */
+    public float trace() { return trace; }
+    public void setTrace(float v) { this.trace = org.overengineer.bettacraft.chem.WaterChemistry.clampTrace(v); }
     public float calcium() { return calcium; }
     public void setCalcium(float ca) { this.calcium = Salinity.clampCalcium(ca); }
     /** M20: whether this is a salt water tank (from {@link Salinity#MARINE_FROM} ppt). */
@@ -461,6 +488,9 @@ public final class TankData {
         ph = o.ph;
         tannin = o.tannin;
         co2 = o.co2;
+        kh = o.kh; // M25 part c
+        magnesium = o.magnesium;
+        trace = o.trace;
         lastWaterChange = o.lastWaterChange;
         lightDimmer = o.lightDimmer;
         lightTimer = o.lightTimer;
@@ -557,6 +587,9 @@ public final class TankData {
         t.putFloat("ph", ph);
         if (tannin > 0) t.putFloat("tannin", tannin);
         t.putFloat("co2", co2);
+        t.putFloat("kh", kh); // M25 part c (absent = the values of the salinity)
+        t.putFloat("magnesium", magnesium);
+        t.putFloat("trace", trace);
         t.putInt("light_dimmer", lightDimmer);
         t.putBoolean("light_timer", lightTimer);
         t.putInt("light_on", lightOn);
@@ -673,6 +706,10 @@ public final class TankData {
         d.setPh(t.contains("ph", Tag.TAG_ANY_NUMERIC) ? t.getFloat("ph") : org.overengineer.bettacraft.chem.WaterChemistry.startPh(d.salinity));
         d.setTannin(t.getFloat("tannin"));
         if (t.contains("co2", Tag.TAG_ANY_NUMERIC)) d.setCo2(t.getFloat("co2"));
+        // M25 part c: tanks of earlier versions get the alkalinity, magnesium and trace elements of their salt
+        d.setKh(t.contains("kh", Tag.TAG_ANY_NUMERIC) ? t.getFloat("kh") : org.overengineer.bettacraft.chem.WaterChemistry.khOf(d.salinity));
+        d.setMagnesium(t.contains("magnesium", Tag.TAG_ANY_NUMERIC) ? t.getFloat("magnesium") : org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(d.salinity));
+        d.setTrace(t.contains("trace", Tag.TAG_ANY_NUMERIC) ? t.getFloat("trace") : org.overengineer.bettacraft.chem.WaterChemistry.traceOf(d.salinity));
         d.lightDimmer = t.contains("light_dimmer", Tag.TAG_ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getInt("light_dimmer"))) : 100;
         d.lightTimer = t.getBoolean("light_timer");
         d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;

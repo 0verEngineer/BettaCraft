@@ -115,6 +115,7 @@ public final class BettaCraft {
         // a power option is on) and the CO2 filling station (cylinders, FE for the compressor, CO2 gas of other mods)
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.RO_UNIT.get(), (be, side) -> be.fluid());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.RO_UNIT.get(), (be, side) -> be.parts());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.DOSING_PUMP.get(), (be, side) -> be.automation()); // M25c
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.RO_UNIT.get(),
                 (be, side) -> org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() ? be.energy() : null);
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.CO2_STATION.get(), (be, side) -> be.automation());

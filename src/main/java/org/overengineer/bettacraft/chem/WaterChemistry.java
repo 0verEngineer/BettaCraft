@@ -246,9 +246,50 @@ public final class WaterChemistry {
         return (float) Math.max(0, Math.min(1, trace - perDay * Math.max(0, days)));
     }
 
-    /** Whether the trace elements give the corals their stronger colours. */
+    /**
+     * Whether the trace elements give the corals their stronger colours (M25 part c: above fresh sea water's 0.5, so only
+     * with dosing).
+     */
     public static boolean traceBonus(double trace) {
-        return trace >= 0.4;
+        return trace >= 0.6;
+    }
+
+    /** M25 part c: alkalinity (dKH) of water with {@code ppt} of salt: tap water's, sea water's at 35 ppt, mixed in between. */
+    public static float khOf(float ppt) {
+        float f = Math.max(0, Math.min(1.5F, ppt / 35F));
+        return TAP_KH + (SEA_KH - TAP_KH) * f;
+    }
+
+    /** M25 part c: magnesium (mg/L) of water with {@code ppt} of salt. */
+    public static float magnesiumOf(float ppt) {
+        float f = Math.max(0, Math.min(1.5F, ppt / 35F));
+        return TAP_MG + (SEA_MG - TAP_MG) * f;
+    }
+
+    /** M25 part c: trace elements (0..1) of water with {@code ppt} of salt (fresh sea water 0.5, tap water none). */
+    public static float traceOf(float ppt) {
+        return Math.max(0, Math.min(1F, SEA_TRACE * ppt / 35F));
+    }
+
+    public static float clampKh(float kh) {
+        return Float.isFinite(kh) ? Math.max(0, Math.min(KH_MAX, kh)) : TAP_KH;
+    }
+
+    public static float clampMagnesium(float mg) {
+        return Float.isFinite(mg) ? Math.max(0, Math.min(MG_MAX, mg)) : TAP_MG;
+    }
+
+    public static float clampTrace(float t) {
+        return Float.isFinite(t) ? Math.max(0, Math.min(1, t)) : 0;
+    }
+
+    /**
+     * M25 part c: what {@code ml} of a dosing channel adds to {@code waterBlocks} of water ({@code perMlBlock}: the rise in
+     * one block of water per mL).
+     */
+    public static double dose(double ml, double perMlBlock, double waterBlocks) {
+        if (ml <= 0 || waterBlocks <= 0) return 0;
+        return ml * perMlBlock / waterBlocks;
     }
 
     // ------------------------------------------------------------------ almond leaves

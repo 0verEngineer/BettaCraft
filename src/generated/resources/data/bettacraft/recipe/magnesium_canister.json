@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:dosing_canister"
+    },
+    {
+      "item": "bettacraft:sea_salt"
+    },
+    {
+      "item": "bettacraft:sea_salt"
+    },
+    {
+      "item": "minecraft:prismarine_shard"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:magnesium_canister"
+  }
+}

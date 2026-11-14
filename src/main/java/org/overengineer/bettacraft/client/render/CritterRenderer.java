@@ -66,6 +66,7 @@ public final class CritterRenderer {
             case ASSASSIN -> "assassin";
             case HERMIT -> "hermit"; // M20
             case TURBO -> "turbo";
+            case TYLOMELANIA -> "tylomelania"; // M25c
         };
     }
 
@@ -123,6 +124,25 @@ public final class CritterRenderer {
             org.overengineer.bettacraft.critters.CritterLooks.Lines.WIDE, BettaCraft.id("textures/entity/critters/nerite_lines_wide.png"),
             org.overengineer.bettacraft.critters.CritterLooks.Lines.BANDS, BettaCraft.id("textures/entity/critters/apple_bands.png"));
 
+    /** M25 part c: the bands of a bee shrimp (by banding grade), tiger stripes, the dots of the cardinal shrimp. */
+    private static final ResourceLocation[] BEE = {BettaCraft.id("textures/entity/critters/shrimp_bee_a.png"),
+            BettaCraft.id("textures/entity/critters/shrimp_bee_s.png"), BettaCraft.id("textures/entity/critters/shrimp_bee_ss.png"),
+            BettaCraft.id("textures/entity/critters/shrimp_bee_sss.png")};
+    private static final ResourceLocation TIGER = BettaCraft.id("textures/entity/critters/shrimp_tiger.png");
+    private static final ResourceLocation DOTS = BettaCraft.id("textures/entity/critters/shrimp_dots.png");
+
+    /** M25 part c: the overlay over the body of a Caridina or a cardinal shrimp and its colour, or null. */
+    @Nullable
+    static Map.Entry<ResourceLocation, Integer> bodyOverlay(Critter k) {
+        if (k.species == CritterSpecies.SULAWESI_SHRIMP) return Map.entry(DOTS, 0xF4F2EE);
+        if (k.species != CritterSpecies.CARIDINA) return null;
+        int c = k.clientColor;
+        if (c == CritterGenes.CARIDINA_RED || c == CritterGenes.CARIDINA_BLACK) return Map.entry(BEE[CritterGenes.banding(k.clientGrade)], 0xF6F4F0);
+        if (c == CritterGenes.CARIDINA_TIGER) return Map.entry(TIGER, 0x0C0E1C);
+        if (c == CritterGenes.WILD_COLOR) return Map.entry(BEE[0], 0xB4AA98); // the wild bee shrimp: pale bands
+        return null; // Taiwan bees: one solid colour
+    }
+
     /** Colour of the soft body of a snail (foot, head, feelers). */
     public static int skinColor(Critter k) {
         return switch (k.species) {
@@ -145,6 +165,7 @@ public final class CritterRenderer {
             case CLEANER_SHRIMP -> 0xF4F0E8;
             case TRUMPET_SNAIL -> 0x8A7A68;
             case ASSASSIN_SNAIL -> 0x6E6A50;
+            case TYLOMELANIA -> 0xF0861C; // M25 part c: the orange body of a rabbit snail
             default -> 0x8A8070;
         };
     }
@@ -280,13 +301,20 @@ public final class CritterRenderer {
                 case "shell" -> k.species == CritterSpecies.HERMIT_CRAB ? (alive ? 0x8A6E52 : dead(0x8A6E52)) : body; // M20: the borrowed shell
                 case "body", "claws" -> body;
                 case "legs", "antennae" -> alive ? pale(body) : dead(pale(body));
-                case "eyes" -> EYE;
+                case "eyes" -> k.species == CritterSpecies.CARIDINA && k.clientColor == CritterGenes.CARIDINA_TIGER ? 0xF07A18 : EYE; // M25c: orange eyes
                 case "eggs" -> k.species.isCrayfish() ? 0x3A2620 : CritterGenes.mix(0xE8C440, body, 0.25F);
                 case "foot", "tentacles" -> skin;
                 case "horns" -> 0x2A2420;
                 default -> body;
             };
             p.render(pose, vc, light, ov, argb(tint));
+        }
+        // M25 part c: bands, stripes or dots over the body of a shrimp
+        var bo = bodyOverlay(k);
+        ModelPart bodyPart = group(m, "body");
+        if (bo != null && bodyPart != null && bodyPart.visible) {
+            int oc = soft ? CritterGenes.mix(bo.getValue(), 0xF4ECE0, 0.45F) : bo.getValue();
+            bodyPart.render(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(bo.getKey())), light, ov, argb(alive ? oc : dead(oc)));
         }
         // M21.5: lines or bands over the shell (same model part, an overlay texture with its own colour)
         if (lk.kind() != org.overengineer.bettacraft.critters.CritterLooks.Lines.NONE) {

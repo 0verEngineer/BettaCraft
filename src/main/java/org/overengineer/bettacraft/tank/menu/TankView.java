@@ -644,6 +644,9 @@ public final class TankView {
         public int demand;
         /** M20: salinity (ppt), calcium (mg/L), skimmers, flow pumps, flow (1 = strong), live rock blocks, light spectrum for corals. */
         public float salinity, calcium;
+        /** M25 part c: alkalinity (dKH), magnesium (mg/L), trace elements (0..1); dosingOn = features.reefDosing. */
+        public float kh, magnesium, trace;
+        public boolean dosingOn;
         public int skimmers, pumps, liveRock;
         public double flow, spectrum;
         /** M24: nitrate (mg/L), its change per day, the levels and the water change interval of the difficulty (0 = off). */
@@ -674,6 +677,10 @@ public final class TankView {
             CompoundTag t = new CompoundTag();
             t.putFloat("salinity", salinity);
             t.putFloat("calcium", calcium);
+            t.putFloat("kh", kh);
+            t.putFloat("magnesium", magnesium);
+            t.putFloat("trace", trace);
+            t.putBoolean("dosing_on", dosingOn);
             t.putInt("skimmers", skimmers);
             t.putInt("pumps", pumps);
             t.putInt("live_rock", liveRock);
@@ -756,6 +763,10 @@ public final class TankView {
             co2State = t.getString("co2_state");
             salinity = t.getFloat("salinity");
             calcium = t.getFloat("calcium");
+            kh = t.getFloat("kh");
+            magnesium = t.getFloat("magnesium");
+            trace = t.getFloat("trace");
+            dosingOn = t.getBoolean("dosing_on");
             skimmers = t.getInt("skimmers");
             pumps = t.getInt("pumps");
             liveRock = t.getInt("live_rock");
@@ -975,6 +986,10 @@ public final class TankView {
         // M20: salt water values and the reef technique
         w.salinity = t.salinity();
         w.calcium = t.calcium();
+        w.kh = t.kh(); // M25 part c
+        w.magnesium = t.magnesium();
+        w.trace = t.trace();
+        w.dosingOn = org.overengineer.bettacraft.reef.ReefDosing.enabled();
         w.skimmers = org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c);
         w.pumps = org.overengineer.bettacraft.reef.TankReef.pumps(level, t);
         w.liveRock = org.overengineer.bettacraft.reef.TankReef.liveRock(level, t);

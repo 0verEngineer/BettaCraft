@@ -58,6 +58,18 @@ public final class Regulator {
         default boolean alwaysAdjustable() {
             return false;
         }
+
+        /** M25c: label of a quick button for setting {@code v} (0..10), null = "x %". */
+        @Nullable
+        default Component quickLabel(int v) {
+            return null;
+        }
+
+        /** M25c: the hint under the window, null = the power hint. */
+        @Nullable
+        default Component hint() {
+            return null;
+        }
     }
 
     /** The device at this position (for a multi-block piece its anchor), or null. */

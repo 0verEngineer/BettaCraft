@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/dosing_pump",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/dosing_pump"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/dosing_pump",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/dosing_pump",
+      "y": 270
+    }
+  }
+}

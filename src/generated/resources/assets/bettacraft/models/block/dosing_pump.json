@@ -1,0 +1,42 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#top"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#front"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        1,
+        0,
+        3
+      ],
+      "to": [
+        15,
+        10,
+        13
+      ]
+    }
+  ],
+  "textures": {
+    "front": "bettacraft:block/dosing_pump_front",
+    "particle": "bettacraft:block/dosing_pump_side",
+    "side": "bettacraft:block/dosing_pump_side",
+    "top": "bettacraft:block/dosing_pump_top"
+  }
+}

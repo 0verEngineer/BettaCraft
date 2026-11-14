@@ -246,7 +246,14 @@ public final class InteriorPlants {
      */
     public record Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade,
                       double salinity, double flow, double calcium, double spectrum, double quality, boolean glow, double coralTemp,
-                      @Nullable java.util.function.ToDoubleFunction<InteriorPlant> localFlow) {
+                      @Nullable java.util.function.ToDoubleFunction<InteriorPlant> localFlow, double reefChem, boolean trace) {
+        /** M25 part c: {@code reefChem} = alkalinity x magnesium x pH factor of the stony corals, {@code trace}: trace elements give stronger colours. */
+        public Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade,
+                   double salinity, double flow, double calcium, double spectrum, double quality, boolean glow, double coralTemp,
+                   @Nullable java.util.function.ToDoubleFunction<InteriorPlant> localFlow) {
+            this(light, effectiveLight, nutrients, temperature, waterLocal, shade, salinity, flow, calcium, spectrum, quality, glow, coralTemp, localFlow, 1, false);
+        }
+
         public Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade) {
             this(light, effectiveLight, nutrients, temperature, waterLocal, shade, 0, 0, 0, 0.6, 0.9, false, 0);
         }
@@ -261,7 +268,8 @@ public final class InteriorPlants {
             if (localFlow == null || flow <= 0) return this;
             double f = localFlow.applyAsDouble(p);
             if (Math.abs(f - 1) < 1e-9) return this;
-            return new Env(light, effectiveLight, nutrients, temperature, waterLocal, shade, salinity, flow * f, calcium, spectrum, quality, glow, coralTemp, null);
+            return new Env(light, effectiveLight, nutrients, temperature, waterLocal, shade, salinity, flow * f, calcium, spectrum, quality, glow, coralTemp, null,
+                    reefChem, trace);
         }
 
         /** Growth factor of a plant (0..1): light for its need, nutrients, temperature, under water. */
@@ -316,7 +324,8 @@ public final class InteriorPlants {
         }
         return new Env(light, Math.max(0, light - (dense ? 3 : 0)), nutrientFactor(q), temperatureFactor(t.waterTemp()),
                 t.waterMb() <= 0 ? 0 : TankCare.waterLocalHeight(t, r.scale()), shade, t.salinity(), flow, t.calcium(), spectrum, q, glow,
-                org.overengineer.bettacraft.reef.Corals.temperatureFactor(t.waterTemp()), local);
+                org.overengineer.bettacraft.reef.Corals.temperatureFactor(t.waterTemp()), local,
+                salt ? org.overengineer.bettacraft.reef.ReefDosing.stonyFactor(t) : 1, salt && org.overengineer.bettacraft.reef.ReefDosing.traceBonus(t)); // M25 part c
     }
 
     /** Share of the water surface (interior blocks) covered by plant blocks at the surface (stem tops, lotus pads). */
@@ -359,7 +368,7 @@ public final class InteriorPlants {
                         p.target++;
                         p.progress -= 1;
                         // M20: a stony coral builds its skeleton from the calcium of the water
-                        if (p.species.stony()) org.overengineer.bettacraft.reef.Corals.useCalcium(t);
+                        if (p.species.stony()) org.overengineer.bettacraft.reef.Corals.useCalcium(t); // M25 part c: and alkalinity and magnesium
                         if (p.target == p.species.stages()) {
                             p.progress = 0;
                             TankCare.log(level, c, "log.bettacraft.aquatic_grown", "@" + item(p.species, 0).getDescriptionId());

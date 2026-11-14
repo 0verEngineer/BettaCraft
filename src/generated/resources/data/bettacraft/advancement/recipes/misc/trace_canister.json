@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_tank": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:tank"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:trace_canister"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tank"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:trace_canister"
+    ]
+  }
+}

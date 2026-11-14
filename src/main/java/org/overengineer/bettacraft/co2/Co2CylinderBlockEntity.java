@@ -132,6 +132,16 @@ public class Co2CylinderBlockEntity extends BlockEntity implements Co2Source, Re
     }
 
     @Override
+    public Component quickLabel(int v) {
+        return Component.translatable("gui.bettacraft.co2.quick", v); // M25c: "5 bubbles/s"
+    }
+
+    @Override
+    public Component hint() {
+        return Component.translatable("gui.bettacraft.co2.hint");
+    }
+
+    @Override
     public Component note() {
         int pct = Math.round(100F * gas / Math.max(0.001F, capacity()));
         if (!TankCo2.enabled()) return Component.translatable("message.bettacraft.co2.off");

@@ -91,6 +91,8 @@ public final class ChemTolerance {
         if (s.marine()) return Range.MARINE;
         return switch (s) {
             case NEOCARIDINA -> Range.fresh(6.2, 8.2, 80, 500);
+            case CARIDINA -> CARIDINA; // M25 part c: soft water only
+            case SULAWESI_SHRIMP, TYLOMELANIA -> SULAWESI;
             case DWARF_CRAYFISH -> Range.fresh(6.5, 8.5, 100, 600);
             case RAMSHORN, BLADDER_SNAIL, TRUMPET_SNAIL -> Range.fresh(6.2, 8.6, 50, 800);
             default -> s.isSnail() ? SNAIL : Range.TOLERANT;

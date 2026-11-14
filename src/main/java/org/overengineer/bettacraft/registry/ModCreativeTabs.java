@@ -97,6 +97,9 @@ public final class ModCreativeTabs {
                 // M25 part b: CO2 and reverse osmosis
                 for (var it : java.util.List.of(ModItems.YEAST, ModItems.BIO_CO2, ModItems.CO2_STATION, ModItems.CO2_SOLENOID, ModItems.RO_UNIT,
                         ModItems.RO_MEMBRANE, ModItems.RO_PREFILTER, ModItems.RO_WATER_BUCKET)) out.accept(it.get());
+                // M25 part c: reef dosing
+                for (var it : java.util.List.of(ModItems.DOSING_PUMP, ModItems.DOSING_CANISTER, ModItems.CALCIUM_CANISTER, ModItems.ALKALINITY_CANISTER,
+                        ModItems.MAGNESIUM_CANISTER, ModItems.TRACE_CANISTER)) out.accept(it.get());
                 out.accept(ModItems.CO2_CYLINDER.get());
                 ItemStack fullCylinder = new ItemStack(ModItems.CO2_CYLINDER.get());
                 org.overengineer.bettacraft.co2.Co2CylinderItem.setGas(fullCylinder, 1e9F);

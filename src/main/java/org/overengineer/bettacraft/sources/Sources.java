@@ -72,7 +72,7 @@ public final class Sources {
                     String target = key(e.getKey());
                     int[] n = netCount(e.getKey());
                     String cond = e.getKey() instanceof TankmateSpecies s && s.seahorse() ? "features.seahorses"
-                            : e.getKey() == CritterSpecies.YELLOW_NERITE ? "features.snailColors"
+                            : e.getKey() instanceof CritterSpecies cs && cs.feature() != null ? cs.feature()
                             : e.getKey() instanceof PlantSpecies p && !p.marine() ? "features.plantNetCatches" : null;
                     out.add(new Source(Source.Kind.NET, target, where, lo, e.getValue(), n[0], n[1], 0, false, cond, null));
                 }
@@ -95,7 +95,7 @@ public final class Sources {
                 case SHRIMP -> new int[]{1, 3};
                 case CRAYFISH -> new int[]{1, 1};
                 case SNAIL -> s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.RED_NERITE
-                        || s == CritterSpecies.YELLOW_NERITE ? new int[]{1, 1} : new int[]{1, 2};
+                        || s == CritterSpecies.YELLOW_NERITE || s == CritterSpecies.TYLOMELANIA ? new int[]{1, 1} : new int[]{1, 2};
             };
         }
         return new int[]{1, 1};
@@ -173,7 +173,7 @@ public final class Sources {
             for (var c : table) {
                 int wt = (int) Math.max(1, Math.round(critters * c.weight() / total));
                 out.add(new Source(Source.Kind.SPAWN, Target.critter(c.species()), where, wt, wt, 2, 5, 0, false,
-                        c.species() == CritterSpecies.YELLOW_NERITE ? "features.snailColors" : "features.wildCritters", null));
+                        c.species().feature() != null ? c.species().feature() : "features.wildCritters", null));
             }
         }
         for (var e : WildTables.WILD_CORALS.entries()) {

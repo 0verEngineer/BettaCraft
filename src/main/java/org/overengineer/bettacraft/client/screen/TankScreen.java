@@ -953,6 +953,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     Component.translatable("gui.bettacraft.co2.state." + w.co2State)).withStyle(f));
         }
         if (salty) out.add(Component.translatable("gui.bettacraft.water.chem_tip.salt").withStyle(ChatFormatting.GRAY));
+        if (salty && w.dosingOn && org.overengineer.bettacraft.tank.Salinity.marine(w.salinity)) { // M25 part c: Balling light
+            boolean low = w.kh < 6 || w.magnesium < 1150;
+            out.add(Component.translatable("gui.bettacraft.water.reef_tip", String.format(java.util.Locale.ROOT, "%.1f", w.kh), Math.round(w.magnesium),
+                    Math.round(w.trace * 100)).withStyle(low ? ChatFormatting.GOLD : ChatFormatting.AQUA));
+            if (low) out.add(Component.translatable("gui.bettacraft.water.reef_tip.low").withStyle(ChatFormatting.GOLD));
+            if (org.overengineer.bettacraft.chem.WaterChemistry.traceBonus(w.trace))
+                out.add(Component.translatable("gui.bettacraft.water.reef_tip.trace").withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
         if (drivers.isEmpty()) out.add(Component.translatable("gui.bettacraft.water.chem_tip.nothing").withStyle(ChatFormatting.GRAY));
         else {
             MutableComponent l = Component.translatable("gui.bettacraft.water.chem_tip.drivers").withStyle(ChatFormatting.GRAY);
@@ -1048,7 +1056,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (kind == org.overengineer.bettacraft.tank.Salinity.Kind.MARINE) {
             ChatFormatting ca = w.calcium < 300 ? ChatFormatting.RED : w.calcium < 380 ? ChatFormatting.GOLD : ChatFormatting.GREEN;
             int no3 = w.nitrateInterval > 0 ? Math.round(w.nitrate) : org.overengineer.bettacraft.tank.Salinity.nitrate(w.quality); // M24: its own value
-            c.append(Component.translatable("gui.bettacraft.reef.calcium", Math.round(w.calcium)).withStyle(ca))
+            c.append(Component.translatable("gui.bettacraft.reef.calcium", Math.round(w.calcium)).withStyle(ca));
+            if (w.dosingOn) { // M25 part c: the alkalinity next to the calcium
+                c.append(Component.translatable("gui.bettacraft.reef.kh", String.format(java.util.Locale.ROOT, "%.1f", w.kh))
+                        .withStyle(w.kh < 5 ? ChatFormatting.RED : w.kh < 6 ? ChatFormatting.GOLD : ChatFormatting.GREEN));
+            }
+            c
                     .append(Component.translatable("gui.bettacraft.reef.nitrate", no3).withStyle(no3 > 40 ? ChatFormatting.RED : no3 > 20 ? ChatFormatting.GOLD : ChatFormatting.GREEN));
         }
         return c;

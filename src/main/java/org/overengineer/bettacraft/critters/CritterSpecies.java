@@ -44,13 +44,25 @@ public enum CritterSpecies {
     HERMIT_CRAB("hermit_crab", Group.SNAIL, Model.HERMIT, 0.2, 0.045, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 22, 28, 0.35, 0.03, 0.8,
             new String[0], 0x3A6AD0),
     TURBO_SNAIL("turbo_snail", Group.SNAIL, Model.TURBO, 0.3, 0.025, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 22, 28, 0.4, 0.03, 2.5,
-            new String[0], 0x6A6A3E);
+            new String[0], 0x6A6A3E),
+    // M25 part c: Caridina bee shrimp (soft water; one species with the colour lines of the trade: Crystal Red, Crystal
+    // Black, the Taiwan bee factor - alone Blue Bolt, with red Wine Red - and the Tiger line, Orange Eye Blue Tiger),
+    // their banding grade (A, S, SS, SSS) is the grade; fewer young than the Neocaridina, cooler water. Not crossable with them.
+    CARIDINA("caridina", Group.SHRIMP, Model.SHRIMP, 0.2, 0.08, true, Breeding.PAIR_BERRIED, 0.25, 2.5, 2, 6, 4.0, 18, 26, 0.5, 0.03, 0.06,
+            new String[]{"red", "black", "taiwan", "tiger"}, 0x5C524A),
+    // M25 part c: the Sulawesi animals of the ancient lakes (hard, warm, alkaline water): the cardinal shrimp (Caridina
+    // dennerli, red with white dots, few young) and the Tylomelania (rabbit snails: big cone shells, orange body, one
+    // live young at a time)
+    SULAWESI_SHRIMP("sulawesi_shrimp", Group.SHRIMP, Model.SHRIMP, 0.17, 0.07, true, Breeding.PAIR_BERRIED, 0.12, 3.0, 1, 4, 5.0, 25, 31, 0.55, 0.025, 0.1,
+            new String[0], 0xC8261E),
+    TYLOMELANIA("tylomelania", Group.SNAIL, Model.TYLOMELANIA, 0.42, 0.02, true, Breeding.PAIR, 0.05, 0, 1, 1, 8.0, 24, 30, 0.35, 0.03, 0.8,
+            new String[0], 0x3A2C22);
 
     /** Stocking group: how many of them count as one fish ({@code stocking.*PerFish}). */
     public enum Group { SHRIMP, CRAYFISH, SNAIL }
 
     /** Body plan of the renderer (and of tools/assetgen/critters.py). */
-    public enum Model { SHRIMP, CRAYFISH, NERITE, APPLE, RAMSHORN, BLADDER, TRUMPET, ASSASSIN, HERMIT, TURBO }
+    public enum Model { SHRIMP, CRAYFISH, NERITE, APPLE, RAMSHORN, BLADDER, TRUMPET, ASSASSIN, HERMIT, TURBO, TYLOMELANIA }
 
     public enum Breeding {
         /** No eggs, no young in fresh water (nerites). */
@@ -145,6 +157,27 @@ public enum CritterSpecies {
     public boolean hasGrade() { return loci.length > 0; }
     /** M20: a reef animal (salt water). */
     public boolean marine() { return org.overengineer.bettacraft.reef.SaltTolerance.critter(this).marine(); }
+
+    /** M25 part c: the feature switch this species belongs to (null = always there). */
+    @Nullable
+    public String feature() {
+        return switch (this) {
+            case CARIDINA -> "features.caridina";
+            case SULAWESI_SHRIMP, TYLOMELANIA -> "features.sulawesi";
+            case YELLOW_NERITE -> "features.snailColors";
+            default -> null;
+        };
+    }
+
+    /** M25 part c: whether new animals of this species come from the net, the wild and the trader (its feature switch). */
+    public boolean available() {
+        return switch (this) {
+            case CARIDINA -> org.overengineer.bettacraft.config.CommonConfig.caridina();
+            case SULAWESI_SHRIMP, TYLOMELANIA -> org.overengineer.bettacraft.config.CommonConfig.sulawesi();
+            case YELLOW_NERITE -> org.overengineer.bettacraft.config.CommonConfig.snailColors();
+            default -> true;
+        };
+    }
 
     public String translationKey() {
         return "critter.bettacraft." + id;

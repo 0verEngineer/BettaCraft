@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "N": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "pattern": [
+    " N ",
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "count": 2,
+    "id": "bettacraft:dosing_canister"
+  }
+}

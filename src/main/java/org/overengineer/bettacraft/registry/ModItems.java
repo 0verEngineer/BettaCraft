@@ -276,6 +276,22 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> CO2_STATION = ITEMS.registerSimpleBlockItem(ModBlocks.CO2_STATION);
     public static final DeferredItem<BlockItem> RO_UNIT = ITEMS.registerSimpleBlockItem(ModBlocks.RO_UNIT);
 
+    // M25 part c: reef dosing
+    public static final DeferredItem<BlockItem> DOSING_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.DOSING_PUMP);
+    public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> DOSING_CANISTER = canister("dosing_canister", null);
+    public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> CALCIUM_CANISTER = canister("calcium_canister",
+            org.overengineer.bettacraft.reef.ReefDosing.Additive.CALCIUM);
+    public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> ALKALINITY_CANISTER = canister("alkalinity_canister",
+            org.overengineer.bettacraft.reef.ReefDosing.Additive.ALKALINITY);
+    public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> MAGNESIUM_CANISTER = canister("magnesium_canister",
+            org.overengineer.bettacraft.reef.ReefDosing.Additive.MAGNESIUM);
+    public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> TRACE_CANISTER = canister("trace_canister",
+            org.overengineer.bettacraft.reef.ReefDosing.Additive.TRACE);
+
+    private static DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> canister(String id, org.overengineer.bettacraft.reef.ReefDosing.Additive a) {
+        return ITEMS.register(id, () -> new org.overengineer.bettacraft.reef.DosingCanisterItem(a, new Item.Properties().stacksTo(a == null ? 16 : 1)));
+    }
+
     private static DeferredItem<org.overengineer.bettacraft.chem.ChemItem> chem(String id, org.overengineer.bettacraft.chem.ChemItem.Kind kind, Item.Properties props) {
         return ITEMS.register(id, () -> new org.overengineer.bettacraft.chem.ChemItem(kind, props));
     }

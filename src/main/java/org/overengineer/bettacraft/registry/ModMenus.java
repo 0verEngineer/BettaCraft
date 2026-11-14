@@ -25,6 +25,10 @@ public final class ModMenus {
     public static final Supplier<MenuType<org.overengineer.bettacraft.crucible.CrucibleMenu>> CRUCIBLE = MENUS.register("crucible",
             () -> IMenuTypeExtension.create(org.overengineer.bettacraft.crucible.CrucibleMenu::new));
 
+    /** M25 part c: the dosing pump. */
+    public static final Supplier<MenuType<org.overengineer.bettacraft.reef.DosingPumpMenu>> DOSING_PUMP = MENUS.register("dosing_pump",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.reef.DosingPumpMenu::new));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

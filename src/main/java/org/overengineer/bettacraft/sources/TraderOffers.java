@@ -117,6 +117,26 @@ public final class TraderOffers {
                     CritterSpecies s = random.nextBoolean() ? CritterSpecies.RED_NERITE : CritterSpecies.YELLOW_NERITE;
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 4), Optional.empty(), TankCritters.bagOf(s, 2, () -> CritterGenes.WILD, rnd, false), 3, 1, 0.05F);
                 }));
+        // M25 part c: crystal bee shrimp (A or S grade) and the Sulawesi animals, rare
+        out.add(new Offer("caridina", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.CARIDINA), 2, 8, 1.0, false, "features.caridina")),
+                (trader, random) -> {
+                    if (!CommonConfig.caridina()) return null;
+                    RandomGenerator rnd = random::nextLong;
+                    int line = random.nextBoolean() ? CritterGenes.CARIDINA_RED : CritterGenes.CARIDINA_BLACK;
+                    float grade = 0.2F + random.nextFloat() * 0.3F;
+                    return new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(),
+                            TankCritters.bagOf(CritterSpecies.CARIDINA, 2, () -> CritterGenes.pure(line, grade), rnd, true), 2, 1, 0.05F);
+                }));
+        out.add(new Offer("sulawesi", Slot.RARE, 2, () -> List.of(
+                new Product(Target.critter(CritterSpecies.SULAWESI_SHRIMP), 2, 7, 0.5, false, "features.sulawesi"),
+                new Product(Target.critter(CritterSpecies.TYLOMELANIA), 2, 7, 0.5, false, "features.sulawesi")),
+                (trader, random) -> {
+                    if (!CommonConfig.sulawesi()) return null;
+                    RandomGenerator rnd = random::nextLong;
+                    ItemStack bag = random.nextBoolean() ? TankCritters.bagOf(CritterSpecies.SULAWESI_SHRIMP, 2, () -> CritterGenes.WILD, rnd, true)
+                            : TankCritters.bagOf(CritterSpecies.TYLOMELANIA, 2, () -> CritterGenes.WILD, rnd, true);
+                    return new MerchantOffer(new ItemCost(Items.EMERALD, 7), Optional.empty(), bag, 2, 1, 0.05F);
+                }));
         out.add(new Offer("assassin_snail", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.ASSASSIN_SNAIL), 1, 4)),
                 offer(4, 2, (r, rnd) -> TankCritters.bagOf(CritterSpecies.ASSASSIN_SNAIL, 1, () -> CritterGenes.WILD, rnd, false))));
         out.add(new Offer("dwarf_clawed_frog", Slot.RARE, 2, () -> List.of(new Product(Target.FROG, 1, 6)),

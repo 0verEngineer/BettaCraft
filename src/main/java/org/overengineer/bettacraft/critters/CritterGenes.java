@@ -109,6 +109,10 @@ public record CritterGenes(int a, int b, float grade) {
     public static final int WILD_COLOR = -1;
     /** Neocaridina black + yellow at once. */
     public static final int CHOCOLATE = 100;
+    /** M25 part c: Caridina with the Taiwan bee factor on the red line (Wine Red). */
+    public static final int WINE_RED = 101;
+    /** M25 part c: loci of the Caridina. */
+    public static final int CARIDINA_RED = 0, CARIDINA_BLACK = 1, CARIDINA_TAIWAN = 2, CARIDINA_TIGER = 3;
 
     /**
      * The colour an animal of {@code species} shows: the index of its locus, {@link #WILD_COLOR}, or (Neocaridina)
@@ -120,6 +124,10 @@ public record CritterGenes(int a, int b, float grade) {
         if (hom == 0) return WILD_COLOR;
         if (Integer.bitCount(hom) == 1) return Integer.numberOfTrailingZeros(hom);
         if (species == CritterSpecies.NEOCARIDINA && hom == ((1 << 2) | (1 << 5))) return CHOCOLATE; // yellow + black
+        if (species == CritterSpecies.CARIDINA) { // M25 part c: the Taiwan bee factor on a crystal line
+            if (hom == ((1 << CARIDINA_TAIWAN) | (1 << CARIDINA_RED))) return WINE_RED;
+            if (hom == ((1 << CARIDINA_TAIWAN) | (1 << CARIDINA_BLACK))) return CARIDINA_TAIWAN; // Blue Bolt from the black line
+        }
         return WILD_COLOR;
     }
 
@@ -128,10 +136,27 @@ public record CritterGenes(int a, int b, float grade) {
      * ({@code red_cherry}, {@code sakura}, {@code fire_red}, {@code painted_fire_red}).
      */
     public String variety(CritterSpecies species) {
-        int c = color(species);
+        return varietyOf(species, color(species), grade);
+    }
+
+    /**
+     * The variety id of a colour ({@code c} as from {@link #color}) at a grade (also on the client, which only gets the
+     * colour and the grade). M25 part c: Caridina crystal lines by their banding grade ({@code crystal_red},
+     * {@code crystal_red_s}, {@code _ss}, {@code _sss}; the same for black), {@code blue_bolt}, {@code wine_red},
+     * {@code orange_eye_blue_tiger}.
+     */
+    public static String varietyOf(CritterSpecies species, int c, float grade) {
         if (c == CHOCOLATE) return "chocolate";
-        if (c == WILD_COLOR) return "wild";
+        if (c == WINE_RED) return species == CritterSpecies.CARIDINA ? "wine_red" : "wild";
+        if (c == WILD_COLOR || c < 0 || c >= species.loci().length) return "wild";
         String locus = species.loci()[c];
+        if (species == CritterSpecies.CARIDINA) {
+            return switch (locus) {
+                case "red", "black" -> "crystal_" + locus + bandingSuffix(grade);
+                case "taiwan" -> "blue_bolt";
+                default -> "orange_eye_blue_tiger";
+            };
+        }
         if (species == CritterSpecies.NEOCARIDINA) {
             return switch (locus) {
                 case "red" -> grade < 0.3F ? "red_cherry" : grade < 0.55F ? "sakura" : grade < 0.8F ? "fire_red" : "painted_fire_red";
@@ -142,6 +167,16 @@ public record CritterGenes(int a, int b, float grade) {
             };
         }
         return locus;
+    }
+
+    /** M25 part c: banding grade of a crystal Caridina: A (no suffix) below 0.35, S, SS from 0.6, SSS from 0.82. */
+    public static String bandingSuffix(float grade) {
+        return grade < 0.35F ? "" : grade < 0.6F ? "_s" : grade < 0.82F ? "_ss" : "_sss";
+    }
+
+    /** M25 part c: banding grade 0 (A) .. 3 (SSS), as {@link #bandingSuffix}. */
+    public static int banding(float grade) {
+        return grade < 0.35F ? 0 : grade < 0.6F ? 1 : grade < 0.82F ? 2 : 3;
     }
 
     /** Translation key of the variety name, e.g. {@code variety.bettacraft.neocaridina.sakura}. */
@@ -167,6 +202,7 @@ public record CritterGenes(int a, int b, float grade) {
     /** Full colour of a variety ({@code color} as from {@link #color}). */
     public static int fullColor(CritterSpecies species, int color) {
         if (color == CHOCOLATE) return 0x4A2A1A;
+        if (color == WINE_RED) return species == CritterSpecies.CARIDINA ? 0x6E0E26 : species.wildColor();
         if (color < 0 || color >= species.loci().length) return species.wildColor();
         return switch (species.id() + ":" + species.loci()[color]) {
             case "neocaridina:red" -> 0xD8241A;
@@ -176,6 +212,10 @@ public record CritterGenes(int a, int b, float grade) {
             case "neocaridina:green" -> 0x2E7A40;
             case "neocaridina:black" -> 0x1C1A24;
             case "dwarf_crayfish:orange" -> 0xF06A1A;
+            case "caridina:red" -> 0xC81A1E; // M25 part c: the bands of a Crystal Red
+            case "caridina:black" -> 0x16141C;
+            case "caridina:taiwan" -> 0x3C86E0; // Blue Bolt
+            case "caridina:tiger" -> 0x1E3A9C; // Orange Eye Blue Tiger
             case "apple_snail:gold" -> org.overengineer.bettacraft.config.CommonConfig.snailColors() ? 0xF4C414 : 0xE8B828; // M21.5: a stronger yellow
             case "apple_snail:blue" -> 0x5A7CB0;
             case "apple_snail:purple" -> 0x6A3A72;

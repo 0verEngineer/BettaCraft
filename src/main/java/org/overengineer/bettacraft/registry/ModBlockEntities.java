@@ -86,6 +86,10 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.osmosis.RoUnitBlockEntity>> RO_UNIT = BLOCK_ENTITIES.register("ro_unit",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.osmosis.RoUnitBlockEntity::new, ModBlocks.RO_UNIT.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.reef.DosingPumpBlockEntity>> DOSING_PUMP = BLOCK_ENTITIES.register("dosing_pump",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.reef.DosingPumpBlockEntity::new, ModBlocks.DOSING_PUMP.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

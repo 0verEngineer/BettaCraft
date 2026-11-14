@@ -43,7 +43,9 @@ public final class ItemHints {
             // M25: water chemistry
             "tds_meter", "ph_test_kit", "remineralising_salt", "almond_leaf",
             // M25 part b: CO2 and reverse osmosis
-            "yeast", "bio_co2", "co2_cylinder", "co2_solenoid", "co2_station", "ro_unit", "ro_membrane", "ro_prefilter", "ro_water_bucket");
+            "yeast", "bio_co2", "co2_cylinder", "co2_solenoid", "co2_station", "ro_unit", "ro_membrane", "ro_prefilter", "ro_water_bucket",
+            // M25 part c: reef dosing
+            "dosing_pump", "dosing_canister", "calcium_canister", "alkalinity_canister", "magnesium_canister", "trace_canister");
 
     private ItemHints() {}
 

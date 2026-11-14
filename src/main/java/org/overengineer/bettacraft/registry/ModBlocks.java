@@ -271,6 +271,11 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.osmosis.RoUnitBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    /** M25 part c: the dosing pump of a reef tank. */
+    public static final DeferredBlock<org.overengineer.bettacraft.reef.DosingPumpBlock> DOSING_PUMP = BLOCKS.register("dosing_pump",
+            () -> new org.overengineer.bettacraft.reef.DosingPumpBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)

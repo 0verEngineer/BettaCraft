@@ -128,8 +128,10 @@ public final class TankInteractions {
         long added = tank.waterMb() - before;
         if (added > 0) {
             float salinityBefore = tank.salinity();
+            org.overengineer.bettacraft.reef.ReefDosing.Snapshot reef = org.overengineer.bettacraft.reef.ReefDosing.Snapshot.of(tank); // M25 part c
             tank.setSalinity(Salinity.mix(salinityBefore, before, addedPpt, added));
             tank.setCalcium(Salinity.mixCalcium(tank.calcium(), before, Salinity.calciumOf(addedPpt), added));
+            reef.mixIn(tank, before, addedPpt, added);
             if (Salinity.kind(salinityBefore) != Salinity.kind(tank.salinity()) && before > 0) {
                 TankCare.log(level, controller, "log.bettacraft.salinity_" + Salinity.kind(tank.salinity()).name().toLowerCase(java.util.Locale.ROOT),
                         String.format(java.util.Locale.ROOT, "%.1f", tank.salinity()));
@@ -161,8 +163,10 @@ public final class TankInteractions {
         long added = tank.waterMb() - before;
         if (added > 0) {
             float salinityBefore = tank.salinity();
+            org.overengineer.bettacraft.reef.ReefDosing.Snapshot reef = org.overengineer.bettacraft.reef.ReefDosing.Snapshot.of(tank); // M25 part c
             tank.setSalinity(Salinity.mix(salinityBefore, before, v.salinity(), added));
             tank.setCalcium(Salinity.mixCalcium(tank.calcium(), before, v.calcium(), added));
+            reef.mixIn(tank, before, v.salinity(), added);
             if (Salinity.kind(salinityBefore) != Salinity.kind(tank.salinity()) && before > 0) {
                 TankCare.log(level, controller, "log.bettacraft.salinity_" + Salinity.kind(tank.salinity()).name().toLowerCase(java.util.Locale.ROOT),
                         String.format(java.util.Locale.ROOT, "%.1f", tank.salinity()));

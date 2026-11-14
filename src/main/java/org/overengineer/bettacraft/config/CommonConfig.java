@@ -58,6 +58,9 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_WATER_CHEMISTRY;
     public static final ModConfigSpec.BooleanValue FEATURE_CO2;
     public static final ModConfigSpec.BooleanValue FEATURE_REVERSE_OSMOSIS;
+    public static final ModConfigSpec.BooleanValue FEATURE_CARIDINA;
+    public static final ModConfigSpec.BooleanValue FEATURE_SULAWESI;
+    public static final ModConfigSpec.BooleanValue FEATURE_REEF_DOSING;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -177,6 +180,12 @@ public final class CommonConfig {
                 "plants grow faster, lowers the pH and too much harms the animals (off: the devices give no CO2)").define("co2", true);
         FEATURE_REVERSE_OSMOSIS = b.comment("Reverse osmosis unit: makes reverse osmosis water (nothing dissolved) from water, with a membrane and a prefilter",
                 "that wear out (off: it does not run)").define("reverseOsmosis", true);
+        FEATURE_CARIDINA = b.comment("Caridina bee shrimp (Crystal Red, Crystal Black, Taiwan bees, Tiger) for soft water, with their banding grades",
+                "(off: no new ones from the net, the wild and the trader; those in tanks stay)").define("caridina", true);
+        FEATURE_SULAWESI = b.comment("Sulawesi animals: cardinal shrimp and Tylomelania snails for hard, warm water (off: no new ones from the net, the",
+                "wild and the trader; those in tanks stay)").define("sulawesi", true);
+        FEATURE_REEF_DOSING = b.comment("Reef dosing: alkalinity (KH), magnesium and trace elements in salt water, used up by the stony corals, and the",
+                "dosing pump with up to four canisters (off: the values stand still and the pump does not dose)").define("reefDosing", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -284,6 +293,9 @@ public final class CommonConfig {
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }
     public static boolean co2() { return getOr(FEATURE_CO2, true); }
     public static boolean reverseOsmosis() { return getOr(FEATURE_REVERSE_OSMOSIS, true); }
+    public static boolean caridina() { return getOr(FEATURE_CARIDINA, true); }
+    public static boolean sulawesi() { return getOr(FEATURE_SULAWESI, true); }
+    public static boolean reefDosing() { return getOr(FEATURE_REEF_DOSING, true); }
 
     private CommonConfig() {}
 }

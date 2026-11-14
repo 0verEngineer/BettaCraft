@@ -60,7 +60,7 @@ public final class Corals {
     /** All conditions except the light (0..1): the colour and the menu use it. */
     public static double conditions(InteriorPlants.Env env, PlantSpecies s) {
         double c = salinityFactor(env.salinity()) * env.coralTemp() * flowFactor(env.flow(), s.flow()) * waterFactor(env.quality(), s.stony());
-        if (s.stony()) c *= calciumFactor(env.calcium());
+        if (s.stony()) c *= calciumFactor(env.calcium()) * env.reefChem(); // M25 part c: alkalinity, magnesium, pH
         return c;
     }
 
@@ -82,7 +82,7 @@ public final class Corals {
         if (salinityFactor(env.salinity()) <= 0 || env.coralTemp() <= 0 || env.light() < 4) return 0;
         double c = salinityFactor(env.salinity()) * env.coralTemp() * waterFactor(env.quality(), s.stony()) * flowFactor(env.flow(), s.flow());
         if (c < 0.3) return 1;
-        return env.glow() ? 3 : 2;
+        return env.glow() || env.trace() ? 3 : 2; // M25 part c: trace elements bring out the strong colours too
     }
 
     /**
@@ -105,5 +105,6 @@ public final class Corals {
         double per = ServerConfig.getOr(ServerConfig.REEF_CALCIUM_PER_STAGE, 40.0);
         if (per <= 0 || t.waterMb() <= 0) return;
         t.setCalcium((float) Math.max(0, t.calcium() - per / Math.max(1.0, t.waterBlocks())));
+        ReefDosing.useWithCalcium(t, per); // M25 part c: the alkalinity and a little magnesium go with it
     }
 }

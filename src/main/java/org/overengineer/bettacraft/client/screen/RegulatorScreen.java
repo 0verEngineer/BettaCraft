@@ -39,9 +39,11 @@ public class RegulatorScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal("-"), b -> send(-1, true)).bounds(left + 10, top + 46, 20, 20).build());
         addRenderableWidget(Button.builder(Component.literal("+"), b -> send(1, true)).bounds(left + W - 30, top + 46, 20, 20).build());
         int[] quick = {0, 5, 10};
+        Regulator.Device dev = device();
         for (int i = 0; i < quick.length; i++) {
             int v = quick[i];
-            addRenderableWidget(Button.builder(Component.literal(v * 10 + " %"), b -> send(v, false))
+            Component q = dev != null ? dev.quickLabel(v) : null; // M25c: the CO2 cylinder in bubbles per second
+            addRenderableWidget(Button.builder(q != null ? q : Component.literal(v * 10 + " %"), b -> send(v, false))
                     .bounds(left + 10 + i * ((W - 20) / 3), top + 74, (W - 20) / 3 - 6, 18).build());
         }
     }
@@ -81,7 +83,8 @@ public class RegulatorScreen extends Screen {
                     : Component.translatable("gui.bettacraft.regulator.sponge_off").withStyle(ChatFormatting.GOLD);
         }
         if (note != null) g.drawCenteredString(font, note, left + W / 2, top + 34, 0xFFFFFF);
-        g.drawCenteredString(font, Component.translatable("gui.bettacraft.regulator.hint").withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, 0xA0A0A0);
+        Component hint = d.hint() != null ? d.hint() : Component.translatable("gui.bettacraft.regulator.hint");
+        g.drawCenteredString(font, hint.copy().withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, 0xA0A0A0);
     }
 
     @Override
