@@ -40,6 +40,17 @@ grows stage by stage over the days when the conditions are right:
 | Acropora | stony (SPS) | branches | strong | strong | yes, clean water | frags |
 | Bubble Tip Anemone | anemone | tentacles | medium | medium | no | home of the clownfish |
 
+## Shape and movement
+
+Every coral has its own shape that moves in the water, inside and in the miniature: **zoanthids** stand on columns over
+a thin mat, **green star polyps** cover the rock with a purple mat and green stars; both **close for a moment when a
+fish swims by** (or you swim up to them inside). **Mushroom corals** slowly lift and lower their discs, the **leather
+coral** has a rigid trunk and a cap whose polyp lawn waves, **Acropora** and **Lobophyllia** are rigid with small
+waving polyps, the **hammer coral** sways and pulses with its hammer-tipped tentacles and the **bubble tip anemone**
+with its tentacles. Minecraft's corals and coral fans sway a little in the miniature too.
+
+![Corals with their shapes](../images/reef_corals_mesh.png)
+
 ## Colours
 
 ![Acropora bleached, pale, healthy and glowing under actinic light](../images/reef_coral_colors.png)

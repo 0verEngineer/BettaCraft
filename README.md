@@ -36,7 +36,11 @@ block.
   miniature grows along; red plants get redder in strong light. Trim with shears (inside or from outside on the
   glass), divide rhizomes, take plants out by their root. They clean the water, hide the female after spawning and
   give a small breeding bonus. Found by fishing in jungles, rivers and swamps, in swamp water, on moss next to water
-  and from the wandering trader.
+  and from the wandering trader. Every plant and coral is drawn with real leaves, polyps and tentacles that move in the
+  water, inside and in the miniature outside (each player can switch back to the block look: `render.plantMeshes`);
+  zoanthids and star polyps close when a fish swims by. Kelp, seagrass and corals sway in the miniature too.
+- **Containers:** every bucket, bag and bottle empties everywhere: into the world and the sea, cauldrons, every tank and
+  other mods' tanks; bottles pour out without a water block. Animals only go free into the world after a confirmation.
 - **Small animals:** Neocaridina shrimp in eleven colours, the orange dwarf crayfish (CPO), nerites (the red and yellow
   racer nerites each in their own shade), apple snails (mostly gold, some with bands), ramshorns (red-brown, pink, blue,
   red), bladder, trumpet and assassin snails crawl over the floor, the decoration, the
@@ -153,7 +157,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   `#bettacraft:betta_food`, `#bettacraft:live_food`, `#bettacraft:fry_food`, `#bettacraft:fry_food_start`,
   `#bettacraft:pellet_fish`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
   `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
-  `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior` (blocks).
+  `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior`, `#bettacraft:swaying_plants` (blocks).
 - **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`),
   `inhabitants.maxHitbox`, `inhabitants.refuseHostile`, `inhabitants.tadpoles`, `inhabitants.outgrown`; `/bettacraft wateranimals` writes a table
   of every water animal of the loaded mods and whether aquariums take it.

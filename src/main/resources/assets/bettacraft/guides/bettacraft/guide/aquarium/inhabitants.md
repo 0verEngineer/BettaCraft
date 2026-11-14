@@ -30,6 +30,17 @@ breed. Small water animals that get into the aquarium without a bucket (spawn eg
   button also fills an empty Better Fish Tanks fish bag (-100 mB) or a Fintastic fishnet (no water).
 * **Directly:** right-click a fish in the aquarium with a water bucket, like anywhere else.
 
+## Emptying buckets, bags and bottles
+
+* **Animals into the world:** an animal bucket or a filled fish or critter bag used on the world (the ground, a pond,
+  the sea from the shore or a boat) first asks in a small screen: *Cancel* keeps the animals, *Empty* lets them go.
+  Into an aquarium they go without asking (the net brings them back).
+* **Buckets:** the sea water bucket pours like a water bucket, also into the sea and other water surfaces, into a
+  cauldron, from a dispenser and into other mods' tanks and pipes.
+* **Bottles** (salt water, swamp water, infusoria, artemia nauplii): sneak + right-click (or right-click into the air)
+  pours them out anywhere: a splash, an empty glass bottle, no water block. In an aquarium they work as before.
+* An empty fish bag can be shaken out with sneak + right-click.
+
 ## Stocking
 
 The stocking counts **fish**. Adults count fully, the young only a little (they are small and eat little):

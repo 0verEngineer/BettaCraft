@@ -138,6 +138,7 @@ public final class DevSmokeMP {
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
             case "seahorses" -> checkSeahorses(name, a);
+            case "containers" -> checkContainers(name, a);
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -368,6 +369,54 @@ public final class DevSmokeMP {
         check(name + ": water drawn with " + a[2] + " ppt", Integer.parseInt(a[2]) == Math.round(c.getTank().salinity()));
         check(name + ": " + a[3] + " clownfish (server " + fish + ")", Integer.parseInt(a[3]) == fish && fish >= 2);
         check(name + ": " + a[4] + " coral blocks in the miniature (server " + coral + ")", Integer.parseInt(a[4]) == coral && coral > 1);
+    }
+
+    /** M22.1: the pool (8 deep, glass walls) and the stone pad of the container steps, west of the seahorse tank. */
+    private static BlockPos poolMin() {
+        return base.offset(-24, 0, 6);
+    }
+
+    /** M22.1: Dev1 stands over {@code at} (the block below its feet + 1), looking straight down. */
+    private static void overBlock(ServerPlayer p, BlockPos at) {
+        p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 0F, 90F);
+    }
+
+    /**
+     * M22.1 {@code containers <what> <hand item> <block at the spot> <bettas near> <screen>} from Dev1 after each use: the
+     * client sees what the server did (no ghost water, no ghost item, no ghost animal).
+     */
+    private static void checkContainers(String name, String[] a) {
+        if (a.length < 6) {
+            fail(name + ": short container report");
+            return;
+        }
+        ServerPlayer p = player(name);
+        String hand = p == null ? "?" : net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(p.getMainHandItem().getItem()).toString();
+        check(name + ": " + a[1] + ": the item in the hand " + a[2] + " (server " + hand + ")", hand.equals(a[2]));
+        switch (a[1]) {
+            case "sea" -> {
+                check(name + ": the sea water bucket emptied into the deep water (" + a[2] + ")", "minecraft:bucket".equals(a[2]));
+                check(name + ": the pool is still water on the client (" + a[3] + ")", "water".equals(a[3]));
+            }
+            case "ask" -> {
+                check(name + ": the confirm screen opened (" + a[5] + ")", "screen".equals(a[5]));
+                check(name + ": the betta bucket still full while asking (" + a[2] + ")", "bettacraft:betta_bucket".equals(a[2]));
+                check(name + ": no water on the pad before the confirmation (" + a[3] + ")", "air".equals(a[3]));
+                check(name + ": no betta before the confirmation (" + a[4] + ")", "0".equals(a[4]));
+            }
+            case "release" -> {
+                int bettas = p == null ? -1 : p.serverLevel().getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class,
+                        new net.minecraft.world.phys.AABB(poolMin().offset(8, 1, 1)).inflate(3)).size();
+                check(name + ": the confirmed betta bucket is empty (" + a[2] + ")", "minecraft:bucket".equals(a[2]));
+                check(name + ": the water of the bucket on the pad on the client (" + a[3] + ")", "water".equals(a[3]));
+                check(name + ": " + a[4] + " betta let go on the client (server " + bettas + ")", a[4].equals(String.valueOf(bettas)) && bettas == 1);
+            }
+            case "pour" -> {
+                check(name + ": the bottle poured out (" + a[2] + ")", "minecraft:glass_bottle".equals(a[2]));
+                check(name + ": no water block from the bottle on the client (" + a[3] + ")", "air".equals(a[3]));
+            }
+            default -> fail(name + ": unknown container report " + a[1]);
+        }
     }
 
     /** M21.8: the small seahorse tank (west of the cabinets). */
@@ -874,6 +923,58 @@ public final class DevSmokeMP {
             }
             say("seahorses", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":seahorses") && reports.containsKey(P2 + ":seahorses"), 20 * 30));
+        // M22.1: containers in multiplayer. Dev1 empties a sea water bucket into deep water (out of reach of the bottom), a
+        // betta bucket onto a stone pad (the confirm screen opens, nothing happens until "Empty"), pours a bottle out
+        // sneaking; after each the client reports what it sees (no ghost blocks, items or animals)
+        steps.add(new Step("containers: sea water bucket", () -> {
+            BlockPos min = poolMin();
+            ServerLevel level = server.overworld();
+            for (int x = -1; x <= 3; x++)
+                for (int z = -1; z <= 3; z++)
+                    for (int y = 0; y < 8; y++) {
+                        boolean wall = x == -1 || x == 3 || z == -1 || z == 3;
+                        level.setBlockAndUpdate(min.offset(x, y, z), wall ? net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState()
+                                : net.minecraft.world.level.block.Blocks.WATER.defaultBlockState());
+                    }
+            // the stone pad: bare, nothing on it (the dev world keeps the last run)
+            BlockPos pad = min.offset(8, 0, 1);
+            level.setBlockAndUpdate(pad, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+            for (int y = 1; y < 4; y++) level.setBlockAndUpdate(pad.above(y), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            for (var b : level.getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class, new net.minecraft.world.phys.AABB(pad).inflate(4))) b.discard();
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            overBlock(p, min.offset(1, 7, 1));
+            hand(P1, new ItemStack(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get()));
+            say("container", P1, "sea," + min.getX() + "," + (min.getY() + 7) + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":containers"), 20 * 30));
+        steps.add(new Step("containers: animals ask first", () -> {
+            reports.remove(P1 + ":containers");
+            BlockPos pad = poolMin().offset(8, 0, 1);
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            overBlock(p, pad.above(2));
+            org.overengineer.bettacraft.genetics.BettaGenome g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(net.minecraft.util.RandomSource.create(221));
+            hand(P1, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get()),
+                    org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
+            say("container", P1, "ask," + pad.getX() + "," + (pad.getY() + 1) + "," + pad.getZ());
+        }, () -> reports.containsKey(P1 + ":containers"), 20 * 30));
+        steps.add(new Step("containers: animals released", () -> {
+            reports.remove(P1 + ":containers");
+            BlockPos pad = poolMin().offset(8, 0, 1);
+            say("container", P1, "release," + pad.getX() + "," + (pad.getY() + 1) + "," + pad.getZ());
+        }, () -> reports.containsKey(P1 + ":containers"), 20 * 30));
+        steps.add(new Step("containers: bottle", () -> {
+            reports.remove(P1 + ":containers");
+            BlockPos pad = poolMin().offset(10, 0, 1);
+            ServerLevel level = server.overworld();
+            level.setBlockAndUpdate(pad, net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState());
+            for (int y = 1; y < 4; y++) level.setBlockAndUpdate(pad.above(y), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            overBlock(p, pad.above(2));
+            hand(P1, new ItemStack(org.overengineer.bettacraft.registry.ModItems.SALT_WATER_BOTTLE.get()));
+            say("container", P1, "pour," + pad.getX() + "," + (pad.getY() + 1) + "," + pad.getZ());
+        }, () -> reports.containsKey(P1 + ":containers"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             // M21.8: back to the default cyst stack size
             ServerConfig.FOOD_CYST_STACK.set(16);

@@ -4,6 +4,46 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.14.2-beta.1] - 2026-11-14
+
+A new look for every aquarium plant and coral, swaying water plants in the miniature, and every container empties
+everywhere (animals only after a confirmation).
+
+### Added
+- **Every aquarium plant with real leaves**, inside the tank and in the miniature outside, swaying in the water: Java
+  fern (long lanceolate fronds on a creeping rhizome), the four Bucephalandras (small wavy leaves, the Mini Needle with
+  needles), Java moss (fine sprigs), the three Cryptocorynes and the Amazon sword (rosettes of leaves on petioles),
+  Ludwigia and Alternanthera (stems with pairs of elliptic or narrow red leaves), Monte Carlo (tiny round leaves on
+  runners) and the red tiger lotus (bulb, mottled leaves under water, floating leaves on long petioles). Every species
+  has its own procedural leaf texture.
+- **Every coral and reef animal with a real shape**: zoanthids (a colony of polyps on columns over a thin mat) and green
+  star polyps (purple mat, green stars) that **close for a moment when a fish swims by** (or a player inside), mushroom
+  corals whose discs slowly rise and sink, the leather coral (rigid trunk, cap with a waving polyp lawn), Acropora
+  (rigid branches, thicker towards the base, pale tips, small waving polyps), Lobophyllia (a fleshy dome with its ridges
+  in the polyp colour), the hammer coral (stony skeleton with pulsing, hammer-tipped tentacles) and the bubble tip
+  anemone (foot, oral disc, swaying and pulsing tentacles with bubble tips).
+- **Kelp, seagrass, corals and coral fans sway in the miniature** outside the tank as well (they stood still at 1/16):
+  tag `#bettacraft:swaying_plants` for modpacks and mods, and other mods' underwater plants are found automatically
+  (`swaying.autoDetect`, exclusion list `swaying.exclude`); their own models and textures, swayed while drawn. Switch
+  `features.swayingForeignPlants`.
+- **Client settings** `render.plantMeshes` and `render.swayingPlants` (Mod settings in the game): every player chooses
+  the new or the old plant look and the swaying for themselves, also on a server; `features.plantMeshes` stays the
+  switch for the whole pack.
+- **Confirmation before animals go free**: an animal bucket or a filled fish or critter bag used on the world opens a
+  small screen with "Cancel" and "Empty"; only "Empty" lets the animals go. Putting them into a tank needs no
+  confirmation.
+
+### Changed
+- **Every container empties everywhere**: the sea water bucket pours into the sea and other water surfaces (the bug:
+  from the shore or a boat it found no bottom in reach, like a vanilla bucket, and did nothing), into a cauldron, from a
+  dispenser and through the fluid capability into other mods' tanks and pipes. Animal buckets let their animal go into
+  a water surface too. Bottles of salt water, swamp water, infusoria and artemia nauplii pour out anywhere with sneak +
+  right-click (or right-click into the air): splashes and a sound, an empty glass bottle, no water block; in tanks they
+  work as before. An empty fish bag can be shaken out with sneak + right-click.
+- **Vallisneria** grown from now on keeps its ribbons apart (they no longer share blocks and cross at the top);
+  existing plants keep their shape.
+- Ludwigia and Alternanthera: the outer part of a big leaf hangs on its stem node (no little stems going up and down).
+
 ## [1.14.1-beta.1] - 2026-11-14
 
 Seahorses (`features.seahorses`), stacking artemia cyst jars, a visible clear glass tank icon.

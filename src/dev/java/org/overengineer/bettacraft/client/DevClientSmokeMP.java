@@ -222,6 +222,7 @@ final class DevClientSmokeMP {
                     send("cabinets " + w[0] + " " + w[1] + " " + (sound == net.minecraft.world.level.block.SoundType.DEEPSLATE_BRICKS ? "deepslate_bricks" : "other"));
                 });
             }
+            case "container" -> container(args);
             case "place" -> then(12, () -> {
                 // M15: right-click where the server turned the player (in a tank interior)
                 Minecraft mc = Minecraft.getInstance();
@@ -401,6 +402,39 @@ final class DevClientSmokeMP {
     }
 
     /** Holds sneak with the given pitch for some ticks (to leave a tank interior: look up); screenshots of the hint. */
+    /**
+     * M22.1: right-click with the item the server put into the hand, looking where the server turned the player: "sea"
+     * (a sea water bucket into deep water), "ask" (a betta bucket onto a stone pad: the confirm screen must open, then
+     * "Cancel"), "release" (the same, now "Empty"), "pour" (a bottle, sneaking). Then reports the hand, the block at the
+     * spot and the bettas near it as this client sees them.
+     */
+    private static void container(String args) {
+        Minecraft mc = Minecraft.getInstance();
+        String[] s = args.split(",", 2);
+        String what = s[0];
+        BlockPos at = pos(s[1]);
+        boolean[] screen = new boolean[1];
+        if (what.equals("pour")) then(15, () -> mc.options.keyShift.setDown(true));
+        then(15, () -> KeyMapping.click(mc.options.keyUse.getKey()));
+        then(20, () -> {
+            mc.options.keyShift.setDown(false);
+            screen[0] = mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen;
+            if (what.equals("ask") && screen[0]) shot("confirm_screen");
+            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) {
+                if (what.equals("release")) c.confirm();
+                else c.cancel();
+            }
+        });
+        then(40, () -> {
+            var st = mc.level.getBlockState(at);
+            String block = st.isAir() ? "air" : mc.level.getFluidState(at).is(net.minecraft.tags.FluidTags.WATER) ? "water"
+                    : net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(st.getBlock()).getPath();
+            int bettas = mc.level.getEntitiesOfClass(BettaEntity.class, new net.minecraft.world.phys.AABB(at).inflate(3)).size();
+            String hand = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(mc.player.getMainHandItem().getItem()).toString();
+            send("containers " + what + " " + hand + " " + block + " " + bettas + " " + (screen[0] ? "screen" : "none"));
+        });
+    }
+
     private static void sneak(String args) {
         Minecraft mc = Minecraft.getInstance();
         String[] s = args.split(",");

@@ -39,7 +39,7 @@ public final class ModItems {
             () -> new org.overengineer.bettacraft.tank.algae.AlgaeScraperItem(new Item.Properties().durability(200)));
     /** M14: a dwarf clawed frog in a bucket of water (like the betta bucket). */
     public static final DeferredItem<net.minecraft.world.item.MobBucketItem> FROG_BUCKET = ITEMS.register("dwarf_frog_bucket",
-            () -> new net.minecraft.world.item.MobBucketItem(ModEntities.DWARF_FROG.get(), net.minecraft.world.level.material.Fluids.WATER,
+            () -> new org.overengineer.bettacraft.containers.AnimalBucketItem(ModEntities.DWARF_FROG.get(), net.minecraft.world.level.material.Fluids.WATER,
                     net.minecraft.sounds.SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<DeferredSpawnEggItem> FROG_SPAWN_EGG = ITEMS.register("dwarf_frog_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.DWARF_FROG, 0x6E6450, 0x3A3428, new Item.Properties()));
@@ -79,18 +79,19 @@ public final class ModItems {
     public static final DeferredItem<DeferredSpawnEggItem> BETTA_SPAWN_EGG = ITEMS.register("betta_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.BETTA, 0x6B6A3A, 0x13817F, new Item.Properties()));
 
+    // M22.1: bottles pour out anywhere (sneak + right-click, or right-click into the air), see ContainerRules
     public static final DeferredItem<Item> SWAMP_WATER_BOTTLE = ITEMS.register("swamp_water_bottle",
-            () -> new Item(new Item.Properties().stacksTo(16)));
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> SALT_WATER_BOTTLE = ITEMS.register("salt_water_bottle",
-            () -> new Item(new Item.Properties().stacksTo(16)));
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> BETTA_PELLETS = ITEMS.registerSimpleItem("betta_pellets");
     public static final DeferredItem<Item> MOSQUITO_LARVAE = ITEMS.registerSimpleItem("mosquito_larvae");
 
     // fry food (M2)
     public static final DeferredItem<Item> INFUSORIA = ITEMS.register("infusoria",
-            () -> new Item(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
     public static final DeferredItem<Item> ARTEMIA_NAUPLII = ITEMS.register("artemia_nauplii",
-            () -> new Item(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
     public static final DeferredItem<CultureItem> INFUSORIA_CULTURE = ITEMS.register("infusoria_culture",
             () -> new CultureItem(INFUSORIA, false, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<CultureItem> ARTEMIA_CULTURE = ITEMS.register("artemia_culture",

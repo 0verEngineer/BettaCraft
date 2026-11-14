@@ -16,6 +16,12 @@ final class LangM221 {
         a.accept("bettacraft.configuration.autoDetect", "Find other water plants by themselves");
         a.accept("bettacraft.configuration.autoDetect.tooltip", "Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, drawn as a cross or a plant model) sways (off: only the tag)");
         a.accept("bettacraft.configuration.exclude", "Never sway");
+        // containers (M22.1): the question before animals leave a bucket or a bag, pouring bottles out
+        a.accept("gui.bettacraft.confirm_empty.title", "Let the animals go?");
+        a.accept("gui.bettacraft.confirm_empty.text", "%s is emptied here: the animals in it go free into the world. To keep them, put them into a tank instead.");
+        a.accept("gui.bettacraft.confirm_empty.cancel", "Cancel");
+        a.accept("gui.bettacraft.confirm_empty.empty", "Empty");
+        a.accept("tooltip.bettacraft.pour", "Sneak + right-click (or into the air): pour out");
         a.accept("bettacraft.configuration.exclude.tooltip", "Blocks that never sway: block ids (\"modid:block\"), block tags (\"#modid:tag\") or whole mods (\"modid:*\")");
     }
 }

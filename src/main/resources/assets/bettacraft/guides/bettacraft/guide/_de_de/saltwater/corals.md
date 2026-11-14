@@ -40,6 +40,18 @@ Stein setzen. Eine Koralle wächst über die Tage Stufe für Stufe, wenn die Bed
 | Acropora | Stein (SPS) | Äste | stark | stark | ja, sauberes Wasser | Ableger |
 | Blasenanemone | Anemone | Tentakel | mittel | mittel | nein | Zuhause der Clownfische |
 
+## Form und Bewegung
+
+Jede Koralle hat ihre eigene Form, die sich im Wasser bewegt, innen und in der Miniatur: **Zoanthus** stehen auf
+Säulen über einer dünnen Matte, **Grüne Sternpolypen** überziehen den Stein mit einer violetten Matte und grünen
+Sternen; beide **ziehen sich kurz zusammen, wenn ein Fisch vorbeischwimmt** (oder du innen zu ihnen schwimmst).
+**Scheibenanemonen** heben und senken langsam ihre Scheiben, die **Lederkoralle** hat einen starren Stamm und ein Dach,
+dessen Polypenrasen wogt, **Acropora** und **Lobophyllia** sind starr mit kleinen wedelnden Polypen, die
+**Hammerkoralle** wiegt und pulsiert mit ihren hammerförmigen Tentakeln und die **Blasenanemone** mit ihren Tentakeln.
+Minecrafts Korallen und Korallenfächer wippen in der Miniatur auch leicht.
+
+![Korallen mit ihren Formen](../images/reef_corals_mesh.png)
+
 ## Farben
 
 ![Acropora gebleicht, blass, gesund und leuchtend unter aktinischem Licht](../images/reef_coral_colors.png)

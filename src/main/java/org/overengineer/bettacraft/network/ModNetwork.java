@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "7";
+    public static final String VERSION = "8";
 
     private ModNetwork() {}
 
@@ -29,7 +29,14 @@ public final class ModNetwork {
         r.playToClient(TankCrittersPayload.TYPE, TankCrittersPayload.STREAM_CODEC, ModNetwork::onTankCritters);
         r.playToClient(InteriorLeavePayload.TYPE, InteriorLeavePayload.STREAM_CODEC, ModNetwork::onInteriorLeave); // M15
         r.playToClient(ServerSettingsPayload.TYPE, ServerSettingsPayload.STREAM_CODEC, ModNetwork::onServerSettings); // M21.8
+        r.playToServer(EmptyConfirmPayload.TYPE, EmptyConfirmPayload.STREAM_CODEC, ModNetwork::onEmptyConfirm); // M22.1
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+    }
+
+    private static void onEmptyConfirm(EmptyConfirmPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.containers.ContainerRules.confirm(sp, payload.interactionHand());
+        });
     }
 
     private static void onServerSettings(ServerSettingsPayload payload, IPayloadContext ctx) {

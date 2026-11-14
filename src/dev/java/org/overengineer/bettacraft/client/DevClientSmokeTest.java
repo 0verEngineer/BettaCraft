@@ -85,6 +85,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM216 m216;
     private static DevClientSmokeM217 m217;
     private static DevClientSmokeM218 m218;
+    private static DevClientSmokeM221 m221;
+    /** -Psmoketestm22_1: only the M22.1 scene (every plant and coral with its shape, swaying water plants, emptying containers). */
+    private static final boolean M22_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_1only");
     /** -Psmoketestm21_8: only the M21.8 scene (seahorses, cyst stacks, clear glass icon). */
     private static final boolean M21_8_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_8only");
     /** -Psmoketestm21_7: only the M21.7 scene (stone cabinets). */
@@ -153,6 +156,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M22_1_ONLY) {
+                if (ticks == 60) m221 = new DevClientSmokeM221();
+                if (m221 != null && m221.tick()) {
+                    m221 = null;
+                    LOGGER.info("[smoketest] client world test finished (M22.1 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M21_8_ONLY) {
                 if (ticks == 60) m218 = new DevClientSmokeM218();
                 if (m218 != null && m218.tick()) {
@@ -536,6 +548,10 @@ final class DevClientSmokeTest {
                     }
                     if (m218 != null && m218.tick()) {
                         m218 = null;
+                        m221 = new DevClientSmokeM221(); // M22.1: plant look for every species, swaying water plants, containers
+                    }
+                    if (m221 != null && m221.tick()) {
+                        m221 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

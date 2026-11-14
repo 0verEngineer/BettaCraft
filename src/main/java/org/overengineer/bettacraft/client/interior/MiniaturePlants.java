@@ -54,7 +54,7 @@ public final class MiniaturePlants {
         int lightKey = Integer.MIN_VALUE;
         /** M22.1: a mesh with polyps that react to the fish; when the fish were last looked for. */
         boolean reactive;
-        long lastSense = Long.MIN_VALUE;
+        long lastSense = -1000;
     }
 
     private MiniaturePlants() {}

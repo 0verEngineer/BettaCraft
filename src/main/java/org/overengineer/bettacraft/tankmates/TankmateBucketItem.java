@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.material.Fluids;
@@ -16,7 +15,7 @@ import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
 import org.overengineer.bettacraft.registry.ModEntities;
 
 /** M19: a tankmate in a bucket of water (one item per species), with a tooltip of the fish. */
-public class TankmateBucketItem extends MobBucketItem {
+public class TankmateBucketItem extends org.overengineer.bettacraft.containers.AnimalBucketItem {
     private final TankmateSpecies species;
 
     public TankmateBucketItem(TankmateSpecies species, Properties properties) {

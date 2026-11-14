@@ -107,18 +107,28 @@ Rezepte gibt es keine. Man findet Pflanzen in der Welt und zieht dann selbst nac
   nestbereit (1,1-fach).
 * Bettas schwimmen um die Pflanzen herum wie um Deko.
 
-## Neue Optik (Prototyp)
+## Die Optik
 
-**Rotala**, **Vallisneria** und **Anubias** sehen neu aus: echte runde, bandförmige und breite Blätter statt
-Blattblöcken, im Innenraum und in der Miniatur außen am Aquarium; Rotala und Vallisneria wiegen sich im Wasser wie
-Seetang, außen genauso wie innen. Jeder Rotala-Trieb hat seinen Stängel (auch Seitentriebe), und jedes
-Vallisneria-Blatt ist ein Band vom Boden bis zur Oberfläche und an ihr entlang. Die Blöcke sind weiter da (du kannst sie
-mit der Schere schneiden und abbauen wie bisher), sie werden nur anders gezeichnet. Ein Schnitt mit der Schere,
-Wachstum oder ein abgebauter Block zeigen sich sofort an der Pflanze; mit einem Shaderpack werfen die Blätter Schatten.
-Ab 24 Blöcken Entfernung zeigt die Miniatur die Pflanzen wieder als Pixel (`render.miniaturePlantMeshDistance` in der
-Client-Config, 0 = immer Pixel). `features.plantMeshes` in der Common-Config schaltet zur alten Optik zurück.
+Jede Pflanze hat **echte Blätter** statt Blattblöcken, im Innenraum und in der Miniatur außen am Aquarium, und sie
+wiegen sich im Wasser, außen genauso wie innen: Javafarn mit langen Wedeln an seinem Rhizom, die Bucephalandras mit
+kleinen gewellten Blättern (die Mini Needle mit Nadeln), Anubias mit breiten Blättern, Javamoos als feine Zweiglein,
+die Cryptocorynen und die Amazonas-Schwertpflanze als Rosetten aus Blättern an Stielen, Rotala, Ludwigia und
+Alternanthera als Stängel mit Blattpaaren, Vallisneria als lange Bänder bis zur Oberfläche und an ihr entlang, Monte
+Carlo als Teppich aus winzigen runden Blättchen und der Rote Tigerlotus mit seiner Knolle, gefleckten Blättern und
+Schwimmblättern an langen Stielen. Die Blöcke sind weiter da (du kannst sie mit der Schere schneiden und abbauen wie
+bisher), sie werden nur anders gezeichnet. Ein Schnitt mit der Schere, Wachstum oder ein abgebauter Block zeigen sich
+sofort an der Pflanze; mit einem Shaderpack werfen die Blätter Schatten. Ab 24 Blöcken Entfernung zeigt die Miniatur die
+Pflanzen wieder als Pixel (`render.miniaturePlantMeshDistance` in der Client-Config, 0 = immer Pixel).
 
-![Rotala, Vallisneria und Anubias in der neuen Optik](../images/plants_mesh.png)
+**Alte Optik:** In den Mod-Einstellungen (*Darstellung*, `render.plantMeshes`) kann jeder Spieler für sich zu den
+Blöcken zurückschalten, auch auf einem Server; `features.plantMeshes` in der Common-Config schaltet sie für das ganze
+Modpack ab.
+
+Neue Vallisneria (ab Version 1.14.2 gepflanzt) hält ihre Bänder auseinander; ältere Pflanzen behalten ihre Form.
+
+![Pflanzen in der neuen Optik](../images/plants_mesh.png)
+
+![Aufsitzer, Rosetten und Stängelpflanzen](../images/plants_mesh_all.png)
 
 ![Dieselben Pflanzen in der Miniatur außen am Aquarium](../images/plants_mesh_outside.png)
 

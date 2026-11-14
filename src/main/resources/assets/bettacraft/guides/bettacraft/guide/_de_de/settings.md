@@ -77,15 +77,18 @@ Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fe
 AUTO = nur die erste vorhandene von Jade, WTHIT und The One Probe, damit zwei Overlay-Mods nicht jedes Aquarium doppelt
 zeigen; JADE, TOP, WTHIT oder ALL) und Schalter für einzelne Funktionen (`features.*`): `interiorPathfinding` (Frösche
 laufen um die Deko herum, Kleintiere gehen unter Überhänge und in Höhlen, Harnischwelse schwimmen in ihre Laichhöhle; aus
-= geradeaus) und `plantMeshes` (die neue Optik von Rotala, Vallisneria und Anubias im Innenraum und in der Miniatur, ein
-Prototyp; aus = die Blattblöcke), seit 1.13.2 `smoothSwimming` (Fische wenden im Bogen und neigen sich weich, Dornaugen
+= geradeaus) und `plantMeshes` (die neue Optik der Pflanzen und Korallen im Innenraum und in der Miniatur; aus = die
+Blöcke, für alle), seit 1.14.2 `swayingForeignPlants` (Kelp, Seegras, Korallen und Wasserpflanzen anderer Mods wippen in
+der Miniatur; der Tag `#bettacraft:swaying_plants`, andere Unterwasserpflanzen werden selbst erkannt: `swaying.autoDetect`,
+nie wippen: `swaying.exclude` mit Block-IDs, `#Tags` oder `modid:*`), seit 1.13.2 `smoothSwimming` (Fische wenden im Bogen und neigen sich weich, Dornaugen
 schlängeln sich und verstecken sich tagsüber, Harnischwelse stellen sich erst an der Scheibe auf), `greenNeonTetra` (der
 Grüne Neon beim Händler und im Kescher), `snailColors` (eigene Farbtöne der Rennschnecken, meist goldene Apfelschnecken
 mit Bändern, rote Posthörner), `detailedDecor` (der große Schädel und das große Wrack), `breakProtection` (der Schalter
 im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar) und seit 1.14.1 `seahorses` ([Seepferdchen](saltwater/seahorses.md); aus = keine aus Kescher und Händler). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
 auch Explosionen und Kolben abhält. Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
 der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
-0 = immer Pixel), das
+0 = immer Pixel), die Pflanzen-Optik und die wippenden Wasserpflanzen nur für diesen Spieler (`render.plantMeshes`,
+`render.swayingPlants`; beide in den Mod-Einstellungen, auch auf einem Server), das
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
 der Kantenlinien (`render.tankEdgeWidth`, in Pixeln zu 1/16 Block, 0,1 bis 1, Standard 0,25; 0 = keine), die Größe des
 Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 Blöcken), die Entfernung, bis zu der

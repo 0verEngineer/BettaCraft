@@ -209,7 +209,7 @@ public final class PlantMeshRenderer {
         /** Disturbances (x, y, z relative to the root corner, time) of the last seconds; at most {@link #MAX_DIST}. */
         final float[] dist = new float[MAX_DIST * 4];
         int distCount;
-        long lastCheck = Long.MIN_VALUE;
+        long lastCheck = -1000;
         static final int MAX_DIST = 6;
         /** Ticks to close, ticks to open again, reach of a disturbance (interior blocks). */
         static final float CLOSE = 4, OPEN = 70, RANGE = 7;

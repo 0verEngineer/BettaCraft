@@ -115,6 +115,13 @@ public class FishBagItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (!isFilled(stack)) {
+            // M22.1: an empty bag is shaken out anywhere (sneak + right-click): a few drops, no water block
+            if (!player.isSecondaryUseActive()) return InteractionResultHolder.pass(stack);
+            org.overengineer.bettacraft.containers.ContainerRules.pour(level, player,
+                    org.overengineer.bettacraft.containers.ContainerRules.pourSpot(player, getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY)));
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        }
         if (stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return releaseCritters(level, player, hand, stack);
         EntityType<?> type = containedType(stack);
         if (type == null) return InteractionResultHolder.pass(stack);
@@ -124,6 +131,10 @@ public class FishBagItem extends Item {
         if (!level.getFluidState(pos).is(FluidTags.WATER)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
             return InteractionResultHolder.fail(stack);
+        }
+        // M22.1: animals only go into the world once the player confirmed it
+        if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) {
+            return org.overengineer.bettacraft.containers.ContainerRules.waiting(stack);
         }
         if (level instanceof ServerLevel server && stack.has(ModDataComponents.TANKMATE_GROUP.get())) {
             // M19: a group of tankmates swims off
@@ -164,6 +175,9 @@ public class FishBagItem extends Item {
         if (!level.getFluidState(hit.getBlockPos()).is(FluidTags.WATER)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
             return InteractionResultHolder.fail(stack);
+        }
+        if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) {
+            return org.overengineer.bettacraft.containers.ContainerRules.waiting(stack);
         }
         if (!level.isClientSide) {
             level.playSound(null, hit.getBlockPos(), SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 0.8F, 1.3F);

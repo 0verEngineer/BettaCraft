@@ -1805,5 +1805,10 @@
   "bettacraft.configuration.autoDetect": "Andere Wasserpflanzen selbst erkennen",
   "bettacraft.configuration.autoDetect.tooltip": "Außer #bettacraft:swaying_plants wippt auch jede andere Unterwasserpflanze (Pflanzenmaterial, wassergefüllt oder Wasserpflanze, als Kreuz oder Pflanzenmodell gezeichnet) (aus: nur der Tag)",
   "bettacraft.configuration.exclude": "Nie wippen",
-  "bettacraft.configuration.exclude.tooltip": "Blöcke, die nie wippen: Block-IDs (\"modid:block\"), Block-Tags (\"#modid:tag\") oder ganze Mods (\"modid:*\")"
+  "bettacraft.configuration.exclude.tooltip": "Blöcke, die nie wippen: Block-IDs (\"modid:block\"), Block-Tags (\"#modid:tag\") oder ganze Mods (\"modid:*\")",
+  "gui.bettacraft.confirm_empty.title": "Tiere freilassen?",
+  "gui.bettacraft.confirm_empty.text": "%s wird hier ausgeleert: Die Tiere darin kommen frei in die Welt. Zum Behalten stattdessen in ein Becken setzen.",
+  "gui.bettacraft.confirm_empty.cancel": "Abbrechen",
+  "gui.bettacraft.confirm_empty.empty": "Ausleeren",
+  "tooltip.bettacraft.pour": "Schleichen + Rechtsklick (oder in die Luft): ausleeren"
 }

@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -40,6 +41,8 @@ public final class BettaCraft {
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         modBus.addListener(ModNetwork::register);
         modBus.addListener(BettaCraft::onCapabilities);
+        // M22.1: the sea water bucket in a cauldron and from a dispenser like a water bucket
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(BettaCraft::containerSetup));
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
                 org.overengineer.bettacraft.equipment.CabinetStones.clear());
@@ -66,7 +69,36 @@ public final class BettaCraft {
         container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
     }
 
+    /** M22.1: every container empties everywhere (ContainerRules): the sea water bucket into cauldrons and from dispensers. */
+    private static void containerSetup() {
+        var sea = org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get();
+        for (var map : new net.minecraft.core.cauldron.CauldronInteraction.InteractionMap[] {net.minecraft.core.cauldron.CauldronInteraction.EMPTY,
+                net.minecraft.core.cauldron.CauldronInteraction.WATER, net.minecraft.core.cauldron.CauldronInteraction.LAVA,
+                net.minecraft.core.cauldron.CauldronInteraction.POWDER_SNOW}) {
+            map.map().put(sea, net.minecraft.core.cauldron.CauldronInteraction.FILL_WATER);
+        }
+        net.minecraft.world.level.block.DispenserBlock.registerBehavior(sea, new net.minecraft.core.dispenser.DefaultDispenseItemBehavior() {
+            private final net.minecraft.core.dispenser.DefaultDispenseItemBehavior drop = new net.minecraft.core.dispenser.DefaultDispenseItemBehavior();
+
+            @Override
+            public ItemStack execute(net.minecraft.core.dispenser.BlockSource source, ItemStack stack) {
+                var bucket = (net.minecraft.world.item.DispensibleContainerItem) stack.getItem();
+                var pos = source.pos().relative(source.state().getValue(net.minecraft.world.level.block.DispenserBlock.FACING));
+                var level = source.level();
+                if (bucket.emptyContents(null, level, pos, null, stack)) {
+                    bucket.checkExtraContent(null, level, stack, pos);
+                    return consumeWithRemainder(source, stack, new ItemStack(net.minecraft.world.item.Items.BUCKET));
+                }
+                return drop.dispense(source, stack);
+            }
+        });
+    }
+
     private static void onCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
+        // M22.1: a bucket of sea water is a bucket of water for other mods' tanks and pipes (it empties into a bucket)
+        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM,
+                (stack, ctx) -> new net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper(stack),
+                org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
         // hoppers, pipes and other mods insert food into the feeder
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FEEDER.get(),
                 (be, side) -> be.items());

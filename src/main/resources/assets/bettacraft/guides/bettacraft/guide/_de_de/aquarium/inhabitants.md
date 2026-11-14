@@ -33,6 +33,18 @@ ebenfalls übernommen.
   Wasser).
 * **Direkt:** Rechtsklicke einen Fisch im Aquarium mit einem Wassereimer, wie überall sonst.
 
+## Eimer, Beutel und Flaschen ausleeren
+
+* **Tiere in die Welt:** Ein Tier-Eimer oder ein gefüllter Fisch- oder Kleintier-Beutel fragt erst in einem kleinen
+  Fenster nach, wenn du ihn auf die Welt anwendest (Boden, Teich, das Meer vom Ufer oder Boot aus): *Abbrechen* behält
+  die Tiere, *Ausleeren* lässt sie frei. Ins Aquarium kommen sie ohne Nachfrage (der Kescher holt sie wieder).
+* **Eimer:** Der Meerwasser-Eimer leert sich wie ein Wassereimer, auch ins Meer und in andere Wasserflächen, in einen
+  Kessel, aus einem Werfer und in Tanks und Rohre anderer Mods.
+* **Flaschen** (Salzwasser, Sumpfwasser, Infusorien, Artemia-Nauplien): Schleichen + Rechtsklick (oder Rechtsklick in
+  die Luft) leert sie überall aus: ein Platschen, eine leere Glasflasche, kein Wasserblock. Im Aquarium wirken sie wie
+  bisher.
+* Eine leere Fischtüte lässt sich mit Schleichen + Rechtsklick ausschütteln.
+
 ## Besatz
 
 Der Besatz zählt **Fische**. Adulte zählen voll, Jungtiere nur wenig (sie sind klein und fressen wenig):

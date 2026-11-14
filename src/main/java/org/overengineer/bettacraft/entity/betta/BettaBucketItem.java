@@ -5,7 +5,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.material.Fluids;
@@ -13,7 +12,7 @@ import org.overengineer.bettacraft.registry.ModDataComponents;
 import org.overengineer.bettacraft.registry.ModEntities;
 
 /** Bucket of Betta: vanilla mob bucket with a tooltip of the fish (sex, shape, colours, pattern). */
-public class BettaBucketItem extends MobBucketItem {
+public class BettaBucketItem extends org.overengineer.bettacraft.containers.AnimalBucketItem {
     public BettaBucketItem(Properties properties) {
         super(ModEntities.BETTA.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, properties);
     }

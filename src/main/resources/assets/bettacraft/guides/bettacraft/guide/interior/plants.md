@@ -103,18 +103,27 @@ There are no crafting recipes. Find plants in the world, then grow your own:
   faster (1.1x).
 * Bettas swim around the plants like around decoration.
 
-## New look (prototype)
+## The look
 
-**Rotala**, **Vallisneria** and **Anubias** have a new look: real round, ribbon-shaped and broad leaves instead of leaf
-blocks, inside the interior and in the miniature outside the aquarium; Rotala and Vallisneria sway in the water like
-kelp, outside just like inside. Every Rotala shoot has its stem (side shoots too), and every Vallisneria leaf is one
-ribbon from the ground up to the surface and along it. The blocks are still there (you can cut them with shears and
-break them as before), they are only drawn differently. A cut with the shears, growth or a broken block shows on the
-plant at once; with a shader pack the leaves cast shadows. From further away than 24 blocks the miniature shows the
-plants as pixels again (`render.miniaturePlantMeshDistance` in the client config, 0 = always pixels).
-`features.plantMeshes` in the common config switches back to the old look.
+Every plant has **real leaves** instead of leaf blocks, inside the interior and in the miniature outside the aquarium,
+and they sway in the water, outside just like inside: Java fern with long fronds on its rhizome, the Bucephalandras
+with small wavy leaves (the Mini Needle with needles), Anubias with broad leaves, Java moss as fine sprigs, the
+Cryptocorynes and the Amazon sword as rosettes of leaves on petioles, Rotala, Ludwigia and Alternanthera as stems with
+pairs of leaves, Vallisneria as long ribbons up to the surface and along it, Monte Carlo as a carpet of tiny round
+leaves and the red tiger lotus with its bulb, mottled leaves and floating leaves on long stalks. The blocks are still
+there (you can cut them with shears and break them as before), they are only drawn differently. A cut with the
+shears, growth or a broken block shows on the plant at once; with a shader pack the leaves cast shadows. From further
+away than 24 blocks the miniature shows the plants as pixels again (`render.miniaturePlantMeshDistance` in the client
+config, 0 = always pixels).
 
-![Rotala, Vallisneria and Anubias with the new look](../images/plants_mesh.png)
+**Old look:** in the Mod settings (*Rendering*, `render.plantMeshes`) every player can switch back to the blocks for
+themselves, also on a server; `features.plantMeshes` in the common config switches it off for the whole pack.
+
+New Vallisneria (planted from version 1.14.2 on) keeps its ribbons apart; older plants keep their shape.
+
+![Plants with the new look](../images/plants_mesh.png)
+
+![Epiphytes, rosettes and stem plants](../images/plants_mesh_all.png)
 
 ![The same plants in the miniature outside the aquarium](../images/plants_mesh_outside.png)
 

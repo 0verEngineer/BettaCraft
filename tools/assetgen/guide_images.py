@@ -385,6 +385,24 @@ def m21_8(out_en: Path) -> None:
             print("missing", src)
 
 
+# M22.1 scene (DevClientSmokeM221, -Psmoketestm22_1): every plant and coral with its new look. ``py guide_images.py m22_1``.
+M22_1_WORLD = {"plants_mesh": ("bettacraft_m22_1_inside_rooted_wide_new", (0, 60, 1280, 900)),
+               "plants_mesh_all": ("bettacraft_m22_1_inside_epiphytes_wide_new", (0, 60, 1280, 900)),
+               "plants_mesh_outside": ("bettacraft_m22_1_outside_rooted_new", (0, 40, 1280, 880)),
+               "reef_corals_mesh": ("bettacraft_m22_1_inside_reef_wide_new", (0, 60, 1280, 900))}
+
+
+def m22_1(out_en: Path) -> None:
+    for name, (shot, box) in M22_1_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = 960
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -399,6 +417,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m22_1"]:
+        m22_1(out_en)
+        return 0
     if sys.argv[1:] == ["m21_8"]:
         m21_8(out_en)
         return 0

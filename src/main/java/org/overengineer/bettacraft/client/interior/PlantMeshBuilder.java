@@ -66,7 +66,7 @@ final class PlantMeshBuilder {
             case ALTERNANTHERA -> stems(PlantTex.NARROW, 1.75F, 0.62F, 0.45F);
             case VALLISNERIA -> ribbons();
             case ANUBIAS_NANA -> anubias();
-            case JAVA_FERN -> rhizomeLeaves(PlantTex.LANCE, 0.10F, 2.0F, 4.2F, 0.3F, 0.02, 0.6);
+            case JAVA_FERN -> rhizomeLeaves(PlantTex.LANCE, 0.10F, 1.8F, 3.0F, 0.3F, 0.02, 0.6);
             case BUCE_GREEN_WAVY, BUCE_BROWNIE_RED, BUCE_BLUE -> rhizomeLeaves(PlantTex.WAVY, 0.22F, 1.5F, 2.8F, 0.22F, 0.01, 0.15);
             case BUCE_MINI_NEEDLE -> rhizomeLeaves(PlantTex.NEEDLE, 0.15F, 0.9F, 1.3F, 0.2F, 0.01, 0.15);
             case CRYPT_GREEN, CRYPT_BROWN, CRYPT_FLAMINGO -> rosette(PlantTex.CRYPT, 0.32F, 1.7F, 3.0F, 0.025, 0.4);
@@ -297,22 +297,25 @@ final class PlantMeshBuilder {
         if (total < 1e-3F) return;
         Vector3f[] side = new Vector3f[n];
         Vector3f[] nrm = new Vector3f[n];
+        // one direction across for the whole blade (horizontal, across its way from base to tip), so it never flips
+        Vector3f way = new Vector3f(pts.getLast()).sub(pts.getFirst());
+        Vector3f across0 = new Vector3f(way.z, 0, -way.x);
+        if (across0.lengthSquared() < 1e-4F) across0.set((float) Math.cos(yawSeed), 0, (float) Math.sin(yawSeed));
+        across0.normalize();
         for (int i = 0; i < n; i++) {
             Vector3f t = new Vector3f(pts.get(Math.min(n - 1, i + 1))).sub(pts.get(Math.max(0, i - 1)));
             if (t.lengthSquared() < 1e-8F) t.set(0, 1, 0);
             t.normalize();
-            Vector3f s = new Vector3f(t).cross(0, 1, 0);
-            if (s.lengthSquared() < 1e-3F) s.set((float) Math.cos(yawSeed), 0, (float) Math.sin(yawSeed));
+            Vector3f s = new Vector3f(across0).sub(new Vector3f(t).mul(across0.dot(t)));
+            if (s.lengthSquared() < 1e-4F) s = i > 0 ? new Vector3f(side[i - 1]) : new Vector3f(across0);
             s.normalize();
-            if (i > 0 && s.dot(side[i - 1]) < 0) s.negate();
-            // a gentle twist towards the tip
+            // a gentle twist towards the tip (around the blade's own line)
             float tw = twist * i / (n - 1);
-            Vector3f nn = new Vector3f(s).cross(t).normalize();
-            if (nn.y < 0) nn.negate();
-            s = new Vector3f(s).mul((float) Math.cos(tw)).add(new Vector3f(nn).mul((float) Math.sin(tw))).normalize();
+            Vector3f ts = new Vector3f(t).cross(s);
+            s = new Vector3f(s).mul((float) Math.cos(tw)).add(ts.mul((float) Math.sin(tw))).normalize();
             side[i] = s;
             Vector3f nv = new Vector3f(s).cross(t).normalize();
-            if (nv.y < 0) nv.negate();
+            if (i == 0 ? nv.y < 0 : nv.dot(nrm[i - 1]) < 0) nv.negate();
             nrm[i] = nv;
         }
         float at = 0;
@@ -433,6 +436,21 @@ final class PlantMeshBuilder {
             h.put(k, hk);
             col.put(k, 0xFF000000 | (r / n) << 16 | (g / n) << 8 | b / n);
         }
+        // one smoothing pass over the corners inside the skin (the steps of the blocks become a gentle surface)
+        Long2FloatOpenHashMap hs = new Long2FloatOpenHashMap(h);
+        for (long k : corners) {
+            int x = colX(k), z = colZ(k);
+            long[] nb = {col(x - 1, z), col(x + 1, z), col(x, z - 1), col(x, z + 1)};
+            float sum = 0;
+            int n = 0;
+            for (long o : nb) {
+                if (!h.containsKey(o)) continue;
+                sum += h.get(o);
+                n++;
+            }
+            if (n == 4 && interior(top, x, z)) hs.put(k, h.get(k) * 0.5F + sum / n * 0.5F);
+        }
+        h = hs;
         Long2ObjectOpenHashMap<Vector3f> normal = new Long2ObjectOpenHashMap<>();
         for (long k : corners) {
             int x = colX(k), z = colZ(k);
@@ -461,6 +479,11 @@ final class PlantMeshBuilder {
         long a = col(x0, z0), b = col(x0 + 1, z0), c = col(x0 + 1, z0 + 1), d = col(x0, z0 + 1);
         if (!h.containsKey(a) || !h.containsKey(b) || !h.containsKey(c) || !h.containsKey(d)) return fallback;
         return (h.get(a) * (1 - fx) + h.get(b) * fx) * (1 - fz) + (h.get(d) * (1 - fx) + h.get(c) * fx) * fz;
+    }
+
+    /** All four columns around the corner (x, z) belong to the skin. */
+    private static boolean interior(Long2FloatOpenHashMap top, int x, int z) {
+        return top.containsKey(col(x - 1, z - 1)) && top.containsKey(col(x, z - 1)) && top.containsKey(col(x - 1, z)) && top.containsKey(col(x, z));
     }
 
     static long col(int x, int z) {
@@ -1049,27 +1072,30 @@ final class PlantMeshBuilder {
         Long2FloatOpenHashMap rimTo = new Long2FloatOpenHashMap();
         for (long ck : topY.keySet()) {
             rimTo.put(ck, bottomY.get(ck) + 0.12F);
-            top.put(ck, topY.get(ck) + 0.62F);
+            // star polyps encrust the rock as a sheet over the whole colony; zoanthids sit on a thin mat on the rock and
+            // stand up on columns of their own
+            top.put(ck, (star ? topY.get(ck) : bottomY.get(ck)) + (star ? 0.62F : 0.4F));
             colour.put(ck, colorOf(colX(ck), topY.get(ck), colZ(ck), PlantPart.LEAF));
         }
-        Long2FloatOpenHashMap skin = heightfield(PlantTex.CORAL_MAT, top, colour, topY, 0.45F, false, 4, rimTo);
-        // a polyp on every oral disc (TOP), more in the mat in between (star polyps grow very dense)
+        Long2FloatOpenHashMap skin = heightfield(PlantTex.CORAL_MAT, top, colour, topY, star ? 0.45F : 0.25F, false, 4, rimTo);
         for (long ck : topY.keySet()) {
             int x = colX(ck), y = topY.get(ck), z = colZ(ck);
             boolean disc = topPart.get(ck) == PlantPart.TOP;
-            if (!disc && hash(x, y, z, 31) > (star ? 0.55F : 0.25F)) continue;
+            // star polyps: on every oral disc and more in the mat between; zoanthids: a polyp on every column
+            if (star && !disc && hash(x, y, z, 31) > 0.55F) continue;
             float jx = (hash(x, y, z, 32) - 0.5F) * 0.5F, jz = (hash(x, y, z, 33) - 0.5F) * 0.5F;
             float bx = x + 0.5F + jx, bz = z + 0.5F + jz;
             Vector3f base = new Vector3f(bx, surface(skin, bx, bz, y + 0.62F) - 0.06F, bz);
-            float stalk = (star ? 0.32F : 0.55F) * (0.8F + hash(x, y, z, 34) * 0.4F);
+            float stalk = star ? 0.32F * (0.8F + hash(x, y, z, 34) * 0.4F)
+                    : Math.max(0.45F, y + 0.55F - base.y) * (0.9F + hash(x, y, z, 34) * 0.2F);
             float radius = (star ? 0.62F : 0.5F) * (0.85F + hash(x, y, z, 35) * 0.3F) * style.detail();
             Vector3f lean = new Vector3f((hash(x, y, z, 36) - 0.5F) * 0.5F, 1, (hash(x, y, z, 37) - 0.5F) * 0.5F).normalize();
             Vector3f head = new Vector3f(base).add(new Vector3f(lean).mul(stalk));
             anim(PlantMeshRenderer.ANIM_POLYP, base, stalk + radius);
             use(x, y, z, PlantPart.LEAF);
-            tube(PlantTex.TENTACLE, base, head, (star ? 0.12F : 0.2F) * style.detail(), (star ? 0.1F : 0.22F) * style.detail(), 4);
+            tube(PlantTex.TENTACLE, base, head, (star ? 0.12F : 0.22F) * style.detail(), (star ? 0.1F : 0.24F) * style.detail(), star ? 4 : 5);
             use(x, y, z, PlantPart.TOP);
-            int tipC = curColor;
+            int tipC = disc || star ? curColor : lerpColor(curColor, colorOf(x, y, z, PlantPart.LEAF), 0.4F);
             int inner = star ? tipC : lerpColor(tipC, colorOf(x, y, z, PlantPart.LEAF), 0.15F);
             disc(star ? PlantTex.STAR_POLYP : PlantTex.ZOA_POLYP, head, lean, new Vector3f(1, 0, 0), radius, 0.06F, 0.02F, 8, inner, tipC);
             still();
@@ -1082,7 +1108,25 @@ final class PlantMeshBuilder {
     /** Mushroom corals: discs on short stalks that slowly rise and sink. */
     void mushrooms() {
         Long2ObjectOpenHashMap<PlantPart> parts = parts();
-        List<LongArrayList> centres = PlantSkeleton.clusters(parts, k -> parts.get(k) == PlantPart.TOP);
+        List<LongArrayList> centres = new ArrayList<>();
+        // the middle of a disc: a TOP block with TOP blocks on at least three sides (the generator marks a small cross);
+        // groups of TOP blocks without such a middle (trimmed, overlapped) count as one disc each
+        for (LongArrayList cl : PlantSkeleton.clusters(parts, k -> parts.get(k) == PlantPart.TOP)) {
+            int found = 0;
+            for (long k : cl) {
+                int n = 0;
+                for (int[] d : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+                    if (parts.get(PlantSkeleton.key(PlantSkeleton.x(k) + d[0], PlantSkeleton.y(k), PlantSkeleton.z(k) + d[1])) == PlantPart.TOP) n++;
+                }
+                if (n >= 3) {
+                    LongArrayList one = new LongArrayList();
+                    one.add(k);
+                    centres.add(one);
+                    found++;
+                }
+            }
+            if (found == 0) centres.add(cl);
+        }
         if (centres.isEmpty()) {
             // trimmed down to the stalks: one disc on the root
             LongArrayList one = new LongArrayList();
@@ -1105,6 +1149,8 @@ final class PlantMeshBuilder {
             float dx = pc.x - mids.get(best).x, dz = pc.z - mids.get(best).z;
             radius[best] = Math.max(radius[best], (float) Math.sqrt(dx * dx + dz * dz));
         }
+        // a disc is at most as wide as the generator makes them (discs that grew into each other are not one disc)
+        for (int i = 0; i < radius.length; i++) radius[i] = Math.min(radius[i], 4.2F);
         for (int i = 0; i < mids.size(); i++) {
             Vector3f mid = mids.get(i);
             long ck = centres.get(i).getLong(0);
@@ -1253,7 +1299,7 @@ final class PlantMeshBuilder {
         for (LongArrayList head : PlantSkeleton.clusters(parts, k -> parts.get(k) == PlantPart.LEAF || parts.get(k) == PlantPart.TOP)) {
             for (long k : head) {
                 boolean tip = parts.get(k) == PlantPart.TOP;
-                if (!tip && hash(k, 61) > 0.25F) continue;
+                if (!tip && hash(k, 61) > 0.45F) continue;
                 Vector3f to = c(k);
                 // every tentacle grows from the nearest end of the skeleton (heads of neighbouring branches may touch)
                 Vector3f base = new Vector3f(0.5F, 0.3F, 0.5F);
@@ -1272,14 +1318,14 @@ final class PlantMeshBuilder {
                 float len = end.distance(base);
                 anim(PlantMeshRenderer.ANIM_PULSE, base, len);
                 use(k, PlantPart.LEAF);
-                tube(PlantTex.TENTACLE, base, end, 0.24F * style.detail(), 0.2F * style.detail(), 5);
+                tube(PlantTex.TENTACLE, base, end, 0.34F * style.detail(), 0.28F * style.detail(), 6);
                 // the hammer: a short bar across the tip
                 Vector3f across = new Vector3f(dir).cross(0, 1, 0);
                 if (across.lengthSquared() < 1e-3F) across.set(1, 0, 0);
-                across.normalize().mul(0.42F * style.detail());
-                if (hash(k, 62) > 0.5F) across = new Vector3f(across).cross(dir).normalize().mul(0.42F * style.detail());
+                across.normalize().mul(0.55F * style.detail());
+                if (hash(k, 62) > 0.5F) across = new Vector3f(across).cross(dir).normalize().mul(0.55F * style.detail());
                 use(k, PlantPart.TOP);
-                tube(PlantTex.TENTACLE, new Vector3f(end).sub(across), new Vector3f(end).add(across), 0.2F * style.detail(), 0.2F * style.detail(), 5);
+                tube(PlantTex.TENTACLE, new Vector3f(end).sub(across), new Vector3f(end).add(across), 0.3F * style.detail(), 0.3F * style.detail(), 6);
                 still();
             }
         }
