@@ -189,12 +189,32 @@ Pflanzen werden in `#bettacraft:swamp_waters` und `#bettacraft:betta_spawn_biome
 werden beim Laden der Welt festgelegt, ein geänderter Tag braucht einen Neustart. Einträge anderer Mods sind optional:
 Ohne die Mod werden sie übersprungen.
 
+### Wildtiere in der Welt
+
+Die wilden Fische, Frösche und Kleintiere gehören zur Vanilla-Spawngruppe *Wasser-Umgebung*, wie Kabeljau, Lachs und
+Tropenfische. Deren Obergrenze liegt bei 20 pro Spieler, und mit vielen Fisch-Mods (Fish of Thieves, Naturalist, …)
+füllen die Fische der Ozeane in der Nähe sie oft ganz. Darum hat Bettacraft zusätzlich einen eigenen, sparsamen
+Spawn-Durchlauf (Common-Config `features.wildSpawnPass`, an): alle `wildlife.spawnPassInterval` Ticks (200 = 10 Sekunden)
+bekommt jeder Spieler einen Versuch in passendem Wasser 24 bis 48 Blöcke entfernt, solange weniger als
+`wildlife.spawnPassPerPlayer` (10) Wildtiere der Mod im Umkreis von 48 Blöcken leben. Die üblichen Regeln bleiben: wenige
+pro 32 Blöcke (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), nie in einem Aquarium, und weit weg vom Spieler
+verschwinden sie wieder wie Vanilla-Fische. Die Gewichte sind `spawn.wildFishWeight` und `spawn.wildCritterWeight`
+(Common-Config).
+
+Alle Tiere der Mod stehen im Entity-Tag `#bettacraft:all_animals`, die von selbst spawnenden in
+`#bettacraft:wild_animals`, zum Beispiel `/effect give @e[type=#bettacraft:all_animals,distance=..64] minecraft:glowing 30`.
+
 ## Befehle
 
 * `/bettacraft interior leave`: einen Innenraum verlassen.
 * Operatoren: `/bettacraft interior resync` (alle Miniaturen neu senden), `/bettacraft interior bench` (Messung),
   `/bettacraft wateranimals` (jedes Wassertier der geladenen Mods und ob Aquarien es nehmen, als Tabelle in
   `bettacraft-water-animals.tsv`).
+* Operatoren: `/bettacraft wildlife` zeigt für deine Position das Biom, seine Gewässerart, die Tiere der Mod, die dort
+  spawnen, mit ihren Gewichten, unsere Wildtiere in der Nähe, wie voll die Obergrenze der Wasser-Umgebung ist (und welche
+  Mods sie füllen) und ob Vanilla oder der eigene Spawn-Durchlauf gerade spawnen kann. `/bettacraft wildlife list [Radius]`
+  listet unsere Tiere in der Nähe mit Koordinaten (64 Blöcke; Beckenbewohner nicht mitgezählt),
+  `/bettacraft wildlife glow [Radius]` lässt sie 30 Sekunden leuchten.
 
 ## In diesem Kapitel
 

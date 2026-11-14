@@ -111,6 +111,14 @@ public final class Wildlife {
         return f <= 0 ? 0 : Math.max(1, (int) Math.round(net * f / 10.0));
     }
 
+    /** M28.1: the species spawns by itself in some water (default config). */
+    public static boolean spawnsWild(TankmateSpecies s) {
+        for (NetCatching.Water w : NetCatching.Water.values()) {
+            if (w != NetCatching.Water.CAVE && w != NetCatching.Water.NONE && fishWeight(s, w) > 0) return true;
+        }
+        return false;
+    }
+
     /** Smallest and largest shoal of a species that spawns together. */
     public static int[] group(TankmateSpecies s) {
         if (!s.shoaling()) return new int[]{1, 1};
@@ -197,6 +205,18 @@ public final class Wildlife {
         if (pos.getY() > sea || pos.getY() < sea - 24) return false;
         int cap = ServerConfig.getOr(ServerConfig.WILD_CRITTERS_NEARBY, 8);
         return nearby(level, pos, org.overengineer.bettacraft.entity.critter.WildCritterEntity.class, e -> true) < cap;
+    }
+
+    /**
+     * M28.1: any wild animal of the mod in the world: a wild tankmate, frog or small animal, or a betta that nobody caught,
+     * named or put into a tank.
+     */
+    public static boolean isWildAnimal(Entity e) {
+        if (e instanceof org.overengineer.bettacraft.entity.critter.WildCritterEntity c) return c.isWild();
+        if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b) {
+            return !b.fromBucket() && !b.isPersistenceRequired() && !b.hasCustomName() && !org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(b);
+        }
+        return isWildFish(e);
     }
 
     /** A wild tankmate or frog that spawned by itself (not from a bucket, not in a tank). */

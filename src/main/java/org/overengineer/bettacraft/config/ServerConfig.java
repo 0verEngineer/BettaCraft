@@ -256,6 +256,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue GENES_ALWAYS_VISIBLE;
     public static final ModConfigSpec.IntValue WILD_FISH_NEARBY;
     public static final ModConfigSpec.IntValue WILD_CRITTERS_NEARBY;
+    // M28.1: the own spawn pass of the wild animals
+    public static final ModConfigSpec.IntValue WILD_PASS_INTERVAL;
+    public static final ModConfigSpec.IntValue WILD_PASS_PER_PLAYER;
     // M23: aeration, oxygen, internal filters, lights
     public static final ModConfigSpec.BooleanValue POWER_AIR_PUMP;
     public static final ModConfigSpec.DoubleValue POWER_AIR_PUMP_FE;
@@ -879,6 +882,11 @@ public final class ServerConfig {
         WILD_CRITTERS_NEARBY = b.comment("Wild shrimp, crayfish, snails and hermit crabs only spawn while fewer than this many of them live within",
                         "32 blocks (features.wildCritters)")
                 .defineInRange("wildCrittersNearby", 8, 0, 256);
+        WILD_PASS_INTERVAL = b.comment("Ticks between two tries of the own spawn pass per player (20 ticks = 1 second; features.wildSpawnPass)")
+                .defineInRange("spawnPassInterval", 200, 20, 72000);
+        WILD_PASS_PER_PLAYER = b.comment("The own spawn pass only spawns while fewer than this many wild animals of the mod live within 48 blocks of",
+                        "the player (features.wildSpawnPass; 0 = it spawns nothing)")
+                .defineInRange("spawnPassPerPlayer", 10, 0, 256);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

@@ -186,12 +186,30 @@ the first that fits decides.
 Plants are fished in `#bettacraft:swamp_waters` and `#bettacraft:betta_spawn_biomes`. Spawns and corals are set when
 the world loads, a changed tag needs a restart. Entries of other mods are optional: without the mod they are skipped.
 
+### Wild animals in the world
+
+The wild fish, frogs and small animals belong to the vanilla spawn group *water ambient*, like cod, salmon and tropical
+fish. Its cap is 20 per player, and with many fish mods (Fish of Thieves, Naturalist, ...) the fish of the oceans nearby
+often fill it. So Bettacraft also has its own frugal spawn pass (common config `features.wildSpawnPass`, on): every
+`wildlife.spawnPassInterval` ticks (200 = 10 seconds) each player gets one try in fitting water 24 to 48 blocks away,
+while fewer than `wildlife.spawnPassPerPlayer` (10) wild animals of the mod live within 48 blocks. The usual rules stay:
+a few per 32 blocks (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), never in an aquarium, and far from the player
+they vanish again like vanilla fish. The weights are `spawn.wildFishWeight` and `spawn.wildCritterWeight` (common config).
+
+All animals of the mod are in the entity tag `#bettacraft:all_animals`, the ones that spawn by themselves in
+`#bettacraft:wild_animals`, for example `/effect give @e[type=#bettacraft:all_animals,distance=..64] minecraft:glowing 30`.
+
 ## Commands
 
 * `/bettacraft interior leave`: leave an interior.
 * Operators: `/bettacraft interior resync` (send all miniatures again), `/bettacraft interior bench` (measure),
   `/bettacraft wateranimals` (every water animal of the loaded mods and whether aquariums take it, as a table in
   `bettacraft-water-animals.tsv`).
+* Operators: `/bettacraft wildlife` shows for your position the biome, its kind of water, the animals of the mod that
+  spawn there with their weights, our wild animals nearby, how full the water-ambient cap is (and which mods fill it)
+  and whether vanilla or the own spawn pass can spawn now. `/bettacraft wildlife list [radius]` lists our animals nearby
+  with their coordinates (64 blocks; tank inhabitants left out), `/bettacraft wildlife glow [radius]` lets them glow for
+  30 seconds.
 
 ## In this chapter
 

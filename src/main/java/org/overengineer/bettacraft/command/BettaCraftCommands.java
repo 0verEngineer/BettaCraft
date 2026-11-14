@@ -53,6 +53,8 @@ public final class BettaCraftCommands {
                             ctx.getSource().sendSuccess(() -> Component.literal("Resyncing " + count + " interior region(s)"), true);
                             return n;
                         })))
+                // M28.1: where the wild animals are and why (not)
+                .then(WildlifeCommand.build())
                 // M16: every water animal of the loaded mods and whether tanks take it (table in bettacraft-water-animals.tsv)
                 .then(Commands.literal("wateranimals").requires(s -> s.hasPermission(2)).executes(ctx -> {
                     var src = ctx.getSource();

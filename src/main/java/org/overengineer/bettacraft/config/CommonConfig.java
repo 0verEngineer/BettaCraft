@@ -70,6 +70,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_DECOR_EFFECTS;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
+    public static final ModConfigSpec.BooleanValue FEATURE_WILD_SPAWN_PASS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -180,6 +181,10 @@ public final class CommonConfig {
         FEATURE_AUTO_WATER_CHANGE = b.comment("Water change controller: changes a part of the water by itself at an interval (off: it does nothing)")
                 .define("autoWaterChange", true);
         FEATURE_TOP_OFF = b.comment("Top-off: a level sensor tops off evaporated water from a reservoir or a pipe (off: it does nothing)").define("topOff", true);
+        // M28.1
+        FEATURE_WILD_SPAWN_PASS = b.comment("Own spawn pass for the wild animals: now and then a few wild fish, frogs or small animals spawn in fitting water near",
+                "each player, outside the vanilla water-ambient mob cap that cod, salmon, tropical fish and the fish of other mods fill",
+                "(limits: wildlife.spawnPass*; off: only the vanilla spawning)").define("wildSpawnPass", true);
         // M25
         FEATURE_WATER_CHEMISTRY = b.comment("Water chemistry: TDS, pH and hardness from the substrate, peat, almond leaves, wood, food and water changes;",
                 "every animal has its range (off: the values stand still and no animal minds them)").define("waterChemistry", true);
@@ -313,6 +318,7 @@ public final class CommonConfig {
     public static boolean multiblockFilter() { return getOr(FEATURE_MULTIBLOCK_FILTER, true); }
     public static boolean autoWaterChange() { return getOr(FEATURE_AUTO_WATER_CHANGE, true); }
     public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
+    public static boolean wildSpawnPass() { return getOr(FEATURE_WILD_SPAWN_PASS, true); } // M28.1
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }
     public static boolean co2() { return getOr(FEATURE_CO2, true); }
