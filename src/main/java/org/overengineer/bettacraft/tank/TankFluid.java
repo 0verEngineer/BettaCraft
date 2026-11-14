@@ -69,7 +69,7 @@ public final class TankFluid implements IFluidHandler {
 
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
-        return stack.getFluid().isSame(Fluids.WATER);
+        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()); // M25: also reverse osmosis and sea water
     }
 
     @Override
@@ -83,7 +83,7 @@ public final class TankFluid implements IFluidHandler {
         long n = Math.min(resource.getAmount(), t.capacityMb() - t.waterMb());
         if (n <= 0) return 0;
         if (action.execute()) {
-            TankInteractions.addWater((ServerLevel) level, c, n, WaterValues.from(resource));
+            TankInteractions.addWater((ServerLevel) level, c, n, WaterValues.from(resource, TankCare.ambient((ServerLevel) level, t)));
             if (b != null) b.flowIn(level.getGameTime(), n);
         }
         return (int) n;

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#c:carbon_dioxide",
+      "required": false
+    },
+    {
+      "id": "#c:co2",
+      "required": false
+    }
+  ]
+}

@@ -87,6 +87,10 @@ public class TankBlockEntity extends BlockEntity {
     boolean heatPowered = true, filterPowered = true, lightPowered = true;
     /** M23: air pumps next to the tank (positions), whether they have FE, and the light factor (dimmer x daylight curve) last applied to the lights. */
     java.util.List<BlockPos> airPumpCache = java.util.List.of();
+    /** M25: CO2 sources (bio CO2 bottles, gas cylinders) that serve this tank. */
+    java.util.List<BlockPos> co2Cache = java.util.List.of();
+    /** M25: bubbles per second the CO2 sources give now and the CO2 the water moves to (set by the care step, for the menu). */
+    public double co2Bubbles, co2Target = org.overengineer.bettacraft.chem.WaterChemistry.CO2_AIR;
     boolean airPowered = true;
     public double appliedLightFactor = -1;
     /** M23: what the last care step found (menu, overlays): oxygen exchange per day, consumption, equilibrium, air outlets driven. */

@@ -183,14 +183,15 @@ public final class BettaCare {
         if (c.crowdBad()) causes.add(Component.translatable("cause.bettacraft.overcrowding"));
         boolean chem = org.overengineer.bettacraft.chem.TankChemistry.bad(controller.getTank(), org.overengineer.bettacraft.chem.ChemTolerance.BETTA); // M25
         boolean quality = c.waterBad() && (!chem || org.overengineer.bettacraft.tank.TankWater.isBad(controller.getTank()));
-        if (chem) causes.add(Component.translatable("cause.bettacraft.water_chemistry"));
+        boolean co2 = chem && org.overengineer.bettacraft.chem.TankChemistry.co2Bad(controller.getTank(), org.overengineer.bettacraft.chem.ChemTolerance.BETTA); // M25 part b
+        if (chem) causes.add(Component.translatable(co2 ? "cause.bettacraft.co2" : "cause.bettacraft.water_chemistry"));
         if (quality) causes.add(Component.translatable("cause.bettacraft.water_quality"));
         if (causes.isEmpty()) causes.add(Component.translatable("cause.bettacraft.illness"));
         Component cause = causes.getFirst();
         for (int i = 1; i < causes.size(); i++) cause = Component.translatable("cause.bettacraft.and", cause, causes.get(i));
         announce(level, fish, cause);
         String causeKey = c.saltBad() ? "salinity" : c.tempBad() && fish.health.isHungry(p) ? "both" : fish.health.isHungry(p) ? "hunger"
-                : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : chem && !quality ? "water_chemistry" : c.waterBad() ? "water_quality" : "illness";
+                : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : chem && !quality ? (co2 ? "co2" : "water_chemistry") : c.waterBad() ? "water_quality" : "illness";
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + causeKey);
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();

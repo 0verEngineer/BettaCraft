@@ -172,7 +172,7 @@ public final class PipeNetwork {
                 if (h == null) continue;
                 // only water: look first, then take exactly that (other mods' tanks compare the values too)
                 FluidStack sim = h.drain(want, IFluidHandler.FluidAction.SIMULATE);
-                if (sim.isEmpty() || !sim.getFluid().isSame(net.minecraft.world.level.material.Fluids.WATER)) continue;
+                if (sim.isEmpty() || !org.overengineer.bettacraft.registry.ModFluids.isWater(sim.getFluid())) continue;
                 FluidStack got = action.simulate() ? sim : h.drain(sim, action);
                 if (got.isEmpty()) continue;
                 if (action.execute()) {

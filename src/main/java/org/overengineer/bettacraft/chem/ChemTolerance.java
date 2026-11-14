@@ -76,6 +76,14 @@ public final class ChemTolerance {
     public static final Range SOFT = Range.fresh(5.0, 7.8, 0, 450);
     /** Livebearers: medium to hard water. */
     public static final Range LIVEBEARER = Range.fresh(6.8, 8.6, 100, 800);
+    /** Dwarf gourami (a labyrinth fish like the bettas). */
+    public static final Range GOURAMI = Range.fresh(6.0, 8.0, 0, 500);
+
+    /** M25 part b: how much CO2 an animal with this range bears (the labyrinth fish breathe air: more). */
+    public static double co2Tolerance(Range r) {
+        return r == BETTA || r == GOURAMI ? org.overengineer.bettacraft.co2.TankCo2.LABYRINTH : 1.0;
+    }
+
     /** Snails: medium to hard water for the shells. */
     public static final Range SNAIL = Range.fresh(6.8, 8.6, 100, 700);
 
@@ -97,7 +105,7 @@ public final class ChemTolerance {
             case PYGMY_CORY, PANDA_CORY, STERBAI_CORY, GREEN_GOLD_CORY, OTOCINCLUS -> Range.fresh(5.8, 8.0, 0, 500);
             case LEOPARD_FROG_PLECO, ZEBRA_PLECO, BRISTLENOSE_PLECO, CLOWN_LOACH -> Range.fresh(5.8, 8.0, 0, 550);
             case GUPPY, ENDLER_GUPPY, PLATY -> LIVEBEARER;
-            case DWARF_GOURAMI -> Range.fresh(6.0, 8.0, 0, 500);
+            case DWARF_GOURAMI -> GOURAMI;
             default -> Range.TOLERANT;
         };
     }

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,stage=0": {
+      "model": "bettacraft:block/bio_co2_empty",
+      "y": 90
+    },
+    "facing=east,stage=1": {
+      "model": "bettacraft:block/bio_co2_mixed",
+      "y": 90
+    },
+    "facing=east,stage=2": {
+      "model": "bettacraft:block/bio_co2_fermenting",
+      "y": 90
+    },
+    "facing=east,stage=3": {
+      "model": "bettacraft:block/bio_co2_spent",
+      "y": 90
+    },
+    "facing=north,stage=0": {
+      "model": "bettacraft:block/bio_co2_empty"
+    },
+    "facing=north,stage=1": {
+      "model": "bettacraft:block/bio_co2_mixed"
+    },
+    "facing=north,stage=2": {
+      "model": "bettacraft:block/bio_co2_fermenting"
+    },
+    "facing=north,stage=3": {
+      "model": "bettacraft:block/bio_co2_spent"
+    },
+    "facing=south,stage=0": {
+      "model": "bettacraft:block/bio_co2_empty",
+      "y": 180
+    },
+    "facing=south,stage=1": {
+      "model": "bettacraft:block/bio_co2_mixed",
+      "y": 180
+    },
+    "facing=south,stage=2": {
+      "model": "bettacraft:block/bio_co2_fermenting",
+      "y": 180
+    },
+    "facing=south,stage=3": {
+      "model": "bettacraft:block/bio_co2_spent",
+      "y": 180
+    },
+    "facing=west,stage=0": {
+      "model": "bettacraft:block/bio_co2_empty",
+      "y": 270
+    },
+    "facing=west,stage=1": {
+      "model": "bettacraft:block/bio_co2_mixed",
+      "y": 270
+    },
+    "facing=west,stage=2": {
+      "model": "bettacraft:block/bio_co2_fermenting",
+      "y": 270
+    },
+    "facing=west,stage=3": {
+      "model": "bettacraft:block/bio_co2_spent",
+      "y": 270
+    }
+  }
+}

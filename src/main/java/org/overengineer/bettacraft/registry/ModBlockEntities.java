@@ -72,6 +72,20 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity>> FILTER_PUMP_HEAD = BLOCK_ENTITIES.register("filter_pump_head",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity::new, ModBlocks.FILTER_PUMP_HEAD.get()).build(null));
 
+    // M25
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.co2.BioCo2BlockEntity>> BIO_CO2 = BLOCK_ENTITIES.register("bio_co2",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.co2.BioCo2BlockEntity::new, ModBlocks.BIO_CO2.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.co2.Co2CylinderBlockEntity>> CO2_CYLINDER = BLOCK_ENTITIES.register("co2_cylinder",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.co2.Co2CylinderBlockEntity::new, ModBlocks.CO2_CYLINDER.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.co2.Co2StationBlockEntity>> CO2_STATION = BLOCK_ENTITIES.register("co2_station",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.co2.Co2StationBlockEntity::new, ModBlocks.CO2_STATION.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.osmosis.RoUnitBlockEntity>> RO_UNIT = BLOCK_ENTITIES.register("ro_unit",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.osmosis.RoUnitBlockEntity::new, ModBlocks.RO_UNIT.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

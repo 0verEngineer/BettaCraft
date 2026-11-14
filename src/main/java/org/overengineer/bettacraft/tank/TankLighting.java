@@ -115,7 +115,12 @@ public final class TankLighting {
 
     /** Extra algae growth from strong light (above 15), times the missing CO2 and fertiliser (M25 hook; 1 = nothing of either yet). */
     public static double algaeBoost(double light) {
-        return light <= 15 ? 1 : 1 + (light - 15) / 10.0 * noNutrientBalance();
+        return algaeBoost(light, noNutrientBalance());
+    }
+
+    /** M25: as {@link #algaeBoost(double)} with the missing CO2 of the tank ({@code TankCo2.algaeBalance}: 1 none, 0.3 well dosed). */
+    public static double algaeBoost(double light, double missing) {
+        return light <= 15 ? 1 : 1 + (light - 15) / 10.0 * Math.max(0, missing);
     }
 
     /** M25 hook: how much CO2 and fertiliser are missing for strong light (1 = none dosed; there is no CO2 yet). */

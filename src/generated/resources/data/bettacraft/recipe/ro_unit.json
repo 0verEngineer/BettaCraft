@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "P": {
+      "item": "bettacraft:glass_pipe"
+    }
+  },
+  "pattern": [
+    "PGP",
+    "IBI",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:ro_unit"
+  }
+}

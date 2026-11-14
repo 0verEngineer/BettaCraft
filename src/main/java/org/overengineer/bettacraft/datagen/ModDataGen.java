@@ -110,6 +110,7 @@ public final class ModDataGen {
         BlockTagsGen blockTags = gen.addProvider(event.includeServer(), new BlockTagsGen(out, lookup, efh));
         gen.addProvider(event.includeServer(), new ItemTagsGen(out, lookup, blockTags.contentsGetter(), efh));
         gen.addProvider(event.includeServer(), new EntityTagsGen(out, lookup, efh));
+        gen.addProvider(event.includeServer(), new DataGenM25b.FluidTagsGen(out, lookup, efh)); // M25
         gen.addProvider(event.includeServer(), new BiomeTagsGen(out, lookup, efh));
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(out, lookup, new RegistrySetBuilder()
                 .add(Registries.CONFIGURED_FEATURE, ctx -> ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
@@ -316,6 +317,7 @@ public final class ModDataGen {
             }, TankLightBlock.POWERED, TankLightBlock.COLOR, TankLightBlock.DIM); // M18: the colour is a tint of the panel (BettaCraftClient)
             DataGenM23.blockStates(this); // M23
             DataGenM24.blockStates(this); // M24
+            DataGenM25b.blockStates(this); // M25 part b
         }
 
         /** M20: reef rock, live rock, the flow pump in the interior and the protein skimmer on the tank. */
@@ -585,6 +587,7 @@ public final class ModDataGen {
             DataGenM23.itemModels(this); // M23
             DataGenM24.itemModels(this); // M24
             DataGenM25.itemModels(this); // M25
+            DataGenM25b.itemModels(this);
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
             withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
@@ -983,6 +986,7 @@ public final class ModDataGen {
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
+            DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -1129,6 +1133,15 @@ public final class ModDataGen {
             dropSelf(ModBlocks.REEF_ROCK.get());
             dropSelf(ModBlocks.LIVE_ROCK.get());
             for (Block b : m24Blocks()) dropSelf(b); // M24
+            // M25: the cylinder keeps its gas and its solenoid valve
+            dropSelf(ModBlocks.BIO_CO2.get());
+            dropSelf(ModBlocks.CO2_STATION.get());
+            dropSelf(ModBlocks.RO_UNIT.get());
+            add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1))
+                    .add(LootItem.lootTableItem(ModBlocks.CO2_CYLINDER.get())
+                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                    .include(ModDataComponents.CO2_GAS.get()).include(ModDataComponents.CO2_SOLENOID.get()))))));
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
             // M22.3: wild corals only with silk touch (like vanilla corals); shears cut frags off them
@@ -1155,6 +1168,7 @@ public final class ModDataGen {
                     .stream().collect(java.util.stream.Collectors.collectingAndThen(java.util.stream.Collectors.toList(), l -> {
                         for (var b : ModBlocks.WILD_CORALS.values()) l.add(b.get());
                         l.addAll(m24Blocks());
+                        l.addAll(DataGenM25b.blocks()); // M25
                         return l;
                     }));
         }
@@ -1214,6 +1228,7 @@ public final class ModDataGen {
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get(),
                     ModBlocks.CORNER_FILTER_SEGMENT.get()); // M23
             for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
+            DataGenM25b.blockTags(this::tag); // M25
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())

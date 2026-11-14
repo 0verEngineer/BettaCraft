@@ -941,6 +941,17 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (w.peat > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.peat", Math.round(w.peat * 100)));
         if (w.tannin > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.leaves", Math.round(w.tannin * 100)));
         if (w.wood > 0.01) drivers.add(Component.translatable("gui.bettacraft.water.chem_tip.wood", Math.round(w.wood * 100)));
+        // M25 part b: what doses CO2 and how much there is
+        if (w.co2On && (w.co2Sources > 0 || w.co2 > 5)) {
+            ChatFormatting f = switch (w.co2State) {
+                case "deadly" -> ChatFormatting.RED;
+                case "high" -> ChatFormatting.GOLD;
+                case "good" -> ChatFormatting.GREEN;
+                default -> ChatFormatting.GRAY;
+            };
+            out.add(Component.translatable("gui.bettacraft.water.co2_tip", w.co2Sources, fmt((float) w.co2Bubbles), fmt((float) w.co2Target),
+                    Component.translatable("gui.bettacraft.co2.state." + w.co2State)).withStyle(f));
+        }
         if (salty) out.add(Component.translatable("gui.bettacraft.water.chem_tip.salt").withStyle(ChatFormatting.GRAY));
         if (drivers.isEmpty()) out.add(Component.translatable("gui.bettacraft.water.chem_tip.nothing").withStyle(ChatFormatting.GRAY));
         else {

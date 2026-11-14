@@ -57,15 +57,38 @@ public record WaterValues(float temp, float salinity, float calcium, float quali
         return new WaterValues(round(temp), 0F, 0F, 1F, 0F, WaterChemistry.RO_TDS, WaterChemistry.RO_PH);
     }
 
+    /** M25: sea water at a temperature (35 ppt with the calcium of the sea, clean, the pH of the sea). */
+    public static WaterValues sea(float temp) {
+        return new WaterValues(round(temp), Salinity.SEA, Salinity.calciumOf(Salinity.SEA), 1F, 0F, WaterChemistry.TAP_TDS, WaterChemistry.SEA_PH);
+    }
+
+    /** M25: temperature of reverse osmosis water and sea water out of other mods' tanks (room temperature). */
+    public static final float FLUID_TEMP = 20F;
+
     /** Rounded so that portions of the same water stack together in other mods' tanks (two decimals). */
     private static float round(float v) {
         return Math.round(v * 100F) / 100F;
     }
 
-    /** The values a fluid stack carries, or null (tap water or a fluid without them). */
+    /**
+     * The values a fluid stack carries, or null (tap water or a fluid without them). M25: reverse osmosis water and sea
+     * water ({@link org.overengineer.bettacraft.registry.ModFluids}) without values are pure: {@link #ro} and {@link #sea}
+     * at room temperature.
+     */
     @Nullable
     public static WaterValues from(FluidStack stack) {
-        return stack.isEmpty() ? null : stack.get(ModDataComponents.WATER_VALUES.get());
+        return from(stack, FLUID_TEMP);
+    }
+
+    /** As {@link #from(FluidStack)}, with the temperature reverse osmosis and sea water have where they arrive. */
+    @Nullable
+    public static WaterValues from(FluidStack stack, float temp) {
+        if (stack.isEmpty()) return null;
+        WaterValues v = stack.get(ModDataComponents.WATER_VALUES.get());
+        if (v != null) return v;
+        if (stack.getFluid().isSame(org.overengineer.bettacraft.registry.ModFluids.RO_WATER.get())) return ro(temp);
+        if (stack.getFluid().isSame(org.overengineer.bettacraft.registry.ModFluids.SEA_WATER.get())) return sea(temp);
+        return null;
     }
 
     /** Water with these values. */

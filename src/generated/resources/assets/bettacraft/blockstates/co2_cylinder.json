@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,solenoid=false": {
+      "model": "bettacraft:block/co2_cylinder",
+      "y": 90
+    },
+    "facing=east,solenoid=true": {
+      "model": "bettacraft:block/co2_cylinder_solenoid",
+      "y": 90
+    },
+    "facing=north,solenoid=false": {
+      "model": "bettacraft:block/co2_cylinder"
+    },
+    "facing=north,solenoid=true": {
+      "model": "bettacraft:block/co2_cylinder_solenoid"
+    },
+    "facing=south,solenoid=false": {
+      "model": "bettacraft:block/co2_cylinder",
+      "y": 180
+    },
+    "facing=south,solenoid=true": {
+      "model": "bettacraft:block/co2_cylinder_solenoid",
+      "y": 180
+    },
+    "facing=west,solenoid=false": {
+      "model": "bettacraft:block/co2_cylinder",
+      "y": 270
+    },
+    "facing=west,solenoid=true": {
+      "model": "bettacraft:block/co2_cylinder_solenoid",
+      "y": 270
+    }
+  }
+}

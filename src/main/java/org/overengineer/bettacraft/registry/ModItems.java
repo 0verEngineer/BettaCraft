@@ -262,6 +262,20 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> REMINERALISING_SALT = chem("remineralising_salt", org.overengineer.bettacraft.chem.ChemItem.Kind.REMINERALISER, new Item.Properties());
     public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> ALMOND_LEAF = chem("almond_leaf", org.overengineer.bettacraft.chem.ChemItem.Kind.ALMOND_LEAF, new Item.Properties());
 
+    // M25 part b: CO2 and reverse osmosis
+    /** Yeast for the bio CO2 (brown mushroom and sugar in a bowl). */
+    public static final DeferredItem<Item> YEAST = ITEMS.register("yeast", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CO2_SOLENOID = ITEMS.register("co2_solenoid", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> RO_MEMBRANE = ITEMS.register("ro_membrane", () -> new Item(new Item.Properties().durability(100)));
+    public static final DeferredItem<Item> RO_PREFILTER = ITEMS.register("ro_prefilter", () -> new Item(new Item.Properties().durability(100)));
+    public static final DeferredItem<org.overengineer.bettacraft.osmosis.RoWaterBucketItem> RO_WATER_BUCKET = ITEMS.register("ro_water_bucket",
+            () -> new org.overengineer.bettacraft.osmosis.RoWaterBucketItem(new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)));
+    public static final DeferredItem<BlockItem> BIO_CO2 = ITEMS.registerSimpleBlockItem(ModBlocks.BIO_CO2);
+    public static final DeferredItem<org.overengineer.bettacraft.co2.Co2CylinderItem> CO2_CYLINDER = ITEMS.register("co2_cylinder",
+            () -> new org.overengineer.bettacraft.co2.Co2CylinderItem(ModBlocks.CO2_CYLINDER.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<BlockItem> CO2_STATION = ITEMS.registerSimpleBlockItem(ModBlocks.CO2_STATION);
+    public static final DeferredItem<BlockItem> RO_UNIT = ITEMS.registerSimpleBlockItem(ModBlocks.RO_UNIT);
+
     private static DeferredItem<org.overengineer.bettacraft.chem.ChemItem> chem(String id, org.overengineer.bettacraft.chem.ChemItem.Kind kind, Item.Properties props) {
         return ITEMS.register(id, () -> new org.overengineer.bettacraft.chem.ChemItem(kind, props));
     }

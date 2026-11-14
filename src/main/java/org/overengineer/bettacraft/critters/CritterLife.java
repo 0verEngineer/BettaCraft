@@ -43,7 +43,14 @@ public final class CritterLife {
      */
     public record Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
                       Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage,
-                      double ph, double tds) {
+                      double ph, double tds, double co2) {
+        /** M25 part a: without CO2 dosing. */
+        public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
+                   Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage,
+                   double ph, double tds) {
+            this(quality, qualityEnabled, temp, bettas, hiding, cap, breed, air, hunting, salinity, saltSpeed, oxygenShortage, ph, tds, Double.NaN);
+        }
+
         /** M23 and M24: without water chemistry (NaN: nobody minds it). */
         public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
                    Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage) {
@@ -52,7 +59,15 @@ public final class CritterLife {
 
         /** M25: how far the water is out of the species' pH / TDS range (0 without chemistry). */
         public double chemDistance(CritterSpecies s) {
-            return Double.isNaN(ph) ? 0 : org.overengineer.bettacraft.chem.ChemTolerance.critter(s).distance(ph, tds);
+            double d = Double.isNaN(ph) ? 0 : org.overengineer.bettacraft.chem.ChemTolerance.critter(s).distance(ph, tds);
+            return Math.max(d, co2Distance(s));
+        }
+
+        /** M25 part b: how far too much CO2 is out of the range (shrimp and crayfish bear less; 0 without CO2 dosing). */
+        public double co2Distance(CritterSpecies s) {
+            if (Double.isNaN(co2)) return 0;
+            return org.overengineer.bettacraft.co2.TankCo2.distance(co2, org.overengineer.bettacraft.co2.TankCo2.stressFrom(),
+                    org.overengineer.bettacraft.co2.TankCo2.lethalFrom(), s.isSnail() ? 1.0 : org.overengineer.bettacraft.co2.TankCo2.SHRIMP);
         }
 
         /** M22 and earlier: without an oxygen shortage. */
@@ -71,7 +86,7 @@ public final class CritterLife {
         }
     }
 
-    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN, CHEMISTRY }
+    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN, CHEMISTRY, CO2 }
 
     /** What happened in a step (for the tank log and the GameTests). */
     public static final class Result {
@@ -208,7 +223,7 @@ public final class CritterLife {
             if (cd >= org.overengineer.bettacraft.chem.ChemTolerance.BAD_FROM) {
                 double cr = chemRate(cd);
                 rate += cr;
-                if (cause == null || cr > rate - cr) cause = Cause.CHEMISTRY;
+                if (cause == null || cr > rate - cr) cause = env.co2Distance(c.species) >= cd ? Cause.CO2 : Cause.CHEMISTRY;
             }
             if (c.soft()) rate *= 1.5;
             if (rate > 0 && rnd.nextDouble() < 1 - Math.exp(-rate * days)) die(c, cause == null ? Cause.WATER : cause, r);

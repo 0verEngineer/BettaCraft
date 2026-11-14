@@ -65,7 +65,8 @@ public class RegulatorScreen extends Screen {
         if (d == null) return;
         g.drawCenteredString(font, d.name(), left + W / 2, top + 8, 0xFFFFFF);
         int p = d.power();
-        g.drawCenteredString(font, Component.translatable("gui.bettacraft.regulator.power", p * 10), left + W / 2, top + 22, 0xFFE0E0E0);
+        Component label = d.valueLabel(); // M25: the CO2 cylinder shows bubbles per second
+        g.drawCenteredString(font, label != null ? label : Component.translatable("gui.bettacraft.regulator.power", p * 10), left + W / 2, top + 22, 0xFFE0E0E0);
         int bx = left + 36, bw = W - 72, by = top + 52;
         g.fill(bx, by, bx + bw, by + 8, 0xFF202020);
         g.fill(bx, by, bx + Math.round(bw * p / 10F), by + 8, 0xFF50A0E0);

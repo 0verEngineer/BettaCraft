@@ -30,7 +30,7 @@ public final class TankEquipment {
         if (last != Long.MIN_VALUE && now >= last && now - last < RESCAN_TICKS) return;
         c.equipmentScanTime = now;
         TankData t = c.getTank();
-        List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>(), pumps = new ArrayList<>();
+        List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>(), pumps = new ArrayList<>(), co2 = new ArrayList<>();
         // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
         // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
@@ -58,10 +58,12 @@ public final class TankEquipment {
                 check(level, t, p, d.getOpposite(), filters, skimmers);
                 // M23: an air pump beside the tank (it serves the first tank it touches)
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(p.immutable());
+                if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.co2.Co2SourceBlock) co2.add(p.immutable()); // M25
             }
         }
         for (BlockPos top : t.openTops()) {
             if (level.isLoaded(top) && level.getBlockState(top).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(top.immutable());
+            if (level.isLoaded(top) && level.getBlockState(top).getBlock() instanceof org.overengineer.bettacraft.co2.Co2SourceBlock) co2.add(top.immutable()); // M25
         }
         filters.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         cabinets.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
@@ -76,6 +78,22 @@ public final class TankEquipment {
         }
         mine.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.airPumpCache = List.copyOf(mine);
+        // M25: CO2 sources serve the first tank they touch, like the air pumps
+        List<BlockPos> gas = new ArrayList<>();
+        for (BlockPos sp : new java.util.LinkedHashSet<>(co2)) {
+            BlockPos tb = org.overengineer.bettacraft.equipment.AirPumpBlockEntity.tankBlock(level, sp);
+            if (tb != null && t.contains(tb)) gas.add(sp);
+        }
+        gas.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
+        c.co2Cache = List.copyOf(gas);
+    }
+
+    /** M25: CO2 sources (bio CO2 bottles, gas cylinders) that serve this tank. */
+    public static List<BlockPos> co2Sources(Level level, TankBlockEntity c) {
+        scanIfNeeded(level, c);
+        List<BlockPos> out = new ArrayList<>();
+        for (BlockPos p : c.co2Cache) if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.co2.Co2SourceBlock) out.add(p);
+        return out;
     }
 
     /** M23: air pumps that serve this tank. */

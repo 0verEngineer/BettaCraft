@@ -1,0 +1,106 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#cap"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        10,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap"
+        },
+        "east": {
+          "texture": "#cap"
+        },
+        "north": {
+          "texture": "#cap"
+        },
+        "south": {
+          "texture": "#cap"
+        },
+        "up": {
+          "texture": "#cap"
+        },
+        "west": {
+          "texture": "#cap"
+        }
+      },
+      "from": [
+        6.5,
+        10,
+        6.5
+      ],
+      "to": [
+        9.5,
+        12,
+        9.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap"
+        },
+        "east": {
+          "texture": "#cap"
+        },
+        "north": {
+          "texture": "#cap"
+        },
+        "south": {
+          "texture": "#cap"
+        },
+        "up": {
+          "texture": "#cap"
+        },
+        "west": {
+          "texture": "#cap"
+        }
+      },
+      "from": [
+        7.5,
+        12,
+        7.5
+      ],
+      "to": [
+        8.5,
+        13,
+        11
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cap": "bettacraft:block/bio_co2_cap",
+    "particle": "bettacraft:block/bio_co2_fermenting",
+    "side": "bettacraft:block/bio_co2_fermenting"
+  }
+}

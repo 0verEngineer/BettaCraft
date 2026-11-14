@@ -56,6 +56,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_INTERIOR_PIPES;
     public static final ModConfigSpec.BooleanValue FEATURE_MULTIBLOCK_FILTER;
     public static final ModConfigSpec.BooleanValue FEATURE_WATER_CHEMISTRY;
+    public static final ModConfigSpec.BooleanValue FEATURE_CO2;
+    public static final ModConfigSpec.BooleanValue FEATURE_REVERSE_OSMOSIS;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -171,6 +173,10 @@ public final class CommonConfig {
         // M25
         FEATURE_WATER_CHEMISTRY = b.comment("Water chemistry: TDS, pH and hardness from the substrate, peat, almond leaves, wood, food and water changes;",
                 "every animal has its range (off: the values stand still and no animal minds them)").define("waterChemistry", true);
+        FEATURE_CO2 = b.comment("CO2 dosing: bio CO2, gas cylinders with pressure regulator and solenoid valve, the CO2 filling station; CO2 makes the",
+                "plants grow faster, lowers the pH and too much harms the animals (off: the devices give no CO2)").define("co2", true);
+        FEATURE_REVERSE_OSMOSIS = b.comment("Reverse osmosis unit: makes reverse osmosis water (nothing dissolved) from water, with a membrane and a prefilter",
+                "that wear out (off: it does not run)").define("reverseOsmosis", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -276,6 +282,8 @@ public final class CommonConfig {
     public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }
+    public static boolean co2() { return getOr(FEATURE_CO2, true); }
+    public static boolean reverseOsmosis() { return getOr(FEATURE_REVERSE_OSMOSIS, true); }
 
     private CommonConfig() {}
 }

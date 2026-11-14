@@ -347,6 +347,8 @@ public final class InteriorPlants {
         int redTarget = PlantColors.tintFor(env.light());
         for (InteriorPlant p : r.plants().all()) {
             double rate = speed * env.rate(p);
+            // M25: CO2 makes the freshwater plants grow faster, the strong-light plants most
+            if (rate > 0 && !p.species.marine()) rate *= org.overengineer.bettacraft.co2.TankCo2.growth(t, PlantSpecies.Light.need(p.species.light()));
             if (rate > 0 && p.room == 0) p.room = room(env.waterLocal(), r, p);
             if (rate > 0) {
                 activeMass += p.blocks;

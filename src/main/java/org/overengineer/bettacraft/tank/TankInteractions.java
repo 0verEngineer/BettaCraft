@@ -38,7 +38,8 @@ public final class TankInteractions {
         r = org.overengineer.bettacraft.chem.ChemItem.useOnTank(stack, level, pos, player, hand); // M25: measuring, salt, leaves
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         boolean sea = stack.is(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
-        boolean fill = stack.is(Items.WATER_BUCKET) || sea;
+        boolean ro = stack.is(org.overengineer.bettacraft.registry.ModItems.RO_WATER_BUCKET.get()); // M25
+        boolean fill = stack.is(Items.WATER_BUCKET) || sea || ro;
         boolean drain = stack.is(Items.BUCKET);
         if (!fill && !drain) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -63,7 +64,13 @@ public final class TankInteractions {
             }
             float qualityBefore = tank.waterQuality();
             boolean hadWater = tank.waterMb() > 0;
-            changeWater(server, controller, TankData.MB_PER_BLOCK, sea ? Salinity.SEA : 0.0F);
+            if (ro) {
+                // M25: reverse osmosis water: a water change with nothing dissolved (TDS 0, pH 6.8)
+                changeWater(server, controller, TankData.MB_PER_BLOCK, 0.0F, org.overengineer.bettacraft.chem.WaterChemistry.RO_TDS,
+                        org.overengineer.bettacraft.chem.WaterChemistry.RO_PH);
+            } else {
+                changeWater(server, controller, TankData.MB_PER_BLOCK, sea ? Salinity.SEA : 0.0F);
+            }
             if (hadWater && qualityBefore < WaterQuality.GOOD_FROM && tank.waterQuality() > qualityBefore) {
                 org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WATER_CHANGE,
                         Math.round(tank.waterQuality() * 100));
@@ -109,6 +116,12 @@ public final class TankInteractions {
      * brings its calcium), the waste is diluted like with fresh water.
      */
     public static void changeWater(ServerLevel level, TankBlockEntity controller, long deltaMb, float addedPpt) {
+        changeWater(level, controller, deltaMb, addedPpt, org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS,
+                addedPpt >= Salinity.BRACKISH_FROM ? org.overengineer.bettacraft.chem.WaterChemistry.SEA_PH : org.overengineer.bettacraft.chem.WaterChemistry.TAP_PH);
+    }
+
+    /** M25: as {@link #changeWater(ServerLevel, TankBlockEntity, long, float)} with the TDS and pH of the added water (reverse osmosis water). */
+    public static void changeWater(ServerLevel level, TankBlockEntity controller, long deltaMb, float addedPpt, float addedTds, float addedPh) {
         TankData tank = controller.getTank();
         long before = tank.waterMb();
         tank.setWaterMb(before + deltaMb);
@@ -123,8 +136,7 @@ public final class TankInteractions {
             }
             tank.setWaterQuality(WaterQuality.mix(tank.waterQuality(), before, added));
             tank.setNitrate(TankNitrate.mix(tank.nitrate(), before, 0F, added)); // M24: fresh water has no nitrate
-            org.overengineer.bettacraft.chem.TankChemistry.mixIn(tank, before, added, org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS,
-                    addedPpt >= Salinity.BRACKISH_FROM ? org.overengineer.bettacraft.chem.WaterChemistry.SEA_PH : org.overengineer.bettacraft.chem.WaterChemistry.TAP_PH); // M25: tap water
+            org.overengineer.bettacraft.chem.TankChemistry.mixIn(tank, before, added, addedTds, addedPh); // M25: tap water (or reverse osmosis water)
             tank.setLastFreshWater(level.getGameTime());
             if (before > 0) tank.setLastWaterChange(level.getGameTime());
             // M19: fresh water has the ambient temperature; a large cool water change sets off the corydoras

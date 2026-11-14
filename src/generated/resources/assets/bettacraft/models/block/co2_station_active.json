@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "bettacraft:block/co2_station_front_active",
+    "side": "bettacraft:block/co2_station_side",
+    "top": "bettacraft:block/co2_station_top"
+  }
+}

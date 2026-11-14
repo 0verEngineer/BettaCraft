@@ -144,7 +144,9 @@ public final class TankmateCare {
     private static void dieOfIllness(ServerLevel level, TankBlockEntity controller, TankmateEntity fish, BettaHealth.Conditions c, BettaHealth.Params p) {
         String key = c.saltBad() ? "salinity" : fish.health.isHungry(p) ? "hunger" : c.tempBad() ? "temperature"
                 : c.waterBad() && (fish.stress & STRESS_WATER) == 0 && (fish.stress & STRESS_OXYGEN) != 0 ? "oxygen"
-                : c.waterBad() && (fish.stress & STRESS_WATER) == 0 && (fish.stress & STRESS_CHEMISTRY) != 0 ? "water_chemistry" : c.waterBad() ? "water_quality"
+                : c.waterBad() && (fish.stress & STRESS_WATER) == 0 && (fish.stress & STRESS_CHEMISTRY) != 0
+                        ? (org.overengineer.bettacraft.chem.TankChemistry.co2Bad(controller.getTank(), org.overengineer.bettacraft.chem.ChemTolerance.tankmate(fish.species())) ? "co2" : "water_chemistry")
+                        : c.waterBad() ? "water_quality"
                 : (fish.stress & STRESS_SHOAL) != 0 ? "lonely" : (fish.stress & STRESS_FLOW) != 0 ? "flow"
                 : (fish.stress & STRESS_NO_POSTS) != 0 ? "no_posts" : c.crowdBad() ? "overcrowding" : "illness";
 

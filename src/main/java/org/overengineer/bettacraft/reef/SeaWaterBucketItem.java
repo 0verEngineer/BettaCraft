@@ -12,12 +12,22 @@ import net.minecraft.world.level.material.Fluids;
  * M22.1: also pours into a water surface the player looks at (the sea from a boat or the shore, where vanilla buckets
  * only look for the bottom), into a cauldron and through the fluid capability into other mods' tanks and pipes (water).
  * <p>
+ * M25: other mods see the fluid {@code bettacraft:sea_water} in it ({@link org.overengineer.bettacraft.osmosis.WaterBucketWrapper}).
+ * <p>
  * M20: a bucket of sea water. In the world it pours plain water (Minecraft has one water); poured into a tank it brings
  * 35 ppt of salt and the calcium of sea water. Draining a salt water tank fills an empty bucket with it.
  */
 public class SeaWaterBucketItem extends BucketItem {
+    private final String tooltip;
+
     public SeaWaterBucketItem(Properties properties) {
+        this(properties, "tooltip.bettacraft.sea_water_bucket");
+    }
+
+    /** M25: also the bucket of reverse osmosis water (it pours plain water too). */
+    protected SeaWaterBucketItem(Properties properties, String tooltip) {
         super(Fluids.WATER, properties);
+        this.tooltip = tooltip;
     }
 
     @Override
@@ -46,6 +56,6 @@ public class SeaWaterBucketItem extends BucketItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.bettacraft.sea_water_bucket").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable(this.tooltip).withStyle(ChatFormatting.GRAY));
     }
 }

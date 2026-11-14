@@ -68,6 +68,11 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onLayers);
         modBus.addListener(BettaCraftClient::onRenderers);
         modBus.addListener(BettaCraftClient::onScreens);
+        // M25: reverse osmosis and sea water look like water in other mods' tanks (lighter / deeper blue)
+        modBus.addListener((net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent e) -> {
+            e.registerFluidType(waterLook(0xFFB0DCF4), org.overengineer.bettacraft.registry.ModFluids.RO_WATER_TYPE.get());
+            e.registerFluidType(waterLook(0xFF2A64B0), org.overengineer.bettacraft.registry.ModFluids.SEA_WATER_TYPE.get());
+        });
         // M15: how to leave a tank interior, bottom left
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) -> e.registerBelow(
                 net.neoforged.neoforge.client.gui.VanillaGuiLayers.CHAT, org.overengineer.bettacraft.BettaCraft.id("interior_leave_hint"),
@@ -259,5 +264,25 @@ public final class BettaCraftClient {
 
     private static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
         event.register(TankModelLoader.ID, TankModelLoader.INSTANCE);
+    }
+
+    /** M25: the look of our water fluids: Minecraft's water textures in a tint. */
+    private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions waterLook(int tint) {
+        return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+
+            @Override
+            public int getTintColor() {
+                return tint;
+            }
+        };
     }
 }

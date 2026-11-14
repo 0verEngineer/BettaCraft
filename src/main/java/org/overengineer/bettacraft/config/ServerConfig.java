@@ -263,6 +263,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue CHEM_REMINERAL_PPM;
     public static final ModConfigSpec.DoubleValue CHEM_LEAF_TANNIN;
     public static final ModConfigSpec.DoubleValue CHEM_LEAF_HALF_LIFE;
+    public static final ModConfigSpec.DoubleValue CO2_PER_BUBBLE, CO2_STRESS_FROM, CO2_LETHAL_FROM, CO2_BREATH, CO2_PLANT_UPTAKE, CO2_BIO_BUBBLES, CO2_BIO_DAYS,
+            CO2_CYLINDER_DAYS;
+    public static final ModConfigSpec.IntValue CO2_STATION_TICKS, CO2_STATION_FE, CO2_FOREIGN_MB;
+    public static final ModConfigSpec.DoubleValue RO_RATE, RO_BOOST, RO_WASTE, RO_MEMBRANE, RO_PREFILTER;
+    public static final ModConfigSpec.IntValue RO_FE;
     public static final ModConfigSpec.IntValue PIPE_STEEL_RATE;
     public static final ModConfigSpec.IntValue PIPE_PUMP_RATE;
     public static final ModConfigSpec.BooleanValue POWER_PUMPS;
@@ -570,6 +575,35 @@ public final class ServerConfig {
         CHEM_REMINERAL_PPM = b.comment("TDS (ppm) one remineralising salt adds to 1000 mB of water").defineInRange("remineraliserPpm", 400.0, 1.0, 100000.0);
         CHEM_LEAF_TANNIN = b.comment("Water blocks one almond leaf colours fully with its tannins (they lower the pH)").defineInRange("leafBlocks", 1.0, 0.01, 1000.0);
         CHEM_LEAF_HALF_LIFE = b.comment("Days until half of the tannins of the almond leaves have faded").defineInRange("leafHalfLifeDays", 7.0, 0.1, 1000.0);
+        b.pop();
+        b.comment("CO2 dosing (M25, features.co2): bio CO2, gas cylinders and the filling station").push("co2Dosing");
+        CO2_PER_BUBBLE = b.comment("mg/L per day one bubble per second gives one block of water (a bigger tank needs more bubbles)")
+                .defineInRange("co2PerBubble", 150.0, 0.0, 100000.0);
+        CO2_STRESS_FROM = b.comment("CO2 (mg/L) from which the animals are stressed").defineInRange("co2StressFrom", 35.0, 1.0, 200.0);
+        CO2_LETHAL_FROM = b.comment("CO2 (mg/L) from which the water is bad for the animals (sick, in the end dead; bettas and gouramis breathe air and",
+                "bear a little more, shrimp less)").defineInRange("co2LethalFrom", 50.0, 1.0, 200.0);
+        CO2_BREATH = b.comment("mg/L per day one adult animal per water block breathes out").defineInRange("co2Breath", 2.0, 0.0, 1000.0);
+        CO2_PLANT_UPTAKE = b.comment("mg/L per day a densely planted tank in strong light takes up").defineInRange("co2PlantUptake", 30.0, 0.0, 10000.0);
+        CO2_BIO_BUBBLES = b.comment("Bubbles per second of a bio CO2 bottle at its best (it starts slowly, varies and fades at the end)")
+                .defineInRange("bioCo2Bubbles", 1.0, 0.0, 10.0);
+        CO2_BIO_DAYS = b.comment("Days a bio CO2 bottle with four sugar ferments (less sugar: shorter)").defineInRange("bioCo2Days", 4.0, 0.1, 1000.0);
+        CO2_CYLINDER_DAYS = b.comment("Days a full CO2 cylinder lasts at one bubble per second").defineInRange("cylinderBubbleDays", 60.0, 0.1, 100000.0);
+        CO2_STATION_TICKS = b.comment("Ticks a CO2 filling station needs to fill a cylinder from the flue gas of one burning furnace, smoker, blast",
+                "furnace or campfire (more burning fires fill faster)").defineInRange("stationTicksPerCylinder", 24000, 20, 10000000);
+        CO2_STATION_FE = b.comment("FE per tick of the compressor of the CO2 filling station while it fills (only while a power option is on)")
+                .defineInRange("stationFe", 20, 0, 100000);
+        CO2_FOREIGN_MB = b.comment("mB of another mod's CO2 gas (fluid tag #bettacraft:co2_gas) for a full cylinder").defineInRange("foreignCo2Mb", 1000, 1, 1000000);
+        b.pop();
+        b.comment("Reverse osmosis unit (M25, features.reverseOsmosis)").push("osmosis");
+        RO_RATE = b.comment("mB of reverse osmosis water per tick without a pressure pump (it simply runs on the water it gets)")
+                .defineInRange("roRate", 1.0, 0.01, 10000.0);
+        RO_BOOST = b.comment("How much faster the FE pressure pump makes it (only while a power option is on and it has FE)")
+                .defineInRange("roPumpBoost", 4.0, 1.0, 100.0);
+        RO_FE = b.comment("FE per tick of the pressure pump").defineInRange("roPumpFe", 20, 0, 100000);
+        RO_WASTE = b.comment("Parts of waste water for each part of reverse osmosis water (it leaves through a pipe or the drain)")
+                .defineInRange("roWastePerPart", 3.0, 0.0, 100.0);
+        RO_MEMBRANE = b.comment("Buckets of reverse osmosis water a membrane makes before it is worn out").defineInRange("roMembraneBuckets", 128.0, 1.0, 100000.0);
+        RO_PREFILTER = b.comment("Buckets of reverse osmosis water a prefilter cartridge lasts").defineInRange("roPrefilterBuckets", 32.0, 1.0, 100000.0);
         b.pop();
         b.comment("Pipes and pumps (M24, features.pipes): they carry water with all its values (temperature, salt, quality, nitrate)").push("pipes");
         PIPE_GLASS_RATE = b.comment("mB per tick a glass pipe network carries").defineInRange("glassPipeRate", 50, 1, 1000000);

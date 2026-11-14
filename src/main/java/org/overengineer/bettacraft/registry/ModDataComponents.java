@@ -72,6 +72,14 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<net.minecraft.nbt.CompoundTag>> TANKMATE_CLUTCH = COMPONENTS.registerComponentType("tankmate_clutch",
             b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG));
 
+    /** M25: CO2 in a gas cylinder (bubble-days: days at one bubble per second; missing = empty). */
+    public static final Supplier<DataComponentType<Float>> CO2_GAS = COMPONENTS.registerComponentType("co2_gas",
+            b -> b.persistent(com.mojang.serialization.Codec.FLOAT).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT));
+
+    /** M25: a solenoid valve sits on the cylinder (it closes at night). */
+    public static final Supplier<DataComponentType<Boolean>> CO2_SOLENOID = COMPONENTS.registerComponentType("co2_solenoid",
+            b -> b.persistent(com.mojang.serialization.Codec.BOOL).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }

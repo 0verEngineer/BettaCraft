@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "K": {
+      "item": "minecraft:dried_kelp"
+    }
+  },
+  "pattern": [
+    " K ",
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:bio_co2"
+  }
+}

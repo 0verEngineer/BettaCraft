@@ -91,5 +91,10 @@ public final class ModTags {
     /** M21.7: never a cabinet stone (copper, ores, glass, purpur, prismarine, concrete, mud bricks ...). */
     public static final TagKey<Item> CABINET_EXCLUDED = TagKey.create(Registries.ITEM, BettaCraft.id("cabinet_excluded"));
 
+    /** M25: fires whose flue gas the CO2 filling station collects while they burn (LIT): furnace, smoker, blast furnace, campfires. */
+    public static final TagKey<Block> FLUE_GAS_SOURCES = TagKey.create(Registries.BLOCK, BettaCraft.id("flue_gas_sources"));
+    /** M25: CO2 gas of other mods (fluids) the filling station takes. */
+    public static final TagKey<net.minecraft.world.level.material.Fluid> CO2_GAS = TagKey.create(Registries.FLUID, BettaCraft.id("co2_gas"));
+
     private ModTags() {}
 }

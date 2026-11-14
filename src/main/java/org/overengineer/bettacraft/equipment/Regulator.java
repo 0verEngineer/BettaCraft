@@ -47,6 +47,17 @@ public final class Regulator {
         default Component note() {
             return null;
         }
+
+        /** M25: the setting as text instead of "x %" (the CO2 cylinder: bubbles per second), or null. */
+        @Nullable
+        default Component valueLabel() {
+            return null;
+        }
+
+        /** M25: whether it can be set also with features.powerRegulator off (the pressure regulator of a CO2 cylinder). */
+        default boolean alwaysAdjustable() {
+            return false;
+        }
     }
 
     /** The device at this position (for a multi-block piece its anchor), or null. */
@@ -86,19 +97,21 @@ public final class Regulator {
 
     /** Changes the power by {@code delta} steps or sets it ({@code absolute}); server side, checked. */
     public static void apply(ServerPlayer player, BlockPos pos, int value, boolean absolute) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return;
         Level level = player.level();
         if (player.distanceToSqr(pos.getCenter()) > 64) return;
         // like a lever: no spawn protection check (turning a knob is not building), but spectators and adventure players cannot
         if (!player.mayBuild() || player.isSpectator() || !level.getWorldBorder().isWithinBounds(pos)) return;
         Device d = find(level, pos);
         if (d == null) return;
+        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator() && !d.alwaysAdjustable()) return;
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)
                 && !org.overengineer.bettacraft.tank.interior.InteriorManager.canBuild(player, pos)) return;
         int next = Math.max(0, Math.min(10, absolute ? value : d.power() + value));
         if (next == d.power()) return;
         d.setPower(next);
-        player.displayClientMessage(Component.translatable("message.bettacraft.regulator.set", d.name(), next * 10), true);
+        Component label = d.valueLabel();
+        if (label != null) player.displayClientMessage(Component.translatable("message.bettacraft.regulator.set_value", d.name(), label), true); // M25
+        else player.displayClientMessage(Component.translatable("message.bettacraft.regulator.set", d.name(), next * 10), true);
     }
 
     // ------------------------------------------------------------------ devices

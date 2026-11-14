@@ -660,6 +660,11 @@ public final class TankView {
         public double phTarget = 7.5, acid, alkaline, peat, tannin, wood;
         public String hardness = "medium";
         public List<String> chemOff = new ArrayList<>();
+        /** M25 part b: CO2 dosing on, bubbles per second of the sources, their number, the CO2 the water moves to, its state. */
+        public boolean co2On;
+        public double co2Bubbles, co2Target = 3;
+        public int co2Sources;
+        public String co2State = "low";
 
         public boolean reefLine() {
             return salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM || skimmers > 0 || pumps > 0 || liveRock > 0;
@@ -717,6 +722,11 @@ public final class TankView {
             net.minecraft.nbt.ListTag off = new net.minecraft.nbt.ListTag();
             for (String s : chemOff) off.add(net.minecraft.nbt.StringTag.valueOf(s));
             t.put("chem_off", off);
+            t.putBoolean("co2_on", co2On);
+            t.putDouble("co2_bubbles", co2Bubbles);
+            t.putDouble("co2_target", co2Target);
+            t.putInt("co2_sources", co2Sources);
+            t.putString("co2_state", co2State);
             return t;
         }
 
@@ -739,6 +749,11 @@ public final class TankView {
             wood = t.getDouble("wood");
             chemOff = new ArrayList<>();
             for (net.minecraft.nbt.Tag x : t.getList("chem_off", net.minecraft.nbt.Tag.TAG_STRING)) chemOff.add(x.getAsString());
+            co2On = t.getBoolean("co2_on");
+            co2Bubbles = t.getDouble("co2_bubbles");
+            co2Target = t.getDouble("co2_target");
+            co2Sources = t.getInt("co2_sources");
+            co2State = t.getString("co2_state");
             salinity = t.getFloat("salinity");
             calcium = t.getFloat("calcium");
             skimmers = t.getInt("skimmers");
@@ -982,6 +997,12 @@ public final class TankView {
         w.tds = t.tds();
         w.ph = t.ph();
         w.co2 = t.co2();
+        // M25 part b: CO2 dosing
+        w.co2On = org.overengineer.bettacraft.co2.TankCo2.enabled();
+        w.co2Bubbles = c.co2Bubbles;
+        w.co2Target = c.co2Target;
+        w.co2Sources = org.overengineer.bettacraft.tank.TankEquipment.co2Sources(level, c).size();
+        w.co2State = org.overengineer.bettacraft.co2.TankCo2.state(t.co2()).name().toLowerCase(java.util.Locale.ROOT);
         if (!w.chemOn) return;
         var d = org.overengineer.bettacraft.chem.TankChemistry.drivers(level, c);
         w.phTarget = org.overengineer.bettacraft.chem.TankChemistry.phTarget(t, d);

@@ -29,6 +29,7 @@ public final class BettaCraft {
     public BettaCraft(IEventBus modBus, ModContainer container) {
         ModDataComponents.register(modBus);
         ModBlocks.register(modBus);
+        org.overengineer.bettacraft.registry.ModFluids.register(modBus); // M25
         ModEntities.register(modBus);
         ModItems.register(modBus);
         ModBlockEntities.register(modBus);
@@ -45,7 +46,7 @@ public final class BettaCraft {
         org.overengineer.bettacraft.critters.CritterGenes.MUTATION = org.overengineer.bettacraft.world.Wildlife::mutationChance;
         modBus.addListener(BettaCraft::onCapabilities);
         // M22.1: the sea water bucket in a cauldron and from a dispenser like a water bucket
-        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(BettaCraft::containerSetup));
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork((Runnable) BettaCraft::containerSetup));
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
                 org.overengineer.bettacraft.equipment.CabinetStones.clear());
@@ -74,7 +75,11 @@ public final class BettaCraft {
 
     /** M22.1: every container empties everywhere (ContainerRules): the sea water bucket into cauldrons and from dispensers. */
     private static void containerSetup() {
-        var sea = org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get();
+        containerSetup(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
+        containerSetup(org.overengineer.bettacraft.registry.ModItems.RO_WATER_BUCKET.get()); // M25
+    }
+
+    private static void containerSetup(net.minecraft.world.item.Item sea) {
         for (var map : new net.minecraft.core.cauldron.CauldronInteraction.InteractionMap[] {net.minecraft.core.cauldron.CauldronInteraction.EMPTY,
                 net.minecraft.core.cauldron.CauldronInteraction.WATER, net.minecraft.core.cauldron.CauldronInteraction.LAVA,
                 net.minecraft.core.cauldron.CauldronInteraction.POWDER_SNOW}) {
@@ -99,9 +104,23 @@ public final class BettaCraft {
 
     private static void onCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
         // M22.1: a bucket of sea water is a bucket of water for other mods' tanks and pipes (it empties into a bucket)
+        // M25: other mods see the fluids of their own (bettacraft:sea_water, bettacraft:ro_water)
         event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM,
-                (stack, ctx) -> new net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper(stack),
+                (stack, ctx) -> new org.overengineer.bettacraft.osmosis.WaterBucketWrapper(stack, org.overengineer.bettacraft.registry.ModFluids.SEA_WATER),
                 org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
+        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM,
+                (stack, ctx) -> new org.overengineer.bettacraft.osmosis.WaterBucketWrapper(stack, org.overengineer.bettacraft.registry.ModFluids.RO_WATER),
+                org.overengineer.bettacraft.registry.ModItems.RO_WATER_BUCKET.get());
+        // M25: the reverse osmosis unit (water in, reverse osmosis water out; parts from hoppers; FE for the pressure pump while
+        // a power option is on) and the CO2 filling station (cylinders, FE for the compressor, CO2 gas of other mods)
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.RO_UNIT.get(), (be, side) -> be.fluid());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.RO_UNIT.get(), (be, side) -> be.parts());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.RO_UNIT.get(),
+                (be, side) -> org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() ? be.energy() : null);
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.CO2_STATION.get(), (be, side) -> be.automation());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.CO2_STATION.get(), (be, side) -> be.gasIn());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CO2_STATION.get(),
+                (be, side) -> org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() ? be.energy() : null);
         // hoppers, pipes and other mods insert food into the feeder
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FEEDER.get(),
                 (be, side) -> be.items());

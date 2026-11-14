@@ -122,6 +122,7 @@ public final class TankAeration {
         Air air = air(level, c, eq, waterY);
         updateOutlets(level, c, r, eq, waterY, air);
         if (enabled() && t.waterMb() > 0) oxygen(level, c, eq, waterY, air, days);
+        else c.o2Exchange = t.waterMb() > 0 ? exchange(level, c, eq, waterY, air) : 0; // M25: the CO2 needs the exchange also without the oxygen feature
         if (CommonConfig.fryIntake() && days > 0) fryIntake(level, c, eq, waterY, days);
     }
 

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:ingots/copper"
+    },
+    {
+      "tag": "c:dusts/redstone"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:co2_solenoid"
+  }
+}

@@ -120,8 +120,15 @@ public final class TankChemistry {
 
     /** How far the water of {@code t} is out of the range (0 when the feature is off or the tank is dry). */
     public static double distance(TankData t, @Nullable ChemTolerance.Range r) {
-        if (r == null || !enabled() || t.waterMb() <= 0) return 0;
-        return r.distance(t.ph(), t.tds());
+        if (r == null || t.waterMb() <= 0) return 0;
+        double d = enabled() ? r.distance(t.ph(), t.tds()) : 0;
+        // M25 part b: too much CO2 counts the same way (features.co2)
+        return Math.max(d, org.overengineer.bettacraft.co2.TankCo2.distance(t, ChemTolerance.co2Tolerance(r)));
+    }
+
+    /** M25 part b: too much CO2 is what is wrong for an animal with this range (the cause of death). */
+    public static boolean co2Bad(TankData t, @Nullable ChemTolerance.Range r) {
+        return r != null && org.overengineer.bettacraft.co2.TankCo2.distance(t, ChemTolerance.co2Tolerance(r)) >= ChemTolerance.BAD_FROM;
     }
 
     public static ChemTolerance.Fit fit(TankData t, @Nullable ChemTolerance.Range r) {

@@ -236,11 +236,11 @@ public final class DeviceEffects {
     private static void onScroll(InputEvent.MouseScrollingEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.screen != null || !mc.player.isShiftKeyDown()) return;
-        if (!CommonConfig.powerRegulator()) return;
         HitResult hit = mc.hitResult;
         if (!(hit instanceof BlockHitResult bh) || hit.getType() != HitResult.Type.BLOCK) return;
         Regulator.Device d = Regulator.find(mc.level, bh.getBlockPos());
         if (d == null) return;
+        if (!CommonConfig.powerRegulator() && !d.alwaysAdjustable()) return;
         int step = e.getScrollDeltaY() > 0 ? 1 : e.getScrollDeltaY() < 0 ? -1 : 0;
         if (step == 0) return;
         PacketDistributor.sendToServer(new RegulatorPayload(d.pos(), step, true));

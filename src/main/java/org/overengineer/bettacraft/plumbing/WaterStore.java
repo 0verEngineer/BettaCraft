@@ -55,7 +55,7 @@ public class WaterStore implements IFluidHandler {
 
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
-        return stack.getFluid().isSame(Fluids.WATER);
+        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()); // M25: reverse osmosis and sea water become water with their values
     }
 
     @Override

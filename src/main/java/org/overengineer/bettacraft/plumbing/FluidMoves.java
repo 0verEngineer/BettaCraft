@@ -25,7 +25,7 @@ public final class FluidMoves {
     /** Water that {@code from} can give, up to {@code max} (looked at, not taken). */
     public static FluidStack peekWater(IFluidHandler from, int max) {
         FluidStack sim = from.drain(max, IFluidHandler.FluidAction.SIMULATE);
-        return sim.isEmpty() || !sim.getFluid().isSame(Fluids.WATER) ? FluidStack.EMPTY : sim;
+        return sim.isEmpty() || !org.overengineer.bettacraft.registry.ModFluids.isWater(sim.getFluid()) ? FluidStack.EMPTY : sim;
     }
 
     /** How much of {@code water} {@code to} takes (with the plain-water fallback for tanks that refuse the values). */
