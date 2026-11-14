@@ -127,6 +127,7 @@ public final class TankmateBreeding {
         Map<TankmateSpecies, List<TankmateEntity>> by = bySpecies(mates);
         shoals(level, c, by);
         aggression(level, c, bettas, mates, days, now);
+        seahorses(level, c, mates);
         grazing(t, mates);
         snails(level, c, mates, days);
         fry(level, c, bettas, mates, days);
@@ -139,6 +140,7 @@ public final class TankmateBreeding {
                 case SCATTER -> scatter(level, c, e.getKey(), e.getValue(), days, full);
                 case LIVEBEARER -> livebearer(level, c, e.getKey(), e.getValue(), by, days, full);
                 case FOAM_NEST -> foam(level, c, e.getKey(), e.getValue(), days, now, full);
+                case POUCH -> pouch(level, c, e.getKey(), e.getValue(), days, full); // M21.8 seahorses
                 case NONE -> {}
             }
         }
@@ -574,6 +576,56 @@ public final class TankmateBreeding {
         }
     }
 
+    /**
+     * M21.8: fast or pushy reef fish harass the seahorses (they count as chased: stress, the menu says so). Runs after
+     * {@link #aggression}, which clears the chased state every step.
+     */
+    private static void seahorses(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates) {
+        TankmateEntity by = null;
+        boolean any = false;
+        for (TankmateEntity m : mates) if (m.species().seahorse()) any = true;
+        if (!any) return;
+        by = Seahorses.harasserIn(mates);
+        String key = "seahorse_harassed";
+        if (by == null) {
+            c.tankmateLogged.remove(key);
+            return;
+        }
+        for (TankmateEntity m : mates) if (m.species().seahorse() && m.lifeStage() != LifeStage.FRY) m.setChased(true);
+        if (c.tankmateLogged.add(key)) TankCare.log(level, c, "log.bettacraft.tm.seahorse_harassed", "@" + by.species().translationKey());
+    }
+
+    /**
+     * M21.8 seahorses: a fit female passes her eggs to a fit male (the eggs, i.e. the partner's genes, go into his brood
+     * pouch: {@code gravidDays} on the male); after {@code seahorses.pouchDays} he gives birth ({@link #births}).
+     */
+    private static void pouch(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list, double days, boolean full) {
+        if (full) return;
+        TankData t = c.getTank();
+        if (!s.breedingTemp(t.waterTemp())) return;
+        List<TankmateEntity> females = adults(list, true, true);
+        if (females.isEmpty()) return;
+        RandomSource r = level.getRandom();
+        for (TankmateEntity m : adults(list, false, true)) {
+            if (m.isGravid() || m.breeding().cooldown() > 0) continue;
+            TankmateEntity f = null;
+            for (TankmateEntity x : females) if (x.breeding().cooldown() <= 0) f = x;
+            if (f == null) return;
+            // courtship over a few days; well fed with live food (conditioned) twice as fast
+            double rate = 0.5 * speed() * (m.breeding().isConditioned() || f.breeding().isConditioned() ? 2.0 : 1.0);
+            if (r.nextDouble() >= chance(rate, days)) continue;
+            m.setGravid(0, f.genes());
+            f.breeding().setCooldown(1.0);
+            TankCare.log(level, c, "log.bettacraft.tm.pouch", TankCare.nameArg(f), TankCare.nameArg(m));
+            c.markTankChanged();
+        }
+    }
+
+    /** Days the young need until birth: the pouch of a seahorse male, the belly of a livebearer female. */
+    public static double gestationDays(TankmateSpecies s) {
+        return s.seahorse() ? Seahorses.pouchDays() : gestationDays();
+    }
+
     /** M21.6: the species a guppy or an endler crosses with (with features.livebearerGenetics), or null. */
     @Nullable
     public static TankmateSpecies hybridPartner(TankmateSpecies s) {
@@ -784,16 +836,16 @@ public final class TankmateBreeding {
     private static void births(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, long now) {
         TankData t = c.getTank();
         RandomSource r = level.getRandom();
-        double gest = gestationDays();
         for (TankmateEntity f : mates) {
-            if (!f.isGravid() || f.gravidDays() < gest) continue;
+            if (!f.isGravid() || f.gravidDays() < gestationDays(f.species())) continue;
             TankmateSpecies s = f.species();
             int n = brood(s, f, r);
+            // (a seahorse male carries the female's genes here)
             TankmateGenes father = f.gravidFather() != null ? f.gravidFather() : TankmateGenes.wild(s);
             f.setGravid(-1, null);
             f.breeding().setCooldown(0.5);
             int boxed = 0;
-            if (t.breedingBox()) {
+            if (t.breedingBox() && !s.seahorse()) {
                 int inBox = boxFry(t);
                 boxed = Math.min(n, Math.max(0, boxCapacity() - inBox));
                 if (boxed > 0) {
@@ -814,8 +866,15 @@ public final class TankmateBreeding {
                 boolean female = r.nextBoolean();
                 if (spawn(level, c, s, TankmateGenes.cross(f.genes(), father, female, r::nextLong), female, LifeStage.FRY, f.generation() + 1, p) != null) made++;
             }
-            TankCare.log(level, c, boxed > 0 ? "log.bettacraft.tm.born_box" : "log.bettacraft.tm.born", TankCare.nameArg(f),
-                    String.valueOf(made + boxed), String.valueOf(boxed));
+            if (s.seahorse()) {
+                // M21.8: the male pumps the fry out of his pouch
+                level.sendParticles(ParticleTypes.BUBBLE, f.getX(), f.getY() + f.getBbHeight() * 0.4, f.getZ(), 8, 0.05, 0.05, 0.05, 0.01);
+                TankCare.log(level, c, "log.bettacraft.tm.pouch_born", TankCare.nameArg(f), String.valueOf(made));
+            } else {
+                TankCare.log(level, c, boxed > 0 ? "log.bettacraft.tm.born_box" : "log.bettacraft.tm.born", TankCare.nameArg(f),
+                        String.valueOf(made + boxed), String.valueOf(boxed));
+            }
+
             c.markTankChanged();
         }
     }
@@ -893,6 +952,7 @@ public final class TankmateBreeding {
                 } else {
                     males++;
                     fitM |= fit(m);
+                    if (m.isGravid()) gravid++; // M21.8: a seahorse male with a full brood pouch
                 }
             }
             d.putInt("males", males);
@@ -910,6 +970,7 @@ public final class TankmateBreeding {
                 }
                 case GLASS_EGGS -> d.putBoolean("cool", coolChangeRecent(level, t));
                 case LIVEBEARER -> d.putBoolean("box", t.breedingBox());
+                case POUCH -> d.putInt("posts", Seahorses.spots(level, t).size()); // M21.8
                 default -> {}
             }
             ListTag cl = new ListTag();

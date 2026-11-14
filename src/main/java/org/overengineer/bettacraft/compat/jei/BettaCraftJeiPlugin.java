@@ -47,6 +47,14 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
     }
 
     /** M21.7 dev smoke test: opens JEI's crafting page of the stone cabinet. False if JEI is not ready or it is missing. */
+    /** M21.8 smoke scenes: sets the search text of the JEI item list (false without JEI). */
+    public static boolean filterForTest(String text) {
+        var rt = runtime;
+        if (rt == null) return false;
+        rt.getIngredientFilter().setFilterText(text);
+        return true;
+    }
+
     public static boolean showStoneCabinet() {
         var rt = runtime;
         if (rt == null) return false;

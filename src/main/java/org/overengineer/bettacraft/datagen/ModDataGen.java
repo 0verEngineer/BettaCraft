@@ -564,9 +564,10 @@ public final class ModDataGen {
             for (var d : ModItems.DECOR.values()) basicItem(d.get());
             // M19: tankmates (bucket with the betta's fish overlay, tinted per species), spawn eggs, breeding items
             for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+                String fish = sp.seahorse() ? "item/seahorse_bucket_fish" : "item/betta_bucket_fish"; // M21.8: a seahorse in the bucket
                 withExistingParent(sp.bucketId(), mcLoc("item/generated"))
-                        .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish"))
-                        .texture("layer2", modLoc("item/betta_bucket_fish_fins")).texture("layer3", modLoc("item/betta_bucket_glass"));
+                        .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc(fish))
+                        .texture("layer2", modLoc(fish + "_fins")).texture("layer3", modLoc("item/betta_bucket_glass"));
                 withExistingParent(sp.spawnEggId(), mcLoc("item/template_spawn_egg"));
             }
             basicItem(ModItems.BREEDING_BOX.get());

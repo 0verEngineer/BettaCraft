@@ -38,7 +38,7 @@ class TankmateDataTest {
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(26, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon
+        assertEquals(28, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));

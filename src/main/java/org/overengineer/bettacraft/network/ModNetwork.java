@@ -28,7 +28,13 @@ public final class ModNetwork {
         r.playToClient(TankPlantsPayload.TYPE, TankPlantsPayload.STREAM_CODEC, ModNetwork::onTankPlants);
         r.playToClient(TankCrittersPayload.TYPE, TankCrittersPayload.STREAM_CODEC, ModNetwork::onTankCritters);
         r.playToClient(InteriorLeavePayload.TYPE, InteriorLeavePayload.STREAM_CODEC, ModNetwork::onInteriorLeave); // M15
+        r.playToClient(ServerSettingsPayload.TYPE, ServerSettingsPayload.STREAM_CODEC, ModNetwork::onServerSettings); // M21.8
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+    }
+
+    private static void onServerSettings(ServerSettingsPayload payload, IPayloadContext ctx) {
+        // common code: on an integrated server both sides read the same config anyway
+        ctx.enqueueWork(() -> org.overengineer.bettacraft.food.ArtemiaCystsItem.setClientOverride(payload.cystStack()));
     }
 
     private static void onGenetics(GeneticsSyncPayload payload, IPayloadContext ctx) {

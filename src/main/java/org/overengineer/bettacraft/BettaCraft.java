@@ -52,6 +52,15 @@ public final class BettaCraft {
             org.overengineer.bettacraft.compat.top.TheOneProbeCompat.register(modBus);
         }
 
+        // M21.8: the cyst stack size reaches the clients at login and whenever the server config is reloaded
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent e) -> {
+            if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) org.overengineer.bettacraft.network.ServerSettingsPayload.send(sp);
+        });
+        modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
+            if (e.getConfig().getSpec() != ServerConfig.SPEC) return;
+            var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+            if (server != null) server.execute(() -> org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server));
+        });
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);

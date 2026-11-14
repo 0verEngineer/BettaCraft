@@ -137,14 +137,16 @@ final class TankmateBehaviour {
             } else if (mode == Mode.REST || mode == Mode.GLASS) {
                 // M21.5: on the glass it counts as arrived a little earlier (the buoyancy kept small fish hovering just off the
                 // spot), then it is held there
-                double arrive = mode == Mode.GLASS && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0.0225 : 0.004;
+                double arrive = mode == Mode.GLASS && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0.0225
+                        : hitchPost != null ? 0.04 : 0.004; // M21.8: a seahorse holds on a little beside its post (the path ends short of it)
                 if (fish.position().distanceToSqr(target) > arrive) {
                     // M21.5: a kuhli loach creeps into its shelter around the decoration
                     Vec3 to = sheltered ? steer(server, w, target) : target;
                     // M21.5: a little faster while still far away (on the way to the glass it took minutes)
                     double far = fish.position().distanceTo(target);
                     double sp = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() && far > 0.6 ? 0.8 : 0.4;
-                    move().swimTo(to.x, to.y, to.z, sheltered ? Math.min(sp, 0.5) : sp);
+                    // M21.8: a seahorse on its way to a post swims at its (slow) full speed
+                    move().swimTo(to.x, to.y, to.z, hitchPost != null ? 1.0 : sheltered ? Math.min(sp, 0.5) : sp);
                     // M21.5: the time on the glass (or resting) starts once it is there (the way does not use it up)
                     if (sp > 0.4 || arrive > 0.004) {
                         if (++travel < 900) ticks++;
@@ -153,6 +155,19 @@ final class TankmateBehaviour {
                     move().stop();
                     if (arrive > 0.004) fish.setDeltaMovement(target.subtract(fish.position()).scale(0.15));
                     else fish.setDeltaMovement(fish.getDeltaMovement().scale(0.3));
+                    if (hitchPost != null) {
+                        // M21.8: the seahorse holds on to its post: tail curled round it, facing it
+                        hitched = true;
+                        behaviourFlags = TankmateEntity.FLAG_REST;
+                        fish.setDeltaMovement(target.subtract(fish.position()).scale(0.2));
+                        Vec3 d = hitchPost.subtract(fish.position());
+                        if (d.horizontalDistanceSqr() > 1e-6) {
+                            float yaw = (float) (Mth.atan2(d.z, d.x) * Mth.RAD_TO_DEG) - 90F;
+                            fish.setYRot(Mth.approachDegrees(fish.getYRot(), yaw, 6F));
+                            fish.yBodyRot = fish.getYRot();
+                            fish.yHeadRot = fish.getYRot();
+                        }
+                    }
                     if (mode == Mode.GLASS && glassFace >= 0) {
                         faceGlass();
                         // M21.5: upright only once it is on the glass (it used to stand up on the way already)
@@ -173,7 +188,13 @@ final class TankmateBehaviour {
         glassFace = -1;
         sheltered = false;
         travel = 0;
+        hitchPost = null;
+        hitched = false;
         RandomSource r = r();
+        if (s.seahorse()) {
+            seahorse(server, w, s);
+            return;
+        }
         boolean night = !server.isDay();
         double restChance = s.nocturnal() ? (night ? 0.15 : 0.75) : 0.3;
         if (eel(s)) {
@@ -226,6 +247,56 @@ final class TankmateBehaviour {
     }
 
     // ------------------------------------------------------------------ modes
+
+    /** M21.8: the post a seahorse is on its way to or holds on to (null: none). */
+    @Nullable
+    Vec3 hitchPost;
+    /** M21.8: the seahorse has reached its post and holds on to it. */
+    boolean hitched;
+
+    /**
+     * M21.8: a seahorse mostly holds on to a hitching post (almost always in strong flow), now and then swims a slow,
+     * upright tour or - without a post - lies on the bottom.
+     */
+    private void seahorse(ServerLevel server, TankWaterVolume w, TankmateSpecies s) {
+        RandomSource r = r();
+        boolean flow = (fish.stressBits() & TankmateCare.STRESS_FLOW) != 0;
+        if (r.nextDouble() < (flow ? 0.95 : 0.72) && hitch(server, w, 400 + r.nextInt(800))) return;
+        if ((fish.stressBits() & TankmateCare.STRESS_NO_POSTS) != 0 && r.nextDouble() < 0.6) {
+            rest(server, w, 160 + r.nextInt(240));
+            return;
+        }
+        go(cruiseTarget(w, s, 0.3, 1.2), 0.6, Mode.CRUISE);
+        ticks = 140 + r.nextInt(160);
+    }
+
+    /** M21.8: swims to a hitching post nearby (around the decoration); false if the tank has none. */
+    private boolean hitch(ServerLevel server, TankWaterVolume w, int duration) {
+        var controller = TankInhabitants.resolveController(server, fish);
+        if (controller == null) return false;
+        List<org.overengineer.bettacraft.tankmates.Seahorses.Spot> spots = org.overengineer.bettacraft.tankmates.Seahorses.spots(server, controller.getTank());
+        if (spots.isEmpty()) return false;
+        RandomSource r = r();
+        org.overengineer.bettacraft.tankmates.Seahorses.Spot best = null;
+        double bestD = Double.MAX_VALUE;
+        // the nearest of a few random posts (a seahorse does not cross the whole tank for every rest)
+        for (int i = 0; i < 6; i++) {
+            var sp = spots.get(r.nextInt(spots.size()));
+            double d = sp.pos().distanceToSqr(fish.position());
+            if (d < bestD) {
+                best = sp;
+                bestD = d;
+            }
+        }
+        if (best == null) return false;
+        target = clamp(w, best.pos());
+        hitchPost = best.post();
+        mode = Mode.REST;
+        ticks = duration;
+        sheltered = true; // the way leads around the decoration
+        behaviourFlags = 0; // the tail curls once it is there
+        return true;
+    }
 
     private void shoal(ServerLevel server, TankWaterVolume w, TankmateSpecies s) {
         TankmateEntity lead = s.shoaling() ? leader(server, w) : null;
@@ -510,7 +581,15 @@ final class TankmateBehaviour {
         return glass(server, fish.tankWater);
     }
 
+    /** M21.8 GameTests and smoke scenes: hitch to the nearest post now (false if there is none). */
+    boolean hitchNow() {
+        if (!(fish.level() instanceof ServerLevel server) || fish.tankWater == null) return false;
+        travel = 0;
+        return hitch(server, fish.tankWater, 2000);
+    }
+
     void freeze() {
+
         target = fish.position();
         mode = Mode.REST;
         ticks = Integer.MAX_VALUE / 2;

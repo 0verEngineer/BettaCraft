@@ -108,8 +108,9 @@ public final class TankView {
         d.putInt("stress", m.stressBits());
         d.putBoolean("guard", m.isGuarding());
         d.putBoolean("cave", m.cave() != null);
+        d.putBoolean("hitched", m.isHitched()); // M21.8
         d.putFloat("gravid", m.isGravid() ? (float) Math.min(1.0, m.gravidDays() / Math.max(1e-6,
-                org.overengineer.bettacraft.tankmates.TankmateBreeding.gestationDays())) : -1F);
+                org.overengineer.bettacraft.tankmates.TankmateBreeding.gestationDays(s))) : -1F);
         d.putFloat("temp", t.waterTemp());
         d.putFloat("stock", (float) org.overengineer.bettacraft.tank.TankInhabitants.weight(m));
         return d;

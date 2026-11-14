@@ -364,7 +364,7 @@ public final class WaterGameTests {
             ItemStack out = tub.items().getStackInSlot(CultureTubBlockEntity.OUTPUT);
             h.assertTrue(out.is(ModItems.ARTEMIA_NAUPLII.get()) && out.getCount() == 2, "2 bottles of nauplii: " + out);
             h.assertTrue(tub.items().getStackInSlot(CultureTubBlockEntity.BOTTLES).isEmpty(), "the two bottles were filled");
-            h.assertTrue(tub.items().getStackInSlot(CultureTubBlockEntity.INPUT).getDamageValue() == 1, "one use of the cysts");
+            h.assertTrue(org.overengineer.bettacraft.food.ArtemiaCystsItem.used(tub.items().getStackInSlot(CultureTubBlockEntity.INPUT)) == 1, "one use of the cysts");
             h.assertTrue("bottles".equals(tub.blocker(level)), "now it needs glass bottles");
             h.assertTrue(items.extractItem(CultureTubBlockEntity.OUTPUT, 16, false).getCount() == 2, "a hopper can take the food");
             h.succeed();

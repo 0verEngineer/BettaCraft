@@ -160,6 +160,12 @@ final class BreedingLines {
                 case SCATTER -> out.add(check(d.getInt("mops") > 0 || d.getFloat("plants") >= 0.005F, Component.translatable(
                         s.broadLeafSpawner() ? "gui.bettacraft.breeding.tm.broad" : "gui.bettacraft.breeding.tm.medium",
                         d.getInt("mops"), Math.round(d.getFloat("plants") * 1000) / 10.0F)));
+                case POUCH -> {
+                    // M21.8 seahorses: hitching posts, full brood pouches
+                    out.add(check(d.getInt("posts") > 0, Component.translatable("gui.bettacraft.breeding.tm.posts", d.getInt("posts"))));
+                    if (d.getInt("gravid") > 0) out.add(Component.translatable("gui.bettacraft.breeding.tm.pouches", d.getInt("gravid"))
+                            .withStyle(ChatFormatting.LIGHT_PURPLE));
+                }
                 case LIVEBEARER -> {
                     if (d.getInt("gravid") > 0) out.add(Component.translatable("gui.bettacraft.breeding.tm.gravid", d.getInt("gravid"))
                             .withStyle(ChatFormatting.LIGHT_PURPLE));

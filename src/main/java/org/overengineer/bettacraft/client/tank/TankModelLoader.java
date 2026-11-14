@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
 import org.overengineer.bettacraft.BettaCraft;
 
-/** Geometry loader {@code bettacraft:tank}: model JSON needs textures {@code edge} and {@code particle}. */
+/** Geometry loader {@code bettacraft:tank}: model JSON needs textures {@code edge}, {@code particle} and (M21.8) {@code clear_icon}. */
 public final class TankModelLoader implements IGeometryLoader<TankModelLoader.Geometry> {
     public static final net.minecraft.resources.ResourceLocation ID = BettaCraft.id("tank");
     public static final TankModelLoader INSTANCE = new TankModelLoader();
@@ -30,7 +30,9 @@ public final class TankModelLoader implements IGeometryLoader<TankModelLoader.Ge
                                ModelState modelState, ItemOverrides overrides) {
             TextureAtlasSprite edge = spriteGetter.apply(context.getMaterial("edge"));
             TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial("particle"));
-            return new TankBakedModel(edge, particle, context.getTransforms(), null, org.overengineer.bettacraft.tank.TankStyle.TEXTURED, null);
+            // M21.8: the glass of the clear glass item icon
+            TextureAtlasSprite clear = context.hasMaterial("clear_icon") ? spriteGetter.apply(context.getMaterial("clear_icon")) : edge;
+            return new TankBakedModel(edge, clear, particle, context.getTransforms(), null, org.overengineer.bettacraft.tank.TankStyle.TEXTURED, null);
         }
     }
 }

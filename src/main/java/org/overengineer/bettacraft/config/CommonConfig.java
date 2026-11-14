@@ -23,6 +23,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_CLIP_FEEDER;
     public static final ModConfigSpec.BooleanValue FEATURE_LIVEBEARER_GENETICS;
     public static final ModConfigSpec.BooleanValue FEATURE_STONE_CABINETS;
+    public static final ModConfigSpec.BooleanValue FEATURE_SEAHORSES;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -65,6 +66,9 @@ public final class CommonConfig {
         FEATURE_STONE_CABINETS = b.comment("Stone cabinets: the aquarium cabinet can also be crafted from stone (also of other mods) with the slabs "
                 + "of the same stone; it looks like that stone and is mined with a pickaxe (off: no new ones can be crafted; placed ones stay)")
                 .define("stoneCabinets", true);
+        // M21.8
+        FEATURE_SEAHORSES = b.comment("Seahorses (lined seahorse Hippocampus erectus, dwarf seahorse H. zosterae) at the wandering trader and in the "
+                + "aquarium net in warm and lukewarm oceans (off: no new ones; seahorses already caught stay)").define("seahorses", true);
         b.pop();
         SPEC = b.build();
     }
@@ -90,7 +94,13 @@ public final class CommonConfig {
         return getOr(FEATURE_SMOOTH_SWIMMING, true);
     }
 
+    /** M21.8: seahorses at the trader and in the net. */
+    public static boolean seahorses() {
+        return getOr(FEATURE_SEAHORSES, true);
+    }
+
     public static boolean greenNeon() {
+
         return getOr(FEATURE_GREEN_NEON, true);
     }
 

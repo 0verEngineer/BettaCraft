@@ -1215,8 +1215,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             notes.add(Component.translatable("gui.bettacraft.tm.chased").withStyle(ChatFormatting.RED));
         if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_CROWDED) != 0)
             notes.add(Component.translatable("gui.bettacraft.tm.crowded").withStyle(ChatFormatting.RED));
-        if (d.getFloat("gravid") >= 0) notes.add(Component.translatable("gui.bettacraft.tm.gravid", Math.round(d.getFloat("gravid") * 100))
-                .withStyle(ChatFormatting.LIGHT_PURPLE));
+        // M21.8 seahorses
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_FLOW) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.flow").withStyle(ChatFormatting.RED));
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_NO_POSTS) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.no_posts").withStyle(ChatFormatting.RED));
+        if (d.getBoolean("hitched")) notes.add(Component.translatable("gui.bettacraft.tm.hitched").withStyle(ChatFormatting.AQUA));
+        if (d.getFloat("gravid") >= 0) notes.add(Component.translatable(s.seahorse() ? "gui.bettacraft.tm.pouch" : "gui.bettacraft.tm.gravid",
+                Math.round(d.getFloat("gravid") * 100)).withStyle(ChatFormatting.LIGHT_PURPLE));
+        if (s.seahorse()) notes.add(Component.translatable("gui.bettacraft.tm.live_food").withStyle(ChatFormatting.GRAY));
+
         if (d.getBoolean("guard")) notes.add(Component.translatable("gui.bettacraft.tm.guarding").withStyle(ChatFormatting.AQUA));
         else if (d.getBoolean("cave")) notes.add(Component.translatable(s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.ANEMONE
                 ? "gui.bettacraft.tm.in_anemone" : "gui.bettacraft.tm.has_cave").withStyle(ChatFormatting.AQUA));

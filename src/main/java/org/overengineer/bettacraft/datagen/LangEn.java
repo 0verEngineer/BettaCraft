@@ -21,6 +21,7 @@ final class LangEn {
         LangM215.addAll(a); // M21.5
         LangM216.addAll(a); // M21.6
         LangM217.addAll(a); // M21.7
+        LangM218.addAll(a); // M21.8
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -345,7 +346,7 @@ final class LangEn {
         a.accept("item.bettacraft.artemia_cysts", "Artemia Cysts");
         a.accept("tooltip.bettacraft.culture", "Ready after %s in-game day(s) (keep it in your inventory or a chest)");
         a.accept("tooltip.bettacraft.culture.light", "Ready after %s in-game day(s), needs light to hatch");
-        a.accept("tooltip.bettacraft.artemia_cysts", "%s uses left. Craft with a bottle of salt water.");
+        a.accept("tooltip.bettacraft.artemia_cysts", "%s uses left per jar. Craft with a bottle of salt water.");
         a.accept("pectoral.bettacraft.normal", "Normal");
         a.accept("pectoral.bettacraft.dumbo", "Dumbo");
         a.accept("locus.bettacraft.finform", "Tail");
@@ -610,7 +611,7 @@ final class LangEn {
         a.accept("info.bettacraft.mosquito_larvae", "Live food: one portion feeds up to 4 bettas and gets a breeding pair in the mood twice as fast.\nFrom a smelted bottle of swamp water or a larva tub, sometimes from mud mined in a swamp.");
         a.accept("info.bettacraft.betta_pellets", "Everyday food: one pellet feeds up to 4 bettas (juveniles and older).\nRight-click a tank with it or put it into a feeder.");
         a.accept("info.bettacraft.salt_water_bottle", "Use a glass bottle on water in an ocean. Mix it with artemia cysts for an artemia hatchery.");
-        a.accept("info.bettacraft.artemia_cysts", "Dried brine shrimp eggs, a rare find when you mine sand.\nOne item lasts for 16 hatcheries.");
+        a.accept("info.bettacraft.artemia_cysts", "Dried brine shrimp eggs, a rare find when you mine sand.\nOne jar lasts for 16 hatcheries. Jars stack (16 by default, the server can allow 32 or 64); only jars with the same uses left stack together.");
         a.accept("info.bettacraft.infusoria_culture", "Turns into a bottle of infusoria after one in-game day, in your inventory, a chest or on the ground.");
         a.accept("info.bettacraft.infusoria", "First food for fry. One bottle feeds 20 fry. Hand feeding gives the bottle back.");
         a.accept("info.bettacraft.artemia_culture", "Hatches into artemia nauplii after one in-game day, but only in light (level 9 or more).");

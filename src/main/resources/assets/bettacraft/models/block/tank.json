@@ -3,6 +3,7 @@
   "loader": "bettacraft:tank",
   "textures": {
     "particle": "minecraft:block/glass",
-    "edge": "bettacraft:block/tank_edge"
+    "edge": "bettacraft:block/tank_edge",
+    "clear_icon": "bettacraft:block/tank_clear_icon"
   }
 }

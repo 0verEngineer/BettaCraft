@@ -194,6 +194,21 @@ final class DevClientSmokeMP {
                             + fish + " " + coral);
                 });
             }
+            case "seahorses" -> {
+                // M21.8: the seahorses and the full brood pouch on this client, the cyst stack size it uses, the jars in slot 0 and 1
+                BlockPos min = pos(args);
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var box = new net.minecraft.world.phys.AABB(min).expandTowards(2, 2, 2);
+                    var mates = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box, m -> m.species().seahorse());
+                    long pouches = mates.stream().filter(m -> m.isGravid() && !m.isFemale()).count();
+                    int stack = new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get()).getMaxStackSize();
+                    var s0 = mc.player.getInventory().getItem(0);
+                    var s1 = mc.player.getInventory().getItem(1);
+                    send("seahorses " + mates.size() + " " + pouches + " " + stack + " " + s0.getCount() + " " + org.overengineer.bettacraft.food.ArtemiaCystsItem.usesLeft(s0)
+                            + " " + s1.getCount() + " " + org.overengineer.bettacraft.food.ArtemiaCystsItem.usesLeft(s1));
+                });
+            }
             case "cabinets" -> {
                 // M21.7: the material of the two cabinets on this client and the sound of the stone one
                 BlockPos at = pos(args);

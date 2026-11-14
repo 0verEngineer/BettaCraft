@@ -34,6 +34,7 @@ navigation:
 | `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation, mirror training (`mirrorReadinessBonus` 1.25), days live food keeps a fish conditioned (`conditioningDays` 2) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | fry per bottle, days a culture needs |
+| `food.artemiaCystStackSize` | 16 | jars of artemia cysts per stack: 16, 32 or 64 (each keeps its 16 uses) |
 | `stages.*Days` | | duration of the life stages |
 | `interior.defaultScale` | 16 | 4, 8 or 16 interior blocks per tank block (new aquariums) |
 | `interior.substrateCostsBlock` | true | substrate costs a block |
@@ -67,6 +68,7 @@ navigation:
 | `saltwater.oceanWaterIsSalty`, `foreignAnimals`, `vanillaCoralsNeedSalt` | true, LENIENT, false | sea water buckets from the ocean; salt and animals of vanilla / other mods (LENIENT or REALISTIC); vanilla corals die in fresh water |
 | `saltwater.skimmerBlocks`, `liveRockBlocks`, `pumpFlowBlocks` | 48, 24, 24 | water blocks a protein skimmer and a tank block of live rock keep clean in salt water, water blocks a flow pump moves |
 | `saltwater.coralGrowthSpeed`, `calciumPerStage`, `calciumPerDose`, `reefNetFishShare` | 1, 40, 200, 0.4 | coral growth, calcium a stony coral uses per stage and one additive adds (mg/L in one water block), share of reef fish in the net |
+| `seahorses.maxFlow`, `needHitchingPosts`, `feedingsPerDay`, `foodShareWithFastFish`, `harassedByFastFish`, `pouchDays` | 0.6, on, 2, 0.35, on, 4 | [seahorses](saltwater/seahorses.md): highest flow, stress without a post, feedings a day, food share next to fast fish, tangs and damsels harass them, days in the brood pouch |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | when players get this handbook |
 | `simulateUnloadedTime` | false | time passes in unloaded chunks |
 
@@ -79,7 +81,7 @@ animals go under overhangs and into caves, plecos swim into their spawning cave;
 since 1.13.2 `smoothSwimming` (fish turn in curves and tilt smoothly, kuhli loaches undulate and hide by day, plecos stand
 up only on the glass), `greenNeonTetra` (the green neon at the trader and in the net), `snailColors` (individual shades of
 the racer nerites, mostly gold apple snails with bands, red ramshorns), `detailedDecor` (the big skull and shipwreck),
-`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted). The server config `tank.protectFromExplosionsAndPistons`
+`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted) and since 1.14.1 `seahorses` ([seahorses](saltwater/seahorses.md); off = none from the net and the trader). The server config `tank.protectFromExplosionsAndPistons`
 decides whether the break protection also stops explosions and pistons. The **client config** has the animation and miniature distances, the distance up to which the
 miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 24; further away pixels, 0 = always
 pixels), the water surface glitter,

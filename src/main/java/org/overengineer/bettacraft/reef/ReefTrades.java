@@ -57,7 +57,7 @@ public final class ReefTrades {
         return (trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new java.util.ArrayList<>();
-            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && s.marine()) pool.add(s);
+            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && s.marine() && s.available()) pool.add(s); // M21.8: features.seahorses
             if (pool.isEmpty()) return null;
             return TankmateTrades.offer(pool.get(rnd.nextInt(pool.size())), rnd);
         };

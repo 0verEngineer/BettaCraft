@@ -69,6 +69,8 @@ public class CultureTubBlockEntity extends BlockEntity {
         }
     };
     private int water;
+    /** M21.8: a jar of cysts split off a stack in the input slot and opened (its remaining uses come first). */
+    private ItemStack opened = ItemStack.EMPTY;
     private double progress;
     private long lastTick = -1;
 
@@ -220,11 +222,18 @@ public class CultureTubBlockEntity extends BlockEntity {
         return artemia() ? ServerConfig.getOr(ServerConfig.CULTURE_ARTEMIA_DAYS, 1.0) : ServerConfig.getOr(ServerConfig.CULTURE_LARVA_DAYS, 2.0);
     }
 
+    /** M21.8: the jar opened from a stack of cysts (EMPTY if none; GameTests). */
+    public ItemStack openedJar() {
+        return opened;
+    }
+
     /** Ingredient uses left (cysts count their remaining uses). */
     public int ingredientUses() {
         ItemStack s = items.getStackInSlot(INPUT);
-        if (s.isEmpty()) return 0;
-        return s.isDamageableItem() ? s.getCount() * (s.getMaxDamage() - s.getDamageValue()) : s.getCount();
+        if (s.isEmpty() && opened.isEmpty()) return 0;
+        int open = opened.isEmpty() ? 0 : ArtemiaCystsItem.usesLeft(opened);
+        if (s.isEmpty()) return open;
+        return open + (s.getItem() instanceof ArtemiaCystsItem ? ArtemiaCystsItem.totalUses(s) : s.getCount());
     }
 
     // ------------------------------------------------------------------ environment
@@ -233,7 +242,7 @@ public class CultureTubBlockEntity extends BlockEntity {
     @Nullable
     public String blocker(Level level) {
         if (water < WATER_PER_BATCH) return artemia() ? "salt_water" : "water";
-        if (items.getStackInSlot(INPUT).isEmpty()) return artemia() ? "cysts" : "organic";
+        if (items.getStackInSlot(INPUT).isEmpty() && opened.isEmpty()) return artemia() ? "cysts" : "organic";
         ItemStack out = items.getStackInSlot(OUTPUT);
         // M17: a whole batch must fit (before, a batch near the full mark used its food and water for fewer items)
         int y = Math.min(batchYield(), OUTPUT_MAX);
@@ -295,12 +304,20 @@ public class CultureTubBlockEntity extends BlockEntity {
 
     private void finishBatch() {
         ItemStack in = items.getStackInSlot(INPUT);
-        if (in.isDamageableItem()) {
+        if (!opened.isEmpty()) {
+            // M21.8: the jar already opened from a stack first
+            opened = ArtemiaCystsItem.usedJar(opened);
+        } else if (in.getItem() instanceof ArtemiaCystsItem) {
             ItemStack d = in.copy();
-            int dmg = d.getDamageValue() + 1;
-            if (dmg >= d.getMaxDamage()) d.shrink(1);
-            else d.setDamageValue(dmg);
-            items.setStackInSlot(INPUT, d.isEmpty() ? ItemStack.EMPTY : d);
+            ItemStack jar = ArtemiaCystsItem.useOne(d);
+            if (d.isEmpty()) {
+                // the last jar of the slot: it stays in the slot with one use less
+                items.setStackInSlot(INPUT, jar);
+            } else {
+                // M21.8: a stack of jars: one jar is split off and opened, the rest stays unopened in the slot
+                items.setStackInSlot(INPUT, d);
+                opened = jar;
+            }
         } else {
             items.extractItem(INPUT, 1, false);
         }
@@ -432,6 +449,10 @@ public class CultureTubBlockEntity extends BlockEntity {
     }
 
     public void dropContents(Level level, BlockPos pos) {
+        if (!opened.isEmpty()) {
+            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, opened.copy());
+            opened = ItemStack.EMPTY;
+        }
         for (int i = 0; i < SLOTS; i++) {
             ItemStack s = items.getStackInSlot(i);
             if (!s.isEmpty()) Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, s.copy());
@@ -448,6 +469,7 @@ public class CultureTubBlockEntity extends BlockEntity {
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("water", water);
         tag.putDouble("progress", progress);
+        if (!opened.isEmpty()) tag.put("opened_jar", opened.save(registries));
     }
 
     @Override
@@ -460,5 +482,6 @@ public class CultureTubBlockEntity extends BlockEntity {
         }
         water = Math.max(0, Math.min(WATER_CAPACITY, tag.getInt("water")));
         progress = Math.max(0, Math.min(1, tag.getDouble("progress")));
+        opened = tag.contains("opened_jar") ? ItemStack.parseOptional(registries, tag.getCompound("opened_jar")) : ItemStack.EMPTY;
     }
 }

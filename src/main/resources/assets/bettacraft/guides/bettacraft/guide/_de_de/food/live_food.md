@@ -42,6 +42,8 @@ Das <ItemLink id="bettacraft:artemia_hatchery" /> brütet [Artemia-Nauplien](fry
 
 1. **Salzwasser-Flaschen** hineingießen (je 250 mB, bis zu 1000 mB). Die leeren Flaschen bleiben im Zuchtbecken.
 2. **Artemia-Eier** hineinlegen; jeder Ansatz verbraucht eine ihrer 16 Anwendungen.
+   Aus einem Stapel öffnet das Zuchtbecken immer eine Dose und braucht sie auf, bevor es die nächste öffnet (beim Abbauen
+   fällt die offene Dose mit ihren restlichen Anwendungen heraus).
 3. Jede Flasche Nauplien braucht eine **Glasflasche**: mit Glasflaschen rechtsklicken oder per Trichter hineingeben.
 4. Nach **1 Ingame-Tag** ergibt ein Ansatz 2 Flaschen Nauplien. Mit leerer Hand oder einem Trichter darunter
    herausnehmen.

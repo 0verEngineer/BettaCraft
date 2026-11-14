@@ -59,6 +59,8 @@ public class TankBakedModel implements IDynamicBakedModel {
     public static final ModelProperty<Integer> LIGHT = new ModelProperty<>();
 
     private final TextureAtlasSprite edge;
+    /** M21.8: the faint glass of the clear glass tank's item icon (the placed block has no glass quads). */
+    private final TextureAtlasSprite clearIcon;
     private final TextureAtlasSprite fallbackParticle;
     private final ItemTransforms transforms;
     @Nullable
@@ -80,9 +82,10 @@ public class TankBakedModel implements IDynamicBakedModel {
     private final Map<String, TankBakedModel> itemVariants;
     private final ItemOverrides overrides;
 
-    public TankBakedModel(TextureAtlasSprite edge, TextureAtlasSprite fallbackParticle, ItemTransforms transforms, @Nullable BlockState fixedGlass,
-                          TankStyle fixedStyle, @Nullable Map<String, TankBakedModel> sharedVariants) {
+    public TankBakedModel(TextureAtlasSprite edge, TextureAtlasSprite clearIcon, TextureAtlasSprite fallbackParticle, ItemTransforms transforms,
+                          @Nullable BlockState fixedGlass, TankStyle fixedStyle, @Nullable Map<String, TankBakedModel> sharedVariants) {
         this.edge = edge;
+        this.clearIcon = clearIcon;
         this.fallbackParticle = fallbackParticle;
         this.transforms = transforms;
         this.fixedGlass = fixedGlass;
@@ -93,7 +96,7 @@ public class TankBakedModel implements IDynamicBakedModel {
             public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
                 TankStyle style = TankBlockItem.getStyle(stack);
                 String key = TankBlockItem.getGlass(stack) + "|" + style.getSerializedName();
-                return itemVariants.computeIfAbsent(key, k -> new TankBakedModel(edge, fallbackParticle, transforms,
+                return itemVariants.computeIfAbsent(key, k -> new TankBakedModel(edge, clearIcon, fallbackParticle, transforms,
                         TankBlockItem.glassBlock(stack).defaultBlockState(), style, itemVariants));
             }
         };
@@ -153,6 +156,13 @@ public class TankBakedModel implements IDynamicBakedModel {
                     for (BakedQuad q : quads) java.util.Collections.addAll(out, connected(q, side, hidden, water));
                 }
             }
+        }
+        if (fixedGlass != null && fixedStyle == TankStyle.CLEAN) {
+            // M21.8: the item icon of a clear glass tank: a faint tinted pane with highlights and a 1 px frame (the thin edge
+            // lines of the block are far below a pixel in a 16 px icon, the icon was almost invisible)
+            out.add(clearPane(side));
+            out.addAll(edgeQuads(side, 0, 0, 0, ITEM_EDGE_WIDTH));
+            return out;
         }
         if (renderType == null || renderType == RenderType.cutout()) {
             int width = edgeWidth();
@@ -371,7 +381,34 @@ public class TankBakedModel implements IDynamicBakedModel {
         return (int) Math.round(Math.min(1.0, Math.max(0.1, px)) * 1000);
     }
 
+    /** M21.8: edge width of the clear glass item icon in 1/1000 px (one texel of the 16 px icon). */
+    static final int ITEM_EDGE_WIDTH = 1000;
+    private final Map<Direction, BakedQuad> paneCache = new ConcurrentHashMap<>();
+
+    /** M21.8: the faint pane of the clear glass item icon on one face. */
+    private BakedQuad clearPane(Direction side) {
+        return paneCache.computeIfAbsent(side, d -> {
+            float[] c = new float[12];
+            float in = 0.0005F;
+            BoxFaces.corners(d, in, in, in, 1 - in, 1 - in, 1 - in, c);
+            QuadBakingVertexConsumer q = new QuadBakingVertexConsumer();
+            q.setSprite(clearIcon);
+            q.setDirection(d);
+            q.setShade(true);
+            q.setTintIndex(-1);
+            for (int k = 0; k < 4; k++) {
+                float x = c[k * 3], y = c[k * 3 + 1], z = c[k * 3 + 2];
+                q.addVertex(x, y, z)
+                        .setColor(0xFFFFFFFF)
+                        .setUv(clearIcon.getU(BoxFaces.u(d, clamp(x), clamp(y), clamp(z))), clearIcon.getV(BoxFaces.v(d, clamp(x), clamp(y), clamp(z))))
+                        .setNormal(d.getStepX(), d.getStepY(), d.getStepZ());
+            }
+            return q.bakeQuad();
+        });
+    }
+
     private List<BakedQuad> edgeQuads(Direction side, int mask, int concave, int corners, int width) {
+        if (width == ITEM_EDGE_WIDTH) return itemEdges.computeIfAbsent(side, d -> buildEdges(d, mask, concave, corners, width));
         if (edgeCacheWidth != width) {
             edgeCache.clear();
             edgeCacheWidth = width;
@@ -380,6 +417,14 @@ public class TankBakedModel implements IDynamicBakedModel {
         long key = ((((long) side.ordinal() * 64 + mask) * 64 + concave) * 16 + corners) | ((long) width << 32);
         List<BakedQuad> cached = edgeCache.get(key);
         if (cached != null) return cached;
+        List<BakedQuad> result = buildEdges(side, mask, concave, corners, width);
+        edgeCache.put(key, result);
+        return result;
+    }
+
+    private final Map<Direction, List<BakedQuad>> itemEdges = new ConcurrentHashMap<>();
+
+    private List<BakedQuad> buildEdges(Direction side, int mask, int concave, int corners, int width) {
         float line = width / 1000F / 16F;
         List<BakedQuad> list = new ArrayList<>();
         float[] c = new float[12];
@@ -407,9 +452,7 @@ public class TankBakedModel implements IDynamicBakedModel {
                 list.add(bake(side, c));
             }
         }
-        List<BakedQuad> result = List.copyOf(list);
-        edgeCache.put(key, result);
-        return result;
+        return List.copyOf(list);
     }
 
     /** Shrinks the box {@code b} (x0,y0,z0,x1,y1,z1) to the strip of width {@code w} along its side towards {@code e}. */

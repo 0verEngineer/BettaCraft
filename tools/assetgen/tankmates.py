@@ -367,10 +367,62 @@ def damsel():
     return p, [body, caudal(p, 8, 12, "fork"), dorsal_fin(p, 0.3, 11, 5, "long", lean=-4)] + pectorals(p, 0.24, 4, 3)
 
 
+class SeaPlan:
+    """M21.8: the upright seahorse: t runs from the top of the head (0) down to the tip of the tail (1), v from the back
+    (0, +z) to the belly (1, -z), so the looks can paint rings down the body and a pale belly."""
+    name = "seahorse"
+    snout, ped = -16, 16
+
+    def t_of(self, z):
+        return 0.5  # the looks of the seahorse use y (height) directly
+
+    def v_of(self, y, z):
+        return max(0.0, min(1.0, 0.5 - z / 8.0))
+
+
+def seahorse():
+    """M21.8 seahorse: upright, 32 px from the crown (y = -32) down to the curled tail tip (y = 0), the snout pointing to
+    -z. Groups: body (head, snout, crown, eyes, neck, trunk), male (brood pouch), dorsal (fin on the back), pec_r/pec_l
+    and the tail chain curl1..curl6 (nested; the renderer curls it round the hitching post)."""
+    p = SeaPlan()
+    body = Group("body", (0, 0, 0))
+    body.boxes.append(box("crown", "body", (0, -31.0, 1.2), (2, 2, 2)))
+    body.boxes.append(box("head", "head", (0, -28.0, 0.6), (4, 5, 5)))
+    body.boxes.append(box("snout", "head", (0, -27.2, -4.0), (2, 2, 5)))
+    body.boxes.append(box("eye_r", "eye", (1.6, -28.6, -0.8), (2, 2, 2)))
+    body.boxes.append(box("eye_l", "eye", (-1.6, -28.6, -0.8), (2, 2, 2)))
+    body.boxes.append(box("neck", "body", (0, -24.0, 1.4), (3, 3, 4)))
+    body.boxes.append(box("trunk0", "body", (0, -21.0, 0.2), (4, 3, 6)))
+    body.boxes.append(box("trunk1", "body", (0, -18.0, -0.4), (5, 3, 7)))
+    body.boxes.append(box("trunk2", "body", (0, -15.0, -0.2), (5, 3, 6)))
+    body.boxes.append(box("trunk3", "body", (0, -12.5, 0.4), (4, 2, 5)))
+    male = Group("male", (0, -14.2, -2.6))  # pivot at the back of the pouch: it swells forward when full
+    male.boxes.append(box("pouch", "body", (0, -14.2, -3.6), (3, 4, 2)))
+    dorsal = Group("dorsal", (0, -17.0, 3.0))
+    dorsal.boxes.append(box("dorsal", "dorsal", (0, -17.0, 4.5), (0, 4, 3), fin="oval"))
+    groups = [body, male, dorsal]
+    for side, sx in (("r", 1), ("l", -1)):
+        g = Group(f"pec_{side}", (sx * 1.6, -26.0, 2.0))
+        g.boxes.append(box(f"pec_{side}", "pectoral", (sx * 1.9, -26.0, 3.0), (0, 2, 2), (0, sx * 35, 0), fin="oval"))
+        groups.append(g)
+    widths = [(3, 4), (3, 3), (3, 3), (2, 3), (2, 2), (1, 2)]
+    parent = None
+    for i, (wd, dp) in enumerate(widths):
+        y0 = -11.5 + i * 2
+        z = 0.6 + i * 0.25
+        name = f"curl{i + 1}"
+        g = Group(name, (0, y0, z), parent)
+        g.boxes.append(box(name, "body", (0, y0 + 1.0, z), (wd, 2, dp)))
+        groups.append(g)
+        parent = name
+    return p, groups
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
     "clown": clown, "tang": tang, "goby": goby, "damsel": damsel,
+    "seahorse": seahorse,
 }
 
 
@@ -687,7 +739,45 @@ def looks(species, variety, female):
                 return C("#f4d018")
             return C("#2a4ae0") if part != "pectoral" else C("#c8d0e8")
         return Look(body, fins)
+    if sp in ("lined_seahorse", "dwarf_seahorse"):
+        return seahorse_look(sp, var)
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
+
+
+def seahorse_look(sp, var):
+    """M21.8: bony rings down the body, a paler belly and pouch, fine pale lines on the neck (the 'lined' seahorse) and
+    small white dots; the dwarf seahorse tan with darker mottling."""
+    rnd = np.random.default_rng(2108 + len(var) + (7 if sp == "dwarf_seahorse" else 0))
+    spots = rnd.random((64, 64))
+    base = {"wild": "#4e463e", "yellow": "#e2b828", "orange": "#e0702a"}.get(var, "#4e463e")
+    if sp == "dwarf_seahorse":
+        base = "#b09868"
+    light = {"wild": "#a8987c", "yellow": "#f6dc70", "orange": "#f4a868"}.get(var, "#a8987c")
+    if sp == "dwarf_seahorse":
+        light = "#dccca0"
+
+    def body(t, v, x, z, y):
+        c = mix(C(base), C(light), 0.15 + 0.55 * v ** 1.6)
+        ring = 0.5 + 0.5 * math.sin(y * 2.2)
+        c = c * (0.86 + 0.14 * ring)
+        k = spots[int(abs(y) * 2.1 + abs(x) * 3.3) % 64, int((z + 16) * 3.7) % 64]
+        if sp == "dwarf_seahorse":
+            if k > 0.8:
+                c = mix(c, C("#5a4c30"), 0.6)
+            elif k < 0.05:
+                c = C("#f4f0e0")
+        else:
+            if -26 < y < -12 and int(abs(y) * 1.5) % 3 == 0 and v < 0.75:
+                c = mix(c, C("#e8e4d8"), 0.45)  # the fine pale lines along the neck and trunk
+            elif k > 0.93:
+                c = C("#f0ece0")
+        if y < -27 and z < -2:
+            c = c * 0.9  # the snout a little darker
+        return np.clip(c, 0, 1)
+
+    def fins(part, a, b, t, v, z, y):
+        return mix(C(light), C("#f0f0e8"), 0.5)
+    return Look(body, fins, eye="#1a1410", ring="#d8d0b8")
 
 
 def livebearer_look(sp, var, female):
@@ -1011,7 +1101,11 @@ SPECIES = [
     ("yellowtail_damsel", "damsel", ["wild"], False),
     # M21.5 (at the end: the texture seeds of the others stay)
     ("green_neon_tetra", "tetra", ["wild", "blue"], False),
+    # M21.8 seahorses
+    ("lined_seahorse", "seahorse", ["wild", "yellow", "orange"], False),
+    ("dwarf_seahorse", "seahorse", ["wild"], False),
 ]
+
 
 
 def texture_name(sp, varieties, var, dimorphic, female):

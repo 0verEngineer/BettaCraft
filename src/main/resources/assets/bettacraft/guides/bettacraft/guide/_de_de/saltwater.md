@@ -19,6 +19,7 @@ Bewohner: **Clownfische** in ihrer **Anemone**, **Doktorfische**, **Grundeln**, 
 * [Rifftechnik](saltwater/technique.md): Eiweißabschäumer, Strömungspumpe, aktinisches Licht, Riff- und Lebendgestein.
 * [Korallen](saltwater/corals.md): Weich- und Steinkorallen und die Anemone: Licht, Strömung, Kalzium, Ableger.
 * [Rifftiere](saltwater/reef_animals.md): die Fische und Kleintiere des Riffs, Clownfisch-Zucht, wo man sie bekommt.
+* [Seepferdchen](saltwater/seahorses.md): Haltepunkte, wenig Strömung, Lebendfutter, die Bruttasche des Männchens.
 
 ## Kurz gesagt
 

@@ -88,6 +88,7 @@ public final class ServerConfig {
 
     // food (M2)
     public static final ModConfigSpec.IntValue FOOD_FRY_PER_ITEM;
+    public static final ModConfigSpec.ConfigValue<Integer> FOOD_CYST_STACK;
     public static final ModConfigSpec.DoubleValue FOOD_CULTURE_DAYS;
 
     // interior
@@ -184,6 +185,10 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue TANKMATES_BREEDING_SPEED;
     public static final ModConfigSpec.DoubleValue TANKMATES_CLUTCH_SPEED;
     public static final ModConfigSpec.DoubleValue TANKMATES_GESTATION_DAYS;
+    // M21.8 seahorses
+    public static final ModConfigSpec.DoubleValue SEAHORSE_MAX_FLOW, SEAHORSE_FEEDINGS, SEAHORSE_FAST_SHARE, SEAHORSE_POUCH_DAYS;
+    public static final ModConfigSpec.BooleanValue SEAHORSE_NEED_POSTS, SEAHORSE_HARASSED;
+
     public static final ModConfigSpec.IntValue TANKMATES_MAX_FRY;
     public static final ModConfigSpec.IntValue TANKMATES_BOX_CAPACITY;
     public static final ModConfigSpec.DoubleValue TANKMATES_FRY_EATEN;
@@ -308,6 +313,9 @@ public final class ServerConfig {
         b.comment("Food").push("food");
         FOOD_FRY_PER_ITEM = b.comment("Fry fed by one portion of fry food (infusoria, artemia nauplii)").defineInRange("fryPerItem", 20, 1, 256);
         FOOD_CULTURE_DAYS = b.comment("Days an infusoria or artemia culture needs to become ready").defineInRange("cultureDays", 1.0, 0.0, 100.0);
+        // M21.8
+        FOOD_CYST_STACK = b.comment("How many jars of artemia cysts stack in one slot: 16, 32 or 64 (each jar keeps its 16 uses; only jars with the same uses left stack; "
+                + "stacks bigger than a smaller new limit stay as they are)").defineInList("artemiaCystStackSize", 16, java.util.Arrays.asList(16, 32, 64));
         b.pop();
 
         b.comment("Duration of the life stages in in-game days").push("stages");
@@ -558,6 +566,20 @@ public final class ServerConfig {
         REEF_CALCIUM_DOSE = b.comment("Calcium (mg/L in one water block) one calcium additive adds").defineInRange("calciumPerDose", 200.0, 0.0, 10000.0);
         REEF_NET_SHARE = b.comment("Share of the catches of the aquarium net in warm and lukewarm oceans that are reef fish instead of small",
                         "animals (0 = no fish)").defineInRange("reefNetFishShare", 0.4, 0.0, 1.0);
+        b.pop();
+
+        b.comment("M21.8: seahorses (lined and dwarf seahorse)").push("seahorses");
+        SEAHORSE_MAX_FLOW = b.comment("Water movement above which seahorses are stressed (1 = the strong flow stony corals need; one external",
+                        "filter in a tank of 16 water blocks gives 0.5; 0 = flow never stresses them)").defineInRange("maxFlow", 0.6, 0.0, 3.0);
+        SEAHORSE_NEED_POSTS = b.comment("Seahorses are stressed without a hitching post (aquarium plants, corals or decoration that stick up in the",
+                        "tank interior) to hold on to with their tail").define("needHitchingPosts", true);
+        SEAHORSE_FEEDINGS = b.comment("Feedings a day a seahorse needs (they have no stomach; 1 = like the other fish)")
+                .defineInRange("feedingsPerDay", 2.0, 1.0, 8.0);
+        SEAHORSE_FAST_SHARE = b.comment("Chance that a slow seahorse gets its share of the food while fast fish are in the tank")
+                .defineInRange("foodShareWithFastFish", 0.35, 0.0, 1.0);
+        SEAHORSE_HARASSED = b.comment("Fast or pushy reef fish (tangs, damselfish, chromis, clownfish) stress seahorses").define("harassedByFastFish", true);
+        SEAHORSE_POUCH_DAYS = b.comment("Days a male seahorse carries the eggs in his brood pouch before the fry are born")
+                .defineInRange("pouchDays", 4.0, 0.05, 100.0);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

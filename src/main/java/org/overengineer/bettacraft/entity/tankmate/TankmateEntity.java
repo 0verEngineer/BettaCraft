@@ -122,6 +122,7 @@ public class TankmateEntity extends AbstractFish {
             case TANG -> 0.7;
             case GOBY -> 0.4;
             case DAMSEL -> 0.7;
+            case SEAHORSE -> 0.22; // M21.8: slow, upright swimmers
         };
         double hp = s.length() >= 0.6 ? 6.0 : s.length() >= 0.35 ? 4.0 : 3.0;
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, hp).add(Attributes.MOVEMENT_SPEED, speed);
@@ -323,7 +324,8 @@ public class TankmateEntity extends AbstractFish {
 
     /** Distance the centre keeps from the glass: half the body (rendered length) or the hitbox, plus the glass. */
     public double sideMargin() {
-        double half = Math.max(getBbWidth() * 0.5, Math.min(0.45, species.length() * lifeStage().scale() * 0.4));
+        // M21.8: a seahorse stands upright (its length is its height; the snout and the curled tail reach a little forward)
+        double half = Math.max(getBbWidth() * 0.5, Math.min(0.45, species.length() * lifeStage().scale() * (species.seahorse() ? 0.18 : 0.4)));
         return half + 1.0 / 16 + 0.005;
     }
 
@@ -336,6 +338,22 @@ public class TankmateEntity extends AbstractFish {
     /** M21.5 GameTests: swim to the glass now (false if there is no free spot). */
     public boolean swimToGlassForTest() {
         return behaviour.glassNow();
+    }
+
+    /** M21.8: a seahorse that holds on to a hitching post (server). */
+    public boolean isHitched() {
+        return behaviour.hitched && behaviour.hitchPost != null;
+    }
+
+    /** M21.8: the hitching post a seahorse holds on to or swims to (server; null if none). */
+    @Nullable
+    public Vec3 hitchPost() {
+        return behaviour.hitchPost;
+    }
+
+    /** M21.8 GameTests and smoke scenes: swim to the nearest hitching post now (false if the tank has none). */
+    public boolean hitchNowForTest() {
+        return behaviour.hitchNow();
     }
 
     /** M21.5 GameTests: the behaviour target (null if none). */
@@ -519,8 +537,14 @@ public class TankmateEntity extends AbstractFish {
         if (level() instanceof ServerLevel server && isAlive()) TankmateCare.serverTick(server, this);
         if (level().isClientSide) {
             boolean eel = species.model() == TankmateSpecies.Model.KUHLI;
-            // an eel-like kuhli loach undulates slowly; the other fish beat faster the faster they swim
-            swimPose.tick(this, eel ? 0.16F : 0.45F, eel ? 0.32F : 1.1F, eel ? 12F : 35F, flag(FLAG_GLASS) && isInWater());
+            if (species.seahorse()) {
+                // M21.8: upright, never pitched; the small dorsal fin flutters fast all the time
+                swimPose.tick(this, 0.9F, 0.6F, 0F, false);
+            } else {
+                // an eel-like kuhli loach undulates slowly; the other fish beat faster the faster they swim
+                swimPose.tick(this, eel ? 0.16F : 0.45F, eel ? 0.32F : 1.1F, eel ? 12F : 35F, flag(FLAG_GLASS) && isInWater());
+            }
+
             if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
                 yBodyRot = swimPose.yaw();
                 yHeadRot = yBodyRot;

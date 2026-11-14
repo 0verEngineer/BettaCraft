@@ -19,6 +19,7 @@ water salted with **sea salt**. Salt water is clearer and bluer, and it is home 
 * [Reef technique](saltwater/technique.md): protein skimmer, flow pump, actinic light, reef rock and live rock.
 * [Corals](saltwater/corals.md): soft and stony corals and the anemone: light, flow, calcium, frags.
 * [Reef animals](saltwater/reef_animals.md): the fish and the small animals of the reef, clownfish breeding, where to get them.
+* [Seahorses](saltwater/seahorses.md): hitching posts, low flow, live food, the brood pouch of the male.
 
 ## In short
 

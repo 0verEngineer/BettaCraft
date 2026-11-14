@@ -18,6 +18,8 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     @Nullable
     private final ModelPart tail, dorsal, pecR, pecL, male, female, filaments;
     private final List<ModelPart> segments = new ArrayList<>();
+    /** M21.8: the seahorse's tail chain (curled round the hitching post). */
+    private final List<ModelPart> curls = new ArrayList<>();
 
     public TankmateModel(ModelPart root) {
         this.root = root;
@@ -33,6 +35,37 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
             ModelPart s = find(fish, "seg" + i);
             if (s == null) break;
             segments.add(s);
+        }
+        for (int i = 1; i <= 8; i++) {
+            ModelPart s = find(fish, "curl" + i);
+            if (s == null) break;
+            curls.add(s);
+        }
+    }
+
+    /**
+     * M21.8 seahorse: the tail curls forward segment by segment, tightly round the post while it holds on (FLAG_REST),
+     * loosely and slowly waving while it swims; the small dorsal fin on the back flutters fast (that is how a seahorse
+     * swims), the pectorals behind the head as well; a male's brood pouch swells while he carries eggs.
+     */
+    private void seahorse(TankmateEntity fish, float ageInTicks) {
+        boolean hitched = fish.flag(TankmateEntity.FLAG_REST);
+        float t = ageInTicks + fish.getId() * 3.1F;
+        for (int i = 0; i < curls.size(); i++) {
+            float k = (i + 1) / (float) curls.size();
+            float curl = hitched ? 0.2F + 0.55F * k : 0.06F + 0.16F * k + 0.06F * Mth.sin(t * 0.06F - i * 0.7F);
+            curls.get(i).xRot = -curl;
+        }
+        if (dorsal != null) dorsal.yRot = Mth.sin(t * 1.9F) * (hitched ? 0.25F : 0.55F);
+        float flutter = Mth.sin(t * 1.6F) * 0.45F;
+        if (pecR != null) pecR.yRot = flutter;
+        if (pecL != null) pecL.yRot = -flutter;
+        if (male != null) {
+            male.visible = !fish.isFemale();
+            boolean full = fish.isGravid();
+            male.xScale = full ? 1.7F : 1.0F;
+            male.yScale = full ? 1.35F : 1.0F;
+            male.zScale = full ? 2.3F : 1.0F;
         }
     }
 
@@ -54,6 +87,11 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     @Override
     public void setupAnim(TankmateEntity fish, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         root.getAllParts().forEach(ModelPart::resetPose);
+        if (!curls.isEmpty()) {
+            seahorse(fish, ageInTicks);
+            return;
+        }
+
         boolean smooth = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming();
         float pt = ageInTicks - (float) Math.floor(ageInTicks); // the partial tick (age = tickCount + partial)
         float swim;

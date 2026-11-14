@@ -137,6 +137,7 @@ public final class DevSmokeMP {
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
+            case "seahorses" -> checkSeahorses(name, a);
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -367,6 +368,28 @@ public final class DevSmokeMP {
         check(name + ": water drawn with " + a[2] + " ppt", Integer.parseInt(a[2]) == Math.round(c.getTank().salinity()));
         check(name + ": " + a[3] + " clownfish (server " + fish + ")", Integer.parseInt(a[3]) == fish && fish >= 2);
         check(name + ": " + a[4] + " coral blocks in the miniature (server " + coral + ")", Integer.parseInt(a[4]) == coral && coral > 1);
+    }
+
+    /** M21.8: the small seahorse tank (west of the cabinets). */
+    private static BlockPos seahorseMin() {
+        return base.offset(-16, 0, 6);
+    }
+
+    /**
+     * M21.8 {@code seahorses <seahorses> <full pouches> <stack size> <slot 0 count> <slot 0 uses> <slot 1 count> <slot 1 uses>}: the
+     * clients see both seahorses and the full brood pouch of the male, follow the live change of the cyst stack size (32) and
+     * have the stacked jars with the right uses.
+     */
+    private static void checkSeahorses(String name, String[] a) {
+        if (a.length < 8) {
+            fail(name + ": short seahorse report");
+            return;
+        }
+        check(name + ": " + a[1] + " seahorses (server 2)", "2".equals(a[1]));
+        check(name + ": " + a[2] + " full brood pouch (server 1, the male)", "1".equals(a[2]));
+        check(name + ": cyst jars per stack " + a[3] + " (server 32 after the live change)", "32".equals(a[3]));
+        check(name + ": a stack of " + a[4] + " jars with " + a[5] + " uses each (server 20 x 16)", "20".equals(a[4]) && "16".equals(a[5]));
+        check(name + ": a used jar " + a[6] + " x " + a[7] + " uses (server 1 x 15)", "1".equals(a[6]) && "15".equals(a[7]));
     }
 
     private static TankBlockEntity main() {
@@ -812,7 +835,49 @@ public final class DevSmokeMP {
             }
             say("cabinets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> reports.containsKey(P1 + ":cabinets") && reports.containsKey(P2 + ":cabinets"), 20 * 30));
+        steps.add(new Step("seahorses", () -> {
+            // M21.8: a small seahorse tank with a pair (the male with a full brood pouch); the cyst stack size is changed live
+            // to 32 (both clients must follow), each player gets a stack of 20 jars and a used jar
+            BlockPos min = seahorseMin();
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the seahorse tank formed", c != null);
+            if (c == null) return;
+            TankInteractions.changeWater(level, c, 8000 - c.getTank().waterMb(), 33F);
+            c.getTank().setWaterTemp(23F);
+            c.getTank().setTargetTemp(23F);
+            for (var old : org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(level, c.getTank())) {
+                c.getTank().inhabitants().remove(old.getUUID());
+                old.discard();
+            }
+            var sp = org.overengineer.bettacraft.tankmates.TankmateSpecies.LINED_SEAHORSE;
+            var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
+            for (int i = 0; i < 2; i++) {
+                var e = org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, c, sp, org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp), i == 0,
+                        org.overengineer.bettacraft.entity.betta.LifeStage.ADULT, 0, w.box().getCenter().add(i * 0.4 - 0.2, -0.4, 0));
+                if (e != null && i == 1) {
+                    e.setGravid(0.5, org.overengineer.bettacraft.tankmates.TankmateGenes.wild(sp));
+                    org.overengineer.bettacraft.entity.tankmate.TankmateCare.advance(level, c, e, 0.01);
+                }
+            }
+            c.markTankChanged();
+            ServerConfig.FOOD_CYST_STACK.set(32);
+            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
+            for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+                p.getInventory().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get(), 20));
+                p.getInventory().setItem(1, org.overengineer.bettacraft.food.ArtemiaCystsItem.usedJar(
+                        new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get())));
+            }
+            say("seahorses", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":seahorses") && reports.containsKey(P2 + ":seahorses"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
+            // M21.8: back to the default cyst stack size
+            ServerConfig.FOOD_CYST_STACK.set(16);
+            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);
             if (p2 != null) p2.teleportTo(server.overworld(), mainMin.getX() + 5.5, mainMin.getY(), mainMin.getZ() - 2.5, 35F, 10F);

@@ -34,6 +34,7 @@ navigation:
 | `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation, Spiegeltraining (`mirrorReadinessBonus` 1,25), Tage, die Lebendfutter einen Fisch konditioniert hält (`conditioningDays` 2) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | Jungfische pro Flasche, Tage für einen Ansatz |
+| `food.artemiaCystStackSize` | 16 | Dosen Artemia-Zysten pro Stapel: 16, 32 oder 64 (jede behält ihre 16 Anwendungen) |
 | `stages.*Days` | | Dauer der Lebensstufen |
 | `interior.defaultScale` | 16 | 4, 8 oder 16 Innenraum-Blöcke pro Aquarium-Block (neue Aquarien) |
 | `interior.substrateCostsBlock` | true | Bodengrund kostet einen Block |
@@ -67,6 +68,7 @@ navigation:
 | `saltwater.oceanWaterIsSalty`, `foreignAnimals`, `vanillaCoralsNeedSalt` | true, LENIENT, false | Meerwassereimer aus dem Ozean; Salz und Tiere aus Vanilla / anderen Mods (LENIENT oder REALISTIC); Vanilla-Korallen sterben im Süßwasser |
 | `saltwater.skimmerBlocks`, `liveRockBlocks`, `pumpFlowBlocks` | 48, 24, 24 | Wasserblöcke, die ein Eiweißabschäumer und ein Tankblock Lebendgestein im Salzwasser sauber halten, Wasserblöcke, die eine Strömungspumpe bewegt |
 | `saltwater.coralGrowthSpeed`, `calciumPerStage`, `calciumPerDose`, `reefNetFishShare` | 1, 40, 200, 0,4 | Wachstum der Korallen, Kalzium, das eine Steinkoralle je Stufe verbraucht und ein Zusatz hinzufügt (mg/L in einem Wasserblock), Anteil Rifffische im Kescher |
+| `seahorses.maxFlow`, `needHitchingPosts`, `feedingsPerDay`, `foodShareWithFastFish`, `harassedByFastFish`, `pouchDays` | 0,6, an, 2, 0,35, an, 4 | [Seepferdchen](saltwater/seahorses.md): höchste Strömung, Stress ohne Haltepunkt, Fütterungen pro Tag, Futteranteil neben schnellen Fischen, Doktorfische und Riffbarsche bedrängen sie, Tage in der Bruttasche |
 | `guide.giveBook` | ON_FIRST_CATCH_OR_CRAFT | wann Spieler dieses Handbuch bekommen |
 | `simulateUnloadedTime` | false | Zeit läuft in nicht geladenen Chunks weiter |
 
@@ -80,7 +82,7 @@ Prototyp; aus = die Blattblöcke), seit 1.13.2 `smoothSwimming` (Fische wenden i
 schlängeln sich und verstecken sich tagsüber, Harnischwelse stellen sich erst an der Scheibe auf), `greenNeonTetra` (der
 Grüne Neon beim Händler und im Kescher), `snailColors` (eigene Farbtöne der Rennschnecken, meist goldene Apfelschnecken
 mit Bändern, rote Posthörner), `detailedDecor` (der große Schädel und das große Wrack), `breakProtection` (der Schalter
-im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
+im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar) und seit 1.14.1 `seahorses` ([Seepferdchen](saltwater/seahorses.md); aus = keine aus Kescher und Händler). Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
 auch Explosionen und Kolben abhält. Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
 der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
 0 = immer Pixel), das

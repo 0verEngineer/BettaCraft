@@ -113,13 +113,24 @@ public enum TankmateSpecies {
     YELLOWTAIL_DAMSEL(d("yellowtail_damsel", "Chrysiptera parasema", Model.DAMSEL, Group.DAMSEL, Breeding.NONE, Zone.LOW)
             .size(0.33).temp(23, 28).breed(25, 27).quality(0.4).shoal(1).stock(0.45).brood(0, 0).growth(1.1)
             .eats(0.5).egg(0x2A5AE0, 0xF0D020).native_(Water.WARM_OCEAN, 10).native_(Water.LUKEWARM_OCEAN, 12).trader(Trade.COMMON)
-            .salt(Salinity.Range.HARDY_MARINE));
+            .salt(Salinity.Range.HARDY_MARINE)),
+    // ---------------------------------------------------------------- M21.8 seahorses (sea water down to strong brackish)
+    // slow, upright swimmers that hold on to plants, corals and decoration with their tail; eat live food only (artemia,
+    // larvae), often; the female lays her eggs into the male's brood pouch and he gives birth to fry that eat artemia at once
+    LINED_SEAHORSE(d("lined_seahorse", "Hippocampus erectus", Model.SEAHORSE, Group.SEAHORSE, Breeding.POUCH, Zone.LOW)
+            .size(0.62).hitbox(0.22, 0.58).temp(18, 27).breed(21, 25).quality(0.6).shoal(1).stock(1.5).brood(8, 20).growth(1.8)
+            .eats(0.0).egg(0xD8A030, 0xF2E2A8).native_(Water.LUKEWARM_OCEAN, 4).native_(Water.WARM_OCEAN, 3)
+            .trader(Trade.RARE).salt(Salinity.Range.HARDY_MARINE).varieties("wild", "yellow", "orange")),
+    DWARF_SEAHORSE(d("dwarf_seahorse", "Hippocampus zosterae", Model.SEAHORSE, Group.SEAHORSE, Breeding.POUCH, Zone.LOW)
+            .size(0.22).hitbox(0.1, 0.21).temp(21, 28).breed(24, 27).quality(0.6).shoal(1).stock(0.3).brood(3, 10).growth(1.0)
+            .eats(0.0).egg(0xC8B070, 0xEADCA8).native_(Water.WARM_OCEAN, 4)
+            .trader(Trade.RARE).salt(Salinity.Range.HARDY_MARINE));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
-    public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL }
+    public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE }
 
     /** Family group (handbook, overlays, menu). */
-    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL }
+    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -134,6 +145,11 @@ public enum TankmateSpecies {
         FOAM_NEST,
         /** M20: the clownfish pair spawns at the foot of its host anemone; the male guards the eggs. */
         ANEMONE,
+        /**
+         * M21.8: seahorses: the female lays her eggs into the brood pouch of the male, who carries them and gives birth
+         * to live fry ({@code seahorses.pouchDays}).
+         */
+        POUCH,
         /** Practically never breeds in a tank (clown loach, the other reef fish). */
         NONE
     }
@@ -218,7 +234,13 @@ public enum TankmateSpecies {
 
     /** M21.5: new species can be switched off (features.*): then neither the trader nor the net brings them. */
     public boolean available() {
+        if (seahorse()) return org.overengineer.bettacraft.config.CommonConfig.seahorses();
         return this != GREEN_NEON_TETRA || org.overengineer.bettacraft.config.CommonConfig.greenNeon();
+    }
+
+    /** M21.8: a seahorse (hitches, low flow, live food, brood pouch). */
+    public boolean seahorse() {
+        return def.model == Model.SEAHORSE;
     }
 
     /** Net catch weight in this kind of water (0 = not native there). */
@@ -349,6 +371,8 @@ public enum TankmateSpecies {
                     case TANG -> 0.7;
                     case CLOWN, DAMSEL -> 0.5;
                     case GOBY -> 0.3;
+                    case SEAHORSE -> 1.6;
+
                     case CORY -> 0.42;
                     case PLECO -> 0.3;
                     case KUHLI -> 0.18;

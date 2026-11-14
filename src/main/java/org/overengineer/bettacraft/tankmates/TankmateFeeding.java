@@ -39,7 +39,8 @@ public final class TankmateFeeding {
         if (kind == null) return out;
         for (TankmateEntity m : TankmateBreeding.tankmates(level, t)) {
             if (bottomOnly && !bottomFish(m)) continue;
-            if (BettaFood.canEat(m.lifeStage(), m.stageProgress(), kind)) out.add(m);
+            // M21.8: seahorses take live food and artemia only (the fry artemia from birth)
+            if (m.species().seahorse() ? Seahorses.canEat(m.lifeStage(), kind) : BettaFood.canEat(m.lifeStage(), m.stageProgress(), kind)) out.add(m);
         }
         return out;
     }
@@ -55,13 +56,20 @@ public final class TankmateFeeding {
         if (round != null) list.removeIf(m -> round.contains(m.getUUID()));
         list.sort(Comparator.comparingDouble((TankmateEntity m) -> m.health().daysSinceFed()).reversed());
         boolean midwater = fastThere;
-        for (TankmateEntity m : list) if (!bottomFish(m)) midwater = true;
+        for (TankmateEntity m : list) if (!bottomFish(m) && !m.species().seahorse()) midwater = true;
         double share = ServerConfig.getOr(ServerConfig.TANKMATES_BOTTOM_SHARE, 0.6);
+        // M21.8: slow seahorses next to fast eaters (bettas, midwater fish)
+        double seahorseShare = ServerConfig.getOr(ServerConfig.SEAHORSE_FAST_SHARE, 0.35);
         int used = 0, overfed = 0;
         for (TankmateEntity m : list) {
             if (used >= portions) break;
             if (!wafer && bottomFish(m) && midwater && level.getRandom().nextDouble() >= share) continue;
-            if (m.health().daysSinceFed() < TankCare.OVERFED_DAYS) overfed++;
+            if (m.species().seahorse() && midwater && level.getRandom().nextDouble() >= seahorseShare) continue;
+
+            double overfedDays = m.species().seahorse() ? TankCare.OVERFED_DAYS / Math.max(1.0, ServerConfig.getOr(ServerConfig.SEAHORSE_FEEDINGS, 2.0))
+                    : TankCare.OVERFED_DAYS; // M21.8: seahorses eat often
+            if (m.health().daysSinceFed() < overfedDays) overfed++;
+
             m.health().feed();
             if (kind == BettaFood.Kind.LIVE && m.isAdult()) m.breeding().condition();
             if (round != null) round.add(m.getUUID());

@@ -251,8 +251,9 @@ public final class DevShowcase {
             if (s.varieties().size() <= 1) continue;
             for (String v : s.varieties()) {
                 TankBlockEntity c = tank(level, at, 2, 2, 2, s.marine() ? 35F : 0F, true);
-                region(level, c, (s.marine() ? Blocks.SAND : Blocks.GRAVEL).defaultBlockState());
+                InteriorRegion vr = region(level, c, (s.marine() ? Blocks.SAND : Blocks.GRAVEL).defaultBlockState());
                 if (s.marine()) reefLight(level, at, 2);
+                if (s.seahorse()) seagrass(InteriorManager.interiorLevel(level.getServer()), vr); // M21.8: something to hold on to
                 for (int i = 0; i < Math.min(4, Math.max(2, s.shoal())); i++) fish(level, c, s, TankmateGenes.pure(s, v), i % 2 == 0, r);
                 name(level, at, de("variety.bettacraft." + s.id() + "." + v));
                 at = at.east(2 + GAP);
@@ -380,6 +381,45 @@ public final class DevShowcase {
             critters(level, c, s, 4);
             name(level, at, de(s.translationKey()));
             at = at.east(2 + GAP);
+        }
+        // M21.8: seahorses: a seahorse tank (seagrass, kelp, corals, calm water, no pump) with lined seahorses of every colour,
+        // a small dwarf seahorse tank, a pair with a full brood pouch and fry
+        at = startRow(level, "Seepferdchen");
+        {
+            ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+            TankBlockEntity c = tank(level, at, 4, 2, 3, 33F, true);
+            InteriorRegion ir = region(level, c, Blocks.SAND.defaultBlockState());
+            seagrass(in, ir);
+            rock(in, ir, 18, 38, 7, 5, ModBlocks.REEF_ROCK.get().defaultBlockState());
+            rock(in, ir, 48, 38, 7, 6, ModBlocks.REEF_ROCK.get().defaultBlockState());
+            coral(in, ir, PlantSpecies.LEATHER_CORAL, 18, 38, 2180L);
+            coral(in, ir, PlantSpecies.HAMMER_CORAL, 48, 38, 2181L);
+            reefLight(level, at, 4);
+            c.getTank().setWaterTemp(24F);
+            c.getTank().setTargetTemp(24F);
+            for (String v : TankmateSpecies.LINED_SEAHORSE.varieties()) {
+                fish(level, c, TankmateSpecies.LINED_SEAHORSE, TankmateGenes.pure(TankmateSpecies.LINED_SEAHORSE, v), true, r);
+                fish(level, c, TankmateSpecies.LINED_SEAHORSE, TankmateGenes.pure(TankmateSpecies.LINED_SEAHORSE, v), false, r);
+            }
+            critters(level, c, CritterSpecies.TURBO_SNAIL, 2);
+            name(level, at, "Seepferdchenbecken (33 ‰)");
+            at = at.east(4 + GAP);
+            TankBlockEntity d = tank(level, at, 2, 2, 2, 33F, true);
+            seagrass(in, region(level, d, Blocks.SAND.defaultBlockState()));
+            reefLight(level, at, 2);
+            for (int i = 0; i < 4; i++) fish(level, d, TankmateSpecies.DWARF_SEAHORSE, TankmateGenes.wild(TankmateSpecies.DWARF_SEAHORSE), i % 2 == 0, r);
+            name(level, at, "Zwergseepferdchen");
+            at = at.east(2 + GAP);
+            TankBlockEntity b = tank(level, at, 2, 2, 2, 33F, true);
+            seagrass(in, region(level, b, Blocks.SAND.defaultBlockState()));
+            reefLight(level, at, 2);
+            b.getTank().setWaterTemp(23F);
+            b.getTank().setTargetTemp(23F);
+            TankmateGenes yellow = TankmateGenes.pure(TankmateSpecies.LINED_SEAHORSE, "yellow");
+            fish(level, b, TankmateSpecies.LINED_SEAHORSE, yellow, true, r);
+            fish(level, b, TankmateSpecies.LINED_SEAHORSE, yellow, false, r);
+            for (var e : TankmateBreeding.tankmates(level, b.getTank())) if (!e.isFemale()) e.setGravid(1.0, yellow);
+            name(level, at, "Seepferdchen: Bruttasche");
         }
         // M21.7: cabinets of stone: a small tank on a cabinet of every vanilla stone with slabs, then the first stones of
         // other mods that the recipes know a slab for
@@ -783,6 +823,21 @@ public final class DevShowcase {
         s.add(at.offset(0, 1, 1));
         tank(level, s, at, 0F, true, null, null);
         name(level, at, "Form: Stufe");
+    }
+
+    /** M21.8: seagrass, tall seagrass and two kelp stems in an interior (hitching posts for seahorses). */
+    private static void seagrass(ServerLevel in, InteriorRegion r) {
+        for (int x = 2; x < r.sizeX() - 2; x++) {
+            for (int z = 2; z < Math.min(r.sizeZ() - 2, 22); z++) {
+                int k = (x * 7 + z * 13) % 11;
+                if (k == 0) in.setBlock(r.toWorld(x, 0, z), Blocks.TALL_SEAGRASS.defaultBlockState(), 2);
+                else if (k == 3 || k == 6) in.setBlock(r.toWorld(x, 0, z), Blocks.SEAGRASS.defaultBlockState(), 2);
+            }
+        }
+        int top = Math.min(r.sizeY() - 6, 22);
+        for (int[] kp : new int[][]{{r.sizeX() / 4, r.sizeZ() * 2 / 3}, {r.sizeX() * 3 / 4, r.sizeZ() * 2 / 3}}) {
+            for (int y = 0; y < top; y++) in.setBlock(r.toWorld(kp[0], y, kp[1]), (y == top - 1 ? Blocks.KELP : Blocks.KELP_PLANT).defaultBlockState(), 2);
+        }
     }
 
     private static void reef(ServerLevel level, BlockPos at, RandomSource r) {

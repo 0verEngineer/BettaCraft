@@ -43,7 +43,8 @@ Infusorien sind winzige Einzeller, die in Wasser mit Pflanzenresten wachsen.
 Artemia sind Salinenkrebse; ihre getrockneten Eier (Zysten) schlüpfen in Salzwasser.
 
 1. **Zysten:** Beim Abbauen von Sand (auch rotem Sand) fallen manchmal <ItemLink id="bettacraft:artemia_cysts" />
-   heraus (2 %). Ein Item reicht für 16 Ansätze.
+   heraus (2 %). Eine Dose reicht für 16 Ansätze. Dosen stapeln sich (16 pro Stapel, der Server kann 32 oder 64
+   erlauben); nur Dosen mit gleich vielen Anwendungen stapeln sich, eine angebrochene Dose kommt einzeln aus dem Gitter zurück.
 2. **Salzwasser:** Wende eine Glasflasche auf Wasser in einem Ozean an: eine
    <ItemLink id="bettacraft:salt_water_bottle" />.
 3. Mische beides zu einem <ItemLink id="bettacraft:artemia_culture" /> und warte **einen Ingame-Tag im Licht**

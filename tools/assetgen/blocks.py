@@ -26,6 +26,21 @@ def tank_edge() -> np.ndarray:
     return out
 
 
+def tank_clear_icon() -> np.ndarray:
+    """M21.8: the glass of the clear glass tank's item icon: a faint blue-green tint, a lighter rim inside the dark edge
+    lines and two diagonal highlights (the placed block shows no glass at all)."""
+    out = np.zeros((S, S, 4), np.uint8)
+    yy, xx = np.mgrid[0:S, 0:S]
+    out[..., 0], out[..., 1], out[..., 2], out[..., 3] = 0xb4, 0xe2, 0xec, 70
+    rim = (xx == 1) | (yy == 1) | (xx == S - 2) | (yy == S - 2)
+    inner = (xx >= 1) & (xx <= S - 2) & (yy >= 1) & (yy <= S - 2)
+    out[rim & inner] = (0xe4, 0xf6, 0xfa, 150)
+    d = xx + yy
+    out[inner & ~rim & ((d == 6) | (d == 7))] = (0xf8, 0xfc, 0xff, 175)
+    out[inner & ~rim & (d == 10)] = (0xf0, 0xfa, 0xff, 125)
+    return out
+
+
 def tank_frame() -> np.ndarray:
     """Item/inventory look: transparent centre, 1px dark grey border."""
     out = np.zeros((S, S, 4), np.uint8)
@@ -237,6 +252,7 @@ def all_blocks():
     return {
         "tank_edge": tank_edge(),
         "tank_frame": tank_frame(),
+        "tank_clear_icon": tank_clear_icon(),  # M21.8
         "tank_water_still": water,
         "tank_water_side": side,
         "interior_floor": interior_floor(),

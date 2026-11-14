@@ -61,6 +61,25 @@ B_FISH = [
     "................",
 ]
 B_INSIDE = [(x, y) for y in range(8, 14) for x in range(3, 13)]
+# M21.8: an upright seahorse in the water (snout to the left, the tail curled under it)
+B_SEAHORSE = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "......bb........",
+    "....bbbe........",
+    ".......bF.......",
+    "......bbbF......",
+    ".......bb.......",
+    "......bb........",
+    "................",
+    "................",
+]
 # glass in front of the fish: a reflection streak on the left, a faint one on the right, the water line
 B_FRONT = [
     "................",
@@ -123,8 +142,10 @@ def textures() -> dict[str, np.ndarray]:
     body, fins = _fish(B_FISH, B_INSIDE)
     front = icons.grid(B_FRONT, FRONT)
     frog = _frog(base, front, 0, 4)
+    sea_body, sea_fins = _fish(B_SEAHORSE, B_INSIDE)
     return {"betta_bucket": base, "betta_bucket_fish": body, "betta_bucket_fish_fins": fins,
-            "betta_bucket_glass": front, "dwarf_frog_bucket": frog}
+            "betta_bucket_glass": front, "dwarf_frog_bucket": frog,
+            "seahorse_bucket_fish": sea_body, "seahorse_bucket_fish_fins": sea_fins}
 
 
 def write_all() -> list:

@@ -369,6 +369,22 @@ def m21_7(out_en: Path) -> None:
         save(sheet.resize((width, round(sheet.height * width / sheet.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M21.8 scene (DevClientSmokeM218, -Psmoketestm21_8): seahorses at their posts, the brood pouch. ``py guide_images.py m21_8``.
+M21_8_WORLD = {"seahorses": ("bettacraft_m21_8_hitched", (0, 180, 1280, 660)),
+               "seahorse_pouch": ("bettacraft_m21_8_pouch", (300, 180, 1000, 620))}
+
+
+def m21_8(out_en: Path) -> None:
+    for name, (shot, box) in M21_8_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = 960
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -383,6 +399,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m21_8"]:
+        m21_8(out_en)
+        return 0
     if sys.argv[1:] == ["m21_7"]:
         m21_7(out_en)
         return 0
