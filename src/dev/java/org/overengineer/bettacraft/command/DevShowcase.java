@@ -178,7 +178,7 @@ public final class DevShowcase {
         level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
         // keep the whole showcase loaded while it is built (the animals are entities)
         for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
-            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 14 * ROW + 10 >> 4) + 1; cz++) {
+            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 16 * ROW + 10 >> 4) + 1; cz++) {
                 level.setChunkForced(cx, cz, true);
                 forced.add(new ChunkPos(cx, cz));
             }
@@ -439,6 +439,24 @@ public final class DevShowcase {
             at = at.east(3);
         }
         LOGGER.info("[showcase] stone cabinets: {} stones ({} of other mods)", stones.size(), Math.min(modded, 6));
+        // M22.4: the outlet side of the cabinet filter: back, left, right, front; floating plants drift away from the jet
+        at = startRow(level, "Filterauslass am Schrank");
+        String[] sidesDe = {"Auslass hinten", "Auslass links", "Auslass rechts", "Auslass vorne"};
+        for (var side : org.overengineer.bettacraft.equipment.OutletSide.values()) {
+            TankBlockEntity c = tank(level, at, 3, 2, 2, 0F, true);
+            TankInteractions.changeWater(level, c, -3000, 0F); // three quarters full: the jet falls into the water
+            for (int x = 0; x < 3; x++) {
+                if (level.getBlockEntity(at.offset(x, -1, 0)) instanceof CabinetBlockEntity cab && cab.hasFilter()) cab.setOutletSide(side);
+            }
+            for (int k = 0; k < 5; k++) {
+                var t = k % 2 == 0 ? org.overengineer.bettacraft.tank.plants.FloatingPlantType.SALVINIA : org.overengineer.bettacraft.tank.plants.FloatingPlantType.FROGBIT;
+                org.overengineer.bettacraft.tank.plants.TankPlants.add(c, t, at.getX() + 0.7 + (k % 3) * 0.8, at.getZ() + 0.6 + (k / 3) * 0.8, 0.8F, k * 50F);
+                plants++;
+            }
+            org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+            name(level, at, sidesDe[side.ordinal()]);
+            at = at.east(3 + GAP);
+        }
     }
 
     private static ResourceLocation blockOf(net.minecraft.world.item.Item item) {

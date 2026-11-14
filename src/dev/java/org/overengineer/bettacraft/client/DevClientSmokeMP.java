@@ -233,6 +233,42 @@ final class DevClientSmokeMP {
                     send("cabinets " + w[0] + " " + w[1] + " " + (sound == net.minecraft.world.level.block.SoundType.DEEPSLATE_BRICKS ? "deepslate_bricks" : "other"));
                 });
             }
+            case "outlets" -> {
+                // M22.4: the outlet side of the two cabinets as this client knows it (block entity update)
+                BlockPos at = pos(args);
+                then(30, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    String[] w = new String[2];
+                    for (int i = 0; i < 2; i++) {
+                        w[i] = mc.level.getBlockEntity(at.offset(0, 0, i)) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab ? cab.outletSide().id() : "none";
+                    }
+                    send("outlets " + w[0] + "," + w[1]);
+                });
+            }
+            case "outletmenu" -> {
+                // M22.4: Dev1 opens the cabinet menu with a right-click on the cabinet's front and presses the outlet button
+                // like the tank menu step: a right-click (use key) on the cabinet the server turned the player to
+                then(30, () -> net.minecraft.client.KeyMapping.click(Minecraft.getInstance().options.keyUse.getKey()));
+                then(40, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) || mc.gameMode == null) {
+                        send("outletmenu none:" + mc.screen + "_hit:" + (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult b ? b.getBlockPos().toShortString().replace(" ", "")
+                                + "_" + mc.level.getBlockState(b.getBlockPos()).getBlock() : String.valueOf(mc.hitResult)).replace(" ", "_") + "_mode:" + mc.gameMode.getPlayerMode()
+                                + "_at:" + mc.player.blockPosition().toShortString().replace(" ", ""));
+                        return;
+                    }
+                    var side = s.getMenu().outletSide();
+                    if (side != org.overengineer.bettacraft.equipment.OutletSide.LEFT) {
+                        send("outletmenu side:" + side);
+                        return;
+                    }
+                    double x = s.getGuiLeft() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
+                    double y = s.getGuiTop() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
+                    s.mouseClicked(x, y, 0); // left -> right
+                    s.mouseReleased(x, y, 0);
+                    send("outletmenu ok");
+                });
+            }
             case "container" -> container(args);
             case "place" -> then(12, () -> {
                 // M15: right-click where the server turned the player (in a tank interior)

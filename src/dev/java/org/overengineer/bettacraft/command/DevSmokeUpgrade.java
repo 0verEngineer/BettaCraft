@@ -68,6 +68,8 @@ public final class DevSmokeUpgrade {
     private static JsonObject expected;
     private static final List<ChunkPos> forced = new ArrayList<>();
     private static final List<String> problems = new ArrayList<>();
+    /** M22.4: cabinets whose outlet side was checked (old cabinets keep the back wall). */
+    private static int cabinetsChecked;
 
     private DevSmokeUpgrade() {}
 
@@ -117,6 +119,7 @@ public final class DevSmokeUpgrade {
                     write(server, level, SNAPSHOT);
                 }
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
+                LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -363,6 +366,11 @@ public final class DevSmokeUpgrade {
                 e.addProperty("filter", BuiltInRegistries.ITEM.getKey(cab.filterItem().getItem()).toString());
                 e.addProperty("heater0", BuiltInRegistries.ITEM.getKey(cab.heater(0).getItem()).toString());
                 e.addProperty("items", items(cab.items()));
+                // M22.4: a cabinet of an older world keeps its hose on the back wall
+                if (cab.outletSetting() != org.overengineer.bettacraft.equipment.OutletSide.BACK) {
+                    problems.add("cabinet " + p.toShortString() + ": outlet side " + cab.outletSetting() + " instead of the back wall");
+                }
+                cabinetsChecked++;
             } else if (be instanceof FeederBlockEntity f) {
                 e.addProperty("items", items(f.items()));
                 e.addProperty("feedings", f.feedingsPerDay());

@@ -146,10 +146,17 @@ public final class DevSmokeMP {
                         a.length > 2 && "hermit_crab:-1,neocaridina:0,ramshorn:-1".equals(a[2]));
                 check(name + ": genes always visible " + (a.length > 3 ? a[3] : "?") + " (server true after the live change)", a.length > 3 && "true".equals(a[3]));
             }
+            case "outlets" -> {
+                // M22.4: the outlet side of each cabinet reaches every client (set on the server, then by Dev1's menu button)
+                String want = OUTLETS_EXPECTED;
+                check(name + ": cabinet outlets " + (a.length > 1 ? a[1] : "?") + " (server " + want + ")", a.length > 1 && want.equals(a[1]));
+            }
+            case "outletmenu" -> check(name + ": cabinet menu with the outlet button (" + (a.length > 1 ? a[1] : "?") + ")", a.length > 1 && "ok".equals(a[1]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
-        reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine").contains(a[0]) ? a[1] : ""), text);
+        reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine").contains(a[0]) ? a[1] : "")
+                + ("outlets".equals(a[0]) ? OUTLETS_EXPECTED : ""), text);
     }
 
     /** {@code state <phase> <water> <plants> <idsum> <cx> <cz> <fish>}: what the client sees = the server state now. */
@@ -301,6 +308,9 @@ public final class DevSmokeMP {
         check(name + ": gliding without jumps (biggest step " + String.format(Locale.ROOT, "%.4f", maxStep) + " per frame, " + jumps + " jumps)",
                 maxStep < 0.05 && jumps == 0);
     }
+
+    /** M22.4: the outlet sides of the two cabinets the clients must report ("left,front", then "right,front"). */
+    private static String OUTLETS_EXPECTED = "left,front";
 
     private static void check(String what, boolean ok) {
         if (ok) {
@@ -899,6 +909,43 @@ public final class DevSmokeMP {
             }
             say("cabinets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> reports.containsKey(P1 + ":cabinets") && reports.containsKey(P2 + ":cabinets"), 20 * 30));
+        // M22.4: the outlet side of the cabinet filter: set on the server (the stone cabinet left, the cherry one front), both
+        // clients see it; then Dev1 turns the stone one to the right with the button of the cabinet menu, both see that too
+        steps.add(new Step("outlets", () -> {
+            BlockPos at = base.offset(-12, 0, 6);
+            ServerLevel level = server.overworld();
+            org.overengineer.bettacraft.equipment.OutletSide[] sides = {org.overengineer.bettacraft.equipment.OutletSide.LEFT,
+                    org.overengineer.bettacraft.equipment.OutletSide.FRONT};
+            for (int i = 0; i < 2; i++) {
+                if (level.getBlockEntity(at.offset(0, 0, i)) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
+                    cab.items().setStackInSlot(org.overengineer.bettacraft.equipment.CabinetBlockEntity.FILTER_SLOT,
+                            new ItemStack(org.overengineer.bettacraft.registry.ModItems.EXTERNAL_FILTER.get()));
+                    cab.setOutletSide(sides[i]);
+                }
+            }
+            OUTLETS_EXPECTED = "left,front";
+            say("outlets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> reports.containsKey(P1 + ":outletsleft,front") && reports.containsKey(P2 + ":outletsleft,front"), 20 * 30));
+        steps.add(new Step("outlet button", () -> {
+            BlockPos at = base.offset(-12, 0, 6);
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            // next to the cabinet (the menu closes at more than 8 blocks)
+            p.resetFallDistance();
+            // the stage hangs in the air: a block to stand on in front of the cabinet
+            server.overworld().setBlockAndUpdate(at.offset(0, -1, -2), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
+            p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 1.6, 0F, 35F); // looking at the cabinet door
+            hand(P1, ItemStack.EMPTY); // the client opens the menu itself (right-click on the cabinet)
+            say("outletmenu", P1, at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> server.overworld().getBlockEntity(base.offset(-12, 0, 6)) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab
+                && cab.outletSide() == org.overengineer.bettacraft.equipment.OutletSide.RIGHT && reports.containsKey(P1 + ":outletmenu"), 20 * 30));
+        steps.add(new Step("outlets after the button", () -> {
+            ServerPlayer p = player(P1);
+            if (p != null) p.closeContainer();
+            OUTLETS_EXPECTED = "right,front";
+            BlockPos at = base.offset(-12, 0, 6);
+            say("outlets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> reports.containsKey(P1 + ":outletsright,front") && reports.containsKey(P2 + ":outletsright,front"), 20 * 30));
         steps.add(new Step("seahorses", () -> {
             // M21.8: a small seahorse tank with a pair (the male with a full brood pouch); the cyst stack size is changed live
             // to 32 (both clients must follow), each player gets a stack of 20 jars and a used jar
