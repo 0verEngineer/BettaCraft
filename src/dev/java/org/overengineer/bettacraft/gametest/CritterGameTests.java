@@ -257,8 +257,20 @@ public final class CritterGameTests {
     }
 
     /** Pink ramshorns from two wild carriers, then pure. */
-    @GameTest(template = EMPTY, timeoutTicks = 400)
+    @GameTest(template = EMPTY, timeoutTicks = 400, batch = "bettacraft_critters_no_mutations")
     public static void pinkRamshornsBredPure(GameTestHelper h) {
+        // M22.5: without the spontaneous mutations of M22.3 like the shrimp test (a pink allele mutated back to the wild
+        // one gives a wild-coloured young in the pure pink tank; 1 of 40 local runs)
+        boolean mutations = org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.get();
+        org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(false);
+        try {
+            pinkRamshorns(h);
+        } finally {
+            org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(mutations);
+        }
+    }
+
+    private static void pinkRamshorns(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 2, 2, 3, 2, 2, 12000);
         add(h, c, CritterSpecies.RAMSHORN, new CritterGenes(1, 0, 0.1F), true);
         add(h, c, CritterSpecies.RAMSHORN, new CritterGenes(0, 1, 0.1F), true);
