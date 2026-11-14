@@ -64,7 +64,7 @@ final class DevClientSmokeM25 {
         });
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> p.teleportTo(p.serverLevel(), base.getX() + 5.5, base.getY() + 1.0, base.getZ() - 1.5, 0F, 20F)));
-        then(20, () -> org.overengineer.bettacraft.util.ClientHooks.openRegulator(base.offset(5, 1, 0)));
+        then(20, () -> org.overengineer.bettacraft.util.ClientHooks.openRegulator(base.offset(5, 0, 0)));
         then(20, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.RegulatorScreen)) LOGGER.error("[smoketest] M25 no regulator screen for the cylinder");
         });
@@ -81,8 +81,8 @@ final class DevClientSmokeM25 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
-        for (int x = -3; x <= 12; x++)
-            for (int z = -3; z <= 6; z++) {
+        for (int x = -14; x <= 20; x++)
+            for (int z = -12; z <= 16; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
                 for (int y = 0; y < 5; y++) level.setBlockAndUpdate(base.offset(x, y, z), Blocks.AIR.defaultBlockState());
             }
@@ -102,6 +102,9 @@ final class DevClientSmokeM25 {
         level.setBlockAndUpdate(base.offset(8, 1, 0), ModBlocks.CO2_STATION.get().defaultBlockState());
         if (level.getBlockEntity(base.offset(8, 1, 0)) instanceof Co2StationBlockEntity st) st.items().setStackInSlot(0, new ItemStack(ModItems.CO2_CYLINDER.get()));
         // the reverse osmosis unit next to a water source, a glass pipe to the tank
+        // a walled water source (it must not flood the scene)
+        for (BlockPos w : List.of(base.offset(-2, 0, 2), base.offset(-1, 0, 1), base.offset(-1, 0, 3)))
+            level.setBlockAndUpdate(w, Blocks.STONE_BRICKS.defaultBlockState());
         level.setBlockAndUpdate(base.offset(-1, 0, 2), Blocks.WATER.defaultBlockState());
         level.setBlockAndUpdate(base.offset(0, 0, 2), ModBlocks.RO_UNIT.get().defaultBlockState().setValue(RoUnitBlock.FACING, Direction.NORTH));
         if (level.getBlockEntity(base.offset(0, 0, 2)) instanceof RoUnitBlockEntity ro) {
