@@ -13,10 +13,10 @@ name: Build
 on:
   push:
     branches: [master]
-    paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes"]
+    paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes", "docs/**"]
   pull_request:
     branches: [master]
-    paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes"]
+    paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes", "docs/**"]
   workflow_dispatch:
     inputs:
       full:

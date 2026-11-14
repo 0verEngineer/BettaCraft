@@ -6,7 +6,8 @@
 
 Stills become JPEGs (scenes) or a PNG (menus), the frame sequences small looping GIFs (one global palette, unchanged
 pixels transparent, so the LZW runs stay long) and animated WebPs (smaller, better colours). Names start with
-``bettacraft-`` so the files can be reused for the Modrinth / CurseForge pages as they are.
+``bettacraft-`` so the files can be reused for the CurseForge page as they are (docs/description.md links the GIFs:
+the CurseForge description takes GIF, PNG and JPG).
 """
 import os
 import sys

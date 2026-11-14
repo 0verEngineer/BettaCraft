@@ -4,16 +4,17 @@
 #      smoke / GameTest classes, no foreign assets, mods.toml version = tag), the release notes are the top section of
 #      CHANGELOG.md (releaseNotes; it must be the section of this version)
 #   3. GitHub release with the jar and its SHA-256 (prerelease for -alpha / -beta / -rc versions)
-#   4. Modrinth and CurseForge with mc-publish, each only if its token secret AND its project id variable are set
-#      (channel alpha / beta / release from the version). Without them the step is skipped, nothing fails.
-# Started by hand (Actions > Release > Run workflow) it is a dry run: tests, jar check and release notes, the jar as a
-# workflow artifact, no GitHub release and no upload. Setup: the secrets and variables below.
+#   4. CurseForge file upload with mc-publish, only if the token secret AND the project id variable are set (channel
+#      alpha / beta / release from the version). Without them the step is skipped, nothing fails. CurseForge is the only
+#      mod site.
+#   5. the CurseForge project description from docs/description.md with absolute image links pinned to the tag
+#      (curseforgeDescription), as a workflow artifact: CurseForge has no API for the description, paste it by hand.
+# Started by hand (Actions > Release > Run workflow) it is a dry run: tests, jar check, release notes and the description,
+# the jar as a workflow artifact, no GitHub release and no upload. Setup: the secret and variable below.
 #
 # Repository settings (Settings > Secrets and variables > Actions):
-#   Secrets:   MODRINTH_TOKEN          Modrinth personal access token (scopes: Create versions, Read projects)
-#              CURSEFORGE_TOKEN        CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
-#   Variables: MODRINTH_PROJECT_ID     id of the Modrinth project (8 characters, e.g. "AbCd1234")
-#              CURSEFORGE_PROJECT_ID   numeric id of the CurseForge project
+#   Secret:    CURSEFORGE_TOKEN        CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
+#   Variable:  CURSEFORGE_PROJECT_ID   numeric id of the CurseForge project
 name: Release
 
 on:
@@ -49,9 +50,7 @@ jobs:
     env:
       GRADLE_OPTS: -Dorg.gradle.daemon=false
       GRADLE_ARGS: --no-configuration-cache --stacktrace --console=plain
-      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
-      MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
       CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
       IS_TAG: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
     steps:
@@ -90,11 +89,14 @@ jobs:
           fi
           echo "Bettacraft $version, channel $type, tag: $IS_TAG"
 
-      - name: Build, check the jar, release notes
+      - name: Build, check the jar, release notes, CurseForge description
+        env:
+          # images of the description: pinned to the tag, in a dry run to the commit
+          DESCRIPTION_REF: ${{ env.IS_TAG == 'true' && github.ref_name || github.sha }}
         run: |
           chmod +x gradlew
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
-          ./gradlew assemble verifyReleaseJar releaseNotes ${{ steps.version.outputs.expected }} $GRADLE_ARGS
+          ./gradlew assemble verifyReleaseJar releaseNotes curseforgeDescription ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
           cat build/verifyReleaseJar.txt
           jar="build/libs/bettacraft-${{ steps.version.outputs.version }}.jar"
           test -f "$jar"
@@ -102,6 +104,8 @@ jobs:
           cat build/libs/*.sha256
           echo "----- release notes -----"
           cat build/release-notes.md
+          echo "----- CurseForge description (build/curseforge/) -----"
+          ls -l build/curseforge
 
       - name: Upload jar
         uses: actions/upload-artifact@v7
@@ -111,6 +115,13 @@ jobs:
             build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
             build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
             build/release-notes.md
+          if-no-files-found: error
+
+      - name: Upload the CurseForge description
+        uses: actions/upload-artifact@v7
+        with:
+          name: curseforge-description-${{ steps.version.outputs.version }}
+          path: build/curseforge/
           if-no-files-found: error
 
       - name: GitHub release
@@ -127,33 +138,6 @@ jobs:
           make_latest: ${{ steps.version.outputs.type == 'release' }}
           fail_on_unmatched_files: true
 
-      - name: Publish to Modrinth
-        if: env.IS_TAG == 'true' && env.MODRINTH_TOKEN != '' && env.MODRINTH_PROJECT_ID != ''
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          modrinth-id: ${{ env.MODRINTH_PROJECT_ID }}
-          modrinth-token: ${{ env.MODRINTH_TOKEN }}
-          # optional integrations (Modrinth project ids, checked against the Modrinth API in M22): Jade, GuideME, JEI,
-          # The One Probe, WTHIT, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist
-          modrinth-dependencies: |
-            nvQzSEkH(optional)
-            Ck4E7v7R(optional)
-            u6dRKJwZ(optional)
-            Eyw0UxEx(optional)
-            6AQIaxuO(optional)
-            s91ifBqW(optional)
-            BzOTnuqM(optional)
-            Vl1uNAuy(optional)
-            F8BQNPWX(optional)
-          files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
-          name: Bettacraft ${{ steps.version.outputs.version }}
-          version: ${{ steps.version.outputs.version }}
-          version-type: ${{ steps.version.outputs.type }}
-          changelog-file: build/release-notes.md
-          loaders: neoforge
-          game-versions: "1.21.1"
-          java: "21"
-
       - name: Publish to CurseForge
         if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
@@ -161,7 +145,8 @@ jobs:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
           # optional integrations (CurseForge slugs; check them on the project pages before the first upload, a wrong
-          # slug fails the upload): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fish Tanks
+          # slug fails the upload): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fish Tanks, Fish of Thieves. Fintastic,
+          # Aquaculture 2 and Naturalist are supported too; add their slugs once checked on CurseForge (RELEASING.md)
           curseforge-dependencies: |
             jade(optional)
             guideme(optional)
@@ -169,6 +154,7 @@ jobs:
             the-one-probe(optional)
             wthit-forge(optional)
             better-fishtanks(optional)
+            fish-of-thieves(optional)
           files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
           name: Bettacraft ${{ steps.version.outputs.version }}
           version: ${{ steps.version.outputs.version }}

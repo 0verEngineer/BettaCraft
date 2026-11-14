@@ -819,7 +819,7 @@ tasks.register('verifyReleaseJar') {
 
 // gradlew releaseNotes : the section of mod_version at the top of CHANGELOG.md ("## [<version>] - <date>" up to the next
 // "## [" heading, without link references) -> build/release-notes.md, the body of the GitHub release and the changelog of
-// the Modrinth / CurseForge upload. Fails if the first version section of CHANGELOG.md is not the one of mod_version.
+// the CurseForge upload. Fails if the first version section of CHANGELOG.md is not the one of mod_version.
 def notesVersion = mod_version
 def notesChangelog = file('CHANGELOG.md')
 tasks.register('releaseNotes') {
@@ -847,6 +847,112 @@ tasks.register('releaseNotes') {
         f.parentFile.mkdirs()
         f.write(body.join('\n') + '\n', 'UTF-8')
         logger.lifecycle("releaseNotes: ${body.size()} lines of ${notesVersion} -> ${f}")
+    }
+}
+
+// gradlew curseforgeDescription [-PdescriptionRef=v1.2.3] : the CurseForge project description from docs/description.md.
+// CurseForge has no API for the project description (only file uploads), so this makes a ready-to-paste version:
+// build/curseforge/description.md (Markdown editor) and description.html (WYSIWYG editor, "Source" view). Relative image
+// links (images/...) become raw.githubusercontent.com links pinned to descriptionRef (the release tag; default: the current
+// commit), other relative links become github.com/.../blob/<ref>/ links, so images of old descriptions never break. Fails on
+// a missing image, on a WebP image (use the GIF / PNG / JPG versions) and on a relative link left over.
+// The images load only once the GitHub repository is public.
+def descSource = file('docs/description.md')
+def descRepo = 'https://github.com/0verEngineer/BettaCraft'
+def descRaw = 'https://raw.githubusercontent.com/0verEngineer/BettaCraft'
+def descRef = providers.gradleProperty('descriptionRef').orElse(
+        providers.exec { commandLine 'git', 'rev-parse', 'HEAD'; ignoreExitValue = true }.standardOutput.asText.map { it.trim() ?: 'master' })
+tasks.register('curseforgeDescription') {
+    group = 'build'
+    description = 'Builds the CurseForge project description (Markdown + HTML with absolute links) from docs/description.md'
+    inputs.file(descSource)
+    inputs.property('ref', descRef)
+    def outDir = layout.buildDirectory.dir('curseforge')
+    outputs.dir(outDir)
+    doLast {
+        String ref = descRef.get()
+        File docs = descSource.parentFile
+        def problems = []
+        def abs = { String url, boolean image ->
+            if (url ==~ /^(https?:|mailto:|#).*/) return url
+            def target = docs.toPath().resolve(url).normalize()
+            def rel = docs.parentFile.toPath().relativize(target).toString().replace('\\', '/')
+            if (!target.toFile().exists()) problems << "missing file ${url}".toString()
+            if (image && url.toLowerCase().endsWith('.webp')) problems << "WebP image ${url} (use the GIF / PNG / JPG)".toString()
+            return image ? "${descRaw}/${ref}/${rel}".toString() : "${descRepo}/blob/${ref}/${rel}".toString()
+        }
+        String md = descSource.getText('UTF-8').replace('\r\n', '\n')
+        // images first (also inside links), then links
+        md = md.replaceAll(/!\[([^\]]*)\]\(([^)\s]+)\)/) { all, alt, url -> "![${alt}](${abs(url, true)})" }
+        md = md.replaceAll(/(?<!!)\[([^\]]*)\]\(([^)\s]+)\)/) { all, text, url -> "[${text}](${abs(url, false)})" }
+        md = md.replaceAll(/<img src="([^"]+)"/) { all, url -> "<img src=\"${abs(url, true)}\"" }
+        if (!problems.isEmpty()) throw new GradleException("curseforgeDescription: ${problems.size()} problem(s) in docs/description.md:\n  " + problems.join('\n  '))
+
+        // a small Markdown -> HTML converter for what description.md uses: headings, paragraphs, lists, tables, images,
+        // links, bold, italic, code, quotes, rules and raw HTML lines
+        def esc = { String s -> s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;') }
+        def inline = { String s ->
+            def codes = []
+            s = s.replaceAll(/`([^`]+)`/) { all, c -> codes << c; "\u0000${codes.size() - 1}\u0000" }
+            s = esc(s)
+            s = s.replaceAll(/!\[([^\]]*)\]\(([^)\s]+)\)/) { all, alt, url -> "<img src=\"${url}\" alt=\"${alt}\">" }
+            s = s.replaceAll(/\[([^\]]*)\]\(([^)\s]+)\)/) { all, t, url -> "<a href=\"${url}\">${t}</a>" }
+            s = s.replaceAll(/\*\*([^*]+)\*\*/, '<strong>$1</strong>')
+            s = s.replaceAll(/(?<![\w*])\*([^*\s][^*]*)\*(?![\w*])/, '<em>$1</em>')
+            s = s.replaceAll(/\u0000(\d+)\u0000/) { all, i -> "<code>${esc(codes[i as int])}</code>" }
+            return s
+        }
+        def html = new StringBuilder()
+        def lines = md.split('\n', -1) as List
+        int i = 0
+        while (i < lines.size()) {
+            String l = lines[i]
+            if (l.trim().isEmpty()) { i++; continue }
+            def h = l =~ /^(#{1,6})\s+(.*)$/
+            if (h.matches()) { int n = h.group(1).length(); html << "<h${n}>${inline(h.group(2))}</h${n}>\n"; i++; continue }
+            if (l ==~ /^\s*(---|\*\*\*)\s*$/) { html << '<hr>\n'; i++; continue }
+            if (l.startsWith('<')) { while (i < lines.size() && !lines[i].trim().isEmpty()) html << lines[i++] << '\n'; continue }
+            if (l.startsWith('|')) {
+                def rows = []
+                while (i < lines.size() && lines[i].startsWith('|')) rows << lines[i++]
+                html << '<table>\n'
+                rows.eachWithIndex { String r, int k ->
+                    if (k == 1 && r ==~ /^[|\s:-]+$/) return
+                    def cells = r.replaceAll(/^\|/, '').replaceAll(/\|\s*$/, '').split(/\|/).collect { it.trim() }
+                    String tag = k == 0 ? 'th' : 'td'
+                    html << '<tr>' << cells.collect { "<${tag}>${inline(it)}</${tag}>" }.join('') << '</tr>\n'
+                }
+                html << '</table>\n'
+                continue
+            }
+            if (l ==~ /^\s*([-*]|\d+\.)\s+.*/) {
+                boolean ordered = l ==~ /^\s*\d+\.\s+.*/
+                html << (ordered ? '<ol>\n' : '<ul>\n')
+                while (i < lines.size() && lines[i] ==~ /^\s*([-*]|\d+\.)\s+.*/) {
+                    String item = lines[i++].replaceFirst(/^\s*([-*]|\d+\.)\s+/, '')
+                    while (i < lines.size() && lines[i] ==~ /^\s{2,}\S.*/ && !(lines[i] ==~ /^\s*([-*]|\d+\.)\s+.*/)) item += ' ' + lines[i++].trim()
+                    html << '<li>' << inline(item) << '</li>\n'
+                }
+                html << (ordered ? '</ol>\n' : '</ul>\n')
+                continue
+            }
+            if (l.startsWith('>')) {
+                def q = []
+                while (i < lines.size() && lines[i].startsWith('>')) q << lines[i++].replaceFirst(/^>\s?/, '')
+                html << '<blockquote><p>' << inline(q.join(' ')) << '</p></blockquote>\n'
+                continue
+            }
+            def para = []
+            while (i < lines.size() && !lines[i].trim().isEmpty() && !(lines[i] ==~ /^(#{1,6}\s|\||>|<|\s*([-*]|\d+\.)\s).*/)) para << lines[i++].trim()
+            html << '<p>' << inline(para.join(' ')) << '</p>\n'
+        }
+        def dir = outDir.get().asFile
+        dir.mkdirs()
+        new File(dir, 'description.md').write(md, 'UTF-8')
+        new File(dir, 'description.html').write(html.toString(), 'UTF-8')
+        int images = (md =~ /raw\.githubusercontent\.com/).size()
+        logger.lifecycle("curseforgeDescription: ${images} image(s) pinned to ${ref} -> ${dir}/description.md and description.html " +
+                '(paste by hand; the images load only from a public repository)')
     }
 }
 
