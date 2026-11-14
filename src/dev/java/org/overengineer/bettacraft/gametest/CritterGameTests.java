@@ -276,7 +276,9 @@ public final class CritterGameTests {
         add(h, c, CritterSpecies.RAMSHORN, new CritterGenes(0, 1, 0.1F), true);
         add(h, c, CritterSpecies.RAMSHORN, new CritterGenes(1, 0, 0.1F), true);
         TankData t = c.getTank();
-        for (int d = 0; d < 40 && t.critters().stream().noneMatch(k -> "pink".equals(k.genes.variety(CritterSpecies.RAMSHORN))); d++) days(h, c, 1, true);
+        // M22.5: up to 100 days (was 40: snails breed slowly, many young carry no pink, 1 of 1,000 diagnosis runs and once
+        // in 30 full GameTest runs had no pink young after 40 days)
+        for (int d = 0; d < 100 && t.critters().stream().noneMatch(k -> "pink".equals(k.genes.variety(CritterSpecies.RAMSHORN))); d++) days(h, c, 1, true);
         List<Critter> pink = t.critters().stream().filter(k -> "pink".equals(k.genes.variety(CritterSpecies.RAMSHORN))).toList();
         h.assertTrue(!pink.isEmpty(), "pink young from red-brown carriers: " + debug(t));
         // a tank of pink ones only breeds pink
