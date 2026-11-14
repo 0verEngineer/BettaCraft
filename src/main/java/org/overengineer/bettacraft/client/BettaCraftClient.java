@@ -72,6 +72,7 @@ public final class BettaCraftClient {
         modBus.addListener((net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent e) -> {
             e.registerFluidType(waterLook(0xFFB0DCF4), org.overengineer.bettacraft.registry.ModFluids.RO_WATER_TYPE.get());
             e.registerFluidType(waterLook(0xFF2A64B0), org.overengineer.bettacraft.registry.ModFluids.SEA_WATER_TYPE.get());
+            e.registerFluidType(waterLook(0xFF8A9A4A), org.overengineer.bettacraft.registry.ModFluids.LIVE_FOOD_TYPE.get()); // M26: murky green-brown
         });
         // M15: how to leave a tank interior, bottom left
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) -> e.registerBelow(
@@ -195,6 +196,8 @@ public final class BettaCraftClient {
                             ? org.overengineer.bettacraft.plants.PlantPart.STEM : org.overengineer.bettacraft.plants.PlantPart.RHIZOME, 2), e.getValue().get());
         }
         event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
+        event.register((stack, tint) -> tint == 0 ? TUBIFEX_WATER : 0xFFFFFFFF, ModItems.TUBIFEX_DISH.get()); // M26
+        event.register((stack, tint) -> tint == 0 ? DAPHNIA_WATER : 0xFFFFFFFF, ModItems.DAPHNIA_BARREL.get());
         // M18: the panel of the aquarium light in its colour
         event.register((stack, tint) -> tint == 1 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
                 org.overengineer.bettacraft.equipment.TankLightItem.colorOf(stack), true) : 0xFFFFFFFF, ModItems.TANK_LIGHT.get(),
@@ -203,6 +206,8 @@ public final class BettaCraftClient {
 
     /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
     static final int LARVA_WATER = 0xFF6A7C3A, HATCHERY_WATER = 0xFF4E93C8;
+    /** M26: the stale brown water of the tubifex dish and the green water of the daphnia barrel. */
+    static final int TUBIFEX_WATER = 0xFF6E5A3A, DAPHNIA_WATER = 0xFF5E8A3E;
 
     private static void onBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.LARVA_TUB.get());
@@ -215,6 +220,8 @@ public final class BettaCraftClient {
             }, b.get());
         }
         event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());
+        event.register((state, level, pos, tint) -> tint == 0 ? TUBIFEX_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TUBIFEX_DISH.get()); // M26
+        event.register((state, level, pos, tint) -> tint == 0 ? DAPHNIA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.DAPHNIA_BARREL.get());
         // M18: the panel of the aquarium light in its colour (darker while off)
         event.register((state, level, pos, tint) -> tint == 0 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
                 state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.COLOR), state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT))
@@ -258,6 +265,7 @@ public final class BettaCraftClient {
         event.register(ModMenus.TANK.get(), TankScreen::new);
         event.register(ModMenus.FEEDER.get(), FeederScreen::new);
         event.register(ModMenus.DOSING_PUMP.get(), org.overengineer.bettacraft.client.screen.DosingPumpScreen::new); // M25 part c
+        event.register(ModMenus.LIVE_FOOD_PUMP.get(), org.overengineer.bettacraft.client.screen.LiveFoodPumpScreen::new); // M26
         event.register(ModMenus.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.screen.ExternalFilterScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), org.overengineer.bettacraft.client.screen.CrucibleScreen::new); // M24
         event.register(ModMenus.CABINET.get(), org.overengineer.bettacraft.client.screen.CabinetScreen::new);

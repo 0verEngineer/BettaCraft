@@ -139,6 +139,9 @@ public final class WildTables {
     /** Mud broken in a swamp ({@code #bettacraft:betta_spawn_biomes}) drops mosquito larvae (loot modifier, datagen). */
     public static final float MUD_LARVAE_CHANCE = 0.04F;
 
+    /** M26: mud broken in a swamp drops tubifex worms (the start of a tubifex dish; loot modifier, datagen). */
+    public static final float MUD_TUBIFEX_CHANCE = 0.05F;
+
     /**
      * M22.3: the wild coral colonies of the warm ocean reefs (one species per colony; the common soft corals more often than
      * the stony ones). Shears cut a frag off them.

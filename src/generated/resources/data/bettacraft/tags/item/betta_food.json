@@ -4,6 +4,8 @@
     "bettacraft:mosquito_larvae",
     "bettacraft:infusoria",
     "bettacraft:artemia_nauplii",
+    "bettacraft:tubifex",
+    "bettacraft:daphnia",
     {
       "id": "fintastic:regular_feed",
       "required": false

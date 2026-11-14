@@ -29,6 +29,15 @@ public final class ModFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SEA_WATER = FLUIDS.register("sea_water", () -> new BaseFlowingFluid.Source(sea()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_SEA_WATER = FLUIDS.register("flowing_sea_water", () -> new BaseFlowingFluid.Flowing(sea()));
 
+    /** M26: live food (daphnia, artemia ...) in water, from the live food pump; a tank feeds it to its animals. */
+    public static final DeferredHolder<FluidType, FluidType> LIVE_FOOD_TYPE = TYPES.register("live_food", () -> new FluidType(props()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIVE_FOOD = FLUIDS.register("live_food", () -> new BaseFlowingFluid.Source(live()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_LIVE_FOOD = FLUIDS.register("flowing_live_food", () -> new BaseFlowingFluid.Flowing(live()));
+
+    private static BaseFlowingFluid.Properties live() {
+        return new BaseFlowingFluid.Properties(LIVE_FOOD_TYPE, LIVE_FOOD, FLOWING_LIVE_FOOD);
+    }
+
     private static FluidType.Properties props() {
         return FluidType.Properties.create().canSwim(true).canDrown(true).canExtinguish(true).canHydrate(true).supportsBoating(true)
                 .canConvertToSource(false).sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL).sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY);

@@ -33,6 +33,12 @@ public final class ModTags {
     public static final TagKey<Item> PLASTIC_SHEETS = TagKey.create(Registries.ITEM, BettaCraft.id("plastic_sheets"));
     /** Organic matter the larva tub turns into mosquito larvae (M9): leaves, wheat, rotten flesh, bone meal. */
     public static final TagKey<Item> LARVA_TUB_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("larva_tub_food"));
+    /** M26: live food that conditions twice as well (tubifex). */
+    public static final TagKey<Item> CONDITIONING_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("conditioning_food"));
+    /** M26: what feeds a tubifex dish (mulm). */
+    public static final TagKey<Item> TUBIFEX_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("tubifex_food"));
+    /** M26: what feeds a daphnia barrel (yeast, green water). */
+    public static final TagKey<Item> DAPHNIA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("daphnia_food"));
     public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "buckets/entity_water"));
 
     /** Never accepted in tanks. */

@@ -1,0 +1,42 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#top"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#front"
+        },
+        "south": {
+          "texture": "#front"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        9,
+        13
+      ]
+    }
+  ],
+  "textures": {
+    "front": "bettacraft:block/live_food_pump_front",
+    "particle": "bettacraft:block/live_food_pump_side",
+    "side": "bettacraft:block/live_food_pump_side",
+    "top": "bettacraft:block/live_food_pump_top"
+  }
+}

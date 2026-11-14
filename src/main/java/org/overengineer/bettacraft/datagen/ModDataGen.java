@@ -322,6 +322,7 @@ public final class ModDataGen {
             DataGenM24.blockStates(this); // M24
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
+            DataGenM26.blockStates(this); // M26 part a
             simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
@@ -594,6 +595,7 @@ public final class ModDataGen {
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
+            DataGenM26.itemModels(this); // M26 part a
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -995,6 +997,7 @@ public final class ModDataGen {
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
+            DataGenM26.recipes(output, hasIt(ModItems.TANK.get())); // M26 part a
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1151,6 +1154,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.CO2_STATION.get());
             dropSelf(ModBlocks.RO_UNIT.get());
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
+            for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             dropSelf(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
@@ -1185,6 +1189,7 @@ public final class ModDataGen {
                         l.addAll(m24Blocks());
                         l.addAll(DataGenM25b.blocks()); // M25
                         l.addAll(DataGenM25c.blocks());
+                        l.addAll(DataGenM26.blocks()); // M26 part a
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
                         return l;
                     }));
@@ -1213,6 +1218,12 @@ public final class ModDataGen {
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
             }, new ItemStack(ModItems.MOSQUITO_LARVAE.get())));
+            // M26: and tubifex worms (the start of a tubifex dish)
+            add("mud_tubifex", new AddItemLootModifier(new LootItemCondition[]{
+                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("blocks/mud")).build(),
+                    LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
+                    LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_TUBIFEX_CHANCE).build()
+            }, new ItemStack(ModItems.TUBIFEX.get())));
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
             add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[0],
                     new ItemStack(ModItems.ARTEMIA_CYSTS.get())));
@@ -1247,6 +1258,7 @@ public final class ModDataGen {
             for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
             DataGenM25b.blockTags(this::tag); // M25
             DataGenM25c.blockTags(this::tag);
+            DataGenM26.blockTags(this::tag); // M26 part a
             tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             tag(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
@@ -1317,6 +1329,7 @@ public final class ModDataGen {
             tag(ModTags.BETTA_FOOD).add(ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.INFUSORIA.get(),
                     ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
+            DataGenM26.itemTags(this::tag); // M26 part a: tubifex, daphnia and what the cultures eat
             // M9: organic matter for the larva tub
             tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry

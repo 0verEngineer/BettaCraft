@@ -145,6 +145,9 @@ public final class Sources {
         out.add(src(Source.Kind.SHOVEL, Target.critter(CritterSpecies.TRUMPET_SNAIL), Where.SWAMP, def(ServerConfig.CRITTERS_MUD_CHANCE), "minecraft:mud"));
         out.add(src(Source.Kind.SHOVEL, Target.critter(CritterSpecies.TRUMPET_SNAIL), Where.MANGROVE, def(ServerConfig.CRITTERS_MUD_CHANCE), "minecraft:mud"));
         out.add(src(Source.Kind.BLOCK_DROP, Target.item("mosquito_larvae"), Where.SWAMP, WildTables.MUD_LARVAE_CHANCE, "minecraft:mud"));
+        // M26: the starters of the live food cultures
+        out.add(src(Source.Kind.BLOCK_DROP, Target.item("tubifex"), Where.SWAMP, WildTables.MUD_TUBIFEX_CHANCE, "minecraft:mud"));
+        out.add(src(Source.Kind.BOTTLE, Target.item("daphnia"), Where.SWAMP, def(ServerConfig.LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE)));
         out.add(src(Source.Kind.BLOCK_DROP, Target.item("artemia_cysts"), Where.SAND, def(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE), "#c:sands"));
         int weight = def(CommonConfig.SPAWN_WEIGHT), min = def(CommonConfig.SPAWN_MIN_GROUP), max = Math.max(min, def(CommonConfig.SPAWN_MAX_GROUP));
         out.add(new Source(Source.Kind.SPAWN, Target.BETTA, Where.SWAMP, weight, weight, min, max, 0, false, null, null));

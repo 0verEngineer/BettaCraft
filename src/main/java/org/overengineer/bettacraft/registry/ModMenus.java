@@ -29,6 +29,10 @@ public final class ModMenus {
     public static final Supplier<MenuType<org.overengineer.bettacraft.reef.DosingPumpMenu>> DOSING_PUMP = MENUS.register("dosing_pump",
             () -> IMenuTypeExtension.create(org.overengineer.bettacraft.reef.DosingPumpMenu::new));
 
+    /** M26: the live food pump. */
+    public static final Supplier<MenuType<org.overengineer.bettacraft.food.LiveFoodPumpMenu>> LIVE_FOOD_PUMP = MENUS.register("live_food_pump",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.food.LiveFoodPumpMenu::new));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

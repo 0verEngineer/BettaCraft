@@ -47,7 +47,8 @@ public final class PipeFluid implements IFluidHandler {
 
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
-        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()); // M25: also reverse osmosis and sea water
+        // M25: also reverse osmosis and sea water; M26: live food suspension (only pushed, never pulled)
+        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()) || org.overengineer.bettacraft.food.LiveFood.isSuspension(stack);
     }
 
     @Override
@@ -59,7 +60,7 @@ public final class PipeFluid implements IFluidHandler {
 
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        if (resource.isEmpty() || !isFluidValid(0, resource)) return FluidStack.EMPTY;
+        if (resource.isEmpty() || !org.overengineer.bettacraft.registry.ModFluids.isWater(resource.getFluid())) return FluidStack.EMPTY;
         PipeNetwork n = net();
         return n == null ? FluidStack.EMPTY : n.drain(level, resource.getAmount(), null, action, from);
     }

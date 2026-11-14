@@ -47,7 +47,9 @@ public final class ItemHints {
             // M25 part c: reef dosing
             "dosing_pump", "dosing_canister", "calcium_canister", "alkalinity_canister", "magnesium_canister", "trace_canister",
             // M25 part d
-            "active_soil");
+            "active_soil",
+            // M26 part a: live food cultures and the live food pump
+            "tubifex", "daphnia", "mulm", "green_water_culture", "green_water_bottle", "tubifex_dish", "daphnia_barrel", "live_food_pump");
 
     private ItemHints() {}
 

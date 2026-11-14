@@ -124,6 +124,11 @@ public final class PipeNetwork {
         return Math.max(0, rate * WINDOW - used);
     }
 
+    /** M26: mB the network can still carry in this window (it carries at most its rate per tick, counted per window). */
+    public int room(Level level) {
+        return budget(level);
+    }
+
     /** Pushes water into the network (from the block at {@code from}, which is skipped). Returns what the ends took. */
     public int fill(Level level, FluidStack resource, IFluidHandler.FluidAction action, @Nullable BlockPos from) {
         if (resource.isEmpty() || ends.isEmpty() || !CommonConfig.pipes()) return 0;

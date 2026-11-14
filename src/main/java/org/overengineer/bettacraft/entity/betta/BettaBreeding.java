@@ -32,7 +32,17 @@ public final class BettaBreeding {
     }
 
     public void condition() {
-        conditioned = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_CONDITIONING_DAYS, CONDITIONING_DAYS);
+        condition(1.0);
+    }
+
+    /** M26: conditioning that lasts {@code factor} times as long (tubifex); never shortens a longer one. */
+    public void condition(double factor) {
+        double d = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.BREEDING_CONDITIONING_DAYS, CONDITIONING_DAYS) * factor;
+        conditioned = Math.max(conditioned, d);
+    }
+
+    public double conditionedDays() {
+        return conditioned;
     }
 
     public boolean isConditioned() {

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "P": {
+      "item": "bettacraft:glass_pipe"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "IPI",
+    "IRI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:live_food_pump"
+  }
+}

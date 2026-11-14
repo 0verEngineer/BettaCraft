@@ -69,7 +69,8 @@ public final class TankFluid implements IFluidHandler {
 
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
-        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()); // M25: also reverse osmosis and sea water
+        // M25: also reverse osmosis and sea water; M26: live food suspension from the live food pump
+        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()) || org.overengineer.bettacraft.food.LiveFood.isSuspension(stack);
     }
 
     @Override
@@ -79,6 +80,11 @@ public final class TankFluid implements IFluidHandler {
         if (c == null) return 0;
         InteriorPlumbing.Bulkhead b = bulkhead(c);
         if (b != null && !b.canFill()) return 0;
+        if (org.overengineer.bettacraft.food.LiveFood.isSuspension(resource)) {
+            int n = org.overengineer.bettacraft.food.LiveFood.fillTank((ServerLevel) level, c, resource, action);
+            if (n > 0 && b != null && action.execute()) b.flowIn(level.getGameTime(), n);
+            return n;
+        }
         TankData t = c.getTank();
         long n = Math.min(resource.getAmount(), t.capacityMb() - t.waterMb());
         if (n <= 0) return 0;
@@ -99,7 +105,7 @@ public final class TankFluid implements IFluidHandler {
 
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        if (resource.isEmpty() || !isFluidValid(0, resource)) return FluidStack.EMPTY;
+        if (resource.isEmpty() || !org.overengineer.bettacraft.registry.ModFluids.isWater(resource.getFluid())) return FluidStack.EMPTY;
         return drain(resource.getAmount(), action);
     }
 

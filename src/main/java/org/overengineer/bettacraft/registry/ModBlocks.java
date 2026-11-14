@@ -281,6 +281,19 @@ public final class ModBlocks {
             () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BLACK)
                     .strength(0.6F).sound(SoundType.GRAVEL)));
 
+    /** M26 part a: tubifex worms in mud and stale water. */
+    public static final DeferredBlock<org.overengineer.bettacraft.food.LiveCultureBlock> TUBIFEX_DISH = BLOCKS.register("tubifex_dish",
+            () -> new org.overengineer.bettacraft.food.LiveCultureBlock(org.overengineer.bettacraft.food.LiveCultureBlock.Kind.TUBIFEX, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_ORANGE).strength(1.0F).sound(SoundType.DECORATED_POT).noOcclusion()));
+    /** M26 part a: daphnia (water fleas) in a barrel with a glass top. */
+    public static final DeferredBlock<org.overengineer.bettacraft.food.LiveCultureBlock> DAPHNIA_BARREL = BLOCKS.register("daphnia_barrel",
+            () -> new org.overengineer.bettacraft.food.LiveCultureBlock(org.overengineer.bettacraft.food.LiveCultureBlock.Kind.DAPHNIA, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava()));
+    /** M26 part a: pumps live food from a breeder through the pipes into tanks. */
+    public static final DeferredBlock<org.overengineer.bettacraft.food.LiveFoodPumpBlock> LIVE_FOOD_PUMP = BLOCKS.register("live_food_pump",
+            () -> new org.overengineer.bettacraft.food.LiveFoodPumpBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)

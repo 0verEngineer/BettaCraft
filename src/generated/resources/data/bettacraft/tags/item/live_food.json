@@ -1,6 +1,8 @@
 {
   "values": [
     "bettacraft:mosquito_larvae",
+    "bettacraft:tubifex",
+    "bettacraft:daphnia",
     {
       "id": "aquaculture:worm",
       "required": false

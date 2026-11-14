@@ -66,6 +66,11 @@ public final class BettaHealth {
         foodStress = 0;
     }
 
+    /** M26: food from a poor culture brought germs: adds bad-water stress (sick after {@code daysUntilSick} of it). */
+    public void addWaterStress(double days) {
+        if (days > 0) waterStress += days;
+    }
+
     public boolean isHungry(Params p) {
         return daysSinceFed > p.hungryAfterDays();
     }

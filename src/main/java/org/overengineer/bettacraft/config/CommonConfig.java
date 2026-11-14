@@ -61,6 +61,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_CARIDINA;
     public static final ModConfigSpec.BooleanValue FEATURE_SULAWESI;
     public static final ModConfigSpec.BooleanValue FEATURE_REEF_DOSING;
+    public static final ModConfigSpec.BooleanValue FEATURE_LIVE_FOOD_CULTURES;
+    public static final ModConfigSpec.BooleanValue FEATURE_LIVE_FOOD_PUMP;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -186,6 +188,11 @@ public final class CommonConfig {
                 "wild and the trader; those in tanks stay)").define("sulawesi", true);
         FEATURE_REEF_DOSING = b.comment("Reef dosing: alkalinity (KH), magnesium and trace elements in salt water, used up by the stony corals, and the",
                 "dosing pump with up to four canisters (off: the values stand still and the pump does not dose)").define("reefDosing", true);
+        // M26
+        FEATURE_LIVE_FOOD_CULTURES = b.comment("Live food cultures: the tubifex dish (mud, mulm or waste water) and the daphnia barrel (yeast or green water,",
+                "light), harvested with the net or by hoppers and pumps (off: the cultures stand still)").define("liveFoodCultures", true);
+        FEATURE_LIVE_FOOD_PUMP = b.comment("Live food pump: pumps daphnia, artemia and other live food from a breeder through the pipes into tanks on a",
+                "schedule (off: it does not pump and tanks take no live food from pipes)").define("liveFoodPump", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -296,6 +303,8 @@ public final class CommonConfig {
     public static boolean caridina() { return getOr(FEATURE_CARIDINA, true); }
     public static boolean sulawesi() { return getOr(FEATURE_SULAWESI, true); }
     public static boolean reefDosing() { return getOr(FEATURE_REEF_DOSING, true); }
+    public static boolean liveFoodCultures() { return getOr(FEATURE_LIVE_FOOD_CULTURES, true); }
+    public static boolean liveFoodPump() { return getOr(FEATURE_LIVE_FOOD_PUMP, true); }
 
     private CommonConfig() {}
 }

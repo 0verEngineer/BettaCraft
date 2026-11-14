@@ -133,6 +133,16 @@ public final class BettaCraft {
                 (be, side) -> be.automation());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.CULTURE_TUB.get(),
                 (be, side) -> be.fluid());
+        // M26: live food cultures (starters, food and mud in; the harvest and empty bottles out; water from pipes) and the
+        // live food pump (its empty bottles out; FE while the pumps need it)
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.LIVE_CULTURE.get(),
+                (be, side) -> be.automation());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.LIVE_CULTURE.get(),
+                (be, side) -> be.fluid());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.LIVE_FOOD_PUMP.get(),
+                (be, side) -> be.bottleHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.LIVE_FOOD_PUMP.get(),
+                (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
         // M9 tank water from pipes (fresh water in, used water out) and FE for the equipment (power.* config):
         // any tank block, an attached external filter, a cabinet under the tank or a light on it; only offered while the
         // server config needs power (no misleading energy bars in info mods otherwise)

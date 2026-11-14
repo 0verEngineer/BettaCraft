@@ -298,12 +298,12 @@ public final class TankCare {
             BettaEntity b = fish.get(i);
             if (b.health().daysSinceFed() < OVERFED_DAYS) overfed++;
             b.health().feed();
-            if (kind == BettaFood.Kind.LIVE && b.isAdult()) b.breeding().condition();
+            org.overengineer.bettacraft.food.LiveFood.eaten(food, b.health(), b.breeding(), b.isAdult()); // M26: tubifex, poor cultures
             if (round != null) round.add(b.getUUID());
         }
         if (fed > 0) log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
         int left = items * per - fed;
-        left -= org.overengineer.bettacraft.tankmates.TankmateFeeding.feed(level, controller, mates, kind, Math.min(left, mates.size()), !fish.isEmpty(), wafer, round);
+        left -= org.overengineer.bettacraft.tankmates.TankmateFeeding.feed(level, controller, mates, food, kind, Math.min(left, mates.size()), !fish.isEmpty(), wafer, round);
         int frogsFed = TankFrogs.feed(level, controller, kind, Math.min(left, frogs.size()), !fish.isEmpty(), false);
         if (round != null) for (var f : frogs) if (f.daysSinceFed() <= 1e-6) round.add(f.getUUID());
         left -= frogsFed;
@@ -311,6 +311,17 @@ public final class TankCare {
         org.overengineer.bettacraft.critters.TankCritters.addFood(controller.getTank(), left > 0 ? left : fed * org.overengineer.bettacraft.critters.TankCritters.CRUMBS);
         TankWater.overfed(level, controller, overfed);
         return items;
+    }
+
+    /** M26: whether anybody in the tank eats this food now (bettas, tankmates, frogs or the small animals). */
+    public static boolean anyoneEats(ServerLevel level, TankData tank, ItemStack food) {
+        BettaFood.Kind kind = BettaFood.kind(food);
+        if (kind == null) return false;
+        boolean wafer = org.overengineer.bettacraft.tankmates.TankmateFeeding.bottomFood(food);
+        if (!wafer && !eaters(level, tank, kind).isEmpty()) return true;
+        if (!org.overengineer.bettacraft.tankmates.TankmateFeeding.eaters(level, tank, kind, wafer).isEmpty()) return true;
+        if (TankFrogs.eats(kind) && !wafer && !TankFrogs.frogs(level, tank).isEmpty()) return true;
+        return org.overengineer.bettacraft.critters.TankCritters.wantFood(tank);
     }
 
     /** Right-click on the tank with betta food: one item, food sinks down, bettas swim to it. */

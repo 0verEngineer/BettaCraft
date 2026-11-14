@@ -80,6 +80,14 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<Boolean>> CO2_SOLENOID = COMPONENTS.registerComponentType("co2_solenoid",
             b -> b.persistent(com.mojang.serialization.Codec.BOOL).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL));
 
+    /** M26: tubifex from a foul dish (they stress the fish a little). */
+    public static final Supplier<DataComponentType<Boolean>> POOR_CULTURE = COMPONENTS.registerComponentType("poor_culture",
+            b -> b.persistent(com.mojang.serialization.Codec.BOOL).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL));
+
+    /** M26: what a live food suspension (fluid {@code bettacraft:live_food}) carries. */
+    public static final Supplier<DataComponentType<org.overengineer.bettacraft.food.LiveFood.Content>> LIVE_FOOD = COMPONENTS.registerComponentType("live_food",
+            b -> b.persistent(org.overengineer.bettacraft.food.LiveFood.Content.CODEC).networkSynchronized(org.overengineer.bettacraft.food.LiveFood.Content.STREAM_CODEC));
+
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }

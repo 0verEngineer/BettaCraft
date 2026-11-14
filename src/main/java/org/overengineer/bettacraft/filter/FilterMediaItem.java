@@ -42,6 +42,11 @@ public class FilterMediaItem extends Item {
         return stack.getItem() instanceof FilterMediaItem m ? m.medium : FilterMedium.NONE;
     }
 
+    /** M26: mulm a medium of this dirt (0..1) gives when it is washed: one from a quarter dirty, two from three quarters. */
+    public static int mulmFrom(double dirt) {
+        return dirt >= 0.75 ? 2 : dirt >= 0.25 ? 1 : 0;
+    }
+
     @Override
     public boolean isValidRepairItem(ItemStack stack, ItemStack repair) {
         return false;
@@ -61,7 +66,13 @@ public class FilterMediaItem extends Item {
         }
         if (stack.getDamageValue() <= 0) return InteractionResult.PASS;
         if (!level.isClientSide) {
+            // M26: the mulm washed out of a dirty medium (food for the tubifex dish)
+            int mulm = mulmFrom(dirt(stack));
             stack.setDamageValue(0);
+            if (mulm > 0 && ctx.getPlayer() != null) {
+                ItemStack m = new ItemStack(org.overengineer.bettacraft.registry.ModItems.MULM.get(), mulm);
+                if (!ctx.getPlayer().getInventory().add(m)) ctx.getPlayer().drop(m, false);
+            }
             LayeredCauldronBlock.lowerFillLevel(s, level, pos);
             level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.6F, 1.2F);
             if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.media.cleaned", stack.getHoverName())

@@ -72,5 +72,12 @@ public final class SwampWaterEvents {
             player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.aquatic.cutting_in_bottle",
                     cutting.getHoverName()), true);
         }
+        // M26: and now and then a few daphnia (the start of a daphnia barrel)
+        if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && level.getRandom().nextDouble()
+                < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE, 0.08)) {
+            ItemStack daphnia = new ItemStack(ModItems.DAPHNIA.get());
+            if (!player.getInventory().add(daphnia)) player.drop(daphnia, false);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.live_food.daphnia_in_bottle"), true);
+        }
     }
 }

@@ -142,25 +142,29 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     public int feedNow(ServerLevel level, TankBlockEntity tank) {
         java.util.Set<java.util.UUID> fed = new java.util.HashSet<>();
         int used = 0;
-        for (int i = 0; i < slots; i++) {
-            ItemStack s = items.getStackInSlot(i);
-            if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
-            int n = TankCare.feed(level, tank, s, s.getCount(), fed);
-            if (n > 0) {
-                items.extractItem(i, n, false);
-                used += n;
-            }
-        }
-        // then food stored in the cabinets under the tank (PLAN 6.5)
-        for (CabinetBlockEntity cab : org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, tank)) {
-            var st = cab.storage();
-            for (int i = 0; i < st.getSlots(); i++) {
-                ItemStack s = st.getStackInSlot(i);
-                if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD)) continue;
+        // M26: the animals prefer live food: it goes first (from the feeder, then from the cabinets), then the rest
+        java.util.List<CabinetBlockEntity> cabinets = org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, tank);
+        for (boolean live : new boolean[]{true, false}) {
+            for (int i = 0; i < slots; i++) {
+                ItemStack s = items.getStackInSlot(i);
+                if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD) || s.is(ModTags.LIVE_FOOD) != live) continue;
                 int n = TankCare.feed(level, tank, s, s.getCount(), fed);
                 if (n > 0) {
-                    st.extractItem(i, n, false);
+                    items.extractItem(i, n, false);
                     used += n;
+                }
+            }
+            // then food stored in the cabinets under the tank (PLAN 6.5)
+            for (CabinetBlockEntity cab : cabinets) {
+                var st = cab.storage();
+                for (int i = 0; i < st.getSlots(); i++) {
+                    ItemStack s = st.getStackInSlot(i);
+                    if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD) || s.is(ModTags.LIVE_FOOD) != live) continue;
+                    int n = TankCare.feed(level, tank, s, s.getCount(), fed);
+                    if (n > 0) {
+                        st.extractItem(i, n, false);
+                        used += n;
+                    }
                 }
             }
         }

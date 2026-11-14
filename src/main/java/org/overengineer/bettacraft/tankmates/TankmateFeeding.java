@@ -51,6 +51,12 @@ public final class TankmateFeeding {
      */
     public static int feed(ServerLevel level, TankBlockEntity c, List<TankmateEntity> eaters, BettaFood.Kind kind, int portions,
                            boolean fastThere, boolean wafer, @Nullable Set<UUID> round) {
+        return feed(level, c, eaters, net.minecraft.world.item.ItemStack.EMPTY, kind, portions, fastThere, wafer, round);
+    }
+
+    /** As above with the food itself (M26: tubifex condition better, food of a poor culture stresses a little). */
+    public static int feed(ServerLevel level, TankBlockEntity c, List<TankmateEntity> eaters, net.minecraft.world.item.ItemStack food, BettaFood.Kind kind,
+                           int portions, boolean fastThere, boolean wafer, @Nullable Set<UUID> round) {
         if (portions <= 0 || eaters.isEmpty()) return 0;
         List<TankmateEntity> list = new ArrayList<>(eaters);
         if (round != null) list.removeIf(m -> round.contains(m.getUUID()));
@@ -71,7 +77,11 @@ public final class TankmateFeeding {
             if (m.health().daysSinceFed() < overfedDays) overfed++;
 
             m.health().feed();
-            if (kind == BettaFood.Kind.LIVE && m.isAdult()) m.breeding().condition();
+            if (food.isEmpty()) {
+                if (kind == BettaFood.Kind.LIVE && m.isAdult()) m.breeding().condition();
+            } else {
+                org.overengineer.bettacraft.food.LiveFood.eaten(food, m.health(), m.breeding(), m.isAdult());
+            }
             if (round != null) round.add(m.getUUID());
             used++;
         }

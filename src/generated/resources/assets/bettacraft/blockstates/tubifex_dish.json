@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "mud=false,stage=0,water=false": {
+      "model": "bettacraft:block/tubifex_dish"
+    },
+    "mud=false,stage=0,water=true": {
+      "model": "bettacraft:block/tubifex_dish_water"
+    },
+    "mud=false,stage=1,water=false": {
+      "model": "bettacraft:block/tubifex_dish_1"
+    },
+    "mud=false,stage=1,water=true": {
+      "model": "bettacraft:block/tubifex_dish_water_1"
+    },
+    "mud=false,stage=2,water=false": {
+      "model": "bettacraft:block/tubifex_dish_2"
+    },
+    "mud=false,stage=2,water=true": {
+      "model": "bettacraft:block/tubifex_dish_water_2"
+    },
+    "mud=false,stage=3,water=false": {
+      "model": "bettacraft:block/tubifex_dish_3"
+    },
+    "mud=false,stage=3,water=true": {
+      "model": "bettacraft:block/tubifex_dish_water_3"
+    },
+    "mud=true,stage=0,water=false": {
+      "model": "bettacraft:block/tubifex_dish_mud"
+    },
+    "mud=true,stage=0,water=true": {
+      "model": "bettacraft:block/tubifex_dish_mud_water"
+    },
+    "mud=true,stage=1,water=false": {
+      "model": "bettacraft:block/tubifex_dish_mud_1"
+    },
+    "mud=true,stage=1,water=true": {
+      "model": "bettacraft:block/tubifex_dish_mud_water_1"
+    },
+    "mud=true,stage=2,water=false": {
+      "model": "bettacraft:block/tubifex_dish_mud_2"
+    },
+    "mud=true,stage=2,water=true": {
+      "model": "bettacraft:block/tubifex_dish_mud_water_2"
+    },
+    "mud=true,stage=3,water=false": {
+      "model": "bettacraft:block/tubifex_dish_mud_3"
+    },
+    "mud=true,stage=3,water=true": {
+      "model": "bettacraft:block/tubifex_dish_mud_water_3"
+    }
+  }
+}

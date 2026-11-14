@@ -159,6 +159,16 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue CULTURE_LARVA_YIELD;
     public static final ModConfigSpec.DoubleValue CULTURE_ARTEMIA_DAYS;
     public static final ModConfigSpec.IntValue CULTURE_ARTEMIA_YIELD;
+    // M26: live food cultures and the live food pump
+    public static final ModConfigSpec.DoubleValue LIVE_FOOD_TUBIFEX_DAYS;
+    public static final ModConfigSpec.IntValue LIVE_FOOD_TUBIFEX_ROOM;
+    public static final ModConfigSpec.DoubleValue LIVE_FOOD_DAPHNIA_DAYS;
+    public static final ModConfigSpec.IntValue LIVE_FOOD_DAPHNIA_ROOM;
+    public static final ModConfigSpec.DoubleValue LIVE_FOOD_CROWDED_DAYS;
+    public static final ModConfigSpec.DoubleValue LIVE_FOOD_TUBIFEX_CONDITIONING;
+    public static final ModConfigSpec.DoubleValue LIVE_FOOD_POOR_STRESS;
+    public static final ModConfigSpec.DoubleValue LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE;
+    public static final ModConfigSpec.IntValue LIVE_FOOD_PUMP_FE;
 
     // misc
     public static final ModConfigSpec.BooleanValue SIMULATE_UNLOADED_TIME;
@@ -654,6 +664,26 @@ public final class ServerConfig {
         CULTURE_ARTEMIA_DAYS = b.comment("In-game days an artemia hatchery needs for one batch (needs light)").defineInRange("hatcheryDays", 1.0, 0.01, 100.0);
         CULTURE_ARTEMIA_YIELD = b.comment("Bottles of artemia nauplii per batch (uses one use of cysts, 250 mB of salt water and one glass bottle per bottle)")
                 .defineInRange("hatcheryYield", 2, 1, 16);
+        b.pop();
+
+        b.comment("M26: live food cultures (tubifex dish, daphnia barrel, features.liveFoodCultures) and the live food pump (features.liveFoodPump)")
+                .push("liveFood");
+        LIVE_FOOD_TUBIFEX_DAYS = b.comment("In-game days a fed tubifex dish needs to grow from a tenth to nine tenths of its room")
+                .defineInRange("tubifexDays", 4.0, 0.1, 100.0);
+        LIVE_FOOD_TUBIFEX_ROOM = b.comment("Portions of tubifex a full dish holds").defineInRange("tubifexRoom", 8, 2, 64);
+        LIVE_FOOD_DAPHNIA_DAYS = b.comment("In-game days a fed and lit daphnia barrel needs to grow from a tenth to nine tenths of its room")
+                .defineInRange("daphniaDays", 3.0, 0.1, 100.0);
+        LIVE_FOOD_DAPHNIA_ROOM = b.comment("Portions of daphnia a full barrel holds").defineInRange("daphniaRoom", 16, 2, 64);
+        LIVE_FOOD_CROWDED_DAYS = b.comment("In-game days a daphnia barrel stays crowded (90 % of its room) before the culture collapses (harvest in time)")
+                .defineInRange("crowdedDays", 1.0, 0.05, 100.0);
+        LIVE_FOOD_TUBIFEX_CONDITIONING = b.comment("How many times as long as other live food tubifex condition a breeding fish")
+                .defineInRange("tubifexConditioning", 2.0, 1.0, 10.0);
+        LIVE_FOOD_POOR_STRESS = b.comment("Days of bad-water stress a fish gets from one meal of tubifex from a foul dish (0 = harmless)")
+                .defineInRange("poorTubifexStress", 0.5, 0.0, 10.0);
+        LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE = b.comment("Chance that a bottle of swamp water brings up a few daphnia as well")
+                .defineInRange("bottleDaphniaChance", 0.08, 0.0, 1.0);
+        LIVE_FOOD_PUMP_FE = b.comment("FE the live food pump needs per portion while pipes.pumpsRequireEnergy is on")
+                .defineInRange("pumpFePerPortion", 200, 0, 100000);
         b.pop();
 
         b.comment("Shrimp, dwarf crayfish and snails: small animals that live in a tank as data (no entities)").push("invertebrates");

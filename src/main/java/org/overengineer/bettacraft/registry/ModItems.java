@@ -290,6 +290,20 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> TRACE_CANISTER = canister("trace_canister",
             org.overengineer.bettacraft.reef.ReefDosing.Additive.TRACE);
 
+    // M26 part a: live food cultures and the live food pump
+    public static final DeferredItem<org.overengineer.bettacraft.food.LiveFoodItem> TUBIFEX = ITEMS.register("tubifex",
+            () -> new org.overengineer.bettacraft.food.LiveFoodItem(new Item.Properties()));
+    public static final DeferredItem<Item> DAPHNIA = ITEMS.registerSimpleItem("daphnia");
+    /** Mulm washed out of dirty filter media: food for the tubifex dish. */
+    public static final DeferredItem<Item> MULM = ITEMS.registerSimpleItem("mulm");
+    public static final DeferredItem<Item> GREEN_WATER_BOTTLE = ITEMS.register("green_water_bottle",
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+    public static final DeferredItem<CultureItem> GREEN_WATER_CULTURE = ITEMS.register("green_water_culture",
+            () -> new CultureItem(GREEN_WATER_BOTTLE, true, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<BlockItem> TUBIFEX_DISH = ITEMS.registerSimpleBlockItem(ModBlocks.TUBIFEX_DISH);
+    public static final DeferredItem<BlockItem> DAPHNIA_BARREL = ITEMS.registerSimpleBlockItem(ModBlocks.DAPHNIA_BARREL);
+    public static final DeferredItem<BlockItem> LIVE_FOOD_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.LIVE_FOOD_PUMP);
+
     private static DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> canister(String id, org.overengineer.bettacraft.reef.ReefDosing.Additive a) {
         return ITEMS.register(id, () -> new org.overengineer.bettacraft.reef.DosingCanisterItem(a, new Item.Properties().stacksTo(a == null ? 16 : 1)));
     }

@@ -123,6 +123,9 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.ARTEMIA_NAUPLII.get());
                 out.accept(ModItems.LARVA_TUB.get());
                 out.accept(ModItems.ARTEMIA_HATCHERY.get());
+                // M26: live food cultures and the live food pump
+                for (var it : java.util.List.of(ModItems.TUBIFEX, ModItems.MULM, ModItems.TUBIFEX_DISH, ModItems.DAPHNIA, ModItems.GREEN_WATER_CULTURE,
+                        ModItems.GREEN_WATER_BOTTLE, ModItems.DAPHNIA_BARREL, ModItems.LIVE_FOOD_PUMP)) out.accept(it.get());
                 // M20: salt water and the reef technique
                 out.accept(ModItems.SEA_WATER_BUCKET.get());
                 out.accept(ModItems.SEA_SALT.get());
