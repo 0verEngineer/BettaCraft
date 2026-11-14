@@ -20,6 +20,8 @@
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
+    "client.GuideNavBarMixin",
+    "client.GuideNavBarRowMixin",
     "client.IrisBlockIdsMixin"
   ],
   "injectors": {
