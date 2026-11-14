@@ -200,20 +200,24 @@ public final class ContainerGameTests {
         h.succeed();
     }
 
-    /** Into another mod's tank or pipe: the fluid capability holds 1000 mB of water and leaves an empty bucket. */
+    /**
+     * Into another mod's tank or pipe: the fluid capability holds 1000 mB of sea water (M25: the fluid
+     * {@code bettacraft:sea_water}) and leaves an empty bucket; the other way round an empty bucket fills with sea water.
+     */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void seaWaterBucketIntoAForeignTank(GameTestHelper h) {
         ItemStack stack = new ItemStack(ModItems.SEA_WATER_BUCKET.get());
         var handler = FluidUtil.getFluidHandler(stack).orElse(null);
         check(handler != null, "no fluid capability");
-        check(handler.getFluidInTank(0).is(Fluids.WATER) && handler.getFluidInTank(0).getAmount() == 1000, "not 1000 mB of water: " + handler.getFluidInTank(0));
+        var sea = org.overengineer.bettacraft.registry.ModFluids.SEA_WATER.get();
+        check(handler.getFluidInTank(0).is(sea) && handler.getFluidInTank(0).getAmount() == 1000, "not 1000 mB of sea water: " + handler.getFluidInTank(0));
         FluidTank foreign = new FluidTank(8000);
         var result = FluidUtil.tryEmptyContainer(stack, foreign, 1000, null, true);
         check(result.isSuccess() && result.getResult().is(Items.BUCKET), "the bucket did not empty into the foreign tank");
-        check(foreign.getFluidAmount() == 1000 && foreign.getFluid().is(Fluids.WATER), "the foreign tank has no water: " + foreign.getFluid());
-        // the other way round an empty bucket fills with water (plain water: the foreign tank knows no salt)
+        check(foreign.getFluidAmount() == 1000 && foreign.getFluid().is(sea), "the foreign tank has no sea water: " + foreign.getFluid());
+        // the other way round an empty bucket fills with sea water
         var back = FluidUtil.tryFillContainer(new ItemStack(Items.BUCKET), foreign, 1000, null, true);
-        check(back.isSuccess() && back.getResult().is(Items.WATER_BUCKET), "the empty bucket did not fill from the foreign tank");
+        check(back.isSuccess() && back.getResult().is(ModItems.SEA_WATER_BUCKET.get()), "the empty bucket did not fill with sea water from the foreign tank");
         check(foreign.getFluid().isEmpty() || foreign.getFluid().getAmount() == 0, "water left in the foreign tank");
         check(foreign.fill(new FluidStack(Fluids.WATER, 1), IFluidHandler.FluidAction.SIMULATE) == 1, "foreign tank broken");
         h.succeed();

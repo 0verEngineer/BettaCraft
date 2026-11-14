@@ -74,6 +74,8 @@ public final class DevSmokeUpgrade {
     private static int m23Checked;
     /** M24: tanks of the old world checked (nitrate starts at 0, no water change noted, no bulkhead). */
     private static int m24Checked;
+    /** M25 part b: old sea water buckets found in the chests (they must give other mods the sea water fluid). */
+    private static int seaBuckets;
 
     private DevSmokeUpgrade() {}
 
@@ -126,6 +128,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
                 LOGGER.info("[smoketest] upgrade: {} filters and lights run at full power, undimmed (M23)", m23Checked);
                 LOGGER.info("[smoketest] upgrade: {} tanks start with nitrate 0 and no water change (M24)", m24Checked);
+                LOGGER.info("[smoketest] upgrade: {} sea water buckets give the sea water fluid (M25)", seaBuckets);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -284,6 +287,9 @@ public final class DevSmokeUpgrade {
             if (t.nitrate() > 0.5F) problems.add("tank " + c.getBlockPos().toShortString() + ": nitrate " + t.nitrate() + " instead of 0");
             if (t.lastWaterChange() >= 0) problems.add("tank " + c.getBlockPos().toShortString() + ": a water change noted");
             m24Checked++;
+            // M25 part b: no CO2 source in an old world: the CO2 stays at the air's
+            if (Math.abs(t.co2() - org.overengineer.bettacraft.chem.WaterChemistry.CO2_AIR) > 0.5)
+                problems.add("tank " + c.getBlockPos().toShortString() + ": CO2 " + t.co2() + " instead of the air's");
             // M25: tanks of earlier versions hold tap water and no animal of ours minds it
             if (Math.abs(t.tds() - org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS) > 5 || Math.abs(t.ph() - org.overengineer.bettacraft.chem.WaterChemistry.startPh(t.salinity())) > 0.1)
                 problems.add("tank " + c.getBlockPos().toShortString() + ": TDS " + t.tds() + " / pH " + t.ph() + " instead of tap water");
@@ -455,6 +461,14 @@ public final class DevSmokeUpgrade {
             for (var c : s.getComponentsPatch().entrySet()) comps.add(String.valueOf(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.getKey())));
             // M22.3: old bags and buckets hold animals that count as analysed
             if (STAGE == 1 && !analysedContents(s)) problems.add("chest " + cb.getBlockPos().toShortString() + " slot " + i + ": animals not analysed");
+            // M25 part b: an old sea water bucket stays valid and is sea water for other mods
+            if (STAGE == 1 && s.is(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get())) {
+                var fh = net.neoforged.neoforge.fluids.FluidUtil.getFluidHandler(s.copy()).orElse(null);
+                var in = fh == null ? net.neoforged.neoforge.fluids.FluidStack.EMPTY : fh.drain(1000, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                if (!in.getFluid().isSame(org.overengineer.bettacraft.registry.ModFluids.SEA_WATER.get()))
+                    problems.add("chest " + cb.getBlockPos().toShortString() + " slot " + i + ": sea water bucket gives " + in.getFluid());
+                else seaBuckets++;
+            }
             java.util.Collections.sort(comps);
             it.addProperty("components", String.join(",", comps));
             a.add(it);

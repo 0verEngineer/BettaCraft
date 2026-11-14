@@ -27,8 +27,9 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     public static final int MAX_SUGAR = 4;
     private boolean water;
     private int sugar;
-    /** Game time the yeast went in (-1: not fermenting). */
-    private long start = -1;
+    /** Game time the yeast went in ({@link #NONE}: not fermenting; may be negative early in a world). */
+    private static final long NONE = Long.MIN_VALUE;
+    private long start = NONE;
     /** Days the brew ferments. */
     private double days;
     /** Bubbles per second in the last care step (for the status). */
@@ -68,18 +69,18 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     // ------------------------------------------------------------------ state
 
     public boolean fermenting() {
-        return start >= 0;
+        return start != NONE;
     }
 
     /** 0..1 of the fermentation time at this game time. */
     public double progress(long now) {
-        if (start < 0 || days <= 0) return 0;
+        if (start == NONE || days <= 0) return 0;
         return Math.max(0, (now - start) / (days * 24000.0));
     }
 
     /** Bubbles per second now. */
     public double bubblesAt(long now) {
-        if (start < 0) return 0;
+        if (start == NONE) return 0;
         return ServerConfig.getOr(ServerConfig.CO2_BIO_BUBBLES, 1.0) * curve(progress(now)) * unevenness(worldPosition.asLong(), now);
     }
 
@@ -95,14 +96,14 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     }
 
     private int stage() {
-        if (start >= 0) return BioCo2Block.FERMENTING;
+        if (start != NONE) return BioCo2Block.FERMENTING;
         if (water) return BioCo2Block.MIXED;
         return getBlockState().getValue(BioCo2Block.STAGE) == BioCo2Block.SPENT ? BioCo2Block.SPENT : BioCo2Block.EMPTY;
     }
 
     private void checkSpent(Level level) {
-        if (start >= 0 && progress(level.getGameTime()) >= 1) {
-            start = -1;
+        if (start != NONE && progress(level.getGameTime()) >= 1) {
+            start = NONE;
             water = false;
             sugar = 0;
             lastBubbles = 0;
@@ -137,7 +138,7 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     public void use(Player player, InteractionHand hand, ItemStack stack) {
         if (level == null) return;
         if (stack.is(Items.WATER_BUCKET) || stack.is(ModItems.RO_WATER_BUCKET.get())) {
-            if (start >= 0 || water) {
+            if (start != NONE || water) {
                 msg(player, "message.bettacraft.bio_co2.has_water", ChatFormatting.GOLD);
                 return;
             }
@@ -148,8 +149,8 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
             setStage(BioCo2Block.MIXED);
             msg(player, "message.bettacraft.bio_co2.water", ChatFormatting.AQUA);
         } else if (stack.is(Items.SUGAR)) {
-            if (!water || start >= 0) {
-                msg(player, start >= 0 ? "message.bettacraft.bio_co2.fermenting_already" : "message.bettacraft.bio_co2.needs_water", ChatFormatting.GOLD);
+            if (!water || start != NONE) {
+                msg(player, start != NONE ? "message.bettacraft.bio_co2.fermenting_already" : "message.bettacraft.bio_co2.needs_water", ChatFormatting.GOLD);
                 return;
             }
             if (sugar >= MAX_SUGAR) {
@@ -160,8 +161,8 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
             if (!player.getAbilities().instabuild) stack.shrink(1);
             player.displayClientMessage(Component.translatable("message.bettacraft.bio_co2.sugar", sugar, MAX_SUGAR).withStyle(ChatFormatting.AQUA), true);
         } else if (stack.is(ModItems.YEAST.get())) {
-            if (!water || sugar <= 0 || start >= 0) {
-                msg(player, start >= 0 ? "message.bettacraft.bio_co2.fermenting_already" : !water ? "message.bettacraft.bio_co2.needs_water"
+            if (!water || sugar <= 0 || start != NONE) {
+                msg(player, start != NONE ? "message.bettacraft.bio_co2.fermenting_already" : !water ? "message.bettacraft.bio_co2.needs_water"
                         : "message.bettacraft.bio_co2.needs_sugar", ChatFormatting.GOLD);
                 return;
             }
@@ -184,13 +185,13 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     }
 
     public void pourOut(Player player) {
-        if (!water && start < 0 && stage() != BioCo2Block.SPENT) {
+        if (!water && start == NONE && stage() != BioCo2Block.SPENT) {
             tell(player);
             return;
         }
         water = false;
         sugar = 0;
-        start = -1;
+        start = NONE;
         lastBubbles = 0;
         setStage(BioCo2Block.EMPTY);
         setChanged();
@@ -203,7 +204,7 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
         checkSpent(level);
         Component c;
         if (!TankCo2.enabled()) c = Component.translatable("message.bettacraft.co2.off").withStyle(ChatFormatting.GOLD);
-        else if (start >= 0) {
+        else if (start != NONE) {
             long now = level.getGameTime();
             double left = Math.max(0, (1 - progress(now)) * days);
             c = Component.translatable("message.bettacraft.bio_co2.status", String.format(java.util.Locale.ROOT, "%.1f", bubblesAt(now)),
@@ -244,7 +245,7 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
         super.loadAdditional(tag, registries);
         water = tag.getBoolean("water");
         sugar = Math.max(0, Math.min(MAX_SUGAR, tag.getInt("sugar")));
-        start = tag.contains("start") ? tag.getLong("start") : -1;
+        start = tag.contains("start") ? tag.getLong("start") : NONE;
         days = tag.getDouble("days");
     }
 }

@@ -163,6 +163,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestm25')) {
+                // gradlew runClient -Psmoketestm25 : only the M25 part b scene (a tank with a CO2 cylinder and a bio CO2 bottle, the
+                // filling station on a burning furnace, the reverse osmosis unit at a water source, the cylinder's regulator screen
+                // en + de, the handbook pages en + de)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m25only', 'true'
+            }
             if (project.hasProperty('smoketestm24')) {
                 // gradlew runClient -Psmoketestm24 : only the M24 scene (multiblock filter, tank on pipes with bulkheads and a pump,
                 // the interior pipes with nozzle, lily pipe and spray bar running, crucible, level sensor, water change controller,

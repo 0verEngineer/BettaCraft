@@ -94,6 +94,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM23 m23;
     /** -Psmoketestm24: only the M24 scene (pipes, multiblock filter, interior pipes, crucible, water devices, menus, handbook). */
     private static final boolean M24_ONLY = Boolean.getBoolean("bettacraft.smoketest.m24only");
+    /** -Psmoketestm25: only the M25 part b scene (CO2 cylinder, bio CO2, filling station, reverse osmosis unit, regulator, handbook). */
+    private static final boolean M25_ONLY = Boolean.getBoolean("bettacraft.smoketest.m25only");
+    private static DevClientSmokeM25 m25;
     private static DevClientSmokeM24 m24;
     /** -Psmoketestm22_4: only the M22.4 scene (the four outlet sides of the cabinet filter, the cabinet menu, the handbook plant sources). */
     private static final boolean M22_4_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_4only");
@@ -171,6 +174,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M25_ONLY) {
+                if (ticks == 60) m25 = new DevClientSmokeM25();
+                if (m25 != null && m25.tick()) {
+                    m25 = null;
+                    LOGGER.info("[smoketest] client world test finished (M25 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M24_ONLY) {
                 if (ticks == 60) m24 = new DevClientSmokeM24();
                 if (m24 != null && m24.tick()) {
