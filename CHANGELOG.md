@@ -4,6 +4,34 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.21.1-beta.1] - 2026-11-15
+
+Every aquarium and floating plant now grows wild in the waters of its origin, and wild animals are easier to find:
+an own frugal spawn pass outside the vanilla mob cap and the operator command `/bettacraft wildlife`.
+
+### Added
+- **Wild plants in the world** (`features.wildPlants`, `spawn.wildPlantFrequency`; new chunks): all 49 aquarium plants
+  grow in small groups in the waters they come from: Anubias, Bucephalandra and Java fern on stones and sunken roots
+  in jungle water with the crypts, swords and lotus; stem plants, carpets and lotus in swamps; Vallisneria, Sagittaria,
+  hairgrass and mosses in rivers; crypts, Java fern and moss in mangroves; **Marimo** balls in cold lakes and frozen
+  rivers; mosses in the pools of the lush caves. Strong-light and soft-water plants are rare, strong-light ones only in
+  shallow water. The waters are the biome tags `#bettacraft:*_waters` (new: `#bettacraft:cold_waters`), so biome mods
+  count.
+- **Shears** cut a cutting off a wild plant (two of a stem plant); it grows back in about an in-game day. By hand it
+  gives nothing like seagrass, with silk touch the whole plant (half grown). Five shared world blocks (epiphyte, moss,
+  rosette, stem plants, carpet) carry the species and look like it.
+- **Wild floating plants** (duckweed, frogbit, salvinia, red root floater, water lettuce, hornwort, Riccia) lie on calm
+  water like lily pads in swamps, mangroves, jungle water, rivers and cold lakes; pick them up by hand, with shears or
+  scoop them with the aquarium net.
+- **Own spawn pass for wild animals** (`features.wildSpawnPass`, `wildlife.spawnPassInterval`,
+  `wildlife.spawnPassPerPlayer`): with many fish mods the vanilla water-ambient cap is full of ocean fish, so now and
+  then a few wild fish, frogs or small animals spawn in fitting water near each player, at most 10 within 48 blocks.
+- **`/bettacraft wildlife`** (operators): biome, water, the spawn entries of the mod with weight and share, wild
+  animals nearby, the fill of the mob cap and whether spawning can happen; `list [radius]` and `glow [radius]`.
+- Entity tags `#bettacraft:all_animals` and `#bettacraft:wild_animals` (e.g. `@e[type=#bettacraft:all_animals]`).
+- Handbook: "Wild in the world" on the plants page, the new places in every "Obtaining" section, settings and commands
+  (English and German).
+
 ## [1.21.0-beta.1] - 2026-11-14
 
 Many more plants: 32 new aquarium plants (Anubias, Bucephalandra, stem plants, carpets, mosses, the rolling Marimo,

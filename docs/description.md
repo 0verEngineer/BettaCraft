@@ -48,6 +48,8 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
   hairgrass, Vallisneria, Aponogeton, tiger lotus ...) grow from a cutting into plants of many blocks, turn red in strong
   light, some need CO2 or soft water, are trimmed with shears and clean the water. The **Marimo** ball rolls with the
   current. **Floating plants** (duckweed, salvinia, water lettuce, hornwort ...) drift on the surface and spread.
+- **Every plant grows wild** in the waters it comes from (jungle, swamp, river, mangrove, cold lakes, lush caves):
+  shears cut a cutting, floating plants lie on calm water like lily pads.
 - Every plant and coral has real leaves, polyps and tentacles that **sway in the water**, inside and in the miniature;
   zoanthids and star polyps close when a fish swims by.
 
@@ -110,7 +112,7 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
-  O' Plenty and others get the wild animals and corals (biome tags).
+  O' Plenty and others get the wild animals, plants and corals (biome tags).
 - **Sodium and Iris:** supported, water and miniatures render correctly with shaders.
 
 ![The aquarium room with Complementary shaders](images/bettacraft-aquarium-room-shaders.jpg)

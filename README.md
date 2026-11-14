@@ -58,6 +58,9 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   are trimmed with shears and clean the water. The **Marimo** ball rolls with the current. **Floating plants**
   (duckweed, frogbit, salvinia, red root floater, water lettuce, hornwort, Riccia) drift on the surface, grow and
   spread; lily pads stay put.
+- **Every plant grows wild** in the waters of its origin: Anubias and Bucephalandra on stones in jungle water, stem
+  plants and carpets in swamps, Vallisneria and mosses in rivers, Marimo balls in cold lakes, floating plants on calm
+  water. Shears cut a cutting, the plant grows back.
 - Every plant and coral has **real leaves, polyps and tentacles that sway** in the water, inside and in the miniature
   outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
 
@@ -69,7 +72,8 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   Bolt, Wine Red, Tiger), Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and more crawl
   over floor, plants and glass; algae grow and the cleaning crew eats them. Dwarf clawed frogs.
 - **Wild animals and corals** live in the waters they come from (jungle, swamp, river, mangrove, warm and lukewarm
-  ocean); the waters are biome tags, so the biomes of biome mods count too. Catch them with the aquarium net.
+  ocean); the waters are biome tags, so the biomes of biome mods count too. Catch them with the aquarium net. An own
+  frugal spawn pass keeps them findable next to the fish of other mods; `/bettacraft wildlife` shows what lives where.
 - **Water animals of all mods** (fish, axolotls, tadpoles, seahorses ...) live in the aquariums; big, boss and hostile
   ones are refused with a reason.
 
