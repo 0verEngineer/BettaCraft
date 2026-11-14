@@ -31,8 +31,8 @@ item_ids:
 
 ## Obtaining
 
-* **Fishing** in jungle water: 0.22 % per catch (about 1 in 450 catches), instead of the fish.
-* **Fishing** in rivers: 0.22 % per catch (about 1 in 457 catches), instead of the fish.
+* **Fishing** in jungle water: 0.21 % per catch (about 1 in 487 catches), instead of the fish.
+* **Fishing** in rivers: 0.19 % per catch (about 1 in 517 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; breaking a rhizome piece divides it.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

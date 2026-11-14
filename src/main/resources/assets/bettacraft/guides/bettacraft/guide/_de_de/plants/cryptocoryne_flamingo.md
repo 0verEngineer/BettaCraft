@@ -33,8 +33,8 @@ item_ids:
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,23–0,28 % pro Schwung (etwa 1 von 361–433 Schwüngen) (Config `features.plantNetCatches`).
-* **Angeln** in Sümpfen: 0,07 % pro Fang (etwa 1 von 1468 Fängen), statt des Fischs.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,19–0,23 % pro Schwung (etwa 1 von 433–520 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Sümpfen: 0,06 % pro Fang (etwa 1 von 1585 Fängen), statt des Fischs.
 * **Fahrender Händler** (seltene Angebote): 1 für 5 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
 

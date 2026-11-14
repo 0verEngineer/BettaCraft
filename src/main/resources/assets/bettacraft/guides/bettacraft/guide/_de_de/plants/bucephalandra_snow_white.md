@@ -33,7 +33,7 @@ item_ids:
 
 ## Bezug
 
-* **Angeln** in Flüssen: 0,04 % pro Fang (etwa 1 von 2740 Fängen), statt des Fischs.
+* **Angeln** in Flüssen: 0,03 % pro Fang (etwa 1 von 3100 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

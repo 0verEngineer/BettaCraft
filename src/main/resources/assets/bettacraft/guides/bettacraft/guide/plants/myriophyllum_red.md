@@ -35,8 +35,8 @@ item_ids:
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.23–0.28 % per swing (about 1 in 361–433 swings) (config `features.plantNetCatches`).
-* **Fishing** in swamps: 0.1 % per catch (about 1 in 979 catches), instead of the fish.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.19–0.23 % per swing (about 1 in 433–520 swings) (config `features.plantNetCatches`).
+* **Fishing** in swamps: 0.09 % per catch (about 1 in 1057 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

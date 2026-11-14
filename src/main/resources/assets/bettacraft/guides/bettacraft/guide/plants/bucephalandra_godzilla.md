@@ -33,7 +33,7 @@ item_ids:
 
 ## Obtaining
 
-* **Fishing** in rivers: 0.11 % per catch (about 1 in 913 catches), instead of the fish.
+* **Fishing** in rivers: 0.1 % per catch (about 1 in 1033 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; breaking a rhizome piece divides it.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

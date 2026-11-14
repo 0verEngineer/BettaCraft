@@ -8,7 +8,7 @@ navigation:
 
 # Epiphytes and moss
 
-Epiphytes grow on a rhizome that sits on **stone or wood**, not in the substrate: rocks, logs, planks and the decoration. They are slow and content with little light. Java moss holds on to any solid block.
+Epiphytes grow on a rhizome that sits on **stone or wood**, not in the substrate: rocks, logs, planks and the decoration. They are slow and content with little light. Java moss, Christmas moss and flame moss hold on to any solid block; Riccia is tied onto stone or wood (or floats on the surface), the Marimo ball lies on the floor and rolls with the current.
 
 ## Species
 
@@ -32,3 +32,7 @@ Epiphytes grow on a rhizome that sits on **stone or wood**, not in the substrate
 | <ItemImage id="bettacraft:bucephalandra_pink_lady" /> | [Bucephalandra 'Pink Lady'](bucephalandra_pink_lady.md) | epiphyte (rhizome) | medium | about 24 days |
 | <ItemImage id="bettacraft:bucephalandra_mini_pink" /> | [Bucephalandra 'Mini Pink'](bucephalandra_mini_pink.md) | epiphyte (rhizome) | medium | about 22 days |
 | <ItemImage id="bettacraft:bucephalandra_snow_white" /> | [Bucephalandra 'Snow White'](bucephalandra_snow_white.md) | epiphyte (rhizome) | medium | about 26 days |
+| <ItemImage id="bettacraft:christmas_moss" /> | [Christmas Moss](christmas_moss.md) | moss | low | about 8 days |
+| <ItemImage id="bettacraft:flame_moss" /> | [Flame Moss](flame_moss.md) | moss | low | about 8 days |
+| <ItemImage id="bettacraft:riccia_fluitans" /> | [Riccia (Crystalwort)](riccia_fluitans.md) | moss | strong | about 4 days |
+| <ItemImage id="bettacraft:marimo" /> | [Marimo Ball](marimo.md) | moss | low | about 60 days |

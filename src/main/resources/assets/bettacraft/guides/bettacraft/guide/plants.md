@@ -53,6 +53,19 @@ part of the miniature behind the glass. Every plant looks a little different.
 | <ItemImage id="bettacraft:limnophila_sessiliflora" /> | [Limnophila Sessiliflora](plants/limnophila_sessiliflora.md) | stem plant | medium | about 2.5 days |
 | <ItemImage id="bettacraft:myriophyllum_red" /> | [Myriophyllum 'Red'](plants/myriophyllum_red.md) | stem plant | strong | about 3 days |
 | <ItemImage id="bettacraft:bacopa_caroliniana" /> | [Bacopa Caroliniana](plants/bacopa_caroliniana.md) | stem plant | medium | about 4 days |
+| <ItemImage id="bettacraft:hemianthus_callitrichoides" /> | [Hemianthus Callitrichoides 'Cuba'](plants/hemianthus_callitrichoides.md) | carpet | very strong | about 4 days |
+| <ItemImage id="bettacraft:eleocharis_acicularis" /> | [Eleocharis (Hairgrass)](plants/eleocharis_acicularis.md) | carpet | medium | about 3.5 days |
+| <ItemImage id="bettacraft:staurogyne_repens" /> | [Staurogyne Repens](plants/staurogyne_repens.md) | carpet | medium | about 4.5 days |
+| <ItemImage id="bettacraft:marsilea_hirsuta" /> | [Marsilea (Water Clover)](plants/marsilea_hirsuta.md) | carpet | low | about 6 days |
+| <ItemImage id="bettacraft:christmas_moss" /> | [Christmas Moss](plants/christmas_moss.md) | moss | low | about 8 days |
+| <ItemImage id="bettacraft:flame_moss" /> | [Flame Moss](plants/flame_moss.md) | moss | low | about 8 days |
+| <ItemImage id="bettacraft:riccia_fluitans" /> | [Riccia (Crystalwort)](plants/riccia_fluitans.md) | moss | strong | about 4 days |
+| <ItemImage id="bettacraft:marimo" /> | [Marimo Ball](plants/marimo.md) | moss | low | about 60 days |
+| <ItemImage id="bettacraft:echinodorus_red_diamond" /> | [Echinodorus 'Red Diamond'](plants/echinodorus_red_diamond.md) | rosette | medium | about 8 days |
+| <ItemImage id="bettacraft:cryptocoryne_parva" /> | [Cryptocoryne Parva](plants/cryptocoryne_parva.md) | rosette | low | about 16 days |
+| <ItemImage id="bettacraft:sagittaria_subulata" /> | [Sagittaria Subulata](plants/sagittaria_subulata.md) | rosette | low | about 4 days |
+| <ItemImage id="bettacraft:aponogeton_ulvaceus" /> | [Aponogeton Ulvaceus](plants/aponogeton_ulvaceus.md) | bulb with floating leaves | medium | about 6 days |
+| <ItemImage id="bettacraft:nymphaea_lotus_green" /> | [Green Tiger Lotus](plants/nymphaea_lotus_green.md) | bulb with floating leaves | medium | about 6 days |
 
 ## In this chapter
 

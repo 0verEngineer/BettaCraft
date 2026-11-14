@@ -35,8 +35,8 @@ item_ids:
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,23–0,28 % pro Schwung (etwa 1 von 361–433 Schwüngen) (Config `features.plantNetCatches`).
-* **Angeln** in Sümpfen: 0,1 % pro Fang (etwa 1 von 979 Fängen), statt des Fischs.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,19–0,23 % pro Schwung (etwa 1 von 433–520 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Sümpfen: 0,09 % pro Fang (etwa 1 von 1057 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 3 Ableger pro Schnitt; sie breitet sich auch selbst aus (Seitentriebe).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

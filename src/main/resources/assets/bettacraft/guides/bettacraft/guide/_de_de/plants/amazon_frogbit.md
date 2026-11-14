@@ -32,8 +32,8 @@ Amazonas-Froschbiss (*Limnobium laevigatum*) aus Mittel- und Südamerika: runde 
 
 ## Bezug
 
-* **Angeln** in Sümpfen: 1,5 % pro Fang (etwa 1 von 67 Fängen), statt des Fischs.
-* **Angeln** in Mangrovensümpfen: 1,5 % pro Fang (etwa 1 von 67 Fängen), statt des Fischs.
+* **Angeln** in Sümpfen: 1,2 % pro Fang (etwa 1 von 84 Fängen), statt des Fischs.
+* **Angeln** in Mangrovensümpfen: 1,3 % pro Fang (etwa 1 von 80 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 2 für 1 Smaragd.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 

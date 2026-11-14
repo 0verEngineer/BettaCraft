@@ -32,8 +32,8 @@ item_ids:
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,29–0,35 % pro Schwung (etwa 1 von 289–347 Schwüngen) (Config `features.plantNetCatches`).
-* **Angeln** in Flüssen: 0,15 % pro Fang (etwa 1 von 685 Fängen), statt des Fischs.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,24–0,29 % pro Schwung (etwa 1 von 347–417 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Flüssen: 0,13 % pro Fang (etwa 1 von 775 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

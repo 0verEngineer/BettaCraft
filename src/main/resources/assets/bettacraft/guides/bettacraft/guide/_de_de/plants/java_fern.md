@@ -32,8 +32,8 @@ Javafarn (*Microsorum pteropus*) aus den Bächen Südostasiens: lange, feste Wed
 
 ## Bezug
 
-* **Angeln** in Dschungelgewässern: 1,1 % pro Fang (etwa 1 von 90 Fängen), statt des Fischs.
-* **Angeln** in Flüssen: 1,1 % pro Fang (etwa 1 von 91 Fängen), statt des Fischs.
+* **Angeln** in Dschungelgewässern: 1 % pro Fang (etwa 1 von 97 Fängen), statt des Fischs.
+* **Angeln** in Flüssen: 0,97 % pro Fang (etwa 1 von 103 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

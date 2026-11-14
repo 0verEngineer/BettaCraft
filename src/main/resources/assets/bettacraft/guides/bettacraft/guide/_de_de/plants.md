@@ -53,6 +53,19 @@ Aquarium sieht man sie als Teil der Miniatur hinter dem Glas. Jede Pflanze sieht
 | <ItemImage id="bettacraft:limnophila_sessiliflora" /> | [Limnophila sessiliflora](plants/limnophila_sessiliflora.md) | Stängelpflanze | mittel | etwa 2,5 Tage |
 | <ItemImage id="bettacraft:myriophyllum_red" /> | [Myriophyllum „Red“](plants/myriophyllum_red.md) | Stängelpflanze | viel | etwa 3 Tage |
 | <ItemImage id="bettacraft:bacopa_caroliniana" /> | [Bacopa caroliniana](plants/bacopa_caroliniana.md) | Stängelpflanze | mittel | etwa 4 Tage |
+| <ItemImage id="bettacraft:hemianthus_callitrichoides" /> | [Hemianthus callitrichoides „Cuba“](plants/hemianthus_callitrichoides.md) | Bodendecker | sehr viel | etwa 4 Tage |
+| <ItemImage id="bettacraft:eleocharis_acicularis" /> | [Nadelsimse (Eleocharis)](plants/eleocharis_acicularis.md) | Bodendecker | mittel | etwa 3,5 Tage |
+| <ItemImage id="bettacraft:staurogyne_repens" /> | [Staurogyne repens](plants/staurogyne_repens.md) | Bodendecker | mittel | etwa 4,5 Tage |
+| <ItemImage id="bettacraft:marsilea_hirsuta" /> | [Kleefarn (Marsilea)](plants/marsilea_hirsuta.md) | Bodendecker | wenig | etwa 6 Tage |
+| <ItemImage id="bettacraft:christmas_moss" /> | [Christmas-Moos](plants/christmas_moss.md) | Moos | wenig | etwa 8 Tage |
+| <ItemImage id="bettacraft:flame_moss" /> | [Flame-Moos](plants/flame_moss.md) | Moos | wenig | etwa 8 Tage |
+| <ItemImage id="bettacraft:riccia_fluitans" /> | [Teichlebermoos (Riccia)](plants/riccia_fluitans.md) | Moos | viel | etwa 4 Tage |
+| <ItemImage id="bettacraft:marimo" /> | [Marimo-Kugel](plants/marimo.md) | Moos | wenig | etwa 60 Tage |
+| <ItemImage id="bettacraft:echinodorus_red_diamond" /> | [Echinodorus „Red Diamond“](plants/echinodorus_red_diamond.md) | Rosettenpflanze | mittel | etwa 8 Tage |
+| <ItemImage id="bettacraft:cryptocoryne_parva" /> | [Cryptocoryne parva](plants/cryptocoryne_parva.md) | Rosettenpflanze | wenig | etwa 16 Tage |
+| <ItemImage id="bettacraft:sagittaria_subulata" /> | [Pfeilkraut (Sagittaria subulata)](plants/sagittaria_subulata.md) | Rosettenpflanze | wenig | etwa 4 Tage |
+| <ItemImage id="bettacraft:aponogeton_ulvaceus" /> | [Aponogeton ulvaceus](plants/aponogeton_ulvaceus.md) | Knolle mit Schwimmblättern | mittel | etwa 6 Tage |
+| <ItemImage id="bettacraft:nymphaea_lotus_green" /> | [Grüner Tigerlotus](plants/nymphaea_lotus_green.md) | Knolle mit Schwimmblättern | mittel | etwa 6 Tage |
 
 ## In diesem Kapitel
 

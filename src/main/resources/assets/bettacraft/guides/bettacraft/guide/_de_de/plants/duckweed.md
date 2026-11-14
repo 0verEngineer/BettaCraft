@@ -32,8 +32,8 @@ Wasserlinse (*Lemna minor*), auf stillem Wasser fast überall zu Hause: winzige 
 
 ## Bezug
 
-* **Angeln** in Sümpfen: 2,7 % pro Fang (etwa 1 von 37 Fängen), statt des Fischs.
-* **Angeln** in Mangrovensümpfen: 2,1 % pro Fang (etwa 1 von 48 Fängen), statt des Fischs.
+* **Angeln** in Sümpfen: 2,1 % pro Fang (etwa 1 von 47 Fängen), statt des Fischs.
+* **Angeln** in Mangrovensümpfen: 1,8 % pro Fang (etwa 1 von 57 Fängen), statt des Fischs.
 * **Glasflasche** mit Wasser gefüllt in Sümpfen: 15 % pro Flasche, zusätzlich zum Wasser.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 

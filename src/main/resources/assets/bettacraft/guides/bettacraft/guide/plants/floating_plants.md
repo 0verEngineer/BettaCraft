@@ -12,7 +12,7 @@ navigation:
 
 Floating plants drift on the **water surface** of an aquarium. They are no blocks: use one on the aquarium and it floats
 where you look at the water. They grow with light and nutrients, put out offshoots, take up waste from the water and
-give the male a good place for his bubble nest.
+give the male a good place for his bubble nest. Hornwort has no roots: its shoots hang deep into the water. [Riccia](riccia_fluitans.md) floats too (or is tied onto stone and wood).
 
 ## Species
 
@@ -22,6 +22,9 @@ give the male a good place for his bubble nest.
 | <ItemImage id="bettacraft:amazon_frogbit" /> | [Amazon Frogbit](amazon_frogbit.md) | medium | the favourite |
 | <ItemImage id="bettacraft:salvinia" /> | [Salvinia](salvinia.md) | fast | good |
 | <ItemImage id="bettacraft:red_root_floater" /> | [Red Root Floater](red_root_floater.md) | medium | good |
+| <ItemImage id="bettacraft:water_lettuce" /> | [Water Lettuce](water_lettuce.md) | medium | good |
+| <ItemImage id="bettacraft:hornwort" /> | [Hornwort](hornwort.md) | very fast | so-so |
+| <ItemImage id="bettacraft:riccia_fluitans" /> | [Riccia (Crystalwort)](riccia_fluitans.md) | fast | the favourite |
 
 ## Growing
 

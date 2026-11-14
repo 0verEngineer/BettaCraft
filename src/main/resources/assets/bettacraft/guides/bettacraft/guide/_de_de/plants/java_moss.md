@@ -32,8 +32,8 @@ Javamoos (*Taxiphyllum barbieri*) aus Südostasien: feine grüne Triebe, die Ste
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,72–0,86 % pro Schwung (etwa 1 von 116–139 Schwüngen) (Config `features.plantNetCatches`).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,74–0,89 % pro Schwung (etwa 1 von 113–136 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,6–0,72 % pro Schwung (etwa 1 von 139–167 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,68–0,81 % pro Schwung (etwa 1 von 123–148 Schwüngen) (Config `features.plantNetCatches`).
 * **Schere** an einem Moosblock neben Wasser: 50 % pro Schnitt.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 

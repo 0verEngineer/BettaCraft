@@ -33,7 +33,7 @@ item_ids:
 
 ## Bezug
 
-* **Angeln** in Sümpfen: 0,68 % pro Fang (etwa 1 von 147 Fängen), statt des Fischs.
+* **Angeln** in Sümpfen: 0,63 % pro Fang (etwa 1 von 159 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 0,94 % pro Fang (etwa 1 von 106 Fängen), statt des Fischs.
 * **Glasflasche** mit Wasser gefüllt in Sümpfen: 0,85 % pro Flasche, zusätzlich zum Wasser.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 3 Ableger pro Schnitt; sie breitet sich auch selbst aus (Seitentriebe).

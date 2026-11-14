@@ -32,8 +32,8 @@ Duckweed (*Lemna minor*), found on still water almost everywhere: tiny leaves in
 
 ## Obtaining
 
-* **Fishing** in swamps: 2.7 % per catch (about 1 in 37 catches), instead of the fish.
-* **Fishing** in mangrove swamps: 2.1 % per catch (about 1 in 48 catches), instead of the fish.
+* **Fishing** in swamps: 2.1 % per catch (about 1 in 47 catches), instead of the fish.
+* **Fishing** in mangrove swamps: 1.8 % per catch (about 1 in 57 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 15 % per bottle, along with the water.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 

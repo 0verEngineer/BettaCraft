@@ -32,8 +32,8 @@ item_ids:
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.29–0.35 % per swing (about 1 in 289–347 swings) (config `features.plantNetCatches`).
-* **Fishing** in rivers: 0.15 % per catch (about 1 in 685 catches), instead of the fish.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.24–0.29 % per swing (about 1 in 347–417 swings) (config `features.plantNetCatches`).
+* **Fishing** in rivers: 0.13 % per catch (about 1 in 775 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; breaking a rhizome piece divides it.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

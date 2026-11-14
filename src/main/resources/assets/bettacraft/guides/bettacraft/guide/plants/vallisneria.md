@@ -32,8 +32,8 @@ Vallisneria (*Vallisneria spiralis*), eelgrass from warm waters worldwide: long 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 2.2–2.6 % per swing (about 1 in 39–46 swings) (config `features.plantNetCatches`).
-* **Fishing** in rivers: 0.36 % per catch (about 1 in 274 catches), instead of the fish.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.8–2.2 % per swing (about 1 in 46–56 swings) (config `features.plantNetCatches`).
+* **Fishing** in rivers: 0.32 % per catch (about 1 in 310 catches), instead of the fish.
 * **Wandering trader** (usual offers): 2 for 1 emerald.
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 

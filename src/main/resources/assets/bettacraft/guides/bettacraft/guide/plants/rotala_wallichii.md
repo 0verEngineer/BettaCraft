@@ -35,7 +35,7 @@ item_ids:
 
 ## Obtaining
 
-* **Fishing** in swamps: 0.1 % per catch (about 1 in 979 catches), instead of the fish.
+* **Fishing** in swamps: 0.09 % per catch (about 1 in 1057 catches), instead of the fish.
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

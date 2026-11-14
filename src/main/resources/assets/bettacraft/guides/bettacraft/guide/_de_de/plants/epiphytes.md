@@ -8,7 +8,7 @@ navigation:
 
 # Aufsitzerpflanzen und Moos
 
-Aufsitzerpflanzen wachsen an einem Rhizom, das auf **Stein oder Holz** sitzt, nicht im Bodengrund: Felsen, Stämme, Bretter und die Deko. Sie sind langsam und kommen mit wenig Licht aus. Javamoos hält sich an jedem festen Block.
+Aufsitzerpflanzen wachsen an einem Rhizom, das auf **Stein oder Holz** sitzt, nicht im Bodengrund: Felsen, Stämme, Bretter und die Deko. Sie sind langsam und kommen mit wenig Licht aus. Javamoos, Christmas- und Flame-Moos halten sich an jedem festen Block; Riccia wird auf Stein oder Holz gebunden (oder schwimmt an der Oberfläche), die Marimo-Kugel liegt auf dem Boden und rollt mit der Strömung.
 
 ## Arten
 
@@ -32,3 +32,7 @@ Aufsitzerpflanzen wachsen an einem Rhizom, das auf **Stein oder Holz** sitzt, ni
 | <ItemImage id="bettacraft:bucephalandra_pink_lady" /> | [Bucephalandra „Pink Lady“](bucephalandra_pink_lady.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 24 Tage |
 | <ItemImage id="bettacraft:bucephalandra_mini_pink" /> | [Bucephalandra „Mini Pink“](bucephalandra_mini_pink.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 22 Tage |
 | <ItemImage id="bettacraft:bucephalandra_snow_white" /> | [Bucephalandra „Snow White“](bucephalandra_snow_white.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 26 Tage |
+| <ItemImage id="bettacraft:christmas_moss" /> | [Christmas-Moos](christmas_moss.md) | Moos | wenig | etwa 8 Tage |
+| <ItemImage id="bettacraft:flame_moss" /> | [Flame-Moos](flame_moss.md) | Moos | wenig | etwa 8 Tage |
+| <ItemImage id="bettacraft:riccia_fluitans" /> | [Teichlebermoos (Riccia)](riccia_fluitans.md) | Moos | viel | etwa 4 Tage |
+| <ItemImage id="bettacraft:marimo" /> | [Marimo-Kugel](marimo.md) | Moos | wenig | etwa 60 Tage |

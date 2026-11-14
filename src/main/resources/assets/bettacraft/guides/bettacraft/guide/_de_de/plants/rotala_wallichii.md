@@ -35,7 +35,7 @@ item_ids:
 
 ## Bezug
 
-* **Angeln** in Sümpfen: 0,1 % pro Fang (etwa 1 von 979 Fängen), statt des Fischs.
+* **Angeln** in Sümpfen: 0,09 % pro Fang (etwa 1 von 1057 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 3 Ableger pro Schnitt; sie breitet sich auch selbst aus (Seitentriebe).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

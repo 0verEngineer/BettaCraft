@@ -32,8 +32,8 @@ item_ids:
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,3–0,35 % pro Schwung (etwa 1 von 282–339 Schwüngen) (Config `features.plantNetCatches`).
-* **Angeln** in Dschungelgewässern: 0,22 % pro Fang (etwa 1 von 450 Fängen), statt des Fischs.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,27–0,32 % pro Schwung (etwa 1 von 308–369 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Dschungelgewässern: 0,21 % pro Fang (etwa 1 von 487 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

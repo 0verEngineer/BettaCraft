@@ -32,8 +32,8 @@ item_ids:
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,69–0,83 % pro Schwung (etwa 1 von 120–144 Schwüngen) (Config `features.plantNetCatches`).
-* **Angeln** in Sümpfen: 1,2 % pro Fang (etwa 1 von 84 Fängen), statt des Fischs.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,58–0,69 % pro Schwung (etwa 1 von 144–173 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Sümpfen: 1,1 % pro Fang (etwa 1 von 91 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 1,6 % pro Fang (etwa 1 von 61 Fängen), statt des Fischs.
 * **Glasflasche** mit Wasser gefüllt in Sümpfen: 1,5 % pro Flasche, zusätzlich zum Wasser.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).

@@ -12,7 +12,7 @@ navigation:
 
 Schwimmpflanzen treiben auf der **Wasseroberfläche** eines Aquariums. Sie sind keine Blöcke: Wende eine auf das
 Aquarium an, dann schwimmt sie dort, wo du auf das Wasser schaust. Sie wachsen mit Licht und Nährstoffen, bilden
-Ableger, nehmen Abfallstoffe aus dem Wasser auf und bieten dem Männchen einen guten Platz für sein Schaumnest.
+Ableger, nehmen Abfallstoffe aus dem Wasser auf und bieten dem Männchen einen guten Platz für sein Schaumnest. Hornkraut hat keine Wurzeln: seine Triebe hängen tief ins Wasser. [Riccia](riccia_fluitans.md) schwimmt auch (oder wird auf Stein und Holz gebunden).
 
 ## Arten
 
@@ -22,6 +22,9 @@ Ableger, nehmen Abfallstoffe aus dem Wasser auf und bieten dem Männchen einen g
 | <ItemImage id="bettacraft:amazon_frogbit" /> | [Amazonas-Froschbiss](amazon_frogbit.md) | mittel | der liebste |
 | <ItemImage id="bettacraft:salvinia" /> | [Schwimmfarn](salvinia.md) | schnell | gut |
 | <ItemImage id="bettacraft:red_root_floater" /> | [Rote Wurzelflosse](red_root_floater.md) | mittel | gut |
+| <ItemImage id="bettacraft:water_lettuce" /> | [Muschelblume](water_lettuce.md) | mittel | gut |
+| <ItemImage id="bettacraft:hornwort" /> | [Hornkraut](hornwort.md) | sehr schnell | mäßig |
+| <ItemImage id="bettacraft:riccia_fluitans" /> | [Teichlebermoos (Riccia)](riccia_fluitans.md) | schnell | der liebste |
 
 ## Wachstum
 

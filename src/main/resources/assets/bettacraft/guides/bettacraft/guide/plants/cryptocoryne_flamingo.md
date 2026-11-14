@@ -33,8 +33,8 @@ item_ids:
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.23–0.28 % per swing (about 1 in 361–433 swings) (config `features.plantNetCatches`).
-* **Fishing** in swamps: 0.07 % per catch (about 1 in 1468 catches), instead of the fish.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.19–0.23 % per swing (about 1 in 433–520 swings) (config `features.plantNetCatches`).
+* **Fishing** in swamps: 0.06 % per catch (about 1 in 1585 catches), instead of the fish.
 * **Wandering trader** (rare offers): 1 for 5 emeralds.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
 

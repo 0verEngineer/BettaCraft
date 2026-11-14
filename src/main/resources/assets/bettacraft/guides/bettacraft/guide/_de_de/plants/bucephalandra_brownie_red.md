@@ -33,8 +33,8 @@ item_ids:
 
 ## Bezug
 
-* **Angeln** in Dschungelgewässern: 0,22 % pro Fang (etwa 1 von 450 Fängen), statt des Fischs.
-* **Angeln** in Flüssen: 0,22 % pro Fang (etwa 1 von 457 Fängen), statt des Fischs.
+* **Angeln** in Dschungelgewässern: 0,21 % pro Fang (etwa 1 von 487 Fängen), statt des Fischs.
+* **Angeln** in Flüssen: 0,19 % pro Fang (etwa 1 von 517 Fängen), statt des Fischs.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).
