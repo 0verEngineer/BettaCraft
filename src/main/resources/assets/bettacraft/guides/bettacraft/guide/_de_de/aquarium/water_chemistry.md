@@ -15,7 +15,7 @@ Neben Temperatur, Qualität und Nitrat hat das Wasser eines Aquariums drei einfa
 **Wasser** des Beckenmenüs zeigt sie in seiner zweiten Zeile (mit der Maus darüber: was sie bewegt und welchen Tieren
 das Wasser nicht passt); der [TDS-Messstift und der pH-Tropfentest](../equipment/water_tests.md) messen sie am Becken.
 
-* **TDS** (gelöste Stoffe, ppm): die Mineralien im Wasser. **Leitungswasser hat etwa 250 ppm**, Osmosewasser 0.
+* **TDS** (gelöste Stoffe, ppm): die Mineralien im Wasser. **Leitungswasser hat etwa 250 ppm**, [Osmosewasser](../equipment/reverse_osmosis.md) 0.
   Futter und Abfall der Tiere heben ihn langsam (`chemistry.tdsPerDay`, 1,5 ppm am Tag in einem normal besetzten
   Becken), Verdunstung lässt ihn zurück (Nachfüllen mit Leitungswasser hebt ihn), Wasserwechsel bringen ihn zurück.
   <ItemLink id="bettacraft:remineralising_salt" /> hebt ihn gezielt: eine Portion bringt 400 ppm in einen Eimer
@@ -25,7 +25,7 @@ das Wasser nicht passt); der [TDS-Messstift und der pH-Tropfentest](../equipment
   * Kalkstein (Kalzit, Tropfsteinblock, tote Koralle, Kalkstein von Create ... `#bettacraft:limestone`) zieht ihn
     Richtung 8,2, als Bodengrund ganz, als Steine im Aquarium halb;
   * Torf im [Multiblock-Filter](../equipment/filter_media.md), Wurzeln (Stämme und Wurzeln im Aquarium,
-    `#bettacraft:driftwood`), <ItemLink id="bettacraft:almond_leaf" /> und CO2 senken ihn;
+    `#bettacraft:driftwood`), <ItemLink id="bettacraft:almond_leaf" /> und [CO2](../equipment/co2.md) senken ihn;
   * weiches Wasser (wenig TDS) ist kaum gepuffert und wird von selbst leicht sauer.
 * **Härte** ist kein eigener Wert: **weich, mittelhart oder hart** aus TDS und Bodengrund (Soil macht weich,
   Kalkstein hart). Leitungswasser ist mittelhart.

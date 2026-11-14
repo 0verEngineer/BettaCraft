@@ -15,8 +15,8 @@ Besides temperature, quality and nitrate, the water of an aquarium has three sim
 **Water** of the tank menu shows them in its second line (hover over it for what drives them and which animals the
 water does not suit); the [TDS meter and the pH drop test](../equipment/water_tests.md) measure them at the tank.
 
-* **TDS** (total dissolved solids, ppm): the minerals in the water. **Tap water has about 250 ppm**, reverse osmosis
-  water 0. Food and waste of the animals raise it slowly (`chemistry.tdsPerDay`, 1.5 ppm a day in a normally stocked
+* **TDS** (total dissolved solids, ppm): the minerals in the water. **Tap water has about 250 ppm**, [reverse osmosis
+  water](../equipment/reverse_osmosis.md) 0. Food and waste of the animals raise it slowly (`chemistry.tdsPerDay`, 1.5 ppm a day in a normally stocked
   tank), evaporation leaves it behind (topping off with tap water raises it), water changes bring it back.
   <ItemLink id="bettacraft:remineralising_salt" /> raises it on purpose: one portion adds 400 ppm to a bucket of
   water; sneaking adds as much as brings the aquarium to 150 ppm.
@@ -25,7 +25,7 @@ water does not suit); the [TDS meter and the pH drop test](../equipment/water_te
   * limestone (calcite, dripstone, dead coral, Create's limestone ... `#bettacraft:limestone`) pulls it towards 8.2,
     as substrate fully, as rocks in the aquarium half;
   * peat in the [multiblock filter](../equipment/filter_media.md), driftwood (logs and roots in the aquarium,
-    `#bettacraft:driftwood`), <ItemLink id="bettacraft:almond_leaf" /> and CO2 lower it;
+    `#bettacraft:driftwood`), <ItemLink id="bettacraft:almond_leaf" /> and [CO2](../equipment/co2.md) lower it;
   * soft water (low TDS) is barely buffered and turns slightly acidic on its own.
 * **Hardness** is no value of its own: **soft, medium hard or hard** from the TDS and the substrate (soil softens,
   limestone hardens). Tap water is medium hard.

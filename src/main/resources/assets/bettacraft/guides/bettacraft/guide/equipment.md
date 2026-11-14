@@ -36,6 +36,8 @@ navigation:
 | [Tank lid](equipment/tank_lid.md) | stops the water from evaporating |
 | [Tools and containers](equipment/tools.md) | aquarium net, fish bag, algae scraper, mirror stick, breeding box |
 | [TDS meter and pH drop test](equipment/water_tests.md) | measure the [water chemistry](aquarium/water_chemistry.md) |
+| [CO2 dosing](equipment/co2.md) | bio CO2, CO2 cylinder with solenoid valve, filling station: faster plant growth |
+| [Reverse osmosis unit](equipment/reverse_osmosis.md) | reverse osmosis water (nothing dissolved) for soft water |
 
 By default none of the equipment needs power; a server can switch that on (see [Power](equipment/power.md)).
 
