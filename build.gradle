@@ -163,6 +163,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestm22_3')) {
+                // gradlew runClient -Psmoketestm22_3 : only the M22.3 scene (wild fish shoals and small animals on the bottom of a
+                // pool, wild corals on a reef, the magnifier and the single small animals in the tank menu en + de, bucket tooltips)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m22_3only', 'true'
+            }
             if (project.hasProperty('smoketestm22_2')) {
                 // gradlew runClient -Psmoketestm22_2 : only the M22.2 scene (a gallery of every reef fish, seahorse, snail, reef
                 // invertebrate, plant, coral and floating plant for the handbook; the handbook with its navigation folded open,

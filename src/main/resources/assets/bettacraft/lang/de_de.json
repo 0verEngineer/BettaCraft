@@ -1854,8 +1854,8 @@
   "gui.bettacraft.critters.sex.male": "♂ Männchen",
   "gui.bettacraft.critters.sex.female": "♀ Weibchen",
   "gui.bettacraft.critters.sex_tooltip": "Welche Tiere „Entnehmen“ aus der gewählten Art nimmt: beliebig, nur Männchen oder nur Weibchen",
-  "gui.bettacraft.critters.into_bag": "In die Tüte",
-  "gui.bettacraft.critters.into_bucket": "In den Eimer",
+  "gui.bettacraft.critters.into_bag": "Tüte",
+  "gui.bettacraft.critters.into_bucket": "Eimer",
   "gui.bettacraft.critters.container_tooltip": "In Fischtüten (je 100 mB) oder Eimer entnehmen (ein passender Wassereimer oder ein leerer Eimer mit 1000 mB aus dem Becken)",
   "gui.bettacraft.critters.take_one_tooltip": "Nimmt genau das ausgewählte Tier heraus",
   "gui.bettacraft.critters.young_short": "jung",
@@ -1900,5 +1900,6 @@
   "bettacraft.configuration.bigContainers": "Mehrere Tiere pro Eimer und Tüte",
   "bettacraft.configuration.bigContainers.tooltip": "Mehrere Tiere einer Art pro Eimer und Fischtüte, je nach Größe (ein Eimer: 32 Garnelen, 24 Bärblinge, 1 Betta; eine Tüte die Hälfte), Kleintiere auch im normalen Eimer (aus: ein Fisch pro Eimer, Tüten wie bisher)",
   "bettacraft.configuration.animalList": "Liste einzelner Kleintiere",
-  "bettacraft.configuration.animalList.tooltip": "Liste jeder einzelnen Garnele, jedes Krebses und jeder Schnecke im Aquarium-Menü (Geschlecht, Alter, Farbdichte, Gene), um genau dieses Tier zu entnehmen, und die Wahl des Geschlechts beim schnellen Entnehmen (aus: nur die Arten wie bisher)"
+  "bettacraft.configuration.animalList.tooltip": "Liste jeder einzelnen Garnele, jedes Krebses und jeder Schnecke im Aquarium-Menü (Geschlecht, Alter, Farbdichte, Gene), um genau dieses Tier zu entnehmen, und die Wahl des Geschlechts beim schnellen Entnehmen (aus: nur die Arten wie bisher)",
+  "gui.bettacraft.critters.take_bucket": "In Eimer"
 }

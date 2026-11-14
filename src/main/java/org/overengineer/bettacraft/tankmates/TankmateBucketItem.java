@@ -93,8 +93,11 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
         Component lb = livebearerName(s, fish);
         if (lb != null) c.append(", ").append(lb.copy().withStyle(ChatFormatting.GRAY));
         else if (s.varieties().size() > 1) c.append(", ").append(Component.translatable(s.varietyKey(g.phenotype(s))));
-        if (org.overengineer.bettacraft.genetics.GeneVisibility.visible(org.overengineer.bettacraft.genetics.GeneVisibility.analysed(fish))) {
-            if (s.varieties().size() > 1 && lb == null) c.append(Component.translatable("tooltip.bettacraft.genes.short", g.text()));
+        boolean hidden = s.varieties().size() > 1 || TankmateGenes.livebearer(s); // one colour form: nothing hidden to analyse
+        if (!hidden) {
+            // nothing
+        } else if (org.overengineer.bettacraft.genetics.GeneVisibility.visible(org.overengineer.bettacraft.genetics.GeneVisibility.analysed(fish))) {
+            if (lb == null) c.append(Component.translatable("tooltip.bettacraft.genes.short", g.text()));
         } else {
             c.append(Component.translatable("tooltip.bettacraft.genes.unknown_short"));
         }
@@ -105,6 +108,7 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
     /** M22.3: the genes of one fish in a bucket (or a note that they are not analysed). */
     public static void genesLine(TankmateSpecies s, CompoundTag bucketData, List<Component> tooltip) {
         CompoundTag fish = bucketData.getCompound(TankmateEntity.KEY);
+        if (s.varieties().size() < 2 && !TankmateGenes.livebearer(s)) return; // one colour form: nothing hidden
         if (!org.overengineer.bettacraft.genetics.GeneVisibility.visible(org.overengineer.bettacraft.genetics.GeneVisibility.analysed(fish))) {
             tooltip.add(Component.translatable("tooltip.bettacraft.genes.unknown").withStyle(ChatFormatting.DARK_GRAY));
         } else if (s.varieties().size() > 1 && livebearerName(s, fish) == null) {

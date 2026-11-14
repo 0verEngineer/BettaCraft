@@ -57,8 +57,9 @@ final class LangM223 {
         a.accept("gui.bettacraft.critters.sex.male", "♂ Males");
         a.accept("gui.bettacraft.critters.sex.female", "♀ Females");
         a.accept("gui.bettacraft.critters.sex_tooltip", "Which animals \"Take out\" takes from the selected kind: any, only males or only females");
-        a.accept("gui.bettacraft.critters.into_bag", "Into bag");
-        a.accept("gui.bettacraft.critters.into_bucket", "Into bucket");
+        a.accept("gui.bettacraft.critters.into_bag", "Bag");
+        a.accept("gui.bettacraft.critters.into_bucket", "Bucket");
+        a.accept("gui.bettacraft.critters.take_bucket", "Into bucket");
         a.accept("gui.bettacraft.critters.container_tooltip", "Take out into fish bags (100 mB each) or buckets (a bucket of water that suits them, or an empty bucket with 1000 mB of the tank)");
         a.accept("gui.bettacraft.critters.take_one_tooltip", "Takes exactly the selected animal out");
         a.accept("gui.bettacraft.critters.young_short", "young");

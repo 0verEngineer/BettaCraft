@@ -394,6 +394,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         analyseButton.visible = tab == Tab.INHABITANTS && v != null && !v.genesFree;
         sexButton.setMessage(Component.translatable("gui.bettacraft.critters.sex." + (critterSex == 1 ? "male" : critterSex == 2 ? "female" : "any")));
         containerButton.setMessage(Component.translatable(critterBucket ? "gui.bettacraft.critters.into_bucket" : "gui.bettacraft.critters.into_bag"));
+        critterTakeButton.setMessage(Component.translatable(critterBucket ? "gui.bettacraft.critters.take_bucket" : "gui.bettacraft.critters.take"));
         sexButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.critters.sex_tooltip")));
         containerButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.critters.container_tooltip")));
         boxButton.visible = tab == Tab.BREEDING && v != null && v.breeding.getBoolean("box");
@@ -1004,6 +1005,20 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (v == null) return false;
         for (TankView.Inhabitant i : v.inhabitants) {
             if (!i.frog()) continue;
+            critterPage = false;
+            selected = i.uuid();
+            setTab(Tab.INHABITANTS);
+            return true;
+        }
+        return false;
+    }
+
+    /** Dev smoke test only (M22.3): the fish page of the animals tab with the first betta selected; false without one. */
+    public boolean showBettaForTest() {
+        TankView v = view();
+        if (v == null) return false;
+        for (TankView.Inhabitant i : v.inhabitants) {
+            if (!i.betta()) continue;
             critterPage = false;
             selected = i.uuid();
             setTab(Tab.INHABITANTS);
