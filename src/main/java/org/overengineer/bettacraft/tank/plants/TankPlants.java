@@ -172,7 +172,7 @@ public final class TankPlants {
                 if (s.getBlock() instanceof ExternalFilterBlock) path = FilterFlow.forFilterBlock(t, e.getBlockPos(), s.getValue(ExternalFilterBlock.FACING));
             } else if (f instanceof CabinetBlockEntity cab) {
                 BlockState s = cab.getBlockState();
-                if (s.getBlock() instanceof CabinetBlock) path = FilterFlow.forCabinet(t, cab.getBlockPos(), s.getValue(CabinetBlock.FACING));
+                if (s.getBlock() instanceof CabinetBlock) path = FilterFlow.forCabinet(t, cab); // M22.4: its outlet side
             }
             if (path == null || !path.wet()) continue;
             Vec3 hit = path.submerged() ? path.nozzle() : path.impact();

@@ -51,18 +51,20 @@ public final class Sources {
     // ------------------------------------------------------------------ the aquarium net
 
     private static void net(List<Source> out) {
-        double chance = def(ServerConfig.CRITTERS_NET_CHANCE), tank = def(ServerConfig.TANKMATES_NET_SHARE), reef = def(ServerConfig.REEF_NET_SHARE);
+        double chance = def(ServerConfig.CRITTERS_NET_CHANCE), tank = def(ServerConfig.TANKMATES_NET_SHARE), reef = def(ServerConfig.REEF_NET_SHARE),
+                plantShare = def(ServerConfig.AQUATIC_NET_SHARE);
         for (NetCatching.Water w : NetCatching.Water.values()) {
             if (w == NetCatching.Water.NONE) continue;
             boolean[] lushes = w == NetCatching.Water.CAVE ? new boolean[]{false, true} : new boolean[]{false};
             for (boolean lush : lushes) {
                 Where where = lush ? Where.LUSH_CAVES : NET_WATERS.get(w);
                 // the lowest chance (no plants, soft bottom) and the highest of the four combinations
-                Map<Object, Double> base = NetCatching.odds(w, false, false, lush, chance, tank, reef);
+                WeightedTable<PlantSpecies> plantTable = WildTables.netPlants(w);
+                Map<Object, Double> base = NetCatching.odds(w, false, false, lush, chance, tank, reef, plantShare, plantTable);
                 Map<Object, Double> best = new java.util.LinkedHashMap<>(base);
                 for (boolean plants : new boolean[]{false, true}) {
                     for (boolean hard : new boolean[]{false, true}) {
-                        NetCatching.odds(w, plants, hard, lush, chance, tank, reef).forEach((k, v) -> best.merge(k, v, Math::max));
+                        NetCatching.odds(w, plants, hard, lush, chance, tank, reef, plantShare, plantTable).forEach((k, v) -> best.merge(k, v, Math::max));
                     }
                 }
                 for (var e : best.entrySet()) {
@@ -70,7 +72,8 @@ public final class Sources {
                     String target = key(e.getKey());
                     int[] n = netCount(e.getKey());
                     String cond = e.getKey() instanceof TankmateSpecies s && s.seahorse() ? "features.seahorses"
-                            : e.getKey() == CritterSpecies.YELLOW_NERITE ? "features.snailColors" : null;
+                            : e.getKey() == CritterSpecies.YELLOW_NERITE ? "features.snailColors"
+                            : e.getKey() instanceof PlantSpecies p && !p.marine() ? "features.plantNetCatches" : null;
                     out.add(new Source(Source.Kind.NET, target, where, lo, e.getValue(), n[0], n[1], 0, false, cond, null));
                 }
             }
@@ -110,12 +113,21 @@ public final class Sources {
         for (var e : WildTables.FISHING_FLOATING_MANGROVE.entries()) {
             out.add(src(Source.Kind.FISHING, Target.floating(e.value()), Where.MANGROVE, floating * WildTables.FISHING_FLOATING_MANGROVE.share(e.value())));
         }
-        for (var e : WildTables.FISHING_PLANTS_TROPICAL.entries()) {
-            out.add(src(Source.Kind.FISHING, Target.plant(e.value()), Where.JUNGLE_OR_RIVER, aquatic * WildTables.FISHING_PLANTS_TROPICAL.share(e.value())));
-        }
-        for (var e : WildTables.FISHING_PLANTS_SWAMP.entries()) {
-            out.add(src(Source.Kind.FISHING, Target.plant(e.value()), Where.SWAMP_OR_MANGROVE,
-                    (1 - floating) * aquatic * WildTables.FISHING_PLANTS_SWAMP.share(e.value())));
+        // M22.4: per water (jungle, river, swamp, mangrove); in swamps and mangroves after the floating plants
+        for (var w : org.overengineer.bettacraft.world.AquaticPlantFishingModifier.Water.values()) {
+            WeightedTable<PlantSpecies> t = PlantTables.fishingDefault(w);
+            Where where = switch (w) {
+                case JUNGLE -> Where.JUNGLE;
+                case RIVER -> Where.RIVER;
+                case SWAMP -> Where.SWAMP;
+                case MANGROVE -> Where.MANGROVE;
+            };
+            double before = w == org.overengineer.bettacraft.world.AquaticPlantFishingModifier.Water.SWAMP
+                    || w == org.overengineer.bettacraft.world.AquaticPlantFishingModifier.Water.MANGROVE ? 1 - floating : 1;
+            java.util.Set<PlantSpecies> seen = new java.util.HashSet<>();
+            for (var e : t.entries()) {
+                if (seen.add(e.value())) out.add(src(Source.Kind.FISHING, Target.plant(e.value()), where, before * aquatic * t.share(e.value())));
+            }
         }
     }
 
@@ -126,8 +138,8 @@ public final class Sources {
         out.add(src(Source.Kind.BOTTLE, Target.item("salt_water_bottle"), Where.SALT_WATER, 1.0));
         double duck = def(ServerConfig.PLANTS_BOTTLE_CHANCE), cut = def(ServerConfig.AQUATIC_BOTTLE_CHANCE);
         out.add(src(Source.Kind.BOTTLE, Target.floating(FloatingPlantType.DUCKWEED), Where.SWAMP, duck));
-        for (var e : WildTables.FISHING_PLANTS_SWAMP.entries()) {
-            out.add(src(Source.Kind.BOTTLE, Target.plant(e.value()), Where.SWAMP, (1 - duck) * cut * WildTables.FISHING_PLANTS_SWAMP.share(e.value())));
+        for (var e : WildTables.BOTTLE_CUTTINGS.entries()) {
+            out.add(src(Source.Kind.BOTTLE, Target.plant(e.value()), Where.SWAMP, (1 - duck) * cut * WildTables.BOTTLE_CUTTINGS.share(e.value())));
         }
         out.add(src(Source.Kind.SHEARS, Target.plant(PlantSpecies.JAVA_MOSS), Where.NEAR_WATER, def(ServerConfig.AQUATIC_MOSS_CHANCE), "minecraft:moss_block"));
         out.add(src(Source.Kind.SHOVEL, Target.critter(CritterSpecies.TRUMPET_SNAIL), Where.SWAMP, def(ServerConfig.CRITTERS_MUD_CHANCE), "minecraft:mud"));

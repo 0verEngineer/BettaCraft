@@ -1108,7 +1108,7 @@ public final class ModDataGen {
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CABINET.get())
                             .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                                    .include(ModDataComponents.WOOD.get()))))));
+                                    .include(ModDataComponents.WOOD.get()).include(ModDataComponents.OUTLET_SIDE.get()))))));
         }
 
         @Override

@@ -38,7 +38,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         TankData t = c.getTank();
         BlockState s = be.getBlockState();
         if (s.getBlock() instanceof ExternalFilterBlock) return FilterFlow.forFilterBlock(t, be.getBlockPos(), s.getValue(ExternalFilterBlock.FACING));
-        if (s.getBlock() instanceof CabinetBlock) return FilterFlow.forCabinet(t, be.getBlockPos(), s.getValue(CabinetBlock.FACING));
+        if (s.getBlock() instanceof CabinetBlock && be instanceof CabinetBlockEntity cab) return FilterFlow.forCabinet(t, cab); // M22.4: its outlet side
         return null;
     }
 
@@ -52,9 +52,10 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         Vec3 origin = new Vec3(pos.getX(), pos.getY(), pos.getZ());
         int hoseLight = LevelRenderer.getLightColor(level, BlockPos.containing(p.top()));
         Vec3 source = null;
-        if (be.getBlockState().getBlock() instanceof CabinetBlock) {
-            net.minecraft.core.Direction back = be.getBlockState().getValue(CabinetBlock.FACING).getOpposite();
-            source = new Vec3(pos.getX() + 0.5 + back.getStepX() * 0.5, pos.getY() + 0.75, pos.getZ() + 0.5 + back.getStepZ() * 0.5);
+        if (be.getBlockState().getBlock() instanceof CabinetBlock && be instanceof CabinetBlockEntity cab) {
+            // M22.4: out of the cabinet's side towards the wall of its outlet
+            net.minecraft.core.Direction out = cab.outletSide().wall(be.getBlockState().getValue(CabinetBlock.FACING));
+            source = new Vec3(pos.getX() + 0.5 + out.getStepX() * 0.5, pos.getY() + 0.75, pos.getZ() + 0.5 + out.getStepZ() * 0.5);
         }
         FlowRenderer.hose(ps, buffers.getBuffer(FlowRenderer.hoseType()), p, origin, hoseLight, source);
         if (!p.wet() || IrisCompat.renderingShadowPass()) return;

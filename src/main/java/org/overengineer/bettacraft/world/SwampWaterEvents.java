@@ -66,7 +66,7 @@ public final class SwampWaterEvents {
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.AQUATIC_BOTTLE_CHANCE, 0.05)) {
             // M13: or a cutting of a swamp plant (Cryptocoryne, Ludwigia, Rotala)
             var r = level.getRandom();
-            var species = AquaticPlantFishingModifier.pick(AquaticPlantFishingModifier.Water.SWAMP, r::nextLong);
+            var species = org.overengineer.bettacraft.sources.WildTables.BOTTLE_CUTTINGS.pick(r::nextLong); // M22.4: its own table
             ItemStack cutting = org.overengineer.bettacraft.plants.InteriorPlants.item(species, 0);
             if (!player.getInventory().add(cutting)) player.drop(cutting, false);
             player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.aquatic.cutting_in_bottle",

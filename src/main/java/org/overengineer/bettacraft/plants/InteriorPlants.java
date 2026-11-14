@@ -245,15 +245,29 @@ public final class InteriorPlants {
      *                 corals use), {@code quality} (water quality) and {@code glow} (actinic light) matter for the corals
      */
     public record Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade,
-                      double salinity, double flow, double calcium, double spectrum, double quality, boolean glow, double coralTemp) {
+                      double salinity, double flow, double calcium, double spectrum, double quality, boolean glow, double coralTemp,
+                      @Nullable java.util.function.ToDoubleFunction<InteriorPlant> localFlow) {
         public Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade) {
             this(light, effectiveLight, nutrients, temperature, waterLocal, shade, 0, 0, 0, 0.6, 0.9, false, 0);
+        }
+
+        public Env(int light, int effectiveLight, double nutrients, double temperature, double waterLocal, double shade,
+                   double salinity, double flow, double calcium, double spectrum, double quality, boolean glow, double coralTemp) {
+            this(light, effectiveLight, nutrients, temperature, waterLocal, shade, salinity, flow, calcium, spectrum, quality, glow, coralTemp, null);
+        }
+
+        /** M22.4: the conditions where this plant grows: the flow is stronger in front of a filter outlet ({@code TankCurrents}). */
+        public Env at(InteriorPlant p) {
+            if (localFlow == null || flow <= 0) return this;
+            double f = localFlow.applyAsDouble(p);
+            if (Math.abs(f - 1) < 1e-9) return this;
+            return new Env(light, effectiveLight, nutrients, temperature, waterLocal, shade, salinity, flow * f, calcium, spectrum, quality, glow, coralTemp, null);
         }
 
         /** Growth factor of a plant (0..1): light for its need, nutrients, temperature, under water. */
         public double rate(InteriorPlant p) {
             if (p.y + 0.5 >= waterLocal) return 0; // dry: no growth
-            if (p.species.marine()) return org.overengineer.bettacraft.reef.Corals.rate(this, p.species, effectiveLight);
+            if (p.species.marine()) return org.overengineer.bettacraft.reef.Corals.rate(at(p), p.species, effectiveLight);
             // M20: freshwater plants stop growing in brackish and salt water
             return lightFactor(effectiveLight, p.species.light()) * nutrients * temperature * org.overengineer.bettacraft.reef.Corals.freshFactor(salinity);
         }
@@ -289,9 +303,20 @@ public final class InteriorPlants {
         double flow = salt ? org.overengineer.bettacraft.reef.TankReef.flow(level, c) : 0;
         double spectrum = salt ? org.overengineer.bettacraft.reef.TankReef.spectrum(level, t) : 0.6;
         boolean glow = salt && org.overengineer.bettacraft.reef.TankReef.glows(level, t);
+        // M22.4: the corals in front of a filter outlet get more flow
+        java.util.function.ToDoubleFunction<InteriorPlant> local = null;
+        if (flow > 0) {
+            var currents = org.overengineer.bettacraft.tank.TankCurrents.cached(level, c);
+            if (!currents.isEmpty()) {
+                local = p -> {
+                    var w = org.overengineer.bettacraft.tankmates.TankmateSpots.toWorld(t, r, p.x + 0.5, p.y + 0.5, p.z + 0.5);
+                    return org.overengineer.bettacraft.tank.TankCurrents.factor(currents, w.x, w.z);
+                };
+            }
+        }
         return new Env(light, Math.max(0, light - (dense ? 3 : 0)), nutrientFactor(q), temperatureFactor(t.waterTemp()),
                 t.waterMb() <= 0 ? 0 : TankCare.waterLocalHeight(t, r.scale()), shade, t.salinity(), flow, t.calcium(), spectrum, q, glow,
-                org.overengineer.bettacraft.reef.Corals.temperatureFactor(t.waterTemp()));
+                org.overengineer.bettacraft.reef.Corals.temperatureFactor(t.waterTemp()), local);
     }
 
     /** Share of the water surface (interior blocks) covered by plant blocks at the surface (stem tops, lotus pads). */
@@ -350,7 +375,7 @@ public final class InteriorPlants {
             if (p.species.tinted()) {
                 // smoothed over about two days, with hysteresis: the tint level only moves when clearly off
                 // M20: corals: bleached / pale / healthy / glowing from their conditions
-                double want = (p.species.marine() ? org.overengineer.bettacraft.reef.Corals.tint(env, p.species) : redTarget) / (double) PlantColors.MAX_TINT;
+                double want = (p.species.marine() ? org.overengineer.bettacraft.reef.Corals.tint(env.at(p), p.species) : redTarget) / (double) PlantColors.MAX_TINT;
                 p.redness += (want - p.redness) * Math.min(1.0, days / 2.0);
                 int tint = p.tint;
                 if (Math.abs(p.redness * PlantColors.MAX_TINT - tint) > 0.6) tint = (int) Math.round(p.redness * PlantColors.MAX_TINT);

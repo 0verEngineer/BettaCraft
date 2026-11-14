@@ -161,7 +161,10 @@ public class CabinetBlock extends BaseEntityBlock {
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         ItemStack s = super.getCloneItemStack(state, target, level, pos, player);
-        if (level.getBlockEntity(pos) instanceof CabinetBlockEntity be) CabinetBlockItem.setWood(s, be.woodId());
+        if (level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
+            CabinetBlockItem.setWood(s, be.woodId());
+            if (be.outletSetting() != OutletSide.BACK) s.set(org.overengineer.bettacraft.registry.ModDataComponents.OUTLET_SIDE.get(), be.outletSetting().id());
+        }
         return s;
     }
 }

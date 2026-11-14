@@ -46,6 +46,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     public static final Set<CabinetBlockEntity> CLIENT_FILTERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private ResourceLocation wood = DEFAULT_WOOD;
+    /** M22.4: the side the filter hose goes up (server: as set; client: the effective side the server sent). */
+    private OutletSide outlet = OutletSide.BACK;
     /** Client copy: whether the filter slot is filled (the slot itself is not synced outside the menu). */
     private boolean clientHasFilter;
 
@@ -96,6 +98,31 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     public BlockState woodState() {
         Block b = BuiltInRegistries.BLOCK.get(wood);
         return b == Blocks.AIR ? Blocks.OAK_PLANKS.defaultBlockState() : b.defaultBlockState();
+    }
+
+    /**
+     * M22.4: the side the hose of the filter goes up. On the server BACK while {@code features.cabinetOutletSide} is off (the
+     * setting is kept); on the client the side the server sent.
+     */
+    public OutletSide outletSide() {
+        if (level != null && level.isClientSide) return outlet;
+        return org.overengineer.bettacraft.config.CommonConfig.cabinetOutletSide() ? outlet : OutletSide.BACK;
+    }
+
+    /** M22.4: the stored setting (also while the feature is off). */
+    public OutletSide outletSetting() {
+        return outlet;
+    }
+
+    public void setOutletSide(OutletSide side) {
+        if (side == null || side == outlet) return;
+        outlet = side;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            var tank = FilterHost.tankOf(level, tankBlockPos());
+            if (tank != null) org.overengineer.bettacraft.tank.TankCurrents.invalidate(tank);
+        }
     }
 
     public ItemStack filterItem() {
@@ -158,6 +185,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         super.saveAdditional(tag, registries);
         Schemas.CABINET.stamp(tag);
         tag.putString("wood", wood.toString());
+        if (outlet != OutletSide.BACK) tag.putString("outlet", outlet.id()); // M22.4
         tag.put("items", items.serializeNBT(registries));
     }
 
@@ -168,6 +196,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         ResourceLocation w = ResourceLocation.tryParse(tag.getString("wood"));
         ResourceLocation old = wood;
         wood = w == null ? DEFAULT_WOOD : w;
+        outlet = OutletSide.byId(tag.getString("outlet")); // M22.4: old cabinets keep the back wall
         if (tag.contains("items")) {
             items.deserializeNBT(registries, tag.getCompound("items"));
             if (items.getSlots() != SLOTS) items.setSize(SLOTS);
@@ -182,6 +211,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         Schemas.CABINET.stamp(tag);
         tag.putString("wood", wood.toString());
         tag.putBoolean("has_filter", !filterItem().isEmpty());
+        tag.putString("outlet", outletSide().id()); // M22.4: the effective side
         return tag;
     }
 
@@ -201,6 +231,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         ResourceLocation w = ResourceLocation.tryParse(tag.getString("wood"));
         wood = w == null ? DEFAULT_WOOD : w;
         clientHasFilter = tag.getBoolean("has_filter");
+        outlet = OutletSide.byId(tag.getString("outlet"));
         afterClientUpdate(old);
     }
 
@@ -242,16 +273,19 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         super.applyImplicitComponents(input);
         ResourceLocation w = input.get(ModDataComponents.WOOD.get());
         if (w != null) wood = w;
+        outlet = OutletSide.byId(input.get(ModDataComponents.OUTLET_SIDE.get())); // M22.4
     }
 
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
         components.set(ModDataComponents.WOOD.get(), wood);
+        if (outlet != OutletSide.BACK) components.set(ModDataComponents.OUTLET_SIDE.get(), outlet.id()); // M22.4: only when set
     }
 
     @Override
     public void removeComponentsFromTag(CompoundTag tag) {
         tag.remove("wood");
+        tag.remove("outlet");
     }
 }

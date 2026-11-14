@@ -23,9 +23,13 @@ public class CabinetMenu extends AbstractContainerMenu {
     public static final int FILTER_X = 26, FILTER_Y = 18, HEATER_X = 17, HEATER_Y = 44, STORAGE_X = 98, STORAGE_Y = 17;
     /** Menu slot indices. */
     public static final int FILTER = 0, HEATER0 = 1, STORAGE0 = 3, PLAYER0 = 3 + CabinetBlockEntity.STORAGE;
+    /** M22.4: menu button ids 0..3 set the outlet side ({@link OutletSide} ordinal). */
+    public static final int BUTTON_OUTLET0 = 0;
     @Nullable
     private final CabinetBlockEntity cabinet;
     private final IItemHandlerModifiable items;
+    /** M22.4: the outlet side (ordinal), -1 while {@code features.cabinetOutletSide} is off on the server. */
+    private final net.minecraft.world.inventory.DataSlot outlet = net.minecraft.world.inventory.DataSlot.standalone();
 
     public CabinetMenu(int id, Inventory inv, RegistryFriendlyByteBuf buf) {
         this(id, inv, null, new ItemStackHandler(CabinetBlockEntity.SLOTS));
@@ -59,6 +63,37 @@ public class CabinetMenu extends AbstractContainerMenu {
             for (int c = 0; c < 9; c++)
                 addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
         for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, 142));
+        outlet.set(cabinet == null ? -1 : outletValue(cabinet));
+        addDataSlot(new net.minecraft.world.inventory.DataSlot() {
+            @Override
+            public int get() {
+                return cabinet == null ? outlet.get() : outletValue(cabinet);
+            }
+
+            @Override
+            public void set(int v) {
+                outlet.set(v);
+            }
+        });
+    }
+
+    private static int outletValue(CabinetBlockEntity c) {
+        return org.overengineer.bettacraft.config.CommonConfig.cabinetOutletSide() ? c.outletSetting().ordinal() : -1;
+    }
+
+    /** M22.4: the outlet side shown in the menu, or null while the setting is switched off. */
+    @Nullable
+    public OutletSide outletSide() {
+        int v = cabinet == null ? outlet.get() : outletValue(cabinet);
+        return v < 0 ? null : OutletSide.byIndex(v);
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (cabinet == null || id < BUTTON_OUTLET0 || id >= BUTTON_OUTLET0 + OutletSide.values().length) return false;
+        if (!org.overengineer.bettacraft.config.CommonConfig.cabinetOutletSide()) return false;
+        cabinet.setOutletSide(OutletSide.byIndex(id - BUTTON_OUTLET0));
+        return true;
     }
 
     public boolean hasFilter() {

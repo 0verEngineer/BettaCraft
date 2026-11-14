@@ -75,7 +75,7 @@ public final class TankmateCare {
         if (waterBad) stress |= STRESS_WATER;
         if (s.seahorse()) {
             // M21.8: strong flow, nothing to hold on to
-            if (org.overengineer.bettacraft.tankmates.Seahorses.flowTooStrong(org.overengineer.bettacraft.tankmates.Seahorses.flow(level, controller))) stress |= STRESS_FLOW;
+            if (org.overengineer.bettacraft.tankmates.Seahorses.flowTooStrong(org.overengineer.bettacraft.tankmates.Seahorses.flowAt(level, controller, fish.getX(), fish.getZ()))) stress |= STRESS_FLOW;
             if (ServerConfig.getOr(ServerConfig.SEAHORSE_NEED_POSTS, true) && !org.overengineer.bettacraft.tankmates.Seahorses.hasPosts(level, tank)) stress |= STRESS_NO_POSTS;
         }
         fish.stress = stress;

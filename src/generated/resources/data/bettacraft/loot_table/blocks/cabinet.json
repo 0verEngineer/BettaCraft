@@ -15,7 +15,8 @@
             {
               "function": "minecraft:copy_components",
               "include": [
-                "bettacraft:wood"
+                "bettacraft:wood",
+                "bettacraft:outlet_side"
               ],
               "source": "block_entity"
             }

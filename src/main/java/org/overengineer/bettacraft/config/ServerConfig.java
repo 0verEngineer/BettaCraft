@@ -125,6 +125,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue AQUATIC_FISHING_CHANCE;
     public static final ModConfigSpec.DoubleValue AQUATIC_BOTTLE_CHANCE;
     public static final ModConfigSpec.DoubleValue AQUATIC_MOSS_CHANCE;
+    // M22.4: plants from the net and the fishing tables
+    public static final ModConfigSpec.DoubleValue AQUATIC_NET_SHARE;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> NET_PLANTS_RIVER, NET_PLANTS_JUNGLE, NET_PLANTS_SWAMP;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> FISHING_PLANTS_JUNGLE, FISHING_PLANTS_RIVER, FISHING_PLANTS_SWAMP,
+            FISHING_PLANTS_MANGROVE;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_BASE_DECLINE;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_PER_ANIMAL;
     public static final ModConfigSpec.DoubleValue WATER_QUALITY_PER_OVERFED;
@@ -422,6 +427,21 @@ public final class ServerConfig {
                 .defineInRange("bottleCuttingChance", 0.05, 0.0, 1.0);
         AQUATIC_MOSS_CHANCE = b.comment("Chance that shears on a moss block next to water give Java moss")
                 .defineInRange("mossChance", 0.5, 0.0, 1.0);
+        // M22.4: no plant only at the wandering trader
+        AQUATIC_NET_SHARE = b.comment("Share of the aquarium net's catches in rivers, jungle water and swamps that is an aquarium plant from the",
+                        "bottom (times critters.netChance; features.plantNetCatches; 0 = the net brings up no plants)")
+                .defineInRange("netPlantShare", org.overengineer.bettacraft.sources.WildTables.NET_PLANT_SHARE, 0.0, 1.0);
+        NET_PLANTS_RIVER = plantList(b, "netPlantsRiver", "Plants the net brings up in rivers", org.overengineer.bettacraft.sources.WildTables.NET_PLANTS_RIVER);
+        NET_PLANTS_JUNGLE = plantList(b, "netPlantsJungle", "Plants the net brings up in jungle water", org.overengineer.bettacraft.sources.WildTables.NET_PLANTS_JUNGLE);
+        NET_PLANTS_SWAMP = plantList(b, "netPlantsSwamp", "Plants the net brings up in swamps", org.overengineer.bettacraft.sources.WildTables.NET_PLANTS_SWAMP);
+        FISHING_PLANTS_JUNGLE = plantList(b, "fishingPlantsJungle", "Plants fishing brings up in jungles (plantFishingChance)",
+                org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_JUNGLE);
+        FISHING_PLANTS_RIVER = plantList(b, "fishingPlantsRiver", "Plants fishing brings up in rivers (plantFishingChance)",
+                org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_RIVER);
+        FISHING_PLANTS_SWAMP = plantList(b, "fishingPlantsSwamp", "Plants fishing brings up in swamps (plantFishingChance)",
+                org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_SWAMP);
+        FISHING_PLANTS_MANGROVE = plantList(b, "fishingPlantsMangrove", "Plants fishing brings up in mangrove swamps (plantFishingChance)",
+                org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_MANGROVE);
         b.pop();
 
         b.comment("Evaporation: open tanks slowly lose water. A lid, the feeder or a light on a top block covers that block.").push("evaporation");
@@ -616,6 +636,15 @@ public final class ServerConfig {
                 .define("simulateUnloadedTime", false);
 
         SPEC = b.build();
+    }
+
+    /** M22.4: a list of "plant_id=weight" entries (an aquarium plant and its weight), default from a table of {@code WildTables}. */
+    private static ModConfigSpec.ConfigValue<java.util.List<? extends String>> plantList(ModConfigSpec.Builder b, String key, String what,
+                                                                                        org.overengineer.bettacraft.sources.WeightedTable<org.overengineer.bettacraft.plants.PlantSpecies> def) {
+        return b.comment(what + ": entries \"plant_id=weight\" (the item ids of the aquarium plants without \"bettacraft:\");",
+                        "an empty list brings up none")
+                .defineListAllowEmpty(key, org.overengineer.bettacraft.sources.PlantTables.toList(def), () -> "amazon_sword=10",
+                        org.overengineer.bettacraft.sources.PlantTables::validEntry);
     }
 
     /** Safe accessor: config values are unavailable before the server config is loaded (e.g. in GameTests early). */

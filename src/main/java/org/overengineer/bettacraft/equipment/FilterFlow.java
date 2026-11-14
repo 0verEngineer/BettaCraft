@@ -148,11 +148,25 @@ public final class FilterFlow {
     /** Path of a filter inside the cabinet at {@code pos} (tank above it): up the tank's back wall. */
     @Nullable
     public static Path forCabinet(TankData t, BlockPos pos, Direction cabinetFront) {
-        Direction back = cabinetFront.getOpposite();
-        double lateral = back.getAxis() == Direction.Axis.Z ? pos.getX() + 0.5 : pos.getZ() + 0.5;
+        return forCabinet(t, pos, cabinetFront, OutletSide.BACK);
+    }
+
+    /** M22.4: path of a filter inside the cabinet at {@code pos} up the wall of the chosen {@code side}. */
+    @Nullable
+    public static Path forCabinet(TankData t, BlockPos pos, Direction cabinetFront, OutletSide side) {
+        Direction out = side.wall(cabinetFront);
+        double lateral = out.getAxis() == Direction.Axis.Z ? pos.getX() + 0.5 : pos.getZ() + 0.5;
         BlockPos above = pos.above();
-        // M10: the back wall of this row of the shape
-        BlockPos wall = t.contains(above) ? TankShape.walk(t.members(), above, back) : above;
-        return compute(t, wall, back, lateral, pos.getY() + 0.75);
+        // M10: the wall of this row of the shape
+        BlockPos wall = t.contains(above) ? TankShape.walk(t.members(), above, out) : above;
+        return compute(t, wall, out, lateral, pos.getY() + 0.75);
+    }
+
+    /** M22.4: the path of a cabinet's filter with its outlet side (the client side the server sent). */
+    @Nullable
+    public static Path forCabinet(TankData t, CabinetBlockEntity cabinet) {
+        var s = cabinet.getBlockState();
+        if (!(s.getBlock() instanceof CabinetBlock)) return null;
+        return forCabinet(t, cabinet.getBlockPos(), s.getValue(CabinetBlock.FACING), cabinet.outletSide());
     }
 }

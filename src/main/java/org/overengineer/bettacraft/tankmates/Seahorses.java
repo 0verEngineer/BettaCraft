@@ -76,6 +76,7 @@ public final class Seahorses {
     public static void forget() {
         SPOTS.clear();
         FLOW.clear();
+        org.overengineer.bettacraft.tank.TankCurrents.forget(); // M22.4
     }
 
     private static List<Spot> compute(ServerLevel level, TankData t) {
@@ -175,6 +176,15 @@ public final class Seahorses {
         double v = org.overengineer.bettacraft.reef.TankReef.flow(level, c);
         FLOW.put(key, new FlowCache(now, v));
         return v;
+    }
+
+    /**
+     * M22.4: the water movement where a seahorse is (world x/z in its tank): the tank's flow, stronger in front of a filter
+     * outlet ({@link org.overengineer.bettacraft.tank.TankCurrents}): an outlet on the other side of the tank keeps it calm.
+     */
+    public static double flowAt(ServerLevel level, TankBlockEntity c, double x, double z) {
+        double f = flow(level, c);
+        return f <= 0 ? 0 : f * org.overengineer.bettacraft.tank.TankCurrents.factor(level, c, x, z);
     }
 
     public static boolean flowTooStrong(double flow) {

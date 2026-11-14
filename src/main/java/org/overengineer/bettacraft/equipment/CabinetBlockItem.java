@@ -63,5 +63,11 @@ public class CabinetBlockItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.bettacraft.cabinet").withStyle(ChatFormatting.GRAY));
+        // M22.4: a cabinet that remembers another outlet side than the back
+        String side = stack.get(ModDataComponents.OUTLET_SIDE.get());
+        if (side != null && OutletSide.byId(side) != OutletSide.BACK) {
+            tooltip.add(Component.translatable("tooltip.bettacraft.cabinet.outlet", Component.translatable(OutletSide.byId(side).translationKey()))
+                    .withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 }

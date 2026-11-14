@@ -26,8 +26,10 @@ import org.overengineer.bettacraft.registry.ModTags;
 /**
  * Fishing sometimes brings up an aquarium plant instead of the catch (M13, chance in the server config
  * {@code interiorPlants.fishingChance}): in jungles and rivers the epiphytes (Java fern, Anubias, Bucephalandra, the
- * "Blue" and "Brownie Red" rarely), in swamps and mangrove swamps Cryptocoryne, Ludwigia and Rotala. Applied to the
- * fishing loot table only (condition in the JSON); a catch that already became a floating plant (M12) stays one.
+ * "Blue" and "Brownie Red" rarely), in swamps and mangrove swamps Cryptocoryne, Ludwigia and Rotala. M22.4: rarely the
+ * Amazon sword and the tiger lotus in jungles, Vallisneria and Monte Carlo in rivers, Alternanthera, the tiger lotus and
+ * the Cryptocoryne "Flamingo" in swamps. Applied to the fishing loot table only (condition in the JSON); a catch that
+ * already became a floating plant (M12) stays one.
  */
 public class AquaticPlantFishingModifier extends LootModifier {
     public static final MapCodec<AquaticPlantFishingModifier> CODEC = RecordCodecBuilder.mapCodec(i -> codecStart(i)
@@ -37,13 +39,15 @@ public class AquaticPlantFishingModifier extends LootModifier {
         super(conditions);
     }
 
-    /** Where the plants of a biome come from: jungle / river, or swamp. */
-    public enum Water { TROPICAL, SWAMP }
+    /** Where the plants of a biome come from (M22.4: jungle and river apart, the mangrove swamp apart from the swamp). */
+    public enum Water { JUNGLE, RIVER, SWAMP, MANGROVE }
 
     @Nullable
     public static Water water(Holder<Biome> biome) {
-        if (biome.is(Biomes.MANGROVE_SWAMP) || biome.is(ModTags.BETTA_SPAWN_BIOMES)) return Water.SWAMP;
-        if (biome.is(BiomeTags.IS_JUNGLE) || biome.is(BiomeTags.IS_RIVER)) return Water.TROPICAL;
+        if (biome.is(Biomes.MANGROVE_SWAMP)) return Water.MANGROVE;
+        if (biome.is(ModTags.BETTA_SPAWN_BIOMES)) return Water.SWAMP;
+        if (biome.is(BiomeTags.IS_JUNGLE)) return Water.JUNGLE;
+        if (biome.is(BiomeTags.IS_RIVER)) return Water.RIVER;
         return null;
     }
 
@@ -57,7 +61,9 @@ public class AquaticPlantFishingModifier extends LootModifier {
         double chance = ServerConfig.getOr(ServerConfig.AQUATIC_FISHING_CHANCE, 0.05);
         if (context.getRandom().nextDouble() >= chance) return loot;
         var r = context.getRandom();
-        ItemStack plant = InteriorPlants.item(pick(w, r::nextLong), 0);
+        PlantSpecies p = pick(w, r::nextLong);
+        if (p == null) return loot;
+        ItemStack plant = InteriorPlants.item(p, 0);
         if (plant.isEmpty()) return loot;
         loot.clear();
         loot.add(plant);
@@ -65,18 +71,17 @@ public class AquaticPlantFishingModifier extends LootModifier {
     }
 
     /**
-     * Which plant comes up (M22.2: from the tables {@link org.overengineer.bettacraft.sources.WildTables#FISHING_PLANTS_TROPICAL}
-     * and {@link org.overengineer.bettacraft.sources.WildTables#FISHING_PLANTS_SWAMP}). Jungle / river: Java fern 30,
-     * Anubias 30, Bucephalandra "Green Wavy" 15, "Mini Needle" 13, "Blue" 6, "Brownie Red" 6. Swamp: Cryptocoryne green
-     * 35, brown 25, Ludwigia 20, Rotala 20.
+     * Which plant comes up (M22.2: from the tables of {@link org.overengineer.bettacraft.sources.WildTables}; M22.4: per water,
+     * from the server config lists {@code interiorPlants.fishingPlants*}). Null when the list is empty.
      */
+    @Nullable
     public static PlantSpecies pick(Water w, RandomGenerator rnd) {
-        return table(w).pick(rnd);
+        var t = table(w);
+        return t.isEmpty() ? null : t.pick(rnd);
     }
 
     public static org.overengineer.bettacraft.sources.WeightedTable<PlantSpecies> table(Water w) {
-        return w == Water.SWAMP ? org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_SWAMP
-                : org.overengineer.bettacraft.sources.WildTables.FISHING_PLANTS_TROPICAL;
+        return org.overengineer.bettacraft.sources.PlantTables.fishing(w);
     }
 
     @Override

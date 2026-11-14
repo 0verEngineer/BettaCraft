@@ -37,6 +37,9 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_MAGNIFIER;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_CONTAINERS;
     public static final ModConfigSpec.BooleanValue FEATURE_ANIMAL_LIST;
+    // M22.4
+    public static final ModConfigSpec.BooleanValue FEATURE_PLANT_NET_CATCHES;
+    public static final ModConfigSpec.BooleanValue FEATURE_CABINET_OUTLET_SIDE;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> SWAYING_EXCLUDE;
 
     static {
@@ -113,6 +116,13 @@ public final class CommonConfig {
                 .define("bigContainers", true);
         FEATURE_ANIMAL_LIST = b.comment("List of every single shrimp, crayfish and snail in the tank menu (sex, age, colour density, genes) to take",
                 "out exactly that one, and the sex choice for the quick take-out (off: only the kinds like before)").define("animalList", true);
+        // M22.4
+        FEATURE_PLANT_NET_CATCHES = b.comment("The aquarium net now and then brings up an aquarium plant from the bottom of rivers, jungle water and",
+                "swamps (interiorPlants.netPlantShare; off: plants only from fishing, bottles, shears and the trader)").define("plantNetCatches", true);
+        FEATURE_CABINET_OUTLET_SIDE = b.comment("Setting in the cabinet menu: on which side of the tank the hose of the external filter in the cabinet",
+                "goes up (back, left, right or front); jet, bubbles and the current in the tank follow it, and the current is",
+                "stronger in front of the outlet (seahorses, corals) (off: always the back wall, the current evenly like before)")
+                .define("cabinetOutletSide", true);
         b.pop();
         b.comment("Swaying water plants in the tank miniature (M22.1, features.swayingForeignPlants)").push("swaying");
         SWAYING_AUTO = b.comment("Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, "
@@ -192,6 +202,9 @@ public final class CommonConfig {
     public static boolean magnifier() { return getOr(FEATURE_MAGNIFIER, true); }
     public static boolean bigContainers() { return getOr(FEATURE_BIG_CONTAINERS, true); }
     public static boolean animalList() { return getOr(FEATURE_ANIMAL_LIST, true); }
+    // M22.4
+    public static boolean plantNetCatches() { return getOr(FEATURE_PLANT_NET_CATCHES, true); }
+    public static boolean cabinetOutletSide() { return getOr(FEATURE_CABINET_OUTLET_SIDE, true); }
 
     private CommonConfig() {}
 }

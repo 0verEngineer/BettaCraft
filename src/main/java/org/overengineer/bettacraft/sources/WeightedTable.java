@@ -28,6 +28,21 @@ public final class WeightedTable<T> {
         return new Builder<>();
     }
 
+    /** M22.4: a table without entries ({@link #pick} must not be called on it). */
+    public static <T> WeightedTable<T> empty() {
+        return new WeightedTable<>(new ArrayList<>());
+    }
+
+    public boolean isEmpty() {
+        return total <= 0;
+    }
+
+    /** M22.4: whether {@code value} is in the table with a weight above 0. */
+    public boolean contains(T value) {
+        for (Entry<T> e : entries) if (e.value().equals(value) && e.weight() > 0) return true;
+        return false;
+    }
+
     public List<Entry<T>> entries() {
         return entries;
     }
@@ -57,6 +72,12 @@ public final class WeightedTable<T> {
 
         public Builder<T> add(T value, int weight) {
             entries.add(new Entry<>(value, weight));
+            return this;
+        }
+
+        /** M22.4: every entry of another table. */
+        public Builder<T> addAll(WeightedTable<T> other) {
+            entries.addAll(other.entries());
             return this;
         }
 

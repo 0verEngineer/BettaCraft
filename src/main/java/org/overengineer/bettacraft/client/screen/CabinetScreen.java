@@ -1,19 +1,58 @@
 package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.CabinetMenu;
+import org.overengineer.bettacraft.equipment.OutletSide;
 
-/** Cabinet: filter slot, the two heater slots of that filter (only with a filter), 3x3 storage. */
+/**
+ * Cabinet: filter slot, the two heater slots of that filter (only with a filter), 3x3 storage; M22.4: the button
+ * "Outlet: back / left / right / front" (which tank wall the filter hose goes up; hidden while the server has
+ * {@code features.cabinetOutletSide} off).
+ */
 public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/cabinet.png");
+    /** M22.4: below the heater slots, left of the inventory (the inventory label moves under the storage). */
+    public static final int OUTLET_X = 7, OUTLET_Y = 62, OUTLET_W = 86, OUTLET_H = 12;
+    private TankScreen.FitButton outletButton;
 
     public CabinetScreen(CabinetMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        outletButton = new TankScreen.FitButton(leftPos + OUTLET_X, topPos + OUTLET_Y, OUTLET_W, OUTLET_H, Component.empty(), b -> {
+            OutletSide s = menu.outletSide();
+            if (s == null || minecraft == null || minecraft.gameMode == null) return;
+            OutletSide next = hasShiftDown() ? OutletSide.byIndex((s.ordinal() + OutletSide.values().length - 1) % OutletSide.values().length) : s.next();
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_OUTLET0 + next.ordinal());
+        });
+        outletButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.cabinet.outlet.tooltip")));
+        addRenderableWidget(outletButton);
+        updateOutlet();
+    }
+
+    /** Label and visibility of the outlet button from the menu's synced value. */
+    private void updateOutlet() {
+        if (outletButton == null) return;
+        OutletSide s = menu.outletSide();
+        outletButton.visible = s != null;
+        if (s != null) outletButton.setMessage(Component.translatable("gui.bettacraft.cabinet.outlet", Component.translatable(s.translationKey())));
+        // the inventory label leaves room for the button
+        inventoryLabelX = s != null ? 98 : 8;
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        updateOutlet();
     }
 
     @Override
@@ -44,6 +83,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        updateOutlet();
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
     }

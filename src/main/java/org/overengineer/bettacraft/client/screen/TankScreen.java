@@ -335,7 +335,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** A button whose label is drawn smaller when it does not fit (instead of vanilla's scrolling text), centred. */
     public static final class FitButton extends Button {
-        FitButton(int x, int y, int w, int h, Component label, OnPress onPress) {
+        public FitButton(int x, int y, int w, int h, Component label, OnPress onPress) {
             super(x, y, w, h, label, onPress, DEFAULT_NARRATION);
         }
 
