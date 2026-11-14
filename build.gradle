@@ -163,6 +163,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestreadme')) {
+                // gradlew runClient -Psmoketestreadme -PnoJei : the README media (an aquarium room, close-ups, frame sequences, menus) as
+                // run/screenshots/readme_*.png, then tools/assetgen/readme_media.py builds docs/images; add -Pshaders -Preadmeroom
+                // for only the room pictures with Complementary (suffix _shaders)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.readmeonly', 'true'
+                if (project.hasProperty('readmeroom')) systemProperty 'bettacraft.readme.roomonly', 'true'
+            }
             if (project.hasProperty('smoketestm25c')) {
                 // gradlew runClient -Psmoketestm25c : only the M25 part c scene (Caridina lines in soft water, cardinal shrimp and
                 // Tylomelania in hard water, the dosing pump at a reef tank with its window en + de)
