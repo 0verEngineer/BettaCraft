@@ -1060,6 +1060,9 @@ public final class DevSmokeMP {
             c.getTank().setTargetTemp(24.5F);
             c.markTankChanged();
             var s = ModBlocks.MONITOR.get().defaultBlockState().setValue(org.overengineer.bettacraft.monitor.MonitorBlock.FACING, net.minecraft.core.Direction.NORTH);
+            // a fresh screen (the world of an earlier run may still have the screen with Dev1's layout)
+            level.setBlockAndUpdate(min.offset(1, 0, -3), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(min.offset(0, 0, -3), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
             level.setBlockAndUpdate(min.offset(1, 0, -3), s);
             level.setBlockAndUpdate(min.offset(0, 0, -3), s);
             say("monitor", "all", (min.getX() + 1) + "," + min.getY() + "," + (min.getZ() - 3));
