@@ -239,6 +239,333 @@ INTERNAL_FILTER = [
     "................",
 ]
 
+# ---------------------------------------------------------------- M28 part c
+
+BOAT_P = {"k": K, "H": "#c8a46a", "L": "#a8844c", "M": "#86663a", "D": "#644a28", "w": "#17140f", "g": "#5d7f30",
+          "s": "#8f6d45", "S": "#6b5234"}
+ROWING_BOAT = [
+    "................",
+    "................",
+    "................",
+    "......kkkk......",
+    "...kkkSSSSkkk...",
+    ".kkHHHLLgLHHHkk.",
+    "kHHLLLLLLLLLLLHk",
+    "kLLLMMMMMMMMMLLk",
+    "kMMMkkkkkkkkkMMk",
+    "kDDkwwwwwwwwwkDk",
+    "kssk.wwwwwwww.kk",
+    "kkk...........k.",
+    "................",
+    "..kkkkkkkkkk....",
+    "..kssssssssskkk.",
+    "..kkkkkkkkkkkSk.",
+]
+
+BOW_P = {"k": K, "H": "#b48a55", "L": "#946c3d", "M": "#74522c", "D": "#553a1d", "s": "#e9e2cf",
+         "o": "#b0623a", "O": "#d07a4a", "w": "#2a1810"}
+SHIP_BOW = [
+    "kk..............",
+    ".kHk......k.....",
+    "..kHk.....k.....",
+    "...kHk...kskk...",
+    "...kHHk..ksssk..",
+    "...kHLLk.kkkk...",
+    "...kHLLLkk.k....",
+    "...kHLLLLLLLk.k.",
+    "...kHLLLLLLLLkHk",
+    "...kHLLkkkkkkLLk",
+    "...kHLkoOOOOokLk",
+    "...kHLkOwwwwOkMk",
+    "....kLkOwwwwOkMk",
+    "....kMkoOOOOokDk",
+    ".....kkkkkkkkkk.",
+    "................",
+]
+
+HOLEY_P = {"k": K, "H": "#f2f0e8", "L": "#dcdad0", "M": "#bdb9ae", "D": "#9a958a", "w": "#2e2a26", "b": "#866b5c"}
+HOLEY_ROCK = [
+    "................",
+    "................",
+    "................",
+    "......kkkk......",
+    "....kkHHLLkk....",
+    "...kHHLwLLMLk...",
+    "..kHLLLLLbMMMk..",
+    "..kHwLLLLMMwDk..",
+    ".kHLLLkkkkMMMDk.",
+    ".kHLLkwwwwkMwDk.",
+    "kHLbLkwwwwkMMDDk",
+    "kHLLMkwwwwkMDwDk",
+    "kLwMMkwwwwkMMDDk",
+    "kLLMMkwwwwkDDDDk",
+    "kkkkkkkkkkkkkkkk",
+    "................",
+]
+
+SLATE_P = {"k": "#0e0e10", "H": "#6a6a70", "L": "#525258", "M": "#3e3e44", "D": "#2c2c31", "w": "#0a0a0c"}
+SLATE_CAVE = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "....kkkkkkkk....",
+    "...kHHHHHHHHk...",
+    ".kkkkkkkkkkkkkk.",
+    "kHHHHHHHHHHHHHLk",
+    "kLMMMMMMMMMMMMDk",
+    "kkkkkkkkkkkkkkkk",
+    ".kHLkwwwwwwkHLk.",
+    ".kMMkwwwwwwkMMk.",
+    ".kHLkwwwwwwkHLk.",
+    ".kMDkwwwwwwkMDk.",
+    ".kkkkkkkkkkkkkk.",
+    "................",
+]
+
+SEIRYU_P = {"k": K, "H": "#a9a9ad", "L": "#8a8a8f", "M": "#6d6d72", "D": "#4f4f55", "v": "#ececec"}
+SEIRYU_STONE = [
+    "....k...........",
+    "....kk..........",
+    "...kHk..........",
+    "...kHLk.........",
+    "..kHvLk.........",
+    "..kHLvMk........",
+    "..kHLLvk........",
+    ".kHLLMMk...k....",
+    ".kHLvMMDk.kHk...",
+    ".kHLLvMDkkHLMk..",
+    "kHLLLMvMDkHvMk..",
+    "kHLLMMMDDkLLvDk.",
+    "kHLvMMMDDkHLMDk.",
+    "kLLLMMMDDkLMMDDk",
+    "kkkkkkkkkkkkkkkk",
+    "................",
+]
+
+DRAGON_P = {"k": "#2a170e", "H": "#c98a62", "L": "#a86e4a", "M": "#8a5638", "D": "#6a3f27", "w": "#1e120b", "c": "#d9a47c"}
+DRAGON_STONE = [
+    "................",
+    "................",
+    "................",
+    "....kkkk........",
+    "...kHcLwk.......",
+    "..kHLwLLMk..kk..",
+    "..kHLLMwMk.kHck.",
+    ".kHwLLMMDkkHLwMk",
+    ".kHLLwMMDkHLLMwk",
+    "kHcLMMwMDkHwLMDk",
+    "kHLwMMMDDkLLMMDk",
+    "kLLMkkkkkkkMwMDk",
+    "kLwMk.....kMMDDk",
+    "kLLMk.....kMDDDk",
+    "kkkkk.....kkkkkk",
+    "................",
+]
+
+LAVA_P = {"k": "#140c0c", "H": "#a8473a", "L": "#8a3529", "M": "#2e2a2e", "D": "#1c1a1e", "w": "#080608", "r": "#c25a44"}
+LAVA_ROCK = [
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....kkkkk......",
+    "...kkrHwMHkk....",
+    "..kHLwMLLwMMk...",
+    "..kHMLLwMLMDk...",
+    ".kHLwMMLLwMDDk..",
+    ".krLLMkkkkLMwDk.",
+    "kHwMLkwwwwkMDDk.",
+    "kLMMwkwwwwkwMDk.",
+    "kLLwMkwwwwkMDDDk",
+    "kMLMMkwwwwkMDwDk",
+    "kkkkkkkkkkkkkkkk",
+    "................",
+]
+
+MANGROVE_P = {"k": "#1a120c", "H": "#7a4a34", "L": "#6b3c2a", "M": "#4a3b2a", "D": "#352a1e", "R": "#5e4a36"}
+MANGROVE_ROOT = [
+    "......kkk.......",
+    ".....kHLLk......",
+    ".....kHLLk......",
+    ".....kHLMk......",
+    "....kRHLMRk.....",
+    "...kRRkkkRRk....",
+    "..kRMk...kMRk...",
+    "..kRk.....kRk...",
+    ".kRMk.....kMRk..",
+    ".kRk...k...kRk..",
+    "kRMk..kRk..kMRk.",
+    "kRk..kRMk...kRk.",
+    "kRk..kRk....kRk.",
+    "kMk..kMk....kMk.",
+    "kkk..kkk....kkk.",
+    "................",
+]
+
+SPIDER_P = {"k": "#3a2a14", "H": "#e0c48e", "L": "#c4a46a", "M": "#a2844e", "D": "#806434"}
+SPIDERWOOD = [
+    "k.....k...k....k",
+    "Hk...kL..kH...kL",
+    ".Lk..kH.kL...kL.",
+    "..Lk.kLkkL..kL..",
+    "...LkLHkL..kL...",
+    "kk..LHLLk.kL..kk",
+    "HLk..LHLkkL..kLH",
+    "..LLk.LHHLLkkL..",
+    "....LkkHLMkLL...",
+    ".....LkHLMk.....",
+    "......kHLMk.....",
+    "......kHLMk.....",
+    ".....kHLLMDk....",
+    "....kHLLMMDDk...",
+    "....kkkkkkkkk...",
+    "................",
+]
+
+BOG_P = {"k": "#120c06", "H": "#6a5236", "L": "#4e3a24", "M": "#3a2a18", "D": "#281c10"}
+BOGWOOD_BRIDGE = [
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....kkkkkk.....",
+    "...kkHHLLLLkk...",
+    "..kHHLLMMMMLLk..",
+    ".kHLLMkkkkkkMMk.",
+    ".kHLMk......kMDk",
+    "kHLMk........kDk",
+    "kHLk..........kk",
+    "kLMk..........kD",
+    "kLMk..........kD",
+    "kHLMk........kMD",
+    "kkkkk........kkk",
+    "................",
+]
+
+COCO_P = {"k": "#1a0f08", "H": "#8a5a36", "L": "#6e4426", "M": "#55331a", "D": "#3e2412", "f": "#a0784e", "w": "#120a05"}
+COCONUT_CAVE = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....kkkkkk.....",
+    "...kkHfLLLMkk...",
+    "..kHHLLfLMMMDk..",
+    ".kHLfLLLMfMMDDk.",
+    ".kHLLLkkkkMMDDk.",
+    "kHfLLkwwwwkMfDDk",
+    "kHLLMkwwwwkMMDDk",
+    "kLLMMkwwwwkMDDDk",
+    "kkkkkkkkkkkkkkkk",
+    "................",
+    "................",
+]
+
+CLAY_P = {"k": "#2a140a", "H": "#d88a5a", "L": "#b8693e", "M": "#9a5530", "D": "#7a4022", "w": "#1e0f08", "W": "#3a1e10"}
+CLAY_TUBES = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "kkkkkkk.kkkkkkk.",
+    "kHHHHLk.kHHHHLk.",
+    "kHkkkLk.kHkkkLk.",
+    "kHwWwMk.kHwWwMk.",
+    "kHwwwMk.kHwwwMk.",
+    "kLwwwMk.kLwwwMk.",
+    "kLkkkMk.kLkkkMk.",
+    "kLMMMDkkkLMMMDk.",
+    "kkkkkkkkkkkkkkk.",
+    "................",
+    "................",
+    "................",
+]
+
+SHRIMP_P = {"k": "#24140c", "H": "#c28a68", "L": "#a86c4c", "O": "#c66a2e", "o": "#a2521f", "W": "#e4cbb8", "V": "#c4a896",
+            "w": "#1a0e08"}
+SHRIMP_TUBES = [
+    "................",
+    "................",
+    "................",
+    "....kkkkkk......",
+    "....kWWWVk......",
+    "....kWkkVk......",
+    "....kWkwkVk.....",
+    "....kVkkVk......",
+    "kkkkkkkkkkkkk...",
+    "kHHHLkkOOOok....",
+    "kHkkLkkOkkok....",
+    "kHkwLkkOkwok....",
+    "kHkkLkkOkkok....",
+    "kLLLLkkooook....",
+    "kkkkkkkkkkkk....",
+    "................",
+]
+
+RUIN_P = {"k": K, "H": "#e8e8ea", "L": "#c8c8cc", "M": "#a6a6ac", "D": "#84848a", "m": "#5d7f30", "n": "#7ca444"}
+RUIN_COLUMN = [
+    "....kk..........",
+    "....kHk.........",
+    "...kHLkk........",
+    "...kHLMk........",
+    "...kHLMk........",
+    "...kHLMk........",
+    "...kHLMk........",
+    "...kHLMk........",
+    "...kHLMk........",
+    "...knLMk........",
+    "...kHLmk........",
+    "..kkHLMkk.kkkkk.",
+    ".kHHLLMMDkHLLMDk",
+    ".knHLLLMDkLMMnDk",
+    ".kkkkkkkkkkkkkkk",
+    "................",
+]
+
+HELMET_P = {"k": "#2a1408", "H": "#e0a050", "L": "#c47a34", "M": "#a15325", "D": "#7a3c1a", "y": "#f0c860",
+            "w": "#14100c", "g": "#9a9a9a", "G": "#c8d0d4"}
+DIVER_HELMET = [
+    "......kkk.......",
+    "......kyk.......",
+    "....kkkkkkk.....",
+    "...kHHLLLMMk....",
+    "..kHHLLLLMMDk...",
+    "..kHLkkkkkMDk...",
+    ".kGHkwwwwwkMDk..",
+    ".kgHkwwwwwkMgk..",
+    ".kGLkwwwwwkMDk..",
+    "..kLyk...kyDk...",
+    "..kLLkkkkkMDk...",
+    "..kkkkkkkkkkk...",
+    ".kHLyLLLLLyMDk..",
+    "kHHLLLLLLLLMMDk.",
+    "kkkkkkkkkkkkkkk.",
+    "................",
+]
+
+CHEST_P = {"k": "#1c1008", "H": "#9a7448", "L": "#7a5632", "M": "#5e4024", "D": "#3e2814", "G": "#ffd84a",
+           "g": "#e0a020", "b": "#bfe8ff", "B": "#7fc0ea"}
+TREASURE_CHEST = [
+    "........b.......",
+    ".......B.b......",
+    "..kkkkkkbkkkk...",
+    "..kHLLLLLLLDk...",
+    "..kHLLLLLLLDk...",
+    "..kMMMMMMMMDk...",
+    "..kkkkkbkkkkk...",
+    ".kGgGGgBGgGGgk..",
+    ".kDkkkkkkkkkDk..",
+    ".kDHLLLggLLLDk..",
+    ".kDHLLkGGkLLDk..",
+    ".kDHLLLkkLLLDk..",
+    ".kDMMMMMMMMMDk..",
+    ".kkkkkkkkkkkkkk.",
+    "..kGgk.kGgGk.kGk",
+    "...k....kkk...k.",
+]
+
 ICONS = {
     "decor_castle": (CASTLE, STONE),
     "decor_shipwreck": (SHIPWRECK, WOOD),
@@ -251,6 +578,22 @@ ICONS = {
     "decor_almond_leaf": (ALMOND_LEAF, ALMOND),
     "decor_cave": (CAVE, CAVE_P),
     "internal_filter": (INTERNAL_FILTER, FILTER),
+    "decor_rowing_boat": (ROWING_BOAT, BOAT_P),  # M28
+    "decor_ship_bow": (SHIP_BOW, BOW_P),  # M28
+    "decor_holey_rock": (HOLEY_ROCK, HOLEY_P),  # M28
+    "decor_slate_cave": (SLATE_CAVE, SLATE_P),  # M28
+    "decor_seiryu_stone": (SEIRYU_STONE, SEIRYU_P),  # M28
+    "decor_dragon_stone": (DRAGON_STONE, DRAGON_P),  # M28
+    "decor_lava_rock": (LAVA_ROCK, LAVA_P),  # M28
+    "decor_mangrove_root": (MANGROVE_ROOT, MANGROVE_P),  # M28
+    "decor_spiderwood": (SPIDERWOOD, SPIDER_P),  # M28
+    "decor_bogwood_bridge": (BOGWOOD_BRIDGE, BOG_P),  # M28
+    "decor_coconut_cave": (COCONUT_CAVE, COCO_P),  # M28
+    "decor_clay_tubes": (CLAY_TUBES, CLAY_P),  # M28
+    "decor_shrimp_tubes": (SHRIMP_TUBES, SHRIMP_P),  # M28
+    "decor_ruin_column": (RUIN_COLUMN, RUIN_P),  # M28
+    "decor_diver_helmet": (DIVER_HELMET, HELMET_P),  # M28
+    "decor_treasure_chest": (TREASURE_CHEST, CHEST_P),  # M28
 }
 
 

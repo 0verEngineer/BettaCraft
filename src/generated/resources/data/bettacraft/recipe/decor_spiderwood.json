@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:stripped_oak_log"
+    },
+    {
+      "item": "minecraft:oak_log"
+    },
+    {
+      "tag": "c:rods/wooden"
+    },
+    {
+      "tag": "c:rods/wooden"
+    },
+    {
+      "tag": "c:rods/wooden"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_spiderwood"
+  }
+}

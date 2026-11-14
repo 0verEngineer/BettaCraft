@@ -93,7 +93,7 @@ public final class ModCreativeTabs {
                         ModItems.FILTER_FOAM, ModItems.CERAMIC_RINGS, ModItems.ACTIVATED_CARBON, ModItems.FILTER_PEAT, ModItems.RESERVOIR,
                         ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER)) out.accept(it.get());
                 // M25: water chemistry
-                for (var it : java.util.List.of(ModItems.TDS_METER, ModItems.PH_TEST_KIT, ModItems.REMINERALISING_SALT, ModItems.ALMOND_LEAF, ModItems.ACTIVE_SOIL)) out.accept(it.get());
+                for (var it : java.util.List.of(ModItems.TDS_METER, ModItems.PH_TEST_KIT, ModItems.REMINERALISING_SALT, ModItems.ALMOND_LEAF, ModItems.ALDER_CONE, ModItems.ACTIVE_SOIL)) out.accept(it.get());
                 // M25 part b: CO2 and reverse osmosis
                 for (var it : java.util.List.of(ModItems.YEAST, ModItems.BIO_CO2, ModItems.CO2_STATION, ModItems.CO2_SOLENOID, ModItems.RO_UNIT,
                         ModItems.RO_MEMBRANE, ModItems.RO_PREFILTER, ModItems.RO_WATER_BUCKET)) out.accept(it.get());

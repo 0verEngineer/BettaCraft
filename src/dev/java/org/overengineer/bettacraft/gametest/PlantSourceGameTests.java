@@ -94,9 +94,9 @@ public final class PlantSourceGameTests {
             for (var e : biomes.entrySet()) {
                 biome(level, water, e.getKey());
                 h.assertTrue(NetCatching.water(level, water) == e.getValue(), e.getKey() + ": water " + NetCatching.water(level, water));
-                Map<PlantSpecies, Integer> got = swing(h, water, 300);
+                Map<PlantSpecies, Integer> got = swing(h, water, 1500); // M28c: rare plants (weight 2 of about 300) come up for sure
                 int plants = got.values().stream().mapToInt(Integer::intValue).sum();
-                h.assertTrue(plants == 300, e.getKey() + ": every swing a plant: " + plants);
+                h.assertTrue(plants == 1500, e.getKey() + ": every swing a plant: " + plants);
                 var table = WildTables.netPlants(e.getValue());
                 for (PlantSpecies p : got.keySet()) h.assertTrue(table.contains(p), e.getKey() + ": " + p + " is not a plant of this water");
                 for (var en : table.entries()) h.assertTrue(got.containsKey(en.value()), e.getKey() + ": " + en.value() + " never came up: " + got);

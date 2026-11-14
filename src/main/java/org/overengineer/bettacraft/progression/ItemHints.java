@@ -50,7 +50,7 @@ public final class ItemHints {
             "lily_pipe", "nozzle", "spray_bar", "filter_chamber", "filter_pump_head", "filter_inlet", "filter_outlet", "filter_foam", "ceramic_rings",
             "activated_carbon", "filter_peat", "reservoir", "level_sensor", "water_change_controller",
             // M25: water chemistry
-            "tds_meter", "ph_test_kit", "remineralising_salt", "almond_leaf",
+            "tds_meter", "ph_test_kit", "remineralising_salt", "almond_leaf", "alder_cone",
             // M25 part b: CO2 and reverse osmosis
             "yeast", "bio_co2", "co2_cylinder", "co2_solenoid", "co2_station", "ro_unit", "ro_membrane", "ro_prefilter", "ro_water_bucket",
             // M25 part c: reef dosing

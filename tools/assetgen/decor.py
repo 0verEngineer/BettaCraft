@@ -521,6 +521,484 @@ def spawning_mop() -> Voxels:
     return v
 
 
+import math
+
+# ---------------------------------------------------------------- M28 part c: wrecks, hardscape, roots, caves, kitsch
+# The front of a structure (the side that faces the player) is z = 0. Caves for plecos are tubes of
+# bettacraft:spawning_cave (clusters of at least 20 blocks, TankmateSpots), with the inner 4 x 4 of the M19 tube so the
+# fish swim in (M21 pathfinding).
+
+
+def _clay_tube(v: Voxels, x0: int, y0: int, z0: int, length: int, along: str = "z", open_high: bool = False,
+               block: str = "bettacraft:spawning_cave"):
+    """A tube of 6 x 6 (inside 4 x 4) and `length`, open at one end (the low one unless `open_high`), closed at the other."""
+    closed = 0 if open_high else length - 1
+    for a in range(length):
+        for u in range(6):
+            for w in range(6):
+                ring = u in (0, 5) or w in (0, 5)
+                if not ring and a != closed:
+                    continue
+                if along == "z":
+                    v.set(x0 + u, y0 + w, z0 + a, block)
+                else:
+                    v.set(x0 + a, y0 + w, z0 + u, block)
+
+
+def rowing_boat() -> Voxels:
+    """M28: a sunken rowing boat, keel up on the bottom (11 x 8, 5 high): a low cave under the hull for catfish, open at
+    the broken stern; a plank missing in the bottom, a broken oar beside it."""
+    v = Voxels()
+    rnd = random.Random(2801)
+    plank = lambda: "oak_planks" if rnd.random() > 0.2 else "spruce_planks"
+    for x in range(1, 10):
+        taper = x in (1, 9)
+        if not taper:
+            for z in (0, 6):
+                v.set(x, 0, z, "stripped_oak_log[axis=x]")  # the gunwale on the ground
+                v.set(x, 1, z, plank())
+            for z in (1, 5):
+                v.set(x, 2, z, plank())
+            for z in (2, 3, 4):
+                v.set(x, 3, z, plank())
+            v.set(x, 4, 3, "stripped_spruce_log[axis=x]")  # the keel on top
+        else:
+            for z in (1, 5):
+                v.set(x, 1, z, plank())
+            for z in (2, 4):
+                v.set(x, 2, z, plank())
+            v.set(x, 3, 3, plank())
+            v.set(x, 4, 3, "stripped_spruce_log[axis=x]")
+    for y in (1, 2, 3):
+        v.set(0, y, 3, "stripped_spruce_log[axis=y]")  # the stem
+    # the stern is broken off: the cave opens there
+    for z in range(1, 6):
+        for y in range(0, 4):
+            v.remove(9, y, z)
+    v.remove(9, 4, 3)
+    v.set(9, 1, 0, "spruce_slab[type=top]")
+    v.set(9, 1, 6, "spruce_slab[type=top]")
+    v.remove(6, 3, 3)  # a missing plank in the bottom
+    v.set(6, 3, 2, "oak_stairs[facing=north,half=top]")
+    v.set(4, 4, 2, "moss_carpet")
+    # the oar beside the boat
+    for x in range(2, 8):
+        v.set(x, 0, 7, "stripped_spruce_log[axis=x]")
+    v.set(8, 0, 7, "spruce_slab[type=bottom]")
+    v.set(9, 0, 7, "spruce_slab[type=bottom]")
+    return v
+
+
+def ship_bow() -> Voxels:
+    """M28: the bow of a sailing ship, broken off amidships (14 x 10, 11 high): a planked hull with a rounded bilge that
+    narrows to the stem, a bowsprit, a forecastle deck, the stump of the foremast with a rag of sail, a hole in the side,
+    and in the open hold a cargo of clay pipe that plecos breed in (a spawning cave, its mouth at the broken end)."""
+    v = Voxels()
+    rnd = random.Random(2802)
+    plank = lambda: "spruce_planks" if rnd.random() > 0.3 else "dark_oak_planks"
+    L = 12  # hull x = 0 .. 11 (bow at x = 0), bowsprit in front of it
+    for x in range(L):
+        half = [1, 2, 3, 4][x] if x < 4 else 5  # half width at the rail: the bow narrows to the stem
+        z0, z1 = 5 - half, 4 + half
+        top = 8 + (1 if x < 3 else 0)  # the sheer rises to the bow
+        v.set(x, 0, 4, "stripped_dark_oak_log[axis=x]")  # the keel
+        v.set(x, 0, 5, "stripped_dark_oak_log[axis=x]")
+        if half >= 4:
+            # rounded bilge: bottom z0+2 .. z1-2 at y = 1, curving out to the full width at y = 3
+            for z in range(z0 + 2, z1 - 1):
+                v.set(x, 1, z, "dark_oak_planks")
+            v.set(x, 1, z0 + 1, "spruce_stairs[facing=south,half=top]")
+            v.set(x, 1, z1 - 1, "spruce_stairs[facing=north,half=top]")
+            v.set(x, 2, z0 + 1, plank())
+            v.set(x, 2, z1 - 1, plank())
+            v.set(x, 2, z0, "spruce_stairs[facing=south,half=top]")
+            v.set(x, 2, z1, "spruce_stairs[facing=north,half=top]")
+            ys = range(3, top)
+        else:
+            for z in range(z0 + 1, z1):
+                v.set(x, 1, z, "dark_oak_planks")
+            ys = range(1, top)
+        for y in ys:
+            v.set(x, y, z0, plank())
+            v.set(x, y, z1, plank())
+        v.set(x, top, z0, "stripped_spruce_log[axis=x]")  # the rail
+        v.set(x, top, z1, "stripped_spruce_log[axis=x]")
+        if x < 6:
+            for z in range(z0 + 1, z1):
+                v.set(x, 8, z, "spruce_slab[type=top]")  # forecastle deck
+    # stem and bowsprit
+    for y in range(1, 10):
+        v.set(0, y, 4, "stripped_dark_oak_log[axis=y]")
+        v.set(0, y, 5, "stripped_dark_oak_log[axis=y]")
+    v.set(-1, 9, 4, "stripped_spruce_log[axis=x]")
+    v.set(-2, 10, 4, "stripped_spruce_log[axis=x]")
+    v.set(-1, 10, 4, "stripped_spruce_log[axis=x]")
+    # foremast stump on the forecastle, a rag of sail on its yard
+    for y in range(9, 11):
+        v.set(3, y, 4, "stripped_spruce_log[axis=y]")
+    for z in range(2, 8):
+        v.set(3, 10, z, "stripped_spruce_log[axis=z]")
+    v.set(3, 9, 6, "white_wool")
+    v.set(4, 9, 6, "white_carpet")
+    # a hole in the side facing the player (z = 0): the clay pipe shows through
+    for x in (7, 8):
+        for y in (4, 5):
+            v.remove(x, y, 0)
+    v.set(6, 5, 0, "spruce_slab[type=top]")
+    v.set(9, 4, 0, "spruce_stairs[facing=west,half=bottom]")
+    # the broken end: splintered planks at x = 10, 11
+    for x in (10, 11):
+        for y in range(4, 9):
+            for z in (0, 9):
+                if rnd.random() < (0.45 if x == 11 else 0.2) * (y - 2) / 3:
+                    v.remove(x, y, z)
+    # cargo: a clay pipe along the hold, closed towards the bow, open at the broken end
+    _clay_tube(v, 5, 2, 2, 7, along="x", open_high=True)
+    v.set(6, 8, 7, "barrel[facing=up]")
+    return v
+
+
+def holey_rock() -> Voxels:
+    """M28: holey rock (Lochgestein), 7 x 6, 5 high: a pale lump of limestone (calcite, a little dripstone) full of holes
+    with two tunnels through it; it hardens the water like other limestone."""
+    v = Voxels()
+    rnd = random.Random(2803)
+    for x in range(7):
+        for y in range(5):
+            for z in range(6):
+                d = ((x - 3) / 3.6) ** 2 + (y / 5.2) ** 2 + ((z - 2.5) / 3.1) ** 2
+                if d <= 1.0 + rnd.uniform(-0.12, 0.05):
+                    v.set(x, y, z, "calcite" if rnd.random() > 0.15 else "dripstone_block")
+    for z in range(6):  # tunnel front to back
+        for y in (1, 2):
+            v.remove(2, y, z)
+            v.remove(3, y, z)
+    for x in range(7):  # and across
+        v.remove(x, 1, 3)
+    for (x, y, z) in list(v.blocks):
+        if rnd.random() < 0.18 and y > 0 and ((x + 1, y, z) not in v.blocks or (x, y + 1, z) not in v.blocks or (x, y, z - 1) not in v.blocks):
+            v.remove(x, y, z)  # pits in the surface
+    return v
+
+
+def slate_cave() -> Voxels:
+    """M28: a cave of stacked slate plates, 8 x 6, 5 high: two walls of layered plates under a wide roof plate, open to
+    the front, for catfish and plecos to hide."""
+    v = Voxels()
+    rnd = random.Random(2804)
+    plate = lambda: rnd.choice(["deepslate_tiles", "polished_deepslate", "cobbled_deepslate", "deepslate_bricks"])
+    for z in range(6):
+        for y in range(3):
+            for x in (0, 1, 6, 7):
+                if (x in (0, 7)) and y == 2 and z in (0, 5):
+                    continue
+                v.set(x, y, z, plate())
+    for x in range(2, 6):
+        v.set(x, 0, 5, plate())
+        v.set(x, 1, 5, plate())
+    for x in range(0, 8):
+        for z in range(0, 6):
+            if (x in (0, 7)) and z in (0, 5):
+                continue
+            v.set(x, 3, z, "deepslate_tile_slab[type=bottom]" if x in (0, 7) else plate())
+    for x in range(1, 6):
+        for z in range(1, 5):
+            v.set(x, 4, z, "polished_deepslate_slab[type=bottom]")
+    return v
+
+
+def seiryu_stone() -> Voxels:
+    """M28: Seiryu rocks, 8 x 6, 9 high: three grey, sharp-edged rocks (a tall one and two small ones) with white
+    calcite veins."""
+    v = Voxels()
+    rnd = random.Random(2805)
+    rocks = [(2.5, 2.5, 2.4, 9), (6.0, 1.5, 1.6, 5), (5.5, 4.5, 1.4, 3)]
+    for cx, cz, r, h in rocks:
+        lean = rnd.uniform(-0.15, 0.15)
+        for y in range(h):
+            rr = r * (1 - y / h) ** 0.7 + 0.35
+            ox = cx + lean * y
+            for x in range(int(ox - rr) - 1, int(ox + rr) + 2):
+                for z in range(int(cz - rr) - 1, int(cz + rr) + 2):
+                    # facetted: max-norm and diamond mixed give flat faces and sharp edges
+                    dx, dz = abs(x + 0.5 - ox), abs(z + 0.5 - cz)
+                    d = 0.55 * max(dx, dz) + 0.45 * (dx + dz) / 1.4
+                    if d <= rr and 0 <= x < 8 and 0 <= z < 6:
+                        vein = (x + 2 * y + z) % 6 == 0 and rnd.random() < 0.7
+                        v.set(x, y, z, "calcite" if vein else rnd.choice(["stone", "stone", "andesite", "tuff"]))
+    return v
+
+
+def dragon_stone() -> Voxels:
+    """M28: dragon stone (Ohko), 8 x 6, 6 high: clay-coloured, deeply wrinkled lumps with many holes, an arch to swim
+    through."""
+    v = Voxels()
+    rnd = random.Random(2806)
+    clay = lambda: rnd.choice(["terracotta", "terracotta", "brown_terracotta", "packed_mud", "light_gray_terracotta"])
+    for x in range(8):
+        for y in range(6):
+            for z in range(6):
+                d1 = ((x - 2) / 2.6) ** 2 + (y / 6.3) ** 2 + ((z - 2.5) / 2.9) ** 2
+                d2 = ((x - 5.8) / 2.3) ** 2 + (y / 4.4) ** 2 + ((z - 3) / 2.4) ** 2
+                if min(d1, d2) <= 1.0 + rnd.uniform(-0.15, 0.05):
+                    v.set(x, y, z, clay())
+    for z in range(6):  # the arch
+        for y in (0, 1):
+            v.remove(3, y, z)
+            v.remove(4, y, z)
+    for (x, y, z) in list(v.blocks):
+        exposed = sum((x + dx, y + dy, z + dz) not in v.blocks for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 0, -1)))
+        if exposed and rnd.random() < 0.28:
+            v.remove(x, y, z)  # the holes and wrinkles
+    return v
+
+
+def lava_rock() -> Voxels:
+    """M28: lava rock, 6 x 5, 5 high: porous red-brown and black rock with a small cave."""
+    v = Voxels()
+    rnd = random.Random(2807)
+    for x in range(6):
+        for y in range(5):
+            for z in range(5):
+                d = ((x - 2.5) / 3.1) ** 2 + (y / 5.0) ** 2 + ((z - 2) / 2.7) ** 2
+                if d <= 1.0 + rnd.uniform(-0.15, 0.05):
+                    v.set(x, y, z, rnd.choice(["blackstone", "red_terracotta", "red_terracotta", "brown_terracotta", "basalt[axis=y]"]))
+    for z in range(0, 4):
+        for x in (2, 3):
+            v.remove(x, 0, z)
+            v.remove(x, 1, z)
+    for (x, y, z) in list(v.blocks):
+        if y > 0 and rnd.random() < 0.15:
+            v.remove(x, y, z)  # pores
+    return v
+
+
+def _line(v: Voxels, a, b, state: str):
+    """Blocks along the straight line from a to b (fine steps, no gaps)."""
+    n = int(max(abs(b[i] - a[i]) for i in range(3)) * 3) + 1
+    for i in range(n + 1):
+        t = i / n
+        v.set(*(int(round(a[k] + (b[k] - a[k]) * t)) for k in range(3)), state)
+
+
+def mangrove_root() -> Voxels:
+    """M28: a mangrove root, 8 x 7, 7 high: a short trunk raised on arching prop roots, with room for fish underneath."""
+    v = Voxels()
+    top = (3.5, 4.0, 3.0)
+    for y in range(4, 7):
+        for x in (3, 4):
+            v.set(x, y, 3, "mangrove_log[axis=y]")
+    v.set(3, 6, 2, "mangrove_log[axis=y]")
+    for i, ang in enumerate((0.3, 1.5, 2.7, 3.9, 5.1)):
+        r = 3.6 if i % 2 else 3.2
+        prev = top
+        for s in range(1, 9):
+            t = s / 8
+            p = (3.5 + math.cos(ang) * r * t, 4.0 * (1 - t ** 1.6) + 0.2, 3.0 + math.sin(ang) * r * t * 0.9)
+            _line(v, prev, p, "mangrove_roots")
+            prev = p
+    # keep it inside 8 x 7
+    for (x, y, z) in list(v.blocks):
+        if not (0 <= x < 8 and 0 <= z < 7):
+            v.remove(x, y, z)
+    return v
+
+
+def spiderwood() -> Voxels:
+    """M28: spiderwood, 8 x 8, 10 high: a light root stock with fine branches that spread out and fork again and again."""
+    v = Voxels()
+    rnd = random.Random(2809)
+
+    def branch(p, ang, tilt, length, depth):
+        dx = math.cos(ang) * math.sin(tilt)
+        dz = math.sin(ang) * math.sin(tilt)
+        dy = math.cos(tilt)
+        q = (p[0] + dx * length, p[1] + dy * length, p[2] + dz * length)
+        _line(v, p, q, "stripped_oak_wood" if depth < 1 else "oak_wood" if depth == 1 else "stripped_oak_wood")
+        if depth >= 3:
+            return
+        for k in range(2):
+            branch(q, ang + (k - 0.5) * rnd.uniform(0.7, 1.3), min(1.25, tilt + rnd.uniform(-0.05, 0.3)), length * 0.7, depth + 1)
+
+    for x in (3, 4):
+        for z in (3, 4):
+            v.set(x, 0, z, "stripped_oak_wood")
+    for i in range(4):
+        branch((3.5, 0.6, 3.5), i * 1.57 + rnd.uniform(-0.4, 0.4), rnd.uniform(0.45, 0.8), 3.2, 0)
+    for (x, y, z) in list(v.blocks):
+        if not (0 <= x < 8 and 0 <= z < 8 and y < 10):
+            v.remove(x, y, z)
+    return v
+
+
+def bogwood_bridge() -> Voxels:
+    """M28: a bogwood bridge, 8 x 4, 5 high: a dark, gnarled root arching over the bottom, fish swim through below."""
+    v = Voxels()
+    for i in range(41):
+        x = i / 40 * 7
+        y = 3.6 * math.sin(math.pi * i / 40) ** 0.8
+        z = 1.5 + 0.6 * math.sin(i / 6)
+        for dz in (0, 1):
+            v.set(int(round(x)), int(round(y)), int(round(z)) + dz, "dark_oak_wood" if (i // 5) % 3 else "stripped_dark_oak_wood")
+    for x in (0, 1, 6, 7):
+        for z in (1, 2):
+            v.set(x, 0, z, "dark_oak_wood")  # thick feet
+    v.set(0, 1, 2, "dark_oak_wood")
+    v.set(7, 1, 1, "dark_oak_wood")
+    _line(v, (5, 3, 2), (6, 4, 0), "stripped_dark_oak_wood")  # a side twig
+    _line(v, (2, 3, 2), (1, 4, 3), "stripped_dark_oak_wood")
+    return v
+
+
+def coconut_cave() -> Voxels:
+    """M28: half a coconut shell lying on its rim, 6 x 6, 3 high, with an entrance at the front (a cave for small
+    fish such as dwarf cichlids)."""
+    v = Voxels()
+    for x in range(6):
+        for y in range(3):
+            for z in range(6):
+                d = ((x - 2.5) ** 2 + (y * 1.25) ** 2 + (z - 2.5) ** 2) ** 0.5
+                if 1.9 <= d <= 3.0:
+                    v.set(x, y, z, "brown_wool" if (x + y + z) % 4 == 0 else "brown_terracotta")
+    for x in (2, 3):
+        for y in (0, 1):
+            v.remove(x, y, 0)
+    v.set(1, 0, 0, "spruce_slab[type=bottom]")  # the broken rim
+    return v
+
+
+def clay_tubes() -> Voxels:
+    """M28: two clay tubes side by side, 13 x 9, 6 high, open to the front: each is a spawning cave for plecos."""
+    v = Voxels()
+    _clay_tube(v, 0, 0, 0, 9)
+    _clay_tube(v, 7, 0, 1, 7)
+    return v
+
+
+def shrimp_tubes() -> Voxels:
+    """M28: a stack of thin terracotta tubes for shrimp, 6 x 5, 6 high: young shrimp hide in them."""
+    v = Voxels()
+    colours = ["terracotta", "orange_terracotta", "white_terracotta"]
+    for i, (x0, y0) in enumerate(((0, 0), (3, 0), (1, 3))):
+        for z in range(5 if i != 2 else 4):
+            for u in range(3):
+                for w in range(3):
+                    if u == 1 and w == 1:
+                        continue
+                    v.set(x0 + u, y0 + w, z + (1 if i == 2 else 0), colours[i])
+    return v
+
+
+def ruin_column() -> Voxels:
+    """M28: a broken antique column, 7 x 4, 9 high: a plinth, a fluted shaft broken off at the top, a fallen drum and
+    its capital beside it, moss on the stones."""
+    v = Voxels()
+    for x in range(4):
+        for z in range(4):
+            v.set(x, 0, z, "polished_diorite")
+    for y in range(1, 9):
+        for x in (1, 2):
+            for z in (1, 2):
+                if y >= 7 and (x, z) != (1, 1) and not (y == 7 and (x, z) == (2, 1)):
+                    continue
+                v.set(x, y, z, "diorite" if (x + z + y) % 2 else "polished_diorite")
+    for x in (4, 5, 6):
+        for z in (1, 2):
+            v.set(x, 0, z, "polished_diorite" if x != 5 else "diorite")
+    v.set(5, 0, 3, "smooth_quartz_slab[type=bottom]")
+    v.set(6, 0, 3, "smooth_quartz_slab[type=bottom]")
+    v.set(0, 1, 0, "moss_carpet")
+    v.set(3, 1, 3, "moss_carpet")
+    v.set(5, 1, 1, "moss_carpet")
+    return v
+
+
+def diver_helmet() -> Voxels:
+    """M28: an old diving helmet on its breastplate, 7 x 7, 7 high, brass-coloured, with round side windows and an open
+    face window: small fish swim in and out."""
+    v = Voxels()
+    for x in range(7):
+        for z in range(7):
+            if ((x - 3) / 3.5) ** 2 + ((z - 3) / 3.0) ** 2 <= 1.0:
+                v.set(x, 0, z, "orange_terracotta")
+                if ((x - 3) / 3.5) ** 2 + ((z - 3) / 3.0) ** 2 > 0.45:
+                    v.set(x, 1, z, "orange_terracotta")
+    for x, z in ((1, 1), (5, 1), (1, 5), (5, 5)):
+        v.set(x, 1, z, "yellow_terracotta")  # the bolts
+    for x in range(7):
+        for y in range(2, 7):
+            for z in range(7):
+                d = ((x - 3) ** 2 + (y - 3.8) ** 2 + (z - 3) ** 2) ** 0.5
+                if 2.1 <= d <= 3.1:
+                    v.set(x, y, z, "orange_terracotta")
+    for x in (2, 3, 4):  # the face window: open
+        for y in (3, 4, 5):
+            v.remove(x, y, 0)
+            v.remove(x, y, 1)
+    for x in range(1, 6):  # the brass rim of the face window
+        for y in range(2, 7):
+            if x in (1, 5) or y in (2, 6):
+                if (x, y) in ((1, 2), (5, 2), (1, 6), (5, 6)):
+                    continue
+                v.set(x, y, 1, "yellow_terracotta")
+    for z in (3,):  # the side windows
+        v.set(0, 4, z, "light_gray_stained_glass")
+        v.set(6, 4, z, "light_gray_stained_glass")
+    v.set(3, 7, 3, "yellow_terracotta")  # the valve on top
+    v.set(3, 7, 4, "yellow_terracotta")
+    return v
+
+
+def treasure_chest() -> Voxels:
+    """M28: a treasure chest with its lid open, 6 x 6, 5 high, full of gold coins that spill out at the front; an air
+    stone hidden among the coins lets bubbles rise when an air pump drives it."""
+    v = Voxels()
+    for x in range(6):
+        for z in range(1, 5):
+            for y in range(3):
+                shell = x in (0, 5) or z in (1, 4) or y == 0
+                if shell:
+                    band = x in (0, 5) or (x in (1, 4) and z in (1, 4))
+                    v.set(x, y, z, "dark_oak_planks" if band else "spruce_planks")
+            if 0 < x < 5 and 1 < z < 4:
+                v.set(x, 1, z, "yellow_concrete")  # the coins inside
+    v.set(2, 2, 2, "yellow_concrete")
+    v.set(3, 2, 3, "yellow_concrete")
+    v.set(2, 2, 3, "bettacraft:air_stone")  # bubbles: open above, the lid stands at the back
+    v.set(3, 2, 2, "yellow_carpet")
+    v.set(2, 2, 1, "yellow_concrete")  # the lock
+    v.set(3, 2, 1, "yellow_concrete")
+    for x in range(6):  # the open lid, upright behind the chest
+        for y in (3, 4):
+            v.set(x, y, 5, "dark_oak_planks" if x in (0, 5) else "spruce_planks")
+    v.set(0, 3, 4, "spruce_slab[type=bottom]")
+    v.set(5, 3, 4, "spruce_slab[type=bottom]")
+    for x in range(2, 6):  # coins spilt in front of it
+        v.set(x, 0, 0, "yellow_carpet")
+    v.set(1, 0, 0, "yellow_concrete")
+    return v
+
+
+M28_DECOR = {
+    "rowing_boat": rowing_boat,
+    "ship_bow": ship_bow,
+    "holey_rock": holey_rock,
+    "slate_cave": slate_cave,
+    "seiryu_stone": seiryu_stone,
+    "dragon_stone": dragon_stone,
+    "lava_rock": lava_rock,
+    "mangrove_root": mangrove_root,
+    "spiderwood": spiderwood,
+    "bogwood_bridge": bogwood_bridge,
+    "coconut_cave": coconut_cave,
+    "clay_tubes": clay_tubes,
+    "shrimp_tubes": shrimp_tubes,
+    "ruin_column": ruin_column,
+    "diver_helmet": diver_helmet,
+    "treasure_chest": treasure_chest,
+}
+
+
 DECOR = {
     "castle": castle,
     # M21.5: the detailed versions; the old small ones stay as *_small (features.detailedDecor = false)
@@ -537,6 +1015,7 @@ DECOR = {
     "cave": cave,
     "spawning_cave": spawning_cave,
     "spawning_mop": spawning_mop,
+    **M28_DECOR,  # M28 part c
 }
 
 # ---------------------------------------------------------------- icons from the voxels
@@ -553,6 +1032,20 @@ COLORS = {
     "moss_carpet": "#5d7f30", "stone": "#7f7f7f", "pointed_dripstone": "#e8e2d0", "white_candle": "#f0f0e8", "black_concrete": "#101014",
     "smooth_quartz_slab": "#ece6dc", "stripped_dark_oak_log": "#6b5234", "spruce_trapdoor": "#6a4c2c", "white_carpet": "#e8e8e8", "spawning_cave": "#b0623a", "spawning_mop": "#3e9a3a",
 }
+
+
+# M28 part c
+COLORS.update({
+    "oak_planks": "#a8864f", "stripped_oak_log": "#b29257", "oak_stairs": "#a8864f", "dark_oak_planks": "#4a311a",
+    "calcite": "#dcdcd6", "dripstone_block": "#866b5c", "deepslate_tiles": "#37373a", "polished_deepslate": "#48484b",
+    "cobbled_deepslate": "#505055", "deepslate_bricks": "#46464a", "deepslate_tile_slab": "#37373a", "polished_deepslate_slab": "#48484b",
+    "terracotta": "#985e43", "brown_terracotta": "#4d3323", "packed_mud": "#8e6b53", "light_gray_terracotta": "#876a61",
+    "red_terracotta": "#8f3d2e", "mangrove_log": "#6b3c2a", "mangrove_roots": "#4a3b2a", "stripped_oak_wood": "#b29257",
+    "oak_wood": "#6d5532", "dark_oak_wood": "#3e2e1a", "stripped_dark_oak_wood": "#6b5234", "brown_wool": "#724728",
+    "orange_terracotta": "#a15325", "white_terracotta": "#d1b2a1", "yellow_terracotta": "#ba8523", "polished_diorite": "#c1c1c3",
+    "diorite": "#bcbcbc", "light_gray_stained_glass": "#9a9a9a", "yellow_concrete": "#f0af15", "yellow_carpet": "#f8c527",
+    "air_stone": "#3d6fa8", "white_wool": "#e4e4e4",
+})
 
 
 def _color(state: str) -> np.ndarray:
@@ -706,7 +1199,7 @@ def write_all() -> list:
     for name, f in DECOR.items():
         v = f()
         sx, sy, sz = v.size()
-        assert max(sx, sz) <= (14 if name in ("spawning_cave", "shipwreck", "dino_skull") else 8), f"{name}: footprint {sx}x{sz} too big"
+        assert max(sx, sz) <= (14 if name in ("spawning_cave", "shipwreck", "dino_skull", "rowing_boat", "ship_bow", "clay_tubes") else 8), f"{name}: footprint {sx}x{sz} too big"
         p = STRUCT_DIR / f"{name}.nbt"
         p.write_bytes(structure_nbt(v))
         out.append(p)

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:blackstone"
+    },
+    {
+      "item": "minecraft:blackstone"
+    },
+    {
+      "item": "minecraft:red_terracotta"
+    },
+    {
+      "item": "minecraft:magma_block"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_lava_rock"
+  }
+}

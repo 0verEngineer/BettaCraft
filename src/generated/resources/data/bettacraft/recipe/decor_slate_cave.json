@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:deepslate_tiles"
+    },
+    {
+      "item": "minecraft:deepslate_tiles"
+    },
+    {
+      "item": "minecraft:polished_deepslate"
+    },
+    {
+      "item": "minecraft:cobbled_deepslate"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_slate_cave"
+  }
+}

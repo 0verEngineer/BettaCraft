@@ -261,6 +261,8 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> PH_TEST_KIT = chem("ph_test_kit", org.overengineer.bettacraft.chem.ChemItem.Kind.PH_TEST, new Item.Properties().durability(50));
     public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> REMINERALISING_SALT = chem("remineralising_salt", org.overengineer.bettacraft.chem.ChemItem.Kind.REMINERALISER, new Item.Properties());
     public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> ALMOND_LEAF = chem("almond_leaf", org.overengineer.bettacraft.chem.ChemItem.Kind.ALMOND_LEAF, new Item.Properties());
+    /** M28: alder cones: placed on the floor (leaf litter) or put into a tank like the almond leaves, with fewer tannins. */
+    public static final DeferredItem<org.overengineer.bettacraft.chem.ChemItem> ALDER_CONE = chem("alder_cone", org.overengineer.bettacraft.chem.ChemItem.Kind.ALDER_CONE, new Item.Properties());
 
     // M25 part b: CO2 and reverse osmosis
     /** Yeast for the bio CO2 (brown mushroom and sugar in a bowl). */

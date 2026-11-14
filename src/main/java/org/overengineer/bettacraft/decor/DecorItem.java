@@ -106,6 +106,7 @@ public class DecorItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.bettacraft.decor.size", type.sizeX, type.sizeZ, type.sizeY).withStyle(ChatFormatting.GRAY));
+        if (type.hasHint()) tooltip.add(Component.translatable("tooltip.bettacraft." + type.itemId()).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.bettacraft.decor.usage").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

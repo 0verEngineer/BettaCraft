@@ -47,6 +47,8 @@ public final class InteriorEquipment {
      * volume. Absent in regions of earlier versions: they are counted by a rescan. Part d: floor blocks with active soil.
      */
     int floorBlocks, acidFloor, limeFloor, limeRocks, driftwood, activeSoil;
+    /** M28: almond leaves and alder cones on the floor, shelter blocks (clay and terracotta) for the young shrimp. */
+    int leafLitter, alderCones, shelter;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -69,6 +71,9 @@ public final class InteriorEquipment {
     public int limeRocks() { return limeRocks; }
     public int driftwood() { return driftwood; }
     public int activeSoil() { return activeSoil; }
+    public int leafLitter() { return leafLitter; }
+    public int alderCones() { return alderCones; }
+    public int shelter() { return shelter; }
 
     /** M25: a floor block's substrate changed ({@code null} = none): the soil / limestone counts follow. */
     public void onSubstrate(@javax.annotation.Nullable BlockState old, @javax.annotation.Nullable BlockState neu) {
@@ -149,6 +154,9 @@ public final class InteriorEquipment {
     private void remove(long key, BlockState s) {
         if (s.is(ModTags.LIMESTONE)) limeRocks = Math.max(0, limeRocks - 1); // M25
         else if (s.is(ModTags.DRIFTWOOD)) driftwood = Math.max(0, driftwood - 1);
+        if (s.is(ModBlocks.ALMOND_LEAF_LITTER.get())) leafLitter = Math.max(0, leafLitter - 1); // M28
+        else if (s.is(ModBlocks.ALDER_CONES.get())) alderCones = Math.max(0, alderCones - 1);
+        if (s.is(ModTags.SHRIMP_SHELTER)) shelter = Math.max(0, shelter - 1);
         if (s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER)) {
             power.remove(key);
             intakeSponges.remove(key);
@@ -174,6 +182,9 @@ public final class InteriorEquipment {
     private void add(long key, BlockState s) {
         if (s.is(ModTags.LIMESTONE)) limeRocks++; // M25
         else if (s.is(ModTags.DRIFTWOOD)) driftwood++;
+        if (s.is(ModBlocks.ALMOND_LEAF_LITTER.get())) leafLitter++; // M28
+        else if (s.is(ModBlocks.ALDER_CONES.get())) alderCones++;
+        if (s.is(ModTags.SHRIMP_SHELTER)) shelter++;
         boolean device = s.is(ModBlocks.AIR_STONE.get()) || s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER)
                 && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
         if (device) {
@@ -235,6 +246,7 @@ public final class InteriorEquipment {
         spawningVersion++;
         substrate = 0;
         floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = activeSoil = 0;
+        leafLitter = alderCones = shelter = 0;
         needsScan = false;
         if (!r.built()) return;
         int x0 = r.originX(), z0 = r.originZ();
@@ -304,6 +316,7 @@ public final class InteriorEquipment {
         t.putLongArray("floating", floating.toLongArray());
         t.putInt("substrate", substrate);
         t.putIntArray("chem", new int[]{floorBlocks, acidFloor, limeFloor, limeRocks, driftwood, activeSoil}); // M25 (part d: active soil)
+        t.putIntArray("litter", new int[]{leafLitter, alderCones, shelter}); // M28
         t.putLongArray("caves", caveBlocks.toLongArray()); // M19
         t.putLongArray("mops", mopBlocks.toLongArray());
         t.putLongArray("pumps", pumps.toLongArray()); // M20
@@ -382,6 +395,15 @@ public final class InteriorEquipment {
             activeSoil = chem.length >= 6 ? chem[5] : 0; // part d: there was no active soil before
         } else {
             floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = activeSoil = 0;
+            needsScan = true;
+        }
+        int[] litter = t.getIntArray("litter"); // M28: regions of earlier versions count the litter and shelter once
+        if (litter.length >= 3) {
+            leafLitter = litter[0];
+            alderCones = litter[1];
+            shelter = litter[2];
+        } else {
+            leafLitter = alderCones = shelter = 0;
             needsScan = true;
         }
     }

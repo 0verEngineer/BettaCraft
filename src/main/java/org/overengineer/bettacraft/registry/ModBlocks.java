@@ -281,6 +281,17 @@ public final class ModBlocks {
             () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BLACK)
                     .strength(0.6F).sound(SoundType.GRAVEL)));
 
+    /** M28: Indian almond leaves lying on the floor (placed with the almond leaf item; tannins, food for the shrimp). */
+    public static final DeferredBlock<org.overengineer.bettacraft.decor.LitterBlock> ALMOND_LEAF_LITTER = BLOCKS.register("almond_leaf_litter",
+            () -> new org.overengineer.bettacraft.decor.LitterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
+                    .instabreak().noCollission().noOcclusion().sound(SoundType.AZALEA_LEAVES).pushReaction(PushReaction.DESTROY),
+                    ModItems.ALMOND_LEAF, Block.box(0, 0, 0, 16, 1, 16)));
+    /** M28: alder cones lying on the floor (placed with the alder cone item; a few tannins, food for the shrimp). */
+    public static final DeferredBlock<org.overengineer.bettacraft.decor.LitterBlock> ALDER_CONES = BLOCKS.register("alder_cones",
+            () -> new org.overengineer.bettacraft.decor.LitterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
+                    .instabreak().noCollission().noOcclusion().sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY),
+                    ModItems.ALDER_CONE, Block.box(3, 0, 3, 13, 9, 13)));
+
     /** M26 part a: tubifex worms in mud and stale water. */
     public static final DeferredBlock<org.overengineer.bettacraft.food.LiveCultureBlock> TUBIFEX_DISH = BLOCKS.register("tubifex_dish",
             () -> new org.overengineer.bettacraft.food.LiveCultureBlock(org.overengineer.bettacraft.food.LiveCultureBlock.Kind.TUBIFEX, BlockBehaviour.Properties.of()

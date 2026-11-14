@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "minecraft:boats"
+    },
+    {
+      "tag": "minecraft:planks"
+    },
+    {
+      "item": "minecraft:moss_carpet"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_rowing_boat"
+  }
+}

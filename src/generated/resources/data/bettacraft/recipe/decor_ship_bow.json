@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "bettacraft:spawning_cave"
+    },
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    },
+    "W": {
+      "item": "minecraft:white_wool"
+    }
+  },
+  "pattern": [
+    " SW",
+    "PCP",
+    "LPL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_ship_bow"
+  }
+}

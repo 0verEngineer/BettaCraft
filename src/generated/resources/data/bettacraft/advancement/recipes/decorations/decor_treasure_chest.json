@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_air_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:air_stone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:decor_treasure_chest"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_air_stone"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:decor_treasure_chest"
+    ]
+  }
+}

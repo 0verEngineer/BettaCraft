@@ -319,6 +319,21 @@ public final class WaterChemistry {
         return (float) Math.min(1, tannin + leaves * perLeaf * 1000.0 / waterMb);
     }
 
+    /** M28: share of a leaf's tannins that a leaf lying on the floor keeps in the water (it leaches slowly); an alder cone a third of it. */
+    public static final double LITTER_SHARE = 0.5;
+    /** M28: tannins of an alder cone against an almond leaf. */
+    public static final double CONE_TANNIN = 1.0 / 3.0;
+
+    /**
+     * M28: tannins per day that leaves and alder cones lying in the tank give off: against the fading (half-life
+     * {@code halfLifeDays}) the water settles at {@link #LITTER_SHARE} of what as many leaves put into it would give.
+     */
+    public static double litterTanninPerDay(int leaves, int cones, long waterMb, double perLeaf, double halfLifeDays) {
+        if (waterMb <= 0 || halfLifeDays <= 0 || leaves + cones <= 0) return 0;
+        double steady = LITTER_SHARE * (leaves + cones * CONE_TANNIN) * perLeaf * 1000.0 / waterMb;
+        return Math.min(1.0, steady) * Math.log(2) / halfLifeDays;
+    }
+
     /** Tannins fade with a half-life of {@code halfLifeDays}. */
     public static float fadeTannin(float tannin, double days, double halfLifeDays) {
         if (tannin <= 0 || halfLifeDays <= 0) return tannin;

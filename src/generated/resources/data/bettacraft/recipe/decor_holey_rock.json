@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:dripstone_block"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_holey_rock"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/carpet",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "bettacraft:block/almond_leaf_litter",
+    "wool": "bettacraft:block/almond_leaf_litter"
+  }
+}

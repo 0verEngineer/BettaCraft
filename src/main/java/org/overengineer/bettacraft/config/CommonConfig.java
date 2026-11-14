@@ -67,6 +67,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_FOOD_VARIETY;
     public static final ModConfigSpec.BooleanValue FEATURE_MONITORS;
     public static final ModConfigSpec.BooleanValue FEATURE_MARIMO_ROLLING;
+    public static final ModConfigSpec.BooleanValue FEATURE_DECOR_EFFECTS;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -207,6 +208,8 @@ public final class CommonConfig {
         // M28
         FEATURE_MARIMO_ROLLING = b.comment("Marimo balls roll slowly over the tank floor with the current of filters and outlets (off: they stay where they",
                 "were put)").define("marimoRolling", true);
+        FEATURE_DECOR_EFFECTS = b.comment("Almond leaves and alder cones on the floor of a tank interior give off tannins (lower the pH a little) and feed",
+                "the shrimp; clay and terracotta (tubes, caves, dragon stone) hide young shrimp (off: they are only decoration)").define("decorEffects", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -324,6 +327,7 @@ public final class CommonConfig {
     public static boolean monitors() { return getOr(FEATURE_MONITORS, true); }
     // M28
     public static boolean marimoRolling() { return getOr(FEATURE_MARIMO_ROLLING, true); }
+    public static boolean decorEffects() { return getOr(FEATURE_DECOR_EFFECTS, true); }
 
     private CommonConfig() {}
 }

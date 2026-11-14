@@ -30,10 +30,14 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
 /**
  * M25: the water chemistry items used on a tank: the TDS meter (measures, never wears out), the pH drop test (measures,
  * used up after its tests), remineralising salt (raises the TDS; sneaking: up to {@link TankChemistry#REMINERALISE_TARGET})
- * and almond leaves (tannins: they lower the pH a little and fade).
+ * and almond leaves (tannins: they lower the pH a little and fade). M28: alder cones (the same with a third of the
+ * tannins); both are also laid on the floor as leaf litter ({@link org.overengineer.bettacraft.decor.LitterBlock}).
  */
 public class ChemItem extends Item {
-    public enum Kind { TDS_METER, PH_TEST, REMINERALISER, ALMOND_LEAF }
+    public enum Kind { TDS_METER, PH_TEST, REMINERALISER, ALMOND_LEAF, ALDER_CONE }
+
+    /** M28: tannins of an alder cone against an almond leaf. */
+    public static final double CONE_TANNIN = WaterChemistry.CONE_TANNIN;
 
     private final Kind kind;
 
@@ -49,8 +53,32 @@ public class ChemItem extends Item {
     /** Sneaking skips the tank's own interaction: the tank is handled here then. */
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
-        if (ctx.getPlayer() == null || !(ctx.getLevel().getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock)) return InteractionResult.PASS;
+        if (ctx.getPlayer() == null || !(ctx.getLevel().getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock)) {
+            return kind == Kind.ALMOND_LEAF || kind == Kind.ALDER_CONE ? placeLitter(ctx) : InteractionResult.PASS;
+        }
         return useOnTank(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer(), ctx.getHand()).result();
+    }
+
+    /** M28: lays the leaf or cone on the floor as leaf litter (in a tank interior: with the right to build there). */
+    private InteractionResult placeLitter(UseOnContext ctx) {
+        Level level = ctx.getLevel();
+        net.minecraft.world.item.context.BlockPlaceContext place = new net.minecraft.world.item.context.BlockPlaceContext(ctx);
+        BlockPos pos = place.getClickedPos();
+        net.minecraft.world.level.block.state.BlockState state = (kind == Kind.ALMOND_LEAF
+                ? org.overengineer.bettacraft.registry.ModBlocks.ALMOND_LEAF_LITTER : org.overengineer.bettacraft.registry.ModBlocks.ALDER_CONES).get().defaultBlockState();
+        if (!place.canPlace() || !state.canSurvive(level, pos)) return InteractionResult.PASS;
+        Player player = ctx.getPlayer();
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level) && player != null
+                && !org.overengineer.bettacraft.tank.interior.InteriorManager.canBuild(player, pos)) {
+            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            return InteractionResult.FAIL;
+        }
+        if (player != null && !level.mayInteract(player, pos)) return InteractionResult.FAIL;
+        level.setBlock(pos, state, net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.playSound(null, pos, kind == Kind.ALMOND_LEAF ? SoundEvents.AZALEA_LEAVES_PLACE : SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.7F, 1.1F);
+        if (player == null || !player.getAbilities().instabuild) ctx.getItemInHand().shrink(1);
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -85,7 +113,7 @@ public class ChemItem extends Item {
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.5F, 1.4F);
                 if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
-            case REMINERALISER, ALMOND_LEAF -> {
+            case REMINERALISER, ALMOND_LEAF, ALDER_CONE -> {
                 if (!TankInhabitants.canModify(player, t)) {
                     player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
                     return ItemInteractionResult.CONSUME;
@@ -122,7 +150,8 @@ public class ChemItem extends Item {
 
     private static void addLeaf(ItemStack stack, ServerLevel level, BlockPos pos, Player player, TankBlockEntity c) {
         TankData t = c.getTank();
-        double per = ServerConfig.getOr(ServerConfig.CHEM_LEAF_TANNIN, 1.0);
+        double per = ServerConfig.getOr(ServerConfig.CHEM_LEAF_TANNIN, 1.0)
+                * (stack.getItem() instanceof ChemItem ci && ci.kind == Kind.ALDER_CONE ? CONE_TANNIN : 1.0);
         t.setTannin(WaterChemistry.addLeaves(t.tannin(), t.waterMb(), 1, per));
         if (!player.getAbilities().instabuild) stack.shrink(1);
         level.playSound(null, pos, SoundEvents.AZALEA_LEAVES_PLACE, SoundSource.BLOCKS, 0.7F, 1.0F);

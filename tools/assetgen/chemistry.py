@@ -97,6 +97,28 @@ LEAF = [
 LEAF_P = {"o": "#3a2412", "b": "#8a5426", "v": "#c88a48"}
 
 
+# M28: alder cones (two dark woody cones on a twig); the same art is the texture of the placed cones (cross model)
+CONE = [
+    "................",
+    "...........kk...",
+    "..........kTk...",
+    ".........kTk....",
+    "...kkk..kTk.kk..",
+    "..kHsHk.kTkkTk..",
+    "..kLHLkkTkkTk...",
+    "..kHsMk.kTTk....",
+    "..kLHLk..kTkkk..",
+    "..kHsMk..kTkHsk.",
+    "...kLMk..kTkLHk.",
+    "....kk...kTkHsk.",
+    ".........kTkLMk.",
+    ".........kTk.k..",
+    "..........k.....",
+    "................",
+]
+CONE_P = {"k": "#1e120a", "H": "#7a4e2e", "L": "#5c3820", "M": "#432812", "s": "#a3764c", "T": "#6a5438"}
+
+
 def active_soil():
     """Active soil (part d): round dark brown-black clay granules with lighter rims and dark gaps, seeded and tileable."""
     rng = np.random.default_rng(2501)
@@ -131,6 +153,10 @@ def write_all():
     }
     out = [save_png(img, ITEM_TEX / f"{name}.png") for name, img in icons.items()]
     out.append(save_png(active_soil(), BLOCK_TEX / "active_soil.png"))
+    # M28: alder cone item, the leaf litter and the placed cones (block textures from the same art)
+    out.append(save_png(grid(CONE, CONE_P), ITEM_TEX / "alder_cone.png"))
+    out.append(save_png(grid(CONE, CONE_P), BLOCK_TEX / "alder_cones.png"))
+    out.append(save_png(grid(LEAF, LEAF_P), BLOCK_TEX / "almond_leaf_litter.png"))
     return out
 
 

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_spawning_cave": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:spawning_cave"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:decor_clay_tubes"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_spawning_cave"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:decor_clay_tubes"
+    ]
+  }
+}

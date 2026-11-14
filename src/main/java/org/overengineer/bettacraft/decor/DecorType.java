@@ -24,7 +24,33 @@ public enum DecorType {
     /** M19: a clay tube for the plecos to breed in (blocks {@code bettacraft:spawning_cave}). */
     SPAWNING_CAVE(12, 6, 6),
     /** M19: green wool strands on a stone, for the egg scatterers (blocks {@code bettacraft:spawning_mop}). */
-    SPAWNING_MOP(5, 10, 5);
+    SPAWNING_MOP(5, 10, 5),
+    // M28 part c (appended: the item ids come from the names, the order only sorts them)
+    /** A rowing boat keel up, a low cave under it for catfish. */
+    ROWING_BOAT(10, 5, 8),
+    /** The bow of a sailing ship; a clay pipe in its hold is a spawning cave for plecos. */
+    SHIP_BOW(14, 11, 10),
+    /** Holey limestone (calcite, dripstone): hardens the water like other limestone. */
+    HOLEY_ROCK(7, 5, 6),
+    SLATE_CAVE(8, 5, 6),
+    /** Grey rocks with calcite veins (they harden the water a little). */
+    SEIRYU_STONE(8, 9, 6),
+    /** Ohko: terracotta (shelter for young shrimp). */
+    DRAGON_STONE(8, 6, 6),
+    LAVA_ROCK(6, 5, 5),
+    /** Roots of wood (logs and mangrove roots lower the pH like driftwood). */
+    MANGROVE_ROOT(7, 7, 7),
+    SPIDERWOOD(8, 9, 8),
+    BOGWOOD_BRIDGE(8, 5, 4),
+    COCONUT_CAVE(6, 3, 6),
+    /** Two clay tubes: each a spawning cave for plecos. */
+    CLAY_TUBES(13, 6, 9),
+    /** Thin terracotta tubes: shelter for young shrimp. */
+    SHRIMP_TUBES(6, 6, 5),
+    RUIN_COLUMN(7, 9, 4),
+    DIVER_HELMET(7, 8, 7),
+    /** With an air stone among its coins: bubbles when an air pump drives it. */
+    TREASURE_CHEST(6, 5, 6);
 
     public final int sizeX, sizeY, sizeZ;
 
@@ -41,6 +67,11 @@ public enum DecorType {
     /** Item id: {@code bettacraft:decor_<name>}. */
     public String itemId() {
         return "decor_" + id();
+    }
+
+    /** M28: the new decorations have a line of their own in the tooltip (what they do in a tank). */
+    public boolean hasHint() {
+        return ordinal() >= ROWING_BOAT.ordinal();
     }
 
     public ResourceLocation structure() {

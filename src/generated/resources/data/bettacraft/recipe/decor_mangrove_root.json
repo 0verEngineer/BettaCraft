@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_log"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_mangrove_root"
+  }
+}

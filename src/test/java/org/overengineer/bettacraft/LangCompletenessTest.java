@@ -41,7 +41,7 @@ class LangCompletenessTest {
             "color.", "lb.bettacraft.pattern.", "lb.bettacraft.body.", "lb.bettacraft.locus.", "lb.bettacraft.tail_", "critter.bettacraft.look.");
     /** Values that are the same word in German (names, Latin genera, loan words used by German aquarists). */
     private static final Set<String> SAME_IN_GERMAN = Set.of(
-            "advancements.bettacraft.root.title", "monitor.bettacraft.alarm", "monitor.bettacraft.device.co2", "monitor.bettacraft.redstone",
+            "advancements.bettacraft.root.title", "item.bettacraft.decor_spiderwood", "monitor.bettacraft.alarm", "monitor.bettacraft.device.co2", "monitor.bettacraft.redstone",
             "monitor.bettacraft.state.alarm", "monitor.bettacraft.tile.alarm", "monitor.bettacraft.value.magnesium", "itemGroup.bettacraft", "block.bettacraft.acropora", "item.bettacraft.acropora",
             "block.bettacraft.lily_pipe", "block.bettacraft.lobophyllia", "item.bettacraft.lobophyllia", "block.bettacraft.monte_carlo",
             "item.bettacraft.monte_carlo", "block.bettacraft.vallisneria", "item.bettacraft.vallisneria", "item.bettacraft.mulm",

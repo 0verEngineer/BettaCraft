@@ -17,11 +17,11 @@ final class LangM25 {
         a.accept("tooltip.bettacraft.tds_meter", "Right-click a tank: TDS (dissolved minerals) and hardness");
         a.accept("tooltip.bettacraft.ph_test", "Right-click a tank: pH and where it is drifting");
         a.accept("tooltip.bettacraft.remineraliser", "Right-click a tank: raises the TDS (sneak: up to 150 ppm)");
-        a.accept("tooltip.bettacraft.almond_leaf", "Right-click a tank: tannins lower the pH a little and fade");
+        a.accept("tooltip.bettacraft.almond_leaf", "Right-click a tank: tannins lower the pH a little and fade; or lay it on the floor");
         a.accept("info.bettacraft.tds_meter", "Measures the TDS (total dissolved solids, ppm) of a tank and shows the hardness: soft, medium hard or hard.\nNormal water has about 250 ppm, reverse osmosis water 0. Food and waste raise it, water changes bring it back.\nNever wears out.");
         a.accept("info.bettacraft.ph_test_kit", "Measures the pH of a tank (5 to 9) and shows where it is drifting.\nSoil lowers the pH, limestone raises it; peat, almond leaves, driftwood and CO2 lower it.\nEnough for 50 tests.");
         a.accept("info.bettacraft.remineralising_salt", "Raises the TDS of a tank: one portion adds 400 ppm to a bucket of water (config).\nSneaking adds as much as brings the tank to 150 ppm, the middle of the range of soft-water shrimp.\nNot for salt water.");
-        a.accept("info.bettacraft.almond_leaf", "Dried catappa leaf: its tannins lower the pH a little (blackwater) and fade within about a week.\nOne leaf per water block colours the water fully.\nDry jungle leaves in a smoker, furnace or on a campfire.");
+        a.accept("info.bettacraft.almond_leaf", "Dried catappa leaf: its tannins lower the pH a little (blackwater) and fade within about a week.\nOne leaf per water block colours the water fully.\nLaid on the floor of a tank interior it keeps giving off tannins (about half as many) and the shrimp graze on it.\nDry jungle leaves in a smoker, furnace or on a campfire.");
         a.accept("message.bettacraft.chem.off", "Water chemistry is switched off (features.waterChemistry)");
         a.accept("message.bettacraft.chem.salty", "Salt water does not need remineralising salt");
         a.accept("message.bettacraft.chem.hard_enough", "Already %s ppm: hard enough");

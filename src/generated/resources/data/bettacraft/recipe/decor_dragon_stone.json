@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:terracotta"
+    },
+    {
+      "item": "minecraft:terracotta"
+    },
+    {
+      "item": "minecraft:brown_terracotta"
+    },
+    {
+      "item": "minecraft:packed_mud"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_dragon_stone"
+  }
+}

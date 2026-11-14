@@ -153,7 +153,22 @@ public final class TankCritters {
             }
         }
         h += 0.1 * Math.min(1.0, org.overengineer.bettacraft.tank.plants.TankPlants.coverage(t));
+        // M28: tubes and holes of clay and terracotta, leaf litter
+        if (r != null && org.overengineer.bettacraft.config.CommonConfig.decorEffects()) {
+            var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+            h += shelterHiding(eq.shelter(), eq.leafLitter() + eq.alderCones());
+        }
         return Math.min(0.9, h);
+    }
+
+    /** M28: hiding of the young shrimp in clay and terracotta (full from 40 blocks: +0.15) and in leaf litter (full from 8: +0.05). */
+    public static double shelterHiding(int shelterBlocks, int litter) {
+        return 0.15 * Math.min(1.0, Math.max(0, shelterBlocks) / 40.0) + 0.05 * Math.min(1.0, Math.max(0, litter) / 8.0);
+    }
+
+    /** M28: food per day the shrimp graze from leaves (0.05 each) and alder cones (0.02 each) lying in the tank, at most 1. */
+    public static double litterFood(int leaves, int cones) {
+        return Math.min(1.0, 0.05 * Math.max(0, leaves) + 0.02 * Math.max(0, cones));
     }
 
     /** Food the tank grows per day for the small animals: biofilm per water block, plants (interior and floating). */
@@ -162,6 +177,12 @@ public final class TankCritters {
         double f = ServerConfig.getOr(ServerConfig.CRITTERS_BIOFILM, 0.03) * t.waterBlocks();
         f += org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t) * t.waterBlocks();
         f += 0.02 * t.plants().size();
+        // M28: the shrimp graze the biofilm on leaves and alder cones
+        InteriorRegion r = org.overengineer.bettacraft.config.CommonConfig.decorEffects() ? region(level, t) : null;
+        if (r != null) {
+            var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+            f += litterFood(eq.leafLitter(), eq.alderCones());
+        }
         return f;
     }
 

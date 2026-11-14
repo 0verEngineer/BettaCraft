@@ -1334,7 +1334,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             }
             i++;
         }
-        y += 20;
+        y += (i + 10) / 11 * 18 + 2; // M28: three rows of decorations
         line(g, Component.translatable("gui.bettacraft.interior.hint_enter").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
         y += 10;
         line(g, Component.translatable("gui.bettacraft.interior.hint_substrate").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);

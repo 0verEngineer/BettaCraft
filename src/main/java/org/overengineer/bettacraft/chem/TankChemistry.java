@@ -107,8 +107,22 @@ public final class TankChemistry {
         if (!enabled() || days <= 0 || t.waterMb() <= 0) return;
         Drivers d = drivers(level, c);
         float tds = t.tds(), ph = t.ph(), tannin = t.tannin();
+        // M28: leaves and alder cones on the floor give off tannins
+        double litter = litterPerDay(level, c);
+        if (litter > 0) t.setTannin((float) Math.min(1.0, t.tannin() + litter * days));
         step(t, d, tdsPerDay(level, c, d), days);
         if (Math.abs(tds - t.tds()) > 1e-4 || Math.abs(ph - t.ph()) > 1e-5 || tannin != t.tannin()) c.setChanged();
+    }
+
+    /** M28: tannins per day of the leaf litter in the interior of this tank ({@code features.decorEffects}). */
+    public static double litterPerDay(ServerLevel level, TankBlockEntity c) {
+        if (!CommonConfig.decorEffects()) return 0;
+        TankData t = c.getTank();
+        InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
+        if (r == null || !r.built()) return 0;
+        InteriorEquipment eq = InteriorManager.equipment(level.getServer(), r);
+        return WaterChemistry.litterTanninPerDay(eq.leafLitter(), eq.alderCones(), t.waterMb(), ServerConfig.getOr(ServerConfig.CHEM_LEAF_TANNIN, 1.0),
+                ServerConfig.getOr(ServerConfig.CHEM_LEAF_HALF_LIFE, 7.0));
     }
 
     /** Pure step of the values of {@code t} (also for the GameTests). */

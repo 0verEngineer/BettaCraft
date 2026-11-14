@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "bettacraft:block/alder_cones"
+      },
+      {
+        "model": "bettacraft:block/alder_cones",
+        "y": 90
+      }
+    ]
+  }
+}

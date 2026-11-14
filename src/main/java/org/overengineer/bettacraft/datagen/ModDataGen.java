@@ -324,6 +324,7 @@ public final class ModDataGen {
             DataGenM25c.blockStates(this); // M25 part c
             DataGenM26.blockStates(this); // M26 part a
             DataGenM27.blockStates(this); // M27
+            DataGenM28.blockStates(this); // M28 part c
             simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
@@ -598,6 +599,7 @@ public final class ModDataGen {
             DataGenM25c.itemModels(this);
             DataGenM26.itemModels(this); // M26 part a
             DataGenM27.itemModels(this); // M27
+            DataGenM28.itemModels(this); // M28 part c
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -1001,6 +1003,7 @@ public final class ModDataGen {
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM26.recipes(output, hasIt(ModItems.TANK.get())); // M26 part a
             DataGenM27.recipes(output, hasIt(ModItems.TANK.get())); // M27
+            DataGenM28.recipes(output, hasIt(ModItems.TANK.get())); // M28 part c
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1159,6 +1162,8 @@ public final class ModDataGen {
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
+            dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
+            dropOther(ModBlocks.ALDER_CONES.get(), ModItems.ALDER_CONE.get());
             dropSelf(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
@@ -1195,6 +1200,7 @@ public final class ModDataGen {
                         l.addAll(DataGenM25c.blocks());
                         l.addAll(DataGenM26.blocks()); // M26 part a
                         l.addAll(DataGenM27.blocks()); // M27
+                        l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
                         return l;
                     }));
@@ -1265,6 +1271,7 @@ public final class ModDataGen {
             DataGenM25c.blockTags(this::tag);
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM27.blockTags(this::tag); // M27
+            DataGenM28.blockTags(this::tag); // M28 part c
             tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             tag(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
