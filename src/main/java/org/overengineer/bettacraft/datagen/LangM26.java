@@ -36,6 +36,7 @@ final class LangM26 {
         a.accept("message.bettacraft.live_culture.poor_harvest", "The water was stale: these worms are of poor quality");
         a.accept("message.bettacraft.live_food.daphnia_in_bottle", "A few daphnia came up with the water");
         a.accept("log.bettacraft.live_food_pumped", "Live food pump: %s portions of %s");
+        a.accept("log.bettacraft.live_food_pumped_one", "Live food pump: %s portion of %s");
 
         a.accept("gui.bettacraft.live_food_pump.doses", "Doses per day");
         a.accept("gui.bettacraft.live_food_pump.portions", "Portions per dose");
@@ -45,6 +46,7 @@ final class LangM26 {
         a.accept("gui.bettacraft.live_food_pump.reach", "Food next to it: %s · tanks reached: %s");
         a.accept("gui.bettacraft.live_food_pump.idle", "Waiting for the next dose");
         a.accept("gui.bettacraft.live_food_pump.pumped", "Pumped %s portions");
+        a.accept("gui.bettacraft.live_food_pump.pumped_one", "Pumped %s portion");
         a.accept("gui.bettacraft.live_food_pump.no_source", "No breeder next to it");
         a.accept("gui.bettacraft.live_food_pump.no_food", "The breeder has no food ready");
         a.accept("gui.bettacraft.live_food_pump.no_target", "No tank reached (pipes or a tank next to it)");
@@ -54,6 +56,7 @@ final class LangM26 {
         a.accept("gui.bettacraft.live_food_pump.off", "The live food pump is switched off (features.liveFoodPump)");
         a.accept("gui.bettacraft.live_food_pump.paused", "Paused by a redstone signal");
         a.accept("gui.bettacraft.live_food_pump.busy", "Pumped %s portions, the pipes are at their limit: the rest follows");
+        a.accept("gui.bettacraft.live_food_pump.busy_one", "Pumped %s portion, the pipes are at their limit: the rest follows");
 
         a.accept("info.bettacraft.tubifex", "Tubifex worms: live food with a strong conditioning value; a breeding pair fed with them stays in the mood twice as long.\nMining mud in a swamp sometimes drops a few: put them into a tubifex dish to start a culture.\nWorms from a stale dish are of poor quality and may make the fish sick.");
         a.accept("info.bettacraft.daphnia", "Daphnia (water fleas): live food for bettas, tankmates, frogs and seahorses.\nA bottle of swamp water sometimes brings up a few: put them into a daphnia barrel to start a culture.");

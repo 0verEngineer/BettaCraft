@@ -321,7 +321,7 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
     /** Status line of the window. */
     public static Component statusText(int status, int pumped) {
         return switch (status) {
-            case PUMPED -> Component.translatable("gui.bettacraft.live_food_pump.pumped", pumped);
+            case PUMPED -> Component.translatable(pumped == 1 ? "gui.bettacraft.live_food_pump.pumped_one" : "gui.bettacraft.live_food_pump.pumped", pumped);
             case NO_SOURCE -> Component.translatable("gui.bettacraft.live_food_pump.no_source");
             case NO_FOOD -> Component.translatable("gui.bettacraft.live_food_pump.no_food");
             case NO_TARGET -> Component.translatable("gui.bettacraft.live_food_pump.no_target");
@@ -330,7 +330,7 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
             case BOTTLES_FULL -> Component.translatable("gui.bettacraft.live_food_pump.bottles_full");
             case OFF -> Component.translatable("gui.bettacraft.live_food_pump.off");
             case PAUSED -> Component.translatable("gui.bettacraft.live_food_pump.paused");
-            case BUSY -> Component.translatable("gui.bettacraft.live_food_pump.busy", pumped);
+            case BUSY -> Component.translatable(pumped == 1 ? "gui.bettacraft.live_food_pump.busy_one" : "gui.bettacraft.live_food_pump.busy", pumped);
             default -> Component.translatable("gui.bettacraft.live_food_pump.idle");
         };
     }

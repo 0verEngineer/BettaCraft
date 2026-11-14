@@ -105,7 +105,7 @@ public final class LiveFood {
         if (action.execute()) {
             int used = TankCare.feed(level, c, food, portions);
             if (used < portions) org.overengineer.bettacraft.critters.TankCritters.addFood(c.getTank(), portions - used);
-            TankCare.log(level, c, "log.bettacraft.live_food_pumped", String.valueOf(portions), "@" + food.getDescriptionId());
+            TankCare.log(level, c, portions == 1 ? "log.bettacraft.live_food_pumped_one" : "log.bettacraft.live_food_pumped", String.valueOf(portions), "@" + food.getDescriptionId());
             c.setChanged();
         }
         return portions * PORTION_MB;
