@@ -60,12 +60,27 @@ public final class DevBiomeMods {
             if (Wildlife.water(b) != w.water()) out.add(w.id() + ": spawn water " + Wildlife.water(b) + ", want " + w.water());
             boolean corals = hasCorals(b);
             if (corals != w.corals() || BiomeWaters.coralReef(b) != w.corals()) out.add(w.id() + ": wild corals " + corals + ", want " + w.corals());
+            // M28.1: the wild plants of the waters (the oceans and beaches have none)
+            var plants = switch (w.water()) {
+                case RIVER -> org.overengineer.bettacraft.sources.WildTables.PlantWater.RIVER;
+                case SWAMP -> org.overengineer.bettacraft.sources.WildTables.PlantWater.SWAMP;
+                case MANGROVE -> org.overengineer.bettacraft.sources.WildTables.PlantWater.MANGROVE;
+                case JUNGLE -> org.overengineer.bettacraft.sources.WildTables.PlantWater.JUNGLE;
+                default -> null;
+            };
+            if (BiomeWaters.plantWater(b) != plants) out.add(w.id() + ": wild plant water " + BiomeWaters.plantWater(b) + ", want " + plants);
+            if (plants != null && !hasFeature(b, "wild_plants")) out.add(w.id() + ": no wild plants feature");
         }
         // the lush caves of Regions Unexplored by the common tags (#c:is_lush and #c:is_cave)
         reg.getHolder(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("regions_unexplored:ancient_delta"))).ifPresent(b -> {
             if (!BiomeWaters.lushCave(b) || NetCatching.water(b, false) != NetCatching.Water.CAVE) out.add("regions_unexplored:ancient_delta is no lush cave");
         });
         return out;
+    }
+
+    public static boolean hasFeature(Holder<Biome> b, String id) {
+        return b.value().getGenerationSettings().features().stream().anyMatch(set -> set.stream()
+                .anyMatch(f -> f.unwrapKey().map(k -> k.location().equals(BettaCraft.id(id))).orElse(false)));
     }
 
     public static boolean hasCorals(Holder<Biome> b) {

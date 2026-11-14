@@ -237,6 +237,12 @@ neoForge {
                 // M28: -Pgallery=id,id,... only these species (no handbook pictures)
                 if (project.hasProperty('gallery')) systemProperty 'bettacraft.smoketest.gallery', project.property('gallery')
             }
+            if (project.hasProperty('smoketestm281')) {
+                // gradlew runClient -Psmoketestm281 : only the M28.1 part b scene (wild aquarium and floating plants in a river, a
+                // swamp, a jungle and a cold pond, from above and under water; add -Pshaders for Complementary)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m281only', 'true'
+            }
             if (project.hasProperty('smoketestm28c')) {
                 // gradlew runClient -Psmoketestm28c : only the M28 part c scene (wrecks, stones, roots, caves and tubes, ornaments with
                 // the treasure chest bubbling from an air pump, leaf litter; add -Pshaders for Complementary)

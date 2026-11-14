@@ -114,6 +114,8 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM28b m28b;
     /** -Psmoketestm28c: only the M28 part c scene (the new decorations, the leaf litter). */
     private static final boolean M28C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m28conly");
+    private static final boolean M281_ONLY = Boolean.getBoolean("bettacraft.smoketest.m281only");
+    private static DevClientSmokeM281 m281;
     private static DevClientSmokeM28c m28c;
     /** -Psmoketestm27: only the M27 scene (monitor screens). */
     private static final boolean M27_ONLY = Boolean.getBoolean("bettacraft.smoketest.m27only");
@@ -201,6 +203,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M281_ONLY) {
+                if (ticks == 60) m281 = new DevClientSmokeM281();
+                if (m281 != null && m281.tick()) {
+                    m281 = null;
+                    LOGGER.info("[smoketest] client world test finished (M28.1 only)");
                     mc.stop();
                 }
                 return;
