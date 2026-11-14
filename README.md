@@ -12,6 +12,12 @@ block.
 
 - **Bettas** spawn in swamps (`#c:is_swamp`, so also the swamps of Biomes O' Plenty, Regions Unexplored and others).
   Catch them with a water bucket or a fish bag; the fish keeps all its genes.
+- **Wild animals and corals:** the tankmates live wild, rarely and in small shoals, in the waters they come from
+  (jungle, swamp, river, warm and lukewarm ocean), shrimp, crayfish, snails and hermit crabs crawl over the bottom as
+  small animals you catch with the net, a bag or a bucket, and every coral grows on the warm ocean reefs (shears cut a
+  frag). About 3 in 100 wild animals show a bred colour openly; every animal can mutate.
+- **Magnifier:** the hidden genes of a new animal are unknown until it is analysed in an aquarium (right-click the
+  aquarium, or the Analyse button of the menu); the result stays with the animal.
 - **Genetics:** nine loci with two alleles each (tail shape, fin length, pectorals, body colour, fin colour, pattern,
   pattern colour, iridescence and its colour), dominance, carriers and a small mutation chance. 8 tail shapes,
   short- and long-finned forms, dumbo ears, 43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo,
@@ -41,6 +47,8 @@ block.
   zoanthids and star polyps close when a fish swims by. Kelp, seagrass and corals sway in the miniature too.
 - **Containers:** every bucket, bag and bottle empties everywhere: into the world and the sea, cauldrons, every tank and
   other mods' tanks; bottles pour out without a water block. Animals only go free into the world after a confirmation.
+  Buckets and bags hold several animals of one species by size (32 shrimp or 24 rasboras per bucket, a bag half of
+  that, one betta), small animals also in a plain bucket; a bucket of water keeps the tank's water if it suits the animal.
 - **Small animals:** Neocaridina shrimp in eleven colours, the orange dwarf crayfish (CPO), nerites (the red and yellow
   racer nerites each in their own shade), apple snails (mostly gold, some with bands), ramshorns (red-brown, pink, blue,
   red), bladder, trumpet and assassin snails crawl over the floor, the decoration, the
@@ -92,10 +100,11 @@ block.
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood or stone (they hold the
   external filter and food), an automatic feeder (1 to 3 times per day, takes food from the cabinets below), a small
   clip-on feeder for the side of the glass and a connecting light bar that redstone switches off, in 16 colours that tint the water (dye it).
-- **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
+- **Tank menu:** overview with target temperature, inhabitants with genotype, every single shrimp, crayfish and snail
+  (take out exactly one, or the best of a sex into a bag or a bucket), breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting), a lock for the owner and a break protection
   that stops everyone (also the owner, creative, explosions and pistons) from breaking the aquarium.
-- **Handbook and progression:** 149 handbook pages in English and German (with GuideME): chapters and sub-chapters that
+- **Handbook and progression:** 150 handbook pages in English and German (with GuideME): chapters and sub-chapters that
   fold open, a page for every animal, plant, coral and device with where to get it (generated from the game data), and
   31 advancements (listed on the page Progress).
 - **Languages:** English and German.

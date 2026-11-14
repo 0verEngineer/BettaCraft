@@ -187,6 +187,8 @@ public final class DevSmokeUpgrade {
                 problems.add(where + ": interior " + diff(want.getAsJsonObject("interior"), have.getAsJsonObject("interior")));
             }
             if (!want.get("equipment").equals(have.get("equipment"))) problems.add(where + ": equipment " + want.get("equipment") + " -> " + have.get("equipment"));
+            // M22.3: every animal of an older world counts as analysed (magnifier)
+            if (have.has("unanalysed") && have.get("unanalysed").getAsInt() > 0) problems.add(where + ": " + have.get("unanalysed") + " animals not analysed");
             equipment += want.getAsJsonArray("equipment").size();
         }
         Map<Long, JsonElement> chests = new TreeMap<>();
@@ -321,6 +323,14 @@ public final class DevSmokeUpgrade {
         java.util.Collections.sort(cs);
         cs.forEach(crit::add);
         o.add("critters", crit);
+        // M22.3: animals of the old world that would hide their genes (must be none)
+        int unanalysed = 0;
+        for (Critter k : t.critters()) if (!k.analysed) unanalysed++;
+        for (UUID u : t.inhabitants()) {
+            Entity e = level.getEntity(u);
+            if (e instanceof BettaEntity b && !b.getBettaData().analysed() || e instanceof TankmateEntity m && !m.analysed()) unanalysed++;
+        }
+        if (STAGE == 1) o.addProperty("unanalysed", unanalysed);
         if (t.regionId() >= 0) {
             InteriorRegion r = InteriorRegions.get(server).get(t.regionId());
             ServerLevel in = InteriorManager.interiorLevel(server);
@@ -373,6 +383,23 @@ public final class DevSmokeUpgrade {
         return sb.toString().trim();
     }
 
+    /** M22.3: every animal in a bag or bucket of an older version counts as analysed. */
+    private static boolean analysedContents(ItemStack s) {
+        var critters = s.get(org.overengineer.bettacraft.registry.ModDataComponents.CRITTERS.get());
+        if (critters != null) for (var t : critters) if (!org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t)) return false;
+        var group = s.get(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get());
+        if (group != null) for (var t : group) if (!org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompound(TankmateEntity.KEY))) return false;
+        var bucket = s.get(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA);
+        if (bucket != null) {
+            var t = bucket.copyTag();
+            if (t.contains(TankmateEntity.KEY) && !org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompound(TankmateEntity.KEY))) return false;
+            if (t.contains(org.overengineer.bettacraft.entity.betta.BettaData.KEY)
+                    && !org.overengineer.bettacraft.entity.betta.BettaData.load(t.getCompound(org.overengineer.bettacraft.entity.betta.BettaData.KEY)).analysed()) return false;
+        }
+        var fish = s.get(org.overengineer.bettacraft.registry.ModDataComponents.FISH_DATA.get());
+        return fish == null || fish.analysed();
+    }
+
     private static JsonObject chest(ChestBlockEntity cb) {
         JsonObject o = new JsonObject();
         o.addProperty("pos", cb.getBlockPos().asLong());
@@ -386,6 +413,8 @@ public final class DevSmokeUpgrade {
             it.addProperty("count", s.getCount());
             List<String> comps = new ArrayList<>();
             for (var c : s.getComponentsPatch().entrySet()) comps.add(String.valueOf(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.getKey())));
+            // M22.3: old bags and buckets hold animals that count as analysed
+            if (STAGE == 1 && !analysedContents(s)) problems.add("chest " + cb.getBlockPos().toShortString() + " slot " + i + ": animals not analysed");
             java.util.Collections.sort(comps);
             it.addProperty("components", String.join(",", comps));
             a.add(it);

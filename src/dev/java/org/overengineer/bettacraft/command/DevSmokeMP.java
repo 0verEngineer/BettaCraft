@@ -139,6 +139,13 @@ public final class DevSmokeMP {
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
             case "seahorses" -> checkSeahorses(name, a);
             case "containers" -> checkContainers(name, a);
+            case "wildlife" -> {
+                // M22.3: the wild small animals with their species and colour, and the genes switch, on every client
+                check(name + ": " + (a.length > 1 ? a[1] : "?") + " wild small animals (server 3)", a.length > 3 && "3".equals(a[1]));
+                check(name + ": species and colours " + (a.length > 2 ? a[2] : "?") + " (server hermit_crab:-1,neocaridina:0,ramshorn:-1)",
+                        a.length > 2 && "hermit_crab:-1,neocaridina:0,ramshorn:-1".equals(a[2]));
+                check(name + ": genes always visible " + (a.length > 3 ? a[3] : "?") + " (server true after the live change)", a.length > 3 && "true".equals(a[3]));
+            }
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -378,6 +385,7 @@ public final class DevSmokeMP {
 
     /** M22.1: Dev1 stands over {@code at} (the block below its feet + 1), looking straight down. */
     private static void overBlock(ServerPlayer p, BlockPos at) {
+        p.resetFallDistance();
         p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 0F, 90F);
     }
 
@@ -562,7 +570,14 @@ public final class DevSmokeMP {
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
         if (!ENABLED || base == null || !(e.getEntity() instanceof ServerPlayer p)) return;
+        // M22.3: a player who died in an earlier run comes back alive; the test players take no damage (a fall after a
+        // teleport under lag killed Dev1 once and left it on the death screen for the next run)
+        if (p.isDeadOrDying()) p = server.getPlayerList().respawn(p, false, net.minecraft.world.entity.Entity.RemovalReason.KILLED);
         p.setGameMode(GameType.SURVIVAL);
+        p.getAbilities().invulnerable = true;
+        p.onUpdateAbilities();
+        p.setInvulnerable(true);
+        p.setHealth(p.getMaxHealth());
         p.getInventory().clearContent();
         if (P1.equals(p.getGameProfile().getName())) placeDev1(p);
         else placeDev2(p);
@@ -975,7 +990,31 @@ public final class DevSmokeMP {
             hand(P1, new ItemStack(org.overengineer.bettacraft.registry.ModItems.SALT_WATER_BOTTLE.get()));
             say("container", P1, "pour," + pad.getX() + "," + (pad.getY() + 1) + "," + pad.getZ());
         }, () -> reports.containsKey(P1 + ":containers"), 20 * 30));
+        // M22.3: wild small animals in the pool (entities with the full animal data; the clients see species and colour),
+        // and the server switch "genes always visible" reaches the clients live
+        steps.add(new Step("wildlife", () -> {
+            BlockPos min = poolMin();
+            ServerLevel level = server.overworld();
+            for (var e : level.getEntitiesOfClass(org.overengineer.bettacraft.entity.critter.WildCritterEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) e.discard();
+            var kinds = new org.overengineer.bettacraft.critters.CritterSpecies[]{org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA,
+                    org.overengineer.bettacraft.critters.CritterSpecies.RAMSHORN, org.overengineer.bettacraft.critters.CritterSpecies.HERMIT_CRAB};
+            for (int i = 0; i < 3; i++) {
+                var k = new org.overengineer.bettacraft.critters.Critter(0, kinds[i], i == 0, i == 0 ? org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.6F)
+                        : org.overengineer.bettacraft.critters.CritterGenes.WILD, 0, 0, 0);
+                k.age = 20;
+                var e = org.overengineer.bettacraft.entity.critter.WildCritterEntity.of(level, k.saveAnimal());
+                if (e == null) continue;
+                e.moveTo(min.getX() + 0.3 + i * 0.7, min.getY() + 0.1, min.getZ() + 1.5, 0F, 0F);
+                e.setPersistenceRequired();
+                level.addFreshEntity(e);
+            }
+            ServerConfig.GENES_ALWAYS_VISIBLE.set(true);
+            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
+            say("wildlife", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":wildlife") && reports.containsKey(P2 + ":wildlife"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
+            ServerConfig.GENES_ALWAYS_VISIBLE.set(false);
+            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
             // M21.8: back to the default cyst stack size
             ServerConfig.FOOD_CYST_STACK.set(16);
             org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);

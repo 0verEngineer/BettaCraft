@@ -4,6 +4,59 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.15.0-beta.1] - 2026-11-14
+
+Wild animals and corals in the world, rare beautiful wild colours, a magnifier for the hidden genes, single small
+animals in the tank menu and buckets and bags with several animals.
+
+### Added
+- **Wild tankmates in the world**: tetras, corydoras, plecos and otocinclus in jungle water, rasboras, kuhli and clown
+  loaches, the dwarf gourami and dwarf clawed frogs in swamps, guppies, endlers and platys in rivers, the reef fish and
+  seahorses in warm and lukewarm oceans. They spawn rarely and in small shoals (only while fewer than six wild ones live
+  within 32 blocks, never inside an aquarium) and despawn far from players like vanilla fish; caught ones stay
+  (`features.wildFish`, `spawn.wildFishWeight`, `wildlife.wildFishNearby`).
+- **Wild small animals**: shrimp, dwarf crayfish, snails, cleaner shrimp and hermit crabs live in the world as small
+  animals that crawl over the bottom of rivers, swamps, mangroves, beaches, jungle water and the oceans. Right-click one
+  with the aquarium net, a fish bag or a bucket of water to catch it; let it go again and it crawls off. In the world,
+  in buckets, bags and aquariums it keeps everything: species, sex, genes, colour density, age, look and the analysis
+  (`features.wildCritters`, `spawn.wildCritterWeight`, `wildlife.wildCrittersNearby`).
+- **Wild corals**: every Bettacraft coral and the bubble tip anemone grow as big colonies on the warm ocean reefs among
+  the vanilla corals (new chunks). Shears cut a frag off a colony, which grows back after a while; with silk touch the
+  colony itself (`features.wildCorals`).
+- **Beautiful wild colours**: most wild animals are wild-coloured, some carry a bred colour hidden, and about 3 in 100
+  show one openly: red shrimp, albino bristlenoses, named guppy strains, domestic-looking bettas
+  (`features.wildColors`, `wildlife.beautifulWildChance`).
+- **Spontaneous mutations** for every animal: shrimp, crayfish, snails and the tankmates without their own genetics
+  now mutate too (0.3 % per gene and birth; bettas 1 % and guppies and endlers 0.4 % as before; `features.mutations`,
+  `wildlife.otherMutationChance`).
+- **Magnifier** (glass pane, copper or gold, a stick; 64 uses, repaired with glass panes): the hidden genes of a new
+  animal are unknown until it is analysed in an aquarium. Right-click an aquarium to analyse every animal in it, or the
+  new **Analyse** button of the tank menu for one fish or small animal. The result stays with the animal (tank lists,
+  other tanks, bucket and bag tooltips). Animals of older worlds count as analysed. Server config
+  `wildlife.genesAlwaysVisible` shows every animal's genes without a magnifier (`features.magnifier`).
+- **Single small animals in the tank menu**: click a kind to fold open every single shrimp, crayfish or snail with its
+  sex, age, colour density and genes; take out exactly that one or analyse it. The quick take-out of a kind now picks
+  the sex (any, males, females) and goes into a fish bag or a bucket (`features.animalList`).
+- **Several animals per bucket and bag**, by their size (one species per container): a bucket holds 32 shrimp, snails,
+  neons or endlers, 24 rasboras or guppies, 12 corydoras or platys, 6 plecos or dwarf gouramis, 2 bristlenoses or tangs
+  and one betta, clown loach or frog; a fish bag half of a bucket (16 shrimp, 12 rasboras as before). The next animal
+  of the species joins the container in the hand or in the inventory. Shrimp, crayfish and snails also go into a plain
+  bucket of water (no fish bag needed). Old bags with more animals stay valid (`features.bigContainers`).
+- Bucket and bag tooltips list every animal with its sex, stage, colour and (once analysed) its genes.
+
+### Changed
+- Taking an animal out of an aquarium with a bucket: an empty bucket takes 1000 mB of the tank's water as before; a
+  **bucket of water** is used as it is and the tank keeps its water, but the water must suit the animal (plain water for
+  freshwater animals, sea water for reef animals).
+- The **bucket of sea water** works like a water bucket everywhere: it catches fish (vanilla and other mods' fish too,
+  reef fish need it), and it is in `#c:buckets/water` for the recipes and machines of other mods.
+- Small animals let go into the world (after the confirmation) now crawl off instead of being gone.
+- The breeding prediction of a betta pair needs both parents analysed.
+- Betta data schema v4 (the analysis flag; older bettas are migrated as analysed).
+- Handbook: page Magnifier, wild animals and corals on "Catching animals" and "Corals", buckets with several animals, the
+  single small animals in the tank menu; every new spawn and the shears on wild corals in the generated Obtaining
+  sections and "Where to find what" (en + de).
+
 ## [1.14.3-beta.1] - 2026-11-14
 
 The handbook is complete: chapters and sub-chapters that fold open, a page for every animal, plant, coral and device,

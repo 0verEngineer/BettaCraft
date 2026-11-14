@@ -209,6 +209,17 @@ final class DevClientSmokeMP {
                             + " " + s1.getCount() + " " + org.overengineer.bettacraft.food.ArtemiaCystsItem.usesLeft(s1));
                 });
             }
+            case "wildlife" -> {
+                // M22.3: the wild small animals near the pool (species and colour as drawn) and the genes switch of the server
+                BlockPos min = pos(args);
+                then(40, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var list = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.critter.WildCritterEntity.class, new net.minecraft.world.phys.AABB(min).inflate(6));
+                    String kinds = list.stream().map(e -> e.drawn().species.id() + ":" + e.drawn().clientColor).sorted()
+                            .collect(java.util.stream.Collectors.joining(","));
+                    send("wildlife " + list.size() + " " + (kinds.isEmpty() ? "-" : kinds) + " " + org.overengineer.bettacraft.genetics.GeneVisibility.free());
+                });
+            }
             case "cabinets" -> {
                 // M21.7: the material of the two cabinets on this client and the sound of the stone one
                 BlockPos at = pos(args);
@@ -608,6 +619,11 @@ final class DevClientSmokeMP {
             return;
         }
         if (mc.player == null || mc.level == null) return;
+        // M22.3: a player that died (here or in an earlier run) respawns at once instead of waiting on the death screen
+        if (mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen) {
+            mc.player.respawn();
+            mc.setScreen(null);
+        }
         if (!sizeSet) {
             sizeSet = true;
             mc.getWindow().setWindowed(1280, 960);
