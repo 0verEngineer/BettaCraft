@@ -95,9 +95,12 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   AE2 and Refined Storage fill and empty it, the feeder and the reservoir.
 - **Food variety:** favourite and poorly suited food for every kind of eater; a varied diet helps the fish recover and
   makes the bettas' colours stronger. All data-driven (item tags).
+- **Monitors:** monitor blocks join into screens of up to 8 x 5 blocks that find every tank around them and show a
+  dashboard: values, traffic lights with the tank's warnings, graphs over up to 7 in-game days, animals and breeding,
+  devices and power, alarms with a redstone signal and the logbook; arranged by drag and drop in an editor.
 
 ### Handbook, progression, languages
-- 183 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
+- 184 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
   get it (generated from the game data), 31 advancements, JEI pages and tooltips.
 - Every larger feature has a switch (`features.*`) so modpacks can turn it off.
 

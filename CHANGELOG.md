@@ -4,6 +4,33 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.20.0-beta.1] - 2026-11-14
+
+Aquarium monitors: screens of monitor blocks that find the tanks around them and show a dashboard of values,
+traffic lights, graphs, animals, devices, alarms with redstone and the logbook, arranged in an editor.
+
+### Added
+- **Monitor** (`features.monitors`, `monitor.*`): monitor blocks next to each other join into one screen of up to
+  8 x 5 blocks with one frame (bigger walls are cut into several screens; the dashboard goes on when a screen grows,
+  shrinks or splits). The screen finds every tank within `monitor.range` (32) blocks by itself, named after the tank
+  sign; tanks out of range or unloaded show "not loaded" with their last values. While a power option is on it needs
+  `monitor.fePerBlock` (1) FE per tick and block. Recipe: 4 iron, 4 glass panes and a redstone make 4 monitors.
+- **Tank history:** every tank records all its values once per in-game hour for 7 in-game days (also without a
+  monitor), so graphs show the past right away.
+- **Widgets:** value tile (temperature, water quality, pH, TDS, salinity, calcium, KH, magnesium, oxygen, CO2, nitrate,
+  water level, animals, algae, food in the feeder; optionally with the graph of the last day), traffic light (the
+  tank's state with the warnings of its menu), history graph (one to three values over 1-7 in-game days), animal list
+  (count per species, bubble nest, eggs, young), device status (filters, heaters, coolers, light with dimmer, CO2, air
+  pumps, power, the tank's energy), alarm (blinks past a limit) and event log (the latest logbook entries of one or
+  all tanks). Out of the box the screen arranges two value tiles per tank by itself.
+- **Dashboard editor** (right-click a monitor; sneak + right-click shows its state): arrange the tiles on the screen's
+  grid by drag and drop, resize them, pick type, tank, values, graph days, alarm limit and colours. Needs the build
+  rights at the monitor; "Automatic" gives the screen back its automatic layout.
+- **Redstone alarms:** an alarm tile with redstone makes every block of its screen give a signal of 15 while it is
+  triggered; a comparator reads the number of triggered alarms. Such screens watch their tanks also when nobody looks.
+- The data only goes to players who see a monitor, bundled into one packet per player and second.
+- Handbook page for the monitor (widgets, editor, alarms) in English and German.
+
 ## [1.19.1-beta.1] - 2026-11-14
 
 German translation checked, a wide logo for the mod list, and releases go to CurseForge only.
