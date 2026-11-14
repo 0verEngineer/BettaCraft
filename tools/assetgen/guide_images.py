@@ -426,6 +426,28 @@ def m22_2(out_en: Path) -> None:
         save(im, out_en / f"sp_{sp}.png")
 
 
+# M22.4 scene (DevClientSmokeM224, -Psmoketestm22_4): the four outlet sides of the cabinet filter (back, left, right,
+# front) as a 2x2 sheet of the close-ups. ``py guide_images.py m22_4``.
+M22_4_SIDES = ["back", "left", "right", "front"]
+M22_4_BOX = (370, 280, 910, 750)
+
+
+def m22_4(out_en: Path) -> None:
+    tiles = []
+    for side in M22_4_SIDES:
+        src = SHOTS / f"bettacraft_m22_4_outlet_{side}.png"
+        if not src.exists():
+            print("missing", src)
+            return
+        tiles.append(Image.open(src).convert("RGB").crop(M22_4_BOX))
+    w, h = tiles[0].size
+    sheet = Image.new("RGB", (w * 2, h * 2))
+    for i, t in enumerate(tiles):
+        sheet.paste(t, ((i % 2) * w, (i // 2) * h))
+    width = 960
+    save(sheet.resize((width, round(sheet.height * width / sheet.width)), Image.LANCZOS), out_en / "cabinet_outlets.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -440,6 +462,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m22_4"]:
+        m22_4(out_en)
+        return 0
     if sys.argv[1:] == ["m22_2"]:
         m22_2(out_en)
         return 0

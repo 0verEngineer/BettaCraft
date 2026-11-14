@@ -88,6 +88,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM221 m221;
     private static DevClientSmokeM222 m222;
     private static DevClientSmokeM223 m223;
+    private static DevClientSmokeM224 m224;
+    /** -Psmoketestm22_4: only the M22.4 scene (the four outlet sides of the cabinet filter, the cabinet menu, the handbook plant sources). */
+    private static final boolean M22_4_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_4only");
     /** -Psmoketestm22_3: only the M22.3 scene (wild fish and small animals, wild corals, magnifier, single animals, bucket tooltips). */
     private static final boolean M22_3_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_3only");
     /** -Psmoketestm22_2: only the M22.2 scene (species gallery for the handbook, the handbook with its navigation en + de). */
@@ -162,6 +165,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M22_4_ONLY) {
+                if (ticks == 60) m224 = new DevClientSmokeM224();
+                if (m224 != null && m224.tick()) {
+                    m224 = null;
+                    LOGGER.info("[smoketest] client world test finished (M22.4 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M22_3_ONLY) {
                 if (ticks == 60) m223 = new DevClientSmokeM223();
                 if (m223 != null && m223.tick()) {
@@ -584,6 +596,10 @@ final class DevClientSmokeTest {
                     }
                     if (m223 != null && m223.tick()) {
                         m223 = null;
+                        m224 = new DevClientSmokeM224(); // M22.4: the outlet sides of the cabinet filter, plant sources in the handbook
+                    }
+                    if (m224 != null && m224.tick()) {
+                        m224 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }
