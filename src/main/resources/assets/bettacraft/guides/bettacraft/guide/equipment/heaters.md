@@ -24,10 +24,6 @@ item_ids:
 | <ItemLink id="bettacraft:heater_medium" /> | 32 water blocks |
 | <ItemLink id="bettacraft:heater_large" /> | 64 water blocks |
 
-<RecipeFor id="bettacraft:heater_small" />
-<RecipeFor id="bettacraft:heater_medium" />
-<RecipeFor id="bettacraft:heater_large" />
-
 ## Where heaters work
 
 * **In the interior:** place the heater in the [interior](../interior.md) of the aquarium. It becomes a heater rod
@@ -43,3 +39,11 @@ Breaking one block of a heater rod removes the whole rod and gives the heater ba
 
 For hot places there are [coolers](coolers.md), which go into the same places. A server can make heaters and coolers
 need [power](power.md).
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:heater_small" />
+<RecipesFor id="bettacraft:heater_medium" />
+<RecipesFor id="bettacraft:heater_large" />

@@ -3,9 +3,8 @@ navigation:
   title: Breeding the tankmates
   icon: bettacraft:breeding_box
   parent: tankmates.md
-  position: 2
+  position: 20
 item_ids:
-  - bettacraft:breeding_box
   - bettacraft:fry_powder
   - bettacraft:algae_wafer
   - bettacraft:spawning_cave
@@ -63,7 +62,7 @@ clutches of every species in the tank.
 
 ## Foam nest: dwarf gourami
 
-* Like a [betta](../breeding.md): the male builds a foam nest at the surface (floating plants help), the female spawns
+* Like a [betta](../bettas/breeding.md): the male builds a foam nest at the surface (floating plants help), the female spawns
   into it, then the male guards the nest and chases her away - take her out.
 
 ## Clown loaches
@@ -75,3 +74,14 @@ clutches of every species in the tank.
 * <ItemLink id="bettacraft:fry_powder" /> feeds the fry of every species (also betta fry) through the whole fry stage;
   craft it from two betta pellets and bone meal. Infusoria and artemia work like for the bettas.
 * <ItemLink id="bettacraft:algae_wafer" /> for the bottom fish: dried kelp and pellets.
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:fry_powder" />
+<RecipesFor id="bettacraft:algae_wafer" />
+<RecipesFor id="bettacraft:spawning_cave" />
+<RecipesFor id="bettacraft:spawning_mop" />
+<RecipesFor id="bettacraft:decor_spawning_cave" />
+<RecipesFor id="bettacraft:decor_spawning_mop" />

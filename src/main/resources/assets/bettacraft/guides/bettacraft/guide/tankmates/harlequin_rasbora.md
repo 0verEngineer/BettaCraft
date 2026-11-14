@@ -2,8 +2,8 @@
 navigation:
   title: Harlequin Rasbora
   icon: bettacraft:harlequin_rasbora_bucket
-  parent: tankmates.md
-  position: 14
+  parent: tankmates/rasboras.md
+  position: 10
 item_ids:
   - bettacraft:harlequin_rasbora_bucket
   - bettacraft:harlequin_rasbora_spawn_egg
@@ -15,22 +15,30 @@ item_ids:
 
 Copper body with a black wedge; spawns upside down under broad leaves.
 
+**Origin:** the peat swamps of Malaysia, Sumatra and Borneo.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Rasboras |
-| Scientific | *Trigonostigma heteromorpha* |
-| Size in the game | about 4 cm (0.37 blocks) |
-| Origin | the peat swamps of Malaysia, Sumatra and Borneo |
+| Group | Rasboras |
+| Scientific name | *Trigonostigma heteromorpha* |
+| Size in the game | about 4.5 cm (0.37 blocks) |
 | Temperature | 22–28 °C |
-| Shoal | 6 or more |
-| Water | sensitive |
-| Stocking | 0.45 fish |
-| Breeding | Scatters its eggs (fine plants, spawning mop), 26–28 °C |
+| Breeding temperature | 26–28 °C |
+| Water | fresh water, normal |
+| Shoal | from 6 fish |
+| Swims | in the middle |
+| Stocking | counts as 0.45 fish |
+| Breeding | Scatters its eggs (fine plants, spawning mop), 15–40 young |
+| Betta tank | yes |
 
 ## Breeding
 
 At 26–28 °C a pair scatters 15–40 eggs into broad leaves (crypts, anubias, sword plants) or a spawning mop. The parents and every other fish eat the eggs they reach; in a spawning mop most are safe. Live food (mosquito larvae) gets them ready faster.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in swamps and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 4.2–5 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).

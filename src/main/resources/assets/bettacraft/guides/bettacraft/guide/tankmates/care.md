@@ -3,7 +3,7 @@ navigation:
   title: Care of the tankmates
   icon: bettacraft:algae_wafer
   parent: tankmates.md
-  position: 1
+  position: 10
 ---
 
 # Care of the tankmates
@@ -35,7 +35,7 @@ after a few days (7 by default), and sick fish die if nothing changes.
 * **Bottom fish** (corydoras, plecos, otocinclus, loaches) only get part of the food that sinks past faster fish
   (`tankmates.behaviour.bottomFoodShare`, 0.6). <ItemLink id="bettacraft:algae_wafer" /> sink straight to them: the
   bettas and the midwater fish do not eat wafers.
-* **Algae eaters** (otocinclus, bristlenose; the L134 a little) graze the [algae](../invertebrates/algae.md) on the
+* **Algae eaters** (otocinclus, bristlenose; the L134 a little) graze the [algae](../aquarium/algae.md) on the
   glass and live on them while there are any.
 
 ## Stocking
@@ -54,12 +54,3 @@ after a few days (7 by default), and sick fish die if nothing changes.
   snail tank.
 * Every adult (bettas and tankmates) **hunts the fry** of the tankmates and eats the eggs it can reach
   (`fryEatenPerDay`, `eggsEatenPerDay`). Plants, java moss and floating plants hide the fry, a spawning mop the eggs.
-
-## Getting them
-
-* With the [aquarium net](../invertebrates/catching.md): in **jungle water** the South American species (tetras, corys,
-  plecos, otocinclus), in **swamps** the South-East Asian ones (rasboras, kuhli, dwarf gourami, rarely clown loaches), in
-  **rivers** livebearers, bristlenoses and green gold corys. Part of the catches are fish
-  (`tankmates.behaviour.netFishShare`), shoaling fish come one to four at a time.
-* The **wandering trader** sells a shoal of six (or a pair) in a fish bag, now and then of a bred variety.
-* And by breeding them.

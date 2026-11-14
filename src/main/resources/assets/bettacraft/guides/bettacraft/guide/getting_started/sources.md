@@ -1,0 +1,121 @@
+---
+navigation:
+  title: Where to find what
+  icon: minecraft:filled_map
+  parent: getting_started.md
+  position: 20
+---
+
+# Where to find what
+
+Everything the world gives you for your aquariums, with the chance of each try (default config values). The page is
+written from the game's own tables, so it always matches the game. Every animal and plant page has the same list for
+its species under **Obtaining**.
+
+* **Aquarium net**: swing it at open water (not a tank) with an empty fish bag in your inventory; see
+  [Catching animals](catching.md). Plants nearby and a hard bottom (sand, gravel, stone) make some catches likelier: the
+  chances show the lowest and the highest value.
+* **Fishing**: now and then a plant comes up instead of the fish.
+* **Wandering trader**: every trader picks some of his offers at random; the tables show what each offer can be.
+
+## Aquarium net
+
+| Where | Catch (chance per swing) |
+|---|---|
+| In rivers | [Green Gold Cory](../tankmates/green_gold_cory.md) 1.7–2.1 %, [Bristlenose Pleco](../tankmates/bristlenose_pleco.md) 1.1–1.4 %, [Otocinclus](../tankmates/otocinclus.md) 1.1–1.4 %, [Guppy](../tankmates/guppy.md) 3.4–4.1 %, [Endler Guppy](../tankmates/endler_guppy.md) 1.7–2.1 %, [Platy](../tankmates/platy.md) 2.9–3.4 %, [Neocaridina Shrimp](../invertebrates/neocaridina.md) 10–12 %, [Ramshorn Snail](../invertebrates/ramshorn.md) 7.8–9.3 %, [Bladder Snail](../invertebrates/bladder_snail.md) 6.5–7.7 %, [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md) 1–2 %, [Assassin Snail](../invertebrates/assassin_snail.md) 0.78 % |
+| In swamps | [Harlequin Rasbora](../tankmates/harlequin_rasbora.md) 4.2–5 %, [Mosquito Rasbora](../tankmates/mosquito_rasbora.md) 3.7–4.4 %, [Kuhli Loach](../tankmates/kuhli_loach.md) 2–2.4 %, [Clown Loach](../tankmates/clown_loach.md) 0.5–0.6 %, [Dwarf Gourami](../tankmates/dwarf_gourami.md) 1.7–2 %, [Ramshorn Snail](../invertebrates/ramshorn.md) 8.8–12 %, [Bladder Snail](../invertebrates/bladder_snail.md) 8.8–12 %, [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md) 7.3–11 %, [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md) 1.5 % |
+| In mangrove swamps | [Zebra Nerite](../invertebrates/zebra_nerite.md) 9–11 %, [Horned Nerite](../invertebrates/horned_nerite.md) 7.2–9 %, [Olive Nerite](../invertebrates/olive_nerite.md) 9–11 %, [Red Nerite](../invertebrates/red_nerite.md) 1.8–2.2 %, [Yellow Racer Nerite](../invertebrates/yellow_nerite.md) 1.4–1.7 %, [Assassin Snail](../invertebrates/assassin_snail.md) 1.4–1.7 % |
+| At beaches | [Zebra Nerite](../invertebrates/zebra_nerite.md) 9–11 %, [Horned Nerite](../invertebrates/horned_nerite.md) 7.5–9 %, [Olive Nerite](../invertebrates/olive_nerite.md) 9–11 %, [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md) 4.5–5.4 % |
+| In jungle water | [Neon Tetra](../tankmates/neon_tetra.md) 2–2.4 %, [Cardinal Tetra](../tankmates/cardinal_tetra.md) 1.4–1.7 %, [Green Neon Tetra](../tankmates/green_neon_tetra.md) 0.79–0.94 %, [Ember Tetra](../tankmates/ember_tetra.md) 1.2–1.4 %, [Glowlight Tetra](../tankmates/glowlight_tetra.md) 0.98–1.2 %, [Pygmy Cory](../tankmates/pygmy_cory.md) 0.92–1.1 %, [Panda Cory](../tankmates/panda_cory.md) 1–1.3 %, [Sterbai Cory](../tankmates/sterbai_cory.md) 0.92–1.1 %, [Green Gold Cory](../tankmates/green_gold_cory.md) 0.52–0.63 %, [L134 Leopard Frog Pleco](../tankmates/leopard_frog_pleco.md) 0.33–0.39 %, [L046 Zebra Pleco](../tankmates/zebra_pleco.md) 0.13–0.16 %, [Bristlenose Pleco](../tankmates/bristlenose_pleco.md) 0.66–0.79 %, [Otocinclus](../tankmates/otocinclus.md) 0.66–0.79 %, [Clown Loach](../tankmates/clown_loach.md) 0.2–0.24 %, [Endler Guppy](../tankmates/endler_guppy.md) 0.26–0.31 %, [Apple Snail](../invertebrates/apple_snail.md) 18–21 %, [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md) 4.9–5.7 %, [Dwarf Crayfish (CPO)](../invertebrates/dwarf_crayfish.md) 3.1–3.6 % |
+| In deep cave water | [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md) 26–34 %, [Assassin Snail](../invertebrates/assassin_snail.md) 3.5–4.2 % |
+| In lush caves | [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md) 20–27 %, [Ramshorn Snail](../invertebrates/ramshorn.md) 6.8–11 %, [Assassin Snail](../invertebrates/assassin_snail.md) 2.7–2.9 % |
+| In warm oceans (coral reefs) | [Zoanthids](../saltwater/zoanthus.md) 0.75–0.9 %, [Mushroom Coral](../saltwater/mushroom_coral.md) 0.75–0.9 %, [Bubble Tip Anemone](../saltwater/bubble_tip_anemone.md) 0.75–0.9 %, [Green Star Polyps](../saltwater/green_star_polyps.md) 0.75–0.9 %, [Ocellaris Clownfish](../saltwater/ocellaris_clownfish.md) 2.5–3 %, [Yellow Tang](../saltwater/yellow_tang.md) 1–1.2 %, [Yellow Watchman Goby](../saltwater/yellow_watchman_goby.md) 1.7–2 %, [Green Chromis](../saltwater/green_chromis.md) 2.9–3.5 %, [Yellowtail Damsel](../saltwater/yellowtail_damsel.md) 2.1–2.5 %, [Lined Seahorse](../saltwater/lined_seahorse.md) 0.62–0.74 %, [Dwarf Seahorse](../saltwater/dwarf_seahorse.md) 0.83–0.99 %, [Mexican Turbo Snail](../saltwater/turbo_snail.md) 9.6–12 %, [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md) 9.6–12 %, [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md) 6.4–7.4 % |
+| In lukewarm oceans | [Yellow Watchman Goby](../saltwater/yellow_watchman_goby.md) 2.3–2.7 %, [Green Chromis](../saltwater/green_chromis.md) 3.8–4.5 %, [Yellowtail Damsel](../saltwater/yellowtail_damsel.md) 4.5–5.4 %, [Lined Seahorse](../saltwater/lined_seahorse.md) 1.5–1.8 %, [Mexican Turbo Snail](../saltwater/turbo_snail.md) 11–13 %, [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md) 13–16 %, [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md) 1.9–2.2 % |
+
+## Fishing
+
+| Where | Catch (chance per catch) |
+|---|---|
+| In swamps | [Duckweed](../plants/duckweed.md) 2.7 %, [Salvinia](../plants/salvinia.md) 1.8 %, [Amazon Frogbit](../plants/amazon_frogbit.md) 1.5 % |
+| In mangrove swamps | [Duckweed](../plants/duckweed.md) 2.1 %, [Salvinia](../plants/salvinia.md) 1.5 %, [Amazon Frogbit](../plants/amazon_frogbit.md) 1.5 %, [Red Root Floater](../plants/red_root_floater.md) 0.9 % |
+| In jungles and rivers | [Java Fern](../plants/java_fern.md) 1.5 %, [Anubias Nana](../plants/anubias_nana.md) 1.5 %, [Bucephalandra 'Green Wavy'](../plants/bucephalandra_green_wavy.md) 0.75 %, [Bucephalandra 'Mini Needle'](../plants/bucephalandra_mini_needle.md) 0.65 %, [Bucephalandra 'Blue'](../plants/bucephalandra_blue.md) 0.3 %, [Bucephalandra 'Brownie Red'](../plants/bucephalandra_brownie_red.md) 0.3 % |
+| In swamps and mangrove swamps | [Cryptocoryne Wendtii (Green)](../plants/cryptocoryne_wendtii_green.md) 1.6 %, [Cryptocoryne Wendtii (Brown)](../plants/cryptocoryne_wendtii_brown.md) 1.2 %, [Ludwigia Repens](../plants/ludwigia_repens.md) 0.94 %, [Rotala Rotundifolia](../plants/rotala_rotundifolia.md) 0.94 % |
+
+## Other finds
+
+* [Bottle of Swamp Water](../food.md): glass bottle filled with water in swamps (always).
+* [Bottle of Salt Water](../food/fry_food.md): glass bottle filled with water in oceans and at beaches (always).
+* [Duckweed](../plants/duckweed.md): glass bottle filled with water in swamps (15 %).
+* [Cryptocoryne Wendtii (Green)](../plants/cryptocoryne_wendtii_green.md): glass bottle filled with water in swamps (1.5 %).
+* [Cryptocoryne Wendtii (Brown)](../plants/cryptocoryne_wendtii_brown.md): glass bottle filled with water in swamps (1.1 %).
+* [Ludwigia Repens](../plants/ludwigia_repens.md): glass bottle filled with water in swamps (0.85 %).
+* [Rotala Rotundifolia](../plants/rotala_rotundifolia.md): glass bottle filled with water in swamps (0.85 %).
+* [Java Moss](../plants/java_moss.md): shears on a moss block next to water (50 %).
+* [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md): shovel on mud in swamps (8 %).
+* [Malaysian Trumpet Snail](../invertebrates/trumpet_snail.md): shovel on mud in mangrove swamps (8 %).
+* [Mosquito Larvae](../food.md): breaking mud in swamps (4 %).
+* [Artemia Cysts](../food/fry_food.md): breaking sand (2 %).
+* [Betta](../bettas.md): spawns in swamps (spawn weight 8).
+
+## Wandering trader: usual offers
+
+| Thing | Count | Emeralds |
+|---|---|---|
+| [Dwarf Crayfish (CPO)](../invertebrates/dwarf_crayfish.md) | 2 | 5 |
+| [Apple Snail](../invertebrates/apple_snail.md) | 1 | 3 |
+| [Neon Tetra](../tankmates/neon_tetra.md) | 6 | 4 |
+| [Cardinal Tetra](../tankmates/cardinal_tetra.md) | 6 | 4 |
+| [Green Neon Tetra](../tankmates/green_neon_tetra.md) | 6 | 3 |
+| [Ember Tetra](../tankmates/ember_tetra.md) | 6 | 3 |
+| [Harlequin Rasbora](../tankmates/harlequin_rasbora.md) | 6 | 4 |
+| [Mosquito Rasbora](../tankmates/mosquito_rasbora.md) | 8 | 3 |
+| [Pygmy Cory](../tankmates/pygmy_cory.md) | 8 | 3 |
+| [Panda Cory](../tankmates/panda_cory.md) | 6 | 4 |
+| [Sterbai Cory](../tankmates/sterbai_cory.md) | 6 | 5 |
+| [Bristlenose Pleco](../tankmates/bristlenose_pleco.md) | 2 | 4 |
+| [Otocinclus](../tankmates/otocinclus.md) | 6 | 3 |
+| [Kuhli Loach](../tankmates/kuhli_loach.md) | 6 | 4 |
+| [Guppy](../tankmates/guppy.md) | 6 | 4+ |
+| [Endler Guppy](../tankmates/endler_guppy.md) | 6 | 3+ |
+| [Platy](../tankmates/platy.md) | 6 | 4 |
+| [Dwarf Gourami](../tankmates/dwarf_gourami.md) | 2 | 4 |
+| [Amazon Sword](../plants/amazon_sword.md) | 1 | 1 |
+| [Vallisneria](../plants/vallisneria.md) | 2 | 1 |
+| [Monte Carlo](../plants/monte_carlo.md) | 2 | 1 |
+| [Alternanthera Reineckii](../plants/alternanthera_reineckii.md) | 1 | 2 |
+| [Amazon Frogbit](../plants/amazon_frogbit.md) | 2 | 1 |
+| [Salvinia](../plants/salvinia.md) | 3 | 1 |
+| [Sea Salt](../saltwater/water.md) | 8 | 2 |
+| [Ocellaris Clownfish](../saltwater/ocellaris_clownfish.md) | 2 | 4 |
+| [Yellow Watchman Goby](../saltwater/yellow_watchman_goby.md) | 2 | 3 |
+| [Green Chromis](../saltwater/green_chromis.md) | 6 | 4 |
+| [Yellowtail Damsel](../saltwater/yellowtail_damsel.md) | 2 | 3 |
+| [Zoanthids](../saltwater/zoanthus.md) | 2 | 4 |
+| [Mushroom Coral](../saltwater/mushroom_coral.md) | 2 | 4 |
+| [Bubble Tip Anemone](../saltwater/bubble_tip_anemone.md) | 2 | 4 |
+| [Green Star Polyps](../saltwater/green_star_polyps.md) | 2 | 4 |
+
+## Wandering trader: rare offers
+
+| Thing | Count | Emeralds |
+|---|---|---|
+| [Neocaridina Shrimp](../invertebrates/neocaridina.md) | 2 | 6 |
+| [Ramshorn Snail](../invertebrates/ramshorn.md) | 2 | 4 |
+| [Red Nerite](../invertebrates/red_nerite.md) | 2 | 4 |
+| [Yellow Racer Nerite](../invertebrates/yellow_nerite.md) | 2 | 4 |
+| [Assassin Snail](../invertebrates/assassin_snail.md) | 1 | 4 |
+| [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md) | 1 | 6 |
+| [Glowlight Tetra](../tankmates/glowlight_tetra.md) | 6 | 7 |
+| [Green Gold Cory](../tankmates/green_gold_cory.md) | 6 | 8 |
+| [L134 Leopard Frog Pleco](../tankmates/leopard_frog_pleco.md) | 2 | 7 |
+| [L046 Zebra Pleco](../tankmates/zebra_pleco.md) | 2 | 6 |
+| [Clown Loach](../tankmates/clown_loach.md) | 6 | 17 |
+| [Red Tiger Lotus](../plants/red_tiger_lotus.md) | 1 | 4 |
+| [Cryptocoryne 'Flamingo'](../plants/cryptocoryne_flamingo.md) | 1 | 5 |
+| [Red Root Floater](../plants/red_root_floater.md) | 2 | 3 |
+| [Yellow Tang](../saltwater/yellow_tang.md) | 2 | 9 |
+| [Lined Seahorse](../saltwater/lined_seahorse.md) | 2 | 7 |
+| [Dwarf Seahorse](../saltwater/dwarf_seahorse.md) | 2 | 5 |
+| [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md) | 1 | 5 |
+| [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md) | 3 | 5 |
+| [Live Rock](../saltwater/reef_rock.md) | 8 | 6 |

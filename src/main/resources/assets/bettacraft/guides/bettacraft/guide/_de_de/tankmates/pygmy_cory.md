@@ -2,8 +2,8 @@
 navigation:
   title: Pygmäen-Panzerwels
   icon: bettacraft:pygmy_cory_bucket
-  parent: tankmates.md
-  position: 16
+  parent: tankmates/corydoras.md
+  position: 10
 item_ids:
   - bettacraft:pygmy_cory_bucket
   - bettacraft:pygmy_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Ein winziger Panzerwels, der oft im lockeren Schwarm im freien Wasser schwebt.
 
+**Herkunft:** den Rio Madeira (Brasilien).
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Panzerwelse |
-| Wissenschaftlich | *Corydoras pygmaeus* |
-| Größe im Spiel | etwa 3 cm (0,21 Blöcke) |
-| Herkunft | den Rio Madeira (Brasilien) |
+| Gruppe | Panzerwelse |
+| Wissenschaftlicher Name | *Corydoras pygmaeus* |
+| Größe im Spiel | etwa 2,5 cm (0,21 Blöcke) |
 | Temperatur | 22–27 °C |
+| Zuchttemperatur | 22–26 °C |
+| Wasser | Süßwasser, normal |
 | Schwarm | ab 8 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,2 Fisch |
-| Zucht | klebt Eier ans Glas (nach kühlem Wasserwechsel), 22–26 °C |
+| Schwimmt | im unteren Wasser |
+| Besatz | zählt als 0,2 Fisch |
+| Zucht | klebt Eier ans Glas (nach kühlem Wasserwechsel), 10–25 Junge |
+| Betta-Becken | zu kühl |
+| Besonderheiten | holt Luft an der Oberfläche |
 
 ## Zucht
 
@@ -35,6 +42,8 @@ Ein kühler Wasserwechsel löst das Laichen aus: mindestens ein Viertel des Wass
 
 * Schießt ab und zu zum Luftholen an die Oberfläche.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,92–1,1 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 8 für 3 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).

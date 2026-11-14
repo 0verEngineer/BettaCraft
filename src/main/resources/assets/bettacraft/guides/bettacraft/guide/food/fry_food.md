@@ -35,8 +35,6 @@ Infusoria are tiny single-celled animals that grow in water with plant matter.
 2. Wait **one in-game day**. The culture ripens in your inventory, in a chest or on the ground.
 3. It turns into a <ItemLink id="bettacraft:infusoria" />.
 
-<RecipesFor id="bettacraft:infusoria_culture" />
-
 ## Artemia nauplii
 
 Artemia are brine shrimp; their dried eggs (cysts) hatch in salt water.
@@ -49,4 +47,12 @@ Artemia are brine shrimp; their dried eggs (cysts) hatch in salt water.
    9 or more when it is ready).
 4. It turns into a <ItemLink id="bettacraft:artemia_nauplii" />.
 
-<RecipeFor id="bettacraft:artemia_culture" />
+## Obtaining
+
+* <ItemLink id="bettacraft:salt_water_bottle" />: **Glass bottle** filled with water in oceans and at beaches.
+* <ItemLink id="bettacraft:artemia_cysts" />: **Breaking sand**: 2 % per block.
+
+Crafting:
+
+<RecipesFor id="bettacraft:infusoria_culture" />
+<RecipesFor id="bettacraft:artemia_culture" />

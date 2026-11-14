@@ -3,12 +3,7 @@ navigation:
   title: Seahorses
   icon: bettacraft:lined_seahorse_bucket
   parent: saltwater.md
-  position: 5
-item_ids:
-  - bettacraft:lined_seahorse_bucket
-  - bettacraft:dwarf_seahorse_bucket
-  - bettacraft:lined_seahorse_spawn_egg
-  - bettacraft:dwarf_seahorse_spawn_egg
+  position: 60
 ---
 
 # Seahorses
@@ -19,10 +14,12 @@ Seahorses are fish of their own kind: they swim slowly and **upright**, steer wi
 most of the day **holding on to something with their tail**. In a Bettacraft tank they need a quiet reef tank of their own
 rather than a busy community tank.
 
-| Seahorse | ‰ | °C | Stocking | Notes |
+## Species
+
+| Species | °C | Shoal | Water | Breeding |
 |---|---|---|---|---|
-| Lined Seahorse (*Hippocampus erectus*) | 20–42 | 18–27 | 1.5 | the most common captive-bred seahorse; dark, yellow or orange |
-| Dwarf Seahorse (*Hippocampus zosterae*) | 20–42 | 21–28 | 0.3 | only 2–3 cm, for small tanks |
+| <ItemImage id="bettacraft:lined_seahorse_bucket" /> [Lined Seahorse](lined_seahorse.md) | 18–27 | – | sea water, also strong brackish water | Brood pouch: the male carries the eggs |
+| <ItemImage id="bettacraft:dwarf_seahorse_bucket" /> [Dwarf Seahorse](dwarf_seahorse.md) | 21–28 | – | sea water, also strong brackish water | Brood pouch: the male carries the eggs |
 
 ## What they need
 
@@ -49,9 +46,3 @@ her eggs into the brood pouch of the male**; his belly swells and the menu shows
 After a few days (`seahorses.pouchDays`, default 4) **he gives birth** to the fry. Seahorse fry are big enough to eat
 **artemia nauplii** from the first day; keep an [artemia hatchery](../food.md) going. Live food gets the pair in the mood
 twice as fast.
-
-## Where to get them
-
-* The **aquarium net** in a **lukewarm** or **warm ocean** (lined seahorse) or a warm ocean (dwarf seahorse), rarely.
-* The **wandering trader** now and then offers a pair among his rare offers.
-* `features.seahorses` switches them off (no new ones from the net and the trader).

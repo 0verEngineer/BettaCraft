@@ -2,8 +2,8 @@
 navigation:
   title: Panda Cory
   icon: bettacraft:panda_cory_bucket
-  parent: tankmates.md
-  position: 17
+  parent: tankmates/corydoras.md
+  position: 20
 item_ids:
   - bettacraft:panda_cory_bucket
   - bettacraft:panda_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Cream with a black eye mask, black dorsal fin and a spot at the tail base. Likes it cool.
 
+**Origin:** cool clear streams of the Rio Ucayali in Peru.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Corydoras |
-| Scientific | *Corydoras panda* |
-| Size in the game | about 4 cm (0.37 blocks) |
-| Origin | cool clear streams of the Rio Ucayali in Peru |
+| Group | Corydoras |
+| Scientific name | *Corydoras panda* |
+| Size in the game | about 4.5 cm (0.37 blocks) |
 | Temperature | 20–26 °C |
-| Shoal | 6 or more |
-| Water | sensitive |
-| Stocking | 0.45 fish |
-| Breeding | Glues its eggs to the glass (after a cool water change), 21–25 °C |
+| Breeding temperature | 21–25 °C |
+| Water | fresh water, normal |
+| Shoal | from 6 fish |
+| Swims | on the bottom |
+| Stocking | counts as 0.45 fish |
+| Breeding | Glues its eggs to the glass (after a cool water change), 12–30 young |
+| Betta tank | too cool |
+| Special | gulps air at the surface |
 
 ## Breeding
 
@@ -36,6 +43,8 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Darts up to the surface for a gulp of air now and then.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1–1.3 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).

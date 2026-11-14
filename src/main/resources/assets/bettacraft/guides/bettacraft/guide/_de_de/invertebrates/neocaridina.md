@@ -1,6 +1,6 @@
 ---
 navigation:
-  title: Garnelen
+  title: Neocaridina-Garnelen
   icon: bettacraft:fish_bag
   parent: invertebrates.md
   position: 10
@@ -13,6 +13,21 @@ navigation:
 Die Zwerggarnele *Neocaridina davidi* (etwa 2,5 cm) läuft über Boden, Steine und Pflanzen, schwimmt ab und zu einen
 kurzen Sprung und weidet ein wenig das Glas ab. Garnelen fressen Biofilm, Algen und die Reste des Fischfutters: Mit
 Garnelen verdirbt Überfüttern das Wasser kaum.
+
+## Steckbrief
+
+| | |
+|---|---|
+| Gruppe | Garnelen |
+| Größe im Spiel | etwa 2,5 cm (0,2 Blöcke) |
+| Temperatur | 18–28 °C |
+| Wasser | Süßwasser, empfindlich |
+| Vermehrung | Männchen und Weibchen; das Weibchen trägt die Eier, die Jungen schlüpfen fertig entwickelt, 3–8 Junge |
+| Heranwachsen | etwa 3 Tage |
+| Algen | weidet 0,08 Scheiben am Tag ab |
+| Klettert an der Scheibe | ja |
+| Besatz | 25 zählen als ein Fisch |
+| Farblinien | 6 (aus Wildtieren herausgezüchtet) |
 
 ## Farben
 
@@ -52,3 +67,9 @@ Garnelen verdirbt Überfüttern das Wasser kaum.
 * 18 bis 28 °C. Garnelen sind empfindlich: Unter 45 % Wasserqualität sterben sie weg.
 * Futter: Ein Becken bildet etwas von selbst; Pflanzen und Algen geben mehr. Eine große Kolonie braucht Reste des
   Fischfutters.
+
+## Bezug
+
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 10–12 % pro Schwung, 1–3 auf einmal.
+* **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde.
+* **Vermehrung** im Aquarium (Männchen und Weibchen).

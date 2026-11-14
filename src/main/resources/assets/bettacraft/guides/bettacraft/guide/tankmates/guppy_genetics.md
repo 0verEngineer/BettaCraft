@@ -2,8 +2,8 @@
 navigation:
   title: Guppy Genetics
   icon: bettacraft:endler_guppy_bucket
-  parent: tankmates.md
-  position: 28
+  parent: tankmates/livebearers.md
+  position: 40
 ---
 
 # Guppy and Endler Genetics
@@ -89,7 +89,7 @@ generations they become guppies or endlers again.
 
 * The **wandering trader** sells wild-caught guppies and endlers and pure-bred strains (Red Cobra, Blue Moscow, Full
   Gold, Tuxedo Koi, Japan Blue, Endler Tiger, Black Bar, ...).
-* The [aquarium net](../invertebrates/catching.md) brings wild fish (some carry a bred allele hidden), now and then a
+* The [aquarium net](../getting_started/catching.md) brings wild fish (some carry a bred allele hidden), now and then a
   group of feral fancy guppies.
 * Fish from worlds before this version keep their look: the old varieties (Wild, Red, Blue Grass, Green Cobra, Tuxedo;
   endler Wild, Tiger, Black Bar) become Wild Guppy, Full Red, Blue Grass, Green Cobra, Half Black Red and the endler

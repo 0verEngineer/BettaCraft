@@ -1,9 +1,8 @@
 ---
 navigation:
-  title: Ausrüstung
+  title: Technik
   icon: bettacraft:external_filter
-  parent: index.md
-  position: 40
+  position: 30
 ---
 
 # Ausrüstung
@@ -26,6 +25,11 @@ navigation:
 | [Futterautomat](equipment/feeder.md) | füttert die Fische bis zu dreimal am Tag |
 | [Licht](equipment/light.md) | eine Lichtleiste, per Redstone schaltbar |
 | [Schrank](equipment/cabinet.md) | Unterbau für das Aquarium mit Platz für Filter und Futter |
-| [Aquarium-Abdeckung](aquarium/water_quality.md) | verhindert, dass das Wasser verdunstet |
+| [Abdeckung](equipment/tank_lid.md) | verhindert, dass das Wasser verdunstet |
+| [Werkzeuge und Behälter](equipment/tools.md) | Kescher, Fischbeutel, Algenschaber, Spiegelstab, Ablaichkasten |
 
 Standardmäßig braucht keine Ausrüstung Strom; ein Server kann das einschalten (siehe [Strom](equipment/power.md)).
+
+## In diesem Kapitel
+
+<SubPages icons={true} />

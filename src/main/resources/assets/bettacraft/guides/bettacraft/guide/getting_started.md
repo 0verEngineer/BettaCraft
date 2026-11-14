@@ -2,7 +2,6 @@
 navigation:
   title: First steps
   icon: minecraft:water_bucket
-  parent: index.md
   position: 10
 ---
 
@@ -49,4 +48,8 @@ Bettas need food at least every day. Right-click the aquarium with <ItemLink id=
 <ItemLink id="bettacraft:mosquito_larvae" />, or let an <ItemLink id="bettacraft:feeder" /> do it.
 See [Food](food.md) for how to get them.
 
-That is all a single betta needs. Next: [decorate the interior](interior.md) or [start breeding](breeding.md).
+That is all a single betta needs. Next: [decorate the interior](interior.md) or [start breeding](bettas/breeding.md).
+
+## In this chapter
+
+<SubPages icons={true} />

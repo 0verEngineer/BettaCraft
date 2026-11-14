@@ -22,7 +22,7 @@ Ei bis zum adulten Fisch.
 
 ![Jungfisch, Juvenil, Subadult, ein flarendes Männchen und ein Weibchen in Zuchtfarben](../images/stages.png)
 
-* Eier und Larven sind noch keine Tiere: Sie gehören zum [Schaumnest](../breeding.md) und entwickeln sich nur bei 24
+* Eier und Larven sind noch keine Tiere: Sie gehören zum [Schaumnest](breeding.md) und entwickeln sich nur bei 24
   bis 30 °C.
 * Ab dem Jungfisch ist der Betta ein echtes Tier im Aquarium.
 * Ein junger Betta wächst nur, solange er **satt** ist, die Wassertemperatur **verträglich** ist (24 bis 30 °C) und er

@@ -1,0 +1,122 @@
+---
+navigation:
+  title: Was gibt es wo
+  icon: minecraft:filled_map
+  parent: getting_started.md
+  position: 20
+---
+
+# Was gibt es wo
+
+Alles, was die Welt für deine Aquarien hergibt, mit der Chance pro Versuch (Standardwerte der Config). Die Seite wird aus
+den Tabellen des Spiels selbst geschrieben und passt deshalb immer zum Spiel. Jede Tier- und Pflanzenseite hat dieselbe
+Liste für ihre Art unter **Bezug**.
+
+* **Kescher**: in offenem Wasser (nicht im Aquarium) schwingen, mit einem leeren Fischbeutel im Inventar; siehe
+  [Tiere fangen](catching.md). Pflanzen in der Nähe und harter Boden (Sand, Kies, Stein) machen manche Fänge
+  wahrscheinlicher: die Chancen zeigen den niedrigsten und den höchsten Wert.
+* **Angeln**: ab und zu kommt statt des Fischs eine Pflanze hoch.
+* **Fahrender Händler**: jeder Händler wählt einen Teil seiner Angebote zufällig; die Tabellen zeigen, was jedes Angebot
+  sein kann.
+
+## Kescher
+
+| Wo | Fang (Chance pro Schwung) |
+|---|---|
+| In Flüssen | [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md) 1,7–2,1 %, [Antennenwels](../tankmates/bristlenose_pleco.md) 1,1–1,4 %, [Otocinclus (Ohrgitter-Harnischwels)](../tankmates/otocinclus.md) 1,1–1,4 %, [Guppy](../tankmates/guppy.md) 3,4–4,1 %, [Endler-Guppy](../tankmates/endler_guppy.md) 1,7–2,1 %, [Platy](../tankmates/platy.md) 2,9–3,4 %, [Neocaridina-Garnele](../invertebrates/neocaridina.md) 10–12 %, [Posthornschnecke](../invertebrates/ramshorn.md) 7,8–9,3 %, [Blasenschnecke](../invertebrates/bladder_snail.md) 6,5–7,7 %, [Turmdeckelschnecke](../invertebrates/trumpet_snail.md) 1–2 %, [Raubschnecke](../invertebrates/assassin_snail.md) 0,78 % |
+| In Sümpfen | [Keilfleckbärbling](../tankmates/harlequin_rasbora.md) 4,2–5 %, [Moskitobärbling](../tankmates/mosquito_rasbora.md) 3,7–4,4 %, [Dornauge](../tankmates/kuhli_loach.md) 2–2,4 %, [Prachtschmerle](../tankmates/clown_loach.md) 0,5–0,6 %, [Zwergfadenfisch](../tankmates/dwarf_gourami.md) 1,7–2 %, [Posthornschnecke](../invertebrates/ramshorn.md) 8,8–12 %, [Blasenschnecke](../invertebrates/bladder_snail.md) 8,8–12 %, [Turmdeckelschnecke](../invertebrates/trumpet_snail.md) 7,3–11 %, [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md) 1,5 % |
+| In Mangrovensümpfen | [Zebra-Rennschnecke](../invertebrates/zebra_nerite.md) 9–11 %, [Geweihschnecke](../invertebrates/horned_nerite.md) 7,2–9 %, [Oliv-Rennschnecke](../invertebrates/olive_nerite.md) 9–11 %, [Rote Rennschnecke](../invertebrates/red_nerite.md) 1,8–2,2 %, [Gelbe Rennschnecke](../invertebrates/yellow_nerite.md) 1,4–1,7 %, [Raubschnecke](../invertebrates/assassin_snail.md) 1,4–1,7 % |
+| An Stränden | [Zebra-Rennschnecke](../invertebrates/zebra_nerite.md) 9–11 %, [Geweihschnecke](../invertebrates/horned_nerite.md) 7,5–9 %, [Oliv-Rennschnecke](../invertebrates/olive_nerite.md) 9–11 %, [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md) 4,5–5,4 % |
+| In Dschungelgewässern | [Neonsalmler](../tankmates/neon_tetra.md) 2–2,4 %, [Roter Neon](../tankmates/cardinal_tetra.md) 1,4–1,7 %, [Grüner Neon](../tankmates/green_neon_tetra.md) 0,79–0,94 %, [Feuersalmler](../tankmates/ember_tetra.md) 1,2–1,4 %, [Glühlichtsalmler](../tankmates/glowlight_tetra.md) 0,98–1,2 %, [Pygmäen-Panzerwels](../tankmates/pygmy_cory.md) 0,92–1,1 %, [Panda-Panzerwels](../tankmates/panda_cory.md) 1–1,3 %, [Sterbai-Panzerwels](../tankmates/sterbai_cory.md) 0,92–1,1 %, [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md) 0,52–0,63 %, [L134 Leopard-Frosch-Wels](../tankmates/leopard_frog_pleco.md) 0,33–0,39 %, [L046 Zebra-Harnischwels](../tankmates/zebra_pleco.md) 0,13–0,16 %, [Antennenwels](../tankmates/bristlenose_pleco.md) 0,66–0,79 %, [Otocinclus (Ohrgitter-Harnischwels)](../tankmates/otocinclus.md) 0,66–0,79 %, [Prachtschmerle](../tankmates/clown_loach.md) 0,2–0,24 %, [Endler-Guppy](../tankmates/endler_guppy.md) 0,26–0,31 %, [Apfelschnecke](../invertebrates/apple_snail.md) 18–21 %, [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md) 4,9–5,7 %, [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md) 3,1–3,6 % |
+| In tiefem Höhlenwasser | [Turmdeckelschnecke](../invertebrates/trumpet_snail.md) 26–34 %, [Raubschnecke](../invertebrates/assassin_snail.md) 3,5–4,2 % |
+| In üppigen Höhlen | [Turmdeckelschnecke](../invertebrates/trumpet_snail.md) 20–27 %, [Posthornschnecke](../invertebrates/ramshorn.md) 6,8–11 %, [Raubschnecke](../invertebrates/assassin_snail.md) 2,7–2,9 % |
+| In warmen Ozeanen (Korallenriffe) | [Krustenanemonen (Zoanthus)](../saltwater/zoanthus.md) 0,75–0,9 %, [Scheibenanemone](../saltwater/mushroom_coral.md) 0,75–0,9 %, [Blasenanemone](../saltwater/bubble_tip_anemone.md) 0,75–0,9 %, [Grüne Sternpolypen](../saltwater/green_star_polyps.md) 0,75–0,9 %, [Falscher Clownfisch](../saltwater/ocellaris_clownfish.md) 2,5–3 %, [Gelber Segelflossendoktor](../saltwater/yellow_tang.md) 1–1,2 %, [Gelbe Wächtergrundel](../saltwater/yellow_watchman_goby.md) 1,7–2 %, [Grünes Schwalbenschwänzchen](../saltwater/green_chromis.md) 2,9–3,5 %, [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md) 2,1–2,5 %, [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md) 0,62–0,74 %, [Zwergseepferdchen](../saltwater/dwarf_seahorse.md) 0,83–0,99 %, [Mexikanische Turboschnecke](../saltwater/turbo_snail.md) 9,6–12 %, [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md) 9,6–12 %, [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md) 6,4–7,4 % |
+| In lauwarmen Ozeanen | [Gelbe Wächtergrundel](../saltwater/yellow_watchman_goby.md) 2,3–2,7 %, [Grünes Schwalbenschwänzchen](../saltwater/green_chromis.md) 3,8–4,5 %, [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md) 4,5–5,4 %, [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md) 1,5–1,8 %, [Mexikanische Turboschnecke](../saltwater/turbo_snail.md) 11–13 %, [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md) 13–16 %, [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md) 1,9–2,2 % |
+
+## Angeln
+
+| Wo | Fang (Chance pro Fang) |
+|---|---|
+| In Sümpfen | [Wasserlinse](../plants/duckweed.md) 2,7 %, [Schwimmfarn](../plants/salvinia.md) 1,8 %, [Amazonas-Froschbiss](../plants/amazon_frogbit.md) 1,5 % |
+| In Mangrovensümpfen | [Wasserlinse](../plants/duckweed.md) 2,1 %, [Schwimmfarn](../plants/salvinia.md) 1,5 %, [Amazonas-Froschbiss](../plants/amazon_frogbit.md) 1,5 %, [Rote Wurzelflosse](../plants/red_root_floater.md) 0,9 % |
+| In Dschungeln und Flüssen | [Javafarn](../plants/java_fern.md) 1,5 %, [Anubias nana](../plants/anubias_nana.md) 1,5 %, [Bucephalandra „Green Wavy“](../plants/bucephalandra_green_wavy.md) 0,75 %, [Bucephalandra „Mini Needle“](../plants/bucephalandra_mini_needle.md) 0,65 %, [Bucephalandra „Blue“](../plants/bucephalandra_blue.md) 0,3 %, [Bucephalandra „Brownie Red“](../plants/bucephalandra_brownie_red.md) 0,3 % |
+| In Sümpfen und Mangrovensümpfen | [Cryptocoryne wendtii (grün)](../plants/cryptocoryne_wendtii_green.md) 1,6 %, [Cryptocoryne wendtii (braunrot)](../plants/cryptocoryne_wendtii_brown.md) 1,2 %, [Ludwigia repens](../plants/ludwigia_repens.md) 0,94 %, [Rotala rotundifolia](../plants/rotala_rotundifolia.md) 0,94 % |
+
+## Weitere Funde
+
+* [Flasche Sumpfwasser](../food.md): Glasflasche mit Wasser in Sümpfen (immer).
+* [Flasche Salzwasser](../food/fry_food.md): Glasflasche mit Wasser in Ozeanen und an Stränden (immer).
+* [Wasserlinse](../plants/duckweed.md): Glasflasche mit Wasser in Sümpfen (15 %).
+* [Cryptocoryne wendtii (grün)](../plants/cryptocoryne_wendtii_green.md): Glasflasche mit Wasser in Sümpfen (1,5 %).
+* [Cryptocoryne wendtii (braunrot)](../plants/cryptocoryne_wendtii_brown.md): Glasflasche mit Wasser in Sümpfen (1,1 %).
+* [Ludwigia repens](../plants/ludwigia_repens.md): Glasflasche mit Wasser in Sümpfen (0,85 %).
+* [Rotala rotundifolia](../plants/rotala_rotundifolia.md): Glasflasche mit Wasser in Sümpfen (0,85 %).
+* [Javamoos](../plants/java_moss.md): Schere an einem Moosblock neben Wasser (50 %).
+* [Turmdeckelschnecke](../invertebrates/trumpet_snail.md): Schaufel auf Schlamm in Sümpfen (8 %).
+* [Turmdeckelschnecke](../invertebrates/trumpet_snail.md): Schaufel auf Schlamm in Mangrovensümpfen (8 %).
+* [Mückenlarven](../food.md): Schlamm abbauen in Sümpfen (4 %).
+* [Artemia-Zysten](../food/fry_food.md): Sand abbauen (2 %).
+* [Betta](../bettas.md): spawnt in Sümpfen (Spawn-Gewicht 8).
+
+## Fahrender Händler: übliche Angebote
+
+| Ware | Anzahl | Smaragde |
+|---|---|---|
+| [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md) | 2 | 5 |
+| [Apfelschnecke](../invertebrates/apple_snail.md) | 1 | 3 |
+| [Neonsalmler](../tankmates/neon_tetra.md) | 6 | 4 |
+| [Roter Neon](../tankmates/cardinal_tetra.md) | 6 | 4 |
+| [Grüner Neon](../tankmates/green_neon_tetra.md) | 6 | 3 |
+| [Feuersalmler](../tankmates/ember_tetra.md) | 6 | 3 |
+| [Keilfleckbärbling](../tankmates/harlequin_rasbora.md) | 6 | 4 |
+| [Moskitobärbling](../tankmates/mosquito_rasbora.md) | 8 | 3 |
+| [Pygmäen-Panzerwels](../tankmates/pygmy_cory.md) | 8 | 3 |
+| [Panda-Panzerwels](../tankmates/panda_cory.md) | 6 | 4 |
+| [Sterbai-Panzerwels](../tankmates/sterbai_cory.md) | 6 | 5 |
+| [Antennenwels](../tankmates/bristlenose_pleco.md) | 2 | 4 |
+| [Otocinclus (Ohrgitter-Harnischwels)](../tankmates/otocinclus.md) | 6 | 3 |
+| [Dornauge](../tankmates/kuhli_loach.md) | 6 | 4 |
+| [Guppy](../tankmates/guppy.md) | 6 | 4+ |
+| [Endler-Guppy](../tankmates/endler_guppy.md) | 6 | 3+ |
+| [Platy](../tankmates/platy.md) | 6 | 4 |
+| [Zwergfadenfisch](../tankmates/dwarf_gourami.md) | 2 | 4 |
+| [Amazonas-Schwertpflanze](../plants/amazon_sword.md) | 1 | 1 |
+| [Vallisneria](../plants/vallisneria.md) | 2 | 1 |
+| [Monte Carlo](../plants/monte_carlo.md) | 2 | 1 |
+| [Alternanthera reineckii](../plants/alternanthera_reineckii.md) | 1 | 2 |
+| [Amazonas-Froschbiss](../plants/amazon_frogbit.md) | 2 | 1 |
+| [Schwimmfarn](../plants/salvinia.md) | 3 | 1 |
+| [Meersalz](../saltwater/water.md) | 8 | 2 |
+| [Falscher Clownfisch](../saltwater/ocellaris_clownfish.md) | 2 | 4 |
+| [Gelbe Wächtergrundel](../saltwater/yellow_watchman_goby.md) | 2 | 3 |
+| [Grünes Schwalbenschwänzchen](../saltwater/green_chromis.md) | 6 | 4 |
+| [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md) | 2 | 3 |
+| [Krustenanemonen (Zoanthus)](../saltwater/zoanthus.md) | 2 | 4 |
+| [Scheibenanemone](../saltwater/mushroom_coral.md) | 2 | 4 |
+| [Blasenanemone](../saltwater/bubble_tip_anemone.md) | 2 | 4 |
+| [Grüne Sternpolypen](../saltwater/green_star_polyps.md) | 2 | 4 |
+
+## Fahrender Händler: seltene Angebote
+
+| Ware | Anzahl | Smaragde |
+|---|---|---|
+| [Neocaridina-Garnele](../invertebrates/neocaridina.md) | 2 | 6 |
+| [Posthornschnecke](../invertebrates/ramshorn.md) | 2 | 4 |
+| [Rote Rennschnecke](../invertebrates/red_nerite.md) | 2 | 4 |
+| [Gelbe Rennschnecke](../invertebrates/yellow_nerite.md) | 2 | 4 |
+| [Raubschnecke](../invertebrates/assassin_snail.md) | 1 | 4 |
+| [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md) | 1 | 6 |
+| [Glühlichtsalmler](../tankmates/glowlight_tetra.md) | 6 | 7 |
+| [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md) | 6 | 8 |
+| [L134 Leopard-Frosch-Wels](../tankmates/leopard_frog_pleco.md) | 2 | 7 |
+| [L046 Zebra-Harnischwels](../tankmates/zebra_pleco.md) | 2 | 6 |
+| [Prachtschmerle](../tankmates/clown_loach.md) | 6 | 17 |
+| [Roter Tigerlotus](../plants/red_tiger_lotus.md) | 1 | 4 |
+| [Cryptocoryne „Flamingo“](../plants/cryptocoryne_flamingo.md) | 1 | 5 |
+| [Rote Wurzelflosse](../plants/red_root_floater.md) | 2 | 3 |
+| [Gelber Segelflossendoktor](../saltwater/yellow_tang.md) | 2 | 9 |
+| [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md) | 2 | 7 |
+| [Zwergseepferdchen](../saltwater/dwarf_seahorse.md) | 2 | 5 |
+| [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md) | 1 | 5 |
+| [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md) | 3 | 5 |
+| [Lebendgestein](../saltwater/reef_rock.md) | 8 | 6 |

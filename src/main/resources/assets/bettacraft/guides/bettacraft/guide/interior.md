@@ -1,12 +1,11 @@
 ---
 navigation:
-  title: Interior
+  title: Interior and decoration
   icon: bettacraft:decor_castle
-  parent: index.md
-  position: 70
+  position: 100
 ---
 
-# Interior
+# Interior and decoration
 
 Every aquarium has a room of its own: its **interior**. Step inside, build whatever you like with any blocks, and the
 aquarium shows it as a **miniature** behind the glass.
@@ -57,8 +56,6 @@ The miniature is built in the background and updated block by block. Block entit
 shown. Very large builds stop at a limit (`interior.maxRenderedBlocks`); the interior tab of the menu then says
 "Render limit reached".
 
-## More
+## In this chapter
 
-* [Substrate](interior/substrate.md)
-* [Decoration](interior/decor.md)
-* [Aquarium plants](interior/plants.md): cuttings that grow into plants of many blocks
+<SubPages icons={true} />

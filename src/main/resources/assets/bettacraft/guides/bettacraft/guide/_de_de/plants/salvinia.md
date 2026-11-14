@@ -1,0 +1,37 @@
+---
+navigation:
+  title: Schwimmfarn
+  icon: bettacraft:salvinia
+  parent: plants/floating_plants.md
+  position: 30
+item_ids:
+  - bettacraft:salvinia
+---
+
+# Schwimmfarn
+
+![Schwimmfarn](../images/sp_salvinia.png)
+
+Schwimmfarn (*Salvinia natans*) aus den stillen Gewässern Europas und Asiens: kleine, paarige, behaarte Blätter.
+
+## Steckbrief
+
+| | |
+|---|---|
+| Wuchsform | Schwimmpflanze |
+| Blattgröße | bis 5,3 cm |
+| Wachstum | schnell |
+| Nimmt Abfall auf | ×1,1 |
+| Nestplatz | gut |
+| Wurzeln | mittel |
+
+## Haltung
+
+* Robust, mittleres Wachstum; ein guter Nestplatz.
+
+## Bezug
+
+* **Angeln** in Sümpfen: 1,8 % pro Fang, statt des Fischs.
+* **Angeln** in Mangrovensümpfen: 1,5 % pro Fang, statt des Fischs.
+* **Fahrender Händler** (übliche Angebote): 3 für 1 Smaragd.
+* **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.

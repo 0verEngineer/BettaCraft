@@ -1,0 +1,35 @@
+---
+navigation:
+  title: Bucephalandra „Blue“
+  icon: bettacraft:bucephalandra_blue
+  parent: plants/epiphytes.md
+  position: 50
+item_ids:
+  - bettacraft:bucephalandra_blue
+---
+
+# Bucephalandra „Blue“
+
+![Bucephalandra „Blue“](../images/sp_bucephalandra_blue.png)
+
+*Bucephalandra* „Blue“ aus Borneo: Blätter mit bläulichem Schimmer.
+
+## Steckbrief
+
+| | |
+|---|---|
+| Wuchsform | Aufsitzerpflanze (Rhizom) |
+| Wächst auf | Stein und Holz (auch Deko) |
+| Licht | wenig |
+| Volle Größe | nach etwa 22 Tagen |
+| Breitet sich aus | nein |
+| Ableger pro Schnitt | 1 |
+
+## Haltung
+
+* Auf Stein oder Holz; beim Angeln selten.
+
+## Bezug
+
+* **Angeln** in Dschungeln und Flüssen: 0,3 % pro Fang, statt des Fischs.
+* **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.

@@ -2,8 +2,8 @@
 navigation:
   title: Guppy-Genetik
   icon: bettacraft:endler_guppy_bucket
-  parent: tankmates.md
-  position: 28
+  parent: tankmates/livebearers.md
+  position: 40
 ---
 
 # Guppy- und Endler-Genetik
@@ -91,7 +91,7 @@ Generationen rückgekreuzt werden sie wieder zu Guppys oder Endlern.
 
 * Der **fahrende Händler** verkauft Wildfänge und reinerbige Zuchtformen (Red Cobra, Blue Moskau, Full Gold, Tuxedo
   Koi, Japan Blue, Endler Tiger, Black Bar, …).
-* Der [Kescher](../invertebrates/catching.md) bringt Wildfische (manche tragen ein Zucht-Allel verdeckt), ab und zu
+* Der [Kescher](../getting_started/catching.md) bringt Wildfische (manche tragen ein Zucht-Allel verdeckt), ab und zu
   eine Gruppe verwilderter Zuchtguppys.
 * Fische aus Welten vor dieser Version behalten ihr Aussehen: Die alten Varianten (Wild, Rot, Blue Grass, Green
   Cobra, Tuxedo; Endler Wild, Tiger, Black Bar) werden zu Wildguppy, Full Red, Blue Grass, Green Cobra, Halbschwarz

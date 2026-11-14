@@ -3,7 +3,7 @@ navigation:
   title: Kühler
   icon: bettacraft:cooler_medium
   parent: equipment.md
-  position: 15
+  position: 20
 item_ids:
   - bettacraft:cooler_small
   - bettacraft:cooler_medium
@@ -28,10 +28,6 @@ haben und nutzt immer das Passende.
 | <ItemLink id="bettacraft:cooler_medium" /> | 32 Wasserblöcke |
 | <ItemLink id="bettacraft:cooler_large" /> | 64 Wasserblöcke |
 
-<RecipeFor id="bettacraft:cooler_small" />
-<RecipeFor id="bettacraft:cooler_medium" />
-<RecipeFor id="bettacraft:cooler_large" />
-
 Kühler funktionieren überall dort, wo auch Heizer funktionieren:
 
 * **Im Innenraum** als Stab (6, 9 oder 12 Blöcke hoch bei Maßstab 16); er kühlt nur, solange sein unterster Block unter
@@ -41,3 +37,11 @@ Kühler funktionieren überall dort, wo auch Heizer funktionieren:
 
 Bei zu wenig Kapazität kommt das Wasser nur einen passenden Teil des Wegs zur Zieltemperatur. Wenn der Server für Heizer
 Strom verlangt, brauchen ihn auch die Kühler (siehe [Strom](power.md)).
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:cooler_small" />
+<RecipesFor id="bettacraft:cooler_medium" />
+<RecipesFor id="bettacraft:cooler_large" />

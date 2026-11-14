@@ -2,11 +2,9 @@
 navigation:
   title: Bettas
   icon: bettacraft:betta_bucket
-  parent: index.md
-  position: 20
+  position: 40
 item_ids:
   - bettacraft:betta_bucket
-  - bettacraft:fish_bag
   - bettacraft:betta_spawn_egg
 ---
 
@@ -37,8 +35,6 @@ Bedürfnisse und kämpfen nicht.
 Das Rezept der Fischtüte wechselt auf Plastik, wenn eine Mod mit Plastikplatten installiert ist (mehr Tüten pro
 Rezept):
 
-<RecipesFor id="bettacraft:fish_bag" />
-
 Der Tooltip von Eimer und Tüte zeigt Typ, Geschlecht, Farben, Muster und Schimmer des Fisches. Auf ein
 [Aquarium](aquarium/inhabitants.md) angewendet setzt du den Fisch ein, auf Wasser lässt du ihn frei.
 
@@ -47,10 +43,11 @@ Der Tooltip von Eimer und Tüte zeigt Typ, Geschlecht, Farben, Muster und Schimm
 Männchen haben lange, bunte Flossen. Weibchen haben kürzere Flossen, sind etwas blasser und zeigen in Zuchtstimmung
 senkrechte Querstreifen. Das Geschlecht steht als ♂ und ♀ im Aquarium-Menü und in Jade.
 
-## Mehr über Bettas
+## Bezug
 
-* [Lebensstufen](bettas/life_stages.md)
-* [Gesundheit](bettas/health.md)
-* [Genetik](bettas/genetics.md)
-* [Typen und Farben](bettas/types.md)
-* [Kämpfe, Flaring und Raubfische](bettas/fighting.md)
+* **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 8).
+* **[Zucht](bettas/breeding.md)**: Schaumnest, Eier und Jungfische im Aquarium.
+
+## In diesem Kapitel
+
+<SubPages icons={true} />

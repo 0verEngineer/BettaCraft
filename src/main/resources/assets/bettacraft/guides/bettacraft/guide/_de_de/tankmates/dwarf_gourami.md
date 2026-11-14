@@ -3,7 +3,7 @@ navigation:
   title: Zwergfadenfisch
   icon: bettacraft:dwarf_gourami_bucket
   parent: tankmates.md
-  position: 29
+  position: 90
 item_ids:
   - bettacraft:dwarf_gourami_bucket
   - bettacraft:dwarf_gourami_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Blau-rot gestreifte Männchen mit langen Fühlern; ein Labyrinthfisch wie der Betta - Fadenfisch- und Betta-Männchen kämpfen.
 
+**Herkunft:** pflanzenreiche Gewässer Indiens und Bangladeschs.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Fadenfische |
-| Wissenschaftlich | *Trichogaster lalius* |
-| Größe im Spiel | etwa 7 cm (0,55 Blöcke) |
-| Herkunft | pflanzenreiche Gewässer Indiens und Bangladeschs |
+| Gruppe | Fadenfische |
+| Wissenschaftlicher Name | *Trichogaster lalius* |
+| Größe im Spiel | etwa 6,5 cm (0,55 Blöcke) |
 | Temperatur | 24–29 °C |
-| Schwarm | einzeln oder paarweise |
-| Wasser | normal |
-| Besatz | 1 Fisch |
-| Zucht | baut ein Schaumnest, 26–29 °C |
+| Zuchttemperatur | 26–29 °C |
+| Wasser | Süßwasser, normal |
+| Schwarm | einzeln oder als Paar |
+| Schwimmt | nahe der Oberfläche |
+| Besatz | zählt als 1 Fisch |
+| Zucht | baut ein Schaumnest, 20–50 Junge |
+| Betta-Becken | nein |
+| Besonderheiten | revierbildend, wird von Betta-Männchen gejagt, 3 Farbformen |
 
 ## Farbformen
 
@@ -39,6 +46,8 @@ Wie ein Betta: Bei 26–29 °C baut das Männchen ein Schaumnest an der Oberflä
 
 * Betta-Männchen jagen die Männchen dieser Art (Config `tankmates.behaviour.bettaAggression`).
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Sümpfen und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,7–2 % pro Schwung.
+* **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: baut ein Schaumnest.

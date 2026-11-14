@@ -2,7 +2,7 @@
 navigation:
   title: Neonsalmler
   icon: bettacraft:neon_tetra_bucket
-  parent: tankmates.md
+  parent: tankmates/tetras.md
   position: 10
 item_ids:
   - bettacraft:neon_tetra_bucket
@@ -15,22 +15,30 @@ item_ids:
 
 Ein blauer Neonstreifen über einer roten hinteren Körperhälfte: der klassische Schwarmfisch.
 
+**Herkunft:** Schwarzwasserbäche am oberen Amazonas (Peru, Kolumbien).
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Salmler |
-| Wissenschaftlich | *Paracheirodon innesi* |
+| Gruppe | Salmler |
+| Wissenschaftlicher Name | *Paracheirodon innesi* |
 | Größe im Spiel | etwa 3 cm (0,25 Blöcke) |
-| Herkunft | Schwarzwasserbäche am oberen Amazonas (Peru, Kolumbien) |
 | Temperatur | 20–27 °C |
+| Zuchttemperatur | 22–25 °C |
+| Wasser | Süßwasser, empfindlich |
 | Schwarm | ab 6 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,35 Fisch |
-| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 22–25 °C |
+| Schwimmt | in der Mitte |
+| Besatz | zählt als 0,35 Fisch |
+| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 20–50 Junge |
+| Betta-Becken | zu kühl |
 
 ## Zucht
 
 Bei 22–25 °C streut ein Paar 20–50 Eier in feinblättrige Pflanzen, Javamoos oder einen **Laichmop**. Die Eltern und alle anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher. Lebendfutter (Mückenlarven) macht die Fische laichbereiter.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 2–2,4 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

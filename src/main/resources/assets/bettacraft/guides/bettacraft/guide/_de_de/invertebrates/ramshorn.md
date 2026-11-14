@@ -1,0 +1,41 @@
+---
+navigation:
+  title: Posthornschnecke
+  icon: bettacraft:fish_bag
+  parent: invertebrates/snails.md
+  position: 70
+---
+
+# Posthornschnecke
+
+![Posthornschnecke](../images/sp_ramshorn.png)
+
+Die Posthornschnecke (*Planorbella* sp.) aus den stillen Gewässern Nordamerikas: ein flach gewundenes Gehäuse, wild rotbraun; Rosa, Blau und Rot entstehen durch Zucht.
+
+## Steckbrief
+
+| | |
+|---|---|
+| Gruppe | Schnecken |
+| Größe im Spiel | etwa 1,5 cm (0,12 Blöcke) |
+| Temperatur | 15–30 °C |
+| Wasser | Süßwasser, normal |
+| Vermehrung | Zwitter: ein Tier genügt, 1–2 Junge |
+| Heranwachsen | etwa 3 Tage |
+| Algen | weidet 0,6 Scheiben am Tag ab |
+| Klettert an der Scheibe | ja |
+| Besatz | 50 zählen als ein Fisch |
+| Farblinien | 3 (aus Wildtieren herausgezüchtet) |
+
+## Haltung
+
+* Eine Schnecke genügt zur Vermehrung (Zwitter).
+* Wildfänge tragen manchmal Rosa oder Blau verdeckt: zwei Träger geben ein Viertel farbige Junge, **Rosa x Rosa züchtet rein**.
+
+## Bezug
+
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 7,8–9,3 % pro Schwung, 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 8,8–12 % pro Schwung, 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 6,8–11 % pro Schwung, 1–2 auf einmal.
+* **Fahrender Händler** (seltene Angebote): 2 für 4 Smaragde.
+* **Vermehrung** im Aquarium (ein Tier genügt).

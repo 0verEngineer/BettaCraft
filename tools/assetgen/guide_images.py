@@ -403,6 +403,29 @@ def m22_1(out_en: Path) -> None:
             print("missing", src)
 
 
+# M22.2 gallery (DevClientSmokeM222, -Psmoketestm22_2): one small tank per species in front of a white wall, the same
+# camera for every kind (reef fish and seahorses, snails and reef invertebrates, plants, corals, floating plants from
+# above): ``bettacraft_m22_2_sp_<id>.png`` -> ``images/sp_<id>.png`` at 720x480. ``py guide_images.py m22_2``.
+M22_2_BOX = {"fish": (160, 160, 1120, 800), "critter": (160, 200, 1120, 840), "floating": (160, 120, 1120, 760),
+             "tall": (160, 100, 1120, 740), "low": (300, 360, 980, 813)}
+M22_2_CRITTERS = {"zebra_nerite", "horned_nerite", "olive_nerite", "red_nerite", "yellow_nerite", "apple_snail", "ramshorn", "bladder_snail",
+                  "trumpet_snail", "assassin_snail", "cleaner_shrimp", "hermit_crab", "turbo_snail"}
+M22_2_FLOATING = {"duckweed", "amazon_frogbit", "salvinia", "red_root_floater"}
+M22_2_FISH = {"ocellaris_clownfish", "yellow_tang", "yellow_watchman_goby", "green_chromis", "yellowtail_damsel", "lined_seahorse", "dwarf_seahorse"}
+# plants and corals that reach up through the tank (the others sit low: a closer crop)
+M22_2_TALL = {"java_fern", "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "red_tiger_lotus",
+              "acropora", "hammer_coral"}
+
+
+def m22_2(out_en: Path) -> None:
+    for src in sorted(SHOTS.glob("bettacraft_m22_2_sp_*.png")):
+        sp = src.stem[len("bettacraft_m22_2_sp_"):]
+        kind = ("critter" if sp in M22_2_CRITTERS else "floating" if sp in M22_2_FLOATING else "fish" if sp in M22_2_FISH
+                else "tall" if sp in M22_2_TALL else "low")
+        im = Image.open(src).convert("RGB").crop(M22_2_BOX[kind]).resize((720, 480), Image.LANCZOS)
+        save(im, out_en / f"sp_{sp}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -417,6 +440,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m22_2"]:
+        m22_2(out_en)
+        return 0
     if sys.argv[1:] == ["m22_1"]:
         m22_1(out_en)
         return 0

@@ -1,6 +1,6 @@
 ---
 navigation:
-  title: Zwergkrallenfrösche
+  title: Zwergkrallenfrosch
   icon: bettacraft:dwarf_frog_bucket
   parent: invertebrates.md
   position: 40
@@ -32,9 +32,8 @@ die Deko des Innenraums herum (Steine, Wurzeln, Pflanzen, Höhlen), statt durch 
   sie mit zwei oder drei Fütterungen am Tag öfter.
 * Nach 4 Tagen ohne Futter beginnt ein Frosch zu hungern.
 
-## Woher
+## Bezug
 
-* Mit dem [Kescher](catching.md) in Sümpfen und Dschungelgewässern (selten) oder vom fahrenden Händler (selten).
-* In einem Eimer Wasser (<ItemLink id="bettacraft:dwarf_frog_bucket" />) oder einer Fischtüte, wie ein Betta.
-* Beim Besatz zählt ein Frosch wie ein Fisch (`stocking.frogsPerFish`).
-* Frösche vermehren sich in Bettacraft nicht.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,5 % pro Schwung.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 4,9–5,7 % pro Schwung.
+* **Fahrender Händler** (seltene Angebote): 1 für 6 Smaragde.

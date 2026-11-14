@@ -2,8 +2,8 @@
 navigation:
   title: Animals of other mods
   icon: minecraft:axolotl_bucket
-  parent: aquarium.md
-  position: 22
+  parent: settings.md
+  position: 10
 ---
 
 # Animals of other mods
@@ -12,7 +12,7 @@ navigation:
 
 Every small water animal of vanilla Minecraft and of other mods can live in a Bettacraft aquarium: fish, axolotls,
 tadpoles, squids, sea slugs, seahorses, starfish and more. Bettacraft does not need to know the mod; it looks at the
-animal itself. Put it in with its own bucket or with a fish bag (see [Inhabitants](inhabitants.md)).
+animal itself. Put it in with its own bucket or with a fish bag (see [Inhabitants](../aquarium/inhabitants.md)).
 
 ## What is refused
 

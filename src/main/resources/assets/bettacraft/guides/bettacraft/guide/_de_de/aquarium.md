@@ -2,8 +2,7 @@
 navigation:
   title: Aquarium
   icon: bettacraft:tank
-  parent: index.md
-  position: 30
+  position: 20
 item_ids:
   - bettacraft:tank
 ---
@@ -12,8 +11,6 @@ item_ids:
 
 Das <ItemLink id="bettacraft:tank" /> ist das Herz von Bettacraft: ein Glasblock, der sich mit seinen Nachbarn zu einem
 Aquarium mit echtem Wasser verbindet.
-
-<RecipesFor id="bettacraft:tank" />
 
 Alle sechs Glasblöcke im Rezept müssen gleich sein; das Aquarium übernimmt dieses Glas. **Jedes Glas geht**, auch
 gefärbtes Glas, getöntes Glas und das Glas anderer Mods (`#c:glass_blocks`).
@@ -63,12 +60,12 @@ Die Innenraum-Blöcke hinter dem abgebauten Block droppen als Items (mehr als 27
 einen Block in der Mitte abbaut, kann das Aquarium in mehrere kleinere teilen; jedes behält das Wasser und den Innenraum
 seiner eigenen Blöcke.
 
-## Mehr
+## In diesem Kapitel
 
-* [Formen](aquarium/shapes.md)
-* [Wasser](aquarium/water.md)
-* [Bewohner](aquarium/inhabitants.md)
-* [Tiere anderer Mods](aquarium/other_animals.md)
-* [Schwimmpflanzen](aquarium/floating_plants.md)
-* [Temperatur](aquarium/temperature.md)
-* [Aquarium-Menü, Namensschild und Sperre](aquarium/menu.md)
+<SubPages icons={true} />
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:tank" />

@@ -2,8 +2,8 @@
 navigation:
   title: Grüner Neon
   icon: bettacraft:green_neon_tetra_bucket
-  parent: tankmates.md
-  position: 11
+  parent: tankmates/tetras.md
+  position: 30
 item_ids:
   - bettacraft:green_neon_tetra_bucket
   - bettacraft:green_neon_tetra_spawn_egg
@@ -17,18 +17,24 @@ Eine eigene Art, im Handel auch **Blauer Neon** genannt: kleiner als der Neonsal
 ganzen Körper und Rot gibt es kaum. In der Wildform ist der Streifen grün, beim **Blauen Neon** blau (rezessiv: zwei blaue
 Eltern geben blaue Junge, ein grüner Fisch kann Blau verdeckt tragen).
 
+**Herkunft:** Schwarzwasser von oberem Rio Negro und Orinoko (Brasilien, Kolumbien, Venezuela).
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Salmler |
-| Wissenschaftlich | *Paracheirodon simulans* |
+| Gruppe | Salmler |
+| Wissenschaftlicher Name | *Paracheirodon simulans* |
 | Größe im Spiel | etwa 2,5 cm (0,22 Blöcke) |
-| Herkunft | Schwarzwasser von oberem Rio Negro und Orinoko (Brasilien, Kolumbien, Venezuela) |
 | Temperatur | 24–30 °C |
+| Zuchttemperatur | 26–29 °C |
+| Wasser | Süßwasser, empfindlich |
 | Schwarm | ab 6 Tieren |
-| Wasser | sehr empfindlich |
-| Besatz | 0,25 Fisch |
-| Farbformen | Grüner Neon (Wildform), Blauer Neon |
-| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 26–29 °C |
+| Schwimmt | in der Mitte |
+| Besatz | zählt als 0,25 Fisch |
+| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 15–40 Junge |
+| Betta-Becken | ja |
+| Besonderheiten | 2 Farbformen |
 
 ## Neonsalmler, Roter Neon, Grüner Neon
 
@@ -41,7 +47,8 @@ Eltern geben blaue Junge, ein grüner Fisch kann Blau verdeckt tragen).
 Bei 26–29 °C streut ein Paar 15–40 Eier in feinblättrige Pflanzen, Javamoos oder einen **Laichmop**. Die Eltern und alle
 anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern und beim fahrenden Händler (ab und zu der Blaue
-Neon); danach durch Zucht. Der Config-Schalter `features.greenNeonTetra` schaltet neue ab.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,79–0,94 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

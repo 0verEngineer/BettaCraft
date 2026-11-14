@@ -2,8 +2,8 @@
 navigation:
   title: Green Gold Cory
   icon: bettacraft:green_gold_cory_bucket
-  parent: tankmates.md
-  position: 19
+  parent: tankmates/corydoras.md
+  position: 40
 item_ids:
   - bettacraft:green_gold_cory_bucket
   - bettacraft:green_gold_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Gold-green with a dark side stripe and yellow-orange fins.
 
+**Origin:** the Rio Meta region in Colombia.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Corydoras |
-| Scientific | *Corydoras melanotaenia* |
-| Size in the game | about 6 cm (0.46 blocks) |
-| Origin | the Rio Meta region in Colombia |
+| Group | Corydoras |
+| Scientific name | *Corydoras melanotaenia* |
+| Size in the game | about 5.5 cm (0.46 blocks) |
 | Temperature | 22–27 °C |
-| Shoal | 6 or more |
-| Water | sensitive |
-| Stocking | 0.55 fish |
-| Breeding | Glues its eggs to the glass (after a cool water change), 23–26 °C |
+| Breeding temperature | 23–26 °C |
+| Water | fresh water, normal |
+| Shoal | from 6 fish |
+| Swims | on the bottom |
+| Stocking | counts as 0.55 fish |
+| Breeding | Glues its eggs to the glass (after a cool water change), 12–30 young |
+| Betta tank | too cool |
+| Special | gulps air at the surface |
 
 ## Breeding
 
@@ -36,6 +43,9 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Darts up to the surface for a gulp of air now and then.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in rivers, jungle water and from the wandering trader (rare); then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.7–2.1 % per swing, 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.52–0.63 % per swing, 1–4 at a time.
+* **Wandering trader** (rare offers): 6 for 8 emeralds; one of 5 in this offer.
+* **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).

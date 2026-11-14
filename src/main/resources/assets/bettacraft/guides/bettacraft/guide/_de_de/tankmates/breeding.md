@@ -3,9 +3,8 @@ navigation:
   title: Zucht der Beifische
   icon: bettacraft:breeding_box
   parent: tankmates.md
-  position: 2
+  position: 20
 item_ids:
-  - bettacraft:breeding_box
   - bettacraft:fry_powder
   - bettacraft:algae_wafer
   - bettacraft:spawning_cave
@@ -65,7 +64,7 @@ zeigt die Bedingungen und die Gelege jeder Art im Becken.
 
 ## Schaumnest: Zwergfadenfisch
 
-* Wie beim [Betta](../breeding.md): Das Männchen baut ein Schaumnest an der Oberfläche (Schwimmpflanzen helfen), das
+* Wie beim [Betta](../bettas/breeding.md): Das Männchen baut ein Schaumnest an der Oberfläche (Schwimmpflanzen helfen), das
   Weibchen laicht hinein, danach bewacht das Männchen das Nest und vertreibt sie - nimm sie heraus.
 
 ## Prachtschmerlen
@@ -78,3 +77,14 @@ zeigt die Bedingungen und die Gelege jeder Art im Becken.
 * <ItemLink id="bettacraft:fry_powder" /> ernährt die Jungfische aller Arten (auch Betta-Junge) im ganzen
   Jungfisch-Stadium; aus zwei Betta-Pellets und Knochenmehl. Infusorien und Artemia gehen wie bei den Bettas.
 * <ItemLink id="bettacraft:algae_wafer" /> für die Bodenfische: getrockneter Seetang und Pellets.
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:fry_powder" />
+<RecipesFor id="bettacraft:algae_wafer" />
+<RecipesFor id="bettacraft:spawning_cave" />
+<RecipesFor id="bettacraft:spawning_mop" />
+<RecipesFor id="bettacraft:decor_spawning_cave" />
+<RecipesFor id="bettacraft:decor_spawning_mop" />

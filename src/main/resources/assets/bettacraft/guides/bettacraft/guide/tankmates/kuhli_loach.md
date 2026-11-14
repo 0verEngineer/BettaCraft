@@ -2,8 +2,8 @@
 navigation:
   title: Kuhli Loach
   icon: bettacraft:kuhli_loach_bucket
-  parent: tankmates.md
-  position: 24
+  parent: tankmates/loaches.md
+  position: 10
 item_ids:
   - bettacraft:kuhli_loach_bucket
   - bettacraft:kuhli_loach_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 An eel-like banded loach that rests in hiding by day and roams the bottom at night.
 
+**Origin:** the peat swamps of Indonesia and Malaysia.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Loaches |
-| Scientific | *Pangio kuhlii* |
+| Group | Loaches |
+| Scientific name | *Pangio kuhlii* |
 | Size in the game | about 7 cm (0.6 blocks) |
-| Origin | the peat swamps of Indonesia and Malaysia |
 | Temperature | 24–30 °C |
-| Shoal | 5 or more |
-| Water | sensitive |
-| Stocking | 0.4 fish |
-| Breeding | Scatters its eggs (fine plants, spawning mop), 25–28 °C |
+| Breeding temperature | 25–28 °C |
+| Water | fresh water, normal |
+| Shoal | from 5 fish |
+| Swims | on the bottom |
+| Stocking | counts as 0.4 fish |
+| Breeding | Scatters its eggs (fine plants, spawning mop), 15–50 young |
+| Betta tank | yes |
+| Special | active at night |
 
 ## Breeding
 
@@ -36,6 +43,8 @@ At 25–28 °C a pair scatters 15–50 eggs into fine-leaved plants, java moss o
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Mostly resting by day, active at night.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in swamps and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 2–2.4 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).

@@ -3,12 +3,7 @@ navigation:
   title: Seepferdchen
   icon: bettacraft:lined_seahorse_bucket
   parent: saltwater.md
-  position: 5
-item_ids:
-  - bettacraft:lined_seahorse_bucket
-  - bettacraft:dwarf_seahorse_bucket
-  - bettacraft:lined_seahorse_spawn_egg
-  - bettacraft:dwarf_seahorse_spawn_egg
+  position: 60
 ---
 
 # Seepferdchen
@@ -19,10 +14,12 @@ Seepferdchen sind Fische ganz eigener Art: Sie schwimmen langsam und **aufrecht*
 Rücken und verbringen den größten Teil des Tages damit, sich **mit dem Schwanz festzuhalten**. In einem Bettacraft-Becken
 brauchen sie ein ruhiges eigenes Meerwasserbecken statt eines belebten Gesellschaftsbeckens.
 
-| Seepferdchen | ‰ | °C | Besatz | Hinweise |
+## Arten
+
+| Art | °C | Schwarm | Wasser | Zucht |
 |---|---|---|---|---|
-| Gestreiftes Seepferdchen (*Hippocampus erectus*) | 20–42 | 18–27 | 1,5 | das häufigste nachgezüchtete Seepferdchen; dunkel, gelb oder orange |
-| Zwergseepferdchen (*Hippocampus zosterae*) | 20–42 | 21–28 | 0,3 | nur 2–3 cm, für kleine Becken |
+| <ItemImage id="bettacraft:lined_seahorse_bucket" /> [Gestreiftes Seepferdchen](lined_seahorse.md) | 18–27 | – | Meerwasser, auch starkes Brackwasser | Bruttasche: das Männchen trägt die Eier |
+| <ItemImage id="bettacraft:dwarf_seahorse_bucket" /> [Zwergseepferdchen](dwarf_seahorse.md) | 21–28 | – | Meerwasser, auch starkes Brackwasser | Bruttasche: das Männchen trägt die Eier |
 
 ## Was sie brauchen
 
@@ -51,10 +48,3 @@ Seepferdchen vermehren sich im Becken, wenn ein gesundes, gefüttertes Paar in W
 das Menü zeigt *Bruttasche voll* mit dem Fortschritt. Nach einigen Tagen (`seahorses.pouchDays`, Standard 4) **gebiert er**
 die Jungen. Junge Seepferdchen sind groß genug, um vom ersten Tag an **Artemia-Nauplien** zu fressen; halte einen
 [Artemia-Ansatz](../food.md) bereit. Lebendfutter bringt das Paar doppelt so schnell in Stimmung.
-
-## Woher bekommen
-
-* Mit dem **Aquarienkescher** in einem **lauwarmen** oder **warmen Ozean** (Gestreiftes Seepferdchen) bzw. einem warmen
-  Ozean (Zwergseepferdchen), selten.
-* Der **fahrende Händler** bietet ab und zu ein Paar unter seinen seltenen Angeboten an.
-* `features.seahorses` schaltet sie ab (keine neuen aus Kescher und Händler).

@@ -52,16 +52,20 @@ wrecks placed before stay as they are. (`features.detailedDecor` off: new ones a
 
 ## Recipes
 
-<RecipeFor id="bettacraft:decor_castle" />
-<RecipeFor id="bettacraft:decor_shipwreck" />
-<RecipeFor id="bettacraft:decor_dino_skull" />
-<RecipeFor id="bettacraft:decor_volcano" />
-<RecipeFor id="bettacraft:decor_driftwood" />
-<RecipeFor id="bettacraft:decor_stones" />
-<RecipeFor id="bettacraft:decor_moss_ball" />
-<RecipeFor id="bettacraft:decor_hammock" />
-<RecipeFor id="bettacraft:decor_almond_leaf" />
-<RecipeFor id="bettacraft:decor_cave" />
-
 The Indian almond leaf is a classic of betta keeping: in real aquariums its tannins colour the water and calm the
 fish. Here it is decoration.
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:decor_castle" />
+<RecipesFor id="bettacraft:decor_shipwreck" />
+<RecipesFor id="bettacraft:decor_dino_skull" />
+<RecipesFor id="bettacraft:decor_volcano" />
+<RecipesFor id="bettacraft:decor_driftwood" />
+<RecipesFor id="bettacraft:decor_stones" />
+<RecipesFor id="bettacraft:decor_moss_ball" />
+<RecipesFor id="bettacraft:decor_hammock" />
+<RecipesFor id="bettacraft:decor_almond_leaf" />
+<RecipesFor id="bettacraft:decor_cave" />

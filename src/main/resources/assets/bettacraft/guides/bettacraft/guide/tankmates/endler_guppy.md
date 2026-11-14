@@ -2,8 +2,8 @@
 navigation:
   title: Endler Guppy
   icon: bettacraft:endler_guppy_bucket
-  parent: tankmates.md
-  position: 27
+  parent: tankmates/livebearers.md
+  position: 20
 item_ids:
   - bettacraft:endler_guppy_bucket
   - bettacraft:endler_guppy_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Smaller than the guppy, males with neon-green and orange patches. Fine with bettas in most cases.
 
+**Origin:** the Laguna de Patos in Venezuela.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Livebearers |
-| Scientific | *Poecilia wingei* |
-| Size in the game | about 3 cm (0.22 blocks) |
-| Origin | the Laguna de Patos in Venezuela |
+| Group | Livebearers |
+| Scientific name | *Poecilia wingei* |
+| Size in the game | about 2.5 cm (0.22 blocks) |
 | Temperature | 23–30 °C |
-| Shoal | 3 or more |
-| Water | hardy |
-| Stocking | 0.22 fish |
-| Breeding | Bears live young, 24–29 °C |
+| Breeding temperature | 24–29 °C |
+| Water | fresh or brackish water, hardy |
+| Shoal | from 3 fish |
+| Swims | near the surface |
+| Stocking | counts as 0.22 fish |
+| Breeding | Bears live young, 4–12 young |
+| Betta tank | yes |
+| Special | 3 colour varieties |
 
 ## Genetics and strains
 
@@ -40,6 +47,9 @@ With `features.livebearerGenetics` off the old fixed varieties show: Wild type, 
 
 At 24–29 °C a female with a male gets pregnant and gives birth to 4–12 young after 3 days. The adults eat fry: plants hide them, a **breeding box** in the tank catches them.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in rivers, jungle water and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.7–2.1 % per swing, 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.26–0.31 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 3+ emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Bears live young.

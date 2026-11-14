@@ -3,7 +3,7 @@ navigation:
   title: Tank menu
   icon: minecraft:name_tag
   parent: aquarium.md
-  position: 40
+  position: 70
 ---
 
 # Tank menu, name sign and lock
@@ -47,7 +47,7 @@ best grade into a fish bag (Shift: the worst, Ctrl: a full bag of 16), **Clutche
 ## Breeding
 
 Warnings, the bubble nest, the breeding conditions with ✔ and ✘, the young fish, the parents and the expected offspring.
-See [Breeding](../breeding.md).
+See [Breeding](../bettas/breeding.md).
 
 ## Water
 
@@ -61,7 +61,7 @@ open top blocks, heaters and coolers, and the stored [power](../equipment/power.
 
 ![The plants tab](../images/menu_plants.png)
 
-The [floating plants](floating_plants.md) of the aquarium: number per species, cover, light, growth, waste uptake, the
+The [floating plants](../plants/floating_plants.md) of the aquarium: number per species, cover, light, growth, waste uptake, the
 warning for a dense cover and the **Thin out** button.
 
 ## Interior

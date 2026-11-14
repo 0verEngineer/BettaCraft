@@ -2,8 +2,8 @@
 navigation:
   title: Prachtschmerle
   icon: bettacraft:clown_loach_bucket
-  parent: tankmates.md
-  position: 25
+  parent: tankmates/loaches.md
+  position: 20
 item_ids:
   - bettacraft:clown_loach_bucket
   - bettacraft:clown_loach_spawn_egg
@@ -15,17 +15,23 @@ item_ids:
 
 Orange mit drei schwarzen Bändern, wird groß, will eine Gruppe und frisst Schnecken. Vermehrt sich nicht im Aquarium.
 
+**Herkunft:** die Flüsse Borneos und Sumatras.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Schmerlen |
-| Wissenschaftlich | *Chromobotia macracanthus* |
+| Gruppe | Schmerlen |
+| Wissenschaftlicher Name | *Chromobotia macracanthus* |
 | Größe im Spiel | etwa 11 cm (0,9 Blöcke) |
-| Herkunft | die Flüsse Borneos und Sumatras |
 | Temperatur | 25–30 °C |
+| Wasser | Süßwasser, empfindlich |
 | Schwarm | ab 5 Tieren |
-| Wasser | empfindlich |
-| Besatz | 2,5 Fisch |
+| Schwimmt | im unteren Wasser |
+| Besatz | zählt als 2,5 Fisch |
 | Zucht | vermehrt sich nicht im Aquarium |
+| Betta-Becken | zu groß |
+| Besonderheiten | frisst Schnecken |
 
 ## Zucht
 
@@ -36,6 +42,8 @@ Vermehrt sich im Aquarium praktisch nie.
 * Bodenfisch: bekommt sinkendes Futter nur zum Teil ab, wenn schnellere Fische da sind - Futtertabletten gehen direkt an ihn.
 * Frisst Schnecken (keine großen Apfelschnecken).
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Sümpfen, Dschungelgewässern und beim fahrenden Händler (selten); danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,5–0,6 % pro Schwung, 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,2–0,24 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 5 in diesem Angebot.

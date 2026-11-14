@@ -1,14 +1,14 @@
 ---
 navigation:
-  title: Catching
+  title: Catching animals
   icon: bettacraft:tank_net
-  parent: invertebrates.md
-  position: 60
+  parent: getting_started.md
+  position: 10
 ---
 
 # Catching small animals
 
-Right-click open water with the [aquarium net](../aquarium/floating_plants.md). After a short cooldown you can try
+Right-click open water with the [aquarium net](../plants/floating_plants.md). After a short cooldown you can try
 again; the net wears a little. With a chance (30 %, more near plants) something alive is in the net, and it goes into an
 **empty fish bag** from your inventory. Without an empty bag it gets away.
 

@@ -3,7 +3,7 @@ navigation:
   title: Pflege der Beifische
   icon: bettacraft:algae_wafer
   parent: tankmates.md
-  position: 1
+  position: 10
 ---
 
 # Pflege der Beifische
@@ -35,7 +35,7 @@ machen sie nach einigen Tagen krank (Standard 7), und kranke Fische sterben, wen
 * **Bodenfische** (Panzerwelse, Harnischwelse, Otocinclus, Schmerlen) bekommen vom Futter, das an schnelleren Fischen
   vorbei sinkt, nur einen Teil ab (`tankmates.behaviour.bottomFoodShare`, 0,6). <ItemLink id="bettacraft:algae_wafer" />
   sinken direkt zu ihnen: Bettas und Fische im freien Wasser fressen keine Tabletten.
-* **Algenfresser** (Otocinclus, Antennenwels; der L134 ein wenig) weiden die [Algen](../invertebrates/algae.md) am Glas
+* **Algenfresser** (Otocinclus, Antennenwels; der L134 ein wenig) weiden die [Algen](../aquarium/algae.md) am Glas
   ab und leben davon, solange welche da sind.
 
 ## Besatz
@@ -57,13 +57,3 @@ machen sie nach einigen Tagen krank (Standard 7), und kranke Fische sterben, wen
 * Jeder Erwachsene (Bettas und Beifische) **jagt die Jungfische** der Beifische und frisst die Eier, die er erreicht
   (`fryEatenPerDay`, `eggsEatenPerDay`). Pflanzen, Javamoos und Schwimmpflanzen verstecken die Jungen, ein Laichmop die
   Eier.
-
-## Beschaffung
-
-* Mit dem [Kescher](../invertebrates/catching.md): in **Dschungelgewässern** die südamerikanischen Arten (Salmler,
-  Panzerwelse, Harnischwelse, Otocinclus), in **Sümpfen** die südostasiatischen (Bärblinge, Dornauge, Zwergfadenfisch,
-  selten Prachtschmerlen), in **Flüssen** Lebendgebärende, Antennenwelse und Gelbflossen-Panzerwelse. Ein Teil der Fänge
-  sind Fische (`tankmates.behaviour.netFishShare`), Schwarmfische kommen zu eins bis vier.
-* Der **fahrende Händler** verkauft einen Schwarm von sechs (oder ein Paar) in einer Fischtüte, ab und zu in einer
-  Zuchtform.
-* Und durch Zucht.

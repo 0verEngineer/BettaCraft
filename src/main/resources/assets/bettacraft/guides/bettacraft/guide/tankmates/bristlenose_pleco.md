@@ -2,8 +2,8 @@
 navigation:
   title: Bristlenose Pleco
   icon: bettacraft:bristlenose_pleco_bucket
-  parent: tankmates.md
-  position: 22
+  parent: tankmates/plecos.md
+  position: 10
 item_ids:
   - bettacraft:bristlenose_pleco_bucket
   - bettacraft:bristlenose_pleco_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 The best algae eater of the tankmates; males grow bristles on the snout. Also albino and super red.
 
+**Origin:** South American rivers; the aquarium form is bred everywhere.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Plecos |
-| Scientific | *Ancistrus sp.* |
-| Size in the game | about 8 cm (0.7 blocks) |
-| Origin | South American rivers; the aquarium form is bred everywhere |
+| Group | Plecos |
+| Scientific name | *Ancistrus sp.* |
+| Size in the game | about 8.5 cm (0.7 blocks) |
 | Temperature | 21–28 °C |
-| Shoal | alone or in pairs |
-| Water | hardy |
-| Stocking | 1.2 fish |
-| Breeding | Spawns in a cave, the male guards, 23–27 °C |
+| Breeding temperature | 23–27 °C |
+| Water | fresh water, hardy |
+| Shoal | alone or as a pair |
+| Swims | on the glass and the bottom |
+| Stocking | counts as 1.2 fish |
+| Breeding | Spawns in a cave, the male guards, 15–40 young |
+| Betta tank | yes |
+| Special | eats algae, territorial, 3 colour varieties |
 
 ## Varieties
 
@@ -41,6 +48,9 @@ Needs a **spawning cave** (decoration) and 23–27 °C. Every male claims a cave
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Males defend their cave: give several males several caves.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water, rivers and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.1–1.4 % per swing.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.66–0.79 % per swing.
+* **Wandering trader** (usual offers): 2 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Spawns in a cave, the male guards.

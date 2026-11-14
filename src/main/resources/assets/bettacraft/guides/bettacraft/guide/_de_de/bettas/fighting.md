@@ -3,9 +3,7 @@ navigation:
   title: Kämpfe, Flaring und Raubfische
   icon: minecraft:iron_sword
   parent: bettas.md
-  position: 50
-item_ids:
-  - bettacraft:mirror_stick
+  position: 60
 ---
 
 # Kämpfe, Flaring und Raubfische
@@ -16,7 +14,7 @@ Bettas heißen nicht umsonst *Siamesische Kampffische*: **Zwei adulte Männchen 
 stirbt. Ein Kampf dauert etwa einen Ingame-Tag (`combat.fightDays`), du hast also Zeit zu reagieren. Aquarium-Menü, Log
 und Jade warnen sofort („Männchen kämpfen! Trennen!“). Nimm eines der beiden mit Eimer oder Fischtüte heraus.
 
-* Weibchen kämpfen nicht miteinander; ein Männchen jagt Weibchen nur, solange es ein [Schaumnest](../breeding.md)
+* Weibchen kämpfen nicht miteinander; ein Männchen jagt Weibchen nur, solange es ein [Schaumnest](breeding.md)
   bewacht.
 * Wilde Bettas kämpfen in der Natur nicht. Ein wildes Männchen im Aquarium schon.
 * Server können Kämpfe abschalten (`combat.malesFight = false`).

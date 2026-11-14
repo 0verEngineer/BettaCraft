@@ -1,11 +1,9 @@
 ---
 navigation:
   title: Water quality
-  icon: bettacraft:tank_lid
+  icon: minecraft:potion
   parent: aquarium.md
-  position: 15
-item_ids:
-  - bettacraft:tank_lid
+  position: 30
 ---
 
 # Water quality and evaporation
@@ -24,7 +22,7 @@ with a bar, Jade, The One Probe and WTHIT show it when you look at the aquarium.
 * **Filters** remove most of the waste (80 %) as long as they are large enough: an
   [external filter](../equipment/filters.md) keeps 32 water blocks clean, an internal filter under water 16. A smaller
   filter removes a matching part.
-* **Floating plants** take up a little waste while they have light, see [Floating plants](floating_plants.md).
+* **Floating plants** take up a little waste while they have light, see [Floating plants](../plants/floating_plants.md).
 * **Water change:** take water out with empty buckets and pour fresh water in. Fresh water dilutes the waste; taking
   water out does not change the quality. Pipes of other mods can fill and drain the aquarium as well.
 

@@ -12,19 +12,22 @@ from any glass, fill with water, decorate from the inside and use to breed betta
 
 ![A decorated aquarium with bettas, light bar and name sign](images/tank.png)
 
-## Where to start
+## Chapters
 
-* [First steps](getting_started.md): from the swamp to your first aquarium in seven steps.
-* [Bettas](bettas.md): catching, life stages, health, genetics, types, fights.
-* [Aquarium](aquarium.md): building tanks, water, inhabitants, temperature and the tank menu.
-* [Equipment](equipment.md): heaters, filters, feeder, light and cabinet.
-* [Food](food.md): swamp water, mosquito larvae, pellets and food for fry.
-* [Breeding](breeding.md): bubble nests, eggs, fry and what the parents need.
-* [Small animals](invertebrates.md): shrimp, dwarf crayfish, snails, dwarf clawed frogs and the algae on the glass.
-* [Tankmates](tankmates.md): tetras, rasboras, corydoras, plecos, loaches, livebearers and the dwarf gourami, with their own way of breeding.
-* [Reef tanks](saltwater.md): salt water, protein skimmer, flow pump, corals on reef rock, clownfish and other reef animals.
-* [Interior](interior.md): step into a tank and decorate it block by block.
-* [Settings and other mods](settings.md): config options, Jade, JEI and commands.
+* [First steps](getting_started.md): from the swamp to your first aquarium, catching animals, where to find what.
+* [Aquarium](aquarium.md): building tanks, shapes, water, water quality, temperature, algae, inhabitants and the tank menu.
+* [Equipment](equipment.md): heaters, coolers, filters, feeders, light, lid, cabinet, power and the tools.
+* [Bettas](bettas.md): life stages, health, breeding, genetics, types, fights.
+* [Tankmates](tankmates.md): tetras, rasboras, corydoras, plecos, loaches, livebearers and the dwarf gourami, one page per species.
+* [Small animals](invertebrates.md): shrimp, dwarf crayfish, ten snails and the dwarf clawed frog.
+* [Reef tanks](saltwater.md): salt water, reef technique, corals, reef fish, reef invertebrates and seahorses.
+* [Plants](plants.md): every aquarium plant by growth form, the floating plants, care and cuttings.
+* [Food and live food](food.md): pellets, larvae, fry food, the larva tub and the artemia hatchery.
+* [Interior and decoration](interior.md): step into a tank, substrate and decoration.
+* [Progress](progress.md): the advancements.
+* [Settings and other mods](settings.md): config options, commands, Jade, JEI, animals of other mods.
+
+Every page is in the navigation on the left: chapters and sub-chapters fold open.
 
 ## Quick reference
 

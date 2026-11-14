@@ -3,7 +3,7 @@ navigation:
   title: Genetik
   icon: minecraft:written_book
   parent: bettas.md
-  position: 30
+  position: 40
 ---
 
 # Genetik
@@ -34,7 +34,7 @@ einem zufälligen anderen Allel **mutieren** (`breeding.mutationChance`, 1 %).
 Beispiel: Zwei Halbmonde, die beide einen verborgenen Schleierschwanz tragen (Schleierschwanz / Halbmond), ergeben etwa
 75 % Schleierschwänze und 25 % Halbmonde, weil Schleierschwanz über Halbmond dominiert.
 
-Der [Zucht-Tab](../breeding.md) des Aquarium-Menüs rechnet das für dich aus: Sobald ein adultes Paar im Aquarium ist,
+Der [Zucht-Tab](breeding.md) des Aquarium-Menüs rechnet das für dich aus: Sobald ein adultes Paar im Aquarium ist,
 zeigt er die erwarteten Nachkommen pro Locus (ein Punnett-Quadrat) zusammen mit den Genotypen beider Eltern.
 
 ## Stammbaum

@@ -1,0 +1,36 @@
+---
+navigation:
+  title: Red Nerite
+  icon: bettacraft:fish_bag
+  parent: invertebrates/snails.md
+  position: 40
+---
+
+# Red Nerite
+
+![Red Nerite](../images/sp_red_nerite.png)
+
+The red racer nerite (*Vittina waigiensis*, "Red Racer") from Indonesia: orange, red or deep red, some with thin yellow lines.
+
+## Profile
+
+| | |
+|---|---|
+| Group | Snails |
+| Size in the game | about 2 cm (0.16 blocks) |
+| Temperature | 20–28 °C |
+| Water | fresh, brackish or sea water, normal |
+| Breeding | no young in fresh water |
+| Algae | grazes 2 glass faces a day |
+| Climbs the glass | yes |
+| Stocking | 50 count as one fish |
+
+## Care
+
+* Every one has its **own shade** (the tooltip of the fish bag names it); it cannot be bred.
+* Never multiplies in fresh water.
+
+## Obtaining
+
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.8–2.2 % per swing.
+* **Wandering trader** (rare offers): 2 for 4 emeralds; one of 2 in this offer (config `features.snailColors`).

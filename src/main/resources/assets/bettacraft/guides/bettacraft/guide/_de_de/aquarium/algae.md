@@ -1,11 +1,9 @@
 ---
 navigation:
   title: Algen
-  icon: bettacraft:algae_scraper
-  parent: invertebrates.md
+  icon: minecraft:green_dye
+  parent: aquarium.md
   position: 50
-item_ids:
-  - bettacraft:algae_scraper
 ---
 
 # Algen und Algenschaber

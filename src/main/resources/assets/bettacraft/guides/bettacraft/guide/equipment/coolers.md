@@ -3,7 +3,7 @@ navigation:
   title: Coolers
   icon: bettacraft:cooler_medium
   parent: equipment.md
-  position: 15
+  position: 20
 item_ids:
   - bettacraft:cooler_small
   - bettacraft:cooler_medium
@@ -28,10 +28,6 @@ both and always uses the one that fits.
 | <ItemLink id="bettacraft:cooler_medium" /> | 32 water blocks |
 | <ItemLink id="bettacraft:cooler_large" /> | 64 water blocks |
 
-<RecipeFor id="bettacraft:cooler_small" />
-<RecipeFor id="bettacraft:cooler_medium" />
-<RecipeFor id="bettacraft:cooler_large" />
-
 Coolers go wherever heaters go:
 
 * **In the interior** as a rod (6, 9 or 12 blocks high at scale 16); it only cools while its lowest block is under water.
@@ -40,3 +36,11 @@ Coolers go wherever heaters go:
 
 With too little capacity the water only gets the matching part of the way to the target. When the server needs power
 for heaters, coolers need it as well (see [Power](power.md)).
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:cooler_small" />
+<RecipesFor id="bettacraft:cooler_medium" />
+<RecipesFor id="bettacraft:cooler_large" />

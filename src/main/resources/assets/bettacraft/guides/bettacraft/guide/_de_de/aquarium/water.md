@@ -3,7 +3,7 @@ navigation:
   title: Wasser
   icon: minecraft:water_bucket
   parent: aquarium.md
-  position: 10
+  position: 20
 ---
 
 # Wasser

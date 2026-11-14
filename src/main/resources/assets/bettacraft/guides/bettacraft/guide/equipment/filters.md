@@ -3,7 +3,7 @@ navigation:
   title: Filters
   icon: bettacraft:internal_filter
   parent: equipment.md
-  position: 20
+  position: 30
 item_ids:
   - bettacraft:internal_filter
   - bettacraft:external_filter
@@ -23,8 +23,6 @@ an external filter handles 32 water blocks, an internal filter under water 16 (s
 Place the <ItemLink id="bettacraft:internal_filter" /> in the [interior](../interior.md): it becomes a filter tower
 (2x2x8 blocks at scale 16) whose outlet faces you. The aquarium shows a water jet at its outlet.
 
-<RecipeFor id="bettacraft:internal_filter" />
-
 ## External filter
 
 ![An external filter next to an aquarium](../images/external_filter.png)
@@ -38,6 +36,11 @@ water (under water it is a short current).
 * Broken, it keeps its heaters in the item (the tooltip lists them).
 * It can also go into an [aquarium cabinet](cabinet.md) under the aquarium.
 
-<RecipeFor id="bettacraft:external_filter" />
-
 The tank menu shows "Filters: 1 outside (heaters: 2), 1 inside".
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:internal_filter" />
+<RecipesFor id="bettacraft:external_filter" />

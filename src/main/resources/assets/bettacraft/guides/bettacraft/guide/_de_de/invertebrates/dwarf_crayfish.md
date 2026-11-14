@@ -12,6 +12,20 @@ Der Mexikanische Zwergflusskrebs *Cambarellus patzcuarensis* ist etwa doppelt so
 kleine Scheren. Er ist friedlich: Fische greift er nicht an, aber er holt sich das Futter, das zu Boden sinkt, räumt tote
 Tiere schnell weg und fängt ab und zu ein schwaches, hungerndes Kleintier.
 
+## Steckbrief
+
+| | |
+|---|---|
+| Gruppe | Krebse |
+| Größe im Spiel | etwa 4 cm (0,34 Blöcke) |
+| Temperatur | 15–26 °C |
+| Wasser | Süßwasser, empfindlich |
+| Vermehrung | Männchen und Weibchen; das Weibchen trägt die Eier, die Jungen schlüpfen fertig entwickelt, 3–6 Junge |
+| Heranwachsen | etwa 4 Tage |
+| Klettert an der Scheibe | nein |
+| Besatz | 12 zählen als ein Fisch |
+| Farblinien | 1 (aus Wildtieren herausgezüchtet) |
+
 ## Farben
 
 * **Orange** (der bekannte „CPO“): eine rezessive Farbe wie die Garnelenfarben.
@@ -34,3 +48,9 @@ Bettas gehen auf ihn los.
 * **15 bis 26 °C**: kühler, als es ein Betta mag. In einem warmen Betta-Becken (26-28 °C) sind Krebse an ihrer Grenze.
 * Unter 40 % Wasserqualität leiden sie.
 * Besatz: 12 Krebse zählen wie ein Fisch (`stocking.crayfishPerFish`).
+
+## Bezug
+
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 3,1–3,6 % pro Schwung.
+* **Fahrender Händler** (übliche Angebote): 2 für 5 Smaragde.
+* **Vermehrung** im Aquarium (Männchen und Weibchen).

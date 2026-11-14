@@ -2,8 +2,8 @@
 navigation:
   title: L046 Zebra Pleco
   icon: bettacraft:zebra_pleco_bucket
-  parent: tankmates.md
-  position: 21
+  parent: tankmates/plecos.md
+  position: 30
 item_ids:
   - bettacraft:zebra_pleco_bucket
   - bettacraft:zebra_pleco_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Black and white stripes, very warm, clean water and a cave. Eats meaty food, not algae.
 
+**Origin:** the rocky rapids of the Rio Xingu in Brazil (protected in the wild).
+
+## Profile
+
 | | |
 |---|---|
-| Family | Plecos |
-| Scientific | *Hypancistrus zebra (L046)* |
-| Size in the game | about 7 cm (0.55 blocks) |
-| Origin | the rocky rapids of the Rio Xingu in Brazil (protected in the wild) |
+| Group | Plecos |
+| Scientific name | *Hypancistrus zebra (L046)* |
+| Size in the game | about 6.5 cm (0.55 blocks) |
 | Temperature | 26–31 °C |
-| Shoal | alone or in pairs |
-| Water | very sensitive |
-| Stocking | 0.9 fish |
-| Breeding | Spawns in a cave, the male guards, 28–31 °C |
+| Breeding temperature | 28–31 °C |
+| Water | fresh water, sensitive |
+| Shoal | alone or as a pair |
+| Swims | on the bottom |
+| Stocking | counts as 0.9 fish |
+| Breeding | Spawns in a cave, the male guards, 5–14 young |
+| Betta tank | yes |
+| Special | territorial |
 
 ## Breeding
 
@@ -36,6 +43,8 @@ Needs a **spawning cave** (decoration) and 28–31 °C. Every male claims a cave
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Males defend their cave: give several males several caves.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader (rare); then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.16 % per swing.
+* **Wandering trader** (rare offers): 2 for 6 emeralds; one of 5 in this offer.
+* **[Breeding](breeding.md)**: Spawns in a cave, the male guards.

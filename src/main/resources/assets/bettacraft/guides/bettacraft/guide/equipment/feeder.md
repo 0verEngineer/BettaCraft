@@ -3,7 +3,7 @@ navigation:
   title: Feeder
   icon: bettacraft:feeder
   parent: equipment.md
-  position: 30
+  position: 40
 item_ids:
   - bettacraft:feeder
 ---
@@ -18,8 +18,6 @@ item_ids:
 Place the <ItemLink id="bettacraft:feeder" /> **on top of an aquarium** and put food into its nine slots. Hoppers and
 pipes of other mods can fill it.
 
-<RecipeFor id="bettacraft:feeder" />
-
 * It feeds **once a day** in the morning by default. In its menu you can choose 1, 2 or 3 times a day (morning,
   afternoon, evening).
 * Every fish gets the first food in the slots that suits it: **fry food** for fry, pellets or larvae for the older
@@ -31,3 +29,9 @@ No room on top (a one-block tank with a light)? The [clip-on feeder](clip_feeder
 
 One pellet or one portion of mosquito larvae feeds up to 4 fish, one bottle of fry food 20 fry. Overfeeding does no
 harm. See [Food](../food.md).
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:feeder" />

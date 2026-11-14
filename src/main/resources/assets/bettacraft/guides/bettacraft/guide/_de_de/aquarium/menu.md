@@ -3,7 +3,7 @@ navigation:
   title: Aquarium-Menü
   icon: minecraft:name_tag
   parent: aquarium.md
-  position: 40
+  position: 70
 ---
 
 # Aquarium-Menü, Namensschild und Sperre
@@ -50,7 +50,7 @@ eine Fischtüte (Umschalt: das schlechteste, Strg: eine volle Tüte mit 16), **G
 ## Zucht
 
 Warnungen, das Schaumnest, die Zuchtbedingungen mit ✔ und ✘, die Jungtiere, die Eltern und die erwarteten Nachkommen.
-Siehe [Zucht](../breeding.md).
+Siehe [Zucht](../bettas/breeding.md).
 
 ## Wasser
 
@@ -65,7 +65,7 @@ Server ihn verlangt.
 
 ![Der Pflanzen-Tab](../images/menu_plants.png)
 
-Die [Schwimmpflanzen](floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, Abfallaufnahme, die
+Die [Schwimmpflanzen](../plants/floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, Abfallaufnahme, die
 Warnung bei dichter Decke und der Knopf **Ausdünnen**.
 
 ## Innenraum

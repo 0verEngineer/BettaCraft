@@ -2,8 +2,8 @@
 navigation:
   title: Tiere anderer Mods
   icon: minecraft:axolotl_bucket
-  parent: aquarium.md
-  position: 22
+  parent: settings.md
+  position: 10
 ---
 
 # Tiere anderer Mods
@@ -13,7 +13,7 @@ navigation:
 Jedes kleine Wassertier aus Vanilla-Minecraft und aus anderen Mods kann in einem Bettacraft-Aquarium leben: Fische,
 Axolotl, Kaulquappen, Tintenfische, Meeresschnecken, Seepferdchen, Seesterne und mehr. Bettacraft muss die Mod dafür
 nicht kennen, es schaut sich das Tier selbst an. Eingesetzt wird es mit seinem eigenen Eimer oder einer Fischtüte (siehe
-[Bewohner](inhabitants.md)).
+[Bewohner](../aquarium/inhabitants.md)).
 
 ## Was abgelehnt wird
 

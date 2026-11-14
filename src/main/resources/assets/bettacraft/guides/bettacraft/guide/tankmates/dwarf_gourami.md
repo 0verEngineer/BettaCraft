@@ -3,7 +3,7 @@ navigation:
   title: Dwarf Gourami
   icon: bettacraft:dwarf_gourami_bucket
   parent: tankmates.md
-  position: 29
+  position: 90
 item_ids:
   - bettacraft:dwarf_gourami_bucket
   - bettacraft:dwarf_gourami_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Blue and red striped males with long feelers; a labyrinth fish like the betta - male gouramis and male bettas fight.
 
+**Origin:** plant-rich waters of India and Bangladesh.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Gouramis |
-| Scientific | *Trichogaster lalius* |
-| Size in the game | about 7 cm (0.55 blocks) |
-| Origin | plant-rich waters of India and Bangladesh |
+| Group | Gouramis |
+| Scientific name | *Trichogaster lalius* |
+| Size in the game | about 6.5 cm (0.55 blocks) |
 | Temperature | 24–29 °C |
-| Shoal | alone or in pairs |
-| Water | average |
-| Stocking | 1 fish |
-| Breeding | Builds a foam nest, 26–29 °C |
+| Breeding temperature | 26–29 °C |
+| Water | fresh water, normal |
+| Shoal | alone or as a pair |
+| Swims | near the surface |
+| Stocking | counts as 1 fish |
+| Breeding | Builds a foam nest, 20–50 young |
+| Betta tank | no |
+| Special | territorial, chased by male bettas, 3 colour varieties |
 
 ## Varieties
 
@@ -39,6 +46,8 @@ Like a betta: at 26–29 °C the male builds a foam nest at the surface (floatin
 
 * Male bettas go for the males of this species (config `tankmates.behaviour.bettaAggression`).
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in swamps and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.7–2 % per swing.
+* **Wandering trader** (usual offers): 2 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Builds a foam nest.

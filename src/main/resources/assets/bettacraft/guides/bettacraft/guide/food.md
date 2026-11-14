@@ -1,16 +1,15 @@
 ---
 navigation:
-  title: Food
+  title: Food and live food
   icon: bettacraft:betta_pellets
-  parent: index.md
-  position: 50
+  position: 90
 item_ids:
   - bettacraft:swamp_water_bottle
   - bettacraft:mosquito_larvae
   - bettacraft:betta_pellets
 ---
 
-# Food
+# Food and live food
 
 Bettas need food at least **once a day**. A fish counts as hungry one day after its last meal and gets sick after
 7 days without food (see [Health](bettas/health.md)).
@@ -26,15 +25,12 @@ Bettas need food at least **once a day**. A fish counts as hungry one day after 
 
 1. **Swamp water:** use a glass bottle on water in a swamp. Whether water counts as swamp water depends on the biome
    of the water block you click. You get a <ItemLink id="bettacraft:swamp_water_bottle" />;
-   sometimes a bit of [duckweed](aquarium/floating_plants.md) comes up with it.
+   sometimes a bit of [duckweed](plants/floating_plants.md) comes up with it.
 2. **Mosquito larvae:** heat the bottle in a furnace, smoker or on a campfire and the larvae hatch, or breed them in a
    [larva tub](food/live_food.md). Mining mud in a
    swamp sometimes drops <ItemLink id="bettacraft:mosquito_larvae" /> as well.
 3. **Betta pellets:** raw fish (cod, salmon or the fish of other mods), mosquito larvae, bone meal and dried kelp give 8
    <ItemLink id="bettacraft:betta_pellets" />.
-
-<RecipesFor id="bettacraft:mosquito_larvae" />
-<RecipeFor id="bettacraft:betta_pellets" />
 
 | Food | Feeds | Special |
 |---|---|---|
@@ -49,3 +45,17 @@ Bettas need food at least **once a day**. A fish counts as hungry one day after 
 * **Automatically:** an [aquarium feeder](equipment/feeder.md) on the aquarium feeds 1 to 3 times a day.
 
 Overfeeding does no harm.
+
+## In this chapter
+
+<SubPages icons={true} />
+
+## Obtaining
+
+* <ItemLink id="bettacraft:swamp_water_bottle" />: **Glass bottle** filled with water in swamps.
+* <ItemLink id="bettacraft:mosquito_larvae" />: **Breaking mud** in swamps: 4 % per block.
+
+Crafting:
+
+<RecipesFor id="bettacraft:mosquito_larvae" />
+<RecipesFor id="bettacraft:betta_pellets" />

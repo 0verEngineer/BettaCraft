@@ -3,7 +3,7 @@ navigation:
   title: Besatz
   icon: bettacraft:tank
   parent: invertebrates.md
-  position: 70
+  position: 50
 ---
 
 # Besatz

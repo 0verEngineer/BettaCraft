@@ -2,7 +2,7 @@
 navigation:
   title: L134 Leopard Frog Pleco
   icon: bettacraft:leopard_frog_pleco_bucket
-  parent: tankmates.md
+  parent: tankmates/plecos.md
   position: 20
 item_ids:
   - bettacraft:leopard_frog_pleco_bucket
@@ -15,17 +15,24 @@ item_ids:
 
 A small pleco with yellow and black bands. Lives in caves and on the glass, eats algae a little and needs warm water.
 
+**Origin:** the Rio Tapajós in Brazil.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Plecos |
-| Scientific | *Peckoltia compta (L134)* |
+| Group | Plecos |
+| Scientific name | *Peckoltia compta (L134)* |
 | Size in the game | about 7 cm (0.6 blocks) |
-| Origin | the Rio Tapajós in Brazil |
 | Temperature | 25–30 °C |
-| Shoal | alone or in pairs |
-| Water | sensitive |
-| Stocking | 1 fish |
-| Breeding | Spawns in a cave, the male guards, 27–30 °C |
+| Breeding temperature | 27–30 °C |
+| Water | fresh water, normal |
+| Shoal | alone or as a pair |
+| Swims | on the glass and the bottom |
+| Stocking | counts as 1 fish |
+| Breeding | Spawns in a cave, the male guards, 8–20 young |
+| Betta tank | yes |
+| Special | territorial |
 
 ## Breeding
 
@@ -37,6 +44,8 @@ Needs a **spawning cave** (decoration) and 27–30 °C. Every male claims a cave
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Males defend their cave: give several males several caves.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader (rare); then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.33–0.39 % per swing.
+* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 5 in this offer.
+* **[Breeding](breeding.md)**: Spawns in a cave, the male guards.

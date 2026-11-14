@@ -2,7 +2,7 @@
 navigation:
   title: Neon Tetra
   icon: bettacraft:neon_tetra_bucket
-  parent: tankmates.md
+  parent: tankmates/tetras.md
   position: 10
 item_ids:
   - bettacraft:neon_tetra_bucket
@@ -15,22 +15,30 @@ item_ids:
 
 A blue neon stripe over a red rear half: the classic shoal fish.
 
+**Origin:** the blackwater streams of the upper Amazon (Peru, Colombia).
+
+## Profile
+
 | | |
 |---|---|
-| Family | Tetras |
-| Scientific | *Paracheirodon innesi* |
+| Group | Tetras |
+| Scientific name | *Paracheirodon innesi* |
 | Size in the game | about 3 cm (0.25 blocks) |
-| Origin | the blackwater streams of the upper Amazon (Peru, Colombia) |
 | Temperature | 20–27 °C |
-| Shoal | 6 or more |
-| Water | sensitive |
-| Stocking | 0.35 fish |
-| Breeding | Scatters its eggs (fine plants, spawning mop), 22–25 °C |
+| Breeding temperature | 22–25 °C |
+| Water | fresh water, sensitive |
+| Shoal | from 6 fish |
+| Swims | in the middle |
+| Stocking | counts as 0.35 fish |
+| Breeding | Scatters its eggs (fine plants, spawning mop), 20–50 young |
+| Betta tank | too cool |
 
 ## Breeding
 
 At 22–25 °C a pair scatters 20–50 eggs into fine-leaved plants, java moss or a **spawning mop**. The parents and every other fish eat the eggs they reach; in a spawning mop most are safe. Live food (mosquito larvae) gets them ready faster.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 2–2.4 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).

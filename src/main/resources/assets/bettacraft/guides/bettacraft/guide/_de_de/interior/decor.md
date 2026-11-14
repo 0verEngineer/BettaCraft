@@ -52,16 +52,20 @@ Schon gesetzte Schädel und Wracks bleiben, wie sie sind. (`features.detailedDec
 
 ## Rezepte
 
-<RecipeFor id="bettacraft:decor_castle" />
-<RecipeFor id="bettacraft:decor_shipwreck" />
-<RecipeFor id="bettacraft:decor_dino_skull" />
-<RecipeFor id="bettacraft:decor_volcano" />
-<RecipeFor id="bettacraft:decor_driftwood" />
-<RecipeFor id="bettacraft:decor_stones" />
-<RecipeFor id="bettacraft:decor_moss_ball" />
-<RecipeFor id="bettacraft:decor_hammock" />
-<RecipeFor id="bettacraft:decor_almond_leaf" />
-<RecipeFor id="bettacraft:decor_cave" />
-
 Das Seemandelbaumblatt ist ein Klassiker der Betta-Haltung: In echten Aquarien färben seine Gerbstoffe das Wasser und
 beruhigen die Fische. Hier ist es Deko.
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:decor_castle" />
+<RecipesFor id="bettacraft:decor_shipwreck" />
+<RecipesFor id="bettacraft:decor_dino_skull" />
+<RecipesFor id="bettacraft:decor_volcano" />
+<RecipesFor id="bettacraft:decor_driftwood" />
+<RecipesFor id="bettacraft:decor_stones" />
+<RecipesFor id="bettacraft:decor_moss_ball" />
+<RecipesFor id="bettacraft:decor_hammock" />
+<RecipesFor id="bettacraft:decor_almond_leaf" />
+<RecipesFor id="bettacraft:decor_cave" />

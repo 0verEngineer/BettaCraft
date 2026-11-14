@@ -2,8 +2,7 @@
 navigation:
   title: Equipment
   icon: bettacraft:external_filter
-  parent: index.md
-  position: 40
+  position: 30
 ---
 
 # Equipment
@@ -26,6 +25,11 @@ navigation:
 | [Feeder](equipment/feeder.md) | feeds the fish up to three times a day |
 | [Light](equipment/light.md) | a light bar, switchable with redstone |
 | [Cabinet](equipment/cabinet.md) | stand for the aquarium with room for a filter and food |
-| [Aquarium lid](aquarium/water_quality.md) | stops the water from evaporating |
+| [Tank lid](equipment/tank_lid.md) | stops the water from evaporating |
+| [Tools and containers](equipment/tools.md) | aquarium net, fish bag, algae scraper, mirror stick, breeding box |
 
 By default none of the equipment needs power; a server can switch that on (see [Power](equipment/power.md)).
+
+## In this chapter
+
+<SubPages icons={true} />

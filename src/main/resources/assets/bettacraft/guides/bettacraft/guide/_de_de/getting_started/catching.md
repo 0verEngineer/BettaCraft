@@ -1,14 +1,14 @@
 ---
 navigation:
-  title: Fangen
+  title: Tiere fangen
   icon: bettacraft:tank_net
-  parent: invertebrates.md
-  position: 60
+  parent: getting_started.md
+  position: 10
 ---
 
 # Kleintiere fangen
 
-Rechtsklick mit dem [Kescher](../aquarium/floating_plants.md) auf offenes Wasser. Nach einer kurzen Abklingzeit geht es
+Rechtsklick mit dem [Kescher](../plants/floating_plants.md) auf offenes Wasser. Nach einer kurzen Abklingzeit geht es
 wieder; der Kescher nutzt sich ein wenig ab. Mit einer Chance (30 %, nahe Pflanzen mehr) zappelt etwas im Netz, und es
 kommt in eine **leere Fischtüte** aus deinem Inventar. Ohne leere Tüte entwischt es.
 

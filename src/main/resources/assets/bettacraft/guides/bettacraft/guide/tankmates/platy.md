@@ -2,8 +2,8 @@
 navigation:
   title: Platy
   icon: bettacraft:platy_bucket
-  parent: tankmates.md
-  position: 28
+  parent: tankmates/livebearers.md
+  position: 30
 item_ids:
   - bettacraft:platy_bucket
   - bettacraft:platy_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 A sturdy, peaceful livebearer in many colours.
 
+**Origin:** Mexico and Central America.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Livebearers |
-| Scientific | *Xiphophorus maculatus* |
+| Group | Livebearers |
+| Scientific name | *Xiphophorus maculatus* |
 | Size in the game | about 5 cm (0.42 blocks) |
-| Origin | Mexico and Central America |
 | Temperature | 20–27 °C |
-| Shoal | 3 or more |
-| Water | hardy |
-| Stocking | 0.5 fish |
-| Breeding | Bears live young, 22–26 °C |
+| Breeding temperature | 22–26 °C |
+| Water | fresh or brackish water, hardy |
+| Shoal | from 3 fish |
+| Swims | in the middle |
+| Stocking | counts as 0.5 fish |
+| Breeding | Bears live young, 8–25 young |
+| Betta tank | too cool |
+| Special | 5 colour varieties |
 
 ## Varieties
 
@@ -35,6 +42,8 @@ Varieties: Wild type, Red, Sunset, Mickey Mouse, Blue. The wild type is dominant
 
 At 22–26 °C a female with a male gets pregnant and gives birth to 8–25 young after 3 days. The adults eat fry: plants hide them, a **breeding box** in the tank catches them.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in rivers and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 2.9–3.4 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Bears live young.

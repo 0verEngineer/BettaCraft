@@ -2,8 +2,8 @@
 navigation:
   title: Platy
   icon: bettacraft:platy_bucket
-  parent: tankmates.md
-  position: 28
+  parent: tankmates/livebearers.md
+  position: 30
 item_ids:
   - bettacraft:platy_bucket
   - bettacraft:platy_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Ein robuster, friedlicher Lebendgebärender in vielen Farben.
 
+**Herkunft:** Mexiko und Mittelamerika.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Lebendgebärende |
-| Wissenschaftlich | *Xiphophorus maculatus* |
+| Gruppe | Lebendgebärende |
+| Wissenschaftlicher Name | *Xiphophorus maculatus* |
 | Größe im Spiel | etwa 5 cm (0,42 Blöcke) |
-| Herkunft | Mexiko und Mittelamerika |
 | Temperatur | 20–27 °C |
+| Zuchttemperatur | 22–26 °C |
+| Wasser | Süß- oder Brackwasser, robust |
 | Schwarm | ab 3 Tieren |
-| Wasser | robust |
-| Besatz | 0,5 Fisch |
-| Zucht | lebendgebärend, 22–26 °C |
+| Schwimmt | in der Mitte |
+| Besatz | zählt als 0,5 Fisch |
+| Zucht | lebendgebärend, 8–25 Junge |
+| Betta-Becken | zu kühl |
+| Besonderheiten | 5 Farbformen |
 
 ## Farbformen
 
@@ -35,6 +42,8 @@ Farbformen: Wildform, Rot, Sunset, Mickey-Maus, Blau. Die Wildform ist dominant,
 
 Bei 22–26 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 3 Tagen 8–25 fertige Junge zur Welt. Die Erwachsenen fressen Jungfische: Pflanzen verstecken sie, ein **Ablaichkasten** im Becken fängt sie auf.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Flüssen und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 2,9–3,4 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: lebendgebärend.

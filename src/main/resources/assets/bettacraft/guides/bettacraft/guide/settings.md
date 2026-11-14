@@ -2,8 +2,7 @@
 navigation:
   title: Settings and other mods
   icon: minecraft:comparator
-  parent: index.md
-  position: 80
+  position: 120
 ---
 
 # Settings and other mods
@@ -49,6 +48,12 @@ navigation:
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE use and storage |
 | `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2); at most 16 per batch |
+| `floatingPlants.growthSpeed`, `maxCoverage`, `denseCoverFrom`, `maxPerTank` | 1, 0.6, 0.5, 256 | [floating plants](plants/floating_plants.md): growth (0 = none), the most of the surface they cover, dense cover from, plants per aquarium |
+| `floatingPlants.wasteUptake`, `breedingBonus`, `pelletsOnLeaves` | 0.04, 1.15, 0.25 | waste they take up, faster nest under them, share of pellets that stay on the leaves |
+| `floatingPlants.bottleDuckweedChance`, `fishingChance` | 0.15, 0.06 | duckweed in a bottle of swamp water, a floating plant from fishing in swamps (see [Where to find what](getting_started/sources.md)) |
+| `interiorPlants.plantGrowthSpeed`, `plantWasteUptake`, `plantBreedingBonus`, `hidingSpots` | 1, 0.5, 1.1, 0.6 | [aquarium plants](plants.md): growth (0 = none), waste uptake, nest bonus in a planted tank, hiding spots |
+| `interiorPlants.maxPlantsPerTank`, `plantsSpread` | 48, true | plants per aquarium, side shoots and runners |
+| `interiorPlants.plantFishingChance`, `bottleCuttingChance`, `mossChance` | 0.05, 0.05, 0.5 | a plant from fishing, a cutting in swamp water, Java moss from shears on moss |
 | `invertebrates.maxCrittersPerTank` | 200 | shrimp, crayfish and snails per aquarium |
 | `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | breeding speed (0 = never) |
 | `invertebrates.bettasHuntShrimp` | true | bettas hunt young shrimp and crayfish |
@@ -134,7 +139,7 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 * **Naturalist:** bass, catfish and other small animals are accepted; piranha and anglerfish are predators.
 * **Every other mod with water animals** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
   Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, ...): its small water animals go into aquariums, large
-  and hostile ones are refused. See [Animals of other mods](aquarium/other_animals.md).
+  and hostile ones are refused. See [Animals of other mods](settings/other_animals.md).
 * **Swamps of other mods** (Biomes O' Plenty, Regions Unexplored, ...): wild bettas spawn in every biome of
   `#c:is_swamp` through `#bettacraft:betta_spawn_biomes`.
 
@@ -144,3 +149,7 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 * Operators: `/bettacraft interior resync` (send all miniatures again), `/bettacraft interior bench` (measure),
   `/bettacraft wateranimals` (every water animal of the loaded mods and whether aquariums take it, as a table in
   `bettacraft-water-animals.tsv`).
+
+## In this chapter
+
+<SubPages icons={true} />

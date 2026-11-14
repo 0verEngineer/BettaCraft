@@ -3,16 +3,7 @@ navigation:
   title: Korallen
   icon: bettacraft:acropora
   parent: saltwater.md
-  position: 3
-item_ids:
-  - bettacraft:zoanthus
-  - bettacraft:green_star_polyps
-  - bettacraft:mushroom_coral
-  - bettacraft:leather_coral
-  - bettacraft:hammer_coral
-  - bettacraft:lobophyllia
-  - bettacraft:acropora
-  - bettacraft:bubble_tip_anemone
+  position: 30
 ---
 
 # Korallen
@@ -29,16 +20,18 @@ Stein setzen. Eine Koralle wächst über die Tage Stufe für Stufe, wenn die Bed
 * Steinkorallen: **Kalzium** (voll ab 380 mg/L, nichts unter 250; jede Wachstumsstufe verbraucht etwas) und **sauberes
   Wasser** (wenig Nitrat).
 
-| Koralle | Art | Form | Licht | Strömung | Kalzium | Ausbreitung |
-|---|---|---|---|---|---|---|
-| Krustenanemonen | Weich | Polypenteppich | mittel | schwach | nein | breitet sich über den Stein aus |
-| Grüne Sternpolypen | Weich | Polypenteppich | mittel | mittel | nein | breitet sich schnell aus |
-| Scheibenanemone | Weich | Scheiben | wenig | schwach | nein | neue Scheiben daneben |
-| Lederkoralle | Weich | Hut | mittel | mittel | nein | Ableger |
-| Hammerkoralle | Stein (LPS) | Äste mit Köpfen | mittel | mittel | ja | Ableger |
-| Lobophyllia | Stein (LPS) | Kuppel | mittel | schwach | ja | Ableger |
-| Acropora | Stein (SPS) | Äste | stark | stark | ja, sauberes Wasser | Ableger |
-| Blasenanemone | Anemone | Tentakel | mittel | mittel | nein | Zuhause der Clownfische |
+## Arten
+
+| | Koralle | Licht | Strömung | Kalzium | Volle Größe |
+|---|---|---|---|---|---|
+| <ItemImage id="bettacraft:zoanthus" /> | [Krustenanemonen (Zoanthus)](zoanthus.md) | mittel | sanft | nein | etwa 5 Tage |
+| <ItemImage id="bettacraft:green_star_polyps" /> | [Grüne Sternpolypen](green_star_polyps.md) | mittel | mittel | nein | etwa 4 Tage |
+| <ItemImage id="bettacraft:mushroom_coral" /> | [Scheibenanemone](mushroom_coral.md) | wenig | sanft | nein | etwa 8 Tage |
+| <ItemImage id="bettacraft:leather_coral" /> | [Lederkoralle](leather_coral.md) | mittel | mittel | nein | etwa 10 Tage |
+| <ItemImage id="bettacraft:hammer_coral" /> | [Hammerkoralle](hammer_coral.md) | mittel | mittel | ja | etwa 12 Tage |
+| <ItemImage id="bettacraft:lobophyllia" /> | [Lobophyllia](lobophyllia.md) | mittel | sanft | ja | etwa 15 Tage |
+| <ItemImage id="bettacraft:acropora" /> | [Acropora](acropora.md) | viel | stark | ja | etwa 14 Tage |
+| <ItemImage id="bettacraft:bubble_tip_anemone" /> | [Blasenanemone](bubble_tip_anemone.md) | mittel | mittel | nein | etwa 6 Tage |
 
 ## Form und Bewegung
 

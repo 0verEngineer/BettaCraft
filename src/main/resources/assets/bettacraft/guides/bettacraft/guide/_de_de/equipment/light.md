@@ -3,7 +3,7 @@ navigation:
   title: Licht
   icon: bettacraft:tank_light
   parent: equipment.md
-  position: 40
+  position: 60
 item_ids:
   - bettacraft:tank_light
 ---
@@ -17,8 +17,6 @@ item_ids:
 </GameScene>
 
 Das <ItemLink id="bettacraft:tank_light" /> leuchtet mit Lichtstufe 15.
-
-<RecipeFor id="bettacraft:tank_light" />
 
 * Lichter in einer Reihe verbinden sich zu **einer langen Leiste** (nur der Länge nach, nicht zu einer Fläche).
 * Setze es oben auf das Aquarium, auf den Glasrand oder **hängend** unter einen Block über dem Aquarium.
@@ -47,3 +45,9 @@ Das Licht gibt es in den **16 Farbstoff-Farben**. Weiß ist das Licht wie bisher
 ![Mit Complementary und der Option „Colored Lighting“](../images/light_shader.png)
 
 ![Die 16 Lichter](../images/light_items.png)
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:tank_light" />

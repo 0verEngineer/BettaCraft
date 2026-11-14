@@ -1,6 +1,6 @@
 ---
 navigation:
-  title: Dwarf clawed frogs
+  title: Dwarf clawed frog
   icon: bettacraft:dwarf_frog_bucket
   parent: invertebrates.md
   position: 40
@@ -32,9 +32,8 @@ the decoration of the interior (rocks, roots, plants, caves) instead of walking 
   two or three feedings a day.
 * After 4 days without food a frog starts to starve.
 
-## Getting them
+## Obtaining
 
-* With the [aquarium net](catching.md) in swamps and jungle water (rare), or from the wandering trader (rare).
-* In a bucket of water (<ItemLink id="bettacraft:dwarf_frog_bucket" />) or a fish bag, like a betta.
-* For the stocking a frog counts as one fish (`stocking.frogsPerFish`).
-* Frogs do not breed in Bettacraft.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.5 % per swing.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 4.9–5.7 % per swing.
+* **Wandering trader** (rare offers): 1 for 6 emeralds.

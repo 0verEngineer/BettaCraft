@@ -3,7 +3,7 @@ navigation:
   title: Futterautomat
   icon: bettacraft:feeder
   parent: equipment.md
-  position: 30
+  position: 40
 item_ids:
   - bettacraft:feeder
 ---
@@ -18,8 +18,6 @@ item_ids:
 Setze den <ItemLink id="bettacraft:feeder" /> **oben auf ein Aquarium** und lege Futter in seine neun Plätze. Trichter
 und Rohre anderer Mods können ihn befüllen.
 
-<RecipeFor id="bettacraft:feeder" />
-
 * Er füttert standardmäßig **einmal am Tag** morgens. In seinem Menü wählst du 1, 2 oder 3 Fütterungen am Tag (morgens,
   nachmittags, abends).
 * Jeder Fisch bekommt das erste passende Futter aus den Plätzen: **Jungfischfutter** für Jungfische, Pellets oder Larven
@@ -31,3 +29,9 @@ Kein Platz oben (ein Becken von einem Block Höhe mit Licht)? Der [Klemm-Futtera
 
 Ein Pellet oder eine Portion Mückenlarven füttert bis zu 4 Fische, eine Flasche Jungfischfutter 20 Jungfische.
 Überfüttern schadet nicht. Siehe [Futter](../food.md).
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:feeder" />

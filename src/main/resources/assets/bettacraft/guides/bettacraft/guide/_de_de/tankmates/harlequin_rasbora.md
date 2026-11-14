@@ -2,8 +2,8 @@
 navigation:
   title: Keilfleckbärbling
   icon: bettacraft:harlequin_rasbora_bucket
-  parent: tankmates.md
-  position: 14
+  parent: tankmates/rasboras.md
+  position: 10
 item_ids:
   - bettacraft:harlequin_rasbora_bucket
   - bettacraft:harlequin_rasbora_spawn_egg
@@ -15,22 +15,30 @@ item_ids:
 
 Kupferfarben mit schwarzem Keilfleck; laicht kopfüber unter breite Blätter.
 
+**Herkunft:** Torfsümpfe in Malaysia, Sumatra und Borneo.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Bärblinge |
-| Wissenschaftlich | *Trigonostigma heteromorpha* |
-| Größe im Spiel | etwa 4 cm (0,37 Blöcke) |
-| Herkunft | Torfsümpfe in Malaysia, Sumatra und Borneo |
+| Gruppe | Bärblinge |
+| Wissenschaftlicher Name | *Trigonostigma heteromorpha* |
+| Größe im Spiel | etwa 4,5 cm (0,37 Blöcke) |
 | Temperatur | 22–28 °C |
+| Zuchttemperatur | 26–28 °C |
+| Wasser | Süßwasser, normal |
 | Schwarm | ab 6 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,45 Fisch |
-| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 26–28 °C |
+| Schwimmt | in der Mitte |
+| Besatz | zählt als 0,45 Fisch |
+| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 15–40 Junge |
+| Betta-Becken | ja |
 
 ## Zucht
 
 Bei 26–28 °C streut ein Paar 15–40 Eier in breite Blätter (Cryptocorynen, Anubias, Schwertpflanzen) oder einen Laichmop. Die Eltern und alle anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher. Lebendfutter (Mückenlarven) macht die Fische laichbereiter.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Sümpfen und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 4,2–5 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

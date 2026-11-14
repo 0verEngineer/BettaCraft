@@ -2,8 +2,8 @@
 navigation:
   title: Guppy
   icon: bettacraft:guppy_bucket
-  parent: tankmates.md
-  position: 26
+  parent: tankmates/livebearers.md
+  position: 10
 item_ids:
   - bettacraft:guppy_bucket
   - bettacraft:guppy_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Männchen mit großen bunten Schwänzen, Weibchen größer und grau. Betta-Männchen gehen auf Guppy-Männchen los.
 
+**Herkunft:** Venezuela und Trinidad, heute weltweit verwildert.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Lebendgebärende |
-| Wissenschaftlich | *Poecilia reticulata* |
+| Gruppe | Lebendgebärende |
+| Wissenschaftlicher Name | *Poecilia reticulata* |
 | Größe im Spiel | etwa 4 cm (0,33 Blöcke) |
-| Herkunft | Venezuela und Trinidad, heute weltweit verwildert |
 | Temperatur | 22–28 °C |
+| Zuchttemperatur | 23–28 °C |
+| Wasser | Süß- oder Brackwasser, robust |
 | Schwarm | ab 3 Tieren |
-| Wasser | robust |
-| Besatz | 0,35 Fisch |
-| Zucht | lebendgebärend, 23–28 °C |
+| Schwimmt | nahe der Oberfläche |
+| Besatz | zählt als 0,35 Fisch |
+| Zucht | lebendgebärend, 5–16 Junge |
+| Betta-Becken | nur Weibchen |
+| Besonderheiten | wird von Betta-Männchen gejagt, 5 Farbformen |
 
 ## Genetik und Zuchtformen
 
@@ -46,6 +53,8 @@ Bei 23–28 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 
 * Betta-Männchen jagen die Männchen dieser Art (Config `tankmates.behaviour.bettaAggression`).
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Flüssen und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 3,4–4,1 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 4+ Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: lebendgebärend.

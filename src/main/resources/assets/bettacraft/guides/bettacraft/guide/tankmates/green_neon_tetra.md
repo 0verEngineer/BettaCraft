@@ -2,8 +2,8 @@
 navigation:
   title: Green Neon Tetra
   icon: bettacraft:green_neon_tetra_bucket
-  parent: tankmates.md
-  position: 11
+  parent: tankmates/tetras.md
+  position: 30
 item_ids:
   - bettacraft:green_neon_tetra_bucket
   - bettacraft:green_neon_tetra_spawn_egg
@@ -17,18 +17,24 @@ A species of its own, also sold as **Blue Neon**: smaller than the neon tetra, t
 and there is hardly any red. In the wild form the stripe is green, in the **Blue Neon** blue (recessive: two blue
 parents give blue young, a green fish can carry blue hidden).
 
+**Origin:** blackwater of the upper Rio Negro and Orinoco (Brazil, Colombia, Venezuela).
+
+## Profile
+
 | | |
 |---|---|
-| Family | Tetras |
-| Scientific | *Paracheirodon simulans* |
+| Group | Tetras |
+| Scientific name | *Paracheirodon simulans* |
 | Size in the game | about 2.5 cm (0.22 blocks) |
-| Origin | blackwater of the upper Rio Negro and Orinoco (Brazil, Colombia, Venezuela) |
 | Temperature | 24–30 °C |
-| Shoal | 6 or more |
-| Water | very sensitive |
-| Stocking | 0.25 fish |
-| Colour forms | Green Neon (wild type), Blue Neon |
-| Breeding | Scatters its eggs (fine plants, spawning mop), 26–29 °C |
+| Breeding temperature | 26–29 °C |
+| Water | fresh water, sensitive |
+| Shoal | from 6 fish |
+| Swims | in the middle |
+| Stocking | counts as 0.25 fish |
+| Breeding | Scatters its eggs (fine plants, spawning mop), 15–40 young |
+| Betta tank | yes |
+| Special | 2 colour varieties |
 
 ## Neon tetra, cardinal, green neon
 
@@ -41,7 +47,8 @@ parents give blue young, a green fish can carry blue hidden).
 At 26–29 °C a pair scatters 15–40 eggs into fine-leaved plants, java moss or a **spawning mop**. The parents and every
 other fish eat the eggs they reach; in a spawning mop most are safe.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader (now and then the
-Blue Neon); then by breeding. The config switch `features.greenNeonTetra` turns new ones off.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.79–0.94 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 3 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).

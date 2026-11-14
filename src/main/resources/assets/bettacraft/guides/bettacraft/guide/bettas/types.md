@@ -3,7 +3,7 @@ navigation:
   title: Types and colours
   icon: minecraft:tropical_fish
   parent: bettas.md
-  position: 40
+  position: 50
 ---
 
 # Types and colours

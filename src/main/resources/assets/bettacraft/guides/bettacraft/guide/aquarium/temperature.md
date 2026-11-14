@@ -3,7 +3,7 @@ navigation:
   title: Temperature
   icon: bettacraft:heater_small
   parent: aquarium.md
-  position: 30
+  position: 40
 ---
 
 # Temperature

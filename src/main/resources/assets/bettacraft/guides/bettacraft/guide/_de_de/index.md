@@ -12,19 +12,22 @@ baust, mit Wasser füllst, von innen einrichtest und in denen du Bettas mit echt
 
 ![Ein eingerichtetes Aquarium mit Bettas, Lichtleiste und Namensschild](images/tank.png)
 
-## Wo anfangen?
+## Kapitel
 
-* [Erste Schritte](getting_started.md): in sieben Schritten vom Sumpf zum ersten Aquarium.
-* [Bettas](bettas.md): Fangen, Lebensstufen, Gesundheit, Genetik, Typen, Kämpfe.
-* [Aquarium](aquarium.md): Aquarien bauen, Wasser, Bewohner, Temperatur und das Aquarium-Menü.
-* [Ausrüstung](equipment.md): Heizstäbe, Filter, Futterautomat, Licht und Schrank.
-* [Futter](food.md): Sumpfwasser, Mückenlarven, Pellets und Jungfischfutter.
-* [Zucht](breeding.md): Schaumnester, Eier, Jungfische und was die Eltern brauchen.
-* [Kleintiere](invertebrates.md): Garnelen, Zwergkrebse, Schnecken, Zwergkrallenfrösche und die Algen am Glas.
-* [Beifische](tankmates.md): Salmler, Bärblinge, Panzerwelse, Harnischwelse, Schmerlen, Lebendgebärende und der Zwergfadenfisch, jeder mit seiner eigenen Zucht.
-* [Meerwasserbecken](saltwater.md): Salzwasser, Eiweißabschäumer, Strömungspumpe, Korallen auf Riffgestein, Clownfische und andere Rifftiere.
-* [Innenraum](interior.md): ins Aquarium hineingehen und es Block für Block einrichten.
-* [Einstellungen und andere Mods](settings.md): Config-Optionen, Jade, JEI und Befehle.
+* [Erste Schritte](getting_started.md): vom Sumpf zum ersten Aquarium, Tiere fangen, was es wo gibt.
+* [Aquarium](aquarium.md): Becken bauen, Formen, Wasser, Wasserqualität, Temperatur, Algen, Bewohner und das Aquarium-Menü.
+* [Technik](equipment.md): Heizer, Kühler, Filter, Futterautomaten, Licht, Abdeckung, Schrank, Strom und die Werkzeuge.
+* [Bettas](bettas.md): Lebensphasen, Gesundheit, Zucht, Genetik, Zuchtformen, Kämpfe.
+* [Beifische](tankmates.md): Salmler, Bärblinge, Panzerwelse, Harnischwelse, Schmerlen, Lebendgebärende und der Zwergfadenfisch, eine Seite pro Art.
+* [Kleintiere](invertebrates.md): Garnelen, Zwergkrebse, zehn Schnecken und der Zwergkrallenfrosch.
+* [Meerwasser und Riff](saltwater.md): Salzwasser, Rifftechnik, Korallen, Rifffische, Wirbellose im Riff und Seepferdchen.
+* [Pflanzen](plants.md): jede Aquarienpflanze nach Wuchsform, die Schwimmpflanzen, Pflege und Ableger.
+* [Futter und Lebendfutter](food.md): Pellets, Larven, Aufzuchtfutter, der Larvenbottich und die Artemia-Brutanlage.
+* [Einrichtung und Deko](interior.md): ins Becken steigen, Bodengrund und Deko.
+* [Fortschritt](progress.md): die Fortschritte.
+* [Einstellungen und andere Mods](settings.md): Config-Optionen, Befehle, Jade, JEI, Tiere anderer Mods.
+
+Jede Seite steht links in der Navigation: Kapitel und Unterkapitel klappen auf.
 
 ## Kurzübersicht
 

@@ -2,8 +2,8 @@
 navigation:
   title: Sterbai Cory
   icon: bettacraft:sterbai_cory_bucket
-  parent: tankmates.md
-  position: 18
+  parent: tankmates/corydoras.md
+  position: 30
 item_ids:
   - bettacraft:sterbai_cory_bucket
   - bettacraft:sterbai_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Dark with white dots and orange pectoral fins; one of the few corys for warm betta tanks.
 
+**Origin:** the Rio Guaporé (Brazil, Bolivia), warm water.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Corydoras |
-| Scientific | *Corydoras sterbai* |
+| Group | Corydoras |
+| Scientific name | *Corydoras sterbai* |
 | Size in the game | about 6 cm (0.5 blocks) |
-| Origin | the Rio Guaporé (Brazil, Bolivia), warm water |
 | Temperature | 24–30 °C |
-| Shoal | 6 or more |
-| Water | average |
-| Stocking | 0.6 fish |
-| Breeding | Glues its eggs to the glass (after a cool water change), 24–28 °C |
+| Breeding temperature | 24–28 °C |
+| Water | fresh water, normal |
+| Shoal | from 6 fish |
+| Swims | on the bottom |
+| Stocking | counts as 0.6 fish |
+| Breeding | Glues its eggs to the glass (after a cool water change), 12–30 young |
+| Betta tank | yes |
+| Special | gulps air at the surface |
 
 ## Breeding
 
@@ -36,6 +43,8 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 * Bottom fish: gets only part of the sinking food while faster fish are around - algae wafers go straight to it.
 * Darts up to the surface for a gulp of air now and then.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.92–1.1 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 5 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).

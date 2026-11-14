@@ -2,8 +2,7 @@
 navigation:
   title: Einstellungen und andere Mods
   icon: minecraft:comparator
-  parent: index.md
-  position: 80
+  position: 120
 ---
 
 # Einstellungen und andere Mods
@@ -49,6 +48,12 @@ navigation:
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | Ausrüstung braucht FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE-Verbrauch und -Speicher |
 | `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2); höchstens 16 pro Ansatz |
+| `floatingPlants.growthSpeed`, `maxCoverage`, `denseCoverFrom`, `maxPerTank` | 1, 0.6, 0.5, 256 | [Schwimmpflanzen](plants/floating_plants.md): Wachstum (0 = keins), größte bedeckte Oberfläche, dichte Decke ab, Pflanzen pro Aquarium |
+| `floatingPlants.wasteUptake`, `breedingBonus`, `pelletsOnLeaves` | 0.04, 1.15, 0.25 | aufgenommener Abfall, schnelleres Nest darunter, Anteil der Pellets, der auf den Blättern liegen bleibt |
+| `floatingPlants.bottleDuckweedChance`, `fishingChance` | 0.15, 0.06 | Wasserlinse in einer Flasche Sumpfwasser, eine Schwimmpflanze beim Angeln im Sumpf (siehe [Was gibt es wo](getting_started/sources.md)) |
+| `interiorPlants.plantGrowthSpeed`, `plantWasteUptake`, `plantBreedingBonus`, `hidingSpots` | 1, 0.5, 1.1, 0.6 | [Aquarienpflanzen](plants.md): Wachstum (0 = keins), Abfallaufnahme, Nestbonus im bepflanzten Becken, Verstecke |
+| `interiorPlants.maxPlantsPerTank`, `plantsSpread` | 48, true | Pflanzen pro Aquarium, Seitentriebe und Ausläufer |
+| `interiorPlants.plantFishingChance`, `bottleCuttingChance`, `mossChance` | 0.05, 0.05, 0.5 | eine Pflanze beim Angeln, ein Ableger im Sumpfwasser, Javamoos von der Schere am Moos |
 | `invertebrates.maxCrittersPerTank` | 200 | Garnelen, Krebse und Schnecken pro Aquarium |
 | `invertebrates.shrimpBreeding`, `crayfishBreeding`, `snailBreeding` | 1 | Vermehrungstempo (0 = nie) |
 | `invertebrates.bettasHuntShrimp` | true | Bettas jagen junge Garnelen und Krebse |
@@ -135,7 +140,7 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
 * **Naturalist:** Barsch, Wels und andere kleine Tiere werden angenommen; Piranha und Anglerfisch sind Raubfische.
 * **Jede andere Mod mit Wassertieren** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
   Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, …): Ihre kleinen Wassertiere gehen ins Aquarium, große und
-  feindliche werden abgelehnt. Siehe [Tiere anderer Mods](aquarium/other_animals.md).
+  feindliche werden abgelehnt. Siehe [Tiere anderer Mods](settings/other_animals.md).
 * **Sümpfe anderer Mods** (Biomes O' Plenty, Regions Unexplored …): Wildbettas erscheinen in jedem Biom aus
   `#c:is_swamp` über `#bettacraft:betta_spawn_biomes`.
 
@@ -145,3 +150,7 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
 * Operatoren: `/bettacraft interior resync` (alle Miniaturen neu senden), `/bettacraft interior bench` (Messung),
   `/bettacraft wateranimals` (jedes Wassertier der geladenen Mods und ob Aquarien es nehmen, als Tabelle in
   `bettacraft-water-animals.tsv`).
+
+## In diesem Kapitel
+
+<SubPages icons={true} />

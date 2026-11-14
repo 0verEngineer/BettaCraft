@@ -22,7 +22,7 @@ from the egg to the adult fish.
 
 ![Fry, juvenile, subadult, a flaring male and a female in breeding colours](../images/stages.png)
 
-* Eggs and larvae are not animals yet: they are part of the [bubble nest](../breeding.md) and only develop at 24 to
+* Eggs and larvae are not animals yet: they are part of the [bubble nest](breeding.md) and only develop at 24 to
   30 °C.
 * From the fry stage on the betta is a real animal in the tank.
 * A young betta only grows while it is **fed**, the water temperature is **tolerable** (24 to 30 °C) and it is **not

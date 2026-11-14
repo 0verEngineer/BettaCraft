@@ -1,11 +1,9 @@
 ---
 navigation:
   title: Wasserqualität
-  icon: bettacraft:tank_lid
+  icon: minecraft:potion
   parent: aquarium.md
-  position: 15
-item_ids:
-  - bettacraft:tank_lid
+  position: 30
 ---
 
 # Wasserqualität und Verdunstung
@@ -24,7 +22,7 @@ mit einem Balken, Jade, The One Probe und WTHIT zeigen sie beim Blick auf das Aq
 * **Filter** entfernen den Großteil des Abfalls (80 %), solange sie groß genug sind: Ein
   [Außenfilter](../equipment/filters.md) hält 32 Wasserblöcke sauber, ein Innenfilter unter Wasser 16. Ein kleinerer
   Filter entfernt einen passenden Teil.
-* **Schwimmpflanzen** nehmen etwas Abfall auf, solange sie Licht haben, siehe [Schwimmpflanzen](floating_plants.md).
+* **Schwimmpflanzen** nehmen etwas Abfall auf, solange sie Licht haben, siehe [Schwimmpflanzen](../plants/floating_plants.md).
 * **Wasserwechsel:** Wasser mit leeren Eimern entnehmen und Frischwasser nachgießen. Frischwasser verdünnt den Abfall;
   Wasser entnehmen ändert die Qualität nicht. Leitungen anderer Mods können das Aquarium ebenfalls füllen und leeren.
 

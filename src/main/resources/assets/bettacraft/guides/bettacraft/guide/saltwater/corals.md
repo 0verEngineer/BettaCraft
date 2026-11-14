@@ -3,16 +3,7 @@ navigation:
   title: Corals
   icon: bettacraft:acropora
   parent: saltwater.md
-  position: 3
-item_ids:
-  - bettacraft:zoanthus
-  - bettacraft:green_star_polyps
-  - bettacraft:mushroom_coral
-  - bettacraft:leather_coral
-  - bettacraft:hammer_coral
-  - bettacraft:lobophyllia
-  - bettacraft:acropora
-  - bettacraft:bubble_tip_anemone
+  position: 30
 ---
 
 # Corals
@@ -29,16 +20,18 @@ grows stage by stage over the days when the conditions are right:
 * Stony corals: **calcium** (full from 380 mg/L, nothing below 250; each growth stage uses some) and **clean water**
   (little nitrate).
 
-| Coral | Kind | Form | Light | Flow | Calcium | Spreading |
-|---|---|---|---|---|---|---|
-| Zoanthids | soft | polyp mat | medium | gentle | no | spreads over the rock |
-| Green Star Polyps | soft | polyp mat | medium | medium | no | spreads fast |
-| Mushroom Coral | soft | discs | low | gentle | no | new discs nearby |
-| Leather Coral | soft | toadstool | medium | medium | no | frags |
-| Hammer Coral | stony (LPS) | branches with heads | medium | medium | yes | frags |
-| Lobophyllia | stony (LPS) | dome | medium | gentle | yes | frags |
-| Acropora | stony (SPS) | branches | strong | strong | yes, clean water | frags |
-| Bubble Tip Anemone | anemone | tentacles | medium | medium | no | home of the clownfish |
+## Species
+
+| | Coral | Light | Flow | Calcium | Full size |
+|---|---|---|---|---|---|
+| <ItemImage id="bettacraft:zoanthus" /> | [Zoanthids](zoanthus.md) | medium | gentle | no | about 5 days |
+| <ItemImage id="bettacraft:green_star_polyps" /> | [Green Star Polyps](green_star_polyps.md) | medium | medium | no | about 4 days |
+| <ItemImage id="bettacraft:mushroom_coral" /> | [Mushroom Coral](mushroom_coral.md) | low | gentle | no | about 8 days |
+| <ItemImage id="bettacraft:leather_coral" /> | [Leather Coral](leather_coral.md) | medium | medium | no | about 10 days |
+| <ItemImage id="bettacraft:hammer_coral" /> | [Hammer Coral](hammer_coral.md) | medium | medium | yes | about 12 days |
+| <ItemImage id="bettacraft:lobophyllia" /> | [Lobophyllia](lobophyllia.md) | medium | gentle | yes | about 15 days |
+| <ItemImage id="bettacraft:acropora" /> | [Acropora](acropora.md) | strong | strong | yes | about 14 days |
+| <ItemImage id="bettacraft:bubble_tip_anemone" /> | [Bubble Tip Anemone](bubble_tip_anemone.md) | medium | medium | no | about 6 days |
 
 ## Shape and movement
 

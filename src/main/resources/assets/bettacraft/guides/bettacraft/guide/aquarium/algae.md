@@ -1,11 +1,9 @@
 ---
 navigation:
   title: Algae
-  icon: bettacraft:algae_scraper
-  parent: invertebrates.md
+  icon: minecraft:green_dye
+  parent: aquarium.md
   position: 50
-item_ids:
-  - bettacraft:algae_scraper
 ---
 
 # Algae and the algae scraper

@@ -3,7 +3,7 @@ navigation:
   title: Filter
   icon: bettacraft:internal_filter
   parent: equipment.md
-  position: 20
+  position: 30
 item_ids:
   - bettacraft:internal_filter
   - bettacraft:external_filter
@@ -23,8 +23,6 @@ sauber**: Ein Außenfilter schafft 32 Wasserblöcke, ein Innenfilter unter Wasse
 Setze den <ItemLink id="bettacraft:internal_filter" /> in den [Innenraum](../interior.md): Er wird zu einem Filterturm
 (2x2x8 Blöcke bei Maßstab 16), dessen Auslass zu dir zeigt. Das Aquarium zeigt an seinem Auslass einen Wasserstrahl.
 
-<RecipeFor id="bettacraft:internal_filter" />
-
 ## Außenfilter
 
 ![Ein Außenfilter neben einem Aquarium](../images/external_filter.png)
@@ -39,6 +37,11 @@ Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Str�
 * Abgebaut behält er seine Heizstäbe im Item (der Tooltip listet sie auf).
 * Er passt auch in einen [Aquariumschrank](cabinet.md) unter dem Aquarium.
 
-<RecipeFor id="bettacraft:external_filter" />
-
 Das Aquarium-Menü zeigt „Filter: 1 außen (Heizstäbe: 2), 1 innen“.
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:internal_filter" />
+<RecipesFor id="bettacraft:external_filter" />

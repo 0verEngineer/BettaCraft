@@ -2,11 +2,9 @@
 navigation:
   title: Bettas
   icon: bettacraft:betta_bucket
-  parent: index.md
-  position: 20
+  position: 40
 item_ids:
   - bettacraft:betta_bucket
-  - bettacraft:fish_bag
   - bettacraft:betta_spawn_egg
 ---
 
@@ -35,8 +33,6 @@ needs and do not fight.
 
 The fish bag recipe switches to plastic when a mod with plastic sheets is installed (more bags per craft):
 
-<RecipesFor id="bettacraft:fish_bag" />
-
 The tooltip of a bucket or bag shows the type, sex, colours, pattern and iridescence of the fish. Use it on an
 [aquarium](aquarium/inhabitants.md) to put the fish in, or on water to release it.
 
@@ -45,10 +41,11 @@ The tooltip of a bucket or bag shows the type, sex, colours, pattern and iridesc
 Males have long, colourful fins. Females have shorter fins, are a little paler and show vertical bars when they are in
 breeding mood. The sex is shown with ♂ and ♀ in the tank menu and in Jade.
 
-## More about bettas
+## Obtaining
 
-* [Life stages](bettas/life_stages.md)
-* [Health](bettas/health.md)
-* [Genetics](bettas/genetics.md)
-* [Types and colours](bettas/types.md)
-* [Fights, flaring and predators](bettas/fighting.md)
+* **Wild** in swamps, in groups of 1–2 (spawn weight 8).
+* **[Breeding](bettas/breeding.md)**: bubble nest, eggs and fry in the aquarium.
+
+## In this chapter
+
+<SubPages icons={true} />

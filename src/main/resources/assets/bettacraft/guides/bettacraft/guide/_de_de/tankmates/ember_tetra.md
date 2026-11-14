@@ -2,8 +2,8 @@
 navigation:
   title: Feuersalmler
   icon: bettacraft:ember_tetra_bucket
-  parent: tankmates.md
-  position: 12
+  parent: tankmates/tetras.md
+  position: 40
 item_ids:
   - bettacraft:ember_tetra_bucket
   - bettacraft:ember_tetra_spawn_egg
@@ -15,22 +15,30 @@ item_ids:
 
 Ein winziger, orange leuchtender Salmler, friedlich und betta-tauglich.
 
+**Herkunft:** das Araguaia-Becken in Brasilien.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Salmler |
-| Wissenschaftlich | *Hyphessobrycon amandae* |
+| Gruppe | Salmler |
+| Wissenschaftlicher Name | *Hyphessobrycon amandae* |
 | Größe im Spiel | etwa 2 cm (0,17 Blöcke) |
-| Herkunft | das Araguaia-Becken in Brasilien |
 | Temperatur | 22–29 °C |
+| Zuchttemperatur | 25–28 °C |
+| Wasser | Süßwasser, normal |
 | Schwarm | ab 6 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,2 Fisch |
-| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 25–28 °C |
+| Schwimmt | in der Mitte |
+| Besatz | zählt als 0,2 Fisch |
+| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 15–40 Junge |
+| Betta-Becken | ja |
 
 ## Zucht
 
 Bei 25–28 °C streut ein Paar 15–40 Eier in feinblättrige Pflanzen, Javamoos oder einen **Laichmop**. Die Eltern und alle anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher. Lebendfutter (Mückenlarven) macht die Fische laichbereiter.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,2–1,4 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

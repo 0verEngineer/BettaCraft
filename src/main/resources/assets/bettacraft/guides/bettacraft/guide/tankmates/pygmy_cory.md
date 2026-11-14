@@ -2,8 +2,8 @@
 navigation:
   title: Pygmy Cory
   icon: bettacraft:pygmy_cory_bucket
-  parent: tankmates.md
-  position: 16
+  parent: tankmates/corydoras.md
+  position: 10
 item_ids:
   - bettacraft:pygmy_cory_bucket
   - bettacraft:pygmy_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 A tiny cory that often hovers in a loose shoal in the middle of the water.
 
+**Origin:** the Rio Madeira (Brazil).
+
+## Profile
+
 | | |
 |---|---|
-| Family | Corydoras |
-| Scientific | *Corydoras pygmaeus* |
-| Size in the game | about 3 cm (0.21 blocks) |
-| Origin | the Rio Madeira (Brazil) |
+| Group | Corydoras |
+| Scientific name | *Corydoras pygmaeus* |
+| Size in the game | about 2.5 cm (0.21 blocks) |
 | Temperature | 22–27 °C |
-| Shoal | 8 or more |
-| Water | sensitive |
-| Stocking | 0.2 fish |
-| Breeding | Glues its eggs to the glass (after a cool water change), 22–26 °C |
+| Breeding temperature | 22–26 °C |
+| Water | fresh water, normal |
+| Shoal | from 8 fish |
+| Swims | in the lower water |
+| Stocking | counts as 0.2 fish |
+| Breeding | Glues its eggs to the glass (after a cool water change), 10–25 young |
+| Betta tank | too cool |
+| Special | gulps air at the surface |
 
 ## Breeding
 
@@ -35,6 +42,8 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 
 * Darts up to the surface for a gulp of air now and then.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.92–1.1 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 8 for 3 emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).

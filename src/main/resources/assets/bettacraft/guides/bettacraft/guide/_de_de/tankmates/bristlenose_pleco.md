@@ -2,8 +2,8 @@
 navigation:
   title: Antennenwels
   icon: bettacraft:bristlenose_pleco_bucket
-  parent: tankmates.md
-  position: 22
+  parent: tankmates/plecos.md
+  position: 10
 item_ids:
   - bettacraft:bristlenose_pleco_bucket
   - bettacraft:bristlenose_pleco_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Der beste Algenfresser unter den Beifischen; Männchen tragen Antennen auf der Schnauze. Auch als Albino und Super Red.
 
+**Herkunft:** südamerikanische Flüsse; die Aquarienform wird überall nachgezüchtet.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Harnischwelse |
-| Wissenschaftlich | *Ancistrus sp.* |
-| Größe im Spiel | etwa 8 cm (0,7 Blöcke) |
-| Herkunft | südamerikanische Flüsse; die Aquarienform wird überall nachgezüchtet |
+| Gruppe | Harnischwelse |
+| Wissenschaftlicher Name | *Ancistrus sp.* |
+| Größe im Spiel | etwa 8,5 cm (0,7 Blöcke) |
 | Temperatur | 21–28 °C |
-| Schwarm | einzeln oder paarweise |
-| Wasser | robust |
-| Besatz | 1,2 Fisch |
-| Zucht | laicht in Höhlen, das Männchen bewacht, 23–27 °C |
+| Zuchttemperatur | 23–27 °C |
+| Wasser | Süßwasser, robust |
+| Schwarm | einzeln oder als Paar |
+| Schwimmt | an der Scheibe und am Boden |
+| Besatz | zählt als 1,2 Fisch |
+| Zucht | laicht in Höhlen, das Männchen bewacht, 15–40 Junge |
+| Betta-Becken | ja |
+| Besonderheiten | frisst Algen, revierbildend, 3 Farbformen |
 
 ## Farbformen
 
@@ -41,6 +48,9 @@ Braucht eine **Laichhöhle** (Deko) und 23–27 °C. Jedes Männchen besetzt ein
 * Bodenfisch: bekommt sinkendes Futter nur zum Teil ab, wenn schnellere Fische da sind - Futtertabletten gehen direkt an ihn.
 * Männchen verteidigen ihre Höhle: Für mehrere Männchen mehrere Höhlen einrichten.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern, Flüssen und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,1–1,4 % pro Schwung.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,66–0,79 % pro Schwung.
+* **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.

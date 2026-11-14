@@ -13,14 +13,20 @@ navigation:
 Schnecken kriechen langsam über alles, auch die Deko und das Glas hinauf, und weiden dort die Algen ab. Ein paar
 Schnecken halten das Glas sauber.
 
-| Schnecke | Vermehrung | Besonderheit |
-|---|---|---|
-| **Rennschnecken**: Zebra, Geweih, Oliv, Rote und Gelbe Rennschnecke | keine Eier, **vermehren sich nie** im Süßwasser | die besten Algenfresser; die Geweihschnecke hat kleine Hörner; jede Rote und Gelbe Rennschnecke hat ihren eigenen Farbton |
-| **Apfelschnecke** (*Pomacea diffusa*): **gold** (die übliche), Wildfarbe braun, blau, violett, elfenbein | rosa Gelege **über der Wasserlinie** am Glas | groß; ein Betta zupft ab und zu an ihren Fühlern (nur Optik) |
-| **Posthornschnecke** (*Planorbella*): rot-braun, **rosa**, **blau**, **rot** | langsam, eine Schnecke reicht | Farben vererben sich wie die Garnelenfarben (Mendel + Güte) |
-| **Blasenschnecke** | langsam, eine reicht | winzig, durchsichtig braun |
-| **Turmdeckelschnecke** | langsam, eine reicht | gräbt sich tagsüber in den Bodengrund ein, kommt nachts heraus |
-| **Raubschnecke** (*Clea helena*) | sehr selten, paarweise | frisst andere Schnecken (Rennschnecken nur selten, ihr Gehäuse ist hart): die natürliche Lösung bei zu vielen Schnecken |
+## Arten
+
+| Tier | °C | Vermehrung | Algen |
+|---|---|---|---|
+| [Zebra-Rennschnecke](zebra_nerite.md) | 20–28 | nein | viel |
+| [Geweihschnecke](horned_nerite.md) | 20–28 | nein | viel |
+| [Oliv-Rennschnecke](olive_nerite.md) | 20–28 | nein | viel |
+| [Rote Rennschnecke](red_nerite.md) | 20–28 | nein | viel |
+| [Gelbe Rennschnecke](yellow_nerite.md) | 20–28 | nein | viel |
+| [Apfelschnecke](apple_snail.md) | 20–30 | Paar | viel |
+| [Posthornschnecke](ramshorn.md) | 15–30 | ein Tier genügt | etwas |
+| [Blasenschnecke](bladder_snail.md) | 10–30 | ein Tier genügt | etwas |
+| [Turmdeckelschnecke](trumpet_snail.md) | 18–32 | ein Tier genügt | kaum |
+| [Raubschnecke](assassin_snail.md) | 20–30 | Paar | kaum |
 
 ## Rennschnecken: jede ein bisschen anders
 
@@ -49,7 +55,7 @@ bringt sie auch.
 
 Ein Weibchen (mit einem Männchen) klettert am Glas **über die Wasserlinie** und legt dort ein rosa Gelege ab. Dafür muss
 über dem Wasser Luft sein: der Luftspalt unter dem Glas (`tank.waterHeadroom` > 0) oder ein nicht ganz volles Becken.
-Nach 3 Tagen schlüpfen 5 bis 10 Junge, außer du nimmst das Gelege ab: mit dem [Kescher](../aquarium/floating_plants.md)
+Nach 3 Tagen schlüpfen 5 bis 10 Junge, außer du nimmst das Gelege ab: mit dem [Kescher](../plants/floating_plants.md)
 darauf zielen oder im Menü **Gelege weg** drücken.
 
 ## Hinweise

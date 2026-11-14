@@ -2,7 +2,6 @@
 navigation:
   title: Erste Schritte
   icon: minecraft:water_bucket
-  parent: index.md
   position: 10
 ---
 
@@ -15,7 +14,7 @@ oder bronzene Fische mit kurzen Flossen, die Wildform „Plakat“.
 
 ## 2. Einen Betta fangen
 
-Rechtsklicke einen Betta mit einem **Wassereimer** oder einer <ItemLink id="bettacraft:fish_bag" />. Eimer und Tüte
+Rechtsklicke einen Betta mit einem **Wassereimer** (du bekommst einen <ItemLink id="bettacraft:betta_bucket" />) oder einer <ItemLink id="bettacraft:fish_bag" />. Eimer und Tüte
 bewahren den Fisch mit all seinen Genen auf. Fische im Eimer oder in der Tüte altern nicht.
 
 <RecipesFor id="bettacraft:fish_bag" />
@@ -50,4 +49,8 @@ Bettas brauchen mindestens einmal am Tag Futter. Rechtsklicke das Aquarium mit
 <ItemLink id="bettacraft:feeder" /> erledigen. Unter [Futter](food.md) steht, wie man es bekommt.
 
 Mehr braucht ein einzelner Betta nicht. Weiter geht es mit dem [Einrichten des Innenraums](interior.md) oder der
-[Zucht](breeding.md).
+[Zucht](bettas/breeding.md).
+
+## In diesem Kapitel
+
+<SubPages icons={true} />

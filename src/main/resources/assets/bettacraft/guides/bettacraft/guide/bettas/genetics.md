@@ -3,7 +3,7 @@ navigation:
   title: Genetics
   icon: minecraft:written_book
   parent: bettas.md
-  position: 30
+  position: 40
 ---
 
 # Genetics
@@ -33,7 +33,7 @@ For each locus a baby gets one random allele of the mother and one of the father
 Example: two halfmoons that both carry a hidden veiltail (veiltail / halfmoon) give about 75 % veiltails and 25 %
 halfmoons, because veiltail is dominant over halfmoon.
 
-The [breeding tab](../breeding.md) of the tank menu calculates this for you: once an adult pair is in the tank it shows
+The [breeding tab](breeding.md) of the tank menu calculates this for you: once an adult pair is in the tank it shows
 the expected offspring per locus (a Punnett square) together with the genotypes of both parents.
 
 ## Pedigree

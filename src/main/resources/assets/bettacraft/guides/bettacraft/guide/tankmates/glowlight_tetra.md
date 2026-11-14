@@ -2,8 +2,8 @@
 navigation:
   title: Glowlight Tetra
   icon: bettacraft:glowlight_tetra_bucket
-  parent: tankmates.md
-  position: 13
+  parent: tankmates/tetras.md
+  position: 50
 item_ids:
   - bettacraft:glowlight_tetra_bucket
   - bettacraft:glowlight_tetra_spawn_egg
@@ -15,22 +15,30 @@ item_ids:
 
 Translucent with a glowing orange-red line from snout to tail.
 
+**Origin:** the Essequibo river in Guyana.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Tetras |
-| Scientific | *Hemigrammus erythrozonus* |
-| Size in the game | about 3 cm (0.29 blocks) |
-| Origin | the Essequibo river in Guyana |
+| Group | Tetras |
+| Scientific name | *Hemigrammus erythrozonus* |
+| Size in the game | about 3.5 cm (0.29 blocks) |
 | Temperature | 23–28 °C |
-| Shoal | 6 or more |
-| Water | sensitive |
-| Stocking | 0.35 fish |
-| Breeding | Scatters its eggs (fine plants, spawning mop), 25–28 °C |
+| Breeding temperature | 25–28 °C |
+| Water | fresh water, normal |
+| Shoal | from 6 fish |
+| Swims | in the middle |
+| Stocking | counts as 0.35 fish |
+| Breeding | Scatters its eggs (fine plants, spawning mop), 20–50 young |
+| Betta tank | yes |
 
 ## Breeding
 
 At 25–28 °C a pair scatters 20–50 eggs into fine-leaved plants, java moss or a **spawning mop**. The parents and every other fish eat the eggs they reach; in a spawning mop most are safe. Live food (mosquito larvae) gets them ready faster.
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in jungle water and from the wandering trader (rare); then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.98–1.2 % per swing, 1–4 at a time.
+* **Wandering trader** (rare offers): 6 for 7 emeralds; one of 5 in this offer.
+* **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).

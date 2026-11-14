@@ -2,8 +2,8 @@
 navigation:
   title: Moskitobärbling
   icon: bettacraft:mosquito_rasbora_bucket
-  parent: tankmates.md
-  position: 15
+  parent: tankmates/rasboras.md
+  position: 20
 item_ids:
   - bettacraft:mosquito_rasbora_bucket
   - bettacraft:mosquito_rasbora_spawn_egg
@@ -15,22 +15,30 @@ item_ids:
 
 Einer der kleinsten Aquarienfische (etwa 2 cm), rot mit dunkler Linie. Auch als Chili-Rasbora im Handel - es ist dieselbe Art.
 
+**Herkunft:** die Schwarzwasser-Torfsümpfe Borneos.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Bärblinge |
-| Wissenschaftlich | *Boraras brigittae* |
+| Gruppe | Bärblinge |
+| Wissenschaftlicher Name | *Boraras brigittae* |
 | Größe im Spiel | etwa 2 cm (0,15 Blöcke) |
-| Herkunft | die Schwarzwasser-Torfsümpfe Borneos |
 | Temperatur | 22–28 °C |
+| Zuchttemperatur | 25–28 °C |
+| Wasser | Süßwasser, empfindlich |
 | Schwarm | ab 8 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,12 Fisch |
-| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 25–28 °C |
+| Schwimmt | nahe der Oberfläche |
+| Besatz | zählt als 0,12 Fisch |
+| Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 8–25 Junge |
+| Betta-Becken | ja |
 
 ## Zucht
 
 Bei 25–28 °C streut ein Paar 8–25 Eier in feinblättrige Pflanzen, Javamoos oder einen **Laichmop**. Die Eltern und alle anderen Fische fressen erreichbare Eier; im Laichmop sind die meisten sicher. Lebendfutter (Mückenlarven) macht die Fische laichbereiter.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Sümpfen und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 3,7–4,4 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 8 für 3 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).

@@ -2,8 +2,8 @@
 navigation:
   title: Zucht
   icon: minecraft:lily_pad
-  parent: index.md
-  position: 60
+  parent: bettas.md
+  position: 30
 ---
 
 # Zucht
@@ -11,7 +11,7 @@ navigation:
 Bettas vermehren sich nur in einem Bettacraft-Aquarium, und zwar nah an der echten Betta-Zucht: Das **Männchen baut ein
 Schaumnest**, das Paar laicht, und danach **müssen beide Eltern zur richtigen Zeit raus**.
 
-![Ein Schaumnest mit Eiern an der Oberfläche](images/nest.png)
+![Ein Schaumnest mit Eiern an der Oberfläche](../images/nest.png)
 
 ## 1. Voraussetzungen
 
@@ -27,13 +27,13 @@ hat zwei Eier mehr. Die Filterströmung spielt keine Rolle.
 ## 2. Schaumnest
 
 Das Männchen baut an der Wasseroberfläche ein **Schaumnest**, das dauert noch einmal einen Vierteltag. Am liebsten baut
-es unter Schwimmpflanzen: Setze [Schwimmpflanzen](aquarium/floating_plants.md) auf die Oberfläche (Amazonas-Froschbiss
+es unter Schwimmpflanzen: Setze [Schwimmpflanzen](../plants/floating_plants.md) auf die Oberfläche (Amazonas-Froschbiss
 mag es am liebsten), dann entsteht das Nest unter der dichtesten Gruppe; ohne sie unter der **Seerose** im
-[Innenraum](interior.md), die ihm am nächsten ist. Schwimmpflanzen machen es außerdem etwas schneller bereit. Ein fertiges Nest ohne Weibchen zerfällt nach 3 Tagen. Das Nest ist ein gewölbter
+[Innenraum](../interior.md), die ihm am nächsten ist. Schwimmpflanzen machen es außerdem etwas schneller bereit. Ein fertiges Nest ohne Weibchen zerfällt nach 3 Tagen. Das Nest ist ein gewölbter
 Schaumhaufen, der etwas unter die Oberfläche reicht, so siehst du es auch durch die Seitenscheibe; die Eier sitzen an
 seiner Unterseite, die Larven hängen daran.
 
-![Das gewölbte Schaumnest von der Seite durchs Glas](images/nest_side.png)
+![Das gewölbte Schaumnest von der Seite durchs Glas](../images/nest_side.png)
 
 ## 3. Laichen
 
@@ -52,13 +52,13 @@ abbauen.
 ## 5. Jungfische
 
 Sobald die Jungfische frei schwimmen, **nimm das Männchen heraus**: Es frisst pro Tag etwa jeden dritten Jungfisch. Das
-Menü zeigt „Männchen entnehmen! (es frisst die Jungfische)“. Jetzt [Jungfischfutter](food/fry_food.md) füttern und das
+Menü zeigt „Männchen entnehmen! (es frisst die Jungfische)“. Jetzt [Jungfischfutter](../food/fry_food.md) füttern und das
 Wasser warm halten; nach etwa 8 weiteren Tagen sind die jungen Bettas erwachsen.
 
 ## Der Zucht-Tab
 
-![Der Zucht-Tab](images/menu_breeding.png)
+![Der Zucht-Tab](../images/menu_breeding.png)
 
-Der Zucht-Tab des [Aquarium-Menüs](aquarium/menu.md) zeigt die Warnungen, das Nest mit seinen Eiern oder Larven, alle
+Der Zucht-Tab des [Aquarium-Menüs](../aquarium/menu.md) zeigt die Warnungen, das Nest mit seinen Eiern oder Larven, alle
 Bedingungen mit ✔ und ✘, die Jungtiere, die Eltern und die **erwarteten Nachkommen** des Paares für jedes Merkmal, mit
-den Genotypen beider Eltern. Siehe [Genetik](bettas/genetics.md).
+den Genotypen beider Eltern. Siehe [Genetik](genetics.md).

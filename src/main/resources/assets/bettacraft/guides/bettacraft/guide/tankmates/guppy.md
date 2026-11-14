@@ -2,8 +2,8 @@
 navigation:
   title: Guppy
   icon: bettacraft:guppy_bucket
-  parent: tankmates.md
-  position: 26
+  parent: tankmates/livebearers.md
+  position: 10
 item_ids:
   - bettacraft:guppy_bucket
   - bettacraft:guppy_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Males with big colourful tails, females bigger and grey. Male bettas go for male guppies.
 
+**Origin:** Venezuela and Trinidad, today wild in warm waters worldwide.
+
+## Profile
+
 | | |
 |---|---|
-| Family | Livebearers |
-| Scientific | *Poecilia reticulata* |
+| Group | Livebearers |
+| Scientific name | *Poecilia reticulata* |
 | Size in the game | about 4 cm (0.33 blocks) |
-| Origin | Venezuela and Trinidad, today wild in warm waters worldwide |
 | Temperature | 22–28 °C |
-| Shoal | 3 or more |
-| Water | hardy |
-| Stocking | 0.35 fish |
-| Breeding | Bears live young, 23–28 °C |
+| Breeding temperature | 23–28 °C |
+| Water | fresh or brackish water, hardy |
+| Shoal | from 3 fish |
+| Swims | near the surface |
+| Stocking | counts as 0.35 fish |
+| Breeding | Bears live young, 5–16 young |
+| Betta tank | females only |
+| Special | chased by male bettas, 5 colour varieties |
 
 ## Genetics and strains
 
@@ -45,6 +52,8 @@ At 23–28 °C a female with a male gets pregnant and gives birth to 5–16 youn
 
 * Male bettas go for the males of this species (config `tankmates.behaviour.bettaAggression`).
 
-## Getting it
+## Obtaining
 
-With the [aquarium net](../invertebrates/catching.md) in rivers and from the wandering trader; then by breeding.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 3.4–4.1 % per swing, 1–4 at a time.
+* **Wandering trader** (usual offers): 6 for 4+ emeralds; one of 16 in this offer.
+* **[Breeding](breeding.md)**: Bears live young.

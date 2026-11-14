@@ -1,16 +1,15 @@
 ---
 navigation:
-  title: Futter
+  title: Futter und Lebendfutter
   icon: bettacraft:betta_pellets
-  parent: index.md
-  position: 50
+  position: 90
 item_ids:
   - bettacraft:swamp_water_bottle
   - bettacraft:mosquito_larvae
   - bettacraft:betta_pellets
 ---
 
-# Futter
+# Futter und Lebendfutter
 
 Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen Tag nach seiner letzten Mahlzeit, nach
 7 Tagen ohne Futter wird er krank (siehe [Gesundheit](bettas/health.md)).
@@ -26,15 +25,12 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
 
 1. **Sumpfwasser:** Wende eine Glasflasche auf Wasser in einem Sumpf an. Ob Wasser als Sumpfwasser zählt, entscheidet
    das Biom des angeklickten Wasserblocks. Du bekommst eine <ItemLink id="bettacraft:swamp_water_bottle" />;
-   manchmal kommt etwas [Wasserlinse](aquarium/floating_plants.md) mit.
+   manchmal kommt etwas [Wasserlinse](plants/floating_plants.md) mit.
 2. **Mückenlarven:** Erhitze die Flasche im Ofen, Räucherofen oder am Lagerfeuer, dann schlüpfen die Larven, oder
    züchte sie in einem [Larvenbottich](food/live_food.md). Beim
    Abbauen von Schlamm im Sumpf fallen manchmal auch <ItemLink id="bettacraft:mosquito_larvae" /> heraus.
 3. **Betta-Pellets:** roher Fisch (Kabeljau, Lachs oder Fische anderer Mods), Mückenlarven, Knochenmehl und getrockneter Seetang ergeben 8
    <ItemLink id="bettacraft:betta_pellets" />.
-
-<RecipesFor id="bettacraft:mosquito_larvae" />
-<RecipeFor id="bettacraft:betta_pellets" />
 
 | Futter | Füttert | Besonderheit |
 |---|---|---|
@@ -49,3 +45,17 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
 * **Automatisch:** Ein [Futterautomat](equipment/feeder.md) auf dem Aquarium füttert 1- bis 3-mal am Tag.
 
 Überfüttern schadet nicht.
+
+## In diesem Kapitel
+
+<SubPages icons={true} />
+
+## Bezug
+
+* <ItemLink id="bettacraft:swamp_water_bottle" />: **Glasflasche** mit Wasser gefüllt in Sümpfen.
+* <ItemLink id="bettacraft:mosquito_larvae" />: **Schlamm abbauen** in Sümpfen: 4 % pro Block.
+
+Herstellung:
+
+<RecipesFor id="bettacraft:mosquito_larvae" />
+<RecipesFor id="bettacraft:betta_pellets" />

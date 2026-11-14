@@ -1,6 +1,6 @@
 ---
 navigation:
-  title: Shrimp
+  title: Neocaridina shrimp
   icon: bettacraft:fish_bag
   parent: invertebrates.md
   position: 10
@@ -13,6 +13,21 @@ navigation:
 The dwarf shrimp *Neocaridina davidi* (about 2.5 cm) walks over the floor, the stones and the plants, now and then
 swims a short jump and grazes the glass a little. Shrimp eat biofilm, algae and the leftovers of the fish food: with
 shrimp, overfeeding hardly fouls the water.
+
+## Profile
+
+| | |
+|---|---|
+| Group | Shrimp |
+| Size in the game | about 2.5 cm (0.2 blocks) |
+| Temperature | 18–28 °C |
+| Water | fresh water, sensitive |
+| Breeding | male and female; the female carries the eggs, the young hatch fully formed, 3–8 young |
+| Growing up | about 3 days |
+| Algae | grazes 0.08 glass faces a day |
+| Climbs the glass | yes |
+| Stocking | 25 count as one fish |
+| Colour lines | 6 (bred from wild animals) |
 
 ## Colours
 
@@ -51,3 +66,9 @@ shrimp, overfeeding hardly fouls the water.
 
 * 18 to 28 °C. Shrimp are sensitive: below 45 % water quality they die off.
 * Food: a tank grows some on its own; plants and algae add to it. A big colony needs leftovers of the fish food.
+
+## Obtaining
+
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 10–12 % per swing, 1–3 at a time.
+* **Wandering trader** (rare offers): 2 for 6 emeralds.
+* **Breeding** in the aquarium (male and female).

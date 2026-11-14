@@ -24,10 +24,6 @@ item_ids:
 | <ItemLink id="bettacraft:heater_medium" /> | 32 Wasserblöcke |
 | <ItemLink id="bettacraft:heater_large" /> | 64 Wasserblöcke |
 
-<RecipeFor id="bettacraft:heater_small" />
-<RecipeFor id="bettacraft:heater_medium" />
-<RecipeFor id="bettacraft:heater_large" />
-
 ## Wo Heizstäbe wirken
 
 * **Im Innenraum:** Setze den Heizstab in den [Innenraum](../interior.md) des Aquariums. Er wird zu einem Heizstab aus
@@ -43,3 +39,11 @@ Baut man einen Block des Heizstabs ab, verschwindet der ganze Stab und man bekom
 
 Für heiße Gegenden gibt es [Kühler](coolers.md), die an dieselben Stellen passen. Ein Server kann für Heizer und Kühler
 [Strom](power.md) verlangen.
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:heater_small" />
+<RecipesFor id="bettacraft:heater_medium" />
+<RecipesFor id="bettacraft:heater_large" />

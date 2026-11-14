@@ -3,7 +3,7 @@ navigation:
   title: Salt water
   icon: bettacraft:sea_salt
   parent: saltwater.md
-  position: 1
+  position: 10
 item_ids:
   - bettacraft:sea_water_bucket
   - bettacraft:sea_salt
@@ -54,3 +54,13 @@ axolotls and tadpoles fresh water.
 
 The water tab of the [tank menu](../aquarium/menu.md) shows salt, calcium and nitrate instead of the glass line, and in
 the last line the skimmers, the flow pumps with their flow, the live rock and how much of the light the corals can use.
+
+## Obtaining
+
+* <ItemLink id="bettacraft:sea_salt" />: **Wandering trader** (usual offers): 8 for 2 emeralds.
+
+Crafting:
+
+<RecipesFor id="bettacraft:sea_water_bucket" />
+<RecipesFor id="bettacraft:sea_salt" />
+<RecipesFor id="bettacraft:calcium_additive" />

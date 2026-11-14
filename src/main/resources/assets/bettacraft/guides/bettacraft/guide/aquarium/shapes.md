@@ -3,7 +3,7 @@ navigation:
   title: Shapes
   icon: bettacraft:tank
   parent: aquarium.md
-  position: 5
+  position: 10
 ---
 
 # Aquarium shapes

@@ -3,7 +3,7 @@ navigation:
   title: Power
   icon: minecraft:redstone
   parent: equipment.md
-  position: 60
+  position: 90
 ---
 
 # Power

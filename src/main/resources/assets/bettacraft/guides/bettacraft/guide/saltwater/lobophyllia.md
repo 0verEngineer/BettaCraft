@@ -1,0 +1,42 @@
+---
+navigation:
+  title: Lobophyllia
+  icon: bettacraft:lobophyllia
+  parent: saltwater/corals.md
+  position: 60
+item_ids:
+  - bettacraft:lobophyllia
+---
+
+# Lobophyllia
+
+![Lobophyllia](../images/sp_lobophyllia.png)
+
+*Lobophyllia* (lobed brain coral) from the Indo-Pacific: a stony coral (LPS) that grows into a fleshy dome of red and green lobes.
+
+## Profile
+
+| | |
+|---|---|
+| Growth form | dome (stony coral) |
+| Grows on | reef rock, live rock |
+| Light | medium |
+| Flow | gentle |
+| Calcium | builds a skeleton, uses calcium |
+| Water | sea water |
+| Full size | after about 15 days |
+| Spreads | no |
+| Cuttings per trim | 1 |
+
+## Care
+
+* Builds a skeleton: needs **calcium**.
+* Medium light, gentle flow.
+
+## Obtaining
+
+* **Frags**: shears on a grown coral give 1 cutting per trim.
+
+Crafting:
+
+<RecipesFor id="bettacraft:lobophyllia" />

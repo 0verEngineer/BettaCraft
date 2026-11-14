@@ -2,7 +2,7 @@
 navigation:
   title: L134 Leopard-Frosch-Wels
   icon: bettacraft:leopard_frog_pleco_bucket
-  parent: tankmates.md
+  parent: tankmates/plecos.md
   position: 20
 item_ids:
   - bettacraft:leopard_frog_pleco_bucket
@@ -15,17 +15,24 @@ item_ids:
 
 Ein kleiner Harnischwels mit gelb-schwarzen Bändern. Lebt in Höhlen und am Glas, frisst etwas Algen und braucht warmes Wasser.
 
+**Herkunft:** den Rio Tapajós in Brasilien.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Harnischwelse |
-| Wissenschaftlich | *Peckoltia compta (L134)* |
+| Gruppe | Harnischwelse |
+| Wissenschaftlicher Name | *Peckoltia compta (L134)* |
 | Größe im Spiel | etwa 7 cm (0,6 Blöcke) |
-| Herkunft | den Rio Tapajós in Brasilien |
 | Temperatur | 25–30 °C |
-| Schwarm | einzeln oder paarweise |
-| Wasser | empfindlich |
-| Besatz | 1 Fisch |
-| Zucht | laicht in Höhlen, das Männchen bewacht, 27–30 °C |
+| Zuchttemperatur | 27–30 °C |
+| Wasser | Süßwasser, normal |
+| Schwarm | einzeln oder als Paar |
+| Schwimmt | an der Scheibe und am Boden |
+| Besatz | zählt als 1 Fisch |
+| Zucht | laicht in Höhlen, das Männchen bewacht, 8–20 Junge |
+| Betta-Becken | ja |
+| Besonderheiten | revierbildend |
 
 ## Zucht
 
@@ -37,6 +44,8 @@ Braucht eine **Laichhöhle** (Deko) und 27–30 °C. Jedes Männchen besetzt ein
 * Bodenfisch: bekommt sinkendes Futter nur zum Teil ab, wenn schnellere Fische da sind - Futtertabletten gehen direkt an ihn.
 * Männchen verteidigen ihre Höhle: Für mehrere Männchen mehrere Höhlen einrichten.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern und beim fahrenden Händler (selten); danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,33–0,39 % pro Schwung.
+* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 5 in diesem Angebot.
+* **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.

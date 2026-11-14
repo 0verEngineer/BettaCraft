@@ -2,8 +2,7 @@
 navigation:
   title: Beifische
   icon: bettacraft:neon_tetra_bucket
-  parent: index.md
-  position: 66
+  position: 50
 ---
 
 # Beifische
@@ -14,10 +13,6 @@ Endler und Platy und der **Zwergfadenfisch**. Sie sind echte Tiere wie die Betta
 schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede Art vermehrt sich so wie in der Natur.
 
 ![Ein Gesellschaftsbecken mit Beifischen](images/tm_community.png)
-
-* [Pflege](tankmates/care.md): Schwärme, Temperatur, Wasser, Futter, Besatz, Bettas und andere Beifische.
-* [Zucht](tankmates/breeding.md): Eier am Glas, Höhlen, Freilaicher, Lebendgebärende, Schaumnester; Ablaichkasten,
-  Laichhöhle und Laichmop, Staubfutter.
 
 ## Kurz gesagt
 
@@ -39,24 +34,28 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 
 | Art | °C | Schwarm | Betta-Becken | Zucht |
 |---|---|---|---|---|
-| [Neonsalmler](tankmates/neon_tetra.md) | 20–27 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Roter Neon](tankmates/cardinal_tetra.md) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Grüner Neon](tankmates/green_neon_tetra.md) (grün, Blauer Neon) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Feuersalmler](tankmates/ember_tetra.md) | 22–29 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Glühlichtsalmler](tankmates/glowlight_tetra.md) | 23–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Keilfleckbärbling](tankmates/harlequin_rasbora.md) | 22–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Moskitobärbling](tankmates/mosquito_rasbora.md) | 22–28 | 8 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Pygmäen-Panzerwels](tankmates/pygmy_cory.md) | 22–27 | 8 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
-| [Panda-Panzerwels](tankmates/panda_cory.md) | 20–26 | 6 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
-| [Sterbai-Panzerwels](tankmates/sterbai_cory.md) | 24–30 | 6 | ja | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
-| [Gelbflossen-Panzerwels](tankmates/green_gold_cory.md) | 22–27 | 6 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
-| [L134 Leopard-Frosch-Wels](tankmates/leopard_frog_pleco.md) | 25–30 | – | ja | laicht in Höhlen, das Männchen bewacht |
-| [L046 Zebra-Harnischwels](tankmates/zebra_pleco.md) | 26–31 | – | ja | laicht in Höhlen, das Männchen bewacht |
-| [Antennenwels](tankmates/bristlenose_pleco.md) | 21–28 | – | ja | laicht in Höhlen, das Männchen bewacht |
-| [Otocinclus (Ohrgitter-Harnischwels)](tankmates/otocinclus.md) | 21–27 | 5 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
-| [Dornauge](tankmates/kuhli_loach.md) | 24–30 | 5 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
-| [Prachtschmerle](tankmates/clown_loach.md) | 25–30 | 5 | zu groß | vermehrt sich nicht im Aquarium |
-| [Guppy](tankmates/guppy.md) | 22–28 | 3 | nur Weibchen | lebendgebärend |
-| [Endler-Guppy](tankmates/endler_guppy.md) | 23–30 | 3 | ja | lebendgebärend |
-| [Platy](tankmates/platy.md) | 20–27 | 3 | zu kühl | lebendgebärend |
-| [Zwergfadenfisch](tankmates/dwarf_gourami.md) | 24–29 | – | nein | baut ein Schaumnest |
+| <ItemImage id="bettacraft:neon_tetra_bucket" /> [Neonsalmler](tankmates/neon_tetra.md) | 20–27 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:cardinal_tetra_bucket" /> [Roter Neon](tankmates/cardinal_tetra.md) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:green_neon_tetra_bucket" /> [Grüner Neon](tankmates/green_neon_tetra.md) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:ember_tetra_bucket" /> [Feuersalmler](tankmates/ember_tetra.md) | 22–29 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:glowlight_tetra_bucket" /> [Glühlichtsalmler](tankmates/glowlight_tetra.md) | 23–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:harlequin_rasbora_bucket" /> [Keilfleckbärbling](tankmates/harlequin_rasbora.md) | 22–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:mosquito_rasbora_bucket" /> [Moskitobärbling](tankmates/mosquito_rasbora.md) | 22–28 | 8 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:pygmy_cory_bucket" /> [Pygmäen-Panzerwels](tankmates/pygmy_cory.md) | 22–27 | 8 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
+| <ItemImage id="bettacraft:panda_cory_bucket" /> [Panda-Panzerwels](tankmates/panda_cory.md) | 20–26 | 6 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
+| <ItemImage id="bettacraft:sterbai_cory_bucket" /> [Sterbai-Panzerwels](tankmates/sterbai_cory.md) | 24–30 | 6 | ja | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
+| <ItemImage id="bettacraft:green_gold_cory_bucket" /> [Gelbflossen-Panzerwels](tankmates/green_gold_cory.md) | 22–27 | 6 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
+| <ItemImage id="bettacraft:leopard_frog_pleco_bucket" /> [L134 Leopard-Frosch-Wels](tankmates/leopard_frog_pleco.md) | 25–30 | – | ja | laicht in Höhlen, das Männchen bewacht |
+| <ItemImage id="bettacraft:zebra_pleco_bucket" /> [L046 Zebra-Harnischwels](tankmates/zebra_pleco.md) | 26–31 | – | ja | laicht in Höhlen, das Männchen bewacht |
+| <ItemImage id="bettacraft:bristlenose_pleco_bucket" /> [Antennenwels](tankmates/bristlenose_pleco.md) | 21–28 | – | ja | laicht in Höhlen, das Männchen bewacht |
+| <ItemImage id="bettacraft:otocinclus_bucket" /> [Otocinclus (Ohrgitter-Harnischwels)](tankmates/otocinclus.md) | 21–27 | 5 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
+| <ItemImage id="bettacraft:kuhli_loach_bucket" /> [Dornauge](tankmates/kuhli_loach.md) | 24–30 | 5 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:clown_loach_bucket" /> [Prachtschmerle](tankmates/clown_loach.md) | 25–30 | 5 | zu groß | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:guppy_bucket" /> [Guppy](tankmates/guppy.md) | 22–28 | 3 | nur Weibchen | lebendgebärend |
+| <ItemImage id="bettacraft:endler_guppy_bucket" /> [Endler-Guppy](tankmates/endler_guppy.md) | 23–30 | 3 | ja | lebendgebärend |
+| <ItemImage id="bettacraft:platy_bucket" /> [Platy](tankmates/platy.md) | 20–27 | 3 | zu kühl | lebendgebärend |
+| <ItemImage id="bettacraft:dwarf_gourami_bucket" /> [Zwergfadenfisch](tankmates/dwarf_gourami.md) | 24–29 | – | nein | baut ein Schaumnest |
+
+## In diesem Kapitel
+
+<SubPages icons={true} />

@@ -3,7 +3,7 @@ navigation:
   title: Inhabitants
   icon: bettacraft:fish_bag
   parent: aquarium.md
-  position: 20
+  position: 60
 ---
 
 # Inhabitants
@@ -18,7 +18,7 @@ Accepted is every **small water animal** (hitbox up to 0.8 x 0.8), also of other
 squids (with a fish bag, they have no bucket) and more. Refused are animals that are too big, bosses, hostile mobs, land
 animals and the animals in `#bettacraft:tank_blacklist` (giant fish of other mods); the message says why. The animals in
 `#bettacraft:tank_inhabitants` (e.g. the Fintastic pleco) are always welcome. Details and settings:
-[Animals of other mods](other_animals.md).
+[Animals of other mods](../settings/other_animals.md).
 
 Other animals keep their own behaviour and have **no needs** in the aquarium; only bettas get hungry, need warmth and
 breed. Small water animals that get into the aquarium without a bucket (spawn egg, command) are adopted as well.

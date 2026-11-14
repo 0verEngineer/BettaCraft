@@ -3,7 +3,7 @@ navigation:
   title: Bewohner
   icon: bettacraft:fish_bag
   parent: aquarium.md
-  position: 20
+  position: 60
 ---
 
 # Bewohner
@@ -18,7 +18,7 @@ Angenommen wird jedes **kleine Wassertier** (Hitbox bis 0,8 x 0,8), auch aus and
 Tintenfische (mit der Fischtüte, sie haben keinen Eimer) und mehr. Abgelehnt werden zu große Tiere, Bosse, feindliche
 Mobs, Landtiere und die Tiere in `#bettacraft:tank_blacklist` (Riesenfische anderer Mods); die Meldung nennt den Grund.
 Die Tiere in `#bettacraft:tank_inhabitants` (z. B. der Fintastic-Pleco) sind immer willkommen. Einzelheiten und
-Einstellungen: [Tiere anderer Mods](other_animals.md).
+Einstellungen: [Tiere anderer Mods](../settings/other_animals.md).
 
 Andere Tiere behalten ihr eigenes Verhalten und haben im Aquarium **keine Bedürfnisse**; nur Bettas werden hungrig,
 brauchen Wärme und vermehren sich. Kleine Wassertiere, die ohne Eimer ins Aquarium kommen (Spawn-Ei, Befehl), werden

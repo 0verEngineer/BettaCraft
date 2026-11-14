@@ -1,0 +1,38 @@
+---
+navigation:
+  title: Blasenschnecke
+  icon: bettacraft:fish_bag
+  parent: invertebrates/snails.md
+  position: 80
+---
+
+# Blasenschnecke
+
+![Blasenschnecke](../images/sp_bladder_snail.png)
+
+Die Blasenschnecke (*Physella acuta*), weltweit in stillen Gewässern zu Hause: winzig, mit durchscheinend braunem Gehäuse.
+
+## Steckbrief
+
+| | |
+|---|---|
+| Gruppe | Schnecken |
+| Größe im Spiel | etwa 1 cm (0,07 Blöcke) |
+| Temperatur | 10–30 °C |
+| Wasser | Süßwasser, robust |
+| Vermehrung | Zwitter: ein Tier genügt, 1–2 Junge |
+| Heranwachsen | etwa 2 Tage |
+| Algen | weidet 0,3 Scheiben am Tag ab |
+| Klettert an der Scheibe | ja |
+| Besatz | 50 zählen als ein Fisch |
+
+## Haltung
+
+* Robust und genügsam; eine Schnecke genügt zur Vermehrung.
+* Frisst Futterreste und ein wenig Algen.
+
+## Bezug
+
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 6,5–7,7 % pro Schwung, 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 8,8–12 % pro Schwung, 1–2 auf einmal.
+* **Vermehrung** im Aquarium (ein Tier genügt).

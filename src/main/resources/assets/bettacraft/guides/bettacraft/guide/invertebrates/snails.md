@@ -13,14 +13,20 @@ navigation:
 Snails crawl slowly over everything, also up the decoration and the glass, and graze the algae there. A few snails
 keep the glass clean.
 
-| Snail | Breeding | Special |
-|---|---|---|
-| **Nerites**: zebra, horned, olive, red and yellow racer nerite | no eggs, **never breed** in fresh water | the best algae eaters; the horned nerite has small horns; every racer nerite has its own shade |
-| **Apple snail** (*Pomacea diffusa*): **gold** (the usual one), wild brown, blue, purple, ivory | pink clutch **above the water line** on the glass | large; a betta nips at its feelers now and then (only a look) |
-| **Ramshorn** (*Planorbella*): red-brown, **pink**, **blue**, **red** | slowly, one snail is enough | colours inherited like the shrimp colours (Mendel + grade) |
-| **Bladder snail** | slowly, one is enough | tiny, see-through brown |
-| **Malaysian trumpet snail** | slowly, one is enough | digs into the substrate by day, comes out at night |
-| **Assassin snail** (*Clea helena*) | very rarely, in pairs | eats other snails (nerites only rarely, their shell is hard): the natural fix for too many snails |
+## Species
+
+| Animal | °C | Breeding | Algae |
+|---|---|---|---|
+| [Zebra Nerite](zebra_nerite.md) | 20–28 | no | a lot |
+| [Horned Nerite](horned_nerite.md) | 20–28 | no | a lot |
+| [Olive Nerite](olive_nerite.md) | 20–28 | no | a lot |
+| [Red Nerite](red_nerite.md) | 20–28 | no | a lot |
+| [Yellow Racer Nerite](yellow_nerite.md) | 20–28 | no | a lot |
+| [Apple Snail](apple_snail.md) | 20–30 | pair | a lot |
+| [Ramshorn Snail](ramshorn.md) | 15–30 | one is enough | some |
+| [Bladder Snail](bladder_snail.md) | 10–30 | one is enough | some |
+| [Malaysian Trumpet Snail](trumpet_snail.md) | 18–32 | one is enough | hardly |
+| [Assassin Snail](assassin_snail.md) | 20–30 | pair | hardly |
 
 ## Racer nerites: every one a little different
 
@@ -48,7 +54,7 @@ carriers give a quarter pink (or blue, or red) young, and **pink x pink breeds t
 
 A female apple snail (with a male) climbs up the glass **above the water line** and lays a pink clutch there. That needs
 air above the water: the air gap under the glass (`tank.waterHeadroom` > 0) or a tank that is not full. After 3 days 5 to
-10 young hatch, unless you take the clutch off: aim the [aquarium net](../aquarium/floating_plants.md) at it, or press
+10 young hatch, unless you take the clutch off: aim the [aquarium net](../plants/floating_plants.md) at it, or press
 **Clutches off** in the menu.
 
 ## Notes

@@ -2,8 +2,8 @@
 navigation:
   title: Gelbflossen-Panzerwels
   icon: bettacraft:green_gold_cory_bucket
-  parent: tankmates.md
-  position: 19
+  parent: tankmates/corydoras.md
+  position: 40
 item_ids:
   - bettacraft:green_gold_cory_bucket
   - bettacraft:green_gold_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Goldgrün mit dunklem Seitenband und gelb-orangen Flossen.
 
+**Herkunft:** die Region des Rio Meta in Kolumbien.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Panzerwelse |
-| Wissenschaftlich | *Corydoras melanotaenia* |
-| Größe im Spiel | etwa 6 cm (0,46 Blöcke) |
-| Herkunft | die Region des Rio Meta in Kolumbien |
+| Gruppe | Panzerwelse |
+| Wissenschaftlicher Name | *Corydoras melanotaenia* |
+| Größe im Spiel | etwa 5,5 cm (0,46 Blöcke) |
 | Temperatur | 22–27 °C |
+| Zuchttemperatur | 23–26 °C |
+| Wasser | Süßwasser, normal |
 | Schwarm | ab 6 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,55 Fisch |
-| Zucht | klebt Eier ans Glas (nach kühlem Wasserwechsel), 23–26 °C |
+| Schwimmt | am Boden |
+| Besatz | zählt als 0,55 Fisch |
+| Zucht | klebt Eier ans Glas (nach kühlem Wasserwechsel), 12–30 Junge |
+| Betta-Becken | zu kühl |
+| Besonderheiten | holt Luft an der Oberfläche |
 
 ## Zucht
 
@@ -36,6 +43,9 @@ Ein kühler Wasserwechsel löst das Laichen aus: mindestens ein Viertel des Wass
 * Bodenfisch: bekommt sinkendes Futter nur zum Teil ab, wenn schnellere Fische da sind - Futtertabletten gehen direkt an ihn.
 * Schießt ab und zu zum Luftholen an die Oberfläche.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Flüssen, Dschungelgewässern und beim fahrenden Händler (selten); danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,7–2,1 % pro Schwung, 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,52–0,63 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (seltene Angebote): 6 für 8 Smaragde; eins von 5 in diesem Angebot.
+* **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).

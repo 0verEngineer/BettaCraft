@@ -3,7 +3,7 @@ navigation:
   title: Salzwasser
   icon: bettacraft:sea_salt
   parent: saltwater.md
-  position: 1
+  position: 10
 item_ids:
   - bettacraft:sea_water_bucket
   - bettacraft:sea_salt
@@ -56,3 +56,13 @@ Kugelfisch und Tintenfisch Salzwasser, Axolotl und Kaulquappen Süßwasser.
 Der Wasser-Tab im [Aquarium-Menü](../aquarium/menu.md) zeigt Salz, Kalzium und Nitrat statt der Glas-Zeile, und in der
 letzten Zeile die Abschäumer, die Strömungspumpen mit ihrer Strömung, das Lebendgestein und wie viel vom Licht die Korallen
 nutzen können.
+
+## Bezug
+
+* <ItemLink id="bettacraft:sea_salt" />: **Fahrender Händler** (übliche Angebote): 8 für 2 Smaragde.
+
+Herstellung:
+
+<RecipesFor id="bettacraft:sea_water_bucket" />
+<RecipesFor id="bettacraft:sea_salt" />
+<RecipesFor id="bettacraft:calcium_additive" />

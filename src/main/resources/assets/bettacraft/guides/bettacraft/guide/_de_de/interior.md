@@ -1,12 +1,11 @@
 ---
 navigation:
-  title: Innenraum
+  title: Einrichtung und Deko
   icon: bettacraft:decor_castle
-  parent: index.md
-  position: 70
+  position: 100
 ---
 
-# Innenraum
+# Einrichtung und Deko
 
 Jedes Aquarium hat einen eigenen Raum: seinen **Innenraum**. Geh hinein, bau mit beliebigen Blöcken, was dir gefällt,
 und das Aquarium zeigt es als **Miniatur** hinter dem Glas.
@@ -59,8 +58,6 @@ Die Miniatur wird im Hintergrund gebaut und Block für Block aktualisiert. Block
 nicht gezeigt. Sehr große Bauten enden an einem Limit (`interior.maxRenderedBlocks`); der Innenraum-Tab im Menü meldet
 dann „Render-Limit erreicht“.
 
-## Mehr
+## In diesem Kapitel
 
-* [Bodengrund](interior/substrate.md)
-* [Deko](interior/decor.md)
-* [Aquarienpflanzen](interior/plants.md): Stecklinge, die zu Pflanzen aus vielen Blöcken wachsen
+<SubPages icons={true} />

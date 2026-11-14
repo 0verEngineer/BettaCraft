@@ -2,8 +2,8 @@
 navigation:
   title: Endler-Guppy
   icon: bettacraft:endler_guppy_bucket
-  parent: tankmates.md
-  position: 27
+  parent: tankmates/livebearers.md
+  position: 20
 item_ids:
   - bettacraft:endler_guppy_bucket
   - bettacraft:endler_guppy_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Kleiner als der Guppy, Männchen mit neongrünen und orangen Flecken. Meist betta-tauglich.
 
+**Herkunft:** die Laguna de Patos in Venezuela.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Lebendgebärende |
-| Wissenschaftlich | *Poecilia wingei* |
-| Größe im Spiel | etwa 3 cm (0,22 Blöcke) |
-| Herkunft | die Laguna de Patos in Venezuela |
+| Gruppe | Lebendgebärende |
+| Wissenschaftlicher Name | *Poecilia wingei* |
+| Größe im Spiel | etwa 2,5 cm (0,22 Blöcke) |
 | Temperatur | 23–30 °C |
+| Zuchttemperatur | 24–29 °C |
+| Wasser | Süß- oder Brackwasser, robust |
 | Schwarm | ab 3 Tieren |
-| Wasser | robust |
-| Besatz | 0,22 Fisch |
-| Zucht | lebendgebärend, 24–29 °C |
+| Schwimmt | nahe der Oberfläche |
+| Besatz | zählt als 0,22 Fisch |
+| Zucht | lebendgebärend, 4–12 Junge |
+| Betta-Becken | ja |
+| Besonderheiten | 3 Farbformen |
 
 ## Genetik und Zuchtformen
 
@@ -40,6 +47,9 @@ Mit `features.livebearerGenetics` aus zeigen sich die alten festen Farbformen: W
 
 Bei 24–29 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 3 Tagen 4–12 fertige Junge zur Welt. Die Erwachsenen fressen Jungfische: Pflanzen verstecken sie, ein **Ablaichkasten** im Becken fängt sie auf.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Flüssen, Dschungelgewässern und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,7–2,1 % pro Schwung, 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,26–0,31 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 3+ Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: lebendgebärend.

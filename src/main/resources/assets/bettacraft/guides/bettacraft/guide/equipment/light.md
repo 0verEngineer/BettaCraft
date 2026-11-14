@@ -3,7 +3,7 @@ navigation:
   title: Light
   icon: bettacraft:tank_light
   parent: equipment.md
-  position: 40
+  position: 60
 item_ids:
   - bettacraft:tank_light
 ---
@@ -17,8 +17,6 @@ item_ids:
 </GameScene>
 
 The <ItemLink id="bettacraft:tank_light" /> gives light level 15.
-
-<RecipeFor id="bettacraft:tank_light" />
 
 * Lights next to each other in a row join into **one long bar** (only lengthwise, not into a surface).
 * Place it on top of the aquarium, on the glass rim or **hanging** under a block above the aquarium.
@@ -46,3 +44,9 @@ The light comes in the **16 dye colours**. White is the light it always was (lig
 ![With Complementary and its "Colored Lighting" option](../images/light_shader.png)
 
 ![The 16 lights](../images/light_items.png)
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:tank_light" />

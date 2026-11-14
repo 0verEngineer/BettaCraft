@@ -12,6 +12,20 @@ The Mexican dwarf crayfish *Cambarellus patzcuarensis* is about twice the size o
 It is peaceful: it does not attack fish, but it takes the food that sinks to the floor, cleans up dead animals quickly
 and now and then catches a weak, starving small animal.
 
+## Profile
+
+| | |
+|---|---|
+| Group | Crayfish |
+| Size in the game | about 4 cm (0.34 blocks) |
+| Temperature | 15–26 °C |
+| Water | fresh water, sensitive |
+| Breeding | male and female; the female carries the eggs, the young hatch fully formed, 3–6 young |
+| Growing up | about 4 days |
+| Climbs the glass | no |
+| Stocking | 12 count as one fish |
+| Colour lines | 1 (bred from wild animals) |
+
 ## Colours
 
 * **Orange** (the well-known "CPO"): a recessive colour, like the shrimp colours.
@@ -32,3 +46,9 @@ the net). For half a day after the moult the crayfish is **soft**: more sensitiv
 * **15 to 26 °C**: cooler than a betta likes it. In a warm betta tank (26-28 °C) crayfish are at their limit.
 * Below 40 % water quality they suffer.
 * Stocking: 12 crayfish count as one fish (`stocking.crayfishPerFish`).
+
+## Obtaining
+
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 3.1–3.6 % per swing.
+* **Wandering trader** (usual offers): 2 for 5 emeralds.
+* **Breeding** in the aquarium (male and female).

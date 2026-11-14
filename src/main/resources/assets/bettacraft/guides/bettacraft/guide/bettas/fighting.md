@@ -3,9 +3,7 @@ navigation:
   title: Fights, flaring and predators
   icon: minecraft:iron_sword
   parent: bettas.md
-  position: 50
-item_ids:
-  - bettacraft:mirror_stick
+  position: 60
 ---
 
 # Fights, flaring and predators
@@ -16,7 +14,7 @@ Bettas are called *Siamese fighting fish* for a reason: **two adult males in the
 dies. A fight takes about one in-game day (`combat.fightDays`), so you have time to react. The tank menu, the tank log
 and Jade warn you at once ("Males are fighting! Separate them."). Take one of them out with a bucket or a fish bag.
 
-* Females do not fight each other; a male only chases females while he guards a [bubble nest](../breeding.md).
+* Females do not fight each other; a male only chases females while he guards a [bubble nest](breeding.md).
 * Wild bettas do not fight in the wild. A wild male put into an aquarium does.
 * Servers can turn fights off (`combat.malesFight = false`).
 

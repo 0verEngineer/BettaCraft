@@ -2,8 +2,8 @@
 navigation:
   title: Panda-Panzerwels
   icon: bettacraft:panda_cory_bucket
-  parent: tankmates.md
-  position: 17
+  parent: tankmates/corydoras.md
+  position: 20
 item_ids:
   - bettacraft:panda_cory_bucket
   - bettacraft:panda_cory_spawn_egg
@@ -15,17 +15,24 @@ item_ids:
 
 Cremeweiß mit schwarzer Augenmaske, schwarzer Rückenflosse und Fleck an der Schwanzwurzel. Mag es kühl.
 
+**Herkunft:** kühle klare Bäche am Rio Ucayali in Peru.
+
+## Steckbrief
+
 | | |
 |---|---|
-| Familie | Panzerwelse |
-| Wissenschaftlich | *Corydoras panda* |
-| Größe im Spiel | etwa 4 cm (0,37 Blöcke) |
-| Herkunft | kühle klare Bäche am Rio Ucayali in Peru |
+| Gruppe | Panzerwelse |
+| Wissenschaftlicher Name | *Corydoras panda* |
+| Größe im Spiel | etwa 4,5 cm (0,37 Blöcke) |
 | Temperatur | 20–26 °C |
+| Zuchttemperatur | 21–25 °C |
+| Wasser | Süßwasser, normal |
 | Schwarm | ab 6 Tieren |
-| Wasser | empfindlich |
-| Besatz | 0,45 Fisch |
-| Zucht | klebt Eier ans Glas (nach kühlem Wasserwechsel), 21–25 °C |
+| Schwimmt | am Boden |
+| Besatz | zählt als 0,45 Fisch |
+| Zucht | klebt Eier ans Glas (nach kühlem Wasserwechsel), 12–30 Junge |
+| Betta-Becken | zu kühl |
+| Besonderheiten | holt Luft an der Oberfläche |
 
 ## Zucht
 
@@ -36,6 +43,8 @@ Ein kühler Wasserwechsel löst das Laichen aus: mindestens ein Viertel des Wass
 * Bodenfisch: bekommt sinkendes Futter nur zum Teil ab, wenn schnellere Fische da sind - Futtertabletten gehen direkt an ihn.
 * Schießt ab und zu zum Luftholen an die Oberfläche.
 
-## Beschaffung
+## Bezug
 
-Mit dem [Kescher](../invertebrates/catching.md) in Dschungelgewässern und beim fahrenden Händler; danach durch Zucht.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1–1,3 % pro Schwung, 1–4 auf einmal.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).

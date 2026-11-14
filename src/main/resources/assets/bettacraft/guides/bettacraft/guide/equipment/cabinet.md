@@ -3,7 +3,7 @@ navigation:
   title: Cabinet
   icon: bettacraft:cabinet
   parent: equipment.md
-  position: 50
+  position: 80
 item_ids:
   - bettacraft:cabinet
 ---
@@ -14,8 +14,6 @@ item_ids:
 
 The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **any wood**: five planks of one kind
 (also from other mods), three wooden slabs and a wooden chest. The cabinet takes the look of its planks.
-
-<RecipeFor id="bettacraft:cabinet" />
 
 * Cabinets next to each other that face the same way join into one long cabinet with a continuous top.
 * **Filter slot:** put an [external filter](filters.md) in. A cabinet directly under the aquarium then counts as an
@@ -42,3 +40,9 @@ bricks do not.
   resistant as the stone.
 * Modpacks can add stones with the item tag `#bettacraft:cabinet_stones` and rule some out with
   `#bettacraft:cabinet_excluded`. The setting `features.stoneCabinets` switches the stone recipe off.
+
+## Obtaining
+
+Crafting:
+
+<RecipesFor id="bettacraft:cabinet" />

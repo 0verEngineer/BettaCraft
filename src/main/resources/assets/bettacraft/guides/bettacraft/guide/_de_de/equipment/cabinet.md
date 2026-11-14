@@ -3,7 +3,7 @@ navigation:
   title: Schrank
   icon: bettacraft:cabinet
   parent: equipment.md
-  position: 50
+  position: 80
 item_ids:
   - bettacraft:cabinet
 ---
@@ -14,8 +14,6 @@ item_ids:
 
 Der <ItemLink id="bettacraft:cabinet" /> ist ein Unterbau für das Aquarium aus **jedem Holz**: fünf Bretter einer Sorte
 (auch aus anderen Mods), drei Holzstufen und eine Holztruhe. Der Schrank bekommt das Aussehen seiner Bretter.
-
-<RecipeFor id="bettacraft:cabinet" />
 
 * Nebeneinander stehende Schränke, die in dieselbe Richtung zeigen, verbinden sich zu einem langen Schrank mit
   durchgehender Arbeitsplatte.
@@ -44,3 +42,9 @@ Beton und Schlammziegel gehen nicht.
   explosionsfest wie der Stein.
 * Modpacks können mit dem Item-Tag `#bettacraft:cabinet_stones` Steine hinzufügen und mit `#bettacraft:cabinet_excluded`
   welche ausschließen. Die Einstellung `features.stoneCabinets` schaltet das Steinrezept ab.
+
+## Bezug
+
+Herstellung:
+
+<RecipesFor id="bettacraft:cabinet" />

@@ -36,8 +36,6 @@ Infusorien sind winzige Einzeller, die in Wasser mit Pflanzenresten wachsen.
 2. Warte **einen Ingame-Tag**. Der Ansatz reift im Inventar, in einer Truhe oder auf dem Boden.
 3. Er wird zu einer <ItemLink id="bettacraft:infusoria" />.
 
-<RecipesFor id="bettacraft:infusoria_culture" />
-
 ## Artemia-Nauplien
 
 Artemia sind Salinenkrebse; ihre getrockneten Eier (Zysten) schlüpfen in Salzwasser.
@@ -51,4 +49,12 @@ Artemia sind Salinenkrebse; ihre getrockneten Eier (Zysten) schlüpfen in Salzwa
    (Lichtstufe 9 oder mehr, wenn er fertig wird).
 4. Er wird zu einer <ItemLink id="bettacraft:artemia_nauplii" />.
 
-<RecipeFor id="bettacraft:artemia_culture" />
+## Bezug
+
+* <ItemLink id="bettacraft:salt_water_bottle" />: **Glasflasche** mit Wasser gefüllt in Ozeanen und an Stränden.
+* <ItemLink id="bettacraft:artemia_cysts" />: **Sand abbauen**: 2 % pro Block.
+
+Herstellung:
+
+<RecipesFor id="bettacraft:infusoria_culture" />
+<RecipesFor id="bettacraft:artemia_culture" />
