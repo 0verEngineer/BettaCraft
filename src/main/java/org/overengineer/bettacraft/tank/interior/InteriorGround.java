@@ -95,7 +95,18 @@ public final class InteriorGround {
         for (int ly = start; ly >= 0; ly--) {
             p.set(x, InteriorRegion.BASE_Y + ly, z);
             int top = surface(interior, chunk, p, ly);
-            if (top >= 0) return top;
+            if (top < 0) continue;
+            // M22.5: the height lies inside a solid block: the ground is the top of the whole solid stack, not of the
+            // block it was found in (a crayfish beside a pillar under a table stood inside the pillar's next block)
+            if (ly == start && top > from16) {
+                for (int up = ly + 1; up < r.sizeY(); up++) {
+                    p.set(x, InteriorRegion.BASE_Y + up, z);
+                    int above = surface(interior, chunk, p, up);
+                    if (above < 0 || above <= top) break;
+                    top = above;
+                }
+            }
+            return top;
         }
         return 0;
     }
