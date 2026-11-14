@@ -19,7 +19,7 @@ input slots; after a batch (10 seconds) the food lies in the output slot.
 
 ![The window of the food maker](../images/food_maker_menu.png)
 
-* **Product:** choose it with **<** and **>**, or leave it on **Automatic**: then it makes the recipe with the most
+* **Product:** choose it with **\<** and **\>**, or leave it on **Automatic**: then it makes the recipe with the most
   ingredients the inputs hold (fish, wheat, kelp and sugar give flakes, not pellets).
 * **Spring:** without power it runs on a spring. **Sneak + right-click with an empty hand** winds it: the crank turns a
   quarter and the ratchet clicks. Eight winds fill it, and a full spring works for **one in-game day**

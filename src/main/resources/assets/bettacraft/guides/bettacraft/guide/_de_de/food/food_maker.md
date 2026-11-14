@@ -19,7 +19,7 @@ ihre vier Eingänge; nach einer Portion (10 Sekunden) liegt das Futter in der Au
 
 ![Das Fenster der Futtermaschine](../images/food_maker_menu.png)
 
-* **Produkt:** mit **<** und **>** wählen oder auf **Automatisch** lassen: dann macht sie das Rezept mit den meisten
+* **Produkt:** mit **\<** und **\>** wählen oder auf **Automatisch** lassen: dann macht sie das Rezept mit den meisten
   Zutaten, die in den Eingängen liegen (Fisch, Weizen, Seetang und Zucker geben Flocken, keine Pellets).
 * **Feder:** Ohne Strom läuft sie mit einer Feder. **Schleichen + Rechtsklick mit leerer Hand** zieht sie auf: die Kurbel
   dreht sich um eine Vierteldrehung und die Ratsche klickt. Achtmal Aufziehen füllt sie, und eine volle Feder arbeitet

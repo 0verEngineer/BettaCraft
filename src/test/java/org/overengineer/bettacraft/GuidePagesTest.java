@@ -274,6 +274,29 @@ class GuidePagesTest {
         assertTrue(problems.isEmpty(), "missing pages:\n" + String.join("\n", problems));
     }
 
+    /**
+     * M26.1: GuideME reads the pages as MDX, where a "<" that does not open a tag (e.g. a button label "**<**") makes the whole
+     * page fail to load. Outside code spans it must be written as "\<".
+     */
+    @Test
+    void noBareAngleBrackets() throws IOException {
+        Pattern bare = Pattern.compile("(?<!\\\\)<(?![A-Za-z/!])");
+        List<String> problems = new ArrayList<>();
+        Path root = root();
+        for (boolean german : new boolean[]{false, true}) {
+            Path dir = german ? root.resolve("_de_de") : root;
+            for (String page : pages(dir, german)) {
+                List<String> lines = Files.readAllLines(dir.resolve(page), StandardCharsets.UTF_8);
+                for (int i = 0; i < lines.size(); i++) {
+                    if (bare.matcher(lines.get(i).replaceAll("`[^`]*`", "")).find()) {
+                        problems.add((german ? "_de_de/" : "") + page + ":" + (i + 1) + ": " + lines.get(i).strip());
+                    }
+                }
+            }
+        }
+        assertTrue(problems.isEmpty(), "bare \"<\" in handbook pages (write \\<):\n" + String.join("\n", problems));
+    }
+
     /** Items a player can hold (not technical blocks, not the guide itself). */
     private static boolean isPlayerItem(String id) {
         String p = id.substring(id.indexOf(':') + 1);
