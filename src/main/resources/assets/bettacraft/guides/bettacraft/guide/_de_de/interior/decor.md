@@ -50,10 +50,20 @@ Schon gesetzte Schädel und Wracks bleiben, wie sie sind. (`features.detailedDec
 
 ![Das Platzierungs-Hologramm eines Dino-Schädels](../images/hologram.png)
 
+## Mehr Deko (1.21)
+
+* [Wracks](decor/wrecks.md): ein gesunkenes Ruderboot und der Bug eines Segelschiffs mit Laichhöhle im Laderaum
+* [Steine und Höhlen](decor/hardscape.md): Lochgestein, Schieferplatten-Höhle, Seiryu-Steine, Drachenstein, Lavagestein
+* [Wurzeln](decor/roots.md): Mangrovenwurzel, Spiderwood, Moorkien-Brücke
+* [Höhlen und Röhren](decor/tubes.md): Kokosnuss-Höhle, Tonröhren, Garnelen-Röhren
+* [Kitsch](decor/kitsch.md): Ruinen-Säule, Taucherhelm, Schatztruhe mit Blasen
+* [Laub](decor/leaf_litter.md): Seemandelbaumblätter und Erlenzapfen am Boden
+
 ## Rezepte
 
 Das Seemandelbaumblatt ist ein Klassiker der Betta-Haltung: In echten Aquarien färben seine Gerbstoffe das Wasser und
-beruhigen die Fische. Hier ist es Deko.
+beruhigen die Fische. Diese Deko ist nur Teppich; echte Blätter am Boden geben Gerbstoffe ab:
+siehe [Laub](decor/leaf_litter.md).
 
 ## Bezug
 

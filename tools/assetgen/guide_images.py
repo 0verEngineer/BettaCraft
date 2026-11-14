@@ -555,6 +555,41 @@ def m27(out_en: Path, out_de: Path) -> None:
         print("missing", src)
 
 
+# M28 part c scene (DevClientSmokeM28c, -Psmoketestm28c): the close-ups of the new decorations as one sheet per
+# handbook page (three per row), the leaf litter from its wide shot. ``py guide_images.py m28c``.
+M28C_GROUPS = {
+    "decor_m28_wrecks": ["rowing_boat", "ship_bow"],
+    "decor_m28_stones": ["holey_rock", "slate_cave", "seiryu_stone", "dragon_stone", "lava_rock"],
+    "decor_m28_roots": ["mangrove_root", "spiderwood", "bogwood_bridge"],
+    "decor_m28_caves": ["coconut_cave", "clay_tubes", "shrimp_tubes"],
+    "decor_m28_kitsch": ["ruin_column", "diver_helmet", "treasure_chest"],
+}
+M28C_BOX = (200, 150, 1080, 810)  # 880 x 660 of the 1280 x 960 close-up
+M28C_TILE = (360, 270)
+
+
+def m28c(out_en: Path) -> None:
+    for name, ids in M28C_GROUPS.items():
+        tiles = []
+        for i in ids:
+            src = SHOTS / f"bettacraft_m28c_inside_{i}.png"
+            if not src.exists():
+                print("missing", src)
+                return
+            tiles.append(Image.open(src).convert("RGB").crop(M28C_BOX).resize(M28C_TILE, Image.LANCZOS))
+        cols = min(3, len(tiles))
+        rows = (len(tiles) + cols - 1) // cols
+        sheet = Image.new("RGB", (cols * M28C_TILE[0] + (cols - 1) * 4, rows * M28C_TILE[1] + (rows - 1) * 4), (40, 40, 44))
+        for k, t in enumerate(tiles):
+            sheet.paste(t, ((k % cols) * (M28C_TILE[0] + 4), (k // cols) * (M28C_TILE[1] + 4)))
+        save(sheet, out_en / f"{name}.png")
+    src = SHOTS / "bettacraft_m28c_inside_litter_wide.png"
+    if src.exists():
+        save(Image.open(src).convert("RGB").crop((160, 240, 1120, 960)).resize((720, 540), Image.LANCZOS), out_en / "decor_m28_litter.png")
+    else:
+        print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -569,6 +604,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m28c"]:
+        m28c(out_en)
+        return 0
     if sys.argv[1:] == ["m27"]:
         m27(out_en, out_de)
         return 0

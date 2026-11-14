@@ -44,6 +44,8 @@ das Wasser nicht passt); der [TDS-Messstift und der pH-Tropfentest](../equipment
 
 Seemandelbaumblätter färben das Wasser mit Gerbstoffen (ein Blatt je Wasserblock färbt es ganz); sie verblassen in
 etwa einer Woche (`chemistry.leafHalfLifeDays`). Dschungellaub im Räucherofen, Ofen oder auf dem Lagerfeuer trocknen.
+Als [Laub](../interior/decor/leaf_litter.md) im Innenraum auf den Boden gelegt geben Blätter und Erlenzapfen dauerhaft
+Gerbstoffe ab.
 
 ## Die Tiere
 

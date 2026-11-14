@@ -44,6 +44,8 @@ water does not suit); the [TDS meter and the pH drop test](../equipment/water_te
 
 Almond leaves colour the water with tannins (one leaf per water block colours it fully); they fade within about a
 week (`chemistry.leafHalfLifeDays`). Dry jungle leaves in a smoker, furnace or on a campfire to get them.
+Laid on the floor of the interior as [leaf litter](../interior/decor/leaf_litter.md), leaves and alder cones keep giving
+off tannins.
 
 ## The animals
 

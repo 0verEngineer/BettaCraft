@@ -50,10 +50,20 @@ wrecks placed before stay as they are. (`features.detailedDecor` off: new ones a
 
 ![The placement hologram of a dinosaur skull](../images/hologram.png)
 
+## More decoration (1.21)
+
+* [Wrecks](decor/wrecks.md): a sunken rowing boat and the bow of a sailing ship with a spawning cave in its hold
+* [Stones and caves](decor/hardscape.md): holey rock, slate cave, Seiryu stone, dragon stone, lava rock
+* [Roots](decor/roots.md): mangrove root, spiderwood, bogwood bridge
+* [Caves and tubes](decor/tubes.md): coconut cave, clay tubes, shrimp tubes
+* [Ornaments](decor/kitsch.md): ruined column, diving helmet, treasure chest with bubbles
+* [Leaf litter](decor/leaf_litter.md): almond leaves and alder cones on the floor
+
 ## Recipes
 
 The Indian almond leaf is a classic of betta keeping: in real aquariums its tannins colour the water and calm the
-fish. Here it is decoration.
+fish. This decoration is only carpet; real leaves laid on the floor
+give off tannins: see [leaf litter](decor/leaf_litter.md).
 
 ## Obtaining
 
