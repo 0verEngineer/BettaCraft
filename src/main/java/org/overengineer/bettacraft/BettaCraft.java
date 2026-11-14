@@ -39,6 +39,7 @@ public final class BettaCraft {
         ModCreativeTabs.register(modBus);
         org.overengineer.bettacraft.progression.ModTriggers.register(modBus);
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
+        org.overengineer.bettacraft.registry.ModParticles.register(modBus); // M23
         modBus.addListener(ModNetwork::register);
         // M22.3: spontaneous mutations of the small animals (wildlife.otherMutationChance)
         org.overengineer.bettacraft.critters.CritterGenes.MUTATION = org.overengineer.bettacraft.world.Wildlife::mutationChance;
@@ -125,7 +126,11 @@ public final class BettaCraft {
                 (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be.getBlockPos().above()) : null);
         event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
                 (level, pos, state, be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired()
-                        ? new org.overengineer.bettacraft.tank.TankPower.Storage(level, pos.below()) : null, ModBlocks.TANK_LIGHT.get());
+                        ? new org.overengineer.bettacraft.tank.TankPower.Storage(level, pos.below()) : null, ModBlocks.TANK_LIGHT.get(),
+                ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get()); // M23: the stronger lights too
+        // M23: the air pump forwards FE to the tank it serves
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.AIR_PUMP.get(),
+                (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be::tankBlockPos) : null);
     }
 
     public static ResourceLocation id(String path) {

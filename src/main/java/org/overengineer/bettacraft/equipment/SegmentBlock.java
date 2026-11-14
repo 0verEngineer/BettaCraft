@@ -43,7 +43,14 @@ public class SegmentBlock extends Block {
 
     /** What the piece is: heater rod, cooler rod (M9) or internal filter. */
     /** M20: PUMP = flow pump (a small box with an outlet like the internal filter). */
-    public enum Kind { HEATER, COOLER, FILTER, PUMP }
+    /** M23: SPONGE_FILTER = air-driven sponge filter, CORNER_FILTER = motor corner filter (both {@link DeviceSegmentBlock}). */
+    public enum Kind { HEATER, COOLER, FILTER, PUMP, SPONGE_FILTER, CORNER_FILTER;
+
+        /** Filters with a motor that can suck in fry (M23). */
+        public boolean motorFilter() {
+            return this == FILTER || this == CORNER_FILTER;
+        }
+    }
 
     public enum Size implements StringRepresentable {
         SMALL(16, 6), MEDIUM(32, 9), LARGE(64, 12);
@@ -114,7 +121,7 @@ public class SegmentBlock extends Block {
 
     /** The item this piece gives back. */
     public ItemStack itemFor(BlockState state) {
-        if (kind == Kind.FILTER || kind == Kind.PUMP) return new ItemStack(filterItem.get());
+        if (!isRod()) return new ItemStack(filterItem.get());
         boolean cool = kind == Kind.COOLER;
         return new ItemStack(switch (state.getValue(SIZE)) {
             case SMALL -> cool ? org.overengineer.bettacraft.registry.ModItems.COOLER_SMALL.get() : org.overengineer.bettacraft.registry.ModItems.HEATER_SMALL.get();
@@ -141,7 +148,11 @@ public class SegmentBlock extends Block {
             List<ItemStack> drops = new ArrayList<>();
             for (BlockPos p : connected(level, pos)) {
                 BlockState s = level.getBlockState(p);
-                if (s.is(this) && s.getValue(PART) == Part.ANCHOR) drops.add(itemFor(s));
+                if (s.is(this) && s.getValue(PART) == Part.ANCHOR) {
+                    drops.add(itemFor(s));
+                    // M23: a fitted intake sponge comes back too
+                    if (s.hasProperty(DeviceSegmentBlock.SPONGE) && s.getValue(DeviceSegmentBlock.SPONGE)) drops.add(new ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_SPONGE.get()));
+                }
                 if (!p.equals(pos)) level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
             if (drops.isEmpty()) drops.add(itemFor(state));
@@ -177,6 +188,26 @@ public class SegmentBlock extends Block {
     /** Filter box at the given scale: {footprint, height} (2x2x8 at scale 16). */
     public static int[] filterShape(int scale) {
         return new int[]{Math.max(1, 2 * scale / 16), Math.max(2, Math.round(8 * scale / 16F))};
+    }
+
+    /** M23: sponge filter at the given scale: {footprint, height} (2x2x5 at scale 16: sponge and lift tube). */
+    public static int[] spongeShape(int scale) {
+        return new int[]{Math.max(1, 2 * scale / 16), Math.max(2, Math.round(5 * scale / 16F))};
+    }
+
+    /** M23: corner filter at the given scale: {footprint, height} (2x2x7 at scale 16). */
+    public static int[] cornerShape(int scale) {
+        return new int[]{Math.max(1, 2 * scale / 16), Math.max(2, Math.round(7 * scale / 16F))};
+    }
+
+    /** Footprint and height of a piece of this kind (not for rods). */
+    public static int[] shape(Kind kind, int scale) {
+        return switch (kind) {
+            case PUMP -> pumpShape(scale);
+            case SPONGE_FILTER -> spongeShape(scale);
+            case CORNER_FILTER -> cornerShape(scale);
+            default -> filterShape(scale);
+        };
     }
 
     /** M20: flow pump box at the given scale: {footprint, height} (2x2x2 at scale 16). */

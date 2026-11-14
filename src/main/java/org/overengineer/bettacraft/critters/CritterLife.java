@@ -42,7 +42,13 @@ public final class CritterLife {
      * @param hunting whether bettas hunt at all (config)
      */
     public record Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
-                      Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed) {
+                      Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage) {
+        /** M22 and earlier: without an oxygen shortage. */
+        public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
+                   Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed) {
+            this(quality, qualityEnabled, temp, bettas, hiding, cap, breed, air, hunting, salinity, saltSpeed, 0);
+        }
+
         public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
                    Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting) {
             this(quality, qualityEnabled, temp, bettas, hiding, cap, breed, air, hunting, 0, 1);
@@ -53,7 +59,7 @@ public final class CritterLife {
         }
     }
 
-    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY }
+    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN }
 
     /** What happened in a step (for the tank log and the GameTests). */
     public static final class Result {
@@ -166,6 +172,12 @@ public final class CritterLife {
             if (tr > 0) {
                 rate += tr;
                 if (cause == null || tr > rate - tr) cause = Cause.TEMPERATURE;
+            }
+            // M23: too little oxygen: shrimp, crayfish and crabs suffer, snails (many breathe air) only a little
+            if (env.oxygenShortage() > 0) {
+                double or = 1.5 * env.oxygenShortage() * (c.species.isSnail() ? 0.2 : 1.0);
+                rate += or;
+                if (cause == null || or > rate - or) cause = Cause.OXYGEN;
             }
             if (c.hunger > 3) {
                 double hr = 0.25 * (c.hunger - 3);

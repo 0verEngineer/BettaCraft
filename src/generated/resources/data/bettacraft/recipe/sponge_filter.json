@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "H": {
+      "item": "bettacraft:air_hose"
+    },
+    "S": {
+      "item": "bettacraft:intake_sponge"
+    }
+  },
+  "pattern": [
+    " H ",
+    "SGS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:sponge_filter"
+  }
+}

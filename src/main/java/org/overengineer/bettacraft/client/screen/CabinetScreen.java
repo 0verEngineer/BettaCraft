@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.equipment.OutletSide;
 public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/cabinet.png");
     /** M22.4: below the heater slots, left of the inventory (the inventory label moves under the storage). */
-    public static final int OUTLET_X = 7, OUTLET_Y = 62, OUTLET_W = 86, OUTLET_H = 12;
+    public static final int OUTLET_X = 7, OUTLET_Y = 62, OUTLET_W = 58, OUTLET_H = 12;
     private TankScreen.FitButton outletButton;
 
     public CabinetScreen(CabinetMenu menu, Inventory inv, Component title) {
@@ -36,8 +36,24 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         });
         outletButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.cabinet.outlet.tooltip")));
         addRenderableWidget(outletButton);
+        powerBtn = addRenderableWidget(powerButton(leftPos + OUTLET_X + OUTLET_W + 2, topPos + OUTLET_Y, 84 - OUTLET_W, OUTLET_H, menu::power, menu.containerId));
         updateOutlet();
     }
+
+    private TankScreen.FitButton powerBtn;
+
+    /** M23: the power regulator button: click +10 %, sneak + click -10 % (tooltip explains). */
+    private TankScreen.FitButton powerButton(int x, int y, int w, int h, java.util.function.IntSupplier value, int containerId) {
+        TankScreen.FitButton b = new TankScreen.FitButton(x, y, w, h, Component.empty(), btn -> {
+            if (minecraft == null || minecraft.gameMode == null) return;
+            minecraft.gameMode.handleInventoryButtonClick(containerId, hasShiftDown()
+                    ? org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_DOWN : org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_UP);
+        });
+        b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.bettacraft.regulator.button_tooltip")));
+        b.visible = org.overengineer.bettacraft.config.CommonConfig.powerRegulator();
+        return b;
+    }
+
 
     /** Label and visibility of the outlet button from the menu's synced value. */
     private void updateOutlet() {
@@ -84,6 +100,10 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         updateOutlet();
+        if (powerBtn != null) {
+            powerBtn.visible = org.overengineer.bettacraft.config.CommonConfig.powerRegulator() && menu.hasFilter();
+            powerBtn.setMessage(Component.literal(menu.power() * 10 + "%"));
+        }
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
     }

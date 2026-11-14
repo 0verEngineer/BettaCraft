@@ -36,7 +36,7 @@ public final class TankProtection {
         if (!CommonConfig.breakProtection()) return null;
         BlockState s = level.getBlockState(pos);
         if (s.is(ModBlocks.TANK.get())) return check(level, pos);
-        if (s.is(ModBlocks.TANK_LID.get()) || s.is(ModBlocks.TANK_LIGHT.get()) || s.is(ModBlocks.FEEDER.get())) return check(level, pos.below());
+        if (s.is(ModBlocks.TANK_LID.get()) || s.getBlock() instanceof org.overengineer.bettacraft.equipment.TankLightBlock || s.is(ModBlocks.FEEDER.get())) return check(level, pos.below());
         if (s.is(ModBlocks.CABINET.get())) return check(level, pos.above());
         if (s.is(ModBlocks.CLIP_FEEDER.get())) {
             Direction d = s.getValue(org.overengineer.bettacraft.equipment.ClipFeederBlock.FACING);

@@ -1,0 +1,49 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel",
+          "tintindex": 0,
+          "uv": [
+            0.5,
+            0.0,
+            15.5,
+            15.5
+          ]
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#housing"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      },
+      "from": [
+        0.5,
+        0,
+        0
+      ],
+      "to": [
+        15.5,
+        3,
+        15.5
+      ]
+    }
+  ],
+  "textures": {
+    "housing": "bettacraft:block/high_power_led",
+    "panel": "bettacraft:block/high_power_led_panel_off",
+    "particle": "bettacraft:block/high_power_led",
+    "top": "bettacraft:block/high_power_led_top"
+  }
+}

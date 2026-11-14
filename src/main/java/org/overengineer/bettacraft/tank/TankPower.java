@@ -33,8 +33,13 @@ public final class TankPower {
         return ServerConfig.getOr(ServerConfig.POWER_LIGHT, false);
     }
 
+    /** M23: air pumps need FE. */
+    public static boolean airRequired() {
+        return ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP, false);
+    }
+
     public static boolean anyRequired() {
-        return heaterRequired() || filterRequired() || lightRequired();
+        return heaterRequired() || filterRequired() || lightRequired() || airRequired();
     }
 
     public static long capacity() {
@@ -68,22 +73,26 @@ public final class TankPower {
     public static void step(ServerLevel level, TankBlockEntity c, long ticks) {
         boolean wasLight = c.lightPowered;
         if (!anyRequired()) {
-            c.heatPowered = c.filterPowered = c.lightPowered = true;
+            c.heatPowered = c.filterPowered = c.lightPowered = c.airPowered = true;
             c.lastDemand = 0;
         } else {
             TankData t = c.getTank();
-            int filterFe = filterRequired() ? TankWater.filterCount(level, c) * ServerConfig.getOr(ServerConfig.POWER_FILTER_FE, 10) : 0;
+            // M23: each filter by its power regulator
+            int filterFe = filterRequired() ? (int) Math.ceil(TankWater.filterLoad(level, c) * ServerConfig.getOr(ServerConfig.POWER_FILTER_FE, 10) - 1e-9) : 0;
+            int airFe = airRequired() ? (int) Math.ceil(TankAeration.airDemand(level, c) * ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP_FE, 2.0) - 1e-9) : 0;
             int heatFe = heaterRequired() ? heaterDemand(level, c) : 0;
             int lightFe = lightRequired() ? lightsWanting(level, t) * ServerConfig.getOr(ServerConfig.POWER_LIGHT_FE, 4) : 0;
             long buf = t.powerBuffer();
             long n = Math.max(1, ticks);
             c.filterPowered = filterFe <= 0 || buf >= filterFe * n;
             if (filterFe > 0 && c.filterPowered) buf -= filterFe * n;
+            c.airPowered = airFe <= 0 || buf >= airFe * n;
+            if (airFe > 0 && c.airPowered) buf -= airFe * n;
             c.heatPowered = heatFe <= 0 || buf >= heatFe * n;
             if (heatFe > 0 && c.heatPowered) buf -= heatFe * n;
             c.lightPowered = lightFe <= 0 || buf >= lightFe * n;
             if (lightFe > 0 && c.lightPowered) buf -= lightFe * n;
-            c.lastDemand = filterFe + heatFe + lightFe;
+            c.lastDemand = filterFe + airFe + heatFe + lightFe;
             if (buf != t.powerBuffer()) {
                 t.setPowerBuffer(buf);
                 c.setChanged();
@@ -119,7 +128,9 @@ public final class TankPower {
     /** Lets the lights on the tank recompute whether they shine. */
     public static void updateLights(ServerLevel level, TankData tank) {
         for (BlockPos p : TankCare.aboveTop(tank)) {
-            if (level.isLoaded(p) && level.getBlockState(p).is(ModBlocks.TANK_LIGHT.get())) level.scheduleTick(p, ModBlocks.TANK_LIGHT.get(), 1);
+            if (!level.isLoaded(p)) continue;
+            var b = level.getBlockState(p).getBlock();
+            if (b instanceof TankLightBlock) level.scheduleTick(p, b, 1); // M23: every tier
         }
     }
 

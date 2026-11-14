@@ -41,6 +41,15 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_PLANT_NET_CATCHES;
     public static final ModConfigSpec.BooleanValue FEATURE_CABINET_OUTLET_SIDE;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> SWAYING_EXCLUDE;
+    // M23
+    public static final ModConfigSpec.BooleanValue FEATURE_OXYGEN;
+    public static final ModConfigSpec.BooleanValue FEATURE_AERATION;
+    public static final ModConfigSpec.BooleanValue FEATURE_INTERNAL_FILTERS;
+    public static final ModConfigSpec.BooleanValue FEATURE_FRY_INTAKE;
+    public static final ModConfigSpec.BooleanValue FEATURE_POWER_REGULATOR;
+    public static final ModConfigSpec.BooleanValue FEATURE_LED_TIERS;
+    public static final ModConfigSpec.BooleanValue FEATURE_LIGHT_TIMER;
+    public static final ModConfigSpec.BooleanValue SOUNDS_USE_VANILLA;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -123,6 +132,26 @@ public final class CommonConfig {
                 "goes up (back, left, right or front); jet, bubbles and the current in the tank follow it, and the current is",
                 "stronger in front of the outlet (seahorses, corals) (off: always the back wall, the current evenly like before)")
                 .define("cabinetOutletSide", true);
+        // M23
+        FEATURE_OXYGEN = b.comment("Oxygen as a water value: it drops with warm water, many animals and at night in planted tanks without light, and rises with",
+                "air stones, sponge filters, filter outlets and flow pumps; too little stresses the animals (bettas and gouramis breathe air and",
+                "hardly mind) (off: no oxygen value, nobody suffers)").define("oxygen", true);
+        FEATURE_AERATION = b.comment("Air pump with air stones in the tank interior: bubble columns, more oxygen (off: they cannot be placed and placed ones do",
+                "nothing)").define("aeration", true);
+        FEATURE_INTERNAL_FILTERS = b.comment("More internal filters: the air-driven sponge filter (gentle, needs an air pump), the corner filter and the intake",
+                "sponge for motor filters (off: they cannot be placed or fitted and placed ones do not clean)").define("moreInternalFilters", true);
+        FEATURE_FRY_INTAKE = b.comment("Motor filters without an intake sponge suck in the fry of bettas and other fish now and then (filters.fryIntakePerDay)",
+                "(off: no fry is sucked in)").define("fryIntake", true);
+        FEATURE_POWER_REGULATOR = b.comment("Power regulator 0-100 % on filters, air stones, air pumps and flow pumps (menu or sneak + mouse wheel): less power",
+                "cleans and moves less, needs less FE and is quieter (off: everything runs at 100 %)").define("powerRegulator", true);
+        FEATURE_LED_TIERS = b.comment("Stronger aquarium lights: the LED panel (2 blocks wide) and the high-power LED (any size); stronger light makes red plants",
+                "redder, lets the strong-light plants grow and brings more algae (off: the new lights count like the light bar)").define("ledTiers", true);
+        FEATURE_LIGHT_TIMER = b.comment("Dimmer and daylight timer with sunrise and sunset for the lights of a tank (tank menu, tab Devices) (off: lights are on",
+                "at full strength like before)").define("lightTimer", true);
+        b.pop();
+        b.comment("Sounds (M23)").push("sounds");
+        SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
+                "of the filters, air pump, air stones, sponge filter, flow pump and feeder").define("useVanilla", false);
         b.pop();
         b.comment("Swaying water plants in the tank miniature (M22.1, features.swayingForeignPlants)").push("swaying");
         SWAYING_AUTO = b.comment("Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, "
@@ -205,6 +234,16 @@ public final class CommonConfig {
     // M22.4
     public static boolean plantNetCatches() { return getOr(FEATURE_PLANT_NET_CATCHES, true); }
     public static boolean cabinetOutletSide() { return getOr(FEATURE_CABINET_OUTLET_SIDE, true); }
+
+    // M23
+    public static boolean oxygen() { return getOr(FEATURE_OXYGEN, true); }
+    public static boolean aeration() { return getOr(FEATURE_AERATION, true); }
+    public static boolean moreInternalFilters() { return getOr(FEATURE_INTERNAL_FILTERS, true); }
+    public static boolean fryIntake() { return getOr(FEATURE_FRY_INTAKE, true); }
+    public static boolean powerRegulator() { return getOr(FEATURE_POWER_REGULATOR, true); }
+    public static boolean ledTiers() { return getOr(FEATURE_LED_TIERS, true); }
+    public static boolean lightTimer() { return getOr(FEATURE_LIGHT_TIMER, true); }
+    public static boolean vanillaSounds() { return getOr(SOUNDS_USE_VANILLA, false); }
 
     private CommonConfig() {}
 }

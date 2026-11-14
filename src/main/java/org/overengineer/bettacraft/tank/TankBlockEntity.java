@@ -85,6 +85,13 @@ public class TankBlockEntity extends BlockEntity {
      * coolers, filters and lights have the FE they need (always true while the config does not require power).
      */
     boolean heatPowered = true, filterPowered = true, lightPowered = true;
+    /** M23: air pumps next to the tank (positions), whether they have FE, and the light factor (dimmer x daylight curve) last applied to the lights. */
+    java.util.List<BlockPos> airPumpCache = java.util.List.of();
+    boolean airPowered = true;
+    public double appliedLightFactor = -1;
+    /** M23: what the last care step found (menu, overlays): oxygen exchange per day, consumption, equilibrium, air outlets driven. */
+    public double o2Exchange, o2Use, o2Target;
+    public int airOutlets, airDriven;
     /** FE per tick the equipment needed in the last care step (for the menu and the info overlays). */
     int lastDemand;
 
@@ -161,6 +168,7 @@ public class TankBlockEntity extends BlockEntity {
     public boolean heatPowered() { return heatPowered; }
     public boolean filterPowered() { return filterPowered; }
     public boolean lightPowered() { return lightPowered; }
+    public boolean airPowered() { return airPowered; }
     public int lastDemand() { return lastDemand; }
 
     public boolean isCrowded() {

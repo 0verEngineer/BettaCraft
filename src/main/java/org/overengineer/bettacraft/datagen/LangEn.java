@@ -25,6 +25,7 @@ final class LangEn {
         LangM221.addAll(a); // M22.1
         LangM223.addAll(a); // M22.3
         LangM224.addAll(a); // M22.4
+        LangM23.addAll(a); // M23
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -622,10 +623,10 @@ final class LangEn {
         a.accept("info.bettacraft.heater_small", "Heats up to 16 water blocks towards the target temperature of the tank (default 27 °C).\nPlace it in the tank interior (under water) or into an external filter. Heaters add up.");
         a.accept("info.bettacraft.heater_medium", "Heats up to 32 water blocks. Place it in the tank interior or into an external filter.");
         a.accept("info.bettacraft.heater_large", "Heats up to 64 water blocks. Place it in the tank interior or into an external filter.");
-        a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality).");
+        a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality) and moves the surface (oxygen). Without an intake sponge it sucks in fry. Right-click or sneak + mouse wheel: power regulator.");
         a.accept("info.bettacraft.external_filter", "Place it next to a tank (facing it) or put it into a cabinet under the tank.\nKeeps 32 water blocks clean and holds two heaters or coolers of any size.");
         a.accept("info.bettacraft.feeder", "Place it on top of a tank and fill it with food (also by hopper).\nFeeds 1 to 3 times a day, picks fry food for fry and takes food from cabinets under the tank.");
-        a.accept("info.bettacraft.tank_light", "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15. A redstone signal switches the whole bar off.\nDye it (right-click dyes the whole bar, or in the crafting grid): 16 colours tint the water, the plants get the same light.");
+        a.accept("info.bettacraft.tank_light", "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15, the weakest of the three light tiers (stronger: LED panel, high-power LED). A redstone signal switches the whole bar off; dimmer and daylight timer in the tank menu (tab Devices).\nDye it (right-click dyes the whole bar, or in the crafting grid): 16 colours tint the water, the plants get the same light.");
         a.accept("info.bettacraft.cabinet", "Made from any planks or stone (with the slabs of the same stone). Put a tank on it.\nHolds an external filter (with two heaters) and nine stacks the feeder can use.\nThe button \"Outlet\" in its menu chooses the tank wall the filter hose goes up: back (default), left, right or front. Jet, bubbles and the current follow it; in front of the outlet the water moves faster (seahorses mind it, corals like it). Broken, the cabinet keeps the setting.");
         a.accept("info.bettacraft.betta_spawn_egg", "Spawns a betta with random domestic genes.");
         a.accept("info.bettacraft.decor", "A decoration structure: places a small build facing you.\nWorks in a tank interior (it then shows up in the tank in miniature) and anywhere in the world.");

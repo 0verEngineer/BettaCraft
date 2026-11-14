@@ -129,6 +129,51 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         return items.getStackInSlot(FILTER_SLOT);
     }
 
+    // ------------------------------------------------------------------ M23 regulator and intake sponge
+
+    private int regulator = 10;
+    private boolean intakeSponge;
+
+    @Override
+    public int regulator() {
+        return regulator;
+    }
+
+    @Override
+    public void setRegulator(int v) {
+        v = Math.max(0, Math.min(10, v));
+        if (v == regulator) return;
+        regulator = v;
+        m23Changed();
+    }
+
+    @Override
+    public boolean intakeSponge() {
+        return intakeSponge;
+    }
+
+    @Override
+    public void setIntakeSponge(boolean on) {
+        if (on == intakeSponge) return;
+        intakeSponge = on;
+        m23Changed();
+    }
+
+    private void m23Changed() {
+        setChanged();
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    private void saveM23(CompoundTag tag) {
+        if (regulator != 10) tag.putInt("regulator", regulator);
+        if (intakeSponge) tag.putBoolean("intake_sponge", true);
+    }
+
+    private void loadM23(CompoundTag tag) {
+        regulator = tag.contains("regulator") ? Math.max(0, Math.min(10, tag.getInt("regulator"))) : 10;
+        intakeSponge = tag.getBoolean("intake_sponge");
+    }
+
     // ------------------------------------------------------------------ FilterHost
 
     @Override
@@ -187,6 +232,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putString("wood", wood.toString());
         if (outlet != OutletSide.BACK) tag.putString("outlet", outlet.id()); // M22.4
         tag.put("items", items.serializeNBT(registries));
+        saveM23(tag);
     }
 
     @Override
@@ -202,6 +248,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
             if (items.getSlots() != SLOTS) items.setSize(SLOTS);
         }
         if (tag.contains("has_filter")) clientHasFilter = tag.getBoolean("has_filter");
+        loadM23(tag);
         if (level != null && level.isClientSide) afterClientUpdate(old);
     }
 
@@ -212,6 +259,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putString("wood", wood.toString());
         tag.putBoolean("has_filter", !filterItem().isEmpty());
         tag.putString("outlet", outletSide().id()); // M22.4: the effective side
+        saveM23(tag);
+        tag.putInt("regulator", regulator());
         return tag;
     }
 
@@ -232,6 +281,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         wood = w == null ? DEFAULT_WOOD : w;
         clientHasFilter = tag.getBoolean("has_filter");
         outlet = OutletSide.byId(tag.getString("outlet"));
+        loadM23(tag);
         afterClientUpdate(old);
     }
 

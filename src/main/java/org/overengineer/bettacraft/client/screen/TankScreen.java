@@ -48,7 +48,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int ENTER_X = 176;
 
     /** Order of the constants = index of {@link #selectTabForTest}; the buttons are drawn in a different order. */
-    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS }
+    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES }
 
     /** Scale of the tab labels: seven tabs fit into the 236 px of the menu (also the longer German labels). */
     public static final float TAB_LABEL_SCALE = 0.75F;
@@ -60,6 +60,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private final List<AbstractWidget> overview = new ArrayList<>();
     private final List<AbstractWidget> inhabitants = new ArrayList<>();
     private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, tabWater, tabPlants, logFilterButton, interiorEnterButton;
+    /** M23: tab Devices (oxygen, aeration, lights with dimmer and timer). */
+    private Button tabDevices;
+    private final List<AbstractWidget> devices = new ArrayList<>();
+    private Button timerButton;
     private Button thinButton;
     /** M13: the plants tab shows the aquarium plants of the interior instead of the floating plants. */
     private boolean aquaticPage;
@@ -133,8 +137,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int x = leftPos, y = topPos;
         // seven tabs across the top (the title moved into the overview: no room for both) with labels in a smaller font;
         // widths follow the scaled labels, the rest of the 236 px is shared out
-        Tab[] order = {Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.PLANTS, Tab.INTERIOR, Tab.LOG};
-        String[] keys = {"overview", "inhabitants", "breeding", "water", "plants", "interior", "log"};
+        Tab[] order = {Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES, Tab.PLANTS, Tab.INTERIOR, Tab.LOG};
+        String[] keys = {"overview", "inhabitants", "breeding", "water", "devices", "plants", "interior", "log"};
         int[] labels = new int[order.length];
         for (int i = 0; i < order.length; i++) labels[i] = font.width(Component.translatable("gui.bettacraft.tab." + keys[i]));
         int[] widths = tabWidths(labels, TAB_LABEL_SCALE, 236);
@@ -149,9 +153,21 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabInhabitants = tabs[1];
         tabBreeding = tabs[2];
         tabWater = tabs[3];
-        tabPlants = tabs[4];
-        tabInterior = tabs[5];
-        tabLog = tabs[6];
+        tabDevices = tabs[4];
+        tabPlants = tabs[5];
+        tabInterior = tabs[6];
+        tabLog = tabs[7];
+        // M23: dimmer, daylight timer with on and off time
+        devices.clear();
+        devices.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> lightSetting(TankActions.SET_DIMMER, -10)).bounds(x + 62, y + 98, 14, 13).build()));
+        devices.add(addRenderableWidget(Button.builder(Component.literal("+"), b -> lightSetting(TankActions.SET_DIMMER, 10)).bounds(x + 112, y + 98, 14, 13).build()));
+        timerButton = addRenderableWidget(new FitButton(x + 150, y + 98, 88, 13, Component.empty(), b -> send(TankActions.TOGGLE_TIMER, 0, "", null)));
+        timerButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.devices.timer_tooltip")));
+        devices.add(timerButton);
+        devices.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> lightSetting(TankActions.SET_LIGHT_ON, -30)).bounds(x + 46, y + 114, 14, 13).build()));
+        devices.add(addRenderableWidget(Button.builder(Component.literal("+"), b -> lightSetting(TankActions.SET_LIGHT_ON, 30)).bounds(x + 96, y + 114, 14, 13).build()));
+        devices.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> lightSetting(TankActions.SET_LIGHT_OFF, -30)).bounds(x + 168, y + 114, 14, 13).build()));
+        devices.add(addRenderableWidget(Button.builder(Component.literal("+"), b -> lightSetting(TankActions.SET_LIGHT_OFF, 30)).bounds(x + 218, y + 114, 14, 13).build()));
         interiorEnterButton = addRenderableWidget(new FitButton(x + 176, y + 124, 62, 14, Component.translatable("gui.bettacraft.tank.enter"),
                 b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         thinButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.plants.thin"), b -> send(TankActions.THIN_PLANTS, 0, "", null))
@@ -288,7 +304,19 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** Dev smoke test only: the tab buttons from left to right (to check that they fit). */
     public List<Button> tabButtonsForTest() {
-        return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabPlants, tabInterior, tabLog);
+        return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabPlants, tabInterior, tabLog);
+    }
+
+    /** M23: dimmer (+-10 %, shift +-1 %) and the timer times (+-30 min, shift +-60 min). */
+    private void lightSetting(int action, int delta) {
+        TankView v = view();
+        if (v == null) return;
+        TankView.Tech t = v.tech;
+        switch (action) {
+            case TankActions.SET_DIMMER -> send(action, Math.max(0, Math.min(100, t.dimmer + (hasShiftDown() ? Integer.signum(delta) : delta))), "", null);
+            case TankActions.SET_LIGHT_ON -> send(action, Math.floorMod(t.lightOn + (hasShiftDown() ? 2 * delta : delta), 1440), "", null);
+            default -> send(action, Math.floorMod(t.lightOff + (hasShiftDown() ? 2 * delta : delta), 1440), "", null);
+        }
     }
 
     /**
@@ -430,6 +458,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabInterior.active = tab != Tab.INTERIOR;
         tabWater.active = tab != Tab.WATER;
         tabPlants.active = tab != Tab.PLANTS;
+        tabDevices.active = tab != Tab.DEVICES;
+        boolean lightControls = tab == Tab.DEVICES && v != null && v.tech.timerFeature;
+        for (AbstractWidget w : devices) {
+            w.visible = lightControls;
+            w.active = v != null && v.canModify;
+        }
+        if (v != null) timerButton.setMessage(Component.translatable(v.tech.timer ? "gui.bettacraft.devices.timer_on" : "gui.bettacraft.devices.timer_off"));
         thinButton.visible = tab == Tab.PLANTS && !aquaticPage;
         plantPageButton.visible = tab == Tab.PLANTS;
         plantPageButton.setX(leftPos + (aquaticPage ? 166 : 92));
@@ -640,6 +675,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
             case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
             case WATER -> drawWater(g, v);
+            case DEVICES -> drawDevices(g, v);
             case PLANTS -> {
                 if (aquaticPage) drawAquatic(g, v);
                 else drawPlants(g, v);
@@ -816,6 +852,76 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 13;
         if (w.reefLine()) fitLine(g, reefLine(w), x, y, TEXT_LIGHT, 226); // M20: skimmers, pumps, live rock
         else line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    /** M23: tab Devices: oxygen and aeration, fry and the intake sponges, the lights with dimmer and daylight timer. */
+    private void drawDevices(GuiGraphics g, TankView v) {
+        TankView.Tech t = v.tech;
+        int x = 11, y = 20;
+        if (!t.oxygenOn) {
+            line(g, Component.translatable("gui.bettacraft.devices.oxygen_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+        } else if (Float.isNaN(t.oxygen) || v.waterMb <= 0) {
+            line(g, Component.translatable("gui.bettacraft.devices.oxygen_unknown").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+        } else {
+            String st = org.overengineer.bettacraft.tank.TankAeration.state(t.oxygen);
+            ChatFormatting col = st.equals("good") ? ChatFormatting.GREEN : st.equals("low") ? ChatFormatting.GOLD : ChatFormatting.RED;
+            fitLine(g, Component.translatable("gui.bettacraft.devices.oxygen", fmt(t.oxygen), Component.translatable("gui.bettacraft.devices.oxygen." + st).withStyle(col)),
+                    x, y, TEXT_LIGHT, BAR_X - 4 - x);
+            int bx = BAR_X, bw = BAR_W;
+            double max = Math.max(1, t.saturation * 1.3);
+            g.fill(bx, y + 1, bx + bw, y + 7, 0xFF202020);
+            int c = st.equals("good") ? 0xFF50A0E0 : st.equals("low") ? 0xFFD0A040 : 0xFFD04040;
+            g.fill(bx, y + 1, bx + (int) Math.round(bw * Mth.clamp(t.oxygen / max, 0, 1)), y + 7, c);
+            int sat = bx + (int) Math.round(bw * t.saturation / max);
+            g.fill(sat, y, sat + 1, y + 8, 0xFFFFFFFF);
+            y += 11;
+            fitLine(g, Component.translatable("gui.bettacraft.devices.oxygen_detail", fmt((float) t.target), fmt((float) t.saturation), fmt((float) t.exchange),
+                    fmt((float) t.use)).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, 226);
+        }
+        y += 11;
+        Component air;
+        if (!t.aerationOn) air = Component.translatable("gui.bettacraft.devices.aeration_off").withStyle(ChatFormatting.GRAY);
+        else if (t.pumps == 0) air = Component.translatable("gui.bettacraft.devices.no_pump", t.stones, t.spongeFilters)
+                .withStyle(t.stones + t.spongeFilters > 0 ? ChatFormatting.GOLD : ChatFormatting.GRAY);
+        else air = Component.translatable("gui.bettacraft.devices.air", t.pumps, t.pumpsRunning, t.stones, t.spongeFilters)
+                .withStyle(t.airPower && !t.airPowered ? ChatFormatting.RED : ChatFormatting.AQUA);
+        fitLine(g, air, x, y, TEXT_LIGHT, 226);
+        y += 11;
+        if (t.oxygenOn && t.exchange > 0) {
+            fitLine(g, Component.translatable("gui.bettacraft.devices.co2", Math.round(t.co2Strip * 100)).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, 226);
+            y += 11;
+        }
+        if (t.fry) {
+            fitLine(g, t.unprotected > 0 ? Component.translatable("gui.bettacraft.devices.fry_risk", t.unprotected).withStyle(ChatFormatting.GOLD)
+                    : Component.translatable("gui.bettacraft.devices.fry_safe").withStyle(ChatFormatting.GREEN), x, y, TEXT_LIGHT, 226);
+        }
+        y = 20 + 11 * 6 + 2;
+        Component kind = Component.translatable("gui.bettacraft.devices.lights", t.bars, t.panels, t.highPower, fmt((float) t.light),
+                Component.translatable("gui.bettacraft.devices.light_class." + lightClass(t.light)));
+        fitLine(g, kind, x, y, TEXT_LIGHT, 226);
+        y += 12;
+        if (!t.timerFeature) {
+            line(g, Component.translatable("gui.bettacraft.devices.timer_feature_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+            return;
+        }
+        line(g, Component.translatable("gui.bettacraft.devices.dimmer"), x, 101, TEXT_LIGHT);
+        g.drawCenteredString(font, t.dimmer + " %", 94, 101, 0xFFFFFF);
+        line(g, Component.translatable("gui.bettacraft.devices.on"), x, 117, TEXT_LIGHT);
+        g.drawCenteredString(font, clock(t.lightOn), 78, 117, t.timer ? 0xFFFFFF : 0x808080);
+        line(g, Component.translatable("gui.bettacraft.devices.off"), 128, 117, TEXT_LIGHT);
+        g.drawCenteredString(font, clock(t.lightOff), 200, 117, t.timer ? 0xFFFFFF : 0x808080);
+        fitLine(g, Component.translatable("gui.bettacraft.devices.now", Math.round(t.factor * 100)).withStyle(ChatFormatting.GRAY), x, 130, TEXT_LIGHT, 226);
+    }
+
+    /** "08:30" for minutes of the day. */
+    static String clock(int minutes) {
+        int m = Math.floorMod(minutes, 1440);
+        return String.format(java.util.Locale.ROOT, "%02d:%02d", m / 60, m % 60);
+    }
+
+    /** dark / weak / good / strong / very_strong by the light at the surface (up to 20). */
+    static String lightClass(double light) {
+        return light < 9 ? "dark" : light < 12 ? "weak" : light < 14.5 ? "good" : light < 16.5 ? "strong" : "very_strong";
     }
 
     /** M20: "Salinity 35.0 ppt (sea water) · calcium 420 mg/L · nitrate 5 mg/L". */
@@ -1305,6 +1411,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             notes.add(Component.translatable("gui.bettacraft.tm.flow").withStyle(ChatFormatting.RED));
         if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_NO_POSTS) != 0)
             notes.add(Component.translatable("gui.bettacraft.tm.no_posts").withStyle(ChatFormatting.RED));
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_OXYGEN) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.oxygen").withStyle(ChatFormatting.RED)); // M23
         if (d.getBoolean("hitched")) notes.add(Component.translatable("gui.bettacraft.tm.hitched").withStyle(ChatFormatting.AQUA));
         if (d.getFloat("gravid") >= 0) notes.add(Component.translatable(s.seahorse() ? "gui.bettacraft.tm.pouch" : "gui.bettacraft.tm.gravid",
                 Math.round(d.getFloat("gravid") * 100)).withStyle(ChatFormatting.LIGHT_PURPLE));

@@ -251,8 +251,13 @@ public final class ModDataGen {
             for (String kind : new String[]{"heater_segment", "cooler_segment", "filter_segment"}) {
                 var block = kind.equals("heater_segment") ? ModBlocks.HEATER_SEGMENT.get() : kind.equals("cooler_segment") ? ModBlocks.COOLER_SEGMENT.get()
                         : ModBlocks.FILTER_SEGMENT.get();
-                getVariantBuilder(block).forAllStates(state -> {
+                java.util.function.Function<net.minecraft.world.level.block.state.BlockState, ConfiguredModel[]> fn = state -> {
                     var part = state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.PART);
+                    // M23: an intake sponge at the foot of the internal filter
+                    if (state.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.SPONGE) && state.getValue(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.SPONGE)
+                            && (part == org.overengineer.bettacraft.equipment.SegmentBlock.Part.ANCHOR || part == org.overengineer.bettacraft.equipment.SegmentBlock.Part.BASE)) {
+                        return ConfiguredModel.builder().modelFile(DataGenM23.filterSponge(this)).build();
+                    }
                     String tex = switch (part) {
                         case ANCHOR, BASE -> "anchor";
                         case MIDDLE -> "middle";
@@ -268,7 +273,13 @@ public final class ModDataGen {
                                 .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING).toYRot() + 180) % 360).build();
                     }
                     return ConfiguredModel.builder().modelFile(models().cubeColumn(kind + "_" + tex, modLoc(side), modLoc(top))).build();
-                });
+                };
+                if (block instanceof org.overengineer.bettacraft.equipment.DeviceSegmentBlock) {
+                    getVariantBuilder(block).forAllStatesExcept(fn, org.overengineer.bettacraft.equipment.SegmentBlock.SIZE,
+                            org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER, org.overengineer.bettacraft.equipment.DeviceSegmentBlock.ACTIVE);
+                } else {
+                    getVariantBuilder(block).forAllStates(fn);
+                }
             }
 
             aquaticPlants();
@@ -302,7 +313,8 @@ public final class ModDataGen {
                 ModelFile m = lightModel(neg, pos, hanging, lit);
                 return ConfiguredModel.builder().modelFile(m)
                         .rotationY(state.getValue(TankLightBlock.AXIS) == Direction.Axis.Z ? 90 : 0).build();
-            }, TankLightBlock.POWERED, TankLightBlock.COLOR); // M18: the colour is a tint of the panel (BettaCraftClient)
+            }, TankLightBlock.POWERED, TankLightBlock.COLOR, TankLightBlock.DIM); // M18: the colour is a tint of the panel (BettaCraftClient)
+            DataGenM23.blockStates(this); // M23
         }
 
         /** M20: reef rock, live rock, the flow pump in the interior and the protein skimmer on the tank. */
@@ -312,8 +324,11 @@ public final class ModDataGen {
             ModelFile side = models().cube("flow_pump_segment", modLoc("block/flow_pump_segment_side"), modLoc("block/flow_pump_segment_side"),
                     modLoc("block/flow_pump_segment_outlet"), modLoc("block/flow_pump_segment_side"), modLoc("block/flow_pump_segment_side"),
                     modLoc("block/flow_pump_segment_side")).texture("particle", modLoc("block/flow_pump_segment_side"));
-            getVariantBuilder(ModBlocks.PUMP_SEGMENT.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(side)
-                    .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING).toYRot() + 180) % 360).build());
+            getVariantBuilder(ModBlocks.PUMP_SEGMENT.get()).forAllStatesExcept(state -> ConfiguredModel.builder().modelFile(side)
+                    .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.SegmentBlock.FACING).toYRot() + 180) % 360).build(),
+                    org.overengineer.bettacraft.equipment.SegmentBlock.PART, org.overengineer.bettacraft.equipment.SegmentBlock.SIZE,
+                    org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER, org.overengineer.bettacraft.equipment.DeviceSegmentBlock.SPONGE,
+                    org.overengineer.bettacraft.equipment.DeviceSegmentBlock.ACTIVE); // M23: the regulator and the rest do not change the look
             // skimmer: reaction tube 5..11 x 0..12 x 2..8 and the collection cup 4..12 x 12..16 x 1..9, a hook over the glass
             BlockModelBuilder m = models().getBuilder("protein_skimmer")
                     .texture("side", modLoc("block/protein_skimmer_side")).texture("top", modLoc("block/protein_skimmer_top"))
@@ -566,6 +581,7 @@ public final class ModDataGen {
             withExistingParent("tank_light", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/tank_light")).texture("layer1", modLoc("item/tank_light_glow"));
             withExistingParent("external_filter", modLoc("block/external_filter"));
+            DataGenM23.itemModels(this); // M23
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
             withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
@@ -961,6 +977,7 @@ public final class ModDataGen {
                     .requires(Items.DRIED_KELP).requires(Items.DRIED_KELP).requires(ModItems.BETTA_PELLETS.get())
                     .unlockedBy("has_dried_kelp", has(Items.DRIED_KELP)).save(output, BettaCraft.id("algae_wafer"));
             reefRecipes(output);
+            DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -1092,6 +1109,18 @@ public final class ModDataGen {
             dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
             dropSelf(ModBlocks.SPAWNING_MOP.get());
             dropSelf(ModBlocks.PROTEIN_SKIMMER.get()); // M20
+            // M23
+            dropSelf(ModBlocks.AIR_PUMP.get());
+            dropSelf(ModBlocks.AIR_STONE.get());
+            for (Block led : List.of(ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get())) {
+                add(led, LootTable.lootTable().withPool(applyExplosionCondition(led, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(led)
+                                .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(led).copy(TankLightBlock.COLOR)
+                                        .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(led)
+                                                .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                                        .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
+            }
             dropSelf(ModBlocks.REEF_ROCK.get());
             dropSelf(ModBlocks.LIVE_ROCK.get());
             dropSelf(ModBlocks.LARVA_TUB.get());
@@ -1115,7 +1144,8 @@ public final class ModDataGen {
         protected Iterable<Block> getKnownBlocks() {
             return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
                     ModBlocks.TANK_LID.get(), ModBlocks.LARVA_TUB.get(), ModBlocks.ARTEMIA_HATCHERY.get(), ModBlocks.SPAWNING_CAVE.get(),
-                    ModBlocks.SPAWNING_MOP.get(), ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get())
+                    ModBlocks.SPAWNING_MOP.get(), ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get(),
+                    ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get())
                     .stream().collect(java.util.stream.Collectors.collectingAndThen(java.util.stream.Collectors.toList(), l -> {
                         for (var b : ModBlocks.WILD_CORALS.values()) l.add(b.get());
                         return l;
@@ -1166,6 +1196,8 @@ public final class ModDataGen {
                     ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.ARTEMIA_HATCHERY.get());
             tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.SPAWNING_CAVE.get()); // M19
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get(),
+                    ModBlocks.CORNER_FILTER_SEGMENT.get()); // M23
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())

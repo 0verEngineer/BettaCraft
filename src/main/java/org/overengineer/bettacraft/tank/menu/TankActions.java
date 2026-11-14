@@ -44,6 +44,11 @@ public final class TankActions {
     public static final int TAKE_CRITTER_ONE = 14;
     /** M22.3: analyses one animal with the magnifier (target = a fish; or text "critter" and value = the id of a small animal). */
     public static final int ANALYSE = 15;
+    /** M23: lights: dimmer (value 0..100), timer on/off, on time and off time (value = minutes of the day). */
+    public static final int SET_DIMMER = 16;
+    public static final int TOGGLE_TIMER = 17;
+    public static final int SET_LIGHT_ON = 18;
+    public static final int SET_LIGHT_OFF = 19;
 
     /** M22.3: bits of the value of {@link #TAKE_CRITTER}: 0-1 how many (one best, one worst, a full container), 2-3 the sex, 4 a bucket. */
     public static int critterValue(int mode, int sex, boolean bucket) {
@@ -71,6 +76,20 @@ public final class TankActions {
             case TOGGLE_SIGN -> {
                 if (!modify) error = locked();
                 else tank.setSignVisible(!tank.signVisible());
+            }
+            case SET_DIMMER, TOGGLE_TIMER, SET_LIGHT_ON, SET_LIGHT_OFF -> {
+                if (!modify) error = locked();
+                else if (org.overengineer.bettacraft.config.CommonConfig.lightTimer()) {
+                    switch (p.action()) {
+                        case SET_DIMMER -> tank.setLightDimmer(p.value());
+                        case TOGGLE_TIMER -> tank.setLightTimer(!tank.lightTimer());
+                        case SET_LIGHT_ON -> tank.setLightOn(p.value());
+                        default -> tank.setLightOff(p.value());
+                    }
+                    controller.setChanged();
+                    org.overengineer.bettacraft.tank.TankLighting.step(player.serverLevel(), controller);
+                    org.overengineer.bettacraft.tank.TankPower.updateLights(player.serverLevel(), tank);
+                }
             }
             case SET_SIGN_POS -> {
                 if (!modify) error = locked();

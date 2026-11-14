@@ -36,6 +36,7 @@ is copied to `builds/m5-types.png`.
 | `render.py` | Texture compositing (same order as the runtime) and a side-view software rasterizer. |
 | `preview.py` | Preview sheets in `build/preview/` (forms, patterns, stages, icons, `types.png` = all named varieties, forms and patterns, copied to `builds/m5-types.png`) and the mod logo `src/main/resources/bettacraft.png`. |
 | `guide_images.py` | M6: crops the screenshots of `gradlew runClient -Psmoketestworld` (`run/screenshots/guide_*.png`, window 1280x960) into the handbook images `assets/bettacraft/guides/bettacraft/guide/images/` (tank menu tabs also German, `_de_de/images/`). Not part of `build.py` (needs a client run). |
+| `sounds.py` | M23: the equipment sounds `assets/bettacraft/sounds/block/` (filter running, air pump hum loop, air stone bubbles, sponge filter gurgle, flow pump whir loop, feeder clicks), all procedural with fixed seeds (Minnaert bubbles, shaped noise, harmonic hum), mono 44.1 kHz Ogg Vorbis. `--report DIR` prints levels, spectra and the loop seam check and writes spectrograms to DIR. Needs `soundfile`. Not part of `build.py`. Origins: `SOUNDS-CREDITS.md`. |
 | `build.py` | Runs all of the above. |
 
 ## Layer / tint concept (runtime)

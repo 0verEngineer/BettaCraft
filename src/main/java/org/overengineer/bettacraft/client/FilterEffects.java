@@ -38,6 +38,7 @@ final class FilterEffects {
             if (be.getBlockPos().getCenter().distanceToSqr(cam) > RANGE * RANGE) continue;
             FilterFlow.Path p = FilterRenderer.path(mc.level, be);
             if (p == null || !p.wet()) continue;
+            if (((FilterHost) be).powerShare() <= 0) continue; // M23: switched to 0 %
             Vec3 hit = p.impact();
             if (p.submerged()) {
                 if (RAND.nextInt(2) == 0) {
@@ -53,9 +54,12 @@ final class FilterEffects {
                 }
                 if (RAND.nextInt(4) == 0) mc.level.addParticle(ParticleTypes.SPLASH, hit.x, p.surfaceY() + 0.02, hit.z, 0, 0.05, 0);
             }
-            if (sound && RAND.nextInt(70) == 0 && hit.distanceToSqr(cam) < 16 * 16) {
-                mc.level.playLocalSound(hit.x, hit.y, hit.z, ModSounds.FILTER_RUNNING.get(), SoundSource.BLOCKS,
-                        0.25F + RAND.nextFloat() * 0.1F, 0.9F + RAND.nextFloat() * 0.2F, false);
+            // M23: own sound (or Minecraft's), quieter with the power regulator and the client volume of the filters
+            double share = ((FilterHost) be).powerShare();
+            float vol = (float) ((0.25F + RAND.nextFloat() * 0.1F) * share * DeviceEffects.volume(org.overengineer.bettacraft.equipment.Regulator.Sound.FILTER));
+            if (sound && vol > 0.001F && RAND.nextInt(70) == 0 && hit.distanceToSqr(cam) < 16 * 16) {
+                mc.level.playLocalSound(hit.x, hit.y, hit.z, ModSounds.pick(ModSounds.FILTER_RUNNING, ModSounds.FILTER_RUNNING_VANILLA), SoundSource.BLOCKS,
+                        vol, 0.9F + RAND.nextFloat() * 0.2F, false);
             }
         }
         org.overengineer.bettacraft.client.interior.MiniatureJets.tickParticles(mc, RAND, sound);

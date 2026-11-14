@@ -1,0 +1,135 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            15.0
+          ]
+        },
+        "east": {
+          "texture": "#housing",
+          "uv": [
+            1.0,
+            14.5,
+            16.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#housing",
+          "uv": [
+            1.0,
+            14.5,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            14.5,
+            15.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            14.5,
+            15.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        0,
+        14.5,
+        0
+      ],
+      "to": [
+        15,
+        16,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.0,
+            15.0,
+            15.0
+          ]
+        },
+        "east": {
+          "texture": "#housing",
+          "uv": [
+            1.0,
+            14.5,
+            16.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#housing",
+          "uv": [
+            1.0,
+            14.5,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            14.5,
+            15.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            14.5,
+            15.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        0,
+        14.5,
+        0
+      ],
+      "to": [
+        15,
+        16,
+        15
+      ]
+    }
+  ],
+  "textures": {
+    "housing": "bettacraft:block/led_panel",
+    "panel": "bettacraft:block/led_panel_panel_off",
+    "particle": "bettacraft:block/led_panel"
+  }
+}

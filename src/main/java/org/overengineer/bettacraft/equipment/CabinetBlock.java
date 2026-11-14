@@ -121,6 +121,8 @@ public class CabinetBlock extends BaseEntityBlock {
             for (int i = 0; i < be.items().getSlots(); i++) {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
             }
+            if (be.intakeSponge()) Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+                    new ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_SPONGE.get())); // M23
             level.updateNeighbourForOutputSignal(pos, this);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);

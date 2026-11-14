@@ -110,6 +110,7 @@ public final class BettaCraftClient {
             }
         });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
+        org.overengineer.bettacraft.client.DeviceEffects.init(modBus); // M23: air pumps, air stones, regulator, particles
         NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);
 
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
@@ -191,7 +192,8 @@ public final class BettaCraftClient {
         event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
         // M18: the panel of the aquarium light in its colour
         event.register((stack, tint) -> tint == 1 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
-                org.overengineer.bettacraft.equipment.TankLightItem.colorOf(stack), true) : 0xFFFFFFFF, ModItems.TANK_LIGHT.get());
+                org.overengineer.bettacraft.equipment.TankLightItem.colorOf(stack), true) : 0xFFFFFFFF, ModItems.TANK_LIGHT.get(),
+                ModItems.LED_PANEL.get(), ModItems.HIGH_POWER_LED.get()); // M23: every light tier
     }
 
     /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
@@ -211,7 +213,8 @@ public final class BettaCraftClient {
         // M18: the panel of the aquarium light in its colour (darker while off)
         event.register((state, level, pos, tint) -> tint == 0 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
                 state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.COLOR), state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT))
-                : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TANK_LIGHT.get());
+                : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TANK_LIGHT.get(),
+                org.overengineer.bettacraft.registry.ModBlocks.LED_PANEL.get(), org.overengineer.bettacraft.registry.ModBlocks.HIGH_POWER_LED.get());
     }
 
     private static void onLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -243,6 +246,7 @@ public final class BettaCraftClient {
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
         event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);
+        event.registerBlockEntityRenderer(ModBlockEntities.AIR_PUMP.get(), org.overengineer.bettacraft.client.render.AirHoseRenderer::new); // M23
     }
 
     private static void onScreens(RegisterMenuScreensEvent event) {

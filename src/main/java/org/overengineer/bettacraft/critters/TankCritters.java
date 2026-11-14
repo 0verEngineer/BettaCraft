@@ -234,7 +234,8 @@ public final class TankCritters {
         if (TankInhabitants.stocking(level, t) >= TankInhabitants.hardCap(t.waterBlocks()) - 1e-6) cap = Math.min(cap, alive(t));
         CritterLife.Env env = new CritterLife.Env(dry ? 0F : t.waterQuality(), TankWater.qualityEnabled() || dry, t.waterTemp(), adults,
                 hiding(level, t), cap, breeding(), Double.isFinite(terrain.airTop()),
-                ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true), t.salinity(), org.overengineer.bettacraft.reef.SaltTolerance.speed());
+                ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true), t.salinity(), org.overengineer.bettacraft.reef.SaltTolerance.speed(),
+                dry ? 0 : org.overengineer.bettacraft.tank.TankAeration.shortage(t)); // M23
         double[] pool = {t.critterFood()};
         CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, rnd, t::nextCritterId);
         t.setCritterFood(pool[0]);

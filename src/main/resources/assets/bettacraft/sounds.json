@@ -2,11 +2,86 @@
   "block.filter.running": {
     "subtitle": "subtitles.bettacraft.block.filter.running",
     "sounds": [
+      {"name": "bettacraft:block/filter/running1", "volume": 0.6},
+      {"name": "bettacraft:block/filter/running2", "volume": 0.6},
+      {"name": "bettacraft:block/filter/running3", "volume": 0.6}
+    ]
+  },
+  "block.filter.running_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.filter.running",
+    "sounds": [
       {"name": "minecraft:block/bubble_column/upwards_ambient1", "volume": 0.4},
       {"name": "minecraft:block/bubble_column/upwards_ambient2", "volume": 0.4},
       {"name": "minecraft:block/bubble_column/upwards_ambient3", "volume": 0.4},
       {"name": "minecraft:block/bubble_column/upwards_ambient4", "volume": 0.4},
       {"name": "minecraft:liquid/water", "volume": 0.3, "pitch": 1.3}
+    ]
+  },
+  "block.air_pump.hum": {
+    "subtitle": "subtitles.bettacraft.block.air_pump.hum",
+    "sounds": [
+      {"name": "bettacraft:block/air_pump/hum", "volume": 0.35}
+    ]
+  },
+  "block.air_pump.hum_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.air_pump.hum",
+    "sounds": [
+      {"name": "minecraft:block/beacon/ambient", "volume": 0.25, "pitch": 1.6}
+    ]
+  },
+  "block.air_stone.bubbles": {
+    "subtitle": "subtitles.bettacraft.block.air_stone.bubbles",
+    "sounds": [
+      {"name": "bettacraft:block/air_stone/bubbles1", "volume": 0.5},
+      {"name": "bettacraft:block/air_stone/bubbles2", "volume": 0.5},
+      {"name": "bettacraft:block/air_stone/bubbles3", "volume": 0.5}
+    ]
+  },
+  "block.air_stone.bubbles_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.air_stone.bubbles",
+    "sounds": [
+      {"name": "minecraft:block/bubble_column/upwards_ambient1", "volume": 0.35, "pitch": 1.4},
+      {"name": "minecraft:block/bubble_column/upwards_ambient2", "volume": 0.35, "pitch": 1.4},
+      {"name": "minecraft:block/bubble_column/upwards_ambient3", "volume": 0.35, "pitch": 1.4}
+    ]
+  },
+  "block.sponge_filter.gurgle": {
+    "subtitle": "subtitles.bettacraft.block.sponge_filter.gurgle",
+    "sounds": [
+      {"name": "bettacraft:block/sponge_filter/gurgle1", "volume": 0.5},
+      {"name": "bettacraft:block/sponge_filter/gurgle2", "volume": 0.5}
+    ]
+  },
+  "block.sponge_filter.gurgle_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.sponge_filter.gurgle",
+    "sounds": [
+      {"name": "minecraft:block/bubble_column/upwards_ambient4", "volume": 0.35, "pitch": 0.8},
+      {"name": "minecraft:block/bubble_column/upwards_ambient5", "volume": 0.35, "pitch": 0.8}
+    ]
+  },
+  "block.flow_pump.whir": {
+    "subtitle": "subtitles.bettacraft.block.flow_pump.whir",
+    "sounds": [
+      {"name": "bettacraft:block/flow_pump/whir", "volume": 0.3}
+    ]
+  },
+  "block.flow_pump.whir_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.flow_pump.whir",
+    "sounds": [
+      {"name": "minecraft:block/conduit/ambient", "volume": 0.2, "pitch": 1.3}
+    ]
+  },
+  "block.feeder.click": {
+    "subtitle": "subtitles.bettacraft.block.feeder.click",
+    "sounds": [
+      {"name": "bettacraft:block/feeder/click1", "volume": 0.8},
+      {"name": "bettacraft:block/feeder/click2", "volume": 0.8}
+    ]
+  },
+  "block.feeder.click_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.feeder.click",
+    "sounds": [
+      {"name": "minecraft:random/click", "volume": 0.3, "pitch": 1.6}
     ]
   },
   "block.tank.fill": {

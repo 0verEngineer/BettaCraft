@@ -41,6 +41,14 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.food.CultureTubBlockEntity::new, ModBlocks.LARVA_TUB.get(),
                     ModBlocks.ARTEMIA_HATCHERY.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.AirStoneBlockEntity>> AIR_STONE = BLOCK_ENTITIES.register("air_stone",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.AirStoneBlockEntity::new, ModBlocks.AIR_STONE.get()).build(null));
+
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.equipment.AirPumpBlockEntity>> AIR_PUMP = BLOCK_ENTITIES.register("air_pump",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.equipment.AirPumpBlockEntity::new, ModBlocks.AIR_PUMP.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

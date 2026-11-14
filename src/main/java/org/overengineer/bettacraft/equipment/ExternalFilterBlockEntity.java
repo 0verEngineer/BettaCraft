@@ -52,6 +52,51 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         return heaters;
     }
 
+    // ------------------------------------------------------------------ M23 regulator and intake sponge
+
+    private int regulator = 10;
+    private boolean intakeSponge;
+
+    @Override
+    public int regulator() {
+        return regulator;
+    }
+
+    @Override
+    public void setRegulator(int v) {
+        v = Math.max(0, Math.min(10, v));
+        if (v == regulator) return;
+        regulator = v;
+        m23Changed();
+    }
+
+    @Override
+    public boolean intakeSponge() {
+        return intakeSponge;
+    }
+
+    @Override
+    public void setIntakeSponge(boolean on) {
+        if (on == intakeSponge) return;
+        intakeSponge = on;
+        m23Changed();
+    }
+
+    private void m23Changed() {
+        setChanged();
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    private void saveM23(CompoundTag tag) {
+        if (regulator != 10) tag.putInt("regulator", regulator);
+        if (intakeSponge) tag.putBoolean("intake_sponge", true);
+    }
+
+    private void loadM23(CompoundTag tag) {
+        regulator = tag.contains("regulator") ? Math.max(0, Math.min(10, tag.getInt("regulator"))) : 10;
+        intakeSponge = tag.getBoolean("intake_sponge");
+    }
+
     // ------------------------------------------------------------------ FilterHost
 
     @Override
@@ -121,6 +166,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         super.saveAdditional(tag, registries);
         Schemas.EXTERNAL_FILTER.stamp(tag);
         tag.put("heaters", heaters.serializeNBT(registries));
+        saveM23(tag);
     }
 
     @Override
@@ -131,6 +177,25 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
             heaters.deserializeNBT(registries, tag.getCompound("heaters"));
             if (heaters.getSlots() != FilterHeaters.SLOTS) heaters.setSize(FilterHeaters.SLOTS);
         }
+        loadM23(tag);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        saveM23(tag);
+        tag.putInt("regulator", regulator());
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        loadM23(tag);
     }
 
     @Override

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "bettacraft:high_power_led_dye",
+  "ingredients": [
+    {
+      "item": "bettacraft:high_power_led"
+    },
+    {
+      "item": "minecraft:light_blue_dye"
+    }
+  ],
+  "result": {
+    "components": {
+      "minecraft:block_state": {
+        "color": "light_blue"
+      }
+    },
+    "count": 1,
+    "id": "bettacraft:high_power_led"
+  }
+}

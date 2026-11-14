@@ -58,6 +58,36 @@ public final class TankWater {
         return eq.filters().isEmpty() ? 0 : eq.filtersBelow(TankCare.waterLocalHeight(tank, r.scale()));
     }
 
+    /** M23: corner filters standing under water in the interior. */
+    public static int cornerFilters(ServerLevel level, TankData tank) {
+        if (!org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters()) return 0;
+        var r = InteriorRegions.get(level.getServer()).get(tank.regionId());
+        if (r == null || !r.built()) return 0;
+        var eq = InteriorManager.equipment(level.getServer(), r);
+        double y = TankCare.waterLocalHeight(tank, r.scale());
+        int n = 0;
+        for (long l : eq.corners()) if (net.minecraft.core.BlockPos.getY(l) < y) n++;
+        return n;
+    }
+
+    /** M23: regulator shares {internal filters, corner filters, flow pumps} under water. */
+    public static double[] interiorShares(ServerLevel level, TankData tank) {
+        var r = InteriorRegions.get(level.getServer()).get(tank.regionId());
+        if (r == null || !r.built()) return new double[3];
+        var eq = InteriorManager.equipment(level.getServer(), r);
+        double y = TankCare.waterLocalHeight(tank, r.scale());
+        return new double[]{eq.shareBelow(eq.filters(), y),
+                org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters() ? eq.shareBelow(eq.corners(), y) : 0, eq.shareBelow(eq.pumps(), y)};
+    }
+
+    /** M23: the FE-using devices that run with the filters, weighted by their regulators (external, internal, corner, skimmers, flow pumps). */
+    public static double filterLoad(ServerLevel level, TankBlockEntity c) {
+        double n = 0;
+        for (var f : TankEquipment.filters(level, c)) n += f.powerShare();
+        double[] in = interiorShares(level, c.getTank());
+        return n + in[0] + in[1] + in[2] + org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c);
+    }
+
     /** All filters that work in the water: external filters (blocks and cabinets) and internal filters under water. */
     public static int filterCount(ServerLevel level, TankBlockEntity c) {
         // M20: protein skimmers and flow pumps run on the same power as the filters
@@ -69,10 +99,17 @@ public final class TankWater {
     public static double filterBlocks(ServerLevel level, TankBlockEntity c) {
         // M20: live rock cleans salt water without power
         double rock = org.overengineer.bettacraft.reef.TankReef.liveRockBlocks(level, c.getTank());
-        if (!c.filterPowered) return rock;
-        int ext = TankEquipment.filters(level, c).size(), in = internalFilters(level, c.getTank());
+        // M23: the sponge filters run on the air pump (its own FE), by the air they get
+        double sponge = TankAeration.runningSpongeFilters(level, c);
+        if (!c.filterPowered) return rock + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12);
+        // M23: every filter by its power regulator, the corner filters too
+        double ext = 0;
+        for (var f : TankEquipment.filters(level, c)) ext += f.powerShare();
+        double[] in = interiorShares(level, c.getTank());
         return ext * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_EXTERNAL_FILTER_BLOCKS, 32)
-                + in * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_INTERNAL_FILTER_BLOCKS, 16)
+                + in[0] * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_INTERNAL_FILTER_BLOCKS, 16)
+                + in[1] * (double) ServerConfig.getOr(ServerConfig.FILTER_CORNER_BLOCKS, 20)
+                + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12)
                 // M20: in salt water the protein skimmers and the live rock clean too
                 + org.overengineer.bettacraft.reef.TankReef.skimmerBlocks(level, c) + rock;
     }

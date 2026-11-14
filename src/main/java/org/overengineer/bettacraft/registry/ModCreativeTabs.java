@@ -73,6 +73,19 @@ public final class ModCreativeTabs {
                 for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {
                     if (c != net.minecraft.world.item.DyeColor.WHITE) out.accept(org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 1));
                 }
+                // M23: the stronger lights, aeration and the other internal filters
+                for (var led : java.util.List.of(ModItems.LED_PANEL, ModItems.HIGH_POWER_LED)) {
+                    out.accept(led.get());
+                    for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {
+                        if (c != net.minecraft.world.item.DyeColor.WHITE) out.accept(org.overengineer.bettacraft.equipment.TankLightItem.of(led.get(), c, 1));
+                    }
+                }
+                out.accept(ModItems.AIR_PUMP.get());
+                out.accept(ModItems.AIR_HOSE.get());
+                out.accept(ModItems.AIR_STONE.get());
+                out.accept(ModItems.SPONGE_FILTER.get());
+                out.accept(ModItems.CORNER_FILTER.get());
+                out.accept(ModItems.INTAKE_SPONGE.get());
                 out.accept(ModItems.TANK_LID.get());
                 out.accept(ModItems.MIRROR_STICK.get());
                 out.accept(ModItems.AQUARIUM_NET.get());

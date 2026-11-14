@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "bettacraft:led_panel_dye",
+  "ingredients": [
+    {
+      "item": "bettacraft:led_panel"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
+  ],
+  "result": {
+    "components": {
+      "minecraft:block_state": {
+        "color": "yellow"
+      }
+    },
+    "count": 1,
+    "id": "bettacraft:led_panel"
+  }
+}

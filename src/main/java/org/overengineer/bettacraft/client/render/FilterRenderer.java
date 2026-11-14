@@ -59,6 +59,8 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         }
         FlowRenderer.hose(ps, buffers.getBuffer(FlowRenderer.hoseType()), p, origin, hoseLight, source);
         if (!p.wet() || IrisCompat.renderingShadowPass()) return;
+        double share = ((FilterHost) be).powerShare(); // M23: the power regulator
+        if (share <= 0) return;
         float time = (level.getGameTime() + partialTick) / 20F;
         int jetLight = LevelRenderer.getLightColor(level, BlockPos.containing(p.nozzle()));
         Vec3 n = p.nozzle();
@@ -66,6 +68,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         FilterFlow.Path shifted = new FilterFlow.Path(p.bottom(), p.top(), p.inside(), start, p.inward(), p.surfaceY(), true);
         TankBlockEntity c = FilterHost.tankOf(level, ((FilterHost) be).tankBlockPos());
         double scale = c == null || c.getTank() == null ? 1.0 : FilterFlow.fitScale(c.getTank(), shifted, 1.0);
+        scale *= 0.4 + 0.6 * share;
         FlowRenderer.jet(ps, buffers.getBuffer(FlowRenderer.jetType()), shifted.jet(10, scale), p.inward(), origin, jetLight, time,
                 p.submerged() ? 0.06F : 0.05F, p.submerged() ? 0.7F : 1.0F);
     }

@@ -1,0 +1,196 @@
+{
+  "variants": {
+    "hanging=false,lit=false,neg=false,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led__off"
+    },
+    "hanging=false,lit=false,neg=false,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_s_off"
+    },
+    "hanging=false,lit=false,neg=false,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_e_off"
+    },
+    "hanging=false,lit=false,neg=false,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_es_off"
+    },
+    "hanging=false,lit=false,neg=false,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_n_off"
+    },
+    "hanging=false,lit=false,neg=false,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ns_off"
+    },
+    "hanging=false,lit=false,neg=false,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_en_off"
+    },
+    "hanging=false,lit=false,neg=false,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_ens_off"
+    },
+    "hanging=false,lit=false,neg=true,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_w_off"
+    },
+    "hanging=false,lit=false,neg=true,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ws_off"
+    },
+    "hanging=false,lit=false,neg=true,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_we_off"
+    },
+    "hanging=false,lit=false,neg=true,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wes_off"
+    },
+    "hanging=false,lit=false,neg=true,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_wn_off"
+    },
+    "hanging=false,lit=false,neg=true,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_wns_off"
+    },
+    "hanging=false,lit=false,neg=true,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_wen_off"
+    },
+    "hanging=false,lit=false,neg=true,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wens_off"
+    },
+    "hanging=false,lit=true,neg=false,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led__on"
+    },
+    "hanging=false,lit=true,neg=false,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_s_on"
+    },
+    "hanging=false,lit=true,neg=false,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_e_on"
+    },
+    "hanging=false,lit=true,neg=false,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_es_on"
+    },
+    "hanging=false,lit=true,neg=false,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_n_on"
+    },
+    "hanging=false,lit=true,neg=false,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ns_on"
+    },
+    "hanging=false,lit=true,neg=false,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_en_on"
+    },
+    "hanging=false,lit=true,neg=false,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_ens_on"
+    },
+    "hanging=false,lit=true,neg=true,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_w_on"
+    },
+    "hanging=false,lit=true,neg=true,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ws_on"
+    },
+    "hanging=false,lit=true,neg=true,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_we_on"
+    },
+    "hanging=false,lit=true,neg=true,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wes_on"
+    },
+    "hanging=false,lit=true,neg=true,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_wn_on"
+    },
+    "hanging=false,lit=true,neg=true,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_wns_on"
+    },
+    "hanging=false,lit=true,neg=true,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_wen_on"
+    },
+    "hanging=false,lit=true,neg=true,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wens_on"
+    },
+    "hanging=true,lit=false,neg=false,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led__hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_s_hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_e_hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_es_hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_n_hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ns_hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_en_hanging_off"
+    },
+    "hanging=true,lit=false,neg=false,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_ens_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_w_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ws_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_we_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wes_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_wn_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_wns_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_wen_hanging_off"
+    },
+    "hanging=true,lit=false,neg=true,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wens_hanging_off"
+    },
+    "hanging=true,lit=true,neg=false,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led__hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_s_hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_e_hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_es_hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_n_hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ns_hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_en_hanging_on"
+    },
+    "hanging=true,lit=true,neg=false,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_ens_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=false,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_w_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=false,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_ws_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=false,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_we_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=false,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wes_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=true,pos=false,south=false": {
+      "model": "bettacraft:block/high_power_led_wn_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=true,pos=false,south=true": {
+      "model": "bettacraft:block/high_power_led_wns_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=true,pos=true,south=false": {
+      "model": "bettacraft:block/high_power_led_wen_hanging_on"
+    },
+    "hanging=true,lit=true,neg=true,north=true,pos=true,south=true": {
+      "model": "bettacraft:block/high_power_led_wens_hanging_on"
+    }
+  }
+}

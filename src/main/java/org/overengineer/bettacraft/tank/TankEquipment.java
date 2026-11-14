@@ -30,7 +30,7 @@ public final class TankEquipment {
         if (last != Long.MIN_VALUE && now >= last && now - last < RESCAN_TICKS) return;
         c.equipmentScanTime = now;
         TankData t = c.getTank();
-        List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>();
+        List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>(), pumps = new ArrayList<>();
         // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
         // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
@@ -56,7 +56,12 @@ public final class TankEquipment {
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
             } else {
                 check(level, t, p, d.getOpposite(), filters, skimmers);
+                // M23: an air pump beside the tank (it serves the first tank it touches)
+                if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(p.immutable());
             }
+        }
+        for (BlockPos top : t.openTops()) {
+            if (level.isLoaded(top) && level.getBlockState(top).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(top.immutable());
         }
         filters.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         cabinets.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
@@ -64,6 +69,23 @@ public final class TankEquipment {
         c.cabinetCache = List.copyOf(cabinets);
         skimmers.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.skimmerCache = List.copyOf(skimmers);
+        List<BlockPos> mine = new ArrayList<>();
+        for (BlockPos ap : new java.util.LinkedHashSet<>(pumps)) {
+            BlockPos tb = org.overengineer.bettacraft.equipment.AirPumpBlockEntity.tankBlock(level, ap);
+            if (tb != null && t.contains(tb)) mine.add(ap);
+        }
+        mine.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
+        c.airPumpCache = List.copyOf(mine);
+    }
+
+    /** M23: air pumps that serve this tank. */
+    public static List<org.overengineer.bettacraft.equipment.AirPumpBlockEntity> airPumps(Level level, TankBlockEntity c) {
+        scanIfNeeded(level, c);
+        List<org.overengineer.bettacraft.equipment.AirPumpBlockEntity> out = new ArrayList<>();
+        for (BlockPos p : c.airPumpCache) {
+            if (level.isLoaded(p) && level.getBlockEntity(p) instanceof org.overengineer.bettacraft.equipment.AirPumpBlockEntity a) out.add(a);
+        }
+        return out;
     }
 
     private static void check(Level level, TankData t, BlockPos p, Direction towardsTank, List<BlockPos> out, List<BlockPos> skimmers) {

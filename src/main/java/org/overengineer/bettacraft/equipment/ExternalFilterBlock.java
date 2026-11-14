@@ -130,6 +130,16 @@ public class ExternalFilterBlock extends BaseEntityBlock {
         return ItemInteractionResult.CONSUME;
     }
 
+    /** M23: a fitted intake sponge comes back when the filter goes (the heaters stay in the item). */
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be && be.intakeSponge()) {
+            net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+                    new ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_SPONGE.get()));
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be) {

@@ -209,7 +209,7 @@ public final class InteriorPlants {
             p.target = Math.min(stage, s.stages());
             TankBlockEntity c = controller(level.getServer(), r);
             if (c != null && s.tinted()) {
-                p.redness = PlantColors.tintFor(TankPlants.light(c.getLevel() instanceof ServerLevel sl ? sl : level, c)) / (double) PlantColors.MAX_TINT;
+                p.redness = PlantColors.tintFor((int) Math.round(TankPlants.strongLight(c.getLevel() instanceof ServerLevel sl ? sl : level, c))) / (double) PlantColors.MAX_TINT;
                 p.tint = (int) Math.round(p.redness * PlantColors.MAX_TINT);
             }
             apply(level, r, p);
@@ -269,7 +269,7 @@ public final class InteriorPlants {
             if (p.y + 0.5 >= waterLocal) return 0; // dry: no growth
             if (p.species.marine()) return org.overengineer.bettacraft.reef.Corals.rate(at(p), p.species, effectiveLight);
             // M20: freshwater plants stop growing in brackish and salt water
-            return lightFactor(effectiveLight, p.species.light()) * nutrients * temperature * org.overengineer.bettacraft.reef.Corals.freshFactor(salinity);
+            return lightFactor(effectiveLight, PlantSpecies.Light.need(p.species.light())) * nutrients * temperature * org.overengineer.bettacraft.reef.Corals.freshFactor(salinity);
         }
     }
 
@@ -294,7 +294,7 @@ public final class InteriorPlants {
 
     public static Env env(ServerLevel level, TankBlockEntity c, InteriorRegion r) {
         TankData t = c.getTank();
-        int light = TankPlants.light(level, c);
+        int light = (int) Math.round(TankPlants.strongLight(level, c)); // M23: up to 20 under strong LEDs
         double shade = TankPlants.coverage(t) + surfaceCover(t, r);
         boolean dense = shade >= ServerConfig.getOr(ServerConfig.PLANTS_DENSE_FROM, 0.5);
         float q = TankWater.qualityEnabled() ? t.waterQuality() : 0.9F;
@@ -640,7 +640,7 @@ public final class InteriorPlants {
         InteriorRegion r = region(level.getServer(), c.getTank());
         ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
         if (r == null || interior == null) return;
-        int tint = PlantColors.tintFor(TankPlants.light(level, c));
+        int tint = PlantColors.tintFor((int) Math.round(TankPlants.strongLight(level, c)));
         for (InteriorPlant p : new ArrayList<>(r.plants().all())) {
             if (!p.species.tinted()) continue;
             p.redness = tint / (double) PlantColors.MAX_TINT;

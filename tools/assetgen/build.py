@@ -14,6 +14,7 @@ import decor_icons
 import equipment
 import aquatic_plants
 import reef
+import aeration
 import floating_plants
 import gui
 import icons
@@ -50,6 +51,7 @@ def main() -> int:
     written += floating_plants.write_all()
     written += aquatic_plants.write_all()
     written += reef.write_all()  # M20
+    written += aeration.write_all()  # M23
     written += critters.write_all()
     written += tankmates.write_all()
     written += cultures.write_all()

@@ -26,10 +26,10 @@ public enum PlantSpecies {
     // stem plants: on substrate, fast, up to the surface, then side shoots
     ROTALA("rotala_rotundifolia", Form.STEM, 2.5, 8, Light.HIGH, Red.TIPS, "fine", 0x6A9A3C, 0x8AA040, 0xE05A4C, 0x7A8A44, 0x7A8A44),
     LUDWIGIA("ludwigia_repens", Form.STEM, 3, 8, Light.MID, Red.RED, "fine", 0x6A8A3A, 0x7E9040, 0xB0462E, 0x7A5A36, 0x7A5A36),
-    ALTERNANTHERA("alternanthera_reineckii", Form.STEM, 3.5, 8, Light.HIGH, Red.RED, "fine", 0x7A4A40, 0x8A5048, 0xB42A40, 0x8A3A3A, 0x8A3A3A),
+    ALTERNANTHERA("alternanthera_reineckii", Form.STEM, 3.5, 8, Light.VERY_HIGH, Red.RED, "fine", 0x7A4A40, 0x8A5048, 0xB42A40, 0x8A3A3A, 0x8A3A3A),
     // runners: on substrate, fast, spread
     VALLISNERIA("vallisneria", Form.RIBBON, 2.5, 8, Light.MID, Red.NONE, "ribbon", 0x6AA040, 0x84B850, 0, 0x6AA040, 0x6A8A3A),
-    MONTE_CARLO("monte_carlo", Form.CARPET, 3, 6, Light.HIGH, Red.NONE, "mat", 0x62A83A, 0x7CC046, 0, 0x62A83A, 0x62A83A),
+    MONTE_CARLO("monte_carlo", Form.CARPET, 3, 6, Light.VERY_HIGH, Red.NONE, "mat", 0x62A83A, 0x7CC046, 0, 0x62A83A, 0x62A83A),
     // tuber: on substrate, medium, floating leaves at the surface
     TIGER_LOTUS("red_tiger_lotus", Form.BULB, 6, 8, Light.MID, Red.RED, "lotus", 0x6A3A30, 0x7A4234, 0xAE2A30, 0x7A5A3A, 0x6A4A2A),
     // M20 corals and the anemone of the reef tank: on reef rock, salt water only; colours: tissue, tips, glow under actinic light
@@ -77,9 +77,16 @@ public enum PlantSpecies {
 
     /** Light need: growth starts at {@code from} (surface light 0..15) and is full at {@code full}. */
     public enum Light {
-        LOW(4, 8), MID(6, 11), HIGH(9, 14);
+        LOW(4, 8), MID(6, 11), HIGH(9, 14),
+        /** M23: strong-light plants: grow slowly under the light bar (15), fully only under an LED panel or high-power LED. */
+        VERY_HIGH(12, 18);
 
         public final int from, full;
+
+        /** The need that counts now: without features.ledTiers the strong-light plants are content with the bar like before. */
+        public static Light need(Light l) {
+            return l == VERY_HIGH && !org.overengineer.bettacraft.config.CommonConfig.ledTiers() ? HIGH : l;
+        }
 
         Light(int from, int full) {
             this.from = from;

@@ -26,6 +26,25 @@ public interface FilterHost {
     @Nullable
     BlockPos tankBlockPos();
 
+    /** M23: power regulator 0..10 (0..100 %). */
+    default int regulator() {
+        return 10;
+    }
+
+    default void setRegulator(int v) {}
+
+    /** M23: share 0..1 of the regulator (1 while features.powerRegulator is off). */
+    default double powerShare() {
+        return org.overengineer.bettacraft.config.CommonConfig.powerRegulator() ? Math.max(0, Math.min(10, regulator())) / 10.0 : 1.0;
+    }
+
+    /** M23: an intake sponge is fitted (the filter does not suck in fry). */
+    default boolean intakeSponge() {
+        return false;
+    }
+
+    default void setIntakeSponge(boolean on) {}
+
     default int heaterBlocks() {
         if (!hasFilter()) return 0;
         int sum = 0;

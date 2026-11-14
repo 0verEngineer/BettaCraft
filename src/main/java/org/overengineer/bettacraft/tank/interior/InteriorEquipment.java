@@ -33,6 +33,12 @@ public final class InteriorEquipment {
     /** M20: anchors of the flow pumps and the number of live rock blocks (biological filter in salt water). */
     final LongOpenHashSet pumps = new LongOpenHashSet();
     int liveRock;
+    /** M23: corner filters, sponge filters and air stones (anchors / positions), the regulator of every device (absent = 100 %) and the motor filters with an intake sponge. */
+    final LongOpenHashSet corners = new LongOpenHashSet();
+    final LongOpenHashSet spongeFilters = new LongOpenHashSet();
+    final LongOpenHashSet airStones = new LongOpenHashSet();
+    final Long2IntOpenHashMap power = new Long2IntOpenHashMap();
+    final LongOpenHashSet intakeSponges = new LongOpenHashSet();
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -44,6 +50,39 @@ public final class InteriorEquipment {
     public int spawningVersion() { return spawningVersion; }
     public LongOpenHashSet pumps() { return pumps; }
     public int liveRock() { return liveRock; }
+    public LongOpenHashSet corners() { return corners; }
+    public LongOpenHashSet spongeFilters() { return spongeFilters; }
+    public LongOpenHashSet airStones() { return airStones; }
+
+    /** M23: regulator 0..10 of the device at this local position. */
+    public int powerOf(long key) {
+        return power.getOrDefault(key, 10);
+    }
+
+    /** M23: regulator share 0..1 (1 with features.powerRegulator off). */
+    public double shareOf(long key) {
+        return org.overengineer.bettacraft.equipment.Regulator.share(powerOf(key));
+    }
+
+    public boolean hasIntakeSponge(long key) {
+        return intakeSponges.contains(key);
+    }
+
+    /** M23: sum of the regulator shares of the devices in {@code set} below the water surface. */
+    public double shareBelow(LongOpenHashSet set, double localWaterY) {
+        double n = 0;
+        for (long l : set) if (BlockPos.getY(l) < localWaterY) n += shareOf(l);
+        return n;
+    }
+
+    /** M23: running motor filters (internal and corner) below the water without an intake sponge: sum of their shares. */
+    public double unprotectedMotorShare(double localWaterY) {
+        double n = 0;
+        for (LongOpenHashSet set : java.util.List.of(filters, corners)) {
+            for (long l : set) if (BlockPos.getY(l) < localWaterY && !intakeSponges.contains(l)) n += shareOf(l);
+        }
+        return n;
+    }
 
     /** M20: flow pumps whose anchor is below the water surface. */
     public int pumpsBelow(double localWaterY) {
@@ -54,6 +93,14 @@ public final class InteriorEquipment {
     public boolean needsScan() { return needsScan; }
     public void markNeedsScan() { needsScan = true; }
 
+    private void clearM23() {
+        corners.clear();
+        spongeFilters.clear();
+        airStones.clear();
+        power.clear();
+        intakeSponges.clear();
+    }
+
     /** Applies one block change at interior-local coordinates. */
     void onChange(int lx, int ly, int lz, BlockState oldState, BlockState newState) {
         long key = BlockPos.asLong(lx, ly, lz);
@@ -62,7 +109,14 @@ public final class InteriorEquipment {
     }
 
     private void remove(long key, BlockState s) {
-        if (isHeaterAnchor(s)) heaters.remove(key);
+        if (s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER)) {
+            power.remove(key);
+            intakeSponges.remove(key);
+        }
+        if (s.is(ModBlocks.AIR_STONE.get())) airStones.remove(key);
+        else if (isAnchor(s, ModBlocks.CORNER_FILTER_SEGMENT.get())) corners.remove(key);
+        else if (isAnchor(s, ModBlocks.SPONGE_FILTER_SEGMENT.get())) spongeFilters.remove(key);
+        else if (isHeaterAnchor(s)) heaters.remove(key);
         else if (isCoolerAnchor(s)) coolers.remove(key);
         else if (isFilterAnchor(s)) filters.remove(key);
         else if (isPumpAnchor(s)) pumps.remove(key);
@@ -78,7 +132,17 @@ public final class InteriorEquipment {
     }
 
     private void add(long key, BlockState s) {
-        if (isHeaterAnchor(s)) heaters.put(key, s.getValue(SegmentBlock.SIZE).capacity);
+        boolean device = s.is(ModBlocks.AIR_STONE.get()) || s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER)
+                && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
+        if (device) {
+            int pw = s.getValue(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.POWER);
+            if (pw != 10) power.put(key, pw);
+            if (s.hasProperty(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.SPONGE) && s.getValue(org.overengineer.bettacraft.equipment.DeviceSegmentBlock.SPONGE)) intakeSponges.add(key);
+        }
+        if (s.is(ModBlocks.AIR_STONE.get())) airStones.add(key);
+        else if (isAnchor(s, ModBlocks.CORNER_FILTER_SEGMENT.get())) corners.add(key);
+        else if (isAnchor(s, ModBlocks.SPONGE_FILTER_SEGMENT.get())) spongeFilters.add(key);
+        else if (isHeaterAnchor(s)) heaters.put(key, s.getValue(SegmentBlock.SIZE).capacity);
         else if (isCoolerAnchor(s)) coolers.put(key, s.getValue(SegmentBlock.SIZE).capacity);
         else if (isFilterAnchor(s)) filters.add(key);
         else if (isPumpAnchor(s)) pumps.add(key);
@@ -91,6 +155,10 @@ public final class InteriorEquipment {
             mopBlocks.add(key);
             spawningVersion++;
         }
+    }
+
+    static boolean isAnchor(BlockState s, net.minecraft.world.level.block.Block b) {
+        return s.is(b) && s.getValue(SegmentBlock.PART) == SegmentBlock.Part.ANCHOR;
     }
 
     static boolean isHeaterAnchor(BlockState s) {
@@ -118,6 +186,7 @@ public final class InteriorEquipment {
         caveBlocks.clear();
         mopBlocks.clear();
         pumps.clear();
+        clearM23();
         liveRock = 0;
         spawningVersion++;
         substrate = 0;
@@ -184,6 +253,20 @@ public final class InteriorEquipment {
         t.putLongArray("mops", mopBlocks.toLongArray());
         t.putLongArray("pumps", pumps.toLongArray()); // M20
         t.putInt("live_rock", liveRock);
+        // M23
+        t.putLongArray("corners", corners.toLongArray());
+        t.putLongArray("sponge_filters", spongeFilters.toLongArray());
+        t.putLongArray("air_stones", airStones.toLongArray());
+        t.putLongArray("intake_sponges", intakeSponges.toLongArray());
+        long[] pk = new long[power.size()];
+        int[] pv = new int[power.size()];
+        int j = 0;
+        for (var e : power.long2IntEntrySet()) {
+            pk[j] = e.getLongKey();
+            pv[j++] = e.getIntValue();
+        }
+        t.putLongArray("power_keys", pk);
+        t.putIntArray("power_values", pv);
         if (needsScan) t.putBoolean("rescan", true);
         return t;
     }
@@ -208,6 +291,14 @@ public final class InteriorEquipment {
         pumps.clear();
         for (long l : t.getLongArray("pumps")) pumps.add(l);
         liveRock = Math.max(0, t.getInt("live_rock"));
+        clearM23();
+        for (long l : t.getLongArray("corners")) corners.add(l);
+        for (long l : t.getLongArray("sponge_filters")) spongeFilters.add(l);
+        for (long l : t.getLongArray("air_stones")) airStones.add(l);
+        for (long l : t.getLongArray("intake_sponges")) intakeSponges.add(l);
+        long[] pk = t.getLongArray("power_keys");
+        int[] pv = t.getIntArray("power_values");
+        for (int i = 0; i < pk.length && i < pv.length; i++) power.put(pk[i], pv[i]);
         spawningVersion++;
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");

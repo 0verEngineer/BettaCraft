@@ -47,7 +47,7 @@ public final class ModBlocks {
             .strength(0.8F)
             .sound(SoundType.METAL)
             .noOcclusion()
-            .lightLevel(s -> s.getValue(TankLightBlock.LIT) ? 15 : 0)
+            .lightLevel(TankLightBlock::lightLevel)
             .isRedstoneConductor((s, l, p) -> false)));
 
     /** Heater rod in a tank interior (PLAN 7.3), one block per segment. */
@@ -64,7 +64,7 @@ public final class ModBlocks {
 
     /** Internal filter box in a tank interior (PLAN 7.3). */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> FILTER_SEGMENT = BLOCKS.register("filter_segment",
-            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.FILTER, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
+            () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.FILTER, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
 
     /** External filter next to a tank (PLAN 6.2), two heater slots. */
@@ -149,7 +149,7 @@ public final class ModBlocks {
 
     /** M20: flow pump in a tank interior (a small box with a jet like the internal filter): water movement for the corals. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> PUMP_SEGMENT = BLOCKS.register("flow_pump_segment",
-            () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.PUMP, () -> ModItems.FLOW_PUMP.get(), BlockBehaviour.Properties.of()
+            () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.PUMP, () -> ModItems.FLOW_PUMP.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
 
     /** M20: protein skimmer hanging on a tank like the external filter: cleans salt water (no effect in fresh water). */
@@ -183,6 +183,40 @@ public final class ModBlocks {
         }
         return java.util.Collections.unmodifiableMap(m);
     }
+
+    // ------------------------------------------------------------------ M23 aeration, internal filters, LED tiers
+
+    /** M23: air-driven sponge filter in a tank interior (needs an air pump). */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.DeviceSegmentBlock> SPONGE_FILTER_SEGMENT = BLOCKS.register("sponge_filter_segment",
+            () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.SPONGE_FILTER, () -> ModItems.SPONGE_FILTER.get(), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(0.4F).sound(SoundType.WOOL).noLootTable().pushReaction(PushReaction.BLOCK)));
+
+    /** M23: motor corner filter in a tank interior. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.DeviceSegmentBlock> CORNER_FILTER_SEGMENT = BLOCKS.register("corner_filter_segment",
+            () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.CORNER_FILTER, () -> ModItems.CORNER_FILTER.get(), BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
+
+    /** M23: air stone in a tank interior. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.AirStoneBlock> AIR_STONE = BLOCKS.register("air_stone",
+            () -> new org.overengineer.bettacraft.equipment.AirStoneBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().pushReaction(PushReaction.DESTROY)));
+
+    /** M23: air pump next to a tank. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.AirPumpBlock> AIR_PUMP = BLOCKS.register("air_pump",
+            () -> new org.overengineer.bettacraft.equipment.AirPumpBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.DESTROY)));
+
+    /** M23: LED panel (2 blocks wide), the middle light tier. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.LedPanelBlock> LED_PANEL = BLOCKS.register("led_panel",
+            () -> new org.overengineer.bettacraft.equipment.LedPanelBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(0.8F).sound(SoundType.METAL).noOcclusion()
+                    .lightLevel(TankLightBlock::lightLevel).isRedstoneConductor((s, l, p) -> false)));
+
+    /** M23: high-power LED, the strongest light tier. */
+    public static final DeferredBlock<org.overengineer.bettacraft.equipment.HighPowerLedBlock> HIGH_POWER_LED = BLOCKS.register("high_power_led",
+            () -> new org.overengineer.bettacraft.equipment.HighPowerLedBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.0F).sound(SoundType.METAL).noOcclusion()
+                    .lightLevel(TankLightBlock::lightLevel).isRedstoneConductor((s, l, p) -> false)));
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);

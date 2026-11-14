@@ -97,6 +97,12 @@ public final class TankData {
     /** M20: salt (ppt, sea water 35) and calcium (mg/L) of the water; 0 = fresh water (all tanks before M20). */
     private float salinity;
     private float calcium;
+    /** M23: dissolved oxygen in mg/L (NaN = not known yet: the first care step starts at saturation). */
+    private float oxygen = Float.NaN;
+    /** M23: light settings of the tank: dimmer 0..100 %, daylight timer with on/off time (minutes of the day, 6:00 = 360). */
+    private int lightDimmer = 100;
+    private boolean lightTimer;
+    private int lightOn = 8 * 60, lightOff = 20 * 60;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -334,6 +340,18 @@ public final class TankData {
     public void setLastCoolChange(long t) { this.lastCoolChange = t; }
     public double fishGrazing() { return fishGrazing; }
     public void setFishGrazing(double g) { this.fishGrazing = Double.isFinite(g) ? Math.max(0, g) : 0; }
+    // M23
+    public float oxygen() { return oxygen; }
+    public void setOxygen(float mgl) { this.oxygen = Float.isNaN(mgl) ? Float.NaN : Math.max(0F, Math.min(25F, mgl)); }
+    public int lightDimmer() { return lightDimmer; }
+    public void setLightDimmer(int pct) { this.lightDimmer = Math.max(0, Math.min(100, pct)); }
+    public boolean lightTimer() { return lightTimer; }
+    public void setLightTimer(boolean on) { this.lightTimer = on; }
+    public int lightOn() { return lightOn; }
+    public int lightOff() { return lightOff; }
+    public void setLightOn(int minutes) { this.lightOn = Math.floorMod(minutes, 24 * 60); }
+    public void setLightOff(int minutes) { this.lightOff = Math.floorMod(minutes, 24 * 60); }
+
     public float salinity() { return salinity; }
     public void setSalinity(float ppt) { this.salinity = Salinity.clampSalinity(ppt); }
     public float calcium() { return calcium; }
@@ -410,6 +428,11 @@ public final class TankData {
         lastCoolChange = o.lastCoolChange;
         salinity = o.salinity;
         calcium = o.calcium;
+        oxygen = o.oxygen; // M23
+        lightDimmer = o.lightDimmer;
+        lightTimer = o.lightTimer;
+        lightOn = o.lightOn;
+        lightOff = o.lightOff;
     }
 
     public float waterQuality() { return waterQuality; }
@@ -491,6 +514,12 @@ public final class TankData {
         t.putLong("last_cool_change", lastCoolChange);
         t.putFloat("salinity", salinity);
         t.putFloat("calcium", calcium);
+        // M23 (no schema step: absent = unknown oxygen and the light settings of earlier versions)
+        if (!Float.isNaN(oxygen)) t.putFloat("oxygen", oxygen);
+        t.putInt("light_dimmer", lightDimmer);
+        t.putBoolean("light_timer", lightTimer);
+        t.putInt("light_on", lightOn);
+        t.putInt("light_off", lightOff);
         return t;
     }
 
@@ -596,6 +625,11 @@ public final class TankData {
         d.lastCoolChange = t.contains("last_cool_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_cool_change") : -1L;
         d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
         d.calcium = Salinity.clampCalcium(t.getFloat("calcium"));
+        d.oxygen = t.contains("oxygen", Tag.TAG_ANY_NUMERIC) ? t.getFloat("oxygen") : Float.NaN;
+        d.lightDimmer = t.contains("light_dimmer", Tag.TAG_ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getInt("light_dimmer"))) : 100;
+        d.lightTimer = t.getBoolean("light_timer");
+        d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;
+        d.lightOff = t.contains("light_off", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_off"), 1440) : 20 * 60;
         d.recomputeBounds();
         return d;
     }

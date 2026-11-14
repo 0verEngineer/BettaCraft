@@ -28,6 +28,8 @@ public final class TankmateCare {
     public static final int STRESS_SHOAL = 1, STRESS_CHASED = 2, STRESS_TEMP = 4, STRESS_WATER = 8, STRESS_CROWDED = 16;
     /** M21.8 seahorses: the water moves too much, no hitching post. */
     public static final int STRESS_FLOW = 32, STRESS_NO_POSTS = 64;
+    /** M23: too little oxygen in the water. */
+    public static final int STRESS_OXYGEN = 128;
     /** Algae on the glass (mean share) from which grazers find enough to eat. */
     public static final double GRAZING_FROM = 0.04;
 
@@ -73,6 +75,9 @@ public final class TankmateCare {
         if (crowded) stress |= STRESS_CROWDED;
         if (!tempOk) stress |= STRESS_TEMP;
         if (waterBad) stress |= STRESS_WATER;
+        // M23: low oxygen (the dwarf gourami breathes air like the bettas)
+        boolean lowO2 = org.overengineer.bettacraft.tank.TankAeration.lowFor(tank, org.overengineer.bettacraft.tank.TankAeration.labyrinth(fish));
+        if (lowO2) stress |= STRESS_OXYGEN;
         if (s.seahorse()) {
             // M21.8: strong flow, nothing to hold on to
             if (org.overengineer.bettacraft.tankmates.Seahorses.flowTooStrong(org.overengineer.bettacraft.tankmates.Seahorses.flowAt(level, controller, fish.getX(), fish.getZ()))) stress |= STRESS_FLOW;
@@ -80,7 +85,7 @@ public final class TankmateCare {
         }
         fish.stress = stress;
         boolean social = ServerConfig.getOr(ServerConfig.TANKMATES_SHOAL_STRESS, true) && (stress & STRESS_SHOAL) != 0;
-        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, crowded || social || (stress & (STRESS_CHASED | STRESS_FLOW | STRESS_NO_POSTS)) != 0, waterBad, salt);
+        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, crowded || social || (stress & (STRESS_CHASED | STRESS_FLOW | STRESS_NO_POSTS)) != 0, waterBad || lowO2, salt);
         // grazers find their food on the glass
         if (s.grazer() && fish.health.daysSinceFed() > 0.3 && org.overengineer.bettacraft.tank.algae.TankAlgae.mean(tank) >= GRAZING_FROM) {
             fish.health.feed();
@@ -129,7 +134,8 @@ public final class TankmateCare {
     }
 
     private static void dieOfIllness(ServerLevel level, TankBlockEntity controller, TankmateEntity fish, BettaHealth.Conditions c, BettaHealth.Params p) {
-        String key = c.saltBad() ? "salinity" : fish.health.isHungry(p) ? "hunger" : c.tempBad() ? "temperature" : c.waterBad() ? "water_quality"
+        String key = c.saltBad() ? "salinity" : fish.health.isHungry(p) ? "hunger" : c.tempBad() ? "temperature"
+                : c.waterBad() && (fish.stress & STRESS_WATER) == 0 && (fish.stress & STRESS_OXYGEN) != 0 ? "oxygen" : c.waterBad() ? "water_quality"
                 : (fish.stress & STRESS_SHOAL) != 0 ? "lonely" : (fish.stress & STRESS_FLOW) != 0 ? "flow"
                 : (fish.stress & STRESS_NO_POSTS) != 0 ? "no_posts" : c.crowdBad() ? "overcrowding" : "illness";
 

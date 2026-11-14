@@ -80,7 +80,8 @@ public final class BettaCare {
         boolean tempOk = TankTemperature.isTolerable(tank.waterTemp());
         double salt = org.overengineer.bettacraft.reef.SaltTolerance.shock(org.overengineer.bettacraft.reef.SaltTolerance.BETTA, tank);
         BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, controller.isCrowded() && fish.isAdult(),
-                org.overengineer.bettacraft.tank.TankWater.isBad(tank) || salt >= org.overengineer.bettacraft.tank.Salinity.STRESS_FROM, salt);
+                org.overengineer.bettacraft.tank.TankWater.isBad(tank) || salt >= org.overengineer.bettacraft.tank.Salinity.STRESS_FROM
+                        || org.overengineer.bettacraft.tank.TankAeration.lowFor(tank, true), salt); // M23: labyrinth fish hardly mind low oxygen
         boolean wasSick = fish.health.isSick();
         BettaHealth.Event event;
         if (days > 1.0) {

@@ -14,6 +14,8 @@ public final class PlantColors {
 
     /** Tint level of red species for the light at the surface (0..15): 0 below 9, 3 from 14 (same classes as M12). */
     public static int tintFor(int light) {
+        // M23: with the LED tiers the deepest red needs more than the bar (15): an LED panel or a high-power LED
+        if (org.overengineer.bettacraft.config.CommonConfig.ledTiers()) return light < 9 ? 0 : light < 13 ? 1 : light < 16 ? 2 : 3;
         return light < 9 ? 0 : light < 12 ? 1 : light < 14 ? 2 : 3;
     }
 

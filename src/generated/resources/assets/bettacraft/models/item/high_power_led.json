@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/high_power_led",
+    "layer1": "bettacraft:item/high_power_led_glow"
+  }
+}

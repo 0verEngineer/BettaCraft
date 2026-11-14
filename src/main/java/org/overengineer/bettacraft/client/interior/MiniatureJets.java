@@ -72,13 +72,43 @@ public final class MiniatureJets {
         RenderType rt = FlowRenderer.jetType();
         PoseStack ps = event.getPoseStack();
         float time = (mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) / 20F;
-        for (FilterFlow.Path p : paths) {
-            double scale = jetScale(region, t, p);
+        List<ClientRegion.Outlet> outlets = region.outlets();
+        for (int i = 0; i < paths.size(); i++) {
+            FilterFlow.Path p = paths.get(i);
+            // M23: a regulated device blows a shorter jet
+            double share = i < outlets.size() ? outlets.get(i).share() : 1.0;
+            double scale = jetScale(region, t, p) * (0.4 + 0.6 * share);
             int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(p.nozzle()));
             FlowRenderer.jet(ps, buffers.getBuffer(rt), p.jet(8, scale), p.inward(), cam, light, time,
                     (float) (0.05 * scale + 0.018), p.submerged() ? 0.9F : 1.0F);
         }
         buffers.endBatch(rt);
+    }
+
+    /** M23: bubble columns of the air stones and sponge filters in the miniature (tiny bubbles up to the water surface). */
+    static void bubbles(Minecraft mc, RandomSource rand, TankData t, ClientRegion region, Vec3 cam, boolean sound) {
+        if (t.waterMb() <= 0) return;
+        double surface = surfaceY(t);
+        double fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
+        float size = (float) Math.max(0.012, Math.min(0.05, 0.6 * fy));
+        for (ClientRegion.Bubbler b : region.bubblers()) {
+            Vec3 w = toWorld(t, region, b.x(), b.y(), b.z());
+            if (w.y >= surface || w.distanceToSqr(cam) > 32 * 32) continue;
+            double rate = b.sponge() ? 0.5 : 0.3 + 0.6 * b.share();
+            if (rand.nextDouble() < rate) {
+                double spread = (b.sponge() ? 0.6 : 0.3) * fy * 16 / 16.0;
+                mc.level.addParticle(new org.overengineer.bettacraft.registry.ModParticles.AirBubble((float) surface, size),
+                        w.x + (rand.nextDouble() - 0.5) * spread, w.y, w.z + (rand.nextDouble() - 0.5) * spread, 0, 0.02 + rand.nextDouble() * 0.01, 0);
+            }
+            if (sound && rand.nextInt(120) == 0 && w.distanceToSqr(cam) < 10 * 10) {
+                var ev = b.sponge() ? org.overengineer.bettacraft.registry.ModSounds.pick(org.overengineer.bettacraft.registry.ModSounds.SPONGE_FILTER_GURGLE,
+                        org.overengineer.bettacraft.registry.ModSounds.SPONGE_FILTER_GURGLE_VANILLA)
+                        : org.overengineer.bettacraft.registry.ModSounds.pick(org.overengineer.bettacraft.registry.ModSounds.AIR_STONE_BUBBLES,
+                        org.overengineer.bettacraft.registry.ModSounds.AIR_STONE_BUBBLES_VANILLA);
+                float vol = (float) (0.2 * b.share() * org.overengineer.bettacraft.client.DeviceEffects.volume(org.overengineer.bettacraft.equipment.Regulator.Sound.AIR_STONE));
+                if (vol > 0.001F) mc.level.playLocalSound(w.x, w.y, w.z, ev, net.minecraft.sounds.SoundSource.BLOCKS, vol, 0.9F + rand.nextFloat() * 0.2F, false);
+            }
+        }
     }
 
     /** Client tick: bubbles at the outlets of nearby tanks (and the quiet filter sound). */
@@ -89,11 +119,25 @@ public final class MiniatureJets {
             if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;
             ClientRegion region = ClientInteriorCache.get(t.regionId());
             if (region == null) continue;
-            for (FilterFlow.Path p : paths(t, region)) {
+            bubbles(mc, rand, t, region, cam, sound); // M23
+            List<FilterFlow.Path> paths = paths(t, region);
+            List<ClientRegion.Outlet> outlets = region.outlets();
+            for (int i = 0; i < paths.size(); i++) {
+                FilterFlow.Path p = paths.get(i);
                 if (p.nozzle().distanceToSqr(cam) > 32 * 32) continue;
+                ClientRegion.Outlet o = i < outlets.size() ? outlets.get(i) : null;
+                double share = o == null ? 1.0 : o.share();
                 if (sound && rand.nextInt(90) == 0 && p.nozzle().distanceToSqr(cam) < 12 * 12) {
-                    mc.level.playLocalSound(p.nozzle().x, p.nozzle().y, p.nozzle().z, org.overengineer.bettacraft.registry.ModSounds.FILTER_RUNNING.get(),
-                            net.minecraft.sounds.SoundSource.BLOCKS, 0.15F, 1.2F + rand.nextFloat() * 0.2F, false);
+                    // M23: own sounds (or Minecraft's), quieter with the regulator, per device kind volume
+                    boolean pump = o != null && o.pump();
+                    var ev = pump ? org.overengineer.bettacraft.registry.ModSounds.pick(org.overengineer.bettacraft.registry.ModSounds.FLOW_PUMP_WHIR,
+                            org.overengineer.bettacraft.registry.ModSounds.FLOW_PUMP_WHIR_VANILLA)
+                            : org.overengineer.bettacraft.registry.ModSounds.pick(org.overengineer.bettacraft.registry.ModSounds.FILTER_RUNNING,
+                            org.overengineer.bettacraft.registry.ModSounds.FILTER_RUNNING_VANILLA);
+                    float vol = (float) (0.15 * share * (pump ? org.overengineer.bettacraft.client.DeviceEffects.volume(org.overengineer.bettacraft.equipment.Regulator.Sound.FLOW_PUMP)
+                            : org.overengineer.bettacraft.client.DeviceEffects.volume(org.overengineer.bettacraft.equipment.Regulator.Sound.FILTER)));
+                    if (vol > 0.001F) mc.level.playLocalSound(p.nozzle().x, p.nozzle().y, p.nozzle().z, ev,
+                            net.minecraft.sounds.SoundSource.BLOCKS, vol, 1.2F + rand.nextFloat() * 0.2F, false);
                 }
                 if (rand.nextInt(3) != 0) continue;
                 List<Vec3> jet = p.jet(4, jetScale(region, t, p));

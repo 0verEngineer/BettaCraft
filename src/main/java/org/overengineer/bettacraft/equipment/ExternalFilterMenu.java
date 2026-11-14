@@ -46,7 +46,47 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
             for (int c = 0; c < 9; c++)
                 addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
         for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, 142));
+        addPowerSlot(filter);
     }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        return powerButton(player, id, filter);
+    }
+
+    // ------------------------------------------------------------------ M23 power regulator
+
+    /** Button ids of the power regulator: up / down by 10 %. */
+    public static final int BUTTON_POWER_UP = 20, BUTTON_POWER_DOWN = 21;
+    private final net.minecraft.world.inventory.DataSlot power = net.minecraft.world.inventory.DataSlot.standalone();
+
+    private void addPowerSlot(@Nullable FilterHost host) {
+        power.set(host == null ? 10 : host.regulator());
+        addDataSlot(new net.minecraft.world.inventory.DataSlot() {
+            @Override
+            public int get() {
+                return host == null ? power.get() : host.regulator();
+            }
+
+            @Override
+            public void set(int v) {
+                power.set(v);
+            }
+        });
+    }
+
+    /** Regulator 0..10 as the menu sees it. */
+    public int power() {
+        return power.get();
+    }
+
+    private boolean powerButton(Player player, int id, @Nullable FilterHost host) {
+        if (host == null || (id != BUTTON_POWER_UP && id != BUTTON_POWER_DOWN)) return false;
+        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return false;
+        host.setRegulator(Math.max(0, Math.min(10, host.regulator() + (id == BUTTON_POWER_UP ? 1 : -1))));
+        return true;
+    }
+
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {

@@ -26,6 +26,8 @@ public final class ClientConfig {
     public static final ModConfigSpec.BooleanValue INTERIOR_LEAVE_HINT;
     /** M18: how strongly coloured tank lights tint the water (0 = not at all). */
     public static final ModConfigSpec.DoubleValue LIGHT_TINT;
+    /** M23: volume of the device sounds per kind (times the power regulator of the device). */
+    public static final ModConfigSpec.DoubleValue VOLUME_FILTER, VOLUME_AIR_PUMP, VOLUME_AIR_STONE, VOLUME_FLOW_PUMP, VOLUME_FEEDER;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -57,6 +59,11 @@ public final class ClientConfig {
         b.pop();
         b.comment("Sounds").push("sound");
         FILTER_SOUND = b.comment("Play the filter bubbling sound").define("filterSound", true);
+        VOLUME_FILTER = b.comment("Volume of the filters (external, cabinet, internal, corner filter) from 0 to 1").defineInRange("filterVolume", 1.0, 0.0, 1.0);
+        VOLUME_AIR_PUMP = b.comment("Volume of the air pump hum from 0 to 1").defineInRange("airPumpVolume", 1.0, 0.0, 1.0);
+        VOLUME_AIR_STONE = b.comment("Volume of the air stones and sponge filters from 0 to 1").defineInRange("airStoneVolume", 1.0, 0.0, 1.0);
+        VOLUME_FLOW_PUMP = b.comment("Volume of the flow pumps from 0 to 1").defineInRange("flowPumpVolume", 1.0, 0.0, 1.0);
+        VOLUME_FEEDER = b.comment("Volume of the feeder clicks from 0 to 1").defineInRange("feederVolume", 1.0, 0.0, 1.0);
         b.pop();
         SPEC = b.build();
     }

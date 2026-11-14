@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "part=anchor": {
+      "model": "bettacraft:block/sponge_filter_segment_sponge"
+    },
+    "part=base": {
+      "model": "bettacraft:block/sponge_filter_segment_sponge"
+    },
+    "part=middle": {
+      "model": "bettacraft:block/sponge_filter_segment_sponge"
+    },
+    "part=top": {
+      "model": "bettacraft:block/sponge_filter_segment_top"
+    }
+  }
+}

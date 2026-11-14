@@ -52,12 +52,8 @@ public final class EquipmentPlacement {
         if (heater) {
             foot = 1;
             height = SegmentBlock.heaterLength(size, r.scale());
-        } else if (kind == SegmentBlock.Kind.PUMP) {
-            int[] f = SegmentBlock.pumpShape(r.scale());
-            foot = f[0];
-            height = f[1];
         } else {
-            int[] f = SegmentBlock.filterShape(r.scale());
+            int[] f = SegmentBlock.shape(kind, r.scale());
             foot = f[0];
             height = f[1];
         }
@@ -66,7 +62,14 @@ public final class EquipmentPlacement {
             case COOLER -> ModBlocks.COOLER_SEGMENT.get();
             case FILTER -> ModBlocks.FILTER_SEGMENT.get();
             case PUMP -> ModBlocks.PUMP_SEGMENT.get();
+            case SPONGE_FILTER -> ModBlocks.SPONGE_FILTER_SEGMENT.get();
+            case CORNER_FILTER -> ModBlocks.CORNER_FILTER_SEGMENT.get();
         };
+        // M23: the sponge filter and the corner filter are switched off with features.moreInternalFilters
+        if ((kind == SegmentBlock.Kind.SPONGE_FILTER || kind == SegmentBlock.Kind.CORNER_FILTER) && !org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters()) {
+            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
+            return InteractionResult.FAIL;
+        }
         // the filter outlet points at the player (into the room of the tank)
         net.minecraft.core.Direction facing = player != null ? player.getDirection().getOpposite() : net.minecraft.core.Direction.NORTH;
         List<BlockPos> cells = new ArrayList<>();

@@ -231,6 +231,24 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue GENES_ALWAYS_VISIBLE;
     public static final ModConfigSpec.IntValue WILD_FISH_NEARBY;
     public static final ModConfigSpec.IntValue WILD_CRITTERS_NEARBY;
+    // M23: aeration, oxygen, internal filters, lights
+    public static final ModConfigSpec.BooleanValue POWER_AIR_PUMP;
+    public static final ModConfigSpec.DoubleValue POWER_AIR_PUMP_FE;
+    public static final ModConfigSpec.IntValue AIR_OUTLETS_PER_PUMP;
+    public static final ModConfigSpec.DoubleValue OXYGEN_AIR_STONE;
+    public static final ModConfigSpec.DoubleValue OXYGEN_SPONGE_FILTER;
+    public static final ModConfigSpec.DoubleValue OXYGEN_FILTER;
+    public static final ModConfigSpec.DoubleValue OXYGEN_FLOW_PUMP;
+    public static final ModConfigSpec.DoubleValue OXYGEN_SURFACE;
+    public static final ModConfigSpec.DoubleValue OXYGEN_PER_ANIMAL;
+    public static final ModConfigSpec.DoubleValue OXYGEN_PLANTS;
+    public static final ModConfigSpec.DoubleValue OXYGEN_STRESS_BELOW;
+    public static final ModConfigSpec.DoubleValue OXYGEN_LABYRINTH_STRESS_BELOW;
+    public static final ModConfigSpec.IntValue FILTER_SPONGE_BLOCKS;
+    public static final ModConfigSpec.IntValue FILTER_CORNER_BLOCKS;
+    public static final ModConfigSpec.DoubleValue FILTER_FRY_INTAKE;
+    public static final ModConfigSpec.DoubleValue LIGHT_PANEL_BOOST;
+    public static final ModConfigSpec.DoubleValue LIGHT_HIGH_POWER_BOOST;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -463,6 +481,46 @@ public final class ServerConfig {
         POWER_FILTER_FE = b.comment("FE per tick of each filter").defineInRange("filterFePerTick", 10, 0, 100000);
         POWER_LIGHT_FE = b.comment("FE per tick of each lit light block on a tank").defineInRange("lightFePerTick", 4, 0, 100000);
         POWER_BUFFER = b.comment("FE a tank can store").defineInRange("bufferFe", 100000, 1000, 100000000);
+        b.pop();
+
+        // M23
+        b.comment("Air pumps, air stones and the oxygen in the water (features.aeration, features.oxygen)").push("aeration");
+        POWER_AIR_PUMP = b.comment("Air pumps only run while the tank has enough FE (power.airPumpFePerOutlet for every air stone and sponge filter they",
+                "drive; off: they run without power like the filters without power mods)").define("airPumpRequiresEnergy", false);
+        POWER_AIR_PUMP_FE = b.comment("FE per tick an air pump needs for each air stone or sponge filter it drives (times its power regulator)")
+                .defineInRange("airPumpFePerOutlet", 2.0, 0.0, 10000.0);
+        AIR_OUTLETS_PER_PUMP = b.comment("Air stones and sponge filters one air pump drives at full strength (more share its air and bubble less)")
+                .defineInRange("outletsPerPump", 4, 1, 64);
+        OXYGEN_AIR_STONE = b.comment("Oxygen exchange of one air stone at 100 %, in water blocks per day (like the filters' cleaning: a stone keeps that much water",
+                "near saturation)").defineInRange("airStoneExchange", 30.0, 0.0, 10000.0);
+        OXYGEN_SPONGE_FILTER = b.comment("Oxygen exchange of one running sponge filter (its air lift), in water blocks per day")
+                .defineInRange("spongeFilterExchange", 15.0, 0.0, 10000.0);
+        OXYGEN_FILTER = b.comment("Oxygen exchange of one motor filter (its outlet moves the surface), in water blocks per day")
+                .defineInRange("filterExchange", 6.0, 0.0, 10000.0);
+        OXYGEN_FLOW_PUMP = b.comment("Oxygen exchange of one flow pump, in water blocks per day").defineInRange("flowPumpExchange", 8.0, 0.0, 10000.0);
+        OXYGEN_SURFACE = b.comment("Oxygen exchange of the still water surface per day, times top blocks / water blocks")
+                .defineInRange("surfaceExchange", 2.0, 0.0, 1000.0);
+        OXYGEN_PER_ANIMAL = b.comment("Oxygen one adult fish uses per day, in mg/L for one water block (at 25 °C; warmer water doubles it every 10 °C)")
+                .defineInRange("oxygenPerAnimal", 6.0, 0.0, 1000.0);
+        OXYGEN_PLANTS = b.comment("Oxygen a densely planted tank makes per day in full light, in mg/L (at night the plants use a quarter of it)")
+                .defineInRange("plantOxygen", 8.0, 0.0, 1000.0);
+        OXYGEN_STRESS_BELOW = b.comment("Below this oxygen (mg/L) fish, shrimp and crayfish are stressed (snails a little, frogs not at all)")
+                .defineInRange("oxygenStressBelow", 3.5, 0.0, 20.0);
+        OXYGEN_LABYRINTH_STRESS_BELOW = b.comment("Below this oxygen (mg/L) bettas and dwarf gouramis are stressed (labyrinth fish breathe air at the surface)")
+                .defineInRange("labyrinthStressBelow", 1.0, 0.0, 20.0);
+        b.pop();
+        b.comment("Internal filters (features.moreInternalFilters, features.fryIntake)").push("internalFilters");
+        FILTER_SPONGE_BLOCKS = b.comment("Water blocks one sponge filter keeps clean (it needs air from an air pump)")
+                .defineInRange("spongeFilterBlocks", 12, 0, 10000);
+        FILTER_CORNER_BLOCKS = b.comment("Water blocks one corner filter keeps clean").defineInRange("cornerFilterBlocks", 20, 0, 10000);
+        FILTER_FRY_INTAKE = b.comment("Share of the fry a running motor filter without intake sponge sucks in per day (internal, corner and external filters;",
+                "the sponge filter never does; 0 = never)").defineInRange("fryIntakePerDay", 0.15, 0.0, 1000.0);
+        b.pop();
+        b.comment("Light strength of the aquarium lights (features.ledTiers): the light bar gives light 15, the stronger lights more").push("lights");
+        LIGHT_PANEL_BOOST = b.comment("Extra light of an LED panel over the light bar (light 15 + this, on the share of the tank it covers)")
+                .defineInRange("panelBoost", 2.5, 0.0, 15.0);
+        LIGHT_HIGH_POWER_BOOST = b.comment("Extra light of a high-power LED over the light bar (light 15 + this, on the share of the tank it covers)")
+                .defineInRange("highPowerBoost", 5.0, 0.0, 15.0);
         b.pop();
 
         b.comment("Breeding live food: larva tub (mosquito larvae) and artemia hatchery (artemia nauplii)").push("foodBreeding");

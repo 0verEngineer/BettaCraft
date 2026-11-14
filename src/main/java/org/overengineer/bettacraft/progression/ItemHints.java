@@ -33,7 +33,9 @@ public final class ItemHints {
             "sea_water_bucket", "sea_salt", "calcium_additive", "flow_pump", "protein_skimmer", "reef_rock", "live_rock",
             "zoanthus", "green_star_polyps", "mushroom_coral", "leather_coral", "hammer_coral", "lobophyllia", "acropora", "bubble_tip_anemone",
             // M22.3: the magnifier, small animals in a bucket
-            "magnifier", "critter_bucket");
+            "magnifier", "critter_bucket",
+            // M23: aeration, internal filters, light tiers
+            "air_pump", "air_hose", "air_stone", "sponge_filter", "corner_filter", "intake_sponge", "led_panel", "high_power_led");
 
     private ItemHints() {}
 

@@ -282,6 +282,7 @@ public final class GuideGen {
             case LOW -> t("low", "wenig");
             case MID -> t("medium", "mittel");
             case HIGH -> t("strong", "viel");
+            case VERY_HIGH -> t("very strong (an LED panel or a high-power LED)", "sehr viel (LED-Panel oder Hochleistungs-LED)");
         });
         if (p.marine()) {
             tb.row(t("Flow", "Strömung"), switch (p.flow()) {
@@ -465,6 +466,7 @@ public final class GuideGen {
                 case LOW -> t("low", "wenig");
                 case MID -> t("medium", "mittel");
                 case HIGH -> t("strong", "viel");
+                case VERY_HIGH -> t("very strong", "sehr viel");
             };
             String days = t("about " + num(p.daysToFull()) + " days", "etwa " + num(p.daysToFull()) + " Tage");
             String name = link(lang("item.bettacraft." + p.id()), page(Target.plant(p)), page, false);

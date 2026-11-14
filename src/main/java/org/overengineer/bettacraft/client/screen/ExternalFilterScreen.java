@@ -21,7 +21,23 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     protected void init() {
         super.init();
         titleLabelX = (imageWidth - font.width(title)) / 2;
+        powerBtn = addRenderableWidget(powerButton(leftPos + 112, topPos + 35, 56, 16, menu::power, menu.containerId));
     }
+
+    private TankScreen.FitButton powerBtn;
+
+    /** M23: the power regulator button: click +10 %, sneak + click -10 % (tooltip explains). */
+    private TankScreen.FitButton powerButton(int x, int y, int w, int h, java.util.function.IntSupplier value, int containerId) {
+        TankScreen.FitButton b = new TankScreen.FitButton(x, y, w, h, Component.empty(), btn -> {
+            if (minecraft == null || minecraft.gameMode == null) return;
+            minecraft.gameMode.handleInventoryButtonClick(containerId, hasShiftDown()
+                    ? org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_DOWN : org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_UP);
+        });
+        b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.bettacraft.regulator.button_tooltip")));
+        b.visible = org.overengineer.bettacraft.config.CommonConfig.powerRegulator();
+        return b;
+    }
+
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
@@ -42,6 +58,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        if (powerBtn != null) powerBtn.setMessage(Component.translatable("gui.bettacraft.regulator.button", menu.power() * 10));
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
     }

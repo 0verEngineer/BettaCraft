@@ -212,6 +212,24 @@ public final class ModItems {
         return java.util.Collections.unmodifiableMap(m);
     }
 
+    // ------------------------------------------------------------------ M23 aeration, internal filters, LED tiers
+
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.InternalFilterItem> SPONGE_FILTER = ITEMS.register("sponge_filter",
+            () -> new org.overengineer.bettacraft.equipment.InternalFilterItem(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.SPONGE_FILTER, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.InternalFilterItem> CORNER_FILTER = ITEMS.register("corner_filter",
+            () -> new org.overengineer.bettacraft.equipment.InternalFilterItem(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.CORNER_FILTER, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.IntakeSpongeItem> INTAKE_SPONGE = ITEMS.register("intake_sponge",
+            () -> new org.overengineer.bettacraft.equipment.IntakeSpongeItem(new Item.Properties()));
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.AirStoneItem> AIR_STONE = ITEMS.register("air_stone",
+            () -> new org.overengineer.bettacraft.equipment.AirStoneItem(ModBlocks.AIR_STONE.get(), new Item.Properties()));
+    public static final DeferredItem<BlockItem> AIR_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.AIR_PUMP);
+    /** M23: air hose (crafting part of the air stone and the sponge filter). */
+    public static final DeferredItem<Item> AIR_HOSE = ITEMS.registerSimpleItem("air_hose");
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.TankLightItem> LED_PANEL = ITEMS.register("led_panel",
+            () -> new org.overengineer.bettacraft.equipment.TankLightItem(ModBlocks.LED_PANEL.get(), new Item.Properties()));
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.TankLightItem> HIGH_POWER_LED = ITEMS.register("high_power_led",
+            () -> new org.overengineer.bettacraft.equipment.TankLightItem(ModBlocks.HIGH_POWER_LED.get(), new Item.Properties()));
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }

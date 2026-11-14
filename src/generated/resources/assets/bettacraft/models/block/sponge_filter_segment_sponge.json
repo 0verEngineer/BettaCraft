@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "bettacraft:block/sponge_filter_sponge",
+    "side": "bettacraft:block/sponge_filter_sponge"
+  }
+}

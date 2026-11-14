@@ -175,6 +175,8 @@ public final class TankView {
     public double coolerBlocks;
     public int filterCoolers, coolersInside, coolerCapWet;
     public final Water water = new Water();
+    /** M23: oxygen, aeration and the lights (tab Devices). */
+    public final Tech tech = new Tech();
     /** M12: floating plants (water tab, plants page). */
     public final Plants plants = new Plants();
     /** M13: aquarium plants of the interior (second page of the plants tab). */
@@ -433,7 +435,7 @@ public final class TankView {
             a.tints[p.species.ordinal()] = Math.max(a.tints[p.species.ordinal()], p.tint);
             a.blocks += p.blocks;
             if (p.y + 0.5 >= env.waterLocal()) a.dry++;
-            else if (org.overengineer.bettacraft.plants.InteriorPlants.lightFactor(env.effectiveLight(), p.species.light()) <= 0) a.dark++;
+            else if (org.overengineer.bettacraft.plants.InteriorPlants.lightFactor(env.effectiveLight(), org.overengineer.bettacraft.plants.PlantSpecies.Light.need(p.species.light())) <= 0) a.dark++;
             else if (p.fullGrown()) a.fullGrown++;
             else if (env.rate(p) > 0) a.growing++;
         }
@@ -507,6 +509,129 @@ public final class TankView {
     }
 
     /** Water tab (M9). */
+    /** M23: oxygen and aeration, the lights with dimmer and timer, the filters without intake sponge (tab Devices). */
+    public static final class Tech {
+        public boolean oxygenOn, aerationOn, timerFeature, tiersOn, fry;
+        public float oxygen = Float.NaN;
+        public double saturation, target, exchange, use, co2Strip;
+        public int pumps, pumpsRunning, stones, spongeFilters, outlets, driven;
+        public boolean airPowered = true, airPower;
+        public double light, ledLight, factor = 1;
+        public int bars, panels, highPower, lit;
+        public int dimmer = 100, lightOn = 480, lightOff = 1200;
+        public boolean timer;
+        public int unprotected;
+
+        CompoundTag save() {
+            CompoundTag t = new CompoundTag();
+            t.putBoolean("o2_on", oxygenOn);
+            t.putBoolean("air_on", aerationOn);
+            t.putBoolean("timer_feature", timerFeature);
+            t.putBoolean("tiers_on", tiersOn);
+            t.putBoolean("fry", fry);
+            if (!Float.isNaN(oxygen)) t.putFloat("o2", oxygen);
+            t.putDouble("sat", saturation);
+            t.putDouble("target", target);
+            t.putDouble("exchange", exchange);
+            t.putDouble("use", use);
+            t.putDouble("co2", co2Strip);
+            t.putIntArray("air", new int[]{pumps, pumpsRunning, stones, spongeFilters, outlets, driven});
+            t.putBoolean("air_ok", airPowered);
+            t.putBoolean("air_power", airPower);
+            t.putDouble("light", light);
+            t.putDouble("led", ledLight);
+            t.putDouble("factor", factor);
+            t.putIntArray("lights", new int[]{bars, panels, highPower, lit});
+            t.putIntArray("timer_set", new int[]{dimmer, lightOn, lightOff});
+            t.putBoolean("timer", timer);
+            t.putInt("unprotected", unprotected);
+            return t;
+        }
+
+        void load(CompoundTag t) {
+            oxygenOn = t.getBoolean("o2_on");
+            aerationOn = t.getBoolean("air_on");
+            timerFeature = t.getBoolean("timer_feature");
+            tiersOn = t.getBoolean("tiers_on");
+            fry = t.getBoolean("fry");
+            oxygen = t.contains("o2") ? t.getFloat("o2") : Float.NaN;
+            saturation = t.getDouble("sat");
+            target = t.getDouble("target");
+            exchange = t.getDouble("exchange");
+            use = t.getDouble("use");
+            co2Strip = t.getDouble("co2");
+            int[] a = t.getIntArray("air");
+            if (a.length == 6) {
+                pumps = a[0]; pumpsRunning = a[1]; stones = a[2]; spongeFilters = a[3]; outlets = a[4]; driven = a[5];
+            }
+            airPowered = t.getBoolean("air_ok");
+            airPower = t.getBoolean("air_power");
+            light = t.getDouble("light");
+            ledLight = t.getDouble("led");
+            factor = t.getDouble("factor");
+            int[] l = t.getIntArray("lights");
+            if (l.length == 4) {
+                bars = l[0]; panels = l[1]; highPower = l[2]; lit = l[3];
+            }
+            int[] ts = t.getIntArray("timer_set");
+            if (ts.length == 3) {
+                dimmer = ts[0]; lightOn = ts[1]; lightOff = ts[2];
+            }
+            timer = t.getBoolean("timer");
+            unprotected = t.getInt("unprotected");
+        }
+    }
+
+    private static Tech tech(ServerLevel level, TankBlockEntity c) {
+        TankData t = c.getTank();
+        Tech x = new Tech();
+        x.oxygenOn = org.overengineer.bettacraft.tank.TankAeration.enabled();
+        x.aerationOn = org.overengineer.bettacraft.config.CommonConfig.aeration();
+        x.timerFeature = org.overengineer.bettacraft.config.CommonConfig.lightTimer();
+        x.tiersOn = org.overengineer.bettacraft.config.CommonConfig.ledTiers();
+        x.fry = org.overengineer.bettacraft.config.CommonConfig.fryIntake();
+        x.oxygen = t.oxygen();
+        x.saturation = org.overengineer.bettacraft.tank.TankAeration.saturation(t.waterTemp(), t.salinity());
+        x.target = c.o2Target;
+        x.exchange = c.o2Exchange;
+        x.use = c.o2Use;
+        x.co2Strip = org.overengineer.bettacraft.tank.TankAeration.co2Stripping(c.o2Exchange);
+        var pumps = org.overengineer.bettacraft.tank.TankEquipment.airPumps(level, c);
+        x.pumps = pumps.size();
+        for (var p : pumps) if (p.running()) x.pumpsRunning++;
+        var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
+        if (r != null && r.built()) {
+            var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+            x.stones = eq.airStones().size();
+            x.spongeFilters = eq.spongeFilters().size();
+            double y = org.overengineer.bettacraft.tank.TankCare.waterLocalHeight(t, r.scale());
+            for (long l : eq.filters()) if (net.minecraft.core.BlockPos.getY(l) < y && !eq.hasIntakeSponge(l)) x.unprotected++;
+            for (long l : eq.corners()) if (net.minecraft.core.BlockPos.getY(l) < y && !eq.hasIntakeSponge(l)) x.unprotected++;
+        }
+        for (var f : org.overengineer.bettacraft.tank.TankEquipment.filters(level, c)) if (!f.intakeSponge()) x.unprotected++;
+        x.outlets = c.airOutlets;
+        x.driven = c.airDriven;
+        x.airPowered = c.airPowered();
+        x.airPower = org.overengineer.bettacraft.tank.TankPower.airRequired();
+        x.light = org.overengineer.bettacraft.tank.plants.TankPlants.strongLight(level, c);
+        x.ledLight = org.overengineer.bettacraft.tank.TankLighting.ledLight(level, c);
+        for (var p : org.overengineer.bettacraft.tank.TankCare.aboveTop(t)) {
+            if (!level.isLoaded(p)) continue;
+            var s = level.getBlockState(p);
+            if (!(s.getBlock() instanceof org.overengineer.bettacraft.equipment.TankLightBlock)) continue;
+            if (s.getBlock() instanceof org.overengineer.bettacraft.equipment.LedPanelBlock) x.panels++;
+            else if (s.getBlock() instanceof org.overengineer.bettacraft.equipment.HighPowerLedBlock) x.highPower++;
+            else x.bars++;
+            if (s.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT)) x.lit++;
+        }
+        x.dimmer = t.lightDimmer();
+        x.lightOn = t.lightOn();
+        x.lightOff = t.lightOff();
+        x.timer = t.lightTimer();
+        x.factor = org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getDayTime());
+        return x;
+    }
+
     public static final class Water {
         public boolean qualityEnabled = true, evaporationEnabled = true;
         public float quality = 1, badBelow = 0.35F;
@@ -742,6 +867,7 @@ public final class TankView {
         eq.putInt("legacy", legacy);
         out.put("equipment", eq);
         out.put("water_care", water(level, controller, live).save());
+        out.put("tech", tech(level, controller).save());
         out.put("plants", plants(level, controller).save());
         out.put("aquatic", aquatic(level, controller).save());
         return out;
@@ -907,6 +1033,7 @@ public final class TankView {
         v.legacyHeaters = eq.getInt("legacy");
         v.filterCoolers = eq.getInt("filter_coolers");
         v.water.load(t.getCompound("water_care"));
+        v.tech.load(t.getCompound("tech"));
         v.plants.load(t.getCompound("plants"));
         v.aquatic.load(t.getCompound("aquatic"));
         v.breeding = t.getCompound("breeding");

@@ -69,6 +69,8 @@ public final class TankCare {
         TankPower.step(server, be, dt);
         updateTemperature(server, be, dt / 24000.0);
         TankWater.step(server, be, dt / 24000.0);
+        TankLighting.step(server, be); // M23: dimmer and daylight timer
+        TankAeration.step(server, be, dt / 24000.0); // M23: air pumps, oxygen, fry intake
         org.overengineer.bettacraft.tank.plants.TankPlants.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.plants.InteriorPlants.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.tank.algae.TankAlgae.step(server, be, dt / 24000.0); // M14

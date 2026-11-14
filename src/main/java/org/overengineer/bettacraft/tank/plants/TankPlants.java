@@ -143,9 +143,18 @@ public final class TankPlants {
      * or a full block over the tank keeps the sky out; the glass does not.
      */
     public static int light(ServerLevel level, TankBlockEntity c) {
+        return (int) Math.round(Math.min(15, strongLight(level, c)));
+    }
+
+    /**
+     * M23: light at the surface up to 20: the lit lights of the tank ({@link org.overengineer.bettacraft.tank.TankLighting#ledLight}:
+     * 15 for the bar, more for the LED panel and the high-power LED, times dimmer and daylight timer) or the daylight,
+     * whichever is brighter.
+     */
+    public static double strongLight(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
-        int[] lights = TankCare.lights(level, t);
-        if (lights[1] > 0 && c.lightPowered()) return 15;
+        double led = org.overengineer.bettacraft.tank.TankLighting.ledLight(level, c);
+        if (led >= 15) return led;
         int layer = surfaceLayer(t), best = 0;
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         for (long l : t.members()) {
@@ -155,7 +164,7 @@ public final class TankPlants {
             best = Math.max(best, level.getMaxLocalRawBrightness(p));
             if (best >= 15) break;
         }
-        return best;
+        return Math.max(led, best);
     }
 
     // ------------------------------------------------------------------ filter jets

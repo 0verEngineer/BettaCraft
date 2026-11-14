@@ -1,0 +1,73 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.5,
+            15.5,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            13.0,
+            15.5,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#housing",
+          "uv": [
+            0.5,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#housing",
+          "uv": [
+            0.0,
+            13.0,
+            15.5,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#housing",
+          "uv": [
+            0.5,
+            13.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        0,
+        13,
+        0.5
+      ],
+      "to": [
+        15.5,
+        16,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "housing": "bettacraft:block/high_power_led",
+    "panel": "bettacraft:block/high_power_led_panel_off",
+    "particle": "bettacraft:block/high_power_led",
+    "top": "bettacraft:block/high_power_led_top"
+  }
+}

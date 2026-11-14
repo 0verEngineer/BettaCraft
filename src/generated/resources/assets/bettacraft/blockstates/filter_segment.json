@@ -1,155 +1,104 @@
 {
   "variants": {
-    "facing=east,part=anchor,size=large": {
+    "facing=east,part=anchor,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=east,part=anchor,size=medium": {
+    "facing=east,part=anchor,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
+    },
+    "facing=east,part=base,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=east,part=anchor,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
+    "facing=east,part=base,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
     },
-    "facing=east,part=base,size=large": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=east,part=base,size=medium": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=east,part=base,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=east,part=middle,size=large": {
+    "facing=east,part=middle,sponge=false": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=east,part=middle,size=medium": {
+    "facing=east,part=middle,sponge=true": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=east,part=middle,size=small": {
-      "model": "bettacraft:block/filter_segment_middle"
-    },
-    "facing=east,part=top,size=large": {
+    "facing=east,part=top,sponge=false": {
       "model": "bettacraft:block/filter_segment_top_outlet",
       "y": 90
     },
-    "facing=east,part=top,size=medium": {
+    "facing=east,part=top,sponge=true": {
       "model": "bettacraft:block/filter_segment_top_outlet",
       "y": 90
     },
-    "facing=east,part=top,size=small": {
-      "model": "bettacraft:block/filter_segment_top_outlet",
-      "y": 90
-    },
-    "facing=north,part=anchor,size=large": {
+    "facing=north,part=anchor,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=north,part=anchor,size=medium": {
+    "facing=north,part=anchor,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
+    },
+    "facing=north,part=base,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=north,part=anchor,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
+    "facing=north,part=base,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
     },
-    "facing=north,part=base,size=large": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=north,part=base,size=medium": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=north,part=base,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=north,part=middle,size=large": {
+    "facing=north,part=middle,sponge=false": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=north,part=middle,size=medium": {
+    "facing=north,part=middle,sponge=true": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=north,part=middle,size=small": {
-      "model": "bettacraft:block/filter_segment_middle"
-    },
-    "facing=north,part=top,size=large": {
+    "facing=north,part=top,sponge=false": {
       "model": "bettacraft:block/filter_segment_top_outlet"
     },
-    "facing=north,part=top,size=medium": {
+    "facing=north,part=top,sponge=true": {
       "model": "bettacraft:block/filter_segment_top_outlet"
     },
-    "facing=north,part=top,size=small": {
-      "model": "bettacraft:block/filter_segment_top_outlet"
-    },
-    "facing=south,part=anchor,size=large": {
+    "facing=south,part=anchor,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=south,part=anchor,size=medium": {
+    "facing=south,part=anchor,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
+    },
+    "facing=south,part=base,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=south,part=anchor,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
+    "facing=south,part=base,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
     },
-    "facing=south,part=base,size=large": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=south,part=base,size=medium": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=south,part=base,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=south,part=middle,size=large": {
+    "facing=south,part=middle,sponge=false": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=south,part=middle,size=medium": {
+    "facing=south,part=middle,sponge=true": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=south,part=middle,size=small": {
-      "model": "bettacraft:block/filter_segment_middle"
-    },
-    "facing=south,part=top,size=large": {
+    "facing=south,part=top,sponge=false": {
       "model": "bettacraft:block/filter_segment_top_outlet",
       "y": 180
     },
-    "facing=south,part=top,size=medium": {
+    "facing=south,part=top,sponge=true": {
       "model": "bettacraft:block/filter_segment_top_outlet",
       "y": 180
     },
-    "facing=south,part=top,size=small": {
-      "model": "bettacraft:block/filter_segment_top_outlet",
-      "y": 180
-    },
-    "facing=west,part=anchor,size=large": {
+    "facing=west,part=anchor,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=west,part=anchor,size=medium": {
+    "facing=west,part=anchor,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
+    },
+    "facing=west,part=base,sponge=false": {
       "model": "bettacraft:block/filter_segment_anchor"
     },
-    "facing=west,part=anchor,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
+    "facing=west,part=base,sponge=true": {
+      "model": "bettacraft:block/filter_segment_sponge"
     },
-    "facing=west,part=base,size=large": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=west,part=base,size=medium": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=west,part=base,size=small": {
-      "model": "bettacraft:block/filter_segment_anchor"
-    },
-    "facing=west,part=middle,size=large": {
+    "facing=west,part=middle,sponge=false": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=west,part=middle,size=medium": {
+    "facing=west,part=middle,sponge=true": {
       "model": "bettacraft:block/filter_segment_middle"
     },
-    "facing=west,part=middle,size=small": {
-      "model": "bettacraft:block/filter_segment_middle"
-    },
-    "facing=west,part=top,size=large": {
+    "facing=west,part=top,sponge=false": {
       "model": "bettacraft:block/filter_segment_top_outlet",
       "y": 270
     },
-    "facing=west,part=top,size=medium": {
-      "model": "bettacraft:block/filter_segment_top_outlet",
-      "y": 270
-    },
-    "facing=west,part=top,size=small": {
+    "facing=west,part=top,sponge=true": {
       "model": "bettacraft:block/filter_segment_top_outlet",
       "y": 270
     }

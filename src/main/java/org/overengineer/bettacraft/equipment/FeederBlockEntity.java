@@ -178,6 +178,9 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         }
         if (used == 0 && !TankCare.bettas(level, tank.getTank()).isEmpty()) TankCare.log(level, tank, "log.bettacraft.feeder_empty");
         if (used > 0) org.overengineer.bettacraft.progression.Progress.awardNear(level, tank, org.overengineer.bettacraft.progression.Progress.FEEDER, used);
+        // M23: the drum clicks when it turns
+        if (used > 0) level.playSound(null, worldPosition, org.overengineer.bettacraft.registry.ModSounds.pick(org.overengineer.bettacraft.registry.ModSounds.FEEDER_CLICK,
+                org.overengineer.bettacraft.registry.ModSounds.FEEDER_CLICK_VANILLA), net.minecraft.sounds.SoundSource.BLOCKS, 0.6F, 1.0F);
         return used;
     }
 

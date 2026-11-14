@@ -48,12 +48,25 @@ public class TankLightBlock extends Block {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     /** M18: colour of the light (optics only, see {@link TankLightColors}). */
     public static final EnumProperty<DyeColor> COLOR = EnumProperty.create("color", DyeColor.class);
-    private static final int MAX_BAR = 64;
+    /** M23: dimmer step of the tank's light settings: 0 = full (light 15), 1..3 = 12, 9, 6 (states of earlier versions load as full). */
+    public static final net.minecraft.world.level.block.state.properties.IntegerProperty DIM =
+            net.minecraft.world.level.block.state.properties.IntegerProperty.create("dim", 0, 3);
+    static final int MAX_BAR = 64;
+
+    /** Light level a state gives off (M23: dimmed). */
+    public static int lightLevel(BlockState s) {
+        return s.getValue(LIT) ? 15 - 3 * s.getValue(DIM) : 0;
+    }
+
+    /** M23: the extra light of this kind of light over the bar (0 for the bar), see {@link org.overengineer.bettacraft.tank.TankLighting}. */
+    public double boost() {
+        return 0;
+    }
 
     public TankLightBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(AXIS, Direction.Axis.X).setValue(NEG, false).setValue(POS, false)
-                .setValue(HANGING, false).setValue(LIT, true).setValue(POWERED, false).setValue(COLOR, DyeColor.WHITE));
+                .setValue(HANGING, false).setValue(LIT, true).setValue(POWERED, false).setValue(COLOR, DyeColor.WHITE).setValue(DIM, 0));
     }
 
     @Override
@@ -63,7 +76,7 @@ public class TankLightBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) {
-        b.add(AXIS, NEG, POS, HANGING, LIT, POWERED, COLOR);
+        b.add(AXIS, NEG, POS, HANGING, LIT, POWERED, COLOR, DIM);
     }
 
     /** M18: a dye colours the whole bar (one dye for the bar); a bar that already has the colour keeps the dye. */
@@ -134,7 +147,8 @@ public class TankLightBlock extends Block {
     }
 
     private static boolean joins(BlockState self, BlockState other) {
-        return other.getBlock() instanceof TankLightBlock && other.getValue(AXIS) == self.getValue(AXIS)
+        // M23: only the same kind of light (a bar never joins an LED panel)
+        return other.getBlock() == self.getBlock() && other.getValue(AXIS) == self.getValue(AXIS)
                 && other.getValue(HANGING) == self.getValue(HANGING);
     }
 
@@ -163,10 +177,10 @@ public class TankLightBlock extends Block {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         super.onRemove(state, level, pos, newState, moving);
         if (!level.isClientSide && !newState.is(this)) {
-            Direction neg = Direction.fromAxisAndDirection(state.getValue(AXIS), Direction.AxisDirection.NEGATIVE);
-            for (Direction d : new Direction[]{neg, neg.getOpposite()}) {
+            for (Direction d : Direction.Plane.HORIZONTAL) {
                 BlockPos n = pos.relative(d);
-                if (level.getBlockState(n).getBlock() instanceof TankLightBlock) level.scheduleTick(n, this, 1);
+                Block b = level.getBlockState(n).getBlock();
+                if (b instanceof TankLightBlock) level.scheduleTick(n, b, 1);
             }
         }
     }
@@ -180,10 +194,14 @@ public class TankLightBlock extends Block {
         List<BlockPos> bar = bar(level, pos, state);
         boolean anyPowered = false;
         for (BlockPos p : bar) anyPowered |= level.getBlockState(p).getValue(POWERED);
-        boolean lit = !anyPowered && org.overengineer.bettacraft.tank.TankPower.lightHasPower(level, bar);
+        // M23: the daylight timer and the dimmer of the tank below
+        int[] timer = org.overengineer.bettacraft.tank.TankLighting.fixtureState(level, bar);
+        boolean lit = !anyPowered && org.overengineer.bettacraft.tank.TankPower.lightHasPower(level, bar) && timer[0] > 0;
+        int dim = timer[1];
         for (BlockPos p : bar) {
             BlockState s = level.getBlockState(p);
-            if (s.getValue(LIT) != lit) level.setBlock(p, s.setValue(LIT, lit), Block.UPDATE_CLIENTS);
+            if (!(s.getBlock() instanceof TankLightBlock)) continue;
+            if (s.getValue(LIT) != lit || s.getValue(DIM) != dim) level.setBlock(p, s.setValue(LIT, lit).setValue(DIM, dim), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -193,7 +211,14 @@ public class TankLightBlock extends Block {
         return false;
     }
 
+    /** The connected blocks of the light (bar: along its axis; M23: the panels and high-power LEDs have their own shapes). */
     public static List<BlockPos> bar(Level level, BlockPos pos, BlockState state) {
+        if (state.getBlock() instanceof TankLightBlock t) return t.fixture(level, pos, state);
+        return List.of(pos);
+    }
+
+    /** All blocks of the light this block belongs to. */
+    protected List<BlockPos> fixture(Level level, BlockPos pos, BlockState state) {
         List<BlockPos> out = new ArrayList<>();
         out.add(pos);
         Direction neg = Direction.fromAxisAndDirection(state.getValue(AXIS), Direction.AxisDirection.NEGATIVE);

@@ -67,7 +67,11 @@ public final class TankReef {
         TankData t = c.getTank();
         if (t.waterMb() <= 0 || !c.filterPowered()) return 0;
         double pump = ServerConfig.getOr(ServerConfig.REEF_PUMP_BLOCKS, 24);
-        double moved = pumps(level, t) * pump + TankEquipment.filters(level, c).size() * pump / 3 + TankWater.internalFilters(level, t) * pump / 6;
+        // M23: by the power regulators (corner filters like internal ones)
+        double ext = 0;
+        for (var f : TankEquipment.filters(level, c)) ext += f.powerShare();
+        double[] in = TankWater.interiorShares(level, t);
+        double moved = in[2] * pump + ext * pump / 3 + (in[0] + in[1]) * pump / 6;
         return flow(moved, t.waterBlocks());
     }
 

@@ -47,7 +47,10 @@ public final class IrisLightColors {
     /** Adds the lit light states with the id of their reference block; returns how many. */
     static int alias(Object2IntMap<BlockState> ids) {
         int n = 0;
-        for (BlockState s : ModBlocks.TANK_LIGHT.get().getStateDefinition().getPossibleStates()) {
+        java.util.List<BlockState> all = new java.util.ArrayList<>(ModBlocks.TANK_LIGHT.get().getStateDefinition().getPossibleStates());
+        all.addAll(ModBlocks.LED_PANEL.get().getStateDefinition().getPossibleStates()); // M23
+        all.addAll(ModBlocks.HIGH_POWER_LED.get().getStateDefinition().getPossibleStates());
+        for (BlockState s : all) {
             if (!s.getValue(TankLightBlock.LIT) || ids.containsKey(s)) continue;
             BlockState ref = reference(s.getValue(TankLightBlock.COLOR));
             if (ref == null || !ids.containsKey(ref)) continue;

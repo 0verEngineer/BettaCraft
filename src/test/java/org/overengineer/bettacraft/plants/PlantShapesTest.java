@@ -131,7 +131,9 @@ class PlantShapesTest {
         assertTrue(brightness(flamingoStrong) > brightness(flamingoWeak), "Flamingo brighter in strong light");
         assertTrue(brightness(flamingoWeak) > 150, "Flamingo whitish");
         assertEquals(0, PlantColors.tintFor(8));
-        assertEquals(3, PlantColors.tintFor(15));
+        // M23: the light bar (15) gives the second deepest red, an LED panel or high-power LED (16 and more) the deepest
+        assertEquals(2, PlantColors.tintFor(15));
+        assertEquals(3, PlantColors.tintFor(17));
     }
 
     private static int brightness(int c) {

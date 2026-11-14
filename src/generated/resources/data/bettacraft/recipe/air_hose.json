@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "K": {
+      "item": "minecraft:dried_kelp"
+    }
+  },
+  "pattern": [
+    "K",
+    "K",
+    "K"
+  ],
+  "result": {
+    "count": 4,
+    "id": "bettacraft:air_hose"
+  }
+}

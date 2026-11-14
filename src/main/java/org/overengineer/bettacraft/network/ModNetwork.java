@@ -24,6 +24,7 @@ public final class ModNetwork {
         r.playToServer(InteriorRequestPayload.TYPE, InteriorRequestPayload.STREAM_CODEC, ModNetwork::onInteriorRequest);
         r.playToClient(TankViewPayload.TYPE, TankViewPayload.STREAM_CODEC, ModNetwork::onTankView);
         r.playToServer(TankActionPayload.TYPE, TankActionPayload.STREAM_CODEC, ModNetwork::onTankAction);
+        r.playToServer(RegulatorPayload.TYPE, RegulatorPayload.STREAM_CODEC, ModNetwork::onRegulator); // M23
         r.playToClient(GeneticsSyncPayload.TYPE, GeneticsSyncPayload.STREAM_CODEC, ModNetwork::onGenetics);
         r.playToClient(TankPlantsPayload.TYPE, TankPlantsPayload.STREAM_CODEC, ModNetwork::onTankPlants);
         r.playToClient(TankCrittersPayload.TYPE, TankCrittersPayload.STREAM_CODEC, ModNetwork::onTankCritters);
@@ -94,6 +95,13 @@ public final class ModNetwork {
         if (FMLEnvironment.dist.isClient()) {
             ctx.enqueueWork(() -> org.overengineer.bettacraft.client.interior.InteriorLeaveHud.accept(payload));
         }
+    }
+
+    private static void onRegulator(RegulatorPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer sp)
+                org.overengineer.bettacraft.equipment.Regulator.apply(sp, payload.pos(), payload.value(), !payload.relative());
+        });
     }
 
     private static void onTankAction(TankActionPayload payload, IPayloadContext ctx) {

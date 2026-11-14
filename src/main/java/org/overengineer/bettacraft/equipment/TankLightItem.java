@@ -36,6 +36,6 @@ public class TankLightItem extends BlockItem {
     public Component getName(ItemStack stack) {
         DyeColor c = colorOf(stack);
         if (c == DyeColor.WHITE) return super.getName(stack);
-        return Component.translatable("block.bettacraft.tank_light.colored", Component.translatable("color.minecraft." + c.getName()));
+        return Component.translatable(getDescriptionId() + ".colored", Component.translatable("color.minecraft." + c.getName()));
     }
 }
