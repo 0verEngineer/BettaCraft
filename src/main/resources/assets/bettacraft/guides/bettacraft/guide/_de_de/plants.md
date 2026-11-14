@@ -34,6 +34,25 @@ Aquarium sieht man sie als Teil der Miniatur hinter dem Glas. Jede Pflanze sieht
 | <ItemImage id="bettacraft:vallisneria" /> | [Vallisneria](plants/vallisneria.md) | Bänder mit Ausläufern | mittel | etwa 2,5 Tage |
 | <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](plants/monte_carlo.md) | Bodendecker | sehr viel | etwa 3 Tage |
 | <ItemImage id="bettacraft:red_tiger_lotus" /> | [Roter Tigerlotus](plants/red_tiger_lotus.md) | Knolle mit Schwimmblättern | mittel | etwa 6 Tage |
+| <ItemImage id="bettacraft:anubias_nana_petite" /> | [Anubias nana „Petite“](plants/anubias_nana_petite.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 30 Tage |
+| <ItemImage id="bettacraft:anubias_pinto" /> | [Anubias „Pinto“](plants/anubias_pinto.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 32 Tage |
+| <ItemImage id="bettacraft:anubias_white" /> | [Anubias „White“](plants/anubias_white.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 30 Tage |
+| <ItemImage id="bettacraft:anubias_coffeefolia" /> | [Anubias coffeefolia](plants/anubias_coffeefolia.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 25 Tage |
+| <ItemImage id="bettacraft:anubias_barteri_round_leaf" /> | [Anubias barteri „Round Leaf“](plants/anubias_barteri_round_leaf.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 28 Tage |
+| <ItemImage id="bettacraft:bucephalandra_kedagang" /> | [Bucephalandra „Kedagang“](plants/bucephalandra_kedagang.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 22 Tage |
+| <ItemImage id="bettacraft:bucephalandra_theia" /> | [Bucephalandra „Theia“](plants/bucephalandra_theia.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 20 Tage |
+| <ItemImage id="bettacraft:bucephalandra_godzilla" /> | [Bucephalandra „Godzilla“](plants/bucephalandra_godzilla.md) | Aufsitzerpflanze (Rhizom) | wenig | etwa 24 Tage |
+| <ItemImage id="bettacraft:bucephalandra_pink_lady" /> | [Bucephalandra „Pink Lady“](plants/bucephalandra_pink_lady.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 24 Tage |
+| <ItemImage id="bettacraft:bucephalandra_mini_pink" /> | [Bucephalandra „Mini Pink“](plants/bucephalandra_mini_pink.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 22 Tage |
+| <ItemImage id="bettacraft:bucephalandra_snow_white" /> | [Bucephalandra „Snow White“](plants/bucephalandra_snow_white.md) | Aufsitzerpflanze (Rhizom) | mittel | etwa 26 Tage |
+| <ItemImage id="bettacraft:ludwigia_super_red" /> | [Ludwigia „Super Red“](plants/ludwigia_super_red.md) | Stängelpflanze | viel | etwa 3,5 Tage |
+| <ItemImage id="bettacraft:rotala_hra" /> | [Rotala „H'ra“](plants/rotala_hra.md) | Stängelpflanze | viel | etwa 3 Tage |
+| <ItemImage id="bettacraft:rotala_wallichii" /> | [Rotala wallichii](plants/rotala_wallichii.md) | Stängelpflanze | sehr viel | etwa 3,5 Tage |
+| <ItemImage id="bettacraft:hygrophila_pinnatifida" /> | [Hygrophila pinnatifida](plants/hygrophila_pinnatifida.md) | Stängelpflanze | mittel | etwa 5 Tage |
+| <ItemImage id="bettacraft:pogostemon_helferi" /> | [Pogostemon helferi „Downoi“](plants/pogostemon_helferi.md) | Stängelpflanze | viel | etwa 6 Tage |
+| <ItemImage id="bettacraft:limnophila_sessiliflora" /> | [Limnophila sessiliflora](plants/limnophila_sessiliflora.md) | Stängelpflanze | mittel | etwa 2,5 Tage |
+| <ItemImage id="bettacraft:myriophyllum_red" /> | [Myriophyllum „Red“](plants/myriophyllum_red.md) | Stängelpflanze | viel | etwa 3 Tage |
+| <ItemImage id="bettacraft:bacopa_caroliniana" /> | [Bacopa caroliniana](plants/bacopa_caroliniana.md) | Stängelpflanze | mittel | etwa 4 Tage |
 
 ## In diesem Kapitel
 

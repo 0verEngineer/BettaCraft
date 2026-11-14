@@ -31,9 +31,9 @@ Monte Carlo (*Micranthemum tweediei*) from Argentina: a carpet of tiny round lea
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.2–1.4 % per swing (about 1 in 69–83 swings) (config `features.plantNetCatches`).
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.5–1.8 % per swing (about 1 in 56–67 swings) (config `features.plantNetCatches`).
-* **Fishing** in rivers: 0.18 % per catch (about 1 in 570 catches), instead of the fish.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.96–1.2 % per swing (about 1 in 87–104 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.2–1.4 % per swing (about 1 in 72–87 swings) (config `features.plantNetCatches`).
+* **Fishing** in rivers: 0.15 % per catch (about 1 in 685 catches), instead of the fish.
 * **Wandering trader** (usual offers): 2 for 1 emerald.
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 

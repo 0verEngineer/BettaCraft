@@ -32,8 +32,8 @@ Java moss (*Taxiphyllum barbieri*) from South-East Asia: fine green sprigs that 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.9–1.1 % per swing (about 1 in 93–111 swings) (config `features.plantNetCatches`).
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.9–1.1 % per swing (about 1 in 93–111 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.72–0.86 % per swing (about 1 in 116–139 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.74–0.89 % per swing (about 1 in 113–136 swings) (config `features.plantNetCatches`).
 * **Shears** on a moss block next to water: 50 % per cut.
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim.
 

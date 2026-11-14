@@ -33,8 +33,8 @@ item_ids:
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.9–1.1 % per swing (about 1 in 93–111 swings) (config `features.plantNetCatches`).
-* **Fishing** in swamps: 1 % per catch (about 1 in 96 catches), instead of the fish.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.69–0.83 % per swing (about 1 in 120–144 swings) (config `features.plantNetCatches`).
+* **Fishing** in swamps: 0.85 % per catch (about 1 in 117 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 1.2 % per catch (about 1 in 85 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 1.1 % per bottle, along with the water.
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; it also spreads by itself (runners).

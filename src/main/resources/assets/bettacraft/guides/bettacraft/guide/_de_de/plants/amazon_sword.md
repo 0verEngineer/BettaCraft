@@ -32,9 +32,9 @@ Die Amazonas-Schwertpflanze (*Echinodorus grisebachii* „Bleherae“) aus Süda
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,6–0,72 % pro Schwung (etwa 1 von 139–167 Schwüngen) (Config `features.plantNetCatches`).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 2,7–3,2 % pro Schwung (etwa 1 von 31–37 Schwüngen) (Config `features.plantNetCatches`).
-* **Angeln** in Dschungelgewässern: 0,43 % pro Fang (etwa 1 von 230 Fängen), statt des Fischs.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,48–0,58 % pro Schwung (etwa 1 von 174–208 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 2,2–2,7 % pro Schwung (etwa 1 von 38–45 Schwüngen) (Config `features.plantNetCatches`).
+* **Angeln** in Dschungelgewässern: 0,37 % pro Fang (etwa 1 von 270 Fängen), statt des Fischs.
 * **Fahrender Händler** (übliche Angebote): 1 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
 

@@ -414,7 +414,10 @@ M22_2_FLOATING = {"duckweed", "amazon_frogbit", "salvinia", "red_root_floater"}
 M22_2_FISH = {"ocellaris_clownfish", "yellow_tang", "yellow_watchman_goby", "green_chromis", "yellowtail_damsel", "lined_seahorse", "dwarf_seahorse"}
 # plants and corals that reach up through the tank (the others sit low: a closer crop)
 M22_2_TALL = {"java_fern", "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "red_tiger_lotus",
-              "acropora", "hammer_coral"}
+              "acropora", "hammer_coral",
+              # M28 part a: the new stem plants (Downoi stays low)
+              "ludwigia_super_red", "rotala_hra", "rotala_wallichii", "hygrophila_pinnatifida", "limnophila_sessiliflora", "myriophyllum_red",
+              "bacopa_caroliniana"}
 
 
 def m22_2(out_en: Path) -> None:

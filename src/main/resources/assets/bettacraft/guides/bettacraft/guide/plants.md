@@ -34,6 +34,25 @@ part of the miniature behind the glass. Every plant looks a little different.
 | <ItemImage id="bettacraft:vallisneria" /> | [Vallisneria](plants/vallisneria.md) | ribbons with runners | medium | about 2.5 days |
 | <ItemImage id="bettacraft:monte_carlo" /> | [Monte Carlo](plants/monte_carlo.md) | carpet | very strong | about 3 days |
 | <ItemImage id="bettacraft:red_tiger_lotus" /> | [Red Tiger Lotus](plants/red_tiger_lotus.md) | bulb with floating leaves | medium | about 6 days |
+| <ItemImage id="bettacraft:anubias_nana_petite" /> | [Anubias Nana 'Petite'](plants/anubias_nana_petite.md) | epiphyte (rhizome) | low | about 30 days |
+| <ItemImage id="bettacraft:anubias_pinto" /> | [Anubias 'Pinto'](plants/anubias_pinto.md) | epiphyte (rhizome) | low | about 32 days |
+| <ItemImage id="bettacraft:anubias_white" /> | [Anubias 'White'](plants/anubias_white.md) | epiphyte (rhizome) | medium | about 30 days |
+| <ItemImage id="bettacraft:anubias_coffeefolia" /> | [Anubias Coffeefolia](plants/anubias_coffeefolia.md) | epiphyte (rhizome) | low | about 25 days |
+| <ItemImage id="bettacraft:anubias_barteri_round_leaf" /> | [Anubias Barteri 'Round Leaf'](plants/anubias_barteri_round_leaf.md) | epiphyte (rhizome) | low | about 28 days |
+| <ItemImage id="bettacraft:bucephalandra_kedagang" /> | [Bucephalandra 'Kedagang'](plants/bucephalandra_kedagang.md) | epiphyte (rhizome) | low | about 22 days |
+| <ItemImage id="bettacraft:bucephalandra_theia" /> | [Bucephalandra 'Theia'](plants/bucephalandra_theia.md) | epiphyte (rhizome) | low | about 20 days |
+| <ItemImage id="bettacraft:bucephalandra_godzilla" /> | [Bucephalandra 'Godzilla'](plants/bucephalandra_godzilla.md) | epiphyte (rhizome) | low | about 24 days |
+| <ItemImage id="bettacraft:bucephalandra_pink_lady" /> | [Bucephalandra 'Pink Lady'](plants/bucephalandra_pink_lady.md) | epiphyte (rhizome) | medium | about 24 days |
+| <ItemImage id="bettacraft:bucephalandra_mini_pink" /> | [Bucephalandra 'Mini Pink'](plants/bucephalandra_mini_pink.md) | epiphyte (rhizome) | medium | about 22 days |
+| <ItemImage id="bettacraft:bucephalandra_snow_white" /> | [Bucephalandra 'Snow White'](plants/bucephalandra_snow_white.md) | epiphyte (rhizome) | medium | about 26 days |
+| <ItemImage id="bettacraft:ludwigia_super_red" /> | [Ludwigia 'Super Red'](plants/ludwigia_super_red.md) | stem plant | strong | about 3.5 days |
+| <ItemImage id="bettacraft:rotala_hra" /> | [Rotala 'H'ra'](plants/rotala_hra.md) | stem plant | strong | about 3 days |
+| <ItemImage id="bettacraft:rotala_wallichii" /> | [Rotala Wallichii](plants/rotala_wallichii.md) | stem plant | very strong | about 3.5 days |
+| <ItemImage id="bettacraft:hygrophila_pinnatifida" /> | [Hygrophila Pinnatifida](plants/hygrophila_pinnatifida.md) | stem plant | medium | about 5 days |
+| <ItemImage id="bettacraft:pogostemon_helferi" /> | [Pogostemon Helferi 'Downoi'](plants/pogostemon_helferi.md) | stem plant | strong | about 6 days |
+| <ItemImage id="bettacraft:limnophila_sessiliflora" /> | [Limnophila Sessiliflora](plants/limnophila_sessiliflora.md) | stem plant | medium | about 2.5 days |
+| <ItemImage id="bettacraft:myriophyllum_red" /> | [Myriophyllum 'Red'](plants/myriophyllum_red.md) | stem plant | strong | about 3 days |
+| <ItemImage id="bettacraft:bacopa_caroliniana" /> | [Bacopa Caroliniana](plants/bacopa_caroliniana.md) | stem plant | medium | about 4 days |
 
 ## In this chapter
 
