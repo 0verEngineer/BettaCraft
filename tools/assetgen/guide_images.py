@@ -487,6 +487,27 @@ def m25c(out_en: Path, out_de: Path) -> None:
             print("missing", src)
 
 
+# M26 part a (DevClientSmokeM26, -Psmoketestm26): the live food cultures with the pump, the pump window (en, de)
+M26_WORLD = {"live_food_cultures": ("bettacraft_m26_cultures", (150, 280, 1050, 540))}
+M26_MENU = ("bettacraft_m26_pump", "bettacraft_m26_pump_de", (464, 368, 816, 592))
+
+
+def m26(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M26_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    en, de, box = M26_MENU
+    for shot, out in ((en, out_en), (de, out_de)):
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out / "live_food_pump_menu.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -501,6 +522,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m26"]:
+        m26(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m25c"]:
         m25c(out_en, out_de)
         return 0

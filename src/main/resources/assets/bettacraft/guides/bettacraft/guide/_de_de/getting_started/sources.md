@@ -58,6 +58,8 @@ die [Biom-Tags](../settings.md)).
 * [Turmdeckelschnecke](../invertebrates/trumpet_snail.md): Schaufel auf Schlamm in Sümpfen (8 %).
 * [Turmdeckelschnecke](../invertebrates/trumpet_snail.md): Schaufel auf Schlamm in Mangrovensümpfen (8 %).
 * [Mückenlarven](../food.md): Schlamm abbauen in Sümpfen (4 %).
+* [Tubifex](../food/tubifex_dish.md): Schlamm abbauen in Sümpfen (5 %).
+* [Daphnien](../food/daphnia_barrel.md): Glasflasche mit Wasser in Sümpfen (8 %).
 * [Artemia-Zysten](../food/fry_food.md): Sand abbauen (2 %).
 * [Betta](../bettas.md): spawnt in Sümpfen (Spawn-Gewicht 8).
 * [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md): spawnt in Flüssen (Spawn-Gewicht 3).

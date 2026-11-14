@@ -26,7 +26,9 @@ Medien verschmutzen, während der Filter läuft, schneller mit mehr Fischen (`mu
 Filter-Fenster zeigen den Schmutz; ein verstopfter Schwamm oder verstopfte Keramik reinigt noch ein Fünftel.
 
 **Reinigen:** Mit einem schmutzigen Schwamm oder Keramikröhrchen einen **Wasserkessel** rechtsklicken: das Medium ist
-ausgewaschen, der Kessel verliert eine Stufe. Kohle und Torf werden nicht gereinigt: frische einsetzen.
+ausgewaschen, der Kessel verliert eine Stufe. Kohle und Torf werden nicht gereinigt: frische einsetzen. Ein Medium, das zu
+einem Viertel oder mehr verschmutzt war, hinterlässt <ItemLink id="bettacraft:mulm" /> (zwei ab drei Vierteln): Futter für
+die [Tubifex-Zuchtschale](../food/tubifex_dish.md).
 
 ## Bezug
 

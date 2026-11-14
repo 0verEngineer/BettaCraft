@@ -171,6 +171,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.readmeonly', 'true'
                 if (project.hasProperty('readmeroom')) systemProperty 'bettacraft.readme.roomonly', 'true'
             }
+            if (project.hasProperty('smoketestm26')) {
+                // gradlew runClient -Psmoketestm26 : only the M26 part a scene (tubifex dish, daphnia barrel, live food pump feeding a
+                // tank through glass pipes, its window en + de)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m26only', 'true'
+            }
             if (project.hasProperty('smoketestm25c')) {
                 // gradlew runClient -Psmoketestm25c : only the M25 part c scene (Caridina lines in soft water, cardinal shrimp and
                 // Tylomelania in hard water, the dosing pump at a reef tank with its window en + de)

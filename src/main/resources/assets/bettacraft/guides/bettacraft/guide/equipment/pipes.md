@@ -42,6 +42,9 @@ regulator](regulator.md). Redstone stops it. With `pipes.pumpsRequireEnergy` it 
 An aquarium block takes water from a pipe on any side. From **below**, a floor block with a
 [bulkhead](bulkhead.md) lets it in through outlets you place inside the aquarium.
 
+Pipes also carry **live food**: a [live food pump](../food/live_food_pump.md) next to a breeder pushes live food
+suspension through them into the tanks.
+
 ## Obtaining
 
 Crafting:

@@ -36,13 +36,18 @@ Bettas need food at least **once a day**. A fish counts as hungry one day after 
 |---|---|---|
 | Betta pellets | up to 4 bettas | everyday food from the juvenile stage on |
 | Mosquito larvae | up to 4 bettas | live food: a breeding pair gets in the mood twice as fast |
+| [Tubifex](food/tubifex_dish.md) | up to 4 bettas | live food: conditions twice as long as the others |
+| [Daphnia](food/daphnia_barrel.md) | up to 4 bettas | live food, also for tankmates, frogs and seahorses |
 | [Infusoria, artemia nauplii](food/fry_food.md) | 20 fry | only for fry |
 
 ## Feeding
 
 * **By hand:** right-click the aquarium with the food. The food particles sink and the bettas swim to them. The
   hungriest fish eat first. If nobody in the aquarium eats that food, you get a message and keep it.
-* **Automatically:** an [aquarium feeder](equipment/feeder.md) on the aquarium feeds 1 to 3 times a day.
+* **Automatically:** an [aquarium feeder](equipment/feeder.md) on the aquarium feeds 1 to 3 times a day. The animals
+  prefer live food: the feeder gives live food first and the rest only to those that have not eaten yet.
+* **Live food through pipes:** a [live food pump](food/live_food_pump.md) next to a breeder pumps live food into the
+  tanks on a schedule.
 
 Overfeeding does no harm.
 

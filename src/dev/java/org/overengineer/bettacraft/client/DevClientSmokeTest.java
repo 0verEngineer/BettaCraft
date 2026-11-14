@@ -101,6 +101,8 @@ final class DevClientSmokeTest {
     private static final boolean README_ONLY = Boolean.getBoolean("bettacraft.smoketest.readmeonly");
     private static DevClientSmokeReadme readme;
     private static DevClientSmokeM25c m25c;
+    private static final boolean M26_ONLY = Boolean.getBoolean("bettacraft.smoketest.m26only");
+    private static DevClientSmokeM26 m26;
     private static DevClientSmokeM25 m25;
     private static DevClientSmokeM24 m24;
     /** -Psmoketestm22_4: only the M22.4 scene (the four outlet sides of the cabinet filter, the cabinet menu, the handbook plant sources). */
@@ -184,6 +186,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M26_ONLY) {
+                if (ticks == 60) m26 = new DevClientSmokeM26();
+                if (m26 != null && m26.tick()) {
+                    m26 = null;
+                    LOGGER.info("[smoketest] client world test finished (M26 only)");
                     mc.stop();
                 }
                 return;

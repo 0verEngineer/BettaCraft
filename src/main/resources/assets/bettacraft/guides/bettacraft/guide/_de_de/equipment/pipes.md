@@ -42,6 +42,9 @@ Redstone hält sie an. Mit `pipes.pumpsRequireEnergy` braucht sie FE (`pumpFePer
 Ein Aquariumblock nimmt Wasser aus einem Rohr an jeder Seite. Von **unten** lässt ein Bodenblock mit
 [Bodendurchführung](bulkhead.md) es durch Ausläufe herein, die du im Aquarium setzt.
 
+Rohre tragen auch **Lebendfutter**: eine [Lebendfutter-Pumpe](../food/live_food_pump.md) neben einer Zuchtanlage drückt
+Lebendfutter-Suspension durch sie in die Becken.
+
 ## Bezug
 
 Herstellung:

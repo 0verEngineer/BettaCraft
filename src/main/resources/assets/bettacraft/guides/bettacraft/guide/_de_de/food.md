@@ -36,13 +36,18 @@ Bettas brauchen mindestens **einmal am Tag** Futter. Hungrig ist ein Fisch einen
 |---|---|---|
 | Betta-Pellets | bis zu 4 Bettas | Alltagsfutter ab Juvenil |
 | Mückenlarven | bis zu 4 Bettas | Lebendfutter: Ein Zuchtpaar kommt doppelt so schnell in Stimmung |
+| [Tubifex](food/tubifex_dish.md) | bis zu 4 Bettas | Lebendfutter: konditioniert doppelt so lange wie das übrige |
+| [Daphnien](food/daphnia_barrel.md) | bis zu 4 Bettas | Lebendfutter, auch für Beifische, Frösche und Seepferdchen |
 | [Infusorien, Artemia-Nauplien](food/fry_food.md) | 20 Jungfische | nur für Jungfische |
 
 ## Füttern
 
 * **Von Hand:** Rechtsklicke das Aquarium mit dem Futter. Die Futterteilchen sinken ab und die Bettas schwimmen hin. Die
   hungrigsten Fische fressen zuerst. Frisst niemand im Aquarium dieses Futter, bekommst du eine Meldung und behältst es.
-* **Automatisch:** Ein [Futterautomat](equipment/feeder.md) auf dem Aquarium füttert 1- bis 3-mal am Tag.
+* **Automatisch:** Ein [Futterautomat](equipment/feeder.md) auf dem Aquarium füttert 1- bis 3-mal am Tag. Die Tiere
+  mögen Lebendfutter lieber: der Automat gibt zuerst Lebendfutter und den Rest nur denen, die noch nichts bekommen haben.
+* **Lebendfutter durch Rohre:** Eine [Lebendfutter-Pumpe](food/live_food_pump.md) neben einer Zuchtanlage pumpt nach
+  Zeitplan Lebendfutter in die Becken.
 
 Überfüttern schadet nicht.
 

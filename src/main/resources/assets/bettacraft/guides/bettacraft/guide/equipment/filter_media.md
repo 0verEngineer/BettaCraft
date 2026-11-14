@@ -26,7 +26,8 @@ Media get dirty while the filter runs, faster with more fish (`multiblockFilter.
 filter's screen show the dirt; a clogged sponge or ceramic still cleans a fifth.
 
 **Cleaning:** right-click a **water cauldron** with a dirty sponge or ceramic rings: it is washed clean and the
-cauldron loses one level. Carbon and peat are not cleaned: put in fresh ones.
+cauldron loses one level. Carbon and peat are not cleaned: put in fresh ones. A medium that was a quarter dirty or
+more leaves <ItemLink id="bettacraft:mulm" /> (two from three quarters): food for the [tubifex dish](../food/tubifex_dish.md).
 
 ## Obtaining
 
