@@ -1,0 +1,174 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#top"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#front"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        11,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#hopper"
+        },
+        "east": {
+          "texture": "#hopper"
+        },
+        "north": {
+          "texture": "#hopper"
+        },
+        "south": {
+          "texture": "#hopper"
+        },
+        "up": {
+          "texture": "#hopper"
+        },
+        "west": {
+          "texture": "#hopper"
+        }
+      },
+      "from": [
+        4,
+        11,
+        4
+      ],
+      "to": [
+        12,
+        15,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#crank"
+        },
+        "east": {
+          "texture": "#crank"
+        },
+        "north": {
+          "texture": "#crank"
+        },
+        "south": {
+          "texture": "#crank"
+        },
+        "up": {
+          "texture": "#crank"
+        },
+        "west": {
+          "texture": "#crank"
+        }
+      },
+      "from": [
+        14,
+        5,
+        7
+      ],
+      "to": [
+        15,
+        7,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#crank"
+        },
+        "east": {
+          "texture": "#crank"
+        },
+        "north": {
+          "texture": "#crank"
+        },
+        "south": {
+          "texture": "#crank"
+        },
+        "up": {
+          "texture": "#crank"
+        },
+        "west": {
+          "texture": "#crank"
+        }
+      },
+      "from": [
+        15,
+        6,
+        7.5
+      ],
+      "to": [
+        16,
+        10.5,
+        8.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#knob"
+        },
+        "east": {
+          "texture": "#knob"
+        },
+        "north": {
+          "texture": "#knob"
+        },
+        "south": {
+          "texture": "#knob"
+        },
+        "up": {
+          "texture": "#knob"
+        },
+        "west": {
+          "texture": "#knob"
+        }
+      },
+      "from": [
+        16,
+        9,
+        7
+      ],
+      "to": [
+        17.5,
+        11,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "crank": "bettacraft:block/food_maker_crank",
+    "front": "bettacraft:block/food_maker_front",
+    "hopper": "bettacraft:block/food_maker_hopper",
+    "knob": "bettacraft:block/food_maker_knob",
+    "particle": "bettacraft:block/food_maker_side",
+    "side": "bettacraft:block/food_maker_side",
+    "top": "bettacraft:block/food_maker_top"
+  }
+}

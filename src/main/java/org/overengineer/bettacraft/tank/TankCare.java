@@ -275,6 +275,14 @@ public final class TankCare {
     public static int feed(ServerLevel level, TankBlockEntity controller, ItemStack food, int maxItems, @Nullable java.util.Set<java.util.UUID> round) {
         BettaFood.Kind kind = BettaFood.kind(food);
         if (kind == null || maxItems <= 0) return 0;
+        // M26 part b: shrimp food goes to the shrimp, crayfish and snails only (twice the food of a leftover)
+        if (food.is(org.overengineer.bettacraft.registry.ModTags.CRITTER_FOOD)) {
+            if (!org.overengineer.bettacraft.critters.TankCritters.wantFood(controller.getTank())) return 0;
+            org.overengineer.bettacraft.critters.TankCritters.addFood(controller.getTank(),
+                    BettaFood.FISH_PER_FOOD * ServerConfig.getOr(ServerConfig.DIET_SHRIMP_FOOD_FACTOR, 2.0));
+            log(level, controller, "log.bettacraft.critters_fed", "@" + food.getDescriptionId());
+            return 1;
+        }
         // M19: algae wafers sink straight to the bottom fish (the bettas do not eat them)
         boolean wafer = org.overengineer.bettacraft.tankmates.TankmateFeeding.bottomFood(food);
         List<BettaEntity> fish = wafer ? new ArrayList<>() : eaters(level, controller.getTank(), kind);
@@ -298,7 +306,9 @@ public final class TankCare {
             BettaEntity b = fish.get(i);
             if (b.health().daysSinceFed() < OVERFED_DAYS) overfed++;
             b.health().feed();
-            org.overengineer.bettacraft.food.LiveFood.eaten(food, b.health(), b.breeding(), b.isAdult()); // M26: tubifex, poor cultures
+            org.overengineer.bettacraft.food.LiveFood.eaten(food, b.health(), b.breeding(), b.isAdult(),
+                    org.overengineer.bettacraft.food.FoodDiet.Diet.BETTA); // M26: tubifex, poor cultures; part b: the diet
+            b.syncDiet();
             if (round != null) round.add(b.getUUID());
         }
         if (fed > 0) log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
@@ -317,6 +327,7 @@ public final class TankCare {
     public static boolean anyoneEats(ServerLevel level, TankData tank, ItemStack food) {
         BettaFood.Kind kind = BettaFood.kind(food);
         if (kind == null) return false;
+        if (food.is(org.overengineer.bettacraft.registry.ModTags.CRITTER_FOOD)) return org.overengineer.bettacraft.critters.TankCritters.wantFood(tank);
         boolean wafer = org.overengineer.bettacraft.tankmates.TankmateFeeding.bottomFood(food);
         if (!wafer && !eaters(level, tank, kind).isEmpty()) return true;
         if (!org.overengineer.bettacraft.tankmates.TankmateFeeding.eaters(level, tank, kind, wafer).isEmpty()) return true;

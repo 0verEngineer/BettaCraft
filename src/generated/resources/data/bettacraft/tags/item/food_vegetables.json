@@ -1,0 +1,12 @@
+{
+  "values": [
+    "minecraft:carrot",
+    "minecraft:pumpkin",
+    "minecraft:melon_slice",
+    "minecraft:beetroot",
+    {
+      "id": "#c:foods/vegetable",
+      "required": false
+    }
+  ]
+}

@@ -82,11 +82,13 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
     @Override
     public void registerCategories(mezz.jei.api.registration.IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new CrucibleJei(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new FoodMakerJei(registration.getJeiHelpers().getGuiHelper())); // M26 part b
     }
 
     @Override
     public void registerRecipeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(ModItems.CRUCIBLE.get()), CrucibleJei.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModItems.FOOD_MAKER.get()), FoodMakerJei.TYPE);
     }
 
     @Override
@@ -96,6 +98,8 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         if (mcLevel != null) {
             registration.addRecipes(CrucibleJei.TYPE, mcLevel.getRecipeManager().getAllRecipesFor(org.overengineer.bettacraft.registry.ModRecipes.CRUCIBLE_TYPE.get())
                     .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
+            registration.addRecipes(FoodMakerJei.TYPE, org.overengineer.bettacraft.food.FoodMakerBlockEntity.recipes(mcLevel.getRecipeManager())
+                    .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList()); // M26 part b
         }
         for (String path : ItemHints.ITEMS) {
             Item item = BuiltInRegistries.ITEM.get(BettaCraft.id(path));

@@ -1441,6 +1441,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 hp > 0.5F ? 0xFF50C050 : 0xFFD04040);
         y += 9;
         bar(g, x, y, Component.translatable("gui.bettacraft.fish.satiation"), sel.satiation(), 0xFFD0A040);
+        dietTooltip(sel.tankmate().getCompound("diet"), x, y, mx, my); // M26 part b
         y += 10;
         var gt = sel.genotype();
         int top = y;
@@ -1468,6 +1469,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     }
 
     /** M19: a tankmate: species or variety, sex and stage, health, food, its shoal, temperature range, stress and breeding state. */
+    /** M26 part b: hovering the food bar shows how varied the diet was lately. */
+    private void dietTooltip(net.minecraft.nbt.CompoundTag diet, int x, int y, int mx, int my) {
+        if (diet.isEmpty() || mx < x || mx >= x + 124 || my < y || my >= y + 9) return;
+        List<Component> l = new java.util.ArrayList<>();
+        l.add(Component.translatable("gui.bettacraft.fish.diet", diet.getInt("n")));
+        if (diet.getBoolean("varied")) l.add(Component.translatable("gui.bettacraft.fish.diet_varied").withStyle(ChatFormatting.GREEN));
+        else if (diet.getInt("need") > 0) l.add(Component.translatable("gui.bettacraft.fish.diet_need", diet.getInt("need")).withStyle(ChatFormatting.GRAY));
+        pendingTooltip = l;
+    }
+
     private void drawTankmate(GuiGraphics g, TankView.Inhabitant sel, int x, int y, int mx, int my) {
         CompoundTag d = sel.tankmate();
         var s = org.overengineer.bettacraft.tankmates.TankmateSpecies.byId(d.getString("species"));
@@ -1511,6 +1522,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         bar(g, x, y, Component.translatable(sel.sick() ? "gui.bettacraft.fish.sick" : "gui.bettacraft.fish.health"), hp, hp > 0.5F ? 0xFF50C050 : 0xFFD04040);
         y += 9;
         bar(g, x, y, Component.translatable("gui.bettacraft.fish.satiation"), sel.satiation(), 0xFFD0A040);
+        dietTooltip(d.getCompound("diet"), x, y, mx, my); // M26 part b
         y += 11;
         int stress = d.getInt("stress");
         if (s.shoaling()) {

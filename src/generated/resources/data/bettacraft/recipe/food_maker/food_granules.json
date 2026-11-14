@@ -1,0 +1,21 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 1,
+      "item": "minecraft:spider_eye"
+    },
+    {
+      "count": 2,
+      "item": "minecraft:wheat"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:dried_kelp"
+    }
+  ],
+  "result": {
+    "count": 12,
+    "id": "bettacraft:food_granules"
+  }
+}

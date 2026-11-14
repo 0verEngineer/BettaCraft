@@ -66,10 +66,11 @@ public final class TankmateFeeding {
         double share = ServerConfig.getOr(ServerConfig.TANKMATES_BOTTOM_SHARE, 0.6);
         // M21.8: slow seahorses next to fast eaters (bettas, midwater fish)
         double seahorseShare = ServerConfig.getOr(ServerConfig.SEAHORSE_FAST_SHARE, 0.35);
+        boolean sinks = !food.isEmpty() && org.overengineer.bettacraft.food.FoodDiet.sinks(food); // M26 part b: granules sink to them
         int used = 0, overfed = 0;
         for (TankmateEntity m : list) {
             if (used >= portions) break;
-            if (!wafer && bottomFish(m) && midwater && level.getRandom().nextDouble() >= share) continue;
+            if (!wafer && !sinks && bottomFish(m) && midwater && level.getRandom().nextDouble() >= share) continue;
             if (m.species().seahorse() && midwater && level.getRandom().nextDouble() >= seahorseShare) continue;
 
             double overfedDays = m.species().seahorse() ? TankCare.OVERFED_DAYS / Math.max(1.0, ServerConfig.getOr(ServerConfig.SEAHORSE_FEEDINGS, 2.0))
@@ -80,7 +81,8 @@ public final class TankmateFeeding {
             if (food.isEmpty()) {
                 if (kind == BettaFood.Kind.LIVE && m.isAdult()) m.breeding().condition();
             } else {
-                org.overengineer.bettacraft.food.LiveFood.eaten(food, m.health(), m.breeding(), m.isAdult());
+                org.overengineer.bettacraft.food.LiveFood.eaten(food, m.health(), m.breeding(), m.isAdult(),
+                        org.overengineer.bettacraft.food.FoodDiet.of(m.species())); // M26 part b: the diet of the species
             }
             if (round != null) round.add(m.getUUID());
             used++;

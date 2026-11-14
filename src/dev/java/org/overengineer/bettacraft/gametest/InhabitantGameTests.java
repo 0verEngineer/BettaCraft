@@ -284,7 +284,8 @@ public final class InhabitantGameTests {
         b.saveToBucketTag(bucket);
         CompoundTag bucketTag = bucket.get(DataComponents.BUCKET_ENTITY_DATA).copyTag();
         h.assertTrue(nbt.getCompound(BettaData.KEY).equals(bucketTag.getCompound(BettaData.KEY)), "same data under key 'betta'");
-        h.assertTrue(BettaData.load(nbt.getCompound(BettaData.KEY)).equals(bucket.get(ModDataComponents.FISH_DATA.get())), "component equals NBT");
+        // M26 part b: compared as saved (the raw tag of the record keeps the health of the insertion, save() replaces it)
+        h.assertTrue(BettaData.load(nbt.getCompound(BettaData.KEY)).save().equals(bucket.get(ModDataComponents.FISH_DATA.get()).save()), "component equals NBT");
         h.succeed();
     }
 

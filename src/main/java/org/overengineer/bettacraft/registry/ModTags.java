@@ -39,6 +39,16 @@ public final class ModTags {
     public static final TagKey<Item> TUBIFEX_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("tubifex_food"));
     /** M26: what feeds a daphnia barrel (yeast, green water). */
     public static final TagKey<Item> DAPHNIA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("daphnia_food"));
+    /** M26 part b: frozen food (live food frozen with ice): eaten like live food, but not pumped. */
+    public static final TagKey<Item> FROZEN_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("frozen_food"));
+    /** M26 part b: food only the shrimp, crayfish and snails eat (shrimp food). */
+    public static final TagKey<Item> CRITTER_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("critter_food"));
+    /** M26 part b: food that sinks to the bottom fish (granules, wafers): they get their share even next to fast fish. */
+    public static final TagKey<Item> SINKING_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("sinking_food"));
+    /** M26 part b: vegetables for the food maker (carrot, pumpkin, melon, beetroot, {@code #c:foods/vegetable}). */
+    public static final TagKey<Item> FOOD_VEGETABLES = TagKey.create(Registries.ITEM, BettaCraft.id("food_vegetables"));
+    /** M26 part b: ice for frozen food (ice, packed ice, blue ice, snow blocks). */
+    public static final TagKey<Item> FREEZING_ICE = TagKey.create(Registries.ITEM, BettaCraft.id("freezing_ice"));
     public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "buckets/entity_water"));
 
     /** Never accepted in tanks. */

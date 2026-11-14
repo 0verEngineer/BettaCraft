@@ -169,6 +169,16 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue LIVE_FOOD_POOR_STRESS;
     public static final ModConfigSpec.DoubleValue LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE;
     public static final ModConfigSpec.IntValue LIVE_FOOD_PUMP_FE;
+    // M26 part b: the food maker and the food variety
+    public static final ModConfigSpec.IntValue FOOD_MAKER_TICKS;
+    public static final ModConfigSpec.IntValue FOOD_MAKER_SPRING_TICKS;
+    public static final ModConfigSpec.IntValue FOOD_MAKER_WINDS;
+    public static final ModConfigSpec.IntValue FOOD_MAKER_FE;
+    public static final ModConfigSpec.DoubleValue DIET_VARIETY_DAYS;
+    public static final ModConfigSpec.IntValue DIET_VARIETY_GROUPS;
+    public static final ModConfigSpec.DoubleValue DIET_VARIETY_RECOVERY;
+    public static final ModConfigSpec.DoubleValue DIET_POOR_FED_DAYS;
+    public static final ModConfigSpec.DoubleValue DIET_SHRIMP_FOOD_FACTOR;
 
     // misc
     public static final ModConfigSpec.BooleanValue SIMULATE_UNLOADED_TIME;
@@ -684,6 +694,29 @@ public final class ServerConfig {
                 .defineInRange("bottleDaphniaChance", 0.08, 0.0, 1.0);
         LIVE_FOOD_PUMP_FE = b.comment("FE the live food pump needs per portion while pipes.pumpsRequireEnergy is on")
                 .defineInRange("pumpFePerPortion", 200, 0, 100000);
+        b.pop();
+
+        b.comment("M26 part b: the food maker (features.foodMaker): a spring wound by hand, or FE while a power option is on")
+                .push("foodMaking");
+        FOOD_MAKER_TICKS = b.comment("Ticks the food maker needs for one batch").defineInRange("ticksPerBatch", 200, 1, 72000);
+        FOOD_MAKER_SPRING_TICKS = b.comment("Ticks of work a fully wound spring gives (24000 = one in-game day)")
+                .defineInRange("springTicks", 24000, 20, 1000000);
+        FOOD_MAKER_WINDS = b.comment("Sneak + right-clicks with an empty hand that wind the spring fully").defineInRange("windsToFull", 8, 1, 64);
+        FOOD_MAKER_FE = b.comment("FE per tick the food maker takes while it works and a power option is on (then it has no spring)")
+                .defineInRange("makerFePerTick", 10, 0, 100000);
+        b.pop();
+
+        b.comment("M26 part b: food variety (features.foodVariety): food groups, favourite and poor food of each diet (item tags",
+                "#bettacraft:diet/<diet>/favourite and /poor)").push("diet");
+        DIET_VARIETY_DAYS = b.comment("In-game days a fish remembers what it ate").defineInRange("varietyDays", 3.0, 0.1, 30.0);
+        DIET_VARIETY_GROUPS = b.comment("Food groups (pellets, flakes, granules, wafers, frozen, live) a fish must have eaten in that time for a varied diet")
+                .defineInRange("varietyGroups", 3, 1, 6);
+        DIET_VARIETY_RECOVERY = b.comment("How many times as fast a fish with a varied diet recovers from stress and sickness")
+                .defineInRange("varietyRecovery", 1.5, 1.0, 10.0);
+        DIET_POOR_FED_DAYS = b.comment("A meal of a food that suits the species badly counts as eaten this many days ago (it is hungry again sooner)")
+                .defineInRange("poorFoodFedDays", 0.5, 0.0, 10.0);
+        DIET_SHRIMP_FOOD_FACTOR = b.comment("Shrimp food gives the shrimp, crayfish and snails this many times the food of a leftover pellet")
+                .defineInRange("shrimpFoodFactor", 2.0, 0.1, 20.0);
         b.pop();
 
         b.comment("Shrimp, dwarf crayfish and snails: small animals that live in a tank as data (no entities)").push("invertebrates");

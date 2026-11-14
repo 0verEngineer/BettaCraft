@@ -49,7 +49,9 @@ public final class ItemHints {
             // M25 part d
             "active_soil",
             // M26 part a: live food cultures and the live food pump
-            "tubifex", "daphnia", "mulm", "green_water_culture", "green_water_bottle", "tubifex_dish", "daphnia_barrel", "live_food_pump");
+            "tubifex", "daphnia", "mulm", "green_water_culture", "green_water_bottle", "tubifex_dish", "daphnia_barrel", "live_food_pump",
+            // M26 part b: the food maker and its foods
+            "food_maker", "fish_flakes", "food_granules", "shrimp_food", "frozen_mosquito_larvae", "frozen_artemia", "frozen_daphnia");
 
     private ItemHints() {}
 

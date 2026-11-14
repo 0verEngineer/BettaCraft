@@ -126,6 +126,9 @@ public final class ModCreativeTabs {
                 // M26: live food cultures and the live food pump
                 for (var it : java.util.List.of(ModItems.TUBIFEX, ModItems.MULM, ModItems.TUBIFEX_DISH, ModItems.DAPHNIA, ModItems.GREEN_WATER_CULTURE,
                         ModItems.GREEN_WATER_BOTTLE, ModItems.DAPHNIA_BARREL, ModItems.LIVE_FOOD_PUMP)) out.accept(it.get());
+                // M26 part b: the food maker and its foods
+                for (var it : java.util.List.of(ModItems.FOOD_MAKER, ModItems.FISH_FLAKES, ModItems.FOOD_GRANULES, ModItems.SHRIMP_FOOD,
+                        ModItems.FROZEN_MOSQUITO_LARVAE, ModItems.FROZEN_ARTEMIA, ModItems.FROZEN_DAPHNIA)) out.accept(it.get());
                 // M20: salt water and the reef technique
                 out.accept(ModItems.SEA_WATER_BUCKET.get());
                 out.accept(ModItems.SEA_SALT.get());

@@ -1,0 +1,25 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 1,
+      "tag": "bettacraft:pellet_fish"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:wheat"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:kelp"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:sugar"
+    }
+  ],
+  "result": {
+    "count": 12,
+    "id": "bettacraft:fish_flakes"
+  }
+}

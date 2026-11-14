@@ -294,6 +294,11 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.food.LiveFoodPumpBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    /** M26 part b: makes fish food from vanilla ingredients and live food (wound spring or FE). */
+    public static final DeferredBlock<org.overengineer.bettacraft.food.FoodMakerBlock> FOOD_MAKER = BLOCKS.register("food_maker",
+            () -> new org.overengineer.bettacraft.food.FoodMakerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(2.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)

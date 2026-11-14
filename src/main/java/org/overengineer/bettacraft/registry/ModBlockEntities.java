@@ -97,6 +97,10 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.food.LiveFoodPumpBlockEntity>> LIVE_FOOD_PUMP = BLOCK_ENTITIES.register("live_food_pump",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.food.LiveFoodPumpBlockEntity::new, ModBlocks.LIVE_FOOD_PUMP.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.food.FoodMakerBlockEntity>> FOOD_MAKER = BLOCK_ENTITIES.register("food_maker",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.food.FoodMakerBlockEntity::new, ModBlocks.FOOD_MAKER.get()).build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

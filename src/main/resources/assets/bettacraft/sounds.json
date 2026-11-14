@@ -78,6 +78,18 @@
       {"name": "bettacraft:block/feeder/click2", "volume": 0.8}
     ]
   },
+  "block.food_maker.wind": {
+    "subtitle": "subtitles.bettacraft.block.food_maker.wind",
+    "sounds": [
+      {"name": "bettacraft:block/feeder/click1", "volume": 0.9, "pitch": 0.8}
+    ]
+  },
+  "block.food_maker.wind_vanilla": {
+    "subtitle": "subtitles.bettacraft.block.food_maker.wind",
+    "sounds": [
+      {"name": "minecraft:random/click", "volume": 0.35, "pitch": 1.2}
+    ]
+  },
   "block.feeder.click_vanilla": {
     "subtitle": "subtitles.bettacraft.block.feeder.click",
     "sounds": [

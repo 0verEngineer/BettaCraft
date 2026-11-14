@@ -143,6 +143,12 @@ public final class BettaCraft {
                 (be, side) -> be.bottleHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.LIVE_FOOD_PUMP.get(),
                 (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
+        // M26 part b: the food maker (ingredients in from every side, the food out; FE while a power option is on): hoppers,
+        // pipes and AE2 / RS buses, interfaces and pattern providers use it without special code
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FOOD_MAKER.get(),
+                (be, side) -> be.automation());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.FOOD_MAKER.get(),
+                (be, side) -> org.overengineer.bettacraft.food.FoodMakerBlockEntity.powered() ? be.energy() : null);
         // M9 tank water from pipes (fresh water in, used water out) and FE for the equipment (power.* config):
         // any tank block, an attached external filter, a cabinet under the tank or a light on it; only offered while the
         // server config needs power (no misleading energy bars in info mods otherwise)

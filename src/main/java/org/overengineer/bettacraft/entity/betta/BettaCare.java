@@ -39,7 +39,8 @@ public final class BettaCare {
                 ServerConfig.getOr(ServerConfig.HEALTH_DAYS_SICK_UNTIL_DEATH, 14.0),
                 ServerConfig.getOr(ServerConfig.HEALTH_BOTH_BAD_MULTIPLIER, 2.0),
                 ServerConfig.getOr(ServerConfig.HEALTH_RECOVERY_PER_DAY, 2.0),
-                ServerConfig.getOr(ServerConfig.HEALTH_HUNGRY_AFTER_DAYS, 1.0)); // M17: configurable
+                ServerConfig.getOr(ServerConfig.HEALTH_HUNGRY_AFTER_DAYS, 1.0), // M17: configurable
+                org.overengineer.bettacraft.food.FoodDiet.params()); // M26 part b: a varied diet
     }
 
     static void serverTick(ServerLevel level, BettaEntity fish) {
@@ -100,6 +101,7 @@ public final class BettaCare {
             default -> {}
         }
         if (wasSick != fish.health.isSick()) fish.syncLook();
+        fish.syncDiet(); // M26 part b
         fish.breeding.tick(days);
 
         boolean fed = !fish.health.isHungry(p);

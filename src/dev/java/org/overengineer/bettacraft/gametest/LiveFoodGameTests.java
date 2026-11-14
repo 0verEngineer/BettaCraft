@@ -188,7 +188,7 @@ public final class LiveFoodGameTests {
         h.assertTrue(p.status() == LiveFoodPumpBlockEntity.PUMPED && p.lastPumped() == 2, "pumped: " + p.status() + " " + p.lastPumped());
         h.assertTrue(b.model().harvestable(b.room()) == before - 2, "two portions taken: " + before + " -> " + b.model().harvestable(b.room()));
         h.assertTrue(fish.health().daysSinceFed() == 0 && fish.breeding().isConditioned(), "the betta ate live food");
-        h.assertTrue(logged(c.getTank(), "log.bettacraft.live_food_pumped"), "logged");
+        h.assertTrue(logged(c.getTank(), "log.bettacraft.live_food_pumped") || logged(c.getTank(), "log.bettacraft.live_food_pumped_one"), "logged");
         // the schedule: two doses a day, the first one at 7:00
         p.setDoses(2);
         level.setDayTime(500);

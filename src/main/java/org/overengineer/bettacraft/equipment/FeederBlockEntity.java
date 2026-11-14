@@ -50,6 +50,8 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     private int feedingsPerDay = 1;
     private long lastEvent = Long.MIN_VALUE;
     private double virtualCredit;
+    /** M26 part b: the slot the next feeding starts with (it turns on, so different foods take turns: a varied diet). */
+    private int turn;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -144,14 +146,17 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         int used = 0;
         // M26: the animals prefer live food: it goes first (from the feeder, then from the cabinets), then the rest
         java.util.List<CabinetBlockEntity> cabinets = org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, tank);
+        int first = -1;
         for (boolean live : new boolean[]{true, false}) {
-            for (int i = 0; i < slots; i++) {
+            for (int k = 0; k < slots; k++) {
+                int i = (k + turn) % slots;
                 ItemStack s = items.getStackInSlot(i);
                 if (s.isEmpty() || !s.is(ModTags.BETTA_FOOD) || s.is(ModTags.LIVE_FOOD) != live) continue;
                 int n = TankCare.feed(level, tank, s, s.getCount(), fed);
                 if (n > 0) {
                     items.extractItem(i, n, false);
                     used += n;
+                    if (first < 0) first = i;
                 }
             }
             // then food stored in the cabinets under the tank (PLAN 6.5)
@@ -167,6 +172,10 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
                     }
                 }
             }
+        }
+        if (first >= 0 && slots > 1) {
+            turn = (first + 1) % slots;
+            setChanged();
         }
         // M12: under a dense cover of floating plants some food stays on the leaves: it costs food and rots in the water
         int stuck = org.overengineer.bettacraft.tank.plants.TankPlants.pelletsOnLeaves(tank.getTank(), used, level.getRandom()::nextLong);
@@ -232,6 +241,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         tag.putInt("feedings", feedingsPerDay);
         tag.putLong("last_event", lastEvent);
         tag.putDouble("credit", virtualCredit);
+        if (turn != 0) tag.putInt("turn", turn); // M26 part b
     }
 
     @Override
@@ -243,5 +253,6 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         lastEvent = tag.contains("last_event") ? tag.getLong("last_event") : Long.MIN_VALUE;
         double credit = tag.getDouble("credit");
         virtualCredit = Double.isFinite(credit) ? Math.max(0, Math.min(1, credit)) : 0;
+        turn = Math.floorMod(tag.getInt("turn"), Math.max(1, slots));
     }
 }

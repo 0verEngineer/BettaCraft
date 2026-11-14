@@ -205,7 +205,7 @@ public final class Seahorses {
     public static BettaHealth.Params params(BettaHealth.Params p) {
         double feedings = ServerConfig.getOr(ServerConfig.SEAHORSE_FEEDINGS, 2.0);
         if (feedings <= 1.0) return p;
-        return new BettaHealth.Params(p.daysUntilSick(), p.daysSickUntilDeath(), p.bothBadMultiplier(), p.recoveryPerDay(), p.hungryAfterDays() / feedings);
+        return new BettaHealth.Params(p.daysUntilSick(), p.daysSickUntilDeath(), p.bothBadMultiplier(), p.recoveryPerDay(), p.hungryAfterDays() / feedings, p.diet());
     }
 
     // ------------------------------------------------------------------ tankmates

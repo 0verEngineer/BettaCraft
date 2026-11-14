@@ -34,7 +34,7 @@ final class DataGenM26 {
     private DataGenM26() {}
 
     static List<Block> blocks() {
-        return List.of(ModBlocks.TUBIFEX_DISH.get(), ModBlocks.DAPHNIA_BARREL.get(), ModBlocks.LIVE_FOOD_PUMP.get());
+        return List.of(ModBlocks.TUBIFEX_DISH.get(), ModBlocks.DAPHNIA_BARREL.get(), ModBlocks.LIVE_FOOD_PUMP.get(), ModBlocks.FOOD_MAKER.get());
     }
 
     static void blockStates(BlockStateProvider p) {
@@ -48,6 +48,7 @@ final class DataGenM26 {
         pump.element().from(3, 0, 3).to(13, 9, 13).allFaces((d, f) -> f.texture(d == Direction.NORTH || d == Direction.SOUTH ? "#front"
                 : d.getAxis().isVertical() ? "#top" : "#side")).end();
         p.simpleBlock(ModBlocks.LIVE_FOOD_PUMP.get(), pump);
+        DataGenM26b.blockStates(p); // M26 part b
     }
 
     /** A shallow terracotta dish (1..15 x 0..5) with mud, stale water and the worms on the mud. */
@@ -110,6 +111,7 @@ final class DataGenM26 {
         p.withExistingParent("tubifex_dish", p.modLoc("block/tubifex_dish_mud_water_2"));
         p.withExistingParent("daphnia_barrel", p.modLoc("block/daphnia_barrel_water_2"));
         p.withExistingParent("live_food_pump", p.modLoc("block/live_food_pump"));
+        DataGenM26b.itemModels(p); // M26 part b
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
@@ -127,10 +129,11 @@ final class DataGenM26 {
                 .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(Items.BONE_MEAL)
                 .unlockedBy("has_swamp_water", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SWAMP_WATER_BOTTLE.get()))
                 .save(out, BettaCraft.id("green_water_culture"));
+        DataGenM26b.recipes(out, hasTank); // M26 part b
     }
 
     static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
-        tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.TUBIFEX_DISH.get(), ModBlocks.LIVE_FOOD_PUMP.get());
+        tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.TUBIFEX_DISH.get(), ModBlocks.LIVE_FOOD_PUMP.get(), ModBlocks.FOOD_MAKER.get());
         tag.apply(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.DAPHNIA_BARREL.get());
     }
 
@@ -140,5 +143,6 @@ final class DataGenM26 {
         tag.apply(ModTags.CONDITIONING_FOOD).add(ModItems.TUBIFEX.get());
         tag.apply(ModTags.TUBIFEX_FOOD).add(ModItems.MULM.get());
         tag.apply(ModTags.DAPHNIA_FOOD).add(ModItems.YEAST.get(), ModItems.GREEN_WATER_BOTTLE.get());
+        DataGenM26b.itemTags(tag); // M26 part b
     }
 }

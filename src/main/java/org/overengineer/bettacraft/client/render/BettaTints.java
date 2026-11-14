@@ -55,6 +55,10 @@ public final class BettaTints {
             sat *= SICK_SATURATION;
             val *= SICK_BRIGHTNESS;
         }
+        if (f.isVaried() && !f.isSick()) { // M26 part b: a varied diet shows in the colours
+            sat = Math.min(1.0F, sat * 1.12F);
+            val *= 1.03F;
+        }
         if (f.isFlaring()) {
             sat = Math.min(1.0F, sat * 1.25F + 0.05F);
             val *= 1.08F;

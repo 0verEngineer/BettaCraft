@@ -1,0 +1,17 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 1,
+      "item": "minecraft:egg"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:wheat"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:fry_powder"
+  }
+}

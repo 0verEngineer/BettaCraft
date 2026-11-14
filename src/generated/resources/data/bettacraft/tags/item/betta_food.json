@@ -6,6 +6,12 @@
     "bettacraft:artemia_nauplii",
     "bettacraft:tubifex",
     "bettacraft:daphnia",
+    "bettacraft:fish_flakes",
+    "bettacraft:food_granules",
+    "bettacraft:shrimp_food",
+    "bettacraft:frozen_mosquito_larvae",
+    "bettacraft:frozen_artemia",
+    "bettacraft:frozen_daphnia",
     {
       "id": "fintastic:regular_feed",
       "required": false

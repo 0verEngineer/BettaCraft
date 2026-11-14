@@ -106,9 +106,17 @@ public final class TankView {
     public record LogLine(long time, String key, List<String> args) {}
 
     /** M19: what the animals tab shows of a tankmate. */
+    /** M26 part b: the diet of a betta (in the details tag; it has no "species", so it is no tankmate). */
+    static CompoundTag bettaDetails(BettaEntity b) {
+        CompoundTag d = new CompoundTag();
+        if (org.overengineer.bettacraft.config.CommonConfig.foodVariety()) d.put("diet", org.overengineer.bettacraft.food.FoodDiet.info(b.health()));
+        return d;
+    }
+
     static CompoundTag tankmateDetails(TankData t, org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
         var s = m.species();
         CompoundTag d = new CompoundTag();
+        if (org.overengineer.bettacraft.config.CommonConfig.foodVariety()) d.put("diet", org.overengineer.bettacraft.food.FoodDiet.info(m.health())); // M26 part b
         d.putString("species", s.id());
         d.putString("variety", m.variety());
         boolean known = org.overengineer.bettacraft.genetics.GeneVisibility.visible(m.analysed()); // M22.3: the alleles only once analysed
@@ -868,7 +876,7 @@ public final class TankView {
                         round(h.healthFraction(p)), round(h.satiation(p)), h.isSick(), true, b.genome(),
                         org.overengineer.bettacraft.genetics.GeneVisibility.visible(b.getBettaData().analysed()) ? b.genotype() : BettaGenotype.homozygous(b.genome()),
                         round(b.getHealth() / b.getMaxHealth()), round((float) b.stageProgress()), b.getBettaData().generation(), false, 0F, false,
-                        new CompoundTag(), b.getBettaData().analysed(), org.overengineer.bettacraft.genetics.GeneVisibility.visible(b.getBettaData().analysed()));
+                        bettaDetails(b), b.getBettaData().analysed(), org.overengineer.bettacraft.genetics.GeneVisibility.visible(b.getBettaData().analysed()));
             } else if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity f) {
                 // M14: frogs have needs (food, air at the surface)
                 float hp = round(f.getHealth() / f.getMaxHealth());

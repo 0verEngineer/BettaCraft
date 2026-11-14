@@ -304,6 +304,17 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> DAPHNIA_BARREL = ITEMS.registerSimpleBlockItem(ModBlocks.DAPHNIA_BARREL);
     public static final DeferredItem<BlockItem> LIVE_FOOD_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.LIVE_FOOD_PUMP);
 
+    // M26 part b: the food maker and its foods
+    public static final DeferredItem<BlockItem> FOOD_MAKER = ITEMS.registerSimpleBlockItem(ModBlocks.FOOD_MAKER);
+    /** Flakes: float at the surface (the midwater fish like them, the bottom fish hardly get any). */
+    public static final DeferredItem<Item> FISH_FLAKES = ITEMS.registerSimpleItem("fish_flakes");
+    /** Granules: sink slowly (the bottom fish get their share). */
+    public static final DeferredItem<Item> FOOD_GRANULES = ITEMS.registerSimpleItem("food_granules");
+    public static final DeferredItem<Item> SHRIMP_FOOD = ITEMS.registerSimpleItem("shrimp_food");
+    public static final DeferredItem<Item> FROZEN_MOSQUITO_LARVAE = ITEMS.registerSimpleItem("frozen_mosquito_larvae");
+    public static final DeferredItem<Item> FROZEN_ARTEMIA = ITEMS.registerSimpleItem("frozen_artemia");
+    public static final DeferredItem<Item> FROZEN_DAPHNIA = ITEMS.registerSimpleItem("frozen_daphnia");
+
     private static DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> canister(String id, org.overengineer.bettacraft.reef.ReefDosing.Additive a) {
         return ITEMS.register(id, () -> new org.overengineer.bettacraft.reef.DosingCanisterItem(a, new Item.Properties().stacksTo(a == null ? 16 : 1)));
     }

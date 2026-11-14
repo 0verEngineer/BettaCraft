@@ -1,0 +1,21 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 1,
+      "item": "minecraft:kelp"
+    },
+    {
+      "count": 1,
+      "tag": "bettacraft:food_vegetables"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:bone_meal"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:shrimp_food"
+  }
+}

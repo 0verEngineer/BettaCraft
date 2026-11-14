@@ -1,0 +1,17 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 4,
+      "item": "bettacraft:mosquito_larvae"
+    },
+    {
+      "count": 1,
+      "tag": "bettacraft:freezing_ice"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "bettacraft:frozen_mosquito_larvae"
+  }
+}

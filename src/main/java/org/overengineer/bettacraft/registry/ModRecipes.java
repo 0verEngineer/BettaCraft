@@ -33,6 +33,12 @@ public final class ModRecipes {
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.crucible.CrucibleRecipe>> CRUCIBLE = SERIALIZERS.register("crucible",
             org.overengineer.bettacraft.crucible.CrucibleRecipe.Serializer::new);
 
+    // M26 part b: the food maker
+    public static final Supplier<net.minecraft.world.item.crafting.RecipeType<org.overengineer.bettacraft.food.FoodMakerRecipe>> FOOD_MAKER_TYPE =
+            TYPES.register("food_maker", () -> net.minecraft.world.item.crafting.RecipeType.simple(BettaCraft.id("food_maker")));
+    public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.food.FoodMakerRecipe>> FOOD_MAKER = SERIALIZERS.register("food_maker",
+            org.overengineer.bettacraft.food.FoodMakerRecipe.Serializer::new);
+
     public static void register(IEventBus bus) {
         SERIALIZERS.register(bus);
         TYPES.register(bus);

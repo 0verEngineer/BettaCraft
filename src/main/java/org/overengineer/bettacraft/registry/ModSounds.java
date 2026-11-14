@@ -34,6 +34,9 @@ public final class ModSounds {
     public static final Supplier<SoundEvent> FLOW_PUMP_WHIR_VANILLA = register("block.flow_pump.whir_vanilla");
     public static final Supplier<SoundEvent> FEEDER_CLICK = register("block.feeder.click");
     public static final Supplier<SoundEvent> FEEDER_CLICK_VANILLA = register("block.feeder.click_vanilla");
+    /** M26 part b: the ratchet of the food maker's spring (the feeder's ratchet ticks, lower). */
+    public static final Supplier<SoundEvent> FOOD_MAKER_WIND = register("block.food_maker.wind");
+    public static final Supplier<SoundEvent> FOOD_MAKER_WIND_VANILLA = register("block.food_maker.wind_vanilla");
 
     /** M23: the own sound or its Minecraft twin, by {@code sounds.useVanilla} (of the side that plays it). */
     public static SoundEvent pick(Supplier<SoundEvent> own, Supplier<SoundEvent> vanilla) {

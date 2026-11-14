@@ -28,7 +28,8 @@ public final class BettaFood {
         if (stack.isEmpty()) return null;
         if (stack.is(ModTags.FRY_FOOD_START)) return Kind.FRY_START;
         if (stack.is(ModTags.FRY_FOOD)) return Kind.FRY;
-        if (stack.is(ModTags.LIVE_FOOD)) return Kind.LIVE;
+        if (stack.is(ModTags.LIVE_FOOD) || stack.is(ModTags.FROZEN_FOOD)) return Kind.LIVE; // M26 part b: frozen food like live food
+        if (stack.is(ModTags.CRITTER_FOOD)) return Kind.NORMAL; // M26 part b: shrimp food (only the small animals eat it)
         if (stack.is(ModTags.BOTTOM_FOOD)) return Kind.NORMAL; // M19: algae wafers (only the bottom fish eat them)
         if (stack.is(ModTags.BETTA_FOOD)) return Kind.NORMAL;
         return null;

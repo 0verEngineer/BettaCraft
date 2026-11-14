@@ -1,0 +1,21 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 2,
+      "item": "minecraft:dried_kelp"
+    },
+    {
+      "count": 1,
+      "tag": "bettacraft:food_vegetables"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:wheat"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:algae_wafer"
+  }
+}

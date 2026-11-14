@@ -54,7 +54,9 @@ public class BettaEntity extends AbstractFish {
     /** Bit 0: flaring, bit 1: breeding colours (female bars). */
     private static final EntityDataAccessor<Byte> DATA_FLAGS = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.BYTE);
     private static final ResourceLocation SICK_SLOW = BettaCraft.id("sick_slowness");
-    public static final int FLAG_FLARE = 1, FLAG_MOOD = 2;
+    public static final int FLAG_FLARE = 1, FLAG_MOOD = 2, FLAG_VARIED = 4;
+    /** M26 part b: a varied diet (stronger colours), server side; synced in the flags. */
+    boolean varied;
 
     private BettaData data;
     BettaHealth health = new BettaHealth();
@@ -297,6 +299,16 @@ public class BettaEntity extends AbstractFish {
         return (entityData.get(DATA_FLAGS) & FLAG_MOOD) != 0;
     }
 
+    /** M26 part b: a varied diet (client: synced flag); the colours are a little stronger. */
+    public boolean isVaried() {
+        return (entityData.get(DATA_FLAGS) & FLAG_VARIED) != 0;
+    }
+
+    /** M26 part b: recomputes the varied-diet flag (server, after a meal and in the care step). */
+    public void syncDiet() {
+        varied = health.varied(org.overengineer.bettacraft.food.FoodDiet.params());
+    }
+
     public BettaHealth health() {
         return health;
     }
@@ -443,7 +455,7 @@ public class BettaEntity extends AbstractFish {
         if (level() instanceof ServerLevel server && isAlive()) {
             BettaCare.serverTick(server, this);
             long now = server.getGameTime();
-            byte flags = (byte) ((now < flareUntil ? FLAG_FLARE : 0) | (now < moodUntil ? FLAG_MOOD : 0));
+            byte flags = (byte) ((now < flareUntil ? FLAG_FLARE : 0) | (now < moodUntil ? FLAG_MOOD : 0) | (varied ? FLAG_VARIED : 0));
             if (flags != entityData.get(DATA_FLAGS)) entityData.set(DATA_FLAGS, flags);
         }
     }

@@ -21,9 +21,25 @@ public final class BettaHealth {
     static final double MAX_STEP_DAYS = 0.02;
 
     public record Params(double daysUntilSick, double daysSickUntilDeath, double bothBadMultiplier, double recoveryPerDay,
-                         double hungryAfterDays) {
+                         double hungryAfterDays, Diet diet) {
         public static final Params DEFAULT = new Params(7, 14, 2, 2, 1);
+
+        public Params(double daysUntilSick, double daysSickUntilDeath, double bothBadMultiplier, double recoveryPerDay, double hungryAfterDays) {
+            this(daysUntilSick, daysSickUntilDeath, bothBadMultiplier, recoveryPerDay, hungryAfterDays, Diet.DEFAULT);
+        }
     }
+
+    /**
+     * M26 part b: a varied diet. A fish that ate {@code groups} different food groups within the last {@code windowDays}
+     * recovers {@code recovery} times as fast from stress and sickness.
+     */
+    public record Diet(double windowDays, int groups, double recovery) {
+        public static final Diet DEFAULT = new Diet(3, 3, 1.5);
+        public static final Diet OFF = new Diet(0, Integer.MAX_VALUE, 1);
+    }
+
+    /** M26 part b: food groups a fish remembers (pellets, flakes, granules, wafers, frozen, live food ...). */
+    public static final int FOOD_GROUPS = 8;
 
     /**
      * @param salt M20: salt shock per day from the wrong salinity (0 = the salinity is fine; 1 = deadly within a day,
@@ -56,14 +72,42 @@ public final class BettaHealth {
     double saltShock;
     boolean sick;
     double sickDays;
+    /** M26 part b: days since the fish last ate food of each group (infinite = not within the last month). */
+    final double[] ateAgo = new double[FOOD_GROUPS];
 
-    public BettaHealth() {}
+    public BettaHealth() {
+        java.util.Arrays.fill(ateAgo, Double.POSITIVE_INFINITY);
+    }
 
     // ------------------------------------------------------------------ logic
 
     public void feed() {
         daysSinceFed = 0;
         foodStress = 0;
+    }
+
+    /** M26 part b: an unsuitable food: fed, but hungry again {@code hungryAfter} minus {@code daysFedAgo} days later. */
+    public void feedPoorly(double daysFedAgo) {
+        feed();
+        daysSinceFed = Math.max(0, daysFedAgo);
+        foodStress = daysSinceFed;
+    }
+
+    /** M26 part b: the fish ate food of this group (index of {@link org.overengineer.bettacraft.food.FoodDiet.Group}). */
+    public void ate(int group) {
+        if (group >= 0 && group < FOOD_GROUPS) ateAgo[group] = 0;
+    }
+
+    /** M26 part b: how many food groups the fish ate within the last {@code windowDays}. */
+    public int variety(double windowDays) {
+        int n = 0;
+        for (double d : ateAgo) if (d < windowDays) n++;
+        return n;
+    }
+
+    /** M26 part b: whether the diet is varied enough for the bonus. */
+    public boolean varied(Diet d) {
+        return variety(d.windowDays()) >= d.groups();
     }
 
     /** M26: food from a poor culture brought germs: adds bad-water stress (sick after {@code daysUntilSick} of it). */
@@ -93,15 +137,18 @@ public final class BettaHealth {
         boolean foodBad = isHungry(p);
         int bad = (foodBad ? 1 : 0) + (c.tempBad() ? 1 : 0) + (c.crowdBad() ? 1 : 0) + (c.waterBad() ? 1 : 0) + (c.saltBad() ? 1 : 0);
         double m = bad >= 2 ? p.bothBadMultiplier() : 1.0;
+        // M26 part b: a varied diet speeds up the recovery
+        double rec = p.recoveryPerDay() * (varied(p.diet()) ? Math.max(1, p.diet().recovery()) : 1.0);
+        for (int i = 0; i < FOOD_GROUPS; i++) if (ateAgo[i] < 30) ateAgo[i] += dt; else ateAgo[i] = Double.POSITIVE_INFINITY;
         // M20: the wrong salinity is a shock of its own (faster than the other stresses; a sea fish in fresh water dies in hours)
-        saltShock = c.saltBad() ? saltShock + dt * c.salt() : Math.max(0, saltShock - dt * p.recoveryPerDay());
+        saltShock = c.saltBad() ? saltShock + dt * c.salt() : Math.max(0, saltShock - dt * rec);
         if (saltShock >= 1) return Event.DIED;
 
         daysSinceFed += dt;
         foodStress += dt * m;
-        tempStress = c.tempBad() ? tempStress + dt * m : Math.max(0, tempStress - dt * p.recoveryPerDay());
-        crowdStress = c.crowdBad() ? crowdStress + dt * m : Math.max(0, crowdStress - dt * p.recoveryPerDay());
-        waterStress = c.waterBad() ? waterStress + dt * m : Math.max(0, waterStress - dt * p.recoveryPerDay());
+        tempStress = c.tempBad() ? tempStress + dt * m : Math.max(0, tempStress - dt * rec);
+        crowdStress = c.crowdBad() ? crowdStress + dt * m : Math.max(0, crowdStress - dt * rec);
+        waterStress = c.waterBad() ? waterStress + dt * m : Math.max(0, waterStress - dt * rec);
 
         if (!sick) {
             if (foodStress >= p.daysUntilSick() || tempStress >= p.daysUntilSick() || crowdStress >= p.daysUntilSick()
@@ -116,7 +163,7 @@ public final class BettaHealth {
             sickDays += dt * m;
             if (sickDays >= p.daysSickUntilDeath()) return Event.DIED;
         } else {
-            sickDays -= dt * p.recoveryPerDay();
+            sickDays -= dt * rec;
             if (sickDays <= 0) {
                 sick = false;
                 sickDays = 0;
@@ -165,6 +212,9 @@ public final class BettaHealth {
         if (saltShock > 0) t.putDouble("salt_shock", saltShock);
         t.putBoolean("sick", sick);
         t.putDouble("sick_days", sickDays);
+        CompoundTag diet = new CompoundTag(); // M26 part b
+        for (int i = 0; i < FOOD_GROUPS; i++) if (ateAgo[i] < 30) diet.putDouble(String.valueOf(i), ateAgo[i]);
+        if (!diet.isEmpty()) t.put("diet", diet);
         return t;
     }
 
@@ -184,6 +234,8 @@ public final class BettaHealth {
         h.saltShock = Math.min(1, days(t, "salt_shock")); // M20
         h.sick = t.getBoolean("sick");
         h.sickDays = days(t, "sick_days");
+        CompoundTag diet = t.getCompound("diet"); // M26 part b; empty for older fish
+        for (int i = 0; i < FOOD_GROUPS; i++) if (diet.contains(String.valueOf(i))) h.ateAgo[i] = Math.min(30, days(diet, String.valueOf(i)));
         return h;
     }
 

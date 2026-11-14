@@ -51,10 +51,10 @@ public final class LiveFood {
         return Boolean.TRUE.equals(stack.get(ModDataComponents.POOR_CULTURE.get()));
     }
 
-    /** Food a pump may send: live food and fry food (not pellets or wafers). */
+    /** Food a pump may send: live food and fry food (not pellets, wafers or frozen food). */
     public static boolean pumpable(ItemStack stack) {
         BettaFood.Kind k = BettaFood.kind(stack);
-        return k == BettaFood.Kind.LIVE || BettaFood.isFryFood(k);
+        return (k == BettaFood.Kind.LIVE && !stack.is(ModTags.FROZEN_FOOD)) || BettaFood.isFryFood(k);
     }
 
     /** How much longer than usual this food conditions a breeding fish. */
@@ -66,6 +66,12 @@ public final class LiveFood {
     public static void eaten(ItemStack food, BettaHealth health, BettaBreeding breeding, boolean adult) {
         if (adult && BettaFood.kind(food) == BettaFood.Kind.LIVE) breeding.condition(conditioning(food));
         if (poor(food)) health.addWaterStress(ServerConfig.getOr(ServerConfig.LIVE_FOOD_POOR_STRESS, 0.5));
+    }
+
+    /** As above for a fish of this diet (M26 part b: food variety, favourite and poor food, {@link FoodDiet}). */
+    public static void eaten(ItemStack food, BettaHealth health, BettaBreeding breeding, boolean adult, FoodDiet.Diet diet) {
+        eaten(food, health, breeding, adult);
+        FoodDiet.eaten(food, health, breeding, adult, diet);
     }
 
     // ------------------------------------------------------------------ the suspension

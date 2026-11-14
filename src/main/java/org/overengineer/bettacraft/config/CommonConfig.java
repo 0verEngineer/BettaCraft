@@ -63,6 +63,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_REEF_DOSING;
     public static final ModConfigSpec.BooleanValue FEATURE_LIVE_FOOD_CULTURES;
     public static final ModConfigSpec.BooleanValue FEATURE_LIVE_FOOD_PUMP;
+    public static final ModConfigSpec.BooleanValue FEATURE_FOOD_MAKER;
+    public static final ModConfigSpec.BooleanValue FEATURE_FOOD_VARIETY;
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
 
@@ -193,6 +195,10 @@ public final class CommonConfig {
                 "light), harvested with the net or by hoppers and pumps (off: the cultures stand still)").define("liveFoodCultures", true);
         FEATURE_LIVE_FOOD_PUMP = b.comment("Live food pump: pumps daphnia, artemia and other live food from a breeder through the pipes into tanks on a",
                 "schedule (off: it does not pump and tanks take no live food from pipes)").define("liveFoodPump", true);
+        FEATURE_FOOD_MAKER = b.comment("Food maker: makes pellets, flakes, granules, wafers, fry powder, shrimp food and frozen food from vanilla",
+                "ingredients and live food, with a wound spring or FE (off: it stands still)").define("foodMaker", true);
+        FEATURE_FOOD_VARIETY = b.comment("Food variety: favourite and poor food per species, a varied diet speeds up the recovery and shows in the",
+                "colours of the bettas (off: every food is the same)").define("foodVariety", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -305,6 +311,8 @@ public final class CommonConfig {
     public static boolean reefDosing() { return getOr(FEATURE_REEF_DOSING, true); }
     public static boolean liveFoodCultures() { return getOr(FEATURE_LIVE_FOOD_CULTURES, true); }
     public static boolean liveFoodPump() { return getOr(FEATURE_LIVE_FOOD_PUMP, true); }
+    public static boolean foodMaker() { return getOr(FEATURE_FOOD_MAKER, true); }
+    public static boolean foodVariety() { return getOr(FEATURE_FOOD_VARIETY, true); }
 
     private CommonConfig() {}
 }
