@@ -70,6 +70,8 @@ public final class DevSmokeUpgrade {
     private static final List<String> problems = new ArrayList<>();
     /** M22.4: cabinets whose outlet side was checked (old cabinets keep the back wall). */
     private static int cabinetsChecked;
+    /** M23: external filters and lights of the old world checked (full power, no sponge, not dimmed). */
+    private static int m23Checked;
 
     private DevSmokeUpgrade() {}
 
@@ -120,6 +122,7 @@ public final class DevSmokeUpgrade {
                 }
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
+                LOGGER.info("[smoketest] upgrade: {} filters and lights run at full power, undimmed (M23)", m23Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -371,6 +374,15 @@ public final class DevSmokeUpgrade {
                     problems.add("cabinet " + p.toShortString() + ": outlet side " + cab.outletSetting() + " instead of the back wall");
                 }
                 cabinetsChecked++;
+                // M23: full power, no intake sponge
+                if (cab.regulator() != 10 || cab.intakeSponge()) problems.add("cabinet " + p.toShortString() + ": regulator " + cab.regulator() + ", sponge " + cab.intakeSponge());
+            } else if (be instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity xf) {
+                if (xf.regulator() != 10 || xf.intakeSponge()) problems.add("filter " + p.toShortString() + ": regulator " + xf.regulator() + ", sponge " + xf.intakeSponge());
+                m23Checked++;
+            } else if (s.getBlock() instanceof org.overengineer.bettacraft.equipment.TankLightBlock) {
+                // M23: an old light is not dimmed (a lit one shines at 15)
+                if (s.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.DIM) != 0) problems.add("light " + p.toShortString() + " dimmed");
+                m23Checked++;
             } else if (be instanceof FeederBlockEntity f) {
                 e.addProperty("items", items(f.items()));
                 e.addProperty("feedings", f.feedingsPerDay());

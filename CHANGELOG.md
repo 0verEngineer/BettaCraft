@@ -4,6 +4,49 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.16.0-beta.1] - 2026-11-14
+
+Aeration, oxygen and stronger lights: an air pump drives air stones and sponge filters in the tank, oxygen becomes a
+water value, motor filters suck in fry unless an intake sponge is fitted, every device gets a power regulator, the light
+comes in three tiers with a dimmer and a daylight timer, and the devices sound like themselves.
+
+### Added
+- **Air pump** (next to or on a tank, with its air hose into the water) and **air stones** in the interior: columns of
+  fine bubbles rise to the surface, inside the tank and in the miniature. One pump drives 4 air stones or sponge filters
+  at full strength. Without power mods it simply runs; with `aeration.airPumpRequiresEnergy` it needs 2 FE/t per air
+  stone. Air hose as a crafting part.
+- **Oxygen** (mg/L) as a water value: saturation falls with warm and salty water; the still surface, air stones, sponge
+  filters, filter outlets and flow pumps exchange oxygen; the animals use it (more in warm water), plants make it in
+  light and use some in the dark. Below 3.5 mg/L fish, shrimp and crayfish are stressed (they fall ill and can die;
+  snails a little, frogs not at all); bettas and dwarf gouramis breathe air and only suffer below 1 mg/L. Low and
+  critical oxygen go into the tank log. The amount of CO2 strong aeration drives out is shown and ready for CO2 dosing
+  later (`features.oxygen`, `aeration.*`).
+- **Sponge filter** (air-driven, needs an air pump, cleans 12 water blocks, never sucks in fry), **corner filter**
+  (motor filter, 20 water blocks) and **intake sponge**: running motor filters (internal, corner, external, cabinet)
+  without one suck in fry now and then (logged; `features.fryIntake`, `internalFilters.fryIntakePerDay`).
+- **Power regulator** 0-100 % on filters, air stones, air pumps and flow pumps: a small screen on right-click, a button
+  in the external filter and cabinet menus, sneak + mouse wheel everywhere. Less power cleans, moves and aerates less,
+  needs less FE (filters by their setting) and is quieter; the jet gets shorter (`features.powerRegulator`).
+- **LED panel** (one item lays a panel 2 blocks wide, panels in a row join) and **high-power LED** (joins on all four
+  sides into a fixture of any size), both dyeable in 16 colours like the light bar. They add 2.5 and 5 to the light 15
+  of the bar on the part of the tank they cover (`features.ledTiers`, `lights.*`).
+- **Dimmer and daylight timer** for the lights of a tank (default 08:00 to 20:00 with an hour of sunrise and sunset):
+  the lights dim (light level 15/12/9/6) or go off, and the plants get less light (`features.lightTimer`).
+- New tab **Devices** in the tank menu: oxygen with bar and the reasons, air pumps and stones, CO2 driven out, motor
+  filters without intake sponge, the lights with light strength, dimmer and timer buttons.
+- **Own sounds** for filters, air pump (looping hum), air stones, sponge filter, flow pump and feeder (procedural,
+  `tools/assetgen/sounds.py`, see SOUNDS-CREDITS.md); `sounds.useVanilla` switches back to Minecraft's sounds; client
+  volumes per kind of device (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`).
+- Handbook pages (en + de): air pump, air stone, sponge filter, corner filter, intake sponge, power regulator, LED panel,
+  high-power LED, oxygen; light, filters, power, tank menu and settings updated.
+
+### Changed
+- Stronger light matters: the deepest red of red plants now needs an LED panel or a high-power LED (under the light bar
+  or daylight they are one step less red), and Monte Carlo and Alternanthera reineckii are strong-light plants that grow
+  at full speed only under the stronger tiers (under the bar a bit more than half). With `features.ledTiers` off both
+  behave as before.
+- The feeder clicks when it feeds.
+
 ## [1.15.2-beta.1] - 2026-11-14
 
 The build on GitHub is green again: GameTests that depend on chance failed there now and then. In the game only one

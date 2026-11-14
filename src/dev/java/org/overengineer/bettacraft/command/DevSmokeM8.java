@@ -40,7 +40,8 @@ final class DevSmokeM8 {
         BettaEntity b = (BettaEntity) TankInhabitants.liveInhabitants(level, c.getTank()).stream()
                 .filter(e -> e instanceof BettaEntity).findFirst().orElseThrow(() -> new IllegalStateException("M8: no betta"));
         List<Component> betta = InfoLines.betta(b, InfoData.betta(b), true);
-        if (betta.size() < 5) throw new IllegalStateException("M8: betta info " + betta);
+        // a betta whose genes are still unknown (M22.3 magnifier) shows one line instead of its genes: 4 lines are enough
+        if (betta.size() < 4) throw new IllegalStateException("M8: betta info " + betta);
         LOGGER.info("[smoketest] M8 info lines: tank {}, filter {}, betta {} ({})", lines.size(), InfoLines.filter(filter).size(), betta.size(),
                 betta.getFirst().getString());
         List<String> mods = new ArrayList<>();
