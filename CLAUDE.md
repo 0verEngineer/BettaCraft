@@ -16,7 +16,8 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
 | `tools/ci` | `fetch_mods.py` + `power-mods.json`: pinned Modrinth jars for the `-Ppower` GameTests in CI |
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
-| `docs/images` | README / Modrinth / CurseForge media (made by `tools/assetgen/readme_media.py`) |
+| `docs/description.md` | the CurseForge mod page (English, short German summary); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
+| `docs/images` | README / CurseForge media (made by `tools/assetgen/readme_media.py`; banner by `preview.py`) |
 | `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>`) |
 
 ## Key systems (where to look)
@@ -67,6 +68,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ./gradlew buildShowcase                           # showcase world "Bettacraft Schaukasten" (then -Pshowcasetour)
 ./gradlew verifyReleaseJar                        # jar has no dev/GameTest code, no foreign assets, right version
 ./gradlew releaseNotes                            # build/release-notes.md from the top CHANGELOG section
+./gradlew curseforgeDescription                   # build/curseforge/ description (md + html) from docs/description.md
 ```
 
 - Client smoke scenes: one `DevClientSmokeMxx` per milestone, flag `-PsmoketestmXX` in `build.gradle`, screenshots in
@@ -81,7 +83,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   `runClient` a background window.
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the
   manual *full* run adds smokes without optional mods / with TOP + WTHIT and GameTests with `-Ppower`. `release.yml`
-  on a `v<mod_version>` tag: full tests, GitHub release, Modrinth/CurseForge upload. The local release checklist is
+  on a `v<mod_version>` tag: full tests, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is
   `RELEASING.md` (not committed).
 
 ## Working rules

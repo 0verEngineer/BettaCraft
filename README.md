@@ -207,13 +207,20 @@ loads it, the jar does not contain it.
   up with its message as an annotation on the run page.
 - **Release** (`.github/workflows/release.yml`, a pushed tag `v<mod_version>`): the full test set, the jar of the tag,
   `verifyReleaseJar`, the top section of `CHANGELOG.md` as release notes, a GitHub release (a prerelease for `-alpha`,
-  `-beta` and `-rc` versions) and, once the tokens and project ids are set, the upload to Modrinth and CurseForge.
+  `-beta` and `-rc` versions) and, once the token and project id are set, the file upload to CurseForge (the only mod
+  site). It also builds the CurseForge project description (`curseforgeDescription`, see below) as a workflow artifact.
 - The same checks locally:
 
 ```
 ./gradlew verifyReleaseJar      # the jar holds only Bettacraft classes and namespaces, no dev / GameTest code, version ok
 ./gradlew releaseNotes          # build/release-notes.md from the top section of CHANGELOG.md (must be mod_version)
+./gradlew curseforgeDescription # build/curseforge/description.md + .html from docs/description.md, image links pinned
+                                # to -PdescriptionRef=<tag> (default: the current commit), ready to paste on CurseForge
 ```
+
+The mod page text lives in [docs/description.md](docs/description.md) (relative image links, so it reads on GitHub too).
+CurseForge has no API for the project description, so it is pasted by hand after a release; its images come from
+`raw.githubusercontent.com` and load only while the repository is public.
 
 Client smoke tests, the multiplayer test, `buildShowcase`, `smoketestUpgrade`, `-Paquatic`, `-Pbiomes`, `-Pstorage` (AE2 and Refined Storage) and `-Pshaders` only run
 locally (they need a window, local worlds or mod jars that cannot all be downloaded in CI).

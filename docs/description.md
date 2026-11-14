@@ -1,0 +1,149 @@
+![Bettacraft](images/bettacraft-banner.png)
+
+# Bettacraft
+
+**Betta fish and real aquariums for Minecraft 1.21.1 (NeoForge).** Catch wild bettas and tankmates, keep them in
+multiblock aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the
+water, run filters, lights, CO2, pipes and reef dosing, culture live food, and breed new colours with real Mendel
+genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
+
+![An aquarium room: a reef tank, a planted show tank with LED panels, CO2 and a multiblock filter, and a betta nano tank](images/bettacraft-aquarium-room.jpg)
+
+![A planted tank: a Koi Galaxy betta, neon tetras, harlequin rasboras, corydoras and shrimp swim between swaying plants](images/bettacraft-planted-tank-swimming.gif)
+
+## Bettas and genetics
+
+- **Wild bettas** live in swamps (also those of biome mods). Catch them with a water bucket or a fish bag; the fish keeps
+  all its genes. A magnifier, or the aquarium, reveals the hidden genes of a new animal.
+- **Mendel genetics:** nine loci with dominance, carriers and mutations: 8 tail shapes, short and long fins, dumbo ears,
+  43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo, Black Orchid, Mustard Gas, Samurai, Hellboy ...).
+  Colours, genes and varieties are data-driven and can be changed with datapacks.
+- **Breeding:** condition the pair with live food, give them floating plants for the bubble nest, and raise eggs,
+  larvae and fry through six life stages on infusoria and artemia that you culture yourself. Two adult males flare and
+  fight, also at a mirror stick. The breeding tab shows Punnett squares.
+
+![Six betta varieties: Koi Galaxy, Black Orchid, Mustard Gas, Samurai, Avatar, Hellboy](images/bettacraft-betta-varieties.jpg)
+
+## Aquariums you build yourself
+
+- **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable up to
+  64), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket, and the
+  animals are real entities.
+- **The interior:** sneak and right-click with an empty hand to step inside the tank, a pocket dimension at 16 blocks
+  per tank block. Build with any block: substrates, rocks, driftwood, castles, shipwrecks, caves, equipment. Outside,
+  the aquarium shows the result as a live miniature, and several players can build at once.
+- **Care:** temperature from biome and time of day, heaters and coolers, hunger, stocking, water quality, oxygen,
+  sickness and recovery. A tank menu with tabs (overview, inhabitants and their genes, breeding, water, devices,
+  plants, interior, log), name sign, owner lock and break protection.
+
+![Inside the planted tank at 16 blocks per tank block, plants swaying](images/bettacraft-tank-interior-swaying.gif)
+
+## Plants and corals
+
+- **17 aquarium plants** (Java fern, Anubias, Bucephalandra, Java moss, Cryptocorynes, Amazon sword, Rotala, Ludwigia,
+  Alternanthera, Vallisneria, Monte Carlo, tiger lotus ...) grow from a cutting into plants of many blocks, turn red in
+  strong light, are trimmed with shears and clean the water. **Floating plants** drift on the surface and spread.
+- Every plant and coral has real leaves, polyps and tentacles that **sway in the water**, inside and in the miniature;
+  zoanthids and star polyps close when a fish swims by.
+
+![A planted tank with a betta, tetras and rasboras](images/bettacraft-planted-tank.jpg)
+
+## Tankmates and small animals
+
+- **21 tankmates** with their own models and behaviour: tetras, rasboras, corydoras, plecos, otocinclus, loaches,
+  guppies and endlers (with their own genetics and 28 strains), platys and the dwarf gourami. Shoals, water ranges,
+  predators and prey, and a breeding style for every species.
+- **Shrimp, snails and more:** Neocaridina in eleven colours with selection grades, bee shrimp from Crystal Red S to
+  SSS, Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and dwarf clawed frogs. Algae grow,
+  and the cleaning crew eats them.
+- **Water animals of other mods** live in the aquariums too; big, boss and hostile ones are refused with a reason.
+
+## Reef tanks and seahorses
+
+- Sea water and salinity, protein skimmer, flow pump, live rock and actinic light. Eight corals and the bubble tip
+  anemone grow with light, flow, calcium, alkalinity and magnesium from a four-channel dosing pump, and they bleach,
+  glow and give frags. Clownfish spawn at their anemone; tangs, gobies, chromis, damsels, cleaner shrimp, hermit crabs.
+- **Seahorses** swim upright, hold on to plants and corals, and the male gives birth from his brood pouch.
+
+![A reef tank: clownfish at their anemone, green chromis, a yellow tang, seahorses and corals](images/bettacraft-reef-tank-swimming.gif)
+
+## Equipment, water and chemistry
+
+- Internal, external, sponge and corner filters, cabinets of any wood or stone, automatic and clip-on feeders, air
+  pumps with air stones, light bars and LED panels in 16 colours with dimmer and daylight timer.
+- **Pipes and water changes:** glass and stainless steel pipes and pumps carry water with all its values, a multiblock
+  filter of any size with media that clog, nitrate that makes water changes matter, and a water change controller that
+  does them for you.
+- **Water chemistry:** TDS, pH and hardness from the water, the substrate, driftwood, leaves and CO2, with a range for
+  every animal. CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
+- Optional Forge Energy for the equipment. All sounds are generated by the mod's own tools.
+
+## Food and live food
+
+- **Live food cultures:** tubifex worms, daphnia, mosquito larvae and artemia grow, go stale and crash when crowded or
+  hot. A **live food pump** sends them through the pipes into the tanks on a schedule.
+- **Food maker:** pellets, flakes, granules, algae wafers, fry powder, shrimp food and frozen food from vanilla
+  ingredients and live food, on a hand-wound spring or on FE. Hoppers, AE2 and Refined Storage fill and empty it.
+- **Food variety:** every kind of eater has favourite and poorly suited food; a varied diet helps the fish recover and
+  makes the bettas' colours stronger.
+
+## Handbook and menus
+
+An in-game handbook (with GuideME) in English and German with a page for every animal, plant, coral and device and
+where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every item explains itself in its tooltip.
+
+![The tank menu with the genes of a betta and the water values, and the handbook page on genetics](images/bettacraft-menus.png)
+
+## Compatibility
+
+- **Required:** Minecraft 1.21.1, NeoForge 21.1.200 or newer, Java 21. Install on client and server. No other mod is
+  required.
+- **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
+  filter and cabinet lines).
+- **Aquarium and fish mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, and the small
+  water animals of any mod.
+- **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
+  pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
+- **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
+  O' Plenty and others get the wild animals and corals (biome tags).
+- **Sodium and Iris:** supported, water and miniatures render correctly with shaders.
+
+![The aquarium room with Complementary shaders](images/bettacraft-aquarium-room-shaders.jpg)
+
+## FAQ
+
+**Does it work with shaders?** Yes. Sodium and Iris are supported, the water and the miniatures render correctly. The
+pictures above were taken with Complementary Reimagined.
+
+**Can I use it in my modpack?** Yes. The mod is MIT licensed (code and all assets), so you may include it in any pack.
+Every larger feature has a switch (`features.*` in `config/bettacraft-common.toml`), so packs can turn off what they do
+not want. Tags and datapacks control spawns, food, inhabitants and genetics.
+
+**Where is the config?** `serverconfig/bettacraft-server.toml` in the world (tank size, animals, breeding, water, power
+...), `config/bettacraft-common.toml` (spawns, feature switches) and `config/bettacraft-client.toml` (render
+distances, connected glass, effects). Every option can also be changed in game: Mods > Bettacraft > Config.
+
+**Do I need power?** No. By default no device needs energy; with the power options on they take Forge Energy.
+
+**Will my fish die while I am away?** By default time stands still for aquariums in unloaded chunks, and water
+quality and evaporation are on but gentle.
+
+**Is it a beta?** Yes. Worlds are migrated between versions and nothing should get lost, but keep backups. Bugs and
+ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issues).
+
+## Credits
+
+- Code, procedural textures, models, sounds and the logo: 0verEngineer. Every asset comes from the mod's own generator
+  (`tools/assetgen`), no third-party assets are used. Licence: MIT.
+- Developed with the help of AI coding tools; the screenshots and animations are real in-game captures.
+- Inspired by real betta and aquarium keeping. Thanks to the authors of NeoForge, GuideME, JEI, Jade and the mods
+  Bettacraft works with.
+- Source code, changelog and issues: [github.com/0verEngineer/BettaCraft](https://github.com/0verEngineer/BettaCraft).
+
+## Kurz auf Deutsch
+
+Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
+Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
+Einrichten, wachsende Pflanzen und Korallen, Beifische, Garnelen und Schnecken, Meerwasser mit Seepferdchen, Filter,
+Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Die Mod und das Handbuch im Spiel sind komplett
+auf Deutsch übersetzt; die Spielsprache Deutsch genügt.
