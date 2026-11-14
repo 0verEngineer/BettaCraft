@@ -4,6 +4,28 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.19.1-beta.1] - 2026-11-14
+
+German translation checked, a wide logo for the mod list, and releases go to CurseForge only.
+
+### Added
+- **Wide logo** in the NeoForge mod list: a 512x128 pixel-art banner with the halfmoon betta of the icon (made by
+  `tools/assetgen`); the square icon stays the mod icon (also for Catalogue).
+- **Mod page text** `docs/description.md` (features of all versions with pictures and animations, compatibility, FAQ,
+  credits, a short German summary) and `gradlew curseforgeDescription`, which makes the paste-ready CurseForge version
+  with image links pinned to the release tag. The release workflow builds it as an artifact.
+
+### Changed
+- Releases are uploaded to **CurseForge only**; the CurseForge upload also names Fish of Thieves as an optional
+  integration.
+- German: config labels for drops and sounds, the log tab ("Protokoll"), wild-type alleles ("Wildtyp") and the info
+  texts of several tankmates (grammar, capitalisation, a doubled line) are fixed. A test now fails on German texts that
+  are still English.
+
+### Fixed
+- The handbook page of the food maker did not load (the button labels < and > broke GuideME's page parser); a test
+  checks every page for this now.
+
 ## [1.19.0-beta.1] - 2026-11-14
 
 Live food and fish food: tubifex and daphnia cultures, a live food pump that feeds tanks through pipes, a food maker
