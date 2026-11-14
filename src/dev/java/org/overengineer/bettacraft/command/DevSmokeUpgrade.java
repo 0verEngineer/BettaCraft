@@ -72,6 +72,8 @@ public final class DevSmokeUpgrade {
     private static int cabinetsChecked;
     /** M23: external filters and lights of the old world checked (full power, no sponge, not dimmed). */
     private static int m23Checked;
+    /** M24: tanks of the old world checked (nitrate starts at 0, no water change noted, no bulkhead). */
+    private static int m24Checked;
 
     private DevSmokeUpgrade() {}
 
@@ -123,6 +125,7 @@ public final class DevSmokeUpgrade {
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
                 LOGGER.info("[smoketest] upgrade: {} filters and lights run at full power, undimmed (M23)", m23Checked);
+                LOGGER.info("[smoketest] upgrade: {} tanks start with nitrate 0 and no water change (M24)", m24Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -276,6 +279,12 @@ public final class DevSmokeUpgrade {
 
     private static JsonObject tank(MinecraftServer server, ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
+        // M24: a tank of an older version starts without nitrate (40 ticks of care add a trace at most) and without bulkheads
+        if (STAGE == 1) {
+            if (t.nitrate() > 0.5F) problems.add("tank " + c.getBlockPos().toShortString() + ": nitrate " + t.nitrate() + " instead of 0");
+            if (t.lastWaterChange() >= 0) problems.add("tank " + c.getBlockPos().toShortString() + ": a water change noted");
+            m24Checked++;
+        }
         JsonObject o = new JsonObject();
         o.addProperty("pos", c.getBlockPos().asLong());
         o.addProperty("name", t.name());

@@ -29,7 +29,8 @@ import org.overengineer.bettacraft.tank.TankNitrate;
 public class WaterChangerBlockEntity extends BlockEntity {
     public enum Status { WAITING, CHANGED, NO_TANK, NO_WATER, NO_POWER, OFF, DISABLED }
 
-    private int intervalDays = 7;
+    /** Days between changes; 0 = not set yet: what the difficulty asks for ({@link #defaultInterval}). */
+    private int intervalDays;
     private int share = 25;
     private boolean enabled = true;
     /** Game time of the last change (or of placing it: the first change comes one interval later). */
@@ -43,7 +44,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
     }
 
     public DeviceEnergy energy() { return energy; }
-    public int intervalDays() { return intervalDays; }
+    public int intervalDays() { return intervalDays > 0 ? intervalDays : defaultInterval(); }
     public int share() { return share; }
     public boolean enabled() { return enabled; }
     public long last() { return last; }
@@ -67,7 +68,6 @@ public class WaterChangerBlockEntity extends BlockEntity {
     static void serverTick(Level level, BlockPos pos, BlockState state, WaterChangerBlockEntity be) {
         if (be.last < 0) {
             be.last = level.getGameTime();
-            be.intervalDays = defaultInterval();
             be.changed();
         }
         if ((level.getGameTime() + pos.asLong()) % 20 != 0) return;
@@ -83,7 +83,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
         if (!CommonConfig.autoWaterChange()) st = Status.OFF;
         else if (!enabled && !force) st = Status.DISABLED;
         else if (c == null) st = Status.NO_TANK;
-        else if (!force && last >= 0 && now - last < intervalDays * 24000L) st = status == Status.CHANGED ? Status.CHANGED : Status.WAITING;
+        else if (!force && last >= 0 && now - last < intervalDays() * 24000L) st = status == Status.CHANGED ? Status.CHANGED : Status.WAITING;
         else {
             int r = change(level, c);
             done = Math.max(0, r);
@@ -151,7 +151,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        intervalDays = tag.contains("interval") ? Math.max(1, Math.min(60, tag.getInt("interval"))) : 7;
+        intervalDays = tag.contains("interval") ? Math.max(0, Math.min(60, tag.getInt("interval"))) : 0;
         share = tag.contains("share") ? Math.max(5, Math.min(50, tag.getInt("share"))) : 25;
         enabled = !tag.contains("enabled") || tag.getBoolean("enabled");
         last = tag.contains("last") ? tag.getLong("last") : -1;
@@ -168,6 +168,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag t = new CompoundTag();
         write(t);
+        t.putInt("interval", intervalDays()); // the client sees the effective interval
         return t;
     }
 

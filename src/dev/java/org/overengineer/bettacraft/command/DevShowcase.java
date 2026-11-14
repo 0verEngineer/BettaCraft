@@ -178,7 +178,7 @@ public final class DevShowcase {
         level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
         // keep the whole showcase loaded while it is built (the animals are entities)
         for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
-            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 17 * ROW + 10 >> 4) + 1; cz++) {
+            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 18 * ROW + 10 >> 4) + 1; cz++) {
                 level.setChunkForced(cx, cz, true);
                 forced.add(new ChunkPos(cx, cz));
             }
@@ -493,6 +493,39 @@ public final class DevShowcase {
             name(level, at, tiersDe[tier]);
             at = at.east(4 + GAP);
         }
+        // M24: a multiblock filter at a tank, the top-off and the water change controller, the crucible
+        at = startRow(level, "Rohre, Filter und Wasserwechsel");
+        TankBlockEntity ft = tank(level, at, 3, 2, 2, 0F, true);
+        net.minecraft.world.item.Item[] media = {ModItems.FILTER_FOAM.get(), ModItems.CERAMIC_RINGS.get()};
+        for (int y = 0; y < 2; y++) {
+            level.setBlockAndUpdate(at.offset(4, y, 0), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
+            if (level.getBlockEntity(at.offset(4, y, 0)) instanceof org.overengineer.bettacraft.filter.FilterChamberBlockEntity ch) ch.setMedium(new ItemStack(media[y]));
+        }
+        level.setBlockAndUpdate(at.offset(4, 2, 0), ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(3, 0, 0), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.WEST));
+        level.setBlockAndUpdate(at.offset(3, 1, 0), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.WEST));
+        name(level, at, "Multiblock-Filter");
+        at = at.east(5 + GAP);
+        TankBlockEntity wt = tank(level, at, 3, 2, 2, 0F, true);
+        wt.getTank().setNitrate(45F);
+        level.setBlockAndUpdate(at.offset(-1, 0, 0), ModBlocks.LEVEL_SENSOR.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(-2, 0, 0), ModBlocks.RESERVOIR.get().defaultBlockState());
+        if (level.getBlockEntity(at.offset(-2, 0, 0)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity res24)
+            res24.water().fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 16000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        level.setBlockAndUpdate(at.offset(3, 0, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
+        name(level, at, "Nachfüllen + Wasserwechsel");
+        at = at.east(5 + GAP);
+        level.setBlockAndUpdate(at.offset(1, -1, 0), Blocks.MAGMA_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(at.offset(1, 0, 0), ModBlocks.CRUCIBLE.get().defaultBlockState());
+        if (level.getBlockEntity(at.offset(1, 0, 0)) instanceof org.overengineer.bettacraft.crucible.CrucibleBlockEntity cr) {
+            cr.items().setStackInSlot(0, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 64));
+            cr.items().setStackInSlot(1, new ItemStack(net.minecraft.world.item.Items.COAL, 64));
+            cr.items().setStackInSlot(2, new ItemStack(net.minecraft.world.item.Items.QUARTZ, 64));
+            cr.items().setStackInSlot(3, new ItemStack(net.minecraft.world.item.Items.BLAZE_POWDER, 64));
+        }
+        for (int x = 2; x < 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 0), (x % 2 == 0 ? ModBlocks.GLASS_PIPE : ModBlocks.STAINLESS_STEEL_PIPE).get().defaultBlockState());
+        LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());
     }
 
     private static ResourceLocation blockOf(net.minecraft.world.item.Item item) {

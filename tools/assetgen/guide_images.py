@@ -448,6 +448,23 @@ def m22_4(out_en: Path) -> None:
     save(sheet.resize((width, round(sheet.height * width / sheet.width)), Image.LANCZOS), out_en / "cabinet_outlets.png")
 
 
+# M24 scene (DevClientSmokeM24, -Psmoketestm24): the multiblock filter, the tank on pipes, the interior pipes
+M24_WORLD = {"multiblock_filter": ("bettacraft_m24_multiblock_filter", (0, 120, 1280, 900)),
+             "pipes": ("bettacraft_m24_scene", (80, 300, 1240, 560)),
+             "interior_pipes": ("bettacraft_m24_interior", (0, 0, 1280, 960))}
+
+
+def m24(out_en: Path) -> None:
+    for name, (shot, box) in M24_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        width = min(960, im.width)
+        save(im.resize((width, round(im.height * width / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -462,6 +479,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m24"]:
+        m24(out_en)
+        return 0
     if sys.argv[1:] == ["m22_4"]:
         m22_4(out_en)
         return 0

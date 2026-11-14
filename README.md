@@ -109,6 +109,13 @@ block.
 - **Light tiers:** light bar, LED panel (2 blocks wide, joins into long panels) and high-power LED (any size), all in
   16 colours; stronger light makes red plants redder, lets strong-light plants grow and brings algae; a dimmer and a
   daylight timer with sunrise and sunset in the tank menu (`features.ledTiers`, `features.lightTimer`).
+- **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values (also to
+  the tanks and pipes of other mods); a bulkhead in the tank floor leads to interior pipes with intake strainer, lily
+  pipe, nozzle and spray bar, whose current acts where they sit; a multiblock external filter of any size with filter
+  media that clog and are washed; nitrate rises with the animals so water changes matter (`waterchange.difficulty` OFF,
+  EASY, NORMAL, REALISTIC), a water change controller and a top-off with level sensor and reservoir do them by
+  themselves; stainless steel from the crucible (`features.pipes`, `interiorPipes`, `multiblockFilter`,
+  `autoWaterChange`, `topOff`, `stainlessSteel`).
 - **Own sounds:** filters, air pump, air stones, sponge filter, flow pump and feeder have their own procedural sounds
   (`sounds.useVanilla` switches back to Minecraft's), each kind with its own client volume.
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood or stone (they hold the
@@ -118,7 +125,7 @@ block.
   (take out exactly one, or the best of a sex into a bag or a bucket), breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting), a lock for the owner and a break protection
   that stops everyone (also the owner, creative, explosions and pistons) from breaking the aquarium.
-- **Handbook and progression:** 159 handbook pages in English and German (with GuideME): chapters and sub-chapters that
+- **Handbook and progression:** 167 handbook pages in English and German (with GuideME): chapters and sub-chapters that
   fold open, a page for every animal, plant, coral and device with where to get it (generated from the game data), and
   31 advancements (listed on the page Progress).
 - **Languages:** English and German.
@@ -147,6 +154,7 @@ No other mod is required.
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
+| Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces) |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |
 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift).

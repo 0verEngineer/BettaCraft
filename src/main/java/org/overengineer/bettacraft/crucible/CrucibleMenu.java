@@ -17,7 +17,7 @@ import org.overengineer.bettacraft.registry.ModMenus;
 /** M24: crucible menu: four inputs (2x2), fuel, output and the player inventory; progress and heat as data slots. */
 public class CrucibleMenu extends AbstractContainerMenu {
     public static final int[][] INPUT_XY = {{38, 17}, {56, 17}, {38, 35}, {56, 35}};
-    public static final int FUEL_X = 47, FUEL_Y = 57, OUT_X = 116, OUT_Y = 26;
+    public static final int FUEL_X = 47, FUEL_Y = 53, OUT_X = 116, OUT_Y = 26;
     @Nullable
     private final CrucibleBlockEntity be;
     private final ContainerData data;

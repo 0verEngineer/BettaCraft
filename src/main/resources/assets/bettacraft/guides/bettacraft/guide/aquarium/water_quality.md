@@ -24,7 +24,9 @@ with a bar, Jade, The One Probe and WTHIT show it when you look at the aquarium.
   filter removes a matching part.
 * **Floating plants** take up a little waste while they have light, see [Floating plants](../plants/floating_plants.md).
 * **Water change:** take water out with empty buckets and pour fresh water in. Fresh water dilutes the waste; taking
-  water out does not change the quality. Pipes of other mods can fill and drain the aquarium as well.
+  water out does not change the quality. Pipes (ours and those of other mods) can fill and drain the aquarium as well.
+  Water changes also lower the [nitrate](nitrate.md), which no filter removes; the
+  [water change controller](../equipment/water_change.md) does them by itself.
 
 | Quality | State | |
 |---|---|---|

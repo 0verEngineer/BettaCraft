@@ -4,6 +4,54 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.17.0-beta.1] - 2026-11-14
+
+Pipes, stainless steel and water changes: water flows through glass and stainless steel pipes with all its values, a
+bulkhead brings it into the tank where interior pipes end in outlets with their own current, a multiblock external
+filter of any size cleans with media that clog, nitrate makes water changes necessary, and a water change controller
+and a top-off do them by themselves.
+
+### Added
+- **Stainless steel** from the new **crucible**: 3 iron ingots, coal, nether quartz and blaze powder melt into 3 ingots.
+  Heat from lava (or a lava cauldron or magma block) right under it, FE while a power option is on, or fuel (lava bucket,
+  blaze rod, blaze powder). Hoppers fill and empty it. Also made in the metallurgic infuser (Mekanism), alloy smelter
+  (EnderIO), heated mixing (Create) and induction smelter (Thermal), only when those mods are installed. Tag
+  `#c:ingots/stainless_steel`; the steel of other mods (`#c:ingots/steel`) is not accepted (`features.stainlessSteel`,
+  `crucible.*`).
+- **Glass pipes** (50 mB/t) and **stainless steel pipes** (250 mB/t) and the **water pump** (200 mB/t, power regulator,
+  redstone stops it). The water keeps its values (temperature, salt, calcium, quality, nitrate) on its way; it uses the
+  standard fluid handler, so the tanks and pipes of Mekanism, EnderIO, Create, AE2, RS and cauldrons join
+  (`features.pipes`, `pipes.*`).
+- **Bulkhead** in a floor block of a tank: its connection stands on the interior floor, and **interior pipes** lead from
+  it to an **intake strainer**, **lily pipe**, **nozzle** or **spray bar**. A pipe under that floor block puts water in
+  through the outlets and takes it out through the strainers; while water flows the outlets show their stream and their
+  current acts where they sit (seahorses, corals, floating plants; fish swim into it now and then)
+  (`features.interiorPipes`).
+- **Multiblock external filter** in any size: 1 to 16 **filter chambers**, a **pump head**, **inlet** and **outlet**
+  connectors. Filter media: **filter sponge** (12 water blocks), **ceramic rings** (24), **activated carbon** (16, used
+  up), **filter peat** (6, softens the water once pH comes). Media clog with the stocking (sponges fastest, a clogged
+  sponge also slows the flow); wash sponges and ceramic in a water cauldron. When inlet and outlet lead to the same tank
+  it cleans that tank; a screen shows size, problems, flow and every medium (`features.multiblockFilter`,
+  `multiblockFilter.*`). The old external filter stays the small variant.
+- **Nitrate** as its own water value: it rises slowly with the animals even with a good filter; only water changes and
+  plants lower it. `waterchange.difficulty`: OFF, EASY (25 % every 20 days), NORMAL (every 14 days, default), REALISTIC
+  (every 7 days) for a normally stocked tank. From 50 mg/L the fish breed at half speed, algae grow faster and the log
+  warns; from 120 mg/L the water is bad (sickness, deaths only after many weeks). Shown in the water tab of the tank menu
+  with an explanation; evaporation concentrates it, topping off dilutes it back. Tanks of older versions start at 0.
+- **Water change controller**: next to a tank it changes 5 to 50 % of the water every 1 to 60 days (screen; "change
+  now"), with fresh water from a reservoir, pipe or other mod's tank or endlessly from a water source block next to it;
+  it only drains what it can refill (`features.autoWaterChange`).
+- **Top-off**: the **level sensor** next to a tank (or at a multiblock filter) tops off evaporated water from a
+  **reservoir** (16 buckets), a pipe, another mod's tank (also AE2/RS) or a water source block. Fresh water only, so the
+  salinity of a reef tank stays where it was (`features.topOff`).
+- `pipes.pumpsRequireEnergy`: water pumps, filter pump heads, water change controllers and level sensors need FE.
+- Handbook pages (en + de): crucible and stainless steel, pipes and water pump, bulkhead and interior pipes, multiblock
+  filter, filter media, water change controller, top-off, nitrate; equipment, filters, water quality and settings
+  updated.
+
+### Changed
+- The nitrate of the reef line in the water tab is now the real nitrate value (it followed the water quality before).
+
 ## [1.16.0-beta.1] - 2026-11-14
 
 Aeration, oxygen and stronger lights: an air pump drives air stones and sponge filters in the tank, oxygen becomes a

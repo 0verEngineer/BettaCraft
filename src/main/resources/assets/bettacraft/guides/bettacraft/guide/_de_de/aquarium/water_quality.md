@@ -24,7 +24,9 @@ mit einem Balken, Jade, The One Probe und WTHIT zeigen sie beim Blick auf das Aq
   Filter entfernt einen passenden Teil.
 * **Schwimmpflanzen** nehmen etwas Abfall auf, solange sie Licht haben, siehe [Schwimmpflanzen](../plants/floating_plants.md).
 * **Wasserwechsel:** Wasser mit leeren Eimern entnehmen und Frischwasser nachgießen. Frischwasser verdünnt den Abfall;
-  Wasser entnehmen ändert die Qualität nicht. Leitungen anderer Mods können das Aquarium ebenfalls füllen und leeren.
+  Wasser entnehmen ändert die Qualität nicht. Rohre (unsere und die anderer Mods) können das Aquarium ebenfalls füllen
+  und leeren. Wasserwechsel senken auch das [Nitrat](nitrate.md), das kein Filter entfernt; die
+  [Wasserwechsel-Steuerung](../equipment/water_change.md) macht sie selbst.
 
 | Qualität | Zustand | |
 |---|---|---|

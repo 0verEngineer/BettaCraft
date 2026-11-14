@@ -163,6 +163,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestm24')) {
+                // gradlew runClient -Psmoketestm24 : only the M24 scene (multiblock filter, tank on pipes with bulkheads and a pump,
+                // the interior pipes with nozzle, lily pipe and spray bar running, crucible, level sensor, water change controller,
+                // the filter / water changer / crucible screens and the water tab en + de, the handbook en + de; add -Pshaders)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m24only', 'true'
+            }
             if (project.hasProperty('smoketestm23')) {
                 // gradlew runClient -Psmoketestm23 : only the M23 scene (three tanks under light bar, LED panel and high-power LED,
                 // air pump with air stones, sponge and corner filter: bubble columns in the miniature and inside, the daylight timer

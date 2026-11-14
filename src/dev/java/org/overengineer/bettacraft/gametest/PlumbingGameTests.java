@@ -253,6 +253,35 @@ public final class PlumbingGameTests {
         h.succeed();
     }
 
+    /** With Mekanism (-Ppower): a Mekanism fluid tank at the end of a pipe takes our water and gives it back. */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void pipesReachAMekanismTank(GameTestHelper h) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("mekanism", "basic_fluid_tank");
+        if (!BuiltInRegistries.BLOCK.containsKey(id)) {
+            h.succeed(); // only with the power mods
+            return;
+        }
+        ServerLevel level = h.getLevel();
+        TankBlockEntity a = tank(h, 1, 2, 1, 2, 2, 2);
+        a.getTank().setWaterTemp(28F);
+        long before = a.getTank().waterMb();
+        WaterPumpBlockEntity p = pump(h, new BlockPos(3, 2, 1), Direction.EAST);
+        pipe(h, true, new BlockPos(4, 2, 1));
+        h.setBlock(new BlockPos(5, 2, 1), BuiltInRegistries.BLOCK.get(id).defaultBlockState());
+        h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(4, 2, 1))).getValue(PipeBlock.SIDES.get(Direction.EAST)), "the pipe joins the Mekanism tank");
+        int moved = batch(h, p);
+        var cap = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(new BlockPos(5, 2, 1)), Direction.WEST);
+        h.assertTrue(moved > 0 && cap != null && cap.getFluidInTank(0).getAmount() == moved && a.getTank().waterMb() == before - moved,
+                "water in the Mekanism tank: " + moved + " / " + (cap == null ? "no handler" : cap.getFluidInTank(0)));
+        com.mojang.logging.LogUtils.getLogger().info("M24 Mekanism tank holds {} with values {}", cap.getFluidInTank(0), WaterValues.from(cap.getFluidInTank(0)));
+        // and back
+        h.setBlock(new BlockPos(3, 2, 1), ModBlocks.WATER_PUMP.get().defaultBlockState().setValue(WaterPumpBlock.FACING, Direction.WEST));
+        WaterPumpBlockEntity back = (WaterPumpBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 1)));
+        h.assertTrue(batch(h, back) == moved && a.getTank().waterMb() == before, "back into the aquarium");
+        h.assertTrue(near(a.getTank().waterTemp(), 28, 0.05), "with its temperature: " + a.getTank().waterTemp());
+        h.succeed();
+    }
+
     // ------------------------------------------------------------------ bulkhead and interior pipes
 
     /**

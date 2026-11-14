@@ -53,6 +53,8 @@ public final class InteriorPlumbing {
     private static final Map<Integer, Cache> CACHE = new ConcurrentHashMap<>();
     /** Region id -> outlet key -> game time water last went through it. */
     private static final Map<Integer, Long2LongOpenHashMap> ACTIVE = new ConcurrentHashMap<>();
+    /** Region id -> outlet key -> the look last set on the block (so the interior is only touched when it changes). */
+    private static final Map<Integer, it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap> SHOWN = new ConcurrentHashMap<>();
 
     /** Pure: the outlets joined to the piece at {@code start} (pieces join their six neighbours; outlets end a line). */
     public static Net search(Long2IntOpenHashMap plumbing, long start) {
@@ -158,6 +160,7 @@ public final class InteriorPlumbing {
     public static void forget() {
         ACTIVE.clear();
         CACHE.clear();
+        SHOWN.clear();
     }
 
     /** The currents of the active outlets of a tank, in world coordinates (empty with the feature off). */
@@ -215,11 +218,15 @@ public final class InteriorPlumbing {
         for (var e : new ArrayList<>(r.equipment().plumbing().long2IntEntrySet())) {
             if (!Plumb.kind(e.getIntValue()).outlet()) continue;
             long k = e.getLongKey();
-            BlockPos p = r.toWorld(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k));
-            if (!interior.isLoaded(p)) continue;
-            BlockState s = interior.getBlockState(p);
-            if (!(s.getBlock() instanceof PlumbingBlock)) continue;
             boolean on = CommonConfig.interiorPipes() && active(r.id(), k, now);
+            var shown = SHOWN.computeIfAbsent(r.id(), x -> new it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap());
+            if (shown.containsKey(k) && shown.get(k) == on) continue;
+            // the look changes (rarely: water starts or stops): the interior chunk is loaded for it if needed, so the
+            // stream shows when a player enters (the tank does not tick while everybody is inside)
+            BlockPos p = r.toWorld(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k));
+            BlockState s = interior.getBlockState(p);
+            shown.put(k, on);
+            if (!(s.getBlock() instanceof PlumbingBlock)) continue;
             if (s.getValue(PlumbingBlock.ACTIVE) != on) interior.setBlock(p, s.setValue(PlumbingBlock.ACTIVE, on), Block.UPDATE_CLIENTS);
         }
     }

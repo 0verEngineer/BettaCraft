@@ -27,6 +27,11 @@ navigation:
 | [Luftpumpe](equipment/air_pump.md) und [Ausströmer](equipment/air_stone.md) | Blasensäulen und Sauerstoff |
 | [Schwammfilter](equipment/sponge_filter.md), [Eckfilter](equipment/corner_filter.md), [Ansaugschutz](equipment/intake_sponge.md) | weitere Innenfilter; der Schwamm schützt die Jungfische |
 | [Leistungsregler](equipment/regulator.md) | 0 bis 100 % für Filter, Pumpen und Ausströmer |
+| [Multiblock-Außenfilter](equipment/multiblock_filter.md) und [Filtermedien](equipment/filter_media.md) | ein großer Filter in jeder Größe; Medien verschmutzen und werden ausgewaschen |
+| [Rohre und Wasserpumpe](equipment/pipes.md) | tragen Wasser mit seinen Werten; auch zu Tanks und Rohren anderer Mods |
+| [Bodendurchführung und Innenraum-Rohre](equipment/bulkhead.md) | Rohre durch den Boden, Ausläufe im Aquarium mit eigener Strömung |
+| [Wasserwechsel-Steuerung](equipment/water_change.md) und [Nachfüllsystem](equipment/top_off.md) | automatische Wasserwechsel und Nachfüllen von verdunstetem Wasser |
+| [Schmelztiegel und Edelstahl](equipment/crucible.md) | der Stahl für Rohre und Wassergeräte |
 | [Schrank](equipment/cabinet.md) | Unterbau für das Aquarium mit Platz für Filter und Futter |
 | [Abdeckung](equipment/tank_lid.md) | verhindert, dass das Wasser verdunstet |
 | [Werkzeuge und Behälter](equipment/tools.md) | Kescher, Fischbeutel, Algenschaber, Spiegelstab, Ablaichkasten |

@@ -36,6 +36,8 @@ Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Str�
   und kühlen seine Kühler das Aquarium.
 * Abgebaut behält er seine Heizstäbe im Item (der Tooltip listet sie auf).
 * Er passt auch in einen [Aquariumschrank](cabinet.md) unter dem Aquarium.
+* Er ist die kleine Variante: ein [Multiblock-Außenfilter](multiblock_filter.md) in jeder Größe, mit Filtermedien und
+  Rohren, reinigt viel mehr.
 
 Das Aquarium-Menü zeigt „Filter: 1 außen (Heizstäbe: 2), 1 innen“.
 

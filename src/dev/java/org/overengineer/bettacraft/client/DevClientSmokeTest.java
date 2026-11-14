@@ -92,6 +92,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm23: only the M23 scene (aeration, internal filters, light tiers, timer, menus, handbook). */
     private static final boolean M23_ONLY = Boolean.getBoolean("bettacraft.smoketest.m23only");
     private static DevClientSmokeM23 m23;
+    /** -Psmoketestm24: only the M24 scene (pipes, multiblock filter, interior pipes, crucible, water devices, menus, handbook). */
+    private static final boolean M24_ONLY = Boolean.getBoolean("bettacraft.smoketest.m24only");
+    private static DevClientSmokeM24 m24;
     /** -Psmoketestm22_4: only the M22.4 scene (the four outlet sides of the cabinet filter, the cabinet menu, the handbook plant sources). */
     private static final boolean M22_4_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_4only");
     /** -Psmoketestm22_3: only the M22.3 scene (wild fish and small animals, wild corals, magnifier, single animals, bucket tooltips). */
@@ -168,6 +171,15 @@ final class DevClientSmokeTest {
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            if (M24_ONLY) {
+                if (ticks == 60) m24 = new DevClientSmokeM24();
+                if (m24 != null && m24.tick()) {
+                    m24 = null;
+                    LOGGER.info("[smoketest] client world test finished (M24 only)");
+                    mc.stop();
+                }
+                return;
+            }
             if (M23_ONLY) {
                 if (ticks == 60) m23 = new DevClientSmokeM23();
                 if (m23 != null && m23.tick()) {
@@ -616,6 +628,10 @@ final class DevClientSmokeTest {
                     }
                     if (m23 != null && m23.tick()) {
                         m23 = null;
+                        m24 = new DevClientSmokeM24(); // M24: pipes, multiblock filter, interior pipes, crucible, water devices
+                    }
+                    if (m24 != null && m24.tick()) {
+                        m24 = null;
                         LOGGER.info("[smoketest] client world test finished");
                         mc.stop();
                     }

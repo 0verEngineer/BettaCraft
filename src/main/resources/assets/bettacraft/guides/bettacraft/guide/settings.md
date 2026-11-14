@@ -45,6 +45,12 @@ navigation:
 | `waterQuality.qualityEnabled` | true | water quality on (loss per day 0.01, per animal 0.04, per overfed portion 0.01, filters remove 0.8, bad below 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
 | `evaporation.evaporationEnabled` | true | open tanks lose water (`mbPerBlockPerDay` 20) |
+| `waterchange.difficulty` | NORMAL | [nitrate](aquarium/nitrate.md): OFF, EASY (25 % every 20 days), NORMAL (14 days), REALISTIC (7 days) |
+| `waterchange.nitrateStressFrom`, `nitrateLethalFrom`, `plantUptake`, `referenceFishPerBlock` | 50, 120, 1.2, 0.5 | less breeding and more algae from, bad water from, uptake of dense plants, a normally stocked tank |
+| `pipes.glassPipeRate`, `steelPipeRate`, `pumpRate` | 50, 250, 200 | [pipes and the water pump](equipment/pipes.md) in mB per tick |
+| `pipes.pumpsRequireEnergy`, `pumpFePerTick` | false, 8 | water pumps, filter pump heads, water change controllers and level sensors need FE |
+| `crucible.meltTicks`, `fePerTick` | 200, 20 | [crucible](equipment/crucible.md): time of a melt, FE instead of fuel |
+| `multiblockFilter.spongeBlocks`, `ceramicBlocks`, `carbonBlocks`, `peatBlocks`, `dirtPerDay`, `maxChambers` | 12, 24, 16, 6, 0.04, 16 | [multiblock filter](equipment/multiblock_filter.md): water blocks per medium, how fast media clog, chambers at most |
 | `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE use and storage |
 | `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2); at most 16 per batch |
@@ -94,7 +100,7 @@ the racer nerites, mostly gold apple snails with bands, red ramshorns), `detaile
 `breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted) and since 1.14.1 `seahorses` ([seahorses](saltwater/seahorses.md); off = none from the net and the trader) and since 1.15.1 `plantNetCatches` (aquarium plants from the [net](equipment/tank_net.md); off = plants only from fishing, bottles, shears and the trader) and `cabinetOutletSide` (the [outlet side](equipment/cabinet.md) of the cabinet filter; off = always the back wall, even flow) and since 1.16.0 `oxygen` ([oxygen](aquarium/oxygen.md)), `aeration`
 ([air pump and air stones](equipment/air_pump.md)), `moreInternalFilters` (sponge and corner filter, intake sponge),
 `fryIntake` (motor filters suck in fry), `powerRegulator` ([power regulator](equipment/regulator.md)), `ledTiers`
-([LED panel and high-power LED](equipment/light.md)) and `lightTimer` (dimmer and daylight timer). The common config
+([LED panel and high-power LED](equipment/light.md)) and `lightTimer` (dimmer and daylight timer) and since 1.17.0 `stainlessSteel` ([crucible](equipment/crucible.md)), `pipes` ([pipes and the water pump](equipment/pipes.md)), `interiorPipes` ([bulkhead and interior pipes](equipment/bulkhead.md)), `multiblockFilter` ([multiblock filter](equipment/multiblock_filter.md)), `autoWaterChange` ([water change controller](equipment/water_change.md)) and `topOff` ([level sensor](equipment/top_off.md)). The common config
 `sounds.useVanilla` switches the device sounds back to Minecraft's own; the client config has a volume per kind of
 device (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`). The server config `tank.protectFromExplosionsAndPistons`
 decides whether the break protection also stops explosions and pistons. The **client config** has the animation and miniature distances, the distance up to which the

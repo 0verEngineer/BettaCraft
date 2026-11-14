@@ -42,9 +42,8 @@ public class PlumbingBlock extends Block {
     public PlumbingBlock(Plumb kind, Properties properties) {
         super(properties);
         this.kind = kind;
-        BlockState s = stateDefinition.any();
-        if (kind == Plumb.PIPE) for (BooleanProperty p : PipeBlock.SIDES.values()) s = s.setValue(p, false);
-        if (kind.outlet()) s = s.setValue(FACING, Direction.NORTH).setValue(ACTIVE, false);
+        BlockState s = stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false);
+        for (BooleanProperty p : PipeBlock.SIDES.values()) s = s.setValue(p, false);
         registerDefaultState(s);
     }
 

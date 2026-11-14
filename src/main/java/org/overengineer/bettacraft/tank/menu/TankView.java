@@ -871,7 +871,7 @@ public final class TankView {
             coolers += f.coolerCount();
         }
         eq.putInt("filter_coolers", coolers);
-        eq.putInt("filter_blocks", blocks);
+        eq.putInt("filter_blocks", blocks + (int) org.overengineer.bettacraft.filter.MultiblockFilter.serving(level, controller)[0]); // M24: multiblock filters count as outside
         eq.putInt("cabinet_filters", cab);
         eq.putInt("cabinets", org.overengineer.bettacraft.tank.TankEquipment.cabinets(level, controller).size());
         eq.putInt("filter_heaters", heaters);

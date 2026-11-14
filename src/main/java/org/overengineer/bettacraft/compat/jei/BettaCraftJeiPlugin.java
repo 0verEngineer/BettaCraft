@@ -78,8 +78,25 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(org.overengineer.bettacraft.equipment.StoneCabinetRecipe.class, new StoneCabinetJei());
     }
 
+    /** M24: the crucible. */
+    @Override
+    public void registerCategories(mezz.jei.api.registration.IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(new CrucibleJei(registration.getJeiHelpers().getGuiHelper()));
+    }
+
+    @Override
+    public void registerRecipeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(new ItemStack(ModItems.CRUCIBLE.get()), CrucibleJei.TYPE);
+    }
+
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        // M24: the melts of the crucible (from the recipe manager of the world)
+        var mcLevel = net.minecraft.client.Minecraft.getInstance().level;
+        if (mcLevel != null) {
+            registration.addRecipes(CrucibleJei.TYPE, mcLevel.getRecipeManager().getAllRecipesFor(org.overengineer.bettacraft.registry.ModRecipes.CRUCIBLE_TYPE.get())
+                    .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
+        }
         for (String path : ItemHints.ITEMS) {
             Item item = BuiltInRegistries.ITEM.get(BettaCraft.id(path));
             info(registration, List.of(new ItemStack(item)), "info.bettacraft." + path);

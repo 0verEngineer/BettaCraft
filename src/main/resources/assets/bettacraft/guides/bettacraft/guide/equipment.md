@@ -27,6 +27,11 @@ navigation:
 | [Air pump](equipment/air_pump.md) and [air stone](equipment/air_stone.md) | bubble columns and oxygen |
 | [Sponge filter](equipment/sponge_filter.md), [corner filter](equipment/corner_filter.md), [intake sponge](equipment/intake_sponge.md) | more internal filters; the sponge protects the fry |
 | [Power regulator](equipment/regulator.md) | 0 to 100 % for filters, pumps and air stones |
+| [Multiblock external filter](equipment/multiblock_filter.md) and [filter media](equipment/filter_media.md) | a big filter of any size; media clog and are washed |
+| [Pipes and water pump](equipment/pipes.md) | carry water with its values; also to the tanks and pipes of other mods |
+| [Bulkhead and interior pipes](equipment/bulkhead.md) | pipes through the floor, outlets inside the aquarium with their own current |
+| [Water change controller](equipment/water_change.md) and [top-off](equipment/top_off.md) | automatic water changes and topping off evaporated water |
+| [Crucible and stainless steel](equipment/crucible.md) | the steel for pipes and water devices |
 | [Cabinet](equipment/cabinet.md) | stand for the aquarium with room for a filter and food |
 | [Tank lid](equipment/tank_lid.md) | stops the water from evaporating |
 | [Tools and containers](equipment/tools.md) | aquarium net, fish bag, algae scraper, mirror stick, breeding box |

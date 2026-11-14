@@ -33,7 +33,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
         CrucibleBlockEntity.Heat src = menu.source();
         int h = src == CrucibleBlockEntity.Heat.LAVA || src == CrucibleBlockEntity.Heat.FE ? 14
                 : menu.heat() > 0 ? Math.max(1, (int) Math.ceil(13.0 * menu.heat() / menu.heatMax()) + 1) : 0;
-        if (h > 0) g.blitSprite(LIT, 14, 14, 0, 14 - h, leftPos + 66, topPos + 56 + 14 - h, 14, h);
+        if (h > 0) g.blitSprite(LIT, 14, 14, 0, 14 - h, leftPos + 66, topPos + 54 + 14 - h, 14, h);
         int w = (int) Math.ceil(24.0 * menu.progress() / menu.meltTicks());
         if (w > 0) g.blitSprite(BURN, 24, 16, 0, 0, leftPos + 80, topPos + 30, w, 16);
     }

@@ -80,7 +80,7 @@ public class PlumbingItem extends BlockItem {
             for (int dz = 0; dz < s; dz++) {
                 BlockPos w = r.toWorld(cell.getX() * s + dx, 0, cell.getZ() * s + dz);
                 if (!interior.getBlockState(w).canBeReplaced()) continue;
-                double d = (dx - s / 2.0 + 0.5) * (dx - s / 2.0 + 0.5) + (dz - s / 2.0 + 0.5) * (dz - s / 2.0 + 0.5);
+                double d = (dx - s / 2) * (dx - s / 2) + (dz - s / 2) * (dz - s / 2);
                 if (d < bestD) {
                     bestD = d;
                     best = w;

@@ -259,6 +259,25 @@ final class DevClientSmokeMP {
                     send("aeration " + runs + "," + bubblers + "," + panels);
                 });
             }
+            case "plumbing" -> {
+                // M24: the pipe between reservoir and pump joins both, the controller's settings reached this client
+                BlockPos at = pos(args);
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var pipe = mc.level.getBlockState(at.offset(-2, 0, 0));
+                    boolean joins = pipe.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock
+                            && pipe.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.SIDES.get(net.minecraft.core.Direction.WEST))
+                            && pipe.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.SIDES.get(net.minecraft.core.Direction.EAST));
+                    String wc = mc.level.getBlockEntity(at.offset(-1, 0, 1)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity w
+                            ? w.intervalDays() + "," + w.share() : "none";
+                    send("plumbing " + joins + "," + wc);
+                });
+            }
+            case "waterchange" -> then(20, () -> {
+                // M24: Dev1 sets the water change controller like its screen does and starts a change
+                LOGGER.info("[mp] sending the water change settings for {}", pos(args));
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(new org.overengineer.bettacraft.network.WaterChangerPayload(pos(args), 3, 30, true, true));
+            });
             case "regulate" -> then(20, () -> {
                 // M23: Dev1 sets the air pump to 50 % like the regulator screen does
                 LOGGER.info("[mp] sending the regulator for {}", pos(args));

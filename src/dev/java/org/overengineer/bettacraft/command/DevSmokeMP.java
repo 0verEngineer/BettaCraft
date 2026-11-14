@@ -153,6 +153,8 @@ public final class DevSmokeMP {
             }
             case "aeration" -> check(name + ": air pump runs, bubbling stones and LED panel halves " + (a.length > 1 ? a[1] : "?") + " (server true,2,2)",
                     a.length > 1 && "true,2,2".equals(a[1]));
+            case "plumbing" -> check(name + ": pipe joins pump and reservoir, controller interval and share " + (a.length > 1 ? a[1] : "?") + " (server true,9,25)",
+                    a.length > 1 && "true,9,25".equals(a[1])); // M24
             case "outletmenu" -> check(name + ": cabinet menu with the outlet button (" + (a.length > 1 ? a[1] : "?") + ")", a.length > 1 && "ok".equals(a[1]));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
@@ -982,6 +984,46 @@ public final class DevSmokeMP {
             p.teleportTo(server.overworld(), min.getX() - 1.5, min.getY(), min.getZ() - 1.5, 0F, 30F);
             say("regulate", P1, (min.getX() - 1) + "," + min.getY() + "," + min.getZ());
         }, () -> server.overworld().getBlockEntity(base.offset(-19, 0, 12)) instanceof org.overengineer.bettacraft.equipment.AirPumpBlockEntity a && a.power() == 5, 20 * 30));
+        // M24: a tank fed by a water pump through a steel pipe from a reservoir, with a water change controller: both clients
+        // see the pipe join, the controller's settings; then Dev1 changes the settings and starts a water change (payload)
+        steps.add(new Step("plumbing", () -> {
+            BlockPos min = base.offset(-26, 0, 12);
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the pipe tank formed", c != null);
+            if (c == null) return;
+            org.overengineer.bettacraft.tank.TankInteractions.changeWater(level, c, 6000, 0F);
+            c.getTank().setNitrate(40F);
+            level.setBlockAndUpdate(min.offset(-3, 0, 0), ModBlocks.RESERVOIR.get().defaultBlockState());
+            if (level.getBlockEntity(min.offset(-3, 0, 0)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity r)
+                r.water().fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2000),
+                        net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            level.setBlockAndUpdate(min.offset(-2, 0, 0), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+            level.setBlockAndUpdate(min.offset(-1, 0, 0), ModBlocks.WATER_PUMP.get().defaultBlockState()
+                    .setValue(org.overengineer.bettacraft.plumbing.WaterPumpBlock.FACING, net.minecraft.core.Direction.EAST));
+            level.setBlockAndUpdate(min.offset(-1, 0, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
+            level.setBlockAndUpdate(min.offset(-2, 0, 1), ModBlocks.RESERVOIR.get().defaultBlockState());
+            if (level.getBlockEntity(min.offset(-2, 0, 1)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity r2)
+                r2.water().fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 16000),
+                        net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            if (level.getBlockEntity(min.offset(-1, 0, 1)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity wc) wc.set(9, 25, false);
+            say("plumbing", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":plumbing") && reports.containsKey(P2 + ":plumbing"), 20 * 40));
+        steps.add(new Step("water change", () -> {
+            BlockPos min = base.offset(-26, 0, 12);
+            ServerPlayer p = player(P1);
+            if (p == null) return;
+            server.overworld().setBlockAndUpdate(new BlockPos(min.getX() - 1, min.getY() - 1, min.getZ() - 2), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
+            p.resetFallDistance();
+            p.teleportTo(server.overworld(), min.getX() - 0.5, min.getY(), min.getZ() - 1.5, 0F, 30F);
+            say("waterchange", P1, (min.getX() - 1) + "," + min.getY() + "," + (min.getZ() + 1));
+        }, () -> server.overworld().getBlockEntity(base.offset(-27, 0, 13)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity wc
+                && wc.intervalDays() == 3 && wc.share() == 30 && wc.enabled() && wc.last() >= 0
+                && TankMultiblock.getController(server.overworld(), base.offset(-26, 0, 12)) instanceof TankBlockEntity c && c.getTank().nitrate() < 39.9F, 20 * 30));
         steps.add(new Step("seahorses", () -> {
             // M21.8: a small seahorse tank with a pair (the male with a full brood pouch); the cyst stack size is changed live
             // to 32 (both clients must follow), each player gets a stack of 20 jars and a used jar

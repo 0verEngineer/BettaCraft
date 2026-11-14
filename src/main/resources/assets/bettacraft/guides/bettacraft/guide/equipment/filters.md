@@ -35,6 +35,8 @@ water (under water it is a short current).
   right-click it with a heater. While the filter is attached, its heaters heat and its coolers cool the aquarium.
 * Broken, it keeps its heaters in the item (the tooltip lists them).
 * It can also go into an [aquarium cabinet](cabinet.md) under the aquarium.
+* It is the small variant: a [multiblock external filter](multiblock_filter.md) of any size, with filter media and
+  pipes, cleans much more.
 
 The tank menu shows "Filters: 1 outside (heaters: 2), 1 inside".
 

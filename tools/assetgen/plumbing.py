@@ -507,7 +507,7 @@ SPRAY_P = {"s": "#8a949e", "v": "#c8d0d8", "#": "#20262c", "b": "#7fd0ff"}
 def crucible_gui():
     img = gui._small_panel()
     from gui import slot, inset
-    for (x, y) in ((38, 17), (56, 17), (38, 35), (56, 35), (47, 57)):
+    for (x, y) in ((38, 17), (56, 17), (38, 35), (56, 35), (47, 53)):
         slot(img, x, y)
     inset(img, 116, 26, 26, 26)
     return img
