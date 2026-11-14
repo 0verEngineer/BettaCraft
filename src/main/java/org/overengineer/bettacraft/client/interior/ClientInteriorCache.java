@@ -31,6 +31,11 @@ public final class ClientInteriorCache {
     private ClientInteriorCache() {}
 
     @Nullable
+    /** M22.1: every miniature is meshed again (which blocks sway changed). */
+    public static void markAllDirty() {
+        for (ClientRegion r : REGIONS.values()) r.markAllDirty();
+    }
+
     public static ClientRegion get(int id) {
         return REGIONS.get(id);
     }

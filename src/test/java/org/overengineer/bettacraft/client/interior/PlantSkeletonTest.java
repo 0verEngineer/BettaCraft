@@ -60,7 +60,11 @@ class PlantSkeletonTest {
             if (leaf) {
                 long n = s.leafAt.get(k);
                 assertTrue(s.parent.containsKey(n), what + ": leaf " + str(k) + " hangs on a stem node");
-                assertEquals(1, PlantSkeleton.distance(k, n), what + ": leaf " + str(k) + " sits right at its stem");
+                // M22.1: or the outer part of a big leaf, two blocks out and one up, with its inner part between
+                boolean outer = PlantSkeleton.distance(k, n) == 2 && PlantSkeleton.y(k) == PlantSkeleton.y(n) + 1
+                        && s.leafAt.getOrDefault(PlantSkeleton.key(PlantSkeleton.x(n) + Integer.signum(PlantSkeleton.x(k) - PlantSkeleton.x(n)), PlantSkeleton.y(n),
+                        PlantSkeleton.z(n) + Integer.signum(PlantSkeleton.z(k) - PlantSkeleton.z(n))), Long.MAX_VALUE) == n;
+                assertTrue(PlantSkeleton.distance(k, n) == 1 || outer, what + ": leaf " + str(k) + " sits right at its stem");
             }
         }
         // every stem node leads down to the floor through its parents, and only the lowest layer stands on the floor
@@ -137,6 +141,23 @@ class PlantSkeletonTest {
     }
 
     @Test
+    void everyLudwigiaAndAlternantheraLeafSitsOnAStemThatReachesTheFloor() {
+        // M22.1: the other stem plants (a leaf every second node, wider leaves at the bigger scale)
+        int forms = 0;
+        for (PlantSpecies sp : new PlantSpecies[] {PlantSpecies.LUDWIGIA, PlantSpecies.ALTERNANTHERA})
+            for (int scale : SCALES)
+                for (int headroom : HEADROOMS)
+                    for (long seed = 1; seed <= 20; seed++) {
+                        PlantShapes.Shape sh = PlantShapes.of(sp, seed, scale, headroom);
+                        for (int st = 1; st <= sh.stages(); st++) {
+                            checkStems(blocks(sh.at(st)), sp + " scale " + scale + " headroom " + headroom + " seed " + seed + " stage " + st);
+                            forms++;
+                        }
+                    }
+        assertTrue(forms > 1000);
+    }
+
+    @Test
     void rotalaWithMissingBlocksStillHasNoLeafWithoutStem() {
         // blocks the plant could not place (decoration in the way) or a neighbour took: whatever is left and connected
         Random r = new Random(21);
@@ -184,6 +205,32 @@ class PlantSkeletonTest {
                     }
                 }
         assertTrue(forms > 1000);
+    }
+
+    @Test
+    void vallisneriaVersion2KeepsItsRibbonsApart() {
+        // M22.1: the generator of new plants keeps the ribbons out of each other's blocks: the skeleton finds fewer blocks
+        // shared by two ribbons (crossings) than with the old generator (which existing plants keep)
+        int shared1 = 0, shared2 = 0, forms = 0;
+        for (int scale : SCALES)
+            for (int headroom : HEADROOMS)
+                for (long seed = 1; seed <= 40; seed++) {
+                    for (int v = 1; v <= 2; v++) {
+                        PlantShapes.Shape sh = PlantShapes.of(PlantSpecies.VALLISNERIA, seed, scale, headroom, v);
+                        Long2ObjectOpenHashMap<PlantPart> b = blocks(sh.all());
+                        checkRibbons(b, "vallisneria v" + v + " scale " + scale + " headroom " + headroom + " seed " + seed);
+                        LongOpenHashSet seen = new LongOpenHashSet();
+                        int shared = 0;
+                        for (PlantSkeleton.Ribbon r : PlantSkeleton.ribbons(b)) for (long k : r.cells()) if (!seen.add(k)) shared++;
+                        if (v == 1) shared1 += shared;
+                        else shared2 += shared;
+                    }
+                    forms++;
+                }
+        assertTrue(forms > 500);
+        // the generator itself never puts two ribbons into one block any more; where ribbons stand diagonally next to
+        // each other the skeleton may still walk along a neighbour for a few blocks
+        assertTrue(shared2 < shared1, "version 2 shares fewer blocks: " + shared2 + " vs " + shared1);
     }
 
     @Test

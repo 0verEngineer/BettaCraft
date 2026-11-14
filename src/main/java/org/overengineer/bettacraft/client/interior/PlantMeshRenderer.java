@@ -61,11 +61,10 @@ public final class PlantMeshRenderer {
      * own that are left out while the tank shows the meshes, M21.1).
      */
     public static final ModelProperty<Boolean> MINIATURE = new ModelProperty<>();
-    private static final ResourceLocation TEX_ROUND = BettaCraft.id("textures/block/plant_mesh/leaf_round.png");
-    private static final ResourceLocation TEX_OVATE = BettaCraft.id("textures/block/plant_mesh/leaf_ovate.png");
-    private static final ResourceLocation TEX_RIBBON = BettaCraft.id("textures/block/plant_mesh/ribbon.png");
-    private static final ResourceLocation TEX_STEM = BettaCraft.id("textures/block/plant_mesh/stem.png");
-    private static final ResourceLocation[] TEXTURES = {TEX_ROUND, TEX_OVATE, TEX_RIBBON, TEX_STEM};
+    /** How a quad moves besides the sway (M22.1, corals): see {@link #drawAt}. */
+    static final int ANIM_NONE = 0, ANIM_WIGGLE = 1, ANIM_POLYP = 2, ANIM_PULSE = 3, ANIM_RISE = 4, ANIM_TUFT = 5;
+    /** Floats per vertex: x, y, z, u, v, nx, ny, nz, height (sway), anchor x, y, z, weight, phase. */
+    static final int STRIDE = 14;
     private static final int MAX_BLOCKS = 2000, REACH = 10, BUILDS_PER_FRAME = 6;
     private static final double DRAW_DISTANCE = 80, SHADOW_DISTANCE = 64;
 
@@ -86,8 +85,13 @@ public final class PlantMeshRenderer {
 
     private PlantMeshRenderer() {}
 
+    /**
+     * The meshes are drawn: on for the pack ({@code features.plantMeshes}, common) and for this player
+     * ({@code render.plantMeshes}, client, M22.1). Only the client draws them; the blocks and everything on the server
+     * stay the same, so every player on a server may choose for themselves.
+     */
     public static boolean active() {
-        return CommonConfig.plantMeshes();
+        return CommonConfig.plantMeshes() && org.overengineer.bettacraft.config.ClientConfig.plantMeshes();
     }
 
     static void noteRoot(BlockPos pos) {
@@ -101,13 +105,13 @@ public final class PlantMeshRenderer {
 
     // ------------------------------------------------------------------ invalidation (client thread)
 
-    private static boolean prototype(BlockState s) {
-        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshPrototype();
+    private static boolean meshed(BlockState s) {
+        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshed();
     }
 
     /** {@code ClientLevel.sendBlockUpdated}: every block change on the client (packets, prediction, shears, growth). */
     public static void onBlockChanged(ClientLevel level, BlockPos pos, BlockState old, BlockState now) {
-        boolean was = prototype(old), is = prototype(now);
+        boolean was = meshed(old), is = meshed(now);
         if (!was && !is) return;
         if (level != meshLevel && meshLevel != null) return;
         long key = pos.asLong();
@@ -172,20 +176,25 @@ public final class PlantMeshRenderer {
      * leaf textures from the block atlas (mipmapped like terrain, see {@link #MINI}), leaves a little longer and wider,
      * stems thicker and the colours a little stronger, so the tiny leaves do not flicker or vanish.
      */
-    record Style(float leafLong, float leafWide, float stem, float ribbon, float saturate, boolean atlas) {
-        static final Style INSIDE = new Style(1F, 1F, 1F, 1F, 1F, false);
-        static final Style OUTSIDE = new Style(1.25F, 1.5F, 1.8F, 1.35F, 1.18F, true);
+    record Style(float leafLong, float leafWide, float stem, float ribbon, float saturate, boolean atlas, float detail) {
+        static final Style INSIDE = new Style(1F, 1F, 1F, 1F, 1F, false, 1F);
+        /** M22.1: polyps, tufts and bubble tips of the corals a little larger outside ({@code detail}). */
+        static final Style OUTSIDE = new Style(1.25F, 1.5F, 1.8F, 1.35F, 1.18F, true, 1.3F);
     }
 
-    /** Quads of one texture: 4 vertices of 9 floats (x, y, z, u, v, nx, ny, nz, height for the sway) per quad. */
+    /**
+     * Quads of one texture: 4 vertices of {@link #STRIDE} floats and a colour each, per quad the index of its light and
+     * how it moves ({@code ANIM_*}).
+     */
     static final class Layer {
         final FloatArrayList v = new FloatArrayList();
         final IntArrayList color = new IntArrayList();
         final IntArrayList light = new IntArrayList();
+        final IntArrayList mode = new IntArrayList();
     }
 
     static final class Mesh {
-        final Layer[] layers = new Layer[TEXTURES.length];
+        final Layer[] layers = new Layer[PlantTex.ALL.length];
         final LongArrayList lightPos = new LongArrayList();
         final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap lightIndex = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
         int[] lights = new int[0];
@@ -195,416 +204,82 @@ public final class PlantMeshRenderer {
         int minX, minY, minZ, maxX, maxY, maxZ;
         double swayPerBlock, swayMax;
         float phase;
+        /** M22.1: polyps that close when something swims by (zoanthids, star polyps). */
+        boolean reactive;
+        /** Disturbances (x, y, z relative to the root corner, time) of the last seconds; at most {@link #MAX_DIST}. */
+        final float[] dist = new float[MAX_DIST * 4];
+        int distCount;
+        long lastCheck = Long.MIN_VALUE;
+        static final int MAX_DIST = 6;
+        /** Ticks to close, ticks to open again, reach of a disturbance (interior blocks). */
+        static final float CLOSE = 4, OPEN = 70, RANGE = 7;
+        BlockPos rootPos = BlockPos.ZERO;
+
+        /**
+         * Something swam by at (x, y, z), relative to the root corner: the polyps around close. A disturbance near a
+         * recent one renews it (a fish that stays keeps them closed).
+         */
+        void disturb(float x, float y, float z, float time) {
+            float rx = rootPos.getX(), ry = rootPos.getY(), rz = rootPos.getZ();
+            if (x < minX - rx - RANGE || x > maxX - rx + 1 + RANGE || z < minZ - rz - RANGE || z > maxZ - rz + 1 + RANGE
+                    || y < minY - ry - RANGE || y > maxY - ry + 1 + RANGE) return;
+            int oldest = 0;
+            for (int i = 0; i < distCount; i++) {
+                float dx = dist[i * 4] - x, dy = dist[i * 4 + 1] - y, dz = dist[i * 4 + 2] - z;
+                float age = time - dist[i * 4 + 3];
+                if (dx * dx + dy * dy + dz * dz < 4 && age < OPEN) {
+                    dist[i * 4] = x;
+                    dist[i * 4 + 1] = y;
+                    dist[i * 4 + 2] = z;
+                    // stays closed: renewed as if it had closed just now, without opening in between
+                    if (age >= CLOSE) dist[i * 4 + 3] = time - CLOSE;
+                    return;
+                }
+                if (dist[i * 4 + 3] < dist[oldest * 4 + 3]) oldest = i;
+            }
+            int i = distCount < MAX_DIST ? distCount++ : oldest;
+            dist[i * 4] = x;
+            dist[i * 4 + 1] = y;
+            dist[i * 4 + 2] = z;
+            dist[i * 4 + 3] = time;
+        }
+
+        /** How far the polyp anchored at (x, y, z) is closed (0 open .. 1 closed). */
+        float closed(float x, float y, float z, float time) {
+            float c = 0;
+            for (int i = 0; i < distCount; i++) {
+                float age = time - dist[i * 4 + 3];
+                if (age < 0 || age > CLOSE + OPEN) continue;
+                float env = age < CLOSE ? age / CLOSE : 1 - (age - CLOSE) / OPEN;
+                float dx = dist[i * 4] - x, dy = dist[i * 4 + 1] - y, dz = dist[i * 4 + 2] - z;
+                float d = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                c = Math.max(c, env * Math.clamp(1.4F - d / RANGE, 0F, 1F));
+            }
+            return c;
+        }
+
+        /** Polyps of this mesh closed right now (smoke tests). */
+        boolean anyClosed(float time) {
+            for (int i = 0; i < distCount; i++) if (time - dist[i * 4 + 3] <= CLOSE + OPEN) return true;
+            return false;
+        }
 
         Mesh() {
             for (int i = 0; i < layers.length; i++) layers[i] = new Layer();
         }
     }
 
+    /** Plants inside whose polyps are closed right now (smoke tests). */
+    public static int closedMeshes(float time) {
+        int n = 0;
+        for (Mesh m : MESHES.values()) if (m.anyClosed(time)) n++;
+        return n;
+    }
+
     /** Blocks the mesh is built from: the client level (inside) or the copy of the interior for the miniature (outside). */
     @FunctionalInterface
     interface BlockSource {
         BlockState get(int x, int y, int z);
-    }
-
-    /** Builds the quads of a plant; positions relative to the corner of the root block. */
-    private static final class Builder {
-        final Mesh m = new Mesh();
-        final BlockPos root;
-        final PlantSpecies sp;
-        final Long2ObjectOpenHashMap<BlockState> blocks;
-        final Style style;
-        final net.minecraft.client.renderer.texture.TextureAtlasSprite[] sprites;
-        int curLight;
-        int curColor;
-
-        Builder(BlockPos root, PlantSpecies sp, Long2ObjectOpenHashMap<BlockState> blocks, Style style) {
-            this.root = root;
-            this.sp = sp;
-            this.blocks = blocks;
-            this.style = style;
-            this.sprites = style.atlas() ? miniSprites() : null;
-        }
-
-        PlantPart part(int x, int y, int z) {
-            BlockState s = blocks.get(BlockPos.asLong(x, y, z));
-            return s == null ? null : s.getValue(AquaticPlantBlock.PART);
-        }
-
-        boolean has(int x, int y, int z) {
-            return blocks.containsKey(BlockPos.asLong(x, y, z));
-        }
-
-        void use(int x, int y, int z, PlantPart part) {
-            BlockState s = blocks.get(BlockPos.asLong(x, y, z));
-            int tint = s == null ? 0 : s.getValue(AquaticPlantBlock.TINT);
-            curColor = 0xFF000000 | saturate(PlantColors.color(sp, part, tint), style.saturate());
-            long key = root.offset(x, y, z).asLong();
-            int i = m.lightIndex.getOrDefault(key, -1);
-            if (i < 0) {
-                i = m.lightPos.size();
-                m.lightPos.add(key);
-                m.lightIndex.put(key, i);
-            }
-            curLight = i;
-        }
-
-        void quad(int tex, Vector3f a, Vector3f b, Vector3f c, Vector3f d, float u0, float v0, float u1, float v1, Vector3f n) {
-            Layer l = m.layers[tex];
-            if (sprites != null) {
-                // the atlas does not repeat: tiled stems and ribbons are folded back into one tile per quad
-                float shift = (float) Math.floor(Math.min(v0, v1));
-                v0 = Math.clamp(v0 - shift, 0F, 1F);
-                v1 = Math.clamp(v1 - shift, 0F, 1F);
-                var sprite = sprites[tex];
-                u0 = sprite.getU(u0);
-                u1 = sprite.getU(u1);
-                v0 = sprite.getV(v0);
-                v1 = sprite.getV(v1);
-            }
-            vert(l, a, u0, v1, n);
-            vert(l, b, u1, v1, n);
-            vert(l, c, u1, v0, n);
-            vert(l, d, u0, v0, n);
-            l.color.add(curColor);
-            l.light.add(curLight);
-            m.quads++;
-        }
-
-        private static void vert(Layer l, Vector3f p, float u, float v, Vector3f n) {
-            l.v.add(p.x);
-            l.v.add(p.y);
-            l.v.add(p.z);
-            l.v.add(u);
-            l.v.add(v);
-            l.v.add(n.x);
-            l.v.add(n.y);
-            l.v.add(n.z);
-            l.v.add(Math.max(0, p.y));
-        }
-
-        /** A thin square tube from a to b. */
-        void tube(Vector3f a, Vector3f b, float r) {
-            Vector3f d = new Vector3f(b).sub(a);
-            float len = d.length();
-            if (len < 1e-4F) return;
-            d.div(len);
-            Vector3f s = Math.abs(d.y) > 0.9F ? new Vector3f(1, 0, 0) : new Vector3f(0, 1, 0).cross(d).normalize();
-            Vector3f t = new Vector3f(d).cross(s).normalize();
-            Vector3f[] off = {new Vector3f(s).mul(r), new Vector3f(t).mul(r), new Vector3f(s).mul(-r), new Vector3f(t).mul(-r)};
-            for (int i = 0; i < 4; i++) {
-                Vector3f o0 = off[i], o1 = off[(i + 1) % 4];
-                Vector3f n = new Vector3f(o0).add(o1).normalize();
-                quad(3, new Vector3f(a).add(o0), new Vector3f(a).add(o1), new Vector3f(b).add(o1), new Vector3f(b).add(o0), i * 0.25F, 0, i * 0.25F + 0.25F, len, n);
-            }
-        }
-
-        /**
-         * A leaf blade from {@code base} along {@code dir} ({@code len} long, {@code width} wide), the blade in the plane of
-         * dir and {@code across}, arched a little towards its upper side.
-         */
-        void leaf(int tex, Vector3f base, Vector3f dir, Vector3f across, float len, float width, float arch) {
-            Vector3f d = new Vector3f(dir).normalize();
-            Vector3f s = new Vector3f(across).normalize();
-            Vector3f n = new Vector3f(s).cross(d).normalize();
-            if (n.y < 0) {
-                n.negate();
-                s.negate();
-            }
-            Vector3f half = new Vector3f(s).mul(width / 2);
-            Vector3f mid = new Vector3f(base).add(new Vector3f(d).mul(len / 2)).add(new Vector3f(n).mul(arch * len));
-            Vector3f tip = new Vector3f(base).add(new Vector3f(d).mul(len));
-            // base half (v 1 .. 0.5), tip half (v 0.5 .. 0)
-            quad(tex, new Vector3f(base).sub(half), new Vector3f(base).add(half), new Vector3f(mid).add(half), new Vector3f(mid).sub(half), 0, 0.5F, 1, 1, n);
-            quad(tex, new Vector3f(mid).sub(half), new Vector3f(mid).add(half), new Vector3f(tip).add(half), new Vector3f(tip).sub(half), 0, 0, 1, 0.5F, n);
-        }
-
-        static Vector3f c(int x, int y, int z) {
-            return new Vector3f(x + 0.5F, y + 0.5F, z + 0.5F);
-        }
-
-        // -------------------------------------------------------------- Rotala
-
-        /** The blocks of the plant as parts, keyed for {@link PlantSkeleton}. */
-        Long2ObjectOpenHashMap<PlantPart> parts() {
-            Long2ObjectOpenHashMap<PlantPart> out = new Long2ObjectOpenHashMap<>();
-            for (var e : blocks.long2ObjectEntrySet()) {
-                long k = e.getLongKey();
-                out.put(PlantSkeleton.key(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k)), e.getValue().getValue(AquaticPlantBlock.PART));
-            }
-            return out;
-        }
-
-        static Vector3f c(long skeletonKey) {
-            return c(PlantSkeleton.x(skeletonKey), PlantSkeleton.y(skeletonKey), PlantSkeleton.z(skeletonKey));
-        }
-
-        /**
-         * M21.1: the shoots as chains of stem nodes ({@link PlantSkeleton#stems}): a stem from every node to its parent
-         * (the floor for the lowest ones), a bud of young leaves on every tip, and every leaf block a pair of round leaves
-         * from the node it hangs on, fanned out towards the block.
-         */
-        void stems() {
-            PlantSkeleton.Stems sk = PlantSkeleton.stems(parts());
-            it.unimi.dsi.fastutil.longs.LongOpenHashSet tips = sk.tips();
-            float r = 0.075F * style.stem();
-            for (long k : sk.order) {
-                int x = PlantSkeleton.x(k), y = PlantSkeleton.y(k), z = PlantSkeleton.z(k);
-                use(x, y, z, PlantPart.STEM);
-                long p = sk.parent.get(k);
-                Vector3f from = p == PlantSkeleton.FLOOR ? new Vector3f(x + 0.5F, Math.max(0, y), z + 0.5F) : c(p);
-                tube(from, c(k), p == PlantSkeleton.FLOOR ? r * 1.07F : r);
-                if (tips.contains(k)) {
-                    // the growing tip: a little bud of young leaves, on in the direction the shoot grows
-                    use(x, y, z, PlantPart.TOP);
-                    Vector3f dir = new Vector3f(c(k)).sub(from);
-                    if (dir.lengthSquared() < 1e-4F || p == PlantSkeleton.FLOOR) dir.set(0, 1, 0);
-                    dir.normalize();
-                    Vector3f tip = c(k).add(new Vector3f(dir).mul(0.3F));
-                    tube(c(k), tip, r * 0.8F);
-                    for (int i = 0; i < 3; i++) {
-                        double a = i * Math.PI * 2 / 3 + (x * 7 + z * 13) * 0.3;
-                        Vector3f d = new Vector3f((float) Math.cos(a), 0, (float) Math.sin(a)).add(new Vector3f(dir).mul(1.6F));
-                        leaf(0, tip, d, new Vector3f((float) -Math.sin(a), 0, (float) Math.cos(a)), 0.5F * style.leafLong(), 0.36F * style.leafWide(), 0.08F);
-                    }
-                }
-            }
-            for (var e : sk.leafAt.long2LongEntrySet()) {
-                long k = e.getLongKey(), n = e.getLongValue();
-                int x = PlantSkeleton.x(k), y = PlantSkeleton.y(k), z = PlantSkeleton.z(k);
-                PlantPart p = part(x, y, z);
-                if (p == null) continue;
-                boolean top = p == PlantPart.TOP;
-                use(x, y, z, top ? PlantPart.TOP : PlantPart.LEAF);
-                int dx = x - PlantSkeleton.x(n), dy = y - PlantSkeleton.y(n), dz = z - PlantSkeleton.z(n);
-                double a = dx == 0 && dz == 0 ? (x * 5 + z * 11 + y * 3) * 0.7 : Math.atan2(dz, dx);
-                // a pair of round leaves from the node of the stem, fanned out towards this block
-                Vector3f node = c(n).add((float) Math.cos(a) * 0.06F, 0, (float) Math.sin(a) * 0.06F);
-                for (int i = -1; i <= 1; i += 2) {
-                    double b = a + i * 0.5;
-                    float rise = (top ? 0.8F : 0.38F) + dy * 0.7F;
-                    Vector3f d = new Vector3f((float) Math.cos(b), rise, (float) Math.sin(b));
-                    leaf(0, node, d, new Vector3f((float) -Math.sin(b), 0, (float) Math.cos(b)), (top ? 0.78F : 1.0F) * style.leafLong(),
-                            (top ? 0.55F : 0.68F) * style.leafWide(), 0.1F);
-                }
-            }
-            m.swayPerBlock = 0.03;
-            m.swayMax = 0.9;
-        }
-
-        // -------------------------------------------------------------- Vallisneria
-
-        /**
-         * M21.1: every ribbon ({@link PlantSkeleton#ribbons}) as one strip from its base on the floor (or the ribbon it
-         * branches off) through its blocks up to the surface, round the bend and along the surface to a rounded tip; the
-         * steps of the blocks smoothed into a curve, the strip turning from upright (slightly twisted) to flat on the
-         * water without a gap.
-         */
-        void ribbons() {
-            for (PlantSkeleton.Ribbon rb : PlantSkeleton.ribbons(parts())) {
-                // a branch of one or two blocks lies against the ribbon it branches off (blocks of crossing ribbons the
-                // walk could not tell apart): drawn, it would only be a little flap on that ribbon
-                if (rb.from() != PlantSkeleton.FLOOR && rb.cells().size() <= 2) continue;
-                List<Vector3f> pts = new ArrayList<>();
-                List<int[]> cells = new ArrayList<>();
-                long first = rb.cells().getLong(0);
-                int fx = PlantSkeleton.x(first), fy = PlantSkeleton.y(first), fz = PlantSkeleton.z(first);
-                pts.add(rb.from() == PlantSkeleton.FLOOR ? new Vector3f(fx + 0.5F, fy, fz + 0.5F) : c(rb.from()));
-                cells.add(new int[] {fx, fy, fz});
-                for (long k : rb.cells()) {
-                    pts.add(c(k));
-                    cells.add(new int[] {PlantSkeleton.x(k), PlantSkeleton.y(k), PlantSkeleton.z(k)});
-                }
-                // a rounded tip half a block further
-                Vector3f last = pts.getLast(), prev = pts.get(pts.size() - 2);
-                Vector3f ext = new Vector3f(last).sub(prev);
-                if (ext.lengthSquared() < 1e-6F) ext.set(0, 1, 0);
-                pts.add(new Vector3f(last).add(ext.normalize().mul(0.45F)));
-                cells.add(cells.getLast());
-                // smooth the steps of the blocks into a gentle curve (the ends stay)
-                for (int it = 0; it < 3; it++) {
-                    List<Vector3f> sm = new ArrayList<>(pts.size());
-                    sm.add(pts.getFirst());
-                    for (int k = 1; k < pts.size() - 1; k++) {
-                        sm.add(new Vector3f(pts.get(k - 1)).add(pts.get(k)).add(pts.get(k)).add(pts.get(k + 1)).mul(0.25F));
-                    }
-                    sm.add(pts.getLast());
-                    pts = sm;
-                }
-                float yaw = (float) Math.floorMod(fx * 73 + fz * 151, 360) * (float) Math.PI / 180F;
-                strip(pts, cells, yaw, 0.34F * style.ribbon());
-            }
-            m.swayPerBlock = 0.05;
-            m.swayMax = 1.6;
-        }
-
-        /**
-         * A ribbon strip along the points: the half width across is worked out per point (upright parts turn slowly with
-         * {@code yaw}, parts along the surface lie flat), so neighbouring pieces share their edges.
-         */
-        void strip(List<Vector3f> pts, List<int[]> cells, float yaw, float w) {
-            int n = pts.size();
-            Vector3f[] side = new Vector3f[n];
-            for (int i = 0; i < n; i++) {
-                Vector3f t = new Vector3f(pts.get(Math.min(n - 1, i + 1))).sub(pts.get(Math.max(0, i - 1)));
-                if (t.lengthSquared() < 1e-8F) t.set(0, 1, 0);
-                t.normalize();
-                float ya = yaw + 0.08F * i;
-                Vector3f sv = new Vector3f((float) Math.cos(ya), 0, (float) Math.sin(ya));
-                Vector3f sh = new Vector3f(t).cross(0, 1, 0);
-                Vector3f s;
-                if (sh.lengthSquared() < 1e-4F) {
-                    s = new Vector3f(sv);
-                } else {
-                    sh.normalize();
-                    if (sh.dot(sv) < 0) sh.negate();
-                    float up = Math.clamp((Math.abs(t.y) - 0.3F) / 0.5F, 0F, 1F);
-                    s = new Vector3f(sv).mul(up).add(new Vector3f(sh).mul(1 - up));
-                }
-                s.sub(new Vector3f(t).mul(s.dot(t)));
-                if (s.lengthSquared() < 1e-8F) s = new Vector3f(sh.lengthSquared() > 1e-4F ? sh : sv);
-                s.normalize();
-                if (i > 0 && s.dot(side[i - 1]) < 0) s.negate();
-                side[i] = s;
-            }
-            float v = 0;
-            for (int i = 1; i < n; i++) {
-                Vector3f a = pts.get(i - 1), b = pts.get(i);
-                Vector3f seg = new Vector3f(b).sub(a);
-                float len = seg.length();
-                if (len < 1e-4F) continue;
-                int[] cell = cells.get(i);
-                PlantPart p = part(cell[0], cell[1], cell[2]);
-                use(cell[0], cell[1], cell[2], p == PlantPart.TOP ? PlantPart.TOP : PlantPart.RIBBON);
-                // narrower towards the rounded tip
-                Vector3f s0 = new Vector3f(side[i - 1]).mul(w), s1 = new Vector3f(side[i]).mul(i == n - 1 ? w * 0.55F : w);
-                Vector3f nrm = new Vector3f(s0).cross(seg).normalize();
-                if (nrm.y < 0) nrm.negate();
-                float v1 = v + len * 0.5F;
-                quad(2, new Vector3f(a).sub(s0), new Vector3f(a).add(s0), new Vector3f(b).add(s1), new Vector3f(b).sub(s1), 0, v1, 1, v, nrm);
-                v = v1;
-            }
-        }
-
-        // -------------------------------------------------------------- Anubias
-
-        void epiphyte() {
-            List<Long> leafBlocks = new ArrayList<>();
-            List<Long> stems = new ArrayList<>();
-            for (var e : blocks.long2ObjectEntrySet()) {
-                long k = e.getLongKey();
-                int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
-                PlantPart p = e.getValue().getValue(AquaticPlantBlock.PART);
-                switch (p) {
-                    case ROOT, RHIZOME -> {
-                        use(x, y, z, PlantPart.RHIZOME);
-                        Vector3f a = new Vector3f(x + 0.5F, y + 0.32F, z + 0.5F);
-                        boolean linked = false;
-                        for (int[] d : new int[][] {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}) {
-                            PlantPart q = part(x + d[0], y, z + d[1]);
-                            if (q == PlantPart.RHIZOME || q == PlantPart.ROOT) {
-                                linked = true;
-                                if (d[0] + d[1] > 0) tube(a, new Vector3f(x + d[0] + 0.5F, y + 0.32F, z + d[1] + 0.5F), 0.26F);
-                            }
-                        }
-                        if (!linked) tube(new Vector3f(a).sub(0.3F, 0, 0), new Vector3f(a).add(0.3F, 0, 0), 0.26F);
-                    }
-                    case STEM -> stems.add(k);
-                    case LEAF, TOP -> leafBlocks.add(k);
-                    default -> { }
-                }
-            }
-            // leaf bases: stalk blocks next to a leaf block; every leaf block belongs to the nearest base
-            List<Long> leafBases = new ArrayList<>();
-            for (long k : stems) {
-                int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
-                boolean touches = false;
-                for (int dy = -1; dy <= 1 && !touches; dy++)
-                    for (int dz = -1; dz <= 1 && !touches; dz++)
-                        for (int dx = -1; dx <= 1 && !touches; dx++) {
-                            PlantPart q = part(x + dx, y + dy, z + dz);
-                            touches = q == PlantPart.LEAF || q == PlantPart.TOP;
-                        }
-                if (touches) leafBases.add(k);
-            }
-            // bases right next to each other are one leaf
-            List<Long> merged = new ArrayList<>();
-            for (long k : leafBases) {
-                boolean near = false;
-                for (long o : merged) near |= Math.abs(BlockPos.getX(o) - BlockPos.getX(k)) <= 1 && Math.abs(BlockPos.getY(o) - BlockPos.getY(k)) <= 1
-                        && Math.abs(BlockPos.getZ(o) - BlockPos.getZ(k)) <= 1;
-                if (!near) merged.add(k);
-            }
-            if (merged.isEmpty() && !leafBlocks.isEmpty()) merged.add(BlockPos.asLong(0, 0, 0));
-            List<List<Long>> blades = new ArrayList<>();
-            for (int n = 0; n < merged.size(); n++) blades.add(new ArrayList<>());
-            for (long k : leafBlocks) {
-                Vector3f p = c(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k));
-                int best = 0;
-                double bd = Double.MAX_VALUE;
-                for (int n = 0; n < merged.size(); n++) {
-                    long b = merged.get(n);
-                    double d = p.distanceSquared(c(BlockPos.getX(b), BlockPos.getY(b), BlockPos.getZ(b)));
-                    if (d < bd) {
-                        bd = d;
-                        best = n;
-                    }
-                }
-                blades.get(best).add(k);
-            }
-            for (int n = 0; n < merged.size(); n++) {
-                if (blades.get(n).isEmpty()) continue;
-                long b = merged.get(n);
-                int bx = BlockPos.getX(b), by = BlockPos.getY(b), bz = BlockPos.getZ(b);
-                Vector3f base = c(bx, by, bz);
-                // the petiole: from the nearest piece of rhizome up to the base of the blade, a little arched
-                Vector3f from = new Vector3f(0.5F, 0.4F, 0.5F);
-                double fd = Double.MAX_VALUE;
-                for (var e : blocks.long2ObjectEntrySet()) {
-                    PlantPart q = e.getValue().getValue(AquaticPlantBlock.PART);
-                    if (q != PlantPart.RHIZOME && q != PlantPart.ROOT) continue;
-                    long k = e.getLongKey();
-                    Vector3f r = new Vector3f(BlockPos.getX(k) + 0.5F, BlockPos.getY(k) + 0.4F, BlockPos.getZ(k) + 0.5F);
-                    if (r.distanceSquared(base) < fd) {
-                        fd = r.distanceSquared(base);
-                        from = r;
-                    }
-                }
-                use(bx, by, bz, PlantPart.STEM);
-                Vector3f mid = new Vector3f(from).add(base).mul(0.5F).add(0, 0.25F, 0);
-                tube(from, mid, 0.07F * style.stem());
-                tube(mid, base, 0.065F * style.stem());
-                blade(blades.get(n), base);
-            }
-            m.swayPerBlock = 0.006;
-            m.swayMax = 0.08;
-        }
-
-        private void blade(List<Long> patch, Vector3f b) {
-            Vector3f tip = new Vector3f(b);
-            long tipKey = patch.getFirst();
-            for (long k : patch) {
-                Vector3f p = c(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k));
-                if (p.distanceSquared(b) > tip.distanceSquared(b)) {
-                    tip = p;
-                    tipKey = k;
-                }
-            }
-            Vector3f dir = new Vector3f(tip).sub(b);
-            if (dir.lengthSquared() < 0.01F) dir.set(0, 1, 0.3F);
-            float len = dir.length() + 1.0F;
-            dir.normalize();
-            Vector3f across = Math.abs(dir.y) > 0.95F ? new Vector3f(1, 0, 0) : new Vector3f(0, 1, 0).cross(dir).normalize();
-            float spread = 0;
-            for (long k : patch) {
-                Vector3f p = c(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k)).sub(b);
-                spread = Math.max(spread, Math.abs(p.dot(across)));
-            }
-            float width = Math.max(1.2F, Math.min(3.4F, spread * 2 + 1.4F));
-            PlantPart p = part(BlockPos.getX(tipKey), BlockPos.getY(tipKey), BlockPos.getZ(tipKey));
-            use(BlockPos.getX(tipKey), BlockPos.getY(tipKey), BlockPos.getZ(tipKey), p == null ? PlantPart.LEAF : p);
-            leaf(1, b, dir, across, len * style.leafLong(), width * Math.min(1.15F, style.leafWide()), 0.1F);
-        }
     }
 
     private static Mesh build(ClientLevel level, BlockPos root, PlantSpecies sp) {
@@ -638,13 +313,16 @@ public final class PlantMeshRenderer {
                         if (seen.add(n.asLong())) q.add(n);
                     }
         }
-        Builder b = new Builder(root, sp, blocks, style);
-        switch (sp.form()) {
-            case STEM -> b.stems();
-            case RIBBON -> b.ribbons();
-            default -> b.epiphyte();
+        Long2ObjectOpenHashMap<PlantPart> parts = new Long2ObjectOpenHashMap<>(blocks.size());
+        it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap tints = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap(blocks.size());
+        for (var e : blocks.long2ObjectEntrySet()) {
+            parts.put(e.getLongKey(), e.getValue().getValue(AquaticPlantBlock.PART));
+            tints.put(e.getLongKey(), (int) e.getValue().getValue(AquaticPlantBlock.TINT));
         }
+        PlantMeshBuilder b = new PlantMeshBuilder(root, sp, parts, tints, style);
+        b.build();
         Mesh m = b.m;
+        m.rootPos = root.immutable();
         int minX = 0, minY = 0, minZ = 0, maxX = 1, maxY = 1, maxZ = 1;
         for (long k : blocks.keySet()) {
             minX = Math.min(minX, BlockPos.getX(k));
@@ -668,24 +346,10 @@ public final class PlantMeshRenderer {
         return m;
     }
 
-    /** RGB with the saturation scaled by {@code f} (1 = unchanged). */
-    static int saturate(int rgb, float f) {
-        if (f == 1F) return rgb;
-        float r = (rgb >> 16 & 255), g = (rgb >> 8 & 255), b = (rgb & 255);
-        float grey = r * 0.299F + g * 0.587F + b * 0.114F;
-        int nr = Math.clamp(Math.round(grey + (r - grey) * f), 0, 255);
-        int ng = Math.clamp(Math.round(grey + (g - grey) * f), 0, 255);
-        int nb = Math.clamp(Math.round(grey + (b - grey) * f), 0, 255);
-        return nr << 16 | ng << 8 | nb;
-    }
-
-    private static final ResourceLocation[] MINI_SPRITES = {BettaCraft.id("block/plant_mesh/leaf_round_mini"), BettaCraft.id("block/plant_mesh/leaf_ovate_mini"),
-            BettaCraft.id("block/plant_mesh/ribbon_mini"), BettaCraft.id("block/plant_mesh/stem")};
-
     static net.minecraft.client.renderer.texture.TextureAtlasSprite[] miniSprites() {
         var atlas = Minecraft.getInstance().getModelManager().getAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
-        var out = new net.minecraft.client.renderer.texture.TextureAtlasSprite[MINI_SPRITES.length];
-        for (int i = 0; i < out.length; i++) out[i] = atlas.getSprite(MINI_SPRITES[i]);
+        var out = new net.minecraft.client.renderer.texture.TextureAtlasSprite[PlantTex.ALL.length];
+        for (int i = 0; i < out.length; i++) out[i] = atlas.getSprite(PlantTex.ALL[i].sprite);
         return out;
     }
 
@@ -740,7 +404,7 @@ public final class PlantMeshRenderer {
             BlockPos pos = BlockPos.of(key);
             if (pos.distToCenterSqr(cam) > DRAW_DISTANCE * DRAW_DISTANCE) continue;
             BlockState s = level.getBlockState(pos);
-            if (!prototype(s) || s.getValue(AquaticPlantBlock.PART) != PlantPart.ROOT) {
+            if (!meshed(s) || s.getValue(AquaticPlantBlock.PART) != PlantPart.ROOT) {
                 if (level.isLoaded(pos)) {
                     ROOTS.remove(key);
                     INDEX.remove(key);
@@ -764,10 +428,24 @@ public final class PlantMeshRenderer {
                 m.lights = l;
             }
             if (!event.getFrustum().isVisible(m.box)) continue;
+            if (m.reactive) senseInside(level, m, pos, time);
             draw(m, pos, cam, ps, buffers, time);
             lastDrawn++;
         }
-        for (ResourceLocation t : TEXTURES) buffers.endBatch(RenderType.entityCutoutNoCull(t));
+        for (PlantTex t : PlantTex.ALL) buffers.endBatch(RenderType.entityCutoutNoCull(t.texture));
+    }
+
+    /** M22.1: everything alive near the polyps of a mesh (inside: the player, other players) closes them for a moment. */
+    private static void senseInside(ClientLevel level, Mesh m, BlockPos root, float time) {
+        long now = (long) time;
+        if (now - m.lastCheck < 4) return;
+        m.lastCheck = now;
+        AABB box = new AABB(m.minX, m.minY, m.minZ, m.maxX + 1, m.maxY + 1, m.maxZ + 1).inflate(Mesh.RANGE);
+        for (var e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box)) {
+            if (e.isSpectator()) continue;
+            Vec3 p = e.position();
+            m.disturb((float) (p.x - root.getX()), (float) (p.y + e.getBbHeight() * 0.5 - root.getY()), (float) (p.z - root.getZ()), time);
+        }
     }
 
     /**
@@ -794,6 +472,8 @@ public final class PlantMeshRenderer {
         }
         // M21.1: the meshes of the miniatures shown right now cast shadows too
         lastShadowDrawn += MiniaturePlants.renderShadow(ps, cam, shadowBuffers, time, SHADOW_DISTANCE);
+        // M22.1: and the swaying water plants of the miniatures
+        lastShadowDrawn += MiniatureSway.renderShadow(ps, cam, shadowBuffers, time, SHADOW_DISTANCE);
         shadowBuffers.endBatch();
         shadowPasses++;
     }
@@ -813,28 +493,73 @@ public final class PlantMeshRenderer {
     /**
      * Draws a mesh with its sway; {@code ps} is at the corner of the root block. {@code all}: one render type for every
      * layer (the atlas-mapped meshes of the miniature), else each layer with its own texture.
+     * <p>
+     * M22.1, besides the sway (by the height above the root, like kelp) every quad moves as its {@code ANIM_*} says,
+     * around its anchor (the base of its polyp or tentacle) and by its weight (0 at the anchor, 1 at its reach):
+     * {@link #ANIM_WIGGLE} and {@link #ANIM_TUFT} wave a little, {@link #ANIM_POLYP} waves and closes towards its base when
+     * something swims by ({@link Mesh#closed}), {@link #ANIM_PULSE} swells and shrinks slowly and sways, {@link #ANIM_RISE}
+     * lifts and lowers a mushroom disc. Everything at draw time; the mesh is built once.
      */
     static void drawAt(Mesh m, PoseStack ps, MultiBufferSource buffers, float time, @javax.annotation.Nullable RenderType all) {
         PoseStack.Pose pose = ps.last();
         Matrix4f mat = pose.pose();
         double w = 0.045 * Math.PI * 2;
-        for (int t = 0; t < TEXTURES.length; t++) {
+        for (int t = 0; t < PlantTex.ALL.length; t++) {
             Layer l = m.layers[t];
-            if (l.color.isEmpty()) continue;
-            VertexConsumer vc = buffers.getBuffer(all != null ? all : RenderType.entityCutoutNoCull(TEXTURES[t]));
+            if (l.light.isEmpty()) continue;
+            VertexConsumer vc = buffers.getBuffer(all != null ? all : RenderType.entityCutoutNoCull(PlantTex.ALL[t].texture));
             float[] v = l.v.elements();
-            int quads = l.color.size();
+            int[] col = l.color.elements();
+            int quads = l.light.size();
             for (int q = 0; q < quads; q++) {
-                int color = l.color.getInt(q);
                 int light = m.lights.length > l.light.getInt(q) ? m.lights[l.light.getInt(q)] : net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+                int mode = l.mode.getInt(q);
                 for (int k = 0; k < 4; k++) {
-                    int o = (q * 4 + k) * 9;
+                    int o = (q * 4 + k) * STRIDE;
                     float h = v[o + 8];
-                    // like kelp: the higher, the further the plant swings in the current
-                    double amp = Math.min(m.swayMax, m.swayPerBlock * Math.pow(h, 1.25));
-                    float sx = (float) (amp * Math.sin(time * w + m.phase + h * 0.12));
-                    float sz = (float) (amp * 0.6 * Math.cos(time * w * 0.8 + m.phase * 1.3 + h * 0.1));
-                    vc.addVertex(mat, v[o] + sx, v[o + 1], v[o + 2] + sz).setColor(color).setUv(v[o + 3], v[o + 4])
+                    float x = v[o], y = v[o + 1], z = v[o + 2];
+                    if (mode != ANIM_NONE) {
+                        float ax = v[o + 9], ay = v[o + 10], az = v[o + 11], wt = v[o + 12], ph = v[o + 13];
+                        float scale = 1, amp = 0, f = 0.3F;
+                        switch (mode) {
+                            case ANIM_WIGGLE -> amp = 0.12F;
+                            case ANIM_TUFT -> {
+                                amp = 0.06F;
+                                f = 0.45F;
+                            }
+                            case ANIM_POLYP -> {
+                                amp = 0.08F;
+                                scale = 1 - 0.8F * m.closed(ax, ay, az, time);
+                            }
+                            case ANIM_PULSE -> {
+                                amp = 0.22F;
+                                f = 0.09F;
+                                scale = 1 + 0.12F * wt * (float) Math.sin(time * 0.06F + ph);
+                            }
+                            case ANIM_RISE -> {
+                                y += wt * 0.28F * (float) Math.sin(time * 0.025F + ph);
+                                x += wt * 0.05F * (float) Math.sin(time * 0.02F + ph * 2);
+                            }
+                            default -> { }
+                        }
+                        if (scale != 1) {
+                            x = ax + (x - ax) * scale;
+                            y = ay + (y - ay) * scale;
+                            z = az + (z - az) * scale;
+                        }
+                        if (amp > 0) {
+                            x += wt * amp * (float) Math.sin(time * f + ph);
+                            z += wt * amp * (float) Math.cos(time * f * 0.83F + ph * 1.3F);
+                            y += wt * amp * 0.3F * (float) Math.sin(time * f * 1.3F + ph);
+                        }
+                    }
+                    if (m.swayMax > 0) {
+                        // like kelp: the higher, the further the plant swings in the current
+                        double amp = Math.min(m.swayMax, m.swayPerBlock * Math.pow(h, 1.25));
+                        x += (float) (amp * Math.sin(time * w + m.phase + h * 0.12));
+                        z += (float) (amp * 0.6 * Math.cos(time * w * 0.8 + m.phase * 1.3 + h * 0.1));
+                    }
+                    vc.addVertex(mat, x, y, z).setColor(col[q * 4 + k]).setUv(v[o + 3], v[o + 4])
                             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, v[o + 5], v[o + 6], v[o + 7]);
                 }
             }

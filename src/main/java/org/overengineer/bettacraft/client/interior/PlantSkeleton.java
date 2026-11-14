@@ -271,6 +271,7 @@ public final class PlantSkeleton {
         for (long k : all) {
             if (s.node(k) || s.leafAt.containsKey(k)) continue;
             long n = adjacentNode(s, k);
+            if (n == Long.MAX_VALUE) n = outerLeafNode(s, k);
             if (n == Long.MAX_VALUE) {
                 LongList path = pathToNode(blocks, s, k);
                 if (path == null) {
@@ -288,6 +289,27 @@ public final class PlantSkeleton {
             }
             s.leafAt.put(k, n);
         }
+        // an outer leaf part whose inner part became a stem later hangs on that stem (right next to it)
+        for (var e : s.leafAt.long2LongEntrySet()) {
+            long k = e.getLongKey(), n = e.getLongValue();
+            if (cheb(k, n) != 2) continue;
+            long mid = off(n, Integer.signum(x(k) - x(n)), 0, Integer.signum(z(k) - z(n)));
+            if (s.node(mid)) e.setValue(mid);
+        }
+    }
+
+    /**
+     * M22.1: the outer part of a big leaf (Ludwigia, Alternanthera: two blocks out and one up from its node): the node two
+     * blocks aside and one below whose leaf lies right between them. Or {@code Long.MAX_VALUE}.
+     */
+    private static long outerLeafNode(Stems s, long k) {
+        for (int[] d : ORTH) {
+            long n = off(k, -2 * d[0], -1, -2 * d[1]);
+            if (!s.node(n)) continue;
+            long mid = off(n, d[0], 0, d[1]);
+            if (s.leafAt.containsKey(mid) && s.leafAt.get(mid) == n) return n;
+        }
+        return Long.MAX_VALUE;
     }
 
     private static long adjacentNode(Stems s, long k) {
@@ -303,13 +325,20 @@ public final class PlantSkeleton {
 
     /** Shortest way (26-neighbourhood, through blocks of the plant) from k to a stem node: k first, the node last. */
     private static LongList pathToNode(Long2ObjectMap<PlantPart> blocks, Stems s, long start) {
+        // M22.1: first a way that never goes up (the blocks on it become a stem that hangs on the next one, never on
+        // one above it), only then any way
+        LongList down = pathToNode(blocks, s, start, false);
+        return down != null ? down : pathToNode(blocks, s, start, true);
+    }
+
+    private static LongList pathToNode(Long2ObjectMap<PlantPart> blocks, Stems s, long start, boolean up) {
         Long2LongOpenHashMap from = new Long2LongOpenHashMap();
         ArrayDeque<Long> q = new ArrayDeque<>();
         q.add(start);
         from.put(start, start);
         while (!q.isEmpty()) {
             long c = q.poll();
-            for (int dy = -1; dy <= 1; dy++)
+            for (int dy = -1; dy <= (up ? 1 : 0); dy++)
                 for (int dz = -1; dz <= 1; dz++)
                     for (int dx = -1; dx <= 1; dx++) {
                         if (dx == 0 && dy == 0 && dz == 0) continue;
@@ -452,7 +481,7 @@ public final class PlantSkeleton {
     private static void walk(Long2ObjectMap<PlantPart> blocks, LongOpenHashSet taken, List<Walker> active) {
         for (int guard = 0; !active.isEmpty() && guard < 1024; guard++) {
             // up first for all ribbons (so a ribbon running along the surface never takes the top of another one) ...
-            for (int pass = 0; pass < 4; pass++) {
+            for (int pass = 0; pass < 5; pass++) {
                 for (Walker w : active) {
                     if (w.flat || w.moved) continue;
                     long t = w.tip();
@@ -465,7 +494,12 @@ public final class PlantSkeleton {
                             if (w.lx != 0 || w.lz != 0) n = free(blocks, taken, off(t, w.lx, 1, w.lz));
                             else for (int[] d : ORTH) if (n == Long.MAX_VALUE) n = free(blocks, taken, off(t, d[0], 1, d[1]));
                         }
+                        // M22.1: the generator of new plants turns a lean aside where another ribbon is: a free block
+                        // diagonally above to any side before sharing a block
                         case 2 -> {
+                            if (w.lx != 0 || w.lz != 0) for (int[] d : ORTH) if (n == Long.MAX_VALUE) n = free(blocks, taken, off(t, d[0], 1, d[1]));
+                        }
+                        case 3 -> {
                             if (blocks.containsKey(up) && !w.own.contains(up) && goesOn(blocks, up, w.lx, w.lz)) {
                                 n = up;
                                 share = true;
@@ -559,5 +593,151 @@ public final class PlantSkeleton {
     /** Chebyshev distance of two keys (tests). */
     public static int distance(long a, long b) {
         return cheb(a, b);
+    }
+
+    // ------------------------------------------------------------------ M22.1 trees, leaves, clusters
+
+    /** Every offset of the 26-neighbourhood in a fixed order (straight before diagonal), so results are reproducible. */
+    private static final int[][] N26 = n26();
+
+    private static int[][] n26() {
+        List<int[]> l = new ArrayList<>();
+        for (int dy = -1; dy <= 1; dy++)
+            for (int dz = -1; dz <= 1; dz++)
+                for (int dx = -1; dx <= 1; dx++) if (dx != 0 || dy != 0 || dz != 0) l.add(new int[] {dx, dy, dz});
+        l.sort((a, b) -> Integer.compare(Math.abs(a[0]) + Math.abs(a[1]) + Math.abs(a[2]), Math.abs(b[0]) + Math.abs(b[1]) + Math.abs(b[2])));
+        return l.toArray(new int[0][]);
+    }
+
+    /**
+     * M22.1: a shortest-path tree over the blocks of a plant: from every source block (the root, the rhizome ...) out
+     * through the blocks {@code walk} accepts (26-neighbourhood). Every block reached knows its parent (sources:
+     * {@link #FLOOR}) and its depth (steps from a source).
+     */
+    public static final class Tree {
+        public final Long2LongOpenHashMap parent = new Long2LongOpenHashMap();
+        public final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap depth = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
+        /** Blocks in the order they were reached (parents before their children). */
+        public final LongArrayList order = new LongArrayList();
+
+        public boolean contains(long k) {
+            return parent.containsKey(k);
+        }
+
+        /** Blocks no other block hangs on. */
+        public LongOpenHashSet ends() {
+            LongOpenHashSet t = new LongOpenHashSet(parent.keySet());
+            for (long p : parent.values()) t.remove(p);
+            return t;
+        }
+
+        /** Steps from every block to the deepest end below it (0 for an end): thick near the base, thin at the tips. */
+        public it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap reach() {
+            var r = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
+            for (int i = order.size() - 1; i >= 0; i--) {
+                long k = order.getLong(i);
+                int mine = r.getOrDefault(k, 0);
+                r.putIfAbsent(k, 0);
+                long p = parent.get(k);
+                if (p != FLOOR) r.put(p, Math.max(r.getOrDefault(p, 0), mine + 1));
+            }
+            return r;
+        }
+
+        /** The blocks from the source down to {@code k} (the source first, {@code k} last). */
+        public LongArrayList path(long k) {
+            LongArrayList l = new LongArrayList();
+            for (long c = k; c != FLOOR && l.size() <= order.size(); c = parent.get(c)) l.add(c);
+            java.util.Collections.reverse(l);
+            return l;
+        }
+    }
+
+    public static Tree tree(Long2ObjectMap<PlantPart> blocks, java.util.function.LongPredicate source, java.util.function.LongPredicate walk) {
+        Tree t = new Tree();
+        ArrayDeque<Long> q = new ArrayDeque<>();
+        for (long k : sorted(of(blocks))) {
+            if (!source.test(k)) continue;
+            t.parent.put(k, FLOOR);
+            t.depth.put(k, 0);
+            t.order.add(k);
+            q.add(k);
+        }
+        while (!q.isEmpty()) {
+            long c = q.poll();
+            int d = t.depth.get(c);
+            for (int[] o : N26) {
+                long n = off(c, o[0], o[1], o[2]);
+                if (t.parent.containsKey(n) || !blocks.containsKey(n) || !walk.test(n)) continue;
+                t.parent.put(n, c);
+                t.depth.put(n, d + 1);
+                t.order.add(n);
+                q.add(n);
+            }
+        }
+        return t;
+    }
+
+    /**
+     * M22.1: the tips of the leaves of a rosette or a rhizome: blocks of the tree no neighbour of which lies deeper, at
+     * least {@code minDepth} steps from a source; tips closer than {@code radius} to a deeper tip belong to the same leaf
+     * (the width of a blade ends in several such blocks). Deepest first.
+     */
+    public static LongArrayList leafTips(Tree t, int minDepth, double radius) {
+        LongArrayList cand = new LongArrayList();
+        for (long k : t.order) {
+            int d = t.depth.get(k);
+            if (d < minDepth) continue;
+            boolean max = true;
+            for (int[] o : N26) {
+                long n = off(k, o[0], o[1], o[2]);
+                if (t.depth.getOrDefault(n, -1) > d) {
+                    max = false;
+                    break;
+                }
+            }
+            if (max) cand.add(k);
+        }
+        // deepest first; same depth in the tree's order (reproducible)
+        LongArrayList byDepth = new LongArrayList(cand);
+        byDepth.sort((a, b) -> Integer.compare(t.depth.get(b), t.depth.get(a)));
+        LongArrayList tips = new LongArrayList();
+        double r2 = radius * radius;
+        for (long k : byDepth) {
+            boolean near = false;
+            for (long o : tips) {
+                if (dist2(o, k) <= r2) {
+                    near = true;
+                    break;
+                }
+            }
+            if (!near) tips.add(k);
+        }
+        return tips;
+    }
+
+    /** M22.1: the 26-connected groups of the blocks {@code in} accepts (polyp heads, discs, floating pads), each sorted. */
+    public static List<LongArrayList> clusters(Long2ObjectMap<PlantPart> blocks, java.util.function.LongPredicate in) {
+        List<LongArrayList> out = new ArrayList<>();
+        LongOpenHashSet seen = new LongOpenHashSet();
+        for (long k : sorted(of(blocks))) {
+            if (seen.contains(k) || !in.test(k)) continue;
+            LongArrayList c = new LongArrayList();
+            ArrayDeque<Long> q = new ArrayDeque<>();
+            q.add(k);
+            seen.add(k);
+            while (!q.isEmpty()) {
+                long p = q.poll();
+                c.add(p);
+                for (int[] o : N26) {
+                    long n = off(p, o[0], o[1], o[2]);
+                    if (seen.contains(n) || !blocks.containsKey(n) || !in.test(n)) continue;
+                    seen.add(n);
+                    q.add(n);
+                }
+            }
+            out.add(c);
+        }
+        return out;
     }
 }

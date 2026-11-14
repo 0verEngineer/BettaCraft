@@ -67,21 +67,35 @@ public final class PlantShapes {
      *                 kept below it
      */
     public static Shape of(PlantSpecies s, long seed, int scale, int headroom) {
-        // M17: shapes are pure functions of these four values and immutable; removing a plant asked for the shapes of
+        return of(s, seed, scale, headroom, VERSION);
+    }
+
+    /**
+     * Version of the generator a new plant gets (stored per plant, {@link InteriorPlant#shapeVersion}): 1 = up to M22,
+     * 2 = M22.1 (Vallisneria keeps its ribbons apart). A plant keeps the version it started with, so its blocks never
+     * change shape in an existing world.
+     */
+    public static final int VERSION = 2;
+
+    /** The shape of a plant with the generator of {@code version} (older plants keep theirs). */
+    public static Shape of(PlantSpecies s, long seed, int scale, int headroom, int version) {
+        // only the Vallisneria changed with version 2
+        int v = s.form() == PlantSpecies.Form.RIBBON ? Math.max(1, Math.min(VERSION, version)) : 1;
+        // M17: shapes are pure functions of these values and immutable; removing a plant asked for the shapes of
         // all plants of the species once per removed block (thousands of random walks for a tall stem plant)
-        Key key = new Key(s, seed, scale, headroom);
+        Key key = new Key(s, seed, scale, headroom, v);
         synchronized (CACHE) {
             Shape cached = CACHE.get(key);
             if (cached != null) return cached;
         }
-        Shape shape = build(s, seed, scale, headroom);
+        Shape shape = build(s, seed, scale, headroom, v);
         synchronized (CACHE) {
             CACHE.put(key, shape);
         }
         return shape;
     }
 
-    private record Key(PlantSpecies s, long seed, int scale, int headroom) {}
+    private record Key(PlantSpecies s, long seed, int scale, int headroom, int version) {}
 
     /** At most this many shapes are kept (a few KB each). */
     static final int CACHE_SIZE = 1024;
@@ -92,8 +106,9 @@ public final class PlantShapes {
         }
     };
 
-    static Shape build(PlantSpecies s, long seed, int scale, int headroom) {
+    static Shape build(PlantSpecies s, long seed, int scale, int headroom, int version) {
         Builder b = new Builder(s, seed, Math.max(4, Math.min(16, scale)) / 16.0, Math.max(1, headroom));
+        b.version = version;
         b.add(0, 0, 0, PlantPart.ROOT, 1);
         switch (s.form()) {
             case EPIPHYTE -> b.epiphyte();
@@ -121,6 +136,7 @@ public final class PlantShapes {
         /** Lowest y blocks may have (epiphytes and moss may hang a little below their root). */
         final int minY;
         final Long2ObjectLinkedOpenHashMap<Voxel> map = new Long2ObjectLinkedOpenHashMap<>();
+        int version = VERSION;
 
         Builder(PlantSpecies s, long seed, double u, int headroom) {
             this.s = s;
@@ -363,6 +379,10 @@ public final class PlantShapes {
         }
 
         void ribbons() {
+            if (version >= 2) {
+                ribbonsApart();
+                return;
+            }
             int count = between(4, 7);
             int top = headroom - 1;
             List<int[]> bases = new ArrayList<>();
@@ -390,6 +410,70 @@ public final class PlantShapes {
                     add(x + d[0] * j, height, z + d[1] * j, n >= total - 2 ? PlantPart.TOP : PlantPart.RIBBON, birth(b0, stages, n / (double) total));
                 }
             }
+        }
+
+        /**
+         * M22.1 (version 2): like {@link #ribbons} (the same random numbers in the same order), but every ribbon keeps out
+         * of the blocks of the ribbons before it: a lean into a taken column turns to a free side (or the ribbon grows on
+         * straight), a ribbon whose own column was taken leans away, and the run along the surface ends before a taken
+         * block. So the ribbons no longer share blocks, cross and twist at the top.
+         */
+        void ribbonsApart() {
+            int count = between(4, 7);
+            int top = headroom - 1;
+            List<int[]> bases = new ArrayList<>();
+            bases.add(new int[]{0, 0});
+            List<int[]> around = new ArrayList<>(List.of(NEIGHBOURS));
+            Collections.shuffle(around, r);
+            for (int i = 1; i < count && i <= around.size(); i++) bases.add(around.get(i - 1));
+            it.unimi.dsi.fastutil.longs.LongOpenHashSet taken = new it.unimi.dsi.fastutil.longs.LongOpenHashSet();
+            for (int k = 0; k < bases.size(); k++) {
+                int[] base = bases.get(k);
+                int b0 = 1 + k * Math.max(1, stages - 3) / bases.size();
+                int height = Math.max(2, top - r.nextInt(Math.max(1, top / 5) + 1));
+                int[] d = DIRS[r.nextInt(4)];
+                int swayEvery = between(4, 7);
+                int run = height >= top - 1 ? len(between(2, 6)) : 0;
+                int total = height + 1 + run;
+                int x = base[0], z = base[1], n = 0;
+                if (k > 0 && taken.contains(key(x, 0, z))) continue; // the base itself is taken: no room for this ribbon
+                it.unimi.dsi.fastutil.longs.LongArrayList mine = new it.unimi.dsi.fastutil.longs.LongArrayList();
+                int h;
+                for (h = 0; h <= height; h++, n++) {
+                    boolean lean = h > 0 && h % swayEvery == 0;
+                    if (h > 0 && taken.contains(key(x, h, z))) lean = true; // a ribbon before leaned into this column
+                    if (lean) {
+                        int[] step = free(taken, x, h, z, d);
+                        if (step != null) {
+                            x += step[0];
+                            z += step[1];
+                            d = step;
+                        } else if (taken.contains(key(x, h, z))) {
+                            break; // boxed in: the ribbon ends here
+                        }
+                    }
+                    if (h > 0 || k > 0) add(x, h, z, n >= total - 2 ? PlantPart.TOP : PlantPart.RIBBON, birth(b0, stages, n / (double) total));
+                    mine.add(key(x, h, z));
+                }
+                if (h > height) {
+                    for (int j = 1; j <= run; j++, n++) {
+                        int rx = x + d[0] * j, rz = z + d[1] * j;
+                        if (taken.contains(key(rx, height, rz)) || taken.contains(key(rx, height - 1, rz))) break;
+                        add(rx, height, rz, n >= total - 2 ? PlantPart.TOP : PlantPart.RIBBON, birth(b0, stages, n / (double) total));
+                        mine.add(key(rx, height, rz));
+                    }
+                }
+                taken.addAll(mine);
+            }
+        }
+
+        /** A side to lean to from (x, h, z) whose block at the same height is free: the wanted one first, then the others. */
+        private int[] free(it.unimi.dsi.fastutil.longs.LongOpenHashSet taken, int x, int h, int z, int[] want) {
+            if (!taken.contains(key(x + want[0], h, z + want[1])) && !taken.contains(key(x + want[0], h - 1, z + want[1]))) return want;
+            for (int[] d : DIRS) {
+                if (!taken.contains(key(x + d[0], h, z + d[1])) && !taken.contains(key(x + d[0], h - 1, z + d[1]))) return d;
+            }
+            return null;
         }
 
         void carpet() {

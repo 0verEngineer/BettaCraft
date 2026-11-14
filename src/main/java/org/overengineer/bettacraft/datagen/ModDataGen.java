@@ -1107,6 +1107,11 @@ public final class ModDataGen {
             // Fintastic plants may stand in the dry interior like seagrass and kelp (M7)
             var plants = tag(ModTags.INTERIOR_WATER_PLANTS);
             for (String p : Compat.FINTASTIC_PLANTS) plants.addOptional(Compat.rl(Compat.FINTASTIC, p));
+            // M22.1: they sway in the miniature outside the tank too
+            var sway = tag(ModTags.SWAYING_PLANTS).add(net.minecraft.world.level.block.Blocks.KELP, net.minecraft.world.level.block.Blocks.KELP_PLANT,
+                    net.minecraft.world.level.block.Blocks.SEAGRASS, net.minecraft.world.level.block.Blocks.TALL_SEAGRASS)
+                    .addTag(BlockTags.CORALS).addTag(BlockTags.WALL_CORALS);
+            for (String p : Compat.FINTASTIC_PLANTS) sway.addOptional(Compat.rl(Compat.FINTASTIC, p));
             // M13: where aquarium plants grow
             tag(ModTags.EPIPHYTE_SURFACES).addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.LOGS).addTag(BlockTags.PLANKS)
                     .addTag(BlockTags.STONE_BRICKS).addTag(Tags.Blocks.COBBLESTONES).addTag(BlockTags.WOODEN_SLABS).addTag(BlockTags.WOODEN_STAIRS)

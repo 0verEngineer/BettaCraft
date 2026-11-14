@@ -61,6 +61,11 @@ public final class ModTags {
      * and kelp (PLAN 7.3; Fintastic plants in M7).
      */
     public static final TagKey<Block> INTERIOR_WATER_PLANTS = TagKey.create(Registries.BLOCK, BettaCraft.id("interior_water_plants"));
+    /**
+     * M22.1: blocks that sway in the tank miniature outside (kelp, seagrass, corals, coral fans by default; modpacks and
+     * mods add their water plants; others are found automatically, config swaying.autoDetect).
+     */
+    public static final TagKey<Block> SWAYING_PLANTS = TagKey.create(Registries.BLOCK, BettaCraft.id("swaying_plants"));
     /** Blocks that cannot become an interior floor substrate (PLAN 7.2). */
     public static final TagKey<Block> SUBSTRATE_BLACKLIST = TagKey.create(Registries.BLOCK, BettaCraft.id("substrate_blacklist"));
 

@@ -14,6 +14,10 @@ public final class ClientConfig {
     /** M21.1: up to this distance the miniature shows the plant meshes (Rotala, Vallisneria, Anubias), further away voxels. */
     public static final ModConfigSpec.IntValue MINIATURE_PLANT_MESH_DISTANCE;
     public static final ModConfigSpec.BooleanValue LOG_MINIATURE_STATS;
+    /** M22.1: this player sees the plants and corals with real shapes (with features.plantMeshes on), else the old blocks. */
+    public static final ModConfigSpec.BooleanValue PLANT_MESHES;
+    /** M22.1: Minecraft's and other mods' water plants sway in the miniature outside the tank (with features.swayingForeignPlants). */
+    public static final ModConfigSpec.BooleanValue SWAYING_PLANTS;
     public static final ModConfigSpec.BooleanValue CONNECTED_GLASS;
     public static final ModConfigSpec.DoubleValue TANK_EDGE_WIDTH;
     /** M15: size of the tank name sign (factor on the default height of 0.12 blocks). */
@@ -31,6 +35,10 @@ public final class ClientConfig {
         MINIATURE_RENDER_DISTANCE = b.comment("Distance (blocks) up to which tank interiors are rendered as miniature").defineInRange("miniatureRenderDistance", 64, 8, 512);
         MINIATURE_PLANT_MESH_DISTANCE = b.comment("Distance (blocks) up to which the miniature of a tank shows the plants with real leaves (like inside, features.plantMeshes); further away they are drawn as pixels again. 0 = always as pixels")
                 .defineInRange("miniaturePlantMeshDistance", 24, 0, 256);
+        PLANT_MESHES = b.comment("Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the "
+                + "miniature (off: the old block look, only for you; the pack switch features.plantMeshes turns it off for everyone)").define("plantMeshes", true);
+        SWAYING_PLANTS = b.comment("Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank (off: they stand still, only "
+                + "for you; the pack switch features.swayingForeignPlants turns it off for everyone)").define("swayingPlants", true);
         TANK_DETAIL_DISTANCE = b.comment("Distance (blocks) up to which the name sign, bubble nest, floating plants, small animals and algae of a tank are drawn")
                 .defineInRange("tankDetailDistance", 48, 8, 256);
         CONNECTED_GLASS = b.comment("Connected glass textures on textured tanks: the frame of the glass texture only along the outer edges of the whole tank (off: every block shows its own frame)")
@@ -51,6 +59,15 @@ public final class ClientConfig {
         FILTER_SOUND = b.comment("Play the filter bubbling sound").define("filterSound", true);
         b.pop();
         SPEC = b.build();
+    }
+
+    /** Safe accessors (the client config may not be loaded yet, e.g. in unit tests). */
+    public static boolean plantMeshes() {
+        return CommonConfig.getOr(PLANT_MESHES, true);
+    }
+
+    public static boolean swayingPlants() {
+        return CommonConfig.getOr(SWAYING_PLANTS, true);
     }
 
     private ClientConfig() {}

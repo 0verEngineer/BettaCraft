@@ -48,6 +48,8 @@ public final class ClientRegion {
     MiniaturePlants.State plants;
     /** The meshes stand in for the plant voxels in this frame (set by the opaque pass, read by the translucent one). */
     boolean plantMeshesShown;
+    /** M22.1: the swaying water plants of this tank sway right now (else their static buffers are drawn). */
+    boolean swaying;
 
     ClientRegion(int id, int version, int sizeX, int sizeY, int sizeZ, int scale, boolean truncated, List<InteriorSnapshot.Section> list) {
         this.id = id;

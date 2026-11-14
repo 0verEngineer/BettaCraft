@@ -22,6 +22,7 @@ final class LangEn {
         LangM216.addAll(a); // M21.6
         LangM217.addAll(a); // M21.7
         LangM218.addAll(a); // M21.8
+        LangM221.addAll(a); // M22.1
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -562,8 +563,8 @@ final class LangEn {
         a.accept("bettacraft.configuration.features.tooltip", "Switches for single features (M21 on; older features follow in a later version)");
         a.accept("bettacraft.configuration.interiorPathfinding", "Path finding in the interior");
         a.accept("bettacraft.configuration.interiorPathfinding.tooltip", "Path finding in the tank interior: dwarf frogs walk around decoration, small animals go under overhangs and into caves, plecos swim into their spawning cave (off: straight lines like before)");
-        a.accept("bettacraft.configuration.plantMeshes", "New plant look (prototype)");
-        a.accept("bettacraft.configuration.plantMeshes.tooltip", "New look of Rotala, Vallisneria and Anubias in the tank interior (prototype): real leaves that sway in the water instead of leaf blocks; the miniature outside keeps the block look (off: the old leaf blocks everywhere)");
+        a.accept("bettacraft.configuration.plantMeshes", "New plant look");
+        a.accept("bettacraft.configuration.plantMeshes.tooltip", "Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the miniature outside (off: the old blocks). Under Features for everyone (modpack, server), under Rendering only for you");
         a.accept("bettacraft.configuration.render", "Rendering");
         a.accept("bettacraft.configuration.render.tooltip", "Rendering of tanks, fish and interior miniatures");
         a.accept("bettacraft.configuration.animationDistance", "Animation distance");
@@ -574,7 +575,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.miniatureRenderDistance.tooltip", "Distance (blocks) up to which tank interiors are rendered as miniature");
         a.accept("bettacraft.configuration.miniaturePlantMeshDistance", "Real plant leaves in miniatures up to");
         a.accept("bettacraft.configuration.miniaturePlantMeshDistance.tooltip",
-                "Distance (blocks) up to which the miniature of a tank shows the plants with real leaves like inside (Rotala, Vallisneria, Anubias; needs features.plantMeshes). Further away they are drawn as pixels again. 0 = always as pixels");
+                "Distance (blocks) up to which the miniature of a tank shows the plants and corals with real leaves like inside (needs the new plant look). Further away they are drawn as pixels again. 0 = always as pixels");
         a.accept("bettacraft.configuration.logMiniatureStats", "Log miniature statistics");
         a.accept("bettacraft.configuration.logMiniatureStats.tooltip", "Write mesh build and sync statistics of tank miniatures to the log (for debugging)");
         a.accept("bettacraft.configuration.sound", "Sounds");

@@ -24,6 +24,9 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_LIVEBEARER_GENETICS;
     public static final ModConfigSpec.BooleanValue FEATURE_STONE_CABINETS;
     public static final ModConfigSpec.BooleanValue FEATURE_SEAHORSES;
+    public static final ModConfigSpec.BooleanValue FEATURE_SWAYING_FOREIGN_PLANTS;
+    public static final ModConfigSpec.BooleanValue SWAYING_AUTO;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> SWAYING_EXCLUDE;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -44,8 +47,13 @@ public final class CommonConfig {
         b.comment("Switches for single features (M21 on; older features follow in a later version)").push("features");
         FEATURE_PATHFINDING = b.comment("Path finding in the tank interior: dwarf frogs walk around decoration, small animals go under overhangs and into caves, "
                 + "plecos swim into their spawning cave (off: straight lines like before)").define("interiorPathfinding", true);
-        FEATURE_PLANT_MESHES = b.comment("New look of Rotala, Vallisneria and Anubias in the tank interior (prototype): real leaves that sway in the water "
-                + "instead of leaf blocks; the miniature outside keeps the block look (off: the old leaf blocks everywhere)").define("plantMeshes", true);
+        FEATURE_PLANT_MESHES = b.comment("New look of the aquarium plants and corals: real leaves, polyps and tentacles that move in the water, inside the tank "
+                + "and in the miniature outside (off: the old blocks for everyone; each player can also turn it off for themselves: client render.plantMeshes)")
+                .define("plantMeshes", true);
+        // M22.1
+        FEATURE_SWAYING_FOREIGN_PLANTS = b.comment("Kelp, seagrass, corals (#bettacraft:swaying_plants) and the water plants of other mods sway in the miniature "
+                + "outside the tank like inside (off: they stand still; each player can also turn it off: client render.swayingPlants)")
+                .define("swayingForeignPlants", true);
         // M21.5
         FEATURE_SMOOTH_SWIMMING = b.comment("Smooth swimming: fish turn in curves, tilt and right themselves smoothly, kuhli loaches undulate slowly like eels "
                 + "and hide by day, plecos and otocinclus only stand upright once they reach the glass (off: the old, jerkier movement)").define("smoothSwimming", true);
@@ -70,6 +78,12 @@ public final class CommonConfig {
         FEATURE_SEAHORSES = b.comment("Seahorses (lined seahorse Hippocampus erectus, dwarf seahorse H. zosterae) at the wandering trader and in the "
                 + "aquarium net in warm and lukewarm oceans (off: no new ones; seahorses already caught stay)").define("seahorses", true);
         b.pop();
+        b.comment("Swaying water plants in the tank miniature (M22.1, features.swayingForeignPlants)").push("swaying");
+        SWAYING_AUTO = b.comment("Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, "
+                + "drawn as a cross or a plant model) sways (off: only the tag)").define("autoDetect", true);
+        SWAYING_EXCLUDE = b.comment("Blocks that never sway: block ids (\"modid:block\"), block tags (\"#modid:tag\") or whole mods (\"modid:*\")")
+                .defineListAllowEmpty("exclude", java.util.List.of(), () -> "", o -> o instanceof String);
+        b.pop();
         SPEC = b.build();
     }
 
@@ -88,6 +102,11 @@ public final class CommonConfig {
 
     public static boolean plantMeshes() {
         return getOr(FEATURE_PLANT_MESHES, true);
+    }
+
+    /** M22.1: foreign water plants sway in the miniature. */
+    public static boolean swayingForeignPlants() {
+        return getOr(FEATURE_SWAYING_FOREIGN_PLANTS, true);
     }
 
     public static boolean smoothSwimming() {

@@ -54,7 +54,7 @@ public final class PlantMeshModel extends BakedModelWrapper<BakedModel> {
 
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
         for (var e : ModBlocks.AQUATIC_PLANTS.entrySet()) {
-            if (!e.getKey().meshPrototype()) continue;
+            if (!e.getKey().meshed()) continue;
             for (BlockState s : e.getValue().get().getStateDefinition().getPossibleStates()) {
                 if (s.getValue(AquaticPlantBlock.PART) == PlantPart.CUTTING) continue;
                 ModelResourceLocation loc = BlockModelShaper.stateToModelLocation(s);

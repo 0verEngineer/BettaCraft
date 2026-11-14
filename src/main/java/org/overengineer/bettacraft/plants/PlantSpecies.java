@@ -131,9 +131,12 @@ public enum PlantSpecies {
 
     public Form form() { return form; }
 
-    /** M21: drawn with real leaf shapes in the tank interior (prototype, config features.plantMeshes). */
-    public boolean meshPrototype() {
-        return this == ROTALA || this == VALLISNERIA || this == ANUBIAS_NANA;
+    /**
+     * Drawn with real shapes inside and outside (M21 prototype: Rotala, Vallisneria, Anubias; M22.1: every plant and
+     * coral). Config {@code features.plantMeshes} (pack) and {@code render.plantMeshes} (each player).
+     */
+    public boolean meshed() {
+        return true;
     }
 
     /** In-game days from cutting to full size under good conditions (growth speed 1). */

@@ -52,27 +52,30 @@ public final class MiniaturePlants {
         final PlantMeshIndex index = new PlantMeshIndex();
         boolean scanned;
         int lightKey = Integer.MIN_VALUE;
+        /** M22.1: a mesh with polyps that react to the fish; when the fish were last looked for. */
+        boolean reactive;
+        long lastSense = Long.MIN_VALUE;
     }
 
     private MiniaturePlants() {}
 
-    private static boolean prototypeRoot(BlockState s) {
-        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshPrototype() && s.getValue(AquaticPlantBlock.PART) == PlantPart.ROOT;
+    private static boolean meshedRoot(BlockState s) {
+        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshed() && s.getValue(AquaticPlantBlock.PART) == PlantPart.ROOT;
     }
 
     /** A block the meshes draw instead of the miniature (the planted cutting stays a voxel). */
     static boolean meshBlock(BlockState s) {
-        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshPrototype() && s.getValue(AquaticPlantBlock.PART) != PlantPart.CUTTING;
+        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshed() && s.getValue(AquaticPlantBlock.PART) != PlantPart.CUTTING;
     }
 
     private static void scan(State st, InteriorSnapshot.Section s) {
         if (s.sy() == InteriorSnapshot.FLOOR_SY) return;
         boolean any = false;
-        for (BlockState b : s.palette()) any |= prototypeRoot(b);
+        for (BlockState b : s.palette()) any |= meshedRoot(b);
         if (!any) return;
         short[] idx = s.indices();
         for (int i = 0; i < InteriorSnapshot.SECTION_VOLUME; i++) {
-            if (!prototypeRoot(s.palette()[idx[i]])) continue;
+            if (!meshedRoot(s.palette()[idx[i]])) continue;
             int lx = (s.sx() << 4) + (i & 15), ly = (s.sy() << 4) + ((i >> 8) & 15) - InteriorRegion.BASE_Y, lz = (s.sz() << 4) + ((i >> 4) & 15);
             st.roots.add(BlockPos.asLong(lx, ly, lz));
         }
@@ -127,7 +130,7 @@ public final class MiniaturePlants {
             long key = it.nextLong();
             int x = BlockPos.getX(key), y = BlockPos.getY(key), z = BlockPos.getZ(key);
             BlockState s = region.get(x, y, z);
-            if (!prototypeRoot(s)) {
+            if (!meshedRoot(s)) {
                 it.remove();
                 st.meshes.remove(key);
                 st.index.remove(key);
@@ -139,6 +142,7 @@ public final class MiniaturePlants {
                 m = PlantMeshRenderer.build(region::get, new BlockPos(x, y, z), ((AquaticPlantBlock) s.getBlock()).species(), PlantMeshRenderer.Style.OUTSIDE);
                 st.index.put(key, m.minX, m.minY, m.minZ, m.maxX, m.maxY, m.maxZ);
                 st.meshes.put(key, m);
+                st.reactive |= m.reactive;
                 light(level, region, t, m);
                 builds++;
             } else if (m != null && relight) {
@@ -176,9 +180,45 @@ public final class MiniaturePlants {
         float fx = (t.sizeX() - 2 * m) / region.sizeX, fy = (t.sizeY() - 2 * m) / region.sizeY, fz = (t.sizeZ() - 2 * m) / region.sizeZ;
         Shown sh = new Shown(st, min.getX() + m, min.getY() + m, min.getZ() + m, fx, fy, fz);
         SHOWN.add(sh);
+        if (st.reactive) sense(t, sh, time);
         lastTanks++;
         lastDrawn += drawAll(ps, cam, sh, buffers, time);
         lastNanos += System.nanoTime() - t0;
+    }
+
+    /**
+     * M22.1: the fish of the tank (real entities in the tank) close the polyps they swim by: their position in the
+     * interior's coordinates, every 4 ticks.
+     */
+    private static void sense(TankData t, Shown sh, float time) {
+        long now = (long) time;
+        if (now - sh.state.lastSense < 4) return;
+        sh.state.lastSense = now;
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return;
+        BlockPos min = t.min();
+        net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(min.getX(), min.getY(), min.getZ(), min.getX() + t.sizeX(),
+                min.getY() + t.sizeY(), min.getZ() + t.sizeZ());
+        for (var e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box)) {
+            if (e instanceof net.minecraft.world.entity.player.Player) continue;
+            Vec3 p = e.position();
+            float lx = (float) ((p.x - sh.x) / sh.fx), ly = (float) ((p.y + e.getBbHeight() * 0.5 - sh.y) / sh.fy), lz = (float) ((p.z - sh.z) / sh.fz);
+            for (var me : sh.state.meshes.long2ObjectEntrySet()) {
+                PlantMeshRenderer.Mesh mesh = me.getValue();
+                if (!mesh.reactive) continue;
+                long k = me.getLongKey();
+                mesh.disturb(lx - BlockPos.getX(k), ly - BlockPos.getY(k), lz - BlockPos.getZ(k), time);
+            }
+        }
+    }
+
+    /** Polyps of a region's miniature closed right now (smoke tests). */
+    public static int closedMeshes(int regionId, float time) {
+        ClientRegion r = ClientInteriorCache.get(regionId);
+        if (r == null || r.plants == null) return 0;
+        int n = 0;
+        for (PlantMeshRenderer.Mesh m : r.plants.meshes.values()) if (m.anyClosed(time)) n++;
+        return n;
     }
 
     private static int drawAll(PoseStack ps, Vec3 cam, Shown sh, MultiBufferSource buffers, float time) {

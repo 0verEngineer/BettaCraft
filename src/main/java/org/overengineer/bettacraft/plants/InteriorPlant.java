@@ -31,6 +31,11 @@ public final class InteriorPlant {
     public int room;
     /** Smoothed redness 0..1 the {@link #tint} follows (day and night under the sky must not flip it twice a day). */
     public double redness;
+    /**
+     * M22.1: version of the shape generator of this plant ({@link PlantShapes#VERSION}): new plants get the current one,
+     * plants saved before M22.1 have none and keep version 1 (their blocks never change shape).
+     */
+    public int shapeVersion = PlantShapes.VERSION;
 
     public InteriorPlant(int id, PlantSpecies species, int x, int y, int z, long seed, int stage) {
         this.id = id;
@@ -65,6 +70,7 @@ public final class InteriorPlant {
         t.putInt("surface", surface);
         t.putInt("room", room);
         t.putDouble("redness", redness);
+        t.putInt("shape", shapeVersion);
         return t;
     }
 
@@ -83,6 +89,7 @@ public final class InteriorPlant {
         pl.surface = t.getInt("surface");
         pl.room = t.getInt("room");
         pl.redness = t.getDouble("redness");
+        pl.shapeVersion = t.contains("shape") ? t.getInt("shape") : 1;
         return pl;
     }
 

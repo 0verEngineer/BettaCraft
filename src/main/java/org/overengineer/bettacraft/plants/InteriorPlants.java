@@ -131,7 +131,7 @@ public final class InteriorPlants {
     }
 
     public static PlantShapes.Shape shape(InteriorRegion r, InteriorPlant p) {
-        return PlantShapes.of(p.species, p.seed, r.scale(), Math.max(2, p.room == 0 ? r.sizeY() - p.y : p.room));
+        return PlantShapes.of(p.species, p.seed, r.scale(), Math.max(2, p.room == 0 ? r.sizeY() - p.y : p.room), p.shapeVersion);
     }
 
     // ------------------------------------------------------------------ planting

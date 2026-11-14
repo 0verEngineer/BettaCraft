@@ -47,7 +47,7 @@ public final class BettaCraftClient {
     private static void rebuildChunks() {
         var mc = net.minecraft.client.Minecraft.getInstance();
         Object look = java.util.List.of(org.overengineer.bettacraft.config.ClientConfig.CONNECTED_GLASS.get(),
-                org.overengineer.bettacraft.config.ClientConfig.TANK_EDGE_WIDTH.get(), org.overengineer.bettacraft.config.CommonConfig.plantMeshes());
+                org.overengineer.bettacraft.config.ClientConfig.TANK_EDGE_WIDTH.get(), org.overengineer.bettacraft.client.interior.PlantMeshRenderer.active());
         if (look.equals(lastTankLook)) return;
         lastTankLook = look;
         mc.execute(() -> {
@@ -93,7 +93,19 @@ public final class BettaCraftClient {
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
             if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();
             // M21: features.plantMeshes switches the plant blocks of the interior between blocks and meshes
-            if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) rebuildChunks();
+            if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) {
+                rebuildChunks();
+                org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll(); // M22.1: which blocks sway
+            }
+        });
+        modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Loading e) -> {
+            if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) org.overengineer.bettacraft.client.interior.MiniatureSway.reset();
+        });
+        // M22.1: the tag of the swaying water plants may change with a data pack
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) -> {
+            if (e.getUpdateCause() == net.neoforged.neoforge.event.TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
+                org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll();
+            }
         });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
         NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);

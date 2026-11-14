@@ -182,7 +182,7 @@ class PlantShapesTest {
     void cachedShapesEqualFreshOnes() {
         for (PlantSpecies s : PlantSpecies.values()) {
             PlantShapes.Shape a = PlantShapes.of(s, 77, 16, 30);
-            assertEquals(PlantShapes.build(s, 77, 16, 30).all(), a.all(), s + " cached = fresh");
+            assertEquals(PlantShapes.build(s, 77, 16, 30, PlantShapes.VERSION).all(), a.all(), s + " cached = fresh");
             org.junit.jupiter.api.Assertions.assertSame(a, PlantShapes.of(s, 77, 16, 30), s + " from the cache");
         }
     }
