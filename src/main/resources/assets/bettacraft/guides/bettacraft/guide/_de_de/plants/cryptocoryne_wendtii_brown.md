@@ -37,6 +37,8 @@ item_ids:
 * **Angeln** in Sümpfen: 0,79 % pro Fang (etwa 1 von 127 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 1,2 % pro Fang (etwa 1 von 85 Fängen), statt des Fischs.
 * **Glasflasche** mit Wasser gefüllt in Sümpfen: 1,1 % pro Flasche, zusätzlich zum Wasser.
+* **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Mangrovensümpfen: 100 % pro Schnitt (Config `features.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

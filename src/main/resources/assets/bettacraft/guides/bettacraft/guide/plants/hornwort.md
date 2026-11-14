@@ -34,6 +34,9 @@ Hornwort (*Ceratophyllum demersum*): rootless shoots with whorls of stiff leaves
 
 * **Fishing** in swamps: 0.67 % per catch (about 1 in 150 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 0.4 % per catch (about 1 in 250 catches), instead of the fish.
+* **Breaking wild floating plants** in swamps: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in rivers: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in cold lakes and frozen rivers: 100 % per block (config `features.wildPlants`).
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

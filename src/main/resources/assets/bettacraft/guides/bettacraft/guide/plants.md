@@ -13,6 +13,28 @@ Aquarium plants grow in the [interior](interior.md) of an aquarium. You plant a 
 and over the days it grows into a plant of many blocks: fronds, leaves, stems, ribbons. In the aquarium you see it as
 part of the miniature behind the glass. Every plant looks a little different.
 
+## Wild in the world
+
+![Wild aquarium and floating plants in a swamp pool](images/wild_plants.png)
+
+Every aquarium plant and every floating plant also grows wild, in small groups in the waters of its origin (new
+chunks):
+
+| Water | Grows there |
+|---|---|
+| Jungle water | Anubias, Bucephalandra and Java fern on stones and sunken roots, the crypts, swords, Hygrophila pinnatifida, Aponogeton, red tiger lotus, rarely Pogostemon and Rotala wallichii; water lettuce, salvinia, red root floater |
+| Swamps | stem plants (Ludwigia, Limnophila, Bacopa, Rotala, rarely the red and strong-light ones), carpets (Marsilea, Staurogyne, rarely Monte Carlo and HC Cuba), green and red tiger lotus; duckweed, salvinia, frogbit, hornwort, floating Riccia |
+| Rivers | Vallisneria, Sagittaria, hairgrass, Java, Christmas and flame moss, Amazon sword, Riccia |
+| Mangrove swamps | the crypts, Java fern and Java moss; duckweed, water lettuce, salvinia, frogbit, red root floater |
+| Cold lakes and frozen rivers | Marimo balls, hairgrass; hornwort |
+| Lush caves | Java, Christmas and flame moss on the stone of the pools |
+
+**Shears** cut a cutting off a wild plant (two of a stem plant); it then grows back for about an in-game day. Broken by
+hand it gives nothing, like seagrass; with **silk touch** you get the whole plant, half grown. Floating plants lie on
+calm water like lily pads: pick them up by hand, with shears or scoop them with the [aquarium net](equipment/tank_net.md).
+Strong-light plants grow only in shallow water and, like the soft-water plants, are rare. Config:
+`features.wildPlants`, `spawn.wildPlantFrequency`.
+
 ## All plants
 
 | | Plant | Growth form | Light | Full size |

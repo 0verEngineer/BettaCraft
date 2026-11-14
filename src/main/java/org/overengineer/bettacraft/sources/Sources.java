@@ -152,7 +152,31 @@ public final class Sources {
         int weight = def(CommonConfig.SPAWN_WEIGHT), min = def(CommonConfig.SPAWN_MIN_GROUP), max = Math.max(min, def(CommonConfig.SPAWN_MAX_GROUP));
         out.add(new Source(Source.Kind.SPAWN, Target.BETTA, Where.SWAMP, weight, weight, min, max, 0, false, null, null));
         wildlife(out);
+        wildPlants(out);
     }
+
+    /**
+     * M28.1: the wild aquarium plants under water (shears cut a cutting off the wild block; stem plants give two) and the
+     * wild floating plants on the surface (broken by hand, with shears or the net: always the plant), per water.
+     */
+    private static void wildPlants(List<Source> out) {
+        for (WildTables.PlantWater w : WildTables.PlantWater.values()) {
+            for (var e : WildTables.wildPlants(w).entries()) {
+                PlantSpecies s = e.value();
+                int n = s.form() == PlantSpecies.Form.STEM ? 2 : 1;
+                out.add(new Source(Source.Kind.SHEARS, Target.plant(s), w.where(), 1.0, 1.0, n, n, 0, false, "features.wildPlants",
+                        "bettacraft:" + org.overengineer.bettacraft.plants.wild.WildPlantKind.of(s).id()));
+            }
+            for (var e : WildTables.wildFloating(w).entries()) {
+                FloatingPlantType t = e.value();
+                String target = t.plantItem() ? Target.plant(PlantSpecies.byId(t.id())) : Target.floating(t);
+                out.add(new Source(Source.Kind.BLOCK_DROP, target, w.where(), 1.0, 1.0, 1, 1, 0, false, "features.wildPlants", WILD_FLOATING_BLOCK));
+            }
+        }
+    }
+
+    /** M28.1: the block id of the wild floating plants (the handbook names it). */
+    public static final String WILD_FLOATING_BLOCK = "bettacraft:wild_floating_plant";
 
     /** M22.3: the wild tankmates, frogs and small animals (spawns per water) and the wild corals of the reefs (shears). */
     private static void wildlife(List<Source> out) {

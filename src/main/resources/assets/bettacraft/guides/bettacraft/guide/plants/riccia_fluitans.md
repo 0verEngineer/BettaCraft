@@ -35,6 +35,8 @@ Crystalwort (*Riccia fluitans*): a liverwort of small, forked thalli; tied onto 
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.23–0.28 % per swing (about 1 in 361–433 swings) (config `features.plantNetCatches`).
 * **Fishing** in swamps: 0.13 % per catch (about 1 in 793 catches), instead of the fish.
+* **Breaking wild floating plants** in swamps: 100 % per block (config `features.wildPlants`).
+* **Shears** on a wild plant in rivers: 100 % per cut (config `features.wildPlants`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

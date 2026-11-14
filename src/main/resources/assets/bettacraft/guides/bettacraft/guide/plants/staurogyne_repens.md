@@ -34,6 +34,7 @@ item_ids:
 
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.27–0.32 % per swing (about 1 in 308–369 swings) (config `features.plantNetCatches`).
 * **Fishing** in jungle water: 0.1 % per catch (about 1 in 973 catches), instead of the fish.
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

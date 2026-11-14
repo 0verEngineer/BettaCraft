@@ -34,6 +34,8 @@ Hairgrass (*Eleocharis acicularis*): a lawn of thin, upright needles that spread
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.23–0.28 % per swing (about 1 in 361–433 swings) (config `features.plantNetCatches`).
 * **Fishing** in swamps: 0.09 % per catch (about 1 in 1057 catches), instead of the fish.
+* **Shears** on a wild plant in rivers: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in cold lakes and frozen rivers: 100 % per cut (config `features.wildPlants`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

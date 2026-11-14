@@ -36,6 +36,7 @@ Die Marimo-Kugel (*Aegagropila linnaei*) aus den kühlen Seen Japans und Nordeur
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,08–0,1 % pro Schwung (etwa 1 von 1042–1250 Schwüngen) (Config `features.plantNetCatches`).
 * **Angeln** in Flüssen: 0,03 % pro Fang (etwa 1 von 3100 Fängen), statt des Fischs.
+* **Schere** an einem wilden Pflanzenbestand in kalten Seen und gefrorenen Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

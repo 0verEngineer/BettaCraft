@@ -176,6 +176,7 @@ the first that fits decides.
 | `#bettacraft:mangrove_waters` | Mangrove swamp | `minecraft:mangrove_swamp`, Oh The Biomes We've Gone white mangrove marshes |
 | `#bettacraft:swamp_waters` | Swamp | `minecraft:swamp`, `#c:is_swamp`, the Twilight Forest swamp |
 | `#bettacraft:lush_cave_waters` | Lush caves (net) | `minecraft:lush_caves`; also every biome in both `#c:is_lush` and `#c:is_cave` |
+| `#bettacraft:cold_waters` | Cold lakes (wild Marimo, hairgrass, hornwort) | `minecraft:frozen_river`, the taigas and snowy plains; also every land biome in `#c:is_cold/overworld` |
 | `#bettacraft:river_waters` | River | `#minecraft:is_river`, the Twilight Forest stream |
 | `#bettacraft:beach_waters` | Beach | `#minecraft:is_beach` |
 | `#bettacraft:warm_ocean_waters` | Warm ocean (reef) | `minecraft:warm_ocean`, the Regions Unexplored rocky reef; also every biome in both `#c:is_ocean` and `#c:is_hot` |
@@ -198,6 +199,15 @@ they vanish again like vanilla fish. The weights are `spawn.wildFishWeight` and 
 
 All animals of the mod are in the entity tag `#bettacraft:all_animals`, the ones that spawn by themselves in
 `#bettacraft:wild_animals`, for example `/effect give @e[type=#bettacraft:all_animals,distance=..64] minecraft:glowing 30`.
+
+### Wild plants in the world
+
+Every aquarium and floating plant grows wild in new chunks (common config `features.wildPlants`, on): at most one try per
+chunk (three in the lush caves), a group of one species on the bottom or a patch of floating plants on calm water. The
+chance per try is 50 % in jungle water, 40 % in swamps and mangroves, 35 % in rivers and the lush caves, 15 % in cold
+waters, times `spawn.wildPlantFrequency` (1.0; 0 = none, up to 10). The biome modifier `bettacraft:wild_plants` adds the
+features to the tags of the waters above, so the biomes of biome mods count; which plants grow where is listed in
+[Plants](plants.md).
 
 ## Commands
 

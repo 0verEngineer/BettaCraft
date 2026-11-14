@@ -178,6 +178,7 @@ Reihenfolge; der erste passende Tag entscheidet.
 | `#bettacraft:mangrove_waters` | Mangrovensumpf | `minecraft:mangrove_swamp`, die White Mangrove Marshes von Oh The Biomes We've Gone |
 | `#bettacraft:swamp_waters` | Sumpf | `minecraft:swamp`, `#c:is_swamp`, der Sumpf des Twilight Forest |
 | `#bettacraft:lush_cave_waters` | Üppige Höhlen (Kescher) | `minecraft:lush_caves`; außerdem jedes Biom, das in `#c:is_lush` und in `#c:is_cave` ist |
+| `#bettacraft:cold_waters` | Kalte Seen (wilde Marimo, Nadelsimse, Hornkraut) | `minecraft:frozen_river`, die Taigas und verschneiten Ebenen; außerdem jedes Landbiom in `#c:is_cold/overworld` |
 | `#bettacraft:river_waters` | Fluss | `#minecraft:is_river`, der Bach des Twilight Forest |
 | `#bettacraft:beach_waters` | Strand | `#minecraft:is_beach` |
 | `#bettacraft:warm_ocean_waters` | Warmer Ozean (Riff) | `minecraft:warm_ocean`, das Rocky Reef von Regions Unexplored; außerdem jedes Biom, das in `#c:is_ocean` und in `#c:is_hot` ist |
@@ -203,6 +204,15 @@ verschwinden sie wieder wie Vanilla-Fische. Die Gewichte sind `spawn.wildFishWei
 
 Alle Tiere der Mod stehen im Entity-Tag `#bettacraft:all_animals`, die von selbst spawnenden in
 `#bettacraft:wild_animals`, zum Beispiel `/effect give @e[type=#bettacraft:all_animals,distance=..64] minecraft:glowing 30`.
+
+### Wilde Pflanzen in der Welt
+
+Jede Aquarien- und Schwimmpflanze wächst in neuen Chunks wild (Common-Config `features.wildPlants`, an): höchstens ein
+Versuch pro Chunk (drei in den üppigen Höhlen), eine Gruppe einer Art am Grund oder ein Fleck Schwimmpflanzen auf ruhigem
+Wasser. Die Chance pro Versuch ist 50 % in Dschungelgewässern, 40 % in Sümpfen und Mangroven, 35 % in Flüssen und den
+üppigen Höhlen, 15 % in kalten Gewässern, mal `spawn.wildPlantFrequency` (1.0; 0 = keine, bis 10). Der Biom-Modifier
+`bettacraft:wild_plants` hängt die Features an die Tags der Gewässer oben, damit die Biome von Biom-Mods mitzählen; welche
+Pflanze wo wächst, steht unter [Pflanzen](plants.md).
 
 ## Befehle
 

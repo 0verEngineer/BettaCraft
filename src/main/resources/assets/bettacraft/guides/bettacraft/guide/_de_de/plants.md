@@ -13,6 +13,28 @@ Aquarienpflanzen wachsen im [Innenraum](interior.md) eines Aquariums. Gepflanzt 
 ein Block, und im Lauf der Tage wächst daraus eine Pflanze aus vielen Blöcken: Wedel, Blätter, Stängel, Blattbänder. Im
 Aquarium sieht man sie als Teil der Miniatur hinter dem Glas. Jede Pflanze sieht etwas anders aus.
 
+## Wild in der Welt
+
+![Wilde Aquarien- und Schwimmpflanzen in einem Sumpftümpel](images/wild_plants.png)
+
+Jede Aquarienpflanze und jede Schwimmpflanze wächst auch wild, in kleinen Gruppen in den Gewässern ihrer Herkunft (neue
+Chunks):
+
+| Gewässer | Wächst dort |
+|---|---|
+| Dschungelgewässer | Anubias, Bucephalandra und Javafarn auf Steinen und versunkenen Wurzeln, die Cryptocorynen, Schwertpflanzen, Hygrophila pinnatifida, Aponogeton, roter Tigerlotus, selten Pogostemon und Rotala wallichii; Muschelblume, Schwimmfarn, Rote Wurzelflosse |
+| Sümpfe | Stängelpflanzen (Ludwigia, Limnophila, Bacopa, Rotala, selten die roten und Starklicht-Arten), Bodendecker (Marsilea, Staurogyne, selten Monte Carlo und HC Cuba), grüner und roter Tigerlotus; Wasserlinse, Schwimmfarn, Froschbiss, Hornkraut, schwimmendes Riccia |
+| Flüsse | Vallisneria, Sagittaria, Nadelsimse, Javamoos, Christmasmoos und Flammenmoos, Amazonas-Schwertpflanze, Riccia |
+| Mangrovensümpfe | die Cryptocorynen, Javafarn und Javamoos; Wasserlinse, Muschelblume, Schwimmfarn, Froschbiss, Rote Wurzelflosse |
+| Kalte Seen und gefrorene Flüsse | Marimo-Kugeln, Nadelsimse; Hornkraut |
+| Üppige Höhlen | Javamoos, Christmasmoos und Flammenmoos auf dem Stein der Tümpel |
+
+Die **Schere** schneidet einen Ableger von einer wilden Pflanze (bei Stängelpflanzen zwei); danach wächst sie etwa einen
+Spieltag lang nach. Von Hand abgebaut gibt sie nichts, wie Seegras; mit **Behutsamkeit** bekommt man die ganze Pflanze,
+halb ausgewachsen. Schwimmpflanzen liegen wie Seerosenblätter auf ruhigem Wasser: mit der Hand oder der Schere aufsammeln
+oder mit dem [Kescher](equipment/tank_net.md) abschöpfen. Starklicht-Pflanzen wachsen nur in flachem Wasser und sind, wie
+die Weichwasser-Pflanzen, selten. Config: `features.wildPlants`, `spawn.wildPlantFrequency`.
+
 ## Alle Pflanzen
 
 | | Pflanze | Wuchsform | Licht | Volle Größe |

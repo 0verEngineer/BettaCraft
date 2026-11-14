@@ -34,6 +34,9 @@ Hornkraut (*Ceratophyllum demersum*): wurzellose Triebe mit Quirlen aus steifen 
 
 * **Angeln** in Sümpfen: 0,67 % pro Fang (etwa 1 von 150 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 0,4 % pro Fang (etwa 1 von 250 Fängen), statt des Fischs.
+* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Flüssen: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in kalten Seen und gefrorenen Flüssen: 100 % pro Block (Config `features.wildPlants`).
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -33,6 +33,9 @@ Salvinia (*Salvinia natans*), a floating fern from the still waters of Europe an
 
 * **Fishing** in swamps: 1.4 % per catch (about 1 in 70 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 1.3 % per catch (about 1 in 80 catches), instead of the fish.
+* **Breaking wild floating plants** in jungle water: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in swamps: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.wildPlants`).
 * **Wandering trader** (usual offers): 3 for 1 emerald.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 

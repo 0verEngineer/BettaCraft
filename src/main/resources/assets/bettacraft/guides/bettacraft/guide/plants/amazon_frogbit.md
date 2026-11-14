@@ -34,6 +34,8 @@ Amazon frogbit (*Limnobium laevigatum*) from Central and South America: round le
 
 * **Fishing** in swamps: 1.2 % per catch (about 1 in 84 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 1.3 % per catch (about 1 in 80 catches), instead of the fish.
+* **Breaking wild floating plants** in swamps: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.wildPlants`).
 * **Wandering trader** (usual offers): 2 for 1 emerald.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 

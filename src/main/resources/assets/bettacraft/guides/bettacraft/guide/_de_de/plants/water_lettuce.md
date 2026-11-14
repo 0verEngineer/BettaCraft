@@ -34,6 +34,8 @@ Die Muschelblume (*Pistia stratiotes*) aus den Tropen: Rosetten aus samtigen Bl�
 
 * **Angeln** in S체mpfen: 0,57 % pro Fang (etwa 1 von 175 F채ngen), statt des Fischs.
 * **Angeln** in Mangrovens체mpfen: 0,6 % pro Fang (etwa 1 von 167 F채ngen), statt des Fischs.
+* **Wilde Schwimmpflanzen abbauen** in Dschungelgew채ssern: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Mangrovens체mpfen: 100 % pro Block (Config `features.wildPlants`).
 * **Ableger**: w채chst auf einer beleuchteten Wasseroberfl채che und bildet Ableger; mit dem Kescher herausnehmen.
 
 Die Biome von Biome-Mods z채hlen mit ([Biom-Tags](../settings.md)).

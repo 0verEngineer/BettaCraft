@@ -35,6 +35,7 @@ item_ids:
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,19–0,23 % pro Schwung (etwa 1 von 433–520 Schwüngen) (Config `features.plantNetCatches`).
 * **Angeln** in Sümpfen: 0,06 % pro Fang (etwa 1 von 1585 Fängen), statt des Fischs.
+* **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.wildPlants`).
 * **Fahrender Händler** (seltene Angebote): 1 für 5 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
 

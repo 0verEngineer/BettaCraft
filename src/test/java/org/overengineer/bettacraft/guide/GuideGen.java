@@ -445,7 +445,7 @@ public final class GuideGen {
                 case SHOVEL -> lines.add(bold(t("Shovel", "Schaufel")) + t(" on " + block(s.block()) + " ", " auf " + block(s.block()) + " ") + where(s.where()) + ": "
                         + chance(s.chance(), s.chanceMax()) + t(" per try, into an empty fish bag", " pro Versuch, in einen leeren Fischbeutel"));
                 case BLOCK_DROP -> lines.add(bold(t("Breaking " + block(s.block()), block(s.block()) + " abbauen"))
-                        + (s.where() == Where.SAND ? "" : " " + where(s.where())) + ": " + chance(s.chance(), s.chanceMax()) + t(" per block", " pro Block"));
+                        + (s.where() == Where.SAND ? "" : " " + where(s.where())) + ": " + chance(s.chance(), s.chanceMax()) + t(" per block", " pro Block") + cond);
                 case SPAWN -> lines.add(bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ", in groups of " + s.min() + "–" + s.max() + " (spawn weight "
                         + (int) s.chance() + ")", " " + where(s.where()) + ", in Gruppen von " + s.min() + "–" + s.max() + " (Spawn-Gewicht " + (int) s.chance() + ")") + cond);
                 case TRADER_USUAL, TRADER_RARE -> {
@@ -697,6 +697,7 @@ public final class GuideGen {
             case SALT_WATER -> t("in oceans and at beaches", "in Ozeanen und an Stränden");
             case NEAR_WATER -> t("next to water", "neben Wasser");
             case SAND -> t("anywhere", "überall");
+            case COLD_WATER -> t("in cold lakes and frozen rivers", "in kalten Seen und gefrorenen Flüssen");
         };
     }
 
@@ -705,6 +706,10 @@ public final class GuideGen {
             case "minecraft:mud" -> t("mud", "Schlamm");
             case "minecraft:moss_block" -> t("moss block", "Moosblock");
             case "#c:sands" -> t("sand", "Sand");
+            // M28.1: the wild plants (one block per growth form) and the wild floating plants
+            case "bettacraft:wild_epiphyte", "bettacraft:wild_moss", "bettacraft:wild_rosette", "bettacraft:wild_stem", "bettacraft:wild_carpet" ->
+                    t("wild plant", "wilden Pflanzenbestand");
+            case "bettacraft:wild_floating_plant" -> t("wild floating plants", "Wilde Schwimmpflanzen");
             default -> id.startsWith("bettacraft:wild_") ? t("wild coral colony", "wilden Korallenstock") : id; // M22.3
         };
     }

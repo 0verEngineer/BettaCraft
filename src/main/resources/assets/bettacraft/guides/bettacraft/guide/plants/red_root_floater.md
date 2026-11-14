@@ -33,6 +33,8 @@ The red root floater (*Phyllanthus fluitans*) from South America: round leaves a
 ## Obtaining
 
 * **Fishing** in mangrove swamps: 0.75 % per catch (about 1 in 133 catches), instead of the fish.
+* **Breaking wild floating plants** in jungle water: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.wildPlants`).
 * **Wandering trader** (rare offers): 2 for 3 emeralds.
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 

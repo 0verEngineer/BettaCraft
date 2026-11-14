@@ -34,6 +34,8 @@ Amazonas-Froschbiss (*Limnobium laevigatum*) aus Mittel- und Südamerika: runde 
 
 * **Angeln** in Sümpfen: 1,2 % pro Fang (etwa 1 von 84 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 1,3 % pro Fang (etwa 1 von 80 Fängen), statt des Fischs.
+* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.wildPlants`).
 * **Fahrender Händler** (übliche Angebote): 2 für 1 Smaragd.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 

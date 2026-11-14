@@ -35,6 +35,7 @@ item_ids:
 * **Fishing** in swamps: 0.63 % per catch (about 1 in 159 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 0.94 % per catch (about 1 in 106 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 0.85 % per bottle, along with the water.
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -34,6 +34,8 @@ Nadelsimse (*Eleocharis acicularis*): ein Rasen aus dünnen, aufrechten Nadeln, 
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,23–0,28 % pro Schwung (etwa 1 von 361–433 Schwüngen) (Config `features.plantNetCatches`).
 * **Angeln** in Sümpfen: 0,09 % pro Fang (etwa 1 von 1057 Fängen), statt des Fischs.
+* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in kalten Seen und gefrorenen Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

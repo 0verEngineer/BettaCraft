@@ -138,6 +138,81 @@ die [Biom-Tags](../settings.md)).
 * [Lobophyllia](../saltwater/lobophyllia.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
 * [Acropora](../saltwater/acropora.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
 * [Blasenanemone](../saltwater/bubble_tip_anemone.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
+* [Javafarn](../plants/java_fern.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Anubias nana](../plants/anubias_nana.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Anubias barteri „Round Leaf“](../plants/anubias_barteri_round_leaf.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Anubias nana „Petite“](../plants/anubias_nana_petite.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Anubias coffeefolia](../plants/anubias_coffeefolia.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Anubias „Pinto“](../plants/anubias_pinto.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Anubias „White“](../plants/anubias_white.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Green Wavy“](../plants/bucephalandra_green_wavy.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Mini Needle“](../plants/bucephalandra_mini_needle.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Brownie Red“](../plants/bucephalandra_brownie_red.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Theia“](../plants/bucephalandra_theia.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Blue“](../plants/bucephalandra_blue.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Kedagang“](../plants/bucephalandra_kedagang.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Godzilla“](../plants/bucephalandra_godzilla.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Pink Lady“](../plants/bucephalandra_pink_lady.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Mini Pink“](../plants/bucephalandra_mini_pink.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Bucephalandra „Snow White“](../plants/bucephalandra_snow_white.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Cryptocoryne wendtii (grün)](../plants/cryptocoryne_wendtii_green.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Cryptocoryne wendtii (braunrot)](../plants/cryptocoryne_wendtii_brown.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Cryptocoryne parva](../plants/cryptocoryne_parva.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Cryptocoryne „Flamingo“](../plants/cryptocoryne_flamingo.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Amazonas-Schwertpflanze](../plants/amazon_sword.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Echinodorus „Red Diamond“](../plants/echinodorus_red_diamond.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Hygrophila pinnatifida](../plants/hygrophila_pinnatifida.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Aponogeton ulvaceus](../plants/aponogeton_ulvaceus.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Roter Tigerlotus](../plants/red_tiger_lotus.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Pogostemon helferi „Downoi“](../plants/pogostemon_helferi.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Rotala wallichii](../plants/rotala_wallichii.md): Schere an einem wilden Pflanzenbestand in Dschungelgewässern (immer).
+* [Muschelblume](../plants/water_lettuce.md): Wilde Schwimmpflanzen abbauen in Dschungelgewässern (immer).
+* [Schwimmfarn](../plants/salvinia.md): Wilde Schwimmpflanzen abbauen in Dschungelgewässern (immer).
+* [Rote Wurzelflosse](../plants/red_root_floater.md): Wilde Schwimmpflanzen abbauen in Dschungelgewässern (immer).
+* [Rotala rotundifolia](../plants/rotala_rotundifolia.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Ludwigia repens](../plants/ludwigia_repens.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Limnophila sessiliflora](../plants/limnophila_sessiliflora.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Bacopa caroliniana](../plants/bacopa_caroliniana.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Kleefarn (Marsilea)](../plants/marsilea_hirsuta.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Staurogyne repens](../plants/staurogyne_repens.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Grüner Tigerlotus](../plants/nymphaea_lotus_green.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Roter Tigerlotus](../plants/red_tiger_lotus.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Rotala „H'ra“](../plants/rotala_hra.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Ludwigia „Super Red“](../plants/ludwigia_super_red.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Monte Carlo](../plants/monte_carlo.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Hemianthus callitrichoides „Cuba“](../plants/hemianthus_callitrichoides.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Alternanthera reineckii](../plants/alternanthera_reineckii.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Myriophyllum „Red“](../plants/myriophyllum_red.md): Schere an einem wilden Pflanzenbestand in Sümpfen (immer).
+* [Wasserlinse](../plants/duckweed.md): Wilde Schwimmpflanzen abbauen in Sümpfen (immer).
+* [Schwimmfarn](../plants/salvinia.md): Wilde Schwimmpflanzen abbauen in Sümpfen (immer).
+* [Amazonas-Froschbiss](../plants/amazon_frogbit.md): Wilde Schwimmpflanzen abbauen in Sümpfen (immer).
+* [Hornkraut](../plants/hornwort.md): Wilde Schwimmpflanzen abbauen in Sümpfen (immer).
+* [Teichlebermoos (Riccia)](../plants/riccia_fluitans.md): Wilde Schwimmpflanzen abbauen in Sümpfen (immer).
+* [Vallisneria](../plants/vallisneria.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Pfeilkraut (Sagittaria subulata)](../plants/sagittaria_subulata.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Nadelsimse (Eleocharis)](../plants/eleocharis_acicularis.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Javamoos](../plants/java_moss.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Christmas-Moos](../plants/christmas_moss.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Flame-Moos](../plants/flame_moss.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Amazonas-Schwertpflanze](../plants/amazon_sword.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Teichlebermoos (Riccia)](../plants/riccia_fluitans.md): Schere an einem wilden Pflanzenbestand in Flüssen (immer).
+* [Hornkraut](../plants/hornwort.md): Wilde Schwimmpflanzen abbauen in Flüssen (immer).
+* [Wasserlinse](../plants/duckweed.md): Wilde Schwimmpflanzen abbauen in Flüssen (immer).
+* [Cryptocoryne wendtii (grün)](../plants/cryptocoryne_wendtii_green.md): Schere an einem wilden Pflanzenbestand in Mangrovensümpfen (immer).
+* [Cryptocoryne wendtii (braunrot)](../plants/cryptocoryne_wendtii_brown.md): Schere an einem wilden Pflanzenbestand in Mangrovensümpfen (immer).
+* [Javafarn](../plants/java_fern.md): Schere an einem wilden Pflanzenbestand in Mangrovensümpfen (immer).
+* [Javamoos](../plants/java_moss.md): Schere an einem wilden Pflanzenbestand in Mangrovensümpfen (immer).
+* [Wasserlinse](../plants/duckweed.md): Wilde Schwimmpflanzen abbauen in Mangrovensümpfen (immer).
+* [Muschelblume](../plants/water_lettuce.md): Wilde Schwimmpflanzen abbauen in Mangrovensümpfen (immer).
+* [Schwimmfarn](../plants/salvinia.md): Wilde Schwimmpflanzen abbauen in Mangrovensümpfen (immer).
+* [Amazonas-Froschbiss](../plants/amazon_frogbit.md): Wilde Schwimmpflanzen abbauen in Mangrovensümpfen (immer).
+* [Rote Wurzelflosse](../plants/red_root_floater.md): Wilde Schwimmpflanzen abbauen in Mangrovensümpfen (immer).
+* [Marimo-Kugel](../plants/marimo.md): Schere an einem wilden Pflanzenbestand in kalten Seen und gefrorenen Flüssen (immer).
+* [Nadelsimse (Eleocharis)](../plants/eleocharis_acicularis.md): Schere an einem wilden Pflanzenbestand in kalten Seen und gefrorenen Flüssen (immer).
+* [Hornkraut](../plants/hornwort.md): Wilde Schwimmpflanzen abbauen in kalten Seen und gefrorenen Flüssen (immer).
+* [Javamoos](../plants/java_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Christmas-Moos](../plants/christmas_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Flame-Moos](../plants/flame_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
 
 ## Fahrender Händler: übliche Angebote
 

@@ -136,6 +136,81 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Lobophyllia](../saltwater/lobophyllia.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 * [Acropora](../saltwater/acropora.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 * [Bubble Tip Anemone](../saltwater/bubble_tip_anemone.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
+* [Java Fern](../plants/java_fern.md): shears on a wild plant in jungle water (always).
+* [Anubias Nana](../plants/anubias_nana.md): shears on a wild plant in jungle water (always).
+* [Anubias Barteri 'Round Leaf'](../plants/anubias_barteri_round_leaf.md): shears on a wild plant in jungle water (always).
+* [Anubias Nana 'Petite'](../plants/anubias_nana_petite.md): shears on a wild plant in jungle water (always).
+* [Anubias Coffeefolia](../plants/anubias_coffeefolia.md): shears on a wild plant in jungle water (always).
+* [Anubias 'Pinto'](../plants/anubias_pinto.md): shears on a wild plant in jungle water (always).
+* [Anubias 'White'](../plants/anubias_white.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Green Wavy'](../plants/bucephalandra_green_wavy.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Mini Needle'](../plants/bucephalandra_mini_needle.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Brownie Red'](../plants/bucephalandra_brownie_red.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Theia'](../plants/bucephalandra_theia.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Blue'](../plants/bucephalandra_blue.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Kedagang'](../plants/bucephalandra_kedagang.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Godzilla'](../plants/bucephalandra_godzilla.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Pink Lady'](../plants/bucephalandra_pink_lady.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Mini Pink'](../plants/bucephalandra_mini_pink.md): shears on a wild plant in jungle water (always).
+* [Bucephalandra 'Snow White'](../plants/bucephalandra_snow_white.md): shears on a wild plant in jungle water (always).
+* [Cryptocoryne Wendtii (Green)](../plants/cryptocoryne_wendtii_green.md): shears on a wild plant in jungle water (always).
+* [Cryptocoryne Wendtii (Brown)](../plants/cryptocoryne_wendtii_brown.md): shears on a wild plant in jungle water (always).
+* [Cryptocoryne Parva](../plants/cryptocoryne_parva.md): shears on a wild plant in jungle water (always).
+* [Cryptocoryne 'Flamingo'](../plants/cryptocoryne_flamingo.md): shears on a wild plant in jungle water (always).
+* [Amazon Sword](../plants/amazon_sword.md): shears on a wild plant in jungle water (always).
+* [Echinodorus 'Red Diamond'](../plants/echinodorus_red_diamond.md): shears on a wild plant in jungle water (always).
+* [Hygrophila Pinnatifida](../plants/hygrophila_pinnatifida.md): shears on a wild plant in jungle water (always).
+* [Aponogeton Ulvaceus](../plants/aponogeton_ulvaceus.md): shears on a wild plant in jungle water (always).
+* [Red Tiger Lotus](../plants/red_tiger_lotus.md): shears on a wild plant in jungle water (always).
+* [Pogostemon Helferi 'Downoi'](../plants/pogostemon_helferi.md): shears on a wild plant in jungle water (always).
+* [Rotala Wallichii](../plants/rotala_wallichii.md): shears on a wild plant in jungle water (always).
+* [Water Lettuce](../plants/water_lettuce.md): breaking wild floating plants in jungle water (always).
+* [Salvinia](../plants/salvinia.md): breaking wild floating plants in jungle water (always).
+* [Red Root Floater](../plants/red_root_floater.md): breaking wild floating plants in jungle water (always).
+* [Rotala Rotundifolia](../plants/rotala_rotundifolia.md): shears on a wild plant in swamps (always).
+* [Ludwigia Repens](../plants/ludwigia_repens.md): shears on a wild plant in swamps (always).
+* [Limnophila Sessiliflora](../plants/limnophila_sessiliflora.md): shears on a wild plant in swamps (always).
+* [Bacopa Caroliniana](../plants/bacopa_caroliniana.md): shears on a wild plant in swamps (always).
+* [Marsilea (Water Clover)](../plants/marsilea_hirsuta.md): shears on a wild plant in swamps (always).
+* [Staurogyne Repens](../plants/staurogyne_repens.md): shears on a wild plant in swamps (always).
+* [Green Tiger Lotus](../plants/nymphaea_lotus_green.md): shears on a wild plant in swamps (always).
+* [Red Tiger Lotus](../plants/red_tiger_lotus.md): shears on a wild plant in swamps (always).
+* [Rotala 'H'ra'](../plants/rotala_hra.md): shears on a wild plant in swamps (always).
+* [Ludwigia 'Super Red'](../plants/ludwigia_super_red.md): shears on a wild plant in swamps (always).
+* [Monte Carlo](../plants/monte_carlo.md): shears on a wild plant in swamps (always).
+* [Hemianthus Callitrichoides 'Cuba'](../plants/hemianthus_callitrichoides.md): shears on a wild plant in swamps (always).
+* [Alternanthera Reineckii](../plants/alternanthera_reineckii.md): shears on a wild plant in swamps (always).
+* [Myriophyllum 'Red'](../plants/myriophyllum_red.md): shears on a wild plant in swamps (always).
+* [Duckweed](../plants/duckweed.md): breaking wild floating plants in swamps (always).
+* [Salvinia](../plants/salvinia.md): breaking wild floating plants in swamps (always).
+* [Amazon Frogbit](../plants/amazon_frogbit.md): breaking wild floating plants in swamps (always).
+* [Hornwort](../plants/hornwort.md): breaking wild floating plants in swamps (always).
+* [Riccia (Crystalwort)](../plants/riccia_fluitans.md): breaking wild floating plants in swamps (always).
+* [Vallisneria](../plants/vallisneria.md): shears on a wild plant in rivers (always).
+* [Sagittaria Subulata](../plants/sagittaria_subulata.md): shears on a wild plant in rivers (always).
+* [Eleocharis (Hairgrass)](../plants/eleocharis_acicularis.md): shears on a wild plant in rivers (always).
+* [Java Moss](../plants/java_moss.md): shears on a wild plant in rivers (always).
+* [Christmas Moss](../plants/christmas_moss.md): shears on a wild plant in rivers (always).
+* [Flame Moss](../plants/flame_moss.md): shears on a wild plant in rivers (always).
+* [Amazon Sword](../plants/amazon_sword.md): shears on a wild plant in rivers (always).
+* [Riccia (Crystalwort)](../plants/riccia_fluitans.md): shears on a wild plant in rivers (always).
+* [Hornwort](../plants/hornwort.md): breaking wild floating plants in rivers (always).
+* [Duckweed](../plants/duckweed.md): breaking wild floating plants in rivers (always).
+* [Cryptocoryne Wendtii (Green)](../plants/cryptocoryne_wendtii_green.md): shears on a wild plant in mangrove swamps (always).
+* [Cryptocoryne Wendtii (Brown)](../plants/cryptocoryne_wendtii_brown.md): shears on a wild plant in mangrove swamps (always).
+* [Java Fern](../plants/java_fern.md): shears on a wild plant in mangrove swamps (always).
+* [Java Moss](../plants/java_moss.md): shears on a wild plant in mangrove swamps (always).
+* [Duckweed](../plants/duckweed.md): breaking wild floating plants in mangrove swamps (always).
+* [Water Lettuce](../plants/water_lettuce.md): breaking wild floating plants in mangrove swamps (always).
+* [Salvinia](../plants/salvinia.md): breaking wild floating plants in mangrove swamps (always).
+* [Amazon Frogbit](../plants/amazon_frogbit.md): breaking wild floating plants in mangrove swamps (always).
+* [Red Root Floater](../plants/red_root_floater.md): breaking wild floating plants in mangrove swamps (always).
+* [Marimo Ball](../plants/marimo.md): shears on a wild plant in cold lakes and frozen rivers (always).
+* [Eleocharis (Hairgrass)](../plants/eleocharis_acicularis.md): shears on a wild plant in cold lakes and frozen rivers (always).
+* [Hornwort](../plants/hornwort.md): breaking wild floating plants in cold lakes and frozen rivers (always).
+* [Java Moss](../plants/java_moss.md): shears on a wild plant in lush caves (always).
+* [Christmas Moss](../plants/christmas_moss.md): shears on a wild plant in lush caves (always).
+* [Flame Moss](../plants/flame_moss.md): shears on a wild plant in lush caves (always).
 
 ## Wandering trader: usual offers
 

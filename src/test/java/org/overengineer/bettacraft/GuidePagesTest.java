@@ -302,6 +302,10 @@ class GuidePagesTest {
         String p = id.substring(id.indexOf(':') + 1);
         // M19: the tankmate entities (their buckets and spawn eggs are items with pages)
         if (org.overengineer.bettacraft.tankmates.TankmateSpecies.byId(p) != null) return false;
+        // M28.1: the wild plant blocks of the world have no item (shears give the plant, silk touch the plant too)
+        if (p.equals("wild_floating_plant") || java.util.Arrays.stream(org.overengineer.bettacraft.plants.wild.WildPlantKind.values()).anyMatch(k -> k.id().equals(p))) {
+            return false;
+        }
         return !(p.equals("betta") || p.equals("dwarf_clawed_frog") || p.equals("wild_critter") || p.equals("guide") || p.startsWith("interior_") || p.endsWith("_segment"));
     }
 }
