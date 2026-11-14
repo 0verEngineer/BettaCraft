@@ -4,6 +4,35 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.15.2-beta.1] - 2026-11-14
+
+The build on GitHub is green again: GameTests that depend on chance failed there now and then. In the game only one
+small thing changes: shrimp and crayfish no longer step into the side of a pillar under a table or overhang.
+
+### Fixed
+- Small animals under an overhang (a table, a cave): beside a pillar a crayfish could take a height inside the pillar
+  for the ground and stand in the stone. The ground there is now the top of the whole pillar, too high to step onto.
+- The GameTests of the guppy and endler breeding waited for a pregnancy with the full care step, so a pair below the
+  shoal size of three fell sick from shoal stress after seven days and the waiting ended early: about one run in 250
+  per test had no pregnancy and failed (once on GitHub Actions). They now wait up to 30 days with only the breeding
+  step; the neon tetra spawning test waits up to 12 days instead of 4.
+- The GameTest of the aquarium net in jungle water expected a fish from every swing, but since 1.15.1 a fifth of the
+  catches there is a plant (3 of 15 local runs failed). It now runs without net plants.
+- The shrimp breeding GameTest counted a young of an early backcross (red twice, blue once, so red) as a red x blue F1
+  that must look wild, and failed now and then; it now checks only the young that carry red once, and waits up to 40
+  days (was 20) for the first brood. The shrimp poor-water test counts only the shrimp put in, not young born late.
+- The GameTest of the net in the different waters swings 60 times per water instead of 25 (a rarer species was
+  sometimes not caught).
+- The seahorse hitching post GameTest keeps the interior chunks loaded while it looks for the posts (they could
+  unload in between, and an unloaded interior looks like an empty floor).
+- The guppy inheritance GameTest grows up a son without a spontaneous mutation (0.4 % per allele and birth).
+- The pink ramshorn GameTest runs without the spontaneous mutations of 1.15.0, like the shrimp colour test, and waits
+  up to 100 days (was 40) for the first pink young.
+
+### Changed
+- The build workflow shows a failed GameTest with its message as an annotation on the run page and keeps the GameTest
+  log in the uploaded logs.
+
 ## [1.15.1-beta.1] - 2026-11-14
 
 No plant comes only from the wandering trader any more, the handbook shows every way to get a plant with its chance,

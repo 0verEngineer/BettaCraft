@@ -205,7 +205,8 @@ loads it, the jar does not contain it.
   and `verifyReleaseJar`), the changelog section, `runData` must not change `src/generated`, GameTests and a dedicated
   server smoke test. Started by hand with *full* (and before every release) it also runs the server smoke without any
   optional mod and with The One Probe and WTHIT, and the GameTests with the power mods of `-Ppower` (pinned Modrinth
-  jars, `tools/ci/power-mods.json`, fetched and SHA-512 checked by `tools/ci/fetch_mods.py`).
+  jars, `tools/ci/power-mods.json`, fetched and SHA-512 checked by `tools/ci/fetch_mods.py`). A failed GameTest shows
+  up with its message as an annotation on the run page.
 - **Release** (`.github/workflows/release.yml`, a pushed tag `v<mod_version>`): the full test set, the jar of the tag,
   `verifyReleaseJar`, the top section of `CHANGELOG.md` as release notes, a GitHub release (a prerelease for `-alpha`,
   `-beta` and `-rc` versions) and, once the tokens and project ids are set, the upload to Modrinth and CurseForge.
