@@ -52,7 +52,9 @@ block.
   that, one betta), small animals also in a plain bucket; a bucket of water keeps the tank's water if it suits the animal.
 - **Small animals:** Neocaridina shrimp in eleven colours, the orange dwarf crayfish (CPO), nerites (the red and yellow
   racer nerites each in their own shade), apple snails (mostly gold, some with bands), ramshorns (red-brown, pink, blue,
-  red), bladder, trumpet and assassin snails crawl over the floor, the decoration, the
+  red), bladder, trumpet and assassin snails, bee shrimp for soft water (Crystal Red and Black with S to SSS grades,
+  Blue Bolt, Wine Red, Orange Eye Blue Tiger), Sulawesi cardinal shrimp and Tylomelania snails for hard water crawl
+  over the floor, the decoration, the
   plants and the glass. Mendel colours plus a grade bred up by selection (Red Cherry to Painted Fire Red), breeding by
   type (eggs under the tail, apple snail clutches above the water line, nerites never), bettas hunt the young and
   plants hide them. Dwarf clawed frogs breathe at the surface and are slow eaters. Algae grow on the glass, the
@@ -70,7 +72,8 @@ block.
 - **Reef tanks:** sea water from the ocean or with sea salt, salinity that mixes and concentrates, freshwater animals
   die in salt water and reef animals in fresh water (nerites and livebearers tolerate brackish water). Protein
   skimmer, flow pump, reef rock and live rock, actinic light. Eight corals and the bubble tip anemone grow on reef
-  rock in the interior with light, flow and calcium, bleach or glow, and give frags. Clownfish (they spawn at their
+  rock in the interior with light, flow and calcium, alkalinity and magnesium (a four-channel dosing pump keeps them up;
+  trace elements bring strong colours), bleach or glow, and give frags. Clownfish (they spawn at their
   anemone), yellow tang, watchman goby, green chromis, yellowtail damsel, cleaner shrimp, hermit crabs, turbo snails.
 - **Seahorses:** the lined seahorse (dark, yellow, orange) and the dwarf seahorse swim slowly and upright and curl
   their tail round plants, corals, seagrass, kelp or decoration; they need calm water (no strong pumps), live food
@@ -116,6 +119,11 @@ block.
   EASY, NORMAL, REALISTIC), a water change controller and a top-off with level sensor and reservoir do them by
   themselves; stainless steel from the crucible (`features.pipes`, `interiorPipes`, `multiblockFilter`,
   `autoWaterChange`, `topOff`, `stainlessSteel`).
+- **Water chemistry:** TDS, pH and hardness from the water, the substrate (active soil, limestone), driftwood, peat,
+  almond leaves and CO2, with a range for every animal (TDS meter, pH drop test, remineralising salt); topping off lets
+  the TDS climb, regular water changes hold it. CO2 dosing (bio CO2, cylinder with regulator and solenoid valve,
+  filling station on flue gas), a reverse osmosis unit, and reverse osmosis and sea water as fluids for other mods
+  (`features.waterChemistry`, `co2`, `reverseOsmosis`, `caridina`, `sulawesi`, `reefDosing`).
 - **Own sounds:** filters, air pump, air stones, sponge filter, flow pump and feeder have their own procedural sounds
   (`sounds.useVanilla` switches back to Minecraft's), each kind with its own client volume.
 - **Equipment:** internal and external filters with a water jet, aquarium cabinets of any wood or stone (they hold the
@@ -125,7 +133,7 @@ block.
   (take out exactly one, or the best of a sex into a bag or a bucket), breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting), a lock for the owner and a break protection
   that stops everyone (also the owner, creative, explosions and pistons) from breaking the aquarium.
-- **Handbook and progression:** 167 handbook pages in English and German (with GuideME): chapters and sub-chapters that
+- **Handbook and progression:** 178 handbook pages in English and German (with GuideME): chapters and sub-chapters that
   fold open, a page for every animal, plant, coral and device with where to get it (generated from the game data), and
   31 advancements (listed on the page Progress).
 - **Languages:** English and German.
@@ -154,7 +162,7 @@ No other mod is required.
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
-| Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces) |
+| Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water` and `bettacraft:sea_water`; CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |
 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift).

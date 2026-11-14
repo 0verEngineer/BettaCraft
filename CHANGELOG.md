@@ -4,6 +4,55 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.18.0-beta.1] - 2026-11-14
+
+Water chemistry: TDS, pH and hardness of the water with a range for every animal, CO2 dosing for the plants, a reverse
+osmosis unit for soft water, bee shrimp that need it, Sulawesi animals that need hard water, active soil, and reef
+chemistry with a dosing pump.
+
+### Added
+- **Water chemistry** (`features.waterChemistry`, `chemistry.*`): every aquarium has a **TDS** (ppm, normal water about
+  250, reverse osmosis water 0), a **pH** (5 to 9, normal water 7.5) and a **hardness** (soft, medium hard, hard). Food and
+  waste raise the TDS, evaporation leaves the minerals behind, water changes, pipes and fusing tanks mix the values by
+  volume. The pH drifts within a day to what the tank holds: active soil and plain soil pull it down, limestone
+  (calcite, dripstone, dead coral, Create's limestone) as substrate or rocks pulls it up, peat in the multiblock filter,
+  driftwood (logs and roots in the interior), Indian almond leaves (tannins) and CO2 lower it.
+- Every animal has its **range of pH and TDS** (shown in the species pages and the water tab); a little out of range
+  stresses it, far out it gets sick and dies. Normal water suits every animal of earlier versions.
+- **TDS meter**, **pH drop test** (50 tests), **remineralising salt** (sneak: brings the tank to 150 ppm) and **Indian
+  almond leaves** (dry jungle leaves in a furnace, smoker or on a campfire). The water tab shows TDS, hardness and pH in
+  its second line, with a tooltip on what drives them and which animals the water does not suit.
+- **Active soil**: a substrate block (clay, mud and filter peat) for the interior floor: it pulls the pH towards 6.2,
+  keeps the water soft, slowly takes up minerals and lets freshwater plants grow up to a quarter faster. It never wears
+  out. Plain soil (dirt, mud, podzol ... `#bettacraft:acid_substrate`) works half as strongly.
+- **CO2 dosing** (`features.co2`, `co2Dosing.*`): bio CO2 (sugar and yeast, about 4 days), the **CO2 cylinder** with a
+  pressure regulator (0 to 10 bubbles/s), bubble counter and **solenoid valve** (closes when the light is off), and a
+  **CO2 filling station** on a burning furnace, smoker, blast furnace or campfire (with a power option FE for the
+  compressor; CO2 gas of other mods via `#bettacraft:co2_gas`). CO2 makes plants grow up to 2.5 times faster and lowers
+  the pH; aeration drives it out; too much stresses and kills the animals.
+- **Reverse osmosis unit** (`features.reverseOsmosis`, `osmosis.*`): runs without power (faster with FE), 1 part reverse
+  osmosis water to 3 parts waste water, membrane and prefilter wear out. **Reverse osmosis water bucket**.
+- Reverse osmosis water and sea water are **fluids** (`bettacraft:ro_water`, `bettacraft:sea_water`) for the tanks, pipes
+  and storage of other mods; in the world, tanks, pipes and the reservoir they become water with their values.
+- **Bee shrimp** (Caridina, `features.caridina`): Crystal Red and Crystal Black with banding grades A, S, SS and SSS,
+  the Taiwan bee factor (Blue Bolt, Wine Red) and Orange Eye Blue Tiger; their own species, not crossable with the
+  Neocaridina, soft water only. Rare in rivers (net and wild), sometimes at the wandering trader.
+- **Sulawesi animals** (`features.sulawesi`): the cardinal shrimp and the Tylomelania snail (its own model, livebearing)
+  for hard, warm water with a high pH. Rare in jungle water, sometimes at the wandering trader.
+- **Reef chemistry** (`features.reefDosing`, `dosing.*`): alkalinity (KH), magnesium and trace elements in salt water
+  next to the calcium; stony corals use KH and magnesium, low values slow them, trace elements give strong colours,
+  the pH of salt water follows the alkalinity. The **dosing pump** doses four canisters (calcium, alkalinity,
+  magnesium, trace elements; mL per day each) into a reef tank next to it or through pipes.
+- Handbook pages in English and German: water chemistry, TDS meter and pH drop test, CO2 dosing, reverse osmosis,
+  water as a fluid, active soil, bee shrimp, cardinal shrimp, Tylomelania, reef chemistry, dosing pump.
+
+### Changed
+- Topping off only with normal water lets the TDS climb for months; with regular partial water changes it settles a
+  little above the normal water's (hard water leaves part of its minerals as lime scale when it evaporates).
+- Texts say "normal water" (any water of the world but reverse osmosis and sea water) instead of "tap water".
+- Old aquariums start with normal water values (and CO2, alkalinity and magnesium matching their salt); old sea water
+  buckets give the sea water fluid.
+
 ## [1.17.0-beta.1] - 2026-11-14
 
 Pipes, stainless steel and water changes: water flows through glass and stainless steel pipes with all its values, a
