@@ -1423,6 +1423,13 @@ public final class ModDataGen {
             for (var e : Compat.PREDATORS) predators.addOptional(e);
             var prey = tag(ModTags.BETTA_PREY);
             for (var e : Compat.PREY) prey.addOptional(e);
+            // M28.1: every animal of the mod, and the ones that spawn wild (for commands: @e[type=#bettacraft:all_animals])
+            var all = tag(ModTags.ALL_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
+            var wild = tag(ModTags.WILD_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
+            for (var e : ModEntities.TANKMATES.entrySet()) {
+                all.add(e.getValue().get());
+                if (org.overengineer.bettacraft.world.Wildlife.spawnsWild(e.getKey())) wild.add(e.getValue().get());
+            }
         }
     }
 

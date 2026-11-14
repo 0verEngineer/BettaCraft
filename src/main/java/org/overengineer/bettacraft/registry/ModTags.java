@@ -59,6 +59,10 @@ public final class ModTags {
     public static final TagKey<EntityType<?>> PREDATORS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("predators"));
     /** Live prey of other mods (Fintastic artemia, daphnia, copepods): hungry bettas in a tank eat it as live food (M7). */
     public static final TagKey<EntityType<?>> BETTA_PREY = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("betta_prey"));
+    /** M28.1: every animal entity of the mod (betta, dwarf clawed frog, wild small animals, every tankmate and seahorse). */
+    public static final TagKey<EntityType<?>> ALL_ANIMALS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("all_animals"));
+    /** M28.1: the animals of the mod that spawn in the world by themselves (default config). */
+    public static final TagKey<EntityType<?>> WILD_ANIMALS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("wild_animals"));
     public static final TagKey<EntityType<?>> C_FISH = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fish"));
     public static final TagKey<EntityType<?>> C_FISHES = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fishes"));
     public static final TagKey<EntityType<?>> BFT_CATCHABLE = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("betterfishtanks", "catchable_fish"));
