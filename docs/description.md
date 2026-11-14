@@ -30,8 +30,11 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
   64), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket, and the
   animals are real entities.
 - **The interior:** sneak and right-click with an empty hand to step inside the tank, a pocket dimension at 16 blocks
-  per tank block. Build with any block: substrates, rocks, driftwood, castles, shipwrecks, caves, equipment. Outside,
-  the aquarium shows the result as a live miniature, and several players can build at once.
+  per tank block. Build with any block: substrates, equipment and 28 decorations: castles, shipwrecks and a ship's bow,
+  aquascaping stones (Seiryu, dragon stone, holey rock, lava rock, slate caves), roots and spiderwood, clay tubes that
+  plecos breed in, a diving helmet and a treasure chest that bubbles from the air pump. Almond leaves and alder cones on
+  the floor lower the pH and feed the shrimp. Outside, the aquarium shows the result as a live miniature, and several
+  players can build at once.
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, stocking, water quality, oxygen,
   sickness and recovery. A tank menu with tabs (overview, inhabitants and their genes, breeding, water, devices,
   plants, interior, log), name sign, owner lock and break protection.
@@ -40,9 +43,11 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 
 ## Plants and corals
 
-- **17 aquarium plants** (Java fern, Anubias, Bucephalandra, Java moss, Cryptocorynes, Amazon sword, Rotala, Ludwigia,
-  Alternanthera, Vallisneria, Monte Carlo, tiger lotus ...) grow from a cutting into plants of many blocks, turn red in
-  strong light, are trimmed with shears and clean the water. **Floating plants** drift on the surface and spread.
+- **49 aquarium plants** (Java fern, Anubias, Bucephalandras that turn white or pink in strong light, mosses, Riccia,
+  Cryptocorynes, sword plants, Rotala, Ludwigia and other stem plants, carpets such as Monte Carlo, HC 'Cuba' and
+  hairgrass, Vallisneria, Aponogeton, tiger lotus ...) grow from a cutting into plants of many blocks, turn red in strong
+  light, some need CO2 or soft water, are trimmed with shears and clean the water. The **Marimo** ball rolls with the
+  current. **Floating plants** (duckweed, salvinia, water lettuce, hornwort ...) drift on the surface and spread.
 - Every plant and coral has real leaves, polyps and tentacles that **sway in the water**, inside and in the miniature;
   zoanthids and star polyps close when a fish swims by.
 
@@ -144,6 +149,6 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 
 Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
-Einrichten, wachsende Pflanzen und Korallen, Beifische, Garnelen und Schnecken, Meerwasser mit Seepferdchen, Filter,
+Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, Beifische, Garnelen und Schnecken, Meerwasser mit Seepferdchen, Filter,
 Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Die Mod und das Handbuch im Spiel sind komplett
 auf Deutsch übersetzt; die Spielsprache Deutsch genügt.

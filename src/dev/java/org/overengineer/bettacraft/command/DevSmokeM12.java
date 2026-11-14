@@ -50,7 +50,7 @@ final class DevSmokeM12 {
         FloatingPlantType[] types = FloatingPlantType.values();
         start = new double[types.length * 2];
         for (int i = 0; i < types.length; i++) {
-            FloatingPlant pl = TankPlants.add(c, types[i], p.getX() + 0.6 + (i % 3) * 0.9, p.getZ() + 0.6 + (i / 3) * 1.5, 0.6F, i);
+            FloatingPlant pl = TankPlants.add(c, types[i], p.getX() + 0.6 + (i % 3) * 0.9, p.getZ() + 0.6 + (i / 3) * 0.9, 0.6F, i); // M28c: three rows inside the 3 x 3 tank (8 types)
             if (pl == null) throw new IllegalStateException("M12: could not add " + types[i]);
             start[i * 2] = pl.x;
             start[i * 2 + 1] = pl.z;

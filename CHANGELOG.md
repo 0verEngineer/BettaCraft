@@ -4,6 +4,47 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.21.0-beta.1] - 2026-11-14
+
+Many more plants: 32 new aquarium plants (Anubias, Bucephalandra, stem plants, carpets, mosses, the rolling Marimo,
+rosettes and tubers) and two new floating plants; 16 new decorations (wrecks, aquascaping stones, roots, caves and
+tubes, ornaments) and leaf litter that lowers the pH and feeds the shrimp.
+
+### Added
+- **Anubias:** *A. barteri* var. *nana* 'Petite', 'Pinto' (white marbled), 'White', *A. coffeefolia*, *A. barteri*
+  'Round Leaf'. **Bucephalandra:** 'Kedagang', 'Theia', 'Godzilla', 'Pink Lady', 'Mini Pink', 'Snow White' ('Biblis'):
+  the white and pink ones only colour under strong light (light bar: half, LED panel or high-power LED: fully).
+- **Stem plants:** Ludwigia 'Super Red', Rotala 'H'ra' and *R. wallichii*, *Hygrophila pinnatifida* (also grows on
+  stone and wood), *Pogostemon helferi* 'Downoi', *Limnophila sessiliflora*, Myriophyllum 'Red', *Bacopa caroliniana*.
+  Some need CO2 (40 % growth without) or soft water (`features.co2`, `features.waterChemistry`).
+- **Carpets:** *Hemianthus callitrichoides* 'Cuba' (very strong light and CO2), Eleocharis hairgrass, *Staurogyne
+  repens*, Marsilea water clover. **Mosses:** Christmas moss, flame moss, Riccia (tied onto stone or wood, or floating:
+  the same item put on a tank from outside), the **Marimo** ball: grows very slowly, takes cool water and **rolls**
+  over the floor with the current of filters and outlets (`features.marimoRolling`).
+- **Rosettes and tubers:** Echinodorus 'Red Diamond', *Cryptocoryne parva*, *Sagittaria subulata*, *Aponogeton
+  ulvaceus* (a flower spike at the surface), the green tiger lotus.
+- **Floating plants:** water lettuce (*Pistia*) and hornwort (its shoots hang deep into the water).
+- All new plants with their own leaf meshes (swaying, shadows with shaders), from fishing and the aquarium net, with
+  handbook pages in English and German. Plant lists in an unchanged server config get the new plants by themselves.
+- **16 decorations** (multiblock builds like the others, all working in the tank interior and in the world):
+  - wrecks: a **sunken rowing boat** (a low cave for catfish) and the **bow of a sailing ship** whose clay pipe in the
+    hold is a spawning cave for plecos;
+  - stones: **holey rock** (limestone: hardens the water), **slate cave**, **Seiryu stone** (calcite veins),
+    **dragon stone** and **lava rock**;
+  - roots: **mangrove root**, **spiderwood**, **bogwood bridge** (wood: lowers the pH a little);
+  - caves and tubes: **coconut cave**, **clay tubes** (two spawning caves for plecos), **shrimp tubes**;
+  - ornaments: **ruined column**, **diving helmet** (small fish swim in through the face window) and a **treasure chest**
+    whose coins bubble while an air pump runs (an air stone hides among them).
+- **Leaf litter** (`features.decorEffects`): Indian almond leaves and the new **alder cones** (birch leaves dried in a
+  smoker, furnace or on a campfire) can be laid on the floor. In a tank interior they give off tannins all the time
+  (the pH sinks a little), the shrimp graze on them, and clay and terracotta (tubes, caves, dragon stone, lava rock)
+  hide young shrimp from hunting bettas. Alder cones also go into a tank like almond leaves, with a third of the tannins.
+- Handbook: pages for the new decorations and the leaf litter in English and German.
+
+### Changed
+- **Hammer coral and mushroom coral** grow in a new shape (coral generator version 3): the hammer coral as a low clump
+  of heads, the mushroom discs keep apart. Corals already in a tank keep their shape.
+
 ## [1.20.0-beta.1] - 2026-11-14
 
 Aquarium monitors: screens of monitor blocks that find the tanks around them and show a dashboard of values,

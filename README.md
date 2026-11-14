@@ -41,7 +41,9 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   64), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket,
   rendered clear (also with Sodium and Iris). The animals are real entities.
 - **Interior:** sneak and right-click with an empty hand to step inside a pocket dimension at 16 blocks per tank block
-  and build with any block: substrates, decoration (castle, shipwreck, skull, driftwood, cave ...), equipment. The
+  and build with any block: substrates, equipment and 28 decorations (castle, wrecks, skull, aquascaping stones such
+  as Seiryu, dragon stone and holey rock, roots, clay tubes that are spawning caves, a diving helmet, a treasure chest
+  that bubbles from the air pump ...). Almond leaves and alder cones on the floor lower the pH and feed the shrimp. The
   aquarium shows the result as a live miniature; several players can build at once.
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, overcrowding, water quality, oxygen,
   sickness and recovery; a tank log tells you what happened. Tank menu with overview, inhabitants and their
@@ -49,10 +51,13 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   break protection.
 
 ### Plants and corals
-- **17 aquarium plants** (Java fern, Anubias, four Bucephalandras, Java moss, Cryptocorynes, Amazon sword, Rotala,
-  Ludwigia, Alternanthera, Vallisneria, Monte Carlo, tiger lotus) grow over the days from a cutting into plants of many
-  blocks, get redder in strong light, are trimmed with shears and clean the water. **Floating plants** (duckweed,
-  frogbit, salvinia, red root floater) drift on the surface, grow and spread; lily pads stay put.
+- **49 aquarium plants** (Java fern, six Anubias, ten Bucephalandras, Java, Christmas and flame moss, Riccia,
+  Cryptocorynes, Amazon sword and Echinodorus 'Red Diamond', Rotalas, Ludwigias and other stem plants, carpets such as
+  Monte Carlo, HC 'Cuba', hairgrass and Marsilea, Vallisneria, Sagittaria, Aponogeton, tiger lotus ...) grow over the
+  days from a cutting into plants of many blocks, get redder (or white) in strong light, some need CO2 or soft water,
+  are trimmed with shears and clean the water. The **Marimo** ball rolls with the current. **Floating plants**
+  (duckweed, frogbit, salvinia, red root floater, water lettuce, hornwort, Riccia) drift on the surface, grow and
+  spread; lily pads stay put.
 - Every plant and coral has **real leaves, polyps and tentacles that sway** in the water, inside and in the miniature
   outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
 
@@ -100,7 +105,7 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   devices and power, alarms with a redstone signal and the logbook; arranged by drag and drop in an editor.
 
 ### Handbook, progression, languages
-- 184 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
+- 224 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
   get it (generated from the game data), 31 advancements, JEI pages and tooltips.
 - Every larger feature has a switch (`features.*`) so modpacks can turn it off.
 
@@ -168,7 +173,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   `#bettacraft:pellet_fish`, `#bettacraft:frozen_food`, `#bettacraft:critter_food`, `#bettacraft:sinking_food`,
   `#bettacraft:food_groups/*`, `#bettacraft:diet/*/favourite` and `/poor`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
   `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
-  `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior`, `#bettacraft:swaying_plants` (blocks).
+  `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior`, `#bettacraft:swaying_plants`, `#bettacraft:shrimp_shelter` (blocks).
 - **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`),
   `inhabitants.maxHitbox`, `inhabitants.refuseHostile`, `inhabitants.tadpoles`, `inhabitants.outgrown`; `/bettacraft wateranimals` writes a table
   of every water animal of the loaded mods and whether aquariums take it.
