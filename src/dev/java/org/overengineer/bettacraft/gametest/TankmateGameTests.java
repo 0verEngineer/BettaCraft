@@ -313,7 +313,8 @@ public final class TankmateGameTests {
         h.assertTrue(TankmateSpots.plantShare(level.getServer(), plants.getTank(), false) > 0, "fine-leaved plants");
         for (TankBlockEntity c : List.of(bare, mop, plants)) for (int i = 0; i < 6; i++) add(h, c, TankmateSpecies.NEON_TETRA, i % 2 == 0);
         for (TankBlockEntity c : List.of(bare, mop, plants)) {
-            for (int i = 0; i < 40 && clutches(c.getTank(), Clutch.Kind.SCATTER) == 0 && !logged(c.getTank(), "log.bettacraft.tm.spawned_bare"); i++) {
+            // M22.5: up to 12 days (was 4: three females at 0.6 a day left about 1 run in 500 without eggs in one of the tanks)
+            for (int i = 0; i < 120 && clutches(c.getTank(), Clutch.Kind.SCATTER) == 0 && !logged(c.getTank(), "log.bettacraft.tm.spawned_bare"); i++) {
                 feedAll(h, c);
                 c.getTank().setWaterTemp(23F);
                 TankmateBreeding.step(level, c, 0.1);
@@ -344,9 +345,9 @@ public final class TankmateGameTests {
             add(h, c, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "red"), false, LifeStage.ADULT);
         }
         for (TankBlockEntity c : List.of(open, boxed)) {
-            // M21.7: up to 15 days (was 5: about 2 % of the runs had no pregnancy by chance)
-            for (int i = 0; i < 60 && mates(h, c, null).stream().noneMatch(TankmateEntity::isGravid); i++) days(h, c, 0.25, 0.25, 25F);
-            h.assertTrue(mates(h, c, null).stream().anyMatch(TankmateEntity::isGravid), "a pregnant female");
+            // M21.7: up to 15 days (was 5: about 2 % of the runs had no pregnancy by chance); M22.5: without the care step
+            // while waiting (the pair fell sick from shoal stress after 7 days, so the 15 days were 7)
+            h.assertTrue(LivebearerGameTests.waitForPregnancy(h, c, 25F, 30), "a pregnant female");
             days(h, c, TankmateBreeding.gestationDays() + 0.25, 0.25, 25F);
             h.assertTrue(logged(c.getTank(), c == open ? "log.bettacraft.tm.born" : "log.bettacraft.tm.born_box"), "she gave birth");
         }

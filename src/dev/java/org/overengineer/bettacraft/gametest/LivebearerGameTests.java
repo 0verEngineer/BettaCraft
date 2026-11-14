@@ -76,10 +76,28 @@ public final class LivebearerGameTests {
         return t.log().stream().anyMatch(e -> e.key().equals(key));
     }
 
+    /**
+     * Up to {@code maxDays} of the breeding step until a female is pregnant: everyone fed, the water held, but no care
+     * step. M22.5: the pregnancy is a chance (0.8 a day); with the care step a pair below the shoal size of three gets
+     * shoal stress and falls sick after {@code health.daysUntilSick} (7 days), which ended the waiting early: about 1 in
+     * 250 runs had no pregnancy (failed once on GitHub Actions). Without the care step nothing stops the waiting, and
+     * 30 days leave a chance of e^-24 for no pregnancy.
+     */
+    static boolean waitForPregnancy(GameTestHelper h, TankBlockEntity c, float temp, double maxDays) {
+        for (double d = 0; d < maxDays - 1e-9; d += 0.25) {
+            List<TankmateEntity> all = new ArrayList<>(TankmateBreeding.tankmates(h.getLevel(), c.getTank()));
+            if (all.stream().anyMatch(TankmateEntity::isGravid)) return true;
+            for (TankmateEntity m : all) m.health().feed();
+            c.getTank().setWaterTemp(temp);
+            c.getTank().setWaterQuality(1F);
+            TankmateBreeding.step(h.getLevel(), c, 0.25);
+        }
+        return TankmateBreeding.tankmates(h.getLevel(), c.getTank()).stream().anyMatch(TankmateEntity::isGravid);
+    }
+
     /** Runs until the female is pregnant and has given birth; the young (generation 1). */
     private static List<TankmateEntity> breed(GameTestHelper h, TankBlockEntity c) {
-        for (int i = 0; i < 30 && mates(h, c).stream().noneMatch(TankmateEntity::isGravid); i++) days(h, c, 0.25, 0.25);
-        h.assertTrue(mates(h, c).stream().anyMatch(TankmateEntity::isGravid), "a pregnant female");
+        h.assertTrue(waitForPregnancy(h, c, 25F, 30), "a pregnant female");
         days(h, c, TankmateBreeding.gestationDays() + 0.25, 0.25);
         List<TankmateEntity> young = mates(h, c).stream().filter(m -> m.generation() == 1).toList();
         h.assertTrue(!young.isEmpty(), "young were born");
