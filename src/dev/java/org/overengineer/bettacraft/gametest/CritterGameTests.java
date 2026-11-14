@@ -173,12 +173,14 @@ public final class CritterGameTests {
         add(h, mix, CritterSpecies.NEOCARIDINA, CritterGenes.pure(0, 0.5F), true);
         add(h, mix, CritterSpecies.NEOCARIDINA, CritterGenes.pure(1, 0.5F), false);
         boolean berried = false;
-        for (int d = 0; d < 20 && !(count(red.getTank(), CritterSpecies.NEOCARIDINA) > 2 && count(mix.getTank(), CritterSpecies.NEOCARIDINA) > 2); d++) {
+        // M22.5: up to 40 days (was 20: a pair breeds at 0.35 a day, about 1 run in 1,300 had no brood; 3 of 4,000 pairs in a
+        // diagnosis run, once in 60 full GameTest runs)
+        for (int d = 0; d < 40 && !(count(red.getTank(), CritterSpecies.NEOCARIDINA) > 2 && count(mix.getTank(), CritterSpecies.NEOCARIDINA) > 2); d++) {
             days(h, red, 1, true);
             days(h, mix, 1, true);
             berried |= red.getTank().critters().stream().anyMatch(Critter::berried);
         }
-        h.assertTrue(berried || count(red.getTank(), CritterSpecies.NEOCARIDINA) > 2, "a female carried eggs");
+        h.assertTrue(berried || count(red.getTank(), CritterSpecies.NEOCARIDINA) > 2, "a female carried eggs: " + debug(red.getTank()));
         h.assertTrue(logged(red.getTank(), "log.bettacraft.critters_born"), "the log names the young");
         for (Critter k : red.getTank().critters()) {
             if (k.generation == 1) h.assertTrue(k.genes.shows(0), "red x red gives red young");
