@@ -289,18 +289,28 @@ final class DevClientSmokeMP {
                 }
                 var l = new org.overengineer.bettacraft.monitor.DashboardLayout();
                 l.auto = false;
-                l.tiles.add(org.overengineer.bettacraft.monitor.DashboardTile.value(l.nextId++, 0, 0, 8, 4, t.id,
+                l.tiles.add(org.overengineer.bettacraft.monitor.DashboardTile.value(l.nextId++, 0, 0, 4, 4, t.id,
                         org.overengineer.bettacraft.monitor.MonitorValue.PH, false));
+                // part b: an alarm with redstone (the tank is warmer than 20 °C) and a traffic light (needs the detail)
+                l.tiles.add(org.overengineer.bettacraft.monitor.DashboardTile.alarm(l.nextId++, 4, 0, 2, 4, t.id,
+                        org.overengineer.bettacraft.monitor.MonitorValue.TEMPERATURE, false, 20F, true));
+                l.tiles.add(new org.overengineer.bettacraft.monitor.DashboardTile(l.nextId++, 6, 0, 2, 4,
+                        org.overengineer.bettacraft.monitor.DashboardTile.STATUS, t.id));
                 net.neoforged.neoforge.network.PacketDistributor.sendToServer(new org.overengineer.bettacraft.network.MonitorLayoutPayload(at, l.save()));
             });
-            case "monitorseen" -> then(20, () -> {
+            case "monitorseen" -> then(60, () -> {
                 Minecraft mc = Minecraft.getInstance();
                 BlockPos at = pos(args);
                 if (!(mc.level.getBlockEntity(at) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m)) {
                     send("monitorseen none");
                     return;
                 }
-                send("monitorseen " + m.layout().tiles.size() + "," + m.layout().auto + "," + (m.layout().tiles.isEmpty() ? "-" : m.layout().tiles.get(0).value().id));
+                // part b: the alarm is triggered on this client too (it blinks), the traffic light has the tank's detail
+                var tiles = m.layout().tiles;
+                boolean alarm = tiles.size() > 1 && tiles.get(1).triggered(m.clientTank(tiles.get(1).tank));
+                boolean detail = tiles.size() > 2 && m.clientTank(tiles.get(2).tank) != null && !m.clientTank(tiles.get(2).tank).detail.isEmpty();
+                send("monitorseen " + tiles.size() + "," + m.layout().auto + "," + (tiles.isEmpty() ? "-" : tiles.get(0).value().id)
+                        + "," + (alarm ? "alarm" : "quiet") + "," + (detail ? "detail" : "nodetail"));
             });
             case "plumbing" -> {
                 // M24: the pipe between reservoir and pump joins both, the controller's settings reached this client

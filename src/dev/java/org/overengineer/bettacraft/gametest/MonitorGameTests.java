@@ -210,4 +210,105 @@ public final class MonitorGameTests {
         }
         h.succeed();
     }
+
+    // ------------------------------------------------------------------ part b
+
+    /** An alarm tile with redstone: the screen powers a lamp beside it while the tank is too warm, also without viewers. */
+    @GameTest(template = EMPTY, batch = "bettacraft_m27", timeoutTicks = 60)
+    public static void alarmsGiveARedstoneSignal(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        TankBlockEntity t = AerationGameTests.tank(h, 2, 1, 2, 2, 2, 2);
+        t.getTank().setWaterTemp(30F);
+        BlockPos tl = new BlockPos(9, 2, 8);
+        wall(h, tl, 2, 1);
+        BlockPos lamp = tl.west(2);
+        h.setBlock(lamp, Blocks.REDSTONE_LAMP);
+        MonitorBlockEntity c = be(h, tl);
+        DashboardLayout l = new DashboardLayout();
+        l.auto = false;
+        l.tiles.add(DashboardTile.alarm(l.nextId++, 0, 0, 4, 2, t.getTank().id(), MonitorValue.TEMPERATURE, false, 28F, true));
+        l.tiles.add(DashboardTile.alarm(l.nextId++, 4, 0, 4, 2, t.getTank().id(), MonitorValue.TEMPERATURE, true, 20F, true));
+        c.setLayout(l);
+        MonitorSync.cycle(level, c); // nobody looks: the redstone alarm still reads the tank
+        h.assertTrue(c.alarms() == 1, "one alarm: " + c.alarms());
+        h.assertTrue(be(h, tl.west()).alarms() == 1, "every block of the screen knows it");
+        h.assertTrue(h.getBlockState(lamp).getValue(net.minecraft.world.level.block.RedstoneLampBlock.LIT), "the lamp beside the screen is lit");
+        int analog = h.getBlockState(tl).getAnalogOutputSignal(level, h.absolutePos(tl));
+        h.assertTrue(analog == 1, "comparator: number of alarms " + analog);
+        t.getTank().setWaterTemp(25F);
+        MonitorSync.cycle(level, c);
+        h.assertTrue(c.alarms() == 0, "cooled down: " + c.alarms());
+        h.assertTrue(h.getBlockState(tl.west()).getSignal(level, h.absolutePos(tl.west()), Direction.EAST) == 0, "no signal");
+        // without redstone the alarm only blinks
+        l.tiles.clear();
+        l.tiles.add(DashboardTile.alarm(l.nextId++, 0, 0, 4, 2, t.getTank().id(), MonitorValue.TEMPERATURE, true, 26F, false));
+        c.setLayout(l);
+        MonitorSync.cycle(level, c);
+        h.assertTrue(c.alarms() == 0, "no redstone: " + c.alarms());
+        h.succeed();
+    }
+
+    /** Status, animal, device and log tiles: the server adds the tank's warnings, animals, devices and log. */
+    @GameTest(template = EMPTY, batch = "bettacraft_m27", timeoutTicks = 60)
+    public static void detailTilesGetWarningsDevicesAndLog(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        TankBlockEntity t = AerationGameTests.tank(h, 2, 1, 2, 3, 2, 2);
+        t.getTank().setName("Detail");
+        org.overengineer.bettacraft.tank.TankCare.log(level, t, "log.bettacraft.critters_born", "3", "@block.minecraft.stone");
+        BlockPos tl = new BlockPos(10, 2, 8);
+        wall(h, tl, 2, 2);
+        MonitorBlockEntity c = be(h, tl);
+        MonitorSync.discover(level, c);
+        MonitorTank k = c.tank(t.getTank().id());
+        h.assertTrue(k != null && k.detail.isEmpty(), "only values while no tile needs more");
+        DashboardLayout l = new DashboardLayout();
+        l.auto = false;
+        l.tiles.add(new DashboardTile(l.nextId++, 0, 0, 4, 4, DashboardTile.STATUS, t.getTank().id()));
+        l.tiles.add(new DashboardTile(l.nextId++, 4, 0, 4, 4, DashboardTile.DEVICES, t.getTank().id()));
+        l.tiles.add(new DashboardTile(l.nextId++, 0, 4, 8, 4, DashboardTile.LOG, null));
+        c.setLayout(l);
+        MonitorSync.refresh(level, c);
+        h.assertTrue(!k.detail.isEmpty(), "detail now");
+        var dev = k.detail.getList("dev", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        h.assertTrue(dev.size() >= 4 && "filter".equals(dev.getCompound(0).getString("k")), "devices: " + dev);
+        boolean noFilter = false;
+        var warn = k.detail.getList("warn", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        for (int i = 0; i < warn.size(); i++) noFilter |= "monitor.bettacraft.warn.no_filter".equals(warn.getCompound(i).getString("k"));
+        h.assertTrue(noFilter || !org.overengineer.bettacraft.tank.TankWater.qualityEnabled(), "a tank without filter warns: " + warn);
+        var log = k.detail.getList("log", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        h.assertTrue(!log.isEmpty() && "log.bettacraft.critters_born".equals(log.getCompound(log.size() - 1).getString("k")), "the log: " + log);
+        h.assertTrue(k.detail.getList("animals", net.minecraft.nbt.Tag.TAG_COMPOUND).isEmpty(), "no animals");
+        h.succeed();
+    }
+
+    /** A layout from a player (the editor): every widget type goes through, clipped to the screen; auto goes off. */
+    @GameTest(template = EMPTY, batch = "bettacraft_m27", timeoutTicks = 40)
+    public static void editorLayoutIsApplied(GameTestHelper h) {
+        BlockPos tl = new BlockPos(10, 2, 8);
+        wall(h, tl, 2, 1);
+        MonitorBlockEntity c = be(h, tl);
+        net.minecraft.server.level.ServerPlayer p = net.neoforged.neoforge.common.util.FakePlayerFactory.get(h.getLevel(),
+                new com.mojang.authlib.GameProfile(new java.util.UUID(27, 2), "MonitorEditor"));
+        p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 5.5)));
+        DashboardLayout l = new DashboardLayout();
+        l.auto = false;
+        java.util.UUID id = new java.util.UUID(7, 7);
+        int x = 0;
+        for (String type : DashboardTile.TYPES) {
+            DashboardTile t = new DashboardTile(l.nextId++, x, x % 2, 1, 2, type, id);
+            x++;
+            l.tiles.add(t);
+        }
+        l.tiles.add(DashboardTile.graph(l.nextId++, 6, 0, 10, 9, id, 3, MonitorValue.PH)); // too big: clipped
+        h.assertTrue(MonitorBlockEntity.applyLayout(p, h.absolutePos(tl.west()), l.save()), "applied");
+        DashboardLayout got = c.layout();
+        h.assertTrue(!got.auto && got.tiles.size() == 8, "all tiles: " + got.tiles.size());
+        for (int i = 0; i < DashboardTile.TYPES.size(); i++) h.assertTrue(DashboardTile.TYPES.get(i).equals(got.tiles.get(i).kind()), "type " + i);
+        DashboardTile g = got.tiles.get(7);
+        h.assertTrue(g.w == 2 && g.h == 4 && g.days() == 3, "clipped graph " + g.w + "x" + g.h);
+        // too far away: refused
+        p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 30.5)));
+        h.assertTrue(!MonitorBlockEntity.applyLayout(p, h.absolutePos(tl), new DashboardLayout().save()), "too far");
+        h.succeed();
+    }
 }

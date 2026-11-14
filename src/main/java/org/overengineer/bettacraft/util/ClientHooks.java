@@ -39,4 +39,11 @@ public final class ClientHooks {
     public static void openFilter(BlockPos pos) {
         filter.accept(pos.immutable());
     }
+
+    /** M27: the dashboard editor of a monitor screen. */
+    public static volatile Consumer<BlockPos> monitor = p -> {};
+
+    public static void openMonitor(BlockPos pos) {
+        monitor.accept(pos.immutable());
+    }
 }

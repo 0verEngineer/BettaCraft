@@ -43,6 +43,8 @@ import org.overengineer.bettacraft.tank.TankData;
  * <li>Sync: the tanks go to the viewers when they changed (or to new viewers, and every {@link #RESEND_EVERY} cycles); the
  * history lines the tiles need when a new hour was recorded. Everything a player gets in one tick goes in one
  * {@link MonitorDataPayload} ({@link #onServerTick}).</li>
+ * <li>Alarms (part b): the alarm tiles with redstone are checked every cycle; while one is past its limit the screen gives
+ * a redstone signal ({@link MonitorBlockEntity#alarms}). Such a screen reads its tanks also without viewers.</li>
  * </ol>
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
@@ -82,9 +84,13 @@ public final class MonitorSync {
         if (viewers.isEmpty() || status != MonitorBlockEntity.ON) {
             c.sentTo.clear();
             c.historySentTo.clear();
+            // part b: alarms with redstone watch their tanks even when nobody looks
+            if (status == MonitorBlockEntity.ON && c.layout().hasRedstoneAlarm()) work(level, c);
+            c.setAlarms(status == MonitorBlockEntity.ON ? c.layout().triggeredAlarms(c::tank) : 0);
             return;
         }
         work(level, c);
+        c.setAlarms(c.layout().triggeredAlarms(c::tank));
         // the tanks
         int hash = 1;
         for (MonitorTank t : c.tanks()) hash = hash * 31 + t.contentHash();
@@ -161,10 +167,13 @@ public final class MonitorSync {
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
-    private static void update(ServerLevel level, MonitorTank k, TankBlockEntity t, long now) {
+    private static void update(ServerLevel level, MonitorBlockEntity c, MonitorTank k, TankBlockEntity t, long now) {
         k.pos = t.getBlockPos().immutable();
         k.name = t.getTank().name();
         k.values = MonitorValue.sampleAll(level, t);
+        // part b: warnings, animals, devices and the log only for the tiles that show them, and not every cycle
+        if (!c.layout().needsDetail()) k.detail = new net.minecraft.nbt.CompoundTag();
+        else if (k.detail.isEmpty() || c.cycles % DISCOVER_EVERY == 1) k.detail = MonitorDetail.build(level, t);
         k.seen = now;
         k.live = true;
     }
@@ -193,7 +202,7 @@ public final class MonitorSync {
             MonitorTank k = it.next();
             TankBlockEntity t = found.remove(k.id);
             if (t != null) {
-                if (distance(center, t.getTank()) <= range) update(level, k, t, now);
+                if (distance(center, t.getTank()) <= range) update(level, c, k, t, now);
                 else k.live = false;
             } else {
                 k.live = false;
@@ -207,7 +216,7 @@ public final class MonitorSync {
         for (TankBlockEntity t : fresh) {
             if (c.tanks().size() >= MAX_TANKS) break;
             MonitorTank k = new MonitorTank(t.getTank().id(), "", t.getBlockPos(), true, new float[0], now);
-            update(level, k, t, now);
+            update(level, c, k, t, now);
             c.tanks().add(k);
         }
         c.setChanged();
@@ -225,7 +234,7 @@ public final class MonitorSync {
             }
             if (level.getBlockEntity(k.pos) instanceof TankBlockEntity t && t.isController() && t.getTank().id().equals(k.id)
                     && distance(center, t.getTank()) <= range) {
-                update(level, k, t, now);
+                update(level, c, k, t, now);
             } else {
                 k.live = false;
             }

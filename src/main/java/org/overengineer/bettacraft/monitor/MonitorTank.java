@@ -19,6 +19,8 @@ public final class MonitorTank {
     public float[] values;
     /** Game time of the last values. */
     public long seen;
+    /** Part b: warnings, animals, devices, log ({@link MonitorDetail}); empty until a tile needs it. */
+    public CompoundTag detail = new CompoundTag();
 
     public MonitorTank(UUID id, String name, BlockPos pos, boolean live, float[] values, long seen) {
         this.id = id;
@@ -34,7 +36,9 @@ public final class MonitorTank {
     }
 
     public MonitorTank copy() {
-        return new MonitorTank(id, name, pos, live, values.clone(), seen);
+        MonitorTank t = new MonitorTank(id, name, pos, live, values.clone(), seen);
+        t.detail = detail;
+        return t;
     }
 
     public int contentHash() {
@@ -42,6 +46,7 @@ public final class MonitorTank {
         h = h * 31 + name.hashCode();
         h = h * 31 + (live ? 1 : 0);
         h = h * 31 + Arrays.hashCode(values);
+        h = h * 31 + detail.hashCode();
         return h;
     }
 
@@ -54,6 +59,7 @@ public final class MonitorTank {
         CompoundTag v = new CompoundTag();
         for (MonitorValue m : MonitorValue.ALL) if (Float.isFinite(value(m))) v.putFloat(m.id, value(m));
         c.put("values", v);
+        if (!detail.isEmpty()) c.put("detail", detail.copy());
         return c;
     }
 
@@ -63,7 +69,9 @@ public final class MonitorTank {
         Arrays.fill(values, Float.NaN);
         CompoundTag v = c.getCompound("values");
         for (MonitorValue m : MonitorValue.ALL) if (v.contains(m.id)) values[m.ordinal()] = v.getFloat(m.id);
-        return new MonitorTank(c.getUUID("id"), c.getString("name"), BlockPos.of(c.getLong("pos")), false, values, c.getLong("seen"));
+        MonitorTank t = new MonitorTank(c.getUUID("id"), c.getString("name"), BlockPos.of(c.getLong("pos")), false, values, c.getLong("seen"));
+        t.detail = c.getCompound("detail").copy();
+        return t;
     }
 
     public void write(FriendlyByteBuf buf) {
@@ -73,6 +81,7 @@ public final class MonitorTank {
         buf.writeLong(seen);
         buf.writeVarInt(values.length);
         for (float f : values) buf.writeFloat(f);
+        buf.writeNbt(detail);
     }
 
     public static MonitorTank read(FriendlyByteBuf buf) {
@@ -84,6 +93,9 @@ public final class MonitorTank {
         float[] values = new float[Math.max(n, MonitorValue.ALL.length)];
         Arrays.fill(values, Float.NaN);
         for (int i = 0; i < n; i++) values[i] = buf.readFloat();
-        return new MonitorTank(id, name, BlockPos.ZERO, live, values, seen);
+        MonitorTank t = new MonitorTank(id, name, BlockPos.ZERO, live, values, seen);
+        CompoundTag d = buf.readNbt();
+        t.detail = d == null ? new CompoundTag() : d;
+        return t;
     }
 }

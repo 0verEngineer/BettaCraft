@@ -12,6 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import org.overengineer.bettacraft.monitor.DashboardLayout;
+import org.overengineer.bettacraft.monitor.DashboardTile;
 import org.overengineer.bettacraft.monitor.MonitorBlock;
 import org.overengineer.bettacraft.monitor.MonitorBlockEntity;
 import org.overengineer.bettacraft.monitor.MonitorValue;
@@ -27,7 +29,9 @@ import org.slf4j.LoggerFactory;
  * M27 part a client smoke ({@code -Psmoketestm27}): a 3 x 2 monitor wall and a single monitor between two named tanks,
  * with a day of history recorded beforehand. Screenshots {@code bettacraft_m27_wall} (the screens with the automatic
  * layout: temperature with its graph and water quality per tank), {@code _wall_de} and {@code _single} (close up).
- * Checks (errors in the log): the screen formed, the client got the data of both tanks.
+ * Part b: {@code _dashboard} / {@code _dashboard_de} (a hand-made dashboard with every widget type, the alarm triggered) and
+ * {@code _editor} (the editor with the graph picked).
+ * Checks (errors in the log): the screen formed, the client got the data of both tanks, the dashboard and the detail.
  */
 final class DevClientSmokeM27 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -52,7 +56,18 @@ final class DevClientSmokeM27 {
         then(1, () -> quickLanguage(lang));
         then(1, () -> look(base.getX() - 3.5, base.getY() + 1.6, base.getZ() - 1.3, 0F, 10F));
         then(40, () -> shot("single"));
+        // part b: a hand-made dashboard with every widget on the wall, then the editor
+        then(1, () -> server(this::dashboard));
+        then(1, () -> look(base.getX() + 1.5, base.getY() + 2.0, base.getZ() - 3.2, 0F, 6F));
+        then(140, this::checkDashboard);
+        then(1, () -> shot("dashboard"));
+        then(1, () -> quickLanguage("de_de"));
+        then(20, () -> shot("dashboard_de"));
+        then(1, () -> quickLanguage(lang));
         then(1, () -> mc.options.hideGui = false);
+        then(1, this::openEditor);
+        then(20, () -> shot("editor"));
+        then(1, () -> mc.setScreen(null));
     }
 
     private void build(ServerPlayer p) {
@@ -84,6 +99,55 @@ final class DevClientSmokeM27 {
         for (int x = 0; x <= 2; x++) level.setBlockAndUpdate(base.offset(x, 0, 1), Blocks.POLISHED_DEEPSLATE.defaultBlockState());
         level.setBlockAndUpdate(base.offset(-4, 0, 1), Blocks.POLISHED_DEEPSLATE.defaultBlockState());
         level.setBlockAndUpdate(base.offset(0, 4, -2), Blocks.LIGHT.defaultBlockState());
+    }
+
+    /** Every widget type on the 3 x 2 wall (12 x 8 cells); the alarm (Reef above 24 °C) is triggered and blinks. */
+    private void dashboard(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        BlockPos tl = base.offset(2, 2, 1);
+        if (!(level.getBlockEntity(tl) instanceof MonitorBlockEntity c)) return;
+        java.util.UUID nano = null, reef = null;
+        for (var k : c.tanks()) {
+            if ("Betta Nano".equals(k.name)) nano = k.id;
+            if ("Reef".equals(k.name)) reef = k.id;
+        }
+        if (level.getBlockEntity(base.offset(4, 0, 1)) instanceof TankBlockEntity a && a.isController()) {
+            var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, a, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET),
+                    net.minecraft.world.entity.EntityType.TROPICAL_FISH, p, false);
+            if (err != null) LOGGER.warn("[smoketest] M27 tropical fish: {}", err.getString());
+            org.overengineer.bettacraft.tank.TankCare.log(level, a, "log.bettacraft.critters_born", "6", "@" + org.overengineer.bettacraft.critters.CritterSpecies.values()[0].translationKey());
+        }
+        DashboardLayout l = new DashboardLayout();
+        l.auto = false;
+        l.tiles.add(new DashboardTile(l.nextId++, 0, 0, 4, 4, DashboardTile.STATUS, nano));
+        l.tiles.add(DashboardTile.graph(l.nextId++, 4, 0, 4, 4, nano, 1, MonitorValue.TEMPERATURE, MonitorValue.WATER_QUALITY));
+        l.tiles.add(DashboardTile.alarm(l.nextId++, 8, 0, 4, 2, reef, MonitorValue.TEMPERATURE, false, 24F, true));
+        DashboardTile v = DashboardTile.value(l.nextId++, 8, 2, 4, 2, reef, MonitorValue.SALINITY, false);
+        v.background = 0xFF0E2A5A;
+        l.tiles.add(v);
+        l.tiles.add(new DashboardTile(l.nextId++, 0, 4, 4, 4, DashboardTile.ANIMALS, nano));
+        l.tiles.add(new DashboardTile(l.nextId++, 4, 4, 4, 4, DashboardTile.DEVICES, reef));
+        l.tiles.add(new DashboardTile(l.nextId++, 8, 4, 4, 4, DashboardTile.LOG, null));
+        c.setLayout(l);
+    }
+
+    private void checkDashboard() {
+        if (!(mc.level.getBlockEntity(base.offset(2, 2, 1)) instanceof MonitorBlockEntity c)) return;
+        if (c.layout().tiles.size() != 7 || c.layout().auto) LOGGER.error("[smoketest] M27 the dashboard did not reach the client: {} tiles", c.layout().tiles.size());
+        int detail = 0;
+        for (var k : c.clientTanks) if (!k.detail.isEmpty()) detail++;
+        if (detail != 2) LOGGER.error("[smoketest] M27 {} tanks with detail instead of 2", detail);
+        LOGGER.info("[smoketest] M27 dashboard: {} tiles, {} tanks with detail, {} history lines", c.layout().tiles.size(), detail, c.clientHistory.size());
+    }
+
+    private void openEditor() {
+        var screen = new org.overengineer.bettacraft.client.screen.MonitorEditorScreen(base.offset(2, 2, 1));
+        mc.setScreen(screen);
+        if (screen.editing() == null) {
+            LOGGER.error("[smoketest] M27 the editor has no layout");
+            return;
+        }
+        screen.select(screen.editing().tiles.get(1).id); // the graph
     }
 
     private void check() {

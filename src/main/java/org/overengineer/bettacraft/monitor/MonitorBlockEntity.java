@@ -53,6 +53,8 @@ public class MonitorBlockEntity extends BlockEntity {
     private final DeviceEnergy energy = new DeviceEnergy(ENERGY_CAPACITY, this::setChanged);
     private final List<MonitorTank> tanks = new ArrayList<>();
     private int status = ON;
+    /** Part b: triggered alarm tiles with redstone (not saved, checked every cycle); > 0 = redstone signal. */
+    private int alarms;
     // server only, not saved
     int cycles;
     int lastTankHash, lastHistoryHash;
@@ -185,6 +187,32 @@ public class MonitorBlockEntity extends BlockEntity {
         if (this.status == status) return;
         this.status = status;
         syncToClients();
+    }
+
+    /** The triggered alarm tiles with redstone of this block's screen (the controller's). */
+    public int alarms() {
+        MonitorBlockEntity c = controller();
+        return c == null ? 0 : c.alarms;
+    }
+
+    /** The tank with this id this screen knows (server). */
+    @Nullable
+    public MonitorTank tank(UUID id) {
+        for (MonitorTank t : tanks) if (t.id.equals(id)) return t;
+        return null;
+    }
+
+    /** From {@link MonitorSync#cycle}: the redstone of every block of the screen changes with the count of alarms. */
+    void setAlarms(int n) {
+        if (alarms == n || level == null) return;
+        boolean was = alarms > 0;
+        alarms = n;
+        Block block = getBlockState().getBlock();
+        for (BlockPos p : members()) {
+            if (!level.isLoaded(p)) continue;
+            if (was != n > 0) level.updateNeighborsAt(p, block);
+            level.updateNeighbourForOutputSignal(p, block);
+        }
     }
 
     public void setLayout(DashboardLayout layout) {

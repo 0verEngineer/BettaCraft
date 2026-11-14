@@ -17,6 +17,22 @@ import net.minecraft.nbt.CompoundTag;
 public final class DashboardTile {
     /** A value tile: one value of a tank, big, with the tank's name. */
     public static final String VALUE = "value";
+    /** Traffic light: the state of a tank (green, yellow, red) with the warnings of its menu. */
+    public static final String STATUS = "status";
+    /** History graph: one to three values ({@code history}) over {@code days} (1-7) game days. */
+    public static final String GRAPH = "graph";
+    /** Animal list: count per species, breeding (nest, eggs, young). */
+    public static final String ANIMALS = "animals";
+    /** Device status: filters, heaters, light, CO2, air pumps (on/off, power level), energy. */
+    public static final String DEVICES = "devices";
+    /** Alarm: blinks while {@code value} is above / below {@code limit} ({@code below}); {@code redstone}: the screen gives a signal. */
+    public static final String ALARM = "alarm";
+    /** Event log: the latest logbook entries of one tank or (tank null) of every tank of the screen. */
+    public static final String LOG = "log";
+    /** Every widget type in the order of the editor. */
+    public static final List<String> TYPES = List.of(VALUE, STATUS, GRAPH, ANIMALS, DEVICES, ALARM, LOG);
+    /** Most values one graph shows. */
+    public static final int MAX_GRAPH_VALUES = 3;
     public static final int MAX_TYPE_LENGTH = 32;
 
     public int id;
@@ -57,12 +73,92 @@ public final class DashboardTile {
         return settings.getBoolean("spark");
     }
 
+    /** A history graph of up to three values over {@code days}. */
+    public static DashboardTile graph(int id, int x, int y, int w, int h, @Nullable UUID tank, int days, MonitorValue... values) {
+        DashboardTile t = new DashboardTile(id, x, y, w, h, GRAPH, tank);
+        t.setHistory(List.of(values));
+        t.settings.putInt("days", days);
+        return t;
+    }
+
+    /** An alarm tile: {@code value} above (or below) {@code limit}, with a redstone signal or not. */
+    public static DashboardTile alarm(int id, int x, int y, int w, int h, @Nullable UUID tank, MonitorValue value, boolean below, float limit,
+                                      boolean redstone) {
+        DashboardTile t = new DashboardTile(id, x, y, w, h, ALARM, tank);
+        t.settings.putString("value", value.id);
+        t.settings.putBoolean("below", below);
+        t.settings.putFloat("limit", limit);
+        t.settings.putBoolean("redstone", redstone);
+        return t;
+    }
+
+    /** The widget type, {@link #VALUE} for unknown ones (a newer version's widget in an older game). */
+    public String kind() {
+        return TYPES.contains(type) ? type : VALUE;
+    }
+
+    /** Graph: game days shown (1-7). */
+    public int days() {
+        int d = settings.contains("days") ? settings.getInt("days") : 1;
+        return Math.max(1, Math.min(7, d));
+    }
+
+    /** Graph: the values (at most {@link #MAX_GRAPH_VALUES}, the value tile's value if none are set). */
+    public List<MonitorValue> graphValues() {
+        List<MonitorValue> out = new ArrayList<>();
+        for (String s : settings.getString("history").split(",")) {
+            MonitorValue v = MonitorValue.byId(s.trim());
+            if (v != null && !out.contains(v) && out.size() < MAX_GRAPH_VALUES) out.add(v);
+        }
+        if (out.isEmpty()) out.add(value());
+        return out;
+    }
+
+    public void setHistory(List<MonitorValue> values) {
+        StringBuilder b = new StringBuilder();
+        for (MonitorValue v : values) {
+            if (v == null) continue;
+            if (b.length() > 0) b.append(',');
+            b.append(v.id);
+        }
+        settings.putString("history", b.toString());
+    }
+
+    /** Alarm: true = alarm below the limit, false = above. */
+    public boolean below() {
+        return settings.getBoolean("below");
+    }
+
+    public float limit() {
+        return settings.getFloat("limit");
+    }
+
+    /** Alarm: the screen gives a redstone signal while it is on. */
+    public boolean redstone() {
+        return ALARM.equals(type) && settings.getBoolean("redstone");
+    }
+
+    /** Alarm: the value of the tank is past the limit (an unknown tank or value, or a tank not loaded, is no alarm). */
+    public boolean triggered(@Nullable MonitorTank t) {
+        if (!ALARM.equals(type) || t == null || !t.live) return false;
+        float v = t.value(value());
+        if (!Float.isFinite(v)) return false;
+        return below() ? v < limit() : v > limit();
+    }
+
+    /** The widget shows more than the values: warnings, animals, devices or the log ({@link MonitorDetail}). */
+    public boolean needsDetail() {
+        return STATUS.equals(type) || ANIMALS.equals(type) || DEVICES.equals(type) || LOG.equals(type);
+    }
+
     /** The values of {@link #tank} whose history this tile shows (empty if none). */
     public List<MonitorValue> historyValues() {
         if (tank == null) return List.of();
         List<MonitorValue> out = new ArrayList<>();
-        if (VALUE.equals(type) && spark()) out.add(value());
-        if (settings.contains("history")) {
+        if ((VALUE.equals(type) || ALARM.equals(type)) && spark()) out.add(value());
+        if (GRAPH.equals(type)) {
+            for (MonitorValue v : graphValues()) if (!out.contains(v)) out.add(v);
+        } else if (settings.contains("history")) {
             for (String s : settings.getString("history").split(",")) {
                 MonitorValue v = MonitorValue.byId(s.trim());
                 if (v != null && !out.contains(v)) out.add(v);

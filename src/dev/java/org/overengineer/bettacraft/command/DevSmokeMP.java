@@ -163,8 +163,13 @@ public final class DevSmokeMP {
                 check(name + ": monitor temperature " + (a.length > 2 ? a[2] : "?") + " (server " + f(temp) + ")",
                         a.length > 2 && Math.abs(Float.parseFloat(a[2]) - temp) < 0.3F);
             }
-            case "monitorseen" -> check(name + ": the layout from Dev1 " + (a.length > 1 ? a[1] : "?") + " (server 1,false,ph)",
-                    a.length > 1 && "1,false,ph".equals(a[1])); // M27
+            case "monitorseen" -> { // M27
+                int alarms = server.overworld().getBlockEntity(monitorMin().offset(1, 0, -3)) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m
+                        ? m.alarms() : -1;
+                check(name + ": the layout from Dev1, alarm and detail " + (a.length > 1 ? a[1] : "?") + " (server 3,false,ph,alarm,detail)",
+                        a.length > 1 && "3,false,ph,alarm,detail".equals(a[1]));
+                check(name + ": the screen gives a redstone signal for the alarm (server alarms " + alarms + ")", alarms == 1);
+            }
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -1068,7 +1073,7 @@ public final class DevSmokeMP {
             p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 2.5, 0F, 10F);
             say("monitorlayout", P1, at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> server.overworld().getBlockEntity(monitorMin().offset(1, 0, -3)) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m
-                && !m.layout().auto && m.layout().tiles.size() == 1, 20 * 30));
+                && !m.layout().auto && m.layout().tiles.size() == 3, 20 * 30));
         steps.add(new Step("monitor layout seen", () -> {
             BlockPos at = monitorMin().offset(1, 0, -3);
             say("monitorseen", "all", at.getX() + "," + at.getY() + "," + at.getZ());

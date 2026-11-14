@@ -115,4 +115,79 @@ class MonitorModelTest {
         assertEquals(203, back.series(id).lastHour());
         assertEquals(199F, back.series(id).values(MonitorValue.TEMPERATURE, 4)[3]);
     }
+
+    @Test
+    void widgetSettings() {
+        UUID id = new UUID(1, 2);
+        DashboardTile g = DashboardTile.graph(1, 0, 0, 8, 4, id, 9, MonitorValue.PH, MonitorValue.TDS, MonitorValue.PH);
+        assertEquals(7, g.days(), "days clamped to 7");
+        assertEquals(List.of(MonitorValue.PH, MonitorValue.TDS), g.graphValues());
+        assertEquals(List.of(MonitorValue.PH, MonitorValue.TDS), g.historyValues(), "the server sends what the graph shows");
+        DashboardTile back = DashboardTile.load(g.save());
+        assertEquals(g.save(), back.save());
+        // unknown types (a newer version) show as value tiles
+        DashboardTile odd = new DashboardTile(2, 0, 0, 1, 1, "hologram", id);
+        assertEquals(DashboardTile.VALUE, odd.kind());
+        // alarms
+        DashboardTile a = DashboardTile.alarm(3, 0, 0, 4, 2, id, MonitorValue.TEMPERATURE, false, 28F, true);
+        float[] v = new float[MonitorValue.ALL.length];
+        java.util.Arrays.fill(v, Float.NaN);
+        MonitorTank t = new MonitorTank(id, "A", BlockPos.ZERO, true, v, 0);
+        assertFalse(a.triggered(t), "no value: no alarm");
+        v[MonitorValue.TEMPERATURE.ordinal()] = 29F;
+        assertTrue(a.triggered(t));
+        t.live = false;
+        assertFalse(a.triggered(t), "not loaded: no alarm");
+        t.live = true;
+        DashboardTile b = DashboardTile.alarm(4, 4, 0, 4, 2, id, MonitorValue.TEMPERATURE, true, 28F, false);
+        assertFalse(b.triggered(t));
+        DashboardLayout l = new DashboardLayout();
+        l.tiles.add(a);
+        l.tiles.add(b);
+        assertTrue(l.hasRedstoneAlarm());
+        assertEquals(1, l.triggeredAlarms(x -> t));
+        assertFalse(l.needsDetail());
+        l.tiles.add(new DashboardTile(5, 0, 2, 4, 4, DashboardTile.STATUS, id));
+        assertTrue(l.needsDetail());
+    }
+
+    @Test
+    void freeSpotsDoNotOverlap() {
+        DashboardLayout l = new DashboardLayout();
+        l.tiles.add(DashboardTile.value(1, 0, 0, 4, 2, null, MonitorValue.PH, false));
+        assertFalse(l.free(3, 1, 2, 2, -1));
+        assertTrue(l.free(3, 1, 2, 2, 1), "ignoring the tile itself");
+        int[] at = l.freeSpot(4, 2, 8, 4, -1);
+        assertEquals(4, at[0]);
+        assertEquals(0, at[1]);
+        l.tiles.add(DashboardTile.value(2, 4, 0, 4, 2, null, MonitorValue.PH, false));
+        l.tiles.add(DashboardTile.value(3, 0, 2, 8, 2, null, MonitorValue.PH, false));
+        assertEquals(null, l.freeSpot(1, 1, 8, 4, -1), "full");
+    }
+
+    @Test
+    void tankDetailGoesOverTheWire() {
+        float[] v = new float[MonitorValue.ALL.length];
+        MonitorTank t = new MonitorTank(new UUID(3, 4), "Reef", BlockPos.ZERO, true, v, 5);
+        t.detail.putString("nest", "built");
+        int before = t.contentHash();
+        net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+        t.write(buf);
+        MonitorTank back = MonitorTank.read(buf);
+        assertEquals("built", back.detail.getString("nest"));
+        assertEquals("Reef", back.name);
+        t.detail = new CompoundTag();
+        assertTrue(before != t.contentHash(), "the detail is part of the change check");
+        CompoundTag d = new CompoundTag();
+        net.minecraft.nbt.ListTag w = new net.minecraft.nbt.ListTag();
+        CompoundTag one = new CompoundTag();
+        one.putInt("s", MonitorDetail.WARNING);
+        w.add(one);
+        CompoundTag two = new CompoundTag();
+        two.putInt("s", MonitorDetail.ALARM);
+        w.add(two);
+        d.put("warn", w);
+        assertEquals(MonitorDetail.ALARM, MonitorDetail.state(d));
+        assertEquals(0, MonitorDetail.state(new CompoundTag()));
+    }
 }

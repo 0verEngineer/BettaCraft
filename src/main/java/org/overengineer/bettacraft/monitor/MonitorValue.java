@@ -27,7 +27,10 @@ public enum MonitorValue {
     FILL("fill", "%", 0),
     STOCKING("stocking", "", 0),
     ALGAE("algae", "%", 0),
-    FOOD("food", "", 0);
+    FOOD("food", "", 0),
+    // part b
+    KH("kh", "dKH", 1),
+    MAGNESIUM("magnesium", "mg/l", 0);
 
     public static final MonitorValue[] ALL = values();
 
@@ -80,6 +83,8 @@ public enum MonitorValue {
                 FeederBlockEntity f = TankCare.findFeeder(level, t);
                 yield f == null ? Float.NaN : f.foodCount();
             }
+            case KH -> t.kh();
+            case MAGNESIUM -> t.magnesium();
         };
     }
 

@@ -72,6 +72,45 @@ public final class DashboardLayout {
         return out;
     }
 
+    /** Some tile shows more than the values (warnings, animals, devices, log): the server then sends {@link MonitorDetail}. */
+    public boolean needsDetail() {
+        for (DashboardTile t : tiles) if (t.needsDetail()) return true;
+        return false;
+    }
+
+    /** Some alarm tile gives a redstone signal: the screen then checks its tanks even when nobody looks. */
+    public boolean hasRedstoneAlarm() {
+        for (DashboardTile t : tiles) if (t.redstone()) return true;
+        return false;
+    }
+
+    /** The alarm tiles with redstone that are triggered now ({@code tank} looks up a tank by id). */
+    public int triggeredAlarms(java.util.function.Function<UUID, MonitorTank> tank) {
+        int n = 0;
+        for (DashboardTile t : tiles) if (t.redstone() && t.triggered(t.tank == null ? null : tank.apply(t.tank))) n++;
+        return n;
+    }
+
+    /** The first free place for a tile of {@code w} x {@code h} cells on a grid of {@code gw} x {@code gh} (row by row), or null. */
+    @javax.annotation.Nullable
+    public int[] freeSpot(int w, int h, int gw, int gh, int ignoreId) {
+        for (int y = 0; y + h <= gh; y++) {
+            for (int x = 0; x + w <= gw; x++) {
+                if (free(x, y, w, h, ignoreId)) return new int[]{x, y};
+            }
+        }
+        return null;
+    }
+
+    /** No tile (but the one with {@code ignoreId}) overlaps this rectangle. */
+    public boolean free(int x, int y, int w, int h, int ignoreId) {
+        for (DashboardTile t : tiles) {
+            if (t.id == ignoreId) continue;
+            if (x < t.x + t.w && t.x < x + w && y < t.y + t.h && t.y < y + h) return false;
+        }
+        return true;
+    }
+
     /** The tanks in the order of the automatic layout: by name (unnamed last), then by id. */
     public static List<MonitorTank> autoOrder(List<MonitorTank> tanks) {
         List<MonitorTank> sorted = new ArrayList<>(tanks);

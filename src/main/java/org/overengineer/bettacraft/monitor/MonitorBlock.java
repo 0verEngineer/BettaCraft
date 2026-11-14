@@ -103,9 +103,38 @@ public class MonitorBlock extends BaseEntityBlock {
         MonitorScreens.reform(server, seeds, facing, old);
     }
 
+    // ------------------------------------------------------------------ part b: redstone from the alarms
+
+    @Override
+    protected boolean isSignalSource(BlockState state) {
+        return true;
+    }
+
+    /** 15 while an alarm tile with redstone of the screen is triggered (every block of the screen, every side). */
+    @Override
+    protected int getSignal(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, Direction side) {
+        return level.getBlockEntity(pos) instanceof MonitorBlockEntity be && be.alarms() > 0 ? 15 : 0;
+    }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    /** Comparator: the number of triggered alarm tiles with redstone (at most 15). */
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof MonitorBlockEntity be ? Math.min(15, be.alarms()) : 0;
+    }
+
+    /** Right-click: the dashboard editor (needs build rights, the server checks again); sneaking: the info line. */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof MonitorBlockEntity be)) return InteractionResult.PASS;
+        if (!player.isShiftKeyDown() && player.mayBuild()) {
+            if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openMonitor(pos);
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!level.isClientSide) {
             MonitorBlockEntity c = be.controller();
             if (c == null) c = be;
