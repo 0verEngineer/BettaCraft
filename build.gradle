@@ -240,7 +240,12 @@ neoForge {
             // gradlew runServer -Psmoketestmp : the multiplayer test stage, waits for the clients Dev1 and Dev2 (normally
             // started together with the clients by gradlew runMultiplayerTest)
             if (project.hasProperty('smoketestmp')) systemProperty 'bettacraft.smoketest.mp', 'true'
-            if (project.hasProperty('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1: -Pbiomes
+            // M25.1: -Pbiomes : a world of its own (run/world_biomes); the biome mods write their biome source into the
+            // level.dat (Lithostitched), the normal dev world would no longer load without them
+            if (project.hasProperty('biomes')) {
+                systemProperty 'bettacraft.biomemods', 'true'
+                programArguments.addAll '--world', 'world_biomes'
+            }
         }
 
         gameTestServer {
