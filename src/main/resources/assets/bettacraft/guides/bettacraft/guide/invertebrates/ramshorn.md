@@ -35,7 +35,7 @@ The ramshorn snail (*Planorbella* sp.) from the still waters of North America: a
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 7.3–8.6 % per swing (about 1 in 12–14 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 7–8.3 % per swing (about 1 in 12–14 swings), 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 8.3–11 % per swing (about 1 in 9–12 swings), 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in lush caves: 6.8–11 % per swing (about 1 in 9–15 swings), 1–2 at a time.
 * **Wild** in rivers, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).

@@ -465,6 +465,28 @@ def m24(out_en: Path) -> None:
         save(im.resize((width, round(im.height * width / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M25 part c (DevClientSmokeM25c, -Psmoketestm25c): the bee shrimp lines, the Sulawesi tank, the dosing pump window (en, de)
+M25C_WORLD = {"critters_caridina": ("bettacraft_m25_caridina", (0, 400, 1280, 600)),
+              "critters_sulawesi": ("bettacraft_m25_sulawesi", (240, 380, 1040, 620))}
+M25C_MENU = ("bettacraft_m25_dosing_pump", "bettacraft_m25_dosing_pump_de", (464, 294, 816, 664))
+
+
+def m25c(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M25C_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    en, de, box = M25C_MENU
+    for shot, out in ((en, out_en), (de, out_de)):
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out / "dosing_pump_menu.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -479,6 +501,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m25c"]:
+        m25c(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m24"]:
         m24(out_en)
         return 0

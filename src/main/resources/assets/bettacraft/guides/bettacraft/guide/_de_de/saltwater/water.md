@@ -47,7 +47,8 @@ Kugelfisch und Tintenfisch Salzwasser, Axolotl und Kaulquappen Süßwasser.
 
 * **Kalzium** (mg/L) kommt mit Meerwasser und Meersalz (Meerwasser: 420). Die Steinkorallen bauen daraus ihre Skelette und
   verbrauchen es; unter 380 wachsen sie langsamer, unter 250 gar nicht. Wasserwechsel mit Meerwasser und der
-  **Kalzium-Zusatz** (aus Calcit oder Knochenmehl und Meersalz) füllen es wieder auf.
+  **Kalzium-Zusatz** (aus Calcit oder Knochenmehl und Meersalz) füllen es wieder auf. Alkalinität, Magnesium und Spurenelemente:
+  [Riffchemie](reef_chemistry.md).
 * **Nitrat** (NO₃) ist der Abfall im Wasser, wie Meerwasseraquarianer ihn messen: das Menü zeigt es neben dem Salz.
   Steinkorallen werden ab 40 mg/L langsamer und hören bei 60 auf; Eiweißabschäumer und Lebendgestein halten es niedrig.
 

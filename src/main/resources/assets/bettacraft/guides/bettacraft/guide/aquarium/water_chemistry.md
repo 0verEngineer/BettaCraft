@@ -35,8 +35,9 @@ week (`chemistry.leafHalfLifeDays`). Dry jungle leaves in a smoker, furnace or o
 
 ## The animals
 
-Every animal has its range of pH and TDS; **tap water suits all of them**, so nothing changes for aquariums of older
-versions. A little out of the range the animals are only stressed (the menu warns, small animals breed slower); far
+Every animal has its range of pH and TDS; **tap water suits all of them** but the
+[bee shrimp](../invertebrates/caridina.md) (they need soft water: reverse osmosis water, remineralised a little, and
+soil), so nothing changes for aquariums of older versions. A little out of the range the animals are only stressed (the menu warns, small animals breed slower); far
 out (half a pH unit or 50 ppm beyond the range) the water counts as bad for them: they get sick and in the end die.
 
 | Animals | pH | TDS (ppm) |
@@ -49,11 +50,14 @@ out (half a pH unit or 50 ppm beyond the range) the water counts as bad for them
 | Dwarf gourami | 6.0–8.0 | 0–500 |
 | Neocaridina | 6.2–8.2 | 80–500 |
 | Dwarf crayfish | 6.5–8.5 | 100–600 |
+| [Bee shrimp (Caridina)](../invertebrates/caridina.md) | 5.5–6.8 | 100–200 |
+| [Cardinal shrimp](../invertebrates/sulawesi_shrimp.md), [Tylomelania](../invertebrates/tylomelania.md) (Sulawesi) | 7.5–8.6 | 150–350 |
 | Snails (ramshorn, bladder and trumpet snails: 6.2–8.6, 50–800) | 6.8–8.6 | 100–700 |
 | Salt water animals | 7.8–8.6 | (only the pH) |
 
 The species pages list the range of every animal. Salt water is buffered by its alkalinity: its pH stays near 8.2
-and the substrate hardly moves it.
+and the substrate hardly moves it; when the stony corals use the alkalinity up, it sinks (see
+[reef chemistry](../saltwater/reef_chemistry.md)).
 
 `features.waterChemistry` (common config) switches it all off: the values stand still and no animal minds them.
 

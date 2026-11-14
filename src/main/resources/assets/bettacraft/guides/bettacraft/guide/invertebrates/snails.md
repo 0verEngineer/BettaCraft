@@ -27,6 +27,7 @@ keep the glass clean.
 | [Bladder Snail](bladder_snail.md) | 10–30 | one is enough | some |
 | [Malaysian Trumpet Snail](trumpet_snail.md) | 18–32 | one is enough | hardly |
 | [Assassin Snail](assassin_snail.md) | 20–30 | pair | hardly |
+| [Tylomelania Snail](tylomelania.md) | 24–30 | pair | some |
 
 ## Racer nerites: every one a little different
 

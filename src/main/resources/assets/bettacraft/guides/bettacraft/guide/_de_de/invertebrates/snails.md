@@ -27,6 +27,7 @@ Schnecken halten das Glas sauber.
 | [Blasenschnecke](bladder_snail.md) | 10–30 | ein Tier genügt | etwas |
 | [Turmdeckelschnecke](trumpet_snail.md) | 18–32 | ein Tier genügt | kaum |
 | [Raubschnecke](assassin_snail.md) | 20–30 | Paar | kaum |
+| [Tylomelania-Schnecke](tylomelania.md) | 24–30 | Paar | etwas |
 
 ## Rennschnecken: jede ein bisschen anders
 

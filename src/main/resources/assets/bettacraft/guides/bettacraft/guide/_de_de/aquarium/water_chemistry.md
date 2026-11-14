@@ -35,8 +35,9 @@ etwa einer Woche (`chemistry.leafHalfLifeDays`). Dschungellaub im Räucherofen, 
 
 ## Die Tiere
 
-Jedes Tier hat seinen Bereich für pH und TDS; **Leitungswasser passt allen**, für Aquarien älterer Versionen ändert
-sich also nichts. Etwas außerhalb sind die Tiere nur gestresst (das Menü warnt, Kleintiere vermehren sich langsamer);
+Jedes Tier hat seinen Bereich für pH und TDS; **Leitungswasser passt allen** außer den
+[Bienengarnelen](../invertebrates/caridina.md) (sie brauchen weiches Wasser: Osmosewasser, leicht aufgehärtet, und
+Soil), für Aquarien älterer Versionen ändert sich also nichts. Etwas außerhalb sind die Tiere nur gestresst (das Menü warnt, Kleintiere vermehren sich langsamer);
 weit außerhalb (ein halber pH-Schritt oder 50 ppm jenseits des Bereichs) gilt das Wasser für sie als schlecht: sie
 werden krank und sterben am Ende.
 
@@ -50,11 +51,14 @@ werden krank und sterben am Ende.
 | Zwergfadenfisch | 6,0–8,0 | 0–500 |
 | Neocaridina | 6,2–8,2 | 80–500 |
 | Zwergkrebs | 6,5–8,5 | 100–600 |
+| [Bienengarnelen (Caridina)](../invertebrates/caridina.md) | 5,5–6,8 | 100–200 |
+| [Kardinalgarnele](../invertebrates/sulawesi_shrimp.md), [Tylomelania](../invertebrates/tylomelania.md) (Sulawesi) | 7,5–8,6 | 150–350 |
 | Schnecken (Posthorn-, Blasen- und Turmdeckelschnecke: 6,2–8,6, 50–800) | 6,8–8,6 | 100–700 |
 | Meerestiere | 7,8–8,6 | (nur der pH) |
 
 Die Artenseiten nennen den Bereich jedes Tiers. Salzwasser ist durch seine Karbonathärte gepuffert: sein pH bleibt
-bei etwa 8,2, und der Bodengrund bewegt ihn kaum.
+bei etwa 8,2, und der Bodengrund bewegt ihn kaum; verbrauchen die Steinkorallen die Karbonathärte, sinkt er (siehe
+[Riffchemie](../saltwater/reef_chemistry.md)).
 
 `features.waterChemistry` (Common-Config) schaltet alles ab: die Werte stehen still und kein Tier stört sich daran.
 

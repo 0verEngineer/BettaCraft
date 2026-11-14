@@ -42,6 +42,9 @@ Grund. Schnecken und Garnelen sind deine **Putzkolonne**: Sie halten das Glas fr
 | [Blasenschnecke](invertebrates/bladder_snail.md) | 10–30 | ein Tier genügt | etwas |
 | [Turmdeckelschnecke](invertebrates/trumpet_snail.md) | 18–32 | ein Tier genügt | kaum |
 | [Raubschnecke](invertebrates/assassin_snail.md) | 20–30 | Paar | kaum |
+| [Bienengarnele](invertebrates/caridina.md) | 18–26 | Paar | kaum |
+| [Kardinalgarnele](invertebrates/sulawesi_shrimp.md) | 25–31 | Paar | kaum |
+| [Tylomelania-Schnecke](invertebrates/tylomelania.md) | 24–30 | Paar | etwas |
 | [Zwergkrallenfrosch](invertebrates/dwarf_clawed_frog.md) | 20–28 | nein | nein |
 
 ## In diesem Kapitel

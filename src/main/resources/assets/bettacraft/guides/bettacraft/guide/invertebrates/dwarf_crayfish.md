@@ -50,7 +50,7 @@ the net). For half a day after the moult the crayfish is **soft**: more sensitiv
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 2.9–3.3 % per swing (about 1 in 30–35 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 2.6–3 % per swing (about 1 in 33–38 swings).
 * **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.wildCritters`).
 * **Wandering trader** (usual offers): 2 for 5 emeralds.
 * **Breeding** in the aquarium (male and female).

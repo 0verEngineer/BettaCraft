@@ -38,6 +38,7 @@ navigation:
 | [TDS meter and pH drop test](equipment/water_tests.md) | measure the [water chemistry](aquarium/water_chemistry.md) |
 | [CO2 dosing](equipment/co2.md) | bio CO2, CO2 cylinder with solenoid valve, filling station: faster plant growth |
 | [Reverse osmosis unit](equipment/reverse_osmosis.md) | reverse osmosis water (nothing dissolved) for soft water |
+| [Dosing pump](saltwater/dosing_pump.md) | doses calcium, alkalinity, magnesium and trace elements into reef tanks |
 
 By default none of the equipment needs power; a server can switch that on (see [Power](equipment/power.md)).
 

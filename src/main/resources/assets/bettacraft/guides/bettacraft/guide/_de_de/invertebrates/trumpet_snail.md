@@ -34,7 +34,7 @@ Die Turmdeckelschnecke (*Melanoides tuberculata*) aus Afrika und Südasien: ein 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,97–1,9 % pro Schwung (etwa 1 von 53–103 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,93–1,8 % pro Schwung (etwa 1 von 54–108 Schwüngen), 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 6,9–11 % pro Schwung (etwa 1 von 9–15 Schwüngen), 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in tiefem Höhlenwasser: 26–34 % pro Schwung (etwa 1 von 3–4 Schwüngen), 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 20–27 % pro Schwung (etwa 1 von 4–5 Schwüngen), 1–2 auf einmal.

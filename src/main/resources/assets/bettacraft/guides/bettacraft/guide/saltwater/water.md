@@ -46,7 +46,8 @@ axolotls and tadpoles fresh water.
 
 * **Calcium** (mg/L) comes with sea water and sea salt (sea water: 420). The stony corals build their skeletons from it and
   use it up; below 380 they slow down, below 250 they stop. Water changes with sea water and the **calcium additive**
-  (from calcite or bone meal and sea salt) bring it back.
+  (from calcite or bone meal and sea salt) bring it back. Alkalinity, magnesium and trace elements:
+  [reef chemistry](reef_chemistry.md).
 * **Nitrate** (NO₃) is the waste in the water as reefers know it: the menu shows it next to the salt. Stony corals slow down
   from 40 mg/L and stop at 60; a protein skimmer and live rock keep it low.
 

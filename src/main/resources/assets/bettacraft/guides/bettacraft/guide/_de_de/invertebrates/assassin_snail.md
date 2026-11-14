@@ -33,7 +33,7 @@ Die Raubturmdeckelschnecke (*Clea helena*) aus Südostasien: ein gelb-braun geb�
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,73 % pro Schwung (etwa 1 von 137 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,7 % pro Schwung (etwa 1 von 144 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 1,4–1,7 % pro Schwung (etwa 1 von 58–69 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in tiefem Höhlenwasser: 3,5–4,2 % pro Schwung (etwa 1 von 24–28 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 2,7–2,9 % pro Schwung (etwa 1 von 34–37 Schwüngen).

@@ -36,7 +36,7 @@ Die Paradiesschnecke (*Pomacea diffusa*) aus dem Amazonasbecken: eine große Sch
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 17–20 % pro Schwung (etwa 1 von 5–6 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 16–18 % pro Schwung (etwa 1 von 6 Schwüngen).
 * **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 5) (Config `features.wildCritters`).
 * **Fahrender Händler** (übliche Angebote): 1 für 3 Smaragde.
 * **Vermehrung** im Aquarium (Männchen und Weibchen).

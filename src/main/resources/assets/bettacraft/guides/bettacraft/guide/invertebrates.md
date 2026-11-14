@@ -41,6 +41,9 @@ bottom. The snails and shrimp are your **cleaning crew**: they keep the glass fr
 | [Bladder Snail](invertebrates/bladder_snail.md) | 10–30 | one is enough | some |
 | [Malaysian Trumpet Snail](invertebrates/trumpet_snail.md) | 18–32 | one is enough | hardly |
 | [Assassin Snail](invertebrates/assassin_snail.md) | 20–30 | pair | hardly |
+| [Bee Shrimp](invertebrates/caridina.md) | 18–26 | pair | hardly |
+| [Cardinal Shrimp](invertebrates/sulawesi_shrimp.md) | 25–31 | pair | hardly |
+| [Tylomelania Snail](invertebrates/tylomelania.md) | 24–30 | pair | some |
 | [Dwarf Clawed Frog](invertebrates/dwarf_clawed_frog.md) | 20–28 | no | no |
 
 ## In this chapter
