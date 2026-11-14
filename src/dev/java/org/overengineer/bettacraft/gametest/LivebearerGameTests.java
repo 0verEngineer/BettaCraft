@@ -95,6 +95,16 @@ public final class LivebearerGameTests {
         return TankmateBreeding.tankmates(h.getLevel(), c.getTank()).stream().anyMatch(TankmateEntity::isGravid);
     }
 
+    /** Every autosomal allele of the young comes unchanged from its parent (first allele mother, second father). */
+    private static boolean unmutated(LivebearerGenome g, LivebearerGenome mother, LivebearerGenome father) {
+        if (g == null) return false;
+        for (LbLocus l : LbLocus.values()) {
+            if (!g.a(l).equals(mother.a(l)) && !g.a(l).equals(mother.b(l))) return false;
+            if (!g.b(l).equals(father.a(l)) && !g.b(l).equals(father.b(l))) return false;
+        }
+        return true;
+    }
+
     /** Runs until the female is pregnant and has given birth; the young (generation 1). */
     private static List<TankmateEntity> breed(GameTestHelper h, TankBlockEntity c) {
         h.assertTrue(waitForPregnancy(h, c, 25F, 30), "a pregnant female");
@@ -108,7 +118,7 @@ public final class LivebearerGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 400)
     public static void guppiesInheritAtBirth(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 2);
-        add(h, c, TankmateSpecies.GUPPY, TankmateGenes.strain(TankmateSpecies.GUPPY, LivebearerStrain.FULL_GOLD), true);
+        TankmateEntity mother = add(h, c, TankmateSpecies.GUPPY, TankmateGenes.strain(TankmateSpecies.GUPPY, LivebearerStrain.FULL_GOLD), true);
         TankmateEntity father = add(h, c, TankmateSpecies.GUPPY, TankmateGenes.strain(TankmateSpecies.GUPPY, LivebearerStrain.RED_COBRA), false);
         h.assertTrue("cobra".equals(father.genes().lb().y), "the father has the cobra Y");
         List<TankmateEntity> young = breed(h, c);
@@ -131,7 +141,10 @@ public final class LivebearerGameTests {
         h.assertTrue(carriers >= young.size() - 1, "the young carry the gold of their mother: " + carriers + "/" + young.size());
         h.assertTrue(sons + daughters == young.size(), "all young counted");
         // a son grows up: a Red Cobra like his father (red over yellow, the leopard tail, the cobra Y, gold hidden)
-        TankmateEntity son = young.stream().filter(y -> !y.isFemale()).findFirst().orElse(null);
+        // M22.5: a son without a spontaneous mutation (0.4 % per allele and birth since M21.6; a mutated body allele made
+        // the grown son look different now and then, 1 of 95 local runs)
+        LivebearerGenome mg = mother.genes().lb(), fg = father.genes().lb();
+        TankmateEntity son = young.stream().filter(y -> !y.isFemale() && unmutated(y.genes().lb(), mg, fg)).findFirst().orElse(null);
         if (son != null) {
             // the parents out (they would eat the fry)
             for (TankmateEntity m : mates(h, c)) {

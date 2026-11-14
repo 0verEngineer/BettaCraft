@@ -101,6 +101,22 @@ public final class SeahorseGameTests {
         for (int x = 0; x < w; x++) for (int z = 0; z < w; z++) for (int y = 0; y < height; y++) in.setBlock(r.toWorld(lx + x, y, lz + z), Blocks.STONE.defaultBlockState(), 3);
     }
 
+    /**
+     * M22.5: loads the interior chunks of the region and keeps them loaded (the interior ticket, renewed on every call).
+     * Without a player in the interior nothing holds them: placed blocks loaded them for a moment, and when they had
+     * unloaded again before the posts were looked up, the height map saw an empty floor (no posts; failed 2 of 30 runs).
+     */
+    static void keepLoaded(GameTestHelper h, InteriorRegion r) {
+        ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
+        for (int cx = (r.originX() - 1) >> 4; cx <= (r.originX() + r.sizeX()) >> 4; cx++) {
+            for (int cz = (r.originZ() - 1) >> 4; cz <= (r.originZ() + r.sizeZ()) >> 4; cz++) {
+                net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(cx, cz);
+                in.getChunkSource().addRegionTicket(org.overengineer.bettacraft.tank.interior.InteriorPreparation.TICKET, cp, 0, cp);
+                in.getChunk(cx, cz);
+            }
+        }
+    }
+
     // ------------------------------------------------------------------ hitching posts
 
     /**
@@ -114,10 +130,12 @@ public final class SeahorseGameTests {
         InteriorRegion r = region(h, c);
         pillar(h, r, 8, 8, 3, 12);
         pillar(h, r, 34, 30, 3, 10);
+        keepLoaded(h, r);
         TankBlockEntity bare = tank(h, 10, 2, 2, 2, 2, 2, 8000, 33F, 23F);
         TankmateEntity sh = add(h, c, TankmateSpecies.LINED_SEAHORSE, false, LifeStage.ADULT);
         TankmateEntity lonely = add(h, bare, TankmateSpecies.LINED_SEAHORSE, true, LifeStage.ADULT);
         h.runAfterDelay(30, () -> {
+            keepLoaded(h, r);
             Seahorses.forget();
             var spots = Seahorses.spots(level, c.getTank());
             h.assertTrue(!spots.isEmpty(), "the pillars are hitching posts");
@@ -129,6 +147,7 @@ public final class SeahorseGameTests {
             h.assertTrue(sh.hitchNowForTest(), "swims to a post");
             h.assertTrue(sh.hitchPost() != null, "has a post");
             h.succeedWhen(() -> {
+                keepLoaded(h, r);
                 h.assertTrue(sh.isHitched(), "holds on to the post at " + sh.position() + " (target " + sh.behaviourTarget() + ")");
                 h.assertTrue(sh.flag(TankmateEntity.FLAG_REST), "tail curled (synced flag)");
                 Vec3 post = sh.hitchPost();
