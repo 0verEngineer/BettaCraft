@@ -100,6 +100,28 @@ class PlantSourcesTest {
         assertTrue(PlantTables.fromList(List.of()).isEmpty(), "an empty list brings up nothing");
     }
 
+    /**
+     * M28: a config list an older version wrote (the default without the new species) counts as the default, so the new
+     * plants come up after an update; a changed list does not.
+     */
+    @Test
+    void oldDefaultListsGetTheNewPlants() {
+        for (var t : List.of(WildTables.NET_PLANTS_RIVER, WildTables.NET_PLANTS_JUNGLE, WildTables.NET_PLANTS_SWAMP, WildTables.FISHING_PLANTS_JUNGLE,
+                WildTables.FISHING_PLANTS_RIVER, WildTables.FISHING_PLANTS_SWAMP)) {
+            var old = PlantTables.older(t);
+            assertTrue(old.entries().size() < t.entries().size(), "the table has new plants");
+            assertTrue(old.entries().stream().noneMatch(e -> e.value().newerThanConfigLists()), "older: without them");
+            // written by the old version and read back, in any order
+            List<String> list = new ArrayList<>(PlantTables.toList(old));
+            java.util.Collections.reverse(list);
+            assertTrue(PlantTables.sameEntries(PlantTables.fromList(list), old), "recognised");
+            // one weight changed: the pack's own list
+            list.set(0, list.get(0).replaceAll("=\\d+$", "=99"));
+            assertTrue(!PlantTables.sameEntries(PlantTables.fromList(list), old), "a changed list stays");
+        }
+        assertTrue(PlantTables.sameEntries(PlantTables.older(WildTables.FISHING_PLANTS_MANGROVE), WildTables.FISHING_PLANTS_MANGROVE), "unchanged table");
+    }
+
     private static JsonObject lang(String rel) throws IOException {
         Path p = Path.of(System.getProperty("bettacraft.projectDir", "."), rel);
         assertTrue(Files.exists(p), "missing " + p + " (run gradlew runData)");

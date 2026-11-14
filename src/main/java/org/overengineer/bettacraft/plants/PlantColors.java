@@ -49,6 +49,21 @@ public final class PlantColors {
                 default -> lerp(base, s.redColor, 0.3 * f);
             };
             case CORAL -> coral(s, p, base, tint);
+            case WHITE -> white(s, p, base, f);
+        };
+    }
+
+    /**
+     * M28: the white and pink Bucephalandras: green with a pale shimmer up to tint 1, half way at tint 2 (the light bar),
+     * white to whitish pink only at tint 3 (strong light: an LED panel or a high-power LED with the LED tiers).
+     */
+    static int white(PlantSpecies s, PlantPart p, int base, double f) {
+        double w = f <= 0.34 ? 0.12 * f / 0.34 : f <= 0.67 ? 0.12 + 0.33 * (f - 0.34) / 0.33 : 0.45 + 0.55 * (f - 0.67) / 0.33;
+        return switch (p) {
+            case TOP -> lerp(s.top, brighter(s.redColor, 1.03), Math.min(1, 0.08 + w));
+            case LEAF, CUTTING -> lerp(s.leaf, s.redColor, w);
+            case STEM -> lerp(s.stem, s.redColor, 0.4 * w);
+            default -> base;
         };
     }
 

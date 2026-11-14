@@ -40,6 +40,12 @@ public final class WildTables {
             .addAll(FISHING_PLANTS_TROPICAL)
             .add(PlantSpecies.AMAZON_SWORD, 10)
             .add(PlantSpecies.TIGER_LOTUS, 5)
+            // M28: the Anubias of the West African rainforest streams; "White" and "Pinto" rarely
+            .add(PlantSpecies.ANUBIAS_PETITE, 6)
+            .add(PlantSpecies.ANUBIAS_COFFEEFOLIA, 5)
+            .add(PlantSpecies.ANUBIAS_ROUND_LEAF, 5)
+            .add(PlantSpecies.ANUBIAS_WHITE, 2)
+            .add(PlantSpecies.ANUBIAS_PINTO, 2)
             .build();
 
     /** M22.4: fishing in rivers: the epiphytes and, rarely, Vallisneria (river ribbons) and Monte Carlo from the banks. */
@@ -47,6 +53,16 @@ public final class WildTables {
             .addAll(FISHING_PLANTS_TROPICAL)
             .add(PlantSpecies.VALLISNERIA, 10)
             .add(PlantSpecies.MONTE_CARLO, 4)
+            // M28: the Bucephalandras of the Borneo streams (the pink and white ones rarely), Hygrophila pinnatifida and
+            // Downoi from the rocks of Indian and Thai streams
+            .add(PlantSpecies.BUCE_KEDAGANG, 4)
+            .add(PlantSpecies.BUCE_THEIA, 4)
+            .add(PlantSpecies.BUCE_GODZILLA, 3)
+            .add(PlantSpecies.BUCE_PINK_LADY, 2)
+            .add(PlantSpecies.BUCE_MINI_PINK, 2)
+            .add(PlantSpecies.BUCE_SNOW_WHITE, 1)
+            .add(PlantSpecies.HYGROPHILA_PINNATIFIDA, 4)
+            .add(PlantSpecies.POGOSTEMON_DOWNOI, 3)
             .build();
 
     /**
@@ -58,6 +74,13 @@ public final class WildTables {
             .add(PlantSpecies.ALTERNANTHERA, 6)
             .add(PlantSpecies.TIGER_LOTUS, 5)
             .add(PlantSpecies.CRYPT_FLAMINGO, 2)
+            // M28: the stem plants of swamps and paddy fields
+            .add(PlantSpecies.LIMNOPHILA_SESSILIFLORA, 6)
+            .add(PlantSpecies.BACOPA_CAROLINIANA, 6)
+            .add(PlantSpecies.LUDWIGIA_SUPER_RED, 4)
+            .add(PlantSpecies.ROTALA_HRA, 3)
+            .add(PlantSpecies.ROTALA_WALLICHII, 3)
+            .add(PlantSpecies.MYRIOPHYLLUM_RED, 3)
             .build();
 
     /** M22.4: fishing in mangrove swamps: the M13 swamp table (crypts and stem plants). */
@@ -75,6 +98,11 @@ public final class WildTables {
             .add(PlantSpecies.JAVA_MOSS, 15)
             .add(PlantSpecies.ALTERNANTHERA, 10)
             .add(PlantSpecies.AMAZON_SWORD, 10)
+            // M28
+            .add(PlantSpecies.HYGROPHILA_PINNATIFIDA, 8)
+            .add(PlantSpecies.BUCE_KEDAGANG, 6)
+            .add(PlantSpecies.BUCE_THEIA, 6)
+            .add(PlantSpecies.POGOSTEMON_DOWNOI, 5)
             .build();
 
     public static final WeightedTable<PlantSpecies> NET_PLANTS_JUNGLE = WeightedTable.<PlantSpecies>builder()
@@ -82,6 +110,10 @@ public final class WildTables {
             .add(PlantSpecies.ALTERNANTHERA, 20)
             .add(PlantSpecies.TIGER_LOTUS, 20)
             .add(PlantSpecies.JAVA_MOSS, 15)
+            // M28
+            .add(PlantSpecies.ANUBIAS_COFFEEFOLIA, 8)
+            .add(PlantSpecies.ANUBIAS_ROUND_LEAF, 8)
+            .add(PlantSpecies.ANUBIAS_PETITE, 6)
             .build();
 
     public static final WeightedTable<PlantSpecies> NET_PLANTS_SWAMP = WeightedTable.<PlantSpecies>builder()
@@ -91,6 +123,11 @@ public final class WildTables {
             .add(PlantSpecies.CRYPT_GREEN, 15)
             .add(PlantSpecies.CRYPT_BROWN, 15)
             .add(PlantSpecies.CRYPT_FLAMINGO, 5)
+            // M28
+            .add(PlantSpecies.LIMNOPHILA_SESSILIFLORA, 10)
+            .add(PlantSpecies.BACOPA_CAROLINIANA, 10)
+            .add(PlantSpecies.ROTALA_HRA, 5)
+            .add(PlantSpecies.MYRIOPHYLLUM_RED, 5)
             .build();
 
     /** M22.4: the default net plant table of a water (empty where the net brings up no plants). */

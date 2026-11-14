@@ -81,6 +81,24 @@ final class PlantMeshBuilder {
             case HAMMER_CORAL -> hammer();
             case LOBOPHYLLIA -> dome();
             case BUBBLE_TIP_ANEMONE -> anemone();
+            // M28 part a
+            case ANUBIAS_PETITE -> anubias(PlantTex.OVATE, 0.8F);
+            case ANUBIAS_PINTO -> anubias(PlantTex.PINTO, 1F);
+            case ANUBIAS_WHITE -> anubias(PlantTex.OVATE, 1F);
+            case ANUBIAS_COFFEEFOLIA -> anubias(PlantTex.COFFEE, 1.05F);
+            case ANUBIAS_ROUND_LEAF -> anubias(PlantTex.ROUND, 1.2F);
+            case BUCE_KEDAGANG -> rhizomeLeaves(PlantTex.NARROW, 0.2F, 1.1F, 1.9F, 0.22F, 0.01, 0.15);
+            case BUCE_THEIA, BUCE_PINK_LADY, BUCE_SNOW_WHITE -> rhizomeLeaves(PlantTex.WAVY, 0.22F, 1.5F, 2.8F, 0.22F, 0.01, 0.15);
+            case BUCE_GODZILLA -> rhizomeLeaves(PlantTex.WAVY, 0.2F, 1.7F, 3.1F, 0.25F, 0.01, 0.15);
+            case BUCE_MINI_PINK -> rhizomeLeaves(PlantTex.WAVY, 0.22F, 1.1F, 1.9F, 0.18F, 0.01, 0.15);
+            case LUDWIGIA_SUPER_RED -> stems(PlantTex.ELLIPTIC, 1.45F, 0.85F, 0.55F);
+            case ROTALA_HRA -> stems(PlantTex.NARROW, 1.15F, 0.5F, 0.5F);
+            case ROTALA_WALLICHII -> stems(PlantTex.NEEDLE, 1.0F, 0.4F, 0.45F, 3);
+            case HYGROPHILA_PINNATIFIDA -> stems(PlantTex.LOBED, 2.0F, 1.0F, 0.6F);
+            case POGOSTEMON_DOWNOI -> stems(PlantTex.CRISP, 1.1F, 0.55F, 0.7F, 2);
+            case LIMNOPHILA_SESSILIFLORA -> stems(PlantTex.FEATHER, 1.2F, 0.8F, 0.5F, 3);
+            case MYRIOPHYLLUM_RED -> stems(PlantTex.FEATHER, 1.1F, 0.75F, 0.5F, 3);
+            case BACOPA_CAROLINIANA -> stems(PlantTex.ROUND, 1.25F, 0.95F, 0.5F);
         }
     }
 
@@ -528,9 +546,21 @@ final class PlantMeshBuilder {
      * it hangs on, fanned out towards the block. M22.1: the leaf ({@code tex}, length, width, fan angle) per species.
      */
     void stems(PlantTex tex, float leafLen, float leafWidth, float fan) {
+        stems(tex, leafLen, leafWidth, fan, 1);
+    }
+
+    /**
+     * M28: {@code perSide} leaves from the node towards every leaf block (2 or 3: the whorls of the fine-leaved stem
+     * plants, spread over twice the fan angle).
+     */
+    void stems(PlantTex tex, float leafLen, float leafWidth, float fan, int perSide) {
         PlantSkeleton.Stems sk = PlantSkeleton.stems(parts());
         LongOpenHashSet tips = sk.tips();
-        float r = (sp == PlantSpecies.ROTALA ? 0.075F : 0.09F) * style.stem();
+        float r = switch (sp) {
+            case ROTALA, ROTALA_HRA, ROTALA_WALLICHII, LIMNOPHILA_SESSILIFLORA, MYRIOPHYLLUM_RED -> 0.075F;
+            case BACOPA_CAROLINIANA -> 0.11F;
+            default -> 0.09F;
+        } * style.stem();
         for (long k : sk.order) {
             int x = PlantSkeleton.x(k), y = PlantSkeleton.y(k), z = PlantSkeleton.z(k);
             use(x, y, z, PlantPart.STEM);
@@ -564,8 +594,9 @@ final class PlantMeshBuilder {
             double a = dx == 0 && dz == 0 ? (x * 5 + z * 11 + y * 3) * 0.7 : Math.atan2(dz, dx);
             // a pair of leaves from the node of the stem, fanned out towards this block
             Vector3f node = c(n).add((float) Math.cos(a) * 0.06F, 0, (float) Math.sin(a) * 0.06F);
-            for (int i = -1; i <= 1; i += 2) {
-                double b = a + i * fan;
+            for (int j = 0; j < 2 * perSide; j++) {
+                // a pair (perSide 1: a - fan, a + fan), or a whorl from a - 2 fan to a + 2 fan
+                double b = perSide == 1 ? a + (j == 0 ? -fan : fan) : a + fan * 2 * (j / (2.0 * perSide - 1) * 2 - 1);
                 float rise = (top ? 0.8F : 0.38F) + dy * 0.7F;
                 Vector3f d = new Vector3f((float) Math.cos(b), rise, (float) Math.sin(b));
                 leaf(tex, node, d, new Vector3f((float) -Math.sin(b), 0, (float) Math.cos(b)), (top ? 0.78F : 1.0F) * leafLen * style.leafLong(),
@@ -695,6 +726,16 @@ final class PlantMeshBuilder {
     // ------------------------------------------------------------------ Anubias
 
     void anubias() {
+        anubias(PlantTex.OVATE, 1F);
+    }
+
+    /** The leaf texture and width of an Anubias blade (M28: the other Anubias). */
+    private PlantTex anubiasTex = PlantTex.OVATE;
+    private float anubiasWide = 1F;
+
+    void anubias(PlantTex tex, float wide) {
+        anubiasTex = tex;
+        anubiasWide = wide;
         List<Long> leafBlocks = new ArrayList<>();
         List<Long> stems = new ArrayList<>();
         rhizome(0.26F);
@@ -818,10 +859,12 @@ final class PlantMeshBuilder {
             Vector3f p = c(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k)).sub(b);
             spread = Math.max(spread, Math.abs(p.dot(across)));
         }
-        float width = Math.max(1.2F, Math.min(3.4F, spread * 2 + 1.4F));
+        float width = Math.max(1.2F, Math.min(3.4F, spread * 2 + 1.4F)) * anubiasWide;
         PlantPart p = part(BlockPos.getX(tipKey), BlockPos.getY(tipKey), BlockPos.getZ(tipKey));
         use(BlockPos.getX(tipKey), BlockPos.getY(tipKey), BlockPos.getZ(tipKey), p == null ? PlantPart.LEAF : p);
-        leaf(PlantTex.OVATE, b, dir, across, len * style.leafLong(), width * Math.min(1.15F, style.leafWide()), 0.1F);
+        // M28: the coloured "Pinto" texture carries its own green and white, the vertex colour only shades it
+        if (anubiasTex == PlantTex.PINTO) curColor = 0xFF000000 | saturate(p == PlantPart.TOP ? 0xFFFFF8 : 0xF0F2EA, style.saturate());
+        leaf(anubiasTex, b, dir, across, len * style.leafLong(), width * Math.min(1.15F, style.leafWide()), 0.1F);
     }
 
     // ------------------------------------------------------------------ M22.1 leaves from a crown or a rhizome

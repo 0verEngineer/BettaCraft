@@ -153,7 +153,9 @@ public final class InteriorPlants {
             }
             default -> {
                 boolean floor = Substrate.isFloor(support) && support.getValue(InteriorFloorBlock.SUBSTRATE);
-                if (face != Direction.UP || !(floor || support.is(ModTags.PLANT_SUBSTRATE))) return "needs_substrate";
+                // M28: Hygrophila pinnatifida also roots on stone and wood
+                boolean hardscape = s.alsoOnHardscape() && support.is(ModTags.EPIPHYTE_SURFACES);
+                if (face != Direction.UP || !(floor || hardscape || support.is(ModTags.PLANT_SUBSTRATE))) return "needs_substrate";
             }
         }
         return null;
@@ -281,6 +283,28 @@ public final class InteriorPlants {
         }
     }
 
+    /**
+     * M28: growth factor of the special needs of a species (1 for most): a {@link PlantSpecies#needsCo2()} plant grows at
+     * {@link PlantSpecies#NO_CO2_GROWTH} without CO2 and at full speed from a good CO2 level (with {@code features.co2}); a
+     * {@link PlantSpecies#softWater()} plant slows down in hard or alkaline water (with {@code features.waterChemistry}):
+     * full up to pH 7.0 and 300 TDS, half from pH 8.0 or 700 TDS.
+     */
+    public static double needsFactor(TankData t, PlantSpecies s) {
+        double f = 1;
+        if (s.needsCo2() && org.overengineer.bettacraft.co2.TankCo2.enabled()) {
+            f *= PlantSpecies.NO_CO2_GROWTH + (1 - PlantSpecies.NO_CO2_GROWTH) * org.overengineer.bettacraft.chem.WaterChemistry.co2Boost(t.co2());
+        }
+        if (s.softWater() && org.overengineer.bettacraft.config.CommonConfig.waterChemistry()) f *= softWaterFactor(t.ph(), t.tds());
+        return f;
+    }
+
+    /** M28: growth of a soft water plant at this pH and TDS (1 .. 0.5 each, multiplied, at least 0.25). */
+    public static double softWaterFactor(double ph, double tds) {
+        double a = 1 - 0.5 * Math.max(0, Math.min(1, ph - 7.0));
+        double b = 1 - 0.5 * Math.max(0, Math.min(1, (tds - 300) / 400));
+        return Math.max(0.25, a * b);
+    }
+
     /** Light factor for a light need: 0 below {@code from}, 1 from {@code full}. */
     public static double lightFactor(int light, PlantSpecies.Light need) {
         if (light < need.from) return 0;
@@ -371,6 +395,8 @@ public final class InteriorPlants {
             if (rate > 0 && !p.species.marine()) rate *= org.overengineer.bettacraft.co2.TankCo2.growth(t, PlantSpecies.Light.need(p.species.light()));
             // M25 part d: active soil feeds the freshwater plants (up to +25 % on a fully covered floor)
             if (rate > 0 && !p.species.marine()) rate *= soilBoost;
+            // M28: the demanding species: CO2 and soft water
+            if (rate > 0) rate *= needsFactor(t, p.species);
             if (rate > 0 && p.room == 0) p.room = room(env.waterLocal(), r, p);
             if (rate > 0) {
                 activeMass += p.blocks;

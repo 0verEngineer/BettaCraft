@@ -43,7 +43,29 @@ public enum PlantSpecies {
     LOBOPHYLLIA("lobophyllia", Form.DOME, 15, 8, Light.MID, Red.CORAL, "brain", 0xA8402A, 0x4E9A4A, 0xFF6A3A, 0x8A3A2A, 0x8A3A2A),
     ACROPORA("acropora", Form.BRANCH, 14, 8, Light.HIGH, Red.CORAL, "branch", 0x5A62C0, 0xA8C0FF, 0x7AA8FF, 0x7A7AA8, 0x7A7AA8),
     // the host anemone of the clownfish (Entacmaea quadricolor): tentacles with bubble tips on a sticky foot
-    BUBBLE_TIP_ANEMONE("bubble_tip_anemone", Form.ANEMONE, 6, 6, Light.MID, Red.CORAL, "tentacle", 0xC24A56, 0xF4A6B8, 0xFF7AA6, 0xD8A890, 0xD8A890);
+    BUBBLE_TIP_ANEMONE("bubble_tip_anemone", Form.ANEMONE, 6, 6, Light.MID, Red.CORAL, "tentacle", 0xC24A56, 0xF4A6B8, 0xFF7AA6, 0xD8A890, 0xD8A890),
+    // M28 part a: more Anubias (very slow shade plants), Bucephalandras and stem plants. Always appended: the order seeds
+    // the shapes ({@link PlantShapes}), so a species in the middle would change the plants of existing worlds.
+    ANUBIAS_PETITE("anubias_nana_petite", Form.EPIPHYTE, 30, 6, Light.LOW, Red.NONE, "broad", 0x2A5626, 0x45803A, 0, 0x3A6228, 0x4E5A30),
+    /** White marbled leaves: the mesh draws them with a coloured texture of its own ({@code leaf_pinto}). */
+    ANUBIAS_PINTO("anubias_pinto", Form.EPIPHYTE, 32, 6, Light.LOW, Red.NONE, "broad", 0x9CBC8A, 0xC8DCB8, 0, 0x5A7A48, 0x4E5A30),
+    ANUBIAS_WHITE("anubias_white", Form.EPIPHYTE, 30, 6, Light.MID, Red.NONE, "broad", 0xC6D4B2, 0xEEF0E4, 0, 0xB4C29C, 0x5A5A3A),
+    ANUBIAS_COFFEEFOLIA("anubias_coffeefolia", Form.EPIPHYTE, 25, 6, Light.LOW, Red.NONE, "broad", 0x2C5026, 0x7E4C32, 0, 0x3A5A28, 0x4E4A30),
+    ANUBIAS_ROUND_LEAF("anubias_barteri_round_leaf", Form.EPIPHYTE, 28, 8, Light.LOW, Red.NONE, "broad", 0x2E5C2A, 0x4C8838, 0, 0x3C6629, 0x4E5A30),
+    BUCE_KEDAGANG("bucephalandra_kedagang", Form.EPIPHYTE, 22, 6, Light.LOW, Red.NONE, "wavy", 0x2A4E40, 0x3E6E5C, 0, 0x3A4E3A, 0x3E4436),
+    BUCE_THEIA("bucephalandra_theia", Form.EPIPHYTE, 20, 6, Light.LOW, Red.NONE, "wavy", 0x4E7A3E, 0x6E9A4A, 0, 0x4A603A, 0x4E4A30),
+    BUCE_GODZILLA("bucephalandra_godzilla", Form.EPIPHYTE, 24, 6, Light.LOW, Red.RED, "wavy", 0x4A5A30, 0x5A6236, 0x7A2E2E, 0x5A4630, 0x4E3E2A),
+    BUCE_PINK_LADY("bucephalandra_pink_lady", Form.EPIPHYTE, 24, 6, Light.MID, Red.WHITE, "wavy", 0x6E8A5A, 0x86A06A, 0xF2CAD4, 0x6A6A4A, 0x4E4A30),
+    BUCE_MINI_PINK("bucephalandra_mini_pink", Form.EPIPHYTE, 22, 6, Light.MID, Red.WHITE, "wavy", 0x708C5C, 0x8AA46E, 0xF2B6C8, 0x6A6A4A, 0x4E4A30),
+    BUCE_SNOW_WHITE("bucephalandra_snow_white", Form.EPIPHYTE, 26, 6, Light.MID, Red.WHITE, "wavy", 0x7A9468, 0x94AC80, 0xF6F2EC, 0x7A7A5A, 0x4E4A30),
+    LUDWIGIA_SUPER_RED("ludwigia_super_red", Form.STEM, 3.5, 8, Light.HIGH, Red.RED, "fine", 0x8A4E3A, 0xA0583E, 0xCC2238, 0x7A3A30, 0x7A3A30),
+    ROTALA_HRA("rotala_hra", Form.STEM, 3, 8, Light.HIGH, Red.RED, "fine", 0x7A9A44, 0x9AA048, 0xEA6E46, 0x8A6A40, 0x8A6A40),
+    ROTALA_WALLICHII("rotala_wallichii", Form.STEM, 3.5, 8, Light.VERY_HIGH, Red.TIPS, "fine", 0x7A9A40, 0x9A9A4A, 0xF0507A, 0x8A5A44, 0x8A5A44),
+    HYGROPHILA_PINNATIFIDA("hygrophila_pinnatifida", Form.STEM, 5, 8, Light.MID, Red.RED, "fine", 0x4E6A36, 0x6A7A3E, 0x8E4A30, 0x5A4A30, 0x5A4A30),
+    POGOSTEMON_DOWNOI("pogostemon_helferi", Form.STEM, 6, 6, Light.HIGH, Red.NONE, "fine", 0x7AB04A, 0x94C45A, 0, 0x6A9A40, 0x6A9A40),
+    LIMNOPHILA_SESSILIFLORA("limnophila_sessiliflora", Form.STEM, 2.5, 8, Light.MID, Red.NONE, "fine", 0x78B246, 0x96C85A, 0, 0x6A9A3E, 0x6A9A3E),
+    MYRIOPHYLLUM_RED("myriophyllum_red", Form.STEM, 3, 8, Light.HIGH, Red.RED, "fine", 0x8A5A44, 0x9A6048, 0xC83A3A, 0x7A4A3A, 0x7A4A3A),
+    BACOPA_CAROLINIANA("bacopa_caroliniana", Form.STEM, 4, 8, Light.MID, Red.TIPS, "fine", 0x6A9A44, 0x84AA4E, 0xB4683A, 0x6A8A3E, 0x6A8A3E);
 
     /** Growth form: decides the shape ({@link PlantShapes}), where it may be planted and how it spreads. */
     public enum Form {
@@ -105,7 +127,12 @@ public enum PlantSpecies {
         /** Stays whitish pink and gets brighter and pinker in strong light. */
         FLAMINGO,
         /** M20 corals: 0 = bleached, 1 = pale, 2 = healthy colours, 3 = glowing under actinic light. */
-        CORAL
+        CORAL,
+        /**
+         * M28: greenish in ordinary light, white to whitish pink only in strong light (fully with the LED tiers only under
+         * an LED panel or a high-power LED): the pink and white Bucephalandras.
+         */
+        WHITE
     }
 
     private final String id;
@@ -193,6 +220,35 @@ public enum PlantSpecies {
     /** M20: the host anemone of the clownfish. */
     public boolean anemone() {
         return form == Form.ANEMONE;
+    }
+
+    /** M28: grows on stone and wood (hardscape) as well as on substrate: Hygrophila pinnatifida. */
+    public boolean alsoOnHardscape() {
+        return this == HYGROPHILA_PINNATIFIDA;
+    }
+
+    /**
+     * M28: grows well only with CO2 ({@code features.co2}): without dosed CO2 at {@link #NO_CO2_GROWTH} of its speed (the
+     * demanding stem plants of the aquascapes).
+     */
+    public boolean needsCo2() {
+        return switch (this) {
+            case LUDWIGIA_SUPER_RED, ROTALA_HRA, ROTALA_WALLICHII, POGOSTEMON_DOWNOI, MYRIOPHYLLUM_RED -> true;
+            default -> false;
+        };
+    }
+
+    /** M28: growth of a {@link #needsCo2()} plant without CO2 (it rises to the full speed with a good CO2 level). */
+    public static final double NO_CO2_GROWTH = 0.4;
+
+    /** M28: wants soft, slightly acidic water ({@code features.waterChemistry}): slower in hard or alkaline water. */
+    public boolean softWater() {
+        return this == ROTALA_WALLICHII || this == MYRIOPHYLLUM_RED;
+    }
+
+    /** M28: the species that came after the plant tables became config lists (M22.4); see {@code PlantTables}. */
+    public boolean newerThanConfigLists() {
+        return ordinal() > BUBBLE_TIP_ANEMONE.ordinal();
     }
 
     /** Stages one trim with shears takes off. */

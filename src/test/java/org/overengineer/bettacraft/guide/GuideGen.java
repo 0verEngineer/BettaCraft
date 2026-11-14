@@ -329,7 +329,9 @@ public final class GuideGen {
         tb.row(t("Grows on", "Wächst auf"), p.marine() ? t("reef rock, live rock", "Riffgestein, lebendem Gestein") : switch (p.form()) {
             case EPIPHYTE -> t("stone and wood (also decoration)", "Stein und Holz (auch Deko)");
             case MOSS -> t("any solid block", "jedem festen Block");
-            default -> t("substrate (sand, gravel, dirt, the interior floor)", "Bodengrund (Sand, Kies, Erde, Innenboden)");
+            default -> p.alsoOnHardscape() ? t("substrate (sand, gravel, dirt, the interior floor), also stone and wood",
+                    "Bodengrund (Sand, Kies, Erde, Innenboden), auch Stein und Holz")
+                    : t("substrate (sand, gravel, dirt, the interior floor)", "Bodengrund (Sand, Kies, Erde, Innenboden)");
         });
         tb.row(t("Light", "Licht"), switch (p.light()) {
             case LOW -> t("low", "wenig");
@@ -353,8 +355,15 @@ public final class GuideGen {
         if (p.tinted() && !p.marine()) tb.row(t("Colour", "Farbe"), switch (p.red()) {
             case TIPS -> t("red tips in strong light", "rote Spitzen bei viel Licht");
             case FLAMINGO -> t("whitish pink, brighter in strong light", "weißlich rosa, kräftiger bei viel Licht");
+            case WHITE -> t("greenish; white to pink only in strong light (fully under an LED panel or a high-power LED)",
+                    "grünlich; weiß bis rosa nur bei viel Licht (ganz unter einem LED-Panel oder einer Hochleistungs-LED)");
             default -> t("redder in strong light", "röter bei viel Licht");
         });
+        // M28: the demanding species
+        if (p.needsCo2()) tb.row("CO2", t("needed: without CO2 it grows at " + Math.round(PlantSpecies.NO_CO2_GROWTH * 100) + " % speed",
+                "nötig: ohne CO2 wächst sie mit " + Math.round(PlantSpecies.NO_CO2_GROWTH * 100) + " % Geschwindigkeit"));
+        if (p.softWater()) tb.row(t("Water chemistry", "Wasserchemie"), t("soft water: best up to pH 7 and 300 TDS, slower in hard water",
+                "weiches Wasser: am besten bis pH 7 und 300 TDS, langsamer in hartem Wasser"));
         return tb.render();
     }
 

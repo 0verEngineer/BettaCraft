@@ -16,7 +16,10 @@ enum PlantTex {
     CRYPT("leaf_crypt", true), ELLIPTIC("leaf_elliptic", true), NARROW("leaf_narrow", true), LOTUS_LEAF("lotus_leaf", true),
     LOTUS_PAD("lotus_pad", true), MOSS("moss", true), CORAL_MAT("coral_mat", false), ZOA_POLYP("zoa_polyp", true),
     STAR_POLYP("star_polyp", true), MUSHROOM("mushroom_disc", true), FLESH("coral_flesh", false), ACRO("acro", false),
-    TENTACLE("tentacle", false), TUFT("tuft", true), BUBBLE("bubble", true);
+    TENTACLE("tentacle", false), TUFT("tuft", true), BUBBLE("bubble", true),
+    // M28 part a (appended: the layers of a mesh are indexed by the ordinal); PINTO is coloured, the mesh tints it white
+    COFFEE("leaf_coffee", true), LOBED("leaf_lobed", true), FEATHER("leaf_feather", true), CRISP("leaf_crisp", true),
+    PINTO("leaf_pinto", true);
 
     static final PlantTex[] ALL = values();
 

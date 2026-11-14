@@ -24,6 +24,11 @@ public final class ItemHints {
             "java_fern", "anubias_nana", "bucephalandra_green_wavy", "bucephalandra_brownie_red", "bucephalandra_blue",
             "bucephalandra_mini_needle", "java_moss", "cryptocoryne_wendtii_green", "cryptocoryne_wendtii_brown", "cryptocoryne_flamingo",
             "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "monte_carlo", "red_tiger_lotus",
+            // M28 part a: more Anubias, Bucephalandras and stem plants
+            "anubias_nana_petite", "anubias_pinto", "anubias_white", "anubias_coffeefolia", "anubias_barteri_round_leaf",
+            "bucephalandra_kedagang", "bucephalandra_theia", "bucephalandra_godzilla", "bucephalandra_pink_lady", "bucephalandra_mini_pink",
+            "bucephalandra_snow_white", "ludwigia_super_red", "rotala_hra", "rotala_wallichii", "hygrophila_pinnatifida", "pogostemon_helferi",
+            "limnophila_sessiliflora", "myriophyllum_red", "bacopa_caroliniana",
             "betta_spawn_egg",
             // M14: algae, frogs
             "algae_scraper", "dwarf_frog_bucket", "dwarf_frog_spawn_egg",

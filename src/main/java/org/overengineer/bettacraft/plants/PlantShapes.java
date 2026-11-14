@@ -243,9 +243,34 @@ public final class PlantShapes {
                     rhiz = between(3, 5); leaves = between(6, 9); stalkA = 2; stalkB = 3; bladeA = 16; bladeB = 26; halfW = 1;
                     stalkElevA = 65; stalkElevB = 82; e0A = 62; e0B = 80; droop = 30; nominal = 24;
                 }
-                case ANUBIAS_NANA -> {
+                case ANUBIAS_NANA, ANUBIAS_PINTO, ANUBIAS_WHITE -> {
                     rhiz = between(3, 5); leaves = between(5, 8); stalkA = 2; stalkB = 4; bladeA = 4; bladeB = 6; halfW = 2;
                     stalkElevA = 55; stalkElevB = 75; e0A = 18; e0B = 35; droop = 10; nominal = 8;
+                }
+                // M28: the dwarf "Petite", the larger coffeefolia and "Round Leaf", the Bucephalandras by size
+                case ANUBIAS_PETITE -> {
+                    rhiz = between(2, 3); leaves = between(6, 9); stalkA = 1; stalkB = 2; bladeA = 2; bladeB = 4; halfW = 1;
+                    stalkElevA = 50; stalkElevB = 70; e0A = 15; e0B = 30; droop = 8; nominal = 5;
+                }
+                case ANUBIAS_COFFEEFOLIA -> {
+                    rhiz = between(3, 5); leaves = between(5, 8); stalkA = 3; stalkB = 5; bladeA = 5; bladeB = 8; halfW = 2;
+                    stalkElevA = 60; stalkElevB = 80; e0A = 25; e0B = 45; droop = 15; nominal = 11;
+                }
+                case ANUBIAS_ROUND_LEAF -> {
+                    rhiz = between(3, 5); leaves = between(5, 7); stalkA = 3; stalkB = 5; bladeA = 5; bladeB = 7; halfW = 2;
+                    stalkElevA = 55; stalkElevB = 75; e0A = 15; e0B = 30; droop = 10; nominal = 11;
+                }
+                case BUCE_KEDAGANG -> {
+                    rhiz = between(2, 3); leaves = between(7, 10); stalkA = 1; stalkB = 2; bladeA = 4; bladeB = 6; halfW = 1;
+                    stalkElevA = 45; stalkElevB = 75; e0A = 30; e0B = 60; droop = 15; nominal = 8;
+                }
+                case BUCE_GODZILLA -> {
+                    rhiz = between(3, 4); leaves = between(7, 10); stalkA = 1; stalkB = 2; bladeA = 4; bladeB = 7; halfW = 1;
+                    stalkElevA = 40; stalkElevB = 70; e0A = 25; e0B = 50; droop = 18; nominal = 9;
+                }
+                case BUCE_MINI_PINK -> {
+                    rhiz = 2; leaves = between(8, 12); stalkA = 1; stalkB = 1; bladeA = 2; bladeB = 3; halfW = 1;
+                    stalkElevA = 40; stalkElevB = 75; e0A = 25; e0B = 55; droop = 12; nominal = 5;
                 }
                 case BUCE_MINI_NEEDLE -> {
                     rhiz = between(2, 3); leaves = between(8, 12); stalkA = 1; stalkB = 1; bladeA = 3; bladeB = 5; halfW = 0;
@@ -330,9 +355,14 @@ public final class PlantShapes {
         }
 
         void stems() {
-            int count = s == PlantSpecies.ROTALA ? between(3, 4) : between(2, 3);
-            int nodeEvery = s == PlantSpecies.ROTALA ? 1 : 2;
-            int top = headroom - 1;
+            // M28: Downoi stays a low bush of many short shoots; the fine-leaved stem plants carry leaves on every node
+            boolean bush = s == PlantSpecies.POGOSTEMON_DOWNOI;
+            int count = s == PlantSpecies.ROTALA || bush ? between(3, 4) : between(2, 3);
+            int nodeEvery = switch (s) {
+                case ROTALA, ROTALA_HRA, ROTALA_WALLICHII, LIMNOPHILA_SESSILIFLORA, MYRIOPHYLLUM_RED, POGOSTEMON_DOWNOI -> 1;
+                default -> 2;
+            };
+            int top = bush ? Math.min(headroom - 1, Math.max(3, len(10))) : headroom - 1;
             List<int[]> bases = new ArrayList<>();
             bases.add(new int[]{0, 0});
             List<int[]> around = new ArrayList<>(List.of(NEIGHBOURS));
@@ -367,7 +397,7 @@ public final class PlantShapes {
                     }
                 }
                 // at the surface the tops run along it (they shade the tank below)
-                if (height >= top - 1 && si < 2) {
+                if (!bush && height >= top - 1 && si < 2) {
                     int run = len(between(2, 5));
                     int[] d = DIRS[r.nextInt(4)];
                     for (int k = 1; k <= run; k++) {

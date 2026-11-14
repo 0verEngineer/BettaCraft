@@ -14,6 +14,10 @@ import org.overengineer.bettacraft.world.AquaticPlantFishingModifier;
  * M22.4: the plant tables of the net and of fishing as server config lists ({@code "plant_id=weight"}), so modpacks can
  * change them; the defaults are the tables of {@link WildTables}, which the handbook prints. Unknown ids and broken entries
  * are skipped.
+ * <p>
+ * M28: a list that is still exactly the default of before the new species (a config file written by an older version and
+ * never changed) counts as the default, so an updated mod brings up its new plants without editing the config; a list a
+ * pack changed stays as it is.
  */
 public final class PlantTables {
     private PlantTables() {}
@@ -71,8 +75,25 @@ public final class PlantTables {
         Parsed p = CACHE.get(key);
         if (p != null && p.source() == list) return p.table();
         WeightedTable<PlantSpecies> t = fromList(list);
+        if (sameEntries(t, older(def))) t = def;
         CACHE.put(key, new Parsed(list, t));
         return t;
+    }
+
+    /** M28: a default table without the species that came after the config lists (what an older version wrote). */
+    public static WeightedTable<PlantSpecies> older(WeightedTable<PlantSpecies> def) {
+        WeightedTable.Builder<PlantSpecies> b = WeightedTable.builder();
+        for (var e : def.entries()) if (!e.value().newerThanConfigLists()) b.add(e.value(), e.weight());
+        return b.build();
+    }
+
+    /** The same species with the same weights (the order does not matter). */
+    static boolean sameEntries(WeightedTable<PlantSpecies> a, WeightedTable<PlantSpecies> b) {
+        if (a.entries().size() != b.entries().size() || a.total() != b.total()) return false;
+        Map<PlantSpecies, Integer> m = new java.util.EnumMap<>(PlantSpecies.class);
+        for (var e : a.entries()) m.merge(e.value(), e.weight(), Integer::sum);
+        for (var e : b.entries()) if (m.merge(e.value(), -e.weight(), Integer::sum) != 0) return false;
+        return true;
     }
 
     /** The plants the net brings up in this water (server config). */

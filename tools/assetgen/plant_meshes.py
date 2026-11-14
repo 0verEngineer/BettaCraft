@@ -17,6 +17,9 @@ above the cut-out threshold where the leaf is).
 
 M22.1: every other plant and coral (``M22_1`` below: leaves of each species, moss, polyps, coral tissue, tentacles).
 
+M28 part a: the puckered coffeefolia leaf, the lobed Hygrophila pinnatifida leaf, the feathery whorl leaf (Myriophyllum,
+Limnophila), the crisped Downoi leaf and the white marbled Anubias "Pinto" leaf (the only coloured one: tinted white).
+
 Run from the repo root:  py tools/assetgen/plant_meshes.py
 """
 from __future__ import annotations
@@ -374,6 +377,130 @@ def bubble():
     return _finish(v, inside)
 
 
+# ---------------------------------------------------------------------------- M28 part a
+
+def _ovate_w(t):
+    if t < 0.06:
+        return 0.06 * t / 0.06
+    s = (t - 0.06) / 0.94
+    return 0.49 * math.sin(math.pi * min(1.0, s)) ** 0.6 * (1.0 - 0.15 * s)
+
+
+def leaf_pinto():
+    """Anubias "Pinto": the ovate anubias leaf, green with white marbling. Coloured (the mesh tints it white), the
+    marbling in streaks along the lateral veins."""
+    grey = _leaf(_ovate_w, 6, 0.10, 2801)
+    r = _rng(2811)
+    from PIL import Image
+    low = (r.random((7, 12)) * 255).astype(np.uint8)
+    big = np.asarray(Image.fromarray(low).resize((N, N), Image.BICUBIC), np.float64) / 255
+    ys, xs = np.mgrid[0:N, 0:N]
+    u = (xs + 0.5) / N - 0.5
+    t = (ys + 0.5) / N
+    streak = 0.5 + 0.5 * np.sin((t + np.abs(u) * 1.2) * 6 * 2 * math.pi + big * 5)
+    white = np.clip((big * 0.75 + streak * 0.45 - 0.62) * 5, 0, 1)
+    v = grey[..., 0]
+    a = grey[..., 3]
+    green = np.stack([0.22 * v + 0.02, 0.50 * v + 0.04, 0.20 * v + 0.02], -1)
+    pale = np.stack([0.96 * v + 0.06, 0.98 * v + 0.06, 0.90 * v + 0.06], -1)
+    rgb = np.clip(green * (1 - white[..., None]) + pale * white[..., None], 0, 1)
+    out = np.zeros_like(grey)
+    out[..., :3] = rgb * a[..., None]
+    out[..., 3] = a
+    return out
+
+
+def _mini_rgb(img, grow: int = 2, flat: float = 0.6):
+    """``_mini`` for a coloured texture: per channel flattened towards the mean, the mean bled outwards."""
+    a = img[..., 3] > 0.5
+    out = np.zeros_like(img)
+    for c in range(3):
+        v = img[..., c]
+        mean = v[a].mean() if a.any() else 0.8
+        out[..., c] = np.clip(np.where(a, mean + (v - mean) * flat + 0.04, mean + 0.04), 0, 1)
+    grown = a.copy()
+    for _ in range(grow):
+        g = grown.copy()
+        g[1:, :] |= grown[:-1, :]
+        g[:-1, :] |= grown[1:, :]
+        g[:, 1:] |= grown[:, :-1]
+        g[:, :-1] |= grown[:, 1:]
+        grown = g
+    out[..., 3] = grown.astype(np.float64)
+    return out
+
+
+def leaf_coffee():
+    """Anubias coffeefolia: the ovate leaf, puckered between deeply sunken lateral veins."""
+    img = _leaf(_ovate_w, 0, 0.12, 2802)
+    ys, xs = np.mgrid[0:N, 0:N]
+    u = (xs + 0.5) / N - 0.5
+    t = (ys + 0.5) / N
+    phase = (t + np.abs(u) * 1.1) * 8
+    f = phase - np.floor(phase)
+    pucker = 0.10 * np.sin(f * math.pi) - 0.16 * (np.abs(f - 0.5) > 0.42)
+    img[..., :3] += (pucker * (img[..., 3] > 0))[..., None]
+    img[..., :3] = np.clip(img[..., :3], 0, 1) * img[..., 3:4]
+    return img
+
+
+def leaf_lobed():
+    """Hygrophila pinnatifida: a lanceolate leaf cut deeply into rounded lobes on both sides."""
+    def w(t):
+        if t > 0.97:
+            return 0.0
+        base = 0.42 * math.sin(math.pi * min(1.0, t ** 0.85)) ** 0.8
+        lobe = abs(math.sin(t * math.pi * 5.5))
+        return max(0.035, base * (0.25 + 0.75 * lobe ** 0.6)) if t > 0.08 else base
+    return _leaf(w, 0, 0.12, 2803)
+
+
+def leaf_feather():
+    """Myriophyllum, Limnophila: one feathery leaf of a whorl, a midrib with fine filaments either side."""
+    ys, xs = np.mgrid[0:N, 0:N]
+    u = (xs + 0.5) / N - 0.5
+    t = (ys + 0.5) / N
+    r = _rng(2804)
+    half = 0.46 * np.sin(np.pi * np.clip(t, 0, 1)) ** 0.7
+    rib = np.abs(u) < 0.035
+    # filaments slanting towards the tip, about 9 a side
+    phase = (t + np.abs(u) * 0.9) * 9
+    fil = (np.abs(phase - np.round(phase)) < 0.13) & (np.abs(u) <= half)
+    inside = (rib & (t < 0.98)) | fil
+    v = 0.84 - 0.10 * rib + r.normal(0, 0.02, (N, N))
+    return _finish(v, inside)
+
+
+def leaf_crisp():
+    """Pogostemon helferi "Downoi": a narrow leaf with a strongly crisped, toothed margin."""
+    def w(t):
+        if t > 0.97:
+            return 0.0
+        base = 0.34 * math.sin(math.pi * min(1.0, t ** 0.9)) ** 0.75
+        return max(0.0, base * (1.0 + 0.22 * math.sin(t * math.pi * 2 * 9)))
+    img = _leaf(w, 5, 0.12, 2805)
+    ys, xs = np.mgrid[0:N, 0:N]
+    t = (ys + 0.5) / N
+    img[..., :3] += (0.06 * np.sin(t * math.pi * 2 * 9)[..., None]) * (img[..., 3:4] > 0)
+    img[..., :3] = np.clip(img[..., :3], 0, 1) * img[..., 3:4]
+    return img
+
+
+M28 = {"leaf_coffee": (leaf_coffee, 2), "leaf_lobed": (leaf_lobed, 2), "leaf_feather": (leaf_feather, 2), "leaf_crisp": (leaf_crisp, 2)}
+
+
+def write_m28() -> list:
+    out = []
+    for name, (gen, grow) in M28.items():
+        img = gen()
+        out.append(save_png(img, OUT / f"{name}.png"))
+        out.append(save_png(_mini(img, grow=grow), OUT / f"{name}_mini.png"))
+    pinto = leaf_pinto()
+    out.append(save_png(pinto, OUT / "leaf_pinto.png"))
+    out.append(save_png(_mini_rgb(pinto), OUT / "leaf_pinto_mini.png"))
+    return out
+
+
 # texture name -> (generator, mini variant: None = none, else the dilation in texels)
 M22_1 = {
     "leaf_lance": (leaf_lance, 2), "leaf_wavy": (leaf_wavy, 2), "leaf_needle": (leaf_needle, 2),
@@ -400,7 +527,7 @@ def write_all() -> list:
     return [save_png(lr, OUT / "leaf_round.png"), save_png(lo, OUT / "leaf_ovate.png"),
             save_png(rb, OUT / "ribbon.png"), save_png(stem(), OUT / "stem.png"),
             save_png(_mini(lr), OUT / "leaf_round_mini.png"), save_png(_mini(lo), OUT / "leaf_ovate_mini.png"),
-            save_png(_mini(rb, grow=1), OUT / "ribbon_mini.png")] + write_m22_1()
+            save_png(_mini(rb, grow=1), OUT / "ribbon_mini.png")] + write_m22_1() + write_m28()
 
 
 if __name__ == "__main__":
