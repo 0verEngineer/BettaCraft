@@ -59,8 +59,13 @@ block.
   skimmer, flow pump, reef rock and live rock, actinic light. Eight corals and the bubble tip anemone grow on reef
   rock in the interior with light, flow and calcium, bleach or glow, and give frags. Clownfish (they spawn at their
   anemone), yellow tang, watchman goby, green chromis, yellowtail damsel, cleaner shrimp, hermit crabs, turbo snails.
+- **Seahorses:** the lined seahorse (dark, yellow, orange) and the dwarf seahorse swim slowly and upright and curl
+  their tail round plants, corals, seagrass, kelp or decoration; they need calm water (no strong pumps), live food
+  (artemia, larvae) twice a day and calm tankmates. The female lays her eggs into the brood pouch of the male, who
+  gives birth to fry that eat artemia from the start (`features.seahorses`).
 - **Power (optional):** a server can make heaters, coolers, filters and lights need Forge Energy from any FE mod.
 - **Live food breeding:** a larva tub for mosquito larvae and an artemia hatchery for nauplii, both with hoppers.
+  Jars of artemia cysts (16 uses each) stack to 16, or 32 or 64 by server config.
 - **Breeding:** conditioning with live food, bubble nest, spawning, eggs, larvae and six life stages. Take the
   female out after spawning and the male once the fry swim, or they get hurt or eaten. Fry need infusoria and
   artemia nauplii, which you culture yourself.
@@ -86,7 +91,7 @@ block.
 - **Tank menu:** overview with target temperature, inhabitants with genotype, breeding tab with Punnett squares,
   interior and log; name sign on the glass (its size is a client setting), a lock for the owner and a break protection
   that stops everyone (also the owner, creative, explosions and pistons) from breaking the aquarium.
-- **Handbook and progression:** 72 handbook pages in English and German (with GuideME) and 29 advancements.
+- **Handbook and progression:** 73 handbook pages in English and German (with GuideME) and 29 advancements.
 - **Languages:** English and German.
 
 ## Requirements

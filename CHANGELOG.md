@@ -4,6 +4,36 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.14.1-beta.1] - 2026-11-14
+
+Seahorses (`features.seahorses`), stacking artemia cyst jars, a visible clear glass tank icon.
+
+### Added
+- **Seahorses** for reef tanks: the **lined seahorse** (*Hippocampus erectus*; dark, yellow or orange) and the **dwarf
+  seahorse** (*Hippocampus zosterae*), own upright model with a curling tail, a fluttering dorsal fin and the male's
+  brood pouch. They swim slowly and spend most of the time **holding on to a hitching post** with their tail:
+  aquarium plants, corals, decoration, vanilla seagrass and kelp that stick up in the tank interior. Without a post
+  they lie on the bottom and are stressed; **strong flow** (pumps, strong filters; `seahorses.maxFlow`) stresses them
+  too. They eat **only live food** (mosquito larvae, artemia nauplii; the fry artemia from birth), need it **twice a
+  day** (`seahorses.feedingsPerDay`) and are slow eaters next to fast fish. Tangs, damselfish, chromis and clownfish
+  harass them. Sea water and strong brackish water (20-42 ‰); the lined seahorse likes it cooler (18-27 °C).
+- **Brood pouch**: a fit pair breeds at 21-25 °C (dwarf 24-27 °C): the female lays her eggs into the male's pouch, his
+  belly swells, and after `seahorses.pouchDays` (4) he gives birth to the fry. Menu: holds on to a post, current too
+  strong, nothing to hold on to, brood pouch full; breeding tab with the hitching posts and full pouches.
+- Seahorses from the aquarium net in lukewarm and warm oceans and, rarely, from the wandering trader; seahorse bucket
+  icon, JEI care sheets, handbook page "Seahorses" (en, de), showcase row.
+- Config `seahorses.*` (maxFlow, needHitchingPosts, feedingsPerDay, foodShareWithFastFish, harassedByFastFish,
+  pouchDays) and `features.seahorses`, en and de labels.
+
+### Changed
+- **Artemia cyst jars stack**: 16 per stack by default, 32 or 64 with `food.artemiaCystStackSize` (server config, sent
+  to the clients at login and when the config is reloaded). Every jar keeps its 16 uses; only jars with the same uses
+  left stack together. Crafting a hatchery from a stack takes one jar off it and gives it back with one use less; the
+  artemia hatchery opens one jar of a stack at a time and uses it up first (breaking it drops the open jar). Jars of
+  older worlds keep their uses. A smaller new stack size leaves bigger stacks as they are.
+- The **clear glass tank item** shows a faint tinted pane with highlights and a one-pixel frame; it was almost
+  invisible in the inventory. The placed block is unchanged.
+
 ## [1.14.0-beta.1] - 2026-11-14
 
 Build pipeline and releases. No gameplay changes.
