@@ -237,6 +237,13 @@ neoForge {
                 // M28: -Pgallery=id,id,... only these species (no handbook pictures)
                 if (project.hasProperty('gallery')) systemProperty 'bettacraft.smoketest.gallery', project.property('gallery')
             }
+            if (project.hasProperty('smoketestm28b')) {
+                // gradlew runClient -Psmoketestm28b : only the M28 part b scene (carpets, mosses, Riccia, the rolling Marimo, the
+                // tubers, the hammer and mushroom coral of shape version 1 and 3, water lettuce, hornwort, floating Riccia; add
+                // -Pshaders for Complementary)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m28bonly', 'true'
+            }
             if (project.hasProperty('smoketestm28')) {
                 // gradlew runClient -Psmoketestm28 : only the M28 part a scene (the new Anubias, Bucephalandras and stem plants inside
                 // and outside, near and far; the white and pink Bucephalandras under the light bar and under a high-power LED;

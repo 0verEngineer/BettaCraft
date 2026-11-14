@@ -410,14 +410,16 @@ M22_2_BOX = {"fish": (160, 160, 1120, 800), "critter": (160, 200, 1120, 840), "f
              "tall": (160, 100, 1120, 740), "low": (300, 360, 980, 813)}
 M22_2_CRITTERS = {"zebra_nerite", "horned_nerite", "olive_nerite", "red_nerite", "yellow_nerite", "apple_snail", "ramshorn", "bladder_snail",
                   "trumpet_snail", "assassin_snail", "cleaner_shrimp", "hermit_crab", "turbo_snail"}
-M22_2_FLOATING = {"duckweed", "amazon_frogbit", "salvinia", "red_root_floater"}
+M22_2_FLOATING = {"duckweed", "amazon_frogbit", "salvinia", "red_root_floater", "water_lettuce", "hornwort"}
 M22_2_FISH = {"ocellaris_clownfish", "yellow_tang", "yellow_watchman_goby", "green_chromis", "yellowtail_damsel", "lined_seahorse", "dwarf_seahorse"}
 # plants and corals that reach up through the tank (the others sit low: a closer crop)
 M22_2_TALL = {"java_fern", "amazon_sword", "rotala_rotundifolia", "ludwigia_repens", "alternanthera_reineckii", "vallisneria", "red_tiger_lotus",
               "acropora", "hammer_coral",
               # M28 part a: the new stem plants (Downoi stays low)
               "ludwigia_super_red", "rotala_hra", "rotala_wallichii", "hygrophila_pinnatifida", "limnophila_sessiliflora", "myriophyllum_red",
-              "bacopa_caroliniana"}
+              "bacopa_caroliniana",
+              # M28 part b: the tubers reach the surface
+              "aponogeton_ulvaceus", "nymphaea_lotus_green"}
 
 
 def m22_2(out_en: Path) -> None:
