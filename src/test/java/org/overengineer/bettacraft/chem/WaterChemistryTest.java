@@ -2,6 +2,7 @@ package org.overengineer.bettacraft.chem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -120,6 +121,12 @@ class WaterChemistryTest {
         for (CritterSpecies s : CritterSpecies.values()) {
             var r = ChemTolerance.critter(s);
             double ph = s.marine() ? WaterChemistry.SEA_PH : WaterChemistry.TAP_PH;
+            // M25 part c: the Caridina came after the water chemistry and need soft water (no old tank holds them)
+            if (s == CritterSpecies.CARIDINA) {
+                assertFalse(r.contains(ph, WaterChemistry.TAP_TDS), "Caridina need soft water");
+                assertTrue(r.contains(6.2, 150), r.describe());
+                continue;
+            }
             assertTrue(r.contains(ph, WaterChemistry.TAP_TDS), s + " " + r.describe());
         }
         assertTrue(ChemTolerance.BETTA.contains(WaterChemistry.TAP_PH, WaterChemistry.TAP_TDS));

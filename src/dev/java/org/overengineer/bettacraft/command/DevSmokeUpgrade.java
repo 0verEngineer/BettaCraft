@@ -74,6 +74,8 @@ public final class DevSmokeUpgrade {
     private static int m23Checked;
     /** M24: tanks of the old world checked (nitrate starts at 0, no water change noted, no bulkhead). */
     private static int m24Checked;
+    /** M25 part c: old tanks whose alkalinity and magnesium follow their salt. */
+    private static int m25cChecked;
     /** M25 part b: old sea water buckets found in the chests (they must give other mods the sea water fluid). */
     private static int seaBuckets;
 
@@ -129,6 +131,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} filters and lights run at full power, undimmed (M23)", m23Checked);
                 LOGGER.info("[smoketest] upgrade: {} tanks start with nitrate 0 and no water change (M24)", m24Checked);
                 LOGGER.info("[smoketest] upgrade: {} sea water buckets give the sea water fluid (M25)", seaBuckets);
+                LOGGER.info("[smoketest] upgrade: {} tanks with alkalinity and magnesium of their salt (M25c)", m25cChecked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -293,6 +296,11 @@ public final class DevSmokeUpgrade {
             // M25: tanks of earlier versions hold tap water and no animal of ours minds it
             if (Math.abs(t.tds() - org.overengineer.bettacraft.chem.WaterChemistry.TAP_TDS) > 5 || Math.abs(t.ph() - org.overengineer.bettacraft.chem.WaterChemistry.startPh(t.salinity())) > 0.1)
                 problems.add("tank " + c.getBlockPos().toShortString() + ": TDS " + t.tds() + " / pH " + t.ph() + " instead of tap water");
+            // M25 part c: alkalinity and magnesium of an old tank follow its salt (sea water: 8 dKH, 1300 mg/L; fresh: tap water)
+            if (Math.abs(t.kh() - org.overengineer.bettacraft.chem.WaterChemistry.khOf(t.salinity())) > 0.3
+                    || Math.abs(t.magnesium() - org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(t.salinity())) > 20)
+                problems.add("tank " + c.getBlockPos().toShortString() + ": KH " + t.kh() + " / Mg " + t.magnesium() + " instead of the values of its salt");
+            else m25cChecked++;
             for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, t)) {
                 if (org.overengineer.bettacraft.chem.TankChemistry.off(t, org.overengineer.bettacraft.chem.ChemTolerance.of(e)))
                     problems.add("tank " + c.getBlockPos().toShortString() + ": the water does not suit " + e.getName().getString());

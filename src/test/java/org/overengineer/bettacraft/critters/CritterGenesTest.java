@@ -33,6 +33,34 @@ class CritterGenesTest {
         assertEquals("variety.bettacraft.neocaridina.sakura", CritterGenes.pure(RED, 0.4F).varietyKey(n));
     }
 
+    /** M25 part c: the Caridina lines, the Taiwan bee factor and the banding grades. */
+    @Test
+    void caridinaLinesAndBandingGrades() {
+        CritterSpecies c = CritterSpecies.CARIDINA;
+        assertEquals("wild", CritterGenes.WILD.variety(c));
+        assertEquals("crystal_red", CritterGenes.pure(CritterGenes.CARIDINA_RED, 0.2F).variety(c));
+        assertEquals("crystal_red_s", CritterGenes.pure(CritterGenes.CARIDINA_RED, 0.5F).variety(c));
+        assertEquals("crystal_red_ss", CritterGenes.pure(CritterGenes.CARIDINA_RED, 0.7F).variety(c));
+        assertEquals("crystal_red_sss", CritterGenes.pure(CritterGenes.CARIDINA_RED, 0.9F).variety(c));
+        assertEquals("crystal_black_ss", CritterGenes.pure(CritterGenes.CARIDINA_BLACK, 0.65F).variety(c));
+        assertEquals("blue_bolt", CritterGenes.pure(CritterGenes.CARIDINA_TAIWAN, 0.5F).variety(c));
+        assertEquals("orange_eye_blue_tiger", CritterGenes.pure(CritterGenes.CARIDINA_TIGER, 0.5F).variety(c));
+        int wine = (1 << CritterGenes.CARIDINA_TAIWAN) | (1 << CritterGenes.CARIDINA_RED);
+        assertEquals("wine_red", new CritterGenes(wine, wine, 0.5F).variety(c), "Taiwan bee on the red line");
+        assertEquals(CritterGenes.WINE_RED, new CritterGenes(wine, wine, 0.5F).color(c));
+        int bolt = (1 << CritterGenes.CARIDINA_TAIWAN) | (1 << CritterGenes.CARIDINA_BLACK);
+        assertEquals("blue_bolt", new CritterGenes(bolt, bolt, 0.5F).variety(c), "Taiwan bee on the black line");
+        int tibee = (1 << CritterGenes.CARIDINA_TIGER) | (1 << CritterGenes.CARIDINA_RED);
+        assertEquals("wild", new CritterGenes(tibee, tibee, 0.5F).variety(c), "tiger x bee falls back");
+        // the client only knows colour and grade
+        assertEquals("wine_red", CritterGenes.varietyOf(c, CritterGenes.WINE_RED, 0.3F));
+        assertEquals("crystal_black_sss", CritterGenes.varietyOf(c, CritterGenes.CARIDINA_BLACK, 0.95F));
+        assertEquals(3, CritterGenes.banding(0.9F));
+        // the Neocaridina keep their names
+        assertEquals("chocolate", CritterGenes.varietyOf(CritterSpecies.NEOCARIDINA, CritterGenes.CHOCOLATE, 0.5F));
+        assertEquals("wild", CritterGenes.varietyOf(CritterSpecies.NEOCARIDINA, CritterGenes.WINE_RED, 0.5F));
+    }
+
     @Test
     void mixedColoursFallBackToTheWildFormAndComeBackInF2() {
         Random rnd = new Random(1);

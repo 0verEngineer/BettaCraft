@@ -174,6 +174,31 @@ class CritterSimTest {
         assertTrue(l.stream().anyMatch(c -> c.generation == 1 && c.adult()), "young grow up");
     }
 
+    /** M25 part c: Caridina breed among themselves, but never with the Neocaridina. */
+    @Test
+    void caridinaDoNotCrossWithNeocaridina() {
+        Random rnd = new Random(25);
+        AtomicInteger ids = new AtomicInteger(10);
+        List<Critter> mixed = new ArrayList<>(List.of(adult(1, CritterSpecies.NEOCARIDINA, true), adult(2, CritterSpecies.CARIDINA, false),
+                adult(3, CritterSpecies.CARIDINA, true), adult(4, CritterSpecies.NEOCARIDINA, false)));
+        mixed.get(1).genes = CritterGenes.pure(CritterGenes.CARIDINA_RED, 0.5F);
+        mixed.get(2).genes = CritterGenes.pure(CritterGenes.CARIDINA_RED, 0.5F);
+        for (int i = 0; i < 24 * 30; i++) {
+            CritterLife.step(mixed, new ArrayList<>(), env(0.9F, 22, 0, 0, true), 1.0 / 24, new double[]{100}, rnd, ids::getAndIncrement);
+        }
+        long caridina = mixed.stream().filter(c -> c.generation == 1 && c.species == CritterSpecies.CARIDINA).count();
+        assertTrue(caridina >= 2, "the bee shrimp bred: " + caridina);
+        // every young Caridina is a crystal red (red x red), and every young Neocaridina wild (wild x wild): no hybrids
+        assertTrue(mixed.stream().filter(c -> c.generation == 1 && c.species == CritterSpecies.CARIDINA)
+                .allMatch(c -> c.genes.variety(CritterSpecies.CARIDINA).startsWith("crystal_red")), "red x red gives crystal reds");
+        assertTrue(mixed.stream().filter(c -> c.generation == 1 && c.species == CritterSpecies.NEOCARIDINA)
+                .allMatch(c -> c.genes.carried() == 0), "no colour of the Caridina in a Neocaridina");
+        // a lone Neocaridina female with Caridina males: nothing
+        List<Critter> lone = new ArrayList<>(List.of(adult(1, CritterSpecies.NEOCARIDINA, true), adult(2, CritterSpecies.CARIDINA, false)));
+        for (int i = 0; i < 24 * 20; i++) CritterLife.step(lone, new ArrayList<>(), env(0.9F, 22, 0, 0, true), 1.0 / 24, new double[]{100}, rnd, ids::getAndIncrement);
+        assertTrue(lone.stream().noneMatch(c -> c.generation == 1) && !lone.get(0).berried(), "no young without a mate of the own species");
+    }
+
     @Test
     void neritesNeverBreedOthersSlowly() {
         Random rnd = new Random(8);

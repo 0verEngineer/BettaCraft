@@ -163,6 +163,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m21_8only', 'true'
             }
+            if (project.hasProperty('smoketestm25c')) {
+                // gradlew runClient -Psmoketestm25c : only the M25 part c scene (Caridina lines in soft water, cardinal shrimp and
+                // Tylomelania in hard water, the dosing pump at a reef tank with its window en + de)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m25conly', 'true'
+            }
             if (project.hasProperty('smoketestm25')) {
                 // gradlew runClient -Psmoketestm25 : only the M25 part b scene (a tank with a CO2 cylinder and a bio CO2 bottle, the
                 // filling station on a burning furnace, the reverse osmosis unit at a water source, the cylinder's regulator screen
