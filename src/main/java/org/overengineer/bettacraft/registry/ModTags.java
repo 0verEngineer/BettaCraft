@@ -77,6 +77,8 @@ public final class ModTags {
     public static final TagKey<Block> PLANT_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("plant_substrate"));
     /** M25: substrate that lowers the pH and softens the water (soil, mud). */
     public static final TagKey<Block> ACID_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("acid_substrate"));
+    /** M25 part d: active soil: as substrate it lowers the pH and the hardness at full strength (the soil tag counts half). */
+    public static final TagKey<Block> ACTIVE_SOIL = TagKey.create(Registries.BLOCK, BettaCraft.id("active_soil"));
     /** M25: limestone: as substrate or rocks in the tank it raises the pH and hardens the water. */
     public static final TagKey<Block> LIMESTONE = TagKey.create(Registries.BLOCK, BettaCraft.id("limestone"));
     /** M25: driftwood in the tank (logs, roots): releases tannins, lowers the pH a little. */

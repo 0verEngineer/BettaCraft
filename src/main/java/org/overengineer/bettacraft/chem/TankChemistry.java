@@ -38,25 +38,34 @@ public final class TankChemistry {
     }
 
     /**
-     * What sets the pH of a tank besides the water itself (each 0..1): soil and limestone of the floor (limestone rocks
-     * count half), peat in the filters, tannins of almond leaves, driftwood.
+     * M25 part d: how much a floor block of plain soil ({@code #bettacraft:acid_substrate}: dirt, mud, podzol ...) counts
+     * against {@link org.overengineer.bettacraft.registry.ModTags#ACTIVE_SOIL active soil}: half (it still lowers the pH a
+     * little, but only active soil keeps the water soft enough for bee shrimp).
      */
-    public record Drivers(double acid, double alkaline, double peat, double tannin, double wood) {
-        public static final Drivers NONE = new Drivers(0, 0, 0, 0, 0);
+    public static final double DIRT_SHARE = 0.5;
+
+    /**
+     * What sets the pH of a tank besides the water itself (each 0..1): soil and limestone of the floor (limestone rocks
+     * count half), peat in the filters, tannins of almond leaves, driftwood. {@code acid} is the soil share (active soil
+     * fully, plain soil {@link #DIRT_SHARE}); {@code activeSoil} the share of the floor covered with active soil.
+     */
+    public record Drivers(double acid, double alkaline, double peat, double tannin, double wood, double activeSoil) {
+        public static final Drivers NONE = new Drivers(0, 0, 0, 0, 0, 0);
     }
 
     /** Pure: the drivers from the counts of the interior (floor blocks, rock and wood blocks at the interior scale). */
-    public static Drivers drivers(int floorBlocks, int acidFloor, int limeFloor, int limeRocks, int driftwood, int scale,
+    public static Drivers drivers(int floorBlocks, int activeSoil, int acidFloor, int limeFloor, int limeRocks, int driftwood, int scale,
                                   double waterBlocks, double peatBlocks, double tannin) {
         double floor = Math.max(1, floorBlocks);
         double volume = Math.pow(Math.max(1, scale), 3) * Math.max(1.0, waterBlocks);
         // rocks and wood: a tenth of the water volume counts fully
         double rocks = Math.min(1.0, limeRocks * 10.0 / volume);
-        double acid = Math.min(1.0, acidFloor / floor);
+        double active = Math.min(1.0, activeSoil / floor);
+        double acid = Math.min(1.0, (activeSoil + DIRT_SHARE * acidFloor) / floor);
         double alkaline = Math.min(1.0, limeFloor / floor + 0.5 * rocks);
         double wood = Math.min(1.0, driftwood * 10.0 / volume);
         double peat = Math.min(1.0, Math.max(0, peatBlocks) / Math.max(1.0, waterBlocks));
-        return new Drivers(acid, alkaline, peat, WaterChemistry.clamp01(tannin), wood);
+        return new Drivers(acid, alkaline, peat, WaterChemistry.clamp01(tannin), wood, active);
     }
 
     /** The drivers of this tank now (the counts of its interior, the peat of its multiblock filters, the leaves). */
@@ -65,8 +74,8 @@ public final class TankChemistry {
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
         InteriorEquipment eq = r != null && r.built() ? InteriorManager.equipment(level.getServer(), r) : null;
         double peat = MultiblockFilter.peat(level, c);
-        if (eq == null) return drivers(0, 0, 0, 0, 0, 16, t.waterBlocks(), peat, t.tannin());
-        return drivers(eq.floorBlocks(), eq.acidFloor(), eq.limeFloor(), eq.limeRocks(), eq.driftwood(), r.scale(), t.waterBlocks(), peat, t.tannin());
+        if (eq == null) return drivers(0, 0, 0, 0, 0, 0, 16, t.waterBlocks(), peat, t.tannin());
+        return drivers(eq.floorBlocks(), eq.activeSoil(), eq.acidFloor(), eq.limeFloor(), eq.limeRocks(), eq.driftwood(), r.scale(), t.waterBlocks(), peat, t.tannin());
     }
 
     public static WaterChemistry.Inputs inputs(TankData t, Drivers d) {
@@ -84,7 +93,7 @@ public final class TankChemistry {
     public static double tdsPerDay(ServerLevel level, TankBlockEntity c, Drivers d) {
         TankData t = c.getTank();
         if (!enabled() || t.waterMb() <= 0) return 0;
-        double waste = TankNitrate.difficulty() == WaterChangeDifficulty.OFF ? 0 : ServerConfig.getOr(ServerConfig.CHEM_TDS_PER_DAY, 1.5);
+        double waste = TankNitrate.difficulty() == WaterChangeDifficulty.OFF ? 0 : ServerConfig.getOr(ServerConfig.CHEM_TDS_PER_DAY, WaterChemistry.WASTE_TDS_PER_DAY);
         return WaterChemistry.tdsPerDay(t.tds(), TankNitrate.load(level, t), waste, d.acid(), d.alkaline());
     }
 

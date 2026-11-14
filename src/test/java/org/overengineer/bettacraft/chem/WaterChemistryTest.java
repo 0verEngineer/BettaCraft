@@ -80,6 +80,51 @@ class WaterChemistryTest {
         assertEquals(500F, WaterChemistry.concentrate(250F, 2000, 1000, WaterChemistry.TDS_MAX), 1e-3);
     }
 
+    /** One game year of a 3x3x3 tank (27 water blocks, 9 open on top, 27 °C), normally stocked, topped off every day with normal water. */
+    private static float[] year(int changeEveryDays, double share) {
+        long water = 27_000;
+        long lost = Math.round(org.overengineer.bettacraft.tank.WaterQuality.evaporationPerDay(9, 27F, 20.0));
+        float tds = WaterChemistry.TAP_TDS;
+        float[] days = new float[365];
+        for (int d = 0; d < 365; d++) {
+            tds = WaterChemistry.stepTds(tds, WaterChemistry.tdsPerDay(tds, 1, WaterChemistry.WASTE_TDS_PER_DAY, 0, 0), 1);
+            tds = WaterChemistry.evaporateTds(tds, water, lost);
+            tds = WaterChemistry.mix(tds, water - lost, WaterChemistry.TAP_TDS, lost); // the level sensor tops off
+            if (changeEveryDays > 0 && (d + 1) % changeEveryDays == 0) {
+                long change = Math.round(water * share);
+                tds = WaterChemistry.mix(tds, water - change, WaterChemistry.TAP_TDS, change);
+            }
+            days[d] = tds;
+        }
+        return days;
+    }
+
+    @Test
+    void topOffAloneClimbsButWaterChangesHoldTheTds() {
+        // M25 part d: evaporation + top-off + 25 % water change every 14 days: the TDS settles near the normal water's
+        float[] y = year(14, 0.25);
+        float lo = Float.MAX_VALUE, hi = 0, hiMid = 0, hiEnd = 0;
+        for (int d = 60; d < 365; d++) {
+            lo = Math.min(lo, y[d]);
+            hi = Math.max(hi, y[d]);
+            if (d >= 150 && d < 240) hiMid = Math.max(hiMid, y[d]);
+            if (d >= 275) hiEnd = Math.max(hiEnd, y[d]);
+        }
+        assertTrue(lo > WaterChemistry.TAP_TDS && hi < WaterChemistry.TAP_TDS * 1.3F, "band " + lo + ".." + hi);
+        assertTrue(hi - lo < 40, "narrow band " + lo + ".." + hi);
+        assertTrue(Math.abs(hiEnd - hiMid) < 2, "settled, does not keep rising: " + hiMid + " -> " + hiEnd);
+        assertEquals(WaterChemistry.Hardness.MEDIUM, WaterChemistry.hardness(hi, 0, 0, false), "stays medium hard");
+        // weekly changes hold it even closer
+        float[] w = year(7, 0.25);
+        assertTrue(w[364] < y[364] || w[364] < WaterChemistry.TAP_TDS * 1.2F, "weekly " + w[364]);
+        // only topping off with normal water: it climbs for months (wanted, as in the real hobby)
+        float[] t = year(0, 0);
+        assertTrue(t[89] > hi && t[179] > t[89] + 20 && t[364] > t[179] + 20 && t[364] > 400, "top-off only " + t[89] + " " + t[179] + " " + t[364]);
+        // soft water leaves no lime scale: evaporation concentrates it fully
+        assertEquals(100F, WaterChemistry.evaporateTds(50F, 2000, 1000), 1e-3);
+        assertTrue(WaterChemistry.evaporateTds(250F, 2000, 1000) < 400F, "hard water: part of it settles as lime scale");
+    }
+
     @Test
     void mixingAndAdditives() {
         assertEquals(125F, WaterChemistry.mix(250F, 1000, 0F, 1000), 1e-4);
@@ -101,12 +146,18 @@ class WaterChemistryTest {
     void driversFromTheInterior() {
         // half the floor soil, a 16-scale tank of 8 water blocks with a tenth of its volume in limestone rocks
         int vol = 16 * 16 * 16 * 8;
-        var d = TankChemistry.drivers(100, 50, 0, vol / 10, 0, 16, 8, 4, 0.2);
-        assertEquals(0.5, d.acid(), 1e-9);
+        var d = TankChemistry.drivers(100, 0, 50, 0, vol / 10, 0, 16, 8, 4, 0.2);
+        assertEquals(0.25, d.acid(), 1e-9, "plain soil counts half");
+        assertEquals(0, d.activeSoil(), 1e-9);
+        // M25 part d: active soil counts fully, together with plain soil at most 1
+        var a = TankChemistry.drivers(100, 50, 50, 0, 0, 0, 16, 8, 0, 0);
+        assertEquals(0.75, a.acid(), 1e-9);
+        assertEquals(0.5, a.activeSoil(), 1e-9);
+        assertEquals(1.0, TankChemistry.drivers(100, 100, 0, 0, 0, 0, 16, 8, 0, 0).acid(), 1e-9);
         assertEquals(0.5, d.alkaline(), 1e-3, "rocks count half");
         assertEquals(0.5, d.peat(), 1e-9, "4 of 8 blocks filtered through peat");
         assertEquals(0.2, d.tannin(), 1e-9);
-        assertEquals(TankChemistry.Drivers.NONE, TankChemistry.drivers(0, 0, 0, 0, 0, 16, 8, 0, 0));
+        assertEquals(TankChemistry.Drivers.NONE, TankChemistry.drivers(0, 0, 0, 0, 0, 0, 16, 8, 0, 0));
     }
 
     @Test

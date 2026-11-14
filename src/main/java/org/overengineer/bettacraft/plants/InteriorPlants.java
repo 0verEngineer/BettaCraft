@@ -344,6 +344,16 @@ public final class InteriorPlants {
         grow(level, c, r, days);
     }
 
+    /** M25 part d: growth factor of the freshwater plants from the active soil on the floor (1 .. {@link #ACTIVE_SOIL_BOOST}). */
+    public static final double ACTIVE_SOIL_BOOST = 1.25;
+
+    public static double activeSoilBoost(ServerLevel level, InteriorRegion r) {
+        if (!r.built()) return 1.0;
+        var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
+        if (eq == null || eq.floorBlocks() <= 0) return 1.0;
+        return 1.0 + (ACTIVE_SOIL_BOOST - 1.0) * Math.min(1.0, eq.activeSoil() / (double) eq.floorBlocks());
+    }
+
     /** Growth for {@code days} (also used by GameTests with long steps). Returns the number of plants whose blocks changed. */
     public static int grow(ServerLevel level, TankBlockEntity c, InteriorRegion r, double days) {
         TankData t = c.getTank();
@@ -354,10 +364,13 @@ public final class InteriorPlants {
         List<InteriorPlant> shoots = new ArrayList<>();
         double activeMass = 0;
         int redTarget = PlantColors.tintFor(env.light());
+        double soilBoost = activeSoilBoost(level, r);
         for (InteriorPlant p : r.plants().all()) {
             double rate = speed * env.rate(p);
             // M25: CO2 makes the freshwater plants grow faster, the strong-light plants most
             if (rate > 0 && !p.species.marine()) rate *= org.overengineer.bettacraft.co2.TankCo2.growth(t, PlantSpecies.Light.need(p.species.light()));
+            // M25 part d: active soil feeds the freshwater plants (up to +25 % on a fully covered floor)
+            if (rate > 0 && !p.species.marine()) rate *= soilBoost;
             if (rate > 0 && p.room == 0) p.room = room(env.waterLocal(), r, p);
             if (rate > 0) {
                 activeMass += p.blocks;

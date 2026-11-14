@@ -31,8 +31,9 @@ public final class Substrate {
 
     /** Whether the block can be a substrate: a full, opaque-ish model block without block entity, not blacklisted. */
     public static boolean isValid(Block block) {
-        if (block instanceof EntityBlock || BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(BettaCraft.MOD_ID)) return false;
         BlockState s = block.defaultBlockState();
+        if (s.is(ModTags.ACTIVE_SOIL) && !(block instanceof EntityBlock)) return true; // M25 part d: the mod's own active soil
+        if (block instanceof EntityBlock || BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(BettaCraft.MOD_ID)) return false;
         if (s.is(ModTags.SUBSTRATE_BLACKLIST) || s.getRenderShape() != RenderShape.MODEL) return false;
         return s.isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
     }

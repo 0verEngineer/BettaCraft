@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "item": "minecraft:clay_ball"
+    },
+    "M": {
+      "item": "minecraft:mud"
+    },
+    "P": {
+      "item": "bettacraft:filter_peat"
+    }
+  },
+  "pattern": [
+    "CMC",
+    "MPM",
+    "CMC"
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:active_soil"
+  }
+}

@@ -276,6 +276,11 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.reef.DosingPumpBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    /** M25 part d: active soil, fired clay granules with humic acids: as interior substrate it keeps the water soft and acidic. */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> ACTIVE_SOIL = BLOCKS.register("active_soil",
+            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BLACK)
+                    .strength(0.6F).sound(SoundType.GRAVEL)));
+
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)

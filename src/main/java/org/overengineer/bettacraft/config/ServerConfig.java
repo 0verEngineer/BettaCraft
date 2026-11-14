@@ -574,8 +574,8 @@ public final class ServerConfig {
         b.pop();
         // M25
         b.comment("Water chemistry (M25, features.waterChemistry): TDS, pH and hardness of the water").push("chemistry");
-        CHEM_TDS_PER_DAY = b.comment("TDS (ppm) a normally stocked tank gains per day from food and waste (water changes bring it back to the tap",
-                "water's 250)").defineInRange("tdsPerDay", 1.5, 0.0, 1000.0);
+        CHEM_TDS_PER_DAY = b.comment("TDS (ppm) a normally stocked tank gains per day from food and waste (water changes bring it back towards the normal",
+                "water's 250)").defineInRange("tdsPerDay", org.overengineer.bettacraft.chem.WaterChemistry.WASTE_TDS_PER_DAY, 0.0, 1000.0);
         CHEM_REMINERAL_PPM = b.comment("TDS (ppm) one remineralising salt adds to 1000 mB of water").defineInRange("remineraliserPpm", 400.0, 1.0, 100000.0);
         CHEM_LEAF_TANNIN = b.comment("Water blocks one almond leaf colours fully with its tannins (they lower the pH)").defineInRange("leafBlocks", 1.0, 0.01, 1000.0);
         CHEM_LEAF_HALF_LIFE = b.comment("Days until half of the tannins of the almond leaves have faded").defineInRange("leafHalfLifeDays", 7.0, 0.1, 1000.0);

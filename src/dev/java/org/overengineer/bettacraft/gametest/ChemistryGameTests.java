@@ -83,10 +83,31 @@ public final class ChemistryGameTests {
         floor(in, r, Blocks.DIRT.defaultBlockState());
         h.assertTrue(eq.acidFloor() == eq.floorBlocks(), "soil counted: " + eq.acidFloor());
         var d = TankChemistry.drivers(level, c);
-        h.assertTrue(near(d.acid(), 1, 1e-6), "soil share " + d.acid());
+        // M25 part d: plain soil counts half; active soil fully
+        h.assertTrue(near(d.acid(), TankChemistry.DIRT_SHARE, 1e-6) && d.activeSoil() == 0, "plain soil share " + d.acid());
         TankChemistry.step(level, c, 5);
-        h.assertTrue(t.ph() < 6.6F && t.ph() > 6.2F, "soil lowers the pH: " + t.ph());
-        h.assertTrue(TankChemistry.hardness(t, d) == WaterChemistry.Hardness.SOFT, "soil softens: " + TankChemistry.hardness(t, d));
+        h.assertTrue(t.ph() < 7.2F && t.ph() > 6.7F, "plain soil lowers the pH a little: " + t.ph());
+        h.assertTrue(TankChemistry.hardness(t, d) == WaterChemistry.Hardness.MEDIUM, "plain soil does not make it soft: " + TankChemistry.hardness(t, d));
+        h.assertTrue(Substrate.isValid(org.overengineer.bettacraft.registry.ModBlocks.ACTIVE_SOIL.get()), "active soil is a substrate");
+        floor(in, r, org.overengineer.bettacraft.registry.ModBlocks.ACTIVE_SOIL.get().defaultBlockState());
+        h.assertTrue(eq.activeSoil() == eq.floorBlocks() && eq.acidFloor() == 0, "active soil counted: " + eq.activeSoil());
+        d = TankChemistry.drivers(level, c);
+        h.assertTrue(near(d.acid(), 1, 1e-6) && near(d.activeSoil(), 1, 1e-6), "active soil share " + d.acid());
+        h.assertTrue(near(org.overengineer.bettacraft.plants.InteriorPlants.activeSoilBoost(level, r), org.overengineer.bettacraft.plants.InteriorPlants.ACTIVE_SOIL_BOOST, 1e-6),
+                "active soil feeds the plants");
+        TankChemistry.step(level, c, 5);
+        h.assertTrue(t.ph() < 6.6F && t.ph() > 6.2F, "active soil lowers the pH: " + t.ph());
+        h.assertTrue(TankChemistry.hardness(t, d) == WaterChemistry.Hardness.SOFT, "active soil softens: " + TankChemistry.hardness(t, d));
+        // it does not wear out: a year later the same pull (the TDS it takes up only makes the water softer)
+        float tds = t.tds();
+        TankChemistry.step(level, c, 365);
+        d = TankChemistry.drivers(level, c);
+        h.assertTrue(near(d.acid(), 1, 1e-6) && t.ph() < 6.6F && t.tds() < tds, "a year later: pH " + t.ph() + ", TDS " + t.tds());
+        // a rescan (regions of earlier versions) counts it the same
+        eq.markNeedsScan();
+        eq = InteriorManager.equipment(level.getServer(), r);
+        h.assertTrue(eq.activeSoil() == eq.floorBlocks(), "rescan active soil: " + eq.activeSoil());
+        t.setTds(WaterChemistry.TAP_TDS); // a water change back to normal water for the limestone part
         floor(in, r, Blocks.CALCITE.defaultBlockState());
         h.assertTrue(eq.acidFloor() == 0 && eq.limeFloor() == eq.floorBlocks(), "limestone counted, soil gone: " + eq.limeFloor());
         TankChemistry.step(level, c, 5);

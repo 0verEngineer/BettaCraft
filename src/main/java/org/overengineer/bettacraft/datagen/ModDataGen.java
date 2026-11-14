@@ -319,6 +319,7 @@ public final class ModDataGen {
             DataGenM24.blockStates(this); // M24
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
+            simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
         /** M20: reef rock, live rock, the flow pump in the interior and the protein skimmer on the tank. */
@@ -590,6 +591,7 @@ public final class ModDataGen {
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
+            withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
             withExistingParent("larva_tub", modLoc("block/larva_tub_water3"));
@@ -990,6 +992,11 @@ public final class ModDataGen {
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
+            // M25 part d: active soil from clay, mud and filter peat (humic acids)
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
+                    .pattern("CMC").pattern("MPM").pattern("CMC")
+                    .define('C', Items.CLAY_BALL).define('M', Items.MUD).define('P', ModItems.FILTER_PEAT.get())
+                    .unlockedBy("has_tank", hasIt(ModItems.TANK.get())).save(output, BettaCraft.id("active_soil"));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
@@ -1141,6 +1148,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.CO2_STATION.get());
             dropSelf(ModBlocks.RO_UNIT.get());
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
+            dropSelf(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CO2_CYLINDER.get())
@@ -1174,6 +1182,7 @@ public final class ModDataGen {
                         l.addAll(m24Blocks());
                         l.addAll(DataGenM25b.blocks()); // M25
                         l.addAll(DataGenM25c.blocks());
+                        l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
                         return l;
                     }));
         }
@@ -1235,6 +1244,8 @@ public final class ModDataGen {
             for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
             DataGenM25b.blockTags(this::tag); // M25
             DataGenM25c.blockTags(this::tag);
+            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
+            tag(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
@@ -1263,7 +1274,7 @@ public final class ModDataGen {
                             net.minecraft.world.level.block.Blocks.MOSS_BLOCK, net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS,
                             net.minecraft.world.level.block.Blocks.MUDDY_MANGROVE_ROOTS, net.minecraft.world.level.block.Blocks.BAMBOO_BLOCK)
                     .addTag(BlockTags.TERRACOTTA);
-            tag(ModTags.PLANT_SUBSTRATE).addTag(BlockTags.SAND).addTag(BlockTags.DIRT).addTag(Tags.Blocks.GRAVELS)
+            tag(ModTags.PLANT_SUBSTRATE).add(ModBlocks.ACTIVE_SOIL.get()).addTag(BlockTags.SAND).addTag(BlockTags.DIRT).addTag(Tags.Blocks.GRAVELS)
                     .add(net.minecraft.world.level.block.Blocks.GRAVEL, net.minecraft.world.level.block.Blocks.CLAY,
                             net.minecraft.world.level.block.Blocks.MUD, net.minecraft.world.level.block.Blocks.SOUL_SAND,
                             net.minecraft.world.level.block.Blocks.SOUL_SOIL, net.minecraft.world.level.block.Blocks.SUSPICIOUS_SAND,

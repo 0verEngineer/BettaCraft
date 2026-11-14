@@ -5,7 +5,9 @@ package org.overengineer.bettacraft.chem;
  * <ul>
  * <li><b>TDS</b> (ppm, dissolved solids besides the sea salt): tap water about 250, reverse osmosis water 0. It rises with
  * the waste of the animals, the food and remineralising salt, limestone dissolves slowly, active soil takes a little;
- * evaporation leaves it behind, water changes mix it by volume.</li>
+ * evaporation leaves it behind (minerals above soft water partly settle as lime scale: {@link #evaporateTds}), water
+ * changes mix it by volume. Topping off with normal water alone lets it climb for months; with regular partial water
+ * changes it settles a little above the value of normal water (M25 part d).</li>
  * <li><b>Hardness</b> is no value of its own: soft / medium / hard from the TDS and the substrate ({@link #hardness}).</li>
  * <li><b>pH</b> (5..9) drifts to an equilibrium ({@link #phTarget}): the buffer of the water (TDS; in salt water the
  * alkalinity), pulled towards 6.2 by active soil and towards 8.2 by limestone, lowered by peat in a filter, almond leaves,
@@ -32,7 +34,12 @@ public final class WaterChemistry {
     public static final float TDS_MAX = 2000F, KH_MAX = 30F, MG_MAX = 2500F, CO2_MAX = 200F;
 
     /** Soft below this effective hardness, hard from {@link #HARD_FROM}. */
-    public static final double SOFT_BELOW = 150, HARD_FROM = 300;
+    public static final double SOFT_BELOW = 150, HARD_FROM = 400;
+
+    /** Default TDS (ppm/day) a normally stocked tank gains from food and waste (server config {@code chemistry.tdsPerDay}). */
+    public static final double WASTE_TDS_PER_DAY = 0.6;
+    /** M25 part d: share of the minerals evaporation leaves behind that settle as lime scale (hard water; none below {@link #SCALE_FROM}). */
+    public static final double SCALE_SHARE = 0.6, SCALE_FROM = 100, SCALE_FULL = 250;
 
     public enum Hardness { SOFT, MEDIUM, HARD }
 
@@ -119,9 +126,21 @@ public final class WaterChemistry {
         return clampTds((float) (tds + perDay * Math.max(0, days)));
     }
 
+    /**
+     * M25 part d: TDS after {@code lostMb} of pure water evaporated from {@code waterMb}. The minerals stay behind, but in
+     * hard water a share of them settles as lime scale (on the glass, the substrate, the plants): none below
+     * {@link #SCALE_FROM} ppm, {@link #SCALE_SHARE} from {@link #SCALE_FULL}. That is why regular water changes hold the
+     * TDS a little above the normal water's although every top-off brings new minerals.
+     */
+    public static float evaporateTds(float tds, long waterMb, long lostMb) {
+        float conc = concentrate(tds, waterMb, lostMb, TDS_MAX);
+        double scale = SCALE_SHARE * clamp01((tds - SCALE_FROM) / (SCALE_FULL - SCALE_FROM));
+        return clampTds((float) (tds + (conc - tds) * (1 - scale)));
+    }
+
     /** Effective hardness: the TDS, softened by active soil, hardened by limestone. */
     public static double effectiveHardness(double tds, double acid, double alkaline) {
-        return Math.max(0, tds) * (1 - 0.4 * clamp01(acid)) + 200 * clamp01(alkaline);
+        return Math.max(0, tds) * (1 - 0.5 * clamp01(acid)) + 200 * clamp01(alkaline);
     }
 
     public static Hardness hardness(double tds, double acid, double alkaline, boolean salty) {

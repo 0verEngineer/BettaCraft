@@ -38,7 +38,7 @@ final class LangM24 {
         a.accept("message.bettacraft.bulkhead.installed", "Bulkhead fitted: its connection is on the interior floor (pipes from below go through it)");
         a.accept("message.bettacraft.bulkhead.where", "Use it on a floor block of a tank (or place it on the interior floor)");
         a.accept("message.bettacraft.reservoir.fill", "Reservoir: %s / %s mB (%s)");
-        a.accept("message.bettacraft.reservoir.tap", "tap water%s");
+        a.accept("message.bettacraft.reservoir.tap", "normal water%s");
         a.accept("message.bettacraft.reservoir.fresh", "fresh water, %s ppt salt");
         a.accept("message.bettacraft.reservoir.salty", "salty water, %s ppt: no good for the top-off");
         a.accept("message.bettacraft.level_sensor.target", "Level sensor: tops off up to %s %% (%s)");

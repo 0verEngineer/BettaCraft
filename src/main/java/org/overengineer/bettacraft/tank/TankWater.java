@@ -200,8 +200,7 @@ public final class TankWater {
                 float salt = Salinity.concentrate(tank.salinity(), tank.waterMb(), lost, Salinity.MAX);
                 float ca = Salinity.concentrate(tank.calcium(), tank.waterMb(), lost, 2000F);
                 float no3 = TankNitrate.concentrate(tank.nitrate(), tank.waterMb(), lost); // M24
-                float tds = org.overengineer.bettacraft.chem.WaterChemistry.concentrate(tank.tds(), tank.waterMb(), lost,
-                        org.overengineer.bettacraft.chem.WaterChemistry.TDS_MAX); // M25: the minerals stay behind too
+                float tds = org.overengineer.bettacraft.chem.WaterChemistry.evaporateTds(tank.tds(), tank.waterMb(), lost); // M25: the minerals stay behind too (part of them as lime scale)
                 org.overengineer.bettacraft.reef.ReefDosing.Snapshot reef = org.overengineer.bettacraft.reef.ReefDosing.Snapshot.of(tank); // M25 part c
                 long had = tank.waterMb();
                 TankInteractions.changeWater(level, c, -lost);

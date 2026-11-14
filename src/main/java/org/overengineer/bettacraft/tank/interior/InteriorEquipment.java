@@ -44,9 +44,9 @@ public final class InteriorEquipment {
     int plumbingVersion;
     /**
      * M25 water chemistry: floor blocks (all, with soil, with limestone), limestone rocks and driftwood blocks in the
-     * volume. Absent in regions of earlier versions: they are counted by a rescan.
+     * volume. Absent in regions of earlier versions: they are counted by a rescan. Part d: floor blocks with active soil.
      */
-    int floorBlocks, acidFloor, limeFloor, limeRocks, driftwood;
+    int floorBlocks, acidFloor, limeFloor, limeRocks, driftwood, activeSoil;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -68,15 +68,18 @@ public final class InteriorEquipment {
     public int limeFloor() { return limeFloor; }
     public int limeRocks() { return limeRocks; }
     public int driftwood() { return driftwood; }
+    public int activeSoil() { return activeSoil; }
 
     /** M25: a floor block's substrate changed ({@code null} = none): the soil / limestone counts follow. */
     public void onSubstrate(@javax.annotation.Nullable BlockState old, @javax.annotation.Nullable BlockState neu) {
         if (old != null) {
-            if (old.is(ModTags.ACID_SUBSTRATE)) acidFloor = Math.max(0, acidFloor - 1);
+            if (old.is(ModTags.ACTIVE_SOIL)) activeSoil = Math.max(0, activeSoil - 1); // M25 part d
+            else if (old.is(ModTags.ACID_SUBSTRATE)) acidFloor = Math.max(0, acidFloor - 1);
             else if (old.is(ModTags.LIMESTONE)) limeFloor = Math.max(0, limeFloor - 1);
         }
         if (neu != null) {
-            if (neu.is(ModTags.ACID_SUBSTRATE)) acidFloor++;
+            if (neu.is(ModTags.ACTIVE_SOIL)) activeSoil++;
+            else if (neu.is(ModTags.ACID_SUBSTRATE)) acidFloor++;
             else if (neu.is(ModTags.LIMESTONE)) limeFloor++;
         }
     }
@@ -231,7 +234,7 @@ public final class InteriorEquipment {
         liveRock = 0;
         spawningVersion++;
         substrate = 0;
-        floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = 0;
+        floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = activeSoil = 0;
         needsScan = false;
         if (!r.built()) return;
         int x0 = r.originX(), z0 = r.originZ();
@@ -300,7 +303,7 @@ public final class InteriorEquipment {
         t.putLongArray("filters", filters.toLongArray());
         t.putLongArray("floating", floating.toLongArray());
         t.putInt("substrate", substrate);
-        t.putIntArray("chem", new int[]{floorBlocks, acidFloor, limeFloor, limeRocks, driftwood}); // M25
+        t.putIntArray("chem", new int[]{floorBlocks, acidFloor, limeFloor, limeRocks, driftwood, activeSoil}); // M25 (part d: active soil)
         t.putLongArray("caves", caveBlocks.toLongArray()); // M19
         t.putLongArray("mops", mopBlocks.toLongArray());
         t.putLongArray("pumps", pumps.toLongArray()); // M20
@@ -370,14 +373,15 @@ public final class InteriorEquipment {
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");
         int[] chem = t.getIntArray("chem"); // M25: regions of earlier versions count the soil, limestone and wood once
-        if (chem.length == 5) {
+        if (chem.length >= 5) {
             floorBlocks = chem[0];
             acidFloor = chem[1];
             limeFloor = chem[2];
             limeRocks = chem[3];
             driftwood = chem[4];
+            activeSoil = chem.length >= 6 ? chem[5] : 0; // part d: there was no active soil before
         } else {
-            floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = 0;
+            floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = activeSoil = 0;
             needsScan = true;
         }
     }
