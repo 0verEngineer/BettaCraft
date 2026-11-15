@@ -219,13 +219,20 @@ final class DevClientSmokeMP {
                         return;
                     }
                     // M31 part b: the variety of the slider and the growth of the hatchling (synced entity data)
-                    int variety = -1;
+                    int variety = -1, geckoVariety = -1;
                     float growth = 2F;
+                    String pose = "none";
                     for (var s : mc.level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.HerpEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) {
+                        if (s.species() == org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO) { // M31 part c
+                            pose = s.herpPose().name();
+                            geckoVariety = s.variety();
+                            continue;
+                        }
                         variety = Math.max(variety, s.variety());
                         growth = Math.min(growth, s.growth());
                     }
-                    send("m31 " + t.terrariumMode().id() + " " + t.hasClimate() + " " + Math.round(t.uv()) + " " + variety + " " + Math.round(growth));
+                    send("m31 " + t.terrariumMode().id() + " " + t.hasClimate() + " " + Math.round(t.uv()) + " " + variety + " " + Math.round(growth) + " " + pose + " "
+                            + geckoVariety);
                 });
             }
             case "reef" -> {

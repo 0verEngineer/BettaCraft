@@ -129,6 +129,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm30b: the freshwater giants (arapaima, redtail catfish, wels, motoro stingrays). */
     private static final boolean M30B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m30bonly");
     private static DevClientSmokeM30b m30b;
+    /** -Psmoketestm31c: dart frogs in a paludarium, geckos (one on the glass), corn snakes, horned frogs (one buried). */
+    private static final boolean M31C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31conly");
+    private static DevClientSmokeM31c m31c;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
     private static final boolean M31B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31bonly");
     private static DevClientSmokeM31b m31b;
@@ -228,6 +231,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M31C_ONLY) {
+                if (ticks == 60) m31c = new DevClientSmokeM31c();
+                if (m31c != null && m31c.tick()) {
+                    m31c = null;
+                    LOGGER.info("[smoketest] client world test finished (M31 part c only)");
                     mc.stop();
                 }
                 return;

@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm31c')) {
+                // gradlew runClient -Psmoketestm31c : only the M31 part c scene (dart frogs in a paludarium, geckos with one on the
+                // glass, corn snakes, horned frogs with one buried)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m31conly', 'true'
+            }
             if (project.hasProperty('smoketestm31b')) {
                 // gradlew runClient -Psmoketestm31b : only the M31 part b scene (a paludarium with sliders of both varieties, a
                 // Reeves' turtle, a musk turtle, a clutch of eggs with hatchlings; a dry terrarium with Hermann's tortoises)

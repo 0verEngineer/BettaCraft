@@ -153,6 +153,9 @@ public final class DevSmokeMP {
                 // M31 part b: the synced turtle state: the variety of a yellow-bellied slider and the size of a hatchling
                 check(name + ": slider variety " + (a.length > 4 ? a[4] : "?") + " (server 1 = yellow-bellied)", a.length > 4 && "1".equals(a[4]));
                 check(name + ": hatchling growth " + (a.length > 5 ? a[5] : "?") + " (server 0)", a.length > 5 && "0".equals(a[5]));
+                // M31 part c: the pose of a crested gecko on a wall and its morph
+                check(name + ": gecko pose " + (a.length > 6 ? a[6] : "?") + " (server WALL_E)", a.length > 6 && "WALL_E".equals(a[6]));
+                check(name + ": gecko morph " + (a.length > 7 ? a[7] : "?") + " (server 2 = harlequin)", a.length > 7 && "2".equals(a[7]));
             }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
@@ -1000,6 +1003,16 @@ public final class DevSmokeMP {
                 s.setPersistenceRequired();
                 s.moveTo(min.getX() + 0.5 + i, min.getY(), min.getZ() - 2.5, 0F, 0F);
                 level.addFreshEntity(s);
+            }
+            // M31 part c: a harlequin crested gecko shown clinging to a wall (the synced pose)
+            var g = org.overengineer.bettacraft.registry.ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO).create(level);
+            if (g != null) {
+                g.setVariety(2);
+                g.setNoAi(true);
+                g.setPersistenceRequired();
+                g.setPoseForTest(org.overengineer.bettacraft.terrarium.LandWalker.Pose.WALL_E);
+                g.moveTo(min.getX() + 2.5, min.getY(), min.getZ() - 2.5, 0F, 0F);
+                level.addFreshEntity(g);
             }
             c.markTankChanged();
             say("m31", "all", min.getX() + "," + min.getY() + "," + min.getZ());

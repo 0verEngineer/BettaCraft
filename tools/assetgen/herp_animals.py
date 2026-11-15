@@ -87,27 +87,31 @@ def tadpole() -> list[Group]:
 
 
 def horned_frog() -> list[Group]:
-    body = Group("body", pivot=(0, -3.6, 1.0), cubes=[
-        c("back", (0, -3.7, 1.0), (10.0, 6.0, 9.0), (0, 0, 0), "skin"),
-        c("belly", (0, -0.9, 1.0), (9.0, 1.2, 8.0), (0, 0, 0), "belly"),
+    """Wide and low: a broad body under a low dome, a head as wide as the body with the mouth line across the front, the
+    eyes with their little horns standing up from the flat top."""
+    body = Group("body", pivot=(0, -3.0, 1.0), cubes=[
+        c("back", (0, -2.2, 1.0), (11.0, 3.2, 10.0), (0, 0, 0), "skin"),
+        c("dome", (0, -4.6, 1.0), (9.0, 1.8, 8.5), (0, 0, 0), "skin"),
+        c("top", (0, -5.9, 1.2), (6.5, 1.0, 6.0), (0, 0, 0), "skin"),
+        c("belly", (0, -0.35, 1.0), (10.0, 0.7, 9.0), (0, 0, 0), "belly"),
     ])
-    head = Group("head", pivot=(0, -3.8, -3.0), cubes=[
-        c("skull", (0, -4.2, -4.8), (10.6, 5.0, 3.8), (0, 0, 0), "head"),
-        c("jaw", (0, -1.4, -4.6), (9.8, 1.2, 3.6), (0, 0, 0), "jaw"),
-        c("eye_r", (3.0, -7.0, -4.2), (2.0, 1.4, 2.0), (0, 0, 0), "eye"),
-        c("eye_l", (-3.0, -7.0, -4.2), (2.0, 1.4, 2.0), (0, 0, 0), "eye"),
-        c("horn_r", (3.0, -7.9, -3.9), (1.6, 0.8, 1.2), (0, 0, 0), "horn"),
-        c("horn_l", (-3.0, -7.9, -3.9), (1.6, 0.8, 1.2), (0, 0, 0), "horn"),
+    head = Group("head", pivot=(0, -3.0, -3.5), cubes=[
+        c("skull", (0, -3.6, -5.3), (11.4, 3.4, 3.6), (0, 0, 0), "head"),
+        c("jaw", (0, -1.2, -5.0), (11.0, 1.6, 3.4), (0, 0, 0), "jaw"),
+        c("eye_r", (3.2, -5.9, -4.6), (2.2, 1.6, 2.2), (0, 0, 0), "eye"),
+        c("eye_l", (-3.2, -5.9, -4.6), (2.2, 1.6, 2.2), (0, 0, 0), "eye"),
+        c("horn_r", (3.2, -7.0, -4.2), (1.4, 0.7, 1.4), (0, 0, 0), "horn"),
+        c("horn_l", (-3.2, -7.0, -4.2), (1.4, 0.7, 1.4), (0, 0, 0), "horn"),
     ])
     groups = [body, head]
     for name, sx in (("leg_fr", 1), ("leg_fl", -1)):
-        groups.append(Group(name, pivot=(4.6 * sx, -1.8, -2.0), cubes=[
-            c("arm", (5.2 * sx, -1.0, -2.6), (1.8, 2.0, 1.8), (0, 0, 0), "limb"),
-            c("hand", (5.6 * sx, -0.15, -3.4), (2.4, 0.3, 2.0), (0, 0, 0), "toe")]))
+        groups.append(Group(name, pivot=(5.0 * sx, -1.6, -2.4), cubes=[
+            c("arm", (5.7 * sx, -0.9, -3.0), (1.8, 1.8, 1.8), (0, 0, 0), "limb"),
+            c("hand", (6.1 * sx, -0.15, -3.7), (2.4, 0.3, 2.0), (0, 0, 0), "toe")]))
     for name, sx in (("leg_br", 1), ("leg_bl", -1)):
-        groups.append(Group(name, pivot=(4.8 * sx, -2.0, 3.8), cubes=[
-            c("thigh", (5.4 * sx, -1.6, 3.6), (2.6, 2.6, 4.2), (0, -20 * sx, 0), "limb"),
-            c("foot", (5.8 * sx, -0.15, 2.0), (2.6, 0.3, 3.0), (0, 0, 0), "toe")]))
+        groups.append(Group(name, pivot=(5.0 * sx, -1.8, 3.8), cubes=[
+            c("thigh", (5.5 * sx, -1.3, 3.8), (2.6, 2.2, 4.2), (0, -20 * sx, 0), "limb"),
+            c("foot", (6.0 * sx, -0.15, 2.0), (2.6, 0.3, 3.0), (0, 0, 0), "toe")]))
     return groups
 
 
@@ -251,7 +255,7 @@ def _horned(green: bool):
 
     def colour(cu, face, px, py, pz, rng):
         if cu.pattern == "eye":
-            return np.array([0.75, 0.62, 0.20]) if abs(py + 7.0) > 0.25 else np.array([0.04, 0.03, 0.02])
+            return np.array([0.04, 0.03, 0.02]) if face in ("north", "east", "west") and abs(py + 5.9) < 0.3 else np.array([0.80, 0.66, 0.22])
         if cu.pattern in ("belly", "jaw") or face == "bottom":
             col = belly
             if cu.pattern == "jaw" and face in ("north", "east", "west") and py < -1.6:
@@ -266,8 +270,8 @@ def _horned(green: bool):
             col = rim
         if cu.pattern == "horn":
             col = ground * 0.85
-        if cu.pattern == "head" and face == "north" and py > -2.4:
-            col = np.array([0.10, 0.08, 0.06])  # the mouth seen from the front
+        if cu.pattern == "head" and face in ("north", "east", "west") and py > -2.5:
+            col = np.array([0.12, 0.09, 0.06])  # the wide mouth line all round the front
         if cu.pattern in ("limb", "toe") and int(px * 2 + pz) % 3 == 0:
             col = blotch
         return np.clip(col * _shade(face) + (rng.random() - 0.5) * 0.05, 0, 1)
@@ -295,7 +299,9 @@ def _leopard(morph: str):
             col = band if math.sin(pz * 1.5) > 0.2 else (ground * 1.05 if morph != "tangerine" else ground)
             if morph == "tangerine":
                 col = band
-        dots = math.sin(px * 3.3 + 0.5) * math.sin(pz * 2.9 + py * 1.3) > (0.55 if morph != "tangerine" else 0.8)
+        cell = (math.floor(px * 1.6), math.floor(pz * 1.6), math.floor(py * 1.6))
+        h = ((cell[0] * 73856093) ^ (cell[1] * 19349663) ^ (cell[2] * 83492791)) % 100
+        dots = h < (30 if morph != "tangerine" else 8)
         if dots and cu.pattern != "toe":
             col = spot
         if face in ("east", "west") and py > -1.0:
