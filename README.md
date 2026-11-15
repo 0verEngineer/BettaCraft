@@ -62,6 +62,9 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   are trimmed with shears and clean the water. The **Marimo** ball rolls with the current. **Floating plants**
   (duckweed, frogbit, salvinia, red root floater, water lettuce, hornwort, Riccia) drift on the surface, grow and
   spread; lily pads stay put.
+- **Liquid fertilizer** makes them grow up to half as fast again; the plants use it up, too much feeds the algae. A
+  **fertilizer maker** mixes it from kelp meal, nutrient salt and water and pipes it into the tank; the dosing pump doses
+  it too.
 - **Every plant grows wild** in the waters of its origin: Anubias and Bucephalandra on stones in jungle water, stem
   plants and carpets in swamps, Vallisneria and mosses in rivers, Marimo balls in cold lakes, floating plants on calm
   water. Shears cut a cutting, the plant grows back.
@@ -130,14 +133,15 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   matter, a water change controller and a top-off do them for you.
 - **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
-- Optional Forge Energy for the equipment, power regulator, own procedural sounds.
+- Optional Forge Energy for the equipment, power regulator, own procedural sounds. No generator? A **crank** winds the
+  filters, the water devices and the cabinet under a tank, which then powers every device of its tank.
 
 ### Food and live food
 - **Live food cultures:** tubifex worms in a dish with mud and mulm (or the waste water of a tank), daphnia in a barrel
   with yeast or green water and light, mosquito larvae and artemia; they grow, go stale, crash when crowded or hot. A
   **live food pump** feeds them through the pipes into the tanks on a schedule.
 - **Food maker:** pellets, flakes, granules, algae wafers, fry powder, shrimp food and frozen food from wheat, kelp, fish,
-  spider eyes, sugar, eggs, vegetables and live food; runs on a hand-wound spring (a day per spring) or on FE. Hoppers,
+  spider eyes, sugar, eggs, vegetables and live food; runs on a spring wound with the crank (a day per spring) or on FE. Hoppers,
   AE2 and Refined Storage fill and empty it, the feeder and the reservoir.
 - **Food variety:** favourite and poorly suited food for every kind of eater; a varied diet helps the fish recover and
   makes the bettas' colours stronger. All data-driven (item tags).
@@ -177,7 +181,7 @@ No other mod is required.
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
 | Fintastic, Aquaculture 2, Critters and Companions, Naturalist (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; their land and marsh animals (tortoise, alligator, lizard, snake, scorpions, crab, dragonflies, duck, capybara, otter ...) live in terraria and paludaria; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
-| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit and the food maker; Display Links show tank values; Create pipes fill aquariums |
+| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients and products; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
 | [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off |

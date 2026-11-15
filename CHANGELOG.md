@@ -4,6 +4,50 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.29.0-beta.1] - 2026-11-16
+
+Liquid fertilizer and the fertilizer maker; a crank that winds the machines, and with the power options on also the
+filters, the water devices and the cabinet under a tank, so you can keep a tank without any generator.
+
+### Added
+- **Liquid fertilizer:** a bottle of five portions; right-click a tank to dose one (a portion brings 4 water blocks to the
+  right level). Up to 100 % the aquarium plants and the floating plants of Bettacraft grow up to half as fast again
+  (`fertilizer.growthBoost`); they grow without it as well, and plants of other mods are not affected. The plants use it
+  up, a little fades by itself, water changes dilute it, and it travels with the water in pipes (a filter loop keeps it).
+  From 150 % the tank is **overdosed**: no more growth, but the algae grow faster (three times as fast at 300 %). The
+  Water tab shows the level (none, low, good, overdosed).
+- **Fertilizer maker:** mixes a kelp meal, a nutrient salt and 250 mB of water into 250 mB of fertilizer (a bottle). Water
+  from a bucket, a pipe or other mods; empty glass bottles are filled, otherwise the fertilizer goes through a pipe into a
+  tank, which takes it only up to 100 % (`fertilizer.pipeUpTo`). It runs on a spring wound with the crank, or on FE with
+  a power option on (then its spring when the FE is short), and on Create's rotation. Item, fluid and energy capabilities
+  for hoppers, AE2, Refined Storage and other mods' pipes (fluid `bettacraft:fertilizer`). Comparator, redstone pause.
+- New intermediates **kelp meal** (dried kelp and bone meal) and **nutrient salt** (bone meal, charcoal, an iron nugget).
+- **Fertilizer canister** for the dosing pump: it doses fertilizer into fresh and salt water tanks, its mL per day
+  (`features.fertilizer.dosing`).
+- **Crank:** right-click a device with a spring to wind it; hold the button to keep winding (one charge, a day of a
+  device's work, in about five seconds; `winding.clicksPerCharge`). Without the power options only the food maker and the
+  fertilizer maker need it. **With a power option on** (`features.power.winding`) every device that needs FE can be wound
+  instead: the external filter (it drives the heaters and coolers in it too), the multiblock filter (six charges, wind any
+  part), the reverse osmosis unit, the water change controller, the water pump, and the **cabinet** under a tank (six
+  charges): it stores the winding and gives it to every device of its tank that needs FE (filters, heaters and coolers,
+  heat mats, misters, lights, air pumps), the more devices the faster. FE always goes first; a spring stands still in
+  unloaded chunks. The windows of the filter, the cabinet and the machines show the spring, so do Jade, The One Probe
+  and WTHIT; the Water tab says how many devices the springs drive.
+- Feature switches `features.fertilizer.enabled`, `features.fertilizer.dosing` and `features.power.winding`; server config
+  sections `winding` (charges per device, ticks and clicks per charge) and `fertilizer`.
+- Handbook (English and German): pages for the crank, liquid fertilizer and the fertilizer maker; power, food maker and
+  settings updated.
+
+### Changed
+- **The food maker is wound with the crank** instead of sneak + right-click with an empty hand (that now only says so); a
+  full spring takes 25 clicks (`foodMaking.windsToFull`, before 8 winds). With a power option on it no longer has to run
+  on FE alone: it takes FE first and its spring when the FE is short.
+- The water values carried by pipes include the fertilizer; the network version is 17 (clients need this version).
+
+### Upgrading
+- Old worlds load unchanged: tanks get no fertilizer, filters and cabinets an unwound spring (tank schema 11, filter and
+  cabinet schema 2); the food maker keeps its wound spring. A config written before keeps `windsToFull = 8`.
+
 ## [1.28.0-beta.1] - 2026-11-15
 
 Smaller bettas: a new size setting with Normal as the default and the old size as Large.
