@@ -85,6 +85,10 @@ public class FilterPartBlock extends BaseEntityBlock implements PipeConnectable 
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        // M29.1: with a block in hand the part does not open the filter screen: the block is placed against it (a tank on
+        // the connectors of a filter under it, pipes at an inlet, more chambers), like against any other block
+        if (stack.getItem() instanceof net.minecraft.world.item.BlockItem && !(stack.getItem() instanceof FilterMediaItem))
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (part != Part.CHAMBER || !(stack.getItem() instanceof FilterMediaItem)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof FilterChamberBlockEntity ch)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!ch.medium().isEmpty()) {

@@ -814,10 +814,17 @@ public final class DevShowcase {
         TankBlockEntity cab = tank(level, at, 2, 2, 2, 0F, true);
         if (level.getBlockEntity(at.below()) instanceof CabinetBlockEntity cb) {
             cb.storage().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 24), false);
+            // M29.1: an air pump in the cabinet too: its hose goes up with the filter hose and down to two air stones
+            cb.items().setStackInSlot(CabinetBlockEntity.AIR_PUMP_SLOT, new ItemStack(ModItems.AIR_PUMP.get()));
             cb.setChanged();
         }
+        InteriorRegion cr = region(level, cab, Blocks.GRAVEL.defaultBlockState());
+        ServerLevel cin = InteriorManager.interiorLevel(level.getServer());
+        cin.setBlock(cr.toWorld(8, 0, 22), ModBlocks.AIR_STONE.get().defaultBlockState(), 3);
+        cin.setBlock(cr.toWorld(22, 0, 16), ModBlocks.AIR_STONE.get().defaultBlockState(), 3);
         TankEquipment.invalidate(cab);
-        name(level, at, "Schrank + Filter + Futter");
+        org.overengineer.bettacraft.tank.TankAeration.step(level, cab, 0.01);
+        name(level, at, "Schrank + Filter + Luftpumpe");
         at = at.east(2 + GAP);
         // M21.5: a one-block tank with a light on top and a clip-on feeder on its glass
         TankBlockEntity clip = tank(level, at, 1, 1, 1, 0F, true);
@@ -872,6 +879,52 @@ public final class DevShowcase {
         }
         TankEquipment.invalidate(h);
         name(level, at, "Abschäumer + " + de("item.bettacraft.flow_pump"));
+        at = at.east(2 + GAP + 1);
+        multiblockFilters(level, at);
+    }
+
+    /**
+     * M29.1: a multiblock filter connected to its tank by pipes (two separate runs, inlet low at the front, outlet high at the
+     * back) and one standing directly under its tank (inlet and outlet on top of the chambers, facing up into the floor).
+     */
+    private static void multiblockFilters(ServerLevel level, BlockPos at) {
+        net.minecraft.world.item.Item[] media = {ModItems.FILTER_FOAM.get(), ModItems.CERAMIC_RINGS.get(), ModItems.FILTER_PEAT.get(), ModItems.FILTER_FOAM.get()};
+        // by pipes: tank x 0..2, pipes x 3..4, connectors x 5, chambers x 6 (2 x 2), pump head on top
+        TankBlockEntity pt = tank(level, at, 3, 2, 2, 0F, true);
+        for (int x = 3; x <= 6; x++) for (int z = 0; z < 2; z++) level.setBlockAndUpdate(at.offset(x, -1, z), Blocks.POLISHED_ANDESITE.defaultBlockState());
+        int k = 0;
+        for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
+            level.setBlockAndUpdate(at.offset(6, y, z), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
+            if (level.getBlockEntity(at.offset(6, y, z)) instanceof org.overengineer.bettacraft.filter.FilterChamberBlockEntity ch) ch.setMedium(new ItemStack(media[k++]));
+        }
+        level.setBlockAndUpdate(at.offset(6, 2, 0), ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(5, 0, 0), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.WEST));
+        level.setBlockAndUpdate(at.offset(5, 1, 1), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.WEST));
+        for (int x = 3; x <= 4; x++) {
+            level.setBlockAndUpdate(at.offset(x, 0, 0), ModBlocks.GLASS_PIPE.get().defaultBlockState());
+            level.setBlockAndUpdate(at.offset(x, 1, 1), ModBlocks.GLASS_PIPE.get().defaultBlockState());
+        }
+        for (int x = 3; x <= 5; x++) for (int[] yz : new int[][]{{0, 0}, {1, 1}}) {
+            BlockPos p = at.offset(x, yz[0], yz[1]);
+            level.setBlockAndUpdate(p, Block.updateFromNeighbourShapes(level.getBlockState(p), level, p));
+        }
+        name(level, at, "Multiblock-Filter über Rohre");
+        LOGGER.info("[showcase] M29.1 multiblock filter by pipes at {}", pt.getBlockPos());
+        at = at.east(7 + GAP);
+        // under the tank: chambers 2 x 2 on the cabinet layer, two more chambers and the connectors above them, the pump head beside
+        BlockPos fl = at.below();
+        k = 0;
+        for (int z = 0; z < 2; z++) for (int x = 0; x < 2; x++) {
+            level.setBlockAndUpdate(fl.offset(x, 0, z), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
+            if (level.getBlockEntity(fl.offset(x, 0, z)) instanceof org.overengineer.bettacraft.filter.FilterChamberBlockEntity ch) ch.setMedium(new ItemStack(media[k++]));
+        }
+        for (int x = 0; x < 2; x++) level.setBlockAndUpdate(at.offset(x, 0, 1), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(0, 0, 0), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.UP));
+        level.setBlockAndUpdate(at.offset(1, 0, 0), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.UP));
+        level.setBlockAndUpdate(fl.offset(2, 0, 0), ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
+        TankBlockEntity ut = tank(level, at.above(), 2, 2, 2, 0F, true);
+        name(level, at.above(), "Multiblock-Filter unter dem Becken");
+        LOGGER.info("[showcase] M29.1 multiblock filter under the tank at {}", ut.getBlockPos());
     }
 
     private static void glassAndShapes(ServerLevel level, BlockPos at) {

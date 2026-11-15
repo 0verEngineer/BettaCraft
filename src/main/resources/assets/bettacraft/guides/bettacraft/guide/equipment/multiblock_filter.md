@@ -40,6 +40,11 @@ Right-click the pump head (or a chamber with an empty hand): the filter's screen
 it cleans, the flow and every chamber's medium with its dirt. Sneak + mouse wheel: [power regulator](regulator.md).
 With `pipes.pumpsRequireEnergy` the pump head needs FE. A [level sensor](top_off.md) can sit at the filter too.
 
+**Under the aquarium:** the filter may also stand directly under its aquarium, like a cabinet filter: chambers on the
+floor, the inlet and the outlet on top of them with their sockets facing up into the aquarium's floor (or chambers
+right under the floor and the connectors at the side with pipes up). With a block in your hand a click on a filter part
+places the block instead of opening the screen, so you can build the aquarium on top.
+
 The old one-block [external filter](filters.md) stays the small variant.
 
 ## Obtaining

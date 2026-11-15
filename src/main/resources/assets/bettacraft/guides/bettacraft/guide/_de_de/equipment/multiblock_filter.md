@@ -41,6 +41,11 @@ gereinigten Aquarium, Durchfluss und dem Medium jeder Kammer samt Schmutz. Schle
 [Leistungsregler](regulator.md). Mit `pipes.pumpsRequireEnergy` braucht der Pumpenkopf FE. Ein
 [Niveausensor](top_off.md) kann auch am Filter sitzen.
 
+**Unter dem Aquarium:** Der Filter kann auch direkt unter seinem Aquarium stehen, wie ein Schrankfilter: Kammern am
+Boden, Ein- und Auslass obendrauf mit dem Anschluss nach oben in den Aquariumboden (oder Kammern direkt unter dem Boden
+und die Anschlüsse seitlich mit Rohren nach oben). Mit einem Block in der Hand setzt ein Klick auf ein Filterteil den
+Block, statt den Bildschirm zu öffnen, so kannst du das Aquarium obendrauf bauen.
+
 Der alte Ein-Block-[Außenfilter](filters.md) bleibt die kleine Variante.
 
 ## Bezug
