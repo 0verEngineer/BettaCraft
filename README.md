@@ -165,8 +165,13 @@ No other mod is required.
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
+| Fintastic, Aquaculture 2, Critters and Companions, Naturalist (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
+| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit and the food maker; Display Links show tank values; Create pipes fill aquariums |
+| Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients and products; pattern providers and autocrafters feed the food maker and the crucible |
+| [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
+| [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
-| Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water` and `bettacraft:sea_water`; CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
+| Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water`, `bettacraft:sea_water` and `bettacraft:live_food` (Mekanism tanks too); CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
 | Biome mods (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Twilight Forest, ...) | their swamps, rivers, mangroves, lush caves and warm oceans get the wild animals, net catches, fishing loot and corals of their vanilla counterparts (biome tags `#bettacraft:*_waters`, `#bettacraft:coral_reef_biomes`) |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |
 
@@ -214,6 +219,12 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   of every water animal of the loaded mods and whether aquariums take it.
 - **Datapacks:** `data/<namespace>/bettacraft/colors/*.json`, `.../genes/<locus>.json` and `.../varieties/*.json`
   add or change colours, allele ranks and frequencies, and named varieties.
+- **Animals of other mods:** profiles in `data/<namespace>/bettacraft/foreign_animals/*.json` give any water animal our
+  care and breeding (format in the handbook, "Profiles for animals of other mods").
+- **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
+  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and a KubeJS example; the
+  NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent` (`org.overengineer.bettacraft.api.event`) and
+  `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other mods (`features.modpackEvents`).
 - **Commands:** `/bettacraft interior leave` for everyone; operators: `/bettacraft interior resync`,
   `/bettacraft interior bench` and `/bettacraft wateranimals`.
 

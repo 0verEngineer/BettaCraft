@@ -14,6 +14,7 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `src/generated` | output of `gradlew runData` (recipes, tags, models, `en_us.json`, advancements), committed |
 | `src/test` | JUnit tests (genetics, chemistry, lang completeness, config labels, ids, handbook generator `guide/GuideGen` + `GuideGenTest`, `GuidePagesTest`) |
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
+| `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
 | `tools/ci` | `fetch_mods.py` + `power-mods.json`: pinned Modrinth jars for the `-Ppower` GameTests in CI |
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
 | `docs/description.md` | the CurseForge mod page (English, short German summary); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
@@ -80,7 +81,10 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   biomes to the wild animals, see `world/` and the GameTest `biomeModBiomesMapToTheirWaters`), `-Pstorage`
   (`run/storage-mods`: Applied Energistics 2 and Refined Storage; `StorageGameTests` move items with their buses), `-Pcreate`
   (`run/create-mods`: Create 6, Create Aeronautics bundled and Sable from ATM10AA; `CreateGameTests` move tanks on a bearing and a
-  Sable sub-level; the travelling tanks are `tank/TankMoves`, `compat/create/`). Leave runtime mods out
+  Sable sub-level; the travelling tanks are `tank/TankMoves`, `compat/create/`), `-Pquests` (`run/quest-mods`: FTB Quests +
+  libraries; the chapter of `modpack/` is copied into the run, `QuestGameTests`), `-Pkubejs` (`run/kubejs-mods`: KubeJS, Rhino;
+  the example script is copied into the run), `-Pmaps` (`run/map-mods`: JourneyMap, client only; alarm waypoints). The public
+  events for scripts are in `api/event` (posted by `api/ApiEvents`). Leave runtime mods out
   with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoCompat`; add `-Ptop`, `-Pwthit`. `-Pbackground` makes a plain
   `runClient` a background window.
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the

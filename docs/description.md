@@ -139,6 +139,13 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   water animals of any mod.
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
+- **Animals of other mods:** Fintastic, Aquaculture 2, Critters and Companions and Naturalist fish get our care and
+  breeding in Bettacraft aquariums (their young inherit their colours); modpacks add profiles for any animal.
+- **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals; rotation
+  drives pumps, the reverse osmosis unit and the food maker; Display Links show tank values. **AE2 and Refined
+  Storage** autocrafting feeds the food maker and the crucible; **Mekanism** tanks take the Bettacraft fluids.
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (33 quests, English and German), KubeJS events (animal born,
+  animal died, monitor alarm), and **JourneyMap** waypoints at tanks with a monitor alarm.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
   O' Plenty and others get the wild animals, plants and corals (biome tags).
 - **Sodium and Iris:** supported, water and miniatures render correctly with shaders.
@@ -181,5 +188,7 @@ Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
 Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Terrarien und Paludarien mit Schildkröten, Pfeilgiftfröschen,
 Geckos und Kornnattern, verkleinerte Mobs im Glas, Filter,
-Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Die Mod und das Handbuch im Spiel sind komplett
-auf Deutsch übersetzt; die Spielsprache Deutsch genügt.
+Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Fische anderer Mods (Fintastic, Aquaculture …)
+bekommen unsere Pflege und Zucht, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
+ein FTB-Quests-Kapitel, KubeJS-Events und JourneyMap-Wegpunkte bei Alarmen. Die Mod und das Handbuch im Spiel sind
+komplett auf Deutsch übersetzt; die Spielsprache Deutsch genügt.

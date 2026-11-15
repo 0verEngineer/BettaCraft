@@ -4,6 +4,60 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.25.0-beta.1] - 2026-11-15
+
+Full compatibility: the animals of other mods get our care and breeding, tanks travel on Create contraptions and
+airships, Create, AE2, Refined Storage and Mekanism work with the devices, and modpacks get a quest chapter, script
+events and map waypoints.
+
+### Added
+- **Animals of other mods with our care and breeding** (`features.foreignCare`, `features.foreignBreeding`): data-driven
+  profiles (`data/<namespace>/bettacraft/foreign_animals/*.json`, `/reload`) give an animal of vanilla or another mod
+  hunger, a temperature range, water quality, pH and TDS, stocking and (with `saltwater.foreignAnimals = REALISTIC`)
+  salinity in a Bettacraft aquarium: days of trouble make it sick, a sick animal dies (tank log with the cause). Two
+  grown, fed, healthy animals breed by our rules: livebearers give birth, egg layers spawn (some need plants, food fish a
+  big aquarium), and the young take their parents' variants (colours, patterns) from the NBT their mod stores. Profiles
+  ship for Fintastic (guppy, gourami, pleco, small catfish, minnow, moony, cod, salmon), Aquaculture's small fish,
+  the koi of Critters and Companions and Naturalist's bass, catfish and piranha. A handbook page explains the format for
+  modpack makers. `foreign.foreignBreedingSpeed`, `foreign.foreignHealthSpeed`.
+- **Their own breeding suppressed in tanks** (`features.suppressForeignBreeding`): no love from food, no babies of their
+  mod's breeding (vanilla, Fintastic) for the animals in a Bettacraft aquarium; our axolotl, turtle and mob breeding is
+  unaffected.
+- **Tanks on Create contraptions and Create Aeronautics airships** (`features.createContraptions`): pistons, bearings,
+  pulleys, gantries, carts, trains and Sable airships move the whole tank; the animals are packed into it for the trip
+  and drawn swimming in the travelling miniature, the care pauses, and water, plants, interior, small animals and values
+  arrive where the tank is put down (also turned: the interior turns with it). Eggs in the nest, young in clutches and a
+  player inside keep a tank in place.
+- **Create rotation** (`features.createRotation`): a shaft, cogwheel or motor pointing at a water pump, filter pump head,
+  water change controller, level sensor, reverse osmosis unit or food maker drives it (64 RPM full work, slower
+  proportionally, overstressed none; no stress cost).
+- **Create Display Links** (`features.createDisplayLinks`): tanks ("Tank values") and monitors ("Monitored tanks") are
+  display sources for display boards, nixie tubes, signs and lecterns. Create pipes and pumps fill tanks.
+- **Autocrafting with AE2 and Refined Storage:** pattern providers and autocrafters put the ingredients of a processing
+  pattern into the food maker and the crucible; an import bus brings the product back.
+- **Mekanism:** the Bettacraft fluids (reverse osmosis water, sea water, live food) go into its tanks and pipes; the CO2
+  fluid of Create: The Factory Must Grow (`#c:carbon_dioxide`) feeds the CO2 station.
+- **FTB Quests chapter "Bettacraft"** for modpacks: 33 quests from the first tank through the betta, water care,
+  breeding, plants, the reef and big tanks to the terrarium, with advancement and item tasks and the texts as
+  translation keys (English and German). Not in the jar: `bettacraft-modpack-<version>.zip` of the release
+  (`gradlew modpackZip`, the folder `modpack/`), with a KubeJS example script.
+- **Events for KubeJS and other mods** (`features.modpackEvents`): `AnimalBornEvent` (young born or hatched in a tank,
+  ours and foreign), `AnimalDiedEvent` (with the cause, the animal and the killer) and `TankAlarmEvent` (a monitor alarm
+  goes off or clears) on the NeoForge event bus (`org.overengineer.bettacraft.api.event`, KubeJS `NativeEvents.onEvent`),
+  and read-only helpers in `org.overengineer.bettacraft.api.BettacraftApi` (`tankValues` and more).
+- **JourneyMap waypoints for monitor alarms** (`features.alarmWaypoints`, client `map.showAlarmWaypoints`): an alarm
+  puts a red waypoint at its tank for the owner and the players within 128 blocks, until it clears.
+
+### Changed
+- Monitor screens with an alarm tile check their tanks every second also when nobody looks (before only those with
+  redstone alarms), for the events and waypoints.
+
+### Fixed
+- A tank whose controller Create cannot put down (the target is unbreakable) no longer loses its data and animals: the
+  blocks that came down form the tank, or the dropped block becomes a **packed tank** item that sets it up again.
+- A destroyed contraption (a minecart, bearing or piston entity that is gone for good) frees the interior region of its
+  tank instead of leaving it behind.
+
 ## [1.24.1-beta.1] - 2026-11-15
 
 Tank interiors are much cheaper to create.
