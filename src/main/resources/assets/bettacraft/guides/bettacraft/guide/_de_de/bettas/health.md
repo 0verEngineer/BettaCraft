@@ -40,8 +40,13 @@ gesunder Betta heilt 2 Punkte pro Tag.
 
 ## Altersschwäche
 
-Altersschwäche ist standardmäßig aus. Schaltet ein Server sie ein (`health.oldAge.enabled`), sterben Bettas nach
-2 Ingame-Jahren zu je 96 Tagen.
+Altersschwäche ist standardmäßig aus. Schaltet ein Server sie ein (`health.oldAge.enabled`), sterben Bettas und Beifische
+nach `health.oldAge.years` Ingame-Jahren (2) zu je `health.oldAge.daysPerYear` Tagen (96), also nach 192 Tagen im Aquarium.
+Das Alter zählt wie jeder andere Zähler: solange der Fisch in einem Aquarium lebt, dessen Chunk geladen ist. Ein Fisch von
+vor 1.26.0 beginnt mit dem Alter seiner Lebensstufe (ein ausgewachsener mit dem Alter, in dem er ausgewachsen ist). Der Tod
+steht im Becken-Logbuch mit der Ursache „Altersschwäche“. Mit `care.mode` NO_DEATH oder DECOR stirbt niemand an
+Altersschwäche. Garnelen, Schnecken, Amphibien, Reptilien, Schildkröten, Tiere anderer Mods und die Mobs im Glas sterben
+nicht an Altersschwäche.
 
 ## Zeit, während du weg bist
 

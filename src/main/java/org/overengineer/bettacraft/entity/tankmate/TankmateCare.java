@@ -108,6 +108,7 @@ public final class TankmateCare {
             fish.health.feed();
         }
         boolean wasSick = fish.health.isSick();
+        org.overengineer.bettacraft.entity.betta.OldAge.start(fish.health, fish.stage, fish.stageDays, fish::stageDuration); // M33 part d
         BettaHealth.Event event = fish.health.step(days, c, p);
         switch (event) {
             case GOT_SICK -> TankCare.log(level, controller, "log.bettacraft.sick", TankCare.nameArg(fish));
@@ -117,6 +118,10 @@ public final class TankmateCare {
                 return;
             }
             default -> {}
+        }
+        if (org.overengineer.bettacraft.entity.betta.OldAge.due(fish.health)) { // M33 part d
+            dieOfOldAge(level, controller, fish);
+            return;
         }
         fish.breeding.tick(days);
         if (fish.gravidDays >= 0) fish.gravidDays += days;
@@ -162,6 +167,16 @@ public final class TankmateCare {
 
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + key);
         org.overengineer.bettacraft.api.ApiEvents.died(level, controller, fish, key, null); // M32 part d
+        controller.getTank().inhabitants().remove(fish.getUUID());
+        controller.markTankChanged();
+        fish.discard();
+    }
+
+    /** M33 part d: old age: the tank log and the KubeJS event with the cause {@code old_age} (no chat message, like illness). */
+    private static void dieOfOldAge(ServerLevel level, TankBlockEntity controller, TankmateEntity fish) {
+        String key = org.overengineer.bettacraft.entity.betta.OldAge.CAUSE;
+        TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + key);
+        org.overengineer.bettacraft.api.ApiEvents.died(level, controller, fish, key, null);
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();
         fish.discard();

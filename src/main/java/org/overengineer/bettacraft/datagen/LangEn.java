@@ -51,6 +51,7 @@ final class LangEn {
         LangM32c.addAll(a); // M32 part c
         LangM32d.addAll(a); // M32 part d
         LangM33c.addAll(a); // M33 part c
+        LangM33d.addAll(a); // M33 part d
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -251,6 +252,7 @@ final class LangEn {
         a.accept("cause.bettacraft.temperature", "wrong temperature");
         a.accept("cause.bettacraft.overcrowding", "overcrowding");
         a.accept("cause.bettacraft.illness", "illness");
+        a.accept("cause.bettacraft.old_age", "old age"); // M33 part d
         a.accept("cause.bettacraft.both", "hunger and wrong temperature");
         a.accept("cause.bettacraft.and", "%s and %s");
 
@@ -486,7 +488,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.oldAge", "Old age");
         a.accept("bettacraft.configuration.oldAge.tooltip", "Death of old age (off by default)");
         a.accept("bettacraft.configuration.enabled", "Enabled");
-        a.accept("bettacraft.configuration.enabled.tooltip", "Whether bettas die of old age");
+        a.accept("bettacraft.configuration.enabled.tooltip", "Whether bettas and tankmates die of old age after the lifespan (not in care.mode NO_DEATH or DECOR)");
         a.accept("bettacraft.configuration.years", "Lifespan (years)");
         a.accept("bettacraft.configuration.years.tooltip", "Lifespan in in-game years");
         a.accept("bettacraft.configuration.daysPerYear", "Days per year");

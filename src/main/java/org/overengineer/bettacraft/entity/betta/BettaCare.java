@@ -88,6 +88,7 @@ public final class BettaCare {
                         || org.overengineer.bettacraft.tank.TankAeration.lowFor(tank, true) // M23: labyrinth fish hardly mind low oxygen
                         || org.overengineer.bettacraft.chem.TankChemistry.bad(tank, org.overengineer.bettacraft.chem.ChemTolerance.BETTA), salt); // M25: pH / TDS far out of the betta's range
         boolean wasSick = fish.health.isSick();
+        OldAge.start(fish.health, fish.liveStage, fish.stageDays, LifeStage::days); // M33 part d
         BettaHealth.Event event;
         if (days > 1.0) {
             event = catchUp(level, controller, fish, days, c, p);
@@ -102,6 +103,10 @@ public final class BettaCare {
                 return;
             }
             default -> {}
+        }
+        if (OldAge.due(fish.health)) { // M33 part d
+            dieOfOldAge(level, controller, fish);
+            return;
         }
         if (wasSick != fish.health.isSick()) fish.syncLook();
         fish.syncDiet(); // M26 part b
@@ -202,6 +207,16 @@ public final class BettaCare {
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();
         fish.discard(); // the fish simply vanishes, no drops (PLAN 5.5)
+    }
+
+    /** M33 part d: old age ({@link OldAge}): message, tank log and the KubeJS event with the cause {@code old_age}. */
+    static void dieOfOldAge(ServerLevel level, TankBlockEntity controller, BettaEntity fish) {
+        announce(level, fish, Component.translatable("cause.bettacraft." + OldAge.CAUSE));
+        TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + OldAge.CAUSE);
+        org.overengineer.bettacraft.api.ApiEvents.died(level, controller, fish, OldAge.CAUSE, null);
+        controller.getTank().inhabitants().remove(fish.getUUID());
+        controller.markTankChanged();
+        fish.discard();
     }
 
     /** Death by damage (fight, chasing male, predator, ...): message and tank log. */

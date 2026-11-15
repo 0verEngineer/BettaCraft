@@ -401,7 +401,7 @@ public final class ServerConfig {
         HEALTH_BOTH_BAD_MULTIPLIER = b.comment("Speed multiplier of all health timers while two or more conditions (food, temperature, stocking) are bad").defineInRange("bothBadMultiplier", 2.0, 1.0, 10.0);
         HEALTH_RECOVERY_PER_DAY = b.comment("Sick days removed per good day").defineInRange("recoveryPerDay", 2.0, 0.0, 100.0);
         b.push("oldAge");
-        HEALTH_OLD_AGE_ENABLED = b.comment("Whether bettas die of old age").define("enabled", false);
+        HEALTH_OLD_AGE_ENABLED = b.comment("Whether bettas and tankmates die of old age after the lifespan (not in care.mode NO_DEATH or DECOR)").define("enabled", false);
         HEALTH_OLD_AGE_YEARS = b.comment("Lifespan in in-game years").defineInRange("years", 2.0, 0.1, 100.0);
         HEALTH_OLD_AGE_DAYS_PER_YEAR = b.comment("In-game days per year (Serene Seasons default: 96)").defineInRange("daysPerYear", 96, 1, 10000);
         b.pop();

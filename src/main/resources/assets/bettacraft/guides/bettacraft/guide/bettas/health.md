@@ -40,8 +40,12 @@ Bettas have 6 health points. Fights, a male guarding his nest and predators hurt
 
 ## Old age
 
-Dying of old age is off by default. If a server turns it on (`health.oldAge.enabled`), bettas die after 2 in-game years
-of 96 days each.
+Dying of old age is off by default. If a server turns it on (`health.oldAge.enabled`), bettas and tankmates die after
+`health.oldAge.years` in-game years (2) of `health.oldAge.daysPerYear` days (96), so after 192 days in an aquarium. The
+age counts like every other timer: while the fish lives in an aquarium whose chunk is loaded. A fish from before 1.26.0
+starts at the age of its life stage (a grown fish at the age at which it grew up). The death shows in the tank log with
+the cause "old age". With `care.mode` NO_DEATH or DECOR nothing dies of old age. Shrimp, snails, amphibians, reptiles,
+turtles, the animals of other mods and the mobs in glass do not age to death.
 
 ## Time while you are away
 

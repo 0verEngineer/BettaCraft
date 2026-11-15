@@ -89,6 +89,8 @@ public final class BettaHealth {
     double saltShock;
     boolean sick;
     double sickDays;
+    /** M33 part d: days the animal has lived in a tank (its age for {@link OldAge}); -1 = not counted yet (older data). */
+    double ageDays = -1;
     /** M26 part b: days since the fish last ate food of each group (infinite = not within the last month). */
     final double[] ateAgo = new double[FOOD_GROUPS];
 
@@ -139,6 +141,7 @@ public final class BettaHealth {
     /** Advances the timers by {@code days}. Returns the most important event that happened (DIED wins). */
     public Event step(double days, Conditions c, Params p) {
         Event result = Event.NONE;
+        if (ageDays >= 0) ageDays += Math.max(0, days); // M33 part d: old age
         double left = Math.max(0, days);
         while (left > 1e-9) {
             double dt = Math.min(MAX_STEP_DAYS, left);
@@ -227,6 +230,10 @@ public final class BettaHealth {
     public double crowdStress() { return crowdStress; }
     public double waterStress() { return waterStress; }
     public double saltShock() { return saltShock; }
+    /** M33 part d: the age in days, -1 if not counted yet. */
+    public double ageDays() { return ageDays; }
+    public boolean ageKnown() { return ageDays >= 0; }
+    public void setAgeDays(double d) { ageDays = Double.isFinite(d) ? Math.max(0, d) : 0; }
 
     // ------------------------------------------------------------------ NBT
 
@@ -243,6 +250,7 @@ public final class BettaHealth {
         CompoundTag diet = new CompoundTag(); // M26 part b
         for (int i = 0; i < FOOD_GROUPS; i++) if (ateAgo[i] < 30) diet.putDouble(String.valueOf(i), ateAgo[i]);
         if (!diet.isEmpty()) t.put("diet", diet);
+        if (ageDays >= 0) t.putDouble("age_days", ageDays); // M33 part d
         return t;
     }
 
@@ -264,6 +272,7 @@ public final class BettaHealth {
         h.sickDays = days(t, "sick_days");
         CompoundTag diet = t.getCompound("diet"); // M26 part b; empty for older fish
         for (int i = 0; i < FOOD_GROUPS; i++) if (diet.contains(String.valueOf(i))) h.ateAgo[i] = Math.min(30, days(diet, String.valueOf(i)));
+        h.ageDays = t.contains("age_days") ? days(t, "age_days") : -1; // M33 part d; older animals: counted from their stage
         return h;
     }
 
