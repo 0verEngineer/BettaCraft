@@ -90,6 +90,17 @@ public final class ForeignTerrariumGameTests {
                 p.terrarium(), p.land()), false);
     }
 
+    /** Puts the stand-in profiles in place (nothing to do with Naturalist); the returned runnable restores the profiles. */
+    private static Runnable install(List<Animal> animals) {
+        Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
+        if (animals.stream().allMatch(Animal::real)) return () -> {};
+        Map<ResourceLocation, ForeignProfile> files = new LinkedHashMap<>(saved);
+        int i = 0;
+        for (Animal a : animals) if (!a.real()) files.put(BettaCraft.id("gametest_stand_in_" + i++), a.profile());
+        ForeignProfiles.set(files);
+        return () -> ForeignProfiles.set(saved);
+    }
+
     /** Runs the test with the stand-in profiles in place (nothing to do with Naturalist), restoring the profiles afterwards. */
     private static void with(List<Animal> animals, Runnable body) {
         Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
@@ -237,10 +248,11 @@ public final class ForeignTerrariumGameTests {
      * The tortoise (1 m) goes into a dry terrarium of 12 x 3 x 6 with land enough (from its box, no water), not into a small
      * terrarium (the size rule names the minimum) nor a paludarium; the walker holds it there (its own AI off).
      */
-    @GameTest(template = EMPTY, batch = "bettacraft_m35_foreign_terrarium", timeoutTicks = 200)
+    @GameTest(template = EMPTY, batch = "bettacraft_m35_tortoise_walk", timeoutTicks = 200)
     public static void tortoiseGoesIntoABigDryTerrarium(GameTestHelper h) {
         Animal a = tortoise();
-        with(List.of(a), () -> {
+        Runnable restore = install(List.of(a)); // the stand-in profile stays until the delayed check
+        try {
             ServerLevel level = h.getLevel();
             h.assertTrue(BigAnimals.length(a.type(), null) == 1.0, "1 m for the size rule");
             h.assertTrue(TerrariumAnimals.isTerrariumAnimal(a.type()), "a terrarium animal by its profile");
@@ -257,11 +269,18 @@ public final class ForeignTerrariumGameTests {
             h.assertTrue(dry.getTank().waterMb() == 0, "still dry");
             h.assertTrue(ForeignCare.menuValues(t) != null, "our care");
             h.runAfterDelay(30, () -> {
+                try {
                 h.assertTrue(ForeignTerrarium.held(t), "the walker holds it in its tank");
                 h.assertTrue(TankInhabitants.tankBox(dry.getTank()).contains(t.position()), "it stays in the tank");
                 h.succeed();
+                } finally {
+                    restore.run();
+                }
             });
-        });
+        } catch (RuntimeException ex) {
+            restore.run();
+            throw ex;
+        }
     }
 
     /** Greens by hand on the tank and from the feeder (the feeder waits until it is hungry); a cow's wheat is no food for it. */
@@ -331,10 +350,11 @@ public final class ForeignTerrariumGameTests {
      * The alligator (2 m) only into a big paludarium (24 x 6 x 12, the whole tank counts): a small paludarium names the
      * minimum, a terrarium refuses it; in its tank it eats the neons, and takes raw meat from the feeder when hungry.
      */
-    @GameTest(template = EMPTY, batch = "bettacraft_m35_foreign_terrarium", timeoutTicks = 300)
+    @GameTest(template = EMPTY, batch = "bettacraft_m35_alligator", timeoutTicks = 300)
     public static void alligatorInABigPaludariumHuntsAndTakesMeat(GameTestHelper h) {
         Animal a = alligator();
-        with(List.of(a), () -> {
+        Runnable restore = install(List.of(a)); // the stand-in profile stays until the delayed check
+        try {
             ServerLevel level = h.getLevel();
             TankBlockEntity small = paludarium(h, 2, 20, 6, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
             Component no = insert(h, small, container(h, a.type(), true, false));
@@ -359,10 +379,17 @@ public final class ForeignTerrariumGameTests {
             h.assertTrue(ForeignFood.feedFromFeeder(level, c, feeder) == 1 && feeder.getStackInSlot(1).getCount() == 1, "raw beef from the feeder");
             h.assertTrue(ForeignCare.health(g).daysSinceFed() < 0.01, "fed");
             h.runAfterDelay(30, () -> {
+                try {
                 h.assertTrue(ForeignTerrarium.held(g), "the walker holds it");
                 h.succeed();
+                } finally {
+                    restore.run();
+                }
             });
-        });
+        } catch (RuntimeException ex) {
+            restore.run();
+            throw ex;
+        }
     }
 
     // ------------------------------------------------------------------ the terrarium box
