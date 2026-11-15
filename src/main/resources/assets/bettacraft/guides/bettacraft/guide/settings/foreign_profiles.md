@@ -82,3 +82,13 @@ installed are skipped quietly (unless `"required": true`). Example:
 
 Animals with a care of their own in Bettacraft (our animals, the axolotl, dolphin, sea turtle and the mobs in glass) cannot
 be given a profile. The server log lists the profiles it loaded and every mistake in a file.
+
+## Checking the profiles in a world
+
+* **A renamed entity:** if the mod of a profile is installed but the entity id is not registered (a newer version of the
+  mod renamed it), the server log warns with the profile file, the missing id and the similar ids of that mod, so the
+  file can be fixed. A profile for a mod that is not installed stays quiet.
+* **`/bettacraft foreign list [radius]`** (operators): every animal of vanilla or another mod in the tank you look at, or
+  else in all tanks within the radius (default 32 blocks), with its entity id and the profile file that maps it, or "no
+  profile". At the end, the entity types of other mods that live in these tanks without a profile: the ones a profile
+  would be worth writing for.

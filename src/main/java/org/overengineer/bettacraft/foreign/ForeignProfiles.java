@@ -5,7 +5,9 @@ import org.overengineer.bettacraft.config.Feature;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +44,10 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/foreign");
     private static final FileToIdConverter FILES = FileToIdConverter.json("bettacraft/foreign_animals");
     private static volatile Map<EntityType<?>, ForeignProfile> byType = Map.of();
+    /** M33 part d: warnings about an entity id missing from a loaded mod (renamed?) so far (GameTests). */
+    public static int renamedWarnings;
+    /** M33 part d: the profile file that maps each type (for {@code /bettacraft foreign list}). */
+    private static volatile Map<EntityType<?>, ResourceLocation> fileByType = Map.of();
     /** Types registered as terrarium animals by a profile (taken back on the next reload). */
     private static final Set<EntityType<?>> TERRARIUM = new HashSet<>();
     /** The files of the last {@link #set} (GameTests add their own and restore these). */
@@ -87,6 +93,12 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         return of(e.getType());
     }
 
+    /** M33 part d: the id of the profile file that maps this type, or null. */
+    @Nullable
+    public static ResourceLocation fileOf(EntityType<?> type) {
+        return fileByType.get(type);
+    }
+
     /** Every mapped type with its profile (handbook, dev command, tests). */
     public static Map<EntityType<?>, ForeignProfile> all() {
         return byType;
@@ -104,6 +116,59 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         if (type == EntityType.AXOLOTL || type == EntityType.DOLPHIN || type == EntityType.TURTLE || type == EntityType.TADPOLE) return true;
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return true;
         return TerrariumAnimals.isTerrariumAnimal(type) && !TERRARIUM.contains(type);
+    }
+
+    /** Whether the mod of this namespace is loaded (by its mod id, or because it has entities registered under it). */
+    static boolean modLoaded(String namespace) {
+        if ("minecraft".equals(namespace)) return true;
+        var mods = net.neoforged.fml.ModList.get();
+        if (mods != null && mods.isLoaded(namespace)) return true;
+        return !pathsOf(namespace).isEmpty();
+    }
+
+    /** The paths of the entity types registered under a namespace. */
+    static List<String> pathsOf(String namespace) {
+        List<String> out = new ArrayList<>();
+        for (ResourceLocation id : BuiltInRegistries.ENTITY_TYPE.keySet()) if (id.getNamespace().equals(namespace)) out.add(id.getPath());
+        return out;
+    }
+
+    /**
+     * M33 part d (pure, unit-tested): up to {@code max} of {@code candidates} that look like {@code missing}, the most
+     * similar first: by edit distance, where a candidate that contains the other (or is contained) or shares its last word
+     * ({@code _}-separated) counts as close; nothing further away than half of the longer id.
+     */
+    public static List<String> similar(String missing, java.util.Collection<String> candidates, int max) {
+        record Scored(String id, int score) {}
+        List<Scored> scored = new ArrayList<>();
+        String last = missing.substring(missing.lastIndexOf('_') + 1);
+        for (String c : candidates) {
+            int d = distance(missing, c);
+            boolean close = c.contains(missing) || missing.contains(c) || (last.length() >= 3 && c.substring(c.lastIndexOf('_') + 1).equals(last));
+            if (close) d = Math.min(d, Math.abs(c.length() - missing.length()) / 2);
+            if (close || d <= Math.max(missing.length(), c.length()) / 2) scored.add(new Scored(c, d));
+        }
+        scored.sort(java.util.Comparator.comparingInt(Scored::score).thenComparing(Scored::id));
+        List<String> out = new ArrayList<>();
+        for (int i = 0; i < Math.min(max, scored.size()); i++) out.add(scored.get(i).id());
+        return out;
+    }
+
+    /** Levenshtein distance. */
+    static int distance(String a, String b) {
+        int[] prev = new int[b.length() + 1], cur = new int[b.length() + 1];
+        for (int j = 0; j <= b.length(); j++) prev[j] = j;
+        for (int i = 1; i <= a.length(); i++) {
+            cur[0] = i;
+            for (int j = 1; j <= b.length(); j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                cur[j] = Math.min(Math.min(cur[j - 1] + 1, prev[j] + 1), prev[j - 1] + cost);
+            }
+            int[] t = prev;
+            prev = cur;
+            cur = t;
+        }
+        return prev[b.length()];
     }
 
     @Override
@@ -132,13 +197,23 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         for (EntityType<?> t : TERRARIUM) TerrariumAnimals.unregister(t);
         TERRARIUM.clear();
         Map<EntityType<?>, ForeignProfile> map = new LinkedHashMap<>();
+        Map<EntityType<?>, ResourceLocation> fileMap = new LinkedHashMap<>();
         int skipped = 0;
         for (Map.Entry<ResourceLocation, ForeignProfile> f : files.entrySet()) {
             ForeignProfile p = f.getValue();
             for (ResourceLocation eid : p.entities()) {
                 var type = BuiltInRegistries.ENTITY_TYPE.getOptional(eid);
                 if (type.isEmpty()) {
-                    if (p.required()) LOGGER.warn("{}: entity {} is not registered", f.getKey(), eid);
+                    if (modLoaded(eid.getNamespace())) {
+                        // M33 part d: the mod is there but not this id: probably renamed in a newer version of the mod
+                        renamedWarnings++;
+                        List<String> like = similar(eid.getPath(), pathsOf(eid.getNamespace()), 3);
+                        LOGGER.warn("Foreign animal profile {}: entity {} is not registered although the mod {} is loaded (renamed?); {}",
+                                f.getKey(), eid, eid.getNamespace(), like.isEmpty() ? "no entity of that mod has a similar id"
+                                        : "similar ids of that mod: " + String.join(", ", like.stream().map(x -> eid.getNamespace() + ":" + x).toList()));
+                    } else if (p.required()) {
+                        LOGGER.warn("{}: entity {} is not registered", f.getKey(), eid);
+                    }
                     skipped++;
                     continue;
                 }
@@ -147,6 +222,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
                     continue;
                 }
                 map.put(type.get(), p);
+                fileMap.put(type.get(), f.getKey());
             }
         }
         for (Map.Entry<EntityType<?>, ForeignProfile> e : map.entrySet()) {
@@ -154,6 +230,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
             TerrariumAnimals.register(e.getKey(), e.getValue().terrarium(), () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FOREIGN_CARE));
             TERRARIUM.add(e.getKey());
         }
+        fileByType = Map.copyOf(fileMap);
         byType = Map.copyOf(map);
         LOGGER.info("Loaded {} foreign animal profiles for {} entity types ({} of mods not installed)", files.size(), map.size(), skipped);
         return byType;

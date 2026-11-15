@@ -82,3 +82,13 @@ Entities, deren Mod nicht installiert ist, werden still übersprungen (außer mi
 
 Tiere mit eigener Pflege in Bettacraft (unsere Tiere, Axolotl, Delfin, Meeresschildkröte und die Mobs im Glas) können kein
 Profil bekommen. Das Serverlog nennt die geladenen Profile und jeden Fehler in einer Datei.
+
+## Profile in einer Welt prüfen
+
+* **Umbenannte Entity:** Ist die Mod eines Profils installiert, die Entity-ID aber nicht registriert (eine neuere Version der
+  Mod hat sie umbenannt), warnt das Server-Log mit der Profil-Datei, der fehlenden ID und den ähnlichen IDs dieser Mod,
+  damit sich die Datei korrigieren lässt. Ein Profil für eine Mod, die nicht installiert ist, bleibt still.
+* **`/bettacraft foreign list [Radius]`** (Operatoren): jedes Tier aus Vanilla oder einer anderen Mod im angeschauten Becken,
+  sonst in allen Becken im Radius (Standard 32 Blöcke), mit seiner Entity-ID und der Profil-Datei, die es abbildet, oder
+  „kein Profil“. Am Ende die Entity-Typen anderer Mods, die ohne Profil in diesen Becken leben: die, für die sich ein Profil
+  lohnen würde.

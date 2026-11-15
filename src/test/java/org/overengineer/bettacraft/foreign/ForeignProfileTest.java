@@ -136,4 +136,17 @@ class ForeignProfileTest {
             assertFalse(p.required(), f.getFileName() + " must not require its mod");
         }
     }
+
+    /** M33 part d: the hint of the log warning for a renamed entity id: the similar ids of the mod, the most similar first. */
+    @Test
+    void similarIdsForARenamedEntity() {
+        java.util.List<String> mod = java.util.List.of("guppy", "fancy_guppy", "neon_tetra", "betta_splendens", "piranha", "zebrafish");
+        org.junit.jupiter.api.Assertions.assertEquals(java.util.List.of("guppy"), ForeignProfiles.similar("guppie", mod, 3));
+        org.junit.jupiter.api.Assertions.assertEquals("neon_tetra", ForeignProfiles.similar("tetra", mod, 3).getFirst());
+        org.junit.jupiter.api.Assertions.assertEquals(java.util.List.of("piranha"), ForeignProfiles.similar("red_piranha", mod, 3), "contained is close");
+        org.junit.jupiter.api.Assertions.assertTrue(ForeignProfiles.similar("axolotl", mod, 3).isEmpty(), "nothing alike: no hint");
+        org.junit.jupiter.api.Assertions.assertEquals(2, ForeignProfiles.similar("guppy", mod, 2).size(), "at most max");
+        org.junit.jupiter.api.Assertions.assertEquals(0, ForeignProfiles.distance("koi", "koi"));
+        org.junit.jupiter.api.Assertions.assertEquals(2, ForeignProfiles.distance("koi", "kio"));
+    }
 }

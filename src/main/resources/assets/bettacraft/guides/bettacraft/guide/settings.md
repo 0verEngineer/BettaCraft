@@ -28,7 +28,7 @@ navigation:
 | `health.bothBadMultiplier` | 2 | faster stress with two bad conditions |
 | `health.recoveryPerDay` | 2 | sick days healed per good day |
 | `health.hungryAfterDays` | 1 | days after a meal until a betta is hungry again |
-| `health.oldAge.enabled` | false | death of old age (`years` 2, `daysPerYear` 96) |
+| `health.oldAge.enabled` | false | death of old age of bettas and tankmates (`years` 2, `daysPerYear` 96) |
 | `temperature.tauDays` | 0.1 | how fast the water changes its temperature |
 | `temperature.toleratedMin`, `toleratedMax` | 24, 30 | water temperatures bettas tolerate (°C); the best range is `breeding.minTemp` to `maxTemp` |
 | `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation, mirror training (`mirrorReadinessBonus` 1.25), days live food keeps a fish conditioned (`conditioningDays` 2) |
@@ -322,6 +322,8 @@ features to the tags of the waters above, so the biomes of biome mods count; whi
   30 seconds.
 * `/bettacraft preset` shows the active preset and the values it sets; operators (level 3): `/bettacraft preset <name>`
   switches it (see Presets above).
+* Operators: `/bettacraft foreign list [radius]` lists the animals of vanilla and other mods in the tank you look at (or in
+  the tanks nearby) with their profile, and the types of other mods without one ([profiles](settings/foreign_profiles.md)).
 
 ## In this chapter
 

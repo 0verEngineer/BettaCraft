@@ -20,6 +20,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
+import org.overengineer.bettacraft.command.ForeignCommand;
+import org.overengineer.bettacraft.foreign.ForeignProfile;
+import org.overengineer.bettacraft.foreign.ForeignProfiles;
 import org.overengineer.bettacraft.mobs.GlassMobs;
 import org.overengineer.bettacraft.network.ModNetwork;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
@@ -105,5 +108,53 @@ public final class Hardening2GameTests {
         FluidStack water = f.drain(new FluidStack(Fluids.WATER, 100), IFluidHandler.FluidAction.SIMULATE);
         h.assertTrue(!water.isEmpty() && water.getFluid().isSame(Fluids.WATER), "asked for water, got it: " + water.getAmount());
         h.succeed();
+    }
+
+    // ------------------------------------------------------------------ foreign profiles (user addition)
+
+    /** A profile whose mod is loaded but whose entity id is not registered warns (renamed?); a missing mod stays quiet. */
+    @GameTest(template = EMPTY, batch = "bettacraft_m33d_foreign")
+    public static void renamedForeignEntityWarns(GameTestHelper h) {
+        var saved = ForeignProfiles.files();
+        try {
+            var files = new java.util.LinkedHashMap<>(saved);
+            files.put(BettaCraft.id("gametest_renamed"), ForeignProfile.parse(com.google.gson.JsonParser.parseString(
+                    "{\"entity\": \"minecraft:tropicalfish\"}").getAsJsonObject(), w -> {}));
+            int before = ForeignProfiles.renamedWarnings;
+            ForeignProfiles.set(files);
+            h.assertTrue(ForeignProfiles.renamedWarnings == before + 1, "a warning for minecraft:tropicalfish");
+            h.assertTrue(ForeignProfiles.similar("tropicalfish", java.util.List.of("tropical_fish", "cod", "pufferfish"), 3).getFirst().equals("tropical_fish"),
+                    "the hint names minecraft:tropical_fish");
+            files.put(BettaCraft.id("gametest_renamed"), ForeignProfile.parse(com.google.gson.JsonParser.parseString(
+                    "{\"entity\": \"nosuchmod:fish\"}").getAsJsonObject(), w -> {}));
+            before = ForeignProfiles.renamedWarnings;
+            ForeignProfiles.set(files);
+            h.assertTrue(ForeignProfiles.renamedWarnings == before, "a mod that is not installed stays quiet");
+            h.succeed();
+        } finally {
+            ForeignProfiles.set(saved);
+        }
+    }
+
+    /** {@code /bettacraft foreign list}: each foreign animal with its profile file or none; vanilla types are no "mod without profile". */
+    @GameTest(template = EMPTY, batch = "bettacraft_m33d_foreign")
+    public static void foreignListShowsProfiles(GameTestHelper h) {
+        ForeignGameTests.withProfile(ForeignGameTests.TROPICAL, () -> {
+            TankBlockEntity c = ForeignGameTests.tank(h, 2, 2, 3, 2, 3, 25F);
+            ForeignGameTests.add(h, c, EntityType.TROPICAL_FISH, t -> {});
+            ForeignGameTests.add(h, c, EntityType.COD, t -> {});
+            List<ForeignCommand.Row> rows = ForeignCommand.rows(h.getLevel(), c);
+            h.assertTrue(rows.size() == 2, "two foreign animals: " + rows.size());
+            ForeignCommand.Row cod = rows.stream().filter(r -> r.type() == EntityType.COD).findFirst().orElseThrow();
+            ForeignCommand.Row tropical = rows.stream().filter(r -> r.type() == EntityType.TROPICAL_FISH).findFirst().orElseThrow();
+            h.assertTrue(cod.profile() == null, "the cod has no profile");
+            h.assertTrue(BettaCraft.id("gametest_stand_in").equals(tropical.profile()), "the tropical fish has the test profile: " + tropical.profile());
+            h.assertTrue(ForeignCommand.unprofiled(rows).isEmpty(), "vanilla types are not listed as mods without a profile");
+            var modRows = new java.util.ArrayList<>(rows);
+            modRows.add(new ForeignCommand.Row(org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), net.minecraft.network.chat.Component.empty(), null));
+            h.assertTrue(ForeignCommand.unprofiled(modRows).size() == 1, "a type of another namespace without a profile is listed");
+            h.assertTrue(ForeignCommand.tanksNear(h.getLevel(), c.getBlockPos().getCenter(), 8).contains(c), "the tank is found nearby");
+            h.succeed();
+        });
     }
 }

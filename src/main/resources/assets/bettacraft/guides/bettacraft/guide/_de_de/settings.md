@@ -28,7 +28,7 @@ navigation:
 | `health.bothBadMultiplier` | 2 | schnellerer Stress bei zwei schlechten Bedingungen |
 | `health.recoveryPerDay` | 2 | geheilte Krankheitstage pro gutem Tag |
 | `health.hungryAfterDays` | 1 | Tage nach einer Mahlzeit, bis ein Betta wieder hungrig ist |
-| `health.oldAge.enabled` | false | Tod durch Altersschwäche (`years` 2, `daysPerYear` 96) |
+| `health.oldAge.enabled` | false | Tod durch Altersschwäche von Bettas und Beifischen (`years` 2, `daysPerYear` 96) |
 | `temperature.tauDays` | 0.1 | wie schnell das Wasser seine Temperatur ändert |
 | `temperature.toleratedMin`, `toleratedMax` | 24, 30 | Wassertemperaturen, die Bettas vertragen (°C); am besten ist `breeding.minTemp` bis `maxTemp` |
 | `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation, Spiegeltraining (`mirrorReadinessBonus` 1,25), Tage, die Lebendfutter einen Fisch konditioniert hält (`conditioningDays` 2) |
@@ -334,6 +334,8 @@ Pflanze wo wächst, steht unter [Pflanzen](plants.md).
   `/bettacraft wildlife glow [Radius]` lässt sie 30 Sekunden leuchten.
 * `/bettacraft preset` zeigt die aktive Voreinstellung und die Werte, die sie setzt; Operatoren (Stufe 3):
   `/bettacraft preset <Name>` wechselt sie (siehe Voreinstellungen oben).
+* Operatoren: `/bettacraft foreign list [Radius]` listet die Tiere aus Vanilla und anderen Mods im angeschauten Becken (oder in
+  den Becken in der Nähe) mit ihrem Profil und die Typen anderer Mods ohne Profil ([Profile](settings/foreign_profiles.md)).
 
 ## In diesem Kapitel
 
