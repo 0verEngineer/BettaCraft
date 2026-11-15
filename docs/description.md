@@ -145,7 +145,9 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   drives pumps, the reverse osmosis unit and the food maker; Display Links show tank values. **AE2 and Refined
   Storage** autocrafting feeds the food maker and the crucible; **Mekanism** tanks take the Bettacraft fluids.
 - **For modpacks:** an FTB Quests chapter "Bettacraft" (33 quests, English and German), KubeJS events (animal born,
-  animal died, monitor alarm), and **JourneyMap** waypoints at tanks with a monitor alarm.
+  animal died, monitor alarm), **JourneyMap** waypoints at tanks with a monitor alarm, a switch for every feature,
+  presets (simple, realistic, decoration only) and `/bettacraft foreign list` to see which animals of other mods still
+  need a profile.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
   O' Plenty and others get the wild animals, plants and corals (biome tags).
 - **Sodium and Iris:** supported, water and miniatures render correctly with shaders.
@@ -158,8 +160,11 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 pictures above were taken with Complementary Reimagined.
 
 **Can I use it in my modpack?** Yes. The mod is MIT licensed (code and all assets), so you may include it in any pack.
-Every larger feature has a switch (`features.*` in `config/bettacraft-common.toml`), so packs can turn off what they do
-not want. Tags and datapacks control spawns, food, inhabitants and genetics.
+Every feature has its own switch (`features.*` in `config/bettacraft-common.toml`, 105 in all): off, it loses its
+recipes, trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests. Presets
+(`preset = SIMPLE | REALISTIC | DECOR`) set other defaults in one line, `care.mode = NO_DEATH` keeps every animal alive,
+and datapacks can use the `bettacraft:feature` recipe and loot condition. Tags and datapacks control spawns, food,
+inhabitants and genetics.
 
 **Where is the config?** `serverconfig/bettacraft-server.toml` in the world (tank size, animals, breeding, water, power
 ...), `config/bettacraft-common.toml` (spawns, feature switches) and `config/bettacraft-client.toml` (render
@@ -190,5 +195,6 @@ Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanz
 Geckos und Kornnattern, verkleinerte Mobs im Glas, Filter,
 Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Fische anderer Mods (Fintastic, Aquaculture …)
 bekommen unsere Pflege und Zucht, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
-ein FTB-Quests-Kapitel, KubeJS-Events und JourneyMap-Wegpunkte bei Alarmen. Die Mod und das Handbuch im Spiel sind
+ein FTB-Quests-Kapitel, KubeJS-Events, JourneyMap-Wegpunkte bei Alarmen, einen Schalter für jedes Feature und
+Voreinstellungen (einfach, realistisch, nur Deko). Die Mod und das Handbuch im Spiel sind
 komplett auf Deutsch übersetzt; die Spielsprache Deutsch genügt.

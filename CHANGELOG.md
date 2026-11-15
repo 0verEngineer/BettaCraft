@@ -4,6 +4,74 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.26.0-beta.1] - 2026-11-15
+
+Modpack configuration: every feature can be switched off on its own, presets for simple, realistic and decoration
+tanks, a care mode without deaths, a second hardening pass over the systems of 1.14 to 1.25, tools for foreign animal
+profiles and death of old age.
+
+### Added
+- **Feature switches per feature** (common config, section `features`): one tree per feature group with
+  `features.<group>.enabled` and its sub-switches next to it (`features.tankmates.cichlids`, `features.saltwater.seahorses`,
+  `features.pipes.autoWaterChange` ...), 105 switches in all, with parents and requirements (corals need salt water,
+  herp breeding needs breeding ...). A feature that is off loses its recipes, trader offers, loot, net catches and wild
+  spawns; its items and blocks stay registered (worlds stay safe), but are no longer obtainable.
+- **Hidden when off:** the server sends its switches to every client (also after a config reload), so the creative tab,
+  JEI (items and the crucible / food maker categories) and the handbook (navigation, search; a page reached by a link
+  names the group that is off) follow the server.
+- **Resting logic:** a feature that is off rests, nothing is deleted and nothing dies: betta and tankmate care (per
+  species group), breeding, small animals, frogs, algae, floating and aquarium plants, corals, the interior (no entering,
+  no growth), salt shock, FE demand (devices run without FE), live food breeders and cultures, device sounds, info
+  overlays, Better Fish Tanks. Switched on again, everything goes on where it stopped.
+- **`bettacraft:feature` condition for datapacks:** as a recipe condition (`{"type": "bettacraft:feature", "feature":
+  "tankmates.cichlids"}`) and as a loot condition; every Bettacraft recipe and loot modifier of an optional feature
+  carries it.
+- **Presets** (common config `preset = CUSTOM | SIMPLE | REALISTIC | DECOR`, `presetKeep`): a second set of defaults over
+  the feature switches and the server values. *Simple*: no water chemistry, CO2, reverse osmosis or power, no forced water
+  changes or evaporation, gentler care. *Realistic*: everything on, strict values, the devices need FE. *Decor*: no care,
+  no chemistry, power, algae or breeding. A value changed in the file or listed in `presetKeep` wins; nothing is written
+  into the files. `/bettacraft preset [name]` shows or switches it (operators), the clients follow.
+- **Care mode** (`care.mode = NORMAL | NO_DEATH | DECOR`): NO_DEATH keeps needs and sickness but no animal in a tank or
+  terrarium dies of them or is eaten; DECOR has no needs at all. Players and `/kill` still kill.
+- **Death of old age** (`health.oldAge.enabled`, off by default, not part of a preset): bettas and tankmates die after
+  `health.oldAge.years` (2) in-game years of `health.oldAge.daysPerYear` (96) days in an aquarium; the tank log, the chat
+  message and the KubeJS `AnimalDiedEvent` give the cause `old_age`. The age counts with the care (loaded chunks only); a
+  fish from an older version starts at the age of its life stage. Never in `care.mode` NO_DEATH or DECOR. Small animals,
+  amphibians, reptiles, turtles, foreign animals and mobs in glass do not age to death.
+- **`/bettacraft foreign list [radius]`** (operators): the animals of vanilla and other mods in the tank you look at (or in
+  the tanks nearby) with their entity id and the profile file that maps them or "no profile", and the entity types of
+  other mods that live in these tanks without a profile.
+- **Renamed foreign entities are reported:** if the mod of a foreign animal profile is loaded but its entity id is not
+  registered (renamed in a newer version of the mod), the server log warns with the profile file, the missing id and the
+  similar ids of that mod. A profile for a mod that is not installed stays quiet as before.
+
+### Changed
+- **Feature switch keys renamed** (for modpacks): the flat keys of 1.25 (`features.wildBettas`, `features.cichlids`,
+  `features.foreignCare` ...) are now paths in the feature tree (`features.bettas.wildSpecies`,
+  `features.tankmates.cichlids`, `features.foreignAnimals.care` ...). The game **migrates an existing
+  `config/bettacraft-common.toml` automatically** when it starts: every value goes to its new key (what was off stays off),
+  the old keys are removed, the old file is kept as `bettacraft-common.toml.pre-m33`, and each moved key is logged. The
+  handbook's settings page has the whole tree.
+- A species sub-switch (`features.tankmates.cichlids` ...) now also lets the care of the animals already in tanks rest.
+- Network version 13 (feature switches and the preset are synced): clients and servers of 1.26 only connect to each other.
+- `saltwater.foreignAnimals` stays LENIENT by default (the Realistic preset sets REALISTIC).
+
+### Fixed
+- A monitor layout sent by a client keeps only the settings the widgets know, with sane values and tile ids (it could
+  carry any NBT into the block entity, the chunk and every client's sync).
+- A pipe network built while part of it was in an unloaded chunk is built again shortly after (its pipes and ends there
+  stayed missing until a pipe changed); a pipe asked for one fluid gives only that fluid.
+- The water change controller's menu respects claims, spawn protection and the build rights of an interior, and "change
+  now" runs at most once a second.
+- Decoration template requests are answered at most 32 times per player and second.
+- A mob in glass converted by vanilla or another mod (lightning, powder snow ...) keeps its mark and still drops nothing;
+  a converted mob that may not live in glass leaves the tank's list.
+- Caches by interior region or position (interior pipes, tankmate spots, seahorse posts, currents) no longer reach the
+  next world of the same game (single player); currents are cached per dimension.
+- Shrinking an interior into a big tank's coarser one no longer turns free substrate into paid substrate (an item from
+  nothing when it was taken out).
+- `health.oldAge.enabled` had no effect (see Added).
+
 ## [1.25.0-beta.1] - 2026-11-15
 
 Full compatibility: the animals of other mods get our care and breeding, tanks travel on Create contraptions and

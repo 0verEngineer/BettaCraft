@@ -140,7 +140,10 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 ### Handbook, progression, languages
 - 224 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
   get it (generated from the game data), 31 advancements, JEI pages and tooltips.
-- Every larger feature has a switch (`features.*`) so modpacks can turn it off.
+- Every feature has its own switch (`features.<group>.enabled` and sub-switches, 105 in all): off, it loses its recipes,
+  trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
+- Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
+  old age (`health.oldAge.enabled`).
 
 ## Requirements
 
@@ -194,7 +197,8 @@ The handbook (GuideME) and the JEI pages explain everything else.
 | File | Content |
 |---|---|
 | `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
-| `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`), feature switches (`features.*`) |
+| `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`), feature switches (`features.*`, a tree per feature group; old 1.25 keys are migrated automatically, backup
+`bettacraft-common.toml.pre-m33`), presets (`preset`, `presetKeep`) |
 | `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound, device volumes, air pump and flow pump sounds (off by default) |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
@@ -225,8 +229,15 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and a KubeJS example; the
   NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent` (`org.overengineer.bettacraft.api.event`) and
   `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other mods (`features.modpackEvents`).
-- **Commands:** `/bettacraft interior leave` for everyone; operators: `/bettacraft interior resync`,
-  `/bettacraft interior bench` and `/bettacraft wateranimals`.
+- **Feature switches and presets:** every feature can be turned off on its own (`features.*` in
+  `config/bettacraft-common.toml`; the server sends them to the clients). Datapacks can use the recipe and loot condition
+  `{"type": "bettacraft:feature", "feature": "tankmates.cichlids"}`. `preset = SIMPLE | REALISTIC | DECOR` sets other
+  defaults for the switches and the server values (values changed in the files and paths in `presetKeep` win);
+  `care.mode = NO_DEATH | DECOR` keeps every animal alive.
+- **Commands:** `/bettacraft interior leave` and `/bettacraft preset` for everyone; operators: `/bettacraft interior resync`,
+  `/bettacraft interior bench`, `/bettacraft wateranimals`, `/bettacraft wildlife`, `/bettacraft preset <name>` and
+  `/bettacraft foreign list [radius]` (the animals of other mods in tanks and their profiles; a profile whose entity was
+  renamed is reported in the log).
 
 ## Building from source
 
