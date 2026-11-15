@@ -787,7 +787,7 @@
   "gui.bettacraft.tank_mode.tooltip.terrarium": "Beckentyp Terrarium (fest): Das Becken bleibt ein Terrarium (jetzt: %s). Es kommt kein Wasser hinein: kein Eimer, Rohr, keine Pumpe, kein Nachfüllen, keine andere Mod.",
   "gui.bettacraft.tank_mode.tooltip_cycle": "Klick: nächster Typ, Umschalt-Klick: der davor. Wasser im Becken wird nie entfernt; Abpumpen geht immer.",
   "gui.bettacraft.tank_mode.limit": "Wasser höchstens %s mB (der Landteil muss bleiben)",
-  "gui.bettacraft.tank_mode.too_much_water": "Mehr Wasser, als dieser Beckentyp erlaubt: Es kommt keins dazu, lass etwas ab",
+  "gui.bettacraft.tank_mode.too_much_water": "Zu viel Wasser für diesen Beckentyp: Es kommt keins dazu",
   "message.bettacraft.tank_mode.terrarium_no_water": "Terrarium: kein Wasser (der Beckentyp ist im Beckenmenü eingestellt)",
   "message.bettacraft.tank_mode.paludarium_limit": "Paludarium: Wasser höchstens bis %s Blöcke hoch (%s mB), der Landteil muss bleiben",
   "message.bettacraft.tank_mode.protected": "Du darfst dieses Becken hier nicht ändern",

@@ -79,6 +79,7 @@ public final class DevSmokeUpgrade {
     /** M29 part c/d: old bettas that are pure Betta splendens (no ancestry, the species id unchanged). */
     private static int m29Checked;
     private static int m33Checked;
+    private static int m331Checked;
     /** M25 part b: old sea water buckets found in the chests (they must give other mods the sea water fluid). */
     private static int seaBuckets;
 
@@ -149,6 +150,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} tanks with alkalinity and magnesium of their salt (M25c)", m25cChecked);
                 LOGGER.info("[smoketest] upgrade: {} old bettas are pure Betta splendens (M29)", m29Checked);
                 LOGGER.info("[smoketest] upgrade: {} old bettas start with no age or the age of their stage (M33 old age)", m33Checked);
+                LOGGER.info("[smoketest] upgrade: {} tanks with their tank type (old ones automatic, M33.1)", m331Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -189,6 +191,11 @@ public final class DevSmokeUpgrade {
                     problems.add(where + ": a full fish tank became a " + have.get("terra_mode").getAsString());
                 }
             }
+            // M33.1: a tank of an older world starts on the automatic tank type (and keeps a type it had)
+            String wantType = want.has("tank_mode") ? want.get("tank_mode").getAsString() : "auto";
+            if (have.has("tank_mode") && !wantType.equals(have.get("tank_mode").getAsString())) {
+                problems.add(where + ": tank type " + wantType + " -> " + have.get("tank_mode").getAsString());
+            } else if (have.has("tank_mode")) m331Checked++;
             if (Math.abs(want.get("salinity").getAsDouble() - have.get("salinity").getAsDouble()) > 1e-3) {
                 problems.add(where + ": salinity " + want.get("salinity") + " -> " + have.get("salinity"));
             }
@@ -340,6 +347,7 @@ public final class DevSmokeUpgrade {
         o.addProperty("water", t.waterMb());
         o.addProperty("salinity", t.salinity());
         o.addProperty("terra_mode", t.terrariumMode().id()); // M31 (absent in the snapshots of older versions)
+        o.addProperty("tank_mode", t.tankMode().id()); // M33.1 (absent in the snapshots of older versions)
         o.addProperty("cap", t.capacityMb());
         o.addProperty("land", t.landShare());
         o.addProperty("members", t.memberCount());

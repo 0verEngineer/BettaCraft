@@ -1986,7 +1986,7 @@
   "gui.bettacraft.tank_mode.limit": "Water at most %s mB (the land part must stay)",
   "gui.bettacraft.tank_mode.paludarium": "Paludarium",
   "gui.bettacraft.tank_mode.terrarium": "Terrarium",
-  "gui.bettacraft.tank_mode.too_much_water": "More water than this tank type allows: none comes in, drain some",
+  "gui.bettacraft.tank_mode.too_much_water": "Too much water for this tank type: none comes in",
   "gui.bettacraft.tank_mode.tooltip.aquarium": "Tank type aquarium (fixed): the tank stays an aquarium whatever land it has (now: %s). Water comes in as long as it fits.",
   "gui.bettacraft.tank_mode.tooltip.auto": "Tank type automatic: the tank is what its water and land make it (now: %s). Water comes in as long as it fits.",
   "gui.bettacraft.tank_mode.tooltip.paludarium": "Tank type paludarium (fixed): the tank stays a paludarium (now: %s). Water only comes in up to the height where the land part stays big enough.",

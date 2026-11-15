@@ -158,6 +158,8 @@ public final class DevSmokeMP {
                 check(name + ": gecko morph " + (a.length > 7 ? a[7] : "?") + " (server 2 = harlequin)", a.length > 7 && "2".equals(a[7]));
                 // M31 part d: the zombie in glass, shrunk to 0.18
                 check(name + ": zombie scale x100 " + (a.length > 8 ? a[8] : "?") + " (server 18)", a.length > 8 && "18".equals(a[8]));
+                // M33.1: the tank type
+                check(name + ": tank type " + (a.length > 9 ? a[9] : "?") + " (server terrarium)", a.length > 9 && "terrarium".equals(a[9]));
             }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
@@ -1001,6 +1003,9 @@ public final class DevSmokeMP {
             level.setBlockAndUpdate(min.offset(1, 2, 0), ModBlocks.BASKING_LAMP.get().defaultBlockState());
             var mode = org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, c);
             check("the dry tank is a terrarium (" + mode + ")", mode == org.overengineer.bettacraft.terrarium.TerrariumMode.TERRARIUM);
+            // M33.1: the tank type is fixed to terrarium (saved and synced to every client)
+            c.getTank().setTankMode(org.overengineer.bettacraft.terrarium.TankModeSetting.TERRARIUM);
+            check("a fixed terrarium refuses water", org.overengineer.bettacraft.terrarium.WaterLimit.room(level, c) == 0);
             org.overengineer.bettacraft.terrarium.TankClimate.step(level, c, 0.01);
             check("the terrarium has a climate", c.getTank().hasClimate());
             // M31 part b: a yellow-bellied slider and a slider hatchling next to the tank (no AI; the dev world keeps the last run's)

@@ -18,7 +18,7 @@ final class LangM331 {
         a.accept("gui.bettacraft.tank_mode.tooltip.terrarium", "Tank type terrarium (fixed): the tank stays a terrarium (now: %s). No water comes in: no bucket, pipe, pump, top-off or other mod.");
         a.accept("gui.bettacraft.tank_mode.tooltip_cycle", "Click: next type, Shift-click: the one before. Water already in the tank is never removed; draining always works.");
         a.accept("gui.bettacraft.tank_mode.limit", "Water at most %s mB (the land part must stay)");
-        a.accept("gui.bettacraft.tank_mode.too_much_water", "More water than this tank type allows: none comes in, drain some");
+        a.accept("gui.bettacraft.tank_mode.too_much_water", "Too much water for this tank type: none comes in");
         a.accept("message.bettacraft.tank_mode.terrarium_no_water", "Terrarium: no water (the tank type is set in the tank menu)");
         a.accept("message.bettacraft.tank_mode.paludarium_limit", "Paludarium: water only up to %s blocks high (%s mB), the land part must stay");
         a.accept("message.bettacraft.tank_mode.protected", "You may not change this tank here");

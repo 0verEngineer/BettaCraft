@@ -237,7 +237,7 @@ final class DevClientSmokeMP {
                         zombie = Math.min(zombie, z.getScale());
                     }
                     send("m31 " + t.terrariumMode().id() + " " + t.hasClimate() + " " + Math.round(t.uv()) + " " + variety + " " + Math.round(growth) + " " + pose + " "
-                            + geckoVariety + " " + Math.round(zombie * 100));
+                            + geckoVariety + " " + Math.round(zombie * 100) + " " + t.tankMode().id()); // M33.1: the tank type
                 });
             }
             case "reef" -> {

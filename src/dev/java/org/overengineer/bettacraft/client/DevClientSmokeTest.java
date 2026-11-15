@@ -145,6 +145,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM32d m32d;
     /** -Psmoketestm33b: the creative tab and the handbook with the tankmates and salt water off (M33 part b). */
     private static final boolean M33B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m33bonly");
+    /** -Psmoketestm331: the tank type switch in the climate tab and the overview (M33.1). */
+    private static final boolean M331_ONLY = Boolean.getBoolean("bettacraft.smoketest.m331only");
+    private static DevClientSmokeM331 m331;
     private static DevClientSmokeM33b m33b;
     private static DevClientSmokeM31d m31d;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
@@ -246,6 +249,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M331_ONLY) {
+                if (ticks == 60) m331 = new DevClientSmokeM331();
+                if (m331 != null && m331.tick()) {
+                    m331 = null;
+                    LOGGER.info("[smoketest] client world test finished (M33.1 only)");
                     mc.stop();
                 }
                 return;

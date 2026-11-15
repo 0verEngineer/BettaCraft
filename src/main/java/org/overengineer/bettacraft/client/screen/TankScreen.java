@@ -259,7 +259,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         overview.addAll(List.of(signButton, signPosButton, frontButton, minusButton, plusButton, enterButton));
         // M33.1: the tank type (automatic, aquarium, paludarium, terrarium) left of the target temperature, again in the climate tab
-        modeButton = addRenderableWidget(new FitButton(x + 112, y + 77, 52, 12, Component.empty(), b -> cycleMode()));
+        modeButton = addRenderableWidget(new FitButton(x + 116, y + 77, 49, 12, Component.empty(), b -> cycleMode()));
         overview.add(modeButton);
         climateModeButton = addRenderableWidget(new FitButton(x + 166, y + 18, 72, 12, Component.empty(), b -> cycleMode()));
 
@@ -560,7 +560,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         climateModeButton.visible = tab == Tab.CLIMATE && v.climate.settingOn;
         for (Button b : List.of(modeButton, climateModeButton)) {
             b.active = mod;
-            b.setMessage(Component.translatable("gui.bettacraft.tank_mode.button", modeName)
+            // the overview has only room for the name (the tooltip says what it is)
+            b.setMessage((b == modeButton ? modeName.copy() : Component.translatable("gui.bettacraft.tank_mode.button", modeName))
                     .withStyle(setting == org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO ? ChatFormatting.WHITE : ChatFormatting.AQUA));
             b.setTooltip(Tooltip.create(mod ? modeTooltip(v) : Component.translatable("message.bettacraft.tank.locked")));
         }
