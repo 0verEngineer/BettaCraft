@@ -137,6 +137,25 @@ public final class TraderOffers {
                             : TankCritters.bagOf(CritterSpecies.TYLOMELANIA, 2, () -> CritterGenes.WILD, rnd, true);
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 7), Optional.empty(), bag, 2, 1, 0.05F);
                 }));
+        // M29 part d: the big crayfish, one per bag: a blue or an orange Florida crayfish, a marbled crayfish
+        out.add(new Offer("florida_crayfish", Slot.RARE, 2, () -> List.of(
+                new Product(Target.critter(CritterSpecies.FLORIDA_CRAYFISH), 1, 8, 1.0, false, "features.bigCrayfish")),
+                (trader, random) -> {
+                    if (!CommonConfig.bigCrayfish()) return null;
+                    RandomGenerator rnd = random::nextLong;
+                    int line = random.nextFloat() < 0.65F ? 0 : 1;
+                    return new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(),
+                            TankCritters.bagOf(CritterSpecies.FLORIDA_CRAYFISH, 1, () -> CritterGenes.pure(line, 0.3F + random.nextFloat() * 0.3F), rnd, true),
+                            2, 1, 0.05F);
+                }));
+        out.add(new Offer("marbled_crayfish", Slot.USUAL, 3, () -> List.of(
+                new Product(Target.critter(CritterSpecies.MARBLED_CRAYFISH), 1, 4, 1.0, false, "features.bigCrayfish")),
+                (trader, random) -> {
+                    if (!CommonConfig.bigCrayfish()) return null;
+                    RandomGenerator rnd = random::nextLong;
+                    return new MerchantOffer(new ItemCost(Items.EMERALD, 4), Optional.empty(),
+                            TankCritters.bagOf(CritterSpecies.MARBLED_CRAYFISH, 1, () -> CritterGenes.WILD, rnd, true), 3, 1, 0.05F);
+                }));
         out.add(new Offer("assassin_snail", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.ASSASSIN_SNAIL), 1, 4)),
                 offer(4, 2, (r, rnd) -> TankCritters.bagOf(CritterSpecies.ASSASSIN_SNAIL, 1, () -> CritterGenes.WILD, rnd, false))));
         out.add(new Offer("dwarf_clawed_frog", Slot.RARE, 2, () -> List.of(new Product(Target.FROG, 1, 6)),

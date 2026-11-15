@@ -322,6 +322,8 @@ public final class GuideGen {
                     "Männchen und Weibchen; ein rosa Gelege an der Scheibe über der Wasserlinie");
             case SELF -> t("hermaphrodite: one animal is enough", "Zwitter: ein Tier genügt");
             case PAIR -> t("male and female, rarely one young at a time", "Männchen und Weibchen, selten ein Junges");
+            case PARTHENO -> t("females only: every adult carries eggs without a male, the young are her clones",
+                    "nur Weibchen: jedes erwachsene Tier trägt Eier ohne Männchen, die Jungen sind ihre Klone"); // M29 part d
         } + (s.breeds() && s.broodMax() > 0 ? t(", " + s.broodMin() + "–" + s.broodMax() + " young", ", " + s.broodMin() + "–" + s.broodMax() + " Junge") : ""));
         if (s.breeds()) tb.row(t("Growing up", "Heranwachsen"), t("about " + num(s.juvenileDays()) + " days", "etwa " + num(s.juvenileDays()) + " Tage"));
         if (s.algaePerDay() >= 0.05) {
@@ -333,7 +335,12 @@ public final class GuideGen {
             case CRAYFISH -> ServerConfig.STOCKING_CRAYFISH_PER_FISH.getDefault();
             case SNAIL -> ServerConfig.STOCKING_SNAILS_PER_FISH.getDefault();
         };
-        tb.row(t("Stocking", "Besatz"), t(per + " count as one fish", per + " zählen als ein Fisch"));
+        if (s.stockScale() != 1.0) { // M29 part d: a big crayfish counts as most of a fish
+            String f = num(s.stockScale() / per);
+            tb.row(t("Stocking", "Besatz"), t("counts as " + f + " fish", "zählt als " + f + " Fisch"));
+        } else {
+            tb.row(t("Stocking", "Besatz"), t(per + " count as one fish", per + " zählen als ein Fisch"));
+        }
         if (s.loci().length > 0) tb.row(t("Colour lines", "Farblinien"), t(s.loci().length + " (bred from wild animals)", s.loci().length + " (aus Wildtieren herausgezüchtet)"));
         return tb.render();
     }
@@ -496,7 +503,7 @@ public final class GuideGen {
                 CritterSpecies s = CritterSpecies.byId(id);
                 if (!s.breeds()) return null;
                 return bold(t("Breeding", "Vermehrung")) + t(" in the aquarium", " im Aquarium")
-                        + (s.hermaphrodite() ? t(" (one animal is enough)", " (ein Tier genügt)") : t(" (male and female)", " (Männchen und Weibchen)"));
+                        + (s.hermaphrodite() || s.allFemale() ? t(" (one animal is enough)", " (ein Tier genügt)") : t(" (male and female)", " (Männchen und Weibchen)"));
             }
             default:
                 return null;
@@ -543,7 +550,7 @@ public final class GuideGen {
         for (CritterSpecies s : CritterSpecies.values()) {
             if (!which.test(s)) continue;
             tb.row(link(lang(s.translationKey()), page(Target.critter(s)), page, false), range(s.minTemp(), s.maxTemp()),
-                    !s.breeds() ? t("no", "nein") : s.hermaphrodite() ? t("one is enough", "ein Tier genügt") : t("pair", "Paar"),
+                    !s.breeds() ? t("no", "nein") : s.hermaphrodite() || s.allFemale() ? t("one is enough", "ein Tier genügt") : t("pair", "Paar"),
                     s.algaePerDay() >= 1.0 ? t("a lot", "viel") : s.algaePerDay() >= 0.25 ? t("some", "etwas") : t("hardly", "kaum"));
         }
         if (frog) {

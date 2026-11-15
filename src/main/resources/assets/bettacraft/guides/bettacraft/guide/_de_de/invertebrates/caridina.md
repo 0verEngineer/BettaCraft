@@ -73,7 +73,7 @@ nicht in normalem Wasser. Sie sind eine eigene Art und **kreuzen sich nicht mit 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,2–1,4 % pro Schwung (etwa 1 von 73–86 Schwüngen), 1–3 auf einmal (Config `features.caridina`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,1–1,3 % pro Schwung (etwa 1 von 74–88 Schwüngen), 1–3 auf einmal (Config `features.caridina`).
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.caridina`).
 * **Fahrender Händler** (seltene Angebote): 2 für 8 Smaragde (Config `features.caridina`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).

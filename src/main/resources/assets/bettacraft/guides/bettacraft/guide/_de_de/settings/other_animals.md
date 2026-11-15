@@ -43,6 +43,8 @@ Datapack. `/bettacraft wateranimals` (Operatoren) listet jedes Wassertier der ge
 Tiere anderer Mods behalten ihr eigenes Verhalten, ihren Hunger und ihre Vermehrung. Bettacraft hält sie nur im Wasser
 der echten Tankform und zählt sie für den Besatz; seine Pflege (Temperatur, Wasserqualität) schadet ihnen nie.
 
+* **Axolotl** (Vanilla) bekommen als Ausnahme unsere Pflege und Zucht (kühles Wasser, Eier an den Pflanzen,
+  Farbgenetik), siehe [Axolotl](../invertebrates/axolotl.md).
 * **Raubfische** (`#bettacraft:predators`) jagen kleine Fische und Jungfische: Kugelfische, **Axolotl**, Piranhas, der
   Anglerfisch der Otherside und die Raubfische der Aquarium-Mods. Siehe
   [Kämpfe, Flaring und Raubfische](../bettas/fighting.md).

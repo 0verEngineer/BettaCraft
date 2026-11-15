@@ -130,11 +130,14 @@ public final class CritterRenderer {
             BettaCraft.id("textures/entity/critters/shrimp_bee_sss.png")};
     private static final ResourceLocation TIGER = BettaCraft.id("textures/entity/critters/shrimp_tiger.png");
     private static final ResourceLocation DOTS = BettaCraft.id("textures/entity/critters/shrimp_dots.png");
+    /** M29 part d: the dark marbling of the marbled crayfish. */
+    private static final ResourceLocation MARBLE = BettaCraft.id("textures/entity/critters/crayfish_marble.png");
 
     /** M25 part c: the overlay over the body of a Caridina or a cardinal shrimp and its colour, or null. */
     @Nullable
     static Map.Entry<ResourceLocation, Integer> bodyOverlay(Critter k) {
         if (k.species == CritterSpecies.SULAWESI_SHRIMP) return Map.entry(DOTS, 0xF4F2EE);
+        if (k.species == CritterSpecies.MARBLED_CRAYFISH) return Map.entry(MARBLE, 0x3A3424); // M29 part d
         if (k.species != CritterSpecies.CARIDINA) return null;
         int c = k.clientColor;
         if (c == CritterGenes.CARIDINA_RED || c == CritterGenes.CARIDINA_BLACK) return Map.entry(BEE[CritterGenes.banding(k.clientGrade)], 0xF6F4F0);
@@ -339,6 +342,24 @@ public final class CritterRenderer {
             boolean was = eggs.visible;
             eggs.visible = true;
             eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xF07AA8));
+            eggs.visible = was;
+            return;
+        }
+        if (o.kind == CritterObject.Kind.AXOLOTL_EGGS) {
+            // M29 part d: axolotl eggs on a plant: a few small, pale, jelly-coated eggs (the egg group of the shrimp model)
+            ModelPart eggs = group(CritterSpecies.Model.SHRIMP, "eggs");
+            if (eggs == null) return;
+            vc = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
+            boolean was = eggs.visible;
+            eggs.visible = true;
+            for (int i = 0; i < 5; i++) {
+                pose.pushPose();
+                pose.translate((i - 2) * 0.045F, (i % 2) * 0.05F - 0.04F + (i == 2 ? 0.07F : 0), (i % 3 - 1) * 0.03F);
+                pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(i * 70F));
+                pose.scale(0.8F, -0.85F, -0.7F);
+                eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(i % 2 == 1 ? 0xF6F2E2 : 0xE4DEC4));
+                pose.popPose();
+            }
             eggs.visible = was;
             return;
         }

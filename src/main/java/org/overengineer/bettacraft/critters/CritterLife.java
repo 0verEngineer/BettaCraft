@@ -28,6 +28,11 @@ public final class CritterLife {
     public static final double ASSASSIN_RATE = 0.3;
     /** Food stock the pool keeps at most, in days of the colony's needs. */
     public static final double POOL_DAYS = 3.0;
+    /**
+     * M29 part d: small animals one big crayfish catches per day when nothing hides them ({@code invertebrates.bigCrayfishPreyPerDay},
+     * set by the mod; plants, moss and shelters hide the prey).
+     */
+    public static volatile java.util.function.DoubleSupplier BIG_PREY = () -> 0.4;
 
     private CritterLife() {}
 
@@ -86,7 +91,7 @@ public final class CritterLife {
         }
     }
 
-    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN, CHEMISTRY, CO2 }
+    public enum Cause { WATER, TEMPERATURE, HUNGER, BETTA, ASSASSIN, CRAYFISH, AIR, SALINITY, OXYGEN, CHEMISTRY, CO2, BIG_CRAYFISH }
 
     /** What happened in a step (for the tank log and the GameTests). */
     public static final class Result {
@@ -231,6 +236,7 @@ public final class CritterLife {
         hunt(list, env, days, rnd, r);
         assassins(list, days, rnd, r);
         crayfish(list, days, rnd, r);
+        bigCrayfish(list, env, days, rnd, r);
         breed(list, objects, env, days, rnd, ids, r);
         // objects
         for (Iterator<CritterObject> it = objects.iterator(); it.hasNext(); ) {
@@ -276,7 +282,7 @@ public final class CritterLife {
         if (!c.alive()) return 0;
         return switch (c.species.group()) {
             case SHRIMP -> c.adult() ? 0.03 : 1.0;
-            case CRAYFISH -> c.adult() ? (c.soft() ? 0.25 : 0) : (c.soft() ? 1.0 : 0.6);
+            case CRAYFISH -> c.adult() ? (c.soft() && !c.species.big() ? 0.25 : 0) : (c.soft() ? 1.0 : 0.6);
             case SNAIL -> !c.adult() && (c.species == CritterSpecies.RAMSHORN || c.species == CritterSpecies.BLADDER_SNAIL) ? 0.1 : 0;
         };
     }
@@ -332,6 +338,41 @@ public final class CritterLife {
                 r.eaten.add(c);
                 r.causes.put(c, Cause.CRAYFISH);
             }
+        }
+    }
+
+    /**
+     * M29 part d: how likely a big crayfish goes for this animal: shrimp (young first), small snails and young ones,
+     * dwarf crayfish (soft ones first), the soft young of big crayfish (cannibals); nerites, apple snails and the big
+     * snails hardly.
+     */
+    public static double bigCrayfishWeight(Critter c) {
+        if (!c.alive()) return 0;
+        CritterSpecies s = c.species;
+        return switch (s.group()) {
+            case SHRIMP -> c.adult() ? 1.0 : 1.5;
+            case CRAYFISH -> s.big() ? (!c.adult() && c.soft() ? 0.3 : 0) : c.soft() ? 1.2 : 0.4;
+            case SNAIL -> s.nerite() || s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.TYLOMELANIA || s == CritterSpecies.HERMIT_CRAB
+                    || s == CritterSpecies.TURBO_SNAIL ? (c.adult() ? 0.05 : 0.5) : (c.adult() ? 0.5 : 1.0);
+        };
+    }
+
+    /** M29 part d: big crayfish catch small animals (fewer where plants and moss hide them). */
+    private static void bigCrayfish(List<Critter> list, Env env, double days, RandomGenerator rnd, Result r) {
+        double rate = BIG_PREY.getAsDouble();
+        if (rate <= 0) return;
+        int n = 0;
+        for (Critter c : list) if (c.alive() && c.species.big() && c.adult()) n++;
+        if (n == 0) return;
+        double h = rate * n * Math.max(0.1, 1 - env.hiding());
+        double expected = h * days;
+        int catches = (int) Math.floor(expected) + (rnd.nextDouble() < expected - Math.floor(expected) ? 1 : 0);
+        for (int i = 0; i < catches; i++) {
+            Critter victim = pick(list, CritterLife::bigCrayfishWeight, rnd);
+            if (victim == null) return;
+            list.remove(victim);
+            r.eaten.add(victim);
+            r.causes.put(victim, Cause.BIG_CRAYFISH);
         }
     }
 
@@ -407,6 +448,24 @@ public final class CritterLife {
                         c.father = male.genes;
                         r.berried++;
                     }
+                }
+                case PARTHENO -> { // M29 part d: no male needed, the young are clones of their mother
+                    if (c.berried()) {
+                        if (c.eggs >= s.eggDays()) {
+                            int n = s.broodMin() + rnd.nextInt(s.broodMax() - s.broodMin() + 1);
+                            n = Math.min(n, Math.max(0, env.cap() - alive));
+                            for (int i = 0; i < n; i++) {
+                                list.add(young(c, c.genes, ids, rnd, r));
+                                alive++;
+                            }
+                            c.eggs = -1;
+                            c.father = null;
+                        }
+                        continue;
+                    }
+                    if (alive >= env.cap() || rate <= 0 || rnd.nextDouble() >= 1 - Math.exp(-rate * days)) continue;
+                    c.eggs = 0;
+                    r.berried++;
                 }
                 case SELF -> {
                     if (alive >= env.cap() || rate <= 0) continue;

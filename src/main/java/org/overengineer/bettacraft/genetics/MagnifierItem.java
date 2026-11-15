@@ -64,8 +64,10 @@ public class MagnifierItem extends Item {
     /** Analyses every animal of the tank not analysed yet (one use each, as long as the magnifier lasts); returns how many. */
     public static int analyseAll(ServerLevel level, TankBlockEntity c, Player player, ItemStack magnifier, @Nullable EquipmentSlot slot) {
         TankData t = c.getTank();
-        if (GeneVisibility.free()) return 0;
-        int n = 0;
+        // M29 part d: the colour genes of the axolotls (in a message, the vanilla axolotl has no menu entry of ours)
+        int ax = org.overengineer.bettacraft.tank.AxolotlCare.analyse(level, t, player, magnifier, slot);
+        if (GeneVisibility.free()) return ax;
+        int n = ax;
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (magnifier.isEmpty()) break;
             if (analyse(e)) {

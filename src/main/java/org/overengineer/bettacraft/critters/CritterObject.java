@@ -9,7 +9,8 @@ import net.minecraft.nbt.Tag;
  * (hatches into young unless it is taken off) or the shed shell of a crayfish after a moult (disappears after a while).
  */
 public final class CritterObject {
-    public enum Kind { CLUTCH, MOLT }
+    /** M29 part d: AXOLOTL_EGGS, the eggs of a vanilla axolotl on a plant ({@link org.overengineer.bettacraft.tank.AxolotlCare}). */
+    public enum Kind { CLUTCH, MOLT, AXOLOTL_EGGS }
 
     public final int id;
     public final Kind kind;
@@ -74,6 +75,7 @@ public final class CritterObject {
         Kind k = switch (t.getString("kind")) {
             case "clutch" -> Kind.CLUTCH;
             case "molt" -> Kind.MOLT;
+            case "axolotl_eggs" -> Kind.AXOLOTL_EGGS;
             default -> null;
         };
         if (k == null) return null;

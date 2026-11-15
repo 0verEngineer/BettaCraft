@@ -11,6 +11,10 @@ Besides the bettas an aquarium can hold a whole community of small animals: **sh
 **snails** crawl over the floor, the decoration, the plants and up the glass, and **dwarf clawed frogs** paddle along the
 bottom. The snails and shrimp are your **cleaning crew**: they keep the glass free of [algae](aquarium/algae.md).
 
+The **big crayfish** ([Florida crayfish](invertebrates/florida_crayfish.md), [marbled crayfish](invertebrates/marbled_crayfish.md))
+are no clean-up crew: they eat plants and small animals and catch slow fish. The vanilla **[axolotl](invertebrates/axolotl.md)**
+gets our care and breeding in a cool tank.
+
 ![A tank with a shrimp colony, snails and a frog](images/critters_tank.png)
 
 ## In short
@@ -44,6 +48,8 @@ bottom. The snails and shrimp are your **cleaning crew**: they keep the glass fr
 | [Bee Shrimp](invertebrates/caridina.md) | 18–26 | pair | hardly |
 | [Cardinal Shrimp](invertebrates/sulawesi_shrimp.md) | 25–31 | pair | hardly |
 | [Tylomelania Snail](invertebrates/tylomelania.md) | 24–30 | pair | some |
+| [Florida Crayfish](invertebrates/florida_crayfish.md) | 15–28 | pair | hardly |
+| [Marbled Crayfish](invertebrates/marbled_crayfish.md) | 12–30 | one is enough | hardly |
 | [Dwarf Clawed Frog](invertebrates/dwarf_clawed_frog.md) | 20–28 | no | no |
 
 ## In this chapter

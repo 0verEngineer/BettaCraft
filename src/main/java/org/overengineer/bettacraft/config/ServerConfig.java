@@ -192,6 +192,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue CRITTERS_CRAYFISH_BREEDING;
     public static final ModConfigSpec.DoubleValue CRITTERS_SNAIL_BREEDING;
     public static final ModConfigSpec.BooleanValue CRITTERS_BETTAS_HUNT;
+    /** M29 part d: the big crayfish (small animals, fish and plants per day) and the axolotls (breeding, heat). */
+    public static final ModConfigSpec.DoubleValue BIG_CRAYFISH_PREY, BIG_CRAYFISH_FISH, BIG_CRAYFISH_PLANTS;
+    public static final ModConfigSpec.DoubleValue AXOLOTL_BREEDING, AXOLOTL_EGG_DAYS, AXOLOTL_HEAT_DAMAGE;
     public static final ModConfigSpec.DoubleValue CRITTERS_BIOFILM;
     public static final ModConfigSpec.DoubleValue CRITTERS_NET_CHANCE;
     public static final ModConfigSpec.IntValue CRITTERS_NET_COOLDOWN;
@@ -751,6 +754,19 @@ public final class ServerConfig {
                 .defineInRange("snailBreeding", 1.0, 0.0, 10.0);
         CRITTERS_BETTAS_HUNT = b.comment("Whether bettas hunt young shrimp and crayfish (now and then an adult shrimp); plants and Java moss hide them")
                 .define("bettasHuntShrimp", true);
+        // M29 part d
+        BIG_CRAYFISH_PREY = b.comment("Small animals (shrimp, small snails, dwarf crayfish) one big crayfish (Florida, marbled) catches per day;",
+                "plants, moss and shelters hide them (0 = never)").defineInRange("bigCrayfishPreyPerDay", 0.4, 0.0, 50.0);
+        BIG_CRAYFISH_FISH = b.comment("Fish one big crayfish goes for per day: it eats fry and young fish and small bottom fish, and pinches bettas",
+                "and other slow fish resting near the floor (plants hide them; 0 = never)").defineInRange("bigCrayfishFishPerDay", 0.15, 0.0, 50.0);
+        BIG_CRAYFISH_PLANTS = b.comment("Plants one big crayfish damages per day: it eats a grown plant back by a stage or digs a young rooted plant",
+                "out of the substrate (epiphytes and moss on wood and stone are safe; 0 = never)").defineInRange("bigCrayfishPlantsPerDay", 0.3, 0.0, 50.0);
+        AXOLOTL_BREEDING = b.comment("Breeding speed of vanilla axolotls in a tank: a pair in cool water (15-20 °C) with plants lays eggs on the",
+                "plants (1 = normal, 0 = they never breed there)").defineInRange("axolotlBreeding", 1.0, 0.0, 10.0);
+        AXOLOTL_EGG_DAYS = b.comment("Days the axolotl eggs on the plants need to hatch into larvae (baby axolotls)")
+                .defineInRange("axolotlEggDays", 1.5, 0.05, 30.0);
+        AXOLOTL_HEAT_DAMAGE = b.comment("Damage (hit points per day) an axolotl takes per degree above 23 °C; from 21 °C it is stressed and does not",
+                "breed (0 = warm water only stops the breeding)").defineInRange("axolotlHeatDamage", 1.0, 0.0, 100.0);
         CRITTERS_BIOFILM = b.comment("Food (portions per day) one water block grows on its own as biofilm for the small animals; plants and",
                         "algae add to it, leftovers of the fish food too")
                 .defineInRange("biofilmPerWaterBlock", 0.03, 0.0, 10.0);

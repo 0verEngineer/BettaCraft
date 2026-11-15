@@ -72,6 +72,16 @@ public class TankBlockEntity extends BlockEntity {
     /** M19: log once per episode (male bettas chasing tankmates, a clown loach eating snails, a shoal that is too small). */
     public boolean tankmateChaseLogged, tankmateSnailLogged;
     public final java.util.Set<String> tankmateLogged = new java.util.HashSet<>();
+    /** M29 part d: game time of the last log line per kind (big crayfish, axolotls), not saved. */
+    public final java.util.Map<String, Long> logTimes = new java.util.HashMap<>();
+
+    /** M29 part d: whether a log line of this kind may be written now (at most one per {@code ticks}); remembers the time. */
+    public boolean logDue(String kind, long now, long ticks) {
+        Long last = logTimes.get(kind);
+        if (last != null && now - last < ticks && now >= last) return false;
+        logTimes.put(kind, now);
+        return true;
+    }
     /** M14: signature of the algae stages the clients have (transient; a change sends the tank view). */
     public long algaeSignature = Long.MIN_VALUE;
     /** M14: game time of the last death log line per species (transient: several deaths in a row are one line). */

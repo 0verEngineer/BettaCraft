@@ -11,6 +11,10 @@ Neben den Bettas kann ein Aquarium eine ganze Gemeinschaft kleiner Tiere halten:
 **Schnecken** krabbeln über den Boden, die Deko, die Pflanzen und das Glas hinauf, und **Zwergkrallenfrösche** paddeln am
 Grund. Schnecken und Garnelen sind deine **Putzkolonne**: Sie halten das Glas frei von [Algen](aquarium/algae.md).
 
+Die **großen Krebse** ([Floridakrebs](invertebrates/florida_crayfish.md), [Marmorkrebs](invertebrates/marbled_crayfish.md))
+sind keine Putzkolonne: Sie fressen Pflanzen und Kleintiere und fangen langsame Fische. Der Vanilla-**[Axolotl](invertebrates/axolotl.md)**
+bekommt in einem kühlen Becken unsere Pflege und Zucht.
+
 ![Ein Aquarium mit Garnelenkolonie, Schnecken und einem Frosch](images/critters_tank.png)
 
 ## Kurz gesagt
@@ -45,6 +49,8 @@ Grund. Schnecken und Garnelen sind deine **Putzkolonne**: Sie halten das Glas fr
 | [Bienengarnele](invertebrates/caridina.md) | 18–26 | Paar | kaum |
 | [Kardinalgarnele](invertebrates/sulawesi_shrimp.md) | 25–31 | Paar | kaum |
 | [Tylomelania-Schnecke](invertebrates/tylomelania.md) | 24–30 | Paar | etwas |
+| [Floridakrebs](invertebrates/florida_crayfish.md) | 15–28 | Paar | kaum |
+| [Marmorkrebs](invertebrates/marbled_crayfish.md) | 12–30 | ein Tier genügt | kaum |
 | [Zwergkrallenfrosch](invertebrates/dwarf_clawed_frog.md) | 20–28 | nein | nein |
 
 ## In diesem Kapitel

@@ -34,7 +34,7 @@ die Deko des Innenraums herum (Steine, Wurzeln, Pflanzen, Höhlen), statt durch 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,4 % pro Schwung (etwa 1 von 73 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,3 % pro Schwung (etwa 1 von 76 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 4,2–4,8 % pro Schwung (etwa 1 von 21–24 Schwüngen).
 * **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.wildFish`).
 * **Wild** in Dschungelgewässern, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildFish`).

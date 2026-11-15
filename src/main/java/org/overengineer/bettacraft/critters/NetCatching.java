@@ -82,6 +82,8 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.BLADDER_SNAIL, 25 * p));
                 out.add(new Catch(CritterSpecies.TRUMPET_SNAIL, 4 * hard));
                 out.add(new Catch(CritterSpecies.ASSASSIN_SNAIL, 3));
+                // M29 part d: the marbled crayfish, set free in rivers and lakes (rare)
+                if (CritterSpecies.MARBLED_CRAYFISH.available()) out.add(new Catch(CritterSpecies.MARBLED_CRAYFISH, 2));
                 // M25 part c: wild bee shrimp in soft, plant-rich streams (rare; rarer over sand and stone)
                 if (CritterSpecies.CARIDINA.available()) out.add(new Catch(CritterSpecies.CARIDINA, (hardBottom ? 1.5 : 5) * p));
             }
@@ -90,6 +92,8 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.BLADDER_SNAIL, 30 * p));
                 out.add(new Catch(CritterSpecies.TRUMPET_SNAIL, 25 * hard));
                 out.add(new Catch(null, 5));
+                // M29 part d: the Florida crayfish lives in the swamps of Florida (rare)
+                if (CritterSpecies.FLORIDA_CRAYFISH.available()) out.add(new Catch(CritterSpecies.FLORIDA_CRAYFISH, 4 * p));
             }
             case MANGROVE -> {
                 out.add(new Catch(CritterSpecies.ZEBRA_NERITE, 25 * ner));
@@ -197,6 +201,7 @@ public final class NetCatching {
             case NEOCARIDINA -> 0.06;
             case CARIDINA -> 0.05; // M25 part c
             case DWARF_CRAYFISH -> 0.15;
+            case FLORIDA_CRAYFISH -> 0.12; // M29 part d: wild ones now and then carry blue or orange
             case RAMSHORN -> 0.2;
             case APPLE_SNAIL -> 0.08;
             default -> 0;

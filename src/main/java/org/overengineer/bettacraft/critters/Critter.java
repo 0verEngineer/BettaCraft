@@ -74,7 +74,7 @@ public final class Critter {
     public Critter(int id, CritterSpecies species, boolean female, CritterGenes genes, double x, double y, double z) {
         this.id = id;
         this.species = species;
-        this.female = female;
+        this.female = female || species.allFemale(); // M29 part d: marbled crayfish are all female
         this.genes = genes;
         this.x = this.px = this.tx = x;
         this.y = this.py = this.ty = y;

@@ -222,7 +222,11 @@ public final class TankInhabitants {
             return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
         }
         if (e instanceof Bucketable b) {
-            if (stored == null) b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
+            if (stored == null) {
+                CompoundTag data = stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag();
+                b.loadFromBucketTag(data);
+                AxolotlCare.fromBucket(e, data); // M29 part d: the colour genes of an axolotl
+            }
             b.setFromBucket(true);
         }
         // M16: after the bucket data, which can change the size (Fintastic gouramis: giant, three-spot or dwarf variant)
@@ -601,6 +605,11 @@ public final class TankInhabitants {
             } else {
                 filled = bucketable.getBucketItemStack();
                 bucketable.saveToBucketTag(filled);
+                if (e instanceof net.minecraft.world.entity.animal.axolotl.Axolotl) { // M29 part d: keep the colour genes
+                    CompoundTag data = filled.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag();
+                    AxolotlCare.toBucket(e, data);
+                    filled.set(DataComponents.BUCKET_ENTITY_DATA, CustomData.of(data));
+                }
             }
             org.overengineer.bettacraft.containers.AnimalContainers.give(player, slot, filled);
         }

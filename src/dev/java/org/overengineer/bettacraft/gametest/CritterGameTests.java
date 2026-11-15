@@ -594,7 +594,9 @@ public final class CritterGameTests {
                             || s == CritterSpecies.TRUMPET_SNAIL || s == CritterSpecies.DWARF_CRAYFISH || s == CritterSpecies.RAMSHORN
                             || s == CritterSpecies.HERMIT_CRAB && cs[0].equals("minecraft:beach") // M20: hermit crabs at the beach
                             || s == CritterSpecies.CARIDINA && cs[0].equals("minecraft:river") // M25c: rare bee shrimp in rivers
-                            || (s == CritterSpecies.SULAWESI_SHRIMP || s == CritterSpecies.TYLOMELANIA) && cs[0].equals("minecraft:jungle"); // M25c
+                            || (s == CritterSpecies.SULAWESI_SHRIMP || s == CritterSpecies.TYLOMELANIA) && cs[0].equals("minecraft:jungle") // M25c
+                            || s == CritterSpecies.MARBLED_CRAYFISH && cs[0].equals("minecraft:river") // M29d: rare big crayfish
+                            || s == CritterSpecies.FLORIDA_CRAYFISH && cs[0].equals("minecraft:swamp");
                     h.assertTrue(ok, cs[0] + " should not give " + s);
                 }
                 if (cs[0].equals("minecraft:mangrove_swamp")) h.assertTrue(!seen.contains(CritterSpecies.NEOCARIDINA), "no shrimp in mangroves");

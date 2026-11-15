@@ -71,7 +71,7 @@ water. They are a species of their own and **do not cross with the Neocaridina**
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.2–1.4 % per swing (about 1 in 73–86 swings), 1–3 at a time (config `features.caridina`).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.1–1.3 % per swing (about 1 in 74–88 swings), 1–3 at a time (config `features.caridina`).
 * **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.caridina`).
 * **Wandering trader** (rare offers): 2 for 8 emeralds (config `features.caridina`).
 * **Breeding** in the aquarium (male and female).

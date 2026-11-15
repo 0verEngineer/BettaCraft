@@ -39,7 +39,9 @@ take it, in `bettacraft-water-animals.tsv` in the server folder.
 ![Seahorse, axolotl, koi, lanternfish, starfish and more](../images/foreign_animals_closeup.png)
 
 Animals of other mods keep their own behaviour, hunger and breeding. Bettacraft only holds them in the water of the
-real tank shape and counts them for the stocking; its care (temperature, water quality) never hurts them.
+real tank shape and counts them for the stocking; its care (temperature, water quality) never hurts them. The one
+exception is the vanilla **axolotl**: it gets our care and breeding (cool water, eggs on the plants, colour genetics), see
+[Axolotl](../invertebrates/axolotl.md).
 
 * **Predators** (`#bettacraft:predators`) hunt small fish and fry: pufferfish, **axolotls**, piranhas, the Otherside
   angler fish and the predators of the aquarium mods. See [Fights, flaring and predators](../bettas/fighting.md).

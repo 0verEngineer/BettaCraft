@@ -93,14 +93,14 @@ public final class TankCritters {
 
     /** M18: how much of a fish one small animal counts. */
     public static double weight(Critter c) {
-        double w = 1.0 / Math.max(1e-6, perFish(c.species.group()));
+        double w = c.species.stockScale() / Math.max(1e-6, perFish(c.species.group())); // M29 part d: big crayfish count more
         return c.adult() ? w : w * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();
     }
 
     /** Bioload of the small animals (in fish): all living ones, young at half. */
     public static double bioload(TankData t) {
         double s = 0;
-        for (Critter c : t.critters()) if (c.alive()) s += (c.adult() ? 1.0 : 0.5) / Math.max(1e-6, perFish(c.species.group()));
+        for (Critter c : t.critters()) if (c.alive()) s += (c.adult() ? 1.0 : 0.5) * c.species.stockScale() / Math.max(1e-6, perFish(c.species.group()));
         return s;
     }
 
@@ -263,6 +263,7 @@ public final class TankCritters {
         CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, rnd, t::nextCritterId);
         t.setCritterFood(pool[0]);
         afterLife(level, c, terrain, r, bettas, rnd);
+        BigCrayfish.step(level, c, days, rnd); // M29 part d: plants and fish
         c.setChanged();
         sync(level, c);
     }
@@ -328,6 +329,8 @@ public final class TankCritters {
                 TankCare.log(level, c, "log.bettacraft.critter_assassin", "@" + k.species.translationKey());
             } else if (why == CritterLife.Cause.CRAYFISH) {
                 TankCare.log(level, c, "log.bettacraft.critter_crayfish", "@" + k.species.translationKey());
+            } else if (why == CritterLife.Cause.BIG_CRAYFISH && c.logDue("big_crayfish_prey", now, 6000)) { // M29 part d: once in a while
+                TankCare.log(level, c, "log.bettacraft.critter_big_crayfish", "@" + k.species.translationKey());
             }
         }
         if (r.rotted > 0) TankWater.overfed(level, c, r.rotted);
@@ -615,7 +618,7 @@ public final class TankCritters {
             c.markTankChanged();
             sync(level, c);
             level.playSound(null, player.blockPosition(), SoundEvents.SLIME_SQUISH_SMALL, SoundSource.NEUTRAL, 0.6F, 1.2F);
-            if (a.object().kind == CritterObject.Kind.CLUTCH) {
+            if (a.object().kind == CritterObject.Kind.CLUTCH || a.object().kind == CritterObject.Kind.AXOLOTL_EGGS) {
                 TankCare.log(level, c, "log.bettacraft.clutch_removed", TankCare.nameArg(player));
                 return Component.translatable("message.bettacraft.critters.clutch_removed").withStyle(ChatFormatting.GREEN);
             }

@@ -74,6 +74,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_CICHLIDS;
     public static final ModConfigSpec.BooleanValue FEATURE_PUFFERS, FEATURE_BARBS_LOACHES;
     public static final ModConfigSpec.BooleanValue FEATURE_COMMUNITY_FISH, FEATURE_GOURAMIS, FEATURE_WILD_BETTAS;
+    public static final ModConfigSpec.BooleanValue FEATURE_BIG_CRAYFISH, FEATURE_AXOLOTL_CARE;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
@@ -213,6 +214,13 @@ public final class CommonConfig {
         FEATURE_WILD_BETTAS = b.comment("Wild bettas: some wild bettas in swamps are Betta imbellis or Betta smaragdina instead of Betta splendens; they",
                 "cross with each other and with Betta splendens into fertile hybrids (off: only Betta splendens in the wild; fish already caught",
                 "stay)").define("wildBettas", true);
+        // M29 part d
+        FEATURE_BIG_CRAYFISH = b.comment("Big crayfish: the Florida crayfish (wild, blue, orange) and the marbled crayfish (only females, multiplies on its",
+                "own) at the wandering trader, in the aquarium net and wild; they eat plants, dig them up and catch slow fish and small animals",
+                "(off: no new ones; those in tanks stay)").define("bigCrayfish", true);
+        FEATURE_AXOLOTL_CARE = b.comment("Axolotl care: vanilla axolotls in a tank want cool water (15-20 °C, a cooler), suffer in warm water and breed",
+                "there: eggs on the plants, larvae as baby axolotls, the five colours inherited by Mendel (blue recessive and rare;",
+                "off: axolotls in tanks are left to vanilla)").define("axolotlCare", true);
         FEATURE_WILD_PLANTS = b.comment("Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks; jungle water,",
                 "swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand",
                 "or with the net (spawn.wildPlantFrequency; off: no new ones in new chunks, plants already there stay)").define("wildPlants", true);
@@ -356,6 +364,8 @@ public final class CommonConfig {
     public static boolean communityFish() { return getOr(FEATURE_COMMUNITY_FISH, true); } // M29 part c
     public static boolean gouramis() { return getOr(FEATURE_GOURAMIS, true); }
     public static boolean wildBettas() { return getOr(FEATURE_WILD_BETTAS, true); }
+    public static boolean bigCrayfish() { return getOr(FEATURE_BIG_CRAYFISH, true); } // M29 part d
+    public static boolean axolotlCare() { return getOr(FEATURE_AXOLOTL_CARE, true); }
     public static boolean wildPlants() { return getOr(FEATURE_WILD_PLANTS, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25

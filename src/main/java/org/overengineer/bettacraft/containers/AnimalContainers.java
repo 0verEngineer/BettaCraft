@@ -74,12 +74,13 @@ public final class AnimalContainers {
     /** Small animals per bucket (0 without the feature: they only go into bags). */
     public static int bucket(CritterSpecies s) {
         if (!CommonConfig.bigContainers()) return 0;
+        if (s.big()) return 4; // M29 part d: big crayfish
         return s.length() <= 0.35 ? 32 : 24;
     }
 
     /** Small animals per fish bag (16 without the feature, like before). */
     public static int bag(CritterSpecies s) {
-        if (!CommonConfig.bigContainers()) return org.overengineer.bettacraft.critters.TankCritters.MAX_PER_BAG;
+        if (!CommonConfig.bigContainers()) return s.big() ? 4 : org.overengineer.bettacraft.critters.TankCritters.MAX_PER_BAG;
         return Math.max(1, bucket(s) / 2);
     }
 

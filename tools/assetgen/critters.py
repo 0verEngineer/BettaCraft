@@ -443,6 +443,9 @@ def overlay(groups: list[Group], size: int, kind: str, seed: int, group: str = "
                             on = math.sin(pz * 2.4 + 0.6) > (0.35 - level * 0.42)
                     elif kind == "tiger":  # M25c: thin dark stripes across the segments
                         on = math.sin(pz * 3.1 + 0.4) > 0.78 and face != "north" and face != "south"
+                    elif kind == "marble":  # M29d: the dark marbling of the marbled crayfish
+                        v = math.sin(px * 1.9 + math.sin(pz * 1.4 + py * 0.8) * 2.2) + math.sin(pz * 2.3 + px * 0.7) * 0.6
+                        on = v > 0.95 + (rng.random() - 0.5) * 0.35
                     elif kind == "dots":  # M25c: the white dots of the cardinal shrimp
                         on = rng.random() < 0.09 and face in ("top", "east", "west")
                     else:  # apple snail bands around the whorls
@@ -621,6 +624,8 @@ def write_all() -> list:
                 written.append(save_png(overlay(groups, sizes[name], f"bee{lv}", 2530 + lv, "body"), CRIT_TEX / f"shrimp_bee_{g}.png"))
             written.append(save_png(overlay(groups, sizes[name], "tiger", 2535, "body"), CRIT_TEX / "shrimp_tiger.png"))
             written.append(save_png(overlay(groups, sizes[name], "dots", 2536, "body"), CRIT_TEX / "shrimp_dots.png"))
+        if name == "crayfish":  # M29d: marbled crayfish
+            written.append(save_png(overlay(groups, sizes[name], "marble", 2900, "body"), CRIT_TEX / "crayfish_marble.png"))
     written.append(write_java(models, sizes))
     for st in range(1, 5):
         written.append(save_png(algae(st), ALGAE_TEX / f"algae_{st}.png"))

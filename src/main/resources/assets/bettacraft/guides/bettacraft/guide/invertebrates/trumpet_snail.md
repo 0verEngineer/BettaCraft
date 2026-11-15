@@ -34,8 +34,8 @@ The Malaysian trumpet snail (*Melanoides tuberculata*) from Africa and South Asi
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.93–1.8 % per swing (about 1 in 54–108 swings), 1–2 at a time.
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 6.9–11 % per swing (about 1 in 9–15 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.91–1.8 % per swing (about 1 in 55–110 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 6.6–10 % per swing (about 1 in 10–15 swings), 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in deep cave water: 26–34 % per swing (about 1 in 3–4 swings), 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in lush caves: 20–27 % per swing (about 1 in 4–5 swings), 1–2 at a time.
 * **Shovel** on mud in swamps: 8 % per try, into an empty fish bag.

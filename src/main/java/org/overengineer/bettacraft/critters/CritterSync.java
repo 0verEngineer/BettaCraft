@@ -97,7 +97,7 @@ public final class CritterSync {
                 double x = minX + b.getShort() / UNIT, y = minY + b.getShort() / UNIT, z = minZ + b.getShort() / UNIT;
                 float yaw = (b.get() & 0xFF) / 256F * 360F;
                 float size = (b.get() & 0xFF) / 255F;
-                CritterObject.Kind kind = (k & 3) == 0 ? CritterObject.Kind.CLUTCH : CritterObject.Kind.MOLT;
+                CritterObject.Kind kind = CritterObject.Kind.values()[Math.min(CritterObject.Kind.values().length - 1, k & 3)];
                 CritterObject o = new CritterObject(i, kind, x, y, z);
                 o.face = face;
                 o.yaw = yaw;

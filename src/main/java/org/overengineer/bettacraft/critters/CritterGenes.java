@@ -212,6 +212,8 @@ public record CritterGenes(int a, int b, float grade) {
             case "neocaridina:green" -> 0x2E7A40;
             case "neocaridina:black" -> 0x1C1A24;
             case "dwarf_crayfish:orange" -> 0xF06A1A;
+            case "florida_crayfish:blue" -> 0x2C64D4; // M29 part d
+            case "florida_crayfish:orange" -> 0xEC6418;
             case "caridina:red" -> 0xC81A1E; // M25 part c: the bands of a Crystal Red
             case "caridina:black" -> 0x16141C;
             case "caridina:taiwan" -> 0x3C86E0; // Blue Bolt

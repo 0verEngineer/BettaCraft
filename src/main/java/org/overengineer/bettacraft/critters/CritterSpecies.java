@@ -56,7 +56,15 @@ public enum CritterSpecies {
     SULAWESI_SHRIMP("sulawesi_shrimp", Group.SHRIMP, Model.SHRIMP, 0.17, 0.07, true, Breeding.PAIR_BERRIED, 0.12, 3.0, 1, 4, 5.0, 25, 31, 0.55, 0.025, 0.1,
             new String[0], 0xC8261E),
     TYLOMELANIA("tylomelania", Group.SNAIL, Model.TYLOMELANIA, 0.42, 0.02, true, Breeding.PAIR, 0.05, 0, 1, 1, 8.0, 24, 30, 0.35, 0.03, 0.8,
-            new String[0], 0x3A2C22);
+            new String[0], 0x3A2C22),
+    // M29 part d: the big crayfish (about 10 cm, more than twice the dwarf crayfish): the Florida crayfish (Procambarus
+    // alleni; wild brown with a blue sheen, the blue and the orange form of the trade as recessive colours) and the
+    // marbled crayfish (Procambarus virginalis: only females, every adult carries eggs without a male, the young are her
+    // clones). They eat plants, dig up young plants, catch slow fish and small animals (BigCrayfish).
+    FLORIDA_CRAYFISH("florida_crayfish", Group.CRAYFISH, Model.CRAYFISH, 0.8, 0.07, false, Breeding.PAIR_BERRIED, 0.12, 4.0, 3, 6, 6.0, 15, 28, 0.35, 0.25, 0.0,
+            new String[]{"blue", "orange"}, 0x6A4634),
+    MARBLED_CRAYFISH("marbled_crayfish", Group.CRAYFISH, Model.CRAYFISH, 0.72, 0.065, false, Breeding.PARTHENO, 0.2, 3.0, 3, 6, 5.0, 12, 30, 0.3, 0.2, 0.0,
+            new String[0], 0x6A6248);
 
     /** Stocking group: how many of them count as one fish ({@code stocking.*PerFish}). */
     public enum Group { SHRIMP, CRAYFISH, SNAIL }
@@ -74,7 +82,9 @@ public enum CritterSpecies {
         /** Hermaphrodites: one adult is enough, few eggs at a time (ramshorn, bladder and trumpet snails). */
         SELF,
         /** Male and female, rarely one young at a time (assassin snail). */
-        PAIR
+        PAIR,
+        /** M29 part d: females only; every adult carries eggs without a male, the young are clones (marbled crayfish). */
+        PARTHENO
     }
 
     private final String id;
@@ -151,6 +161,12 @@ public enum CritterSpecies {
     public boolean hermaphrodite() { return breeding == Breeding.SELF; }
     public boolean hasSexes() { return breeding != Breeding.SELF; }
     public boolean breeds() { return breeding != Breeding.NONE; }
+    /** M29 part d: only females (parthenogenesis). */
+    public boolean allFemale() { return breeding == Breeding.PARTHENO; }
+    /** M29 part d: one of the big crayfish (Florida, marbled): eats plants, digs them up, catches slow fish and small animals. */
+    public boolean big() { return group == Group.CRAYFISH && length >= 0.6; }
+    /** M29 part d: how many of the group's stocking share one animal counts (a big crayfish 9 dwarf crayfish, 0.75 fish). */
+    public double stockScale() { return big() ? 9.0 : 1.0; }
     /** Trumpet snails dig into the substrate by day. */
     public boolean burrows() { return this == TRUMPET_SNAIL; }
     /** Animals with a colour line also have a grade (colour density) that is bred up over generations. */
@@ -165,6 +181,7 @@ public enum CritterSpecies {
             case CARIDINA -> "features.caridina";
             case SULAWESI_SHRIMP, TYLOMELANIA -> "features.sulawesi";
             case YELLOW_NERITE -> "features.snailColors";
+            case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> "features.bigCrayfish";
             default -> null;
         };
     }
@@ -175,6 +192,7 @@ public enum CritterSpecies {
             case CARIDINA -> org.overengineer.bettacraft.config.CommonConfig.caridina();
             case SULAWESI_SHRIMP, TYLOMELANIA -> org.overengineer.bettacraft.config.CommonConfig.sulawesi();
             case YELLOW_NERITE -> org.overengineer.bettacraft.config.CommonConfig.snailColors();
+            case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> org.overengineer.bettacraft.config.CommonConfig.bigCrayfish();
             default -> true;
         };
     }
