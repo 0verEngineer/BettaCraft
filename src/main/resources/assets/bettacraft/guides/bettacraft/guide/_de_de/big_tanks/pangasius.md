@@ -44,10 +44,10 @@ Schwanzflosse. Im Heimaquarium wird er etwa einen Meter lang.
 
 ## Bezug
 
-* **[Großer Kescher](large_net.md)** in Flüssen: 4 % pro Schwung (etwa 1 von 25 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in Flüssen: 5 % pro Fang (etwa 1 von 20 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Großer Kescher](large_net.md)** in Dschungelgewässern: 4 % pro Schwung (etwa 1 von 25 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in Dschungelgewässern: 5 % pro Fang (etwa 1 von 20 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in Flüssen: 3 % pro Schwung (etwa 1 von 33 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in Flüssen: 3,8 % pro Fang (etwa 1 von 27 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in Dschungelgewässern: 1,1 % pro Schwung (etwa 1 von 88 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in Dschungelgewässern: 1,4 % pro Fang (etwa 1 von 70 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
 * **Wild** in Flüssen, in Gruppen von 1–1 (Spawn-Gewicht 3) (Config `features.bigAnimals`).
 * **Wild** in Dschungelgewässern, in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.bigAnimals`).
 

@@ -56,6 +56,14 @@ empty transport tub in your inventory).
 Big animals eat the small fish, young bettas and shrimp of their tank; keep them with fish of their own size. They swim
 in wide curves and turn slowly.
 
+## Freshwater giants
+
+Besides the [pangasius](big_tanks/pangasius.md) four more giants live in fresh water: the predatory
+[redtail catfish](big_tanks/redtail_catfish.md) and the [arapaima](big_tanks/arapaima.md), an air breather, from the
+jungle waters, the [wels catfish](big_tanks/wels_catfish.md) of cool rivers (no heater needed) and the
+[motoro stingray](big_tanks/motoro_stingray.md), which glides over the sand and lies on it. The catfish rest on the ground
+by day. Only the stingray breeds in a tank: it bears live young, as many as the size rule leaves room for.
+
 ## In this chapter
 
 <SubPages icons={true} />
@@ -65,3 +73,7 @@ in wide curves and turn slowly.
 | Species | °C | Shoal | Betta tank | Breeding |
 |---|---|---|---|---|
 | <ItemImage id="bettacraft:pangasius_spawn_egg" /> [Pangasius](big_tanks/pangasius.md) | 22–30 | – | no (eats them) | Does not breed in a tank |
+| <ItemImage id="bettacraft:redtail_catfish_spawn_egg" /> [Redtail Catfish](big_tanks/redtail_catfish.md) | 20–28 | – | no (eats them) | Does not breed in a tank |
+| <ItemImage id="bettacraft:wels_catfish_spawn_egg" /> [Wels Catfish](big_tanks/wels_catfish.md) | 4–26 | – | no (eats them) | Does not breed in a tank |
+| <ItemImage id="bettacraft:arapaima_spawn_egg" /> [Arapaima](big_tanks/arapaima.md) | 24–31 | – | no (eats them) | Does not breed in a tank |
+| <ItemImage id="bettacraft:motoro_stingray_spawn_egg" /> [Motoro Stingray](big_tanks/motoro_stingray.md) | 24–30 | – | no (too big) | Bears live young |

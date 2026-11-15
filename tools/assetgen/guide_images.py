@@ -700,6 +700,27 @@ def m30a(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+
+# M30 part b scene (DevClientSmokeM30b, -Psmoketestm30b): the freshwater giants in a 24 x 6 x 12 tank, a stingray from above.
+# ``py guide_images.py m30b``.
+M30B_WORLD = {
+    "tm_redtail_catfish": ("catfish_near", (200, 340, 560, 560)),
+    "tm_wels_catfish": ("catfish_near", (620, 410, 880, 570)),
+    "tm_arapaima": ("catfish_near", (700, 260, 1000, 420)),
+    "tm_motoro_stingray": ("stingray_top", (500, 380, 800, 580)),
+}
+
+
+def m30b(out_en: Path) -> None:
+    for name, (shot, box) in M30B_WORLD.items():
+        src = SHOTS / f"bettacraft_m30b_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width * 2)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -714,6 +735,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m30b"]:
+        m30b(out_en)
+        return 0
     if sys.argv[1:] == ["m30a"]:
         m30a(out_en)
         return 0

@@ -45,10 +45,18 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 
 ## Other finds
 
-* [Pangasius](../big_tanks/pangasius.md): large net in rivers (4 %).
-* [Pangasius](../big_tanks/pangasius.md): fishing with a steel leader in rivers (5 %).
-* [Pangasius](../big_tanks/pangasius.md): large net in jungle water (4 %).
-* [Pangasius](../big_tanks/pangasius.md): fishing with a steel leader in jungle water (5 %).
+* [Pangasius](../big_tanks/pangasius.md): large net in rivers (3 %).
+* [Pangasius](../big_tanks/pangasius.md): fishing with a steel leader in rivers (3.8 %).
+* [Wels Catfish](../big_tanks/wels_catfish.md): large net in rivers (1 %).
+* [Wels Catfish](../big_tanks/wels_catfish.md): fishing with a steel leader in rivers (1.3 %).
+* [Pangasius](../big_tanks/pangasius.md): large net in jungle water (1.1 %).
+* [Pangasius](../big_tanks/pangasius.md): fishing with a steel leader in jungle water (1.4 %).
+* [Redtail Catfish](../big_tanks/redtail_catfish.md): large net in jungle water (1.1 %).
+* [Redtail Catfish](../big_tanks/redtail_catfish.md): fishing with a steel leader in jungle water (1.4 %).
+* [Arapaima](../big_tanks/arapaima.md): large net in jungle water (0.57 %).
+* [Arapaima](../big_tanks/arapaima.md): fishing with a steel leader in jungle water (0.71 %).
+* [Motoro Stingray](../big_tanks/motoro_stingray.md): large net in jungle water (1.1 %).
+* [Motoro Stingray](../big_tanks/motoro_stingray.md): fishing with a steel leader in jungle water (1.4 %).
 * [Bottle of Swamp Water](../food.md): glass bottle filled with water in swamps (always).
 * [Bottle of Salt Water](../food/fry_food.md): glass bottle filled with water in oceans and at beaches (always).
 * [Duckweed](../plants/duckweed.md): glass bottle filled with water in swamps (15 %).
@@ -91,6 +99,7 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Black Molly](../tankmates/black_molly.md): spawns in rivers (spawn weight 2).
 * [Swordtail](../tankmates/swordtail.md): spawns in rivers (spawn weight 4).
 * [Pangasius](../big_tanks/pangasius.md): spawns in rivers (spawn weight 3).
+* [Wels Catfish](../big_tanks/wels_catfish.md): spawns in rivers (spawn weight 1).
 * [Neocaridina Shrimp](../invertebrates/neocaridina.md): spawns in rivers (spawn weight 2).
 * [Ramshorn Snail](../invertebrates/ramshorn.md): spawns in rivers (spawn weight 2).
 * [Bladder Snail](../invertebrates/bladder_snail.md): spawns in rivers (spawn weight 1).
@@ -160,6 +169,9 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Rummy-Nose Tetra](../tankmates/rummy_nose_tetra.md): spawns in jungle water (spawn weight 6).
 * [Black Phantom Tetra](../tankmates/black_phantom_tetra.md): spawns in jungle water (spawn weight 4).
 * [Pangasius](../big_tanks/pangasius.md): spawns in jungle water (spawn weight 2).
+* [Redtail Catfish](../big_tanks/redtail_catfish.md): spawns in jungle water (spawn weight 2).
+* [Arapaima](../big_tanks/arapaima.md): spawns in jungle water (spawn weight 1).
+* [Motoro Stingray](../big_tanks/motoro_stingray.md): spawns in jungle water (spawn weight 2).
 * [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md): spawns in jungle water (spawn weight 4).
 * [Apple Snail](../invertebrates/apple_snail.md): spawns in jungle water (spawn weight 5).
 * [Dwarf Crayfish (CPO)](../invertebrates/dwarf_crayfish.md): spawns in jungle water (spawn weight 1).

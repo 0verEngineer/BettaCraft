@@ -57,6 +57,15 @@ nimmst du ein großes Tier im Beckenmenü (eine leere Transportwanne im Inventar
 Große Tiere fressen die kleinen Fische, jungen Bettas und Garnelen ihres Beckens; halte sie mit Fischen ihrer Größe. Sie
 schwimmen weite Bögen und wenden langsam.
 
+## Riesen des Süßwassers
+
+Neben dem [Pangasius](big_tanks/pangasius.md) leben vier weitere Riesen im Süßwasser: der räuberische
+[Rotflossen-Antennenwels](big_tanks/redtail_catfish.md) und der [Arapaima](big_tanks/arapaima.md), ein Luftatmer, aus den
+Dschungelgewässern, der [Europäische Wels](big_tanks/wels_catfish.md) kühler Flüsse (keine Heizung nötig) und der
+[Süßwasserstechrochen](big_tanks/motoro_stingray.md), der über den Sand gleitet und auf ihm liegt. Die Welse ruhen tagsüber
+am Boden. Nur der Stechrochen vermehrt sich im Becken: er bringt lebende Junge zur Welt, so viele, wie die Größenregel
+Platz lässt.
+
 ## In diesem Kapitel
 
 <SubPages icons={true} />
@@ -66,3 +75,7 @@ schwimmen weite Bögen und wenden langsam.
 | Art | °C | Schwarm | Betta-Becken | Zucht |
 |---|---|---|---|---|
 | <ItemImage id="bettacraft:pangasius_spawn_egg" /> [Pangasius](big_tanks/pangasius.md) | 22–30 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:redtail_catfish_spawn_egg" /> [Rotflossen-Antennenwels](big_tanks/redtail_catfish.md) | 20–28 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:wels_catfish_spawn_egg" /> [Europäischer Wels](big_tanks/wels_catfish.md) | 4–26 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:arapaima_spawn_egg" /> [Arapaima](big_tanks/arapaima.md) | 24–31 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:motoro_stingray_spawn_egg" /> [Süßwasserstechrochen](big_tanks/motoro_stingray.md) | 24–30 | – | nein (zu groß) | lebendgebärend |

@@ -47,10 +47,18 @@ die [Biom-Tags](../settings.md)).
 
 ## Weitere Funde
 
-* [Pangasius](../big_tanks/pangasius.md): großer Kescher in Flüssen (4 %).
-* [Pangasius](../big_tanks/pangasius.md): Angeln mit Stahlvorfach in Flüssen (5 %).
-* [Pangasius](../big_tanks/pangasius.md): großer Kescher in Dschungelgewässern (4 %).
-* [Pangasius](../big_tanks/pangasius.md): Angeln mit Stahlvorfach in Dschungelgewässern (5 %).
+* [Pangasius](../big_tanks/pangasius.md): großer Kescher in Flüssen (3 %).
+* [Pangasius](../big_tanks/pangasius.md): Angeln mit Stahlvorfach in Flüssen (3,8 %).
+* [Europäischer Wels](../big_tanks/wels_catfish.md): großer Kescher in Flüssen (1 %).
+* [Europäischer Wels](../big_tanks/wels_catfish.md): Angeln mit Stahlvorfach in Flüssen (1,3 %).
+* [Pangasius](../big_tanks/pangasius.md): großer Kescher in Dschungelgewässern (1,1 %).
+* [Pangasius](../big_tanks/pangasius.md): Angeln mit Stahlvorfach in Dschungelgewässern (1,4 %).
+* [Rotflossen-Antennenwels](../big_tanks/redtail_catfish.md): großer Kescher in Dschungelgewässern (1,1 %).
+* [Rotflossen-Antennenwels](../big_tanks/redtail_catfish.md): Angeln mit Stahlvorfach in Dschungelgewässern (1,4 %).
+* [Arapaima](../big_tanks/arapaima.md): großer Kescher in Dschungelgewässern (0,57 %).
+* [Arapaima](../big_tanks/arapaima.md): Angeln mit Stahlvorfach in Dschungelgewässern (0,71 %).
+* [Süßwasserstechrochen](../big_tanks/motoro_stingray.md): großer Kescher in Dschungelgewässern (1,1 %).
+* [Süßwasserstechrochen](../big_tanks/motoro_stingray.md): Angeln mit Stahlvorfach in Dschungelgewässern (1,4 %).
 * [Flasche Sumpfwasser](../food.md): Glasflasche mit Wasser in Sümpfen (immer).
 * [Flasche Salzwasser](../food/fry_food.md): Glasflasche mit Wasser in Ozeanen und an Stränden (immer).
 * [Wasserlinse](../plants/duckweed.md): Glasflasche mit Wasser in Sümpfen (15 %).
@@ -93,6 +101,7 @@ die [Biom-Tags](../settings.md)).
 * [Black Molly](../tankmates/black_molly.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Schwertträger](../tankmates/swordtail.md): spawnt in Flüssen (Spawn-Gewicht 4).
 * [Pangasius](../big_tanks/pangasius.md): spawnt in Flüssen (Spawn-Gewicht 3).
+* [Europäischer Wels](../big_tanks/wels_catfish.md): spawnt in Flüssen (Spawn-Gewicht 1).
 * [Neocaridina-Garnele](../invertebrates/neocaridina.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Posthornschnecke](../invertebrates/ramshorn.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Blasenschnecke](../invertebrates/bladder_snail.md): spawnt in Flüssen (Spawn-Gewicht 1).
@@ -162,6 +171,9 @@ die [Biom-Tags](../settings.md)).
 * [Rotkopfsalmler](../tankmates/rummy_nose_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 6).
 * [Schwarzer Phantomsalmler](../tankmates/black_phantom_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
 * [Pangasius](../big_tanks/pangasius.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
+* [Rotflossen-Antennenwels](../big_tanks/redtail_catfish.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
+* [Arapaima](../big_tanks/arapaima.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
+* [Süßwasserstechrochen](../big_tanks/motoro_stingray.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
 * [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
 * [Apfelschnecke](../invertebrates/apple_snail.md): spawnt in Dschungelgewässern (Spawn-Gewicht 5).
 * [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).

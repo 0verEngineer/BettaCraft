@@ -44,10 +44,10 @@ forked tail. In a home tank it grows to about one metre.
 
 ## Obtaining
 
-* **[Large net](large_net.md)** in rivers: 4 % per swing (about 1 in 25 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in rivers: 5 % per catch (about 1 in 20 catches), into an empty transport tub (config `features.bigAnimals`).
-* **[Large net](large_net.md)** in jungle water: 4 % per swing (about 1 in 25 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in jungle water: 5 % per catch (about 1 in 20 catches), into an empty transport tub (config `features.bigAnimals`).
+* **[Large net](large_net.md)** in rivers: 3 % per swing (about 1 in 33 swings), into an empty transport tub (config `features.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in rivers: 3.8 % per catch (about 1 in 27 catches), into an empty transport tub (config `features.bigAnimals`).
+* **[Large net](large_net.md)** in jungle water: 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in jungle water: 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigAnimals`).
 * **Wild** in rivers, in groups of 1–1 (spawn weight 3) (config `features.bigAnimals`).
 * **Wild** in jungle water, in groups of 1–1 (spawn weight 2) (config `features.bigAnimals`).
 

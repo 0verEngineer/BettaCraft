@@ -158,7 +158,7 @@ public final class GuideGen {
             case RAINBOW -> "tankmates/rainbowfish.md"; // M29 part c
             case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
             case SEAHORSE -> "saltwater/seahorses.md";
-            case CATFISH -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
+            case CATFISH, BONYTONGUE, RAY -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
         };
     }
 
@@ -288,16 +288,20 @@ public final class GuideGen {
         List<String> traits = new ArrayList<>();
         if (s.grazer()) traits.add(t("eats algae", "frisst Algen"));
         if (s.eatsSnails()) traits.add(t("eats snails", "frisst Schnecken"));
-        if (s.isLarge() && s.preyLength() > 0) traits.add(t("eats small fish, bettas and shrimp", "frisst kleine Fische, Bettas und Garnelen")); // M30
+        if (s.isLarge() && s.preyLength() >= org.overengineer.bettacraft.tankmates.TankmateBreeding.BETTA_PREY_LENGTH)
+            traits.add(t("eats small fish, bettas and shrimp", "frisst kleine Fische, Bettas und Garnelen")); // M30
         else if (s.preyLength() > 0) traits.add(t("eats small fish and shrimp", "frisst kleine Fische und Garnelen")); // M29
-        if (s.isLarge()) traits.add(t("swims wide curves", "schwimmt weite Bögen"));
+        if (s.isLarge() && s.large().swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.RAY_BOTTOM)
+            traits.add(t("glides over the ground and lies on the substrate", "gleitet über den Boden und liegt auf dem Bodengrund")); // M30 part b
+        else if (s.isLarge()) traits.add(t("swims wide curves", "schwimmt weite Bögen"));
         if (s.puffer()) traits.add(t("needs snails or hard food for its teeth", "braucht Schnecken oder hartes Futter für die Zähne")); // M29 part b
         if (s.finNipper()) traits.add(t("nips long fins", "zupft lange Flossen"));
         if (s.cichlid()) traits.add(t("guards its brood", "bewacht seine Brut"));
         if (s.parentsFeed()) traits.add(t("feeds its young with skin secretion", "füttert die Jungen mit Hautschleim"));
         if (s.nocturnal()) traits.add(t("active at night", "nachtaktiv"));
-        if (s.airGulper()) traits.add(t("gulps air at the surface", "holt Luft an der Oberfläche"));
-        if (s.labyrinth()) traits.add(t("breathes air (labyrinth fish)", "atmet Luft (Labyrinthfisch)")); // M29 part c
+        if (s.isLarge() && s.labyrinth()) traits.add(t("air breather: comes up to breathe at the surface", "Luftatmer: holt Luft an der Oberfläche")); // M30 part b
+        else if (s.airGulper()) traits.add(t("gulps air at the surface", "holt Luft an der Oberfläche"));
+        if (s.labyrinth() && !s.isLarge()) traits.add(t("breathes air (labyrinth fish)", "atmet Luft (Labyrinthfisch)")); // M29 part c
         if (s.territorial()) traits.add(t("territorial", "revierbildend"));
         if (s.bettaTarget()) traits.add(t("chased by male bettas", "wird von Betta-Männchen gejagt"));
         if (s.varieties().size() > 1) traits.add(t(s.varieties().size() + " colour varieties", s.varieties().size() + " Farbformen"));
@@ -306,7 +310,8 @@ public final class GuideGen {
     }
 
     private String bettaTank(TankmateSpecies s) {
-        if (s.isLarge()) return t("no (eats them)", "nein (frisst sie)"); // M30
+        if (s.isLarge()) return s.preyLength() >= org.overengineer.bettacraft.tankmates.TankmateBreeding.BETTA_PREY_LENGTH
+                ? t("no (eats them)", "nein (frisst sie)") : t("no (too big)", "nein (zu groß)"); // M30
         if (s.tempMax() < 28) return t("too cool", "zu kühl");
         if (s.tempMin() > 26) return t("too warm", "zu warm");
         if (s.stock() >= 2.5) return t("too big", "zu groß");
