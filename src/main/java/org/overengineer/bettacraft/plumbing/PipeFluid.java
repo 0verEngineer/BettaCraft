@@ -48,7 +48,8 @@ public final class PipeFluid implements IFluidHandler {
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
         // M25: also reverse osmosis and sea water; M26: live food suspension (only pushed, never pulled)
-        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()) || org.overengineer.bettacraft.food.LiveFood.isSuspension(stack);
+        return org.overengineer.bettacraft.registry.ModFluids.isWater(stack.getFluid()) || org.overengineer.bettacraft.food.LiveFood.isSuspension(stack)
+                || org.overengineer.bettacraft.fertilizer.Fertilizer.isFluid(stack); // M37: fertilizer from the fertilizer maker (only pushed)
     }
 
     @Override

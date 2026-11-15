@@ -34,6 +34,15 @@ public final class ModFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIVE_FOOD = FLUIDS.register("live_food", () -> new BaseFlowingFluid.Source(live()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_LIVE_FOOD = FLUIDS.register("flowing_live_food", () -> new BaseFlowingFluid.Flowing(live()));
 
+    /** M37: liquid fertilizer from the fertilizer maker (in pipes and tanks; a tank takes it into its water up to 100 %). */
+    public static final DeferredHolder<FluidType, FluidType> FERTILIZER_TYPE = TYPES.register("fertilizer", () -> new FluidType(props()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> FERTILIZER = FLUIDS.register("fertilizer", () -> new BaseFlowingFluid.Source(fert()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_FERTILIZER = FLUIDS.register("flowing_fertilizer", () -> new BaseFlowingFluid.Flowing(fert()));
+
+    private static BaseFlowingFluid.Properties fert() {
+        return new BaseFlowingFluid.Properties(FERTILIZER_TYPE, FERTILIZER, FLOWING_FERTILIZER);
+    }
+
     private static BaseFlowingFluid.Properties live() {
         return new BaseFlowingFluid.Properties(LIVE_FOOD_TYPE, LIVE_FOOD, FLOWING_LIVE_FOOD);
     }

@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "crank=0,facing=east,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_0",
+      "y": 90
+    },
+    "crank=0,facing=east,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_0",
+      "y": 90
+    },
+    "crank=0,facing=north,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_0"
+    },
+    "crank=0,facing=north,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_0"
+    },
+    "crank=0,facing=south,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_0",
+      "y": 180
+    },
+    "crank=0,facing=south,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_0",
+      "y": 180
+    },
+    "crank=0,facing=west,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_0",
+      "y": 270
+    },
+    "crank=0,facing=west,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_0",
+      "y": 270
+    },
+    "crank=1,facing=east,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_1",
+      "y": 90
+    },
+    "crank=1,facing=east,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_1",
+      "y": 90
+    },
+    "crank=1,facing=north,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_1"
+    },
+    "crank=1,facing=north,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_1"
+    },
+    "crank=1,facing=south,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_1",
+      "y": 180
+    },
+    "crank=1,facing=south,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_1",
+      "y": 180
+    },
+    "crank=1,facing=west,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_1",
+      "y": 270
+    },
+    "crank=1,facing=west,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_1",
+      "y": 270
+    },
+    "crank=2,facing=east,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_2",
+      "y": 90
+    },
+    "crank=2,facing=east,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_2",
+      "y": 90
+    },
+    "crank=2,facing=north,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_2"
+    },
+    "crank=2,facing=north,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_2"
+    },
+    "crank=2,facing=south,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_2",
+      "y": 180
+    },
+    "crank=2,facing=south,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_2",
+      "y": 180
+    },
+    "crank=2,facing=west,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_2",
+      "y": 270
+    },
+    "crank=2,facing=west,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_2",
+      "y": 270
+    },
+    "crank=3,facing=east,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_3",
+      "y": 90
+    },
+    "crank=3,facing=east,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_3",
+      "y": 90
+    },
+    "crank=3,facing=north,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_3"
+    },
+    "crank=3,facing=north,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_3"
+    },
+    "crank=3,facing=south,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_3",
+      "y": 180
+    },
+    "crank=3,facing=south,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_3",
+      "y": 180
+    },
+    "crank=3,facing=west,working=false": {
+      "model": "bettacraft:block/fertilizer_maker_3",
+      "y": 270
+    },
+    "crank=3,facing=west,working=true": {
+      "model": "bettacraft:block/fertilizer_maker_3",
+      "y": 270
+    }
+  }
+}

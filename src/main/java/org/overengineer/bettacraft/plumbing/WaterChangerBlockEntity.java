@@ -28,7 +28,7 @@ import org.overengineer.bettacraft.tank.TankNitrate;
  * from the reservoir, pipe or other mod's tank next to it, or endlessly from a water source block next to it. It only
  * drains what it can refill. Fresh tap water has the temperature of the place (a cool water change, M19).
  */
-public class WaterChangerBlockEntity extends BlockEntity {
+public class WaterChangerBlockEntity extends BlockEntity implements org.overengineer.bettacraft.winding.Windable {
     public enum Status { WAITING, CHANGED, NO_TANK, NO_WATER, NO_POWER, OFF, DISABLED }
 
     /** Days between changes; 0 = not set yet: what the difficulty asks for ({@link #defaultInterval}). */
@@ -48,6 +48,21 @@ public class WaterChangerBlockEntity extends BlockEntity {
     }
 
     public DeviceEnergy energy() { return energy; }
+
+    /** M37: the spring the crank winds ({@code features.power.winding}): its pump changes the water on it (a charge is a day of pump work) while its FE is short. */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.WATER_CHANGER, this::setChanged);
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.WATER_CHANGER;
+    }
+
     public int intervalDays() { return intervalDays > 0 ? intervalDays : defaultInterval(); }
     public int share() { return share; }
     public boolean enabled() { return enabled; }
@@ -121,7 +136,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
         if (amount <= 0) return 0;
         int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * amount / 100.0);
         if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
-        if (DeviceEnergy.required() && !energy.use(fe)) return -1;
+        if (DeviceEnergy.required() && !org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, DeviceEnergy.pumpFe())) return -1; // M37: FE, else the spring
         TankInteractions.changeWater(level, c, -amount);
         long filled = 0;
         if (endless) {
@@ -158,6 +173,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         write(tag);
         energy.save(tag);
+        spring.save(tag, "spring");
     }
 
     @Override
@@ -174,6 +190,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
         }
         lastMb = tag.getInt("last_mb");
         energy.load(tag);
+        spring.load(tag, "spring");
     }
 
     @Override

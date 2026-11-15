@@ -70,6 +70,7 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
         g.fill(bx, by, bx + 6, by + bh, 0xFF2A2A2A);
         int h = (int) Math.round((double) bh * menu.drive() / menu.driveMax());
         if (h > 0) g.fill(bx, by + bh - h, bx + 6, by + bh, menu.powered() ? 0xFFD03030 : 0xFFC8A040);
+        if (menu.powered()) SpringGauge.draw(g, bx + 9, by, bh, menu.springPercent()); // M37: FE first, then the spring
         // progress
         int w = (int) Math.ceil(24.0 * menu.progress() / menu.batchTicks());
         // the empty arrow (shaft and head), then the progress over it
@@ -123,7 +124,9 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
             int pct = (int) Math.round(100.0 * menu.drive() / menu.driveMax());
             g.renderTooltip(font, menu.powered()
                     ? Component.translatable("gui.bettacraft.food_maker.energy", menu.drive(), menu.driveMax())
-                    : Component.translatable("gui.bettacraft.food_maker.spring", pct), mouseX, mouseY);
+                    : Component.translatable("gui.bettacraft.spring.tooltip", pct), mouseX, mouseY);
+        } else if (menu.powered() && SpringGauge.over(mouseX, mouseY, leftPos + 18, topPos + 32, 36)) {
+            SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
         }
     }
 }

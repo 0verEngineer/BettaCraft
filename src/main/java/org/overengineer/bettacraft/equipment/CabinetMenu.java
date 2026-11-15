@@ -91,6 +91,14 @@ public class CabinetMenu extends AbstractContainerMenu {
                 outlet.set(v);
             }
         });
+        addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(cabinet)); // M37
+    }
+
+    /** M37: the spring of the cabinet in percent (-1: not windable now). */
+    private net.minecraft.world.inventory.DataSlot spring;
+
+    public int springPercent() {
+        return spring.get();
     }
 
     private static int outletValue(CabinetBlockEntity c) {

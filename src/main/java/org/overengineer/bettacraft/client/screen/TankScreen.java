@@ -978,7 +978,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     .withStyle(ChatFormatting.GOLD);
         line(g, evap, x, y, TEXT_LIGHT);
         y += 11;
-        line(g, Component.translatable("gui.bettacraft.water.temp_equipment", (int) v.heaterBlocks, (int) v.coolerBlocks), x, y, TEXT_LIGHT);
+        Component equipment = Component.translatable("gui.bettacraft.water.temp_equipment", (int) v.heaterBlocks, (int) v.coolerBlocks);
+        if (w.fertilizerOn) equipment = equipment.copy().append(Component.literal(" · ").withStyle(ChatFormatting.GRAY)).append(fertilizerLine(w)); // M37
+        fitLine(g, equipment, x, y, TEXT_LIGHT, 226);
         y += 11;
         if (!w.anyPower()) {
             line(g, Component.translatable("gui.bettacraft.water.power_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
@@ -990,12 +992,28 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             groups.append(powerGroup("power_heat", w.heaterPower, w.heatPowered)).append("  ")
                     .append(powerGroup("power_filter", w.filterPower, w.filterPowered)).append("  ")
                     .append(powerGroup("power_light", w.lightPower, w.lightPowered));
-            line(g, groups, x, y, TEXT_LIGHT);
+            // M37: the wound springs (cabinet, external filters) drive devices while the FE is short
+            if (w.springUnits > 0) groups.append("  ").append(Component.translatable("gui.bettacraft.water.power_spring",
+                    String.format(java.util.Locale.ROOT, "%.1f", w.springUnits)).withStyle(ChatFormatting.GOLD));
+            fitLine(g, groups, x, y, TEXT_LIGHT, 226);
         }
         y += 13;
         if (w.reefLine()) fitLine(g, reefLine(w), x, y, TEXT_LIGHT, 226); // M20: skimmers, pumps, live rock
         else if (w.chemOn) line(g, org.overengineer.bettacraft.compat.info.InfoLines.glassLine(v.glass, v.style.getSerializedName()), x, y, TEXT_LIGHT); // M25
         else line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    /** M37: "Fertilizer 80 % (good)": none / low (grey, yellow), good (green), overdosed (gold). */
+    static Component fertilizerLine(TankView.Water w) {
+        var st = org.overengineer.bettacraft.fertilizer.Fertilizer.state(w.fertilizer, w.fertilizerOver);
+        ChatFormatting col = switch (st) {
+            case NONE -> ChatFormatting.GRAY;
+            case LOW -> ChatFormatting.YELLOW;
+            case GOOD -> ChatFormatting.GREEN;
+            case OVERDOSED -> ChatFormatting.GOLD;
+        };
+        return Component.translatable("gui.bettacraft.water.fertilizer", Math.round(w.fertilizer * 100),
+                Component.translatable("gui.bettacraft.water.fertilizer." + st.name().toLowerCase(java.util.Locale.ROOT))).withStyle(col);
     }
 
     /** M25: "TDS 250 ppm (medium hard) · pH 7.5 (neutral, steady)", red when the water does not suit an animal. */

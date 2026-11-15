@@ -1,0 +1,101 @@
+package org.overengineer.bettacraft.datagen;
+
+import java.util.function.BiConsumer;
+
+/** M37 English texts (the crank and winding, liquid fertilizer and the fertilizer maker). The German ones are in de_de.json; edit both. */
+final class LangM37 {
+    private LangM37() {}
+
+    static void addAll(BiConsumer<String, String> a) {
+        a.accept("item.bettacraft.crank", "Crank");
+        a.accept("block.bettacraft.fertilizer_maker", "Fertilizer Maker");
+        a.accept("item.bettacraft.kelp_meal", "Kelp Meal");
+        a.accept("item.bettacraft.nutrient_salt", "Nutrient Salt");
+        a.accept("item.bettacraft.liquid_fertilizer", "Liquid Fertilizer");
+        a.accept("item.bettacraft.fertilizer_canister", "Fertilizer Canister");
+        a.accept("fluid_type.bettacraft.fertilizer", "Liquid Fertilizer");
+        a.accept("message.bettacraft.crank.nothing", "The crank does not fit here: only devices with a spring can be wound");
+        a.accept("message.bettacraft.crank.off", "%s is switched off");
+        a.accept("message.bettacraft.crank.fe_only", "%s runs on FE only (features.power.winding is off)");
+        a.accept("message.bettacraft.crank.no_need", "%s runs without power: no need to wind it");
+        a.accept("message.bettacraft.crank.full", "%s is fully wound");
+        a.accept("message.bettacraft.crank.wound", "%s: spring %s%% (%s h of work)");
+        a.accept("message.bettacraft.crank.use_crank", "Wind it with the crank (an iron ingot, an iron nugget and a stick)");
+        a.accept("tooltip.bettacraft.crank", "Right-click a device with a spring to wind it; hold the button to keep winding");
+        a.accept("gui.bettacraft.spring.tooltip", "Spring: %s%% (wind it with the crank)");
+        a.accept("gui.bettacraft.food_maker.status.fe_or_wind", "No FE: connect power or wind the spring with the crank");
+        a.accept("gui.bettacraft.water.power_spring", "Spring: %s devices");
+        a.accept("jade.bettacraft.spring", "Spring: %s%% (%s h)");
+        a.accept("config.jade.plugin_bettacraft.spring", "Bettacraft spring (crank)");
+        a.accept("message.bettacraft.fertilizer.off", "Liquid fertilizer is switched off (features.fertilizer.enabled)");
+        a.accept("message.bettacraft.fertilizer.dosed", "Fertilizer: %s%%");
+        a.accept("message.bettacraft.fertilizer.overdosed", "Fertilizer: %s%%: overdosed! The algae will thrive; change some water");
+        a.accept("log.bettacraft.fertilizer_overdosed", "Overdosed with fertilizer (%s%%): the algae grow faster");
+        a.accept("tooltip.bettacraft.liquid_fertilizer", "%s of %s portions");
+        a.accept("tooltip.bettacraft.liquid_fertilizer.use", "Right-click a tank: one portion into the water");
+        a.accept("gui.bettacraft.water.fertilizer", "Fertilizer %s%% (%s)");
+        a.accept("gui.bettacraft.water.fertilizer.none", "none");
+        a.accept("gui.bettacraft.water.fertilizer.low", "low");
+        a.accept("gui.bettacraft.water.fertilizer.good", "good");
+        a.accept("gui.bettacraft.water.fertilizer.overdosed", "overdosed");
+        a.accept("gui.bettacraft.dosing.additive.fertilizer", "Fertilizer");
+        a.accept("gui.bettacraft.fertilizer_maker.status.idle", "Idle");
+        a.accept("gui.bettacraft.fertilizer_maker.status.working", "Mixing liquid fertilizer");
+        a.accept("gui.bettacraft.fertilizer_maker.status.no_ingredients", "Needs kelp meal and nutrient salt");
+        a.accept("gui.bettacraft.fertilizer_maker.status.no_water", "Needs water (a bucket or a pipe)");
+        a.accept("gui.bettacraft.fertilizer_maker.status.full", "The fertilizer tank is full: bottles or a pipe empty it");
+        a.accept("gui.bettacraft.fertilizer_maker.status.wind", "The spring has run down: wind it with the crank");
+        a.accept("gui.bettacraft.fertilizer_maker.status.no_power", "Needs FE");
+        a.accept("gui.bettacraft.fertilizer_maker.status.fe_or_wind", "No FE: connect power or wind the spring with the crank");
+        a.accept("gui.bettacraft.fertilizer_maker.status.paused", "Paused by redstone");
+        a.accept("gui.bettacraft.fertilizer_maker.status.off", "The fertilizer maker is switched off (features.fertilizer.enabled)");
+        a.accept("gui.bettacraft.fertilizer_maker.water", "Water: %s / %s mB");
+        a.accept("gui.bettacraft.fertilizer_maker.fertilizer", "Liquid fertilizer: %s / %s mB");
+        a.accept("info.bettacraft.crank", "The crank winds devices with a spring: right-click, hold the button to keep winding (one charge, a day of a device's work, in about five seconds).\nWithout the power options only the food maker and the fertilizer maker need it. With a power option on also the external filter (with its heaters), the multiblock filter, the reverse osmosis unit, the water change controller, the water pump and the cabinet under a tank can be wound instead of FE; the cabinet holds six charges and gives them to every device of its tank.");
+        a.accept("info.bettacraft.kelp_meal", "Dried kelp ground with bone meal: the organic part of liquid fertilizer. Goes into the fertilizer maker.");
+        a.accept("info.bettacraft.nutrient_salt", "Bone meal (phosphate), charcoal (potash) and iron: the minerals of liquid fertilizer. Goes into the fertilizer maker.");
+        a.accept("info.bettacraft.liquid_fertilizer", "Five portions of liquid fertilizer. Right-click a tank: one portion goes into the water (a portion brings 4 water blocks to the right level).\nUp to 100 % the aquarium and floating plants of Bettacraft grow up to half as fast again; they use it up. From 150 % the tank is overdosed and the algae grow faster. Water changes dilute it. Plants of other mods are not affected.");
+        a.accept("info.bettacraft.fertilizer_maker", "Mixes a kelp meal and a nutrient salt with 250 mB of water into 250 mB of liquid fertilizer (a bottle). Water comes from a bucket, a pipe or other mods.\nEmpty glass bottles in the bottle slot are filled; otherwise the fertilizer goes into pipes or a tank next to it (a tank takes it only up to 100 %).\nWithout power it runs on a spring: wind it with the crank. With a power option on it takes FE, and its spring when the FE is short; Create's rotation drives it too. Redstone pauses it.");
+        a.accept("info.bettacraft.fertilizer_canister", "A canister of liquid fertilizer for the dosing pump (500 mL, two bottles). The pump doses it into fresh and salt water tanks, its mL per day.");
+        a.accept("bettacraft.configuration.winding", "Winding with the crank");
+        a.accept("bettacraft.configuration.winding.tooltip", "Winding with the crank (features.power.winding). Without the power options only the food maker and the fertilizer maker have a spring; with a device's power option on the external filter, multiblock filter, reverse osmosis unit, water change controller, water pump and the cabinet under a tank (for every device of its tank) can be wound instead of FE. FE goes first. One charge is one in-game day of one device's work; the spring stands still in unloaded chunks");
+        a.accept("bettacraft.configuration.ticksPerCharge", "Ticks per charge");
+        a.accept("bettacraft.configuration.ticksPerCharge.tooltip", "Ticks of one device's work in one charge (24000 = one in-game day)");
+        a.accept("bettacraft.configuration.clicksPerCharge", "Crank clicks per charge");
+        a.accept("bettacraft.configuration.clicksPerCharge.tooltip", "Clicks with the crank for one charge (holding the crank clicks about five times a second: 25 = 5 seconds)");
+        a.accept("bettacraft.configuration.externalFilterCharges", "External filter charges");
+        a.accept("bettacraft.configuration.externalFilterCharges.tooltip", "Charges the spring of an external filter holds (it also drives the heaters in it)");
+        a.accept("bettacraft.configuration.multiblockFilterCharges", "Multiblock filter charges");
+        a.accept("bettacraft.configuration.multiblockFilterCharges.tooltip", "Charges the spring of a multiblock filter (its pump head) holds");
+        a.accept("bettacraft.configuration.cabinetCharges", "Cabinet charges");
+        a.accept("bettacraft.configuration.cabinetCharges.tooltip", "Charges the spring of a cabinet under a tank holds (shared by every device of the tank that needs FE)");
+        a.accept("bettacraft.configuration.osmosisCharges", "Reverse osmosis charges");
+        a.accept("bettacraft.configuration.osmosisCharges.tooltip", "Charges the spring of the pressure pump of a reverse osmosis unit holds");
+        a.accept("bettacraft.configuration.waterChangerCharges", "Water change controller charges");
+        a.accept("bettacraft.configuration.waterChangerCharges.tooltip", "Charges the spring of a water change controller holds (a charge is a day of a pump's work)");
+        a.accept("bettacraft.configuration.waterPumpCharges", "Water pump charges");
+        a.accept("bettacraft.configuration.waterPumpCharges.tooltip", "Charges the spring of a water pump holds");
+        a.accept("bettacraft.configuration.fertilizerMakerCharges", "Fertilizer maker charges");
+        a.accept("bettacraft.configuration.fertilizerMakerCharges.tooltip", "Charges the spring of the fertilizer maker holds (it needs its spring without the power options)");
+        a.accept("bettacraft.configuration.portionWaterBlocks", "Water blocks per portion");
+        a.accept("bettacraft.configuration.portionWaterBlocks.tooltip", "Water blocks one portion (a fifth of a bottle, 50 mB) brings to the right level (100 %)");
+        a.accept("bettacraft.configuration.fertilizerDecayPerDay", "Fertilizer loss per day");
+        a.accept("bettacraft.configuration.fertilizerDecayPerDay.tooltip", "Share of the fertilizer that is lost per in-game day by itself (also without plants)");
+        a.accept("bettacraft.configuration.plantUsePerDay", "Plant use per day");
+        a.accept("bettacraft.configuration.plantUsePerDay.tooltip", "Level the plants use per day for each block of growing plants per water block (dense tanks use it faster)");
+        a.accept("bettacraft.configuration.growthBoost", "Growth boost");
+        a.accept("bettacraft.configuration.growthBoost.tooltip", "Extra growth of the plants at the right level (0.5 = 1.5 times as fast; less fertilizer gives less)");
+        a.accept("bettacraft.configuration.overdoseAt", "Overdosed from");
+        a.accept("bettacraft.configuration.overdoseAt.tooltip", "Level from which the tank is overdosed (1.5 = 150 %): more brings no more growth, but the algae grow faster");
+        a.accept("bettacraft.configuration.overdoseAlgae", "Algae when overdosed");
+        a.accept("bettacraft.configuration.overdoseAlgae.tooltip", "Algae growth at twice the overdose level (3 = three times as fast; in between it rises smoothly)");
+        a.accept("bettacraft.configuration.pipeUpTo", "Piped fertilizer up to");
+        a.accept("bettacraft.configuration.pipeUpTo.tooltip", "Fertilizer that comes in through a pipe (from the fertilizer maker) fills the tank only up to this level");
+        a.accept("bettacraft.configuration.fertilizerTicksPerBatch", "Fertilizer maker ticks per batch");
+        a.accept("bettacraft.configuration.fertilizerTicksPerBatch.tooltip", "Ticks the fertilizer maker needs for one batch (250 mB, a bottle)");
+        a.accept("bettacraft.configuration.fertilizerFePerTick", "Fertilizer maker FE per tick");
+        a.accept("bettacraft.configuration.fertilizerFePerTick.tooltip", "FE per tick the fertilizer maker takes while it works and a power option is on (FE first, then its spring)");
+        a.accept("bettacraft.configuration.fertilizer", "Liquid fertilizer");
+        a.accept("bettacraft.configuration.fertilizer.tooltip", "M37: liquid fertilizer (features.fertilizer.enabled): it speeds up the growth of the aquarium and floating plants of Bettacraft (never the plants of other mods); the plants use it up, water changes dilute it, too much feeds the algae");
+    }
+}

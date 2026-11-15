@@ -39,7 +39,8 @@ public final class TankAlgae {
         return AlgaeSim.growthPerDay(speed(), (int) Math.round(Math.min(15, strong)), t.waterQuality(), TankWater.qualityEnabled(),
                 org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t), TankPlants.coverage(t))
                 * org.overengineer.bettacraft.tank.TankLighting.algaeBoost(strong, org.overengineer.bettacraft.co2.TankCo2.algaeBalance(t))
-                * org.overengineer.bettacraft.tank.TankNitrate.algaeFactor(t); // M24: nitrate feeds the algae
+                * org.overengineer.bettacraft.tank.TankNitrate.algaeFactor(t) // M24: nitrate feeds the algae
+                * org.overengineer.bettacraft.fertilizer.Fertilizer.algae(t); // M37: too much fertilizer feeds them too
     }
 
     /** Faces the cleaning crew grazes clean per day (snails best, nerites most, shrimp a little; young less). */

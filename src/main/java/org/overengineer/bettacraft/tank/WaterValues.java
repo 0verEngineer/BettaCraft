@@ -15,8 +15,9 @@ import org.overengineer.bettacraft.registry.ModDataComponents;
  * M24: the values a portion of water carries through pipes (data component {@code bettacraft:water} on the fluid stack):
  * temperature (°C), salt (ppt), calcium (mg/L), quality (0..1) and nitrate (mg/L); M25: TDS (ppm) and pH. Water without
  * the component is tap water (fresh, clean, no nitrate, TDS 250, pH 7.5, the temperature of the place it comes in).
+ * M37: and the liquid fertilizer in it (the tank's level, 1 = 100 %), so that a filter loop or a pump keeps it.
  */
-public record WaterValues(float temp, float salinity, float calcium, float quality, float nitrate, float tds, float ph) {
+public record WaterValues(float temp, float salinity, float calcium, float quality, float nitrate, float tds, float ph, float fertilizer) {
     public static final Codec<WaterValues> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.FLOAT.fieldOf("temp").forGetter(WaterValues::temp),
             Codec.FLOAT.optionalFieldOf("salinity", 0F).forGetter(WaterValues::salinity),
@@ -24,7 +25,8 @@ public record WaterValues(float temp, float salinity, float calcium, float quali
             Codec.FLOAT.optionalFieldOf("quality", 1F).forGetter(WaterValues::quality),
             Codec.FLOAT.optionalFieldOf("nitrate", 0F).forGetter(WaterValues::nitrate),
             Codec.FLOAT.optionalFieldOf("tds", WaterChemistry.TAP_TDS).forGetter(WaterValues::tds),
-            Codec.FLOAT.optionalFieldOf("ph", WaterChemistry.TAP_PH).forGetter(WaterValues::ph)).apply(i, WaterValues::new));
+            Codec.FLOAT.optionalFieldOf("ph", WaterChemistry.TAP_PH).forGetter(WaterValues::ph),
+            Codec.FLOAT.optionalFieldOf("fertilizer", 0F).forGetter(WaterValues::fertilizer)).apply(i, WaterValues::new));
 
     public static final StreamCodec<ByteBuf, WaterValues> STREAM_CODEC = StreamCodec.of((buf, v) -> {
         buf.writeFloat(v.temp);
@@ -34,7 +36,14 @@ public record WaterValues(float temp, float salinity, float calcium, float quali
         buf.writeFloat(v.nitrate);
         buf.writeFloat(v.tds);
         buf.writeFloat(v.ph);
-    }, buf -> new WaterValues(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat()));
+        buf.writeFloat(v.fertilizer);
+    }, buf -> new WaterValues(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
+            buf.readFloat()));
+
+    /** M25 values (no fertilizer). */
+    public WaterValues(float temp, float salinity, float calcium, float quality, float nitrate, float tds, float ph) {
+        this(temp, salinity, calcium, quality, nitrate, tds, ph, 0F);
+    }
 
     /** M24 values (tap water's TDS and pH). */
     public WaterValues(float temp, float salinity, float calcium, float quality, float nitrate) {
@@ -44,7 +53,7 @@ public record WaterValues(float temp, float salinity, float calcium, float quali
     /** The values of the water in a tank now. */
     public static WaterValues of(TankData t) {
         return new WaterValues(round(t.waterTemp()), round(t.salinity()), Math.round(t.calcium()), round(t.waterQuality()), round(t.nitrate()),
-                Math.round(t.tds()), round(t.ph()));
+                Math.round(t.tds()), round(t.ph()), round(t.fertilizer()));
     }
 
     /** Tap water at a temperature (fresh, clean). */

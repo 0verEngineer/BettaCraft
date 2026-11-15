@@ -1,0 +1,207 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#top"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#front"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        10,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#lid"
+        },
+        "east": {
+          "texture": "#tank"
+        },
+        "north": {
+          "texture": "#tank"
+        },
+        "south": {
+          "texture": "#tank"
+        },
+        "up": {
+          "texture": "#lid"
+        },
+        "west": {
+          "texture": "#tank"
+        }
+      },
+      "from": [
+        3.5,
+        10,
+        3.5
+      ],
+      "to": [
+        12.5,
+        14,
+        12.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#lid"
+        },
+        "east": {
+          "texture": "#lid"
+        },
+        "north": {
+          "texture": "#lid"
+        },
+        "south": {
+          "texture": "#lid"
+        },
+        "up": {
+          "texture": "#lid"
+        },
+        "west": {
+          "texture": "#lid"
+        }
+      },
+      "from": [
+        4.5,
+        14,
+        4.5
+      ],
+      "to": [
+        11.5,
+        15,
+        11.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#crank"
+        },
+        "east": {
+          "texture": "#crank"
+        },
+        "north": {
+          "texture": "#crank"
+        },
+        "south": {
+          "texture": "#crank"
+        },
+        "up": {
+          "texture": "#crank"
+        },
+        "west": {
+          "texture": "#crank"
+        }
+      },
+      "from": [
+        14,
+        4,
+        7
+      ],
+      "to": [
+        15,
+        6,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#crank"
+        },
+        "east": {
+          "texture": "#crank"
+        },
+        "north": {
+          "texture": "#crank"
+        },
+        "south": {
+          "texture": "#crank"
+        },
+        "up": {
+          "texture": "#crank"
+        },
+        "west": {
+          "texture": "#crank"
+        }
+      },
+      "from": [
+        15,
+        4.5,
+        3.5
+      ],
+      "to": [
+        16,
+        5.5,
+        8.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#knob"
+        },
+        "east": {
+          "texture": "#knob"
+        },
+        "north": {
+          "texture": "#knob"
+        },
+        "south": {
+          "texture": "#knob"
+        },
+        "up": {
+          "texture": "#knob"
+        },
+        "west": {
+          "texture": "#knob"
+        }
+      },
+      "from": [
+        16,
+        4,
+        3
+      ],
+      "to": [
+        17.5,
+        6,
+        5
+      ]
+    }
+  ],
+  "textures": {
+    "crank": "bettacraft:block/food_maker_crank",
+    "front": "bettacraft:block/fertilizer_maker_front",
+    "knob": "bettacraft:block/food_maker_knob",
+    "lid": "bettacraft:block/fertilizer_maker_lid",
+    "particle": "bettacraft:block/fertilizer_maker_side",
+    "side": "bettacraft:block/fertilizer_maker_side",
+    "tank": "bettacraft:block/fertilizer_maker_tank",
+    "top": "bettacraft:block/fertilizer_maker_top"
+  }
+}

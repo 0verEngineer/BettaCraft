@@ -49,6 +49,14 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
                 addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
         for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, 142));
         addPowerSlot(filter);
+        addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(filter)); // M37
+    }
+
+    /** M37: the spring of the filter in percent (-1: not windable now). */
+    private net.minecraft.world.inventory.DataSlot spring;
+
+    public int springPercent() {
+        return spring.get();
     }
 
     @Override

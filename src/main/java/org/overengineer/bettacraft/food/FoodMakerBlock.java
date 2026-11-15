@@ -35,8 +35,7 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /**
  * M26 part b: the food maker. A steel case with a hopper on top and a crank on the side. Right-click opens the window;
- * sneak + right-click with an empty hand winds the spring (the crank turns a quarter, the ratchet clicks) when it does not
- * run on FE ({@link FoodMakerBlockEntity}).
+ * M37: the crank item winds the spring (the crank turns a quarter, the ratchet clicks; {@link FoodMakerBlockEntity}).
  */
 public class FoodMakerBlock extends BaseEntityBlock {
     public static final MapCodec<FoodMakerBlock> CODEC = simpleCodec(FoodMakerBlock::new);
@@ -80,7 +79,8 @@ public class FoodMakerBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof FoodMakerBlockEntity be)) return InteractionResult.PASS;
         if (player.isSecondaryUseActive()) {
-            if (!level.isClientSide) be.wind(player);
+            // M37: the spring is wound with the crank now (sneak + empty hand only says so)
+            if (!level.isClientSide) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.crank.use_crank"), true);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide && player instanceof ServerPlayer sp) sp.openMenu(be, pos);

@@ -330,6 +330,7 @@ public final class ModDataGen {
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
             DataGenM26.blockStates(this); // M26 part a
+            DataGenM37.blockStates(this); // M37
             DataGenM27.blockStates(this); // M27
             DataGenM28.blockStates(this); // M28 part c
             DataGenM281.blockStates(this); // M28.1
@@ -608,6 +609,7 @@ public final class ModDataGen {
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
             DataGenM26.itemModels(this); // M26 part a
+            DataGenM37.itemModels(this); // M37
             DataGenM27.itemModels(this); // M27
             DataGenM28.itemModels(this); // M28 part c
             DataGenM30.itemModels(this); // M30 part a
@@ -1051,6 +1053,7 @@ public final class ModDataGen {
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM26.recipes(output, hasIt(ModItems.TANK.get())); // M26 part a
+            DataGenM37.recipes(output, hasIt(ModItems.TANK.get())); // M37
             DataGenM27.recipes(output, hasIt(ModItems.TANK.get())); // M27
             DataGenM28.recipes(output, hasIt(ModItems.TANK.get())); // M28 part c
             DataGenM30.recipes(output, hasIt(ModItems.TANK.get())); // M30 part a
@@ -1218,6 +1221,7 @@ public final class ModDataGen {
             add(ModBlocks.TURTLE_EGGS.get(), LootTable.lootTable()); // M31 part b: broken eggs give nothing
             add(ModBlocks.FROG_EGGS.get(), LootTable.lootTable()); // M31 part c
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
+            for (Block b : DataGenM37.blocks()) dropSelf(b); // M37
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
             dropOther(ModBlocks.ALDER_CONES.get(), ModItems.ALDER_CONE.get());
@@ -1259,6 +1263,7 @@ public final class ModDataGen {
                         l.add(ModBlocks.TURTLE_EGGS.get()); // M31 part b
                         l.add(ModBlocks.FROG_EGGS.get()); // M31 part c
                         l.addAll(DataGenM26.blocks()); // M26 part a
+                        l.addAll(DataGenM37.blocks()); // M37
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
@@ -1338,6 +1343,7 @@ public final class ModDataGen {
             DataGenM31b.blockTags(this::tag); // M31 part b
             DataGenM31c.blockTags(this::tag); // M31 part c
             DataGenM26.blockTags(this::tag); // M26 part a
+            DataGenM37.blockTags(this::tag); // M37
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c
             DataGenM32b.blockTags(this::tag); // M32 part b

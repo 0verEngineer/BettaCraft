@@ -73,6 +73,7 @@ public final class BettaCraftClient {
             e.registerFluidType(waterLook(0xFFB0DCF4), org.overengineer.bettacraft.registry.ModFluids.RO_WATER_TYPE.get());
             e.registerFluidType(waterLook(0xFF2A64B0), org.overengineer.bettacraft.registry.ModFluids.SEA_WATER_TYPE.get());
             e.registerFluidType(waterLook(0xFF8A9A4A), org.overengineer.bettacraft.registry.ModFluids.LIVE_FOOD_TYPE.get()); // M26: murky green-brown
+            e.registerFluidType(waterLook(0xFF6E8A1E), org.overengineer.bettacraft.registry.ModFluids.FERTILIZER_TYPE.get()); // M37: olive green
         });
         // M15: how to leave a tank interior, bottom left
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) -> e.registerBelow(
@@ -305,6 +306,7 @@ public final class BettaCraftClient {
         event.register(ModMenus.DOSING_PUMP.get(), org.overengineer.bettacraft.client.screen.DosingPumpScreen::new); // M25 part c
         event.register(ModMenus.LIVE_FOOD_PUMP.get(), org.overengineer.bettacraft.client.screen.LiveFoodPumpScreen::new); // M26
         event.register(ModMenus.FOOD_MAKER.get(), org.overengineer.bettacraft.client.screen.FoodMakerScreen::new); // M26 part b
+        event.register(ModMenus.FERTILIZER_MAKER.get(), org.overengineer.bettacraft.client.screen.FertilizerMakerScreen::new); // M37
         event.register(ModMenus.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.screen.ExternalFilterScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), org.overengineer.bettacraft.client.screen.CrucibleScreen::new); // M24
         event.register(ModMenus.CABINET.get(), org.overengineer.bettacraft.client.screen.CabinetScreen::new);

@@ -182,9 +182,10 @@ public final class TankPlants {
     /** Where the jets of the attached filters hit the surface (only while the filters run). */
     public static List<FloatingPlantSim.Jet> jets(Level level, TankBlockEntity c) {
         List<FloatingPlantSim.Jet> out = new ArrayList<>();
-        if (!c.filterPowered()) return out;
+        if (!org.overengineer.bettacraft.tank.TankPower.anyFilterRuns(c)) return out;
         TankData t = c.getTank();
         for (FilterHost f : TankEquipment.filters(level, c)) {
+            if (!org.overengineer.bettacraft.tank.TankPower.filterRuns(c, f)) continue; // M37
             FilterFlow.Path path = null;
             if (f instanceof ExternalFilterBlockEntity e) {
                 BlockState s = e.getBlockState();
@@ -222,6 +223,9 @@ public final class TankPlants {
         sync(level, c);
     }
 
+    /** M37: plant blocks of fertilizer use per block of growing floating leaves. */
+    public static final double FERTILIZER_PER_AREA = 0.25;
+
     /** Growth and waste uptake for {@code days} (also used by GameTests with long steps). */
     public static FloatingPlantSim.Growth grow(ServerLevel level, TankBlockEntity c, double days) {
         TankData t = c.getTank();
@@ -234,8 +238,9 @@ public final class TankPlants {
     private static FloatingPlantSim.Growth grow(ServerLevel level, TankBlockEntity c, double days, PlantSurface surface, RandomGenerator rnd) {
         TankData t = c.getTank();
         int light = light(level, c);
+        // M37: liquid fertilizer speeds them up like the aquarium plants
         FloatingPlantSim.Env env = new FloatingPlantSim.Env(FloatingPlantSim.lightFactor(light),
-                FloatingPlantSim.nutrientFactor(TankWater.qualityEnabled() ? t.waterQuality() : 0.9F), FloatingPlantSim.redTarget(light));
+                FloatingPlantSim.nutrientFactor(TankWater.qualityEnabled() ? t.waterQuality() : 0.9F) * org.overengineer.bettacraft.fertilizer.Fertilizer.growth(t), FloatingPlantSim.redTarget(light));
         int before = t.plants().size();
         FloatingPlantSim.Growth g = FloatingPlantSim.grow(t.plants(), surface, env, params(), days, rnd, t::nextPlantId);
         if (g.offshoots() > 0 && before > 0) {
@@ -246,6 +251,7 @@ public final class TankPlants {
                 TankCare.log(level, c, "log.bettacraft.plants_full", String.valueOf(Math.round(Math.min(1.0, full) * 100)));
             }
         }
+        org.overengineer.bettacraft.fertilizer.Fertilizer.used(t, g.activeArea() * FERTILIZER_PER_AREA, days); // M37: they use the fertilizer too
         double uptake = ServerConfig.getOr(ServerConfig.PLANTS_WASTE_UPTAKE, 0.04);
         if (TankWater.qualityEnabled() && uptake > 0 && g.activeArea() > 0 && t.waterQuality() < 1.0F) {
             double dq = uptake * g.activeArea() * days / Math.max(1.0, t.waterBlocks());

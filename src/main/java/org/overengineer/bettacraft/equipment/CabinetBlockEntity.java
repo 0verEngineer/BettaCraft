@@ -41,7 +41,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * filter item), nine storage slots (hoppers / pipes reach the storage slots only) and (M29.1) slot 10 for an air pump
  * that drives the air stones and sponge filters of the tank above (its hose goes up with the filter hose).
  */
-public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource {
+public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource, org.overengineer.bettacraft.winding.Windable {
     public static final ResourceLocation DEFAULT_WOOD = ResourceLocation.withDefaultNamespace("oak_planks");
     public static final ModelProperty<BlockState> WOOD_STATE = new ModelProperty<>();
     public static final int FILTER_SLOT = 0, STORAGE = 9, AIR_PUMP_SLOT = 1 + STORAGE, SLOTS = 2 + STORAGE;
@@ -93,6 +93,23 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     public ItemStackHandler items() {
         return items;
+    }
+
+    /**
+     * M37: the spring the crank winds: it stores the winding and gives it to every device of the tank above that needs FE
+     * while the tank's FE is short ({@link org.overengineer.bettacraft.tank.TankPower}), the more devices the faster.
+     */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.CABINET, this::setChanged);
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.CABINET;
     }
 
     /** Storage slots only (capability for hoppers and pipes). */
@@ -279,6 +296,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.put("items", items.serializeNBT(registries));
         if (airDriven > 0) tag.putInt("air_driven", airDriven); // M29.1
         saveM23(tag);
+        spring.save(tag, "spring"); // M37
     }
 
     @Override
@@ -303,6 +321,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (tag.contains("has_filter")) clientHasFilter = tag.getBoolean("has_filter");
         if (tag.contains("has_air_pump")) clientHasAirPump = tag.getBoolean("has_air_pump");
         loadM23(tag);
+        if (level == null || !level.isClientSide) spring.load(tag, "spring"); // M37 (not in the client copy)
         if (level != null && level.isClientSide) afterClientUpdate(old);
     }
 

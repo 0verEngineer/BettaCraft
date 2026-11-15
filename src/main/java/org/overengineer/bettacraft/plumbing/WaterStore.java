@@ -83,7 +83,7 @@ public class WaterStore implements IFluidHandler {
         return new WaterValues((float) ((x.temp() * a + y.temp() * b) / t), (float) ((x.salinity() * a + y.salinity() * b) / t),
                 (float) ((x.calcium() * a + y.calcium() * b) / t), (float) ((x.quality() * a + y.quality() * b) / t),
                 (float) ((x.nitrate() * a + y.nitrate() * b) / t), (float) ((x.tds() * a + y.tds() * b) / t),
-                org.overengineer.bettacraft.chem.WaterChemistry.mixPh(x.ph(), a, y.ph(), b));
+                org.overengineer.bettacraft.chem.WaterChemistry.mixPh(x.ph(), a, y.ph(), b), (float) ((x.fertilizer() * a + y.fertilizer() * b) / t));
     }
 
     @Override

@@ -20,6 +20,8 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
     public static final ResourceLocation BETTA = BettaCraft.id("betta");
     public static final ResourceLocation FILTER = BettaCraft.id("filter");
     public static final ResourceLocation CULTURE = BettaCraft.id("culture");
+    /** M37: the spring of the devices the crank winds. */
+    public static final ResourceLocation SPRING = BettaCraft.id("spring");
 
     @Override
     public void register(IWailaCommonRegistration registration) {
@@ -28,6 +30,12 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(JadeServerData.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.food.FoodMakerBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.osmosis.RoUnitBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterPumpBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity.class);
     }
 
     @Override
@@ -37,6 +45,12 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.food.FoodMakerBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.osmosis.RoUnitBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterDeviceBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterPumpBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.filter.FilterPartBlock.class);
         // looking through the glass at a fish shows the fish, not the tank block
         registration.addRayTraceCallback((hit, accessor, original) -> JadeClientTooltips.retarget(registration, accessor));
     }

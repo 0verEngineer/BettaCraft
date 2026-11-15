@@ -183,6 +183,12 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue FOOD_MAKER_SPRING_TICKS;
     public static final ModConfigSpec.IntValue FOOD_MAKER_WINDS;
     public static final ModConfigSpec.IntValue FOOD_MAKER_FE;
+    // M37: winding with the crank, liquid fertilizer and the fertilizer maker
+    public static final ModConfigSpec.IntValue WIND_TICKS_PER_CHARGE, WIND_CLICKS_PER_CHARGE;
+    public static final ModConfigSpec.DoubleValue WIND_EXTERNAL_FILTER, WIND_MULTIBLOCK_FILTER, WIND_CABINET, WIND_OSMOSIS, WIND_WATER_CHANGER,
+            WIND_WATER_PUMP, WIND_FERTILIZER_MAKER;
+    public static final ModConfigSpec.DoubleValue FERT_PORTION_BLOCKS, FERT_DECAY, FERT_PLANT_USE, FERT_BOOST, FERT_OVERDOSE, FERT_ALGAE, FERT_PIPE_UP_TO;
+    public static final ModConfigSpec.IntValue FERT_MAKER_TICKS, FERT_MAKER_FE;
     public static final ModConfigSpec.DoubleValue DIET_VARIETY_DAYS;
     public static final ModConfigSpec.IntValue DIET_VARIETY_GROUPS;
     public static final ModConfigSpec.DoubleValue DIET_VARIETY_RECOVERY;
@@ -756,9 +762,56 @@ public final class ServerConfig {
         FOOD_MAKER_TICKS = b.comment("Ticks the food maker needs for one batch").defineInRange("ticksPerBatch", 200, 1, 72000);
         FOOD_MAKER_SPRING_TICKS = b.comment("Ticks of work a fully wound spring gives (24000 = one in-game day)")
                 .defineInRange("springTicks", 24000, 20, 1000000);
-        FOOD_MAKER_WINDS = b.comment("Sneak + right-clicks with an empty hand that wind the spring fully").defineInRange("windsToFull", 8, 1, 64);
-        FOOD_MAKER_FE = b.comment("FE per tick the food maker takes while it works and a power option is on (then it has no spring)")
+        FOOD_MAKER_WINDS = b.comment("Clicks with the crank that wind the spring fully (holding the crank clicks about five times a second)")
+                .defineInRange("windsToFull", 25, 1, 1000);
+        FOOD_MAKER_FE = b.comment("FE per tick the food maker takes while it works and a power option is on (it takes FE first, then its spring)")
                 .defineInRange("makerFePerTick", 10, 0, 100000);
+        b.pop();
+
+        b.comment("M37: winding with the crank (features.power.winding). Without the power options only the food maker and the fertilizer maker",
+                "have a spring; with a device's power option on the external filter, multiblock filter, reverse osmosis unit, water change",
+                "controller, water pump and the cabinet under a tank (for every device of its tank) can be wound instead of FE. FE goes first.",
+                "One charge is one in-game day of one device's work; the spring stands still in unloaded chunks").push("winding");
+        WIND_TICKS_PER_CHARGE = b.comment("Ticks of one device's work in one charge (24000 = one in-game day)")
+                .defineInRange("ticksPerCharge", 24000, 20, 1000000);
+        WIND_CLICKS_PER_CHARGE = b.comment("Clicks with the crank for one charge (holding the crank clicks about five times a second: 25 = 5 seconds)")
+                .defineInRange("clicksPerCharge", 25, 1, 1000);
+        WIND_EXTERNAL_FILTER = b.comment("Charges the spring of an external filter holds (it also drives the heaters in it)")
+                .defineInRange("externalFilterCharges", 1.0, 0.05, 64.0);
+        WIND_MULTIBLOCK_FILTER = b.comment("Charges the spring of a multiblock filter (its pump head) holds")
+                .defineInRange("multiblockFilterCharges", 6.0, 0.05, 64.0);
+        WIND_CABINET = b.comment("Charges the spring of a cabinet under a tank holds (shared by every device of the tank that needs FE)")
+                .defineInRange("cabinetCharges", 6.0, 0.05, 64.0);
+        WIND_OSMOSIS = b.comment("Charges the spring of the pressure pump of a reverse osmosis unit holds")
+                .defineInRange("osmosisCharges", 1.0, 0.05, 64.0);
+        WIND_WATER_CHANGER = b.comment("Charges the spring of a water change controller holds (a charge is a day of a pump's work)")
+                .defineInRange("waterChangerCharges", 1.0, 0.05, 64.0);
+        WIND_WATER_PUMP = b.comment("Charges the spring of a water pump holds")
+                .defineInRange("waterPumpCharges", 1.0, 0.05, 64.0);
+        WIND_FERTILIZER_MAKER = b.comment("Charges the spring of the fertilizer maker holds (it needs its spring without the power options)")
+                .defineInRange("fertilizerMakerCharges", 1.0, 0.05, 64.0);
+        b.pop();
+
+        b.comment("M37: liquid fertilizer (features.fertilizer.enabled): it speeds up the growth of the aquarium and floating plants of",
+                "Bettacraft (never the plants of other mods); the plants use it up, water changes dilute it, too much feeds the algae").push("fertilizer");
+        FERT_PORTION_BLOCKS = b.comment("Water blocks one portion (a fifth of a bottle, 50 mB) brings to the right level (100 %)")
+                .defineInRange("portionWaterBlocks", 4.0, 0.1, 1000.0);
+        FERT_DECAY = b.comment("Share of the fertilizer that is lost per in-game day by itself (also without plants)")
+                .defineInRange("fertilizerDecayPerDay", 0.05, 0.0, 10.0);
+        FERT_PLANT_USE = b.comment("Level the plants use per day for each block of growing plants per water block (dense tanks use it faster)")
+                .defineInRange("plantUsePerDay", 0.5, 0.0, 100.0);
+        FERT_BOOST = b.comment("Extra growth of the plants at the right level (0.5 = 1.5 times as fast; less fertilizer gives less)")
+                .defineInRange("growthBoost", 0.5, 0.0, 10.0);
+        FERT_OVERDOSE = b.comment("Level from which the tank is overdosed (1.5 = 150 %): more brings no more growth, but the algae grow faster")
+                .defineInRange("overdoseAt", 1.5, 1.0, 10.0);
+        FERT_ALGAE = b.comment("Algae growth at twice the overdose level (3 = three times as fast; in between it rises smoothly)")
+                .defineInRange("overdoseAlgae", 3.0, 1.0, 50.0);
+        FERT_PIPE_UP_TO = b.comment("Fertilizer that comes in through a pipe (from the fertilizer maker) fills the tank only up to this level")
+                .defineInRange("pipeUpTo", 1.0, 0.1, 10.0);
+        FERT_MAKER_TICKS = b.comment("Ticks the fertilizer maker needs for one batch (250 mB, a bottle)")
+                .defineInRange("fertilizerTicksPerBatch", 200, 1, 72000);
+        FERT_MAKER_FE = b.comment("FE per tick the fertilizer maker takes while it works and a power option is on (FE first, then its spring)")
+                .defineInRange("fertilizerFePerTick", 10, 0, 100000);
         b.pop();
 
         b.comment("M26 part b: food variety (features.foodVariety.enabled): food groups, favourite and poor food of each diet (item tags",

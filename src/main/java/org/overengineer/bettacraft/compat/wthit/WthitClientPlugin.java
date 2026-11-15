@@ -27,6 +27,12 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         registrar.body(new Filter(), CabinetBlock.class);
         registrar.body(new Culture(), org.overengineer.bettacraft.food.CultureTubBlock.class);
         registrar.body(new Betta(), BettaEntity.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.food.FoodMakerBlock.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.osmosis.RoUnitBlock.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.plumbing.WaterDeviceBlock.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.plumbing.WaterPumpBlock.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.filter.FilterPartBlock.class);
         // looking through the glass at a fish shows the fish, not the tank block
         registrar.redirect(new Tank(), TankBlock.class);
     }
@@ -55,6 +61,15 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.filter(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+        }
+    }
+
+    /** M37: the spring of the devices the crank winds. */
+    static final class Spring implements IBlockComponentProvider {
+        @Override
+        public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
+            InfoLines.spring(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
 

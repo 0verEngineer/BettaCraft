@@ -176,6 +176,7 @@ public final class InfoLines {
             out.add(Component.translatable("jade.bettacraft.filter.heaters", d.getInt("heaters"), d.getInt("heat")));
         }
         if (d.getInt("coolers") > 0) out.add(Component.translatable("jade.bettacraft.filter.coolers", d.getInt("coolers"), d.getInt("cool")));
+        out.addAll(spring(d)); // M37
         if (!d.getBoolean("has_filter")) return out;
         if (d.getBoolean("attached")) {
             String name = d.getString("tank");
@@ -185,6 +186,16 @@ public final class InfoLines {
         } else {
             out.add(Component.translatable("jade.bettacraft.filter.no_tank").withStyle(ChatFormatting.GOLD));
         }
+        return out;
+    }
+
+    /** M37: "Spring: 40 % (9.6 h)" of a device with a spring (nothing while it may not be wound). */
+    public static List<Component> spring(CompoundTag d) {
+        List<Component> out = new ArrayList<>();
+        if (d == null || !d.contains("spring")) return out;
+        int pct = d.getInt("spring");
+        out.add(Component.translatable("jade.bettacraft.spring", pct, d.getString("spring_hours"))
+                .withStyle(pct <= 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
         return out;
     }
 

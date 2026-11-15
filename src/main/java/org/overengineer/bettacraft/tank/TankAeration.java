@@ -224,6 +224,10 @@ public final class TankAeration {
             if (eq != null) motor += eq.shareBelow(eq.filters(), waterY) + (Features.enabled(Feature.MORE_INTERNAL_FILTERS) ? eq.shareBelow(eq.corners(), waterY) : 0);
             devices += motor * ServerConfig.getOr(ServerConfig.OXYGEN_FILTER, 6.0);
             if (eq != null) devices += eq.shareBelow(eq.pumps(), waterY) * ServerConfig.getOr(ServerConfig.OXYGEN_FLOW_PUMP, 8.0);
+        } else {
+            double motor = 0; // M37: the external filters wound with the crank
+            for (FilterHost f : TankEquipment.filters(level, c)) if (TankPower.filterRuns(c, f)) motor += f.powerShare();
+            devices += motor * ServerConfig.getOr(ServerConfig.OXYGEN_FILTER, 6.0);
         }
         return k + devices / wb;
     }
@@ -276,9 +280,10 @@ public final class TankAeration {
 
     /** Share of running unprotected motor filters (external, cabinet, internal, corner) by their regulators. */
     public static double unprotectedMotors(ServerLevel level, TankBlockEntity c, InteriorEquipment eq, double waterY) {
-        if (!c.filterPowered) return 0;
+        if (!TankPower.anyFilterRuns(c)) return 0;
         double n = 0;
-        for (FilterHost f : TankEquipment.filters(level, c)) if (!f.intakeSponge()) n += f.powerShare();
+        for (FilterHost f : TankEquipment.filters(level, c)) if (!f.intakeSponge() && TankPower.filterRuns(c, f)) n += f.powerShare();
+        if (!c.filterPowered) return n; // M37: only the wound external filters run
         if (eq != null) {
             for (long l : eq.filters()) if (BlockPos.getY(l) < waterY && !eq.hasIntakeSponge(l)) n += eq.shareOf(l);
             if (Features.enabled(Feature.MORE_INTERNAL_FILTERS)) for (long l : eq.corners()) if (BlockPos.getY(l) < waterY && !eq.hasIntakeSponge(l)) n += eq.shareOf(l);

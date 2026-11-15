@@ -82,6 +82,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         if (!menu.getSlot(CabinetMenu.AIR_PUMP).hasItem()) { // M29.1
             g.blit(TEXTURE, leftPos + CabinetMenu.AIR_PUMP_X, topPos + CabinetMenu.AIR_PUMP_Y, 176, 50, 16, 16);
         }
+        SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         if (menu.hasFilter()) {
             for (int i = 0; i < 2; i++) {
                 int x = leftPos + CabinetMenu.HEATER_X + i * 18, y = topPos + CabinetMenu.HEATER_Y;
@@ -119,5 +120,9 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
+        if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
     }
+
+    /** M37: the spring gauge right of the storage. */
+    static final int SPRING_X = 160, SPRING_Y = 17, SPRING_H = 54;
 }

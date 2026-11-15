@@ -115,6 +115,8 @@ public final class TankData {
     private float kh = org.overengineer.bettacraft.chem.WaterChemistry.TAP_KH, magnesium = org.overengineer.bettacraft.chem.WaterChemistry.TAP_MG, trace;
     /** M24: game time of the last water change (bucket, pipe or controller; -1 = none yet) and the share changed then. */
     private long lastWaterChange = -1L;
+    /** M37: liquid fertilizer in the water (1 = the right level, 100 %; from {@code fertilizer.overdoseAt} overdosed). */
+    private float fertilizer;
     /** M23: light settings of the tank: dimmer 0..100 %, daylight timer with on/off time (minutes of the day, 6:00 = 360). */
     private int lightDimmer = 100;
     private boolean lightTimer;
@@ -492,6 +494,10 @@ public final class TankData {
     /** M25 part c: trace elements 0..1 (from 0.4 the corals show their stronger colours). */
     public float trace() { return trace; }
     public void setTrace(float v) { this.trace = org.overengineer.bettacraft.chem.WaterChemistry.clampTrace(v); }
+    /** M37: the fertilizer level (0 .. {@link #FERTILIZER_MAX}, 1 = 100 %). */
+    public float fertilizer() { return fertilizer; }
+    public void setFertilizer(float v) { this.fertilizer = Float.isFinite(v) ? Math.max(0F, Math.min(FERTILIZER_MAX, v)) : 0F; }
+    public static final float FERTILIZER_MAX = 20F;
     public float calcium() { return calcium; }
     public void setCalcium(float ca) { this.calcium = Salinity.clampCalcium(ca); }
     /** M20: whether this is a salt water tank (from {@link Salinity#MARINE_FROM} ppt). */
@@ -576,6 +582,7 @@ public final class TankData {
         kh = o.kh; // M25 part c
         magnesium = o.magnesium;
         trace = o.trace;
+        fertilizer = o.fertilizer; // M37
         lastWaterChange = o.lastWaterChange;
         lightDimmer = o.lightDimmer;
         lightTimer = o.lightTimer;
@@ -769,6 +776,7 @@ public final class TankData {
         t.putFloat("kh", kh); // M25 part c (absent = the values of the salinity)
         t.putFloat("magnesium", magnesium);
         t.putFloat("trace", trace);
+        t.putFloat("fertilizer", fertilizer); // M37 (schema 11)
         t.putInt("light_dimmer", lightDimmer);
         t.putBoolean("light_timer", lightTimer);
         t.putInt("light_on", lightOn);
@@ -896,6 +904,7 @@ public final class TankData {
         d.setKh(t.contains("kh", Tag.TAG_ANY_NUMERIC) ? t.getFloat("kh") : org.overengineer.bettacraft.chem.WaterChemistry.khOf(d.salinity));
         d.setMagnesium(t.contains("magnesium", Tag.TAG_ANY_NUMERIC) ? t.getFloat("magnesium") : org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(d.salinity));
         d.setTrace(t.contains("trace", Tag.TAG_ANY_NUMERIC) ? t.getFloat("trace") : org.overengineer.bettacraft.chem.WaterChemistry.traceOf(d.salinity));
+        d.setFertilizer(t.getFloat("fertilizer")); // M37
         d.lightDimmer = t.contains("light_dimmer", Tag.TAG_ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getInt("light_dimmer"))) : 100;
         d.lightTimer = t.getBoolean("light_timer");
         d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;

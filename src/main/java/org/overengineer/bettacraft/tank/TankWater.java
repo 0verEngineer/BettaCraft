@@ -108,7 +108,13 @@ public final class TankWater {
         double sponge = TankAeration.runningSpongeFilters(level, c);
         // M24: the multiblock filters (their pump head has its own power)
         double multi = org.overengineer.bettacraft.filter.MultiblockFilter.serving(level, c)[1];
-        if (!c.filterPowered) return rock + multi + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12);
+        if (!c.filterPowered) {
+            // M37: external filters wound with the crank clean on their own spring
+            double wound = 0;
+            for (var f : TankEquipment.filters(level, c)) if (TankPower.filterRuns(c, f)) wound += f.powerShare();
+            return rock + multi + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12)
+                    + wound * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_EXTERNAL_FILTER_BLOCKS, 32);
+        }
         // M23: every filter by its power regulator, the corner filters too
         double ext = 0;
         for (var f : TankEquipment.filters(level, c)) ext += f.powerShare();

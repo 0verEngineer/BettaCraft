@@ -63,6 +63,8 @@ public final class FeatureContent {
         put(Feature.LIVE_FOOD_PUMP, "live_food_pump");
         put(Feature.FOOD_MACHINE, "food_maker", "fish_flakes", "food_granules", "shrimp_food", "shell_food", "frozen_mosquito_larvae", "frozen_artemia",
                 "frozen_daphnia");
+        put(Feature.FERTILIZER, "fertilizer_maker", "kelp_meal", "nutrient_salt", "liquid_fertilizer"); // M37 (the crank is core)
+        put(Feature.FERTILIZER_DOSING, "fertilizer_canister");
         put(Feature.MONITORS, "monitor");
         put(Feature.BIG_ANIMALS, "large_net", "transport_tub", "transport_tub_filled", "steel_leader");
         put(Feature.TERRARIUM_DEVICES, "heat_mat", "basking_lamp", "mister", "thermo_hygrometer");

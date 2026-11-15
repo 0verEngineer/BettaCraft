@@ -37,7 +37,7 @@ import org.overengineer.bettacraft.tank.WaterValues;
  * next to it is endless), the reverse osmosis water it made, membrane and prefilter (slots 0 and 1) and the FE of the
  * pressure pump.
  */
-public class RoUnitBlockEntity extends BlockEntity {
+public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.bettacraft.winding.Windable {
     public static final int STEP = 20, FEED_CAPACITY = 4000, PURE_CAPACITY = 8000;
     public static final int MEMBRANE = 0, PREFILTER = 1;
     private final ItemStackHandler parts = new ItemStackHandler(2) {
@@ -75,6 +75,20 @@ public class RoUnitBlockEntity extends BlockEntity {
 
     public DeviceEnergy energy() {
         return energy;
+    }
+
+    /** M37: the spring the crank winds ({@code features.power.winding}): the pressure pump boosts on it while its FE is short. */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.OSMOSIS, this::setChanged);
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.OSMOSIS;
     }
 
     public int feed() {
@@ -149,8 +163,9 @@ public class RoUnitBlockEntity extends BlockEntity {
             // M32 part c: Create's rotation drives the pressure pump (the boost) like FE, also without the power options
             boolean turned = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, worldPosition) > 0F;
             if (turned) energy.drive(level, worldPosition, fe);
-            if ((org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() || turned) && energy.getEnergyStored() >= fe) {
-                energy.use(fe);
+            int fePerTick = ServerConfig.getOr(ServerConfig.RO_FE, 20);
+            if ((org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() || turned) && org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, fePerTick)) {
+                org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, fePerTick); // M37: FE, else the spring
                 rate *= ServerConfig.getOr(ServerConfig.RO_BOOST, 4.0);
                 boosted = true;
             }
@@ -333,6 +348,7 @@ public class RoUnitBlockEntity extends BlockEntity {
         tag.putDouble("wear_membrane", wearMembrane);
         tag.putDouble("wear_prefilter", wearPrefilter);
         energy.save(tag);
+        spring.save(tag, "spring");
     }
 
     @Override
@@ -345,5 +361,6 @@ public class RoUnitBlockEntity extends BlockEntity {
         wearMembrane = tag.getDouble("wear_membrane");
         wearPrefilter = tag.getDouble("wear_prefilter");
         energy.load(tag);
+        spring.load(tag, "spring");
     }
 }

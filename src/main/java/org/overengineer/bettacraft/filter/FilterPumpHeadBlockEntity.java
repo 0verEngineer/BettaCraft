@@ -36,7 +36,7 @@ import org.overengineer.bettacraft.tank.TankNitrate;
  * clogged sponges), finds the tank both lead to, cleans it by its media and lets the media clog with the tank's
  * stocking. Shows everything in its screen (synced: chambers, media, flow, tank, problem).
  */
-public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.Device {
+public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.Device, org.overengineer.bettacraft.winding.Windable {
     private int power = 10;
     private final DeviceEnergy energy = new DeviceEnergy(20000, this::setChanged);
     // synced state
@@ -55,6 +55,21 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     }
 
     public DeviceEnergy energy() { return energy; }
+
+    /** M37: the spring the crank winds ({@code features.power.winding}): the pump runs on it (six charges) while its FE is short. */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.MULTIBLOCK_FILTER, this::setChanged);
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.MULTIBLOCK_FILTER;
+    }
+
     public MultiblockFilter.Problem problem() { return problem; }
     public int chambers() { return chambers; }
     public int inlets() { return inlets; }
@@ -92,7 +107,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         if (s.formed() && Features.enabled(Feature.MULTIBLOCK_FILTER) && share > 0 && !level.hasNeighborSignal(worldPosition)) {
             int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
             if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
-            if (!DeviceEnergy.required() || energy.getEnergyStored() >= fe) {
+            if (!DeviceEnergy.required() || org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, DeviceEnergy.pumpFe())) {
                 double spongeDirt = 0;
                 int sponges = 0;
                 for (FilterChamberBlockEntity c : ch) {
@@ -105,7 +120,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
                 int max = (int) Math.round(ServerConfig.getOr(ServerConfig.PIPE_PUMP_RATE, 200) / 2.0 * PipeNetwork.WINDOW * share * flowFactor);
                 moved = pump(level, s, max);
                 if (moved > 0) {
-                    if (DeviceEnergy.required()) energy.use(fe);
+                    if (DeviceEnergy.required()) org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, DeviceEnergy.pumpFe()); // M37: FE, else the spring
                     TankBlockEntity t = tankOf(level, s);
                     if (t != null) {
                         served = t.getBlockPos();
@@ -267,6 +282,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         super.saveAdditional(tag, registries);
         write(tag);
         energy.save(tag);
+        spring.save(tag, "spring");
     }
 
     @Override
@@ -274,6 +290,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         super.loadAdditional(tag, registries);
         read(tag);
         energy.load(tag);
+        spring.load(tag, "spring");
     }
 
     @Override

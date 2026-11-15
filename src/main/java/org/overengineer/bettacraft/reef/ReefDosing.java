@@ -24,7 +24,9 @@ public final class ReefDosing {
 
     /** The four additives of the dosing pump. */
     public enum Additive {
-        CALCIUM("calcium"), ALKALINITY("alkalinity"), MAGNESIUM("magnesium"), TRACE("trace");
+        CALCIUM("calcium"), ALKALINITY("alkalinity"), MAGNESIUM("magnesium"), TRACE("trace"),
+        /** M37: liquid fertilizer (fresh and salt water, {@code features.fertilizer.dosing}). */
+        FERTILIZER("fertilizer");
 
         private final String id;
 
@@ -43,6 +45,7 @@ public final class ReefDosing {
                 case ALKALINITY -> ServerConfig.getOr(ServerConfig.DOSING_KH_PER_ML, 0.07);
                 case MAGNESIUM -> ServerConfig.getOr(ServerConfig.DOSING_MG_PER_ML, 4.0);
                 case TRACE -> ServerConfig.getOr(ServerConfig.DOSING_TRACE_PER_ML, 0.15);
+                case FERTILIZER -> org.overengineer.bettacraft.fertilizer.Fertilizer.portionBlocks() / org.overengineer.bettacraft.fertilizer.Fertilizer.PORTION_MB;
             };
         }
     }
@@ -58,6 +61,10 @@ public final class ReefDosing {
 
     /** Adds {@code ml} of an additive to the tank (shared by its whole volume). */
     public static void dose(TankData t, Additive a, double ml) {
+        if (a == Additive.FERTILIZER) { // M37: its own level (1 = 100 %)
+            org.overengineer.bettacraft.fertilizer.Fertilizer.doseMl(t, ml);
+            return;
+        }
         double add = WaterChemistry.dose(ml, a.perMl(), Math.max(1.0, t.waterBlocks()));
         if (add <= 0) return;
         switch (a) {
@@ -65,6 +72,7 @@ public final class ReefDosing {
             case ALKALINITY -> t.setKh((float) (t.kh() + add));
             case MAGNESIUM -> t.setMagnesium((float) (t.magnesium() + add));
             case TRACE -> t.setTrace((float) (t.trace() + add));
+            case FERTILIZER -> {}
         }
     }
 

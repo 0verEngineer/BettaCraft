@@ -61,6 +61,22 @@ final class JadeClientTooltips {
         }
     }
 
+    /** M37: the spring of the devices the crank winds. */
+    static final class Spring implements IBlockComponentProvider {
+        static final Spring INSTANCE = new Spring();
+
+        @Override
+        public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
+            InfoLines.spring(accessor.getServerData().getCompound(InfoData.KEY)).forEach(tooltip::add);
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.SPRING;
+        }
+    }
+
     /** Larva tub and artemia hatchery (M9). */
     static final class Culture implements IBlockComponentProvider {
         static final Culture INSTANCE = new Culture();

@@ -59,6 +59,8 @@ public class FoodMakerMenu extends AbstractContainerMenu {
     /** 0 = automatic, else 1 + index in {@link FoodMakerBlockEntity#recipes}. */
     public int selected() { return data.get(5); }
     public boolean powered() { return data.get(6) != 0; }
+    /** M37: the spring in percent while it may be wound (-1 otherwise). */
+    public int springPercent() { return data.get(7); }
 
     @Override
     public boolean clickMenuButton(Player player, int id) {

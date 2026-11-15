@@ -163,9 +163,12 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
     /** Doses {@code days} worth of every channel (also for the GameTests). */
     public void step(double days) {
         List<TankBlockEntity> all = targets();
-        List<TankBlockEntity> salt = new ArrayList<>();
+        List<TankBlockEntity> salt = new ArrayList<>(), wet = new ArrayList<>();
         for (TankBlockEntity c : all) if (c.getTank() != null && ReefDosing.dosable(c.getTank())) salt.add(c);
-        tanks = salt.size();
+        // M37: fertilizer goes into every tank with water (fresh and salt)
+        boolean fert = org.overengineer.bettacraft.fertilizer.Fertilizer.dosingEnabled() && fertilizerChannel();
+        if (fert) for (TankBlockEntity c : all) if (c.getTank() != null && c.getTank().waterMb() > 0) wet.add(c);
+        tanks = salt.isEmpty() ? wet.size() : salt.size();
         TankData shown = !salt.isEmpty() ? salt.getFirst().getTank() : !all.isEmpty() ? all.getFirst().getTank() : null;
         if (shown != null) {
             shownCa = Math.round(shown.calcium());
@@ -179,7 +182,7 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
             status = OFF;
             return;
         }
-        if (salt.isEmpty()) {
+        if (salt.isEmpty() && wet.isEmpty()) {
             status = all.isEmpty() ? NO_TANK : FRESH;
             return;
         }
@@ -192,8 +195,10 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
                 continue;
             }
             double ml = perDay[ch] * days;
-            for (TankBlockEntity c : salt) {
-                ReefDosing.dose(c.getTank(), can.additive(), ml / salt.size());
+            List<TankBlockEntity> to = can.additive() == ReefDosing.Additive.FERTILIZER ? wet : salt; // M37
+            if (to.isEmpty()) continue;
+            for (TankBlockEntity c : to) {
+                ReefDosing.dose(c.getTank(), can.additive(), ml / to.size());
                 c.setChanged();
             }
             any = true;
@@ -215,6 +220,14 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
         }
         status = any ? RUNNING : dry ? EMPTY : IDLE;
         setChanged();
+    }
+
+    /** M37: a running channel holds a fertilizer canister. */
+    private boolean fertilizerChannel() {
+        for (int ch = 0; ch < CHANNELS; ch++) {
+            if (perDay[ch] > 0 && items.getStackInSlot(ch).getItem() instanceof DosingCanisterItem c && c.additive() == ReefDosing.Additive.FERTILIZER) return true;
+        }
+        return false;
     }
 
     /** Comparator: 15 = all running canisters full, 0 = one of them is empty. */

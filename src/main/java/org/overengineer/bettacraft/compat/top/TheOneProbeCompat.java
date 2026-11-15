@@ -91,6 +91,8 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
                 add(info, InfoLines.filter(d));
             } else if (state.getBlock() instanceof org.overengineer.bettacraft.food.CultureTubBlock) {
                 add(info, InfoLines.culture(InfoData.culture(server, level.getBlockEntity(data.getPos()))));
+            } else if (level.getBlockEntity(data.getPos()) instanceof org.overengineer.bettacraft.winding.Windable w) { // M37: the spring
+                add(info, InfoLines.spring(InfoData.spring(server, (net.minecraft.world.level.block.entity.BlockEntity) w)));
             }
         }
     }

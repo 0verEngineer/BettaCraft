@@ -109,6 +109,10 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.food.FoodMakerBlockEntity::new, ModBlocks.FOOD_MAKER.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity>> FERTILIZER_MAKER = BLOCK_ENTITIES.register("fertilizer_maker",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity::new, ModBlocks.FERTILIZER_MAKER.get()).build(null)); // M37
+
+    @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.monitor.MonitorBlockEntity>> MONITOR = BLOCK_ENTITIES.register("monitor",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.monitor.MonitorBlockEntity::new, ModBlocks.MONITOR.get()).build(null)); // M27
 

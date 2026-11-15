@@ -173,6 +173,13 @@ public final class BettaCraft {
         // pipes and AE2 / RS buses, interfaces and pattern providers use it without special code
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FOOD_MAKER.get(),
                 (be, side) -> be.automation());
+        // M37: the fertilizer maker (kelp meal, salt and bottles in, filled bottles out; water in, fertilizer out; FE with a power option)
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FERTILIZER_MAKER.get(),
+                (be, side) -> be.automation());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.FERTILIZER_MAKER.get(),
+                (be, side) -> be.fluids());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.FERTILIZER_MAKER.get(),
+                (be, side) -> org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.powered() ? be.energy() : null);
         // M27: every block of a monitor screen takes FE into the screen's buffer while a power option is on
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.MONITOR.get(),
                 (be, side) -> org.overengineer.bettacraft.monitor.MonitorSync.powerRequired() ? be.screenEnergy() : null);

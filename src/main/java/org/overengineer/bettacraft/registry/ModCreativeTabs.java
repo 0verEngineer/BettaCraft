@@ -147,6 +147,9 @@ public final class ModCreativeTabs {
                 // M26 part b: the food maker and its foods
                 for (var it : java.util.List.of(ModItems.FOOD_MAKER, ModItems.FISH_FLAKES, ModItems.FOOD_GRANULES, ModItems.SHRIMP_FOOD,
                         ModItems.FROZEN_MOSQUITO_LARVAE, ModItems.FROZEN_ARTEMIA, ModItems.FROZEN_DAPHNIA, ModItems.SHELL_FOOD)) out.accept(it.get());
+                out.accept(ModItems.CRANK.get()); // M37
+                for (var it : java.util.List.of(ModItems.FERTILIZER_MAKER, ModItems.KELP_MEAL, ModItems.NUTRIENT_SALT, ModItems.LIQUID_FERTILIZER,
+                        ModItems.FERTILIZER_CANISTER)) out.accept(it.get());
                 out.accept(ModItems.MONITOR.get()); // M27
                 // M20: salt water and the reef technique
                 out.accept(ModItems.SEA_WATER_BUCKET.get());

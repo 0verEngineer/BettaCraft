@@ -23,7 +23,7 @@ import org.overengineer.bettacraft.data.schema.Schemas;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /** External filter block next to a tank (PLAN 6.2): two heater slots; the heaters stay in the item when it is broken. */
-public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvider, FilterHost {
+public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvider, FilterHost, org.overengineer.bettacraft.winding.Windable {
     /** Client-side filters currently loaded (bubbles and sound; never touched on the server). */
     public static final java.util.Set<ExternalFilterBlockEntity> CLIENT_LOADED =
             java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
@@ -50,6 +50,20 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
 
     public ItemStackHandler heaters() {
         return heaters;
+    }
+
+    /** M37: the spring the crank winds (the filter and the heaters in it run on it while the tank's FE is short). */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.EXTERNAL_FILTER, this::setChanged);
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.EXTERNAL_FILTER;
     }
 
     // ------------------------------------------------------------------ M23 regulator and intake sponge
@@ -167,6 +181,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         Schemas.EXTERNAL_FILTER.stamp(tag);
         tag.put("heaters", heaters.serializeNBT(registries));
         saveM23(tag);
+        spring.save(tag, "spring");
     }
 
     @Override
@@ -178,6 +193,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
             if (heaters.getSlots() != FilterHeaters.SLOTS) heaters.setSize(FilterHeaters.SLOTS);
         }
         loadM23(tag);
+        spring.load(tag, "spring");
     }
 
     @Override

@@ -46,6 +46,21 @@ final class JadeServerData {
         }
     }
 
+    /** M37: the spring of the devices the crank winds. */
+    static final class Spring implements IServerDataProvider<BlockAccessor> {
+        static final Spring INSTANCE = new Spring();
+
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (accessor.getLevel() instanceof ServerLevel level) put(data, InfoData.spring(level, accessor.getBlockEntity()));
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.SPRING;
+        }
+    }
+
     /** Larva tub and artemia hatchery (M9). */
     static final class Culture implements IServerDataProvider<BlockAccessor> {
         static final Culture INSTANCE = new Culture();

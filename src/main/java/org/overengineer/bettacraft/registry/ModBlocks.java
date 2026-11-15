@@ -373,6 +373,11 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.food.FoodMakerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(2.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    /** M37: makes liquid fertilizer from kelp meal, nutrient salt and water (wound spring or FE). */
+    public static final DeferredBlock<org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock> FERTILIZER_MAKER = BLOCKS.register("fertilizer_maker",
+            () -> new org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(2.0F, 6.0F).sound(SoundType.METAL).noOcclusion()));
+
     /** M27: a monitor block; next to each other they join into screens that show the tanks in range. */
     public static final DeferredBlock<org.overengineer.bettacraft.monitor.MonitorBlock> MONITOR = BLOCKS.register("monitor",
             () -> new org.overengineer.bettacraft.monitor.MonitorBlock(BlockBehaviour.Properties.of()

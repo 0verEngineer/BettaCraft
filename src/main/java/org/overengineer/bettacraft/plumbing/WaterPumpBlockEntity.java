@@ -24,7 +24,7 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * M24: the water pump. Every {@link PipeNetwork#WINDOW} ticks it moves a batch from the block behind it to the block in
  * front of it: {@code pipes.pumpRate} x regulator per tick; less if the pipes carry less or the target is full.
  */
-public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Device {
+public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Device, org.overengineer.bettacraft.winding.Windable {
     private int power = 10;
     /** mB moved in the last batch (0 = standing still). */
     private int moved;
@@ -36,6 +36,20 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
 
     public DeviceEnergy energy() {
         return energy;
+    }
+
+    /** M37: the spring the crank winds ({@code features.power.winding}): it pumps on it while its FE is short. */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.WATER_PUMP, this::setChanged);
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.WATER_PUMP;
     }
 
     /** mB per tick in the last batch. */
@@ -55,13 +69,13 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
         if (Features.enabled(Feature.PIPES) && share > 0 && !level.hasNeighborSignal(pos)) {
             int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
             if (DeviceEnergy.required()) energy.drive(level, pos, fe); // M32 part c: Create's rotation
-            if (!DeviceEnergy.required() || energy.getEnergyStored() >= fe) {
+            if (!DeviceEnergy.required() || org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, DeviceEnergy.pumpFe())) {
                 Direction out = state.getValue(WaterPumpBlock.FACING);
                 IFluidHandler from = FluidMoves.neighbour(level, pos, out.getOpposite()), to = FluidMoves.neighbour(level, pos, out);
                 if (from != null && to != null) {
                     int max = (int) Math.round(ServerConfig.getOr(ServerConfig.PIPE_PUMP_RATE, 200) * PipeNetwork.WINDOW * share);
                     n = FluidMoves.move(from, to, max);
-                    if (n > 0 && DeviceEnergy.required()) energy.use(fe);
+                    if (n > 0 && DeviceEnergy.required()) org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, DeviceEnergy.pumpFe()); // M37: FE, else the spring
                 }
             }
         }
@@ -119,6 +133,7 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
         tag.putInt("power", power);
         tag.putInt("moved", moved);
         energy.save(tag);
+        spring.save(tag, "spring");
     }
 
     @Override
@@ -127,6 +142,7 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
         power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getInt("power"))) : 10;
         moved = Math.max(0, tag.getInt("moved"));
         energy.load(tag);
+        spring.load(tag, "spring");
     }
 
     @Override

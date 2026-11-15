@@ -45,6 +45,8 @@ public final class TankInteractions {
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.chem.ChemItem.useOnTank(stack, level, pos, player, hand); // M25: measuring, salt, leaves
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = org.overengineer.bettacraft.fertilizer.Fertilizer.useOnTank(stack, level, pos, player, hand); // M37: a portion of fertilizer
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         boolean sea = stack.is(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
         boolean ro = stack.is(org.overengineer.bettacraft.registry.ModItems.RO_WATER_BUCKET.get()); // M25
         boolean fill = stack.is(Items.WATER_BUCKET) || sea || ro;
@@ -152,6 +154,7 @@ public final class TankInteractions {
             tank.setWaterQuality(WaterQuality.mix(tank.waterQuality(), before, added));
             tank.setNitrate(TankNitrate.mix(tank.nitrate(), before, 0F, added)); // M24: fresh water has no nitrate
             org.overengineer.bettacraft.chem.TankChemistry.mixIn(tank, before, added, addedTds, addedPh); // M25: tap water (or reverse osmosis water)
+            tank.setFertilizer(before <= 0 ? 0F : (float) (tank.fertilizer() * (double) before / (before + added))); // M37: fresh water dilutes it
             tank.setLastFreshWater(level.getGameTime());
             if (before > 0) tank.setLastWaterChange(level.getGameTime());
             // M19: fresh water has the ambient temperature; a large cool water change sets off the corydoras
@@ -188,6 +191,7 @@ public final class TankInteractions {
             tank.setWaterQuality(before <= 0 ? v.quality() : (float) ((tank.waterQuality() * (double) before + v.quality() * (double) added) / total));
             tank.setNitrate(TankNitrate.mix(tank.nitrate(), before, v.nitrate(), added));
             org.overengineer.bettacraft.chem.TankChemistry.mixIn(tank, before, added, v.tds(), v.ph()); // M25
+            tank.setFertilizer(before <= 0 ? v.fertilizer() : (float) ((tank.fertilizer() * (double) before + v.fertilizer() * (double) added) / total)); // M37
             tank.setWaterTemp(before <= 0 ? v.temp() : (float) ((tank.waterTemp() * (double) before + v.temp() * (double) added) / total));
             if (!Float.isNaN(tank.oxygen()) && before <= 0) tank.setOxygen(Float.NaN);
         }

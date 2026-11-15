@@ -815,6 +815,10 @@ public final class TankView {
         /** M25 part c: alkalinity (dKH), magnesium (mg/L), trace elements (0..1); dosingOn = features.reefDosing. */
         public float kh, magnesium, trace;
         public boolean dosingOn;
+        /** M37: liquid fertilizer (feature on, level 1 = 100 %, overdosed from), devices the wound springs drive. */
+        public boolean fertilizerOn;
+        public float fertilizer, fertilizerOver = 1.5F;
+        public double springUnits;
         public int skimmers, pumps, liveRock;
         public double flow, spectrum;
         /** M24: nitrate (mg/L), its change per day, the levels and the water change interval of the difficulty (0 = off). */
@@ -849,6 +853,10 @@ public final class TankView {
             t.putFloat("magnesium", magnesium);
             t.putFloat("trace", trace);
             t.putBoolean("dosing_on", dosingOn);
+            t.putBoolean("fert_on", fertilizerOn); // M37
+            t.putFloat("fert", fertilizer);
+            t.putFloat("fert_over", fertilizerOver);
+            t.putDouble("spring_units", springUnits);
             t.putInt("skimmers", skimmers);
             t.putInt("pumps", pumps);
             t.putInt("live_rock", liveRock);
@@ -935,6 +943,10 @@ public final class TankView {
             magnesium = t.getFloat("magnesium");
             trace = t.getFloat("trace");
             dosingOn = t.getBoolean("dosing_on");
+            fertilizerOn = t.getBoolean("fert_on"); // M37
+            fertilizer = t.getFloat("fert");
+            fertilizerOver = t.contains("fert_over") ? t.getFloat("fert_over") : 1.5F;
+            springUnits = t.getDouble("spring_units");
             skimmers = t.getInt("skimmers");
             pumps = t.getInt("pumps");
             liveRock = t.getInt("live_rock");
@@ -1165,6 +1177,10 @@ public final class TankView {
         w.magnesium = t.magnesium();
         w.trace = t.trace();
         w.dosingOn = org.overengineer.bettacraft.reef.ReefDosing.enabled();
+        w.fertilizerOn = org.overengineer.bettacraft.fertilizer.Fertilizer.enabled(); // M37
+        w.fertilizer = t.fertilizer();
+        w.fertilizerOver = (float) org.overengineer.bettacraft.fertilizer.Fertilizer.overdoseAt();
+        w.springUnits = c.springUnits();
         w.skimmers = org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c);
         w.pumps = org.overengineer.bettacraft.reef.TankReef.pumps(level, t);
         w.liveRock = org.overengineer.bettacraft.reef.TankReef.liveRock(level, t);

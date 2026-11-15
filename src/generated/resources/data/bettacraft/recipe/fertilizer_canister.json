@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "fertilizer.dosing"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:dosing_canister"
+    },
+    {
+      "type": "neoforge:components",
+      "components": {
+        "minecraft:damage": 0
+      },
+      "items": "bettacraft:liquid_fertilizer"
+    },
+    {
+      "type": "neoforge:components",
+      "components": {
+        "minecraft:damage": 0
+      },
+      "items": "bettacraft:liquid_fertilizer"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:fertilizer_canister"
+  }
+}

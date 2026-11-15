@@ -47,8 +47,9 @@ public final class TankCurrents {
         if (t == null || t.waterMb() <= 0) return out;
         // M24: the outlets of the interior pipes act where they sit
         if (level instanceof net.minecraft.server.level.ServerLevel s) out.addAll(org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.currents(s, c));
-        if (!c.filterPowered() || !Features.enabled(Feature.CABINET_OUTLET_SIDE)) return out;
+        if (!TankPower.anyFilterRuns(c) || !Features.enabled(Feature.CABINET_OUTLET_SIDE)) return out;
         for (FilterHost f : TankEquipment.filters(level, c)) {
+            if (!TankPower.filterRuns(c, f)) continue; // M37
             FilterFlow.Path path = path(t, f);
             if (path == null || !path.wet()) continue;
             Vec3 at = path.submerged() ? path.nozzle() : path.impact();

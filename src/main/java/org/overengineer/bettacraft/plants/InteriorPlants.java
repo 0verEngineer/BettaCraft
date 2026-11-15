@@ -393,9 +393,10 @@ public final class InteriorPlants {
         boolean spread = ServerConfig.getOr(ServerConfig.AQUATIC_SPREAD, true);
         List<InteriorPlant> due = new ArrayList<>();
         List<InteriorPlant> shoots = new ArrayList<>();
-        double activeMass = 0;
+        double activeMass = 0, fedMass = 0;
         int redTarget = PlantColors.tintFor(env.light());
         double soilBoost = activeSoilBoost(level, r);
+        double fertilizer = org.overengineer.bettacraft.fertilizer.Fertilizer.growth(t); // M37: liquid fertilizer speeds up our freshwater plants
         for (InteriorPlant p : r.plants().all()) {
             // M33 part b: aquarium plants / corals off: they rest (no growth, spreading, uptake or colour change)
             if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS) && !p.species.marine() || !org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.CORALS) && p.species.marine()) continue;
@@ -404,6 +405,11 @@ public final class InteriorPlants {
             if (rate > 0 && !p.species.marine()) rate *= org.overengineer.bettacraft.co2.TankCo2.growth(t, PlantSpecies.Light.need(p.species.light()));
             // M25 part d: active soil feeds the freshwater plants (up to +25 % on a fully covered floor)
             if (rate > 0 && !p.species.marine()) rate *= soilBoost;
+            // M37: liquid fertilizer (up to +50 % at 100 %; the plants use it up)
+            if (rate > 0 && !p.species.marine()) {
+                rate *= fertilizer;
+                fedMass += p.blocks;
+            }
             // M28: the demanding species: CO2 and soft water
             if (rate > 0) rate *= needsFactor(t, p.species);
             if (rate > 0 && p.room == 0) p.room = room(env.waterLocal(), r, p);
@@ -446,6 +452,7 @@ public final class InteriorPlants {
             if (p.target != p.stage && !due.contains(p)) due.add(p);
         }
         uptake(level, c, r, env, activeMass, days);
+        org.overengineer.bettacraft.fertilizer.Fertilizer.used(t, fedMass / Math.pow(r.scale(), 3), days); // M37
         int rolled = rollAll(level, c, r, days);
         if (due.isEmpty() && shoots.isEmpty()) return rolled;
         ServerLevel interior = InteriorManager.interiorLevel(level.getServer());

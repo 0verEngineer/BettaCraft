@@ -412,6 +412,21 @@ public final class ModItems {
     /** M29 part b: hard food with crushed shells; wears down the teeth of the puffers (#bettacraft:hard_food). */
     public static final DeferredItem<Item> SHELL_FOOD = ITEMS.registerSimpleItem("shell_food");
 
+    // M37: liquid fertilizer, its intermediates, the fertilizer maker and the canister of the dosing pump
+    public static final DeferredItem<BlockItem> FERTILIZER_MAKER = ITEMS.registerSimpleBlockItem(ModBlocks.FERTILIZER_MAKER);
+    /** Ground dried kelp with bone meal: the organic part of the fertilizer. */
+    public static final DeferredItem<Item> KELP_MEAL = ITEMS.registerSimpleItem("kelp_meal");
+    /** Bone meal, charcoal (potash) and iron: the mineral salts and the iron of the fertilizer. */
+    public static final DeferredItem<Item> NUTRIENT_SALT = ITEMS.registerSimpleItem("nutrient_salt");
+    public static final DeferredItem<org.overengineer.bettacraft.fertilizer.FertilizerBottleItem> LIQUID_FERTILIZER = ITEMS.register("liquid_fertilizer",
+            () -> new org.overengineer.bettacraft.fertilizer.FertilizerBottleItem(new Item.Properties()));
+    public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> FERTILIZER_CANISTER = canister("fertilizer_canister",
+            org.overengineer.bettacraft.reef.ReefDosing.Additive.FERTILIZER);
+
+    /** M37: the crank: winds the spring of the food maker, the fertilizer maker and (with the power options) the filters and cabinets. */
+    public static final DeferredItem<org.overengineer.bettacraft.winding.CrankItem> CRANK = ITEMS.register("crank",
+            () -> new org.overengineer.bettacraft.winding.CrankItem(new Item.Properties().stacksTo(1)));
+
     private static DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> canister(String id, org.overengineer.bettacraft.reef.ReefDosing.Additive a) {
         return ITEMS.register(id, () -> new org.overengineer.bettacraft.reef.DosingCanisterItem(a, new Item.Properties().stacksTo(a == null ? 16 : 1)));
     }

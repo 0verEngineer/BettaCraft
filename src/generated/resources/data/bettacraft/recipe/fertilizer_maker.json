@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "fertilizer.enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "K": {
+      "item": "bettacraft:crank"
+    }
+  },
+  "pattern": [
+    "IBI",
+    "ICI",
+    "IKI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:fertilizer_maker"
+  }
+}

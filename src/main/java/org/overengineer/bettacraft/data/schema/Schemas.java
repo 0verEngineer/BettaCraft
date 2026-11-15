@@ -24,6 +24,7 @@ public final class Schemas {
             .step(7, Schemas::tankV7toV8)
             .step(8, Schemas::tankV8toV9)
             .step(9, Schemas::tankV9toV10)
+            .step(10, Schemas::tankV10toV11)
             .build();
 
     /** Betta data (entity NBT key "betta", item component bettacraft:fish_data, bucket_entity_data key "betta"). */
@@ -52,6 +53,7 @@ public final class Schemas {
     /** External filter block entity (M4): two heater slots. */
     public static final MigrationChain EXTERNAL_FILTER = MigrationChain.builder("external_filter")
             .step(0, data -> data)
+            .step(1, Schemas::springV1toV2) // M37: the spring of the crank
             .build();
 
     /** Larva tub and artemia hatchery (M9): water, slots and progress. */
@@ -62,6 +64,7 @@ public final class Schemas {
     /** Cabinet block entity (M4): planks, filter slot and storage. */
     public static final MigrationChain CABINET = MigrationChain.builder("cabinet")
             .step(0, data -> data)
+            .step(1, Schemas::springV1toV2) // M37: the spring of the crank
             .build();
 
     /** Tank interior region SavedData (one per server, in the overworld data folder). */
@@ -228,6 +231,20 @@ public final class Schemas {
         CompoundTag tank = data.getCompound("tank");
         if (!tank.contains("salinity", Tag.TAG_ANY_NUMERIC)) tank.putFloat("salinity", 0.0F);
         if (!tank.contains("calcium", Tag.TAG_ANY_NUMERIC)) tank.putFloat("calcium", 0.0F);
+        return data;
+    }
+
+    /** M37: liquid fertilizer: every tank of an older world has none in its water. */
+    static CompoundTag tankV10toV11(CompoundTag data) {
+        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompound("tank");
+        if (!tank.contains("fertilizer", Tag.TAG_ANY_NUMERIC)) tank.putFloat("fertilizer", 0.0F);
+        return data;
+    }
+
+    /** M37: external filters and cabinets of an older world have an unwound spring. */
+    static CompoundTag springV1toV2(CompoundTag data) {
+        if (!data.contains("spring", Tag.TAG_ANY_NUMERIC)) data.putLong("spring", 0L);
         return data;
     }
 

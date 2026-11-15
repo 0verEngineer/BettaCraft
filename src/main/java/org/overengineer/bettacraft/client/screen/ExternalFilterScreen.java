@@ -44,6 +44,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         for (int i = 0; i < FilterHeaters.SLOTS; i++) {
             if (!menu.getSlot(i).hasItem()) {
                 g.blit(TEXTURE, leftPos + ExternalFilterMenu.SLOT_X + i * 18, topPos + ExternalFilterMenu.SLOT_Y, 176, 18, 16, 16);
@@ -63,5 +64,9 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         if (powerBtn != null) powerBtn.setMessage(Component.translatable("gui.bettacraft.regulator.button", menu.power() * 10));
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
+        if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
     }
+
+    /** M37: the spring gauge on the left. */
+    static final int SPRING_X = 12, SPRING_Y = 18, SPRING_H = 52;
 }

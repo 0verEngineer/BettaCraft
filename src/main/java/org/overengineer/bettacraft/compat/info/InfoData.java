@@ -178,12 +178,30 @@ public final class InfoData {
             out.putString("tank", c.getTank().name());
             if (TankPower.filterRequired()) out.putBoolean("unpowered", !c.filterPowered());
         }
+        if (f instanceof org.overengineer.bettacraft.winding.Windable w) putSpring(out, w); // M37
         if (f instanceof CabinetBlockEntity cab) {
             int n = 0;
             for (int i = 0; i < cab.storage().getSlots(); i++) n += cab.storage().getStackInSlot(i).getCount();
             out.putInt("storage", n);
         }
         return out;
+    }
+
+    /** M37: a device with a spring (food maker, fertilizer maker, osmosis, water devices, filter pump head); null otherwise. */
+    public static CompoundTag spring(ServerLevel level, BlockEntity be) {
+        org.overengineer.bettacraft.winding.Windable w = be instanceof org.overengineer.bettacraft.winding.Windable x ? x
+                : level == null || be == null ? null : org.overengineer.bettacraft.winding.Winding.find(level, be.getBlockPos());
+        if (w == null) return null;
+        CompoundTag out = new CompoundTag();
+        putSpring(out, w);
+        return out.isEmpty() ? null : out;
+    }
+
+    private static void putSpring(CompoundTag out, org.overengineer.bettacraft.winding.Windable w) {
+        int pct = org.overengineer.bettacraft.winding.Winding.shown(w);
+        if (pct < 0) return;
+        out.putInt("spring", pct);
+        out.putString("spring_hours", org.overengineer.bettacraft.winding.Winding.hours(w.windSpring()));
     }
 
     /** Betta: care state (only meaningful in a tank), stage progress, genotype, generation. */

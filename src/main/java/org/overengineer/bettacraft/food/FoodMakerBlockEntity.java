@@ -38,16 +38,19 @@ import org.overengineer.bettacraft.registry.ModSounds;
  * {@code foodMaker.ticksPerBatch} ticks. The product is chosen in the window, or "automatic": the recipe with the most
  * ingredients that the inputs hold (so a pattern of AE2 / RS only has to put the ingredients in).
  * <p>
- * Drive: while a power option is on (like the crucible) it takes {@code foodMaker.fePerTick} FE while it works and has
- * no spring; otherwise a spring that sneak + right-click with an empty hand winds ({@code foodMaker.windsToFull} winds,
- * {@code foodMaker.springTicks} ticks of work when full: one in-game day). Redstone pauses it.
+ * Drive: a spring that the crank winds (M37, {@link org.overengineer.bettacraft.winding.Winding}; {@code foodMaking.windsToFull}
+ * clicks, {@code foodMaking.springTicks} ticks of work when full: one in-game day). While a power option is on (like the
+ * crucible) it takes {@code foodMaking.makerFePerTick} FE while it works, and its spring when the FE is short
+ * ({@code features.power.winding}). Redstone pauses it.
  * <p>
  * Hoppers, pipes of other mods, AE2 / RS buses and interfaces put ingredients into the inputs (from every side) and take
  * the food from the output ({@link #automation()}).
  */
-public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
+public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, org.overengineer.bettacraft.winding.Windable {
     public static final int INPUTS = FoodMakerRecipe.INPUTS, OUTPUT = 4, SLOTS = 5, DATA = 8;
-    public static final int IDLE = 0, WORKING = 1, NO_RECIPE = 2, OUTPUT_FULL = 3, WIND_IT = 4, NO_POWER = 5, PAUSED = 6, OFF = 7;
+    public static final int IDLE = 0, WORKING = 1, NO_RECIPE = 2, OUTPUT_FULL = 3, WIND_IT = 4, NO_POWER = 5, PAUSED = 6, OFF = 7,
+            /** M37: no FE and the spring is down: connect FE or wind it. */
+            FE_OR_WIND = 8;
 
     private final ItemStackHandler items = new ItemStackHandler(SLOTS) {
         @Override
@@ -64,7 +67,10 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     /** The chosen recipe (null = automatic). */
     @Nullable
     private ResourceLocation selected;
-    private int progress, spring, status = IDLE;
+    private int progress, status = IDLE;
+    /** M37: the spring (device-ticks; the crank winds it). */
+    private final org.overengineer.bettacraft.winding.WindSpring spring =
+            org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.FOOD_MAKER, this::setChanged);
     /** M32 part c: share of full work Create's rotation gives (looked at once a second; transient). */
     private float turned;
 
@@ -74,11 +80,12 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
             return switch (i) {
                 case 0 -> progress;
                 case 1 -> batchTicks();
-                case 2 -> powered() ? energy.getEnergyStored() : spring;
-                case 3 -> powered() ? energy.getMaxEnergyStored() : springMax();
+                case 2 -> powered() ? energy.getEnergyStored() : (int) Math.round(spring.fill() * 1000);
+                case 3 -> powered() ? energy.getMaxEnergyStored() : 1000;
                 case 4 -> status;
                 case 5 -> level == null ? 0 : selectedIndex(level.getRecipeManager());
                 case 6 -> powered() ? 1 : 0;
+                case 7 -> org.overengineer.bettacraft.winding.Winding.Device.FOOD_MAKER.windable() ? spring.percent() : -1; // M37
                 default -> 0;
             };
         }
@@ -105,7 +112,17 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public int progress() { return progress; }
-    public int spring() { return spring; }
+    public int spring() { return (int) Math.min(Integer.MAX_VALUE, spring.ticks()); }
+
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windSpring() {
+        return spring;
+    }
+
+    @Override
+    public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
+        return org.overengineer.bettacraft.winding.Winding.Device.FOOD_MAKER;
+    }
     public int status() { return status; }
 
     public static int batchTicks() {
@@ -113,7 +130,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public static int springMax() {
-        return ServerConfig.getOr(ServerConfig.FOOD_MAKER_SPRING_TICKS, 24000);
+        return (int) org.overengineer.bettacraft.winding.Winding.Device.FOOD_MAKER.capacity();
     }
 
     /** Runs on FE (no spring) while any power option is on. */
@@ -122,8 +139,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public void setSpring(int ticks) {
-        spring = Math.max(0, Math.min(springMax(), ticks));
-        setChanged();
+        spring.set(ticks);
     }
 
     // ------------------------------------------------------------------ recipes
@@ -226,12 +242,15 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
         if (powered()) {
             int fe = ServerConfig.getOr(ServerConfig.FOOD_MAKER_FE, 10);
             if (turned > 0F) energy.drive(level, pos, fe); // M32 part c: Create's rotation instead of FE
-            if (!energy.use(fe)) return NO_POWER;
+            if (!energy.use(fe)) {
+                // M37: FE first, then the spring (features.power.winding)
+                if (!org.overengineer.bettacraft.winding.Winding.enabled()) return NO_POWER;
+                if (!spring.use(1)) return FE_OR_WIND;
+            }
         } else {
             // M32 part c: Create's rotation winds the spring (at full speed twice as fast as the machine uses it)
-            if (turned > 0F) setSpring(spring + (int) Math.ceil(2F * turned));
-            if (spring <= 0) return WIND_IT;
-            spring--;
+            if (turned > 0F) spring.set(spring.ticks() + (int) Math.ceil(2F * turned));
+            if (!spring.use(1)) return WIND_IT;
         }
         progress++;
         if (progress >= batchTicks()) {
@@ -262,31 +281,20 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     /**
-     * Sneak + right-click with an empty hand: winds the spring by one step (a quarter turn of the crank, a ratchet click).
-     * Returns false when it runs on FE or the spring is full.
+     * M37: one click of the crank ({@link org.overengineer.bettacraft.winding.Winding#wind}): winds the spring a step (the
+     * crank turns a quarter, the ratchet clicks). False when it may not be wound now or is full.
      */
     public boolean wind(@Nullable Player player) {
         if (level == null) return false;
-        if (powered()) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.food_maker.on_fe"), true);
-            return false;
-        }
-        int max = springMax();
-        if (spring >= max) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.food_maker.wound"), true);
-            return false;
-        }
-        int step = Math.max(1, (int) Math.ceil(max / (double) Math.max(1, ServerConfig.getOr(ServerConfig.FOOD_MAKER_WINDS, 8))));
-        setSpring(spring + step);
+        return org.overengineer.bettacraft.winding.Winding.wind(level, worldPosition, player) == org.overengineer.bettacraft.winding.Winding.Result.WOUND;
+    }
+
+    @Override
+    public void onWound() {
         BlockState st = getBlockState();
-        if (st.hasProperty(FoodMakerBlock.CRANK)) {
+        if (level != null && st.hasProperty(FoodMakerBlock.CRANK)) {
             level.setBlock(worldPosition, st.setValue(FoodMakerBlock.CRANK, (st.getValue(FoodMakerBlock.CRANK) + 1) % 4), Block.UPDATE_CLIENTS);
         }
-        float pitch = 0.7F + 0.5F * spring / (float) max; // the spring gets tighter
-        if (ModSounds.devices()) level.playSound(null, worldPosition, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
-        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.food_maker.spring",
-                Math.round(100.0 * spring / max)), true);
-        return true;
     }
 
     /** Comparator: how full the output slot is. */
@@ -337,6 +345,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
             case OUTPUT_FULL -> "output_full";
             case WIND_IT -> "wind";
             case NO_POWER -> "no_power";
+            case FE_OR_WIND -> "fe_or_wind";
             case PAUSED -> "paused";
             case OFF -> "off";
             default -> "idle";
@@ -362,7 +371,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
         super.saveAdditional(tag, registries);
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("progress", progress);
-        tag.putInt("spring", spring);
+        spring.save(tag, "spring");
         if (selected != null) tag.putString("recipe", selected.toString());
         energy.save(tag);
     }
@@ -372,7 +381,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
         super.loadAdditional(tag, registries);
         if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
         progress = Math.max(0, tag.getInt("progress"));
-        spring = Math.max(0, tag.getInt("spring"));
+        spring.load(tag, "spring");
         selected = tag.contains("recipe") ? ResourceLocation.tryParse(tag.getString("recipe")) : null;
         energy.load(tag);
     }

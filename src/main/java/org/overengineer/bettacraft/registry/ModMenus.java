@@ -37,6 +37,10 @@ public final class ModMenus {
     public static final Supplier<MenuType<org.overengineer.bettacraft.food.FoodMakerMenu>> FOOD_MAKER = MENUS.register("food_maker",
             () -> IMenuTypeExtension.create(org.overengineer.bettacraft.food.FoodMakerMenu::new));
 
+    /** M37: the fertilizer maker. */
+    public static final Supplier<MenuType<org.overengineer.bettacraft.fertilizer.FertilizerMakerMenu>> FERTILIZER_MAKER = MENUS.register("fertilizer_maker",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.fertilizer.FertilizerMakerMenu::new));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

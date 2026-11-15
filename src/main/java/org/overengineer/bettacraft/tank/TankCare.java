@@ -96,6 +96,7 @@ public final class TankCare {
         org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.syncStates(server, be); // M24: outlets show their stream
         org.overengineer.bettacraft.tank.plants.TankPlants.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.plants.InteriorPlants.step(server, be, dt / 24000.0);
+        org.overengineer.bettacraft.fertilizer.Fertilizer.step(server, be, dt / 24000.0); // M37: the fertilizer fades a little by itself
         org.overengineer.bettacraft.tank.algae.TankAlgae.step(server, be, dt / 24000.0); // M14
         org.overengineer.bettacraft.critters.TankCritters.step(server, be, dt / 24000.0); // M14
         TankFrogs.step(server, be); // M14
@@ -144,7 +145,12 @@ public final class TankCare {
      */
     public static double heaterBlocks(ServerLevel level, TankData tank) {
         TankBlockEntity c = controllerOf(level, tank);
-        return c != null && !c.heatPowered ? 0 : rawHeaterBlocks(level, tank);
+        if (c != null && !c.heatPowered) {
+            double wound = 0; // M37: heaters in an external filter wound with the crank
+            for (var f : c.springHeat) wound += f.heaterBlocks();
+            return wound;
+        }
+        return rawHeaterBlocks(level, tank);
     }
 
     /** Heating capacity of all installed heaters, powered or not. */
@@ -155,7 +161,12 @@ public final class TankCare {
     /** Cooling capacity that works now (M9): coolers in attached filters and cooler rods under water in the interior. */
     public static double coolerBlocks(ServerLevel level, TankData tank) {
         TankBlockEntity c = controllerOf(level, tank);
-        return c != null && !c.heatPowered ? 0 : rawCoolerBlocks(level, tank);
+        if (c != null && !c.heatPowered) {
+            double wound = 0; // M37: coolers in an external filter wound with the crank
+            for (var f : c.springHeat) wound += f.coolerBlocks();
+            return wound;
+        }
+        return rawCoolerBlocks(level, tank);
     }
 
     /** Cooling capacity of all installed coolers, powered or not. */
