@@ -171,9 +171,13 @@ public final class AxolotlCare {
     // ------------------------------------------------------------------ care step
 
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
+        step(level, c, days, level.getRandom()::nextLong);
+    }
+
+    /** M32 part d: with a random source of its own (GameTests: a fixed seed instead of the level's shared random). */
+    public static void step(ServerLevel level, TankBlockEntity c, double days, RandomGenerator rnd) {
         if (days <= 0 || !CommonConfig.axolotlCare()) return;
         TankData t = c.getTank();
-        RandomGenerator rnd = level.getRandom()::nextLong;
         hatch(level, c, rnd);
         List<Axolotl> list = new ArrayList<>();
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) if (e instanceof Axolotl a) list.add(a);
@@ -273,6 +277,7 @@ public final class AxolotlCare {
                 if (spawn(level, c, g, o.generation, p) != null) made++;
             }
             TankCare.log(level, c, "log.bettacraft.axolotl_hatched", String.valueOf(made));
+            org.overengineer.bettacraft.api.ApiEvents.born(level, c, net.minecraft.world.entity.EntityType.AXOLOTL, made, true); // M32 part d
         }
         if (changed) {
             c.setChanged();

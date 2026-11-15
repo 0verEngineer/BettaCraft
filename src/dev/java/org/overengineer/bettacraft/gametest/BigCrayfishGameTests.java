@@ -179,24 +179,29 @@ public final class BigCrayfishGameTests {
         return null;
     }
 
-    /** Two leucistic axolotls in cool water: no eggs without plants, then eggs on the plant; the larvae hatch leucistic. */
+    /**
+     * Two leucistic axolotls in cool water: no eggs without plants, then eggs on the plant; the larvae hatch leucistic.
+     * M32 part d: the care runs with a random source of its own (fixed seed); with the level's shared random a rare
+     * spontaneous mutation ({@code otherMutationChance}) sometimes gave a wild-coloured larva.
+     */
     @GameTest(template = EMPTY, timeoutTicks = 200)
     public static void axolotlsLayEggsOnPlantsInCoolWater(GameTestHelper h) {
         ServerLevel level = h.getLevel();
+        java.util.random.RandomGenerator rnd = new java.util.Random(29L);
         TankBlockEntity c = tank(h, 2, 2, 2, 3, 2, 3, 18F);
         InteriorRegion r = region(h, c);
         axolotl(h, c, Axolotl.Variant.LUCY);
         axolotl(h, c, Axolotl.Variant.LUCY);
-        AxolotlCare.step(level, c, 30.0);
+        AxolotlCare.step(level, c, 30.0, rnd);
         h.assertTrue(eggs(c.getTank()) == null, "no eggs without plants");
         h.assertTrue(logged(c.getTank(), "log.bettacraft.axolotl_no_plants"), "no plants logged");
         h.assertTrue(InteriorPlants.plantAt(interior(h), r, PlantSpecies.ROTALA, 24, 0, 24, 4, 5L) != null, "planted");
-        AxolotlCare.step(level, c, 30.0);
+        AxolotlCare.step(level, c, 30.0, rnd);
         CritterObject o = eggs(c.getTank());
         h.assertTrue(o != null, "eggs on the plant");
         h.assertTrue(logged(c.getTank(), "log.bettacraft.axolotl_eggs"), "eggs logged");
         o.age = 10;
-        AxolotlCare.step(level, c, 0.01);
+        AxolotlCare.step(level, c, 0.01, rnd);
         h.assertTrue(eggs(c.getTank()) == null, "hatched");
         List<Axolotl> young = new ArrayList<>();
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof Axolotl a && a.isBaby()) young.add(a);
