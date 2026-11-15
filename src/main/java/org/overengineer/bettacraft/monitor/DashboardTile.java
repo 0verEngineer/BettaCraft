@@ -34,6 +34,8 @@ public final class DashboardTile {
     /** Most values one graph shows. */
     public static final int MAX_GRAPH_VALUES = 3;
     public static final int MAX_TYPE_LENGTH = 32;
+    /** M33 part d: longest text setting a client may send ({@code value} id, {@code history} list). */
+    public static final int MAX_SETTING_LENGTH = 256;
 
     public int id;
     public int x, y, w = 1, h = 1;
@@ -165,6 +167,21 @@ public final class DashboardTile {
             }
         }
         return out;
+    }
+
+    /**
+     * M33 part d (hardening): only the settings the widgets know, with sane values (a layout from a client must not carry
+     * arbitrary NBT into the block entity, the chunk and every client's sync).
+     */
+    public void sanitizeSettings() {
+        CompoundTag in = settings, out = new CompoundTag();
+        for (String k : new String[]{"value", "history"}) {
+            if (in.contains(k, net.minecraft.nbt.Tag.TAG_STRING) && in.getString(k).length() <= MAX_SETTING_LENGTH) out.putString(k, in.getString(k));
+        }
+        for (String k : new String[]{"spark", "below", "redstone"}) if (in.contains(k, net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) out.putBoolean(k, in.getBoolean(k));
+        if (in.contains("days", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) out.putInt("days", Math.max(1, Math.min(7, in.getInt("days"))));
+        if (in.contains("limit", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC) && Float.isFinite(in.getFloat("limit"))) out.putFloat("limit", in.getFloat("limit"));
+        settings = out;
     }
 
     public DashboardTile copy() {

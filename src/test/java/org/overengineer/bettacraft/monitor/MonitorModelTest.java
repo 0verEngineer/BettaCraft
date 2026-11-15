@@ -190,4 +190,29 @@ class MonitorModelTest {
         assertEquals(MonitorDetail.ALARM, MonitorDetail.state(d));
         assertEquals(0, MonitorDetail.state(new CompoundTag()));
     }
+
+    /** M33 part d (hardening): a layout from a client keeps only the known settings and sane ids. */
+    @Test
+    void clientLayoutIsSanitized() {
+        DashboardLayout l = new DashboardLayout();
+        DashboardTile t = DashboardTile.value(Integer.MAX_VALUE, 0, 0, 2, 2, new UUID(1, 2), MonitorValue.TEMPERATURE, true);
+        t.settings.put("junk", new net.minecraft.nbt.ByteArrayTag(new byte[100_000]));
+        t.settings.putString("history", "x".repeat(10_000));
+        t.settings.putInt("days", 99);
+        t.settings.putFloat("limit", Float.NaN);
+        l.tiles.add(t);
+        DashboardTile u = DashboardTile.value(Integer.MAX_VALUE, 2, 0, 2, 2, null, MonitorValue.TEMPERATURE, false);
+        l.tiles.add(u);
+        l.nextId = Integer.MAX_VALUE;
+        l.sanitize(8, 8);
+        assertFalse(t.settings.contains("junk"), "unknown settings go");
+        assertFalse(t.settings.contains("history"), "an overlong history goes");
+        assertFalse(t.settings.contains("limit"), "a NaN limit goes");
+        assertEquals(7, t.settings.getInt("days"));
+        assertEquals(MonitorValue.TEMPERATURE, t.value());
+        assertTrue(t.spark());
+        assertTrue(t.id > 0 && t.id <= DashboardLayout.MAX_ID && u.id > 0 && u.id <= DashboardLayout.MAX_ID && t.id != u.id,
+                "ids in range and unique: " + t.id + ", " + u.id);
+        assertTrue(l.nextId > 0, "no overflow");
+    }
 }

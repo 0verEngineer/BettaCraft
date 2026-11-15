@@ -27,6 +27,8 @@ public final class DashboardLayout {
     public static final int CELLS = 4;
     public static final int MAX_TILES = 128;
     public static final int VERSION = 1;
+    /** M33 part d: tile ids above this are given a new one (no overflow of {@link #nextId}). */
+    public static final int MAX_ID = 1 << 20;
 
     public boolean auto = true;
     public final List<DashboardTile> tiles = new ArrayList<>();
@@ -54,9 +56,11 @@ public final class DashboardLayout {
     public void sanitize(int gw, int gh) {
         clip(gw, gh);
         Set<Integer> seen = new HashSet<>();
-        for (DashboardTile t : tiles) nextId = Math.max(nextId, t.id + 1);
+        nextId = 1; // from the ids in range (a client's counter is not trusted)
+        for (DashboardTile t : tiles) if (t.id > 0 && t.id <= MAX_ID) nextId = Math.max(nextId, t.id + 1);
         for (DashboardTile t : tiles) {
-            if (t.id <= 0 || !seen.add(t.id)) {
+            t.sanitizeSettings(); // M33 part d: no arbitrary NBT from the client
+            if (t.id <= 0 || t.id > MAX_ID || !seen.add(t.id)) {
                 t.id = nextId++;
                 seen.add(t.id);
             }
