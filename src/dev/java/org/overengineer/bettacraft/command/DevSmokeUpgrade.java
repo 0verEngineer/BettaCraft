@@ -78,6 +78,7 @@ public final class DevSmokeUpgrade {
     private static int m25cChecked;
     /** M29 part c/d: old bettas that are pure Betta splendens (no ancestry, the species id unchanged). */
     private static int m29Checked;
+    private static int m33Checked;
     /** M25 part b: old sea water buckets found in the chests (they must give other mods the sea water fluid). */
     private static int seaBuckets;
 
@@ -126,6 +127,10 @@ public final class DevSmokeUpgrade {
                         var g = b.getBettaData().genotype();
                         if (g.ancestry().equals(org.overengineer.bettacraft.genetics.BettaSpecies.Ancestry.SPLENDENS) && "bettacraft:betta".equals(g.species())) m29Checked++;
                         else problems.add("old betta " + b.getUUID() + " is " + g.species() + " " + g.ancestry());
+                        // M33 part d: an old betta has no counted age, or (after its first care step) the age of its stage
+                        double age = b.health().ageDays();
+                        if (age < 0 || age <= 9.0 + 30) m33Checked++;
+                        else problems.add("old betta " + b.getUUID() + " is " + age + " days old");
                     }
                 }
                 if (!problems.isEmpty()) {
@@ -143,6 +148,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} sea water buckets give the sea water fluid (M25)", seaBuckets);
                 LOGGER.info("[smoketest] upgrade: {} tanks with alkalinity and magnesium of their salt (M25c)", m25cChecked);
                 LOGGER.info("[smoketest] upgrade: {} old bettas are pure Betta splendens (M29)", m29Checked);
+                LOGGER.info("[smoketest] upgrade: {} old bettas start with no age or the age of their stage (M33 old age)", m33Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
