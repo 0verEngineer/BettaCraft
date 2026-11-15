@@ -29,7 +29,8 @@ import org.overengineer.bettacraft.registry.ModItems;
  * M26 part b, dev group {@code -Pstorage} (AE2 + Refined Storage in run/storage-mods): the storage mods move items in and
  * out of the food maker through its plain item capability, no special code. AE2: an export bus puts eggs from a chest
  * (behind a storage bus) into the machine, an import bus takes the fry powder out into the chest. RS: an importer takes
- * the food out into a creative storage block. Without the mods the tests pass at once. Only AE2 / RS ids and reflection.
+ * the food out into a creative storage block. M32 part c: an AE2 pattern provider pushes a processing pattern into the
+ * machine (autocrafting). Without the mods the tests pass at once. Only AE2 / RS ids and reflection.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -51,7 +52,15 @@ public final class StorageGameTests {
     }
 
     private static Method method(Class<?> c, String name, int params) {
-        for (Method m : c.getMethods()) if (m.getName().equals(name) && m.getParameterCount() == params) return m;
+        for (Method m : c.getMethods()) {
+            if (m.getName().equals(name) && m.getParameterCount() == params) {
+                try {
+                    m.setAccessible(true); // public methods of package-private implementation classes
+                } catch (RuntimeException ignored) {
+                }
+                return m;
+            }
+        }
         throw new GameTestAssertException("no method " + c.getName() + "." + name);
     }
 
@@ -143,5 +152,73 @@ public final class StorageGameTests {
 
     private static <T extends Comparable<T>> BlockState with(BlockState s, Property<T> p, String value) {
         return p.getValue(value).map(v -> s.setValue(p, v)).orElse(s);
+    }
+
+    /**
+     * M32 part c, AE2 autocrafting: a processing pattern (cod, wheat, two dried kelp -> 12 betta pellets) in a pattern
+     * provider next to the food maker; the provider pushes the inputs through the machine's item capability into its input
+     * slots (never the output), the machine makes the food, which an import bus would take back as in the test above.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_storage", timeoutTicks = 900)
+    public static void ae2PatternProviderFeedsTheFoodMaker(GameTestHelper h) throws Exception {
+        if (!ModList.get().isLoaded("ae2")) {
+            h.succeed();
+            return;
+        }
+        if (FoodMakerBlockEntity.powered()) {
+            h.succeed(); // the spring needs the power options off
+            return;
+        }
+        ServerLevel level = h.getLevel();
+        FoodMakerBlockEntity m = maker(h, new BlockPos(2, 2, 2));
+        h.setBlock(new BlockPos(3, 2, 2), block("ae2:pattern_provider").defaultBlockState());
+        h.setBlock(new BlockPos(4, 2, 2), block("ae2:creative_energy_cell").defaultBlockState());
+        Object provider = level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 2)));
+        if (provider == null) throw new GameTestAssertException("no pattern provider");
+        Object logic = method(provider.getClass(), "getLogic", 0).invoke(provider);
+        Class<?> aeKey = Class.forName("appeng.api.stacks.AEKey");
+        Class<?> itemKey = Class.forName("appeng.api.stacks.AEItemKey");
+        Class<?> generic = Class.forName("appeng.api.stacks.GenericStack");
+        Method keyOf = itemKey.getMethod("of", ItemLike.class);
+        java.lang.reflect.Constructor<?> stack = generic.getConstructor(aeKey, long.class);
+        java.util.List<Object> in = java.util.List.of(stack.newInstance(keyOf.invoke(null, Items.COD), 1L),
+                stack.newInstance(keyOf.invoke(null, Items.WHEAT), 1L), stack.newInstance(keyOf.invoke(null, Items.DRIED_KELP), 2L));
+        java.util.List<Object> out = java.util.List.of(stack.newInstance(keyOf.invoke(null, ModItems.BETTA_PELLETS.get()), 12L));
+        Class<?> helper = Class.forName("appeng.api.crafting.PatternDetailsHelper");
+        ItemStack pattern = (ItemStack) helper.getMethod("encodeProcessingPattern", java.util.List.class, java.util.List.class).invoke(null, in, out);
+        Object patternInv = method(logic.getClass(), "getPatternInv", 0).invoke(logic);
+        method(patternInv.getClass(), "setItemDirect", 2).invoke(patternInv, 0, pattern);
+        method(logic.getClass(), "updatePatterns", 0).invoke(logic);
+        Object details = helper.getMethod("decodePattern", ItemStack.class, net.minecraft.world.level.Level.class).invoke(null, pattern, level);
+        if (details == null) throw new GameTestAssertException("the pattern does not decode");
+        Object[] inputs = (Object[]) method(details.getClass(), "getInputs", 0).invoke(details);
+        Class<?> counter = Class.forName("appeng.api.stacks.KeyCounter");
+        Object holders = java.lang.reflect.Array.newInstance(counter, inputs.length);
+        for (int i = 0; i < inputs.length; i++) {
+            Object[] possible = (Object[]) method(inputs[i].getClass(), "getPossibleInputs", 0).invoke(inputs[i]);
+            long mult = (long) method(inputs[i].getClass(), "getMultiplier", 0).invoke(inputs[i]);
+            Object kc = counter.getConstructor().newInstance();
+            Object what = generic.getMethod("what").invoke(possible[0]);
+            long amount = (long) generic.getMethod("amount").invoke(possible[0]);
+            counter.getMethod("add", aeKey, long.class).invoke(kc, what, amount * mult);
+            java.lang.reflect.Array.set(holders, i, kc);
+        }
+        Method push = method(logic.getClass(), "pushPattern", 2);
+        boolean[] pushed = {false};
+        h.onEachTick(() -> {
+            if (pushed[0]) return;
+            try {
+                pushed[0] = (boolean) push.invoke(logic, details, holders); // true once the grid is up
+                if (pushed[0]) m.setSpring(FoodMakerBlockEntity.springMax());
+            } catch (ReflectiveOperationException e) {
+                throw new GameTestAssertException("pushPattern: " + e);
+            }
+        });
+        h.succeedWhen(() -> {
+            h.assertTrue(pushed[0], "the pattern provider pushed the pattern");
+            h.assertTrue(m.items().getStackInSlot(FoodMakerBlockEntity.OUTPUT).is(ModItems.BETTA_PELLETS.get())
+                    && m.items().getStackInSlot(FoodMakerBlockEntity.OUTPUT).getCount() == 12, "the machine made the pellets: "
+                    + m.items().getStackInSlot(FoodMakerBlockEntity.OUTPUT) + " status " + m.status());
+        });
     }
 }
