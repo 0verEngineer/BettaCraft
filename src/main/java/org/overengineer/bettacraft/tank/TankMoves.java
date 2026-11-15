@@ -45,8 +45,11 @@ import org.slf4j.LoggerFactory;
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class TankMoves {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/tank-moves");
-    /** Ticks a moved member waits for its controller before it forms a tank of its own (the controller did not come along). */
-    static final int MEMBER_WAIT = 100;
+    /**
+     * Ticks a moved member waits for its controller before it forms a tank of its own (the controller did not come along);
+     * longer than the controller waits for blocks in chunks that are not loaded yet.
+     */
+    static final int MEMBER_WAIT = 300;
     /** Ticks a moved controller waits for blocks of its tank that are in chunks not loaded yet. */
     static final int CONTROLLER_WAIT = 200;
 
