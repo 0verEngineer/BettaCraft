@@ -617,7 +617,7 @@ public final class DevShowcase {
             level.setBlockAndUpdate(at.offset(2, 2, 1), ModBlocks.BASKING_LAMP.get().defaultBlockState());
             org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, fc);
             for (String id : List.of("naturalist:lizard", "naturalist:snake", "naturalist:desert_scorpion")) foreign(level, fc, id);
-            name(level, at, "Terrarium: Landtiere anderer Mods");
+            name(level, at, "Landtiere anderer Mods");
         }
         LOGGER.info("[showcase] M31 row: paludarium {}, terraria, mobs in glass {}", pc.getBlockPos(), sc.getBlockPos());
     }
