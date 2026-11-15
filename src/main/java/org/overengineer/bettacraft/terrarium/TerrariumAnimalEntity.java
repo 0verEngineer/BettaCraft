@@ -162,6 +162,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
                 cold = tank.hasClimate() && n.air().below(tank.airTemp());
             }
         }
+        if (tank != null && !org.overengineer.bettacraft.config.Care.needs()) lastFed = server.getGameTime(); // M33 part c, DECOR: always fed
         if (tank != null && !resting() && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
         boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null && walker.basking();
         if (entityData.get(DATA_BASKING) != bask) entityData.set(DATA_BASKING, bask);
@@ -214,7 +215,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     @Override
     public void onTerrariumCare(ServerLevel level, TankBlockEntity c, TerrariumNeeds.Assessment a, double days) {
         stress = (float) a.stress();
-        harmDays = a.harmful() ? harmDays + days : Math.max(0, harmDays - days);
+        harmDays = a.harmful() && org.overengineer.bettacraft.config.Care.needs() ? harmDays + days : Math.max(0, harmDays - days); // M33 part c: DECOR
         double after = ServerConfig.getOr(ServerConfig.TERRA_HARM_DAYS, 1.0);
         if (harmDays >= after) {
             harmDays -= Math.max(0.05, after);

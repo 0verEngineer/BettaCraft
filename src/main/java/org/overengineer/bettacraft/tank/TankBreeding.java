@@ -411,6 +411,7 @@ public final class TankBreeding {
     }
 
     private static void maleEatsFry(ServerLevel level, TankBlockEntity controller, List<BettaEntity> males, List<BettaEntity> fry, double days, RandomSource r) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         double rate = ServerConfig.getOr(ServerConfig.BREEDING_MALE_EATS_FRY_PER_DAY, 0.3);
         if (males.isEmpty() || fry.isEmpty() || rate <= 0) return;
         double p = 1 - Math.exp(-rate * days * males.size());
@@ -435,6 +436,7 @@ public final class TankBreeding {
     // ------------------------------------------------------------------ predators
 
     private static void predators(ServerLevel level, TankBlockEntity controller, List<Entity> live, double days, RandomSource r) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         double rate = ServerConfig.getOr(ServerConfig.COMBAT_PREDATOR_ATTACKS_PER_DAY, 4.0);
         if (rate <= 0) return;
         for (Entity pred : live) {
@@ -465,6 +467,7 @@ public final class TankBreeding {
 
     /** Hungry bettas eat live prey animals of other mods ({@code #bettacraft:betta_prey}); counts as live food. */
     private static void eatPrey(ServerLevel level, TankBlockEntity controller, List<Entity> live, List<BettaEntity> bettas) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         List<Entity> prey = new ArrayList<>();
         for (Entity e : live) if (e.isAlive() && e.getType().is(ModTags.BETTA_PREY)) prey.add(e);
         if (prey.isEmpty()) return;

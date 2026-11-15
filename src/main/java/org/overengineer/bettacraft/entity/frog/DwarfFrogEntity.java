@@ -182,6 +182,14 @@ public class DwarfFrogEntity extends AbstractFish {
             setBreathing(false);
             return;
         }
+        // M33 part c, care.mode DECOR: always fed, never out of breath
+        if (!org.overengineer.bettacraft.config.Care.needs()) {
+            lastFed = server.getGameTime();
+            breath = maxBreath();
+            drown = 0;
+            setBreathing(false);
+            return;
+        }
         if (breath < 0) breath = maxBreath();
         boolean up = surfacing && Math.abs(getY() + getBbHeight() - tankWater.surface()) < 0.12;
         if (up && airAvailable) {

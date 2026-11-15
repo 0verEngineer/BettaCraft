@@ -50,7 +50,7 @@ public final class TerrariumCare {
     private static void generic(LivingEntity e, TerrariumNeeds.Assessment a, double days, TankBlockEntity c) {
         UUID id = e.getUUID();
         double harm = c.terrariumHarm.getOrDefault(id, 0.0);
-        harm = a.harmful() ? harm + days : Math.max(0, harm - days);
+        harm = a.harmful() && org.overengineer.bettacraft.config.Care.needs() ? harm + days : Math.max(0, harm - days); // M33 part c: DECOR
         double after = ServerConfig.getOr(ServerConfig.TERRA_HARM_DAYS, 1.0);
         if (harm >= after && after >= 0) {
             harm -= Math.max(0.05, after);

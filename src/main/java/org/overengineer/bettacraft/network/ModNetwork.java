@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "12"; // M33 part b: feature switches of the server
+    public static final String VERSION = "13"; // M33 part c: the server's preset with its feature switches
 
     private ModNetwork() {}
 
@@ -51,7 +51,7 @@ public final class ModNetwork {
 
     private static void onFeatures(FeatureSyncPayload payload, IPayloadContext ctx) {
         if (FMLEnvironment.dist.isClient()) {
-            ctx.enqueueWork(() -> org.overengineer.bettacraft.client.ClientFeatures.accept(payload.off()));
+            ctx.enqueueWork(() -> org.overengineer.bettacraft.client.ClientFeatures.accept(payload.off(), payload.preset(), payload.keep()));
         }
     }
 

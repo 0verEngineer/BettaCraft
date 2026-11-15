@@ -20,12 +20,26 @@ public final class BettaHealth {
     /** Largest internal integration step: conditions are assumed constant over one call, events are exact enough. */
     static final double MAX_STEP_DAYS = 0.02;
 
+    /** M33 part c: {@code care} = the care mode ({@code care.mode}): NO_DEATH never dies, DECOR has no needs at all. */
     public record Params(double daysUntilSick, double daysSickUntilDeath, double bothBadMultiplier, double recoveryPerDay,
-                         double hungryAfterDays, Diet diet) {
+                         double hungryAfterDays, Diet diet, org.overengineer.bettacraft.config.ServerConfig.CareMode care) {
         public static final Params DEFAULT = new Params(7, 14, 2, 2, 1);
 
         public Params(double daysUntilSick, double daysSickUntilDeath, double bothBadMultiplier, double recoveryPerDay, double hungryAfterDays) {
             this(daysUntilSick, daysSickUntilDeath, bothBadMultiplier, recoveryPerDay, hungryAfterDays, Diet.DEFAULT);
+        }
+
+        public Params(double daysUntilSick, double daysSickUntilDeath, double bothBadMultiplier, double recoveryPerDay, double hungryAfterDays, Diet diet) {
+            this(daysUntilSick, daysSickUntilDeath, bothBadMultiplier, recoveryPerDay, hungryAfterDays, diet,
+                    org.overengineer.bettacraft.config.ServerConfig.CareMode.NORMAL);
+        }
+
+        public boolean canDie() {
+            return org.overengineer.bettacraft.config.Care.canDie(care);
+        }
+
+        public boolean needs() {
+            return org.overengineer.bettacraft.config.Care.needs(care);
         }
     }
 
@@ -62,6 +76,9 @@ public final class BettaHealth {
     }
 
     public enum Event { NONE, GOT_SICK, RECOVERED, DIED }
+
+    /** M33 part c: how close to death an animal waits without dying (care.mode NO_DEATH). */
+    static final double ALMOST = 0.999;
 
     double daysSinceFed;
     double foodStress;
@@ -134,6 +151,11 @@ public final class BettaHealth {
     }
 
     private Event stepOnce(double dt, Conditions c, Params p) {
+        if (!p.needs()) { // M33 part c, care.mode DECOR: always fed, every condition fine (stress and sickness fade)
+            daysSinceFed = 0;
+            foodStress = 0;
+            c = Conditions.GOOD;
+        }
         boolean foodBad = isHungry(p);
         int bad = (foodBad ? 1 : 0) + (c.tempBad() ? 1 : 0) + (c.crowdBad() ? 1 : 0) + (c.waterBad() ? 1 : 0) + (c.saltBad() ? 1 : 0);
         double m = bad >= 2 ? p.bothBadMultiplier() : 1.0;
@@ -142,7 +164,10 @@ public final class BettaHealth {
         for (int i = 0; i < FOOD_GROUPS; i++) if (ateAgo[i] < 30) ateAgo[i] += dt; else ateAgo[i] = Double.POSITIVE_INFINITY;
         // M20: the wrong salinity is a shock of its own (faster than the other stresses; a sea fish in fresh water dies in hours)
         saltShock = c.saltBad() ? saltShock + dt * c.salt() : Math.max(0, saltShock - dt * rec);
-        if (saltShock >= 1) return Event.DIED;
+        if (saltShock >= 1) {
+            if (p.canDie()) return Event.DIED;
+            saltShock = ALMOST; // M33 part c, NO_DEATH: at the brink, it waits for the right water
+        }
 
         daysSinceFed += dt;
         foodStress += dt * m;
@@ -161,7 +186,10 @@ public final class BettaHealth {
         }
         if (bad > 0) {
             sickDays += dt * m;
-            if (sickDays >= p.daysSickUntilDeath()) return Event.DIED;
+            if (sickDays >= p.daysSickUntilDeath()) {
+                if (p.canDie()) return Event.DIED;
+                sickDays = p.daysSickUntilDeath() * ALMOST; // M33 part c, NO_DEATH
+            }
         } else {
             sickDays -= dt * rec;
             if (sickDays <= 0) {

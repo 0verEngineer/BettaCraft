@@ -263,7 +263,8 @@ public final class TankCritters {
                 ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true), t.salinity(), org.overengineer.bettacraft.reef.SaltTolerance.speed(),
                 dry ? 0 : org.overengineer.bettacraft.tank.TankAeration.shortage(t), // M23
                 dry || !org.overengineer.bettacraft.chem.TankChemistry.enabled() ? Double.NaN : t.ph(), t.tds(), // M25
-                dry || !org.overengineer.bettacraft.co2.TankCo2.enabled() ? Double.NaN : t.co2()); // M25 part b
+                dry || !org.overengineer.bettacraft.co2.TankCo2.enabled() ? Double.NaN : t.co2(), // M25 part b
+                org.overengineer.bettacraft.config.Care.mode()); // M33 part c
         double[] pool = {t.critterFood()};
         CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, rnd, t::nextCritterId);
         t.setCritterFood(pool[0]);

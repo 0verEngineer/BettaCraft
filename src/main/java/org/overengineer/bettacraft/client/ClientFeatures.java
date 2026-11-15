@@ -22,17 +22,20 @@ public final class ClientFeatures {
 
     private ClientFeatures() {}
 
-    public static void accept(List<String> off) {
+    public static void accept(List<String> off, String preset, List<String> keep) {
         Minecraft mc = Minecraft.getInstance();
         if (!mc.hasSingleplayerServer()) {
             if (Features.setRemote(off)) LOG.info("Feature switches of the server: {} off", off.isEmpty() ? "none" : String.join(", ", off));
+            // M33 part c: the server's preset counts for its server config values here too
+            if (org.overengineer.bettacraft.config.Presets.setRemote(preset, keep)) LOG.info("Preset of the server: {}", preset);
         }
         refresh();
     }
 
     /** Back to the local config (leaving a server). */
     public static void logout() {
-        if (Features.setRemote(null)) refresh();
+        boolean presetChanged = org.overengineer.bettacraft.config.Presets.setRemote(null, null);
+        if (Features.setRemote(null) || presetChanged) refresh();
     }
 
     /** The creative tab and JEI follow the current switches. */

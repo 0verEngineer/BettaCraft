@@ -287,6 +287,7 @@ public final class TankAeration {
     }
 
     private static void fryIntake(ServerLevel level, TankBlockEntity c, InteriorEquipment eq, double waterY, double days) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR
         double rate = ServerConfig.getOr(ServerConfig.FILTER_FRY_INTAKE, 0.15);
         if (rate <= 0) return;
         TankData t = c.getTank();

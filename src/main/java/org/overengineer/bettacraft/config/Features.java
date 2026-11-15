@@ -43,7 +43,12 @@ public final class Features {
         java.util.Set<Feature> remote = remoteOff;
         if (remote != null) return !remote.contains(f);
         ModConfigSpec.BooleanValue v = CommonConfig.FEATURES.get(f);
-        return v == null || CommonConfig.getOr(v, true);
+        if (v == null) return true;
+        try {
+            return Presets.effective(v, v.get()); // M33 part c: the preset's value where the file has the default
+        } catch (IllegalStateException e) {
+            return true;
+        }
     }
 
     /** The features whose own switch is off here (what a server sends to its clients). */
@@ -77,7 +82,7 @@ public final class Features {
         return remoteOff != null;
     }
 
-    /** Sets the feature's own switch (GameTests, presets); it is not saved to the file by itself. */
+    /** Sets the feature's own switch in the file's place (GameTests); it is not saved to the file by itself. */
     public static void set(Feature f, boolean on) {
         CommonConfig.FEATURES.get(f).set(on);
     }

@@ -191,7 +191,7 @@ public final class AxolotlCare {
             genes(a);
             CompoundTag d = a.getPersistentData();
             if (d.getDouble(REST) > 0) d.putDouble(REST, Math.max(0, d.getDouble(REST) - days));
-            double dmg = heatDamagePerDay(temp, per) * days;
+            double dmg = org.overengineer.bettacraft.config.Care.needs() ? heatDamagePerDay(temp, per) * days : 0; // M33 part c: DECOR
             if (dmg > 0) {
                 double pending = d.getDouble(HEAT) + dmg;
                 if (pending >= 1) {

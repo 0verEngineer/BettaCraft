@@ -37,8 +37,9 @@ public final class ReefCare {
                 if (shock > 0) data.remove(KEY);
                 continue;
             }
-            double s = Salinity.shockPerDay(range, t.salinity(), speed);
+            double s = org.overengineer.bettacraft.config.Care.needs() ? Salinity.shockPerDay(range, t.salinity(), speed) : 0; // M33 part c: DECOR
             shock = s > 0 ? shock + s * days : Math.max(0, shock - days * 2);
+            if (shock >= 1 && !org.overengineer.bettacraft.config.Care.canDie()) shock = 0.999; // M33 part c, NO_DEATH: at the brink
             if (shock >= 1) {
                 data.remove(KEY);
                 TankCare.log(level, c, "log.bettacraft.died", TankCare.nameArg(e), "@cause.bettacraft.salinity");

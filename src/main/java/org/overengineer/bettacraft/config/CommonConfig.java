@@ -26,9 +26,23 @@ public final class CommonConfig {
     // M30
     public static final ModConfigSpec.IntValue SPAWN_BIG_WEIGHT;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
+    // M33 part c
+    public static final ModConfigSpec.EnumValue<Preset> PRESET;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> PRESET_KEEP;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
+        // M33 part c: the presets (Presets): a second set of defaults over the feature switches and the server config
+        PRESET = b.comment("Ready-made profile for the whole mod (feature switches here and the game values in the server config of each world):",
+                        "CUSTOM = none, every value as in the files; SIMPLE = no water chemistry, CO2 or reverse osmosis, no forced water changes,",
+                        "no evaporation, no power, gentler care; REALISTIC = everything on, strict values, the devices need FE, foreign animals",
+                        "mind the salt; DECOR = no care (care.mode = DECOR: never hungry or sick, nothing dies), no chemistry, power, algae or",
+                        "breeding. A value still at its default follows the preset, a value you changed wins (see presetKeep). Nothing is",
+                        "written into the files. After a change in a running game: /reload for the recipes and loot (/bettacraft preset does it all)")
+                .defineEnum("preset", Preset.CUSTOM);
+        PRESET_KEEP = b.comment("Paths that keep their value from the files although the preset sets another one, also when it is the default",
+                        "(e.g. \"features.breeding.enabled\" with the preset DECOR keeps the breeding, \"waterchange.difficulty\" a server value)")
+                .defineListAllowEmpty("presetKeep", java.util.List.of(), () -> "features.breeding.enabled", o -> o instanceof String);
         b.comment("Natural spawning of wild bettas").push("spawn");
         SPAWN_WEIGHT = b.comment("Spawn weight of wild bettas in #bettacraft:betta_spawn_biomes (swamps); 0 disables natural spawning").defineInRange("weight", 8, 0, 1000);
         SPAWN_MIN_GROUP = b.comment("Smallest group of wild bettas that spawns together").defineInRange("minGroupSize", 1, 1, 16);

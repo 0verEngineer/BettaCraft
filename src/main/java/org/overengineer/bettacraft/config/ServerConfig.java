@@ -19,9 +19,17 @@ public final class ServerConfig {
     public enum Outgrown { BAG_IN_FRONT, KEEP }
     /** M24: how often the water must be changed (nitrate rises slowly): EASY 25 % every 20 days, NORMAL every 14, REALISTIC every 7. */
     public enum WaterChangeDifficulty { OFF, EASY, NORMAL, REALISTIC }
+    /**
+     * M33 part c: how hard the care of the animals in tanks and terraria is. NORMAL = as described everywhere; NO_DEATH = the
+     * needs, stress and sickness stay, but no animal dies of them or of other animals (at the brink it waits for help);
+     * DECOR = no needs at all: never hungry, never sick, nothing dies (decoration tanks). Only a player or /kill kills.
+     */
+    public enum CareMode { NORMAL, NO_DEATH, DECOR }
 
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue PROTECT_FROM_EXPLOSIONS_AND_PISTONS;
+    // M33 part c
+    public static final ModConfigSpec.EnumValue<CareMode> CARE_MODE;
 
     // tank
     public static final ModConfigSpec.IntValue TANK_MAX_SIZE_X;
@@ -374,6 +382,15 @@ public final class ServerConfig {
         INHABITANTS_OUTGROWN = b.comment("An animal of another mod that grew bigger than maxHitbox while it lived in a tank (a young animal of a big",
                         "species): BAG_IN_FRONT = it is put into a fish bag that drops in front of the tank, KEEP = it stays")
                 .defineEnum("outgrown", Outgrown.BAG_IN_FRONT);
+        b.pop();
+
+        // M33 part c
+        b.comment("Care of every animal in tanks and terraria (M33)").push("care");
+        CARE_MODE = b.comment("NORMAL = needs, sickness and death as described in the handbook; NO_DEATH = the needs and sickness stay, but no animal",
+                        "in a tank or terrarium dies of hunger, illness, water, temperature, salt, oxygen, drowning or heat, nor is it eaten or killed by",
+                        "another animal (at the brink it waits for help); DECOR = no needs at all: never hungry, never sick, nothing dies (decoration",
+                        "tanks). A player and /kill still kill; the preset \"decor\" sets DECOR")
+                .translation("bettacraft.configuration.careMode").defineEnum("mode", CareMode.NORMAL);
         b.pop();
 
         b.comment("Health of bettas").push("health");
@@ -1096,9 +1113,10 @@ public final class ServerConfig {
         return Math.max(base, big);
     }
 
+    /** The value (M33 part c: the active preset's where it sets one, {@link Presets#effective}); the fallback before the config loads. */
     public static <T> T getOr(ModConfigSpec.ConfigValue<T> value, T fallback) {
         try {
-            return value.get();
+            return Presets.effective(value, value.get());
         } catch (IllegalStateException e) {
             return fallback;
         }

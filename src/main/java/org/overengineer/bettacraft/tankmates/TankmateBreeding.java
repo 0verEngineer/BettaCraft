@@ -274,6 +274,7 @@ public final class TankmateBreeding {
      * prefer bladder and ramshorn snails and wear their teeth down on them.
      */
     private static void snails(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, double days) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         double loachRate = ServerConfig.getOr(ServerConfig.TANKMATES_LOACH_SNAILS, 0.5);
         double pufferRate = ServerConfig.getOr(ServerConfig.TANKMATES_PUFFER_SNAILS, 1.0);
         List<TankmateEntity> eaters = new ArrayList<>();
@@ -340,6 +341,7 @@ public final class TankmateBreeding {
 
     /** Fry of the tankmates (and of the bettas) are hunted by every adult that is bigger. */
     private static void fry(ServerLevel level, TankBlockEntity c, List<BettaEntity> bettas, List<TankmateEntity> mates, double days) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         double rate = ServerConfig.getOr(ServerConfig.TANKMATES_FRY_EATEN, 0.5);
         if (rate <= 0) return;
         double bettaHunt = 0, mateHunt = 0;
@@ -781,6 +783,7 @@ public final class TankmateBreeding {
     public static final double BETTA_PREY_LENGTH = 0.5;
 
     private static void predators(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, double days) {
+        if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         double rate = ServerConfig.getOr(ServerConfig.TANKMATES_PREDATION, 0.3);
         int hunters = 0;
         double maxLen = 0;

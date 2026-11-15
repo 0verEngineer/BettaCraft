@@ -152,7 +152,7 @@ public final class BigCrayfish {
                     break;
                 }
             }
-            if (eaten(victim)) {
+            if (eaten(victim) && org.overengineer.bettacraft.config.Care.canDie()) { // M33 part c: NO_DEATH / DECOR only pinch
                 prey.remove(victim);
                 if (c.logDue("big_crayfish_ate", now, LOG_TICKS)) TankCare.log(level, c, "log.bettacraft.big_crayfish_ate", TankCare.nameArg(victim));
                 level.sendParticles(ParticleTypes.BUBBLE_POP, victim.getX(), victim.getY(), victim.getZ(), 3, 0.05, 0.05, 0.05, 0.01);

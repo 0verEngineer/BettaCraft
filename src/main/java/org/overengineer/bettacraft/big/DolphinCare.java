@@ -69,8 +69,13 @@ public final class DolphinCare {
         for (Dolphin d : list) {
             d.setAirSupply(d.getMaxAirSupply());
             d.setMoisntessLevel(2400);
+            if (!org.overengineer.bettacraft.config.Care.needs()) { // M33 part c, care.mode DECOR: always fed, no harm
+                d.getPersistentData().putLong(FED, now);
+                d.getPersistentData().remove(HARM);
+                continue;
+            }
             // M30 part c: a dolphin a day without fish hunts one of the small fish of its tank
-            if (daysHungry(d, now) > Math.min(1.0, hungryAfter * 0.5)) hunt(level, c, d, now);
+            if (daysHungry(d, now) > Math.min(1.0, hungryAfter * 0.5) && org.overengineer.bettacraft.config.Care.canDie()) hunt(level, c, d, now);
             boolean hungry = daysHungry(d, now) > hungryAfter;
             if (!hungry && !fresh) continue;
             var tag = d.getPersistentData();

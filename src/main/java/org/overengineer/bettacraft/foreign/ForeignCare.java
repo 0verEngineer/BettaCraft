@@ -50,7 +50,7 @@ public final class ForeignCare {
         BettaHealth.Params b = BettaCare.params();
         double speed = ServerConfig.getOr(ServerConfig.FOREIGN_HEALTH_SPEED, 1.0);
         return new BettaHealth.Params(b.daysUntilSick() / speed, b.daysSickUntilDeath() / speed, b.bothBadMultiplier(), b.recoveryPerDay(),
-                p.hungerDays() / speed, BettaHealth.Diet.OFF);
+                p.hungerDays() / speed, BettaHealth.Diet.OFF, b.care());
     }
 
     /** The health timers of an animal (new ones, fed now, if it has none yet). */

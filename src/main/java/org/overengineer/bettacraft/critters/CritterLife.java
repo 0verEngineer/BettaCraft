@@ -45,10 +45,27 @@ public final class CritterLife {
      * @param breed   breeding speed per group (config)
      * @param air     whether there is air above the water (apple snail clutches)
      * @param hunting whether bettas hunt at all (config)
+     * @param care    M33 part c: the care mode ({@code care.mode}): NO_DEATH = nobody dies or is eaten, DECOR = no needs either
      */
     public record Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
                       Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage,
-                      double ph, double tds, double co2) {
+                      double ph, double tds, double co2, org.overengineer.bettacraft.config.ServerConfig.CareMode care) {
+        /** M25 part b: with CO2 dosing, normal care. */
+        public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
+                   Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage,
+                   double ph, double tds, double co2) {
+            this(quality, qualityEnabled, temp, bettas, hiding, cap, breed, air, hunting, salinity, saltSpeed, oxygenShortage, ph, tds, co2,
+                    org.overengineer.bettacraft.config.ServerConfig.CareMode.NORMAL);
+        }
+
+        public boolean canDie() {
+            return org.overengineer.bettacraft.config.Care.canDie(care);
+        }
+
+        public boolean needs() {
+            return org.overengineer.bettacraft.config.Care.needs(care);
+        }
+
         /** M25 part a: without CO2 dosing. */
         public Env(float quality, boolean qualityEnabled, float temp, int bettas, double hiding, int cap,
                    Map<CritterSpecies.Group, Double> breed, boolean air, boolean hunting, double salinity, double saltSpeed, double oxygenShortage,
@@ -165,6 +182,13 @@ public final class CritterLife {
         double food = pool[0], eatenFood = 0;
         for (Critter c : eaters) {
             double n = need(c) * days;
+            if (!env.needs()) { // M33 part c, DECOR: never hungry (food the tank has is still eaten)
+                double e = Math.min(food, n);
+                food -= e;
+                eatenFood += e;
+                c.hunger = 0;
+                continue;
+            }
             if (food >= n) {
                 food -= n;
                 eatenFood += n;
@@ -189,9 +213,9 @@ public final class CritterLife {
                 }
             }
         }
-        // stress and death
+        // stress and death (M33 part c: not with care.mode NO_DEATH or DECOR)
         for (Critter c : list) {
-            if (!c.alive()) continue;
+            if (!c.alive() || !env.canDie()) continue;
             double rate = 0;
             Cause cause = null;
             float bad = c.species.badWater();
@@ -233,10 +257,12 @@ public final class CritterLife {
             if (c.soft()) rate *= 1.5;
             if (rate > 0 && rnd.nextDouble() < 1 - Math.exp(-rate * days)) die(c, cause == null ? Cause.WATER : cause, r);
         }
-        hunt(list, env, days, rnd, r);
-        assassins(list, days, rnd, r);
-        crayfish(list, days, rnd, r);
-        bigCrayfish(list, env, days, rnd, r);
+        if (env.canDie()) { // M33 part c: with NO_DEATH or DECOR nobody is eaten
+            hunt(list, env, days, rnd, r);
+            assassins(list, days, rnd, r);
+            crayfish(list, days, rnd, r);
+            bigCrayfish(list, env, days, rnd, r);
+        }
         breed(list, objects, env, days, rnd, ids, r);
         // objects
         for (Iterator<CritterObject> it = objects.iterator(); it.hasNext(); ) {
