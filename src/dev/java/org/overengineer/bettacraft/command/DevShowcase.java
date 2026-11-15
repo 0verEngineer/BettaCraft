@@ -128,6 +128,7 @@ public final class DevShowcase {
                 builtAt = ticks;
                 build(level);
                 LOGGER.info("[showcase] built {} rows, {} tanks, {} animals, {} plants at {}", row, tanks, animals, plants, origin);
+                logChunks(server, "after the build");
             } else if (builtAt > 0 && ticks == builtAt + 40) {
                 int live = 0, any = 0;
                 for (var e : level.getAllEntities()) {
@@ -135,6 +136,7 @@ public final class DevShowcase {
                     if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity || e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity) live++;
                 }
                 LOGGER.info("[showcase] tick {}: {} fish of {} entities", ticks, live, any);
+                logChunks(server, "40 ticks later");
             } else if (builtAt > 0 && ticks == builtAt + 400) {
                 // the care loop ran for a while: settle the plant colours under their lights, then save
                 int live = 0;
@@ -143,6 +145,7 @@ public final class DevShowcase {
                             || e instanceof DwarfFrogEntity) live++;
                 }
                 LOGGER.info("[showcase] {} fish and frogs alive in the world", live);
+                logChunks(server, "before saving");
                 LOGGER.info("[showcase] saving");
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 server.saveEverything(false, true, true);
@@ -155,6 +158,12 @@ public final class DevShowcase {
             LOGGER.error("[showcase] FAILED", e);
             server.halt(false);
         }
+    }
+
+    /** M31.1: interior chunks held and the heap in use (the build once ran out of memory with ~750 chunks per tank). */
+    private static void logChunks(MinecraftServer server, String when) {
+        ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(server);
+        if (in != null) LOGGER.info("[showcase] interior chunks {}: {}", when, org.overengineer.bettacraft.gametest.InteriorChunkGameTests.stats(in));
     }
 
     private static void prepare(MinecraftServer server, ServerLevel level) {
