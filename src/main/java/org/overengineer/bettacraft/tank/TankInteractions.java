@@ -64,6 +64,11 @@ public final class TankInteractions {
             return ItemInteractionResult.CONSUME;
         }
         if (fill) {
+            // M33.1: a fixed terrarium takes no water, a fixed paludarium only up to its land
+            if (org.overengineer.bettacraft.terrarium.WaterLimit.blocks(server, controller, TankData.MB_PER_BLOCK)) {
+                org.overengineer.bettacraft.terrarium.WaterLimit.tell(server, controller, player);
+                return ItemInteractionResult.CONSUME;
+            }
             if (tank.waterMb() + TankData.MB_PER_BLOCK > tank.capacityMb()) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.full"), true);
                 return ItemInteractionResult.CONSUME;

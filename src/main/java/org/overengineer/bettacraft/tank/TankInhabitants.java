@@ -286,7 +286,7 @@ public final class TankInhabitants {
             }
         }
         if (weight(e) > 0) { // M18: the young count in fractions too
-            long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);
+            long waterAfter = tank.waterMb() + Math.max(0, org.overengineer.bettacraft.terrarium.WaterLimit.clamp(level, controller, addMb)); // M33.1: the limit of the type
             int cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
             if (terra) cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK + org.overengineer.bettacraft.terrarium.TerrariumAnimals.landBlocks(tank)); // M31
             // M14: the small animals and the frogs count by config (stocking.*PerFish)
@@ -308,6 +308,7 @@ public final class TankInhabitants {
             if (!e.isRemoved()) e.discard();
             return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
         }
+        addMb = org.overengineer.bettacraft.terrarium.WaterLimit.clamp(level, controller, addMb); // M33.1: the water of the container spills beside a fixed terrarium / paludarium
         if (addMb > 0) TankInteractions.changeWater(level, controller, addMb, tank.salinity()); // M20: the animal comes in water of its tank
         tank.inhabitants().add(e.getUUID());
         TankCare.log(level, controller, "log.bettacraft.inserted", TankCare.nameArg(e));

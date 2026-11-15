@@ -200,7 +200,8 @@ public final class TankmateItems {
         k.generation = old.generation;
         k.cover = Math.max(old.cover, 0.5);
         t.clutches().add(k);
-        TankInteractions.changeWater(level, c, TankInhabitants.BAG_MB, c.getTank().salinity()); // M20
+        long bagMb = org.overengineer.bettacraft.terrarium.WaterLimit.clamp(level, c, TankInhabitants.BAG_MB); // M33.1
+        if (bagMb > 0) TankInteractions.changeWater(level, c, bagMb, c.getTank().salinity()); // M20
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())));
         level.playSound(null, c.getBlockPos(), SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 0.8F, 1.3F);
         TankCare.log(level, c, "log.bettacraft.tm.clutch_in", "@" + k.species.translationKey(), String.valueOf(k.count));

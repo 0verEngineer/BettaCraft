@@ -77,6 +77,8 @@ public class LevelSensorBlockEntity extends BlockEntity {
         else {
             TankData t = c.getTank();
             long want = t.capacityMb() * target / 100;
+            // M33.1: never above the limit of a fixed terrarium or paludarium
+            if (org.overengineer.bettacraft.terrarium.WaterLimit.limits(t)) want = Math.min(want, org.overengineer.bettacraft.terrarium.WaterLimit.maxWaterMb(level, c));
             long missing = want - t.waterMb();
             if (missing < HYSTERESIS_MB) st = Status.IDLE;
             else {

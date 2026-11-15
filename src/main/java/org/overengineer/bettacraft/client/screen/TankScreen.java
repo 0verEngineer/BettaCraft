@@ -95,6 +95,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
     private Button protectButton;
+    /** M33.1: the tank type, in the overview (every tank) and in the climate tab. */
+    private Button modeButton, climateModeButton;
     private Button lockButton, signButton, signPosButton, frontButton, minusButton, plusButton, enterButton;
     private Button renameButton, bucketButton, bagButton;
     private String sentName;
@@ -132,6 +134,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Nullable
     private TankView view() {
         return menu.view();
+    }
+
+    /** M33.1: the next tank type (shift: the one before). */
+    private void cycleMode() {
+        TankView v = view();
+        if (v == null) return;
+        int n = org.overengineer.bettacraft.terrarium.TankModeSetting.values().length;
+        int next = Math.floorMod(v.climate.setting + (hasShiftDown() ? -1 : 1), n);
+        PacketDistributor.sendToServer(new org.overengineer.bettacraft.network.TankModePayload(menu.containerId, next));
     }
 
     private void send(int action, int value, String text, @Nullable UUID target) {
@@ -247,6 +258,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         enterButton = addRenderableWidget(new FitButton(x + ENTER_X, y + 123, 238 - ENTER_X, 14, Component.translatable("gui.bettacraft.tank.enter"),
                 b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         overview.addAll(List.of(signButton, signPosButton, frontButton, minusButton, plusButton, enterButton));
+        // M33.1: the tank type (automatic, aquarium, paludarium, terrarium) left of the target temperature, again in the climate tab
+        modeButton = addRenderableWidget(new FitButton(x + 112, y + 77, 52, 12, Component.empty(), b -> cycleMode()));
+        overview.add(modeButton);
+        climateModeButton = addRenderableWidget(new FitButton(x + 166, y + 18, 72, 12, Component.empty(), b -> cycleMode()));
 
         // ---- inhabitants
         fishNameBox = new EditBox(font, x + 115, y + 109, 84, 12, Component.translatable("gui.bettacraft.fish.name"));
@@ -447,6 +462,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private void updateWidgets() {
         TankView v = view();
         for (AbstractWidget w : overview) w.visible = tab == Tab.OVERVIEW;
+        if (climateModeButton != null) climateModeButton.visible = false; // M33.1: shown below once the view is there
+        if (modeButton != null && (v == null || !v.climate.settingOn)) modeButton.visible = false;
         for (AbstractWidget w : inhabitants) w.visible = tab == Tab.INHABITANTS && !critterPage;
         critterPageButton.visible = tab == Tab.INHABITANTS;
         critterTakeButton.visible = tab == Tab.INHABITANTS && critterPage;
@@ -536,6 +553,17 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         signPosButton.setMessage(Component.translatable(v.signPos.translationKey()));
         frontButton.setMessage(Component.translatable("gui.bettacraft.tank.front", Component.translatable("gui.bettacraft.direction." + v.front.getSerializedName())));
         for (Button b : List.of(signButton, signPosButton, frontButton, minusButton, plusButton)) b.active = mod;
+        // M33.1: the tank type
+        var setting = v.climate.setting();
+        Component modeName = Component.translatable(setting.translationKey());
+        modeButton.visible = tab == Tab.OVERVIEW && v.climate.settingOn;
+        climateModeButton.visible = tab == Tab.CLIMATE && v.climate.settingOn;
+        for (Button b : List.of(modeButton, climateModeButton)) {
+            b.active = mod;
+            b.setMessage(Component.translatable("gui.bettacraft.tank_mode.button", modeName)
+                    .withStyle(setting == org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO ? ChatFormatting.WHITE : ChatFormatting.AQUA));
+            b.setTooltip(Tooltip.create(mod ? modeTooltip(v) : Component.translatable("message.bettacraft.tank.locked")));
+        }
         enterButton.active = mod || !v.locked;
         interiorEnterButton.active = mod;
         thinButton.active = mod && v.plants.total - v.plants.counts[org.overengineer.bettacraft.tank.plants.FloatingPlantType.LILY_PAD.ordinal()] > 0;
@@ -558,6 +586,22 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         bagButton.active = has && mod && v.hasBag && v.waterMb >= v.bagMb;
         bucketButton.setTooltip(Tooltip.create(takeTooltip(v, sel, false)));
         bagButton.setTooltip(Tooltip.create(takeTooltip(v, sel, true)));
+    }
+
+    /** M33.1: what the tank type does, its water limit and how to change it. */
+    private static Component modeTooltip(TankView v) {
+        var s = v.climate.setting();
+        MutableComponent t = Component.translatable("gui.bettacraft.tank_mode.tooltip." + s.id(), Component.translatable(v.climate.mode().translationKey()));
+        if (s == org.overengineer.bettacraft.terrarium.TankModeSetting.PALUDARIUM && v.climate.maxWater >= 0) {
+            t.append("\n").append(Component.translatable("gui.bettacraft.tank_mode.limit", v.climate.maxWater));
+        }
+        if (mismatch(v)) t.append("\n").append(Component.translatable("gui.bettacraft.tank_mode.too_much_water").withStyle(ChatFormatting.GOLD));
+        return t.append("\n").append(Component.translatable("gui.bettacraft.tank_mode.tooltip_cycle").withStyle(ChatFormatting.GRAY));
+    }
+
+    /** M33.1: a fixed type that holds less water than the tank has (nothing is removed, no more comes in). */
+    private static boolean mismatch(TankView v) {
+        return v.climate.settingOn && v.climate.maxWater >= 0 && v.waterMb > v.climate.maxWater;
     }
 
     private Component takeTooltip(TankView v, @Nullable TankView.Inhabitant sel, boolean bag) {
@@ -821,7 +865,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         stockLineY = topPos + y + 4;
         y += 10;
         Component unpowered = unpowered(v);
-        if (v.waterMb < v.minInsertMb) {
+        if (mismatch(v)) { // M33.1
+            fitLine(g, Component.translatable("gui.bettacraft.tank_mode.too_much_water").withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, room);
+        } else if (v.waterMb < v.minInsertMb && v.climate.maxWater < 0) {
             fitLine(g, Component.translatable("gui.bettacraft.tank.fill_hint", v.minInsertMb).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, room);
         } else if (v.water.qualityEnabled && v.water.quality < org.overengineer.bettacraft.tank.WaterQuality.POOR_BELOW) {
             fitLine(g, Component.translatable(v.water.quality < v.water.badBelow ? "gui.bettacraft.water.warn_bad" : "gui.bettacraft.water.warn_poor",
@@ -1083,8 +1129,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         Component mode = Component.translatable(c.mode().translationKey()).withStyle(ChatFormatting.GREEN);
         int landPct = Math.round(Math.max(0, c.land) * 100);
         fitLine(g, Component.translatable(v.waterMb > 0 ? "gui.bettacraft.terrarium.mode_line" : "gui.bettacraft.terrarium.mode_line_dry", mode, landPct, 100 - landPct),
-                x, y, TEXT_LIGHT, w);
+                x, y, TEXT_LIGHT, c.settingOn ? 150 : w);
         y += 11;
+        // M33.1: a fixed paludarium shows how high the water may go; a fixed type with too much water says that none comes in
+        if (mismatch(v)) {
+            fitLine(g, Component.translatable("gui.bettacraft.tank_mode.too_much_water").withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, w);
+            y += 11;
+        } else if (c.settingOn && c.setting() == org.overengineer.bettacraft.terrarium.TankModeSetting.PALUDARIUM && c.maxWater >= 0) {
+            fitLine(g, Component.translatable("gui.bettacraft.tank_mode.limit", c.maxWater).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+            y += 11;
+        }
         if (!Float.isFinite(c.air)) {
             fitLine(g, Component.translatable("gui.bettacraft.terrarium.no_values").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
             return;

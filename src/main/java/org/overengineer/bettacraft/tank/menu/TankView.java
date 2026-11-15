@@ -600,6 +600,10 @@ public final class TankView {
         public float land = -1, air = Float.NaN, ground = Float.NaN, bask = Float.NaN, humidity = Float.NaN, uv, duty, ambient, roomHumidity, target;
         public int matsUnder, matsWall, lamps, lampsLit, misters, misting, mistWater, mistSetting = -1, openTops, tops;
         public boolean devicesOn = true, heatPowered = true, misterPowered = true;
+        /** M33.1: the tank type set in the menu, whether the switch is on, the most water it allows (-1: no limit). */
+        public int setting;
+        public boolean settingOn;
+        public long maxWater = -1;
         /** "type key|problem key" of every animal kind with a problem. */
         public final List<String> problems = new ArrayList<>();
         /** M31 part b: the turtle clutches: "species key|eggs|progress %|nest °C|sex class (open, females, males, mixed)". */
@@ -612,6 +616,10 @@ public final class TankView {
 
         public boolean hasLand() {
             return mode().hasLand();
+        }
+
+        public org.overengineer.bettacraft.terrarium.TankModeSetting setting() {
+            return org.overengineer.bettacraft.terrarium.TankModeSetting.byOrdinal(setting);
         }
 
         CompoundTag save() {
@@ -631,6 +639,9 @@ public final class TankView {
             t.putBoolean("dev_on", devicesOn);
             t.putBoolean("heat_ok", heatPowered);
             t.putBoolean("mist_ok", misterPowered);
+            t.putInt("type", setting);
+            t.putBoolean("type_on", settingOn);
+            t.putLong("max_water", maxWater);
             ListTag p = new ListTag();
             for (String s : problems) p.add(StringTag.valueOf(s));
             t.put("problems", p);
@@ -660,6 +671,9 @@ public final class TankView {
             devicesOn = !t.contains("dev_on") || t.getBoolean("dev_on");
             heatPowered = !t.contains("heat_ok") || t.getBoolean("heat_ok");
             misterPowered = !t.contains("mist_ok") || t.getBoolean("mist_ok");
+            setting = t.getInt("type");
+            settingOn = t.getBoolean("type_on");
+            maxWater = t.contains("max_water") ? t.getLong("max_water") : -1;
             problems.clear();
             ListTag p = t.getList("problems", Tag.TAG_STRING);
             for (int i = 0; i < p.size(); i++) problems.add(p.getString(i));
@@ -682,6 +696,11 @@ public final class TankView {
         x.duty = t.matDuty();
         x.ambient = TankCare.ambient(level, t);
         x.target = t.targetTemp();
+        // M33.1: the tank type and its water limit
+        x.setting = t.tankMode().ordinal();
+        x.settingOn = org.overengineer.bettacraft.terrarium.WaterLimit.enabled();
+        long max = org.overengineer.bettacraft.terrarium.WaterLimit.limits(t) ? org.overengineer.bettacraft.terrarium.WaterLimit.maxWaterMb(level, c) : Long.MAX_VALUE;
+        x.maxWater = max == Long.MAX_VALUE ? -1 : max;
         if (!t.terrariumMode().hasLand()) return x;
         x.roomHumidity = org.overengineer.bettacraft.terrarium.TankClimate.roomHumidity(level, t);
         x.devicesOn = Features.enabled(Feature.TERRARIUM_DEVICES);

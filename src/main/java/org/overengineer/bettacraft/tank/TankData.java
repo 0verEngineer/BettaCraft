@@ -125,6 +125,8 @@ public final class TankData {
      * feature is off). Saved under "terrarium" only once a tank was a terrarium or paludarium; old tanks have none.
      */
     private org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM;
+    /** M33.1: the tank type chosen in the menu (automatic for new and old tanks). */
+    private org.overengineer.bettacraft.terrarium.TankModeSetting tankMode = org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO;
     private float landShare = -1F, airTemp = Float.NaN, groundTemp = Float.NaN, baskTemp = Float.NaN, humidity = Float.NaN, uv = 0F, matDuty = 0F;
     /** M31 part b: turtle eggs buried in the land (saved under "turtle_eggs" only while there are some). */
     private final List<org.overengineer.bettacraft.terrarium.HerpClutch> herpClutches = new ArrayList<>();
@@ -400,6 +402,9 @@ public final class TankData {
     public int nextHerpClutchId() { return nextHerpClutchId++; }
     public org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode() { return terrariumMode; }
     public void setTerrariumMode(org.overengineer.bettacraft.terrarium.TerrariumMode m) { this.terrariumMode = m == null ? org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM : m; }
+    /** M33.1: the tank type set in the menu ({@link org.overengineer.bettacraft.terrarium.TankModeSetting#AUTO}: detected). */
+    public org.overengineer.bettacraft.terrarium.TankModeSetting tankMode() { return tankMode; }
+    public void setTankMode(org.overengineer.bettacraft.terrarium.TankModeSetting m) { this.tankMode = m == null ? org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO : m; }
     /** Share of the floor that is land (-1 = not worked out yet). */
     public float landShare() { return landShare; }
     public void setLandShare(float s) { this.landShare = Float.isFinite(s) ? Math.max(-1F, Math.min(1F, s)) : -1F; }
@@ -435,6 +440,7 @@ public final class TankData {
         CompoundTag c = new CompoundTag();
         c.putByte("mode", (byte) terrariumMode.ordinal());
         c.putFloat("land", landShare);
+        if (tankMode != org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO) c.putString("type", tankMode.id()); // M33.1
         if (hasClimate()) {
             c.putFloat("air", airTemp);
             c.putFloat("ground", groundTemp);
@@ -449,6 +455,7 @@ public final class TankData {
     private void loadTerrarium(CompoundTag c) {
         terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.byOrdinal(c.getByte("mode"));
         setLandShare(c.contains("land", Tag.TAG_ANY_NUMERIC) ? c.getFloat("land") : -1F);
+        tankMode = org.overengineer.bettacraft.terrarium.TankModeSetting.byId(c.getString("type")); // M33.1: absent = automatic
         if (c.contains("air", Tag.TAG_ANY_NUMERIC) && c.contains("rh", Tag.TAG_ANY_NUMERIC)) {
             setClimate(new org.overengineer.bettacraft.terrarium.Climate.State(c.getFloat("air"), c.getFloat("ground"), c.getFloat("bask"),
                     c.getFloat("rh"), c.getFloat("uv"), c.getFloat("duty")));
@@ -458,7 +465,8 @@ public final class TankData {
     }
 
     private boolean terrariumWorthSaving() {
-        return terrariumMode != org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM || hasClimate();
+        return terrariumMode != org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM || hasClimate()
+                || tankMode != org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO;
     }
 
     public float salinity() { return salinity; }
@@ -530,6 +538,7 @@ public final class TankData {
         front = o.front;
         locked = o.locked;
         breakProtected = o.breakProtected;
+        tankMode = o.tankMode; // M33.1: the parts of a split tank and a merged tank keep the type
         waterQuality = o.waterQuality;
         lastFreshWater = o.lastFreshWater;
         log.clear();

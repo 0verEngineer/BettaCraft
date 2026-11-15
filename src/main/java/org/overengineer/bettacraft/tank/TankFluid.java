@@ -86,7 +86,8 @@ public final class TankFluid implements IFluidHandler {
             return n;
         }
         TankData t = c.getTank();
-        long n = Math.min(resource.getAmount(), t.capacityMb() - t.waterMb());
+        // M33.1: up to the capacity and the limit of a fixed tank type (a pipe gets the part that fits, not a refusal)
+        long n = Math.min(resource.getAmount(), org.overengineer.bettacraft.terrarium.WaterLimit.room((ServerLevel) level, c));
         if (n <= 0) return 0;
         if (action.execute()) {
             TankInteractions.addWater((ServerLevel) level, c, n, WaterValues.from(resource, TankCare.ambient((ServerLevel) level, t)));

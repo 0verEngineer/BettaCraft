@@ -459,7 +459,7 @@ public final class TankCritters {
                         Component.translatable(k.species.translationKey()), org.overengineer.bettacraft.reef.ReefItems.fmt(t.salinity()));
             }
         }
-        long waterAfter = Math.min(t.capacityMb(), t.waterMb() + addMb);
+        long waterAfter = t.waterMb() + Math.max(0, org.overengineer.bettacraft.terrarium.WaterLimit.clamp(level, c, addMb)); // M33.1: the limit of the type
         int cap = TankInhabitants.hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
         double stock = TankInhabitants.stocking(level, t);
         if (stock + add > cap + 1e-6) return Component.translatable("message.bettacraft.tank.crowded_full", cap);
@@ -473,6 +473,7 @@ public final class TankCritters {
             CritterMovement.pick(placed, terrain, rnd);
             t.critters().add(placed);
         }
+        addMb = org.overengineer.bettacraft.terrarium.WaterLimit.clamp(level, c, addMb); // M33.1
         if (addMb > 0) TankInteractions.changeWater(level, c, addMb, c.getTank().salinity()); // M20
         Critter first = fresh.getFirst();
         TankCare.log(level, c, "log.bettacraft.critters_inserted", String.valueOf(fresh.size()), "@" + first.species.translationKey());

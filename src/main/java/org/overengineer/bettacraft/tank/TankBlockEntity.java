@@ -119,6 +119,13 @@ public class TankBlockEntity extends BlockEntity {
     /** M31: the land scan of the climate step (transient): when and at which water amount, land and plant share. */
     public long climateScanTime = Long.MIN_VALUE, climateScanWater = Long.MIN_VALUE;
     public double climateLand = -1, climatePlants;
+    /** M33.1: the walkable tops of the sampled interior columns (last land scan, not saved) and the water limit worked out from them. */
+    @javax.annotation.Nullable public int[] climateTops;
+    public int[] limitTops;
+    public double limitShare = Double.NaN;
+    public long limitMb = -1;
+    /** M33.1: game time of the last tank type change from the menu (at most one every {@code WaterLimit.SET_TICKS}). */
+    public long modeSetTime = Long.MIN_VALUE;
     /** M31: what the last climate step found (FE demand, menu): heat mats working, their duty, misters spraying, lamps lit. */
     public double climateMats;
     public int climateMisting, climateMistWant, climateLamps;

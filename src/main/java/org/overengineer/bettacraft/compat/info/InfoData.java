@@ -53,7 +53,10 @@ public final class InfoData {
         out.putLong("water", t.waterMb());
         out.putLong("cap", t.capacityMb());
         // M31: a terrarium or paludarium and its climate
-        if (t.terrariumMode().hasLand()) {
+        // M33.1: a fixed tank type shows even for an aquarium
+        boolean fixed = org.overengineer.bettacraft.terrarium.WaterLimit.setting(t) != org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO;
+        if (fixed) out.putBoolean("terra_fixed", true);
+        if (t.terrariumMode().hasLand() || fixed) {
             out.putString("terra_mode", t.terrariumMode().translationKey());
             if (t.hasClimate()) {
                 out.putFloat("air", t.airTemp());

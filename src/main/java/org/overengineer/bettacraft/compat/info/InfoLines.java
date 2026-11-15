@@ -62,6 +62,7 @@ public final class InfoLines {
         // M31: terrarium / paludarium climate
         if (d.contains("terra_mode")) {
             Component mode = Component.translatable(d.getString("terra_mode"));
+            if (d.getBoolean("terra_fixed")) mode = Component.translatable("jade.bettacraft.tank.mode_fixed", mode); // M33.1
             if (d.contains("air")) {
                 out.add(Component.translatable("jade.bettacraft.tank.climate", mode, f1(d.getFloat("air")), Math.round(d.getFloat("rh")), f1(d.getFloat("uv")))
                         .withStyle(ChatFormatting.GREEN));

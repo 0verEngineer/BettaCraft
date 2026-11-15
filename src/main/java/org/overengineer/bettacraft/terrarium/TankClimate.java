@@ -73,8 +73,15 @@ public final class TankClimate {
 
     // ------------------------------------------------------------------ land
 
-    /** Share of the floor that is land and the share of that land covered with plants. */
-    public record Land(double land, double plants, boolean complete) {}
+    /**
+     * Share of the floor that is land and the share of that land covered with plants; M33.1: {@code tops} are the walkable
+     * tops (1/16 interior block) of the sampled columns, for the water limit of a fixed paludarium ({@link WaterLimit}).
+     */
+    public record Land(double land, double plants, boolean complete, int[] tops) {
+        public Land(double land, double plants, boolean complete) {
+            this(land, plants, complete, new int[0]);
+        }
+    }
 
     /**
      * Samples the interior columns (at most about 48 x 48): a column is land when its walkable top lies above the water
@@ -88,6 +95,7 @@ public final class TankClimate {
         double water = t.waterMb() <= 0 ? -1 : TankCare.waterLocalHeight(t, r.scale());
         int step = Math.max(1, Math.max(r.sizeX(), r.sizeZ()) / 48);
         int total = 0, land = 0, planted = 0;
+        it.unimi.dsi.fastutil.ints.IntArrayList tops = new it.unimi.dsi.fastutil.ints.IntArrayList();
         boolean complete = true;
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         for (int lz = step / 2; lz < r.sizeZ(); lz += step) {
@@ -101,6 +109,7 @@ public final class TankClimate {
                 }
                 total++;
                 int top16 = InteriorGround.top16(server, r, lx, lz);
+                tops.add(top16);
                 if (water >= 0 && top16 / 16.0 <= water + 0.05) continue;
                 land++;
                 int ly = Math.max(0, (top16 - 1) / 16);
@@ -109,8 +118,8 @@ public final class TankClimate {
                 else if (ly + 1 < r.sizeY() && plant(interior.getBlockState(p.move(0, 1, 0)))) planted++;
             }
         }
-        if (total == 0) return new Land(t.waterMb() <= 0 ? 1 : 0, 0, complete);
-        return new Land(land / (double) total, land == 0 ? 0 : planted / (double) land, complete);
+        if (total == 0) return new Land(t.waterMb() <= 0 ? 1 : 0, 0, complete, tops.toIntArray());
+        return new Land(land / (double) total, land == 0 ? 0 : planted / (double) land, complete, tops.toIntArray());
     }
 
     static boolean plant(BlockState s) {
@@ -204,7 +213,7 @@ public final class TankClimate {
         }
         long now = level.getGameTime();
         scanIfDue(level, c, false);
-        TerrariumMode mode = TerrariumMode.detect(t.waterMb(), c.climateLand, thresholds());
+        TerrariumMode mode = mode(t, TerrariumMode.detect(t.waterMb(), c.climateLand, thresholds()));
         boolean sync = false;
         if (mode != t.terrariumMode()) {
             TerrariumMode was = t.terrariumMode();
@@ -282,6 +291,7 @@ public final class TankClimate {
                 c.climateScanWater = t.waterMb();
                 c.climateLand = land.land();
                 c.climatePlants = land.plants();
+                if (land.complete() || land.tops().length > 0 || c.climateTops == null) c.climateTops = land.tops(); // M33.1
                 t.setLandShare((float) land.land());
             }
         }
@@ -294,12 +304,23 @@ public final class TankClimate {
     public static TerrariumMode refreshMode(ServerLevel level, TankBlockEntity c) {
         if (!enabled()) return TerrariumMode.AQUARIUM;
         scanIfDue(level, c, true);
-        TerrariumMode m = TerrariumMode.detect(c.getTank().waterMb(), c.climateLand, thresholds());
+        TerrariumMode m = mode(c.getTank(), TerrariumMode.detect(c.getTank().waterMb(), c.climateLand, thresholds()));
         if (m != c.getTank().terrariumMode()) {
             c.getTank().setTerrariumMode(m);
             c.markTankChanged();
         }
         return m;
+    }
+
+    /** M33.1: the mode of a tank: the type set in the menu, or (automatic) the {@code detected} one. */
+    public static TerrariumMode mode(TankData t, TerrariumMode detected) {
+        TerrariumMode fixed = WaterLimit.setting(t).fixed();
+        return fixed != null ? fixed : detected;
+    }
+
+    /** M33.1: scans the land now (the water limit of a paludarium whose land was never scanned). */
+    public static void scanNow(ServerLevel level, TankBlockEntity c) {
+        scanIfDue(level, c, true);
     }
 
     public static boolean misterPowerRequired() {

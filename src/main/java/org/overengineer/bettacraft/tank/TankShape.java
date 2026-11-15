@@ -121,6 +121,31 @@ public final class TankShape {
     }
 
     /**
+     * M33.1: the inverse of {@link #surfaceY(int[], int, long, int)}: the most water (mB, rounded down) whose surface stays
+     * at or below the absolute height {@code surfaceY}.
+     */
+    public static long waterBelow(int[] layerCounts, int minY, double surfaceY, int headroom) {
+        double h = surfaceY - minY;
+        if (!(h > 0)) return 0;
+        double top = 1 - headroom / 16.0;
+        long mb = 0;
+        for (int i = 0; i < layerCounts.length; i++) {
+            long cap = layerCounts[i] * TankData.MB_PER_BLOCK;
+            if (cap <= 0) continue;
+            double layer = i == layerCounts.length - 1 ? top : 1;
+            double in = h - i;
+            if (in <= 0) break;
+            if (in >= layer) {
+                mb += cap;
+                continue;
+            }
+            mb += (long) Math.floor(cap * in / layer + 1e-9);
+            break;
+        }
+        return mb;
+    }
+
+    /**
      * Splits the water of {@code old} among the {@code pieces} that remain after removing blocks: every piece keeps the
      * water of its own blocks (each block of a layer holds the same amount), the removed blocks' water is gone.
      * Rounding never creates water; the shares add up to the rounded total kept.

@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "13"; // M33 part c: the server's preset with its feature switches
+    public static final String VERSION = "14"; // M33.1: the tank type packet
 
     private ModNetwork() {}
 
@@ -28,6 +28,9 @@ public final class ModNetwork {
         r.playToServer(WaterChangerPayload.TYPE, WaterChangerPayload.STREAM_CODEC, (p, ctx) -> ctx.enqueueWork(() -> {
             if (ctx.player() instanceof ServerPlayer sp) WaterChangerPayload.apply(sp, p);
         })); // M24
+        r.playToServer(TankModePayload.TYPE, TankModePayload.STREAM_CODEC, (p, ctx) -> ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer sp) TankModePayload.apply(sp, p);
+        })); // M33.1
         r.playToClient(GeneticsSyncPayload.TYPE, GeneticsSyncPayload.STREAM_CODEC, ModNetwork::onGenetics);
         r.playToClient(TankPlantsPayload.TYPE, TankPlantsPayload.STREAM_CODEC, ModNetwork::onTankPlants);
         r.playToClient(TankCrittersPayload.TYPE, TankCrittersPayload.STREAM_CODEC, ModNetwork::onTankCritters);
