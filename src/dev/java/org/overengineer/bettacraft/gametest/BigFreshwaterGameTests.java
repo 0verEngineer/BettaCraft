@@ -137,12 +137,17 @@ public final class BigFreshwaterGameTests {
         TankWaterVolume w = new TankWaterVolume(c.getTank());
         double floor = w.box().minY, half = floor + (w.surface() - floor) * 0.5;
         double[] sum = {0}, max = {-1e9}, path = {0};
-        int[] n = {0}, rest = {0};
+        int[] n = {0}, rest = {0}, counted = {0};
+        boolean[] settled = {false};
         Vec3[] last = {null};
         h.onEachTick(() -> {
             if (!ray.isAlive()) return;
             double above = ray.getY() - floor;
-            if (n[0] > 100) { // after it settled from the tub (it comes in at the middle)
+            // M31.1: only once it settled from the tub: it comes in at the middle (the half mark itself) and the first glide
+            // down can take longer than 100 ticks
+            if (n[0] > 100 && above < 0.5) settled[0] = true;
+            if (settled[0]) {
+                counted[0]++;
                 sum[0] += above;
                 max[0] = Math.max(max[0], ray.getY());
                 if (ray.flag(TankmateEntity.FLAG_REST)) rest[0]++;
@@ -152,7 +157,8 @@ public final class BigFreshwaterGameTests {
             last[0] = ray.position();
         });
         h.runAfterDelay(1000, () -> {
-            double avg = sum[0] / Math.max(1, n[0] - 101);
+            h.assertTrue(counted[0] > 500, "it reached the ground early: " + counted[0] + " ticks after");
+            double avg = sum[0] / Math.max(1, counted[0]);
             org.slf4j.LoggerFactory.getLogger("bettacraft/m30").info("M30 stingray: average {} blocks above the ground, highest {} (half {}), resting {} ticks, path {}",
                     String.format(java.util.Locale.ROOT, "%.2f", avg), String.format(java.util.Locale.ROOT, "%.2f", max[0] - floor),
                     String.format(java.util.Locale.ROOT, "%.2f", half - floor), rest[0], String.format(java.util.Locale.ROOT, "%.1f", path[0]));
