@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm38')) {
+                // gradlew runClient -Psmoketestm38 [-Pbiomes] [-Paquatic] : only the M38 scene (a tank planted with kelp, seagrass and
+                // the water plants of other mods, a reef tank with Minecraft's corals and Fintastic's live rock, swaying; the plants tab)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m38only', 'true'
+            }
             if (project.hasProperty('smoketestm37')) {
                 // gradlew runClient -Psmoketestm37 : only the M37 scene (a tank on wound cabinets with the power options on and no
                 // FE, the crank in the hand, the fertilizer maker piping into the tank, its window, the cabinet's spring, the water tab)
@@ -444,6 +450,7 @@ neoForge {
             gameDirectory = project.file('run/gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             if (project.hasProperty('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1
+            if (project.hasProperty('aquatic')) systemProperty 'bettacraft.aquaticmods', 'true' // M38: the ForeignPlantGameTests then need Alex's Caves
         }
 
         data {
@@ -617,7 +624,8 @@ idea {
 //               needs the aquarium mods (not with -PnoCompat: Critters and Companions uses their YACL)
 //   -Pbiomes  : run/biome-mods (M25.1: Regions Unexplored + Lithostitched + TerraBlender from ATM10AA, Oh The Biomes
 //               We've Gone + Oh The Trees You'll Grow + CorgiLib + GeckoLib from ATM10) for runClient, runServer and
-//               runGameTestServer; the GameTest biomeModBiomesMapToTheirWaters and the server smoke then require them
+//               runGameTestServer; the GameTest biomeModBiomesMapToTheirWaters and the server smoke then require them;
+//               M38: Twilight Forest from ATM10AA too (its lily pads; ForeignPlantGameTests check the plants of both)
 //   -Pstorage : run/storage-mods (M26 part b: Applied Energistics 2 and Refined Storage 2 from ATM10AA) for runClient,
 //               runServer and runGameTestServer; the GameTests of StorageGameTests then move items with their buses
 //   -Pcreate  : run/create-mods (M32 part b: Create 6 (Flywheel, Ponder and Registrate inside), Create Aeronautics (bundled:

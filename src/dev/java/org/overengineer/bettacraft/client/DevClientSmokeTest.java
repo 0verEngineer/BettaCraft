@@ -154,6 +154,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm36: the size setting of the bettas (Normal / Large), with -Pcompare next to one of DragN's bettas (M36). */
     private static final boolean M36_ONLY = Boolean.getBoolean("bettacraft.smoketest.m36only");
     private static DevClientSmokeM36 m36;
+    /** -Psmoketestm38: plants and corals of Minecraft and other mods in two tanks, swaying, the plants tab (M38). */
+    private static final boolean M38_ONLY = Boolean.getBoolean("bettacraft.smoketest.m38only");
+    private static DevClientSmokeM38 m38;
     /** -Psmoketestm37: the fertilizer maker, the crank and the cabinet's spring, the water tab (M37). */
     private static final boolean M37_ONLY = Boolean.getBoolean("bettacraft.smoketest.m37only");
     private static DevClientSmokeM37 m37;
@@ -261,6 +264,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M38_ONLY) {
+                if (ticks == 60) m38 = new DevClientSmokeM38();
+                if (m38 != null && m38.tick()) {
+                    m38 = null;
+                    LOGGER.info("[smoketest] client world test finished (M38 only)");
                     mc.stop();
                 }
                 return;
