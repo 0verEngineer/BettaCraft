@@ -1,3 +1,302 @@
 {
-  "parent": "bettacraft:block/food_maker_0"
+  "parent": "minecraft:block/block",
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "fixed": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.67,
+        0.67,
+        0.67
+      ],
+      "translation": [
+        1.5,
+        0.4,
+        0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ]
+    }
+  },
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#top"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#front"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      },
+      "from": [
+        2,
+        0,
+        3
+      ],
+      "to": [
+        14,
+        10,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#hopper"
+        },
+        "east": {
+          "texture": "#hopper"
+        },
+        "north": {
+          "texture": "#hopper"
+        },
+        "south": {
+          "texture": "#hopper"
+        },
+        "up": {
+          "texture": "#hopper"
+        },
+        "west": {
+          "texture": "#hopper"
+        }
+      },
+      "from": [
+        5.5,
+        10,
+        6.5
+      ],
+      "to": [
+        10.5,
+        12,
+        11.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#hopper"
+        },
+        "east": {
+          "texture": "#hopper"
+        },
+        "north": {
+          "texture": "#hopper"
+        },
+        "south": {
+          "texture": "#hopper"
+        },
+        "up": {
+          "texture": "#hopper"
+        },
+        "west": {
+          "texture": "#hopper"
+        }
+      },
+      "from": [
+        3.5,
+        12,
+        4.5
+      ],
+      "to": [
+        12.5,
+        15.5,
+        13.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#crank"
+        },
+        "east": {
+          "texture": "#crank"
+        },
+        "north": {
+          "texture": "#crank"
+        },
+        "south": {
+          "texture": "#crank"
+        },
+        "up": {
+          "texture": "#crank"
+        },
+        "west": {
+          "texture": "#crank"
+        }
+      },
+      "from": [
+        14,
+        4.5,
+        8
+      ],
+      "to": [
+        15.5,
+        6.5,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#crank"
+        },
+        "east": {
+          "texture": "#crank"
+        },
+        "north": {
+          "texture": "#crank"
+        },
+        "south": {
+          "texture": "#crank"
+        },
+        "up": {
+          "texture": "#crank"
+        },
+        "west": {
+          "texture": "#crank"
+        }
+      },
+      "from": [
+        15.5,
+        4.5,
+        8.5
+      ],
+      "to": [
+        16.5,
+        12,
+        9.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#knob"
+        },
+        "east": {
+          "texture": "#knob"
+        },
+        "north": {
+          "texture": "#knob"
+        },
+        "south": {
+          "texture": "#knob"
+        },
+        "up": {
+          "texture": "#knob"
+        },
+        "west": {
+          "texture": "#knob"
+        }
+      },
+      "from": [
+        16.5,
+        10,
+        8
+      ],
+      "to": [
+        18.5,
+        12.5,
+        10
+      ]
+    }
+  ],
+  "textures": {
+    "crank": "bettacraft:block/food_maker_crank",
+    "front": "bettacraft:block/food_maker_front",
+    "hopper": "bettacraft:block/food_maker_hopper",
+    "knob": "bettacraft:block/food_maker_knob",
+    "particle": "bettacraft:block/food_maker_side",
+    "side": "bettacraft:block/food_maker_side",
+    "top": "bettacraft:block/food_maker_top"
+  }
 }

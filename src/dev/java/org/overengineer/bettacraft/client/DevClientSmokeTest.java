@@ -118,6 +118,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm29: only the M29 part a scene (the cichlids). */
     private static final boolean M29_ONLY = Boolean.getBoolean("bettacraft.smoketest.m29only");
     private static DevClientSmokeM29 m29;
+    /** -Psmoketestm291: only the M29.1 scene (every block item of the mod in a grid). */
+    private static final boolean M291_ONLY = Boolean.getBoolean("bettacraft.smoketest.m291only");
+    private static DevClientSmokeM291 m291;
     /** -Psmoketestm29d: the big crayfish and the axolotls. */
     private static DevClientSmokeM29d m29d;
     private static DevClientSmokeM281 m281;
@@ -208,6 +211,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M291_ONLY) {
+                if (ticks == 60) m291 = new DevClientSmokeM291();
+                if (m291 != null && m291.tick()) {
+                    m291 = null;
+                    LOGGER.info("[smoketest] client world test finished (M29.1 only)");
                     mc.stop();
                 }
                 return;

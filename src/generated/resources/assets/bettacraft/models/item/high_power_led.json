@@ -1,7 +1,196 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/block",
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "fixed": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.67,
+        0.67,
+        0.67
+      ],
+      "translation": [
+        0,
+        4,
+        0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ]
+    }
+  },
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#panel",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#housing"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      },
+      "from": [
+        0.5,
+        4,
+        0.5
+      ],
+      "to": [
+        15.5,
+        7,
+        15.5
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#cone",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#cone",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#cone",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#cone",
+          "tintindex": 0,
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        1,
+        -5,
+        1
+      ],
+      "to": [
+        15,
+        4,
+        15
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
   "textures": {
-    "layer0": "bettacraft:item/high_power_led",
-    "layer1": "bettacraft:item/high_power_led_glow"
+    "cone": "bettacraft:item/light_cone",
+    "housing": "bettacraft:block/high_power_led",
+    "panel": "bettacraft:block/high_power_led_panel_on",
+    "particle": "bettacraft:block/high_power_led",
+    "top": "bettacraft:block/high_power_led_top"
   }
 }

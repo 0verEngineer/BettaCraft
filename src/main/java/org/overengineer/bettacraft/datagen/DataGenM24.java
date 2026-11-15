@@ -221,12 +221,12 @@ final class DataGenM24 {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter) {
-        // the crucible melt: 3 iron + coal (carbon) + nether quartz (stands in for chromium) + blaze powder -> 3 stainless steel
+        // the crucible melt (M29.1: no blaze powder any more, one iron more instead): 4 iron + coal (carbon) + nether quartz
+        // (stands in for chromium) -> 3 stainless steel; blaze rods and blaze powder stay fuel
         out.accept(BettaCraft.id("stainless_steel_ingot_from_crucible"), new CrucibleRecipe(List.of(
-                new SizedIngredient(Ingredient.of(Tags.Items.INGOTS_IRON), 3),
+                new SizedIngredient(Ingredient.of(Tags.Items.INGOTS_IRON), 4),
                 new SizedIngredient(Ingredient.of(net.minecraft.tags.ItemTags.COALS), 1),
-                new SizedIngredient(Ingredient.of(Tags.Items.GEMS_QUARTZ), 1),
-                new SizedIngredient(Ingredient.of(Items.BLAZE_POWDER), 1)), new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get(), 3)), null);
+                new SizedIngredient(Ingredient.of(Tags.Items.GEMS_QUARTZ), 1)), new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get(), 3)), null);
         var steel = ModTags.STAINLESS_STEEL_INGOTS;
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CRUCIBLE.get())
                 .pattern("N N").pattern("NCN").pattern("NNN")

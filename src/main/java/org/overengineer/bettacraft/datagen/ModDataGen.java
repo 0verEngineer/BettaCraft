@@ -596,9 +596,8 @@ public final class ModDataGen {
             withExistingParent("tank", modLoc("block/tank"));
             withExistingParent("feeder", modLoc("block/feeder"));
             withExistingParent("clip_feeder", modLoc("block/clip_feeder"));
-            // M18: a flat icon: the housing and the panel with its light cone (layer 1, tinted in the light colour)
-            withExistingParent("tank_light", mcLoc("item/generated"))
-                    .texture("layer0", modLoc("item/tank_light")).texture("layer1", modLoc("item/tank_light_glow"));
+            // M29.1: the light bar in 3D with its beam, panel and beam tinted in the light colour (tint 0)
+            DataGenM291.lamp(this, "tank_light", "tank_light", "tank_light", 1, 15, 6.5F, 9.5F, 2);
             withExistingParent("external_filter", modLoc("block/external_filter"));
             DataGenM23.itemModels(this); // M23
             DataGenM24.itemModels(this); // M24
@@ -637,13 +636,14 @@ public final class ModDataGen {
             basicItem(ModItems.ARTEMIA_CULTURE.get());
             basicItem(ModItems.ARTEMIA_NAUPLII.get());
             basicItem(ModItems.ARTEMIA_CYSTS.get());
-            basicItem(ModItems.HEATER_SMALL.get());
-            basicItem(ModItems.HEATER_MEDIUM.get());
-            basicItem(ModItems.HEATER_LARGE.get());
-            basicItem(ModItems.COOLER_SMALL.get());
-            basicItem(ModItems.COOLER_MEDIUM.get());
-            basicItem(ModItems.COOLER_LARGE.get());
-            basicItem(ModItems.INTERNAL_FILTER.get());
+            // M29.1: 3D models of the whole device (taller by size)
+            DataGenM291.tube(this, "heater_small", "heater_segment", 7);
+            DataGenM291.tube(this, "heater_medium", "heater_segment", 9.5F);
+            DataGenM291.tube(this, "heater_large", "heater_segment", 12);
+            DataGenM291.tube(this, "cooler_small", "cooler_segment", 7);
+            DataGenM291.tube(this, "cooler_medium", "cooler_segment", 9.5F);
+            DataGenM291.tube(this, "cooler_large", "cooler_segment", 12);
+            DataGenM291.filter(this, "internal_filter", "filter_segment_middle", "filter_segment_anchor", "filter_segment_top", "filter_segment_outlet");
             for (var d : ModItems.DECOR.values()) basicItem(d.get());
             // M19: tankmates (bucket with the betta's fish overlay, tinted per species), spawn eggs, breeding items
             for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
@@ -657,12 +657,12 @@ public final class ModDataGen {
             basicItem(ModItems.FRY_POWDER.get());
             basicItem(ModItems.ALGAE_WAFER.get());
             withExistingParent("spawning_cave", modLoc("block/spawning_cave"));
-            withExistingParent("spawning_mop", mcLoc("item/generated")).texture("layer0", modLoc("block/spawning_mop"));
+            withExistingParent("spawning_mop", mcLoc("item/generated")).texture("layer0", modLoc("block/spawning_mop")); // crossed planes: flat
             // M20: reef tanks
             basicItem(ModItems.SEA_WATER_BUCKET.get());
             basicItem(ModItems.SEA_SALT.get());
             basicItem(ModItems.CALCIUM_ADDITIVE.get());
-            basicItem(ModItems.FLOW_PUMP.get());
+            DataGenM291.block(this, "flow_pump", "flow_pump_segment"); // M29.1: 3D
             withExistingParent("protein_skimmer", modLoc("block/protein_skimmer"));
             withExistingParent("reef_rock", modLoc("block/reef_rock"));
             withExistingParent("live_rock", modLoc("block/live_rock"));
@@ -685,6 +685,7 @@ public final class ModDataGen {
                 withExistingParent(e.getKey().id(), mcLoc("item/generated")).texture("layer0", modLoc("item/plant_" + form))
                         .texture("layer1", modLoc("item/plant_" + form + "_detail"));
             }
+            DataGenM291.blockDisplays(this, generatedModels); // M29.1: block items in 3D
         }
     }
 

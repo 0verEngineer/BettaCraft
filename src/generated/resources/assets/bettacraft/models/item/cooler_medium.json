@@ -1,6 +1,229 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/block",
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "fixed": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ]
+    }
+  },
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#foot",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "east": {
+          "texture": "#body",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#body",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#body",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#body",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        6,
+        1.75,
+        6
+      ],
+      "to": [
+        10,
+        11.25,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            9.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            9.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            9.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            4.0,
+            12.0,
+            12.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            9.0
+          ]
+        }
+      },
+      "from": [
+        5.5,
+        11.25,
+        5.5
+      ],
+      "to": [
+        10.5,
+        14.25,
+        10.5
+      ]
+    }
+  ],
   "textures": {
-    "layer0": "bettacraft:item/cooler_medium"
+    "body": "bettacraft:block/cooler_segment_middle",
+    "cap": "bettacraft:block/cooler_segment_top",
+    "foot": "bettacraft:block/cooler_segment_anchor",
+    "particle": "bettacraft:block/cooler_segment_middle"
   }
 }

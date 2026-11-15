@@ -198,8 +198,8 @@ public final class BettaCraftClient {
         event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
         event.register((stack, tint) -> tint == 0 ? TUBIFEX_WATER : 0xFFFFFFFF, ModItems.TUBIFEX_DISH.get()); // M26
         event.register((stack, tint) -> tint == 0 ? DAPHNIA_WATER : 0xFFFFFFFF, ModItems.DAPHNIA_BARREL.get());
-        // M18: the panel of the aquarium light in its colour
-        event.register((stack, tint) -> tint == 1 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
+        // M18: the panel of the aquarium light in its colour (M29.1: the 3D item tints the panel like the block, tint 0)
+        event.register((stack, tint) -> tint == 0 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
                 org.overengineer.bettacraft.equipment.TankLightItem.colorOf(stack), true) : 0xFFFFFFFF, ModItems.TANK_LIGHT.get(),
                 ModItems.LED_PANEL.get(), ModItems.HIGH_POWER_LED.get()); // M23: every light tier
     }

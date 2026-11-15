@@ -109,7 +109,7 @@ final class DataGenM26 {
             p.withExistingParent(s, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s));
         }
         p.withExistingParent("tubifex_dish", p.modLoc("block/tubifex_dish_mud_water_2"));
-        p.withExistingParent("daphnia_barrel", p.modLoc("block/daphnia_barrel_water_2"));
+        p.withExistingParent("daphnia_barrel", p.modLoc("block/daphnia_barrel_water_3")); // M29.1: full of water fleas
         p.withExistingParent("live_food_pump", p.modLoc("block/live_food_pump"));
         DataGenM26b.itemModels(p); // M26 part b
     }

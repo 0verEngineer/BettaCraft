@@ -82,7 +82,8 @@ def tubifex_overlay(stage):
 
 
 def daphnia_overlay(stage):
-    return _specks(2620 + stage, [(196, 150, 80), (170, 120, 60), (220, 180, 110)], [0, 10, 24, 44][stage], 1)
+    # M29.1: lighter, warmer water fleas, so they stand out on the green water (the barrel icon reads as daphnia)
+    return _specks(2620 + stage, [(240, 204, 132), (222, 128, 74), (252, 232, 178)], [0, 10, 24, 44][stage], 1)
 
 
 def pump_front():

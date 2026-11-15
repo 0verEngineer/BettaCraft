@@ -71,7 +71,7 @@ final class DataGenM26b {
         for (String s : List.of("fish_flakes", "food_granules", "shrimp_food", "frozen_mosquito_larvae", "frozen_artemia", "frozen_daphnia", "shell_food")) {
             p.withExistingParent(s, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s));
         }
-        p.withExistingParent("food_maker", p.modLoc("block/food_maker_0"));
+        DataGenM291.foodMaker(p); // M29.1: a 3D icon with a funnel hopper and a big crank
     }
 
     private static SizedIngredient in(ItemLike item, int n) {

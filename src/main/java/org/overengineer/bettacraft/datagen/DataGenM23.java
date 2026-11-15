@@ -166,10 +166,15 @@ final class DataGenM23 {
     // ------------------------------------------------------------------ item models
 
     static void itemModels(ItemModelProvider p) {
-        for (String led : new String[]{"led_panel", "high_power_led"}) {
-            p.withExistingParent(led, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + led)).texture("layer1", p.modLoc("item/" + led + "_glow"));
-        }
-        for (String s : new String[]{"air_pump", "air_stone", "air_hose", "sponge_filter", "corner_filter", "intake_sponge"}) {
+        // M29.1: the lights seen from below (panel tinted, tint 0), the air pump and the filters in 3D
+        DataGenM291.lamp(p, "led_panel", "led_panel", "led_panel", 1, 15, 0.5F, 15.5F, 1.5F);
+        DataGenM291.lamp(p, "high_power_led", "high_power_led", "high_power_led_top", 0.5F, 15.5F, 0.5F, 15.5F, 3);
+        DataGenM291.block(p, "air_pump", "air_pump");
+        DataGenM291.block(p, "air_stone", "air_stone");
+        DataGenM291.spongeFilter(p);
+        DataGenM291.filter(p, "corner_filter", "corner_filter_segment_side", "corner_filter_segment_intake", "corner_filter_segment_top",
+                "corner_filter_segment_outlet");
+        for (String s : new String[]{"air_hose", "intake_sponge"}) {
             p.withExistingParent(s, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s));
         }
     }

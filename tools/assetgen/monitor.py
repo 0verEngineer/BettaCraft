@@ -25,6 +25,35 @@ def screen():
     return _img(px)
 
 
+def screen_item():
+    """M29.1: the item icon's screen: what the monitor shows when it runs (a temperature curve, a header line and
+    three value bars), so the item reads as a monitor and not as a black box."""
+    import math
+    r = _rng(2705)
+    curve = {x: round(9.5 - 2.6 * math.sin(x * 0.55) - 0.8 * math.sin(x * 1.7)) for x in range(16)}
+
+    def px(x, y):
+        base = _rgb("#0b151a") * (0.92 + 0.08 * r.random())
+        if x in (0, 15) or y in (0, 15):
+            return base * 0.7
+        if y == 2 and 2 <= x <= 9:
+            return _rgb("#5fd0c8")
+        if y == 2 and 11 <= x <= 13:
+            return _rgb("#e0c060")
+        if 1 <= x <= 14 and curve[x] == y:
+            return _rgb("#68e070")
+        if 1 <= x <= 14 and abs(curve[x] - y) == 1 and (curve.get(x - 1) == y or curve.get(x + 1) == y):
+            return _rgb("#3c9a48")
+        if y == 13 and 2 <= x <= 13:
+            bar = 2 + (x - 2) // 4
+            fill = {2: 7, 3: 10, 4: 13}[bar]
+            if (x - 2) % 4 == 3:
+                return base
+            return _rgb("#4a90e0") if x <= fill else _rgb("#1c3040")
+        return base
+    return _img(px)
+
+
 def side():
     """Charcoal case with a seam at the front and two screws."""
     r = _rng(2702)
@@ -73,7 +102,8 @@ def bezel():
 
 def write_all():
     out = []
-    for name, img in {"monitor_screen": screen(), "monitor_side": side(), "monitor_back": back(), "monitor_bezel": bezel()}.items():
+    for name, img in {"monitor_screen": screen(), "monitor_screen_item": screen_item(), "monitor_side": side(), "monitor_back": back(),
+                      "monitor_bezel": bezel()}.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))
     return out
 

@@ -86,7 +86,8 @@ final class DataGenM27 {
     }
 
     static void itemModels(ItemModelProvider p) {
-        p.withExistingParent("monitor", p.modLoc("block/monitor_single"));
+        // M29.1: the item shows a running screen (the block draws its pages with a renderer)
+        p.withExistingParent("monitor", p.modLoc("block/monitor_single")).texture("screen", p.modLoc("block/monitor_screen_item"));
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {

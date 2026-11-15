@@ -39,6 +39,7 @@ is copied to `builds/m5-types.png`.
 | `guide_images.py` | M6: crops the screenshots of `gradlew runClient -Psmoketestworld` (`run/screenshots/guide_*.png`, window 1280x960) into the handbook images `assets/bettacraft/guides/bettacraft/guide/images/` (tank menu tabs also German, `_de_de/images/`). Not part of `build.py` (needs a client run). |
 | `plumbing.py` | M24: stainless steel ingot, crucible (cold and glowing melt), glass and stainless steel pipes, water pump, reservoir, level sensor, water change controller, multiblock filter (chambers with a window per medium, pump head, inlet/outlet), interior bulkhead, pipes and outlets, the filter media icons and the crucible GUI. |
 | `sounds.py` | M23: the equipment sounds `assets/bettacraft/sounds/block/` (filter running, air pump hum loop, air stone bubbles, sponge filter gurgle, flow pump whir loop, feeder clicks), all procedural with fixed seeds (Minnaert bubbles, shaped noise, harmonic hum), mono 44.1 kHz Ogg Vorbis. `--report DIR` prints levels, spectra and the loop seam check and writes spectrograms to DIR. Needs `soundfile`. Not part of `build.py`. Origins: `SOUNDS-CREDITS.md`. |
+| `block_items.py` | M29.1: textures of the 3D block items: `item/light_cone.png` (the beam under the aquarium lights, tinted in the light colour). The monitor's item screen is `monitor_screen_item` in `monitor.py`; the item models themselves are made by the datagen (`DataGenM291`). |
 | `build.py` | Runs all of the above. |
 
 ## Layer / tint concept (runtime)
