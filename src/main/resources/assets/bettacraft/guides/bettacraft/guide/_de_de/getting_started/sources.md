@@ -59,6 +59,20 @@ die [Biom-Tags](../settings.md)).
 * [Arapaima](../big_tanks/arapaima.md): Angeln mit Stahlvorfach in Dschungelgewässern (0,71 %).
 * [Süßwasserstechrochen](../big_tanks/motoro_stingray.md): großer Kescher in Dschungelgewässern (1,1 %).
 * [Süßwasserstechrochen](../big_tanks/motoro_stingray.md): Angeln mit Stahlvorfach in Dschungelgewässern (1,4 %).
+* [Bambushai](../big_tanks/bamboo_shark.md): großer Kescher in warmen Ozeanen (Korallenriffe) (1,1 %).
+* [Bambushai](../big_tanks/bamboo_shark.md): Angeln mit Stahlvorfach in warmen Ozeanen (Korallenriffe) (1,4 %).
+* [Schwarzspitzen-Riffhai](../big_tanks/blacktip_reef_shark.md): großer Kescher in warmen Ozeanen (Korallenriffe) (0,57 %).
+* [Schwarzspitzen-Riffhai](../big_tanks/blacktip_reef_shark.md): Angeln mit Stahlvorfach in warmen Ozeanen (Korallenriffe) (0,71 %).
+* [Gefleckter Adlerrochen](../big_tanks/spotted_eagle_ray.md): großer Kescher in warmen Ozeanen (Korallenriffe) (0,57 %).
+* [Gefleckter Adlerrochen](../big_tanks/spotted_eagle_ray.md): Angeln mit Stahlvorfach in warmen Ozeanen (Korallenriffe) (0,71 %).
+* [Kuhnasenrochen](../big_tanks/cownose_ray.md): großer Kescher in warmen Ozeanen (Korallenriffe) (0,57 %).
+* [Kuhnasenrochen](../big_tanks/cownose_ray.md): Angeln mit Stahlvorfach in warmen Ozeanen (Korallenriffe) (0,71 %).
+* [Große Netzmuräne](../big_tanks/honeycomb_moray.md): großer Kescher in warmen Ozeanen (Korallenriffe) (1,1 %).
+* [Große Netzmuräne](../big_tanks/honeycomb_moray.md): Angeln mit Stahlvorfach in warmen Ozeanen (Korallenriffe) (1,4 %).
+* [Bambushai](../big_tanks/bamboo_shark.md): großer Kescher in lauwarmen Ozeanen (1,3 %).
+* [Bambushai](../big_tanks/bamboo_shark.md): Angeln mit Stahlvorfach in lauwarmen Ozeanen (1,7 %).
+* [Kuhnasenrochen](../big_tanks/cownose_ray.md): großer Kescher in lauwarmen Ozeanen (2,7 %).
+* [Kuhnasenrochen](../big_tanks/cownose_ray.md): Angeln mit Stahlvorfach in lauwarmen Ozeanen (3,3 %).
 * [Flasche Sumpfwasser](../food.md): Glasflasche mit Wasser in Sümpfen (immer).
 * [Flasche Salzwasser](../food/fry_food.md): Glasflasche mit Wasser in Ozeanen und an Stränden (immer).
 * [Wasserlinse](../plants/duckweed.md): Glasflasche mit Wasser in Sümpfen (15 %).
@@ -186,6 +200,11 @@ die [Biom-Tags](../settings.md)).
 * [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 5).
 * [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
 * [Zwergseepferdchen](../saltwater/dwarf_seahorse.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Bambushai](../big_tanks/bamboo_shark.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
+* [Schwarzspitzen-Riffhai](../big_tanks/blacktip_reef_shark.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 1).
+* [Gefleckter Adlerrochen](../big_tanks/spotted_eagle_ray.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 1).
+* [Kuhnasenrochen](../big_tanks/cownose_ray.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 1).
+* [Große Netzmuräne](../big_tanks/honeycomb_moray.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
 * [Mexikanische Turboschnecke](../saltwater/turbo_snail.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
 * [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
 * [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 2).
@@ -193,6 +212,8 @@ die [Biom-Tags](../settings.md)).
 * [Grünes Schwalbenschwänzchen](../saltwater/green_chromis.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 5).
 * [Gelbschwanz-Demoiselle](../saltwater/yellowtail_damsel.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 6).
 * [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 2).
+* [Bambushai](../big_tanks/bamboo_shark.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 1).
+* [Kuhnasenrochen](../big_tanks/cownose_ray.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 2).
 * [Mexikanische Turboschnecke](../saltwater/turbo_snail.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 3).
 * [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 3).
 * [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md): spawnt in lauwarmen Ozeanen (Spawn-Gewicht 1).

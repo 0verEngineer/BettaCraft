@@ -43,9 +43,12 @@ Aquarienpflanzen (ganz, mit ihrer Stufe) kommen als Items vor das Becken, bei vi
 ## Delfine
 
 Der Vanilla-Delfin lebt nur in einem **sehr großen Meerwasserbecken** (ab 32 × 16 × 8 Blöcken, Salz ab 25 ‰). Im Becken
-atmet er an der Oberfläche und bleibt von selbst feucht. Füttere ihn mit **rohem Fisch** per Rechtsklick aufs Becken;
-nach zwei Tagen ohne Fisch (`bigAnimalRules.dolphinHungryDays`) verliert er Gesundheit, ebenso in zu süßem Wasser. Fang
-einen mit dem [großen Kescher](big_tanks/large_net.md) in eine [Transportwanne](big_tanks/transport_tub.md).
+atmet er an der Oberfläche und bleibt von selbst feucht. Füttere ihn mit **rohem Fisch** per Rechtsklick aufs Becken,
+oder leg rohen Fisch in einen [Futterautomaten](equipment/feeder.md) auf dem Becken: bei jeder Fütterung bekommt jeder
+Delfin, der eine Weile keinen Fisch hatte, einen. Ein Delfin, der einen Tag ohne Fisch war, **jagt die kleinen Fische**
+seines Beckens (Beifische, Bettas, Frösche; einen am Tag); nach zwei Tagen ohne Fisch (`bigAnimalRules.dolphinHungryDays`)
+verliert er Gesundheit, ebenso in zu süßem Wasser. Fang einen mit dem [großen Kescher](big_tanks/large_net.md) in eine
+[Transportwanne](big_tanks/transport_tub.md).
 
 ## Fangen und tragen
 
@@ -66,6 +69,17 @@ Dschungelgewässern, der [Europäische Wels](big_tanks/wels_catfish.md) kühler 
 am Boden. Nur der Stechrochen vermehrt sich im Becken: er bringt lebende Junge zur Welt, so viele, wie die Größenregel
 Platz lässt.
 
+## Riesen des Meeres
+
+Fünf große Tiere leben in **Meerwasserbecken**: der [Bambushai](big_tanks/bamboo_shark.md), ein kleiner Bodenhai, der
+**Eikapseln** („Nixentäschchen“) unter die Deko legt, der [Schwarzspitzen-Riffhai](big_tanks/blacktip_reef_shark.md), der
+ständig schwimmen muss und jeden kleinen Fisch frisst, der [Gefleckte Adlerrochen](big_tanks/spotted_eagle_ray.md) und der
+Schwärme bildende [Kuhnasenrochen](big_tanks/cownose_ray.md), die mit langsamen Flügelschlägen durchs freie Wasser fliegen,
+und die [Große Netzmuräne](big_tanks/honeycomb_moray.md), die in einer Höhle unter der Deko lebt und nachts und zum Fressen
+herauskommt. Wild leben sie in warmen (der Kuhnasenrochen auch in lauwarmen) Ozeanen.
+
+![Ein großes Meerwasserbecken mit Haien und Rochen](images/big_tank_sea.png)
+
 ## In diesem Kapitel
 
 <SubPages icons={true} />
@@ -79,3 +93,8 @@ Platz lässt.
 | <ItemImage id="bettacraft:wels_catfish_spawn_egg" /> [Europäischer Wels](big_tanks/wels_catfish.md) | 4–26 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
 | <ItemImage id="bettacraft:arapaima_spawn_egg" /> [Arapaima](big_tanks/arapaima.md) | 24–31 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
 | <ItemImage id="bettacraft:motoro_stingray_spawn_egg" /> [Süßwasserstechrochen](big_tanks/motoro_stingray.md) | 24–30 | – | nein (zu groß) | lebendgebärend |
+| <ItemImage id="bettacraft:bamboo_shark_spawn_egg" /> [Bambushai](big_tanks/bamboo_shark.md) | 22–28 | – | nein (zu groß) | legt Eikapseln |
+| <ItemImage id="bettacraft:blacktip_reef_shark_spawn_egg" /> [Schwarzspitzen-Riffhai](big_tanks/blacktip_reef_shark.md) | 24–30 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:spotted_eagle_ray_spawn_egg" /> [Gefleckter Adlerrochen](big_tanks/spotted_eagle_ray.md) | 24–29 | – | nein (zu groß) | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:cownose_ray_spawn_egg" /> [Kuhnasenrochen](big_tanks/cownose_ray.md) | 18–28 | 3 | nein (zu groß) | lebendgebärend |
+| <ItemImage id="bettacraft:honeycomb_moray_spawn_egg" /> [Große Netzmuräne](big_tanks/honeycomb_moray.md) | 24–28 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |

@@ -57,6 +57,20 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Arapaima](../big_tanks/arapaima.md): fishing with a steel leader in jungle water (0.71 %).
 * [Motoro Stingray](../big_tanks/motoro_stingray.md): large net in jungle water (1.1 %).
 * [Motoro Stingray](../big_tanks/motoro_stingray.md): fishing with a steel leader in jungle water (1.4 %).
+* [Brownbanded Bamboo Shark](../big_tanks/bamboo_shark.md): large net in warm oceans (coral reefs) (1.1 %).
+* [Brownbanded Bamboo Shark](../big_tanks/bamboo_shark.md): fishing with a steel leader in warm oceans (coral reefs) (1.4 %).
+* [Blacktip Reef Shark](../big_tanks/blacktip_reef_shark.md): large net in warm oceans (coral reefs) (0.57 %).
+* [Blacktip Reef Shark](../big_tanks/blacktip_reef_shark.md): fishing with a steel leader in warm oceans (coral reefs) (0.71 %).
+* [Spotted Eagle Ray](../big_tanks/spotted_eagle_ray.md): large net in warm oceans (coral reefs) (0.57 %).
+* [Spotted Eagle Ray](../big_tanks/spotted_eagle_ray.md): fishing with a steel leader in warm oceans (coral reefs) (0.71 %).
+* [Cownose Ray](../big_tanks/cownose_ray.md): large net in warm oceans (coral reefs) (0.57 %).
+* [Cownose Ray](../big_tanks/cownose_ray.md): fishing with a steel leader in warm oceans (coral reefs) (0.71 %).
+* [Honeycomb Moray](../big_tanks/honeycomb_moray.md): large net in warm oceans (coral reefs) (1.1 %).
+* [Honeycomb Moray](../big_tanks/honeycomb_moray.md): fishing with a steel leader in warm oceans (coral reefs) (1.4 %).
+* [Brownbanded Bamboo Shark](../big_tanks/bamboo_shark.md): large net in lukewarm oceans (1.3 %).
+* [Brownbanded Bamboo Shark](../big_tanks/bamboo_shark.md): fishing with a steel leader in lukewarm oceans (1.7 %).
+* [Cownose Ray](../big_tanks/cownose_ray.md): large net in lukewarm oceans (2.7 %).
+* [Cownose Ray](../big_tanks/cownose_ray.md): fishing with a steel leader in lukewarm oceans (3.3 %).
 * [Bottle of Swamp Water](../food.md): glass bottle filled with water in swamps (always).
 * [Bottle of Salt Water](../food/fry_food.md): glass bottle filled with water in oceans and at beaches (always).
 * [Duckweed](../plants/duckweed.md): glass bottle filled with water in swamps (15 %).
@@ -184,6 +198,11 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Yellowtail Damsel](../saltwater/yellowtail_damsel.md): spawns in warm oceans (coral reefs) (spawn weight 5).
 * [Lined Seahorse](../saltwater/lined_seahorse.md): spawns in warm oceans (coral reefs) (spawn weight 2).
 * [Dwarf Seahorse](../saltwater/dwarf_seahorse.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Brownbanded Bamboo Shark](../big_tanks/bamboo_shark.md): spawns in warm oceans (coral reefs) (spawn weight 2).
+* [Blacktip Reef Shark](../big_tanks/blacktip_reef_shark.md): spawns in warm oceans (coral reefs) (spawn weight 1).
+* [Spotted Eagle Ray](../big_tanks/spotted_eagle_ray.md): spawns in warm oceans (coral reefs) (spawn weight 1).
+* [Cownose Ray](../big_tanks/cownose_ray.md): spawns in warm oceans (coral reefs) (spawn weight 1).
+* [Honeycomb Moray](../big_tanks/honeycomb_moray.md): spawns in warm oceans (coral reefs) (spawn weight 2).
 * [Mexican Turbo Snail](../saltwater/turbo_snail.md): spawns in warm oceans (coral reefs) (spawn weight 2).
 * [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md): spawns in warm oceans (coral reefs) (spawn weight 2).
 * [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md): spawns in warm oceans (coral reefs) (spawn weight 2).
@@ -191,6 +210,8 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Green Chromis](../saltwater/green_chromis.md): spawns in lukewarm oceans (spawn weight 5).
 * [Yellowtail Damsel](../saltwater/yellowtail_damsel.md): spawns in lukewarm oceans (spawn weight 6).
 * [Lined Seahorse](../saltwater/lined_seahorse.md): spawns in lukewarm oceans (spawn weight 2).
+* [Brownbanded Bamboo Shark](../big_tanks/bamboo_shark.md): spawns in lukewarm oceans (spawn weight 1).
+* [Cownose Ray](../big_tanks/cownose_ray.md): spawns in lukewarm oceans (spawn weight 2).
 * [Mexican Turbo Snail](../saltwater/turbo_snail.md): spawns in lukewarm oceans (spawn weight 3).
 * [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md): spawns in lukewarm oceans (spawn weight 3).
 * [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md): spawns in lukewarm oceans (spawn weight 1).

@@ -25,6 +25,8 @@ Rohre anderer Mods und die Busse und Interfaces von AE2 oder Refined Storage kö
 * Die Plätze **wechseln sich ab**: jede Fütterung beginnt mit dem Platz nach dem, der beim letzten Mal zuerst gefüttert
   hat. So geben Pellets, Flocken und Frostfutter im Automaten den Fischen [Abwechslung](../food/food_variety.md).
 * Sind seine eigenen Plätze leer, nimmt er Futter aus den [Schränken](cabinet.md) unter dem Aquarium.
+* Auch **roher Fisch** passt in die Plätze: er füttert die [Delfine](../big_tanks.md) eines großen Meerwasserbeckens, einen Fisch für
+  jeden Delfin, der eine Weile keinen Fisch hatte (die anderen Fische fressen ihn nicht).
 * Das Log des Aquariums notiert jede Fütterung und „Der Futterautomat ist leer“.
 
 Kein Platz oben (ein Becken von einem Block Höhe mit Licht)? Der [Klemm-Futterautomat](clip_feeder.md) hängt seitlich an der Scheibe.

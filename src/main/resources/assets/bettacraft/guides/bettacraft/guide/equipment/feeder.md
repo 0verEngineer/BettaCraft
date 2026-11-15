@@ -25,6 +25,8 @@ pipes of other mods and the buses and interfaces of AE2 or Refined Storage can f
 * The slots **take turns**: each feeding starts with the slot after the one that fed first last time, so pellets,
   flakes and frozen food in the feeder give the fish a [varied diet](../food/food_variety.md).
 * When its own slots are empty it takes food from the [cabinets](cabinet.md) under the aquarium.
+* **Raw fish** goes into the slots too: it feeds the [dolphins](../big_tanks.md) of a big sea water tank, one fish for each
+  dolphin that has not had fish for a while (the other fish do not eat it).
 * The tank log notes every feeding and "The feeder is empty".
 
 No room on top (a one-block tank with a light)? The [clip-on feeder](clip_feeder.md) hangs on the side of the glass.
