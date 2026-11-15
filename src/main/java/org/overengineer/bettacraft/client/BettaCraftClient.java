@@ -117,6 +117,7 @@ public final class BettaCraftClient {
         });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
         org.overengineer.bettacraft.client.DeviceEffects.init(modBus); // M23: air pumps, air stones, regulator, particles
+        org.overengineer.bettacraft.client.SoundTest.init(); // M29.1: /bettacraft sounds plays every device sound
         NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);
 
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);

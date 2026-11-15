@@ -28,6 +28,11 @@ public final class ClientConfig {
     public static final ModConfigSpec.DoubleValue LIGHT_TINT;
     /** M23: volume of the device sounds per kind (times the power regulator of the device). */
     public static final ModConfigSpec.DoubleValue VOLUME_FILTER, VOLUME_AIR_PUMP, VOLUME_AIR_STONE, VOLUME_FLOW_PUMP, VOLUME_FEEDER;
+    /**
+     * M29.1: the steady motor sounds of the air pumps and flow pumps are off by default (new keys, so existing client configs
+     * get the new default {@code false} without a migration); the volumes above only apply once a switch is on.
+     */
+    public static final ModConfigSpec.BooleanValue AIR_PUMP_SOUND, FLOW_PUMP_SOUND;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -64,6 +69,8 @@ public final class ClientConfig {
         VOLUME_AIR_STONE = b.comment("Volume of the air stones and sponge filters from 0 to 1").defineInRange("airStoneVolume", 1.0, 0.0, 1.0);
         VOLUME_FLOW_PUMP = b.comment("Volume of the flow pumps from 0 to 1").defineInRange("flowPumpVolume", 1.0, 0.0, 1.0);
         VOLUME_FEEDER = b.comment("Volume of the feeder clicks from 0 to 1").defineInRange("feederVolume", 1.0, 0.0, 1.0);
+        AIR_PUMP_SOUND = b.comment("Play the hum of the air pumps (off by default; its volume is airPumpVolume)").define("airPumpSound", false);
+        FLOW_PUMP_SOUND = b.comment("Play the whir of the flow pumps (off by default; its volume is flowPumpVolume)").define("flowPumpSound", false);
         b.pop();
         SPEC = b.build();
     }

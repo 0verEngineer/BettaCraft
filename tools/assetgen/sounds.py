@@ -29,20 +29,20 @@ Building blocks
 
 Per sound
 ---------
-* ``filter/running1..3`` (2.4-2.8 s): water of the filter outlet falling into the tank. A
-  splash bed (noise 250-3500 Hz, fast random envelope), a stream of mid bubbles (r 1-4 mm,
-  ~0.8-3.3 kHz, 45/s in clusters), a few large plunging bubbles (r 5-11 mm, 300-650 Hz) and
-  a faint low rumble.
+* ``filter/running1..3`` (2.4-2.8 s): calm trickle of the filter outlet (M29.1: the splash noise
+  bed rustled and is gone). A stream of mid bubbles (r 2-6 mm, 540-1600 Hz, 32/s in gentle
+  clusters), a few large plunging bubbles (r 6-11 mm, 300-540 Hz), a soft low water body
+  (noise 70-450 Hz, slow swell); the bubbles are rolled off above 2.6 kHz.
 * ``air_pump/hum`` (loop 2 s): membrane air pump. The magnet swings at the 50 Hz mains, the
   diaphragm moves at 100 Hz: harmonic series of 50 Hz with the 100 Hz line strongest and the
   even harmonics above it, a short noise rattle burst (2-7 kHz) on every 100 Hz stroke with a
   slight random strength per stroke, faint air hiss, slow 0.5/1.5 Hz amplitude wobble.
-* ``air_stone/bubbles1..3`` (2.2-2.8 s): air stone. Dense tiny bubbles (r 0.35-1.4 mm,
-  2.3-9 kHz, ~260/s), some mid bubbles, short surface-burst ticks and a fizz bed
-  (noise 2.5-10 kHz).
+* ``air_stone/bubbles1..3`` (2.2-2.8 s): air stone, bubbles only (M29.1: no surface ticks and no
+  fizz bed any more, they rustled). Small bubbles (r 0.8-1.6 mm, 2-4 kHz, ~70/s) and mid bubbles
+  (r 1.6-3.5 mm, 0.9-2 kHz, ~24/s), rolled off above 4.5 kHz.
 * ``sponge_filter/gurgle1..2`` (2.6-2.8 s): sponge filter lift tube. Groups ("glugs") of
-  2-5 large bubbles (r 3.5-9 mm, 360-930 Hz, slower rise) every ~0.35 s, a low water slosh
-  (noise < 900 Hz) with a burst per glug and a soft surface splash (noise 600-4000 Hz).
+  2-5 large bubbles (r 3.5-9 mm, 360-930 Hz, slower rise) every ~0.35 s and a faint low water
+  slosh (noise 60-350 Hz) with a burst per glug (M29.1: the surface splash noise is gone).
 * ``flow_pump/whir`` (loop 2 s): small circulation pump with a synchronous motor. Weak 50/100 Hz
   hum, impeller blade pass at 200 Hz with harmonics, a faint motor whine near 1.5 kHz with slow
   FM, and the water swoosh (noise 150-1800 Hz) with slow periodic swells, plus a little
@@ -182,19 +182,22 @@ def finish(x: np.ndarray, rms_db: float | None = None, peak_db: float | None = N
 
 # ---------------------------------------------------------------------------- sounds
 def filter_running(seed: int, dur: float) -> np.ndarray:
+    """M29.1: calm trickle of the filter outlet, built from bubbles only (no broadband splash noise, it rustled)."""
     rng = np.random.default_rng(seed)
     n = int(dur * SR)
-    splash = band_noise(rng, n, 250, 3500) * smooth_env(rng, n, 9.0, 0.7) * 0.10
-    splash += band_noise(rng, n, 1200, 6000) * smooth_env(rng, n, 14.0, 0.9) * 0.03
-    rumble = band_noise(rng, n, 50, 220) * smooth_env(rng, n, 2.0, 0.4) * 0.05
     bub = np.zeros(n)
-    times = poisson_times(rng, dur, 45.0, cluster=0.9, cluster_hz=4.0)
-    for t, r in zip(times, log_uniform(rng, 1.0, 4.0, len(times))):
-        add_bubble(bub, t, r, 0.08 * (r / 2.5) ** 0.5 * rng.uniform(0.4, 1.0), xi=rng.uniform(0.1, 0.3))
-    times = poisson_times(rng, dur, 4.0, cluster=0.6)
-    for t, r in zip(times, rng.uniform(5.0, 11.0, len(times))):
-        add_bubble(bub, t, r, 0.10 * rng.uniform(0.5, 1.0), xi=rng.uniform(0.05, 0.15))
-    return finish(splash + rumble + bub, rms_db=-20)
+    # drops of the outlet stream entrain mid bubbles (r 2-6 mm, 540-1600 Hz) in gentle clusters
+    times = poisson_times(rng, dur, 32.0, cluster=0.7, cluster_hz=2.5)
+    for t, r in zip(times, log_uniform(rng, 2.0, 6.0, len(times))):
+        add_bubble(bub, t, r, 0.09 * (r / 3.5) ** 0.5 * rng.uniform(0.35, 1.0), xi=rng.uniform(0.08, 0.25))
+    # now and then a larger, deeper plunging bubble
+    times = poisson_times(rng, dur, 3.0, cluster=0.5)
+    for t, r in zip(times, rng.uniform(6.0, 11.0, len(times))):
+        add_bubble(bub, t, r, 0.09 * rng.uniform(0.5, 1.0), xi=rng.uniform(0.05, 0.12))
+    # a soft low water body under it (below 450 Hz, slow swell: no hiss)
+    body = band_noise(rng, n, 70, 450, order=3) * smooth_env(rng, n, 1.5, 0.35) * 0.018
+    y = fft_filter(bub, hi=2600, order=4) + body
+    return finish(y, rms_db=-24)
 
 
 def air_pump_hum(seed: int) -> np.ndarray:
@@ -226,24 +229,18 @@ def air_pump_hum(seed: int) -> np.ndarray:
 
 
 def air_stone(seed: int, dur: float) -> np.ndarray:
+    """M29.1: only the bubbling stays; the surface ticks and the fizz bed (the rustle) are gone, the stream of tiny
+    bubbles is thinner and a little larger, and everything above 5 kHz is rolled off."""
     rng = np.random.default_rng(seed)
     n = int(dur * SR)
     bub = np.zeros(n)
-    times = poisson_times(rng, dur, 260.0, cluster=0.5, cluster_hz=6.0)
-    for t, r in zip(times, log_uniform(rng, 0.35, 1.4, len(times))):
-        add_bubble(bub, t, r, 0.05 * rng.uniform(0.3, 1.0), xi=rng.uniform(0.1, 0.35))
-    times = poisson_times(rng, dur, 18.0, cluster=0.5)
-    for t, r in zip(times, log_uniform(rng, 1.4, 3.0, len(times))):
-        add_bubble(bub, t, r, 0.06 * rng.uniform(0.4, 1.0), xi=rng.uniform(0.1, 0.25))
-    # surface bursts: very short broadband ticks
-    ticks = np.zeros(n)
-    for t in poisson_times(rng, dur, 120.0, cluster=0.5):
-        i = int(t * SR)
-        m = min(40, n - i)
-        ticks[i:i + m] += rng.uniform(-1, 1) * np.exp(-np.arange(m) / 6.0)
-    ticks = fft_filter(ticks, lo=3000, hi=12000) * 0.25
-    fizz = band_noise(rng, n, 2500, 10000) * smooth_env(rng, n, 12.0, 0.6) * 0.012
-    return finish(bub + ticks + fizz, rms_db=-20)
+    times = poisson_times(rng, dur, 70.0, cluster=0.5, cluster_hz=4.0)
+    for t, r in zip(times, log_uniform(rng, 0.8, 1.6, len(times))):
+        add_bubble(bub, t, r, 0.035 * rng.uniform(0.3, 1.0), xi=rng.uniform(0.1, 0.3))
+    times = poisson_times(rng, dur, 24.0, cluster=0.5)
+    for t, r in zip(times, log_uniform(rng, 1.6, 3.5, len(times))):
+        add_bubble(bub, t, r, 0.07 * rng.uniform(0.4, 1.0), xi=rng.uniform(0.1, 0.25))
+    return finish(fft_filter(bub, hi=4500, order=4), rms_db=-24)
 
 
 def sponge_gurgle(seed: int, dur: float) -> np.ndarray:
@@ -261,9 +258,9 @@ def sponge_gurgle(seed: int, dur: float) -> np.ndarray:
         if m > 0:
             burst_env[i:i + m] += np.sin(np.linspace(0, np.pi, m)) ** 2
         t += rng.uniform(0.2, 0.5)
-    slosh = band_noise(rng, n, 70, 900) * (0.25 + burst_env) * 0.05
-    splash = band_noise(rng, n, 600, 4000) * (0.1 + burst_env) * smooth_env(rng, n, 25.0, 0.6) * 0.015
-    return finish(bub + slosh + splash, rms_db=-20)
+    # M29.1: the surface splash noise (600-4000 Hz, the rustle) is gone; a faint low slosh stays under the glugs
+    slosh = band_noise(rng, n, 60, 350, order=3) * (0.15 + burst_env) * 0.02
+    return finish(fft_filter(bub, hi=3000, order=4) + slosh, rms_db=-24)
 
 
 def flow_pump_whir(seed: int) -> np.ndarray:

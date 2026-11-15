@@ -76,14 +76,14 @@ public final class DeviceEffects {
 
     private static int spongeBubbles;
 
-    /** Client volume 0..1 of a kind of device. */
+    /** Client volume 0..1 of a kind of device (M29.1: 0 for the air and flow pumps unless their sound switch is on). */
     public static double volume(Regulator.Sound kind) {
         try {
             return switch (kind) {
                 case FILTER -> ClientConfig.VOLUME_FILTER.get();
-                case AIR_PUMP -> ClientConfig.VOLUME_AIR_PUMP.get();
+                case AIR_PUMP -> ClientConfig.AIR_PUMP_SOUND.get() ? ClientConfig.VOLUME_AIR_PUMP.get() : 0.0;
                 case AIR_STONE -> ClientConfig.VOLUME_AIR_STONE.get();
-                case FLOW_PUMP -> ClientConfig.VOLUME_FLOW_PUMP.get();
+                case FLOW_PUMP -> ClientConfig.FLOW_PUMP_SOUND.get() ? ClientConfig.VOLUME_FLOW_PUMP.get() : 0.0;
             };
         } catch (IllegalStateException e) {
             return 1.0;
@@ -101,6 +101,11 @@ public final class DeviceEffects {
         if (mc.isPaused()) return;
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
         spongeFilters(mc);
+        if (volume(Regulator.Sound.AIR_PUMP) <= 0.001) { // M29.1: the hum is off by default
+            HUMS.values().forEach(PumpHum::silence);
+            HUMS.clear();
+            return;
+        }
         for (AirPumpBlockEntity be : AirPumpBlockEntity.CLIENT_LOADED) {
             if (be.getLevel() != mc.level || be.isRemoved() || !be.running()) continue;
             BlockPos p = be.getBlockPos();
@@ -133,6 +138,10 @@ public final class DeviceEffects {
 
         private float level() {
             return (float) (be.powerShare() * volume(Regulator.Sound.AIR_PUMP));
+        }
+
+        void silence() {
+            stop();
         }
 
         @Override

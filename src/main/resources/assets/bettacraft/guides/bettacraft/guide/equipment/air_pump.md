@@ -23,7 +23,8 @@ The <ItemLink id="bettacraft:air_pump" /> is a small membrane pump. Place it **n
 
 * One pump drives **4 air stones or sponge filters** at full strength. With more, they share the air and bubble less
   (a second pump helps).
-* It hums quietly while it runs and stands still when nothing in the aquarium needs air.
+* It runs while something in the aquarium needs air and stands still otherwise. Its quiet hum is off by default
+  (client config `sound.airPumpSound`).
 * **Power regulator:** right-click it (or sneak + mouse wheel while looking at it) to set 0 to 100 %. Less power gives
   less air, needs less energy and is quieter (see [Power regulator](regulator.md)).
 * **Energy:** without power mods it simply runs. A server can make it need FE

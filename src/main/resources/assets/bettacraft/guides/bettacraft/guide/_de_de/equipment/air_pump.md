@@ -24,7 +24,8 @@ Aquariums.
 
 * Eine Pumpe treibt **4 Ausströmer oder Schwammfilter** mit voller Stärke. Bei mehr teilen sie sich die Luft und
   sprudeln weniger (eine zweite Pumpe hilft).
-* Sie summt leise, solange sie läuft, und steht still, wenn im Aquarium nichts Luft braucht.
+* Sie läuft, solange im Aquarium etwas Luft braucht, und steht sonst still. Ihr leises Summen ist standardmäßig aus
+  (Client-Config `sound.airPumpSound`).
 * **Leistungsregler:** Rechtsklick (oder Schleichen + Mausrad, während du sie ansiehst) stellt 0 bis 100 % ein.
   Weniger Leistung gibt weniger Luft, braucht weniger Energie und ist leiser (siehe [Leistungsregler](regulator.md)).
 * **Energie:** ohne Strom-Mods läuft sie einfach. Ein Server kann FE verlangen (`aeration.airPumpRequiresEnergy`):
