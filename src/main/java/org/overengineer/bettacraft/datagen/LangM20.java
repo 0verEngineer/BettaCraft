@@ -130,7 +130,7 @@ final class LangM20 {
         a.accept("bettacraft.configuration.oceanWaterIsSalty", "Sea water from the ocean");
         a.accept("bettacraft.configuration.oceanWaterIsSalty.tooltip", "An empty bucket filled in an ocean or at a beach gives a bucket of sea water (for reef tanks; it pours like water)");
         a.accept("bettacraft.configuration.foreignAnimals", "Salt and foreign animals");
-        a.accept("bettacraft.configuration.foreignAnimals.tooltip", "Fish and water animals of vanilla and other mods: LENIENT = the salinity does not matter to them, REALISTIC = vanilla sea animals (cod, tropical fish, pufferfish, squid) need salt water, axolotls and tadpoles fresh water, salmon both; animals of other mods stay lenient");
+        a.accept("bettacraft.configuration.foreignAnimals.tooltip", "Fish and water animals of vanilla and other mods: LENIENT = the salinity does not matter to them, REALISTIC = vanilla sea animals (cod, tropical fish, pufferfish, squid) need salt water, axolotls and tadpoles fresh water, salmon both; animals of other mods by their profile (M32), without one they stay lenient");
         a.accept("bettacraft.configuration.vanillaCoralsNeedSalt", "Vanilla corals need salt");
         a.accept("bettacraft.configuration.vanillaCoralsNeedSalt.tooltip", "Vanilla corals and coral fans in a tank interior die in fresh water (off: they live in every tank, as before)");
         a.accept("bettacraft.configuration.skimmerBlocks", "Protein skimmer capacity");

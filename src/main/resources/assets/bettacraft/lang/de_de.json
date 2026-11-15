@@ -1691,7 +1691,7 @@
   "bettacraft.configuration.oceanWaterIsSalty": "Meerwasser aus dem Ozean",
   "bettacraft.configuration.oceanWaterIsSalty.tooltip": "Ein leerer Eimer, im Ozean oder am Strand gefüllt, gibt einen Meerwassereimer (für Meerwasserbecken; er gießt wie Wasser)",
   "bettacraft.configuration.foreignAnimals": "Salz und fremde Tiere",
-  "bettacraft.configuration.foreignAnimals.tooltip": "Fische und Wassertiere aus Vanilla und anderen Mods: LENIENT = der Salzgehalt ist ihnen egal, REALISTIC = Vanilla-Meerestiere (Kabeljau, Tropenfisch, Kugelfisch, Tintenfisch) brauchen Salzwasser, Axolotl und Kaulquappen Süßwasser, Lachs beides; Tiere anderer Mods bleiben nachsichtig",
+  "bettacraft.configuration.foreignAnimals.tooltip": "Fische und Wassertiere aus Vanilla und anderen Mods: LENIENT = der Salzgehalt ist ihnen egal, REALISTIC = Vanilla-Meerestiere (Kabeljau, Tropenfisch, Kugelfisch, Tintenfisch) brauchen Salzwasser, Axolotl und Kaulquappen Süßwasser, Lachs beides; Tiere anderer Mods nach ihrem Profil (M32), ohne Profil bleiben sie nachsichtig",
   "bettacraft.configuration.vanillaCoralsNeedSalt": "Vanilla-Korallen brauchen Salz",
   "bettacraft.configuration.vanillaCoralsNeedSalt.tooltip": "Vanilla-Korallen und -Korallenfächer im Innenraum sterben im Süßwasser (aus: sie leben in jedem Becken, wie bisher)",
   "bettacraft.configuration.skimmerBlocks": "Leistung des Eiweißabschäumers",

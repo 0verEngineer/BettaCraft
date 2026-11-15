@@ -68,7 +68,7 @@ public final class ForeignCare {
         // a terrarium animal (M31 profile) has its climate in TerrariumCare; here only its hunger and the crowding count
         boolean terra = p.terrarium() != null;
         boolean tempBad = !terra && wet && !p.tolerates(t.waterTemp());
-        double salt = !terra && wet ? org.overengineer.bettacraft.reef.SaltTolerance.shock(p.salinity(), t) : 0;
+        double salt = !terra && wet ? org.overengineer.bettacraft.reef.SaltTolerance.shock(ForeignProfiles.salinity(p), t) : 0; // REALISTIC only
         boolean waterBad = false;
         if (!terra && wet) {
             waterBad = TankWater.qualityEnabled() && t.waterQuality() < p.minQuality();

@@ -890,7 +890,7 @@ public final class ServerConfig {
                         "like water)").define("oceanWaterIsSalty", true);
         SALT_FOREIGN = b.comment("Fish and water animals of vanilla and other mods: LENIENT = the salinity does not matter to them,",
                         "REALISTIC = vanilla sea animals (cod, tropical fish, pufferfish, squid) need salt water, axolotls and tadpoles",
-                        "fresh water, salmon both; animals of other mods stay lenient").defineEnum("foreignAnimals", ForeignSalinity.LENIENT);
+                        "fresh water, salmon both; animals of other mods by their profile (M32), without one they stay lenient").defineEnum("foreignAnimals", ForeignSalinity.LENIENT);
         SALT_VANILLA_CORALS = b.comment("Vanilla corals and coral fans in a tank interior die in fresh water (off: they live in every tank, as",
                         "before)").define("vanillaCoralsNeedSalt", false);
         REEF_SKIMMER_BLOCKS = b.comment("Water blocks one protein skimmer keeps clean in salt water (it does nothing in fresh water)")

@@ -62,6 +62,18 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         return CommonConfig.foreignCare() ? byType.get(e.getType()) : null;
     }
 
+    /**
+     * The salinity range that counts for an animal with this profile: the profile's with
+     * {@code saltwater.foreignAnimals = REALISTIC}, null (the salt does not matter) with the default LENIENT, as for every
+     * animal of vanilla and other mods before.
+     */
+    @Nullable
+    public static org.overengineer.bettacraft.tank.Salinity.Range salinity(ForeignProfile p) {
+        return org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.SALT_FOREIGN,
+                org.overengineer.bettacraft.config.ServerConfig.ForeignSalinity.LENIENT) == org.overengineer.bettacraft.config.ServerConfig.ForeignSalinity.REALISTIC
+                ? p.salinity() : null;
+    }
+
     /** The profile of this type while our care for foreign animals is on, or null. */
     @Nullable
     public static ForeignProfile cared(EntityType<?> type) {

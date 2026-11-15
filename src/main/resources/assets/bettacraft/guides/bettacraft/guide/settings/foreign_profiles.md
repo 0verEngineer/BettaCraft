@@ -14,7 +14,8 @@ the aquarium nothing changes: the animal lives by its own mod there.
 ## What a profile does
 
 * **Care** (`features.foreignCare`): the animal gets hungry like a betta (it eats the tank's food: by hand, from the
-  feeder, the live food pump), minds its temperature range, the water quality, the salinity, pH and TDS and the stocking.
+  feeder, the live food pump), minds its temperature range, the water quality, pH and TDS, the stocking and (with
+  `saltwater.foreignAnimals = REALISTIC`) the salinity.
   Days of trouble make it sick, a sick animal that is not helped dies (tank log with the cause). A fed animal heals. The
   tank menu shows its health and hunger.
 * **Breeding** (`features.foreignBreeding`): two grown, fed, healthy animals of the same kind in water of their breeding

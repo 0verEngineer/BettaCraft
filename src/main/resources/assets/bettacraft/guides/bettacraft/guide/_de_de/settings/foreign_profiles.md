@@ -14,8 +14,8 @@ Außerhalb des Aquariums ändert sich nichts: Dort lebt das Tier nach seiner eig
 ## Was ein Profil bewirkt
 
 * **Pflege** (`features.foreignCare`): Das Tier bekommt Hunger wie ein Betta (es frisst das Futter des Beckens: von Hand,
-  aus dem Futterautomaten, aus der Lebendfutter-Pumpe), achtet auf seinen Temperaturbereich, die Wasserqualität, den
-  Salzgehalt, pH und TDS und den Besatz. Tage mit Problemen machen es krank, ein krankes Tier, dem nicht geholfen wird,
+  aus dem Futterautomaten, aus der Lebendfutter-Pumpe), achtet auf seinen Temperaturbereich, die Wasserqualität, pH und
+  TDS, den Besatz und (mit `saltwater.foreignAnimals = REALISTIC`) den Salzgehalt. Tage mit Problemen machen es krank, ein krankes Tier, dem nicht geholfen wird,
   stirbt (Logbuch mit Ursache). Ein gefüttertes Tier heilt. Das Beckenmenü zeigt seine Gesundheit und seinen Hunger.
 * **Zucht** (`features.foreignBreeding`): Zwei ausgewachsene, satte, gesunde Tiere derselben Art in Wasser ihrer
   Zuchttemperatur vermehren sich hin und wieder. Ein **Lebendgebärender** trägt die Jungen aus und bringt sie zur Welt,

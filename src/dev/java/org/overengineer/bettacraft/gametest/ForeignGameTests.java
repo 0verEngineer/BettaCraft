@@ -142,7 +142,7 @@ public final class ForeignGameTests {
             LivingEntity fish = add(h, c, EntityType.TROPICAL_FISH, t -> {});
             ForeignProfile p = ForeignProfiles.cared(fish);
             h.assertTrue(p != null, "the stand-in has a profile");
-            h.assertTrue(SaltTolerance.of(fish) == p.salinity(), "salinity from the profile");
+            h.assertTrue(SaltTolerance.of(fish) == null, "lenient by default: the salt does not matter");
             h.assertTrue(Math.abs(TankInhabitants.weight(fish) - 0.5) < 1e-6, "stocking from the profile");
             ForeignCare.advance(level, c, fish, p, 2.0);
             h.assertTrue(ForeignCare.health(fish).isHungry(ForeignCare.params(p)), "hungry after two days");
@@ -182,7 +182,15 @@ public final class ForeignGameTests {
                 h.assertTrue(ForeignCare.conditions(c, fish, p).waterBad(), "bad water");
                 c.getTank().setWaterQuality(1F);
                 c.getTank().setSalinity(35F);
-                h.assertTrue(ForeignCare.conditions(c, fish, p).saltBad(), "a freshwater profile in sea water");
+                h.assertTrue(!ForeignCare.conditions(c, fish, p).saltBad(), "lenient: sea water does not matter");
+                var salt = org.overengineer.bettacraft.config.ServerConfig.SALT_FOREIGN.get();
+                try {
+                    org.overengineer.bettacraft.config.ServerConfig.SALT_FOREIGN.set(org.overengineer.bettacraft.config.ServerConfig.ForeignSalinity.REALISTIC);
+                    h.assertTrue(ForeignCare.conditions(c, fish, p).saltBad(), "realistic: a freshwater profile in sea water");
+                    h.assertTrue(SaltTolerance.of(fish) == p.salinity(), "realistic: salinity from the profile");
+                } finally {
+                    org.overengineer.bettacraft.config.ServerConfig.SALT_FOREIGN.set(salt);
+                }
                 c.getTank().setSalinity(0F);
                 CommonConfig.FEATURE_FOREIGN_CARE.set(false);
                 fish.getPersistentData().remove(ForeignCare.KEY);

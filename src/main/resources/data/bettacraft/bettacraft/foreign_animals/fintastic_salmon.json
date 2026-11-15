@@ -1,16 +1,13 @@
 {
-  "entity": [
-    "fintastic:fintastic_cod",
-    "fintastic:fintastic_salmon"
-  ],
+  "entity": "fintastic:fintastic_salmon",
   "group": "food_fish",
   "care": {
     "temperature": [
       2,
-      18
+      20
     ],
     "min_quality": 0.4,
-    "salinity": "hardy_marine"
+    "salinity": "any"
   },
   "breeding": {
     "type": "eggs",
