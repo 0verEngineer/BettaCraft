@@ -4,6 +4,49 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.24.0-beta.1] - 2026-11-15
+
+Terraria and paludaria: tanks with land, their climate and devices, turtles with temperature-dependent sex, frogs,
+geckos and a snake, and Minecraft mobs shrunk and harmless behind glass.
+
+### Added
+- **Terrarium and paludarium** (`features.terrarium`): a tank without water is a terrarium, a tank with water and land
+  built in its interior above the water line a paludarium (`terrarium.paludariumLandShare`, `terrariumLandShare`); the
+  mode is detected, never set. Fish tanks stay aquariums as before. Terraria and paludaria get an **air temperature**,
+  a **humidity** and **UV**, each balanced from the room (biome, day and night, rain on an open top), the devices, the
+  water surface, the plants on the land and the lid. A new **Climate** tab, a line in the overview, the overlays (Jade,
+  TOP, WTHIT) and the monitor show them; a dry terrarium shows no water values.
+- **Terrarium devices** (`features.terrariumDevices`): the **heat mat** (under the tank or on its wall, thermostat = the
+  tank's target temperature, FE with `power.heaterRequiresEnergy`), the **basking lamp** (light, a basking spot 12 K
+  above the air, UV 5), the **mister** (hygrostat 40-95 %, 4000 mB of water from buckets, pipes or a reservoir, FE with
+  `terrarium.misterRequiresEnergy`) and the **thermo-hygrometer** (LCD, comparator output = humidity).
+- **Turtles** (`features.turtles`): the musk turtle, the red-eared and yellow-bellied slider (one species, two
+  varieties; grows big and wants 12 blocks), Hermann's tortoise (dry terrarium, strong UV, eats greens:
+  `#bettacraft:turtle_greens`, carried in the new **terrarium box**, **brumates** in the cold: `terrarium.brumation`) and
+  Reeves' turtle. Vanilla **sea turtle hatchlings** live in paludaria until they outgrow them.
+- **Turtle breeding** (`features.turtleBreeding`): a female lays a clutch into sand or soil on the land (an egg block in the
+  interior); the eggs incubate by the ground temperature (heat mats), and the **nest temperature decides the sex** of the
+  hatchlings (warm females, cool males; the musk turtle with the female-male-female pattern). Hatchlings grow up.
+- **Amphibians and reptiles** (`features.herps`, `features.herpBreeding`): poison dart frogs (three species that do not
+  cross; clutches on moss or leaves, tadpoles into the water), Cranwell's horned frog (sits buried), the leopard gecko
+  (sex by the nest temperature, morphs), the crested gecko (climbs the glass) and the corn snake (a prey animal a week,
+  brumates). They hop, climb and slither in the tank. **Feeder insects**: crickets and fruit flies from their cultures.
+- **Wild turtles, frogs, geckos and snakes** (`features.wildTurtles`, `features.wildHerps`): sliders and musk turtles in
+  swamps and rivers, Reeves' turtles in rivers, tortoises in savannas and shrublands (`#bettacraft:tortoise_lands`), dart
+  frogs and crested geckos in jungles, leopard geckos in deserts and badlands, corn snakes in forests and plains, horned
+  frogs in savannas and swamps.
+- **Mobs in glass** (`features.mobsInGlass`): drowned, zombies, husks, skeletons, strays, spiders, cave spiders,
+  silverfish, endermites and small slimes and magma cubes live in tanks **shrunk** (the `generic.scale` attribute) and
+  **harmless**: no targets, no burning in daylight (`terrarium.mobUndeadBurn` for an open top), no drowning, no
+  despawning. Each has its tank (the drowned needs water, spiders climb the glass of a terrarium); a zombie under water
+  becomes a drowned. Caught with the new **mob jar** below a quarter of its health (`terrarium.mobCatchHealth`, with a
+  cooldown), **lured** into an open tank with bait (rotten flesh, bones, crickets, slime balls, magma cream), or put in
+  from an EnderIO **soul vial** or an Industrial Foregoing **mob imprisonment tool** (`#bettacraft:mob_capture_items` for
+  others). Fed pairs breed (babies, spiderlings, small slimes; `terrarium.mobBreeding`). A mob that lived in glass
+  **never drops anything and gives no experience**, so they are no farm. `inhabitants.allow` adds more hostile mobs.
+- Handbook chapter **Terrarium and paludarium** with pages for every device, animal, the turtle breeding, the feeder
+  insects and the mobs in glass (English and German).
+
 ## [1.23.0-beta.1] - 2026-11-15
 
 Big tanks and big animals: aquariums up to 32 x 16 x 32 blocks with a coarser interior, a size rule for big animals,

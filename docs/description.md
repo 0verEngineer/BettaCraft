@@ -91,6 +91,17 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 
 ![A big sea water tank with a blacktip reef shark, a bamboo shark and its egg cases, eagle and cownose rays](images/bettacraft-big-sea-tank.jpg)
 
+## Terraria, turtles, frogs and mobs in glass
+
+- A tank without water is a **terrarium**, one with water and land a **paludarium**, with air temperature, humidity and
+  UV from heat mats, basking lamps and misters.
+- **Turtles** (musk turtle, sliders, Hermann's tortoise, Reeves' turtle) lay eggs in the sand, and the nest temperature
+  decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
+  that climb the glass and a **corn snake**.
+- **Mobs in glass:** drowned, zombies, skeletons, spiders and small slimes live shrunk and harmless in a tank. Weaken one
+  and catch it in a **mob jar**, lure it into an open tank with bait, or bring it in an EnderIO soul vial. A zombie under
+  water becomes a drowned, fed pairs breed, and mobs in glass never drop anything: decoration, not a farm.
+
 ## Equipment, water and chemistry
 
 - Internal, external, sponge and corner filters, cabinets of any wood or stone, automatic and clip-on feeders, air
@@ -168,6 +179,7 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 
 Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
-Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Filter,
+Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Terrarien und Paludarien mit Schildkröten, Pfeilgiftfröschen,
+Geckos und Kornnattern, verkleinerte Mobs im Glas, Filter,
 Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Die Mod und das Handbuch im Spiel sind komplett
 auf Deutsch übersetzt; die Spielsprache Deutsch genügt.

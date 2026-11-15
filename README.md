@@ -101,6 +101,18 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - Caught with the **large net** or the **steel leader** into a **transport tub** that carries one animal; big animals
   swim wide curves, turn slowly and eat the small fish of their tank.
 
+### Terraria, turtles, frogs and mobs in glass
+- **Terrarium and paludarium:** a tank without water is a terrarium, one with water and land built in its interior a
+  paludarium, with air temperature, humidity and UV; heat mats, basking lamps, misters and a thermo-hygrometer.
+- **Turtles:** musk turtle, red-eared and yellow-bellied slider, Hermann's tortoise (brumates in the cold) and Reeves'
+  turtle; eggs in sand or soil, and the **nest temperature decides the sex** of the hatchlings.
+- **Amphibians and reptiles:** poison dart frogs (tadpoles in the water), Cranwell's horned frog, leopard and crested
+  geckos (the crested one climbs the glass) and the corn snake, with crickets and fruit flies from their cultures; wild
+  in jungles, deserts, forests, savannas and swamps.
+- **Mobs in glass:** drowned, zombies, skeletons, spiders, small slimes and a few more live **shrunk and harmless** in
+  tanks: caught with the mob jar, lured with bait or put in from an EnderIO soul vial; a zombie under water becomes a
+  drowned, fed pairs breed, and they never drop anything.
+
 ### Equipment and water
 - Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside), automatic and
   clip-on feeders, air pumps with air stones (bubble columns), light bar, LED panel and high-power LED in 16 colours
@@ -189,13 +201,15 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 - **Tags:** `#bettacraft:betta_spawn_biomes`, `#bettacraft:salt_water_biomes`, `#bettacraft:warm_ocean_waters`,
   `lukewarm_ocean_waters`, `mangrove_waters`, `lush_cave_waters`, `swamp_waters`, `river_waters`, `beach_waters`,
   `jungle_waters`, `#bettacraft:coral_reef_biomes` (biomes); `#bettacraft:tank_inhabitants`,
-  `#bettacraft:tank_blacklist`, `#bettacraft:predators`, `#bettacraft:betta_prey` (entity types);
+  `#bettacraft:tank_blacklist`, `#bettacraft:predators`, `#bettacraft:betta_prey` (entity types); `#bettacraft:mob_capture_items`,
+  `#bettacraft:turtle_greens`, `#bettacraft:feeder_insects`;
   `#bettacraft:betta_food`, `#bettacraft:live_food`, `#bettacraft:fry_food`, `#bettacraft:fry_food_start`,
   `#bettacraft:pellet_fish`, `#bettacraft:frozen_food`, `#bettacraft:critter_food`, `#bettacraft:sinking_food`,
   `#bettacraft:food_groups/*`, `#bettacraft:diet/*/favourite` and `/poor`, `#bettacraft:plastic_sheets`, `#bettacraft:aquatic_plants` (items); `#bettacraft:floating_plants`,
   `#bettacraft:interior_water_plants`, `#bettacraft:substrate_blacklist`, `#bettacraft:artemia_sand`, `#bettacraft:epiphyte_surfaces`,
   `#bettacraft:plant_substrate`, `#bettacraft:not_in_tank_interior`, `#bettacraft:swaying_plants`, `#bettacraft:shrimp_shelter` (blocks).
-- **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`),
+- **Animals in aquariums:** `inhabitants.allow` / `inhabitants.deny` in the server config (`modid:name`, `modid:*`; a hostile
+  mob in `allow` lives shrunk in glass, `deny` takes a mob in glass out),
   `inhabitants.maxHitbox`, `inhabitants.refuseHostile`, `inhabitants.tadpoles`, `inhabitants.outgrown`; `/bettacraft wateranimals` writes a table
   of every water animal of the loaded mods and whether aquariums take it.
 - **Datapacks:** `data/<namespace>/bettacraft/colors/*.json`, `.../genes/<locus>.json` and `.../varieties/*.json`
