@@ -103,7 +103,7 @@ Die Schildkröten:
 | [Schmuckschildkröte](terrarium/slider_turtle.md) (Rotwange, Gelbwange) | Paludarium, halb Land | Wärmespot, UV; **wird groß** (12 Blöcke) |
 | [Griechische Landschildkröte](terrarium/hermann_tortoise.md) | trockenes Terrarium | Wärmespot, viel UV, Grünzeug; Winterstarre bei Kälte |
 | [Dreikielschildkröte](terrarium/reeves_turtle.md) | Paludarium | Sonnenplatz, etwas kühler |
-| Schlüpflinge der Meeresschildkröte (Vanilla) | Paludarium | nur Schlüpflinge; ausgewachsene sind zu groß |
+| [Meeresschildkröte](terrarium/sea_turtle.md) (Vanilla) | großes Meerwasser-Paludarium | ein Großtier (12 × 6 × 3 Blöcke), ein Sandstrand für die Eier |
 
 Sie legen Eier in Sand oder Erde auf dem Land, und die Nesttemperatur bestimmt das Geschlecht der Schlüpflinge:
 [Schildkrötenzucht](terrarium/turtle_breeding.md). Wilde leben in Sümpfen und Flüssen (die Wasserschildkröten) und in
@@ -121,6 +121,9 @@ Die [Amphibien und Reptilien](terrarium/herps.md):
 
 Sie fressen [Futterinsekten](terrarium/feeder_insects.md) (Heimchen, Fruchtfliegen), Obst oder Beutetiere.
 
+[Landtiere anderer Mods](terrarium/foreign_land_animals.md) mit Terrarium-Profil: Landschildkröte und Alligator von
+Naturalist (der Alligator in einem großen Paludarium), gefangen mit der Terrarienbox oder dem großen Kescher.
+
 [Mobs im Glas](terrarium/mobs_in_glass.md): Ertrunkene, Zombies, Spinnen, kleine Schleime und ein paar weitere leben verkleinert
 und harmlos in Becken (Mobglas, Köder, die Fang-Items anderer Mods). Sie droppen nichts.
 
@@ -134,6 +137,6 @@ und das Menü sagt das. Ein Paludarium behält sie alle für sein Wasser.
 Server-Config `terrarium.*`: die Landanteile der Arten, die Stärke der Geräte, die Zeitkonstanten, das Wasser der
 Sprühanlage, die Tage bis zum Schaden; `power.*`: Heizmatten nutzen den Energie-Schalter der Heizer (`heatMatFePerTick`),
 Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrariums.enabled` (aus: jedes Becken ist ein
-Aquarium), `features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
+Aquarium), `features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.turtles.seaTurtles`, `features.foreignAnimals.terrarium`, `features.terrariums.herps`,
 `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`, `features.mobsInGlass.enabled`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
-`terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.
+`terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`. Landtiere anderer Mods ohne Profil für die Terrarienbox: `terrarium.boxAllow`.

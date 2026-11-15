@@ -53,12 +53,10 @@ Jeder Schlüpfling bekommt die Varietät seiner Mutter oder seines Vaters (die S
 Schlüpfling ist klein (etwa ein Drittel eines ausgewachsenen Tiers) und wächst in 4 bis 8 Spieltagen heran; sein Geschlecht
 zeigt sich, wenn er ausgewachsen ist (der Tooltip des Eimers).
 
-## Schlüpflinge der Meeresschildkröte
+## Meeresschildkröten
 
-Die Vanilla-**Meeresschildkröte** ist viel zu groß für jedes Becken. Ihre **Schlüpflinge** passen: fang einen mit dem
-[Fischbeutel](../equipment/fish_bag.md) am Strand und setz ihn in ein Paludarium (Wasser 20 bis 30 °C, etwas Land).
-Wenn er heranwächst, verlässt er das Becken in einem Fischbeutel davor, wie jedes Tier, das aus seinem Becken herauswächst.
-Eine ausgewachsene Meeresschildkröte wird abgelehnt.
+Die Vanilla-**Meeresschildkröte** ist ein Großtier: ausgewachsene und Schlüpflinge kommen nur in ein großes
+Meerwasser-Paludarium mit Sandstrand, wo ein Paar seine Eier legt ([Meeresschildkröte](sea_turtle.md)).
 
 ## Grünfutter
 

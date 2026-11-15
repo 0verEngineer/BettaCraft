@@ -51,12 +51,10 @@ Every hatchling takes the variety of its mother or its father (the slider: red-e
 small (about a third of a grown one) and grows up in 4 to 8 game days; its sex shows when it is grown (the tooltip of the
 bucket).
 
-## Sea turtle hatchlings
+## Sea turtles
 
-The vanilla **sea turtle** is far too big for any tank. Its **hatchlings** fit: catch one with the
-[fish bag](../equipment/fish_bag.md) on the beach and put it into a paludarium (20 to 30 °C water, some land).
-When it grows up it leaves the tank in a fish bag in front of it, like every animal that outgrows its tank. A grown sea
-turtle is refused.
+The vanilla **sea turtle** is a big animal: grown ones and hatchlings go only into a big sea water paludarium with a sand
+beach, where a pair lays its eggs ([sea turtle](sea_turtle.md)).
 
 ## Greens
 

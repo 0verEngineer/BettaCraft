@@ -38,6 +38,8 @@ Außerhalb des Aquariums ändert sich nichts: Dort lebt das Tier nach seiner eig
 | Fintastic | Moony | Brackwasser | nein |
 | Fintastic, Aquaculture, Naturalist | Kabeljau, Lachs, Hering, Sonnenbarsch, Flussbarsch, Barsch, Forelle, Boulti, Wels, Piranha | Speisefische | nur in Aquarien ab 24 Wasserblöcken (Piranha 16) |
 | Aquaculture | Synodontis | Wels | nein |
+| Naturalist | [Landschildkröte](../terrarium/naturalist_tortoise.md) | trockenes Terrarium, 1 m, Grünzeug | Eier in Sand oder Erde |
+| Naturalist | [Alligator](../terrarium/naturalist_alligator.md) | großes Paludarium, 2 m, rohes Fleisch, jagt kleine Fische | Eier in Sand oder Erde |
 | Critters and Companions | Koi | Teichfisch (4 bis 28 °C) | Eier an Pflanzen, 16 Wasserblöcke |
 
 ## Ein Profil schreiben
@@ -77,11 +79,35 @@ Entities, deren Mod nicht installiert ist, werden still übersprungen (außer mi
 | `breeding.offspring`, `offspring_nbt` | das Entity der Jungen (Standard: dasselbe) und NBT für jedes Junge |
 | `breeding.inherit` | NBT-Schlüssel, die jedes Junge von einem seiner Eltern erbt (zu finden mit `/data get entity`) |
 | `breeding.baby` | die Jungen kommen als Jungtiere ihrer Mod zur Welt (Standard true) |
-| `terrarium` | statt eines Aquariums: `habitat` (`dry`, `paludarium`, `any`), `air`, `humidity`, `land`, `water`, `uv`, `basking` wie bei den [Terrarientieren](../terrarium.md) |
+| `terrarium` | statt eines Aquariums: `habitat` (`dry`, `paludarium`, `any`, `wet`), `air`, `humidity`, `land`, `water`, `uv`, `basking` wie bei den [Terrarientieren](../terrarium.md); dazu die Schlüssel unten |
+| `terrarium.length` | seine Länge in Metern: ein Großtier nach der [Größenregel](../big_tanks.md) (12 / 6 / 3 Blöcke pro Meter, 100 Blöcke pro Kubikmeter); ohne: seine Hitbox entscheidet |
+| `terrarium.volume` | was die Größenregel misst: `land` (das Land mit der Luft darüber), `water` (den Wasserteil) oder `all` (das ganze Becken); Standard nach dem Habitat (`dry` das Land, `wet` das Wasser, sonst alles) |
+| `terrarium.movement` | wie es sich im Becken bewegt: `walk` (Standard), `slither`, `hop`, `climb`, `swim` oder `own` für die KI seiner Mod; oder ein Objekt mit `style` und `walk`, `swim` (Blöcke pro Tick), `bottom`, `max_step`, `water_time`, `bask_time`, `rest_time`, `height` |
+| `terrarium.prey` | es frisst die kleinen Fische und Garnelen seines Beckens bis zu dieser Länge (Blöcke; ab 0,5 auch Bettas und Krallenfrösche) |
+| `terrarium.box` | die Terrarienbox fängt es (Standard true; false: großer Kescher und Transportwanne) |
+| `breeding.nest`, `nest_temperature` | Eier in ein Nest auf dem Land, dessen Oberseite zu diesem Block-Tag gehört (`#bettacraft:turtle_nest_ground`: Sand und Erde); sie schlüpfen nach `days` bei dieser Nesttemperatur (°C; wärmer schneller, bei 18 °C und darunter warten sie, über 36 °C sterben sie) |
 | `suppress_own_breeding` | `false` lässt die eigene Zucht des Tiers im Aquarium zusätzlich laufen |
 
 Tiere mit eigener Pflege in Bettacraft (unsere Tiere, Axolotl, Delfin, Meeresschildkröte und die Mobs im Glas) können kein
 Profil bekommen. Das Serverlog nennt die geladenen Profile und jeden Fehler in einer Datei.
+
+## Terrarium-Profile
+
+Ein Landtier mit Terrarium-Profil (Beispiel: die Landschildkröte):
+
+```json
+{
+  "entity": "naturalist:tortoise",
+  "care": {"hunger_days": 1.5},
+  "food": ["#bettacraft:turtle_greens"],
+  "breeding": {"type": "eggs", "nest": "#bettacraft:turtle_nest_ground", "nest_temperature": 30, "days": 4, "young": [2, 4], "inherit": ["Variant"]},
+  "terrarium": {"habitat": "dry", "air": [22, 35], "humidity": [30, 70], "uv": 4, "basking": true,
+                "length": 1.0, "volume": "land", "movement": {"style": "walk", "walk": 0.012}}
+}
+```
+
+Die Serveroption `terrarium.boxAllow` nennt Landtiere ohne Profil, die die Terrarienbox trotzdem fängt (nur kleine; sie
+leben ohne unsere Pflege in Terrarien und Paludarien).
 
 ## Profile in einer Welt prüfen
 

@@ -39,6 +39,8 @@ the aquarium nothing changes: the animal lives by its own mod there.
 | Fintastic, Aquaculture, Naturalist | cod, salmon, herring, bluegill, perch, bass, trout, boulti, catfish, piranha | food fish | only in aquariums of 24 water blocks and more (piranha 16) |
 | Aquaculture | synodontis | catfish | no |
 | Critters and Companions | koi | pond fish (4 to 28 °C) | eggs on plants, 16 water blocks |
+| Naturalist | [tortoise](../terrarium/naturalist_tortoise.md) | dry terrarium, 1 m, greens | eggs into sand or soil |
+| Naturalist | [alligator](../terrarium/naturalist_alligator.md) | big paludarium, 2 m, raw meat, hunts small fish | eggs into sand or soil |
 
 ## Writing a profile
 
@@ -77,11 +79,35 @@ installed are skipped quietly (unless `"required": true`). Example:
 | `breeding.offspring`, `offspring_nbt` | the entity of the young (default: the same) and NBT for every young |
 | `breeding.inherit` | NBT keys every young takes from one of its parents (find them with `/data get entity`) |
 | `breeding.baby` | the young are born as babies of their mod (default true) |
-| `terrarium` | instead of an aquarium: `habitat` (`dry`, `paludarium`, `any`), `air`, `humidity`, `land`, `water`, `uv`, `basking` like the [terrarium animals](../terrarium.md) |
+| `terrarium` | instead of an aquarium: `habitat` (`dry`, `paludarium`, `any`, `wet`), `air`, `humidity`, `land`, `water`, `uv`, `basking` like the [terrarium animals](../terrarium.md); the keys below |
+| `terrarium.length` | its length in metres: a big animal by the [size rule](../big_tanks.md) (12 / 6 / 3 blocks per metre, 100 blocks per cubic metre); left out: its hitbox decides |
+| `terrarium.volume` | what the size rule measures: `land` (the land with the air above it), `water` (the water part) or `all` (the whole tank); default by the habitat (`dry` the land, `wet` the water, else all) |
+| `terrarium.movement` | how it moves in the tank: `walk` (default), `slither`, `hop`, `climb`, `swim`, or `own` for the AI of its mod; or an object with `style` and `walk`, `swim` (blocks per tick), `bottom`, `max_step`, `water_time`, `bask_time`, `rest_time`, `height` |
+| `terrarium.prey` | it eats the small fish and shrimp of its tank up to this length (blocks; from 0.5 also bettas and dwarf frogs) |
+| `terrarium.box` | the terrarium box catches it (default true; false: the large net and the transport tub) |
+| `breeding.nest`, `nest_temperature` | eggs into a nest on the land whose top is of this block tag (`#bettacraft:turtle_nest_ground`: sand and soil), hatching in `days` at that nest temperature (°C; warmer faster, at 18 °C and below they wait, above 36 °C they die) |
 | `suppress_own_breeding` | `false` lets the animal's own breeding run in the aquarium too |
 
 Animals with a care of their own in Bettacraft (our animals, the axolotl, dolphin, sea turtle and the mobs in glass) cannot
 be given a profile. The server log lists the profiles it loaded and every mistake in a file.
+
+## Terrarium profiles
+
+A land animal with a terrarium profile (example: the tortoise):
+
+```json
+{
+  "entity": "naturalist:tortoise",
+  "care": {"hunger_days": 1.5},
+  "food": ["#bettacraft:turtle_greens"],
+  "breeding": {"type": "eggs", "nest": "#bettacraft:turtle_nest_ground", "nest_temperature": 30, "days": 4, "young": [2, 4], "inherit": ["Variant"]},
+  "terrarium": {"habitat": "dry", "air": [22, 35], "humidity": [30, 70], "uv": 4, "basking": true,
+                "length": 1.0, "volume": "land", "movement": {"style": "walk", "walk": 0.012}}
+}
+```
+
+The server option `terrarium.boxAllow` lists land animals without a profile that the terrarium box catches all the same
+(small ones only; they live in terraria and paludaria without our care).
 
 ## Checking the profiles in a world
 

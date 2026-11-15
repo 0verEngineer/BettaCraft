@@ -99,7 +99,7 @@ The turtles:
 | [Pond slider](terrarium/slider_turtle.md) (red-eared, yellow-bellied) | paludarium, half land | basking lamp, UV; **grows large** (12 blocks) |
 | [Hermann's tortoise](terrarium/hermann_tortoise.md) | dry terrarium | basking lamp, strong UV, greens; brumates in the cold |
 | [Reeves' turtle](terrarium/reeves_turtle.md) | paludarium | basking spot, a little cooler |
-| Sea turtle hatchlings (vanilla) | paludarium | only hatchlings; grown ones are too big |
+| [Sea turtle](terrarium/sea_turtle.md) (vanilla) | big sea water paludarium | a big animal (12 × 6 × 3 blocks), a sand beach for its eggs |
 
 They lay eggs into sand or soil on the land, and the nest temperature decides the sex of the hatchlings:
 [turtle breeding](terrarium/turtle_breeding.md). Wild ones live in swamps and rivers (the water turtles) and in savannas
@@ -117,6 +117,9 @@ The [amphibians and reptiles](terrarium/herps.md):
 
 They eat [feeder insects](terrarium/feeder_insects.md) (crickets, fruit flies), fruit or prey.
 
+[Land animals of other mods](terrarium/foreign_land_animals.md) with a terrarium profile: the tortoise and the alligator of
+Naturalist (the alligator in a big paludarium), caught with the terrarium box or the large net.
+
 [Mobs in glass](terrarium/mobs_in_glass.md): drowned, zombies, spiders, small slimes and a few more live shrunk and harmless
 in tanks (mob jar, bait, the capture items of other mods). They drop nothing.
 
@@ -130,6 +133,6 @@ and the menu says so. A paludarium keeps all of them for its water.
 Server config `terrarium.*`: the land shares of the kinds, the strength of the devices, the time constants, the water of
 the mister, the days to harm; `power.*`: heat mats use the heaters' energy switch (`heatMatFePerTick`), misters their own
 (`terrarium.misterRequiresEnergy`). Common config: `features.terrariums.enabled` (off: every tank is an aquarium),
-`features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
+`features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.turtles.seaTurtles`, `features.foreignAnimals.terrarium`, `features.terrariums.herps`,
 `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`, `features.mobsInGlass.enabled`. Turtles (and the egg layers of the amphibians and reptiles):
-`terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.
+`terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`. Land animals of other mods without a profile for the terrarium box: `terrarium.boxAllow`.
