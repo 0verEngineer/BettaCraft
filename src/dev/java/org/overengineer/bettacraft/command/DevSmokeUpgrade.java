@@ -82,6 +82,9 @@ public final class DevSmokeUpgrade {
     private static int m331Checked;
     /** M25 part b: old sea water buckets found in the chests (they must give other mods the sea water fluid). */
     private static int seaBuckets;
+    /** M35.1: chest, hatchery and item entity with old cyst jars that came through loading (and in stage 2 a reload). */
+    private static int m351Checked;
+    private static final String M351_FILE = "bettacraft_m35_1_cysts.txt";
 
     private DevSmokeUpgrade() {}
 
@@ -134,6 +137,7 @@ public final class DevSmokeUpgrade {
                         else problems.add("old betta " + b.getUUID() + " is " + age + " days old");
                     }
                 }
+                if (STAGE == 2) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
                 if (!problems.isEmpty()) {
                     for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                     throw new IllegalStateException(problems.size() + " difference(s)");
@@ -141,6 +145,13 @@ public final class DevSmokeUpgrade {
                 if (STAGE == 1) {
                     server.saveEverything(false, true, true);
                     write(server, level, SNAPSHOT);
+                    // M35.1: the reference world (1.13.1) has no cyst jars: old ones as fixtures, loaded from the old save format
+                    m351Place(server, level);
+                    if (!problems.isEmpty()) {
+                        for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
+                        throw new IllegalStateException(problems.size() + " problem(s) with the old cyst jars");
+                    }
+                    server.saveEverything(false, true, true);
                 }
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
@@ -151,6 +162,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} old bettas are pure Betta splendens (M29)", m29Checked);
                 LOGGER.info("[smoketest] upgrade: {} old bettas start with no age or the age of their stage (M33 old age)", m33Checked);
                 LOGGER.info("[smoketest] upgrade: {} tanks with their tank type (old ones automatic, M33.1)", m331Checked);
+                LOGGER.info("[smoketest] upgrade: {} places with old artemia cyst jars keep their count without the old uses (M35.1)", m351Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -160,6 +172,95 @@ public final class DevSmokeUpgrade {
             LOGGER.error("[smoketest] UPGRADE STAGE " + STAGE + " FAILED", e);
             server.halt(false);
         }
+    }
+
+    // ------------------------------------------------------------------ M35.1 old cyst jars
+
+    /** {@code n} jars as M21.8..M35 saved them: the spent uses in {@code minecraft:damage}. */
+    private static net.minecraft.nbt.CompoundTag oldJars(int n, int damage, int slot) {
+        net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
+        t.putString("id", "bettacraft:artemia_cysts");
+        t.putInt("count", n);
+        net.minecraft.nbt.CompoundTag c = new net.minecraft.nbt.CompoundTag();
+        c.putInt("minecraft:damage", damage);
+        t.put("components", c);
+        if (slot >= 0) t.putByte("Slot", (byte) slot);
+        return t;
+    }
+
+    private static void plainJars(String where, ItemStack s, int count) {
+        if (!s.is(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get()) || s.getCount() != count
+                || s.has(net.minecraft.core.component.DataComponents.DAMAGE)
+                || !ItemStack.isSameItemSameComponents(s, new ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get()))) {
+            problems.add("M35.1 " + where + ": expected " + count + " plain cyst jars, got " + s + " " + s.getComponentsPatch());
+        } else {
+            m351Checked++;
+        }
+    }
+
+    /** Stage 1: a chest (16 old jars), a hatchery (16 old jars and an open one) and an item entity (16 old jars) above a chest of the reference world. */
+    private static void m351Place(MinecraftServer server, ServerLevel level) throws java.io.IOException {
+        var reg = server.registryAccess();
+        BlockPos base = BlockPos.of(expected.getAsJsonArray("chests").get(0).getAsJsonObject().get("pos").getAsLong()).above(24);
+        level.setBlock(base, net.minecraft.world.level.block.Blocks.CHEST.defaultBlockState(), 3);
+        net.minecraft.nbt.CompoundTag chest = new net.minecraft.nbt.CompoundTag();
+        net.minecraft.nbt.ListTag list = new net.minecraft.nbt.ListTag();
+        list.add(oldJars(16, 7, 0));
+        chest.put("Items", list);
+        level.getBlockEntity(base).loadWithComponents(chest, reg);
+        level.getBlockEntity(base).setChanged();
+        plainJars("chest", ((ChestBlockEntity) level.getBlockEntity(base)).getItem(0), 16);
+        BlockPos hp = base.above(2);
+        level.setBlock(hp, ModBlocks.ARTEMIA_HATCHERY.get().defaultBlockState(), 3);
+        var tub = (org.overengineer.bettacraft.food.CultureTubBlockEntity) level.getBlockEntity(hp);
+        net.minecraft.nbt.CompoundTag tag = tub.saveWithoutMetadata(reg);
+        net.minecraft.nbt.CompoundTag items = new net.minecraft.nbt.CompoundTag();
+        net.minecraft.nbt.ListTag il = new net.minecraft.nbt.ListTag();
+        il.add(oldJars(16, 3, 0));
+        items.put("Items", il);
+        items.putInt("Size", 3);
+        tag.put("items", items);
+        tag.put("opened_jar", oldJars(1, 12, -1));
+        tub.loadWithComponents(tag, reg);
+        tub.setChanged();
+        plainJars("hatchery", tub.items().getStackInSlot(org.overengineer.bettacraft.food.CultureTubBlockEntity.INPUT), 17);
+        net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(level, base.getX() + 0.5, base.getY() + 4, base.getZ() + 0.5,
+                new ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get()));
+        net.minecraft.nbt.CompoundTag et = new net.minecraft.nbt.CompoundTag();
+        drop.saveWithoutId(et);
+        et.put("Item", oldJars(16, 9, -1));
+        net.minecraft.world.entity.item.ItemEntity loaded = new net.minecraft.world.entity.item.ItemEntity(net.minecraft.world.entity.EntityType.ITEM, level);
+        loaded.load(et);
+        loaded.setUUID(UUID.randomUUID());
+        loaded.setNoGravity(true);
+        loaded.setUnlimitedLifetime();
+        loaded.setNeverPickUp();
+        level.addFreshEntity(loaded);
+        plainJars("item entity", loaded.getItem(), 16);
+        Files.writeString(server.getWorldPath(LevelResource.ROOT).resolve(M351_FILE), base.asLong() + " " + loaded.getUUID(), StandardCharsets.UTF_8);
+    }
+
+    /** Stage 2: the jars of stage 1 after saving and loading the world. */
+    private static void m351Check(MinecraftServer server, ServerLevel level) throws java.io.IOException {
+        Path file = server.getWorldPath(LevelResource.ROOT).resolve(M351_FILE);
+        if (!Files.exists(file)) {
+            problems.add("M35.1: missing " + file);
+            return;
+        }
+        String[] a = Files.readString(file, StandardCharsets.UTF_8).trim().split(" ");
+        BlockPos base = BlockPos.of(Long.parseLong(a[0]));
+        level.getChunk(base);
+        if (level.getBlockEntity(base) instanceof ChestBlockEntity chest) plainJars("chest after reload", chest.getItem(0), 16);
+        else problems.add("M35.1: the chest is gone");
+        if (level.getBlockEntity(base.above(2)) instanceof org.overengineer.bettacraft.food.CultureTubBlockEntity tub) {
+            plainJars("hatchery after reload", tub.items().getStackInSlot(org.overengineer.bettacraft.food.CultureTubBlockEntity.INPUT), 17);
+            if (!tub.openedJar().isEmpty()) problems.add("M35.1: the hatchery still has an open jar");
+        } else {
+            problems.add("M35.1: the hatchery is gone");
+        }
+        Entity e = level.getEntity(UUID.fromString(a[1]));
+        if (e instanceof net.minecraft.world.entity.item.ItemEntity ie) plainJars("item entity after reload", ie.getItem(), 16);
+        else problems.add("M35.1: the item entity is gone: " + e);
     }
 
     // ------------------------------------------------------------------ compare

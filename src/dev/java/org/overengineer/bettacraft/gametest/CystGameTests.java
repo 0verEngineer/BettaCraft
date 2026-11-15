@@ -227,7 +227,7 @@ public final class CystGameTests {
 
     /**
      * The sources of cysts give 4x as much: the only one is the sand drop (2 % -> 8 %, one jar each; no trader offer, loot,
-     * recipe or net catch gives cysts), the handbook source table says so, and 4000 sand blocks broken with fixed seeds drop
+     * recipe or net catch gives cysts), the handbook source table says so, and 4000 sand blocks broken with a fixed seed drop
      * about 8 % jars.
      */
     @GameTest(template = EMPTY, timeoutTicks = 100)
@@ -241,17 +241,18 @@ public final class CystGameTests {
         h.assertTrue(s.kind() == Source.Kind.BLOCK_DROP && Math.abs(s.chance() - 0.08) < 1e-9 && s.min() <= 1 && s.max() <= 1,
                 "the sand drop, 8 %, one jar: " + s);
         h.assertTrue(sources.stream().noneMatch(x -> x.kind() == Source.Kind.TRADER_USUAL || x.kind() == Source.Kind.TRADER_RARE), "no trader offer");
-        // break sand 4000 times with fixed seeds
+        // break sand 4000 times with one random source of a fixed seed (the first values of neighbouring seeds are alike)
         BlockPos pos = h.absolutePos(new BlockPos(4, 2, 4));
         var table = level.getServer().reloadableRegistries().getLootTable(Blocks.SAND.getLootTable());
         int jars = 0, sand = 0;
-        for (int seed = 0; seed < 4000; seed++) {
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(351L);
+        for (int i = 0; i < 4000; i++) {
             LootParams params = new LootParams.Builder(level)
                     .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                     .withParameter(LootContextParams.BLOCK_STATE, Blocks.SAND.defaultBlockState())
                     .withParameter(LootContextParams.TOOL, new ItemStack(Items.IRON_SHOVEL))
                     .create(LootContextParamSets.BLOCK);
-            for (ItemStack drop : table.getRandomItems(params, seed)) {
+            for (ItemStack drop : table.getRandomItems(params, random)) {
                 if (drop.is(ModItems.ARTEMIA_CYSTS.get())) jars += drop.getCount();
                 if (drop.is(Items.SAND)) sand += drop.getCount();
             }
