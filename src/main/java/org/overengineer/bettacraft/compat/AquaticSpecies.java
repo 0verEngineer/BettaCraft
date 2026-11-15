@@ -98,6 +98,8 @@ public final class AquaticSpecies {
         for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
             if (type.getCategory() == MobCategory.MISC && !buckets.containsKey(type)) continue; // projectiles, items, boats ...
             if (!type.canSummon()) continue;
+            // M31: terrarium animals (turtles ...) go into terraria and paludaria by their own rules, not into aquaria
+            if (org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type)) continue;
             Entity e;
             try {
                 e = type.create(level);

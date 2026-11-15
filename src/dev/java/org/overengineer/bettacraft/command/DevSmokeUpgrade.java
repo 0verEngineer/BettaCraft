@@ -176,6 +176,13 @@ public final class DevSmokeUpgrade {
             // floating plants spread while the world runs: none may be lost, a few more are fine
             int fw = want.get("floating").getAsInt(), fh = have.get("floating").getAsInt();
             if (fh < fw || fh > fw + Math.max(3, fw / 4)) problems.add(where + ": floating plants " + fw + " -> " + fh);
+            // M31: a fish tank of an older world stays an aquarium (a nearly full tank has no land part)
+            if (want.get("water").getAsLong() > 0 && have.has("terra_mode") && !"aquarium".equals(have.get("terra_mode").getAsString())) {
+                LOGGER.info("[upgrade] {} is now a {} (land {})", where, have.get("terra_mode").getAsString(), have.get("land"));
+                if (have.has("cap") && want.get("water").getAsLong() >= 0.9 * have.get("cap").getAsLong()) {
+                    problems.add(where + ": a full fish tank became a " + have.get("terra_mode").getAsString());
+                }
+            }
             if (Math.abs(want.get("salinity").getAsDouble() - have.get("salinity").getAsDouble()) > 1e-3) {
                 problems.add(where + ": salinity " + want.get("salinity") + " -> " + have.get("salinity"));
             }
@@ -326,6 +333,9 @@ public final class DevSmokeUpgrade {
         o.addProperty("name", t.name());
         o.addProperty("water", t.waterMb());
         o.addProperty("salinity", t.salinity());
+        o.addProperty("terra_mode", t.terrariumMode().id()); // M31 (absent in the snapshots of older versions)
+        o.addProperty("cap", t.capacityMb());
+        o.addProperty("land", t.landShare());
         o.addProperty("members", t.memberCount());
         o.addProperty("front", t.front().getName());
         o.addProperty("locked", t.locked());

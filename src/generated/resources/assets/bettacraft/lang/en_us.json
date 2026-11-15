@@ -1777,6 +1777,7 @@
   "gui.bettacraft.terrarium.air": "Air %1$s °C (room %2$s, target %3$s)",
   "gui.bettacraft.terrarium.animal_problem": "%1$s: %2$s",
   "gui.bettacraft.terrarium.animals_fine": "All %s terrarium animals are fine",
+  "gui.bettacraft.terrarium.bask_only": "Basking spot %s °C",
   "gui.bettacraft.terrarium.devices_off": "Terrarium devices are switched off (features.terrariumDevices)",
   "gui.bettacraft.terrarium.ground_bask": "Ground over the heat mats %1$s °C · basking spot %2$s °C",
   "gui.bettacraft.terrarium.habitat.any": "a terrarium or paludarium",

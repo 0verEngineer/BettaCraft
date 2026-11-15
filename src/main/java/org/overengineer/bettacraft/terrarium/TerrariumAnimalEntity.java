@@ -124,7 +124,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
             }
         }
         if (tank != null && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
-        boolean bask = tank != null && walker.basking();
+        boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null && walker.basking();
         if (entityData.get(DATA_BASKING) != bask) entityData.set(DATA_BASKING, bask);
     }
 
@@ -267,6 +267,13 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         super.readAdditionalSaveData(tag);
         loadTerrarium(tag.getCompound("terrarium"));
         wild = tag.getBoolean("wild");
+    }
+
+    private int baskOverride = -1;
+
+    /** Smoke scenes: shows it basking (true / false) whatever the walker does; null = the walker again. */
+    public void setBaskingForTest(@Nullable Boolean b) {
+        baskOverride = b == null ? -1 : b ? 1 : 0;
     }
 
     /** GameTests: when it last ate. */

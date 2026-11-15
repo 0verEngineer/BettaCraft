@@ -146,6 +146,11 @@ public final class DevSmokeMP {
                         a.length > 1 && "bamboo_shark,bamboo_shark,honeycomb_moray".equals(a[1]));
                 check(name + ": egg cases " + (a.length > 2 ? a[2] : "?") + " (server 1)", a.length > 2 && "1".equals(a[2]));
             }
+            case "m31" -> { // M31 part a: a dry terrarium with a lit basking lamp: its mode and climate reach every client
+                check(name + ": tank mode " + (a.length > 1 ? a[1] : "?") + " (server terrarium)", a.length > 1 && "terrarium".equals(a[1]));
+                check(name + ": climate synced " + (a.length > 2 ? a[2] : "?") + " (server true)", a.length > 2 && "true".equals(a[2]));
+                check(name + ": UV at the basking spot " + (a.length > 3 ? a[3] : "?") + " (server 5)", a.length > 3 && "5".equals(a[3]));
+            }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
@@ -964,6 +969,26 @@ public final class DevSmokeMP {
             c.markTankChanged();
             say("m30", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":m30") && reports.containsKey(P2 + ":m30"), 20 * 30));
+        steps.add(new Step("m31", () -> {
+            // M31 part a: a dry 3 x 2 x 2 tank with a basking lamp on it: a terrarium with its climate
+            BlockPos min = base.offset(-22, 0, 28);
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the M31 tank formed", c != null);
+            if (c == null) return;
+            if (c.getTank().waterMb() > 0) TankInteractions.changeWater(level, c, -c.getTank().waterMb());
+            level.setBlockAndUpdate(min.offset(1, 2, 0), ModBlocks.BASKING_LAMP.get().defaultBlockState());
+            var mode = org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, c);
+            check("the dry tank is a terrarium (" + mode + ")", mode == org.overengineer.bettacraft.terrarium.TerrariumMode.TERRARIUM);
+            org.overengineer.bettacraft.terrarium.TankClimate.step(level, c, 0.01);
+            check("the terrarium has a climate", c.getTank().hasClimate());
+            c.markTankChanged();
+            say("m31", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":m31") && reports.containsKey(P2 + ":m31"), 20 * 30));
         steps.add(new Step("reef", () -> {
             // M20: a small reef tank: sea water, a coral on reef rock in the interior, a clownfish pair; both clients see the salt
             BlockPos min = reefMin();

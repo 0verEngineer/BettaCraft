@@ -217,10 +217,11 @@ public final class TankClimate {
                 t.setClimate(null);
                 sync = true;
             }
+            if (c.climateMats > 0 || sync) offMats(level, c); // mats that glowed on a terrarium go dark
             c.climateMats = 0;
             c.climateMisting = 0;
+            c.climateMistWant = 0;
             c.climateLamps = 0;
-            updateMats(level, c, 0);
             if (sync) sync(c, now, true);
             return;
         }
@@ -303,10 +304,17 @@ public final class TankClimate {
         return ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
     }
 
+    private static void offMats(ServerLevel level, TankBlockEntity c) {
+        for (BlockPos m : TankEquipment.heatMats(level, c)) {
+            BlockState s = level.getBlockState(m);
+            if (s.getBlock() instanceof HeatMatBlock && s.getValue(HeatMatBlock.HEATING)) level.setBlock(m, s.setValue(HeatMatBlock.HEATING, false), Block.UPDATE_CLIENTS);
+        }
+    }
+
     /** The heat mats glow while they heat. */
     private static void updateMats(ServerLevel level, TankBlockEntity c, double duty) {
         boolean on = duty > 0.02 && c.heatPowered() && CommonConfig.terrariumDevices();
-        for (BlockPos m : c.getTank().terrariumMode().hasLand() || on ? TankEquipment.heatMats(level, c) : List.<BlockPos>of()) {
+        for (BlockPos m : TankEquipment.heatMats(level, c)) {
             BlockState s = level.getBlockState(m);
             if (s.getBlock() instanceof HeatMatBlock && s.getValue(HeatMatBlock.HEATING) != on) level.setBlock(m, s.setValue(HeatMatBlock.HEATING, on), Block.UPDATE_CLIENTS);
         }

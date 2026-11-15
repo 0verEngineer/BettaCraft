@@ -207,6 +207,20 @@ final class DevClientSmokeMP {
                     send("m30 " + (big.isEmpty() ? "-" : String.join(",", big)) + " " + cases);
                 });
             }
+            case "m31" -> {
+                // M31 part a: the terrarium's mode and climate in the tank view of this client
+                BlockPos min = pos(args);
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, min);
+                    TankData t = c == null ? null : c.getTank();
+                    if (t == null) {
+                        send("error m31: no tank view for " + min);
+                        return;
+                    }
+                    send("m31 " + t.terrariumMode().id() + " " + t.hasClimate() + " " + Math.round(t.uv()));
+                });
+            }
             case "reef" -> {
                 // M20: salinity of the tank view, the salt the water is drawn with, the reef fish and the coral blocks of the miniature
                 BlockPos min = pos(args);

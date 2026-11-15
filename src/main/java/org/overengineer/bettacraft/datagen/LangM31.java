@@ -87,6 +87,7 @@ final class LangM31 {
         a.accept("gui.bettacraft.terrarium.no_values", "The climate is worked out in a moment");
         a.accept("gui.bettacraft.terrarium.air", "Air %1$s °C (room %2$s, target %3$s)");
         a.accept("gui.bettacraft.terrarium.ground_bask", "Ground over the heat mats %1$s °C · basking spot %2$s °C");
+        a.accept("gui.bettacraft.terrarium.bask_only", "Basking spot %s °C");
         a.accept("gui.bettacraft.terrarium.humidity", "Humidity %1$s %% (room %2$s %%)");
         a.accept("gui.bettacraft.terrarium.uv", "UV at the basking spot %1$s (%2$s)");
         a.accept("gui.bettacraft.terrarium.uv.none", "none");

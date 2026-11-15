@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm31a')) {
+                // gradlew runClient -Psmoketestm31a : only the M31 part a scene (a dry terrarium with the devices, a paludarium with
+                // land, water and two musk turtles, the climate tab of the tank menu)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m31aonly', 'true'
+            }
             if (project.hasProperty('smoketestm30c')) {
                 // gradlew runClient -Psmoketestm30c : only the M30 part c scene (a 28 x 6 x 14 sea water tank with the bamboo
                 // shark and its egg cases, the reef shark, the eagle and two cownose rays and the moray in its cave)

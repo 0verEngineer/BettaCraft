@@ -1090,7 +1090,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         fitLine(g, Component.translatable("gui.bettacraft.terrarium.air", fmt(c.air), fmt(c.ambient), fmt(c.target)), x, y, 0xFFD8A0, BAR_X - 4 - x);
         bar(g, y, (c.air - 10) / 30F, 0xFFE08040, (c.target - 10) / 30F);
         y += 11;
-        fitLine(g, Component.translatable("gui.bettacraft.terrarium.ground_bask", fmt(c.ground), fmt(c.bask)).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+        fitLine(g, (c.matsUnder + c.matsWall > 0 ? Component.translatable("gui.bettacraft.terrarium.ground_bask", fmt(c.ground), fmt(c.bask))
+                : Component.translatable("gui.bettacraft.terrarium.bask_only", fmt(c.bask))).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
         y += 11;
         fitLine(g, Component.translatable("gui.bettacraft.terrarium.humidity", Math.round(c.humidity), Math.round(c.roomHumidity)), x, y, 0xA8D8FF, BAR_X - 4 - x);
         bar(g, y, c.humidity / 100F, 0xFF50A0E0, c.mistSetting >= 0 ? c.mistSetting / 100F : -1);
