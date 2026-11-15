@@ -256,8 +256,13 @@ public final class InteriorEquipment {
         needsScan = false;
         if (!r.built()) return;
         int x0 = r.originX(), z0 = r.originZ();
+        it.unimi.dsi.fastutil.longs.LongArrayList strayWater = new it.unimi.dsi.fastutil.longs.LongArrayList();
         InteriorWorldOps.forEachBlock(interior, x0, InteriorRegion.BASE_Y, z0, x0 + r.sizeX() - 1, InteriorRegion.BASE_Y + r.sizeY() - 1,
                 z0 + r.sizeZ() - 1, (x, y, z, s) -> {
+                    if (s.is(net.minecraft.world.level.block.Blocks.WATER)) {
+                        strayWater.add(BlockPos.asLong(x, y, z)); // M29.1: left behind by broken water plants before the fix
+                        return;
+                    }
                     long k = BlockPos.asLong(x - x0, y - InteriorRegion.BASE_Y, z - z0);
                     add(k, s);
                     int pc = org.overengineer.bettacraft.plumbing.interior.PlumbingBlock.code(s);
@@ -271,6 +276,8 @@ public final class InteriorEquipment {
                     substrate++;
                     if (interior.getBlockEntity(new BlockPos(x, y, z)) instanceof InteriorFloorBlockEntity be) onSubstrate(null, be.substrate());
                 });
+        // M29.1: stray vanilla water blocks go (the interior is dry); plants, corals and decor stay as they are
+        for (long l : strayWater) interior.setBlock(BlockPos.of(l), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
     }
 
     /** Sum of heater capacities whose anchor is below the given interior-local water height. */
@@ -326,6 +333,7 @@ public final class InteriorEquipment {
         t.putLongArray("caves", caveBlocks.toLongArray()); // M19
         t.putLongArray("mops", mopBlocks.toLongArray());
         t.putLongArray("small_caves", smallCaveBlocks.toLongArray()); // M29
+        t.putBoolean("dry", true); // M29.1: scanned for stray water blocks
         t.putLongArray("pumps", pumps.toLongArray()); // M20
         t.putInt("live_rock", liveRock);
         // M23
@@ -395,6 +403,7 @@ public final class InteriorEquipment {
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");
         if (!t.contains("small_caves")) needsScan = true; // M29: regions of earlier versions find their small caves once
+        if (!t.getBoolean("dry")) needsScan = true; // M29.1: regions of earlier versions lose their stray water blocks once
         int[] chem = t.getIntArray("chem"); // M25: regions of earlier versions count the soil, limestone and wood once
         if (chem.length >= 5) {
             floorBlocks = chem[0];

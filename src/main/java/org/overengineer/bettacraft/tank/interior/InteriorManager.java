@@ -45,6 +45,15 @@ public final class InteriorManager {
         return level.dimension() == ModDimensions.TANK_INTERIOR;
     }
 
+    /**
+     * M29.1: vanilla water blocks do not belong in the interior (its water is the tank's own model): a water block
+     * set there becomes air. Plants, corals and decor keep their {@code waterlogged} state; outside nothing changes.
+     */
+    public static BlockState dryInterior(net.minecraft.world.level.Level level, BlockState state) {
+        return state.is(net.minecraft.world.level.block.Blocks.WATER) && isInterior(level)
+                ? net.minecraft.world.level.block.Blocks.AIR.defaultBlockState() : state;
+    }
+
     public static boolean isShellBlock(BlockState s) {
         return s.is(ModBlocks.INTERIOR_WALL.get()) || s.is(ModBlocks.INTERIOR_FLOOR.get());
     }
