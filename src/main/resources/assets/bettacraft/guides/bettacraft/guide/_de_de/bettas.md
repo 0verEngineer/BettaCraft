@@ -47,6 +47,16 @@ Der Tooltip von Eimer und Tüte zeigt Typ, Geschlecht, Farben, Muster und Schimm
 Männchen haben lange, bunte Flossen. Weibchen haben kürzere Flossen, sind etwas blasser und zeigen in Zuchtstimmung
 senkrechte Querstreifen. Das Geschlecht steht als ♂ und ♀ im Aquarium-Menü und in Jade.
 
+## Größe
+
+Bettas gibt es in zwei Größen, die der Server für alle einstellt (Server-Config `sizes.betta`): **Normal** (Standard)
+oder **Groß** (`LARGE`), die Größe von Bettacraft vor 1.28 (Normal ist 0,77 davon, ein erwachsenes Männchen mit
+Schwanz etwa einen halben Block lang). Fisch und Hitbox ändern sich zusammen, jedes Lebensstadium im Verhältnis, sofort
+und ohne Neustart. Es ist nur das Aussehen: Besatz, Zucht und die Daten der Fische bleiben gleich, man kann also beliebig
+hin- und herschalten.
+
+![Dasselbe Becken in Normal (links) und Groß (rechts)](images/betta_sizes.png)
+
 ## Bezug
 
 * **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 8).

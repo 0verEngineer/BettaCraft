@@ -35,6 +35,7 @@ navigation:
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | fry per bottle, days a culture needs |
 | `stages.*Days` | | duration of the life stages |
+| `sizes.betta` | NORMAL | how big the [bettas](bettas.md#size) are drawn, with their hitbox: NORMAL or LARGE (the size before 1.28); only the look, works at once for every player |
 | `interior.defaultScale` | 16 | 4, 8 or 16 interior blocks per tank block (new aquariums) |
 | `interior.substrateCostsBlock` | true | substrate costs a block |
 | `interior.maxRenderedBlocks` | 262144 | limit of the miniature |

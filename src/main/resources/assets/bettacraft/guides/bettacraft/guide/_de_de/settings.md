@@ -35,6 +35,7 @@ navigation:
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | Jungfische pro Flasche, Tage für einen Ansatz |
 | `stages.*Days` | | Dauer der Lebensstufen |
+| `sizes.betta` | NORMAL | wie groß die [Bettas](bettas.md) dargestellt werden, mit ihrer Hitbox: NORMAL oder LARGE (Groß, die Größe vor 1.28); nur das Aussehen, wirkt sofort für alle Spieler |
 | `interior.defaultScale` | 16 | 4, 8 oder 16 Innenraum-Blöcke pro Aquarium-Block (neue Aquarien) |
 | `interior.substrateCostsBlock` | true | Bodengrund kostet einen Block |
 | `interior.maxRenderedBlocks` | 262144 | Limit der Miniatur |

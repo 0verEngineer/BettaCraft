@@ -746,6 +746,56 @@ def m30c(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M36 scene (DevClientSmokeM36, -Psmoketestm36, without -Pcompare): the same community tank at Normal and Large side by
+# side -> images/betta_sizes.png. ``py guide_images.py m36`` also crops again every handbook image that shows our bettas
+# (from fresh -Psmoketestworld, -Psmoketestm11, -Psmoketestm15 and -Psmoketestm29c runs: the bettas are smaller since M36).
+M36_SIZES = (("bettacraft_m36_tank_normal", "bettacraft_m36_tank_large"), (240, 250, 1000, 600))
+M36_WORLD = ("tank", "nest", "stages", "forms", "varieties")
+
+
+def m36(out_en: Path) -> None:
+    names, box = M36_SIZES
+    srcs = [SHOTS / f"{n}.png" for n in names]
+    if all(p.exists() for p in srcs):
+        a, b = (Image.open(p).convert("RGB").crop(box) for p in srcs)
+        gap = 8
+        im = Image.new("RGB", (a.width + gap + b.width, a.height), (255, 255, 255))
+        im.paste(a, (0, 0))
+        im.paste(b, (a.width + gap, 0))
+        w = 900
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / "betta_sizes.png")
+    else:
+        print("missing", srcs)
+    for name in M36_WORLD:
+        src = SHOTS / f"guide_{name}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(WORLD[name]), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name in ("mirror_stick",):
+        shot, box = M11_WORLD[name]
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name, (shot, box) in M15_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    for name in ("betta_imbellis", "betta_smaragdina"):
+        shot, box = M29C_WORLD[name]
+        src = SHOTS / f"bettacraft_m29c_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -760,6 +810,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m36"]:
+        m36(out_en)
+        return 0
     if sys.argv[1:] == ["m30c"]:
         m30c(out_en)
         return 0

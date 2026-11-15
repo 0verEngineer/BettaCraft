@@ -45,6 +45,15 @@ The tooltip of a bucket or bag shows the type, sex, colours, pattern and iridesc
 Males have long, colourful fins. Females have shorter fins, are a little paler and show vertical bars when they are in
 breeding mood. The sex is shown with ♂ and ♀ in the tank menu and in Jade.
 
+## Size
+
+Bettas come in two sizes, set by the server for everyone (server config `sizes.betta`): **Normal** (the default) or
+**Large**, the size of Bettacraft before 1.28 (Normal is 0.77 of it, an adult male with its tail about half a block
+long). The fish and their hitbox change together, every life stage in proportion, at once and without a restart. It is
+only the look: the stocking, the breeding and the fish's data stay the same, so you can switch back and forth.
+
+![The same tank at Normal (left) and Large (right)](images/betta_sizes.png)
+
 ## Obtaining
 
 * **Wild** in swamps, in groups of 1–2 (spawn weight 8).
