@@ -24,8 +24,7 @@ import org.overengineer.bettacraft.terrarium.TerrariumAnimals;
 /**
  * M35 part b: the water animals of vanilla and of other mods (their own AI) stay in the <b>water part</b> of a paludarium.
  * The water of a tank is vanilla water in all its blocks below the surface, also under the land of the miniature, which the
- * AI of a mod cannot see; so every tick a fish that swam into the land (a column whose land rises above the water, or below
- * the floor of the interior at its height) is put back where it last was in the open water, its way stopped and its swim
+ * AI of a mod cannot see; so every tick a fish that swam into the land (below the floor of the interior at its height) is put back where it last was in the open water, its way stopped and its swim
  * turned round (and into a spot of the water part if it never was in one). Our fish keep out of the land by the obstacles
  * of the interior themselves; the land animals go by our walker.
  */
@@ -88,13 +87,12 @@ public final class ForeignWaterPart {
         return TankInhabitants.isWaterAnimal(m);
     }
 
-    /** Whether a spot is in the open water of the tank: over a column whose ground lies under the water, above that ground. */
+    /** Whether a spot is in the open water of the tank: above the floor at its height (not inside the land or the decoration). */
     public static boolean inWaterPart(TankTerrain ter, Vec3 p) {
         double surface = ter.surface();
         if (!Double.isFinite(surface)) return true;
-        double top = ter.ground(p.x, p.z);
-        if (!Double.isFinite(top)) return true; // outside the columns: the glass keeps it
-        if (top > surface - 0.02 && p.y < surface) return false; // a land column: under its land
+        // the floor at its height: inside the land (a solid stack) that is the top of the land above it; under an overhang
+        // or a floating bank the floor below (open water)
         double floor = ter.groundAt(p.x, p.y + 0.05, p.z);
         return !(Double.isFinite(floor) && floor > p.y + 0.05);
     }

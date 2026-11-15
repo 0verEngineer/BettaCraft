@@ -215,6 +215,13 @@ public final class ForeignTerrariumBGameTests {
         h.assertTrue(says(no, "message.bettacraft.tank.too_little_water"), "an aquarium with a third of water refuses: " + (no == null ? "-" : no.getString()));
         TankBlockEntity c = paludarium(h, 2, 2, 12, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
         TankData t = c.getTank();
+        { // a solid bank under the land layer (the helper's land is a floating layer: open water under it)
+            var r = InteriorRegions.get(level.getServer()).get(t.regionId());
+            int top = r.sizeY() / 3 + 2;
+            for (int lx = 0; lx < r.sizeX() / 2; lx++) for (int lz = 0; lz < r.sizeZ(); lz++) for (int ly = 0; ly < top; ly++) {
+                interior(h).setBlock(r.toWorld(lx, ly, lz), Blocks.DIRT.defaultBlockState(), 2);
+            }
+        }
         List<Entity> fish = new ArrayList<>();
         BettaGenome g = BettaGenome.randomDomestic(RandomSource.create(35));
         h.assertTrue(TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, true, 0)),
