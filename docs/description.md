@@ -14,7 +14,8 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 ## Bettas and genetics
 
 - **Wild bettas** live in swamps (also those of biome mods). Catch them with a water bucket or a fish bag; the fish keeps
-  all its genes. A magnifier, or the aquarium, reveals the hidden genes of a new animal.
+  all its genes. A magnifier, or the aquarium, reveals the hidden genes of a new animal. Some are the wild species
+  *Betta imbellis* and *Betta smaragdina*, which cross with *B. splendens* into fertile hybrids.
 - **Mendel genetics:** nine loci with dominance, carriers and mutations: 8 tail shapes, short and long fins, dumbo ears,
   43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo, Black Orchid, Mustard Gas, Samurai, Hellboy ...).
   Colours, genes and varieties are data-driven and can be changed with datapacks.
@@ -57,12 +58,15 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 
 ## Tankmates and small animals
 
-- **21 tankmates** with their own models and behaviour: tetras, rasboras, corydoras, plecos, otocinclus, loaches,
-  guppies and endlers (with their own genetics and 28 strains), platys and the dwarf gourami. Shoals, water ranges,
-  predators and prey, and a breeding style for every species.
+- **48 freshwater tankmates** with their own models and behaviour: tetras, rasboras and danios, rainbowfish, corydoras,
+  plecos, loaches, barbs, guppies and endlers (with their own genetics and 28 strains), platys, mollies, swordtails,
+  gouramis, **cichlids** (rams, Apistogramma, angelfish, discus) and **puffers** that eat snails. Shoals, water ranges,
+  predators and prey, fin nippers, and a breeding style for every species: open and cave brooders guard their young.
 - **Shrimp, snails and more:** Neocaridina in eleven colours with selection grades, bee shrimp from Crystal Red S to
   SSS, Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and dwarf clawed frogs. Algae grow,
-  and the cleaning crew eats them.
+  and the cleaning crew eats them. **Big crayfish** (blue and orange Florida crayfish, the all-female marbled crayfish)
+  eat plants and catch slow fish.
+- **Axolotls** get real care in a cool tank: eggs on the plants, larvae, and the five colours inherited by Mendel.
 - **Water animals of other mods** live in the aquariums too; big, boss and hostile ones are refused with a reason.
 
 ## Reef tanks and seahorses
@@ -151,6 +155,6 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 
 Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
-Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, Beifische, Garnelen und Schnecken, Meerwasser mit Seepferdchen, Filter,
+Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Filter,
 Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Die Mod und das Handbuch im Spiel sind komplett
 auf Deutsch übersetzt; die Spielsprache Deutsch genügt.

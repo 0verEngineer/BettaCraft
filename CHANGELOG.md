@@ -4,6 +4,50 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.22.0-beta.1] - 2026-11-15
+
+New freshwater species: 27 tankmates (cichlids, puffers, barbs and loaches, danios, rainbowfish, tetras, livebearers and
+gouramis), the wild betta species *Betta imbellis* and *Betta smaragdina*, two big crayfish, and our care and breeding
+for the vanilla axolotl.
+
+### Added
+- **Cichlids** (`features.cichlids`): ram (gold, electric blue, balloon), Bolivian ram, cockatoo and Agassiz's dwarf
+  cichlid, angelfish (black, marble, koi, platinum) and discus (red turquoise, pigeon blood, blue diamond). New breeding
+  styles: **open brooders** spawn on a flat stone, in a pit or on a broad leaf and both parents guard the brood;
+  **cave brooders** (Apistogramma) spawn in small caves (coconut shell, slate cave). Guarding parents chase other fish,
+  males hold territories, discus feed their young, angelfish eat small fish and shrimp.
+- **Puffers** (`features.puffers`): dwarf puffer, red-eye puffer and the brackish green spotted puffer. They eat snails
+  (bladder and ramshorn snails first) and their teeth overgrow without snails or hard food: the new **shell food**
+  (food maker, `#bettacraft:hard_food`). Puffers and tiger barbs **nip the fins** of bettas, angelfish, gouramis and
+  male guppies (`tankmates.behaviour.finNipping`, `pufferSnailsPerDay`, `pufferTeethDays`).
+- **Barbs and loaches** (`features.barbsAndLoaches`): tiger barb (green, albino), odessa barb, cherry barb, dwarf chain
+  loach and reticulated loach (snail eaters) and the garra.
+- **More community fish** (`features.communityFish`): zebra danio, celestial pearl danio, forktail and neon dwarf
+  rainbowfish, emperor, rummy-nose and black phantom tetra, black molly (also brackish) and swordtail (the male's
+  sword).
+- **Gouramis** (`features.gouramis`): honey, chocolate and pearl gourami (labyrinth fish). The chocolate gourami is a
+  **mouthbrooder**; only territorial gourami males fight each other.
+- **Wild betta species** (`features.wildBettas`): some wild bettas in swamps are *Betta imbellis* or *Betta
+  smaragdina*. They cross with each other and with *B. splendens* into fertile hybrids; size and fighting strength
+  follow the ancestry, the tooltip names the species or the shares.
+- **Big crayfish** (`features.bigCrayfish`): the **Florida crayfish** (*Procambarus alleni*; wild, blue and orange as
+  recessive colours) and the **marbled crayfish** (*P. virginalis*: only females, every adult carries eggs without a
+  male, the young are clones). About 10 cm: they catch small animals, eat fry and small bottom fish, pinch bettas and
+  slow fish near the floor, eat plants back and dig up young rooted plants; epiphytes and moss are safe
+  (`invertebrates.bigCrayfishPreyPerDay`, `bigCrayfishFishPerDay`, `bigCrayfishPlantsPerDay`). Aquarium net and wild
+  in swamps (Florida) and rivers (marbled), wandering trader; one counts as 0.75 fish, 2 per bag, 4 per bucket.
+- **Axolotl care** (`features.axolotlCare`): vanilla axolotls in a tank want cool water (15–20 °C, a cooler); from
+  21 °C they do not breed, above 23 °C they lose health. Two adults with plants lay **eggs on the plants**, the larvae
+  hatch as baby axolotls (`invertebrates.axolotlBreeding`, `axolotlEggDays`, `axolotlHeatDamage`). The five vanilla
+  colours are inherited by Mendel (blue recessive and rare); the magnifier on the tank tells their colour genes, a
+  bucket from the tank menu keeps them. No own entity: the vanilla model, bucket and other mods keep working.
+- Handbook pages in English and German for every new species, the new groups (cichlids, puffers, barbs, rainbowfish,
+  gouramis), the wild bettas, the big crayfish and the axolotl, with pictures.
+
+### Changed
+- Snail eating works for every snail eater (loaches, puffers); the log names the species.
+- Gourami fights only between territorial gourami males (dwarf and pearl gourami).
+
 ## [1.21.1-beta.1] - 2026-11-15
 
 Every aquarium and floating plant now grows wild in the waters of its origin, and wild animals are easier to find:

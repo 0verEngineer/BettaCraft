@@ -76,6 +76,8 @@ public final class DevSmokeUpgrade {
     private static int m24Checked;
     /** M25 part c: old tanks whose alkalinity and magnesium follow their salt. */
     private static int m25cChecked;
+    /** M29 part c/d: old bettas that are pure Betta splendens (no ancestry, the species id unchanged). */
+    private static int m29Checked;
     /** M25 part b: old sea water buckets found in the chests (they must give other mods the sea water fluid). */
     private static int seaBuckets;
 
@@ -118,6 +120,14 @@ public final class DevSmokeUpgrade {
                 // a few ticks for the animals to join their tanks
             } else if (readyAt > 0 && ticks == readyAt + 40) {
                 compare(server, level);
+                if (STAGE == 1) { // M29: every betta of the old world is a pure Betta splendens
+                    for (var e : level.getAllEntities()) {
+                        if (!(e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b)) continue;
+                        var g = b.getBettaData().genotype();
+                        if (g.ancestry().equals(org.overengineer.bettacraft.genetics.BettaSpecies.Ancestry.SPLENDENS) && "bettacraft:betta".equals(g.species())) m29Checked++;
+                        else problems.add("old betta " + b.getUUID() + " is " + g.species() + " " + g.ancestry());
+                    }
+                }
                 if (!problems.isEmpty()) {
                     for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                     throw new IllegalStateException(problems.size() + " difference(s)");
@@ -132,6 +142,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} tanks start with nitrate 0 and no water change (M24)", m24Checked);
                 LOGGER.info("[smoketest] upgrade: {} sea water buckets give the sea water fluid (M25)", seaBuckets);
                 LOGGER.info("[smoketest] upgrade: {} tanks with alkalinity and magnesium of their salt (M25c)", m25cChecked);
+                LOGGER.info("[smoketest] upgrade: {} old bettas are pure Betta splendens (M29)", m29Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {

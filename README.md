@@ -27,7 +27,8 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 
 ### Bettas and genetics
 - **Wild bettas** spawn in swamps (also those of biome mods); catch them with a water bucket or a fish bag, the fish keeps
-  all its genes. A **magnifier** (or the aquarium) analyses the hidden genes of a new animal.
+  all its genes. A **magnifier** (or the aquarium) analyses the hidden genes of a new animal. Some wild bettas are
+  *Betta imbellis* or *Betta smaragdina*: they cross with *B. splendens* into fertile hybrids.
 - **Mendel genetics:** nine loci with two alleles each (tail shape, fin length, pectorals, body colour, fin colour,
   pattern, pattern colour, iridescence and its colour), dominance, carriers and mutations: 8 tail shapes, short and
   long fins, dumbo ears, 43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo, Black Orchid, Mustard Gas
@@ -65,12 +66,17 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
 
 ### Tankmates and small animals
-- **21 tankmates** with their own models and behaviour: tetras, rasboras, corydoras, plecos, otocinclus, kuhli and clown
-  loaches, guppies and endlers (own genetics with 28 strains), platys and the dwarf gourami. Shoals, water ranges,
-  predators and prey, and a breeding style per species (glued eggs, caves, egg scatterers, livebearers, foam nests).
+- **48 freshwater tankmates** with their own models and behaviour: tetras, rasboras and danios, rainbowfish,
+  corydoras, plecos, otocinclus, loaches and garra, barbs, guppies and endlers (own genetics with 28 strains), platys,
+  mollies and swordtails, gouramis, **cichlids** (rams, Apistogramma, angelfish, discus) and **puffers**. Shoals, water
+  ranges, predators and prey, fin nippers, snail eaters, and a breeding style per species (glued eggs, caves, egg
+  scatterers, livebearers, foam nests, open and cave brooders that guard their young, a mouthbrooder).
 - **Small animals:** Neocaridina in eleven colours with selection grades, bee shrimp (Crystal Red/Black S to SSS, Blue
   Bolt, Wine Red, Tiger), Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and more crawl
-  over floor, plants and glass; algae grow and the cleaning crew eats them. Dwarf clawed frogs.
+  over floor, plants and glass; algae grow and the cleaning crew eats them. Dwarf clawed frogs. **Big crayfish** (the
+  Florida crayfish in blue and orange, the all-female marbled crayfish) eat plants, dig them up and catch slow fish.
+- **Axolotls** (vanilla) get real care in a tank: cool water with a cooler, eggs on the plants, larvae, and the five
+  colours inherited by Mendel (blue recessive and rare).
 - **Wild animals and corals** live in the waters they come from (jungle, swamp, river, mangrove, warm and lukewarm
   ocean); the waters are biome tags, so the biomes of biome mods count too. Catch them with the aquarium net. An own
   frugal spawn pass keeps them findable next to the fish of other mods; `/bettacraft wildlife` shows what lives where.
