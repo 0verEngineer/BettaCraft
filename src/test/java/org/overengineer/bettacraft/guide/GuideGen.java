@@ -111,7 +111,8 @@ public final class GuideGen {
             case "frog" -> "invertebrates/dwarf_clawed_frog.md";
             case "tankmate" -> {
                 TankmateSpecies s = TankmateSpecies.byId(id);
-                yield (s.marine() ? "saltwater/" : "tankmates/") + s.id() + ".md";
+                // M30: the big animals have their own chapter
+                yield (s.isLarge() ? "big_tanks/" : s.marine() ? "saltwater/" : "tankmates/") + s.id() + ".md";
             }
             case "critter" -> {
                 CritterSpecies s = CritterSpecies.byId(id);
@@ -157,6 +158,7 @@ public final class GuideGen {
             case RAINBOW -> "tankmates/rainbowfish.md"; // M29 part c
             case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
             case SEAHORSE -> "saltwater/seahorses.md";
+            case CATFISH -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
         };
     }
 
@@ -223,7 +225,8 @@ public final class GuideGen {
             if (!b.isEmpty()) out.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>()).put(t("## Obtaining", "## Bezug"), b.toString());
         }
         // overview tables
-        tankmateTable(out, "tankmates.md", s -> !s.marine(), t("## All species", "## Alle Arten"));
+        tankmateTable(out, "tankmates.md", s -> !s.marine() && !s.isLarge(), t("## All species", "## Alle Arten"));
+        tankmateTable(out, "big_tanks.md", TankmateSpecies::isLarge, t("## Big animals", "## Große Tiere")); // M30
         for (String g : List.of("tankmates/tetras.md", "tankmates/rasboras.md", "tankmates/corydoras.md", "tankmates/plecos.md", "tankmates/loaches.md",
                 "tankmates/livebearers.md", "tankmates/cichlids.md", "tankmates/puffers.md", "tankmates/barbs.md", "tankmates/rainbowfish.md", "tankmates/gouramis.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
             tankmateTable(out, g, s -> groupPage(s).equals(g), t("## Species", "## Arten"));
@@ -259,7 +262,18 @@ public final class GuideGen {
         Table tb = new Table();
         tb.row(t("Group", "Gruppe"), lang(s.groupKey()));
         tb.row(t("Scientific name", "Wissenschaftlicher Name"), "*" + s.latin() + "*");
-        tb.row(t("Size in the game", "Größe im Spiel"), size(s.length()));
+        if (s.isLarge()) {
+            // M30: a big animal by its real length, and the tank it needs (default size rule)
+            var l = s.large();
+            var need = org.overengineer.bettacraft.tank.BigTankRules.need(l.lengthM(), org.overengineer.bettacraft.tank.BigTankRules.Factors.DEFAULT);
+            tb.row(t("Size", "Größe"), t("about " + num(l.lengthM()) + " m (" + num(s.length()) + " blocks in the game)",
+                    "etwa " + num(l.lengthM()) + " m (" + num(s.length()) + " Blöcke im Spiel)"));
+            tb.row(t("Tank", "Becken"), t("at least " + need.longSide() + " × " + need.shortSide() + " blocks, " + need.height() + " high, "
+                    + need.water() + " water blocks each", "mindestens " + need.longSide() + " × " + need.shortSide() + " Blöcke, " + need.height()
+                    + " hoch, je " + need.water() + " Wasserblöcke"));
+        } else {
+            tb.row(t("Size in the game", "Größe im Spiel"), size(s.length()));
+        }
         tb.row(t("Temperature", "Temperatur"), range(s.tempMin(), s.tempMax()) + " °C");
         if (s.breeding() != TankmateSpecies.Breeding.NONE) tb.row(t("Breeding temperature", "Zuchttemperatur"), range(s.breedMin(), s.breedMax()) + " °C");
         tb.row(t("Water", "Wasser"), salinity(s.salinity()) + ", " + sensitivity(s.minQuality(), 0.45, 0.55));
@@ -274,7 +288,9 @@ public final class GuideGen {
         List<String> traits = new ArrayList<>();
         if (s.grazer()) traits.add(t("eats algae", "frisst Algen"));
         if (s.eatsSnails()) traits.add(t("eats snails", "frisst Schnecken"));
-        if (s.preyLength() > 0) traits.add(t("eats small fish and shrimp", "frisst kleine Fische und Garnelen")); // M29
+        if (s.isLarge() && s.preyLength() > 0) traits.add(t("eats small fish, bettas and shrimp", "frisst kleine Fische, Bettas und Garnelen")); // M30
+        else if (s.preyLength() > 0) traits.add(t("eats small fish and shrimp", "frisst kleine Fische und Garnelen")); // M29
+        if (s.isLarge()) traits.add(t("swims wide curves", "schwimmt weite Bögen"));
         if (s.puffer()) traits.add(t("needs snails or hard food for its teeth", "braucht Schnecken oder hartes Futter für die Zähne")); // M29 part b
         if (s.finNipper()) traits.add(t("nips long fins", "zupft lange Flossen"));
         if (s.cichlid()) traits.add(t("guards its brood", "bewacht seine Brut"));
@@ -290,6 +306,7 @@ public final class GuideGen {
     }
 
     private String bettaTank(TankmateSpecies s) {
+        if (s.isLarge()) return t("no (eats them)", "nein (frisst sie)"); // M30
         if (s.tempMax() < 28) return t("too cool", "zu kühl");
         if (s.tempMin() > 26) return t("too warm", "zu warm");
         if (s.stock() >= 2.5) return t("too big", "zu groß");
@@ -458,6 +475,13 @@ public final class GuideGen {
                         + chance(s.chance(), s.chanceMax()) + t(" per swing", " pro Schwung") + oneIn(s, t("swings", "Schwüngen")) + count(s) + cond);
                 case FISHING -> lines.add(bold(t("Fishing", "Angeln")) + " " + where(s.where()) + ": " + chance(s.chance(), s.chanceMax())
                         + t(" per catch", " pro Fang") + oneIn(s, t("catches", "Fängen")) + t(", instead of the fish", ", statt des Fischs") + cond);
+                // M30: the big animals
+                case BIG_NET -> lines.add(link(t("Large net", "Großer Kescher"), "big_tanks/large_net.md", page) + " " + where(s.where()) + ": "
+                        + chance(s.chance(), s.chanceMax()) + t(" per swing", " pro Schwung") + oneIn(s, t("swings", "Schwüngen"))
+                        + t(", into an empty transport tub", ", in eine leere Transportwanne") + cond);
+                case STEEL_LEADER -> lines.add(link(t("Steel leader", "Stahlvorfach"), "big_tanks/steel_leader.md", page) + t(" (fishing) ", " (Angeln) ")
+                        + where(s.where()) + ": " + chance(s.chance(), s.chanceMax()) + t(" per catch", " pro Fang") + oneIn(s, t("catches", "Fängen"))
+                        + t(", into an empty transport tub", ", in eine leere Transportwanne") + cond);
                 case BOTTLE -> lines.add(s.chance() >= 1 ? bold(t("Glass bottle", "Glasflasche")) + t(" filled with water ", " mit Wasser gefüllt ") + where(s.where())
                         : bold(t("Glass bottle", "Glasflasche")) + t(" filled with water ", " mit Wasser gefüllt ") + where(s.where()) + ": "
                         + chance(s.chance(), s.chanceMax()) + t(" per bottle, along with the water", " pro Flasche, zusätzlich zum Wasser"));
@@ -537,7 +561,7 @@ public final class GuideGen {
                 t("Breeding", "Zucht"));
         for (TankmateSpecies s : TankmateSpecies.values()) {
             if (!which.test(s)) continue;
-            tb.row("<ItemImage id=\"bettacraft:" + s.bucketId() + "\" /> " + link(lang(s.translationKey()), page(Target.tankmate(s)), page, false),
+            tb.row("<ItemImage id=\"bettacraft:" + (s.isLarge() ? s.spawnEggId() : s.bucketId()) + "\" /> " + link(lang(s.translationKey()), page(Target.tankmate(s)), page, false),
                     range(s.tempMin(), s.tempMax()), s.shoaling() ? String.valueOf(s.shoal()) : "–",
                     page.startsWith("saltwater") ? salinity(s.salinity()) : bettaTank(s),
                     lang("tankmate.bettacraft.breeding." + s.breeding().name().toLowerCase(Locale.ROOT)));
@@ -625,6 +649,8 @@ public final class GuideGen {
                 case SHOVEL -> t("shovel on " + block(s.block()) + " ", "Schaufel auf " + block(s.block()) + " ") + where(s.where());
                 case BLOCK_DROP -> t("breaking " + block(s.block()), block(s.block()) + " abbauen") + (s.where() == Where.SAND ? "" : " " + where(s.where()));
                 case SPAWN -> t("spawns ", "spawnt ") + where(s.where());
+                case BIG_NET -> t("large net ", "großer Kescher ") + where(s.where()); // M30
+                case STEEL_LEADER -> t("fishing with a steel leader ", "Angeln mit Stahlvorfach ") + where(s.where());
                 default -> "";
             };
             String ch = s.kind() == Source.Kind.SPAWN ? t("spawn weight " + (int) s.chance(), "Spawn-Gewicht " + (int) s.chance())

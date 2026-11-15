@@ -19,7 +19,8 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * with their reason.
  */
 class AnimalSourcesTest {
-    private static final Set<Source.Kind> WILD = EnumSet.of(Source.Kind.SPAWN, Source.Kind.NET, Source.Kind.FISHING);
+    private static final Set<Source.Kind> WILD = EnumSet.of(Source.Kind.SPAWN, Source.Kind.NET, Source.Kind.FISHING, Source.Kind.BIG_NET,
+            Source.Kind.STEEL_LEADER); // M30: the large net and the steel leader catch big animals
 
     /** Animals without a wild source on purpose (target key, reason). Keep it short. */
     static final Map<String, String> EXCEPTIONS = Map.of();

@@ -1,0 +1,68 @@
+---
+navigation:
+  title: Großbecken
+  icon: bettacraft:transport_tub
+  position: 75
+---
+
+# Großbecken und große Tiere
+
+Becken können bis zu **32 × 16 × 32 Blöcke** groß werden (Config `bigTankRules.bigMaxSize*`). In ein solches Becken passen
+die **großen Tiere**: Riesenwelse, Haie, Rochen und sogar der Vanilla-**Delfin**. Kleine Fische kommen wie bisher in jedes
+Becken; ein großes Tier nur in ein Becken, das groß genug für es ist.
+
+![Ein 32 × 8 × 16 Meerwasserbecken mit zwei Delfinen](images/big_tank_dolphins.png)
+
+## Die Größenregel
+
+Ein Tier bekannter Länge braucht je Meter seiner Länge:
+
+* **12 Blöcke** entlang der längeren Beckenseite, **6 Blöcke** entlang der kürzeren und **3 Blöcke** Höhe;
+* **100 Wasserblöcke** je Kubikmeter seiner Länge, für jedes große Tier (sie addieren sich).
+
+Ein 1 m langer Pangasius oder Bambushai braucht also mindestens 12 × 6 Blöcke und 3 Blöcke Höhe (100 Wasserblöcke), ein
+2,6 m langer Delfin 32 × 16 Blöcke und 8 Blöcke Höhe (etwa 1760 Wasserblöcke; zwei Delfine passen in 32 × 16 × 8). Ist
+ein Becken zu klein, nennt die Meldung die Größe, die das Tier braucht. Die Faktoren stehen in der Config
+(`bigAnimalRules.*`).
+
+Wale, Bosse und feindliche Mobs kommen nie in ein Becken; Tiere anderer Mods zählen als groß, wenn sie im Tag
+`#bettacraft:big_tank_animals` stehen (ihre Länge ergibt sich aus ihrer Größe).
+
+## Der Innenraum eines Großbeckens
+
+Ein Becken, das länger als **16 Blöcke** ist, bekommt einen kleineren Innenraum-Maßstab: **8** statt 16 (und **4** ab 33
+Blöcken), damit sein Innenraum etwa 256 Blöcke lang bleibt (`bigTankRules.interiorScale8Above`, `interiorScale4Above`).
+Becken bis 16 Blöcke behalten Maßstab 16.
+
+Wächst ein Becken mit eingerichtetem Innenraum **über 16 Blöcke hinaus**, wird sein Innenraum in den gröberen
+**verkleinert**: jeder Würfel aus 2 × 2 × 2 Blöcken wird ein Block (der häufigste), das Layout bleibt in halber Größe
+erhalten. Nichts geht verloren: Blöcke, die nicht bleiben, Geräte mit Blockdaten, Truhen samt Inhalt und die
+Aquarienpflanzen (ganz, mit ihrer Stufe) kommen als Items vor das Becken, bei vielen in Truhen gepackt. Bezahlter Bodengrund
+über den neuen Boden hinaus kommt ebenfalls zurück.
+
+## Delfine
+
+Der Vanilla-Delfin lebt nur in einem **sehr großen Meerwasserbecken** (ab 32 × 16 × 8 Blöcken, Salz ab 25 ‰). Im Becken
+atmet er an der Oberfläche und bleibt von selbst feucht. Füttere ihn mit **rohem Fisch** per Rechtsklick aufs Becken;
+nach zwei Tagen ohne Fisch (`bigAnimalRules.dolphinHungryDays`) verliert er Gesundheit, ebenso in zu süßem Wasser. Fang
+einen mit dem [großen Kescher](big_tanks/large_net.md) in eine [Transportwanne](big_tanks/transport_tub.md).
+
+## Fangen und tragen
+
+Große Tiere passen in keinen Eimer und keinen Fischbeutel. Fang sie mit dem [großen Kescher](big_tanks/large_net.md) oder
+beim Angeln mit einem [Stahlvorfach](big_tanks/steel_leader.md), immer in eine leere
+[Transportwanne](big_tanks/transport_tub.md), die ein Tier trägt und dich bremst, solange du sie trägst. Aus einem Becken
+nimmst du ein großes Tier im Beckenmenü (eine leere Transportwanne im Inventar).
+
+Große Tiere fressen die kleinen Fische, jungen Bettas und Garnelen ihres Beckens; halte sie mit Fischen ihrer Größe. Sie
+schwimmen weite Bögen und wenden langsam.
+
+## In diesem Kapitel
+
+<SubPages icons={true} />
+
+## Große Tiere
+
+| Art | °C | Schwarm | Betta-Becken | Zucht |
+|---|---|---|---|---|
+| <ItemImage id="bettacraft:pangasius_spawn_egg" /> [Pangasius](big_tanks/pangasius.md) | 22–30 | – | nein (frisst sie) | vermehrt sich nicht im Aquarium |

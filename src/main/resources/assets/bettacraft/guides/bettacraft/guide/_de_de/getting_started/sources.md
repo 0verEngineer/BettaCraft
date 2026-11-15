@@ -47,6 +47,10 @@ die [Biom-Tags](../settings.md)).
 
 ## Weitere Funde
 
+* [Pangasius](../big_tanks/pangasius.md): großer Kescher in Flüssen (4 %).
+* [Pangasius](../big_tanks/pangasius.md): Angeln mit Stahlvorfach in Flüssen (5 %).
+* [Pangasius](../big_tanks/pangasius.md): großer Kescher in Dschungelgewässern (4 %).
+* [Pangasius](../big_tanks/pangasius.md): Angeln mit Stahlvorfach in Dschungelgewässern (5 %).
 * [Flasche Sumpfwasser](../food.md): Glasflasche mit Wasser in Sümpfen (immer).
 * [Flasche Salzwasser](../food/fry_food.md): Glasflasche mit Wasser in Ozeanen und an Stränden (immer).
 * [Wasserlinse](../plants/duckweed.md): Glasflasche mit Wasser in Sümpfen (15 %).
@@ -88,6 +92,7 @@ die [Biom-Tags](../settings.md)).
 * [Schwarzer Phantomsalmler](../tankmates/black_phantom_tetra.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Black Molly](../tankmates/black_molly.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Schwertträger](../tankmates/swordtail.md): spawnt in Flüssen (Spawn-Gewicht 4).
+* [Pangasius](../big_tanks/pangasius.md): spawnt in Flüssen (Spawn-Gewicht 3).
 * [Neocaridina-Garnele](../invertebrates/neocaridina.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Posthornschnecke](../invertebrates/ramshorn.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Blasenschnecke](../invertebrates/bladder_snail.md): spawnt in Flüssen (Spawn-Gewicht 1).
@@ -156,6 +161,7 @@ die [Biom-Tags](../settings.md)).
 * [Kaisersalmler](../tankmates/emperor_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
 * [Rotkopfsalmler](../tankmates/rummy_nose_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 6).
 * [Schwarzer Phantomsalmler](../tankmates/black_phantom_tetra.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
+* [Pangasius](../big_tanks/pangasius.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
 * [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
 * [Apfelschnecke](../invertebrates/apple_snail.md): spawnt in Dschungelgewässern (Spawn-Gewicht 5).
 * [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).

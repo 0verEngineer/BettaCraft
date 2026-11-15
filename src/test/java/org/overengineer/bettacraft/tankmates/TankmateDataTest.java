@@ -31,14 +31,22 @@ class TankmateDataTest {
                 assertTrue(s.breedMin() >= s.tempMin() && s.breedMax() <= s.tempMax(), s.id() + " breeds inside its tolerable range");
                 assertTrue(s.broodMin() >= 1 && s.broodMax() >= s.broodMin(), s.id() + " brood");
             }
-            assertTrue(s.hitboxWidth() > 0 && s.hitboxWidth() <= 0.8F && s.hitboxHeight() > 0, s.id() + " fits the tank size rule");
-            assertTrue(s.length() >= 0.1 && s.length() <= 1.0, s.id() + " length");
-            assertTrue(s.stock() > 0 && s.stock() <= 3, s.id() + " stocking");
+            if (s.isLarge()) {
+                // M30: the big animals go by the size rule of big tanks (their real length)
+                assertTrue(s.large().lengthM() >= 0.5 && s.large().lengthM() <= 4.0, s.id() + " real length");
+                assertTrue(s.hitboxWidth() > 0.5F && s.hitboxWidth() <= 1.2F && s.hitboxHeight() > 0, s.id() + " hitbox");
+                assertTrue(s.length() >= 1.0 && s.length() <= 8.0, s.id() + " length");
+                assertTrue(s.stock() > 3 && s.trade() == TankmateSpecies.Trade.NONE, s.id() + " stocking, no trader");
+            } else {
+                assertTrue(s.hitboxWidth() > 0 && s.hitboxWidth() <= 0.8F && s.hitboxHeight() > 0, s.id() + " fits the tank size rule");
+                assertTrue(s.length() >= 0.1 && s.length() <= 1.0, s.id() + " length");
+                assertTrue(s.stock() > 0 && s.stock() <= 3, s.id() + " stocking");
+            }
             assertTrue(s.minQuality() > 0 && s.minQuality() < 1, s.id() + " water");
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(55, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c)
+        assertEquals(55, java.util.Arrays.stream(TankmateSpecies.values()).filter(t -> !t.isLarge()).count()); // M30: the big animals apart // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c)
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));

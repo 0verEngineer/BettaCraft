@@ -46,7 +46,7 @@ class LangCompletenessTest {
             "monitor.bettacraft.state.alarm", "monitor.bettacraft.tile.alarm", "monitor.bettacraft.value.magnesium", "itemGroup.bettacraft", "block.bettacraft.acropora", "item.bettacraft.acropora",
             "block.bettacraft.lily_pipe", "block.bettacraft.lobophyllia", "item.bettacraft.lobophyllia", "block.bettacraft.monte_carlo",
             "item.bettacraft.monte_carlo", "block.bettacraft.vallisneria", "item.bettacraft.vallisneria", "item.bettacraft.mulm",
-            "entity.bettacraft.betta", "entity.bettacraft.guppy", "entity.bettacraft.platy", "entity.bettacraft.black_molly", "gui.bettacraft.cabinet.filter",
+            "entity.bettacraft.betta", "entity.bettacraft.guppy", "entity.bettacraft.platy", "entity.bettacraft.black_molly", "entity.bettacraft.pangasius", "gui.bettacraft.cabinet.filter",
             "gui.bettacraft.chem.ph.neutral", "gui.bettacraft.devices.dimmer", "gui.bettacraft.dosing.additive.magnesium",
             "gui.bettacraft.dumbo", "gui.bettacraft.fish.generation", "gui.bettacraft.fish.name", "gui.bettacraft.fish.rename",
             "gui.bettacraft.reef.nitrate", "gui.bettacraft.tank.title", "jade.bettacraft.betta.type", "jade.bettacraft.tank.nest",
