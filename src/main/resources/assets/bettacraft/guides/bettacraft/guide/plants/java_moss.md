@@ -32,12 +32,12 @@ Java moss (*Taxiphyllum barbieri*) from South-East Asia: fine green sprigs that 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.6–0.72 % per swing (about 1 in 139–167 swings) (config `features.plantNetCatches`).
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.68–0.81 % per swing (about 1 in 123–148 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.6–0.72 % per swing (about 1 in 139–167 swings) (config `features.aquaticPlants.netCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.68–0.81 % per swing (about 1 in 123–148 swings) (config `features.aquaticPlants.netCatches`).
 * **Shears** on a moss block next to water: 50 % per cut.
-* **Shears** on a wild plant in rivers: 100 % per cut (config `features.wildPlants`).
-* **Shears** on a wild plant in mangrove swamps: 100 % per cut (config `features.wildPlants`).
-* **Shears** on a wild plant in lush caves: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in rivers: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **Shears** on a wild plant in mangrove swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **Shears** on a wild plant in lush caves: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

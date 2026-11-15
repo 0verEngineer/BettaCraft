@@ -32,10 +32,10 @@ Flame-Moos (*Taxiphyllum* sp. „Flame“): aufrechte, gedrehte Büschel wie kle
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,2–0,24 % pro Schwung (etwa 1 von 417–500 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,2–0,24 % pro Schwung (etwa 1 von 417–500 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Flüssen: 0,1 % pro Fang (etwa 1 von 1033 Fängen), statt des Fischs.
-* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
-* **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

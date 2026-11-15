@@ -60,9 +60,9 @@ Verstecke helfen. 15 bis 28 °C, robust beim Wasser.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,1–1,4 % pro Schwung (etwa 1 von 73–95 Schwüngen) (Config `features.bigCrayfish`).
-* **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.bigCrayfish`).
-* **Fahrender Händler** (seltene Angebote): 1 für 8 Smaragde (Config `features.bigCrayfish`).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,1–1,4 % pro Schwung (etwa 1 von 73–95 Schwüngen) (Config `features.invertebrates.bigCrayfish`).
+* **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.bigCrayfish`).
+* **Fahrender Händler** (seltene Angebote): 1 für 8 Smaragde (Config `features.invertebrates.bigCrayfish`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

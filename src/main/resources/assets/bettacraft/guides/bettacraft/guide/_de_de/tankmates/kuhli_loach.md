@@ -47,7 +47,7 @@ Bei 25–28 °C streut ein Paar 15–50 Eier in feinblättrige Pflanzen, Javamoo
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,2–1,4 % pro Schwung (etwa 1 von 70–83 Schwüngen), 1–4 auf einmal.
-* **Wild** in Sümpfen, in Gruppen von 3–5 (Spawn-Gewicht 6) (Config `features.wildFish`).
+* **Wild** in Sümpfen, in Gruppen von 3–5 (Spawn-Gewicht 6) (Config `features.tankmates.wildSpawns`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 

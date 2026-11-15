@@ -26,7 +26,7 @@ Wild bettas spawn in water in swamp biomes (the biome tag `#bettacraft:betta_spa
 needs and do not fight.
 
 Most wild bettas are *Betta splendens*; some are its wild relatives [Betta imbellis](bettas/betta_imbellis.md) (about 15 %) and
-[Betta smaragdina](bettas/betta_smaragdina.md) (about 10 %, config `features.wildBettas`). All of them cross with each other into
+[Betta smaragdina](bettas/betta_smaragdina.md) (about 10 %, config `features.bettas.wildSpecies`). All of them cross with each other into
 fertile hybrids.
 
 ## Catching

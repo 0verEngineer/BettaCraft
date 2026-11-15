@@ -33,7 +33,7 @@ Die **Schere** schneidet einen Ableger von einer wilden Pflanze (bei Stängelpfl
 Spieltag lang nach. Von Hand abgebaut gibt sie nichts, wie Seegras; mit **Behutsamkeit** bekommt man die ganze Pflanze,
 halb ausgewachsen. Schwimmpflanzen liegen wie Seerosenblätter auf ruhigem Wasser: mit der Hand oder der Schere aufsammeln
 oder mit dem [Kescher](equipment/tank_net.md) abschöpfen. Starklicht-Pflanzen wachsen nur in flachem Wasser und sind, wie
-die Weichwasser-Pflanzen, selten. Config: `features.wildPlants`, `spawn.wildPlantFrequency`.
+die Weichwasser-Pflanzen, selten. Config: `features.aquaticPlants.wildPlants`, `spawn.wildPlantFrequency`.
 
 ## Alle Pflanzen
 

@@ -58,9 +58,9 @@ Die Besatzgrenzen zählen jedes Jungtier wie die Schlüpflinge der Schildkröten
 | Kornnatter | Wälder und Ebenen (`#bettacraft:snake_lands`) |
 
 Sie spawnen auf Erde, Sand oder Terrakotta bei Tageslicht (auch unter dem Laub des Dschungels, nicht in Höhlen), höchstens
-zwei einer Art in der Nähe; die wilden sind die Wildform (die Morphe sind gezüchtet). Schalter: `features.wildHerps`.
+zwei einer Art in der Nähe; die wilden sind die Wildform (die Morphe sind gezüchtet). Schalter: `features.terrariums.wildHerps`.
 
 ## Einstellungen
 
-Common-Config: `features.herps` (aus: keine kommen ins Becken), `features.herpBreeding`, `features.wildHerps`. Brutgeschwindigkeit,
+Common-Config: `features.terrariums.herps` (aus: keine kommen ins Becken), `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`. Brutgeschwindigkeit,
 Tage zwischen den Gelegen und Winterstarre sind die der Schildkröten (`terrarium.*`).

@@ -35,9 +35,9 @@ Duckweed (*Lemna minor*), found on still water almost everywhere: tiny leaves in
 * **Fishing** in swamps: 2.1 % per catch (about 1 in 47 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 1.8 % per catch (about 1 in 57 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 15 % per bottle, along with the water.
-* **Breaking wild floating plants** in swamps: 100 % per block (config `features.wildPlants`).
-* **Breaking wild floating plants** in rivers: 100 % per block (config `features.wildPlants`).
-* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in swamps: 100 % per block (config `features.floatingPlants.wildPlants`).
+* **Breaking wild floating plants** in rivers: 100 % per block (config `features.floatingPlants.wildPlants`).
+* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.floatingPlants.wildPlants`).
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

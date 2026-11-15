@@ -48,8 +48,8 @@ Bei 25–28 °C findet sich ein Paar: Das Männchen und das nächste freie Weibc
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,36–0,42 % pro Schwung (etwa 1 von 238–281 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,09–0,11 % pro Schwung (etwa 1 von 947–1121 Schwüngen).
-* **Wild** in Flüssen, einzeln (Spawn-Gewicht 2) (Config `features.cichlids`).
-* **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 1) (Config `features.cichlids`).
+* **Wild** in Flüssen, einzeln (Spawn-Gewicht 2) (Config `features.tankmates.cichlids`).
+* **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 1) (Config `features.tankmates.cichlids`).
 * **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 12 in diesem Angebot.
 * **[Zucht](breeding.md)**: Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut.
 

@@ -46,7 +46,7 @@ Create's rotation does not drive it (no hard dependency on Create); it runs with
 A water change with RO water mixes its values into the aquarium (TDS and pH by volume, see
 [water fluids](../aquarium/water_fluids.md)).
 
-`features.reverseOsmosis` (common config) switches the unit off.
+`features.osmosis.enabled` (common config) switches the unit off.
 
 ## Obtaining
 

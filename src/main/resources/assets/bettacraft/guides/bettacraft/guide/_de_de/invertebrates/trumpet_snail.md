@@ -40,8 +40,8 @@ Die Turmdeckelschnecke (*Melanoides tuberculata*) aus Afrika und Südasien: ein 
 * **[Kescher](../equipment/tank_net.md)** in üppigen Höhlen: 20–27 % pro Schwung (etwa 1 von 4–5 Schwüngen), 1–2 auf einmal.
 * **Schaufel** auf Schlamm in Sümpfen: 8 % pro Versuch, in einen leeren Fischbeutel.
 * **Schaufel** auf Schlamm in Mangrovensümpfen: 8 % pro Versuch, in einen leeren Fischbeutel.
-* **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.wildCritters`).
-* **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.wildCritters`).
+* **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.wildSpawns`).
+* **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Vermehrung** im Aquarium (ein Tier genügt).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

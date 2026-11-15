@@ -45,7 +45,7 @@ Die Rotation von Create treibt sie nicht an (keine feste Abhängigkeit von Creat
 Ein Wasserwechsel mit Osmosewasser mischt dessen Werte ins Aquarium (TDS und pH nach Volumen, siehe
 [Wasser als Flüssigkeit](../aquarium/water_fluids.md)).
 
-`features.reverseOsmosis` (Common-Config) schaltet die Anlage ab.
+`features.osmosis.enabled` (Common-Config) schaltet die Anlage ab.
 
 ## Bezug
 

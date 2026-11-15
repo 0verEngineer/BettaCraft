@@ -12,7 +12,7 @@ navigation:
 
 Der **Vanilla-Axolotl** kann in einem Bettacraft-Aquarium leben (mit seinem Eimer einsetzen). Er bleibt das Vanilla-Tier
 mit Modell und Eimer, andere Mods funktionieren also weiter mit ihm, aber im Becken bekommt er **unsere Pflege und Zucht**
-(Einstellung `features.axolotlCare`).
+(Einstellung `features.foreignAnimals.axolotlCare`).
 
 ## Kühles Wasser
 

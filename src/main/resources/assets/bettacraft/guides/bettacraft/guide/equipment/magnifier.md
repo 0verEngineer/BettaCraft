@@ -26,7 +26,7 @@ buckets and bags, which list every animal with its genes. Until then they show "
 prediction of a betta pair needs both parents analysed.
 
 Animals of worlds from before the magnifier count as analysed, nobody loses what they could see. Server config
-`wildlife.genesAlwaysVisible` shows every animal's genes without a magnifier; `features.magnifier` switches the whole
+`wildlife.genesAlwaysVisible` shows every animal's genes without a magnifier; `features.breeding.magnifier` switches the whole
 feature off.
 
 ## Obtaining

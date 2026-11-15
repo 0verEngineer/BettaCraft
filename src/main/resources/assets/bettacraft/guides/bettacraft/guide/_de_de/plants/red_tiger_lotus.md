@@ -33,12 +33,12 @@ Der Rote Tigerlotus (*Nymphaea zenkeri*) aus Westafrika: eine Knolle mit gefleck
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,77–0,92 % pro Schwung (etwa 1 von 108–130 Schwüngen) (Config `features.plantNetCatches`).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,9–1,1 % pro Schwung (etwa 1 von 92–111 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,77–0,92 % pro Schwung (etwa 1 von 108–130 Schwüngen) (Config `features.aquaticPlants.netCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,9–1,1 % pro Schwung (etwa 1 von 92–111 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Dschungelgewässern: 0,17 % pro Fang (etwa 1 von 584 Fängen), statt des Fischs.
 * **Angeln** in Sümpfen: 0,16 % pro Fang (etwa 1 von 634 Fängen), statt des Fischs.
-* **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.wildPlants`).
-* **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Fahrender Händler** (seltene Angebote): 1 für 4 Smaragde.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
 

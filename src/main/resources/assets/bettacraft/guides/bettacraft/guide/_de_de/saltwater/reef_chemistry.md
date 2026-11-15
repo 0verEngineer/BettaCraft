@@ -42,5 +42,5 @@ Meerwasser bringt alles mit; ein Riffbecken mit wachsenden Steinkorallen verbrau
 Der Reiter Wasser des [Beckenmenüs](../aquarium/menu.md) zeigt die Alkalinität neben dem Kalzium; mit der Maus über der
 Zeile stehen Magnesium und Spurenelemente.
 
-`features.reefDosing` (Common-Config) schaltet das ab: Alkalinität und Magnesium bremsen die Korallen nicht mehr, die
+`features.corals.reefDosing` (Common-Config) schaltet das ab: Alkalinität und Magnesium bremsen die Korallen nicht mehr, die
 Werte stehen still und die Pumpe dosiert nicht.

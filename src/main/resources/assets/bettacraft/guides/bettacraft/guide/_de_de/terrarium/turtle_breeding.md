@@ -66,5 +66,5 @@ Gras, Farn, Margerite).
 
 ## Einstellungen
 
-Common-Config `features.turtleBreeding` (aus: keine neuen Gelege; gelegte schlüpfen noch). Server-Config
+Common-Config `features.turtles.breeding` (aus: keine neuen Gelege; gelegte schlüpfen noch). Server-Config
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

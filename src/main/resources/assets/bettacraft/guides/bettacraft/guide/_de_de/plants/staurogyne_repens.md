@@ -32,9 +32,9 @@ item_ids:
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,27–0,32 % pro Schwung (etwa 1 von 308–369 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,27–0,32 % pro Schwung (etwa 1 von 308–369 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Dschungelgewässern: 0,1 % pro Fang (etwa 1 von 973 Fängen), statt des Fischs.
-* **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

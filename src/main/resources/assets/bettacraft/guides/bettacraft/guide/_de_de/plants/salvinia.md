@@ -33,9 +33,9 @@ Schwimmfarn (*Salvinia natans*) aus den stillen Gewässern Europas und Asiens: k
 
 * **Angeln** in Sümpfen: 1,4 % pro Fang (etwa 1 von 70 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 1,3 % pro Fang (etwa 1 von 80 Fängen), statt des Fischs.
-* **Wilde Schwimmpflanzen abbauen** in Dschungelgewässern: 100 % pro Block (Config `features.wildPlants`).
-* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.wildPlants`).
-* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Dschungelgewässern: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
 * **Fahrender Händler** (übliche Angebote): 3 für 1 Smaragd.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 

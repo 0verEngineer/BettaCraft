@@ -44,7 +44,7 @@ Die Größen sind in Blöcken angegeben; bei Maßstab 16 sind es genauso viele P
 Seit 1.13.2 sind **Dino-Schädel** und **Schiffswrack** etwa doppelt so groß und viel detaillierter: der Schädel mit
 Augenhöhlen, Nasenlöchern, einer Zahnreihe und einem leicht geöffneten Unterkiefer; das Wrack mit Planken-Rumpf, Bug mit
 Bugspriet, Achterkastell, einem Loch in der Seite und einem gebrochenen Mast mit Rah, schräg auf dem Grund liegend.
-Schon gesetzte Schädel und Wracks bleiben, wie sie sind. (`features.detailedDecor` aus: neue sind die kleinen alten Formen.)
+Schon gesetzte Schädel und Wracks bleiben, wie sie sind. (`features.decor.detailed` aus: neue sind die kleinen alten Formen.)
 
 ![Der neue Dino-Schädel und das neue Schiffswrack](../images/decor_skull_wreck.png)
 

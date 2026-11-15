@@ -44,7 +44,7 @@ Sizes are in blocks; at scale 16 that is the same number of pixels in the aquari
 Since 1.13.2 the **dinosaur skull** and the **shipwreck** are about twice as big and much more detailed: the skull with
 eye sockets, nostrils, a row of teeth and a lower jaw that is a little open; the wreck with a planked hull, a bow with a
 bowsprit, a stern castle, a hole in its side and a broken mast with its yard, lying tilted on the bottom. Skulls and
-wrecks placed before stay as they are. (`features.detailedDecor` off: new ones are the small old shapes.)
+wrecks placed before stay as they are. (`features.decor.detailed` off: new ones are the small old shapes.)
 
 ![The new dinosaur skull and shipwreck](../images/decor_skull_wreck.png)
 

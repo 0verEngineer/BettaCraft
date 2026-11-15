@@ -42,7 +42,7 @@ father to his sons only), swords, orange or yellow tails with coloured edges. St
 Bar, Japan Blue, Yellow Tail. They cross with guppies, the young are hybrids. Everything about it:
 [Guppy Genetics](guppy_genetics.md).
 
-With `features.livebearerGenetics` off the old fixed varieties show: Wild type, Tiger, Black Bar.
+With `features.tankmates.livebearerGenetics` off the old fixed varieties show: Wild type, Tiger, Black Bar.
 
 ## Breeding
 
@@ -52,8 +52,8 @@ At 24–29 °C a female with a male gets pregnant and gives birth to 4–12 youn
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.53–0.63 % per swing (about 1 in 158–188 swings), 1–4 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.18–0.21 % per swing (about 1 in 473–561 swings), 1–4 at a time.
-* **Wild** in rivers, in groups of 3–3 (spawn weight 3) (config `features.wildFish`).
-* **Wild** in jungle water, in groups of 3–3 (spawn weight 2) (config `features.wildFish`).
+* **Wild** in rivers, in groups of 3–3 (spawn weight 3) (config `features.tankmates.wildSpawns`).
+* **Wild** in jungle water, in groups of 3–3 (spawn weight 2) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (usual offers): 6 for 3+ emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Bears live young.
 

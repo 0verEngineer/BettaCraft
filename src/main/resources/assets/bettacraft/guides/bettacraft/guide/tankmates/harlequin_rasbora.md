@@ -41,7 +41,7 @@ At 26–28 °C a pair scatters 15–40 eggs into broad leaves (crypts, anubias, 
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 2.5–3 % per swing (about 1 in 34–40 swings), 1–4 at a time.
-* **Wild** in swamps, in groups of 3–6 (spawn weight 13) (config `features.wildFish`).
+* **Wild** in swamps, in groups of 3–6 (spawn weight 13) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 

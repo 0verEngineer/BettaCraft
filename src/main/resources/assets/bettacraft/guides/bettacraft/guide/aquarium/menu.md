@@ -24,7 +24,7 @@ navigation:
   while it is on **nobody can break the aquarium**, not even the owner and not in creative mode: the glass, the lid, the
   light and the feeders on it, the clip-on feeder on its glass and the cabinet under it. Trying it shows "Break
   protection is on". Explosions and pistons leave it alone too (server config `tank.protectFromExplosionsAndPistons`,
-  on by default). Config switch of the whole feature: `features.breakProtection`.
+  on by default). Config switch of the whole feature: `features.equipment.breakProtection`.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
 * Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
   and the button to enter the interior. The last line warns about poor water or missing power.

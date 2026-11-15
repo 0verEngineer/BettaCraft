@@ -50,7 +50,7 @@ Like a betta: at 26–29 °C the male builds a foam nest at the surface (floatin
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 1–1.2 % per swing (about 1 in 85–100 swings).
-* **Wild** in swamps, alone (spawn weight 5) (config `features.wildFish`).
+* **Wild** in swamps, alone (spawn weight 5) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Builds a foam nest.
 

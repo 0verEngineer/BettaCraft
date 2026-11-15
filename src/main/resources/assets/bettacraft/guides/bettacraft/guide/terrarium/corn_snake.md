@@ -35,4 +35,4 @@ A pair lays 4-8 eggs into sand or soil; the sex is genetic. Morphs: **amelanisti
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:corn_snake_box" />: **Wild** in forests and plains, alone (spawn weight 3) (config `features.wildHerps`).
+* <ItemLink id="bettacraft:corn_snake_box" />: **Wild** in forests and plains, alone (spawn weight 3) (config `features.terrariums.wildHerps`).

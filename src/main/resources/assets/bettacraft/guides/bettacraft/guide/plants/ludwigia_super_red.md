@@ -35,7 +35,7 @@ item_ids:
 ## Obtaining
 
 * **Fishing** in swamps: 0.13 % per catch (about 1 in 793 catches), instead of the fish.
-* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

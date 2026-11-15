@@ -40,7 +40,7 @@ hat seine eigene Seite, auch mehrere Schränke unter einem großen Becken. Klick
   [Seepferdchen](../saltwater/seahorses.md) dort leiden früher unter der Strömung, also den Auslass auf die andere Seite
   ihrer Haltepunkte legen; Korallen vor ihm bekommen mehr Strömung (gut für Acropora, zu viel für Scheibenanemonen).
 * Abgebaut und neu gesetzt behält der Schrank die Seite (sein Item zeigt sie an). Schränke aus älteren Welten bleiben an
-  der Rückwand. Die Einstellung `features.cabinetOutletSide` schaltet den Knopf ab (dann nutzt jeder Schrank die Rückwand,
+  der Rückwand. Die Einstellung `features.equipment.cabinetOutletSide` schaltet den Knopf ab (dann nutzt jeder Schrank die Rückwand,
   und die Strömung ist wieder gleichmäßig).
 
 ## Steinschränke
@@ -60,7 +60,7 @@ Beton und Schlammziegel gehen nicht.
 * Er wird abgebaut wie sein Stein: mit der **Spitzhacke** (mit der Hand droppt nur sein Inhalt), so hart und so
   explosionsfest wie der Stein.
 * Modpacks können mit dem Item-Tag `#bettacraft:cabinet_stones` Steine hinzufügen und mit `#bettacraft:cabinet_excluded`
-  welche ausschließen. Die Einstellung `features.stoneCabinets` schaltet das Steinrezept ab.
+  welche ausschließen. Die Einstellung `features.equipment.stoneCabinets` schaltet das Steinrezept ab.
 
 ## Bezug
 

@@ -34,8 +34,8 @@ Water lettuce (*Pistia stratiotes*) from the tropics: rosettes of velvety leaves
 
 * **Fishing** in swamps: 0.57 % per catch (about 1 in 175 catches), instead of the fish.
 * **Fishing** in mangrove swamps: 0.6 % per catch (about 1 in 167 catches), instead of the fish.
-* **Breaking wild floating plants** in jungle water: 100 % per block (config `features.wildPlants`).
-* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.wildPlants`).
+* **Breaking wild floating plants** in jungle water: 100 % per block (config `features.floatingPlants.wildPlants`).
+* **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.floatingPlants.wildPlants`).
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

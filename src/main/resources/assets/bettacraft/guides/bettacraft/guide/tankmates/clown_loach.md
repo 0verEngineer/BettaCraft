@@ -47,8 +47,8 @@ Practically never breeds in a tank.
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.3–0.35 % per swing (about 1 in 282–334 swings), 1–4 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.16 % per swing (about 1 in 631–748 swings), 1–4 at a time.
-* **Wild** in swamps, in groups of 3–5 (spawn weight 2) (config `features.wildFish`).
-* **Wild** in jungle water, in groups of 3–5 (spawn weight 2) (config `features.wildFish`).
+* **Wild** in swamps, in groups of 3–5 (spawn weight 2) (config `features.tankmates.wildSpawns`).
+* **Wild** in jungle water, in groups of 3–5 (spawn weight 2) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (rare offers): 6 for 17 emeralds; one of 12 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

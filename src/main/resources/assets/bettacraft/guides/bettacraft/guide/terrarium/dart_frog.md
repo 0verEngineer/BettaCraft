@@ -38,4 +38,4 @@ become froglets at 40 % of their growth. See [amphibians and reptiles](herps.md)
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:dart_frog_box" />: **Wild** on the floor of jungles, in groups of 1–2 (spawn weight 4) (config `features.wildHerps`).
+* <ItemLink id="bettacraft:dart_frog_box" />: **Wild** on the floor of jungles, in groups of 1–2 (spawn weight 4) (config `features.terrariums.wildHerps`).

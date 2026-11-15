@@ -58,5 +58,5 @@ Profil schadet unsere Pflege nie.
 * **Fintastic** tauscht Vanilla-Kabeljau und -Lachs beim Spawnen gegen eigene aus. Ein Kabeljau oder Lachs aus dem Eimer
   bleibt in einem Bettacraft-Aquarium, was er ist.
 * **Ihre eigene Vermehrung** (Paarungsbereitschaft durch Futter, die Zucht ihrer Mod) ist im Bettacraft-Aquarium
-  unterdrückt (`features.suppressForeignBreeding`); außerhalb ändert sich nichts. Tiere mit Profil vermehren sich
+  unterdrückt (`features.foreignAnimals.suppressOwnBreeding`); außerhalb ändert sich nichts. Tiere mit Profil vermehren sich
   stattdessen nach unseren Regeln.

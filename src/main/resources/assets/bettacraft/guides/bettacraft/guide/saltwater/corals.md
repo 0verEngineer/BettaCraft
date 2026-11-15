@@ -25,7 +25,7 @@ grows stage by stage over the days when the conditions are right:
 Every coral of the mod and the bubble tip anemone also grow **wild on the warm ocean reefs**, as big colonies among the
 vanilla corals (new chunks; also the warm oceans of biome mods, `#bettacraft:coral_reef_biomes`). Right-click a colony with **shears**: a frag comes off for your reef tank, and the colony
 grows back after a while. Broken, a colony drops nothing (silk touch: itself, for a reef of your own under water).
-Config switch: `features.wildCorals`.
+Config switch: `features.corals.wildCorals`.
 
 ## Species
 

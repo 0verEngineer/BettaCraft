@@ -39,6 +39,6 @@ a root to bask.
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in swamps, in groups of 1–2 (spawn weight 4) (config `features.wildTurtles`).
-* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 2) (config `features.wildTurtles`).
-* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wandering trader** (rare offers): 1 for 7 emeralds (config `features.turtles`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in swamps, in groups of 1–2 (spawn weight 4) (config `features.turtles.wildSpawns`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 2) (config `features.turtles.wildSpawns`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wandering trader** (rare offers): 1 for 7 emeralds (config `features.turtles.enabled`).

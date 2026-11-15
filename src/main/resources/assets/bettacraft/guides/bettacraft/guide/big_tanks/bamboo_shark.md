@@ -58,12 +58,12 @@ about **ten days** (four months in nature; `tankmates.clutchSpeed`). The other f
 
 ## Obtaining
 
-* **[Large net](large_net.md)** in warm oceans (coral reefs): 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in warm oceans (coral reefs): 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigAnimals`).
-* **[Large net](large_net.md)** in lukewarm oceans: 1.3 % per swing (about 1 in 75 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in lukewarm oceans: 1.7 % per catch (about 1 in 60 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in warm oceans (coral reefs), alone (spawn weight 2) (config `features.bigAnimals`).
-* **Wild** in lukewarm oceans, alone (spawn weight 1) (config `features.bigAnimals`).
+* **[Large net](large_net.md)** in warm oceans (coral reefs): 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in warm oceans (coral reefs): 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Large net](large_net.md)** in lukewarm oceans: 1.3 % per swing (about 1 in 75 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in lukewarm oceans: 1.7 % per catch (about 1 in 60 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **Wild** in warm oceans (coral reefs), alone (spawn weight 2) (config `features.bigTanks.bigAnimals`).
+* **Wild** in lukewarm oceans, alone (spawn weight 1) (config `features.bigTanks.bigAnimals`).
 * **[Breeding](../big_tanks.md)**: Lays egg cases.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

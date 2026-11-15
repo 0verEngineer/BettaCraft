@@ -48,8 +48,8 @@ Rarely, at 22–26 °C: a few eggs on the glass and leaves (6–18).
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.36–0.42 % per swing (about 1 in 238–281 swings), 1–4 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.45–0.53 % per swing (about 1 in 189–224 swings), 1–4 at a time.
-* **Wild** in rivers, in groups of 3–5 (spawn weight 2) (config `features.wildFish`).
-* **Wild** in jungle water, in groups of 3–5 (spawn weight 5) (config `features.wildFish`).
+* **Wild** in rivers, in groups of 3–5 (spawn weight 2) (config `features.tankmates.wildSpawns`).
+* **Wild** in jungle water, in groups of 3–5 (spawn weight 5) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (usual offers): 6 for 3 emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).
 

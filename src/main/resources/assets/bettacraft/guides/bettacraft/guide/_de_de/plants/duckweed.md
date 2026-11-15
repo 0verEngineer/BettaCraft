@@ -35,9 +35,9 @@ Wasserlinse (*Lemna minor*), auf stillem Wasser fast überall zu Hause: winzige 
 * **Angeln** in Sümpfen: 2,1 % pro Fang (etwa 1 von 47 Fängen), statt des Fischs.
 * **Angeln** in Mangrovensümpfen: 1,8 % pro Fang (etwa 1 von 57 Fängen), statt des Fischs.
 * **Glasflasche** mit Wasser gefüllt in Sümpfen: 15 % pro Flasche, zusätzlich zum Wasser.
-* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.wildPlants`).
-* **Wilde Schwimmpflanzen abbauen** in Flüssen: 100 % pro Block (Config `features.wildPlants`).
-* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Flüssen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

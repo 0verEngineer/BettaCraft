@@ -33,4 +33,4 @@ yellow-green wavy lines on its head. It likes it a little cooler than the slider
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:reeves_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 3) (config `features.wildTurtles`).
+* <ItemLink id="bettacraft:reeves_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 3) (config `features.turtles.wildSpawns`).

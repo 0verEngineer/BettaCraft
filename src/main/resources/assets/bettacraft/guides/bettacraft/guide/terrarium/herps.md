@@ -58,9 +58,9 @@ names it). Stocking limits count every young like the turtles' hatchlings.
 | Corn snake | forests and plains (`#bettacraft:snake_lands`) |
 
 They spawn on soil, sand or terracotta in daylight (also under the jungle's leaves, not in caves), at most two of a kind
-nearby; the wild ones are the wild type (the morphs are bred). Switch: `features.wildHerps`.
+nearby; the wild ones are the wild type (the morphs are bred). Switch: `features.terrariums.wildHerps`.
 
 ## Settings
 
-Common config: `features.herps` (off: none go into tanks), `features.herpBreeding`, `features.wildHerps`. The
+Common config: `features.terrariums.herps` (off: none go into tanks), `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`. The
 incubation speed, the days between clutches and the brumation are the turtles' (`terrarium.*`).

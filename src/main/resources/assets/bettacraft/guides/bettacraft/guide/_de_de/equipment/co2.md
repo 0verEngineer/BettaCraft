@@ -80,7 +80,7 @@ solange das Feuer brennt: etwa ein Tag Brennen für eine volle Flasche, mehr Feu
 * CO2-Gas anderer Mods (Fluid-Tag `#bettacraft:co2_gas`, mit `#c:carbon_dioxide`) kommt über Rohre: 1000 mB füllen
   eine Flasche (`foreignCo2Mb`).
 
-`features.co2` (Common-Config) schaltet die CO2-Düngung ab: Die Geräte geben kein CO2, das Wasser bleibt beim Wert der Luft.
+`features.co2.enabled` (Common-Config) schaltet die CO2-Düngung ab: Die Geräte geben kein CO2, das Wasser bleibt beim Wert der Luft.
 
 ## Bezug
 

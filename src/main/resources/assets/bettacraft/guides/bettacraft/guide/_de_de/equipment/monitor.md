@@ -74,7 +74,7 @@ Alarm aus.
 
 **Wegpunkt auf der Karte** (seit 1.25.0, mit JourneyMap): Löst ein Alarm aus, bekommen der Besitzer des Beckens und die
 Spieler im Umkreis von 128 Blöcken einen roten Wegpunkt „Becken-Alarm“ am Becken; er verschwindet, wenn der letzte Alarm
-des Beckens aus ist. Server-Schalter `features.alarmWaypoints`, für dich selbst `map.showAlarmWaypoints` in der
+des Beckens aus ist. Server-Schalter `features.compat.journeymap`, für dich selbst `map.showAlarmWaypoints` in der
 Client-Config. Modpack-Skripte bekommen den Alarm als Event, siehe [Modpacks: Quests und Skripte](../settings/modpacks.md).
 
 ## Bezug

@@ -32,7 +32,7 @@ ein Hybride; der Tooltip zeigt die Anteile. Die Abstammung bestimmt die Größe 
 
 ## Bezug
 
-* **Wild** in Sümpfen: etwa 10 % der wilden Bettas (Config `features.wildBettas`).
+* **Wild** in Sümpfen: etwa 10 % der wilden Bettas (Config `features.bettas.wildSpecies`).
 * **[Zucht](breeding.md)**: Schaumnest, Eier und Jungfische im Aquarium.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

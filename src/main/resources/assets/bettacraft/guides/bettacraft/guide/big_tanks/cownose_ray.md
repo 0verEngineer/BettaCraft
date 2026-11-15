@@ -52,12 +52,12 @@ while the tank has room for one more adult by the [size rule](../big_tanks.md).
 
 ## Obtaining
 
-* **[Large net](large_net.md)** in warm oceans (coral reefs): 0.57 % per swing (about 1 in 175 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in warm oceans (coral reefs): 0.71 % per catch (about 1 in 140 catches), into an empty transport tub (config `features.bigAnimals`).
-* **[Large net](large_net.md)** in lukewarm oceans: 2.7 % per swing (about 1 in 38 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in lukewarm oceans: 3.3 % per catch (about 1 in 30 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in warm oceans (coral reefs), in groups of 2–3 (spawn weight 1) (config `features.bigAnimals`).
-* **Wild** in lukewarm oceans, in groups of 2–3 (spawn weight 2) (config `features.bigAnimals`).
+* **[Large net](large_net.md)** in warm oceans (coral reefs): 0.57 % per swing (about 1 in 175 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in warm oceans (coral reefs): 0.71 % per catch (about 1 in 140 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Large net](large_net.md)** in lukewarm oceans: 2.7 % per swing (about 1 in 38 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in lukewarm oceans: 3.3 % per catch (about 1 in 30 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **Wild** in warm oceans (coral reefs), in groups of 2–3 (spawn weight 1) (config `features.bigTanks.bigAnimals`).
+* **Wild** in lukewarm oceans, in groups of 2–3 (spawn weight 2) (config `features.bigTanks.bigAnimals`).
 * **[Breeding](../big_tanks.md)**: Bears live young.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

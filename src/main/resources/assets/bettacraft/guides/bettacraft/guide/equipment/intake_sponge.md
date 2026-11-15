@@ -21,7 +21,7 @@ corner filter in the interior, on the external filter, or on a cabinet with a fi
 cleans as before. The internal filter shows it at its foot. It comes back when the filter is broken.
 
 The [sponge filter](sponge_filter.md) never sucks anything in. The tab **Devices** of the tank menu counts the motor
-filters without a sponge. A server can switch the rule off (`features.fryIntake`) or change it
+filters without a sponge. A server can switch the rule off (`features.breeding.fryIntake`) or change it
 (`internalFilters.fryIntakePerDay`).
 
 ## Obtaining

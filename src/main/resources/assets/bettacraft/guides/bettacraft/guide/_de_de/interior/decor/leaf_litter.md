@@ -17,7 +17,7 @@ Rechtsklicke mit einem <ItemLink id="bettacraft:almond_leaf" /> oder einem
 Es bleibt dort als Laub liegen. Abbauen gibt es zurück. Ein Rechtsklick von außen auf das Becken legt das Blatt wie
 bisher ins Wasser ([Wasserchemie](../../aquarium/water_chemistry.md)).
 
-Mit `features.decorEffects` (und `features.waterChemistry`) wirkt Laub im Innenraum so:
+Mit `features.decor.effects` (und `features.waterChemistry.enabled`) wirkt Laub im Innenraum so:
 
 * **Es gibt dauerhaft Gerbstoffe ab:** Das Wasser pendelt sich bei etwa der Hälfte dessen ein, was ebenso viele Blätter
   im Wasser geben (ein Erlenzapfen ein Drittel eines Blatts). Das senkt den pH etwas und färbt das Wasser.

@@ -49,8 +49,8 @@ A **mouthbrooder**: at 27–29 °C a female spawns with a male and takes the egg
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.3–0.35 % per swing (about 1 in 282–334 swings), 1–4 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.16 % per swing (about 1 in 631–748 swings), 1–4 at a time.
-* **Wild** in swamps, in groups of 3–4 (spawn weight 2) (config `features.gouramis`).
-* **Wild** in jungle water, in groups of 3–4 (spawn weight 2) (config `features.gouramis`).
+* **Wild** in swamps, in groups of 3–4 (spawn weight 2) (config `features.tankmates.gouramis`).
+* **Wild** in jungle water, in groups of 3–4 (spawn weight 2) (config `features.tankmates.gouramis`).
 * **Wandering trader** (rare offers): 6 for 7 emeralds; one of 12 in this offer.
 * **[Breeding](breeding.md)**: Mouthbrooder.
 

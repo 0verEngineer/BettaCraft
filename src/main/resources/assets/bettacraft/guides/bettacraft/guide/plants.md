@@ -33,7 +33,7 @@ chunks):
 hand it gives nothing, like seagrass; with **silk touch** you get the whole plant, half grown. Floating plants lie on
 calm water like lily pads: pick them up by hand, with shears or scoop them with the [aquarium net](equipment/tank_net.md).
 Strong-light plants grow only in shallow water and, like the soft-water plants, are rare. Config:
-`features.wildPlants`, `spawn.wildPlantFrequency`.
+`features.aquaticPlants.wildPlants`, `spawn.wildPlantFrequency`.
 
 ## All plants
 

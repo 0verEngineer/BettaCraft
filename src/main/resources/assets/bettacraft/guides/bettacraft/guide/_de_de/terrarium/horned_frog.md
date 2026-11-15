@@ -35,5 +35,5 @@ Hornfrosch kommt aus der Wildnis.
 
 ## Bezug
 
-* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in Sümpfen, einzeln (Spawn-Gewicht 1) (Config `features.wildHerps`).
-* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in Savannen und trockenem Buschland, einzeln (Spawn-Gewicht 2) (Config `features.wildHerps`).
+* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in Sümpfen, einzeln (Spawn-Gewicht 1) (Config `features.terrariums.wildHerps`).
+* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in Savannen und trockenem Buschland, einzeln (Spawn-Gewicht 2) (Config `features.terrariums.wildHerps`).

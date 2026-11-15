@@ -33,4 +33,4 @@ gelbgrüne Wellenlinien am Kopf. Sie mag es etwas kühler als die Schmuckschildk
 
 ## Bezug
 
-* <ItemLink id="bettacraft:reeves_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.wildTurtles`).
+* <ItemLink id="bettacraft:reeves_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.turtles.wildSpawns`).

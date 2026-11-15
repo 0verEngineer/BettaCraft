@@ -32,9 +32,9 @@ The green tiger lotus (*Nymphaea lotus*) from tropical Africa: green leaves with
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.12–0.14 % per swing (about 1 in 722–867 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.12–0.14 % per swing (about 1 in 722–867 swings) (config `features.aquaticPlants.netCatches`).
 * **Fishing** in jungle water: 0.14 % per catch (about 1 in 730 catches), instead of the fish.
-* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

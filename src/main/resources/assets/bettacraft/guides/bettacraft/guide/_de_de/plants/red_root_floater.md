@@ -33,8 +33,8 @@ Rote Wurzelflosse (*Phyllanthus fluitans*) aus Südamerika: runde Blätter und r
 ## Bezug
 
 * **Angeln** in Mangrovensümpfen: 0,75 % pro Fang (etwa 1 von 133 Fängen), statt des Fischs.
-* **Wilde Schwimmpflanzen abbauen** in Dschungelgewässern: 100 % pro Block (Config `features.wildPlants`).
-* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Dschungelgewässern: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
 * **Fahrender Händler** (seltene Angebote): 2 für 3 Smaragde.
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 

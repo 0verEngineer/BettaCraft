@@ -44,9 +44,9 @@ its tank best with the [Tylomelania snails](tylomelania.md) of the same lakes.
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1–2.2 % per swing (about 1 in 45–96 swings), 1–3 at a time (config `features.sulawesi`).
-* **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.sulawesi`).
-* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 2 in this offer (config `features.sulawesi`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1–2.2 % per swing (about 1 in 45–96 swings), 1–3 at a time (config `features.invertebrates.sulawesi`).
+* **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.sulawesi`).
+* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 2 in this offer (config `features.invertebrates.sulawesi`).
 * **Breeding** in the aquarium (male and female).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

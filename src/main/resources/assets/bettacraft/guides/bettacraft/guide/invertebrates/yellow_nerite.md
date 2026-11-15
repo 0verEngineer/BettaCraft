@@ -29,12 +29,12 @@ The yellow racer nerite, the yellow form of *Vittina waigiensis*: yellow or gold
 ## Care
 
 * Every one has its own shade; it cannot be bred.
-* Only with `features.snailColors`; never multiplies in fresh water.
+* Only with `features.invertebrates.snailColors`; never multiplies in fresh water.
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.3–1.5 % per swing (about 1 in 67–79 swings) (config `features.snailColors`).
-* **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.snailColors`).
-* **Wandering trader** (rare offers): 2 for 4 emeralds; one of 2 in this offer (config `features.snailColors`).
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.3–1.5 % per swing (about 1 in 67–79 swings) (config `features.invertebrates.snailColors`).
+* **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.snailColors`).
+* **Wandering trader** (rare offers): 2 for 4 emeralds; one of 2 in this offer (config `features.invertebrates.snailColors`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

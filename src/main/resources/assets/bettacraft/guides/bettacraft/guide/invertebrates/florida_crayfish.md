@@ -57,9 +57,9 @@ Male and female; the female carries her eggs under the tail for 4 days, 3 to 6 y
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.1–1.4 % per swing (about 1 in 73–95 swings) (config `features.bigCrayfish`).
-* **Wild** in swamps, in groups of 2–5 (spawn weight 1) (config `features.bigCrayfish`).
-* **Wandering trader** (rare offers): 1 for 8 emeralds (config `features.bigCrayfish`).
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.1–1.4 % per swing (about 1 in 73–95 swings) (config `features.invertebrates.bigCrayfish`).
+* **Wild** in swamps, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.bigCrayfish`).
+* **Wandering trader** (rare offers): 1 for 8 emeralds (config `features.invertebrates.bigCrayfish`).
 * **Breeding** in the aquarium (male and female).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

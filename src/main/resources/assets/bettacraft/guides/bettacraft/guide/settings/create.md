@@ -9,7 +9,7 @@ navigation:
 # Moving tanks with Create
 
 With **Create** an aquarium can travel: on a mechanical piston, a bearing, a rope pulley, a gantry, a minecart or a
-train, and with **Create Aeronautics** on an airship (the switch `features.createContraptions`, on by default).
+train, and with **Create Aeronautics** on an airship (the switch `features.compat.create.contraptions`, on by default).
 
 ## The trip
 
@@ -44,7 +44,7 @@ it, and so is its interior. Trains that go into unloaded chunks keep their tanks
 
 A turning Create shaft, cogwheel, gearbox or motor whose shaft points at a **water pump**, **filter pump head**,
 **water change controller**, **level sensor**, **reverse osmosis unit** or **food maker** drives it instead of FE
-(switch `features.createRotation`):
+(switch `features.compat.create.rotation`):
 
 * **64 RPM** (either direction) is full work, slower is proportional: 32 RPM is half the flow, half the boost.
 * The pumps and controllers need the rotation only where a server makes them need FE (`pipes.pumpsRequireEnergy`).
@@ -59,7 +59,7 @@ A turning Create shaft, cogwheel, gearbox or motor whose shaft points at a **wat
 A Create **Display Link** placed on an aquarium block reads **Tank values**: one line per value (temperature, water
 quality, pH, TDS, oxygen, CO2, nitrate, fill, animals, food, salinity and so on), as many as the target has rows, so a
 sign shows the first four and a display board as many as it is high. On a **monitor** it reads **Monitored tanks**:
-one line per tank of the monitor with its name, temperature and water quality (switch `features.createDisplayLinks`).
+one line per tank of the monitor with its name, temperature and water quality (switch `features.compat.create.displayLinks`).
 
 ## Create pipes
 

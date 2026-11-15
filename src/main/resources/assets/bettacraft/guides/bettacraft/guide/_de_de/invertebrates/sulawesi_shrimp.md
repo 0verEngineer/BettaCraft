@@ -45,9 +45,9 @@ Wasser**. Am besten teilt sie ihr Becken mit den [Tylomelania-Schnecken](tylomel
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1–2,2 % pro Schwung (etwa 1 von 45–96 Schwüngen), 1–3 auf einmal (Config `features.sulawesi`).
-* **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.sulawesi`).
-* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 2 in diesem Angebot (Config `features.sulawesi`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1–2,2 % pro Schwung (etwa 1 von 45–96 Schwüngen), 1–3 auf einmal (Config `features.invertebrates.sulawesi`).
+* **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.sulawesi`).
+* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 2 in diesem Angebot (Config `features.invertebrates.sulawesi`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

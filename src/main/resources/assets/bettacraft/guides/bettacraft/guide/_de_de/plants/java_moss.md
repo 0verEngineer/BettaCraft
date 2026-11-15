@@ -32,12 +32,12 @@ Javamoos (*Taxiphyllum barbieri*) aus Südostasien: feine grüne Triebe, die Ste
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,6–0,72 % pro Schwung (etwa 1 von 139–167 Schwüngen) (Config `features.plantNetCatches`).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,68–0,81 % pro Schwung (etwa 1 von 123–148 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,6–0,72 % pro Schwung (etwa 1 von 139–167 Schwüngen) (Config `features.aquaticPlants.netCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,68–0,81 % pro Schwung (etwa 1 von 123–148 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Schere** an einem Moosblock neben Wasser: 50 % pro Schnitt.
-* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
-* **Schere** an einem wilden Pflanzenbestand in Mangrovensümpfen: 100 % pro Schnitt (Config `features.wildPlants`).
-* **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Mangrovensümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

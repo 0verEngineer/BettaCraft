@@ -33,4 +33,4 @@ Gelege auf und vererben sich; wilde Geckos sind immer die normalen gelben.
 
 ## Bezug
 
-* <ItemLink id="bettacraft:leopard_gecko_box" />: **Wild** in Wüsten und Tafelbergen, einzeln (Spawn-Gewicht 4) (Config `features.wildHerps`).
+* <ItemLink id="bettacraft:leopard_gecko_box" />: **Wild** in Wüsten und Tafelbergen, einzeln (Spawn-Gewicht 4) (Config `features.terrariums.wildHerps`).

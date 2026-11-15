@@ -214,7 +214,7 @@ the world loads, a changed tag needs a restart. Entries of other mods are option
 
 The wild fish, frogs and small animals belong to the vanilla spawn group *water ambient*, like cod, salmon and tropical
 fish. Its cap is 20 per player, and with many fish mods (Fish of Thieves, Naturalist, ...) the fish of the oceans nearby
-often fill it. So Bettacraft also has its own frugal spawn pass (common config `features.wildSpawnPass`, on): every
+often fill it. So Bettacraft also has its own frugal spawn pass (common config `features.wildSpawnPass.enabled`, on): every
 `wildlife.spawnPassInterval` ticks (200 = 10 seconds) each player gets one try in fitting water 24 to 48 blocks away,
 while fewer than `wildlife.spawnPassPerPlayer` (10) wild animals of the mod live within 48 blocks. The usual rules stay:
 a few per 32 blocks (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), never in an aquarium, and far from the player
@@ -225,7 +225,7 @@ All animals of the mod are in the entity tag `#bettacraft:all_animals`, the ones
 
 ### Wild plants in the world
 
-Every aquarium and floating plant grows wild in new chunks (common config `features.wildPlants`, on): at most one try per
+Every aquarium and floating plant grows wild in new chunks (common config `features.aquaticPlants.wildPlants`, on): at most one try per
 chunk (three in the lush caves), a group of one species on the bottom or a patch of floating plants on calm water. The
 chance per try is 50 % in jungle water, 40 % in swamps and mangroves, 35 % in rivers and the lush caves, 15 % in cold
 waters, times `spawn.wildPlantFrequency` (1.0; 0 = none, up to 10). The biome modifier `bettacraft:wild_plants` adds the

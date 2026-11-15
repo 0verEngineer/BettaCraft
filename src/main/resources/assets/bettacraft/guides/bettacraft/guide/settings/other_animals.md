@@ -54,4 +54,4 @@ genetics), see [Axolotl](../invertebrates/axolotl.md).
 * **Fintastic** swaps vanilla cod and salmon for its own when they spawn. A cod or salmon from a bucket stays what it is
   in a Bettacraft aquarium.
 * **Their own breeding** (love from food, the breeding of their mod) is suppressed in a Bettacraft aquarium
-  (`features.suppressForeignBreeding`); outside it nothing changes. Animals with a profile breed by our rules instead.
+  (`features.foreignAnimals.suppressOwnBreeding`); outside it nothing changes. Animals with a profile breed by our rules instead.

@@ -32,11 +32,11 @@ Die Amazonas-Schwertpflanze (*Echinodorus grisebachii* „Bleherae“) aus Süda
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,4–0,48 % pro Schwung (etwa 1 von 208–250 Schwüngen) (Config `features.plantNetCatches`).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 2–2,4 % pro Schwung (etwa 1 von 41–49 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,4–0,48 % pro Schwung (etwa 1 von 208–250 Schwüngen) (Config `features.aquaticPlants.netCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 2–2,4 % pro Schwung (etwa 1 von 41–49 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Dschungelgewässern: 0,34 % pro Fang (etwa 1 von 292 Fängen), statt des Fischs.
-* **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.wildPlants`).
-* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Fahrender Händler** (übliche Angebote): 1 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
 

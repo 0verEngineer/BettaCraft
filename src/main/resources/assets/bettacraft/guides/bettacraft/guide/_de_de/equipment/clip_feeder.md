@@ -22,7 +22,7 @@ stattdessen seitlich an der Scheibe**, oben am Rand, wie echte Futterautomaten, 
   nachmittags, abends). **Schleichen + Rechtsklick** mit leerer Hand nimmt das Futter heraus.
 * Kein Trichter, kein Menü, und er deckt das Wasser **nicht** gegen Verdunstung ab.
 * Steht zusätzlich ein großer Futterautomat auf dem Aquarium, füttert der; der Klemm-Futterautomat ist für Becken ohne.
-* Er fällt ab, wenn die Scheibe hinter ihm abgebaut wird. Config-Schalter: `features.clipOnFeeder`.
+* Er fällt ab, wenn die Scheibe hinter ihm abgebaut wird. Config-Schalter: `features.equipment.clipOnFeeder`.
 
 ## Bezug
 

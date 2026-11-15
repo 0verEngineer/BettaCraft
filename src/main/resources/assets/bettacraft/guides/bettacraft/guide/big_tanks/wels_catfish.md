@@ -47,8 +47,8 @@ the game it is 1.5 metres long; in the wild it can reach 2.7 m.
 
 ## Obtaining
 
-* **[Large net](large_net.md)** in rivers: 1 % per swing (about 1 in 100 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in rivers: 1.3 % per catch (about 1 in 80 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in rivers, alone (spawn weight 1) (config `features.bigAnimals`).
+* **[Large net](large_net.md)** in rivers: 1 % per swing (about 1 in 100 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in rivers: 1.3 % per catch (about 1 in 80 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **Wild** in rivers, alone (spawn weight 1) (config `features.bigTanks.bigAnimals`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

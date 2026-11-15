@@ -22,7 +22,7 @@ instead, at the top edge, like the real feeders clipped to an aquarium rim.
   evening). **Sneak + right-click** with an empty hand takes the food out.
 * No hopper, no menu, and it does **not** cover the water against evaporation.
 * If there is a big feeder on the aquarium too, that one feeds; the clip-on feeder is for the tanks without one.
-* It falls off when the glass behind it is broken. Config switch: `features.clipOnFeeder`.
+* It falls off when the glass behind it is broken. Config switch: `features.equipment.clipOnFeeder`.
 
 ## Obtaining
 

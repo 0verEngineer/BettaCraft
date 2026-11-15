@@ -47,8 +47,8 @@ kann er 3 m erreichen.
 
 ## Bezug
 
-* **[Großer Kescher](large_net.md)** in Dschungelgewässern: 0,57 % pro Schwung (etwa 1 von 175 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in Dschungelgewässern: 0,71 % pro Fang (etwa 1 von 140 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 1) (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in Dschungelgewässern: 0,57 % pro Schwung (etwa 1 von 175 Schwüngen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in Dschungelgewässern: 0,71 % pro Fang (etwa 1 von 140 Fängen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 1) (Config `features.bigTanks.bigAnimals`).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

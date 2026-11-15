@@ -12,7 +12,7 @@ navigation:
 
 The **vanilla axolotl** can live in a Bettacraft aquarium (put it in with its bucket). It stays the vanilla animal with
 its model and its bucket, so other mods keep working with it, but in a tank it gets **our care and breeding**
-(config `features.axolotlCare`).
+(config `features.foreignAnimals.axolotlCare`).
 
 ## Cool water
 

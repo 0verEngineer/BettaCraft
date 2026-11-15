@@ -22,7 +22,7 @@ Ansaugstutzen ab; der Filter reinigt wie vorher. Der Innenfilter zeigt ihn an se
 kommt er zurück.
 
 Der [Schwammfilter](sponge_filter.md) saugt nie etwas ein. Der Reiter **Technik** des Aquarium-Menüs zählt die
-Motorfilter ohne Schwamm. Ein Server kann die Regel abschalten (`features.fryIntake`) oder ändern
+Motorfilter ohne Schwamm. Ein Server kann die Regel abschalten (`features.breeding.fryIntake`) oder ändern
 (`internalFilters.fryIntakePerDay`).
 
 ## Bezug

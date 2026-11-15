@@ -33,9 +33,9 @@ Dwarf baby tears (*Hemianthus callitrichoides* "Cuba") from Cuba: the smallest l
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.08–0.1 % per swing (about 1 in 1042–1250 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.08–0.1 % per swing (about 1 in 1042–1250 swings) (config `features.aquaticPlants.netCatches`).
 * **Fishing** in rivers: 0.03 % per catch (about 1 in 3100 catches), instead of the fish.
-* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

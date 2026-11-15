@@ -42,9 +42,9 @@ water** and graze the algae of the glass and the stones.
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1.3–2.7 % per swing (about 1 in 36–77 swings) (config `features.sulawesi`).
-* **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.sulawesi`).
-* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 2 in this offer (config `features.sulawesi`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1.3–2.7 % per swing (about 1 in 36–77 swings) (config `features.invertebrates.sulawesi`).
+* **Wild** in jungle water, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.sulawesi`).
+* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 2 in this offer (config `features.invertebrates.sulawesi`).
 * **Breeding** in the aquarium (male and female).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

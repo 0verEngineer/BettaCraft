@@ -9,7 +9,7 @@ navigation:
 # Becken mit Create bewegen
 
 Mit **Create** kann ein Aquarium reisen: auf einem mechanischen Kolben, einem Lager, einem Seilzug, einem Portalkran,
-einer Lore oder einem Zug, und mit **Create Aeronautics** auf einem Luftschiff (Schalter `features.createContraptions`,
+einer Lore oder einem Zug, und mit **Create Aeronautics** auf einem Luftschiff (Schalter `features.compat.create.contraptions`,
 standardmäßig an).
 
 ## Die Fahrt
@@ -48,7 +48,7 @@ ihr verschwunden, und mit ihm sein Innenraum. Züge, die in ungeladene Chunks fa
 
 Eine drehende Create-Welle, ein Zahnrad, Getriebe oder Motor, dessen Welle auf eine **Wasserpumpe**, einen
 **Filterpumpenkopf**, eine **Wasserwechsel-Steuerung**, einen **Füllstandssensor**, eine **Osmoseanlage** oder eine
-**Futtermaschine** zeigt, treibt sie statt FE an (Schalter `features.createRotation`):
+**Futtermaschine** zeigt, treibt sie statt FE an (Schalter `features.compat.create.rotation`):
 
 * **64 U/min** (in jede Richtung) ist volle Leistung, langsamer anteilig: 32 U/min sind der halbe Durchfluss, der halbe
   Schub.
@@ -65,7 +65,7 @@ Ein **Display Link** von Create an einem Aquariumblock liest **Beckenwerte**: ei
 Wasserqualität, pH, TDS, Sauerstoff, CO2, Nitrat, Füllstand, Tiere, Futter, Salzgehalt usw.), so viele, wie das Ziel
 Zeilen hat; ein Schild zeigt also die ersten vier, eine Anzeigetafel so viele, wie sie hoch ist. An einem **Monitor**
 liest er **Überwachte Becken**: eine Zeile pro Becken des Monitors mit Name, Temperatur und Wasserqualität (Schalter
-`features.createDisplayLinks`).
+`features.compat.create.displayLinks`).
 
 ## Create-Rohre
 

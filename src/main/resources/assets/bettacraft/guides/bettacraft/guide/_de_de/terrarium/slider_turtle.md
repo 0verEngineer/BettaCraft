@@ -48,5 +48,5 @@ Becken für das ausgewachsene Tier, nicht für den Schlüpfling.
 
 ## Bezug
 
-* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildTurtles`).
-* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.wildTurtles`).
+* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.turtles.wildSpawns`).
+* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 3) (Config `features.turtles.wildSpawns`).

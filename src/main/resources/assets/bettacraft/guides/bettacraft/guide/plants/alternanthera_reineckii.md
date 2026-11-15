@@ -32,11 +32,11 @@ item_ids:
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.4–0.48 % per swing (about 1 in 208–250 swings) (config `features.plantNetCatches`).
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.77–0.92 % per swing (about 1 in 108–130 swings) (config `features.plantNetCatches`).
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.9–1.1 % per swing (about 1 in 92–111 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.4–0.48 % per swing (about 1 in 208–250 swings) (config `features.aquaticPlants.netCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.77–0.92 % per swing (about 1 in 108–130 swings) (config `features.aquaticPlants.netCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.9–1.1 % per swing (about 1 in 92–111 swings) (config `features.aquaticPlants.netCatches`).
 * **Fishing** in swamps: 0.19 % per catch (about 1 in 528 catches), instead of the fish.
-* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Wandering trader** (usual offers): 1 for 2 emeralds.
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 

@@ -38,4 +38,4 @@ Jungfischfutter und werden bei 40 % ihres Wachstums zu Fröschchen. Siehe [Amphi
 
 ## Bezug
 
-* <ItemLink id="bettacraft:dart_frog_box" />: **Wild** auf dem Boden von Dschungeln, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildHerps`).
+* <ItemLink id="bettacraft:dart_frog_box" />: **Wild** auf dem Boden von Dschungeln, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.terrariums.wildHerps`).

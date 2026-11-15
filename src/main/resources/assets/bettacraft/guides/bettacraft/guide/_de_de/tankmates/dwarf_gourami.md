@@ -50,7 +50,7 @@ Wie ein Betta: Bei 26–29 °C baut das Männchen ein Schaumnest an der Oberflä
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1–1,2 % pro Schwung (etwa 1 von 85–100 Schwüngen).
-* **Wild** in Sümpfen, einzeln (Spawn-Gewicht 5) (Config `features.wildFish`).
+* **Wild** in Sümpfen, einzeln (Spawn-Gewicht 5) (Config `features.tankmates.wildSpawns`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: baut ein Schaumnest.
 

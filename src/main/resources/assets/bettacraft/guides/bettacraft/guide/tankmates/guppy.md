@@ -43,7 +43,7 @@ grey with small tails but carry the genes. Fish whose look matches a known strai
 Moscow, Full Gold, Tuxedo Koi, Japan Blue, Blue Grass and many more. Guppies cross with endlers (hybrids). Everything
 about it: [Guppy Genetics](guppy_genetics.md).
 
-With `features.livebearerGenetics` off the old fixed varieties show: Wild type, Red, Blue Grass, Green Cobra, Tuxedo.
+With `features.tankmates.livebearerGenetics` off the old fixed varieties show: Wild type, Red, Blue Grass, Green Cobra, Tuxedo.
 
 ## Breeding
 
@@ -56,7 +56,7 @@ At 23–28 °C a female with a male gets pregnant and gives birth to 5–16 youn
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 1.1–1.3 % per swing (about 1 in 79–94 swings), 1–4 at a time.
-* **Wild** in rivers, in groups of 3–3 (spawn weight 6) (config `features.wildFish`).
+* **Wild** in rivers, in groups of 3–3 (spawn weight 6) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (usual offers): 6 for 4+ emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Bears live young.
 

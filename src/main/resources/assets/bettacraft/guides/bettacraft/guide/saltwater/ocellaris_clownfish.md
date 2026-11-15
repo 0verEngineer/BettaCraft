@@ -41,7 +41,7 @@ The false percula clownfish (*Amphiprion ocellaris*) from the coral reefs of the
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 2.5–3 % per swing (about 1 in 34–40 swings).
-* **Wild** in warm oceans (coral reefs), alone (spawn weight 6) (config `features.wildFish`).
+* **Wild** in warm oceans (coral reefs), alone (spawn weight 6) (config `features.saltwater.reefFish`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **[Breeding](reef_animals.md)**: Spawns at its anemone, the male guards.
 

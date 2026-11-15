@@ -35,5 +35,5 @@ frog comes from the wild.
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in swamps, alone (spawn weight 1) (config `features.wildHerps`).
-* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in savannas and dry shrublands, alone (spawn weight 2) (config `features.wildHerps`).
+* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in swamps, alone (spawn weight 1) (config `features.terrariums.wildHerps`).
+* <ItemLink id="bettacraft:horned_frog_box" />: **Wild** in savannas and dry shrublands, alone (spawn weight 2) (config `features.terrariums.wildHerps`).

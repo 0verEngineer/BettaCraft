@@ -47,5 +47,5 @@ grown one"). Plan the tank for the grown animal, not for the hatchling.
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in swamps, in groups of 1–2 (spawn weight 4) (config `features.wildTurtles`).
-* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 3) (config `features.wildTurtles`).
+* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in swamps, in groups of 1–2 (spawn weight 4) (config `features.turtles.wildSpawns`).
+* <ItemLink id="bettacraft:slider_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 3) (config `features.turtles.wildSpawns`).

@@ -16,7 +16,7 @@ item_ids:
   kleine Fische.
 * **Tonröhren:** zwei Röhren aus [Laichhöhlen](../../tankmates/breeding.md)-Blöcken nebeneinander, vorne offen:
   **zwei Laichhöhlen** für Antennenwelse (jede für sich: Sie berühren sich nicht).
-* **Garnelen-Röhren:** ein Stapel dünner Terrakotta-Röhren. Mit `features.decorEffects` **verstecken** Ton und
+* **Garnelen-Röhren:** ein Stapel dünner Terrakotta-Röhren. Mit `features.decor.effects` **verstecken** Ton und
   Terrakotta im Innenraum (diese Röhren, Laichhöhlen, Drachenstein, Lavagestein) **junge Garnelen** vor jagenden Bettas:
   bis zu 15 % der Jagden gehen schief, voll ab 40 Blöcken.
 

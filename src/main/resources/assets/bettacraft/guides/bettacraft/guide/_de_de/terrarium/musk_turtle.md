@@ -39,6 +39,6 @@ oder auf eine Wurzel, um sich zu sonnen.
 
 ## Bezug
 
-* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildTurtles`).
-* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 2) (Config `features.wildTurtles`).
-* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Fahrender Händler** (seltene Angebote): 1 für 7 Smaragde (Config `features.turtles`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.turtles.wildSpawns`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 2) (Config `features.turtles.wildSpawns`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Fahrender Händler** (seltene Angebote): 1 für 7 Smaragde (Config `features.turtles.enabled`).

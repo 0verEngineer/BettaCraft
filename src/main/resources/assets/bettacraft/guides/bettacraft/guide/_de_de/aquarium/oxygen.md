@@ -35,4 +35,4 @@ Luft an der Oberfläche und leiden erst unter 1 mg/L.
 Starke Belüftung **treibt auch CO2 aus** (steht im Menü); das wird wichtig, sobald CO2 für die Pflanzen dosiert werden
 kann.
 
-Ein Server kann den Sauerstoff abschalten (`features.oxygen`) und jeden Wert ändern (`aeration.*`).
+Ein Server kann den Sauerstoff abschalten (`features.waterChemistry.oxygen`) und jeden Wert ändern (`aeration.*`).

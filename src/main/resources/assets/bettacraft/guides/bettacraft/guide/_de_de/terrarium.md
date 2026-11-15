@@ -108,7 +108,7 @@ und das Menü sagt das. Ein Paludarium behält sie alle für sein Wasser.
 
 Server-Config `terrarium.*`: die Landanteile der Arten, die Stärke der Geräte, die Zeitkonstanten, das Wasser der
 Sprühanlage, die Tage bis zum Schaden; `power.*`: Heizmatten nutzen den Energie-Schalter der Heizer (`heatMatFePerTick`),
-Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrarium` (aus: jedes Becken ist ein
-Aquarium), `features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`, `features.herps`,
-`features.herpBreeding`, `features.wildHerps`, `features.mobsInGlass`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
+Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrariums.enabled` (aus: jedes Becken ist ein
+Aquarium), `features.terrariums.devices`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
+`features.terrariums.herpBreeding`, `features.terrariums.wildHerps`, `features.mobsInGlass.enabled`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

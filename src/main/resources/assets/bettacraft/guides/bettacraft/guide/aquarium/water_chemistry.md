@@ -73,7 +73,7 @@ The species pages list the range of every animal. Salt water is buffered by its 
 and the substrate hardly moves it; when the stony corals use the alkalinity up, it sinks (see
 [reef chemistry](../saltwater/reef_chemistry.md)).
 
-`features.waterChemistry` (common config) switches it all off: the values stand still and no animal minds them.
+`features.waterChemistry.enabled` (common config) switches it all off: the values stand still and no animal minds them.
 
 ## Obtaining
 

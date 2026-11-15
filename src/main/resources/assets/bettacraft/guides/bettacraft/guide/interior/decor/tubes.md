@@ -16,7 +16,7 @@ item_ids:
   for small fish.
 * **Clay tubes:** two tubes of [spawning cave](../../tankmates/breeding.md) blocks side by side, open to the front:
   **two spawning caves** for plecos (each its own cave: they do not touch).
-* **Shrimp tubes:** a stack of thin terracotta tubes. With `features.decorEffects`, clay and terracotta in the interior
+* **Shrimp tubes:** a stack of thin terracotta tubes. With `features.decor.effects`, clay and terracotta in the interior
   (these tubes, spawning caves, dragon stone, lava rock) **hide young shrimp** from hunting bettas: up to 15 % of the
   hunts fail, fully from 40 blocks.
 

@@ -42,7 +42,7 @@ In the tab **Devices** of the tank menu:
 * **Daylight timer:** on at the on time, off at the off time (default 08:00 to 20:00), each over an hour like a sunrise
   and a sunset. +/- moves a time by 30 minutes (sneak: an hour).
 
-A server can switch both off (`features.lightTimer`) and the stronger tiers (`features.ledTiers`).
+A server can switch both off (`features.equipment.lightTimer`) and the stronger tiers (`features.equipment.ledTiers`).
 
 ## Colours
 

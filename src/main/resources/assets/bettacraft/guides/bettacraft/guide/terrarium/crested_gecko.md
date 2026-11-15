@@ -34,4 +34,4 @@ sides and legs) appear now and then; wild geckos are the brown tiger form.
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:crested_gecko_box" />: **Wild** on the floor of jungles, alone (spawn weight 3) (config `features.wildHerps`).
+* <ItemLink id="bettacraft:crested_gecko_box" />: **Wild** on the floor of jungles, alone (spawn weight 3) (config `features.terrariums.wildHerps`).

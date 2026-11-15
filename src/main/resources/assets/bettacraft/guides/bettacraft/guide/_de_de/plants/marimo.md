@@ -25,18 +25,18 @@ Die Marimo-Kugel (*Aegagropila linnaei*) aus den kühlen Seen Japans und Nordeur
 | Breitet sich aus | nein |
 | Ableger pro Schnitt | 2 |
 | Temperatur | auch kühles Wasser (ab 5 °C) |
-| Rollt | mit der Strömung von Filtern und Auslässen (Einstellung `features.marimoRolling`) |
+| Rollt | mit der Strömung von Filtern und Auslässen (Einstellung `features.aquaticPlants.marimoRolling`) |
 
 ## Haltung
 
 * Wächst **äußerst langsam** und lebt praktisch ewig; wenig Licht, kühles Wasser macht ihr nichts.
-* In der Strömung eines [Filters](../equipment/filters.md) oder Auslasses **rollt** sie langsam über den Boden (Einstellung `features.marimoRolling`); in stillem Wasser bleibt sie liegen.
+* In der Strömung eines [Filters](../equipment/filters.md) oder Auslasses **rollt** sie langsam über den Boden (Einstellung `features.aquaticPlants.marimoRolling`); in stillem Wasser bleibt sie liegen.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,08–0,1 % pro Schwung (etwa 1 von 1042–1250 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,08–0,1 % pro Schwung (etwa 1 von 1042–1250 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Flüssen: 0,03 % pro Fang (etwa 1 von 3100 Fängen), statt des Fischs.
-* **Schere** an einem wilden Pflanzenbestand in kalten Seen und gefrorenen Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in kalten Seen und gefrorenen Flüssen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

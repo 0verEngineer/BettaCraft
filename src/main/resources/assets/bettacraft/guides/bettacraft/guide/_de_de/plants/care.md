@@ -51,7 +51,7 @@ Jede Pflanze hat **echte Blätter** statt Blattblöcken, im Inneren und in der M
 sich im Wasser. Die Blöcke sind weiter da (Schere und Abbauen funktionieren wie bisher), sie werden nur anders
 gezeichnet. Aus mehr als 24 Blöcken Entfernung zeigt die Miniatur die Pflanzen wieder als Pixel
 (`render.miniaturePlantMeshDistance`). In den Mod-Einstellungen (*Darstellung*, `render.plantMeshes`) kann jeder Spieler
-zu den Blöcken zurückschalten; `features.plantMeshes` schaltet es für das ganze Modpack ab.
+zu den Blöcken zurückschalten; `features.visuals.plantMeshes` schaltet es für das ganze Modpack ab.
 
 ![Aufsitzer, Rosetten und Stängelpflanzen](../images/plants_mesh_all.png)
 

@@ -221,7 +221,7 @@ Ohne die Mod werden sie übersprungen.
 Die wilden Fische, Frösche und Kleintiere gehören zur Vanilla-Spawngruppe *Wasser-Umgebung*, wie Kabeljau, Lachs und
 Tropenfische. Deren Obergrenze liegt bei 20 pro Spieler, und mit vielen Fisch-Mods (Fish of Thieves, Naturalist, …)
 füllen die Fische der Ozeane in der Nähe sie oft ganz. Darum hat Bettacraft zusätzlich einen eigenen, sparsamen
-Spawn-Durchlauf (Common-Config `features.wildSpawnPass`, an): alle `wildlife.spawnPassInterval` Ticks (200 = 10 Sekunden)
+Spawn-Durchlauf (Common-Config `features.wildSpawnPass.enabled`, an): alle `wildlife.spawnPassInterval` Ticks (200 = 10 Sekunden)
 bekommt jeder Spieler einen Versuch in passendem Wasser 24 bis 48 Blöcke entfernt, solange weniger als
 `wildlife.spawnPassPerPlayer` (10) Wildtiere der Mod im Umkreis von 48 Blöcken leben. Die üblichen Regeln bleiben: wenige
 pro 32 Blöcke (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), nie in einem Aquarium, und weit weg vom Spieler
@@ -233,7 +233,7 @@ Alle Tiere der Mod stehen im Entity-Tag `#bettacraft:all_animals`, die von selbs
 
 ### Wilde Pflanzen in der Welt
 
-Jede Aquarien- und Schwimmpflanze wächst in neuen Chunks wild (Common-Config `features.wildPlants`, an): höchstens ein
+Jede Aquarien- und Schwimmpflanze wächst in neuen Chunks wild (Common-Config `features.aquaticPlants.wildPlants`, an): höchstens ein
 Versuch pro Chunk (drei in den üppigen Höhlen), eine Gruppe einer Art am Grund oder ein Fleck Schwimmpflanzen auf ruhigem
 Wasser. Die Chance pro Versuch ist 50 % in Dschungelgewässern, 40 % in Sümpfen und Mangroven, 35 % in Flüssen und den
 üppigen Höhlen, 15 % in kalten Gewässern, mal `spawn.wildPlantFrequency` (1.0; 0 = keine, bis 10). Der Biom-Modifier

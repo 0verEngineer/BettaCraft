@@ -43,7 +43,7 @@ Im Reiter **Technik** des Aquarium-Menüs:
 * **Tageslicht-Timer:** an zur An-Zeit, aus zur Aus-Zeit (Standard 08:00 bis 20:00), jeweils über eine Stunde wie ein
   Sonnenauf- und -untergang. +/- verschiebt eine Zeit um 30 Minuten (Schleichen: eine Stunde).
 
-Ein Server kann beides abschalten (`features.lightTimer`) und die stärkeren Stufen (`features.ledTiers`).
+Ein Server kann beides abschalten (`features.equipment.lightTimer`) und die stärkeren Stufen (`features.equipment.ledTiers`).
 
 ## Farben
 

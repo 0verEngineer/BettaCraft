@@ -33,10 +33,10 @@ Teichlebermoos (*Riccia fluitans*): ein Lebermoos aus kleinen, gegabelten Thalli
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,23–0,28 % pro Schwung (etwa 1 von 361–433 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,23–0,28 % pro Schwung (etwa 1 von 361–433 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Sümpfen: 0,13 % pro Fang (etwa 1 von 793 Fängen), statt des Fischs.
-* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.wildPlants`).
-* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.aquaticPlants.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

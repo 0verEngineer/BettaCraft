@@ -42,9 +42,9 @@ warmem, basischem Wasser** und weiden die Algen von Glas und Steinen ab.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,3–2,7 % pro Schwung (etwa 1 von 36–77 Schwüngen) (Config `features.sulawesi`).
-* **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.sulawesi`).
-* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 2 in diesem Angebot (Config `features.sulawesi`).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,3–2,7 % pro Schwung (etwa 1 von 36–77 Schwüngen) (Config `features.invertebrates.sulawesi`).
+* **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.sulawesi`).
+* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 2 in diesem Angebot (Config `features.invertebrates.sulawesi`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

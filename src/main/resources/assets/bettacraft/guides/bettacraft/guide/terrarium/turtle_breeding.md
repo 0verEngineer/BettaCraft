@@ -64,5 +64,5 @@ fern, oxeye daisy).
 
 ## Settings
 
-Common config `features.turtleBreeding` (off: no new clutches; laid ones still hatch). Server config
+Common config `features.turtles.breeding` (off: no new clutches; laid ones still hatch). Server config
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

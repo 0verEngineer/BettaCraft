@@ -42,7 +42,7 @@ Vater an seine Söhne), Schwerter, orange oder gelbe Schwänze mit farbigen Rän
 Tiger, Black Bar, Japan Blue, Gelbschwanz. Sie kreuzen sich mit Guppys, die Jungen sind Hybride. Alles dazu:
 [Guppy-Genetik](guppy_genetics.md).
 
-Mit `features.livebearerGenetics` aus zeigen sich die alten festen Farbformen: Wildform, Tiger, Black Bar.
+Mit `features.tankmates.livebearerGenetics` aus zeigen sich die alten festen Farbformen: Wildform, Tiger, Black Bar.
 
 ## Zucht
 
@@ -52,8 +52,8 @@ Bei 24–29 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,53–0,63 % pro Schwung (etwa 1 von 158–188 Schwüngen), 1–4 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,18–0,21 % pro Schwung (etwa 1 von 473–561 Schwüngen), 1–4 auf einmal.
-* **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 3) (Config `features.wildFish`).
-* **Wild** in Dschungelgewässern, in Gruppen von 3–3 (Spawn-Gewicht 2) (Config `features.wildFish`).
+* **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 3) (Config `features.tankmates.wildSpawns`).
+* **Wild** in Dschungelgewässern, in Gruppen von 3–3 (Spawn-Gewicht 2) (Config `features.tankmates.wildSpawns`).
 * **Fahrender Händler** (übliche Angebote): 6 für 3+ Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: lebendgebärend.
 

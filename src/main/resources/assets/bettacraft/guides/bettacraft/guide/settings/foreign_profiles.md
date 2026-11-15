@@ -13,16 +13,16 @@ the aquarium nothing changes: the animal lives by its own mod there.
 
 ## What a profile does
 
-* **Care** (`features.foreignCare`): the animal gets hungry like a betta (it eats the tank's food: by hand, from the
+* **Care** (`features.foreignAnimals.care`): the animal gets hungry like a betta (it eats the tank's food: by hand, from the
   feeder, the live food pump), minds its temperature range, the water quality, pH and TDS, the stocking and (with
   `saltwater.foreignAnimals = REALISTIC`) the salinity.
   Days of trouble make it sick, a sick animal that is not helped dies (tank log with the cause). A fed animal heals. The
   tank menu shows its health and hunger.
-* **Breeding** (`features.foreignBreeding`): two grown, fed, healthy animals of the same kind in water of their breeding
+* **Breeding** (`features.foreignAnimals.breeding`): two grown, fed, healthy animals of the same kind in water of their breeding
   temperature breed now and then. A **livebearer** carries the young and gives birth, an **egg layer** spawns and the
   eggs hatch (some need plants, food fish a big aquarium). The young take the variants of their parents (colours,
   patterns: what their mod stores about them), one parent's value for each.
-* **Their own breeding suppressed** (`features.suppressForeignBreeding`, for every animal of vanilla and other mods in
+* **Their own breeding suppressed** (`features.foreignAnimals.suppressOwnBreeding`, for every animal of vanilla and other mods in
   an aquarium): no love from food, no young of their mod's breeding. Our own breeding of axolotls, turtles and the mobs
   in glass is not affected.
 

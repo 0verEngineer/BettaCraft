@@ -36,8 +36,8 @@ the decoration of the interior (rocks, roots, plants, caves) instead of walking 
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.3 % per swing (about 1 in 76 swings).
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 4.2–4.8 % per swing (about 1 in 21–24 swings).
-* **Wild** in swamps, in groups of 1–2 (spawn weight 3) (config `features.wildFish`).
-* **Wild** in jungle water, in groups of 1–2 (spawn weight 4) (config `features.wildFish`).
+* **Wild** in swamps, in groups of 1–2 (spawn weight 3) (config `features.frogs.wildSpawns`).
+* **Wild** in jungle water, in groups of 1–2 (spawn weight 4) (config `features.frogs.wildSpawns`).
 * **Wandering trader** (rare offers): 1 for 6 emeralds.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

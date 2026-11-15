@@ -41,7 +41,7 @@ At 25–28 °C a pair scatters 20–50 eggs into fine-leaved plants, java moss o
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.67–0.79 % per swing (about 1 in 126–150 swings), 1–4 at a time.
-* **Wild** in jungle water, in groups of 3–6 (spawn weight 8) (config `features.wildFish`).
+* **Wild** in jungle water, in groups of 3–6 (spawn weight 8) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (rare offers): 6 for 7 emeralds; one of 12 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 

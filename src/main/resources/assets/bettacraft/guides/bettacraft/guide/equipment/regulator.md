@@ -25,5 +25,5 @@ Less power means:
 * **quieter:** the sound follows the power. Each player can also set the volume per kind of device in the client
   config (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`).
 
-At 0 % the device stands still. A server can switch the regulator off (`features.powerRegulator`): then everything
+At 0 % the device stands still. A server can switch the regulator off (`features.power.regulator`): then everything
 runs at 100 %.

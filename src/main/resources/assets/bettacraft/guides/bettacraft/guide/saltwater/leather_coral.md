@@ -37,7 +37,7 @@ The toadstool leather coral (*Sarcophyton* sp.) from the Indo-Pacific: a firm tr
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.24–0.29 % per swing (about 1 in 347–417 swings).
-* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.corals.wildCorals`).
 * **Frags**: shears on a grown coral give 1 cutting per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -40,8 +40,8 @@ The blue-green chromis (*Chromis viridis*) from the Indo-Pacific: small, shimmer
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 2.9–3.5 % per swing (about 1 in 29–34 swings), 1–4 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 3.8–4.5 % per swing (about 1 in 22–27 swings), 1–4 at a time.
-* **Wild** in warm oceans (coral reefs), in groups of 3–5 (spawn weight 7) (config `features.wildFish`).
-* **Wild** in lukewarm oceans, in groups of 3–5 (spawn weight 5) (config `features.wildFish`).
+* **Wild** in warm oceans (coral reefs), in groups of 3–5 (spawn weight 7) (config `features.saltwater.reefFish`).
+* **Wild** in lukewarm oceans, in groups of 3–5 (spawn weight 5) (config `features.saltwater.reefFish`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 4 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

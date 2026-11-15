@@ -40,7 +40,7 @@ The yellow tang (*Zebrasoma flavescens*) from the reefs of Hawaii: a bright yell
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 1–1.2 % per swing (about 1 in 81–96 swings).
-* **Wild** in warm oceans (coral reefs), alone (spawn weight 3) (config `features.wildFish`).
+* **Wild** in warm oceans (coral reefs), alone (spawn weight 3) (config `features.saltwater.reefFish`).
 * **Wandering trader** (rare offers): 2 for 9 emeralds; one of 3 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -34,4 +34,4 @@ only suffer below 1 mg/L.
 
 Strong aeration also **drives out CO2** (shown in the menu); that will matter once CO2 can be dosed for the plants.
 
-A server can switch the oxygen off (`features.oxygen`) and change every value (`aeration.*`).
+A server can switch the oxygen off (`features.waterChemistry.oxygen`) and change every value (`aeration.*`).

@@ -13,16 +13,16 @@ Außerhalb des Aquariums ändert sich nichts: Dort lebt das Tier nach seiner eig
 
 ## Was ein Profil bewirkt
 
-* **Pflege** (`features.foreignCare`): Das Tier bekommt Hunger wie ein Betta (es frisst das Futter des Beckens: von Hand,
+* **Pflege** (`features.foreignAnimals.care`): Das Tier bekommt Hunger wie ein Betta (es frisst das Futter des Beckens: von Hand,
   aus dem Futterautomaten, aus der Lebendfutter-Pumpe), achtet auf seinen Temperaturbereich, die Wasserqualität, pH und
   TDS, den Besatz und (mit `saltwater.foreignAnimals = REALISTIC`) den Salzgehalt. Tage mit Problemen machen es krank, ein krankes Tier, dem nicht geholfen wird,
   stirbt (Logbuch mit Ursache). Ein gefüttertes Tier heilt. Das Beckenmenü zeigt seine Gesundheit und seinen Hunger.
-* **Zucht** (`features.foreignBreeding`): Zwei ausgewachsene, satte, gesunde Tiere derselben Art in Wasser ihrer
+* **Zucht** (`features.foreignAnimals.breeding`): Zwei ausgewachsene, satte, gesunde Tiere derselben Art in Wasser ihrer
   Zuchttemperatur vermehren sich hin und wieder. Ein **Lebendgebärender** trägt die Jungen aus und bringt sie zur Welt,
   ein **Eierleger** laicht und die Eier schlüpfen (manche brauchen Pflanzen, Speisefische ein großes Aquarium). Die
   Jungen erben die Varianten ihrer Eltern (Farben, Muster: was ihre Mod über sie speichert), je Merkmal den Wert eines
   Elternteils.
-* **Ihre eigene Zucht unterdrückt** (`features.suppressForeignBreeding`, für jedes Tier aus Vanilla und anderen Mods im
+* **Ihre eigene Zucht unterdrückt** (`features.foreignAnimals.suppressOwnBreeding`, für jedes Tier aus Vanilla und anderen Mods im
   Aquarium): keine Paarungsbereitschaft durch Futter, keine Jungen aus der Zucht ihrer Mod. Unsere eigene Zucht von
   Axolotln, Schildkröten und den Mobs im Glas bleibt davon unberührt.
 

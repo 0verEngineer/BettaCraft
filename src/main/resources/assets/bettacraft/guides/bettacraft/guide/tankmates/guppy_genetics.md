@@ -95,5 +95,5 @@ generations they become guppies or endlers again.
   endler Wild, Tiger, Black Bar) become Wild Guppy, Full Red, Blue Grass, Green Cobra, Half Black Red and the endler
   Wild Type, Tiger and Black Bar.
 
-The switch `features.livebearerGenetics` (common config) turns all this off: then the old fixed varieties show again
+The switch `features.tankmates.livebearerGenetics` (common config) turns all this off: then the old fixed varieties show again
 (the genes are kept).

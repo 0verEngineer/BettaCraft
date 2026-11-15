@@ -43,7 +43,7 @@ Weibchen sind grau mit kleinen Schwänzen, tragen die Gene aber mit. Fische, der
 Zuchtform entspricht, bekommen ihren Namen: Red Cobra, Blue Moskau, Full Gold, Tuxedo Koi, Japan Blue, Blue Grass
 und viele mehr. Guppys kreuzen sich mit Endlern (Hybride). Alles dazu: [Guppy-Genetik](guppy_genetics.md).
 
-Mit `features.livebearerGenetics` aus zeigen sich die alten festen Farbformen: Wildform, Rot, Blue Grass, Green
+Mit `features.tankmates.livebearerGenetics` aus zeigen sich die alten festen Farbformen: Wildform, Rot, Blue Grass, Green
 Cobra, Tuxedo.
 
 ## Zucht
@@ -57,7 +57,7 @@ Bei 23–28 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 1,1–1,3 % pro Schwung (etwa 1 von 79–94 Schwüngen), 1–4 auf einmal.
-* **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 6) (Config `features.wildFish`).
+* **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 6) (Config `features.tankmates.wildSpawns`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4+ Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: lebendgebärend.
 

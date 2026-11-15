@@ -44,8 +44,14 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
   variety (`FoodDiet`: food groups and diets as item tags, the diet memory in `BettaHealth`).
 - **Menu**: `client/screen/TankScreen` (tabs) + `tank/menu/`. Info overlays (Jade/TOP/WTHIT) share `compat/info`.
   Other mods only through ids, tags and reflection (`compat/`, `datagen/Compat.java`), no compile dependencies.
-- **Config**: `config/ServerConfig`, `CommonConfig` (`features.*` switches), `ClientConfig`; every option needs an en
-  label (datagen `LangEn.java` → `runData`) and a de label (`assets/bettacraft/lang/de_de.json`), see `ConfigLangTest`.
+- **Config**: `config/ServerConfig`, `CommonConfig`, `ClientConfig`; every option needs an en label (datagen `LangEn.java`
+  → `runData`) and a de label (`assets/bettacraft/lang/de_de.json`), see `ConfigLangTest`.
+- **Feature switches** (M33) `config/`: the tree `features.<group>.enabled` + sub-switches in the common config, one enum
+  `Feature` (path, parent, `requires`, old pre-M33 keys, en label + tooltip; de in `de_de.json`). Ask only
+  `Features.enabled(Feature.X)` (own switch, parents and requirements). `FeatureContent` maps items, recipes and source
+  targets to features; datagen gives every recipe a `bettacraft:feature` condition (`FeatureCondition`), loot modifiers a
+  `bettacraft:feature` loot condition, the trader offers, net tables and spawn rules check `Features`. Old flat keys are
+  moved once by `FeatureMigration` before the common config loads.
 - **Handbook** (GuideME): `assets/bettacraft/guides/bettacraft/guide/` (en) and `_de_de/` (de), images in
   `guide/images/` cropped from smoke screenshots by `tools/assetgen/guide_images.py`. Obtaining sections, profiles and
   species tables are generated from the game data: sources in `sources/` (`WildTables`, `TraderOffers`, `Sources`),
@@ -102,7 +108,10 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 - **Milestones:** read `meilensteine/AGENT-RULES.md` first (local). Open questions go into `meilensteine/mXX-offen.md`;
   if they are unanswered, stop and ask. Branch from `master`, fast-forward `master` only when everything is green;
   push, tag or publish only with the user's OK. Finish with version bump, CHANGELOG section, README, handbook.
-- Every feature gets a `features.*` switch (common config, en + de label). The handbook is kept up to date in English
+- Every new feature gets a switch in the feature tree: a `Feature` constant (a new group `<group>.enabled` or a child of an
+  existing group, never one switch per milestone), en label/tooltip in the enum, de in `de_de.json`; code asks
+  `Features.enabled(Feature.X)`, new items/recipes/sources get their feature in `FeatureContent` (recipes then get their
+  condition in `runData`), and the switch gets a GameTest that turns it off. The handbook is kept up to date in English
   and German together (navigation, a page per species / device with `item_ids`, an Obtaining section).
 - GameTests are deterministic (fixed seeds, config-changing tests in their own batch, config restored on failure).
 - **Minecraft clients only in background mode** (`-Psmoketest*` flags or `-Pbackground`: unfocused window on the

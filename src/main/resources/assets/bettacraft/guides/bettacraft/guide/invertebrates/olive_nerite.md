@@ -35,7 +35,7 @@ The olive nerite (*Neritina reclivata*) from the coasts of Florida and the Carib
 
 * **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 8–9.6 % per swing (about 1 in 10–13 swings), 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** at beaches: 9–11 % per swing (about 1 in 9–11 swings), 1–2 at a time.
-* **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
-* **Wild** at beaches, in groups of 2–5 (spawn weight 2) (config `features.wildCritters`).
+* **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
+* **Wild** at beaches, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

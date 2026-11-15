@@ -48,8 +48,8 @@ zur kleinen Schwanzflosse. Im Spiel ist er 1,5 Meter lang; wild kann er 2,7 m er
 
 ## Bezug
 
-* **[Großer Kescher](large_net.md)** in Flüssen: 1 % pro Schwung (etwa 1 von 100 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in Flüssen: 1,3 % pro Fang (etwa 1 von 80 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **Wild** in Flüssen, einzeln (Spawn-Gewicht 1) (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in Flüssen: 1 % pro Schwung (etwa 1 von 100 Schwüngen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in Flüssen: 1,3 % pro Fang (etwa 1 von 80 Fängen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **Wild** in Flüssen, einzeln (Spawn-Gewicht 1) (Config `features.bigTanks.bigAnimals`).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

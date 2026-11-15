@@ -58,9 +58,9 @@ NativeEvents.onEvent($AnimalBornEvent, event => {
 
 For reading a tank, `org.overengineer.bettacraft.api.BettacraftApi` has `isTank(level, pos)`, `tankId`, `tankName`,
 `tankController` and `tankValues(level, pos)` (the values of the monitors by id: `temperature`, `water_quality`, `ph`,
-`tds`, `salinity`, ...); `pos` can be any block of the tank. The switch `features.modpackEvents` turns the events off.
+`tds`, `salinity`, ...); `pos` can be any block of the tank. The switch `features.compat.modpackEvents` turns the events off.
 
 ## Map waypoints
 
 With **JourneyMap** an alarm of a monitor puts a red waypoint at its tank, see [Monitors](../equipment/monitor.md)
-(`features.alarmWaypoints`, `map.showAlarmWaypoints`). Xaero's Minimap is not supported.
+(`features.compat.journeymap`, `map.showAlarmWaypoints`). Xaero's Minimap is not supported.

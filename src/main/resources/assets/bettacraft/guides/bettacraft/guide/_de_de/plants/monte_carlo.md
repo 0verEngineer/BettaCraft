@@ -31,10 +31,10 @@ Monte Carlo (*Micranthemum tweediei*) aus Argentinien: ein Teppich winziger rund
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,8–0,96 % pro Schwung (etwa 1 von 104–125 Schwüngen) (Config `features.plantNetCatches`).
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,96–1,2 % pro Schwung (etwa 1 von 87–104 Schwüngen) (Config `features.plantNetCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,8–0,96 % pro Schwung (etwa 1 von 104–125 Schwüngen) (Config `features.aquaticPlants.netCatches`).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,96–1,2 % pro Schwung (etwa 1 von 87–104 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Flüssen: 0,13 % pro Fang (etwa 1 von 775 Fängen), statt des Fischs.
-* **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.wildPlants`).
+* **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Fahrender Händler** (übliche Angebote): 2 für 1 Smaragd.
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (Ausläufer).
 

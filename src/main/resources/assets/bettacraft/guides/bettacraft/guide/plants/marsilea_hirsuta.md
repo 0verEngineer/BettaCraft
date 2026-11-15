@@ -32,9 +32,9 @@ Water clover (*Marsilea hirsuta*) from Australia: a fern with little four-leaved
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.31–0.37 % per swing (about 1 in 271–325 swings) (config `features.plantNetCatches`).
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.31–0.37 % per swing (about 1 in 271–325 swings) (config `features.aquaticPlants.netCatches`).
 * **Fishing** in swamps: 0.13 % per catch (about 1 in 793 catches), instead of the fish.
-* **Shears** on a wild plant in swamps: 100 % per cut (config `features.wildPlants`).
+* **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

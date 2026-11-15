@@ -46,8 +46,8 @@ Bei 24–27 °C streut ein Paar 20–50 Eier in feinfiedrige Pflanzen, Javamoos 
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,27–0,32 % pro Schwung (etwa 1 von 317–375 Schwüngen), 1–4 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,27–0,32 % pro Schwung (etwa 1 von 316–374 Schwüngen), 1–4 auf einmal.
-* **Wild** in Flüssen, in Gruppen von 3–6 (Spawn-Gewicht 2) (Config `features.barbsAndLoaches`).
-* **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 3) (Config `features.barbsAndLoaches`).
+* **Wild** in Flüssen, in Gruppen von 3–6 (Spawn-Gewicht 2) (Config `features.tankmates.barbsAndLoaches`).
+* **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 3) (Config `features.tankmates.barbsAndLoaches`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 

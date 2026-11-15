@@ -69,7 +69,7 @@ A mob caught with items in its hands keeps them, but they are lost when it dies.
 
 ## Settings
 
-Common config `features.mobsInGlass` (off: no mob goes in; those in tanks stay). Server config
+Common config `features.mobsInGlass.enabled` (off: no mob goes in; those in tanks stay). Server config
 `terrarium.mobCatchHealth`, `terrarium.mobUndeadBurn`, `terrarium.mobBreeding`, and the lists `inhabitants.allow` and
 `inhabitants.deny`.
 

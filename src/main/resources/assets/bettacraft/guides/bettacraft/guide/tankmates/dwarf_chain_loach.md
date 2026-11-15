@@ -47,7 +47,7 @@ Practically never breeds in a tank.
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.36–0.42 % per swing (about 1 in 238–281 swings), 1–4 at a time.
-* **Wild** in rivers, in groups of 3–6 (spawn weight 2) (config `features.barbsAndLoaches`).
+* **Wild** in rivers, in groups of 3–6 (spawn weight 2) (config `features.tankmates.barbsAndLoaches`).
 * **Wandering trader** (rare offers): 6 for 7 emeralds; one of 12 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -44,11 +44,11 @@ forked tail. In a home tank it grows to about one metre.
 
 ## Obtaining
 
-* **[Large net](large_net.md)** in rivers: 3 % per swing (about 1 in 33 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in rivers: 3.8 % per catch (about 1 in 27 catches), into an empty transport tub (config `features.bigAnimals`).
-* **[Large net](large_net.md)** in jungle water: 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigAnimals`).
-* **[Steel leader](steel_leader.md)** (fishing) in jungle water: 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in rivers, alone (spawn weight 3) (config `features.bigAnimals`).
-* **Wild** in jungle water, alone (spawn weight 2) (config `features.bigAnimals`).
+* **[Large net](large_net.md)** in rivers: 3 % per swing (about 1 in 33 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in rivers: 3.8 % per catch (about 1 in 27 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Large net](large_net.md)** in jungle water: 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **[Steel leader](steel_leader.md)** (fishing) in jungle water: 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigTanks.bigAnimals`).
+* **Wild** in rivers, alone (spawn weight 3) (config `features.bigTanks.bigAnimals`).
+* **Wild** in jungle water, alone (spawn weight 2) (config `features.bigTanks.bigAnimals`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

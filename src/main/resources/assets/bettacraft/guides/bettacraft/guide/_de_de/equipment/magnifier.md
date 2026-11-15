@@ -26,7 +26,7 @@ Tooltips von Eimern und Beuteln, die jedes Tier mit seinen Genen auflisten. Bis 
 analysiert“. Die Zuchtvorhersage eines Betta-Paars braucht beide Eltern analysiert.
 
 Tiere aus Welten von vor der Lupe gelten als analysiert, niemand verliert, was er schon sehen konnte. Die Server-Config
-`wildlife.genesAlwaysVisible` zeigt die Gene aller Tiere ohne Lupe; `features.magnifier` schaltet die ganze Funktion ab.
+`wildlife.genesAlwaysVisible` zeigt die Gene aller Tiere ohne Lupe; `features.breeding.magnifier` schaltet die ganze Funktion ab.
 
 ## Bezug
 

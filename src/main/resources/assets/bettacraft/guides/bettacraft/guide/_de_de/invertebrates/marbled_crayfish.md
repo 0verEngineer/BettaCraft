@@ -38,9 +38,9 @@ Es gibt **nur Weibchen**: Jedes erwachsene Tier trägt Eier ohne Männchen, und 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,46 % pro Schwung (etwa 1 von 220 Schwüngen) (Config `features.bigCrayfish`).
-* **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.bigCrayfish`).
-* **Fahrender Händler** (übliche Angebote): 1 für 4 Smaragde (Config `features.bigCrayfish`).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,46 % pro Schwung (etwa 1 von 220 Schwüngen) (Config `features.invertebrates.bigCrayfish`).
+* **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.bigCrayfish`).
+* **Fahrender Händler** (übliche Angebote): 1 für 4 Smaragde (Config `features.invertebrates.bigCrayfish`).
 * **Vermehrung** im Aquarium (ein Tier genügt).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

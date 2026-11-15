@@ -24,7 +24,7 @@ item_ids:
   Prachtschmerle oder einen Frosch. Ein Beutel fasst die Hälfte eines Eimers (mindestens eins): 16 Garnelen,
   12 Bärblinge. Mit dem Eimer oder Beutel in der Hand das nächste Tier derselben Art anklicken oder weitere aus einem
   Aquarium entnehmen: Sie kommen zuerst in den Behälter ihrer Art. Nie zwei Arten in einem Behälter. Volle Beutel
-  älterer Versionen mit mehr Tieren bleiben gültig (Config `features.bigContainers`).
+  älterer Versionen mit mehr Tieren bleiben gültig (Config `features.equipment.bigContainers`).
 * **Wasser**: Ein leerer Eimer nimmt 1000 mB Beckenwasser mit, ein Beutel 100 mB. Ein **Wassereimer** wird direkt
   benutzt und das Becken behält sein Wasser, aber die Wasserart muss zum Tier passen: normales Wasser für
   Süßwassertiere, ein [Eimer Meerwasser](../saltwater/water.md) für Meerestiere.

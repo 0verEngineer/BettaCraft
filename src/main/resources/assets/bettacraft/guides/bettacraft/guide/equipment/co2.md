@@ -78,7 +78,7 @@ fire burns: about a day of burning for a full cylinder, more fires fill faster (
 * CO2 gas of other mods (fluid tag `#bettacraft:co2_gas`, with `#c:carbon_dioxide`) goes in through pipes:
   1000 mB fill a cylinder (`foreignCo2Mb`).
 
-`features.co2` (common config) switches CO2 dosing off: the devices give no CO2 and the water stays at the air's.
+`features.co2.enabled` (common config) switches CO2 dosing off: the devices give no CO2 and the water stays at the air's.
 
 ## Obtaining
 

@@ -49,8 +49,8 @@ Ein **Maulbrüter**: Bei 27–29 °C laicht ein Weibchen mit einem Männchen und
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,3–0,35 % pro Schwung (etwa 1 von 282–334 Schwüngen), 1–4 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,13–0,16 % pro Schwung (etwa 1 von 631–748 Schwüngen), 1–4 auf einmal.
-* **Wild** in Sümpfen, in Gruppen von 3–4 (Spawn-Gewicht 2) (Config `features.gouramis`).
-* **Wild** in Dschungelgewässern, in Gruppen von 3–4 (Spawn-Gewicht 2) (Config `features.gouramis`).
+* **Wild** in Sümpfen, in Gruppen von 3–4 (Spawn-Gewicht 2) (Config `features.tankmates.gouramis`).
+* **Wild** in Dschungelgewässern, in Gruppen von 3–4 (Spawn-Gewicht 2) (Config `features.tankmates.gouramis`).
 * **Fahrender Händler** (seltene Angebote): 6 für 7 Smaragde; eins von 12 in diesem Angebot.
 * **[Zucht](breeding.md)**: maulbrütend.
 

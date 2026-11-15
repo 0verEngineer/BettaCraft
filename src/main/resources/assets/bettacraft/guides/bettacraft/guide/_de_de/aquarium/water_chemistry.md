@@ -74,7 +74,7 @@ Die Artenseiten nennen den Bereich jedes Tiers. Salzwasser ist durch seine Karbo
 bei etwa 8,2, und der Bodengrund bewegt ihn kaum; verbrauchen die Steinkorallen die Karbonathärte, sinkt er (siehe
 [Riffchemie](../saltwater/reef_chemistry.md)).
 
-`features.waterChemistry` (Common-Config) schaltet alles ab: die Werte stehen still und kein Tier stört sich daran.
+`features.waterChemistry.enabled` (Common-Config) schaltet alles ab: die Werte stehen still und kein Tier stört sich daran.
 
 ## Bezug
 

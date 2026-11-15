@@ -31,7 +31,7 @@ shares. The ancestry sets the size (*imbellis* 0.85, *smaragdina* 1.08 of a *spl
 
 ## Obtaining
 
-* **Wild** in swamps: about 15 % of the wild bettas (config `features.wildBettas`).
+* **Wild** in swamps: about 15 % of the wild bettas (config `features.bettas.wildSpecies`).
 * **[Breeding](breeding.md)**: bubble nest, eggs and fry in the aquarium.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

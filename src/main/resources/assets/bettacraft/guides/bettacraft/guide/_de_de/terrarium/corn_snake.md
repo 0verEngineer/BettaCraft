@@ -35,4 +35,4 @@ Augen) und **anerythristisch** (ohne Rot: grau und schwarz) tauchen ab und zu au
 
 ## Bezug
 
-* <ItemLink id="bettacraft:corn_snake_box" />: **Wild** in Wäldern und Ebenen, einzeln (Spawn-Gewicht 3) (Config `features.wildHerps`).
+* <ItemLink id="bettacraft:corn_snake_box" />: **Wild** in Wäldern und Ebenen, einzeln (Spawn-Gewicht 3) (Config `features.terrariums.wildHerps`).

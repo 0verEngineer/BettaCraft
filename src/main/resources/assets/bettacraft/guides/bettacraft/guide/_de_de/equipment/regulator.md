@@ -26,5 +26,5 @@ Weniger Leistung heißt:
 * **leiser:** der Sound folgt der Leistung. Jeder Spieler kann außerdem die Lautstärke je Geräteart in der Client-Config
   einstellen (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`).
 
-Bei 0 % steht das Gerät still. Ein Server kann den Regler abschalten (`features.powerRegulator`): dann läuft alles mit
+Bei 0 % steht das Gerät still. Ein Server kann den Regler abschalten (`features.power.regulator`): dann läuft alles mit
 100 %.

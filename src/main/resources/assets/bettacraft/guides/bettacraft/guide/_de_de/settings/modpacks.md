@@ -60,9 +60,9 @@ NativeEvents.onEvent($AnimalBornEvent, event => {
 Zum Lesen eines Beckens hat `org.overengineer.bettacraft.api.BettacraftApi` die Methoden `isTank(level, pos)`, `tankId`,
 `tankName`, `tankController` und `tankValues(level, pos)` (die Werte der Monitore nach ID: `temperature`,
 `water_quality`, `ph`, `tds`, `salinity`, ...); `pos` darf jeder Block des Beckens sein. Der Schalter
-`features.modpackEvents` schaltet die Events ab.
+`features.compat.modpackEvents` schaltet die Events ab.
 
 ## Wegpunkte auf der Karte
 
 Mit **JourneyMap** setzt ein Alarm eines Monitors einen roten Wegpunkt an sein Becken, siehe [Monitor](../equipment/monitor.md)
-(`features.alarmWaypoints`, `map.showAlarmWaypoints`). Xaero's Minimap wird nicht unterstützt.
+(`features.compat.journeymap`, `map.showAlarmWaypoints`). Xaero's Minimap wird nicht unterstützt.

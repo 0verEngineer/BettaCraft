@@ -37,7 +37,7 @@ Krustenanemonen (*Zoanthus* sp.) von tropischen Riffen weltweit: Kolonien kleine
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,6–0,72 % pro Schwung (etwa 1 von 139–167 Schwüngen).
-* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.wildCorals`).
+* **Schere** an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe): 100 % pro Schnitt (Config `features.corals.wildCorals`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
 * **Ableger**: eine Schere an einer gewachsenen Koralle gibt 2 Ableger pro Schnitt; sie breitet sich auch selbst aus (über das Gestein).
 

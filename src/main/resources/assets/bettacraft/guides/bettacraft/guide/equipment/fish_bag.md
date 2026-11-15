@@ -23,7 +23,7 @@ item_ids:
   6 plecos or dwarf gouramis, 2 bristlenoses or yellow tangs and one betta, clown loach or frog. A bag holds half of a
   bucket (at least one): 16 shrimp, 12 rasboras. Right-click the next animal of the same species with the bucket or bag
   in your hand, or take more of them out of a tank: they go into the container of their species first. Never two species
-  in one container. Bags of older versions that hold more stay valid (config `features.bigContainers`).
+  in one container. Bags of older versions that hold more stay valid (config `features.equipment.bigContainers`).
 * **Water**: an empty bucket takes 1000 mB of the tank's water along, a bag 100 mB. A **bucket of water** is used as it
   is and the tank keeps its water, but the water must suit the animal: plain water for freshwater animals, a
   [bucket of sea water](../saltwater/water.md) for reef animals.

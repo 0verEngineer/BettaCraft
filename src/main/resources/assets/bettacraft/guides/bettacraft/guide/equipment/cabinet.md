@@ -39,7 +39,7 @@ also several cabinets under one big tank. Click for the next side, sneak + click
   [Seahorses](../saltwater/seahorses.md) there are stressed by the flow sooner, so put the outlet on the other side of
   their hitching posts; corals in front of it get more flow (good for acropora, too much for mushroom corals).
 * Broken and placed again, the cabinet keeps the side (its item shows it). Cabinets of older worlds stay on the back
-  wall. The setting `features.cabinetOutletSide` switches the button off (every cabinet then uses the back wall and the
+  wall. The setting `features.equipment.cabinetOutletSide` switches the button off (every cabinet then uses the back wall and the
   flow is even again).
 
 ## Stone cabinets
@@ -58,7 +58,7 @@ bricks do not.
 * It is mined like its stone: with a **pickaxe** (by hand it drops nothing but its contents), as hard and as blast
   resistant as the stone.
 * Modpacks can add stones with the item tag `#bettacraft:cabinet_stones` and rule some out with
-  `#bettacraft:cabinet_excluded`. The setting `features.stoneCabinets` switches the stone recipe off.
+  `#bettacraft:cabinet_excluded`. The setting `features.equipment.stoneCabinets` switches the stone recipe off.
 
 ## Obtaining
 

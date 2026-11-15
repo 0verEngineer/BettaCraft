@@ -48,8 +48,8 @@ hellgelben Netz, ein hoher Kopf mit tiefem Maul und ein Flossensaum, der über d
 
 ## Bezug
 
-* **[Großer Kescher](large_net.md)** in warmen Ozeanen (Korallenriffe): 1,1 % pro Schwung (etwa 1 von 88 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 1,4 % pro Fang (etwa 1 von 70 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 2) (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in warmen Ozeanen (Korallenriffe): 1,1 % pro Schwung (etwa 1 von 88 Schwüngen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 1,4 % pro Fang (etwa 1 von 70 Fängen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 2) (Config `features.bigTanks.bigAnimals`).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -40,5 +40,5 @@ back. This is the classic three-part method of reef keeping (after Hans-Werner B
 The water tab of the [tank menu](../aquarium/menu.md) shows the alkalinity next to the calcium; hover over the line for
 the magnesium and trace elements.
 
-`features.reefDosing` (common config) switches it off: alkalinity and magnesium no longer slow the corals, the values
+`features.corals.reefDosing` (common config) switches it off: alkalinity and magnesium no longer slow the corals, the values
 stand still and the pump does not dose.

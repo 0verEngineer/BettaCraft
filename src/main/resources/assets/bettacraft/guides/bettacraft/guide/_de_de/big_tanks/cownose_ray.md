@@ -53,12 +53,12 @@ trächtig, solange das Becken nach der [Größenregel](../big_tanks.md) Platz f�
 
 ## Bezug
 
-* **[Großer Kescher](large_net.md)** in warmen Ozeanen (Korallenriffe): 0,57 % pro Schwung (etwa 1 von 175 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 0,71 % pro Fang (etwa 1 von 140 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Großer Kescher](large_net.md)** in lauwarmen Ozeanen: 2,7 % pro Schwung (etwa 1 von 38 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in lauwarmen Ozeanen: 3,3 % pro Fang (etwa 1 von 30 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–3 (Spawn-Gewicht 1) (Config `features.bigAnimals`).
-* **Wild** in lauwarmen Ozeanen, in Gruppen von 2–3 (Spawn-Gewicht 2) (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in warmen Ozeanen (Korallenriffe): 0,57 % pro Schwung (etwa 1 von 175 Schwüngen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 0,71 % pro Fang (etwa 1 von 140 Fängen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in lauwarmen Ozeanen: 2,7 % pro Schwung (etwa 1 von 38 Schwüngen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in lauwarmen Ozeanen: 3,3 % pro Fang (etwa 1 von 30 Fängen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–3 (Spawn-Gewicht 1) (Config `features.bigTanks.bigAnimals`).
+* **Wild** in lauwarmen Ozeanen, in Gruppen von 2–3 (Spawn-Gewicht 2) (Config `features.bigTanks.bigAnimals`).
 * **[Zucht](../big_tanks.md)**: lebendgebärend.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

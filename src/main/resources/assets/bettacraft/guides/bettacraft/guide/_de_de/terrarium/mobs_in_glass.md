@@ -72,7 +72,7 @@ keine Farm. Ein gefangener Mob mit Gegenständen in den Händen behält sie, sie
 
 ## Einstellungen
 
-Common-Config `features.mobsInGlass` (aus: kein Mob kommt hinein; die in Becken bleiben). Server-Config
+Common-Config `features.mobsInGlass.enabled` (aus: kein Mob kommt hinein; die in Becken bleiben). Server-Config
 `terrarium.mobCatchHealth`, `terrarium.mobUndeadBurn`, `terrarium.mobBreeding` und die Listen `inhabitants.allow` und
 `inhabitants.deny`.
 

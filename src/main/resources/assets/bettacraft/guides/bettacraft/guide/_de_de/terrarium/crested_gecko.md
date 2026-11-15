@@ -34,4 +34,4 @@ Ein Paar legt zwei Eier in Sand oder Erde; das Geschlecht ist genetisch. Morphe:
 
 ## Bezug
 
-* <ItemLink id="bettacraft:crested_gecko_box" />: **Wild** auf dem Boden von Dschungeln, einzeln (Spawn-Gewicht 3) (Config `features.wildHerps`).
+* <ItemLink id="bettacraft:crested_gecko_box" />: **Wild** auf dem Boden von Dschungeln, einzeln (Spawn-Gewicht 3) (Config `features.terrariums.wildHerps`).

@@ -97,5 +97,5 @@ Generationen rückgekreuzt werden sie wieder zu Guppys oder Endlern.
   Cobra, Tuxedo; Endler Wild, Tiger, Black Bar) werden zu Wildguppy, Full Red, Blue Grass, Green Cobra, Halbschwarz
   Rot und den Endlern Wildform, Tiger und Black Bar.
 
-Der Schalter `features.livebearerGenetics` (Common-Config) schaltet das alles ab: Dann zeigen sich wieder die alten
+Der Schalter `features.tankmates.livebearerGenetics` (Common-Config) schaltet das alles ab: Dann zeigen sich wieder die alten
 festen Varianten (die Gene bleiben erhalten).

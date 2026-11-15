@@ -37,7 +37,7 @@ Green star polyps (*Pachyclavularia violacea*) from the Indo-Pacific: a purple m
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.6–0.72 % per swing (about 1 in 139–167 swings).
-* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.wildCorals`).
+* **Shears** on a wild coral colony in warm oceans (coral reefs): 100 % per cut (config `features.corals.wildCorals`).
 * **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
 * **Frags**: shears on a grown coral give 2 cuttings per trim; it also spreads by itself (over the rock).
 

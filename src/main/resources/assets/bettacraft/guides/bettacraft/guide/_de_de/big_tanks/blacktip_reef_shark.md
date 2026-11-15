@@ -47,8 +47,8 @@ bis 1,8 m).
 
 ## Bezug
 
-* **[Großer Kescher](large_net.md)** in warmen Ozeanen (Korallenriffe): 0,57 % pro Schwung (etwa 1 von 175 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 0,71 % pro Fang (etwa 1 von 140 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 1) (Config `features.bigAnimals`).
+* **[Großer Kescher](large_net.md)** in warmen Ozeanen (Korallenriffe): 0,57 % pro Schwung (etwa 1 von 175 Schwüngen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 0,71 % pro Fang (etwa 1 von 140 Fängen), in eine leere Transportwanne (Config `features.bigTanks.bigAnimals`).
+* **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 1) (Config `features.bigTanks.bigAnimals`).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

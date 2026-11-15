@@ -38,9 +38,9 @@ There are **only females**: every adult carries eggs without a male, and the you
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.46 % per swing (about 1 in 220 swings) (config `features.bigCrayfish`).
-* **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.bigCrayfish`).
-* **Wandering trader** (usual offers): 1 for 4 emeralds (config `features.bigCrayfish`).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.46 % per swing (about 1 in 220 swings) (config `features.invertebrates.bigCrayfish`).
+* **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.bigCrayfish`).
+* **Wandering trader** (usual offers): 1 for 4 emeralds (config `features.invertebrates.bigCrayfish`).
 * **Breeding** in the aquarium (one animal is enough).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

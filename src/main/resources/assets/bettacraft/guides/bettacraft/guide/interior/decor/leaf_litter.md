@@ -17,7 +17,7 @@ Right-click the floor of the [interior](../../interior.md) (or any block) with a
 Break it to take it back. Right-clicking the tank from outside still puts the leaf into the water as before
 ([water chemistry](../../aquarium/water_chemistry.md)).
 
-With `features.decorEffects` (and `features.waterChemistry`) litter in the interior:
+With `features.decor.effects` (and `features.waterChemistry.enabled`) litter in the interior:
 
 * **gives off tannins** all the time: the water settles at about half of what as many leaves put into it would give
   (an alder cone a third of a leaf). That lowers the pH a little and tints the water.

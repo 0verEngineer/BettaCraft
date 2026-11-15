@@ -26,7 +26,7 @@ enthält). Sie tragen die Gene der Wildform: kurze Flossen, Rundschwanz und gede
 Bedürfnisse und kämpfen nicht.
 
 Die meisten wilden Bettas sind *Betta splendens*; manche sind seine wilden Verwandten [Betta imbellis](bettas/betta_imbellis.md)
-(etwa 15 %) und [Betta smaragdina](bettas/betta_smaragdina.md) (etwa 10 %, Config `features.wildBettas`). Alle kreuzen sich
+(etwa 15 %) und [Betta smaragdina](bettas/betta_smaragdina.md) (etwa 10 %, Config `features.bettas.wildSpecies`). Alle kreuzen sich
 untereinander zu fruchtbaren Hybriden.
 
 ## Fangen

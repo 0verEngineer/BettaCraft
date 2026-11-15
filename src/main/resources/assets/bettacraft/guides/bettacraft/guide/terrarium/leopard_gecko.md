@@ -33,4 +33,4 @@ on to the young; wild geckos are always the normal yellow ones.
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:leopard_gecko_box" />: **Wild** in deserts and badlands, alone (spawn weight 4) (config `features.wildHerps`).
+* <ItemLink id="bettacraft:leopard_gecko_box" />: **Wild** in deserts and badlands, alone (spawn weight 4) (config `features.terrariums.wildHerps`).
