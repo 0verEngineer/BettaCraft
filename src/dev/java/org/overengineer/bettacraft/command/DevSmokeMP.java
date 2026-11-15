@@ -141,6 +141,11 @@ public final class DevSmokeMP {
                 String hy = org.overengineer.bettacraft.genetics.BettaSpecies.HYBRID_ID;
                 check(name + ": betta species " + (a.length > 3 ? a[3] : "?") + " (server " + hy + ", half Betta imbellis)", a.length > 3 && hy.equals(a[3]));
             }
+            case "m30" -> { // M30 part c: two bamboo sharks and a moray (big entities) and an egg case on every client
+                check(name + ": big animals " + (a.length > 1 ? a[1] : "?") + " (server bamboo_shark,bamboo_shark,honeycomb_moray)",
+                        a.length > 1 && "bamboo_shark,bamboo_shark,honeycomb_moray".equals(a[1]));
+                check(name + ": egg cases " + (a.length > 2 ? a[2] : "?") + " (server 1)", a.length > 2 && "1".equals(a[2]));
+            }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
@@ -927,6 +932,38 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.critters.TankCritters.sync(level, c);
             say("m29", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":m29") && reports.containsKey(P2 + ":m29"), 20 * 30));
+        steps.add(new Step("m30", () -> {
+            // M30 part c: a 16 x 4 x 8 sea water tank with two bamboo sharks, a moray and an egg case
+            BlockPos min = base.offset(-22, 0, 18);
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 16; x++) for (int y = 0; y < 4; y++) for (int z = 0; z < 8; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the M30 tank formed", c != null);
+            if (c == null) return;
+            TankInteractions.changeWater(level, c, c.getTank().capacityMb() - c.getTank().waterMb(), org.overengineer.bettacraft.tank.Salinity.SEA);
+            c.getTank().setWaterTemp(26F);
+            c.getTank().setTargetTemp(26F);
+            // the world persists between runs: start from an empty tank
+            for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank())) e.discard();
+            c.getTank().inhabitants().clear();
+            c.getTank().clutches().clear();
+            for (var s : List.of(org.overengineer.bettacraft.tankmates.TankmateSpecies.BAMBOO_SHARK, org.overengineer.bettacraft.tankmates.TankmateSpecies.BAMBOO_SHARK,
+                    org.overengineer.bettacraft.tankmates.TankmateSpecies.HONEYCOMB_MORAY)) {
+                var tub = org.overengineer.bettacraft.big.BigCatching.caught(level, s, org.overengineer.bettacraft.critters.NetCatching.random(level));
+                var err = tub == null ? null : org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, tub,
+                        org.overengineer.bettacraft.tank.TankInhabitants.containedType(tub), null, 0);
+                check(s.id() + " went in" + (err == null ? "" : ": " + err.getString()), tub != null && err == null);
+            }
+            var g = org.overengineer.bettacraft.tankmates.TankmateGenes.wild(org.overengineer.bettacraft.tankmates.TankmateSpecies.BAMBOO_SHARK);
+            var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
+            c.getTank().clutches().add(new org.overengineer.bettacraft.tankmates.Clutch(c.getTank().nextClutchId(), org.overengineer.bettacraft.tankmates.TankmateSpecies.BAMBOO_SHARK,
+                    org.overengineer.bettacraft.tankmates.Clutch.Kind.EGG_CASE, min.getX() + 3, w.box().minY + 0.02, min.getZ() + 2, 1, g, g));
+            c.markTankChanged();
+            say("m30", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":m30") && reports.containsKey(P2 + ":m30"), 20 * 30));
         steps.add(new Step("reef", () -> {
             // M20: a small reef tank: sea water, a coral on reef rock in the interior, a clownfish pair; both clients see the salt
             BlockPos min = reefMin();

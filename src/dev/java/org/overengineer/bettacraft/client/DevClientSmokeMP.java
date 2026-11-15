@@ -190,6 +190,23 @@ final class DevClientSmokeMP {
                     send("m29 " + (cray.isEmpty() ? "-" : String.join(",", cray)) + " " + (axo.isEmpty() ? "-" : String.join(",", axo)) + " " + imb);
                 });
             }
+            case "m30" -> {
+                // M30 part c: the big sea animals (entities) and the shark egg case (tank data) on this client
+                BlockPos min = pos(args);
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, min);
+                    int cases = 0;
+                    if (c != null && c.getTank() != null) {
+                        for (var k : c.getTank().clutches()) if (k.kind == org.overengineer.bettacraft.tankmates.Clutch.Kind.EGG_CASE) cases++;
+                    }
+                    java.util.List<String> big = new java.util.ArrayList<>();
+                    for (var m : mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class,
+                            new net.minecraft.world.phys.AABB(min).expandTowards(16, 4, 8).inflate(0.5), e -> e.species().isLarge())) big.add(m.species().id());
+                    java.util.Collections.sort(big);
+                    send("m30 " + (big.isEmpty() ? "-" : String.join(",", big)) + " " + cases);
+                });
+            }
             case "reef" -> {
                 // M20: salinity of the tank view, the salt the water is drawn with, the reef fish and the coral blocks of the miniature
                 BlockPos min = pos(args);
