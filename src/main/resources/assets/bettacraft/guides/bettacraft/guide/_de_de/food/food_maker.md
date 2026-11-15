@@ -21,11 +21,13 @@ ihre vier Eingänge; nach einer Portion (10 Sekunden) liegt das Futter in der Au
 
 * **Produkt:** mit **\<** und **\>** wählen oder auf **Automatisch** lassen: dann macht sie das Rezept mit den meisten
   Zutaten, die in den Eingängen liegen (Fisch, Weizen, Seetang und Zucker geben Flocken, keine Pellets).
-* **Feder:** Ohne Strom läuft sie mit einer Feder. **Schleichen + Rechtsklick mit leerer Hand** zieht sie auf: die Kurbel
-  dreht sich um eine Vierteldrehung und die Ratsche klickt. Achtmal Aufziehen füllt sie, und eine volle Feder arbeitet
-  **einen Spieltag** lang (`foodMaking.springTicks`). Der Balken links zeigt, wie viel noch übrig ist.
-* **FE:** Solange eine Strom-Option an ist (`pipes.pumpsRequireEnergy` oder die `power.*`-Optionen des Aquariums), hat
-  sie keine Feder und braucht beim Arbeiten `foodMaking.makerFePerTick` FE pro Tick; der Balken zeigt die gespeicherte FE.
+* **Feder:** Ohne Strom läuft sie mit einer Feder. Ein Rechtsklick mit der [Kurbel](../equipment/crank.md) zieht sie auf
+  (Taste halten): bei jedem Klick dreht sich die Kurbel um eine Vierteldrehung und die Ratsche klickt. Etwa fünf Sekunden
+  füllen sie, und eine volle Feder arbeitet **einen Spieltag** lang (`foodMaking.springTicks`). Der Balken links zeigt, wie
+  viel noch übrig ist.
+* **FE:** Solange eine Strom-Option an ist (`pipes.pumpsRequireEnergy` oder die `power.*`-Optionen des Aquariums),
+  braucht sie beim Arbeiten `foodMaking.makerFePerTick` FE pro Tick; der Balken zeigt die gespeicherte FE. Fehlt FE, läuft
+  sie mit ihrer Feder (die Messinganzeige daneben), also auch ohne Stromerzeuger.
 * Ein Redstone-Signal pausiert sie. Ein Komparator liest, wie voll die Ausgabe ist.
 
 | Futter | Portion | Zutaten |

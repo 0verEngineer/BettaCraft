@@ -796,6 +796,30 @@ def m36(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M37 scene (DevClientSmokeM37, -Psmoketestm37 -PnoJei): the fertilizer maker piping into a tank on cabinets, the crank at
+# the cabinet with the action bar, the window of the fertilizer maker (en, de)
+M37_WORLD = {"fertilizer_maker": ("bettacraft_m37_machine", (250, 30, 1180, 560)), "crank": ("bettacraft_m37_crank", (160, 0, 1120, 960))}
+M37_MENU = ("bettacraft_m37_maker_menu", "bettacraft_m37_maker_menu_de", (464, 314, 816, 646))
+
+
+def m37(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M37_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    en, de, box = M37_MENU
+    for shot, out in ((en, out_en), (de, out_de)):
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out / "fertilizer_maker_menu.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -810,6 +834,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m37"]:
+        m37(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m36"]:
         m36(out_en)
         return 0

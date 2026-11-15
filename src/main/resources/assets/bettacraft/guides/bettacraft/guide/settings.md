@@ -61,7 +61,9 @@ navigation:
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE use and storage |
 | `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2); at most 16 per batch |
 | `liveFood.*` | | [tubifex dish](food/tubifex_dish.md) (`tubifexDays` 4, `tubifexRoom` 8, `tubifexConditioning` 2, `poorTubifexStress` 0.5), [daphnia barrel](food/daphnia_barrel.md) (`daphniaDays` 3, `daphniaRoom` 16, `crowdedDays` 1, `bottleDaphniaChance` 0.08), [live food pump](food/live_food_pump.md) (`pumpFePerPortion` 200) |
-| `foodMaking.*` | | [food maker](food/food_maker.md): `ticksPerBatch` 200, `springTicks` 24000 (a full spring), `windsToFull` 8, `makerFePerTick` 10 |
+| `foodMaking.*` | | [food maker](food/food_maker.md): `ticksPerBatch` 200, `springTicks` 24000 (a full spring), `windsToFull` 25 (crank clicks), `makerFePerTick` 10 |
+| `winding.*` | | [crank](equipment/crank.md): `ticksPerCharge` 24000 (one charge = a day of one device), `clicksPerCharge` 25 (5 seconds), the charges of each device (`externalFilterCharges` 1, `multiblockFilterCharges` 6, `cabinetCharges` 6, `osmosisCharges`, `waterChangerCharges`, `waterPumpCharges`, `fertilizerMakerCharges` 1) |
+| `fertilizer.*` | | [liquid fertilizer](plants/fertilizer.md): `portionWaterBlocks` 4, `growthBoost` 0.5, `plantUsePerDay` 0.5, `fertilizerDecayPerDay` 0.05, `overdoseAt` 1.5, `overdoseAlgae` 3, `pipeUpTo` 1; [fertilizer maker](plants/fertilizer_maker.md) `fertilizerTicksPerBatch` 200, `fertilizerFePerTick` 10 |
 | `monitor.*` | | [monitors](equipment/monitor.md): `range` 32 (blocks to the tanks), `fePerBlock` 1 (FE per tick and block while a power option is on) |
 | `diet.*` | | [food variety](food/food_variety.md): `varietyDays` 3, `varietyGroups` 3, `varietyRecovery` 1.5, `poorFoodFedDays` 0.5, `shrimpFoodFactor` 2 |
 | `floatingPlants.growthSpeed`, `maxCoverage`, `denseCoverFrom`, `maxPerTank` | 1, 0.6, 0.5, 256 | [floating plants](plants/floating_plants.md): growth (0 = none), the most of the surface they cover, dense cover from, plants per aquarium |
@@ -143,6 +145,8 @@ another group (reef fish and seahorses need the tankmates, corals need salt wate
 | `tankmates.enabled` (and each group, `saltwater.reefFish`) | their care, shoals, fights and breeding |
 | `saltwater.enabled` | salinity harms nobody |
 | `power.enabled` | no device needs FE (as with every power option off) |
+| `power.winding` | with the power options on, the food maker and the fertilizer maker run on FE only and no other device takes the crank |
+| `fertilizer.enabled` (`fertilizer.dosing`) | the fertilizer does nothing (the level stays), the fertilizer maker stands still (the dosing pump skips fertilizer canisters) |
 | `liveFood.enabled` | breeders and cultures stand still |
 | `sounds.enabled` | the device sounds are silent |
 | `foreignAnimals.enabled`, `decor.enabled`, `compat.create.enabled` | their sub-switches (care, breeding, leaf litter, contraptions ...) |

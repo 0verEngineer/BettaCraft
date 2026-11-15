@@ -26,5 +26,10 @@ einschalten (`power.heaterRequiresEnergy`, `power.filterRequiresEnergy`, `power.
 sie 2 FE pro Tick für jeden angetriebenen Ausströmer oder Schwammfilter (Kabel an die Pumpe oder ans Aquarium). Jedes
 Gerät braucht bei kleinerem [Leistungsregler](regulator.md) weniger FE.
 
+**Kein Stromerzeuger?** Mit `features.power.winding` (an) lässt sich jedes Gerät, das FE braucht, stattdessen mit der
+[Kurbel](crank.md) aufziehen: der Außenfilter mit seinen Heizern, der Multiblock-Filter, die Osmoseanlage, die
+Wassergeräte und der **Unterschrank** unter dem Aquarium, der alle Geräte seines Aquariums versorgt. FE geht vor, die
+Feder springt ein, solange es fehlt.
+
 Der Tab **Wasser** im Aquarium-Menü zeigt die gespeicherte FE, den Bedarf und welche Gruppe ohne Strom ist; auch die
 Übersicht warnt. Lichter, die nicht auf einem Aquarium stehen (an einer Decke hängen), leuchten immer.

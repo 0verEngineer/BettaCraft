@@ -25,5 +25,10 @@ default). Power means **Forge Energy (FE)** and comes from any mod that makes FE
 per tick for every air stone or sponge filter they drive (connect the cable to the pump or to the aquarium). Every
 device uses less FE at a lower [power regulator](regulator.md) setting.
 
+**No generator?** With `features.power.winding` (on) every device that needs FE can be wound with the
+[crank](crank.md) instead: the external filter with its heaters, the multiblock filter, the reverse osmosis unit, the water
+devices and the **cabinet** under the tank, which powers every device of its tank. FE goes first, the spring stands in
+while it is short.
+
 The **Water** tab of the tank menu shows the stored FE, how much the aquarium needs and which group is unpowered; the
 overview warns as well. Lights that are not on an aquarium (hanging from a ceiling) always shine.

@@ -61,7 +61,9 @@ navigation:
 | `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE-Verbrauch und -Speicher |
 | `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2); höchstens 16 pro Ansatz |
 | `liveFood.*` | | [Tubifex-Zuchtschale](food/tubifex_dish.md) (`tubifexDays` 4, `tubifexRoom` 8, `tubifexConditioning` 2, `poorTubifexStress` 0,5), [Daphnien-Fass](food/daphnia_barrel.md) (`daphniaDays` 3, `daphniaRoom` 16, `crowdedDays` 1, `bottleDaphniaChance` 0,08), [Lebendfutter-Pumpe](food/live_food_pump.md) (`pumpFePerPortion` 200) |
-| `foodMaking.*` | | [Futtermaschine](food/food_maker.md): `ticksPerBatch` 200, `springTicks` 24000 (eine volle Feder), `windsToFull` 8, `makerFePerTick` 10 |
+| `foodMaking.*` | | [Futtermaschine](food/food_maker.md): `ticksPerBatch` 200, `springTicks` 24000 (eine volle Feder), `windsToFull` 25 (Kurbelklicks), `makerFePerTick` 10 |
+| `winding.*` | | [Kurbel](equipment/crank.md): `ticksPerCharge` 24000 (eine Ladung = ein Tag eines Geräts), `clicksPerCharge` 25 (5 Sekunden), die Ladungen jedes Geräts (`externalFilterCharges` 1, `multiblockFilterCharges` 6, `cabinetCharges` 6, `osmosisCharges`, `waterChangerCharges`, `waterPumpCharges`, `fertilizerMakerCharges` 1) |
+| `fertilizer.*` | | [Flüssigdünger](plants/fertilizer.md): `portionWaterBlocks` 4, `growthBoost` 0.5, `plantUsePerDay` 0.5, `fertilizerDecayPerDay` 0.05, `overdoseAt` 1.5, `overdoseAlgae` 3, `pipeUpTo` 1; [Düngermaschine](plants/fertilizer_maker.md) `fertilizerTicksPerBatch` 200, `fertilizerFePerTick` 10 |
 | `monitor.*` | | [Monitore](equipment/monitor.md): `range` 32 (Blöcke bis zu den Becken), `fePerBlock` 1 (FE pro Tick und Block, solange eine Strom-Option an ist) |
 | `diet.*` | | [Futtervielfalt](food/food_variety.md): `varietyDays` 3, `varietyGroups` 3, `varietyRecovery` 1,5, `poorFoodFedDays` 0,5, `shrimpFoodFactor` 2 |
 | `floatingPlants.growthSpeed`, `maxCoverage`, `denseCoverFrom`, `maxPerTank` | 1, 0.6, 0.5, 256 | [Schwimmpflanzen](plants/floating_plants.md): Wachstum (0 = keins), größte bedeckte Oberfläche, dichte Decke ab, Pflanzen pro Aquarium |
@@ -144,6 +146,8 @@ Zucht-Schalter `breeding.enabled`, Schildkröten die Terrarien). Aus heißt:
 | `tankmates.enabled` (und jede Gruppe, `saltwater.reefFish`) | ihre Pflege, Schwärme, Kämpfe und Zucht |
 | `saltwater.enabled` | der Salzgehalt schadet niemandem |
 | `power.enabled` | kein Gerät braucht FE (wie mit allen Strom-Optionen aus) |
+| `power.winding` | mit Strom-Optionen laufen Futtermaschine und Düngermaschine nur mit FE, und kein anderes Gerät nimmt die Kurbel |
+| `fertilizer.enabled` (`fertilizer.dosing`) | der Dünger wirkt nicht (der Spiegel bleibt), die Düngermaschine steht still (der Dosierer überspringt Düngerkanister) |
 | `liveFood.enabled` | Zuchtansätze und Kulturen stehen still |
 | `sounds.enabled` | die Gerätesounds schweigen |
 | `foreignAnimals.enabled`, `decor.enabled`, `compat.create.enabled` | ihre Unterschalter (Pflege, Zucht, Laub, Contraptions ...) |
