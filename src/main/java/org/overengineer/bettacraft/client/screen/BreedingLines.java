@@ -160,7 +160,7 @@ final class BreedingLines {
                 case GLASS_EGGS -> {
                     if (cory) out.add(check(d.getBoolean("cool"), Component.translatable("gui.bettacraft.breeding.tm.cool")));
                 }
-                case CAVE -> out.add(check(d.getInt("caves") > 0, Component.translatable("gui.bettacraft.breeding.tm.caves", d.getInt("caves"))));
+                case CAVE, CICHLID_CAVE -> out.add(check(d.getInt("caves") > 0, Component.translatable("gui.bettacraft.breeding.tm.caves", d.getInt("caves"))));
                 case ANEMONE -> out.add(check(d.getInt("anemones") > 0, Component.translatable("gui.bettacraft.breeding.tm.anemones", d.getInt("anemones"))));
                 case SCATTER -> out.add(check(d.getInt("mops") > 0 || d.getFloat("plants") >= 0.005F, Component.translatable(
                         s.broadLeafSpawner() ? "gui.bettacraft.breeding.tm.broad" : "gui.bettacraft.breeding.tm.medium",

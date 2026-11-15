@@ -59,18 +59,19 @@ public final class ClutchRenderer {
         boolean larvae = k.stage() >= 1;
         int col = switch (k.kind) {
             case GLASS -> 0;
-            case CAVE -> 2;
+            case CAVE, OPEN -> 2;
             default -> 1;
         };
         // a little bigger than in nature (2 mm corydoras eggs would be a quarter of a pixel)
         float e = switch (k.kind) {
             case GLASS -> 0.016F;
-            case CAVE -> 0.014F;
+            case CAVE, OPEN -> 0.014F;
             default -> 0.009F;
         };
         float spread = switch (k.kind) {
             case GLASS -> 0.045F + 0.004F * n;
             case CAVE -> 0.035F;
+            case OPEN -> 0.04F + 0.002F * n; // M29: a patch of eggs on the stone, leaf or glass
             default -> 0.07F;
         };
         long seed = k.id * 0x9E3779B97F4A7C15L;
@@ -81,7 +82,7 @@ public final class ClutchRenderer {
             float r = (float) Math.sqrt((h >>> 24 & 0xFFFF) / 65536.0) * spread;
             float da = Mth.cos(a) * r, db = Mth.sin(a) * r;
             float dx, dy, dz;
-            if (k.kind == Clutch.Kind.GLASS && k.face >= 0) {
+            if ((k.kind == Clutch.Kind.GLASS || k.kind == Clutch.Kind.OPEN) && k.face >= 0) {
                 // on the glass plane: spread along the wall and up and down
                 dy = db;
                 if (k.face <= 1) {
@@ -91,7 +92,7 @@ public final class ClutchRenderer {
                     dx = 0;
                     dz = da;
                 }
-            } else if (k.kind == Clutch.Kind.CAVE) {
+            } else if (k.kind == Clutch.Kind.CAVE || k.kind == Clutch.Kind.OPEN) {
                 dx = da;
                 dz = db;
                 dy = ((h >>> 44) & 0xFF) / 255F * 0.02F;

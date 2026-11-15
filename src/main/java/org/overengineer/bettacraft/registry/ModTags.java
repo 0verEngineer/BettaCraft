@@ -131,6 +131,8 @@ public final class ModTags {
     public static final TagKey<Block> DRIFTWOOD = TagKey.create(Registries.BLOCK, BettaCraft.id("driftwood"));
     /** M28: clay and terracotta in a tank interior: the young shrimp hide in its holes and tubes ({@code features.decorEffects}). */
     public static final TagKey<Block> SHRIMP_SHELTER = TagKey.create(Registries.BLOCK, BettaCraft.id("shrimp_shelter"));
+    /** M29: blocks of the small caves the Apistogramma females spawn in (the coconut shell, the slate cave). */
+    public static final TagKey<Block> SMALL_CAVES = TagKey.create(Registries.BLOCK, BettaCraft.id("small_caves"));
     /** M20: where corals and the anemone can be glued on (reef rock, live rock, coral blocks). */
     public static final TagKey<Block> REEF_SURFACES = TagKey.create(Registries.BLOCK, BettaCraft.id("reef_surfaces"));
     /** M13: all aquarium plant items. */

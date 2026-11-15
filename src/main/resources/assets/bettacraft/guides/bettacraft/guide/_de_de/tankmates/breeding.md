@@ -67,6 +67,16 @@ zeigt die Bedingungen und die Gelege jeder Art im Becken.
 * Wie beim [Betta](../bettas/breeding.md): Das Männchen baut ein Schaumnest an der Oberfläche (Schwimmpflanzen helfen), das
   Weibchen laicht hinein, danach bewacht das Männchen das Nest und vertreibt sie - nimm sie heraus.
 
+## Buntbarsche: Offenbrüter und Höhlenbrüter
+
+* **Offenbrüter** ([Schmetterlingsbuntbarsche](ram_cichlid.md), [Skalar](angelfish.md), [Diskus](discus.md)): Ein Männchen und
+  ein freies Weibchen finden sich, putzen einen flachen Stein (Schmetterlingsbuntbarsche) oder ein breites Blatt oder die Scheibe
+  (Skalar, Diskus) und laichen dort. Beide Eltern bewachen Eier und Junge und vertreiben jeden anderen Fisch; ohne beide Eltern
+  stirbt die Brut.
+* **Höhlenbrüter** ([Apistogramma](cockatoo_cichlid.md)): Jedes Weibchen besetzt eine kleine Höhle (Kokosnussschale,
+  Schieferhöhle, Laichhöhle), laicht dort mit dem Männchen und bewacht die Brut allein.
+* **Diskus**-Junge fressen die Hautschleimschicht ihrer Eltern und bleiben tagelang länger bei ihnen.
+
 ## Prachtschmerlen
 
 * Sie vermehren sich im Aquarium nicht (in der Natur wandern sie zum Laichen). Jede Prachtschmerle kommt aus dem Kescher

@@ -418,11 +418,65 @@ def seahorse():
     return p, groups
 
 
+# M29 part a: cichlids
+
+def cichlid():
+    """M29 dwarf cichlid (rams): a deep, compressed body, a long dorsal fin with tall dark front rays, long pelvic fins,
+    a round tail."""
+    p = fusiform_plan("cichlid", depth=12.0, width=4.0, mid=7.5, peak=0.4, head=0.55, ped_frac=0.32, snout=-15, ped=9)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.15, up=0.3)
+    body.boxes.append(anal_fin(p, 0.58, 8, 5, "anal"))
+    body.boxes += pair("pelvic", "pelvic", (0.9, p.bottom(0.36) + 1.6, p.snout + 0.36 * 24 + 1), (0, 5, 3), (24, 16, 0), "anal")
+    front = dorsal_fin(p, 0.2, 3, 7, "tri", name="dorsal2", lean=-4, part="dorsal2")
+    return p, [body, caudal(p, 8, 12, "round"), dorsal_fin(p, 0.28, 13, 6, "long", lean=-4), front] + pectorals(p, 0.26, 4, 3)
+
+
+def apisto():
+    """M29 Apistogramma: an elongated dwarf cichlid with a tall, spiky "cockatoo" crest in front of a long dorsal fin and a
+    lyre tail."""
+    p = fusiform_plan("apisto", depth=9.0, width=4.0, mid=6.0, peak=0.38, head=0.6, ped_frac=0.36, snout=-15, ped=9)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.14, up=0.32)
+    body.boxes.append(anal_fin(p, 0.6, 7, 4, "anal"))
+    body.boxes += pair("pelvic", "pelvic", (0.9, p.bottom(0.38) + 1.2, p.snout + 0.38 * 24 + 1), (0, 4, 3), (22, 16, 0), "anal")
+    return p, [body, caudal(p, 9, 12, "lyre"), dorsal_fin(p, 0.2, 15, 8, "crest", lean=-2)] + pectorals(p, 0.24, 4, 3)
+
+
+def angel():
+    """M29 angelfish: a tall, flat disc with huge swept-back dorsal and anal fins, long pelvic threads and a lyre tail.
+    The body sits high so the anal fin ends at y = 0."""
+    p = fusiform_plan("angel", depth=15.0, width=3.0, mid=19.5, peak=0.42, head=0.45, ped_frac=0.2, snout=-13, ped=6)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.2, up=0.33)
+    body.boxes.append(box("anal", "anal", (0, p.bottom(0.5) + 5.5, p.snout + 0.42 * 19 + 5), (0, 12, 9), (28, 0, 0), fin="tri_down"))
+    fil = Group("filaments", (0, p.bottom(0.3) + 0.5, p.snout + 0.3 * 19))
+    fil.boxes += pair("filament", "filament", (0.6, p.bottom(0.3) + 5.0, p.snout + 0.3 * 19 + 1.5), (1, 11, 1), (-12, 0, 6), None)
+    dorsal = Group("dorsal", (0, p.top(0.4), p.snout + 0.38 * 19))
+    dorsal.boxes.append(box("dorsal", "dorsal", (0, p.top(0.45) - 5.5, p.snout + 0.42 * 19 + 5), (0, 12, 9), (-28, 0, 0), fin="tri_up"))
+    return p, [body, fil, dorsal, caudal(p, 9, 13, "lyre")] + pectorals(p, 0.26, 4, 3)
+
+
+def discus():
+    """M29 discus: a round, flat disc with a low fringe of dorsal and anal fins all round its back and belly."""
+    p = fusiform_plan("discus", depth=19.0, width=3.0, mid=13.5, peak=0.5, head=0.25, ped_frac=0.16, snout=-13, ped=7)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.16, up=0.36)
+    body.boxes.append(anal_fin(p, 0.38, 11, 4, "long_anal"))
+    body.boxes += pair("pelvic", "pelvic", (0.8, p.bottom(0.3) + 1.2, p.snout + 0.3 * 20 + 1), (0, 4, 2), (24, 14, 0), "anal")
+    return p, [body, caudal(p, 6, 10, "round"), dorsal_fin(p, 0.24, 15, 4, "long", lean=0)] + pectorals(p, 0.28, 4, 3)
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
     "clown": clown, "tang": tang, "goby": goby, "damsel": damsel,
     "seahorse": seahorse,
+    "cichlid": cichlid, "apisto": apisto, "angel": angel, "discus": discus,
 }
 
 
@@ -458,6 +512,12 @@ def fin_alpha(shape, a, b):
         return h <= 1.05 - 0.8 * a
     if shape == "long_anal":
         return h <= 0.45 + 0.55 * a
+    if shape == "crest":
+        # M29 Apistogramma: the spiky "cockatoo" crest, tallest in front, every other ray longer
+        return h <= (1.0 - 0.45 * a) * (1.0 if int(a * 9) % 2 == 0 else 0.78)
+    if shape in ("tri_up", "tri_down"):
+        # M29 angelfish: a tall triangle that narrows to a point
+        return h <= 1.0 - 0.75 * a ** 0.8 and a <= 1.0
     return True
 
 
@@ -741,7 +801,215 @@ def looks(species, variety, female):
         return Look(body, fins)
     if sp in ("lined_seahorse", "dwarf_seahorse"):
         return seahorse_look(sp, var)
+    if sp in ("ram_cichlid", "bolivian_ram"):
+        return ram_look(sp, var, female)
+    if sp in ("cockatoo_cichlid", "agassiz_dwarf_cichlid"):
+        return apisto_look(sp, var, female)
+    if sp == "angelfish":
+        return angel_look(var)
+    if sp == "discus":
+        return discus_look(var)
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
+
+
+# M29 part a: cichlid looks
+
+def _spangles(seed):
+    rnd = np.random.default_rng(seed)
+    return rnd.random((64, 64))
+
+
+def ram_look(sp, var, female):
+    """Rams: golden head with a black bar through the eye, a black spot in the middle, blue spangles; the female with a
+    pink belly. Gold, Electric Blue; the balloon has the wild colours (its short body is the renderer's)."""
+    sp_ = _spangles(2901 + len(var))
+    bolivian = sp == "bolivian_ram"
+
+    def body(t, v, x, z, y):
+        k = sp_[int(abs(z) * 2.7 + abs(x) * 1.3) % 64, int((y + 30) * 2.3) % 64]
+        if bolivian:
+            if 0.12 < t < 0.19:
+                return C("#2a2420")
+            if abs(t - 0.5) < 0.05 and 0.3 < v < 0.55:
+                return C("#141210")
+            if 0.42 < v < 0.52 and t > 0.25:
+                return C("#5a5048")
+            base = mix(C("#e8c870"), C("#b8b0a0"), smooth(0.2, 0.6, t))
+            return mix(base, C("#f0ece0"), smooth(0.6, 1.0, v))
+        if var == "electric_blue":
+            if 0.12 < t < 0.18 and v < 0.75:
+                return C("#10204a")
+            base = mix(C("#f08a30"), C("#1e7cf0"), smooth(0.05, 0.2, t))
+            return mix(base, C("#7ac0ff"), 0.6) if k > 0.8 else base
+        if var == "gold":
+            if 0.12 < t < 0.18 and v < 0.75:
+                return C("#e07020")
+            base = mix(C("#f2a020"), C("#f6d040"), smooth(0.1, 0.5, t))
+            return mix(base, C("#fff0a0"), 0.5) if k > 0.85 else base
+        if 0.12 < t < 0.18 and v < 0.8:
+            return C("#16120e")
+        if abs(t - 0.45) < 0.055 and 0.28 < v < 0.52:
+            return C("#16120e")
+        if female and 0.32 < t < 0.6 and v > 0.66:
+            return C("#e85a8a")
+        base = mix(C("#e8a030"), C("#7a9ab0"), smooth(0.15, 0.6, t))
+        base = mix(base, C("#f0e8d0"), smooth(0.7, 1.0, v) * 0.6)
+        return mix(base, C("#3ab0f0"), 0.75) if k > 0.78 else base
+
+    def fins(part, a, b, t, v, z, y):
+        k = sp_[int(a * 37) % 64, int((b + 1) * 21) % 64]
+        if bolivian:
+            if part == "tail" and abs(b) > 0.7:
+                return C("#e03a28")
+            if part in ("dorsal", "dorsal2") and (b + 1) / 2 > 0.8:
+                return C("#e05030")
+            return C("#d8d0b8") if k < 0.8 else C("#6a8ab0")
+        if var == "electric_blue":
+            return C("#2a80f0") if k < 0.75 else C("#a0d0ff")
+        if var == "gold":
+            return C("#f0b030") if k < 0.8 else C("#fff0a0")
+        if part == "dorsal2":
+            return C("#141010")
+        if part == "pelvic":
+            return C("#e04a30") if a < 0.7 else C("#141010")
+        if part == "pectoral":
+            return C("#e0dcc8")
+        return C("#d04030") if k < 0.72 else C("#40b8f0")
+    return Look(body, fins, eye="#a02018")
+
+
+def apisto_look(sp, var, female):
+    """Apistogramma: a dark stripe along the side; the cockatoo male grey-yellow with red-tipped crest rays and a red
+    marked lyre tail (Double Red: red tail and dorsal, Orange Flash: orange flashes), the Agassiz male bluish with an
+    orange and blue framed spade tail (Fire Red: red fins); the females yellow."""
+    sp_ = _spangles(2911 + len(var) + (5 if sp == "agassiz_dwarf_cichlid" else 0))
+    agassiz = sp == "agassiz_dwarf_cichlid"
+
+    def body(t, v, x, z, y):
+        stripe = abs(v - 0.5) < 0.07 and 0.1 < t < 0.92
+        if female:
+            if stripe or (0.1 < t < 0.16 and v < 0.6):
+                return C("#1a1610")
+            return mix(C("#e8c030"), C("#f6e8a0"), v)
+        k = sp_[int(abs(z) * 2.3 + abs(x)) % 64, int((y + 30) * 2.9) % 64]
+        if stripe and var not in ("fire_red",):
+            return C("#2a2a2e")
+        if agassiz:
+            if var == "fire_red":
+                return mix(C("#e85a20"), C("#f0a050"), v) if k < 0.8 else C("#ffd080")
+            base = mix(C("#8a9ab0"), C("#e0d090"), v)
+            return mix(base, C("#5ab0e0"), 0.6) if k > 0.8 else base
+        if t < 0.15 and v > 0.45:
+            return C("#5aa0d0")  # blue cheeks
+        if var == "orange_flash" and k > 0.7:
+            return C("#f08a20")
+        base = mix(C("#a8a080"), C("#f0e0a0"), v)
+        return mix(base, C("#e04830"), 0.5) if var == "double_red" and k > 0.85 else base
+
+    def fins(part, a, b, t, v, z, y):
+        h = (b + 1) / 2
+        if female:
+            return C("#141210") if part in ("pelvic",) or (part == "dorsal" and a < 0.3) else C("#e8d070")
+        k = sp_[int(a * 29) % 64, int((b + 1) * 19) % 64]
+        if agassiz:
+            if var == "fire_red":
+                return C("#e83018") if k < 0.85 else C("#ffa040")
+            if part == "tail":
+                return C("#f07a20") if abs(b) > 0.55 or a > 0.85 else (C("#4a90d0") if k > 0.5 else C("#c8c0a0"))
+            return C("#4a90d0") if part == "dorsal" and h > 0.7 else C("#d8c890")
+        if var == "double_red":
+            return C("#e02818") if part in ("tail", "dorsal", "anal") else C("#e8d8b0")
+        if part == "dorsal":
+            return C("#e83a20") if h > 0.75 and a < 0.5 else (C("#f08a20") if var == "orange_flash" and k > 0.6 else C("#e0dcc0"))
+        if part == "tail":
+            return C("#e03a28") if abs(b) > 0.6 or k > 0.82 else C("#d8d0b0")
+        if part == "pelvic":
+            return C("#f07a30")
+        return C("#d8d0b0")
+    return Look(body, fins, eye="#c03018" if agassiz else "#d0a020")
+
+
+def angel_look(var):
+    """Angelfish: silver with black bars through the eye, the body and the tail base (wild); Black, Marble (black and
+    white marbled), Koi (white with orange and black blotches), Platinum (pure white)."""
+    rnd = np.random.default_rng(2921 + len(var))
+    sp_ = rnd.random((64, 64))
+
+    def marble(z, y):
+        return math.sin(z * 0.55 + math.sin(y * 0.35) * 2.2) + 0.6 * math.sin(y * 0.6 - z * 0.25)
+
+    def body(t, v, x, z, y):
+        if var == "black":
+            return mix(C("#141414"), C("#2a2622"), v * 0.6)
+        if var == "platinum":
+            return mix(C("#e8eaee"), C("#ffffff"), v)
+        if var == "marble":
+            return C("#141414") if marble(z, y) > 0.2 else C("#e8e4dc")
+        if var == "koi":
+            k = sp_[int(abs(z) * 1.3) % 64, int((y + 40) * 1.1) % 64]
+            if t < 0.3 and v < 0.55:
+                return C("#f08a20")
+            return C("#1a1a1a") if k > 0.8 else C("#f4f0e8")
+        for c, half in ((0.15, 0.04), (0.45, 0.06), (0.86, 0.05)):
+            if abs(t - c) < half:
+                return C("#1a1a1a")
+        return mix(C("#b8bcb8"), C("#ecece4"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        if var == "black":
+            return C("#1c1c1c")
+        if var == "platinum":
+            return C("#f0f0f0")
+        if var == "marble":
+            return C("#141414") if marble(z, y) > 0.2 else C("#dcd8d0")
+        if var == "koi":
+            return C("#e8e4d8") if part != "dorsal" else C("#f0a040")
+        if part in ("dorsal", "anal"):
+            return C("#1a1a1a") if a < 0.25 or (b + 1) / 2 > 0.9 else C("#d8d8d0")
+        if part == "tail":
+            return C("#1a1a1a") if abs(b) > 0.85 else C("#d0d0c8")
+        return C("#e0e0d8")
+    return Look(body, fins, eye="#c02018")
+
+
+def discus_look(var):
+    """Discus: the brown wild form with nine faint dark bars and blue lines on the head and fins; Red Turquoise (red
+    with turquoise lines), Pigeon Blood (orange-white with black peppering), Blue Diamond (solid blue)."""
+    rnd = np.random.default_rng(2931 + len(var))
+    sp_ = rnd.random((64, 64))
+
+    def lines(z, y):
+        return math.sin(y * 1.1 + math.sin(z * 0.5) * 1.8)
+
+    def body(t, v, x, z, y):
+        bar = math.cos(t * math.pi * 9) > 0.86
+        if var == "blue_diamond":
+            return mix(C("#2a6ad8"), C("#4a9af0"), v)
+        if var == "pigeon_blood":
+            k = sp_[int(abs(z) * 2.9) % 64, int((y + 40) * 2.7) % 64]
+            if k > 0.86:
+                return C("#1a1210")
+            return mix(C("#f07a30"), C("#f8e8d0"), smooth(0.2, 0.9, v))
+        if var == "red_turquoise":
+            return C("#30c8c0") if lines(z, y) > 0.35 else C("#c03020")
+        if bar:
+            return C("#4a2a18")
+        if t < 0.35 and lines(z, y) > 0.6:
+            return C("#3a98c8")
+        return mix(C("#8a5428"), C("#c08a50"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        h = (b + 1) / 2
+        if part in ("dorsal", "anal") and h > 0.8:
+            return C("#e04020") if var != "blue_diamond" else C("#80c0ff")
+        if var == "blue_diamond":
+            return C("#3a7ae0")
+        if var == "pigeon_blood":
+            return C("#f0a060")
+        if var == "red_turquoise":
+            return C("#30c8c0") if lines(z, y) > 0.2 else C("#b02818")
+        return C("#3a98c8") if lines(z, y) > 0.5 else C("#8a5a30")
+    return Look(body, fins, eye="#d02010")
 
 
 def seahorse_look(sp, var):
@@ -1104,6 +1372,13 @@ SPECIES = [
     # M21.8 seahorses
     ("lined_seahorse", "seahorse", ["wild", "yellow", "orange"], False),
     ("dwarf_seahorse", "seahorse", ["wild"], False),
+    # M29 part a: cichlids
+    ("ram_cichlid", "cichlid", ["wild", "gold", "electric_blue", "balloon"], True),
+    ("bolivian_ram", "cichlid", ["wild"], False),
+    ("cockatoo_cichlid", "apisto", ["wild", "double_red", "orange_flash"], True),
+    ("agassiz_dwarf_cichlid", "apisto", ["wild", "fire_red"], True),
+    ("angelfish", "angel", ["wild", "black", "marble", "koi", "platinum"], False),
+    ("discus", "discus", ["wild", "red_turquoise", "pigeon_blood", "blue_diamond"], False),
 ]
 
 

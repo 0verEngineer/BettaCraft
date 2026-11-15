@@ -227,6 +227,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue TANKMATES_STOCKING;
     public static final ModConfigSpec.DoubleValue TANKMATES_BETTA_AGGRESSION;
     public static final ModConfigSpec.DoubleValue TANKMATES_LOACH_SNAILS;
+    /** M29: small fish and shrimp an adult angelfish eats per day; how hard cichlid parents drive intruders off their brood. */
+    public static final ModConfigSpec.DoubleValue TANKMATES_PREDATION;
+    public static final ModConfigSpec.DoubleValue TANKMATES_BROOD_DEFENCE;
     public static final ModConfigSpec.DoubleValue TANKMATES_BOTTOM_SHARE;
     public static final ModConfigSpec.BooleanValue TANKMATES_WATER_CHANGE_COOLS;
     public static final ModConfigSpec.DoubleValue TANKMATES_COOL_CHANGE_SHARE;
@@ -818,6 +821,10 @@ public final class ServerConfig {
                 .defineInRange("bettaAggression", 1.0, 0.0, 20.0);
         TANKMATES_LOACH_SNAILS = b.comment("Snails one clown loach eats per day (not the big apple snails; nerites are hard to crack)")
                 .defineInRange("clownLoachSnailsPerDay", 0.5, 0.0, 50.0);
+        TANKMATES_PREDATION = b.comment("Small fish (neons, embers, mosquito rasboras ...) and shrimp one adult angelfish eats per day; plants hide them",
+                "(0 = never)").defineInRange("angelfishPreyPerDay", 0.3, 0.0, 20.0);
+        TANKMATES_BROOD_DEFENCE = b.comment("How hard cichlid parents drive other fish away from their eggs and young (hit points per day; 0 = they",
+                "only chase)").defineInRange("broodDefence", 1.0, 0.0, 20.0);
         TANKMATES_BOTTOM_SHARE = b.comment("Chance that a bottom fish (corydoras, pleco, otocinclus, loach) gets its share of food that sinks past",
                         "faster fish; algae wafers go to the bottom fish directly").defineInRange("bottomFoodShare", 0.6, 0.0, 1.0);
         TANKMATES_STOCKING = b.comment("Multiplies how much each tankmate counts for the stocking (a neon 0.35, a bristlenose 1.2, a clown loach",

@@ -25,7 +25,12 @@ public final class Clutch {
         /** A foam nest at the surface, guarded by the male (dwarf gourami); {@link #building} while he builds it. */
         FOAM,
         /** Young livebearers in the breeding box (safe from the adults until they are juveniles). */
-        BOX;
+        BOX,
+        /**
+         * M29: open brooders' eggs on a flat stone, a broad leaf or the glass (face as for {@link #GLASS}), guarded by the
+         * pair ({@link #guardian} the male, {@link #partner} the female); without both the brood dies.
+         */
+        OPEN;
 
         public String id() {
             return name().toLowerCase(Locale.ROOT);
@@ -50,6 +55,9 @@ public final class Clutch {
     public int generation;
     @Nullable
     public UUID guardian;
+    /** M29: the second guarding parent of an open brood (the female). */
+    @Nullable
+    public UUID partner;
     /** Share of the eggs that the adults cannot reach (dense plants, a spawning mop). */
     public double cover;
     /** Foam nest: still being built (progress in days). */
@@ -85,6 +93,7 @@ public final class Clutch {
             case GLASS_EGGS -> 1.0;
             case CAVE -> 1.0;
             case ANEMONE -> 1.5; // M20: clownfish eggs take a week in nature
+            case OPEN, CICHLID_CAVE -> 0.8; // M29: cichlid eggs hatch in two to three days
             case SCATTER -> 0.3;
             case FOAM_NEST -> 0.3;
             default -> 0;
@@ -98,6 +107,8 @@ public final class Clutch {
             case GLASS_EGGS -> 0.5;
             case CAVE -> 1.0;
             case ANEMONE -> 1.0;
+            // M29: the parents keep the wrigglers in a pit or cave; discus young feed on their parents' skin for days more
+            case OPEN, CICHLID_CAVE -> s.parentsFeed() ? 2.2 : 1.0;
             case SCATTER -> 0.6;
             case FOAM_NEST -> 0.5;
             default -> 0;
@@ -137,6 +148,7 @@ public final class Clutch {
         c.age = age;
         c.generation = generation;
         c.guardian = guardian;
+        c.partner = partner;
         c.cover = cover;
         c.building = building;
         c.progress = progress;
@@ -161,6 +173,7 @@ public final class Clutch {
         t.put("father", father.save());
         t.putInt("gen", generation);
         if (guardian != null) t.putUUID("guardian", guardian);
+        if (partner != null) t.putUUID("partner", partner);
         t.putDouble("cover", cover);
         if (building) t.putBoolean("building", true);
         t.putDouble("progress", progress);
@@ -181,6 +194,7 @@ public final class Clutch {
         c.age = Math.max(0, t.getDouble("age"));
         c.generation = t.getInt("gen");
         c.guardian = t.hasUUID("guardian") ? t.getUUID("guardian") : null;
+        c.partner = t.hasUUID("partner") ? t.getUUID("partner") : null;
         c.cover = Math.max(0, Math.min(1, t.getDouble("cover")));
         c.building = t.getBoolean("building");
         c.progress = t.getDouble("progress");

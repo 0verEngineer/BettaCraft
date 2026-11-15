@@ -65,6 +65,8 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
             case LIVEBEARER -> female ? 1.2F : 0.9F;
             case PLATY -> female ? 1.08F : 0.95F;
             case GOURAMI -> female ? 0.92F : 1.0F;
+            case CICHLID -> female ? 0.9F : 1.0F; // M29: dwarf cichlid females are smaller
+            case APISTO -> female ? 0.72F : 1.0F;
             default -> female ? 1.04F : 1.0F;
         };
     }
@@ -118,7 +120,9 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     @Override
     protected void scale(TankmateEntity fish, PoseStack pose, float partialTick) {
         float s = scaleOf(fish);
-        pose.scale(s, s, s);
+        // M29: the balloon ram is short and round (a bred body shape on the colour locus)
+        if (fish.species() == TankmateSpecies.RAM_CICHLID && "balloon".equals(fish.variety())) pose.scale(s * 1.08F, s * 1.15F, s * 0.78F);
+        else pose.scale(s, s, s);
     }
 
     @Override

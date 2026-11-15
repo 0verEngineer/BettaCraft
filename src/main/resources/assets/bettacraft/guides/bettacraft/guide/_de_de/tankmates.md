@@ -7,9 +7,9 @@ navigation:
 
 # Beifische
 
-Zwanzig beliebte Aquarienfische können ein Becken mit den Bettas teilen (oder ohne sie leben): **Salmler**,
+Beliebte Aquarienfische können ein Becken mit den Bettas teilen (oder ohne sie leben): **Salmler**,
 **Bärblinge**, **Panzerwelse**, **Harnischwelse**, **Otocinclus**, **Schmerlen**, die **Lebendgebärenden** Guppy,
-Endler und Platy und der **Zwergfadenfisch**. Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
+Endler und Platy, der **Zwergfadenfisch** und die **Buntbarsche** (Schmetterlingsbuntbarsche, Apistogramma, Skalar, Diskus). Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
 schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede Art vermehrt sich so wie in der Natur.
 
 ![Ein Gesellschaftsbecken mit Beifischen](images/tm_community.png)
@@ -55,6 +55,12 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 | <ItemImage id="bettacraft:endler_guppy_bucket" /> [Endler-Guppy](tankmates/endler_guppy.md) | 23–30 | 3 | ja | lebendgebärend |
 | <ItemImage id="bettacraft:platy_bucket" /> [Platy](tankmates/platy.md) | 20–27 | 3 | zu kühl | lebendgebärend |
 | <ItemImage id="bettacraft:dwarf_gourami_bucket" /> [Zwergfadenfisch](tankmates/dwarf_gourami.md) | 24–29 | – | nein | baut ein Schaumnest |
+| <ItemImage id="bettacraft:ram_cichlid_bucket" /> [Schmetterlingsbuntbarsch](tankmates/ram_cichlid.md) | 25–31 | – | mit Vorsicht (großes Becken) | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut |
+| <ItemImage id="bettacraft:bolivian_ram_bucket" /> [Bolivianischer Schmetterlingsbuntbarsch](tankmates/bolivian_ram.md) | 22–29 | – | mit Vorsicht (großes Becken) | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut |
+| <ItemImage id="bettacraft:cockatoo_cichlid_bucket" /> [Kakadu-Zwergbuntbarsch](tankmates/cockatoo_cichlid.md) | 22–29 | – | mit Vorsicht (großes Becken) | Höhlenbrüter: das Weibchen laicht in einer kleinen Höhle und bewacht die Brut |
+| <ItemImage id="bettacraft:agassiz_dwarf_cichlid_bucket" /> [Agassiz-Zwergbuntbarsch](tankmates/agassiz_dwarf_cichlid.md) | 24–29 | – | mit Vorsicht (großes Becken) | Höhlenbrüter: das Weibchen laicht in einer kleinen Höhle und bewacht die Brut |
+| <ItemImage id="bettacraft:angelfish_bucket" /> [Skalar](tankmates/angelfish.md) | 24–30 | – | nein (groß, zupft Flossen) | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut |
+| <ItemImage id="bettacraft:discus_bucket" /> [Diskus](tankmates/discus.md) | 27–32 | 3 | zu warm | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut |
 
 ## In diesem Kapitel
 

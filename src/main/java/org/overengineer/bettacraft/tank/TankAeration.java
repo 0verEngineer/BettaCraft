@@ -103,9 +103,9 @@ public final class TankAeration {
         return below <= 0 || t.oxygen() >= below ? 0 : (below - t.oxygen()) / below;
     }
 
-    /** Labyrinth fish breathe air at the surface: bettas and the dwarf gourami. */
+    /** Labyrinth fish breathe air at the surface: bettas and the labyrinth tankmates (the dwarf gourami). */
     public static boolean labyrinth(Entity e) {
-        return e instanceof BettaEntity || e instanceof TankmateEntity m && m.species() == org.overengineer.bettacraft.tankmates.TankmateSpecies.DWARF_GOURAMI;
+        return e instanceof BettaEntity || e instanceof TankmateEntity m && m.species().labyrinth();
     }
 
     // ------------------------------------------------------------------ the care step

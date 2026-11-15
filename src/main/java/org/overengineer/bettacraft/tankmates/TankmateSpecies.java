@@ -91,7 +91,7 @@ public enum TankmateSpecies {
     // ---------------------------------------------------------------- gourami (foam nest like the bettas)
     DWARF_GOURAMI(d("dwarf_gourami", "Trichogaster lalius", Model.GOURAMI, Group.GOURAMI, Breeding.FOAM_NEST, Zone.UPPER)
             .size(0.55).temp(24, 29).breed(26, 29).quality(0.5).shoal(1).stock(1.0).brood(20, 50).growth(1.0)
-            .eats(0.7).territorial().bettaTarget().dimorphic().egg(0x3A70C0, 0xD04030).native_(Water.SWAMP, 10).trader(Trade.COMMON)
+            .eats(0.7).territorial().bettaTarget().dimorphic().labyrinth().egg(0x3A70C0, 0xD04030).native_(Water.SWAMP, 10).trader(Trade.COMMON)
             .varieties("wild", "powder_blue", "flame")),
     // ---------------------------------------------------------------- M20 reef fish (salt water)
     // the clownfish pair lives in its host anemone and lays its eggs at the anemone's foot; the male guards them
@@ -124,13 +124,41 @@ public enum TankmateSpecies {
     DWARF_SEAHORSE(d("dwarf_seahorse", "Hippocampus zosterae", Model.SEAHORSE, Group.SEAHORSE, Breeding.POUCH, Zone.LOW)
             .size(0.22).hitbox(0.1, 0.21).temp(21, 28).breed(24, 27).quality(0.6).shoal(1).stock(0.3).brood(3, 10).growth(1.0)
             .eats(0.0).egg(0xC8B070, 0xEADCA8).native_(Water.WARM_OCEAN, 4)
-            .trader(Trade.RARE).salt(Salinity.Range.HARDY_MARINE));
+            .trader(Trade.RARE).salt(Salinity.Range.HARDY_MARINE)),
+    // ---------------------------------------------------------------- M29 part a: cichlids (South America, features.cichlids)
+    // open brooders: the pair cleans a flat stone (rams) or a broad leaf or the glass (angelfish, discus) and guards eggs and young;
+    // cave brooders (Apistogramma): the female spawns in a small cave and guards it, the male defends his territory
+    RAM_CICHLID(d("ram_cichlid", "Mikrogeophagus ramirezi", Model.CICHLID, Group.CICHLID, Breeding.OPEN, Zone.LOW)
+            .size(0.45).temp(25, 31).breed(27, 30).quality(0.65).shoal(1).stock(0.8).brood(20, 60).growth(1.3)
+            .eats(0.35).territorial().territory(3).dimorphic().egg(0xE8A040, 0x3A78C8).native_(Water.RIVER, 6).native_(Water.JUNGLE, 3)
+            .trader(Trade.COMMON).varieties("wild", "gold", "electric_blue", "balloon")),
+    BOLIVIAN_RAM(d("bolivian_ram", "Mikrogeophagus altispinosus", Model.CICHLID, Group.CICHLID, Breeding.OPEN, Zone.LOW)
+            .size(0.62).temp(22, 29).breed(25, 28).quality(0.5).shoal(1).stock(1.0).brood(20, 60).growth(1.5)
+            .eats(0.35).territorial().territory(3).egg(0xE8B860, 0xD06030).native_(Water.RIVER, 4).native_(Water.JUNGLE, 2).trader(Trade.RARE)),
+    COCKATOO_CICHLID(d("cockatoo_cichlid", "Apistogramma cacatuoides", Model.APISTO, Group.CICHLID, Breeding.CICHLID_CAVE, Zone.LOW)
+            .size(0.6).temp(22, 29).breed(24, 28).quality(0.5).shoal(1).stock(0.8).brood(15, 50).growth(1.4)
+            .eats(0.35).territorial().territory(4).dimorphic().egg(0xE8C030, 0xE04020).native_(Water.JUNGLE, 5).native_(Water.RIVER, 2)
+            .trader(Trade.COMMON).varieties("wild", "double_red", "orange_flash")),
+    AGASSIZ_DWARF_CICHLID(d("agassiz_dwarf_cichlid", "Apistogramma agassizii", Model.APISTO, Group.CICHLID, Breeding.CICHLID_CAVE, Zone.LOW)
+            .size(0.55).temp(24, 29).breed(26, 29).quality(0.65).shoal(1).stock(0.7).brood(15, 45).growth(1.4)
+            .eats(0.35).territorial().territory(4).dimorphic().egg(0x4A90D0, 0xE04030).native_(Water.JUNGLE, 4).trader(Trade.COMMON)
+            .varieties("wild", "fire_red")),
+    ANGELFISH(d("angelfish", "Pterophyllum scalare", Model.ANGEL, Group.CICHLID, Breeding.OPEN, Zone.MID)
+            .size(0.9).hitbox(0.5, 0.6).temp(24, 30).breed(26, 29).quality(0.5).shoal(1).stock(2.0).brood(30, 80).growth(2.0)
+            .eats(0.8).prey(0.25).egg(0xC8C4B0, 0x202020).native_(Water.JUNGLE, 4).trader(Trade.COMMON)
+            .varieties("wild", "black", "marble", "koi", "platinum")),
+    DISCUS(d("discus", "Symphysodon aequifasciatus", Model.DISCUS, Group.CICHLID, Breeding.OPEN, Zone.MID)
+            .size(0.95).hitbox(0.55, 0.55).temp(27, 32).breed(28, 31).quality(0.75).shoal(3).stock(2.5).brood(20, 60).growth(2.5)
+            .eats(0.4).parentsFeed().egg(0x8A5030, 0x40A0C0).native_(Water.JUNGLE, 2).trader(Trade.RARE)
+            .varieties("wild", "red_turquoise", "pigeon_blood", "blue_diamond"));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
-    public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE }
+    public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
+        /** M29: the dwarf cichlids (rams), Apistogramma with its crest, the tall angelfish, the round discus. */
+        CICHLID, APISTO, ANGEL, DISCUS }
 
     /** Family group (handbook, overlays, menu). */
-    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE }
+    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE, CICHLID }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -150,6 +178,16 @@ public enum TankmateSpecies {
          * to live fry ({@code seahorses.pouchDays}).
          */
         POUCH,
+        /**
+         * M29: open brooders (rams, angelfish, discus): the pair cleans a flat stone (rams) or a broad leaf or the glass
+         * (angelfish, discus), both guard the eggs and the young and drive other fish away; without the parents the brood dies.
+         */
+        OPEN,
+        /**
+         * M29: cave brooders (Apistogramma): every female claims a small cave (coconut shell, slate cave, spawning cave),
+         * spawns in it with the male and guards eggs and young there; the male defends his territory.
+         */
+        CICHLID_CAVE,
         /** Practically never breeds in a tank (clown loach, the other reef fish). */
         NONE
     }
@@ -219,6 +257,16 @@ public enum TankmateSpecies {
     /** Corydoras dart up to the surface for a gulp of air now and then. */
     public boolean airGulper() { return def.airGulper; }
     public boolean nocturnal() { return def.nocturnal; }
+    /** M23/M29: a labyrinth fish breathes air at the surface (the dwarf gourami; part c: more gouramis). */
+    public boolean labyrinth() { return def.labyrinth; }
+    /** M29: adults eat tankmates up to this length in blocks and shrimp (angelfish; 0 = no). */
+    public double preyLength() { return def.prey; }
+    /** M29: water blocks a territorial adult male needs; more males than the tank has room for fight (0 = no territory). */
+    public double territory() { return def.territory; }
+    /** M29: the parents feed the young with their skin secretion (discus): the brood stays with them longer and dies without them. */
+    public boolean parentsFeed() { return def.parentsFeed; }
+    /** M29: a cichlid (open and cave brooders guarding their brood). */
+    public boolean cichlid() { return def.group == Group.CICHLID; }
     /** Harlequin rasboras spawn under broad leaves (crypts, anubias, sword plants) instead of fine leaves. */
     public boolean broadLeafSpawner() { return def.broadLeaves; }
     /** Males and females look different (own textures). */
@@ -235,7 +283,15 @@ public enum TankmateSpecies {
     /** M21.5: new species can be switched off (features.*): then neither the trader nor the net brings them. */
     public boolean available() {
         if (seahorse()) return org.overengineer.bettacraft.config.CommonConfig.seahorses();
+        if (cichlid()) return org.overengineer.bettacraft.config.CommonConfig.cichlids();
         return this != GREEN_NEON_TETRA || org.overengineer.bettacraft.config.CommonConfig.greenNeon();
+    }
+
+    /** The feature switch that brings new ones (handbook, sources). */
+    public String featureKey() {
+        if (seahorse()) return "features.seahorses";
+        if (cichlid()) return "features.cichlids";
+        return this == GREEN_NEON_TETRA ? "features.greenNeonTetra" : "features.wildFish";
     }
 
     /** M21.8: a seahorse (hitches, low flow, live food, brood pouch). */
@@ -348,7 +404,8 @@ public enum TankmateSpecies {
         float width = -1, height = -1;
         double tMin = 22, tMax = 28, bMin = 24, bMax = 27, quality = 0.5, stock = 0.5, growth = 1.0, algae, eatsFry = 0.3;
         int shoal = 1, broodMin = 10, broodMax = 30, egg1 = 0x808080, egg2 = 0x404040;
-        boolean territorial, bettaTarget, snails, airGulper, nocturnal, broadLeaves, dimorphic;
+        boolean territorial, bettaTarget, snails, airGulper, nocturnal, broadLeaves, dimorphic, labyrinth, parentsFeed;
+        double prey, territory;
         List<String> varieties = List.of("wild");
         final List<Water> waters = new java.util.ArrayList<>();
         final List<Double> weights = new java.util.ArrayList<>();
@@ -372,6 +429,9 @@ public enum TankmateSpecies {
                     case CLOWN, DAMSEL -> 0.5;
                     case GOBY -> 0.3;
                     case SEAHORSE -> 1.6;
+                    case CICHLID -> 0.5;
+                    case APISTO -> 0.38;
+                    case ANGEL, DISCUS -> 0.8;
 
                     case CORY -> 0.42;
                     case PLECO -> 0.3;
@@ -409,6 +469,10 @@ public enum TankmateSpecies {
         Def nocturnal() { nocturnal = true; return this; }
         Def broadLeaves() { broadLeaves = true; return this; }
         Def dimorphic() { dimorphic = true; return this; }
+        Def labyrinth() { labyrinth = true; return this; }
+        Def prey(double maxLength) { prey = maxLength; return this; }
+        Def territory(double waterBlocks) { territory = waterBlocks; return this; }
+        Def parentsFeed() { parentsFeed = true; return this; }
         Def egg(int a, int b) { egg1 = a; egg2 = b; return this; }
         Def varieties(String... v) { varieties = List.of(v); return this; }
         Def trader(Trade t) { trade = t; return this; }

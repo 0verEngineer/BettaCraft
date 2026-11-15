@@ -65,6 +65,15 @@ clutches of every species in the tank.
 * Like a [betta](../bettas/breeding.md): the male builds a foam nest at the surface (floating plants help), the female spawns
   into it, then the male guards the nest and chases her away - take her out.
 
+## Cichlids: open brooders and cave brooders
+
+* **Open brooders** ([rams](ram_cichlid.md), [angelfish](angelfish.md), [discus](discus.md)): a male and a free female pair
+  up, clean a flat stone (rams) or a broad leaf or the glass (angelfish, discus) and spawn there. Both parents guard eggs and
+  young and drive every other fish away; without both parents the brood dies.
+* **Cave brooders** ([Apistogramma](cockatoo_cichlid.md)): every female claims a small cave (coconut shell, slate cave,
+  spawning cave), spawns in it with the male and guards the brood alone.
+* **Discus** young feed on their parents' skin secretion and stay with them for days longer.
+
 ## Clown loaches
 
 * They do not breed in a tank (in nature they migrate to spawn). Every clown loach comes from the net or the trader.

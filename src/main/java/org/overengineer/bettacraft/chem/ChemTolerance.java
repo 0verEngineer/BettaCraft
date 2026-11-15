@@ -108,6 +108,13 @@ public final class ChemTolerance {
             case LEOPARD_FROG_PLECO, ZEBRA_PLECO, BRISTLENOSE_PLECO, CLOWN_LOACH -> Range.fresh(5.8, 8.0, 0, 550);
             case GUPPY, ENDLER_GUPPY, PLATY -> LIVEBEARER;
             case DWARF_GOURAMI -> GOURAMI;
+            // M29 part a: the cichlids of soft South American water (the Bolivian ram and the cockatoo cichlid are hardier)
+            case RAM_CICHLID -> Range.fresh(5.0, 7.5, 0, 300);
+            case BOLIVIAN_RAM -> Range.fresh(6.0, 8.0, 0, 450);
+            case COCKATOO_CICHLID -> Range.fresh(5.5, 8.0, 0, 450);
+            case AGASSIZ_DWARF_CICHLID -> Range.fresh(5.0, 7.2, 0, 250);
+            case ANGELFISH -> Range.fresh(6.0, 8.0, 0, 500);
+            case DISCUS -> Range.fresh(5.0, 7.0, 0, 200);
             default -> Range.TOLERANT;
         };
     }

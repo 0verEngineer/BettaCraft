@@ -167,6 +167,12 @@ class WaterChemistryTest {
             var r = ChemTolerance.tankmate(s);
             assertNotNull(r);
             double ph = s.marine() ? WaterChemistry.SEA_PH : WaterChemistry.TAP_PH;
+            // M29: the soft-water cichlids came after the water chemistry (no old tank holds them): soft water only
+            if (s == TankmateSpecies.DISCUS || s == TankmateSpecies.AGASSIZ_DWARF_CICHLID) {
+                assertFalse(r.contains(ph, WaterChemistry.TAP_TDS), s + " needs soft water");
+                assertTrue(r.contains(6.2, 150), r.describe());
+                continue;
+            }
             assertTrue(r.contains(ph, WaterChemistry.TAP_TDS), s + " " + r.describe());
         }
         for (CritterSpecies s : CritterSpecies.values()) {

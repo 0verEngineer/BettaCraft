@@ -7,9 +7,9 @@ navigation:
 
 # Tankmates
 
-Twenty popular aquarium fish can share a tank with the bettas (or live without them): **tetras**, **rasboras**,
-**corydoras**, **plecos**, **otocinclus**, **loaches**, the **livebearers** guppy, endler and platy, and the **dwarf
-gourami**. They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
+Popular aquarium fish can share a tank with the bettas (or live without them): **tetras**, **rasboras**,
+**corydoras**, **plecos**, **otocinclus**, **loaches**, the **livebearers** guppy, endler and platy, the **dwarf
+gourami** and the **cichlids** (rams, Apistogramma, angelfish, discus). They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
 kind, rest on the bottom or stick to the glass, and every species breeds the way it does in nature.
 
 ![A community tank with tankmates](images/tm_community.png)
@@ -52,6 +52,12 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 | <ItemImage id="bettacraft:endler_guppy_bucket" /> [Endler Guppy](tankmates/endler_guppy.md) | 23–30 | 3 | yes | Bears live young |
 | <ItemImage id="bettacraft:platy_bucket" /> [Platy](tankmates/platy.md) | 20–27 | 3 | too cool | Bears live young |
 | <ItemImage id="bettacraft:dwarf_gourami_bucket" /> [Dwarf Gourami](tankmates/dwarf_gourami.md) | 24–29 | – | no | Builds a foam nest |
+| <ItemImage id="bettacraft:ram_cichlid_bucket" /> [Ram Cichlid](tankmates/ram_cichlid.md) | 25–31 | – | with care (big tank) | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood |
+| <ItemImage id="bettacraft:bolivian_ram_bucket" /> [Bolivian Ram](tankmates/bolivian_ram.md) | 22–29 | – | with care (big tank) | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood |
+| <ItemImage id="bettacraft:cockatoo_cichlid_bucket" /> [Cockatoo Dwarf Cichlid](tankmates/cockatoo_cichlid.md) | 22–29 | – | with care (big tank) | Cave brooder: the female spawns in a small cave and guards the brood |
+| <ItemImage id="bettacraft:agassiz_dwarf_cichlid_bucket" /> [Agassiz's Dwarf Cichlid](tankmates/agassiz_dwarf_cichlid.md) | 24–29 | – | with care (big tank) | Cave brooder: the female spawns in a small cave and guards the brood |
+| <ItemImage id="bettacraft:angelfish_bucket" /> [Angelfish](tankmates/angelfish.md) | 24–30 | – | no (big, nips fins) | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood |
+| <ItemImage id="bettacraft:discus_bucket" /> [Discus](tankmates/discus.md) | 27–32 | 3 | too warm | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood |
 
 ## In this chapter
 

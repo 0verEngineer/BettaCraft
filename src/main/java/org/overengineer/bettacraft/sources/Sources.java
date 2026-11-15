@@ -188,7 +188,7 @@ public final class Sources {
                 if (weight <= 0) continue;
                 int[] g = org.overengineer.bettacraft.world.Wildlife.group(s);
                 out.add(new Source(Source.Kind.SPAWN, Target.tankmate(s), where, weight, weight, g[0], g[1], 0, false,
-                        s.seahorse() ? "features.seahorses" : s == TankmateSpecies.GREEN_NEON_TETRA ? "features.greenNeonTetra" : "features.wildFish", null));
+                        s.featureKey(), null));
             }
             int frog = org.overengineer.bettacraft.world.Wildlife.frogWeight(w);
             if (frog > 0) out.add(new Source(Source.Kind.SPAWN, Target.FROG, where, frog, frog, 1, 2, 0, false, "features.wildFish", null));

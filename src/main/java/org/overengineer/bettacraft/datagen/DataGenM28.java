@@ -129,5 +129,10 @@ final class DataGenM28 {
 
     static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
         tag.apply(ModTags.SHRIMP_SHELTER).addTag(BlockTags.TERRACOTTA).add(ModBlocks.SPAWNING_CAVE.get());
+        // M29: the coconut shell and the slate cave are spawning caves of the Apistogramma
+        tag.apply(ModTags.SMALL_CAVES).add(net.minecraft.world.level.block.Blocks.BROWN_TERRACOTTA, net.minecraft.world.level.block.Blocks.BROWN_WOOL,
+                net.minecraft.world.level.block.Blocks.DEEPSLATE_TILES, net.minecraft.world.level.block.Blocks.POLISHED_DEEPSLATE,
+                net.minecraft.world.level.block.Blocks.COBBLED_DEEPSLATE, net.minecraft.world.level.block.Blocks.DEEPSLATE_BRICKS,
+                net.minecraft.world.level.block.Blocks.DEEPSLATE_TILE_SLAB, net.minecraft.world.level.block.Blocks.POLISHED_DEEPSLATE_SLAB);
     }
 }

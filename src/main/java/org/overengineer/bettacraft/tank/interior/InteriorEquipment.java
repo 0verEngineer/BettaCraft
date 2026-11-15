@@ -28,6 +28,8 @@ public final class InteriorEquipment {
     /** M19: blocks of the spawning caves and of the spawning mops (the tankmates find caves and mops from them). */
     final LongOpenHashSet caveBlocks = new LongOpenHashSet();
     final LongOpenHashSet mopBlocks = new LongOpenHashSet();
+    /** M29: blocks of the small caves for the cave brooding cichlids ({@code #bettacraft:small_caves}). */
+    final LongOpenHashSet smallCaveBlocks = new LongOpenHashSet();
     /** Bumped whenever a cave or mop block changes (cached cave/mop clusters). */
     int spawningVersion;
     /** M20: anchors of the flow pumps and the number of live rock blocks (biological filter in salt water). */
@@ -57,6 +59,7 @@ public final class InteriorEquipment {
     public int substrateCount() { return substrate; }
     public LongOpenHashSet caveBlocks() { return caveBlocks; }
     public LongOpenHashSet mopBlocks() { return mopBlocks; }
+    public LongOpenHashSet smallCaveBlocks() { return smallCaveBlocks; }
     public int spawningVersion() { return spawningVersion; }
     public LongOpenHashSet pumps() { return pumps; }
     public int liveRock() { return liveRock; }
@@ -177,6 +180,7 @@ public final class InteriorEquipment {
             mopBlocks.remove(key);
             spawningVersion++;
         }
+        if (s.is(ModTags.SMALL_CAVES) && smallCaveBlocks.remove(key)) spawningVersion++; // M29
     }
 
     private void add(long key, BlockState s) {
@@ -208,6 +212,7 @@ public final class InteriorEquipment {
             mopBlocks.add(key);
             spawningVersion++;
         }
+        if (s.is(ModTags.SMALL_CAVES) && smallCaveBlocks.add(key)) spawningVersion++; // M29
     }
 
     static boolean isAnchor(BlockState s, net.minecraft.world.level.block.Block b) {
@@ -238,6 +243,7 @@ public final class InteriorEquipment {
         floating.clear();
         caveBlocks.clear();
         mopBlocks.clear();
+        smallCaveBlocks.clear();
         pumps.clear();
         clearM23();
         plumbing.clear();
@@ -319,6 +325,7 @@ public final class InteriorEquipment {
         t.putIntArray("litter", new int[]{leafLitter, alderCones, shelter}); // M28
         t.putLongArray("caves", caveBlocks.toLongArray()); // M19
         t.putLongArray("mops", mopBlocks.toLongArray());
+        t.putLongArray("small_caves", smallCaveBlocks.toLongArray()); // M29
         t.putLongArray("pumps", pumps.toLongArray()); // M20
         t.putInt("live_rock", liveRock);
         // M23
@@ -366,6 +373,8 @@ public final class InteriorEquipment {
         mopBlocks.clear();
         for (long l : t.getLongArray("caves")) caveBlocks.add(l);
         for (long l : t.getLongArray("mops")) mopBlocks.add(l);
+        smallCaveBlocks.clear();
+        for (long l : t.getLongArray("small_caves")) smallCaveBlocks.add(l);
         pumps.clear();
         for (long l : t.getLongArray("pumps")) pumps.add(l);
         liveRock = Math.max(0, t.getInt("live_rock"));
@@ -385,6 +394,7 @@ public final class InteriorEquipment {
         spawningVersion++;
         substrate = t.getInt("substrate");
         needsScan = t.getBoolean("rescan");
+        if (!t.contains("small_caves")) needsScan = true; // M29: regions of earlier versions find their small caves once
         int[] chem = t.getIntArray("chem"); // M25: regions of earlier versions count the soil, limestone and wood once
         if (chem.length >= 5) {
             floorBlocks = chem[0];

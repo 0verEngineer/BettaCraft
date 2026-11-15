@@ -46,6 +46,10 @@ import org.overengineer.bettacraft.tank.TankWaterVolume;
  *     plecos spawn in a spawning cave, the male guards; tetras, rasboras and kuhli loaches scatter eggs into fine-leaved
  *     plants or a spawning mop (harlequins under broad leaves); guppies, endlers and platys bear live young (into the
  *     breeding box if there is one); the dwarf gourami builds a foam nest and guards it. Clown loaches do not breed.</li>
+ *     <li><b>M29 cichlids</b>: open brooders (rams, angelfish, discus) spawn as a pair on a flat stone, a broad leaf or the
+ *     glass, cave brooders (Apistogramma) in a small cave that the female claims; the parents guard eggs and young and drive
+ *     other fish away ({@link #guardBroods}); territorial males need room ({@link #territories}); adult angelfish eat small
+ *     fish and shrimp ({@link #predators}); discus young feed on their parents' skin (they stay with them longer).</li>
  * </ul>
  * Eggs, larvae and boxed young are {@link Clutch} data; free-swimming young are fry entities.
  */
@@ -139,9 +143,11 @@ public final class TankmateBreeding {
         Map<TankmateSpecies, List<TankmateEntity>> by = bySpecies(mates);
         shoals(level, c, by);
         aggression(level, c, bettas, mates, days, now);
+        territories(level, c, mates, days); // M29
         seahorses(level, c, mates);
         grazing(t, mates);
         snails(level, c, mates, days);
+        predators(level, c, mates, days); // M29
         fry(level, c, bettas, mates, days);
         boolean full = full(level, c, live);
         caves(level, c, mates, now);
@@ -153,9 +159,12 @@ public final class TankmateBreeding {
                 case LIVEBEARER -> livebearer(level, c, e.getKey(), e.getValue(), by, days, full);
                 case FOAM_NEST -> foam(level, c, e.getKey(), e.getValue(), days, now, full);
                 case POUCH -> pouch(level, c, e.getKey(), e.getValue(), days, full); // M21.8 seahorses
+                case OPEN -> open(level, c, e.getKey(), e.getValue(), days, now, full); // M29 cichlids
+                case CICHLID_CAVE -> cichlidCave(level, c, e.getKey(), e.getValue(), days, now, full);
                 case NONE -> {}
             }
         }
+        guardBroods(level, c, bettas, mates, days, now); // M29: after the breeding, which marks the guarding parents
         clutches(level, c, bettas, mates, days, now);
         births(level, c, mates, now);
     }
@@ -408,12 +417,15 @@ public final class TankmateBreeding {
     private static void caves(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, long now) {
         List<TankmateEntity> males = new ArrayList<>();
         List<TankmateEntity> clowns = new ArrayList<>();
+        List<TankmateEntity> apistos = new ArrayList<>();
         for (TankmateEntity m : mates) {
             m.setCave(null, Vec3.ZERO);
             if (m.species().breeding() == TankmateSpecies.Breeding.CAVE && m.isAdult() && !m.isFemale()) males.add(m);
             if (m.species().breeding() == TankmateSpecies.Breeding.ANEMONE) clowns.add(m);
+            if (m.species().breeding() == TankmateSpecies.Breeding.CICHLID_CAVE && m.isAdult() && m.isFemale()) apistos.add(m);
         }
         if (!clowns.isEmpty()) anemones(level, c, clowns);
+        if (!apistos.isEmpty()) cichlidCaves(level, c, apistos, males.size());
         if (males.isEmpty()) return;
         List<TankmateSpots.Spot> caves = TankmateSpots.caves(level.getServer(), c.getTank());
         // a male guarding a clutch keeps his cave
@@ -437,6 +449,32 @@ public final class TankmateBreeding {
             } else if (!caves.isEmpty() && males.size() > 1) {
                 m.setChased(true); // no cave left for him: the cave owners chase him off
             }
+        }
+    }
+
+    /**
+     * M29: every adult Apistogramma female claims a cave of her own: the small caves (coconut shell, slate cave) first, then
+     * the spawning caves the pleco males leave free; a female guarding a brood keeps hers; one without a cave is chased off
+     * by the owners.
+     */
+    private static void cichlidCaves(ServerLevel level, TankBlockEntity c, List<TankmateEntity> females, int plecoMales) {
+        TankData t = c.getTank();
+        List<TankmateSpots.Spot> all = TankmateSpots.cichlidCaves(level.getServer(), t);
+        int small = all.size() - TankmateSpots.caves(level.getServer(), t).size();
+        List<Vec3> free = new ArrayList<>();
+        for (int i = 0; i < all.size(); i++) if (i < small || i >= small + plecoMales) free.add(all.get(i).pos());
+        for (Clutch k : t.clutches()) {
+            if (k.kind != Clutch.Kind.CAVE || k.species.breeding() != TankmateSpecies.Breeding.CICHLID_CAVE || k.guardian == null) continue;
+            for (TankmateEntity f : females) if (f.getUUID().equals(k.guardian)) {
+                f.setCave(k.pos(), Vec3.ZERO);
+                free.removeIf(p -> p.distanceToSqr(k.pos()) < 1e-4);
+            }
+        }
+        boolean anyCave = !all.isEmpty();
+        for (TankmateEntity f : females) {
+            if (f.cave() != null) continue;
+            if (!free.isEmpty()) f.setCave(free.removeFirst(), Vec3.ZERO);
+            else if (anyCave && females.size() > 1) f.setChased(true);
         }
     }
 
@@ -509,6 +547,235 @@ public final class TankmateBreeding {
             TankCare.log(level, c, anemone ? "log.bettacraft.tm.spawned_anemone" : "log.bettacraft.tm.spawned_cave", TankCare.nameArg(f),
                     TankCare.nameArg(m), String.valueOf(n));
             c.markTankChanged();
+        }
+    }
+
+    // ------------------------------------------------------------------ M29 cichlids
+
+    /**
+     * Open brooders: every adult male pairs with the nearest free female; when he is ready the pair cleans a spot
+     * ({@link TankmateSpots#openSpot}: a flat stone, a broad leaf, the glass or a pit) and spawns there. Both stay at the
+     * brood and guard it until the young swim free.
+     */
+    private static void open(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list, double days, long now, boolean full) {
+        TankData t = c.getTank();
+        RandomSource r = level.getRandom();
+        boolean temp = s.breedingTemp(t.waterTemp());
+        TankWaterVolume w = new TankWaterVolume(t);
+        List<java.util.UUID> busy = new ArrayList<>();
+        for (Clutch k : t.clutches()) if (k.kind == Clutch.Kind.OPEN && k.species == s) {
+            if (k.guardian != null) busy.add(k.guardian);
+            if (k.partner != null) busy.add(k.partner);
+        }
+        for (TankmateEntity m : adults(list, false, false)) {
+            Clutch brood = null;
+            for (Clutch k : t.clutches()) if (k.kind == Clutch.Kind.OPEN && k.species == s && m.getUUID().equals(k.guardian)) brood = k;
+            if (brood != null) {
+                m.holdAt(w.clamp(brood.pos().add(-0.08, 0.1, 0), 0.08, 0.06, 0.06), now + HOLD);
+                m.setGuarding(true);
+                for (TankmateEntity f : list) if (f.getUUID().equals(brood.partner)) {
+                    f.holdAt(w.clamp(brood.pos().add(0.1, 0.12, 0.04), 0.08, 0.06, 0.06), now + HOLD);
+                    f.setGuarding(true);
+                }
+                continue;
+            }
+            if (full || !fit(m) || !temp || busy.contains(m.getUUID())) continue;
+            TankmateEntity f = null;
+            for (TankmateEntity x : adults(list, true, true)) {
+                if (x.breeding().cooldown() > 0 || busy.contains(x.getUUID())) continue;
+                if (f == null || x.distanceToSqr(m) < f.distanceToSqr(m)) f = x;
+            }
+            if (f == null) continue;
+            m.breeding().addReady(days * speed() * (m.breeding().isConditioned() || f.breeding().isConditioned() ? 1.5 : 1.0));
+            if (m.breeding().ready() < 1.0) continue;
+            m.breeding().resetReady();
+            double[] sp = TankmateSpots.openSpot(level.getServer(), t, s, m.position(), r);
+            int n = brood(s, f, r);
+            Clutch k = new Clutch(t.nextClutchId(), s, Clutch.Kind.OPEN, sp[0], sp[1], sp[2], n, f.genes(), m.genes());
+            k.face = (int) sp[3];
+            k.guardian = m.getUUID();
+            k.partner = f.getUUID();
+            k.generation = Math.max(f.generation(), m.generation()) + 1;
+            t.clutches().add(k);
+            busy.add(m.getUUID());
+            busy.add(f.getUUID());
+            f.breeding().setCooldown(3.0);
+            String place = sp[3] >= 0 ? "glass" : sp[4] <= 0 ? "pit" : s.zone() == TankmateSpecies.Zone.MID ? "leaf" : "stone";
+            level.sendParticles(ParticleTypes.BUBBLE, sp[0], sp[1] + 0.05, sp[2], 4, 0.06, 0.03, 0.06, 0.01);
+            TankCare.log(level, c, "log.bettacraft.tm.spawned_open", TankCare.nameArg(f), TankCare.nameArg(m), String.valueOf(n),
+                    "@log.bettacraft.tm.place." + place);
+            c.markTankChanged();
+        }
+    }
+
+    /** Cave brooders (Apistogramma): a female in her cave spawns with the male when she is ready and guards the brood alone. */
+    private static void cichlidCave(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list, double days, long now, boolean full) {
+        TankData t = c.getTank();
+        RandomSource r = level.getRandom();
+        boolean temp = s.breedingTemp(t.waterTemp());
+        List<TankmateEntity> males = adults(list, false, true);
+        for (TankmateEntity f : adults(list, true, false)) {
+            Vec3 cave = f.cave();
+            if (cave == null) continue;
+            boolean guarding = false;
+            for (Clutch k : t.clutches()) if (k.kind == Clutch.Kind.CAVE && f.getUUID().equals(k.guardian)) guarding = true;
+            if (guarding) {
+                f.holdAt(cave, now + HOLD);
+                f.setGuarding(true);
+                continue;
+            }
+            // a female with a cave stays near it most of the time
+            if (((now / 1200) + f.getId()) % 5 < 3) f.holdAt(cave, now + HOLD);
+            if (full || !fit(f) || !temp || males.isEmpty() || f.breeding().cooldown() > 0) continue;
+            f.breeding().addReady(days * speed() * (f.breeding().isConditioned() ? 1.5 : 1.0));
+            if (f.breeding().ready() < 1.0) continue;
+            TankmateEntity m = nearest(f, males);
+            if (m == null) continue;
+            f.breeding().resetReady();
+            m.holdAt(cave, now + HOLD);
+            f.holdAt(cave, now + HOLD);
+            int n = brood(s, f, r);
+            Clutch k = new Clutch(t.nextClutchId(), s, Clutch.Kind.CAVE, cave.x, cave.y, cave.z, n, f.genes(), m.genes());
+            k.guardian = f.getUUID();
+            k.generation = Math.max(f.generation(), m.generation()) + 1;
+            t.clutches().add(k);
+            f.breeding().setCooldown(3.0);
+            TankCare.log(level, c, "log.bettacraft.tm.spawned_cichlid_cave", TankCare.nameArg(f), TankCare.nameArg(m), String.valueOf(n));
+            c.markTankChanged();
+        }
+    }
+
+    /** The guarded cichlid broods: open broods and the caves of the Apistogramma females. */
+    private static boolean cichlidBrood(Clutch k) {
+        return k.kind == Clutch.Kind.OPEN || k.kind == Clutch.Kind.CAVE && k.species.breeding() == TankmateSpecies.Breeding.CICHLID_CAVE;
+    }
+
+    /**
+     * Cichlid parents drive every other fish (and bettas) that comes close to their eggs and young away: the intruder
+     * flees, counts as chased and takes a bite ({@code tankmates.broodDefence}). Their own young are left alone.
+     */
+    private static void guardBroods(ServerLevel level, TankBlockEntity c, List<BettaEntity> bettas, List<TankmateEntity> mates, double days, long now) {
+        TankData t = c.getTank();
+        double rate = ServerConfig.getOr(ServerConfig.TANKMATES_BROOD_DEFENCE, 1.0);
+        TankmateEntity logGuard = null;
+        Entity logIntruder = null;
+        for (Clutch k : t.clutches()) {
+            if (!cichlidBrood(k) || !k.hasYoung()) continue;
+            List<TankmateEntity> guards = new ArrayList<>();
+            for (TankmateEntity m : mates) if (m.isAlive() && (m.getUUID().equals(k.guardian) || m.getUUID().equals(k.partner))) guards.add(m);
+            if (guards.isEmpty()) continue;
+            Vec3 at = k.pos();
+            double radius = 0.35 + k.species.length() * 0.8;
+            double r2 = radius * radius;
+            for (TankmateEntity m : mates) {
+                if (guards.contains(m) || m.lifeStage() == LifeStage.FRY || m.distanceToSqr(at) > r2) continue;
+                TankmateEntity g = nearest(m, guards);
+                if (g == null) continue;
+                m.flee(g, now + HOLD);
+                m.setChased(true);
+                if (rate > 0) m.addDamage(rate * days, g);
+                if (logGuard == null) {
+                    logGuard = g;
+                    logIntruder = m;
+                }
+            }
+            for (BettaEntity b : bettas) {
+                if (b.lifeStage() == LifeStage.FRY || b.distanceToSqr(at) > r2) continue;
+                TankmateEntity g = nearest(b, guards);
+                if (g == null) continue;
+                b.flee(g, now + HOLD);
+                if (rate > 0) b.addDamage(rate * 0.5 * days, g);
+                if (logGuard == null) {
+                    logGuard = g;
+                    logIntruder = b;
+                }
+            }
+        }
+        if (logGuard == null) {
+            c.tankmateLogged.remove("brood_guard");
+        } else if (c.tankmateLogged.add("brood_guard")) {
+            TankCare.log(level, c, "log.bettacraft.tm.guards_brood", TankCare.nameArg(logGuard), TankCare.nameArg(logIntruder));
+        }
+    }
+
+    /**
+     * Territorial cichlid males need {@link TankmateSpecies#territory} water blocks each: in a tank too small for all of them
+     * the ones beyond (in UUID order) are chased and bitten by the territory owners.
+     */
+    private static void territories(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, double days) {
+        Map<TankmateSpecies, List<TankmateEntity>> males = new EnumMap<>(TankmateSpecies.class);
+        for (TankmateEntity m : mates) {
+            if (m.species().territory() > 0 && m.isAdult() && !m.isFemale()) males.computeIfAbsent(m.species(), k -> new ArrayList<>()).add(m);
+        }
+        TankData t = c.getTank();
+        for (var e : males.entrySet()) {
+            TankmateSpecies s = e.getKey();
+            List<TankmateEntity> list = e.getValue();
+            int room = Math.max(1, (int) Math.floor(t.waterBlocks() / s.territory() + 1e-6));
+            String key = "territory:" + s.id();
+            if (list.size() <= room) {
+                c.tankmateLogged.remove(key);
+                continue;
+            }
+            List<TankmateEntity> owners = list.subList(0, room);
+            for (TankmateEntity m : list.subList(room, list.size())) {
+                TankmateEntity owner = nearest(m, owners);
+                m.setChased(true);
+                m.addDamage(0.5 * days, owner);
+                if (owner != null) m.flee(owner, level.getGameTime() + HOLD);
+            }
+            if (c.tankmateLogged.add(key)) {
+                TankCare.log(level, c, "log.bettacraft.tm.territory", "@" + s.translationKey(), String.valueOf(list.size()), String.valueOf(room));
+            }
+        }
+    }
+
+    /**
+     * Adult predators (angelfish) eat tankmates up to their {@link TankmateSpecies#preyLength} (neons, embers, mosquito
+     * rasboras ...) and shrimp; plants hide some of them.
+     */
+    private static void predators(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, double days) {
+        double rate = ServerConfig.getOr(ServerConfig.TANKMATES_PREDATION, 0.3);
+        int hunters = 0;
+        double maxLen = 0;
+        TankmateEntity by = null;
+        for (TankmateEntity m : mates) {
+            if (m.isAdult() && m.species().preyLength() > 0) {
+                hunters++;
+                maxLen = Math.max(maxLen, m.species().preyLength());
+                if (by == null) by = m;
+            }
+        }
+        if (hunters == 0 || rate <= 0) return;
+        TankData t = c.getTank();
+        RandomSource r = level.getRandom();
+        List<TankmateEntity> fish = new ArrayList<>();
+        for (TankmateEntity m : mates) {
+            if (m.species().preyLength() <= 0 && m.lifeStage() != LifeStage.FRY && m.species().length() <= maxLen + 1e-6) fish.add(m);
+        }
+        List<Critter> shrimp = new ArrayList<>();
+        for (Critter k : t.critters()) if (k.alive() && k.species.group() == CritterSpecies.Group.SHRIMP) shrimp.add(k);
+        if (fish.isEmpty() && shrimp.isEmpty()) {
+            c.tankmateLogged.remove("prey");
+            return;
+        }
+        double hide = TankCritters.hiding(level, t);
+        double expected = rate * hunters * days * (1 - 0.7 * hide);
+        int n = (int) Math.floor(expected) + (r.nextDouble() < expected - Math.floor(expected) ? 1 : 0);
+        int ateFish = 0, ateShrimp = 0;
+        for (int i = 0; i < n && !(fish.isEmpty() && shrimp.isEmpty()); i++) {
+            int pick = r.nextInt(fish.size() + shrimp.size());
+            if (pick < fish.size()) {
+                eat(level, c, fish.remove(pick));
+                ateFish++;
+            } else {
+                t.critters().remove(shrimp.remove(pick - fish.size()));
+                c.markTankChanged();
+                ateShrimp++;
+            }
+        }
+        if (ateFish + ateShrimp > 0 && c.tankmateLogged.add("prey")) {
+            TankCare.log(level, c, "log.bettacraft.tm.ate_prey", TankCare.nameArg(by), String.valueOf(ateFish), String.valueOf(ateShrimp));
         }
     }
 
@@ -754,13 +1021,14 @@ public final class TankmateBreeding {
             int before = k.count, stage = k.stage();
             if (k.species.tolerates(temp)) k.age += days;
             boolean guarded = true;
-            if (k.kind == Clutch.Kind.CAVE || k.kind == Clutch.Kind.FOAM) {
+            if (k.kind == Clutch.Kind.CAVE || k.kind == Clutch.Kind.FOAM || k.kind == Clutch.Kind.OPEN) {
                 if (guardianGone(level, mates, k)) {
                     guarded = false;
                     k.unguarded += days;
                     if (k.unguarded >= 0.5) {
                         t.clutches().remove(k);
-                        TankCare.log(level, c, "log.bettacraft.tm.clutch_died", "@" + k.species.translationKey(), String.valueOf(k.count));
+                        TankCare.log(level, c, k.species.cichlid() ? "log.bettacraft.tm.brood_died" : "log.bettacraft.tm.clutch_died",
+                                "@" + k.species.translationKey(), String.valueOf(k.count));
                         changed = true;
                         continue;
                     }
@@ -787,15 +1055,19 @@ public final class TankmateBreeding {
                 continue;
             }
             if (k.count != before || k.stage() != stage) changed = true;
-            if (k.stage() != stage && stage == 0) TankCare.log(level, c, "log.bettacraft.tm.hatched", "@" + k.species.translationKey(), String.valueOf(k.count));
+            if (k.stage() != stage && stage == 0) {
+                TankCare.log(level, c, "log.bettacraft.tm.hatched", "@" + k.species.translationKey(), String.valueOf(k.count));
+                // M29: discus young graze the skin of their parents for days
+                if (k.species.parentsFeed()) TankCare.log(level, c, "log.bettacraft.tm.parents_feed", "@" + k.species.translationKey());
+            }
         }
         if (changed) c.markTankChanged();
         else c.setChanged();
     }
 
     private static boolean guardianGone(ServerLevel level, List<TankmateEntity> mates, Clutch k) {
-        if (k.guardian == null) return true;
-        for (TankmateEntity m : mates) if (m.getUUID().equals(k.guardian) && m.isAlive()) return false;
+        if (k.guardian == null && k.partner == null) return true;
+        for (TankmateEntity m : mates) if ((m.getUUID().equals(k.guardian) || m.getUUID().equals(k.partner)) && m.isAlive()) return false;
         return true;
     }
 
@@ -822,7 +1094,9 @@ public final class TankmateBreeding {
             // M21.6: the sex first, the X and Y of the livebearer genome depend on it
             boolean female = r.nextBoolean();
             TankmateGenes g = org.overengineer.bettacraft.world.Wildlife.mutate(k.species, TankmateGenes.cross(k.mother, k.father, female, r::nextLong), r::nextLong);
-            Vec3 p = w.clamp(new Vec3(k.x + (r.nextDouble() - 0.5) * 0.3, k.y - 0.05 - r.nextDouble() * 0.15, k.z + (r.nextDouble() - 0.5) * 0.3),
+            // M29: the young of an open brood rise from their stone or leaf (not into it)
+            double dy = k.kind == Clutch.Kind.OPEN ? 0.05 + r.nextDouble() * 0.1 : -0.05 - r.nextDouble() * 0.15;
+            Vec3 p = w.clamp(new Vec3(k.x + (r.nextDouble() - 0.5) * 0.3, k.y + dy, k.z + (r.nextDouble() - 0.5) * 0.3),
                     0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
             if (spawn(level, c, k.species, g, female, stage, k.generation, p) != null) made++;
         }
@@ -976,6 +1250,7 @@ public final class TankmateBreeding {
             d.putInt("gravid", gravid);
             switch (s.breeding()) {
                 case CAVE -> d.putInt("caves", TankmateSpots.caves(level.getServer(), t).size());
+                case CICHLID_CAVE -> d.putInt("caves", TankmateSpots.cichlidCaves(level.getServer(), t).size()); // M29
                 case ANEMONE -> d.putInt("anemones", TankmateSpots.anemones(level.getServer(), t).size());
                 case SCATTER -> {
                     d.putInt("mops", TankmateSpots.mops(level.getServer(), t).size());

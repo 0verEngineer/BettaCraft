@@ -45,9 +45,9 @@ Bei 22–26 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 2,7–3,2 % pro Schwung (etwa 1 von 31–37 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 2,1–2,5 % pro Schwung (etwa 1 von 40–48 Schwüngen), 1–4 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 5) (Config `features.wildFish`).
-* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 16 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 20 in diesem Angebot.
 * **[Zucht](breeding.md)**: lebendgebärend.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -71,6 +71,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_AUTO_WATER_CHANGE;
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_SPAWN_PASS;
+    public static final ModConfigSpec.BooleanValue FEATURE_CICHLIDS;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
@@ -191,6 +192,10 @@ public final class CommonConfig {
         FEATURE_WILD_SPAWN_PASS = b.comment("Own spawn pass for the wild animals: now and then a few wild fish, frogs or small animals spawn in fitting water near",
                 "each player, outside the vanilla water-ambient mob cap that cod, salmon, tropical fish and the fish of other mods fill",
                 "(limits: wildlife.spawnPass*; off: only the vanilla spawning)").define("wildSpawnPass", true);
+        // M29 part a
+        FEATURE_CICHLIDS = b.comment("Cichlids: ram, Bolivian ram, cockatoo and Agassiz's dwarf cichlid, angelfish and discus at the wandering trader, in",
+                "the aquarium net and wild (open brooders and cave brooders that guard their brood; off: no new ones; fish already caught stay)")
+                .define("cichlids", true);
         FEATURE_WILD_PLANTS = b.comment("Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks; jungle water,",
                 "swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand",
                 "or with the net (spawn.wildPlantFrequency; off: no new ones in new chunks, plants already there stay)").define("wildPlants", true);
@@ -328,6 +333,7 @@ public final class CommonConfig {
     public static boolean autoWaterChange() { return getOr(FEATURE_AUTO_WATER_CHANGE, true); }
     public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
     public static boolean wildSpawnPass() { return getOr(FEATURE_WILD_SPAWN_PASS, true); } // M28.1
+    public static boolean cichlids() { return getOr(FEATURE_CICHLIDS, true); } // M29 part a
     public static boolean wildPlants() { return getOr(FEATURE_WILD_PLANTS, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25

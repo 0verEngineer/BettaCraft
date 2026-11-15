@@ -33,7 +33,10 @@ public final class TankmateSpots {
         }
     }
 
-    private record Cache(int region, int version, List<Spot> caves, List<Spot> mops) {}
+    private record Cache(int region, int version, List<Spot> caves, List<Spot> mops, List<Spot> smallCaves) {}
+
+    /** M29: smallest cluster of small cave blocks (coconut shell, slate cave) that counts as a cave for the dwarf cichlids. */
+    public static final int SMALL_CAVE_MIN_BLOCKS = 12;
 
     private static final java.util.Map<Integer, Cache> CACHE = new java.util.concurrent.ConcurrentHashMap<>();
 
@@ -58,6 +61,30 @@ public final class TankmateSpots {
         return c == null ? List.of() : c.caves;
     }
 
+    /**
+     * M29: the caves of the cave brooding cichlids: the small caves (coconut shell, slate cave: clusters of
+     * {@code #bettacraft:small_caves} blocks, at the middle of their floor) first, then the spawning caves of the plecos.
+     */
+    public static List<Spot> cichlidCaves(MinecraftServer server, TankData t) {
+        Cache c = cache(server, t);
+        if (c == null) return List.of();
+        List<Spot> out = new ArrayList<>(c.smallCaves);
+        out.addAll(c.caves);
+        return out;
+    }
+
+    private static List<Spot> smallCaves(TankData t, InteriorRegion r, LongOpenHashSet blocks) {
+        List<Spot> out = new ArrayList<>();
+        for (Spot s : clusters(t, r, blocks, SMALL_CAVE_MIN_BLOCKS, false)) out.add(s);
+        // the spot of a shell or slate cave: the middle of its floor (inside, under the roof), not the middle of its blocks
+        List<Spot> floor = new ArrayList<>();
+        for (Spot s : out) {
+            double fy = (t.sizeY() - 2 * TankTerrain.MARGIN) / r.sizeY();
+            floor.add(new Spot(new Vec3(s.pos().x, Math.max(t.min().getY() + TankTerrain.MARGIN + fy, s.pos().y - 1.0 * fy), s.pos().z), s.blocks(), Vec3.ZERO));
+        }
+        return floor;
+    }
+
     /** Spawning mops: clusters of mop strands, at their centre, with their size. */
     public static List<Spot> mops(MinecraftServer server, TankData t) {
         Cache c = cache(server, t);
@@ -71,7 +98,8 @@ public final class TankmateSpots {
         var eq = InteriorManager.equipment(server, r);
         Cache c = CACHE.get(r.id());
         if (c != null && c.version == eq.spawningVersion() && c.region == r.id()) return c;
-        c = new Cache(r.id(), eq.spawningVersion(), clusters(t, r, eq.caveBlocks(), CAVE_MIN_BLOCKS, true), clusters(t, r, eq.mopBlocks(), 3, false));
+        c = new Cache(r.id(), eq.spawningVersion(), clusters(t, r, eq.caveBlocks(), CAVE_MIN_BLOCKS, true), clusters(t, r, eq.mopBlocks(), 3, false),
+                smallCaves(t, r, eq.smallCaveBlocks()));
         CACHE.put(r.id(), c);
         return c;
     }
@@ -162,6 +190,88 @@ public final class TankmateSpots {
     public static boolean isBroad(org.overengineer.bettacraft.plants.PlantSpecies s) {
         String leaf = s.leafTexture();
         return "broad".equals(leaf) || "wavy".equals(leaf) || "frond".equals(leaf);
+    }
+
+    /**
+     * M29: where an open brooding cichlid pair spawns, near {@code near}: rams on a flat stone (the top of a raised, level
+     * piece of decoration in the lower half of the water) or else in a pit in the substrate; angelfish and discus on a
+     * broad leaf (sword plants, anubias) or else on the glass. Returns {x, y, z, face} (face -1 off the glass, 0..3 on it)
+     * and whether it is a stone or leaf in {@code out[4]} (1) or the bare floor (0).
+     */
+    public static double[] openSpot(MinecraftServer server, TankData t, TankmateSpecies s, Vec3 near, RandomSource r) {
+        double[] out = new double[5];
+        out[3] = -1;
+        TankWaterVolume w = new TankWaterVolume(t);
+        var box = w.box();
+        if (s.zone() == TankmateSpecies.Zone.MID) {
+            // angelfish, discus: a broad leaf, else the glass
+            Spot best = null;
+            for (Spot p : plants(server, t, true)) if (best == null || p.pos().distanceToSqr(near) < best.pos().distanceToSqr(near)) best = p;
+            if (best != null) {
+                Vec3 p = w.clamp(best.pos(), 0.06, 0.06, 0.06);
+                out[0] = p.x;
+                out[1] = p.y;
+                out[2] = p.z;
+                out[4] = 1;
+                return out;
+            }
+            double[] g = new double[4];
+            if (glassSpot(t, w, r, g) != null) {
+                out[0] = g[0];
+                out[1] = Math.max(g[1], box.minY + (w.surface() - box.minY) * 0.3);
+                out[2] = g[2];
+                out[3] = g[3];
+                out[4] = 1;
+                return out;
+            }
+        }
+        InteriorRegion region = region(server, t);
+        TankTerrain terrain = new TankTerrain(t, server, region, true);
+        double floor = Double.MAX_VALUE;
+        List<double[]> samples = new ArrayList<>();
+        double step = 0.125;
+        for (double x = box.minX + 0.1; x <= box.maxX - 0.1; x += step) {
+            for (double z = box.minZ + 0.1; z <= box.maxZ - 0.1; z += step) {
+                double g = terrain.ground(x, z);
+                if (!Double.isFinite(g)) continue;
+                floor = Math.min(floor, g);
+                samples.add(new double[]{x, g, z});
+            }
+        }
+        if (s.zone() != TankmateSpecies.Zone.MID && floor < Double.MAX_VALUE) {
+            double top = floor + (w.surface() - floor) * 0.5;
+            double[] best = null;
+            for (double[] p : samples) {
+                if (p[1] < floor + 0.05 || p[1] > top) continue;
+                boolean flat = true;
+                for (int d = 0; d < 4 && flat; d++) {
+                    double nx = p[0] + (d == 0 ? 0.06 : d == 1 ? -0.06 : 0), nz = p[2] + (d == 2 ? 0.06 : d == 3 ? -0.06 : 0);
+                    double ng = terrain.ground(nx, nz);
+                    flat = Double.isFinite(ng) && Math.abs(ng - p[1]) <= 0.03;
+                }
+                if (!flat) continue;
+                if (best == null || dist2(p, near) < dist2(best, near)) best = p;
+            }
+            if (best != null) {
+                out[0] = best[0];
+                out[1] = best[1] + 0.01;
+                out[2] = best[2];
+                out[4] = 1;
+                return out;
+            }
+        }
+        // a pit in the substrate where the pair is
+        Vec3 p = w.clamp(near, 0.12, 0.05, 0.12);
+        double g = terrain.ground(p.x, p.z);
+        out[0] = p.x;
+        out[1] = (Double.isFinite(g) ? g : box.minY) + 0.01;
+        out[2] = p.z;
+        return out;
+    }
+
+    private static double dist2(double[] p, Vec3 v) {
+        double dx = p[0] - v.x, dy = p[1] - v.y, dz = p[2] - v.z;
+        return dx * dx + dy * dy + dz * dz;
     }
 
     /** Plant blocks per water block (share of the volume) of one leaf kind. */

@@ -50,9 +50,9 @@ other fish eat the eggs they reach; in a spawning mop most are safe.
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.74–0.88 % per swing (about 1 in 114–135 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.67–0.79 % per swing (about 1 in 127–150 swings), 1–4 at a time.
 * **Wild** in jungle water, in groups of 3–6 (spawn weight 6) (config `features.greenNeonTetra`).
-* **Wandering trader** (usual offers): 6 for 3 emeralds; one of 16 in this offer.
+* **Wandering trader** (usual offers): 6 for 3 emeralds; one of 20 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

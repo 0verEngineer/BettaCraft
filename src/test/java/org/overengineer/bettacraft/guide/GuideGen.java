@@ -150,6 +150,7 @@ public final class GuideGen {
             case LOACH -> "tankmates/loaches.md";
             case LIVEBEARER -> "tankmates/livebearers.md";
             case GOURAMI -> "tankmates.md";
+            case CICHLID -> "tankmates/cichlids.md"; // M29
             case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
             case SEAHORSE -> "saltwater/seahorses.md";
         };
@@ -220,7 +221,7 @@ public final class GuideGen {
         // overview tables
         tankmateTable(out, "tankmates.md", s -> !s.marine(), t("## All species", "## Alle Arten"));
         for (String g : List.of("tankmates/tetras.md", "tankmates/rasboras.md", "tankmates/corydoras.md", "tankmates/plecos.md", "tankmates/loaches.md",
-                "tankmates/livebearers.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
+                "tankmates/livebearers.md", "tankmates/cichlids.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
             tankmateTable(out, g, s -> groupPage(s).equals(g), t("## Species", "## Arten"));
         }
         critterTable(out, "invertebrates.md", s -> !s.marine(), true, t("## All species", "## Alle Arten"));
@@ -269,6 +270,9 @@ public final class GuideGen {
         List<String> traits = new ArrayList<>();
         if (s.grazer()) traits.add(t("eats algae", "frisst Algen"));
         if (s.eatsSnails()) traits.add(t("eats snails", "frisst Schnecken"));
+        if (s.preyLength() > 0) traits.add(t("eats small fish and shrimp", "frisst kleine Fische und Garnelen")); // M29
+        if (s.cichlid()) traits.add(t("guards its brood", "bewacht seine Brut"));
+        if (s.parentsFeed()) traits.add(t("feeds its young with skin secretion", "füttert die Jungen mit Hautschleim"));
         if (s.nocturnal()) traits.add(t("active at night", "nachtaktiv"));
         if (s.airGulper()) traits.add(t("gulps air at the surface", "holt Luft an der Oberfläche"));
         if (s.territorial()) traits.add(t("territorial", "revierbildend"));
@@ -282,6 +286,8 @@ public final class GuideGen {
         if (s.tempMax() < 28) return t("too cool", "zu kühl");
         if (s.tempMin() > 26) return t("too warm", "zu warm");
         if (s.stock() >= 2.5) return t("too big", "zu groß");
+        if (s.preyLength() > 0) return t("no (big, nips fins)", "nein (groß, zupft Flossen)"); // M29 angelfish
+        if (s.cichlid() && s.territorial()) return t("with care (big tank)", "mit Vorsicht (großes Becken)"); // M29 dwarf cichlids
         if (s.bettaTarget() && s.territorial()) return t("no", "nein");
         if (s.bettaTarget()) return t("females only", "nur Weibchen");
         return t("yes", "ja");

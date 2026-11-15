@@ -38,7 +38,7 @@ class TankmateDataTest {
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(28, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses
+        assertEquals(34, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));
@@ -129,6 +129,32 @@ class TankmateDataTest {
         assertTrue(Clutch.eggDays(TankmateSpecies.NEON_TETRA) < Clutch.eggDays(TankmateSpecies.PANDA_CORY));
         assertTrue(Clutch.larvaDays(TankmateSpecies.BRISTLENOSE_PLECO) > Clutch.larvaDays(TankmateSpecies.NEON_TETRA));
         assertEquals(0, Clutch.eggDays(TankmateSpecies.CLOWN_LOACH));
+    }
+
+    @Test
+    void cichlidsBroodAndSize() {
+        // M29 part a: open brooders and cave brooders, the discus young stay with their parents longer
+        assertEquals(TankmateSpecies.Breeding.OPEN, TankmateSpecies.RAM_CICHLID.breeding());
+        assertEquals(TankmateSpecies.Breeding.CICHLID_CAVE, TankmateSpecies.COCKATOO_CICHLID.breeding());
+        assertTrue(Clutch.larvaDays(TankmateSpecies.DISCUS) > Clutch.larvaDays(TankmateSpecies.ANGELFISH) + 1.0);
+        assertTrue(TankmateSpecies.DISCUS.parentsFeed() && !TankmateSpecies.ANGELFISH.parentsFeed());
+        assertTrue(TankmateSpecies.DISCUS.tolerates(30) && TankmateSpecies.DISCUS.breedingTemp(30), "discus at 30 C");
+        assertTrue(TankmateSpecies.ANGELFISH.preyLength() >= TankmateSpecies.NEON_TETRA.length(), "an angelfish eats neons");
+        assertTrue(TankmateSpecies.ANGELFISH.preyLength() < TankmateSpecies.PLATY.length(), "not platys");
+        assertEquals(1, org.overengineer.bettacraft.containers.AnimalContainers.bucket(TankmateSpecies.ANGELFISH), "one angelfish per bucket");
+        assertEquals(1, org.overengineer.bettacraft.containers.AnimalContainers.bucket(TankmateSpecies.DISCUS), "one discus per bucket");
+        assertEquals(12, org.overengineer.bettacraft.containers.AnimalContainers.bucket(TankmateSpecies.RAM_CICHLID));
+        assertTrue(TankmateSpecies.RAM_CICHLID.tolerates(26) && TankmateSpecies.RAM_CICHLID.tolerates(28), "rams live in a betta tank");
+        assertTrue(TankmateSpecies.DWARF_GOURAMI.labyrinth() && !TankmateSpecies.RAM_CICHLID.labyrinth());
+        assertEquals("features.cichlids", TankmateSpecies.DISCUS.featureKey());
+        Clutch c = new Clutch(3, TankmateSpecies.ANGELFISH, Clutch.Kind.OPEN, 1, 2, 3, 30, TankmateGenes.wild(TankmateSpecies.ANGELFISH),
+                TankmateGenes.wild(TankmateSpecies.ANGELFISH));
+        c.guardian = java.util.UUID.randomUUID();
+        c.partner = java.util.UUID.randomUUID();
+        Clutch d = Clutch.load(c.save());
+        assertNotNull(d);
+        assertEquals(Clutch.Kind.OPEN, d.kind);
+        assertEquals(c.partner, d.partner);
     }
 
     @Test
