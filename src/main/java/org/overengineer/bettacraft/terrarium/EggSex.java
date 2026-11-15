@@ -43,9 +43,14 @@ public final class EggSex {
 
     /** Incubation progress per day at this temperature (1 / eggDays at the pivot; 0 below {@link #STALL}). */
     public static double rate(HerpSpecies s, double temp, double speed) {
+        return rate(s.pivot(), s.eggDays(), temp, speed);
+    }
+
+    /** M35: the same for eggs that hatch in {@code eggDays} at the {@code pivot} temperature (the egg layers of other mods). */
+    public static double rate(double pivot, double eggDays, double temp, double speed) {
         if (!Double.isFinite(temp) || temp <= STALL) return 0;
-        double r = Math.min(MAX_RATE, (temp - STALL) / Math.max(1.0, s.pivot() - STALL));
-        return r * Math.max(0.01, speed) / Math.max(0.05, s.eggDays());
+        double r = Math.min(MAX_RATE, (temp - STALL) / Math.max(1.0, pivot - STALL));
+        return r * Math.max(0.01, speed) / Math.max(0.05, eggDays);
     }
 
     /** The temperature that gives the most males (the middle of the male range for FMF, 3 K below the pivot for MF). */

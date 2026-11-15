@@ -1,0 +1,48 @@
+{
+  "entity": "naturalist:tortoise",
+  "group": "tortoise",
+  "care": {
+    "hunger_days": 1.5
+  },
+  "food": [
+    "#bettacraft:turtle_greens"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 30,
+    "young": [
+      2,
+      4
+    ],
+    "days": 4,
+    "pause_days": 6,
+    "rate": 0.3,
+    "inherit": [
+      "Variant"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      22,
+      35
+    ],
+    "humidity": [
+      30,
+      70
+    ],
+    "uv": 4,
+    "basking": true,
+    "length": 1.0,
+    "volume": "land",
+    "movement": {
+      "style": "walk",
+      "walk": 0.012,
+      "max_step": 0.4,
+      "bask_time": 0.3,
+      "rest_time": 0.4,
+      "height": 0.8
+    }
+  }
+}

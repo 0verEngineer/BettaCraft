@@ -95,7 +95,7 @@ public class FishBagItem extends Item {
         if (isFilled(stack) || !target.isAlive() || target instanceof Player) return InteractionResult.PASS;
         if (!(target instanceof Bucketable) && !TankInhabitants.isWaterAnimal(target)) return InteractionResult.PASS;
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(target.getType())) return InteractionResult.PASS; // M31 part d: a drowned goes into a mob jar
-        if (TankInhabitants.accepts(target.getType(), target) != TankInhabitants.Acceptance.OK) {
+        if (!TankInhabitants.bagTakes(target)) { // M35: a sea turtle hatchling too
             if (!player.level().isClientSide && TankInhabitants.isWaterAnimal(target)) {
                 player.displayClientMessage(TankInhabitants.rejection(TankInhabitants.accepts(target.getType(), target), target.getType()), true);
             }

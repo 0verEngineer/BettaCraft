@@ -144,8 +144,8 @@ public final class TurtleGameTests {
 
     /**
      * The slider into a paludarium (not a dry terrarium), the tortoise from its box into a dry terrarium without water (not a
-     * paludarium); a sea turtle hatchling in a fish bag into a paludarium, a grown one refused, the hatchling that grows up
-     * leaves in a bag in front of the tank (M17).
+     * paludarium); M35: a sea turtle, grown or a hatchling in a fish bag, is refused by a small paludarium (the size rule of
+     * the big animals; the big sea water paludarium: {@code ForeignTerrariumGameTests}).
      */
     @GameTest(template = EMPTY, timeoutTicks = 200)
     public static void turtlesGoIntoTheirHabitat(GameTestHelper h) {
@@ -162,7 +162,7 @@ public final class TurtleGameTests {
         h.assertTrue(dry.getTank().waterMb() == 0, "still dry");
         h.assertTrue(TankInhabitants.insert(level, palu, container(h, HerpSpecies.HERMANN, true), ModEntities.HERMANN_TORTOISE.get(), null, 0L) != null,
                 "a paludarium refuses the tortoise");
-        // the vanilla sea turtle: a hatchling fits, a grown one does not
+        // the vanilla sea turtle (M35: a big animal): neither a grown one nor a hatchling fits a small paludarium
         Turtle grown = EntityType.TURTLE.create(level);
         grown.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(20, 2, 20)));
         ItemStack bigBag = FishBagItem.fillWith(grown);
@@ -173,16 +173,7 @@ public final class TurtleGameTests {
         ItemStack bag = FishBagItem.fillWith(baby);
         baby.discard();
         var err = TankInhabitants.insert(level, palu, bag, EntityType.TURTLE, null, true);
-        h.assertTrue(err == null, "a sea turtle hatchling goes in: " + (err == null ? "" : err.getString()));
-        Turtle in = null;
-        for (Entity e : TankInhabitants.liveInhabitants(level, palu.getTank())) if (e instanceof Turtle t) in = t;
-        h.assertTrue(in != null && in.isBaby(), "the hatchling lives in the tank");
-        in.setAge(0); // grown up
-        TankInhabitants.reconcile(level, palu);
-        h.assertFalse(in.isAlive(), "the grown sea turtle left the tank");
-        List<ItemEntity> bags = level.getEntitiesOfClass(ItemEntity.class, TankInhabitants.tankBox(palu.getTank()).inflate(4),
-                e -> e.getItem().is(ModItems.FISH_BAG.get()) && FishBagItem.containedType(e.getItem()) == EntityType.TURTLE);
-        h.assertTrue(bags.size() == 1, "in a bag in front of the tank, found " + bags.size());
+        h.assertTrue(BigTankGameTests.says(err, "message.bettacraft.big.too_small"), "a hatchling too: " + (err == null ? "accepted" : err.getString()));
         h.succeed();
     }
 

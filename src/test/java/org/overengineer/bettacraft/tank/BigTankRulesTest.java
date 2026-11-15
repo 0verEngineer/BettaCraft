@@ -1,6 +1,8 @@
 package org.overengineer.bettacraft.tank;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -63,5 +65,23 @@ class BigTankRulesTest {
         var denied = new InhabitantRules.Facts("minecraft:dolphin", 0.9F, 0.6F, false, false, false, false, true, 2.6);
         assertEquals(Acceptance.BLACKLISTED, InhabitantRules.decide(denied,
                 new InhabitantRules.Settings(List.of(), List.of("minecraft:dolphin"), 0.8, true, true)), "the deny list wins");
+    }
+
+    /** M35: the size rule of a terrarium measures the land, the water part or all of the tank; the rooms shared. */
+    @Test
+    void terrariumVolumes() {
+        assertEquals(60, BigTankRules.blocks(BigTankRules.Volume.LAND, 200, 60), 1e-9);
+        assertEquals(140, BigTankRules.blocks(BigTankRules.Volume.WATER, 200, 60), 1e-9);
+        assertEquals(200, BigTankRules.blocks(BigTankRules.Volume.ALL, 200, 60), 1e-9);
+        assertEquals(200, BigTankRules.blocks(BigTankRules.Volume.WATER, 200, 0), 1e-9, "an aquarium: all water");
+        assertEquals(200, BigTankRules.blocks(BigTankRules.Volume.LAND, 200, 500), 1e-9, "never more than the tank");
+        assertTrue(BigTankRules.Volume.ALL.shares(BigTankRules.Volume.LAND) && BigTankRules.Volume.WATER.shares(BigTankRules.Volume.ALL));
+        assertFalse(BigTankRules.Volume.LAND.shares(BigTankRules.Volume.WATER));
+        // a 1 m tortoise on 12 x 3 x 6 blocks of land (216): fits; a 2 m alligator needs 24 x 12 x 6 and 800 blocks
+        BigTankRules.Factors f = BigTankRules.Factors.DEFAULT;
+        assertEquals(BigTankRules.Verdict.OK, BigTankRules.check(12, 3, 6, BigTankRules.blocks(BigTankRules.Volume.LAND, 216, 216), 0, 1.0, f));
+        assertEquals(BigTankRules.Verdict.TOO_LITTLE_WATER, BigTankRules.check(12, 3, 6, BigTankRules.blocks(BigTankRules.Volume.LAND, 216, 50), 0, 1.0, f));
+        assertEquals(BigTankRules.Verdict.TOO_SMALL, BigTankRules.check(16, 6, 8, 768, 0, 2.0, f));
+        assertEquals(BigTankRules.Verdict.OK, BigTankRules.check(24, 6, 12, BigTankRules.blocks(BigTankRules.Volume.ALL, 1728, 900), 0, 2.0, f));
     }
 }

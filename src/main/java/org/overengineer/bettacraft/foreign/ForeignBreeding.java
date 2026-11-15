@@ -39,6 +39,7 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankWater;
 import org.overengineer.bettacraft.tank.TankWaterVolume;
 import org.overengineer.bettacraft.tankmates.TankmateSpots;
+import org.overengineer.bettacraft.terrarium.TerrariumNeeds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,17 +80,18 @@ public final class ForeignBreeding {
         if (t.inhabitants().isEmpty()) return;
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
         if (Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) for (Entity e : live) calm(e);
-        if (!Features.enabled(Feature.FOREIGN_BREEDING) || ForeignProfiles.all().isEmpty()) return;
+        boolean foreignOn = Features.enabled(Feature.FOREIGN_BREEDING) && !ForeignProfiles.all().isEmpty();
+        if (!foreignOn && !org.overengineer.bettacraft.terrarium.SeaTurtles.breedingOn()) return;
         double speed = ServerConfig.getOr(ServerConfig.FOREIGN_BREEDING_SPEED, 1.0);
         Map<EntityType<?>, List<LivingEntity>> byType = new LinkedHashMap<>();
         for (Entity e : live) {
-            ForeignProfile p = ForeignProfiles.of(e.getType());
+            ForeignProfile p = profile(e.getType(), foreignOn);
             if (p == null || !p.breeding().breeds() || !(e instanceof LivingEntity le)) continue;
             byType.computeIfAbsent(e.getType(), k -> new ArrayList<>()).add(le);
         }
         RandomGenerator rnd = level.getRandom()::nextLong;
         for (Map.Entry<EntityType<?>, List<LivingEntity>> en : byType.entrySet()) {
-            ForeignProfile p = ForeignProfiles.of(en.getKey());
+            ForeignProfile p = profile(en.getKey(), foreignOn);
             if (p == null) continue;
             boolean brooding = false;
             for (LivingEntity e : en.getValue()) {
@@ -98,6 +100,10 @@ public final class ForeignBreeding {
                 if (d.contains(BROOD, Tag.TAG_COMPOUND)) {
                     brooding = true;
                     CompoundTag b = d.getCompound(BROOD);
+                    if (p.breeding().nests()) { // M35: eggs into a nest on the land
+                        ForeignNests.step(level, c, e, p, b, days, rnd);
+                        continue;
+                    }
                     b.putDouble("age", b.getDouble("age") + days);
                     if (b.getDouble("age") >= p.breeding().days()) {
                         d.remove(BROOD);
@@ -106,8 +112,16 @@ public final class ForeignBreeding {
                     }
                 }
             }
-            if (!brooding && speed > 0) mate(level, c, p, en.getValue(), days * speed, rnd);
+            double sp = p == org.overengineer.bettacraft.terrarium.SeaTurtles.BREEDING ? 1.0 : speed; // M35: the sea turtle by the turtle settings
+            if (!brooding && sp > 0) mate(level, c, p, en.getValue(), days * sp, rnd);
         }
+    }
+
+    /** M35: the breeding profile of a type: its profile (with our breeding of the foreign animals on), else the sea turtle's. */
+    @Nullable
+    static ForeignProfile profile(EntityType<?> type, boolean foreignOn) {
+        ForeignProfile p = foreignOn ? ForeignProfiles.of(type) : null;
+        return p != null ? p : org.overengineer.bettacraft.terrarium.SeaTurtles.breeding(type);
     }
 
     /** Why a pair of this profile does not breed in this tank now, or null if it may. */
@@ -121,6 +135,10 @@ public final class ForeignBreeding {
         if (t.waterBlocks() + 1e-6 < b.minWaterBlocks()) return "tank_size";
         if (c.isCrowded()) return "crowded";
         if (p.terrarium() == null && TankWater.qualityEnabled() && t.waterQuality() < p.minQuality()) return "water";
+        if (p.terrarium() != null) { // M35: a terrarium animal breeds where it lives well (no harmful problem: the right tank, warm enough)
+            TerrariumNeeds.Assessment a = p.terrarium().assess(org.overengineer.bettacraft.terrarium.TankClimate.conditions(t));
+            if (a.harmful()) return "climate";
+        }
         if (b.needsPlants() && TankmateSpots.plants(level.getServer(), t, false).isEmpty() && TankmateSpots.plants(level.getServer(), t, true).isEmpty()) {
             return "plants";
         }
@@ -130,7 +148,7 @@ public final class ForeignBreeding {
     /** Whether this animal may breed now: grown, not resting, fed and healthy (with our care on). */
     static boolean ready(LivingEntity e, ForeignProfile p) {
         if (!e.isAlive() || e.isBaby() || e.getPersistentData().getDouble(REST) > 0) return false;
-        if (!Features.enabled(Feature.FOREIGN_CARE)) return true;
+        if (ForeignProfiles.cared(e) == null) return true; // M35: the sea turtle has no hunger of ours
         BettaHealth h = ForeignCare.health(e);
         return !h.isSick() && !h.isHungry(ForeignCare.params(p));
     }
@@ -165,8 +183,8 @@ public final class ForeignBreeding {
         brood.put("father", inherited(father, p));
         mother.getPersistentData().put(BROOD, brood);
         father.getPersistentData().putDouble(REST, p.breeding().pauseDays() * 0.5);
-        TankCare.log(level, c, p.breeding().type() == ForeignProfile.Type.LIVEBEARER ? "log.bettacraft.foreign.pregnant" : "log.bettacraft.foreign.spawned",
-                TankCare.nameArg(mother));
+        TankCare.log(level, c, p.breeding().type() == ForeignProfile.Type.LIVEBEARER ? "log.bettacraft.foreign.pregnant"
+                : p.breeding().nests() ? "log.bettacraft.foreign.gravid" : "log.bettacraft.foreign.spawned", TankCare.nameArg(mother)); // M35: a nest on the land
         c.setChanged();
     }
 
@@ -208,7 +226,8 @@ public final class ForeignBreeding {
         }
         Entity e = type.create(level);
         if (e == null) return null;
-        Vec3 p0 = new TankWaterVolume(c.getTank()).clamp(at, Math.max(0.1, e.getBbWidth() / 2), 0.05, Math.max(0.1, e.getBbHeight()));
+        // M35: a terrarium animal hatches where it is (its nest on the land), a water animal in the water
+        Vec3 p0 = p.terrarium() != null ? at : new TankWaterVolume(c.getTank()).clamp(at, Math.max(0.1, e.getBbWidth() / 2), 0.05, Math.max(0.1, e.getBbHeight()));
         if (!b.inherit().isEmpty() || b.offspringNbt() != null) {
             CompoundTag data = e.saveWithoutId(new CompoundTag());
             for (String k : b.inherit()) {

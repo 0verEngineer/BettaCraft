@@ -54,6 +54,31 @@ public final class BigTankRules {
     }
 
     /**
+     * M35: the part of a tank the size rule measures for an animal. An aquarium animal the water, a land animal of a
+     * terrarium the land with the air above it, an animal of both (an alligator) the whole tank.
+     */
+    public enum Volume { LAND, WATER, ALL;
+
+        /** Whether the room of two animals of these volumes is the same room (they count against each other). */
+        public boolean shares(Volume o) {
+            return this == ALL || o == ALL || this == o;
+        }
+    }
+
+    /**
+     * M35: the blocks of this volume in a tank of {@code capacityBlocks} (full) with {@code landBlocks} of them above its
+     * land: the land, the rest (the water), or all of it. A tank without land: the water is all of it, the land nothing.
+     */
+    public static double blocks(Volume v, double capacityBlocks, double landBlocks) {
+        double land = Math.max(0, Math.min(capacityBlocks, landBlocks));
+        return switch (v) {
+            case LAND -> land;
+            case WATER -> capacityBlocks - land;
+            case ALL -> capacityBlocks;
+        };
+    }
+
+    /**
      * The interior scale of a tank of this bounding box: the current one, or smaller (8, 4) once the longest side is longer
      * than {@code scale8Above} / {@code scale4Above}. Never larger than {@code current}.
      */

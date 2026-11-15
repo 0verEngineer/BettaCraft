@@ -55,8 +55,9 @@ public final class ModItems {
             () -> new org.overengineer.bettacraft.terrarium.TurtleBucketItem(ModEntities.REEVES_TURTLE.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<net.minecraft.world.item.MobBucketItem> HERMANN_TORTOISE_BOX = ITEMS.register("hermann_tortoise_box",
             () -> new org.overengineer.bettacraft.terrarium.AnimalBoxItem(ModEntities.HERMANN_TORTOISE.get(), new Item.Properties().stacksTo(1)));
-    /** M31 part b: the empty terrarium box (catches a tortoise; later the land animals of part c). */
-    public static final DeferredItem<Item> TERRARIUM_BOX = ITEMS.register("terrarium_box", () -> new Item(new Item.Properties().stacksTo(16)));
+    /** M31 part b: the empty terrarium box (catches a tortoise; later the land animals of part c). M35: also holds a land animal of another mod. */
+    public static final DeferredItem<org.overengineer.bettacraft.terrarium.TerrariumBoxItem> TERRARIUM_BOX = ITEMS.register("terrarium_box",
+            () -> new org.overengineer.bettacraft.terrarium.TerrariumBoxItem(new Item.Properties().stacksTo(16)));
     /** M31 part d: the mob jar ("Mobglas"): catches a weakened mob alive for a tank. */
     public static final DeferredItem<org.overengineer.bettacraft.mobs.MobJarItem> MOB_JAR = ITEMS.register("mob_jar",
             () -> new org.overengineer.bettacraft.mobs.MobJarItem(new Item.Properties().stacksTo(16)));

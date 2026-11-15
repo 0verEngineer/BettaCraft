@@ -97,6 +97,7 @@ public final class TankInhabitants {
     public static EntityType<?> containedType(ItemStack stack) {
         if (stack.getItem() instanceof FishBagItem) return FishBagItem.containedType(stack);
         if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return org.overengineer.bettacraft.big.TransportTubItem.containedType(stack); // M30
+        if (stack.getItem() instanceof org.overengineer.bettacraft.terrarium.TerrariumBoxItem) return org.overengineer.bettacraft.terrarium.TerrariumBoxItem.containedType(stack); // M35
         if (FishContainers.kind(stack) != null) return FishContainers.containedType(stack);
         if (stack.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem) return org.overengineer.bettacraft.mobs.MobJarItem.containedType(stack); // M31 part d
         if (org.overengineer.bettacraft.compat.MobCaptures.format(stack) != null) return org.overengineer.bettacraft.compat.MobCaptures.containedType(stack);
@@ -114,6 +115,16 @@ public final class TankInhabitants {
      * Acceptance rules (M16, {@link InhabitantRules}): config deny and allow lists, blacklist tag, whitelist tag, bosses,
      * hitbox at most {@code inhabitants.maxHitbox} (0.8), no hostile mobs, and (with an instance) a water animal.
      */
+    /**
+     * M35: whether a fish bag takes this animal: one the tank rules accept, or a young sea turtle (a big animal judged by its
+     * adult size; the tank decides by the size rule when it goes in).
+     */
+    public static boolean bagTakes(Entity e) {
+        Acceptance a = accepts(e.getType(), e);
+        if (a == Acceptance.OK) return true;
+        return a == Acceptance.BIG && e.getType() == EntityType.TURTLE && e instanceof LivingEntity le && le.isBaby();
+    }
+
     public static Acceptance accepts(EntityType<?> type, @Nullable Entity instance) {
         // M31 part d: a mob in glass (drowned, zombie, spider ...) is shrunk in the tank: its size and hostility do not matter
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) {
@@ -162,7 +173,7 @@ public final class TankInhabitants {
     public static long carriedWater(ItemStack stack) {
         if (stack.getItem() instanceof FishBagItem) return BAG_MB;
         if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return 0; // M30: the tub brings no water
-        if (stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem) return 0; // M31 part b: a terrarium box neither
+        if (stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem || stack.getItem() instanceof org.overengineer.bettacraft.terrarium.TerrariumBoxItem) return 0; // M31 part b: a terrarium box neither (M35: nor one of a foreign animal)
         if (stack.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem || org.overengineer.bettacraft.compat.MobCaptures.format(stack) != null) return 0; // M31 part d
         FishContainers.Foreign f = FishContainers.kind(stack);
         return f != null ? f.waterMb : BUCKET_MB;
@@ -189,7 +200,8 @@ public final class TankInhabitants {
             return ItemInteractionResult.CONSUME;
         }
         ItemStack empty = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem ? new ItemStack(ModItems.TRANSPORT_TUB.get()) // M30
-                : stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem ? new ItemStack(ModItems.TERRARIUM_BOX.get()) // M31 part b
+                : stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem || stack.getItem() instanceof org.overengineer.bettacraft.terrarium.TerrariumBoxItem
+                        ? new ItemStack(ModItems.TERRARIUM_BOX.get()) // M31 part b (M35: a box of a foreign animal)
                 : stack.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem ? new ItemStack(ModItems.MOB_JAR.get()) // M31 part d
                 : org.overengineer.bettacraft.compat.MobCaptures.format(stack) != null ? org.overengineer.bettacraft.compat.MobCaptures.emptied(stack)
                 : stack.getItem() instanceof FishBagItem ? new ItemStack(ModItems.FISH_BAG.get())
@@ -231,6 +243,10 @@ public final class TankInhabitants {
             Component big = org.overengineer.bettacraft.big.BigAnimals.refusal(tank, liveInhabitants(level, tank), type, null);
             if (big != null) return big;
         }
+        if (type == EntityType.TURTLE) { // M35: a sea turtle needs a sand beach for its eggs
+            Component beach = org.overengineer.bettacraft.terrarium.SeaTurtles.refusal(level, controller);
+            if (beach != null) return beach;
+        }
         // M20: an animal that would die quickly in this water (freshwater fish into salt water and the other way round)
         var salt = org.overengineer.bettacraft.reef.SaltTolerance.of(type);
         if (org.overengineer.bettacraft.reef.SaltTolerance.refuse(salt, tank)) {
@@ -246,6 +262,7 @@ public final class TankInhabitants {
         CompoundTag stored = FishContainers.storedEntity(stack);
         if (stored == null) stored = FishBagItem.storedEntity(stack); // M16: a water animal without a bucket in our fish bag
         if (stored == null) stored = org.overengineer.bettacraft.big.TransportTubItem.storedEntity(stack); // M30: a big animal in its tub
+        if (stored == null) stored = org.overengineer.bettacraft.terrarium.TerrariumBoxItem.storedEntity(stack); // M35: a land animal of another mod in its box
         if (stored == null) stored = org.overengineer.bettacraft.mobs.MobJarItem.storedEntity(stack); // M31 part d: a mob in a jar
         if (stored == null) stored = org.overengineer.bettacraft.compat.MobCaptures.storedEntity(stack); // M31 part d: soul vial, imprisonment tool
         Entity e;

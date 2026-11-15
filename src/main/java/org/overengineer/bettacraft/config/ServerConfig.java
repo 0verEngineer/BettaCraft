@@ -336,6 +336,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue TERRA_PALUDARIUM_LAND, TERRA_TERRARIUM_LAND, TERRA_MAT_LIFT, TERRA_LAMP_AIR, TERRA_BASK_LIFT,
             TERRA_LAMP_UV, TERRA_SKY_UV, TERRA_MIST_HUMIDITY, TERRA_WATER_HUMIDITY, TERRA_PLANT_HUMIDITY, TERRA_TAU_AIR, TERRA_TAU_HUMIDITY,
             TERRA_MISTER_MB, TERRA_HARM_DAYS, POWER_HEAT_MAT_FE, POWER_MISTER_FE;
+    /** M35 (question C1): land animals of other mods without a profile that the terrarium box catches all the same. */
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> TERRA_BOX_ALLOW;
     // M31 part b: turtles
     public static final ModConfigSpec.DoubleValue TERRA_BRUMATION_BELOW, TERRA_INCUBATION_SPEED, TERRA_CLUTCH_DAYS;
     public static final ModConfigSpec.BooleanValue TERRA_BRUMATION;
@@ -1046,6 +1048,9 @@ public final class ServerConfig {
                 .define("mobUndeadBurn", false);
         TERRA_MOB_BREEDING = b.comment("Mobs in glass breed: two fed drowned, zombies or husks (rotten flesh) a baby, spiders (crickets) spiderlings,",
                         "small slimes and magma cubes (slime ball, magma cream) a new small one; bred mobs drop nothing either").define("mobBreeding", true);
+        TERRA_BOX_ALLOW = b.comment("M35: land animals of other mods without a terrarium profile that the terrarium box catches all the same (\"modid:name\",",
+                        "\"modid:*\"); they live in terraria and paludaria without our care, moved by our walker, small ones only (inhabitants.maxHitbox)")
+                .defineListAllowEmpty("boxAllow", java.util.List.of(), () -> "modid:name", org.overengineer.bettacraft.tank.InhabitantRules::validPattern);
         POWER_HEAT_MAT_FE = b.comment("FE per tick a heat mat needs while it heats (with power.heaterRequiresEnergy)")
                 .defineInRange("heatMatFePerTick", 4.0, 0.0, 100000.0);
         POWER_MISTER = b.comment("Misters only spray while the tank has enough FE").define("misterRequiresEnergy", false);

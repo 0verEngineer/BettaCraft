@@ -39,7 +39,9 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 return stack.is(ModTags.BETTA_FOOD) || stack.is(net.minecraft.tags.ItemTags.FISHES) // M30 part c: raw fish for dolphins
-                        || org.overengineer.bettacraft.terrarium.TerrariumFood.isFood(stack); // M31: greens, insects, fruit, prey for the terrarium animals
+                        || org.overengineer.bettacraft.terrarium.TerrariumFood.isFood(stack) // M31: greens, insects, fruit, prey for the terrarium animals
+                        || stack.is(net.neoforged.neoforge.common.Tags.Items.FOODS_RAW_MEAT) // M35: for the alligator (a tag: the client knows it too)
+                        || org.overengineer.bettacraft.foreign.ForeignFood.isFood(stack); // M35: the item food of the animals of other mods (server)
             }
 
             @Override
@@ -176,6 +178,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         }
         used += org.overengineer.bettacraft.big.DolphinCare.feedFromFeeder(level, tank, items); // M30 part c
         used += org.overengineer.bettacraft.terrarium.TerrariumFood.feedFromFeeder(level, tank, items); // M31 part b
+        used += org.overengineer.bettacraft.foreign.ForeignFood.feedFromFeeder(level, tank, items); // M35: greens, meat for the animals of other mods
         if (first >= 0 && slots > 1) {
             turn = (first + 1) % slots;
             setChanged();

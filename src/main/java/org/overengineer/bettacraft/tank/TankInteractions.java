@@ -33,6 +33,8 @@ public final class TankInteractions {
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.big.DolphinCare.feed(stack, level, pos, player, hand); // M30: raw fish for the dolphins
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = org.overengineer.bettacraft.foreign.ForeignFood.handFeed(stack, level, pos, player, hand); // M35: greens, meat for the animals of other mods
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.mobs.GlassMobs.handFeed(stack, level, pos, player, hand); // M31 part d: food for the mobs in glass, or bait
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.terrarium.TerrariumFood.handFeed(stack, level, pos, player, hand); // M31 part b: greens for the turtles

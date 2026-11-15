@@ -119,6 +119,43 @@ class ForeignProfileTest {
         assertEquals(TerrariumNeeds.Habitat.DRY, p.terrarium().habitat());
     }
 
+    /** M35: the land part of a terrarium profile: length, volume, movement, prey, box, and eggs into a nest. */
+    @Test
+    void landPartAndNest() {
+        List<String> w = new ArrayList<>();
+        ForeignProfile p = parse("""
+                {"entity": "naturalist:alligator", "food": ["#c:foods/raw_meat"],
+                 "breeding": {"type": "eggs", "nest": "#bettacraft:turtle_nest_ground", "nest_temperature": 32, "days": 5},
+                 "terrarium": {"habitat": "paludarium", "length": 2.0, "volume": "all", "prey": 0.8, "box": false,
+                               "movement": {"style": "walk", "walk": 0.02, "swim": 0.035}}}""", w);
+        assertTrue(w.isEmpty(), w.toString());
+        ForeignProfile.Land l = p.land();
+        assertNotNull(l);
+        assertTrue(l.big());
+        assertEquals(2.0, l.lengthM(), 1e-9);
+        assertEquals(org.overengineer.bettacraft.tank.BigTankRules.Volume.ALL, l.volume());
+        assertEquals(0.8, l.preyLength(), 1e-9);
+        assertFalse(l.box());
+        assertNotNull(l.gait());
+        assertEquals(0.035, l.gait().swim(), 1e-9);
+        assertTrue(p.breeding().nests());
+        assertEquals("bettacraft:turtle_nest_ground", p.breeding().nest().toString());
+        assertEquals(32, p.breeding().nestPivot(), 1e-9);
+        // the defaults: the volume by the habitat, the walker, the box, no size rule
+        ForeignProfile dry = parse("{\"entity\": \"a:b\", \"terrarium\": {\"habitat\": \"dry\"}}", w);
+        assertEquals(org.overengineer.bettacraft.tank.BigTankRules.Volume.LAND, dry.land().volume());
+        assertFalse(dry.land().big());
+        assertTrue(dry.land().box() && dry.land().walks());
+        ForeignProfile own = parse("{\"entity\": \"a:b\", \"terrarium\": {\"habitat\": \"wet\", \"movement\": \"own\"}}", w);
+        assertEquals(org.overengineer.bettacraft.tank.BigTankRules.Volume.WATER, own.land().volume());
+        assertFalse(own.land().walks());
+        assertNull(parse("{\"entity\": \"a:b\"}", w).land(), "an aquarium animal has no land part");
+        assertTrue(w.isEmpty(), w.toString());
+        // mistakes are warned about
+        parse("{\"entity\": \"a:b\", \"terrarium\": {\"length\": -1, \"volume\": \"air\", \"movement\": \"fly\"}}", w);
+        assertEquals(3, w.size(), w.toString());
+    }
+
     /** Every shipped default parses without a warning. */
     @Test
     void shippedDefaultsParse() throws IOException {

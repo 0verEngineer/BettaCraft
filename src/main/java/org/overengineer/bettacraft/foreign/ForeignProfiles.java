@@ -115,7 +115,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         if (BettaCraft.MOD_ID.equals(id.getNamespace())) return true;
         if (type == EntityType.AXOLOTL || type == EntityType.DOLPHIN || type == EntityType.TURTLE || type == EntityType.TADPOLE) return true;
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return true;
-        return TerrariumAnimals.isTerrariumAnimal(type) && !TERRARIUM.contains(type);
+        return TerrariumAnimals.isRegistered(type) && !TERRARIUM.contains(type);
     }
 
     /** Whether the mod of this namespace is loaded (by its mod id, or because it has entities registered under it). */
@@ -227,7 +227,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         }
         for (Map.Entry<EntityType<?>, ForeignProfile> e : map.entrySet()) {
             if (e.getValue().terrarium() == null) continue;
-            TerrariumAnimals.register(e.getKey(), e.getValue().terrarium(), () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FOREIGN_CARE));
+            TerrariumAnimals.register(e.getKey(), e.getValue().terrarium(), ForeignTerrarium::enabled); // M35: features.foreignAnimals.terrarium
             TERRARIUM.add(e.getKey());
         }
         fileByType = Map.copyOf(fileMap);

@@ -19,7 +19,7 @@ public abstract class LivingEntityGlassMixin {
     @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
     private void bettacraft$glassTravel(Vec3 input, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (GlassMobs.held(self)) {
+        if (GlassMobs.held(self) || org.overengineer.bettacraft.foreign.ForeignTerrarium.held(self)) { // M35: the land animals of other mods
             self.setDeltaMovement(Vec3.ZERO);
             ci.cancel();
         }
@@ -27,6 +27,7 @@ public abstract class LivingEntityGlassMixin {
 
     @Inject(method = "decreaseAirSupply", at = @At("HEAD"), cancellable = true)
     private void bettacraft$glassAir(int air, CallbackInfoReturnable<Integer> cir) {
-        if (GlassMobs.held((LivingEntity) (Object) this)) cir.setReturnValue(air);
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (GlassMobs.held(self) || org.overengineer.bettacraft.foreign.ForeignTerrarium.held(self)) cir.setReturnValue(air);
     }
 }

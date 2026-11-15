@@ -12,8 +12,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import org.overengineer.bettacraft.chem.ChemTolerance;
+import org.overengineer.bettacraft.tank.BigTankRules;
 import org.overengineer.bettacraft.tank.Salinity;
 import org.overengineer.bettacraft.tankmates.TankmateSpecies;
+import org.overengineer.bettacraft.terrarium.LandWalker;
 import org.overengineer.bettacraft.terrarium.TerrariumNeeds;
 
 /**
@@ -42,11 +44,45 @@ import org.overengineer.bettacraft.terrarium.TerrariumNeeds;
  * @param breeding  how it breeds in our tanks
  * @param suppressOwn whether the animal's own breeding (vanilla love, the mod's breeding goal) is suppressed in our tanks
  * @param terrarium the terrarium needs (M31) if it lives in a terrarium or paludarium instead of an aquarium, or null
+ * @param land      M35: how a terrarium animal lives in its tank (its size for the size rule, how it moves, what it hunts,
+ *                  whether the terrarium box takes it), or null for an aquarium animal
  */
 public record ForeignProfile(List<ResourceLocation> entities, boolean required, String group, @Nullable String species,
                              double tempMin, double tempMax, double minQuality, Salinity.Range salinity, @Nullable ChemTolerance.Range chemistry,
                              boolean labyrinth, double hungerDays, double stock, List<String> food, Breeding breeding, boolean suppressOwn,
-                             @Nullable TerrariumNeeds terrarium) {
+                             @Nullable TerrariumNeeds terrarium, @Nullable Land land) {
+
+    /**
+     * M35: a terrarium animal of another mod in its tank.
+     *
+     * @param lengthM    its length in metres for the size rule of the big animals (M30: sides 12 / 6 / 3 blocks per metre,
+     *                   100 blocks per cubic metre of {@link #volume}); NaN: no size rule (a small animal, by its hitbox)
+     * @param volume     the part of the tank the size rule measures: the land with the air above it (a tortoise), the
+     *                   water, or the whole tank (an alligator, at home in both)
+     * @param gait       how it moves in the tank (our walker, {@code LandWalker}); null: its own AI
+     * @param preyLength it eats small fish and animals of the tank up to this length (blocks; 0: none)
+     * @param box        the terrarium box catches it (false: the large net and the transport tub, like the big water animals)
+     */
+    public record Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box) {
+        public boolean big() {
+            return Double.isFinite(lengthM) && lengthM > 0;
+        }
+
+        public boolean walks() {
+            return gait != null;
+        }
+    }
+
+    /** M35: the default gaits of the movement styles of a foreign terrarium animal (a style name in {@code movement}). */
+    public static LandWalker.Gait gait(LandWalker.Style style) {
+        return switch (style) {
+            case HOP -> new LandWalker.Gait(0.03, 0.02, false, 0.3, 0.1, 0.0, 0.3, 0.1, LandWalker.Style.HOP, 0, false);
+            case CLIMB -> new LandWalker.Gait(0.02, 0.0, true, 1.0, 0.0, 0.1, 0.3, 0.1, LandWalker.Style.CLIMB, 0.4, false);
+            case SLITHER -> new LandWalker.Gait(0.02, 0.02, false, 0.4, 0.1, 0.25, 0.4, 0.1, LandWalker.Style.SLITHER, 0, false);
+            case SWIM -> new LandWalker.Gait(0.0, 0.03, false, 0.2, 1.0, 0.0, 0.2, 0.2, LandWalker.Style.SWIM, 0, false);
+            default -> new LandWalker.Gait(0.015, 0.0, true, 0.3, 0.0, 0.25, 0.35, 0.3);
+        };
+    }
 
     /** How the animal breeds in our tanks. */
     public enum Type {
@@ -74,11 +110,21 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      * @param inherit       NBT keys every young takes from one of its parents at random (its variants: the mod's own
      *                      genetics, e.g. the fin and tail colours of a Fintastic guppy)
      * @param baby          the young are born as babies of the type (they grow up by the mod's own timer)
+     * @param nest          M35: the eggs are laid into a nest on the land of the tank whose top is of this block tag
+     *                      ({@code bettacraft:turtle_nest_ground}: sand and soil) and incubated by the nest temperature;
+     *                      null: the eggs stay with the mother (M32)
+     * @param nestPivot     M35: the nest temperature (°C) at which the eggs hatch in {@link #days}; warmer faster, at
+     *                      18 °C and below they wait, above 36 °C they die (the turtle eggs of M31)
      */
     public record Breeding(Type type, double tempMin, double tempMax, double minWaterBlocks, boolean needsPlants, double days,
                            int youngMin, int youngMax, double pauseDays, double rate, @Nullable ResourceLocation offspring,
-                           @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby) {
-        public static final Breeding NONE = new Breeding(Type.NONE, Double.NaN, Double.NaN, 0, false, 1, 0, 0, 0, 0, null, null, List.of(), true);
+                           @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable ResourceLocation nest, double nestPivot) {
+        public static final Breeding NONE = new Breeding(Type.NONE, Double.NaN, Double.NaN, 0, false, 1, 0, 0, 0, 0, null, null, List.of(), true, null, 30);
+
+        /** M35: the eggs go into a nest on the land. */
+        public boolean nests() {
+            return nest != null && type == Type.EGGS;
+        }
 
         public boolean breeds() {
             return type != Type.NONE && youngMax > 0 && rate > 0;
@@ -168,8 +214,9 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         Breeding breeding = breeding(o.has("breeding") ? o.getAsJsonObject("breeding") : null, sp, temp, warn);
         boolean suppress = bool(o, "suppress_own_breeding", true);
         TerrariumNeeds terra = o.has("terrarium") ? terrarium(o.getAsJsonObject("terrarium"), warn) : null;
+        Land land = terra != null ? land(o.getAsJsonObject("terrarium"), terra, warn) : null;
         return new ForeignProfile(List.copyOf(entities), required, group, sp != null ? sp.id() : null, temp[0], temp[1], quality, salt, chem,
-                labyrinth, hunger, stock, List.copyOf(food), breeding, suppress, terra);
+                labyrinth, hunger, stock, List.copyOf(food), breeding, suppress, terra, land);
     }
 
     private static Breeding breeding(@Nullable JsonObject b, @Nullable TankmateSpecies sp, double[] temp, Consumer<String> warn) {
@@ -208,8 +255,16 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         List<String> inherit = new ArrayList<>();
         if (b.has("inherit")) for (JsonElement e : array(b.get("inherit"))) inherit.add(e.getAsString());
         boolean needsPlants = bool(b, "needs_plants", type == Type.EGGS && sp != null && sp.breeding() == TankmateSpecies.Breeding.SCATTER);
+        ResourceLocation nest = null;
+        if (b.has("nest")) {
+            String n = b.get("nest").getAsString().trim();
+            nest = ResourceLocation.tryParse(n.startsWith("#") ? n.substring(1) : n);
+            if (nest == null) warn.accept("bad nest tag \"" + n + "\" (a block tag, e.g. #bettacraft:turtle_nest_ground)");
+            else if (type != Type.EGGS) warn.accept("\"nest\" only counts for \"type\": \"eggs\"");
+        }
         return new Breeding(type, bt[0], bt[1], Math.max(0, num(b, "min_water_blocks", 0)), needsPlants, days, young[0], young[1],
-                Math.max(0, num(b, "pause_days", 3.0)), Math.max(0, num(b, "rate", 0.5)), offspring, nbt, List.copyOf(inherit), bool(b, "baby", true));
+                Math.max(0, num(b, "pause_days", 3.0)), Math.max(0, num(b, "rate", 0.5)), offspring, nbt, List.copyOf(inherit), bool(b, "baby", true),
+                nest, num(b, "nest_temperature", 30));
     }
 
     /** Our breeding types in the three of the foreign animals: young carried in the body or mouth are born free; the rest lay eggs. */
@@ -250,6 +305,56 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         if (t.has("uv")) b.uv(num(t, "uv", 0));
         if (bool(t, "basking", false)) b.basking();
         return b.build();
+    }
+
+    /**
+     * M35: the land part of a terrarium profile: {@code length} (m), {@code volume} (land, water, all; by the habitat if not
+     * given: a dry terrarium animal the land, a water animal the water, else the whole tank), {@code movement} (a style
+     * {@code walk}, {@code slither}, {@code hop}, {@code climb}, {@code swim}, or {@code own} for the mod's own AI, or an
+     * object with {@code style} and the gait numbers), {@code prey} (blocks) and {@code box}.
+     */
+    private static Land land(JsonObject t, TerrariumNeeds needs, Consumer<String> warn) {
+        double length = num(t, "length", Double.NaN);
+        if (Double.isFinite(length) && length <= 0) {
+            warn.accept("\"length\" must be above 0 (ignored)");
+            length = Double.NaN;
+        }
+        BigTankRules.Volume vol = switch (needs.habitat()) {
+            case DRY -> BigTankRules.Volume.LAND;
+            case WET -> BigTankRules.Volume.WATER;
+            default -> BigTankRules.Volume.ALL;
+        };
+        if (t.has("volume")) {
+            try {
+                vol = BigTankRules.Volume.valueOf(t.get("volume").getAsString().toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ex) {
+                warn.accept("unknown volume \"" + t.get("volume").getAsString() + "\" (land, water, all)");
+            }
+        }
+        LandWalker.Gait gait = gait(LandWalker.Style.WALK);
+        if (t.has("movement")) {
+            JsonElement m = t.get("movement");
+            JsonObject mo = m.isJsonObject() ? m.getAsJsonObject() : null;
+            String style = mo != null ? str(mo, "style", "walk") : m.getAsString();
+            if ("own".equalsIgnoreCase(style)) {
+                gait = null;
+            } else {
+                LandWalker.Style st = LandWalker.Style.WALK;
+                try {
+                    st = LandWalker.Style.valueOf(style.toUpperCase(Locale.ROOT));
+                } catch (IllegalArgumentException ex) {
+                    warn.accept("unknown movement \"" + style + "\" (walk, slither, hop, climb, swim or own)");
+                }
+                LandWalker.Gait g = gait(st);
+                if (mo != null) {
+                    g = new LandWalker.Gait(num(mo, "walk", g.walk()), num(mo, "swim", g.swim()), bool(mo, "bottom", g.bottom()),
+                            num(mo, "max_step", g.maxStep()), num(mo, "water_time", g.waterTime()), num(mo, "bask_time", g.baskTime()),
+                            num(mo, "rest_time", g.restTime()), num(mo, "height", g.height()), st, num(mo, "special", g.special()), bool(mo, "burrows", g.burrows()));
+                }
+                gait = g;
+            }
+        }
+        return new Land(length, vol, gait, Math.max(0, num(t, "prey", 0)), bool(t, "box", true));
     }
 
     static Salinity.Range salinity(JsonElement e, Salinity.Range fallback, Consumer<String> warn) {

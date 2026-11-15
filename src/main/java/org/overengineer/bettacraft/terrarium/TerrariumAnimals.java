@@ -34,18 +34,18 @@ public final class TerrariumAnimals {
     private TerrariumAnimals() {}
 
     /**
-     * The terrarium animals of the mod (common setup): our turtles, frogs, geckos and the snake by their grown needs, and the hatchlings of the vanilla
-     * sea turtle (M31 part b; a grown one is too big for any tank, a hatchling that grows up leaves in a bag like every
-     * outgrown animal, M17).
+     * The terrarium animals of the mod (common setup): our turtles, frogs, geckos and the snake by their grown needs, and the vanilla
+     * sea turtle (M31 part b: the hatchlings; M35: a big animal, grown ones and hatchlings only in big sea water paludaria,
+     * {@link SeaTurtles}).
      */
     public static void registerOurs() {
         for (HerpSpecies s : HerpSpecies.ALL) register(org.overengineer.bettacraft.registry.ModEntities.herp(s), s.needs(),
                 s.turtle() ? () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.TURTLES)
                         : () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.HERPS)); // part c: the amphibians and reptiles
-        register(EntityType.TURTLE, SEA_TURTLE, () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.TURTLES));
+        register(EntityType.TURTLE, SEA_TURTLE, SeaTurtles::enabled);
     }
 
-    /** M31 part b: a sea turtle hatchling: a paludarium with a sandy beach and warm water. */
+    /** M31 part b: a sea turtle: a paludarium with a sandy beach and warm water (M35: sea water, a big tank, {@link SeaTurtles}). */
     public static final TerrariumNeeds SEA_TURTLE = TerrariumNeeds.builder(TerrariumNeeds.Habitat.PALUDARIUM).air(18, 32).water(20, 30).land(0.1, 0.7).build();
 
     /** Registers (or replaces) the needs of a type. */
@@ -62,6 +62,7 @@ public final class TerrariumAnimals {
     /** Whether the feature switch of the type is on (true without one). */
     public static boolean enabled(EntityType<?> type) {
         var e = ENABLED.get(type);
+        if (e == null && !TYPES.containsKey(type) && org.overengineer.bettacraft.foreign.ForeignTerrarium.listed(type)) return org.overengineer.bettacraft.foreign.ForeignTerrarium.enabled(); // M35
         if (e == null && !TYPES.containsKey(type) && org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return org.overengineer.bettacraft.mobs.GlassMobs.enabled(); // M31 part d
         return e == null || e.getAsBoolean();
     }
@@ -73,13 +74,21 @@ public final class TerrariumAnimals {
     }
 
     public static boolean isTerrariumAnimal(EntityType<?> type) {
+        return isRegistered(type) || org.overengineer.bettacraft.foreign.ForeignTerrarium.listed(type); // M35: and the animals of terrarium.boxAllow
+    }
+
+    /** Registered here (our own, the profiles) or a mob in glass; not the animals of {@code terrarium.boxAllow}. */
+    public static boolean isRegistered(EntityType<?> type) {
         return TYPES.containsKey(type) || org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type); // M31 part d: the mobs in glass too
     }
 
     @Nullable
     public static TerrariumNeeds needs(EntityType<?> type) {
         TerrariumNeeds n = TYPES.get(type);
-        return n != null ? n : org.overengineer.bettacraft.mobs.GlassMobs.needs(type);
+        if (n != null) return n;
+        n = org.overengineer.bettacraft.mobs.GlassMobs.needs(type);
+        if (n != null) return n;
+        return org.overengineer.bettacraft.foreign.ForeignTerrarium.listed(type) ? org.overengineer.bettacraft.foreign.ForeignTerrarium.LISTED_NEEDS : null; // M35
     }
 
     /** The needs of this animal (its own when it is a {@link TerrariumAnimal}), or null for every other animal. */

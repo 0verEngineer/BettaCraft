@@ -310,25 +310,55 @@ public final class HerpBreeding {
     /** A random land spot of the tank with the species' nest ground on top and room above (null if none after 48 tries). */
     @Nullable
     public static Nest findNest(ServerLevel level, TankData t, RandomSource r, HerpSpecies s) {
+        return findNest(level, t, r, nestGround(s));
+    }
+
+    /** M35: the same for any nest ground (the egg layers of other mods, the sea turtle). */
+    @Nullable
+    public static Nest findNest(ServerLevel level, TankData t, RandomSource r, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> ground) {
         InteriorRegion region = InteriorRegions.get(level.getServer()).get(t.regionId());
         ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
         if (region == null || !region.built() || interior == null) return null;
         for (int i = 0; i < 48; i++) {
-            Nest n = nestIn(level, t, region, interior, r.nextInt(region.sizeX()), r.nextInt(region.sizeZ()), nestGround(s));
+            Nest n = nestIn(level, t, region, interior, r.nextInt(region.sizeX()), r.nextInt(region.sizeZ()), ground);
             if (n != null) return n;
         }
         return null;
     }
 
+    /**
+     * M35: whether the land of the tank has a nest spot of this ground anywhere (the sea turtle's sand beach when it is put
+     * in): a grid of at most 24 x 24 columns, loading the interior chunks it looks at.
+     */
+    public static boolean anyNest(ServerLevel level, TankData t, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> ground) {
+        InteriorRegion region = InteriorRegions.get(level.getServer()).get(t.regionId());
+        ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
+        if (region == null || !region.built() || interior == null) return false;
+        int sx = Math.max(1, region.sizeX() / 24), sz = Math.max(1, region.sizeZ() / 24);
+        for (int lx = sx / 2; lx < region.sizeX(); lx += sx) {
+            for (int lz = sz / 2; lz < region.sizeZ(); lz += sz) {
+                interior.getChunk((region.originX() + lx) >> 4, (region.originZ() + lz) >> 4);
+                if (nestIn(level, t, region, interior, lx, lz, ground) != null) return true;
+            }
+        }
+        return false;
+    }
+
     /** The nest at this tank spot (the column under it), or null if it is no nest any more. */
     @Nullable
     public static Nest nestAt(ServerLevel level, TankData t, Vec3 at, HerpSpecies s) {
+        return nestAt(level, t, at, nestGround(s));
+    }
+
+    /** M35: the same for any nest ground. */
+    @Nullable
+    public static Nest nestAt(ServerLevel level, TankData t, Vec3 at, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> ground) {
         InteriorRegion region = InteriorRegions.get(level.getServer()).get(t.regionId());
         ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
         if (region == null || !region.built() || interior == null) return null;
         double fx = (t.sizeX() - 2 * TankTerrain.MARGIN) / region.sizeX(), fz = (t.sizeZ() - 2 * TankTerrain.MARGIN) / region.sizeZ();
         int lx = (int) Math.floor((at.x - t.min().getX() - TankTerrain.MARGIN) / fx), lz = (int) Math.floor((at.z - t.min().getZ() - TankTerrain.MARGIN) / fz);
-        return nestIn(level, t, region, interior, lx, lz, nestGround(s));
+        return nestIn(level, t, region, interior, lx, lz, ground);
     }
 
     @Nullable
