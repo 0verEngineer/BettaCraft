@@ -56,6 +56,8 @@ final class DevClientSmokeM31d {
     private final Deque<Step> steps = new ArrayDeque<>();
     private int wait;
     private BlockPos drowned, spiders, slimes, frames;
+    /** The spider on the glass: frozen, so the walker does not set its climbing flag; the scene does, every tick. */
+    private Mob climber;
 
     DevClientSmokeM31d() {
         then(1, () -> server(this::build));
@@ -204,7 +206,8 @@ final class DevClientSmokeM31d {
         TankBlockEntity sc = controller(level, spiders);
         TankTerrain ster = terrain(level, sc.getTank());
         Mob spider = put(level, sc, EntityType.SPIDER, false);
-        at(spider, spiders, ster, 1.5, 3 - TankTerrain.MARGIN - 0.16, 1.2, 0F); // on the back glass, facing it
+        at(spider, spiders, ster, 1.5, 3 - TankTerrain.MARGIN - 0.01, 1.2, 0F); // on the back glass, facing it
+        climber = spider;
         at(put(level, sc, EntityType.CAVE_SPIDER, false), spiders, ster, 0.8, 1.0, Double.NaN, 150F);
         at(put(level, sc, EntityType.SKELETON, false), spiders, ster, 2.4, 1.0, Double.NaN, 190F);
         at(put(level, sc, EntityType.ZOMBIE, false), spiders, ster, 3.3, 1.3, Double.NaN, 160F);
@@ -242,6 +245,7 @@ final class DevClientSmokeM31d {
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (climber instanceof net.minecraft.world.entity.monster.Spider sp) server(p -> sp.setClimbing(true));
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {

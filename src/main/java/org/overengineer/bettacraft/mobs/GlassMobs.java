@@ -228,7 +228,9 @@ public final class GlassMobs {
         GlassMobSpecies sp = species(m.getType());
         var gait = sp != null ? sp.gait() : GlassMobSpecies.generic(BuiltInRegistries.ENTITY_TYPE.getKey(m.getType()), 1, 1).gait();
         s.walker.tick(m, level, t, gait, false);
-        m.horizontalCollision = s.walker.onWall(); // a spider shows it climbs
+        m.horizontalCollision = s.walker.onWall(); // a spider shows it climbs (the client lays it onto the glass)
+        net.minecraft.core.Direction wall = s.walker.pose().wall();
+        if (wall != null) m.setYRot(wall.toYRot());
         m.setYHeadRot(m.getYRot());
         m.yBodyRot = m.getYRot();
         return true;
