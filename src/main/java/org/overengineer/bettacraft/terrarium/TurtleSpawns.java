@@ -112,8 +112,6 @@ public final class TurtleSpawns {
             var ground = level.getBlockState(below);
             if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND)) return false;
         } else {
-            int sea = level.getSeaLevel();
-            if (pos.getY() < sea - 3 || pos.getY() > sea + 4) return false;
             boolean wet = level.getFluidState(pos).is(FluidTags.WATER);
             if (wet && level.getFluidState(pos.above(2)).is(FluidTags.WATER)) return false; // shallow water only
             if (!wet && !nearWater(level, pos, 3)) return false;

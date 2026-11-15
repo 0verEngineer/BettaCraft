@@ -32,12 +32,16 @@ import org.overengineer.bettacraft.terrarium.TurtleEggsBlock;
 final class DataGenM31b {
     private DataGenM31b() {}
 
-    /** Egg centres (x, z in pixels of the block) for one to four eggs; the long axis alternates. */
+    /**
+     * Egg centres (x, z in pixels of the block) for one to four eggs; the long axis alternates. An egg is 26 px long (1.6
+     * interior blocks, about a seventh of a grown slider as in nature), so the clutch reaches beyond its block (models may
+     * span -16..32).
+     */
     private static final float[][][] EGGS = {
             {{8, 8}},
-            {{3.5F, 8}, {12.5F, 9}},
-            {{3, 4.5F}, {13, 5.5F}, {8, 13.5F}},
-            {{3, 3.5F}, {13, 4}, {3.5F, 13}, {12.5F, 13.5F}},
+            {{-1, 8}, {17, 9}},
+            {{-2, -1}, {18, 0}, {8, 18}},
+            {{-3, -2}, {19, -1}, {-2, 18}, {19, 18}},
     };
 
     static void blockStates(BlockStateProvider p) {
@@ -52,13 +56,13 @@ final class DataGenM31b {
         p.getVariantBuilder(ModBlocks.TURTLE_EGGS.get()).forAllStates(s -> ConfiguredModel.builder().modelFile(models[s.getValue(TurtleEggsBlock.EGGS) - 1]).build());
     }
 
-    /** One egg lying half in the ground: three boxes round it off (length 11, width 8, 5.5 above the ground). */
+    /** One egg lying half in the ground: three boxes round it off (length 26, width 19, 13 above the ground). */
     private static void egg(BlockModelBuilder m, float cx, float cz, boolean alongZ) {
-        float[][] boxes = {{8, 8, -1.5F, 4.0F}, {6, 11, -1.0F, 3.4F}, {5, 6.5F, -1.5F, 5.5F}};
+        float[][] boxes = {{19, 19, -3.5F, 9.5F}, {14, 26, -2.5F, 8.0F}, {12, 15, -3.5F, 13.0F}};
         for (float[] b : boxes) {
             float w = alongZ ? b[0] : b[1], l = alongZ ? b[1] : b[0];
             m.element().from(cx - w / 2, b[2], cz - l / 2).to(cx + w / 2, b[3], cz + l / 2)
-                    .allFaces((d, f) -> f.texture("#egg").uvs(2, 2, 2 + Math.min(12, w), 2 + Math.min(12, d.getAxis().isVertical() ? l : b[3] - b[2]))).end();
+                    .allFaces((d, f) -> f.texture("#egg").uvs(0, 0, 16, 16)).end();
         }
     }
 

@@ -144,6 +144,7 @@ public final class TurtleBreeding {
         RandomSource r = f.getRandom();
         TurtleSpecies s = f.species();
         int eggs = s.eggsMin() + r.nextInt(s.eggsMax() - s.eggsMin() + 1);
+        interior.getChunk(n.interior()); // loaded (the nest was just checked; a chunk can unload in between)
         interior.setBlock(n.interior(), ModBlocks.TURTLE_EGGS.get().withEggs(eggs), 3);
         TurtleClutch k = new TurtleClutch(t.nextTurtleClutchId(), s, eggs, n.world(), n.interior(), r.nextLong());
         k.motherVariety = f.variety();
@@ -197,7 +198,9 @@ public final class TurtleBreeding {
     }
 
     private static void remove(@Nullable ServerLevel interior, TurtleClutch k) {
-        if (interior != null && interior.isLoaded(k.interiorPos()) && interior.getBlockState(k.interiorPos()).is(ModBlocks.TURTLE_EGGS.get())) {
+        if (interior == null) return;
+        interior.getChunk(k.interiorPos()); // the egg block must go even while no player looks into the interior
+        if (interior.getBlockState(k.interiorPos()).is(ModBlocks.TURTLE_EGGS.get())) {
             interior.removeBlock(k.interiorPos(), false);
         }
     }
@@ -273,7 +276,10 @@ public final class TurtleBreeding {
     private static Nest nestIn(ServerLevel level, TankData t, InteriorRegion region, ServerLevel interior, int lx, int lz) {
         if (lx < 0 || lz < 0 || lx >= region.sizeX() || lz >= region.sizeZ() || !region.inShape(lx, 0, lz)) return null;
         int wx = region.originX() + lx, wz = region.originZ() + lz;
-        if (interior.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) return null;
+        if (interior.getChunkSource().getChunkNow(wx >> 4, wz >> 4) == null) {
+            InteriorGround.top16(level.getServer(), region, lx, lz); // asks for the chunk (a short ticket): the next try finds it
+            return null;
+        }
         int top16 = InteriorGround.top16(level.getServer(), region, lx, lz);
         if (top16 % 16 != 0) return null; // a slab, a plant mat: no full block of ground
         int ly = top16 / 16;

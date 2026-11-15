@@ -150,6 +150,9 @@ public final class DevSmokeMP {
                 check(name + ": tank mode " + (a.length > 1 ? a[1] : "?") + " (server terrarium)", a.length > 1 && "terrarium".equals(a[1]));
                 check(name + ": climate synced " + (a.length > 2 ? a[2] : "?") + " (server true)", a.length > 2 && "true".equals(a[2]));
                 check(name + ": UV at the basking spot " + (a.length > 3 ? a[3] : "?") + " (server 5)", a.length > 3 && "5".equals(a[3]));
+                // M31 part b: the synced turtle state: the variety of a yellow-bellied slider and the size of a hatchling
+                check(name + ": slider variety " + (a.length > 4 ? a[4] : "?") + " (server 1 = yellow-bellied)", a.length > 4 && "1".equals(a[4]));
+                check(name + ": hatchling growth " + (a.length > 5 ? a[5] : "?") + " (server 0)", a.length > 5 && "0".equals(a[5]));
             }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
@@ -986,6 +989,18 @@ public final class DevSmokeMP {
             check("the dry tank is a terrarium (" + mode + ")", mode == org.overengineer.bettacraft.terrarium.TerrariumMode.TERRARIUM);
             org.overengineer.bettacraft.terrarium.TankClimate.step(level, c, 0.01);
             check("the terrarium has a climate", c.getTank().hasClimate());
+            // M31 part b: a yellow-bellied slider and a slider hatchling next to the tank (no AI; the dev world keeps the last run's)
+            for (var old : level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.TurtleEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
+            for (int i = 0; i < 2; i++) {
+                var s = org.overengineer.bettacraft.registry.ModEntities.SLIDER_TURTLE.get().create(level);
+                if (s == null) continue;
+                s.setVariety(1);
+                if (i == 1) s.makeHatchling();
+                s.setNoAi(true);
+                s.setPersistenceRequired();
+                s.moveTo(min.getX() + 0.5 + i, min.getY(), min.getZ() - 2.5, 0F, 0F);
+                level.addFreshEntity(s);
+            }
             c.markTankChanged();
             say("m31", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":m31") && reports.containsKey(P2 + ":m31"), 20 * 30));

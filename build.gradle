@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm31b')) {
+                // gradlew runClient -Psmoketestm31b : only the M31 part b scene (a paludarium with sliders of both varieties, a
+                // Reeves' turtle, a musk turtle, a clutch of eggs with hatchlings; a dry terrarium with Hermann's tortoises)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m31bonly', 'true'
+            }
             if (project.hasProperty('smoketestm31a')) {
                 // gradlew runClient -Psmoketestm31a : only the M31 part a scene (a dry terrarium with the devices, a paludarium with
                 // land, water and two musk turtles, the climate tab of the tank menu)

@@ -66,6 +66,8 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
     private long nextLay;
     @Nullable
     private Vec3 nestTarget;
+    /** The air of its tank was below {@link #FROST} at the last care step. */
+    private boolean frost;
     private int nestTicks;
 
     public TurtleEntity(EntityType<? extends Animal> type, Level level, TurtleSpecies species) {
@@ -241,6 +243,7 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
         } else if (isBrumating()) {
             setBrumating(false);
         }
+        frost = t.hasClimate() && t.airTemp() < FROST;
         if (isBrumating()) pauseHunger(days);
         super.onTerrariumCare(level, c, adjust(a), days);
     }
@@ -249,8 +252,6 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
     @Override
     public TerrariumNeeds.Assessment adjust(TerrariumNeeds.Assessment a) {
         if (!isBrumating() || a.fine()) return a;
-        TankData t = tankData();
-        boolean frost = t != null && t.hasClimate() && t.airTemp() < FROST;
         EnumSet<TerrariumNeeds.Problem> left = EnumSet.noneOf(TerrariumNeeds.Problem.class);
         for (var p : a.problems()) {
             if (p == TerrariumNeeds.Problem.TOO_COLD && !frost) continue;
