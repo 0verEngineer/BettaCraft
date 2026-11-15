@@ -59,7 +59,7 @@ public final class TankCurrents {
 
     /** As {@link #of}, cached for 5 seconds per tank (seahorses and corals ask often). */
     public static List<Current> cached(Level level, TankBlockEntity c) {
-        long key = c.getBlockPos().asLong(), now = level.getGameTime();
+        long key = key(level, c), now = level.getGameTime();
         Cached e = CACHE.get(key);
         if (e != null && now - e.time >= 0 && now - e.time < CACHE_TICKS) return e.currents;
         if (CACHE.size() > 256) CACHE.clear();
@@ -70,7 +70,12 @@ public final class TankCurrents {
 
     /** Forgets the cached currents of a tank (the outlet side changed; tests). */
     public static void invalidate(TankBlockEntity c) {
-        CACHE.remove(c.getBlockPos().asLong());
+        if (c.getLevel() != null) CACHE.remove(key(c.getLevel(), c));
+    }
+
+    /** M33 part d: by position and dimension (tanks at the same place in two dimensions are two tanks). */
+    private static long key(Level level, TankBlockEntity c) {
+        return c.getBlockPos().asLong() * 31 + level.dimension().location().hashCode();
     }
 
     /** Forgets every cached current (tests). */

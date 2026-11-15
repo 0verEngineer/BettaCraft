@@ -173,6 +173,11 @@ public final class CreateCompat {
         return Optional.empty();
     }
 
+    /** M33 part d: the server stops (the message times are of its game time). */
+    static void forgetMessages() {
+        MESSAGED.clear();
+    }
+
     private static void tell(Level level, BlockPos pos, Component why) {
         if (!(level instanceof ServerLevel sl)) return;
         TankBlockEntity c = TankMultiblock.getController(level, pos);

@@ -243,5 +243,9 @@ public final class InteriorEvents {
         DecorItem.clearCache();
         SNEAK_TICKS.clear();
         InteriorManager.clearOccupants();
+        // M33 part d (hardening): caches by region id or position must not reach the next world of the same game
+        org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.forget();
+        org.overengineer.bettacraft.tankmates.TankmateSpots.forgetAll();
+        org.overengineer.bettacraft.tankmates.Seahorses.forget();
     }
 }

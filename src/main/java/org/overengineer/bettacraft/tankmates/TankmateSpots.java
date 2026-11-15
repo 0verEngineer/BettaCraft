@@ -108,6 +108,11 @@ public final class TankmateSpots {
         CACHE.remove(regionId);
     }
 
+    /** M33 part d: every region (the server stops; region ids start again in the next world). */
+    public static void forgetAll() {
+        CACHE.clear();
+    }
+
     private static List<Spot> clusters(TankData t, InteriorRegion r, LongOpenHashSet blocks, int min, boolean cave) {
         List<Spot> out = new ArrayList<>();
         if (blocks.isEmpty()) return out;

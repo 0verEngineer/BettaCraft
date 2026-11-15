@@ -145,6 +145,7 @@ public final class CreateLandings {
         STOPS.clear();
         LANDED.clear();
         MEMBERS.clear();
+        CreateCompat.forgetMessages(); // M33 part d
     }
 
     /** Whether Create put the contraption down (its {@code skipActorStop} flag), or null if that cannot be read. */
