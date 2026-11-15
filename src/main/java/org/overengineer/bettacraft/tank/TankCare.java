@@ -85,6 +85,7 @@ public final class TankCare {
         org.overengineer.bettacraft.big.DolphinCare.step(server, be, dt / 24000.0); // M30
         org.overengineer.bettacraft.terrarium.TerrariumCare.step(server, be, dt / 24000.0); // M31: the needs of the terrarium animals
         org.overengineer.bettacraft.terrarium.HerpBreeding.step(server, be, dt / 24000.0); // M31 part b: nests, eggs, hatchlings
+        org.overengineer.bettacraft.mobs.GlassMobs.step(server, be, dt / 24000.0); // M31 part d: growing, drowning, breeding, luring mobs
         TankBreeding.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.tankmates.TankmateBreeding.step(server, be, dt / 24000.0); // M19
         org.overengineer.bettacraft.reef.ReefCare.step(server, be, dt / 24000.0); // M20: salt shock of frogs and foreign animals

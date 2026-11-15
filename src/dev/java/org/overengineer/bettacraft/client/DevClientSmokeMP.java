@@ -231,8 +231,13 @@ final class DevClientSmokeMP {
                         variety = Math.max(variety, s.variety());
                         growth = Math.min(growth, s.growth());
                     }
+                    // M31 part d: the smallest zombie there (the one in glass)
+                    float zombie = 9F;
+                    for (var z : mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) {
+                        zombie = Math.min(zombie, z.getScale());
+                    }
                     send("m31 " + t.terrariumMode().id() + " " + t.hasClimate() + " " + Math.round(t.uv()) + " " + variety + " " + Math.round(growth) + " " + pose + " "
-                            + geckoVariety);
+                            + geckoVariety + " " + Math.round(zombie * 100));
                 });
             }
             case "reef" -> {

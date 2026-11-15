@@ -35,13 +35,19 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
         /** Paludarium: water and land. */
         PALUDARIUM,
         /** Either. */
-        ANY;
+        ANY,
+        /** M31 part d: water: an aquarium or a paludarium (the drowned). */
+        WET,
+        /** M31 part d: any tank, an aquarium too (the zombie, which becomes a drowned in the water). */
+        ALL;
 
         public boolean allows(TerrariumMode m) {
             return switch (this) {
                 case DRY -> m == TerrariumMode.TERRARIUM;
                 case PALUDARIUM -> m == TerrariumMode.PALUDARIUM;
                 case ANY -> m.hasLand();
+                case WET -> m != TerrariumMode.TERRARIUM;
+                case ALL -> true;
             };
         }
     }

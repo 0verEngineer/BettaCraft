@@ -14,7 +14,11 @@
     "interior.LevelMixin",
     "interior.ServerLevelMixin",
     "interior.WaterPlantPlacementMixin",
-    "interior.WaterlilyBlockMixin"
+    "interior.WaterlilyBlockMixin",
+    "mob.LivingEntityGlassMixin",
+    "mob.MobGlassMixin",
+    "mob.SlimeGlassMixin",
+    "mob.ZombieGlassMixin"
   ],
   "client": [
     "client.BackgroundWindowMixin",

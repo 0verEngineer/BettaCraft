@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "S": {
+      "item": "minecraft:slime_ball"
+    }
+  },
+  "pattern": [
+    " I ",
+    "GSG",
+    "GGG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:mob_jar"
+  }
+}

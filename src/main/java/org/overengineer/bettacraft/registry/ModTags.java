@@ -114,6 +114,8 @@ public final class ModTags {
     public static final TagKey<net.minecraft.world.item.Item> GECKO_FRUIT = TagKey.create(Registries.ITEM, BettaCraft.id("gecko_fruit"));
     /** M31 part c: prey for the corn snake (raw rabbit and chicken, for the frozen mice of the hobby). */
     public static final TagKey<net.minecraft.world.item.Item> SNAKE_PREY = TagKey.create(Registries.ITEM, BettaCraft.id("snake_prey"));
+    /** M31 part d: capture items of other mods whose mob goes into a tank (besides the EnderIO soul vial and the IF mob imprisonment tool). */
+    public static final TagKey<net.minecraft.world.item.Item> MOB_CAPTURE_ITEMS = TagKey.create(Registries.ITEM, BettaCraft.id("mob_capture_items"));
     /** M31 part c: dart frogs lay their eggs onto these blocks on the land (moss, leaves, soil). */
     public static final TagKey<Block> FROG_NEST_GROUND = TagKey.create(Registries.BLOCK, BettaCraft.id("frog_nest_ground"));
     /** M31 part c: the leopard gecko lives wild here (deserts and badlands). */

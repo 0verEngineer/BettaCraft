@@ -329,6 +329,9 @@ public final class ServerConfig {
     // M31 part b: turtles
     public static final ModConfigSpec.DoubleValue TERRA_BRUMATION_BELOW, TERRA_INCUBATION_SPEED, TERRA_CLUTCH_DAYS;
     public static final ModConfigSpec.BooleanValue TERRA_BRUMATION;
+    // M31 part d: mobs in glass
+    public static final ModConfigSpec.DoubleValue TERRA_MOB_CATCH_HEALTH;
+    public static final ModConfigSpec.BooleanValue TERRA_MOB_UNDEAD_BURN, TERRA_MOB_BREEDING;
     public static final ModConfigSpec.BooleanValue POWER_MISTER;
     public static final ModConfigSpec.IntValue BIG_MAX_SIZE_X, BIG_MAX_SIZE_Y, BIG_MAX_SIZE_Z, INTERIOR_SCALE8_ABOVE, INTERIOR_SCALE4_ABOVE;
     public static final ModConfigSpec.DoubleValue BIG_LONG_SIDE, BIG_SHORT_SIDE, BIG_HEIGHT, BIG_WATER, BIG_DOLPHIN_HUNGRY_DAYS, BIG_SPAWN_CHANCE,
@@ -1018,6 +1021,12 @@ public final class ServerConfig {
                 .defineInRange("incubationSpeed", 1.0, 0.05, 50.0);
         TERRA_CLUTCH_DAYS = b.comment("In-game days a female turtle waits after laying before she lays again")
                 .defineInRange("clutchIntervalDays", 4.0, 0.1, 100.0);
+        TERRA_MOB_CATCH_HEALTH = b.comment("M31 part d: share of its health a mob may have at most to go into the mob jar (0.25 = weakened to a quarter)")
+                .defineInRange("mobCatchHealth", 0.25, 0.01, 1.0);
+        TERRA_MOB_UNDEAD_BURN = b.comment("Undead mobs in glass (zombies, skeletons ...) burn in daylight in a tank without a lid (off: the glass protects them)")
+                .define("mobUndeadBurn", false);
+        TERRA_MOB_BREEDING = b.comment("Mobs in glass breed: two fed drowned, zombies or husks (rotten flesh) a baby, spiders (crickets) spiderlings,",
+                        "small slimes and magma cubes (slime ball, magma cream) a new small one; bred mobs drop nothing either").define("mobBreeding", true);
         POWER_HEAT_MAT_FE = b.comment("FE per tick a heat mat needs while it heats (with power.heaterRequiresEnergy)")
                 .defineInRange("heatMatFePerTick", 4.0, 0.0, 100000.0);
         POWER_MISTER = b.comment("Misters only spray while the tank has enough FE").define("misterRequiresEnergy", false);

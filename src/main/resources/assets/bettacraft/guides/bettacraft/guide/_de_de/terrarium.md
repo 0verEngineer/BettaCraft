@@ -96,6 +96,9 @@ Die [Amphibien und Reptilien](terrarium/herps.md):
 
 Sie fressen [Futterinsekten](terrarium/feeder_insects.md) (Heimchen, Fruchtfliegen), Obst oder Beutetiere.
 
+[Mobs im Glas](terrarium/mobs_in_glass.md): Ertrunkene, Zombies, Spinnen, kleine Schleime und ein paar weitere leben verkleinert
+und harmlos in Becken (Mobglas, Köder, die Fang-Items anderer Mods). Sie droppen nichts.
+
 ## Wasserpflege im Terrarium
 
 Ein Terrarium ohne Wasser hat keine Wasserwerte: Wasserqualität, Filter, Sauerstoff, CO2 und Wasserchemie stehen still,
@@ -107,5 +110,5 @@ Server-Config `terrarium.*`: die Landanteile der Arten, die Stärke der Geräte,
 Sprühanlage, die Tage bis zum Schaden; `power.*`: Heizmatten nutzen den Energie-Schalter der Heizer (`heatMatFePerTick`),
 Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrarium` (aus: jedes Becken ist ein
 Aquarium), `features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`, `features.herps`,
-`features.herpBreeding`, `features.wildHerps`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
+`features.herpBreeding`, `features.wildHerps`, `features.mobsInGlass`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

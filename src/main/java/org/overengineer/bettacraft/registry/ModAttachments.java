@@ -80,6 +80,29 @@ public final class ModAttachments {
                     .copyOnDeath()
                     .build());
 
+    /**
+     * M31 part d: a mob that lives (or lived) shrunk in a tank ({@link org.overengineer.bettacraft.mobs.GlassMobs}): its
+     * growth and breeding times. Persistent; its presence means it drops nothing and gives no experience.
+     */
+    public static final Supplier<AttachmentType<org.overengineer.bettacraft.mobs.GlassMobData>> GLASS_MOB = ATTACHMENTS.register("glass_mob",
+            () -> AttachmentType.builder(org.overengineer.bettacraft.mobs.GlassMobData::new)
+                    .serialize(new IAttachmentSerializer<CompoundTag, org.overengineer.bettacraft.mobs.GlassMobData>() {
+                        @Override
+                        public org.overengineer.bettacraft.mobs.GlassMobData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
+                            return org.overengineer.bettacraft.mobs.GlassMobData.load(Schemas.GLASS_MOB.migrate(tag));
+                        }
+
+                        @Override
+                        public CompoundTag write(org.overengineer.bettacraft.mobs.GlassMobData value, HolderLookup.Provider provider) {
+                            return Schemas.GLASS_MOB.stamp(value.save());
+                        }
+                    })
+                    .build());
+
+    /** M31 part d: the running state of a mob in glass (walker, tank); not saved. */
+    public static final Supplier<AttachmentType<org.overengineer.bettacraft.mobs.GlassMobState>> GLASS_STATE = ATTACHMENTS.register("glass_state",
+            () -> AttachmentType.builder(org.overengineer.bettacraft.mobs.GlassMobState::new).build());
+
     public static void register(IEventBus bus) {
         ATTACHMENTS.register(bus);
     }

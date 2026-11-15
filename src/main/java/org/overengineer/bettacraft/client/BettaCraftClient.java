@@ -154,6 +154,8 @@ public final class BettaCraftClient {
                 (stack, level, entity, seed) -> FishBagItem.isFilled(stack) ? 1.0F : 0.0F));
         event.enqueueWork(() -> ItemProperties.register(ModItems.TRANSPORT_TUB.get(), BettaCraft.id("filled"), // M30
                 (stack, level, entity, seed) -> org.overengineer.bettacraft.big.TransportTubItem.isFilled(stack) ? 1.0F : 0.0F));
+        event.enqueueWork(() -> ItemProperties.register(ModItems.MOB_JAR.get(), BettaCraft.id("filled"), // M31 part d
+                (stack, level, entity, seed) -> org.overengineer.bettacraft.mobs.MobJarItem.isFilled(stack) ? 1.0F : 0.0F));
     }
 
     /** Fish overlay of bucket and bag in the fish's own colours (tint 1 = body, 2 = fins). */

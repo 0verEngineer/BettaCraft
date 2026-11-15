@@ -197,6 +197,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.REEVES_TURTLE_BUCKET.get());
                 out.accept(ModItems.HERMANN_TORTOISE_BOX.get());
                 out.accept(ModItems.TERRARIUM_BOX.get());
+                out.accept(ModItems.MOB_JAR.get()); // M31 part d
                 out.accept(ModItems.SLIDER_TURTLE_SPAWN_EGG.get());
                 out.accept(ModItems.REEVES_TURTLE_SPAWN_EGG.get());
                 out.accept(ModItems.HERMANN_TORTOISE_SPAWN_EGG.get());

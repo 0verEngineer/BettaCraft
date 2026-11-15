@@ -94,6 +94,9 @@ The [amphibians and reptiles](terrarium/herps.md):
 
 They eat [feeder insects](terrarium/feeder_insects.md) (crickets, fruit flies), fruit or prey.
 
+[Mobs in glass](terrarium/mobs_in_glass.md): drowned, zombies, spiders, small slimes and a few more live shrunk and harmless
+in tanks (mob jar, bait, the capture items of other mods). They drop nothing.
+
 ## Water care in a terrarium
 
 A terrarium without water has no water values: water quality, filters, oxygen, CO2 and the water chemistry stand still
@@ -105,5 +108,5 @@ Server config `terrarium.*`: the land shares of the kinds, the strength of the d
 the mister, the days to harm; `power.*`: heat mats use the heaters' energy switch (`heatMatFePerTick`), misters their own
 (`terrarium.misterRequiresEnergy`). Common config: `features.terrarium` (off: every tank is an aquarium),
 `features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`, `features.herps`,
-`features.herpBreeding`, `features.wildHerps`. Turtles (and the egg layers of the amphibians and reptiles):
+`features.herpBreeding`, `features.wildHerps`, `features.mobsInGlass`. Turtles (and the egg layers of the amphibians and reptiles):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

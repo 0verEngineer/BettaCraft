@@ -61,6 +61,7 @@ public final class TerrariumAnimals {
     /** Whether the feature switch of the type is on (true without one). */
     public static boolean enabled(EntityType<?> type) {
         var e = ENABLED.get(type);
+        if (e == null && !TYPES.containsKey(type) && org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return org.overengineer.bettacraft.mobs.GlassMobs.enabled(); // M31 part d
         return e == null || e.getAsBoolean();
     }
 
@@ -71,19 +72,20 @@ public final class TerrariumAnimals {
     }
 
     public static boolean isTerrariumAnimal(EntityType<?> type) {
-        return TYPES.containsKey(type);
+        return TYPES.containsKey(type) || org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type); // M31 part d: the mobs in glass too
     }
 
     @Nullable
     public static TerrariumNeeds needs(EntityType<?> type) {
-        return TYPES.get(type);
+        TerrariumNeeds n = TYPES.get(type);
+        return n != null ? n : org.overengineer.bettacraft.mobs.GlassMobs.needs(type);
     }
 
     /** The needs of this animal (its own when it is a {@link TerrariumAnimal}), or null for every other animal. */
     @Nullable
     public static TerrariumNeeds needs(Entity e) {
         if (e instanceof TerrariumAnimal a) return a.terrariumNeeds();
-        return TYPES.get(e.getType());
+        return needs(e.getType());
     }
 
     /** Why the animal cannot go into this tank now (feature off, wrong mode), or null. */

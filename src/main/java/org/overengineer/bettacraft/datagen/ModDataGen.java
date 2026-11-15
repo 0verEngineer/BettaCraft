@@ -614,6 +614,7 @@ public final class ModDataGen {
             DataGenM31.itemModels(this); // M31 part a
             DataGenM31b.itemModels(this); // M31 part b
             DataGenM31c.itemModels(this); // M31 part c
+            DataGenM31d.itemModels(this); // M31 part d
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -1024,6 +1025,7 @@ public final class ModDataGen {
             DataGenM31.recipes(output, hasIt(ModItems.TANK.get())); // M31 part a
             DataGenM31b.recipes(output, hasIt(ModItems.TANK.get())); // M31 part b
             DataGenM31c.recipes(output, hasIt(ModItems.TANK.get())); // M31 part c
+            DataGenM31d.recipes(output, hasIt(ModItems.TANK.get())); // M31 part d
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1374,6 +1376,7 @@ public final class ModDataGen {
             DataGenM26.itemTags(this::tag); // M26 part a: tubifex, daphnia and what the cultures eat
             DataGenM31b.itemTags(this::tag); // M31 part b: the greens of the turtles
             DataGenM31c.itemTags(this::tag); // M31 part c: insects, fruit, prey
+            DataGenM31d.itemTags(this::tag); // M31 part d: capture items of other mods
             // M9: organic matter for the larva tub
             tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry

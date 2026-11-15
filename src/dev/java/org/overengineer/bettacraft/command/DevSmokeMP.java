@@ -156,6 +156,8 @@ public final class DevSmokeMP {
                 // M31 part c: the pose of a crested gecko on a wall and its morph
                 check(name + ": gecko pose " + (a.length > 6 ? a[6] : "?") + " (server WALL_E)", a.length > 6 && "WALL_E".equals(a[6]));
                 check(name + ": gecko morph " + (a.length > 7 ? a[7] : "?") + " (server 2 = harlequin)", a.length > 7 && "2".equals(a[7]));
+                // M31 part d: the zombie in glass, shrunk to 0.18
+                check(name + ": zombie scale x100 " + (a.length > 8 ? a[8] : "?") + " (server 18)", a.length > 8 && "18".equals(a[8]));
             }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
@@ -1013,6 +1015,16 @@ public final class DevSmokeMP {
                 g.setPoseForTest(org.overengineer.bettacraft.terrarium.LandWalker.Pose.WALL_E);
                 g.moveTo(min.getX() + 2.5, min.getY(), min.getZ() - 2.5, 0F, 0F);
                 level.addFreshEntity(g);
+            }
+            // M31 part d: a zombie from a mob jar into the terrarium: shrunk on every client (the synced scale attribute)
+            for (var old : level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
+            var zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(level);
+            if (zombie != null) {
+                zombie.setHealth(1F);
+                var jar = org.overengineer.bettacraft.mobs.MobJarItem.fillWith(zombie);
+                zombie.discard();
+                var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, jar, net.minecraft.world.entity.EntityType.ZOMBIE, null, 0L);
+                check("a zombie goes into the terrarium" + (err == null ? "" : ": " + err.getString()), err == null);
             }
             c.markTankChanged();
             say("m31", "all", min.getX() + "," + min.getY() + "," + min.getZ());

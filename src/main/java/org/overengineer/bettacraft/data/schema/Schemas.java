@@ -82,6 +82,11 @@ public final class Schemas {
             .step(0, data -> data)
             .build();
 
+    /** Entity attachment bettacraft:glass_mob (M31 part d): a mob that lives (or lived) shrunk in a tank. */
+    public static final MigrationChain GLASS_MOB = MigrationChain.builder("glass_mob")
+            .step(0, data -> data)
+            .build();
+
     /** Player attachment bettacraft:guide_book (M6): whether the handbook was given. */
     public static final MigrationChain GUIDE_BOOK = MigrationChain.builder("guide_book")
             .step(0, data -> data)

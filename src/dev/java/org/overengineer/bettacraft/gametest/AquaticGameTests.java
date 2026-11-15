@@ -223,7 +223,9 @@ public final class AquaticGameTests {
             h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphin: size rule of big tanks (M30)");
             h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.BLACKLISTED, "frog blacklisted");
             h.assertTrue(TankInhabitants.accepts(EntityType.WITHER, null) == TankInhabitants.Acceptance.BOSS, "wither is a boss");
-            h.assertTrue(TankInhabitants.accepts(EntityType.ENDERMITE, null) == TankInhabitants.Acceptance.HOSTILE, "endermite hostile");
+            h.assertTrue(TankInhabitants.accepts(EntityType.VEX, null) == TankInhabitants.Acceptance.HOSTILE, "vex hostile");
+            // M31 part d: the endermite is a mob in glass (shrunk in the tank), unless the deny list names it
+            h.assertTrue(TankInhabitants.accepts(EntityType.ENDERMITE, null) == TankInhabitants.Acceptance.OK, "endermite: a mob in glass");
             Entity bee = EntityType.BEE.create(h.getLevel());
             h.assertTrue(TankInhabitants.accepts(EntityType.BEE, bee) == TankInhabitants.Acceptance.NOT_AQUATIC, "a bee is no water animal");
             bee.discard();
@@ -234,6 +236,9 @@ public final class AquaticGameTests {
             ServerConfig.INHABITANTS_DENY.set(List.of("minecraft:cod"));
             ServerConfig.INHABITANTS_ALLOW.set(List.of("minecraft:*"));
             h.assertTrue(TankInhabitants.accepts(EntityType.COD, null) == TankInhabitants.Acceptance.BLACKLISTED, "deny wins");
+            ServerConfig.INHABITANTS_DENY.set(List.of("minecraft:cod", "minecraft:endermite"));
+            h.assertFalse(org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(EntityType.ENDERMITE), "deny takes the endermite out of the glass");
+            h.assertTrue(org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(EntityType.CREEPER), "allow minecraft:* puts every monster in glass");
             h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.OK, "allow minecraft:* takes dolphins");
             ServerConfig.INHABITANTS_ALLOW.set(List.of());
             ServerConfig.INHABITANTS_DENY.set(List.of());

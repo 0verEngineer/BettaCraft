@@ -96,6 +96,8 @@ public final class TankInhabitants {
         if (stack.getItem() instanceof FishBagItem) return FishBagItem.containedType(stack);
         if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return org.overengineer.bettacraft.big.TransportTubItem.containedType(stack); // M30
         if (FishContainers.kind(stack) != null) return FishContainers.containedType(stack);
+        if (stack.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem) return org.overengineer.bettacraft.mobs.MobJarItem.containedType(stack); // M31 part d
+        if (org.overengineer.bettacraft.compat.MobCaptures.format(stack) != null) return org.overengineer.bettacraft.compat.MobCaptures.containedType(stack);
         if (stack.getItem() instanceof MobBucketItem && MOB_BUCKET_TYPE != null) {
             try {
                 return (EntityType<?>) MOB_BUCKET_TYPE.get(stack.getItem());
@@ -111,6 +113,10 @@ public final class TankInhabitants {
      * hitbox at most {@code inhabitants.maxHitbox} (0.8), no hostile mobs, and (with an instance) a water animal.
      */
     public static Acceptance accepts(EntityType<?> type, @Nullable Entity instance) {
+        // M31 part d: a mob in glass (drowned, zombie, spider ...) is shrunk in the tank: its size and hostility do not matter
+        if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) {
+            return instance == null || org.overengineer.bettacraft.mobs.GlassMobs.fits(instance) ? Acceptance.OK : Acceptance.TOO_BIG;
+        }
         // M16: the size of the animal itself when there is one (variants of other mods differ in size), else of the type
         EntityDimensions d = type.getDimensions();
         float w = instance != null ? instance.getBbWidth() : d.width(), h = instance != null ? instance.getBbHeight() : d.height();
@@ -155,6 +161,7 @@ public final class TankInhabitants {
         if (stack.getItem() instanceof FishBagItem) return BAG_MB;
         if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return 0; // M30: the tub brings no water
         if (stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem) return 0; // M31 part b: a terrarium box neither
+        if (stack.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem || org.overengineer.bettacraft.compat.MobCaptures.format(stack) != null) return 0; // M31 part d
         FishContainers.Foreign f = FishContainers.kind(stack);
         return f != null ? f.waterMb : BUCKET_MB;
     }
@@ -177,6 +184,8 @@ public final class TankInhabitants {
         }
         ItemStack empty = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem ? new ItemStack(ModItems.TRANSPORT_TUB.get()) // M30
                 : stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem ? new ItemStack(ModItems.TERRARIUM_BOX.get()) // M31 part b
+                : stack.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem ? new ItemStack(ModItems.MOB_JAR.get()) // M31 part d
+                : org.overengineer.bettacraft.compat.MobCaptures.format(stack) != null ? org.overengineer.bettacraft.compat.MobCaptures.emptied(stack)
                 : stack.getItem() instanceof FishBagItem ? new ItemStack(ModItems.FISH_BAG.get())
                 : FishContainers.kind(stack) != null ? FishContainers.emptied(stack) : new ItemStack(Items.BUCKET);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, empty));
@@ -231,6 +240,8 @@ public final class TankInhabitants {
         CompoundTag stored = FishContainers.storedEntity(stack);
         if (stored == null) stored = FishBagItem.storedEntity(stack); // M16: a water animal without a bucket in our fish bag
         if (stored == null) stored = org.overengineer.bettacraft.big.TransportTubItem.storedEntity(stack); // M30: a big animal in its tub
+        if (stored == null) stored = org.overengineer.bettacraft.mobs.MobJarItem.storedEntity(stack); // M31 part d: a mob in a jar
+        if (stored == null) stored = org.overengineer.bettacraft.compat.MobCaptures.storedEntity(stack); // M31 part d: soul vial, imprisonment tool
         Entity e;
         if (stored != null) {
             e = FishContainers.create(level, stored); // Better Fish Tanks bag / Fintastic net: the complete entity
@@ -243,6 +254,9 @@ public final class TankInhabitants {
         if (e == null || e.getType() != type) {
             if (e != null) e.discard();
             return Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
+        }
+        if (e instanceof net.minecraft.world.entity.Mob glass && org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) {
+            org.overengineer.bettacraft.mobs.GlassMobs.prepare(glass); // M31 part d: shrunk, harmless, without drops
         }
         if (e instanceof Bucketable b) {
             if (stored == null) {
@@ -417,6 +431,7 @@ public final class TankInhabitants {
             return m.species().stock() * ServerConfig.getOr(ServerConfig.TANKMATES_STOCKING, 1.0) * m.lifeStage().stocking();
         }
         // M30: a big animal of another kind (the dolphin) like a big species: a quarter of the water blocks it needs
+        if (org.overengineer.bettacraft.mobs.GlassMobs.isGlassMob(e)) return org.overengineer.bettacraft.mobs.GlassMobs.weight(e); // M31 part d
         if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta instanceof org.overengineer.bettacraft.terrarium.HerpEntity ? ta.stockWeight() : ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31 (part b: a turtle by its growth)
         double big = org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e);
         if (big > 0) return 25.0 * big * big * big;
@@ -567,6 +582,7 @@ public final class TankInhabitants {
     /** Small water animals that got into the tank without a bucket (spawn egg, /summon) become inhabitants. */
     private static boolean adoptable(Entity e) {
         // M16: also water animals without a bucket (a squid from a spawn egg)
+        if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(e.getType())) return false; // M31 part d: a mob comes in by a jar or a bait, shrunk
         return e instanceof Mob && (e instanceof Bucketable || isWaterAnimal(e)) && !(e instanceof net.minecraft.world.entity.player.Player)
                 && e.isInWater() && accepts(e.getType(), e) == Acceptance.OK;
     }
@@ -605,6 +621,23 @@ public final class TankInhabitants {
         Entity e = level.getEntity(entityId);
         if (e == null || !e.isAlive() || !hasTankRef(e) || !tank.id().equals(e.getData(ModAttachments.TANK_REF.get()).tankId())) {
             return Component.translatable("message.bettacraft.tank.not_inside");
+        }
+        // M31 part d: a mob in glass only goes into an empty mob jar (whichever button)
+        if (org.overengineer.bettacraft.mobs.GlassMobs.isGlassMob(e)) {
+            int jar = -1;
+            for (int i = 0; i < player.getInventory().getContainerSize() && jar < 0; i++) {
+                ItemStack s = player.getInventory().getItem(i);
+                if (s.getItem() instanceof org.overengineer.bettacraft.mobs.MobJarItem && !org.overengineer.bettacraft.mobs.MobJarItem.isFilled(s)) jar = i;
+            }
+            if (jar < 0) return Component.translatable("message.bettacraft.glass.need_jar", e.getName());
+            release(e);
+            org.overengineer.bettacraft.containers.AnimalContainers.give(player, jar, org.overengineer.bettacraft.mobs.MobJarItem.fillWith(e));
+            TankCare.log(level, controller, "log.bettacraft.taken_out", TankCare.nameArg(e));
+            tank.inhabitants().remove(e.getUUID());
+            e.discard();
+            level.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.2F);
+            reconcile(level, controller);
+            return null;
         }
         // M30: a big animal only goes into an empty transport tub (whichever button), with all its data
         if (org.overengineer.bettacraft.big.BigAnimals.isBig(e)) {

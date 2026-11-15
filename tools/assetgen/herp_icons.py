@@ -148,10 +148,59 @@ def fruit_fly_culture():
     return img
 
 
+def _jar(filled: bool):
+    """M31 part d: the mob jar: a glass jar with an iron lid (bars); full, a small zombie stands inside."""
+    img = np.zeros((S, S, 4), np.uint8)
+    rows = [
+        "....LLLLLLLL....",
+        "...LlLlLlLlLL...",
+        "...LLLLLLLLLL...",
+        "....oggggggo....",
+        "...oggggggggo...",
+        "..ohggggggggho..",
+        ".ohgggggggggggo.",
+        ".ohgggggggggggo.",
+        ".ohgggggggggggo.",
+        ".ohgggggggggggo.",
+        ".ohgggggggggggo.",
+        ".ohgggggggggggo.",
+        ".ogggggggggggg o",
+        "..ogggggggggggo.",
+        "...oooooooooo...",
+    ]
+    rows[12] = ".ogggggggggggggo"[:16]
+    _paint(img, rows, {"L": "#6e7378", "l": "#b8bec4", "o": "#3b4f57", "h": "#f4fbfc", "g": "#cfe6ea"}, 0, 1)
+    for y in range(S):  # the glass lets the light through
+        for x in range(S):
+            if tuple(img[y, x, :3]) == tuple(_c("#cfe6ea")[:3]):
+                img[y, x, 3] = 120
+    if filled:
+        _paint(img, [
+            ".ggg.",
+            ".kgk.",
+            ".ggg.",
+            "cCCCc",
+            "gCCCg",
+            ".bbb.",
+            ".b.b.",
+            ".b.b.",
+        ], {"g": "#5a9a48", "k": "#1c2a18", "c": "#2e8a9a", "C": "#38a6b6", "b": "#3a3f8a"}, 5, 6)
+    return img
+
+
+def mob_jar():
+    return _jar(False)
+
+
+def mob_jar_filled():
+    return _jar(True)
+
+
 def textures() -> dict[str, np.ndarray]:
     return {"dart_frog_box": dart_frog_box(), "horned_frog_box": horned_frog_box(), "leopard_gecko_box": leopard_gecko_box(),
             "crested_gecko_box": crested_gecko_box(), "corn_snake_box": corn_snake_box(), "crickets": crickets(),
-            "fruit_flies": fruit_flies(), "cricket_culture": cricket_culture(), "fruit_fly_culture": fruit_fly_culture()}
+            "fruit_flies": fruit_flies(), "cricket_culture": cricket_culture(), "fruit_fly_culture": fruit_fly_culture(),
+            "mob_jar": mob_jar(), "mob_jar_filled": mob_jar_filled()}
 
 
 def write_all() -> list:
