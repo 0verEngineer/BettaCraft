@@ -152,6 +152,8 @@ public final class BettaCraftClient {
         event.enqueueWork(TankAwareWaterExtensions::install);
         event.enqueueWork(() -> ItemProperties.register(ModItems.FISH_BAG.get(), BettaCraft.id("filled"),
                 (stack, level, entity, seed) -> FishBagItem.isFilled(stack) ? 1.0F : 0.0F));
+        event.enqueueWork(() -> ItemProperties.register(ModItems.TRANSPORT_TUB.get(), BettaCraft.id("filled"), // M30
+                (stack, level, entity, seed) -> org.overengineer.bettacraft.big.TransportTubItem.isFilled(stack) ? 1.0F : 0.0F));
     }
 
     /** Fish overlay of bucket and bag in the fish's own colours (tint 1 = body, 2 = fins). */

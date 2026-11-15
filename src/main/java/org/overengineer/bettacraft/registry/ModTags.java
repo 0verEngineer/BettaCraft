@@ -57,6 +57,8 @@ public final class ModTags {
     public static final TagKey<EntityType<?>> TANK_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("tank_blacklist"));
     /** Always accepted in tanks (even if larger than the size rule). */
     public static final TagKey<EntityType<?>> TANK_INHABITANTS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("tank_inhabitants"));
+    /** M30: big animals of other mods (and the vanilla dolphin) that go into big tanks by the size rule (length from the hitbox). */
+    public static final TagKey<EntityType<?>> BIG_TANK_ANIMALS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("big_tank_animals"));
     /** Kill bettas and other small inhabitants. */
     public static final TagKey<EntityType<?>> PREDATORS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("predators"));
     /** Live prey of other mods (Fintastic artemia, daphnia, copepods): hungry bettas in a tank eat it as live food (M7). */

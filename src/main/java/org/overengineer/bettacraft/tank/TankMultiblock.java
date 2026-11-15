@@ -157,7 +157,8 @@ public final class TankMultiblock {
             }
             if (count <= bestCount) continue;
             int scale = subset.getFirst().getTank().scale();
-            if (subset.stream().anyMatch(c -> c.getTank().scale() != scale)) continue;
+            // M30: with big tanks, tanks of different scales join (the finer interiors are shrunk, InteriorRescale)
+            if (!org.overengineer.bettacraft.config.CommonConfig.bigTanks() && subset.stream().anyMatch(c -> c.getTank().scale() != scale)) continue;
             if (freeShapes() ? fitsAsShape(pos, subset) : fitsAsCuboid(pos, subset)) {
                 best = subset;
                 bestCount = count;
@@ -221,7 +222,7 @@ public final class TankMultiblock {
             if (main == null || t.memberCount() > main.memberCount()) main = t;
         }
         all.add(extra.immutable());
-        TankData merged = TankData.create(all, main.scale());
+        TankData merged = TankData.create(all, mergedScale(olds, all, main.scale()));
         merged.setId(main.id());
         merged.copySettingsFrom(main);
         // M17: the nest of a smaller tank (eggs, larvae) used to vanish when it was joined to a bigger one. Keep the
@@ -272,6 +273,23 @@ public final class TankMultiblock {
         InteriorManager.onTanksMerged(level, olds, merged);
         install(level, merged);
         LOGGER.debug("Merged {} tank(s) into {}", olds.size(), merged);
+    }
+
+    /**
+     * M30: the interior scale of a joined tank: the finest scale of the parts, smaller (8, 4) once the tank is longer than
+     * {@code bigTankRules.interiorScale8Above} / {@code interiorScale4Above} blocks (features.bigTanks; off: the main tank's).
+     */
+    static int mergedScale(List<TankData> olds, List<BlockPos> blocks, int mainScale) {
+        if (!org.overengineer.bettacraft.config.CommonConfig.bigTanks()) return mainScale;
+        int scale = mainScale;
+        for (TankData t : olds) scale = Math.min(scale, t.scale());
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+        for (BlockPos p : blocks) {
+            minX = Math.min(minX, p.getX()); minY = Math.min(minY, p.getY()); minZ = Math.min(minZ, p.getZ());
+            maxX = Math.max(maxX, p.getX()); maxY = Math.max(maxY, p.getY()); maxZ = Math.max(maxZ, p.getZ());
+        }
+        return BigTankRules.scaleFor(maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1, scale,
+                ServerConfig.getOr(ServerConfig.INTERIOR_SCALE8_ABOVE, 16), ServerConfig.getOr(ServerConfig.INTERIOR_SCALE4_ABOVE, 32));
     }
 
     private static void moveHeaters(ServerLevel level, TankData from, TankData to, BlockPos dropAt) {
@@ -449,6 +467,16 @@ public final class TankMultiblock {
     }
 
     // ------------------------------------------------------------------ installing / states
+
+    /**
+     * M30: forms one tank of these placed tank blocks at once (GameTests, smoke scenes, the showcase: a 32 x 8 x 16 tank
+     * block by block merges four thousand times), with the interior scale of its size like a grown tank.
+     */
+    public static TankData formAll(ServerLevel level, List<BlockPos> blocks) {
+        TankData t = TankData.create(blocks, mergedScale(List.of(), blocks, ServerConfig.defaultScale()));
+        install(level, t);
+        return t;
+    }
 
     /** Writes the tank into the world: controller BE, member BEs, connection and fill block states. */
     public static void install(ServerLevel level, TankData tank) {

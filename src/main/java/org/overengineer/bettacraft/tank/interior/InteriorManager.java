@@ -318,6 +318,14 @@ public final class InteriorManager {
             InteriorRegion src = regions.get(old.regionId());
             BlockPos off = old.min().subtract(merged.min());
             int dx = off.getX() * s, dy = off.getY() * s, dz = off.getZ() * s;
+            if (src.scale() != s) {
+                // M30: the tank grew past bigTankRules.interiorScale8Above: its interior is shrunk into the coarser one of the
+                // big tank, what does not stay comes out as items (InteriorRescale)
+                ejectPlayers(interior, src);
+                InteriorRescale.shrinkInto(interior, src, target, dx, dy, dz, dy == 0, lostFloor, touched);
+                destroyRegion(server, src);
+                continue;
+            }
             // the old region only has blocks in its own cells (the rest is walled off), so the whole box can be copied
             copyInterior(interior, src, 0, 0, 0, src.sizeX(), src.sizeY(), src.sizeZ(), target.toWorld(dx, dy, dz), touched);
             if (dy == 0) {

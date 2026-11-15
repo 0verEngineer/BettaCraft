@@ -114,7 +114,9 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         info(registration, wild, "info.bettacraft.wild_coral");
         // M19: a care sheet per tankmate species (bucket and spawn egg)
         for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
-            info(registration, List.of(new ItemStack(ModItems.TANKMATE_BUCKETS.get(sp).get()), new ItemStack(ModItems.TANKMATE_SPAWN_EGGS.get(sp).get())),
+            var bucket = ModItems.TANKMATE_BUCKETS.get(sp); // M30: none for the big animals
+            info(registration, bucket == null ? List.of(new ItemStack(ModItems.TANKMATE_SPAWN_EGGS.get(sp).get()))
+                            : List.of(new ItemStack(bucket.get()), new ItemStack(ModItems.TANKMATE_SPAWN_EGGS.get(sp).get())),
                     "info.bettacraft.tankmate." + sp.id());
         }
     }

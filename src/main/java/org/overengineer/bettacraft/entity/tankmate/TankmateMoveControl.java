@@ -10,12 +10,12 @@ import net.minecraft.world.entity.ai.control.MoveControl;
  * behaviour checks the decoration along the line). Slows down while the target is not ahead and near the target, so a
  * shoal does not overshoot; a fish without a target hovers (a little buoyancy, damped).
  */
-final class TankmateMoveControl extends MoveControl {
-    private final TankmateEntity fish;
+class TankmateMoveControl extends MoveControl {
+    protected final TankmateEntity fish;
     /** M21: follows the height of the target closely (the way into a cave). */
     boolean precise;
     /** M21.5: turn rate (degrees per tick) eased like a real fish's, so it swims curves instead of turning on the spot. */
-    private float yawVel;
+    protected float yawVel;
 
     TankmateMoveControl(TankmateEntity fish) {
         super(fish);

@@ -153,7 +153,7 @@ public final class NetCatching {
         };
         if (fw == null) return out;
         for (var s : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
-            if (!s.available()) continue; // M21.5
+            if (!s.available() || s.isLarge()) continue; // M21.5; M30: big animals need the large net
             double wt = s.nativeWeight(fw);
             if (wt > 0) out.put(s, wt);
         }

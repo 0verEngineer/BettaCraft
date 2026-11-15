@@ -153,6 +153,7 @@ public final class ModItems {
         var m = new java.util.EnumMap<org.overengineer.bettacraft.tankmates.TankmateSpecies,
                 DeferredItem<org.overengineer.bettacraft.tankmates.TankmateBucketItem>>(org.overengineer.bettacraft.tankmates.TankmateSpecies.class);
         for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+            if (sp.isLarge()) continue; // M30: big animals do not go into a bucket (transport tub)
             m.put(sp, ITEMS.register(sp.bucketId(), () -> new org.overengineer.bettacraft.tankmates.TankmateBucketItem(sp, new Item.Properties().stacksTo(1))));
         }
         return java.util.Collections.unmodifiableMap(m);
@@ -234,6 +235,17 @@ public final class ModItems {
 
     /** M24: stainless steel (#c:ingots/stainless_steel; steel of other mods is no stainless steel). */
     public static final DeferredItem<Item> STAINLESS_STEEL_INGOT = ITEMS.registerSimpleItem("stainless_steel_ingot");
+
+    // ------------------------------------------------------------------ M30 catching tools for big animals
+    /** M30: the large net (catches a wild big animal into an empty transport tub). */
+    public static final DeferredItem<org.overengineer.bettacraft.big.LargeNetItem> LARGE_NET = ITEMS.register("large_net",
+            () -> new org.overengineer.bettacraft.big.LargeNetItem(new Item.Properties().durability(120)));
+    /** M30: the transport tub (one big animal; slows the player while carried). */
+    public static final DeferredItem<org.overengineer.bettacraft.big.TransportTubItem> TRANSPORT_TUB = ITEMS.register("transport_tub",
+            () -> new org.overengineer.bettacraft.big.TransportTubItem(new Item.Properties().stacksTo(1)));
+    /** M30: the steel leader (fishing for big animals, in the other hand). */
+    public static final DeferredItem<org.overengineer.bettacraft.big.SteelLeaderItem> STEEL_LEADER = ITEMS.register("steel_leader",
+            () -> new org.overengineer.bettacraft.big.SteelLeaderItem(new Item.Properties().durability(32)));
     public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE);
     public static final DeferredItem<BlockItem> GLASS_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.GLASS_PIPE);
     public static final DeferredItem<BlockItem> STAINLESS_STEEL_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.STAINLESS_STEEL_PIPE);

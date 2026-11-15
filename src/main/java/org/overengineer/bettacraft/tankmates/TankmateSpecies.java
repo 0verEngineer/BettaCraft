@@ -234,7 +234,13 @@ public enum TankmateSpecies {
     SWORDTAIL(d("swordtail", "Xiphophorus hellerii", Model.SWORDTAIL, Group.LIVEBEARER, Breeding.LIVEBEARER, Zone.MID)
             .size(0.6).temp(22, 28).breed(23, 27).quality(0.4).shoal(3).stock(0.8).brood(20, 60).growth(0.9)
             .eats(0.6).dimorphic().egg(0x7A9A50, 0xE04030).native_(Water.RIVER, 8).trader(Trade.COMMON).salt(Salinity.Range.BRACKISH)
-            .varieties("wild", "red", "red_wagtail"));
+            .varieties("wild", "red", "red_wagtail")),
+    // ---------------------------------------------------------------- M30 part a: big animals (features.bigAnimals, LargeSpecies)
+    // the iridescent shark catfish of the Mekong: a restless, silvery schooling giant of big rivers; in a home tank about 1 m,
+    // eats everything and, once big, small fish; never breeds in a tank
+    PANGASIUS(d("pangasius", "Pangasianodon hypophthalmus", Model.PANGASIUS, Group.CATFISH, Breeding.NONE, Zone.MID)
+            .large(LargeSpecies.of(1.0).turn(3.0).speed(0.6).eatsSmallFish(0.6)).temp(22, 30).breed(26, 28).quality(0.4).shoal(1)
+            .brood(0, 0).growth(4.0).eats(0.5).egg(0xA8B0B8, 0x3A4250).native_(Water.RIVER, 3).native_(Water.JUNGLE, 2));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
@@ -243,14 +249,18 @@ public enum TankmateSpecies {
         /** M29 part b: the round puffers, the deep-bodied barbs, the flat garra with its sucker mouth. */
         PUFFER, BARB, GARRA,
         /** M29 part c: the rainbowfish with two dorsal fins, the swordtail with the male's sword. */
-        RAINBOW, SWORDTAIL }
+        RAINBOW, SWORDTAIL,
+        /** M30 part a: the pangasius (long, torpedo-shaped, a high sickle-shaped dorsal fin, a deeply forked tail). */
+        PANGASIUS }
 
     /** Family group (handbook, overlays, menu). */
     public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE, CICHLID,
         /** M29 part b. */
         PUFFER, BARB,
         /** M29 part c. */
-        RAINBOW }
+        RAINBOW,
+        /** M30: the giant catfish (pangasius; part b: the redtail catfish and the wels). */
+        CATFISH }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -356,8 +366,13 @@ public enum TankmateSpecies {
     public boolean nocturnal() { return def.nocturnal; }
     /** M23/M29: a labyrinth fish breathes air at the surface (the dwarf gourami; part c: more gouramis). */
     public boolean labyrinth() { return def.labyrinth; }
-    /** M29: adults eat tankmates up to this length in blocks and shrimp (angelfish; 0 = no). */
-    public double preyLength() { return def.prey; }
+    /** M29: adults eat tankmates up to this length in blocks and shrimp (angelfish; 0 = no). M30: big ones by their data. */
+    public double preyLength() { return def.large != null ? def.large.preyLength() : def.prey; }
+    /** M30: the data of a big species (size rule, movement, catching), null for the small fish. */
+    @Nullable
+    public LargeSpecies large() { return def.large; }
+    /** M30: a big animal (giant catfish, shark, ray). */
+    public boolean isLarge() { return def.large != null; }
     /** M29: water blocks a territorial adult male needs; more males than the tank has room for fight (0 = no territory). */
     public double territory() { return def.territory; }
     /** M29: the parents feed the young with their skin secretion (discus): the brood stays with them longer and dies without them. */
@@ -390,6 +405,7 @@ public enum TankmateSpecies {
 
     /** M21.5: new species can be switched off (features.*): then neither the trader nor the net brings them. */
     public boolean available() {
+        if (isLarge()) return org.overengineer.bettacraft.config.CommonConfig.bigAnimals(); // M30
         if (seahorse()) return org.overengineer.bettacraft.config.CommonConfig.seahorses();
         if (cichlid()) return org.overengineer.bettacraft.config.CommonConfig.cichlids();
         if (puffer()) return org.overengineer.bettacraft.config.CommonConfig.puffers();
@@ -401,6 +417,7 @@ public enum TankmateSpecies {
 
     /** The feature switch that brings new ones (handbook, sources). */
     public String featureKey() {
+        if (isLarge()) return "features.bigAnimals"; // M30
         if (seahorse()) return "features.seahorses";
         if (cichlid()) return "features.cichlids";
         if (puffer()) return "features.puffers";
@@ -446,6 +463,20 @@ public enum TankmateSpecies {
     }
 
     public List<Water> waters() { return def.waters; }
+
+    /** M30: the kind of water of the species for a water of the net (null: none of the waters of the species). */
+    @Nullable
+    public static Water waterOf(org.overengineer.bettacraft.critters.NetCatching.Water w) {
+        return switch (w) {
+            case RIVER -> Water.RIVER;
+            case SWAMP -> Water.SWAMP;
+            case JUNGLE -> Water.JUNGLE;
+            case MANGROVE -> Water.MANGROVE;
+            case WARM_OCEAN -> Water.WARM_OCEAN;
+            case LUKEWARM_OCEAN -> Water.LUKEWARM_OCEAN;
+            default -> null;
+        };
+    }
 
     public String entityKey() {
         return "entity.bettacraft." + id();
@@ -551,6 +582,8 @@ public enum TankmateSpecies {
         final List<Double> weights = new java.util.ArrayList<>();
         Trade trade = Trade.NONE;
         Salinity.Range salt = Salinity.Range.FRESH;
+        @Nullable
+        LargeSpecies large;
 
         Def(String id, String latin, Model model, Group group, Breeding breeding, Zone zone) {
             this.id = id;
@@ -588,6 +621,20 @@ public enum TankmateSpecies {
                 this.width = (float) Math.max(0.12, Math.min(0.6, length * w));
                 this.height = (float) Math.max(0.08, Math.min(0.5, length * h));
             }
+            return this;
+        }
+
+        /**
+         * M30: a big species: the length from its real length ({@link LargeSpecies#BLOCKS_PER_METRE}), a hitbox from it,
+         * the stocking weight from its water need, the movement speed; no trader.
+         */
+        Def large(LargeSpecies l) {
+            this.large = l;
+            this.length = l.lengthBlocks();
+            this.width = (float) Math.min(1.2, Math.max(0.5, length * 0.4));
+            this.height = (float) Math.min(0.9, Math.max(0.3, length * (model == Model.PANGASIUS ? 0.3 : 0.25)));
+            this.stock = l.stock();
+            this.trade = Trade.NONE;
             return this;
         }
 

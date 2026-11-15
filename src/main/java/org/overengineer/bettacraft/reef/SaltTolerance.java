@@ -62,6 +62,7 @@ public final class SaltTolerance {
 
     @Nullable
     public static Range of(Entity e) {
+        if (e.getType() == net.minecraft.world.entity.EntityType.DOLPHIN) return Range.MARINE; // M30: sea water only
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) return BETTA;
         if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return m.species().salinity();
         if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) return FROG;
@@ -71,6 +72,7 @@ public final class SaltTolerance {
     /** Range of the animal an entity type stands for (our own types and foreign ones), or null. */
     @Nullable
     public static Range of(EntityType<?> type) {
+        if (type == EntityType.DOLPHIN) return Range.MARINE; // M30
         if (type == org.overengineer.bettacraft.registry.ModEntities.BETTA.get()) return BETTA;
         var tm = org.overengineer.bettacraft.tankmates.TankmateSpecies.of(type);
         if (tm != null) return tm.salinity();

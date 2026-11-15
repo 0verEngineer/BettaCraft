@@ -88,9 +88,11 @@ public final class ModEntities {
         event.register(BETTA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         // M22.3: the wild tankmates, frogs and small animals (rare, never in a tank)
-        for (var t : TANKMATES.values()) {
-            event.register(t.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                    org.overengineer.bettacraft.world.Wildlife::checkFish, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        for (var e : TANKMATES.entrySet()) {
+            // M30: the big animals with their own, rarer rule
+            event.register(e.getValue().get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    e.getKey().isLarge() ? org.overengineer.bettacraft.world.Wildlife::checkBig : org.overengineer.bettacraft.world.Wildlife::checkFish,
+                    RegisterSpawnPlacementsEvent.Operation.REPLACE);
         }
         event.register(DWARF_FROG.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 org.overengineer.bettacraft.world.Wildlife::checkFish, RegisterSpawnPlacementsEvent.Operation.REPLACE);

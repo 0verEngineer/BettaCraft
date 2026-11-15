@@ -607,6 +607,7 @@ public final class ModDataGen {
             DataGenM26.itemModels(this); // M26 part a
             DataGenM27.itemModels(this); // M27
             DataGenM28.itemModels(this); // M28 part c
+            DataGenM30.itemModels(this); // M30 part a
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -648,7 +649,7 @@ public final class ModDataGen {
             // M19: tankmates (bucket with the betta's fish overlay, tinted per species), spawn eggs, breeding items
             for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
                 String fish = sp.seahorse() ? "item/seahorse_bucket_fish" : "item/betta_bucket_fish"; // M21.8: a seahorse in the bucket
-                withExistingParent(sp.bucketId(), mcLoc("item/generated"))
+                if (!sp.isLarge()) withExistingParent(sp.bucketId(), mcLoc("item/generated")) // M30: no bucket for a big animal
                         .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc(fish))
                         .texture("layer2", modLoc(fish + "_fins")).texture("layer3", modLoc("item/betta_bucket_glass"));
                 withExistingParent(sp.spawnEggId(), mcLoc("item/template_spawn_egg"));
@@ -1013,6 +1014,7 @@ public final class ModDataGen {
             DataGenM26.recipes(output, hasIt(ModItems.TANK.get())); // M26 part a
             DataGenM27.recipes(output, hasIt(ModItems.TANK.get())); // M27
             DataGenM28.recipes(output, hasIt(ModItems.TANK.get())); // M28 part c
+            DataGenM30.recipes(output, hasIt(ModItems.TANK.get())); // M30 part a
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1427,6 +1429,8 @@ public final class ModDataGen {
             // M16: the vanilla frog is no tank animal (lives on land, the tadpole grows into it and hops out)
             var blacklist = tag(ModTags.TANK_BLACKLIST).add(EntityType.FROG);
             for (var e : Compat.BLACKLIST) blacklist.addOptional(e);
+            // M30: big animals that go into big tanks by the size rule (their length from the hitbox): the vanilla dolphin
+            tag(ModTags.BIG_TANK_ANIMALS).add(EntityType.DOLPHIN);
             // M16: axolotls hunt small fish and fry
             var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH, EntityType.AXOLOTL);
             for (var e : Compat.PREDATORS) predators.addOptional(e);

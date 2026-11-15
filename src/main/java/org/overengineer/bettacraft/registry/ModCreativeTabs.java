@@ -113,6 +113,9 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.TANK_LID.get());
                 out.accept(ModItems.MIRROR_STICK.get());
                 out.accept(ModItems.AQUARIUM_NET.get());
+                out.accept(ModItems.LARGE_NET.get()); // M30
+                out.accept(ModItems.TRANSPORT_TUB.get());
+                out.accept(ModItems.STEEL_LEADER.get());
                 out.accept(ModItems.ALGAE_SCRAPER.get());
                 // floating plants (M12)
                 for (var p : ModItems.FLOATING_PLANTS.values()) out.accept(p.get());
@@ -194,6 +197,10 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.SPAWNING_MOP.get());
                 java.util.random.RandomGenerator tr = new java.util.Random(19);
                 for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
+                    if (sp.isLarge()) { // M30: a big animal has no bag and no bucket, only its spawn egg here
+                        out.accept(ModItems.TANKMATE_SPAWN_EGGS.get(sp).get());
+                        continue;
+                    }
                     int n = sp.shoaling() ? Math.max(6, sp.shoal()) : 2;
                     if (org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(sp) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
                         // M21.6: a pair of every named strain

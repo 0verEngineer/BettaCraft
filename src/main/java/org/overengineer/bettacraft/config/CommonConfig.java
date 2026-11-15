@@ -76,6 +76,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_COMMUNITY_FISH, FEATURE_GOURAMIS, FEATURE_WILD_BETTAS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_CRAYFISH, FEATURE_AXOLOTL_CARE;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
+    public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
+    public static final ModConfigSpec.IntValue SPAWN_BIG_WEIGHT;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
     static {
@@ -94,6 +96,10 @@ public final class CommonConfig {
         WILD_PLANT_FREQUENCY = b.comment("How often wild aquarium and floating plants grow in new chunks: a factor on the chance of a group per chunk",
                 "(1 = default, about one small group in every two or three chunks with water of their kind; 0 = none; features.wildPlants)")
                 .defineInRange("wildPlantFrequency", 1.0, 0.0, 10.0);
+        // M30
+        SPAWN_BIG_WEIGHT = b.comment("Spawn weight of the wild big animals (giant catfish, sharks, rays) in their biomes per weight point of the species;",
+                "they also need deep water and few of their kind nearby (bigAnimalRules.*); 0 disables them (features.bigAnimals)")
+                .defineInRange("bigAnimalWeight", 1, 0, 1000);
         b.pop();
         b.comment("Recipes").push("recipes");
         RECIPE_FISH_BAG = b.comment("Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one")
@@ -254,6 +260,12 @@ public final class CommonConfig {
                 "were put)").define("marimoRolling", true);
         FEATURE_DECOR_EFFECTS = b.comment("Almond leaves and alder cones on the floor of a tank interior give off tannins (lower the pH a little) and feed",
                 "the shrimp; clay and terracotta (tubes, caves, dragon stone) hide young shrimp (off: they are only decoration)").define("decorEffects", true);
+        // M30
+        FEATURE_BIG_TANKS = b.comment("Big tanks: up to bigTankRules.bigMaxSize* blocks (32 x 16 x 32), with a smaller interior scale (8 or 4) from",
+                "bigTankRules.interiorScale8Above (off: tank.maxSize* as before; big tanks already built stay)").define("bigTanks", true);
+        FEATURE_BIG_ANIMALS = b.comment("Big animals: giant catfish, sharks, rays and the vanilla dolphin in big tanks by the size rule (bigAnimalRules.*),",
+                "the large net, the transport tub and the steel leader, wild big animals (off: none go into tanks, no new ones from the",
+                "wild; those in tanks stay)").define("bigAnimals", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -367,6 +379,8 @@ public final class CommonConfig {
     public static boolean bigCrayfish() { return getOr(FEATURE_BIG_CRAYFISH, true); } // M29 part d
     public static boolean axolotlCare() { return getOr(FEATURE_AXOLOTL_CARE, true); }
     public static boolean wildPlants() { return getOr(FEATURE_WILD_PLANTS, true); }
+    public static boolean bigTanks() { return getOr(FEATURE_BIG_TANKS, true); } // M30
+    public static boolean bigAnimals() { return getOr(FEATURE_BIG_ANIMALS, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }

@@ -29,6 +29,10 @@ public record Source(Kind kind, String target, @Nullable Where where, double cha
         /** Wandering trader, among his usual offers. */
         TRADER_USUAL,
         /** Wandering trader, among his rare offers. */
-        TRADER_RARE
+        TRADER_RARE,
+        /** M30: the large net swung in open water (into an empty transport tub). */
+        BIG_NET,
+        /** M30: fishing with a steel leader in the other hand (into an empty transport tub). */
+        STEEL_LEADER
     }
 }

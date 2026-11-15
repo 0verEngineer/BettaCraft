@@ -31,6 +31,8 @@ public final class TankInteractions {
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = TankInhabitants.tryInsert(stack, level, pos, player, hand);
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = org.overengineer.bettacraft.big.DolphinCare.feed(stack, level, pos, player, hand); // M30: raw fish for the dolphins
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = TankCare.handFeed(stack, level, pos, player, hand, hit.getLocation());
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.reef.ReefItems.useOnTank(stack, level, pos, player, hand); // M20: sea salt, calcium

@@ -63,7 +63,9 @@ public final class ItemHints {
             "food_maker", "fish_flakes", "food_granules", "shrimp_food", "frozen_mosquito_larvae", "frozen_artemia", "frozen_daphnia",
             "shell_food", // M29 part b
             // M27: the monitor
-            "monitor");
+            "monitor",
+            // M30: catching big animals
+            "large_net", "transport_tub", "steel_leader");
 
     private ItemHints() {}
 

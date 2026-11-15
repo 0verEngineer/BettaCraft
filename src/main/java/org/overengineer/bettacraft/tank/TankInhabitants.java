@@ -64,7 +64,9 @@ public final class TankInhabitants {
     private static final int MISSING_LIMIT = 6;
 
     /** M16: BOSS, HOSTILE and NOT_AQUATIC added; NOT_BUCKETABLE is no longer used (the fish bag holds any water animal). */
-    public enum Acceptance { OK, BLACKLISTED, TOO_BIG, NOT_BUCKETABLE, BOSS, HOSTILE, NOT_AQUATIC }
+    public enum Acceptance { OK, BLACKLISTED, TOO_BIG, NOT_BUCKETABLE, BOSS, HOSTILE, NOT_AQUATIC,
+        /** M30: a big animal of known length: the tank decides ({@link org.overengineer.bettacraft.big.BigAnimals#refusal}); never a bucket or bag. */
+        BIG }
 
     @Nullable
     private static final Field MOB_BUCKET_TYPE = findBucketTypeField();
@@ -92,6 +94,7 @@ public final class TankInhabitants {
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         if (stack.getItem() instanceof FishBagItem) return FishBagItem.containedType(stack);
+        if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return org.overengineer.bettacraft.big.TransportTubItem.containedType(stack); // M30
         if (FishContainers.kind(stack) != null) return FishContainers.containedType(stack);
         if (stack.getItem() instanceof MobBucketItem && MOB_BUCKET_TYPE != null) {
             try {
@@ -114,7 +117,7 @@ public final class TankInhabitants {
         String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
         var facts = new InhabitantRules.Facts(id, w, h, type.is(ModTags.TANK_BLACKLIST), type.is(ModTags.TANK_INHABITANTS),
                 type.is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
-                instance == null ? null : isWaterAnimal(instance));
+                instance == null ? null : isWaterAnimal(instance), org.overengineer.bettacraft.big.BigAnimals.length(type, instance));
         return InhabitantRules.decide(facts, rules());
     }
 
@@ -123,7 +126,7 @@ public final class TankInhabitants {
         return new InhabitantRules.Settings(ServerConfig.getOr(ServerConfig.INHABITANTS_ALLOW, List.of()),
                 ServerConfig.getOr(ServerConfig.INHABITANTS_DENY, List.of()),
                 ServerConfig.getOr(ServerConfig.INHABITANTS_MAX_HITBOX, (double) MAX_HITBOX),
-                ServerConfig.getOr(ServerConfig.INHABITANTS_REFUSE_HOSTILE, true));
+                ServerConfig.getOr(ServerConfig.INHABITANTS_REFUSE_HOSTILE, true), org.overengineer.bettacraft.config.CommonConfig.bigAnimals());
     }
 
     /**
@@ -148,6 +151,7 @@ public final class TankInhabitants {
     /** Water that comes along with the animal of this (filled) container: bucket 1000 mB, bags 100 mB, nets 0. */
     public static long carriedWater(ItemStack stack) {
         if (stack.getItem() instanceof FishBagItem) return BAG_MB;
+        if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return 0; // M30: the tub brings no water
         FishContainers.Foreign f = FishContainers.kind(stack);
         return f != null ? f.waterMb : BUCKET_MB;
     }
@@ -168,7 +172,8 @@ public final class TankInhabitants {
             player.displayClientMessage(error, true);
             return ItemInteractionResult.CONSUME;
         }
-        ItemStack empty = stack.getItem() instanceof FishBagItem ? new ItemStack(ModItems.FISH_BAG.get())
+        ItemStack empty = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem ? new ItemStack(ModItems.TRANSPORT_TUB.get()) // M30
+                : stack.getItem() instanceof FishBagItem ? new ItemStack(ModItems.FISH_BAG.get())
                 : FishContainers.kind(stack) != null ? FishContainers.emptied(stack) : new ItemStack(Items.BUCKET);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, empty));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -194,7 +199,12 @@ public final class TankInhabitants {
             return Component.translatable("message.bettacraft.tank.too_little_water", Math.round(minFill * 100));
         }
         Acceptance pre = accepts(type, null);
-        if (pre != Acceptance.OK) return rejection(pre, type);
+        if (pre != Acceptance.OK && pre != Acceptance.BIG) return rejection(pre, type);
+        // M30: a big animal needs a tank big enough for it (and the other big ones in it); said before the water
+        if (pre == Acceptance.BIG) {
+            Component big = org.overengineer.bettacraft.big.BigAnimals.refusal(tank, liveInhabitants(level, tank), type, null);
+            if (big != null) return big;
+        }
         // M20: an animal that would die quickly in this water (freshwater fish into salt water and the other way round)
         var salt = org.overengineer.bettacraft.reef.SaltTolerance.of(type);
         if (org.overengineer.bettacraft.reef.SaltTolerance.refuse(salt, tank)) {
@@ -208,6 +218,7 @@ public final class TankInhabitants {
         Vec3 spawn = findSpawnPos(level, tank, level.getRandom());
         CompoundTag stored = FishContainers.storedEntity(stack);
         if (stored == null) stored = FishBagItem.storedEntity(stack); // M16: a water animal without a bucket in our fish bag
+        if (stored == null) stored = org.overengineer.bettacraft.big.TransportTubItem.storedEntity(stack); // M30: a big animal in its tub
         Entity e;
         if (stored != null) {
             e = FishContainers.create(level, stored); // Better Fish Tanks bag / Fintastic net: the complete entity
@@ -231,9 +242,16 @@ public final class TankInhabitants {
         }
         // M16: after the bucket data, which can change the size (Fintastic gouramis: giant, three-spot or dwarf variant)
         Acceptance acc = accepts(type, e);
-        if (acc != Acceptance.OK) {
+        if (acc != Acceptance.OK && acc != Acceptance.BIG) {
             e.discard();
             return rejection(acc, type);
+        }
+        if (acc == Acceptance.BIG) { // M30: with its own size (a young one of another mod is judged by the adult size)
+            Component big = org.overengineer.bettacraft.big.BigAnimals.refusal(tank, live, type, e);
+            if (big != null) {
+                e.discard();
+                return big;
+            }
         }
         if (weight(e) > 0) { // M18: the young count in fractions too
             long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);
@@ -299,6 +317,7 @@ public final class TankInhabitants {
     public static Component rejection(Acceptance a, EntityType<?> type) {
         return switch (a) {
             case TOO_BIG -> Component.translatable("message.bettacraft.tank.too_big", type.getDescription());
+            case BIG -> Component.translatable("message.bettacraft.big.no_bucket", type.getDescription()); // M30: no bucket, no bag
             case BOSS -> Component.translatable("message.bettacraft.tank.boss", type.getDescription());
             case HOSTILE -> Component.translatable("message.bettacraft.tank.hostile", type.getDescription());
             case NOT_AQUATIC -> Component.translatable("message.bettacraft.tank.not_aquatic", type.getDescription());
@@ -384,6 +403,9 @@ public final class TankInhabitants {
         if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
             return m.species().stock() * ServerConfig.getOr(ServerConfig.TANKMATES_STOCKING, 1.0) * m.lifeStage().stocking();
         }
+        // M30: a big animal of another kind (the dolphin) like a big species: a quarter of the water blocks it needs
+        double big = org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e);
+        if (big > 0) return 25.0 * big * big * big;
         double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity
                 ? 1.0 / Math.max(0.1, ServerConfig.getOr(ServerConfig.STOCKING_FROGS_PER_FISH, 1.0)) : 1.0;
         return isAdult(e) ? w : w * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();
@@ -463,7 +485,8 @@ public final class TankInhabitants {
         for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;
             // M17: a young animal of a big species that grew past inhabitants.maxHitbox in the tank goes out in a bag
-            if (evict && accepts(e.getType(), e) == Acceptance.TOO_BIG) {
+            // M30: a big animal stays (the size rule only decides when it goes in; with features.bigAnimals off it stays too)
+            if (evict && !org.overengineer.bettacraft.big.BigAnimals.isBig(e) && accepts(e.getType(), e) == Acceptance.TOO_BIG) {
                 evictOutgrown(level, controller, e);
                 continue;
             }
@@ -565,6 +588,23 @@ public final class TankInhabitants {
         Entity e = level.getEntity(entityId);
         if (e == null || !e.isAlive() || !hasTankRef(e) || !tank.id().equals(e.getData(ModAttachments.TANK_REF.get()).tankId())) {
             return Component.translatable("message.bettacraft.tank.not_inside");
+        }
+        // M30: a big animal only goes into an empty transport tub (whichever button), with all its data
+        if (org.overengineer.bettacraft.big.BigAnimals.isBig(e)) {
+            int tub = -1;
+            for (int i = 0; i < player.getInventory().getContainerSize() && tub < 0; i++) {
+                ItemStack s = player.getInventory().getItem(i);
+                if (s.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem && !org.overengineer.bettacraft.big.TransportTubItem.isFilled(s)) tub = i;
+            }
+            if (tub < 0) return Component.translatable("message.bettacraft.big.need_tub", e.getName());
+            release(e);
+            org.overengineer.bettacraft.containers.AnimalContainers.give(player, tub, org.overengineer.bettacraft.big.TransportTubItem.fillWith(e));
+            TankCare.log(level, controller, "log.bettacraft.taken_out", TankCare.nameArg(e));
+            tank.inhabitants().remove(e.getUUID());
+            e.discard();
+            level.playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.NEUTRAL, 1.0F, 0.7F);
+            reconcile(level, controller);
+            return null;
         }
         // M16: water animals without a bucket (squids ...) go into bags, nets and Better Fish Tanks bags with their full data
         Bucketable bucketable = e instanceof Bucketable b ? b : null;

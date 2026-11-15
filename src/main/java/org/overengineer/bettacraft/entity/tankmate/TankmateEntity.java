@@ -107,7 +107,8 @@ public class TankmateEntity extends AbstractFish {
         this.species = s == null ? TankmateSpecies.NEON_TETRA : s;
         this.genes = TankmateGenes.wild(species);
         this.lookVariety = species.variety(0);
-        this.moveControl = new TankmateMoveControl(this);
+        // M30: big animals swim wide curves and turn slowly
+        this.moveControl = species.isLarge() ? new LargeMoveControl(this) : new TankmateMoveControl(this);
     }
 
     public static AttributeSupplier.Builder createAttributes(TankmateSpecies s) {
@@ -132,8 +133,10 @@ public class TankmateEntity extends AbstractFish {
             case PUFFER -> 0.4; // M29 part b: puffers hover and paddle with their fins
             case BARB -> 0.75;
             case GARRA -> 0.55;
+            case PANGASIUS -> s.large().speed(); // M30
         };
-        double hp = s.length() >= 0.6 ? 6.0 : s.length() >= 0.35 ? 4.0 : 3.0;
+        if (s.isLarge()) speed = s.large().speed();
+        double hp = s.isLarge() ? 10.0 + 10.0 * s.large().lengthM() : s.length() >= 0.6 ? 6.0 : s.length() >= 0.35 ? 4.0 : 3.0;
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, hp).add(Attributes.MOVEMENT_SPEED, speed);
     }
 
@@ -373,6 +376,8 @@ public class TankmateEntity extends AbstractFish {
     public double sideMargin() {
         // M21.8: a seahorse stands upright (its length is its height; the snout and the curled tail reach a little forward)
         double half = Math.max(getBbWidth() * 0.5, Math.min(0.45, species.length() * lifeStage().scale() * (species.seahorse() ? 0.18 : 0.4)));
+        // M30: a big animal keeps half its body length from the glass (it turns in wide curves, the head must not poke out)
+        if (species.isLarge()) half = Math.max(getBbWidth() * 0.5, species.length() * lifeStage().scale() * 0.42);
         return half + 1.0 / 16 + 0.005;
     }
 
@@ -649,6 +654,19 @@ public class TankmateEntity extends AbstractFish {
     public boolean removeWhenFarAway(double distance) {
         // M22.3: only wild ones that nobody caught, named or put into a tank
         return wild && !fromBucket() && !hasCustomName() && !org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(this);
+    }
+
+    /**
+     * M30: a big animal does not go into a bucket (vanilla water buckets, Bucketable pick-up): it needs the large net and the
+     * transport tub.
+     */
+    @Override
+    protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+        if (species.isLarge() && player.getItemInHand(hand).is(net.minecraft.world.item.Items.WATER_BUCKET)) {
+            if (!level().isClientSide) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.big.no_bucket", getDisplayName()), true);
+            return net.minecraft.world.InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        return super.mobInteract(player, hand);
     }
 
     @Override

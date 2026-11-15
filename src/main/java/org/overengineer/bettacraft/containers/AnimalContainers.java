@@ -200,7 +200,9 @@ public final class AnimalContainers {
 
     /** A bucket of water with these fish of one species (the first one also as the vanilla bucket data). */
     public static ItemStack tankmateBucket(TankmateSpecies s, List<CompoundTag> fish) {
-        ItemStack b = new ItemStack(ModItems.TANKMATE_BUCKETS.get(s).get());
+        var bucket = ModItems.TANKMATE_BUCKETS.get(s);
+        if (bucket == null) return org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(s, fish); // M30: no bucket for a big animal
+        ItemStack b = new ItemStack(bucket.get());
         b.set(DataComponents.BUCKET_ENTITY_DATA, CustomData.of(fish.getFirst()));
         if (fish.size() > 1) b.set(ModDataComponents.TANKMATE_GROUP.get(), List.copyOf(fish));
         return b;

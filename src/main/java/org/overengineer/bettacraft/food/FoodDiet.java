@@ -50,7 +50,9 @@ public final class FoodDiet {
         /** Seahorses: frozen and live food. */
         SEAHORSE,
         /** M29 part b: puffers: hard food (shell food), frozen and live food; flakes and pellets badly. */
-        PUFFER;
+        PUFFER,
+        /** M30: big predators (sharks, the big catfish): frozen and live food (and the fish they catch); flakes and wafers badly. */
+        CARNIVORE;
 
         public final TagKey<Item> favourite = TagKey.create(Registries.ITEM, BettaCraft.id("diet/" + id() + "/favourite"));
         public final TagKey<Item> poor = TagKey.create(Registries.ITEM, BettaCraft.id("diet/" + id() + "/poor"));
@@ -71,6 +73,7 @@ public final class FoodDiet {
     }
 
     public static Diet of(TankmateSpecies s) {
+        if (s.large() != null) return s.large().diet(); // M30
         if (s.seahorse()) return Diet.SEAHORSE;
         if (s.puffer()) return Diet.PUFFER; // M29 part b
         if (s.grazer()) return Diet.GRAZER;

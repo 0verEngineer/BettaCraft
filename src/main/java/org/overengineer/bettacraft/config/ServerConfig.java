@@ -321,6 +321,12 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue MEDIA_DIRT_PER_DAY;
     public static final ModConfigSpec.IntValue MULTIBLOCK_FILTER_MAX_CHAMBERS;
 
+    // M30: big tanks and big animals
+    public static final ModConfigSpec.IntValue BIG_MAX_SIZE_X, BIG_MAX_SIZE_Y, BIG_MAX_SIZE_Z, INTERIOR_SCALE8_ABOVE, INTERIOR_SCALE4_ABOVE;
+    public static final ModConfigSpec.DoubleValue BIG_LONG_SIDE, BIG_SHORT_SIDE, BIG_HEIGHT, BIG_WATER, BIG_DOLPHIN_HUNGRY_DAYS, BIG_SPAWN_CHANCE,
+            BIG_TUB_SLOWNESS, BIG_NET_CHANCE, BIG_LEADER_CHANCE;
+    public static final ModConfigSpec.IntValue BIG_WILD_NEARBY;
+
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
@@ -924,6 +930,48 @@ public final class ServerConfig {
                 .defineInRange("spawnPassPerPlayer", 10, 0, 256);
         b.pop();
 
+        b.comment("M30: big tanks (features.bigTanks): larger tanks and a smaller interior scale for them").push("bigTankRules");
+        BIG_MAX_SIZE_X = b.comment("Maximum tank size along X with features.bigTanks (the larger of this and tank.maxSizeX applies)")
+                .defineInRange("bigMaxSizeX", 32, 1, 64);
+        BIG_MAX_SIZE_Y = b.comment("Maximum tank size along Y with features.bigTanks (the larger of this and tank.maxSizeY applies)")
+                .defineInRange("bigMaxSizeY", 16, 1, 64);
+        BIG_MAX_SIZE_Z = b.comment("Maximum tank size along Z with features.bigTanks (the larger of this and tank.maxSizeZ applies)")
+                .defineInRange("bigMaxSizeZ", 32, 1, 64);
+        INTERIOR_SCALE8_ABOVE = b.comment("A tank whose longest side is longer than this many blocks gets interior scale 8 instead of 16 (its interior",
+                        "stays at most 256 blocks long); an existing interior is shrunk when the tank grows past it, see the handbook")
+                .defineInRange("interiorScale8Above", 16, 1, 64);
+        INTERIOR_SCALE4_ABOVE = b.comment("A tank whose longest side is longer than this many blocks gets interior scale 4")
+                .defineInRange("interiorScale4Above", 32, 1, 64);
+        b.pop();
+
+        b.comment("M30: big animals in tanks (features.bigAnimals): the giant catfish, sharks, rays and dolphins. An animal of known length",
+                "(the big species, the vanilla dolphin, #bettacraft:big_tank_animals) goes into a tank whose longer side is at least",
+                "longSidePerMetre times its length in metres, the shorter side shortSidePerMetre and the height heightPerMetre times it,",
+                "with waterPerCubicMetre water blocks per animal and cubic metre of its length").push("bigAnimalRules");
+        BIG_LONG_SIDE = b.comment("Blocks of the longer horizontal side of a tank per metre of the animal's length (a 1 m shark: 12)")
+                .defineInRange("longSidePerMetre", 12.0, 0.0, 100.0);
+        BIG_SHORT_SIDE = b.comment("Blocks of the shorter horizontal side of a tank per metre of the animal's length (a 1 m shark: 6)")
+                .defineInRange("shortSidePerMetre", 6.0, 0.0, 100.0);
+        BIG_HEIGHT = b.comment("Blocks of the tank height per metre of the animal's length (a 1 m shark: 3)")
+                .defineInRange("heightPerMetre", 3.0, 0.0, 100.0);
+        BIG_WATER = b.comment("Water blocks of the full tank per big animal and cubic metre of its length (a 1 m shark 100, a 2.6 m dolphin 1758)")
+                .defineInRange("waterPerCubicMetre", 100.0, 0.0, 100000.0);
+        BIG_DOLPHIN_HUNGRY_DAYS = b.comment("Days a dolphin in a tank goes without raw fish (fed by hand) before it starts to lose health")
+                .defineInRange("dolphinHungryDays", 2.0, 0.1, 100.0);
+        BIG_WILD_NEARBY = b.comment("Wild big animals only spawn while fewer than this many of them live within 64 blocks (0 = none spawn)")
+                .defineInRange("bigWildNearby", 1, 0, 64);
+        BIG_SPAWN_CHANCE = b.comment("Chance that a spawn of a wild big animal that passed all other rules really happens (keeps them rare)")
+                .defineInRange("bigSpawnChance", 0.25, 0.0, 1.0);
+        BIG_TUB_SLOWNESS = b.comment("How much slower a player walks while carrying a transport tub with an animal (0.35 = 35 % slower)")
+                .defineInRange("tubSlowness", 0.35, 0.0, 0.95);
+        BIG_NET_CHANCE = b.comment("Chance per swing of the large net in open water to catch a big animal of that water (an empty transport tub",
+                        "must be in the inventory)")
+                .defineInRange("largeNetChance", 0.04, 0.0, 1.0);
+        BIG_LEADER_CHANCE = b.comment("Chance per catch with a fishing rod and a steel leader in the other hand to hook a big animal of that",
+                        "water instead (an empty transport tub must be in the inventory)")
+                .defineInRange("steelLeaderChance", 0.05, 0.0, 1.0);
+        b.pop();
+
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");
         GUIDE_GIVE_BOOK = b.comment("When each player gets the handbook, once: ON_JOIN = on the first join, ON_FIRST_CATCH_OR_CRAFT = with the",
                         "first caught betta or the first crafted Bettacraft item, NEVER = not at all (craft it from a book and betta pellets)")
@@ -955,16 +1003,25 @@ public final class ServerConfig {
         }
     }
 
+    /** Largest tank size along an axis; M30: with features.bigTanks the larger of tank.maxSize* and bigTankRules.bigMaxSize*. */
     public static int maxSize(int axis) {
+        int base;
         try {
-            return switch (axis) {
+            base = switch (axis) {
                 case 0 -> TANK_MAX_SIZE_X.get();
                 case 1 -> TANK_MAX_SIZE_Y.get();
                 default -> TANK_MAX_SIZE_Z.get();
             };
         } catch (IllegalStateException e) {
-            return 16;
+            base = 16;
         }
+        if (!CommonConfig.bigTanks()) return base;
+        int big = getOr(switch (axis) {
+            case 0 -> BIG_MAX_SIZE_X;
+            case 1 -> BIG_MAX_SIZE_Y;
+            default -> BIG_MAX_SIZE_Z;
+        }, axis == 1 ? 16 : 32);
+        return Math.max(base, big);
     }
 
     public static <T> T getOr(ModConfigSpec.ConfigValue<T> value, T fallback) {

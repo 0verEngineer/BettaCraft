@@ -541,6 +541,22 @@ def swordtail():
     return p, [body, female, tail, male, dorsal_fin(p, 0.42, 6, 5, "tri", lean=-6)] + pectorals(p, 0.24, 4, 3)
 
 
+# M30 part a: the big animals
+
+def pangasius():
+    """M30 pangasius: a long, torpedo-shaped catfish with a flat head, small eyes set low, two pairs of short barbels, a
+    high, sickle-shaped dorsal fin, a tiny adipose fin, a long anal fin, low pelvics and a deeply forked tail."""
+    p = Plan("pangasius", -16, 10, 7.0, 6.0, 0.62, 0.3, 0.32, mid=5.0, nseg=10)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.08, up=0.55, size=2, inset=0.5)
+    body.boxes += pair("barbel", "barbel", (1.6, p.bottom(0.03) - 0.6, -15.4), (1, 1, 2), (10, 30, 0), None)
+    body.boxes.append(anal_fin(p, 0.58, 9, 3, "long_anal"))
+    body.boxes += pair("pelvic", "pelvic", (1.2, p.bottom(0.45) + 0.6, p.snout + 0.45 * 26), (0, 2, 3), (18, 20, 0), "oval")
+    body.boxes.append(box("adipose", "dorsal", (0, p.top(0.78) + 0.2, p.snout + 0.78 * 26), (0, 1, 2), fin="round_small"))
+    return p, [body, caudal(p, 7, 12, "fork"), dorsal_fin(p, 0.3, 4, 7, "tri", lean=-14)] + pectorals(p, 0.16, 5, 2, spread=50, droop=30)
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
@@ -549,6 +565,7 @@ PLANS = {
     "cichlid": cichlid, "apisto": apisto, "angel": angel, "discus": discus,
     "puffer": puffer, "barb": barb, "garra": garra,
     "rainbow": rainbow, "swordtail": swordtail,
+    "pangasius": pangasius,
 }
 
 
@@ -897,7 +914,38 @@ def looks(species, variety, female):
         return tetra29_look(sp, var, female)
     if sp in ("black_molly", "swordtail"):
         return livebearer29_look(sp, var, female)
+    if sp == "pangasius":
+        return pangasius_look()
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
+
+
+# M30 part a: the big animals
+
+def pangasius_look():
+    """The adult pangasius: a dark blue-grey back, silvery sides with a faint iridescent sheen and a soft dark band along
+    the flank, a white belly; grey fins, the tail lobes and the dorsal darker at the edge."""
+
+    def body(t, v, x, z, y):
+        sheen = 0.5 + 0.5 * math.sin(z * 0.9 + v * 6.0)
+        if v < 0.22:
+            return mix(C("#2c3440"), C("#46505e"), v / 0.22)
+        if v > 0.8:
+            return mix(C("#c8ccd0"), C("#eef0f0"), (v - 0.8) / 0.2)
+        side = mix(C("#8a94a0"), C("#b8c0c8"), (v - 0.22) / 0.58)
+        side = mix(side, C("#c8d4e0"), 0.18 * sheen)
+        if abs(v - 0.42) < 0.05 and 0.12 < t < 0.95:
+            side = mix(side, C("#4a5260"), 0.45)
+        return side
+
+    def fins(part, a, b, t, v, z, y):
+        if part == "tail":
+            return C("#3a4048") if abs(b) > 0.45 else C("#6a7078")
+        if part == "dorsal":
+            return C("#3a4048") if a > 0.55 else C("#5a6068")
+        if part == "barbel":
+            return C("#9a9ea4")
+        return C("#7a8088")
+    return Look(body, fins, eye="#1a1c20")
 
 
 # M29 part c: danio, rainbowfish, gourami, tetra and livebearer looks
@@ -1856,6 +1904,8 @@ SPECIES = [
     ("black_phantom_tetra", "tetra", ["wild"], True),
     ("black_molly", "platy", ["wild", "dalmatian", "gold"], True),
     ("swordtail", "swordtail", ["wild", "red", "red_wagtail"], True),
+    # M30 part a: the big animals
+    ("pangasius", "pangasius", ["wild"], False),
 ]
 
 

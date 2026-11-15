@@ -36,6 +36,7 @@ public final class Sources {
         List<Source> out = new ArrayList<>();
         net(out);
         fishing(out);
+        bigAnimals(out); // M30
         world(out);
         trader(out);
         return out;
@@ -76,6 +77,24 @@ public final class Sources {
                             : e.getKey() instanceof PlantSpecies p && !p.marine() ? "features.plantNetCatches" : null;
                     out.add(new Source(Source.Kind.NET, target, where, lo, e.getValue(), n[0], n[1], 0, false, cond, null));
                 }
+            }
+        }
+    }
+
+    /** M30: the big animals of each water: the large net (per swing) and the steel leader (per catch with the rod). */
+    private static void bigAnimals(List<Source> out) {
+        double net = def(ServerConfig.BIG_NET_CHANCE), lead = def(ServerConfig.BIG_LEADER_CHANCE);
+        for (NetCatching.Water w : NetCatching.Water.values()) {
+            Where where = NET_WATERS.get(w);
+            if (where == null || w == NetCatching.Water.CAVE) continue;
+            Map<TankmateSpecies, Double> table = org.overengineer.bettacraft.world.Wildlife.bigTable(w);
+            double total = 0;
+            for (double v : table.values()) total += v;
+            for (var e : table.entrySet()) {
+                double share = e.getValue() / total;
+                String target = Target.tankmate(e.getKey());
+                out.add(new Source(Source.Kind.BIG_NET, target, where, net * share, net * share, 1, 1, 0, false, "features.bigAnimals", null));
+                out.add(new Source(Source.Kind.STEEL_LEADER, target, where, lead * share, lead * share, 1, 1, 0, false, "features.bigAnimals", null));
             }
         }
     }

@@ -138,6 +138,8 @@ final class DataGenM26b {
         // M29 part b: puffers like hard, frozen and live food and take flakes and pellets badly
         diet(tag, FoodDiet.Diet.PUFFER, List.of(FoodDiet.Group.FROZEN, FoodDiet.Group.LIVE), List.of(FoodDiet.Group.FLAKES, FoodDiet.Group.PELLETS));
         tag.apply(FoodDiet.Diet.PUFFER.favourite).addTag(ModTags.HARD_FOOD);
+        // M30: big predators like frozen and live food, take flakes and wafers badly
+        diet(tag, FoodDiet.Diet.CARNIVORE, List.of(FoodDiet.Group.FROZEN, FoodDiet.Group.LIVE), List.of(FoodDiet.Group.FLAKES, FoodDiet.Group.WAFERS));
     }
 
     private static void diet(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag, FoodDiet.Diet d,

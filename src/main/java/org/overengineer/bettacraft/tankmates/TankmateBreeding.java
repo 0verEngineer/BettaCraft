@@ -774,19 +774,27 @@ public final class TankmateBreeding {
         int hunters = 0;
         double maxLen = 0;
         TankmateEntity by = null;
+        boolean big = false;
         for (TankmateEntity m : mates) {
             if (m.isAdult() && m.species().preyLength() > 0) {
                 hunters++;
                 maxLen = Math.max(maxLen, m.species().preyLength());
                 if (by == null) by = m;
+                big |= m.species().isLarge();
             }
         }
         if (hunters == 0 || rate <= 0) return;
         TankData t = c.getTank();
         RandomSource r = level.getRandom();
-        List<TankmateEntity> fish = new ArrayList<>();
+        List<Entity> fish = new ArrayList<>();
         for (TankmateEntity m : mates) {
             if (m.species().preyLength() <= 0 && m.lifeStage() != LifeStage.FRY && m.species().length() <= maxLen + 1e-6) fish.add(m);
+        }
+        // M30: a big predator (giant catfish, shark) also eats the bettas and the dwarf frogs of its tank
+        if (big) {
+            for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
+                if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity || e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) fish.add(e);
+            }
         }
         List<Critter> shrimp = new ArrayList<>();
         for (Critter k : t.critters()) if (k.alive() && k.species.group() == CritterSpecies.Group.SHRIMP) shrimp.add(k);

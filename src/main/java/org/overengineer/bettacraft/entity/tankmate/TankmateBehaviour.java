@@ -122,7 +122,11 @@ final class TankmateBehaviour {
         }
         if (--ticks > 0 && target != null) {
             if (mode == Mode.CRUISE || mode == Mode.GULP) {
-                if (fish.position().distanceToSqr(target) < 0.01) {
+                if (largeGoal != null && mode == Mode.CRUISE) {
+                    // M30: a big animal picks its next far target before it gets there (no braking), on its way around the decoration
+                    if (fish.position().distanceTo(largeGoal) < Math.max(0.6, s.length() * fish.getAgeScale() * 0.7)) ticks = Math.min(ticks, 1);
+                    else target = steer(server, w, largeGoal);
+                } else if (fish.position().distanceToSqr(target) < 0.01) {
                     if (mode == Mode.GULP) {
                         // back down after the gulp
                         mode = Mode.CRUISE;
@@ -195,6 +199,10 @@ final class TankmateBehaviour {
             seahorse(server, w, s);
             return;
         }
+        if (s.isLarge()) {
+            large(server, w, s);
+            return;
+        }
         boolean night = !server.isDay();
         double restChance = s.nocturnal() ? (night ? 0.15 : 0.75) : 0.3;
         if (eel(s)) {
@@ -247,6 +255,39 @@ final class TankmateBehaviour {
     }
 
     // ------------------------------------------------------------------ modes
+
+    /** M30: the far goal of a cruising big animal (null: none; {@link #target} is the next point on the way to it). */
+    @Nullable
+    Vec3 largeGoal;
+
+    /**
+     * M30: a big animal cruises far ahead: a goal 1.5 to 3.5 body lengths away, mostly within 60 degrees of its heading (so
+     * it swims wide curves with its slow turns), in the height band of its zone, kept a body length from the glass; when
+     * the glass is right ahead it looks to the sides and back. It gets there around the decoration along the M21 paths.
+     */
+    private void large(ServerLevel server, TankWaterVolume w, TankmateSpecies s) {
+        RandomSource r = r();
+        double len = Math.max(1.0, s.length() * fish.getAgeScale());
+        double heading = fish.getYRot() * Mth.DEG_TO_RAD;
+        Vec3 p = fish.position();
+        Vec3 best = null;
+        double bestLen = -1;
+        for (int i = 0; i < 12; i++) {
+            double spread = i < 8 ? Math.PI / 3 : Math.PI;
+            double ang = heading + (r.nextDouble() - 0.5) * 2 * spread;
+            double dist = len * (1.5 + r.nextDouble() * 2.0);
+            Vec3 c = band(w, s, clamp(w, new Vec3(p.x - Math.sin(ang) * dist, p.y + (r.nextDouble() - 0.5) * len * 0.5, p.z + Math.cos(ang) * dist)));
+            double got = Math.hypot(c.x - p.x, c.z - p.z);
+            if (got < len * 0.8 || got <= bestLen) continue;
+            best = c;
+            bestLen = got;
+            if (got >= len * 1.5) break;
+        }
+        if (best == null) best = band(w, s, clamp(w, w.box().getCenter()));
+        go(steer(server, w, best), 0.8 + r.nextDouble() * 0.3, Mode.CRUISE);
+        largeGoal = best;
+        ticks = 80 + r.nextInt(80);
+    }
 
     /** M21.8: the post a seahorse is on its way to or holds on to (null: none). */
     @Nullable
@@ -468,6 +509,7 @@ final class TankmateBehaviour {
     // ------------------------------------------------------------------ helpers
 
     private void go(Vec3 t, double speed, Mode m) {
+        this.largeGoal = null;
         this.target = t;
         this.speed = speed;
         this.mode = m;

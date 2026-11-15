@@ -9,18 +9,29 @@ import javax.annotation.Nullable;
  * collects the facts of an entity type (tags, size, spawn category, instance) and asks {@link #decide}.
  * <p>
  * Order: config deny list, config allow list, tag {@code #bettacraft:tank_blacklist}, tag
- * {@code #bettacraft:tank_inhabitants}, bosses ({@code #c:bosses}), size (hitbox wider or taller than
+ * {@code #bettacraft:tank_inhabitants}, bosses ({@code #c:bosses}), M30: big animals of known length ({@link TankInhabitants.Acceptance#BIG}:
+ * the tank decides, {@link BigTankRules}), size (hitbox wider or taller than
  * {@code inhabitants.maxHitbox}), hostile mobs (spawn category monster, {@code inhabitants.refuseHostile}), and animals
  * that are no water animals at all (a land animal in a bucket of another mod).
  */
 public final class InhabitantRules {
     /** Everything known about a type. {@code aquatic} is null while no instance was looked at. */
     public record Facts(String id, float width, float height, boolean blacklistTag, boolean whitelistTag, boolean boss,
-                        boolean hostile, @Nullable Boolean aquatic) {}
+                        boolean hostile, @Nullable Boolean aquatic, double bigLength) {
+        /** A type without a known big length (M16). */
+        public Facts(String id, float width, float height, boolean blacklistTag, boolean whitelistTag, boolean boss, boolean hostile,
+                     @Nullable Boolean aquatic) {
+            this(id, width, height, blacklistTag, whitelistTag, boss, hostile, aquatic, 0);
+        }
+    }
 
     /** The config side of the rules. */
-    public record Settings(List<? extends String> allow, List<? extends String> deny, double maxHitbox, boolean refuseHostile) {
-        public static final Settings DEFAULT = new Settings(List.of(), List.of(), 0.8, true);
+    public record Settings(List<? extends String> allow, List<? extends String> deny, double maxHitbox, boolean refuseHostile, boolean bigAnimals) {
+        public static final Settings DEFAULT = new Settings(List.of(), List.of(), 0.8, true, true);
+
+        public Settings(List<? extends String> allow, List<? extends String> deny, double maxHitbox, boolean refuseHostile) {
+            this(allow, deny, maxHitbox, refuseHostile, true);
+        }
     }
 
     private InhabitantRules() {}
@@ -31,6 +42,11 @@ public final class InhabitantRules {
         if (f.blacklistTag()) return TankInhabitants.Acceptance.BLACKLISTED;
         if (f.whitelistTag()) return TankInhabitants.Acceptance.OK;
         if (f.boss()) return TankInhabitants.Acceptance.BOSS;
+        // M30: an animal of known length (the big species, the dolphin, #bettacraft:big_tank_animals) depends on the tank
+        if (f.bigLength() > 0) {
+            if (f.hostile() && s.refuseHostile()) return TankInhabitants.Acceptance.HOSTILE;
+            return s.bigAnimals() ? TankInhabitants.Acceptance.BIG : TankInhabitants.Acceptance.TOO_BIG;
+        }
         if (f.width() > s.maxHitbox() + 1e-6 || f.height() > s.maxHitbox() + 1e-6) return TankInhabitants.Acceptance.TOO_BIG;
         if (f.hostile() && s.refuseHostile()) return TankInhabitants.Acceptance.HOSTILE;
         if (Boolean.FALSE.equals(f.aquatic())) return TankInhabitants.Acceptance.NOT_AQUATIC;

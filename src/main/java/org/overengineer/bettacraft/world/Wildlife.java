@@ -117,10 +117,58 @@ public final class Wildlife {
 
     /** Spawn weight of a tankmate in this water ({@code spawn.wildFishWeight} tenths of its net weight), 0 = not there. */
     public static int fishWeight(TankmateSpecies s, NetCatching.Water w) {
+        if (s.isLarge()) return bigWeight(s, w); // M30
         Double net = NetCatching.fishTable(w).get(s);
         if (net == null) return 0;
         int f = CommonConfig.getOr(CommonConfig.SPAWN_FISH_WEIGHT, 5);
         return f <= 0 ? 0 : Math.max(1, (int) Math.round(net * f / 10.0));
+    }
+
+    /**
+     * M30: spawn weight of a big animal in this water: its native weight times {@code spawn.bigAnimalWeight} (rare: they also
+     * need deep water, few of their kind nearby and a {@code bigAnimalRules.bigSpawnChance} roll, {@link #checkBig}).
+     */
+    public static int bigWeight(TankmateSpecies s, NetCatching.Water w) {
+        if (!s.available()) return 0;
+        TankmateSpecies.Water fw = TankmateSpecies.waterOf(w);
+        double wt = fw == null ? 0 : s.nativeWeight(fw);
+        int f = CommonConfig.getOr(CommonConfig.SPAWN_BIG_WEIGHT, 1);
+        return wt <= 0 || f <= 0 ? 0 : Math.max(1, (int) Math.round(wt * f));
+    }
+
+    /** M30: the big animals of a water with their weights (the large net, the steel leader). */
+    public static java.util.Map<TankmateSpecies, Double> bigTable(NetCatching.Water w) {
+        java.util.Map<TankmateSpecies, Double> out = new java.util.LinkedHashMap<>();
+        TankmateSpecies.Water fw = TankmateSpecies.waterOf(w);
+        if (fw == null) return out;
+        for (TankmateSpecies s : TankmateSpecies.values()) {
+            if (!s.isLarge() || !s.available()) continue;
+            double wt = s.nativeWeight(fw);
+            if (wt > 0) out.put(s, wt);
+        }
+        return out;
+    }
+
+    /**
+     * M30: spawn rule of the wild big animals: like the small fish (open water, no tank), but in water at least four blocks
+     * deep, while fewer than {@code bigAnimalRules.bigWildNearby} wild big animals live within 64 blocks, and only with a
+     * {@code bigAnimalRules.bigSpawnChance} roll.
+     */
+    public static boolean checkBig(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!natural(spawnType)) return true;
+        if (!CommonConfig.wildFish() || !CommonConfig.bigAnimals()) return false;
+        if (!level.getFluidState(pos).is(FluidTags.WATER) || inTank(level, pos)) return false;
+        int sea = level.getSeaLevel();
+        if (pos.getY() > sea || pos.getY() < sea - 24) return false;
+        int depth = 0;
+        for (int dy = -3; dy <= 3; dy++) if (level.getFluidState(pos.offset(0, dy, 0)).is(FluidTags.WATER)) depth++;
+        if (depth < 4) return false;
+        int cap = ServerConfig.getOr(ServerConfig.BIG_WILD_NEARBY, 1);
+        if (cap <= 0) return false;
+        AABB box = new AABB(pos).inflate(64);
+        if (level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box,
+                e -> e.isWild() && e.species().isLarge()).size() >= cap) return false;
+        return random.nextDouble() < ServerConfig.getOr(ServerConfig.BIG_SPAWN_CHANCE, 0.25);
     }
 
     /** M28.1: the species spawns by itself in some water (default config). */
@@ -133,7 +181,7 @@ public final class Wildlife {
 
     /** Smallest and largest shoal of a species that spawns together. */
     public static int[] group(TankmateSpecies s) {
-        if (!s.shoaling()) return new int[]{1, 1};
+        if (!s.shoaling() || s.isLarge()) return new int[]{1, 1};
         return new int[]{3, Math.max(3, Math.min(6, s.shoal()))};
     }
 
