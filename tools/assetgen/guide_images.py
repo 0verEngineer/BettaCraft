@@ -820,6 +820,22 @@ def m37(out_en: Path, out_de: Path) -> None:
             print("missing", src)
 
 
+# M38 scene (DevClientSmokeM38, -Psmoketestm38): a tank planted with kelp, seagrass and the water plants of other mods, the
+# reef tank with Minecraft's corals and Fintastic's live rock
+M38_WORLD = {"foreign_plants": ("bettacraft_m38_fresh_a", (110, 0, 1180, 700)), "foreign_corals": ("bettacraft_m38_reef", (0, 0, 1070, 700))}
+
+
+def m38(out_en: Path) -> None:
+    for name, (shot, box) in M38_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -834,6 +850,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m38"]:
+        m38(out_en)
+        return 0
     if sys.argv[1:] == ["m37"]:
         m37(out_en, out_de)
         return 0

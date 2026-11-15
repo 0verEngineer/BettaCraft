@@ -12,6 +12,8 @@ navigation:
 Aquarienpflanzen wachsen im [Innenraum](interior.md) eines Aquariums. Gepflanzt wird ein **Steckling**, kleiner als
 ein Block, und im Lauf der Tage wächst daraus eine Pflanze aus vielen Blöcken: Wedel, Blätter, Stängel, Blattbänder. Im
 Aquarium sieht man sie als Teil der Miniatur hinter dem Glas. Jede Pflanze sieht etwas anders aus.
+Kelp, Seegras, Korallen und die Wasserpflanzen anderer Mods wirken im Innenraum ebenfalls, ohne zu wachsen: siehe
+[Pflanzen anderer Mods](plants/foreign_plants.md).
 
 ## Wild in der Welt
 

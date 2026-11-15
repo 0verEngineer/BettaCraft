@@ -12,6 +12,8 @@ navigation:
 Aquarium plants grow in the [interior](interior.md) of an aquarium. You plant a **cutting**, smaller than a block,
 and over the days it grows into a plant of many blocks: fronds, leaves, stems, ribbons. In the aquarium you see it as
 part of the miniature behind the glass. Every plant looks a little different.
+Kelp, seagrass, corals and the water plants of other mods work in the interior as well, without growing: see
+[Plants of other mods](plants/foreign_plants.md).
 
 ## Wild in the world
 

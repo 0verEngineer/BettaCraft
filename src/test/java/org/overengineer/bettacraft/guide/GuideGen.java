@@ -239,6 +239,7 @@ public final class GuideGen {
             plantTable(out, g, p -> groupPage(p).equals(g), t("## Species", "## Arten"));
         }
         floatingTable(out, "plants/floating_plants.md");
+        foreignPlantTable(out, "plants/foreign_plants.md"); // M38
         sourcesPage(out, "getting_started/sources.md");
         advancements(out, "progress.md");
         return out;
@@ -638,6 +639,65 @@ public final class GuideGen {
                     f.nestFavour() >= 1.0 ? t("the favourite", "der liebste") : f.nestFavour() >= 0.8 ? t("good", "gut") : t("so-so", "mäßig"));
         }
         out.computeIfAbsent(page, k -> new LinkedHashMap<>()).put(t("## Species", "## Arten"), tb.render());
+    }
+
+    // ================================================================== M38: plants of Minecraft and other mods
+
+    /** The default factor of interiorPlants.foreignPlantFactor (the table shows the plant mass with it). */
+    static final double FOREIGN_FACTOR = 0.6;
+
+    private static final Map<String, String> MOD_NAMES = Map.of("minecraft", "Minecraft", "fintastic", "Fintastic",
+            "regions_unexplored", "Regions Unexplored", "alexscaves", "Alex's Caves", "twilightforest", "Twilight Forest");
+
+    /** The profiles of {@code data/bettacraft/bettacraft/foreign_plants}: mod, blocks, role and what they count with (Minecraft first). */
+    private void foreignPlantTable(Map<String, Map<String, String>> out, String page) {
+        Path dir = project().resolve("src/main/resources/data/bettacraft/bettacraft/foreign_plants");
+        List<Path> files = new ArrayList<>();
+        try (var st = Files.list(dir)) {
+            st.filter(f -> f.toString().endsWith(".json")).sorted().forEach(files::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        files.sort(java.util.Comparator.comparing((Path f) -> !f.getFileName().toString().startsWith("minecraft_")).thenComparing(f -> f.getFileName().toString()));
+        Table tb = new Table(t("Mod", "Mod"), t("Blocks", "Blöcke"), t("Counts as", "Zählt als"), t("Effect", "Wirkung"));
+        for (Path f : files) {
+            org.overengineer.bettacraft.plants.foreign.ForeignPlantProfile p;
+            try {
+                p = org.overengineer.bettacraft.plants.foreign.ForeignPlantProfile.parse(
+                        com.google.gson.JsonParser.parseString(Files.readString(f)).getAsJsonObject(), w -> {});
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            List<String> ids = new ArrayList<>();
+            for (var b : p.blocks()) ids.add("`" + b + "`");
+            for (var tag : p.tags()) ids.add("`#" + tag + "`");
+            String ns = !p.blocks().isEmpty() ? p.blocks().get(0).getNamespace() : p.tags().get(0).getNamespace();
+            var role = p.role();
+            String as = switch (role) {
+                case STEM -> t("stem plant", "Stängelpflanze");
+                case ROSETTE -> t("rosette", "Rosette");
+                case EPIPHYTE -> t("epiphyte", "Aufsitzerpflanze");
+                case MOSS -> t("moss", "Moos");
+                case CARPET -> t("carpet", "Bodendecker");
+                case RIBBON -> t("ribbon plant", "Bandpflanze");
+                case BULB -> t("bulb", "Knollenpflanze");
+                case FLOATING -> t("floating leaves", "Schwimmblätter");
+                case CORAL -> t("coral", "Koralle");
+                case LIVE_ROCK -> t("live rock", "Lebendgestein");
+                case NONE -> t("decoration", "Deko");
+            };
+            String effect;
+            if (role == org.overengineer.bettacraft.plants.foreign.ForeignPlantRole.LIVE_ROCK) {
+                effect = t("biological filter in salt water, " + Math.round(FOREIGN_FACTOR * p.factor() * 100) + " % of our live rock",
+                        "biologischer Filter im Meerwasser, " + Math.round(FOREIGN_FACTOR * p.factor() * 100) + " % unseres Lebendgesteins");
+            } else {
+                long mass = Math.round(FOREIGN_FACTOR * p.factor() * role.adultMass(16));
+                effect = t(mass + " blocks of plant mass per plant", mass + " Blöcke Pflanzenmasse pro Pflanze")
+                        + (role == org.overengineer.bettacraft.plants.foreign.ForeignPlantRole.FLOATING ? t(", shade", ", Schatten") : "");
+            }
+            tb.row(MOD_NAMES.getOrDefault(ns, ns), String.join(", ", ids), as, effect);
+        }
+        out.computeIfAbsent(page, k -> new LinkedHashMap<>()).put(t("## The plants", "## Die Pflanzen"), tb.render());
     }
 
     // ================================================================== the page "where to find what"
