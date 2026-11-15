@@ -107,23 +107,25 @@ public final class InteriorRescale {
                     BlockState sub = kinds.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
                     BlockPos to = new BlockPos(dst.originX() + dx + x, InteriorRegion.FLOOR_Y, dst.originZ() + dz + z);
                     if (dst.containsShell(to)) {
-                        Substrate.set(level, to, sub, paid);
-                        if (paid) take(back, sub.getBlock().asItem());
+                        // M33 part d (hardening): paid only when a paid block of this kind came back (a patch of mixed
+                        // paid and free substrate must not turn a free one into a paid one: an item from nothing later)
+                        Substrate.set(level, to, sub, paid && take(back, sub.getBlock().asItem()));
                     }
                 }
                 drops.addAll(back);
             }
     }
 
-    /** Removes one item of this kind from the list (the block that stays in the new interior). */
-    private static void take(List<ItemStack> items, Item item) {
+    /** Removes one item of this kind from the list (the block that stays in the new interior); false if there is none. */
+    static boolean take(List<ItemStack> items, Item item) {
         for (int i = 0; i < items.size(); i++) {
             ItemStack s = items.get(i);
             if (s.is(item)) {
                 s.shrink(1);
                 if (s.isEmpty()) items.remove(i);
-                return;
+                return true;
             }
         }
+        return false;
     }
 }
