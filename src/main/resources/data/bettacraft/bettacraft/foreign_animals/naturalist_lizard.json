@@ -1,0 +1,48 @@
+{
+  "entity": "naturalist:lizard",
+  "group": "lizard",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#bettacraft:feeder_insects",
+    "#bettacraft:turtle_greens"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 29,
+    "young": [
+      2,
+      4
+    ],
+    "days": 4,
+    "pause_days": 8,
+    "rate": 0.25,
+    "inherit": [
+      "Variant"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      24,
+      38
+    ],
+    "humidity": [
+      20,
+      50
+    ],
+    "uv": 4,
+    "basking": true,
+    "min_blocks": 6,
+    "movement": {
+      "style": "walk",
+      "walk": 0.025,
+      "max_step": 0.5,
+      "bask_time": 0.35,
+      "rest_time": 0.3,
+      "height": 0.3
+    }
+  }
+}

@@ -152,8 +152,52 @@ class ForeignProfileTest {
         assertNull(parse("{\"entity\": \"a:b\"}", w).land(), "an aquarium animal has no land part");
         assertTrue(w.isEmpty(), w.toString());
         // mistakes are warned about
-        parse("{\"entity\": \"a:b\", \"terrarium\": {\"length\": -1, \"volume\": \"air\", \"movement\": \"fly\"}}", w);
+        parse("{\"entity\": \"a:b\", \"terrarium\": {\"length\": -1, \"volume\": \"air\", \"movement\": \"swing\"}}", w);
         assertEquals(3, w.size(), w.toString());
+    }
+
+    /** M35 part b: the flying style, the smallest tank of a small animal, and the shipped land animals of part b. */
+    @Test
+    void flyingAndPartBProfiles() throws IOException {
+        List<String> w = new ArrayList<>();
+        ForeignProfile fly = parse("{\"entity\": \"a:b\", \"terrarium\": {\"habitat\": \"paludarium\", \"min_blocks\": 6, \"movement\": \"fly\"}}", w);
+        assertTrue(w.isEmpty(), w.toString());
+        assertEquals(org.overengineer.bettacraft.terrarium.LandWalker.Style.FLY, fly.land().gait().style());
+        assertTrue(fly.land().gait().walk() > 0 && fly.land().gait().swim() == 0, "a flier flies, it does not swim");
+        assertEquals(6, fly.terrarium().minBlocks(), 1e-9);
+        ForeignProfile lizard = shipped("naturalist_lizard");
+        assertEquals(org.overengineer.bettacraft.terrarium.TerrariumNeeds.Habitat.DRY, lizard.terrarium().habitat());
+        assertTrue(lizard.breeding().nests() && !lizard.land().big(), "eggs into a nest; small: its hitbox decides");
+        ForeignProfile snake = shipped("naturalist_snake");
+        assertEquals(org.overengineer.bettacraft.terrarium.LandWalker.Style.SLITHER, snake.land().gait().style());
+        assertEquals(List.of("#bettacraft:snake_prey"), snake.food());
+        assertEquals(ForeignProfile.Type.LIVEBEARER, shipped("naturalist_desert_scorpion").breeding().type(), "scorpions bear live young");
+        assertTrue(shipped("naturalist_desert_scorpion").land().gait().burrows(), "a scorpion hides in the ground");
+        assertTrue(shipped("naturalist_jungle_scorpion").land().big(), "the jungle scorpion (hitbox 1.2) goes by its length");
+        assertEquals(org.overengineer.bettacraft.terrarium.TerrariumNeeds.Habitat.PALUDARIUM, shipped("naturalist_crab").terrarium().habitat());
+        assertFalse(shipped("naturalist_crab").breeding().breeds(), "crab larvae need the sea: no breeding");
+        for (String big : List.of("naturalist_duck", "naturalist_capybara", "crittersandcompanions_otter")) {
+            ForeignProfile b = shipped(big);
+            assertTrue(b.land().big() && b.land().volume() == org.overengineer.bettacraft.tank.BigTankRules.Volume.ALL, big + ": a big paludarium animal");
+        }
+        assertTrue(shipped("crittersandcompanions_otter").land().preyLength() > 0, "the otter hunts small fish");
+        for (String d : List.of("naturalist_dragonfly", "crittersandcompanions_dragonfly")) {
+            assertEquals(org.overengineer.bettacraft.terrarium.LandWalker.Style.FLY, shipped(d).land().gait().style(), d + " flies");
+        }
+        assertEquals(org.overengineer.bettacraft.terrarium.LandWalker.Style.CLIMB, shipped("crittersandcompanions_leaf_insect").land().gait().style());
+        ForeignProfile bunny = shipped("crittersandcompanions_sea_bunny");
+        assertNull(bunny.land(), "the sea bunny is an aquarium animal");
+        assertTrue(bunny.salinity().min() >= 20, "sea water");
+        assertEquals(0.5, org.overengineer.bettacraft.terrarium.PaludariumWater.depthFor(0.2), 1e-9, "at least half a block of water");
+        assertEquals(0.7, org.overengineer.bettacraft.terrarium.PaludariumWater.depthFor(0.6), 1e-9, "a tall fish its height and a little");
+    }
+
+    private static ForeignProfile shipped(String name) throws IOException {
+        Path f = Path.of(System.getProperty("bettacraft.projectDir", "."), "src/main/resources/data/bettacraft/bettacraft/foreign_animals", name + ".json");
+        List<String> w = new ArrayList<>();
+        ForeignProfile p = ForeignProfile.parse(JsonParser.parseString(Files.readString(f)).getAsJsonObject(), w::add);
+        assertTrue(w.isEmpty(), name + ": " + w);
+        return p;
     }
 
     /** Every shipped default parses without a warning. */

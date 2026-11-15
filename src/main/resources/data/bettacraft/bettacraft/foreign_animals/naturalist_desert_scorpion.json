@@ -1,0 +1,42 @@
+{
+  "entity": "naturalist:desert_scorpion",
+  "group": "scorpion",
+  "care": {
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#bettacraft:feeder_insects"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      4
+    ],
+    "days": 5,
+    "pause_days": 10,
+    "rate": 0.2
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      24,
+      38
+    ],
+    "humidity": [
+      10,
+      40
+    ],
+    "min_blocks": 4,
+    "movement": {
+      "style": "walk",
+      "walk": 0.015,
+      "max_step": 0.3,
+      "bask_time": 0.1,
+      "rest_time": 0.5,
+      "height": 0.2,
+      "special": 0.5,
+      "burrows": true
+    }
+  }
+}

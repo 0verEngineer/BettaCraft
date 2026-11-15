@@ -224,7 +224,9 @@ public final class BenchmarkGameTests {
         }
         c.setLayout(l);
         for (int i = 0; i < 6; i++) MonitorSync.cycle(level, c); // discovers the tanks
-        h.assertTrue(c.tanks().size() == tanks.size(), "the screen watches all 12 tanks: " + c.tanks().size());
+        // all 12 (a tank left by a neighbouring test may be in its range too)
+        h.assertTrue(tanks.stream().allMatch(t -> c.tanks().stream().anyMatch(w -> w.id.equals(t.getTank().id()))),
+                "the screen watches all 12 tanks: " + c.tanks().size());
         h.assertTrue(c.alarms() == 6, "six alarms: " + c.alarms());
         int cycles = 25;
         long t0 = System.nanoTime();

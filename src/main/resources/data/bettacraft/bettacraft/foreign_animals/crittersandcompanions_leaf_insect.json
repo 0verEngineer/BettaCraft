@@ -1,0 +1,43 @@
+{
+  "entity": "crittersandcompanions:leaf_insect",
+  "group": "stick_insect",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#minecraft:leaves"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 25,
+    "young": [
+      2,
+      4
+    ],
+    "days": 5,
+    "pause_days": 8,
+    "rate": 0.25
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      22,
+      30
+    ],
+    "humidity": [
+      60,
+      90
+    ],
+    "min_blocks": 4,
+    "movement": {
+      "style": "climb",
+      "walk": 0.006,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.6,
+      "height": 0.2,
+      "special": 0.4
+    }
+  }
+}

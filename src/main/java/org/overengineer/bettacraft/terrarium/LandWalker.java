@@ -32,6 +32,9 @@ import org.overengineer.bettacraft.tank.interior.InteriorPaths;
  *     decoration ({@link Gait#maxStep} high) and prefers the high spots of the land;</li>
  *     <li>{@link Style#SLITHER} (the snake): walks like {@link Style#WALK} (the model does the undulation);</li>
  *     <li>{@link Style#SWIM} (tadpoles): only in the water;</li>
+ *     <li>M35 part b {@link Style#FLY} (dragonflies): flies straight through the air of the tank (over the land, the water
+ *     and the decoration, never into them), hovers, skims the water surface ({@link Gait#waterTime}) and perches on the
+ *     land to rest; {@link Gait#walk} is its flying speed, {@link Gait#height} its body height;</li>
  *     <li>{@link Gait#burrows} (the horned frog): a part ({@link Gait#special}) of its rests on the land it sits buried in
  *     the ground ({@link Pose#BURIED}).</li>
  * </ul>
@@ -42,7 +45,7 @@ public final class LandWalker {
     public enum Activity { REST, LAND, WATER, BASK, CLIMB }
 
     /** How a body plan moves. */
-    public enum Style { WALK, HOP, CLIMB, SLITHER, SWIM }
+    public enum Style { WALK, HOP, CLIMB, SLITHER, SWIM, FLY }
 
     /**
      * What the animal shows besides walking (synced as its ordinal): sitting buried in the ground, or clinging to a wall
@@ -237,6 +240,10 @@ public final class LandWalker {
             wallTick(mob, ter, pos, gait, t.min().getY());
             return;
         }
+        if (gait.style() == Style.FLY) {
+            flyTick(mob, t, ter, pos, gait);
+            return;
+        }
         Vec3 way = goal;
         if (path != null && pathIndex < path.size()) way = path.get(pathIndex);
         double dx = way.x - pos.x, dz = way.z - pos.z;
@@ -333,6 +340,76 @@ public final class LandWalker {
         move(mob, pos, nx, ny + newLift, nz, newLift);
     }
 
+    /**
+     * M35 part b: one tick of a flier: straight towards its goal in the air at its speed (slower when it is close, a
+     * little bob while it hovers), never below the ground or the decoration under it (it rises over them), never out of
+     * the tank (a blocked step: another goal), never under the water surface.
+     */
+    private void flyTick(Mob mob, TankData t, TankTerrain ter, Vec3 pos, Gait gait) {
+        double surface = ter.surface();
+        double dx = goal.x - pos.x, dy = goal.y - pos.y, dz = goal.z - pos.z;
+        double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        atGoal = dist < 0.05;
+        pose = Pose.NONE;
+        double nx = pos.x, ny = pos.y, nz = pos.z;
+        if (!atGoal) {
+            double step = Math.min(dist, Math.max(0.01, gait.walk() * Math.min(1.0, 0.35 + dist)));
+            nx += dx / dist * step;
+            ny += dy / dist * step;
+            nz += dz / dist * step;
+        } else if (activity != Activity.REST) {
+            ny = goal.y + Math.sin(mob.tickCount * 0.3) * 0.02; // hovering
+        }
+        double g = ter.ground(nx, nz);
+        if (!Double.isFinite(g)) {
+            blocked();
+            return;
+        }
+        double low = Math.max(g, Double.isFinite(surface) ? surface + 0.02 : g);
+        ny = Math.max(ny, low);
+        double top = flyTop(t, nx, nz, gait);
+        if (ny > top) ny = Math.max(low, top);
+        if (!t.contains(BlockPos.containing(nx, ny + 0.01, nz)) || !t.contains(BlockPos.containing(nx, ny + gait.height() * 0.5, nz))) {
+            blocked();
+            return;
+        }
+        highest = Math.max(highest, (int) Math.round((ny - t.min().getY()) * 16));
+        move(mob, pos, nx, ny, nz, 0);
+    }
+
+    /** M35 part b: the highest a flier goes at this column (under the lid, its body below it). */
+    private static double flyTop(TankData t, double x, double z, Gait gait) {
+        int bx = Mth.floor(x), bz = Mth.floor(z);
+        int y = t.max().getY();
+        while (y > t.min().getY() && !t.contains(new BlockPos(bx, y, bz))) y--;
+        return y + 1 - TankTerrain.MARGIN - gait.height() - 0.05;
+    }
+
+    /**
+     * M35 part b: a spot in the air of the tank for a flier: over a random column, between a little above the land or the
+     * water and the lid; {@code skim}: just over the water surface (hunting, laying eggs).
+     */
+    @Nullable
+    private static Vec3 airSpot(TankData t, TankTerrain ter, RandomSource r, Gait gait, boolean skim) {
+        double surface = ter.surface();
+        double m = 0.3;
+        for (int i = 0; i < 24; i++) {
+            double x = t.min().getX() + m + r.nextDouble() * Math.max(0.01, t.sizeX() - 2 * m);
+            double z = t.min().getZ() + m + r.nextDouble() * Math.max(0.01, t.sizeZ() - 2 * m);
+            double g = ter.ground(x, z);
+            if (!Double.isFinite(g)) continue;
+            boolean wet = Double.isFinite(surface) && g < surface - 0.01;
+            if (skim && !wet) continue;
+            double low = (wet ? surface : g) + (skim ? 0.08 : 0.35);
+            double top = flyTop(t, x, z, gait);
+            if (top < low) continue;
+            double y = skim ? low : low + r.nextDouble() * (top - low);
+            if (!t.contains(BlockPos.containing(x, y + 0.01, z))) continue;
+            return new Vec3(x, y, z);
+        }
+        return null;
+    }
+
     /** Part c: clinging to a wall: up to the goal while climbing, else down to its foot (then it walks on). */
     private void wallTick(Mob mob, TankTerrain ter, Vec3 pos, Gait gait, double floorY) {
         double g = ter.groundAt(pos.x, pos.y + 0.05, pos.z);
@@ -396,6 +473,9 @@ public final class LandWalker {
             a = forced;
         } else if (gait.style() == Style.SWIM) {
             a = r.nextDouble() < gait.restTime() ? Activity.REST : Activity.WATER;
+        } else if (gait.style() == Style.FLY) {
+            double x = r.nextDouble();
+            a = x < gait.restTime() ? Activity.REST : x < gait.restTime() + (water ? gait.waterTime() : 0) ? Activity.WATER : Activity.LAND;
         } else {
             double bask = spots.isEmpty() ? 0 : gait.baskTime() * (cold ? 2 : 1);
             double wet = water && gait.swim() > 0 ? gait.waterTime() : 0;
@@ -407,6 +487,28 @@ public final class LandWalker {
                     : x < bask + wet + rest + climb ? Activity.CLIMB : Activity.LAND;
         }
         climbWall = null;
+        if (gait.style() == Style.FLY) { // M35 part b: a flier: a perch on the land, the air, just over the water
+            Vec3 target = switch (a) {
+                case REST -> spot1(t, ter, r, true, gait);
+                case WATER -> airSpot(t, ter, r, gait, true);
+                default -> airSpot(t, ter, r, gait, false);
+            };
+            if (target == null) {
+                a = Activity.LAND;
+                target = airSpot(t, ter, r, gait, false);
+            }
+            if (target == null) {
+                a = Activity.REST;
+                target = mob.position();
+            }
+            activity = a;
+            goal = target;
+            buried = false;
+            goalTicks = a == Activity.REST ? 100 + r.nextInt(200) : a == Activity.WATER ? 40 + r.nextInt(60) : 60 + r.nextInt(100);
+            path = null;
+            pathIndex = 0;
+            return;
+        }
         Vec3 target = switch (a) {
             case BASK -> spots.isEmpty() ? null : spots.get(r.nextInt(spots.size())).add((r.nextDouble() - 0.5) * 0.2, 0, (r.nextDouble() - 0.5) * 0.2);
             case WATER -> spot(t, ter, r, false, gait);

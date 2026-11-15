@@ -1,0 +1,55 @@
+{
+  "entity": "naturalist:capybara",
+  "group": "rodent",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#bettacraft:turtle_greens",
+    "minecraft:melon_slice",
+    "minecraft:sugar_cane"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      4
+    ],
+    "days": 5,
+    "pause_days": 10,
+    "rate": 0.2
+  },
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      20,
+      34
+    ],
+    "water": [
+      20,
+      30
+    ],
+    "humidity": [
+      50,
+      100
+    ],
+    "land": [
+      0.4,
+      0.8
+    ],
+    "length": 1.2,
+    "volume": "all",
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.015,
+      "swim": 0.02,
+      "bottom": false,
+      "max_step": 0.5,
+      "water_time": 0.4,
+      "bask_time": 0.0,
+      "rest_time": 0.45,
+      "height": 0.5
+    }
+  }
+}

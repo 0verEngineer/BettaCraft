@@ -3186,6 +3186,7 @@
   "message.bettacraft.net.no_bag": "Something wriggles in the net (%s), but you have no empty fish bag",
   "message.bettacraft.net.nothing_here": "Nothing for an aquarium lives in this water",
   "message.bettacraft.net.plant": "The net brought up a plant from the bottom: %s",
+  "message.bettacraft.paludarium.too_shallow": "The water part is too shallow for %1$s: %2$s blocks deep, it needs %3$s",
   "message.bettacraft.plants.duckweed_in_bottle": "A bit of duckweed came up with the water",
   "message.bettacraft.plants.full": "No room on the water surface",
   "message.bettacraft.plants.no_water": "The tank needs water for floating plants",

@@ -80,6 +80,8 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
             case CLIMB -> new LandWalker.Gait(0.02, 0.0, true, 1.0, 0.0, 0.1, 0.3, 0.1, LandWalker.Style.CLIMB, 0.4, false);
             case SLITHER -> new LandWalker.Gait(0.02, 0.02, false, 0.4, 0.1, 0.25, 0.4, 0.1, LandWalker.Style.SLITHER, 0, false);
             case SWIM -> new LandWalker.Gait(0.0, 0.03, false, 0.2, 1.0, 0.0, 0.2, 0.2, LandWalker.Style.SWIM, 0, false);
+            // M35 part b: a flier: its flying speed, a little over the water, rests perched on the land
+            case FLY -> new LandWalker.Gait(0.06, 0.0, false, 1.0, 0.2, 0.0, 0.2, 0.2, LandWalker.Style.FLY, 0, false);
             default -> new LandWalker.Gait(0.015, 0.0, true, 0.3, 0.0, 0.25, 0.35, 0.3);
         };
     }
@@ -303,6 +305,7 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
             b.water(r[0], r[1]);
         }
         if (t.has("uv")) b.uv(num(t, "uv", 0));
+        if (t.has("min_blocks")) b.minBlocks(Math.max(0, num(t, "min_blocks", 0))); // M35 part b: a small animal's smallest tank (stress below)
         if (bool(t, "basking", false)) b.basking();
         return b.build();
     }
@@ -310,7 +313,7 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
     /**
      * M35: the land part of a terrarium profile: {@code length} (m), {@code volume} (land, water, all; by the habitat if not
      * given: a dry terrarium animal the land, a water animal the water, else the whole tank), {@code movement} (a style
-     * {@code walk}, {@code slither}, {@code hop}, {@code climb}, {@code swim}, or {@code own} for the mod's own AI, or an
+     * {@code walk}, {@code slither}, {@code hop}, {@code climb}, {@code swim}, {@code fly} (part b), or {@code own} for the mod's own AI, or an
      * object with {@code style} and the gait numbers), {@code prey} (blocks) and {@code box}.
      */
     private static Land land(JsonObject t, TerrariumNeeds needs, Consumer<String> warn) {
@@ -343,7 +346,7 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
                 try {
                     st = LandWalker.Style.valueOf(style.toUpperCase(Locale.ROOT));
                 } catch (IllegalArgumentException ex) {
-                    warn.accept("unknown movement \"" + style + "\" (walk, slither, hop, climb, swim or own)");
+                    warn.accept("unknown movement \"" + style + "\" (walk, slither, hop, climb, swim, fly or own)");
                 }
                 LandWalker.Gait g = gait(st);
                 if (mo != null) {

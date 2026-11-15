@@ -1,0 +1,38 @@
+{
+  "entity": "naturalist:dragonfly",
+  "group": "dragonfly",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#bettacraft:small_feeder_insects"
+  ],
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      18,
+      32
+    ],
+    "water": [
+      15,
+      30
+    ],
+    "humidity": [
+      50,
+      100
+    ],
+    "land": [
+      0.2,
+      0.8
+    ],
+    "length": 0.1,
+    "volume": "all",
+    "movement": {
+      "style": "fly",
+      "walk": 0.06,
+      "water_time": 0.25,
+      "rest_time": 0.25,
+      "height": 0.3
+    }
+  }
+}

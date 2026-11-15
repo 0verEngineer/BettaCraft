@@ -231,6 +231,11 @@ public final class TankInhabitants {
         if (terra) {
             Component no = org.overengineer.bettacraft.terrarium.TerrariumAnimals.refusal(level, controller, type);
             if (no != null) return no;
+        } else if (org.overengineer.bettacraft.terrarium.PaludariumWater.applies(level, controller)) {
+            // M35 part b: a water animal in a paludarium goes by its water part (deep enough for it; the stocking and the size
+            // rule of the big animals below measure the water), not by the fill of the whole tank (a third of water is normal there)
+            Component no = org.overengineer.bettacraft.terrarium.PaludariumWater.refusal(tank, type);
+            if (no != null) return no;
         } else if (tank.capacityMb() <= 0 || tank.waterMb() < minFill * tank.capacityMb()) {
             return Component.translatable("message.bettacraft.tank.too_little_water", Math.round(minFill * 100));
         }
@@ -257,8 +262,11 @@ public final class TankInhabitants {
         int maxEntities = ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64);
         if (live.size() >= maxEntities) return Component.translatable("message.bettacraft.tank.max_entities", maxEntities);
 
-        Vec3 spawn = terra ? org.overengineer.bettacraft.terrarium.TerrariumAnimals.spawnPos(level, tank, type, level.getRandom())
-                : findSpawnPos(level, tank, level.getRandom());
+        Vec3 spawn = terra ? org.overengineer.bettacraft.terrarium.TerrariumAnimals.spawnPos(level, tank, type, level.getRandom()) : null;
+        if (spawn == null && tank.terrariumMode().hasLand() && org.overengineer.bettacraft.terrarium.TankClimate.enabled()) { // M35 part b: in the water part, not in the land
+            spawn = org.overengineer.bettacraft.terrarium.PaludariumWater.waterSpot(level, tank, level.getRandom(), type.getDimensions().height());
+        }
+        if (spawn == null) spawn = findSpawnPos(level, tank, level.getRandom());
         CompoundTag stored = FishContainers.storedEntity(stack);
         if (stored == null) stored = FishBagItem.storedEntity(stack); // M16: a water animal without a bucket in our fish bag
         if (stored == null) stored = org.overengineer.bettacraft.big.TransportTubItem.storedEntity(stack); // M30: a big animal in its tub
@@ -407,6 +415,10 @@ public final class TankInhabitants {
     }
 
     public static void release(Entity e) {
+        // M35 part b: a mother of another mod with laid eggs takes her clutch along (the egg block goes, she lays them again)
+        if (e instanceof net.minecraft.world.entity.LivingEntity le && e.level() instanceof ServerLevel && hasTankRef(e)) {
+            org.overengineer.bettacraft.foreign.ForeignNests.leave(le);
+        }
         e.removeData(ModAttachments.TANK_REF.get());
     }
 

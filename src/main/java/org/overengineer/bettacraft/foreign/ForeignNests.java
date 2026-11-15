@@ -34,7 +34,9 @@ import org.overengineer.bettacraft.terrarium.LandWalker;
  * <p>
  * The clutch stays in the brood of the mother's persistent data ({@code ForeignBreeding#BROOD}: {@code nest} with the egg block,
  * the spot, the eggs, the progress, the heat): it needs no tank data, an old tank stays as it was. If the mother leaves the
- * tank, the clutch goes with her (her egg block stays as an empty shell; it has no item and drops nothing).
+ * tank (box, tub, the menu, let go), she takes the clutch along (part b): the egg block goes from the interior (nothing drops),
+ * the eggs go back into her brood with their progress, and in her next tank she looks for a nest and lays them again (the
+ * clutch hatches there, as far as it was). A mother that dies in her tank loses her eggs (the egg block goes).
  */
 public final class ForeignNests {
     /** Days a carrying mother looks for a nest before she gives the eggs up. */
@@ -93,6 +95,7 @@ public final class ForeignNests {
         if (interior == null) return;
         ForeignProfile.Breeding b = p.breeding();
         int eggs = b.youngMin() + (b.youngMax() > b.youngMin() ? rnd.nextInt(b.youngMax() - b.youngMin() + 1) : 0);
+        if (brood.contains("carried_eggs")) eggs = brood.getInt("carried_eggs"); // part b: a clutch she took along
         if (eggs <= 0) {
             giveUp(mother, p);
             return;
@@ -105,8 +108,11 @@ public final class ForeignNests {
         nest.putDouble("y", n.world().y);
         nest.putDouble("z", n.world().z);
         nest.putInt("eggs", eggs);
-        nest.putDouble("progress", 0);
-        nest.putDouble("hot", 0);
+        nest.putDouble("progress", brood.getDouble("carried_progress"));
+        nest.putDouble("hot", brood.getDouble("carried_hot"));
+        brood.remove("carried_eggs");
+        brood.remove("carried_progress");
+        brood.remove("carried_hot");
         brood.put("nest", nest);
         brood.remove("tx");
         TankCare.log(level, c, "log.bettacraft.turtle.laid", TankCare.nameArg(mother), String.valueOf(eggs));
@@ -172,6 +178,44 @@ public final class ForeignNests {
         }
         mother.getPersistentData().remove(ForeignBreeding.BROOD);
         mother.getPersistentData().putDouble(ForeignBreeding.REST, p.breeding().pauseDays());
+    }
+
+    /**
+     * Part b: the mother leaves her tank: a laid clutch goes along with her (the egg block goes from the interior, nothing
+     * drops; the eggs and their progress go back into her brood, she lays them again in her next tank). A mother that
+     * still carries her eggs keeps them as they are; she forgets the nest she was walking to.
+     */
+    public static void leave(LivingEntity mother) {
+        CompoundTag d = mother.getPersistentData();
+        if (!d.contains(ForeignBreeding.BROOD)) return;
+        CompoundTag brood = d.getCompound(ForeignBreeding.BROOD);
+        brood.remove("tx");
+        if (brood.contains("nest")) {
+            CompoundTag nest = brood.getCompound("nest");
+            removeEggs(mother, BlockPos.of(nest.getLong("block")));
+            brood.putInt("carried_eggs", nest.getInt("eggs"));
+            brood.putDouble("carried_progress", nest.getDouble("progress"));
+            brood.putDouble("carried_hot", nest.getDouble("hot"));
+            brood.remove("nest");
+            brood.putDouble("age", 0);
+        }
+        d.put(ForeignBreeding.BROOD, brood);
+    }
+
+    /** Part b: a mother died in her tank: her laid eggs go with her (the egg block goes). */
+    public static void died(LivingEntity mother) {
+        CompoundTag d = mother.getPersistentData();
+        if (!d.contains(ForeignBreeding.BROOD) || !d.getCompound(ForeignBreeding.BROOD).contains("nest")) return;
+        removeEggs(mother, BlockPos.of(d.getCompound(ForeignBreeding.BROOD).getCompound("nest").getLong("block")));
+        d.remove(ForeignBreeding.BROOD);
+    }
+
+    private static void removeEggs(LivingEntity mother, BlockPos block) {
+        if (mother.level().getServer() == null) return;
+        ServerLevel interior = InteriorManager.interiorLevel(mother.level().getServer());
+        if (interior == null) return;
+        interior.getChunk(block);
+        if (interior.getBlockState(block).is(ModBlocks.TURTLE_EGGS.get())) interior.removeBlock(block, false);
     }
 
     private static void giveUp(LivingEntity mother, ForeignProfile p) {

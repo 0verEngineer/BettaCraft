@@ -55,8 +55,8 @@ public class LargeNetItem extends Item {
         }
         if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
         Component name = target.getDisplayName();
+        TankInhabitants.release(target); // M35 part b: first (a mother takes her clutch along), then the tub saves her
         ItemStack tub = TransportTubItem.fillWith(target);
-        TankInhabitants.release(target);
         target.discard();
         BigCatching.give(player, slot, tub, name);
         return InteractionResult.CONSUME;

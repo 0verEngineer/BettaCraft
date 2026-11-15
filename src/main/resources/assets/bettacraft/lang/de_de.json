@@ -3734,6 +3734,7 @@
   "message.bettacraft.big.too_little_room": "Zu wenig Platz für %1$s: die großen Tiere brauchen zusammen %2$s Blöcke Becken, dieses Becken fasst %3$s",
   "message.bettacraft.sea_turtle.no_beach": "%s braucht einen Strand: Sand oder Erde auf dem Land des Paludariums für die Eier",
   "message.bettacraft.box.refused": "Die Terrarienbox nimmt %s nicht (kein Terrarium-Profil, nicht in terrarium.boxAllow)",
+  "message.bettacraft.paludarium.too_shallow": "Der Wasserteil ist zu flach für %1$s: %2$s Blöcke tief, nötig sind %3$s",
   "message.bettacraft.box.too_big": "%s ist zu groß für die Terrarienbox: der große Kescher fängt es in eine Transportwanne",
   "message.bettacraft.box.not_yours": "%s gehört jemand anderem",
   "message.bettacraft.box.need_box": "%s kommt in eine leere Terrarienbox: nimm eine ins Inventar",

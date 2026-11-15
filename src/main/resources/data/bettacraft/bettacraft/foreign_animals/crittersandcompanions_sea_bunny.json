@@ -1,0 +1,17 @@
+{
+  "entity": "crittersandcompanions:sea_bunny",
+  "group": "sea_slug",
+  "care": {
+    "temperature": [
+      18,
+      28
+    ],
+    "min_quality": 0.5,
+    "salinity": "marine",
+    "hunger_days": 1.5,
+    "stock": 0.3
+  },
+  "food": [
+    "normal"
+  ]
+}

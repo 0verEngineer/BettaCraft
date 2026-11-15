@@ -1,0 +1,46 @@
+{
+  "entity": "naturalist:snake",
+  "group": "snake",
+  "care": {
+    "hunger_days": 5.0
+  },
+  "food": [
+    "#bettacraft:snake_prey"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 29,
+    "young": [
+      2,
+      4
+    ],
+    "days": 5,
+    "pause_days": 10,
+    "rate": 0.2,
+    "inherit": [
+      "Variant"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      22,
+      32
+    ],
+    "humidity": [
+      35,
+      70
+    ],
+    "basking": true,
+    "min_blocks": 8,
+    "movement": {
+      "style": "slither",
+      "walk": 0.018,
+      "max_step": 0.4,
+      "bask_time": 0.3,
+      "rest_time": 0.5,
+      "height": 0.15
+    }
+  }
+}

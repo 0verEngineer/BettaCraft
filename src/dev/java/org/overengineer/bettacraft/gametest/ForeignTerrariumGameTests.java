@@ -75,12 +75,12 @@ public final class ForeignTerrariumGameTests {
     // ------------------------------------------------------------------ helpers
 
     /** The animal of a shipped profile: the Naturalist one, or (without Naturalist) a vanilla stand-in with the same profile. */
-    private record Animal(EntityType<?> type, ForeignProfile profile, boolean real) {}
+    record Animal(EntityType<?> type, ForeignProfile profile, boolean real) {}
 
-    private static Animal animal(String file, String naturalistId, EntityType<?> standIn) {
+    static Animal animal(String file, String naturalistId, EntityType<?> standIn) {
         ForeignProfile p = ForeignProfiles.files().get(BettaCraft.id(file));
         if (p == null) throw new GameTestAssertException("no shipped profile " + file);
-        if (ModList.get().isLoaded("naturalist")) {
+        if (ModList.get().isLoaded(ResourceLocation.parse(naturalistId).getNamespace())) {
             EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(naturalistId)).orElseThrow();
             if (ForeignProfiles.of(t) != p) throw new GameTestAssertException(naturalistId + " is not mapped to its profile");
             return new Animal(t, p, true);
@@ -91,7 +91,7 @@ public final class ForeignTerrariumGameTests {
     }
 
     /** Puts the stand-in profiles in place (nothing to do with Naturalist); the returned runnable restores the profiles. */
-    private static Runnable install(List<Animal> animals) {
+    static Runnable install(List<Animal> animals) {
         Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
         if (animals.stream().allMatch(Animal::real)) return () -> {};
         Map<ResourceLocation, ForeignProfile> files = new LinkedHashMap<>(saved);
@@ -102,7 +102,7 @@ public final class ForeignTerrariumGameTests {
     }
 
     /** Runs the test with the stand-in profiles in place (nothing to do with Naturalist), restoring the profiles afterwards. */
-    private static void with(List<Animal> animals, Runnable body) {
+    static void with(List<Animal> animals, Runnable body) {
         Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
         boolean stand = animals.stream().anyMatch(a -> !a.real());
         if (stand) {
@@ -126,14 +126,14 @@ public final class ForeignTerrariumGameTests {
         return animal("naturalist_alligator", "naturalist:alligator", EntityType.CAMEL);
     }
 
-    private static ServerLevel interior(GameTestHelper h) {
+    static ServerLevel interior(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         if (in == null) throw new GameTestAssertException("no interior dimension");
         return in;
     }
 
     /** A tank with a sand floor in its interior. */
-    private static InteriorRegion sandFloor(GameTestHelper h, TankBlockEntity c) {
+    static InteriorRegion sandFloor(GameTestHelper h, TankBlockEntity c) {
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         ServerLevel in = interior(h);
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++) {
@@ -143,7 +143,7 @@ public final class ForeignTerrariumGameTests {
     }
 
     /** A dry terrarium of sx * sy * sz with a sand floor and a warm climate with a basking spot and UV. */
-    private static TankBlockEntity terrarium(GameTestHelper h, int x, int z, int sx, int sy, int sz) {
+    static TankBlockEntity terrarium(GameTestHelper h, int x, int z, int sx, int sy, int sz) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, z, sx, sy, sz, 0);
         sandFloor(h, c);
         TankClimate.step(h.getLevel(), c, 0.01);
@@ -156,7 +156,7 @@ public final class ForeignTerrariumGameTests {
      * A paludarium of sx * sy * sz: water one third of its height (salt {@code ppt}), land of {@code top} over the interior
      * columns x < {@code landShare} of the width (one layer just above the water line), the climate warm with a basking spot.
      */
-    private static TankBlockEntity paludarium(GameTestHelper h, int x, int z, int sx, int sy, int sz, float ppt, double landShare, BlockState top) {
+    static TankBlockEntity paludarium(GameTestHelper h, int x, int z, int sx, int sy, int sz, float ppt, double landShare, BlockState top) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, z, sx, sy, sz, 0);
         TankData t = c.getTank();
         InteriorRegion r = sandFloor(h, c);
@@ -176,7 +176,7 @@ public final class ForeignTerrariumGameTests {
     }
 
     /** A live animal of this type in the world at a spot of the test (not in a tank). */
-    private static LivingEntity wild(GameTestHelper h, EntityType<?> type, Vec3 rel) {
+    static LivingEntity wild(GameTestHelper h, EntityType<?> type, Vec3 rel) {
         Entity e = type.create(h.getLevel());
         if (!(e instanceof LivingEntity le)) throw new GameTestAssertException("no " + type);
         Vec3 a = h.absoluteVec(rel);
@@ -187,7 +187,7 @@ public final class ForeignTerrariumGameTests {
     }
 
     /** A container (filled terrarium box or transport tub) holding a new animal of this type (a baby if asked). */
-    private static ItemStack container(GameTestHelper h, EntityType<?> type, boolean tub, boolean baby) {
+    static ItemStack container(GameTestHelper h, EntityType<?> type, boolean tub, boolean baby) {
         Entity e = type.create(h.getLevel());
         if (e == null) throw new GameTestAssertException("no " + type);
         if (baby && e instanceof Mob m) m.setBaby(true);
@@ -196,13 +196,13 @@ public final class ForeignTerrariumGameTests {
         return s;
     }
 
-    private static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
+    static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
         EntityType<?> type = TankInhabitants.containedType(stack);
         if (type == null) throw new GameTestAssertException("no animal in " + stack);
         return TankInhabitants.insert(h.getLevel(), c, stack, type, null, TankInhabitants.carriedWater(stack));
     }
 
-    private static LivingEntity put(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
+    static LivingEntity put(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         Component err = insert(h, c, stack);
         if (err != null) throw new GameTestAssertException("refused: " + err.getString());
@@ -210,26 +210,26 @@ public final class ForeignTerrariumGameTests {
         throw new GameTestAssertException("not in the tank");
     }
 
-    private static List<LivingEntity> ofType(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
+    static List<LivingEntity> ofType(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
         List<LivingEntity> out = new ArrayList<>();
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (e.getType() == type && e instanceof LivingEntity le) out.add(le);
         return out;
     }
 
-    private static boolean says(Component c, String key) {
+    static boolean says(Component c, String key) {
         return BigTankGameTests.says(c, key);
     }
 
-    private static boolean logged(TankData t, String key) {
+    static boolean logged(TankData t, String key) {
         return t.log().stream().anyMatch(e -> e.key().equals(key));
     }
 
-    private static void feed(LivingEntity e) {
+    static void feed(LivingEntity e) {
         ForeignCare.feed(List.of(e), 1, null);
     }
 
     /** Mates the fed pair of the tank now (a long step), lays the eggs (a short step) and returns the mother. */
-    private static LivingEntity layEggs(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
+    static LivingEntity layEggs(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
         ServerLevel level = h.getLevel();
         for (LivingEntity e : ofType(h, c, type)) feed(e);
         ForeignBreeding.step(level, c, 30.0);

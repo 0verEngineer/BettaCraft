@@ -331,6 +331,13 @@ public final class ForeignTerrarium {
         target.discard();
     }
 
+    /** M35 part b: a mother that dies in her tank loses her laid eggs (the egg block goes, no empty shell stays). */
+    @SubscribeEvent
+    public static void onDeath(net.neoforged.neoforge.event.entity.living.LivingDeathEvent event) {
+        LivingEntity e = event.getEntity();
+        if (!e.level().isClientSide && TankInhabitants.hasTankRef(e)) ForeignNests.died(e);
+    }
+
     /** GameTests: walk this animal to a spot now (its walker), if the walker holds it. */
     public static boolean goTo(Mob m, ServerLevel level, TankData t, Vec3 at, int ticks) {
         LandWalker w = walker(m);
