@@ -34,7 +34,6 @@ navigation:
 | `breeding.*` | | temperatures, nest time, eggs, survival, female cooldown and damage, males eating fry, mutation, mirror training (`mirrorReadinessBonus` 1.25), days live food keeps a fish conditioned (`conditioningDays` 2) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | fry per bottle, days a culture needs |
-| `food.artemiaCystStackSize` | 16 | jars of artemia cysts per stack: 16, 32 or 64 (each keeps its 16 uses) |
 | `stages.*Days` | | duration of the life stages |
 | `interior.defaultScale` | 16 | 4, 8 or 16 interior blocks per tank block (new aquariums) |
 | `interior.substrateCostsBlock` | true | substrate costs a block |
@@ -42,7 +41,7 @@ navigation:
 | `interior.leaveSneakTicks` | 60 | how long to sneak (and look up) to leave |
 | `interior.leaveLookUpDegrees` | 60 | how steeply up you have to look while sneaking to leave (0 = sneaking alone) |
 | `interior.syncRange`, `preparationBudgetMs` | 96, 8 | players this close get the miniature; server time per tick for building new interiors |
-| `drops.artemiaFromSandChance` | 0.02 | artemia cysts from sand |
+| `drops.artemiaFromSandChance` | 0.08 | a jar of artemia cysts from sand (one jar is one culture) |
 | `waterQuality.qualityEnabled` | true | water quality on (loss per day 0.01, per animal 0.04, per overfed portion 0.01, filters remove 0.8, bad below 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
 | `evaporation.evaporationEnabled` | true | open tanks lose water (`mbPerBlockPerDay` 20) |

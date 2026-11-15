@@ -16,8 +16,7 @@ The artemia hatchery hatches [artemia nauplii](fry_food.md) for fry and seahorse
 and works with hoppers and pipes.
 
 1. Pour in **salt water bottles** (250 mB each, up to 1000 mB). The empty bottles stay in the hatchery.
-2. Add **artemia cysts**; each batch uses one of their 16 uses. From a stack the hatchery opens one jar at a time and
-   uses it up before it opens the next (breaking the hatchery drops the open jar with its uses).
+2. Add **artemia cysts**; each batch uses up one jar (a stack of up to 64 jars fits in).
 3. Every bottle of nauplii needs a **glass bottle**: right-click with glass bottles or let a hopper add them.
 4. After **1 in-game day** a batch yields 2 bottles of nauplii. Take them with an empty hand or with a hopper below.
 

@@ -2,15 +2,12 @@ package org.overengineer.bettacraft.datagen;
 
 import java.util.function.BiConsumer;
 
-/** M21.8 English texts (stacking artemia cyst jars, seahorses). de_de.json holds the German ones. */
+/** M21.8 English texts (seahorses). de_de.json holds the German ones. */
 final class LangM218 {
     private LangM218() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        // artemia cysts
-        a.accept("tooltip.bettacraft.artemia_cysts.total", "%s jars, %s uses in total");
-        a.accept("bettacraft.configuration.artemiaCystStackSize", "Artemia cyst jars per stack");
-        a.accept("bettacraft.configuration.artemiaCystStackSize.tooltip", "How many jars of artemia cysts stack in one slot: 16, 32 or 64 (each jar keeps its 16 uses; only jars with the same uses left stack; stacks bigger than a smaller new limit stay as they are)");
+        // (artemia cysts: the stack size config and the "uses in total" tooltip are gone in M35.1)
         // config: seahorses
         a.accept("bettacraft.configuration.seahorses", "Seahorses");
         a.accept("bettacraft.configuration.seahorses.tooltip", "Seahorses (lined seahorse Hippocampus erectus, dwarf seahorse H. zosterae) at the wandering trader and in the aquarium net in warm and lukewarm oceans (off: no new ones; seahorses already caught stay)");

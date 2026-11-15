@@ -34,7 +34,6 @@ navigation:
 | `breeding.*` | | Temperaturen, Nestbau, Eier, Überlebensrate, Pause und Schaden der Weibchen, Männchen fressen Jungfische, Mutation, Spiegeltraining (`mirrorReadinessBonus` 1,25), Tage, die Lebendfutter einen Fisch konditioniert hält (`conditioningDays` 2) |
 | `combat.*` | | `malesFight`, `fightDays`, `predatorAttacksPerDay`, `healPerDay` |
 | `food.fryPerItem`, `food.cultureDays` | 20, 1 | Jungfische pro Flasche, Tage für einen Ansatz |
-| `food.artemiaCystStackSize` | 16 | Dosen Artemia-Zysten pro Stapel: 16, 32 oder 64 (jede behält ihre 16 Anwendungen) |
 | `stages.*Days` | | Dauer der Lebensstufen |
 | `interior.defaultScale` | 16 | 4, 8 oder 16 Innenraum-Blöcke pro Aquarium-Block (neue Aquarien) |
 | `interior.substrateCostsBlock` | true | Bodengrund kostet einen Block |
@@ -42,7 +41,7 @@ navigation:
 | `interior.leaveSneakTicks` | 60 | wie lange man zum Verlassen schleichen (und nach oben schauen) muss |
 | `interior.leaveLookUpDegrees` | 60 | wie steil man beim Schleichen nach oben schauen muss, um hinauszukommen (0 = Schleichen allein) |
 | `interior.syncRange`, `preparationBudgetMs` | 96, 8 | Spieler so nah bekommen die Miniatur; Serverzeit pro Tick für den Bau neuer Innenräume |
-| `drops.artemiaFromSandChance` | 0.02 | Artemia-Zysten aus Sand |
+| `drops.artemiaFromSandChance` | 0.08 | eine Dose Artemia-Zysten aus Sand (eine Dose ist ein Ansatz) |
 | `waterQuality.qualityEnabled` | true | Wasserqualität an (Verlust pro Tag 0.01, pro Tier 0.04, pro Überfütterung 0.01, Filter entfernen 0.8, schlecht unter 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | Wasserblöcke, die ein Filter sauber hält |
 | `evaporation.evaporationEnabled` | true | offene Aquarien verlieren Wasser (`mbPerBlockPerDay` 20) |

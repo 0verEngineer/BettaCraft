@@ -84,7 +84,7 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Mosquito Larvae](../food.md): breaking mud in swamps (4 %).
 * [Tubifex Worms](../food/tubifex_dish.md): breaking mud in swamps (5 %).
 * [Daphnia](../food/daphnia_barrel.md): glass bottle filled with water in swamps (8 %).
-* [Artemia Cysts](../food/fry_food.md): breaking sand (2 %).
+* [Artemia Cysts](../food/fry_food.md): breaking sand (8 %).
 * [Betta](../bettas.md): spawns in swamps (spawn weight 8).
 * [Betta imbellis](../bettas/betta_imbellis.md): spawns in swamps (spawn weight 8).
 * [Betta smaragdina](../bettas/betta_smaragdina.md): spawns in swamps (spawn weight 8).

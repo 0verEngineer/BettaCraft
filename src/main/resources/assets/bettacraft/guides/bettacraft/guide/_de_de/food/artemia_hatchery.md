@@ -16,9 +16,7 @@ Die Artemia-Brutanlage brütet [Artemia-Nauplien](fry_food.md) für Jungfische u
 (Stufe 9 oder mehr) und arbeitet mit Trichtern und Rohren.
 
 1. **Salzwasserflaschen** hineingießen (je 250 mB, bis 1000 mB). Die leeren Flaschen bleiben in der Anlage.
-2. **Artemia-Eier** hinzufügen; jede Runde verbraucht eine ihrer 16 Anwendungen. Aus einem Stapel öffnet die Anlage eine
-   Dose nach der anderen und verbraucht sie, bevor sie die nächste öffnet (beim Abbauen fällt die offene Dose mit ihren
-   Anwendungen heraus).
+2. **Artemia-Eier** hinzufügen; jede Runde verbraucht eine Dose (ein Stapel bis 64 Dosen passt hinein).
 3. Jede Flasche Nauplien braucht eine **Glasflasche**: Rechtsklick mit Glasflaschen oder ein Trichter füllt sie nach.
 4. Nach **1 Spieltag** ergibt eine Runde 2 Flaschen Nauplien. Mit leerer Hand oder einem Trichter darunter entnehmen.
 

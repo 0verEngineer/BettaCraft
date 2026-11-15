@@ -86,7 +86,7 @@ die [Biom-Tags](../settings.md)).
 * [Mückenlarven](../food.md): Schlamm abbauen in Sümpfen (4 %).
 * [Tubifex](../food/tubifex_dish.md): Schlamm abbauen in Sümpfen (5 %).
 * [Daphnien](../food/daphnia_barrel.md): Glasflasche mit Wasser in Sümpfen (8 %).
-* [Artemia-Zysten](../food/fry_food.md): Sand abbauen (2 %).
+* [Artemia-Zysten](../food/fry_food.md): Sand abbauen (8 %).
 * [Betta](../bettas.md): spawnt in Sümpfen (Spawn-Gewicht 8).
 * [Betta imbellis](../bettas/betta_imbellis.md): spawnt in Sümpfen (Spawn-Gewicht 8).
 * [Betta smaragdina](../bettas/betta_smaragdina.md): spawnt in Sümpfen (Spawn-Gewicht 8).
