@@ -557,6 +557,121 @@ def pangasius():
     return p, [body, caudal(p, 7, 12, "fork"), dorsal_fin(p, 0.3, 4, 7, "tri", lean=-14)] + pectorals(p, 0.16, 5, 2, spread=50, droop=30)
 
 
+# M30 part b: the other freshwater giants
+
+def barbel_pair(name, origin, length, yaw, pitch=0.0):
+    """A pair of thin barbels starting at ``origin`` (right side, mirrored to the left) and pointing back and out by ``yaw``
+    degrees (and down by ``pitch``)."""
+    ox, oy, oz = origin
+    dx = math.sin(math.radians(yaw)) * math.cos(math.radians(pitch)) * length / 2
+    dz = math.cos(math.radians(yaw)) * math.cos(math.radians(pitch)) * length / 2
+    dy = math.sin(math.radians(pitch)) * length / 2
+    return pair(name, "barbel", (ox + dx, oy + dy, oz + dz), (1, 1, length), (-pitch, yaw, 0), None)
+
+
+def redtail():
+    """M30 redtail catfish: a heavy catfish with a very broad, flat head and a wide mouth, long barbels at the corners of the
+    mouth and two pairs of chin barbels, a tall rounded dorsal fin, a big adipose fin, a broad, slightly forked tail."""
+    p = Plan("redtail", -16, 9, 8.0, 10.0, 0.75, 0.38, 0.3, flat_belly=True, belly=0.0, nseg=10)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.1, up=0.12, size=2, inset=1.2)
+    body.boxes += barbel_pair("barbel", (3.8, -1.6, -15.2), 11, 42, 6)
+    body.boxes += barbel_pair("chin", (1.4, -0.4, -15.0), 5, 18, 14)
+    body.boxes += barbel_pair("chin2", (2.6, -0.4, -14.4), 5, 30, 12)
+    body.boxes.append(anal_fin(p, 0.66, 5, 4, "oval"))
+    body.boxes += pair("pelvic", "pelvic", (2.4, -0.5, p.snout + 0.52 * 25), (3, 0, 4), (0, 18, -8), "pec_flat")
+    body.boxes.append(box("adipose", "adipose", (0, p.top(0.78) - 1.5, p.snout + 0.78 * 25), (0, 4, 5), fin="oval"))
+    return p, [body, caudal(p, 8, 13, "fork"), dorsal_fin(p, 0.33, 5, 8, "sail", lean=-10)] + pectorals(p, 0.2, 7, 4, spread=30,
+                                                                                                    droop=8, up=0.9, horizontal=True)
+
+
+def wels():
+    """M30 wels catfish: a long, scaleless body, broad and flat in front, compressed behind; a tiny dorsal fin, an endless
+    anal fin from the middle of the belly to the small rounded tail, two very long barbels on the upper jaw and four short
+    ones on the chin, small eyes."""
+    p = Plan("wels", -16, 12, 7.0, 8.0, 0.85, 0.4, 0.2, mid=4.0, nseg=11)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.07, up=0.3, size=1, inset=0.6)
+    body.boxes += barbel_pair("barbel", (3.2, -3.4, -15.4), 12, 55, 32)
+    body.boxes += barbel_pair("chin", (1.2, p.bottom(0.04) - 0.4, -15.0), 4, 14, 20)
+    body.boxes += barbel_pair("chin2", (2.4, p.bottom(0.06) - 0.4, -14.4), 4, 26, 20)
+    body.boxes.append(anal_fin(p, 0.36, 18, 3, "long_anal"))
+    body.boxes += pair("pelvic", "pelvic", (1.4, p.bottom(0.36) + 0.5, p.snout + 0.36 * 28), (0, 2, 3), (18, 20, 0), "oval")
+    return p, [body, caudal(p, 6, 8, "round"), dorsal_fin(p, 0.26, 3, 3, "tri", lean=-8)] + pectorals(p, 0.14, 5, 3, spread=40, droop=25)
+
+
+def arapaima():
+    """M30 arapaima: a long, round, torpedo-like body with a small flat head and an upturned mouth; the dorsal and anal fins
+    sit far back opposite each other and, with the rounded tail, make a paddle; big scales."""
+    p = Plan("arapaima", -16, 10, 6.0, 6.0, 0.72, 0.6, 0.45, mid=4.0, nseg=11)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.07, up=0.3, size=1, inset=0.5)
+    body.boxes.append(anal_fin(p, 0.72, 7, 4, "long_anal"))
+    body.boxes += pair("pelvic", "pelvic", (1.0, p.bottom(0.48) + 0.5, p.snout + 0.48 * 26), (0, 2, 3), (18, 20, 0), "oval")
+    return p, [body, caudal(p, 7, 9, "round"), dorsal_fin(p, 0.7, 7, 4, "long", lean=-2)] + pectorals(p, 0.16, 4, 2, spread=40, droop=25)
+
+
+class RayPlan:
+    """M30 part b: the flat ray: t runs from the snout (0) to the tip of the tail (1), v is 0 on the upper side and 1 on the
+    underside (the disc is 1 px thick at the margin)."""
+
+    def __init__(self, name, snout=-16, ped=16):
+        self.name, self.snout, self.ped = name, snout, ped
+
+    def t_of(self, z):
+        return (z - self.snout) / (self.ped - self.snout)
+
+    def v_of(self, y, z):
+        return 1.0 if y > -0.3 else 0.0
+
+
+# disc of the stingray: z from -16 to +2 (round, 18 px), the margin cut into strips that wave
+RAY_DISC = (-16, 2, 9.0)
+RAY_CORE = 3
+
+
+def ray_half_width(z):
+    z0, z1, r = RAY_DISC
+    c = (z0 + z1) / 2
+    k = (z - c) / r
+    return r * math.sqrt(max(0.0, 1 - k * k))
+
+
+def stingray():
+    """M30 freshwater stingray (Potamotrygon): a round, flat disc (a domed body in the middle, a thin margin cut into nine
+    strips per side, groups wave_r0..8 / wave_l0..8 that the renderer ripples from front to back), small eyes on top, short
+    pelvic lobes behind the disc and a thick tail with a spine."""
+    p = RayPlan("stingray")
+    z0, z1, _ = RAY_DISC
+    body = Group("body", (0, 0, 0))
+    groups = [body]
+    strips = (z1 - z0) // 2
+    for i in range(strips):
+        za = z0 + 2 * i
+        zc = za + 1
+        hw = ray_half_width(zc)
+        core_h = 3 if 2 <= i <= strips - 3 else 2
+        body.boxes.append(box(f"core{i}", "head" if i < 3 else "body", (0, -core_h / 2, zc), (2 * RAY_CORE, core_h, 2)))
+        wing = max(1, round(hw - RAY_CORE))
+        for side, sx in (("r", 1), ("l", -1)):
+            g = Group(f"wave_{side}{i}", (sx * RAY_CORE, -0.5, zc))
+            g.boxes.append(box(f"wing_{side}{i}", "body", (sx * (RAY_CORE + wing / 2), -0.5, zc), (wing, 1, 2)))
+            groups.append(g)
+    body.boxes.append(box("eye_r", "eye", (1.6, -3.5, -10.5), (1, 1, 1)))
+    body.boxes.append(box("eye_l", "eye", (-1.6, -3.5, -10.5), (1, 1, 1)))
+    body.boxes += pair("pelvic", "body", (3.4, -0.5, 2.5), (3, 1, 3), (0, 15, 0), None)
+    tail = Group("tail", (0, -1.0, z1))
+    tail.boxes.append(box("tail0", "body", (0, -1.0, z1 + 2.5), (3, 2, 5)))
+    tail.boxes.append(box("tail1", "body", (0, -0.5, z1 + 7.0), (2, 1, 4)))
+    tail.boxes.append(box("tail2", "body", (0, -0.5, z1 + 11.5), (1, 1, 5)))
+    tail.boxes.append(box("spine", "spine", (0, -1.5, z1 + 7.5), (1, 1, 3)))
+    groups.insert(1, tail)
+    return p, groups
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
@@ -566,6 +681,7 @@ PLANS = {
     "puffer": puffer, "barb": barb, "garra": garra,
     "rainbow": rainbow, "swordtail": swordtail,
     "pangasius": pangasius,
+    "redtail": redtail, "wels": wels, "arapaima": arapaima, "stingray": stingray,
 }
 
 
@@ -916,6 +1032,14 @@ def looks(species, variety, female):
         return livebearer29_look(sp, var, female)
     if sp == "pangasius":
         return pangasius_look()
+    if sp == "redtail_catfish":
+        return redtail_look()
+    if sp == "wels_catfish":
+        return wels_look()
+    if sp == "arapaima":
+        return arapaima_look()
+    if sp == "motoro_stingray":
+        return stingray_look()
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
 
 
@@ -946,6 +1070,149 @@ def pangasius_look():
             return C("#9a9ea4")
         return C("#7a8088")
     return Look(body, fins, eye="#1a1c20")
+
+
+# M30 part b: the other freshwater giants
+
+def _noise(seed, n=64):
+    return np.random.default_rng(seed).random((n, n))
+
+
+def _smooth_noise(seed, n=64, passes=3):
+    a = _noise(seed, n)
+    for _ in range(passes):
+        a = (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) / 5
+    return (a - a.min()) / max(1e-6, a.max() - a.min())
+
+
+def redtail_look():
+    """The redtail catfish: a dark slate-grey back and head with fine black spots, a sharp edge to a broad cream-white band
+    along the lower flank from the mouth to the tail, a white belly; a bright red-orange tail, the dorsal and adipose fins dark
+    with a red edge, light grey barbels."""
+    spots = _noise(3011)
+
+    def body(t, v, x, z, y):
+        if v > 0.55:
+            return mix(C("#ece6d8"), C("#f6f2ea"), (v - 0.55) / 0.45)
+        k = spots[int(abs(z) * 3.1 + abs(x) * 1.7) % 64, int((y + 30) * 2.9) % 64]
+        col = mix(C("#2e3034"), C("#4a4c52"), v / 0.55)
+        if k > 0.84:
+            col = col * 0.55
+        if t > 0.9:
+            col = mix(col, C("#b8402a"), 0.4)
+        return col
+
+    def fins(part, a, b, t, v, z, y):
+        if part == "tail":
+            return mix(C("#e8482a"), C("#f07a3a"), abs(b) * 0.5)
+        if part == "dorsal":
+            return C("#c8402a") if b > 0.55 else C("#34363c")
+        if part == "adipose":
+            return C("#c8402a") if a > 0.7 or abs(b) > 0.7 else C("#34363c")
+        if part == "barbel":
+            return C("#c8c4bc")
+        if part == "anal":
+            return C("#b85a3a")
+        return C("#3a3c42")
+    return Look(body, fins, eye="#141414", ring="#e0d070")
+
+
+def wels_look():
+    """The wels: marbled dark olive, brown and black on the back and the sides, lighter and greener towards the belly, a
+    cream belly with grey blotches; dark brown-grey fins, the long anal fin with a lighter base, dark barbels."""
+    marble = _smooth_noise(3021)
+    fine = _noise(3022)
+
+    def body(t, v, x, z, y):
+        m = marble[int(abs(z) * 1.6 + abs(x) * 0.9) % 64, int((y + 30) * 1.7) % 64]
+        k = fine[int(abs(z) * 3.3) % 64, int((y + 30) * 3.1) % 64]
+        if v > 0.78:
+            return mix(C("#e4dcc4"), C("#b8b098"), 0.6 * (m > 0.62))
+        base = mix(C("#2a2a1e"), C("#5c5a3c"), v / 0.78)
+        base = mix(base, C("#7a7450"), 0.45 * smooth(0.45, 0.7, m))
+        if m < 0.32:
+            base = base * 0.6
+        return base * (0.94 + 0.12 * k)
+
+    def fins(part, a, b, t, v, z, y):
+        if part == "barbel":
+            return C("#2a2820")
+        if part == "anal":
+            return mix(C("#6a6448"), C("#2e2c22"), max(0.0, min(1.0, (b + 1) / 2)))
+        return C("#36342a") if part != "pectoral" else C("#4a4636")
+    return Look(body, fins, eye="#1a1a14", ring="#a09a70")
+
+
+def arapaima_look():
+    """The arapaima: a dark grey-green head and back, olive-grey sides with large scales outlined darker; towards the rear the
+    scales get red edges until the last part of the body is blotched red; a pale grey belly; dark fins with red margins on
+    the dorsal, anal and tail fins."""
+
+    def body(t, v, x, z, y):
+        if v > 0.8:
+            return mix(C("#b8bab0"), C("#d8d8cc"), (v - 0.8) / 0.2)
+        base = mix(C("#2e382e"), C("#6a7460"), v / 0.8)
+        # big scales: a darker outline on a 3 x 2.5 px grid (offset every other row), red edges towards the tail
+        if t > 0.18:
+            row = int((y + 30) / 2.5)
+            col = (abs(z) + (1.5 if row % 2 else 0)) / 3.0
+            edge = (col - int(col)) < 0.3 or ((y + 30) / 2.5 - row) < 0.25
+            red = smooth(0.45, 0.85, t)
+            if edge:
+                base = mix(base * 0.72, C("#c83a28"), red * 0.9)
+            else:
+                base = mix(base, C("#8a5a44"), red * 0.35)
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        red = C("#c8402c")
+        dark = C("#2e322c")
+        if part == "tail":
+            return red if a > 0.65 else mix(dark, red, 0.35)
+        if part in ("dorsal", "anal"):
+            return red if b > 0.5 else mix(dark, red, 0.25)
+        return C("#4a5044")
+    return Look(body, fins, eye="#141414", ring="#c8b860")
+
+
+def stingray_look():
+    """The motoro stingray: a warm grey-brown disc covered with orange eye spots ringed in black, the tail brown with dark
+    bands; the underside creamy white; dark eyes on top."""
+    rnd = np.random.default_rng(3031)
+    centres = []
+    # one orange texel in a ring of black ones (texel centres lie on half numbers), on a staggered 4 px grid
+    for i, gz in enumerate(range(-16, 3, 4)):
+        for gx in range(-10, 11, 4):
+            off = 2 if i % 2 else 0
+            if rnd.random() < 0.85:
+                centres.append((gx + off + 0.5 + int(rnd.integers(-1, 2)), gz + 0.5 + int(rnd.integers(-1, 2)) * (rnd.random() < 0.5), 1.0))
+    fine = _noise(3032)
+
+    def ocellus(x, z):
+        best = 9.0
+        for cx, cz, r in centres:
+            d = math.hypot(x - cx, z - cz) / r
+            if d < best:
+                best = d
+        return best
+
+    def body(t, v, x, z, y):
+        if v > 0.5:
+            return mix(C("#f0e8dc"), C("#e8d0c0"), 0.25 * smooth(0.6, 1.0, abs(x) / 9.0))
+        k = fine[int(abs(z) * 3.7 + 7) % 64, int(abs(x) * 3.3 + 3) % 64]
+        base = mix(C("#6e5a44"), C("#8a7258"), k)
+        if z > 2.5:  # the tail: bands of dark spots
+            return C("#2a2018") if int((z - 2.5) / 1.6) % 2 == 0 and k > 0.35 else base * 0.9
+        d = ocellus(x, z)
+        if d < 0.6:
+            return mix(C("#f08a2a"), C("#f8b048"), 0.5 * k)
+        if d < 1.5:
+            return C("#1c1610")
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        return C("#6a5640")
+    return Look(body, fins, eye="#141210", ring="#c8b890")
 
 
 # M29 part c: danio, rainbowfish, gourami, tetra and livebearer looks
@@ -1906,6 +2173,11 @@ SPECIES = [
     ("swordtail", "swordtail", ["wild", "red", "red_wagtail"], True),
     # M30 part a: the big animals
     ("pangasius", "pangasius", ["wild"], False),
+    # M30 part b: the other freshwater giants
+    ("redtail_catfish", "redtail", ["wild"], False),
+    ("wels_catfish", "wels", ["wild"], False),
+    ("arapaima", "arapaima", ["wild"], False),
+    ("motoro_stingray", "stingray", ["wild"], False),
 ]
 
 

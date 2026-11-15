@@ -133,7 +133,7 @@ public class TankmateEntity extends AbstractFish {
             case PUFFER -> 0.4; // M29 part b: puffers hover and paddle with their fins
             case BARB -> 0.75;
             case GARRA -> 0.55;
-            case PANGASIUS -> s.large().speed(); // M30
+            case PANGASIUS, REDTAIL, WELS, ARAPAIMA, STINGRAY -> s.large().speed(); // M30
         };
         if (s.isLarge()) speed = s.large().speed();
         double hp = s.isLarge() ? 10.0 + 10.0 * s.large().lengthM() : s.length() >= 0.6 ? 6.0 : s.length() >= 0.35 ? 4.0 : 3.0;

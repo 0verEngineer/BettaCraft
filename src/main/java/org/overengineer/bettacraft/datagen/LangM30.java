@@ -82,5 +82,24 @@ final class LangM30 {
         a.accept("info.bettacraft.tankmate.pangasius", "Pangasius (Pangasianodon hypophthalmus), the iridescent shark catfish of the Mekong: a restless, silvery giant of big rivers, in a home tank about 1 m long.\nBig animal: needs a tank of at least 12 × 6 × 3 blocks and 100 water blocks each; swims wide curves.\n22–30 °C, eats everything and, once grown, small fish, young bettas and shrimp. Does not breed in a tank.\nCatch: large net or steel leader in rivers and jungle water (into a transport tub); rarely wild in deep rivers.");
         a.accept("variety.bettacraft.pangasius.wild", "Wild type");
         a.accept("tankmate.bettacraft.group.catfish", "Catfish");
+        // M30 part b: the other freshwater giants
+        a.accept("tankmate.bettacraft.group.bonytongue", "Bonytongues");
+        a.accept("tankmate.bettacraft.group.ray", "Rays");
+        a.accept("entity.bettacraft.redtail_catfish", "Redtail Catfish");
+        a.accept("item.bettacraft.redtail_catfish_spawn_egg", "Redtail Catfish Spawn Egg");
+        a.accept("info.bettacraft.tankmate.redtail_catfish", "Redtail catfish (Phractocephalus hemioliopterus) of the Amazon and the Orinoco: a heavy catfish with a broad, flat head, long barbels, a white flank band and a bright red tail; 1.2 m in the game.\nBig animal: needs a tank of at least 15 × 8 × 4 blocks and 173 water blocks each; rests on the ground by day.\n20–28 °C, soft to medium water. A predator: swallows every small fish, betta and shrimp it can reach. Does not breed in a tank.\nCatch: large net or steel leader in jungle water (into a transport tub); rarely wild there.");
+        a.accept("variety.bettacraft.redtail_catfish.wild", "Wild type");
+        a.accept("entity.bettacraft.wels_catfish", "Wels Catfish");
+        a.accept("item.bettacraft.wels_catfish_spawn_egg", "Wels Catfish Spawn Egg");
+        a.accept("info.bettacraft.tankmate.wels_catfish", "Wels catfish (Silurus glanis), the giant catfish of the deep rivers of Europe: a long, marbled body with an endless anal fin and two long barbels; 1.5 m in the game (wild up to 2.7 m).\nBig animal: needs a tank of at least 18 × 9 × 5 blocks and 338 water blocks each; a night hunter that lies on the ground by day.\n4–26 °C (no heater needed), hardy, neutral to hard water. Eats small fish, bettas and shrimp. Does not breed in a tank.\nCatch: large net or steel leader in rivers (into a transport tub); very rarely wild in deep rivers.");
+        a.accept("variety.bettacraft.wels_catfish.wild", "Wild type");
+        a.accept("entity.bettacraft.arapaima", "Arapaima");
+        a.accept("item.bettacraft.arapaima_spawn_egg", "Arapaima Spawn Egg");
+        a.accept("info.bettacraft.tankmate.arapaima", "Arapaima (Arapaima gigas), the giant of the Amazon floodplains: a long, round body whose scales turn red towards the tail; 2 m in the game (wild up to 3 m).\nBig animal: needs a tank of at least 24 × 12 × 6 blocks and 800 water blocks each.\nAn air breather: comes up to the surface for air every few minutes and does not mind low oxygen. 24–31 °C, soft to medium water. Eats fish, bettas and shrimp. Does not breed in a tank.\nCatch: large net or steel leader in jungle water (into a transport tub); very rarely wild there.");
+        a.accept("variety.bettacraft.arapaima.wild", "Wild type");
+        a.accept("entity.bettacraft.motoro_stingray", "Motoro Stingray");
+        a.accept("item.bettacraft.motoro_stingray_spawn_egg", "Motoro Stingray Spawn Egg");
+        a.accept("info.bettacraft.tankmate.motoro_stingray", "Motoro stingray (Potamotrygon motoro), the freshwater stingray of the Amazon: a round, flat disc with orange, black-ringed eye spots; 0.6 m with the tail.\nBig animal: needs a tank of at least 8 × 4 × 2 blocks and 22 water blocks each; glides low over the ground with a ripple along its disc and lies on the substrate (sand) for long.\n24–30 °C, soft, very clean water. Eats worms, shrimp and small bottom fish.\nLivebearing: a pair has 2–5 pups after a long pregnancy, only as many as the tank has room for (size rule).\nCatch: large net or steel leader in jungle water (into a transport tub); rarely wild there.");
+        a.accept("variety.bettacraft.motoro_stingray.wild", "Wild type");
     }
 }

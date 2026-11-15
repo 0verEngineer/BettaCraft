@@ -30,6 +30,31 @@ public final class LargeSpecies {
     private boolean eatsSmallFish;
     private double preyLength = 0.6;
     private double speed = 0.55;
+    private Swim swim = Swim.FISH;
+    private double restShare;
+
+    /**
+     * M30 part b: how a big animal moves (behaviour in {@code TankmateBehaviour#large}, turns in {@code LargeMoveControl},
+     * animation in {@code TankmateModel}, no body sway in {@code TankmateRenderer}).
+     */
+    public enum Swim {
+        /** A fish: wide curves through its height band, the tail beats. */
+        FISH,
+        /**
+         * A bottom ray (freshwater stingray): glides low over the ground (its zone should be {@code BOTTOM}) with a wave running
+         * back along the margins of its flat disc, settles on the ground now and then and lies still ({@link #rests}).
+         */
+        RAY_BOTTOM,
+        /**
+         * An open-water ray (part c: eagle ray, cownose ray): cruises through its height band with slow, deep beats of its
+         * wing-like disc (the same wave with a long wave length and a big amplitude); it does not lie on the ground.
+         */
+        RAY_OPEN;
+
+        public boolean ray() {
+            return this != FISH;
+        }
+    }
 
     private LargeSpecies(double lengthM) {
         this.lengthM = lengthM;
@@ -64,7 +89,25 @@ public final class LargeSpecies {
         return this;
     }
 
+    /** M30 part b: its way of swimming (default a fish). */
+    public LargeSpecies swim(Swim s) {
+        this.swim = s;
+        return this;
+    }
+
+    /**
+     * M30 part b: share (0..1) of its decisions in which it settles on the ground and lies still for a while (the stingray;
+     * a nocturnal giant catfish by day, twice as often).
+     */
+    public LargeSpecies rests(double share) {
+        this.restShare = share;
+        return this;
+    }
+
     public double lengthM() { return lengthM; }
+    public Swim swim() { return swim; }
+    public boolean ray() { return swim.ray(); }
+    public double restShare() { return restShare; }
     public double turnRate() { return turnRate; }
     public FoodDiet.Diet diet() { return diet; }
     public boolean eatsSmallFish() { return eatsSmallFish; }

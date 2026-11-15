@@ -131,6 +131,12 @@ public final class ChemTolerance {
             case HONEY_GOURAMI, PEARL_GOURAMI -> GOURAMI;
             case CHOCOLATE_GOURAMI -> Range.fresh(4.5, 7.0, 0, 200);
             case BLACK_MOLLY, SWORDTAIL -> LIVEBEARER;
+            // M30 part b: the Amazon giants want soft to medium water, the stingray soft, clean water; the wels of European
+            // rivers is hardy and likes it neutral to alkaline
+            case REDTAIL_CATFISH -> Range.fresh(5.5, 7.8, 0, 500);
+            case ARAPAIMA -> Range.fresh(5.5, 7.8, 0, 450);
+            case MOTORO_STINGRAY -> Range.fresh(5.5, 7.5, 0, 300);
+            case WELS_CATFISH -> Range.fresh(6.5, 8.5, 50, 800);
             default -> Range.TOLERANT;
         };
     }

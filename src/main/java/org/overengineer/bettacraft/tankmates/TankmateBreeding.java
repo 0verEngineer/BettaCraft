@@ -344,7 +344,7 @@ public final class TankmateBreeding {
         int eaten = 0;
         Entity by = null;
         for (TankmateEntity f : mates) {
-            if (f.lifeStage() != LifeStage.FRY) continue;
+            if (f.lifeStage() != LifeStage.FRY || f.species().isLarge()) continue; // M30 part b: stingray pups are born big
             // the adults of the young's own kind count too (guppies eat their own fry)
             double p = chance(rate * (bettaHunt + mateHunt) * (1 - hide), days);
             if (r.nextDouble() < p) {
@@ -769,6 +769,9 @@ public final class TankmateBreeding {
      * Adult predators (angelfish) eat tankmates up to their {@link TankmateSpecies#preyLength} (neons, embers, mosquito
      * rasboras ...) and shrimp; plants hide some of them.
      */
+    /** M30 part b: a big predator eats bettas and dwarf frogs when it takes prey of this length (blocks; an adult betta). */
+    public static final double BETTA_PREY_LENGTH = 0.5;
+
     private static void predators(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, double days) {
         double rate = ServerConfig.getOr(ServerConfig.TANKMATES_PREDATION, 0.3);
         int hunters = 0;
@@ -790,8 +793,9 @@ public final class TankmateBreeding {
         for (TankmateEntity m : mates) {
             if (m.species().preyLength() <= 0 && m.lifeStage() != LifeStage.FRY && m.species().length() <= maxLen + 1e-6) fish.add(m);
         }
-        // M30: a big predator (giant catfish, shark) also eats the bettas and the dwarf frogs of its tank
-        if (big) {
+        // M30: a big predator (giant catfish, shark) also eats the bettas and the dwarf frogs of its tank (M30 part b: one whose
+        // mouth takes a betta; a stingray does not)
+        if (big && maxLen >= BETTA_PREY_LENGTH) {
             for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
                 if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity || e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) fish.add(e);
             }
@@ -887,6 +891,9 @@ public final class TankmateBreeding {
         TankmateSpecies other = hybridPartner(s);
         if (other != null && by.containsKey(other)) males.addAll(adults(by.get(other), false, false));
         if (males.isEmpty()) return;
+        // M30 part b: a big livebearer (the stingray) only carries young while the tank has room for one more adult
+        int room = bigRoom(level, c, s);
+        if (room <= 0) return;
         RandomSource r = level.getRandom();
         for (TankmateEntity f : adults(list, true, true)) {
             if (f.isGravid() || f.breeding().cooldown() > 0) continue;
@@ -946,7 +953,27 @@ public final class TankmateBreeding {
 
     /** Days the young need until birth: the pouch of a seahorse male, the belly of a livebearer female. */
     public static double gestationDays(TankmateSpecies s) {
+        if (s.isLarge()) return gestationDays() * BIG_GESTATION; // M30 part b: a stingray carries her pups about three months
         return s.seahorse() ? Seahorses.pouchDays() : gestationDays();
+    }
+
+    /** M30 part b: a big livebearer carries this many times as long as the small ones. */
+    public static final double BIG_GESTATION = 4.0;
+
+    /**
+     * M30 part b: how many more adults of a big species the size rule of the tank allows ({@link org.overengineer.bettacraft.big.BigAnimals}:
+     * the tank's sides and the water of all big animals in it, young ones counted at their adult size); unlimited for small species.
+     */
+    public static int bigRoom(ServerLevel level, TankBlockEntity c, TankmateSpecies s) {
+        if (!s.isLarge()) return Integer.MAX_VALUE;
+        TankData t = c.getTank();
+        var f = org.overengineer.bettacraft.big.BigAnimals.factors();
+        double len = s.large().lengthM();
+        double others = org.overengineer.bettacraft.big.BigAnimals.waterOfOthers(TankInhabitants.liveInhabitants(level, t), null);
+        double cap = org.overengineer.bettacraft.big.BigAnimals.capacityBlocks(t);
+        if (org.overengineer.bettacraft.tank.BigTankRules.check(t.sizeX(), t.sizeY(), t.sizeZ(), cap, others, len, f)
+                != org.overengineer.bettacraft.tank.BigTankRules.Verdict.OK) return 0;
+        return (int) Math.floor((cap - others) / org.overengineer.bettacraft.tank.BigTankRules.water(len, f) + 1e-6);
     }
 
     /** M21.6: the species a guppy or an endler crosses with (with features.livebearerGenetics), or null. */
@@ -1175,7 +1202,9 @@ public final class TankmateBreeding {
             f.setGravid(-1, null);
             f.breeding().setCooldown(0.5);
             int boxed = 0;
-            if (t.breedingBox() && !s.seahorse() && !s.mouthbrooder()) {
+            // M30 part b: the pups of a big livebearer are born large and free (no breeding box), only as many as the size rule allows
+            if (s.isLarge()) n = Math.min(n, bigRoom(level, c, s));
+            if (t.breedingBox() && !s.seahorse() && !s.mouthbrooder() && !s.isLarge()) {
                 int inBox = boxFry(t);
                 boxed = Math.min(n, Math.max(0, boxCapacity() - inBox));
                 if (boxed > 0) {

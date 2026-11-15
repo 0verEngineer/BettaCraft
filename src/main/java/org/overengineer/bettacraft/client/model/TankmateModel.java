@@ -20,6 +20,8 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     private final List<ModelPart> segments = new ArrayList<>();
     /** M21.8: the seahorse's tail chain (curled round the hitching post). */
     private final List<ModelPart> curls = new ArrayList<>();
+    /** M30 part b: the margin strips of a ray's disc, front to back (the wave runs along them). */
+    private final List<ModelPart> waveR = new ArrayList<>(), waveL = new ArrayList<>();
 
     public TankmateModel(ModelPart root) {
         this.root = root;
@@ -41,6 +43,38 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
             if (s == null) break;
             curls.add(s);
         }
+        for (int i = 0; i < 12; i++) {
+            ModelPart r = find(fish, "wave_r" + i), l = find(fish, "wave_l" + i);
+            if (r == null || l == null) break;
+            waveR.add(r);
+            waveL.add(l);
+        }
+    }
+
+    /**
+     * M30 part b: a ray swims with its disc: a wave runs from the front to the back along the margins (both sides together).
+     * A bottom ray (stingray) ripples with short, quick waves, hardly at all while it lies on the ground; an open-water ray
+     * (part c) beats its wing-like disc slowly and deeply (a long wave, a big amplitude). The tail trails behind.
+     */
+    private void ray(TankmateEntity fish, float ageInTicks, float swim, boolean rest) {
+        var l = fish.species().large();
+        boolean open = l != null && l.swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.RAY_OPEN;
+        float t = ageInTicks + fish.getId() * 7.3F;
+        float freq = open ? 0.11F + 0.05F * swim : rest ? 0.08F : 0.22F + 0.14F * swim;
+        float lag = open ? 0.3F : 1.05F;
+        float amp = open ? (rest ? 0.08F : 0.3F + 0.2F * swim) : rest ? 0.025F : 0.12F + 0.12F * swim;
+        int n = waveR.size();
+        for (int i = 0; i < n; i++) {
+            // the middle of the disc is widest and moves most
+            float k = 0.65F + 0.35F * Mth.sin((i + 0.5F) / n * Mth.PI);
+            float a = Mth.sin(t * freq - i * lag) * amp * k;
+            waveR.get(i).zRot = -a;
+            waveL.get(i).zRot = a;
+        }
+        if (tail != null) tail.yRot = Mth.sin(t * 0.07F) * (rest ? 0.04F : 0.12F);
+        float flutter = Mth.sin(t * 0.5F) * 0.15F;
+        if (pecR != null) pecR.zRot = flutter;
+        if (pecL != null) pecL.zRot = -flutter;
     }
 
     /**
@@ -106,6 +140,10 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
             phase = ageInTicks * (0.45F + 1.1F * swim) + fish.getId() * 1.7F;
         }
         boolean rest = fish.flag(TankmateEntity.FLAG_REST) || fish.flag(TankmateEntity.FLAG_GLASS);
+        if (!waveR.isEmpty()) {
+            ray(fish, ageInTicks, swim, rest);
+            return;
+        }
         float amp = rest ? 0.06F : 0.12F + 0.35F * swim;
         if (tail != null) tail.yRot = Mth.sin(phase) * amp;
         if (dorsal != null) dorsal.xRot = rest ? -0.1F : 0.05F * Mth.sin(phase * 0.5F);

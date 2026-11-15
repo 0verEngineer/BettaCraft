@@ -133,7 +133,10 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
             legacyRotations(fish, pose, bob);
             return;
         }
+        // M30 part b: a ray lies flat out of the water and swims with its disc (no body sway)
+        boolean ray = fish.species().large() != null && fish.species().large().ray();
         if (!fish.isInWater()) {
+            if (ray) return;
             pose.translate(0.05F, 0.05F, -0.05F);
             pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
             return;
@@ -145,6 +148,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         boolean rest = fish.flag(TankmateEntity.FLAG_REST);
         // M21.5: the whole body sways with the beat (an eel hardly: its body wave does that), less when upright on the glass
         float sway = (eel ? 0.4F : rest ? 0.6F : 1.0F + 2.8F * swim) * Mth.sin(sp.phase(partialTick) * (eel ? 1.0F : 1.2F)) * (1 - g);
+        if (ray) sway = 0;
         pose.mulPose(Axis.YP.rotationDegrees(sway));
         if (g > 0) {
             // M21.5: turned upright onto the glass smoothly (nose up, belly against the wall in front of it)

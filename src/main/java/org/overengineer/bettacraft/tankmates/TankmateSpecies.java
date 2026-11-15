@@ -240,7 +240,39 @@ public enum TankmateSpecies {
     // eats everything and, once big, small fish; never breeds in a tank
     PANGASIUS(d("pangasius", "Pangasianodon hypophthalmus", Model.PANGASIUS, Group.CATFISH, Breeding.NONE, Zone.MID)
             .large(LargeSpecies.of(1.0).turn(3.0).speed(0.6).eatsSmallFish(0.6)).temp(22, 30).breed(26, 28).quality(0.4).shoal(1)
-            .brood(0, 0).growth(4.0).eats(0.5).egg(0xA8B0B8, 0x3A4250).native_(Water.RIVER, 3).native_(Water.JUNGLE, 2));
+            .brood(0, 0).growth(4.0).eats(0.5).egg(0xA8B0B8, 0x3A4250).native_(Water.RIVER, 3).native_(Water.JUNGLE, 2)),
+    // ---------------------------------------------------------------- M30 part b: the other freshwater giants
+    // the redtail catfish of the Amazon and the Orinoco: a broad, flat head with long barbels, a dark back, a white belly and a
+    // bright red tail; 1.2 m in big show tanks (wild 1.8 m), swallows every fish that fits its mouth; rests a lot by day;
+    // never spawns in a tank
+    REDTAIL_CATFISH(d("redtail_catfish", "Phractocephalus hemioliopterus", Model.REDTAIL, Group.CATFISH, Breeding.NONE, Zone.LOW)
+            .large(LargeSpecies.of(1.2).turn(2.5).speed(0.45).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(1.0).rests(0.2)).temp(20, 28).breed(24, 27).quality(0.4).shoal(1).brood(0, 0).growth(5.0).eats(0.6)
+            .nocturnal().egg(0x34363C, 0xD8402A).native_(Water.JUNGLE, 2)),
+    // the wels (European catfish) of the deep, slow rivers and lakes of Europe: a long, scaleless body that tapers into a very
+    // long anal fin, a tiny dorsal fin, two long barbels on the upper jaw and four short ones below; marbled olive and brown;
+    // up to 2.7 m wild, 1.5 m in the game; cool water (4-26 C), a night hunter that lies on the ground by day; spawns in a
+    // nest in shallow, warm water in spring and never in a tank
+    WELS_CATFISH(d("wels_catfish", "Silurus glanis", Model.WELS, Group.CATFISH, Breeding.NONE, Zone.LOW)
+            .large(LargeSpecies.of(1.5).turn(2.2).speed(0.4).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(1.0).rests(0.25)).temp(4, 26).breed(20, 24).quality(0.35).shoal(1).brood(0, 0).growth(6.0).eats(0.6)
+            .nocturnal().egg(0x4A4A36, 0xC8BC98).native_(Water.RIVER, 1)),
+    // the arapaima (pirarucu) of the Amazon floodplains: one of the largest freshwater fish (wild up to 3 m), 2 m in the game;
+    // a long, round body, the dorsal and anal fins far back next to the tail, scales turning red towards the rear; an
+    // obligate air breather that comes up to the surface for air every few minutes (low oxygen does not trouble it); eats fish;
+    // breeds only in big ponds (the male guards the young in a nest pit), never in a tank
+    ARAPAIMA(d("arapaima", "Arapaima gigas", Model.ARAPAIMA, Group.BONYTONGUE, Breeding.NONE, Zone.MID)
+            .large(LargeSpecies.of(2.0).turn(2.0).speed(0.5).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(1.0)).temp(24, 31).breed(27, 30).quality(0.45).shoal(1).brood(0, 0).growth(6.0).eats(0.6)
+            .labyrinth().airGulper().egg(0x4E5A48, 0xC8402C).native_(Water.JUNGLE, 1)),
+    // the motoro (ocellate river stingray) of the Amazon and Parana basins: a round, flat disc with orange, black-ringed
+    // eye spots and a tail with a venomous spine; disc up to 45 cm, 0.6 m with the tail; glides over the sand and lies half
+    // buried on it; eats worms, shrimp and small bottom fish; soft, clean, warm water; livebearing: after about three months
+    // the female gives birth to 2-5 fully formed pups (they need the room of an adult)
+    MOTORO_STINGRAY(d("motoro_stingray", "Potamotrygon motoro", Model.STINGRAY, Group.RAY, Breeding.LIVEBEARER, Zone.BOTTOM)
+            .large(LargeSpecies.of(0.6).turn(3.5).speed(0.35).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(0.4).swim(LargeSpecies.Swim.RAY_BOTTOM).rests(0.4)).temp(24, 30).breed(26, 29).quality(0.65).shoal(1)
+            .brood(2, 5).growth(4.0).eats(0.4).egg(0x6A5034, 0xE8902C).native_(Water.JUNGLE, 2));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
@@ -251,7 +283,12 @@ public enum TankmateSpecies {
         /** M29 part c: the rainbowfish with two dorsal fins, the swordtail with the male's sword. */
         RAINBOW, SWORDTAIL,
         /** M30 part a: the pangasius (long, torpedo-shaped, a high sickle-shaped dorsal fin, a deeply forked tail). */
-        PANGASIUS }
+        PANGASIUS,
+        /**
+         * M30 part b: the redtail catfish (broad flat head, long barbels), the wels (long body, endless anal fin), the arapaima
+         * (long round body, dorsal and anal fin at the tail), the stingray (flat round disc with wave segments, thin tail).
+         */
+        REDTAIL, WELS, ARAPAIMA, STINGRAY }
 
     /** Family group (handbook, overlays, menu). */
     public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE, CICHLID,
@@ -260,7 +297,11 @@ public enum TankmateSpecies {
         /** M29 part c. */
         RAINBOW,
         /** M30: the giant catfish (pangasius; part b: the redtail catfish and the wels). */
-        CATFISH }
+        CATFISH,
+        /** M30 part b: the bonytongues (arapaima). */
+        BONYTONGUE,
+        /** M30 part b: the rays (motoro stingray; part c: eagle ray, cownose ray). */
+        RAY }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -633,6 +674,11 @@ public enum TankmateSpecies {
             this.length = l.lengthBlocks();
             this.width = (float) Math.min(1.2, Math.max(0.5, length * 0.4));
             this.height = (float) Math.min(0.9, Math.max(0.3, length * (model == Model.PANGASIUS ? 0.3 : 0.25)));
+            if (l.ray()) {
+                // M30 part b: a flat disc about as wide as half its length with the tail, thin
+                this.width = (float) Math.min(1.6, Math.max(0.4, length * 0.55));
+                this.height = (float) Math.min(0.4, Math.max(0.12, length * 0.13));
+            }
             this.stock = l.stock();
             this.trade = Trade.NONE;
             return this;

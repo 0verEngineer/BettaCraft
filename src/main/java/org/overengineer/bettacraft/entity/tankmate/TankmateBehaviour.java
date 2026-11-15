@@ -143,6 +143,23 @@ final class TankmateBehaviour {
                 // spot), then it is held there
                 double arrive = mode == Mode.GLASS && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0.0225
                         : hitchPost != null ? 0.04 : 0.004; // M21.8: a seahorse holds on a little beside its post (the path ends short of it)
+                if (s.isLarge()) {
+                    // M30 part b: a big animal cannot turn on the spot: it glides in over its spot, settles and sinks onto it
+                    double len = Math.max(0.6, s.length() * fish.getAgeScale());
+                    Vec3 d = target.subtract(fish.position());
+                    boolean over = d.horizontalDistanceSqr() < len * len * 0.16 || behaviourFlags == TankmateEntity.FLAG_REST;
+                    if (!over) {
+                        move().swimTo(target.x, target.y, target.z, speed);
+                        if (++travel < 600) ticks++;
+                    } else {
+                        move().stop();
+                        behaviourFlags = TankmateEntity.FLAG_REST;
+                        Vec3 v = fish.getDeltaMovement();
+                        fish.setDeltaMovement(v.x * 0.85, Mth.clamp(d.y * 0.15, -0.04, 0.02), v.z * 0.85);
+                    }
+                    apply();
+                    return;
+                }
                 if (fish.position().distanceToSqr(target) > arrive) {
                     // M21.5: a kuhli loach creeps into its shelter around the decoration
                     Vec3 to = sheltered ? steer(server, w, target) : target;
@@ -270,6 +287,28 @@ final class TankmateBehaviour {
         double len = Math.max(1.0, s.length() * fish.getAgeScale());
         double heading = fish.getYRot() * Mth.DEG_TO_RAD;
         Vec3 p = fish.position();
+        var l = s.large();
+        // M30 part b: a stingray (and a night hunter by day) glides down to a spot ahead and lies on the ground for a while
+        double rest = l.restShare();
+        if (s.nocturnal()) rest *= server.isDay() ? 2.0 : 0.3;
+        if (rest > 0 && r.nextDouble() < rest) {
+            double ahead = len * (0.5 + r.nextDouble());
+            double ang = heading + (r.nextDouble() - 0.5) * Math.PI / 3;
+            Vec3 spot = onGround(server, w, p.x - Math.sin(ang) * ahead, p.z + Math.cos(ang) * ahead);
+            go(spot, 0.7, Mode.REST);
+            ticks = 240 + r.nextInt(l.ray() ? 600 : 360);
+            return;
+        }
+        // M30 part b: an air breather (arapaima) rises to the surface ahead for a breath every few minutes
+        if (s.airGulper() && r.nextInt(5) == 0) {
+            double ahead = len * (1.5 + r.nextDouble());
+            Vec3 at = clamp(w, new Vec3(p.x - Math.sin(heading) * ahead, p.y, p.z + Math.cos(heading) * ahead));
+            Vec3 up = w.surfacePoint(at, 0.2, Math.max(0.05, fish.getBbHeight()));
+            go(steer(server, w, up), 0.9, Mode.CRUISE);
+            largeGoal = up;
+            ticks = 100 + r.nextInt(60);
+            return;
+        }
         Vec3 best = null;
         double bestLen = -1;
         for (int i = 0; i < 12; i++) {
