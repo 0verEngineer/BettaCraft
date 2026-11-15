@@ -11,6 +11,8 @@ item_ids:
 
 # Ram Cichlid
 
+![Ram Cichlid](../images/tm_ram_cichlid.png)
+
 A small, colourful dwarf cichlid: golden head with a black bar through the eye, a black spot in the middle and blue spangles; the female has a pink belly.
 
 **Origin:** the llanos rivers of the Orinoco basin in Venezuela and Colombia.

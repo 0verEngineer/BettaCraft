@@ -11,6 +11,8 @@ item_ids:
 
 # Angelfish
 
+![Angelfish](../images/tm_angelfish.png)
+
 The tall, flat cichlid with huge swept-back fins and long pelvic threads; silver with black bars in the wild.
 
 **Origin:** calm, plant-rich waters of the Amazon.

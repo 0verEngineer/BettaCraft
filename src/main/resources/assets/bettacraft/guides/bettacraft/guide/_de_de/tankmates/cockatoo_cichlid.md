@@ -11,6 +11,8 @@ item_ids:
 
 # Kakadu-Zwergbuntbarsch
 
+![Kakadu-Zwergbuntbarsch](../images/tm_cockatoo_cichlid.png)
+
 Das Männchen trägt einen hohen, zackigen Kamm (den "Kakadu") und eine Leierschwanzflosse mit roten Zeichnungen; das viel kleinere Weibchen ist gelb mit schwarzem Streifen.
 
 **Herkunft:** der obere Amazonas in Peru und Kolumbien.

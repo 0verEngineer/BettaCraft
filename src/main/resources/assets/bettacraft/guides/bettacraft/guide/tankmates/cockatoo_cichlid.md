@@ -11,6 +11,8 @@ item_ids:
 
 # Cockatoo Dwarf Cichlid
 
+![Cockatoo Dwarf Cichlid](../images/tm_cockatoo_cichlid.png)
+
 The male carries a tall, spiky crest (the "cockatoo") and a lyre tail with red marks; the much smaller female turns yellow with a black stripe.
 
 **Origin:** the upper Amazon in Peru and Colombia.

@@ -237,6 +237,12 @@ neoForge {
                 // M28: -Pgallery=id,id,... only these species (no handbook pictures)
                 if (project.hasProperty('gallery')) systemProperty 'bettacraft.smoketest.gallery', project.property('gallery')
             }
+            if (project.hasProperty('smoketestm29')) {
+                // gradlew runClient -Psmoketestm29 : only the M29 part a scene (every cichlid variety and sex posed in two tanks,
+                // close-ups, a ram pair guarding its eggs on a slate)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m29only', 'true'
+            }
             if (project.hasProperty('smoketestm281')) {
                 // gradlew runClient -Psmoketestm281 : only the M28.1 part b scene (wild aquarium and floating plants in a river, a
                 // swamp, a jungle and a cold pond, from above and under water; add -Pshaders for Complementary)

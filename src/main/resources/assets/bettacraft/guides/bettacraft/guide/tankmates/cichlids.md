@@ -13,6 +13,10 @@ pair on a flat stone, a broad leaf or the glass and guard eggs and young togethe
 small cave that the female claims, and she guards the brood alone. Parents drive every other fish away from their brood, the
 males are territorial, the angelfish eats small fish and shrimp, and discus young feed on their parents' skin.
 
+![Rams and Apistogramma](../images/tm_cichlids.png)
+
+![A ram pair at its eggs on a slate](../images/tm_cichlid_brood.png)
+
 ## Species
 
 | Species | °C | Shoal | Betta tank | Breeding |

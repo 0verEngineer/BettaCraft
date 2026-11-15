@@ -11,6 +11,8 @@ item_ids:
 
 # Schmetterlingsbuntbarsch
 
+![Schmetterlingsbuntbarsch](../images/tm_ram_cichlid.png)
+
 Ein kleiner, bunter Zwergbuntbarsch: goldener Kopf mit schwarzer Augenbinde, ein schwarzer Fleck in der Mitte und blaue Glanzpunkte; das Weibchen hat einen rosa Bauch.
 
 **Herkunft:** die Llanos-Flüsse im Orinoko-Becken in Venezuela und Kolumbien.

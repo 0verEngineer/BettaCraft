@@ -11,6 +11,8 @@ item_ids:
 
 # Diskus
 
+![Diskus](../images/tm_discus.png)
+
 Der König des Aquariums: eine runde, flache Scheibe, wild braun mit neun blassen Binden und blauen Linien, in leuchtenden Farben gezüchtet.
 
 **Herkunft:** das warme, sehr weiche Wasser des Amazonas.

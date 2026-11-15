@@ -14,6 +14,10 @@ Diskus) laichen als Paar auf einen flachen Stein, ein breites Blatt oder die Sch
 Eltern vertreiben jeden anderen Fisch von ihrer Brut, die Männchen sind revierbildend, der Skalar frisst kleine Fische und
 Garnelen, und Diskus-Junge fressen die Haut ihrer Eltern.
 
+![Schmetterlingsbuntbarsche und Apistogramma](../images/tm_cichlids.png)
+
+![Ein Schmetterlingsbuntbarsch-Paar an seinen Eiern auf Schiefer](../images/tm_cichlid_brood.png)
+
 ## Arten
 
 | Art | °C | Schwarm | Betta-Becken | Zucht |

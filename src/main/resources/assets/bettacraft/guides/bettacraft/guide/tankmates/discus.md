@@ -11,6 +11,8 @@ item_ids:
 
 # Discus
 
+![Discus](../images/tm_discus.png)
+
 The king of the aquarium: a round, flat disc, brown with nine faint bars and blue lines in the wild, bred in bright colours.
 
 **Origin:** the warm, very soft water of the Amazon.

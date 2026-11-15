@@ -590,6 +590,32 @@ def m28c(out_en: Path) -> None:
         print("missing", src)
 
 
+# M29 part a scene (DevClientSmokeM29, -Psmoketestm29): a close-up of every cichlid species, the dwarf cichlid tank, the
+# angelfish and discus tank, a ram pair at its brood. ``py guide_images.py m29``.
+M29_DWARF_BOX = (280, 200, 1000, 740)
+M29_WORLD = {
+    "tm_ram_cichlid": ("sp_ram_cichlid", M29_DWARF_BOX),
+    "tm_bolivian_ram": ("sp_bolivian_ram", M29_DWARF_BOX),
+    "tm_cockatoo_cichlid": ("sp_cockatoo_cichlid", M29_DWARF_BOX),
+    "tm_agassiz_dwarf_cichlid": ("sp_agassiz_dwarf_cichlid", M29_DWARF_BOX),
+    "tm_angelfish": ("sp_angelfish", (200, 100, 1080, 760)),
+    "tm_discus": ("sp_discus", (240, 60, 1040, 660)),
+    "tm_cichlids": ("dwarfs_close", (0, 280, 1280, 640)),
+    "tm_cichlid_brood": ("brood", (300, 200, 1000, 620)),
+}
+
+
+def m29(out_en: Path) -> None:
+    for name, (shot, box) in M29_WORLD.items():
+        src = SHOTS / f"bettacraft_m29_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -604,6 +630,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m29"]:
+        m29(out_en)
+        return 0
     if sys.argv[1:] == ["m28c"]:
         m28c(out_en)
         return 0

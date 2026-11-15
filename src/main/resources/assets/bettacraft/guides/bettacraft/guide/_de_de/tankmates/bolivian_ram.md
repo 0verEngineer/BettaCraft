@@ -11,6 +11,8 @@ item_ids:
 
 # Bolivianischer Schmetterlingsbuntbarsch
 
+![Bolivianischer Schmetterlingsbuntbarsch](../images/tm_bolivian_ram.png)
+
 Größer, ruhiger und robuster als der Schmetterlingsbuntbarsch: beige mit gelbem Vorderkörper, einem schwarzen Fleck in der Mitte und roten Flossensäumen.
 
 **Herkunft:** Río Mamoré und Río Guaporé in Bolivien und Brasilien.

@@ -11,6 +11,8 @@ item_ids:
 
 # Agassiz's Dwarf Cichlid
 
+![Agassiz's Dwarf Cichlid](../images/tm_agassiz_dwarf_cichlid.png)
+
 The male is bluish with a long dorsal fin and an orange and blue framed spade tail; the female is yellow with a dark stripe.
 
 **Origin:** the soft blackwater of the Amazon basin.

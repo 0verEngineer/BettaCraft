@@ -11,6 +11,8 @@ item_ids:
 
 # Bolivian Ram
 
+![Bolivian Ram](../images/tm_bolivian_ram.png)
+
 Bigger, calmer and hardier than the ram: beige with a yellow front, a black spot in the middle and red fin edges.
 
 **Origin:** the Río Mamoré and Río Guaporé in Bolivia and Brazil.

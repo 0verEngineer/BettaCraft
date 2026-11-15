@@ -11,6 +11,8 @@ item_ids:
 
 # Skalar
 
+![Skalar](../images/tm_angelfish.png)
+
 Der hohe, flache Buntbarsch mit riesigen, nach hinten gezogenen Flossen und langen Bauchflossenfäden; wild silbern mit schwarzen Binden.
 
 **Herkunft:** ruhige, pflanzenreiche Gewässer des Amazonas.

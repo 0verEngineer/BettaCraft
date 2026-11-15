@@ -11,6 +11,8 @@ item_ids:
 
 # Agassiz-Zwergbuntbarsch
 
+![Agassiz-Zwergbuntbarsch](../images/tm_agassiz_dwarf_cichlid.png)
+
 Das Männchen ist bläulich mit langer Rückenflosse und einer orange und blau gesäumten Spatenschwanzflosse; das Weibchen ist gelb mit dunklem Streifen.
 
 **Herkunft:** das weiche Schwarzwasser des Amazonasbeckens.
