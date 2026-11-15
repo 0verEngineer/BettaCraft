@@ -304,6 +304,7 @@ public final class MobsInGlassGameTests {
         }
         h.assertTrue(TankInhabitants.containedType(vial) == EntityType.SPIDER, "the vial holds a spider");
         ServerPlayer p = MockPlayers.serverPlayer(h);
+        p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL); // creative keeps the full item
         p.setItemInHand(InteractionHand.MAIN_HAND, vial);
         var r = TankInhabitants.tryInsert(vial, h.getLevel(), c.getBlockPos(), p, InteractionHand.MAIN_HAND);
         h.assertTrue(r.consumesAction() && mobs(h, c, EntityType.SPIDER).size() == 1, "the spider is in the tank");
