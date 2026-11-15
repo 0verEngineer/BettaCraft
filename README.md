@@ -103,7 +103,8 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 
 ### Terraria, turtles, frogs and mobs in glass
 - **Terrarium and paludarium:** a tank without water is a terrarium, one with water and land built in its interior a
-  paludarium, with air temperature, humidity and UV; heat mats, basking lamps, misters and a thermo-hygrometer.
+  paludarium, with air temperature, humidity and UV; heat mats, basking lamps, misters and a thermo-hygrometer. The
+  tank type can also be fixed in the menu, so a terrarium is never flooded by mistake.
 - **Turtles:** musk turtle, red-eared and yellow-bellied slider, Hermann's tortoise (brumates in the cold) and Reeves'
   turtle; eggs in sand or soil, and the **nest temperature decides the sex** of the hatchlings.
 - **Amphibians and reptiles:** poison dart frogs (tadpoles in the water), Cranwell's horned frog, leopard and crested

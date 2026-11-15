@@ -4,7 +4,30 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
-## [1.26.0-beta.1] - 2026-11-15
+## [1.26.1-beta.1] - 2026-11-15
+
+A tank type switch, so a terrarium is never flooded by mistake.
+
+### Added
+- **Tank type** (button "Type" in the overview tab of the tank menu next to the target temperature, and at the top of the
+  climate tab): *Automatic* (the default for new and existing tanks: the kind follows the water and the land as before),
+  *Aquarium*, *Paludarium* or *Terrarium*. A fixed type makes the tank that kind.
+- **Water limit of a fixed type:** a terrarium takes no water, a paludarium only up to the height where its land part stays
+  at `terrarium.paludariumLandShare` (the climate tab shows the most water). The limit holds for buckets, pipes and pumps,
+  the fluid capability of other mods (Create pipes and the like get the part that fits instead of a refusal), the top-off
+  and the water an animal brings along; a water change only replaces what it drained. An action bar message says why
+  ("Terrarium: no water", "Paludarium: water only up to 1.8 blocks high").
+- Nothing is ever removed: a type that does not fit the water already in the tank keeps it (the menu says it is too much,
+  no more comes in), draining works as always.
+- The type is saved (absent in older worlds = automatic) and synced; the info overlays (Jade, The One Probe, WTHIT) show a
+  fixed type as "(fixed)"; the tank log notes who set it.
+- Feature switch `features.terrariums.tankMode` (off: every tank is automatic, the chosen type is kept); en + de; handbook
+  page "Terrarium and paludarium".
+
+### Changed
+- Network version 14: the tank type packet (client -> server) is checked like the other menu actions: open menu and
+  reach, the lock, claims and spawn protection, a valid type and at most one change every 5 ticks per tank.
+
 
 Modpack configuration: every feature can be switched off on its own, presets for simple, realistic and decoration
 tanks, a care mode without deaths, a second hardening pass over the systems of 1.14 to 1.25, tools for foreign animal

@@ -8,8 +8,8 @@ feature: terrariums.enabled
 
 # Terrarium and paludarium
 
-Every tank can also be a **terrarium** or a **paludarium**. You do not switch it: the tank works out what it is from its
-water and from the **land** you build in its [interior](interior.md).
+Every tank can also be a **terrarium** or a **paludarium**. Normally you do not switch it: the tank works out what it is
+from its water and from the **land** you build in its [interior](interior.md). You can also fix the type (see below).
 
 * **Aquarium**: water and little or no land. Everything as before.
 * **Paludarium**: water and a land part. Build soil, sand, stones or wood in the interior so that it rises **above the
@@ -20,6 +20,28 @@ water and from the **land** you build in its [interior](interior.md).
 
 The tank log notes when the kind changes. A terrarium or paludarium gets a new tab **Climate** in the tank menu; aquaria
 look as they always did.
+
+## Fixing the tank type
+
+A terrarium that is filled with water by mistake would quietly become a paludarium or an aquarium. To prevent that, the
+button **Type** (in the overview tab next to the target temperature, and at the top of the climate tab) sets the type:
+
+* **Automatic** (every tank starts like this, old tanks too): the kind follows the water and the land as described above.
+* **Aquarium**: the tank stays an aquarium, whatever land it has. Water as much as fits.
+* **Paludarium**: the tank stays a paludarium. Water only comes in up to the height where the land part stays at 15 %
+  (`terrarium.paludariumLandShare`); the climate tab shows how much that is. Build more land higher up and more water fits.
+* **Terrarium**: the tank stays a terrarium and takes **no water at all** (for a water dish leave the type on automatic).
+
+The limit holds for every way water comes in: buckets, pipes and pumps (also of other mods such as Create: they get the
+part that fits), the reservoir, the top-off of the level sensor and the water an animal brings along. A water change only
+replaces the water it took out, and rain never fills a tank. Instead of the water you get a message ("Terrarium: no water",
+"Paludarium: water only up to 1.8 blocks high").
+
+**Nothing is ever removed.** If you fix a type that does not fit the water in the tank (a full tank set to terrarium), the
+water stays, the menu says that it is too much and none comes in; draining with a bucket or a pump works as always.
+Clicking cycles through the types (Shift-click goes back); the tank log notes who set which type. Locked tanks, claims
+and spawn protection apply. The info overlays show a fixed type as "(fixed)". Switch: `features.terrariums.tankMode`
+(off: every tank is automatic again; the chosen type is kept).
 
 ## The climate
 
@@ -108,6 +130,6 @@ and the menu says so. A paludarium keeps all of them for its water.
 Server config `terrarium.*`: the land shares of the kinds, the strength of the devices, the time constants, the water of
 the mister, the days to harm; `power.*`: heat mats use the heaters' energy switch (`heatMatFePerTick`), misters their own
 (`terrarium.misterRequiresEnergy`). Common config: `features.terrariums.enabled` (off: every tank is an aquarium),
-`features.terrariums.devices`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
+`features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
 `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`, `features.mobsInGlass.enabled`. Turtles (and the egg layers of the amphibians and reptiles):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

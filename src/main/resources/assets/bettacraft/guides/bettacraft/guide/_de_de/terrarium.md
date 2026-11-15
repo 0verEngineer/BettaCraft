@@ -8,8 +8,9 @@ feature: terrariums.enabled
 
 # Terrarium und Paludarium
 
-Jedes Becken kann auch ein **Terrarium** oder ein **Paludarium** sein. Du schaltest das nicht um: Das Becken erkennt
-selbst, was es ist, an seinem Wasser und am **Land**, das du in seinem [Innenraum](interior.md) baust.
+Jedes Becken kann auch ein **Terrarium** oder ein **Paludarium** sein. Normalerweise schaltest du das nicht um: Das Becken
+erkennt selbst, was es ist, an seinem Wasser und am **Land**, das du in seinem [Innenraum](interior.md) baust. Du kannst den
+Typ aber auch festlegen (siehe unten).
 
 * **Aquarium**: Wasser und wenig oder kein Land. Alles wie bisher.
 * **Paludarium**: Wasser und ein Landteil. Bau Erde, Sand, Steine oder Holz im Innenraum so, dass sie **über die
@@ -20,6 +21,29 @@ selbst, was es ist, an seinem Wasser und am **Land**, das du in seinem [Innenrau
 
 Das Logbuch des Beckens vermerkt, wenn sich die Art ändert. Ein Terrarium oder Paludarium bekommt im Beckenmenü einen
 neuen Reiter **Klima**; Aquarien sehen aus wie immer.
+
+## Den Beckentyp festlegen
+
+Ein Terrarium, das man aus Versehen mit Wasser füllt, würde still zum Paludarium oder Aquarium. Damit das nicht passiert,
+stellt der Knopf **Typ** (im Übersichts-Reiter neben der Zieltemperatur und oben im Klima-Reiter) den Typ ein:
+
+* **Automatisch** (so startet jedes Becken, auch alte): Die Art folgt Wasser und Land wie oben beschrieben.
+* **Aquarium**: Das Becken bleibt ein Aquarium, egal wie viel Land es hat. Wasser, so viel hineinpasst.
+* **Paludarium**: Das Becken bleibt ein Paludarium. Wasser kommt nur bis zu der Höhe hinein, bei der der Landteil bei 15 %
+  bleibt (`terrarium.paludariumLandShare`); der Klima-Reiter zeigt, wie viel das ist. Bau höher Land, dann passt mehr Wasser.
+* **Terrarium**: Das Becken bleibt ein Terrarium und nimmt **gar kein Wasser** an (für eine Wasserschale den Typ auf
+  automatisch lassen).
+
+Die Grenze gilt für jeden Weg, auf dem Wasser hineinkommt: Eimer, Rohre und Pumpen (auch anderer Mods wie Create: sie
+bekommen den Teil, der passt), das Reservoir, das Nachfüllen über den Füllstandssensor und das Wasser, das ein Tier
+mitbringt. Ein Wasserwechsel ersetzt nur das Wasser, das er abgelassen hat, und Regen füllt nie ein Becken. Statt des
+Wassers kommt eine Meldung („Terrarium: kein Wasser“, „Paludarium: Wasser höchstens bis 1.8 Blöcke hoch“).
+
+**Es wird nie etwas entfernt.** Stellst du einen Typ ein, der nicht zum Wasser im Becken passt (ein volles Becken auf
+Terrarium), bleibt das Wasser, das Menü sagt, dass es zu viel ist, und es kommt keins dazu; Ablassen mit Eimer oder Pumpe
+geht wie immer. Ein Klick schaltet weiter (Umschalt-Klick zurück); das Logbuch vermerkt, wer welchen Typ eingestellt hat.
+Gesperrte Becken, Claims und Spawn-Schutz gelten. Die Info-Anzeigen zeigen einen festen Typ als „(fest)“. Schalter:
+`features.terrariums.tankMode` (aus: jedes Becken ist wieder automatisch; der gewählte Typ bleibt gespeichert).
 
 ## Das Klima
 
@@ -110,6 +134,6 @@ und das Menü sagt das. Ein Paludarium behält sie alle für sein Wasser.
 Server-Config `terrarium.*`: die Landanteile der Arten, die Stärke der Geräte, die Zeitkonstanten, das Wasser der
 Sprühanlage, die Tage bis zum Schaden; `power.*`: Heizmatten nutzen den Energie-Schalter der Heizer (`heatMatFePerTick`),
 Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrariums.enabled` (aus: jedes Becken ist ein
-Aquarium), `features.terrariums.devices`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
+Aquarium), `features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.terrariums.herps`,
 `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`, `features.mobsInGlass.enabled`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

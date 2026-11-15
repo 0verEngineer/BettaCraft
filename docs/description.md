@@ -94,7 +94,7 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 ## Terraria, turtles, frogs and mobs in glass
 
 - A tank without water is a **terrarium**, one with water and land a **paludarium**, with air temperature, humidity and
-  UV from heat mats, basking lamps and misters.
+  UV from heat mats, basking lamps and misters. Fix the tank type in the menu and a terrarium is never flooded by mistake.
 - **Turtles** (musk turtle, sliders, Hermann's tortoise, Reeves' turtle) lay eggs in the sand, and the nest temperature
   decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
   that climb the glass and a **corn snake**.
