@@ -471,12 +471,51 @@ def discus():
     return p, [body, caudal(p, 6, 10, "round"), dorsal_fin(p, 0.24, 15, 4, "long", lean=0)] + pectorals(p, 0.28, 4, 3)
 
 
+# M29 part b: puffers, barbs, the garra
+
+def puffer():
+    """M29 puffers: a short, round, wide body with a blunt head and big eyes high up, small dorsal and anal fins set far
+    back opposite each other, a small round tail and fanning pectorals."""
+    p = fusiform_plan("puffer", depth=11.0, width=8.0, mid=6.5, peak=0.35, head=0.72, ped_frac=0.3, snout=-13, ped=6)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.16, up=0.18, size=3, inset=0.6)
+    body.boxes.append(anal_fin(p, 0.7, 4, 4, "round_small"))
+    return p, [body, caudal(p, 6, 8, "round"), dorsal_fin(p, 0.7, 4, 4, "round_small", lean=-12)] + pectorals(p, 0.3, 3, 3, spread=55, up=0.55)
+
+
+def barb():
+    """M29 barbs: a deep, compressed body with a high back, a tall triangular dorsal fin and a forked tail."""
+    p = fusiform_plan("barb", depth=11.0, width=4.0, mid=7.0, peak=0.42, head=0.5, ped_frac=0.3)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.13, up=0.32)
+    body.boxes.append(anal_fin(p, 0.62, 5, 4, "anal"))
+    body.boxes += pair("pelvic", "pelvic", (0.9, p.bottom(0.45) + 0.8, p.snout + 0.45 * 24), (0, 3, 3), (14, 18, 0), "oval")
+    return p, [body, caudal(p, 8, 12, "fork"), dorsal_fin(p, 0.4, 6, 7, "tri", lean=-6)] + pectorals(p, 0.22, 4, 2)
+
+
+def garra():
+    """M29 garra: a long, flat-bellied bottom fish with a broad head, a sucker disc under the mouth, a forked tail and
+    horizontal pectorals."""
+    p = Plan("garra", -15, 9, 7.0, 6.0, 0.6, 0.4, 0.3, flat_belly=True, belly=0.0, nseg=9)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.12, up=0.25, size=2, inset=0.4)
+    body.boxes.append(box("sucker", "barbel", (0, -0.5, -13.5), (3, 1, 2)))
+    body.boxes += pair("barbel", "barbel", (1.2, -1.5, -15.2), (1, 1, 1), (20, 25, 0), None)
+    body.boxes.append(anal_fin(p, 0.7, 4, 3, "anal"))
+    body.boxes += pair("pelvic", "pelvic", (1.6, -0.6, p.snout + 0.5 * 24), (0, 3, 3), (30, 30, 0), "oval")
+    return p, [body, caudal(p, 9, 11, "fork"), dorsal_fin(p, 0.36, 5, 5, "tri", lean=-10)] + pectorals(p, 0.2, 5, 3, horizontal=True)
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
     "clown": clown, "tang": tang, "goby": goby, "damsel": damsel,
     "seahorse": seahorse,
     "cichlid": cichlid, "apisto": apisto, "angel": angel, "discus": discus,
+    "puffer": puffer, "barb": barb, "garra": garra,
 }
 
 
@@ -809,7 +848,169 @@ def looks(species, variety, female):
         return angel_look(var)
     if sp == "discus":
         return discus_look(var)
+    if sp in ("dwarf_puffer", "red_eye_puffer", "green_spotted_puffer"):
+        return puffer_look(sp, var, female)
+    if sp in ("tiger_barb", "odessa_barb", "cherry_barb"):
+        return barb_look(sp, var, female)
+    if sp in ("dwarf_chain_loach", "reticulated_loach", "garra_rufa"):
+        return loach29_look(sp)
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
+
+
+# M29 part b: puffer, barb and loach looks
+
+def puffer_look(sp, var, female):
+    """Puffers: the dwarf puffer yellow-green with dark blotches and a pale belly (the male with a dark line along the
+    belly), the red-eye puffer brown (the male with a dark belly edged white and red fin edges, the female spotted), the
+    green spotted puffer bright green with round black spots and a white belly."""
+    rnd = _spangles(2931 + len(sp) + (3 if female else 0))
+
+    def blot(z, y, x, sc):
+        return rnd[int(abs(z) * sc + abs(x) * 0.9) % 64, int((y + 30) * sc * 0.9) % 64]
+
+    def body(t, v, x, z, y):
+        if sp == "green_spotted_puffer":
+            if v > 0.62:
+                return C("#f4f4ec")
+            k = math.sin(z * 1.7 + 0.6 * math.sin(y)) * math.sin(y * 1.9 + 0.5 * math.sin(z * 0.7) + x * 0.8)
+            if k > 0.55:
+                return C("#141814")
+            return mix(C("#a8d020"), C("#d8e840"), v / 0.62)
+        if sp == "red_eye_puffer":
+            if not female:
+                if v > 0.72:
+                    return C("#f0ece0") if v < 0.78 else C("#2a1c18")  # white edge, dark belly
+                if v < 0.18 and 0.3 < t < 0.75:
+                    return C("#c8402a")  # the red keel on the back
+                return mix(C("#8a6040"), C("#b08a60"), v)
+            if v > 0.78:
+                return C("#e8e0cc")
+            k = blot(z, y, x, 2.9)
+            return C("#4a3020") if k > 0.75 else mix(C("#a08058"), C("#c8a878"), v)
+        # dwarf puffer
+        if v > 0.7:
+            if not female and v > 0.8 and 0.3 < t < 0.85:
+                return C("#3a3a20")  # the dark line along the male's belly
+            return C("#f0ecc8")
+        k = blot(z, y, x, 1.6)
+        if k > 0.62:
+            return C("#2e3a1e")
+        return mix(C("#a8b030"), C("#d8d050"), v / 0.7)
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "red_eye_puffer" and not female and part in ("tail", "dorsal", "anal") and (abs(b) > 0.6 or a > 0.75):
+            return C("#d82a20")
+        if sp == "green_spotted_puffer":
+            return C("#d8e8a0")
+        return C("#e0dcc0") if part != "tail" else C("#d8d4b0")
+    eye = "#e02818" if sp == "red_eye_puffer" else "#1a3a5a" if sp == "dwarf_puffer" else "#d0a020"
+    return Look(body, fins, eye=eye, ring="#e8d070" if sp == "green_spotted_puffer" else "#c0c0c0")
+
+
+def barb_look(sp, var, female):
+    """Barbs: the tiger barb golden with four black bars (Green: dark moss green, Albino: pale pink with white bars),
+    red snout and fin edges; the odessa barb silver-olive, the male with a broad scarlet band, the female with two dark
+    spots; the cherry barb with a dark stripe, the male cherry red, the female beige."""
+    rnd = _spangles(2941 + len(sp) + len(var) + (7 if female else 0))
+
+    def body(t, v, x, z, y):
+        k = rnd[int(abs(z) * 2.9 + abs(x)) % 64, int((y + 30) * 2.4) % 64]
+        if sp == "tiger_barb":
+            bars = ((0.12, 0.035), (0.34, 0.055), (0.6, 0.05), (0.9, 0.035))
+            on_bar = any(abs(t - c - (v - 0.5) * 0.04) < half for c, half in bars) and v < 0.92
+            if var == "green":
+                base = mix(C("#1e3a1e"), C("#3a6a2e"), v)
+                return mix(base, C("#5ac85a"), 0.5) if k > 0.8 else base
+            if var == "albino":
+                if on_bar:
+                    return C("#f8f4f0")
+                if t < 0.06:
+                    return C("#f05a4a")
+                return mix(C("#f0c8b0"), C("#f8e4d4"), v)
+            if on_bar:
+                return C("#141414")
+            if t < 0.06:
+                return C("#e04030")
+            return mix(C("#d8a040"), C("#f4e0a0"), v)
+        if sp == "odessa_barb":
+            scale = k > 0.82 and v < 0.6
+            if female:
+                if (abs(t - 0.2) < 0.04 or abs(t - 0.86) < 0.04) and 0.35 < v < 0.6:
+                    return C("#1e1a14")
+                return mix(C("#b8b088"), C("#f0ecd8"), v)
+            if 0.4 < v < 0.75 and 0.08 < t < 0.95:
+                return C("#e02a1e") if not scale else C("#901810")
+            if abs(t - 0.2) < 0.035 and 0.3 < v < 0.5:
+                return C("#1e1a14")
+            return mix(C("#8a8a60"), C("#d8d4b8"), v) if not scale else C("#3a3628")
+        # cherry barb
+        stripe = abs(v - 0.5) < 0.06 and 0.04 < t < 0.95
+        if stripe:
+            return C("#3a1410") if not female else C("#3a2a20")
+        if female:
+            return mix(C("#b89870"), C("#ecdcc0"), v)
+        return mix(C("#c02018"), C("#f04a30"), v * 0.8)
+
+    def fins(part, a, b, t, v, z, y):
+        h = (b + 1) / 2
+        if sp == "tiger_barb":
+            if var == "green":
+                return C("#e04030") if (part in ("dorsal", "anal") and h > 0.7) or (part == "tail" and abs(b) > 0.6) else C("#3a5a3a")
+            if var == "albino":
+                return C("#f07a5a") if part in ("dorsal", "tail", "pelvic") else C("#f0e0d4")
+            if part == "dorsal":
+                return C("#141414") if h < 0.75 else C("#e03a28")
+            if part == "pelvic" or (part == "tail" and abs(b) > 0.55):
+                return C("#e03a28")
+            return C("#e8dcc0")
+        if sp == "odessa_barb":
+            if part in ("dorsal", "anal", "pelvic") and not female and (int(a * 6) % 2 == 0):
+                return C("#1e1a14")
+            return C("#e03a28") if not female and part == "tail" else C("#e8e4d0")
+        if not female and part in ("dorsal", "tail", "anal", "pelvic"):
+            return C("#d83020")
+        if part == "dorsal" and h > 0.6:
+            return C("#1e1410")
+        return C("#e8d8c0")
+    return Look(body, fins, eye="#d02828" if var == "albino" else "#141414")
+
+
+def loach29_look(sp):
+    """The dwarf chain loach pale with a chain of dark links along the side and back, the reticulated loach grey-cream
+    with a dark net of Y-shaped bands, the garra grey-brown with a darker stripe and a dark spot at the tail base."""
+
+    def body(t, v, x, z, y):
+        if sp == "dwarf_chain_loach":
+            if v > 0.82:
+                return C("#f4f0e4")
+            link = abs(v - 0.55) < 0.06 and t > 0.08
+            ring = math.sin(z * 1.3) > 0.55 and v < 0.6 and t > 0.06
+            if link or ring or (v < 0.12 and math.sin(z * 1.3 + 1.6) > 0.2):
+                return C("#2a2420")
+            return mix(C("#d8d0b0"), C("#f0ecd8"), v)
+        if sp == "reticulated_loach":
+            if v > 0.85:
+                return C("#ece6d8")
+            k = math.sin(z * 1.1 + 2.0 * math.sin(v * 3.1)) * math.sin(v * 7.5 + z * 0.4)
+            if abs(k) < 0.28:
+                return C("#2a2428")
+            return mix(C("#b8b0a0"), C("#e0d8c4"), v)
+        # garra
+        if t > 0.9 and 0.35 < v < 0.65:
+            return C("#201c18")
+        if abs(v - 0.55) < 0.06 and t > 0.15:
+            return C("#4a443a")
+        if v > 0.85:
+            return C("#d8d0c0")
+        return mix(C("#6a6458"), C("#a8a090"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "dwarf_chain_loach":
+            return C("#e8e0c8") if part != "tail" or abs(b) < 0.4 else C("#2a2420")
+        if sp == "reticulated_loach":
+            return C("#2a2428") if int(a * 5 + (b + 1) * 2) % 2 == 0 and part in ("tail", "dorsal") else C("#d8d0c0")
+        return C("#9a9488") if part != "tail" else C("#8a8478")
+    return Look(body, fins, eye="#2a2420")
 
 
 # M29 part a: cichlid looks
@@ -1379,6 +1580,16 @@ SPECIES = [
     ("agassiz_dwarf_cichlid", "apisto", ["wild", "fire_red"], True),
     ("angelfish", "angel", ["wild", "black", "marble", "koi", "platinum"], False),
     ("discus", "discus", ["wild", "red_turquoise", "pigeon_blood", "blue_diamond"], False),
+    # M29 part b: puffers, barbs, loaches
+    ("dwarf_puffer", "puffer", ["wild"], True),
+    ("red_eye_puffer", "puffer", ["wild"], True),
+    ("green_spotted_puffer", "puffer", ["wild"], False),
+    ("tiger_barb", "barb", ["wild", "green", "albino"], False),
+    ("odessa_barb", "barb", ["wild"], True),
+    ("cherry_barb", "barb", ["wild"], True),
+    ("dwarf_chain_loach", "loach", ["wild"], False),
+    ("reticulated_loach", "loach", ["wild"], False),
+    ("garra_rufa", "garra", ["wild"], False),
 ]
 
 

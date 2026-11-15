@@ -148,6 +148,7 @@ public final class TankmateBreeding {
         grazing(t, mates);
         snails(level, c, mates, days);
         predators(level, c, mates, days); // M29
+        Puffers.finNipping(level, c, bettas, mates, days, now); // M29 part b
         fry(level, c, bettas, mates, days);
         boolean full = full(level, c, live);
         caves(level, c, mates, now);
@@ -257,41 +258,72 @@ public final class TankmateBreeding {
         t.setFishGrazing(g * ServerConfig.getOr(ServerConfig.ALGAE_CLEANER_STRENGTH, 1.0));
     }
 
-    /** Clown loaches eat snails (not the big apple snails; nerites have hard shells). */
+    /**
+     * Snail eaters crack snails (not the big apple snails; nerites have hard shells): the loaches
+     * ({@code tankmates.behaviour.clownLoachSnailsPerDay}) and the puffers ({@code pufferSnailsPerDay}, M29 part b), who
+     * prefer bladder and ramshorn snails and wear their teeth down on them.
+     */
     private static void snails(ServerLevel level, TankBlockEntity c, List<TankmateEntity> mates, double days) {
-        double rate = ServerConfig.getOr(ServerConfig.TANKMATES_LOACH_SNAILS, 0.5);
-        int loaches = 0;
-        for (TankmateEntity m : mates) if (m.species().eatsSnails() && m.lifeStage().ordinal() >= LifeStage.SUBADULT.ordinal()) loaches++;
-        if (loaches == 0 || rate <= 0) {
+        double loachRate = ServerConfig.getOr(ServerConfig.TANKMATES_LOACH_SNAILS, 0.5);
+        double pufferRate = ServerConfig.getOr(ServerConfig.TANKMATES_PUFFER_SNAILS, 1.0);
+        List<TankmateEntity> eaters = new ArrayList<>();
+        double expected = 0;
+        for (TankmateEntity m : mates) {
+            if (!m.species().eatsSnails() || m.lifeStage().ordinal() < LifeStage.SUBADULT.ordinal()) continue;
+            double rate = m.species().puffer() ? pufferRate : loachRate;
+            if (rate <= 0) continue;
+            eaters.add(m);
+            expected += rate * days;
+        }
+        if (eaters.isEmpty()) {
             c.tankmateSnailLogged = false;
             return;
         }
         TankData t = c.getTank();
         RandomSource r = level.getRandom();
-        double expected = rate * loaches * days;
         int n = (int) Math.floor(expected) + (r.nextDouble() < expected - Math.floor(expected) ? 1 : 0);
         int eaten = 0;
+        TankmateEntity by = null;
         for (int i = 0; i < n; i++) {
+            TankmateEntity m = eaters.get(r.nextInt(eaters.size()));
             List<Critter> prey = new ArrayList<>();
+            double total = 0;
             for (Critter k : t.critters()) {
                 if (!k.alive() || k.species.group() != CritterSpecies.Group.SNAIL) continue;
                 if (k.species == CritterSpecies.APPLE_SNAIL && k.adult()) continue;
                 prey.add(k);
+                total += snailWeight(m, k);
             }
             if (prey.isEmpty()) break;
-            Critter k = prey.get(r.nextInt(prey.size()));
+            double pick = r.nextDouble() * total;
+            Critter k = prey.getLast();
+            for (Critter q : prey) {
+                pick -= snailWeight(m, q);
+                if (pick <= 0) {
+                    k = q;
+                    break;
+                }
+            }
             boolean nerite = k.species.model() == CritterSpecies.Model.NERITE;
             if (nerite && r.nextInt(3) != 0) continue;
             t.critters().remove(k);
+            if (m.species().puffer()) m.wearTeeth(); // M29 part b: the shell wears the teeth down
             eaten++;
+            if (by == null) by = m;
         }
         if (eaten > 0) {
             c.markTankChanged();
             if (!c.tankmateSnailLogged) {
                 c.tankmateSnailLogged = true;
-                TankCare.log(level, c, "log.bettacraft.tm.ate_snails", "@" + TankmateSpecies.CLOWN_LOACH.translationKey(), String.valueOf(eaten));
+                TankCare.log(level, c, "log.bettacraft.tm.ate_snails", "@" + by.species().translationKey(), String.valueOf(eaten));
             }
         }
+    }
+
+    /** M29 part b: puffers go for the small, thin-shelled bladder and ramshorn snails first. */
+    private static double snailWeight(TankmateEntity eater, Critter k) {
+        if (!eater.species().puffer()) return 1.0;
+        return k.species == CritterSpecies.BLADDER_SNAIL || k.species == CritterSpecies.RAMSHORN ? 4.0 : 1.0;
     }
 
     // ------------------------------------------------------------------ fry eaten

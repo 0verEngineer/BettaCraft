@@ -46,11 +46,11 @@ Selten, bei 22–26 °C: einzelne Eier an Glas und Blättern (6–18).
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,84–0,99 % pro Schwung (etwa 1 von 101–120 Schwüngen), 1–4 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,56–0,66 % pro Schwung (etwa 1 von 152–180 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,51–0,61 % pro Schwung (etwa 1 von 165–195 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,53–0,63 % pro Schwung (etwa 1 von 158–187 Schwüngen), 1–4 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.wildFish`).
 * **Wild** in Dschungelgewässern, in Gruppen von 3–5 (Spawn-Gewicht 5) (Config `features.wildFish`).
-* **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 20 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 6 für 3 Smaragde; eins von 25 in diesem Angebot.
 * **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

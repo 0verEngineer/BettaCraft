@@ -11,6 +11,7 @@ item_ids:
   - bettacraft:frozen_mosquito_larvae
   - bettacraft:frozen_artemia
   - bettacraft:frozen_daphnia
+  - bettacraft:shell_food
 ---
 
 # Futtervielfalt
@@ -22,6 +23,7 @@ item_ids:
   <ItemImage id="bettacraft:frozen_artemia" scale="2" />
   <ItemImage id="bettacraft:frozen_daphnia" scale="2" />
   <ItemImage id="bettacraft:shrimp_food" scale="2" />
+  <ItemImage id="bettacraft:shell_food" scale="2" />
 </Row>
 
 Jedes Fischfutter gehört zu einer **Futtergruppe**: Pellets, Flocken, Granulat, Tabletten, Frostfutter oder
@@ -42,9 +44,10 @@ Lebendfutter. Jeder Fisch merkt sich, welche Gruppen er in den letzten 3 Tagen g
 | Bodenfische (Panzerwelse, Schmerlen) | Granulat, Tabletten, Frostfutter | Flocken (sie schwimmen oben) |
 | Weidegänger (Harnischwelse, Otocinclus, Doktorfische) | Tabletten | Lebend- und Frostfutter, Flocken |
 | Seepferdchen | Frostfutter | |
+| Kugelfische | Schalenfutter, Frost- und Lebendfutter | Flocken, Pellets |
 
 Datapacks ändern das mit den Item-Tags `#bettacraft:food_groups/<gruppe>` und `#bettacraft:diet/<fresser>/favourite`
-und `/poor` (`betta`, `omnivore`, `bottom`, `grazer`, `seahorse`).
+und `/poor` (`betta`, `omnivore`, `bottom`, `grazer`, `seahorse`, `puffer`).
 
 ## Die Futter
 
@@ -54,6 +57,8 @@ und `/poor` (`betta`, `omnivore`, `bottom`, `grazer`, `seahorse`).
   konditioniert für die Zucht und hält sich. Es geht nicht durch die [Lebendfutter-Pumpe](live_food_pump.md).
 * **Garnelenfutter** sinkt zu den Garnelen, Krebsen und Schnecken; die Fische lassen es liegen. Es gibt ihnen doppelt so
   viel Futter wie ein übriges Pellet (`diet.shrimpFoodFactor`).
+* **Schalenfutter** ist hartes Futter mit zerstoßenen Schalen (`#bettacraft:hard_food`): Es sinkt, die Fische fressen es wie
+  Granulat, und die [Kugelfische](../tankmates/puffers.md) schleifen sich daran die Zähne ab wie an Schnecken.
 
 Alle kommen aus der [Futtermaschine](food_maker.md).
 
@@ -65,3 +70,4 @@ Alle kommen aus der [Futtermaschine](food_maker.md).
 * <ItemLink id="bettacraft:frozen_mosquito_larvae" />: **[Futtermaschine](food_maker.md)**: 4 × <ItemLink id="bettacraft:mosquito_larvae" /> + 1 × <ItemLink id="minecraft:ice" /> → 4.
 * <ItemLink id="bettacraft:frozen_artemia" />: **[Futtermaschine](food_maker.md)**: 4 × <ItemLink id="bettacraft:artemia_nauplii" /> + 1 × <ItemLink id="minecraft:ice" /> → 4.
 * <ItemLink id="bettacraft:frozen_daphnia" />: **[Futtermaschine](food_maker.md)**: 4 × <ItemLink id="bettacraft:daphnia" /> + 1 × <ItemLink id="minecraft:ice" /> → 4.
+* <ItemLink id="bettacraft:shell_food" />: **[Futtermaschine](food_maker.md)**: 2 × <ItemLink id="minecraft:bone_meal" /> + 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 8.

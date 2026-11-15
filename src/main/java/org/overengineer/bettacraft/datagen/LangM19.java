@@ -244,8 +244,8 @@ final class LangM19 {
         a.accept("bettacraft.configuration.shoalStress.tooltip", "Shoaling fish in a group smaller than their species' minimum are stressed (and get sick after a while)");
         a.accept("bettacraft.configuration.bettaAggression", "Betta aggression");
         a.accept("bettacraft.configuration.bettaAggression.tooltip", "How hard male bettas go for male guppies and dwarf gouramis (hit points per day; 0 = peaceful)");
-        a.accept("bettacraft.configuration.clownLoachSnailsPerDay", "Snails a clown loach eats");
-        a.accept("bettacraft.configuration.clownLoachSnailsPerDay.tooltip", "Snails one clown loach eats per day (not the big apple snails; nerites are hard to crack)");
+        a.accept("bettacraft.configuration.clownLoachSnailsPerDay", "Snails a loach eats");
+        a.accept("bettacraft.configuration.clownLoachSnailsPerDay.tooltip", "Snails one loach (clown loach, dwarf chain loach, reticulated loach) eats per day (not the big apple snails; nerites are hard to crack)");
         a.accept("bettacraft.configuration.bottomFoodShare", "Food for the bottom fish");
         a.accept("bettacraft.configuration.bottomFoodShare.tooltip", "Chance that a bottom fish gets its share of food that sinks past faster fish; algae wafers go to the bottom fish directly");
         a.accept("bettacraft.configuration.tankmateStockingFactor", "Stocking factor");

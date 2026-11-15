@@ -230,6 +230,10 @@ public final class ServerConfig {
     /** M29: small fish and shrimp an adult angelfish eats per day; how hard cichlid parents drive intruders off their brood. */
     public static final ModConfigSpec.DoubleValue TANKMATES_PREDATION;
     public static final ModConfigSpec.DoubleValue TANKMATES_BROOD_DEFENCE;
+    /** M29 part b: snails a puffer eats per day, days until its teeth overgrow without snails or hard food, fin nipping. */
+    public static final ModConfigSpec.DoubleValue TANKMATES_PUFFER_SNAILS;
+    public static final ModConfigSpec.DoubleValue TANKMATES_PUFFER_TEETH_DAYS;
+    public static final ModConfigSpec.DoubleValue TANKMATES_FIN_NIPPING;
     public static final ModConfigSpec.DoubleValue TANKMATES_BOTTOM_SHARE;
     public static final ModConfigSpec.BooleanValue TANKMATES_WATER_CHANGE_COOLS;
     public static final ModConfigSpec.DoubleValue TANKMATES_COOL_CHANGE_SHARE;
@@ -819,12 +823,20 @@ public final class ServerConfig {
                 .define("shoalStress", true);
         TANKMATES_BETTA_AGGRESSION = b.comment("How hard male bettas go for male guppies and dwarf gouramis (hit points per day; 0 = peaceful)")
                 .defineInRange("bettaAggression", 1.0, 0.0, 20.0);
-        TANKMATES_LOACH_SNAILS = b.comment("Snails one clown loach eats per day (not the big apple snails; nerites are hard to crack)")
+        TANKMATES_LOACH_SNAILS = b.comment("Snails one loach (clown loach, dwarf chain loach, reticulated loach) eats per day (not the big apple snails;",
+                "nerites are hard to crack)")
                 .defineInRange("clownLoachSnailsPerDay", 0.5, 0.0, 50.0);
         TANKMATES_PREDATION = b.comment("Small fish (neons, embers, mosquito rasboras ...) and shrimp one adult angelfish eats per day; plants hide them",
                 "(0 = never)").defineInRange("angelfishPreyPerDay", 0.3, 0.0, 20.0);
         TANKMATES_BROOD_DEFENCE = b.comment("How hard cichlid parents drive other fish away from their eggs and young (hit points per day; 0 = they",
                 "only chase)").defineInRange("broodDefence", 1.0, 0.0, 20.0);
+        // M29 part b
+        TANKMATES_PUFFER_SNAILS = b.comment("Snails one puffer eats per day; it prefers bladder and ramshorn snails (0 = never)")
+                .defineInRange("pufferSnailsPerDay", 1.0, 0.0, 50.0);
+        TANKMATES_PUFFER_TEETH_DAYS = b.comment("Days a puffer goes without snails or hard food (shell food) before its teeth overgrow: it is stressed and",
+                "refuses soft food until it cracks a snail or hard food again (0 = off)").defineInRange("pufferTeethDays", 8.0, 0.0, 365.0);
+        TANKMATES_FIN_NIPPING = b.comment("How hard fin nippers (puffers, tiger barbs) go for long-finned fish (bettas, angelfish, male guppies, gouramis;",
+                "hit points per day; 0 = never)").defineInRange("finNipping", 0.6, 0.0, 20.0);
         TANKMATES_BOTTOM_SHARE = b.comment("Chance that a bottom fish (corydoras, pleco, otocinclus, loach) gets its share of food that sinks past",
                         "faster fish; algae wafers go to the bottom fish directly").defineInRange("bottomFoodShare", 0.6, 0.0, 1.0);
         TANKMATES_STOCKING = b.comment("Multiplies how much each tankmate counts for the stocking (a neon 0.35, a bristlenose 1.2, a clown loach",

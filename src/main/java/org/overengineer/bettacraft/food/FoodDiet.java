@@ -48,7 +48,9 @@ public final class FoodDiet {
         /** Algae grazers (plecos, otocinclus): plant food. */
         GRAZER,
         /** Seahorses: frozen and live food. */
-        SEAHORSE;
+        SEAHORSE,
+        /** M29 part b: puffers: hard food (shell food), frozen and live food; flakes and pellets badly. */
+        PUFFER;
 
         public final TagKey<Item> favourite = TagKey.create(Registries.ITEM, BettaCraft.id("diet/" + id() + "/favourite"));
         public final TagKey<Item> poor = TagKey.create(Registries.ITEM, BettaCraft.id("diet/" + id() + "/poor"));
@@ -70,6 +72,7 @@ public final class FoodDiet {
 
     public static Diet of(TankmateSpecies s) {
         if (s.seahorse()) return Diet.SEAHORSE;
+        if (s.puffer()) return Diet.PUFFER; // M29 part b
         if (s.grazer()) return Diet.GRAZER;
         if (s.zone().bottom() || s.model() == TankmateSpecies.Model.LOACH) return Diet.BOTTOM;
         return Diet.OMNIVORE;

@@ -11,6 +11,7 @@ item_ids:
   - bettacraft:frozen_mosquito_larvae
   - bettacraft:frozen_artemia
   - bettacraft:frozen_daphnia
+  - bettacraft:shell_food
 ---
 
 # Food variety
@@ -22,6 +23,7 @@ item_ids:
   <ItemImage id="bettacraft:frozen_artemia" scale="2" />
   <ItemImage id="bettacraft:frozen_daphnia" scale="2" />
   <ItemImage id="bettacraft:shrimp_food" scale="2" />
+  <ItemImage id="bettacraft:shell_food" scale="2" />
 </Row>
 
 Every fish food belongs to a **food group**: pellets, flakes, granules, wafers, frozen food or live food. Every fish
@@ -42,9 +44,10 @@ remembers which groups it ate in the last 3 days (`diet.varietyDays`).
 | Bottom fish (corydoras, loaches) | granules, wafers, frozen food | flakes (they float) |
 | Grazers (plecos, otocinclus, tangs) | wafers | live and frozen food, flakes |
 | Seahorses | frozen food | |
+| Puffers | shell food, frozen and live food | flakes, pellets |
 
 Datapacks change these with the item tags `#bettacraft:food_groups/<group>` and `#bettacraft:diet/<eaters>/favourite`
-and `/poor` (`betta`, `omnivore`, `bottom`, `grazer`, `seahorse`).
+and `/poor` (`betta`, `omnivore`, `bottom`, `grazer`, `seahorse`, `puffer`).
 
 ## The foods
 
@@ -54,6 +57,8 @@ and `/poor` (`betta`, `omnivore`, `bottom`, `grazer`, `seahorse`).
   conditions for breeding and keeps. It cannot go through the [live food pump](live_food_pump.md).
 * **Shrimp food** sinks to the shrimp, crayfish and snails; the fish leave it. It gives them twice the food of a leftover
   pellet (`diet.shrimpFoodFactor`).
+* **Shell food** is hard food with crushed shells (`#bettacraft:hard_food`): it sinks, the fish eat it like granules, and the
+  [puffers](../tankmates/puffers.md) wear their teeth down on it like on snails.
 
 All of them come from the [food maker](food_maker.md).
 
@@ -65,3 +70,4 @@ All of them come from the [food maker](food_maker.md).
 * <ItemLink id="bettacraft:frozen_mosquito_larvae" />: **[Food maker](food_maker.md)**: 4 × <ItemLink id="bettacraft:mosquito_larvae" /> + 1 × <ItemLink id="minecraft:ice" /> → 4.
 * <ItemLink id="bettacraft:frozen_artemia" />: **[Food maker](food_maker.md)**: 4 × <ItemLink id="bettacraft:artemia_nauplii" /> + 1 × <ItemLink id="minecraft:ice" /> → 4.
 * <ItemLink id="bettacraft:frozen_daphnia" />: **[Food maker](food_maker.md)**: 4 × <ItemLink id="bettacraft:daphnia" /> + 1 × <ItemLink id="minecraft:ice" /> → 4.
+* <ItemLink id="bettacraft:shell_food" />: **[Food maker](food_maker.md)**: 2 × <ItemLink id="minecraft:bone_meal" /> + 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 8.

@@ -12,6 +12,7 @@
     "bettacraft:frozen_mosquito_larvae",
     "bettacraft:frozen_artemia",
     "bettacraft:frozen_daphnia",
+    "bettacraft:shell_food",
     {
       "id": "fintastic:regular_feed",
       "required": false

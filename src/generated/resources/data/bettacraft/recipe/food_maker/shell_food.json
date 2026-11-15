@@ -1,0 +1,21 @@
+{
+  "type": "bettacraft:food_maker",
+  "ingredients": [
+    {
+      "count": 2,
+      "item": "minecraft:bone_meal"
+    },
+    {
+      "count": 1,
+      "tag": "bettacraft:pellet_fish"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:dried_kelp"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:shell_food"
+  }
+}

@@ -149,6 +149,7 @@ def write_all():
         "frozen_mosquito_larvae": frozen("#b8323a", "#7e1e26"),
         "frozen_artemia": frozen("#e08a6a", "#c06048"),
         "frozen_daphnia": frozen("#b08a50", "#7a5a30"),
+        "shell_food": tub("#e8e0c8", "#8a7058", "#d8e8f0", "#6a8aa0"),  # M29 part b: crushed shells for the puffers
     }
     for name, img in items.items():
         out.append(save_png(img, ITEM_TEX / f"{name}.png"))

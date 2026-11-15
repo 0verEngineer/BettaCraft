@@ -38,7 +38,7 @@ class TankmateDataTest {
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(34, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids
+        assertEquals(43, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));
@@ -129,6 +129,29 @@ class TankmateDataTest {
         assertTrue(Clutch.eggDays(TankmateSpecies.NEON_TETRA) < Clutch.eggDays(TankmateSpecies.PANDA_CORY));
         assertTrue(Clutch.larvaDays(TankmateSpecies.BRISTLENOSE_PLECO) > Clutch.larvaDays(TankmateSpecies.NEON_TETRA));
         assertEquals(0, Clutch.eggDays(TankmateSpecies.CLOWN_LOACH));
+    }
+
+    @Test
+    void puffersBarbsAndLoaches() {
+        // M29 part b: puffers eat snails, need them for their teeth and nip fins; tiger barbs nip, cherry barbs do not
+        for (TankmateSpecies s : java.util.List.of(TankmateSpecies.DWARF_PUFFER, TankmateSpecies.RED_EYE_PUFFER, TankmateSpecies.GREEN_SPOTTED_PUFFER)) {
+            assertTrue(s.puffer() && s.eatsSnails() && s.finNipper(), s.id());
+            assertEquals("features.puffers", s.featureKey());
+            assertEquals(org.overengineer.bettacraft.food.FoodDiet.Diet.PUFFER, org.overengineer.bettacraft.food.FoodDiet.of(s));
+        }
+        assertTrue(TankmateSpecies.TIGER_BARB.finNipper() && !TankmateSpecies.CHERRY_BARB.finNipper() && !TankmateSpecies.ODESSA_BARB.finNipper());
+        assertTrue(TankmateSpecies.ANGELFISH.longFins(false) && TankmateSpecies.GUPPY.longFins(false) && !TankmateSpecies.GUPPY.longFins(true));
+        assertTrue(!TankmateSpecies.NEON_TETRA.longFins(false));
+        // the green spotted puffer: brackish water only
+        assertTrue(!TankmateSpecies.GREEN_SPOTTED_PUFFER.salinity().contains(0) && TankmateSpecies.GREEN_SPOTTED_PUFFER.salinity().contains(15));
+        assertTrue(!TankmateSpecies.GREEN_SPOTTED_PUFFER.marine(), "brackish, not a reef fish");
+        assertTrue(TankmateSpecies.GREEN_SPOTTED_PUFFER.nativeWeight(TankmateSpecies.Water.MANGROVE) > 0);
+        // the loaches eat snails, the garra grazes
+        assertTrue(TankmateSpecies.DWARF_CHAIN_LOACH.eatsSnails() && TankmateSpecies.RETICULATED_LOACH.eatsSnails());
+        assertTrue(TankmateSpecies.GARRA_RUFA.grazer() && !TankmateSpecies.GARRA_RUFA.eatsSnails());
+        assertEquals("features.barbsAndLoaches", TankmateSpecies.GARRA_RUFA.featureKey());
+        assertEquals("features.wildFish", TankmateSpecies.CLOWN_LOACH.featureKey());
+        assertTrue(TankmateSpecies.CHERRY_BARB.tolerates(26) && TankmateSpecies.CHERRY_BARB.tolerates(28), "cherry barbs live in a betta tank");
     }
 
     @Test

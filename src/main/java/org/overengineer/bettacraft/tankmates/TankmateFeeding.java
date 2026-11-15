@@ -72,6 +72,10 @@ public final class TankmateFeeding {
             if (used >= portions) break;
             if (!wafer && !sinks && bottomFish(m) && midwater && level.getRandom().nextDouble() >= share) continue;
             if (m.species().seahorse() && midwater && level.getRandom().nextDouble() >= seahorseShare) continue;
+            // M29 part b: a puffer with overgrown teeth only takes hard food; hard food wears its teeth down
+            boolean hard = Puffers.hardFood(food);
+            if (Puffers.overgrown(m) && !hard) continue;
+            if (hard && m.species().puffer()) m.wearTeeth();
 
             double overfedDays = m.species().seahorse() ? TankCare.OVERFED_DAYS / Math.max(1.0, ServerConfig.getOr(ServerConfig.SEAHORSE_FEEDINGS, 2.0))
                     : TankCare.OVERFED_DAYS; // M21.8: seahorses eat often

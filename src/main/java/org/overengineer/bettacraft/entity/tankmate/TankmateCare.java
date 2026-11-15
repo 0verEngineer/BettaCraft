@@ -34,6 +34,10 @@ public final class TankmateCare {
     public static final int STRESS_NITRATE = 256;
     /** M25: pH or TDS out of the species' range ({@link org.overengineer.bettacraft.chem.ChemTolerance}). */
     public static final int STRESS_CHEMISTRY = 512;
+    /** M29 part b: a puffer's teeth have overgrown (no snails or hard food for too long): it refuses soft food. */
+    public static final int STRESS_TEETH = 1024;
+    /** M29 part b: fin nippers (puffers, tiger barbs) go for its long fins. */
+    public static final int STRESS_NIPPED = 2048;
     /** Algae on the glass (mean share) from which grazers find enough to eat. */
     public static final double GRAZING_FROM = 0.04;
 
@@ -76,7 +80,10 @@ public final class TankmateCare {
         boolean waterBad = TankWater.qualityEnabled() && tank.waterQuality() < s.minQuality() || salt >= org.overengineer.bettacraft.tank.Salinity.STRESS_FROM;
         // M25: pH and TDS: a little out of the range only stresses, far out the water is bad for the species
         var chem = org.overengineer.bettacraft.chem.TankChemistry.fit(tank, org.overengineer.bettacraft.chem.ChemTolerance.tankmate(s));
-        int stress = fish.stress & (STRESS_SHOAL | STRESS_CHASED);
+        int stress = fish.stress & (STRESS_SHOAL | STRESS_CHASED | STRESS_NIPPED);
+        // M29 part b: without snails or hard food the teeth of a puffer overgrow
+        if (s.puffer() && fish.stage != LifeStage.FRY) fish.teethDays += days;
+        if (org.overengineer.bettacraft.tankmates.Puffers.overgrown(fish)) stress |= STRESS_TEETH;
         boolean crowded = controller.isCrowded() && fish.isAdult();
         if (crowded) stress |= STRESS_CROWDED;
         if (!tempOk) stress |= STRESS_TEMP;
@@ -93,7 +100,7 @@ public final class TankmateCare {
         }
         fish.stress = stress;
         boolean social = ServerConfig.getOr(ServerConfig.TANKMATES_SHOAL_STRESS, true) && (stress & STRESS_SHOAL) != 0;
-        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, crowded || social || (stress & (STRESS_CHASED | STRESS_FLOW | STRESS_NO_POSTS)) != 0, waterBad || lowO2 || chem == org.overengineer.bettacraft.chem.ChemTolerance.Fit.BAD, salt);
+        BettaHealth.Conditions c = new BettaHealth.Conditions(!tempOk, crowded || social || (stress & (STRESS_CHASED | STRESS_FLOW | STRESS_NO_POSTS | STRESS_TEETH | STRESS_NIPPED)) != 0, waterBad || lowO2 || chem == org.overengineer.bettacraft.chem.ChemTolerance.Fit.BAD, salt);
         // grazers find their food on the glass
         if (s.grazer() && fish.health.daysSinceFed() > 0.3 && org.overengineer.bettacraft.tank.algae.TankAlgae.mean(tank) >= GRAZING_FROM) {
             fish.health.feed();
@@ -142,11 +149,12 @@ public final class TankmateCare {
     }
 
     private static void dieOfIllness(ServerLevel level, TankBlockEntity controller, TankmateEntity fish, BettaHealth.Conditions c, BettaHealth.Params p) {
-        String key = c.saltBad() ? "salinity" : fish.health.isHungry(p) ? "hunger" : c.tempBad() ? "temperature"
+        String key = c.saltBad() ? "salinity" : fish.health.isHungry(p) ? ((fish.stress & STRESS_TEETH) != 0 ? "teeth" : "hunger") : c.tempBad() ? "temperature"
                 : c.waterBad() && (fish.stress & STRESS_WATER) == 0 && (fish.stress & STRESS_OXYGEN) != 0 ? "oxygen"
                 : c.waterBad() && (fish.stress & STRESS_WATER) == 0 && (fish.stress & STRESS_CHEMISTRY) != 0
                         ? (org.overengineer.bettacraft.chem.TankChemistry.co2Bad(controller.getTank(), org.overengineer.bettacraft.chem.ChemTolerance.tankmate(fish.species())) ? "co2" : "water_chemistry")
                         : c.waterBad() ? "water_quality"
+                : (fish.stress & STRESS_TEETH) != 0 ? "teeth" : (fish.stress & STRESS_NIPPED) != 0 ? "fin_nipping"
                 : (fish.stress & STRESS_SHOAL) != 0 ? "lonely" : (fish.stress & STRESS_FLOW) != 0 ? "flow"
                 : (fish.stress & STRESS_NO_POSTS) != 0 ? "no_posts" : c.crowdBad() ? "overcrowding" : "illness";
 

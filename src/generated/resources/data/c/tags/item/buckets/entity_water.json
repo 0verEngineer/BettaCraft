@@ -34,6 +34,15 @@
     "bettacraft:cockatoo_cichlid_bucket",
     "bettacraft:agassiz_dwarf_cichlid_bucket",
     "bettacraft:angelfish_bucket",
-    "bettacraft:discus_bucket"
+    "bettacraft:discus_bucket",
+    "bettacraft:dwarf_puffer_bucket",
+    "bettacraft:red_eye_puffer_bucket",
+    "bettacraft:green_spotted_puffer_bucket",
+    "bettacraft:tiger_barb_bucket",
+    "bettacraft:odessa_barb_bucket",
+    "bettacraft:cherry_barb_bucket",
+    "bettacraft:dwarf_chain_loach_bucket",
+    "bettacraft:reticulated_loach_bucket",
+    "bettacraft:garra_rufa_bucket"
   ]
 }

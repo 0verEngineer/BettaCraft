@@ -1535,7 +1535,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         y += 9;
         boolean temp = (stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_TEMP) == 0;
         // M20: the reef fish with their salinity
-        Component tl = s.marine() ? Component.translatable("gui.bettacraft.tm.temp_salt", f1(s.tempMin()), f1(s.tempMax()),
+        Component tl = s.marine() || !s.salinity().contains(0) ? Component.translatable("gui.bettacraft.tm.temp_salt", f1(s.tempMin()), f1(s.tempMax()),
                 Math.round(s.salinity().min()), Math.round(s.salinity().max())) : Component.translatable("gui.bettacraft.tm.temp", f1(s.tempMin()), f1(s.tempMax()));
         fitLine(g, tl.copy().withStyle(temp ? ChatFormatting.GREEN : ChatFormatting.RED), x, y, TEXT_LIGHT, 124);
         y += 9;
@@ -1557,6 +1557,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             notes.add(Component.translatable("gui.bettacraft.tm.nitrate").withStyle(ChatFormatting.GOLD)); // M24
         if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_CHEMISTRY) != 0)
             notes.add(Component.translatable("gui.bettacraft.tm.chemistry").withStyle(ChatFormatting.GOLD)); // M25
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_TEETH) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.teeth").withStyle(ChatFormatting.RED)); // M29 part b
+        if ((stress & org.overengineer.bettacraft.entity.tankmate.TankmateCare.STRESS_NIPPED) != 0)
+            notes.add(Component.translatable("gui.bettacraft.tm.nipped").withStyle(ChatFormatting.RED));
         if (d.getBoolean("hitched")) notes.add(Component.translatable("gui.bettacraft.tm.hitched").withStyle(ChatFormatting.AQUA));
         if (d.getFloat("gravid") >= 0) notes.add(Component.translatable(s.seahorse() ? "gui.bettacraft.tm.pouch" : "gui.bettacraft.tm.gravid",
                 Math.round(d.getFloat("gravid") * 100)).withStyle(ChatFormatting.LIGHT_PURPLE));

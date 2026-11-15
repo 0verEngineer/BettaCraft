@@ -151,6 +151,8 @@ public final class GuideGen {
             case LIVEBEARER -> "tankmates/livebearers.md";
             case GOURAMI -> "tankmates.md";
             case CICHLID -> "tankmates/cichlids.md"; // M29
+            case PUFFER -> "tankmates/puffers.md"; // M29 part b
+            case BARB -> "tankmates/barbs.md";
             case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
             case SEAHORSE -> "saltwater/seahorses.md";
         };
@@ -221,7 +223,7 @@ public final class GuideGen {
         // overview tables
         tankmateTable(out, "tankmates.md", s -> !s.marine(), t("## All species", "## Alle Arten"));
         for (String g : List.of("tankmates/tetras.md", "tankmates/rasboras.md", "tankmates/corydoras.md", "tankmates/plecos.md", "tankmates/loaches.md",
-                "tankmates/livebearers.md", "tankmates/cichlids.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
+                "tankmates/livebearers.md", "tankmates/cichlids.md", "tankmates/puffers.md", "tankmates/barbs.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
             tankmateTable(out, g, s -> groupPage(s).equals(g), t("## Species", "## Arten"));
         }
         critterTable(out, "invertebrates.md", s -> !s.marine(), true, t("## All species", "## Alle Arten"));
@@ -271,6 +273,8 @@ public final class GuideGen {
         if (s.grazer()) traits.add(t("eats algae", "frisst Algen"));
         if (s.eatsSnails()) traits.add(t("eats snails", "frisst Schnecken"));
         if (s.preyLength() > 0) traits.add(t("eats small fish and shrimp", "frisst kleine Fische und Garnelen")); // M29
+        if (s.puffer()) traits.add(t("needs snails or hard food for its teeth", "braucht Schnecken oder hartes Futter für die Zähne")); // M29 part b
+        if (s.finNipper()) traits.add(t("nips long fins", "zupft lange Flossen"));
         if (s.cichlid()) traits.add(t("guards its brood", "bewacht seine Brut"));
         if (s.parentsFeed()) traits.add(t("feeds its young with skin secretion", "füttert die Jungen mit Hautschleim"));
         if (s.nocturnal()) traits.add(t("active at night", "nachtaktiv"));
@@ -287,6 +291,7 @@ public final class GuideGen {
         if (s.tempMin() > 26) return t("too warm", "zu warm");
         if (s.stock() >= 2.5) return t("too big", "zu groß");
         if (s.preyLength() > 0) return t("no (big, nips fins)", "nein (groß, zupft Flossen)"); // M29 angelfish
+        if (s.finNipper()) return t("no (nips fins)", "nein (zupft Flossen)"); // M29 part b
         if (s.cichlid() && s.territorial()) return t("with care (big tank)", "mit Vorsicht (großes Becken)"); // M29 dwarf cichlids
         if (s.bettaTarget() && s.territorial()) return t("no", "nein");
         if (s.bettaTarget()) return t("females only", "nur Weibchen");
@@ -750,6 +755,7 @@ public final class GuideGen {
 
     private String salinity(Salinity.Range r) {
         if (r.min() >= Salinity.MARINE_FROM + 5) return t("sea water", "Meerwasser");
+        if (r.min() >= Salinity.BRACKISH_FROM && r.min() < 10) return t("brackish water, also sea water", "Brackwasser, auch Meerwasser"); // M29 part b
         if (r.min() >= Salinity.BRACKISH_FROM) return t("sea water, also strong brackish water", "Meerwasser, auch starkes Brackwasser");
         if (r.max() >= Salinity.MARINE_FROM) return t("fresh, brackish or sea water", "Süß-, Brack- oder Meerwasser");
         if (r.max() > Salinity.BRACKISH_FROM + 2) return t("fresh or brackish water", "Süß- oder Brackwasser");

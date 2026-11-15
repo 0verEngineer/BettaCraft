@@ -150,15 +150,55 @@ public enum TankmateSpecies {
     DISCUS(d("discus", "Symphysodon aequifasciatus", Model.DISCUS, Group.CICHLID, Breeding.OPEN, Zone.MID)
             .size(0.95).hitbox(0.55, 0.55).temp(27, 32).breed(28, 31).quality(0.75).shoal(3).stock(2.5).brood(20, 60).growth(2.5)
             .eats(0.4).parentsFeed().egg(0x8A5030, 0x40A0C0).native_(Water.JUNGLE, 2).trader(Trade.RARE)
-            .varieties("wild", "red_turquoise", "pigeon_blood", "blue_diamond"));
+            .varieties("wild", "red_turquoise", "pigeon_blood", "blue_diamond")),
+    // ---------------------------------------------------------------- M29 part b: puffers (features.puffers)
+    // they crack snails (bladder and ramshorn snails first) and need them or hard food, else their teeth overgrow; they nip the
+    // fins of long-finned fish; the dwarf puffers scatter their eggs into moss, the green spotted puffer lives in brackish water
+    DWARF_PUFFER(d("dwarf_puffer", "Carinotetraodon travancoricus", Model.PUFFER, Group.PUFFER, Breeding.SCATTER, Zone.MID)
+            .size(0.22).temp(22, 29).breed(25, 28).quality(0.55).shoal(1).stock(0.4).brood(5, 15).growth(0.9)
+            .eats(0.6).snails().finNipper().dimorphic().egg(0xC8C050, 0x3A4A28).native_(Water.RIVER, 5).native_(Water.SWAMP, 3)
+            .trader(Trade.COMMON)),
+    RED_EYE_PUFFER(d("red_eye_puffer", "Carinotetraodon irrubesco", Model.PUFFER, Group.PUFFER, Breeding.SCATTER, Zone.MID)
+            .size(0.3).temp(23, 29).breed(25, 28).quality(0.6).shoal(1).stock(0.5).brood(5, 12).growth(1.0)
+            .eats(0.6).snails().finNipper().dimorphic().egg(0x8A6A48, 0xD03A28).native_(Water.SWAMP, 3).native_(Water.JUNGLE, 2)
+            .trader(Trade.RARE)),
+    GREEN_SPOTTED_PUFFER(d("green_spotted_puffer", "Tetraodon nigroviridis", Model.PUFFER, Group.PUFFER, Breeding.NONE, Zone.MID)
+            .size(0.8).hitbox(0.5, 0.45).temp(24, 29).breed(26, 28).quality(0.55).shoal(1).stock(2.5).brood(0, 0).growth(2.0)
+            .eats(0.8).snails().finNipper().prey(0.25).egg(0xB8D030, 0x1A1A14).native_(Water.MANGROVE, 6).trader(Trade.RARE)
+            .salt(Salinity.Range.BRACKISH_ONLY)),
+    // ---------------------------------------------------------------- M29 part b: barbs (egg scatterers, features.barbsAndLoaches)
+    TIGER_BARB(d("tiger_barb", "Puntigrus tetrazona", Model.BARB, Group.BARB, Breeding.SCATTER, Zone.MID)
+            .size(0.5).temp(20, 28).breed(24, 27).quality(0.45).shoal(6).stock(0.6).brood(30, 80).growth(1.0)
+            .eats(0.6).finNipper().egg(0xE8A040, 0x141414).native_(Water.RIVER, 6).native_(Water.SWAMP, 6).trader(Trade.COMMON)
+            .varieties("wild", "green", "albino")),
+    ODESSA_BARB(d("odessa_barb", "Pethia padamya", Model.BARB, Group.BARB, Breeding.SCATTER, Zone.MID)
+            .size(0.48).temp(18, 26).breed(22, 25).quality(0.45).shoal(6).stock(0.55).brood(30, 80).growth(1.0)
+            .eats(0.6).dimorphic().egg(0xC0B898, 0xE03020).native_(Water.RIVER, 6).trader(Trade.COMMON)),
+    CHERRY_BARB(d("cherry_barb", "Rohanella titteya", Model.BARB, Group.BARB, Breeding.SCATTER, Zone.MID)
+            .size(0.4).temp(22, 28).breed(24, 27).quality(0.5).shoal(6).stock(0.4).brood(20, 50).growth(1.0)
+            .eats(0.5).dimorphic().egg(0xD84A3A, 0x3A2018).native_(Water.JUNGLE, 6).native_(Water.RIVER, 3).trader(Trade.COMMON)),
+    // ---------------------------------------------------------------- M29 part b: loaches and the garra (features.barbsAndLoaches)
+    DWARF_CHAIN_LOACH(d("dwarf_chain_loach", "Ambastaia sidthimunki", Model.LOACH, Group.LOACH, Breeding.NONE, Zone.LOW)
+            .size(0.42).temp(24, 29).breed(26, 28).quality(0.55).shoal(6).stock(0.4).brood(0, 0).growth(1.2)
+            .eats(0.2).snails().egg(0xE8E0C0, 0x2A2420).native_(Water.RIVER, 4).trader(Trade.RARE)),
+    RETICULATED_LOACH(d("reticulated_loach", "Botia lohachata", Model.LOACH, Group.LOACH, Breeding.NONE, Zone.LOW)
+            .size(0.75).hitbox(0.5, 0.3).temp(24, 30).breed(26, 28).quality(0.5).shoal(5).stock(1.5).brood(0, 0).growth(2.0)
+            .eats(0.3).snails().egg(0xD8D0B8, 0x2A2428).native_(Water.RIVER, 4).native_(Water.SWAMP, 2).trader(Trade.RARE)),
+    GARRA_RUFA(d("garra_rufa", "Garra rufa", Model.GARRA, Group.LOACH, Breeding.SCATTER, Zone.BOTTOM)
+            .size(0.7).hitbox(0.45, 0.22).temp(18, 32).breed(24, 28).quality(0.55).shoal(5).stock(1.0).brood(20, 60).growth(1.4)
+            .eats(0.3).algae(0.6).egg(0x8A8070, 0x2A2420).native_(Water.RIVER, 6).trader(Trade.COMMON));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
         /** M29: the dwarf cichlids (rams), Apistogramma with its crest, the tall angelfish, the round discus. */
-        CICHLID, APISTO, ANGEL, DISCUS }
+        CICHLID, APISTO, ANGEL, DISCUS,
+        /** M29 part b: the round puffers, the deep-bodied barbs, the flat garra with its sucker mouth. */
+        PUFFER, BARB, GARRA }
 
     /** Family group (handbook, overlays, menu). */
-    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE, CICHLID }
+    public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE, CICHLID,
+        /** M29 part b. */
+        PUFFER, BARB }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -265,6 +305,17 @@ public enum TankmateSpecies {
     public double territory() { return def.territory; }
     /** M29: the parents feed the young with their skin secretion (discus): the brood stays with them longer and dies without them. */
     public boolean parentsFeed() { return def.parentsFeed; }
+    /** M29 part b: nips the fins of long-finned fish (puffers, tiger barbs; {@code tankmates.behaviour.finNipping}). */
+    public boolean finNipper() { return def.finNipper; }
+    /**
+     * M29 part b: long, flowing fins the fin nippers go for: bettas (in their own code), angelfish, gouramis and the males of
+     * the guppies.
+     */
+    public boolean longFins(boolean female) {
+        return this == ANGELFISH || def.group == Group.GOURAMI || this == GUPPY && !female;
+    }
+    /** M29 part b: a puffer (eats snails, its teeth overgrow without snails or hard food). */
+    public boolean puffer() { return def.group == Group.PUFFER; }
     /** M29: a cichlid (open and cave brooders guarding their brood). */
     public boolean cichlid() { return def.group == Group.CICHLID; }
     /** Harlequin rasboras spawn under broad leaves (crypts, anubias, sword plants) instead of fine leaves. */
@@ -284,6 +335,8 @@ public enum TankmateSpecies {
     public boolean available() {
         if (seahorse()) return org.overengineer.bettacraft.config.CommonConfig.seahorses();
         if (cichlid()) return org.overengineer.bettacraft.config.CommonConfig.cichlids();
+        if (puffer()) return org.overengineer.bettacraft.config.CommonConfig.puffers();
+        if (barbOrNewLoach()) return org.overengineer.bettacraft.config.CommonConfig.barbsAndLoaches();
         return this != GREEN_NEON_TETRA || org.overengineer.bettacraft.config.CommonConfig.greenNeon();
     }
 
@@ -291,7 +344,14 @@ public enum TankmateSpecies {
     public String featureKey() {
         if (seahorse()) return "features.seahorses";
         if (cichlid()) return "features.cichlids";
+        if (puffer()) return "features.puffers";
+        if (barbOrNewLoach()) return "features.barbsAndLoaches";
         return this == GREEN_NEON_TETRA ? "features.greenNeonTetra" : "features.wildFish";
+    }
+
+    /** M29 part b: the barbs and the loaches that came with them (switched with features.barbsAndLoaches). */
+    private boolean barbOrNewLoach() {
+        return def.group == Group.BARB || this == DWARF_CHAIN_LOACH || this == RETICULATED_LOACH || this == GARRA_RUFA;
     }
 
     /** M21.8: a seahorse (hitches, low flow, live food, brood pouch). */
@@ -404,7 +464,7 @@ public enum TankmateSpecies {
         float width = -1, height = -1;
         double tMin = 22, tMax = 28, bMin = 24, bMax = 27, quality = 0.5, stock = 0.5, growth = 1.0, algae, eatsFry = 0.3;
         int shoal = 1, broodMin = 10, broodMax = 30, egg1 = 0x808080, egg2 = 0x404040;
-        boolean territorial, bettaTarget, snails, airGulper, nocturnal, broadLeaves, dimorphic, labyrinth, parentsFeed;
+        boolean territorial, bettaTarget, snails, airGulper, nocturnal, broadLeaves, dimorphic, labyrinth, parentsFeed, finNipper;
         double prey, territory;
         List<String> varieties = List.of("wild");
         final List<Water> waters = new java.util.ArrayList<>();
@@ -432,6 +492,9 @@ public enum TankmateSpecies {
                     case CICHLID -> 0.5;
                     case APISTO -> 0.38;
                     case ANGEL, DISCUS -> 0.8;
+                    case PUFFER -> 0.55; // M29 part b
+                    case BARB -> 0.48;
+                    case GARRA -> 0.25;
 
                     case CORY -> 0.42;
                     case PLECO -> 0.3;
@@ -473,6 +536,7 @@ public enum TankmateSpecies {
         Def prey(double maxLength) { prey = maxLength; return this; }
         Def territory(double waterBlocks) { territory = waterBlocks; return this; }
         Def parentsFeed() { parentsFeed = true; return this; }
+        Def finNipper() { finNipper = true; return this; }
         Def egg(int a, int b) { egg1 = a; egg2 = b; return this; }
         Def varieties(String... v) { varieties = List.of(v); return this; }
         Def trader(Trade t) { trade = t; return this; }

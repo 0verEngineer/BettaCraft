@@ -72,6 +72,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_TOP_OFF;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_SPAWN_PASS;
     public static final ModConfigSpec.BooleanValue FEATURE_CICHLIDS;
+    public static final ModConfigSpec.BooleanValue FEATURE_PUFFERS, FEATURE_BARBS_LOACHES;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
@@ -196,6 +197,12 @@ public final class CommonConfig {
         FEATURE_CICHLIDS = b.comment("Cichlids: ram, Bolivian ram, cockatoo and Agassiz's dwarf cichlid, angelfish and discus at the wandering trader, in",
                 "the aquarium net and wild (open brooders and cave brooders that guard their brood; off: no new ones; fish already caught stay)")
                 .define("cichlids", true);
+        // M29 part b
+        FEATURE_PUFFERS = b.comment("Puffers: dwarf puffer, red-eye puffer and the brackish green spotted puffer at the wandering trader, in the aquarium",
+                "net and wild (they eat snails, nip fins and need snails or hard food for their teeth; off: no new ones; fish already caught stay)")
+                .define("puffers", true);
+        FEATURE_BARBS_LOACHES = b.comment("Barbs and loaches: tiger, odessa and cherry barb, dwarf chain loach, reticulated loach and garra at the",
+                "wandering trader, in the aquarium net and wild (off: no new ones; fish already caught stay)").define("barbsAndLoaches", true);
         FEATURE_WILD_PLANTS = b.comment("Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks; jungle water,",
                 "swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand",
                 "or with the net (spawn.wildPlantFrequency; off: no new ones in new chunks, plants already there stay)").define("wildPlants", true);
@@ -334,6 +341,8 @@ public final class CommonConfig {
     public static boolean topOff() { return getOr(FEATURE_TOP_OFF, true); }
     public static boolean wildSpawnPass() { return getOr(FEATURE_WILD_SPAWN_PASS, true); } // M28.1
     public static boolean cichlids() { return getOr(FEATURE_CICHLIDS, true); } // M29 part a
+    public static boolean puffers() { return getOr(FEATURE_PUFFERS, true); } // M29 part b
+    public static boolean barbsAndLoaches() { return getOr(FEATURE_BARBS_LOACHES, true); }
     public static boolean wildPlants() { return getOr(FEATURE_WILD_PLANTS, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25

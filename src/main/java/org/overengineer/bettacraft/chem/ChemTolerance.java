@@ -84,6 +84,9 @@ public final class ChemTolerance {
         return r == BETTA || r == GOURAMI ? org.overengineer.bettacraft.co2.TankCo2.LABYRINTH : 1.0;
     }
 
+    /** M29 part b: brackish fish (green spotted puffer): hard, alkaline water; only the pH counts (like the marine animals). */
+    public static final Range BRACKISH = new Range(7.2F, 8.6F, 0, 0, true);
+
     /** Snails: medium to hard water for the shells. */
     public static final Range SNAIL = Range.fresh(6.8, 8.6, 100, 700);
 
@@ -115,6 +118,13 @@ public final class ChemTolerance {
             case AGASSIZ_DWARF_CICHLID -> Range.fresh(5.0, 7.2, 0, 250);
             case ANGELFISH -> Range.fresh(6.0, 8.0, 0, 500);
             case DISCUS -> Range.fresh(5.0, 7.0, 0, 200);
+            // M29 part b: puffers, barbs, loaches (the brackish green spotted puffer: only the pH counts, the salt drives the TDS)
+            case GREEN_SPOTTED_PUFFER -> BRACKISH;
+            case DWARF_PUFFER -> Range.fresh(6.5, 8.2, 50, 600);
+            case RED_EYE_PUFFER -> Range.fresh(5.0, 7.6, 0, 400);
+            case CHERRY_BARB -> Range.fresh(6.0, 8.0, 0, 500);
+            case DWARF_CHAIN_LOACH, RETICULATED_LOACH -> Range.fresh(6.0, 8.0, 0, 550);
+            case GARRA_RUFA -> Range.fresh(6.5, 8.6, 50, 800);
             default -> Range.TOLERANT;
         };
     }

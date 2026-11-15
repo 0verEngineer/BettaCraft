@@ -9,7 +9,7 @@ navigation:
 
 Beliebte Aquarienfische können ein Becken mit den Bettas teilen (oder ohne sie leben): **Salmler**,
 **Bärblinge**, **Panzerwelse**, **Harnischwelse**, **Otocinclus**, **Schmerlen**, die **Lebendgebärenden** Guppy,
-Endler und Platy, der **Zwergfadenfisch** und die **Buntbarsche** (Schmetterlingsbuntbarsche, Apistogramma, Skalar, Diskus). Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
+Endler und Platy, der **Zwergfadenfisch**, die **Buntbarsche** (Schmetterlingsbuntbarsche, Apistogramma, Skalar, Diskus), die **Barben** und die **Kugelfische**. Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
 schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede Art vermehrt sich so wie in der Natur.
 
 ![Ein Gesellschaftsbecken mit Beifischen](images/tm_community.png)
@@ -61,6 +61,15 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 | <ItemImage id="bettacraft:agassiz_dwarf_cichlid_bucket" /> [Agassiz-Zwergbuntbarsch](tankmates/agassiz_dwarf_cichlid.md) | 24–29 | – | mit Vorsicht (großes Becken) | Höhlenbrüter: das Weibchen laicht in einer kleinen Höhle und bewacht die Brut |
 | <ItemImage id="bettacraft:angelfish_bucket" /> [Skalar](tankmates/angelfish.md) | 24–30 | – | nein (groß, zupft Flossen) | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut |
 | <ItemImage id="bettacraft:discus_bucket" /> [Diskus](tankmates/discus.md) | 27–32 | 3 | zu warm | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut |
+| <ItemImage id="bettacraft:dwarf_puffer_bucket" /> [Erbsenkugelfisch](tankmates/dwarf_puffer.md) | 22–29 | – | nein (zupft Flossen) | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:red_eye_puffer_bucket" /> [Roter Zwergkugelfisch](tankmates/red_eye_puffer.md) | 23–29 | – | nein (zupft Flossen) | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:green_spotted_puffer_bucket" /> [Grüner Kugelfisch](tankmates/green_spotted_puffer.md) | 24–29 | – | zu groß | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:tiger_barb_bucket" /> [Sumatrabarbe](tankmates/tiger_barb.md) | 20–28 | 6 | nein (zupft Flossen) | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:odessa_barb_bucket" /> [Odessabarbe](tankmates/odessa_barb.md) | 18–26 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:cherry_barb_bucket" /> [Kirschflecken-Barbe](tankmates/cherry_barb.md) | 22–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:dwarf_chain_loach_bucket" /> [Zwergschmerle](tankmates/dwarf_chain_loach.md) | 24–29 | 6 | ja | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:reticulated_loach_bucket" /> [Netzschmerle](tankmates/reticulated_loach.md) | 24–30 | 5 | ja | vermehrt sich nicht im Aquarium |
+| <ItemImage id="bettacraft:garra_rufa_bucket" /> [Saugschmerle](tankmates/garra_rufa.md) | 18–32 | 5 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 
 ## In diesem Kapitel
 

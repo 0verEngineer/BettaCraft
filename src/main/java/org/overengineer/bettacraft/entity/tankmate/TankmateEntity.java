@@ -72,6 +72,8 @@ public class TankmateEntity extends AbstractFish {
     int careFlags;
     /** A male guarding a cave clutch or a foam nest (set by the tank's breeding step). */
     boolean guarding;
+    /** M29 part b: puffers: days since the last snail or hard food (the teeth grow; {@code tankmates.behaviour.pufferTeethDays}). */
+    double teethDays;
 
     // tank state (server, transient)
     @Nullable
@@ -126,6 +128,9 @@ public class TankmateEntity extends AbstractFish {
             case CICHLID, APISTO -> 0.5; // M29
             case ANGEL -> 0.45;
             case DISCUS -> 0.4;
+            case PUFFER -> 0.4; // M29 part b: puffers hover and paddle with their fins
+            case BARB -> 0.75;
+            case GARRA -> 0.55;
         };
         double hp = s.length() >= 0.6 ? 6.0 : s.length() >= 0.35 ? 4.0 : 3.0;
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, hp).add(Attributes.MOVEMENT_SPEED, speed);
@@ -312,6 +317,11 @@ public class TankmateEntity extends AbstractFish {
         stress = tooSmall ? stress | TankmateCare.STRESS_SHOAL : stress & ~TankmateCare.STRESS_SHOAL;
     }
 
+    /** M29 part b: fin nippers go for it. */
+    public void setNipped(boolean nipped) {
+        stress = nipped ? stress | TankmateCare.STRESS_NIPPED : stress & ~TankmateCare.STRESS_NIPPED;
+    }
+
     public void setChased(boolean chased) {
         stress = chased ? stress | TankmateCare.STRESS_CHASED : stress & ~TankmateCare.STRESS_CHASED;
     }
@@ -335,6 +345,20 @@ public class TankmateEntity extends AbstractFish {
     @Nullable
     private Vec3 cave;
     private Vec3 caveDir = Vec3.ZERO;
+
+    /** M29 part b: days since a puffer last cracked a snail or hard food. */
+    public double teethDays() {
+        return teethDays;
+    }
+
+    /** M29 part b: a snail or hard food wears the teeth of a puffer down. */
+    public void wearTeeth() {
+        this.teethDays = 0;
+    }
+
+    public void setTeethDaysForTest(double days) {
+        this.teethDays = days;
+    }
 
     public boolean isGuarding() {
         return level().isClientSide ? flag(FLAG_GUARD) : guarding;
@@ -492,6 +516,7 @@ public class TankmateEntity extends AbstractFish {
         t.put("breeding", breeding.save());
         t.putDouble("gravid", gravidDays);
         if (gravidFather != null) t.put("gravid_father", gravidFather.save());
+        if (teethDays > 0) t.putDouble("teeth", teethDays); // M29 part b
         org.overengineer.bettacraft.genetics.GeneVisibility.write(t, analysed); // M22.3
         return t;
     }
@@ -510,6 +535,8 @@ public class TankmateEntity extends AbstractFish {
         if (!Double.isFinite(gravidDays)) gravidDays = -1;
         gravidFather = t.contains("gravid_father", Tag.TAG_COMPOUND) ? TankmateGenes.load(t.getCompound("gravid_father"), species) : null;
         if (gravidDays >= 0 && gravidFather == null) gravidFather = TankmateGenes.wild(species);
+        double teeth = t.getDouble("teeth");
+        teethDays = Double.isFinite(teeth) ? Math.max(0, teeth) : 0;
         analysed = org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t); // M22.3: older worlds: analysed
         syncLook();
         refreshDimensions();

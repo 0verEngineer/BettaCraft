@@ -317,6 +317,8 @@ public final class ModItems {
     public static final DeferredItem<Item> FROZEN_MOSQUITO_LARVAE = ITEMS.registerSimpleItem("frozen_mosquito_larvae");
     public static final DeferredItem<Item> FROZEN_ARTEMIA = ITEMS.registerSimpleItem("frozen_artemia");
     public static final DeferredItem<Item> FROZEN_DAPHNIA = ITEMS.registerSimpleItem("frozen_daphnia");
+    /** M29 part b: hard food with crushed shells; wears down the teeth of the puffers (#bettacraft:hard_food). */
+    public static final DeferredItem<Item> SHELL_FOOD = ITEMS.registerSimpleItem("shell_food");
 
     private static DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> canister(String id, org.overengineer.bettacraft.reef.ReefDosing.Additive a) {
         return ITEMS.register(id, () -> new org.overengineer.bettacraft.reef.DosingCanisterItem(a, new Item.Properties().stacksTo(a == null ? 16 : 1)));

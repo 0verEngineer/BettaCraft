@@ -9,7 +9,7 @@ navigation:
 
 Popular aquarium fish can share a tank with the bettas (or live without them): **tetras**, **rasboras**,
 **corydoras**, **plecos**, **otocinclus**, **loaches**, the **livebearers** guppy, endler and platy, the **dwarf
-gourami** and the **cichlids** (rams, Apistogramma, angelfish, discus). They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
+gourami**, the **cichlids** (rams, Apistogramma, angelfish, discus), the **barbs** and the **puffers**. They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
 kind, rest on the bottom or stick to the glass, and every species breeds the way it does in nature.
 
 ![A community tank with tankmates](images/tm_community.png)
@@ -58,6 +58,15 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 | <ItemImage id="bettacraft:agassiz_dwarf_cichlid_bucket" /> [Agassiz's Dwarf Cichlid](tankmates/agassiz_dwarf_cichlid.md) | 24–29 | – | with care (big tank) | Cave brooder: the female spawns in a small cave and guards the brood |
 | <ItemImage id="bettacraft:angelfish_bucket" /> [Angelfish](tankmates/angelfish.md) | 24–30 | – | no (big, nips fins) | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood |
 | <ItemImage id="bettacraft:discus_bucket" /> [Discus](tankmates/discus.md) | 27–32 | 3 | too warm | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood |
+| <ItemImage id="bettacraft:dwarf_puffer_bucket" /> [Dwarf Puffer](tankmates/dwarf_puffer.md) | 22–29 | – | no (nips fins) | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:red_eye_puffer_bucket" /> [Red-Eye Puffer](tankmates/red_eye_puffer.md) | 23–29 | – | no (nips fins) | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:green_spotted_puffer_bucket" /> [Green Spotted Puffer](tankmates/green_spotted_puffer.md) | 24–29 | – | too big | Does not breed in a tank |
+| <ItemImage id="bettacraft:tiger_barb_bucket" /> [Tiger Barb](tankmates/tiger_barb.md) | 20–28 | 6 | no (nips fins) | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:odessa_barb_bucket" /> [Odessa Barb](tankmates/odessa_barb.md) | 18–26 | 6 | too cool | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:cherry_barb_bucket" /> [Cherry Barb](tankmates/cherry_barb.md) | 22–28 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:dwarf_chain_loach_bucket" /> [Dwarf Chain Loach](tankmates/dwarf_chain_loach.md) | 24–29 | 6 | yes | Does not breed in a tank |
+| <ItemImage id="bettacraft:reticulated_loach_bucket" /> [Reticulated Loach](tankmates/reticulated_loach.md) | 24–30 | 5 | yes | Does not breed in a tank |
+| <ItemImage id="bettacraft:garra_rufa_bucket" /> [Garra](tankmates/garra_rufa.md) | 18–32 | 5 | yes | Scatters its eggs (fine plants, spawning mop) |
 
 ## In this chapter
 

@@ -39,6 +39,8 @@ public final class Salinity {
         public static final Range BRACKISH = new Range(0, 18);
         /** Nerite snails come from estuaries: from fresh water up to almost sea water. */
         public static final Range NERITE = new Range(0, 30);
+        /** M29 part b: brackish fish (the green spotted puffer): brackish water up to almost sea water, not fresh water. */
+        public static final Range BRACKISH_ONLY = new Range(5, 30);
         /** Reef animals: sea water with a little play. */
         public static final Range MARINE = new Range(28, 40);
         /** Hardy marine animals (hermit crabs, damselfish, salmon). */

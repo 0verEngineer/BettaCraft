@@ -68,7 +68,7 @@ final class DataGenM26b {
     }
 
     static void itemModels(ItemModelProvider p) {
-        for (String s : List.of("fish_flakes", "food_granules", "shrimp_food", "frozen_mosquito_larvae", "frozen_artemia", "frozen_daphnia")) {
+        for (String s : List.of("fish_flakes", "food_granules", "shrimp_food", "frozen_mosquito_larvae", "frozen_artemia", "frozen_daphnia", "shell_food")) {
             p.withExistingParent(s, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s));
         }
         p.withExistingParent("food_maker", p.modLoc("block/food_maker_0"));
@@ -102,6 +102,8 @@ final class DataGenM26b {
         make(out, "frozen_mosquito_larvae", ModItems.FROZEN_MOSQUITO_LARVAE.get(), 4, in(ModItems.MOSQUITO_LARVAE.get(), 4), in(ModTags.FREEZING_ICE, 1));
         make(out, "frozen_artemia", ModItems.FROZEN_ARTEMIA.get(), 4, in(ModItems.ARTEMIA_NAUPLII.get(), 4), in(ModTags.FREEZING_ICE, 1));
         make(out, "frozen_daphnia", ModItems.FROZEN_DAPHNIA.get(), 4, in(ModItems.DAPHNIA.get(), 4), in(ModTags.FREEZING_ICE, 1));
+        // M29 part b: hard food for the puffers: crushed shells (bone meal) bound with fish and kelp
+        make(out, "shell_food", ModItems.SHELL_FOOD.get(), 8, in(Items.BONE_MEAL, 2), in(ModTags.PELLET_FISH, 1), in(Items.DRIED_KELP, 1));
     }
 
     private static TagKey<Item> c(String path) {
@@ -114,13 +116,16 @@ final class DataGenM26b {
         tag.apply(ModTags.BETTA_FOOD).add(flakes, granules, shrimp).add(frozen);
         tag.apply(ModTags.FROZEN_FOOD).add(frozen);
         tag.apply(ModTags.CRITTER_FOOD).add(shrimp);
-        tag.apply(ModTags.SINKING_FOOD).add(granules, ModItems.ALGAE_WAFER.get());
+        tag.apply(ModTags.SINKING_FOOD).add(granules, ModItems.ALGAE_WAFER.get(), ModItems.SHELL_FOOD.get());
+        // M29 part b: shell food, hard food for the puffers' teeth (sinks like granules)
+        tag.apply(ModTags.BETTA_FOOD).add(ModItems.SHELL_FOOD.get());
+        tag.apply(ModTags.HARD_FOOD).add(ModItems.SHELL_FOOD.get());
         tag.apply(ModTags.FOOD_VEGETABLES).add(Items.CARROT, Items.PUMPKIN, Items.MELON_SLICE, Items.BEETROOT).addOptionalTag(c("foods/vegetable"));
         tag.apply(ModTags.FREEZING_ICE).add(Items.ICE, Items.PACKED_ICE, Items.BLUE_ICE, Items.SNOW_BLOCK);
         // the food groups
         tag.apply(FoodDiet.Group.PELLETS.tag).add(ModItems.BETTA_PELLETS.get());
         tag.apply(FoodDiet.Group.FLAKES.tag).add(flakes);
-        tag.apply(FoodDiet.Group.GRANULES.tag).add(granules);
+        tag.apply(FoodDiet.Group.GRANULES.tag).add(granules, ModItems.SHELL_FOOD.get());
         tag.apply(FoodDiet.Group.WAFERS.tag).add(ModItems.ALGAE_WAFER.get());
         tag.apply(FoodDiet.Group.FROZEN.tag).addTag(ModTags.FROZEN_FOOD);
         tag.apply(FoodDiet.Group.LIVE.tag).addTag(ModTags.LIVE_FOOD);
@@ -130,6 +135,9 @@ final class DataGenM26b {
         diet(tag, FoodDiet.Diet.BOTTOM, List.of(FoodDiet.Group.GRANULES, FoodDiet.Group.WAFERS, FoodDiet.Group.FROZEN), List.of(FoodDiet.Group.FLAKES));
         diet(tag, FoodDiet.Diet.GRAZER, List.of(FoodDiet.Group.WAFERS), List.of(FoodDiet.Group.LIVE, FoodDiet.Group.FROZEN, FoodDiet.Group.FLAKES));
         diet(tag, FoodDiet.Diet.SEAHORSE, List.of(FoodDiet.Group.FROZEN), List.of());
+        // M29 part b: puffers like hard, frozen and live food and take flakes and pellets badly
+        diet(tag, FoodDiet.Diet.PUFFER, List.of(FoodDiet.Group.FROZEN, FoodDiet.Group.LIVE), List.of(FoodDiet.Group.FLAKES, FoodDiet.Group.PELLETS));
+        tag.apply(FoodDiet.Diet.PUFFER.favourite).addTag(ModTags.HARD_FOOD);
     }
 
     private static void diet(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag, FoodDiet.Diet d,

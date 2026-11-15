@@ -41,6 +41,8 @@ public final class ModTags {
     public static final TagKey<Item> DAPHNIA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("daphnia_food"));
     /** M26 part b: frozen food (live food frozen with ice): eaten like live food, but not pumped. */
     public static final TagKey<Item> FROZEN_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("frozen_food"));
+    /** M29 part b: hard food that wears down the teeth of the puffers (shell food). */
+    public static final TagKey<Item> HARD_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("hard_food"));
     /** M26 part b: food only the shrimp, crayfish and snails eat (shrimp food). */
     public static final TagKey<Item> CRITTER_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("critter_food"));
     /** M26 part b: food that sinks to the bottom fish (granules, wafers): they get their share even next to fast fish. */
