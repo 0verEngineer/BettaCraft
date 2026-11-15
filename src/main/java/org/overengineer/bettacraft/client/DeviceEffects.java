@@ -80,6 +80,7 @@ public final class DeviceEffects {
 
     /** Client volume 0..1 of a kind of device (M29.1: 0 for the air and flow pumps unless their sound switch is on). */
     public static double volume(Regulator.Sound kind) {
+        if (!org.overengineer.bettacraft.registry.ModSounds.devices()) return 0.0; // M33 part b: features.sounds.enabled
         try {
             return switch (kind) {
                 case FILTER -> ClientConfig.VOLUME_FILTER.get();
@@ -115,7 +116,7 @@ public final class DeviceEffects {
     }
 
     private static <T extends net.minecraft.world.level.block.entity.BlockEntity & org.overengineer.bettacraft.equipment.AirSource> void hum(Minecraft mc, Vec3 cam, T be) {
-        if (be.getLevel() != mc.level || be.isRemoved() || !be.airRunning()) return;
+        if (be.getLevel() != mc.level || be.isRemoved() || !be.airRunning() || !ModSounds.devices()) return;
         BlockPos p = be.getBlockPos();
         if (p.getCenter().distanceToSqr(cam) > 16 * 16) return;
         PumpHum h = HUMS.get(p);

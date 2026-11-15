@@ -212,6 +212,7 @@ public final class TankPlants {
         TankData t = c.getTank();
         List<FloatingPlant> plants = t.plants();
         if (plants.isEmpty()) return;
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS)) return; // M33 part b: they rest (no drift, growth or uptake)
         if (t.waterMb() <= 0) return; // stranded on the floor: no drift, no growth
         PlantSurface surface = surface(t);
         RandomGenerator rnd = random(level);

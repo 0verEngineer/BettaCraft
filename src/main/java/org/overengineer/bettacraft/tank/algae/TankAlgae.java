@@ -57,6 +57,7 @@ public final class TankAlgae {
 
     /** Care step: growth and grazing (the grazed algae feed the animals), the log, the sync of the stages. */
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.ALGAE)) return; // M33 part b: the algae rest (no growth, no grazing)
         TankData t = c.getTank();
         List<AlgaeSim.Face> faces = wetFaces(t);
         if (faces.isEmpty()) {

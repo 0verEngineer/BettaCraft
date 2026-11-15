@@ -38,6 +38,11 @@ public final class ModSounds {
     public static final Supplier<SoundEvent> FOOD_MAKER_WIND = register("block.food_maker.wind");
     public static final Supplier<SoundEvent> FOOD_MAKER_WIND_VANILLA = register("block.food_maker.wind_vanilla");
 
+    /** M33 part b: the devices make their sounds ({@code features.sounds.enabled}; on a client: the server's switch). */
+    public static boolean devices() {
+        return org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.SOUNDS);
+    }
+
     /** M23: the own sound or its Minecraft twin, by {@code sounds.useVanilla} (of the side that plays it). */
     public static SoundEvent pick(Supplier<SoundEvent> own, Supplier<SoundEvent> vanilla) {
         return org.overengineer.bettacraft.config.CommonConfig.vanillaSounds() ? vanilla.get() : own.get();

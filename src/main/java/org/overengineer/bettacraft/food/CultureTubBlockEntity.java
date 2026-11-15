@@ -274,6 +274,7 @@ public class CultureTubBlockEntity extends BlockEntity {
         long dt = be.lastTick < 0 ? INTERVAL : Math.max(0, now - be.lastTick);
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastTick = now;
+        if (!org.overengineer.bettacraft.config.FeatureGate.item(state.getBlock().asItem())) return; // M33 part b: live food off: the batch rests
         be.advance(server, dt / 24000.0);
     }
 

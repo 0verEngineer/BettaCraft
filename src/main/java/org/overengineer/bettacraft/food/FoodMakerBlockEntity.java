@@ -283,7 +283,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
             level.setBlock(worldPosition, st.setValue(FoodMakerBlock.CRANK, (st.getValue(FoodMakerBlock.CRANK) + 1) % 4), Block.UPDATE_CLIENTS);
         }
         float pitch = 0.7F + 0.5F * spring / (float) max; // the spring gets tighter
-        level.playSound(null, worldPosition, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
+        if (ModSounds.devices()) level.playSound(null, worldPosition, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
         if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.food_maker.spring",
                 Math.round(100.0 * spring / max)), true);
         return true;

@@ -24,7 +24,7 @@ public final class ReefCare {
     private ReefCare() {}
 
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
-        if (days <= 0) return;
+        if (days <= 0 || !org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.SALTWATER)) return; // M33 part b: no salt shock while salt water is off
         TankData t = c.getTank();
         double speed = SaltTolerance.speed();
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {

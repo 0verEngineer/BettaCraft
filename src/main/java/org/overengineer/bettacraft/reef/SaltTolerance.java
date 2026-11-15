@@ -25,6 +25,7 @@ public final class SaltTolerance {
     private SaltTolerance() {}
 
     public static double speed() {
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.SALTWATER)) return 0; // M33 part b: salt water off: salinity harms nobody
         return ServerConfig.getOr(ServerConfig.SALT_SHOCK_SPEED, 1.0);
     }
 

@@ -71,6 +71,8 @@ public final class TankmateCare {
 
     /** Advances the needs of a tankmate by {@code days} (also used by GameTests). */
     public static void advance(ServerLevel level, TankBlockEntity controller, TankmateEntity fish, double days) {
+        // M33 part b: the species' feature off (tankmates, its group, reef fish ...): its care rests, nothing dies
+        if (!org.overengineer.bettacraft.config.Features.enabled(fish.species().feature())) return;
         TankData tank = controller.getTank();
         TankmateSpecies s = fish.species();
         BettaHealth.Params p = BettaCare.params();

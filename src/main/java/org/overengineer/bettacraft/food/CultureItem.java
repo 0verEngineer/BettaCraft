@@ -48,6 +48,11 @@ public class CultureItem extends Item {
     public ItemStack ripen(ItemStack stack, Level level, Entity holder) {
         Long start = stack.get(ModDataComponents.CULTURE_START.get());
         long now = level.getGameTime();
+        // M33 part b: its feature off (live food): the culture rests; its time goes on from where it stood when it is on again
+        if (!org.overengineer.bettacraft.config.FeatureGate.item(this)) {
+            if (start != null) stack.set(ModDataComponents.CULTURE_START.get(), start + 20);
+            return null;
+        }
         if (start == null) {
             stack.set(ModDataComponents.CULTURE_START.get(), now);
             return null;

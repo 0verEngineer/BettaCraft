@@ -21,26 +21,31 @@ import org.overengineer.bettacraft.registry.ModBlocks;
 public final class TankPower {
     private TankPower() {}
 
+    /** M33 part b: {@code features.power.enabled}: off, no device needs FE (as with every power option off). */
+    public static boolean power() {
+        return org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.POWER);
+    }
+
     public static boolean heaterRequired() {
-        return ServerConfig.getOr(ServerConfig.POWER_HEATER, false);
+        return power() && ServerConfig.getOr(ServerConfig.POWER_HEATER, false);
     }
 
     public static boolean filterRequired() {
-        return ServerConfig.getOr(ServerConfig.POWER_FILTER, false);
+        return power() && ServerConfig.getOr(ServerConfig.POWER_FILTER, false);
     }
 
     public static boolean lightRequired() {
-        return ServerConfig.getOr(ServerConfig.POWER_LIGHT, false);
+        return power() && ServerConfig.getOr(ServerConfig.POWER_LIGHT, false);
     }
 
     /** M23: air pumps need FE. */
     public static boolean airRequired() {
-        return ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP, false);
+        return power() && ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP, false);
     }
 
     /** M31: misters need FE. */
     public static boolean misterRequired() {
-        return ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
+        return power() && ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
     }
 
     public static boolean anyRequired() {

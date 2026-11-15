@@ -123,6 +123,7 @@ public final class TankmateBreeding {
     /** One step of {@code days} (also used by GameTests with longer steps). */
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
         if (days <= 0) return;
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.TANKMATES)) return; // M33 part b: the tankmates rest (no shoals, fights, hunting, breeding)
         nitrateFactor = org.overengineer.bettacraft.tank.TankNitrate.breedingFactor(c.getTank());
         try {
             stepTank(level, c, days);
@@ -152,9 +153,12 @@ public final class TankmateBreeding {
         predators(level, c, mates, days); // M29
         Puffers.finNipping(level, c, bettas, mates, days, now); // M29 part b
         fry(level, c, bettas, mates, days);
+        // M33 part b: breeding off: no spawning, the clutches, broods and pregnancies wait; a species whose feature is off rests
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BREEDING)) return;
         boolean full = full(level, c, live);
         caves(level, c, mates, now);
         for (var e : by.entrySet()) {
+            if (!org.overengineer.bettacraft.config.Features.enabled(e.getKey().feature())) continue;
             switch (e.getKey().breeding()) {
                 case GLASS_EGGS -> glassEggs(level, c, e.getKey(), e.getValue(), days, full);
                 case CAVE, ANEMONE -> cave(level, c, e.getKey(), e.getValue(), days, now, full); // M20: clownfish at their anemone

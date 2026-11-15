@@ -120,6 +120,7 @@ public final class TankBreeding {
     /** M32 part b: a step with its own random source (GameTests: deterministic fights and nests, not the shared level random). */
     public static void step(ServerLevel level, TankBlockEntity controller, double days, RandomSource r) {
         if (days <= 0) return;
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BETTAS)) return; // M33 part b: bettas rest (no nests, fights, hunting)
         TankData tank = controller.getTank();
         long now = level.getGameTime();
         List<Entity> live = TankInhabitants.liveInhabitants(level, tank);
@@ -129,7 +130,7 @@ public final class TankBreeding {
             if (b.isAdult()) (b.isFemale() ? females : males).add(b);
             else if (b.lifeStage() == LifeStage.FRY) fry.add(b);
         }
-        nest(level, controller, tank, live.size(), males, females, days, now, r);
+        if (org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BREEDING)) nest(level, controller, tank, live.size(), males, females, days, now, r); // M33 part b
         fights(level, controller, males, days, now, r);
         maleEatsFry(level, controller, males, fry, days, r);
         predators(level, controller, live, days, r);

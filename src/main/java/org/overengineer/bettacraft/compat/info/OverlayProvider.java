@@ -42,6 +42,7 @@ public final class OverlayProvider {
 
     /** Whether {@code overlay} shows our lines in this game (config + installed mods). */
     public static boolean shows(Overlay overlay) {
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_OVERLAYS)) return false; // M33 part b
         Choice c = org.overengineer.bettacraft.config.CommonConfig.getOr(org.overengineer.bettacraft.config.CommonConfig.OVERLAY_PROVIDER, Choice.AUTO);
         return shows(c, overlay, id -> net.neoforged.fml.ModList.get() != null && net.neoforged.fml.ModList.get().isLoaded(id));
     }

@@ -62,6 +62,11 @@ public final class InteriorManager {
 
     /** Shift + right-click / menu button: enter the tank's interior (region is prepared first if needed). */
     public static void enter(ServerPlayer player, BlockPos clicked) {
+        // M33 part b: interior off: nobody goes in (who is inside can still leave)
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.INTERIOR)) {
+            player.displayClientMessage(org.overengineer.bettacraft.config.FeatureGate.offMessage(org.overengineer.bettacraft.config.Feature.INTERIOR), true);
+            return;
+        }
         if (isInterior(player.level())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.interior.nested"), true);
             return;

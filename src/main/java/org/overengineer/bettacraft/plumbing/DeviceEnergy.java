@@ -19,7 +19,7 @@ public class DeviceEnergy extends EnergyStorage {
 
     /** Whether the water devices need FE. */
     public static boolean required() {
-        return ServerConfig.getOr(ServerConfig.POWER_PUMPS, false);
+        return org.overengineer.bettacraft.tank.TankPower.power() && ServerConfig.getOr(ServerConfig.POWER_PUMPS, false);
     }
 
     /** FE per tick of a pump at 100 %. */

@@ -57,7 +57,7 @@ final class FilterEffects {
             // M23: own sound (or Minecraft's), quieter with the power regulator and the client volume of the filters
             double share = ((FilterHost) be).powerShare();
             float vol = (float) ((0.25F + RAND.nextFloat() * 0.1F) * share * DeviceEffects.volume(org.overengineer.bettacraft.equipment.Regulator.Sound.FILTER));
-            if (sound && vol > 0.001F && RAND.nextInt(70) == 0 && hit.distanceToSqr(cam) < 16 * 16) {
+            if (sound && ModSounds.devices() && vol > 0.001F && RAND.nextInt(70) == 0 && hit.distanceToSqr(cam) < 16 * 16) {
                 mc.level.playLocalSound(hit.x, hit.y, hit.z, ModSounds.pick(ModSounds.FILTER_RUNNING, ModSounds.FILTER_RUNNING_VANILLA), SoundSource.BLOCKS,
                         vol, 0.9F + RAND.nextFloat() * 0.2F, false);
             }

@@ -76,6 +76,8 @@ public final class BettaCare {
      * and at a tolerable temperature), breeding timers and healing of wounds.
      */
     public static void advance(ServerLevel level, TankBlockEntity controller, BettaEntity fish, double days) {
+        // M33 part b: bettas off: their care rests (no hunger, illness, growth or breeding timers; nothing dies)
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BETTAS)) return;
         TankData tank = controller.getTank();
         BettaHealth.Params p = params();
         boolean tempOk = TankTemperature.isTolerable(tank.waterTemp());
@@ -102,7 +104,7 @@ public final class BettaCare {
         }
         if (wasSick != fish.health.isSick()) fish.syncLook();
         fish.syncDiet(); // M26 part b
-        fish.breeding.tick(days);
+        if (org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BREEDING)) fish.breeding.tick(days); // M33 part b
 
         boolean fed = !fish.health.isHungry(p);
         if (fish.liveStage != LifeStage.ADULT && fed && tempOk && !fish.health.isSick()) grow(level, controller, fish, days);

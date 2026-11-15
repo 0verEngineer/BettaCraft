@@ -67,6 +67,7 @@ public final class BetterFishTanksCompat {
     }
 
     private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_BETTER_FISH_TANKS)) return; // M33 part b
         ItemStack stack = event.getItemStack();
         if (!isOurFilledContainer(stack) || !isTankBlock(event.getLevel(), event.getPos())) return;
         event.setCanceled(true);

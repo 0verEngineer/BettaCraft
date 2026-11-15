@@ -71,6 +71,7 @@ public final class TankCritters {
         m.put(CritterSpecies.Group.SHRIMP, ServerConfig.getOr(ServerConfig.CRITTERS_SHRIMP_BREEDING, 1.0));
         m.put(CritterSpecies.Group.CRAYFISH, ServerConfig.getOr(ServerConfig.CRITTERS_CRAYFISH_BREEDING, 1.0));
         m.put(CritterSpecies.Group.SNAIL, ServerConfig.getOr(ServerConfig.CRITTERS_SNAIL_BREEDING, 1.0));
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BREEDING)) m.replaceAll((g, v) -> 0.0); // M33 part b: no breeding
         return m;
     }
 
@@ -220,6 +221,8 @@ public final class TankCritters {
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
         TankData t = c.getTank();
         if (t.critters().isEmpty() && t.critterObjects().isEmpty()) return;
+        // M33 part b: the small animals off: they rest where they are (no moving, eating, ageing, breeding or dying)
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.INVERTEBRATES)) return;
         RandomGenerator rnd = random(level);
         TankTerrain terrain = terrain(level, t);
         long now = level.getGameTime();

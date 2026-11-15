@@ -176,6 +176,12 @@ public class DwarfFrogEntity extends AbstractFish {
             setBreathing(false);
             return;
         }
+        // M33 part b: the frogs off: they rest (time stands still for their hunger, they hold their breath without drowning)
+        if (!Features.enabled(Feature.FROGS)) {
+            if (lastFed != NEVER) lastFed++;
+            setBreathing(false);
+            return;
+        }
         if (breath < 0) breath = maxBreath();
         boolean up = surfacing && Math.abs(getY() + getBbHeight() - tankWater.surface()) < 0.12;
         if (up && airAvailable) {

@@ -369,6 +369,7 @@ public final class InteriorPlants {
     /** One care step of the tank ({@code days} since the last one): growth on the index, blocks of due stages. */
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
         TankData t = c.getTank();
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.INTERIOR)) return; // M33 part b: the interior rests
         InteriorRegion r = region(level.getServer(), t);
         if (r == null || r.plants().isEmpty() || days <= 0) return;
         grow(level, c, r, days);
@@ -396,6 +397,8 @@ public final class InteriorPlants {
         int redTarget = PlantColors.tintFor(env.light());
         double soilBoost = activeSoilBoost(level, r);
         for (InteriorPlant p : r.plants().all()) {
+            // M33 part b: aquarium plants / corals off: they rest (no growth, spreading, uptake or colour change)
+            if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS) && !p.species.marine() || !org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.CORALS) && p.species.marine()) continue;
             double rate = speed * env.rate(p);
             // M25: CO2 makes the freshwater plants grow faster, the strong-light plants most
             if (rate > 0 && !p.species.marine()) rate *= org.overengineer.bettacraft.co2.TankCo2.growth(t, PlantSpecies.Light.need(p.species.light()));

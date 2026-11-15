@@ -303,7 +303,7 @@ public final class TankClimate {
     }
 
     public static boolean misterPowerRequired() {
-        return ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
+        return org.overengineer.bettacraft.tank.TankPower.power() && ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
     }
 
     private static void offMats(ServerLevel level, TankBlockEntity c) {

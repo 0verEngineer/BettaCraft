@@ -71,10 +71,18 @@ public final class TankCare {
         }
         long now = level.getGameTime();
         if ((now + pos.asLong()) % INTERVAL != 0) return;
-        TankData tank = be.getTank();
         long dt = be.lastCareTick < 0 ? INTERVAL : Math.max(0, now - be.lastCareTick);
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastCareTick = now;
+        care(server, be, dt);
+        if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
+            TankInhabitants.reconcile(server, be);
+        }
+    }
+
+    /** One care step of {@code dt} game ticks: every system of the tank in its order (also used by GameTests). */
+    public static void care(ServerLevel server, TankBlockEntity be, long dt) {
+        TankData tank = be.getTank();
         if (tank.hasLegacyHeaters()) TankEquipment.moveLegacyHeaters(server, be);
         TankPower.step(server, be, dt);
         updateTemperature(server, be, dt / 24000.0);
@@ -103,9 +111,6 @@ public final class TankCare {
         org.overengineer.bettacraft.reef.ReefCare.step(server, be, dt / 24000.0); // M20: salt shock of frogs and foreign animals
         org.overengineer.bettacraft.reef.ReefDosing.step(server, be, dt / 24000.0); // M25 part c: magnesium and trace elements
         org.overengineer.bettacraft.monitor.TankHistory.onCare(server, be); // M27: one point per hour for the monitors' graphs
-        if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
-            TankInhabitants.reconcile(server, be);
-        }
     }
 
     // ------------------------------------------------------------------ temperature
