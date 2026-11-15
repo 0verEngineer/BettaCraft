@@ -44,14 +44,13 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
 /**
  * M36 GameTests: the size setting of the bettas ({@code sizes.betta}, Normal / Large) scales their hitbox (every life stage
  * in proportion) and nothing else: the stocking, the data and the tank stay as they are, switching back and forth loses
- * no fish, the fins stay inside the glass at both sizes, the tankmates keep their size. All in one batch (they change the
- * server config); the setting is restored also when a test fails.
+ * no fish, the fins stay inside the glass at both sizes, the tankmates keep their size. Each test in a batch of its own (they
+ * change the server config, the tests of one batch run at the same time); the setting is restored also when a test fails.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class SizeGameTests {
     private static final String EMPTY = "empty_32x10x32";
-    private static final String BATCH = "bettacraft_m36_size";
     private static final double EPS = 1e-4;
 
     private SizeGameTests() {}
@@ -103,7 +102,7 @@ public final class SizeGameTests {
     }
 
     /** The default is Normal (0.77); Large is the size before M36: hitbox 0.5 x 0.35 for an adult, the young in proportion. */
-    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 100)
+    @GameTest(template = EMPTY, batch = "bettacraft_m36_size_hitbox", timeoutTicks = 100)
     public static void bettaHitboxFollowsTheSizeSetting(GameTestHelper h) {
         h.assertTrue(ServerConfig.SIZE_BETTA.getDefault() == AnimalSize.NORMAL, "default Normal: " + ServerConfig.SIZE_BETTA.getDefault());
         AnimalSize saved = ServerConfig.SIZE_BETTA.get();
@@ -146,7 +145,7 @@ public final class SizeGameTests {
     }
 
     /** The stocking, the breeding rules (prey size) and the data of the fish do not depend on the size setting. */
-    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 100)
+    @GameTest(template = EMPTY, batch = "bettacraft_m36_size_stocking", timeoutTicks = 100)
     public static void stockingDoesNotDependOnTheSize(GameTestHelper h) {
         guarded(h, () -> {
             TankBlockEntity c = tank(h, 2, 1, 2, 4, 2, 2);
@@ -177,7 +176,7 @@ public final class SizeGameTests {
      * Switching Large - Normal - Large - Normal with the fish swimming: none is lost, every one stays in its tank (in the
      * water, its fins inside the glass at either size), the tank keeps its inhabitants and every fish its data.
      */
-    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 400)
+    @GameTest(template = EMPTY, batch = "bettacraft_m36_size_switching", timeoutTicks = 400)
     public static void switchingLosesNoFish(GameTestHelper h) {
         AnimalSize saved = ServerConfig.SIZE_BETTA.get();
         TankBlockEntity c;

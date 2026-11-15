@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "15"; // M35.1: the server settings packet lost the cyst stack size
+    public static final String VERSION = "16"; // M36: the server settings packet carries the betta size (M35.1: lost the cyst stack size)
 
     private ModNetwork() {}
 

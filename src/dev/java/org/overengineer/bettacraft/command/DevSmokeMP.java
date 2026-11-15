@@ -165,6 +165,13 @@ public final class DevSmokeMP {
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
             case "seahorses" -> checkSeahorses(name, a);
+            case "sizes" -> {
+                // M36: {@code sizes <setting> <bettas> <hitboxes follow>} the server's betta size on this client
+                String want = ServerConfig.SIZE_BETTA.get().name();
+                check(name + ": betta size " + (a.length > 1 ? a[1] : "?") + " (server " + want + ")", a.length > 1 && want.equals(a[1]));
+                check(name + ": " + (a.length > 2 ? a[2] : "?") + " bettas seen, their hitboxes follow the size: " + (a.length > 3 ? a[3] : "?"),
+                        a.length > 3 && !"0".equals(a[2]) && "true".equals(a[3]));
+            }
             case "containers" -> checkContainers(name, a);
             case "wildlife" -> {
                 // M22.3: the wild small animals with their species and colour, and the genes switch, on every client
@@ -211,7 +218,7 @@ public final class DevSmokeMP {
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
-        reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine").contains(a[0]) ? a[1] : "")
+        reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine", "sizes").contains(a[0]) ? a[1] : "")
                 + ("outlets".equals(a[0]) ? OUTLETS_EXPECTED : ""), text);
     }
 
@@ -1367,6 +1374,18 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
             say("wildlife", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":wildlife") && reports.containsKey(P2 + ":wildlife"), 20 * 30));
+        // M36: the server switches the betta size live (as a reload of the server config does): both clients draw and size
+        // the bettas of the main tank as the server says, Large and then Normal again
+        steps.add(new Step("size large", () -> {
+            ServerConfig.SIZE_BETTA.set(org.overengineer.bettacraft.config.AnimalSize.LARGE);
+            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
+            say("sizes", "all", tankArg());
+        }, () -> reports.containsKey(P1 + ":sizesLARGE") && reports.containsKey(P2 + ":sizesLARGE"), 20 * 30));
+        steps.add(new Step("size normal", () -> {
+            ServerConfig.SIZE_BETTA.set(org.overengineer.bettacraft.config.AnimalSize.NORMAL);
+            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
+            say("sizes", "all", tankArg());
+        }, () -> reports.containsKey(P1 + ":sizesNORMAL") && reports.containsKey(P2 + ":sizesNORMAL"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             ServerConfig.GENES_ALWAYS_VISIBLE.set(false);
             org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);

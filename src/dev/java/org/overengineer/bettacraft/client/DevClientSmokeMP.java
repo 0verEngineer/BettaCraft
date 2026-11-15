@@ -281,6 +281,17 @@ final class DevClientSmokeMP {
                             + " " + s1.getCount() + " " + (s1.has(net.minecraft.core.component.DataComponents.DAMAGE) ? 1 : 0));
                 });
             }
+            case "sizes" -> {
+                // M36: the betta size the server sent and the hitboxes of the bettas of the main tank on this client
+                BlockPos min = pos(args);
+                then(20, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var list = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8));
+                    float f = org.overengineer.bettacraft.config.AnimalSizes.bettaFactor();
+                    boolean follow = list.stream().allMatch(b -> Math.abs(b.getBbWidth() - 0.5F * b.lifeStage().scale() * f) < 1e-3F);
+                    send("sizes " + org.overengineer.bettacraft.config.AnimalSizes.betta().name() + " " + list.size() + " " + follow);
+                });
+            }
             case "wildlife" -> {
                 // M22.3: the wild small animals near the pool (species and colour as drawn) and the genes switch of the server
                 BlockPos min = pos(args);

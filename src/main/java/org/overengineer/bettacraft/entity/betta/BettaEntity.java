@@ -288,7 +288,9 @@ public class BettaEntity extends AbstractFish {
      */
     @Override
     protected net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
-        return super.getDefaultDimensions(pose).scale(org.overengineer.bettacraft.config.AnimalSizes.bettaFactor());
+        float f = org.overengineer.bettacraft.config.AnimalSizes.bettaFactor();
+        sizeFactor = f; // the tick sees no change after a refresh from elsewhere
+        return super.getDefaultDimensions(pose).scale(f);
     }
 
     /** M36: how big the fish is drawn relative to an adult of the size before M36 (life stage times the size setting). */
