@@ -134,6 +134,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM31c m31c;
     /** -Psmoketestm31d: mobs in glass (drowned in an aquarium, a spider on the glass, slimes), the mob jar. */
     private static final boolean M31D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31donly");
+    /** -Pcreate -Psmoketestm32b: a tank travelling on a Create bearing and on a Sable airship (M32 part b). */
+    private static final boolean M32B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32bonly");
+    private static DevClientSmokeM32b m32b;
     private static DevClientSmokeM31d m31d;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
     private static final boolean M31B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31bonly");
@@ -234,6 +237,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M32B_ONLY) {
+                if (ticks == 60) m32b = new DevClientSmokeM32b();
+                if (m32b != null && m32b.tick()) {
+                    m32b = null;
+                    LOGGER.info("[smoketest] client world test finished (M32 part b only)");
                     mc.stop();
                 }
                 return;

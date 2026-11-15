@@ -112,6 +112,11 @@ public class TankBakedModel implements IDynamicBakedModel {
         return g != null ? g : Blocks.GLASS.defaultBlockState();
     }
 
+    /** M32 part b: a tank block on a Create contraption draws its water with the model. */
+    private static boolean waterInModel(ModelData data) {
+        return Boolean.TRUE.equals(data.get(TankBlockEntity.WATER_IN_MODEL));
+    }
+
     private TankStyle styleOf(ModelData data) {
         if (fixedGlass != null) return fixedStyle;
         TankStyle s = data.get(TankBlockEntity.STYLE);
@@ -123,7 +128,7 @@ public class TankBakedModel implements IDynamicBakedModel {
         if (side == null) {
             // with a shader pack the water is part of the block model (shaders then treat it like tinted glass)
             if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == RenderType.translucent())
-                    && org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()) {
+                    && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) {
                 return waterQuads(state, data);
             }
             return List.of();
@@ -178,7 +183,7 @@ public class TankBakedModel implements IDynamicBakedModel {
     @Override
     public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
         ChunkRenderTypeSet own = state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0
-                && org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()
+                && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))
                 ? ChunkRenderTypeSet.of(RenderType.cutout(), RenderType.translucent()) : ChunkRenderTypeSet.of(RenderType.cutout());
         if (styleOf(data) == TankStyle.CLEAN) return own;
         BlockState glass = glassOf(data);

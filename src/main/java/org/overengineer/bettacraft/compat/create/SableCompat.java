@@ -40,6 +40,7 @@ public final class SableCompat {
             projectOut = h.getClass().getMethod("projectOutOfSubLevel", Level.class, Vec3.class);
             helper = h;
             TankMoves.TRAVELLING = SableCompat::inSubLevel;
+            TankMoves.PROJECT = SableCompat::project;
             LOGGER.info("Sable found: tanks on airships travel packed");
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
             LOGGER.error("Sable found, but its helper could not be reached: tanks in sub-levels are treated as standing", e);

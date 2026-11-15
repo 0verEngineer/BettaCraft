@@ -53,6 +53,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     public void render(TankBlockEntity be, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         TankData t = be.getTank();
         if (t == null || !be.isController()) return;
+        TravellingTankRenderer.render(be, t, partialTick, pose, buffers, light); // M32 part b: on a contraption or an airship
         if (t.nest() != null) NestRenderer.render(be, t.nest(), partialTick, pose, buffers); // M15: domed
         FloatingPlantRenderer.render(be, t, partialTick, pose, buffers); // M12
         CritterRenderer.render(be, t, partialTick, pose, buffers); // M14
@@ -138,6 +139,9 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     public AABB getRenderBoundingBox(TankBlockEntity be) {
         TankData t = be.getTank();
         if (t == null || !be.isController()) return BlockEntityRenderer.super.getRenderBoundingBox(be);
+        // M32 part b: on an airship the block entity sits in Sable's plot far away and is drawn at the ship's pose: the box
+        // in plot coordinates would never be in the view (the distance check still applies, with Sable's camera)
+        if (TravellingTankRenderer.travelling(be)) return AABB.INFINITE;
         BlockPos mn = t.min(), mx = t.max();
         return new AABB(mn.getX(), mn.getY(), mn.getZ(), mx.getX() + 1, mx.getY() + 1, mx.getZ() + 1).inflate(0.5);
     }

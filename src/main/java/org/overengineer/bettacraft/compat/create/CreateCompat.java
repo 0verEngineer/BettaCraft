@@ -56,7 +56,7 @@ public final class CreateCompat {
     private static boolean registered;
 
     private static Field ctxWorld, ctxLocalPos, ctxBlockEntityData, ctxContraption;
-    private static Field contraptionAnchor, contraptionUpdateTags;
+    private static Field contraptionAnchor, contraptionUpdateTags, contraptionEntity;
     private static Method transformApplyWithoutOffset;
     private static Object resultSuccess, resultFail, resultPass;
     private static final java.util.Map<UUID, Long> MESSAGED = new java.util.HashMap<>();
@@ -90,6 +90,7 @@ public final class CreateCompat {
             ctxBlockEntityData = context.getField("blockEntityData");
             ctxContraption = context.getField("contraption");
             contraptionAnchor = contraption.getField("anchor");
+            contraptionEntity = contraption.getField("entity");
             contraptionUpdateTags = contraption.getDeclaredField("updateTags");
             contraptionUpdateTags.setAccessible(true);
             transformApplyWithoutOffset = transform.getMethod("applyWithoutOffset", BlockPos.class);
@@ -197,6 +198,14 @@ public final class CreateCompat {
                 startMoving(a[0]);
                 return null;
             }
+            case "tick" -> {
+                tick(a[0]);
+                return null;
+            }
+            case "stopMoving" -> {
+                stopMoving(a[0]);
+                return null;
+            }
             case "canBeDisabledVia" -> {
                 return null; // contraption controls do not switch a tank off
             }
@@ -240,6 +249,35 @@ public final class CreateCompat {
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             LOGGER.error("Could not pack a tank for a contraption", e);
+        }
+    }
+
+    /** Region of a controller's captured data, or -1 (members, client copies). */
+    private static int regionOf(@Nullable CompoundTag nbt) {
+        return nbt != null && nbt.contains("tank", Tag.TAG_COMPOUND) ? nbt.getCompound("tank").getInt("region") : -1;
+    }
+
+    /** Server, every tick of the trip: players near the contraption may get the interior for the miniature. */
+    private static void tick(Object context) {
+        try {
+            if (!(ctxWorld.get(context) instanceof ServerLevel level)) return;
+            int region = regionOf((CompoundTag) ctxBlockEntityData.get(context));
+            if (region < 0 || level.getGameTime() % 20 != 0) return;
+            Object contraption = ctxContraption.get(context);
+            if (!(contraptionEntity.get(contraption) instanceof Entity e)) return;
+            TankMoves.travellingRegion(region, level, () -> e.isAlive() ? e.position() : null);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            LOGGER.debug("Contraption tick", e);
+        }
+    }
+
+    private static void stopMoving(Object context) {
+        try {
+            if (!(ctxWorld.get(context) instanceof ServerLevel)) return;
+            int region = regionOf((CompoundTag) ctxBlockEntityData.get(context));
+            if (region >= 0) TankMoves.stoppedTravelling(region);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            LOGGER.debug("Contraption stop", e);
         }
     }
 

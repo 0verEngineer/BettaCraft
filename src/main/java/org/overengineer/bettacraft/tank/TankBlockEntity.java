@@ -35,6 +35,11 @@ public class TankBlockEntity extends BlockEntity {
     public static final ModelProperty<BlockState> GLASS_STATE = new ModelProperty<>();
     /** M11: textured (connected glass texture) or clean (clear glass, edge lines only). */
     public static final ModelProperty<TankStyle> STYLE = new ModelProperty<>();
+    /**
+     * M32 part b: the water is part of the block model (Create draws a contraption's blocks by their models only, without
+     * the fluid pass that draws the tank water in the world).
+     */
+    public static final ModelProperty<Boolean> WATER_IN_MODEL = new ModelProperty<>();
 
     /** Client-side controllers currently loaded (used by the miniature renderer; never touched on the server). */
     public static final Set<TankBlockEntity> CLIENT_CONTROLLERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -144,8 +149,17 @@ public class TankBlockEntity extends BlockEntity {
     net.minecraft.nbt.ListTag stowed = new net.minecraft.nbt.ListTag();
     /** M32 part b (client): a copy of the controller drawn on a Create contraption (its own local coordinates). */
     public boolean contraptionView;
+    /** M32 part b (client): the swimming animals drawn while travelling, and when the client last checked for a sub-level. */
+    public Object travelCache;
+    public long travelCheckAt = Long.MIN_VALUE;
+    public boolean travelCheck;
 
     public net.minecraft.nbt.ListTag stowed() { return stowed; }
+
+    /** M32 part b (client): Create's copy of a tank block on a contraption (its level is the contraption's, not the world). */
+    public boolean onContraption() {
+        return contraptionView || level != null && level.isClientSide && org.overengineer.bettacraft.client.tank.TankClientLevels.notTheWorld(level);
+    }
 
     @Nullable
     public BlockPos movedFrom() { return movedFrom; }
@@ -383,7 +397,9 @@ public class TankBlockEntity extends BlockEntity {
 
     @Override
     public ModelData getModelData() {
-        return ModelData.builder().with(GLASS_STATE, getGlassState()).with(STYLE, style).build();
+        var b = ModelData.builder().with(GLASS_STATE, getGlassState()).with(STYLE, style);
+        if (onContraption()) b.with(WATER_IN_MODEL, true);
+        return b.build();
     }
 
     @Override
@@ -407,7 +423,7 @@ public class TankBlockEntity extends BlockEntity {
     }
 
     private void updateClientControllerSet() {
-        if (isController() && !isRemoved()) {
+        if (isController() && !isRemoved() && !contraptionView) { // M32 part b: Create's copies are drawn by their renderer
             CLIENT_CONTROLLERS.add(this);
         } else {
             CLIENT_CONTROLLERS.remove(this);

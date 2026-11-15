@@ -91,7 +91,20 @@ public final class MiniatureRenderer {
         }
     }
 
+    /** M32 part b: a travelling tank drawn this frame by its block entity renderer (pose at its controller block). */
+    private record Travelling(TankData tank, BlockPos origin, Matrix4f pose) {}
+
+    private static final List<Travelling> TRAVELLING = new java.util.ArrayList<>();
+
     private MiniatureRenderer() {}
+
+    /**
+     * M32 part b: the miniature of a tank on a Create contraption or an airship, at the pose its block entity was drawn with
+     * (camera-relative, at the controller block {@code origin}); drawn in the next miniature passes.
+     */
+    public static void queueTravelling(TankData t, BlockPos origin, Matrix4f pose) {
+        if (TRAVELLING.size() < 64) TRAVELLING.add(new Travelling(t, origin.immutable(), pose));
+    }
 
     /** M17 (logout): finished meshes nobody will upload any more give their native memory back now, not in the next world. */
     public static void drainResults() {
@@ -120,6 +133,7 @@ public final class MiniatureRenderer {
             for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
                 TankData t = be.getTank();
                 if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;
+                if (org.overengineer.bettacraft.client.render.TravellingTankRenderer.travelling(be)) continue; // M32 part b: drawn at the ship's pose
                 ClientRegion region = ClientInteriorCache.get(t.regionId());
                 if (region == null) continue;
                 BlockPos min = t.min();
@@ -137,6 +151,7 @@ public final class MiniatureRenderer {
         for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
             TankData t = be.getTank();
             if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;
+            if (org.overengineer.bettacraft.client.render.TravellingTankRenderer.travelling(be)) continue;
             ClientRegion region = ClientInteriorCache.get(t.regionId());
             if (region == null || region.meshes.isEmpty()) continue;
             BlockPos min = t.min();
@@ -158,6 +173,17 @@ public final class MiniatureRenderer {
             // (drawn after it, the water's depth would hide it); never in the Iris shadow pass
             if (opaque && !IrisCompat.renderingShadowPass()) MiniatureJets.render(event, be, region, cam);
         }
+        // M32 part b: travelling tanks (no plant meshes, no sway, no jets: their voxels; lit like open daylight)
+        for (Travelling tr : TRAVELLING) {
+            ClientRegion region = ClientInteriorCache.get(tr.tank().regionId());
+            if (region == null) continue;
+            if (opaque) schedule(mc.level, region, tr.tank(), true);
+            if (!region.meshes.isEmpty()) {
+                drawTravelling(region, tr, new Matrix4f(event.getModelViewMatrix()), event.getProjectionMatrix(),
+                        opaque ? OPAQUE : List.of(RenderType.translucent()));
+            }
+        }
+        if (!opaque) TRAVELLING.clear();
         if (opaque) MiniaturePlants.endFrame(mc.renderBuffers().bufferSource());
         if (opaque && MiniatureSway.lastQuads > 0) mc.renderBuffers().bufferSource().endBatch(PlantMeshRenderer.MINI);
         long dt = System.nanoTime() - t0;
@@ -225,10 +251,21 @@ public final class MiniatureRenderer {
     }
 
     private static void schedule(ClientLevel level, ClientRegion region, TankData t) {
+        schedule(level, region, t, false);
+    }
+
+    /** {@code daylight}: a travelling tank (its blocks are not where its data says), meshed as if in open daylight. */
+    private static void schedule(ClientLevel level, ClientRegion region, TankData t, boolean daylight) {
         if (region.dirtyCells.isEmpty() || inFlight >= MAX_IN_FLIGHT) return;
         Long2ObjectOpenHashMap<InteriorSnapshot.Section> map = region.sectionsSnapshot();
         LongOpenHashSet allowed = allowedCells(region, map);
-        byte[] light = RegionBlockGetter.captureLight(level, t.min(), t.sizeX(), t.sizeY(), t.sizeZ());
+        byte[] light;
+        if (daylight) {
+            light = new byte[t.sizeX() * t.sizeY() * t.sizeZ()];
+            java.util.Arrays.fill(light, (byte) 0x0F);
+        } else {
+            light = RegionBlockGetter.captureLight(level, t.min(), t.sizeX(), t.sizeY(), t.sizeZ());
+        }
         if (region.pendingJobs == 0) {
             region.waveStart = System.nanoTime();
             region.waveWorkerNanos = 0;
@@ -482,6 +519,61 @@ public final class MiniatureRenderer {
                     if (sb != null) {
                         sb.bind();
                         sb.draw();
+                    }
+                }
+                shader.clear();
+                VertexBuffer.unbind();
+            }
+            rt.clearRenderState();
+        }
+    }
+
+    /** M32 part b: a travelling tank's meshes at its recorded pose (no culling per mesh: the pose is not the world's). */
+    /**
+     * M32 part b: the miniature of a tank on a Create contraption, drawn at once from its block entity renderer (the
+     * entity pass): Create (Flywheel) draws the contraption's blocks, the tank water among them, before the miniature
+     * passes; drawn there, the water would hide the miniature behind it.
+     */
+    public static void drawTravellingNow(TankData t, BlockPos origin, Matrix4f pose) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || t.regionId() < 0) return;
+        ClientRegion region = ClientInteriorCache.get(t.regionId());
+        if (region == null) return;
+        schedule(mc.level, region, t, true);
+        if (region.meshes.isEmpty()) return;
+        drawTravelling(region, new Travelling(t, origin, pose), new Matrix4f(RenderSystem.getModelViewMatrix()), RenderSystem.getProjectionMatrix(),
+                LAYERS);
+    }
+
+    private static void drawTravelling(ClientRegion region, Travelling tr, Matrix4f modelView, Matrix4f proj, List<RenderType> layers) {
+        TankData t = tr.tank();
+        BlockPos min = t.min(), o = tr.origin();
+        float fx = (t.sizeX() - 2 * MARGIN) / region.sizeX;
+        float fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
+        float fz = (t.sizeZ() - 2 * MARGIN) / region.sizeZ;
+        Matrix4f mv = modelView.mul(tr.pose())
+                .translate(min.getX() - o.getX() + MARGIN, min.getY() - o.getY() + MARGIN, min.getZ() - o.getZ() + MARGIN)
+                .scale(fx, fy, fz);
+        for (RenderType rt : layers) {
+            boolean any = false;
+            for (MiniatureMesh m : region.meshes.values()) {
+                if (m.buffers.containsKey(rt) || m.plantBuffers.containsKey(rt) || m.swayBuffers.containsKey(rt)) {
+                    any = true;
+                    break;
+                }
+            }
+            if (!any) continue;
+            rt.setupRenderState();
+            ShaderInstance shader = RenderSystem.getShader();
+            if (shader != null) {
+                shader.setDefaultUniforms(VertexFormat.Mode.QUADS, mv, proj, Minecraft.getInstance().getWindow());
+                if (shader.CHUNK_OFFSET != null) shader.CHUNK_OFFSET.set(0F, 0F, 0F);
+                shader.apply();
+                for (MiniatureMesh m : region.meshes.values()) {
+                    for (VertexBuffer vb : new VertexBuffer[]{m.buffers.get(rt), m.plantBuffers.get(rt), m.swayBuffers.get(rt)}) {
+                        if (vb == null) continue;
+                        vb.bind();
+                        vb.draw();
                     }
                 }
                 shader.clear();

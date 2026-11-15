@@ -53,6 +53,14 @@ public final class TankMoves {
     /** Whether a position lies on a moving structure (Sable sub-level); set by the Sable compat. */
     public static volatile java.util.function.BiPredicate<Level, BlockPos> TRAVELLING = (l, p) -> false;
 
+    /** Where a point of a moving structure is in the world now (Sable: the ship's pose); set by the Sable compat. */
+    public static volatile java.util.function.BiFunction<Level, Vec3, Vec3> PROJECT = (l, p) -> p;
+
+    /** Interior regions of tanks on Create contraptions (no block entity in the world): where they are now (null = gone). */
+    private record TravelSpot(ResourceKey<Level> dim, java.util.function.Supplier<Vec3> where) {}
+
+    private static final Map<Integer, TravelSpot> TRAVELLING_REGIONS = new HashMap<>();
+
     private record Lift(ResourceKey<Level> dim, BlockPos pos, @Nullable BlockPos controller, boolean wasController, UUID tank,
                         List<BlockPos> members, List<Entity> packed) {}
 
@@ -77,6 +85,7 @@ public final class TankMoves {
             if (e instanceof net.minecraft.world.entity.player.Player || e.isPassenger() || e.isVehicle()) continue;
             CompoundTag t = new CompoundTag();
             if (!e.save(t)) continue;
+            markPlace(t, e, tank);
             list.add(t);
             packedOut.add(e);
         }
@@ -157,6 +166,37 @@ public final class TankMoves {
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         LIFTS.clear();
+        TRAVELLING_REGIONS.clear();
+    }
+
+    /** A tank with this interior region travels on a contraption that is at {@code where} (Create, every tick of the trip). */
+    public static void travellingRegion(int regionId, Level level, java.util.function.Supplier<Vec3> where) {
+        if (regionId >= 0) TRAVELLING_REGIONS.put(regionId, new TravelSpot(level.dimension(), where));
+    }
+
+    public static void stoppedTravelling(int regionId) {
+        TRAVELLING_REGIONS.remove(regionId);
+    }
+
+    /**
+     * Whether a player may get the interior of a region whose tank travels (the miniature on the contraption or airship):
+     * the contraption is near, or the claimed controller is a travelling tank of that region whose ship is near.
+     */
+    public static boolean travellingRegionNear(net.minecraft.server.level.ServerPlayer player, int regionId, BlockPos claimed, double range) {
+        TravelSpot spot = TRAVELLING_REGIONS.get(regionId);
+        if (spot != null) {
+            Vec3 w = spot.where().get();
+            if (w == null) {
+                TRAVELLING_REGIONS.remove(regionId);
+            } else if (spot.dim() == player.level().dimension() && w.distanceToSqr(player.position()) <= range * range) {
+                return true;
+            }
+        }
+        Level level = player.level();
+        if (!level.isLoaded(claimed) || !travelling(level, claimed)) return false;
+        TankBlockEntity c = TankMultiblock.getController(level, claimed);
+        if (c == null || c.getTank().regionId() != regionId) return false;
+        return PROJECT.apply(level, Vec3.atCenterOf(claimed)).distanceToSqr(player.position()) <= range * range;
     }
 
     // ------------------------------------------------------------------ arrival
@@ -251,7 +291,7 @@ public final class TankMoves {
         int released = 0, brought = 0;
         if (travelling) {
             // on a moving structure the animals travel packed (also the ones a mover left at the old place)
-            stowed.addAll(packAndRemove(level, left));
+            stowed.addAll(packAndRemove(level, left, before));
             TankBlockEntity c = TankMultiblock.getController(level, t.anchor());
             if (c != null) {
                 c.stowed.addAll(stowed);
@@ -280,12 +320,27 @@ public final class TankMoves {
         LOGGER.info("Tank {} at {} unpacked {} animal(s)", be.getTank().id(), pos, n);
     }
 
+    /** Key of a packed animal's place in its tank (from the tank's lowest corner), for drawing it while the tank travels. */
+    public static final String PLACE_KEY = "bettacraft:tank_place";
+
+    private static void markPlace(CompoundTag t, Entity e, TankData tank) {
+        BlockPos mn = tank.min();
+        t.put(PLACE_KEY, newDoubleList(e.getX() - mn.getX(), e.getY() - mn.getY(), e.getZ() - mn.getZ()));
+    }
+
+    private static ListTag newDoubleList(double... v) {
+        ListTag l = new ListTag();
+        for (double d : v) l.add(net.minecraft.nbt.DoubleTag.valueOf(d));
+        return l;
+    }
+
     /** Animals as data (they travel packed); the entities are removed. */
-    private static ListTag packAndRemove(ServerLevel level, List<Entity> animals) {
+    private static ListTag packAndRemove(ServerLevel level, List<Entity> animals, TankData tank) {
         ListTag out = new ListTag();
         for (Entity e : animals) {
             CompoundTag t = new CompoundTag();
             if (!e.isAlive() || !e.save(t)) continue;
+            markPlace(t, e, tank);
             out.add(t);
             e.discard();
         }

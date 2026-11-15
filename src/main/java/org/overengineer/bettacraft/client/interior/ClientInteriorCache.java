@@ -127,6 +127,24 @@ public final class ClientInteriorCache {
                 PacketDistributor.sendToServer(new InteriorRequestPayload(t.regionId(), be.getBlockPos(), r == null ? -1 : r.version));
             }
         }
+        // M32 part b: tanks travelling on contraptions and airships (seen by their renderer lately)
+        var seen = org.overengineer.bettacraft.client.render.TravellingTankRenderer.SEEN.int2ObjectEntrySet().iterator();
+        while (seen.hasNext()) {
+            var e = seen.next();
+            var s = e.getValue();
+            if (now - s.time() > 200 || now < s.time()) {
+                seen.remove();
+                continue;
+            }
+            int id = e.getIntKey();
+            used.add(id);
+            ClientRegion r = REGIONS.get(id);
+            long last = LAST_REQUEST.getOrDefault(id, -1000L);
+            if ((r == null && now - last > 100) || (r != null && now - last > 100 && (now + id) % 100 == 0)) {
+                LAST_REQUEST.put(id, now);
+                PacketDistributor.sendToServer(new InteriorRequestPayload(id, s.requestPos(), r == null ? -1 : r.version));
+            }
+        }
         var it = REGIONS.int2ObjectEntrySet().iterator();
         while (it.hasNext()) {
             var e = it.next();

@@ -262,11 +262,14 @@ public final class InteriorSync {
         InteriorRegion r = InteriorRegions.get(server).get(req.regionId());
         if (r == null || !r.built() || player.level().dimension() != r.tankDimension()) return;
         double range = ServerConfig.getOr(ServerConfig.INTERIOR_SYNC_RANGE, 96) + 32;
-        if (player.blockPosition().distSqr(req.controller()) > range * range) return;
-        // M17: never load a chunk for a client request (getBlockEntity loads it synchronously on the server)
-        if (!player.level().isLoaded(req.controller())) return;
-        TankBlockEntity c = TankMultiblock.getController(player.level(), req.controller());
-        if (c == null || c.getTank().regionId() != r.id()) return;
+        // M32 part b: the miniature of a tank travelling on a contraption or an airship
+        if (!org.overengineer.bettacraft.tank.TankMoves.travellingRegionNear(player, r.id(), req.controller(), range)) {
+            if (player.blockPosition().distSqr(req.controller()) > range * range) return;
+            // M17: never load a chunk for a client request (getBlockEntity loads it synchronously on the server)
+            if (!player.level().isLoaded(req.controller())) return;
+            TankBlockEntity c = TankMultiblock.getController(player.level(), req.controller());
+            if (c == null || c.getTank().regionId() != r.id()) return;
+        }
         State st = state(r.id());
         if (req.knownVersion() == st.version && !st.all && st.dirty.isEmpty()) return;
         // M17: one full send per player and region per REQUEST_COOLDOWN ticks; a client asking again and again (or with a

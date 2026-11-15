@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm32b')) {
+                // gradlew runClient -Pcreate -Psmoketestm32b : only the M32 part b scene (a tank on a Create bearing, standing and
+                // turned with the contraption; a tank on a Sable airship)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m32bonly', 'true'
+            }
             if (project.hasProperty('smoketestm31d')) {
                 // gradlew runClient -Psmoketestm31d : only the M31 part d scene (drowned in an aquarium, a spider on the glass, a
                 // skeleton and a zombie, small slimes, the mob jar in item frames)
