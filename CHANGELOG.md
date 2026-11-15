@@ -4,6 +4,32 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.28.0-beta.1] - 2026-11-15
+
+Smaller bettas: a new size setting with Normal as the default and the old size as Large.
+
+### Added
+- **Betta size setting** `sizes.betta` in the server config (`bettacraft-server.toml`): **NORMAL** (the default) or
+  **LARGE**. Normal draws the bettas at 0.77 of their old size, about halfway between the old size and the bettas of
+  DragN's Just Bettas (an adult halfmoon male with its tail is now about 0.55 blocks long instead of 0.72), which is also
+  the scale of the tankmates (about 12 cm per block). Large is the size before 1.28. All betta species and every life
+  stage scale in proportion.
+- The model and the hitbox change together, everywhere a betta is drawn (world, tanks, the handbook scenes); the fins
+  still stay inside the glass at either size.
+- The server's setting counts for every player: it is sent to the clients at login and whenever the server config is
+  reloaded, and a change works at once (the fish refresh their hitbox on their next tick), no restart needed.
+
+### Changed
+- **Bettas are smaller by default.** Only the look and the hitbox change: the stocking, the breeding, the fights, the
+  predators' choice of prey and every saved value of a fish are the same at both sizes, so you can switch back and forth.
+  The other animals keep their size (they were already on the 12 cm per block scale the Normal bettas now follow).
+- Handbook: a section on the size on the betta page (with a picture of both sizes) and the option in the settings table;
+  the betta pictures are new.
+
+### Upgrading
+- Existing worlds get Normal bettas after the update (no data changes). Set `sizes.betta = "LARGE"` in the world's
+  `serverconfig/bettacraft-server.toml` to keep the old size.
+
 ## [1.27.1-beta.1] - 2026-11-15
 
 Artemia cysts made simple: one jar is one culture, jars always stack to 64, and sand gives four times as many.

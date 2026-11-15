@@ -36,6 +36,9 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - **Breeding:** conditioning with live food, bubble nest under floating plants, spawning, eggs, larvae and six life
   stages; fry need infusoria and artemia that you culture yourself (larva tub, artemia hatchery). Two adult males
   fight (they flare first, also at a mirror stick).
+- **Two sizes:** bettas are drawn at **Normal** size (the default since 1.28, about halfway between the old size and the
+  bettas of other mods) or **Large** (the size before 1.28); the server sets it for everyone (`sizes.betta`), the hitbox
+  follows the look, nothing else changes.
 
 ### Aquariums and the interior
 - **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable to
@@ -201,7 +204,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, betta size (`sizes.betta`), food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`), feature switches (`features.*`, a tree per feature group; old 1.25 keys are migrated automatically, backup
 `bettacraft-common.toml.pre-m33`), presets (`preset`, `presetKeep`) |
 | `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound, device volumes, air pump and flow pump sounds (off by default) |

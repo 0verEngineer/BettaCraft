@@ -22,6 +22,8 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 - **Breeding:** condition the pair with live food, give them floating plants for the bubble nest, and raise eggs,
   larvae and fry through six life stages on infusoria and artemia that you culture yourself. Two adult males flare and
   fight, also at a mirror stick. The breeding tab shows Punnett squares.
+- **Two sizes:** Normal (the default) or Large (the size before 1.28), one server setting for everyone; only the look
+  and the hitbox change.
 
 ![Six betta varieties: Koi Galaxy, Black Orchid, Mustard Gas, Samurai, Avatar, Hellboy](images/bettacraft-betta-varieties.jpg)
 
