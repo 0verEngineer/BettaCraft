@@ -166,8 +166,17 @@ public final class Wildlife {
         int cap = ServerConfig.getOr(ServerConfig.BIG_WILD_NEARBY, 1);
         if (cap <= 0) return false;
         AABB box = new AABB(pos).inflate(64);
-        if (level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box,
-                e -> e.isWild() && e.species().isLarge()).size() >= cap) return false;
+        var near = level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box,
+                e -> e.isWild() && e.species().isLarge());
+        // M30 part c: a schooling big species (cownose rays) spawns as a small group: the others of the group join the first
+        // one right next to them without another roll, up to the group size
+        TankmateSpecies s = TankmateSpecies.of(type);
+        if (s != null && s.isLarge() && s.shoaling()) {
+            int[] g = group(s);
+            long mates = near.stream().filter(e -> e.species() == s && e.distanceToSqr(pos.getCenter()) < 144).count();
+            if (mates > 0) return mates < g[1] && near.size() < cap + g[1];
+        }
+        if (near.size() >= cap) return false;
         return random.nextDouble() < ServerConfig.getOr(ServerConfig.BIG_SPAWN_CHANCE, 0.25);
     }
 
@@ -181,7 +190,9 @@ public final class Wildlife {
 
     /** Smallest and largest shoal of a species that spawns together. */
     public static int[] group(TankmateSpecies s) {
-        if (!s.shoaling() || s.isLarge()) return new int[]{1, 1};
+        // M30 part c: big animals alone, a schooling big species (cownose rays) in a small group of 2-3
+        if (s.isLarge()) return s.shoaling() ? new int[]{2, Math.max(2, Math.min(3, s.shoal()))} : new int[]{1, 1};
+        if (!s.shoaling()) return new int[]{1, 1};
         return new int[]{3, Math.max(3, Math.min(6, s.shoal()))};
     }
 

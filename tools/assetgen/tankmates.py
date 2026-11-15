@@ -672,6 +672,142 @@ def stingray():
     return p, groups
 
 
+# M30 part c: the marine big animals
+
+def bamboo_shark():
+    """M30 part c brownbanded bamboo shark (Chiloscyllium punctatum): a slender, flat-bellied bottom shark with a long thick
+    tail, a short rounded snout with two barbels, small eyes high on the head, two equal dorsal fins far back, rounded
+    paddle-like pectoral and pelvic fins and a long, low tail fin without a lower lobe."""
+    p = Plan("bamboo_shark", -16, 10, 4.6, 5.0, 0.72, 0.42, 0.24, flat_belly=True, belly=0.0, nseg=11)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.07, up=0.05, size=1, inset=0.6)
+    body.boxes += pair("barbel", "barbel", (0.9, -0.2, -15.6), (1, 1, 2), (20, 10, 0), None)
+    body.boxes.append(anal_fin(p, 0.76, 4, 2, "falcate"))
+    body.boxes += pair("pelvic", "pelvic", (2.6, -0.4, p.snout + 0.42 * 26), (4, 0, 3), (0, 25, -6), "pec_flat")
+    return p, [body, caudal(p, 7, 5, "bamboo"), dorsal_fin(p, 0.46, 4, 4, "falcate", lean=-10),
+               dorsal_fin(p, 0.63, 4, 4, "falcate", name="dorsal2", lean=-10)] + pectorals(p, 0.2, 5, 4, spread=40, droop=6, up=0.95,
+                                                                                           horizontal=True)
+
+
+def reef_shark():
+    """M30 part c blacktip reef shark (Carcharhinus melanopterus): the classic torpedo-shaped requiem shark with a short,
+    rounded snout, a tall falcate first dorsal fin, a small second dorsal, long sickle-shaped pectoral fins and a strongly
+    heterocercal tail (the long upper lobe swept up and back); the black fin tips are in the texture."""
+    p = Plan("reef_shark", -16, 7, 6.0, 5.6, 0.5, 0.26, 0.36, mid=4.0, nseg=10)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.1, up=0.4, size=1, inset=0.5)
+    body.boxes.append(anal_fin(p, 0.8, 3, 2, "falcate"))
+    body.boxes += pair("pelvic", "pelvic", (1.4, p.bottom(0.6) + 0.4, p.snout + 0.6 * 23), (0, 2, 3), (25, 25, 0), "oval")
+    body.boxes.append(box("dorsal2", "dorsal", (0, p.top(0.8) - 0.8, p.snout + 0.81 * 23), (0, 2, 2), (-10, 0, 0), fin="falcate"))
+    pecs = []
+    for side, sx in (("r", 1), ("l", -1)):
+        z = p.snout + 0.27 * 23
+        y = p.bottom(0.27) - 1.0
+        g = Group(f"pec_{side}", (sx * p.w(0.27) / 2, y, z))
+        g.boxes.append(box(f"pec_{side}", "pectoral", (sx * (p.w(0.27) / 2 + 3.2), y + 0.6, z + 2.6), (8, 0, 4), (0, sx * 38, -sx * 14),
+                           fin="pec_sickle"))
+        pecs.append(g)
+    tail = caudal(p, 9, 16, "hetero")
+    # the upper lobe is long: the fin plane sits above the body axis and is tilted up
+    tail.boxes[0] = box("caudal", "tail", (0, tail.pivot[1], p.ped - 1 + 4.5), (0, 16, 9), (12, 0, 0), fin="hetero")
+    return p, [body, tail, dorsal_fin(p, 0.4, 5, 7, "falcate", lean=-12)] + pecs
+
+
+# outline of the eagle ray's wings: (z, half width) from the head to the end of the disc (pointed tips sweeping back)
+EAGLE_DISC = [(-13, 3.0), (-11, 7.0), (-9, 10.5), (-7, 13.5), (-5, 14.5), (-3, 11.0), (-1, 6.0)]
+COWNOSE_DISC = [(-13, 4.0), (-11, 8.0), (-9, 11.0), (-7, 12.5), (-5, 12.0), (-3, 9.0), (-1, 5.0)]
+
+
+def winged_ray(name, disc, head_len, tail_len, nose):
+    """M30 part c open-water ray (eagle ray, cownose ray): a flat, wide disc of wing-like pectoral fins cut into strips
+    (wave_r0.. / wave_l0..: the renderer beats them like wings), a domed body in the middle, a head that sticks out in
+    front (a duck-bill snout or the notched cow nose), eyes on the sides of the head and a long, thin tail."""
+    p = RayPlan(name)
+    body = Group("body", (0, 0, 0))
+    groups = [body]
+    core = 3
+    for i, (zc, hw) in enumerate(disc):
+        zc = zc + 1  # strips of 2 px from z - 1 to z + 1
+        core_h = 3 if 1 <= i <= len(disc) - 2 else 2
+        body.boxes.append(box(f"core{i}", "head" if i < 1 else "body", (0, -core_h / 2, zc), (2 * core, core_h, 2)))
+        wing = max(1, round(hw - core))
+        for side, sx in (("r", 1), ("l", -1)):
+            g = Group(f"wave_{side}{i}", (sx * core, -0.6, zc))
+            g.boxes.append(box(f"wing_{side}{i}", "body", (sx * (core + wing / 2), -0.6, zc), (wing, 1, 2)))
+            groups.append(g)
+    z_head = disc[0][0]
+    if nose == "bill":
+        body.boxes.append(box("head0", "head", (0, -1.5, z_head - head_len / 2), (4, 3, head_len)))
+        body.boxes.append(box("bill", "head", (0, -0.8, z_head - head_len - 1), (3, 2, 2)))
+    else:
+        # the cow nose: a square head with a notch in front (two lobes) under it
+        body.boxes.append(box("head0", "head", (0, -1.75, z_head - head_len / 2), (6, 3, head_len)))
+        body.boxes += pair("lobe", "head", (1.6, -0.5, z_head - head_len - 0.5), (2, 1, 1), (0, 0, 0), None)
+    zf = z_head - head_len * 0.55
+    body.boxes.append(box("eye_r", "eye", (2.6 if nose != "bill" else 2.1, -2.0, zf), (1, 1, 1)))
+    body.boxes.append(box("eye_l", "eye", (-2.6 if nose != "bill" else -2.1, -2.0, zf), (1, 1, 1)))
+    z1 = disc[-1][0] + 2
+    body.boxes += pair("pelvic", "body", (2.2, -0.5, z1 + 0.5), (2, 1, 3), (0, 20, 0), None)
+    body.boxes.append(box("dorsal", "dorsal", (0, -2.2, z1 + 1.5), (0, 2, 2), (-10, 0, 0), fin="round_small"))
+    tail = Group("tail", (0, -1.0, z1))
+    seg = tail_len / 3
+    tail.boxes.append(box("tail0", "body", (0, -1.0, z1 + seg / 2), (2, 2, round(seg))))
+    tail.boxes.append(box("tail1", "body", (0, -1.0, z1 + seg * 1.5), (1, 1, round(seg))))
+    tail.boxes.append(box("tail2", "body", (0, -1.0, z1 + seg * 2.5), (1, 1, round(seg))))
+    groups.insert(1, tail)
+    return p, groups
+
+
+def eagle_ray():
+    return winged_ray("eagle_ray", EAGLE_DISC, 3, 16, "bill")
+
+
+def cownose_ray():
+    return winged_ray("cownose_ray", COWNOSE_DISC, 2, 12, "cow")
+
+
+def moray():
+    """M30 part c honeycomb moray (Gymnothorax favagineus): a long, muscular, laterally flattened eel without pectoral fins
+    in a chain of segments (seg1.. the renderer bends in a wave, like the kuhli loach), a tall head with a deep mouth whose
+    lower jaw (group jaw) opens and closes as it breathes, small eyes far forward, and one fin seam along the back and the
+    belly that runs round the tail tip."""
+    p = Plan("moray", -16, 15, 5.0, 3.0, 0.9, 0.45, 0.25, flat_belly=True, belly=0.0, nseg=1)
+    groups = []
+    zs = [-16, -11, -6, -1, 4, 8, 12, 15]
+    parent = None
+    for i in range(7):
+        z0, z1 = zs[i], zs[i + 1]
+        tc = p.t_of((z0 + z1) / 2)
+        depth = max(2, round(p.d(tc)))
+        width = max(2, round(p.w(tc)))
+        name = "body" if i == 0 else f"seg{i}"
+        g = Group(name, (0, -depth / 2, z0), parent)
+        if i == 0:
+            # the head: the upper jaw and skull; the lower jaw is its own group (hinged at the corner of the mouth)
+            g.boxes.append(box("seg0", "head", (0, -1.0 - (depth - 1) / 2, (z0 + z1) / 2), (width, depth - 1, z1 - z0)))
+            g.boxes.append(box("eye_r", "eye", (width / 2 - 0.2, -depth + 0.6, z0 + 1.0), (1, 1, 1)))
+            g.boxes.append(box("eye_l", "eye", (-width / 2 + 0.2, -depth + 0.6, z0 + 1.0), (1, 1, 1)))
+            g.boxes += pair("nostril", "barbel", (0.7, -depth / 2 - 0.5, z0 - 0.4), (1, 1, 1), (0, 0, 0), None)
+        else:
+            g.boxes.append(box(f"seg{i}", "body", (0, -depth / 2, (z0 + z1) / 2), (width, depth, z1 - z0)))
+            # the fin seam along the back (and along the belly behind the vent)
+            g.boxes.append(box(f"dorsal{i}", "dorsal", (0, -depth - 0.5, (z0 + z1) / 2), (0, 1, z1 - z0), fin=None))
+            if i >= 3:
+                g.boxes.append(box(f"anal{i}", "anal", (0, 0.5, (z0 + z1) / 2), (0, 1, z1 - z0), fin=None))
+        groups.append(g)
+        if i == 0:
+            jaw = Group("jaw", (0, -1.0, z1 - 1), "body")
+            jaw.boxes.append(box("jaw", "body", (0, -0.5, (z0 + z1) / 2 - 0.5), (width - 1, 1, z1 - z0 - 1)))
+            groups.append(jaw)
+        parent = name
+    tail = Group("tail", (0, -1.5, 15), "seg6")
+    tail.boxes.append(box("caudal", "tail", (0, -1.2, 16), (0, 3, 2), fin="round"))
+    groups.append(tail)
+    return p, groups
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
@@ -682,6 +818,7 @@ PLANS = {
     "rainbow": rainbow, "swordtail": swordtail,
     "pangasius": pangasius,
     "redtail": redtail, "wels": wels, "arapaima": arapaima, "stingray": stingray,
+    "bamboo_shark": bamboo_shark, "reef_shark": reef_shark, "eagle_ray": eagle_ray, "cownose_ray": cownose_ray, "moray": moray,
 }
 
 
@@ -704,6 +841,23 @@ def fin_alpha(shape, a, b):
         return (2 * a - 1) ** 2 + s * s <= 1.0
     if shape == "rod":
         return abs(s) <= 1
+    if shape == "hetero":
+        # M30 part c: a shark's tail: the long upper lobe sweeps up to a point at the back, the short lower lobe points
+        # down and back, the notch between them on the trailing edge
+        if s <= 0:
+            u = -s
+            return u <= 0.08 + 0.92 * a ** 1.1 and a <= 0.72 + 0.28 * u
+        if a < 0.35:
+            return s <= 0.1 + 1.3 * a
+        return s <= 0.555 - 1.0 * (a - 0.35)
+    if shape == "bamboo":
+        # M30 part c: the long, low tail of a bamboo shark (hardly an upper lobe, a long keel below, a notch near the tip)
+        if s <= 0:
+            return -s <= 0.45 * (1 - 0.4 * a)
+        return s <= 0.9 - 0.75 * a and not (a > 0.78 and s > 0.1)
+    if shape == "pec_sickle":
+        # M30 part c: a long, sickle-shaped pectoral fin: the full chord at the root, a pointed tip swept back
+        return -1 + 1.6 * a <= s <= 1 - 0.4 * a
     h = (s + 1) / 2  # 0 = base, 1 = tip (dorsal/anal: base at the body)
     if shape == "tri":
         return h <= 1.05 - 0.85 * a
@@ -717,6 +871,9 @@ def fin_alpha(shape, a, b):
         return h <= 1.05 - 0.8 * a
     if shape == "long_anal":
         return h <= 0.45 + 0.55 * a
+    if shape == "falcate":
+        # M30 part c: a shark's dorsal fin: the leading edge swept back to the apex, a concave trailing edge with a free rear tip
+        return h <= a / 0.5 if a <= 0.5 else h <= 1.0 if a <= 0.62 else h <= 1.0 - 2.1 * (a - 0.62)
     if shape == "crest":
         # M29 Apistogramma: the spiky "cockatoo" crest, tallest in front, every other ray longer
         return h <= (1.0 - 0.45 * a) * (1.0 if int(a * 9) % 2 == 0 else 0.78)
@@ -1040,6 +1197,16 @@ def looks(species, variety, female):
         return arapaima_look()
     if sp == "motoro_stingray":
         return stingray_look()
+    if sp == "bamboo_shark":
+        return bamboo_shark_look()
+    if sp == "blacktip_reef_shark":
+        return reef_shark_look()
+    if sp == "spotted_eagle_ray":
+        return eagle_ray_look()
+    if sp == "cownose_ray":
+        return cownose_ray_look()
+    if sp == "honeycomb_moray":
+        return moray_look()
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
 
 
@@ -1213,6 +1380,141 @@ def stingray_look():
     def fins(part, a, b, t, v, z, y):
         return C("#6a5640")
     return Look(body, fins, eye="#141210", ring="#c8b890")
+
+
+# M30 part c: the marine big animals
+
+def bamboo_shark_look():
+    """The brownbanded bamboo shark as an adult: warm grey-brown above, a cream belly, faint darker saddles across the back
+    and the tail (the strong bands of the young fade), the fins like the body, pale barbels."""
+    fine = _noise(3041)
+
+    def saddle(z):
+        return (z + 16) % 4.0 < 1.6 and z > -12
+
+    def body(t, v, x, z, y):
+        k = fine[int(abs(z) * 3.1 + 5) % 64, int((y + 30) * 2.7 + abs(x)) % 64]
+        if v > 0.72:
+            return mix(C("#e6dcc6"), C("#d8ccb2"), 0.4 * k)
+        base = mix(C("#6e5a44"), C("#9a8262"), v / 0.72) * (0.95 + 0.1 * k)
+        if saddle(z) and v < 0.6:
+            base = base * 0.78
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        if part == "barbel":
+            return C("#d8c8a8")
+        col = C("#7a6448") if not saddle(z) else C("#62503a")
+        if part in ("pectoral", "pelvic"):
+            return mix(col, C("#a89070"), 0.3)
+        return col
+    return Look(body, fins, eye="#141210", ring="#9a8a6a")
+
+
+def reef_shark_look():
+    """The blacktip reef shark: light grey-brown above, a white belly with a pale band reaching forward along the flank,
+    five dark gill slits; jet black tips on the first dorsal, the pectorals and the lower tail lobe, a black margin on the
+    upper tail lobe."""
+
+    def body(t, v, x, z, y):
+        if v > 0.62:
+            return C("#f2f0ea")
+        base = mix(C("#7e7c74"), C("#a8a498"), v / 0.62)
+        # the pale flank band from the pelvics forward into the grey
+        if 0.42 < t < 0.78 and 0.42 < v < 0.62 and v > 0.62 - 0.5 * (t - 0.42):
+            base = mix(base, C("#e8e6de"), 0.75)
+        # gill slits
+        if 0.17 < t < 0.3 and 0.28 < v < 0.62 and int((z + 16) * 2.2) % 2 == 0:
+            base = base * 0.72
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        black = C("#16161a")
+        grey = C("#8a8880")
+        if part == "dorsal":
+            return black if b > 0.35 else grey
+        if part == "pectoral":
+            return black if a > 0.72 else mix(grey, C("#d8d6ce"), 0.3)
+        if part == "tail":
+            if b > 0 and 0.22 < a < 0.55 and b > 0.32:
+                return black  # the tip of the lower lobe
+            if b < 0 and (-b > 0.72 or a > 0.62 + 0.28 * (-b)):
+                return black  # the upper lobe's tip and trailing margin
+            return grey
+        if part == "anal":
+            return black if b > 0.45 else grey
+        return grey
+    return Look(body, fins, eye="#18181a", ring="#b8b4a0")
+
+
+def eagle_ray_look():
+    """The spotted eagle ray: a dark blue-black back covered with small white spots, a white underside, the head and the
+    long whip tail dark."""
+    rnd = np.random.default_rng(3051)
+    dots = set()
+    for gz in range(-20, 20, 3):
+        for gx in range(-16, 17, 3):
+            off = 1 if (gz // 3) % 2 else 0
+            if rnd.random() < 0.85:
+                dots.add((gx + off, gz))
+
+    def body(t, v, x, z, y):
+        if v > 0.5:
+            return C("#f2f0ea")
+        base = mix(C("#1a2030"), C("#283044"), 0.5 + 0.5 * math.sin(x * 0.4 + z * 0.3))
+        if z > 2:
+            return base * 0.85
+        if (math.floor(x), math.floor(z)) in dots and abs(x) > 1.2:
+            return C("#e8ecf0")
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        return C("#1e2434")
+    return Look(body, fins, eye="#0e0e12", ring="#606870")
+
+
+def cownose_ray_look():
+    """The cownose ray: a plain olive-brown back that gets a little lighter towards the wing tips, a white underside, the
+    tail brown."""
+    fine = _smooth_noise(3061, passes=2)
+
+    def body(t, v, x, z, y):
+        if v > 0.5:
+            return mix(C("#f2eee4"), C("#e8dccc"), 0.3 * smooth(6, 12, abs(x)))
+        k = fine[int(abs(z) * 2.3 + 9) % 64, int(abs(x) * 2.1 + 3) % 64]
+        base = mix(C("#5e4630"), C("#86684a"), 0.25 * k + 0.5 * smooth(4, 13, abs(x)))
+        return base * (0.92 if z > 2 else 1.0)
+
+    def fins(part, a, b, t, v, z, y):
+        return C("#5a4430")
+    return Look(body, fins, eye="#141008", ring="#a08868")
+
+
+def moray_look():
+    """The honeycomb (laced) moray: close-set dark brown-black spots separated by a narrow pale yellow network all over the
+    head, the body and the fin seams, a little lighter on the belly."""
+    rnd = np.random.default_rng(3071)
+    jitter = rnd.random((32, 32))
+
+    def pattern(z, y, x):
+        row = math.floor((y + 30) / 2.2)
+        zz = z + 2.8 * jitter[row % 32, 7] + 0.6 * x
+        col = math.floor(zz / 2.8)
+        fz = zz / 2.8 - col
+        fy = (y + 30) / 2.2 - row
+        line = fz < 0.26 + 0.12 * jitter[row % 32, col % 32] or fy < 0.3
+        return line
+
+    def body(t, v, x, z, y):
+        pale = C("#e6d890") if v < 0.85 else C("#efe6b8")
+        dark = C("#2a2016") if v < 0.85 else C("#4a3a26")
+        return pale if pattern(z, y, x) else dark
+
+    def fins(part, a, b, t, v, z, y):
+        if part == "barbel":
+            return C("#3a2c1c")
+        return C("#e0d088") if pattern(z, y, 0) else C("#2e2418")
+    return Look(body, fins, eye="#1a140a", ring="#d8c860")
 
 
 # M29 part c: danio, rainbowfish, gourami, tetra and livebearer looks
@@ -1983,6 +2285,10 @@ def fin_coords(b: Box, lp):
     lx, ly, lz = lp
     if b.fin == "pec_flat":
         return lx / max(1, w) + 0.5, 2 * lz / max(1, d)
+    if b.fin == "pec_sickle":
+        # M30 part c: a from the root (0) to the tip (1) on both sides
+        a = lx / max(1, w) + 0.5
+        return (1 - a if b.name.endswith("_l") else a), 2 * lz / max(1, d)
     a = lz / max(1, d) + 0.5
     s = ly / max(1, h) * 2
     if b.part in ("dorsal",) or b.fin in ("tri", "sail", "flag", "long"):
@@ -2178,6 +2484,12 @@ SPECIES = [
     ("wels_catfish", "wels", ["wild"], False),
     ("arapaima", "arapaima", ["wild"], False),
     ("motoro_stingray", "stingray", ["wild"], False),
+    # M30 part c: the marine big animals
+    ("bamboo_shark", "bamboo_shark", ["wild"], False),
+    ("blacktip_reef_shark", "reef_shark", ["wild"], False),
+    ("spotted_eagle_ray", "eagle_ray", ["wild"], False),
+    ("cownose_ray", "cownose_ray", ["wild"], False),
+    ("honeycomb_moray", "moray", ["wild"], False),
 ]
 
 
@@ -2237,6 +2549,22 @@ def eggs_tex():
         img[:, k * 16:(k + 1) * 16, 3] = m * 1.0
         # a dark embryo dot
         img[6:9, k * 16 + 6:k * 16 + 9, :3] = np.where(m[6:9, 6:9, None], c * 0.55, img[6:9, k * 16 + 6:k * 16 + 9, :3])
+    return img
+
+
+def egg_case_tex():
+    """M30 part c: the leathery egg case (mermaid's purse) of the bamboo shark: dark olive-brown horn with fine lengthwise
+    ridges, a little lighter and amber-translucent in the middle where the yolk shows through."""
+    rng = np.random.default_rng(3081)
+    img = np.zeros((16, 16, 4))
+    for y in range(16):
+        for x in range(16):
+            cx, cy = (x - 7.5) / 7.5, (y - 7.5) / 7.5
+            col = mix(C("#3a3020"), C("#5a4a2c"), 0.5 + 0.5 * math.sin(y * 1.9))
+            glow = max(0.0, 1 - (cx * cx * 1.4 + cy * cy * 2.2))
+            col = mix(col, C("#a07a34"), 0.45 * glow)
+            img[y, x, :3] = np.clip(col * (0.92 + 0.12 * rng.random()), 0, 1)
+            img[y, x, 3] = 1.0
     return img
 
 
@@ -2399,6 +2727,7 @@ def write_all():
     written.append(save_png(mop_block(), BLOCK_TEX / "spawning_mop.png"))
     written.append(save_png(eggs_tex(), TM_TEX / "eggs.png"))
     written.append(save_png(breeding_box_tex(), TM_TEX / "breeding_box.png"))
+    written.append(save_png(egg_case_tex(), TM_TEX / "egg_case.png"))  # M30 part c
     written.append(save_png(grid_icon(BOX_ICON, BOX_P), ITEM_TEX / "breeding_box.png"))
     written.append(save_png(grid_icon(POWDER, POWDER_P), ITEM_TEX / "fry_powder.png"))
     written.append(save_png(grid_icon(WAFER, WAFER_P), ITEM_TEX / "algae_wafer.png"))

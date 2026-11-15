@@ -28,7 +28,9 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * <ul>
  *     <li><b>Breathing</b>: a dolphin breathes air at the surface. In the tank its air and its moisture stay full (the tank
  *     is open at the top for it; the glass keeps it in), so it does not drown or dry out.</li>
- *     <li><b>Food</b>: raw fish ({@code #minecraft:fishes}) by hand: right-click the tank with it. After
+ *     <li><b>Food</b>: raw fish ({@code #minecraft:fishes}) by hand: right-click the tank with it; M30 part c: or from a
+ *     feeder on the tank (raw fish in its slots, one per dolphin and feeding), and a hungry dolphin (a day without fish) hunts
+ *     one of the small fish of its tank a day (tankmates, bettas, frogs; not the big animals). After
  *     {@code bigAnimalRules.dolphinHungryDays} without fish it loses health (2 hearts a day), fish heals it a little.</li>
  *     <li><b>Water</b>: sea water only ({@link BigAnimals#DOLPHIN_MIN_SALT}); in too fresh water it loses health too.</li>
  * </ul>
@@ -67,6 +69,8 @@ public final class DolphinCare {
         for (Dolphin d : list) {
             d.setAirSupply(d.getMaxAirSupply());
             d.setMoisntessLevel(2400);
+            // M30 part c: a dolphin a day without fish hunts one of the small fish of its tank
+            if (daysHungry(d, now) > Math.min(1.0, hungryAfter * 0.5)) hunt(level, c, d, now);
             boolean hungry = daysHungry(d, now) > hungryAfter;
             if (!hungry && !fresh) continue;
             var tag = d.getPersistentData();
@@ -82,6 +86,51 @@ public final class DolphinCare {
                 TankCare.log(level, c, hungry ? "log.bettacraft.dolphin_hungry" : "log.bettacraft.dolphin_fresh", TankCare.nameArg(d));
             }
         }
+    }
+
+    /** M30 part c: the dolphin catches and eats one small fish of the tank (the nearest), if there is one. */
+    private static void hunt(ServerLevel level, TankBlockEntity c, Dolphin d, long now) {
+        Entity prey = null;
+        double best = Double.MAX_VALUE;
+        for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
+            boolean small = e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m ? !m.species().isLarge()
+                    : e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity || e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity;
+            if (!small || !e.isAlive()) continue;
+            double dist = e.distanceToSqr(d);
+            if (dist < best) {
+                best = dist;
+                prey = e;
+            }
+        }
+        if (prey == null) return;
+        Component name = prey.getDisplayName();
+        org.overengineer.bettacraft.tankmates.TankmateBreeding.eat(level, c, prey);
+        d.getPersistentData().putLong(FED, now);
+        level.playSound(null, d.blockPosition(), SoundEvents.DOLPHIN_EAT, SoundSource.NEUTRAL, 1.0F, 1.0F);
+        TankCare.log(level, c, "log.bettacraft.dolphin_hunted", TankCare.nameArg(d), name.getString());
+    }
+
+    /**
+     * M30 part c: a feeder on the tank feeds the dolphins raw fish from its slots: one fish for each dolphin that has not had
+     * fish for a third of a day. Returns the fish used.
+     */
+    public static int feedFromFeeder(ServerLevel level, TankBlockEntity c, net.neoforged.neoforge.items.IItemHandler items) {
+        List<Dolphin> list = dolphins(level, c.getTank());
+        if (list.isEmpty()) return 0;
+        long now = level.getGameTime();
+        int used = 0;
+        for (Dolphin d : list) {
+            if (daysHungry(d, now) < 0.33) continue;
+            for (int i = 0; i < items.getSlots(); i++) {
+                if (!items.getStackInSlot(i).is(ItemTags.FISHES)) continue;
+                if (items.extractItem(i, 1, false).isEmpty()) continue;
+                d.getPersistentData().putLong(FED, now);
+                d.heal(2);
+                used++;
+                break;
+            }
+        }
+        return used;
     }
 
     /** Raw fish on a tank with dolphins: the hungriest one eats it. PASS if there is no dolphin or no fish. */

@@ -32,6 +32,7 @@ public final class LargeSpecies {
     private double speed = 0.55;
     private Swim swim = Swim.FISH;
     private double restShare;
+    private boolean keepsSwimming;
 
     /**
      * M30 part b: how a big animal moves (behaviour in {@code TankmateBehaviour#large}, turns in {@code LargeMoveControl},
@@ -49,10 +50,15 @@ public final class LargeSpecies {
          * An open-water ray (part c: eagle ray, cownose ray): cruises through its height band with slow, deep beats of its
          * wing-like disc (the same wave with a long wave length and a big amplitude); it does not lie on the ground.
          */
-        RAY_OPEN;
+        RAY_OPEN,
+        /**
+         * M30 part c: a lurker (moray eel): it keeps a lair in a crevice under the decoration (or a corner on the ground) and lies
+         * there most of the day with its body waving slowly; it comes out at night to cruise and when there is food.
+         */
+        LURK;
 
         public boolean ray() {
-            return this != FISH;
+            return this == RAY_BOTTOM || this == RAY_OPEN;
         }
     }
 
@@ -104,6 +110,14 @@ public final class LargeSpecies {
         return this;
     }
 
+    /** M30 part c: it has to keep swimming to breathe (ram ventilation: the reef shark); it never rests. */
+    public LargeSpecies keepsSwimming() {
+        this.keepsSwimming = true;
+        this.restShare = 0;
+        return this;
+    }
+
+    public boolean swimsConstantly() { return keepsSwimming; }
     public double lengthM() { return lengthM; }
     public Swim swim() { return swim; }
     public boolean ray() { return swim.ray(); }

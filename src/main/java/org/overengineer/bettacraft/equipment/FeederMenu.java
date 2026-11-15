@@ -66,7 +66,7 @@ public class FeederMenu extends AbstractContainerMenu {
         if (index < 9) {
             if (!moveItemStackTo(s, 9, 45, true)) return ItemStack.EMPTY;
         } else {
-            if (!s.is(ModTags.BETTA_FOOD) || !moveItemStackTo(s, 0, 9, false)) return ItemStack.EMPTY;
+            if (!(s.is(ModTags.BETTA_FOOD) || s.is(net.minecraft.tags.ItemTags.FISHES)) || !moveItemStackTo(s, 0, 9, false)) return ItemStack.EMPTY; // M30 part c: raw fish for dolphins
         }
         if (s.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
         else slot.setChanged();

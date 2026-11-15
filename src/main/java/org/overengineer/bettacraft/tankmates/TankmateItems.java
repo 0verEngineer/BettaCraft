@@ -191,7 +191,9 @@ public final class TankmateItems {
         var r = level.getRandom();
         Vec3 p = w.clamp(new Vec3(w.box().minX + r.nextDouble() * (w.box().maxX - w.box().minX), w.box().minY + 0.03,
                 w.box().minZ + r.nextDouble() * (w.box().maxZ - w.box().minZ)), 0.15, 0.03, 0.02);
-        Clutch k = new Clutch(t.nextClutchId(), old.species, Clutch.Kind.SCATTER, p.x, p.y, p.z, old.count, old.mother, old.father);
+        // M30 part c: an egg case stays an egg case (it hatches by the size rule of its new tank)
+        Clutch k = new Clutch(t.nextClutchId(), old.species, old.kind == Clutch.Kind.EGG_CASE ? Clutch.Kind.EGG_CASE : Clutch.Kind.SCATTER, p.x, p.y, p.z,
+                old.count, old.mother, old.father);
         k.age = old.age;
         k.generation = old.generation;
         k.cover = Math.max(old.cover, 0.5);
@@ -261,6 +263,7 @@ public final class TankmateItems {
         CompoundTag cl = stack.get(ModDataComponents.TANKMATE_CLUTCH.get());
         if (cl != null) {
             Clutch k = Clutch.load(cl);
+            if (k != null && k.kind == Clutch.Kind.EGG_CASE) return Component.translatable("item.bettacraft.fish_bag.egg_case", Component.translatable(k.species.translationKey())); // M30 part c
             if (k != null) return Component.translatable("item.bettacraft.fish_bag.clutch", k.count, Component.translatable(k.species.translationKey()));
         }
         List<CompoundTag> g = stack.get(ModDataComponents.TANKMATE_GROUP.get());

@@ -101,5 +101,36 @@ final class LangM30 {
         a.accept("item.bettacraft.motoro_stingray_spawn_egg", "Motoro Stingray Spawn Egg");
         a.accept("info.bettacraft.tankmate.motoro_stingray", "Motoro stingray (Potamotrygon motoro), the freshwater stingray of the Amazon: a round, flat disc with orange, black-ringed eye spots; 0.6 m with the tail.\nBig animal: needs a tank of at least 8 × 4 × 2 blocks and 22 water blocks each; glides low over the ground with a ripple along its disc and lies on the substrate (sand) for long.\n24–30 °C, soft, very clean water. Eats worms, shrimp and small bottom fish.\nLivebearing: a pair has 2–5 pups after a long pregnancy, only as many as the tank has room for (size rule).\nCatch: large net or steel leader in jungle water (into a transport tub); rarely wild there.");
         a.accept("variety.bettacraft.motoro_stingray.wild", "Wild type");
+        // M30 part c: the marine big animals, egg cases, dolphins
+        a.accept("tankmate.bettacraft.group.shark", "Sharks");
+        a.accept("tankmate.bettacraft.group.moray", "Moray eels");
+        a.accept("tankmate.bettacraft.breeding.egg_case", "Lays egg cases");
+        a.accept("gui.bettacraft.breeding.tm.kind.egg_case", "Egg case");
+        a.accept("gui.bettacraft.breeding.tm.room", "Room for %s more by the size rule");
+        a.accept("log.bettacraft.tm.egg_cases", "%s laid %s egg case(s)");
+        a.accept("log.bettacraft.tm.case_waits", "A pup (%s) is ready to hatch, but the tank has no room for it by the size rule: it waits in its egg case");
+        a.accept("log.bettacraft.tm.case_hatched", "%2$s pup (%1$s) hatched from its egg case");
+        a.accept("log.bettacraft.dolphin_hunted", "%s was hungry and caught %s");
+        a.accept("item.bettacraft.fish_bag.egg_case", "Fish Bag (egg case of %s)");
+        a.accept("entity.bettacraft.bamboo_shark", "Brownbanded Bamboo Shark");
+        a.accept("item.bettacraft.bamboo_shark_spawn_egg", "Brownbanded Bamboo Shark Spawn Egg");
+        a.accept("info.bettacraft.tankmate.bamboo_shark", "Brownbanded bamboo shark (Chiloscyllium punctatum) of the Indo-West Pacific reefs: a slender, brown bottom shark with barbels and two dorsal fins far back; 1 m.\nBig animal: needs a sea water tank of at least 12 × 6 × 3 blocks and 100 water blocks each; lies on the ground under ledges by day and hunts at night.\n22–28 °C. Eats shrimp, crabs and small fish.\nLays leathery egg cases (mermaid's purses) under the decoration; each pup hatches after about ten days, only when the tank has room for it (size rule).\nCatch: large net or steel leader in warm and lukewarm oceans (into a transport tub); rarely wild there.");
+        a.accept("variety.bettacraft.bamboo_shark.wild", "Wild type");
+        a.accept("entity.bettacraft.blacktip_reef_shark", "Blacktip Reef Shark");
+        a.accept("item.bettacraft.blacktip_reef_shark_spawn_egg", "Blacktip Reef Shark Spawn Egg");
+        a.accept("info.bettacraft.tankmate.blacktip_reef_shark", "Blacktip reef shark (Carcharhinus melanopterus) of the shallow Indo-Pacific reefs: a grey shark with black tips on its fins; 1.6 m in the game.\nBig animal: needs a sea water tank of at least 20 × 10 × 5 blocks and 410 water blocks each; it has to keep swimming to breathe and never rests.\n24–30 °C. A predator: eats every fish up to its own mouth size, bettas and shrimp. Does not breed in a tank.\nCatch: large net or steel leader in warm oceans (into a transport tub); very rarely wild there.");
+        a.accept("variety.bettacraft.blacktip_reef_shark.wild", "Wild type");
+        a.accept("entity.bettacraft.spotted_eagle_ray", "Spotted Eagle Ray");
+        a.accept("item.bettacraft.spotted_eagle_ray_spawn_egg", "Spotted Eagle Ray Spawn Egg");
+        a.accept("info.bettacraft.tankmate.spotted_eagle_ray", "Spotted eagle ray (Aetobatus ocellatus) of the warm seas: a dark ray with white spots, pointed wings, a duck-bill snout and a long whip tail; 1.5 m long in the game.\nBig animal: needs a sea water tank of at least 18 × 9 × 5 blocks and 338 water blocks each; flies through open water with slow wing beats.\n24–29 °C. Cracks clams and snails, eats shrimp. Does not breed in a tank.\nCatch: large net or steel leader in warm oceans (into a transport tub); very rarely wild there.");
+        a.accept("variety.bettacraft.spotted_eagle_ray.wild", "Wild type");
+        a.accept("entity.bettacraft.cownose_ray", "Cownose Ray");
+        a.accept("item.bettacraft.cownose_ray_spawn_egg", "Cownose Ray Spawn Egg");
+        a.accept("info.bettacraft.tankmate.cownose_ray", "Cownose ray (Rhinoptera bonasus) of the western Atlantic: a brown ray with a notched \"cow nose\" head that swims in schools; 1 m.\nBig animal: needs a sea water tank of at least 12 × 6 × 3 blocks and 100 water blocks each; keep three or more: they follow each other through the open water with slow wing beats.\n18–28 °C. Cracks clams and snails, eats shrimp.\nLivebearing: one big pup after a long pregnancy, only when the tank has room for it (size rule).\nCatch: large net or steel leader in lukewarm and warm oceans (into a transport tub); rarely wild there, in small schools.");
+        a.accept("variety.bettacraft.cownose_ray.wild", "Wild type");
+        a.accept("entity.bettacraft.honeycomb_moray", "Honeycomb Moray");
+        a.accept("item.bettacraft.honeycomb_moray_spawn_egg", "Honeycomb Moray Spawn Egg");
+        a.accept("info.bettacraft.tankmate.honeycomb_moray", "Honeycomb moray (Gymnothorax favagineus) of the Indo-Pacific reefs: a big moray eel with dark spots in a pale network; 1.2 m in the game.\nBig animal: needs a sea water tank of at least 15 × 8 × 4 blocks and 173 water blocks each; lives in a lair under the decoration (build it a rock cave), breathes with its mouth open and comes out at night and for food.\n24–28 °C. Swallows fish, bettas and shrimp. Does not breed in a tank.\nCatch: large net or steel leader in warm oceans (into a transport tub); rarely wild there.");
+        a.accept("variety.bettacraft.honeycomb_moray.wild", "Wild type");
     }
 }

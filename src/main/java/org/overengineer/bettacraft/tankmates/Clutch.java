@@ -30,7 +30,12 @@ public final class Clutch {
          * M29: open brooders' eggs on a flat stone, a broad leaf or the glass (face as for {@link #GLASS}), guarded by the
          * pair ({@link #guardian} the male, {@link #partner} the female); without both the brood dies.
          */
-        OPEN;
+        OPEN,
+        /**
+         * M30 part c: one leathery egg case of a shark (mermaid's purse) under the decoration or on the ground, one pup in it;
+         * the adults cannot eat it, it hatches only with room by the size rule.
+         */
+        EGG_CASE;
 
         public String id() {
             return name().toLowerCase(Locale.ROOT);
@@ -96,6 +101,7 @@ public final class Clutch {
             case OPEN, CICHLID_CAVE -> 0.8; // M29: cichlid eggs hatch in two to three days
             case SCATTER -> 0.3;
             case FOAM_NEST -> 0.3;
+            case EGG_CASE -> TankmateBreeding.EGG_CASE_DAYS; // M30 part c
             default -> 0;
         };
         return base / speed();

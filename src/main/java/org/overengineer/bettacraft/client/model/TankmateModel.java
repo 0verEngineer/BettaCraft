@@ -16,7 +16,7 @@ import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
 public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     private final ModelPart root;
     @Nullable
-    private final ModelPart tail, dorsal, pecR, pecL, male, female, filaments;
+    private final ModelPart tail, dorsal, pecR, pecL, male, female, filaments, jaw;
     private final List<ModelPart> segments = new ArrayList<>();
     /** M21.8: the seahorse's tail chain (curled round the hitching post). */
     private final List<ModelPart> curls = new ArrayList<>();
@@ -33,6 +33,7 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
         this.male = find(fish, "male");
         this.female = find(fish, "female");
         this.filaments = find(fish, "filaments");
+        this.jaw = find(fish, "jaw"); // M30 part c: the moray's lower jaw
         for (int i = 1; i <= 8; i++) {
             ModelPart s = find(fish, "seg" + i);
             if (s == null) break;
@@ -164,6 +165,8 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
             }
         }
         if (filaments != null) filaments.xRot = 0.15F * Mth.sin(ageInTicks * 0.12F + fish.getId());
+        // M30 part c: a moray breathes by opening and closing its mouth (wider while it lies in its lair)
+        if (jaw != null) jaw.xRot = (rest ? 0.2F : 0.1F) + (rest ? 0.16F : 0.08F) * Mth.sin(ageInTicks * 0.13F + fish.getId() * 2.3F);
         boolean f = fish.isFemale();
         if (male != null) male.visible = !f;
         if (female != null) female.visible = f;

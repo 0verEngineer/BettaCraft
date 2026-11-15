@@ -147,9 +147,14 @@ final class TankmateBehaviour {
                     // M30 part b: a big animal cannot turn on the spot: it glides in over its spot, settles and sinks onto it
                     double len = Math.max(0.6, s.length() * fish.getAgeScale());
                     Vec3 d = target.subtract(fish.position());
-                    boolean over = d.horizontalDistanceSqr() < len * len * 0.16 || behaviourFlags == TankmateEntity.FLAG_REST;
+                    // M30 part c: an eel slides right into its lair (around the decoration)
+                    boolean lurker = s.large().swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.LURK;
+                    // (it cannot always get into the last corner of a crevice: after a while it settles where it is)
+                    boolean over = d.horizontalDistanceSqr() < len * len * (lurker ? 0.05 : 0.16) || behaviourFlags == TankmateEntity.FLAG_REST
+                            || lurker && travel > 300;
                     if (!over) {
-                        move().swimTo(target.x, target.y, target.z, speed);
+                        Vec3 to = sheltered ? steer(server, w, target) : target;
+                        move().swimTo(to.x, to.y, to.z, speed);
                         if (++travel < 600) ticks++;
                     } else {
                         move().stop();
@@ -288,6 +293,10 @@ final class TankmateBehaviour {
         double heading = fish.getYRot() * Mth.DEG_TO_RAD;
         Vec3 p = fish.position();
         var l = s.large();
+        // M30 part c: a moray lies in its lair most of the time and comes out at night
+        if (l.swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.LURK && lurk(server, w)) return;
+        // M30 part c: a schooling big animal (cownose rays) follows the one that leads its school, a little behind and beside it
+        if (s.shoaling() && school(server, w, s, len)) return;
         // M30 part b: a stingray (and a night hunter by day) glides down to a spot ahead and lies on the ground for a while
         double rest = l.restShare();
         if (s.nocturnal()) rest *= server.isDay() ? 2.0 : 0.3;
@@ -326,6 +335,65 @@ final class TankmateBehaviour {
         go(steer(server, w, best), 0.8 + r.nextDouble() * 0.3, Mode.CRUISE);
         largeGoal = best;
         ticks = 80 + r.nextInt(80);
+    }
+
+    /** M30 part c: the moray's lair (null: not chosen yet). */
+    @Nullable
+    private Vec3 lair;
+
+    /**
+     * M30 part c: a moray keeps one lair: a sheltered spot under the decoration near it (else a spot on the ground along a
+     * long wall), and lies there for minutes, its body waving slowly and its mouth breathing; by day it stays in nine of ten
+     * decisions, at night in about half and goes cruising otherwise. False: it goes out now.
+     */
+    private boolean lurk(ServerLevel server, TankWaterVolume w) {
+        RandomSource r = r();
+        if (r.nextDouble() >= (server.isDay() ? 0.9 : 0.45)) return false;
+        if (lair == null || !w.box().inflate(0.05).contains(lair)) {
+            TankTerrain t = terrain(server);
+            double[] spot = t == null ? null : t.shelter(fish.getX(), fish.getY(), fish.getZ(), 3.0, new java.util.Random(r.nextLong()));
+            if (spot != null) {
+                Vec3 c = clamp(w, new Vec3(spot[0], spot[1] + 0.01, spot[2]));
+                lair = new Vec3(c.x, Math.max(w.box().minY, spot[1] + 0.01), c.z);
+            } else {
+                var b = w.box();
+                double m = Math.max(0.6, fish.species().length() * 0.3);
+                // a spot on the ground along a long wall (the clamp keeps it off the glass)
+                boolean alongX = b.maxX - b.minX >= b.maxZ - b.minZ;
+                double u = 0.25 + 0.5 * r.nextDouble();
+                lair = alongX ? onGround(server, w, b.minX + (b.maxX - b.minX) * u, r.nextBoolean() ? b.minZ + m : b.maxZ - m)
+                        : onGround(server, w, r.nextBoolean() ? b.minX + m : b.maxX - m, b.minZ + (b.maxZ - b.minZ) * u);
+            }
+        }
+        target = lair;
+        mode = Mode.REST;
+        ticks = 600 + r.nextInt(900);
+        sheltered = true;
+        behaviourFlags = 0;
+        largeGoal = null;
+        return true;
+    }
+
+    /**
+     * M30 part c: a school of big animals: the leader (lowest id of its kind) cruises as usual; the others swim to a place
+     * a body length or so behind and beside it, a little ahead along its heading so they do not brake. False for the leader.
+     */
+    private boolean school(ServerLevel server, TankWaterVolume w, TankmateSpecies s, double len) {
+        TankmateEntity lead = leader(server, w);
+        if (lead == null || lead == fish) return false;
+        RandomSource r = r();
+        if (offset == Vec3.ZERO || r.nextInt(5) == 0) {
+            double side = (r.nextBoolean() ? 1 : -1) * len * (0.4 + r.nextDouble() * 0.4);
+            offset = new Vec3(side, (r.nextDouble() - 0.5) * len * 0.4, -len * (0.4 + r.nextDouble() * 0.6));
+        }
+        double h = lead.getYRot() * Mth.DEG_TO_RAD;
+        double fx = -Math.sin(h), fz = Math.cos(h); // the leader's heading
+        double ahead = len * 0.8 + offset.z;
+        Vec3 t = band(w, s, clamp(w, lead.position().add(fx * ahead + fz * offset.x, offset.y, fz * ahead - fx * offset.x)));
+        go(steer(server, w, t), fish.position().distanceTo(t) > len * 2 ? 1.1 : 0.85, Mode.CRUISE);
+        largeGoal = null;
+        ticks = 20 + r.nextInt(20);
+        return true;
     }
 
     /** M21.8: the post a seahorse is on its way to or holds on to (null: none). */

@@ -158,7 +158,7 @@ public final class GuideGen {
             case RAINBOW -> "tankmates/rainbowfish.md"; // M29 part c
             case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
             case SEAHORSE -> "saltwater/seahorses.md";
-            case CATFISH, BONYTONGUE, RAY -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
+            case CATFISH, BONYTONGUE, RAY, SHARK, MORAY -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
         };
     }
 
@@ -282,7 +282,8 @@ public final class GuideGen {
         tb.row(t("Swims", "Schwimmt"), zone(s.zone()));
         tb.row(t("Stocking", "Besatz"), t("counts as " + num(s.stock()) + " fish", "zählt als " + num(s.stock()) + " Fisch"));
         String breeding = lang("tankmate.bettacraft.breeding." + s.breeding().name().toLowerCase(Locale.ROOT));
-        if (s.broodMax() > 0) breeding += t(", " + s.broodMin() + "–" + s.broodMax() + " young", ", " + s.broodMin() + "–" + s.broodMax() + " Junge");
+        if (s.broodMax() > 0 && s.broodMin() == s.broodMax()) breeding += t(", " + s.broodMax() + " young", ", " + s.broodMax() + (s.broodMax() == 1 ? " Junges" : " Junge")); // M30 part c
+        else if (s.broodMax() > 0) breeding += t(", " + s.broodMin() + "–" + s.broodMax() + " young", ", " + s.broodMin() + "–" + s.broodMax() + " Junge");
         tb.row(t("Breeding", "Zucht"), breeding);
         if (!s.marine()) tb.row(t("Betta tank", "Betta-Becken"), bettaTank(s));
         List<String> traits = new ArrayList<>();
@@ -290,10 +291,17 @@ public final class GuideGen {
         if (s.eatsSnails()) traits.add(t("eats snails", "frisst Schnecken"));
         if (s.isLarge() && s.preyLength() >= org.overengineer.bettacraft.tankmates.TankmateBreeding.BETTA_PREY_LENGTH)
             traits.add(t("eats small fish, bettas and shrimp", "frisst kleine Fische, Bettas und Garnelen")); // M30
+        else if (s.isLarge() && s.preyLength() > 0 && s.preyLength() < 0.2)
+            traits.add(t("eats shrimp and only the tiniest fish", "frisst Garnelen und nur die winzigsten Fische")); // M30 part c: the rays
         else if (s.preyLength() > 0) traits.add(t("eats small fish and shrimp", "frisst kleine Fische und Garnelen")); // M29
         if (s.isLarge() && s.large().swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.RAY_BOTTOM)
             traits.add(t("glides over the ground and lies on the substrate", "gleitet über den Boden und liegt auf dem Bodengrund")); // M30 part b
+        else if (s.isLarge() && s.large().swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.RAY_OPEN)
+            traits.add(t("flies through open water with slow wing beats", "fliegt mit langsamen Flügelschlägen durchs freie Wasser")); // M30 part c
+        else if (s.isLarge() && s.large().swim() == org.overengineer.bettacraft.tankmates.LargeSpecies.Swim.LURK)
+            traits.add(t("lives in a lair under the decoration and comes out at night and for food", "lebt in einer Höhle unter der Deko und kommt nachts und zum Fressen heraus"));
         else if (s.isLarge()) traits.add(t("swims wide curves", "schwimmt weite Bögen"));
+        if (s.isLarge() && s.large().swimsConstantly()) traits.add(t("must keep swimming to breathe", "muss zum Atmen ständig schwimmen")); // M30 part c
         if (s.puffer()) traits.add(t("needs snails or hard food for its teeth", "braucht Schnecken oder hartes Futter für die Zähne")); // M29 part b
         if (s.finNipper()) traits.add(t("nips long fins", "zupft lange Flossen"));
         if (s.cichlid()) traits.add(t("guards its brood", "bewacht seine Brut"));
@@ -525,7 +533,8 @@ public final class GuideGen {
             case "tankmate": {
                 TankmateSpecies s = TankmateSpecies.byId(id);
                 if (s.breeding() == TankmateSpecies.Breeding.NONE) return null;
-                String where = s.seahorse() ? "saltwater/seahorses.md" : s.marine() ? "saltwater/reef_animals.md" : "tankmates/breeding.md";
+                String where = s.seahorse() ? "saltwater/seahorses.md" : s.isLarge() && s.marine() ? "big_tanks.md" // M30 part c: the size rule
+                : s.marine() ? "saltwater/reef_animals.md" : "tankmates/breeding.md";
                 return link(t("Breeding", "Zucht"), where, page) + ": " + lang("tankmate.bettacraft.breeding." + s.breeding().name().toLowerCase(Locale.ROOT));
             }
             case "critter": {

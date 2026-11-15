@@ -144,7 +144,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         var sp = fish.swimPose;
         float g = sp.glass(partialTick);
         float swim = sp.swim(partialTick);
-        boolean eel = fish.species().model() == TankmateSpecies.Model.KUHLI;
+        boolean eel = fish.species().model() == TankmateSpecies.Model.KUHLI || fish.species().model() == TankmateSpecies.Model.MORAY; // M30 part c
         boolean rest = fish.flag(TankmateEntity.FLAG_REST);
         // M21.5: the whole body sways with the beat (an eel hardly: its body wave does that), less when upright on the glass
         float sway = (eel ? 0.4F : rest ? 0.6F : 1.0F + 2.8F * swim) * Mth.sin(sp.phase(partialTick) * (eel ? 1.0F : 1.2F)) * (1 - g);

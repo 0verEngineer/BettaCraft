@@ -28,6 +28,8 @@ import org.overengineer.bettacraft.tankmates.TankmateBreeding;
 public final class ClutchRenderer {
     private static final ResourceLocation EGGS = BettaCraft.id("textures/entity/tankmates/eggs.png");
     private static final ResourceLocation BOX = BettaCraft.id("textures/entity/tankmates/breeding_box.png");
+    /** M30 part c: the leathery egg case of a shark. */
+    private static final ResourceLocation EGG_CASE = BettaCraft.id("textures/entity/tankmates/egg_case.png");
     /** At most this many eggs of a clutch are drawn. */
     private static final int MAX_DRAWN = 40;
 
@@ -44,6 +46,10 @@ public final class ClutchRenderer {
                 continue;
             }
             if (k.kind == Clutch.Kind.BOX) continue;
+            if (k.kind == Clutch.Kind.EGG_CASE) {
+                eggCase(be, k, pose, buffers, light);
+                continue;
+            }
             if (eggs == null) eggs = buffers.getBuffer(RenderType.entityCutoutNoCull(EGGS));
             pose.pushPose();
             pose.translate(k.x - origin.getX(), k.y - origin.getY(), k.z - origin.getZ());
@@ -108,6 +114,31 @@ public final class ClutchRenderer {
                 cube(last, vc, dx, dy, dz, e, e, e, col, light);
             }
         }
+    }
+
+    /**
+     * M30 part c: a shark's egg case (mermaid's purse): a flat, dark brown pouch about 11 cm long (0.22 blocks) lying on the
+     * ground or under a ledge, turned by its id, with a thin curled tendril at each corner that anchors it.
+     */
+    private static void eggCase(TankBlockEntity be, Clutch k, PoseStack pose, MultiBufferSource buffers, int light) {
+        BlockPos origin = be.getBlockPos();
+        pose.pushPose();
+        pose.translate(k.x - origin.getX(), k.y - origin.getY() + 0.02, k.z - origin.getZ());
+        pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees((k.id * 73) % 360));
+        pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(((k.id * 31) % 15) - 7));
+        PoseStack.Pose last = pose.last();
+        textured(last, buffers.getBuffer(RenderType.entityCutoutNoCull(EGG_CASE)), 0.11F, 0.018F, 0.045F, light);
+        VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(EGGS));
+        for (int sx = -1; sx <= 1; sx += 2) {
+            for (int sz = -1; sz <= 1; sz += 2) {
+                // a tendril: out from the corner along the case, then bending sideways and up
+                float x = sx * 0.11F, z = sz * 0.04F;
+                cube(last, vc, x + sx * 0.03F, 0.004F, z, 0.03F, 0.004F, 0.004F, 3, light);
+                cube(last, vc, x + sx * 0.062F, 0.012F, z + sz * 0.012F, 0.004F, 0.008F, 0.012F, 3, light);
+                cube(last, vc, x + sx * 0.05F, 0.022F, z + sz * 0.026F, 0.012F, 0.004F, 0.004F, 3, light);
+            }
+        }
+        pose.popPose();
     }
 
     /** The gourami's foam nest: drawn like a betta nest (phase, size, eggs) from the clutch. */

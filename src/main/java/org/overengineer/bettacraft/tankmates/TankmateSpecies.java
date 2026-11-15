@@ -272,7 +272,44 @@ public enum TankmateSpecies {
     MOTORO_STINGRAY(d("motoro_stingray", "Potamotrygon motoro", Model.STINGRAY, Group.RAY, Breeding.LIVEBEARER, Zone.BOTTOM)
             .large(LargeSpecies.of(0.6).turn(3.5).speed(0.35).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
                     .eatsSmallFish(0.4).swim(LargeSpecies.Swim.RAY_BOTTOM).rests(0.4)).temp(24, 30).breed(26, 29).quality(0.65).shoal(1)
-            .brood(2, 5).growth(4.0).eats(0.4).egg(0x6A5034, 0xE8902C).native_(Water.JUNGLE, 2));
+            .brood(2, 5).growth(4.0).eats(0.4).egg(0x6A5034, 0xE8902C).native_(Water.JUNGLE, 2)),
+    // ---------------------------------------------------------------- M30 part c: the marine big animals
+    // the brownbanded bamboo shark of the Indo-West Pacific reefs and lagoons: a slender bottom shark (up to 1 m) with barbels
+    // and two dorsal fins far back; lies on the ground by day under ledges and hunts crabs, shrimp and small fish at night;
+    // lays its eggs in leathery egg cases (two at a time) that hatch after about four months
+    BAMBOO_SHARK(d("bamboo_shark", "Chiloscyllium punctatum", Model.BAMBOO_SHARK, Group.SHARK, Breeding.EGG_CASE, Zone.BOTTOM)
+            .large(LargeSpecies.of(1.0).turn(3.5).speed(0.4).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(0.35).rests(0.35)).temp(22, 28).breed(24, 27).quality(0.5).shoal(1).brood(1, 2).growth(5.0).eats(0.3)
+            .nocturnal().egg(0x7A6448, 0xE6DCC6).native_(Water.WARM_OCEAN, 2).native_(Water.LUKEWARM_OCEAN, 1).salt(Salinity.Range.MARINE)),
+    // the blacktip reef shark of the shallow Indo-Pacific reefs: the classic requiem shark with black fin tips, 1.6 m (wild up
+    // to 1.8 m); it has to keep swimming to breathe (ram ventilation), never rests, hunts reef fish; livebearing, but practically
+    // never breeds in a tank
+    BLACKTIP_REEF_SHARK(d("blacktip_reef_shark", "Carcharhinus melanopterus", Model.REEF_SHARK, Group.SHARK, Breeding.NONE, Zone.MID)
+            .large(LargeSpecies.of(1.6).turn(3.5).speed(0.65).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(1.0).keepsSwimming()).temp(24, 30).breed(26, 29).quality(0.55).shoal(1).brood(0, 0).growth(6.0).eats(0.6)
+            .egg(0x8A8880, 0x16161A).native_(Water.WARM_OCEAN, 1).salt(Salinity.Range.MARINE)),
+    // the spotted eagle ray (Indo-Pacific: Aetobatus ocellatus, long called A. narinari): a dark, white-spotted ray with pointed
+    // wings, a duck-bill snout and a whip tail that flies through open water with slow wing beats; digs for clams, snails and
+    // shrimp; 1.5 m long in the game (disc up to 3 m across in the wild); does not breed in a tank
+    SPOTTED_EAGLE_RAY(d("spotted_eagle_ray", "Aetobatus ocellatus", Model.EAGLE_RAY, Group.RAY, Breeding.NONE, Zone.MID)
+            .large(LargeSpecies.of(1.5).turn(2.5).speed(0.55).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(0.15).swim(LargeSpecies.Swim.RAY_OPEN)).temp(24, 29).breed(26, 28).quality(0.6).shoal(1).brood(0, 0)
+            .growth(6.0).eats(0.2).snails().egg(0x1E2434, 0xE8ECF0).native_(Water.WARM_OCEAN, 1).salt(Salinity.Range.MARINE)),
+    // the cownose ray of the western Atlantic: a brown ray with a notched "cow nose" head that migrates in big schools through
+    // warm and temperate seas, a favourite of touch pools; 1 m (disc about 0.9 m across); eats clams, snails and shrimp;
+    // livebearing: one big pup after almost a year
+    COWNOSE_RAY(d("cownose_ray", "Rhinoptera bonasus", Model.COWNOSE_RAY, Group.RAY, Breeding.LIVEBEARER, Zone.MID)
+            .large(LargeSpecies.of(1.0).turn(3.0).speed(0.5).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(0.15).swim(LargeSpecies.Swim.RAY_OPEN)).temp(18, 28).breed(23, 27).quality(0.55).shoal(3).brood(1, 1)
+            .growth(5.0).eats(0.2).snails().egg(0x6E5236, 0xF2EEE4).native_(Water.LUKEWARM_OCEAN, 2).native_(Water.WARM_OCEAN, 1)
+            .salt(Salinity.Range.MARINE)),
+    // the honeycomb (laced) moray of the Indo-Pacific reefs: a big moray eel with dark spots in a pale network; it lives in a
+    // crevice of the reef, mostly with only its head out, opening and closing its mouth to breathe, and comes out at night or
+    // for food; 1.2 m in the game (wild up to 1.8 m); swallows fish, shrimp and crabs; never breeds in a tank
+    HONEYCOMB_MORAY(d("honeycomb_moray", "Gymnothorax favagineus", Model.MORAY, Group.MORAY, Breeding.NONE, Zone.LOW)
+            .large(LargeSpecies.of(1.2).turn(6.0).speed(0.4).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
+                    .eatsSmallFish(0.8).swim(LargeSpecies.Swim.LURK)).temp(24, 28).breed(25, 27).quality(0.45).shoal(1).brood(0, 0)
+            .growth(6.0).eats(0.5).nocturnal().egg(0x2A2016, 0xE6D890).native_(Water.WARM_OCEAN, 2).salt(Salinity.Range.MARINE));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
@@ -288,7 +325,13 @@ public enum TankmateSpecies {
          * M30 part b: the redtail catfish (broad flat head, long barbels), the wels (long body, endless anal fin), the arapaima
          * (long round body, dorsal and anal fin at the tail), the stingray (flat round disc with wave segments, thin tail).
          */
-        REDTAIL, WELS, ARAPAIMA, STINGRAY }
+        REDTAIL, WELS, ARAPAIMA, STINGRAY,
+        /**
+         * M30 part c: the bamboo shark (slender bottom shark, two dorsals far back, long low tail), the reef shark (torpedo body,
+         * tall dorsal, sickle pectorals, heterocercal tail), the eagle and the cownose ray (wing-like discs with wave segments,
+         * a long tail), the moray (an eel in nested segments with a jaw that opens).
+         */
+        BAMBOO_SHARK, REEF_SHARK, EAGLE_RAY, COWNOSE_RAY, MORAY }
 
     /** Family group (handbook, overlays, menu). */
     public enum Group { TETRA, RASBORA, CORY, PLECO, OTOCINCLUS, LOACH, LIVEBEARER, GOURAMI, CLOWNFISH, TANG, GOBY, DAMSEL, SEAHORSE, CICHLID,
@@ -301,7 +344,9 @@ public enum TankmateSpecies {
         /** M30 part b: the bonytongues (arapaima). */
         BONYTONGUE,
         /** M30 part b: the rays (motoro stingray; part c: eagle ray, cownose ray). */
-        RAY }
+        RAY,
+        /** M30 part c: the sharks (bamboo shark, blacktip reef shark) and the moray eels. */
+        SHARK, MORAY }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -337,7 +382,12 @@ public enum TankmateSpecies {
          */
         MOUTH,
         /** Practically never breeds in a tank (clown loach, the other reef fish). */
-        NONE
+        NONE,
+        /**
+         * M30 part c: an egg-laying shark (bamboo shark): the female lays leathery egg cases (mermaid's purses) near the
+         * decoration; each holds one pup that hatches after many days, only when the tank has room for it by the size rule.
+         */
+        EGG_CASE
     }
 
     /** Where in the water column a species swims (fractions of the water height, 0 = bottom). */
@@ -678,6 +728,16 @@ public enum TankmateSpecies {
                 // M30 part b: a flat disc about as wide as half its length with the tail, thin
                 this.width = (float) Math.min(1.6, Math.max(0.4, length * 0.55));
                 this.height = (float) Math.min(0.4, Math.max(0.12, length * 0.13));
+            }
+            if (model == Model.BAMBOO_SHARK || model == Model.REEF_SHARK) {
+                // M30 part c: a shark is slim for its length
+                this.width = (float) Math.max(0.4, length * 0.2);
+                this.height = (float) Math.max(0.3, length * 0.18);
+            }
+            if (model == Model.MORAY) {
+                // M30 part c: an eel: long, narrow and not very tall
+                this.width = (float) Math.max(0.25, length * 0.11);
+                this.height = (float) Math.max(0.25, length * 0.15);
             }
             this.stock = l.stock();
             this.trade = Trade.NONE;

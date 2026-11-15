@@ -178,6 +178,8 @@ final class BreedingLines {
                 }
                 default -> {}
             }
+            // M30 part c: a big species breeds only while the size rule leaves room for its young
+            if (s.isLarge() && d.contains("room")) out.add(check(d.getInt("room") > 0, Component.translatable("gui.bettacraft.breeding.tm.room", d.getInt("room"))));
             ListTag cl = d.getList("clutches", Tag.TAG_COMPOUND);
             for (int k = 0; k < cl.size(); k++) {
                 CompoundTag c = cl.getCompound(k);

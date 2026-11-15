@@ -162,6 +162,7 @@ public final class TankmateBreeding {
                 case POUCH -> pouch(level, c, e.getKey(), e.getValue(), days, full); // M21.8 seahorses
                 case OPEN -> open(level, c, e.getKey(), e.getValue(), days, now, full); // M29 cichlids
                 case CICHLID_CAVE -> cichlidCave(level, c, e.getKey(), e.getValue(), days, now, full);
+                case EGG_CASE -> eggCases(level, c, e.getKey(), e.getValue(), days, full); // M30 part c: the bamboo shark
                 case NONE -> {}
             }
         }
@@ -368,7 +369,7 @@ public final class TankmateBreeding {
         }
     }
 
-    private static void eat(ServerLevel level, TankBlockEntity c, Entity prey) {
+    public static void eat(ServerLevel level, TankBlockEntity c, Entity prey) {
         level.sendParticles(ParticleTypes.BUBBLE_POP, prey.getX(), prey.getY(), prey.getZ(), 3, 0.05, 0.05, 0.05, 0.01);
         c.getTank().inhabitants().remove(prey.getUUID());
         prey.discard();
@@ -957,6 +958,64 @@ public final class TankmateBreeding {
         return s.seahorse() ? Seahorses.pouchDays() : gestationDays();
     }
 
+    /** M30 part c: days in the egg case of the bamboo shark (about four months in nature; tankmates.clutchSpeed divides them). */
+    public static final double EGG_CASE_DAYS = 10.0;
+
+    /** M30 part c: egg cases of a species in the tank that have not hatched yet (each holds one pup). */
+    public static int pendingCases(TankData t, TankmateSpecies s) {
+        int n = 0;
+        for (Clutch k : t.clutches()) if (k.kind == Clutch.Kind.EGG_CASE && k.species == s) n += k.count;
+        return n;
+    }
+
+    /**
+     * M30 part c: an egg-laying shark (bamboo shark): a fit female with a male lays one or two leathery egg cases at a time,
+     * under the decoration (a ledge, a cave) or else on the ground, now and then; only while the size rule leaves room for the
+     * pups of all cases in the tank. Each case holds one pup that hatches after {@link #EGG_CASE_DAYS}.
+     */
+    private static void eggCases(ServerLevel level, TankBlockEntity c, TankmateSpecies s, List<TankmateEntity> list, double days, boolean full) {
+        if (full) return;
+        TankData t = c.getTank();
+        if (!s.breedingTemp(t.waterTemp())) return;
+        List<TankmateEntity> males = adults(list, false, true), females = adults(list, true, true);
+        if (males.isEmpty() || females.isEmpty()) return;
+        int room = bigRoom(level, c, s) - pendingCases(t, s);
+        if (room <= 0) return;
+        RandomSource r = level.getRandom();
+        var region = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
+        TankWaterVolume w = new TankWaterVolume(t);
+        org.overengineer.bettacraft.critters.TankTerrain terrain = new org.overengineer.bettacraft.critters.TankTerrain(t, level.getServer(), region, level.isDay());
+        for (TankmateEntity f : females) {
+            if (room <= 0) break;
+            if (f.breeding().cooldown() > 0) continue;
+            double cond = f.breeding().isConditioned() ? 1.5 : 1.0;
+            if (r.nextDouble() >= chance(0.25 * cond * speed(), days)) continue;
+            TankmateEntity m = nearest(f, males);
+            if (m == null) continue;
+            int n = Math.min(room, brood(s, f, r));
+            for (int i = 0; i < n; i++) {
+                double[] spot = terrain.shelter(f.getX(), f.getY(), f.getZ(), 3.0, new java.util.Random(r.nextLong()));
+                Vec3 p;
+                if (spot != null) {
+                    p = new Vec3(spot[0], spot[1] + 0.02, spot[2]);
+                } else {
+                    double x = f.getX() + (r.nextDouble() - 0.5) * 0.8, z = f.getZ() + (r.nextDouble() - 0.5) * 0.8;
+                    double g = terrain.ground(x, z);
+                    p = new Vec3(x, (Double.isFinite(g) ? g : w.box().minY) + 0.02, z);
+                }
+                p = w.clamp(p, 0.15, 0.02, 0.05);
+                Clutch k = new Clutch(t.nextClutchId(), s, Clutch.Kind.EGG_CASE, p.x, p.y, p.z, 1, f.genes(), m.genes());
+                k.generation = Math.max(f.generation(), m.generation()) + 1;
+                k.cover = 1.0;
+                t.clutches().add(k);
+            }
+            room -= n;
+            f.breeding().setCooldown(3.0);
+            TankCare.log(level, c, "log.bettacraft.tm.egg_cases", TankCare.nameArg(f), String.valueOf(n));
+            c.markTankChanged();
+        }
+    }
+
     /** M30 part b: a big livebearer carries this many times as long as the small ones. */
     public static final double BIG_GESTATION = 4.0;
 
@@ -1107,7 +1166,7 @@ public final class TankmateBreeding {
                     k.unguarded = 0;
                 }
             }
-            if (k.kind != Clutch.Kind.BOX) {
+            if (k.kind != Clutch.Kind.BOX && k.kind != Clutch.Kind.EGG_CASE) { // M30 part c: a leathery egg case is safe
                 // the adults eat what they reach (a guarded cave or nest is safe)
                 boolean exposed = k.kind == Clutch.Kind.GLASS || k.kind == Clutch.Kind.SCATTER || !guarded;
                 if (exposed && hunters > 0 && eggRate > 0) k.count -= binomial(r, k.count, chance(eggRate * hunters * (1 - k.cover), days));
@@ -1120,7 +1179,15 @@ public final class TankmateBreeding {
                 changed = true;
                 continue;
             }
+            if (k.age >= k.totalDays() && k.kind == Clutch.Kind.EGG_CASE && bigRoom(level, c, k.species) <= 0) {
+                // M30 part c: the pup in the egg case is ready, but the tank has no room for another adult by the size rule: it
+                // waits in its case (the menu says so) until there is room or the case goes into a bigger tank
+                k.age = k.totalDays() - 1e-3;
+                if (c.tankmateLogged.add("case_waits")) TankCare.log(level, c, "log.bettacraft.tm.case_waits", "@" + k.species.translationKey());
+                continue;
+            }
             if (k.age >= k.totalDays()) {
+                if (k.kind == Clutch.Kind.EGG_CASE) c.tankmateLogged.remove("case_waits");
                 release(level, c, k, r);
                 changed = true;
                 continue;
@@ -1158,6 +1225,7 @@ public final class TankmateBreeding {
         int live = TankInhabitants.liveInhabitants(level, t).size();
         int room = Math.max(0, ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64) - live);
         int n = Math.min(Math.min(k.count, maxFry()), room);
+        if (k.kind == Clutch.Kind.EGG_CASE) n = Math.min(n, bigRoom(level, c, k.species)); // M30 part c
         LifeStage stage = k.kind == Clutch.Kind.BOX ? LifeStage.JUVENILE : LifeStage.FRY;
         TankWaterVolume w = new TankWaterVolume(t);
         int made = 0;
@@ -1166,12 +1234,13 @@ public final class TankmateBreeding {
             boolean female = r.nextBoolean();
             TankmateGenes g = org.overengineer.bettacraft.world.Wildlife.mutate(k.species, TankmateGenes.cross(k.mother, k.father, female, r::nextLong), r::nextLong);
             // M29: the young of an open brood rise from their stone or leaf (not into it)
-            double dy = k.kind == Clutch.Kind.OPEN ? 0.05 + r.nextDouble() * 0.1 : -0.05 - r.nextDouble() * 0.15;
+            double dy = k.kind == Clutch.Kind.OPEN || k.kind == Clutch.Kind.EGG_CASE ? 0.05 + r.nextDouble() * 0.1 : -0.05 - r.nextDouble() * 0.15;
             Vec3 p = w.clamp(new Vec3(k.x + (r.nextDouble() - 0.5) * 0.3, k.y + dy, k.z + (r.nextDouble() - 0.5) * 0.3),
                     0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
             if (spawn(level, c, k.species, g, female, stage, k.generation, p) != null) made++;
         }
-        TankCare.log(level, c, k.kind == Clutch.Kind.BOX ? "log.bettacraft.tm.box_released" : "log.bettacraft.tm.fry_free",
+        TankCare.log(level, c, k.kind == Clutch.Kind.BOX ? "log.bettacraft.tm.box_released" : k.kind == Clutch.Kind.EGG_CASE ? "log.bettacraft.tm.case_hatched"
+                : "log.bettacraft.tm.fry_free",
                 "@" + k.species.translationKey(), String.valueOf(made));
     }
 
@@ -1336,6 +1405,7 @@ public final class TankmateBreeding {
                 case POUCH -> d.putInt("posts", Seahorses.spots(level, t).size()); // M21.8
                 default -> {}
             }
+            if (s.isLarge()) d.putInt("room", Math.max(0, bigRoom(level, c, s) - pendingCases(t, s))); // M30 part c: the size rule
             ListTag cl = new ListTag();
             for (Clutch k : t.clutches()) {
                 if (k.species != s) continue;

@@ -79,7 +79,10 @@ class ReefTest {
         assertEquals(0, Salinity.shockPerDay(SaltTolerance.BETTA, 35, 0), "config 0: salt does no harm");
         for (TankmateSpecies s : TankmateSpecies.values()) {
             boolean reef = s.group() == TankmateSpecies.Group.CLOWNFISH || s.group() == TankmateSpecies.Group.TANG
-                    || s.group() == TankmateSpecies.Group.GOBY || s.group() == TankmateSpecies.Group.DAMSEL || s.group() == TankmateSpecies.Group.SEAHORSE;
+                    || s.group() == TankmateSpecies.Group.GOBY || s.group() == TankmateSpecies.Group.DAMSEL || s.group() == TankmateSpecies.Group.SEAHORSE
+                    // M30 part c: the sharks, the moray and the sea rays
+                    || s.group() == TankmateSpecies.Group.SHARK || s.group() == TankmateSpecies.Group.MORAY || s == TankmateSpecies.SPOTTED_EAGLE_RAY
+                    || s == TankmateSpecies.COWNOSE_RAY;
             assertEquals(reef, s.marine(), s + " marine");
         }
     }

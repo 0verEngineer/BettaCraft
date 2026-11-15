@@ -34,7 +34,8 @@ class TankmateDataTest {
             if (s.isLarge()) {
                 // M30: the big animals go by the size rule of big tanks (their real length)
                 assertTrue(s.large().lengthM() >= 0.5 && s.large().lengthM() <= 4.0, s.id() + " real length");
-                assertTrue(s.hitboxWidth() > 0.5F && s.hitboxWidth() <= 1.2F && s.hitboxHeight() > 0, s.id() + " hitbox");
+                // (M30 part c: sharks are slim, the moray narrow; rays are wide flat discs)
+                assertTrue(s.hitboxWidth() > 0.2F && s.hitboxWidth() <= (s.large().ray() ? 1.6F : 1.2F) && s.hitboxHeight() > 0, s.id() + " hitbox");
                 assertTrue(s.length() >= 1.0 && s.length() <= 8.0, s.id() + " length");
                 assertTrue(s.stock() > 3 && s.trade() == TankmateSpecies.Trade.NONE, s.id() + " stocking, no trader");
             } else {
