@@ -41,6 +41,15 @@ the aquarium nothing changes: the animal lives by its own mod there.
 | Critters and Companions | koi | pond fish (4 to 28 °C) | eggs on plants, 16 water blocks |
 | Naturalist | [tortoise](../terrarium/naturalist_tortoise.md) | dry terrarium, 1 m, greens | eggs into sand or soil |
 | Naturalist | [alligator](../terrarium/naturalist_alligator.md) | big paludarium, 2 m, raw meat, hunts small fish | eggs into sand or soil |
+| Naturalist | [lizard, snake](../terrarium/foreign_land_animals.md) | dry terrarium, crickets and greens / prey | eggs into sand or soil |
+| Naturalist | [desert and jungle scorpion](../terrarium/foreign_land_animals.md) | dry terrarium (dry / humid air), crickets | live young |
+| Naturalist | [snail](../terrarium/foreign_land_animals.md) | humid terrarium, greens | eggs into sand or soil |
+| Naturalist | [crab](../terrarium/foreign_land_animals.md) | paludarium, fresh or sea water, pellets and fish | no |
+| Naturalist, Critters and Companions | [dragonfly](../terrarium/foreign_land_animals.md) | paludarium, flies, fruit flies | no |
+| Naturalist | [duck, capybara](../terrarium/foreign_land_animals.md) | big paludarium, 0.6 m / 1.2 m | eggs into sand or soil / live young |
+| Critters and Companions | [leaf insect](../terrarium/foreign_land_animals.md) | humid terrarium, leaves | eggs into sand or soil |
+| Critters and Companions | [otter](../terrarium/foreign_land_animals.md) | big paludarium, 1 m, fish, hunts small fish | live young |
+| Critters and Companions | sea bunny | sea water aquarium, pellets | no |
 
 ## Writing a profile
 
@@ -82,9 +91,10 @@ installed are skipped quietly (unless `"required": true`). Example:
 | `terrarium` | instead of an aquarium: `habitat` (`dry`, `paludarium`, `any`, `wet`), `air`, `humidity`, `land`, `water`, `uv`, `basking` like the [terrarium animals](../terrarium.md); the keys below |
 | `terrarium.length` | its length in metres: a big animal by the [size rule](../big_tanks.md) (12 / 6 / 3 blocks per metre, 100 blocks per cubic metre); left out: its hitbox decides |
 | `terrarium.volume` | what the size rule measures: `land` (the land with the air above it), `water` (the water part) or `all` (the whole tank); default by the habitat (`dry` the land, `wet` the water, else all) |
-| `terrarium.movement` | how it moves in the tank: `walk` (default), `slither`, `hop`, `climb`, `swim`, or `own` for the AI of its mod; or an object with `style` and `walk`, `swim` (blocks per tick), `bottom`, `max_step`, `water_time`, `bask_time`, `rest_time`, `height` |
+| `terrarium.movement` | how it moves in the tank: `walk` (default), `slither`, `hop`, `climb`, `swim`, `fly` (through the air, rests on the land), or `own` for the AI of its mod; or an object with `style` and `walk`, `swim` (blocks per tick), `bottom`, `max_step`, `water_time`, `bask_time`, `rest_time`, `height` |
 | `terrarium.prey` | it eats the small fish and shrimp of its tank up to this length (blocks; from 0.5 also bettas and dwarf frogs) |
 | `terrarium.box` | the terrarium box catches it (default true; false: the large net and the transport tub) |
+| `terrarium.min_blocks` | a small animal's smallest tank (blocks of water and land; smaller stresses it) |
 | `breeding.nest`, `nest_temperature` | eggs into a nest on the land whose top is of this block tag (`#bettacraft:turtle_nest_ground`: sand and soil), hatching in `days` at that nest temperature (°C; warmer faster, at 18 °C and below they wait, above 36 °C they die) |
 | `suppress_own_breeding` | `false` lets the animal's own breeding run in the aquarium too |
 

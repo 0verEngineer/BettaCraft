@@ -16,6 +16,17 @@ Land and marsh animals of other mods can live in our terraria and paludaria when
 |---|---|---|---|
 | [Tortoise](naturalist_tortoise.md) | Naturalist | dry terrarium | 1 m: 12 × 6 × 3 blocks, 100 blocks of land |
 | [Alligator](naturalist_alligator.md) | Naturalist | big paludarium | 2 m: 24 × 12 × 6 blocks, 800 blocks of tank |
+| Lizard (bearded dragon, leopard gecko, green, brown) | Naturalist | dry terrarium, basking spot, UV | its hitbox |
+| Snake (green snake, coral snake, rattlesnake) | Naturalist | dry terrarium, basking spot | its hitbox |
+| Desert scorpion | Naturalist | dry terrarium, dry air (10 to 40 %) | its hitbox |
+| Jungle scorpion | Naturalist | dry terrarium, humid air (60 to 90 %) | 0.2 m: 3 × 2 × 1 blocks |
+| Snail | Naturalist | dry terrarium, humid air (70 to 100 %), cool | its hitbox |
+| Crab | Naturalist | paludarium, fresh or sea water | its hitbox |
+| Dragonfly | Naturalist, Critters and Companions | paludarium, flies | 0.1 m (for its wide wings) |
+| Duck | Naturalist | big paludarium | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of tank |
+| Capybara | Naturalist | big paludarium | 1.2 m: 15 × 8 × 4 blocks, 173 blocks of tank |
+| Leaf insect | Critters and Companions | dry terrarium, humid air (60 to 90 %) | its hitbox |
+| Otter | Critters and Companions | big paludarium, cool water | 1 m: 12 × 6 × 3 blocks, 100 blocks of tank |
 
 With a profile an animal gets:
 
@@ -33,5 +44,42 @@ With a profile an animal gets:
   into a [transport tub](../big_tanks/transport_tub.md). Animals without a profile are refused, unless the server lists them
   in `terrarium.boxAllow` (they then live in terraria and paludaria without our care). A tame animal goes into the box
   only for its owner.
+
+## The other animals
+
+| Animal | Food (by hand and from the feeder) | Breeding | In the tank |
+|---|---|---|---|
+| Lizard | crickets, greens, daily | eggs into sand or soil (29 °C) | walks, basks |
+| Snake | prey (raw rabbit, chicken), every 5 days | eggs into sand or soil (29 °C) | slithers, basks |
+| Scorpions | crickets, every 3 days | live young | walks slowly, hides buried in the ground |
+| Snail | greens, carrots, beetroot | eggs into sand or soil (22 °C) | creeps, climbs the glass |
+| Crab | pellets, raw fish | none (its larvae need the sea) | walks on the land and the bottom of the water |
+| Dragonfly | fruit flies, daily | none (its larvae live for years in the water) | flies over the water and the land, rests on the land |
+| Duck | pellets, seeds, greens, raw fish | eggs into sand or soil (26 °C) | swims on the surface, walks on the land |
+| Capybara | greens, melon, sugar cane | live young | grazes, swims |
+| Leaf insect | leaves | eggs into sand or soil (25 °C) | sits still, climbs the glass |
+| Otter | raw fish, clams | live young | swims fast, **hunts small fish** (up to 0.4 blocks) |
+
+* The **scorpions** are hostile at night in the world; in a tank our walker moves them and they attack nobody (like the
+  [mobs in glass](mobs_in_glass.md)). Catch one by day.
+* The **dragonfly** flies (our walker has a flying style for it): straight through the air of the tank, never into the land,
+  the water or the decoration, now and then just over the water, and it rests on the land.
+* The **capybara** goes with the [large net](../big_tanks/large_net.md) into a [transport tub](../big_tanks/transport_tub.md);
+  the others go into the terrarium box.
+* The **sea bunny** of Critters and Companions has an aquarium profile: a sea water aquarium (18 to 28 °C, pellets), no breeding.
+
+## Fish in the water part of a paludarium
+
+Our fish, the fish of other mods with a profile and the water animals the inhabitant rules admit also live in the
+**water part** of a paludarium. There the water part decides, not the fill of the whole tank (a paludarium has its water in a
+third or a half of its height): the water must be deep enough for the fish (half a block, a tall fish its height and a little
+more), and the stocking and the size rule of the big fish measure the water part. A fish comes in over the open water, and it
+stays there: our fish keep out of the land by themselves, a fish of another mod that swims into the land is put back into the
+water.
+
+## Eggs and the mother
+
+A mother that leaves her tank (box, tub, menu) takes her laid clutch along: the eggs vanish from the nest and she lays them
+again, as far as they were, in her next tank (it needs sand or soil). A mother that dies in her tank loses her eggs.
 
 Switch: `features.foreignAnimals.terrarium` (off: none of them go into tanks and the box takes none; those in tanks stay).

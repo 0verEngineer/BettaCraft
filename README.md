@@ -110,6 +110,10 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - **Amphibians and reptiles:** poison dart frogs (tadpoles in the water), Cranwell's horned frog, leopard and crested
   geckos (the crested one climbs the glass) and the corn snake, with crickets and fruit flies from their cultures; wild
   in jungles, deserts, forests, savannas and swamps.
+- **Land animals of other mods:** with a terrarium profile they get our care, breeding and walker in terraria and
+  paludaria: the Naturalist tortoise, alligator, lizard, snake, scorpions, snail, crab, dragonfly, duck and capybara, the
+  Critters and Companions dragonfly, leaf insect and otter; the terrarium box catches them. Fish live in the water part of a
+  paludarium, and grown sea turtles go into big sea water paludaria with a beach.
 - **Mobs in glass:** drowned, zombies, skeletons, spiders, small slimes and a few more live **shrunk and harmless** in
   tanks: caught with the mob jar, lured with bait or put in from an EnderIO soul vial; a zombie under water becomes a
   drowned, fed pairs breed, and they never drop anything.
@@ -169,7 +173,7 @@ No other mod is required.
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
-| Fintastic, Aquaculture 2, Critters and Companions, Naturalist (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
+| Fintastic, Aquaculture 2, Critters and Companions, Naturalist (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; their land and marsh animals (tortoise, alligator, lizard, snake, scorpions, crab, dragonflies, duck, capybara, otter ...) live in terraria and paludaria; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
 | [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit and the food maker; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients and products; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |

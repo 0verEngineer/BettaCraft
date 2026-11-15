@@ -40,6 +40,15 @@ Außerhalb des Aquariums ändert sich nichts: Dort lebt das Tier nach seiner eig
 | Aquaculture | Synodontis | Wels | nein |
 | Naturalist | [Landschildkröte](../terrarium/naturalist_tortoise.md) | trockenes Terrarium, 1 m, Grünzeug | Eier in Sand oder Erde |
 | Naturalist | [Alligator](../terrarium/naturalist_alligator.md) | großes Paludarium, 2 m, rohes Fleisch, jagt kleine Fische | Eier in Sand oder Erde |
+| Naturalist | [Echse, Schlange](../terrarium/foreign_land_animals.md) | trockenes Terrarium, Heimchen und Grünzeug / Beute | Eier in Sand oder Erde |
+| Naturalist | [Wüsten- und Dschungelskorpion](../terrarium/foreign_land_animals.md) | trockenes Terrarium (trockene / feuchte Luft), Heimchen | lebende Junge |
+| Naturalist | [Schnecke](../terrarium/foreign_land_animals.md) | feuchtes Terrarium, Grünzeug | Eier in Sand oder Erde |
+| Naturalist | [Krabbe](../terrarium/foreign_land_animals.md) | Paludarium, Süß- oder Meerwasser, Pellets und Fisch | nein |
+| Naturalist, Critters and Companions | [Libelle](../terrarium/foreign_land_animals.md) | Paludarium, fliegt, Fruchtfliegen | nein |
+| Naturalist | [Ente, Capybara](../terrarium/foreign_land_animals.md) | großes Paludarium, 0,6 m / 1,2 m | Eier in Sand oder Erde / lebende Junge |
+| Critters and Companions | [Wandelndes Blatt](../terrarium/foreign_land_animals.md) | feuchtes Terrarium, Laub | Eier in Sand oder Erde |
+| Critters and Companions | [Otter](../terrarium/foreign_land_animals.md) | großes Paludarium, 1 m, Fisch, jagt kleine Fische | lebende Junge |
+| Critters and Companions | Seehase | Meerwasseraquarium, Pellets | nein |
 | Critters and Companions | Koi | Teichfisch (4 bis 28 °C) | Eier an Pflanzen, 16 Wasserblöcke |
 
 ## Ein Profil schreiben
@@ -82,9 +91,10 @@ Entities, deren Mod nicht installiert ist, werden still übersprungen (außer mi
 | `terrarium` | statt eines Aquariums: `habitat` (`dry`, `paludarium`, `any`, `wet`), `air`, `humidity`, `land`, `water`, `uv`, `basking` wie bei den [Terrarientieren](../terrarium.md); dazu die Schlüssel unten |
 | `terrarium.length` | seine Länge in Metern: ein Großtier nach der [Größenregel](../big_tanks.md) (12 / 6 / 3 Blöcke pro Meter, 100 Blöcke pro Kubikmeter); ohne: seine Hitbox entscheidet |
 | `terrarium.volume` | was die Größenregel misst: `land` (das Land mit der Luft darüber), `water` (den Wasserteil) oder `all` (das ganze Becken); Standard nach dem Habitat (`dry` das Land, `wet` das Wasser, sonst alles) |
-| `terrarium.movement` | wie es sich im Becken bewegt: `walk` (Standard), `slither`, `hop`, `climb`, `swim` oder `own` für die KI seiner Mod; oder ein Objekt mit `style` und `walk`, `swim` (Blöcke pro Tick), `bottom`, `max_step`, `water_time`, `bask_time`, `rest_time`, `height` |
+| `terrarium.movement` | wie es sich im Becken bewegt: `walk` (Standard), `slither`, `hop`, `climb`, `swim`, `fly` (durch die Luft, ruht an Land) oder `own` für die KI seiner Mod; oder ein Objekt mit `style` und `walk`, `swim` (Blöcke pro Tick), `bottom`, `max_step`, `water_time`, `bask_time`, `rest_time`, `height` |
 | `terrarium.prey` | es frisst die kleinen Fische und Garnelen seines Beckens bis zu dieser Länge (Blöcke; ab 0,5 auch Bettas und Krallenfrösche) |
 | `terrarium.box` | die Terrarienbox fängt es (Standard true; false: großer Kescher und Transportwanne) |
+| `terrarium.min_blocks` | das kleinste Becken eines kleinen Tiers (Blöcke Wasser und Land; kleiner stresst es) |
 | `breeding.nest`, `nest_temperature` | Eier in ein Nest auf dem Land, dessen Oberseite zu diesem Block-Tag gehört (`#bettacraft:turtle_nest_ground`: Sand und Erde); sie schlüpfen nach `days` bei dieser Nesttemperatur (°C; wärmer schneller, bei 18 °C und darunter warten sie, über 36 °C sterben sie) |
 | `suppress_own_breeding` | `false` lässt die eigene Zucht des Tiers im Aquarium zusätzlich laufen |
 

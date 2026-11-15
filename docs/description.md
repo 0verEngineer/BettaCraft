@@ -98,6 +98,10 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 - **Turtles** (musk turtle, sliders, Hermann's tortoise, Reeves' turtle) lay eggs in the sand, and the nest temperature
   decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
   that climb the glass and a **corn snake**.
+- **Land animals of other mods:** the Naturalist tortoise, alligator, lizard, snake, scorpions, crab, dragonfly, duck and
+  capybara and the Critters and Companions otter, dragonfly and leaf insect live in terraria and paludaria with our care
+  and breeding; catch them with the terrarium box. Fish swim in the water part of a paludarium, and sea turtles go into big
+  sea water paludaria with a beach.
 - **Mobs in glass:** drowned, zombies, skeletons, spiders and small slimes live shrunk and harmless in a tank. Weaken one
   and catch it in a **mob jar**, lure it into an open tank with bait, or bring it in an EnderIO soul vial. A zombie under
   water becomes a drowned, fed pairs breed, and mobs in glass never drop anything: decoration, not a farm.
@@ -140,7 +144,8 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
 - **Animals of other mods:** Fintastic, Aquaculture 2, Critters and Companions and Naturalist fish get our care and
-  breeding in Bettacraft aquariums (their young inherit their colours); modpacks add profiles for any animal.
+  breeding in Bettacraft aquariums (their young inherit their colours), their land and marsh animals live in terraria and
+  paludaria; modpacks add profiles for any animal.
 - **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals; rotation
   drives pumps, the reverse osmosis unit and the food maker; Display Links show tank values. **AE2 and Refined
   Storage** autocrafting feeds the food maker and the crucible; **Mekanism** tanks take the Bettacraft fluids.
@@ -192,7 +197,7 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
 Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Terrarien und Paludarien mit Schildkröten, Pfeilgiftfröschen,
-Geckos und Kornnattern, verkleinerte Mobs im Glas, Filter,
+Geckos und Kornnattern, Landtieren anderer Mods (Naturalist, Critters and Companions), verkleinerte Mobs im Glas, Filter,
 Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Fische anderer Mods (Fintastic, Aquaculture …)
 bekommen unsere Pflege und Zucht, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
 ein FTB-Quests-Kapitel, KubeJS-Events, JourneyMap-Wegpunkte bei Alarmen, einen Schalter für jedes Feature und

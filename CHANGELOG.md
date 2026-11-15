@@ -4,6 +4,39 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.27.0-beta.1] - 2026-11-15
+
+Land and marsh animals of other mods in terraria and paludaria, fish in the water part of a paludarium, sea turtles as
+big animals.
+
+### Added
+- **Land and marsh animals of other mods** live in our terraria and paludaria when they have a **terrarium profile**
+  (feature switch `features.foreignAnimals.terrarium`): our care (hunger, the climate, sickness), our breeding (egg layers
+  lay into sand or soil on the land, the nest temperature hatches them; livebearers give birth in the tank; their own
+  breeding is suppressed) and our walker instead of their AI (it walks the land of the miniature, swims, basks, climbs,
+  slithers, hides buried, and a new **flying style** for the dragonflies). Item food by hand on the tank and from the
+  feeder (greens, crickets, prey, raw meat and fish, leaves ...).
+- **Shipped profiles:** Naturalist tortoise (dry terrarium, 1 m), alligator (big paludarium, 2 m, hunts small fish),
+  lizard, snake, desert and jungle scorpion (dry terraria), snail (humid), crab (paludarium, fresh or sea water),
+  dragonfly, duck (0.6 m) and capybara (1.2 m, big paludaria); Critters and Companions dragonfly, leaf insect, otter
+  (big paludarium, hunts small fish) and the sea bunny (sea water aquarium). Scorpions are harmless in a tank.
+- **Size rule for terraria and paludaria:** a land animal with a `length` goes by the size rule of the big animals (M30),
+  measured over the land, the water part or the whole tank; small animals by their hitbox and an optional `min_blocks`.
+- **Terrarium box for foreign animals:** catches the land animals with a profile (and those of `terrarium.boxAllow`,
+  without our care) with all their data; big ones go with the large net into the transport tub.
+- **Sea turtles as big animals** (`features.turtles.seaTurtles`): grown ones and hatchlings only into big sea water
+  paludaria with a sand or soil beach, where pairs lay their eggs; a hatchling that grows up stays.
+- Profile keys `terrarium.length`, `volume`, `movement` (`walk`, `slither`, `hop`, `climb`, `swim`, `fly`, `own`), `prey`,
+  `box`, `min_blocks`, `breeding.nest`, `nest_temperature`; handbook pages en + de.
+
+### Changed
+- **Fish in the water part of a paludarium:** our fish, the fish of other mods with a profile and the animals the
+  inhabitant rules admit go into a paludarium by its water part (deep enough for the fish; stocking and size rule over the
+  water part) instead of the fill of the whole tank, come in over the open water and stay there (a fish of another mod
+  that swims into the land is put back).
+- A mother that leaves her tank takes her laid clutch along and lays it again in her next tank (no empty egg shell stays);
+  a mother that dies in her tank loses her eggs.
+
 ## [1.26.1-beta.1] - 2026-11-15
 
 A tank type switch, so a terrarium is never flooded by mistake.
