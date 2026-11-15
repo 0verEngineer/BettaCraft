@@ -130,7 +130,7 @@ public final class ForeignTerrariumBGameTests {
         h.succeed();
     }
 
-    /** The sea bunny (Critters and Companions) by its aquarium profile: into a sea water tank, not into fresh water. */
+    /** The sea bunny (Critters and Companions) by its aquarium profile: into a sea water tank (fresh water refused with realistic foreign salinity). */
     @GameTest(template = EMPTY, batch = "bettacraft_m35b_land", timeoutTicks = 100)
     public static void seaBunnyIntoSeaWater(GameTestHelper h) {
         if (!ModList.get().isLoaded("crittersandcompanions")) {
@@ -147,8 +147,10 @@ public final class ForeignTerrariumBGameTests {
         Entity e = bunny.create(h.getLevel());
         ItemStack bag = FishBagItem.fillWith(e);
         e.discard();
+        // the salt of a foreign profile counts with salt.foreignSalinity = REALISTIC (default LENIENT: no refusal)
+        boolean realistic = org.overengineer.bettacraft.foreign.ForeignProfiles.salinity(p) != null;
         Component no = TankInhabitants.insert(h.getLevel(), fresh, bag.copy(), bunny, null, 100);
-        h.assertTrue(no != null, "fresh water refuses it");
+        h.assertTrue(realistic == (no != null), "fresh water refuses it only when realistic: " + (no == null ? "accepted" : no.getString()));
         Component ok = TankInhabitants.insert(h.getLevel(), sea, bag.copy(), bunny, null, 100);
         h.assertTrue(ok == null, "into sea water: " + (ok == null ? "" : ok.getString()));
         h.succeed();

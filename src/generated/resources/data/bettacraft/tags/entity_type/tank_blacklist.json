@@ -94,10 +94,6 @@
       "required": false
     },
     {
-      "id": "crittersandcompanions:otter",
-      "required": false
-    },
-    {
       "id": "shiny:shiny_frog",
       "required": false
     }

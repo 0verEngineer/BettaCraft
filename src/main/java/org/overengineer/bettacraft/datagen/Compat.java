@@ -50,11 +50,12 @@ public final class Compat {
             rl(AQUACULTURE, "tambaqui"), rl(AQUACULTURE, "carp"), rl(AQUACULTURE, "pollock"),
             rl(AQUACULTURE, "atlantic_cod"), rl(AQUACULTURE, "pink_salmon"), rl(AQUACULTURE, "blackfish"),
             // M16: manta ray, tuna; land and lava pets of Cataclysm in buckets (the baby leviathan follows and teleports to its
-            // owner); the otter of Critters and Companions and the frogs (no tank animals). Fintastic gouramis go by the size
+            // owner) and the frogs (no tank animals; M35 part b: the otter of Critters and Companions has a paludarium profile now and
+            // left the list: the profile keeps it out of aquariums). Fintastic gouramis go by the size
             // of their variant (the giant gourami is too big, three-spot and dwarf gouramis fit).
             rl(LIVING_THINGS, "mantaray"), rl(SUSHI, "tuna"),
             rl(CATACLYSM, "the_baby_leviathan"), rl(CATACLYSM, "modern_remnant"), rl(CATACLYSM, "netherite_ministrosity"),
-            rl(CRITTERS, "otter"), rl(SHINY, "shiny_frog"));
+            rl(SHINY, "shiny_frog"));
 
     /** Typical aquarium animals that are a bit larger than the size rule allows. */
     public static final List<ResourceLocation> INHABITANTS = List.of(rl(FINTASTIC, "pleco"));
