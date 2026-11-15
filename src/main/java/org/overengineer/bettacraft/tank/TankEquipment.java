@@ -96,12 +96,15 @@ public final class TankEquipment {
         return out;
     }
 
-    /** M23: air pumps that serve this tank. */
-    public static List<org.overengineer.bettacraft.equipment.AirPumpBlockEntity> airPumps(Level level, TankBlockEntity c) {
+    /** M23: air pumps that serve this tank (M29.1: also the air pumps in the cabinets under it). */
+    public static List<org.overengineer.bettacraft.equipment.AirSource> airPumps(Level level, TankBlockEntity c) {
         scanIfNeeded(level, c);
-        List<org.overengineer.bettacraft.equipment.AirPumpBlockEntity> out = new ArrayList<>();
+        List<org.overengineer.bettacraft.equipment.AirSource> out = new ArrayList<>();
         for (BlockPos p : c.airPumpCache) {
             if (level.isLoaded(p) && level.getBlockEntity(p) instanceof org.overengineer.bettacraft.equipment.AirPumpBlockEntity a) out.add(a);
+        }
+        for (BlockPos p : c.cabinetCache) {
+            if (level.isLoaded(p) && level.getBlockEntity(p) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab && cab.hasAirPump()) out.add(cab);
         }
         return out;
     }

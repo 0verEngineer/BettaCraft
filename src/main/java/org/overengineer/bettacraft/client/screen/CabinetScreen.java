@@ -77,6 +77,9 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         if (!menu.getSlot(CabinetMenu.FILTER).hasItem()) {
             g.blit(TEXTURE, leftPos + CabinetMenu.FILTER_X, topPos + CabinetMenu.FILTER_Y, 176, 34, 16, 16);
         }
+        if (!menu.getSlot(CabinetMenu.AIR_PUMP).hasItem()) { // M29.1
+            g.blit(TEXTURE, leftPos + CabinetMenu.AIR_PUMP_X, topPos + CabinetMenu.AIR_PUMP_Y, 176, 50, 16, 16);
+        }
         if (menu.hasFilter()) {
             for (int i = 0; i < 2; i++) {
                 int x = leftPos + CabinetMenu.HEATER_X + i * 18, y = topPos + CabinetMenu.HEATER_Y;
@@ -91,10 +94,18 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         super.renderLabels(g, mouseX, mouseY);
         Component f = Component.translatable("gui.bettacraft.cabinet.filter");
         g.drawString(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, 0x606060, false);
-        if (menu.hasFilter()) {
-            Component h = Component.translatable("gui.bettacraft.cabinet.heaters");
-            g.drawString(font, font.plainSubstrByWidth(h.getString(), 42), CabinetMenu.HEATER_X + 38, CabinetMenu.HEATER_Y + 4, 0x606060, false);
-        }
+        // M29.1: the heaters' label gave way to the air pump slot; empty slots explain themselves in a tooltip
+    }
+
+    @Override
+    protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        super.renderTooltip(g, mouseX, mouseY);
+        if (hoveredSlot == null || hoveredSlot.hasItem() || !menu.getCarried().isEmpty()) return;
+        int i = hoveredSlot.index;
+        String key = i == CabinetMenu.AIR_PUMP ? "gui.bettacraft.cabinet.air_pump.tooltip"
+                : i == CabinetMenu.FILTER ? "gui.bettacraft.cabinet.filter"
+                : i >= CabinetMenu.HEATER0 && i < CabinetMenu.HEATER0 + 2 && menu.hasFilter() ? "gui.bettacraft.cabinet.heaters" : null;
+        if (key != null) g.renderTooltip(font, font.split(Component.translatable(key), 180), mouseX, mouseY);
     }
 
     @Override

@@ -606,7 +606,7 @@ public final class TankView {
         x.co2Strip = org.overengineer.bettacraft.tank.TankAeration.co2Stripping(c.o2Exchange);
         var pumps = org.overengineer.bettacraft.tank.TankEquipment.airPumps(level, c);
         x.pumps = pumps.size();
-        for (var p : pumps) if (p.running()) x.pumpsRunning++;
+        for (var p : pumps) if (p.airRunning()) x.pumpsRunning++;
         var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r != null && r.built()) {
             var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);

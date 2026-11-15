@@ -21,8 +21,10 @@ import org.overengineer.bettacraft.registry.ModMenus;
  */
 public class CabinetMenu extends AbstractContainerMenu {
     public static final int FILTER_X = 26, FILTER_Y = 18, HEATER_X = 17, HEATER_Y = 44, STORAGE_X = 98, STORAGE_Y = 17;
+    /** M29.1: the air pump slot, right of the heaters. */
+    public static final int AIR_PUMP_X = 74, AIR_PUMP_Y = 44;
     /** Menu slot indices. */
-    public static final int FILTER = 0, HEATER0 = 1, STORAGE0 = 3, PLAYER0 = 3 + CabinetBlockEntity.STORAGE;
+    public static final int FILTER = 0, HEATER0 = 1, AIR_PUMP = 3, STORAGE0 = 4, PLAYER0 = 4 + CabinetBlockEntity.STORAGE;
     /** M22.4: menu button ids 0..3 set the outlet side ({@link OutletSide} ordinal). */
     public static final int BUTTON_OUTLET0 = 0;
     @Nullable
@@ -56,6 +58,17 @@ public class CabinetMenu extends AbstractContainerMenu {
         });
         FilterItemHeaters heaters = new FilterItemHeaters();
         for (int i = 0; i < 2; i++) addSlot(new HeaterSlot(heaters, i, HEATER_X + i * 18, HEATER_Y));
+        addSlot(new SlotItemHandler(items, CabinetBlockEntity.AIR_PUMP_SLOT, AIR_PUMP_X, AIR_PUMP_Y) { // M29.1
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(ModItems.AIR_PUMP.get());
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         for (int r = 0; r < 3; r++)
             for (int c = 0; c < 3; c++)
                 addSlot(new SlotItemHandler(items, 1 + c + r * 3, STORAGE_X + c * 18, STORAGE_Y + r * 18));
@@ -145,6 +158,8 @@ public class CabinetMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(s, PLAYER0, slots.size(), true)) return ItemStack.EMPTY;
         } else if (s.is(ModItems.EXTERNAL_FILTER.get()) && !slots.get(FILTER).hasItem()) {
             if (!moveItemStackTo(s, FILTER, FILTER + 1, false)) return ItemStack.EMPTY;
+        } else if (s.is(ModItems.AIR_PUMP.get()) && !slots.get(AIR_PUMP).hasItem()) { // M29.1
+            if (!moveItemStackTo(s, AIR_PUMP, AIR_PUMP + 1, false)) return ItemStack.EMPTY;
         } else if (FilterHeaters.isHeater(s) && hasFilter() && (!slots.get(HEATER0).hasItem() || !slots.get(HEATER0 + 1).hasItem())) {
             if (!moveItemStackTo(s, HEATER0, HEATER0 + 2, false)) return ItemStack.EMPTY;
         } else if (!moveItemStackTo(s, STORAGE0, PLAYER0, false)) {

@@ -136,7 +136,7 @@ public final class MonitorDetail {
         }
         var pumps = TankEquipment.airPumps(level, c);
         int running = 0;
-        for (var p : pumps) if (p.running()) running++;
+        for (var p : pumps) if (p.airRunning()) running++;
         dl.add(dev("air_pump", pumps.size(), running, -1, !airOff));
         out.put("dev", dl);
         out.putLong("e", t.powerBuffer());

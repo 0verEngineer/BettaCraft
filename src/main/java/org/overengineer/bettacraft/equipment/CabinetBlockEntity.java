@@ -36,41 +36,54 @@ import org.overengineer.bettacraft.registry.ModItems;
 
 /**
  * Cabinet block entity: the planks it is made of, slot 0 for an external filter (the filter's heaters live in the
- * filter item) and nine storage slots (hoppers / pipes reach the storage slots only).
+ * filter item), nine storage slots (hoppers / pipes reach the storage slots only) and (M29.1) slot 10 for an air pump
+ * that drives the air stones and sponge filters of the tank above (its hose goes up with the filter hose).
  */
-public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost {
+public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource {
     public static final ResourceLocation DEFAULT_WOOD = ResourceLocation.withDefaultNamespace("oak_planks");
     public static final ModelProperty<BlockState> WOOD_STATE = new ModelProperty<>();
-    public static final int FILTER_SLOT = 0, STORAGE = 9, SLOTS = 1 + STORAGE;
+    public static final int FILTER_SLOT = 0, STORAGE = 9, AIR_PUMP_SLOT = 1 + STORAGE, SLOTS = 2 + STORAGE;
     /** Client-side cabinets currently loaded with a filter (bubbles and sound; never touched on the server). */
     public static final Set<CabinetBlockEntity> CLIENT_FILTERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    /** M29.1: client-side cabinets currently loaded with an air pump (hum; never touched on the server). */
+    public static final Set<CabinetBlockEntity> CLIENT_AIR_PUMPS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private ResourceLocation wood = DEFAULT_WOOD;
     /** M22.4: the side the filter hose goes up (server: as set; client: the effective side the server sent). */
     private OutletSide outlet = OutletSide.BACK;
     /** Client copy: whether the filter slot is filled (the slot itself is not synced outside the menu). */
     private boolean clientHasFilter;
+    /** M29.1: client copy of whether the air pump slot is filled. */
+    private boolean clientHasAirPump;
+    /** M29.1: air stones and sponge filters the air pump in the cabinet drives right now (server: set by the care step; synced). */
+    private int airDriven;
 
     private final ItemStackHandler items = new ItemStackHandler(SLOTS) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
+            if (slot == AIR_PUMP_SLOT) return stack.is(ModItems.AIR_PUMP.get()); // M29.1
             return slot != FILTER_SLOT || stack.is(ModItems.EXTERNAL_FILTER.get());
         }
 
         @Override
         public int getSlotLimit(int slot) {
-            return slot == FILTER_SLOT ? 1 : 64;
+            return slot == FILTER_SLOT || slot == AIR_PUMP_SLOT ? 1 : 64;
         }
 
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
-            if (slot == FILTER_SLOT && level != null && !level.isClientSide) {
+            if (slot == AIR_PUMP_SLOT && getStackInSlot(AIR_PUMP_SLOT).isEmpty()) airDriven = 0;
+            if ((slot == FILTER_SLOT || slot == AIR_PUMP_SLOT) && level != null && !level.isClientSide) {
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+                if (slot == AIR_PUMP_SLOT) {
+                    var tank = FilterHost.tankOf(level, tankBlockPos());
+                    if (tank != null) org.overengineer.bettacraft.tank.TankEquipment.invalidate(tank);
+                }
             }
         }
     };
-    private final RangedWrapper storage = new RangedWrapper(items, 1, SLOTS);
+    private final RangedWrapper storage = new RangedWrapper(items, 1, 1 + STORAGE);
 
     public CabinetBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CABINET.get(), pos, state);
@@ -127,6 +140,36 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     public ItemStack filterItem() {
         return items.getStackInSlot(FILTER_SLOT);
+    }
+
+    // ------------------------------------------------------------------ M29.1 air pump
+
+    /** Whether an air pump sits in the cabinet (client: as the server sent it). */
+    public boolean hasAirPump() {
+        return level != null && level.isClientSide ? clientHasAirPump : !items.getStackInSlot(AIR_PUMP_SLOT).isEmpty();
+    }
+
+    @Override
+    public double airShare() {
+        return hasAirPump() ? 1.0 : 0.0;
+    }
+
+    @Override
+    public boolean airRunning() {
+        return hasAirPump() && airDriven > 0;
+    }
+
+    /** Outlets the air pump in the cabinet drives right now. */
+    public int airDriven() {
+        return airDriven;
+    }
+
+    @Override
+    public void setAirDriven(int n) {
+        if (n == airDriven) return;
+        airDriven = n;
+        setChanged();
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     // ------------------------------------------------------------------ M23 regulator and intake sponge
@@ -232,6 +275,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putString("wood", wood.toString());
         if (outlet != OutletSide.BACK) tag.putString("outlet", outlet.id()); // M22.4
         tag.put("items", items.serializeNBT(registries));
+        if (airDriven > 0) tag.putInt("air_driven", airDriven); // M29.1
         saveM23(tag);
     }
 
@@ -245,9 +289,17 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         outlet = OutletSide.byId(tag.getString("outlet")); // M22.4: old cabinets keep the back wall
         if (tag.contains("items")) {
             items.deserializeNBT(registries, tag.getCompound("items"));
-            if (items.getSlots() != SLOTS) items.setSize(SLOTS);
+            if (items.getSlots() != SLOTS) {
+                // M29.1: cabinets of older versions have no air pump slot: keep their items, add the slot
+                java.util.List<ItemStack> kept = new java.util.ArrayList<>();
+                for (int i = 0; i < items.getSlots(); i++) kept.add(items.getStackInSlot(i));
+                items.setSize(SLOTS);
+                for (int i = 0; i < Math.min(kept.size(), SLOTS); i++) items.setStackInSlot(i, kept.get(i));
+            }
         }
+        airDriven = Math.max(0, tag.getInt("air_driven"));
         if (tag.contains("has_filter")) clientHasFilter = tag.getBoolean("has_filter");
+        if (tag.contains("has_air_pump")) clientHasAirPump = tag.getBoolean("has_air_pump");
         loadM23(tag);
         if (level != null && level.isClientSide) afterClientUpdate(old);
     }
@@ -258,6 +310,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         Schemas.CABINET.stamp(tag);
         tag.putString("wood", wood.toString());
         tag.putBoolean("has_filter", !filterItem().isEmpty());
+        tag.putBoolean("has_air_pump", hasAirPump()); // M29.1
+        tag.putInt("air_driven", airDriven);
         tag.putString("outlet", outletSide().id()); // M22.4: the effective side
         saveM23(tag);
         tag.putInt("regulator", regulator());
@@ -280,6 +334,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         ResourceLocation w = ResourceLocation.tryParse(tag.getString("wood"));
         wood = w == null ? DEFAULT_WOOD : w;
         clientHasFilter = tag.getBoolean("has_filter");
+        clientHasAirPump = tag.getBoolean("has_air_pump"); // M29.1
+        airDriven = Math.max(0, tag.getInt("air_driven"));
         outlet = OutletSide.byId(tag.getString("outlet"));
         loadM23(tag);
         afterClientUpdate(old);
@@ -289,6 +345,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (level == null || !level.isClientSide) return;
         if (clientHasFilter && !isRemoved()) CLIENT_FILTERS.add(this);
         else CLIENT_FILTERS.remove(this);
+        if (clientHasAirPump && !isRemoved()) CLIENT_AIR_PUMPS.add(this);
+        else CLIENT_AIR_PUMPS.remove(this);
         if (!oldWood.equals(wood)) {
             requestModelDataUpdate();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
@@ -299,18 +357,21 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     public void onLoad() {
         super.onLoad();
         if (level != null && level.isClientSide && clientHasFilter) CLIENT_FILTERS.add(this);
+        if (level != null && level.isClientSide && clientHasAirPump) CLIENT_AIR_PUMPS.add(this);
     }
 
     @Override
     public void setRemoved() {
         super.setRemoved();
         CLIENT_FILTERS.remove(this);
+        CLIENT_AIR_PUMPS.remove(this);
     }
 
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
         CLIENT_FILTERS.remove(this);
+        CLIENT_AIR_PUMPS.remove(this);
     }
 
     @Override

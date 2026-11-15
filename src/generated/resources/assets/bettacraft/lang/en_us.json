@@ -1297,6 +1297,7 @@
   "gui.bettacraft.breeding.warn.tm_shoal": "A shoal of tankmates is too small",
   "gui.bettacraft.breeding.warn.tm_temp": "Too warm or too cold for a tankmate",
   "gui.bettacraft.breeding.young": "Young: %s fry, %s juveniles, %s subadults",
+  "gui.bettacraft.cabinet.air_pump.tooltip": "Air pump: drives the air stones and sponge filters of the tank above; its air hose goes up with the filter hose",
   "gui.bettacraft.cabinet.filter": "Filter",
   "gui.bettacraft.cabinet.heaters": "Heaters / coolers",
   "gui.bettacraft.cabinet.outlet": "Outlet: %s",

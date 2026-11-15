@@ -37,6 +37,8 @@ CABINET_STORAGE = [(98 + 18 * c, 17 + 18 * r) for r in range(3) for c in range(3
 SIDE_SLOT_FRAME = (176, 0)  # 18x18
 SIDE_HEATER_GHOST = (176, 18)  # 16x16
 SIDE_FILTER_GHOST = (176, 34)  # 16x16
+CABINET_AIR_PUMP = (74, 44)  # M29.1: the air pump slot of the cabinet
+SIDE_AIR_PUMP_GHOST = (176, 50)  # 16x16, cabinet only
 
 
 def panel(img, x, y, w, h):
@@ -145,6 +147,18 @@ def filter_ghost() -> np.ndarray:
     return out
 
 
+def air_pump_ghost() -> np.ndarray:
+    """M29.1: semi-transparent air pump silhouette (a low box with a nozzle and a bit of hose; empty air pump slot hint)."""
+    out = np.zeros((16, 16, 4), np.uint8)
+    out[9:14, 2:12] = (0x37, 0x37, 0x37, 0x70)
+    out[8, 3:11] = (0x37, 0x37, 0x37, 0x90)
+    out[10:12, 12:14] = (0x37, 0x37, 0x37, 0xA0)
+    out[3:11, 13:15] = (0x37, 0x37, 0x37, 0x80)
+    out[2:4, 10:15] = (0x37, 0x37, 0x37, 0x80)
+    out[14, 3:5] = out[14, 9:11] = (0x37, 0x37, 0x37, 0xA0)
+    return out
+
+
 def _small_panel() -> np.ndarray:
     img = np.zeros((H, W, 4), np.uint8)
     panel(img, *SMALL)
@@ -177,6 +191,10 @@ def cabinet_gui() -> np.ndarray:
     # a small arrow from the filter down to its heaters
     x0 = CABINET_FILTER[0] + 7
     img[36:41, x0:x0 + 2] = DARK
+    # M29.1: the air pump slot and its hint
+    slot(img, *CABINET_AIR_PUMP)
+    x, y = SIDE_AIR_PUMP_GHOST
+    img[y:y + 16, x:x + 16] = air_pump_ghost()
     return img
 
 

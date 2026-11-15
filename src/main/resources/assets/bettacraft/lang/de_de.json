@@ -3198,5 +3198,6 @@
   "sound_test.bettacraft.tank_fill": "Wasser ins Becken gießen",
   "sound_test.bettacraft.tank_drain": "Wasser aus dem Becken schöpfen",
   "sound_test.bettacraft.vanilla": "Minecraft-Zwilling (sounds.useVanilla)",
-  "sound_test.bettacraft.own": "eigener Sound"
+  "sound_test.bettacraft.own": "eigener Sound",
+  "gui.bettacraft.cabinet.air_pump.tooltip": "Luftpumpe: treibt die Ausströmer und Schwammfilter des Beckens darüber an; ihr Luftschlauch läuft mit dem Filterschlauch nach oben"
 }

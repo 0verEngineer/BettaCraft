@@ -19,6 +19,8 @@ The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **
 * **Filter slot:** put an [external filter](filters.md) in. A cabinet directly under the aquarium then counts as an
   attached external filter; the hose runs up the wall of its **outlet side** (see below; the back wall unless you
   choose another). The two heater slots of the cabinet menu are the heater slots of that filter.
+* **Air pump slot:** an [air pump](air_pump.md) in the cabinet drives the air stones and sponge filters of the
+  aquarium above, like one beside it; its air hose goes up next to the filter hose at the outlet side.
 * **Nine storage slots** for food and other things. Hoppers can use them, and the [feeder](feeder.md) on the aquarium
   takes food from the cabinets under it.
 * Broken, the cabinet drops its contents like a chest and keeps its wood and its outlet side.
@@ -31,7 +33,7 @@ The button **"Outlet: back"** in the cabinet menu chooses the tank wall the filt
 door: **back** (the default), **left**, **right** or **front** (unusual, but possible). Each cabinet has its own side,
 also several cabinets under one big tank. Click for the next side, sneak + click for the previous one.
 
-* Hose, outlet, water jet and bubbles move to that wall.
+* Hose, outlet, water jet and bubbles move to that wall (and the air hose of an air pump in the cabinet with them).
 * The **current** comes from there: floating plants drift away from the outlet, and in front of it the water moves
   faster than in the rest of the tank (up to almost twice the tank's flow, fading over eight blocks).
   [Seahorses](../saltwater/seahorses.md) there are stressed by the flow sooner, so put the outlet on the other side of

@@ -13,7 +13,6 @@ import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
 import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
-import org.overengineer.bettacraft.equipment.AirPumpBlockEntity;
 import org.overengineer.bettacraft.equipment.AirStoneBlockEntity;
 import org.overengineer.bettacraft.equipment.DeviceSegmentBlock;
 import org.overengineer.bettacraft.equipment.FilterHost;
@@ -140,7 +139,7 @@ public final class TankAeration {
         double capacity = 0;
         if (c.airPowered) {
             int per = ServerConfig.getOr(ServerConfig.AIR_OUTLETS_PER_PUMP, 4);
-            for (AirPumpBlockEntity p : TankEquipment.airPumps(level, c)) capacity += per * p.powerShare();
+            for (org.overengineer.bettacraft.equipment.AirSource p : TankEquipment.airPumps(level, c)) capacity += per * p.airShare();
         }
         return new Air(stones, sponges, stoneShare, supply(capacity, stoneShare + sponges), capacity);
     }
@@ -150,7 +149,7 @@ public final class TankAeration {
         TankData t = c.getTank();
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r == null || !r.built() || !CommonConfig.aeration()) return 0;
-        List<AirPumpBlockEntity> pumps = TankEquipment.airPumps(level, c);
+        List<org.overengineer.bettacraft.equipment.AirSource> pumps = TankEquipment.airPumps(level, c);
         if (pumps.isEmpty()) return 0;
         InteriorEquipment eq = InteriorManager.equipment(level.getServer(), r);
         double waterY = TankCare.waterLocalHeight(t, r.scale());
@@ -158,19 +157,19 @@ public final class TankAeration {
         for (long l : eq.airStones()) if (BlockPos.getY(l) < waterY) outlets += eq.shareOf(l);
         if (CommonConfig.moreInternalFilters()) for (long l : eq.spongeFilters()) if (BlockPos.getY(l) < waterY) outlets += 1;
         double pumpShare = 0;
-        for (AirPumpBlockEntity p : pumps) pumpShare += p.powerShare();
+        for (org.overengineer.bettacraft.equipment.AirSource p : pumps) pumpShare += p.airShare();
         return Math.min(outlets, pumpShare * ServerConfig.getOr(ServerConfig.AIR_OUTLETS_PER_PUMP, 4));
     }
 
     /** Sets the pumps' state and the ACTIVE state of the stones and sponge filters (only where it changes). */
     private static void updateOutlets(ServerLevel level, TankBlockEntity c, InteriorRegion r, InteriorEquipment eq, double waterY, Air air) {
-        List<AirPumpBlockEntity> pumps = TankEquipment.airPumps(level, c);
+        List<org.overengineer.bettacraft.equipment.AirSource> pumps = TankEquipment.airPumps(level, c);
         int outlets = air.stones() + air.spongeFilters();
         int driving = 0;
-        for (AirPumpBlockEntity p : pumps) if (air.supply() > 0 && p.powerShare() > 0) driving++;
-        for (AirPumpBlockEntity p : pumps) {
-            boolean runs = air.supply() > 0 && p.powerShare() > 0;
-            p.setDriven(runs ? Math.max(1, (int) Math.ceil(outlets / (double) Math.max(1, driving))) : 0);
+        for (org.overengineer.bettacraft.equipment.AirSource p : pumps) if (air.supply() > 0 && p.airShare() > 0) driving++;
+        for (org.overengineer.bettacraft.equipment.AirSource p : pumps) {
+            boolean runs = air.supply() > 0 && p.airShare() > 0;
+            p.setAirDriven(runs ? Math.max(1, (int) Math.ceil(outlets / (double) Math.max(1, driving))) : 0);
         }
         c.airOutlets = outlets;
         c.airDriven = air.supply() > 0 ? outlets : 0;

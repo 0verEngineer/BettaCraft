@@ -34,6 +34,24 @@ public final class MiniatureJets {
         return new Vec3(min.getX() + MARGIN + lx * fx, min.getY() + MARGIN + ly * fy, min.getZ() + MARGIN + lz * fz);
     }
 
+    /**
+     * M29.1: where the air hoses of a tank end: the air stones (at their foot) and sponge filters (at the top of the lift
+     * tube) that get air, in world coordinates; empty while the interior is not known on this client.
+     */
+    public static List<Vec3> airTargets(TankData t) {
+        ClientRegion r = t.regionId() < 0 ? null : ClientInteriorCache.get(t.regionId());
+        if (r == null) return List.of();
+        List<Vec3> out = new ArrayList<>();
+        for (ClientRegion.Bubbler b : r.bubblers()) out.add(toWorld(t, r, b.x(), b.sponge() ? b.y() : b.y() - 0.3, b.z()));
+        return out;
+    }
+
+    /** M29.1: the height of the tank floor (the substrate) in world coordinates, for hoses lying on it. */
+    public static double floorY(TankData t) {
+        ClientRegion r = t.regionId() < 0 ? null : ClientInteriorCache.get(t.regionId());
+        return r == null ? t.min().getY() + 0.06 : toWorld(t, r, 0, 0.6, 0).y;
+    }
+
     /** Water surface (M10: per layer, correct for free shapes; the client view knows the tank's blocks). */
     static double surfaceY(TankData t) {
         double h = t.waterSurfaceY() - t.min().getY();

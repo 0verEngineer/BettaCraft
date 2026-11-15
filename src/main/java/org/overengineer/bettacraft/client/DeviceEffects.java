@@ -106,27 +106,33 @@ public final class DeviceEffects {
             HUMS.clear();
             return;
         }
-        for (AirPumpBlockEntity be : AirPumpBlockEntity.CLIENT_LOADED) {
-            if (be.getLevel() != mc.level || be.isRemoved() || !be.running()) continue;
-            BlockPos p = be.getBlockPos();
-            if (p.getCenter().distanceToSqr(cam) > 16 * 16) continue;
-            PumpHum h = HUMS.get(p);
-            if (h == null || h.isStopped()) {
-                h = new PumpHum(be);
-                HUMS.put(p.immutable(), h);
-                mc.getSoundManager().play(h);
-            }
-        }
+        for (AirPumpBlockEntity be : AirPumpBlockEntity.CLIENT_LOADED) hum(mc, cam, be);
+        // M29.1: the air pumps in the cabinets hum too (a little lower, inside the cabinet)
+        for (org.overengineer.bettacraft.equipment.CabinetBlockEntity be : org.overengineer.bettacraft.equipment.CabinetBlockEntity.CLIENT_AIR_PUMPS) hum(mc, cam, be);
         HUMS.values().removeIf(PumpHum::isStopped);
     }
 
-    /** The looping hum of one air pump; stops when the pump stands still, goes or is out of range. */
-    static final class PumpHum extends AbstractTickableSoundInstance {
-        private final AirPumpBlockEntity be;
+    private static <T extends net.minecraft.world.level.block.entity.BlockEntity & org.overengineer.bettacraft.equipment.AirSource> void hum(Minecraft mc, Vec3 cam, T be) {
+        if (be.getLevel() != mc.level || be.isRemoved() || !be.airRunning()) return;
+        BlockPos p = be.getBlockPos();
+        if (p.getCenter().distanceToSqr(cam) > 16 * 16) return;
+        PumpHum h = HUMS.get(p);
+        if (h == null || h.isStopped()) {
+            h = new PumpHum(be, be);
+            HUMS.put(p.immutable(), h);
+            mc.getSoundManager().play(h);
+        }
+    }
 
-        PumpHum(AirPumpBlockEntity be) {
+    /** The looping hum of one air pump (free-standing or in a cabinet); stops when the pump stands still, goes or is out of range. */
+    static final class PumpHum extends AbstractTickableSoundInstance {
+        private final net.minecraft.world.level.block.entity.BlockEntity be;
+        private final org.overengineer.bettacraft.equipment.AirSource air;
+
+        PumpHum(net.minecraft.world.level.block.entity.BlockEntity be, org.overengineer.bettacraft.equipment.AirSource air) {
             super(ModSounds.pick(ModSounds.AIR_PUMP_HUM, ModSounds.AIR_PUMP_HUM_VANILLA), SoundSource.BLOCKS, RandomSource.create());
             this.be = be;
+            this.air = air;
             this.looping = true;
             this.delay = 0;
             BlockPos p = be.getBlockPos();
@@ -137,7 +143,7 @@ public final class DeviceEffects {
         }
 
         private float level() {
-            return (float) (be.powerShare() * volume(Regulator.Sound.AIR_PUMP));
+            return (float) (air.airShare() * volume(Regulator.Sound.AIR_PUMP) * (air instanceof AirPumpBlockEntity ? 1.0 : 0.7));
         }
 
         void silence() {
@@ -147,13 +153,13 @@ public final class DeviceEffects {
         @Override
         public void tick() {
             Minecraft mc = Minecraft.getInstance();
-            if (be.isRemoved() || !be.running() || mc.level == null || be.getLevel() != mc.level
+            if (be.isRemoved() || !air.airRunning() || mc.level == null || be.getLevel() != mc.level
                     || be.getBlockPos().getCenter().distanceToSqr(mc.gameRenderer.getMainCamera().getPosition()) > 18 * 18) {
                 stop();
                 return;
             }
             volume = Math.max(0.0001F, level());
-            pitch = 0.9F + 0.2F * (float) be.powerShare();
+            pitch = 0.9F + 0.2F * (float) air.airShare();
         }
     }
 

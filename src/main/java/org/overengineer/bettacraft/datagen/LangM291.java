@@ -29,5 +29,6 @@ final class LangM291 {
         a.accept("sound_test.bettacraft.tank_drain", "water scooped out of a tank");
         a.accept("sound_test.bettacraft.vanilla", "Minecraft twin (sounds.useVanilla)");
         a.accept("sound_test.bettacraft.own", "own sound");
+        a.accept("gui.bettacraft.cabinet.air_pump.tooltip", "Air pump: drives the air stones and sponge filters of the tank above; its air hose goes up with the filter hose");
     }
 }

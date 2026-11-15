@@ -22,7 +22,7 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * stones and sponge filters it drives right now ({@link #driven}; 0 = it stands still: no tank, nothing to drive,
  * switched to 0 % or no FE). The client hums while it runs and draws the air hose into the tank.
  */
-public class AirPumpBlockEntity extends BlockEntity {
+public class AirPumpBlockEntity extends BlockEntity implements AirSource {
     /** Client-side pumps currently loaded (hum, hose; never touched on the server). */
     public static final java.util.Set<AirPumpBlockEntity> CLIENT_LOADED =
             java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
@@ -64,6 +64,21 @@ public class AirPumpBlockEntity extends BlockEntity {
         if (n == driven) return;
         driven = n;
         changed();
+    }
+
+    @Override
+    public double airShare() {
+        return powerShare();
+    }
+
+    @Override
+    public boolean airRunning() {
+        return running();
+    }
+
+    @Override
+    public void setAirDriven(int n) {
+        setDriven(n);
     }
 
     private void changed() {
