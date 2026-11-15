@@ -1,0 +1,281 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          },
+          "texture": "#bulb"
+        },
+        "east": {
+          "texture": "#shade",
+          "uv": [
+            3.0,
+            2.0,
+            13.0,
+            5.0
+          ]
+        },
+        "north": {
+          "texture": "#shade",
+          "uv": [
+            3.0,
+            2.0,
+            13.0,
+            5.0
+          ]
+        },
+        "south": {
+          "texture": "#shade",
+          "uv": [
+            3.0,
+            2.0,
+            13.0,
+            5.0
+          ]
+        },
+        "up": {
+          "texture": "#shade",
+          "uv": [
+            3.0,
+            2.0,
+            13.0,
+            5.0
+          ]
+        },
+        "west": {
+          "texture": "#shade",
+          "uv": [
+            3.0,
+            2.0,
+            13.0,
+            5.0
+          ]
+        }
+      },
+      "from": [
+        3,
+        9,
+        3
+      ],
+      "to": [
+        13,
+        12,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#shade",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#shade",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#shade",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#shade",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#shade",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#shade",
+          "uv": [
+            4.0,
+            0.0,
+            12.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        4.5,
+        12,
+        4.5
+      ],
+      "to": [
+        11.5,
+        14,
+        11.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            6.0,
+            6.0,
+            9.0,
+            8.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            6.0,
+            6.0,
+            9.0,
+            8.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            6.0,
+            6.0,
+            9.0,
+            8.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            6.0,
+            6.0,
+            9.0,
+            8.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            6.0,
+            6.0,
+            9.0,
+            8.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            6.0,
+            6.0,
+            9.0,
+            8.0
+          ]
+        }
+      },
+      "from": [
+        6.5,
+        14,
+        6.5
+      ],
+      "to": [
+        9.5,
+        15.5,
+        9.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            0.0,
+            8.0,
+            1.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            0.0,
+            8.0,
+            1.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            0.0,
+            8.0,
+            1.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            0.0,
+            8.0,
+            1.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            0.0,
+            8.0,
+            1.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            7.0,
+            0.0,
+            8.0,
+            1.0
+          ]
+        }
+      },
+      "from": [
+        7.5,
+        15.5,
+        7.5
+      ],
+      "to": [
+        8.5,
+        16,
+        8.5
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bulb": "bettacraft:block/basking_lamp_bulb",
+    "cap": "bettacraft:block/mister_nozzle",
+    "particle": "bettacraft:block/basking_lamp_shade",
+    "shade": "bettacraft:block/basking_lamp_shade"
+  }
+}

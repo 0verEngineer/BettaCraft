@@ -52,6 +52,17 @@ public final class InfoData {
         out.putFloat("temp", t.waterTemp());
         out.putLong("water", t.waterMb());
         out.putLong("cap", t.capacityMb());
+        // M31: a terrarium or paludarium and its climate
+        if (t.terrariumMode().hasLand()) {
+            out.putString("terra_mode", t.terrariumMode().translationKey());
+            if (t.hasClimate()) {
+                out.putFloat("air", t.airTemp());
+                out.putFloat("rh", t.humidity());
+                out.putFloat("uv", t.uv());
+                out.putFloat("bask", t.baskTemp());
+                out.putFloat("land", t.landShare());
+            }
+        }
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
         out.putInt("count", live.size());
         out.putInt("adults", TankInhabitants.countAdults(live));

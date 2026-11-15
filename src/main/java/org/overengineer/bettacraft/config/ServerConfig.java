@@ -322,6 +322,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue MULTIBLOCK_FILTER_MAX_CHAMBERS;
 
     // M30: big tanks and big animals
+    // M31: terrarium and paludarium
+    public static final ModConfigSpec.DoubleValue TERRA_PALUDARIUM_LAND, TERRA_TERRARIUM_LAND, TERRA_MAT_LIFT, TERRA_LAMP_AIR, TERRA_BASK_LIFT,
+            TERRA_LAMP_UV, TERRA_SKY_UV, TERRA_MIST_HUMIDITY, TERRA_WATER_HUMIDITY, TERRA_PLANT_HUMIDITY, TERRA_TAU_AIR, TERRA_TAU_HUMIDITY,
+            TERRA_MISTER_MB, TERRA_HARM_DAYS, POWER_HEAT_MAT_FE, POWER_MISTER_FE;
+    public static final ModConfigSpec.BooleanValue POWER_MISTER;
     public static final ModConfigSpec.IntValue BIG_MAX_SIZE_X, BIG_MAX_SIZE_Y, BIG_MAX_SIZE_Z, INTERIOR_SCALE8_ABOVE, INTERIOR_SCALE4_ABOVE;
     public static final ModConfigSpec.DoubleValue BIG_LONG_SIDE, BIG_SHORT_SIDE, BIG_HEIGHT, BIG_WATER, BIG_DOLPHIN_HUNGRY_DAYS, BIG_SPAWN_CHANCE,
             BIG_TUB_SLOWNESS, BIG_NET_CHANCE, BIG_LEADER_CHANCE;
@@ -970,6 +975,43 @@ public final class ServerConfig {
         BIG_LEADER_CHANCE = b.comment("Chance per catch with a fishing rod and a steel leader in the other hand to hook a big animal of that",
                         "water instead (an empty transport tub must be in the inventory)")
                 .defineInRange("steelLeaderChance", 0.05, 0.0, 1.0);
+        b.pop();
+
+        b.comment("M31: terrarium and paludarium (features.terrarium, features.terrariumDevices): the mode of a tank comes from its water and the land",
+                "built in its interior above the water line; terraria and paludaria get air temperature, humidity and UV").push("terrarium");
+        TERRA_PALUDARIUM_LAND = b.comment("A tank with water is a paludarium from this share of land on (interior columns whose top is above the water)")
+                .defineInRange("paludariumLandShare", 0.15, 0.01, 1.0);
+        TERRA_TERRARIUM_LAND = b.comment("A tank with water is a terrarium (the water is only a dish) from this share of land on; without water it is",
+                        "always a terrarium")
+                .defineInRange("terrariumLandShare", 0.9, 0.01, 1.0);
+        TERRA_MAT_LIFT = b.comment("Kelvin the ground rises over heat mats covering half the floor or more (the air gets 40 % of it); they run while",
+                        "the air is below the tank's target temperature")
+                .defineInRange("heatMatLift", 8.0, 0.0, 40.0);
+        TERRA_LAMP_AIR = b.comment("Kelvin the air rises under basking lamps over a quarter of the top or more")
+                .defineInRange("baskingLampAir", 4.0, 0.0, 40.0);
+        TERRA_BASK_LIFT = b.comment("Kelvin the basking spot under a lit basking lamp is warmer than the air")
+                .defineInRange("baskingSpotLift", 12.0, 0.0, 60.0);
+        TERRA_LAMP_UV = b.comment("UV index at the basking spot of a lit basking lamp").defineInRange("baskingLampUv", 5.0, 0.0, 20.0);
+        TERRA_SKY_UV = b.comment("UV index of sunlight through an open top (glass and lids block it)").defineInRange("sunUv", 3.0, 0.0, 20.0);
+        TERRA_MIST_HUMIDITY = b.comment("Percent humidity a spraying mister adds in a closed tank (an open top lets most of it out)")
+                .defineInRange("misterHumidity", 40.0, 0.0, 100.0);
+        TERRA_WATER_HUMIDITY = b.comment("Percent humidity a closed tank full of water surface adds (more when the water is warm)")
+                .defineInRange("waterHumidity", 35.0, 0.0, 100.0);
+        TERRA_PLANT_HUMIDITY = b.comment("Percent humidity land fully covered with plants adds in a closed tank")
+                .defineInRange("plantHumidity", 15.0, 0.0, 100.0);
+        TERRA_TAU_AIR = b.comment("In-game days in which the air temperature gets 63 % of the way to its equilibrium")
+                .defineInRange("airTauDays", 0.05, 0.0, 10.0);
+        TERRA_TAU_HUMIDITY = b.comment("In-game days in which the humidity gets 63 % of the way to its equilibrium")
+                .defineInRange("humidityTauDays", 0.03, 0.0, 10.0);
+        TERRA_MISTER_MB = b.comment("mB of water a mister uses per second while it sprays (its tank holds 4000 mB)")
+                .defineInRange("misterMbPerSecond", 2.0, 0.0, 1000.0);
+        TERRA_HARM_DAYS = b.comment("In-game days a terrarium animal bears a harmful problem (wrong tank, too cold or hot) before it loses health")
+                .defineInRange("harmAfterDays", 1.0, 0.0, 100.0);
+        POWER_HEAT_MAT_FE = b.comment("FE per tick a heat mat needs while it heats (with power.heaterRequiresEnergy)")
+                .defineInRange("heatMatFePerTick", 4.0, 0.0, 100000.0);
+        POWER_MISTER = b.comment("Misters only spray while the tank has enough FE").define("misterRequiresEnergy", false);
+        POWER_MISTER_FE = b.comment("FE per tick a mister needs while it sprays (with misterRequiresEnergy)")
+                .defineInRange("misterFePerTick", 6.0, 0.0, 100000.0);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

@@ -24,6 +24,8 @@ import food_maker
 import monitor
 import block_items
 import big_animals
+import terrarium
+import terrarium_animals
 import floating_plants
 import wild_plants
 import gui
@@ -72,6 +74,8 @@ def main() -> int:
     written += monitor.write_all()  # M27
     written += block_items.write_all()  # M29.1
     written += big_animals.write_all()  # M30
+    written += terrarium.write_all()  # M31
+    written += terrarium_animals.write_all()
     written += critters.write_all()
     written += tankmates.write_all()
     written += cultures.write_all()

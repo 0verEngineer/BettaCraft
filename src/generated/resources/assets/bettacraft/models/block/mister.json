@@ -1,0 +1,283 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            5.0,
+            2.0,
+            11.0,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#tank",
+          "uv": [
+            5.0,
+            2.0,
+            11.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#tank",
+          "uv": [
+            5.0,
+            2.0,
+            11.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#tank",
+          "uv": [
+            5.0,
+            2.0,
+            11.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            5.0,
+            2.0,
+            11.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#tank",
+          "uv": [
+            5.0,
+            2.0,
+            11.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        6,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            6.0,
+            12.0,
+            9.0
+          ]
+        },
+        "east": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            6.0,
+            12.0,
+            9.0
+          ]
+        },
+        "north": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            6.0,
+            12.0,
+            9.0
+          ]
+        },
+        "south": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            6.0,
+            12.0,
+            9.0
+          ]
+        },
+        "up": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            6.0,
+            12.0,
+            9.0
+          ]
+        },
+        "west": {
+          "texture": "#cap",
+          "uv": [
+            4.0,
+            6.0,
+            12.0,
+            9.0
+          ]
+        }
+      },
+      "from": [
+        4.5,
+        6,
+        4.5
+      ],
+      "to": [
+        11.5,
+        8.5,
+        11.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            0.0,
+            4.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        7,
+        7,
+        1
+      ],
+      "to": [
+        9,
+        8.5,
+        4.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            4.0,
+            3.0,
+            7.0
+          ]
+        },
+        "east": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            4.0,
+            3.0,
+            7.0
+          ]
+        },
+        "north": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            4.0,
+            3.0,
+            7.0
+          ]
+        },
+        "south": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            4.0,
+            3.0,
+            7.0
+          ]
+        },
+        "up": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            4.0,
+            3.0,
+            7.0
+          ]
+        },
+        "west": {
+          "texture": "#nozzle",
+          "uv": [
+            0.0,
+            4.0,
+            3.0,
+            7.0
+          ]
+        }
+      },
+      "from": [
+        6.5,
+        6.5,
+        0.5
+      ],
+      "to": [
+        9.5,
+        9,
+        1.5
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cap": "bettacraft:block/mister_cap",
+    "nozzle": "bettacraft:block/mister_nozzle",
+    "particle": "bettacraft:block/mister_cap",
+    "tank": "bettacraft:block/mister_tank"
+  }
+}

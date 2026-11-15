@@ -106,6 +106,8 @@ public final class ModCreativeTabs {
                 // M25 part c: reef dosing
                 for (var it : java.util.List.of(ModItems.DOSING_PUMP, ModItems.DOSING_CANISTER, ModItems.CALCIUM_CANISTER, ModItems.ALKALINITY_CANISTER,
                         ModItems.MAGNESIUM_CANISTER, ModItems.TRACE_CANISTER)) out.accept(it.get());
+                // M31: terrarium devices
+                for (var it : java.util.List.of(ModItems.HEAT_MAT, ModItems.BASKING_LAMP, ModItems.MISTER, ModItems.THERMO_HYGROMETER)) out.accept(it.get());
                 out.accept(ModItems.CO2_CYLINDER.get());
                 ItemStack fullCylinder = new ItemStack(ModItems.CO2_CYLINDER.get());
                 org.overengineer.bettacraft.co2.Co2CylinderItem.setGas(fullCylinder, 1e9F);
@@ -188,7 +190,9 @@ public final class ModCreativeTabs {
                         org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, 10, () -> org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.4F), cr, true)
                         .get(org.overengineer.bettacraft.registry.ModDataComponents.CRITTERS.get())));
                 out.accept(ModItems.FROG_BUCKET.get());
+                out.accept(ModItems.MUSK_TURTLE_BUCKET.get()); // M31
                 out.accept(ModItems.FROG_SPAWN_EGG.get());
+                out.accept(ModItems.MUSK_TURTLE_SPAWN_EGG.get()); // M31
                 // M19: tankmates (a shoal or a pair in a fish bag, every variety; bucket and spawn egg), their breeding items
                 out.accept(ModItems.BREEDING_BOX.get());
                 out.accept(ModItems.FRY_POWDER.get());

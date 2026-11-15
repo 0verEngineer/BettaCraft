@@ -166,6 +166,17 @@ public final class TraderOffers {
                     frog.discard();
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 6), Optional.empty(), bag, 2, 1, 0.05F);
                 }));
+        // M31: the musk turtle in a bucket of water
+        out.add(new Offer("musk_turtle", Slot.RARE, 2, () -> List.of(new Product(Target.item("musk_turtle_bucket"), 1, 7, 1.0, false, "features.turtles")),
+                (trader, random) -> {
+                    if (!CommonConfig.turtles()) return null;
+                    var turtle = org.overengineer.bettacraft.registry.ModEntities.MUSK_TURTLE.get().create(trader.level());
+                    if (turtle == null) return null;
+                    ItemStack bucket = turtle.getBucketItemStack();
+                    turtle.saveToBucketTag(bucket);
+                    turtle.discard();
+                    return new MerchantOffer(new ItemCost(Items.EMERALD, 7), Optional.empty(), bucket, 2, 1, 0.05F);
+                }));
         // ---------------------------------------------------------------- M19 tankmates: two usual offers, one rare
         out.add(new Offer("tankmates_1", Slot.USUAL, 3, () -> fishPool(TankmateSpecies.Trade.COMMON, false), TankmateTrades.listing(TankmateSpecies.Trade.COMMON)));
         out.add(new Offer("tankmates_2", Slot.USUAL, 3, () -> fishPool(TankmateSpecies.Trade.COMMON, false), TankmateTrades.listing(TankmateSpecies.Trade.COMMON)));

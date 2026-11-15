@@ -48,7 +48,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int ENTER_X = 176;
 
     /** Order of the constants = index of {@link #selectTabForTest}; the buttons are drawn in a different order. */
-    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES }
+    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES, CLIMATE }
 
     /** Scale of the tab labels: seven tabs fit into the 236 px of the menu (also the longer German labels). */
     /** Scale of the tab labels: 0.75, smaller when the eight labels (M23) would not fit otherwise (set in init). */
@@ -63,6 +63,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, tabWater, tabPlants, logFilterButton, interiorEnterButton;
     /** M23: tab Devices (oxygen, aeration, lights with dimmer and timer). */
     private Button tabDevices;
+    /** M31: the climate tab, only for a terrarium or paludarium (the tabs are laid out again when that changes). */
+    @Nullable
+    private Button tabClimate;
+    private boolean climateTabShown;
     private final List<AbstractWidget> devices = new ArrayList<>();
     private Button timerButton;
     private Button thinButton;
@@ -153,8 +157,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int x = leftPos, y = topPos;
         // seven tabs across the top (the title moved into the overview: no room for both) with labels in a smaller font;
         // widths follow the scaled labels, the rest of the 236 px is shared out
-        Tab[] order = {Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES, Tab.PLANTS, Tab.INTERIOR, Tab.LOG};
-        String[] keys = {"overview", "inhabitants", "breeding", "water", "devices", "plants", "interior", "log"};
+        TankView cv = view();
+        climateTabShown = cv != null && cv.climate.hasLand();
+        Tab[] order = climateTabShown ? new Tab[]{Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES, Tab.CLIMATE, Tab.PLANTS, Tab.INTERIOR, Tab.LOG}
+                : new Tab[]{Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES, Tab.PLANTS, Tab.INTERIOR, Tab.LOG};
+        String[] keys = new String[order.length];
+        for (int i = 0; i < order.length; i++) keys[i] = order[i].name().toLowerCase(java.util.Locale.ROOT);
         int[] labels = new int[order.length];
         for (int i = 0; i < order.length; i++) labels[i] = font.width(Component.translatable("gui.bettacraft.tab." + keys[i]));
         int labelSum = 0;
@@ -168,14 +176,21 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             tabs[i] = addRenderableWidget(new TabButton(tx, y + 3, widths[i], 12, Component.translatable("gui.bettacraft.tab." + keys[i]), b -> setTab(t)));
             tx += widths[i];
         }
-        tabOverview = tabs[0];
-        tabInhabitants = tabs[1];
-        tabBreeding = tabs[2];
-        tabWater = tabs[3];
-        tabDevices = tabs[4];
-        tabPlants = tabs[5];
-        tabInterior = tabs[6];
-        tabLog = tabs[7];
+        tabClimate = null;
+        for (int i = 0; i < order.length; i++) {
+            switch (order[i]) {
+                case OVERVIEW -> tabOverview = tabs[i];
+                case INHABITANTS -> tabInhabitants = tabs[i];
+                case BREEDING -> tabBreeding = tabs[i];
+                case WATER -> tabWater = tabs[i];
+                case DEVICES -> tabDevices = tabs[i];
+                case CLIMATE -> tabClimate = tabs[i];
+                case PLANTS -> tabPlants = tabs[i];
+                case INTERIOR -> tabInterior = tabs[i];
+                case LOG -> tabLog = tabs[i];
+            }
+        }
+        if (!climateTabShown && tab == Tab.CLIMATE) tab = Tab.OVERVIEW;
         // M23: dimmer, daylight timer with on and off time
         devices.clear();
         devices.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> lightSetting(TankActions.SET_DIMMER, -10)).bounds(x + 62, y + 98, 14, 13).build()));
@@ -323,6 +338,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** Dev smoke test only: the tab buttons from left to right (to check that they fit). */
     public List<Button> tabButtonsForTest() {
+        if (tabClimate != null) return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabClimate, tabPlants, tabInterior, tabLog);
         return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabPlants, tabInterior, tabLog);
     }
 
@@ -478,6 +494,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabWater.active = tab != Tab.WATER;
         tabPlants.active = tab != Tab.PLANTS;
         tabDevices.active = tab != Tab.DEVICES;
+        if (tabClimate != null) tabClimate.active = tab != Tab.CLIMATE;
         boolean lightControls = tab == Tab.DEVICES && v != null && v.tech.timerFeature;
         for (AbstractWidget w : devices) {
             w.visible = lightControls;
@@ -554,6 +571,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Override
     protected void containerTick() {
         super.containerTick();
+        // M31: the tank became a terrarium / paludarium or an aquarium again: the tabs are laid out anew
+        TankView cv = view();
+        if (cv != null && cv.climate.hasLand() != climateTabShown) {
+            flushName();
+            rebuildWidgets();
+            return;
+        }
         if (nameDirtyTicks > 0 && --nameDirtyTicks == 0) {
             String v = nameBox.getValue();
             if (!v.equals(sentName)) {
@@ -705,6 +729,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 if (chemTip != null && mx >= 11 && mx <= 237 && my >= chemTipY - 1 && my < chemTipY + 10) pendingTooltip = new java.util.ArrayList<>(chemTip);
             }
             case DEVICES -> drawDevices(g, v);
+            case CLIMATE -> drawClimate(g, v);
             case PLANTS -> {
                 if (aquaticPage) drawAquatic(g, v);
                 else drawPlants(g, v);
@@ -740,7 +765,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         line(g, Component.translatable("gui.bettacraft.tank.size_water", v.sizeX, v.sizeY, v.sizeZ, v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
         y += 11;
         int tempColor = TankTemperature.isTolerable(v.waterTemp) ? (TankTemperature.isOptimal(v.waterTemp) ? 0x80FF80 : 0xFFE080) : 0xFF7070;
-        line(g, Component.translatable("gui.bettacraft.tank.temperature", fmt(v.waterTemp), fmt(v.ambient)), x, y, tempColor);
+        TankView.Climate cl = v.climate;
+        if (cl.hasLand() && Float.isFinite(cl.air)) {
+            // M31: a terrarium shows its air, a paludarium its water and its air
+            Component air = Component.translatable("gui.bettacraft.terrarium.overview_air", fmt(cl.air), Math.round(cl.humidity), fmt(cl.uv));
+            line(g, v.waterMb > 0 ? Component.translatable("gui.bettacraft.terrarium.overview_both", fmt(v.waterTemp), air, fmt(v.ambient))
+                    : Component.translatable("gui.bettacraft.terrarium.overview_dry", air, fmt(v.ambient)), x, y, 0xC8E8A0);
+        } else {
+            line(g, Component.translatable("gui.bettacraft.tank.temperature", fmt(v.waterTemp), fmt(v.ambient)), x, y, tempColor);
+        }
         y += 11;
         y += 1;
         line(g, Component.translatable("gui.bettacraft.tank.target"), x, y + 2, TEXT_LIGHT);
@@ -1034,6 +1067,75 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         line(g, Component.translatable("gui.bettacraft.devices.off"), 128, 117, TEXT_LIGHT);
         g.drawCenteredString(font, clock(t.lightOff), 200, 117, t.timer ? 0xFFFFFF : 0x808080);
         fitLine(g, Component.translatable("gui.bettacraft.devices.now", Math.round(t.factor * 100)).withStyle(ChatFormatting.GRAY), x, 130, TEXT_LIGHT, 226);
+    }
+
+    /** M31: the climate tab of a terrarium or paludarium. */
+    private void drawClimate(GuiGraphics g, TankView v) {
+        TankView.Climate c = v.climate;
+        int x = 11, y = 20, w = 226;
+        Component mode = Component.translatable(c.mode().translationKey()).withStyle(ChatFormatting.GREEN);
+        int landPct = Math.round(Math.max(0, c.land) * 100);
+        fitLine(g, Component.translatable(v.waterMb > 0 ? "gui.bettacraft.terrarium.mode_line" : "gui.bettacraft.terrarium.mode_line_dry", mode, landPct, 100 - landPct),
+                x, y, TEXT_LIGHT, w);
+        y += 11;
+        if (!Float.isFinite(c.air)) {
+            fitLine(g, Component.translatable("gui.bettacraft.terrarium.no_values").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+            return;
+        }
+        fitLine(g, Component.translatable("gui.bettacraft.terrarium.air", fmt(c.air), fmt(c.ambient), fmt(c.target)), x, y, 0xFFD8A0, BAR_X - 4 - x);
+        bar(g, y, (c.air - 10) / 30F, 0xFFE08040, (c.target - 10) / 30F);
+        y += 11;
+        fitLine(g, Component.translatable("gui.bettacraft.terrarium.ground_bask", fmt(c.ground), fmt(c.bask)).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+        y += 11;
+        fitLine(g, Component.translatable("gui.bettacraft.terrarium.humidity", Math.round(c.humidity), Math.round(c.roomHumidity)), x, y, 0xA8D8FF, BAR_X - 4 - x);
+        bar(g, y, c.humidity / 100F, 0xFF50A0E0, c.mistSetting >= 0 ? c.mistSetting / 100F : -1);
+        y += 11;
+        String uvClass = c.uv < 0.5 ? "none" : c.uv < 2 ? "low" : c.uv < 4 ? "medium" : "high";
+        fitLine(g, Component.translatable("gui.bettacraft.terrarium.uv", fmt(c.uv), Component.translatable("gui.bettacraft.terrarium.uv." + uvClass)),
+                x, y, 0xE0B0FF, BAR_X - 4 - x);
+        bar(g, y, c.uv / 8F, 0xFFB070E0, -1);
+        y += 11;
+        fitLine(g, Component.translatable("gui.bettacraft.terrarium.lid", c.tops - c.openTops, c.tops).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+        y += 12;
+        if (!c.devicesOn) {
+            fitLine(g, Component.translatable("gui.bettacraft.terrarium.devices_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+            y += 11;
+        } else {
+            MutableComponent mats = c.matsUnder + c.matsWall == 0 ? Component.translatable("gui.bettacraft.terrarium.mats_none").withStyle(ChatFormatting.GRAY)
+                    : Component.translatable("gui.bettacraft.terrarium.mats", c.matsUnder, c.matsWall, Math.round(c.duty * 100))
+                    .withStyle(c.heatPowered ? ChatFormatting.GOLD : ChatFormatting.RED);
+            fitLine(g, mats, x, y, TEXT_LIGHT, w);
+            y += 11;
+            MutableComponent lamps = Component.translatable("gui.bettacraft.terrarium.lamps", c.lampsLit, c.lamps).withStyle(c.lamps == 0 ? ChatFormatting.GRAY : ChatFormatting.YELLOW);
+            lamps.append("   ");
+            lamps.append(c.misters == 0 ? Component.translatable("gui.bettacraft.terrarium.misters_none").withStyle(ChatFormatting.GRAY)
+                    : Component.translatable(c.misting > 0 ? "gui.bettacraft.terrarium.misters_on" : "gui.bettacraft.terrarium.misters", c.misters, c.mistWater, c.mistSetting)
+                    .withStyle(!c.misterPowered ? ChatFormatting.RED : c.mistWater <= 0 ? ChatFormatting.GOLD : ChatFormatting.AQUA));
+            fitLine(g, lamps, x, y, TEXT_LIGHT, w);
+            y += 12;
+        }
+        if (c.animals == 0) {
+            fitLine(g, Component.translatable("gui.bettacraft.terrarium.no_animals").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+        } else if (c.problems.isEmpty()) {
+            fitLine(g, Component.translatable("gui.bettacraft.terrarium.animals_fine", c.animals).withStyle(ChatFormatting.GREEN), x, y, TEXT_LIGHT, w);
+        } else {
+            for (int i = 0; i < Math.min(3, c.problems.size()) && y < 135; i++) {
+                String[] kp = c.problems.get(i).split("[|]", 2);
+                fitLine(g, Component.translatable("gui.bettacraft.terrarium.animal_problem", Component.translatable(kp[0]),
+                        Component.translatable(kp.length > 1 ? kp[1] : "")).withStyle(ChatFormatting.GOLD), x, y, TEXT_LIGHT, w);
+                y += 10;
+            }
+        }
+    }
+
+    /** A value bar on the right of a climate line (0..1), with an optional white mark (the target). */
+    private void bar(GuiGraphics g, int y, float f, int color, float mark) {
+        g.fill(BAR_X, y + 1, BAR_X + BAR_W, y + 7, 0xFF202020);
+        g.fill(BAR_X, y + 1, BAR_X + Math.round(BAR_W * Mth.clamp(f, 0, 1)), y + 7, color);
+        if (mark >= 0) {
+            int m = BAR_X + Math.round(BAR_W * Mth.clamp(mark, 0, 1));
+            g.fill(m, y, m + 1, y + 8, 0xFFFFFFFF);
+        }
     }
 
     /** "08:30" for minutes of the day. */

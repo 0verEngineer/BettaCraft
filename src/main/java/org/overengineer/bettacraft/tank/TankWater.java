@@ -144,6 +144,7 @@ public final class TankWater {
     public static boolean covers(Level level, BlockPos above) {
         BlockState s = level.getBlockState(above);
         if (s.getBlock() instanceof TankLidBlock || s.getBlock() instanceof FeederBlock || s.getBlock() instanceof TankLightBlock) return true;
+        if (s.getBlock() instanceof org.overengineer.bettacraft.terrarium.MisterBlock) return true; // M31: like the feeder
         return !s.isAir() && !(s.getBlock() instanceof TankBlock) && s.isFaceSturdy(level, above, Direction.DOWN);
     }
 

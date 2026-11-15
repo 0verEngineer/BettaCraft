@@ -127,6 +127,25 @@ def _frog(base, front, dx, dy):
     return _over(img, front)
 
 
+TURTLE_SHELL = [(6, 5), (7, 5), (8, 5), (9, 5), (5, 6), (6, 6), (7, 6), (8, 6), (9, 6), (10, 6), (5, 7), (6, 7), (7, 7), (8, 7), (9, 7), (10, 7),
+                (6, 8), (7, 8), (8, 8), (9, 8)]
+TURTLE_SKIN = [(11, 6), (12, 6), (11, 7), (4, 6), (5, 8), (10, 8), (4, 8)]
+
+
+def _turtle(base, front, dx, dy):
+    """M31: the musk turtle bucket: a small dark turtle in the water (domed shell, head to the right, feet)."""
+    img = base.copy()
+    shell = np.array([70, 58, 38, 255], np.uint8)
+    dark = np.array([40, 33, 22, 255], np.uint8)
+    skin = np.array([58, 58, 50, 255], np.uint8)
+    for (x, y) in TURTLE_SHELL:
+        img[y + dy, x + dx] = dark if (x + y) % 3 == 0 else shell
+    for (x, y) in TURTLE_SKIN:
+        img[y + dy, x + dx] = skin
+    img[6 + dy, 12 + dx] = np.array([210, 200, 150, 255], np.uint8)  # the pale stripe of the head
+    return _over(img, front)
+
+
 def _over(dst, src):
     """Alpha-composite src over dst (uint8 RGBA)."""
     a = src[..., 3:4].astype(np.float32) / 255
@@ -142,9 +161,10 @@ def textures() -> dict[str, np.ndarray]:
     body, fins = _fish(B_FISH, B_INSIDE)
     front = icons.grid(B_FRONT, FRONT)
     frog = _frog(base, front, 0, 4)
+    turtle = _turtle(base, front, 0, 4)
     sea_body, sea_fins = _fish(B_SEAHORSE, B_INSIDE)
     return {"betta_bucket": base, "betta_bucket_fish": body, "betta_bucket_fish_fins": fins,
-            "betta_bucket_glass": front, "dwarf_frog_bucket": frog,
+            "betta_bucket_glass": front, "dwarf_frog_bucket": frog, "musk_turtle_bucket": turtle,
             "seahorse_bucket_fish": sea_body, "seahorse_bucket_fish_fins": sea_fins}
 
 

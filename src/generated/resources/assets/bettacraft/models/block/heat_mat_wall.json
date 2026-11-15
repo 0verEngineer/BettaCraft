@@ -1,0 +1,65 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#mat",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            14.0
+          ]
+        },
+        "east": {
+          "texture": "#mat",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            14.0
+          ]
+        },
+        "north": {
+          "texture": "#mat"
+        },
+        "south": {
+          "texture": "#mat"
+        },
+        "up": {
+          "texture": "#mat",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            14.0
+          ]
+        },
+        "west": {
+          "texture": "#mat",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            14.0
+          ]
+        }
+      },
+      "from": [
+        1,
+        1,
+        0
+      ],
+      "to": [
+        15,
+        15,
+        1
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "mat": "bettacraft:block/heat_mat",
+    "particle": "bettacraft:block/heat_mat"
+  }
+}

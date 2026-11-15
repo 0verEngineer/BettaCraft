@@ -333,6 +333,7 @@ public final class ModDataGen {
             DataGenM27.blockStates(this); // M27
             DataGenM28.blockStates(this); // M28 part c
             DataGenM281.blockStates(this); // M28.1
+            DataGenM31.blockStates(this); // M31 part a
             simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
@@ -608,6 +609,7 @@ public final class ModDataGen {
             DataGenM27.itemModels(this); // M27
             DataGenM28.itemModels(this); // M28 part c
             DataGenM30.itemModels(this); // M30 part a
+            DataGenM31.itemModels(this); // M31 part a
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -1015,6 +1017,7 @@ public final class ModDataGen {
             DataGenM27.recipes(output, hasIt(ModItems.TANK.get())); // M27
             DataGenM28.recipes(output, hasIt(ModItems.TANK.get())); // M28 part c
             DataGenM30.recipes(output, hasIt(ModItems.TANK.get())); // M30 part a
+            DataGenM31.recipes(output, hasIt(ModItems.TANK.get())); // M31 part a
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1171,6 +1174,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.CO2_STATION.get());
             dropSelf(ModBlocks.RO_UNIT.get());
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
+            for (Block b : DataGenM31.blocks()) dropSelf(b); // M31 part a
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
@@ -1209,6 +1213,7 @@ public final class ModDataGen {
                         l.addAll(m24Blocks());
                         l.addAll(DataGenM25b.blocks()); // M25
                         l.addAll(DataGenM25c.blocks());
+                        l.addAll(DataGenM31.blocks()); // M31 part a
                         l.addAll(DataGenM26.blocks()); // M26 part a
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
@@ -1280,6 +1285,7 @@ public final class ModDataGen {
             for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
             DataGenM25b.blockTags(this::tag); // M25
             DataGenM25c.blockTags(this::tag);
+            DataGenM31.blockTags(this::tag); // M31 part a
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c

@@ -1,0 +1,48 @@
+{
+  "variants": {
+    "facing=down,heating=false": {
+      "model": "bettacraft:block/heat_mat_under",
+      "x": 180
+    },
+    "facing=down,heating=true": {
+      "model": "bettacraft:block/heat_mat_under_on",
+      "x": 180
+    },
+    "facing=east,heating=false": {
+      "model": "bettacraft:block/heat_mat_wall",
+      "y": 90
+    },
+    "facing=east,heating=true": {
+      "model": "bettacraft:block/heat_mat_wall_on",
+      "y": 90
+    },
+    "facing=north,heating=false": {
+      "model": "bettacraft:block/heat_mat_wall"
+    },
+    "facing=north,heating=true": {
+      "model": "bettacraft:block/heat_mat_wall_on"
+    },
+    "facing=south,heating=false": {
+      "model": "bettacraft:block/heat_mat_wall",
+      "y": 180
+    },
+    "facing=south,heating=true": {
+      "model": "bettacraft:block/heat_mat_wall_on",
+      "y": 180
+    },
+    "facing=up,heating=false": {
+      "model": "bettacraft:block/heat_mat_under"
+    },
+    "facing=up,heating=true": {
+      "model": "bettacraft:block/heat_mat_under_on"
+    },
+    "facing=west,heating=false": {
+      "model": "bettacraft:block/heat_mat_wall",
+      "y": 270
+    },
+    "facing=west,heating=true": {
+      "model": "bettacraft:block/heat_mat_wall_on",
+      "y": 270
+    }
+  }
+}

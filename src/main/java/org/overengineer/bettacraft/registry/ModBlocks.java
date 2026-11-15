@@ -305,6 +305,27 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.osmosis.RoUnitBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    // ------------------------------------------------------------------ M31 terrarium devices
+
+    /** M31: heat mat stuck under or onto a tank. */
+    public static final DeferredBlock<org.overengineer.bettacraft.terrarium.HeatMatBlock> HEAT_MAT = BLOCKS.register("heat_mat",
+            () -> new org.overengineer.bettacraft.terrarium.HeatMatBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
+                    .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)
+                    .lightLevel(s -> s.getValue(org.overengineer.bettacraft.terrarium.HeatMatBlock.HEATING) ? 3 : 0)));
+    /** M31: basking lamp (heat and UV) on a tank. */
+    public static final DeferredBlock<org.overengineer.bettacraft.terrarium.BaskingLampBlock> BASKING_LAMP = BLOCKS.register("basking_lamp",
+            () -> new org.overengineer.bettacraft.terrarium.BaskingLampBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(0.8F).sound(SoundType.METAL).noOcclusion()
+                    .lightLevel(TankLightBlock::lightLevel).isRedstoneConductor((s, l, p) -> false)));
+    /** M31: mister (fogger) on or beside a tank. */
+    public static final DeferredBlock<org.overengineer.bettacraft.terrarium.MisterBlock> MISTER = BLOCKS.register("mister",
+            () -> new org.overengineer.bettacraft.terrarium.MisterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    /** M31: thermo-hygrometer on a tank wall. */
+    public static final DeferredBlock<org.overengineer.bettacraft.terrarium.ThermoHygrometerBlock> THERMO_HYGROMETER = BLOCKS.register("thermo_hygrometer",
+            () -> new org.overengineer.bettacraft.terrarium.ThermoHygrometerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.3F).sound(SoundType.METAL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
+
     /** M25 part c: the dosing pump of a reef tank. */
     public static final DeferredBlock<org.overengineer.bettacraft.reef.DosingPumpBlock> DOSING_PUMP = BLOCKS.register("dosing_pump",
             () -> new org.overengineer.bettacraft.reef.DosingPumpBlock(BlockBehaviour.Properties.of()

@@ -38,8 +38,13 @@ public final class TankPower {
         return ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP, false);
     }
 
+    /** M31: misters need FE. */
+    public static boolean misterRequired() {
+        return ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
+    }
+
     public static boolean anyRequired() {
-        return heaterRequired() || filterRequired() || lightRequired() || airRequired();
+        return heaterRequired() || filterRequired() || lightRequired() || airRequired() || misterRequired();
     }
 
     public static long capacity() {
@@ -50,12 +55,17 @@ public final class TankPower {
     public static int heaterDemand(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         Boolean heating = TankTemperature.heating(TankCare.ambient(level, t), t.targetTemp());
-        if (heating == null) return 0;
+        if (heating == null) return matDemand(c);
         double cap = heating ? TankCare.rawHeaterBlocks(level, t) : TankCare.rawCoolerBlocks(level, t);
-        if (cap <= 0) return 0;
+        if (cap <= 0) return matDemand(c);
         double perBlock = heating ? ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0)
                 : ServerConfig.getOr(ServerConfig.POWER_COOLER_FE_PER_BLOCK, 8.0);
-        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock);
+        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock) + matDemand(c);
+    }
+
+    /** M31: FE per tick of the heat mats that heat (their duty of the last climate step). */
+    public static int matDemand(TankBlockEntity c) {
+        return c.climateMats <= 0 ? 0 : (int) Math.ceil(c.climateMats * ServerConfig.getOr(ServerConfig.POWER_HEAT_MAT_FE, 4.0) - 1e-9);
     }
 
     /** Light blocks on top of the tank that are on or want to be on (not switched off by redstone). */
@@ -73,7 +83,7 @@ public final class TankPower {
     public static void step(ServerLevel level, TankBlockEntity c, long ticks) {
         boolean wasLight = c.lightPowered;
         if (!anyRequired()) {
-            c.heatPowered = c.filterPowered = c.lightPowered = c.airPowered = true;
+            c.heatPowered = c.filterPowered = c.lightPowered = c.airPowered = c.misterPowered = true;
             c.lastDemand = 0;
         } else {
             TankData t = c.getTank();
@@ -92,7 +102,11 @@ public final class TankPower {
             if (heatFe > 0 && c.heatPowered) buf -= heatFe * n;
             c.lightPowered = lightFe <= 0 || buf >= lightFe * n;
             if (lightFe > 0 && c.lightPowered) buf -= lightFe * n;
-            c.lastDemand = filterFe + airFe + heatFe + lightFe;
+            // M31: the misters that want to spray, last
+            int mistFe = misterRequired() ? (int) Math.ceil(c.climateMistWant * ServerConfig.getOr(ServerConfig.POWER_MISTER_FE, 6.0) - 1e-9) : 0;
+            c.misterPowered = mistFe <= 0 || buf >= mistFe * n;
+            if (mistFe > 0 && c.misterPowered) buf -= mistFe * n;
+            c.lastDemand = filterFe + airFe + heatFe + lightFe + mistFe;
             if (buf != t.powerBuffer()) {
                 t.setPowerBuffer(buf);
                 c.setChanged();

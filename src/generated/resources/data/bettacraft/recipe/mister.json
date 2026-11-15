@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:glass_bottle"
+    },
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "N": {
+      "tag": "c:nuggets/iron"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    " N ",
+    "GBG",
+    "GRG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:mister"
+  }
+}

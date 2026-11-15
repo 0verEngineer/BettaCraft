@@ -30,7 +30,11 @@ public enum MonitorValue {
     FOOD("food", "", 0),
     // part b
     KH("kh", "dKH", 1),
-    MAGNESIUM("magnesium", "mg/l", 0);
+    MAGNESIUM("magnesium", "mg/l", 0),
+    // M31: terrarium and paludarium (NaN for an aquarium)
+    AIR_TEMPERATURE("air_temperature", "°C", 1),
+    HUMIDITY("humidity", "%", 0),
+    UV("uv", "", 1);
 
     public static final MonitorValue[] ALL = values();
 
@@ -85,6 +89,9 @@ public enum MonitorValue {
             }
             case KH -> t.kh();
             case MAGNESIUM -> t.magnesium();
+            case AIR_TEMPERATURE -> t.hasClimate() ? t.airTemp() : Float.NaN;
+            case HUMIDITY -> t.hasClimate() ? t.humidity() : Float.NaN;
+            case UV -> t.hasClimate() ? t.uv() : Float.NaN;
         };
     }
 

@@ -32,6 +32,14 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .build(BettaCraft.id("dwarf_clawed_frog").toString()));
 
+    /** M31: common musk turtle (Sternotherus odoratus), about 10 cm: the first terrarium animal. */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.MuskTurtleEntity>> MUSK_TURTLE = ENTITIES.register("musk_turtle",
+            () -> EntityType.Builder.of(org.overengineer.bettacraft.terrarium.MuskTurtleEntity::new, MobCategory.CREATURE)
+                    .sized(0.5F, 0.26F)
+                    .eyeHeight(0.16F)
+                    .clientTrackingRange(6)
+                    .build(BettaCraft.id("musk_turtle").toString()));
+
     /** M22.3: a shrimp, crayfish, snail or hermit crab living in the world (one type, the species is data). */
     public static final Supplier<EntityType<org.overengineer.bettacraft.entity.critter.WildCritterEntity>> WILD_CRITTER = ENTITIES.register("wild_critter",
             () -> EntityType.Builder.of(org.overengineer.bettacraft.entity.critter.WildCritterEntity::new, MobCategory.WATER_AMBIENT)
@@ -80,6 +88,7 @@ public final class ModEntities {
     private static void onAttributes(EntityAttributeCreationEvent event) {
         event.put(BETTA.get(), BettaEntity.createAttributes().build());
         event.put(DWARF_FROG.get(), org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.createAttributes().build());
+        event.put(MUSK_TURTLE.get(), org.overengineer.bettacraft.terrarium.MuskTurtleEntity.createAttributes().build()); // M31
         event.put(WILD_CRITTER.get(), org.overengineer.bettacraft.entity.critter.WildCritterEntity.createAttributes().build()); // M22.3
         for (var e : TANKMATES.entrySet()) event.put(e.getValue().get(), org.overengineer.bettacraft.entity.tankmate.TankmateEntity.createAttributes(e.getKey()).build());
     }

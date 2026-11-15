@@ -117,7 +117,9 @@ public final class TankInhabitants {
         String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
         var facts = new InhabitantRules.Facts(id, w, h, type.is(ModTags.TANK_BLACKLIST), type.is(ModTags.TANK_INHABITANTS),
                 type.is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
-                instance == null ? null : isWaterAnimal(instance), org.overengineer.bettacraft.big.BigAnimals.length(type, instance));
+                // M31: a terrarium animal (turtle, frog, gecko ...) needs no water to live in
+                instance == null || org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type) ? null : isWaterAnimal(instance),
+                org.overengineer.bettacraft.big.BigAnimals.length(type, instance));
         return InhabitantRules.decide(facts, rules());
     }
 
@@ -195,7 +197,12 @@ public final class TankInhabitants {
         TankData tank = controller.getTank();
         if (player != null && !canModify(player, tank)) return Component.translatable("message.bettacraft.tank.locked");
         double minFill = ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5);
-        if (tank.capacityMb() <= 0 || tank.waterMb() < minFill * tank.capacityMb()) {
+        // M31: a terrarium animal goes into the tank mode it lives in (a terrarium needs no water), not by the fill
+        boolean terra = org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type);
+        if (terra) {
+            Component no = org.overengineer.bettacraft.terrarium.TerrariumAnimals.refusal(level, controller, type);
+            if (no != null) return no;
+        } else if (tank.capacityMb() <= 0 || tank.waterMb() < minFill * tank.capacityMb()) {
             return Component.translatable("message.bettacraft.tank.too_little_water", Math.round(minFill * 100));
         }
         Acceptance pre = accepts(type, null);
@@ -215,7 +222,8 @@ public final class TankInhabitants {
         int maxEntities = ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64);
         if (live.size() >= maxEntities) return Component.translatable("message.bettacraft.tank.max_entities", maxEntities);
 
-        Vec3 spawn = findSpawnPos(level, tank, level.getRandom());
+        Vec3 spawn = terra ? org.overengineer.bettacraft.terrarium.TerrariumAnimals.spawnPos(level, tank, type, level.getRandom())
+                : findSpawnPos(level, tank, level.getRandom());
         CompoundTag stored = FishContainers.storedEntity(stack);
         if (stored == null) stored = FishBagItem.storedEntity(stack); // M16: a water animal without a bucket in our fish bag
         if (stored == null) stored = org.overengineer.bettacraft.big.TransportTubItem.storedEntity(stack); // M30: a big animal in its tub
@@ -256,6 +264,7 @@ public final class TankInhabitants {
         if (weight(e) > 0) { // M18: the young count in fractions too
             long waterAfter = Math.min(tank.capacityMb(), tank.waterMb() + addMb);
             int cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK);
+            if (terra) cap = hardCap(waterAfter / (double) TankData.MB_PER_BLOCK + org.overengineer.bettacraft.terrarium.TerrariumAnimals.landBlocks(tank)); // M31
             // M14: the small animals and the frogs count by config (stocking.*PerFish)
             if (stocking(live, tank) + weight(e) > cap + 1e-6) {
                 e.discard();
@@ -265,7 +274,7 @@ public final class TankInhabitants {
         // keep the hitbox clear of the glass walls: an entity that starts inside a wall's collision box is not held by it
         // and could slip through (out of the tank, or into the notch of a free shape)
         double half = e.getBbWidth() / 2 + 1.0 / 16 + 0.01;
-        spawn = new TankWaterVolume(tank.members(), Math.max(tank.waterSurfaceY(), tank.min().getY() + 0.9), TankCare.waterBox(tank))
+        if (!terra) spawn = new TankWaterVolume(tank.members(), Math.max(tank.waterSurfaceY(), tank.min().getY() + 0.9), TankCare.waterBox(tank))
                 .clamp(spawn, half, 1.0 / 16 + 0.01, Math.min(0.3, e.getBbHeight()));
         e.moveTo(spawn.x, spawn.y, spawn.z, level.getRandom().nextFloat() * 360F, 0F);
         adopt(e, controller);
@@ -404,6 +413,7 @@ public final class TankInhabitants {
             return m.species().stock() * ServerConfig.getOr(ServerConfig.TANKMATES_STOCKING, 1.0) * m.lifeStage().stocking();
         }
         // M30: a big animal of another kind (the dolphin) like a big species: a quarter of the water blocks it needs
+        if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31
         double big = org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e);
         if (big > 0) return 25.0 * big * big * big;
         double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity
@@ -481,6 +491,7 @@ public final class TankInhabitants {
         TankRef ours = new TankRef(controller.getBlockPos(), tank.id());
         Set<UUID> found = new HashSet<>();
         double adults = org.overengineer.bettacraft.critters.TankCritters.stock(tank) + nestStocking(tank);
+        double land = 0; // M31: the terrarium animals count against the land (only they)
         boolean evict = ServerConfig.getOr(ServerConfig.INHABITANTS_OUTGROWN, ServerConfig.Outgrown.BAG_IN_FRONT) == ServerConfig.Outgrown.BAG_IN_FRONT;
         for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;
@@ -492,7 +503,8 @@ public final class TankInhabitants {
             }
             if (!ours.equals(e.getData(ModAttachments.TANK_REF.get()))) adopt(e, controller);
             found.add(e.getUUID());
-            adults += weight(e);
+            if (org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(e.getType())) land += weight(e);
+            else adults += weight(e);
         }
         for (Entity e : level.getEntities((Entity) null, box.inflate(6), e -> hasTankRef(e) && !inside(tank, e))) {
             if (ours.equals(e.getData(ModAttachments.TANK_REF.get()))) release(e); // left the tank (e.g. teleported)
@@ -524,7 +536,8 @@ public final class TankInhabitants {
             tank.inhabitants().clear();
             tank.inhabitants().addAll(keep);
         }
-        controller.setCrowded(isOvercrowded(adults, tank.waterBlocks()));
+        controller.setCrowded(isOvercrowded(adults, tank.waterBlocks())
+                || land > 0 && isOvercrowded(land, tank.waterBlocks() + org.overengineer.bettacraft.terrarium.TerrariumAnimals.landBlocks(tank)));
         if (changed) controller.markTankChanged();
     }
 

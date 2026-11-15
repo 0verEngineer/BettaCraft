@@ -77,6 +77,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_CRAYFISH, FEATURE_AXOLOTL_CARE;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
+    public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES; // M31
     public static final ModConfigSpec.IntValue SPAWN_BIG_WEIGHT;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
@@ -266,6 +267,14 @@ public final class CommonConfig {
         FEATURE_BIG_ANIMALS = b.comment("Big animals: giant catfish, sharks, rays and the vanilla dolphin in big tanks by the size rule (bigAnimalRules.*),",
                 "the large net, the transport tub and the steel leader, wild big animals (off: none go into tanks, no new ones from the",
                 "wild; those in tanks stay)").define("bigAnimals", true);
+        // M31
+        FEATURE_TERRARIUM = b.comment("Terrarium and paludarium: a tank without water is a terrarium, one with a land part built in the interior above",
+                "the water a paludarium (terrarium.*); they get air temperature, humidity and UV, terrarium animals live there (off: every tank",
+                "is an aquarium as before, no climate values)").define("terrarium", true);
+        FEATURE_TERRARIUM_DEVICES = b.comment("Terrarium devices: heat mat, basking lamp, mister and thermo-hygrometer (off: they do nothing; a basking lamp",
+                "still shines like a light)").define("terrariumDevices", true);
+        FEATURE_TURTLES = b.comment("Turtles in paludaria and terraria: the musk turtle (off: none go into tanks, none are sold; those in tanks stay)")
+                .define("turtles", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -381,6 +390,9 @@ public final class CommonConfig {
     public static boolean wildPlants() { return getOr(FEATURE_WILD_PLANTS, true); }
     public static boolean bigTanks() { return getOr(FEATURE_BIG_TANKS, true); } // M30
     public static boolean bigAnimals() { return getOr(FEATURE_BIG_ANIMALS, true); }
+    public static boolean terrarium() { return getOr(FEATURE_TERRARIUM, true); } // M31
+    public static boolean terrariumDevices() { return getOr(FEATURE_TERRARIUM_DEVICES, true); }
+    public static boolean turtles() { return getOr(FEATURE_TURTLES, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }

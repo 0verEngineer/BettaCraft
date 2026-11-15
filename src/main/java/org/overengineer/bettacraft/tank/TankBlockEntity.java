@@ -108,6 +108,20 @@ public class TankBlockEntity extends BlockEntity {
     public int airOutlets, airDriven;
     /** FE per tick the equipment needed in the last care step (for the menu and the info overlays). */
     int lastDemand;
+    /** M31: heat mats and misters at the tank (transient cache, see TankEquipment), whether the misters have FE. */
+    java.util.List<BlockPos> heatMatCache = java.util.List.of(), misterCache = java.util.List.of();
+    boolean misterPowered = true;
+    /** M31: the land scan of the climate step (transient): when and at which water amount, land and plant share. */
+    public long climateScanTime = Long.MIN_VALUE, climateScanWater = Long.MIN_VALUE;
+    public double climateLand = -1, climatePlants;
+    /** M31: what the last climate step found (FE demand, menu): heat mats working, their duty, misters spraying, lamps lit. */
+    public double climateMats;
+    public int climateMisting, climateMistWant, climateLamps;
+    /** M31: the climate the clients last got, and when. */
+    public float syncedAir = Float.NaN, syncedRh = Float.NaN, syncedUv = Float.NaN;
+    public long climateSyncTime = Long.MIN_VALUE;
+    /** M31: days each registered foreign terrarium animal has borne a harmful problem (transient). */
+    public final java.util.Map<java.util.UUID, Double> terrariumHarm = new java.util.HashMap<>();
 
     private ResourceLocation glass = DEFAULT_GLASS;
     private TankStyle style = TankStyle.TEXTURED;
@@ -183,6 +197,7 @@ public class TankBlockEntity extends BlockEntity {
     public boolean filterPowered() { return filterPowered; }
     public boolean lightPowered() { return lightPowered; }
     public boolean airPowered() { return airPowered; }
+    public boolean misterPowered() { return misterPowered; } // M31
     public int lastDemand() { return lastDemand; }
 
     public boolean isCrowded() {

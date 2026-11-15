@@ -43,6 +43,12 @@ public final class ModItems {
                     net.minecraft.sounds.SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<DeferredSpawnEggItem> FROG_SPAWN_EGG = ITEMS.register("dwarf_frog_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.DWARF_FROG, 0x6E6450, 0x3A3428, new Item.Properties()));
+    /** M31: a musk turtle in a bucket of water. */
+    public static final DeferredItem<net.minecraft.world.item.MobBucketItem> MUSK_TURTLE_BUCKET = ITEMS.register("musk_turtle_bucket",
+            () -> new org.overengineer.bettacraft.containers.AnimalBucketItem(ModEntities.MUSK_TURTLE.get(), net.minecraft.world.level.material.Fluids.WATER,
+                    net.minecraft.sounds.SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<DeferredSpawnEggItem> MUSK_TURTLE_SPAWN_EGG = ITEMS.register("musk_turtle_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.MUSK_TURTLE, 0x3E3526, 0xC8B878, new Item.Properties()));
 
     /** M12: floating plants for the water surface of a tank (no blocks; the lily pad is the vanilla item). */
     public static final java.util.Map<org.overengineer.bettacraft.tank.plants.FloatingPlantType,
@@ -289,6 +295,12 @@ public final class ModItems {
             () -> new org.overengineer.bettacraft.co2.Co2CylinderItem(ModBlocks.CO2_CYLINDER.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<BlockItem> CO2_STATION = ITEMS.registerSimpleBlockItem(ModBlocks.CO2_STATION);
     public static final DeferredItem<BlockItem> RO_UNIT = ITEMS.registerSimpleBlockItem(ModBlocks.RO_UNIT);
+
+    // M31: terrarium devices
+    public static final DeferredItem<BlockItem> HEAT_MAT = ITEMS.registerSimpleBlockItem(ModBlocks.HEAT_MAT);
+    public static final DeferredItem<BlockItem> BASKING_LAMP = ITEMS.registerSimpleBlockItem(ModBlocks.BASKING_LAMP);
+    public static final DeferredItem<BlockItem> MISTER = ITEMS.registerSimpleBlockItem(ModBlocks.MISTER);
+    public static final DeferredItem<BlockItem> THERMO_HYGROMETER = ITEMS.registerSimpleBlockItem(ModBlocks.THERMO_HYGROMETER);
 
     // M25 part c: reef dosing
     public static final DeferredItem<BlockItem> DOSING_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.DOSING_PUMP);

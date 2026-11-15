@@ -31,6 +31,7 @@ public final class TankEquipment {
         c.equipmentScanTime = now;
         TankData t = c.getTank();
         List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>(), pumps = new ArrayList<>(), co2 = new ArrayList<>();
+        List<BlockPos> mats = new ArrayList<>(), misters = new ArrayList<>(); // M31
         // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
         // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
@@ -54,7 +55,11 @@ public final class TankEquipment {
             p.set(c.equipmentFaces[i]);
             if (d == Direction.DOWN) {
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
+                if (level.isLoaded(p) && isMat(level.getBlockState(p), Direction.UP)) mats.add(p.immutable()); // M31: a heat mat under the floor
             } else {
+                // M31: a heat mat stuck to the wall, a mister beside the tank
+                if (level.isLoaded(p) && isMat(level.getBlockState(p), d.getOpposite())) mats.add(p.immutable());
+                if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.terrarium.MisterBlock) misters.add(p.immutable());
                 check(level, t, p, d.getOpposite(), filters, skimmers);
                 // M23: an air pump beside the tank (it serves the first tank it touches)
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(p.immutable());
@@ -62,6 +67,7 @@ public final class TankEquipment {
             }
         }
         for (BlockPos top : t.openTops()) {
+            if (level.isLoaded(top) && level.getBlockState(top).getBlock() instanceof org.overengineer.bettacraft.terrarium.MisterBlock) misters.add(top.immutable()); // M31
             if (level.isLoaded(top) && level.getBlockState(top).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(top.immutable());
             if (level.isLoaded(top) && level.getBlockState(top).getBlock() instanceof org.overengineer.bettacraft.co2.Co2SourceBlock) co2.add(top.immutable()); // M25
         }
@@ -86,6 +92,36 @@ public final class TankEquipment {
         }
         gas.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.co2Cache = List.copyOf(gas);
+        // M31: heat mats (deduplicated: a mat on an inner corner touches two faces) and the misters that serve this tank
+        c.heatMatCache = List.copyOf(new java.util.LinkedHashSet<>(mats));
+        List<BlockPos> mist = new ArrayList<>();
+        for (BlockPos mp : new java.util.LinkedHashSet<>(misters)) {
+            BlockPos tb = org.overengineer.bettacraft.equipment.AirPumpBlockEntity.tankBlock(level, mp);
+            if (tb != null && t.contains(tb)) mist.add(mp);
+        }
+        mist.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
+        c.misterCache = List.copyOf(mist);
+    }
+
+    private static boolean isMat(BlockState s, Direction towardsTank) {
+        return s.getBlock() instanceof org.overengineer.bettacraft.terrarium.HeatMatBlock
+                && s.getValue(org.overengineer.bettacraft.terrarium.HeatMatBlock.FACING) == towardsTank;
+    }
+
+    /** M31: heat mats on this tank (under its floor or on its walls). */
+    public static List<BlockPos> heatMats(Level level, TankBlockEntity c) {
+        scanIfNeeded(level, c);
+        List<BlockPos> out = new ArrayList<>();
+        for (BlockPos p : c.heatMatCache) if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.terrarium.HeatMatBlock) out.add(p);
+        return out;
+    }
+
+    /** M31: misters on or beside this tank. */
+    public static List<org.overengineer.bettacraft.terrarium.MisterBlockEntity> misters(Level level, TankBlockEntity c) {
+        scanIfNeeded(level, c);
+        List<org.overengineer.bettacraft.terrarium.MisterBlockEntity> out = new ArrayList<>();
+        for (BlockPos p : c.misterCache) if (level.isLoaded(p) && level.getBlockEntity(p) instanceof org.overengineer.bettacraft.terrarium.MisterBlockEntity m) out.add(m);
+        return out;
     }
 
     /** M25: CO2 sources (bio CO2 bottles, gas cylinders) that serve this tank. */

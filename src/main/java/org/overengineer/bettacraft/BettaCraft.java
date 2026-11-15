@@ -49,6 +49,10 @@ public final class BettaCraft {
         modBus.addListener(BettaCraft::onCapabilities);
         // M22.1: the sea water bucket in a cauldron and from a dispenser like a water bucket
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork((Runnable) BettaCraft::containerSetup));
+        // M31: the terrarium animals and their needs (the care hook)
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(() ->
+                org.overengineer.bettacraft.terrarium.TerrariumAnimals.register(ModEntities.MUSK_TURTLE.get(), org.overengineer.bettacraft.terrarium.MuskTurtleEntity.NEEDS,
+                        org.overengineer.bettacraft.config.CommonConfig::turtles)));
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
                 org.overengineer.bettacraft.equipment.CabinetStones.clear());
@@ -168,7 +172,13 @@ public final class BettaCraft {
         event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
                 (level, pos, state, be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired()
                         ? new org.overengineer.bettacraft.tank.TankPower.Storage(level, pos.below()) : null, ModBlocks.TANK_LIGHT.get(),
-                ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get()); // M23: the stronger lights too
+                ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get(), ModBlocks.BASKING_LAMP.get()); // M23: the stronger lights too; M31 the basking lamp
+        // M31: the mister takes water from pipes and other mods; it forwards FE to its tank
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.MISTER.get(),
+                (be, side) -> be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.MISTER.get(),
+                (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(),
+                        () -> org.overengineer.bettacraft.equipment.AirPumpBlockEntity.tankBlock(be.getLevel(), be.getBlockPos())) : null);
         // M24: pipes carry water (no block entity: the network does it), the reservoir holds it; FE for the water devices
         event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 (level, pos, state, be, side) -> new org.overengineer.bettacraft.plumbing.PipeFluid(level, pos, side),

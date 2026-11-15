@@ -119,6 +119,13 @@ public final class TankData {
     private int lightDimmer = 100;
     private boolean lightTimer;
     private int lightOn = 8 * 60, lightOff = 20 * 60;
+    /**
+     * M31: terrarium and paludarium ({@link org.overengineer.bettacraft.terrarium.TankClimate}): the mode worked out from
+     * the water and the land, the land share of the floor and the climate (NaN while the tank is an aquarium or the
+     * feature is off). Saved under "terrarium" only once a tank was a terrarium or paludarium; old tanks have none.
+     */
+    private org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM;
+    private float landShare = -1F, airTemp = Float.NaN, groundTemp = Float.NaN, baskTemp = Float.NaN, humidity = Float.NaN, uv = 0F, matDuty = 0F;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -385,6 +392,70 @@ public final class TankData {
     public void setLightOn(int minutes) { this.lightOn = Math.floorMod(minutes, 24 * 60); }
     public void setLightOff(int minutes) { this.lightOff = Math.floorMod(minutes, 24 * 60); }
 
+    // M31 terrarium
+    public org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode() { return terrariumMode; }
+    public void setTerrariumMode(org.overengineer.bettacraft.terrarium.TerrariumMode m) { this.terrariumMode = m == null ? org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM : m; }
+    /** Share of the floor that is land (-1 = not worked out yet). */
+    public float landShare() { return landShare; }
+    public void setLandShare(float s) { this.landShare = Float.isFinite(s) ? Math.max(-1F, Math.min(1F, s)) : -1F; }
+    public float airTemp() { return airTemp; }
+    public float groundTemp() { return groundTemp; }
+    public float baskTemp() { return baskTemp; }
+    public float humidity() { return humidity; }
+    public float uv() { return uv; }
+    public float matDuty() { return matDuty; }
+    /** Whether the tank has a climate now (a terrarium or paludarium with the feature on). */
+    public boolean hasClimate() { return Float.isFinite(airTemp) && Float.isFinite(humidity); }
+
+    @Nullable
+    public org.overengineer.bettacraft.terrarium.Climate.State climate() {
+        return hasClimate() ? new org.overengineer.bettacraft.terrarium.Climate.State(airTemp, groundTemp, baskTemp, humidity, uv, matDuty) : null;
+    }
+
+    public void setClimate(@Nullable org.overengineer.bettacraft.terrarium.Climate.State c) {
+        if (c == null || !c.valid()) {
+            airTemp = groundTemp = baskTemp = humidity = Float.NaN;
+            uv = matDuty = 0F;
+            return;
+        }
+        airTemp = Math.max(-40F, Math.min(80F, c.air()));
+        groundTemp = Float.isFinite(c.ground()) ? Math.max(-40F, Math.min(90F, c.ground())) : airTemp;
+        baskTemp = Float.isFinite(c.bask()) ? Math.max(-40F, Math.min(90F, c.bask())) : airTemp;
+        humidity = Math.max(0F, Math.min(100F, c.humidity()));
+        uv = Float.isFinite(c.uv()) ? Math.max(0F, Math.min(20F, c.uv())) : 0F;
+        matDuty = Float.isFinite(c.matDuty()) ? Math.max(0F, Math.min(1F, c.matDuty())) : 0F;
+    }
+
+    private CompoundTag saveTerrarium() {
+        CompoundTag c = new CompoundTag();
+        c.putByte("mode", (byte) terrariumMode.ordinal());
+        c.putFloat("land", landShare);
+        if (hasClimate()) {
+            c.putFloat("air", airTemp);
+            c.putFloat("ground", groundTemp);
+            c.putFloat("bask", baskTemp);
+            c.putFloat("rh", humidity);
+            c.putFloat("uv", uv);
+            c.putFloat("duty", matDuty);
+        }
+        return c;
+    }
+
+    private void loadTerrarium(CompoundTag c) {
+        terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.byOrdinal(c.getByte("mode"));
+        setLandShare(c.contains("land", Tag.TAG_ANY_NUMERIC) ? c.getFloat("land") : -1F);
+        if (c.contains("air", Tag.TAG_ANY_NUMERIC) && c.contains("rh", Tag.TAG_ANY_NUMERIC)) {
+            setClimate(new org.overengineer.bettacraft.terrarium.Climate.State(c.getFloat("air"), c.getFloat("ground"), c.getFloat("bask"),
+                    c.getFloat("rh"), c.getFloat("uv"), c.getFloat("duty")));
+        } else {
+            setClimate(null);
+        }
+    }
+
+    private boolean terrariumWorthSaving() {
+        return terrariumMode != org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM || hasClimate();
+    }
+
     public float salinity() { return salinity; }
     public void setSalinity(float ppt) {
         float before = salinity;
@@ -496,6 +567,7 @@ public final class TankData {
         lightTimer = o.lightTimer;
         lightOn = o.lightOn;
         lightOff = o.lightOff;
+        setClimate(o.climate()); // M31 (the mode and the land share are worked out again)
     }
 
     public float waterQuality() { return waterQuality; }
@@ -594,6 +666,7 @@ public final class TankData {
         t.putBoolean("light_timer", lightTimer);
         t.putInt("light_on", lightOn);
         t.putInt("light_off", lightOff);
+        if (terrariumWorthSaving()) t.put("terrarium", saveTerrarium()); // M31
         return t;
     }
 
@@ -714,6 +787,7 @@ public final class TankData {
         d.lightTimer = t.getBoolean("light_timer");
         d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;
         d.lightOff = t.contains("light_off", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_off"), 1440) : 20 * 60;
+        if (t.contains("terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompound("terrarium")); // M31
         d.recomputeBounds();
         return d;
     }
@@ -748,6 +822,7 @@ public final class TankData {
         }
         if (breedingBox) t.putBoolean("breeding_box", true);
         if (salinity > 0) t.putFloat("salinity", salinity);
+        if (terrariumWorthSaving()) t.put("terrarium", saveTerrarium()); // M31: the thermometer, the miniature and the turtles' client side
         return t;
     }
 
@@ -795,6 +870,7 @@ public final class TankData {
         }
         d.breedingBox = t.getBoolean("breeding_box");
         d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
+        if (t.contains("terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompound("terrarium")); // M31
         return d;
     }
 

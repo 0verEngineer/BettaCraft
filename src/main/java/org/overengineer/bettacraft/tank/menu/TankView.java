@@ -185,6 +185,8 @@ public final class TankView {
     public final Water water = new Water();
     /** M23: oxygen, aeration and the lights (tab Devices). */
     public final Tech tech = new Tech();
+    /** M31: terrarium / paludarium climate (the climate tab, only shown for those modes). */
+    public final Climate climate = new Climate();
     /** M12: floating plants (water tab, plants page). */
     public final Plants plants = new Plants();
     /** M13: aquarium plants of the interior (second page of the plants tab). */
@@ -590,6 +592,124 @@ public final class TankView {
         }
     }
 
+    /** M31: the climate tab: mode, land, the values, the devices and the problems of the terrarium animals. */
+    public static final class Climate {
+        public int mode;
+        public float land = -1, air = Float.NaN, ground = Float.NaN, bask = Float.NaN, humidity = Float.NaN, uv, duty, ambient, roomHumidity, target;
+        public int matsUnder, matsWall, lamps, lampsLit, misters, misting, mistWater, mistSetting = -1, openTops, tops;
+        public boolean devicesOn = true, heatPowered = true, misterPowered = true;
+        /** "type key|problem key" of every animal kind with a problem. */
+        public final List<String> problems = new ArrayList<>();
+        public int animals;
+
+        public org.overengineer.bettacraft.terrarium.TerrariumMode mode() {
+            return org.overengineer.bettacraft.terrarium.TerrariumMode.byOrdinal(mode);
+        }
+
+        public boolean hasLand() {
+            return mode().hasLand();
+        }
+
+        CompoundTag save() {
+            CompoundTag t = new CompoundTag();
+            t.putInt("mode", mode);
+            t.putFloat("land", land);
+            t.putFloat("air", air);
+            t.putFloat("ground", ground);
+            t.putFloat("bask", bask);
+            t.putFloat("rh", humidity);
+            t.putFloat("uv", uv);
+            t.putFloat("duty", duty);
+            t.putFloat("ambient", ambient);
+            t.putFloat("room_rh", roomHumidity);
+            t.putFloat("target", target);
+            t.putIntArray("dev", new int[]{matsUnder, matsWall, lamps, lampsLit, misters, misting, mistWater, mistSetting, openTops, tops, animals});
+            t.putBoolean("dev_on", devicesOn);
+            t.putBoolean("heat_ok", heatPowered);
+            t.putBoolean("mist_ok", misterPowered);
+            ListTag p = new ListTag();
+            for (String s : problems) p.add(StringTag.valueOf(s));
+            t.put("problems", p);
+            return t;
+        }
+
+        void load(CompoundTag t) {
+            mode = t.getInt("mode");
+            land = t.contains("land") ? t.getFloat("land") : -1;
+            air = t.contains("air") ? t.getFloat("air") : Float.NaN;
+            ground = t.contains("ground") ? t.getFloat("ground") : Float.NaN;
+            bask = t.contains("bask") ? t.getFloat("bask") : Float.NaN;
+            humidity = t.contains("rh") ? t.getFloat("rh") : Float.NaN;
+            uv = t.getFloat("uv");
+            duty = t.getFloat("duty");
+            ambient = t.getFloat("ambient");
+            roomHumidity = t.getFloat("room_rh");
+            target = t.getFloat("target");
+            int[] d = t.getIntArray("dev");
+            if (d.length == 11) {
+                matsUnder = d[0]; matsWall = d[1]; lamps = d[2]; lampsLit = d[3]; misters = d[4]; misting = d[5]; mistWater = d[6]; mistSetting = d[7];
+                openTops = d[8]; tops = d[9]; animals = d[10];
+            }
+            devicesOn = !t.contains("dev_on") || t.getBoolean("dev_on");
+            heatPowered = !t.contains("heat_ok") || t.getBoolean("heat_ok");
+            misterPowered = !t.contains("mist_ok") || t.getBoolean("mist_ok");
+            problems.clear();
+            ListTag p = t.getList("problems", Tag.TAG_STRING);
+            for (int i = 0; i < p.size(); i++) problems.add(p.getString(i));
+        }
+    }
+
+    private static Climate climate(ServerLevel level, TankBlockEntity c, List<Entity> live) {
+        TankData t = c.getTank();
+        Climate x = new Climate();
+        x.mode = t.terrariumMode().ordinal();
+        x.land = t.landShare();
+        x.air = t.airTemp();
+        x.ground = t.groundTemp();
+        x.bask = t.baskTemp();
+        x.humidity = t.humidity();
+        x.uv = t.uv();
+        x.duty = t.matDuty();
+        x.ambient = TankCare.ambient(level, t);
+        x.target = t.targetTemp();
+        if (!t.terrariumMode().hasLand()) return x;
+        x.roomHumidity = org.overengineer.bettacraft.terrarium.TankClimate.roomHumidity(level, t);
+        x.devicesOn = org.overengineer.bettacraft.config.CommonConfig.terrariumDevices();
+        x.heatPowered = c.heatPowered();
+        x.misterPowered = c.misterPowered();
+        for (BlockPos m : org.overengineer.bettacraft.tank.TankEquipment.heatMats(level, c)) {
+            if (org.overengineer.bettacraft.terrarium.HeatMatBlock.underFloor(level.getBlockState(m))) x.matsUnder++;
+            else x.matsWall++;
+        }
+        for (BlockPos top : t.openTops()) {
+            if (!level.isLoaded(top)) continue;
+            var s = level.getBlockState(top);
+            if (s.getBlock() instanceof org.overengineer.bettacraft.terrarium.BaskingLampBlock) {
+                x.lamps++;
+                if (s.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT)) x.lampsLit++;
+            }
+        }
+        for (var m : org.overengineer.bettacraft.tank.TankEquipment.misters(level, c)) {
+            x.misters++;
+            if (m.spraying(level.getGameTime())) x.misting++;
+            x.mistWater += m.amount();
+            x.mistSetting = x.mistSetting < 0 ? m.setting() : Math.min(x.mistSetting, m.setting());
+        }
+        int[] top = org.overengineer.bettacraft.tank.TankWater.openTop(level, t);
+        x.openTops = top[0];
+        x.tops = top[1];
+        var cond = org.overengineer.bettacraft.terrarium.TankClimate.conditions(t);
+        java.util.Set<String> seen = new java.util.LinkedHashSet<>();
+        for (Entity e : live) {
+            var n = org.overengineer.bettacraft.terrarium.TerrariumAnimals.needs(e);
+            if (n == null) continue;
+            x.animals++;
+            for (var p : n.assess(cond).problems()) seen.add(e.getType().getDescriptionId() + "|" + p.translationKey());
+        }
+        x.problems.addAll(seen);
+        return x;
+    }
+
     private static Tech tech(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         Tech x = new Tech();
@@ -884,6 +1004,11 @@ public final class TankView {
                         f.daysSinceFed() > org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.STARVE_DAYS, true, BettaGenome.DEFAULT,
                         BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0, true,
                         round(f.breath() / (float) org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.maxBreath()), !f.airAvailable());
+            } else if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity ta) {
+                // M31: terrarium animals: hunger and the stress from their needs
+                float hp = round(ta.getHealth() / ta.getMaxHealth());
+                i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", !ta.isBaby(), round(1F - ta.stress()), round(ta.satiation()),
+                        ta.stress() >= 0.5F, ta instanceof Bucketable, BettaGenome.DEFAULT, BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0, false, 0F, false);
             } else if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
                 // M19: tankmates have needs like the bettas, plus their shoal, temperature range and breeding state
                 BettaHealth h = m.health();
@@ -954,6 +1079,7 @@ public final class TankView {
         out.put("equipment", eq);
         out.put("water_care", water(level, controller, live).save());
         out.put("tech", tech(level, controller).save());
+        out.put("climate", climate(level, controller, live).save()); // M31
         out.put("plants", plants(level, controller).save());
         out.put("aquatic", aquatic(level, controller).save());
         return out;
@@ -1169,6 +1295,7 @@ public final class TankView {
         v.filterCoolers = eq.getInt("filter_coolers");
         v.water.load(t.getCompound("water_care"));
         v.tech.load(t.getCompound("tech"));
+        v.climate.load(t.getCompound("climate")); // M31
         v.plants.load(t.getCompound("plants"));
         v.aquatic.load(t.getCompound("aquatic"));
         v.breeding = t.getCompound("breeding");

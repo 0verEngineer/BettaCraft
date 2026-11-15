@@ -59,6 +59,18 @@ public final class InfoLines {
         if (!d.getString("name").isEmpty()) out.add(Component.literal(d.getString("name")).withStyle(ChatFormatting.WHITE));
         if (d.contains("glass")) out.add(glassLine(d.getString("glass"), d.getString("style")));
         out.add(Component.translatable("jade.bettacraft.tank.water", f1(d.getFloat("temp")), d.getLong("water"), d.getLong("cap")));
+        // M31: terrarium / paludarium climate
+        if (d.contains("terra_mode")) {
+            Component mode = Component.translatable(d.getString("terra_mode"));
+            if (d.contains("air")) {
+                out.add(Component.translatable("jade.bettacraft.tank.climate", mode, f1(d.getFloat("air")), Math.round(d.getFloat("rh")), f1(d.getFloat("uv")))
+                        .withStyle(ChatFormatting.GREEN));
+                if (details) out.add(Component.translatable("jade.bettacraft.tank.climate_detail", f1(d.getFloat("bask")), Math.round(d.getFloat("land") * 100))
+                        .withStyle(ChatFormatting.GRAY));
+            } else {
+                out.add(mode.copy().withStyle(ChatFormatting.GREEN));
+            }
+        }
         MutableComponent animals = Component.translatable("jade.bettacraft.tank.animals", d.getInt("count"), d.getInt("adults"));
         if (d.getBoolean("crowded")) animals.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
         out.add(animals);

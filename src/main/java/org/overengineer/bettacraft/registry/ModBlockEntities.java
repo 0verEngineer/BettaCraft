@@ -87,6 +87,13 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.osmosis.RoUnitBlockEntity::new, ModBlocks.RO_UNIT.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.terrarium.MisterBlockEntity>> MISTER = BLOCK_ENTITIES.register("mister",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.terrarium.MisterBlockEntity::new, ModBlocks.MISTER.get()).build(null)); // M31
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.terrarium.ThermoHygrometerBlockEntity>> THERMO_HYGROMETER = BLOCK_ENTITIES.register("thermo_hygrometer",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.terrarium.ThermoHygrometerBlockEntity::new, ModBlocks.THERMO_HYGROMETER.get()).build(null));
+
+    @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.reef.DosingPumpBlockEntity>> DOSING_PUMP = BLOCK_ENTITIES.register("dosing_pump",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.reef.DosingPumpBlockEntity::new, ModBlocks.DOSING_PUMP.get()).build(null));
 

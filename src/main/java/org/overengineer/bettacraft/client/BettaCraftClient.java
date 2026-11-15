@@ -257,6 +257,11 @@ public final class BettaCraftClient {
         }
         event.registerLayerDefinition(org.overengineer.bettacraft.client.render.CritterRenderer.FROG_LAYER,
                 org.overengineer.bettacraft.client.model.CritterModelDefinitions::createFrogLayer);
+        // M31: the terrarium animals
+        for (String m : org.overengineer.bettacraft.client.model.TerrariumModelDefinitions.MODELS) {
+            event.registerLayerDefinition(org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer.layer(m),
+                    () -> org.overengineer.bettacraft.client.model.TerrariumModelDefinitions.create(m));
+        }
         // M19: one mesh per tankmate body plan
         for (var e : org.overengineer.bettacraft.client.render.TankmateRenderer.LAYERS.entrySet()) {
             String model = org.overengineer.bettacraft.client.render.TankmateRenderer.name(e.getKey());
@@ -270,12 +275,14 @@ public final class BettaCraftClient {
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
         event.registerEntityRenderer(ModEntities.DWARF_FROG.get(), org.overengineer.bettacraft.client.render.DwarfFrogRenderer::new);
+        event.registerEntityRenderer(ModEntities.MUSK_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "musk_turtle", 0.8F, 0.2F)); // M31
         event.registerEntityRenderer(ModEntities.WILD_CRITTER.get(), org.overengineer.bettacraft.client.render.WildCritterRenderer::new); // M22.3
         for (var t : ModEntities.TANKMATES.values()) event.registerEntityRenderer(t.get(), org.overengineer.bettacraft.client.render.TankmateRenderer::new); // M19
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
         event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);
         event.registerBlockEntityRenderer(ModBlockEntities.AIR_PUMP.get(), org.overengineer.bettacraft.client.render.AirHoseRenderer::new); // M23
+        event.registerBlockEntityRenderer(ModBlockEntities.THERMO_HYGROMETER.get(), org.overengineer.bettacraft.client.render.ThermoHygrometerRenderer::new); // M31
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get(), org.overengineer.bettacraft.client.render.MonitorRenderer::new); // M27
     }
 
