@@ -125,7 +125,7 @@ public final class MiniatureRenderer {
                 BlockPos min = t.min();
                 AABB box = new AABB(min.getX(), min.getY(), min.getZ(), min.getX() + t.sizeX(), min.getY() + t.sizeY(), min.getZ() + t.sizeZ());
                 if (box.getCenter().distanceToSqr(cam) > maxDist * maxDist) continue;
-                int lightKey = lightKey(mc, t);
+                int lightKey = lightKey(mc, t, region);
                 if (region.lightKey != lightKey || region.shaderPack != pack) {
                     region.lightKey = lightKey;
                     region.shaderPack = pack;
@@ -164,10 +164,36 @@ public final class MiniatureRenderer {
         lastFrameNanos = opaque ? dt : lastFrameNanos + dt;
     }
 
-    private static int lightKey(Minecraft mc, TankData t) {
+    /**
+     * When the light around the tank changes, the miniature is lit again. Three tank blocks are checked every frame; M30 part b:
+     * once a second the light of every tank block (a hash): the meshes keep the light of the moment they were built, so a cell
+     * built before the world's light reached its tank block (a tank built in freshly loaded chunks, where the client gets the
+     * light later) stayed dark for good when the three checked blocks were lit already (the dark floor stripes).
+     */
+    private static int lightKey(Minecraft mc, TankData t, ClientRegion region) {
         BlockPos c = t.min().offset(t.sizeX() / 2, t.sizeY() / 2, t.sizeZ() / 2);
+        long now = mc.level.getGameTime();
+        if (region.lightHashAt < 0 || now - region.lightHashAt >= 20 || now < region.lightHashAt) {
+            region.lightHashAt = now;
+            region.lightHash = lightHash(mc, t);
+        }
         return mc.level.getBrightness(LightLayer.BLOCK, c) * 31 + mc.level.getBrightness(LightLayer.SKY, c)
-                + mc.level.getBrightness(LightLayer.BLOCK, t.min()) * 961 + mc.level.getBrightness(LightLayer.SKY, t.max()) * 29791;
+                + mc.level.getBrightness(LightLayer.BLOCK, t.min()) * 961 + mc.level.getBrightness(LightLayer.SKY, t.max()) * 29791
+                + region.lightHash * 923521;
+    }
+
+    /** M30 part b: a hash of the block and sky light of all tank blocks. */
+    static int lightHash(Minecraft mc, TankData t) {
+        int h = 1;
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        BlockPos min = t.min();
+        for (int y = 0; y < t.sizeY(); y++)
+            for (int z = 0; z < t.sizeZ(); z++)
+                for (int x = 0; x < t.sizeX(); x++) {
+                    p.set(min.getX() + x, min.getY() + y, min.getZ() + z);
+                    h = h * 31 + (mc.level.getBrightness(LightLayer.BLOCK, p) << 4 | mc.level.getBrightness(LightLayer.SKY, p));
+                }
+        return h;
     }
 
     // ------------------------------------------------------------------ scheduling

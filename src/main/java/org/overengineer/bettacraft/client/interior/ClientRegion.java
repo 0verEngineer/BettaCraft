@@ -52,6 +52,9 @@ public final class ClientRegion {
     final Long2IntOpenHashMap cellGeneration = new Long2IntOpenHashMap();
     int pendingJobs;
     int lightKey = Integer.MIN_VALUE;
+    /** M30 part b: the light hash of all tank blocks and when it was taken (game time, -1 = never). */
+    int lightHash;
+    long lightHashAt = -1;
     boolean shaderPack;
     int idleTicks;
     /** Stats of the current rebuild wave (logged when it completes). */
