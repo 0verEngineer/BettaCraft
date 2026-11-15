@@ -62,6 +62,10 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   are trimmed with shears and clean the water. The **Marimo** ball rolls with the current. **Floating plants**
   (duckweed, frogbit, salvinia, red root floater, water lettuce, hornwort, Riccia) drift on the surface, grow and
   spread; lily pads stay put.
+- **Plants of Minecraft and other mods work too:** kelp, seagrass, lily pads and corals, and the water plants of
+  Fintastic, Regions Unexplored, Twilight Forest and Alex's Caves in the interior lower the nitrate and count for
+  breeding like a full-grown plant of ours (a little less), without growing and without needs; Fintastic's live rock
+  filters salt water. Modpacks add more with profiles.
 - **Liquid fertilizer** makes them grow up to half as fast again; the plants use it up, too much feeds the algae. A
   **fertilizer maker** mixes it from kelp meal, nutrient salt and water and pipes it into the tank; the dosing pump doses
   it too.
@@ -237,6 +241,9 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   add or change colours, allele ranks and frequencies, and named varieties.
 - **Animals of other mods:** profiles in `data/<namespace>/bettacraft/foreign_animals/*.json` give any water animal our
   care and breeding (format in the handbook, "Profiles for animals of other mods").
+- **Plants of other mods:** profiles in `data/<namespace>/bettacraft/foreign_plants/*.json` say what a block of another
+  mod counts as in an aquarium (a stem plant, a carpet, floating leaves, a coral, live rock ...; handbook "Plants of other
+  mods").
 - **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
   `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and a KubeJS example; the
   NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent` (`org.overengineer.bettacraft.api.event`) and
@@ -249,7 +256,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 - **Commands:** `/bettacraft interior leave` and `/bettacraft preset` for everyone; operators: `/bettacraft interior resync`,
   `/bettacraft interior bench`, `/bettacraft wateranimals`, `/bettacraft wildlife`, `/bettacraft preset <name>` and
   `/bettacraft foreign list [radius]` (the animals of other mods in tanks and their profiles; a profile whose entity was
-  renamed is reported in the log).
+  renamed is reported in the log), `/bettacraft foreign plants [radius]` (the same for the plants).
 
 ## Building from source
 

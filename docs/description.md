@@ -52,6 +52,8 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
   light, some need CO2 or soft water, are trimmed with shears and clean the water. The **Marimo** ball rolls with the
   current. **Floating plants** (duckweed, salvinia, water lettuce, hornwort ...) drift on the surface and spread.
 - **Liquid fertilizer** from the fertilizer maker makes them grow faster; too much feeds the algae.
+- **Plants of Minecraft and other mods work too:** kelp, seagrass, corals and the water plants of Fintastic, Regions
+  Unexplored, Twilight Forest and Alex's Caves lower the nitrate and count for breeding, without growing or needs.
 - **Every plant grows wild** in the waters it comes from (jungle, swamp, river, mangrove, cold lakes, lush caves):
   shears cut a cutting, floating plants lie on calm water like lily pads.
 - Every plant and coral has real leaves, polyps and tentacles that **sway in the water**, inside and in the miniature;
@@ -205,7 +207,7 @@ Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanz
 Geckos und Kornnattern, Landtieren anderer Mods (Naturalist, Critters and Companions), verkleinerte Mobs im Glas, Filter,
 Licht, CO2, Rohre, Wasserchemie, Flüssigdünger, Lebendfutter und eine Futtermaschine, und eine Kurbel für alle, die ohne
 Stromerzeuger spielen. Fische anderer Mods (Fintastic, Aquaculture …)
-bekommen unsere Pflege und Zucht, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
+bekommen unsere Pflege und Zucht, Kelp, Seegras, Korallen und Wasserpflanzen anderer Mods wirken im Becken wie unsere, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
 ein FTB-Quests-Kapitel, KubeJS-Events, JourneyMap-Wegpunkte bei Alarmen, einen Schalter für jedes Feature und
 Voreinstellungen (einfach, realistisch, nur Deko). Die Mod und das Handbuch im Spiel sind
 komplett auf Deutsch übersetzt; die Spielsprache Deutsch genügt.

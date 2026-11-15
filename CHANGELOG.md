@@ -4,6 +4,37 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.30.0-beta.1] - 2026-11-17
+
+Plants and corals of Minecraft and other mods work in the aquariums like ours: kelp, seagrass, lily pads, corals and the
+water plants of Fintastic, Regions Unexplored, Twilight Forest and Alex's Caves lower the nitrate and count for breeding.
+
+### Added
+- **Plants of other mods work:** kelp, seagrass, lily pads, sea pickles, corals and coral blocks of Minecraft, and the
+  water plants of Fintastic (hornwort, Amazon sword, anubias, duckweed, lotus, the algae and moss, caulerpa, sea grapes
+  ...), Regions Unexplored (cattail, duckweed, flowering and giant lily pads), Twilight Forest (huge lily pad, huge water
+  lily) and Alex's Caves (ping-pong sponge) placed in the interior lower the nitrate and take up waste, count as plants
+  for breeding (the bonus of a well planted tank, hiding spots), for the young shrimp and the food of the small animals,
+  for the oxygen and against algae; floating leaves shade the surface. Each plant (the touching blocks of one kind) works
+  like a full-grown Bettacraft plant of the same growth form times `interiorPlants.foreignPlantFactor` (0.6). They do not
+  grow and have no needs: no light minimum, no fertilizer (they neither use it nor grow with it), no reef elements, no
+  salinity. At most `interiorPlants.maxPlantsPerTank` count per tank.
+- **Fintastic's live rock** (also with algae, porous) is a small biological filter in salt water (0.6 times ours); its
+  dead live rock is decoration. Corals and epiphytes grow on both.
+- Data pack profiles `data/<namespace>/bettacraft/foreign_plants/*.json` (blocks or tags, a role such as `stem`,
+  `carpet`, `floating`, `coral` or `live_rock`, a factor; `none` takes a default out). Missing ids of a loaded mod are
+  reported in the log with similar ids (renamed?), those of missing mods are skipped.
+- `/bettacraft foreign plants [radius]` (operators): the plants of other mods in the tanks with their role, plant mass and
+  profile, and the plant blocks of other mods there without one.
+- The plants tab shows how many plants of other mods count and their plant mass.
+- The water plants of Regions Unexplored, Alex's Caves and Twilight Forest stand in the dry interior and sway in the
+  miniature like those of Fintastic; their floating leaves mark the surface for bubble nests.
+- Feature switch `features.aquaticPlants.foreignPlants`.
+- Handbook (English and German): the page "Plants of other mods" with the table of every plant.
+
+### Changed
+- Interiors of earlier versions count their kelp, seagrass and plants of other mods once when they are loaded.
+
 ## [1.29.0-beta.1] - 2026-11-16
 
 Liquid fertilizer and the fertilizer maker; a crank that winds the machines, and with the power options on also the
