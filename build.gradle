@@ -272,6 +272,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m35aonly', 'true'
             }
+            if (project.hasProperty('smoketestm35b')) {
+                // gradlew runClient -Psmoketestm35b : only the M35 part b scene (Naturalist lizard, snake and scorpions in a dry
+                // terrarium, fish in the water part of a paludarium with a crab, dragonflies over the water)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m35bonly', 'true'
+            }
             if (project.hasProperty('smoketestm331')) {
                 // gradlew runClient -Psmoketestm331 : only the M33.1 scene (a fixed paludarium filled to its limit, a full tank
                 // set to terrarium: the climate tab and the overview with the tank type button)

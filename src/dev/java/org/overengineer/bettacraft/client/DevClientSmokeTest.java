@@ -151,6 +151,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm35a: alligators, tortoises and sea turtles in their big terraria and paludaria (M35 part a). */
     private static final boolean M35A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35aonly");
     private static DevClientSmokeM35a m35a;
+    /** -Psmoketestm35b: lizard, snake and scorpions in a terrarium, fish in a paludarium's water part with a crab, dragonflies (M35 part b). */
+    private static final boolean M35B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35bonly");
+    private static DevClientSmokeM35b m35b;
     private static DevClientSmokeM33b m33b;
     private static DevClientSmokeM31d m31d;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
@@ -252,6 +255,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M35B_ONLY) {
+                if (ticks == 60) m35b = new DevClientSmokeM35b();
+                if (m35b != null && m35b.tick()) {
+                    m35b = null;
+                    LOGGER.info("[smoketest] client world test finished (M35 part b only)");
                     mc.stop();
                 }
                 return;

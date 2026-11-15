@@ -608,7 +608,30 @@ public final class DevShowcase {
         glassMob(level, sc, net.minecraft.world.entity.EntityType.ZOMBIE, false);
         glassMob(level, sc, net.minecraft.world.entity.EntityType.SLIME, false);
         name(level, at, "Mobs im Glas: Spinne, Skelett");
+        // M35: land animals of other mods (Naturalist), when it is installed
+        if (net.neoforged.fml.ModList.get().isLoaded("naturalist")) {
+            at = at.east(3 + GAP);
+            TankBlockEntity fc = tank(level, at, 4, 2, 3, 0F, false);
+            InteriorRegion fr = region(level, fc, Blocks.SAND.defaultBlockState());
+            rock(in, fr, fr.sizeX() / 4, fr.sizeZ() / 3, 8, 8, Blocks.SANDSTONE.defaultBlockState());
+            level.setBlockAndUpdate(at.offset(2, 2, 1), ModBlocks.BASKING_LAMP.get().defaultBlockState());
+            org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, fc);
+            for (String id : List.of("naturalist:lizard", "naturalist:snake", "naturalist:desert_scorpion")) foreign(level, fc, id);
+            name(level, at, "Terrarium: Landtiere anderer Mods");
+        }
         LOGGER.info("[showcase] M31 row: paludarium {}, terraria, mobs in glass {}", pc.getBlockPos(), sc.getBlockPos());
+    }
+
+    /** M35: a land animal of another mod from its terrarium box into a tank. */
+    private static void foreign(ServerLevel level, TankBlockEntity c, String id) {
+        var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getOptional(net.minecraft.resources.ResourceLocation.parse(id)).orElse(null);
+        var e = type != null ? type.create(level) : null;
+        if (e == null) return;
+        ItemStack box = org.overengineer.bettacraft.terrarium.TerrariumBoxItem.fillWith(e);
+        e.discard();
+        Component err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, box, type, null, 0L);
+        if (err != null) LOGGER.warn("[showcase] {}: {}", id, err.getString());
+        else animals++;
     }
 
     private static void herp(ServerLevel level, TankBlockEntity c, org.overengineer.bettacraft.terrarium.HerpSpecies s, boolean female, int variety) {
