@@ -477,6 +477,10 @@ final class DevClientSmokeMP {
                 then(5, () -> send("shot"));
             }
             case "features" -> then(20, () -> sendFeatures(args)); // M33 part b
+            case "preset" -> then(20, () -> send(args + " "
+                    + org.overengineer.bettacraft.config.Features.remote() + " " + org.overengineer.bettacraft.config.Presets.active().id() + " "
+                    + org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BREEDING) + " "
+                    + org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.CARE_MODE, null))); // M33 part c
             case "quit" -> then(20, () -> {
                 Minecraft mc = Minecraft.getInstance();
                 LOGGER.info("[mp] {} client finished", name());

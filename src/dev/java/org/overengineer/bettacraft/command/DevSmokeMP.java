@@ -201,6 +201,11 @@ public final class DevSmokeMP {
                     + " (expected true false 0 true)", text.endsWith(" true false 0 true"));
             case "feaon" -> check(name + ": tankmates on again: remote, tankmates, neons > 0, bettas " + text.substring(6),
                     text.startsWith("feaon true true ") && !text.contains(" true true 0 ") && text.endsWith(" true"));
+            // M33 part c: the server's preset reaches the clients (feature switches and the server values they read)
+            case "predecor" -> check(name + ": server preset decor: remote, preset, breeding, care mode " + text.substring(9)
+                    + " (expected true decor false DECOR)", text.equals("predecor true decor false DECOR"));
+            case "precustom" -> check(name + ": server preset custom again: " + text.substring(10)
+                    + " (expected true custom true NORMAL)", text.equals("precustom true custom true NORMAL"));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -1375,6 +1380,15 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server);
             say("features", "all", "feaon");
         }, () -> reports.containsKey(P1 + ":feaon") && reports.containsKey(P2 + ":feaon"), 20 * 30));
+        // M33 part c: the server switches to the preset decor (in memory) and back
+        steps.add(new Step("preset decor", () -> {
+            org.overengineer.bettacraft.command.PresetCommand.apply(server, org.overengineer.bettacraft.config.Preset.DECOR, false);
+            say("preset", "all", "predecor");
+        }, () -> reports.containsKey(P1 + ":predecor") && reports.containsKey(P2 + ":predecor"), 20 * 30));
+        steps.add(new Step("preset custom", () -> {
+            org.overengineer.bettacraft.command.PresetCommand.apply(server, org.overengineer.bettacraft.config.Preset.CUSTOM, false);
+            say("preset", "all", "precustom");
+        }, () -> reports.containsKey(P1 + ":precustom") && reports.containsKey(P2 + ":precustom"), 20 * 30));
         steps.add(new Step("third look", () -> say("state", "all", "3," + tankArg()),
                 () -> reports.containsKey(P1 + ":state3") && reports.containsKey(P2 + ":state3"), 20 * 30));
         steps.add(new Step("quit", () -> say("quit", "all", ""), () -> server.getPlayerList().getPlayerCount() == 0, 20 * 60));

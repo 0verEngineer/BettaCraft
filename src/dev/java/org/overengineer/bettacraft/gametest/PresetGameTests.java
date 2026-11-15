@@ -74,10 +74,10 @@ public final class PresetGameTests {
     // ------------------------------------------------------------------ config save / restore
 
     /** The values these tests change, read raw (past the preset) and set back afterwards. */
-    private record Saved(Preset preset, List<? extends String> keep, ServerConfig.CareMode care, boolean heater, double sick) {
+    private record Saved(Preset preset, List<? extends String> keep, ServerConfig.CareMode care, boolean heater, double sick, boolean hunt) {
         static Saved take() {
             return new Saved(CommonConfig.PRESET.get(), CommonConfig.PRESET_KEEP.get(), ServerConfig.CARE_MODE.get(),
-                    ServerConfig.POWER_HEATER.get(), ServerConfig.HEALTH_DAYS_UNTIL_SICK.get());
+                    ServerConfig.POWER_HEATER.get(), ServerConfig.HEALTH_DAYS_UNTIL_SICK.get(), ServerConfig.CRITTERS_BETTAS_HUNT.get());
         }
 
         void restore() {
@@ -86,6 +86,7 @@ public final class PresetGameTests {
             ServerConfig.CARE_MODE.set(care);
             ServerConfig.POWER_HEATER.set(heater);
             ServerConfig.HEALTH_DAYS_UNTIL_SICK.set(sick);
+            ServerConfig.CRITTERS_BETTAS_HUNT.set(hunt);
         }
     }
 
@@ -199,7 +200,8 @@ public final class PresetGameTests {
             ServerConfig.POWER_HEATER.set(true);
             check(h, !TankPower.anyRequired(), "no FE needed with power off");
             check(h, BettaCare.params().daysUntilSick() == 14.0, "gentler: sick after 14 days");
-            // the tank: acid, hard water and much nitrate stress nobody
+            // the tank: acid, hard water and much nitrate stress nobody (the bettas do not hunt the shrimp here)
+            ServerConfig.CRITTERS_BETTAS_HUNT.set(false);
             Stock s = stock(h, false);
             var t = s.tank().getTank();
             ServerLevel level = h.getLevel();
@@ -207,6 +209,7 @@ public final class PresetGameTests {
                 t.setPh(4.0F);
                 t.setTds(2000F);
                 t.setNitrate(300F);
+                t.setWaterQuality(1F); // no filter in this tank: the water quality is not what is tested (it stays in simple)
                 for (BettaEntity b : s.bettas()) b.health().feed();
                 for (TankmateEntity m : s.mates()) m.health().feed();
                 t.setCritterFood(50);
@@ -216,7 +219,7 @@ public final class PresetGameTests {
             }
             check(h, !TankChemistry.bad(t, ChemTolerance.BETTA), "pH 4 is no problem without chemistry");
             for (BettaEntity b : s.bettas()) check(h, b.isAlive() && b.health().waterStress() == 0, "no water stress for " + b.getName().getString());
-            check(h, aliveCritters(s) == s.critters().size(), "the small animals live");
+            check(h, aliveCritters(s) == s.critters().size(), "the small animals live (" + aliveCritters(s) + "/" + s.critters().size() + ")");
             // precedence: a changed value wins, a kept path keeps its default
             ServerConfig.HEALTH_DAYS_UNTIL_SICK.set(10.0);
             check(h, BettaCare.params().daysUntilSick() == 10.0, "a value changed in the file wins over the preset");
