@@ -4,6 +4,18 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.24.1-beta.1] - 2026-11-15
+
+Tank interiors are much cheaper to create.
+
+### Fixed
+- **Interior chunk generation**: the interior dimension is generated without vanilla's structure neighbourhood (the
+  structure starts of all chunks 8 around each chunk). Creating a tank's interior used to generate, hold and save
+  about 750 tall chunks (a 4x3x3 tank needs 30); now about 130, and only the interior's own chunk columns stay loaded.
+  Interiors are built faster, the server needs far less memory when many are created at once (the showcase world:
+  10.6 GB → 1.9 GB of heap, saving in 21 s instead of 8 min), and each new tank takes about a sixth of the disk space.
+  Interiors that already exist are unchanged. `-Dbettacraft.vanillaInteriorGeneration=true` switches back.
+
 ## [1.24.0-beta.1] - 2026-11-15
 
 Terraria and paludaria: tanks with land, their climate and devices, turtles with temperature-dependent sex, frogs,
