@@ -219,7 +219,7 @@ public final class PresetGameTests {
             }
             check(h, !TankChemistry.bad(t, ChemTolerance.BETTA), "pH 4 is no problem without chemistry");
             for (BettaEntity b : s.bettas()) check(h, b.isAlive() && b.health().waterStress() == 0, "no water stress for " + b.getName().getString());
-            check(h, aliveCritters(s) == s.critters().size(), "the small animals live (" + aliveCritters(s) + "/" + s.critters().size() + ")");
+            check(h, aliveCritters(s) >= s.critters().size(), "no small animal died, young may come (" + aliveCritters(s) + "/" + s.critters().size() + ")");
             // precedence: a changed value wins, a kept path keeps its default
             ServerConfig.HEALTH_DAYS_UNTIL_SICK.set(10.0);
             check(h, BettaCare.params().daysUntilSick() == 10.0, "a value changed in the file wins over the preset");
