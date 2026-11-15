@@ -38,10 +38,12 @@ take it, in `bettacraft-water-animals.tsv` in the server folder.
 
 ![Seahorse, axolotl, koi, lanternfish, starfish and more](../images/foreign_animals_closeup.png)
 
-Animals of other mods keep their own behaviour, hunger and breeding. Bettacraft only holds them in the water of the
-real tank shape and counts them for the stocking; its care (temperature, water quality) never hurts them. The one
-exception is the vanilla **axolotl**: it gets our care and breeding (cool water, eggs on the plants, colour genetics), see
-[Axolotl](../invertebrates/axolotl.md).
+Animals of other mods keep their own behaviour. Bettacraft holds them in the water of the real tank shape and counts
+them for the stocking. Animals **with a profile** (the fish of Fintastic, Aquaculture, Naturalist and the koi of Critters
+and Companions by default) also get our care in the aquarium: hunger, their temperature and water, sickness and death,
+and they breed by our rules, see [Profiles for animals of other mods](foreign_profiles.md). Animals without a profile
+are never hurt by our care. The vanilla **axolotl** has its own care and breeding (cool water, eggs on the plants, colour
+genetics), see [Axolotl](../invertebrates/axolotl.md).
 
 * **Predators** (`#bettacraft:predators`) hunt small fish and fry: pufferfish, **axolotls**, piranhas, the Otherside
   angler fish and the predators of the aquarium mods. See [Fights, flaring and predators](../bettas/fighting.md).
@@ -51,4 +53,5 @@ exception is the vanilla **axolotl**: it gets our care and breeding (cool water,
   out with a fish bag only.
 * **Fintastic** swaps vanilla cod and salmon for its own when they spawn. A cod or salmon from a bucket stays what it is
   in a Bettacraft aquarium.
-* Breeding of animals of other mods is up to those mods; Bettacraft does not add any.
+* **Their own breeding** (love from food, the breeding of their mod) is suppressed in a Bettacraft aquarium
+  (`features.suppressForeignBreeding`); outside it nothing changes. Animals with a profile breed by our rules instead.

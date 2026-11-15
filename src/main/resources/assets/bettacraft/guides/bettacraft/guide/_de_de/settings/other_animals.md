@@ -40,8 +40,11 @@ Datapack. `/bettacraft wateranimals` (Operatoren) listet jedes Wassertier der ge
 
 ![Seepferdchen, Axolotl, Koi, Laternenfisch, Seestern und mehr](../images/foreign_animals_closeup.png)
 
-Tiere anderer Mods behalten ihr eigenes Verhalten, ihren Hunger und ihre Vermehrung. Bettacraft hält sie nur im Wasser
-der echten Tankform und zählt sie für den Besatz; seine Pflege (Temperatur, Wasserqualität) schadet ihnen nie.
+Tiere anderer Mods behalten ihr eigenes Verhalten. Bettacraft hält sie im Wasser der echten Tankform und zählt sie für
+den Besatz. Tiere **mit Profil** (standardmäßig die Fische von Fintastic, Aquaculture, Naturalist und der Koi von Critters
+and Companions) bekommen im Aquarium zusätzlich unsere Pflege: Hunger, ihre Temperatur und ihr Wasser, Krankheit und Tod,
+und sie vermehren sich nach unseren Regeln, siehe [Profile für Tiere anderer Mods](foreign_profiles.md). Tieren ohne
+Profil schadet unsere Pflege nie.
 
 * **Axolotl** (Vanilla) bekommen als Ausnahme unsere Pflege und Zucht (kühles Wasser, Eier an den Pflanzen,
   Farbgenetik), siehe [Axolotl](../invertebrates/axolotl.md).
@@ -54,4 +57,6 @@ der echten Tankform und zählt sie für den Besatz; seine Pflege (Temperatur, Wa
   Heraus kommen sie ebenfalls nur mit einer Fischtüte.
 * **Fintastic** tauscht Vanilla-Kabeljau und -Lachs beim Spawnen gegen eigene aus. Ein Kabeljau oder Lachs aus dem Eimer
   bleibt in einem Bettacraft-Aquarium, was er ist.
-* Die Vermehrung der Tiere anderer Mods ist Sache dieser Mods; Bettacraft fügt keine hinzu.
+* **Ihre eigene Vermehrung** (Paarungsbereitschaft durch Futter, die Zucht ihrer Mod) ist im Bettacraft-Aquarium
+  unterdrückt (`features.suppressForeignBreeding`); außerhalb ändert sich nichts. Tiere mit Profil vermehren sich
+  stattdessen nach unseren Regeln.
