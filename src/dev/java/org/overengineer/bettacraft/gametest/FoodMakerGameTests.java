@@ -128,12 +128,15 @@ public final class FoodMakerGameTests {
         try {
             ServerConfig.POWER_PUMPS.set(true);
             FoodMakerBlockEntity m = maker(h, new BlockPos(2, 1, 2));
-            h.assertTrue(!m.wind(null), "no spring on FE");
+            // M37: with features.power.winding the crank winds it on FE too (FE first, then the spring)
+            boolean winding = org.overengineer.bettacraft.winding.Winding.enabled();
+            h.assertTrue(m.wind(null) == winding, "the crank winds it on FE only with power.winding");
+            m.setSpring(0);
             h.assertTrue(level.getCapability(Capabilities.EnergyStorage.BLOCK, m.getBlockPos(), null) != null, "energy capability");
             m.items().setStackInSlot(0, new ItemStack(Items.EGG));
             m.items().setStackInSlot(1, new ItemStack(Items.WHEAT));
             run(level, m, 1);
-            h.assertTrue(m.status() == FoodMakerBlockEntity.NO_POWER, "needs FE: " + m.status());
+            h.assertTrue(m.status() == (winding ? FoodMakerBlockEntity.FE_OR_WIND : FoodMakerBlockEntity.NO_POWER), "needs FE: " + m.status());
             int fe = ServerConfig.getOr(ServerConfig.FOOD_MAKER_FE, 10);
             int batch = FoodMakerBlockEntity.batchTicks();
             m.energy().receiveEnergy(fe * batch, false);

@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm37')) {
+                // gradlew runClient -Psmoketestm37 : only the M37 scene (a tank on wound cabinets with the power options on and no
+                // FE, the crank in the hand, the fertilizer maker piping into the tank, its window, the cabinet's spring, the water tab)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m37only', 'true'
+            }
             if (project.hasProperty('smoketestm36')) {
                 // gradlew runClient -Psmoketestm36 [-Pcompare] : only the M36 scene (the bettas at Normal and Large next to the
                 // tankmates in front of a one-block ruler; with -Pcompare also one of DragN's bettas, the pictures stay local)

@@ -154,6 +154,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm36: the size setting of the bettas (Normal / Large), with -Pcompare next to one of DragN's bettas (M36). */
     private static final boolean M36_ONLY = Boolean.getBoolean("bettacraft.smoketest.m36only");
     private static DevClientSmokeM36 m36;
+    /** -Psmoketestm37: the fertilizer maker, the crank and the cabinet's spring, the water tab (M37). */
+    private static final boolean M37_ONLY = Boolean.getBoolean("bettacraft.smoketest.m37only");
+    private static DevClientSmokeM37 m37;
     /** -Psmoketestm35b: lizard, snake and scorpions in a terrarium, fish in a paludarium's water part with a crab, dragonflies (M35 part b). */
     private static final boolean M35B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35bonly");
     private static DevClientSmokeM35b m35b;
@@ -258,6 +261,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M37_ONLY) {
+                if (ticks == 60) m37 = new DevClientSmokeM37();
+                if (m37 != null && m37.tick()) {
+                    m37 = null;
+                    LOGGER.info("[smoketest] client world test finished (M37 only)");
                     mc.stop();
                 }
                 return;

@@ -108,6 +108,7 @@ class FeatureTreeTest {
             assertFalse(id.endsWith("_spawn_egg"), "spawn egg without a feature: " + id);
         }
         assertEquals(new TreeSet<>(List.of("algae_wafer", "betta_pellets", "cabinet", "cooler_large", "cooler_medium", "cooler_small",
+                "crank", // M37: the food maker, the fertilizer maker and the power options all use it
                 "external_filter", "feeder", "fish_bag", "fish_bag_filled", "flow_pump", "heater_large", "heater_medium", "heater_small",
                 "internal_filter", "mirror_stick", "swamp_water_bottle", "tank", "tank_lid", "tank_light", "tank_net")), core,
                 "the core items (always there)");

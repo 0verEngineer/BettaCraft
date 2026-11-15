@@ -112,6 +112,13 @@ public final class CreateDeviceGameTests {
         m.items().setStackInSlot(2, new ItemStack(Items.DRIED_KELP, 2));
         m.setSpring(0);
         motor(h, new BlockPos(3, 2, 2), Direction.WEST, 64);
+        // M37: the fertilizer maker with a motor beside it
+        var fert = FertilizerGameTests.maker(h, new BlockPos(2, 2, 8));
+        fert.items().setStackInSlot(org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.MEAL, new ItemStack(ModItems.KELP_MEAL.get(), 2));
+        fert.items().setStackInSlot(org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.SALT, new ItemStack(ModItems.NUTRIENT_SALT.get(), 2));
+        fert.setWater(1000);
+        fert.windSpring().set(0);
+        motor(h, new BlockPos(3, 2, 8), Direction.WEST, 64);
         // the reverse osmosis unit next to water, a motor at half speed
         BlockPos water = new BlockPos(10, 2, 2), ro = new BlockPos(11, 2, 2);
         h.setBlock(water, Blocks.WATER.defaultBlockState());
@@ -130,6 +137,9 @@ public final class CreateDeviceGameTests {
                     "the food maker works: " + m.status());
             int fast = unit.step(level, 20);
             h.assertTrue(unit.boosted() && fast > slow, "the shaft boosts the osmosis unit: " + slow + " -> " + fast);
+            h.assertTrue(CreateKinetics.speed(level, fert.getBlockPos()) == 64F, "the fertilizer maker sees 64 RPM");
+            h.assertTrue(fert.status() == org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.WORKING || fert.fertilizer() > 0,
+                    "the shaft drives the fertilizer maker: " + fert.status());
         });
     }
 
