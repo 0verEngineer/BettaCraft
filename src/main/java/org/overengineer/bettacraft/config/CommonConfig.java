@@ -78,6 +78,7 @@ public final class CommonConfig {
     /** M32 part a: animals of other mods in our tanks. */
     public static final ModConfigSpec.BooleanValue FEATURE_FOREIGN_CARE, FEATURE_FOREIGN_BREEDING, FEATURE_SUPPRESS_FOREIGN_BREEDING;
     public static final ModConfigSpec.BooleanValue FEATURE_CREATE_CONTRAPTIONS; // M32 part b
+    public static final ModConfigSpec.BooleanValue FEATURE_CREATE_ROTATION, FEATURE_CREATE_DISPLAY_LINKS; // M32 part c
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
     public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES, FEATURE_TURTLE_BREEDING, FEATURE_WILD_TURTLES; // M31
@@ -311,6 +312,13 @@ public final class CommonConfig {
                 "Aeronautics airships: the animals are packed into the tank for the trip and drawn swimming, the care pauses, everything comes",
                 "back where the tank is put down (off: Create cannot move tanks; a tank that is already travelling still unpacks)")
                 .define("createContraptions", true);
+        // M32 part c
+        FEATURE_CREATE_ROTATION = b.comment("Create's rotation drives the water pumps, filter pump head, water change controller, level sensor, reverse",
+                "osmosis unit and food maker instead of FE: a shaft or cogwheel pointing at the device, 64 RPM for full work, slower",
+                "proportionally; no stress cost (off: only FE, the crank and the other sources as before)").define("createRotation", true);
+        FEATURE_CREATE_DISPLAY_LINKS = b.comment("Tanks and monitors are sources for Create's Display Link: the values of a tank, or one line per tank a",
+                "monitor shows, on display boards, nixie tubes, signs and lecterns (off: Display Links cannot read them)")
+                .define("createDisplayLinks", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -437,6 +445,8 @@ public final class CommonConfig {
     public static boolean mobsInGlass() { return getOr(FEATURE_MOBS_IN_GLASS, true); } // M31 part d
     public static boolean foreignCare() { return getOr(FEATURE_FOREIGN_CARE, true); } // M32 part a
     public static boolean createContraptions() { return getOr(FEATURE_CREATE_CONTRAPTIONS, true); } // M32 part b
+    public static boolean createRotation() { return getOr(FEATURE_CREATE_ROTATION, true); } // M32 part c
+    public static boolean createDisplayLinks() { return getOr(FEATURE_CREATE_DISPLAY_LINKS, true); }
     public static boolean foreignBreeding() { return getOr(FEATURE_FOREIGN_BREEDING, true); }
     public static boolean suppressForeignBreeding() { return getOr(FEATURE_SUPPRESS_FOREIGN_BREEDING, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }

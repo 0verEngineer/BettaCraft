@@ -63,6 +63,8 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     @Nullable
     private ResourceLocation selected;
     private int progress, spring, status = IDLE;
+    /** M32 part c: share of full work Create's rotation gives (looked at once a second; transient). */
+    private float turned;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -218,10 +220,14 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
             return NO_RECIPE;
         }
         if (!fits(r.result())) return OUTPUT_FULL;
+        if ((level.getGameTime() + pos.asLong()) % 20 == 0) turned = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, pos);
         if (powered()) {
             int fe = ServerConfig.getOr(ServerConfig.FOOD_MAKER_FE, 10);
+            if (turned > 0F) energy.drive(level, pos, fe); // M32 part c: Create's rotation instead of FE
             if (!energy.use(fe)) return NO_POWER;
         } else {
+            // M32 part c: Create's rotation winds the spring (at full speed twice as fast as the machine uses it)
+            if (turned > 0F) setSpring(spring + (int) Math.ceil(2F * turned));
             if (spring <= 0) return WIND_IT;
             spring--;
         }

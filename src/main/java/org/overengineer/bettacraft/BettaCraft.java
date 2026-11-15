@@ -57,6 +57,10 @@ public final class BettaCraft {
             org.overengineer.bettacraft.compat.create.CreateCompat.register();
             org.overengineer.bettacraft.compat.create.SableCompat.register();
         }));
+        // M32 part c: tanks and monitors as sources of Create's Display Link (the only class compiled against Create's API)
+        if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.create.CreateCompat.MOD_ID)) {
+            org.overengineer.bettacraft.compat.create.CreateDisplays.register(modBus);
+        }
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
                 org.overengineer.bettacraft.equipment.CabinetStones.clear());

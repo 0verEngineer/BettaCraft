@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm32c')) {
+                // gradlew runClient -Pcreate -Psmoketestm32c : only the M32 part c scene (Display Links write the values of a tank
+                // onto a sign)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m32conly', 'true'
+            }
             if (project.hasProperty('smoketestm32b')) {
                 // gradlew runClient -Pcreate -Psmoketestm32b : only the M32 part b scene (a tank on a Create bearing, standing and
                 // turned with the contraption; a tank on a Sable airship)
@@ -468,6 +474,10 @@ dependencies {
     // win). Never for GameTests (they ping the mock players like Jade). Config compat.overlayProvider picks the overlay.
     compileOnly "maven.modrinth:the-one-probe:${top_version}"
     if (project.hasProperty('top') && !project.hasProperty('noTop') && !gameTests) localRuntime "maven.modrinth:the-one-probe:${top_version}"
+    // Create (M32 part c): only compileOnly for the one class that extends its abstract DisplaySource (Display Links),
+    // loaded only when Create is there; everything else of the Create compat is reflection. Never in the jar; in dev
+    // Create comes from run/create-mods (-Pcreate).
+    compileOnly "maven.modrinth:create:${create_version}"
     compileOnly "maven.modrinth:wthit:${wthit_version}"
     compileOnly "maven.modrinth:badpackets:${badpackets_version}"
     if (project.hasProperty('wthit') && !project.hasProperty('noWthit') && !gameTests) {

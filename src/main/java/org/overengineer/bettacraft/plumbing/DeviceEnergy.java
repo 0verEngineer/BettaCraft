@@ -39,6 +39,22 @@ public class DeviceEnergy extends EnergyStorage {
         return false;
     }
 
+    /**
+     * M32 part c: Create's rotation next to the device at {@code pos} gives it the FE of its work ({@code fe} at full
+     * speed, proportionally less when slower; {@link org.overengineer.bettacraft.compat.create.CreateKinetics}). Returns
+     * the FE it added.
+     */
+    public int drive(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos, int fe) {
+        if (fe <= 0) return 0;
+        float w = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, pos);
+        if (w <= 0F) return 0;
+        int add = Math.min(capacity - energy, (int) Math.ceil(fe * w));
+        if (add <= 0) return 0;
+        energy += add;
+        changed.run();
+        return add;
+    }
+
     /** Takes {@code fe} if there is that much (true), else nothing. */
     public boolean use(int fe) {
         if (fe <= 0) return true;

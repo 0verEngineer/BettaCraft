@@ -109,6 +109,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
         if (!endless) amount = Math.min(amount, WaterSources.available(level, worldPosition, false));
         if (amount <= 0) return 0;
         int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * amount / 100.0);
+        if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
         if (DeviceEnergy.required() && !energy.use(fe)) return -1;
         TankInteractions.changeWater(level, c, -amount);
         long filled = 0;

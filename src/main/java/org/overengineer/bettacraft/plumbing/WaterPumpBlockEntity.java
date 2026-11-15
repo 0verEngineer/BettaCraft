@@ -52,6 +52,7 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
         double share = Regulator.share(power);
         if (CommonConfig.pipes() && share > 0 && !level.hasNeighborSignal(pos)) {
             int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
+            if (DeviceEnergy.required()) energy.drive(level, pos, fe); // M32 part c: Create's rotation
             if (!DeviceEnergy.required() || energy.getEnergyStored() >= fe) {
                 Direction out = state.getValue(WaterPumpBlock.FACING);
                 IFluidHandler from = FluidMoves.neighbour(level, pos, out.getOpposite()), to = FluidMoves.neighbour(level, pos, out);

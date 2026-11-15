@@ -80,6 +80,7 @@ public class LevelSensorBlockEntity extends BlockEntity {
             else {
                 int amount = (int) Math.min(missing, MAX_PER_STEP);
                 int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * amount / 100.0);
+                if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
                 if (DeviceEnergy.required() && energy.getEnergyStored() < fe) st = Status.NO_POWER;
                 else if (WaterSources.endless(level, worldPosition)) {
                     TankInteractions.topOff(level, c, amount, null);

@@ -89,6 +89,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         double share = Regulator.share(power);
         if (s.formed() && CommonConfig.multiblockFilter() && share > 0 && !level.hasNeighborSignal(worldPosition)) {
             int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
+            if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
             if (!DeviceEnergy.required() || energy.getEnergyStored() >= fe) {
                 double spongeDirt = 0;
                 int sponges = 0;

@@ -144,7 +144,10 @@ public class RoUnitBlockEntity extends BlockEntity {
         else {
             double rate = ServerConfig.getOr(ServerConfig.RO_RATE, 1.0);
             int fe = ServerConfig.getOr(ServerConfig.RO_FE, 20) * ticks;
-            if (org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() && energy.getEnergyStored() >= fe) {
+            // M32 part c: Create's rotation drives the pressure pump (the boost) like FE, also without the power options
+            boolean turned = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, worldPosition) > 0F;
+            if (turned) energy.drive(level, worldPosition, fe);
+            if ((org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() || turned) && energy.getEnergyStored() >= fe) {
                 energy.use(fe);
                 rate *= ServerConfig.getOr(ServerConfig.RO_BOOST, 4.0);
                 boosted = true;

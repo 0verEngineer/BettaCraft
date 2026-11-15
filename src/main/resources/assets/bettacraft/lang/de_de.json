@@ -3581,5 +3581,13 @@
   "message.bettacraft.travel.blocked.eggs": "Eier oder Jungtiere würden die Fahrt nicht überstehen",
   "message.bettacraft.travel.travelling": "Das Becken ist unterwegs: seine Tiere bleiben verpackt, bis es abgesetzt wird",
   "bettacraft.configuration.createContraptions": "Becken auf Create-Contraptions",
-  "bettacraft.configuration.createContraptions.tooltip": "Becken fahren auf Create-Contraptions (Kolben, Lager, Flaschenzüge, Portalkräne, Loren, Züge) und auf Luftschiffen von Create Aeronautics mit: die Tiere werden für die Fahrt ins Becken verpackt und schwimmend gezeichnet, die Pflege pausiert, alles kommt dort zurück, wo das Becken abgesetzt wird (aus: Create kann Becken nicht bewegen; ein Becken, das schon unterwegs ist, packt trotzdem aus)"
+  "bettacraft.configuration.createContraptions.tooltip": "Becken fahren auf Create-Contraptions (Kolben, Lager, Flaschenzüge, Portalkräne, Loren, Züge) und auf Luftschiffen von Create Aeronautics mit: die Tiere werden für die Fahrt ins Becken verpackt und schwimmend gezeichnet, die Pflege pausiert, alles kommt dort zurück, wo das Becken abgesetzt wird (aus: Create kann Becken nicht bewegen; ein Becken, das schon unterwegs ist, packt trotzdem aus)",
+  "tooltip.bettacraft.tank.packed": "Verpacktes Becken mit %s Tier(en): Wasser, Innenraum und Tiere reisen darin mit. Setze es, um das Becken wieder aufzubauen.",
+  "bettacraft.display_source.tank_values": "Beckenwerte",
+  "bettacraft.display_source.monitored_tanks": "Überwachte Becken",
+  "display.bettacraft.not_loaded": "nicht geladen",
+  "bettacraft.configuration.createRotation": "Create-Rotation für Geräte",
+  "bettacraft.configuration.createRotation.tooltip": "Die Rotation von Create treibt Wasserpumpen, Filterpumpenkopf, Wasserwechsel-Steuerung, Füllstandssensor, Umkehrosmose-Anlage und Futtermaschine statt FE an: eine Welle oder ein Zahnrad, das auf das Gerät zeigt, 64 U/min für volle Leistung, langsamer anteilig; keine Belastung (Stress) (aus: nur FE, die Kurbel und die anderen Quellen wie bisher)",
+  "bettacraft.configuration.createDisplayLinks": "Create-Display-Links",
+  "bettacraft.configuration.createDisplayLinks.tooltip": "Becken und Monitore sind Quellen für den Display Link von Create: die Werte eines Beckens oder eine Zeile pro Becken eines Monitors, auf Anzeigetafeln, Nixie-Röhren, Schildern und Lesepulten (aus: Display Links können sie nicht lesen)"
 }
