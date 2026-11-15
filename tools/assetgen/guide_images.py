@@ -616,6 +616,30 @@ def m29(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M29 part b scene (DevClientSmokeM29 part b, -Psmoketestm29b): a close-up of every puffer, barb and loach, the puffer and
+# barb tank, the loach tank. ``py guide_images.py m29b``.
+M29B_BOX = (280, 200, 1000, 740)
+M29B_WORLD = {f"tm_{s}": (f"sp_{s}", M29B_BOX) for s in (
+    "dwarf_puffer", "red_eye_puffer", "green_spotted_puffer", "tiger_barb", "odessa_barb", "cherry_barb",
+    "dwarf_chain_loach", "reticulated_loach", "garra_rufa")}
+# the dwarf puffers are tiny: a tighter crop (the camera cannot get closer than the glass)
+M29B_WORLD["tm_dwarf_puffer"] = ("sp_dwarf_puffer", (480, 370, 760, 560))
+M29B_WORLD["tm_red_eye_puffer"] = ("sp_red_eye_puffer", (500, 360, 780, 550))
+M29B_WORLD["tm_puffers"] = ("puffers_barbs", (0, 280, 1280, 700))
+M29B_WORLD["tm_barbs"] = ("puffers_barbs", (0, 280, 1280, 700))
+
+
+def m29b(out_en: Path) -> None:
+    for name, (shot, box) in M29B_WORLD.items():
+        src = SHOTS / f"bettacraft_m29b_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -630,6 +654,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m29b"]:
+        m29b(out_en)
+        return 0
     if sys.argv[1:] == ["m29"]:
         m29(out_en)
         return 0

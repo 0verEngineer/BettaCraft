@@ -41,6 +41,9 @@ import org.slf4j.LoggerFactory;
  * with every ram and Apistogramma variety and sex posed in two rows (a slate cave and a coconut shell behind them), a tall
  * tank with every angelfish and discus variety, close-ups, and a ram pair guarding its eggs on the slate. Checks (errors in
  * the log): the client sees every cichlid.
+ * <p>
+ * Part b ({@code -Psmoketestm29b}, screenshots {@code bettacraft_m29b_*}): a tank with every puffer and barb (variety and
+ * sex), a tank with the loaches, the garra and the green spotted puffer (brackish), close-ups of every species.
  */
 final class DevClientSmokeM29 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -53,8 +56,20 @@ final class DevClientSmokeM29 {
     /** The first posed fish of every species (for its close-up and the handbook picture). */
     private final java.util.Map<TankmateSpecies, Vec3> firstOf = new java.util.concurrent.ConcurrentHashMap<>();
     private int wait;
+    private final boolean partB;
+    private final String prefix;
 
     DevClientSmokeM29() {
+        this(false);
+    }
+
+    DevClientSmokeM29(boolean partB) {
+        this.partB = partB;
+        this.prefix = partB ? "bettacraft_m29b_" : "bettacraft_m29_";
+        if (partB) {
+            partB();
+            return;
+        }
         then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 700, 0F, 10F)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
@@ -91,6 +106,75 @@ final class DevClientSmokeM29 {
             then(40, () -> shot("sp_" + s.id()));
         }
         then(1, () -> mc.options.hideGui = false);
+    }
+
+    // ------------------------------------------------------------------ part b: puffers, barbs, loaches
+
+    private static final List<TankmateSpecies> PART_B_A = List.of(TankmateSpecies.DWARF_PUFFER, TankmateSpecies.RED_EYE_PUFFER,
+            TankmateSpecies.TIGER_BARB, TankmateSpecies.ODESSA_BARB, TankmateSpecies.CHERRY_BARB);
+    private static final List<TankmateSpecies> PART_B_B = List.of(TankmateSpecies.DWARF_CHAIN_LOACH, TankmateSpecies.RETICULATED_LOACH,
+            TankmateSpecies.GARRA_RUFA, TankmateSpecies.GREEN_SPOTTED_PUFFER);
+
+    private void partB() {
+        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 760, 0F, 10F)));
+        then(20, () -> server(this::buildB));
+        then(1, () -> mc.options.hideGui = true);
+        then(80, () -> server(this::poseB));
+        then(1, () -> look(dwarfs.getX() + 3.0, dwarfs.getY() + 1.0, dwarfs.getZ() - 4.6, 0F, 6F));
+        then(60, () -> {
+            shot("puffers_barbs");
+            int n = 0;
+            for (Entity e : mc.level.entitiesForRendering()) if (e instanceof TankmateEntity m && (PART_B_A.contains(m.species()) || PART_B_B.contains(m.species()))) n++;
+            LOGGER.info("[smoketest] M29b client sees {} puffers, barbs and loaches", n);
+            if (n < 15) LOGGER.error("[smoketest] M29b the client sees too few: {}", n);
+        });
+        then(1, () -> look(big.getX() + 3.0, big.getY() + 1.0, big.getZ() - 4.6, 0F, 6F));
+        then(60, () -> shot("loaches"));
+        List<TankmateSpecies> all = new ArrayList<>(PART_B_A);
+        all.addAll(PART_B_B);
+        for (TankmateSpecies s : all) {
+            then(1, () -> {
+                Vec3 at = firstOf.get(s);
+                if (at == null) {
+                    LOGGER.error("[smoketest] M29b no posed {}", s.id());
+                    return;
+                }
+                double back = s.length() > 0.6 ? 1.7 : s.length() > 0.35 ? 1.3 : 1.15;
+                look(at.x, at.y + 0.05, at.z - back, 0F, 2F);
+            });
+            then(40, () -> shot("sp_" + s.id()));
+        }
+        then(1, () -> mc.options.hideGui = false);
+    }
+
+    private void buildB(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        level.setDayTime(6000);
+        BlockPos base = p.blockPosition().offset(0, 0, -10);
+        dwarfs = base;
+        TankBlockEntity a = tank(level, p, dwarfs, 6, 2, 2, 26F);
+        region(level, a);
+        light(level, dwarfs, 6, 2, 1);
+        big = base.offset(0, 0, -8);
+        TankBlockEntity b = tank(level, p, big, 6, 2, 2, 26F);
+        b.getTank().setSalinity(12F); // the green spotted puffer lives in brackish water
+        region(level, b);
+        light(level, big, 6, 2, 1);
+        for (TankmateSpecies s : PART_B_A) {
+            for (String v : s.varieties()) {
+                fish(level, a, s, v, false);
+                if (s.dimorphic()) fish(level, a, s, v, true);
+            }
+        }
+        for (TankmateSpecies s : PART_B_B) fish(level, b, s, "wild", false);
+    }
+
+    private void poseB(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        TankBlockEntity a = TankMultiblock.getController(level, dwarfs);
+        if (a != null) row(level, a, 6, new double[]{1.3, 0.55}, 0.95, firstOf);
+        TankBlockEntity b = TankMultiblock.getController(level, big);
+        if (b != null) row(level, b, 4, new double[]{0.3}, 1.4, firstOf);
     }
 
     // ------------------------------------------------------------------ scene
@@ -266,6 +350,6 @@ final class DevClientSmokeM29 {
 
     private void shot(String name) {
         mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m29_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, prefix + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }
