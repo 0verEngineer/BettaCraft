@@ -34,6 +34,7 @@ public final class ClientFeatures {
 
     /** Back to the local config (leaving a server). */
     public static void logout() {
+        org.overengineer.bettacraft.config.AnimalSizes.setClient(null); // M36: the local config again
         boolean presetChanged = org.overengineer.bettacraft.config.Presets.setRemote(null, null);
         if (Features.setRemote(null) || presetChanged) refresh();
     }

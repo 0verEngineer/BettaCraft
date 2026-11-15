@@ -282,6 +282,20 @@ public class BettaEntity extends AbstractFish {
         return lifeStage().scale();
     }
 
+    /**
+     * M36: the hitbox (and, in the renderer, the model) times the size setting ({@code sizes.betta}: Normal 0.77, Large 1).
+     * The stocking, the breeding and every other game value do not depend on it.
+     */
+    @Override
+    protected net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+        return super.getDefaultDimensions(pose).scale(org.overengineer.bettacraft.config.AnimalSizes.bettaFactor());
+    }
+
+    /** M36: how big the fish is drawn relative to an adult of the size before M36 (life stage times the size setting). */
+    public float sizeScale() {
+        return lifeStage().scale() * org.overengineer.bettacraft.config.AnimalSizes.bettaFactor();
+    }
+
     public boolean isSick() {
         return entityData.get(DATA_SICK);
     }
@@ -440,9 +454,18 @@ public class BettaEntity extends AbstractFish {
     /** M21.5: the smoothed swimming pose on the client. */
     public final org.overengineer.bettacraft.entity.SwimPose swimPose = new org.overengineer.bettacraft.entity.SwimPose();
 
+    /** M36: the size factor the hitbox was last made with ({@link org.overengineer.bettacraft.config.AnimalSizes}). */
+    private float sizeFactor = org.overengineer.bettacraft.config.AnimalSizes.bettaFactor();
+
     @Override
     public void tick() {
         super.tick();
+        // M36: the size setting changed (config reload, the server's setting arrived): the hitbox follows at once
+        float f = org.overengineer.bettacraft.config.AnimalSizes.bettaFactor();
+        if (f != sizeFactor) {
+            sizeFactor = f;
+            refreshDimensions();
+        }
         if (level().isClientSide) {
             // fins spread and fold smoothly (~8 ticks) instead of jumping when the synced flare flag toggles
             flareAmountO = flareAmount;
@@ -470,14 +493,14 @@ public class BettaEntity extends AbstractFish {
             // Keep our bettas inside the tank water (walls stop them anyway; this keeps them off the surface and, in a
             // free-shape tank, out of the notches).
             Vec3 p = position();
-            double m = Math.max(0.05, 0.2 * lifeStage().scale());
-            Vec3 c = water.clamp(p, m + 1.0 / 16, 1.0 / 16 + 0.05, 0.3 * lifeStage().scale());
+            double m = Math.max(0.05, 0.2 * sizeScale()); // M36: the drawn size
+            Vec3 c = water.clamp(p, m + 1.0 / 16, 1.0 / 16 + 0.05, 0.3 * sizeScale());
             double cx = c.x, cy = c.y, cz = c.z;
             if (cx != p.x || cy != p.y || cz != p.z) {
                 setDeltaMovement(getDeltaMovement().scale(0.5).add((cx - p.x) * 0.05, (cy - p.y) * 0.05, (cz - p.z) * 0.05));
             }
             // the fins reach well beyond the hitbox: keep the whole rendered fish (tail, fins) inside the glass
-            Vec3 fin = BettaExtents.push(water, p, yBodyRot, genome().shape(), lifeStage().scale(),
+            Vec3 fin = BettaExtents.push(water, p, yBodyRot, genome().shape(), sizeScale(),
                     level().getGameTime() < flareUntil, 1.0 / 16 + 0.01);
             if (fin.lengthSqr() > 1e-8) {
                 setPos(p.x + fin.x, p.y + fin.y, p.z + fin.z);

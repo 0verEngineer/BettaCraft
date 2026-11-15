@@ -74,6 +74,7 @@ public final class ModNetwork {
         // common code: on an integrated server both sides read the same config anyway
         ctx.enqueueWork(() -> {
             org.overengineer.bettacraft.genetics.GeneVisibility.setClientFree(payload.genesFree());
+            org.overengineer.bettacraft.config.AnimalSizes.setClient(org.overengineer.bettacraft.config.AnimalSize.byName(payload.bettaSize())); // M36
         });
     }
 

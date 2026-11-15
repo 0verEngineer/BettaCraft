@@ -435,6 +435,15 @@ public final class TankBreeding {
 
     // ------------------------------------------------------------------ predators
 
+    /** M36: the hitbox width for the game rules, without the size setting of the bettas (the rules do not depend on the look). */
+    static float gameWidth(Entity e) {
+        return e instanceof BettaEntity ? e.getBbWidth() / org.overengineer.bettacraft.config.AnimalSizes.bettaFactor() : e.getBbWidth();
+    }
+
+    static float gameHeight(Entity e) {
+        return e instanceof BettaEntity ? e.getBbHeight() / org.overengineer.bettacraft.config.AnimalSizes.bettaFactor() : e.getBbHeight();
+    }
+
     private static void predators(ServerLevel level, TankBlockEntity controller, List<Entity> live, double days, RandomSource r) {
         if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         double rate = ServerConfig.getOr(ServerConfig.COMBAT_PREDATOR_ATTACKS_PER_DAY, 4.0);
@@ -444,10 +453,10 @@ public final class TankBreeding {
             List<LivingEntity> prey = new ArrayList<>();
             for (Entity e : live) {
                 if (e != pred && e.isAlive() && e instanceof LivingEntity le && !e.getType().is(ModTags.PREDATORS)
-                        && e.getBbWidth() <= PREY_MAX_WIDTH) prey.add(le);
+                        && gameWidth(e) <= PREY_MAX_WIDTH) prey.add(le);
             }
             if (prey.isEmpty()) continue;
-            LivingEntity victim = prey.stream().min(Comparator.comparingDouble(e -> e.getBbWidth() * e.getBbHeight())).orElseThrow();
+            LivingEntity victim = prey.stream().min(Comparator.comparingDouble(e -> gameWidth(e) * gameHeight(e))).orElseThrow();
             if (pred instanceof Mob mob && mob.getNavigation().isDone()) mob.getNavigation().moveTo(victim, 1.2);
             if (r.nextDouble() >= 1 - Math.exp(-rate * days)) continue;
             boolean small = victim instanceof BettaEntity b ? !b.isAdult() : victim.getBbWidth() < 0.3F;
@@ -510,7 +519,7 @@ public final class TankBreeding {
         if (n != null && n.hasEggs() && females > 0) out.add("remove_female");
         if (fry > 0 && males > 0) out.add("remove_male");
         if (males >= 2 && ServerConfig.getOr(ServerConfig.COMBAT_MALES_FIGHT, true)) out.add("fight");
-        if (predator && live.stream().anyMatch(e -> !e.getType().is(ModTags.PREDATORS) && e.getBbWidth() <= PREY_MAX_WIDTH)) out.add("predator");
+        if (predator && live.stream().anyMatch(e -> !e.getType().is(ModTags.PREDATORS) && gameWidth(e) <= PREY_MAX_WIDTH)) out.add("predator");
         if (org.overengineer.bettacraft.tank.plants.TankPlants.dense(tank)) out.add("dense_plants"); // M12
         else if (org.overengineer.bettacraft.plants.InteriorPlants.overgrown(level.getServer(), tank)) out.add("overgrown"); // M13
         out.addAll(org.overengineer.bettacraft.tankmates.TankmateBreeding.warnings(level, controller)); // M19

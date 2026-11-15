@@ -275,6 +275,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue WILD_BEAUTIFUL_CHANCE;
     public static final ModConfigSpec.DoubleValue WILD_MUTATION_CHANCE;
     public static final ModConfigSpec.BooleanValue GENES_ALWAYS_VISIBLE;
+    // M36
+    public static final ModConfigSpec.EnumValue<AnimalSize> SIZE_BETTA;
     public static final ModConfigSpec.IntValue WILD_FISH_NEARBY;
     public static final ModConfigSpec.IntValue WILD_CRITTERS_NEARBY;
     // M28.1: the own spawn pass of the wild animals
@@ -1065,6 +1067,12 @@ public final class ServerConfig {
                 .defineInRange("foreignHealthSpeed", 1.0, 0.1, 10.0);
         b.pop();
 
+        b.comment("M36: how big the animals are drawn, with their hitbox (only the look and the hitbox: no data changes, the stocking stays the same;",
+                "a change works at once, also for the players on the server)").push("sizes");
+        SIZE_BETTA = b.comment("Size of the bettas (all species, every life stage in proportion): NORMAL = smaller, about halfway between",
+                        "DragN's Just Bettas and the size before Bettacraft 1.28 (0.77 of it); LARGE = the size before 1.28")
+                .defineEnum("betta", AnimalSize.NORMAL);
+        b.pop();
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");
         GUIDE_GIVE_BOOK = b.comment("When each player gets the handbook, once: ON_JOIN = on the first join, ON_FIRST_CATCH_OR_CRAFT = with the",
                         "first caught betta or the first crafted Bettacraft item, NEVER = not at all (craft it from a book and betta pellets)")

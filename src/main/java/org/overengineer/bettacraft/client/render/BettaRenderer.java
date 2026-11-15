@@ -80,7 +80,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
     public void render(BettaEntity fish, float yaw, float partialTicks, PoseStack pose, MultiBufferSource buffers, int light) {
         BettaModel m = models.get(shapeOf(fish.genome()));
         this.model = m;
-        this.shadowRadius = 0.15F * fish.lifeStage().scale();
+        this.shadowRadius = 0.15F * fish.sizeScale();
         BettaTints.beginFish(fish);
         ResourceLocation skin = skin(fish);
         BettaTints.endFish();
@@ -137,7 +137,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
 
     @Override
     protected void scale(BettaEntity fish, PoseStack pose, float partialTick) {
-        float s = BettaModelDefinitions.ADULT_RENDER_SCALE * fish.lifeStage().scale()
+        float s = BettaModelDefinitions.ADULT_RENDER_SCALE * fish.sizeScale() // M36: life stage times the size setting
                 * org.overengineer.bettacraft.genetics.BettaSpecies.scaleOf(fish.genome().species()); // M29 part c: imbellis smaller
         pose.scale(s, s, s);
     }

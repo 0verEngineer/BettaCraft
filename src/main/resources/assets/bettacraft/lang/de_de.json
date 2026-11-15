@@ -3834,5 +3834,10 @@
   "quest.bettacraft.terrarium_gear.desc": "Ein Wärmespot gibt Wärme und UV, eine Sprühanlage Luftfeuchte, und das Thermo-Hygrometer zeigt beides.",
   "quest.bettacraft.gecko.title": "Leopardgecko",
   "quest.bettacraft.gecko.desc": "Setze einen Leopardgecko in ein warmes, trockenes Terrarium.",
-  "guide.bettacraft.feature_off": "Auf diesem Server abgeschaltet: %s (%s). Was auf dieser Seite steht, wird hier nicht hergestellt und lebt hier nicht weiter; was schon in der Welt ist, bleibt."
+  "guide.bettacraft.feature_off": "Auf diesem Server abgeschaltet: %s (%s). Was auf dieser Seite steht, wird hier nicht hergestellt und lebt hier nicht weiter; was schon in der Welt ist, bleibt.",
+  "bettacraft.configuration.sizes": "Tiergrößen",
+  "bettacraft.configuration.betta": "Betta-Größe",
+  "bettacraft.configuration.betta.tooltip": "Wie groß die Bettas dargestellt werden, mit ihrer Hitbox (alle Arten, jedes Lebensstadium im Verhältnis): Normal = kleiner, etwa in der Mitte zwischen DragN's Just Bettas und der Größe vor Bettacraft 1.28; Groß = die Größe vor 1.28. Nur Aussehen und Hitbox: der Besatz und die Daten der Fische bleiben gleich. Wirkt sofort, für alle Spieler auf dem Server.",
+  "bettacraft.configuration.size.normal": "Normal",
+  "bettacraft.configuration.size.large": "Groß"
 }

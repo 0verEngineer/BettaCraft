@@ -54,6 +54,7 @@ class LangCompletenessTest {
             "pectoral.bettacraft.normal", "stage.bettacraft.adult", "stage.bettacraft.subadult",
             "block.bettacraft.monitor", "monitor.bettacraft.value.co2",
             "gui.bettacraft.terrarium.mode.aquarium", "gui.bettacraft.terrarium.mode.paludarium", "gui.bettacraft.terrarium.mode.terrarium", // M31
+            "bettacraft.configuration.size.normal", // M36
             "gui.bettacraft.tank_mode.aquarium", "gui.bettacraft.tank_mode.paludarium", "gui.bettacraft.tank_mode.terrarium", // M33.1
             "block.bettacraft.thermo_hygrometer", "monitor.bettacraft.value.uv",
             // M33: the switches of other mods are named after the mod
