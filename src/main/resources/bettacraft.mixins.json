@@ -4,6 +4,8 @@
   "package": "org.overengineer.bettacraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "interior.ChunkGenerationTaskMixin",
+    "interior.ChunkMapMixin",
     "interior.CoralBlockMixin",
     "interior.CoralMixin",
     "interior.FloatingPlantItemMixin",
