@@ -55,7 +55,7 @@ public final class TankPower {
     public static int heaterDemand(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         Boolean heating = TankTemperature.heating(TankCare.ambient(level, t), t.targetTemp());
-        if (heating == null) return matDemand(c);
+        if (heating == null || t.waterMb() <= 0) return matDemand(c); // M31: no water, no water heating
         double cap = heating ? TankCare.rawHeaterBlocks(level, t) : TankCare.rawCoolerBlocks(level, t);
         if (cap <= 0) return matDemand(c);
         double perBlock = heating ? ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0)

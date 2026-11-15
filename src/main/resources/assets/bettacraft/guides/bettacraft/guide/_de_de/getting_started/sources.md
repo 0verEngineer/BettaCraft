@@ -374,6 +374,7 @@ die [Biom-Tags](../settings.md)).
 | [Floridakrebs](../invertebrates/florida_crayfish.md) | 1 | 8 |
 | [Raubschnecke](../invertebrates/assassin_snail.md) | 1 | 4 |
 | [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md) | 1 | 6 |
+| [Moschusschildkröteneimer](../terrarium/musk_turtle.md) | 1 | 7 |
 | [Glühlichtsalmler](../tankmates/glowlight_tetra.md) | 6 | 7 |
 | [Gelbflossen-Panzerwels](../tankmates/green_gold_cory.md) | 6 | 8 |
 | [L134 Leopard-Frosch-Wels](../tankmates/leopard_frog_pleco.md) | 2 | 7 |

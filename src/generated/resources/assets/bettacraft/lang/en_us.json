@@ -1797,6 +1797,7 @@
   "gui.bettacraft.terrarium.mode_line_dry": "%1$s · land %2$s %% · no water",
   "gui.bettacraft.terrarium.no_animals": "No terrarium animals in this tank",
   "gui.bettacraft.terrarium.no_values": "The climate is worked out in a moment",
+  "gui.bettacraft.terrarium.no_water": "A terrarium without water: water quality, filters, oxygen and the water chemistry stand still",
   "gui.bettacraft.terrarium.overview_air": "air %1$s °C, %2$s %% RH, UV %3$s",
   "gui.bettacraft.terrarium.overview_both": "Water %1$s °C · %2$s (room %3$s °C)",
   "gui.bettacraft.terrarium.overview_dry": "Terrarium: %1$s (room %2$s °C)",

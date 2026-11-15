@@ -372,6 +372,7 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 | [Florida Crayfish](../invertebrates/florida_crayfish.md) | 1 | 8 |
 | [Assassin Snail](../invertebrates/assassin_snail.md) | 1 | 4 |
 | [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md) | 1 | 6 |
+| [Bucket of Musk Turtle](../terrarium/musk_turtle.md) | 1 | 7 |
 | [Glowlight Tetra](../tankmates/glowlight_tetra.md) | 6 | 7 |
 | [Green Gold Cory](../tankmates/green_gold_cory.md) | 6 | 8 |
 | [L134 Leopard Frog Pleco](../tankmates/leopard_frog_pleco.md) | 2 | 7 |

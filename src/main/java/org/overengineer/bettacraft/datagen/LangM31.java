@@ -104,6 +104,7 @@ final class LangM31 {
         a.accept("gui.bettacraft.terrarium.no_animals", "No terrarium animals in this tank");
         a.accept("gui.bettacraft.terrarium.animals_fine", "All %s terrarium animals are fine");
         a.accept("gui.bettacraft.terrarium.animal_problem", "%1$s: %2$s");
+        a.accept("gui.bettacraft.terrarium.no_water", "A terrarium without water: water quality, filters, oxygen and the water chemistry stand still");
         // overlays, monitor
         a.accept("jade.bettacraft.tank.climate", "%1$s: air %2$s °C, %3$s %% RH, UV %4$s");
         a.accept("jade.bettacraft.tank.climate_detail", "Basking spot %1$s °C, land %2$s %%");

@@ -3420,5 +3420,6 @@
   "message.bettacraft.terrarium.wrong_mode": "%1$s lebt in %2$s (dieses Becken: %3$s)",
   "log.bettacraft.terrarium.mode": "Das Becken ist jetzt: %s",
   "log.bettacraft.terrarium.problem": "%1$s: %2$s",
-  "log.bettacraft.terrarium.died": "%s ist gestorben"
+  "log.bettacraft.terrarium.died": "%s ist gestorben",
+  "gui.bettacraft.terrarium.no_water": "Ein Terrarium ohne Wasser: Wasserqualität, Filter, Sauerstoff und Wasserchemie stehen still"
 }

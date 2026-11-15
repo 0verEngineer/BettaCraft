@@ -188,7 +188,9 @@ public final class TankCare {
     public static void updateTemperature(ServerLevel level, TankBlockEntity be, double dtDays) {
         TankData tank = be.getTank();
         float ambient = ambient(level, tank);
-        float eq = TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(level, tank), coolerBlocks(level, tank), tank.waterBlocks());
+        // M31: without water no heater heats anything: the "water" temperature of a dry tank follows its air (a terrarium) or the room
+        float eq = tank.waterMb() <= 0 ? (tank.hasClimate() ? tank.airTemp() : ambient)
+                : TankTemperature.equilibrium(ambient, tank.targetTemp(), heaterBlocks(level, tank), coolerBlocks(level, tank), tank.waterBlocks());
         double tau = ServerConfig.getOr(ServerConfig.TEMPERATURE_TAU_DAYS, 0.1);
         float next = TankTemperature.approach(tank.waterTemp(), eq, dtDays, tau);
         if (Math.abs(next - tank.waterTemp()) > 1e-4) {

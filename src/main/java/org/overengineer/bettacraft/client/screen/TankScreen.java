@@ -852,6 +852,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int pct = v.capacityMb <= 0 ? 0 : (int) (v.waterMb * 100 / v.capacityMb);
         line(g, Component.translatable("gui.bettacraft.water.volume", v.waterMb, v.capacityMb, pct), x, y, TEXT_LIGHT);
         y += 11;
+        // M31: a dry terrarium has no water values
+        if (v.waterMb <= 0 && v.climate.hasLand()) {
+            fitLine(g, Component.translatable("gui.bettacraft.terrarium.no_water").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, 226);
+            return;
+        }
         // M11: what the tank is made of (glass and style); M20: in salt or brackish water the salt values instead;
         // M25: with water chemistry its values (salt water: the pH after the salt), the glass moves to the last line
         boolean salty = w.salinity >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM;
