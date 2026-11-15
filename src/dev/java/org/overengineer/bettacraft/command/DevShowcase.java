@@ -526,6 +526,7 @@ public final class DevShowcase {
         }
         for (int x = 2; x < 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 0), (x % 2 == 0 ? ModBlocks.GLASS_PIPE : ModBlocks.STAINLESS_STEEL_PIPE).get().defaultBlockState());
         LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());
+        terraria(level); // M31
         // M30: big tanks (the last row: they are deeper than a row): the freshwater giants and the sea giants
         at = startRow(level, "Großbecken");
         bigTank(level, at, 24, 6, 12, 0F, new TankmateSpecies[]{TankmateSpecies.PANGASIUS, TankmateSpecies.REDTAIL_CATFISH, TankmateSpecies.WELS_CATFISH,
@@ -534,6 +535,96 @@ public final class DevShowcase {
         bigTank(level, at, 28, 6, 14, 35F, new TankmateSpecies[]{TankmateSpecies.BAMBOO_SHARK, TankmateSpecies.BAMBOO_SHARK, TankmateSpecies.BLACKTIP_REEF_SHARK,
                 TankmateSpecies.SPOTTED_EAGLE_RAY, TankmateSpecies.COWNOSE_RAY, TankmateSpecies.COWNOSE_RAY, TankmateSpecies.COWNOSE_RAY,
                 TankmateSpecies.HONEYCOMB_MORAY}, "Riesen des Meeres");
+    }
+
+    /**
+     * M31: a row of terraria: a paludarium with sliders and a musk turtle (land on the right, a basking lamp), a dry terrarium
+     * with leopard geckos and a corn snake, one with crested geckos and dart frogs on moss, and the mobs in glass: drowned in an
+     * aquarium, a spider, a skeleton and a zombie in a terrarium with a lid.
+     */
+    private static void terraria(ServerLevel level) {
+        BlockPos at = startRow(level, "Terrarien");
+        ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+        // a paludarium: water on the left, land rising to the right
+        TankBlockEntity pc = tank(level, at, 4, 3, 3, 0F, false);
+        InteriorRegion pr = region(level, pc, Blocks.SAND.defaultBlockState());
+        for (int x = 30; x < pr.sizeX(); x++) for (int z = 0; z < pr.sizeZ(); z++) {
+            int h = Math.min(26, 2 + (x - 30) * 2);
+            for (int y = 0; y < h; y++) in.setBlock(pr.toWorld(x, y, z), y == h - 1 ? Blocks.GRASS_BLOCK.defaultBlockState() : Blocks.DIRT.defaultBlockState(), 2);
+        }
+        org.overengineer.bettacraft.tank.TankInteractions.changeWater(level, pc, 12000);
+        level.setBlockAndUpdate(at.offset(3, 3, 1), ModBlocks.BASKING_LAMP.get().defaultBlockState());
+        org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, pc);
+        herp(level, pc, org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER, true, 0);
+        herp(level, pc, org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER, false, 1);
+        herp(level, pc, org.overengineer.bettacraft.terrarium.HerpSpecies.MUSK, false, 0);
+        name(level, at, "Paludarium: Schmuckschildkröten");
+        // a dry terrarium: leopard geckos and a corn snake on sand and stone under a basking lamp
+        at = at.east(4 + GAP);
+        TankBlockEntity dc = tank(level, at, 4, 2, 3, 0F, false);
+        InteriorRegion dr = region(level, dc, Blocks.SAND.defaultBlockState());
+        rock(in, dr, dr.sizeX() * 3 / 4, dr.sizeZ() * 2 / 3, 9, 10, Blocks.SANDSTONE.defaultBlockState());
+        level.setBlockAndUpdate(at.offset(1, 2, 1), ModBlocks.BASKING_LAMP.get().defaultBlockState());
+        org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, dc);
+        herp(level, dc, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, true, 0);
+        herp(level, dc, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, false, 1);
+        herp(level, dc, org.overengineer.bettacraft.terrarium.HerpSpecies.CORN_SNAKE, true, 0);
+        name(level, at, "Terrarium: Leopardgeckos");
+        // a moist terrarium on moss: crested geckos and a horned frog
+        at = at.east(4 + GAP);
+        TankBlockEntity mc = tank(level, at, 3, 3, 3, 0F, false);
+        InteriorRegion mr = region(level, mc, Blocks.MOSS_BLOCK.defaultBlockState());
+        rock(in, mr, mr.sizeX() / 3, mr.sizeZ() * 2 / 3, 7, 14, Blocks.OAK_LOG.defaultBlockState());
+        org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, mc);
+        herp(level, mc, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, true, 0);
+        herp(level, mc, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, false, 2);
+        herp(level, mc, org.overengineer.bettacraft.terrarium.HerpSpecies.HORNED_FROG, false, 0);
+        name(level, at, "Terrarium: Kronengeckos");
+        // M31 part d: mobs in glass
+        at = at.east(3 + GAP);
+        TankBlockEntity ac = tank(level, at, 3, 2, 2, 0F, true);
+        region(level, ac, Blocks.GRAVEL.defaultBlockState());
+        org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, ac);
+        glassMob(level, ac, net.minecraft.world.entity.EntityType.DROWNED, false);
+        glassMob(level, ac, net.minecraft.world.entity.EntityType.DROWNED, true);
+        name(level, at, "Mobs im Glas: Ertrunkene");
+        at = at.east(3 + GAP);
+        TankBlockEntity sc = tank(level, at, 3, 2, 2, 0F, false);
+        InteriorRegion sr = region(level, sc, Blocks.COARSE_DIRT.defaultBlockState());
+        rock(in, sr, sr.sizeX() * 2 / 3, sr.sizeZ() / 2, 8, 8, Blocks.COBBLESTONE.defaultBlockState());
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 2; z++) level.setBlockAndUpdate(at.offset(x, 2, z), ModBlocks.TANK_LID.get().defaultBlockState());
+        org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, sc);
+        glassMob(level, sc, net.minecraft.world.entity.EntityType.SPIDER, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityType.SKELETON, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityType.ZOMBIE, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityType.SLIME, false);
+        name(level, at, "Mobs im Glas: Spinne, Skelett");
+        LOGGER.info("[showcase] M31 row: paludarium {}, terraria, mobs in glass {}", pc.getBlockPos(), sc.getBlockPos());
+    }
+
+    private static void herp(ServerLevel level, TankBlockEntity c, org.overengineer.bettacraft.terrarium.HerpSpecies s, boolean female, int variety) {
+        var e = org.overengineer.bettacraft.registry.ModEntities.herp(s).create(level);
+        if (e == null) return;
+        e.setFemale(female);
+        e.setVariety(variety);
+        ItemStack box = e.getBucketItemStack();
+        e.saveToBucketTag(box);
+        e.discard();
+        Component err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, box, org.overengineer.bettacraft.registry.ModEntities.herp(s), null, 0L);
+        if (err != null) LOGGER.warn("[showcase] {}: {}", s.id(), err.getString());
+        else animals++;
+    }
+
+    private static void glassMob(ServerLevel level, TankBlockEntity c, net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob> type, boolean baby) {
+        var m = type.create(level);
+        if (m == null) return;
+        if (baby) m.setBaby(true);
+        if (m instanceof net.minecraft.world.entity.monster.Slime s) s.setSize(1, true);
+        ItemStack jar = org.overengineer.bettacraft.mobs.MobJarItem.fillWith(m);
+        m.discard();
+        Component err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, jar, type, null, 0L);
+        if (err != null) LOGGER.warn("[showcase] {}: {}", type.toShortString(), err.getString());
+        else animals++;
     }
 
     /** M30: a big tank (interior scale 8) with sand, rocks to hide under and big animals put in by the size rule. */

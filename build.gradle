@@ -757,7 +757,9 @@ tasks.register('buildShowcase') {
                 'max-tick-time=-1'].join('\n') + '\n', 'UTF-8')
         def cp = new File(logs, 'classpath.txt')
         cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
-        def command = ([java] + srv.allJvmArgs + ['-Dbettacraft.showcase=true', "@${cp.absolutePath}".toString(), srv.mainClass.get()] + srv.args
+        // M31: the build keeps the interiors of all 430 tanks loaded (about 150 000 tall interior chunks, ~13 GB) until it
+        // saves; the default heap (a quarter of the RAM: 16 GB here) ran out with the terrarium row
+        def command = ([java] + srv.allJvmArgs + ['-Xmx24G', '-Dbettacraft.showcase=true', "@${cp.absolutePath}".toString(), srv.mainClass.get()] + srv.args
                 + ['--universe', saves.absolutePath, '--world', 'Bettacraft Schaukasten']).collect { it.toString() }
         def log = new File(logs, 'server.log')
         def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
