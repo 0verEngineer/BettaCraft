@@ -48,6 +48,6 @@ first dorsal fin and long pectorals, every fin with a jet black tip. It grows to
 
 * **[Large net](large_net.md)** in warm oceans (coral reefs): 0.57 % per swing (about 1 in 175 swings), into an empty transport tub (config `features.bigAnimals`).
 * **[Steel leader](steel_leader.md)** (fishing) in warm oceans (coral reefs): 0.71 % per catch (about 1 in 140 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 1) (config `features.bigAnimals`).
+* **Wild** in warm oceans (coral reefs), alone (spawn weight 1) (config `features.bigAnimals`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -34,12 +34,13 @@ public final class TerrariumAnimals {
     private TerrariumAnimals() {}
 
     /**
-     * The terrarium animals of the mod (common setup): our turtles by their grown needs, and the hatchlings of the vanilla
+     * The terrarium animals of the mod (common setup): our turtles, frogs, geckos and the snake by their grown needs, and the hatchlings of the vanilla
      * sea turtle (M31 part b; a grown one is too big for any tank, a hatchling that grows up leaves in a bag like every
      * outgrown animal, M17).
      */
     public static void registerOurs() {
-        for (TurtleSpecies s : TurtleSpecies.ALL) register(org.overengineer.bettacraft.registry.ModEntities.turtle(s), s.needs(), org.overengineer.bettacraft.config.CommonConfig::turtles);
+        for (HerpSpecies s : HerpSpecies.ALL) register(org.overengineer.bettacraft.registry.ModEntities.herp(s), s.needs(),
+                s.turtle() ? org.overengineer.bettacraft.config.CommonConfig::turtles : org.overengineer.bettacraft.config.CommonConfig::herps); // part c: the amphibians and reptiles
         register(EntityType.TURTLE, SEA_TURTLE, org.overengineer.bettacraft.config.CommonConfig::turtles);
     }
 

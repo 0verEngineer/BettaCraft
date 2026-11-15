@@ -39,26 +39,30 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
 
 /**
- * M31 part b: a turtle of the mod ({@link TurtleSpecies}: musk turtle, slider, Hermann's tortoise, Reeves' turtle). On top
- * of the {@link TerrariumAnimalEntity}:
+ * M31: an egg-laying terrarium animal of the mod ({@link HerpSpecies}: part b the turtles, part c the dart frogs, the horned
+ * frog, the geckos and the corn snake). On top of the {@link TerrariumAnimalEntity}:
  * <ul>
- *     <li>a sex (decided by the nest temperature when it hatched, {@link TurtleSex}; random for a wild one) and a variety
- *     (the slider: red-eared or yellow-bellied);</li>
- *     <li>growth from a hatchling over {@link TurtleSpecies#growDays} (size, stocking weight, the tank size it needs);</li>
+ *     <li>a sex (decided by the nest temperature when it hatched, {@link EggSex}, or genetic; random for a wild one) and a
+ *     variety (the slider: red-eared or yellow-bellied; part c: the three dart frogs, the gecko and snake morphs);</li>
+ *     <li>part c: the young of the dart frogs hatch as <b>tadpoles</b> ({@link #isTadpole}): they swim only, eat aquarium
+ *     food and need water until they turn into froglets at {@link #METAMORPHOSIS} of their growth;</li>
+ *     <li>growth from a hatchling over {@link HerpSpecies#growDays} (size, stocking weight, the tank size it needs);</li>
  *     <li>brumation of the tortoise in a cold tank ({@code terrarium.brumation}): it rests with its head pulled in, does
  *     not get hungry and takes no harm from the cold (only from frost);</li>
- *     <li>the nesting walk of a female ({@link TurtleBreeding}) and a bucket of water or a terrarium box.</li>
+ *     <li>the nesting walk of a female ({@link HerpBreeding}) and a bucket of water or a terrarium box.</li>
  * </ul>
  */
-public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
-    private static final EntityDataAccessor<Integer> DATA_VARIETY = SynchedEntityData.defineId(TurtleEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_BRUMATING = SynchedEntityData.defineId(TurtleEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Float> DATA_GROWTH = SynchedEntityData.defineId(TurtleEntity.class, EntityDataSerializers.FLOAT);
+public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
+    /** Part c: a tadpole becomes a froglet at this growth (0..1). */
+    public static final float METAMORPHOSIS = 0.4F;
+    private static final EntityDataAccessor<Integer> DATA_VARIETY = SynchedEntityData.defineId(HerpEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_BRUMATING = SynchedEntityData.defineId(HerpEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> DATA_GROWTH = SynchedEntityData.defineId(HerpEntity.class, EntityDataSerializers.FLOAT);
     /** Air (°C) below which even a brumating tortoise takes harm (frost). */
     public static final double FROST = 2.0;
     private static final double TICKS_PER_DAY = 24000.0;
 
-    private final TurtleSpecies species;
+    private final HerpSpecies species;
     private boolean female;
     private boolean fromBucket;
     private int generation;
@@ -70,18 +74,18 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
     private boolean frost;
     private int nestTicks;
 
-    public TurtleEntity(EntityType<? extends Animal> type, Level level, TurtleSpecies species) {
+    public HerpEntity(EntityType<? extends Animal> type, Level level, HerpSpecies species) {
         super(type, level);
         this.species = species;
         this.female = level.random.nextBoolean();
     }
 
-    public static AttributeSupplier.Builder createAttributes(TurtleSpecies s) {
+    public static AttributeSupplier.Builder createAttributes(HerpSpecies s) {
         double health = s.stock() >= 6 ? 16.0 : s.stock() >= 4 ? 12.0 : 8.0;
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, health).add(Attributes.MOVEMENT_SPEED, s.box() ? 0.08 : 0.12);
     }
 
-    public TurtleSpecies species() {
+    public HerpSpecies species() {
         return species;
     }
 
@@ -175,24 +179,47 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
 
     // ------------------------------------------------------------------ needs, food
 
+    /** Part c: a dart frog tadpole (in the water until {@link #METAMORPHOSIS}). */
+    public boolean isTadpole() {
+        return species.tadpoles() && isBaby() && growth() < METAMORPHOSIS;
+    }
+
+    /** Part c: what a tadpole needs: the water of a paludarium at the species' water temperature, nothing of the air. */
+    public static TerrariumNeeds tadpoleNeeds(HerpSpecies s) {
+        TerrariumNeeds n = s.needs();
+        return new TerrariumNeeds(TerrariumNeeds.Habitat.PALUDARIUM, TerrariumNeeds.Range.ANY, TerrariumNeeds.Range.ANY, 0, TerrariumNeeds.Range.ANY, false,
+                n.water(), 0);
+    }
+
     @Override
     public TerrariumNeeds terrariumNeeds() {
-        return species.needs(!isBaby());
+        return isTadpole() ? tadpoleNeeds(species) : species.needs(!isBaby());
     }
 
     @Override
     public LandWalker.Gait gait() {
-        return species.gait();
+        return isTadpole() ? species.gait().with(LandWalker.Style.SWIM) : species.gait();
+    }
+
+    @Override
+    protected boolean usesBox() {
+        return species.box();
+    }
+
+    /** Hungry enough to eat (the snake waits about a week after a meal). */
+    private boolean hungry() {
+        return !isBrumating() && daysSinceFed() >= species.mealDays() - 1e-9;
     }
 
     @Override
     public boolean eatsFood(BettaFood.Kind kind) {
-        return species.animalFood() && (kind == BettaFood.Kind.NORMAL || kind == BettaFood.Kind.LIVE) && !isBrumating();
+        if (isTadpole()) return kind == BettaFood.Kind.NORMAL || kind == BettaFood.Kind.FRY || kind == BettaFood.Kind.FRY_START; // algae, fine food
+        return species.eats(TerrariumFood.Diet.ANIMAL) && (kind == BettaFood.Kind.NORMAL || kind == BettaFood.Kind.LIVE) && hungry();
     }
 
     @Override
-    public boolean eatsGreens() {
-        return species.greens() && !isBrumating();
+    public boolean eats(TerrariumFood.Diet d) {
+        return !isTadpole() && species.eats(d) && hungry();
     }
 
     @Override
@@ -261,7 +288,7 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
         return left.isEmpty() ? TerrariumNeeds.Assessment.FINE : new TerrariumNeeds.Assessment(left, frost ? a.severity() : 0.1);
     }
 
-    // ------------------------------------------------------------------ breeding (TurtleBreeding)
+    // ------------------------------------------------------------------ breeding (HerpBreeding)
 
     public boolean layReady(long now) {
         return female && !isBaby() && !isBrumating() && now >= nextLay;
@@ -313,7 +340,7 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData data) {
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, spawnType, data);
         female = random.nextBoolean();
-        if (species.varieties().size() > 1) setVariety(TurtleSpawns.variety(species, level.getBiome(blockPosition()), random));
+        if (species.varieties().size() > 1) setVariety(HerpSpawns.variety(species, level.getBiome(blockPosition()), random, spawnType));
         wild = spawnType == MobSpawnType.NATURAL;
         if (isBaby()) makeHatchling();
         return out;
@@ -369,33 +396,12 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
 
     @Override
     public ItemStack getBucketItemStack() {
-        return new ItemStack(ModItems.turtleContainer(species));
+        return new ItemStack(ModItems.herpContainer(species));
     }
 
     @Override
     public SoundEvent getPickupSound() {
         return species.box() ? SoundEvents.ARMOR_EQUIP_LEATHER.value() : SoundEvents.BUCKET_FILL_FISH;
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (species.box()) {
-            ItemStack stack = player.getItemInHand(hand);
-            if (stack.is(ModItems.TERRARIUM_BOX.get()) && isAlive()) {
-                playSound(getPickupSound(), 1.0F, 1.0F);
-                if (!level().isClientSide) {
-                    org.overengineer.bettacraft.tank.TankInhabitants.release(this);
-                    ItemStack filled = getBucketItemStack();
-                    saveToBucketTag(filled);
-                    player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
-                    level().playSound(null, blockPosition(), getPickupSound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
-                    discard();
-                }
-                return InteractionResult.sidedSuccess(level().isClientSide);
-            }
-            return super.mobInteract(player, hand);
-        }
-        return Bucketable.bucketMobPickup(player, hand, this).orElse(super.mobInteract(player, hand));
     }
 
     @Override
@@ -426,23 +432,55 @@ public class TurtleEntity extends TerrariumAnimalEntity implements Bucketable {
         if (isBaby()) entityData.set(DATA_GROWTH, growth());
     }
 
+    // ------------------------------------------------------------------ sounds by body plan (vanilla sounds)
+
     @Override
     protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) {
-        return isBaby() ? SoundEvents.TURTLE_HURT_BABY : SoundEvents.TURTLE_HURT;
+        return switch (species.body()) {
+            case TURTLE -> isBaby() ? SoundEvents.TURTLE_HURT_BABY : SoundEvents.TURTLE_HURT;
+            case FROG -> SoundEvents.FROG_HURT;
+            case GECKO -> SoundEvents.ARMADILLO_HURT;
+            case SNAKE -> SoundEvents.CAT_HISS;
+        };
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return isBaby() ? SoundEvents.TURTLE_DEATH_BABY : SoundEvents.TURTLE_DEATH;
+        return switch (species.body()) {
+            case TURTLE -> isBaby() ? SoundEvents.TURTLE_DEATH_BABY : SoundEvents.TURTLE_DEATH;
+            case FROG -> SoundEvents.FROG_DEATH;
+            case GECKO -> SoundEvents.ARMADILLO_DEATH;
+            case SNAKE -> SoundEvents.CAT_HISS;
+        };
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return null;
+        // part c: a frog calls now and then (a dart frog high and soft), the others are silent
+        return species.body() == HerpSpecies.Body.FROG && !isTadpole() && random.nextInt(4) == 0 ? SoundEvents.FROG_AMBIENT : null;
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return species == HerpSpecies.DART_FROG ? 1.8F : super.getVoicePitch();
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return species.body() == HerpSpecies.Body.TURTLE ? super.getSoundVolume() : 0.35F;
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 600;
     }
 
     @Override
     protected void playStepSound(BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
-        playSound(isBaby() ? SoundEvents.TURTLE_SHAMBLE_BABY : SoundEvents.TURTLE_SHAMBLE, 0.15F, 1.0F);
+        switch (species.body()) {
+            case TURTLE -> playSound(isBaby() ? SoundEvents.TURTLE_SHAMBLE_BABY : SoundEvents.TURTLE_SHAMBLE, 0.15F, 1.0F);
+            case FROG -> playSound(SoundEvents.FROG_STEP, 0.1F, 1.4F);
+            default -> playSound(SoundEvents.ARMADILLO_STEP, 0.08F, 1.5F);
+        }
     }
 }

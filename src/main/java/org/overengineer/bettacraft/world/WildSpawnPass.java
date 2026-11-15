@@ -73,7 +73,7 @@ public final class WildSpawnPass {
             if (p.isSpectator() || (t + p.getId()) % every != 0) continue;
             tryFor(level, p.blockPosition(), level.random);
             // M31 part b: now and then a turtle on the shore or a tortoise on dry grassland
-            org.overengineer.bettacraft.terrarium.TurtleSpawns.tryFor(level, p.blockPosition(), level.random, room(level, p.blockPosition()));
+            org.overengineer.bettacraft.terrarium.HerpSpawns.tryFor(level, p.blockPosition(), level.random, room(level, p.blockPosition()));
         }
     }
 

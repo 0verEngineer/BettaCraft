@@ -227,16 +227,20 @@ public final class Sources {
                         c.species().feature() != null ? c.species().feature() : "features.wildCritters", null));
             }
         }
-        // M31 part b: the wild turtles (on the shore of swamps and rivers; the tortoise on dry land); caught in a bucket or a box
-        for (var e : org.overengineer.bettacraft.terrarium.TurtleSpawns.TABLE) {
+        // M31 part b: the wild turtles (on the shore of swamps and rivers; the tortoise on dry land); caught in a bucket or a box;
+        // part c: the amphibians and reptiles (jungles, dry lands, forests), caught in a box
+        for (var e : org.overengineer.bettacraft.terrarium.HerpSpawns.TABLE) {
             Where where = switch (e.home()) {
                 case SWAMP -> Where.SWAMP;
                 case RIVER -> Where.RIVER;
                 case DRY_LAND -> Where.DRY_LAND;
+                case JUNGLE -> Where.JUNGLE_FLOOR;
+                case ARID -> Where.ARID;
+                case WOODLAND -> Where.WOODLAND;
             };
-            int[] g = org.overengineer.bettacraft.terrarium.TurtleSpawns.group(e.species());
+            int[] g = org.overengineer.bettacraft.terrarium.HerpSpawns.group(e.species());
             out.add(new Source(Source.Kind.SPAWN, Target.item(e.species().containerId()), where, e.weight(), e.weight(), g[0], g[1], 0, false,
-                    "features.wildTurtles", null));
+                    org.overengineer.bettacraft.terrarium.HerpSpawns.featureKey(e.species()), null));
         }
         for (var e : WildTables.WILD_CORALS.entries()) {
             out.add(new Source(Source.Kind.SHEARS, Target.plant(e.value()), Where.WARM_OCEAN, 1.0, 1.0, 1, 1, 0, false, "features.wildCorals",

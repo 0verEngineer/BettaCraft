@@ -25,76 +25,111 @@ import org.overengineer.bettacraft.world.BiomeWaters;
 import org.overengineer.bettacraft.world.Wildlife;
 
 /**
- * M31 part b: where the turtles live in the world (decided by the user's plan, biome tags of M25.1 so biome mods count):
+ * M31: where the turtles (part b) and the amphibians and reptiles (part c) live in the world (biome tags of M25.1, so
+ * biome mods count):
  * <ul>
  *     <li>swamps ({@code #bettacraft:swamp_waters}): sliders (mostly the yellow-bellied one, at home in the swamps of the
- *     south-east of North America) and musk turtles;</li>
+ *     south-east of North America) and musk turtles; part c: now and then a horned frog (the Gran Chaco floods);</li>
  *     <li>rivers ({@code #bettacraft:river_waters}): sliders (mostly red-eared, from the Mississippi), musk turtles, Reeves'
  *     turtles;</li>
- *     <li>savannas and dry shrubland ({@code #bettacraft:tortoise_lands}): Hermann's tortoise (Mediterranean scrub).</li>
+ *     <li>part c jungles ({@code #bettacraft:jungle_waters}, the jungle biomes): dart frogs (on the rainforest floor of
+ *     northern South America) and the crested gecko (rainforest of New Caledonia);</li>
+ *     <li>savannas and dry shrubland ({@code #bettacraft:tortoise_lands}): Hermann's tortoise (Mediterranean scrub); part c:
+ *     the horned frog (the dry Chaco);</li>
+ *     <li>part c deserts and badlands ({@code #bettacraft:arid_lands}): the leopard gecko (rocky semi-desert of Pakistan and
+ *     Afghanistan);</li>
+ *     <li>part c forests and plains ({@code #bettacraft:snake_lands}): the corn snake (fields and pine woods of the south-east
+ *     of North America).</li>
  * </ul>
- * The water turtles spawn on the shore (at most three blocks from water) or in shallow water, the tortoise on grass, dirt
- * or sand under the open sky; never in a tank, and at most {@link #NEARBY_CAP} wild turtles within 32 blocks. They come
- * at the generation of new chunks like vanilla animals (and stay) and through the frugal spawn pass of the mod
- * ({@link #tryFor}, M28.1): those despawn far from players like the wild fish. Catching: a bucket of water (water turtles),
- * the terrarium box (the tortoise). Switch: {@code features.wildTurtles}.
+ * The water turtles spawn on the shore (at most three blocks from water) or in shallow water, the land animals (the box
+ * ones) on soil, sand or terracotta in daylight (also under the jungle's leaves, not in caves); never in a tank, and at
+ * most {@link #NEARBY_CAP} wild animals of the same kind within 32 blocks. They come at the generation of new chunks like
+ * vanilla animals (and stay) and through the frugal spawn pass of the mod ({@link #tryFor}, M28.1): those despawn far
+ * from players like the wild fish. Wild varieties: the slider by its water, the three dart frogs at random, the gecko and
+ * snake morphs never (they are bred). Catching: a bucket of water (water turtles), the terrarium box (the others).
+ * Switches: {@code features.wildTurtles}, part c {@code features.wildHerps}.
  */
-public final class TurtleSpawns {
+public final class HerpSpawns {
     /** Wild turtles allowed within 32 blocks of a new one. */
     public static final int NEARBY_CAP = 2;
     /** Share of the spawn passes that also try a turtle. */
     public static final double PASS_CHANCE = 0.25;
 
-    /** The places of the turtles (for the handbook {@code Sources}: swamp, river, dry land). */
-    public enum Home { SWAMP, RIVER, DRY_LAND }
+    /** The places of the animals (for the handbook {@code Sources}). */
+    public enum Home { SWAMP, RIVER, DRY_LAND, JUNGLE, ARID, WOODLAND }
 
     /** One spawn entry: species, home, CREATURE spawn weight. */
-    public record Entry(TurtleSpecies species, Home home, int weight) {}
+    public record Entry(HerpSpecies species, Home home, int weight) {}
 
     public static final List<Entry> TABLE = List.of(
-            new Entry(TurtleSpecies.SLIDER, Home.SWAMP, 4), new Entry(TurtleSpecies.MUSK, Home.SWAMP, 4),
-            new Entry(TurtleSpecies.SLIDER, Home.RIVER, 3), new Entry(TurtleSpecies.MUSK, Home.RIVER, 2), new Entry(TurtleSpecies.REEVES, Home.RIVER, 3),
-            new Entry(TurtleSpecies.HERMANN, Home.DRY_LAND, 4));
+            new Entry(HerpSpecies.SLIDER, Home.SWAMP, 4), new Entry(HerpSpecies.MUSK, Home.SWAMP, 4),
+            new Entry(HerpSpecies.SLIDER, Home.RIVER, 3), new Entry(HerpSpecies.MUSK, Home.RIVER, 2), new Entry(HerpSpecies.REEVES, Home.RIVER, 3),
+            new Entry(HerpSpecies.HERMANN, Home.DRY_LAND, 4),
+            // part c
+            new Entry(HerpSpecies.HORNED_FROG, Home.SWAMP, 1), new Entry(HerpSpecies.HORNED_FROG, Home.DRY_LAND, 2),
+            new Entry(HerpSpecies.DART_FROG, Home.JUNGLE, 4), new Entry(HerpSpecies.CRESTED_GECKO, Home.JUNGLE, 3),
+            new Entry(HerpSpecies.LEOPARD_GECKO, Home.ARID, 4), new Entry(HerpSpecies.CORN_SNAKE, Home.WOODLAND, 3));
 
-    private TurtleSpawns() {}
+    private HerpSpawns() {}
 
-    /** The home of a biome (null = no turtles). Swamps before rivers; the tortoise lands. */
+    /** The home of a biome (null = no animals). Swamps before rivers before jungles; then the dry and the wooded lands. */
     @Nullable
     public static Home home(Holder<Biome> b) {
         if (BiomeWaters.swamp(b)) return Home.SWAMP;
         if (BiomeWaters.river(b)) return Home.RIVER;
+        if (BiomeWaters.jungle(b)) return Home.JUNGLE;
         if (b.is(ModTags.TORTOISE_LANDS)) return Home.DRY_LAND;
+        if (b.is(ModTags.ARID_LANDS)) return Home.ARID;
+        if (b.is(ModTags.SNAKE_LANDS)) return Home.WOODLAND;
         return null;
     }
 
+    /** The switch of a species' wild spawns. */
+    public static boolean enabled(HerpSpecies s) {
+        return s.turtle() ? CommonConfig.turtles() && CommonConfig.wildTurtles() : CommonConfig.herps() && CommonConfig.wildHerps();
+    }
+
+    /** The config key of that switch (handbook sources). */
+    public static String featureKey(HerpSpecies s) {
+        return s.turtle() ? "features.wildTurtles" : "features.wildHerps";
+    }
+
+    /** The entries of a home whose switches are on. */
     public static List<Entry> entries(@Nullable Home home) {
         List<Entry> out = new ArrayList<>();
         if (home == null) return out;
-        for (Entry e : TABLE) if (e.home == home) out.add(e);
+        for (Entry e : TABLE) if (e.home == home && enabled(e.species)) out.add(e);
         return out;
     }
 
     /** Smallest and largest group (the tortoise alone, the water turtles one or two). */
-    public static int[] group(TurtleSpecies s) {
-        return s.box() ? new int[]{1, 1} : new int[]{1, 2};
+    public static int[] group(HerpSpecies s) {
+        return s.box() && s != HerpSpecies.DART_FROG ? new int[]{1, 1} : new int[]{1, 2}; // part c: dart frogs in small groups
     }
 
-    /** The variety of a wild slider: yellow-bellied mostly in swamps, red-eared mostly in rivers. */
-    public static int variety(TurtleSpecies s, Holder<Biome> biome, RandomSource r) {
+    /**
+     * The variety of a new animal: the slider's yellow-bellied one mostly in swamps, the red-eared one mostly in rivers; part
+     * c: one of the wild varieties at random (the three dart frogs, the horned frog's green and brown); the morphs bred in
+     * captivity never come from a spawn.
+     */
+    public static int variety(HerpSpecies s, Holder<Biome> biome, RandomSource r, MobSpawnType spawnType) {
         if (s.varieties().size() < 2) return 0;
-        double scripta = BiomeWaters.swamp(biome) ? 0.75 : BiomeWaters.river(biome) ? 0.15 : 0.4;
-        return r.nextDouble() < scripta ? s.variety("scripta") : s.variety("elegans");
+        if (s == HerpSpecies.SLIDER) {
+            double scripta = BiomeWaters.swamp(biome) ? 0.75 : BiomeWaters.river(biome) ? 0.15 : 0.4;
+            return r.nextDouble() < scripta ? s.variety("scripta") : s.variety("elegans");
+        }
+        return r.nextInt(s.wildVarieties());
     }
 
     @Nullable
-    public static TurtleSpecies of(EntityType<?> type) {
-        for (TurtleSpecies s : TurtleSpecies.ALL) if (ModEntities.turtle(s) == type) return s;
+    public static HerpSpecies of(EntityType<?> type) {
+        for (HerpSpecies s : HerpSpecies.ALL) if (ModEntities.herp(s) == type) return s;
         return null;
     }
 
-    /** Whether wild turtles spawn (both switches). */
+    /** Whether any wild animal of these spawns (the switches). */
     public static boolean enabled() {
-        return CommonConfig.turtles() && CommonConfig.wildTurtles();
+        return CommonConfig.turtles() && CommonConfig.wildTurtles() || CommonConfig.herps() && CommonConfig.wildHerps();
     }
 
     // ------------------------------------------------------------------ spawn rule
@@ -102,22 +137,22 @@ public final class TurtleSpawns {
     /** Spawn rule of the wild turtles (natural spawns and new chunks; spawn eggs and buckets always). */
     public static boolean check(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (spawnType != MobSpawnType.NATURAL && spawnType != MobSpawnType.CHUNK_GENERATION) return true;
-        if (!enabled()) return false;
-        TurtleSpecies s = of(type);
-        if (s == null || Wildlife.inTank(level, pos)) return false;
+        HerpSpecies s = of(type);
+        if (s == null || !enabled(s) || Wildlife.inTank(level, pos)) return false;
         BlockPos below = pos.below();
         if (!level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) return false;
         if (s.box()) {
-            if (!level.getFluidState(pos).isEmpty() || !level.canSeeSky(pos)) return false;
+            // daylight from the sky (also through the leaves of a jungle), no cave; soil, sand or terracotta
+            if (!level.getFluidState(pos).isEmpty() || level.getBrightness(net.minecraft.world.level.LightLayer.SKY, pos) < 8) return false;
             var ground = level.getBlockState(below);
-            if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND)) return false;
+            if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND) && !ground.is(BlockTags.TERRACOTTA)) return false;
         } else {
             boolean wet = level.getFluidState(pos).is(FluidTags.WATER);
             if (wet && level.getFluidState(pos.above(2)).is(FluidTags.WATER)) return false; // shallow water only
             if (!wet && !nearWater(level, pos, 3)) return false;
         }
         AABB box = new AABB(pos).inflate(32);
-        return level.getEntitiesOfClass(TurtleEntity.class, box, e -> e.isWild() || !e.isPersistenceRequired() && !e.inTank()).size() < NEARBY_CAP;
+        return level.getEntitiesOfClass(HerpEntity.class, box, e -> e.getType() == type && (e.isWild() || !e.isPersistenceRequired() && !e.inTank())).size() < NEARBY_CAP;
     }
 
     private static boolean nearWater(ServerLevelAccessor level, BlockPos pos, int r) {
@@ -161,8 +196,8 @@ public final class TurtleSpawns {
         return 0;
     }
 
-    private static int spawn(ServerLevel level, TurtleSpecies s, BlockPos at, RandomSource r, int room) {
-        EntityType<? extends TurtleEntity> type = ModEntities.turtle(s);
+    private static int spawn(ServerLevel level, HerpSpecies s, BlockPos at, RandomSource r, int room) {
+        EntityType<? extends HerpEntity> type = ModEntities.herp(s);
         int[] g = group(s);
         int count = Math.min(room, g[0] + r.nextInt(g[1] - g[0] + 1)), made = 0;
         for (int i = 0; i < count * 3 && made < count; i++) {
@@ -170,7 +205,7 @@ public final class TurtleSpawns {
             if (i > 0) p = new BlockPos(p.getX(), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p.getX(), p.getZ()), p.getZ());
             if (!SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, p, r)) continue;
             if (!level.noCollision(type.getSpawnAABB(p.getX() + 0.5, p.getY(), p.getZ() + 0.5))) continue;
-            TurtleEntity t = type.create(level);
+            HerpEntity t = type.create(level);
             if (t == null) return made;
             t.moveTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, r.nextFloat() * 360F, 0F);
             if (!EventHooks.checkSpawnPosition(t, level, MobSpawnType.NATURAL)) {

@@ -55,7 +55,7 @@ needs heat mats under the tank to get warm enough for females.
 
 ## Obtaining
 
-* <ItemLink id="bettacraft:hermann_tortoise_box" />: **Wild** in savannas and dry shrublands, in groups of 1–1 (spawn weight 4) (config `features.wildTurtles`).
+* <ItemLink id="bettacraft:hermann_tortoise_box" />: **Wild** in savannas and dry shrublands, alone (spawn weight 4) (config `features.wildTurtles`).
 
 Crafting:
 

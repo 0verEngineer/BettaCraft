@@ -34,7 +34,7 @@ final class LangM31b {
         a.accept("item.bettacraft.slider_turtle_spawn_egg", "Pond Slider Spawn Egg");
         a.accept("item.bettacraft.hermann_tortoise_spawn_egg", "Hermann's Tortoise Spawn Egg");
         a.accept("item.bettacraft.reeves_turtle_spawn_egg", "Reeves' Turtle Spawn Egg");
-        a.accept("block.bettacraft.turtle_eggs", "Turtle Eggs");
+        a.accept("block.bettacraft.turtle_eggs", "Reptile Eggs"); // part c: the geckos and the snake lay them too
         a.accept("turtle.bettacraft.variety.elegans", "Red-eared (T. s. elegans)");
         a.accept("turtle.bettacraft.variety.scripta", "Yellow-bellied (T. s. scripta)");
         a.accept("turtle.bettacraft.variety.wild", "Wild form");

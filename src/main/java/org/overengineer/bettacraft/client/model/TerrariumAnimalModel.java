@@ -53,7 +53,7 @@ public class TerrariumAnimalModel extends HierarchicalModel<TerrariumAnimalEntit
         }
         tail.yRot = Mth.sin(ageInTicks * 0.05F) * 0.1F;
         // M31 part b: brumation: head and legs drawn into the shell, no movement
-        if (e instanceof org.overengineer.bettacraft.terrarium.TurtleEntity t && t.isBrumating()) {
+        if (e instanceof org.overengineer.bettacraft.terrarium.HerpEntity t && t.isBrumating()) {
             head.yRot = 0;
             head.xRot = 0.15F;
             head.z += 2.2F;

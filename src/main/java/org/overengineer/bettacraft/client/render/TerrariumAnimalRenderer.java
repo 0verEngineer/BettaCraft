@@ -30,7 +30,7 @@ public class TerrariumAnimalRenderer extends MobRenderer<TerrariumAnimalEntity, 
     @Override
     public ResourceLocation getTextureLocation(TerrariumAnimalEntity e) {
         // M31 part b: the varieties (the slider: red-eared, yellow-bellied) have their own textures
-        if (e instanceof org.overengineer.bettacraft.terrarium.TurtleEntity t && t.species().varieties().size() > 1) {
+        if (e instanceof org.overengineer.bettacraft.terrarium.HerpEntity t && t.species().varieties().size() > 1) {
             return VARIETIES.computeIfAbsent(t.species().texture(t.variety()), k -> BettaCraft.id("textures/entity/terrarium/" + k + ".png"));
         }
         return texture;

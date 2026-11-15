@@ -106,6 +106,20 @@ public final class ModTags {
     public static final TagKey<Block> TURTLE_NEST_GROUND = TagKey.create(Registries.BLOCK, BettaCraft.id("turtle_nest_ground"));
     /** M31 part b: greens for the turtles and the tortoise (dandelion, clover, herbs: dandelion, pink petals, short grass, fern, oxeye daisy). */
     public static final TagKey<net.minecraft.world.item.Item> TURTLE_GREENS = TagKey.create(Registries.ITEM, BettaCraft.id("turtle_greens"));
+    /** M31 part c: crickets for the horned frog and the geckos. */
+    public static final TagKey<net.minecraft.world.item.Item> FEEDER_INSECTS = TagKey.create(Registries.ITEM, BettaCraft.id("feeder_insects"));
+    /** M31 part c: fruit flies for the dart frogs and the crested gecko. */
+    public static final TagKey<net.minecraft.world.item.Item> SMALL_FEEDER_INSECTS = TagKey.create(Registries.ITEM, BettaCraft.id("small_feeder_insects"));
+    /** M31 part c: soft fruit for the crested gecko (sweet berries, glow berries, melon). */
+    public static final TagKey<net.minecraft.world.item.Item> GECKO_FRUIT = TagKey.create(Registries.ITEM, BettaCraft.id("gecko_fruit"));
+    /** M31 part c: prey for the corn snake (raw rabbit and chicken, for the frozen mice of the hobby). */
+    public static final TagKey<net.minecraft.world.item.Item> SNAKE_PREY = TagKey.create(Registries.ITEM, BettaCraft.id("snake_prey"));
+    /** M31 part c: dart frogs lay their eggs onto these blocks on the land (moss, leaves, soil). */
+    public static final TagKey<Block> FROG_NEST_GROUND = TagKey.create(Registries.BLOCK, BettaCraft.id("frog_nest_ground"));
+    /** M31 part c: the leopard gecko lives wild here (deserts and badlands). */
+    public static final TagKey<Biome> ARID_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("arid_lands"));
+    /** M31 part c: the corn snake lives wild here (temperate forests and plains). */
+    public static final TagKey<Biome> SNAKE_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("snake_lands"));
 
     /** Water in these biomes gives salt water bottles (oceans). */
     public static final TagKey<Biome> SALT_WATER_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("salt_water_biomes"));

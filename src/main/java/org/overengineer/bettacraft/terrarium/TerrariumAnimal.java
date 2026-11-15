@@ -25,8 +25,11 @@ public interface TerrariumAnimal {
         return a;
     }
 
-    /** M31 part b: whether it eats greens ({@code #bettacraft:turtle_greens}: dandelion, clover, herbs). */
-    default boolean eatsGreens() {
+    /**
+     * Whether it eats this land food now ({@link TerrariumFood}: part b greens, part c insects, fruit, prey; false while it is
+     * not hungry yet, like a snake after its meal).
+     */
+    default boolean eats(TerrariumFood.Diet diet) {
         return false;
     }
 

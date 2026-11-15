@@ -200,6 +200,13 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.SLIDER_TURTLE_SPAWN_EGG.get());
                 out.accept(ModItems.REEVES_TURTLE_SPAWN_EGG.get());
                 out.accept(ModItems.HERMANN_TORTOISE_SPAWN_EGG.get());
+                // M31 part c: amphibians and reptiles, their food
+                for (var b : ModItems.HERP_BOXES.values()) out.accept(b.get());
+                for (var e : ModItems.HERP_SPAWN_EGGS.values()) out.accept(e.get());
+                out.accept(ModItems.CRICKET_CULTURE.get());
+                out.accept(ModItems.CRICKETS.get());
+                out.accept(ModItems.FRUIT_FLY_CULTURE.get());
+                out.accept(ModItems.FRUIT_FLIES.get());
                 // M19: tankmates (a shoal or a pair in a fish bag, every variety; bucket and spawn egg), their breeding items
                 out.accept(ModItems.BREEDING_BOX.get());
                 out.accept(ModItems.FRY_POWDER.get());

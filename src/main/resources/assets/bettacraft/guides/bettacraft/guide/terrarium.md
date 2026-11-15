@@ -82,6 +82,18 @@ They lay eggs into sand or soil on the land, and the nest temperature decides th
 [turtle breeding](terrarium/turtle_breeding.md). Wild ones live in swamps and rivers (the water turtles) and in savannas
 and dry shrublands (the tortoise).
 
+The [amphibians and reptiles](terrarium/herps.md):
+
+| Animal | Tank | Needs |
+|---|---|---|
+| [Poison dart frogs](terrarium/dart_frog.md) (three species) | paludarium, mostly land | high humidity, fruit flies; tadpoles in the water |
+| [Cranwell's horned frog](terrarium/horned_frog.md) | moist terrarium | sits buried in the ground; crickets |
+| [Leopard gecko](terrarium/leopard_gecko.md) | dry terrarium | basking spot, crickets; sex by the nest temperature |
+| [Crested gecko](terrarium/crested_gecko.md) | terrarium | climbs the glass; not too warm; fruit and insects |
+| [Corn snake](terrarium/corn_snake.md) | dry terrarium, 8 blocks | basking spot, a prey animal a week; brumates |
+
+They eat [feeder insects](terrarium/feeder_insects.md) (crickets, fruit flies), fruit or prey.
+
 ## Water care in a terrarium
 
 A terrarium without water has no water values: water quality, filters, oxygen, CO2 and the water chemistry stand still
@@ -92,5 +104,6 @@ and the menu says so. A paludarium keeps all of them for its water.
 Server config `terrarium.*`: the land shares of the kinds, the strength of the devices, the time constants, the water of
 the mister, the days to harm; `power.*`: heat mats use the heaters' energy switch (`heatMatFePerTick`), misters their own
 (`terrarium.misterRequiresEnergy`). Common config: `features.terrarium` (off: every tank is an aquarium),
-`features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`. Turtles:
+`features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`, `features.herps`,
+`features.herpBreeding`, `features.wildHerps`. Turtles (and the egg layers of the amphibians and reptiles):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

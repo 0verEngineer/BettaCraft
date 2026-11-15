@@ -48,7 +48,7 @@ Vermehrt sich im Becken praktisch nie.
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 6,5–7,9 % pro Schwung (etwa 1 von 13–15 Schwüngen).
-* **Wild** in Mangrovensümpfen, in Gruppen von 1–1 (Spawn-Gewicht 3) (Config `features.puffers`).
+* **Wild** in Mangrovensümpfen, einzeln (Spawn-Gewicht 3) (Config `features.puffers`).
 * **Fahrender Händler** (seltene Angebote): 2 für 9 Smaragde; eins von 12 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

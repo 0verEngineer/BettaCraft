@@ -48,7 +48,7 @@ Practically never breeds in a tank.
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 6.5–7.9 % per swing (about 1 in 13–15 swings).
-* **Wild** in mangrove swamps, in groups of 1–1 (spawn weight 3) (config `features.puffers`).
+* **Wild** in mangrove swamps, alone (spawn weight 3) (config `features.puffers`).
 * **Wandering trader** (rare offers): 2 for 9 emeralds; one of 12 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

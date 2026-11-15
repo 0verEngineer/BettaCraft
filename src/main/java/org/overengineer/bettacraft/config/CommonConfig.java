@@ -78,6 +78,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
     public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES, FEATURE_TURTLE_BREEDING, FEATURE_WILD_TURTLES; // M31
+    public static final ModConfigSpec.BooleanValue FEATURE_HERPS, FEATURE_HERP_BREEDING, FEATURE_WILD_HERPS; // M31 part c
     public static final ModConfigSpec.IntValue SPAWN_BIG_WEIGHT;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
@@ -279,6 +280,14 @@ public final class CommonConfig {
                 "of the hatchlings (off: no eggs; eggs already laid still hatch)").define("turtleBreeding", true);
         FEATURE_WILD_TURTLES = b.comment("Wild turtles: sliders and musk turtles in swamps and rivers, Reeves' turtles in rivers, Hermann's tortoises in",
                 "savannas and dry shrublands (#bettacraft:tortoise_lands)").define("wildTurtles", true);
+        FEATURE_HERPS = b.comment("Amphibians and reptiles in terraria and paludaria: dart frogs, horned frog, leopard gecko, crested gecko and corn snake",
+                "(off: none go into tanks; those in tanks stay)").define("herps", true);
+        FEATURE_HERP_BREEDING = b.comment("Breeding of the amphibians and reptiles: eggs on the land of the tank (dart frog tadpoles into the water, the",
+                "leopard gecko's sex by the nest temperature; the horned frog does not breed) (off: no eggs; eggs already laid still hatch)")
+                .define("herpBreeding", true);
+        FEATURE_WILD_HERPS = b.comment("Wild amphibians and reptiles: dart frogs and crested geckos in jungles, horned frogs in savannas and swamps,",
+                "leopard geckos in deserts and badlands (#bettacraft:arid_lands), corn snakes in forests and plains (#bettacraft:snake_lands)")
+                .define("wildHerps", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -399,6 +408,9 @@ public final class CommonConfig {
     public static boolean turtles() { return getOr(FEATURE_TURTLES, true); }
     public static boolean turtleBreeding() { return getOr(FEATURE_TURTLE_BREEDING, true); }
     public static boolean wildTurtles() { return getOr(FEATURE_WILD_TURTLES, true); }
+    public static boolean herps() { return getOr(FEATURE_HERPS, true); }
+    public static boolean herpBreeding() { return getOr(FEATURE_HERP_BREEDING, true); }
+    public static boolean wildHerps() { return getOr(FEATURE_WILD_HERPS, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }

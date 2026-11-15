@@ -48,6 +48,6 @@ head with a deep mouth and one fin seam along the back that runs round the tail.
 
 * **[Large net](large_net.md)** in warm oceans (coral reefs): 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigAnimals`).
 * **[Steel leader](steel_leader.md)** (fishing) in warm oceans (coral reefs): 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 2) (config `features.bigAnimals`).
+* **Wild** in warm oceans (coral reefs), alone (spawn weight 2) (config `features.bigAnimals`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

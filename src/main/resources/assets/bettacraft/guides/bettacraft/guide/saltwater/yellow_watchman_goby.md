@@ -40,8 +40,8 @@ The yellow watchman goby (*Cryptocentrus cinctus*) from the lagoons of the weste
 
 * **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 1.7–2 % per swing (about 1 in 50–60 swings).
 * **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 2.3–2.7 % per swing (about 1 in 37–44 swings).
-* **Wild** in warm oceans (coral reefs), in groups of 1–1 (spawn weight 4) (config `features.wildFish`).
-* **Wild** in lukewarm oceans, in groups of 1–1 (spawn weight 3) (config `features.wildFish`).
+* **Wild** in warm oceans (coral reefs), alone (spawn weight 4) (config `features.wildFish`).
+* **Wild** in lukewarm oceans, alone (spawn weight 3) (config `features.wildFish`).
 * **Wandering trader** (usual offers): 2 for 3 emeralds; one of 4 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

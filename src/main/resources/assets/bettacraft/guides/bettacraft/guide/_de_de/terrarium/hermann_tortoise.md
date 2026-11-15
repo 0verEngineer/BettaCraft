@@ -58,7 +58,7 @@ braucht Heizmatten unter dem Becken, um warm genug für Weibchen zu werden.
 
 ## Bezug
 
-* <ItemLink id="bettacraft:hermann_tortoise_box" />: **Wild** in Savannen und trockenem Buschland, in Gruppen von 1–1 (Spawn-Gewicht 4) (Config `features.wildTurtles`).
+* <ItemLink id="bettacraft:hermann_tortoise_box" />: **Wild** in Savannen und trockenem Buschland, einzeln (Spawn-Gewicht 4) (Config `features.wildTurtles`).
 
 Herstellung:
 

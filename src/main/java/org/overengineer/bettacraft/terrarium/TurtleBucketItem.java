@@ -33,17 +33,20 @@ public class TurtleBucketItem extends AnimalBucketItem {
         CompoundTag tag = stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag();
         if (!tag.contains("terrarium")) return;
         CompoundTag t = tag.getCompound("terrarium");
-        TurtleSpecies s = speciesOf(stack);
+        HerpSpecies s = speciesOf(stack);
         if (s != null && s.varieties().size() > 1) lines.add(Component.translatable(s.varietyKey(t.getInt("variety"))).withStyle(ChatFormatting.GRAY));
-        if (t.getInt("age") < 0) lines.add(Component.translatable("tooltip.bettacraft.turtle.young").withStyle(ChatFormatting.GRAY));
+        int age = t.getInt("age");
+        if (s != null && s.tadpoles() && age < 0 && 1.0 + age / (s.growDays() * 24000.0) < HerpEntity.METAMORPHOSIS) { // part c
+            lines.add(Component.translatable("tooltip.bettacraft.herp.tadpole").withStyle(ChatFormatting.AQUA));
+        } else if (age < 0) lines.add(Component.translatable("tooltip.bettacraft.turtle.young").withStyle(ChatFormatting.GRAY));
         else if (t.contains("female")) lines.add(Component.translatable(t.getBoolean("female") ? "tooltip.bettacraft.turtle.female"
                 : "tooltip.bettacraft.turtle.male").withStyle(ChatFormatting.GRAY));
         if (t.getBoolean("brumating")) lines.add(Component.translatable("tooltip.bettacraft.turtle.brumating").withStyle(ChatFormatting.AQUA));
     }
 
-    private static TurtleSpecies speciesOf(ItemStack stack) {
+    private static HerpSpecies speciesOf(ItemStack stack) {
         EntityType<?> type = org.overengineer.bettacraft.tank.TankInhabitants.containedType(stack);
-        for (TurtleSpecies s : TurtleSpecies.ALL) if (org.overengineer.bettacraft.registry.ModEntities.turtle(s) == type) return s;
+        for (HerpSpecies s : HerpSpecies.ALL) if (org.overengineer.bettacraft.registry.ModEntities.herp(s) == type) return s;
         return null;
     }
 }

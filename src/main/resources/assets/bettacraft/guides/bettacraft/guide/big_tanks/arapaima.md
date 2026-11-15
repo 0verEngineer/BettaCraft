@@ -49,6 +49,6 @@ and the dorsal and anal fins far back next to the rounded tail. In the game it i
 
 * **[Large net](large_net.md)** in jungle water: 0.57 % per swing (about 1 in 175 swings), into an empty transport tub (config `features.bigAnimals`).
 * **[Steel leader](steel_leader.md)** (fishing) in jungle water: 0.71 % per catch (about 1 in 140 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in jungle water, in groups of 1–1 (spawn weight 1) (config `features.bigAnimals`).
+* **Wild** in jungle water, alone (spawn weight 1) (config `features.bigAnimals`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

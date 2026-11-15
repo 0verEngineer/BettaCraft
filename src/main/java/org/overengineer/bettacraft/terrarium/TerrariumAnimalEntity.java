@@ -15,6 +15,11 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,6 +42,8 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
 public abstract class TerrariumAnimalEntity extends Animal implements TerrariumAnimal {
     private static final EntityDataAccessor<Boolean> DATA_BASKING = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_IN_TANK = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BOOLEAN);
+    /** M31 part c: the walker's {@link LandWalker.Pose} (buried, clinging to a wall). */
+    private static final EntityDataAccessor<Byte> DATA_POSE = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BYTE);
     private static final double TICKS_PER_DAY = 24000.0;
     private static final long NEVER = Long.MIN_VALUE;
 
@@ -67,6 +74,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         super.defineSynchedData(b);
         b.define(DATA_BASKING, false);
         b.define(DATA_IN_TANK, false);
+        b.define(DATA_POSE, (byte) 0);
     }
 
     @Override
@@ -99,6 +107,11 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
 
     public LandWalker walker() {
         return walker;
+    }
+
+    /** M31 part c: what it shows besides walking (synced): buried in the ground, clinging to a wall of the tank. */
+    public LandWalker.Pose herpPose() {
+        return LandWalker.Pose.of(entityData.get(DATA_POSE));
     }
 
     public float stress() {
@@ -152,6 +165,8 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         if (tank != null && !resting() && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
         boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null && walker.basking();
         if (entityData.get(DATA_BASKING) != bask) entityData.set(DATA_BASKING, bask);
+        LandWalker.Pose p = poseOverride != null ? poseOverride : tank != null && !resting() ? walker.pose() : LandWalker.Pose.NONE;
+        if (entityData.get(DATA_POSE) != (byte) p.ordinal()) entityData.set(DATA_POSE, (byte) p.ordinal());
     }
 
     @Override
@@ -267,6 +282,35 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         super.die(source);
     }
 
+    // ------------------------------------------------------------------ catching (part c: pulled up from the turtles)
+
+    /** Whether it travels in a terrarium box (a land animal) instead of a bucket of water. */
+    protected boolean usesBox() {
+        return false;
+    }
+
+    /**
+     * Catching: a land animal with the empty {@link org.overengineer.bettacraft.registry.ModItems#TERRARIUM_BOX}, a water
+     * animal with a bucket of water (the vanilla way); either leaves its tank. Only for the animals that are {@link Bucketable}.
+     */
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!(this instanceof Bucketable b)) return super.mobInteract(player, hand);
+        if (!usesBox()) return Bucketable.bucketMobPickup(player, hand, (TerrariumAnimalEntity & Bucketable) this).orElse(super.mobInteract(player, hand));
+        ItemStack stack = player.getItemInHand(hand);
+        if (!stack.is(org.overengineer.bettacraft.registry.ModItems.TERRARIUM_BOX.get()) || !isAlive()) return super.mobInteract(player, hand);
+        playSound(b.getPickupSound(), 1.0F, 1.0F);
+        if (!level().isClientSide) {
+            TankInhabitants.release(this);
+            ItemStack filled = b.getBucketItemStack();
+            b.saveToBucketTag(filled);
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
+            level().playSound(null, blockPosition(), b.getPickupSound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+            discard();
+        }
+        return InteractionResult.sidedSuccess(level().isClientSide);
+    }
+
     // ------------------------------------------------------------------ save
 
     protected CompoundTag saveTerrarium() {
@@ -297,6 +341,13 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     }
 
     private int baskOverride = -1;
+    @Nullable
+    private LandWalker.Pose poseOverride;
+
+    /** Smoke scenes: shows this pose whatever the walker does; null = the walker again. */
+    public void setPoseForTest(@Nullable LandWalker.Pose p) {
+        poseOverride = p;
+    }
 
     /** Smoke scenes: shows it basking (true / false) whatever the walker does; null = the walker again. */
     public void setBaskingForTest(@Nullable Boolean b) {

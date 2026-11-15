@@ -65,8 +65,8 @@ können sie nicht fressen.
 * **[Stahlvorfach](steel_leader.md)** (Angeln) in warmen Ozeanen (Korallenriffe): 1,4 % pro Fang (etwa 1 von 70 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
 * **[Großer Kescher](large_net.md)** in lauwarmen Ozeanen: 1,3 % pro Schwung (etwa 1 von 75 Schwüngen), in eine leere Transportwanne (Config `features.bigAnimals`).
 * **[Stahlvorfach](steel_leader.md)** (Angeln) in lauwarmen Ozeanen: 1,7 % pro Fang (etwa 1 von 60 Fängen), in eine leere Transportwanne (Config `features.bigAnimals`).
-* **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.bigAnimals`).
-* **Wild** in lauwarmen Ozeanen, in Gruppen von 1–1 (Spawn-Gewicht 1) (Config `features.bigAnimals`).
+* **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 2) (Config `features.bigAnimals`).
+* **Wild** in lauwarmen Ozeanen, einzeln (Spawn-Gewicht 1) (Config `features.bigAnimals`).
 * **[Zucht](../big_tanks.md)**: legt Eikapseln.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

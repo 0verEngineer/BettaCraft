@@ -30,10 +30,10 @@ import org.overengineer.bettacraft.tank.interior.InteriorRegion;
 import org.overengineer.bettacraft.tank.interior.InteriorRegions;
 import org.overengineer.bettacraft.tank.interior.Substrate;
 import org.overengineer.bettacraft.terrarium.HeatMatBlock;
-import org.overengineer.bettacraft.terrarium.TurtleBreeding;
-import org.overengineer.bettacraft.terrarium.TurtleClutch;
-import org.overengineer.bettacraft.terrarium.TurtleEntity;
-import org.overengineer.bettacraft.terrarium.TurtleSpecies;
+import org.overengineer.bettacraft.terrarium.HerpBreeding;
+import org.overengineer.bettacraft.terrarium.HerpClutch;
+import org.overengineer.bettacraft.terrarium.HerpEntity;
+import org.overengineer.bettacraft.terrarium.HerpSpecies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,10 +61,10 @@ final class DevClientSmokeM31b {
         then(160, () -> server(pl -> place(pl.serverLevel())));
         then(1, () -> look(palu.getX() + 2.5, palu.getY() + 2.1, palu.getZ() - 3.0, 0F, 18F));
         then(120, () -> {
-            int n = mc.level.getEntitiesOfClass(TurtleEntity.class, new AABB(palu).inflate(12)).size();
+            int n = mc.level.getEntitiesOfClass(HerpEntity.class, new AABB(palu).inflate(12)).size();
             LOGGER.info("[smoketest] M31b turtles seen by the client: {}", n);
             if (n < 6) LOGGER.error("[smoketest] M31b expected 6 turtles in the paludarium on the client, got {}", n);
-            for (TurtleEntity t : mc.level.getEntitiesOfClass(TurtleEntity.class, new AABB(palu).inflate(12))) {
+            for (HerpEntity t : mc.level.getEntitiesOfClass(HerpEntity.class, new AABB(palu).inflate(12))) {
                 LOGGER.info("[smoketest] M31b client {} variety {} baby {} growth {}", t.species().id(), t.variety(), t.isBaby(), t.growth());
             }
             shot("paludarium");
@@ -119,15 +119,15 @@ final class DevClientSmokeM31b {
                 : Blocks.DIRT.defaultBlockState(), 2);
     }
 
-    private static void put(ServerLevel level, TankBlockEntity c, TurtleSpecies s, boolean female, int variety, boolean hatchling) {
-        TurtleEntity t = ModEntities.turtle(s).create(level);
+    private static void put(ServerLevel level, TankBlockEntity c, HerpSpecies s, boolean female, int variety, boolean hatchling) {
+        HerpEntity t = ModEntities.herp(s).create(level);
         t.setFemale(female);
         t.setVariety(variety);
         if (hatchling) t.makeHatchling();
         ItemStack stack = t.getBucketItemStack();
         t.saveToBucketTag(stack);
         t.discard();
-        var err = TankInhabitants.insert(level, c, stack, ModEntities.turtle(s), null, 0L);
+        var err = TankInhabitants.insert(level, c, stack, ModEntities.herp(s), null, 0L);
         if (err != null) LOGGER.error("[smoketest] M31b {} refused: {}", s.id(), err.getString());
     }
 
@@ -186,28 +186,28 @@ final class DevClientSmokeM31b {
         org.overengineer.bettacraft.terrarium.TankClimate.step(level, tc, 0.01);
         TankData t = pc.getTank();
         LOGGER.info("[smoketest] M31b paludarium: {} land {}, terrarium: {}", t.terrariumMode(), t.landShare(), tc.getTank().terrariumMode());
-        put(level, pc, TurtleSpecies.SLIDER, true, 0, false);
-        put(level, pc, TurtleSpecies.SLIDER, false, 1, false);
-        put(level, pc, TurtleSpecies.REEVES, true, 0, false);
-        put(level, pc, TurtleSpecies.MUSK, false, 0, false);
-        put(level, pc, TurtleSpecies.SLIDER, true, 0, true);
-        put(level, pc, TurtleSpecies.SLIDER, false, 1, true);
-        put(level, tc, TurtleSpecies.HERMANN, true, 0, false);
-        put(level, tc, TurtleSpecies.HERMANN, false, 0, false);
+        put(level, pc, HerpSpecies.SLIDER, true, 0, false);
+        put(level, pc, HerpSpecies.SLIDER, false, 1, false);
+        put(level, pc, HerpSpecies.REEVES, true, 0, false);
+        put(level, pc, HerpSpecies.MUSK, false, 0, false);
+        put(level, pc, HerpSpecies.SLIDER, true, 0, true);
+        put(level, pc, HerpSpecies.SLIDER, false, 1, true);
+        put(level, tc, HerpSpecies.HERMANN, true, 0, false);
+        put(level, tc, HerpSpecies.HERMANN, false, 0, false);
         // the clutch: a nest in the sand of the beach
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         InteriorRegion pr = InteriorRegions.get(level.getServer()).get(t.regionId());
         for (int cx = pr.originX() >> 4; cx <= (pr.originX() + pr.sizeX()) >> 4; cx++)
             for (int cz = pr.originZ() >> 4; cz <= (pr.originZ() + pr.sizeZ()) >> 4; cz++) in.getChunk(cx, cz); // the interior is there
-        TurtleBreeding.Nest n = TurtleBreeding.nestAt(level, t, new Vec3(palu.getX() + 3.3, palu.getY() + 1.6, palu.getZ() + 0.9));
-        if (n == null) n = TurtleBreeding.findNest(level, t, level.random);
+        HerpBreeding.Nest n = HerpBreeding.nestAt(level, t, new Vec3(palu.getX() + 3.3, palu.getY() + 1.6, palu.getZ() + 0.9), HerpSpecies.SLIDER);
+        if (n == null) n = HerpBreeding.findNest(level, t, level.random, HerpSpecies.SLIDER);
         if (n == null) {
             LOGGER.error("[smoketest] M31b no nest in the sand");
         } else {
             in.setBlock(n.interior(), ModBlocks.TURTLE_EGGS.get().withEggs(4), 3);
-            TurtleClutch k = new TurtleClutch(t.nextTurtleClutchId(), TurtleSpecies.SLIDER, 5, n.world(), n.interior(), 31L);
+            HerpClutch k = new HerpClutch(t.nextHerpClutchId(), HerpSpecies.SLIDER, 5, n.world(), n.interior(), 31L);
             k.incubate(30.5, 1.5, 1);
-            t.turtleClutches().add(k);
+            t.herpClutches().add(k);
             nest = n.world();
             LOGGER.info("[smoketest] M31b clutch at {} (interior {})", nest, n.interior());
         }
@@ -216,9 +216,9 @@ final class DevClientSmokeM31b {
         double[][] spots = {{4.4, 2.2, 200, 1}, {1.4, 1.6, 120, 0}, {2.6, 0.7, 250, 0}, {0.8, 1.2, 60, 0}, {nest.x - palu.getX() + 0.25, nest.z - palu.getZ() - 0.15, 210, 0},
                 {nest.x - palu.getX() - 0.3, nest.z - palu.getZ() + 0.1, 150, 0}};
         int i = 0;
-        List<TurtleEntity> list = level.getEntitiesOfClass(TurtleEntity.class, new AABB(palu).inflate(8), e -> TankInhabitants.inside(t, e));
-        list.sort(java.util.Comparator.comparingInt((TurtleEntity e) -> (e.isBaby() ? 10 : 0) + (e.species() == TurtleSpecies.SLIDER ? e.variety() : e.species() == TurtleSpecies.REEVES ? 2 : 3)));
-        for (TurtleEntity e : list) {
+        List<HerpEntity> list = level.getEntitiesOfClass(HerpEntity.class, new AABB(palu).inflate(8), e -> TankInhabitants.inside(t, e));
+        list.sort(java.util.Comparator.comparingInt((HerpEntity e) -> (e.isBaby() ? 10 : 0) + (e.species() == HerpSpecies.SLIDER ? e.variety() : e.species() == HerpSpecies.REEVES ? 2 : 3)));
+        for (HerpEntity e : list) {
             if (i >= spots.length) break;
             double x = palu.getX() + spots[i][0], z = palu.getZ() + spots[i][1];
             double y = ter.ground(x, z);
@@ -233,7 +233,7 @@ final class DevClientSmokeM31b {
         TankTerrain tter = new TankTerrain(tt, level.getServer(), InteriorRegions.get(level.getServer()).get(tt.regionId()), true);
         double[][] tspots = {{1.5, 1.4, 190, 1}, {2.9, 1.7, 230, 0}};
         int j = 0;
-        for (TurtleEntity e : level.getEntitiesOfClass(TurtleEntity.class, new AABB(terra).inflate(8), e -> TankInhabitants.inside(tt, e))) {
+        for (HerpEntity e : level.getEntitiesOfClass(HerpEntity.class, new AABB(terra).inflate(8), e -> TankInhabitants.inside(tt, e))) {
             if (j >= tspots.length) break;
             double x = terra.getX() + tspots[j][0], z = terra.getZ() + tspots[j][1];
             e.moveTo(x, tter.ground(x, z) + 0.01, z, (float) tspots[j][2], 0F);

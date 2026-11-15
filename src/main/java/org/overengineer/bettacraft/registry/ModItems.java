@@ -64,11 +64,53 @@ public final class ModItems {
     public static final DeferredItem<DeferredSpawnEggItem> REEVES_TURTLE_SPAWN_EGG = ITEMS.register("reeves_turtle_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.REEVES_TURTLE, 0x5A4630, 0xD8C060, new Item.Properties()));
 
-    /** M31 part b: the bucket or box item of a turtle species. */
-    public static Item turtleContainer(org.overengineer.bettacraft.terrarium.TurtleSpecies s) {
-        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.SLIDER) return SLIDER_TURTLE_BUCKET.get();
-        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.HERMANN) return HERMANN_TORTOISE_BOX.get();
-        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.REEVES) return REEVES_TURTLE_BUCKET.get();
+    /** M31 part c: the amphibians and reptiles in their terrarium boxes, and their spawn eggs. */
+    public static final java.util.Map<org.overengineer.bettacraft.terrarium.HerpSpecies, DeferredItem<net.minecraft.world.item.MobBucketItem>> HERP_BOXES = herpBoxes();
+    public static final java.util.Map<org.overengineer.bettacraft.terrarium.HerpSpecies, DeferredItem<DeferredSpawnEggItem>> HERP_SPAWN_EGGS = herpEggs();
+
+    private static java.util.Map<org.overengineer.bettacraft.terrarium.HerpSpecies, DeferredItem<net.minecraft.world.item.MobBucketItem>> herpBoxes() {
+        var m = new java.util.LinkedHashMap<org.overengineer.bettacraft.terrarium.HerpSpecies, DeferredItem<net.minecraft.world.item.MobBucketItem>>();
+        for (var s : ModEntities.HERPS.keySet()) {
+            m.put(s, ITEMS.register(s.containerId(), () -> new org.overengineer.bettacraft.terrarium.AnimalBoxItem(ModEntities.HERPS.get(s).get(), new Item.Properties().stacksTo(1))));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    /** Spawn egg colours (base, spots) of the part c species. */
+    private static int[] eggColours(org.overengineer.bettacraft.terrarium.HerpSpecies s) {
+        return switch (s.id()) {
+            case "dart_frog" -> new int[]{0x2050C8, 0x101418};
+            case "horned_frog" -> new int[]{0x6E9A3A, 0x6A3A20};
+            case "leopard_gecko" -> new int[]{0xE8C858, 0x3A3028};
+            case "crested_gecko" -> new int[]{0xB8783A, 0xE0C08A};
+            default -> new int[]{0xD8602A, 0x8A2A1A};
+        };
+    }
+
+    private static java.util.Map<org.overengineer.bettacraft.terrarium.HerpSpecies, DeferredItem<DeferredSpawnEggItem>> herpEggs() {
+        var m = new java.util.LinkedHashMap<org.overengineer.bettacraft.terrarium.HerpSpecies, DeferredItem<DeferredSpawnEggItem>>();
+        for (var s : ModEntities.HERPS.keySet()) {
+            int[] c = eggColours(s);
+            m.put(s, ITEMS.register(s.spawnEggId(), () -> new DeferredSpawnEggItem(ModEntities.HERPS.get(s), c[0], c[1], new Item.Properties())));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
+    /** M31 part c: feeder insects: crickets (a culture box in the grass) and flightless fruit flies (a culture on fruit). */
+    public static final DeferredItem<Item> CRICKETS = ITEMS.register("crickets", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> FRUIT_FLIES = ITEMS.register("fruit_flies", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<CultureItem> CRICKET_CULTURE = ITEMS.register("cricket_culture",
+            () -> new CultureItem(CRICKETS, false, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<CultureItem> FRUIT_FLY_CULTURE = ITEMS.register("fruit_fly_culture",
+            () -> new CultureItem(FRUIT_FLIES, false, new Item.Properties().stacksTo(16)));
+
+    /** M31 part b: the bucket or box item of a species (part c: the boxes of the amphibians and reptiles). */
+    public static Item herpContainer(org.overengineer.bettacraft.terrarium.HerpSpecies s) {
+        var box = HERP_BOXES.get(s);
+        if (box != null) return box.get();
+        if (s == org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER) return SLIDER_TURTLE_BUCKET.get();
+        if (s == org.overengineer.bettacraft.terrarium.HerpSpecies.HERMANN) return HERMANN_TORTOISE_BOX.get();
+        if (s == org.overengineer.bettacraft.terrarium.HerpSpecies.REEVES) return REEVES_TURTLE_BUCKET.get();
         return MUSK_TURTLE_BUCKET.get();
     }
 

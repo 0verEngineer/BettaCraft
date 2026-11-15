@@ -990,7 +990,7 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.terrarium.TankClimate.step(level, c, 0.01);
             check("the terrarium has a climate", c.getTank().hasClimate());
             // M31 part b: a yellow-bellied slider and a slider hatchling next to the tank (no AI; the dev world keeps the last run's)
-            for (var old : level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.TurtleEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
+            for (var old : level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.HerpEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
             for (int i = 0; i < 2; i++) {
                 var s = org.overengineer.bettacraft.registry.ModEntities.SLIDER_TURTLE.get().create(level);
                 if (s == null) continue;

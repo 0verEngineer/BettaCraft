@@ -14,7 +14,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * M31 part b: a clutch of turtle eggs half buried in sand or soil in the interior of a tank (the miniature shows it in
- * the tank). Only the turtles lay it ({@link TurtleBreeding}); the incubation is the {@link TurtleClutch} of the tank. It
+ * the tank). Only the turtles lay it ({@link HerpBreeding}); the incubation is the {@link HerpClutch} of the tank. It
  * has no item and drops nothing: a player who breaks it in the interior destroys the eggs. No collision, so the animals
  * and the height map of the interior walk over it. The model is larger than the block (an egg is about a fifth of a
  * grown musk turtle).

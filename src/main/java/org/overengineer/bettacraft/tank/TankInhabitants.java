@@ -417,7 +417,7 @@ public final class TankInhabitants {
             return m.species().stock() * ServerConfig.getOr(ServerConfig.TANKMATES_STOCKING, 1.0) * m.lifeStage().stocking();
         }
         // M30: a big animal of another kind (the dolphin) like a big species: a quarter of the water blocks it needs
-        if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta instanceof org.overengineer.bettacraft.terrarium.TurtleEntity ? ta.stockWeight() : ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31 (part b: a turtle by its growth)
+        if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta instanceof org.overengineer.bettacraft.terrarium.HerpEntity ? ta.stockWeight() : ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31 (part b: a turtle by its growth)
         double big = org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e);
         if (big > 0) return 25.0 * big * big * big;
         double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity

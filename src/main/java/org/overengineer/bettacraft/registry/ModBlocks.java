@@ -312,6 +312,10 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> TURTLE_EGGS = BLOCKS.register("turtle_eggs",
             () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
                     .strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
+    /** M31 part c: a dart frog clutch: clear jelly with dark embryos on the land of a tank's interior (no item). */
+    public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> FROG_EGGS = BLOCKS.register("frog_eggs",
+            () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE)
+                    .strength(0.1F).sound(SoundType.FROGSPAWN).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.HeatMatBlock> HEAT_MAT = BLOCKS.register("heat_mat",
             () -> new org.overengineer.bettacraft.terrarium.HeatMatBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
                     .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)

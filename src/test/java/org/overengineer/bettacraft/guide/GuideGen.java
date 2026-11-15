@@ -508,6 +508,9 @@ public final class GuideGen {
                         // M29 part c: a share of the wild bettas
                         ? bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ": about " + Math.round(s.chanceMax() * 100) + " % of the wild bettas",
                         " " + where(s.where()) + ": etwa " + Math.round(s.chanceMax() * 100) + " % der wilden Bettas") + cond
+                        : s.max() <= 1 // M31 part c: a lone animal
+                        ? bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ", alone (spawn weight " + (int) s.chance() + ")",
+                        " " + where(s.where()) + ", einzeln (Spawn-Gewicht " + (int) s.chance() + ")") + cond
                         : bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ", in groups of " + s.min() + "–" + s.max() + " (spawn weight "
                         + (int) s.chance() + ")", " " + where(s.where()) + ", in Gruppen von " + s.min() + "–" + s.max() + " (Spawn-Gewicht " + (int) s.chance() + ")") + cond);
                 case TRADER_USUAL, TRADER_RARE -> {
@@ -764,6 +767,9 @@ public final class GuideGen {
             case SAND -> t("anywhere", "überall");
             case COLD_WATER -> t("in cold lakes and frozen rivers", "in kalten Seen und gefrorenen Flüssen");
             case DRY_LAND -> t("in savannas and dry shrublands", "in Savannen und trockenem Buschland"); // M31 part b
+            case JUNGLE_FLOOR -> t("on the floor of jungles", "auf dem Boden von Dschungeln"); // M31 part c
+            case ARID -> t("in deserts and badlands", "in Wüsten und Tafelbergen");
+            case WOODLAND -> t("in forests and plains", "in Wäldern und Ebenen");
         };
     }
 

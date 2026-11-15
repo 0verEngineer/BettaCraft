@@ -38,5 +38,11 @@ public enum Where {
     /** M28.1: {@code #bettacraft:cold_waters} (frozen rivers, the lakes of taigas and snowy plains, cold land biomes by {@code #c:is_cold/overworld}). */
     COLD_WATER,
     /** M31 part b: {@code #bettacraft:tortoise_lands} (savannas by {@code #c:is_savanna}, the dry shrublands of biome mods). */
-    DRY_LAND
+    DRY_LAND,
+    /** M31 part c: the land of the jungles ({@code #bettacraft:jungle_waters}, {@code #minecraft:is_jungle}). */
+    JUNGLE_FLOOR,
+    /** M31 part c: {@code #bettacraft:arid_lands} (deserts by {@code #c:is_desert}, badlands). */
+    ARID,
+    /** M31 part c: {@code #bettacraft:snake_lands} (temperate forests and plains). */
+    WOODLAND
 }

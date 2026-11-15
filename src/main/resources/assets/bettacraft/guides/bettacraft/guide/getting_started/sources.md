@@ -221,6 +221,12 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Bucket of Musk Turtle](../terrarium/musk_turtle.md): spawns in rivers (spawn weight 2).
 * [Bucket of Reeves' Turtle](../terrarium/reeves_turtle.md): spawns in rivers (spawn weight 3).
 * [Boxed Hermann's Tortoise](../terrarium/hermann_tortoise.md): spawns in savannas and dry shrublands (spawn weight 4).
+* [Boxed Horned Frog](../terrarium/horned_frog.md): spawns in swamps (spawn weight 1).
+* [Boxed Horned Frog](../terrarium/horned_frog.md): spawns in savannas and dry shrublands (spawn weight 2).
+* [Boxed Poison Dart Frog](../terrarium/dart_frog.md): spawns on the floor of jungles (spawn weight 4).
+* [Boxed Crested Gecko](../terrarium/crested_gecko.md): spawns on the floor of jungles (spawn weight 3).
+* [Boxed Leopard Gecko](../terrarium/leopard_gecko.md): spawns in deserts and badlands (spawn weight 4).
+* [Boxed Corn Snake](../terrarium/corn_snake.md): spawns in forests and plains (spawn weight 3).
 * [Zoanthids](../saltwater/zoanthus.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 * [Green Star Polyps](../saltwater/green_star_polyps.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 * [Mushroom Coral](../saltwater/mushroom_coral.md): shears on a wild coral colony in warm oceans (coral reefs) (always).

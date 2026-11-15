@@ -8,6 +8,7 @@
   nozzle (``mister_nozzle``);
 * thermo-hygrometer: a white case (``thermo_hygrometer_side``) and the grey-green LCD face with its frame
   (``thermo_hygrometer_front``); the digits are drawn live by its block entity renderer.
+* M31 part c: the dart frog clutch (``frog_eggs``): pale jelly with dark embryos.
 * M31 part b: turtle eggs (``turtle_eggs``): a chalky cream shell with faint grey-brown speckles and a few grains of the
   nest sand stuck to it.
 
@@ -143,6 +144,22 @@ def turtle_eggs():
     return _img(px)
 
 
+def frog_eggs():
+    """M31 part c: a dart frog clutch: pale, clear-looking jelly (opaque for the miniature) with round dark embryos."""
+    r = _rng(3131)
+
+    def px(x, y):
+        col = _rgb("#d6e4dc") * (0.94 + 0.06 * r.random())
+        # embryos on a grid of 3 px, a dark core with a lighter rim
+        cx, cy = x % 3, y % 3
+        if cx == 1 and cy == 1:
+            col = _rgb("#2a2a22")
+        elif (cx == 1 or cy == 1) and r.random() < 0.3:
+            col = _rgb("#9aa89a")
+        return col
+    return _img(px)
+
+
 def write_all():
     out = []
     tex = {
@@ -151,6 +168,7 @@ def write_all():
         "mister_tank": mister_tank(), "mister_cap": mister_cap(), "mister_nozzle": mister_nozzle(),
         "thermo_hygrometer_side": thermo_side(), "thermo_hygrometer_front": thermo_front(),
         "turtle_eggs": turtle_eggs(),
+        "frog_eggs": frog_eggs(),
     }
     for name, img in tex.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))

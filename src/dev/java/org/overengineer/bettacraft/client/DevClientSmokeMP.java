@@ -221,7 +221,7 @@ final class DevClientSmokeMP {
                     // M31 part b: the variety of the slider and the growth of the hatchling (synced entity data)
                     int variety = -1;
                     float growth = 2F;
-                    for (var s : mc.level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.TurtleEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) {
+                    for (var s : mc.level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.HerpEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) {
                         variety = Math.max(variety, s.variety());
                         growth = Math.min(growth, s.growth());
                     }

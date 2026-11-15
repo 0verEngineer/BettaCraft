@@ -12,9 +12,9 @@ import net.minecraft.world.phys.Vec3;
  * {@link #incubate} adds a step at the nest temperature (pure, unit-tested): the progress, the mean temperature of the
  * thermosensitive period and the heat the embryos took.
  */
-public final class TurtleClutch {
+public final class HerpClutch {
     public final int id;
-    public final TurtleSpecies species;
+    public final HerpSpecies species;
     public int eggs;
     public double x, y, z;
     /** The egg block in the interior dimension. */
@@ -25,13 +25,13 @@ public final class TurtleClutch {
     public double tspSum, tspDays;
     /** Days above the lethal temperature. */
     public double hotDays;
-    /** Varieties of the parents (index in {@link TurtleSpecies#varieties()}). */
+    /** Varieties of the parents (index in {@link HerpSpecies#varieties()}). */
     public int motherVariety, fatherVariety;
     /** Seed of the hatching (the sexes, the varieties): fixed when laid, so a clutch always gives the same young. */
     public long seed;
     public int generation;
 
-    public TurtleClutch(int id, TurtleSpecies species, int eggs, Vec3 at, BlockPos interior, long seed) {
+    public HerpClutch(int id, HerpSpecies species, int eggs, Vec3 at, BlockPos interior, long seed) {
         this.id = id;
         this.species = species;
         this.eggs = eggs;
@@ -53,11 +53,11 @@ public final class TurtleClutch {
     /** One step at the nest temperature {@code temp} for {@code days} ({@code speed}: terrarium.incubationSpeed). */
     public void incubate(double temp, double days, double speed) {
         if (days <= 0 || eggs <= 0) return;
-        if (Double.isFinite(temp) && temp > TurtleSex.LETHAL) hotDays += days;
+        if (Double.isFinite(temp) && temp > EggSex.LETHAL) hotDays += days;
         double before = progress;
-        progress = Math.min(1.0, progress + TurtleSex.rate(species, temp, speed) * days);
+        progress = Math.min(1.0, progress + EggSex.rate(species, temp, speed) * days);
         // the part of this step within the thermosensitive period, weighted by the time it took
-        double from = Math.max(before, TurtleSex.TSP_FROM), to = Math.min(progress, TurtleSex.TSP_TO);
+        double from = Math.max(before, EggSex.TSP_FROM), to = Math.min(progress, EggSex.TSP_TO);
         if (to > from && progress > before && Double.isFinite(temp)) {
             double share = (to - from) / (progress - before);
             tspSum += temp * days * share;
@@ -67,7 +67,7 @@ public final class TurtleClutch {
 
     /** Whether the heat killed the embryos. */
     public boolean cooked() {
-        return hotDays >= TurtleSex.LETHAL_DAYS;
+        return hotDays >= EggSex.LETHAL_DAYS;
     }
 
     public boolean ready() {
@@ -81,11 +81,11 @@ public final class TurtleClutch {
 
     /** The share of females this clutch will give (from what it had so far; 0.5 before the thermosensitive period). */
     public double femaleShare() {
-        return TurtleSex.femaleChance(species, tspTemp());
+        return EggSex.femaleChance(species, tspTemp());
     }
 
-    public TurtleClutch copy() {
-        TurtleClutch c = new TurtleClutch(id, species, eggs, pos(), interiorPos(), seed);
+    public HerpClutch copy() {
+        HerpClutch c = new HerpClutch(id, species, eggs, pos(), interiorPos(), seed);
         c.progress = progress;
         c.tspSum = tspSum;
         c.tspDays = tspDays;
@@ -118,12 +118,12 @@ public final class TurtleClutch {
 
     /** Null for a species that no longer exists or broken numbers. */
     @Nullable
-    public static TurtleClutch load(CompoundTag t) {
-        TurtleSpecies s = TurtleSpecies.byId(t.getString("species"));
+    public static HerpClutch load(CompoundTag t) {
+        HerpSpecies s = HerpSpecies.byId(t.getString("species"));
         if (s == null) return null;
         double x = t.getDouble("x"), y = t.getDouble("y"), z = t.getDouble("z");
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)) return null;
-        TurtleClutch c = new TurtleClutch(t.getInt("id"), s, Math.max(0, Math.min(64, t.getInt("eggs"))), new Vec3(x, y, z),
+        HerpClutch c = new HerpClutch(t.getInt("id"), s, Math.max(0, Math.min(64, t.getInt("eggs"))), new Vec3(x, y, z),
                 BlockPos.of(t.getLong("interior")), t.getLong("seed"));
         c.progress = finite(t.getDouble("progress"), 0, 1);
         c.tspSum = finite(t.getDouble("tsp_sum"), 0, 1e6);

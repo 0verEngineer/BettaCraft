@@ -52,8 +52,8 @@ Wie ein Betta: Bei 25–28 °C baut das Männchen ein Schaumnest an der Oberflä
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,27–0,32 % pro Schwung (etwa 1 von 317–375 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,6–0,71 % pro Schwung (etwa 1 von 141–167 Schwüngen).
-* **Wild** in Flüssen, in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.gouramis`).
-* **Wild** in Sümpfen, in Gruppen von 1–1 (Spawn-Gewicht 3) (Config `features.gouramis`).
+* **Wild** in Flüssen, einzeln (Spawn-Gewicht 2) (Config `features.gouramis`).
+* **Wild** in Sümpfen, einzeln (Spawn-Gewicht 3) (Config `features.gouramis`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: baut ein Schaumnest.
 

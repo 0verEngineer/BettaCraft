@@ -714,13 +714,13 @@ public final class TankView {
             x.animals++;
             var a = n.assess(cond);
             if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) a = ta.adjust(a); // M31 part b: brumation
-            if (e instanceof org.overengineer.bettacraft.terrarium.TurtleEntity te && te.isBrumating()) seen.add(e.getType().getDescriptionId() + "|gui.bettacraft.terrarium.brumating");
+            if (e instanceof org.overengineer.bettacraft.terrarium.HerpEntity te && te.isBrumating()) seen.add(e.getType().getDescriptionId() + "|gui.bettacraft.terrarium.brumating");
             for (var p : a.problems()) seen.add(e.getType().getDescriptionId() + "|" + p.translationKey());
         }
         x.problems.addAll(seen);
         // M31 part b: the clutches in the land
-        double nest = org.overengineer.bettacraft.terrarium.TurtleBreeding.nestTemp(t);
-        for (var k : t.turtleClutches()) {
+        double nest = org.overengineer.bettacraft.terrarium.HerpBreeding.nestTemp(t);
+        for (var k : t.herpClutches()) {
             double f = k.femaleShare();
             String sex = k.tspDays <= 1e-9 ? "open" : f > 0.8 ? "females" : f < 0.2 ? "males" : "mixed";
             x.eggs.add(k.species.translationKey() + "|" + k.eggs + "|" + Math.round(k.progress * 100) + "|"

@@ -223,6 +223,12 @@ die [Biom-Tags](../settings.md)).
 * [Moschusschildkröteneimer](../terrarium/musk_turtle.md): spawnt in Flüssen (Spawn-Gewicht 2).
 * [Dreikielschildkröteneimer](../terrarium/reeves_turtle.md): spawnt in Flüssen (Spawn-Gewicht 3).
 * [Landschildkröte in der Terrarienbox](../terrarium/hermann_tortoise.md): spawnt in Savannen und trockenem Buschland (Spawn-Gewicht 4).
+* [Hornfrosch in der Box](../terrarium/horned_frog.md): spawnt in Sümpfen (Spawn-Gewicht 1).
+* [Hornfrosch in der Box](../terrarium/horned_frog.md): spawnt in Savannen und trockenem Buschland (Spawn-Gewicht 2).
+* [Pfeilgiftfrosch in der Box](../terrarium/dart_frog.md): spawnt auf dem Boden von Dschungeln (Spawn-Gewicht 4).
+* [Kronengecko in der Box](../terrarium/crested_gecko.md): spawnt auf dem Boden von Dschungeln (Spawn-Gewicht 3).
+* [Leopardgecko in der Box](../terrarium/leopard_gecko.md): spawnt in Wüsten und Tafelbergen (Spawn-Gewicht 4).
+* [Kornnatter in der Box](../terrarium/corn_snake.md): spawnt in Wäldern und Ebenen (Spawn-Gewicht 3).
 * [Krustenanemonen (Zoanthus)](../saltwater/zoanthus.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
 * [Grüne Sternpolypen](../saltwater/green_star_polyps.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).
 * [Scheibenanemone](../saltwater/mushroom_coral.md): Schere an einem wilden Korallenstock in warmen Ozeanen (Korallenriffe) (immer).

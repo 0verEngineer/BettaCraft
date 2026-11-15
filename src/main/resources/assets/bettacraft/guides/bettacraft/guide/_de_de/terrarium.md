@@ -84,6 +84,18 @@ Sie legen Eier in Sand oder Erde auf dem Land, und die Nesttemperatur bestimmt d
 [Schildkrötenzucht](terrarium/turtle_breeding.md). Wilde leben in Sümpfen und Flüssen (die Wasserschildkröten) und in
 Savannen und trockenem Buschland (die Landschildkröte).
 
+Die [Amphibien und Reptilien](terrarium/herps.md):
+
+| Tier | Becken | Braucht |
+|---|---|---|
+| [Pfeilgiftfrösche](terrarium/dart_frog.md) (drei Arten) | Paludarium, viel Land | hohe Luftfeuchte, Fruchtfliegen; Kaulquappen im Wasser |
+| [Schmuckhornfrosch](terrarium/horned_frog.md) | feuchtes Terrarium | sitzt eingegraben im Boden; Heimchen |
+| [Leopardgecko](terrarium/leopard_gecko.md) | trockenes Terrarium | Sonnenplatz, Heimchen; Geschlecht nach Nesttemperatur |
+| [Kronengecko](terrarium/crested_gecko.md) | Terrarium | klettert am Glas; nicht zu warm; Obst und Insekten |
+| [Kornnatter](terrarium/corn_snake.md) | trockenes Terrarium, 8 Blöcke | Sonnenplatz, ein Beutetier pro Woche; Winterstarre |
+
+Sie fressen [Futterinsekten](terrarium/feeder_insects.md) (Heimchen, Fruchtfliegen), Obst oder Beutetiere.
+
 ## Wasserpflege im Terrarium
 
 Ein Terrarium ohne Wasser hat keine Wasserwerte: Wasserqualität, Filter, Sauerstoff, CO2 und Wasserchemie stehen still,
@@ -94,5 +106,6 @@ und das Menü sagt das. Ein Paludarium behält sie alle für sein Wasser.
 Server-Config `terrarium.*`: die Landanteile der Arten, die Stärke der Geräte, die Zeitkonstanten, das Wasser der
 Sprühanlage, die Tage bis zum Schaden; `power.*`: Heizmatten nutzen den Energie-Schalter der Heizer (`heatMatFePerTick`),
 Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrarium` (aus: jedes Becken ist ein
-Aquarium), `features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`. Schildkröten:
+Aquarium), `features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`, `features.herps`,
+`features.herpBreeding`, `features.wildHerps`. Schildkröten (und die Eierleger unter den Amphibien und Reptilien):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

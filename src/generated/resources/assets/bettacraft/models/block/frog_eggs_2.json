@@ -1,0 +1,282 @@
+{
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "east": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "north": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "south": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "up": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "west": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        }
+      },
+      "from": [
+        2,
+        0,
+        5
+      ],
+      "to": [
+        8,
+        2.5,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "east": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "north": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "up": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        }
+      },
+      "from": [
+        3,
+        0,
+        4
+      ],
+      "to": [
+        7,
+        3,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "east": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "north": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "south": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "up": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        },
+        "west": {
+          "texture": "#egg",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            4.0
+          ]
+        }
+      },
+      "from": [
+        8,
+        0,
+        7
+      ],
+      "to": [
+        14,
+        2.5,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "east": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "north": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "up": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": "#egg",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            6.0
+          ]
+        }
+      },
+      "from": [
+        9,
+        0,
+        6
+      ],
+      "to": [
+        13,
+        3,
+        12
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "egg": "bettacraft:block/frog_eggs",
+    "particle": "bettacraft:block/frog_eggs"
+  }
+}

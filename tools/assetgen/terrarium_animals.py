@@ -285,6 +285,13 @@ COLOURS = {"musk_turtle": _musk_colour, "hermann_tortoise": _hermann, "reeves_tu
 # models with several textures (varieties): texture name -> colour
 TEXTURES = {"slider_turtle": {"slider_turtle_elegans": _slider(True), "slider_turtle_scripta": _slider(False)}}
 
+# M31 part c: the frogs, geckos and the snake (herp_animals.py)
+import herp_animals  # noqa: E402
+
+MODELS.update(herp_animals.MODELS)
+COLOURS.update(herp_animals.COLOURS)
+TEXTURES.update(herp_animals.TEXTURES)
+
 
 def texture(groups: list[Group], colour, seed: int, size: int) -> np.ndarray:
     """Box-UV texture like critters.texture, coloured per face pixel by ``colour``."""
@@ -328,8 +335,10 @@ def write_java(models: dict[str, list[Group]], sizes: dict[str, int]):
             "import net.minecraft.client.model.geom.builders.PartDefinition;",
             "",
             "/**",
-            " * M31: entity models of the terrarium animals (ground y = 24 under the root part \"animal\", head to -Z). Groups:",
-            " * shell, head, leg_fr / leg_fl / leg_br / leg_bl, tail. Textures: textures/entity/terrarium/<model>.png (box UV).",
+            " * M31: entity models of the terrarium animals (ground y = 24 under the root part \"animal\", head to -Z). Turtles:",
+            " * shell, head, leg_fr / leg_fl / leg_br / leg_bl, tail; part c (herp_animals.py): frogs body, head, four legs; the tadpole",
+            " * body, tail; geckos body, head, four legs, tail, tail_tip; the snake head, seg0..seg9.",
+            " * Textures: textures/entity/terrarium/<texture>.png (box UV; a model can have several, its varieties).",
             " */",
             "public final class TerrariumModelDefinitions {",
             "    public static final String[] MODELS = {" + ", ".join(f'"{m}"' for m in models) + "};",

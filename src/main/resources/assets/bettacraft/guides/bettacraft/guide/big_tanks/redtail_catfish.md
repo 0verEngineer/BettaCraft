@@ -48,6 +48,6 @@ cream-white band along the flank and a bright red tail. In big show tanks it gro
 
 * **[Large net](large_net.md)** in jungle water: 1.1 % per swing (about 1 in 88 swings), into an empty transport tub (config `features.bigAnimals`).
 * **[Steel leader](steel_leader.md)** (fishing) in jungle water: 1.4 % per catch (about 1 in 70 catches), into an empty transport tub (config `features.bigAnimals`).
-* **Wild** in jungle water, in groups of 1–1 (spawn weight 2) (config `features.bigAnimals`).
+* **Wild** in jungle water, alone (spawn weight 2) (config `features.bigAnimals`).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -127,8 +127,8 @@ public final class TankData {
     private org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM;
     private float landShare = -1F, airTemp = Float.NaN, groundTemp = Float.NaN, baskTemp = Float.NaN, humidity = Float.NaN, uv = 0F, matDuty = 0F;
     /** M31 part b: turtle eggs buried in the land (saved under "turtle_eggs" only while there are some). */
-    private final List<org.overengineer.bettacraft.terrarium.TurtleClutch> turtleClutches = new ArrayList<>();
-    private int nextTurtleClutchId = 1;
+    private final List<org.overengineer.bettacraft.terrarium.HerpClutch> herpClutches = new ArrayList<>();
+    private int nextHerpClutchId = 1;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -396,8 +396,8 @@ public final class TankData {
     public void setLightOff(int minutes) { this.lightOff = Math.floorMod(minutes, 24 * 60); }
 
     // M31 terrarium
-    public List<org.overengineer.bettacraft.terrarium.TurtleClutch> turtleClutches() { return turtleClutches; }
-    public int nextTurtleClutchId() { return nextTurtleClutchId++; }
+    public List<org.overengineer.bettacraft.terrarium.HerpClutch> herpClutches() { return herpClutches; }
+    public int nextHerpClutchId() { return nextHerpClutchId++; }
     public org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode() { return terrariumMode; }
     public void setTerrariumMode(org.overengineer.bettacraft.terrarium.TerrariumMode m) { this.terrariumMode = m == null ? org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM : m; }
     /** Share of the floor that is land (-1 = not worked out yet). */
@@ -574,9 +574,9 @@ public final class TankData {
         lightOff = o.lightOff;
         setClimate(o.climate()); // M31 (the mode and the land share are worked out again)
         // M31 part b: the turtle eggs inside this part stay
-        turtleClutches.clear();
-        nextTurtleClutchId = Math.max(nextTurtleClutchId, o.nextTurtleClutchId);
-        for (var c : o.turtleClutches) if (contains(BlockPos.containing(c.x, c.y + 0.01, c.z))) turtleClutches.add(c.copy());
+        herpClutches.clear();
+        nextHerpClutchId = Math.max(nextHerpClutchId, o.nextHerpClutchId);
+        for (var c : o.herpClutches) if (contains(BlockPos.containing(c.x, c.y + 0.01, c.z))) herpClutches.add(c.copy());
     }
 
     public float waterQuality() { return waterQuality; }
@@ -676,11 +676,11 @@ public final class TankData {
         t.putInt("light_on", lightOn);
         t.putInt("light_off", lightOff);
         if (terrariumWorthSaving()) t.put("terrarium", saveTerrarium()); // M31
-        if (!turtleClutches.isEmpty()) { // M31 part b
+        if (!herpClutches.isEmpty()) { // M31 part b
             ListTag te = new ListTag();
-            for (var c : turtleClutches) te.add(c.save());
+            for (var c : herpClutches) te.add(c.save());
             t.put("turtle_eggs", te);
-            t.putInt("next_turtle_clutch", nextTurtleClutchId);
+            t.putInt("next_turtle_clutch", nextHerpClutchId);
         }
         return t;
     }
@@ -806,12 +806,12 @@ public final class TankData {
         ListTag te = t.getList("turtle_eggs", Tag.TAG_COMPOUND); // M31 part b
         int maxTurtle = 0;
         for (int i = 0; i < te.size(); i++) {
-            var c = org.overengineer.bettacraft.terrarium.TurtleClutch.load(te.getCompound(i));
+            var c = org.overengineer.bettacraft.terrarium.HerpClutch.load(te.getCompound(i));
             if (c == null) continue;
-            d.turtleClutches.add(c);
+            d.herpClutches.add(c);
             maxTurtle = Math.max(maxTurtle, c.id);
         }
-        d.nextTurtleClutchId = Math.max(maxTurtle + 1, t.contains("next_turtle_clutch", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_turtle_clutch") : 1);
+        d.nextHerpClutchId = Math.max(maxTurtle + 1, t.contains("next_turtle_clutch", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_turtle_clutch") : 1);
         d.recomputeBounds();
         return d;
     }

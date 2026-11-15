@@ -279,6 +279,12 @@ public final class BettaCraftClient {
         event.registerEntityRenderer(ModEntities.SLIDER_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "slider_turtle", 0.9F, 0.3F)); // M31 part b
         event.registerEntityRenderer(ModEntities.HERMANN_TORTOISE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "hermann_tortoise", 0.85F, 0.28F));
         event.registerEntityRenderer(ModEntities.REEVES_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "reeves_turtle", 0.85F, 0.25F));
+        // M31 part c: the amphibians and reptiles (size of the model, shadow, how deep the horned frog sits buried)
+        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.DART_FROG, 0.3F, 0.08F, 0F);
+        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.HORNED_FROG, 0.7F, 0.22F, 0.22F);
+        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, 0.52F, 0.16F, 0F);
+        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, 0.52F, 0.14F, 0F);
+        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.CORN_SNAKE, 0.88F, 0.2F, 0F);
         event.registerEntityRenderer(ModEntities.WILD_CRITTER.get(), org.overengineer.bettacraft.client.render.WildCritterRenderer::new); // M22.3
         for (var t : ModEntities.TANKMATES.values()) event.registerEntityRenderer(t.get(), org.overengineer.bettacraft.client.render.TankmateRenderer::new); // M19
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
@@ -322,5 +328,11 @@ public final class BettaCraftClient {
                 return tint;
             }
         };
+    }
+
+    /** M31 part c: the renderer of an amphibian or reptile species. */
+    private static void registerHerp(EntityRenderersEvent.RegisterRenderers event, org.overengineer.bettacraft.terrarium.HerpSpecies s, float scale, float shadow,
+                                     float bury) {
+        event.registerEntityRenderer(ModEntities.HERPS.get(s).get(), ctx -> new org.overengineer.bettacraft.client.render.HerpRenderer(ctx, s, scale, shadow, bury));
     }
 }
