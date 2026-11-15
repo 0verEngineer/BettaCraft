@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm36')) {
+                // gradlew runClient -Psmoketestm36 [-Pcompare] : only the M36 scene (the bettas at Normal and Large next to the
+                // tankmates in front of a one-block ruler; with -Pcompare also one of DragN's bettas, the pictures stay local)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m36only', 'true'
+            }
             if (project.hasProperty('smoketestm35a')) {
                 // gradlew runClient -Psmoketestm35a : only the M35 part a scene (Naturalist alligators in a 24 x 6 x 12 paludarium,
                 // tortoises in a dry terrarium, sea turtles in a sea water paludarium)
@@ -618,6 +624,9 @@ idea {
 //   -Pkubejs  : run/kubejs-mods (M32 part d: KubeJS and Rhino from ATM10AA) for runClient, runServer and runGameTestServer;
 //               the example script of modpack/kubejs is copied into the run's kubejs/server_scripts (its lines go to
 //               logs/kubejs/server.log)
+//   -Pcompare : run/compare-mods (M36: DragN's Just Bettas + GeckoLib + TerraBlender from ATM10AA) for runClient and runServer:
+//               only to compare the size of our bettas with theirs (the M36 client smoke puts one of theirs next to ours);
+//               never in the jar, the repo or the README
 def runModsDir = file('run/mods')
 def gameTestModsDir = file('run/gametest/mods')
 def extraMods = [
@@ -630,6 +639,7 @@ def extraMods = [
         [dir: file('run/quest-mods'), on: project.hasProperty('quests'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/map-mods'), on: project.hasProperty('maps'), tasks: ['runClient']],
         [dir: file('run/kubejs-mods'), on: project.hasProperty('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/compare-mods'), on: project.hasProperty('compare'), tasks: ['runClient', 'runServer']],
 ]
 // -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
 // removed without the flag)
@@ -718,7 +728,7 @@ tasks.register('runMultiplayerTest') {
         logs.mkdirs()
         def runDir = file('run')
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods'].each { d ->
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/compare-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()

@@ -107,7 +107,7 @@ public final class InhabitantGameTests {
                 var w = b.tankWater();
                 h.assertTrue(w != null, "fish knows its tank water");
                 var push = org.overengineer.bettacraft.entity.betta.BettaExtents.push(w, b.position(), b.yBodyRot, b.genome().shape(),
-                        b.lifeStage().scale(), b.isFlaring(), 1.0 / 16);
+                        b.sizeScale(), b.isFlaring(), 1.0 / 16);
                 h.assertTrue(push.lengthSqr() < 1e-4, "fins of " + b.genome().shape() + " at yaw " + b.yBodyRot + " stick out by " + push);
             }
             h.succeed();
