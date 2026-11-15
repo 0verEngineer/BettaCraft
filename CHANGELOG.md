@@ -4,6 +4,25 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.27.1-beta.1] - 2026-11-15
+
+Artemia cysts made simple: one jar is one culture, jars always stack to 64, and sand gives four times as many.
+
+### Changed
+- **One jar of artemia cysts is one culture:** crafting an artemia culture or one batch of the artemia hatchery uses the
+  jar up. No more uses per jar: no durability bar, no "uses left" tooltip, no used jar coming back from the crafting grid.
+- **Jars always stack to 64.** The server option `food.artemiaCystStackSize` is gone (and with it its sync to the
+  clients); the config migration removes the old key from `bettacraft-server.toml` (backup `.pre-m35.1`).
+- **Four times as many cysts:** breaking sand drops a jar with 8 % instead of 2 % (`drops.artemiaFromSandChance`; a
+  server config that still had the old default 0.02 is moved to 0.08 by the migration, a value you set yourself stays).
+  The sand drop is the only source of cysts.
+
+### Upgrading
+- **Old jars carry over 1:1 in count, remaining portions are dropped:** a stack of 16 jars (full or opened) becomes 16
+  jars of one culture each and stacks with new ones. This happens when a stack is loaded (inventories, chests and other
+  containers, the hatchery's slot and its open jar, item entities, pipes, Applied Energistics 2 cells), no world scan.
+  Refined Storage keeps old jars as an entry of their own in its list until you take them out; then they are plain jars.
+
 ## [1.27.0-beta.1] - 2026-11-15
 
 Land and marsh animals of other mods in terraria and paludaria, fish in the water part of a paludarium, sea turtles as
