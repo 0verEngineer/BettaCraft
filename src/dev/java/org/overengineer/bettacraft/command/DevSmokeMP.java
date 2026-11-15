@@ -499,9 +499,9 @@ public final class DevSmokeMP {
     }
 
     /**
-     * M21.8 {@code seahorses <seahorses> <full pouches> <stack size> <slot 0 count> <slot 0 uses> <slot 1 count> <slot 1 uses>}: the
-     * clients see both seahorses and the full brood pouch of the male, follow the live change of the cyst stack size (32) and
-     * have the stacked jars with the right uses.
+     * M21.8 {@code seahorses <seahorses> <full pouches> <stack size> <slot 0 count> <slot 0 damaged> <slot 1 count> <slot 1 damaged>}:
+     * the clients see both seahorses and the full brood pouch of the male; M35.1: cyst jars stack to 64 on the clients too (no
+     * config sync any more), and a stack of 16 old jars (loaded with the old damage) arrives as 16 plain jars.
      */
     private static void checkSeahorses(String name, String[] a) {
         if (a.length < 8) {
@@ -510,9 +510,9 @@ public final class DevSmokeMP {
         }
         check(name + ": " + a[1] + " seahorses (server 2)", "2".equals(a[1]));
         check(name + ": " + a[2] + " full brood pouch (server 1, the male)", "1".equals(a[2]));
-        check(name + ": cyst jars per stack " + a[3] + " (server 32 after the live change)", "32".equals(a[3]));
-        check(name + ": a stack of " + a[4] + " jars with " + a[5] + " uses each (server 20 x 16)", "20".equals(a[4]) && "16".equals(a[5]));
-        check(name + ": a used jar " + a[6] + " x " + a[7] + " uses (server 1 x 15)", "1".equals(a[6]) && "15".equals(a[7]));
+        check(name + ": cyst jars per stack " + a[3] + " (64)", "64".equals(a[3]));
+        check(name + ": a stack of " + a[4] + " jars, damaged " + a[5] + " (server 64, none)", "64".equals(a[4]) && "0".equals(a[5]));
+        check(name + ": " + a[6] + " old jars, damaged " + a[7] + " (server 16 loaded from an old save, none)", "16".equals(a[6]) && "0".equals(a[7]));
     }
 
     private static TankBlockEntity main() {
@@ -1280,12 +1280,16 @@ public final class DevSmokeMP {
                 }
             }
             c.markTankChanged();
-            ServerConfig.FOOD_CYST_STACK.set(32);
-            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
             for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-                p.getInventory().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get(), 20));
-                p.getInventory().setItem(1, org.overengineer.bettacraft.food.ArtemiaCystsItem.usedJar(
-                        new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get())));
+                p.getInventory().setItem(0, new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get(), 64));
+                // M35.1: 16 old jars as an old save holds them (5 uses spent): they load as 16 plain jars
+                net.minecraft.nbt.CompoundTag old = new net.minecraft.nbt.CompoundTag();
+                old.putString("id", "bettacraft:artemia_cysts");
+                old.putInt("count", 16);
+                net.minecraft.nbt.CompoundTag comps = new net.minecraft.nbt.CompoundTag();
+                comps.putInt("minecraft:damage", 5);
+                old.put("components", comps);
+                p.getInventory().setItem(1, net.minecraft.world.item.ItemStack.parseOptional(server.registryAccess(), old));
             }
             say("seahorses", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":seahorses") && reports.containsKey(P2 + ":seahorses"), 20 * 30));
@@ -1365,9 +1369,6 @@ public final class DevSmokeMP {
         }, () -> reports.containsKey(P1 + ":wildlife") && reports.containsKey(P2 + ":wildlife"), 20 * 30));
         steps.add(new Step("screenshots", () -> {
             ServerConfig.GENES_ALWAYS_VISIBLE.set(false);
-            org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
-            // M21.8: back to the default cyst stack size
-            ServerConfig.FOOD_CYST_STACK.set(16);
             org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);

@@ -23,7 +23,6 @@ import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
 import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
-import org.overengineer.bettacraft.food.ArtemiaCystsItem;
 import org.overengineer.bettacraft.plants.InteriorPlant;
 import org.overengineer.bettacraft.plants.InteriorPlants;
 import org.overengineer.bettacraft.plants.PlantSpecies;
@@ -54,11 +53,11 @@ import org.slf4j.LoggerFactory;
  *     dwarf seahorses) left to swim freely twice, then posed at their posts close up; a pair with a full brood pouch and
  *     fry in a small tank;</li>
  *     <li>a placed clear glass tank next to a textured one (the block unchanged), the clear glass tank items in the hotbar,
- *     the inventory and JEI, stacks of cyst jars (full, used, old) with their tooltips;</li>
+ *     the inventory and JEI, stacks of cyst jars (M35.1: one jar, one culture; an old one) with their tooltips;</li>
  *     <li>the animals and breeding tabs of the menu with a seahorse, and the handbook page (en, de).</li>
  * </ul>
  * Checks (errors in the log): the client sees the seahorses, some of them hold on to a post while they swim freely, the
- * brood pouch is synced, and client and server agree on the cyst stack size.
+ * brood pouch is synced, and the cyst jars stack to 64 on the client (M35.1).
  */
 final class DevClientSmokeM218 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -123,7 +122,7 @@ final class DevClientSmokeM218 {
         then(20, () -> shot("inventory"));
         then(1, () -> hover(s -> s.is(ModItems.ARTEMIA_CYSTS.get()) && s.getCount() == 16));
         then(10, () -> shot("cysts_tooltip"));
-        then(1, () -> hover(s -> s.is(ModItems.ARTEMIA_CYSTS.get()) && ArtemiaCystsItem.used(s) == 5));
+        then(1, () -> hover(s -> s.is(ModItems.ARTEMIA_CYSTS.get()) && s.getCount() == 3));
         then(10, () -> shot("cysts_old_tooltip"));
         then(1, () -> hover(s -> s.getItem() instanceof TankBlockItem && TankBlockItem.getStyle(s) == TankStyle.CLEAN));
         then(10, () -> shot("glass_tooltip"));
@@ -154,7 +153,7 @@ final class DevClientSmokeM218 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
         level.setDayTime(6000);
-        serverStack = ArtemiaCystsItem.stackSize();
+        serverStack = new ItemStack(ModItems.ARTEMIA_CYSTS.get()).getMaxStackSize();
         base = p.blockPosition().offset(0, 0, -10);
         reef = base;
         TankBlockEntity c = tank(level, p, reef, 5, 2, 3, 24F, 33F);
@@ -266,14 +265,14 @@ final class DevClientSmokeM218 {
         p.getInventory().clearContent();
         ResourceLocation glassId = ResourceLocation.withDefaultNamespace("glass");
         ItemStack old = new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 3);
-        old.set(DataComponents.DAMAGE, 5);
+        old.set(DataComponents.DAMAGE, 5); // M35.1: an old jar; it reaches the client without its old uses
         ItemStack[] hotbar = {
                 TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.CLEAN, 1),
                 TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.CLEAN, 12),
                 TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.TEXTURED, 4),
                 TankBlockItem.of(ModItems.TANK.get(), ResourceLocation.withDefaultNamespace("light_blue_stained_glass"), TankStyle.TEXTURED, 1),
                 new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 16),
-                ArtemiaCystsItem.usedJar(new ItemStack(ModItems.ARTEMIA_CYSTS.get())),
+                new ItemStack(ModItems.ARTEMIA_CYSTS.get()),
                 old,
                 new ItemStack(ModItems.TANKMATE_BUCKETS.get(TankmateSpecies.LINED_SEAHORSE).get()),
                 new ItemStack(ModItems.TANKMATE_BUCKETS.get(TankmateSpecies.DWARF_SEAHORSE).get()),
@@ -317,7 +316,7 @@ final class DevClientSmokeM218 {
     private void checkStack() {
         int client = new ItemStack(ModItems.ARTEMIA_CYSTS.get()).getMaxStackSize();
         LOGGER.info("[smoketest] M21.8 cyst jars per stack: client {}, server {}", client, serverStack);
-        if (client != serverStack || client != 16) LOGGER.error("[smoketest] M21.8 cyst stack size differs: client {}, server {}", client, serverStack);
+        if (client != serverStack || client != 64) LOGGER.error("[smoketest] M21.8 cyst stack size differs: client {}, server {}", client, serverStack);
         if (mc.player != null) {
             ItemStack s = mc.player.getInventory().getItem(4);
             if (!s.is(ModItems.ARTEMIA_CYSTS.get()) || s.getCount() != 16) LOGGER.error("[smoketest] M21.8 the client has no stack of 16 jars: {}", s);

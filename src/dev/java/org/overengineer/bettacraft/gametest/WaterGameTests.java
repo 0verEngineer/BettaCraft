@@ -354,7 +354,7 @@ public final class WaterGameTests {
         }
         h.assertTrue(tub.water() == 500 && tub.items().getStackInSlot(CultureTubBlockEntity.BOTTLES).getCount() == 2, "500 mB and 2 bottles");
         h.assertTrue("cysts".equals(tub.blocker(level)), "waits for cysts: " + tub.blocker(level));
-        h.assertTrue(items.insertItem(CultureTubBlockEntity.INPUT, new ItemStack(ModItems.ARTEMIA_CYSTS.get()), false).isEmpty(), "cysts in");
+        h.assertTrue(items.insertItem(CultureTubBlockEntity.INPUT, new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 2), false).isEmpty(), "two jars of cysts in");
         h.assertTrue(items.extractItem(CultureTubBlockEntity.INPUT, 1, false).isEmpty(), "ingredients cannot be pulled out");
         h.runAfterDelay(2, () -> {
             String b = tub.blocker(level);
@@ -364,7 +364,7 @@ public final class WaterGameTests {
             ItemStack out = tub.items().getStackInSlot(CultureTubBlockEntity.OUTPUT);
             h.assertTrue(out.is(ModItems.ARTEMIA_NAUPLII.get()) && out.getCount() == 2, "2 bottles of nauplii: " + out);
             h.assertTrue(tub.items().getStackInSlot(CultureTubBlockEntity.BOTTLES).isEmpty(), "the two bottles were filled");
-            h.assertTrue(org.overengineer.bettacraft.food.ArtemiaCystsItem.used(tub.items().getStackInSlot(CultureTubBlockEntity.INPUT)) == 1, "one use of the cysts");
+            h.assertTrue(tub.items().getStackInSlot(CultureTubBlockEntity.INPUT).getCount() == 1, "one jar of cysts used up (M35.1: one jar, one batch)");
             h.assertTrue("bottles".equals(tub.blocker(level)), "now it needs glass bottles");
             h.assertTrue(items.extractItem(CultureTubBlockEntity.OUTPUT, 16, false).getCount() == 2, "a hopper can take the food");
             h.succeed();

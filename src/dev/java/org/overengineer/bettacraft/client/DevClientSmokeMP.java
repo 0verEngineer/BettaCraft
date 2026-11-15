@@ -267,7 +267,7 @@ final class DevClientSmokeMP {
                 });
             }
             case "seahorses" -> {
-                // M21.8: the seahorses and the full brood pouch on this client, the cyst stack size it uses, the jars in slot 0 and 1
+                // M21.8: the seahorses and the full brood pouch on this client, the cyst stack size it uses, the jars in slot 0 and 1 (M35.1: damaged?)
                 BlockPos min = pos(args);
                 then(60, () -> {
                     Minecraft mc = Minecraft.getInstance();
@@ -277,8 +277,8 @@ final class DevClientSmokeMP {
                     int stack = new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get()).getMaxStackSize();
                     var s0 = mc.player.getInventory().getItem(0);
                     var s1 = mc.player.getInventory().getItem(1);
-                    send("seahorses " + mates.size() + " " + pouches + " " + stack + " " + s0.getCount() + " " + org.overengineer.bettacraft.food.ArtemiaCystsItem.usesLeft(s0)
-                            + " " + s1.getCount() + " " + org.overengineer.bettacraft.food.ArtemiaCystsItem.usesLeft(s1));
+                    send("seahorses " + mates.size() + " " + pouches + " " + stack + " " + s0.getCount() + " " + (s0.has(net.minecraft.core.component.DataComponents.DAMAGE) ? 1 : 0)
+                            + " " + s1.getCount() + " " + (s1.has(net.minecraft.core.component.DataComponents.DAMAGE) ? 1 : 0));
                 });
             }
             case "wildlife" -> {
