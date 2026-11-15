@@ -178,7 +178,7 @@ public final class DevShowcase {
         level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
         // keep the whole showcase loaded while it is built (the animals are entities)
         for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
-            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 18 * ROW + 10 >> 4) + 1; cz++) {
+            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 20 * ROW + 16 >> 4) + 1; cz++) { // M30: the big tanks of the last row
                 level.setChunkForced(cx, cz, true);
                 forced.add(new ChunkPos(cx, cz));
             }
@@ -526,6 +526,31 @@ public final class DevShowcase {
         }
         for (int x = 2; x < 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 0), (x % 2 == 0 ? ModBlocks.GLASS_PIPE : ModBlocks.STAINLESS_STEEL_PIPE).get().defaultBlockState());
         LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());
+        // M30: big tanks (the last row: they are deeper than a row): the freshwater giants and the sea giants
+        at = startRow(level, "Großbecken");
+        bigTank(level, at, 24, 6, 12, 0F, new TankmateSpecies[]{TankmateSpecies.PANGASIUS, TankmateSpecies.REDTAIL_CATFISH, TankmateSpecies.WELS_CATFISH,
+                TankmateSpecies.ARAPAIMA, TankmateSpecies.MOTORO_STINGRAY, TankmateSpecies.MOTORO_STINGRAY}, "Süßwasser-Riesen");
+        at = at.east(24 + GAP);
+        bigTank(level, at, 28, 6, 14, 35F, new TankmateSpecies[]{TankmateSpecies.BAMBOO_SHARK, TankmateSpecies.BAMBOO_SHARK, TankmateSpecies.BLACKTIP_REEF_SHARK,
+                TankmateSpecies.SPOTTED_EAGLE_RAY, TankmateSpecies.COWNOSE_RAY, TankmateSpecies.COWNOSE_RAY, TankmateSpecies.COWNOSE_RAY,
+                TankmateSpecies.HONEYCOMB_MORAY}, "Riesen des Meeres");
+    }
+
+    /** M30: a big tank (interior scale 8) with sand, rocks to hide under and big animals put in by the size rule. */
+    private static void bigTank(ServerLevel level, BlockPos at, int sx, int sy, int sz, float salt, TankmateSpecies[] animals, String title) {
+        TankBlockEntity c = tank(level, at, sx, sy, sz, salt, true);
+        InteriorRegion ir = region(level, c, Blocks.SAND.defaultBlockState());
+        ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+        var rockState = salt > 20 ? ModBlocks.LIVE_ROCK.get().defaultBlockState() : Blocks.STONE.defaultBlockState();
+        rock(in, ir, ir.sizeX() / 5, ir.sizeZ() * 2 / 3, 12, 10, rockState);
+        rock(in, ir, ir.sizeX() * 4 / 5, ir.sizeZ() * 3 / 5, 14, 12, rockState);
+        for (TankmateSpecies s : animals) {
+            var tub = org.overengineer.bettacraft.big.BigCatching.caught(level, s, org.overengineer.bettacraft.critters.NetCatching.random(level));
+            Component err = tub == null ? Component.literal("no tub") : org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, tub,
+                    org.overengineer.bettacraft.tank.TankInhabitants.containedType(tub), null, 0);
+            if (err != null) LOGGER.warn("[showcase] big tank {}: {}", s.id(), err.getString());
+        }
+        name(level, at, title);
     }
 
     private static ResourceLocation blockOf(net.minecraft.world.item.Item item) {

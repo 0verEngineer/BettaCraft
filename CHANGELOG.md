@@ -4,6 +4,47 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.23.0-beta.1] - 2026-11-15
+
+Big tanks and big animals: aquariums up to 32 x 16 x 32 blocks with a coarser interior, a size rule for big animals,
+ten giants of fresh and sea water (catfish, arapaima, rays, sharks, a moray), shark egg cases and dolphins in very big
+sea water tanks, and the tools to catch and carry them.
+
+### Added
+- **Big tanks** (`features.bigTanks`): tanks grow up to `bigTankRules.bigMaxSize*` (32 x 16 x 32). A tank longer than
+  16 blocks gets interior scale 8 (longer than 32: scale 4), so its interior stays about 256 blocks long. When a
+  decorated tank grows past the threshold its interior is shrunk into the coarser one; nothing is lost: blocks that do
+  not stay, devices with their contents and the plants with their stage come out in front of the tank (in chests).
+- **Size rule of the big animals** (`features.bigAnimals`, `bigAnimalRules.*`): an animal of length L metres needs a tank
+  of 12 L x 6 L blocks, 3 L blocks high and 100 L³ water blocks of its own (they add up). The message names the size
+  that is missing. Small animals keep the old hitbox limit; whales, bosses and hostile mobs never go in; animals of
+  other mods count as big through the tag `#bettacraft:big_tank_animals`.
+- **Freshwater giants:** the pangasius, the redtail catfish, the wels catfish (cool rivers, no heater), the arapaima (an
+  air breather) and the motoro stingray (glides over the sand and lies on it; livebearing with room by the size rule),
+  with real temperatures and water ranges; wild in rivers and jungle water.
+- **Sea giants:** the brownbanded bamboo shark (a bottom shark that rests under ledges by day), the blacktip reef shark
+  (has to keep swimming, eats every small fish), the spotted eagle ray and the cownose ray (fly through open water with
+  slow wing beats; cownose rays school and bear one pup with room) and the honeycomb moray (keeps a lair under the
+  decoration, breathes with its mouth open, comes out at night and for food); wild in warm (and lukewarm) oceans,
+  cownose rays in small schools.
+- **Shark egg cases:** the bamboo shark lays leathery egg cases (mermaid's purses) under the decoration, only while the
+  size rule leaves room for the pups; each pup hatches after about ten days, only when there is room, and waits in its
+  case otherwise. The aquarium net moves a case to another tank; the breeding tab shows the room left.
+- **Dolphins** (vanilla) in very big sea water tanks (from 32 x 16 x 8): they breathe and stay wet in the tank, eat raw
+  fish by hand or from a feeder on the tank, hunt one small fish of their tank a day when they are hungry, and lose
+  health after two days without fish or in too fresh water.
+- **Catching big animals:** the large net (into an empty transport tub), the transport tub (carries one animal with all
+  its data and slows you down while it is full) and the steel leader for the fishing rod (in the off hand). Buckets and
+  fish bags refuse big animals; the tank menu takes a big animal into an empty tub.
+- Big animals swim wide curves and turn slowly (their own movement control), find their way around the decoration and
+  eat the small fish, young bettas and shrimp of their tank by the size of their mouth.
+- Handbook chapter **Big tanks** with a page for every big animal and tool (English and German); the showcase world has a
+  row with a freshwater and a sea water big tank.
+
+### Fixed
+- The miniature of a tank in freshly loaded chunks could keep dark stripes on the floor: its meshes kept the light of
+  the moment they were built; the light of every tank block now counts.
+
 ## [1.22.1-beta.1] - 2026-11-15
 
 Fixes and polish: no water blocks in the tank interior, every block as a 3D item, device sounds without rustling, finer

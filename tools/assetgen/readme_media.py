@@ -28,6 +28,8 @@ STILLS = {
     'readme_varieties': ('bettacraft-betta-varieties', (0.04, 0.3, 0.96, 0.7), 1280),
     'readme_inside': ('bettacraft-tank-interior', None, 1280),
     'readme_nano': ('bettacraft-betta-nano-tank', None, 1280),
+    # M30 part c: the sea giants (gradlew runClient -Psmoketestm30c)
+    'bettacraft_m30c_rays_side': ('bettacraft-big-sea-tank', (0.0, 0.08, 1.0, 0.86), 1280),
 }
 # frame sequence -> (output name, crop fractions or None, width, frames per second, first frame, frame count)
 ANIMS = {

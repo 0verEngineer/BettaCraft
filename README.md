@@ -39,7 +39,7 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 
 ### Aquariums and the interior
 - **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable to
-  64), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket,
+  64; big tanks up to 32x16x32), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket,
   rendered clear (also with Sodium and Iris). The animals are real entities.
 - **Interior:** sneak and right-click with an empty hand to step inside a pocket dimension at 16 blocks per tank block
   and build with any block: substrates, equipment and 28 decorations (castle, wrecks, skull, aquascaping stones such
@@ -80,8 +80,8 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - **Wild animals and corals** live in the waters they come from (jungle, swamp, river, mangrove, warm and lukewarm
   ocean); the waters are biome tags, so the biomes of biome mods count too. Catch them with the aquarium net. An own
   frugal spawn pass keeps them findable next to the fish of other mods; `/bettacraft wildlife` shows what lives where.
-- **Water animals of all mods** (fish, axolotls, tadpoles, seahorses ...) live in the aquariums; big, boss and hostile
-  ones are refused with a reason.
+- **Water animals of all mods** (fish, axolotls, tadpoles, seahorses ...) live in the aquariums; whales, bosses and
+  hostile mobs are refused with a reason, other big animals go by the size rule of the big tanks.
 
 ### Reef tanks and seahorses
 - Sea water, salinity, protein skimmer, flow pump, reef and live rock, actinic light. Eight corals and the bubble tip
@@ -89,6 +89,17 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   frags. Clownfish spawn at their anemone; tang, goby, chromis, damsel, cleaner shrimp, hermit crabs, turbo snails.
 - **Seahorses** (lined and dwarf) swim upright, hold on to plants and corals, eat live food, and the male gives birth
   from his brood pouch.
+
+### Big tanks and big animals
+- **Big tanks** up to 32 x 16 x 32 blocks with a coarser interior (scale 8 or 4); a decorated tank that grows past 16
+  blocks keeps its layout at the new scale, and nothing is lost.
+- **A size rule** for big animals by their real length (12 x 6 x 3 blocks and 100 water blocks per metre, adding up).
+- **Ten giants:** pangasius, redtail and wels catfish, arapaima and motoro stingray in fresh water; bamboo shark (it lays
+  egg cases that hatch when there is room), blacktip reef shark, spotted eagle ray, schooling cownose rays and the
+  honeycomb moray in its lair in sea water. Wild in rivers, jungle water and warm oceans; vanilla **dolphins** in very
+  big sea water tanks.
+- Caught with the **large net** or the **steel leader** into a **transport tub** that carries one animal; big animals
+  swim wide curves, turn slowly and eat the small fish of their tank.
 
 ### Equipment and water
 - Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside), automatic and

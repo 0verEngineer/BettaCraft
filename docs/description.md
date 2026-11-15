@@ -28,7 +28,7 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 ## Aquariums you build yourself
 
 - **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable up to
-  64), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket, and the
+  64; big tanks up to 32x16x32), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket, and the
   animals are real entities.
 - **The interior:** sneak and right-click with an empty hand to step inside the tank, a pocket dimension at 16 blocks
   per tank block. Build with any block: substrates, equipment and 28 decorations: castles, shipwrecks and a ship's bow,
@@ -67,7 +67,7 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
   and the cleaning crew eats them. **Big crayfish** (blue and orange Florida crayfish, the all-female marbled crayfish)
   eat plants and catch slow fish.
 - **Axolotls** get real care in a cool tank: eggs on the plants, larvae, and the five colours inherited by Mendel.
-- **Water animals of other mods** live in the aquariums too; big, boss and hostile ones are refused with a reason.
+- **Water animals of other mods** live in the aquariums too; whales, bosses and hostile mobs are refused with a reason.
 
 ## Reef tanks and seahorses
 
@@ -77,6 +77,19 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 - **Seahorses** swim upright, hold on to plants and corals, and the male gives birth from his brood pouch.
 
 ![A reef tank: clownfish at their anemone, green chromis, a yellow tang, seahorses and corals](images/bettacraft-reef-tank-swimming.gif)
+
+## Big tanks and big animals
+
+- **Big tanks** up to 32 x 16 x 32 blocks with a coarser interior, and a **size rule** for big animals by their real
+  length: a 1 m bamboo shark needs 12 x 6 x 3 blocks, a dolphin 32 x 16 x 8.
+- **Ten giants:** pangasius, redtail and wels catfish, arapaima and the motoro stingray in fresh water; the bamboo shark
+  that lays egg cases (mermaid's purses), the blacktip reef shark, the spotted eagle ray, schooling cownose rays and the
+  honeycomb moray that lives in a lair under your rocks in sea water. Vanilla **dolphins** live in very big sea water
+  tanks and take raw fish from the feeder.
+- Catch them with the **large net** or a **steel leader** on your fishing rod into a **transport tub**; they swim wide
+  curves, turn slowly and eat the small fish of their tank.
+
+![A big sea water tank with a blacktip reef shark, a bamboo shark and its egg cases, eagle and cownose rays](images/bettacraft-big-sea-tank.jpg)
 
 ## Equipment, water and chemistry
 
@@ -155,6 +168,6 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 
 Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
-Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Filter,
+Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Filter,
 Licht, CO2, Rohre, Wasserchemie, Lebendfutter und eine Futtermaschine. Die Mod und das Handbuch im Spiel sind komplett
 auf Deutsch übersetzt; die Spielsprache Deutsch genügt.
