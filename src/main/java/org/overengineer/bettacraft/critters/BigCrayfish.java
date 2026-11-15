@@ -156,6 +156,7 @@ public final class BigCrayfish {
                 prey.remove(victim);
                 if (c.logDue("big_crayfish_ate", now, LOG_TICKS)) TankCare.log(level, c, "log.bettacraft.big_crayfish_ate", TankCare.nameArg(victim));
                 level.sendParticles(ParticleTypes.BUBBLE_POP, victim.getX(), victim.getY(), victim.getZ(), 3, 0.05, 0.05, 0.05, 0.01);
+                org.overengineer.bettacraft.api.ApiEvents.died(level, c, victim, "eaten", null); // M32 part d
                 t.inhabitants().remove(victim.getUUID());
                 victim.discard();
                 c.markTankChanged();

@@ -33,6 +33,8 @@ public final class ClientConfig {
      * get the new default {@code false} without a migration); the volumes above only apply once a switch is on.
      */
     public static final ModConfigSpec.BooleanValue AIR_PUMP_SOUND, FLOW_PUMP_SOUND;
+    /** M32 part d: waypoints at tanks with a monitor alarm on this player's map (JourneyMap), with features.alarmWaypoints. */
+    public static final ModConfigSpec.BooleanValue ALARM_WAYPOINTS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -72,6 +74,10 @@ public final class ClientConfig {
         AIR_PUMP_SOUND = b.comment("Play the hum of the air pumps (off by default; its volume is airPumpVolume)").define("airPumpSound", false);
         FLOW_PUMP_SOUND = b.comment("Play the whir of the flow pumps (off by default; its volume is flowPumpVolume)").define("flowPumpSound", false);
         b.pop();
+        b.comment("Map mods (M32 part d)").push("map");
+        ALARM_WAYPOINTS = b.comment("A waypoint at a tank whose monitor alarm went off, until it clears (JourneyMap; the pack switch",
+                "features.alarmWaypoints turns it off for everyone)").define("showAlarmWaypoints", true);
+        b.pop();
         SPEC = b.build();
     }
 
@@ -82,6 +88,10 @@ public final class ClientConfig {
 
     public static boolean swayingPlants() {
         return CommonConfig.getOr(SWAYING_PLANTS, true);
+    }
+
+    public static boolean alarmWaypoints() {
+        return CommonConfig.getOr(ALARM_WAYPOINTS, true);
     }
 
     private ClientConfig() {}

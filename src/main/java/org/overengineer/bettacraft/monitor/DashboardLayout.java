@@ -84,6 +84,12 @@ public final class DashboardLayout {
         return false;
     }
 
+    /** M32 part d: some alarm tile watches a tank (events and waypoints): the screen checks its tanks even when nobody looks. */
+    public boolean hasAlarm() {
+        for (DashboardTile t : tiles) if (DashboardTile.ALARM.equals(t.type) && t.tank != null) return true;
+        return false;
+    }
+
     /** The alarm tiles with redstone that are triggered now ({@code tank} looks up a tank by id). */
     public int triggeredAlarms(java.util.function.Function<UUID, MonitorTank> tank) {
         int n = 0;

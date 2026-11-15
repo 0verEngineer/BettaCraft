@@ -323,6 +323,7 @@ public final class GlassMobs {
             data(b).fedAt = GlassMobData.NEVER;
             level.sendParticles(ParticleTypes.HEART, young.getX(), young.getY() + 0.3, young.getZ(), 3, 0.1, 0.05, 0.1, 0.0);
             TankCare.log(level, c, "log.bettacraft.glass.born", TankCare.nameArg(young));
+            org.overengineer.bettacraft.api.ApiEvents.born(level, c, young.getType(), 1, false); // M32 part d
         }
     }
 

@@ -44,7 +44,8 @@ import org.overengineer.bettacraft.tank.TankData;
  * history lines the tiles need when a new hour was recorded. Everything a player gets in one tick goes in one
  * {@link MonitorDataPayload} ({@link #onServerTick}).</li>
  * <li>Alarms (part b): the alarm tiles with redstone are checked every cycle; while one is past its limit the screen gives
- * a redstone signal ({@link MonitorBlockEntity#alarms}). Such a screen reads its tanks also without viewers.</li>
+ * a redstone signal ({@link MonitorBlockEntity#alarms}). Since M32 part d a screen with any alarm tile reads its tanks
+ * also without viewers: {@link MonitorAlarms} posts the alarm events and opens the map waypoints.</li>
  * </ol>
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
@@ -84,13 +85,15 @@ public final class MonitorSync {
         if (viewers.isEmpty() || status != MonitorBlockEntity.ON) {
             c.sentTo.clear();
             c.historySentTo.clear();
-            // part b: alarms with redstone watch their tanks even when nobody looks
-            if (status == MonitorBlockEntity.ON && c.layout().hasRedstoneAlarm()) work(level, c);
+            // part b: alarms with redstone watch their tanks even when nobody looks; M32 part d: every alarm tile does (events, waypoints)
+            if (status == MonitorBlockEntity.ON && c.layout().hasAlarm()) work(level, c);
             c.setAlarms(status == MonitorBlockEntity.ON ? c.layout().triggeredAlarms(c::tank) : 0);
+            MonitorAlarms.update(level, c, status == MonitorBlockEntity.ON);
             return;
         }
         work(level, c);
         c.setAlarms(c.layout().triggeredAlarms(c::tank));
+        MonitorAlarms.update(level, c, true);
         // the tanks
         int hash = 1;
         for (MonitorTank t : c.tanks()) hash = hash * 31 + t.contentHash();

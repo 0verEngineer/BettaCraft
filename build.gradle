@@ -581,6 +581,13 @@ idea {
 //   -Pcreate  : run/create-mods (M32 part b: Create 6 (Flywheel, Ponder and Registrate inside), Create Aeronautics (bundled:
 //               Simulated, Aeronautics, Offroad) and Sable from ATM10AA) for runClient, runServer and runGameTestServer;
 //               the GameTests of CreateGameTests then move tanks on pistons, bearings and Sable sub-levels
+//   -Pquests  : run/quest-mods (M32 part d: FTB Quests, FTB Library, FTB Teams, Architectury from ATM10AA) for runClient,
+//               runServer and runGameTestServer; the chapter of modpack/ is copied into the run's config/ftbquests, the
+//               GameTest QuestGameTests then checks that FTB Quests loaded it
+//   -Pmaps    : run/map-mods (M32 part d: JourneyMap from ATM10AA) for runClient: the alarm waypoints
+//   -Pkubejs  : run/kubejs-mods (M32 part d: KubeJS and Rhino from ATM10AA) for runClient, runServer and runGameTestServer;
+//               the example script of modpack/kubejs is copied into the run's kubejs/server_scripts (its lines go to
+//               logs/kubejs/server.log)
 def runModsDir = file('run/mods')
 def gameTestModsDir = file('run/gametest/mods')
 def extraMods = [
@@ -590,7 +597,27 @@ def extraMods = [
         [dir: file('run/biome-mods'), on: project.hasProperty('biomes'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/storage-mods'), on: project.hasProperty('storage'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/create-mods'), on: project.hasProperty('create'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/quest-mods'), on: project.hasProperty('quests'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/map-mods'), on: project.hasProperty('maps'), tasks: ['runClient']],
+        [dir: file('run/kubejs-mods'), on: project.hasProperty('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
 ]
+// -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
+// removed without the flag)
+tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach { t ->
+    def base = t.name == 'runGameTestServer' ? 'run/gametest' : 'run'
+    def copies = [
+            [src: file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: project.hasProperty('quests')],
+            [src: file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: project.hasProperty('kubejs')],
+    ]
+    t.doFirst {
+        copies.each { c ->
+            if (c.on) {
+                c.dst.parentFile.mkdirs()
+                java.nio.file.Files.copy(c.src.toPath(), c.dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            } else if (c.dst.exists()) c.dst.delete()
+        }
+    }
+}
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = file('run/config/fml.toml')
 def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }
@@ -661,7 +688,7 @@ tasks.register('runMultiplayerTest') {
         logs.mkdirs()
         def runDir = file('run')
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods'].each { d ->
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()
@@ -986,6 +1013,17 @@ tasks.register('releaseNotes') {
         f.write(body.join('\n') + '\n', 'UTF-8')
         logger.lifecycle("releaseNotes: ${body.size()} lines of ${notesVersion} -> ${f}")
     }
+}
+
+// gradlew modpackZip : the files for modpack makers in modpack/ (the FTB Quests chapter of tools/modpack/ftbquests_chapter.py,
+// the KubeJS example script), in the folders of an instance (config/, kubejs/) -> build/distributions/bettacraft-modpack-
+// <version>.zip, attached to the GitHub release. Not part of the mod jar.
+tasks.register('modpackZip', Zip) {
+    group = 'distribution'
+    description = 'Zips modpack/ (FTB Quests chapter, KubeJS example script) for modpack makers'
+    from('modpack')
+    archiveFileName = "bettacraft-modpack-${mod_version}.zip"
+    destinationDirectory = layout.buildDirectory.dir('distributions')
 }
 
 // gradlew curseforgeDescription [-PdescriptionRef=v1.2.3] : the CurseForge project description from docs/description.md.

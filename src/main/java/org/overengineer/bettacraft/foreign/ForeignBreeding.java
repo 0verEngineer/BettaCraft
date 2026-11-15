@@ -190,6 +190,7 @@ public final class ForeignBreeding {
             if (spawnYoung(level, c, mother.getType(), p, motherGenes, fatherGenes, at, rnd) != null) made++;
         }
         TankCare.log(level, c, "log.bettacraft.foreign.young", TankCare.nameArg(mother), String.valueOf(made));
+        org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.api.ApiEvents.id(mother.getType()), made, b.type() != ForeignProfile.Type.LIVEBEARER, true, false); // M32 part d
         c.markTankChanged();
     }
 

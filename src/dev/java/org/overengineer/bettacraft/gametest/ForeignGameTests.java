@@ -61,7 +61,7 @@ public final class ForeignGameTests {
         return true;
     }
 
-    private static TankBlockEntity tank(GameTestHelper h, int x, int z, int sx, int sy, int sz, float temp) {
+    static TankBlockEntity tank(GameTestHelper h, int x, int z, int sx, int sy, int sz, float temp) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, z, sx, sy, sz, sx * sy * sz * 1000L);
         c.getTank().setWaterTemp(temp);
         c.getTank().setTargetTemp(temp);
@@ -74,7 +74,7 @@ public final class ForeignGameTests {
     }
 
     /** An animal of {@code type} as an inhabitant of the tank (at its middle). */
-    private static LivingEntity add(GameTestHelper h, TankBlockEntity c, EntityType<?> type, Consumer<CompoundTag> data) {
+    static LivingEntity add(GameTestHelper h, TankBlockEntity c, EntityType<?> type, Consumer<CompoundTag> data) {
         Entity e = type.create(h.getLevel());
         if (!(e instanceof LivingEntity le)) throw new GameTestAssertException("no living " + type);
         CompoundTag t = e.saveWithoutId(new CompoundTag());
@@ -97,7 +97,7 @@ public final class ForeignGameTests {
     }
 
     /** Runs {@code body} with an extra test profile (and the shipped ones), restoring the profiles afterwards. */
-    private static void withProfile(String json, Runnable body) {
+    static void withProfile(String json, Runnable body) {
         Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
         Map<ResourceLocation, ForeignProfile> files = new LinkedHashMap<>(saved);
         files.put(BettaCraft.id("gametest_stand_in"), profile(json));
@@ -123,7 +123,7 @@ public final class ForeignGameTests {
         return e.saveWithoutId(new CompoundTag()).getInt("Variant");
     }
 
-    private static final String TROPICAL = """
+    static final String TROPICAL = """
             {"entity": "minecraft:tropical_fish", "group": "test",
              "care": {"temperature": [22, 28], "min_quality": 0.4, "salinity": "fresh", "stock": 0.5},
              "breeding": {"type": "livebearer", "temperature": [24, 27], "young": [3, 3], "days": 1, "rate": 1000, "inherit": ["Variant"]}}""";

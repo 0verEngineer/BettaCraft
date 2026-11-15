@@ -371,6 +371,7 @@ public final class TankmateBreeding {
 
     public static void eat(ServerLevel level, TankBlockEntity c, Entity prey) {
         level.sendParticles(ParticleTypes.BUBBLE_POP, prey.getX(), prey.getY(), prey.getZ(), 3, 0.05, 0.05, 0.05, 0.01);
+        org.overengineer.bettacraft.api.ApiEvents.died(level, c, prey, "eaten", null); // M32 part d
         c.getTank().inhabitants().remove(prey.getUUID());
         prey.discard();
         c.markTankChanged();
@@ -817,7 +818,9 @@ public final class TankmateBreeding {
                 eat(level, c, fish.remove(pick));
                 ateFish++;
             } else {
-                t.critters().remove(shrimp.remove(pick - fish.size()));
+                org.overengineer.bettacraft.critters.Critter eatenCritter = shrimp.remove(pick - fish.size());
+                t.critters().remove(eatenCritter);
+                org.overengineer.bettacraft.api.ApiEvents.diedData(level, c, org.overengineer.bettacraft.BettaCraft.id(eatenCritter.species.id()), 1, "eaten"); // M32 part d
                 c.markTankChanged();
                 ateShrimp++;
             }
@@ -1242,6 +1245,8 @@ public final class TankmateBreeding {
         TankCare.log(level, c, k.kind == Clutch.Kind.BOX ? "log.bettacraft.tm.box_released" : k.kind == Clutch.Kind.EGG_CASE ? "log.bettacraft.tm.case_hatched"
                 : "log.bettacraft.tm.fry_free",
                 "@" + k.species.translationKey(), String.valueOf(made));
+        // M32 part d: the young of a breeding box were counted when they were born
+        if (k.kind != Clutch.Kind.BOX) org.overengineer.bettacraft.api.ApiEvents.born(level, c, ModEntities.TANKMATES.get(k.species).get(), made, true);
     }
 
     /** Spawns a young tankmate in the tank (offspring, catches, tests). */
@@ -1305,6 +1310,7 @@ public final class TankmateBreeding {
                 TankCare.log(level, c, boxed > 0 ? "log.bettacraft.tm.born_box" : "log.bettacraft.tm.born", TankCare.nameArg(f),
                         String.valueOf(made + boxed), String.valueOf(boxed));
             }
+            org.overengineer.bettacraft.api.ApiEvents.born(level, c, ModEntities.TANKMATES.get(s).get(), made + boxed, false); // M32 part d
 
             c.markTankChanged();
         }

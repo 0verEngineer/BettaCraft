@@ -42,6 +42,7 @@ public final class ReefCare {
             if (shock >= 1) {
                 data.remove(KEY);
                 TankCare.log(level, c, "log.bettacraft.died", TankCare.nameArg(e), "@cause.bettacraft.salinity");
+                org.overengineer.bettacraft.api.ApiEvents.died(level, c, e, "salinity", null); // M32 part d
                 t.inhabitants().remove(e.getUUID());
                 c.markTankChanged();
                 living.discard(); // like a betta that dies of illness: it simply vanishes

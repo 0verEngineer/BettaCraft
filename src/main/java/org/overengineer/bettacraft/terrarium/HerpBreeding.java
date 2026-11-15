@@ -281,6 +281,7 @@ public final class HerpBreeding {
         else TankCare.log(level, c, "log.bettacraft.turtle.hatched", "@" + s.translationKey(), String.valueOf(females + males), String.valueOf(females),
                 String.valueOf(males));
         if (lost > 0) TankCare.log(level, c, "log.bettacraft.turtle.hatch_crowded", String.valueOf(lost));
+        org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.registry.ModEntities.herp(s), females + males, true); // M32 part d
         c.markTankChanged();
         return females + males;
     }

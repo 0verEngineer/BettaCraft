@@ -79,6 +79,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_FOREIGN_CARE, FEATURE_FOREIGN_BREEDING, FEATURE_SUPPRESS_FOREIGN_BREEDING;
     public static final ModConfigSpec.BooleanValue FEATURE_CREATE_CONTRAPTIONS; // M32 part b
     public static final ModConfigSpec.BooleanValue FEATURE_CREATE_ROTATION, FEATURE_CREATE_DISPLAY_LINKS; // M32 part c
+    public static final ModConfigSpec.BooleanValue FEATURE_MODPACK_EVENTS, FEATURE_ALARM_WAYPOINTS; // M32 part d
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
     public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES, FEATURE_TURTLE_BREEDING, FEATURE_WILD_TURTLES; // M31
@@ -319,6 +320,13 @@ public final class CommonConfig {
         FEATURE_CREATE_DISPLAY_LINKS = b.comment("Tanks and monitors are sources for Create's Display Link: the values of a tank, or one line per tank a",
                 "monitor shows, on display boards, nixie tubes, signs and lecterns (off: Display Links cannot read them)")
                 .define("createDisplayLinks", true);
+        // M32 part d
+        FEATURE_MODPACK_EVENTS = b.comment("Bettacraft posts its events for modpack scripts (KubeJS NativeEvents) and other mods on the NeoForge event",
+                "bus: an animal was born or hatched in a tank, an animal of a tank died (with the cause), an alarm tile of a monitor",
+                "went off or cleared (off: none are posted)").define("modpackEvents", true);
+        FEATURE_ALARM_WAYPOINTS = b.comment("A monitor alarm puts a waypoint at its tank on the map of the tank's owner and of the players within 128",
+                "blocks (JourneyMap); it goes away when the alarm clears. Each player can turn it off in the client config",
+                "(map.showAlarmWaypoints) (off: no waypoints)").define("alarmWaypoints", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -447,6 +455,8 @@ public final class CommonConfig {
     public static boolean createContraptions() { return getOr(FEATURE_CREATE_CONTRAPTIONS, true); } // M32 part b
     public static boolean createRotation() { return getOr(FEATURE_CREATE_ROTATION, true); } // M32 part c
     public static boolean createDisplayLinks() { return getOr(FEATURE_CREATE_DISPLAY_LINKS, true); }
+    public static boolean modpackEvents() { return getOr(FEATURE_MODPACK_EVENTS, true); } // M32 part d
+    public static boolean alarmWaypoints() { return getOr(FEATURE_ALARM_WAYPOINTS, true); }
     public static boolean foreignBreeding() { return getOr(FEATURE_FOREIGN_BREEDING, true); }
     public static boolean suppressForeignBreeding() { return getOr(FEATURE_SUPPRESS_FOREIGN_BREEDING, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }

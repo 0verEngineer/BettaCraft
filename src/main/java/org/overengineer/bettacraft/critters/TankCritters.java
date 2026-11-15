@@ -297,6 +297,7 @@ public final class TankCritters {
         }
         for (var e : r.bornBySpecies.entrySet()) {
             TankCare.log(level, c, "log.bettacraft.critters_born", String.valueOf(e.getValue()[0]), "@" + e.getKey().translationKey());
+            org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.BettaCraft.id(e.getKey().id()), e.getValue()[0], false, false, true); // M32 part d
         }
         for (CritterObject o : r.hatchedClutches) {
             TankCare.log(level, c, "log.bettacraft.clutch_hatched", "@" + o.species.translationKey());
@@ -311,6 +312,10 @@ public final class TankCritters {
             died.computeIfAbsent(k.species, s -> new int[1])[0]++;
             cause.put(k.species, r.causes.get(k));
         }
+        for (var e : died.entrySet()) { // M32 part d: every death is posted, the log line comes at most every half minute
+            org.overengineer.bettacraft.api.ApiEvents.diedData(level, c, org.overengineer.bettacraft.BettaCraft.id(e.getKey().id()), e.getValue()[0],
+                    "critter." + cause.get(e.getKey()).name().toLowerCase(java.util.Locale.ROOT));
+        }
         for (var e : died.entrySet()) {
             Long last = c.critterDeathLog.get(e.getKey());
             if (last != null && now - last < 600) continue;
@@ -320,6 +325,7 @@ public final class TankCritters {
         }
         for (Critter k : r.eaten) {
             CritterLife.Cause why = r.causes.get(k);
+            org.overengineer.bettacraft.api.ApiEvents.diedData(level, c, org.overengineer.bettacraft.BettaCraft.id(k.species.id()), 1, "eaten"); // M32 part d
             String young = k.adult() ? "adult" : "young";
             if (why == CritterLife.Cause.BETTA && !bettas.isEmpty()) {
                 BettaEntity b = bettas.get(rnd.nextInt(bettas.size()));

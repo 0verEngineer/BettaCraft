@@ -59,6 +59,8 @@ public class MonitorBlockEntity extends BlockEntity {
     int cycles;
     int lastTankHash, lastHistoryHash;
     final Set<UUID> sentTo = new HashSet<>(), historySentTo = new HashSet<>();
+    /** M32 part d: the alarm tiles that are on now ({@link MonitorAlarms}, not saved: after a restart they go off again). */
+    final java.util.Map<Integer, MonitorAlarms.Watch> activeAlarms = new java.util.HashMap<>();
     // client only
     public List<MonitorTank> clientTanks = List.of();
     public final Map<String, MonitorDataPayload.HistoryLine> clientHistory = new HashMap<>();
@@ -316,6 +318,13 @@ public class MonitorBlockEntity extends BlockEntity {
             CompoundTag c = list.getCompound(i);
             if (c.hasUUID("id")) tanks.add(MonitorTank.load(c));
         }
+    }
+
+    @Override
+    public void setRemoved() {
+        // M32 part d: broken or unloaded: its alarms clear (event, waypoint)
+        if (level instanceof net.minecraft.server.level.ServerLevel sl && !activeAlarms.isEmpty()) MonitorAlarms.clearAll(sl, this);
+        super.setRemoved();
     }
 
     @Override

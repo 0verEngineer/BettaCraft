@@ -96,7 +96,7 @@ jobs:
         run: |
           chmod +x gradlew
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
-          ./gradlew assemble verifyReleaseJar releaseNotes curseforgeDescription ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
+          ./gradlew assemble verifyReleaseJar releaseNotes curseforgeDescription modpackZip ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
           cat build/verifyReleaseJar.txt
           jar="build/libs/bettacraft-${{ steps.version.outputs.version }}.jar"
           test -f "$jar"
@@ -114,6 +114,7 @@ jobs:
           path: |
             build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
             build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
+            build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
             build/release-notes.md
           if-no-files-found: error
 
@@ -134,6 +135,7 @@ jobs:
           files: |
             build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
             build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
+            build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
           prerelease: ${{ steps.version.outputs.type != 'release' }}
           make_latest: ${{ steps.version.outputs.type == 'release' }}
           fail_on_unmatched_files: true

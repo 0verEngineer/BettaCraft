@@ -159,6 +159,7 @@ public final class TankmateCare {
                 : (fish.stress & STRESS_NO_POSTS) != 0 ? "no_posts" : c.crowdBad() ? "overcrowding" : "illness";
 
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + key);
+        org.overengineer.bettacraft.api.ApiEvents.died(level, controller, fish, key, null); // M32 part d
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();
         fish.discard();

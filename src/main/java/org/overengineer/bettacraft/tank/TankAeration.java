@@ -301,6 +301,7 @@ public final class TankAeration {
         for (Entity e : fry) {
             if (rnd.nextDouble() >= p) continue;
             TankCare.log(level, c, "log.bettacraft.fry_intake", TankCare.nameArg(e));
+            org.overengineer.bettacraft.api.ApiEvents.died(level, c, e, "filter_intake", null); // M32 part d
             t.inhabitants().remove(e.getUUID());
             c.markTankChanged();
             e.discard();

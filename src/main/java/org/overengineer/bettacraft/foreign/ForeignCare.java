@@ -104,6 +104,7 @@ public final class ForeignCare {
                 String cause = cond.saltBad() ? "salinity" : h.isHungry(params) ? "hunger" : cond.tempBad() ? "temperature"
                         : cond.waterBad() ? "water_quality" : cond.crowdBad() ? "overcrowding" : "illness";
                 TankCare.log(level, c, "log.bettacraft.died", TankCare.nameArg(e), "@cause.bettacraft." + cause);
+                org.overengineer.bettacraft.api.ApiEvents.died(level, c, e, cause, null); // M32 part d
                 c.getTank().inhabitants().remove(e.getUUID());
                 c.markTankChanged();
                 e.discard(); // like a betta that dies of illness: it simply vanishes

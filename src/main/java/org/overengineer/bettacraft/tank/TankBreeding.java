@@ -380,6 +380,7 @@ public final class TankBreeding {
         tank.setNest(null);
         controller.chaseLogged = false;
         TankCare.log(level, controller, "log.bettacraft.fry_free", String.valueOf(spawned), String.valueOf(n.eggs.size() - spawned));
+        org.overengineer.bettacraft.api.ApiEvents.born(level, controller, ModEntities.BETTA.get(), spawned, true); // M32 part d
         controller.markTankChanged();
     }
 
@@ -424,6 +425,7 @@ public final class TankBreeding {
 
     private static void eat(ServerLevel level, TankBlockEntity controller, Entity prey) {
         level.sendParticles(ParticleTypes.BUBBLE_POP, prey.getX(), prey.getY(), prey.getZ(), 4, 0.05, 0.05, 0.05, 0.01);
+        org.overengineer.bettacraft.api.ApiEvents.died(level, controller, prey, "eaten", null); // M32 part d
         controller.getTank().inhabitants().remove(prey.getUUID());
         prey.discard();
         controller.markTankChanged();
