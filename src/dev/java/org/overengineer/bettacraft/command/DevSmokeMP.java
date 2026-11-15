@@ -162,6 +162,8 @@ public final class DevSmokeMP {
                     a.length > 1 && "true,2,2".equals(a[1]));
             case "plumbing" -> check(name + ": pipe joins pump and reservoir, controller interval and share " + (a.length > 1 ? a[1] : "?") + " (server true,9,25)",
                     a.length > 1 && "true,9,25".equals(a[1])); // M24
+            case "cabpump" -> check(name + ": air pump in the cabinet and pump sounds off by default " + (a.length > 1 ? a[1] : "?") + " (expected true,false,false)",
+                    a.length > 1 && "true,false,false".equals(a[1])); // M29.1
             case "outletmenu" -> check(name + ": cabinet menu with the outlet button (" + (a.length > 1 ? a[1] : "?") + ")", a.length > 1 && "ok".equals(a[1]));
             case "monitor" -> { // M27
                 float temp = TankMultiblock.getController(server.overworld(), monitorMin()) instanceof TankBlockEntity mc ? mc.getTank().waterTemp() : Float.NaN;
@@ -1010,6 +1012,15 @@ public final class DevSmokeMP {
             BlockPos at = base.offset(-12, 0, 6);
             say("outlets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> reports.containsKey(P1 + ":outletsright,front") && reports.containsKey(P2 + ":outletsright,front"), 20 * 30));
+        // M29.1: an air pump goes into the stone cabinet: both clients learn it (hose); their pump sounds are off by default
+        steps.add(new Step("cabinet air pump", () -> {
+            BlockPos at = base.offset(-12, 0, 6);
+            if (server.overworld().getBlockEntity(at) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
+                cab.items().setStackInSlot(org.overengineer.bettacraft.equipment.CabinetBlockEntity.AIR_PUMP_SLOT,
+                        new ItemStack(org.overengineer.bettacraft.registry.ModItems.AIR_PUMP.get()));
+            }
+            say("cabpump", "all", at.getX() + "," + at.getY() + "," + at.getZ());
+        }, () -> reports.containsKey(P1 + ":cabpump") && reports.containsKey(P2 + ":cabpump"), 20 * 30));
         // M23: a small tank with an air pump, two air stones in the interior and an LED panel on top: both clients see the pump
         // run, the stones bubble in the miniature and both halves of the panel; then Dev1 turns the pump to 50 % (regulator)
         steps.add(new Step("aeration", () -> {

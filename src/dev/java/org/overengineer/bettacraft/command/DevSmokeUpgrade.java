@@ -421,6 +421,9 @@ public final class DevSmokeUpgrade {
                 cabinetsChecked++;
                 // M23: full power, no intake sponge
                 if (cab.regulator() != 10 || cab.intakeSponge()) problems.add("cabinet " + p.toShortString() + ": regulator " + cab.regulator() + ", sponge " + cab.intakeSponge());
+                // M29.1: the old cabinet got the air pump slot (empty) and kept its items in their slots
+                if (cab.items().getSlots() != CabinetBlockEntity.SLOTS || cab.hasAirPump() || cab.airDriven() != 0)
+                    problems.add("cabinet " + p.toShortString() + ": " + cab.items().getSlots() + " slots, air pump " + cab.hasAirPump());
             } else if (be instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity xf) {
                 if (xf.regulator() != 10 || xf.intakeSponge()) problems.add("filter " + p.toShortString() + ": regulator " + xf.regulator() + ", sponge " + xf.intakeSponge());
                 m23Checked++;

@@ -267,6 +267,16 @@ final class DevClientSmokeMP {
                     send("outlets " + w[0] + "," + w[1]);
                 });
             }
+            case "cabpump" -> {
+                // M29.1: the air pump in the cabinet as this client knows it, and its pump sound switches (client config)
+                BlockPos at = pos(args);
+                then(30, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    boolean pump = mc.level.getBlockEntity(at) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab && cab.hasAirPump();
+                    send("cabpump " + pump + "," + org.overengineer.bettacraft.config.ClientConfig.AIR_PUMP_SOUND.get() + ","
+                            + org.overengineer.bettacraft.config.ClientConfig.FLOW_PUMP_SOUND.get());
+                });
+            }
             case "aeration" -> {
                 // M23: the air pump runs on this client, the miniature shows both air stones bubbling, both halves of the panel
                 BlockPos at = pos(args);
