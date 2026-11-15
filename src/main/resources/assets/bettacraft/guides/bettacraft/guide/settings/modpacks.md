@@ -12,6 +12,13 @@ Since 1.25.0 Bettacraft brings a quest chapter for **FTB Quests** and events for
 modpack makers: they are not in the mod jar but in the file `bettacraft-modpack-<version>.zip` of every release (in the
 repository the folder `modpack/`). Its folders are those of an instance: copy `config/` and `kubejs/` into it.
 
+## Presets
+
+The quickest way to tune Bettacraft for a pack is one key in `config/bettacraft-common.toml`: `preset = "SIMPLE"`,
+`"REALISTIC"` or `"DECOR"`. It sets the feature switches and the game values of every world's server config at once;
+values the pack changes itself still win, and `presetKeep` keeps single defaults. The table is on the
+[settings page](../settings.md) under Feature switches.
+
 ## FTB Quests chapter
 
 `config/ftbquests/quests/chapters/bettacraft.snbt` is the chapter **Bettacraft**, 33 quests from the first aquarium to

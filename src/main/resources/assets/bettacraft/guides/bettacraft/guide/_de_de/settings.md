@@ -22,6 +22,7 @@ navigation:
 | `inhabitants.refuseHostile` | true | keine feindlichen Mobs im Aquarium |
 | `inhabitants.tadpoles` | LEAVE_AS_FROG | eine große Kaulquappe hüpft als Frosch hinaus; STAY_TADPOLE = sie bleibt Kaulquappe |
 | `inhabitants.outgrown` | BAG_IN_FRONT | ein Tier, das im Aquarium größer als `maxHitbox` geworden ist, wartet in einer Fischtüte davor; KEEP = es bleibt |
+| `care.mode` | NORMAL | NO_DEATH = Bedürfnisse und Krankheit, aber niemand stirbt; DECOR = gar keine Bedürfnisse (siehe Voreinstellungen unter Feature-Schalter) |
 | `health.daysUntilSick` | 7 | Tage Hunger oder falsche Temperatur bis krank |
 | `health.daysSickUntilDeath` | 14 | Krankheitstage bis zum Tod |
 | `health.bothBadMultiplier` | 2 | schnellerer Stress bei zwei schlechten Bedingungen |
@@ -153,6 +154,59 @@ Jeder Schalter hat in den Mod-Einstellungen seine eigene Zeile mit Erklärung. E
 selbst auf diese Schlüssel umgestellt (die alte Datei bleibt als `bettacraft-common.toml.pre-m33`); nach einer Änderung in der
 Datei bringt `/reload` Rezepte und Loot auf den Stand.
 
+### Voreinstellungen (Presets)
+
+Statt jeden Schalter einzeln zu setzen, wählt ein Modpack oder ein Server ein fertiges Profil mit **einem Schlüssel** oben
+in der Common-Config: `preset = "SIMPLE"`, `"REALISTIC"` oder `"DECOR"` (`"CUSTOM"` = keins, der Standard). Operatoren
+können auch `/bettacraft preset <custom|simple|realistic|decor>` eingeben: Das speichert den Schlüssel und schickt ihn an
+alle Spieler; `/bettacraft preset` zeigt die aktive Voreinstellung und jeden Wert, den sie gerade setzt. Eine Voreinstellung
+setzt Feature-Schalter hier und Spielwerte in der Server-Config jeder Welt:
+
+* **Einfach:** keine Wasserchemie, kein CO2 und keine Umkehrosmose, kein Wasserwechsel-Zwang, keine Verdunstung, kein
+  Strom; Tiere werden später krank und erholen sich schneller, ein breiterer Temperaturbereich, ein sanfterer Salzschock,
+  einzelne Schwarmfische haben keinen Stress.
+* **Realistisch:** alles an, strenge Werte: Wasserwechsel jede Woche, früher krank, ein engerer Temperaturbereich, die
+  Geräte brauchen FE (eine Energie-Mod mit Kabeln und Generatoren ist nötig), Tiere anderer Mods achten auf das Salz,
+  Vanilla-Korallen brauchen Meerwasser, tödliches Wasser wird nicht verweigert.
+* **Nur Deko:** keine Pflege. `care.mode = DECOR`: kein Tier wird je hungrig oder krank und keins stirbt; keine
+  Wasserchemie, Wasserqualität, Wasserwechsel, Verdunstung, kein Strom und keine Algen; keine Zucht (es stirbt ja nichts,
+  die Becken würden nur voll), keine Kämpfe.
+
+| Schlüssel | Standard | Einfach | Realistisch | Nur Deko |
+|---|---|---|---|---|
+| `features.waterChemistry.enabled`, `features.co2.enabled`, `features.osmosis.enabled` | an | aus |  | aus |
+| `features.power.enabled` | an | aus |  | aus |
+| `features.algae.enabled`, `features.breeding.enabled` | an |  |  | aus |
+| `care.mode` | NORMAL |  |  | DECOR |
+| `waterchange.difficulty` | NORMAL | aus | REALISTIC | aus |
+| `waterQuality.qualityEnabled` | true |  |  | false |
+| `evaporation.evaporationEnabled` | true | false |  | false |
+| `health.daysUntilSick` / `daysSickUntilDeath` | 7 / 14 | 14 / 28 | 5 / 10 |  |
+| `health.hungryAfterDays` / `recoveryPerDay` | 1 / 2 | 2 / 3 |  |  |
+| `temperature.toleratedMin` / `toleratedMax` | 24 / 30 | 22 / 32 | 25 / 29 |  |
+| `saltwater.salinityShock` | 1.0 | 0.5 |  |  |
+| `saltwater.foreignAnimals` | LENIENT |  | REALISTIC |  |
+| `saltwater.vanillaCoralsNeedSalt` | false |  | true |  |
+| `saltwater.refuseDeadlyWater` | true |  | false |  |
+| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy`, `aeration.airPumpRequiresEnergy`, `pipes.pumpsRequireEnergy`, `terrarium.misterRequiresEnergy` | false |  | true |  |
+| `tankmates.behaviour.shoalStress` | true | false |  |  |
+| `frogs.frogStarveDays` | 4 | 8 |  |  |
+| `bigAnimalRules.dolphinHungryDays` | 2 | 4 |  |  |
+| `terrarium.harmAfterDays` | 1 | 2 |  |  |
+| `foreign.foreignHealthSpeed` | 1.0 | 0.5 |  |  |
+| `combat.malesFight` | true |  |  | false |
+| `invertebrates.bettasHuntShrimp` | true |  |  | false |
+
+* Ein Wert, der noch auf seinem Standard steht, folgt der Voreinstellung; ein in der Datei geänderter Wert gewinnt. Um einen
+  Standard zu behalten, den die Voreinstellung ändern würde, trägt man seinen Pfad in `presetKeep` ein:
+  `presetKeep = ["features.breeding.enabled"]` ist Nur Deko mit Zucht.
+* In die Dateien wird nichts geschrieben: zurück auf `CUSTOM` ist jeder Wert wieder der aus der Datei. Die
+  Mod-Einstellungen zeigen die Werte der Dateien, nicht die der Voreinstellung.
+* Im laufenden Spiel geändert, folgen die Clients sofort; `/reload` bringt Rezepte und Loot auf den Stand.
+* `care.mode` geht auch ohne Voreinstellung: `NO_DEATH` behält die Bedürfnisse und die Krankheit, aber kein Tier in einem
+  Becken oder Terrarium stirbt daran, wird von einem anderen gefressen oder stirbt an Schaden, der nicht von einem Spieler
+  kommt (es wartet mit einem halben Herz); `DECOR` hat gar keine Bedürfnisse. Ein Spieler und `/kill` töten weiterhin.
+
 ## Dieses Handbuch
 
 Das Handbuch braucht die Mod **GuideME**. Jeder Spieler bekommt es einmal, je nach `guide.giveBook`:
@@ -278,6 +332,8 @@ Pflanze wo wächst, steht unter [Pflanzen](plants.md).
   Mods sie füllen) und ob Vanilla oder der eigene Spawn-Durchlauf gerade spawnen kann. `/bettacraft wildlife list [Radius]`
   listet unsere Tiere in der Nähe mit Koordinaten (64 Blöcke; Beckenbewohner nicht mitgezählt),
   `/bettacraft wildlife glow [Radius]` lässt sie 30 Sekunden leuchten.
+* `/bettacraft preset` zeigt die aktive Voreinstellung und die Werte, die sie setzt; Operatoren (Stufe 3):
+  `/bettacraft preset <Name>` wechselt sie (siehe Voreinstellungen oben).
 
 ## In diesem Kapitel
 

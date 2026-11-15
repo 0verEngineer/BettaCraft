@@ -12,6 +12,13 @@ Seit 1.25.0 bringt Bettacraft ein Quest-Kapitel für **FTB Quests** und Events f
 Modpack-Macher: Es steckt nicht im Mod-Jar, sondern in der Datei `bettacraft-modpack-<Version>.zip` jedes Releases (im
 Repository der Ordner `modpack/`). Ihre Ordner sind die einer Instanz: `config/` und `kubejs/` dort hineinkopieren.
 
+## Voreinstellungen
+
+Am schnellsten passt man Bettacraft mit einem Schlüssel in `config/bettacraft-common.toml` an ein Pack an:
+`preset = "SIMPLE"`, `"REALISTIC"` oder `"DECOR"`. Er setzt die Feature-Schalter und die Spielwerte der Server-Config
+jeder Welt auf einmal; Werte, die das Pack selbst ändert, gewinnen weiterhin, und `presetKeep` behält einzelne Standards.
+Die Tabelle steht auf der [Einstellungsseite](../settings.md) unter Feature-Schalter.
+
 ## Kapitel für FTB Quests
 
 `config/ftbquests/quests/chapters/bettacraft.snbt` ist das Kapitel **Bettacraft**, 33 Quests vom ersten Aquarium bis zum

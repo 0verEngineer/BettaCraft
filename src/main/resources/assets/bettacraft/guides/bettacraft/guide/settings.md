@@ -22,6 +22,7 @@ navigation:
 | `inhabitants.refuseHostile` | true | no hostile mobs in aquariums |
 | `inhabitants.tadpoles` | LEAVE_AS_FROG | a grown tadpole hops out as a frog; STAY_TADPOLE = it stays a tadpole |
 | `inhabitants.outgrown` | BAG_IN_FRONT | an animal that grew bigger than `maxHitbox` in the aquarium waits in a fish bag in front of it; KEEP = it stays |
+| `care.mode` | NORMAL | NO_DEATH = needs and sickness, but nobody dies; DECOR = no needs at all (see Presets under Feature switches) |
 | `health.daysUntilSick` | 7 | days of hunger or wrong temperature until sick |
 | `health.daysSickUntilDeath` | 14 | sick days until death |
 | `health.bothBadMultiplier` | 2 | faster stress with two bad conditions |
@@ -152,6 +153,56 @@ Every switch has its own line in the Mod settings with an explanation. A config 
 by itself when the game starts (the old file stays as `bettacraft-common.toml.pre-m33`); after a change in the file `/reload`
 brings the recipes and loot up to date.
 
+### Presets
+
+Instead of setting every switch, a modpack or a server picks a ready-made profile with **one key** at the top of the
+common config: `preset = "SIMPLE"`, `"REALISTIC"` or `"DECOR"` (`"CUSTOM"` = none, the default). Operators can also type
+`/bettacraft preset <custom|simple|realistic|decor>`: it saves the key and sends it to every player; `/bettacraft preset`
+shows the active preset and every value it sets now. A preset sets feature switches here and game values in the server
+config of every world:
+
+* **Simple:** no water chemistry, CO2 or reverse osmosis, no forced water changes, no evaporation, no power; animals get
+  sick later and recover faster, a wider temperature range, a gentler salt shock, single shoal fish are not stressed.
+* **Realistic:** every feature on, strict values: water changes every week, sick sooner, a narrower temperature range,
+  the devices need FE (an energy mod with cables and generators is needed), animals of other mods mind the salt, vanilla
+  corals need sea water, deadly water is not refused.
+* **Decor only:** no care. `care.mode = DECOR`: no animal is ever hungry or sick and none dies; no water chemistry, water
+  quality, water changes, evaporation, power or algae; no breeding (nothing dies, so the tanks would only fill up), no fights.
+
+| Key | Default | Simple | Realistic | Decor only |
+|---|---|---|---|---|
+| `features.waterChemistry.enabled`, `features.co2.enabled`, `features.osmosis.enabled` | on | off |  | off |
+| `features.power.enabled` | on | off |  | off |
+| `features.algae.enabled`, `features.breeding.enabled` | on |  |  | off |
+| `care.mode` | NORMAL |  |  | DECOR |
+| `waterchange.difficulty` | NORMAL | off | REALISTIC | off |
+| `waterQuality.qualityEnabled` | true |  |  | false |
+| `evaporation.evaporationEnabled` | true | false |  | false |
+| `health.daysUntilSick` / `daysSickUntilDeath` | 7 / 14 | 14 / 28 | 5 / 10 |  |
+| `health.hungryAfterDays` / `recoveryPerDay` | 1 / 2 | 2 / 3 |  |  |
+| `temperature.toleratedMin` / `toleratedMax` | 24 / 30 | 22 / 32 | 25 / 29 |  |
+| `saltwater.salinityShock` | 1.0 | 0.5 |  |  |
+| `saltwater.foreignAnimals` | LENIENT |  | REALISTIC |  |
+| `saltwater.vanillaCoralsNeedSalt` | false |  | true |  |
+| `saltwater.refuseDeadlyWater` | true |  | false |  |
+| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy`, `aeration.airPumpRequiresEnergy`, `pipes.pumpsRequireEnergy`, `terrarium.misterRequiresEnergy` | false |  | true |  |
+| `tankmates.behaviour.shoalStress` | true | false |  |  |
+| `frogs.frogStarveDays` | 4 | 8 |  |  |
+| `bigAnimalRules.dolphinHungryDays` | 2 | 4 |  |  |
+| `terrarium.harmAfterDays` | 1 | 2 |  |  |
+| `foreign.foreignHealthSpeed` | 1.0 | 0.5 |  |  |
+| `combat.malesFight` | true |  |  | false |
+| `invertebrates.bettasHuntShrimp` | true |  |  | false |
+
+* A value still at its default follows the preset, a value changed in the file wins. To keep a default the preset would
+  change, list its path in `presetKeep`: `presetKeep = ["features.breeding.enabled"]` is decor with breeding.
+* Nothing is written into the files: back on `CUSTOM` every value is the file's again. The Mod settings show the file
+  values, not the preset's.
+* Changed in a running game, the clients follow at once; `/reload` brings the recipes and loot up to date.
+* `care.mode` also works without a preset: `NO_DEATH` keeps the needs and the sickness, but no animal in a tank or
+  terrarium dies of them, is eaten by another or dies of damage that is not a player's (it waits at half a heart);
+  `DECOR` has no needs at all. A player and `/kill` still kill.
+
 ## This handbook
 
 The handbook needs the mod **GuideME**. Each player gets it once, depending on `guide.giveBook`:
@@ -269,6 +320,8 @@ features to the tags of the waters above, so the biomes of biome mods count; whi
   and whether vanilla or the own spawn pass can spawn now. `/bettacraft wildlife list [radius]` lists our animals nearby
   with their coordinates (64 blocks; tank inhabitants left out), `/bettacraft wildlife glow [radius]` lets them glow for
   30 seconds.
+* `/bettacraft preset` shows the active preset and the values it sets; operators (level 3): `/bettacraft preset <name>`
+  switches it (see Presets above).
 
 ## In this chapter
 
