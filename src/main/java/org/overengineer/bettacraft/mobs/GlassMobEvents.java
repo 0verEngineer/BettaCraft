@@ -25,6 +25,12 @@ public final class GlassMobEvents {
         if (GlassMobs.isGlassMob(e.getEntity())) e.setCanceled(true);
     }
 
+    /** M33 part d: the mark goes with a conversion (lightning, powder snow, other mods), see {@link GlassMobs#converted}. */
+    @SubscribeEvent
+    public static void onConverted(net.neoforged.neoforge.event.entity.living.LivingConversionEvent.Post e) {
+        GlassMobs.converted(e.getEntity(), e.getOutcome());
+    }
+
     @SubscribeEvent
     public static void onExperience(LivingExperienceDropEvent e) {
         if (GlassMobs.isGlassMob(e.getEntity())) {

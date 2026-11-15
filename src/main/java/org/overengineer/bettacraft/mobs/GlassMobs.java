@@ -278,6 +278,33 @@ public final class GlassMobs {
         convert(level, c, z, m.getType() == EntityType.HUSK ? EntityType.ZOMBIE : EntityType.DROWNED);
     }
 
+    /**
+     * M33 part d (hardening): a mob that lived in glass and is converted by vanilla or another mod (lightning, powder snow,
+     * a mod's own conversion) keeps the mark on its new body, so it still drops nothing. If it was in a tank, the new mob
+     * stays there when it may live in glass (shrunk again), otherwise it leaves the tank's list.
+     */
+    public static void converted(LivingEntity from, LivingEntity to) {
+        if (from == to || !isGlassMob(from) || isGlassMob(to)) return;
+        GlassMobData d = data(from), nd = data(to); // data(to) creates the mark
+        nd.growth = d.growth;
+        nd.fedAt = d.fedAt;
+        nd.bredAt = d.bredAt;
+        to.setData(ModAttachments.GLASS_MOB.get(), nd);
+        if (!(to.level() instanceof ServerLevel level) || !TankInhabitants.hasTankRef(from)) return;
+        TankBlockEntity c = TankInhabitants.resolveController(level, from);
+        if (c == null) return;
+        TankData t = c.getTank();
+        t.inhabitants().remove(from.getUUID());
+        if (to instanceof Mob m && species(to.getType()) != null && enabled()) {
+            prepare(m);
+            TankInhabitants.adopt(m, c);
+            t.inhabitants().add(m.getUUID());
+        } else {
+            TankInhabitants.release(to);
+        }
+        c.markTankChanged();
+    }
+
     /** Converts a zombie in its tank (GameTests call it directly). */
     @Nullable
     public static Mob convert(ServerLevel level, TankBlockEntity c, Zombie z, EntityType<? extends Zombie> to) {
