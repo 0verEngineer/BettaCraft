@@ -663,6 +663,24 @@ def m29c(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M29 part d scene (DevClientSmokeM29d, -Psmoketestm29d): the big crayfish and the axolotl tank. ``py guide_images.py m29d``.
+M29D_WORLD = {
+    "critters_big_crayfish": ("crayfish_close", (0, 180, 1280, 720)),
+    "axolotl_tank": ("axolotl", (0, 120, 1280, 600)),
+}
+
+
+def m29d(out_en: Path) -> None:
+    for name, (shot, box) in M29D_WORLD.items():
+        src = SHOTS / f"bettacraft_m29d_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -677,6 +695,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m29d"]:
+        m29d(out_en)
+        return 0
     if sys.argv[1:] == ["m29c"]:
         m29c(out_en)
         return 0

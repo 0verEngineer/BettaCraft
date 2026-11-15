@@ -168,6 +168,28 @@ final class DevClientSmokeMP {
                     send("tankmates " + mates.size() + " " + albino + " " + clutches + " " + eggs + " " + (strains.isEmpty() ? "-" : String.join(",", strains)));
                 });
             }
+            case "m29" -> {
+                // M29 part d: the big crayfish (species and colour of the tank view), the axolotls and the betta hybrid on this client
+                BlockPos min = pos(args);
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, min);
+                    java.util.List<String> cray = new java.util.ArrayList<>();
+                    if (c != null && c.getTank() != null) {
+                        for (var k : c.getTank().critters()) if (k.species.big()) cray.add(k.species.id() + ":" + k.clientColor);
+                    }
+                    java.util.Collections.sort(cray);
+                    var box = new net.minecraft.world.phys.AABB(min).expandTowards(2, 2, 2);
+                    java.util.List<String> axo = new java.util.ArrayList<>();
+                    for (var ax : mc.level.getEntitiesOfClass(net.minecraft.world.entity.animal.axolotl.Axolotl.class, box)) axo.add(ax.getVariant().getSerializedName());
+                    java.util.Collections.sort(axo);
+                    String imb = "-";
+                    for (var b : mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class, box)) {
+                        imb = b.genome().species(); // the client gets the phenotype with the species id (hybrid), not the shares
+                    }
+                    send("m29 " + (cray.isEmpty() ? "-" : String.join(",", cray)) + " " + (axo.isEmpty() ? "-" : String.join(",", axo)) + " " + imb);
+                });
+            }
             case "reef" -> {
                 // M20: salinity of the tank view, the salt the water is drawn with, the reef fish and the coral blocks of the miniature
                 BlockPos min = pos(args);

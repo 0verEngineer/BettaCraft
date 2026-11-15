@@ -134,6 +134,13 @@ public final class DevSmokeMP {
                 check(name + ": the water of the tank is tinted (" + a[2] + ")", !"0".equals(a[2]));
             }
             case "tankmates" -> checkTankmates(name, a);
+            case "m29" -> { // M29 part d: the big crayfish, the axolotls (vanilla, colours) and a wild betta hybrid on every client
+                check(name + ": big crayfish " + (a.length > 1 ? a[1] : "?") + " (server florida_crayfish:0,marbled_crayfish:-1)",
+                        a.length > 1 && "florida_crayfish:0,marbled_crayfish:-1".equals(a[1]));
+                check(name + ": axolotls " + (a.length > 2 ? a[2] : "?") + " (server blue,gold)", a.length > 2 && "blue,gold".equals(a[2]));
+                String hy = org.overengineer.bettacraft.genetics.BettaSpecies.HYBRID_ID;
+                check(name + ": betta species " + (a.length > 3 ? a[3] : "?") + " (server " + hy + ", half Betta imbellis)", a.length > 3 && hy.equals(a[3]));
+            }
             case "reef" -> checkReef(name, a);
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
@@ -883,6 +890,41 @@ public final class DevSmokeMP {
             c.markTankChanged();
             say("tankmates", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":tankmates") && reports.containsKey(P2 + ":tankmates"), 20 * 30));
+        steps.add(new Step("m29", () -> {
+            // M29 part d: a cool tank with a blue Florida crayfish, a marbled crayfish, a blue and a gold axolotl and a betta
+            // that is half Betta imbellis: every client sees the species, colours and the ancestry
+            BlockPos min = base.offset(-5, 0, 9);
+            ServerLevel level = server.overworld();
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+            for (BlockPos q : blocks) level.setBlockAndUpdate(q, ModBlocks.TANK.get().defaultBlockState());
+            for (BlockPos q : blocks) TankMultiblock.onTankBlockAdded(level, q, null);
+            TankBlockEntity c = TankMultiblock.getController(level, min);
+            check("the M29 tank formed", c != null);
+            if (c == null) return;
+            TankInteractions.changeWater(level, c, 8000 - c.getTank().waterMb());
+            c.getTank().setWaterTemp(18F);
+            c.getTank().setTargetTemp(18F);
+            org.overengineer.bettacraft.critters.TankCritters.add(level, c, org.overengineer.bettacraft.critters.CritterSpecies.FLORIDA_CRAYFISH,
+                    org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.5F), true, 30);
+            org.overengineer.bettacraft.critters.TankCritters.add(level, c, org.overengineer.bettacraft.critters.CritterSpecies.MARBLED_CRAYFISH,
+                    org.overengineer.bettacraft.critters.CritterGenes.WILD, true, 30);
+            var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
+            for (var v : List.of(net.minecraft.world.entity.animal.axolotl.Axolotl.Variant.BLUE, net.minecraft.world.entity.animal.axolotl.Axolotl.Variant.GOLD)) {
+                var a = org.overengineer.bettacraft.tank.AxolotlCare.spawn(level, c, org.overengineer.bettacraft.critters.CritterGenes.pure(
+                        org.overengineer.bettacraft.tank.AxolotlCare.locus(v), 0.1F), 0, w.box().getCenter().add(v == net.minecraft.world.entity.animal.axolotl.Axolotl.Variant.BLUE ? -0.3 : 0.3, -0.4, 0));
+                if (a != null) a.setAge(0);
+            }
+            var g = org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(net.minecraft.util.RandomSource.create(29))
+                    .withAncestry(new org.overengineer.bettacraft.genetics.BettaSpecies.Ancestry(32, 0));
+            var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new net.minecraft.world.item.ItemStack(ModItems.BETTA_BUCKET.get()),
+                    org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0));
+            var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, bucket, org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false);
+            check("the hybrid betta went in" + (err == null ? "" : ": " + err.getString()), err == null);
+            c.markTankChanged();
+            org.overengineer.bettacraft.critters.TankCritters.sync(level, c);
+            say("m29", "all", min.getX() + "," + min.getY() + "," + min.getZ());
+        }, () -> reports.containsKey(P1 + ":m29") && reports.containsKey(P2 + ":m29"), 20 * 30));
         steps.add(new Step("reef", () -> {
             // M20: a small reef tank: sea water, a coral on reef rock in the interior, a clownfish pair; both clients see the salt
             BlockPos min = reefMin();

@@ -118,6 +118,8 @@ final class DevClientSmokeTest {
     /** -Psmoketestm29: only the M29 part a scene (the cichlids). */
     private static final boolean M29_ONLY = Boolean.getBoolean("bettacraft.smoketest.m29only");
     private static DevClientSmokeM29 m29;
+    /** -Psmoketestm29d: the big crayfish and the axolotls. */
+    private static DevClientSmokeM29d m29d;
     private static DevClientSmokeM281 m281;
     private static DevClientSmokeM28c m28c;
     /** -Psmoketestm27: only the M27 scene (monitor screens). */
@@ -206,6 +208,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M29_ONLY && Boolean.getBoolean("bettacraft.smoketest.m29d")) {
+                if (ticks == 60) m29d = new DevClientSmokeM29d();
+                if (m29d != null && m29d.tick()) {
+                    m29d = null;
+                    LOGGER.info("[smoketest] client world test finished (M29 part d only)");
                     mc.stop();
                 }
                 return;
