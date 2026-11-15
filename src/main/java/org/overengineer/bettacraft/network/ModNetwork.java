@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "14"; // M33.1: the tank type packet
+    public static final String VERSION = "15"; // M35.1: the server settings packet lost the cyst stack size
 
     private ModNetwork() {}
 
@@ -73,7 +73,6 @@ public final class ModNetwork {
     private static void onServerSettings(ServerSettingsPayload payload, IPayloadContext ctx) {
         // common code: on an integrated server both sides read the same config anyway
         ctx.enqueueWork(() -> {
-            org.overengineer.bettacraft.food.ArtemiaCystsItem.setClientOverride(payload.cystStack());
             org.overengineer.bettacraft.genetics.GeneVisibility.setClientFree(payload.genesFree());
         });
     }

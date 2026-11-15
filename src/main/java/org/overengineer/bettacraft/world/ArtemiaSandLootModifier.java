@@ -16,7 +16,7 @@ import org.overengineer.bettacraft.registry.ModTags;
 
 /**
  * Mining a block of {@code #bettacraft:artemia_sand} (sand) drops artemia cysts with the chance of the server config
- * {@code drops.artemiaFromSandChance} (PLAN 6.3, OFFEN H-16b).
+ * {@code drops.artemiaFromSandChance} (PLAN 6.3, OFFEN H-16b; M35.1: 8 % instead of 2 %, one jar is one culture).
  */
 public class ArtemiaSandLootModifier extends LootModifier {
     public static final MapCodec<ArtemiaSandLootModifier> CODEC = RecordCodecBuilder.mapCodec(i -> codecStart(i)
@@ -34,7 +34,7 @@ public class ArtemiaSandLootModifier extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
         BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
         if (state == null || !state.is(ModTags.ARTEMIA_SAND)) return loot;
-        double chance = ServerConfig.getOr(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE, 0.02);
+        double chance = ServerConfig.getOr(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE, ServerConfig.ARTEMIA_SAND_CHANCE);
         if (context.getRandom().nextDouble() < chance) loot.add(item.copy());
         return loot;
     }

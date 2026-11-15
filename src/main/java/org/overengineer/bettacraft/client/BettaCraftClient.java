@@ -137,7 +137,6 @@ public final class BettaCraftClient {
             org.overengineer.bettacraft.client.interior.PlantMeshRenderer.clear();
             org.overengineer.bettacraft.client.decor.DecorPreview.clear();
             org.overengineer.bettacraft.client.map.AlarmWaypoints.clear(); // M32 part d
-            org.overengineer.bettacraft.food.ArtemiaCystsItem.setClientOverride(0); // M21.8: the next server sends its own
             // back to the built-in genetics (the next server sends its own); not while our integrated server still runs
             if (net.minecraft.client.Minecraft.getInstance().getSingleplayerServer() == null) {
                 org.overengineer.bettacraft.genetics.GeneticsData.reset();

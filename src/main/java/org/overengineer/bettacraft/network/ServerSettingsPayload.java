@@ -11,14 +11,14 @@ import org.overengineer.bettacraft.BettaCraft;
 
 /**
  * M21.8: server settings the client must know at once (join and live reloads of the server config; NeoForge only sends
- * the server config file at login): the stack size of the artemia cyst jars, so client and server agree on merging;
- * M22.3: whether the hidden genes of the animals are free (no magnifier needed) for the tooltips.
+ * the server config file at login): M22.3: whether the hidden genes of the animals are free (no magnifier needed) for the
+ * tooltips. (M21.8..M35 also sent the stack size of the artemia cyst jars; M35.1: they always stack to 64.)
  */
-public record ServerSettingsPayload(int cystStack, boolean genesFree) implements CustomPacketPayload {
+public record ServerSettingsPayload(boolean genesFree) implements CustomPacketPayload {
     public static final Type<ServerSettingsPayload> TYPE = new Type<>(BettaCraft.id("server_settings"));
 
     public static final StreamCodec<FriendlyByteBuf, ServerSettingsPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, ServerSettingsPayload::cystStack, ByteBufCodecs.BOOL, ServerSettingsPayload::genesFree, ServerSettingsPayload::new);
+            ByteBufCodecs.BOOL, ServerSettingsPayload::genesFree, ServerSettingsPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
@@ -26,8 +26,7 @@ public record ServerSettingsPayload(int cystStack, boolean genesFree) implements
     }
 
     public static ServerSettingsPayload current() {
-        return new ServerSettingsPayload(org.overengineer.bettacraft.food.ArtemiaCystsItem.stackSize(),
-                org.overengineer.bettacraft.genetics.GeneVisibility.serverFree()); // M22.3: no magnifier needed on this server
+        return new ServerSettingsPayload(org.overengineer.bettacraft.genetics.GeneVisibility.serverFree()); // M22.3: no magnifier needed on this server
     }
 
     public static void send(ServerPlayer sp) {

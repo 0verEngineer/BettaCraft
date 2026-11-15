@@ -27,7 +27,7 @@ import org.overengineer.bettacraft.entity.betta.FishBagItem;
  *     into other mods' tanks and pipes (fluid capability). Bottles of water or live food are emptied anywhere with sneak +
  *     right-click (or right-click into the air): only splashes and a splash sound, no water block, an empty glass bottle
  *     remains; in tanks they work as before. An empty fish bag can be shaken out anywhere (sneak + right-click), no water
- *     block. Dry goods (artemia cyst jars) are no liquid: they are used up use by use.</li>
+ *     block. Dry goods (artemia cyst jars) are no liquid: one jar is one culture.</li>
  *     <li><b>Animals need a confirmation.</b> A container holding animals (an animal bucket, a filled fish or critter
  *     bag) never lets them go into the world without asking: the player confirms in a small screen with "Cancel" and
  *     "Empty" ({@code ConfirmEmptyScreen}); only then does the server release them ({@link #confirmed}). Putting them

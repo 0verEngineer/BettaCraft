@@ -98,7 +98,6 @@ public final class ServerConfig {
 
     // food (M2)
     public static final ModConfigSpec.IntValue FOOD_FRY_PER_ITEM;
-    public static final ModConfigSpec.ConfigValue<Integer> FOOD_CYST_STACK;
     public static final ModConfigSpec.DoubleValue FOOD_CULTURE_DAYS;
 
     // interior
@@ -112,6 +111,8 @@ public final class ServerConfig {
 
     // drops
     public static final ModConfigSpec.DoubleValue DROPS_ARTEMIA_FROM_SAND_CHANCE;
+    /** M35.1: 4x the old 0.02 (one jar is one culture now). */
+    public static final double ARTEMIA_SAND_CHANCE = 0.08, ARTEMIA_SAND_CHANCE_OLD = 0.02;
 
     // water quality (M9)
     public static final ModConfigSpec.BooleanValue WATER_QUALITY_ENABLED;
@@ -452,9 +453,7 @@ public final class ServerConfig {
         b.comment("Food").push("food");
         FOOD_FRY_PER_ITEM = b.comment("Fry fed by one portion of fry food (infusoria, artemia nauplii)").defineInRange("fryPerItem", 20, 1, 256);
         FOOD_CULTURE_DAYS = b.comment("Days an infusoria or artemia culture needs to become ready").defineInRange("cultureDays", 1.0, 0.0, 100.0);
-        // M21.8
-        FOOD_CYST_STACK = b.comment("How many jars of artemia cysts stack in one slot: 16, 32 or 64 (each jar keeps its 16 uses; only jars with the same uses left stack; "
-                + "stacks bigger than a smaller new limit stay as they are)").defineInList("artemiaCystStackSize", 16, java.util.Arrays.asList(16, 32, 64));
+        // M21.8 artemiaCystStackSize: gone in M35.1 (jars always stack to 64; FeatureMigration removes the old key)
         b.pop();
 
         b.comment("Duration of the life stages in in-game days").push("stages");
@@ -480,7 +479,7 @@ public final class ServerConfig {
         b.pop();
 
         b.comment("Drops").push("drops");
-        DROPS_ARTEMIA_FROM_SAND_CHANCE = b.comment("Chance that breaking sand (#bettacraft:artemia_sand) drops artemia cysts").defineInRange("artemiaFromSandChance", 0.02, 0.0, 1.0);
+        DROPS_ARTEMIA_FROM_SAND_CHANCE = b.comment("Chance that breaking sand (#bettacraft:artemia_sand) drops a jar of artemia cysts").defineInRange("artemiaFromSandChance", ARTEMIA_SAND_CHANCE, 0.0, 1.0);
         b.pop();
 
         b.comment("Water quality of tanks: waste of the animals and of uneaten food lowers it, filters slow that down, fresh water",
@@ -726,7 +725,7 @@ public final class ServerConfig {
                 .defineInRange("larvaTubDays", 2.0, 0.01, 100.0);
         CULTURE_LARVA_YIELD = b.comment("Mosquito larvae per batch (uses one piece of organic matter and 250 mB of water)").defineInRange("larvaTubYield", 3, 1, 16);
         CULTURE_ARTEMIA_DAYS = b.comment("In-game days an artemia hatchery needs for one batch (needs light)").defineInRange("hatcheryDays", 1.0, 0.01, 100.0);
-        CULTURE_ARTEMIA_YIELD = b.comment("Bottles of artemia nauplii per batch (uses one use of cysts, 250 mB of salt water and one glass bottle per bottle)")
+        CULTURE_ARTEMIA_YIELD = b.comment("Bottles of artemia nauplii per batch (uses one jar of cysts, 250 mB of salt water and one glass bottle per bottle)")
                 .defineInRange("hatcheryYield", 2, 1, 16);
         b.pop();
 

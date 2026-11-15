@@ -73,7 +73,7 @@ public final class BettaCraft {
             org.overengineer.bettacraft.compat.top.TheOneProbeCompat.register(modBus);
         }
 
-        // M21.8: the cyst stack size reaches the clients at login and whenever the server config is reloaded
+        // M22.3: the server settings (free genes) reach the clients at login and whenever the server config is reloaded
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent e) -> {
             if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) {
                 org.overengineer.bettacraft.network.ServerSettingsPayload.send(sp);
@@ -90,6 +90,8 @@ public final class BettaCraft {
             var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
             if (server != null) server.execute(() -> org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server));
         });
+        // M35.1: a server config from before M35.1 loses food.artemiaCystStackSize (and gets the 4x sand chance if it had the old default)
+        org.overengineer.bettacraft.config.FeatureMigration.migrateServerFile(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-server.toml"));
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         // M33: a common config from before M33 gets its flat feature switches moved into the feature tree first
         org.overengineer.bettacraft.config.FeatureMigration.migrateFile(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));

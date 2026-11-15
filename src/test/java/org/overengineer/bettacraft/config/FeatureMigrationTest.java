@@ -150,4 +150,29 @@ class FeatureMigrationTest {
         FeatureMigration.migrateFile(broken);
         FeatureMigration.migrateFile(dir.resolve("missing.toml"));
     }
+
+    /** M35.1: the server config loses food.artemiaCystStackSize; the old default sand chance becomes 4x, a set one stays. */
+    @Test
+    void serverConfigLosesTheCystStackSize() throws IOException {
+        String toml = "[drops]\nartemiaFromSandChance = 0.02\n[food]\nfryPerItem = 20\nartemiaCystStackSize = 32\n";
+        Path file = dir.resolve("bettacraft-server.toml");
+        Files.writeString(file, toml, StandardCharsets.UTF_8);
+        FeatureMigration.migrateServerFile(file);
+        CommentedConfig c = parse(Files.readString(file, StandardCharsets.UTF_8));
+        assertNull(at(c, "food.artemiaCystStackSize"), "the old key is gone");
+        assertEquals(20, ((Number) at(c, "food.fryPerItem")).intValue(), "the rest stays");
+        assertEquals(0.08, ((Number) at(c, "drops.artemiaFromSandChance")).doubleValue(), 1e-9, "the old default chance is 4x");
+        assertTrue(Files.exists(dir.resolve("bettacraft-server.toml.pre-m35.1")), "the old file is kept");
+        // a second run changes nothing
+        String once = Files.readString(file, StandardCharsets.UTF_8);
+        FeatureMigration.migrateServerFile(file);
+        assertEquals(once, Files.readString(file, StandardCharsets.UTF_8), "nothing left to migrate");
+        // a chance someone set stays; without the old key (a new file) nothing is touched
+        CommentedConfig own = parse("[drops]\nartemiaFromSandChance = 0.05\n[food]\nartemiaCystStackSize = 16\n");
+        assertFalse(FeatureMigration.migrateServer(own).isEmpty());
+        assertEquals(0.05, ((Number) at(own, "drops.artemiaFromSandChance")).doubleValue(), 1e-9, "a set chance stays");
+        CommentedConfig fresh = parse("[drops]\nartemiaFromSandChance = 0.02\n");
+        assertTrue(FeatureMigration.migrateServer(fresh).isEmpty(), "no old key: nothing to do");
+        assertEquals(0.02, ((Number) at(fresh, "drops.artemiaFromSandChance")).doubleValue(), 1e-9);
+    }
 }

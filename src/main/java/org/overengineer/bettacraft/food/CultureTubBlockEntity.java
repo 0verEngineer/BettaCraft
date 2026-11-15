@@ -38,7 +38,7 @@ import org.overengineer.bettacraft.registry.ModTags;
  * <p>
  * One batch takes {@code foodBreeding.larvaTubDays} (larva tub: needs the open sky; 1.5x as fast at night, 1.3x in a
  * betta biome and 1.3x in the rain) or {@code foodBreeding.hatcheryDays} (hatchery: needs light 9+). It uses one
- * ingredient (one use of cysts) and {@link #WATER_PER_BATCH} mB and yields the configured amount of food. Time stands
+ * ingredient (one jar of cysts) and {@link #WATER_PER_BATCH} mB and yields the configured amount of food. Time stands
  * still while unloaded unless {@code simulateUnloadedTime} is on.
  */
 public class CultureTubBlockEntity extends BlockEntity {
@@ -69,7 +69,10 @@ public class CultureTubBlockEntity extends BlockEntity {
         }
     };
     private int water;
-    /** M21.8: a jar of cysts split off a stack in the input slot and opened (its remaining uses come first). */
+    /**
+     * M21.8: a jar of cysts split off a stack in the input slot and opened. M35.1: jars have no uses any more; an open jar of
+     * an old world goes back onto the input slot on load, or (if it does not fit) waits here and is used up by the next batch.
+     */
     private ItemStack opened = ItemStack.EMPTY;
     private double progress;
     private long lastTick = -1;
@@ -222,18 +225,14 @@ public class CultureTubBlockEntity extends BlockEntity {
         return artemia() ? ServerConfig.getOr(ServerConfig.CULTURE_ARTEMIA_DAYS, 1.0) : ServerConfig.getOr(ServerConfig.CULTURE_LARVA_DAYS, 2.0);
     }
 
-    /** M21.8: the jar opened from a stack of cysts (EMPTY if none; GameTests). */
+    /** The jar of an old world still waiting in the hatchery (EMPTY if none; GameTests). */
     public ItemStack openedJar() {
         return opened;
     }
 
-    /** Ingredient uses left (cysts count their remaining uses). */
+    /** Batches the ingredients are enough for (M35.1: one jar of cysts is one batch). */
     public int ingredientUses() {
-        ItemStack s = items.getStackInSlot(INPUT);
-        if (s.isEmpty() && opened.isEmpty()) return 0;
-        int open = opened.isEmpty() ? 0 : ArtemiaCystsItem.usesLeft(opened);
-        if (s.isEmpty()) return open;
-        return open + (s.getItem() instanceof ArtemiaCystsItem ? ArtemiaCystsItem.totalUses(s) : s.getCount());
+        return items.getStackInSlot(INPUT).getCount() + opened.getCount();
     }
 
     // ------------------------------------------------------------------ environment
@@ -306,20 +305,10 @@ public class CultureTubBlockEntity extends BlockEntity {
     private void finishBatch() {
         ItemStack in = items.getStackInSlot(INPUT);
         if (!opened.isEmpty()) {
-            // M21.8: the jar already opened from a stack first
-            opened = ArtemiaCystsItem.usedJar(opened);
-        } else if (in.getItem() instanceof ArtemiaCystsItem) {
-            ItemStack d = in.copy();
-            ItemStack jar = ArtemiaCystsItem.useOne(d);
-            if (d.isEmpty()) {
-                // the last jar of the slot: it stays in the slot with one use less
-                items.setStackInSlot(INPUT, jar);
-            } else {
-                // M21.8: a stack of jars: one jar is split off and opened, the rest stays unopened in the slot
-                items.setStackInSlot(INPUT, d);
-                opened = jar;
-            }
+            // an open jar of an old world first (M35.1: one jar, one batch)
+            opened = ItemStack.EMPTY;
         } else {
+            // one jar of cysts or one piece of organic matter
             items.extractItem(INPUT, 1, false);
         }
         water -= WATER_PER_BATCH;
@@ -484,5 +473,16 @@ public class CultureTubBlockEntity extends BlockEntity {
         water = Math.max(0, Math.min(WATER_CAPACITY, tag.getInt("water")));
         progress = Math.max(0, Math.min(1, tag.getDouble("progress")));
         opened = tag.contains("opened_jar") ? ItemStack.parseOptional(registries, tag.getCompound("opened_jar")) : ItemStack.EMPTY;
+        if (!opened.isEmpty()) {
+            // M35.1: the open jar of an old world (its old uses are gone on load) goes back onto the jars in the input slot
+            ItemStack in = items.getStackInSlot(INPUT);
+            if (in.isEmpty()) {
+                items.setStackInSlot(INPUT, opened);
+                opened = ItemStack.EMPTY;
+            } else if (ItemStack.isSameItemSameComponents(in, opened) && in.getCount() + opened.getCount() <= in.getMaxStackSize()) {
+                items.setStackInSlot(INPUT, in.copyWithCount(in.getCount() + opened.getCount()));
+                opened = ItemStack.EMPTY;
+            }
+        }
     }
 }
