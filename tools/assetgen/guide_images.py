@@ -721,6 +721,31 @@ def m30b(out_en: Path) -> None:
         w = min(800, im.width * 2)
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
+
+# M30 part c scene (DevClientSmokeM30c, -Psmoketestm30c): the sea giants in a 28 x 6 x 14 sea water tank, the egg cases.
+# ``py guide_images.py m30c``.
+M30C_WORLD = {
+    "big_tank_sea": ("sea_tank", (130, 290, 1160, 530)),
+    "tm_bamboo_shark": ("egg_case", (0, 180, 940, 470)),
+    "big_tank_egg_case": ("egg_case", (620, 300, 960, 470)),
+    "tm_blacktip_reef_shark": ("rays_side", (70, 140, 500, 330)),
+    "tm_spotted_eagle_ray": ("rays_side", (700, 240, 1240, 410)),
+    "tm_cownose_ray": ("rays_side", (200, 290, 680, 510)),
+    "tm_honeycomb_moray": ("moray_cave", (0, 120, 760, 680)),
+}
+
+
+def m30c(out_en: Path) -> None:
+    for name, (shot, box) in M30C_WORLD.items():
+        src = SHOTS / f"bettacraft_m30c_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width * 2)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -735,6 +760,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m30c"]:
+        m30c(out_en)
+        return 0
     if sys.argv[1:] == ["m30b"]:
         m30b(out_en)
         return 0

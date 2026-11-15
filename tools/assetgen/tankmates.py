@@ -618,14 +618,14 @@ class RayPlan:
     """M30 part b: the flat ray: t runs from the snout (0) to the tip of the tail (1), v is 0 on the upper side and 1 on the
     underside (the disc is 1 px thick at the margin)."""
 
-    def __init__(self, name, snout=-16, ped=16):
-        self.name, self.snout, self.ped = name, snout, ped
+    def __init__(self, name, snout=-16, ped=16, under=-0.3):
+        self.name, self.snout, self.ped, self.under = name, snout, ped, under
 
     def t_of(self, z):
         return (z - self.snout) / (self.ped - self.snout)
 
     def v_of(self, y, z):
-        return 1.0 if y > -0.3 else 0.0
+        return 1.0 if y > self.under else 0.0
 
 
 # disc of the stingray: z from -16 to +2 (round, 18 px), the margin cut into strips that wave
@@ -724,7 +724,7 @@ def winged_ray(name, disc, head_len, tail_len, nose):
     """M30 part c open-water ray (eagle ray, cownose ray): a flat, wide disc of wing-like pectoral fins cut into strips
     (wave_r0.. / wave_l0..: the renderer beats them like wings), a domed body in the middle, a head that sticks out in
     front (a duck-bill snout or the notched cow nose), eyes on the sides of the head and a long, thin tail."""
-    p = RayPlan(name)
+    p = RayPlan(name, under=-1.0)  # the underside of the wings is at y = -0.9
     body = Group("body", (0, 0, 0))
     groups = [body]
     core = 3
@@ -734,8 +734,9 @@ def winged_ray(name, disc, head_len, tail_len, nose):
         body.boxes.append(box(f"core{i}", "head" if i < 1 else "body", (0, -core_h / 2, zc), (2 * core, core_h, 2)))
         wing = max(1, round(hw - core))
         for side, sx in (("r", 1), ("l", -1)):
-            g = Group(f"wave_{side}{i}", (sx * core, -0.6, zc))
-            g.boxes.append(box(f"wing_{side}{i}", "body", (sx * (core + wing / 2), -0.6, zc), (wing, 1, 2)))
+            # the wings sit at mid height of the body (a far wing beating down still shows above it)
+            g = Group(f"wave_{side}{i}", (sx * core, -1.4, zc))
+            g.boxes.append(box(f"wing_{side}{i}", "body", (sx * (core + wing / 2), -1.4, zc), (wing, 1, 2)))
             groups.append(g)
     z_head = disc[0][0]
     if nose == "bill":

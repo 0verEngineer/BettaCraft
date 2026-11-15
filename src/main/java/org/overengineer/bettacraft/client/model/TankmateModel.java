@@ -63,7 +63,7 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
         float t = ageInTicks + fish.getId() * 7.3F;
         float freq = open ? 0.11F + 0.05F * swim : rest ? 0.08F : 0.22F + 0.14F * swim;
         float lag = open ? 0.3F : 1.05F;
-        float amp = open ? (rest ? 0.08F : 0.3F + 0.2F * swim) : rest ? 0.025F : 0.12F + 0.12F * swim;
+        float amp = open ? (rest ? 0.08F : 0.25F + 0.15F * swim) : rest ? 0.025F : 0.12F + 0.12F * swim;
         int n = waveR.size();
         for (int i = 0; i < n; i++) {
             // the middle of the disc is widest and moves most
