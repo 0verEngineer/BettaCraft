@@ -665,6 +665,25 @@ public final class TankInhabitants {
             reconcile(level, controller);
             return null;
         }
+        // M35: a land animal of another mod with a box profile goes into an empty terrarium box first (whichever button)
+        if (org.overengineer.bettacraft.foreign.ForeignTerrarium.boxTakes(e)) {
+            int box = -1;
+            for (int i = 0; i < player.getInventory().getContainerSize() && box < 0; i++) {
+                ItemStack s = player.getInventory().getItem(i);
+                if (s.is(ModItems.TERRARIUM_BOX.get()) && !org.overengineer.bettacraft.terrarium.TerrariumBoxItem.isFilled(s)) box = i;
+            }
+            if (box >= 0) {
+                release(e);
+                org.overengineer.bettacraft.containers.AnimalContainers.give(player, box, org.overengineer.bettacraft.terrarium.TerrariumBoxItem.fillWith(e));
+                TankCare.log(level, controller, "log.bettacraft.taken_out", TankCare.nameArg(e));
+                tank.inhabitants().remove(e.getUUID());
+                e.discard();
+                level.playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+                reconcile(level, controller);
+                return null;
+            }
+            if (!org.overengineer.bettacraft.big.BigAnimals.isBig(e)) return Component.translatable("message.bettacraft.box.need_box", e.getName());
+        }
         // M30: a big animal only goes into an empty transport tub (whichever button), with all its data
         if (org.overengineer.bettacraft.big.BigAnimals.isBig(e)) {
             int tub = -1;

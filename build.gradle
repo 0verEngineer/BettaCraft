@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm35a')) {
+                // gradlew runClient -Psmoketestm35a : only the M35 part a scene (Naturalist alligators in a 24 x 6 x 12 paludarium,
+                // tortoises in a dry terrarium, sea turtles in a sea water paludarium)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m35aonly', 'true'
+            }
             if (project.hasProperty('smoketestm331')) {
                 // gradlew runClient -Psmoketestm331 : only the M33.1 scene (a fixed paludarium filled to its limit, a full tank
                 // set to terrarium: the climate tab and the overview with the tank type button)

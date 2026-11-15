@@ -3736,6 +3736,7 @@
   "message.bettacraft.box.refused": "Die Terrarienbox nimmt %s nicht (kein Terrarium-Profil, nicht in terrarium.boxAllow)",
   "message.bettacraft.box.too_big": "%s ist zu groß für die Terrarienbox: der große Kescher fängt es in eine Transportwanne",
   "message.bettacraft.box.not_yours": "%s gehört jemand anderem",
+  "message.bettacraft.box.need_box": "%s kommt in eine leere Terrarienbox: nimm eine ins Inventar",
   "item.bettacraft.terrarium_box.filled": "Terrarienbox mit %s",
   "tooltip.bettacraft.terrarium_box": "Fängt Landtiere: unsere Landschildkröten, Frösche, Geckos und Schlangen und die Landtiere anderer Mods mit Terrarium-Profil",
   "tooltip.bettacraft.terrarium_box.filled": "Rechtsklick auf ein Terrarium oder Paludarium setzt es ein, auf den Boden lässt es frei",

@@ -16,6 +16,7 @@ final class LangM35a {
         a.accept("message.bettacraft.box.refused", "The terrarium box does not take %s (no terrarium profile, not on terrarium.boxAllow)");
         a.accept("message.bettacraft.box.too_big", "%s is too big for the terrarium box: the large net catches it into a transport tub");
         a.accept("message.bettacraft.box.not_yours", "%s belongs to someone else");
+        a.accept("message.bettacraft.box.need_box", "%s goes into an empty terrarium box: have one in your inventory");
         a.accept("item.bettacraft.terrarium_box.filled", "Terrarium Box with %s");
         a.accept("tooltip.bettacraft.terrarium_box", "Catches land animals: our tortoises, frogs, geckos and snakes, and the land animals of other mods with a terrarium profile");
         a.accept("tooltip.bettacraft.terrarium_box.filled", "Right-click a terrarium or paludarium to put it in, or the ground to let it go");

@@ -141,7 +141,7 @@ public final class ForeignTerrarium {
             return false;
         }
         LandWalker.Gait gait = gait(m.getType());
-        if (gait == null || !TankInhabitants.hasTankRef(m) || !enabled()) {
+        if (gait == null || m.isNoAi() || !TankInhabitants.hasTankRef(m) || !enabled()) { // NoAI (a frozen smoke scene): it stays put
             if (gait != null) STATES.remove(m);
             return false;
         }

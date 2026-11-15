@@ -148,6 +148,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm331: the tank type switch in the climate tab and the overview (M33.1). */
     private static final boolean M331_ONLY = Boolean.getBoolean("bettacraft.smoketest.m331only");
     private static DevClientSmokeM331 m331;
+    /** -Psmoketestm35a: alligators, tortoises and sea turtles in their big terraria and paludaria (M35 part a). */
+    private static final boolean M35A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35aonly");
+    private static DevClientSmokeM35a m35a;
     private static DevClientSmokeM33b m33b;
     private static DevClientSmokeM31d m31d;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
@@ -249,6 +252,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M35A_ONLY) {
+                if (ticks == 60) m35a = new DevClientSmokeM35a();
+                if (m35a != null && m35a.tick()) {
+                    m35a = null;
+                    LOGGER.info("[smoketest] client world test finished (M35 part a only)");
                     mc.stop();
                 }
                 return;

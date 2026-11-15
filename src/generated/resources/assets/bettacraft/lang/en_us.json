@@ -3056,6 +3056,7 @@
   "message.bettacraft.bio_co2.sugar": "Sugar %s/%s",
   "message.bettacraft.bio_co2.sugar_full": "Four sugar is enough: now the yeast",
   "message.bettacraft.bio_co2.water": "Water in: now up to four sugar, then yeast",
+  "message.bettacraft.box.need_box": "%s goes into an empty terrarium box: have one in your inventory",
   "message.bettacraft.box.not_yours": "%s belongs to someone else",
   "message.bettacraft.box.refused": "The terrarium box does not take %s (no terrarium profile, not on terrarium.boxAllow)",
   "message.bettacraft.box.too_big": "%s is too big for the terrarium box: the large net catches it into a transport tub",
