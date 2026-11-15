@@ -137,9 +137,26 @@ public final class ModNetwork {
         });
     }
 
+    /** M33 part d (hardening): decoration templates a player asked for in the current second (server thread only). */
+    private static final java.util.Map<ServerPlayer, long[]> TEMPLATE_REQUESTS = new java.util.WeakHashMap<>();
+    /** Requests per player and second that are answered (there are fewer decoration types; a client asks once each). */
+    public static final int TEMPLATE_REQUESTS_PER_SECOND = 32;
+
+    /** Whether a template request of this player is answered now (counts it). */
+    public static boolean templateRequestAllowed(ServerPlayer sp) {
+        long second = sp.serverLevel().getGameTime() / 20;
+        long[] c = TEMPLATE_REQUESTS.computeIfAbsent(sp, k -> new long[]{second, 0});
+        if (c[0] != second) {
+            c[0] = second;
+            c[1] = 0;
+        }
+        return ++c[1] <= TEMPLATE_REQUESTS_PER_SECOND;
+    }
+
     private static void onDecorTemplate(DecorTemplatePayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             if (ctx.player() instanceof ServerPlayer sp) {
+                if (!templateRequestAllowed(sp)) return;
                 // only our own decoration structures are served
                 boolean known = false;
                 for (DecorType t : DecorType.values()) known |= t.structure().equals(payload.id());
