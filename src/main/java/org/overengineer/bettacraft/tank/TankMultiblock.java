@@ -489,8 +489,14 @@ public final class TankMultiblock {
 
     /** Writes the tank into the world: controller BE, member BEs, connection and fill block states. */
     public static void install(ServerLevel level, TankData tank) {
+        install(level, tank, it.unimi.dsi.fastutil.longs.LongSets.EMPTY_SET);
+    }
+
+    /** As above, leaving the block entities at {@code skip} alone (M32 part c: blocks of the tank that did not arrive). */
+    public static void install(ServerLevel level, TankData tank, it.unimi.dsi.fastutil.longs.LongSet skip) {
         BlockPos controller = pickController(tank);
         for (long l : tank.members()) {
+            if (skip.contains(l)) continue;
             BlockPos p = BlockPos.of(l);
             TankBlockEntity be = getBE(level, p);
             if (be == null) continue;

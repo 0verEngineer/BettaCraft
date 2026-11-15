@@ -164,6 +164,9 @@ public class TankBlockEntity extends BlockEntity {
     @Nullable
     public BlockPos movedFrom() { return movedFrom; }
 
+    @Nullable
+    public int[] moveRotation() { return moveRotation == null ? null : moveRotation.clone(); }
+
     /**
      * A mover put this block down from data (Create's block entity transformer): it is handled as moved even when it came
      * back to the very place it left (a bearing turned once round), with the rotation the mover reported (null = find out).

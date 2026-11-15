@@ -16,6 +16,16 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import org.overengineer.bettacraft.tank.PackedTank;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
@@ -429,6 +439,168 @@ public final class CreateGameTests {
                     h.assertTrue(n.getTank().contains(level.getEntity(u).blockPosition()), "in the tank");
                 }
             });
+        });
+    }
+
+    // ------------------------------------------------------------------ M32 part c: endings without a landing
+
+    /** The tank (controller) with this id within {@code r} blocks of {@code at}, or null. */
+    private static TankBlockEntity tankNear(ServerLevel level, BlockPos at, UUID id, int r) {
+        for (BlockPos p : BlockPos.betweenClosed(at.offset(-r, -r, -r), at.offset(r, r, r))) {
+            TankBlockEntity k = TankMultiblock.getController(level, p);
+            if (k != null && k.getTank().id().equals(id)) return k;
+        }
+        return null;
+    }
+
+    private static List<ItemEntity> tankItems(ServerLevel level, BlockPos at) {
+        List<ItemEntity> out = new ArrayList<>();
+        for (ItemEntity e : level.getEntitiesOfClass(ItemEntity.class, new AABB(at).inflate(8))) {
+            if (e.getItem().getItem() instanceof BlockItem bi && bi.getBlock() instanceof TankBlock) out.add(e);
+        }
+        return out;
+    }
+
+    /**
+     * Create cannot place the controller of a 2x2x2 tank (bedrock at its target): the other seven blocks form the tank
+     * with its id, both bettas exactly once, the snails, the stone of the interior; the dropped block keeps its glass.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_create", timeoutTicks = 200)
+    public static void controllerThatCannotBePutDownLosesNothing(GameTestHelper h) throws Exception {
+        if (!create()) {
+            h.succeed();
+            return;
+        }
+        ServerLevel level = h.getLevel();
+        BlockEntity bearing = bearing(h, new BlockPos(4, 1, 4));
+        TankBlockEntity c = stockedTank(h, 4, 2, 4, 2, 2, 2);
+        UUID tankId = c.getTank().id();
+        InteriorRegion r = InteriorManager.ensureRegion(level, c);
+        ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
+        interior.setBlockAndUpdate(r.toWorld(20, 3, 20), Blocks.STONE.defaultBlockState()); // in the far block (+1, 0, +1)
+        List<UUID> bettas = animals(h, c);
+        BlockPos oldAnchor = c.getBlockPos();
+        Entity contraption = assemble(bearing);
+        h.onEachTick(() -> hold(bearing));
+        h.runAfterDelay(2, () -> {
+            level.setBlockAndUpdate(oldAnchor.above(3), Blocks.BEDROCK.defaultBlockState());
+            try {
+                disassemble(bearing, contraption, new BlockPos(0, 3, 0), 0F);
+            } catch (Exception e) {
+                throw new GameTestAssertException("disassembly failed: " + e);
+            }
+            h.succeedWhen(() -> {
+                TankBlockEntity n = tankNear(level, oldAnchor.above(3), tankId, 2);
+                h.assertTrue(n != null, "the tank formed from its other blocks with its id");
+                h.assertTrue(level.getBlockState(oldAnchor.above(3)).is(Blocks.BEDROCK), "bedrock stays");
+                int blocks = 0, snails = 0;
+                Set<Integer> regions = new HashSet<>();
+                for (BlockPos p : BlockPos.betweenClosed(oldAnchor.above(3), oldAnchor.offset(1, 4, 1))) {
+                    TankBlockEntity k = TankMultiblock.getController(level, p);
+                    if (k != null && k.getBlockPos().equals(p)) {
+                        blocks += k.getTank().memberCount();
+                        snails += k.getTank().critters().size();
+                        regions.add(k.getTank().regionId());
+                    }
+                }
+                h.assertTrue(blocks == 7, "seven blocks in tanks: " + blocks);
+                h.assertTrue(snails == 2, "both snails: " + snails);
+                for (UUID u : bettas) {
+                    h.assertTrue(alive(level, u) == 1, "the betta is back exactly once");
+                    h.assertTrue(TankMultiblock.getController(level, level.getEntity(u).blockPosition()) != null, "the betta is in a tank");
+                }
+                int stones = 0;
+                for (int id : regions) {
+                    InteriorRegion k = InteriorRegions.get(level.getServer()).get(id);
+                    if (k != null) stones += interiorBlocks(interior, k, Blocks.STONE);
+                }
+                h.assertTrue(stones == 1, "the interior stone came along: " + stones);
+                boolean glass = false;
+                for (ItemEntity e : tankItems(level, oldAnchor)) {
+                    if (e.getItem().get(org.overengineer.bettacraft.registry.ModDataComponents.GLASS.get()) != null) glass = true;
+                }
+                h.assertTrue(glass, "the dropped tank block keeps its glass");
+            });
+        });
+    }
+
+    /**
+     * A one-block tank that Create cannot put down becomes a packed tank item (its data, the two packed bettas); placed
+     * again somewhere else, the same tank comes back with its region, snails and the two bettas, each exactly once.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_create", timeoutTicks = 200)
+    public static void tankThatCannotBePutDownBecomesAPackedItem(GameTestHelper h) throws Exception {
+        if (!create()) {
+            h.succeed();
+            return;
+        }
+        ServerLevel level = h.getLevel();
+        BlockEntity bearing = bearing(h, new BlockPos(4, 1, 4));
+        TankBlockEntity c = stockedTank(h, 4, 2, 4, 1, 1, 1);
+        UUID tankId = c.getTank().id();
+        int regionId = InteriorManager.ensureRegion(level, c).id();
+        List<UUID> bettas = animals(h, c);
+        BlockPos oldAnchor = c.getBlockPos();
+        Entity contraption = assemble(bearing);
+        h.onEachTick(() -> hold(bearing));
+        h.runAfterDelay(2, () -> {
+            level.setBlockAndUpdate(oldAnchor.above(3), Blocks.BEDROCK.defaultBlockState());
+            try {
+                disassemble(bearing, contraption, new BlockPos(0, 3, 0), 0F);
+            } catch (Exception e) {
+                throw new GameTestAssertException("disassembly failed: " + e);
+            }
+            h.runAfterDelay(2, () -> {
+                List<ItemEntity> items = tankItems(level, oldAnchor);
+                h.assertTrue(items.size() == 1 && PackedTank.isPacked(items.getFirst().getItem()), "one packed tank item, no plain one: " + items.size());
+                h.assertTrue(PackedTank.animals(items.getFirst().getItem()) == 2, "with both bettas");
+                h.assertTrue(InteriorRegions.get(level.getServer()).get(regionId) != null, "the region waits for the packed tank");
+                for (UUID u : bettas) h.assertTrue(alive(level, u) == 0, "a betta is packed, not in the world");
+                // a player puts it down somewhere else
+                ItemStack stack = items.getFirst().getItem().copy();
+                items.getFirst().discard();
+                BlockPos floor = h.absolutePos(new BlockPos(12, 1, 12));
+                level.setBlockAndUpdate(floor, Blocks.STONE.defaultBlockState());
+                ServerPlayer sp = MockPlayers.serverPlayer(h);
+                try {
+                    sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
+                    stack.useOn(new UseOnContext(level, sp, InteractionHand.MAIN_HAND, stack,
+                            new BlockHitResult(Vec3.atCenterOf(floor).add(0, 0.5, 0), Direction.UP, floor, false)));
+                } finally {
+                    sp.getServer().getPlayerList().remove(sp);
+                }
+                h.succeedWhen(() -> {
+                    TankBlockEntity n = TankMultiblock.getController(level, floor.above());
+                    h.assertTrue(n != null && n.getTank().id().equals(tankId), "the same tank stands where it was placed");
+                    h.assertTrue(n.getTank().regionId() == regionId, "with its interior region");
+                    h.assertTrue(n.getTank().critters().size() == 2, "and its snails");
+                    for (UUID u : bettas) {
+                        h.assertTrue(alive(level, u) == 1, "the betta is back exactly once");
+                        h.assertTrue(n.getTank().contains(level.getEntity(u).blockPosition()), "in the placed tank");
+                    }
+                    h.assertTrue(n.stowed().isEmpty(), "nothing left packed");
+                });
+            });
+        });
+    }
+
+    /** The contraption with a tank is destroyed (killed): the tank's interior region is freed, no orphan stays behind. */
+    @GameTest(template = EMPTY, batch = "bettacraft_create", timeoutTicks = 100)
+    public static void destroyedContraptionFreesTheRegion(GameTestHelper h) throws Exception {
+        if (!create()) {
+            h.succeed();
+            return;
+        }
+        ServerLevel level = h.getLevel();
+        BlockEntity bearing = bearing(h, new BlockPos(4, 1, 4));
+        TankBlockEntity c = stockedTank(h, 4, 2, 4, 2, 1, 2);
+        int regionId = InteriorManager.ensureRegion(level, c).id();
+        Entity contraption = assemble(bearing);
+        h.onEachTick(() -> hold(bearing));
+        h.runAfterDelay(2, () -> {
+            h.assertTrue(InteriorRegions.get(level.getServer()).get(regionId) != null, "the region stays while the tank travels");
+            contraption.kill();
+            h.succeedWhen(() -> h.assertTrue(InteriorRegions.get(level.getServer()).get(regionId) == null, "the region of the destroyed tank is freed"));
         });
     }
 }

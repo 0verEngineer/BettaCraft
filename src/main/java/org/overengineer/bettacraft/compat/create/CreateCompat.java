@@ -55,7 +55,7 @@ public final class CreateCompat {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/create");
     private static boolean registered;
 
-    private static Field ctxWorld, ctxLocalPos, ctxBlockEntityData, ctxContraption;
+    private static Field ctxWorld, ctxLocalPos, ctxBlockEntityData, ctxContraption, ctxPosition;
     private static Field contraptionAnchor, contraptionUpdateTags, contraptionEntity;
     private static Method transformApplyWithoutOffset;
     private static Object resultSuccess, resultFail, resultPass;
@@ -89,6 +89,7 @@ public final class CreateCompat {
             ctxLocalPos = context.getField("localPos");
             ctxBlockEntityData = context.getField("blockEntityData");
             ctxContraption = context.getField("contraption");
+            ctxPosition = context.getField("position");
             contraptionAnchor = contraption.getField("anchor");
             contraptionEntity = contraption.getField("entity");
             contraptionUpdateTags = contraption.getDeclaredField("updateTags");
@@ -273,11 +274,45 @@ public final class CreateCompat {
 
     private static void stopMoving(Object context) {
         try {
-            if (!(ctxWorld.get(context) instanceof ServerLevel)) return;
-            int region = regionOf((CompoundTag) ctxBlockEntityData.get(context));
+            if (!(ctxWorld.get(context) instanceof ServerLevel level)) return;
+            CompoundTag nbt = (CompoundTag) ctxBlockEntityData.get(context);
+            int region = regionOf(nbt);
             if (region >= 0) TankMoves.stoppedTravelling(region);
+            if (region >= 0 || nbt != null && nbt.contains("tank", Tag.TAG_COMPOUND)) {
+                // M32 part c: at the end of the tick, a controller Create could not place or a destroyed contraption
+                Object contraption = ctxContraption.get(context);
+                CreateLandings.stopped(level, contraptionEntity.get(contraption) instanceof Entity e ? e : null, nbt,
+                        (net.minecraft.world.phys.Vec3) ctxPosition.get(context), (BlockPos) ctxLocalPos.get(context));
+            }
         } catch (ReflectiveOperationException | RuntimeException e) {
             LOGGER.debug("Contraption stop", e);
+        }
+    }
+
+    private static Method makeTransform, transformApply;
+    private static boolean transformLooked;
+
+    /**
+     * M32 part c: where a contraption entity puts (or put) the block at {@code local} down: its own structure transform,
+     * as in its disassembly. Null if that cannot be read.
+     */
+    @Nullable
+    static BlockPos target(Entity contraption, BlockPos local) {
+        try {
+            if (!transformLooked) {
+                transformLooked = true;
+                ClassLoader cl = CreateCompat.class.getClassLoader();
+                Class<?> ace = Class.forName("com.simibubi.create.content.contraptions.AbstractContraptionEntity", false, cl);
+                Class<?> transform = Class.forName("com.simibubi.create.content.contraptions.StructureTransform", false, cl);
+                makeTransform = ace.getDeclaredMethod("makeStructureTransform");
+                makeTransform.setAccessible(true);
+                transformApply = transform.getMethod("apply", BlockPos.class);
+            }
+            if (makeTransform == null || !makeTransform.getDeclaringClass().isInstance(contraption)) return null;
+            return (BlockPos) transformApply.invoke(makeTransform.invoke(contraption), local);
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            LOGGER.debug("Contraption transform", e);
+            return null;
         }
     }
 
@@ -290,9 +325,11 @@ public final class CreateCompat {
             BlockPos y = ((BlockPos) transformApplyWithoutOffset.invoke(transform, new BlockPos(0, 1, 0))).subtract(o);
             BlockPos z = ((BlockPos) transformApplyWithoutOffset.invoke(transform, new BlockPos(0, 0, 1))).subtract(o);
             t.markMoved(TankMoveMap.fromColumns(x, y, z));
+            CreateLandings.placed(t);
         } catch (ReflectiveOperationException | RuntimeException e) {
             LOGGER.error("Could not read the rotation of a contraption", e);
             t.markMoved(null);
+            CreateLandings.placed(t);
         }
     }
 }

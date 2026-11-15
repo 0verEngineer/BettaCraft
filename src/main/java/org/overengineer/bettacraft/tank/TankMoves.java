@@ -257,9 +257,26 @@ public final class TankMoves {
     }
 
     private static void arrive(ServerLevel level, TankBlockEntity be, TankData t, TankMoveMap map) {
-        BlockPos from = be.movedFrom;
+        ListTag stowed = be.stowed;
+        be.stowed = new ListTag();
+        arrive(level, be, t, be.movedFrom, stowed, map);
+    }
+
+    /**
+     * M32 part c: a tank whose controller did not come down (Create could not place that block, it dropped it as an
+     * item) arrives from the data the mover had: the blocks that did come down form the tank (the controller's place
+     * counts as broken), its interior region, water and packed animals with it. {@code map} takes the old controller
+     * position to where the controller would have been.
+     */
+    public static void arriveWithoutController(ServerLevel level, TankData t, BlockPos oldController, ListTag stowed, TankMoveMap map) {
+        arrive(level, null, t, oldController, stowed, map);
+    }
+
+    private static void arrive(ServerLevel level, @Nullable TankBlockEntity be, TankData t, BlockPos from, ListTag stowed, TankMoveMap map) {
         TankData before = TankData.load(t.save());
         List<BlockPos> missing = new ArrayList<>();
+        List<BlockPos> landed = new ArrayList<>();
+        it.unimi.dsi.fastutil.longs.LongSet skip = new it.unimi.dsi.fastutil.longs.LongOpenHashSet();
         for (long l : before.members()) {
             BlockPos q = map.block(BlockPos.of(l));
             TankBlockEntity o = level.isLoaded(q) ? TankMultiblock.getBE(level, q) : null;
@@ -267,12 +284,12 @@ public final class TankMoves {
                 o.movedFrom = null;
                 o.moveWait = 0;
                 o.moveRotation = null;
+                landed.add(q);
             } else {
                 missing.add(q);
+                skip.add(q.asLong()); // M32 part c: a block of another tank there is never taken over
             }
         }
-        ListTag stowed = be.stowed;
-        be.stowed = new ListTag();
         // animals a mover left at the old place (it moved only the blocks), found before anything is released or moved
         List<Entity> left = new ArrayList<>();
         if (level.isLoaded(before.min()) && !(map.identityRotation() && map.from().equals(map.to()))) {
@@ -282,29 +299,35 @@ public final class TankMoves {
         }
         t.relocate(map, null);
         if (!map.identityRotation() && t.regionId() >= 0) InteriorManager.onTankTurned(level, before, t, map);
-        be.setController(null, null);
-        TankMultiblock.install(level, t);
+        if (be != null) be.setController(null, null);
+        TankMultiblock.install(level, t, skip);
         TankBlockEntity controller = TankMultiblock.getController(level, t.anchor());
         if (controller != null && t.regionId() >= 0) InteriorManager.regionFor(level, controller);
         if (!missing.isEmpty()) {
             LOGGER.warn("Tank {} arrived at {} without {} of its blocks: they count as broken", t.id(), t.anchor(), missing.size());
             TankMultiblock.removeBlocks(level, t, missing);
         }
-        boolean travelling = travelling(level, t.anchor());
+        BlockPos home = null; // a block of the arrived tank (its controller's place may be the one that is missing)
+        for (BlockPos q : landed) if (TankMultiblock.getController(level, q) != null) {
+            home = q;
+            break;
+        }
+        if (home == null) home = t.anchor();
+        boolean travelling = travelling(level, home);
         int released = 0, brought = 0;
         if (travelling) {
             // on a moving structure the animals travel packed (also the ones a mover left at the old place)
             stowed.addAll(packAndRemove(level, left, before));
-            TankBlockEntity c = TankMultiblock.getController(level, t.anchor());
+            TankBlockEntity c = TankMultiblock.getController(level, home);
             if (c != null) {
                 c.stowed.addAll(stowed);
                 c.markTankChanged();
             }
         } else {
-            released = release(level, stowed, map);
-            for (Entity e : left) if (e.isAlive() && place(level, e, map, true)) brought++;
+            released = release(level, stowed, map, home);
+            for (Entity e : left) if (e.isAlive() && place(level, e, map, true, home)) brought++;
         }
-        TankBlockEntity c = TankMultiblock.getController(level, t.anchor());
+        TankBlockEntity c = TankMultiblock.getController(level, home);
         if (c != null) c.markTankChanged();
         LOGGER.info("Tank {} moved from {} to {} (rotation {}): {} animal(s) released, {} brought along{}", t.id(), from, t.anchor(),
                 java.util.Arrays.toString(map.r()), released, brought, travelling ? ", travelling packed" : "");
@@ -355,6 +378,10 @@ public final class TankMoves {
      * world (the same entity) is never doubled. Returns how many came back.
      */
     public static int release(ServerLevel level, ListTag stowed, @Nullable TankMoveMap map) {
+        return release(level, stowed, map, null);
+    }
+
+    private static int release(ServerLevel level, ListTag stowed, @Nullable TankMoveMap map, @Nullable BlockPos home) {
         int n = 0;
         for (int i = 0; i < stowed.size(); i++) {
             CompoundTag tag = stowed.getCompound(i);
@@ -364,17 +391,18 @@ public final class TankMoves {
                 LOGGER.warn("A packed animal ({}) could not be loaded again", tag.getString("id"));
                 continue;
             }
-            if (place(level, e, map, false) && level.addFreshEntity(e)) n++;
+            if (place(level, e, map, false, home) && level.addFreshEntity(e)) n++;
         }
         return n;
     }
 
     /** Moves an entity to its place in the moved tank and adopts it there (the nearest tank of the move if that place is gone). */
-    private static boolean place(ServerLevel level, Entity e, @Nullable TankMoveMap map, boolean live) {
+    private static boolean place(ServerLevel level, Entity e, @Nullable TankMoveMap map, boolean live, @Nullable BlockPos home) {
         Vec3 p = map == null ? e.position() : map.point(e.position());
         float yaw = map == null ? e.getYRot() : map.yaw(e.getYRot());
         TankBlockEntity c = TankMultiblock.getController(level, BlockPos.containing(p));
         if (c == null && map != null) c = TankMultiblock.getController(level, map.to());
+        if (c == null && home != null) c = TankMultiblock.getController(level, home);
         if (c == null) {
             LOGGER.warn("No tank for a released {} at {}", e.getType().getDescriptionId(), p);
             return false;

@@ -60,6 +60,9 @@ public class TankBlockItem extends BlockItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
         tooltip.add(Component.translatable("tooltip.bettacraft.tank").withStyle(net.minecraft.ChatFormatting.GRAY));
+        if (PackedTank.isPacked(stack)) { // M32 part c
+            tooltip.add(Component.translatable("tooltip.bettacraft.tank.packed", PackedTank.animals(stack)).withStyle(net.minecraft.ChatFormatting.GOLD));
+        }
         tooltip.add(Component.translatable("tooltip.bettacraft.tank.style", Component.translatable(getStyle(stack).key()))
                 .withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
         if (flag.isAdvanced()) {
