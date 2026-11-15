@@ -3,6 +3,7 @@ navigation:
   title: Small animals
   icon: bettacraft:dwarf_frog_bucket
   position: 60
+feature: invertebrates.enabled
 ---
 
 # Small animals

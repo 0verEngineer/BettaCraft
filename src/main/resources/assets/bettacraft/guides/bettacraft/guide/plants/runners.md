@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:vallisneria
   parent: plants.md
   position: 50
+feature: aquaticPlants.enabled
 ---
 
 # Runners and carpets

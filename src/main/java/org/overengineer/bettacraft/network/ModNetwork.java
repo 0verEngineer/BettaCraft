@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "11"; // M32 part d: alarm waypoints
+    public static final String VERSION = "12"; // M33 part b: feature switches of the server
 
     private ModNetwork() {}
 
@@ -39,12 +39,19 @@ public final class ModNetwork {
             if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.monitor.MonitorBlockEntity.applyLayout(sp, p.pos(), p.layout());
         })); // M27 (the editor of part b)
         r.playToClient(AlarmWaypointPayload.TYPE, AlarmWaypointPayload.STREAM_CODEC, ModNetwork::onAlarmWaypoint); // M32 part d
+        r.playToClient(FeatureSyncPayload.TYPE, FeatureSyncPayload.STREAM_CODEC, ModNetwork::onFeatures); // M33 part b
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
     }
 
     private static void onMonitorData(MonitorDataPayload payload, IPayloadContext ctx) {
         if (FMLEnvironment.dist.isClient()) {
             ctx.enqueueWork(() -> org.overengineer.bettacraft.client.render.MonitorRenderer.accept(payload));
+        }
+    }
+
+    private static void onFeatures(FeatureSyncPayload payload, IPayloadContext ctx) {
+        if (FMLEnvironment.dist.isClient()) {
+            ctx.enqueueWork(() -> org.overengineer.bettacraft.client.ClientFeatures.accept(payload.off()));
         }
     }
 

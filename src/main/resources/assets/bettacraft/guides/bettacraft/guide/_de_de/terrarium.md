@@ -3,6 +3,7 @@ navigation:
   title: Terrarium und Paludarium
   icon: bettacraft:basking_lamp
   position: 77
+feature: terrariums.enabled
 ---
 
 # Terrarium und Paludarium

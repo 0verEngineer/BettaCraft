@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:endler_guppy_bucket
   parent: tankmates/livebearers.md
   position: 40
+feature: tankmates.livebearerGenetics
 ---
 
 # Guppy- und Endler-Genetik

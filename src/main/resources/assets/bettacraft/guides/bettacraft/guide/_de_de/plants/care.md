@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:shears
   parent: plants.md
   position: 10
+feature: aquaticPlants.enabled
 ---
 
 # Pflege, Schnitt und Ableger

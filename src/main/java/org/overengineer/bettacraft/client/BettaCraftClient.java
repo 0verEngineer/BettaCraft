@@ -60,7 +60,7 @@ public final class BettaCraftClient {
         // M22.1: the question before animals leave a bucket or a bag into the world
         org.overengineer.bettacraft.containers.ContainerRules.confirmScreen = org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen::open;
         // M21.5: the handbook is registered from code (own <Small> tag for the byline on the start page)
-        if (org.overengineer.bettacraft.progression.GuideBook.available()) org.overengineer.bettacraft.compat.guideme.GuideMEClientCompat.register();
+        if (org.overengineer.bettacraft.progression.GuideBook.installed()) org.overengineer.bettacraft.compat.guideme.GuideMEClientCompat.register();
         modBus.addListener(BettaCraftClient::onClientSetup);
         modBus.addListener(BettaCraftClient::onRegisterGeometryLoaders);
         modBus.addListener(BettaCraftClient::onItemColors);
@@ -87,6 +87,8 @@ public final class BettaCraftClient {
         modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
         modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RecipesUpdatedEvent e) -> org.overengineer.bettacraft.equipment.CabinetStones.clear());
+        // M33 part b: leaving a server goes back to the local feature switches
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut e) -> ClientFeatures.logout());
         // M21: plant prototype (Rotala, Vallisneria, Anubias with real leaves in the interior)
         modBus.addListener(org.overengineer.bettacraft.client.interior.PlantMeshModel::onModifyBakingResult);
         NeoForge.EVENT_BUS.addListener(org.overengineer.bettacraft.client.interior.PlantMeshRenderer::onRenderStage);

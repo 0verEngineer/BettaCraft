@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:lined_seahorse_bucket
   parent: saltwater.md
   position: 60
+feature: saltwater.seahorses
 ---
 
 # Seepferdchen

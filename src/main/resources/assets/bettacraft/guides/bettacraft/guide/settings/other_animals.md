@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:axolotl_bucket
   parent: settings.md
   position: 10
+feature: foreignAnimals.enabled
 ---
 
 # Animals of other mods

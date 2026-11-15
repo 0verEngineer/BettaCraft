@@ -21,7 +21,11 @@ public final class ModCreativeTabs {
     public static final Supplier<CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.bettacraft"))
             .icon(() -> new ItemStack(ModItems.BETTA_BUCKET.get()))
-            .displayItems((params, out) -> {
+            .displayItems((params, all) -> {
+                // M33 part b: what belongs to a feature that is off is not shown (FeatureGate: the item and the animals in it)
+                CreativeModeTab.Output out = (stack, visibility) -> {
+                    if (org.overengineer.bettacraft.config.FeatureGate.stack(stack)) all.accept(stack, visibility);
+                };
                 // the handbook first (only with GuideME, M6)
                 ItemStack book = org.overengineer.bettacraft.progression.GuideBook.createBook();
                 if (!book.isEmpty()) out.accept(book);
@@ -31,7 +35,8 @@ public final class ModCreativeTabs {
                 out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                         org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(wildRandom), true, 0)));
                 // M29 part c: the wild species of the splendens complex (a male each)
-                for (var sp : new org.overengineer.bettacraft.genetics.BettaSpecies[]{org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS,
+                for (var sp : !Features.enabled(Feature.WILD_BETTAS) ? new org.overengineer.bettacraft.genetics.BettaSpecies[0]
+                        : new org.overengineer.bettacraft.genetics.BettaSpecies[]{org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS,
                         org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA}) {
                     out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                             org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(sp, wildRandom), false, 0)));

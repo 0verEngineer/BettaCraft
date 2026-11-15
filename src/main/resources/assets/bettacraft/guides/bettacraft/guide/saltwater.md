@@ -3,6 +3,7 @@ navigation:
   title: Reef tanks
   icon: bettacraft:sea_water_bucket
   position: 70
+feature: saltwater.enabled
 ---
 
 # Reef tanks (salt water)

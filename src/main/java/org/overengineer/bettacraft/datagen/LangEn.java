@@ -595,6 +595,9 @@ final class LangEn {
             a.accept(f.translationKey(), f.label());
             a.accept(f.translationKey() + ".tooltip", f.tooltip());
         }
+        // M33 part b: a feature that is off
+        a.accept("message.bettacraft.feature_off_named", "Turned off on this server: %s");
+        a.accept("guide.bettacraft.feature_off", "Turned off on this server: %s (%s). The things of this page are not made and do not live on here; what is already in the world stays.");
         a.accept("bettacraft.configuration.plantMeshes", "New plant look");
         a.accept("bettacraft.configuration.plantMeshes.tooltip", "Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the miniature outside (off: the old blocks). Under Features for everyone (modpack, server), under Rendering only for you");
         a.accept("bettacraft.configuration.render", "Rendering");

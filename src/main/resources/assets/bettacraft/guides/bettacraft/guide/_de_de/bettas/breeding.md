@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:lily_pad
   parent: bettas.md
   position: 30
+feature: breeding.enabled
 ---
 
 # Zucht

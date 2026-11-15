@@ -75,9 +75,17 @@ public final class BettaCraft {
 
         // M21.8: the cyst stack size reaches the clients at login and whenever the server config is reloaded
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent e) -> {
-            if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) org.overengineer.bettacraft.network.ServerSettingsPayload.send(sp);
+            if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) {
+                org.overengineer.bettacraft.network.ServerSettingsPayload.send(sp);
+                org.overengineer.bettacraft.network.FeatureSyncPayload.send(sp); // M33 part b: the server's feature switches
+            }
         });
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
+            if (e.getConfig().getSpec() == CommonConfig.SPEC) { // M33 part b: the feature switches changed in the file
+                var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+                if (server != null) server.execute(() -> org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server));
+                return;
+            }
             if (e.getConfig().getSpec() != ServerConfig.SPEC) return;
             var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
             if (server != null) server.execute(() -> org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server));

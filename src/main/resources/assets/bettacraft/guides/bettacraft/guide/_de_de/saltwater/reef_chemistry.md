@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:alkalinity_canister
   parent: saltwater.md
   position: 15
+feature: corals.reefDosing
 ---
 
 # Riffchemie („Balling light“)

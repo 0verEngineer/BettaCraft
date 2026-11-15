@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:comparator
   parent: equipment.md
   position: 37
+feature: power.regulator
 ---
 
 # Leistungsregler

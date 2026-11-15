@@ -3,6 +3,7 @@ navigation:
   title: Kleintiere
   icon: bettacraft:dwarf_frog_bucket
   position: 60
+feature: invertebrates.enabled
 ---
 
 # Kleintiere

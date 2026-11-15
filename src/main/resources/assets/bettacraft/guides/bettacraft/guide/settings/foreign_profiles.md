@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:tropical_fish_bucket
   parent: settings.md
   position: 20
+feature: foreignAnimals.enabled
 ---
 
 # Profiles for animals of other mods

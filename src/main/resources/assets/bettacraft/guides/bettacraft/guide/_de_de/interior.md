@@ -3,6 +3,7 @@ navigation:
   title: Einrichtung und Deko
   icon: bettacraft:decor_castle
   position: 100
+feature: interior.enabled
 ---
 
 # Einrichtung und Deko

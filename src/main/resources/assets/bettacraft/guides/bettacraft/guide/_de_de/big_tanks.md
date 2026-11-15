@@ -3,6 +3,7 @@ navigation:
   title: Großbecken
   icon: bettacraft:transport_tub
   position: 75
+feature: bigTanks.enabled
 ---
 
 # Großbecken und große Tiere

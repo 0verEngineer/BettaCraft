@@ -3,6 +3,7 @@ navigation:
   title: Meerwasser und Riff
   icon: bettacraft:sea_water_bucket
   position: 70
+feature: saltwater.enabled
 ---
 
 # Meerwasserbecken (Salzwasser)

@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:slider_turtle_spawn_egg
   parent: terrarium.md
   position: 55
+feature: turtles.breeding
 ---
 
 # Turtle breeding

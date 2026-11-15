@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:larva_tub
   parent: food.md
   position: 20
+feature: liveFood.enabled
 ---
 
 # Breeding live food

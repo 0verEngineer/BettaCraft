@@ -112,4 +112,23 @@ class FeatureTreeTest {
                 "internal_filter", "mirror_stick", "swamp_water_bottle", "tank", "tank_lid", "tank_light", "tank_net")), core,
                 "the core items (always there)");
     }
+
+    /** M33 part b: a client of a remote server follows the server's switches, and goes back to its own after the logout. */
+    @Test
+    void remoteSwitches() {
+        assertTrue(Features.enabled(Feature.CICHLIDS));
+        try {
+            assertTrue(Features.setRemote(java.util.List.of("tankmates.enabled", "no.such.feature")));
+            assertTrue(Features.remote());
+            assertFalse(Features.own(Feature.TANKMATES));
+            assertFalse(Features.enabled(Feature.CICHLIDS), "a child of the server's switch that is off");
+            assertTrue(Features.enabled(Feature.BETTAS));
+            assertEquals(java.util.List.of("tankmates.enabled"), Features.ownOff());
+            assertFalse(Features.setRemote(java.util.List.of("tankmates.enabled")), "same values: no change");
+        } finally {
+            Features.setRemote(null);
+        }
+        assertFalse(Features.remote());
+        assertTrue(Features.enabled(Feature.CICHLIDS));
+    }
 }

@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:angelfish_bucket
   parent: tankmates.md
   position: 95
+feature: tankmates.cichlids
 ---
 
 # Buntbarsche

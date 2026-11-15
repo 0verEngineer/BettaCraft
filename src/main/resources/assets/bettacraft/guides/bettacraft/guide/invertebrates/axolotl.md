@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:axolotl_bucket
   parent: invertebrates.md
   position: 45
+feature: foreignAnimals.axolotlCare
 ---
 
 # Axolotl

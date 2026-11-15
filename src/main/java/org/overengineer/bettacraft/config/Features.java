@@ -23,10 +23,51 @@ public final class Features {
         return true;
     }
 
+    /**
+     * Part b: on a client connected to another (dedicated or LAN) server, the server's own values ({@link #setRemote}):
+     * the common config is not synced by NeoForge, but the creative tab, JEI, the handbook and the client-side logic
+     * (sounds, overlays) must follow the server. Null in single player and on every server.
+     */
+    @javax.annotation.Nullable
+    private static volatile java.util.Set<Feature> remoteOff;
+
     /** Only the feature's own switch (not its parents); for the config screen and tests. */
     public static boolean own(Feature f) {
+        java.util.Set<Feature> remote = remoteOff;
+        if (remote != null) return !remote.contains(f);
         ModConfigSpec.BooleanValue v = CommonConfig.FEATURES.get(f);
         return v == null || CommonConfig.getOr(v, true);
+    }
+
+    /** The features whose own switch is off here (what a server sends to its clients). */
+    public static java.util.List<String> ownOff() {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        for (Feature f : Feature.values()) if (!own(f)) out.add(f.path());
+        return out;
+    }
+
+    /**
+     * Client of a remote server: its own values from now on (paths this client does not know are ignored); null goes back
+     * to the local config (logout). Returns whether anything changed.
+     */
+    public static boolean setRemote(@javax.annotation.Nullable java.util.Collection<String> offPaths) {
+        java.util.Set<Feature> before = remoteOff;
+        java.util.Set<Feature> next = null;
+        if (offPaths != null) {
+            next = java.util.EnumSet.noneOf(Feature.class);
+            for (String p : offPaths) {
+                Feature f = Feature.byPath(p);
+                if (f != null) next.add(f);
+            }
+            next = java.util.Collections.unmodifiableSet(next);
+        }
+        remoteOff = next;
+        return !java.util.Objects.equals(before, next);
+    }
+
+    /** Whether the values come from a remote server. */
+    public static boolean remote() {
+        return remoteOff != null;
     }
 
     /** Sets the feature's own switch (GameTests, presets); it is not saved to the file by itself. */

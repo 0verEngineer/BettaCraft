@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:betta_bucket
   parent: bettas.md
   position: 80
+feature: bettas.wildSpecies
 ---
 
 # Betta smaragdina

@@ -20,14 +20,72 @@ import org.overengineer.bettacraft.registry.ModItems;
 public final class BettaCraftJeiPlugin implements IModPlugin {
     private static mezz.jei.api.runtime.IJeiRuntime runtime;
 
+    /** M33 part b: the stacks this plugin took out of JEI's list (features that are off), to give back when they are on. */
+    private static final List<ItemStack> removed = new ArrayList<>();
+    private static final java.util.Set<mezz.jei.api.recipe.RecipeType<?>> hiddenCategories = new java.util.HashSet<>();
+
     @Override
     public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
+        removed.clear();
+        hiddenCategories.clear();
+        applyFeatures();
     }
 
     @Override
     public void onRuntimeUnavailable() {
         runtime = null;
+        removed.clear();
+        hiddenCategories.clear();
+    }
+
+    /**
+     * M33 part b: JEI follows the feature switches (of the server on a remote one, {@link org.overengineer.bettacraft.client.ClientFeatures}):
+     * the items of a feature that is off leave the item list, the crucible and food maker categories hide with their
+     * features; {@code features.compat.jei} off hides our categories and hides nothing else. Called when the runtime starts
+     * and whenever the switches change (client thread).
+     */
+    public static void applyFeatures() {
+        var rt = runtime;
+        if (rt == null) return;
+        boolean on = org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_JEI);
+        category(rt, CrucibleJei.TYPE, !on || !org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.STAINLESS_STEEL));
+        category(rt, FoodMakerJei.TYPE, !on || !org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FOOD_MACHINE));
+        var im = rt.getIngredientManager();
+        List<ItemStack> show = new ArrayList<>();
+        for (ItemStack s : removed) if (!on || org.overengineer.bettacraft.config.FeatureGate.stack(s)) show.add(s);
+        List<ItemStack> hide = new ArrayList<>();
+        if (on) {
+            for (ItemStack s : im.getAllItemStacks()) {
+                if (BettaCraft.MOD_ID.equals(BuiltInRegistries.ITEM.getKey(s.getItem()).getNamespace()) && !org.overengineer.bettacraft.config.FeatureGate.stack(s)) {
+                    hide.add(s);
+                }
+            }
+        }
+        if (!show.isEmpty()) {
+            im.addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, show);
+            removed.removeIf(s -> show.stream().anyMatch(t -> t == s));
+        }
+        if (!hide.isEmpty()) {
+            im.removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, hide);
+            removed.addAll(hide);
+        }
+    }
+
+    private static void category(mezz.jei.api.runtime.IJeiRuntime rt, mezz.jei.api.recipe.RecipeType<?> type, boolean hidden) {
+        if (hidden == hiddenCategories.contains(type)) return;
+        if (hidden) {
+            rt.getRecipeManager().hideRecipeCategory(type);
+            hiddenCategories.add(type);
+        } else {
+            rt.getRecipeManager().unhideRecipeCategory(type);
+            hiddenCategories.remove(type);
+        }
+    }
+
+    /** M33 part b smoke scenes / tests: how many of our stacks JEI has hidden (-1 without a runtime). */
+    public static int hiddenForTest() {
+        return runtime == null ? -1 : removed.size();
     }
 
     /** Dev smoke test: opens the JEI information page of {@code stack}. False if JEI is not ready or there is none. */
@@ -101,6 +159,8 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
             registration.addRecipes(FoodMakerJei.TYPE, org.overengineer.bettacraft.food.FoodMakerBlockEntity.recipes(mcLevel.getRecipeManager())
                     .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList()); // M26 part b
         }
+        // M33 part b: no info pages with features.compat.jei off, none for the items of a feature that is off (at JEI's start)
+        if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_JEI)) return;
         for (String path : ItemHints.ITEMS) {
             Item item = BuiltInRegistries.ITEM.get(BettaCraft.id(path));
             info(registration, List.of(new ItemStack(item)), "info.bettacraft." + path);
@@ -123,6 +183,7 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
 
     /** A translatable text (JEI wraps it; the line breaks in the text stay), no client-only classes here. */
     private static void info(IRecipeRegistration registration, List<ItemStack> stacks, String key) {
+        stacks = stacks.stream().filter(org.overengineer.bettacraft.config.FeatureGate::stack).toList();
         if (stacks.isEmpty()) return;
         registration.addIngredientInfo(stacks, VanillaTypes.ITEM_STACK, Component.translatable(key));
     }

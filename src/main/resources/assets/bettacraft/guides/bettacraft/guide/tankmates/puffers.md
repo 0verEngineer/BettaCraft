@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:dwarf_puffer_bucket
   parent: tankmates.md
   position: 97
+feature: tankmates.puffers
 ---
 
 # Puffers

@@ -29,6 +29,7 @@
     "client.GuideNavBarMixin",
     "client.GuideScreenMixin",
     "client.GuideNavBarRowMixin",
+    "client.GuideSearchMixin",
     "client.IrisBlockIdsMixin"
   ],
   "injectors": {

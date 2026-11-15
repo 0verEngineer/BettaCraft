@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:anubias_nana
   parent: plants.md
   position: 20
+feature: aquaticPlants.enabled
 ---
 
 # Epiphytes and moss

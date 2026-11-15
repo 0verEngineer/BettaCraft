@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:redstone
   parent: equipment.md
   position: 90
+feature: power.enabled
 ---
 
 # Strom

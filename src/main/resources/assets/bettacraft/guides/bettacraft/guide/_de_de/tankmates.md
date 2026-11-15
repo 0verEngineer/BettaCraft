@@ -3,6 +3,7 @@ navigation:
   title: Beifische
   icon: bettacraft:neon_tetra_bucket
   position: 50
+feature: tankmates.enabled
 ---
 
 # Beifische

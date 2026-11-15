@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:tiger_barb_bucket
   parent: tankmates.md
   position: 45
+feature: tankmates.barbsAndLoaches
 ---
 
 # Barbs

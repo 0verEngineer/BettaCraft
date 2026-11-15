@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:minecart
   parent: settings.md
   position: 30
+feature: compat.create.enabled
 ---
 
 # Becken mit Create bewegen

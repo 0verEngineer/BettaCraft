@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:rotala_rotundifolia
   parent: plants.md
   position: 40
+feature: aquaticPlants.enabled
 ---
 
 # Stem plants

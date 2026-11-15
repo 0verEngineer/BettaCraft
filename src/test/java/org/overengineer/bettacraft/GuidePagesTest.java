@@ -164,6 +164,12 @@ class GuidePagesTest {
         return end < 0 ? text : text.substring(end + 4);
     }
 
+    /** M33 part b: the top-level {@code feature:} of a frontmatter. */
+    private static String featureOf(String fm) {
+        Matcher m = Pattern.compile("(?m)^feature:\\s*(.+?)\\s*$").matcher(fm);
+        return m.find() ? m.group(1) : null;
+    }
+
     private static String fmValue(String fm, String key) {
         Matcher m = Pattern.compile("(?m)^\\s+" + key + ":\\s*(.+?)\\s*$").matcher(fm);
         return m.find() ? m.group(1) : null;
@@ -228,6 +234,10 @@ class GuidePagesTest {
                 if (!java.util.Objects.equals(fmValue(fa, key), fmValue(fb, key))) problems.add(page + ": en/de differ in navigation " + key);
             }
             if (!all(ITEM_ID, fa, 1).equals(all(ITEM_ID, fb, 1))) problems.add(page + ": en/de differ in item_ids");
+            // M33 part b: the page's feature (the handbook hides it while that feature is off)
+            if (!java.util.Objects.equals(featureOf(fa), featureOf(fb))) problems.add(page + ": en/de differ in feature");
+            String feature = featureOf(fa);
+            if (feature != null && org.overengineer.bettacraft.config.Feature.byPath(feature) == null) problems.add(page + ": unknown feature " + feature);
             String ba = body(a), bb = body(b);
             List<String> la = new ArrayList<>(), lb = new ArrayList<>();
             for (Matcher m = LINK.matcher(ba); m.find(); ) la.add(m.group(1) + resolve(page, m.group(2)));

@@ -3,6 +3,7 @@ navigation:
   title: Interior and decoration
   icon: bettacraft:decor_castle
   position: 100
+feature: interior.enabled
 ---
 
 # Interior and decoration

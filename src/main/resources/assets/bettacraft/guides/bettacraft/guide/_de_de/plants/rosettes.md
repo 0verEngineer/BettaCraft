@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:amazon_sword
   parent: plants.md
   position: 30
+feature: aquaticPlants.enabled
 ---
 
 # Rosettenpflanzen und Knollen

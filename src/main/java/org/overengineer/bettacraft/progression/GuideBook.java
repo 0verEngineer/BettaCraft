@@ -34,17 +34,23 @@ public final class GuideBook {
 
     private GuideBook() {}
 
-    public static boolean available() {
+    /** GuideME is loaded (the guide is registered with it). */
+    public static boolean installed() {
         return ModList.get() != null && ModList.get().isLoaded("guideme");
     }
 
-    /** A handbook stack, or empty without GuideME. */
+    /** GuideME is loaded and the handbook is on ({@code features.compat.guideme}; off: no book in the tab, none given). */
+    public static boolean available() {
+        return installed() && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_GUIDEME);
+    }
+
+    /** A handbook stack, or empty without GuideME (or with the handbook off). */
     public static ItemStack createBook() {
         return available() ? GuideMECompat.createBook(GUIDE_ID) : ItemStack.EMPTY;
     }
 
     public static boolean isBook(ItemStack stack) {
-        return available() && !stack.isEmpty() && GuideMECompat.isBook(stack, GUIDE_ID);
+        return installed() && !stack.isEmpty() && GuideMECompat.isBook(stack, GUIDE_ID);
     }
 
     public static ServerConfig.GiveBook mode() {

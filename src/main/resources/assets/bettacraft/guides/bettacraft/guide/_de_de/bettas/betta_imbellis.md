@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:betta_bucket
   parent: bettas.md
   position: 70
+feature: bettas.wildSpecies
 ---
 
 # Betta imbellis

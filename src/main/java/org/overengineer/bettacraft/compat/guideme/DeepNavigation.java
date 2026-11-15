@@ -87,7 +87,8 @@ public final class DeepNavigation {
             navTreeF.set(navbar, tree);
             List<Object> rows = (List<Object>) rowsF.get(navbar);
             rows.clear();
-            for (NavigationNode root : tree.getRootNodes()) add(navbar, rows, root, null);
+            guideme.PageCollection pages = guide instanceof guideme.PageCollection pc ? pc : null;
+            for (NavigationNode root : tree.getRootNodes()) add(navbar, rows, root, null, pages);
             ResourceLocation current = currentPage(screen);
             if (current != null) {
                 for (Object r : rows) {
@@ -105,12 +106,16 @@ public final class DeepNavigation {
         }
     }
 
-    private static void add(Object navbar, List<Object> rows, NavigationNode node, Object parent) throws ReflectiveOperationException {
+    private static void add(Object navbar, List<Object> rows, NavigationNode node, Object parent, guideme.PageCollection pages)
+            throws ReflectiveOperationException {
+        // M33 part b: the page of a feature that is off is left out with everything below it
+        if (pages != null && GuidePageFeatures.hides(pages, node)) return;
         Object row = rowCtor.newInstance(navbar, node, parent);
         rows.add(row);
         for (NavigationNode child : node.children()) {
+            if (pages != null && GuidePageFeatures.hides(pages, child)) continue;
             hasChildrenF.setBoolean(row, true);
-            add(navbar, rows, child, row);
+            add(navbar, rows, child, row, pages);
         }
     }
 

@@ -4,6 +4,7 @@ navigation:
   icon: minecraft:green_dye
   parent: aquarium.md
   position: 50
+feature: algae.enabled
 ---
 
 # Algae and the algae scraper

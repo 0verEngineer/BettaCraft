@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:fish_bag
   parent: saltwater.md
   position: 50
+feature: invertebrates.enabled
 ---
 
 # Reef invertebrates

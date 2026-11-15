@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:ocellaris_clownfish_bucket
   parent: saltwater.md
   position: 40
+feature: saltwater.reefFish
 ---
 
 # Rifffische

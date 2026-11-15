@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:acropora
   parent: saltwater.md
   position: 30
+feature: corals.enabled
 ---
 
 # Corals

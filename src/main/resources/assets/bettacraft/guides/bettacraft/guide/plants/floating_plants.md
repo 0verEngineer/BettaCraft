@@ -4,6 +4,7 @@ navigation:
   icon: bettacraft:amazon_frogbit
   parent: plants.md
   position: 60
+feature: floatingPlants.enabled
 ---
 
 # Floating plants

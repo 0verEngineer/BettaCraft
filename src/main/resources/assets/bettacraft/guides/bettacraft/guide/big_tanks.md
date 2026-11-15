@@ -3,6 +3,7 @@ navigation:
   title: Big tanks
   icon: bettacraft:transport_tub
   position: 75
+feature: bigTanks.enabled
 ---
 
 # Big tanks and big animals
