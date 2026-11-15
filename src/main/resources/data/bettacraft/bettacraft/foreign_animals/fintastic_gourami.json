@@ -1,0 +1,11 @@
+{
+  "entity": "fintastic:gourami",
+  "species": "dwarf_gourami",
+  "group": "gourami",
+  "breeding": {
+    "inherit": [
+      "VariantModel",
+      "VariantSkin"
+    ]
+  }
+}

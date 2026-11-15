@@ -1037,8 +1037,9 @@ public final class TankView {
                         m.generation(), false, 0F, false, tankmateDetails(t, m), m.analysed(), org.overengineer.bettacraft.genetics.GeneVisibility.visible(m.analysed()));
             } else {
                 float hp = e instanceof net.minecraft.world.entity.LivingEntity le ? round(le.getHealth() / le.getMaxHealth()) : 1F;
+                float[] fv = org.overengineer.bettacraft.foreign.ForeignCare.menuValues(e); // M32 part a: our needs by its profile
                 i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", TankInhabitants.isAdult(e),
-                        1F, 1F, false, e instanceof Bucketable, BettaGenome.DEFAULT, BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0,
+                        fv != null ? round(fv[0]) : 1F, fv != null ? round(fv[1]) : 1F, fv != null && fv[2] > 0, e instanceof Bucketable, BettaGenome.DEFAULT, BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0,
                         false, 0F, false);
             }
             inh.add(i.save());

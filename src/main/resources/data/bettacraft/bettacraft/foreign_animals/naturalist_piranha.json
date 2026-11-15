@@ -1,0 +1,28 @@
+{
+  "entity": "naturalist:piranha",
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      23,
+      30
+    ],
+    "min_quality": 0.4,
+    "salinity": "fresh"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      26,
+      29
+    ],
+    "min_water_blocks": 16,
+    "needs_plants": true,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3
+  }
+}

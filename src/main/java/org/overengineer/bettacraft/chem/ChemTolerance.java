@@ -146,6 +146,7 @@ public final class ChemTolerance {
     public static Range of(Entity e) {
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) return BETTA;
         if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return tankmate(m.species());
-        return null;
+        var fp = org.overengineer.bettacraft.foreign.ForeignProfiles.cared(e); // M32 part a: an animal of another mod by its profile
+        return fp != null ? fp.chemistry() : null;
     }
 }

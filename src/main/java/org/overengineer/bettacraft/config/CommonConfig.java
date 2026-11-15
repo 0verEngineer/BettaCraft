@@ -75,6 +75,8 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_PUFFERS, FEATURE_BARBS_LOACHES;
     public static final ModConfigSpec.BooleanValue FEATURE_COMMUNITY_FISH, FEATURE_GOURAMIS, FEATURE_WILD_BETTAS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_CRAYFISH, FEATURE_AXOLOTL_CARE;
+    /** M32 part a: animals of other mods in our tanks. */
+    public static final ModConfigSpec.BooleanValue FEATURE_FOREIGN_CARE, FEATURE_FOREIGN_BREEDING, FEATURE_SUPPRESS_FOREIGN_BREEDING;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
     public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES, FEATURE_TURTLE_BREEDING, FEATURE_WILD_TURTLES; // M31
@@ -292,6 +294,17 @@ public final class CommonConfig {
         FEATURE_MOBS_IN_GLASS = b.comment("Mobs in glass: drowned, zombies, husks, skeletons, strays, spiders, cave spiders, silverfish, endermites and small",
                 "slimes and magma cubes live shrunk and harmless in tanks (mob jar, bait, capture items of other mods); they drop nothing",
                 "(off: none go in; those in tanks stay)").define("mobsInGlass", true);
+        // M32 part a
+        FEATURE_FOREIGN_CARE = b.comment("Care for animals of other mods: the fish and water animals of other mods that have a profile",
+                "(data/<ns>/bettacraft/foreign_animals, defaults for Fintastic, Aquaculture, Critters and Companions and Naturalist) get our",
+                "needs in our tanks: hunger, temperature, water quality, salinity, pH/TDS, stress, sickness and death (off: they are left",
+                "to their mod as before; outside our tanks nothing changes either way)").define("foreignCare", true);
+        FEATURE_FOREIGN_BREEDING = b.comment("Breeding of animals of other mods in our tanks by their profile: livebearers give birth, egg layers spawn",
+                "(some on plants, food fish only in big tanks); the young take the variants of their parents (off: they do not breed",
+                "in our tanks)").define("foreignBreeding", true);
+        FEATURE_SUPPRESS_FOREIGN_BREEDING = b.comment("Suppress the own breeding of vanilla and mod animals in our tanks (love from food, breeding goals,",
+                "babies of their mod), so only our breeding applies there (off: their mod may breed them in the tank as well)")
+                .define("suppressForeignBreeding", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -416,6 +429,9 @@ public final class CommonConfig {
     public static boolean herpBreeding() { return getOr(FEATURE_HERP_BREEDING, true); }
     public static boolean wildHerps() { return getOr(FEATURE_WILD_HERPS, true); }
     public static boolean mobsInGlass() { return getOr(FEATURE_MOBS_IN_GLASS, true); } // M31 part d
+    public static boolean foreignCare() { return getOr(FEATURE_FOREIGN_CARE, true); } // M32 part a
+    public static boolean foreignBreeding() { return getOr(FEATURE_FOREIGN_BREEDING, true); }
+    public static boolean suppressForeignBreeding() { return getOr(FEATURE_SUPPRESS_FOREIGN_BREEDING, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }

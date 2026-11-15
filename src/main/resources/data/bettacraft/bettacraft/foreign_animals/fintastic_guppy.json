@@ -1,0 +1,21 @@
+{
+  "entity": "fintastic:guppy",
+  "species": "guppy",
+  "group": "livebearer",
+  "food": [
+    "normal",
+    "live",
+    "fry"
+  ],
+  "breeding": {
+    "inherit": [
+      "FinModel",
+      "FinColor",
+      "TailModel",
+      "TailColor",
+      "HasMainPattern",
+      "MainPattern",
+      "MainPatternColor"
+    ]
+  }
+}

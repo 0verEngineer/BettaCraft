@@ -1,0 +1,31 @@
+{
+  "entity": [
+    "aquaculture:bluegill",
+    "aquaculture:perch",
+    "aquaculture:smallmouth_bass"
+  ],
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      6,
+      28
+    ],
+    "min_quality": 0.35,
+    "salinity": "fresh"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      16,
+      24
+    ],
+    "min_water_blocks": 24,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3
+  }
+}

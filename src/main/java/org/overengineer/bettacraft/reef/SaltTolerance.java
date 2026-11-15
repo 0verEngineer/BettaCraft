@@ -66,6 +66,8 @@ public final class SaltTolerance {
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) return BETTA;
         if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return m.species().salinity();
         if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) return FROG;
+        var fp = org.overengineer.bettacraft.foreign.ForeignProfiles.cared(e); // M32 part a: by its profile
+        if (fp != null) return fp.salinity();
         return foreign(e.getType());
     }
 
@@ -77,6 +79,8 @@ public final class SaltTolerance {
         var tm = org.overengineer.bettacraft.tankmates.TankmateSpecies.of(type);
         if (tm != null) return tm.salinity();
         if (type == org.overengineer.bettacraft.registry.ModEntities.DWARF_FROG.get()) return FROG;
+        var fp = org.overengineer.bettacraft.foreign.ForeignProfiles.cared(type); // M32 part a
+        if (fp != null) return fp.salinity();
         return foreign(type);
     }
 

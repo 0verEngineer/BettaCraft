@@ -1,0 +1,33 @@
+{
+  "entity": [
+    "fintastic:fintastic_cod",
+    "fintastic:fintastic_salmon"
+  ],
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      2,
+      18
+    ],
+    "min_quality": 0.4,
+    "salinity": "hardy_marine"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      4,
+      12
+    ],
+    "min_water_blocks": 24,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3,
+    "inherit": [
+      "Variant"
+    ]
+  }
+}

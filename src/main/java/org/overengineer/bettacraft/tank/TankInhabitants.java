@@ -435,6 +435,8 @@ public final class TankInhabitants {
         if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta instanceof org.overengineer.bettacraft.terrarium.HerpEntity ? ta.stockWeight() : ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31 (part b: a turtle by its growth)
         double big = org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e);
         if (big > 0) return 25.0 * big * big * big;
+        var fp = org.overengineer.bettacraft.foreign.ForeignProfiles.cared(e); // M32 part a: the stocking of its profile
+        if (fp != null && !Double.isNaN(fp.stock())) return isAdult(e) ? fp.stock() : fp.stock() * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();
         double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity
                 ? 1.0 / Math.max(0.1, ServerConfig.getOr(ServerConfig.STOCKING_FROGS_PER_FISH, 1.0)) : 1.0;
         return isAdult(e) ? w : w * org.overengineer.bettacraft.entity.betta.LifeStage.JUVENILE.stocking();

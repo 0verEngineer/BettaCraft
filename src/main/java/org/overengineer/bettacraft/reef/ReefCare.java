@@ -29,6 +29,7 @@ public final class ReefCare {
         double speed = SaltTolerance.speed();
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (e instanceof BettaEntity || e instanceof TankmateEntity || !(e instanceof LivingEntity living)) continue;
+            if (org.overengineer.bettacraft.foreign.ForeignProfiles.cared(e) != null) continue; // M32 part a: the salt is in its health timers
             Salinity.Range range = SaltTolerance.of(e);
             CompoundTag data = e.getPersistentData();
             double shock = data.getDouble(KEY);

@@ -1,0 +1,30 @@
+{
+  "entity": [
+    "naturalist:bass",
+    "naturalist:catfish"
+  ],
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      6,
+      30
+    ],
+    "min_quality": 0.35,
+    "salinity": "fresh"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      18,
+      26
+    ],
+    "min_water_blocks": 24,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "entity": "fintastic:moony",
+  "group": "brackish_fish",
+  "care": {
+    "temperature": [
+      24,
+      28
+    ],
+    "min_quality": 0.45,
+    "salinity": "brackish_only"
+  },
+  "breeding": {
+    "type": "none"
+  }
+}

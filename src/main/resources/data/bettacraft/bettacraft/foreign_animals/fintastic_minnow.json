@@ -1,0 +1,34 @@
+{
+  "entity": "fintastic:minnow",
+  "group": "minnow",
+  "care": {
+    "temperature": [
+      14,
+      26
+    ],
+    "min_quality": 0.35,
+    "salinity": "fresh",
+    "stock": 0.4
+  },
+  "food": [
+    "normal",
+    "live",
+    "fry"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      18,
+      24
+    ],
+    "needs_plants": true,
+    "young": [
+      2,
+      5
+    ],
+    "days": 2,
+    "inherit": [
+      "Variant"
+    ]
+  }
+}

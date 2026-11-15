@@ -1,0 +1,32 @@
+{
+  "entity": "crittersandcompanions:koi_fish",
+  "group": "pond_fish",
+  "care": {
+    "temperature": [
+      4,
+      28
+    ],
+    "min_quality": 0.35,
+    "salinity": "fresh",
+    "stock": 1.5
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      18,
+      24
+    ],
+    "min_water_blocks": 16,
+    "needs_plants": true,
+    "young": [
+      2,
+      4
+    ],
+    "days": 2.5,
+    "pause_days": 5,
+    "rate": 0.35,
+    "inherit": [
+      "Variant"
+    ]
+  }
+}

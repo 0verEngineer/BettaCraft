@@ -1,0 +1,15 @@
+{
+  "entity": "aquaculture:synodontis",
+  "group": "catfish",
+  "care": {
+    "temperature": [
+      22,
+      28
+    ],
+    "min_quality": 0.4,
+    "salinity": "fresh"
+  },
+  "breeding": {
+    "type": "none"
+  }
+}

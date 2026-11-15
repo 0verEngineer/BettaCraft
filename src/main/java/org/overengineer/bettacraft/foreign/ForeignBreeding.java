@@ -1,0 +1,381 @@
+package org.overengineer.bettacraft.foreign;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.random.RandomGenerator;
+import javax.annotation.Nullable;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import org.overengineer.bettacraft.BettaCraft;
+import org.overengineer.bettacraft.config.CommonConfig;
+import org.overengineer.bettacraft.config.ServerConfig;
+import org.overengineer.bettacraft.entity.betta.BettaHealth;
+import org.overengineer.bettacraft.tank.TankBlockEntity;
+import org.overengineer.bettacraft.tank.TankCare;
+import org.overengineer.bettacraft.tank.TankData;
+import org.overengineer.bettacraft.tank.TankInhabitants;
+import org.overengineer.bettacraft.tank.TankWater;
+import org.overengineer.bettacraft.tank.TankWaterVolume;
+import org.overengineer.bettacraft.tankmates.TankmateSpots;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * M32 part a (question A2): breeding of the foreign animals in our tanks.
+ * <ul>
+ *     <li><b>Ours</b> ({@code features.foreignBreeding}): two grown, fed, healthy animals of a type with a breeding profile,
+ *     in water of their breeding temperature, in a tank with enough water ({@link ForeignProfile.Breeding#minWaterBlocks}) and
+ *     plants where the eggs need them, breed now and then ({@link ForeignProfile.Breeding#rate}). A livebearer mother
+ *     carries the young, a clutch of eggs hatches, after {@link ForeignProfile.Breeding#days}; then the young join the tank
+ *     (as many as it has room for). Every young takes the NBT keys of {@link ForeignProfile.Breeding#inherit} from one of
+ *     its parents at random (the mod's own variants) and the {@link ForeignProfile.Breeding#offspringNbt}. The brood lives in
+ *     the mother's persistent data ({@link #BROOD}); one brood per type and tank at a time.</li>
+ *     <li><b>Theirs suppressed</b> ({@code features.suppressForeignBreeding}), in our tanks only: every animal of vanilla or
+ *     another mod that lives in a tank loses its love each care step ({@code resetLove}, vanilla animals and mods with the
+ *     same method by reflection), cannot be made to fall in love with its food there, a vanilla baby from two parents in a
+ *     tank is cancelled ({@link BabyEntitySpawnEvent}, and the same event of mods that post their own, found by name and
+ *     hooked by reflection: Fintastic's {@code BabyFishSpawnEvent}), and as a last resort a baby of a mod's own breeding
+ *     that joins the level right at its parents in a tank (a mod without any event) is removed. Our own breeding (the axolotl
+ *     eggs of M29, the turtles and herps of M31, the mobs in glass) does not go through any of these.</li>
+ * </ul>
+ */
+@EventBusSubscriber(modid = BettaCraft.MOD_ID)
+public final class ForeignBreeding {
+    private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/foreign");
+    public static final String BROOD = "bettacraft:foreign_brood", REST = "bettacraft:foreign_rest";
+    private static final long LOG_TICKS = 6000;
+    /** Set while we add an animal of our own breeding (the join guard lets it in). */
+    private static int ours;
+
+    private ForeignBreeding() {}
+
+    // ------------------------------------------------------------------ our breeding
+
+    public static void step(ServerLevel level, TankBlockEntity c, double days) {
+        if (days <= 0) return;
+        TankData t = c.getTank();
+        if (t.inhabitants().isEmpty()) return;
+        List<Entity> live = TankInhabitants.liveInhabitants(level, t);
+        if (CommonConfig.suppressForeignBreeding()) for (Entity e : live) calm(e);
+        if (!CommonConfig.foreignBreeding() || ForeignProfiles.all().isEmpty()) return;
+        double speed = ServerConfig.getOr(ServerConfig.FOREIGN_BREEDING_SPEED, 1.0);
+        Map<EntityType<?>, List<LivingEntity>> byType = new LinkedHashMap<>();
+        for (Entity e : live) {
+            ForeignProfile p = ForeignProfiles.of(e.getType());
+            if (p == null || !p.breeding().breeds() || !(e instanceof LivingEntity le)) continue;
+            byType.computeIfAbsent(e.getType(), k -> new ArrayList<>()).add(le);
+        }
+        RandomGenerator rnd = level.getRandom()::nextLong;
+        for (Map.Entry<EntityType<?>, List<LivingEntity>> en : byType.entrySet()) {
+            ForeignProfile p = ForeignProfiles.of(en.getKey());
+            if (p == null) continue;
+            boolean brooding = false;
+            for (LivingEntity e : en.getValue()) {
+                CompoundTag d = e.getPersistentData();
+                if (d.getDouble(REST) > 0) d.putDouble(REST, Math.max(0, d.getDouble(REST) - days));
+                if (d.contains(BROOD, Tag.TAG_COMPOUND)) {
+                    brooding = true;
+                    CompoundTag b = d.getCompound(BROOD);
+                    b.putDouble("age", b.getDouble("age") + days);
+                    if (b.getDouble("age") >= p.breeding().days()) {
+                        d.remove(BROOD);
+                        d.putDouble(REST, p.breeding().pauseDays());
+                        hatch(level, c, e, p, b, rnd);
+                    }
+                }
+            }
+            if (!brooding && speed > 0) mate(level, c, p, en.getValue(), days * speed, rnd);
+        }
+    }
+
+    /** Why a pair of this profile does not breed in this tank now, or null if it may. */
+    @Nullable
+    public static String blocked(ServerLevel level, TankBlockEntity c, ForeignProfile p) {
+        TankData t = c.getTank();
+        ForeignProfile.Breeding b = p.breeding();
+        if (!b.breeds()) return "none";
+        if (p.terrarium() == null && t.waterMb() <= 0) return "dry";
+        if (p.terrarium() == null && !b.breedingTemp(t.waterTemp())) return "temperature";
+        if (t.waterBlocks() + 1e-6 < b.minWaterBlocks()) return "tank_size";
+        if (c.isCrowded()) return "crowded";
+        if (p.terrarium() == null && TankWater.qualityEnabled() && t.waterQuality() < p.minQuality()) return "water";
+        if (b.needsPlants() && TankmateSpots.plants(level.getServer(), t, false).isEmpty() && TankmateSpots.plants(level.getServer(), t, true).isEmpty()) {
+            return "plants";
+        }
+        return null;
+    }
+
+    /** Whether this animal may breed now: grown, not resting, fed and healthy (with our care on). */
+    static boolean ready(LivingEntity e, ForeignProfile p) {
+        if (!e.isAlive() || e.isBaby() || e.getPersistentData().getDouble(REST) > 0) return false;
+        if (!CommonConfig.foreignCare()) return true;
+        BettaHealth h = ForeignCare.health(e);
+        return !h.isSick() && !h.isHungry(ForeignCare.params(p));
+    }
+
+    private static void mate(ServerLevel level, TankBlockEntity c, ForeignProfile p, List<LivingEntity> list, double days, RandomGenerator rnd) {
+        List<LivingEntity> ready = new ArrayList<>();
+        for (LivingEntity e : list) if (ready(e, p)) ready.add(e);
+        if (ready.size() < 2) return;
+        String why = blocked(level, c, p);
+        long now = level.getGameTime();
+        if (why != null) {
+            if (("tank_size".equals(why) || "plants".equals(why)) && c.logDue("foreign_breed:" + ready.get(0).getType().getDescriptionId() + why, now, LOG_TICKS * 4)) {
+                TankCare.log(level, c, "log.bettacraft.foreign.cannot_breed", TankCare.nameArg(ready.get(0)), "@gui.bettacraft.foreign.blocked." + why);
+            }
+            return;
+        }
+        if (rnd.nextDouble() >= 1 - Math.exp(-p.breeding().rate() * (ready.size() / 2) * days)) return;
+        LivingEntity mother = ready.get(rnd.nextInt(ready.size()));
+        LivingEntity father = null;
+        double best = Double.MAX_VALUE;
+        for (LivingEntity e : ready) {
+            if (e == mother) continue;
+            double dd = e.distanceToSqr(mother);
+            if (dd < best) {
+                best = dd;
+                father = e;
+            }
+        }
+        if (father == null) return;
+        CompoundTag brood = new CompoundTag();
+        brood.putDouble("age", 0);
+        brood.put("father", inherited(father, p));
+        mother.getPersistentData().put(BROOD, brood);
+        father.getPersistentData().putDouble(REST, p.breeding().pauseDays() * 0.5);
+        TankCare.log(level, c, p.breeding().type() == ForeignProfile.Type.LIVEBEARER ? "log.bettacraft.foreign.pregnant" : "log.bettacraft.foreign.spawned",
+                TankCare.nameArg(mother));
+        c.setChanged();
+    }
+
+    /** The values of the inherited keys of an animal (its save data). */
+    static CompoundTag inherited(Entity e, ForeignProfile p) {
+        CompoundTag out = new CompoundTag();
+        if (p.breeding().inherit().isEmpty()) return out;
+        CompoundTag all = e.saveWithoutId(new CompoundTag());
+        for (String k : p.breeding().inherit()) if (all.contains(k)) out.put(k, all.get(k).copy());
+        return out;
+    }
+
+    private static void hatch(ServerLevel level, TankBlockEntity c, LivingEntity mother, ForeignProfile p, CompoundTag brood, RandomGenerator rnd) {
+        TankData t = c.getTank();
+        ForeignProfile.Breeding b = p.breeding();
+        int live = TankInhabitants.liveInhabitants(level, t).size();
+        int room = Math.max(0, ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64) - live);
+        int n = Math.min(room, b.youngMin() + (b.youngMax() > b.youngMin() ? rnd.nextInt(b.youngMax() - b.youngMin() + 1) : 0));
+        CompoundTag motherGenes = inherited(mother, p), fatherGenes = brood.getCompound("father");
+        int made = 0;
+        for (int i = 0; i < n; i++) {
+            Vec3 at = mother.position().add((rnd.nextDouble() - 0.5) * 0.4, 0, (rnd.nextDouble() - 0.5) * 0.4);
+            if (spawnYoung(level, c, mother.getType(), p, motherGenes, fatherGenes, at, rnd) != null) made++;
+        }
+        TankCare.log(level, c, "log.bettacraft.foreign.young", TankCare.nameArg(mother), String.valueOf(made));
+        c.markTankChanged();
+    }
+
+    /** A young of this profile in the tank (hatching, GameTests): the inherited keys from either parent, the profile's NBT. */
+    @Nullable
+    public static Entity spawnYoung(ServerLevel level, TankBlockEntity c, EntityType<?> parentType, ForeignProfile p, CompoundTag mother,
+                                    CompoundTag father, Vec3 at, RandomGenerator rnd) {
+        ForeignProfile.Breeding b = p.breeding();
+        EntityType<?> type = b.offspring() != null ? BuiltInRegistries.ENTITY_TYPE.getOptional(b.offspring()).orElse(null) : parentType;
+        if (type == null) {
+            LOGGER.warn("offspring {} is not registered", b.offspring());
+            return null;
+        }
+        Entity e = type.create(level);
+        if (e == null) return null;
+        Vec3 p0 = new TankWaterVolume(c.getTank()).clamp(at, Math.max(0.1, e.getBbWidth() / 2), 0.05, Math.max(0.1, e.getBbHeight()));
+        if (!b.inherit().isEmpty() || b.offspringNbt() != null) {
+            CompoundTag data = e.saveWithoutId(new CompoundTag());
+            for (String k : b.inherit()) {
+                CompoundTag from = rnd.nextBoolean() ? mother : father;
+                if (!from.contains(k)) from = from == mother ? father : mother;
+                if (from.contains(k)) data.put(k, from.get(k).copy());
+            }
+            if (b.offspringNbt() != null) data.merge(b.offspringNbt().copy());
+            data.remove("UUID");
+            try {
+                e.load(data);
+            } catch (Exception ex) {
+                LOGGER.warn("cannot apply the inherited data to a young {}: {}", BuiltInRegistries.ENTITY_TYPE.getKey(type), ex.toString());
+            }
+        }
+        if (b.baby() && e instanceof Mob m) m.setBaby(true);
+        e.moveTo(p0.x, p0.y, p0.z, (float) (rnd.nextDouble() * 360), 0F);
+        TankInhabitants.adopt(e, c);
+        ours++;
+        try {
+            if (!level.addFreshEntity(e)) return null;
+        } finally {
+            ours--;
+        }
+        c.getTank().inhabitants().add(e.getUUID());
+        return e;
+    }
+
+    // ------------------------------------------------------------------ their breeding suppressed
+
+    private static final Map<Class<?>, Method[]> LOVE = new ConcurrentHashMap<>();
+
+    /** Whether this inhabitant is an animal of vanilla or another mod (not one of ours). */
+    public static boolean foreign(Entity e) {
+        return !BettaCraft.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getNamespace());
+    }
+
+    /** {@code resetLove()} and {@code isFood(ItemStack)} of the animal's class (vanilla {@code Animal} and mods with the same names). */
+    private static Method[] loveMethods(Class<?> c) {
+        return LOVE.computeIfAbsent(c, k -> {
+            Method reset = null, food = null;
+            try {
+                reset = k.getMethod("resetLove");
+            } catch (NoSuchMethodException ignored) {
+            }
+            try {
+                food = k.getMethod("isFood", ItemStack.class);
+                if (food.getReturnType() != boolean.class) food = null;
+            } catch (NoSuchMethodException ignored) {
+            }
+            return new Method[]{reset, food};
+        });
+    }
+
+    /** Takes the love from a foreign inhabitant (its own breeding cannot start in the tank). */
+    static void calm(Entity e) {
+        if (!foreign(e) || !(e instanceof LivingEntity)) return;
+        if (e instanceof net.minecraft.world.entity.animal.Animal a) {
+            if (a.isInLove()) a.resetLove();
+            return;
+        }
+        Method m = loveMethods(e.getClass())[0];
+        if (m == null) return;
+        try {
+            m.invoke(e);
+        } catch (ReflectiveOperationException | RuntimeException ex) {
+            LOVE.put(e.getClass(), new Method[2]); // do not try again
+        }
+    }
+
+    /** Whether this item is the breeding food of the animal (vanilla {@code isFood} or the mod's method of that name). */
+    static boolean isBreedingFood(Entity e, ItemStack s) {
+        if (s.isEmpty()) return false;
+        if (e instanceof net.minecraft.world.entity.animal.Animal a) return a.isFood(s);
+        Method m = loveMethods(e.getClass())[1];
+        if (m == null) return false;
+        try {
+            return (boolean) m.invoke(e, s);
+        } catch (ReflectiveOperationException | RuntimeException ex) {
+            return false;
+        }
+    }
+
+    /** A foreign inhabitant cannot be fed its breeding food by hand (that would make it fall in love). */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onInteract(PlayerInteractEvent.EntityInteract event) {
+        if (event.getLevel().isClientSide || !CommonConfig.suppressForeignBreeding()) return;
+        Entity e = event.getTarget();
+        if (!TankInhabitants.hasTankRef(e) || !foreign(e) || !isBreedingFood(e, event.getItemStack())) return;
+        Player p = event.getEntity();
+        p.displayClientMessage(Component.translatable("message.bettacraft.foreign.no_love", e.getDisplayName()), true);
+        event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);
+        event.setCanceled(true);
+    }
+
+    /** Breeding events of other mods with {@code getParentA()} / {@code getParentB()}, cancellable (by class name, no compile dependency). */
+    static final List<String> MOD_BABY_EVENTS = List.of("net.voidarkana.fintastic.common.entity.custom.base.BreedableWaterAnimal$BabyFishSpawnEvent");
+    private static boolean hooked;
+
+    @SubscribeEvent
+    public static void onServerAboutToStart(net.neoforged.neoforge.event.server.ServerAboutToStartEvent event) {
+        hookModEvents();
+    }
+
+    /** Listens to the breeding events of the mods in {@link #MOD_BABY_EVENTS} that are loaded (once). */
+    static synchronized void hookModEvents() {
+        if (hooked) return;
+        hooked = true;
+        for (String name : MOD_BABY_EVENTS) hook(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void hook(String name) {
+        Class<?> c;
+        Method pa, pb;
+        try {
+            c = Class.forName(name, false, ForeignBreeding.class.getClassLoader());
+            if (!net.neoforged.bus.api.Event.class.isAssignableFrom(c) || !net.neoforged.bus.api.ICancellableEvent.class.isAssignableFrom(c)) return;
+            pa = c.getMethod("getParentA");
+            pb = c.getMethod("getParentB");
+        } catch (ClassNotFoundException | NoSuchMethodException | LinkageError ex) {
+            return; // the mod is not installed (or changed)
+        }
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, (Class<net.neoforged.bus.api.Event>) c, ev -> {
+            if (!CommonConfig.suppressForeignBreeding()) return;
+            try {
+                Object a = pa.invoke(ev), b = pb.invoke(ev);
+                if (inTank(a) || inTank(b)) ((net.neoforged.bus.api.ICancellableEvent) ev).setCanceled(true);
+            } catch (ReflectiveOperationException | RuntimeException ignored) {
+            }
+        });
+        LOGGER.info("suppressing {} in tanks", name.substring(name.lastIndexOf('.') + 1));
+    }
+
+    private static boolean inTank(@Nullable Object o) {
+        return o instanceof Entity e && !e.level().isClientSide && foreign(e) && TankInhabitants.hasTankRef(e);
+    }
+
+    /** A vanilla baby of two parents in a tank. */
+    @SubscribeEvent
+    public static void onBaby(BabyEntitySpawnEvent event) {
+        if (!CommonConfig.suppressForeignBreeding() || event.getParentA().level().isClientSide) return;
+        Mob a = event.getParentA(), b = event.getParentB();
+        if (foreign(a) && TankInhabitants.hasTankRef(a) || b != null && foreign(b) && TankInhabitants.hasTankRef(b)) {
+            event.setCanceled(true);
+            if (a instanceof net.minecraft.world.entity.animal.Animal x) x.resetLove();
+            if (b instanceof net.minecraft.world.entity.animal.Animal x) x.resetLove();
+        }
+    }
+
+    /**
+     * A baby of a mod's own breeding (no event) that appears right where an inhabitant of the same type lives in a tank:
+     * not loaded from disk, no tank reference, not added by us.
+     */
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onJoin(EntityJoinLevelEvent event) {
+        if (ours > 0 || event.loadedFromDisk() || event.getLevel().isClientSide || !CommonConfig.suppressForeignBreeding()) return;
+        Entity e = event.getEntity();
+        if (!(e instanceof LivingEntity le) || !le.isBaby() || TankInhabitants.hasTankRef(e) || !foreign(e) || ForeignProfiles.ownCare(e.getType())) return;
+        if (!(event.getLevel() instanceof ServerLevel level)) return;
+        List<Entity> parents = level.getEntities((Entity) null, e.getBoundingBox().inflate(1.5),
+                o -> o != e && o.getType() == e.getType() && TankInhabitants.hasTankRef(o));
+        for (Entity parent : parents) {
+            TankBlockEntity c = TankInhabitants.resolveController(level, parent);
+            if (c == null || !TankInhabitants.inside(c.getTank(), e)) continue;
+            event.setCanceled(true);
+            if (c.logDue("foreign_suppressed:" + e.getType().getDescriptionId(), level.getGameTime(), LOG_TICKS)) {
+                LOGGER.debug("suppressed a young {} of its mod's own breeding in tank {}", BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()), c.getTank().id());
+            }
+            return;
+        }
+    }
+}

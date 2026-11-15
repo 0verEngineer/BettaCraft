@@ -195,6 +195,8 @@ public final class ServerConfig {
     /** M29 part d: the big crayfish (small animals, fish and plants per day) and the axolotls (breeding, heat). */
     public static final ModConfigSpec.DoubleValue BIG_CRAYFISH_PREY, BIG_CRAYFISH_FISH, BIG_CRAYFISH_PLANTS;
     public static final ModConfigSpec.DoubleValue AXOLOTL_BREEDING, AXOLOTL_EGG_DAYS, AXOLOTL_HEAT_DAMAGE;
+    /** M32 part a: animals of other mods with a profile (breeding speed, health timers). */
+    public static final ModConfigSpec.DoubleValue FOREIGN_BREEDING_SPEED, FOREIGN_HEALTH_SPEED;
     public static final ModConfigSpec.DoubleValue CRITTERS_BIOFILM;
     public static final ModConfigSpec.DoubleValue CRITTERS_NET_CHANCE;
     public static final ModConfigSpec.IntValue CRITTERS_NET_COOLDOWN;
@@ -1032,6 +1034,14 @@ public final class ServerConfig {
         POWER_MISTER = b.comment("Misters only spray while the tank has enough FE").define("misterRequiresEnergy", false);
         POWER_MISTER_FE = b.comment("FE per tick a mister needs while it sprays (with misterRequiresEnergy)")
                 .defineInRange("misterFePerTick", 6.0, 0.0, 100000.0);
+        b.pop();
+
+        b.comment("Animals of other mods in our tanks (M32, features.foreignCare / foreignBreeding; profiles in",
+                "data/<ns>/bettacraft/foreign_animals)").push("foreign");
+        FOREIGN_BREEDING_SPEED = b.comment("Breeding speed of the animals of other mods with a profile (1 = by the profile, 0 = they never breed in a tank)")
+                .defineInRange("foreignBreedingSpeed", 1.0, 0.0, 10.0);
+        FOREIGN_HEALTH_SPEED = b.comment("Speed of their health timers against the bettas' (hunger, sickness, death; 0.5 = they last twice as long)")
+                .defineInRange("foreignHealthSpeed", 1.0, 0.1, 10.0);
         b.pop();
 
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");

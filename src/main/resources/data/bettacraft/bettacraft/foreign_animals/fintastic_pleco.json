@@ -1,0 +1,10 @@
+{
+  "entity": "fintastic:pleco",
+  "species": "bristlenose_pleco",
+  "group": "pleco",
+  "breeding": {
+    "inherit": [
+      "Variant"
+    ]
+  }
+}
