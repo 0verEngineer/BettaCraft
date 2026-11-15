@@ -73,7 +73,7 @@ public final class CommunityFishGameTests {
         return t.log().stream().anyMatch(e -> e.key().equals(key));
     }
 
-    private static BettaEntity betta(GameTestHelper h, TankBlockEntity c, BettaGenotype g, boolean female) {
+    static BettaEntity betta(GameTestHelper h, TankBlockEntity c, BettaGenotype g, boolean female) {
         BettaData d = BettaData.create(g, female, 0);
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
@@ -139,9 +139,12 @@ public final class CommunityFishGameTests {
         BettaEntity s1 = betta(h, wild, BettaGenotype.randomWild(BettaSpecies.SPLENDENS, r), false);
         BettaEntity s2 = betta(h, wild, BettaGenotype.randomWild(BettaSpecies.SPLENDENS, r), false);
         h.assertTrue("bettacraft:betta_imbellis".equals(i1.genome().species()), "an imbellis: " + i1.genome().species());
-        for (int i = 0; i < 4; i++) {
-            TankBreeding.step(level, calm, 0.05);
-            TankBreeding.step(level, wild, 0.05);
+        // M32 part b: each tank draws the same fixed sequence from its own random (the shared level random made it flaky);
+        // over 0.4 days the whole-point damage of the splendens males is a few points, far from deadly
+        RandomSource rc = RandomSource.create(4242), rw = RandomSource.create(4242);
+        for (int i = 0; i < 8; i++) {
+            TankBreeding.step(level, calm, 0.05, rc);
+            TankBreeding.step(level, wild, 0.05, rw);
         }
         float lostImbellis = i1.getMaxHealth() - i1.getHealth() + i2.getMaxHealth() - i2.getHealth();
         float lostSplendens = s1.getMaxHealth() - s1.getHealth() + s2.getMaxHealth() - s2.getHealth();

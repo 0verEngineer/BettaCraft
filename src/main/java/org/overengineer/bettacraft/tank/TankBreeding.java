@@ -114,6 +114,11 @@ public final class TankBreeding {
 
     /** One simulation step of {@code days} (also used by GameTests). */
     public static void step(ServerLevel level, TankBlockEntity controller, double days) {
+        step(level, controller, days, level.getRandom());
+    }
+
+    /** M32 part b: a step with its own random source (GameTests: deterministic fights and nests, not the shared level random). */
+    public static void step(ServerLevel level, TankBlockEntity controller, double days, RandomSource r) {
         if (days <= 0) return;
         TankData tank = controller.getTank();
         long now = level.getGameTime();
@@ -124,17 +129,16 @@ public final class TankBreeding {
             if (b.isAdult()) (b.isFemale() ? females : males).add(b);
             else if (b.lifeStage() == LifeStage.FRY) fry.add(b);
         }
-        nest(level, controller, tank, live.size(), males, females, days, now);
-        fights(level, controller, males, days, now);
-        maleEatsFry(level, controller, males, fry, days);
-        predators(level, controller, live, days);
+        nest(level, controller, tank, live.size(), males, females, days, now, r);
+        fights(level, controller, males, days, now, r);
+        maleEatsFry(level, controller, males, fry, days, r);
+        predators(level, controller, live, days, r);
         eatPrey(level, controller, live, bettas);
     }
 
     private static void nest(ServerLevel level, TankBlockEntity controller, TankData tank, int liveCount, List<BettaEntity> males,
-                             List<BettaEntity> females, double days, long now) {
+                             List<BettaEntity> females, double days, long now, RandomSource r) {
         BubbleNest n = tank.nest();
-        RandomSource r = level.getRandom();
         boolean tempOk = breedingTemp(tank);
         if (n == null) {
             BettaEntity male = males.stream().filter(TankBreeding::fit).findFirst().orElse(null);
@@ -381,13 +385,12 @@ public final class TankBreeding {
 
     // ------------------------------------------------------------------ fights
 
-    private static void fights(ServerLevel level, TankBlockEntity controller, List<BettaEntity> males, double days, long now) {
+    private static void fights(ServerLevel level, TankBlockEntity controller, List<BettaEntity> males, double days, long now, RandomSource r) {
         if (!ServerConfig.getOr(ServerConfig.COMBAT_MALES_FIGHT, true) || males.size() < 2) {
             controller.fightLogged = false;
             return;
         }
         double perDay = 6.0 / ServerConfig.getOr(ServerConfig.COMBAT_FIGHT_DAYS, 1.0);
-        RandomSource r = level.getRandom();
         for (BettaEntity m : males) {
             if (!m.isAlive()) continue;
             BettaEntity rival = nearest(m, males);
@@ -405,11 +408,10 @@ public final class TankBreeding {
         }
     }
 
-    private static void maleEatsFry(ServerLevel level, TankBlockEntity controller, List<BettaEntity> males, List<BettaEntity> fry, double days) {
+    private static void maleEatsFry(ServerLevel level, TankBlockEntity controller, List<BettaEntity> males, List<BettaEntity> fry, double days, RandomSource r) {
         double rate = ServerConfig.getOr(ServerConfig.BREEDING_MALE_EATS_FRY_PER_DAY, 0.3);
         if (males.isEmpty() || fry.isEmpty() || rate <= 0) return;
         double p = 1 - Math.exp(-rate * days * males.size());
-        RandomSource r = level.getRandom();
         int eaten = 0;
         for (BettaEntity f : fry) {
             if (r.nextDouble() < p) {
@@ -429,10 +431,9 @@ public final class TankBreeding {
 
     // ------------------------------------------------------------------ predators
 
-    private static void predators(ServerLevel level, TankBlockEntity controller, List<Entity> live, double days) {
+    private static void predators(ServerLevel level, TankBlockEntity controller, List<Entity> live, double days, RandomSource r) {
         double rate = ServerConfig.getOr(ServerConfig.COMBAT_PREDATOR_ATTACKS_PER_DAY, 4.0);
         if (rate <= 0) return;
-        RandomSource r = level.getRandom();
         for (Entity pred : live) {
             if (!pred.isAlive() || !pred.getType().is(ModTags.PREDATORS) || !(pred instanceof LivingEntity predator)) continue;
             List<LivingEntity> prey = new ArrayList<>();
