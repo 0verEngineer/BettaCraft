@@ -44,6 +44,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Part b ({@code -Psmoketestm29b}, screenshots {@code bettacraft_m29b_*}): a tank with every puffer and barb (variety and
  * sex), a tank with the loaches, the garra and the green spotted puffer (brackish), close-ups of every species.
+ * <p>
+ * Part c ({@code -Psmoketestm29c}, screenshots {@code bettacraft_m29c_*}): danios, rainbowfish and tetras, gouramis and
+ * livebearers (every variety and sex), the wild bettas (splendens, imbellis, smaragdina, a hybrid), close-ups.
  */
 final class DevClientSmokeM29 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
@@ -64,8 +67,16 @@ final class DevClientSmokeM29 {
     }
 
     DevClientSmokeM29(boolean partB) {
+        this(partB, false);
+    }
+
+    DevClientSmokeM29(boolean partB, boolean partC) {
         this.partB = partB;
-        this.prefix = partB ? "bettacraft_m29b_" : "bettacraft_m29_";
+        this.prefix = partC ? "bettacraft_m29c_" : partB ? "bettacraft_m29b_" : "bettacraft_m29_";
+        if (partC) {
+            partC();
+            return;
+        }
         if (partB) {
             partB();
             return;
@@ -106,6 +117,135 @@ final class DevClientSmokeM29 {
             then(40, () -> shot("sp_" + s.id()));
         }
         then(1, () -> mc.options.hideGui = false);
+    }
+
+
+    // ------------------------------------------------------------------ part c: danios, rainbowfish, gouramis, tetras, livebearers, wild bettas
+
+    private static final List<TankmateSpecies> PART_C_A = List.of(TankmateSpecies.ZEBRA_DANIO, TankmateSpecies.CELESTIAL_PEARL_DANIO,
+            TankmateSpecies.FORKTAIL_RAINBOW, TankmateSpecies.NEON_DWARF_RAINBOW, TankmateSpecies.EMPEROR_TETRA, TankmateSpecies.RUMMY_NOSE_TETRA,
+            TankmateSpecies.BLACK_PHANTOM_TETRA);
+    private static final List<TankmateSpecies> PART_C_B = List.of(TankmateSpecies.HONEY_GOURAMI, TankmateSpecies.CHOCOLATE_GOURAMI,
+            TankmateSpecies.PEARL_GOURAMI, TankmateSpecies.BLACK_MOLLY, TankmateSpecies.SWORDTAIL);
+    private BlockPos bettaTank;
+    private final java.util.Map<String, Vec3> bettaAt = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private void partC() {
+        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 820, 0F, 10F)));
+        then(20, () -> server(this::buildC));
+        then(1, () -> mc.options.hideGui = true);
+        then(80, () -> server(this::poseC));
+        then(1, () -> look(dwarfs.getX() + 3.0, dwarfs.getY() + 1.0, dwarfs.getZ() - 4.6, 0F, 6F));
+        then(60, () -> {
+            shot("community");
+            int n = 0, b = 0;
+            for (Entity e : mc.level.entitiesForRendering()) {
+                if (e instanceof TankmateEntity m && (PART_C_A.contains(m.species()) || PART_C_B.contains(m.species()))) n++;
+                if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) b++;
+            }
+            LOGGER.info("[smoketest] M29c client sees {} new fish, {} bettas", n, b);
+            if (n < 35) LOGGER.error("[smoketest] M29c the client sees too few: {}", n);
+            if (b < 4) LOGGER.error("[smoketest] M29c the client sees too few bettas: {}", b);
+        });
+        then(1, () -> look(big.getX() + 3.0, big.getY() + 1.0, big.getZ() - 4.6, 0F, 6F));
+        then(60, () -> shot("gouramis_livebearers"));
+        then(1, () -> look(bettaTank.getX() + 1.5, bettaTank.getY() + 0.9, bettaTank.getZ() - 2.6, 0F, 6F));
+        then(60, () -> shot("wild_bettas"));
+        List<TankmateSpecies> all = new ArrayList<>(PART_C_A);
+        all.addAll(PART_C_B);
+        for (TankmateSpecies s : all) {
+            then(1, () -> {
+                Vec3 at = firstOf.get(s);
+                if (at == null) {
+                    LOGGER.error("[smoketest] M29c no posed {}", s.id());
+                    return;
+                }
+                double back = s.length() > 0.6 ? 1.7 : s.length() > 0.35 ? 1.3 : 1.15;
+                look(at.x, at.y + 0.05, at.z - back, 0F, 2F);
+            });
+            then(40, () -> shot("sp_" + s.id()));
+        }
+        for (String k : List.of("imbellis", "smaragdina")) {
+            then(1, () -> {
+                Vec3 at = bettaAt.get(k);
+                if (at == null) {
+                    LOGGER.error("[smoketest] M29c no posed betta {}", k);
+                    return;
+                }
+                look(at.x, at.y + 0.05, at.z - 1.2, 0F, 2F);
+            });
+            then(40, () -> shot("betta_" + k));
+        }
+        then(1, () -> mc.options.hideGui = false);
+    }
+
+    private void buildC(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        level.setDayTime(6000);
+        BlockPos base = p.blockPosition().offset(0, 0, -10);
+        dwarfs = base;
+        TankBlockEntity a = tank(level, p, dwarfs, 6, 2, 2, 26F);
+        region(level, a);
+        light(level, dwarfs, 6, 2, 1);
+        big = base.offset(0, 0, -8);
+        TankBlockEntity b = tank(level, p, big, 6, 2, 2, 27F);
+        region(level, b);
+        light(level, big, 6, 2, 1);
+        bettaTank = base.offset(9, 0, 0);
+        TankBlockEntity bt = tank(level, p, bettaTank, 3, 2, 2, 27F);
+        region(level, bt);
+        light(level, bettaTank, 3, 2, 1);
+        for (TankmateSpecies s : PART_C_A) {
+            for (String v : s.varieties()) {
+                fish(level, a, s, v, false);
+                if (s.dimorphic()) fish(level, a, s, v, true);
+            }
+        }
+        for (TankmateSpecies s : PART_C_B) {
+            for (String v : s.varieties()) {
+                fish(level, b, s, v, false);
+                if (s.dimorphic()) fish(level, b, s, v, true);
+            }
+        }
+        // wild bettas: a male of each species and a hybrid
+        net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(29);
+        var imb = org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS, r);
+        var sma = org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA, r);
+        var spl = org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS, r);
+        for (var g : List.of(spl, imb, sma, org.overengineer.bettacraft.genetics.BettaGenotype.cross(imb, spl, r, 0))) {
+            var d = org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0);
+            var bucket = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new net.minecraft.world.item.ItemStack(
+                    org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get()), d);
+            var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, bt, bucket,
+                    org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false);
+            if (err != null) LOGGER.error("[smoketest] M29c betta insert: {}", err.getString());
+        }
+    }
+
+    private void poseC(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        TankBlockEntity a = TankMultiblock.getController(level, dwarfs);
+        if (a != null) row(level, a, 7, new double[]{1.35, 0.85, 0.35}, 0.8, firstOf);
+        TankBlockEntity b = TankMultiblock.getController(level, big);
+        if (b != null) row(level, b, 7, new double[]{1.4, 0.9, 0.4}, 0.82, firstOf);
+        TankBlockEntity bt = TankMultiblock.getController(level, bettaTank);
+        if (bt == null) return;
+        TankWaterVolume w = new TankWaterVolume(bt.getTank());
+        int i = 0;
+        for (Entity e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, bt.getTank())) {
+            if (!(e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity f)) continue;
+            Vec3 at = new Vec3(w.box().minX + 0.45 + (i % 2) * 1.4, w.box().minY + (i < 2 ? 1.25 : 0.55), w.box().minZ + 0.6);
+            f.moveTo(at.x, at.y, at.z, -90F, 0F);
+            SmokeFreeze.freeze(f, true);
+            f.setDeltaMovement(Vec3.ZERO);
+            f.setYRot(-90F);
+            f.yBodyRot = -90F;
+            f.yHeadRot = -90F;
+            var sp = f.genotype().ancestry().species();
+            if (sp != null) bettaAt.putIfAbsent(sp.key(), at);
+            LOGGER.info("[smoketest] M29c betta {} at {}", f.genome().species(), at);
+            i++;
+        }
     }
 
     // ------------------------------------------------------------------ part b: puffers, barbs, loaches

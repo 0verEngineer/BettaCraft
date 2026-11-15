@@ -211,7 +211,7 @@ final class DevClientSmokeTest {
                 return;
             }
             if (M29_ONLY) {
-                if (ticks == 60) m29 = new DevClientSmokeM29(Boolean.getBoolean("bettacraft.smoketest.m29b"));
+                if (ticks == 60) m29 = new DevClientSmokeM29(Boolean.getBoolean("bettacraft.smoketest.m29b"), Boolean.getBoolean("bettacraft.smoketest.m29c"));
                 if (m29 != null && m29.tick()) {
                     m29 = null;
                     LOGGER.info("[smoketest] client world test finished (M29 only)");

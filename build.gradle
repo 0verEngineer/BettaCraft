@@ -243,6 +243,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m29only', 'true'
             }
+            if (project.hasProperty('smoketestm29c')) {
+                // gradlew runClient -Psmoketestm29c : only the M29 part c scene (danios, rainbowfish, tetras, gouramis, livebearers in
+                // every variety and sex, the wild bettas, a close-up per species)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m29only', 'true'
+                systemProperty 'bettacraft.smoketest.m29c', 'true'
+            }
             if (project.hasProperty('smoketestm29b')) {
                 // gradlew runClient -Psmoketestm29b : only the M29 part b scene (every puffer, barb and loach variety and sex posed,
                 // a close-up per species)

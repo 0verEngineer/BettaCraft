@@ -640,6 +640,29 @@ def m29b(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M29 part c scene (DevClientSmokeM29 part c, -Psmoketestm29c): a close-up of every new species and wild betta, the group
+# tanks. ``py guide_images.py m29c``.
+M29C_WORLD = {f"tm_{s}": (f"sp_{s}", M29B_BOX) for s in (
+    "zebra_danio", "forktail_rainbow", "neon_dwarf_rainbow", "honey_gourami", "chocolate_gourami", "pearl_gourami",
+    "emperor_tetra", "rummy_nose_tetra", "black_phantom_tetra", "black_molly", "swordtail")}
+M29C_WORLD["tm_celestial_pearl_danio"] = ("sp_celestial_pearl_danio", (480, 370, 760, 560))
+M29C_WORLD["tm_rainbowfish"] = ("community", (0, 280, 1280, 700))
+M29C_WORLD["tm_gouramis"] = ("gouramis_livebearers", (0, 280, 1280, 700))
+M29C_WORLD["betta_imbellis"] = ("betta_imbellis", M29B_BOX)
+M29C_WORLD["betta_smaragdina"] = ("betta_smaragdina", M29B_BOX)
+
+
+def m29c(out_en: Path) -> None:
+    for name, (shot, box) in M29C_WORLD.items():
+        src = SHOTS / f"bettacraft_m29c_{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -654,6 +677,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m29c"]:
+        m29c(out_en)
+        return 0
     if sys.argv[1:] == ["m29b"]:
         m29b(out_en)
         return 0
