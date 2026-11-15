@@ -31,6 +31,11 @@ public final class PipeNetwork {
     /** Pipes in one network at most (the search stops there). */
     public static final int MAX_PIPES = 1024;
     public static final int WINDOW = 10;
+    /**
+     * M33 part d (hardening): a network that touched an unloaded chunk while it was built is built again after this many
+     * ticks (a chunk that loads later fires no neighbour change, so its pipes and ends would stay missing).
+     */
+    public static final long INCOMPLETE_TICKS = 100;
 
     /** A fluid handler at an end of the network: the block and its face that touches the pipe. */
     public record End(BlockPos pos, Direction face) {}
@@ -42,17 +47,25 @@ public final class PipeNetwork {
     private final LongOpenHashSet pipes;
     private final List<End> ends;
     private final int rate;
+    /** Built while a neighbour chunk was not loaded (see {@link #INCOMPLETE_TICKS}), and when. */
+    private final boolean incomplete;
+    private final long built;
     private long window = Long.MIN_VALUE;
     private int used;
     private int next;
     /** mB moved in the last full window (for the info lines and the GameTests). */
     private int lastWindowMb;
 
-    private PipeNetwork(LongOpenHashSet pipes, List<End> ends, int rate) {
+    private PipeNetwork(LongOpenHashSet pipes, List<End> ends, int rate, boolean incomplete, long built) {
         this.pipes = pipes;
         this.ends = ends;
         this.rate = rate;
+        this.incomplete = incomplete;
+        this.built = built;
     }
+
+    /** Whether the network was built with a part of it in unloaded chunks. */
+    public boolean incomplete() { return incomplete; }
 
     public LongOpenHashSet pipes() { return pipes; }
     public List<End> ends() { return Collections.unmodifiableList(ends); }
@@ -75,7 +88,8 @@ public final class PipeNetwork {
         synchronized (CACHE) {
             var m = CACHE.computeIfAbsent(level, k -> new Long2ObjectOpenHashMap<>());
             PipeNetwork n = m.get(pos.asLong());
-            if (n != null) return n;
+            if (n != null && !(n.incomplete && level.getGameTime() - n.built >= INCOMPLETE_TICKS)) return n;
+            if (n != null) for (long l : n.pipes) m.remove(l);
             n = build(level, pos);
             for (long l : n.pipes) m.put(l, n);
             return n;
@@ -89,6 +103,7 @@ public final class PipeNetwork {
         queue.add(start.immutable());
         seen.add(start.asLong());
         int rate = Integer.MAX_VALUE;
+        boolean incomplete = false;
         while (!queue.isEmpty()) {
             BlockPos p = queue.poll();
             BlockState s = level.getBlockState(p);
@@ -97,7 +112,10 @@ public final class PipeNetwork {
             for (Direction d : Direction.values()) {
                 if (!s.getValue(PipeBlock.SIDES.get(d))) continue;
                 BlockPos n = p.relative(d);
-                if (!level.isLoaded(n)) continue;
+                if (!level.isLoaded(n)) {
+                    incomplete = true;
+                    continue;
+                }
                 BlockState ns = level.getBlockState(n);
                 if (ns.getBlock() instanceof PipeBlock) {
                     if (seen.size() < MAX_PIPES && seen.add(n.asLong())) queue.add(n);
@@ -106,7 +124,7 @@ public final class PipeNetwork {
                 }
             }
         }
-        return new PipeNetwork(seen, ends, rate == Integer.MAX_VALUE ? 0 : rate);
+        return new PipeNetwork(seen, ends, rate == Integer.MAX_VALUE ? 0 : rate, incomplete, level.getGameTime());
     }
 
     @Nullable
@@ -180,6 +198,8 @@ public final class PipeNetwork {
                 // only water: look first, then take exactly that (other mods' tanks compare the values too)
                 FluidStack sim = h.drain(want, IFluidHandler.FluidAction.SIMULATE);
                 if (sim.isEmpty() || !org.overengineer.bettacraft.registry.ModFluids.isWater(sim.getFluid())) continue;
+                // M33 part d: drain(FluidStack) gives only that fluid (fresh, RO or sea water; its values may differ)
+                if (like != null && !like.isEmpty() && sim.getFluid() != like.getFluid()) continue;
                 FluidStack got = action.simulate() ? sim : h.drain(sim, action);
                 if (got.isEmpty()) continue;
                 if (action.execute()) {

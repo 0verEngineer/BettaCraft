@@ -62,7 +62,7 @@ public final class PipeFluid implements IFluidHandler {
     public FluidStack drain(FluidStack resource, FluidAction action) {
         if (resource.isEmpty() || !org.overengineer.bettacraft.registry.ModFluids.isWater(resource.getFluid())) return FluidStack.EMPTY;
         PipeNetwork n = net();
-        return n == null ? FluidStack.EMPTY : n.drain(level, resource.getAmount(), null, action, from);
+        return n == null ? FluidStack.EMPTY : n.drain(level, resource.getAmount(), resource, action, from);
     }
 
     @Override

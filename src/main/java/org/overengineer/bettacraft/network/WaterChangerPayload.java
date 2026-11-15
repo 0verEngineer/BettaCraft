@@ -29,9 +29,13 @@ public record WaterChangerPayload(BlockPos pos, int interval, int share, boolean
     /** Server side: checked and applied. */
     public static void apply(ServerPlayer player, WaterChangerPayload p) {
         if (player.distanceToSqr(p.pos().getCenter()) > 64 || !player.mayBuild() || player.isSpectator()) return;
+        // M33 part d (hardening): claims / spawn protection and the build rights of an interior, like the regulator
+        if (!player.level().isLoaded(p.pos()) || !player.level().mayInteract(player, p.pos())) return;
+        if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(player.level())
+                && !org.overengineer.bettacraft.tank.interior.InteriorManager.canBuild(player, p.pos())) return;
         if (!(player.level().getBlockEntity(p.pos()) instanceof WaterChangerBlockEntity be)) return;
         be.set(p.interval(), p.share(), p.enabled());
-        if (p.changeNow()) {
+        if (p.changeNow() && be.manualChangeAllowed(player.level().getGameTime())) {
             int mb = be.check(player.serverLevel(), true);
             player.displayClientMessage(Component.translatable(mb > 0 ? "message.bettacraft.water_changer.changed" : "message.bettacraft.water_changer.not_changed", mb), true);
         }

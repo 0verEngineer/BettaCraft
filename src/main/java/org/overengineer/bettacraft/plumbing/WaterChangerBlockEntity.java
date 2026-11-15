@@ -40,6 +40,8 @@ public class WaterChangerBlockEntity extends BlockEntity {
     private Status status = Status.WAITING;
     private int lastMb;
     private final DeviceEnergy energy = new DeviceEnergy(40000, this::setChanged);
+    /** M33 part d (hardening): game time of the last "change now" from the menu (one per second; not saved). */
+    private long manualAt = Long.MIN_VALUE;
 
     public WaterChangerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WATER_CHANGER.get(), pos, state);
@@ -52,6 +54,13 @@ public class WaterChangerBlockEntity extends BlockEntity {
     public long last() { return last; }
     public Status status() { return status; }
     public int lastMb() { return lastMb; }
+
+    /** M33 part d: whether "change now" may run again (at most once per {@code 20} ticks, a client can send it in a loop). */
+    public boolean manualChangeAllowed(long now) {
+        if (manualAt != Long.MIN_VALUE && now - manualAt >= 0 && now - manualAt < 20) return false;
+        manualAt = now;
+        return true;
+    }
 
     /** Menu: interval 1..60 days, share 5..50 %, on/off. */
     public void set(int interval, int sharePct, boolean on) {
