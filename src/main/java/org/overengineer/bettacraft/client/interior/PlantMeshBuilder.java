@@ -67,9 +67,11 @@ final class PlantMeshBuilder {
             case VALLISNERIA -> ribbons();
             case ANUBIAS_NANA -> anubias();
             case JAVA_FERN -> rhizomeLeaves(PlantTex.LANCE, 0.10F, 1.8F, 3.0F, 0.3F, 0.02, 0.6);
-            case BUCE_GREEN_WAVY, BUCE_BROWNIE_RED, BUCE_BLUE -> rhizomeLeaves(PlantTex.WAVY, 0.22F, 1.5F, 2.8F, 0.22F, 0.01, 0.15);
-            case BUCE_MINI_NEEDLE -> rhizomeLeaves(PlantTex.NEEDLE, 0.15F, 0.9F, 1.3F, 0.2F, 0.01, 0.15);
-            case CRYPT_GREEN, CRYPT_BROWN, CRYPT_FLAMINGO -> rosette(PlantTex.CRYPT, 0.32F, 1.7F, 3.0F, 0.025, 0.4);
+            // M29.1: Bucephalandras with short, narrow lanceolate leaves close to the rhizome (buce())
+            case BUCE_GREEN_WAVY, BUCE_BROWNIE_RED, BUCE_BLUE -> buce(PlantTex.WAVY, 0.85F, 1.35F);
+            case BUCE_MINI_NEEDLE -> buce(PlantTex.NEEDLE, 0.55F, 0.8F);
+            // M29.1: Cryptocorynes with narrower, longer leaves straight from the rosette, no stalk (crypt())
+            case CRYPT_GREEN, CRYPT_BROWN, CRYPT_FLAMINGO -> crypt(PlantTex.CRYPT, 0.95F, 1.5F, 0.4);
             case AMAZON_SWORD -> rosette(PlantTex.SWORD, 0.38F, 2.3F, 4.6F, 0.03, 0.7);
             case JAVA_MOSS -> moss();
             case MONTE_CARLO -> carpet();
@@ -87,10 +89,10 @@ final class PlantMeshBuilder {
             case ANUBIAS_WHITE -> anubias(PlantTex.OVATE, 1F);
             case ANUBIAS_COFFEEFOLIA -> anubias(PlantTex.COFFEE, 1.05F);
             case ANUBIAS_ROUND_LEAF -> anubias(PlantTex.ROUND, 1.2F);
-            case BUCE_KEDAGANG -> rhizomeLeaves(PlantTex.NARROW, 0.2F, 1.1F, 1.9F, 0.22F, 0.01, 0.15);
-            case BUCE_THEIA, BUCE_PINK_LADY, BUCE_SNOW_WHITE -> rhizomeLeaves(PlantTex.WAVY, 0.22F, 1.5F, 2.8F, 0.22F, 0.01, 0.15);
-            case BUCE_GODZILLA -> rhizomeLeaves(PlantTex.WAVY, 0.2F, 1.7F, 3.1F, 0.25F, 0.01, 0.15);
-            case BUCE_MINI_PINK -> rhizomeLeaves(PlantTex.WAVY, 0.22F, 1.1F, 1.9F, 0.18F, 0.01, 0.15);
+            case BUCE_KEDAGANG -> buce(PlantTex.NARROW, 0.65F, 1.0F);
+            case BUCE_THEIA, BUCE_PINK_LADY, BUCE_SNOW_WHITE -> buce(PlantTex.WAVY, 0.85F, 1.35F);
+            case BUCE_GODZILLA -> buce(PlantTex.WAVY, 1.0F, 1.6F);
+            case BUCE_MINI_PINK -> buce(PlantTex.WAVY, 0.7F, 1.05F);
             case LUDWIGIA_SUPER_RED -> stems(PlantTex.ELLIPTIC, 1.45F, 0.85F, 0.55F);
             case ROTALA_HRA -> stems(PlantTex.NARROW, 1.15F, 0.5F, 0.5F);
             case ROTALA_WALLICHII -> stems(PlantTex.NEEDLE, 1.0F, 0.4F, 0.45F, 3);
@@ -109,7 +111,7 @@ final class PlantMeshBuilder {
             case RICCIA -> riccia();
             case MARIMO -> marimo();
             case ECHINODORUS_RED_DIAMOND -> rosette(PlantTex.SWORD, 0.32F, 1.5F, 2.8F, 0.025, 0.5);
-            case CRYPT_PARVA -> rosette(PlantTex.NARROW, 0.15F, 0.55F, 0.9F, 0.02, 0.3);
+            case CRYPT_PARVA -> crypt(PlantTex.NARROW, 0.4F, 0.6F, 0.3);
             case SAGITTARIA -> rosette(PlantTex.NARROW, 0.06F, 0.5F, 0.8F, 0.03, 0.45);
             case APONOGETON -> aponogeton();
             case NYMPHAEA_GREEN -> lotus();
@@ -668,8 +670,9 @@ final class PlantMeshBuilder {
             float yaw = (float) Math.floorMod(fx * 73 + fz * 151, 360) * (float) Math.PI / 180F;
             strip(pts, cells, yaw, 0.34F * style.ribbon());
         }
-        m.swayPerBlock = 0.05;
-        m.swayMax = 1.6;
+        // M29.1: about 30 % of the old swing (0.05 per block, at most 1.6): the ribbons only rock gently
+        m.swayPerBlock = 0.015;
+        m.swayMax = 0.48;
     }
 
     /** Another ribbon branches off this one (then it is drawn however short it is, M22.1). */
@@ -923,9 +926,14 @@ final class PlantMeshBuilder {
             pts.add(sourceAt != null && PlantSkeleton.x(src) == 0 && PlantSkeleton.y(src) == 0 && PlantSkeleton.z(src) == 0
                     ? new Vector3f(sourceAt) : c(src).sub(0, 0.18F, 0));
             for (int j = 1; j < path.size(); j++) pts.add(c(path.getLong(j)));
+            if (leafScale != 1F) {
+                // M29.1: shorter leaves, drawn in towards their source (Bucephalandra)
+                Vector3f p0 = pts.getFirst();
+                for (int j = 1; j < pts.size(); j++) pts.get(j).sub(p0).mul(leafScale).add(p0);
+            }
             Vector3f last = pts.getLast(), prev = pts.get(pts.size() - 2);
             Vector3f ext = new Vector3f(last).sub(prev);
-            if (ext.lengthSquared() > 1e-6F) pts.add(new Vector3f(last).add(ext.normalize().mul(0.5F)));
+            if (ext.lengthSquared() > 1e-6F) pts.add(new Vector3f(last).add(ext.normalize().mul(0.5F * leafScale)));
             pts = smooth(pts, 3);
             float total = 0;
             for (int j = 1; j < pts.size(); j++) total += pts.get(j).distance(pts.get(j - 1));
@@ -955,16 +963,16 @@ final class PlantMeshBuilder {
                 use(baseKey, PlantPart.STEM);
                 tubes(PlantTex.STEM, stalkPts, stalkR * style.stem(), stalkR * 0.8F * style.stem(), 4);
             }
-            if (bladePts.size() < 2) bladePts.addFirst(new Vector3f(stalkPts.getLast()));
+            if (bladePts.size() < 2 || stalk <= 0) bladePts.addFirst(new Vector3f(stalkPts.getLast())); // M29.1: no stalk: the blade from the source
             PlantPart tp = part(tipKey);
             use(tipKey, tp == PlantPart.TOP ? PlantPart.TOP : PlantPart.LEAF);
-            float w = Math.clamp(spread[i] * 2 + 1F, minW, maxW) * style.leafWide();
+            float w = Math.clamp(spread[i] * 2 + 1F, minW, maxW) * Math.min(style.leafWide(), wideCap);
             float twist = (hash(tipKey, 7) - 0.5F) * 0.8F;
             // longer outside a little (the blade's tip extends along the curve)
-            if (style.leafLong() != 1F && bladePts.size() >= 2) {
+            if (Math.min(style.leafLong(), longCap) != 1F && bladePts.size() >= 2) {
                 Vector3f l2 = bladePts.getLast(), p2 = bladePts.get(bladePts.size() - 2);
                 Vector3f e2 = new Vector3f(l2).sub(p2);
-                if (e2.lengthSquared() > 1e-6F) bladePts.add(new Vector3f(l2).add(e2.normalize().mul(total * (1 - stalk) * (style.leafLong() - 1))));
+                if (e2.lengthSquared() > 1e-6F) bladePts.add(new Vector3f(l2).add(e2.normalize().mul(total * (1 - stalk) * (Math.min(style.leafLong(), longCap) - 1))));
             }
             blade(tex, bladePts, w, twist, hash(tipKey, 3) * 6.28F);
         }
@@ -983,7 +991,39 @@ final class PlantMeshBuilder {
         m.swayMax = swayMax;
     }
 
-    /** Cryptocorynes and the Amazon sword: every leaf from the crown. */
+    /** M29.1: leaves of a Bucephalandra: shorter than the blocks (drawn in towards the rhizome), outside only a little longer and wider. */
+    float leafScale = 1F, wideCap = Float.MAX_VALUE, longCap = Float.MAX_VALUE;
+
+    /**
+     * M29.1: Bucephalandra: short, narrow lanceolate leaves close to the rhizome (about 60 % of the way to their leaf
+     * blocks, a short petiole); outside the leaves are only a little wider and longer than inside (the style's 1.5 / 1.25
+     * made them look like Anubias).
+     */
+    void buce(PlantTex tex, float minW, float maxW) {
+        leafScale = 0.6F;
+        wideCap = 1.15F;
+        longCap = 1.1F;
+        rhizomeLeaves(tex, 0.12F, minW, maxW, 0.2F, 0.01, 0.15);
+    }
+
+    /**
+     * M29.1: Cryptocoryne: the leaves come straight out of a low rosette at the ground (no stalk, no stem), narrower and
+     * longer than before; outside they are not widened as much.
+     */
+    void crypt(PlantTex tex, float minW, float maxW, double swayMax) {
+        wideCap = 1.2F;
+        Long2ObjectOpenHashMap<PlantPart> parts = parts();
+        long root = PlantSkeleton.key(0, 0, 0);
+        PlantSkeleton.Tree tree = PlantSkeleton.tree(parts, k -> k == root, k -> true);
+        // the rosette: a low, flat base on the ground
+        use(0, 0, 0, PlantPart.STEM);
+        tube(PlantTex.STEM, new Vector3f(0.5F, 0F, 0.5F), new Vector3f(0.5F, 0.1F, 0.5F), 0.2F, 0.14F, 6);
+        leaves(parts, tree, new LongOpenHashSet(), tex, 0F, minW, maxW, 0.06F, new Vector3f(0.5F, 0.06F, 0.5F));
+        m.swayPerBlock = 0.02;
+        m.swayMax = swayMax;
+    }
+
+    /** Cryptocorynes (before M29.1) and the Amazon sword: every leaf from the crown. */
     void rosette(PlantTex tex, float stalk, float minW, float maxW, double sway, double swayMax) {
         Long2ObjectOpenHashMap<PlantPart> parts = parts();
         long root = PlantSkeleton.key(0, 0, 0);
