@@ -71,7 +71,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
         int end = CrucibleBlockEntity.SLOTS;
         if (index < end) {
             if (!moveItemStackTo(s, end, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (CrucibleBlockEntity.fuelTicks(s) > 0 && !s.is(net.minecraft.world.item.Items.BLAZE_POWDER)) {
+        } else if (CrucibleBlockEntity.fuelTicks(s) > 0) {
             if (!moveItemStackTo(s, CrucibleBlockEntity.FUEL, CrucibleBlockEntity.FUEL + 1, false)) return ItemStack.EMPTY;
         } else if (!moveItemStackTo(s, 0, CrucibleBlockEntity.INPUTS, false)) {
             return ItemStack.EMPTY;

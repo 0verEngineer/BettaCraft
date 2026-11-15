@@ -105,7 +105,7 @@ public final class PlumbingGameTests {
 
     // ------------------------------------------------------------------ crucible and stainless steel
 
-    /** 3 iron + coal + quartz + blaze powder melt into 3 stainless steel over lava (free) and with a blaze rod as fuel. */
+    /** 4 iron + coal + quartz melt into 3 stainless steel over lava (free) and with a blaze rod as fuel (M29.1: no blaze powder). */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void crucibleMeltsStainlessSteel(GameTestHelper h) {
         ServerLevel level = h.getLevel();
@@ -115,15 +115,14 @@ public final class PlumbingGameTests {
             h.setBlock(rel, ModBlocks.CRUCIBLE.get().defaultBlockState());
             BlockPos pos = h.absolutePos(rel);
             if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity be)) throw new GameTestAssertException("no crucible");
-            be.items().setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 4));
+            be.items().setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 5));
             be.items().setStackInSlot(1, new ItemStack(Items.COAL, 1));
             be.items().setStackInSlot(2, new ItemStack(Items.QUARTZ, 1));
-            be.items().setStackInSlot(3, new ItemStack(Items.BLAZE_POWDER, 1));
             if (!lava) be.items().setStackInSlot(CrucibleBlockEntity.FUEL, new ItemStack(Items.BLAZE_ROD, 1));
             for (int t = 0; t < CrucibleBlockEntity.meltTicks(); t++) be.tick(level, pos, level.getBlockState(pos));
             ItemStack out = be.items().getStackInSlot(CrucibleBlockEntity.OUTPUT);
             h.assertTrue(out.is(ModItems.STAINLESS_STEEL_INGOT.get()) && out.getCount() == 3, (lava ? "lava" : "blaze rod") + ": 3 stainless steel: " + out);
-            h.assertTrue(be.items().getStackInSlot(0).getCount() == 1 && be.items().getStackInSlot(1).isEmpty() && be.items().getStackInSlot(3).isEmpty(),
+            h.assertTrue(be.items().getStackInSlot(0).getCount() == 1 && be.items().getStackInSlot(1).isEmpty() && be.items().getStackInSlot(2).isEmpty(),
                     "the ingredients are used (one iron left)");
             h.assertTrue(be.source() == (lava ? CrucibleBlockEntity.Heat.LAVA : CrucibleBlockEntity.Heat.FUEL) || be.source() == CrucibleBlockEntity.Heat.NONE,
                     "heat source: " + be.source());
@@ -136,10 +135,9 @@ public final class PlumbingGameTests {
         h.setBlock(new BlockPos(10, 2, 2), ModBlocks.CRUCIBLE.get().defaultBlockState());
         BlockPos cold = h.absolutePos(new BlockPos(10, 2, 2));
         CrucibleBlockEntity c = (CrucibleBlockEntity) level.getBlockEntity(cold);
-        c.items().setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 3));
+        c.items().setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 4));
         c.items().setStackInSlot(1, new ItemStack(Items.CHARCOAL, 1));
         c.items().setStackInSlot(2, new ItemStack(Items.QUARTZ, 1));
-        c.items().setStackInSlot(3, new ItemStack(Items.BLAZE_POWDER, 1));
         for (int t = 0; t < CrucibleBlockEntity.meltTicks() + 5; t++) c.tick(level, cold, level.getBlockState(cold));
         h.assertTrue(c.items().getStackInSlot(CrucibleBlockEntity.OUTPUT).isEmpty(), "no heat, no steel");
         h.succeed();

@@ -522,7 +522,7 @@ public final class DevShowcase {
             cr.items().setStackInSlot(0, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 64));
             cr.items().setStackInSlot(1, new ItemStack(net.minecraft.world.item.Items.COAL, 64));
             cr.items().setStackInSlot(2, new ItemStack(net.minecraft.world.item.Items.QUARTZ, 64));
-            cr.items().setStackInSlot(3, new ItemStack(net.minecraft.world.item.Items.BLAZE_POWDER, 64));
+            cr.items().setStackInSlot(3, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 64));
         }
         for (int x = 2; x < 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 0), (x % 2 == 0 ? ModBlocks.GLASS_PIPE : ModBlocks.STAINLESS_STEEL_PIPE).get().defaultBlockState());
         LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());

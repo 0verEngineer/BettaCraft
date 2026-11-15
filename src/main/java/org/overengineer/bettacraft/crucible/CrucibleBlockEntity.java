@@ -133,7 +133,7 @@ public class CrucibleBlockEntity extends BlockEntity implements MenuProvider {
             @Override
             public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
                 if (side == Direction.DOWN || slot == OUTPUT) return stack;
-                if (fuelTicks(stack) > 0 && slot != FUEL && !stack.is(Items.BLAZE_POWDER)) return stack;
+                if (fuelTicks(stack) > 0 && slot != FUEL) return stack;
                 return items.insertItem(slot, stack, simulate);
             }
 

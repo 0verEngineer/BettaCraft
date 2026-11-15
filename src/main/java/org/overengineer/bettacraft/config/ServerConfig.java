@@ -669,7 +669,7 @@ public final class ServerConfig {
         POWER_PUMP_FE = b.comment("FE per tick of a running water pump or filter pump head at 100 % (a water change costs this per 100 mB)")
                 .defineInRange("pumpFePerTick", 8, 0, 100000);
         b.pop();
-        b.comment("Crucible (M24, features.stainlessSteel): stainless steel from iron, coal, nether quartz and blaze powder").push("crucible");
+        b.comment("Crucible (M24, features.stainlessSteel): stainless steel from iron, coal and nether quartz").push("crucible");
         CRUCIBLE_TICKS = b.comment("Ticks one melt takes").defineInRange("meltTicks", 200, 1, 100000);
         CRUCIBLE_FE = b.comment("FE per tick the crucible uses instead of fuel while FE is available (power mods)").defineInRange("fePerTick", 20, 0, 100000);
         b.pop();

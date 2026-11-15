@@ -236,7 +236,7 @@ final class DevClientSmokeM24 {
             cr.items().setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 60));
             cr.items().setStackInSlot(1, new ItemStack(Items.COAL, 20));
             cr.items().setStackInSlot(2, new ItemStack(Items.QUARTZ, 20));
-            cr.items().setStackInSlot(3, new ItemStack(Items.BLAZE_POWDER, 20));
+            cr.items().setStackInSlot(3, new ItemStack(Items.IRON_INGOT, 20));
             cr.items().setStackInSlot(CrucibleBlockEntity.OUTPUT, new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get(), 6));
         }
         level.setBlockAndUpdate(base.offset(2 * SPACING + 4, 1, 2), ModBlocks.GLASS_PIPE.get().defaultBlockState());

@@ -198,13 +198,17 @@ final class DataGenM24 {
     // ------------------------------------------------------------------ item models
 
     static void itemModels(ItemModelProvider p) {
-        for (String s : List.of("stainless_steel_ingot", "filter_foam", "ceramic_rings", "activated_carbon", "filter_peat", "bulkhead", "interior_pipe",
-                "intake_strainer", "lily_pipe", "nozzle", "spray_bar")) {
+        for (String s : List.of("stainless_steel_ingot", "filter_foam", "ceramic_rings", "activated_carbon", "filter_peat")) {
             p.withExistingParent(s, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s));
         }
+        // M29.1: the interior plumbing in 3D
+        DataGenM291.block(p, "bulkhead", "bulkhead");
+        DataGenM291.block(p, "interior_pipe", "interior_pipe_item");
+        for (String s : List.of("intake_strainer", "lily_pipe", "nozzle", "spray_bar")) DataGenM291.block(p, s, s);
         p.withExistingParent("glass_pipe", p.modLoc("block/glass_pipe_item"));
         p.withExistingParent("stainless_steel_pipe", p.modLoc("block/stainless_steel_pipe_item"));
-        for (String s : List.of("water_pump", "crucible", "reservoir", "level_sensor", "water_change_controller", "filter_pump_head", "filter_inlet", "filter_outlet")) {
+        p.withExistingParent("crucible", p.modLoc("block/crucible_lit")); // M29.1: the glowing melt makes the icon readable
+        for (String s : List.of("water_pump", "reservoir", "level_sensor", "water_change_controller", "filter_pump_head", "filter_inlet", "filter_outlet")) {
             p.withExistingParent(s, p.modLoc("block/" + s));
         }
         p.withExistingParent("filter_chamber", p.modLoc("block/filter_chamber_none"));
