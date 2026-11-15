@@ -171,10 +171,10 @@ final class BreedingLines {
                     if (d.getInt("gravid") > 0) out.add(Component.translatable("gui.bettacraft.breeding.tm.pouches", d.getInt("gravid"))
                             .withStyle(ChatFormatting.LIGHT_PURPLE));
                 }
-                case LIVEBEARER -> {
-                    if (d.getInt("gravid") > 0) out.add(Component.translatable("gui.bettacraft.breeding.tm.gravid", d.getInt("gravid"))
+                case LIVEBEARER, MOUTH -> {
+                    if (d.getInt("gravid") > 0) out.add(Component.translatable(s.mouthbrooder() ? "gui.bettacraft.breeding.tm.mouth" : "gui.bettacraft.breeding.tm.gravid", d.getInt("gravid"))
                             .withStyle(ChatFormatting.LIGHT_PURPLE));
-                    if (!d.getBoolean("box")) out.add(Component.translatable("gui.bettacraft.breeding.tm.no_box").withStyle(ChatFormatting.GRAY));
+                    if (s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.LIVEBEARER && !d.getBoolean("box")) out.add(Component.translatable("gui.bettacraft.breeding.tm.no_box").withStyle(ChatFormatting.GRAY));
                 }
                 default -> {}
             }

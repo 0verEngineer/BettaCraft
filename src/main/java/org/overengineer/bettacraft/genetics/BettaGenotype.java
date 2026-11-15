@@ -12,10 +12,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 
 /**
- * Genotype of a betta (M2): an allele pair per {@link BettaLoci locus} plus the species. The visible fish
+ * Genotype of a betta (M2): an allele pair per {@link BettaLoci locus} plus the species (M29 part c: the
+ * {@link BettaSpecies.Ancestry ancestry} of the Betta splendens complex; the species id follows from it). The visible fish
  * ({@link BettaGenome}, used by the renderer) is {@link #express() expressed} from it.
  * <p>
- * NBT: {@code {species:"bettacraft:betta", finform:["plakat","veil"], pectoral:[...], ...}}; keys this version does not
+ * NBT: {@code {species:"bettacraft:betta", ancestry:{imbellis:32, smaragdina:0}, finform:["plakat","veil"], ...}} (no
+ * ancestry: the pure species of the id); keys this version does not
  * know are kept in {@link #extra} and written back unchanged. Pure logic (unit-tested without a Minecraft bootstrap).
  */
 public final class BettaGenotype {
@@ -39,19 +41,37 @@ public final class BettaGenotype {
     public record Outcome(String allele, double probability) {}
 
     public static final String SPECIES_KEY = "species";
+    public static final String ANCESTRY_KEY = "ancestry";
 
     private final String species;
+    private final BettaSpecies.Ancestry ancestry;
     private final Map<Locus, AllelePair> genes;
     private final CompoundTag extra;
 
     private BettaGenotype(String species, Map<Locus, AllelePair> genes, CompoundTag extra) {
-        this.species = species;
+        this(species, BettaSpecies.Ancestry.of(species), genes, extra);
+    }
+
+    private BettaGenotype(String species, BettaSpecies.Ancestry ancestry, Map<Locus, AllelePair> genes, CompoundTag extra) {
+        // ids of the splendens complex follow the ancestry; foreign species ids (datapacks) stay as they are
+        this.species = BettaSpecies.byId(species) != null || BettaSpecies.HYBRID_ID.equals(species) ? ancestry.speciesId() : species;
+        this.ancestry = ancestry;
         this.genes = genes;
         this.extra = extra;
     }
 
     public String species() {
         return species;
+    }
+
+    /** M29 part c: shares of Betta splendens, imbellis and smaragdina. */
+    public BettaSpecies.Ancestry ancestry() {
+        return ancestry;
+    }
+
+    /** M29 part c: the same genes with another ancestry (wild species, tests). */
+    public BettaGenotype withAncestry(BettaSpecies.Ancestry a) {
+        return new BettaGenotype(a.speciesId(), a, new LinkedHashMap<>(genes), extra.copy());
     }
 
     public AllelePair pair(Locus l) {
@@ -87,7 +107,7 @@ public final class BettaGenotype {
     public BettaGenotype with(Locus l, AllelePair p) {
         Map<Locus, AllelePair> m = new LinkedHashMap<>(genes);
         m.put(l, p);
-        return new BettaGenotype(species, m, extra.copy());
+        return new BettaGenotype(species, ancestry, m, extra.copy());
     }
 
     static String phenotypeValue(BettaGenome g, Locus l) {
@@ -123,7 +143,9 @@ public final class BettaGenotype {
             String b = r.nextBoolean() ? pf.a() : pf.b();
             m.put(l, new AllelePair(mutate(l, a, r, mutationChance), mutate(l, b, r, mutationChance)));
         }
-        return new BettaGenotype(mother.species, m, new CompoundTag());
+        BettaSpecies.Ancestry a = BettaSpecies.Ancestry.mix(mother.ancestry, father.ancestry); // M29 part c
+        return new BettaGenotype(BettaSpecies.byId(mother.species) != null || BettaSpecies.HYBRID_ID.equals(mother.species) ? a.speciesId() : mother.species,
+                a, m, new CompoundTag());
     }
 
     private static String mutate(Locus l, String allele, RandomSource r, double chance) {
@@ -167,6 +189,20 @@ public final class BettaGenotype {
         return g;
     }
 
+    /**
+     * M29 part c: a wild fish of one species of the splendens complex: its wild colours, now and then a hidden second wild
+     * colour, rarely a hidden long fin.
+     */
+    public static BettaGenotype randomWild(BettaSpecies s, RandomSource r) {
+        if (s == BettaSpecies.SPLENDENS) return randomWild(r);
+        BettaGenotype g = homozygous(BettaSpecies.randomWildGenome(s, r)).withAncestry(BettaSpecies.Ancestry.pure(s));
+        BettaGenome other = BettaSpecies.randomWildGenome(s, r);
+        g = g.with(BettaLoci.BODY_COLOR, new AllelePair(g.pair(BettaLoci.BODY_COLOR).a(), other.bodyColor()));
+        g = g.with(BettaLoci.FIN_COLOR, new AllelePair(g.pair(BettaLoci.FIN_COLOR).a(), other.finColor()));
+        if (r.nextInt(8) == 0) g = g.with(BettaLoci.FIN_LENGTH, new AllelePair(BettaGenome.SHORT, BettaGenome.LONG));
+        return g;
+    }
+
     /** Any combination (spawn eggs, tests): two random alleles per locus, weighted by the gene frequencies. */
     public static BettaGenotype randomDomestic(RandomSource r) {
         Map<Locus, AllelePair> m = new LinkedHashMap<>();
@@ -187,6 +223,8 @@ public final class BettaGenotype {
     public CompoundTag save() {
         CompoundTag t = extra.copy();
         t.putString(SPECIES_KEY, species);
+        // M29 part c: only hybrids need the shares (a pure fish has the ancestry of its id)
+        if (!ancestry.equals(BettaSpecies.Ancestry.of(species))) t.put(ANCESTRY_KEY, ancestry.save());
         for (Locus l : BettaLoci.ALL) {
             AllelePair p = genes.get(l);
             ListTag list = new ListTag();
@@ -203,6 +241,9 @@ public final class BettaGenotype {
         BettaGenome def = BettaGenome.DEFAULT;
         CompoundTag extra = t.copy();
         extra.remove(SPECIES_KEY);
+        extra.remove(ANCESTRY_KEY);
+        BettaSpecies.Ancestry ancestry = t.contains(ANCESTRY_KEY, Tag.TAG_COMPOUND) ? BettaSpecies.Ancestry.load(t.getCompound(ANCESTRY_KEY))
+                : BettaSpecies.Ancestry.of(species);
         for (Locus l : BettaLoci.ALL) {
             extra.remove(l.id());
             String d = phenotypeValue(def, l);
@@ -218,12 +259,12 @@ public final class BettaGenotype {
                 m.put(l, new AllelePair(d, d));
             }
         }
-        return new BettaGenotype(species, m, extra);
+        return new BettaGenotype(species, ancestry, m, extra);
     }
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof BettaGenotype g && species.equals(g.species) && genes.equals(g.genes) && extra.equals(g.extra);
+        return o instanceof BettaGenotype g && species.equals(g.species) && ancestry.equals(g.ancestry) && genes.equals(g.genes) && extra.equals(g.extra);
     }
 
     @Override

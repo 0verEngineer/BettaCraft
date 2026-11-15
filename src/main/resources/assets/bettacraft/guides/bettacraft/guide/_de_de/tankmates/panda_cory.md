@@ -46,9 +46,9 @@ Ein kühler Wasserwechsel löst das Laichen aus: mindestens ein Viertel des Wass
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,86–1 % pro Schwung (etwa 1 von 99–117 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,71–0,85 % pro Schwung (etwa 1 von 118–140 Schwüngen), 1–4 auf einmal.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 8) (Config `features.wildFish`).
-* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 25 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: klebt Eier ans Glas (nach kühlem Wasserwechsel).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

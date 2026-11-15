@@ -587,13 +587,25 @@ public final class TankmateGameTests {
         h.succeed();
     }
 
-    /** Every species can be spawned into a tank, stays inside for a while and counts for the stocking. */
+    /** Every species can be spawned into a tank, stays inside for a while and counts for the stocking (the first half). */
     @GameTest(template = EMPTY, timeoutTicks = 260)
     public static void everySpeciesLivesInATank(GameTestHelper h) {
+        int n = TankmateSpecies.values().length;
+        livesInATank(h, java.util.Arrays.asList(TankmateSpecies.values()).subList(0, n / 2));
+    }
+
+    /** M29 part c: the second half (the empty template holds 48 tanks, there are more species now). */
+    @GameTest(template = EMPTY, timeoutTicks = 260)
+    public static void everySpeciesLivesInATank2(GameTestHelper h) {
+        int n = TankmateSpecies.values().length;
+        livesInATank(h, java.util.Arrays.asList(TankmateSpecies.values()).subList(n / 2, n));
+    }
+
+    private static void livesInATank(GameTestHelper h, List<TankmateSpecies> species) {
         List<TankBlockEntity> tanks = new ArrayList<>();
         int i = 0;
-        for (TankmateSpecies s : TankmateSpecies.values()) {
-            int x = 1 + (i % 8) * 4, z = 1 + (i / 8) * 5; // M29: 8 a row (43 species)
+        for (TankmateSpecies s : species) {
+            int x = 1 + (i % 8) * 4, z = 1 + (i / 8) * 5; // M29: 8 a row, up to 48 species per test
             TankBlockEntity c = tank(h, x, 2, z, 3, 2, 3, 18000, (float) ((s.tempMin() + s.tempMax()) / 2));
             if (s.marine()) c.getTank().setSalinity(35F); // M20: the reef fish in sea water
             else if (!s.salinity().contains(0)) c.getTank().setSalinity((s.salinity().min() + s.salinity().max()) / 2); // M29: brackish
@@ -603,7 +615,7 @@ public final class TankmateGameTests {
         }
         h.runAfterDelay(240, () -> {
             int j = 0;
-            for (TankmateSpecies s : TankmateSpecies.values()) {
+            for (TankmateSpecies s : species) {
                 TankBlockEntity c = tanks.get(j++);
                 List<TankmateEntity> list = mates(h, c, s);
                 h.assertTrue(list.size() >= 2, s.id() + " still in the tank: " + list.size());

@@ -28,6 +28,8 @@ class AnimalSourcesTest {
     static Map<String, String> animals() {
         Map<String, String> out = new LinkedHashMap<>();
         out.put(Target.BETTA, "betta");
+        // M29 part c: the wild species of the splendens complex
+        for (var s : org.overengineer.bettacraft.genetics.BettaSpecies.values()) out.put(Target.betta(s), s.latin());
         out.put(Target.FROG, "dwarf clawed frog");
         for (TankmateSpecies s : TankmateSpecies.values()) out.put(Target.tankmate(s), s.id());
         for (CritterSpecies s : CritterSpecies.values()) out.put(Target.critter(s), s.id());

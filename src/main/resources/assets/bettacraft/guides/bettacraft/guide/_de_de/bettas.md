@@ -25,6 +25,10 @@ Wilde Bettas erscheinen im Wasser von Sumpf-Biomen (Biom-Tag `#bettacraft:betta_
 enthält). Sie tragen die Gene der Wildform: kurze Flossen, Rundschwanz und gedeckte Farben. In der Natur haben sie keine
 Bedürfnisse und kämpfen nicht.
 
+Die meisten wilden Bettas sind *Betta splendens*; manche sind seine wilden Verwandten [Betta imbellis](bettas/betta_imbellis.md)
+(etwa 15 %) und [Betta smaragdina](bettas/betta_smaragdina.md) (etwa 10 %, Config `features.wildBettas`). Alle kreuzen sich
+untereinander zu fruchtbaren Hybriden.
+
 ## Fangen
 
 * **Wassereimer:** Rechtsklick auf den Fisch. Du bekommst einen <ItemLink id="bettacraft:betta_bucket" />.

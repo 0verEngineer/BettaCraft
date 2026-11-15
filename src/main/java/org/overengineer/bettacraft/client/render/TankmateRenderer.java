@@ -64,6 +64,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         return switch (s.model()) {
             case LIVEBEARER -> female ? 1.2F : 0.9F;
             case PLATY -> female ? 1.08F : 0.95F;
+            case SWORDTAIL -> female ? 1.05F : 0.95F; // M29 part c
             case GOURAMI -> female ? 0.92F : 1.0F;
             case CICHLID -> female ? 0.9F : 1.0F; // M29: dwarf cichlid females are smaller
             case APISTO -> female ? 0.72F : 1.0F;

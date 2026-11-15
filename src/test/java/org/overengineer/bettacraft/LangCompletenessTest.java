@@ -38,14 +38,15 @@ class LangCompletenessTest {
             "\\b(the|and|with|of|your|you|this|when|from|into|only|which|while|without|after|until|right-click|sneak)\\b");
     /** Keys whose values are trade names (varieties, strains, patterns, colour forms): the same in German. */
     private static final List<String> TRADE_NAME_PREFIXES = List.of("variety.", "strain.", "pattern.", "form.", "shape.", "type.",
-            "color.", "lb.bettacraft.pattern.", "lb.bettacraft.body.", "lb.bettacraft.locus.", "lb.bettacraft.tail_", "critter.bettacraft.look.");
+            "color.", "lb.bettacraft.pattern.", "lb.bettacraft.body.", "lb.bettacraft.locus.", "lb.bettacraft.tail_", "critter.bettacraft.look.",
+            "betta.bettacraft.species."); // M29 part c: Latin species names
     /** Values that are the same word in German (names, Latin genera, loan words used by German aquarists). */
     private static final Set<String> SAME_IN_GERMAN = Set.of(
             "advancements.bettacraft.root.title", "item.bettacraft.decor_spiderwood", "monitor.bettacraft.alarm", "monitor.bettacraft.device.co2", "monitor.bettacraft.redstone",
             "monitor.bettacraft.state.alarm", "monitor.bettacraft.tile.alarm", "monitor.bettacraft.value.magnesium", "itemGroup.bettacraft", "block.bettacraft.acropora", "item.bettacraft.acropora",
             "block.bettacraft.lily_pipe", "block.bettacraft.lobophyllia", "item.bettacraft.lobophyllia", "block.bettacraft.monte_carlo",
             "item.bettacraft.monte_carlo", "block.bettacraft.vallisneria", "item.bettacraft.vallisneria", "item.bettacraft.mulm",
-            "entity.bettacraft.betta", "entity.bettacraft.guppy", "entity.bettacraft.platy", "gui.bettacraft.cabinet.filter",
+            "entity.bettacraft.betta", "entity.bettacraft.guppy", "entity.bettacraft.platy", "entity.bettacraft.black_molly", "gui.bettacraft.cabinet.filter",
             "gui.bettacraft.chem.ph.neutral", "gui.bettacraft.devices.dimmer", "gui.bettacraft.dosing.additive.magnesium",
             "gui.bettacraft.dumbo", "gui.bettacraft.fish.generation", "gui.bettacraft.fish.name", "gui.bettacraft.fish.rename",
             "gui.bettacraft.reef.nitrate", "gui.bettacraft.tank.title", "jade.bettacraft.betta.type", "jade.bettacraft.tank.nest",

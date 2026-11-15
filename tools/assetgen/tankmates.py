@@ -509,6 +509,38 @@ def garra():
     return p, [body, caudal(p, 9, 11, "fork"), dorsal_fin(p, 0.36, 5, 5, "tri", lean=-10)] + pectorals(p, 0.2, 5, 3, horizontal=True)
 
 
+# M29 part c: the rainbowfish, the swordtail
+
+def rainbow():
+    """M29 rainbowfish: a deep, compressed body with a high back, big eyes, two dorsal fins (a small first and a long
+    second one), a long anal fin opposite the second dorsal and a forked tail."""
+    p = fusiform_plan("rainbow", depth=11.0, width=4.0, mid=7.0, peak=0.45, head=0.45, ped_frac=0.3)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.12, up=0.3, size=3, inset=0.6)
+    body.boxes.append(anal_fin(p, 0.45, 11, 4, "long_anal"))
+    body.boxes += pair("pelvic", "pelvic", (0.9, p.bottom(0.4) + 0.8, p.snout + 0.4 * 24), (0, 3, 3), (14, 18, 0), "oval")
+    return p, [body, caudal(p, 8, 12, "fork"), dorsal_fin(p, 0.36, 3, 4, "tri", lean=-6),
+               dorsal_fin(p, 0.56, 8, 4, "long", name="dorsal2", lean=-4)] + pectorals(p, 0.22, 4, 2)
+
+
+def swordtail():
+    """M29 swordtail: a slimmer platy body; the male carries the long "sword" on the lower edge of the tail (it sits in the
+    tail group so it swings with the tail; only males show it)."""
+    p = fusiform_plan("swordtail", depth=9.0, width=4.5, mid=6.5, peak=0.4, head=0.5, ped_frac=0.38)
+    body = Group("body", (0, 0, 0))
+    body.boxes += p.segments()
+    body.boxes += eyes(p, 0.12, up=0.3)
+    body.boxes += pair("pelvic", "pelvic", (0.9, p.bottom(0.45) + 0.6, p.snout + 0.45 * 24), (0, 2, 3), (14, 18, 0), "oval")
+    female = Group("female", (0, 0, 0))
+    female.boxes.append(box("anal_f", "anal", (0, p.bottom(0.62) + 1.2, p.snout + 0.6 * 24 + 2), (0, 3, 4), (8, 0, 0), fin="anal"))
+    tail = caudal(p, 7, 10, "round")
+    cy = tail.pivot[1]
+    male = Group("male", tail.pivot, "tail")
+    male.boxes.append(box("sword", "sword", (0, cy + 10 / 2 - 1.0, p.ped - 1 + 3 + 5), (0, 2, 10), fin="rod"))
+    return p, [body, female, tail, male, dorsal_fin(p, 0.42, 6, 5, "tri", lean=-6)] + pectorals(p, 0.24, 4, 3)
+
+
 PLANS = {
     "tetra": tetra, "rasbora": rasbora, "cory": cory, "pleco": pleco, "oto": oto, "kuhli": kuhli, "loach": loach,
     "livebearer": livebearer, "platy": platy, "gourami": gourami,
@@ -516,6 +548,7 @@ PLANS = {
     "seahorse": seahorse,
     "cichlid": cichlid, "apisto": apisto, "angel": angel, "discus": discus,
     "puffer": puffer, "barb": barb, "garra": garra,
+    "rainbow": rainbow, "swordtail": swordtail,
 }
 
 
@@ -854,7 +887,227 @@ def looks(species, variety, female):
         return barb_look(sp, var, female)
     if sp in ("dwarf_chain_loach", "reticulated_loach", "garra_rufa"):
         return loach29_look(sp)
+    if sp in ("zebra_danio", "celestial_pearl_danio"):
+        return danio_look(sp, var, female)
+    if sp in ("forktail_rainbow", "neon_dwarf_rainbow"):
+        return rainbow_look(sp, var, female)
+    if sp in ("honey_gourami", "chocolate_gourami", "pearl_gourami"):
+        return gourami29_look(sp, var, female)
+    if sp in ("emperor_tetra", "rummy_nose_tetra", "black_phantom_tetra"):
+        return tetra29_look(sp, var, female)
+    if sp in ("black_molly", "swordtail"):
+        return livebearer29_look(sp, var, female)
     return Look(lambda t, v, x, z, y: C("#a0a0a0"))
+
+
+# M29 part c: danio, rainbowfish, gourami, tetra and livebearer looks
+
+def danio_look(sp, var, female):
+    """Zebra danio: blue-black and silver-gold stripes along the body into the tail (Leopard: spots, Golden: pale gold with
+    faint stripes); celestial pearl danio: blue-grey with golden pearl spots, the male with an orange belly and red-orange
+    fins with black bars."""
+    rnd = _spangles(2951 + len(var) + (5 if female else 0))
+
+    def body(t, v, x, z, y):
+        if sp == "celestial_pearl_danio":
+            if v > 0.8:
+                return C("#e8702a") if not female else C("#d8c8b0")
+            k = rnd[int(abs(z) * 2.6 + abs(x)) % 64, int((y + 30) * 2.6) % 64]
+            if k > 0.8 and 0.08 < t < 0.95:
+                return C("#f0e0a0")
+            return mix(C("#2a3a5a"), C("#4a6080"), v)
+        if var == "leopard":
+            k = rnd[int(abs(z) * 2.2 + abs(x)) % 64, int((y + 30) * 2.2) % 64]
+            if k > 0.72 and v < 0.85:
+                return C("#1a2440")
+            return mix(C("#e0d090"), C("#f4ecd0"), v)
+        dark, light = ("#a8a070", "#f0e0a0") if var == "golden" else ("#1e3090", "#e8d8a0")
+        if v > 0.85:
+            return C("#f0ece0")
+        stripe = 0.2 < v < 0.8 and int((v - 0.2) / 0.12) % 2 == 0 and t > 0.12
+        return C(dark) if stripe else C(light)
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "celestial_pearl_danio":
+            if part in ("dorsal", "anal", "tail") and int(a * 4) % 2 == 1:
+                return C("#141418")
+            return C("#e85a2a") if not female else C("#d8a070")
+        if part == "tail" and var != "leopard":
+            dark = "#b0a070" if var == "golden" else "#2a3a90"
+            return C(dark) if math.sin(b * math.pi * 2.5) > 0.2 else C("#e8dcb0")
+        if part == "anal" and var != "golden":
+            return C("#2a3a90") if int(b * 4) % 2 == 0 else C("#e8d8a0")
+        return C("#e0dcc0")
+    return Look(body, fins)
+
+
+def rainbow_look(sp, var, female):
+    """Forktail rainbow: pale blue-silver, the male with yellow fin edges and yellow-tipped tail lobes, a blue eye ring;
+    neon dwarf rainbow: neon blue scales, the male with red fins, the female with yellowish fins."""
+    def body(t, v, x, z, y):
+        if sp == "forktail_rainbow":
+            if v > 0.78:
+                return C("#f0ecd8")
+            return mix(C("#7aa8c8"), C("#c8dce0"), v)
+        if v > 0.82:
+            return C("#e8ecf0")
+        shine = 0.5 + 0.5 * math.sin(z * 2.0 + y * 1.3)
+        base = mix(C("#3a78d8"), C("#7ac0f8"), shine) if not female else mix(C("#7aa0c0"), C("#b0c8d8"), shine)
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "forktail_rainbow":
+            if female:
+                return C("#e0e0d8")
+            if part == "tail" and abs(b) > 0.65:
+                return C("#f8d820")
+            if part in ("dorsal", "dorsal2", "anal") and (b > 0.5 or a > 0.8):
+                return C("#f8d820")
+            return C("#c8d0c0")
+        if female:
+            return C("#e8d8a0")
+        if part in ("tail", "dorsal", "dorsal2", "anal", "pelvic"):
+            return C("#e02a24") if not (part == "tail" and abs(b) < 0.25) else C("#c84a40")
+        return C("#d8d8d0")
+    return Look(body, fins, eye="#141414", ring="#4a90e0" if sp == "forktail_rainbow" else "#c0c0c0")
+
+
+def gourami29_look(sp, var, female):
+    """Honey gourami: honey-orange, the male with a dark blue-black throat and belly and a yellow dorsal, the female beige
+    with a brown stripe (Gold: golden yellow, Red: deep orange-red); chocolate gourami: brown with cream bands and
+    yellow-edged fins; pearl gourami: covered with pearl dots, a dark line from the snout to the tail, the male with an
+    orange-red throat."""
+    rnd = _spangles(2961 + len(sp) + len(var) + (3 if female else 0))
+
+    def body(t, v, x, z, y):
+        if sp == "honey_gourami":
+            if female:
+                if 0.42 < v < 0.55 and t > 0.1:
+                    return C("#8a6038")
+                return mix(C("#c8b088"), C("#e8dcc0"), v)
+            if var == "gold":
+                return mix(C("#f0b020"), C("#f8d860"), v)
+            if var == "red":
+                return mix(C("#e04018"), C("#f07030"), v)
+            if v > 0.62 and t < 0.65:
+                return C("#1e2440")
+            return mix(C("#e08a28"), C("#f0b048"), v)
+        if sp == "chocolate_gourami":
+            bands = (0.22, 0.4, 0.58, 0.78)
+            if any(abs(t - c + (v - 0.5) * 0.05) < 0.03 for c in bands) and v < 0.9:
+                return C("#e8d0a0")
+            return mix(C("#4a2a1a"), C("#7a4a30"), v)
+        # pearl gourami
+        if 0.48 < v < 0.56 and t > 0.05:
+            return C("#2a2420")
+        if not female and v > 0.68 and t < 0.6:
+            return C("#e05a28")
+        k = rnd[int(abs(z) * 3.0 + abs(x)) % 64, int((y + 30) * 3.0) % 64]
+        if k > 0.55:
+            return C("#f0ece0")
+        return mix(C("#8a7a68"), C("#b8a890"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "honey_gourami":
+            if female:
+                return C("#d8ccb0")
+            if part == "dorsal" and var == "wild":
+                return C("#f8e040")
+            if part == "filament":
+                return C("#f0a040")
+            return C("#f09030") if var != "red" else C("#e85020")
+        if sp == "chocolate_gourami":
+            if part in ("tail", "dorsal", "anal") and (a > 0.82 or abs(b) > 0.85):
+                return C("#f0d040")
+            return C("#6a4028")
+        if part == "filament":
+            return C("#e8a060") if not female else C("#d8c8a8")
+        if part in ("anal", "tail", "dorsal"):
+            k = rnd[int(abs(z) * 3.0) % 64, int((y + 30) * 3.0) % 64]
+            if not female and part == "anal" and b > 0.5:
+                return C("#e05a28")
+            return C("#f0ece0") if k > 0.6 else C("#9a8a78")
+        return C("#c8c0b0")
+    return Look(body, fins)
+
+
+def tetra29_look(sp, var, female):
+    """Emperor tetra: a broad black band along the side, a blue-purple sheen above and gold below, yellow fins with black
+    edges (the male with longer fins); rummy-nose tetra: silver with a red head and a tail striped black and white; black
+    phantom tetra: smoky silver with a black shoulder patch, the male with black fins, the female with red ones."""
+    def body(t, v, x, z, y):
+        if sp == "emperor_tetra":
+            if 0.4 < v < 0.6 and t > 0.08:
+                return C("#141418")
+            if v <= 0.4:
+                return mix(C("#5a4a8a"), C("#7a8ac8"), v / 0.4)
+            return mix(C("#b8a060"), C("#e8d8a8"), (v - 0.6) / 0.4)
+        if sp == "rummy_nose_tetra":
+            if t < 0.2 and v < 0.85:
+                return C("#e0202a")
+            return mix(C("#b8bcb8"), C("#ecece6"), v)
+        # black phantom
+        if 0.26 < t < 0.36 and 0.28 < v < 0.62:
+            return C("#141414")
+        return mix(C("#7a7a80"), C("#c8c8cc"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "emperor_tetra":
+            if part in ("dorsal", "anal") and (b > 0.6 or a > 0.85):
+                return C("#141418")
+            if part == "tail" and abs(b) < 0.18:
+                return C("#141418")
+            return C("#e0c860") if not female else C("#d0c8a0")
+        if sp == "rummy_nose_tetra":
+            if part == "tail":
+                bb = abs(b)
+                return C("#141414") if 0.18 < bb < 0.42 or bb > 0.8 else C("#f4f4f0")
+            return C("#e4e4dc")
+        if part in ("dorsal", "anal") and not female:
+            return C("#1a1a1e")
+        if part in ("pelvic", "anal", "adipose") and female:
+            return C("#e04030")
+        return C("#c8c8c8")
+    return Look(body, fins, ring="#5aa0f0" if sp == "emperor_tetra" and not female else "#c0c0c0")
+
+
+def livebearer29_look(sp, var, female):
+    """Black molly: velvet black (Dalmatian: white with black spots, Gold: yellow-gold); swordtail: olive-green with a red
+    zigzag line along the side (Red, Red Wagtail: red with black fins), the male's sword yellow edged black."""
+    rnd = _spangles(2971 + len(sp) + len(var))
+
+    def body(t, v, x, z, y):
+        if sp == "black_molly":
+            if var == "dalmatian":
+                k = rnd[int(abs(z) * 2.4 + abs(x)) % 64, int((y + 30) * 2.4) % 64]
+                return C("#141414") if k > 0.84 else mix(C("#e8e8e4"), C("#f8f8f4"), v)
+            if var == "gold":
+                return mix(C("#e0a820"), C("#f8d860"), v)
+            return mix(C("#141418"), C("#2a2a30"), v)
+        if var in ("red", "red_wagtail"):
+            return mix(C("#d82a1a"), C("#f05a30"), v)
+        if abs(v - 0.5 - 0.04 * math.sin(z * 2.2)) < 0.05 and t > 0.08:
+            return C("#d83a28")
+        return mix(C("#6a8a48"), C("#d8dcb8"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        if sp == "black_molly":
+            if var == "dalmatian":
+                k = rnd[int(abs(z) * 2.4) % 64, int((y + 30) * 2.4) % 64]
+                return C("#141414") if k > 0.85 else C("#e8e8e4")
+            if var == "gold":
+                return C("#f0c040")
+            return C("#202024")
+        if part == "sword":
+            if var == "red_wagtail":
+                return C("#141414")
+            return C("#141414") if b > 0.3 else C("#f0d030")
+        if var == "red_wagtail":
+            return C("#141414")
+        if var == "red":
+            return C("#e04030")
+        return C("#c8c8a0")
+    return Look(body, fins)
 
 
 # M29 part b: puffer, barb and loach looks
@@ -1590,6 +1843,19 @@ SPECIES = [
     ("dwarf_chain_loach", "loach", ["wild"], False),
     ("reticulated_loach", "loach", ["wild"], False),
     ("garra_rufa", "garra", ["wild"], False),
+    # M29 part c: danios, rainbowfish, gouramis, tetras, livebearers
+    ("zebra_danio", "rasbora", ["wild", "leopard", "golden"], False),
+    ("celestial_pearl_danio", "rasbora", ["wild"], True),
+    ("forktail_rainbow", "rainbow", ["wild"], True),
+    ("neon_dwarf_rainbow", "rainbow", ["wild"], True),
+    ("honey_gourami", "gourami", ["wild", "gold", "red"], True),
+    ("chocolate_gourami", "gourami", ["wild"], False),
+    ("pearl_gourami", "gourami", ["wild"], True),
+    ("emperor_tetra", "tetra", ["wild"], True),
+    ("rummy_nose_tetra", "tetra", ["wild"], False),
+    ("black_phantom_tetra", "tetra", ["wild"], True),
+    ("black_molly", "platy", ["wild", "dalmatian", "gold"], True),
+    ("swordtail", "swordtail", ["wild", "red", "red_wagtail"], True),
 ]
 
 

@@ -2,8 +2,8 @@
 navigation:
   title: Dwarf Gourami
   icon: bettacraft:dwarf_gourami_bucket
-  parent: tankmates.md
-  position: 90
+  parent: tankmates/gouramis.md
+  position: 10
 item_ids:
   - bettacraft:dwarf_gourami_bucket
   - bettacraft:dwarf_gourami_spawn_egg
@@ -33,7 +33,7 @@ Blue and red striped males with long feelers; a labyrinth fish like the betta - 
 | Stocking | counts as 1 fish |
 | Breeding | Builds a foam nest, 20–50 young |
 | Betta tank | no |
-| Special | territorial, chased by male bettas, 3 colour varieties |
+| Special | breathes air (labyrinth fish), territorial, chased by male bettas, 3 colour varieties |
 
 ## Varieties
 
@@ -49,9 +49,9 @@ Like a betta: at 26–29 °C the male builds a foam nest at the surface (floatin
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.3–1.6 % per swing (about 1 in 64–76 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in swamps: 1–1.2 % per swing (about 1 in 85–100 swings).
 * **Wild** in swamps, in groups of 1–1 (spawn weight 5) (config `features.wildFish`).
-* **Wandering trader** (usual offers): 2 for 4 emeralds; one of 25 in this offer.
+* **Wandering trader** (usual offers): 2 for 4 emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Builds a foam nest.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

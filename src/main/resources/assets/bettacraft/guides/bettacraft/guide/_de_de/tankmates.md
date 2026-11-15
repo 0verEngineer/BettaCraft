@@ -9,7 +9,7 @@ navigation:
 
 Beliebte Aquarienfische können ein Becken mit den Bettas teilen (oder ohne sie leben): **Salmler**,
 **Bärblinge**, **Panzerwelse**, **Harnischwelse**, **Otocinclus**, **Schmerlen**, die **Lebendgebärenden** Guppy,
-Endler und Platy, der **Zwergfadenfisch**, die **Buntbarsche** (Schmetterlingsbuntbarsche, Apistogramma, Skalar, Diskus), die **Barben** und die **Kugelfische**. Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
+Endler, Platy, Molly und Schwertträger, die **Guramis**, die **Regenbogenfische**, die **Buntbarsche** (Schmetterlingsbuntbarsche, Apistogramma, Skalar, Diskus), die **Barben** und die **Kugelfische**. Sie sind echte Tiere wie die Bettas, schwimmen in der Wasserzone ihrer Art,
 schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede Art vermehrt sich so wie in der Natur.
 
 ![Ein Gesellschaftsbecken mit Beifischen](images/tm_community.png)
@@ -23,7 +23,7 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 * Jede Art hat ihren **Temperaturbereich**; das klassische Betta-Becken (26-28 °C) passt für Roten Neon, Feuersalmler,
   Keilfleckbärbling, Moskitobärbling, Sterbai-Panzerwels, Dornauge und die L-Welse, nicht für Neonsalmler,
   Panda-Panzerwels oder Platy.
-* **Betta-Männchen jagen Guppy- und Zwergfadenfisch-Männchen**. Jeder Erwachsene frisst Jungfische und Eier, die er
+* **Betta-Männchen jagen Guppy-, Zwergfadenfisch- und Mosaikfadenfisch-Männchen**. Jeder Erwachsene frisst Jungfische und Eier, die er
   erreicht.
 * Das [Tank-Menü](aquarium/menu.md) zeigt jeden Fisch mit Schwarm, Temperatur und Zuchtstand, der Tab Zucht die Gelege
   jeder Art; Jade, The One Probe und WTHIT listen die Beifische.
@@ -70,6 +70,18 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 | <ItemImage id="bettacraft:dwarf_chain_loach_bucket" /> [Zwergschmerle](tankmates/dwarf_chain_loach.md) | 24–29 | 6 | ja | vermehrt sich nicht im Aquarium |
 | <ItemImage id="bettacraft:reticulated_loach_bucket" /> [Netzschmerle](tankmates/reticulated_loach.md) | 24–30 | 5 | ja | vermehrt sich nicht im Aquarium |
 | <ItemImage id="bettacraft:garra_rufa_bucket" /> [Saugschmerle](tankmates/garra_rufa.md) | 18–32 | 5 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:zebra_danio_bucket" /> [Zebrabärbling](tankmates/zebra_danio.md) | 18–27 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:celestial_pearl_danio_bucket" /> [Perlhuhnbärbling](tankmates/celestial_pearl_danio.md) | 20–26 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:forktail_rainbow_bucket" /> [Gabelschwanz-Regenbogenfisch](tankmates/forktail_rainbow.md) | 23–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:neon_dwarf_rainbow_bucket" /> [Neon-Zwergregenbogenfisch](tankmates/neon_dwarf_rainbow.md) | 23–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:honey_gourami_bucket" /> [Honigfadenfisch](tankmates/honey_gourami.md) | 22–28 | – | ja | baut ein Schaumnest |
+| <ItemImage id="bettacraft:chocolate_gourami_bucket" /> [Schokoladengurami](tankmates/chocolate_gourami.md) | 25–30 | 4 | ja | maulbrütend |
+| <ItemImage id="bettacraft:pearl_gourami_bucket" /> [Mosaikfadenfisch](tankmates/pearl_gourami.md) | 24–30 | – | nein | baut ein Schaumnest |
+| <ItemImage id="bettacraft:emperor_tetra_bucket" /> [Kaisersalmler](tankmates/emperor_tetra.md) | 23–27 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:rummy_nose_tetra_bucket" /> [Rotkopfsalmler](tankmates/rummy_nose_tetra.md) | 24–29 | 8 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:black_phantom_tetra_bucket" /> [Schwarzer Phantomsalmler](tankmates/black_phantom_tetra.md) | 22–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:black_molly_bucket" /> [Black Molly](tankmates/black_molly.md) | 22–30 | 3 | ja | lebendgebärend |
+| <ItemImage id="bettacraft:swordtail_bucket" /> [Schwertträger](tankmates/swordtail.md) | 22–28 | 3 | ja | lebendgebärend |
 
 ## In diesem Kapitel
 

@@ -38,7 +38,7 @@ class TankmateDataTest {
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(43, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches
+        assertEquals(55, TankmateSpecies.values().length); // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c)
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));
@@ -129,6 +129,30 @@ class TankmateDataTest {
         assertTrue(Clutch.eggDays(TankmateSpecies.NEON_TETRA) < Clutch.eggDays(TankmateSpecies.PANDA_CORY));
         assertTrue(Clutch.larvaDays(TankmateSpecies.BRISTLENOSE_PLECO) > Clutch.larvaDays(TankmateSpecies.NEON_TETRA));
         assertEquals(0, Clutch.eggDays(TankmateSpecies.CLOWN_LOACH));
+    }
+
+    @Test
+    void communityFishAndGouramis() {
+        // M29 part c: the new gouramis are labyrinth fish; only the territorial ones fight, the chocolate gourami broods in her mouth
+        for (TankmateSpecies s : java.util.List.of(TankmateSpecies.HONEY_GOURAMI, TankmateSpecies.CHOCOLATE_GOURAMI, TankmateSpecies.PEARL_GOURAMI)) {
+            assertTrue(s.labyrinth() && s.group() == TankmateSpecies.Group.GOURAMI && s.longFins(false), s.id());
+            assertEquals("features.gouramis", s.featureKey());
+        }
+        assertTrue(TankmateSpecies.PEARL_GOURAMI.territorial() && !TankmateSpecies.HONEY_GOURAMI.territorial());
+        assertTrue(TankmateSpecies.CHOCOLATE_GOURAMI.mouthbrooder() && !TankmateSpecies.PLATY.mouthbrooder());
+        assertTrue(!org.overengineer.bettacraft.chem.ChemTolerance.tankmate(TankmateSpecies.CHOCOLATE_GOURAMI).contains(7.5, 300), "soft water only");
+        for (TankmateSpecies s : java.util.List.of(TankmateSpecies.ZEBRA_DANIO, TankmateSpecies.CELESTIAL_PEARL_DANIO, TankmateSpecies.FORKTAIL_RAINBOW,
+                TankmateSpecies.NEON_DWARF_RAINBOW, TankmateSpecies.EMPEROR_TETRA, TankmateSpecies.RUMMY_NOSE_TETRA, TankmateSpecies.BLACK_PHANTOM_TETRA,
+                TankmateSpecies.BLACK_MOLLY, TankmateSpecies.SWORDTAIL)) {
+            assertEquals("features.communityFish", s.featureKey(), s.id());
+            assertTrue(!s.waters().isEmpty() && s.trade() != TankmateSpecies.Trade.NONE, s.id());
+        }
+        // the livebearers keep the simple variety genetics; the molly also lives in brackish water and mangroves
+        assertTrue(!TankmateGenes.livebearer(TankmateSpecies.BLACK_MOLLY) && !TankmateGenes.livebearer(TankmateSpecies.SWORDTAIL));
+        assertEquals(TankmateSpecies.Breeding.LIVEBEARER, TankmateSpecies.SWORDTAIL.breeding());
+        assertTrue(TankmateSpecies.BLACK_MOLLY.salinity().contains(0) && TankmateSpecies.BLACK_MOLLY.salinity().contains(15));
+        assertTrue(TankmateSpecies.BLACK_MOLLY.nativeWeight(TankmateSpecies.Water.MANGROVE) > 0);
+        assertTrue(TankmateSpecies.ZEBRA_DANIO.tolerates(18), "zebra danios live unheated");
     }
 
     @Test

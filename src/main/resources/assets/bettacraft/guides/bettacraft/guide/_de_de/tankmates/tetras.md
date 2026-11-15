@@ -19,3 +19,6 @@ Kleine, friedliche Schwarmfische aus den Flüssen und Schwarzwasserbächen Süda
 | <ItemImage id="bettacraft:green_neon_tetra_bucket" /> [Grüner Neon](green_neon_tetra.md) | 24–30 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 | <ItemImage id="bettacraft:ember_tetra_bucket" /> [Feuersalmler](ember_tetra.md) | 22–29 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
 | <ItemImage id="bettacraft:glowlight_tetra_bucket" /> [Glühlichtsalmler](glowlight_tetra.md) | 23–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:emperor_tetra_bucket" /> [Kaisersalmler](emperor_tetra.md) | 23–27 | 6 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:rummy_nose_tetra_bucket" /> [Rotkopfsalmler](rummy_nose_tetra.md) | 24–29 | 8 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:black_phantom_tetra_bucket" /> [Schwarzer Phantomsalmler](black_phantom_tetra.md) | 22–28 | 6 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |

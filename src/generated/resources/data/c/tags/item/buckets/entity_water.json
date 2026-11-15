@@ -43,6 +43,18 @@
     "bettacraft:cherry_barb_bucket",
     "bettacraft:dwarf_chain_loach_bucket",
     "bettacraft:reticulated_loach_bucket",
-    "bettacraft:garra_rufa_bucket"
+    "bettacraft:garra_rufa_bucket",
+    "bettacraft:zebra_danio_bucket",
+    "bettacraft:celestial_pearl_danio_bucket",
+    "bettacraft:forktail_rainbow_bucket",
+    "bettacraft:neon_dwarf_rainbow_bucket",
+    "bettacraft:honey_gourami_bucket",
+    "bettacraft:chocolate_gourami_bucket",
+    "bettacraft:pearl_gourami_bucket",
+    "bettacraft:emperor_tetra_bucket",
+    "bettacraft:rummy_nose_tetra_bucket",
+    "bettacraft:black_phantom_tetra_bucket",
+    "bettacraft:black_molly_bucket",
+    "bettacraft:swordtail_bucket"
   ]
 }

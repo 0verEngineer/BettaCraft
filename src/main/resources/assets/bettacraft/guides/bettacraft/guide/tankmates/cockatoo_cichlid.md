@@ -50,11 +50,11 @@ Every adult female claims a **small cave** of her own: the [coconut shell](../in
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.26–0.3 % per swing (about 1 in 329–390 swings).
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.27–0.32 % per swing (about 1 in 316–374 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.18–0.21 % per swing (about 1 in 475–563 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.22–0.26 % per swing (about 1 in 379–449 swings).
 * **Wild** in rivers, in groups of 1–1 (spawn weight 1) (config `features.cichlids`).
 * **Wild** in jungle water, in groups of 1–1 (spawn weight 3) (config `features.cichlids`).
-* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 25 in this offer.
+* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 36 in this offer.
 * **[Breeding](breeding.md)**: Cave brooder: the female spawns in a small cave and guards the brood.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

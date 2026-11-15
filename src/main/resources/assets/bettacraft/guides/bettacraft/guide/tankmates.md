@@ -8,8 +8,8 @@ navigation:
 # Tankmates
 
 Popular aquarium fish can share a tank with the bettas (or live without them): **tetras**, **rasboras**,
-**corydoras**, **plecos**, **otocinclus**, **loaches**, the **livebearers** guppy, endler and platy, the **dwarf
-gourami**, the **cichlids** (rams, Apistogramma, angelfish, discus), the **barbs** and the **puffers**. They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
+**corydoras**, **plecos**, **otocinclus**, **loaches**, the **livebearers** guppy, endler, platy, molly and swordtail, the **gouramis**,
+the **rainbowfish**, the **cichlids** (rams, Apistogramma, angelfish, discus), the **barbs** and the **puffers**. They are real animals like the bettas, swim in the zone of the water their species likes, shoal with their
 kind, rest on the bottom or stick to the glass, and every species breeds the way it does in nature.
 
 ![A community tank with tankmates](images/tm_community.png)
@@ -21,7 +21,7 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 * A shoaling fish alone or in a small group is **stressed** and gets sick after a while: keep at least the minimum.
 * Every species has its **temperature range**; the classic betta tank (26-28 °C) suits the cardinal, ember, harlequin,
   mosquito rasbora, sterbai cory, kuhli loach and the L-numbers, not the neon, the panda cory or the platy.
-* **Male bettas chase male guppies and dwarf gouramis**. Every adult eats the fry and the eggs it can reach.
+* **Male bettas chase male guppies and dwarf and pearl gouramis**. Every adult eats the fry and the eggs it can reach.
 * The [tank menu](aquarium/menu.md) shows each fish with its shoal, temperature and breeding state, the breeding tab
   the clutches of every species; Jade, The One Probe and WTHIT list the tankmates.
 
@@ -67,6 +67,18 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 | <ItemImage id="bettacraft:dwarf_chain_loach_bucket" /> [Dwarf Chain Loach](tankmates/dwarf_chain_loach.md) | 24–29 | 6 | yes | Does not breed in a tank |
 | <ItemImage id="bettacraft:reticulated_loach_bucket" /> [Reticulated Loach](tankmates/reticulated_loach.md) | 24–30 | 5 | yes | Does not breed in a tank |
 | <ItemImage id="bettacraft:garra_rufa_bucket" /> [Garra](tankmates/garra_rufa.md) | 18–32 | 5 | yes | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:zebra_danio_bucket" /> [Zebra Danio](tankmates/zebra_danio.md) | 18–27 | 6 | too cool | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:celestial_pearl_danio_bucket" /> [Celestial Pearl Danio](tankmates/celestial_pearl_danio.md) | 20–26 | 6 | too cool | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:forktail_rainbow_bucket" /> [Forktail Rainbowfish](tankmates/forktail_rainbow.md) | 23–28 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:neon_dwarf_rainbow_bucket" /> [Neon Dwarf Rainbowfish](tankmates/neon_dwarf_rainbow.md) | 23–28 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:honey_gourami_bucket" /> [Honey Gourami](tankmates/honey_gourami.md) | 22–28 | – | yes | Builds a foam nest |
+| <ItemImage id="bettacraft:chocolate_gourami_bucket" /> [Chocolate Gourami](tankmates/chocolate_gourami.md) | 25–30 | 4 | yes | Mouthbrooder |
+| <ItemImage id="bettacraft:pearl_gourami_bucket" /> [Pearl Gourami](tankmates/pearl_gourami.md) | 24–30 | – | no | Builds a foam nest |
+| <ItemImage id="bettacraft:emperor_tetra_bucket" /> [Emperor Tetra](tankmates/emperor_tetra.md) | 23–27 | 6 | too cool | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:rummy_nose_tetra_bucket" /> [Rummy-Nose Tetra](tankmates/rummy_nose_tetra.md) | 24–29 | 8 | yes | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:black_phantom_tetra_bucket" /> [Black Phantom Tetra](tankmates/black_phantom_tetra.md) | 22–28 | 6 | yes | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:black_molly_bucket" /> [Black Molly](tankmates/black_molly.md) | 22–30 | 3 | yes | Bears live young |
+| <ItemImage id="bettacraft:swordtail_bucket" /> [Swordtail](tankmates/swordtail.md) | 22–28 | 3 | yes | Bears live young |
 
 ## In this chapter
 

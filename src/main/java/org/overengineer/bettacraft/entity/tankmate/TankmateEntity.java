@@ -113,7 +113,8 @@ public class TankmateEntity extends AbstractFish {
     public static AttributeSupplier.Builder createAttributes(TankmateSpecies s) {
         double speed = switch (s.model()) {
             case TETRA, RASBORA -> 0.75;
-            case LIVEBEARER, PLATY -> 0.65;
+            case LIVEBEARER, PLATY, SWORDTAIL -> 0.65;
+            case RAINBOW -> 0.7; // M29 part c
             case CORY -> 0.5;
             case PLECO -> 0.35;
             case OTO -> 0.4;

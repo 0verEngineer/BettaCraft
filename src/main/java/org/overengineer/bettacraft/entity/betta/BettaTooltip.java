@@ -3,6 +3,7 @@ package org.overengineer.bettacraft.entity.betta;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.overengineer.bettacraft.genetics.BettaGenome;
 import org.overengineer.bettacraft.genetics.BettaLoci;
 import org.overengineer.bettacraft.genetics.BettaPatterns;
@@ -54,8 +55,32 @@ public final class BettaTooltip {
                         ? GeneticsData.get().name(BettaLoci.IRIDESCENCE, "none") : iridescence(g)));
     }
 
+    /**
+     * M29 part c: the species of the splendens complex, or the shares of a hybrid ("Hybrid: 50 % B. splendens, 50 % B.
+     * imbellis"); null for a pure Betta splendens (nothing to say).
+     */
+    @javax.annotation.Nullable
+    public static Component species(org.overengineer.bettacraft.genetics.BettaGenotype g) {
+        var a = g.ancestry();
+        if (a.pureSplendens()) return null;
+        var s = a.species();
+        if (s != null && a.share(s) == 64) return Component.translatable(s.translationKey()).withStyle(ChatFormatting.ITALIC);
+        MutableComponent shares = Component.empty();
+        boolean first = true;
+        for (var sp : org.overengineer.bettacraft.genetics.BettaSpecies.values()) {
+            int n = a.share(sp);
+            if (n == 0) continue;
+            if (!first) shares.append(", ");
+            first = false;
+            shares.append(Component.translatable("tooltip.bettacraft.betta.species_share", Math.round(n * 100 / 64.0), Component.translatable(sp.translationKey())));
+        }
+        return Component.translatable("tooltip.bettacraft.betta.hybrid", shares);
+    }
+
     public static void append(BettaData d, List<Component> tooltip) {
         tooltip.add(type(d.genome()).copy().withStyle(ChatFormatting.GOLD));
+        Component species = species(d.genotype());
+        if (species != null) tooltip.add(species.copy().withStyle(ChatFormatting.DARK_GREEN));
         for (Component c : lines(d)) tooltip.add(c.copy().withStyle(ChatFormatting.GRAY));
         if (!d.isAdult()) tooltip.add(Component.translatable(d.lifeStage().translationKey()).withStyle(ChatFormatting.DARK_AQUA));
         if (d.generation() > 0) {

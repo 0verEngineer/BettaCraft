@@ -50,11 +50,11 @@ Jedes erwachsene Weibchen besetzt eine eigene **kleine Höhle**: zuerst die [Kok
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,26–0,3 % pro Schwung (etwa 1 von 329–390 Schwüngen).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,27–0,32 % pro Schwung (etwa 1 von 316–374 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,18–0,21 % pro Schwung (etwa 1 von 475–563 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,22–0,26 % pro Schwung (etwa 1 von 379–449 Schwüngen).
 * **Wild** in Flüssen, in Gruppen von 1–1 (Spawn-Gewicht 1) (Config `features.cichlids`).
 * **Wild** in Dschungelgewässern, in Gruppen von 1–1 (Spawn-Gewicht 3) (Config `features.cichlids`).
-* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 25 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 36 in diesem Angebot.
 * **[Zucht](breeding.md)**: Höhlenbrüter: das Weibchen laicht in einer kleinen Höhle und bewacht die Brut.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

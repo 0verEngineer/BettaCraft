@@ -151,6 +151,11 @@ public final class Sources {
         out.add(src(Source.Kind.BLOCK_DROP, Target.item("artemia_cysts"), Where.SAND, def(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE), "#c:sands"));
         int weight = def(CommonConfig.SPAWN_WEIGHT), min = def(CommonConfig.SPAWN_MIN_GROUP), max = Math.max(min, def(CommonConfig.SPAWN_MAX_GROUP));
         out.add(new Source(Source.Kind.SPAWN, Target.BETTA, Where.SWAMP, weight, weight, min, max, 0, false, null, null));
+        // M29 part c: some of the wild bettas are Betta imbellis or Betta smaragdina (chanceMax: their share among the wild bettas)
+        out.add(new Source(Source.Kind.SPAWN, Target.betta(org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS), Where.SWAMP, weight,
+                org.overengineer.bettacraft.world.Wildlife.IMBELLIS_SHARE, min, max, 0, false, "features.wildBettas", null));
+        out.add(new Source(Source.Kind.SPAWN, Target.betta(org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA), Where.SWAMP, weight,
+                org.overengineer.bettacraft.world.Wildlife.SMARAGDINA_SHARE, min, max, 0, false, "features.wildBettas", null));
         wildlife(out);
         wildPlants(out);
     }

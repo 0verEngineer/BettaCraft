@@ -28,6 +28,12 @@ public final class ModCreativeTabs {
                 net.minecraft.util.RandomSource wildRandom = net.minecraft.util.RandomSource.create(7);
                 out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                         org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(wildRandom), true, 0)));
+                // M29 part c: the wild species of the splendens complex (a male each)
+                for (var sp : new org.overengineer.bettacraft.genetics.BettaSpecies[]{org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS,
+                        org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA}) {
+                    out.accept(org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
+                            org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomWild(sp, wildRandom), false, 0)));
+                }
                 // One tank per glass type of #c:glass_blocks (tags are bound when the tab is built).
                 boolean any = false;
                 for (Holder<Block> glass : BuiltInRegistries.BLOCK.getTagOrEmpty(ModTags.TANK_GLASS_BLOCKS)) {

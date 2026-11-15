@@ -157,7 +157,7 @@ public final class TankmateBreeding {
                 case GLASS_EGGS -> glassEggs(level, c, e.getKey(), e.getValue(), days, full);
                 case CAVE, ANEMONE -> cave(level, c, e.getKey(), e.getValue(), days, now, full); // M20: clownfish at their anemone
                 case SCATTER -> scatter(level, c, e.getKey(), e.getValue(), days, full);
-                case LIVEBEARER -> livebearer(level, c, e.getKey(), e.getValue(), by, days, full);
+                case LIVEBEARER, MOUTH -> livebearer(level, c, e.getKey(), e.getValue(), by, days, full); // M29 part c: mouthbrooders
                 case FOAM_NEST -> foam(level, c, e.getKey(), e.getValue(), days, now, full);
                 case POUCH -> pouch(level, c, e.getKey(), e.getValue(), days, full); // M21.8 seahorses
                 case OPEN -> open(level, c, e.getKey(), e.getValue(), days, now, full); // M29 cichlids
@@ -221,7 +221,10 @@ public final class TankmateBreeding {
         if (!chased) c.tankmateChaseLogged = false;
         // gourami males fight each other
         List<TankmateEntity> gouramis = new ArrayList<>();
-        for (TankmateEntity m : mates) if (m.species().group() == TankmateSpecies.Group.GOURAMI && m.isAdult() && !m.isFemale()) gouramis.add(m);
+        // M29 part c: only the territorial gouramis (dwarf, pearl); honey and chocolate gouramis are peaceful
+        for (TankmateEntity m : mates) {
+            if (m.species().group() == TankmateSpecies.Group.GOURAMI && m.species().territorial() && m.isAdult() && !m.isFemale()) gouramis.add(m);
+        }
         if (gouramis.size() >= 2) {
             for (TankmateEntity g : gouramis) {
                 TankmateEntity rival = nearest(g, gouramis);
@@ -882,7 +885,8 @@ public final class TankmateBreeding {
             if (r.nextDouble() >= chance(0.8 * speed(), days)) continue;
             TankmateEntity m = males.get(r.nextInt(males.size()));
             f.setGravid(0, m.genes());
-            if (m.species() == s) TankCare.log(level, c, "log.bettacraft.tm.gravid", TankCare.nameArg(f));
+            if (s.mouthbrooder()) TankCare.log(level, c, "log.bettacraft.tm.mouth_eggs", TankCare.nameArg(f), TankCare.nameArg(m));
+            else if (m.species() == s) TankCare.log(level, c, "log.bettacraft.tm.gravid", TankCare.nameArg(f));
             else TankCare.log(level, c, "log.bettacraft.tm.gravid_hybrid", TankCare.nameArg(f), TankCare.nameArg(m));
         }
     }
@@ -1163,7 +1167,7 @@ public final class TankmateBreeding {
             f.setGravid(-1, null);
             f.breeding().setCooldown(0.5);
             int boxed = 0;
-            if (t.breedingBox() && !s.seahorse()) {
+            if (t.breedingBox() && !s.seahorse() && !s.mouthbrooder()) {
                 int inBox = boxFry(t);
                 boxed = Math.min(n, Math.max(0, boxCapacity() - inBox));
                 if (boxed > 0) {
@@ -1189,6 +1193,8 @@ public final class TankmateBreeding {
                 // M21.8: the male pumps the fry out of his pouch
                 level.sendParticles(ParticleTypes.BUBBLE, f.getX(), f.getY() + f.getBbHeight() * 0.4, f.getZ(), 8, 0.05, 0.05, 0.05, 0.01);
                 TankCare.log(level, c, "log.bettacraft.tm.pouch_born", TankCare.nameArg(f), String.valueOf(made));
+            } else if (s.mouthbrooder()) {
+                TankCare.log(level, c, "log.bettacraft.tm.mouth_born", TankCare.nameArg(f), String.valueOf(made)); // M29 part c
             } else {
                 TankCare.log(level, c, boxed > 0 ? "log.bettacraft.tm.born_box" : "log.bettacraft.tm.born", TankCare.nameArg(f),
                         String.valueOf(made + boxed), String.valueOf(boxed));

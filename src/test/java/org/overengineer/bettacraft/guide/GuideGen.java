@@ -107,7 +107,7 @@ public final class GuideGen {
         int c = target.indexOf(':');
         String kind = c < 0 ? target : target.substring(0, c), id = c < 0 ? "" : target.substring(c + 1);
         return switch (kind) {
-            case "betta" -> "bettas.md";
+            case "betta" -> id.isEmpty() ? "bettas.md" : "bettas/betta_" + id + ".md"; // M29 part c: the wild species
             case "frog" -> "invertebrates/dwarf_clawed_frog.md";
             case "tankmate" -> {
                 TankmateSpecies s = TankmateSpecies.byId(id);
@@ -131,6 +131,7 @@ public final class GuideGen {
     public static Map<String, String> speciesTargets() {
         Map<String, String> out = new LinkedHashMap<>();
         out.put(Target.BETTA, "Betta");
+        for (var s : org.overengineer.bettacraft.genetics.BettaSpecies.values()) out.put(Target.betta(s), s.latin()); // M29 part c
         out.put(Target.FROG, "dwarf clawed frog");
         for (TankmateSpecies s : TankmateSpecies.values()) out.put(Target.tankmate(s), s.id());
         for (CritterSpecies s : CritterSpecies.values()) out.put(Target.critter(s), s.id());
@@ -149,10 +150,11 @@ public final class GuideGen {
             case PLECO, OTOCINCLUS -> "tankmates/plecos.md";
             case LOACH -> "tankmates/loaches.md";
             case LIVEBEARER -> "tankmates/livebearers.md";
-            case GOURAMI -> "tankmates.md";
+            case GOURAMI -> "tankmates/gouramis.md"; // M29 part c: four gouramis
             case CICHLID -> "tankmates/cichlids.md"; // M29
             case PUFFER -> "tankmates/puffers.md"; // M29 part b
             case BARB -> "tankmates/barbs.md";
+            case RAINBOW -> "tankmates/rainbowfish.md"; // M29 part c
             case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
             case SEAHORSE -> "saltwater/seahorses.md";
         };
@@ -223,7 +225,7 @@ public final class GuideGen {
         // overview tables
         tankmateTable(out, "tankmates.md", s -> !s.marine(), t("## All species", "## Alle Arten"));
         for (String g : List.of("tankmates/tetras.md", "tankmates/rasboras.md", "tankmates/corydoras.md", "tankmates/plecos.md", "tankmates/loaches.md",
-                "tankmates/livebearers.md", "tankmates/cichlids.md", "tankmates/puffers.md", "tankmates/barbs.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
+                "tankmates/livebearers.md", "tankmates/cichlids.md", "tankmates/puffers.md", "tankmates/barbs.md", "tankmates/rainbowfish.md", "tankmates/gouramis.md", "saltwater/reef_animals.md", "saltwater/seahorses.md")) {
             tankmateTable(out, g, s -> groupPage(s).equals(g), t("## Species", "## Arten"));
         }
         critterTable(out, "invertebrates.md", s -> !s.marine(), true, t("## All species", "## Alle Arten"));
@@ -279,6 +281,7 @@ public final class GuideGen {
         if (s.parentsFeed()) traits.add(t("feeds its young with skin secretion", "füttert die Jungen mit Hautschleim"));
         if (s.nocturnal()) traits.add(t("active at night", "nachtaktiv"));
         if (s.airGulper()) traits.add(t("gulps air at the surface", "holt Luft an der Oberfläche"));
+        if (s.labyrinth()) traits.add(t("breathes air (labyrinth fish)", "atmet Luft (Labyrinthfisch)")); // M29 part c
         if (s.territorial()) traits.add(t("territorial", "revierbildend"));
         if (s.bettaTarget()) traits.add(t("chased by male bettas", "wird von Betta-Männchen gejagt"));
         if (s.varieties().size() > 1) traits.add(t(s.varieties().size() + " colour varieties", s.varieties().size() + " Farbformen"));
@@ -457,7 +460,11 @@ public final class GuideGen {
                         + chance(s.chance(), s.chanceMax()) + t(" per try, into an empty fish bag", " pro Versuch, in einen leeren Fischbeutel"));
                 case BLOCK_DROP -> lines.add(bold(t("Breaking " + block(s.block()), block(s.block()) + " abbauen"))
                         + (s.where() == Where.SAND ? "" : " " + where(s.where())) + ": " + chance(s.chance(), s.chanceMax()) + t(" per block", " pro Block") + cond);
-                case SPAWN -> lines.add(bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ", in groups of " + s.min() + "–" + s.max() + " (spawn weight "
+                case SPAWN -> lines.add(s.target().startsWith("betta:")
+                        // M29 part c: a share of the wild bettas
+                        ? bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ": about " + Math.round(s.chanceMax() * 100) + " % of the wild bettas",
+                        " " + where(s.where()) + ": etwa " + Math.round(s.chanceMax() * 100) + " % der wilden Bettas") + cond
+                        : bold(t("Wild", "Wild")) + t(" " + where(s.where()) + ", in groups of " + s.min() + "–" + s.max() + " (spawn weight "
                         + (int) s.chance() + ")", " " + where(s.where()) + ", in Gruppen von " + s.min() + "–" + s.max() + " (Spawn-Gewicht " + (int) s.chance() + ")") + cond);
                 case TRADER_USUAL, TRADER_RARE -> {
                     String slot = s.kind() == Source.Kind.TRADER_USUAL ? t("usual offers", "übliche Angebote") : t("rare offers", "seltene Angebote");
@@ -679,7 +686,7 @@ public final class GuideGen {
         int c = target.indexOf(':');
         String kind = c < 0 ? target : target.substring(0, c), id = c < 0 ? "" : target.substring(c + 1);
         return switch (kind) {
-            case "betta" -> lang("entity.bettacraft.betta");
+            case "betta" -> id.isEmpty() ? lang("entity.bettacraft.betta") : lang("betta.bettacraft.species." + id);
             case "frog" -> lang("entity.bettacraft.dwarf_clawed_frog");
             case "tankmate" -> lang(TankmateSpecies.byId(id).translationKey());
             case "critter" -> lang(CritterSpecies.byId(id).translationKey());

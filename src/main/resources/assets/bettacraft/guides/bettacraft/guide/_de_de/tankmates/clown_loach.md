@@ -45,10 +45,10 @@ Vermehrt sich im Aquarium praktisch nie.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,39–0,47 % pro Schwung (etwa 1 von 215–254 Schwüngen), 1–4 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,16–0,19 % pro Schwung (etwa 1 von 526–624 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,3–0,35 % pro Schwung (etwa 1 von 282–334 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,13–0,16 % pro Schwung (etwa 1 von 631–748 Schwüngen), 1–4 auf einmal.
 * **Wild** in Sümpfen, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.wildFish`).
 * **Wild** in Dschungelgewässern, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.wildFish`).
-* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 11 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 12 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

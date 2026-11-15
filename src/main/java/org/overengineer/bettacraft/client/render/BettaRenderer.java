@@ -135,7 +135,8 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
 
     @Override
     protected void scale(BettaEntity fish, PoseStack pose, float partialTick) {
-        float s = BettaModelDefinitions.ADULT_RENDER_SCALE * fish.lifeStage().scale();
+        float s = BettaModelDefinitions.ADULT_RENDER_SCALE * fish.lifeStage().scale()
+                * org.overengineer.bettacraft.genetics.BettaSpecies.scaleOf(fish.genome().species()); // M29 part c: imbellis smaller
         pose.scale(s, s, s);
     }
 

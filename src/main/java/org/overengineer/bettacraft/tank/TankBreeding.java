@@ -395,6 +395,8 @@ public final class TankBreeding {
             m.pursue(rival, now + HOLD);
             m.flare(now + HOLD);
             double dmg = rival.getMaxHealth() / 6.0 * perDay * days * (0.5 + r.nextDouble());
+            // M29 part c: Betta imbellis males mostly just flare, smaragdina fight less hard than splendens
+            dmg *= (m.genotype().ancestry().aggression() + rival.genotype().ancestry().aggression()) / 2;
             m.addDamage(dmg, rival);
         }
         if (!controller.fightLogged) {

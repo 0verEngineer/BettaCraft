@@ -6,7 +6,8 @@ import org.overengineer.bettacraft.tank.plants.FloatingPlantType;
 import org.overengineer.bettacraft.tankmates.TankmateSpecies;
 
 /**
- * M22.2: keys for the things a {@link Source} gives (the handbook finds a page per key): {@code betta}, {@code frog},
+ * M22.2: keys for the things a {@link Source} gives (the handbook finds a page per key): {@code betta} (M29 part c: also
+ * {@code betta:imbellis}, {@code betta:smaragdina}), {@code frog},
  * {@code tankmate:<id>}, {@code critter:<id>}, {@code plant:<id>} (aquarium plants and corals), {@code floating:<id>}
  * and {@code item:<id>} for other Bettacraft items.
  */
@@ -15,6 +16,11 @@ public final class Target {
 
     public static final String BETTA = "betta";
     public static final String FROG = "frog";
+
+    /** M29 part c: a wild species of the splendens complex ({@code betta:imbellis}); Betta splendens is {@link #BETTA}. */
+    public static String betta(org.overengineer.bettacraft.genetics.BettaSpecies s) {
+        return s == org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS ? BETTA : "betta:" + s.key();
+    }
 
     public static String tankmate(TankmateSpecies s) {
         return "tankmate:" + s.id();

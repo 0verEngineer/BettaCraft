@@ -49,7 +49,19 @@ public final class Wildlife {
 
     /** Genes of a wild betta: wild colours with hidden carriers, rarely a domestic-looking fish. */
     public static BettaGenotype betta(RandomSource r) {
-        return r.nextDouble() < beautifulChance() ? BettaGenotype.randomDomestic(r) : BettaGenotype.randomWild(r);
+        if (r.nextDouble() < beautifulChance()) return BettaGenotype.randomDomestic(r);
+        return BettaGenotype.randomWild(wildBettaSpecies(r.nextDouble()), r);
+    }
+
+    /** M29 part c: shares of the wild species among the wild bettas (features.wildBettas): Betta imbellis, Betta smaragdina. */
+    public static final double IMBELLIS_SHARE = 0.15, SMARAGDINA_SHARE = 0.1;
+
+    /** M29 part c: the species of a wild betta for a roll in 0..1. */
+    public static org.overengineer.bettacraft.genetics.BettaSpecies wildBettaSpecies(double roll) {
+        if (!CommonConfig.wildBettas()) return org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS;
+        if (roll < IMBELLIS_SHARE) return org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS;
+        if (roll < IMBELLIS_SHARE + SMARAGDINA_SHARE) return org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA;
+        return org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS;
     }
 
     /**

@@ -46,11 +46,11 @@ Bei 25–28 °C findet sich ein Paar: Das Männchen und das nächste freie Weibc
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,51–0,61 % pro Schwung (etwa 1 von 165–195 Schwüngen).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,11–0,13 % pro Schwung (etwa 1 von 789–935 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,36–0,42 % pro Schwung (etwa 1 von 238–281 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,09–0,11 % pro Schwung (etwa 1 von 947–1121 Schwüngen).
 * **Wild** in Flüssen, in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.cichlids`).
 * **Wild** in Dschungelgewässern, in Gruppen von 1–1 (Spawn-Gewicht 1) (Config `features.cichlids`).
-* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 11 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 12 in diesem Angebot.
 * **[Zucht](breeding.md)**: Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

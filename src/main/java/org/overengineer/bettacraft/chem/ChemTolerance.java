@@ -125,6 +125,12 @@ public final class ChemTolerance {
             case CHERRY_BARB -> Range.fresh(6.0, 8.0, 0, 500);
             case DWARF_CHAIN_LOACH, RETICULATED_LOACH -> Range.fresh(6.0, 8.0, 0, 550);
             case GARRA_RUFA -> Range.fresh(6.5, 8.6, 50, 800);
+            // M29 part c (the chocolate gourami of the peat swamps: very soft, acid water only)
+            case RUMMY_NOSE_TETRA, BLACK_PHANTOM_TETRA, EMPEROR_TETRA, CELESTIAL_PEARL_DANIO -> SOFT;
+            case FORKTAIL_RAINBOW, NEON_DWARF_RAINBOW -> Range.fresh(6.5, 8.5, 50, 700);
+            case HONEY_GOURAMI, PEARL_GOURAMI -> GOURAMI;
+            case CHOCOLATE_GOURAMI -> Range.fresh(4.5, 7.0, 0, 200);
+            case BLACK_MOLLY, SWORDTAIL -> LIVEBEARER;
             default -> Range.TOLERANT;
         };
     }

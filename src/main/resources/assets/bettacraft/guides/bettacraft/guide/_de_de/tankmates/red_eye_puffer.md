@@ -48,11 +48,11 @@ Bei 25–28 °C streut ein Paar 5–12 Eier in feinfiedrige Pflanzen, Javamoos o
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,39–0,47 % pro Schwung (etwa 1 von 215–254 Schwüngen).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,11–0,13 % pro Schwung (etwa 1 von 789–935 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,3–0,35 % pro Schwung (etwa 1 von 282–334 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,09–0,11 % pro Schwung (etwa 1 von 947–1121 Schwüngen).
 * **Wild** in Sümpfen, in Gruppen von 1–1 (Spawn-Gewicht 2) (Config `features.puffers`).
 * **Wild** in Dschungelgewässern, in Gruppen von 1–1 (Spawn-Gewicht 1) (Config `features.puffers`).
-* **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde; eins von 11 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde; eins von 12 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).
