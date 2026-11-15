@@ -579,6 +579,95 @@ public final class TankData {
         for (var c : o.herpClutches) if (contains(BlockPos.containing(c.x, c.y + 0.01, c.z))) herpClutches.add(c.copy());
     }
 
+    /**
+     * M32 part b: everything with a world position goes along with a rigid move of the tank (Create contraption, Sable
+     * sub-level): the blocks, the nest, floating plants, small animals and their clutches and moults, algae, the clutches
+     * of the tankmates, turtle eggs ({@code interior} maps their egg blocks when the interior was turned too), the front.
+     * A tank that lies on its side afterwards (not {@link TankMoveMap#upright()}) keeps its small animals on the floor
+     * of the new bottom; floating plants that would be outside the shape drift to the anchor's column. Works on the
+     * server data and on a client view.
+     */
+    public void relocate(TankMoveMap map, @Nullable java.util.function.LongUnaryOperator interior) {
+        boolean upright = map.upright();
+        LongSet moved = new LongOpenHashSet();
+        for (long l : members) moved.add(map.block(l));
+        members.clear();
+        members.addAll(moved);
+        recomputeBounds();
+        BlockPos a = anchor();
+        if (nest != null) {
+            if (upright) nest.pos = map.point(nest.pos);
+            else nest = null; // the bubbles do not survive the tank lying on its side (a nest with eggs is never moved)
+        }
+        for (var p : plants) {
+            net.minecraft.world.phys.Vec3 v = map.point(p.x, minY + 0.5, p.z), pv = map.point(p.prevX, minY + 0.5, p.prevZ);
+            p.x = v.x;
+            p.z = v.z;
+            p.prevX = pv.x;
+            p.prevZ = pv.z;
+            if (!containsColumn(p.x, p.z)) {
+                p.x = p.prevX = a.getX() + 0.5;
+                p.z = p.prevZ = a.getZ() + 0.5;
+            }
+        }
+        for (var c : critters) {
+            net.minecraft.world.phys.Vec3 v = map.point(c.x, c.y, c.z), t = map.point(c.tx, c.ty, c.tz), pp = map.point(c.px, c.py, c.pz);
+            if (upright && contains(BlockPos.containing(v.x, v.y + 0.01, v.z))) {
+                c.x = v.x; c.y = v.y; c.z = v.z;
+                c.tx = t.x; c.ty = t.y; c.tz = t.z;
+                c.px = pp.x; c.py = pp.y; c.pz = pp.z;
+                c.yaw = map.yaw(c.yaw);
+                c.pyaw = map.yaw(c.pyaw);
+                c.face = turnFace(map, c.face);
+            } else {
+                c.x = c.tx = c.px = a.getX() + 0.5;
+                c.y = c.ty = c.py = a.getY() + 0.05;
+                c.z = c.tz = c.pz = a.getZ() + 0.5;
+                c.face = org.overengineer.bettacraft.critters.Critter.FLOOR;
+            }
+        }
+        for (var o : critterObjects) {
+            net.minecraft.world.phys.Vec3 v = map.point(o.x, o.y, o.z);
+            if (upright && contains(BlockPos.containing(v.x, v.y, v.z))) {
+                o.x = v.x; o.y = v.y; o.z = v.z;
+                o.yaw = map.yaw(o.yaw);
+                o.face = turnFace(map, o.face);
+            } else {
+                o.x = a.getX() + 0.5;
+                o.y = a.getY() + 0.05;
+                o.z = a.getZ() + 0.5;
+                o.face = org.overengineer.bettacraft.critters.Critter.FLOOR;
+            }
+        }
+        it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<float[]> turned = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+        for (var e : algae.long2ObjectEntrySet()) {
+            float[] v = e.getValue(), n = v.clone();
+            if (upright) for (int d = 0; d < 4; d++) n[map.direction(Direction.from2DDataValue(d)).get2DDataValue()] = v[d];
+            turned.put(map.block(e.getLongKey()), n);
+        }
+        algae.clear();
+        algae.putAll(turned);
+        for (var c : clutches) {
+            net.minecraft.world.phys.Vec3 v = map.point(c.x, c.y, c.z);
+            c.x = v.x; c.y = v.y; c.z = v.z;
+            if (c.face >= 0) c.face = upright ? map.direction(Direction.from2DDataValue(c.face)).get2DDataValue() : -1;
+        }
+        for (var c : herpClutches) {
+            net.minecraft.world.phys.Vec3 v = map.point(c.x, c.y, c.z);
+            c.x = v.x; c.y = v.y; c.z = v.z;
+            if (interior != null) c.interior = interior.applyAsLong(c.interior);
+        }
+        if (upright) front = map.direction(front);
+        layerCounts = null;
+        surfaceCacheMb = Long.MIN_VALUE;
+    }
+
+    /** A glass face of a small animal (1 + 2D data value) turned with the tank; the floor and swimming stay. */
+    private static byte turnFace(TankMoveMap map, byte face) {
+        if (face < org.overengineer.bettacraft.critters.Critter.GLASS_SOUTH || face > org.overengineer.bettacraft.critters.Critter.GLASS_EAST) return face;
+        return (byte) (1 + map.direction(Direction.from2DDataValue(face - 1)).get2DDataValue());
+    }
+
     public float waterQuality() { return waterQuality; }
     public void setWaterQuality(float q) { this.waterQuality = WaterQuality.clamp(q); }
     public double evaporationCarry() { return evaporationCarry; }

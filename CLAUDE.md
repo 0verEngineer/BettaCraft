@@ -78,7 +78,9 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   (`run/power-mods`), `-Paquatic` (`run/aquatic-mods`), `-Pbiomes` (`run/biome-mods`: biome mods such as Regions Unexplored and Oh The
   Biomes We've Gone; servers then use the world `run/world_biomes`; the biome tags `#bettacraft:*_waters` map their
   biomes to the wild animals, see `world/` and the GameTest `biomeModBiomesMapToTheirWaters`), `-Pstorage`
-  (`run/storage-mods`: Applied Energistics 2 and Refined Storage; `StorageGameTests` move items with their buses). Leave runtime mods out
+  (`run/storage-mods`: Applied Energistics 2 and Refined Storage; `StorageGameTests` move items with their buses), `-Pcreate`
+  (`run/create-mods`: Create 6, Create Aeronautics bundled and Sable from ATM10AA; `CreateGameTests` move tanks on a bearing and a
+  Sable sub-level; the travelling tanks are `tank/TankMoves`, `compat/create/`). Leave runtime mods out
   with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoCompat`; add `-Ptop`, `-Pwthit`. `-Pbackground` makes a plain
   `runClient` a background window.
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the

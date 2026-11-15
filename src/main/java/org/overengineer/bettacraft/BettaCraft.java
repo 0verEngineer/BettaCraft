@@ -52,6 +52,11 @@ public final class BettaCraft {
         // M31: the terrarium animals and their needs (the care hook)
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(
                 org.overengineer.bettacraft.terrarium.TerrariumAnimals::registerOurs));
+        // M32 part b: tanks on Create contraptions (reflection, only with Create) and Sable sub-levels (Create Aeronautics)
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(() -> {
+            org.overengineer.bettacraft.compat.create.CreateCompat.register();
+            org.overengineer.bettacraft.compat.create.SableCompat.register();
+        }));
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
                 org.overengineer.bettacraft.equipment.CabinetStones.clear());

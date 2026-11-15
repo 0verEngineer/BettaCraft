@@ -177,6 +177,10 @@ public final class TankInhabitants {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
             return ItemInteractionResult.CONSUME;
         }
+        if (TankMoves.travelling(level, pos)) { // M32 part b: on an airship the animals travel packed
+            player.displayClientMessage(Component.translatable("message.bettacraft.travel.travelling"), true);
+            return ItemInteractionResult.CONSUME;
+        }
         Component error = insert(server, controller, stack, type, player, carriedWater(stack));
         if (error != null) {
             player.displayClientMessage(error, true);

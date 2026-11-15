@@ -43,8 +43,16 @@ public final class TankCare {
     private TankCare() {}
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TankBlockEntity be) {
+        // M32 part b: a tank block put down by a mover (Create contraption, Sable) first takes its tank along
+        if (be.movedFrom != null && level instanceof ServerLevel s) {
+            TankMoves.tick(s, pos, be);
+            return;
+        }
         if (be.orphanCheck > 0 && --be.orphanCheck == 0 && level instanceof ServerLevel s) TankMultiblock.repairOrphan(s, pos, be);
         if (!(level instanceof ServerLevel server) || !be.isController()) return;
+        if (!be.stowed.isEmpty()) TankMoves.unpackLeftovers(server, pos, be);
+        // M32 part b: on a moving structure (Sable sub-level) the care is paused and the animals travel packed
+        if ((level.getGameTime() + pos.asLong()) % INTERVAL == 0 && TankMoves.travelling(level, pos)) return;
         // the air gap below the glass (tank.waterHeadroom) is in the fill states: recompute them once after loading and
         // whenever the config changes, not only on the next change of the water amount
         int headroom = TankData.headroom();

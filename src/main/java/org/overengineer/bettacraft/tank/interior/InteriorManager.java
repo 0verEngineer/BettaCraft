@@ -66,6 +66,10 @@ public final class InteriorManager {
             player.displayClientMessage(Component.translatable("message.bettacraft.interior.nested"), true);
             return;
         }
+        if (org.overengineer.bettacraft.tank.TankMoves.travelling(player.level(), clicked)) { // M32 part b
+            player.displayClientMessage(Component.translatable("message.bettacraft.travel.travelling"), true);
+            return;
+        }
         TankBlockEntity controller = TankMultiblock.getController(player.level(), clicked);
         ServerLevel interior = interiorLevel(player.server);
         if (controller == null || interior == null) {
@@ -391,6 +395,83 @@ public final class InteriorManager {
         InteriorWorldOps.resendChunks(interior, touched);
         ejectPlayers(interior, src);
         destroyRegion(server, src);
+    }
+
+    /**
+     * M32 part b: a tank came back turned from a move (Create contraption, Sable sub-level): its interior is copied block
+     * by block into a new region of the turned shape, the blocks turned with it (about the vertical axis), the floor
+     * substrate and the aquarium plants too. A tank lying on its side afterwards keeps its blocks (unturned) but its old
+     * floor comes out as items (the new bottom gets a plain floor). {@code old} has the coordinates before the move,
+     * {@code moved} after {@link TankData#relocate}; the turtle eggs of {@code moved} get their new egg blocks.
+     */
+    public static void onTankTurned(ServerLevel tankLevel, TankData old, TankData moved, org.overengineer.bettacraft.tank.TankMoveMap map) {
+        MinecraftServer server = tankLevel.getServer();
+        InteriorRegions regions = InteriorRegions.get(server);
+        InteriorRegion src = regions.get(old.regionId());
+        moved.setRegionId(-1);
+        if (src == null) return;
+        if (!src.built()) {
+            destroyRegion(server, src);
+            return;
+        }
+        ServerLevel interior = interiorLevel(server);
+        if (interior == null) return;
+        int s = old.scale();
+        boolean upright = map.upright();
+        net.minecraft.world.level.block.Rotation rot = switch (upright ? map.quarterTurns() : 0) {
+            case 1 -> net.minecraft.world.level.block.Rotation.CLOCKWISE_90;
+            case 2 -> net.minecraft.world.level.block.Rotation.CLOCKWISE_180;
+            case 3 -> net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90;
+            default -> net.minecraft.world.level.block.Rotation.NONE;
+        };
+        InteriorRegion target = allocate(tankLevel, moved);
+        buildShell(server, target);
+        LongSet touched = new LongOpenHashSet();
+        BlockPos a = src.toWorld(0, 0, 0);
+        List<InteriorWorldOps.Captured> blocks = InteriorWorldOps.capture(interior, a.getX(), a.getY(), a.getZ(),
+                a.getX() + src.sizeX() - 1, a.getY() + src.sizeY() - 1, a.getZ() + src.sizeZ() - 1);
+        List<InteriorWorldOps.Captured> turned = new ArrayList<>(blocks.size());
+        for (InteriorWorldOps.Captured c : blocks) {
+            int[] q = turnLocal(old, moved, s, map, c.dx(), c.dy(), c.dz());
+            if (q[0] < 0 || q[1] < 0 || q[2] < 0 || q[0] >= target.sizeX() || q[1] >= target.sizeY() || q[2] >= target.sizeZ()) continue;
+            turned.add(new InteriorWorldOps.Captured(q[0], q[1], q[2], c.state().rotate(rot), c.blockEntity()));
+        }
+        InteriorWorldOps.paste(interior, target.toWorld(0, 0, 0), turned, touched);
+        List<ItemStack> lostFloor = new ArrayList<>();
+        if (upright) {
+            for (int x = 0; x < src.sizeX(); x++)
+                for (int z = 0; z < src.sizeZ(); z++) {
+                    InteriorFloorBlockEntity be = Substrate.active(interior, new BlockPos(src.originX() + x, InteriorRegion.FLOOR_Y, src.originZ() + z));
+                    if (be == null) continue;
+                    int[] q = turnLocal(old, moved, s, map, x, 0, z);
+                    BlockPos to = new BlockPos(target.originX() + q[0], InteriorRegion.FLOOR_Y, target.originZ() + q[2]);
+                    if (target.containsShell(to)) Substrate.set(interior, to, be.substrate(), be.paid());
+                }
+        } else {
+            collectFloor(interior, src, lostFloor);
+        }
+        for (var pl : src.plants().all()) {
+            int[] q = turnLocal(old, moved, s, map, pl.x, pl.y, pl.z);
+            target.plants().adopt(pl, q[0], q[1], q[2]);
+        }
+        for (var c : moved.herpClutches()) {
+            BlockPos e = BlockPos.of(c.interior);
+            int[] q = turnLocal(old, moved, s, map, e.getX() - a.getX(), e.getY() - a.getY(), e.getZ() - a.getZ());
+            c.interior = target.toWorld(q[0], q[1], q[2]).asLong();
+        }
+        if (!lostFloor.isEmpty()) InteriorDrops.drop(tankLevel, moved.anchor(), lostFloor);
+        InteriorWorldOps.resendChunks(interior, touched);
+        ejectPlayers(interior, src);
+        destroyRegion(server, src);
+        target.equipment().markNeedsScan();
+        InteriorSync.markAllDirty(target.id());
+    }
+
+    /** Interior block (lx, ly, lz) of the old tank's region -> its block in the region of the moved tank. */
+    private static int[] turnLocal(TankData old, TankData moved, int s, org.overengineer.bettacraft.tank.TankMoveMap map, int lx, int ly, int lz) {
+        BlockPos om = old.min(), nm = moved.min();
+        net.minecraft.world.phys.Vec3 w = map.point(om.getX() + (lx + 0.5) / s, om.getY() + (ly + 0.5) / s, om.getZ() + (lz + 0.5) / s);
+        return new int[]{(int) Math.floor((w.x - nm.getX()) * s), (int) Math.floor((w.y - nm.getY()) * s), (int) Math.floor((w.z - nm.getZ()) * s)};
     }
 
     /**

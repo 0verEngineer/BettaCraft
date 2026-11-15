@@ -1303,6 +1303,7 @@ public final class ModDataGen {
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c
+            DataGenM32b.blockTags(this::tag); // M32 part b
             tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             tag(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);

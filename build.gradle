@@ -562,6 +562,9 @@ idea {
 //               runGameTestServer; the GameTest biomeModBiomesMapToTheirWaters and the server smoke then require them
 //   -Pstorage : run/storage-mods (M26 part b: Applied Energistics 2 and Refined Storage 2 from ATM10AA) for runClient,
 //               runServer and runGameTestServer; the GameTests of StorageGameTests then move items with their buses
+//   -Pcreate  : run/create-mods (M32 part b: Create 6 (Flywheel, Ponder and Registrate inside), Create Aeronautics (bundled:
+//               Simulated, Aeronautics, Offroad) and Sable from ATM10AA) for runClient, runServer and runGameTestServer;
+//               the GameTests of CreateGameTests then move tanks on pistons, bearings and Sable sub-levels
 def runModsDir = file('run/mods')
 def gameTestModsDir = file('run/gametest/mods')
 def extraMods = [
@@ -570,6 +573,7 @@ def extraMods = [
         [dir: file('run/aquatic-mods'), on: project.hasProperty('aquatic'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/biome-mods'), on: project.hasProperty('biomes'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/storage-mods'), on: project.hasProperty('storage'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/create-mods'), on: project.hasProperty('create'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
 ]
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = file('run/config/fml.toml')
@@ -640,8 +644,8 @@ tasks.register('runMultiplayerTest') {
         logs.deleteDir()
         logs.mkdirs()
         def runDir = file('run')
-        // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods'].each { d ->
+        // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()

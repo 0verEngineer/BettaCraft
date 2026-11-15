@@ -331,12 +331,21 @@ public final class TankMultiblock {
             LOGGER.warn("Tank block at {} removed but its controller {} is not available", pos, cp);
             return;
         }
+        removeBlocks(level, t, List.of(pos));
+    }
 
+    /**
+     * Takes blocks out of a tank (one broken block; M32 part b: the blocks of a tank that did not come along on a move):
+     * their interior drops as items, the rest of the tank is installed again as its connected pieces (first = largest
+     * part keeps id, equipment, power and the inhabitant list). Drops and messages at the first removed block.
+     */
+    public static void removeBlocks(ServerLevel level, TankData t, List<BlockPos> removedBlocks) {
+        BlockPos pos = removedBlocks.getFirst();
         LongSet remaining = new LongOpenHashSet(t.members());
-        remaining.remove(pos.asLong());
+        for (BlockPos q : removedBlocks) remaining.remove(q.asLong());
 
         // Interior part of the removed block drops as items, the rest is copied into the pieces' regions.
-        InteriorManager.dropInteriorOfBlock(level, t, pos);
+        for (BlockPos q : removedBlocks) InteriorManager.dropInteriorOfBlock(level, t, q);
         if (remaining.isEmpty()) {
             InteriorManager.freeRegion(level, t);
             net.minecraft.world.Containers.dropContents(level, pos, t.legacyHeaters());

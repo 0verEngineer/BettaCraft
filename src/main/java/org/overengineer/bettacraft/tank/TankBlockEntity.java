@@ -123,6 +123,42 @@ public class TankBlockEntity extends BlockEntity {
     /** M31: days each registered foreign terrarium animal has borne a harmful problem (transient). */
     public final java.util.Map<java.util.UUID, Double> terrariumHarm = new java.util.HashMap<>();
 
+    /**
+     * M32 part b: where this block entity was last saved ({@code at} in its data). A block entity loaded from data saved at
+     * another position was moved as data (a Create contraption put it down, Sable took it into a sub-level, another mod
+     * moved it): {@link TankMoves} then moves the whole tank along. Server only; transient.
+     */
+    @Nullable
+    BlockPos movedFrom;
+    /** M32 part b: the rotation the mover reported (Create's StructureTransform), or null (it is worked out from the blocks). */
+    @Nullable
+    int[] moveRotation;
+    int moveWait;
+    /** Where the data this block entity was loaded from had been saved (null: never loaded from data). */
+    @Nullable
+    private BlockPos savedAt;
+    /**
+     * M32 part b: the animals packed into the tank's data for a trip (entity data with id, saved like the fish bag does),
+     * released again where the tank is put down; on the client the same list draws them while the tank moves.
+     */
+    net.minecraft.nbt.ListTag stowed = new net.minecraft.nbt.ListTag();
+    /** M32 part b (client): a copy of the controller drawn on a Create contraption (its own local coordinates). */
+    public boolean contraptionView;
+
+    public net.minecraft.nbt.ListTag stowed() { return stowed; }
+
+    @Nullable
+    public BlockPos movedFrom() { return movedFrom; }
+
+    /**
+     * A mover put this block down from data (Create's block entity transformer): it is handled as moved even when it came
+     * back to the very place it left (a bearing turned once round), with the rotation the mover reported (null = find out).
+     */
+    public void markMoved(@Nullable int[] rotation) {
+        this.moveRotation = TankMoveMap.valid(rotation) ? rotation.clone() : null;
+        if (savedAt != null) this.movedFrom = savedAt;
+    }
+
     private ResourceLocation glass = DEFAULT_GLASS;
     private TankStyle style = TankStyle.TEXTURED;
     @Nullable
@@ -219,6 +255,15 @@ public class TankBlockEntity extends BlockEntity {
         style = TankStyle.byId(tag.getString("style"));
         int[] c = tag.getIntArray("controller");
         controllerPos = c.length == 3 ? new BlockPos(c[0], c[1], c[2]) : null;
+        // M32 part b: saved somewhere else = moved as data (the controller position is the old one until TankMoves ran)
+        movedFrom = null;
+        savedAt = null;
+        if (tag.contains("at", Tag.TAG_LONG)) {
+            BlockPos at = BlockPos.of(tag.getLong("at"));
+            savedAt = at;
+            if (!at.equals(worldPosition)) movedFrom = at;
+        }
+        stowed = tag.getList("stowed", Tag.TAG_COMPOUND).copy();
         if (tag.contains("tank", Tag.TAG_COMPOUND)) {
             tank = TankData.load(tag.getCompound("tank"));
         } else if (tag.contains("tank_view", Tag.TAG_COMPOUND)) {
@@ -230,6 +275,14 @@ public class TankBlockEntity extends BlockEntity {
             // M14: the small animals too
             if (old != null && level != null) org.overengineer.bettacraft.critters.CritterSync.adopt(old.critters(), tank.critters(),
                     level.getGameTime(), org.overengineer.bettacraft.tank.plants.TankPlants.SYNC_TICKS);
+            // M32 part b: a controller's view at another position than its controller = Create's copy on a contraption
+            // (block entities there sit at contraption-local positions): its data moves to the local position, so the
+            // sign, nest, plants and small animals are drawn on the contraption
+            if (controllerPos != null && !controllerPos.equals(worldPosition)) {
+                tank.relocate(TankMoveMap.translation(controllerPos, worldPosition), null);
+                controllerPos = worldPosition.immutable();
+                contraptionView = true;
+            }
         } else {
             tank = null;
         }
@@ -239,7 +292,10 @@ public class TankBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         writeCommon(tag);
-        if (tank != null && isController()) {
+        tag.putLong("at", worldPosition.asLong()); // M32 part b
+        if (!stowed.isEmpty()) tag.put("stowed", stowed.copy());
+        // a moved controller keeps its data until TankMoves ran (its controller position is still the old one)
+        if (tank != null && (isController() || movedFrom != null && movedFrom.equals(controllerPos))) {
             tag.put("tank", tank.save());
         }
     }
@@ -259,6 +315,7 @@ public class TankBlockEntity extends BlockEntity {
         writeCommon(tag);
         if (tank != null && isController()) {
             tag.put("tank_view", tank.saveClientView());
+            if (!stowed.isEmpty()) tag.put("stowed", stowed.copy()); // M32 part b: drawn while the tank travels
         }
         return tag;
     }

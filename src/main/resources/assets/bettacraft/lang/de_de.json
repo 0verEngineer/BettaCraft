@@ -3574,5 +3574,12 @@
   "bettacraft.configuration.foreignBreedingSpeed": "Zuchtgeschwindigkeit",
   "bettacraft.configuration.foreignBreedingSpeed.tooltip": "Zuchtgeschwindigkeit der Tiere anderer Mods mit Profil (1 = laut Profil, 0 = sie vermehren sich im Becken nie)",
   "bettacraft.configuration.foreignHealthSpeed": "Tempo der Gesundheits-Timer",
-  "bettacraft.configuration.foreignHealthSpeed.tooltip": "Tempo ihrer Gesundheits-Timer gegenüber denen der Bettas (Hunger, Krankheit, Tod; 0,5 = sie halten doppelt so lange durch)"
+  "bettacraft.configuration.foreignHealthSpeed.tooltip": "Tempo ihrer Gesundheits-Timer gegenüber denen der Bettas (Hunger, Krankheit, Tod; 0,5 = sie halten doppelt so lange durch)",
+  "message.bettacraft.travel.blocked": "Dieses Becken kann gerade nicht reisen: %s",
+  "message.bettacraft.travel.blocked.interior": "jemand ist im Inneren",
+  "message.bettacraft.travel.blocked.nest": "im Schaumnest liegen Eier",
+  "message.bettacraft.travel.blocked.eggs": "Eier oder Jungtiere würden die Fahrt nicht überstehen",
+  "message.bettacraft.travel.travelling": "Das Becken ist unterwegs: seine Tiere bleiben verpackt, bis es abgesetzt wird",
+  "bettacraft.configuration.createContraptions": "Becken auf Create-Contraptions",
+  "bettacraft.configuration.createContraptions.tooltip": "Becken fahren auf Create-Contraptions (Kolben, Lager, Flaschenzüge, Portalkräne, Loren, Züge) und auf Luftschiffen von Create Aeronautics mit: die Tiere werden für die Fahrt ins Becken verpackt und schwimmend gezeichnet, die Pflege pausiert, alles kommt dort zurück, wo das Becken abgesetzt wird (aus: Create kann Becken nicht bewegen; ein Becken, das schon unterwegs ist, packt trotzdem aus)"
 }
