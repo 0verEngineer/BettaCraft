@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.mobs;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,9 +91,9 @@ public final class GlassMobs {
 
     // ------------------------------------------------------------------ which mobs
 
-    /** Whether the feature is on ({@code features.mobsInGlass}; it lives in terraria, so {@code features.terrarium} too). */
+    /** Whether the feature is on ({@code features.mobsInGlass.enabled}; it lives in terraria, so {@code features.terrariums.enabled} too). */
     public static boolean enabled() {
-        return CommonConfig.mobsInGlass() && TankClimate.enabled();
+        return Features.enabled(Feature.MOBS_IN_GLASS) && TankClimate.enabled();
     }
 
     /**

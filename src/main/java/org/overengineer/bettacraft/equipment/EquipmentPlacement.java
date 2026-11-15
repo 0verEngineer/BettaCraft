@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -65,8 +67,8 @@ public final class EquipmentPlacement {
             case SPONGE_FILTER -> ModBlocks.SPONGE_FILTER_SEGMENT.get();
             case CORNER_FILTER -> ModBlocks.CORNER_FILTER_SEGMENT.get();
         };
-        // M23: the sponge filter and the corner filter are switched off with features.moreInternalFilters
-        if ((kind == SegmentBlock.Kind.SPONGE_FILTER || kind == SegmentBlock.Kind.CORNER_FILTER) && !org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters()) {
+        // M23: the sponge filter and the corner filter are switched off with features.equipment.moreInternalFilters
+        if ((kind == SegmentBlock.Kind.SPONGE_FILTER || kind == SegmentBlock.Kind.CORNER_FILTER) && !Features.enabled(Feature.MORE_INTERNAL_FILTERS)) {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
             return InteractionResult.FAIL;
         }

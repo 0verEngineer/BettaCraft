@@ -54,7 +54,12 @@ class LangCompletenessTest {
             "pectoral.bettacraft.normal", "stage.bettacraft.adult", "stage.bettacraft.subadult",
             "block.bettacraft.monitor", "monitor.bettacraft.value.co2",
             "gui.bettacraft.terrarium.mode.aquarium", "gui.bettacraft.terrarium.mode.paludarium", "gui.bettacraft.terrarium.mode.terrarium", // M31
-            "block.bettacraft.thermo_hygrometer", "monitor.bettacraft.value.uv");
+            "block.bettacraft.thermo_hygrometer", "monitor.bettacraft.value.uv",
+            // M33: the switches of other mods are named after the mod
+            "bettacraft.configuration.features.compat.betterFishTanks", "bettacraft.configuration.features.compat.create",
+            "bettacraft.configuration.features.compat.create.enabled", "bettacraft.configuration.features.compat.enderio",
+            "bettacraft.configuration.features.compat.jei", "bettacraft.configuration.features.compat.mekanism",
+            "bettacraft.configuration.features.compat.overlays", "bettacraft.configuration.features.compat.thermal");
     private static final Pattern NO_WORDS = Pattern.compile("%(\\d+\\$)?[sd]|\\b(TDS|ppm|pH|FE|KH|Ca|NO|mB|t)\\b");
 
     private static int placeholders(String s) {

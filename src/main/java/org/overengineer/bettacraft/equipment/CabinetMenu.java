@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -30,7 +32,7 @@ public class CabinetMenu extends AbstractContainerMenu {
     @Nullable
     private final CabinetBlockEntity cabinet;
     private final IItemHandlerModifiable items;
-    /** M22.4: the outlet side (ordinal), -1 while {@code features.cabinetOutletSide} is off on the server. */
+    /** M22.4: the outlet side (ordinal), -1 while {@code features.equipment.cabinetOutletSide} is off on the server. */
     private final net.minecraft.world.inventory.DataSlot outlet = net.minecraft.world.inventory.DataSlot.standalone();
 
     public CabinetMenu(int id, Inventory inv, RegistryFriendlyByteBuf buf) {
@@ -92,7 +94,7 @@ public class CabinetMenu extends AbstractContainerMenu {
     }
 
     private static int outletValue(CabinetBlockEntity c) {
-        return org.overengineer.bettacraft.config.CommonConfig.cabinetOutletSide() ? c.outletSetting().ordinal() : -1;
+        return Features.enabled(Feature.CABINET_OUTLET_SIDE) ? c.outletSetting().ordinal() : -1;
     }
 
     /** M22.4: the outlet side shown in the menu, or null while the setting is switched off. */
@@ -106,7 +108,7 @@ public class CabinetMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int id) {
         if (powerButton(player, id, cabinet)) return true;
         if (cabinet == null || id < BUTTON_OUTLET0 || id >= BUTTON_OUTLET0 + OutletSide.values().length) return false;
-        if (!org.overengineer.bettacraft.config.CommonConfig.cabinetOutletSide()) return false;
+        if (!Features.enabled(Feature.CABINET_OUTLET_SIDE)) return false;
         cabinet.setOutletSide(OutletSide.byIndex(id - BUTTON_OUTLET0));
         return true;
     }
@@ -139,7 +141,7 @@ public class CabinetMenu extends AbstractContainerMenu {
 
     private boolean powerButton(Player player, int id, @Nullable FilterHost host) {
         if (host == null || (id != BUTTON_POWER_UP && id != BUTTON_POWER_DOWN)) return false;
-        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return false;
+        if (!Features.enabled(Feature.POWER_REGULATOR)) return false;
         host.setRegulator(Math.max(0, Math.min(10, host.regulator() + (id == BUTTON_POWER_UP ? 1 : -1))));
         return true;
     }

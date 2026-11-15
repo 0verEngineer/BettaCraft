@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
@@ -42,7 +44,7 @@ public final class TankClimate {
     private TankClimate() {}
 
     public static boolean enabled() {
-        return CommonConfig.terrarium();
+        return Features.enabled(Feature.TERRARIUMS);
     }
 
     public static TerrariumMode.Thresholds thresholds() {
@@ -176,7 +178,7 @@ public final class TankClimate {
      */
     public static List<Vec3> baskingSpots(ServerLevel level, TankData t) {
         List<Vec3> out = new java.util.ArrayList<>();
-        if (!CommonConfig.terrariumDevices()) return out;
+        if (!Features.enabled(Feature.TERRARIUM_DEVICES)) return out;
         var terrain = new org.overengineer.bettacraft.critters.TankTerrain(t, level.getServer(),
                 InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay());
         double surface = t.waterMb() <= 0 ? Double.NEGATIVE_INFINITY : t.waterSurfaceY();
@@ -225,7 +227,7 @@ public final class TankClimate {
             if (sync) sync(c, now, true);
             return;
         }
-        boolean devices = CommonConfig.terrariumDevices();
+        boolean devices = Features.enabled(Feature.TERRARIUM_DEVICES);
         // heat mats (with the heaters' power), basking lamps, misters
         double ground = 0, wall = 0;
         List<BlockPos> mats = devices ? TankEquipment.heatMats(level, c) : List.of();
@@ -313,7 +315,7 @@ public final class TankClimate {
 
     /** The heat mats glow while they heat. */
     private static void updateMats(ServerLevel level, TankBlockEntity c, double duty) {
-        boolean on = duty > 0.02 && c.heatPowered() && CommonConfig.terrariumDevices();
+        boolean on = duty > 0.02 && c.heatPowered() && Features.enabled(Feature.TERRARIUM_DEVICES);
         for (BlockPos m : TankEquipment.heatMats(level, c)) {
             BlockState s = level.getBlockState(m);
             if (s.getBlock() instanceof HeatMatBlock && s.getValue(HeatMatBlock.HEATING) != on) level.setBlock(m, s.setValue(HeatMatBlock.HEATING, on), Block.UPDATE_CLIENTS);

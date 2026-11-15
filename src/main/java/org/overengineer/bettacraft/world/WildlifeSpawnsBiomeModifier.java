@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.world;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
@@ -35,7 +37,7 @@ public record WildlifeSpawnsBiomeModifier() implements BiomeModifier {
         NetCatching.Water w = Wildlife.water(biome);
         if (w == NetCatching.Water.NONE) return;
         var spawns = builder.getMobSpawnSettings();
-        if (org.overengineer.bettacraft.config.CommonConfig.wildFish()) {
+        if (Features.enabled(Feature.TANKMATES_WILD)) {
             for (TankmateSpecies s : TankmateSpecies.values()) {
                 if (!s.available()) continue;
                 int weight = Wildlife.fishWeight(s, w);
@@ -44,10 +46,12 @@ public record WildlifeSpawnsBiomeModifier() implements BiomeModifier {
                 var type = ModEntities.TANKMATES.get(s).get();
                 spawns.addSpawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, weight, g[0], g[1]));
             }
+        }
+        if (Features.enabled(Feature.FROGS_WILD)) { // M33: the frogs have their own switch
             int frog = Wildlife.frogWeight(w);
             if (frog > 0) spawns.addSpawn(ModEntities.DWARF_FROG.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.DWARF_FROG.get(), frog, 1, 2));
         }
-        if (org.overengineer.bettacraft.config.CommonConfig.wildCritters()) {
+        if (Features.enabled(Feature.INVERTEBRATES_WILD)) {
             int c = Wildlife.critterWeight(w);
             if (c > 0) spawns.addSpawn(ModEntities.WILD_CRITTER.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.WILD_CRITTER.get(), c, 2, 5));
         }

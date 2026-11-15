@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -169,7 +171,7 @@ public final class ForeignGameTests {
     /** Cold water, bad water and the wrong salinity are trouble; off, the animal is left alone. */
     @GameTest(template = EMPTY, batch = "bettacraft_m32_foreign_off", timeoutTicks = 200)
     public static void standInConditionsAndSwitch(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_FOREIGN_CARE.get();
+        boolean saved = Features.own(Feature.FOREIGN_CARE);
         withProfile(TROPICAL, () -> {
             try {
                 ServerLevel level = h.getLevel();
@@ -192,13 +194,13 @@ public final class ForeignGameTests {
                     org.overengineer.bettacraft.config.ServerConfig.SALT_FOREIGN.set(salt);
                 }
                 c.getTank().setSalinity(0F);
-                CommonConfig.FEATURE_FOREIGN_CARE.set(false);
+                Features.set(Feature.FOREIGN_CARE, false);
                 fish.getPersistentData().remove(ForeignCare.KEY);
                 ForeignCare.step(level, c, 30.0);
                 h.assertTrue(fish.isAlive() && !fish.getPersistentData().contains(ForeignCare.KEY), "off: no needs");
                 h.assertTrue(ForeignCare.menuValues(fish) == null && SaltTolerance.of(fish) == SaltTolerance.foreign(fish.getType()), "off: as before");
             } finally {
-                CommonConfig.FEATURE_FOREIGN_CARE.set(saved);
+                Features.set(Feature.FOREIGN_CARE, saved);
             }
         });
         h.succeed();
@@ -249,7 +251,7 @@ public final class ForeignGameTests {
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m32_foreign_suppress", timeoutTicks = 200)
     public static void vanillaBreedingIsSuppressedInTanks(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_SUPPRESS_FOREIGN_BREEDING.get();
+        boolean saved = Features.own(Feature.SUPPRESS_FOREIGN_BREEDING);
         try {
             ServerLevel level = h.getLevel();
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 18F);
@@ -265,14 +267,14 @@ public final class ForeignGameTests {
             // our breeding still works: an axolotl baby of M29 joins
             h.assertTrue(org.overengineer.bettacraft.tank.AxolotlCare.spawn(level, c, org.overengineer.bettacraft.critters.CritterGenes.WILD, 1,
                     a.position()) != null, "our hatching is not suppressed");
-            CommonConfig.FEATURE_SUPPRESS_FOREIGN_BREEDING.set(false);
+            Features.set(Feature.SUPPRESS_FOREIGN_BREEDING, false);
             a.setAge(0);
             b.setAge(0);
             a.spawnChildFromBreeding(level, b);
             h.assertTrue(level.getEntities(EntityType.AXOLOTL, TankInhabitants.tankBox(c.getTank()).inflate(2), e -> e.isBaby()).size() >= 2,
                     "off: the vanilla baby comes");
         } finally {
-            CommonConfig.FEATURE_SUPPRESS_FOREIGN_BREEDING.set(saved);
+            Features.set(Feature.SUPPRESS_FOREIGN_BREEDING, saved);
         }
         h.succeed();
     }

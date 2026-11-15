@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.entity.tankmate;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -97,7 +99,7 @@ public class TankmateEntity extends AbstractFish {
     private String lookVariety = "wild";
     private boolean lookFemale;
     private LifeStage lookStage = LifeStage.ADULT;
-    /** M21.6: the guppy or endler genome the server sends while features.livebearerGenetics is on (null: the old varieties). */
+    /** M21.6: the guppy or endler genome the server sends while features.tankmates.livebearerGenetics is on (null: the old varieties). */
     @Nullable
     private org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome lookLb;
 
@@ -168,7 +170,7 @@ public class TankmateEntity extends AbstractFish {
             genes = wild ? org.overengineer.bettacraft.world.Wildlife.tankmate(species, random::nextLong) : TankmateGenes.wild(species, 0.08, random::nextLong);
             // spawn eggs and commands: a random bred variety now and then
             if (spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.COMMAND) {
-                if (TankmateGenes.livebearer(species) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+                if (TankmateGenes.livebearer(species) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
                     // M21.6: a named strain of the species now and then
                     if (random.nextInt(3) == 0) {
                         var strains = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(species == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY);
@@ -225,12 +227,12 @@ public class TankmateEntity extends AbstractFish {
 
     /**
      * M21.6: the guppy or endler genome that decides the look (client: as sent by the server), or null when the species
-     * has none or features.livebearerGenetics is off (then the old fixed varieties show).
+     * has none or features.tankmates.livebearerGenetics is off (then the old fixed varieties show).
      */
     @Nullable
     public org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome livebearerGenome() {
         if (level().isClientSide) return lookLb;
-        return org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics() ? genes.lb() : null;
+        return Features.enabled(Feature.LIVEBEARER_GENETICS) ? genes.lb() : null;
     }
 
     /** M21.6: what a guppy or endler shows (null: no genome, see {@link #livebearerGenome()}). */
@@ -475,7 +477,7 @@ public class TankmateEntity extends AbstractFish {
         look.putString("variety", genes.phenotype(species));
         look.putBoolean("female", female);
         look.putString("stage", stage.id());
-        if (genes.lb() != null && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) look.put("lb", genes.lb().save());
+        if (genes.lb() != null && Features.enabled(Feature.LIVEBEARER_GENETICS)) look.put("lb", genes.lb().save());
         entityData.set(DATA_LOOK, look);
     }
 
@@ -605,7 +607,7 @@ public class TankmateEntity extends AbstractFish {
                 swimPose.tick(this, eel ? 0.16F : 0.45F, eel ? 0.32F : 1.1F, eel ? 12F : 35F, flag(FLAG_GLASS) && isInWater());
             }
 
-            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+            if (Features.enabled(Feature.SMOOTH_SWIMMING)) {
                 yBodyRot = swimPose.yaw();
                 yHeadRot = yBodyRot;
             }

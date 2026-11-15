@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.interior;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
@@ -41,7 +43,7 @@ import org.overengineer.bettacraft.tank.TankData;
  * lowest block of the column of swaying blocks it belongs to). Every frame they are drawn with the same sway function
  * as the plant meshes (the higher above the foot, the further), within the same LOD distance; further away, or switched
  * off, the ordinary static buffers of the same blocks are drawn instead. With an Iris shader pack they cast shadows.
- * Switches: {@code features.swayingForeignPlants} (pack), {@code render.swayingPlants} (player), the automatic detection
+ * Switches: {@code features.visuals.swayingForeignPlants} (pack), {@code render.swayingPlants} (player), the automatic detection
  * and an exclusion list ({@code swaying.*}).
  */
 public final class MiniatureSway {
@@ -213,7 +215,7 @@ public final class MiniatureSway {
 
     /** Swaying is on and the tank is close enough (the same LOD distance as the plant meshes). */
     static boolean wanted(double distSq) {
-        if (!CommonConfig.swayingForeignPlants() || !ClientConfig.swayingPlants()) return false;
+        if (!Features.enabled(Feature.SWAYING_PLANTS) || !ClientConfig.swayingPlants()) return false;
         int lod = ClientConfig.MINIATURE_PLANT_MESH_DISTANCE.get();
         return lod > 0 && distSq <= (double) lod * lod;
     }

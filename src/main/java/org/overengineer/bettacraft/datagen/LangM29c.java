@@ -88,11 +88,5 @@ final class LangM29c {
         a.accept("betta.bettacraft.species.smaragdina", "Betta smaragdina");
         a.accept("tooltip.bettacraft.betta.hybrid", "Hybrid: %s");
         a.accept("tooltip.bettacraft.betta.species_share", "%s %% %s");
-        a.accept("bettacraft.configuration.communityFish", "More community fish");
-        a.accept("bettacraft.configuration.communityFish.tooltip", "More community fish: zebra danio, celestial pearl danio, forktail and neon dwarf rainbowfish, emperor, rummy-nose and black phantom tetra, black molly and swordtail at the wandering trader, in the aquarium net and wild (off: no new ones; fish already caught stay)");
-        a.accept("bettacraft.configuration.gouramis", "Gouramis");
-        a.accept("bettacraft.configuration.gouramis.tooltip", "Gouramis: honey, chocolate and pearl gourami at the wandering trader, in the aquarium net and wild (labyrinth fish; foam nests, the chocolate gourami broods in her mouth; off: no new ones; fish already caught stay)");
-        a.accept("bettacraft.configuration.wildBettas", "Wild bettas");
-        a.accept("bettacraft.configuration.wildBettas.tooltip", "Wild bettas: some wild bettas in swamps are Betta imbellis or Betta smaragdina instead of Betta splendens; they cross with each other and with Betta splendens into fertile hybrids (off: only Betta splendens in the wild; fish already caught stay)");
     }
 }

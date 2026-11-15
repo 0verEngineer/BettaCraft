@@ -10,10 +10,6 @@ final class LangM31b {
     private LangM31b() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("bettacraft.configuration.turtleBreeding", "Turtle breeding");
-        a.accept("bettacraft.configuration.turtleBreeding.tooltip", "Turtle breeding: females lay eggs into sand or soil on the land of the tank, the nest temperature decides the sex of the hatchlings (off: no eggs; eggs already laid still hatch)");
-        a.accept("bettacraft.configuration.wildTurtles", "Wild turtles");
-        a.accept("bettacraft.configuration.wildTurtles.tooltip", "Wild turtles: sliders and musk turtles in swamps and rivers, Reeves' turtles in rivers, Hermann's tortoises in savannas and dry shrublands (#bettacraft:tortoise_lands)");
         a.accept("bettacraft.configuration.brumation", "Brumation");
         a.accept("bettacraft.configuration.brumation.tooltip", "Hermann's tortoises brumate (rest without food or harm) while the air of their tank is below brumationBelow (off: the cold harms them like the other turtles)");
         a.accept("bettacraft.configuration.brumationBelow", "Brumation below");

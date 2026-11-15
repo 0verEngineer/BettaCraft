@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -184,15 +186,15 @@ public final class ReefDosingGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m25c_off", timeoutTicks = 100)
     public static void featureSwitches(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean car = CommonConfig.FEATURE_CARIDINA.get(), sul = CommonConfig.FEATURE_SULAWESI.get(), dos = CommonConfig.FEATURE_REEF_DOSING.get();
+        boolean car = Features.own(Feature.CARIDINA), sul = Features.own(Feature.SULAWESI), dos = Features.own(Feature.REEF_DOSING);
         try {
             h.assertTrue(NetCatching.table(NetCatching.Water.RIVER, true, false, false).stream().anyMatch(x -> x.species() == CritterSpecies.CARIDINA), "bee shrimp in rivers");
             h.assertTrue(NetCatching.table(NetCatching.Water.JUNGLE, false, true, false).stream().anyMatch(x -> x.species() == CritterSpecies.TYLOMELANIA)
                     && NetCatching.table(NetCatching.Water.JUNGLE, false, true, false).stream().anyMatch(x -> x.species() == CritterSpecies.SULAWESI_SHRIMP),
                     "Sulawesi animals in jungle water");
-            CommonConfig.FEATURE_CARIDINA.set(false);
-            CommonConfig.FEATURE_SULAWESI.set(false);
-            CommonConfig.FEATURE_REEF_DOSING.set(false);
+            Features.set(Feature.CARIDINA, false);
+            Features.set(Feature.SULAWESI, false);
+            Features.set(Feature.REEF_DOSING, false);
             h.assertTrue(NetCatching.table(NetCatching.Water.RIVER, true, false, false).stream().noneMatch(x -> x.species() == CritterSpecies.CARIDINA)
                     && NetCatching.table(NetCatching.Water.JUNGLE, false, true, false).stream().noneMatch(x -> x.species() == CritterSpecies.TYLOMELANIA),
                     "switched off: not in the net");
@@ -208,9 +210,9 @@ public final class ReefDosingGameTests {
             t.setKh(1F);
             h.assertTrue(ReefDosing.stonyFactor(t) == 1, "and it does not slow them");
         } finally {
-            CommonConfig.FEATURE_CARIDINA.set(car);
-            CommonConfig.FEATURE_SULAWESI.set(sul);
-            CommonConfig.FEATURE_REEF_DOSING.set(dos);
+            Features.set(Feature.CARIDINA, car);
+            Features.set(Feature.SULAWESI, sul);
+            Features.set(Feature.REEF_DOSING, dos);
         }
         h.succeed();
     }

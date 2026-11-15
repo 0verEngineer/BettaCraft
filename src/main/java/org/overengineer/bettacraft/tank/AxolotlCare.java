@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -149,7 +151,7 @@ public final class AxolotlCare {
      */
     public static int analyse(ServerLevel level, TankData t, net.minecraft.world.entity.player.Player player, net.minecraft.world.item.ItemStack magnifier,
                               @Nullable net.minecraft.world.entity.EquipmentSlot slot) {
-        if (!CommonConfig.axolotlCare()) return 0;
+        if (!Features.enabled(Feature.AXOLOTL_CARE)) return 0;
         boolean free = org.overengineer.bettacraft.genetics.GeneVisibility.free();
         int n = 0;
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
@@ -176,7 +178,7 @@ public final class AxolotlCare {
 
     /** M32 part d: with a random source of its own (GameTests: a fixed seed instead of the level's shared random). */
     public static void step(ServerLevel level, TankBlockEntity c, double days, RandomGenerator rnd) {
-        if (days <= 0 || !CommonConfig.axolotlCare()) return;
+        if (days <= 0 || !Features.enabled(Feature.AXOLOTL_CARE)) return;
         TankData t = c.getTank();
         hatch(level, c, rnd);
         List<Axolotl> list = new ArrayList<>();

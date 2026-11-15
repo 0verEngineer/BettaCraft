@@ -22,7 +22,7 @@ final class LangM25 {
         a.accept("info.bettacraft.ph_test_kit", "Measures the pH of a tank (5 to 9) and shows where it is drifting.\nSoil lowers the pH, limestone raises it; peat, almond leaves, driftwood and CO2 lower it.\nEnough for 50 tests.");
         a.accept("info.bettacraft.remineralising_salt", "Raises the TDS of a tank: one portion adds 400 ppm to a bucket of water (config).\nSneaking adds as much as brings the tank to 150 ppm, the middle of the range of soft-water shrimp.\nNot for salt water.");
         a.accept("info.bettacraft.almond_leaf", "Dried catappa leaf: its tannins lower the pH a little (blackwater) and fade within about a week.\nOne leaf per water block colours the water fully.\nLaid on the floor of a tank interior it keeps giving off tannins (about half as many) and the shrimp graze on it.\nDry jungle leaves in a smoker, furnace or on a campfire.");
-        a.accept("message.bettacraft.chem.off", "Water chemistry is switched off (features.waterChemistry)");
+        a.accept("message.bettacraft.chem.off", "Water chemistry is switched off (features.waterChemistry.enabled)");
         a.accept("message.bettacraft.chem.salty", "Salt water does not need remineralising salt");
         a.accept("message.bettacraft.chem.hard_enough", "Already %s ppm: hard enough");
         a.accept("message.bettacraft.chem.remineralised", "%s remineralising salt dissolved: TDS %s ppm");
@@ -54,8 +54,6 @@ final class LangM25 {
         a.accept("gui.bettacraft.tm.chemistry", "pH or TDS out of range");
         a.accept("cause.bettacraft.water_chemistry", "the wrong pH or hardness");
         a.accept("cause.bettacraft.critter.chemistry", "wrong pH or hardness");
-        a.accept("bettacraft.configuration.waterChemistry", "Water chemistry");
-        a.accept("bettacraft.configuration.waterChemistry.tooltip", "Water chemistry: TDS, pH and hardness from the substrate, peat, almond leaves, wood, food and water changes; every animal has its range (off: the values stand still and no animal minds them)");
         a.accept("bettacraft.configuration.chemistry", "Water chemistry");
         a.accept("bettacraft.configuration.tdsPerDay", "TDS per day");
         a.accept("bettacraft.configuration.tdsPerDay.tooltip", "TDS (ppm) a normally stocked tank gains per day from food and waste (water changes bring it back near the 250 of normal water)");

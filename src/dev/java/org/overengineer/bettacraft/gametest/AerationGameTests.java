@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -196,19 +198,19 @@ public final class AerationGameTests {
         h.succeed();
     }
 
-    /** features.oxygen off: no value changes, nobody is stressed. */
+    /** features.waterChemistry.oxygen off: no value changes, nobody is stressed. */
     @GameTest(template = EMPTY, batch = "bettacraft_m23_oxygen_off", timeoutTicks = 200)
     public static void oxygenFeatureOff(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_OXYGEN.get();
+        boolean saved = Features.own(Feature.OXYGEN);
         try {
-            CommonConfig.FEATURE_OXYGEN.set(false);
+            Features.set(Feature.OXYGEN, false);
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 2);
             c.getTank().setOxygen(0.5F);
             TankAeration.step(h.getLevel(), c, 1.0);
             h.assertTrue(c.getTank().oxygen() == 0.5F, "the value stands still");
             h.assertTrue(!TankAeration.lowFor(c.getTank(), false), "nobody is stressed");
         } finally {
-            CommonConfig.FEATURE_OXYGEN.set(saved);
+            Features.set(Feature.OXYGEN, saved);
         }
         h.succeed();
     }
@@ -297,10 +299,10 @@ public final class AerationGameTests {
         h.succeed();
     }
 
-    /** features.powerRegulator off: every device works at 100 %. */
+    /** features.power.regulator off: every device works at 100 %. */
     @GameTest(template = EMPTY, batch = "bettacraft_m23_regulator_off", timeoutTicks = 200)
     public static void regulatorFeatureOff(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_POWER_REGULATOR.get();
+        boolean saved = Features.own(Feature.POWER_REGULATOR);
         try {
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 2);
             h.setBlock(new BlockPos(2, 2, 4), ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.NORTH));
@@ -308,10 +310,10 @@ public final class AerationGameTests {
             FilterHost f = TankEquipment.filters(h.getLevel(), c).getFirst();
             f.setRegulator(2);
             double low = TankWater.filterBlocks(h.getLevel(), c);
-            CommonConfig.FEATURE_POWER_REGULATOR.set(false);
+            Features.set(Feature.POWER_REGULATOR, false);
             h.assertTrue(TankWater.filterBlocks(h.getLevel(), c) > low * 4, "off: full strength");
         } finally {
-            CommonConfig.FEATURE_POWER_REGULATOR.set(saved);
+            Features.set(Feature.POWER_REGULATOR, saved);
         }
         h.succeed();
     }

@@ -47,7 +47,5 @@ final class LangM28c {
         a.accept("block.bettacraft.almond_leaf_litter", "Indian Almond Leaf");
         a.accept("tooltip.bettacraft.alder_cone", "Right-click a tank: a few tannins; or lay it on the floor");
         a.accept("info.bettacraft.alder_cone", "Dried alder cone: like an almond leaf with a third of the tannins, it lowers the pH a little.\nRight-click a tank to put it in, or lay it on the floor of a tank interior: there it keeps giving off tannins and the shrimp graze on it.\nDry birch leaves in a smoker, furnace or on a campfire.");
-        a.accept("bettacraft.configuration.decorEffects", "Leaf litter and shelter");
-        a.accept("bettacraft.configuration.decorEffects.tooltip", "Almond leaves and alder cones on the floor of a tank interior give off tannins (lower the pH a little) and feed the shrimp; clay and terracotta (tubes, caves, dragon stone) hide young shrimp (off: they are only decoration)");
     }
 }

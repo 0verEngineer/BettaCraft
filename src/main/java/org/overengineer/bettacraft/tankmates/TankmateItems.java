@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -297,7 +299,7 @@ public final class TankmateItems {
         int females = 0;
         for (CompoundTag f : fish) if (f.getCompound(TankmateEntity.KEY).getBoolean("female")) females++;
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.group", fish.size() - females, females).withStyle(ChatFormatting.GRAY));
-        if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+        if (TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
             // M21.6: the strains in the bag
             java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
             java.util.Map<String, Component> names = new java.util.HashMap<>();

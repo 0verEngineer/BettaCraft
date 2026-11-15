@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing.interior;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -110,7 +112,7 @@ public final class InteriorPlumbing {
     /** The bulkhead of the tank under the block {@code member} (only floor blocks have one), or null. */
     @Nullable
     public static Bulkhead bulkheadAt(ServerLevel level, TankBlockEntity c, BlockPos member) {
-        if (!CommonConfig.interiorPipes()) return null;
+        if (!Features.enabled(Feature.INTERIOR_PIPES)) return null;
         TankData t = c.getTank();
         if (t.contains(member.below())) return null;
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
@@ -166,7 +168,7 @@ public final class InteriorPlumbing {
     /** The currents of the active outlets of a tank, in world coordinates (empty with the feature off). */
     public static List<TankCurrents.Current> currents(ServerLevel level, TankBlockEntity c) {
         List<TankCurrents.Current> out = new ArrayList<>();
-        if (!CommonConfig.interiorPipes()) return out;
+        if (!Features.enabled(Feature.INTERIOR_PIPES)) return out;
         TankData t = c.getTank();
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r == null || !r.built() || InteriorManager.equipment(level.getServer(), r).plumbing().isEmpty()) return out;
@@ -218,7 +220,7 @@ public final class InteriorPlumbing {
         for (var e : new ArrayList<>(r.equipment().plumbing().long2IntEntrySet())) {
             if (!Plumb.kind(e.getIntValue()).outlet()) continue;
             long k = e.getLongKey();
-            boolean on = CommonConfig.interiorPipes() && active(r.id(), k, now);
+            boolean on = Features.enabled(Feature.INTERIOR_PIPES) && active(r.id(), k, now);
             var shown = SHOWN.computeIfAbsent(r.id(), x -> new it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap());
             if (shown.containsKey(k) && shown.get(k) == on) continue;
             // the look changes (rarely: water starts or stops): the interior chunk is loaded for it if needed, so the

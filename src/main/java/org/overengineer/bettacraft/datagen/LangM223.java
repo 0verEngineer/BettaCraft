@@ -90,21 +90,5 @@ final class LangM223 {
         a.accept("bettacraft.configuration.wildFishWeight.tooltip", "Spawn weight of the wild tankmate fish and dwarf clawed frogs in their biomes, in tenths of their net catch weight; 0 disables them");
         a.accept("bettacraft.configuration.wildCritterWeight", "Spawn weight of wild small animals");
         a.accept("bettacraft.configuration.wildCritterWeight.tooltip", "Spawn weight of wild shrimp, crayfish, snails and hermit crabs crawling on the bottom of their waters; 0 disables them");
-        a.accept("bettacraft.configuration.wildFish", "Wild fish in the world");
-        a.accept("bettacraft.configuration.wildFish.tooltip", "Wild tankmate fish, seahorses and dwarf clawed frogs spawn in their biomes, rarely and in small shoals (off: only the net, the trader and breeding bring them)");
-        a.accept("bettacraft.configuration.wildCritters", "Wild small animals in the world");
-        a.accept("bettacraft.configuration.wildCritters.tooltip", "Wild shrimp, crayfish, snails and hermit crabs crawl on the bottom of rivers, swamps, mangroves, beaches, jungle water and warm oceans; caught with the net, a fish bag or a bucket, and they can be let go again (off: they do not spawn, and let go into the world they are gone like before)");
-        a.accept("bettacraft.configuration.wildCorals", "Wild corals on the reefs");
-        a.accept("bettacraft.configuration.wildCorals.tooltip", "Every Bettacraft coral and the bubble tip anemone grow on the warm ocean coral reefs (new chunks); shears cut a frag off them (off: no new ones in new chunks)");
-        a.accept("bettacraft.configuration.wildColors", "Beautiful wild colours");
-        a.accept("bettacraft.configuration.wildColors.tooltip", "Now and then a wild animal shows a bred colour openly (wildlife.beautifulWildChance; off: wild animals are wild-coloured, bred colours only hidden)");
-        a.accept("bettacraft.configuration.mutations", "Mutations of every animal");
-        a.accept("bettacraft.configuration.mutations.tooltip", "Spontaneous mutations also for shrimp, crayfish, snails and the tankmates without their own genetics (off: only bettas, guppies and endlers mutate)");
-        a.accept("bettacraft.configuration.magnifier", "Magnifier");
-        a.accept("bettacraft.configuration.magnifier.tooltip", "The hidden genes of a new animal are unknown until it is analysed with the magnifier in a tank (off: every animal shows its genes like before)");
-        a.accept("bettacraft.configuration.bigContainers", "Several animals per bucket and bag");
-        a.accept("bettacraft.configuration.bigContainers.tooltip", "Several animals of one species per bucket and fish bag by their size (a bucket: 32 shrimp, 24 rasboras, 1 betta; a bag half of that), small animals also in a plain bucket (off: one fish per bucket, bags as before)");
-        a.accept("bettacraft.configuration.animalList", "List of single small animals");
-        a.accept("bettacraft.configuration.animalList.tooltip", "List of every single shrimp, crayfish and snail in the tank menu (sex, age, colour density, genes) to take out exactly that one, and the sex choice for the quick take-out (off: only the kinds like before)");
     }
 }

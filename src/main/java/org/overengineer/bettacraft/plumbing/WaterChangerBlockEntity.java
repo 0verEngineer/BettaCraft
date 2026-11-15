@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -80,7 +82,7 @@ public class WaterChangerBlockEntity extends BlockEntity {
         int done = 0;
         TankBlockEntity c = WaterSources.tank(level, worldPosition, false);
         long now = level.getGameTime();
-        if (!CommonConfig.autoWaterChange()) st = Status.OFF;
+        if (!Features.enabled(Feature.AUTO_WATER_CHANGE)) st = Status.OFF;
         else if (!enabled && !force) st = Status.DISABLED;
         else if (c == null) st = Status.NO_TANK;
         else if (!force && last >= 0 && now - last < intervalDays() * 24000L) st = status == Status.CHANGED ? Status.CHANGED : Status.WAITING;

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +46,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpots;
 /**
  * M28 part c GameTests: the new decorations place in a tank interior; the clay pipe of the ship's bow and the clay
  * tubes are spawning caves a pleco swims into; the treasure chest bubbles only with an air pump; leaves and alder cones
- * on the floor give off tannins and feed the shrimp, terracotta hides young shrimp; {@code features.decorEffects} off:
+ * on the floor give off tannins and feed the shrimp, terracotta hides young shrimp; {@code features.decor.effects} off:
  * nothing (own batch, config restored).
  */
 @GameTestHolder(BettaCraft.MOD_ID)
@@ -177,12 +179,12 @@ public final class M28DecorGameTests {
         h.succeed();
     }
 
-    /** features.decorEffects off: litter and tubes are only decoration. */
+    /** features.decor.effects off: litter and tubes are only decoration. */
     @GameTest(template = EMPTY, batch = "bettacraft_m28_decor_off", timeoutTicks = 200)
     public static void decorEffectsOff(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_DECOR_EFFECTS.get();
+        boolean saved = Features.own(Feature.DECOR_EFFECTS);
         try {
-            CommonConfig.FEATURE_DECOR_EFFECTS.set(false);
+            Features.set(Feature.DECOR_EFFECTS, false);
             ServerLevel level = h.getLevel();
             TankBlockEntity c = AerationGameTests.tank(h, 1, 1, 1, 2, 2, 2);
             InteriorRegion r = AerationGameTests.region(h, c);
@@ -194,7 +196,7 @@ public final class M28DecorGameTests {
             h.assertTrue(TankCritters.foodPerDay(level, c.getTank()) == food0, "no food");
             h.assertTrue(TankCritters.hiding(level, c.getTank()) == hide0, "no shelter");
         } finally {
-            CommonConfig.FEATURE_DECOR_EFFECTS.set(saved);
+            Features.set(Feature.DECOR_EFFECTS, saved);
         }
         h.succeed();
     }

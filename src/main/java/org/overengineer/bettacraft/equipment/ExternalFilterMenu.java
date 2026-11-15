@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -82,7 +84,7 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
 
     private boolean powerButton(Player player, int id, @Nullable FilterHost host) {
         if (host == null || (id != BUTTON_POWER_UP && id != BUTTON_POWER_DOWN)) return false;
-        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return false;
+        if (!Features.enabled(Feature.POWER_REGULATOR)) return false;
         host.setRegulator(Math.max(0, Math.min(10, host.regulator() + (id == BUTTON_POWER_UP ? 1 : -1))));
         return true;
     }

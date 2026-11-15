@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -156,12 +158,12 @@ public final class CritterGameTests {
     public static void shrimpBreedTrueAndMixedColoursFallBack(GameTestHelper h) {
         // M22.4: without the spontaneous mutations of M22.3 (0.3 % per gene and birth: with six colour genes and twenty young
         // a mutated one now and then made this test flaky); the mutations have their own test (WildlifeGameTests)
-        boolean mutations = org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.get();
-        org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(false);
+        boolean mutations = Features.own(Feature.MUTATIONS);
+        Features.set(Feature.MUTATIONS, false);
         try {
             shrimpBreedTrue(h);
         } finally {
-            org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(mutations);
+            Features.set(Feature.MUTATIONS, mutations);
         }
     }
 
@@ -261,12 +263,12 @@ public final class CritterGameTests {
     public static void pinkRamshornsBredPure(GameTestHelper h) {
         // M22.5: without the spontaneous mutations of M22.3 like the shrimp test (a pink allele mutated back to the wild
         // one gives a wild-coloured young in the pure pink tank; 1 of 40 local runs)
-        boolean mutations = org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.get();
-        org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(false);
+        boolean mutations = Features.own(Feature.MUTATIONS);
+        Features.set(Feature.MUTATIONS, false);
         try {
             pinkRamshorns(h);
         } finally {
-            org.overengineer.bettacraft.config.CommonConfig.FEATURE_MUTATIONS.set(mutations);
+            Features.set(Feature.MUTATIONS, mutations);
         }
     }
 

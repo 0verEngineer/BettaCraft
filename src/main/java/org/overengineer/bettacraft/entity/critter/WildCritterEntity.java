@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.entity.critter;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -213,10 +215,10 @@ public class WildCritterEntity extends WaterAnimal {
 
     /**
      * Lets animals of a bag or a bucket go at {@code pos} (they sink to the bottom and crawl off); with
-     * {@code features.wildCritters} off they are simply gone like before. Returns how many live in the world now.
+     * {@code features.invertebrates.wildSpawns} off they are simply gone like before. Returns how many live in the world now.
      */
     public static int release(ServerLevel level, List<CompoundTag> animals, BlockPos pos, @Nullable Player player) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.wildCritters()) {
+        if (!Features.enabled(Feature.INVERTEBRATES_WILD)) {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
             return 0;
         }

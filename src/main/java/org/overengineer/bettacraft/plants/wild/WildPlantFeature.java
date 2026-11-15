@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.plants.wild;
 
+import org.overengineer.bettacraft.config.Features;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +28,7 @@ import org.overengineer.bettacraft.world.BiomeWaters;
  * in the waters of its origin ({@link WildTables#wildPlants}, {@link WildTables#wildFloating}; the water by
  * {@link BiomeWaters#plantWater}, so the biomes of biome mods count). At most one try per chunk (and a few in the lush
  * caves), with a chance per water ({@link #chance}) times the config {@code spawn.wildPlantFrequency}; nothing with
- * {@code features.wildPlants} off. Strong-light plants only in shallow water. Epiphytes and mosses sit on stone or wood:
+ * {@code features.aquaticPlants.wildPlants}, {@code features.floatingPlants.wildPlants} off. Strong-light plants only in shallow water. Epiphytes and mosses sit on stone or wood:
  * on a soft bottom a stone (or in the jungle and mangroves a sunken root) is laid under them.
  */
 public class WildPlantFeature extends Feature<NoneFeatureConfiguration> {
@@ -66,7 +67,9 @@ public class WildPlantFeature extends Feature<NoneFeatureConfiguration> {
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
-        if (!CommonConfig.wildPlants()) return false;
+        // M33: the aquarium plants and the floating plants have their own switches (each with its group)
+        if (!Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_WILD)
+                && !Features.enabled(org.overengineer.bettacraft.config.Feature.FLOATING_WILD)) return false;
         WorldGenLevel level = ctx.level();
         PlantWater w = BiomeWaters.plantWater(level.getBiome(ctx.origin()));
         if (w == null || (w == PlantWater.LUSH_CAVES) != cave) return false;
@@ -78,11 +81,15 @@ public class WildPlantFeature extends Feature<NoneFeatureConfiguration> {
     /** One group in the water {@code w} near {@code origin} (no chance roll, no biome check: the GameTests call it). */
     public static boolean place(WorldGenLevel level, BlockPos origin, RandomSource r, PlantWater w, boolean cave) {
         var floating = WildTables.wildFloating(w);
-        if (!floating.isEmpty() && r.nextInt(100) < floatingShare(w)) {
-            if (placeFloating(level, origin, r, floating.pick(new java.util.Random(r.nextLong())), cave)) return true;
+        boolean aquatic = Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_WILD);
+        if (!floating.isEmpty() && (!aquatic || r.nextInt(100) < floatingShare(w))) {
+            var t = floating.pick(new java.util.Random(r.nextLong()));
+            boolean on = Features.enabled(t.plantItem() ? org.overengineer.bettacraft.config.Feature.AQUATIC_WILD
+                    : org.overengineer.bettacraft.config.Feature.FLOATING_WILD);
+            if (on && placeFloating(level, origin, r, t, cave)) return true;
         }
         var table = WildTables.wildPlants(w);
-        if (table.isEmpty()) return false;
+        if (table.isEmpty() || !aquatic) return false;
         return placeGroup(level, origin, r, table.pick(new java.util.Random(r.nextLong())), w, cave);
     }
 

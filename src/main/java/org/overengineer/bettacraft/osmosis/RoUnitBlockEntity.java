@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.osmosis;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -136,7 +138,7 @@ public class RoUnitBlockEntity extends BlockEntity {
         stop = "";
         double waste = ServerConfig.getOr(ServerConfig.RO_WASTE, 3.0);
         boolean endless = WaterSources.endless(level, worldPosition);
-        if (!CommonConfig.reverseOsmosis()) stop = "off";
+        if (!Features.enabled(Feature.OSMOSIS)) stop = "off";
         else if (parts.getStackInSlot(MEMBRANE).isEmpty()) stop = "no_membrane";
         else if (parts.getStackInSlot(PREFILTER).isEmpty()) stop = "no_prefilter";
         else if (pure >= PURE_CAPACITY) stop = "full";

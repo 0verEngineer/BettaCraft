@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "equipment.multiblockFilter"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {

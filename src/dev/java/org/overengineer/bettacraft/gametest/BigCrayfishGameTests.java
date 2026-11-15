@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
@@ -147,20 +149,20 @@ public final class BigCrayfishGameTests {
         h.succeed();
     }
 
-    /** With features.bigCrayfish off the net no longer catches them (those in tanks stay). */
+    /** With features.invertebrates.bigCrayfish off the net no longer catches them (those in tanks stay). */
     @GameTest(template = EMPTY, batch = "bettacraft_m29d_feature", timeoutTicks = 100)
     public static void bigCrayfishFeatureSwitch(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_BIG_CRAYFISH.get();
+        boolean saved = Features.own(Feature.BIG_CRAYFISH);
         try {
             h.assertTrue(NetCatching.table(NetCatching.Water.SWAMP, false, false, false).stream().anyMatch(x -> x.species() == CritterSpecies.FLORIDA_CRAYFISH),
                     "Florida crayfish in swamps");
             h.assertTrue(NetCatching.table(NetCatching.Water.RIVER, false, false, false).stream().anyMatch(x -> x.species() == CritterSpecies.MARBLED_CRAYFISH),
                     "marbled crayfish in rivers");
-            CommonConfig.FEATURE_BIG_CRAYFISH.set(false);
+            Features.set(Feature.BIG_CRAYFISH, false);
             h.assertTrue(NetCatching.table(NetCatching.Water.SWAMP, false, false, false).stream().noneMatch(x -> x.species() == CritterSpecies.FLORIDA_CRAYFISH),
                     "off: not in the net");
         } finally {
-            CommonConfig.FEATURE_BIG_CRAYFISH.set(saved);
+            Features.set(Feature.BIG_CRAYFISH, saved);
         }
         h.succeed();
     }

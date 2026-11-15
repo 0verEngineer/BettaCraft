@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.render;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.EnumMap;
@@ -129,7 +131,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     @Override
     protected void setupRotations(TankmateEntity fish, PoseStack pose, float bob, float yBodyRot, float partialTick, float scale) {
         super.setupRotations(fish, pose, bob, yBodyRot, partialTick, scale);
-        if (!org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+        if (!Features.enabled(Feature.SMOOTH_SWIMMING)) {
             legacyRotations(fish, pose, bob);
             return;
         }
@@ -161,7 +163,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         if (pitch != 0) pose.mulPose(Axis.XP.rotationDegrees(pitch));
     }
 
-    /** Up to M21: raw last-tick movement, thresholds (features.smoothSwimming off). */
+    /** Up to M21: raw last-tick movement, thresholds (features.visuals.smoothSwimming off). */
     private static void legacyRotations(TankmateEntity fish, PoseStack pose, float bob) {
         if (fish.flag(TankmateEntity.FLAG_GLASS) && fish.isInWater()) {
             float len = (float) fish.species().length() * fish.lifeStage().scale();

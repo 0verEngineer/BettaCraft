@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -356,23 +358,23 @@ public final class CreateGameTests {
         });
     }
 
-    /** With features.createContraptions off Create cannot move a tank (as before M32). */
+    /** With features.compat.create.contraptions off Create cannot move a tank (as before M32). */
     @GameTest(template = EMPTY, batch = "bettacraft_create_config", timeoutTicks = 60)
     public static void switchOffKeepsTanksUnmovable(GameTestHelper h) throws Exception {
         if (!create()) {
             h.succeed();
             return;
         }
-        boolean saved = CommonConfig.FEATURE_CREATE_CONTRAPTIONS.get();
+        boolean saved = Features.own(Feature.CREATE_CONTRAPTIONS);
         try {
-            CommonConfig.FEATURE_CREATE_CONTRAPTIONS.set(false);
+            Features.set(Feature.CREATE_CONTRAPTIONS, false);
             BlockEntity bearing = bearing(h, new BlockPos(4, 1, 20));
             TankBlockEntity c = CritterGameTests.tank(h, 4, 2, 20, 2, 1, 2, 4000L);
             method(bearing.getClass(), "assemble", 0).invoke(bearing);
             h.assertTrue(field(bearing.getClass(), "movedContraption").get(bearing) == null, "the bearing did not take the tank");
             h.assertTrue(TankMultiblock.getController(h.getLevel(), c.getBlockPos()) == c, "the tank stays");
         } finally {
-            CommonConfig.FEATURE_CREATE_CONTRAPTIONS.set(saved);
+            Features.set(Feature.CREATE_CONTRAPTIONS, saved);
         }
         h.succeed();
     }

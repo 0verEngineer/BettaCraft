@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.world;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Optional;
 import java.util.random.RandomGenerator;
 import net.minecraft.world.item.Items;
@@ -36,7 +38,7 @@ public final class TankmateTrades {
         int n = count(s);
         int price = basePrice(s);
         java.util.function.Supplier<TankmateGenes> genes;
-        if (TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+        if (TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
             // M21.6: guppies and endlers: wild-caught ones (each its own genes) or a pure-bred named strain
             var strains = traderStrains(s);
             if (rnd.nextInt(5) < 3 && !strains.isEmpty()) {
@@ -67,7 +69,7 @@ public final class TankmateTrades {
 
     /** M22.2: whether offers of this species are sometimes a named strain (2 emeralds more). */
     public static boolean sellsStrains(TankmateSpecies s) {
-        return TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics() && !traderStrains(s).isEmpty();
+        return TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS) && !traderStrains(s).isEmpty();
     }
 
     /** M21.6: the named strains the trader sells of a guppy or endler species. */

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -183,7 +185,7 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
                 setChanged();
             }
         }
-        if (!CommonConfig.liveFoodPump()) {
+        if (!Features.enabled(Feature.LIVE_FOOD_PUMP)) {
             status = OFF;
             return;
         }

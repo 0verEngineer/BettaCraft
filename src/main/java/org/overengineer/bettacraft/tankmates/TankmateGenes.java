@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +18,7 @@ import org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain;
  * <p>
  * M21.6: guppies and endlers also carry a full {@link LivebearerGenome} ({@code lb}; tail shape, colours, patterns, the
  * X and Y chromosome, the endler share). The variety alleles are still inherited alongside it, so the old fixed
- * varieties come back when {@code features.livebearerGenetics} is switched off. Fish without a genome (older worlds)
+ * varieties come back when {@code features.tankmates.livebearerGenetics} is switched off. Fish without a genome (older worlds)
  * get one from their varieties when loaded ({@link LivebearerLegacy}).
  */
 public record TankmateGenes(String a, String b, @Nullable LivebearerGenome lb) {
@@ -87,13 +89,13 @@ public record TankmateGenes(String a, String b, @Nullable LivebearerGenome lb) {
     /**
      * Wild animals: the wild type, now and then hiding a bred variety ({@code carrier} chance per allele of a random
      * other variety), the way albino bristlenoses turn up in normal broods. M21.6: a guppy or an endler gets a random
-     * wild genome (with {@code features.livebearerGenetics}; otherwise the one of its variety).
+     * wild genome (with {@code features.tankmates.livebearerGenetics}; otherwise the one of its variety).
      */
     public static TankmateGenes wild(TankmateSpecies s, double carrier, RandomGenerator r) {
         String w = s.variety(0);
         String a = w;
         if (s.varieties().size() >= 2 && carrier > 0 && r.nextDouble() < carrier) a = s.variety(1 + r.nextInt(s.varieties().size() - 1));
-        if (livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+        if (livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
             return new TankmateGenes(a, w, LivebearerGenome.wild(s == TankmateSpecies.ENDLER_GUPPY, r));
         }
         return withLegacy(s, a, w);

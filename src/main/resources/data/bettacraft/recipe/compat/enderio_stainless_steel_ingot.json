@@ -3,6 +3,14 @@
     {
       "type": "neoforge:mod_loaded",
       "modid": "enderio"
+    },
+    {
+      "type": "bettacraft:feature",
+      "feature": "equipment.stainlessSteel"
+    },
+    {
+      "type": "bettacraft:feature",
+      "feature": "compat.enderio"
     }
   ],
   "type": "enderio:alloy_smelting",

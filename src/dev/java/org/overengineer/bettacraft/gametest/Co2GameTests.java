@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -322,14 +324,14 @@ public final class Co2GameTests {
         h.succeed();
     }
 
-    /** features.co2 and features.reverseOsmosis off: no CO2 from the devices, the unit stands still. */
+    /** features.co2.enabled and features.osmosis.enabled off: no CO2 from the devices, the unit stands still. */
     @GameTest(template = EMPTY, batch = "bettacraft_m25_co2_off", timeoutTicks = 100)
     public static void featuresOff(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean co2 = CommonConfig.FEATURE_CO2.get(), ro = CommonConfig.FEATURE_REVERSE_OSMOSIS.get();
+        boolean co2 = Features.own(Feature.CO2), ro = Features.own(Feature.OSMOSIS);
         try {
-            CommonConfig.FEATURE_CO2.set(false);
-            CommonConfig.FEATURE_REVERSE_OSMOSIS.set(false);
+            Features.set(Feature.CO2, false);
+            Features.set(Feature.OSMOSIS, false);
             TankBlockEntity c = AerationGameTests.tank(h, 1, 2, 1, 2, 2, 2);
             TankData t = c.getTank();
             Co2CylinderBlockEntity cyl = cylinder(h, c, new BlockPos(3, 2, 1), false);
@@ -350,8 +352,8 @@ public final class Co2GameTests {
             unit.setFeed(1000);
             h.assertTrue(unit.step(level, 20) == 0 && unit.stopReason().equals("off"), "the unit is off");
         } finally {
-            CommonConfig.FEATURE_CO2.set(co2);
-            CommonConfig.FEATURE_REVERSE_OSMOSIS.set(ro);
+            Features.set(Feature.CO2, co2);
+            Features.set(Feature.OSMOSIS, ro);
         }
         h.succeed();
     }

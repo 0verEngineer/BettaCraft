@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "breeding.enabled"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_green_wool": {

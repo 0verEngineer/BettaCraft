@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
@@ -136,6 +138,8 @@ public final class NetCatching {
             }
             default -> {}
         }
+        // M33: the small animals, the reef animals and the frog only with their switches
+        out.removeIf(c -> c.species() == null ? !Features.enabled(Feature.FROGS) : !c.species().available());
         return out;
     }
 
@@ -189,7 +193,7 @@ public final class NetCatching {
 
     /** Wild genes: the colour lines are hidden in a few animals (bred out later). */
     public static CritterGenes wildGenes(CritterSpecies s, RandomGenerator rnd) {
-        boolean colors = org.overengineer.bettacraft.config.CommonConfig.snailColors();
+        boolean colors = Features.enabled(Feature.SNAIL_COLORS);
         if (colors && s == CritterSpecies.APPLE_SNAIL) {
             // M21.5: like in the trade, nearly every apple snail is gold; wild brown is rare, now and then another colour
             double x = rnd.nextDouble();
@@ -285,7 +289,7 @@ public final class NetCatching {
             int n = s.shoaling() ? 1 + rnd.nextInt(4) : 1;
             java.util.function.Supplier<org.overengineer.bettacraft.tankmates.TankmateGenes> genes = () -> org.overengineer.bettacraft.world.Wildlife.tankmate(s, rnd); // M22.3
             // M21.6: now and then a group of feral fancy guppies (escaped strains) instead of wild ones
-            var feral = org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(s) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()
+            var feral = org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)
                     ? org.overengineer.bettacraft.world.TankmateTrades.traderStrains(s) : java.util.List.<org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain>of();
             if (!feral.isEmpty() && rnd.nextInt(12) == 0) {
                 var st = feral.get(rnd.nextInt(feral.size()));
@@ -312,9 +316,9 @@ public final class NetCatching {
         return ServerConfig.getOr(ServerConfig.CRITTERS_NET_CHANCE, 0.3);
     }
 
-    /** M22.4: the share of the catches that is a plant ({@code interiorPlants.netPlantShare}, 0 with {@code features.plantNetCatches} off). */
+    /** M22.4: the share of the catches that is a plant ({@code interiorPlants.netPlantShare}, 0 with {@code features.aquaticPlants.netCatches} off). */
     public static double plantShare() {
-        if (!org.overengineer.bettacraft.config.CommonConfig.plantNetCatches()) return 0;
+        if (!Features.enabled(Feature.PLANT_NET_CATCHES)) return 0;
         return ServerConfig.getOr(ServerConfig.AQUATIC_NET_SHARE, org.overengineer.bettacraft.sources.WildTables.NET_PLANT_SHARE);
     }
 
@@ -333,7 +337,7 @@ public final class NetCatching {
         double chance = netChance * (plants ? 1.2 : 1.0);
         var fish = fishTable(w);
         boolean ocean = w == Water.WARM_OCEAN || w == Water.LUKEWARM_OCEAN;
-        if (w == Water.WARM_OCEAN && rnd.nextDouble() < chance * reefShare * org.overengineer.bettacraft.sources.WildTables.NET_FRAG_FACTOR) {
+        if (w == Water.WARM_OCEAN && Features.enabled(Feature.CORALS) && rnd.nextDouble() < chance * reefShare * org.overengineer.bettacraft.sources.WildTables.NET_FRAG_FACTOR) {
             return new Outcome(org.overengineer.bettacraft.sources.WildTables.NET_REEF_FRAGS.pick(rnd), null, null, null, false);
         }
         if (plantShare > 0 && !plantTable.isEmpty() && rnd.nextDouble() < chance * plantShare) {
@@ -362,7 +366,7 @@ public final class NetCatching {
         var fish = fishTable(w);
         boolean ocean = w == Water.WARM_OCEAN || w == Water.LUKEWARM_OCEAN;
         double left = 1.0;
-        if (w == Water.WARM_OCEAN) {
+        if (w == Water.WARM_OCEAN && Features.enabled(Feature.CORALS)) {
             double pf = Math.min(1, chance * reefShare * org.overengineer.bettacraft.sources.WildTables.NET_FRAG_FACTOR);
             var frags = org.overengineer.bettacraft.sources.WildTables.NET_REEF_FRAGS;
             for (var f : frags.entries()) out.merge(f.value(), pf * frags.share(f.value()) / countOf(frags, f.value()), Double::sum);

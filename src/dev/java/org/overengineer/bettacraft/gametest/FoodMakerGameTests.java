@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -207,10 +209,10 @@ public final class FoodMakerGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m26b_off", timeoutTicks = 100)
     public static void foodFeatureSwitches(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean maker = CommonConfig.FEATURE_FOOD_MAKER.get(), variety = CommonConfig.FEATURE_FOOD_VARIETY.get();
+        boolean maker = Features.own(Feature.FOOD_MACHINE), variety = Features.own(Feature.FOOD_VARIETY);
         try {
-            CommonConfig.FEATURE_FOOD_MAKER.set(false);
-            CommonConfig.FEATURE_FOOD_VARIETY.set(false);
+            Features.set(Feature.FOOD_MACHINE, false);
+            Features.set(Feature.FOOD_VARIETY, false);
             FoodMakerBlockEntity m = maker(h, new BlockPos(8, 1, 8));
             m.items().setStackInSlot(0, new ItemStack(Items.EGG));
             m.items().setStackInSlot(1, new ItemStack(Items.WHEAT));
@@ -227,8 +229,8 @@ public final class FoodMakerGameTests {
             h.assertTrue(cory.health().variety(3) == 0, "no food memory");
             h.assertTrue(cory.health().daysSinceFed() == 0, "flakes fill like any food: " + cory.health().daysSinceFed());
         } finally {
-            CommonConfig.FEATURE_FOOD_MAKER.set(maker);
-            CommonConfig.FEATURE_FOOD_VARIETY.set(variety);
+            Features.set(Feature.FOOD_MACHINE, maker);
+            Features.set(Feature.FOOD_VARIETY, variety);
         }
         h.succeed();
     }

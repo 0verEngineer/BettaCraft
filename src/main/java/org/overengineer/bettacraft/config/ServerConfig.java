@@ -537,7 +537,7 @@ public final class ServerConfig {
                 .defineInRange("mossChance", 0.5, 0.0, 1.0);
         // M22.4: no plant only at the wandering trader
         AQUATIC_NET_SHARE = b.comment("Share of the aquarium net's catches in rivers, jungle water and swamps that is an aquarium plant from the",
-                        "bottom (times critters.netChance; features.plantNetCatches; 0 = the net brings up no plants)")
+                        "bottom (times critters.netChance; features.aquaticPlants.netCatches; 0 = the net brings up no plants)")
                 .defineInRange("netPlantShare", org.overengineer.bettacraft.sources.WildTables.NET_PLANT_SHARE, 0.0, 1.0);
         NET_PLANTS_RIVER = plantList(b, "netPlantsRiver", "Plants the net brings up in rivers", org.overengineer.bettacraft.sources.WildTables.NET_PLANTS_RIVER);
         NET_PLANTS_JUNGLE = plantList(b, "netPlantsJungle", "Plants the net brings up in jungle water", org.overengineer.bettacraft.sources.WildTables.NET_PLANTS_JUNGLE);
@@ -574,7 +574,7 @@ public final class ServerConfig {
         b.pop();
 
         // M23
-        b.comment("Air pumps, air stones and the oxygen in the water (features.aeration, features.oxygen)").push("aeration");
+        b.comment("Air pumps, air stones and the oxygen in the water (features.equipment.aeration, features.waterChemistry.oxygen)").push("aeration");
         POWER_AIR_PUMP = b.comment("Air pumps only run while the tank has enough FE (power.airPumpFePerOutlet for every air stone and sponge filter they",
                 "drive; off: they run without power like the filters without power mods)").define("airPumpRequiresEnergy", false);
         POWER_AIR_PUMP_FE = b.comment("FE per tick an air pump needs for each air stone or sponge filter it drives (times its power regulator)")
@@ -599,14 +599,14 @@ public final class ServerConfig {
         OXYGEN_LABYRINTH_STRESS_BELOW = b.comment("Below this oxygen (mg/L) bettas and dwarf gouramis are stressed (labyrinth fish breathe air at the surface)")
                 .defineInRange("labyrinthStressBelow", 1.0, 0.0, 20.0);
         b.pop();
-        b.comment("Internal filters (features.moreInternalFilters, features.fryIntake)").push("internalFilters");
+        b.comment("Internal filters (features.equipment.moreInternalFilters, features.breeding.fryIntake)").push("internalFilters");
         FILTER_SPONGE_BLOCKS = b.comment("Water blocks one sponge filter keeps clean (it needs air from an air pump)")
                 .defineInRange("spongeFilterBlocks", 12, 0, 10000);
         FILTER_CORNER_BLOCKS = b.comment("Water blocks one corner filter keeps clean").defineInRange("cornerFilterBlocks", 20, 0, 10000);
         FILTER_FRY_INTAKE = b.comment("Share of the fry a running motor filter without intake sponge sucks in per day (internal, corner and external filters;",
                 "the sponge filter never does; 0 = never)").defineInRange("fryIntakePerDay", 0.15, 0.0, 1000.0);
         b.pop();
-        b.comment("Light strength of the aquarium lights (features.ledTiers): the light bar gives light 15, the stronger lights more").push("lights");
+        b.comment("Light strength of the aquarium lights (features.equipment.ledTiers): the light bar gives light 15, the stronger lights more").push("lights");
         LIGHT_PANEL_BOOST = b.comment("Extra light of an LED panel over the light bar (light 15 + this, on the share of the tank it covers)")
                 .defineInRange("panelBoost", 2.5, 0.0, 15.0);
         LIGHT_HIGH_POWER_BOOST = b.comment("Extra light of a high-power LED over the light bar (light 15 + this, on the share of the tank it covers)")
@@ -628,14 +628,14 @@ public final class ServerConfig {
                 .defineInRange("referenceFishPerBlock", 0.5, 0.01, 100.0);
         b.pop();
         // M25
-        b.comment("Water chemistry (M25, features.waterChemistry): TDS, pH and hardness of the water").push("chemistry");
+        b.comment("Water chemistry (M25, features.waterChemistry.enabled): TDS, pH and hardness of the water").push("chemistry");
         CHEM_TDS_PER_DAY = b.comment("TDS (ppm) a normally stocked tank gains per day from food and waste (water changes bring it back towards the normal",
                 "water's 250)").defineInRange("tdsPerDay", org.overengineer.bettacraft.chem.WaterChemistry.WASTE_TDS_PER_DAY, 0.0, 1000.0);
         CHEM_REMINERAL_PPM = b.comment("TDS (ppm) one remineralising salt adds to 1000 mB of water").defineInRange("remineraliserPpm", 400.0, 1.0, 100000.0);
         CHEM_LEAF_TANNIN = b.comment("Water blocks one almond leaf colours fully with its tannins (they lower the pH)").defineInRange("leafBlocks", 1.0, 0.01, 1000.0);
         CHEM_LEAF_HALF_LIFE = b.comment("Days until half of the tannins of the almond leaves have faded").defineInRange("leafHalfLifeDays", 7.0, 0.1, 1000.0);
         b.pop();
-        b.comment("CO2 dosing (M25, features.co2): bio CO2, gas cylinders and the filling station").push("co2Dosing");
+        b.comment("CO2 dosing (M25, features.co2.enabled): bio CO2, gas cylinders and the filling station").push("co2Dosing");
         CO2_PER_BUBBLE = b.comment("mg/L per day one bubble per second gives one block of water (a bigger tank needs more bubbles)")
                 .defineInRange("co2PerBubble", 150.0, 0.0, 100000.0);
         CO2_STRESS_FROM = b.comment("CO2 (mg/L) from which the animals are stressed").defineInRange("co2StressFrom", 35.0, 1.0, 200.0);
@@ -653,7 +653,7 @@ public final class ServerConfig {
                 .defineInRange("stationFe", 20, 0, 100000);
         CO2_FOREIGN_MB = b.comment("mB of another mod's CO2 gas (fluid tag #bettacraft:co2_gas) for a full cylinder").defineInRange("foreignCo2Mb", 1000, 1, 1000000);
         b.pop();
-        b.comment("Reverse osmosis unit (M25, features.reverseOsmosis)").push("osmosis");
+        b.comment("Reverse osmosis unit (M25, features.osmosis.enabled)").push("osmosis");
         RO_RATE = b.comment("mB of reverse osmosis water per tick without a pressure pump (it simply runs on the water it gets)")
                 .defineInRange("roRate", 1.0, 0.01, 10000.0);
         RO_BOOST = b.comment("How much faster the FE pressure pump makes it (only while a power option is on and it has FE)")
@@ -664,7 +664,7 @@ public final class ServerConfig {
         RO_MEMBRANE = b.comment("Buckets of reverse osmosis water a membrane makes before it is worn out").defineInRange("roMembraneBuckets", 128.0, 1.0, 100000.0);
         RO_PREFILTER = b.comment("Buckets of reverse osmosis water a prefilter cartridge lasts").defineInRange("roPrefilterBuckets", 32.0, 1.0, 100000.0);
         b.pop();
-        b.comment("Reef dosing (M25, features.reefDosing): alkalinity, magnesium and trace elements of salt water and the dosing pump").push("dosing");
+        b.comment("Reef dosing (M25, features.corals.reefDosing): alkalinity, magnesium and trace elements of salt water and the dosing pump").push("dosing");
         DOSING_CA_PER_ML = b.comment("Calcium (mg/L in one water block) one mL of calcium solution adds (a bigger tank needs more)")
                 .defineInRange("calciumPerMl", 2.0, 0.0, 10000.0);
         DOSING_KH_PER_ML = b.comment("Alkalinity (dKH in one water block) one mL of alkalinity solution adds (2 mg/L calcium match 0.07 dKH)")
@@ -678,7 +678,7 @@ public final class ServerConfig {
         DOSING_CANISTER_ML = b.comment("mL of solution in one canister of the dosing pump").defineInRange("canisterMl", 500, 1, 1000000);
         DOSING_MAX_ML = b.comment("Most mL per day one channel of the dosing pump can be set to").defineInRange("maxMlPerDay", 100, 1, 100000);
         b.pop();
-        b.comment("Pipes and pumps (M24, features.pipes): they carry water with all its values (temperature, salt, quality, nitrate)").push("pipes");
+        b.comment("Pipes and pumps (M24, features.pipes.enabled): they carry water with all its values (temperature, salt, quality, nitrate)").push("pipes");
         PIPE_GLASS_RATE = b.comment("mB per tick a glass pipe network carries").defineInRange("glassPipeRate", 50, 1, 1000000);
         PIPE_STEEL_RATE = b.comment("mB per tick a stainless steel pipe network carries (a network of both kinds carries what its weakest pipe carries)")
                 .defineInRange("steelPipeRate", 250, 1, 1000000);
@@ -688,11 +688,11 @@ public final class ServerConfig {
         POWER_PUMP_FE = b.comment("FE per tick of a running water pump or filter pump head at 100 % (a water change costs this per 100 mB)")
                 .defineInRange("pumpFePerTick", 8, 0, 100000);
         b.pop();
-        b.comment("Crucible (M24, features.stainlessSteel): stainless steel from iron, coal and nether quartz").push("crucible");
+        b.comment("Crucible (M24, features.equipment.stainlessSteel): stainless steel from iron, coal and nether quartz").push("crucible");
         CRUCIBLE_TICKS = b.comment("Ticks one melt takes").defineInRange("meltTicks", 200, 1, 100000);
         CRUCIBLE_FE = b.comment("FE per tick the crucible uses instead of fuel while FE is available (power mods)").defineInRange("fePerTick", 20, 0, 100000);
         b.pop();
-        b.comment("Multiblock external filter (M24, features.multiblockFilter): water blocks one filter chamber keeps clean with its medium").push("multiblockFilter");
+        b.comment("Multiblock external filter (M24, features.equipment.multiblockFilter): water blocks one filter chamber keeps clean with its medium").push("multiblockFilter");
         MEDIA_SPONGE_BLOCKS = b.comment("Water blocks a chamber with a filter sponge (mechanical) keeps clean").defineInRange("spongeBlocks", 12, 0, 10000);
         MEDIA_CERAMIC_BLOCKS = b.comment("Water blocks a chamber with ceramic rings (bacteria) keeps clean").defineInRange("ceramicBlocks", 24, 0, 10000);
         MEDIA_CARBON_BLOCKS = b.comment("Water blocks a chamber with activated carbon keeps clean (it is used up, not cleaned)").defineInRange("carbonBlocks", 16, 0, 10000);
@@ -711,7 +711,7 @@ public final class ServerConfig {
                 .defineInRange("hatcheryYield", 2, 1, 16);
         b.pop();
 
-        b.comment("M26: live food cultures (tubifex dish, daphnia barrel, features.liveFoodCultures) and the live food pump (features.liveFoodPump)")
+        b.comment("M26: live food cultures (tubifex dish, daphnia barrel, features.liveFood.cultures) and the live food pump (features.liveFood.pump)")
                 .push("liveFood");
         LIVE_FOOD_TUBIFEX_DAYS = b.comment("In-game days a fed tubifex dish needs to grow from a tenth to nine tenths of its room")
                 .defineInRange("tubifexDays", 4.0, 0.1, 100.0);
@@ -731,7 +731,7 @@ public final class ServerConfig {
                 .defineInRange("pumpFePerPortion", 200, 0, 100000);
         b.pop();
 
-        b.comment("M26 part b: the food maker (features.foodMaker): a spring wound by hand, or FE while a power option is on")
+        b.comment("M26 part b: the food maker (features.foodMachine.enabled): a spring wound by hand, or FE while a power option is on")
                 .push("foodMaking");
         FOOD_MAKER_TICKS = b.comment("Ticks the food maker needs for one batch").defineInRange("ticksPerBatch", 200, 1, 72000);
         FOOD_MAKER_SPRING_TICKS = b.comment("Ticks of work a fully wound spring gives (24000 = one in-game day)")
@@ -741,7 +741,7 @@ public final class ServerConfig {
                 .defineInRange("makerFePerTick", 10, 0, 100000);
         b.pop();
 
-        b.comment("M26 part b: food variety (features.foodVariety): food groups, favourite and poor food of each diet (item tags",
+        b.comment("M26 part b: food variety (features.foodVariety.enabled): food groups, favourite and poor food of each diet (item tags",
                 "#bettacraft:diet/<diet>/favourite and /poor)").push("diet");
         DIET_VARIETY_DAYS = b.comment("In-game days a fish remembers what it ate").defineInRange("varietyDays", 3.0, 0.1, 30.0);
         DIET_VARIETY_GROUPS = b.comment("Food groups (pellets, flakes, granules, wafers, frozen, live) a fish must have eaten in that time for a varied diet")
@@ -754,7 +754,7 @@ public final class ServerConfig {
                 .defineInRange("shrimpFoodFactor", 2.0, 0.1, 20.0);
         b.pop();
 
-        b.comment("M27: the monitors (features.monitors): screens of monitor blocks that show every tank in range").push("monitor");
+        b.comment("M27: the monitors (features.monitors.enabled): screens of monitor blocks that show every tank in range").push("monitor");
         MONITOR_RANGE = b.comment("Blocks from a monitor within which it finds the tanks (nearest point of the tank)")
                 .defineInRange("range", 32, 4, 128);
         MONITOR_FE_PER_BLOCK = b.comment("FE per tick of each monitor block while a power option is on (power.* or pipes.pumpsRequireEnergy)")
@@ -923,32 +923,32 @@ public final class ServerConfig {
 
         b.comment("M22.3: wild animals in the world, their colours, mutations and the magnifier").push("wildlife");
         WILD_BEAUTIFUL_CHANCE = b.comment("Chance that a wild animal (spawned in the world or caught with the net) shows a bred colour openly (pure-bred);",
-                        "most are wild-coloured, some carry a bred colour hidden (features.wildColors)")
+                        "most are wild-coloured, some carry a bred colour hidden (features.breeding.wildColors)")
                 .defineInRange("beautifulWildChance", 0.03, 0.0, 1.0);
         WILD_MUTATION_CHANCE = b.comment("Chance per gene and birth that a shrimp, crayfish, snail or a tankmate without its own genetics mutates",
-                        "(bettas: breeding.mutationChance, guppies and endlers 0.4 %; features.mutations)")
+                        "(bettas: breeding.mutationChance, guppies and endlers 0.4 %; features.breeding.mutations)")
                 .defineInRange("otherMutationChance", 0.003, 0.0, 1.0);
         GENES_ALWAYS_VISIBLE = b.comment("Hidden genes of every animal are always visible, without analysing them with the magnifier")
                 .define("genesAlwaysVisible", false);
         WILD_FISH_NEARBY = b.comment("Wild tankmate fish and frogs only spawn while fewer than this many of them live within 32 blocks",
-                        "(keeps them rare, in small shoals; features.wildFish)")
+                        "(keeps them rare, in small shoals; features.tankmates.wildSpawns)")
                 .defineInRange("wildFishNearby", 6, 0, 256);
         WILD_CRITTERS_NEARBY = b.comment("Wild shrimp, crayfish, snails and hermit crabs only spawn while fewer than this many of them live within",
-                        "32 blocks (features.wildCritters)")
+                        "32 blocks (features.invertebrates.wildSpawns)")
                 .defineInRange("wildCrittersNearby", 8, 0, 256);
-        WILD_PASS_INTERVAL = b.comment("Ticks between two tries of the own spawn pass per player (20 ticks = 1 second; features.wildSpawnPass)")
+        WILD_PASS_INTERVAL = b.comment("Ticks between two tries of the own spawn pass per player (20 ticks = 1 second; features.wildSpawnPass.enabled)")
                 .defineInRange("spawnPassInterval", 200, 20, 72000);
         WILD_PASS_PER_PLAYER = b.comment("The own spawn pass only spawns while fewer than this many wild animals of the mod live within 48 blocks of",
-                        "the player (features.wildSpawnPass; 0 = it spawns nothing)")
+                        "the player (features.wildSpawnPass.enabled; 0 = it spawns nothing)")
                 .defineInRange("spawnPassPerPlayer", 10, 0, 256);
         b.pop();
 
-        b.comment("M30: big tanks (features.bigTanks): larger tanks and a smaller interior scale for them").push("bigTankRules");
-        BIG_MAX_SIZE_X = b.comment("Maximum tank size along X with features.bigTanks (the larger of this and tank.maxSizeX applies)")
+        b.comment("M30: big tanks (features.bigTanks.enabled): larger tanks and a smaller interior scale for them").push("bigTankRules");
+        BIG_MAX_SIZE_X = b.comment("Maximum tank size along X with features.bigTanks.enabled (the larger of this and tank.maxSizeX applies)")
                 .defineInRange("bigMaxSizeX", 32, 1, 64);
-        BIG_MAX_SIZE_Y = b.comment("Maximum tank size along Y with features.bigTanks (the larger of this and tank.maxSizeY applies)")
+        BIG_MAX_SIZE_Y = b.comment("Maximum tank size along Y with features.bigTanks.enabled (the larger of this and tank.maxSizeY applies)")
                 .defineInRange("bigMaxSizeY", 16, 1, 64);
-        BIG_MAX_SIZE_Z = b.comment("Maximum tank size along Z with features.bigTanks (the larger of this and tank.maxSizeZ applies)")
+        BIG_MAX_SIZE_Z = b.comment("Maximum tank size along Z with features.bigTanks.enabled (the larger of this and tank.maxSizeZ applies)")
                 .defineInRange("bigMaxSizeZ", 32, 1, 64);
         INTERIOR_SCALE8_ABOVE = b.comment("A tank whose longest side is longer than this many blocks gets interior scale 8 instead of 16 (its interior",
                         "stays at most 256 blocks long); an existing interior is shrunk when the tank grows past it, see the handbook")
@@ -957,7 +957,7 @@ public final class ServerConfig {
                 .defineInRange("interiorScale4Above", 32, 1, 64);
         b.pop();
 
-        b.comment("M30: big animals in tanks (features.bigAnimals): the giant catfish, sharks, rays and dolphins. An animal of known length",
+        b.comment("M30: big animals in tanks (features.bigTanks.bigAnimals): the giant catfish, sharks, rays and dolphins. An animal of known length",
                 "(the big species, the vanilla dolphin, #bettacraft:big_tank_animals) goes into a tank whose longer side is at least",
                 "longSidePerMetre times its length in metres, the shorter side shortSidePerMetre and the height heightPerMetre times it,",
                 "with waterPerCubicMetre water blocks per animal and cubic metre of its length").push("bigAnimalRules");
@@ -985,7 +985,7 @@ public final class ServerConfig {
                 .defineInRange("steelLeaderChance", 0.05, 0.0, 1.0);
         b.pop();
 
-        b.comment("M31: terrarium and paludarium (features.terrarium, features.terrariumDevices): the mode of a tank comes from its water and the land",
+        b.comment("M31: terrarium and paludarium (features.terrariums.enabled, features.terrariums.devices): the mode of a tank comes from its water and the land",
                 "built in its interior above the water line; terraria and paludaria get air temperature, humidity and UV").push("terrarium");
         TERRA_PALUDARIUM_LAND = b.comment("A tank with water is a paludarium from this share of land on (interior columns whose top is above the water)")
                 .defineInRange("paludariumLandShare", 0.15, 0.01, 1.0);
@@ -1036,7 +1036,7 @@ public final class ServerConfig {
                 .defineInRange("misterFePerTick", 6.0, 0.0, 100000.0);
         b.pop();
 
-        b.comment("Animals of other mods in our tanks (M32, features.foreignCare / foreignBreeding; profiles in",
+        b.comment("Animals of other mods in our tanks (M32, features.foreignAnimals.care / foreignBreeding; profiles in",
                 "data/<ns>/bettacraft/foreign_animals)").push("foreign");
         FOREIGN_BREEDING_SPEED = b.comment("Breeding speed of the animals of other mods with a profile (1 = by the profile, 0 = they never breed in a tank)")
                 .defineInRange("foreignBreedingSpeed", 1.0, 0.0, 10.0);
@@ -1075,7 +1075,7 @@ public final class ServerConfig {
         }
     }
 
-    /** Largest tank size along an axis; M30: with features.bigTanks the larger of tank.maxSize* and bigTankRules.bigMaxSize*. */
+    /** Largest tank size along an axis; M30: with features.bigTanks.enabled the larger of tank.maxSize* and bigTankRules.bigMaxSize*. */
     public static int maxSize(int axis) {
         int base;
         try {
@@ -1087,7 +1087,7 @@ public final class ServerConfig {
         } catch (IllegalStateException e) {
             base = 16;
         }
-        if (!CommonConfig.bigTanks()) return base;
+        if (!Features.enabled(Feature.BIG_TANKS)) return base;
         int big = getOr(switch (axis) {
             case 0 -> BIG_MAX_SIZE_X;
             case 1 -> BIG_MAX_SIZE_Y;

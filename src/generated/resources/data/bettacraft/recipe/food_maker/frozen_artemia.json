@@ -1,4 +1,14 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "liveFood.enabled"
+    },
+    {
+      "type": "bettacraft:feature",
+      "feature": "foodMachine.enabled"
+    }
+  ],
   "type": "bettacraft:food_maker",
   "ingredients": [
     {

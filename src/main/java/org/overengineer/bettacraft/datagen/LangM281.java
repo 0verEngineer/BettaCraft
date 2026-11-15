@@ -10,8 +10,6 @@ final class LangM281 {
     private LangM281() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("bettacraft.configuration.wildSpawnPass", "Own spawn pass for wild animals");
-        a.accept("bettacraft.configuration.wildSpawnPass.tooltip", "Now and then a few wild fish, frogs or small animals spawn in fitting water near each player, outside the vanilla water-ambient mob cap that cod, salmon, tropical fish and the fish of other mods fill (off: only the vanilla spawning)");
         a.accept("bettacraft.configuration.spawnPassInterval", "Spawn pass interval");
         a.accept("bettacraft.configuration.spawnPassInterval.tooltip", "Ticks between two tries of the own spawn pass per player (20 ticks = 1 second)");
         a.accept("bettacraft.configuration.spawnPassPerPlayer", "Wild animals per player at most");
@@ -25,7 +23,7 @@ final class LangM281 {
         a.accept("command.bettacraft.wildlife.vanilla.room", "Vanilla spawning: possible now (the cap has room)");
         a.accept("command.bettacraft.wildlife.vanilla.full", "Vanilla spawning: no, the cap is full (despawning fish make room again)");
         a.accept("command.bettacraft.wildlife.vanilla.no_species", "Vanilla spawning: none of our animals in this biome");
-        a.accept("command.bettacraft.wildlife.pass.off", "Own spawn pass: off (features.wildSpawnPass)");
+        a.accept("command.bettacraft.wildlife.pass.off", "Own spawn pass: off (features.wildSpawnPass.enabled)");
         a.accept("command.bettacraft.wildlife.pass.full", "Own spawn pass: waiting, %s of %s wild animals already nearby");
         a.accept("command.bettacraft.wildlife.pass.on", "Own spawn pass: tries every %s s in water %s to %s blocks away, up to %s more animals");
         a.accept("command.bettacraft.wildlife.list.none", "No animals of Bettacraft within %s blocks (tank inhabitants left out).");
@@ -60,8 +58,6 @@ final class LangM281 {
         a.accept("block.bettacraft.wild_carpet", "Wild Carpet Plant");
         a.accept("block.bettacraft.wild_floating_plant", "Wild Floating Plants");
         a.accept("message.bettacraft.wild_plant.trimmed", "This plant was cut just now; it has to grow back first");
-        a.accept("bettacraft.configuration.wildPlants", "Wild aquarium and floating plants");
-        a.accept("bettacraft.configuration.wildPlants.tooltip", "Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks: jungle water, swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand or with the net (off: no new ones in new chunks)");
         a.accept("bettacraft.configuration.wildPlantFrequency", "Wild plant frequency");
         a.accept("bettacraft.configuration.wildPlantFrequency.tooltip", "A factor on the chance of a wild plant group per chunk (1 = about one small group in every two or three chunks with water of their kind; 0 = none)");
     }

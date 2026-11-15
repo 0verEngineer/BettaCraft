@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,7 +133,7 @@ public final class PipeNetwork {
 
     /** Pushes water into the network (from the block at {@code from}, which is skipped). Returns what the ends took. */
     public int fill(Level level, FluidStack resource, IFluidHandler.FluidAction action, @Nullable BlockPos from) {
-        if (resource.isEmpty() || ends.isEmpty() || !CommonConfig.pipes()) return 0;
+        if (resource.isEmpty() || ends.isEmpty() || !Features.enabled(Feature.PIPES)) return 0;
         if (!BUSY.get().add(this)) return 0;
         try {
             int left = Math.min(resource.getAmount(), budget(level));
@@ -164,7 +166,7 @@ public final class PipeNetwork {
 
     /** Pulls up to {@code max} mB of water (or of {@code like}'s fluid) from the ends (not from {@code from}). */
     public FluidStack drain(Level level, int max, @Nullable FluidStack like, IFluidHandler.FluidAction action, @Nullable BlockPos from) {
-        if (max <= 0 || ends.isEmpty() || !CommonConfig.pipes()) return FluidStack.EMPTY;
+        if (max <= 0 || ends.isEmpty() || !Features.enabled(Feature.PIPES)) return FluidStack.EMPTY;
         if (!BUSY.get().add(this)) return FluidStack.EMPTY;
         try {
             int want = Math.min(max, budget(level));

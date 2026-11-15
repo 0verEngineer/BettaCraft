@@ -10,13 +10,9 @@ final class LangM32d {
     private LangM32d() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("bettacraft.configuration.modpackEvents", "Events for modpack scripts");
-        a.accept("bettacraft.configuration.modpackEvents.tooltip", "Bettacraft posts its events for modpack scripts (KubeJS NativeEvents) and other mods on the NeoForge event bus: an animal was born or hatched in a tank, an animal of a tank died (with the cause), an alarm tile of a monitor went off or cleared (off: none are posted)");
-        a.accept("bettacraft.configuration.alarmWaypoints", "Waypoints for monitor alarms");
-        a.accept("bettacraft.configuration.alarmWaypoints.tooltip", "A monitor alarm puts a waypoint at its tank on the map of the tank's owner and of the players within 128 blocks (JourneyMap); it goes away when the alarm clears. Each player can turn it off in the client config (off: no waypoints)");
         a.accept("bettacraft.configuration.map", "Map mods");
         a.accept("bettacraft.configuration.showAlarmWaypoints", "Alarm waypoints on my map");
-        a.accept("bettacraft.configuration.showAlarmWaypoints.tooltip", "A waypoint at a tank whose monitor alarm went off, until it clears (JourneyMap; the pack switch features.alarmWaypoints turns it off for everyone)");
+        a.accept("bettacraft.configuration.showAlarmWaypoints.tooltip", "A waypoint at a tank whose monitor alarm went off, until it clears (JourneyMap; the pack switch features.compat.journeymap turns it off for everyone)");
 
         a.accept("waypoint.bettacraft.alarm", "Tank alarm: %s (%s)");
         a.accept("waypoint.bettacraft.tank", "Tank");

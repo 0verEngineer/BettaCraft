@@ -82,8 +82,14 @@ final class DevSmokeM12 {
         boolean frogbit = false, red = false;
         for (int lv = 1; lv <= 2; lv++) {
             for (VillagerTrades.ItemListing l : VillagerTrades.WANDERING_TRADER_TRADES.get(lv)) {
-                if (l instanceof net.neoforged.neoforge.common.BasicItemListing b) {
-                    var offer = b.getOffer(null, level.getRandom());
+                {
+                    // M33: the listings are wrapped by their feature switches; the plant ones need no trader
+                    net.minecraft.world.item.trading.MerchantOffer offer;
+                    try {
+                        offer = l.getOffer(null, level.getRandom());
+                    } catch (RuntimeException ex) {
+                        continue;
+                    }
                     if (offer == null) continue;
                     frogbit |= offer.getResult().is(ModItems.FLOATING_PLANTS.get(FloatingPlantType.FROGBIT).get());
                     red |= offer.getResult().is(ModItems.FLOATING_PLANTS.get(FloatingPlantType.RED_ROOT_FLOATER).get());

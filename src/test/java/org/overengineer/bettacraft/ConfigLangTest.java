@@ -18,17 +18,27 @@ import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
 
 /**
- * Every section and value of the three configs has a label ({@code bettacraft.configuration.<name>}) for the NeoForge
+ * Every section and value of the three configs has a label ({@code bettacraft.configuration.<name>} or the translation key of the spec) for the NeoForge
  * config screen, and every value a tooltip; the German file gets them through {@link LangCompletenessTest}.
  */
 class ConfigLangTest {
-    private static void collect(UnmodifiableConfig spec, Set<String> labels, Set<String> values) {
-        for (UnmodifiableConfig.Entry e : spec.entrySet()) {
-            labels.add(e.getKey());
+    /**
+     * The label keys of every section and value: the translation key set in the spec (M33: the feature tree), otherwise
+     * {@code bettacraft.configuration.<name>}; values also need {@code <key>.tooltip}.
+     */
+    private static void collect(ModConfigSpec spec, UnmodifiableConfig level, java.util.List<String> path, Set<String> labels, Set<String> values) {
+        for (UnmodifiableConfig.Entry e : level.entrySet()) {
+            java.util.List<String> p = new java.util.ArrayList<>(path);
+            p.add(e.getKey());
             if (e.getValue() instanceof UnmodifiableConfig sub) {
-                collect(sub, labels, values);
+                String key = spec.getLevelTranslationKey(p);
+                labels.add(key != null ? key : "bettacraft.configuration." + e.getKey());
+                collect(spec, sub, p, labels, values);
             } else {
-                values.add(e.getKey());
+                String key = e.getValue() instanceof ModConfigSpec.ValueSpec v && v.getTranslationKey() != null ? v.getTranslationKey()
+                        : "bettacraft.configuration." + e.getKey();
+                labels.add(key);
+                values.add(key);
             }
         }
     }
@@ -39,11 +49,11 @@ class ConfigLangTest {
         JsonObject lang = JsonParser.parseString(Files.readString(en, StandardCharsets.UTF_8)).getAsJsonObject();
         Set<String> labels = new TreeSet<>(), values = new TreeSet<>();
         for (ModConfigSpec spec : new ModConfigSpec[]{ServerConfig.SPEC, CommonConfig.SPEC, ClientConfig.SPEC}) {
-            collect(spec.getSpec(), labels, values);
+            collect(spec, spec.getSpec(), java.util.List.of(), labels, values);
         }
         Set<String> missing = new TreeSet<>();
-        for (String k : labels) if (!lang.has("bettacraft.configuration." + k)) missing.add(k);
-        for (String k : values) if (!lang.has("bettacraft.configuration." + k + ".tooltip")) missing.add(k + ".tooltip");
+        for (String k : labels) if (!lang.has(k)) missing.add(k);
+        for (String k : values) if (!lang.has(k + ".tooltip")) missing.add(k + ".tooltip");
         assertTrue(missing.isEmpty(), "config keys without translation: " + missing);
         assertTrue(lang.has("bettacraft.configuration.title"), "config screen title");
     }

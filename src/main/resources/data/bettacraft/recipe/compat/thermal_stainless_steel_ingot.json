@@ -3,6 +3,14 @@
     {
       "type": "neoforge:mod_loaded",
       "modid": "thermal"
+    },
+    {
+      "type": "bettacraft:feature",
+      "feature": "equipment.stainlessSteel"
+    },
+    {
+      "type": "bettacraft:feature",
+      "feature": "compat.thermal"
     }
   ],
   "type": "thermal:smelter",

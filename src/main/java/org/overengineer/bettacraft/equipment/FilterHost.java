@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -33,9 +35,9 @@ public interface FilterHost {
 
     default void setRegulator(int v) {}
 
-    /** M23: share 0..1 of the regulator (1 while features.powerRegulator is off). */
+    /** M23: share 0..1 of the regulator (1 while features.power.regulator is off). */
     default double powerShare() {
-        return org.overengineer.bettacraft.config.CommonConfig.powerRegulator() ? Math.max(0, Math.min(10, regulator())) / 10.0 : 1.0;
+        return Features.enabled(Feature.POWER_REGULATOR) ? Math.max(0, Math.min(10, regulator())) / 10.0 : 1.0;
     }
 
     /** M23: an intake sponge is fitted (the filter does not suck in fry). */

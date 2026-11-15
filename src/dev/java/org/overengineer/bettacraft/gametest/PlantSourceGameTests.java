@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -34,7 +36,7 @@ import org.overengineer.bettacraft.world.AquaticPlantFishingModifier;
  * M22.4: no plant only at the wandering trader. The aquarium net brings up the plants of its water (rivers: Vallisneria,
  * Monte Carlo, Java moss, Alternanthera, the sword; jungle water: the Amazon sword, Alternanthera, the tiger lotus, Java
  * moss; swamps: Monte Carlo, Alternanthera, the tiger lotus, the crypts and the rare Flamingo), not in other water, not
- * with {@code features.plantNetCatches} off; the config lists change the tables; every plant species of the game (also
+ * with {@code features.aquaticPlants.netCatches} off; the config lists change the tables; every plant species of the game (also
  * floating plants and corals) is in a net or fishing table the server really uses.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
@@ -116,12 +118,12 @@ public final class PlantSourceGameTests {
         h.succeed();
     }
 
-    /** {@code features.plantNetCatches} off: the net brings up no plants; the config list replaces a table (an empty one: none). */
+    /** {@code features.aquaticPlants.netCatches} off: the net brings up no plants; the config list replaces a table (an empty one: none). */
     @GameTest(template = EMPTY, batch = "bettacraft_plant_net_config", timeoutTicks = 400)
     public static void netPlantsSwitchAndConfigList(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         double chance = ServerConfig.CRITTERS_NET_CHANCE.get(), share = ServerConfig.AQUATIC_NET_SHARE.get();
-        boolean feature = CommonConfig.FEATURE_PLANT_NET_CATCHES.get();
+        boolean feature = Features.own(Feature.PLANT_NET_CATCHES);
         var river = ServerConfig.NET_PLANTS_RIVER.get();
         try {
             ServerConfig.CRITTERS_NET_CHANCE.set(1.0);
@@ -129,9 +131,9 @@ public final class PlantSourceGameTests {
             BlockPos rel = new BlockPos(16, 2, 16), water = h.absolutePos(rel);
             h.setBlock(rel, Blocks.WATER);
             biome(level, water, "minecraft:river");
-            CommonConfig.FEATURE_PLANT_NET_CATCHES.set(false);
+            Features.set(Feature.PLANT_NET_CATCHES, false);
             h.assertTrue(swing(h, water, 60).isEmpty(), "switched off: no plants");
-            CommonConfig.FEATURE_PLANT_NET_CATCHES.set(true);
+            Features.set(Feature.PLANT_NET_CATCHES, true);
             ServerConfig.NET_PLANTS_RIVER.set(java.util.List.of("red_tiger_lotus=1", "no_such_plant=5"));
             Map<PlantSpecies, Integer> got = swing(h, water, 40);
             h.assertTrue(got.keySet().equals(EnumSet.of(PlantSpecies.TIGER_LOTUS)) && got.get(PlantSpecies.TIGER_LOTUS) == 40,
@@ -142,7 +144,7 @@ public final class PlantSourceGameTests {
         } finally {
             ServerConfig.CRITTERS_NET_CHANCE.set(chance);
             ServerConfig.AQUATIC_NET_SHARE.set(share);
-            CommonConfig.FEATURE_PLANT_NET_CATCHES.set(feature);
+            Features.set(Feature.PLANT_NET_CATCHES, feature);
             ServerConfig.NET_PLANTS_RIVER.set(river);
         }
         h.succeed();

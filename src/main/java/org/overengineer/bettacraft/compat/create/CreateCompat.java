@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.compat.create;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -39,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * M32 part b: our tanks on Create contraptions (pistons, bearings, pulleys, gantries, carts, trains), through Create's
  * public registries only, by reflection (no compile dependency):
  * <ul>
- *     <li>{@code BlockMovementChecks}: a tank may move ({@code features.createContraptions}, nobody in its interior, no
+ *     <li>{@code BlockMovementChecks}: a tank may move ({@code features.compat.create.contraptions}, nobody in its interior, no
  *     eggs or young that cannot travel), and all blocks of a tank are attached to each other, so a tank always moves as a
  *     whole.</li>
  *     <li>{@code MovementBehaviour} of the tank block: at the start of a move the controller packs the animals into the
@@ -115,7 +117,7 @@ public final class CreateCompat {
             Object beRegistry = registries.getField("BLOCK_ENTITY_TRANSFORMERS").get(null);
             beRegistry.getClass().getMethod("register", Object.class, Object.class).invoke(beRegistry, ModBlockEntities.TANK.get(), transformer);
             registered = true;
-            LOGGER.info("Create found: tanks travel on contraptions (features.createContraptions)");
+            LOGGER.info("Create found: tanks travel on contraptions (features.compat.create.contraptions)");
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
             LOGGER.error("Create found, but its contraption API could not be reached: tanks stay unmovable", e);
         }
@@ -148,7 +150,7 @@ public final class CreateCompat {
 
     private static Object movementAllowed(BlockState state, Level level, BlockPos pos) {
         if (!(state.getBlock() instanceof TankBlock)) return resultPass;
-        if (!CommonConfig.createContraptions()) return resultFail;
+        if (!Features.enabled(Feature.CREATE_CONTRAPTIONS)) return resultFail;
         Optional<Component> why = cannotTravel(level, pos);
         if (why.isEmpty()) return resultSuccess;
         tell(level, pos, why.get());
@@ -184,7 +186,7 @@ public final class CreateCompat {
     }
 
     private static Object attachedTowards(BlockState state, Level level, BlockPos pos, Direction direction) {
-        if (!(state.getBlock() instanceof TankBlock) || !CommonConfig.createContraptions()) return resultPass;
+        if (!(state.getBlock() instanceof TankBlock) || !Features.enabled(Feature.CREATE_CONTRAPTIONS)) return resultPass;
         TankBlockEntity a = TankMultiblock.getBE(level, pos), b = TankMultiblock.getBE(level, pos.relative(direction));
         if (a == null || b == null || a.getControllerPos() == null) return resultPass;
         return a.getControllerPos().equals(b.getControllerPos()) ? resultSuccess : resultPass;

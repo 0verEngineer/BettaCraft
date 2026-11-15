@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Locale;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
@@ -87,9 +89,9 @@ public final class FoodDiet {
         return Fit.OK;
     }
 
-    /** The diet bonus of the health timers (off with {@code features.foodVariety}). */
+    /** The diet bonus of the health timers (off with {@code features.foodVariety.enabled}). */
     public static BettaHealth.Diet params() {
-        if (!CommonConfig.foodVariety()) return BettaHealth.Diet.OFF;
+        if (!Features.enabled(Feature.FOOD_VARIETY)) return BettaHealth.Diet.OFF;
         return new BettaHealth.Diet(ServerConfig.getOr(ServerConfig.DIET_VARIETY_DAYS, 3.0), ServerConfig.getOr(ServerConfig.DIET_VARIETY_GROUPS, 3),
                 ServerConfig.getOr(ServerConfig.DIET_VARIETY_RECOVERY, 1.5));
     }
@@ -99,7 +101,7 @@ public final class FoodDiet {
      * shorter while, a favourite conditions an adult (unless it is live food, which conditions anyway).
      */
     public static void eaten(ItemStack food, BettaHealth health, BettaBreeding breeding, boolean adult, Diet diet) {
-        if (!CommonConfig.foodVariety() || food.isEmpty()) return;
+        if (!Features.enabled(Feature.FOOD_VARIETY) || food.isEmpty()) return;
         Group g = group(food);
         if (g != null) health.ate(g.ordinal());
         switch (fit(diet, food)) {

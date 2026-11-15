@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -212,7 +214,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private int step(Level level, BlockPos pos) {
-        if (!CommonConfig.foodMaker()) return OFF;
+        if (!Features.enabled(Feature.FOOD_MACHINE)) return OFF;
         if (level.hasNeighborSignal(pos)) return PAUSED;
         FoodMakerRecipe r = current(level);
         if (r == null) {

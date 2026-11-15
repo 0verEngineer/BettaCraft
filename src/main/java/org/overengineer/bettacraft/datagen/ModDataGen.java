@@ -705,7 +705,8 @@ public final class ModDataGen {
         }
 
         @Override
-        protected void buildRecipes(RecipeOutput output) {
+        protected void buildRecipes(RecipeOutput raw) {
+            RecipeOutput output = featureGated(raw); // M33: every recipe only while its features are on
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK.get(), 4)
                     .pattern("GGG")
                     .pattern("GIG")
@@ -934,6 +935,37 @@ public final class ModDataGen {
                     .define('C', Tags.Items.CHESTS_WOODEN)
                     .unlockedBy("has_cobblestone", has(Items.COBBLESTONE))
                     .save(as(output, org.overengineer.bettacraft.equipment.StoneCabinetRecipe::of), BettaCraft.id("stone_cabinet"));
+        }
+
+        /**
+         * M33: adds a {@code bettacraft:feature} condition per feature of the recipe ({@link
+         * org.overengineer.bettacraft.config.FeatureContent#ofRecipe}: its result, its type, a few by id) to every recipe.
+         */
+        private static RecipeOutput featureGated(RecipeOutput parent) {
+            return new RecipeOutput() {
+                @Override
+                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                    String result = null;
+                    try {
+                        var stack = recipe.getResultItem(net.minecraft.core.RegistryAccess.EMPTY);
+                        var key = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+                        if (!stack.isEmpty() && key.getNamespace().equals(BettaCraft.MOD_ID)) result = key.getPath();
+                    } catch (RuntimeException ignored) {
+                        // a recipe without a fixed result
+                    }
+                    var type = net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
+                    List<ICondition> all = new java.util.ArrayList<>(List.of(conditions));
+                    for (var f : org.overengineer.bettacraft.config.FeatureContent.ofRecipe(id.getPath(), result, type == null ? null : type.toString())) {
+                        all.add(new org.overengineer.bettacraft.config.FeatureCondition(f));
+                    }
+                    parent.accept(id, recipe, advancement, all.toArray(ICondition[]::new));
+                }
+
+                @Override
+                public Advancement.Builder advancement() {
+                    return parent.advancement();
+                }
+            };
         }
 
         /** Turns the ShapedRecipe produced by the builder into one of our ShapedRecipe subclasses. */
@@ -1252,26 +1284,31 @@ public final class ModDataGen {
         @Override
         protected void start() {
             var biomes = registries.lookupOrThrow(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES);
+            // M33: every modifier only while its feature is on (bettacraft:feature)
             add("mud_mosquito_larvae", new AddItemLootModifier(new LootItemCondition[]{
+                    new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD),
                     LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
             }, new ItemStack(ModItems.MOSQUITO_LARVAE.get())));
             // M26: and tubifex worms (the start of a tubifex dish)
             add("mud_tubifex", new AddItemLootModifier(new LootItemCondition[]{
+                    new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES),
                     LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_TUBIFEX_CHANCE).build()
             }, new ItemStack(ModItems.TUBIFEX.get())));
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
-            add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[0],
+            add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[]{new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD)},
                     new ItemStack(ModItems.ARTEMIA_CYSTS.get())));
             // M12: fishing in swamps / mangrove swamps sometimes brings up a floating plant (chance from the server config)
             add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
+                    new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS),
                     LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
             }));
             // M13: fishing in jungles, rivers and swamps sometimes brings up an aquarium plant
             add("fishing_aquatic_plants", new org.overengineer.bettacraft.world.AquaticPlantFishingModifier(new LootItemCondition[]{
+                    new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS),
                     LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
             }));
         }

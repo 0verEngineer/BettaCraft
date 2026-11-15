@@ -16,7 +16,5 @@ final class LangM32b {
         a.accept("message.bettacraft.travel.blocked.eggs", "eggs or young would not survive the trip");
         a.accept("message.bettacraft.travel.travelling", "The tank is travelling: its animals are packed until it is put down");
 
-        a.accept("bettacraft.configuration.createContraptions", "Tanks on Create contraptions");
-        a.accept("bettacraft.configuration.createContraptions.tooltip", "Tanks travel on Create contraptions (pistons, bearings, pulleys, gantries, carts, trains) and on Create Aeronautics airships: the animals are packed into the tank for the trip and drawn swimming, the care pauses, everything comes back where the tank is put down (off: Create cannot move tanks; a tank that is already travelling still unpacks)");
     }
 }

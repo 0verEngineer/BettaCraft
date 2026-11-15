@@ -11,18 +11,14 @@ final class LangM30 {
 
     static void addAll(BiConsumer<String, String> a) {
         // config
-        a.accept("bettacraft.configuration.bigTanks", "Big tanks");
-        a.accept("bettacraft.configuration.bigTanks.tooltip", "Big tanks: up to bigTankRules.bigMaxSize* blocks (32 x 16 x 32), with a smaller interior scale (8 or 4) from bigTankRules.interiorScale8Above (off: tank.maxSize* as before; big tanks already built stay)");
-        a.accept("bettacraft.configuration.bigAnimals", "Big animals");
-        a.accept("bettacraft.configuration.bigAnimals.tooltip", "Big animals: giant catfish, sharks, rays and the vanilla dolphin in big tanks by the size rule (bigAnimalRules.*), the large net, the transport tub and the steel leader, wild big animals (off: none go into tanks, no new ones from the wild; those in tanks stay)");
         a.accept("bettacraft.configuration.bigTankRules", "Big tanks");
         a.accept("bettacraft.configuration.bigAnimalRules", "Big animals");
         a.accept("bettacraft.configuration.bigMaxSizeX", "Big tank: maximum size X");
-        a.accept("bettacraft.configuration.bigMaxSizeX.tooltip", "Maximum tank size along X with features.bigTanks (the larger of this and tank.maxSizeX applies)");
+        a.accept("bettacraft.configuration.bigMaxSizeX.tooltip", "Maximum tank size along X with features.bigTanks.enabled (the larger of this and tank.maxSizeX applies)");
         a.accept("bettacraft.configuration.bigMaxSizeY", "Big tank: maximum size Y");
-        a.accept("bettacraft.configuration.bigMaxSizeY.tooltip", "Maximum tank size along Y with features.bigTanks (the larger of this and tank.maxSizeY applies)");
+        a.accept("bettacraft.configuration.bigMaxSizeY.tooltip", "Maximum tank size along Y with features.bigTanks.enabled (the larger of this and tank.maxSizeY applies)");
         a.accept("bettacraft.configuration.bigMaxSizeZ", "Big tank: maximum size Z");
-        a.accept("bettacraft.configuration.bigMaxSizeZ.tooltip", "Maximum tank size along Z with features.bigTanks (the larger of this and tank.maxSizeZ applies)");
+        a.accept("bettacraft.configuration.bigMaxSizeZ.tooltip", "Maximum tank size along Z with features.bigTanks.enabled (the larger of this and tank.maxSizeZ applies)");
         a.accept("bettacraft.configuration.interiorScale8Above", "Interior scale 8 above");
         a.accept("bettacraft.configuration.interiorScale8Above.tooltip", "A tank whose longest side is longer than this many blocks gets interior scale 8 instead of 16 (its interior stays at most 256 blocks long); an existing interior is shrunk when the tank grows past it");
         a.accept("bettacraft.configuration.interiorScale4Above", "Interior scale 4 above");
@@ -48,7 +44,7 @@ final class LangM30 {
         a.accept("bettacraft.configuration.steelLeaderChance", "Steel leader chance");
         a.accept("bettacraft.configuration.steelLeaderChance.tooltip", "Chance per catch with a fishing rod and a steel leader in the other hand to hook a big animal of that water instead (an empty transport tub must be in the inventory)");
         a.accept("bettacraft.configuration.bigAnimalWeight", "Big animal spawn weight");
-        a.accept("bettacraft.configuration.bigAnimalWeight.tooltip", "Spawn weight of the wild big animals (giant catfish, sharks, rays) in their biomes per weight point of the species; they also need deep water and few of their kind nearby (bigAnimalRules.*); 0 disables them (features.bigAnimals)");
+        a.accept("bettacraft.configuration.bigAnimalWeight.tooltip", "Spawn weight of the wild big animals (giant catfish, sharks, rays) in their biomes per weight point of the species; they also need deep water and few of their kind nearby (bigAnimalRules.*); 0 disables them (features.bigTanks.bigAnimals)");
         // messages
         a.accept("message.bettacraft.big.too_small", "%1$s needs a tank of at least %2$s × %3$s blocks and %4$s blocks high (this one: %5$s × %6$s, %7$s high)");
         a.accept("message.bettacraft.big.too_little_water", "Not enough water for %1$s: the big animals need %2$s water blocks together, this tank holds %3$s");

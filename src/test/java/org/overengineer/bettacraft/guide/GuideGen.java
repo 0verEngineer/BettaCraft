@@ -422,8 +422,8 @@ public final class GuideGen {
         if (p.onlyOnHardscape()) tb.row(t("Floating", "Schwimmend"), t("yes: use it on a tank from outside", "ja: von außen auf ein Aquarium anwenden"));
         if (p.rolls()) {
             tb.row(t("Temperature", "Temperatur"), t("also cool water (from 5 °C)", "auch kühles Wasser (ab 5 °C)"));
-            tb.row(t("Rolls", "Rollt"), t("with the current of filters and outlets (config `features.marimoRolling`)",
-                    "mit der Strömung von Filtern und Auslässen (Einstellung `features.marimoRolling`)"));
+            tb.row(t("Rolls", "Rollt"), t("with the current of filters and outlets (config `features.aquaticPlants.marimoRolling`)",
+                    "mit der Strömung von Filtern und Auslässen (Einstellung `features.aquaticPlants.marimoRolling`)"));
         }
         return tb.render();
     }

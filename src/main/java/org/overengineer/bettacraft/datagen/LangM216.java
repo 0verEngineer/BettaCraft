@@ -7,8 +7,6 @@ final class LangM216 {
     private LangM216() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("bettacraft.configuration.livebearerGenetics", "Guppy and endler genetics");
-        a.accept("bettacraft.configuration.livebearerGenetics.tooltip", "Guppy and endler genetics: every guppy and endler has its own genes (tail shape, body and tail colour, patterns on the X and Y chromosome) that are inherited at birth, named strains, endler x guppy hybrids (off: the old fixed varieties; the genes are kept)");
         a.accept("log.bettacraft.tm.gravid_hybrid", "%s is pregnant by %s (the young will be hybrids)");
         a.accept("advancements.bettacraft.guppy_strain.title", "Line Breeder");
         a.accept("advancements.bettacraft.guppy_strain.description", "Breed a named guppy or endler strain such as Red Cobra, Blue Moscow or Endler Tiger");

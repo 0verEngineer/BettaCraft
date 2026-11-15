@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -262,17 +264,17 @@ public final class PolishGameTests {
 
     // ------------------------------------------------------------------ detailed decoration
 
-    /** The new skull and wreck are about twice as big (more blocks); with features.detailedDecor off the old small ones. */
+    /** The new skull and wreck are about twice as big (more blocks); with features.decor.detailed off the old small ones. */
     @GameTest(template = EMPTY, batch = "bettacraft_decor_config", timeoutTicks = 40)
     public static void detailedSkullAndWreckAndTheSmallOnes(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean was = org.overengineer.bettacraft.config.CommonConfig.FEATURE_DETAILED_DECOR.get();
+        boolean was = Features.own(Feature.DETAILED_DECOR);
         try {
             int[] big = new int[2], small = new int[2];
             var types = new org.overengineer.bettacraft.decor.DecorType[]{org.overengineer.bettacraft.decor.DecorType.DINO_SKULL,
                     org.overengineer.bettacraft.decor.DecorType.SHIPWRECK};
             for (int pass = 0; pass < 2; pass++) {
-                org.overengineer.bettacraft.config.CommonConfig.FEATURE_DETAILED_DECOR.set(pass == 0);
+                Features.set(Feature.DETAILED_DECOR, pass == 0);
                 for (int i = 0; i < 2; i++) {
                     var t = org.overengineer.bettacraft.decor.DecorItem.template(level, types[i].structure());
                     h.assertTrue(t.isPresent(), types[i] + " template " + types[i].structure());
@@ -289,7 +291,7 @@ public final class PolishGameTests {
             }
             for (int i = 0; i < 2; i++) h.assertTrue(big[i] >= small[i] * 2, types[i] + ": " + big[i] + " blocks vs. " + small[i] + " before");
         } finally {
-            org.overengineer.bettacraft.config.CommonConfig.FEATURE_DETAILED_DECOR.set(was);
+            Features.set(Feature.DETAILED_DECOR, was);
         }
         h.succeed();
     }

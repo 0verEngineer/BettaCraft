@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "terrariums.devices"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_tank": {

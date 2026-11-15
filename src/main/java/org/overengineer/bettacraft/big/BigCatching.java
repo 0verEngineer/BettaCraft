@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.big;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Map;
 import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
@@ -84,7 +86,7 @@ public final class BigCatching {
         if (player.getCooldowns().isOnCooldown(tool.getItem())) return false;
         player.getCooldowns().addCooldown(tool.getItem(), ServerConfig.getOr(ServerConfig.CRITTERS_NET_COOLDOWN, 40));
         level.playSound(null, water, SoundEvents.GENERIC_SPLASH, SoundSource.PLAYERS, 0.8F, 0.9F);
-        if (!CommonConfig.bigAnimals()) return true;
+        if (!Features.enabled(Feature.BIG_ANIMALS)) return true;
         int slot = emptyTub(player);
         if (slot < 0) {
             player.displayClientMessage(Component.translatable("message.bettacraft.big.need_tub_net"), true);
@@ -119,7 +121,7 @@ public final class BigCatching {
     @SubscribeEvent
     public static void onFished(ItemFishedEvent event) {
         Player p = event.getEntity();
-        if (!(p instanceof ServerPlayer sp) || !(p.level() instanceof ServerLevel level) || !CommonConfig.bigAnimals()) return;
+        if (!(p instanceof ServerPlayer sp) || !(p.level() instanceof ServerLevel level) || !Features.enabled(Feature.BIG_ANIMALS)) return;
         ItemStack lead = leader(p);
         if (lead.isEmpty()) return;
         int slot = emptyTub(p);

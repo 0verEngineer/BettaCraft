@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,7 +47,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpots;
 /**
  * M21: path finding in the tank interior: the dwarf frog walks round a wall of decoration through its gap (never
  * through the stone), small animals walk under an overhang and back out, a pleco male swims into his spawning cave
- * through the mouth; with {@code features.interiorPathfinding} off the old straight lines come back.
+ * through the mouth; with {@code features.interior.pathfinding} off the old straight lines come back.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -187,13 +189,13 @@ public final class PathfindingGameTests {
         }
         h.assertTrue(under > 0, "no crayfish walked under the table");
         // with the feature off they stay on the top of the columns (the old height map)
-        boolean saved = CommonConfig.FEATURE_PATHFINDING.get();
-        CommonConfig.FEATURE_PATHFINDING.set(false);
+        boolean saved = Features.own(Feature.PATHFINDING);
+        Features.set(Feature.PATHFINDING, false);
         try {
             h.assertTrue(Math.abs(terrain.groundAt(x, floor + 0.05, z) - top) < 1e-6, "off: the top again");
             h.assertTrue(terrain.shelter(x, floor, z, 1.5, rnd) == null, "off: no shelters");
         } finally {
-            CommonConfig.FEATURE_PATHFINDING.set(saved);
+            Features.set(Feature.PATHFINDING, saved);
         }
         h.succeed();
     }

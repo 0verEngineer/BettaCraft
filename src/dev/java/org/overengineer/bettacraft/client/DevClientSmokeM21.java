@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -36,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * M21 part of the dev client smoke test: the plant prototype. A 3x2x2 tank under a light with Rotala, Vallisneria and
  * Anubias (on a rock), grown. Screenshots {@code bettacraft_m21_*}: the tank from outside (the miniature keeps the
  * blocks), inside the interior with the new look ({@code plants_new_*}) and the same views with
- * {@code features.plantMeshes} off ({@code plants_old_*}); a shear cut on a Rotala that must show in its mesh in the next
+ * {@code features.visuals.plantMeshes} off ({@code plants_old_*}); a shear cut on a Rotala that must show in its mesh in the next
  * frame ({@code plants_cut_before/after}; with a shader pack also: the meshes are drawn in the shadow pass); the new fish
  * buckets in the hotbar.
  */
@@ -58,7 +60,7 @@ final class DevClientSmokeM21 {
     private BlockPos base;
     private int wait;
     private volatile InteriorRegion region;
-    private final boolean saved = CommonConfig.plantMeshes();
+    private final boolean saved = Features.enabled(Feature.PLANT_MESHES);
     private BlockPos cutRoot;
     private int cutBefore, buildsBefore;
 
@@ -162,7 +164,7 @@ final class DevClientSmokeM21 {
     }
 
     private void setMeshes(boolean on) {
-        CommonConfig.FEATURE_PLANT_MESHES.set(on);
+        Features.set(Feature.PLANT_MESHES, on);
         if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
     }
 

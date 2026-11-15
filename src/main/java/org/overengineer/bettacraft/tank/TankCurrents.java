@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,7 @@ import org.overengineer.bettacraft.equipment.FilterHost;
  * M22.4: the direction of the water movement in a tank. Every running external filter (a filter block or the filter in a
  * cabinet with its outlet side) sends a current from its outlet across the tank. In front of an outlet the water moves
  * faster than the tank's average ({@code TankReef#flow}): seahorses there feel the stronger flow, corals there get more of
- * it, floating plants drift with it ({@code TankPlants#jets}). Off with {@code features.cabinetOutletSide} (the flow is even
+ * it, floating plants drift with it ({@code TankPlants#jets}). Off with {@code features.equipment.cabinetOutletSide} (the flow is even
  * like before).
  */
 public final class TankCurrents {
@@ -45,7 +47,7 @@ public final class TankCurrents {
         if (t == null || t.waterMb() <= 0) return out;
         // M24: the outlets of the interior pipes act where they sit
         if (level instanceof net.minecraft.server.level.ServerLevel s) out.addAll(org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.currents(s, c));
-        if (!c.filterPowered() || !CommonConfig.cabinetOutletSide()) return out;
+        if (!c.filterPowered() || !Features.enabled(Feature.CABINET_OUTLET_SIDE)) return out;
         for (FilterHost f : TankEquipment.filters(level, c)) {
             FilterFlow.Path path = path(t, f);
             if (path == null || !path.wet()) continue;

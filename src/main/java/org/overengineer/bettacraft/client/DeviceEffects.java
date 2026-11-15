@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
@@ -257,7 +259,7 @@ public final class DeviceEffects {
         if (!(hit instanceof BlockHitResult bh) || hit.getType() != HitResult.Type.BLOCK) return;
         Regulator.Device d = Regulator.find(mc.level, bh.getBlockPos());
         if (d == null) return;
-        if (!CommonConfig.powerRegulator() && !d.alwaysAdjustable()) return;
+        if (!Features.enabled(Feature.POWER_REGULATOR) && !d.alwaysAdjustable()) return;
         int step = e.getScrollDeltaY() > 0 ? 1 : e.getScrollDeltaY() < 0 ? -1 : 0;
         if (step == 0) return;
         PacketDistributor.sendToServer(new RegulatorPayload(d.pos(), step, true));

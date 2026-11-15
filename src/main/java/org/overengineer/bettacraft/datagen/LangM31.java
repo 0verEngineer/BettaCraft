@@ -13,10 +13,6 @@ final class LangM31 {
         // config
         a.accept("bettacraft.configuration.terrarium", "Terrarium and paludarium");
         a.accept("bettacraft.configuration.terrarium.tooltip", "Terrarium and paludarium: a tank without water is a terrarium, one with a land part built in the interior above the water a paludarium (terrarium.*); they get air temperature, humidity and UV, terrarium animals live there (off: every tank is an aquarium as before, no climate values)");
-        a.accept("bettacraft.configuration.terrariumDevices", "Terrarium devices");
-        a.accept("bettacraft.configuration.terrariumDevices.tooltip", "Terrarium devices: heat mat, basking lamp, mister and thermo-hygrometer (off: they do nothing; a basking lamp still shines like a light)");
-        a.accept("bettacraft.configuration.turtles", "Turtles");
-        a.accept("bettacraft.configuration.turtles.tooltip", "Turtles in paludaria and terraria: musk turtle, slider, Hermann's tortoise, Reeves' turtle and the hatchlings of the sea turtle (off: none go into tanks, none are sold; those in tanks stay)");
         a.accept("bettacraft.configuration.paludariumLandShare", "Paludarium from land share");
         a.accept("bettacraft.configuration.paludariumLandShare.tooltip", "A tank with water is a paludarium from this share of land on (interior columns whose top is above the water)");
         a.accept("bettacraft.configuration.terrariumLandShare", "Terrarium from land share");
@@ -95,7 +91,7 @@ final class LangM31 {
         a.accept("gui.bettacraft.terrarium.uv.medium", "medium");
         a.accept("gui.bettacraft.terrarium.uv.high", "high");
         a.accept("gui.bettacraft.terrarium.lid", "Lid: %1$s of %2$s top blocks covered");
-        a.accept("gui.bettacraft.terrarium.devices_off", "Terrarium devices are switched off (features.terrariumDevices)");
+        a.accept("gui.bettacraft.terrarium.devices_off", "Terrarium devices are switched off (features.terrariums.devices)");
         a.accept("gui.bettacraft.terrarium.mats_none", "Heat mats: none");
         a.accept("gui.bettacraft.terrarium.mats", "Heat mats: %1$s under the floor, %2$s on the walls, heating %3$s %%");
         a.accept("gui.bettacraft.terrarium.lamps", "Basking lamps: %1$s of %2$s lit");

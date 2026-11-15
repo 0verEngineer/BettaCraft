@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.crucible;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -178,7 +180,7 @@ public class CrucibleBlockEntity extends BlockEntity implements MenuProvider {
 
     /** One tick (public for the GameTests). */
     public void tick(Level level, BlockPos pos, BlockState state) {
-        RecipeHolder<CrucibleRecipe> r = CommonConfig.stainlessSteel() ? recipe(level) : null;
+        RecipeHolder<CrucibleRecipe> r = Features.enabled(Feature.STAINLESS_STEEL) ? recipe(level) : null;
         boolean ready = r != null && fits(r.value().result());
         Heat now = Heat.NONE;
         if (ready) {

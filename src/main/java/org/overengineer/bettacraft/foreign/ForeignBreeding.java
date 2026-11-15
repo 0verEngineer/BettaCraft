@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,14 +45,14 @@ import org.slf4j.LoggerFactory;
 /**
  * M32 part a (question A2): breeding of the foreign animals in our tanks.
  * <ul>
- *     <li><b>Ours</b> ({@code features.foreignBreeding}): two grown, fed, healthy animals of a type with a breeding profile,
+ *     <li><b>Ours</b> ({@code features.foreignAnimals.breeding}): two grown, fed, healthy animals of a type with a breeding profile,
  *     in water of their breeding temperature, in a tank with enough water ({@link ForeignProfile.Breeding#minWaterBlocks}) and
  *     plants where the eggs need them, breed now and then ({@link ForeignProfile.Breeding#rate}). A livebearer mother
  *     carries the young, a clutch of eggs hatches, after {@link ForeignProfile.Breeding#days}; then the young join the tank
  *     (as many as it has room for). Every young takes the NBT keys of {@link ForeignProfile.Breeding#inherit} from one of
  *     its parents at random (the mod's own variants) and the {@link ForeignProfile.Breeding#offspringNbt}. The brood lives in
  *     the mother's persistent data ({@link #BROOD}); one brood per type and tank at a time.</li>
- *     <li><b>Theirs suppressed</b> ({@code features.suppressForeignBreeding}), in our tanks only: every animal of vanilla or
+ *     <li><b>Theirs suppressed</b> ({@code features.foreignAnimals.suppressOwnBreeding}), in our tanks only: every animal of vanilla or
  *     another mod that lives in a tank loses its love each care step ({@code resetLove}, vanilla animals and mods with the
  *     same method by reflection), cannot be made to fall in love with its food there, a vanilla baby from two parents in a
  *     tank is cancelled ({@link BabyEntitySpawnEvent}, and the same event of mods that post their own, found by name and
@@ -76,8 +78,8 @@ public final class ForeignBreeding {
         TankData t = c.getTank();
         if (t.inhabitants().isEmpty()) return;
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
-        if (CommonConfig.suppressForeignBreeding()) for (Entity e : live) calm(e);
-        if (!CommonConfig.foreignBreeding() || ForeignProfiles.all().isEmpty()) return;
+        if (Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) for (Entity e : live) calm(e);
+        if (!Features.enabled(Feature.FOREIGN_BREEDING) || ForeignProfiles.all().isEmpty()) return;
         double speed = ServerConfig.getOr(ServerConfig.FOREIGN_BREEDING_SPEED, 1.0);
         Map<EntityType<?>, List<LivingEntity>> byType = new LinkedHashMap<>();
         for (Entity e : live) {
@@ -128,7 +130,7 @@ public final class ForeignBreeding {
     /** Whether this animal may breed now: grown, not resting, fed and healthy (with our care on). */
     static boolean ready(LivingEntity e, ForeignProfile p) {
         if (!e.isAlive() || e.isBaby() || e.getPersistentData().getDouble(REST) > 0) return false;
-        if (!CommonConfig.foreignCare()) return true;
+        if (!Features.enabled(Feature.FOREIGN_CARE)) return true;
         BettaHealth h = ForeignCare.health(e);
         return !h.isSick() && !h.isHungry(ForeignCare.params(p));
     }
@@ -293,7 +295,7 @@ public final class ForeignBreeding {
     /** A foreign inhabitant cannot be fed its breeding food by hand (that would make it fall in love). */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onInteract(PlayerInteractEvent.EntityInteract event) {
-        if (event.getLevel().isClientSide || !CommonConfig.suppressForeignBreeding()) return;
+        if (event.getLevel().isClientSide || !Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
         Entity e = event.getTarget();
         if (!TankInhabitants.hasTankRef(e) || !foreign(e) || !isBreedingFood(e, event.getItemStack())) return;
         Player p = event.getEntity();
@@ -331,7 +333,7 @@ public final class ForeignBreeding {
             return; // the mod is not installed (or changed)
         }
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, (Class<net.neoforged.bus.api.Event>) c, ev -> {
-            if (!CommonConfig.suppressForeignBreeding()) return;
+            if (!Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
             try {
                 Object a = pa.invoke(ev), b = pb.invoke(ev);
                 if (inTank(a) || inTank(b)) ((net.neoforged.bus.api.ICancellableEvent) ev).setCanceled(true);
@@ -348,7 +350,7 @@ public final class ForeignBreeding {
     /** A vanilla baby of two parents in a tank. */
     @SubscribeEvent
     public static void onBaby(BabyEntitySpawnEvent event) {
-        if (!CommonConfig.suppressForeignBreeding() || event.getParentA().level().isClientSide) return;
+        if (!Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING) || event.getParentA().level().isClientSide) return;
         Mob a = event.getParentA(), b = event.getParentB();
         if (foreign(a) && TankInhabitants.hasTankRef(a) || b != null && foreign(b) && TankInhabitants.hasTankRef(b)) {
             event.setCanceled(true);
@@ -363,7 +365,7 @@ public final class ForeignBreeding {
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onJoin(EntityJoinLevelEvent event) {
-        if (ours > 0 || event.loadedFromDisk() || event.getLevel().isClientSide || !CommonConfig.suppressForeignBreeding()) return;
+        if (ours > 0 || event.loadedFromDisk() || event.getLevel().isClientSide || !Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
         Entity e = event.getEntity();
         if (!(e instanceof LivingEntity le) || !le.isBaby() || TankInhabitants.hasTankRef(e) || !foreign(e) || ForeignProfiles.ownCare(e.getType())) return;
         if (!(event.getLevel() instanceof ServerLevel level)) return;

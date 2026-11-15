@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Locale;
 import javax.annotation.Nullable;
 
@@ -174,27 +176,26 @@ public enum CritterSpecies {
     /** M20: a reef animal (salt water). */
     public boolean marine() { return org.overengineer.bettacraft.reef.SaltTolerance.critter(this).marine(); }
 
-    /** M25 part c: the feature switch this species belongs to (null = always there). */
+    /** M25 part c: the sub-switch this species belongs to (null = only the group, {@link Feature#INVERTEBRATES}). */
     @Nullable
-    public String feature() {
+    public Feature feature() {
         return switch (this) {
-            case CARIDINA -> "features.caridina";
-            case SULAWESI_SHRIMP, TYLOMELANIA -> "features.sulawesi";
-            case YELLOW_NERITE -> "features.snailColors";
-            case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> "features.bigCrayfish";
+            case CARIDINA -> Feature.CARIDINA;
+            case SULAWESI_SHRIMP, TYLOMELANIA -> Feature.SULAWESI;
+            case YELLOW_NERITE -> Feature.SNAIL_COLORS;
+            case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> Feature.BIG_CRAYFISH;
             default -> null;
         };
     }
 
-    /** M25 part c: whether new animals of this species come from the net, the wild and the trader (its feature switch). */
+    /**
+     * M25 part c: whether new animals of this species come from the net, the wild and the trader (M33: the small animals,
+     * salt water for the reef animals, and its own switch).
+     */
     public boolean available() {
-        return switch (this) {
-            case CARIDINA -> org.overengineer.bettacraft.config.CommonConfig.caridina();
-            case SULAWESI_SHRIMP, TYLOMELANIA -> org.overengineer.bettacraft.config.CommonConfig.sulawesi();
-            case YELLOW_NERITE -> org.overengineer.bettacraft.config.CommonConfig.snailColors();
-            case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> org.overengineer.bettacraft.config.CommonConfig.bigCrayfish();
-            default -> true;
-        };
+        if (!Features.enabled(Feature.INVERTEBRATES) || marine() && !Features.enabled(Feature.SALTWATER)) return false;
+        Feature f = feature();
+        return f == null || Features.enabled(f);
     }
 
     public String translationKey() {

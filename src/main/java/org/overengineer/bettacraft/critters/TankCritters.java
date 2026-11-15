@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -154,7 +156,7 @@ public final class TankCritters {
         }
         h += 0.1 * Math.min(1.0, org.overengineer.bettacraft.tank.plants.TankPlants.coverage(t));
         // M28: tubes and holes of clay and terracotta, leaf litter
-        if (r != null && org.overengineer.bettacraft.config.CommonConfig.decorEffects()) {
+        if (r != null && Features.enabled(Feature.DECOR_EFFECTS)) {
             var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
             h += shelterHiding(eq.shelter(), eq.leafLitter() + eq.alderCones());
         }
@@ -178,7 +180,7 @@ public final class TankCritters {
         f += org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t) * t.waterBlocks();
         f += 0.02 * t.plants().size();
         // M28: the shrimp graze the biofilm on leaves and alder cones
-        InteriorRegion r = org.overengineer.bettacraft.config.CommonConfig.decorEffects() ? region(level, t) : null;
+        InteriorRegion r = Features.enabled(Feature.DECOR_EFFECTS) ? region(level, t) : null;
         if (r != null) {
             var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
             f += litterFood(eq.leafLitter(), eq.alderCones());

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing.interior;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -52,7 +54,7 @@ public class PlumbingItem extends BlockItem {
 
     /** Puts a bulkhead into the floor block {@code pos} of a tank (from outside). Public for the GameTests. */
     public static InteractionResult installFromOutside(ServerLevel level, BlockPos pos, Player player, ItemStack stack) {
-        if (!CommonConfig.interiorPipes()) {
+        if (!Features.enabled(Feature.INTERIOR_PIPES)) {
             say(player, level, "message.bettacraft.feature_off");
             return InteractionResult.FAIL;
         }
@@ -106,7 +108,7 @@ public class PlumbingItem extends BlockItem {
             say(ctx.getPlayer(), level, kind == Plumb.PORT ? "message.bettacraft.bulkhead.where" : "message.bettacraft.equipment.interior_only");
             return InteractionResult.FAIL;
         }
-        if (!CommonConfig.interiorPipes()) {
+        if (!Features.enabled(Feature.INTERIOR_PIPES)) {
             say(ctx.getPlayer(), level, "message.bettacraft.feature_off");
             return InteractionResult.FAIL;
         }

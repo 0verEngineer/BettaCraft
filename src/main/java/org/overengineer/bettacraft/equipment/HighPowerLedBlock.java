@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class HighPowerLedBlock extends TankLightBlock {
 
     @Override
     public double boost() {
-        return org.overengineer.bettacraft.config.CommonConfig.ledTiers()
+        return Features.enabled(Feature.LED_TIERS)
                 ? org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.LIGHT_HIGH_POWER_BOOST, 5.0) : 0;
     }
 

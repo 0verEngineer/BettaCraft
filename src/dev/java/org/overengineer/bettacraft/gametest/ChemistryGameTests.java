@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -279,13 +281,13 @@ public final class ChemistryGameTests {
         h.succeed();
     }
 
-    /** features.waterChemistry off: the values stand still, no animal minds them, the tools say so. */
+    /** features.waterChemistry.enabled off: the values stand still, no animal minds them, the tools say so. */
     @GameTest(template = EMPTY, batch = "bettacraft_m25_chem_off", timeoutTicks = 100)
     public static void featureOff(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean saved = CommonConfig.FEATURE_WATER_CHEMISTRY.get();
+        boolean saved = Features.own(Feature.WATER_CHEMISTRY);
         try {
-            CommonConfig.FEATURE_WATER_CHEMISTRY.set(false);
+            Features.set(Feature.WATER_CHEMISTRY, false);
             TankBlockEntity c = AerationGameTests.tank(h, 1, 2, 1, 2, 2, 2);
             TankData t = c.getTank();
             var platy = AerationGameTests.add(h, c, TankmateSpecies.PLATY, LifeStage.ADULT);
@@ -301,7 +303,7 @@ public final class ChemistryGameTests {
             ChemItem.useOnTank(salt, level, c.getBlockPos(), sp, InteractionHand.MAIN_HAND);
             h.assertTrue(salt.getCount() == 4 && t.tds() == 0F, "the salt is not used");
         } finally {
-            CommonConfig.FEATURE_WATER_CHEMISTRY.set(saved);
+            Features.set(Feature.WATER_CHEMISTRY, saved);
         }
         h.succeed();
     }

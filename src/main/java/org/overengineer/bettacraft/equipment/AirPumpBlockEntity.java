@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,9 +40,9 @@ public class AirPumpBlockEntity extends BlockEntity implements AirSource {
         return power;
     }
 
-    /** Share 0..1 of the regulator (1 while features.powerRegulator is off). */
+    /** Share 0..1 of the regulator (1 while features.power.regulator is off). */
     public double powerShare() {
-        return org.overengineer.bettacraft.config.CommonConfig.powerRegulator() ? power / 10.0 : 1.0;
+        return Features.enabled(Feature.POWER_REGULATOR) ? power / 10.0 : 1.0;
     }
 
     public void setPower(int p) {

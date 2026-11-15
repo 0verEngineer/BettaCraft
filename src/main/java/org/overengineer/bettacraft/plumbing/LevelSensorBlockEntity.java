@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -70,7 +72,7 @@ public class LevelSensorBlockEntity extends BlockEntity {
         Status st;
         int added = 0;
         TankBlockEntity c = WaterSources.tank(level, worldPosition, true);
-        if (!CommonConfig.topOff()) st = Status.OFF;
+        if (!Features.enabled(Feature.TOP_OFF)) st = Status.OFF;
         else if (c == null) st = Status.NO_TANK;
         else {
             TankData t = c.getTank();

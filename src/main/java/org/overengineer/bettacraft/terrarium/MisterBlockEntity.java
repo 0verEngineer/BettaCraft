@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -76,7 +78,7 @@ public class MisterBlockEntity extends BlockEntity {
 
     /** Whether it wants to spray at this humidity (a hygrostat with a little hysteresis while it already sprays). */
     public boolean wants(float humidity, long now) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.terrariumDevices()) return false;
+        if (!Features.enabled(Feature.TERRARIUM_DEVICES)) return false;
         float on = spraying(now) ? setting + 2 : setting;
         return !(humidity >= on);
     }

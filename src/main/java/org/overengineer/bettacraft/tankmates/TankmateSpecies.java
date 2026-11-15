@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
@@ -125,7 +127,7 @@ public enum TankmateSpecies {
             .size(0.22).hitbox(0.1, 0.21).temp(21, 28).breed(24, 27).quality(0.6).shoal(1).stock(0.3).brood(3, 10).growth(1.0)
             .eats(0.0).egg(0xC8B070, 0xEADCA8).native_(Water.WARM_OCEAN, 4)
             .trader(Trade.RARE).salt(Salinity.Range.HARDY_MARINE)),
-    // ---------------------------------------------------------------- M29 part a: cichlids (South America, features.cichlids)
+    // ---------------------------------------------------------------- M29 part a: cichlids (South America, features.tankmates.cichlids)
     // open brooders: the pair cleans a flat stone (rams) or a broad leaf or the glass (angelfish, discus) and guards eggs and young;
     // cave brooders (Apistogramma): the female spawns in a small cave and guards it, the male defends his territory
     RAM_CICHLID(d("ram_cichlid", "Mikrogeophagus ramirezi", Model.CICHLID, Group.CICHLID, Breeding.OPEN, Zone.LOW)
@@ -151,7 +153,7 @@ public enum TankmateSpecies {
             .size(0.95).hitbox(0.55, 0.55).temp(27, 32).breed(28, 31).quality(0.75).shoal(3).stock(2.5).brood(20, 60).growth(2.5)
             .eats(0.4).parentsFeed().egg(0x8A5030, 0x40A0C0).native_(Water.JUNGLE, 2).trader(Trade.RARE)
             .varieties("wild", "red_turquoise", "pigeon_blood", "blue_diamond")),
-    // ---------------------------------------------------------------- M29 part b: puffers (features.puffers)
+    // ---------------------------------------------------------------- M29 part b: puffers (features.tankmates.puffers)
     // they crack snails (bladder and ramshorn snails first) and need them or hard food, else their teeth overgrow; they nip the
     // fins of long-finned fish; the dwarf puffers scatter their eggs into moss, the green spotted puffer lives in brackish water
     DWARF_PUFFER(d("dwarf_puffer", "Carinotetraodon travancoricus", Model.PUFFER, Group.PUFFER, Breeding.SCATTER, Zone.MID)
@@ -166,7 +168,7 @@ public enum TankmateSpecies {
             .size(0.8).hitbox(0.5, 0.45).temp(24, 29).breed(26, 28).quality(0.55).shoal(1).stock(2.5).brood(0, 0).growth(2.0)
             .eats(0.8).snails().finNipper().prey(0.25).egg(0xB8D030, 0x1A1A14).native_(Water.MANGROVE, 6).trader(Trade.RARE)
             .salt(Salinity.Range.BRACKISH_ONLY)),
-    // ---------------------------------------------------------------- M29 part b: barbs (egg scatterers, features.barbsAndLoaches)
+    // ---------------------------------------------------------------- M29 part b: barbs (egg scatterers, features.tankmates.barbsAndLoaches)
     TIGER_BARB(d("tiger_barb", "Puntigrus tetrazona", Model.BARB, Group.BARB, Breeding.SCATTER, Zone.MID)
             .size(0.5).temp(20, 28).breed(24, 27).quality(0.45).shoal(6).stock(0.6).brood(30, 80).growth(1.0)
             .eats(0.6).finNipper().egg(0xE8A040, 0x141414).native_(Water.RIVER, 6).native_(Water.SWAMP, 6).trader(Trade.COMMON)
@@ -177,7 +179,7 @@ public enum TankmateSpecies {
     CHERRY_BARB(d("cherry_barb", "Rohanella titteya", Model.BARB, Group.BARB, Breeding.SCATTER, Zone.MID)
             .size(0.4).temp(22, 28).breed(24, 27).quality(0.5).shoal(6).stock(0.4).brood(20, 50).growth(1.0)
             .eats(0.5).dimorphic().egg(0xD84A3A, 0x3A2018).native_(Water.JUNGLE, 6).native_(Water.RIVER, 3).trader(Trade.COMMON)),
-    // ---------------------------------------------------------------- M29 part b: loaches and the garra (features.barbsAndLoaches)
+    // ---------------------------------------------------------------- M29 part b: loaches and the garra (features.tankmates.barbsAndLoaches)
     DWARF_CHAIN_LOACH(d("dwarf_chain_loach", "Ambastaia sidthimunki", Model.LOACH, Group.LOACH, Breeding.NONE, Zone.LOW)
             .size(0.42).temp(24, 29).breed(26, 28).quality(0.55).shoal(6).stock(0.4).brood(0, 0).growth(1.2)
             .eats(0.2).snails().egg(0xE8E0C0, 0x2A2420).native_(Water.RIVER, 4).trader(Trade.RARE)),
@@ -187,7 +189,7 @@ public enum TankmateSpecies {
     GARRA_RUFA(d("garra_rufa", "Garra rufa", Model.GARRA, Group.LOACH, Breeding.SCATTER, Zone.BOTTOM)
             .size(0.7).hitbox(0.45, 0.22).temp(18, 32).breed(24, 28).quality(0.55).shoal(5).stock(1.0).brood(20, 60).growth(1.4)
             .eats(0.3).algae(0.6).egg(0x8A8070, 0x2A2420).native_(Water.RIVER, 6).trader(Trade.COMMON)),
-    // ---------------------------------------------------------------- M29 part c: danios (egg scatterers, features.communityFish)
+    // ---------------------------------------------------------------- M29 part c: danios (egg scatterers, features.tankmates.communityFish)
     ZEBRA_DANIO(d("zebra_danio", "Danio rerio", Model.RASBORA, Group.RASBORA, Breeding.SCATTER, Zone.UPPER)
             .size(0.4).temp(18, 27).breed(24, 27).quality(0.35).shoal(6).stock(0.4).brood(30, 80).growth(0.8)
             .eats(0.7).egg(0x3A5AC8, 0xE8D8A0).native_(Water.RIVER, 10).native_(Water.SWAMP, 5).trader(Trade.COMMON)
@@ -195,14 +197,14 @@ public enum TankmateSpecies {
     CELESTIAL_PEARL_DANIO(d("celestial_pearl_danio", "Celestichthys margaritatus", Model.RASBORA, Group.RASBORA, Breeding.SCATTER, Zone.LOW)
             .size(0.17).temp(20, 26).breed(22, 25).quality(0.6).shoal(6).stock(0.15).brood(10, 30).growth(0.8)
             .eats(0.4).dimorphic().egg(0x2A3A6A, 0xF08030).native_(Water.SWAMP, 8).trader(Trade.COMMON)),
-    // ---------------------------------------------------------------- M29 part c: rainbowfish (eggs into moss, features.communityFish)
+    // ---------------------------------------------------------------- M29 part c: rainbowfish (eggs into moss, features.tankmates.communityFish)
     FORKTAIL_RAINBOW(d("forktail_rainbow", "Pseudomugil furcatus", Model.RAINBOW, Group.RAINBOW, Breeding.SCATTER, Zone.UPPER)
             .size(0.4).temp(23, 28).breed(25, 27).quality(0.55).shoal(6).stock(0.4).brood(10, 30).growth(1.0)
             .eats(0.5).dimorphic().egg(0x8AC0D0, 0xF0D020).native_(Water.JUNGLE, 6).native_(Water.RIVER, 3).trader(Trade.COMMON)),
     NEON_DWARF_RAINBOW(d("neon_dwarf_rainbow", "Melanotaenia praecox", Model.RAINBOW, Group.RAINBOW, Breeding.SCATTER, Zone.MID)
             .size(0.5).temp(23, 28).breed(25, 27).quality(0.5).shoal(6).stock(0.6).brood(15, 40).growth(1.2)
             .eats(0.5).dimorphic().egg(0x5AA0E8, 0xE03030).native_(Water.JUNGLE, 6).native_(Water.RIVER, 4).trader(Trade.COMMON)),
-    // ---------------------------------------------------------------- M29 part c: gouramis (labyrinth fish, features.gouramis)
+    // ---------------------------------------------------------------- M29 part c: gouramis (labyrinth fish, features.tankmates.gouramis)
     // the honey and the pearl gourami build foam nests like the dwarf gourami; the chocolate gourami female broods the eggs in her mouth
     HONEY_GOURAMI(d("honey_gourami", "Trichogaster chuna", Model.GOURAMI, Group.GOURAMI, Breeding.FOAM_NEST, Zone.UPPER)
             .size(0.4).temp(22, 28).breed(25, 28).quality(0.5).shoal(1).stock(0.6).brood(20, 60).growth(0.9)
@@ -215,7 +217,7 @@ public enum TankmateSpecies {
             .size(0.85).temp(24, 30).breed(27, 29).quality(0.5).shoal(1).stock(1.6).brood(30, 80).growth(1.6)
             .eats(0.6).territorial().bettaTarget().dimorphic().labyrinth().egg(0xC8B8A0, 0xE85030).native_(Water.SWAMP, 5).native_(Water.JUNGLE, 3)
             .trader(Trade.COMMON)),
-    // ---------------------------------------------------------------- M29 part c: tetras (egg scatterers, features.communityFish)
+    // ---------------------------------------------------------------- M29 part c: tetras (egg scatterers, features.tankmates.communityFish)
     EMPEROR_TETRA(d("emperor_tetra", "Nematobrycon palmeri", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.42).temp(23, 27).breed(24, 27).quality(0.55).shoal(6).stock(0.45).brood(20, 50).growth(1.1)
             .eats(0.5).dimorphic().egg(0x6A6AA0, 0x141414).native_(Water.RIVER, 4).native_(Water.JUNGLE, 4).trader(Trade.COMMON)),
@@ -225,7 +227,7 @@ public enum TankmateSpecies {
     BLACK_PHANTOM_TETRA(d("black_phantom_tetra", "Hyphessobrycon megalopterus", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.37).temp(22, 28).breed(24, 27).quality(0.5).shoal(6).stock(0.4).brood(20, 60).growth(1.0)
             .eats(0.5).dimorphic().egg(0x6A6A68, 0x141414).native_(Water.JUNGLE, 8).native_(Water.RIVER, 3).trader(Trade.COMMON)),
-    // ---------------------------------------------------------------- M29 part c: livebearers (features.communityFish)
+    // ---------------------------------------------------------------- M29 part c: livebearers (features.tankmates.communityFish)
     // simple variety genetics like the platy (not the guppy genome); the molly also lives in brackish water and mangroves
     BLACK_MOLLY(d("black_molly", "Poecilia sphenops", Model.PLATY, Group.LIVEBEARER, Breeding.LIVEBEARER, Zone.MID)
             .size(0.6).temp(22, 30).breed(24, 28).quality(0.45).shoal(3).stock(0.8).brood(10, 40).growth(0.9)
@@ -235,7 +237,7 @@ public enum TankmateSpecies {
             .size(0.6).temp(22, 28).breed(23, 27).quality(0.4).shoal(3).stock(0.8).brood(20, 60).growth(0.9)
             .eats(0.6).dimorphic().egg(0x7A9A50, 0xE04030).native_(Water.RIVER, 8).trader(Trade.COMMON).salt(Salinity.Range.BRACKISH)
             .varieties("wild", "red", "red_wagtail")),
-    // ---------------------------------------------------------------- M30 part a: big animals (features.bigAnimals, LargeSpecies)
+    // ---------------------------------------------------------------- M30 part a: big animals (features.bigTanks.bigAnimals, LargeSpecies)
     // the iridescent shark catfish of the Mekong: a restless, silvery schooling giant of big rivers; in a home tank about 1 m,
     // eats everything and, once big, small fish; never breeds in a tank
     PANGASIUS(d("pangasius", "Pangasianodon hypophthalmus", Model.PANGASIUS, Group.CATFISH, Breeding.NONE, Zone.MID)
@@ -494,41 +496,44 @@ public enum TankmateSpecies {
     /** M20: a reef fish (salt water). */
     public boolean marine() { return def.salt.marine(); }
 
-    /** M21.5: new species can be switched off (features.*): then neither the trader nor the net brings them. */
+    /**
+     * M33: the feature switch of the species (its group of species, or the tankmates as a whole); off: neither the trader,
+     * the net nor the wild brings new ones.
+     */
+    public Feature feature() {
+        if (isLarge()) return Feature.BIG_ANIMALS; // M30
+        if (seahorse()) return Feature.SEAHORSES;
+        if (marine()) return Feature.REEF_FISH;
+        if (cichlid()) return Feature.CICHLIDS;
+        if (puffer()) return Feature.PUFFERS;
+        if (barbOrNewLoach()) return Feature.BARBS_AND_LOACHES;
+        if (newGourami()) return Feature.GOURAMIS;
+        if (communityFish()) return Feature.COMMUNITY_FISH;
+        return this == GREEN_NEON_TETRA ? Feature.GREEN_NEON : Feature.TANKMATES;
+    }
+
+    /** M21.5: new ones come from the trader and the net ({@link #feature} on, with its group). */
     public boolean available() {
-        if (isLarge()) return org.overengineer.bettacraft.config.CommonConfig.bigAnimals(); // M30
-        if (seahorse()) return org.overengineer.bettacraft.config.CommonConfig.seahorses();
-        if (cichlid()) return org.overengineer.bettacraft.config.CommonConfig.cichlids();
-        if (puffer()) return org.overengineer.bettacraft.config.CommonConfig.puffers();
-        if (barbOrNewLoach()) return org.overengineer.bettacraft.config.CommonConfig.barbsAndLoaches();
-        if (newGourami()) return org.overengineer.bettacraft.config.CommonConfig.gouramis();
-        if (communityFish()) return org.overengineer.bettacraft.config.CommonConfig.communityFish();
-        return this != GREEN_NEON_TETRA || org.overengineer.bettacraft.config.CommonConfig.greenNeon();
+        return Features.enabled(feature());
     }
 
-    /** The feature switch that brings new ones (handbook, sources). */
+    /** The feature switch of the wild ones (handbook, sources): the species' own one, the wild spawns for the plain tankmates. */
     public String featureKey() {
-        if (isLarge()) return "features.bigAnimals"; // M30
-        if (seahorse()) return "features.seahorses";
-        if (cichlid()) return "features.cichlids";
-        if (puffer()) return "features.puffers";
-        if (barbOrNewLoach()) return "features.barbsAndLoaches";
-        if (newGourami()) return "features.gouramis";
-        if (communityFish()) return "features.communityFish";
-        return this == GREEN_NEON_TETRA ? "features.greenNeonTetra" : "features.wildFish";
+        Feature f = feature();
+        return (f == Feature.TANKMATES ? Feature.TANKMATES_WILD : f).key();
     }
 
-    /** M29 part b: the barbs and the loaches that came with them (switched with features.barbsAndLoaches). */
+    /** M29 part b: the barbs and the loaches that came with them (switched with features.tankmates.barbsAndLoaches). */
     private boolean barbOrNewLoach() {
         return def.group == Group.BARB || this == DWARF_CHAIN_LOACH || this == RETICULATED_LOACH || this == GARRA_RUFA;
     }
 
-    /** M29 part c: the honey, chocolate and pearl gourami (switched with features.gouramis). */
+    /** M29 part c: the honey, chocolate and pearl gourami (switched with features.tankmates.gouramis). */
     private boolean newGourami() {
         return this == HONEY_GOURAMI || this == CHOCOLATE_GOURAMI || this == PEARL_GOURAMI;
     }
 
-    /** M29 part c: danios, rainbowfish, tetras, molly and swordtail (switched with features.communityFish). */
+    /** M29 part c: danios, rainbowfish, tetras, molly and swordtail (switched with features.tankmates.communityFish). */
     private boolean communityFish() {
         return switch (this) {
             case ZEBRA_DANIO, CELESTIAL_PEARL_DANIO, FORKTAIL_RAINBOW, NEON_DWARF_RAINBOW, EMPEROR_TETRA, RUMMY_NOSE_TETRA, BLACK_PHANTOM_TETRA,

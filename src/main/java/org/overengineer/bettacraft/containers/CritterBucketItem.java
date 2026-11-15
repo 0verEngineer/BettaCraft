@@ -29,7 +29,7 @@ import org.overengineer.bettacraft.registry.ModDataComponents;
  * M22.3: shrimp, crayfish, snails or hermit crabs of one species in a plain bucket of water (no fish bag needed): taken
  * out of a tank with an empty bucket (1000 mB of the tank's water) or a bucket of water that suits them, or caught in the
  * world. Into a tank they go in with the water; into the world (after the confirmation of {@link ContainerRules}) the
- * water is poured out and the animals crawl off as wild animals ({@code features.wildCritters}).
+ * water is poured out and the animals crawl off as wild animals ({@code features.invertebrates.wildSpawns}).
  */
 public class CritterBucketItem extends BucketItem {
     public CritterBucketItem(Properties properties) {

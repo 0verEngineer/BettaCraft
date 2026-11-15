@@ -100,7 +100,7 @@ public final class BettaCraftClient {
         // M11: tank look settings (connected glass, edge width) are baked into the chunk meshes: rebuild them on change
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
             if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();
-            // M21: features.plantMeshes switches the plant blocks of the interior between blocks and meshes
+            // M21: features.visuals.plantMeshes switches the plant blocks of the interior between blocks and meshes
             if (e.getConfig().getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) {
                 rebuildChunks();
                 org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll(); // M22.1: which blocks sway

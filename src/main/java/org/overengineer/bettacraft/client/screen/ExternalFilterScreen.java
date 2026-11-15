@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -34,7 +36,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
                     ? org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_DOWN : org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_UP);
         });
         b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.bettacraft.regulator.button_tooltip")));
-        b.visible = org.overengineer.bettacraft.config.CommonConfig.powerRegulator();
+        b.visible = Features.enabled(Feature.POWER_REGULATOR);
         return b;
     }
 

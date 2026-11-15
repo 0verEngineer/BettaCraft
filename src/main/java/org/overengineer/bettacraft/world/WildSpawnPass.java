@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.world;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -42,7 +44,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorManager;
  * {@link BettaSpawnsBiomeModifier}), one group of them spawns with the normal spawn rules ({@link Wildlife#checkFish},
  * {@link Wildlife#checkCritter}: a few per 32 blocks, never in a tank) while fewer than
  * {@code wildlife.spawnPassPerPlayer} wild animals of the mod live within 48 blocks. They despawn like vanilla fish.
- * Switch: {@code features.wildSpawnPass}.
+ * Switch: {@code features.wildSpawnPass.enabled}.
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class WildSpawnPass {
@@ -65,7 +67,7 @@ public final class WildSpawnPass {
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !CommonConfig.wildSpawnPass()) return;
+        if (!(event.getLevel() instanceof ServerLevel level) || !Features.enabled(Feature.WILD_SPAWN_PASS)) return;
         if (InteriorManager.isInterior(level) || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) return;
         int every = interval();
         long t = level.getGameTime();

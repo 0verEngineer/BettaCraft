@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -396,13 +398,13 @@ public final class PlumbingGameTests {
         h.succeed();
     }
 
-    /** features.multiblockFilter off: the filter does not clean (own batch). */
+    /** features.equipment.multiblockFilter off: the filter does not clean (own batch). */
     @GameTest(template = EMPTY, batch = "bettacraft_m24_filter_off", timeoutTicks = 100)
     public static void multiblockFilterOff(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean saved = CommonConfig.FEATURE_MULTIBLOCK_FILTER.get();
+        boolean saved = Features.own(Feature.MULTIBLOCK_FILTER);
         try {
-            CommonConfig.FEATURE_MULTIBLOCK_FILTER.set(false);
+            Features.set(Feature.MULTIBLOCK_FILTER, false);
             MultiblockFilter.forget();
             TankBlockEntity c = tank(h, 0, 2, 0, 2, 2, 2);
             h.setBlock(new BlockPos(3, 2, 0), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
@@ -413,7 +415,7 @@ public final class PlumbingGameTests {
             FilterPumpHeadBlockEntity head = (FilterPumpHeadBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 3, 0)));
             h.assertTrue(head.run(level, true) == 0 && MultiblockFilter.serving(level, c)[1] == 0, "switched off: nothing");
         } finally {
-            CommonConfig.FEATURE_MULTIBLOCK_FILTER.set(saved);
+            Features.set(Feature.MULTIBLOCK_FILTER, saved);
         }
         h.succeed();
     }
@@ -538,18 +540,18 @@ public final class PlumbingGameTests {
         h.succeed();
     }
 
-    /** features.pipes off: pumps stand still and pipes carry nothing (own batch). */
+    /** features.pipes.enabled off: pumps stand still and pipes carry nothing (own batch). */
     @GameTest(template = EMPTY, batch = "bettacraft_m24_pipes_off", timeoutTicks = 100)
     public static void pipesOff(GameTestHelper h) {
-        boolean saved = CommonConfig.FEATURE_PIPES.get();
+        boolean saved = Features.own(Feature.PIPES);
         try {
-            CommonConfig.FEATURE_PIPES.set(false);
+            Features.set(Feature.PIPES, false);
             TankBlockEntity a = tank(h, 1, 2, 1, 2, 2, 2);
             WaterPumpBlockEntity p = pump(h, new BlockPos(3, 2, 1), Direction.EAST);
             reservoir(h, new BlockPos(4, 2, 1), 0, null);
             h.assertTrue(batch(h, p) == 0 && a.getTank().waterMb() == a.getTank().capacityMb(), "switched off: the pump stands still");
         } finally {
-            CommonConfig.FEATURE_PIPES.set(saved);
+            Features.set(Feature.PIPES, saved);
         }
         h.succeed();
     }

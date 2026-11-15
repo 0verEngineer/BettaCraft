@@ -53,7 +53,7 @@ class BigTankRulesTest {
         var dolphin = new InhabitantRules.Facts("minecraft:dolphin", 0.9F, 0.6F, false, false, false, false, true, 2.6);
         assertEquals(Acceptance.BIG, InhabitantRules.decide(dolphin, InhabitantRules.Settings.DEFAULT));
         var off = new InhabitantRules.Settings(List.of(), List.of(), 0.8, true, false);
-        assertEquals(Acceptance.TOO_BIG, InhabitantRules.decide(dolphin, off), "features.bigAnimals off: too big as before");
+        assertEquals(Acceptance.TOO_BIG, InhabitantRules.decide(dolphin, off), "features.bigTanks.bigAnimals off: too big as before");
         var whale = new InhabitantRules.Facts("x:whale", 4F, 3F, false, false, false, false, true);
         assertEquals(Acceptance.TOO_BIG, InhabitantRules.decide(whale, InhabitantRules.Settings.DEFAULT), "unknown big animals stay too big");
         var boss = new InhabitantRules.Facts("x:leviathan", 4F, 3F, false, false, true, true, true, 20);

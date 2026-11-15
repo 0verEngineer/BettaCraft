@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.containers;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -58,29 +60,29 @@ public final class AnimalContainers {
 
     // ------------------------------------------------------------------ capacities
 
-    /** Animals of a tankmate species per bucket (by size; 1 without {@code features.bigContainers}). */
+    /** Animals of a tankmate species per bucket (by size; 1 without {@code features.equipment.bigContainers}). */
     public static int bucket(TankmateSpecies s) {
-        if (!CommonConfig.bigContainers()) return 1;
+        if (!Features.enabled(Feature.BIG_CONTAINERS)) return 1;
         double l = s.length();
         return l <= 0.25 ? 32 : l <= 0.4 ? 24 : l <= 0.5 ? 12 : l <= 0.65 ? 6 : l <= 0.75 ? 2 : 1;
     }
 
     /** Animals of a tankmate species per fish bag (half a bucket, at least 1; 12 without the feature, like before). */
     public static int bag(TankmateSpecies s) {
-        if (!CommonConfig.bigContainers()) return TankmateItems.MAX_PER_BAG;
+        if (!Features.enabled(Feature.BIG_CONTAINERS)) return TankmateItems.MAX_PER_BAG;
         return Math.max(1, bucket(s) / 2);
     }
 
     /** Small animals per bucket (0 without the feature: they only go into bags). */
     public static int bucket(CritterSpecies s) {
-        if (!CommonConfig.bigContainers()) return 0;
+        if (!Features.enabled(Feature.BIG_CONTAINERS)) return 0;
         if (s.big()) return 4; // M29 part d: big crayfish
         return s.length() <= 0.35 ? 32 : 24;
     }
 
     /** Small animals per fish bag (16 without the feature, like before). */
     public static int bag(CritterSpecies s) {
-        if (!CommonConfig.bigContainers()) return s.big() ? 4 : org.overengineer.bettacraft.critters.TankCritters.MAX_PER_BAG;
+        if (!Features.enabled(Feature.BIG_CONTAINERS)) return s.big() ? 4 : org.overengineer.bettacraft.critters.TankCritters.MAX_PER_BAG;
         return Math.max(1, bucket(s) / 2);
     }
 

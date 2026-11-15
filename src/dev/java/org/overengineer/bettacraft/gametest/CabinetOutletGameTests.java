@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,7 +41,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * M22.4: the outlet side of the filter in a cabinet. The menu button sets back / left / right / front; the hose goes up
  * that wall, the jet and the current come from it (floating plant jets, {@link TankCurrents}); a seahorse in front of the
  * outlet feels the stronger flow, one on the other side does not; the setting survives saving, breaking and placing
- * (item component), old cabinets keep the back wall, and with {@code features.cabinetOutletSide} off every cabinet uses
+ * (item component), old cabinets keep the back wall, and with {@code features.equipment.cabinetOutletSide} off every cabinet uses
  * the back wall.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
@@ -142,9 +144,9 @@ public final class CabinetOutletGameTests {
             TankmateCare.advance(level, c, sh, 0.05);
             h.assertTrue((sh.stressBits() & TankmateCare.STRESS_FLOW) == 0, "no flow stress any more: " + sh.stressBits());
             // switched off: even flow like before, also in front of the outlet
-            boolean feature = CommonConfig.FEATURE_CABINET_OUTLET_SIDE.get();
+            boolean feature = Features.own(Feature.CABINET_OUTLET_SIDE);
             try {
-                CommonConfig.FEATURE_CABINET_OUTLET_SIDE.set(false);
+                Features.set(Feature.CABINET_OUTLET_SIDE, false);
                 Seahorses.forget();
                 h.assertTrue(TankCurrents.of(level, c).isEmpty(), "off: no directed currents");
                 h.assertTrue(Math.abs(Seahorses.flowAt(level, c, front.x, front.z) - base) < 1e-9, "off: the average flow everywhere");
@@ -153,7 +155,7 @@ public final class CabinetOutletGameTests {
                 FilterFlow.Path p = FilterFlow.forCabinet(c.getTank(), cab);
                 h.assertTrue(p != null && p.inward() == Direction.NORTH, "off: the jet from the back wall " + (p == null ? null : p.inward()));
             } finally {
-                CommonConfig.FEATURE_CABINET_OUTLET_SIDE.set(feature);
+                Features.set(Feature.CABINET_OUTLET_SIDE, feature);
                 Seahorses.forget();
             }
             h.succeed();
@@ -169,7 +171,7 @@ public final class CabinetOutletGameTests {
         h.setBlock(cp, state);
         CabinetBlockEntity cab = (CabinetBlockEntity) level.getBlockEntity(h.absolutePos(cp));
         ServerPlayer sp = MockPlayers.serverPlayer(h);
-        boolean feature = CommonConfig.FEATURE_CABINET_OUTLET_SIDE.get();
+        boolean feature = Features.own(Feature.CABINET_OUTLET_SIDE);
         try {
             sp.teleportTo(h.absolutePos(cp).getX() + 0.5, h.absolutePos(cp).getY() + 1, h.absolutePos(cp).getZ() - 1.5);
             CabinetMenu menu = (CabinetMenu) cab.createMenu(1, sp.getInventory(), sp);
@@ -177,11 +179,11 @@ public final class CabinetOutletGameTests {
             h.assertTrue(menu.clickMenuButton(sp, CabinetMenu.BUTTON_OUTLET0 + OutletSide.FRONT.ordinal()), "button front");
             h.assertTrue(cab.outletSide() == OutletSide.FRONT && menu.outletSide() == OutletSide.FRONT, "front set");
             h.assertTrue(!menu.clickMenuButton(sp, 9), "unknown button refused");
-            CommonConfig.FEATURE_CABINET_OUTLET_SIDE.set(false);
+            Features.set(Feature.CABINET_OUTLET_SIDE, false);
             h.assertTrue(menu.outletSide() == null, "off: the menu hides the setting");
             h.assertTrue(!menu.clickMenuButton(sp, CabinetMenu.BUTTON_OUTLET0 + OutletSide.LEFT.ordinal()) && cab.outletSetting() == OutletSide.FRONT,
                     "off: the button does nothing");
-            CommonConfig.FEATURE_CABINET_OUTLET_SIDE.set(feature);
+            Features.set(Feature.CABINET_OUTLET_SIDE, feature);
             menu.clickMenuButton(sp, CabinetMenu.BUTTON_OUTLET0 + OutletSide.LEFT.ordinal());
             h.assertTrue(cab.outletSide() == OutletSide.LEFT, "left set");
             // the update tag (network) carries the side
@@ -212,7 +214,7 @@ public final class CabinetOutletGameTests {
             h.assertTrue(backDrops.stream().filter(s -> s.is(ModItems.CABINET.get())).allMatch(s -> s.get(ModDataComponents.OUTLET_SIDE.get()) == null),
                     "back: no component " + backDrops);
         } finally {
-            CommonConfig.FEATURE_CABINET_OUTLET_SIDE.set(feature);
+            Features.set(Feature.CABINET_OUTLET_SIDE, feature);
             sp.getServer().getPlayerList().remove(sp);
         }
         h.succeed();

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.decor;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Locale;
 import net.minecraft.resources.ResourceLocation;
 import org.overengineer.bettacraft.BettaCraft;
@@ -11,7 +13,7 @@ import org.overengineer.bettacraft.BettaCraft;
  */
 public enum DecorType {
     CASTLE(8, 12, 8),
-    /** M21.5: the detailed versions (the small old ones: {@code _small}, with features.detailedDecor off). */
+    /** M21.5: the detailed versions (the small old ones: {@code _small}, with features.decor.detailed off). */
     SHIPWRECK(13, 10, 5),
     DINO_SKULL(12, 8, 6),
     VOLCANO(7, 6, 7),
@@ -75,7 +77,7 @@ public enum DecorType {
     }
 
     public ResourceLocation structure() {
-        boolean small = (this == SHIPWRECK || this == DINO_SKULL) && !org.overengineer.bettacraft.config.CommonConfig.detailedDecor();
+        boolean small = (this == SHIPWRECK || this == DINO_SKULL) && !Features.enabled(Feature.DETAILED_DECOR);
         return BettaCraft.id("decor/" + id() + (small ? "_small" : ""));
     }
 }

@@ -23,7 +23,7 @@ final class LangM26 {
 
         a.accept("message.bettacraft.live_culture.status", "Water %s/%s mB · culture %s%% · food %s%% · %s ready");
         a.accept("message.bettacraft.live_culture.foul", "· stale %s%%");
-        a.accept("message.bettacraft.live_culture.blocked.off", "Live food cultures are switched off (features.liveFoodCultures)");
+        a.accept("message.bettacraft.live_culture.blocked.off", "Live food cultures are switched off (features.liveFood.cultures)");
         a.accept("message.bettacraft.live_culture.blocked.mud", "Needs mud");
         a.accept("message.bettacraft.live_culture.blocked.water", "Needs more water");
         a.accept("message.bettacraft.live_culture.blocked.animals", "No animals: put some in to start");
@@ -53,7 +53,7 @@ final class LangM26 {
         a.accept("gui.bettacraft.live_food_pump.nobody_eats", "Nobody in the tanks eats this food now");
         a.accept("gui.bettacraft.live_food_pump.no_power", "Needs FE (pipes.pumpsRequireEnergy)");
         a.accept("gui.bettacraft.live_food_pump.bottles_full", "Full of empty bottles: take them out");
-        a.accept("gui.bettacraft.live_food_pump.off", "The live food pump is switched off (features.liveFoodPump)");
+        a.accept("gui.bettacraft.live_food_pump.off", "The live food pump is switched off (features.liveFood.pump)");
         a.accept("gui.bettacraft.live_food_pump.paused", "Paused by a redstone signal");
         a.accept("gui.bettacraft.live_food_pump.busy", "Pumped %s portions, the pipes are at their limit: the rest follows");
         a.accept("gui.bettacraft.live_food_pump.busy_one", "Pumped %s portion, the pipes are at their limit: the rest follows");
@@ -87,9 +87,5 @@ final class LangM26 {
         a.accept("bettacraft.configuration.bottleDaphniaChance.tooltip", "Chance that a bottle of swamp water brings up a few daphnia as well");
         a.accept("bettacraft.configuration.pumpFePerPortion", "Live food pump FE per portion");
         a.accept("bettacraft.configuration.pumpFePerPortion.tooltip", "FE the live food pump needs per portion while pipes.pumpsRequireEnergy is on");
-        a.accept("bettacraft.configuration.liveFoodCultures", "Live food cultures");
-        a.accept("bettacraft.configuration.liveFoodCultures.tooltip", "Live food cultures: the tubifex dish (mud, mulm or waste water) and the daphnia barrel (yeast or green water, light), harvested with the net or by hoppers and pumps (off: the cultures stand still)");
-        a.accept("bettacraft.configuration.liveFoodPump", "Live food pump");
-        a.accept("bettacraft.configuration.liveFoodPump.tooltip", "Live food pump: pumps daphnia, artemia and other live food from a breeder through the pipes into tanks on a schedule (off: it does not pump and tanks take no live food from pipes)");
     }
 }

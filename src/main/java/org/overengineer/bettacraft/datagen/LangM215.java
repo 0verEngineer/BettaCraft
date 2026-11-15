@@ -12,12 +12,12 @@ final class LangM215 {
         a.accept("message.bettacraft.clip_feeder.status", "Clip-on feeder: %s food, %sx a day");
         a.accept("message.bettacraft.clip_feeder.full", "The clip-on feeder is full (one stack)");
         a.accept("message.bettacraft.clip_feeder.where", "The clip-on feeder hangs on a side face of a top tank block");
-        a.accept("message.bettacraft.clip_feeder.off", "Clip-on feeders are switched off (features.clipOnFeeder)");
+        a.accept("message.bettacraft.clip_feeder.off", "Clip-on feeders are switched off (features.equipment.clipOnFeeder)");
         a.accept("gui.bettacraft.tank.protect_on", "Protected");
         a.accept("gui.bettacraft.tank.protect_off", "Unprotected");
         a.accept("gui.bettacraft.tank.protect_tooltip", "Break protection (owner or OP): while it is on nobody can break the tank, not even the owner or in creative mode: glass, lid, light, feeders and the cabinet below. Explosions and pistons leave it alone too (server config).");
         a.accept("message.bettacraft.tank.break_protected", "Break protection is on: switch it off in the tank menu first");
-        a.accept("message.bettacraft.tank.break_protection_off", "Break protection is switched off on this server (features.breakProtection)");
+        a.accept("message.bettacraft.tank.break_protection_off", "Break protection is switched off on this server (features.equipment.breakProtection)");
         a.accept("log.bettacraft.protection_on", "%s switched the break protection on");
         a.accept("log.bettacraft.protection_off", "%s switched the break protection off");
         a.accept("bettacraft.configuration.protectFromExplosionsAndPistons", "Protection against explosions and pistons");
@@ -37,17 +37,5 @@ final class LangM215 {
         a.accept("critter.bettacraft.look.golden", "golden yellow");
         a.accept("critter.bettacraft.look.yellow_lines", "yellow with dark lines");
         a.accept("variety.bettacraft.ramshorn.red", "Red");
-        a.accept("bettacraft.configuration.smoothSwimming", "Smooth swimming");
-        a.accept("bettacraft.configuration.smoothSwimming.tooltip", "Smooth swimming: fish turn in curves, tilt and right themselves smoothly, kuhli loaches undulate slowly like eels and hide by day, plecos and otocinclus only stand upright once they reach the glass (off: the old, jerkier movement)");
-        a.accept("bettacraft.configuration.greenNeonTetra", "Green neon tetra");
-        a.accept("bettacraft.configuration.greenNeonTetra.tooltip", "Green neon tetra (Paracheirodon simulans, blue and green form) at the wandering trader and in the aquarium net (off: no new ones; fish already caught stay)");
-        a.accept("bettacraft.configuration.snailColors", "Snail colours");
-        a.accept("bettacraft.configuration.snailColors.tooltip", "Snail colours: every nerite gets its own random shade (red and yellow racer nerites), apple snails are mostly gold with shades and bands, ramshorn snails also come in red (off: one fixed colour per variety, brown apple snails, no new red ramshorns)");
-        a.accept("bettacraft.configuration.detailedDecor", "Detailed skull and shipwreck");
-        a.accept("bettacraft.configuration.detailedDecor.tooltip", "Bigger, more detailed dino skull and shipwreck decoration (off: the small old shapes for newly placed ones)");
-        a.accept("bettacraft.configuration.breakProtection", "Break protection");
-        a.accept("bettacraft.configuration.breakProtection.tooltip", "Break protection switch in the tank menu: nobody can break a protected tank, its lid, light, feeders and the cabinet below (off: the switch is hidden and does nothing)");
-        a.accept("bettacraft.configuration.clipOnFeeder", "Clip-on feeder");
-        a.accept("bettacraft.configuration.clipOnFeeder.tooltip", "Clip-on feeder: a small automatic feeder that hangs on the side of the glass (for tanks whose top is taken by a light) (off: it cannot be placed and placed ones do not feed)");
     }
 }

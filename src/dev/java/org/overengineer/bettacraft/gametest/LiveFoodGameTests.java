@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
@@ -277,10 +279,10 @@ public final class LiveFoodGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m26_off", timeoutTicks = 100)
     public static void featureSwitches(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean cul = CommonConfig.FEATURE_LIVE_FOOD_CULTURES.get(), pmp = CommonConfig.FEATURE_LIVE_FOOD_PUMP.get();
+        boolean cul = Features.own(Feature.LIVE_FOOD_CULTURES), pmp = Features.own(Feature.LIVE_FOOD_PUMP);
         try {
-            CommonConfig.FEATURE_LIVE_FOOD_CULTURES.set(false);
-            CommonConfig.FEATURE_LIVE_FOOD_PUMP.set(false);
+            Features.set(Feature.LIVE_FOOD_CULTURES, false);
+            Features.set(Feature.LIVE_FOOD_PUMP, false);
             LiveCultureBlockEntity d = culture(h, new BlockPos(8, 1, 8), true);
             d.setMud(true);
             d.setWater(1000);
@@ -301,8 +303,8 @@ public final class LiveFoodGameTests {
             h.assertTrue(tank != null && tank.fill(LiveFood.suspension(new ItemStack(ModItems.DAPHNIA.get()), 1), IFluidHandler.FluidAction.EXECUTE) == 0,
                     "the tank takes no suspension");
         } finally {
-            CommonConfig.FEATURE_LIVE_FOOD_CULTURES.set(cul);
-            CommonConfig.FEATURE_LIVE_FOOD_PUMP.set(pmp);
+            Features.set(Feature.LIVE_FOOD_CULTURES, cul);
+            Features.set(Feature.LIVE_FOOD_PUMP, pmp);
         }
         h.succeed();
     }

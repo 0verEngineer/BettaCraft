@@ -55,7 +55,7 @@ final class LangM25c {
         a.accept("gui.bettacraft.dosing.empty", "A canister is empty: refill it");
         a.accept("gui.bettacraft.dosing.no_tank", "No tank next to it or at the end of its pipes");
         a.accept("gui.bettacraft.dosing.fresh", "Not a salt water tank: it does not dose");
-        a.accept("gui.bettacraft.dosing.off", "Reef dosing is switched off (features.reefDosing)");
+        a.accept("gui.bettacraft.dosing.off", "Reef dosing is switched off (features.corals.reefDosing)");
         a.accept("gui.bettacraft.dosing.values", "Tank: Ca %s · KH %s · Mg %s · trace %s %%");
         // tank menu
         a.accept("gui.bettacraft.reef.kh", " · KH %s");
@@ -66,12 +66,6 @@ final class LangM25c {
         a.accept("gui.bettacraft.co2.quick", "%s bubbles/s");
         a.accept("gui.bettacraft.co2.hint", "Bubbles per second: a bigger tank needs more. Also sneak + mouse wheel.");
         // config
-        a.accept("bettacraft.configuration.caridina", "Caridina bee shrimp");
-        a.accept("bettacraft.configuration.caridina.tooltip", "Caridina bee shrimp (Crystal Red, Crystal Black, Taiwan bees, Tiger) for soft water, with their banding grades (off: no new ones from the net, the wild and the trader; those in tanks stay)");
-        a.accept("bettacraft.configuration.sulawesi", "Sulawesi animals");
-        a.accept("bettacraft.configuration.sulawesi.tooltip", "Sulawesi animals: cardinal shrimp and Tylomelania snails for hard, warm water (off: no new ones from the net, the wild and the trader; those in tanks stay)");
-        a.accept("bettacraft.configuration.reefDosing", "Reef dosing");
-        a.accept("bettacraft.configuration.reefDosing.tooltip", "Reef dosing: alkalinity (KH), magnesium and trace elements in salt water, used up by the stony corals, and the dosing pump with up to four canisters (off: the values stand still and the pump does not dose)");
         a.accept("bettacraft.configuration.dosing", "Reef dosing");
         a.accept("bettacraft.configuration.calciumPerMl", "Calcium per mL");
         a.accept("bettacraft.configuration.calciumPerMl.tooltip", "Calcium (mg/L in one water block) one mL of calcium solution adds (a bigger tank needs more)");

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.HolderLookup;
@@ -25,7 +27,7 @@ import org.overengineer.bettacraft.registry.ModRecipes;
  * C = wooden chest). Which blocks count as stone and which slab belongs to them is decided live by {@link CabinetStones}
  * (tags and the game's own slab recipes), so stones of every mod work. The ingredient lists in the JSON (vanilla stones
  * and their slabs in the same order) are only for JEI, the recipe book and the handbook. The result remembers the stone
- * in {@code bettacraft:wood}, like the planks of a wooden cabinet. Off with {@code features.stoneCabinets}.
+ * in {@code bettacraft:wood}, like the planks of a wooden cabinet. Off with {@code features.equipment.stoneCabinets}.
  */
 public class StoneCabinetRecipe extends ShapedRecipe {
     public StoneCabinetRecipe(String group, CraftingBookCategory category, ShapedRecipePattern pattern, ItemStack result, boolean showNotification) {
@@ -57,7 +59,7 @@ public class StoneCabinetRecipe extends ShapedRecipe {
     /** The stone of a matching grid (five identical stones, three of their own slabs, a chest), or null. */
     @Nullable
     public static Item findStone(CraftingInput input, RecipeManager recipes, HolderLookup.Provider registries) {
-        if (!CommonConfig.stoneCabinets() || input.width() != 3 || input.height() != 3) return null;
+        if (!Features.enabled(Feature.STONE_CABINETS) || input.width() != 3 || input.height() != 3) return null;
         Item stone = null, slab = null;
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +23,7 @@ public class ClipFeederBlockEntity extends FeederBlockEntity {
 
     @Override
     protected boolean active() {
-        return org.overengineer.bettacraft.config.CommonConfig.clipFeeder();
+        return Features.enabled(Feature.CLIP_FEEDER);
     }
 
     /** The tank block it hangs on (behind it). */

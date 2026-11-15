@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plants;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 /**
  * Colours of the aquarium plants (M13): the block textures are grey and tinted with these colours (block colour handler,
  * also in the miniature, so shader packs see an ordinary tinted block like leaves or grass). Red species get redder in
@@ -15,7 +17,7 @@ public final class PlantColors {
     /** Tint level of red species for the light at the surface (0..15): 0 below 9, 3 from 14 (same classes as M12). */
     public static int tintFor(int light) {
         // M23: with the LED tiers the deepest red needs more than the bar (15): an LED panel or a high-power LED
-        if (org.overengineer.bettacraft.config.CommonConfig.ledTiers()) return light < 9 ? 0 : light < 13 ? 1 : light < 16 ? 2 : 3;
+        if (Features.enabled(Feature.LED_TIERS)) return light < 9 ? 0 : light < 13 ? 1 : light < 16 ? 2 : 3;
         return light < 9 ? 0 : light < 12 ? 1 : light < 14 ? 2 : 3;
     }
 

@@ -47,7 +47,7 @@ final class LangM25b {
         a.accept("message.bettacraft.bio_co2.mixed", "Water and %s/%s sugar: add yeast");
         a.accept("message.bettacraft.bio_co2.spent", "Spent: set it up again (water bucket, sugar, yeast)");
         a.accept("message.bettacraft.bio_co2.empty", "Empty: a water bucket, up to four sugar, then yeast");
-        a.accept("message.bettacraft.co2.off", "CO2 dosing is switched off (features.co2)");
+        a.accept("message.bettacraft.co2.off", "CO2 dosing is switched off (features.co2.enabled)");
         a.accept("message.bettacraft.co2.no_tank", "Not next to a tank: place it beside a tank or on it");
         a.accept("message.bettacraft.co2.has_solenoid", "It has a solenoid valve already");
         a.accept("message.bettacraft.co2.solenoid_on", "Solenoid valve on: it closes while the lights are off");
@@ -61,7 +61,7 @@ final class LangM25b {
         a.accept("message.bettacraft.ro.prefilter_in", "Prefilter in");
         a.accept("message.bettacraft.ro.not_enough", "Only %s mB of RO water: a bucket needs 1000");
         a.accept("message.bettacraft.ro.feed_full", "The water inlet is full");
-        a.accept("message.bettacraft.ro.stop.off", "switched off (features.reverseOsmosis)");
+        a.accept("message.bettacraft.ro.stop.off", "switched off (features.osmosis.enabled)");
         a.accept("message.bettacraft.ro.stop.no_membrane", "no membrane");
         a.accept("message.bettacraft.ro.stop.no_prefilter", "no prefilter");
         a.accept("message.bettacraft.ro.stop.full", "full");
@@ -85,10 +85,6 @@ final class LangM25b {
         a.accept("cause.bettacraft.co2", "too much CO2");
         a.accept("cause.bettacraft.critter.co2", "too much CO2");
         // config
-        a.accept("bettacraft.configuration.co2", "CO2 dosing");
-        a.accept("bettacraft.configuration.co2.tooltip", "CO2 dosing: bio CO2, gas cylinders with pressure regulator and solenoid valve, the CO2 filling station; CO2 makes the plants grow faster, lowers the pH and too much harms the animals (off: the devices give no CO2)");
-        a.accept("bettacraft.configuration.reverseOsmosis", "Reverse osmosis");
-        a.accept("bettacraft.configuration.reverseOsmosis.tooltip", "Reverse osmosis unit: makes reverse osmosis water (nothing dissolved) from water, with a membrane and a prefilter that wear out (off: it does not run)");
         a.accept("bettacraft.configuration.co2Dosing", "CO2 dosing");
         a.accept("bettacraft.configuration.osmosis", "Reverse osmosis unit");
         a.accept("bettacraft.configuration.co2PerBubble", "CO2 per bubble");

@@ -37,6 +37,14 @@ public final class ModCodecs {
     public static final Supplier<org.overengineer.bettacraft.plants.wild.WildPlantFeature> WILD_CAVE_PLANTS = FEATURES.register("wild_cave_plants",
             () -> new org.overengineer.bettacraft.plants.wild.WildPlantFeature(true));
     public static final Supplier<MapCodec<FishBagRecipeCondition>> CONFIG_CONDITION = CONDITIONS.register("config", () -> FishBagRecipeCondition.CODEC);
+    /** M33: recipes and loot only while their feature is on. */
+    public static final Supplier<MapCodec<org.overengineer.bettacraft.config.FeatureCondition>> FEATURE_CONDITION =
+            CONDITIONS.register("feature", () -> org.overengineer.bettacraft.config.FeatureCondition.CODEC);
+    public static final DeferredRegister<net.minecraft.world.level.storage.loot.predicates.LootItemConditionType> LOOT_CONDITIONS =
+            DeferredRegister.create(net.minecraft.core.registries.Registries.LOOT_CONDITION_TYPE, BettaCraft.MOD_ID);
+    public static final Supplier<net.minecraft.world.level.storage.loot.predicates.LootItemConditionType> FEATURE_LOOT_CONDITION =
+            LOOT_CONDITIONS.register("feature", () -> new net.minecraft.world.level.storage.loot.predicates.LootItemConditionType(
+                    org.overengineer.bettacraft.config.FeatureLootCondition.CODEC));
     public static final Supplier<MapCodec<AddItemLootModifier>> ADD_ITEM = LOOT_MODIFIERS.register("add_item", () -> AddItemLootModifier.CODEC);
 
     public static final Supplier<MapCodec<org.overengineer.bettacraft.world.ArtemiaSandLootModifier>> ARTEMIA_SAND =
@@ -55,6 +63,7 @@ public final class ModCodecs {
         FEATURES.register(bus);
         CONDITIONS.register(bus);
         LOOT_MODIFIERS.register(bus);
+        LOOT_CONDITIONS.register(bus);
     }
 
     private ModCodecs() {}

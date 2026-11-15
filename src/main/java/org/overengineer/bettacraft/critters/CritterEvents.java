@@ -84,6 +84,7 @@ public final class CritterEvents {
             if (!org.overengineer.bettacraft.world.BiomeWaters.swamp(biome) && !org.overengineer.bettacraft.world.BiomeWaters.mangrove(biome)) return;
             if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
             player.getCooldowns().addCooldown(stack.getItem(), 20);
+            if (!CritterSpecies.TRUMPET_SNAIL.available()) return; // M33: features.invertebrates
             if (server.getRandom().nextDouble() >= ServerConfig.getOr(ServerConfig.CRITTERS_MUD_CHANCE, 0.08)) return;
             var rnd = NetCatching.random(server);
             ItemStack bag = TankCritters.bagOf(CritterSpecies.TRUMPET_SNAIL, 1, () -> CritterGenes.WILD, rnd, false);

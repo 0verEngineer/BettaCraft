@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plants;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -289,8 +291,8 @@ public final class InteriorPlants {
 
     /**
      * M28: growth factor of the special needs of a species (1 for most): a {@link PlantSpecies#needsCo2()} plant grows at
-     * {@link PlantSpecies#NO_CO2_GROWTH} without CO2 and at full speed from a good CO2 level (with {@code features.co2}); a
-     * {@link PlantSpecies#softWater()} plant slows down in hard or alkaline water (with {@code features.waterChemistry}):
+     * {@link PlantSpecies#NO_CO2_GROWTH} without CO2 and at full speed from a good CO2 level (with {@code features.co2.enabled}); a
+     * {@link PlantSpecies#softWater()} plant slows down in hard or alkaline water (with {@code features.waterChemistry.enabled}):
      * full up to pH 7.0 and 300 TDS, half from pH 8.0 or 700 TDS.
      */
     public static double needsFactor(TankData t, PlantSpecies s) {
@@ -298,7 +300,7 @@ public final class InteriorPlants {
         if (s.needsCo2() && org.overengineer.bettacraft.co2.TankCo2.enabled()) {
             f *= PlantSpecies.NO_CO2_GROWTH + (1 - PlantSpecies.NO_CO2_GROWTH) * org.overengineer.bettacraft.chem.WaterChemistry.co2Boost(t.co2());
         }
-        if (s.softWater() && org.overengineer.bettacraft.config.CommonConfig.waterChemistry()) f *= softWaterFactor(t.ph(), t.tds());
+        if (s.softWater() && Features.enabled(Feature.WATER_CHEMISTRY)) f *= softWaterFactor(t.ph(), t.tds());
         return f;
     }
 
@@ -472,12 +474,12 @@ public final class InteriorPlants {
     public static final double MARIMO_ROLLS_FILTERED = 0.3;
 
     /**
-     * M28: the Marimo balls of a tank roll over the floor ({@code features.marimoRolling}): in the current of a filter or
+     * M28: the Marimo balls of a tank roll over the floor ({@code features.aquaticPlants.marimoRolling}): in the current of a filter or
      * pipe outlet ({@code TankCurrents}) along it, now and then; elsewhere, with a running filter, rarely and to a random
      * side; in still water never. Returns the number of balls that moved.
      */
     static int rollAll(ServerLevel level, TankBlockEntity c, InteriorRegion r, double days) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.marimoRolling() || days <= 0 || c.getTank().waterMb() <= 0) return 0;
+        if (!Features.enabled(Feature.MARIMO_ROLLING) || days <= 0 || c.getTank().waterMb() <= 0) return 0;
         List<InteriorPlant> balls = null;
         for (InteriorPlant p : r.plants().all()) {
             if (p.species.rolls() && p.stage > 0) {

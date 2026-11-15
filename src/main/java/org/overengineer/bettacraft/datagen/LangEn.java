@@ -587,9 +587,14 @@ final class LangEn {
         a.accept("bettacraft.configuration.overlayProvider", "Overlay mod");
         a.accept("bettacraft.configuration.overlayProvider.tooltip", "Which overlay mod shows the Bettacraft lines (tank, betta, filter, culture): AUTO = only the first installed one in the order Jade, WTHIT, The One Probe (no doubled boxes with two overlay mods); JADE, TOP or WTHIT = only that one; ALL = every installed one");
         a.accept("bettacraft.configuration.features", "Features");
-        a.accept("bettacraft.configuration.features.tooltip", "Switches for single features (M21 on; older features follow in a later version)");
-        a.accept("bettacraft.configuration.interiorPathfinding", "Path finding in the interior");
-        a.accept("bettacraft.configuration.interiorPathfinding.tooltip", "Path finding in the tank interior: dwarf frogs walk around decoration, small animals go under overhangs and into caves, plecos swim into their spawning cave (off: straight lines like before)");
+        a.accept("bettacraft.configuration.features.tooltip", "Switches per feature: every group has its switch enabled, sub-switches are off when their group is off; "
+                + "a feature that is off loses its recipes, trader offers, loot, catches and wild spawns, its items and blocks stay registered");
+        // M33: the feature tree (labels and tooltips from the Feature enum; German in de_de.json)
+        for (var e : org.overengineer.bettacraft.config.Feature.SECTIONS.entrySet()) a.accept("bettacraft.configuration.features." + e.getKey(), e.getValue());
+        for (var f : org.overengineer.bettacraft.config.Feature.values()) {
+            a.accept(f.translationKey(), f.label());
+            a.accept(f.translationKey() + ".tooltip", f.tooltip());
+        }
         a.accept("bettacraft.configuration.plantMeshes", "New plant look");
         a.accept("bettacraft.configuration.plantMeshes.tooltip", "Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the miniature outside (off: the old blocks). Under Features for everyone (modpack, server), under Rendering only for you");
         a.accept("bettacraft.configuration.render", "Rendering");
@@ -875,7 +880,7 @@ final class LangEn {
         a.accept("info.bettacraft.riccia_fluitans", "A liverwort of forked, bright green thalli: tied onto stone or wood it grows into a shining cushion, on the surface it floats; males like to build their bubble nest in it.\nTie it onto stone or wood in a tank interior (rocks, roots, decoration), or use it on a tank from outside: then it floats on the surface like a floating plant. From a cutting it grows into a plant of many blocks, about 4 days to full size with strong light (a lit tank light), nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in swamps, sometimes the aquarium net in swamps; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
         a.accept("item.bettacraft.marimo", "Marimo Ball");
         a.accept("block.bettacraft.marimo", "Marimo Ball");
-        a.accept("info.bettacraft.marimo", "A velvety ball of green algae: grows extremely slowly, never minds cool water and lives practically forever. In the current of a filter or outlet it rolls slowly over the floor.\nPut it in a tank interior on the floor or any solid block. From a cutting it grows into a plant of many blocks, about 60 days to full size with little light, nutrients (waste in the water) and 5-30 °C, also while nobody is inside.\nFind it: rarely when fishing in rivers, rarely the aquarium net in rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. It rolls with the current (config features.marimoRolling).");
+        a.accept("info.bettacraft.marimo", "A velvety ball of green algae: grows extremely slowly, never minds cool water and lives practically forever. In the current of a filter or outlet it rolls slowly over the floor.\nPut it in a tank interior on the floor or any solid block. From a cutting it grows into a plant of many blocks, about 60 days to full size with little light, nutrients (waste in the water) and 5-30 °C, also while nobody is inside.\nFind it: rarely when fishing in rivers, rarely the aquarium net in rivers; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out. It rolls with the current (config features.aquaticPlants.marimoRolling).");
         a.accept("item.bettacraft.echinodorus_red_diamond", "Echinodorus 'Red Diamond'");
         a.accept("block.bettacraft.echinodorus_red_diamond", "Echinodorus 'Red Diamond'");
         a.accept("info.bettacraft.echinodorus_red_diamond", "A compact sword plant with wine-red leaves, the redder the stronger the light.\nPlant it in a tank interior on substrate (the interior floor with a substrate, sand, gravel or dirt). From a cutting it grows into a plant of many blocks, about 8 days to full size with medium light, nutrients (waste in the water) and 20-30 °C, also while nobody is inside.\nFind it: fishing in jungles, sometimes the aquarium net in jungle water; cuttings from trimming.\nShears: trim it (cuttings), inside or from outside on the tank where you look. Break the root: take the whole plant out.");
@@ -897,8 +902,6 @@ final class LangEn {
         a.accept("item.bettacraft.hornwort", "Hornwort");
         a.accept("tooltip.bettacraft.hornwort", "Free-floating shoots deep into the water");
         a.accept("info.bettacraft.hornwort", "Hornwort (Ceratophyllum demersum) has no roots: its shoots with whorls of stiff leaves float free just under the surface and hang deep into the water. Grows fast and takes up the most waste. Use it on a tank: it floats where you look at the water.\nGrows with light and nutrients, forms offshoots and takes up waste.\nFind it: fishing in swamps and mangrove swamps.\nTake plants out: right-click the surface with an empty hand or an aquarium net; net + sneak thins the whole tank out by half.");
-        a.accept("bettacraft.configuration.marimoRolling", "Rolling Marimo balls");
-        a.accept("bettacraft.configuration.marimoRolling.tooltip", "Marimo balls roll slowly over the tank floor with the current of filters and outlets (off: they stay where they were put)");
     }
 
     /** M13: aquarium plants. */

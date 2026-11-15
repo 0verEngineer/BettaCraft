@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "osmosis.enabled"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_tank": {

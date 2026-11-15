@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,7 +71,7 @@ public final class TankHistory extends SavedData {
 
     /** From the care step of a tank: records a point when a new hour began. */
     public static void onCare(ServerLevel level, TankBlockEntity controller) {
-        if (!CommonConfig.monitors() || controller.getTank() == null) return;
+        if (!Features.enabled(Feature.MONITORS) || controller.getTank() == null) return;
         TankHistory h = get(level);
         long hour = hour(level.getGameTime());
         Series s = h.tanks.get(controller.getTank().id());

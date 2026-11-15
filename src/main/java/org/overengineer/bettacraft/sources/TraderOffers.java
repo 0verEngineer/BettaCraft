@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.sources;
 
+import org.overengineer.bettacraft.config.FeatureContent;
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,9 +69,21 @@ public final class TraderOffers {
         public VillagerTrades.ItemListing listing() {
             return LISTINGS.computeIfAbsent(id, k -> factory.get());
         }
+
+        /** M33: the offer is made while at least one of its products has all its features on ({@link FeatureContent#ofTarget}). */
+        public boolean allowed() {
+            for (Product p : products.get()) if (Features.all(FeatureContent.ofTarget(p.target()))) return true;
+            return false;
+        }
+
+        /** M33: the listing the trader gets: nothing while the offer is not {@link #allowed}, asked at every new trader. */
+        public VillagerTrades.ItemListing gatedListing() {
+            return GATED.computeIfAbsent(id, k -> (trader, random) -> allowed() ? listing().getOffer(trader, random) : null);
+        }
     }
 
     private static final java.util.Map<String, VillagerTrades.ItemListing> LISTINGS = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final java.util.Map<String, VillagerTrades.ItemListing> GATED = new java.util.concurrent.ConcurrentHashMap<>();
 
     /** Colour lines of the Neocaridina the trader brings (loci of {@link CritterSpecies#NEOCARIDINA}). */
     private static final int[] SHRIMP_LINES = {0, 1, 2, 3, 4, 5};
@@ -82,7 +97,7 @@ public final class TraderOffers {
 
     @SubscribeEvent
     public static void onWandererTrades(WandererTradesEvent event) {
-        for (Offer o : all()) (o.slot() == Slot.USUAL ? event.getGenericTrades() : event.getRareTrades()).add(o.listing());
+        for (Offer o : all()) (o.slot() == Slot.USUAL ? event.getGenericTrades() : event.getRareTrades()).add(o.gatedListing());
     }
 
     private static List<Offer> build() {
@@ -94,7 +109,7 @@ public final class TraderOffers {
         out.add(new Offer("apple_snail", Slot.USUAL, 4, () -> List.of(new Product(Target.critter(CritterSpecies.APPLE_SNAIL), 1, 3)),
                 offer(3, 4, (r, rnd) -> TankCritters.bagOf(CritterSpecies.APPLE_SNAIL, 1, () -> {
                     // M21.5: mostly gold (as in the shops), the other colours now and then
-                    if (!CommonConfig.snailColors()) return CritterGenes.pure(rnd.nextBoolean() ? 0 : 1, 0.3F);
+                    if (!Features.enabled(Feature.SNAIL_COLORS)) return CritterGenes.pure(rnd.nextBoolean() ? 0 : 1, 0.3F);
                     double x = rnd.nextDouble();
                     return CritterGenes.pure(x < 0.7 ? 0 : x < 0.8 ? 1 : x < 0.9 ? 2 : 3, 0.3F + rnd.nextFloat() * 0.2F);
                 }, rnd, true))));
@@ -106,21 +121,21 @@ public final class TraderOffers {
                 })));
         out.add(new Offer("ramshorn", Slot.RARE, 3, () -> List.of(new Product(Target.critter(CritterSpecies.RAMSHORN), 2, 4)),
                 offer(4, 3, (r, rnd) -> TankCritters.bagOf(CritterSpecies.RAMSHORN, 2,
-                        () -> CritterGenes.pure(rnd.nextInt(CommonConfig.snailColors() ? 3 : 2), 0.3F), rnd, false))));
+                        () -> CritterGenes.pure(rnd.nextInt(Features.enabled(Feature.SNAIL_COLORS) ? 3 : 2), 0.3F), rnd, false))));
         // M21.5: racer nerites, red or yellow, every one its own shade
         out.add(new Offer("racer_nerites", Slot.RARE, 3, () -> List.of(
-                new Product(Target.critter(CritterSpecies.RED_NERITE), 2, 4, 0.5, false, "features.snailColors"),
-                new Product(Target.critter(CritterSpecies.YELLOW_NERITE), 2, 4, 0.5, false, "features.snailColors")),
+                new Product(Target.critter(CritterSpecies.RED_NERITE), 2, 4, 0.5, false, Feature.SNAIL_COLORS.key()),
+                new Product(Target.critter(CritterSpecies.YELLOW_NERITE), 2, 4, 0.5, false, Feature.SNAIL_COLORS.key())),
                 (trader, random) -> {
-                    if (!CommonConfig.snailColors()) return null;
+                    if (!Features.enabled(Feature.SNAIL_COLORS)) return null;
                     RandomGenerator rnd = random::nextLong;
                     CritterSpecies s = random.nextBoolean() ? CritterSpecies.RED_NERITE : CritterSpecies.YELLOW_NERITE;
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 4), Optional.empty(), TankCritters.bagOf(s, 2, () -> CritterGenes.WILD, rnd, false), 3, 1, 0.05F);
                 }));
         // M25 part c: crystal bee shrimp (A or S grade) and the Sulawesi animals, rare
-        out.add(new Offer("caridina", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.CARIDINA), 2, 8, 1.0, false, "features.caridina")),
+        out.add(new Offer("caridina", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.CARIDINA), 2, 8, 1.0, false, Feature.CARIDINA.key())),
                 (trader, random) -> {
-                    if (!CommonConfig.caridina()) return null;
+                    if (!Features.enabled(Feature.CARIDINA)) return null;
                     RandomGenerator rnd = random::nextLong;
                     int line = random.nextBoolean() ? CritterGenes.CARIDINA_RED : CritterGenes.CARIDINA_BLACK;
                     float grade = 0.2F + random.nextFloat() * 0.3F;
@@ -128,10 +143,10 @@ public final class TraderOffers {
                             TankCritters.bagOf(CritterSpecies.CARIDINA, 2, () -> CritterGenes.pure(line, grade), rnd, true), 2, 1, 0.05F);
                 }));
         out.add(new Offer("sulawesi", Slot.RARE, 2, () -> List.of(
-                new Product(Target.critter(CritterSpecies.SULAWESI_SHRIMP), 2, 7, 0.5, false, "features.sulawesi"),
-                new Product(Target.critter(CritterSpecies.TYLOMELANIA), 2, 7, 0.5, false, "features.sulawesi")),
+                new Product(Target.critter(CritterSpecies.SULAWESI_SHRIMP), 2, 7, 0.5, false, Feature.SULAWESI.key()),
+                new Product(Target.critter(CritterSpecies.TYLOMELANIA), 2, 7, 0.5, false, Feature.SULAWESI.key())),
                 (trader, random) -> {
-                    if (!CommonConfig.sulawesi()) return null;
+                    if (!Features.enabled(Feature.SULAWESI)) return null;
                     RandomGenerator rnd = random::nextLong;
                     ItemStack bag = random.nextBoolean() ? TankCritters.bagOf(CritterSpecies.SULAWESI_SHRIMP, 2, () -> CritterGenes.WILD, rnd, true)
                             : TankCritters.bagOf(CritterSpecies.TYLOMELANIA, 2, () -> CritterGenes.WILD, rnd, true);
@@ -139,9 +154,9 @@ public final class TraderOffers {
                 }));
         // M29 part d: the big crayfish, one per bag: a blue or an orange Florida crayfish, a marbled crayfish
         out.add(new Offer("florida_crayfish", Slot.RARE, 2, () -> List.of(
-                new Product(Target.critter(CritterSpecies.FLORIDA_CRAYFISH), 1, 8, 1.0, false, "features.bigCrayfish")),
+                new Product(Target.critter(CritterSpecies.FLORIDA_CRAYFISH), 1, 8, 1.0, false, Feature.BIG_CRAYFISH.key())),
                 (trader, random) -> {
-                    if (!CommonConfig.bigCrayfish()) return null;
+                    if (!Features.enabled(Feature.BIG_CRAYFISH)) return null;
                     RandomGenerator rnd = random::nextLong;
                     int line = random.nextFloat() < 0.65F ? 0 : 1;
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(),
@@ -149,9 +164,9 @@ public final class TraderOffers {
                             2, 1, 0.05F);
                 }));
         out.add(new Offer("marbled_crayfish", Slot.USUAL, 3, () -> List.of(
-                new Product(Target.critter(CritterSpecies.MARBLED_CRAYFISH), 1, 4, 1.0, false, "features.bigCrayfish")),
+                new Product(Target.critter(CritterSpecies.MARBLED_CRAYFISH), 1, 4, 1.0, false, Feature.BIG_CRAYFISH.key())),
                 (trader, random) -> {
-                    if (!CommonConfig.bigCrayfish()) return null;
+                    if (!Features.enabled(Feature.BIG_CRAYFISH)) return null;
                     RandomGenerator rnd = random::nextLong;
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 4), Optional.empty(),
                             TankCritters.bagOf(CritterSpecies.MARBLED_CRAYFISH, 1, () -> CritterGenes.WILD, rnd, true), 3, 1, 0.05F);
@@ -167,9 +182,9 @@ public final class TraderOffers {
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 6), Optional.empty(), bag, 2, 1, 0.05F);
                 }));
         // M31: the musk turtle in a bucket of water
-        out.add(new Offer("musk_turtle", Slot.RARE, 2, () -> List.of(new Product(Target.item("musk_turtle_bucket"), 1, 7, 1.0, false, "features.turtles")),
+        out.add(new Offer("musk_turtle", Slot.RARE, 2, () -> List.of(new Product(Target.item("musk_turtle_bucket"), 1, 7, 1.0, false, Feature.TURTLES.key())),
                 (trader, random) -> {
-                    if (!CommonConfig.turtles()) return null;
+                    if (!Features.enabled(Feature.TURTLES)) return null;
                     var turtle = org.overengineer.bettacraft.registry.ModEntities.MUSK_TURTLE.get().create(trader.level());
                     if (turtle == null) return null;
                     ItemStack bucket = turtle.getBucketItemStack();
@@ -233,7 +248,7 @@ public final class TraderOffers {
         for (TankmateSpecies s : pool) {
             boolean strains = TankmateTrades.sellsStrains(s);
             out.add(new Product(Target.tankmate(s), TankmateTrades.count(s), TankmateTrades.basePrice(s), 1.0 / pool.size(), strains,
-                    s.seahorse() ? "features.seahorses" : null));
+                    s.seahorse() ? Feature.SEAHORSES.key() : null));
         }
         return out;
     }
@@ -253,7 +268,7 @@ public final class TraderOffers {
         return (trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new ArrayList<>();
-            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && s.marine() && s.available()) pool.add(s); // M21.8: features.seahorses
+            for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && s.marine() && s.available()) pool.add(s); // M21.8: features.saltwater.seahorses
             if (pool.isEmpty()) return null;
             return TankmateTrades.offer(pool.get(rnd.nextInt(pool.size())), rnd);
         };

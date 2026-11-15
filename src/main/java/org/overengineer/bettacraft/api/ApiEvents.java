@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.api;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,7 +31,7 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
  * M32 part d (internal, not API): posts the public events of {@code api.event} from the places where animals are born and
  * die and alarms change. Deaths by damage of any tank inhabitant (ours, vanilla, other mods) come from one
  * {@link LivingDeathEvent} listener; the deaths of the care (the animal simply vanishes), of prey and of the small
- * animals are posted where they happen. {@code features.modpackEvents} off: nothing is posted.
+ * animals are posted where they happen. {@code features.compat.modpackEvents} off: nothing is posted.
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class ApiEvents {
@@ -39,7 +41,7 @@ public final class ApiEvents {
     private ApiEvents() {}
 
     private static boolean on() {
-        return CommonConfig.modpackEvents();
+        return Features.enabled(Feature.MODPACK_EVENTS);
     }
 
     public static ResourceLocation id(EntityType<?> type) {

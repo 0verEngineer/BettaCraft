@@ -1,0 +1,299 @@
+#Natural spawning of wild bettas
+[spawn]
+	#Spawn weight of wild bettas in #bettacraft:betta_spawn_biomes (swamps); 0 disables natural spawning
+	# Default: 8
+	# Range: 0 ~ 1000
+	weight = 8
+	#Smallest group of wild bettas that spawns together
+	# Default: 1
+	# Range: 1 ~ 16
+	minGroupSize = 1
+	#Largest group of wild bettas that spawns together
+	# Default: 2
+	# Range: 1 ~ 16
+	maxGroupSize = 2
+	#Spawn weight of the wild tankmate fish and dwarf clawed frogs in their biomes, in tenths of their net catch weight
+	#(jungle: tetras, corydoras, plecos, otocinclus; swamps: rasboras, loaches, dwarf gourami, frogs; rivers: livebearers;
+	#warm and lukewarm oceans: reef fish and seahorses); 0 disables them (features.wildFish)
+	# Default: 5
+	# Range: 0 ~ 1000
+	wildFishWeight = 5
+	#Spawn weight of wild shrimp, crayfish, snails and hermit crabs crawling on the bottom of rivers, swamps,
+	#mangroves, beaches, jungle water and warm oceans; 0 disables them (features.wildCritters)
+	# Default: 6
+	# Range: 0 ~ 1000
+	wildCritterWeight = 6
+	#How often wild aquarium and floating plants grow in new chunks: a factor on the chance of a group per chunk
+	#(1 = default, about one small group in every two or three chunks with water of their kind; 0 = none; features.wildPlants)
+	# Default: 1.0
+	# Range: 0.0 ~ 10.0
+	wildPlantFrequency = 1.0
+	#Spawn weight of the wild big animals (giant catfish, sharks, rays) in their biomes per weight point of the species;
+	#they also need deep water and few of their kind nearby (bigAnimalRules.*); 0 disables them (features.bigAnimals)
+	# Default: 1
+	# Range: 0 ~ 1000
+	bigAnimalWeight = 1
+
+#Recipes
+[recipes]
+	#Fish bag recipe: AUTO = plastic if #bettacraft:plastic_sheets is not empty, otherwise dried kelp; KELP or PLASTIC force one
+	#Allowed Values: AUTO, KELP, PLASTIC
+	fishBag = "AUTO"
+
+#Integration with other mods
+[compat]
+	#Which overlay mod shows the Bettacraft lines (tank, betta, filter, culture): AUTO = only the first installed one in the order Jade, WTHIT, The One Probe (no doubled boxes with two overlay mods); JADE, TOP or WTHIT = only that one; ALL = every installed one
+	#Allowed Values: AUTO, JADE, TOP, WTHIT, ALL
+	overlayProvider = "AUTO"
+
+#Switches for single features (M21 on; older features follow in a later version)
+[features]
+	#Path finding in the tank interior: dwarf frogs walk around decoration, small animals go under overhangs and into caves, plecos swim into their spawning cave (off: straight lines like before)
+	interiorPathfinding = true
+	#New look of the aquarium plants and corals: real leaves, polyps and tentacles that move in the water, inside the tank and in the miniature outside (off: the old blocks for everyone; each player can also turn it off for themselves: client render.plantMeshes)
+	plantMeshes = true
+	#Smooth swimming: fish turn in curves, tilt and right themselves smoothly, kuhli loaches undulate slowly like eels and hide by day, plecos and otocinclus only stand upright once they reach the glass (off: the old, jerkier movement)
+	smoothSwimming = true
+	#Green neon tetra (Paracheirodon simulans, blue and green form) at the wandering trader and in the aquarium net (off: no new ones; fish already caught stay)
+	greenNeonTetra = true
+	#Snail colours: every nerite gets its own random shade (red and yellow racer nerites), apple snails are mostly gold with shades and bands, ramshorn snails also come in red (off: one fixed colour per variety, brown apple snails, no new red ramshorns)
+	snailColors = true
+	#Bigger, more detailed dino skull and shipwreck decoration (off: the small old shapes for newly placed ones)
+	detailedDecor = true
+	#Break protection switch in the tank menu: nobody can break a protected tank, its lid, light, feeders and the cabinet below (off: the switch is hidden and does nothing)
+	breakProtection = true
+	#Clip-on feeder: a small automatic feeder that hangs on the side of the glass (for tanks whose top is taken by a light) (off: it cannot be placed and placed ones do not feed)
+	clipOnFeeder = true
+	#Guppy and endler genetics: every guppy and endler has its own genes (tail shape, body and tail colour, patterns on the X and Y chromosome) that are inherited at birth, named strains, endler x guppy hybrids (off: the old fixed varieties; the genes are kept)
+	livebearerGenetics = true
+	#Stone cabinets: the aquarium cabinet can also be crafted from stone (also of other mods) with the slabs of the same stone; it looks like that stone and is mined with a pickaxe (off: no new ones can be crafted; placed ones stay)
+	stoneCabinets = true
+	#Seahorses (lined seahorse Hippocampus erectus, dwarf seahorse H. zosterae) at the wandering trader and in the aquarium net in warm and lukewarm oceans (off: no new ones; seahorses already caught stay)
+	seahorses = true
+	#Kelp, seagrass, corals (#bettacraft:swaying_plants) and the water plants of other mods sway in the miniature outside the tank like inside (off: they stand still; each player can also turn it off: client render.swayingPlants)
+	swayingForeignPlants = true
+	#Wild tankmate fish, seahorses and dwarf clawed frogs spawn in their biomes, rarely and in small shoals
+	#(off: only the net, the trader and breeding bring them)
+	wildFish = true
+	#Wild shrimp, crayfish, snails and hermit crabs crawl on the bottom of rivers, swamps, mangroves, beaches,
+	#jungle water and warm oceans; caught with the net, a fish bag or a bucket, and they can be let go again (off: they do not
+	#spawn, and let go into the world they are gone like before)
+	wildCritters = true
+	#Every Bettacraft coral and the bubble tip anemone grow in the warm ocean coral reefs (new chunks); shears
+	#cut a frag off them (off: no new ones in new chunks; corals already there stay)
+	wildCorals = true
+	#Now and then a wild animal shows a bred colour openly (wildlife.beautifulWildChance)
+	#(off: wild animals are wild-coloured, bred colours only hidden)
+	wildColors = true
+	#Spontaneous mutations also for shrimp, crayfish, snails and the tankmates without their own genetics
+	#(wildlife.otherMutationChance; off: only bettas, guppies and endlers mutate)
+	mutations = true
+	#Magnifier: the hidden genes of a new animal are unknown until it is analysed in a tank (off: every animal
+	#shows its genes like before)
+	magnifier = true
+	#Several animals of one species per bucket and fish bag by their size (a bucket: 32 shrimp, 24 rasboras,
+	#1 betta; a bag half of that), shrimp and snails also in a plain bucket (off: one fish per bucket, bags as before)
+	bigContainers = true
+	#List of every single shrimp, crayfish and snail in the tank menu (sex, age, colour density, genes) to take
+	#out exactly that one, and the sex choice for the quick take-out (off: only the kinds like before)
+	animalList = true
+	#The aquarium net now and then brings up an aquarium plant from the bottom of rivers, jungle water and
+	#swamps (interiorPlants.netPlantShare; off: plants only from fishing, bottles, shears and the trader)
+	plantNetCatches = true
+	#Setting in the cabinet menu: on which side of the tank the hose of the external filter in the cabinet
+	#goes up (back, left, right or front); jet, bubbles and the current in the tank follow it, and the current is
+	#stronger in front of the outlet (seahorses, corals) (off: always the back wall, the current evenly like before)
+	cabinetOutletSide = true
+	#Oxygen as a water value: it drops with warm water, many animals and at night in planted tanks without light, and rises with
+	#air stones, sponge filters, filter outlets and flow pumps; too little stresses the animals (bettas and gouramis breathe air and
+	#hardly mind) (off: no oxygen value, nobody suffers)
+	oxygen = true
+	#Air pump with air stones in the tank interior: bubble columns, more oxygen (off: they cannot be placed and placed ones do
+	#nothing)
+	aeration = true
+	#More internal filters: the air-driven sponge filter (gentle, needs an air pump), the corner filter and the intake
+	#sponge for motor filters (off: they cannot be placed or fitted and placed ones do not clean)
+	moreInternalFilters = true
+	#Motor filters without an intake sponge suck in the fry of bettas and other fish now and then (filters.fryIntakePerDay)
+	#(off: no fry is sucked in)
+	fryIntake = true
+	#Power regulator 0-100 % on filters, air stones, air pumps and flow pumps (menu or sneak + mouse wheel): less power
+	#cleans and moves less, needs less FE and is quieter (off: everything runs at 100 %)
+	powerRegulator = true
+	#Stronger aquarium lights: the LED panel (2 blocks wide) and the high-power LED (any size); stronger light makes red plants
+	#redder, lets the strong-light plants grow and brings more algae (off: the new lights count like the light bar)
+	ledTiers = true
+	#Dimmer and daylight timer with sunrise and sunset for the lights of a tank (tank menu, tab Devices) (off: lights are on
+	#at full strength like before)
+	lightTimer = true
+	#Crucible and stainless steel (also from the machines of Mekanism, EnderIO, Create and Thermal) (off: the crucible
+	#does not melt)
+	stainlessSteel = true
+	#Glass and stainless steel pipes and the water pump: they carry water with its values between tanks, filters and the
+	#tanks and pipes of other mods (off: pipes carry nothing and pumps stand still)
+	pipes = true
+	#Bulkhead in the tank floor and pipes, intake strainer, lily pipe, nozzle and spray bar in the tank interior; their
+	#current acts where they sit (off: they cannot be placed and the bulkheads stay closed)
+	interiorPipes = true
+	#Multiblock external filter from filter chambers, a pump head and connectors, with filter media that clog and
+	#must be cleaned (off: it does not clean)
+	multiblockFilter = true
+	#Water change controller: changes a part of the water by itself at an interval (off: it does nothing)
+	autoWaterChange = true
+	#Top-off: a level sensor tops off evaporated water from a reservoir or a pipe (off: it does nothing)
+	topOff = true
+	#Water chemistry: TDS, pH and hardness from the substrate, peat, almond leaves, wood, food and water changes;
+	#every animal has its range (off: the values stand still and no animal minds them)
+	waterChemistry = true
+	#CO2 dosing: bio CO2, gas cylinders with pressure regulator and solenoid valve, the CO2 filling station; CO2 makes the
+	#plants grow faster, lowers the pH and too much harms the animals (off: the devices give no CO2)
+	co2 = true
+	#Reverse osmosis unit: makes reverse osmosis water (nothing dissolved) from water, with a membrane and a prefilter
+	#that wear out (off: it does not run)
+	reverseOsmosis = true
+	#Caridina bee shrimp (Crystal Red, Crystal Black, Taiwan bees, Tiger) for soft water, with their banding grades
+	#(off: no new ones from the net, the wild and the trader; those in tanks stay)
+	caridina = true
+	#Sulawesi animals: cardinal shrimp and Tylomelania snails for hard, warm water (off: no new ones from the net, the
+	#wild and the trader; those in tanks stay)
+	sulawesi = true
+	#Reef dosing: alkalinity (KH), magnesium and trace elements in salt water, used up by the stony corals, and the
+	#dosing pump with up to four canisters (off: the values stand still and the pump does not dose)
+	reefDosing = true
+	#Live food cultures: the tubifex dish (mud, mulm or waste water) and the daphnia barrel (yeast or green water,
+	#light), harvested with the net or by hoppers and pumps (off: the cultures stand still)
+	liveFoodCultures = true
+	#Live food pump: pumps daphnia, artemia and other live food from a breeder through the pipes into tanks on a
+	#schedule (off: it does not pump and tanks take no live food from pipes)
+	liveFoodPump = true
+	#Food maker: makes pellets, flakes, granules, wafers, fry powder, shrimp food and frozen food from vanilla
+	#ingredients and live food, with a wound spring or FE (off: it stands still)
+	foodMaker = true
+	#Food variety: favourite and poor food per species, a varied diet speeds up the recovery and shows in the
+	#colours of the bettas (off: every food is the same)
+	foodVariety = true
+	#Monitors: screens of monitor blocks that show the values of every tank in range, with graphs of the last
+	#days (off: the screens stay dark and record nothing)
+	monitors = true
+	#Marimo balls roll slowly over the tank floor with the current of filters and outlets (off: they stay where they
+	#were put)
+	marimoRolling = true
+	#Almond leaves and alder cones on the floor of a tank interior give off tannins (lower the pH a little) and feed
+	#the shrimp; clay and terracotta (tubes, caves, dragon stone) hide young shrimp (off: they are only decoration)
+	decorEffects = true
+	#Own spawn pass for the wild animals: now and then a few wild fish, frogs or small animals spawn in fitting water near
+	#each player, outside the vanilla water-ambient mob cap that cod, salmon, tropical fish and the fish of other mods fill
+	#(limits: wildlife.spawnPass*; off: only the vanilla spawning)
+	wildSpawnPass = true
+	#Every aquarium plant and floating plant grows wild in the waters of its origin (new chunks; jungle water,
+	#swamps, rivers, mangroves, cold lakes, lush caves); shears cut a cutting off them, floating plants are picked up by hand
+	#or with the net (spawn.wildPlantFrequency; off: no new ones in new chunks, plants already there stay)
+	wildPlants = true
+	#Cichlids: ram, Bolivian ram, cockatoo and Agassiz's dwarf cichlid, angelfish and discus at the wandering trader, in
+	#the aquarium net and wild (open brooders and cave brooders that guard their brood; off: no new ones; fish already caught stay)
+	cichlids = true
+	#Puffers: dwarf puffer, red-eye puffer and the brackish green spotted puffer at the wandering trader, in the aquarium
+	#net and wild (they eat snails, nip fins and need snails or hard food for their teeth; off: no new ones; fish already caught stay)
+	puffers = true
+	#Barbs and loaches: tiger, odessa and cherry barb, dwarf chain loach, reticulated loach and garra at the
+	#wandering trader, in the aquarium net and wild (off: no new ones; fish already caught stay)
+	barbsAndLoaches = true
+	#More community fish: zebra danio, celestial pearl danio, forktail and neon dwarf rainbowfish, emperor, rummy-nose
+	#and black phantom tetra, black molly and swordtail at the wandering trader, in the aquarium net and wild (off: no new ones;
+	#fish already caught stay)
+	communityFish = true
+	#Gouramis: honey, chocolate and pearl gourami at the wandering trader, in the aquarium net and wild (labyrinth fish;
+	#foam nests, the chocolate gourami broods in her mouth; off: no new ones; fish already caught stay)
+	gouramis = true
+	#Wild bettas: some wild bettas in swamps are Betta imbellis or Betta smaragdina instead of Betta splendens; they
+	#cross with each other and with Betta splendens into fertile hybrids (off: only Betta splendens in the wild; fish already caught
+	#stay)
+	wildBettas = true
+	#Big crayfish: the Florida crayfish (wild, blue, orange) and the marbled crayfish (only females, multiplies on its
+	#own) at the wandering trader, in the aquarium net and wild; they eat plants, dig them up and catch slow fish and small animals
+	#(off: no new ones; those in tanks stay)
+	bigCrayfish = true
+	#Axolotl care: vanilla axolotls in a tank want cool water (15-20 °C, a cooler), suffer in warm water and breed
+	#there: eggs on the plants, larvae as baby axolotls, the five colours inherited by Mendel (blue recessive and rare;
+	#off: axolotls in tanks are left to vanilla)
+	axolotlCare = true
+	#Big tanks: up to bigTankRules.bigMaxSize* blocks (32 x 16 x 32), with a smaller interior scale (8 or 4) from
+	#bigTankRules.interiorScale8Above (off: tank.maxSize* as before; big tanks already built stay)
+	bigTanks = true
+	#Big animals: giant catfish, sharks, rays and the vanilla dolphin in big tanks by the size rule (bigAnimalRules.*),
+	#the large net, the transport tub and the steel leader, wild big animals (off: none go into tanks, no new ones from the
+	#wild; those in tanks stay)
+	bigAnimals = true
+	#Terrarium and paludarium: a tank without water is a terrarium, one with a land part built in the interior above
+	#the water a paludarium (terrarium.*); they get air temperature, humidity and UV, terrarium animals live there (off: every tank
+	#is an aquarium as before, no climate values)
+	terrarium = true
+	#Terrarium devices: heat mat, basking lamp, mister and thermo-hygrometer (off: they do nothing; a basking lamp
+	#still shines like a light)
+	terrariumDevices = true
+	#Turtles in paludaria and terraria: musk turtle, slider, Hermann's tortoise, Reeves' turtle and the hatchlings of the sea
+	#turtle (off: none go into tanks, none are sold; those in tanks stay)
+	turtles = true
+	#Turtle breeding: females lay eggs into sand or soil on the land of the tank, the nest temperature decides the sex
+	#of the hatchlings (off: no eggs; eggs already laid still hatch)
+	turtleBreeding = true
+	#Wild turtles: sliders and musk turtles in swamps and rivers, Reeves' turtles in rivers, Hermann's tortoises in
+	#savannas and dry shrublands (#bettacraft:tortoise_lands)
+	wildTurtles = true
+	#Amphibians and reptiles in terraria and paludaria: dart frogs, horned frog, leopard gecko, crested gecko and corn snake
+	#(off: none go into tanks; those in tanks stay)
+	herps = true
+	#Breeding of the amphibians and reptiles: eggs on the land of the tank (dart frog tadpoles into the water, the
+	#leopard gecko's sex by the nest temperature; the horned frog does not breed) (off: no eggs; eggs already laid still hatch)
+	herpBreeding = true
+	#Wild amphibians and reptiles: dart frogs and crested geckos in jungles, horned frogs in savannas and swamps,
+	#leopard geckos in deserts and badlands (#bettacraft:arid_lands), corn snakes in forests and plains (#bettacraft:snake_lands)
+	wildHerps = true
+	#Mobs in glass: drowned, zombies, husks, skeletons, strays, spiders, cave spiders, silverfish, endermites and small
+	#slimes and magma cubes live shrunk and harmless in tanks (mob jar, bait, capture items of other mods); they drop nothing
+	#(off: none go in; those in tanks stay)
+	mobsInGlass = true
+	#Care for animals of other mods: the fish and water animals of other mods that have a profile
+	#(data/<ns>/bettacraft/foreign_animals, defaults for Fintastic, Aquaculture, Critters and Companions and Naturalist) get our
+	#needs in our tanks: hunger, temperature, water quality, salinity, pH/TDS, stress, sickness and death (off: they are left
+	#to their mod as before; outside our tanks nothing changes either way)
+	foreignCare = true
+	#Breeding of animals of other mods in our tanks by their profile: livebearers give birth, egg layers spawn
+	#(some on plants, food fish only in big tanks); the young take the variants of their parents (off: they do not breed
+	#in our tanks)
+	foreignBreeding = true
+	#Suppress the own breeding of vanilla and mod animals in our tanks (love from food, breeding goals,
+	#babies of their mod), so only our breeding applies there (off: their mod may breed them in the tank as well)
+	suppressForeignBreeding = true
+	#Tanks travel on Create contraptions (pistons, bearings, pulleys, gantries, carts, trains) and on Create
+	#Aeronautics airships: the animals are packed into the tank for the trip and drawn swimming, the care pauses, everything comes
+	#back where the tank is put down (off: Create cannot move tanks; a tank that is already travelling still unpacks)
+	createContraptions = true
+	#Create's rotation drives the water pumps, filter pump head, water change controller, level sensor, reverse
+	#osmosis unit and food maker instead of FE: a shaft or cogwheel pointing at the device, 64 RPM for full work, slower
+	#proportionally; no stress cost (off: only FE, the crank and the other sources as before)
+	createRotation = true
+	#Tanks and monitors are sources for Create's Display Link: the values of a tank, or one line per tank a
+	#monitor shows, on display boards, nixie tubes, signs and lecterns (off: Display Links cannot read them)
+	createDisplayLinks = true
+	#Bettacraft posts its events for modpack scripts (KubeJS NativeEvents) and other mods on the NeoForge event
+	#bus: an animal was born or hatched in a tank, an animal of a tank died (with the cause), an alarm tile of a monitor
+	#went off or cleared (off: none are posted)
+	modpackEvents = true
+	#A monitor alarm puts a waypoint at its tank on the map of the tank's owner and of the players within 128
+	#blocks (JourneyMap); it goes away when the alarm clears. Each player can turn it off in the client config
+	#(map.showAlarmWaypoints) (off: no waypoints)
+	alarmWaypoints = true
+
+#Swaying water plants in the tank miniature (M22.1, features.swayingForeignPlants)
+[swaying]
+	#Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, drawn as a cross or a plant model) sways (off: only the tag)
+	autoDetect = true
+	#Blocks that never sway: block ids ("modid:block"), block tags ("#modid:tag") or whole mods ("modid:*")
+	exclude = []
+
+#Sounds (M23)
+[sounds]
+	#Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds
+	#of the filters, air pump, air stones, sponge filter, flow pump and feeder
+	useVanilla = false

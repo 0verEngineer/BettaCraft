@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -149,7 +151,7 @@ public class LiveCultureBlockEntity extends BlockEntity {
     /** Why the culture does not grow right now (translation key suffix), or null. */
     @Nullable
     public String blocker(Level level) {
-        if (!CommonConfig.liveFoodCultures()) return "off";
+        if (!Features.enabled(Feature.LIVE_FOOD_CULTURES)) return "off";
         if (tubifex() && !mud) return "mud";
         if (water < minWater()) return "water";
         if (!model.alive()) return "animals";
@@ -174,7 +176,7 @@ public class LiveCultureBlockEntity extends BlockEntity {
 
     /** Advances the culture by {@code days} (also used by GameTests). */
     public CultureModel.Event advance(ServerLevel level, double days) {
-        if (!CommonConfig.liveFoodCultures() || days <= 0) return CultureModel.Event.NONE;
+        if (!Features.enabled(Feature.LIVE_FOOD_CULTURES) || days <= 0) return CultureModel.Event.NONE;
         CultureModel.Event e;
         if (tubifex()) {
             e = model.stepTubifex(days, mud, water >= minWater(), growthDays());

@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
  * M21.6: the named guppy and endler strains (like the named betta varieties). A fish belongs to the first strain whose
  * conditions its phenotype meets (most specific first). Strains with a Y pattern can only be males (a female has no
  * Y); the others name females too. Each strain has an example genome (pure-bred, homozygous: what the trader sells and
- * the showcase shows), the old fixed variety it is closest to ({@link #legacy}, for {@code features.livebearerGenetics}
+ * the showcase shows), the old fixed variety it is closest to ({@link #legacy}, for {@code features.tankmates.livebearerGenetics}
  * off) and whether the trader or the net bring it.
  */
 public enum LivebearerStrain {

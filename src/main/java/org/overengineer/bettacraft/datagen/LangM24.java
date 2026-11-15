@@ -87,7 +87,7 @@ final class LangM24 {
         a.accept("gui.bettacraft.level_sensor.status.no_source", "no water source next to it");
         a.accept("gui.bettacraft.level_sensor.status.salty", "the source is salty: fresh water only");
         a.accept("gui.bettacraft.level_sensor.status.no_power", "no FE");
-        a.accept("gui.bettacraft.level_sensor.status.off", "switched off (features.topOff)");
+        a.accept("gui.bettacraft.level_sensor.status.off", "switched off (features.pipes.topOff)");
         a.accept("gui.bettacraft.water_changer.now", "Change now");
         a.accept("gui.bettacraft.water_changer.on", "Automatic: on");
         a.accept("gui.bettacraft.water_changer.off", "Automatic: off");
@@ -100,7 +100,7 @@ final class LangM24 {
         a.accept("gui.bettacraft.water_changer.status.no_tank", "No tank next to it");
         a.accept("gui.bettacraft.water_changer.status.no_water", "No fresh water to refill with");
         a.accept("gui.bettacraft.water_changer.status.no_power", "Not enough FE");
-        a.accept("gui.bettacraft.water_changer.status.off", "Switched off (features.autoWaterChange)");
+        a.accept("gui.bettacraft.water_changer.status.off", "Switched off (features.pipes.autoWaterChange)");
         a.accept("gui.bettacraft.water_changer.status.disabled", "Automatic is off");
         a.accept("gui.bettacraft.water.nitrate", "Nitrate %s mg/L: %s · %s");
         a.accept("gui.bettacraft.water.nitrate.low", "low");
@@ -180,13 +180,5 @@ final class LangM24 {
         a.accept("bettacraft.configuration.dirtPerDay.tooltip", "How fast the media clog per day in a normally stocked tank (1 = clogged; sponges fastest, ceramic at half the rate)");
         a.accept("bettacraft.configuration.maxChambers", "Most filter chambers");
         a.accept("bettacraft.configuration.maxChambers.tooltip", "Most filter chambers one multiblock filter may have");
-        a.accept("bettacraft.configuration.stainlessSteel", "Stainless steel");
-        a.accept("bettacraft.configuration.stainlessSteel.tooltip", "Crucible and stainless steel (also from the machines of Mekanism, EnderIO, Create and Thermal) (off: the crucible does not melt)");
-        a.accept("bettacraft.configuration.interiorPipes", "Interior pipes");
-        a.accept("bettacraft.configuration.interiorPipes.tooltip", "Bulkhead in the tank floor and pipes, intake strainer, lily pipe, nozzle and spray bar in the tank interior; their current acts where they sit (off: they cannot be placed and the bulkheads stay closed)");
-        a.accept("bettacraft.configuration.autoWaterChange", "Automatic water change");
-        a.accept("bettacraft.configuration.autoWaterChange.tooltip", "Water change controller: changes a part of the water by itself at an interval (off: it does nothing)");
-        a.accept("bettacraft.configuration.topOff", "Top-off");
-        a.accept("bettacraft.configuration.topOff.tooltip", "Top-off: a level sensor tops off evaporated water from a reservoir or a pipe (off: it does nothing)");
     }
 }

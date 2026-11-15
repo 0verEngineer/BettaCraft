@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.server.level.ServerLevel;
 import org.overengineer.bettacraft.chem.WaterChemistry;
 import org.overengineer.bettacraft.config.CommonConfig;
@@ -15,7 +17,7 @@ import org.overengineer.bettacraft.tank.TankData;
  * also falls slowly ({@code reefDosing.magnesiumDropPerDay}) and the trace elements are used up
  * ({@code reefDosing.traceUsePerDay}). Low alkalinity or magnesium slows the stony corals, trace elements above fresh sea
  * water give the corals their strong colours. The dosing pump ({@link DosingPumpBlockEntity}) and water changes with sea
- * water bring them back. With {@code features.reefDosing} off the values stand still and do not matter.
+ * water bring them back. With {@code features.corals.reefDosing} off the values stand still and do not matter.
  */
 public final class ReefDosing {
     private ReefDosing() {}
@@ -46,7 +48,7 @@ public final class ReefDosing {
     }
 
     public static boolean enabled() {
-        return CommonConfig.reefDosing();
+        return Features.enabled(Feature.REEF_DOSING);
     }
 
     /** Whether the pump doses into this tank: salt water with water in it. */

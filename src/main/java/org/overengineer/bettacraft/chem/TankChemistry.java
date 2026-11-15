@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.chem;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerLevel;
 import org.overengineer.bettacraft.config.CommonConfig;
@@ -20,7 +22,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorRegions;
  * changes (food and waste of the animals, limestone, soil) and the pH drifts to the equilibrium of the water and what is
  * in the tank: the substrate of the interior floor (soil lowers, limestone raises), limestone rocks, driftwood, peat in a
  * multiblock filter, almond leaves and the CO2. Water changes mix the values by volume ({@link #mixIn}). With
- * {@code features.waterChemistry} off the values stand still and no animal minds them.
+ * {@code features.waterChemistry.enabled} off the values stand still and no animal minds them.
  * <p>
  * Hooks for the later parts of M25: the CO2 ({@link TankData#co2()}, mg/L) is read here for the pH; the CO2 devices set it
  * (aeration drives it out: {@link WaterChemistry#co2Exchange} with
@@ -34,7 +36,7 @@ public final class TankChemistry {
     public static final float REMINERALISE_TARGET = 150F;
 
     public static boolean enabled() {
-        return CommonConfig.waterChemistry();
+        return Features.enabled(Feature.WATER_CHEMISTRY);
     }
 
     /**
@@ -79,7 +81,7 @@ public final class TankChemistry {
     }
 
     public static WaterChemistry.Inputs inputs(TankData t, Drivers d) {
-        // M25 part c: the alkalinity of the tank buffers salt water (with features.reefDosing off: that of sea water)
+        // M25 part c: the alkalinity of the tank buffers salt water (with features.corals.reefDosing off: that of sea water)
         double kh = org.overengineer.bettacraft.reef.ReefDosing.enabled() ? t.kh() : WaterChemistry.SEA_KH;
         return new WaterChemistry.Inputs(t.tds(), t.salinity(), kh, d.acid(), d.alkaline(), d.peat(), d.tannin(), d.wood(), t.co2());
     }
@@ -114,9 +116,9 @@ public final class TankChemistry {
         if (Math.abs(tds - t.tds()) > 1e-4 || Math.abs(ph - t.ph()) > 1e-5 || tannin != t.tannin()) c.setChanged();
     }
 
-    /** M28: tannins per day of the leaf litter in the interior of this tank ({@code features.decorEffects}). */
+    /** M28: tannins per day of the leaf litter in the interior of this tank ({@code features.decor.effects}). */
     public static double litterPerDay(ServerLevel level, TankBlockEntity c) {
-        if (!CommonConfig.decorEffects()) return 0;
+        if (!Features.enabled(Feature.DECOR_EFFECTS)) return 0;
         TankData t = c.getTank();
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r == null || !r.built()) return 0;
@@ -147,7 +149,7 @@ public final class TankChemistry {
     public static double distance(TankData t, @Nullable ChemTolerance.Range r) {
         if (r == null || t.waterMb() <= 0) return 0;
         double d = enabled() ? r.distance(t.ph(), t.tds()) : 0;
-        // M25 part b: too much CO2 counts the same way (features.co2)
+        // M25 part b: too much CO2 counts the same way (features.co2.enabled)
         return Math.max(d, org.overengineer.bettacraft.co2.TankCo2.distance(t, ChemTolerance.co2Tolerance(r)));
     }
 

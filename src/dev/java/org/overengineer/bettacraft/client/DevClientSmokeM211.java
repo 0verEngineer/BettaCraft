@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -57,7 +59,7 @@ final class DevClientSmokeM211 {
     private BlockPos base, pond;
     private int wait;
     private volatile InteriorRegion region;
-    private final boolean savedMeshes = CommonConfig.plantMeshes();
+    private final boolean savedMeshes = Features.enabled(Feature.PLANT_MESHES);
     private final int savedLod = ClientConfig.MINIATURE_PLANT_MESH_DISTANCE.get();
     private int cutBefore;
 
@@ -148,7 +150,7 @@ final class DevClientSmokeM211 {
         then(20, () -> shot("lily_angle_old"));
         then(1, () -> FloatingPlantRenderer.layered = true);
         then(1, () -> {
-            CommonConfig.FEATURE_PLANT_MESHES.set(savedMeshes);
+            Features.set(Feature.PLANT_MESHES, savedMeshes);
             ClientConfig.MINIATURE_PLANT_MESH_DISTANCE.set(savedLod);
         });
     }
@@ -163,7 +165,7 @@ final class DevClientSmokeM211 {
     }
 
     private void setMeshes(boolean on) {
-        CommonConfig.FEATURE_PLANT_MESHES.set(on);
+        Features.set(Feature.PLANT_MESHES, on);
         if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
     }
 

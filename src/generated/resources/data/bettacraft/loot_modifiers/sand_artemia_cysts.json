@@ -1,6 +1,11 @@
 {
   "type": "bettacraft:artemia_sand",
-  "conditions": [],
+  "conditions": [
+    {
+      "condition": "bettacraft:feature",
+      "feature": "liveFood.enabled"
+    }
+  ],
   "item": {
     "count": 1,
     "id": "bettacraft:artemia_cysts"

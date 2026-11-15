@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.entity.frog;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -147,7 +149,7 @@ public class DwarfFrogEntity extends AbstractFish {
         if (level() instanceof ServerLevel server && isAlive()) serverTick(server);
         if (level().isClientSide) {
             swimPose.tick(this, 0.5F, 0F, 0F, false);
-            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+            if (Features.enabled(Feature.SMOOTH_SWIMMING)) {
                 yBodyRot = swimPose.yaw();
                 yHeadRot = yBodyRot;
             }

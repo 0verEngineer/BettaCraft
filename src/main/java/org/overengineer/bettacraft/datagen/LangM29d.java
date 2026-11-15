@@ -44,9 +44,5 @@ final class LangM29d {
         a.accept("bettacraft.configuration.axolotlEggDays.tooltip", "Days the axolotl eggs on the plants need to hatch into larvae (baby axolotls)");
         a.accept("bettacraft.configuration.axolotlHeatDamage", "Axolotl heat damage");
         a.accept("bettacraft.configuration.axolotlHeatDamage.tooltip", "Damage (hit points per day) an axolotl takes per degree above 23 °C; from 21 °C it is stressed and does not breed (0 = warm water only stops the breeding)");
-        a.accept("bettacraft.configuration.bigCrayfish", "Big crayfish");
-        a.accept("bettacraft.configuration.bigCrayfish.tooltip", "Big crayfish: the Florida crayfish (wild, blue, orange) and the marbled crayfish (only females, multiplies on its own) at the wandering trader, in the aquarium net and wild; they eat plants, dig them up and catch slow fish and small animals (off: no new ones; those in tanks stay)");
-        a.accept("bettacraft.configuration.axolotlCare", "Axolotl care");
-        a.accept("bettacraft.configuration.axolotlCare.tooltip", "Axolotl care: vanilla axolotls in a tank want cool water (15-20 °C, a cooler), suffer in warm water and breed there: eggs on the plants, larvae as baby axolotls, the five colours inherited by Mendel (blue recessive and rare; off: axolotls in tanks are left to vanilla)");
     }
 }

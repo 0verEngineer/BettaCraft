@@ -68,7 +68,7 @@ public final class PlantEvents {
             InteriorPlants.trimFromOutside(server, c, player, stack, e.getHand());
             return;
         }
-        if (state.is(Blocks.MOSS_BLOCK) && nextToWater(level, pos)) {
+        if (state.is(Blocks.MOSS_BLOCK) && nextToWater(level, pos) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS)) { // M33
             e.setCanceled(true);
             e.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
             if (level.isClientSide) return;

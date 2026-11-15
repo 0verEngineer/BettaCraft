@@ -151,8 +151,8 @@ public final class SourcesGameTests {
         Set<VillagerTrades.ItemListing> registered = new HashSet<>();
         for (int level = 1; level <= 2; level++) registered.addAll(List.of(VillagerTrades.WANDERING_TRADER_TRADES.get(level)));
         for (TraderOffers.Offer o : TraderOffers.all()) {
-            h.assertTrue(registered.contains(o.listing()), "offer " + o.id() + " is not among the trader's listings");
-            boolean usual = List.of(VillagerTrades.WANDERING_TRADER_TRADES.get(1)).contains(o.listing());
+            h.assertTrue(registered.contains(o.gatedListing()), "offer " + o.id() + " is not among the trader's listings");
+            boolean usual = List.of(VillagerTrades.WANDERING_TRADER_TRADES.get(1)).contains(o.gatedListing());
             h.assertTrue(usual == (o.slot() == TraderOffers.Slot.USUAL), "offer " + o.id() + " in the wrong slot");
             Set<String> seen = new HashSet<>();
             for (int i = 0; i < 60; i++) {

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plants;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Locale;
 import javax.annotation.Nullable;
 
@@ -128,9 +130,9 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
 
         public final int from, full;
 
-        /** The need that counts now: without features.ledTiers the strong-light plants are content with the bar like before. */
+        /** The need that counts now: without features.equipment.ledTiers the strong-light plants are content with the bar like before. */
         public static Light need(Light l) {
-            return l == VERY_HIGH && !org.overengineer.bettacraft.config.CommonConfig.ledTiers() ? HIGH : l;
+            return l == VERY_HIGH && !Features.enabled(Feature.LED_TIERS) ? HIGH : l;
         }
 
         Light(int from, int full) {
@@ -194,7 +196,7 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
 
     /**
      * Drawn with real shapes inside and outside (M21 prototype: Rotala, Vallisneria, Anubias; M22.1: every plant and
-     * coral). Config {@code features.plantMeshes} (pack) and {@code render.plantMeshes} (each player).
+     * coral). Config {@code features.visuals.plantMeshes} (pack) and {@code render.plantMeshes} (each player).
      */
     public boolean meshed() {
         return true;
@@ -255,7 +257,7 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
     }
 
     /**
-     * M28: grows well only with CO2 ({@code features.co2}): without dosed CO2 at {@link #NO_CO2_GROWTH} of its speed (the
+     * M28: grows well only with CO2 ({@code features.co2.enabled}): without dosed CO2 at {@link #NO_CO2_GROWTH} of its speed (the
      * demanding stem plants of the aquascapes).
      */
     public boolean needsCo2() {
@@ -268,7 +270,7 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
     /** M28: growth of a {@link #needsCo2()} plant without CO2 (it rises to the full speed with a good CO2 level). */
     public static final double NO_CO2_GROWTH = 0.4;
 
-    /** M28: wants soft, slightly acidic water ({@code features.waterChemistry}): slower in hard or alkaline water. */
+    /** M28: wants soft, slightly acidic water ({@code features.waterChemistry.enabled}): slower in hard or alkaline water. */
     public boolean softWater() {
         return this == ROTALA_WALLICHII || this == MYRIOPHYLLUM_RED;
     }

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank.interior;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -17,7 +19,7 @@ import org.overengineer.bettacraft.util.GridPathfinder;
  * plant parts that are obstacles, and outside the tank's shape. Used by the dwarf frogs (they walked into the
  * decoration and got stuck), the small animals (under overhangs and into caves) and the pleco males (into their
  * spawning cave instead of only to its mouth). Positions are tank-world coordinates like {@link InteriorObstacles}.
- * Without an interior (or with {@code features.interiorPathfinding} off) every call returns null and the animals move
+ * Without an interior (or with {@code features.interior.pathfinding} off) every call returns null and the animals move
  * in straight lines as before.
  */
 public final class InteriorPaths {
@@ -108,7 +110,7 @@ public final class InteriorPaths {
     /** The grid of a tank, or null without a built interior or with the feature off. */
     @Nullable
     public static Grid grid(MinecraftServer server, TankData tank, double topY) {
-        if (!CommonConfig.pathfinding() || server == null) return null;
+        if (!Features.enabled(Feature.PATHFINDING) || server == null) return null;
         InteriorRegion r = InteriorRegions.get(server).get(tank.regionId());
         if (r == null || !r.built()) return null;
         ServerLevel interior = InteriorManager.interiorLevel(server);

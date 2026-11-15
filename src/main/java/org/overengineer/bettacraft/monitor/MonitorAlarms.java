@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -24,7 +26,7 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
  * M32 part d: the alarm tiles of a monitor as events. Every cycle of a working screen ({@link MonitorSync#cycle}) the
  * triggered state of each alarm tile of a tank is compared with the last one: going off posts a {@code TankAlarmEvent}
  * (active) and opens a waypoint at the tank for its owner and the players within {@link #WAYPOINT_RANGE} blocks
- * ({@code features.alarmWaypoints}, client: JourneyMap); clearing posts the event again (not active) and closes the
+ * ({@code features.compat.journeymap}, client: JourneyMap); clearing posts the event again (not active) and closes the
  * waypoint once no other alarm of the tank is on. A tank that is not loaded or out of range keeps its state. A screen
  * that stops watching (off, no power, broken, unloaded) clears all of its alarms; a changed tile counts as a new one.
  */
@@ -99,7 +101,7 @@ public final class MonitorAlarms {
         ApiEvents.alarm(level, w.tankPos(), w.tank(), w.tankName(), c.getBlockPos(), w.value(), current, w.limit(), w.below(), on);
         String key = key(level, c, tile);
         if (on) {
-            if (!CommonConfig.alarmWaypoints()) return;
+            if (!Features.enabled(Feature.ALARM_WAYPOINTS)) return;
             UUID owner = owner(level, w);
             AlarmWaypointPayload add = new AlarmWaypointPayload(w.tank(), true, level.dimension().location(), w.tankPos(), w.tankName(), w.value());
             Set<UUID> to = BOOK.open(w.tank(), key, owner, add, () -> recipients(level, w.tankPos(), owner));
@@ -135,7 +137,7 @@ public final class MonitorAlarms {
     /** The owner of a tank with an open waypoint comes online: they get it too. */
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp) || !CommonConfig.alarmWaypoints()) return;
+        if (!(event.getEntity() instanceof ServerPlayer sp) || !Features.enabled(Feature.ALARM_WAYPOINTS)) return;
         for (UUID tank : BOOK.joined(sp.getUUID())) {
             AlarmWaypointBook.Entry e = BOOK.entry(tank);
             if (e == null || !(e.data instanceof AlarmWaypointPayload add)) continue;

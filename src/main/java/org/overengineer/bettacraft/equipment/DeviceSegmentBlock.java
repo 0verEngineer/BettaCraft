@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -39,7 +41,7 @@ public class DeviceSegmentBlock extends SegmentBlock {
     /** Right-click with an empty hand: the power regulator (client screen). */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return InteractionResult.PASS;
+        if (!Features.enabled(Feature.POWER_REGULATOR)) return InteractionResult.PASS;
         if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

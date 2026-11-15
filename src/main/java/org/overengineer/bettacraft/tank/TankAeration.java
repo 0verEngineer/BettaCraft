@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -28,13 +30,13 @@ import org.overengineer.bettacraft.tank.interior.InteriorRegions;
  * one pump drives {@code aeration.outletsPerPump} at full strength (its regulator scales that), more share the air.
  * With {@code aeration.airPumpRequiresEnergy} the pumps need FE (TankPower). Air stones and sponge filters show whether
  * they get air in their block state ({@link DeviceSegmentBlock#ACTIVE}: bubble columns, sound).</li>
- * <li><b>Oxygen</b> (mg/L, {@code features.oxygen}): the water tends to an equilibrium {@code saturation - use / exchange}:
+ * <li><b>Oxygen</b> (mg/L, {@code features.waterChemistry.oxygen}): the water tends to an equilibrium {@code saturation - use / exchange}:
  * saturation falls with warm and salty water; the exchange (per day) comes from the still surface (top blocks / water
  * blocks), the air stones, sponge filters, motor filters and flow pumps (each by its regulator); the animals use oxygen
  * (more in warm water), the plants make it in light and use a little in the dark. Below {@code aeration.oxygenStressBelow}
  * fish, shrimp and crayfish are stressed; bettas and dwarf gouramis (labyrinth fish) only below
  * {@code aeration.labyrinthStressBelow}.</li>
- * <li><b>Fry intake</b> ({@code features.fryIntake}): running motor filters without an intake sponge suck in fry.</li>
+ * <li><b>Fry intake</b> ({@code features.breeding.fryIntake}): running motor filters without an intake sponge suck in fry.</li>
  * </ul>
  * The pure model is unit-tested ({@code TankAerationTest}).
  */
@@ -82,7 +84,7 @@ public final class TankAeration {
     }
 
     public static boolean enabled() {
-        return CommonConfig.oxygen();
+        return Features.enabled(Feature.OXYGEN);
     }
 
     // ------------------------------------------------------------------ stress
@@ -122,12 +124,12 @@ public final class TankAeration {
         updateOutlets(level, c, r, eq, waterY, air);
         if (enabled() && t.waterMb() > 0) oxygen(level, c, eq, waterY, air, days);
         else c.o2Exchange = t.waterMb() > 0 ? exchange(level, c, eq, waterY, air) : 0; // M25: the CO2 needs the exchange also without the oxygen feature
-        if (CommonConfig.fryIntake() && days > 0) fryIntake(level, c, eq, waterY, days);
+        if (Features.enabled(Feature.FRY_INTAKE) && days > 0) fryIntake(level, c, eq, waterY, days);
     }
 
     /** The pumps' air for the stones and sponge filters under water. */
     public static Air air(ServerLevel level, TankBlockEntity c, InteriorEquipment eq, double waterY) {
-        if (eq == null || !CommonConfig.aeration()) return new Air(0, 0, 0, 0, 0);
+        if (eq == null || !Features.enabled(Feature.AERATION)) return new Air(0, 0, 0, 0, 0);
         int stones = 0, sponges = 0;
         double stoneShare = 0;
         for (long l : eq.airStones()) {
@@ -135,7 +137,7 @@ public final class TankAeration {
             stones++;
             stoneShare += eq.shareOf(l);
         }
-        if (CommonConfig.moreInternalFilters()) for (long l : eq.spongeFilters()) if (BlockPos.getY(l) < waterY) sponges++;
+        if (Features.enabled(Feature.MORE_INTERNAL_FILTERS)) for (long l : eq.spongeFilters()) if (BlockPos.getY(l) < waterY) sponges++;
         double capacity = 0;
         if (c.airPowered) {
             int per = ServerConfig.getOr(ServerConfig.AIR_OUTLETS_PER_PUMP, 4);
@@ -148,14 +150,14 @@ public final class TankAeration {
     public static double airDemand(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
-        if (r == null || !r.built() || !CommonConfig.aeration()) return 0;
+        if (r == null || !r.built() || !Features.enabled(Feature.AERATION)) return 0;
         List<org.overengineer.bettacraft.equipment.AirSource> pumps = TankEquipment.airPumps(level, c);
         if (pumps.isEmpty()) return 0;
         InteriorEquipment eq = InteriorManager.equipment(level.getServer(), r);
         double waterY = TankCare.waterLocalHeight(t, r.scale());
         double outlets = 0;
         for (long l : eq.airStones()) if (BlockPos.getY(l) < waterY) outlets += eq.shareOf(l);
-        if (CommonConfig.moreInternalFilters()) for (long l : eq.spongeFilters()) if (BlockPos.getY(l) < waterY) outlets += 1;
+        if (Features.enabled(Feature.MORE_INTERNAL_FILTERS)) for (long l : eq.spongeFilters()) if (BlockPos.getY(l) < waterY) outlets += 1;
         double pumpShare = 0;
         for (org.overengineer.bettacraft.equipment.AirSource p : pumps) pumpShare += p.airShare();
         return Math.min(outlets, pumpShare * ServerConfig.getOr(ServerConfig.AIR_OUTLETS_PER_PUMP, 4));
@@ -191,7 +193,7 @@ public final class TankAeration {
             if (!interior.isLoaded(p)) continue;
             BlockState s = interior.getBlockState(p);
             if (!s.hasProperty(DeviceSegmentBlock.ACTIVE)) continue;
-            boolean on = air.supply() > 0 && BlockPos.getY(l) < waterY && CommonConfig.moreInternalFilters();
+            boolean on = air.supply() > 0 && BlockPos.getY(l) < waterY && Features.enabled(Feature.MORE_INTERNAL_FILTERS);
             if (s.getValue(DeviceSegmentBlock.ACTIVE) != on) interior.setBlock(p, s.setValue(DeviceSegmentBlock.ACTIVE, on), Block.UPDATE_CLIENTS);
         }
     }
@@ -200,7 +202,7 @@ public final class TankAeration {
     public static double runningSpongeFilters(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
-        if (r == null || !r.built() || !CommonConfig.moreInternalFilters()) return 0;
+        if (r == null || !r.built() || !Features.enabled(Feature.MORE_INTERNAL_FILTERS)) return 0;
         InteriorEquipment eq = InteriorManager.equipment(level.getServer(), r);
         if (eq.spongeFilters().isEmpty()) return 0;
         double waterY = TankCare.waterLocalHeight(t, r.scale());
@@ -219,7 +221,7 @@ public final class TankAeration {
         if (c.filterPowered) {
             double motor = 0;
             for (FilterHost f : TankEquipment.filters(level, c)) motor += f.powerShare();
-            if (eq != null) motor += eq.shareBelow(eq.filters(), waterY) + (CommonConfig.moreInternalFilters() ? eq.shareBelow(eq.corners(), waterY) : 0);
+            if (eq != null) motor += eq.shareBelow(eq.filters(), waterY) + (Features.enabled(Feature.MORE_INTERNAL_FILTERS) ? eq.shareBelow(eq.corners(), waterY) : 0);
             devices += motor * ServerConfig.getOr(ServerConfig.OXYGEN_FILTER, 6.0);
             if (eq != null) devices += eq.shareBelow(eq.pumps(), waterY) * ServerConfig.getOr(ServerConfig.OXYGEN_FLOW_PUMP, 8.0);
         }
@@ -279,7 +281,7 @@ public final class TankAeration {
         for (FilterHost f : TankEquipment.filters(level, c)) if (!f.intakeSponge()) n += f.powerShare();
         if (eq != null) {
             for (long l : eq.filters()) if (BlockPos.getY(l) < waterY && !eq.hasIntakeSponge(l)) n += eq.shareOf(l);
-            if (CommonConfig.moreInternalFilters()) for (long l : eq.corners()) if (BlockPos.getY(l) < waterY && !eq.hasIntakeSponge(l)) n += eq.shareOf(l);
+            if (Features.enabled(Feature.MORE_INTERNAL_FILTERS)) for (long l : eq.corners()) if (BlockPos.getY(l) < waterY && !eq.hasIntakeSponge(l)) n += eq.shareOf(l);
         }
         return n;
     }

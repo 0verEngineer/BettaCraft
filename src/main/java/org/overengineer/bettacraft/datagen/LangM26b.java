@@ -32,7 +32,7 @@ final class LangM26b {
         a.accept("gui.bettacraft.food_maker.status.wind", "The spring has run down: sneak + right-click to wind it");
         a.accept("gui.bettacraft.food_maker.status.no_power", "Needs FE");
         a.accept("gui.bettacraft.food_maker.status.paused", "Paused by a redstone signal");
-        a.accept("gui.bettacraft.food_maker.status.off", "The food maker is switched off (features.foodMaker)");
+        a.accept("gui.bettacraft.food_maker.status.off", "The food maker is switched off (features.foodMachine.enabled)");
         a.accept("log.bettacraft.critters_fed", "The small animals got %s");
         a.accept("gui.bettacraft.fish.diet", "Food kinds in the last days: %s");
         a.accept("gui.bettacraft.fish.diet_varied", "Varied diet: recovers faster from stress and sickness");
@@ -68,9 +68,5 @@ final class LangM26b {
         a.accept("bettacraft.configuration.poorFoodFedDays.tooltip", "A meal of a food that suits the species badly counts as eaten this many days ago (it is hungry again sooner)");
         a.accept("bettacraft.configuration.shrimpFoodFactor", "Shrimp food strength");
         a.accept("bettacraft.configuration.shrimpFoodFactor.tooltip", "Shrimp food gives the shrimp, crayfish and snails this many times the food of a leftover pellet");
-        a.accept("bettacraft.configuration.foodMaker", "Food maker");
-        a.accept("bettacraft.configuration.foodMaker.tooltip", "Food maker: makes pellets, flakes, granules, wafers, fry powder, shrimp food and frozen food from vanilla ingredients and live food, with a wound spring or FE (off: it stands still)");
-        a.accept("bettacraft.configuration.foodVariety", "Food variety");
-        a.accept("bettacraft.configuration.foodVariety.tooltip", "Food variety: favourite and poor food per species, a varied diet speeds up the recovery and shows in the colours of the bettas (off: every food is the same)");
     }
 }

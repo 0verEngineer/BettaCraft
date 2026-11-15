@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -86,7 +88,7 @@ public class ClipFeederBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction face = ctx.getClickedFace();
         Player player = ctx.getPlayer();
-        if (!org.overengineer.bettacraft.config.CommonConfig.clipFeeder()) {
+        if (!Features.enabled(Feature.CLIP_FEEDER)) {
             if (player != null && !ctx.getLevel().isClientSide) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.clip_feeder.off").withStyle(ChatFormatting.RED), true);
             }

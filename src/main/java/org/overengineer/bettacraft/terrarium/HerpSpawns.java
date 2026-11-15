@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -47,7 +49,7 @@ import org.overengineer.bettacraft.world.Wildlife;
  * vanilla animals (and stay) and through the frugal spawn pass of the mod ({@link #tryFor}, M28.1): those despawn far
  * from players like the wild fish. Wild varieties: the slider by its water, the three dart frogs at random, the gecko and
  * snake morphs never (they are bred). Catching: a bucket of water (water turtles), the terrarium box (the others).
- * Switches: {@code features.wildTurtles}, part c {@code features.wildHerps}.
+ * Switches: {@code features.turtles.wildSpawns}, part c {@code features.terrariums.wildHerps}.
  */
 public final class HerpSpawns {
     /** Wild turtles allowed within 32 blocks of a new one. */
@@ -86,12 +88,12 @@ public final class HerpSpawns {
 
     /** The switch of a species' wild spawns. */
     public static boolean enabled(HerpSpecies s) {
-        return s.turtle() ? CommonConfig.turtles() && CommonConfig.wildTurtles() : CommonConfig.herps() && CommonConfig.wildHerps();
+        return Features.enabled(s.turtle() ? Feature.WILD_TURTLES : Feature.WILD_HERPS); // M33: with their parents
     }
 
     /** The config key of that switch (handbook sources). */
     public static String featureKey(HerpSpecies s) {
-        return s.turtle() ? "features.wildTurtles" : "features.wildHerps";
+        return (s.turtle() ? Feature.WILD_TURTLES : Feature.WILD_HERPS).key();
     }
 
     /** The entries of a home whose switches are on. */
@@ -129,7 +131,7 @@ public final class HerpSpawns {
 
     /** Whether any wild animal of these spawns (the switches). */
     public static boolean enabled() {
-        return CommonConfig.turtles() && CommonConfig.wildTurtles() || CommonConfig.herps() && CommonConfig.wildHerps();
+        return Features.enabled(Feature.WILD_TURTLES) || Features.enabled(Feature.WILD_HERPS);
     }
 
     // ------------------------------------------------------------------ spawn rule

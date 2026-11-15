@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank.menu;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.StringUtil;
@@ -79,7 +81,7 @@ public final class TankActions {
             }
             case SET_DIMMER, TOGGLE_TIMER, SET_LIGHT_ON, SET_LIGHT_OFF -> {
                 if (!modify) error = locked();
-                else if (org.overengineer.bettacraft.config.CommonConfig.lightTimer()) {
+                else if (Features.enabled(Feature.LIGHT_TIMER)) {
                     switch (p.action()) {
                         case SET_DIMMER -> tank.setLightDimmer(p.value());
                         case TOGGLE_TIMER -> tank.setLightTimer(!tank.lightTimer());

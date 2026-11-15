@@ -8,7 +8,7 @@ import net.neoforged.bus.api.Event;
 /**
  * M32 part d: the base of Bettacraft's public events on {@code NeoForge.EVENT_BUS} (server side, main thread). They are
  * notifications (not cancellable) for modpack scripts (KubeJS: {@code NativeEvents.onEvent}) and other mods; the
- * switch {@code features.modpackEvents} turns them off. Every event names the tank: the level, the position of its
+ * switch {@code features.compat.modpackEvents} turns them off. Every event names the tank: the level, the position of its
  * controller block, its stable id (kept when tanks merge, split or travel) and the name of its sign ("" without one).
  */
 public abstract class TankEvent extends Event {

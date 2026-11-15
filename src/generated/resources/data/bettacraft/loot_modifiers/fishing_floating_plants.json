@@ -2,6 +2,10 @@
   "type": "bettacraft:fishing_floating_plants",
   "conditions": [
     {
+      "condition": "bettacraft:feature",
+      "feature": "floatingPlants.enabled"
+    },
+    {
       "condition": "neoforge:loot_table_id",
       "loot_table_id": "minecraft:gameplay/fishing"
     }

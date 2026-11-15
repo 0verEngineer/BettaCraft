@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -54,7 +56,7 @@ public final class Regulator {
             return null;
         }
 
-        /** M25: whether it can be set also with features.powerRegulator off (the pressure regulator of a CO2 cylinder). */
+        /** M25: whether it can be set also with features.power.regulator off (the pressure regulator of a CO2 cylinder). */
         default boolean alwaysAdjustable() {
             return false;
         }
@@ -115,7 +117,7 @@ public final class Regulator {
         if (!player.mayBuild() || player.isSpectator() || !level.getWorldBorder().isWithinBounds(pos)) return;
         Device d = find(level, pos);
         if (d == null) return;
-        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator() && !d.alwaysAdjustable()) return;
+        if (!Features.enabled(Feature.POWER_REGULATOR) && !d.alwaysAdjustable()) return;
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)
                 && !org.overengineer.bettacraft.tank.interior.InteriorManager.canBuild(player, pos)) return;
         int next = Math.max(0, Math.min(10, absolute ? value : d.power() + value));
@@ -239,14 +241,14 @@ public final class Regulator {
         }
     }
 
-    /** Share 0..1 of a block state's regulator (1 without the property or with features.powerRegulator off). */
+    /** Share 0..1 of a block state's regulator (1 without the property or with features.power.regulator off). */
     public static double share(BlockState s) {
-        if (!s.hasProperty(DeviceSegmentBlock.POWER) || !org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return 1.0;
+        if (!s.hasProperty(DeviceSegmentBlock.POWER) || !Features.enabled(Feature.POWER_REGULATOR)) return 1.0;
         return s.getValue(DeviceSegmentBlock.POWER) / 10.0;
     }
 
-    /** Share 0..1 of a stored power value (0..10) (1 with features.powerRegulator off). */
+    /** Share 0..1 of a stored power value (0..10) (1 with features.power.regulator off). */
     public static double share(int power) {
-        return org.overengineer.bettacraft.config.CommonConfig.powerRegulator() ? Math.max(0, Math.min(10, power)) / 10.0 : 1.0;
+        return Features.enabled(Feature.POWER_REGULATOR) ? Math.max(0, Math.min(10, power)) / 10.0 : 1.0;
     }
 }

@@ -98,7 +98,7 @@ public final class InteriorEquipment {
         return power.getOrDefault(key, 10);
     }
 
-    /** M23: regulator share 0..1 (1 with features.powerRegulator off). */
+    /** M23: regulator share 0..1 (1 with features.power.regulator off). */
     public double shareOf(long key) {
         return org.overengineer.bettacraft.equipment.Regulator.share(powerOf(key));
     }

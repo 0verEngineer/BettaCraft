@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.compat.create;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,9 +56,9 @@ public final class CreateKinetics {
         return ok;
     }
 
-    /** Whether rotation can drive devices at all (Create there, {@code features.createRotation} on). */
+    /** Whether rotation can drive devices at all (Create there, {@code features.compat.create.rotation} on). */
     public static boolean available() {
-        return CommonConfig.createRotation() && init();
+        return Features.enabled(Feature.CREATE_ROTATION) && init();
     }
 
     /** The fastest speed (RPM, absolute) of a Create shaft pointing at {@code pos} that is not overstressed, or 0. */

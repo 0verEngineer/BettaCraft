@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.registry;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -65,7 +67,7 @@ public final class ModCreativeTabs {
                     out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), id));
                 }
                 // M21.7: a selection of stone cabinets (every stone with its own slabs works, see the stone cabinet recipe)
-                if (org.overengineer.bettacraft.config.CommonConfig.stoneCabinets()) {
+                if (Features.enabled(Feature.STONE_CABINETS)) {
                     for (var stone : org.overengineer.bettacraft.equipment.CabinetStones.SELECTION) {
                         if (!(stone instanceof net.minecraft.world.item.BlockItem bi)) continue;
                         out.accept(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()),
@@ -221,7 +223,7 @@ public final class ModCreativeTabs {
                         continue;
                     }
                     int n = sp.shoaling() ? Math.max(6, sp.shoal()) : 2;
-                    if (org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(sp) && org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) {
+                    if (org.overengineer.bettacraft.tankmates.TankmateGenes.livebearer(sp) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
                         // M21.6: a pair of every named strain
                         for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(sp == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY)) {
                             out.accept(org.overengineer.bettacraft.tankmates.TankmateItems.groupBag(sp, 2,

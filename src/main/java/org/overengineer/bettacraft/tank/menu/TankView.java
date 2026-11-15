@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank.menu;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -109,19 +111,19 @@ public final class TankView {
     /** M26 part b: the diet of a betta (in the details tag; it has no "species", so it is no tankmate). */
     static CompoundTag bettaDetails(BettaEntity b) {
         CompoundTag d = new CompoundTag();
-        if (org.overengineer.bettacraft.config.CommonConfig.foodVariety()) d.put("diet", org.overengineer.bettacraft.food.FoodDiet.info(b.health()));
+        if (Features.enabled(Feature.FOOD_VARIETY)) d.put("diet", org.overengineer.bettacraft.food.FoodDiet.info(b.health()));
         return d;
     }
 
     static CompoundTag tankmateDetails(TankData t, org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
         var s = m.species();
         CompoundTag d = new CompoundTag();
-        if (org.overengineer.bettacraft.config.CommonConfig.foodVariety()) d.put("diet", org.overengineer.bettacraft.food.FoodDiet.info(m.health())); // M26 part b
+        if (Features.enabled(Feature.FOOD_VARIETY)) d.put("diet", org.overengineer.bettacraft.food.FoodDiet.info(m.health())); // M26 part b
         d.putString("species", s.id());
         d.putString("variety", m.variety());
         boolean known = org.overengineer.bettacraft.genetics.GeneVisibility.visible(m.analysed()); // M22.3: the alleles only once analysed
         d.putString("genes", known ? m.genes().text() : "");
-        // M21.6: the guppy and endler genome (with features.livebearerGenetics); M22.3: the whole genome only once analysed
+        // M21.6: the guppy and endler genome (with features.tankmates.livebearerGenetics); M22.3: the whole genome only once analysed
         var lb = m.livebearerGenome();
         if (lb != null) {
             d.put("lb", lb.save());
@@ -241,7 +243,7 @@ public final class TankView {
     /** M14: the small animals for the menu. */
     public static final class Critters {
         public final List<CritterGroup> groups = new ArrayList<>();
-        /** M22.3: every living animal (with {@code features.animalList}), sorted by kind and grade. */
+        /** M22.3: every living animal (with {@code features.invertebrates.animalList}), sorted by kind and grade. */
         public final List<CritterInfo> animals = new ArrayList<>();
         public int total, max, dead, clutches, molts;
         public double stock, algae, algaeGrowth, grazing, foodDays, hiding;
@@ -338,7 +340,7 @@ public final class TankView {
             }
             out.groups.add(new CritterGroup(first.species.ordinal(), first.genes.variety(first.species), first.genes.rgb(first.species), adults, young,
                     females, males, berried, sum / e.size(), mx, mn));
-            if (org.overengineer.bettacraft.config.CommonConfig.animalList()) {
+            if (Features.enabled(Feature.ANIMAL_LIST)) {
                 // M22.3: every animal of the kind, the best first
                 List<org.overengineer.bettacraft.critters.Critter> each = new ArrayList<>(e);
                 each.sort(java.util.Comparator.comparing((org.overengineer.bettacraft.critters.Critter k) -> !k.adult())
@@ -682,7 +684,7 @@ public final class TankView {
         x.target = t.targetTemp();
         if (!t.terrariumMode().hasLand()) return x;
         x.roomHumidity = org.overengineer.bettacraft.terrarium.TankClimate.roomHumidity(level, t);
-        x.devicesOn = org.overengineer.bettacraft.config.CommonConfig.terrariumDevices();
+        x.devicesOn = Features.enabled(Feature.TERRARIUM_DEVICES);
         x.heatPowered = c.heatPowered();
         x.misterPowered = c.misterPowered();
         for (BlockPos m : org.overengineer.bettacraft.tank.TankEquipment.heatMats(level, c)) {
@@ -733,10 +735,10 @@ public final class TankView {
         TankData t = c.getTank();
         Tech x = new Tech();
         x.oxygenOn = org.overengineer.bettacraft.tank.TankAeration.enabled();
-        x.aerationOn = org.overengineer.bettacraft.config.CommonConfig.aeration();
-        x.timerFeature = org.overengineer.bettacraft.config.CommonConfig.lightTimer();
-        x.tiersOn = org.overengineer.bettacraft.config.CommonConfig.ledTiers();
-        x.fry = org.overengineer.bettacraft.config.CommonConfig.fryIntake();
+        x.aerationOn = Features.enabled(Feature.AERATION);
+        x.timerFeature = Features.enabled(Feature.LIGHT_TIMER);
+        x.tiersOn = Features.enabled(Feature.LED_TIERS);
+        x.fry = Features.enabled(Feature.FRY_INTAKE);
         x.oxygen = t.oxygen();
         x.saturation = org.overengineer.bettacraft.tank.TankAeration.saturation(t.waterTemp(), t.salinity());
         x.target = c.o2Target;
@@ -960,7 +962,7 @@ public final class TankView {
         out.putString("front", t.front().getSerializedName());
         out.putBoolean("locked", t.locked());
         out.putBoolean("break_protected", t.breakProtected());
-        out.putBoolean("protection_feature", org.overengineer.bettacraft.config.CommonConfig.breakProtection());
+        out.putBoolean("protection_feature", Features.enabled(Feature.BREAK_PROTECTION));
         out.putBoolean("can_modify", TankInhabitants.canModify(player, t));
         out.putBoolean("owner", player.getUUID().equals(t.owner()));
         String ownerName = "";

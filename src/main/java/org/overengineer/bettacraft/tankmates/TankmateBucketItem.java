@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -119,7 +121,7 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
     /** M21.6: the strain (or hybrid, or description) of a guppy or endler in a bucket or bag, null without the genetics. */
     @Nullable
     public static Component livebearerName(TankmateSpecies s, CompoundTag fish) {
-        if (!TankmateGenes.livebearer(s) || !org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) return null;
+        if (!TankmateGenes.livebearer(s) || !Features.enabled(Feature.LIVEBEARER_GENETICS)) return null;
         TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
         if (g.lb() == null) return null;
         return org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(g.lb().express(fish.getBoolean("female"))).withStyle(ChatFormatting.GOLD);

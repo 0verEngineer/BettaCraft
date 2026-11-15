@@ -40,8 +40,9 @@ public final class TerrariumAnimals {
      */
     public static void registerOurs() {
         for (HerpSpecies s : HerpSpecies.ALL) register(org.overengineer.bettacraft.registry.ModEntities.herp(s), s.needs(),
-                s.turtle() ? org.overengineer.bettacraft.config.CommonConfig::turtles : org.overengineer.bettacraft.config.CommonConfig::herps); // part c: the amphibians and reptiles
-        register(EntityType.TURTLE, SEA_TURTLE, org.overengineer.bettacraft.config.CommonConfig::turtles);
+                s.turtle() ? () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.TURTLES)
+                        : () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.HERPS)); // part c: the amphibians and reptiles
+        register(EntityType.TURTLE, SEA_TURTLE, () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.TURTLES));
     }
 
     /** M31 part b: a sea turtle hatchling: a paludarium with a sandy beach and warm water. */

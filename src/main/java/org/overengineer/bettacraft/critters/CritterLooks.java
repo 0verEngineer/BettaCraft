@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.random.RandomGenerator;
 
 /**
@@ -27,7 +29,7 @@ public final class CritterLooks {
 
     /** A new random look (0 = classic when the feature is off or the species has none). */
     public static int random(CritterSpecies s, RandomGenerator rnd) {
-        if (!has(s) || !org.overengineer.bettacraft.config.CommonConfig.snailColors()) return 0;
+        if (!has(s) || !Features.enabled(Feature.SNAIL_COLORS)) return 0;
         return 1 + rnd.nextInt(0xFFFF);
     }
 

@@ -18,7 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 /**
  * M28: leaf litter on the floor: Indian almond leaves (placed with the {@code almond_leaf} item) and alder cones. In a
  * tank interior they give off tannins (lower the pH a little, colour the water) and the shrimp graze on them
- * ({@code features.decorEffects}, counted in {@link org.overengineer.bettacraft.tank.interior.InteriorEquipment}). They
+ * ({@code features.decor.effects}, counted in {@link org.overengineer.bettacraft.tank.interior.InteriorEquipment}). They
  * lie on any block, drop their item and have no collision (the fish swim over them).
  */
 public class LitterBlock extends Block {

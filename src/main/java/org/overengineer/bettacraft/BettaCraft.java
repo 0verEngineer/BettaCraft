@@ -83,6 +83,8 @@ public final class BettaCraft {
             if (server != null) server.execute(() -> org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server));
         });
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        // M33: a common config from before M33 gets its flat feature switches moved into the feature tree first
+        org.overengineer.bettacraft.config.FeatureMigration.migrateFile(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
         container.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
     }

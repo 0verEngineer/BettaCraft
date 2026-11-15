@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -266,10 +268,10 @@ final class DevClientSmokeM216 {
 
     /** Switches the genetics (server config value) and re-sends the look of the old-variety fish. */
     private void setGenetics(boolean on) {
-        org.overengineer.bettacraft.config.CommonConfig.FEATURE_LIVEBEARER_GENETICS.set(on);
+        Features.set(Feature.LIVEBEARER_GENETICS, on);
         for (TankmateEntity e : legacyFish) e.setup(e.genes(), e.isFemale(), e.lifeStage(), e.generation());
         LOGGER.info("[smoketest] M21.6 genetics {} ({}), {} old-variety fish re-sent", on ? "on" : "off",
-                org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics(), legacyFish.size());
+                Features.enabled(Feature.LIVEBEARER_GENETICS), legacyFish.size());
     }
 
     /** Every guppy and endler near the scene has the genetics look and a composited skin. */

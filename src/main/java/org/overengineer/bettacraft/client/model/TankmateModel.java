@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.model;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -127,7 +129,7 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
             return;
         }
 
-        boolean smooth = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming();
+        boolean smooth = Features.enabled(Feature.SMOOTH_SWIMMING);
         float pt = ageInTicks - (float) Math.floor(ageInTicks); // the partial tick (age = tickCount + partial)
         float swim;
         float phase;

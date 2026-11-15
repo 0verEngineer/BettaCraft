@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.overengineer.bettacraft.config.CommonConfig;
+import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.CritterSpecies;
 import org.overengineer.bettacraft.critters.NetCatching;
@@ -72,9 +73,9 @@ public final class Sources {
                     double lo = base.getOrDefault(e.getKey(), 0.0);
                     String target = key(e.getKey());
                     int[] n = netCount(e.getKey());
-                    String cond = e.getKey() instanceof TankmateSpecies s && s.seahorse() ? "features.seahorses"
-                            : e.getKey() instanceof CritterSpecies cs && cs.feature() != null ? cs.feature()
-                            : e.getKey() instanceof PlantSpecies p && !p.marine() ? "features.plantNetCatches" : null;
+                    String cond = e.getKey() instanceof TankmateSpecies s && s.seahorse() ? Feature.SEAHORSES.key()
+                            : e.getKey() instanceof CritterSpecies cs && cs.feature() != null ? cs.feature().key()
+                            : e.getKey() instanceof PlantSpecies p && !p.marine() ? Feature.PLANT_NET_CATCHES.key() : null;
                     out.add(new Source(Source.Kind.NET, target, where, lo, e.getValue(), n[0], n[1], 0, false, cond, null));
                 }
             }
@@ -93,8 +94,8 @@ public final class Sources {
             for (var e : table.entrySet()) {
                 double share = e.getValue() / total;
                 String target = Target.tankmate(e.getKey());
-                out.add(new Source(Source.Kind.BIG_NET, target, where, net * share, net * share, 1, 1, 0, false, "features.bigAnimals", null));
-                out.add(new Source(Source.Kind.STEEL_LEADER, target, where, lead * share, lead * share, 1, 1, 0, false, "features.bigAnimals", null));
+                out.add(new Source(Source.Kind.BIG_NET, target, where, net * share, net * share, 1, 1, 0, false, Feature.BIG_ANIMALS.key(), null));
+                out.add(new Source(Source.Kind.STEEL_LEADER, target, where, lead * share, lead * share, 1, 1, 0, false, Feature.BIG_ANIMALS.key(), null));
             }
         }
     }
@@ -172,9 +173,9 @@ public final class Sources {
         out.add(new Source(Source.Kind.SPAWN, Target.BETTA, Where.SWAMP, weight, weight, min, max, 0, false, null, null));
         // M29 part c: some of the wild bettas are Betta imbellis or Betta smaragdina (chanceMax: their share among the wild bettas)
         out.add(new Source(Source.Kind.SPAWN, Target.betta(org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS), Where.SWAMP, weight,
-                org.overengineer.bettacraft.world.Wildlife.IMBELLIS_SHARE, min, max, 0, false, "features.wildBettas", null));
+                org.overengineer.bettacraft.world.Wildlife.IMBELLIS_SHARE, min, max, 0, false, Feature.WILD_BETTAS.key(), null));
         out.add(new Source(Source.Kind.SPAWN, Target.betta(org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA), Where.SWAMP, weight,
-                org.overengineer.bettacraft.world.Wildlife.SMARAGDINA_SHARE, min, max, 0, false, "features.wildBettas", null));
+                org.overengineer.bettacraft.world.Wildlife.SMARAGDINA_SHARE, min, max, 0, false, Feature.WILD_BETTAS.key(), null));
         wildlife(out);
         wildPlants(out);
     }
@@ -188,13 +189,14 @@ public final class Sources {
             for (var e : WildTables.wildPlants(w).entries()) {
                 PlantSpecies s = e.value();
                 int n = s.form() == PlantSpecies.Form.STEM ? 2 : 1;
-                out.add(new Source(Source.Kind.SHEARS, Target.plant(s), w.where(), 1.0, 1.0, n, n, 0, false, "features.wildPlants",
+                out.add(new Source(Source.Kind.SHEARS, Target.plant(s), w.where(), 1.0, 1.0, n, n, 0, false, Feature.AQUATIC_WILD.key(),
                         "bettacraft:" + org.overengineer.bettacraft.plants.wild.WildPlantKind.of(s).id()));
             }
             for (var e : WildTables.wildFloating(w).entries()) {
                 FloatingPlantType t = e.value();
                 String target = t.plantItem() ? Target.plant(PlantSpecies.byId(t.id())) : Target.floating(t);
-                out.add(new Source(Source.Kind.BLOCK_DROP, target, w.where(), 1.0, 1.0, 1, 1, 0, false, "features.wildPlants", WILD_FLOATING_BLOCK));
+                out.add(new Source(Source.Kind.BLOCK_DROP, target, w.where(), 1.0, 1.0, 1, 1, 0, false,
+                        (t.plantItem() ? Feature.AQUATIC_WILD : Feature.FLOATING_WILD).key(), WILD_FLOATING_BLOCK));
             }
         }
     }
@@ -215,7 +217,7 @@ public final class Sources {
                         s.featureKey(), null));
             }
             int frog = org.overengineer.bettacraft.world.Wildlife.frogWeight(w);
-            if (frog > 0) out.add(new Source(Source.Kind.SPAWN, Target.FROG, where, frog, frog, 1, 2, 0, false, "features.wildFish", null));
+            if (frog > 0) out.add(new Source(Source.Kind.SPAWN, Target.FROG, where, frog, frog, 1, 2, 0, false, Feature.FROGS_WILD.key(), null));
             int critters = org.overengineer.bettacraft.world.Wildlife.critterWeight(w);
             if (critters <= 0) continue;
             var table = org.overengineer.bettacraft.world.Wildlife.critterTable(w, false, false);
@@ -224,7 +226,7 @@ public final class Sources {
             for (var c : table) {
                 int wt = (int) Math.max(1, Math.round(critters * c.weight() / total));
                 out.add(new Source(Source.Kind.SPAWN, Target.critter(c.species()), where, wt, wt, 2, 5, 0, false,
-                        c.species().feature() != null ? c.species().feature() : "features.wildCritters", null));
+                        c.species().feature() != null ? c.species().feature().key() : Feature.INVERTEBRATES_WILD.key(), null));
             }
         }
         // M31 part b: the wild turtles (on the shore of swamps and rivers; the tortoise on dry land); caught in a bucket or a box;
@@ -243,7 +245,7 @@ public final class Sources {
                     org.overengineer.bettacraft.terrarium.HerpSpawns.featureKey(e.species()), null));
         }
         for (var e : WildTables.WILD_CORALS.entries()) {
-            out.add(new Source(Source.Kind.SHEARS, Target.plant(e.value()), Where.WARM_OCEAN, 1.0, 1.0, 1, 1, 0, false, "features.wildCorals",
+            out.add(new Source(Source.Kind.SHEARS, Target.plant(e.value()), Where.WARM_OCEAN, 1.0, 1.0, 1, 1, 0, false, Feature.WILD_CORALS.key(),
                     "bettacraft:wild_" + e.value().id()));
         }
     }

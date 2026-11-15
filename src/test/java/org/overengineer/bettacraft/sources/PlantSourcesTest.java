@@ -23,7 +23,7 @@ import org.overengineer.bettacraft.tank.plants.FloatingPlantType;
 /**
  * M22.4: the wandering trader (or another hard way) is never the only source of a plant. Every aquarium plant, floating
  * plant and coral, also the ones later milestones add, must come from the net or from fishing somewhere, and with
- * {@code features.plantNetCatches} off still from the wild (not only the trader). The info texts (JEI, EMI, the shift
+ * {@code features.aquaticPlants.netCatches} off still from the wild (not only the trader). The info texts (JEI, EMI, the shift
  * tooltip) name the same ways as the data: the net, fishing and the trader exactly when the game has them.
  */
 class PlantSourcesTest {
@@ -43,9 +43,9 @@ class PlantSourcesTest {
         for (var e : plants().entrySet()) {
             List<Source> all = Sources.of(e.getKey());
             boolean netOrFishing = all.stream().anyMatch(s -> s.kind() == Source.Kind.NET || s.kind() == Source.Kind.FISHING);
-            boolean wildWithoutNetSwitch = all.stream().anyMatch(s -> !TRADER.contains(s.kind()) && !"features.plantNetCatches".equals(s.condition()));
+            boolean wildWithoutNetSwitch = all.stream().anyMatch(s -> !TRADER.contains(s.kind()) && !"features.aquaticPlants.netCatches".equals(s.condition()));
             if (!netOrFishing) problems.add(e.getValue() + ": neither the net nor fishing brings it");
-            if (!wildWithoutNetSwitch) problems.add(e.getValue() + ": only the trader with features.plantNetCatches off");
+            if (!wildWithoutNetSwitch) problems.add(e.getValue() + ": only the trader with features.aquaticPlants.netCatches off");
         }
         assertTrue(problems.isEmpty(), "plants only at the trader (add a net or fishing source to sources/WildTables):\n" + String.join("\n", problems));
     }

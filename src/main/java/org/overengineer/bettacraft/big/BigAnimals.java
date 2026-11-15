@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.big;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
@@ -78,7 +80,7 @@ public final class BigAnimals {
      */
     @Nullable
     public static Component refusal(TankData t, List<Entity> live, EntityType<?> type, @Nullable Entity e) {
-        if (!CommonConfig.bigAnimals()) return Component.translatable("message.bettacraft.tank.too_big", type.getDescription());
+        if (!Features.enabled(Feature.BIG_ANIMALS)) return Component.translatable("message.bettacraft.tank.too_big", type.getDescription());
         double len = length(type, e);
         if (len <= 0) return null;
         BigTankRules.Factors f = factors();

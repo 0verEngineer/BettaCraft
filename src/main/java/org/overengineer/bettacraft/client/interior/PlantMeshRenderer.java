@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.interior;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
@@ -86,12 +88,12 @@ public final class PlantMeshRenderer {
     private PlantMeshRenderer() {}
 
     /**
-     * The meshes are drawn: on for the pack ({@code features.plantMeshes}, common) and for this player
+     * The meshes are drawn: on for the pack ({@code features.visuals.plantMeshes}, common) and for this player
      * ({@code render.plantMeshes}, client, M22.1). Only the client draws them; the blocks and everything on the server
      * stay the same, so every player on a server may choose for themselves.
      */
     public static boolean active() {
-        return CommonConfig.plantMeshes() && org.overengineer.bettacraft.config.ClientConfig.plantMeshes();
+        return Features.enabled(Feature.PLANT_MESHES) && org.overengineer.bettacraft.config.ClientConfig.plantMeshes();
     }
 
     static void noteRoot(BlockPos pos) {

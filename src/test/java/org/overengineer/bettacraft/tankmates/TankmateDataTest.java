@@ -145,7 +145,7 @@ class TankmateDataTest {
         // M29 part c: the new gouramis are labyrinth fish; only the territorial ones fight, the chocolate gourami broods in her mouth
         for (TankmateSpecies s : java.util.List.of(TankmateSpecies.HONEY_GOURAMI, TankmateSpecies.CHOCOLATE_GOURAMI, TankmateSpecies.PEARL_GOURAMI)) {
             assertTrue(s.labyrinth() && s.group() == TankmateSpecies.Group.GOURAMI && s.longFins(false), s.id());
-            assertEquals("features.gouramis", s.featureKey());
+            assertEquals("features.tankmates.gouramis", s.featureKey());
         }
         assertTrue(TankmateSpecies.PEARL_GOURAMI.territorial() && !TankmateSpecies.HONEY_GOURAMI.territorial());
         assertTrue(TankmateSpecies.CHOCOLATE_GOURAMI.mouthbrooder() && !TankmateSpecies.PLATY.mouthbrooder());
@@ -153,7 +153,7 @@ class TankmateDataTest {
         for (TankmateSpecies s : java.util.List.of(TankmateSpecies.ZEBRA_DANIO, TankmateSpecies.CELESTIAL_PEARL_DANIO, TankmateSpecies.FORKTAIL_RAINBOW,
                 TankmateSpecies.NEON_DWARF_RAINBOW, TankmateSpecies.EMPEROR_TETRA, TankmateSpecies.RUMMY_NOSE_TETRA, TankmateSpecies.BLACK_PHANTOM_TETRA,
                 TankmateSpecies.BLACK_MOLLY, TankmateSpecies.SWORDTAIL)) {
-            assertEquals("features.communityFish", s.featureKey(), s.id());
+            assertEquals("features.tankmates.communityFish", s.featureKey(), s.id());
             assertTrue(!s.waters().isEmpty() && s.trade() != TankmateSpecies.Trade.NONE, s.id());
         }
         // the livebearers keep the simple variety genetics; the molly also lives in brackish water and mangroves
@@ -169,7 +169,7 @@ class TankmateDataTest {
         // M29 part b: puffers eat snails, need them for their teeth and nip fins; tiger barbs nip, cherry barbs do not
         for (TankmateSpecies s : java.util.List.of(TankmateSpecies.DWARF_PUFFER, TankmateSpecies.RED_EYE_PUFFER, TankmateSpecies.GREEN_SPOTTED_PUFFER)) {
             assertTrue(s.puffer() && s.eatsSnails() && s.finNipper(), s.id());
-            assertEquals("features.puffers", s.featureKey());
+            assertEquals("features.tankmates.puffers", s.featureKey());
             assertEquals(org.overengineer.bettacraft.food.FoodDiet.Diet.PUFFER, org.overengineer.bettacraft.food.FoodDiet.of(s));
         }
         assertTrue(TankmateSpecies.TIGER_BARB.finNipper() && !TankmateSpecies.CHERRY_BARB.finNipper() && !TankmateSpecies.ODESSA_BARB.finNipper());
@@ -182,8 +182,8 @@ class TankmateDataTest {
         // the loaches eat snails, the garra grazes
         assertTrue(TankmateSpecies.DWARF_CHAIN_LOACH.eatsSnails() && TankmateSpecies.RETICULATED_LOACH.eatsSnails());
         assertTrue(TankmateSpecies.GARRA_RUFA.grazer() && !TankmateSpecies.GARRA_RUFA.eatsSnails());
-        assertEquals("features.barbsAndLoaches", TankmateSpecies.GARRA_RUFA.featureKey());
-        assertEquals("features.wildFish", TankmateSpecies.CLOWN_LOACH.featureKey());
+        assertEquals("features.tankmates.barbsAndLoaches", TankmateSpecies.GARRA_RUFA.featureKey());
+        assertEquals("features.tankmates.wildSpawns", TankmateSpecies.CLOWN_LOACH.featureKey());
         assertTrue(TankmateSpecies.CHERRY_BARB.tolerates(26) && TankmateSpecies.CHERRY_BARB.tolerates(28), "cherry barbs live in a betta tank");
     }
 
@@ -202,7 +202,7 @@ class TankmateDataTest {
         assertEquals(12, org.overengineer.bettacraft.containers.AnimalContainers.bucket(TankmateSpecies.RAM_CICHLID));
         assertTrue(TankmateSpecies.RAM_CICHLID.tolerates(26) && TankmateSpecies.RAM_CICHLID.tolerates(28), "rams live in a betta tank");
         assertTrue(TankmateSpecies.DWARF_GOURAMI.labyrinth() && !TankmateSpecies.RAM_CICHLID.labyrinth());
-        assertEquals("features.cichlids", TankmateSpecies.DISCUS.featureKey());
+        assertEquals("features.tankmates.cichlids", TankmateSpecies.DISCUS.featureKey());
         Clutch c = new Clutch(3, TankmateSpecies.ANGELFISH, Clutch.Kind.OPEN, 1, 2, 3, 30, TankmateGenes.wild(TankmateSpecies.ANGELFISH),
                 TankmateGenes.wild(TankmateSpecies.ANGELFISH));
         c.guardian = java.util.UUID.randomUUID();

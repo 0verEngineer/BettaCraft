@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -43,7 +45,7 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
  * {@code NeoForge.EVENT_BUS} like a script would: young born (an animal of another mod by its profile), an animal dying of
  * our care and by damage (with the cause and the entity), a monitor alarm going off and clearing (and its map waypoint
  * opening for a player nearby and closing), the script helpers of {@link BettacraftApi}, and the switch
- * {@code features.modpackEvents} off. Own batches; the config is restored in {@code finally}.
+ * {@code features.compat.modpackEvents} off. Own batches; the config is restored in {@code finally}.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -173,11 +175,11 @@ public final class ModpackEventGameTests {
         h.succeed();
     }
 
-    /** features.modpackEvents off: nothing is posted; features.alarmWaypoints off: the alarm event, but no waypoint. */
+    /** features.compat.modpackEvents off: nothing is posted; features.compat.journeymap off: the alarm event, but no waypoint. */
     @GameTest(template = EMPTY, batch = "bettacraft_m32_events_off", timeoutTicks = 100)
     public static void switchesTurnEventsAndWaypointsOff(GameTestHelper h) {
         listen();
-        boolean events = CommonConfig.FEATURE_MODPACK_EVENTS.get(), waypoints = CommonConfig.FEATURE_ALARM_WAYPOINTS.get();
+        boolean events = Features.own(Feature.MODPACK_EVENTS), waypoints = Features.own(Feature.ALARM_WAYPOINTS);
         try {
             ServerLevel level = h.getLevel();
             TankBlockEntity t = AerationGameTests.tank(h, 2, 1, 2, 2, 2, 2);
@@ -189,20 +191,20 @@ public final class ModpackEventGameTests {
             l.auto = false;
             l.tiles.add(DashboardTile.alarm(l.nextId++, 0, 0, 4, 2, t.getTank().id(), MonitorValue.TEMPERATURE, false, 28F, false));
             c.setLayout(l);
-            CommonConfig.FEATURE_ALARM_WAYPOINTS.set(false);
+            Features.set(Feature.ALARM_WAYPOINTS, false);
             MonitorSync.cycle(level, c);
             h.assertTrue(caught(TankAlarmEvent.class).size() == 1, "the event still comes");
             h.assertTrue(!MonitorAlarms.waypointOpen(t.getTank().id()), "but no waypoint");
             t.getTank().setWaterTemp(25F);
             MonitorSync.cycle(level, c);
-            CommonConfig.FEATURE_MODPACK_EVENTS.set(false);
+            Features.set(Feature.MODPACK_EVENTS, false);
             CAUGHT.clear();
             t.getTank().setWaterTemp(30F);
             MonitorSync.cycle(level, c);
             h.assertTrue(CAUGHT.isEmpty(), "events off: nothing posted (" + CAUGHT.size() + ")");
         } finally {
-            CommonConfig.FEATURE_MODPACK_EVENTS.set(events);
-            CommonConfig.FEATURE_ALARM_WAYPOINTS.set(waypoints);
+            Features.set(Feature.MODPACK_EVENTS, events);
+            Features.set(Feature.ALARM_WAYPOINTS, waypoints);
         }
         h.succeed();
     }

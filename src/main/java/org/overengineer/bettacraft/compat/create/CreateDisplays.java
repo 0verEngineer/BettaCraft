@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.compat.create;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
@@ -32,7 +34,7 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * </ul>
  * Create's {@code DisplaySource} is an abstract class, so this one class is compiled against Create's API (compileOnly,
  * never in our jar) and only loaded when Create is there ({@link #register} from the mod constructor behind a
- * {@code ModList} check). {@code features.createDisplayLinks} off: the sources give no lines.
+ * {@code ModList} check). {@code features.compat.create.displayLinks} off: the sources give no lines.
  */
 public final class CreateDisplays {
     private static final DeferredRegister<DisplaySource> SOURCES = DeferredRegister.create(CreateRegistries.DISPLAY_SOURCE, BettaCraft.MOD_ID);
@@ -65,7 +67,7 @@ public final class CreateDisplays {
     /** The lines of the tank the block at the source belongs to (empty without a tank or with the switch off). */
     public static List<MutableComponent> tankLines(ServerLevel level, net.minecraft.core.BlockPos pos, int max, int columns) {
         List<MutableComponent> out = new ArrayList<>();
-        if (!CommonConfig.createDisplayLinks()) return out;
+        if (!Features.enabled(Feature.CREATE_DISPLAY_LINKS)) return out;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null || c.getTank() == null) return out;
         for (MonitorValue v : ORDER) {
@@ -79,7 +81,7 @@ public final class CreateDisplays {
     /** One line per tank of the monitor at the source. */
     public static List<MutableComponent> monitorLines(BlockEntity be, int max) {
         List<MutableComponent> out = new ArrayList<>();
-        if (!CommonConfig.createDisplayLinks() || !(be instanceof MonitorBlockEntity m)) return out;
+        if (!Features.enabled(Feature.CREATE_DISPLAY_LINKS) || !(be instanceof MonitorBlockEntity m)) return out;
         MonitorBlockEntity screen = m.controller();
         if (screen == null) return out;
         for (MonitorTank t : screen.tanks()) {

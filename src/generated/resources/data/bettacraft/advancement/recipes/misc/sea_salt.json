@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "saltwater.enabled"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_sea_water": {

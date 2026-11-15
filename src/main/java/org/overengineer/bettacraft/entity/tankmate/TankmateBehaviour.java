@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.entity.tankmate;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -141,7 +143,7 @@ final class TankmateBehaviour {
             } else if (mode == Mode.REST || mode == Mode.GLASS) {
                 // M21.5: on the glass it counts as arrived a little earlier (the buoyancy kept small fish hovering just off the
                 // spot), then it is held there
-                double arrive = mode == Mode.GLASS && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0.0225
+                double arrive = mode == Mode.GLASS && Features.enabled(Feature.SMOOTH_SWIMMING) ? 0.0225
                         : hitchPost != null ? 0.04 : 0.004; // M21.8: a seahorse holds on a little beside its post (the path ends short of it)
                 if (s.isLarge()) {
                     // M30 part b: a big animal cannot turn on the spot: it glides in over its spot, settles and sinks onto it
@@ -170,7 +172,7 @@ final class TankmateBehaviour {
                     Vec3 to = sheltered ? steer(server, w, target) : target;
                     // M21.5: a little faster while still far away (on the way to the glass it took minutes)
                     double far = fish.position().distanceTo(target);
-                    double sp = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() && far > 0.6 ? 0.8 : 0.4;
+                    double sp = Features.enabled(Feature.SMOOTH_SWIMMING) && far > 0.6 ? 0.8 : 0.4;
                     // M21.8: a seahorse on its way to a post swims at its (slow) full speed
                     move().swimTo(to.x, to.y, to.z, hitchPost != null ? 1.0 : sheltered ? Math.min(sp, 0.5) : sp);
                     // M21.5: the time on the glass (or resting) starts once it is there (the way does not use it up)
@@ -482,7 +484,7 @@ final class TankmateBehaviour {
 
     /** M21.5: the eel-like kuhli loach (smooth swimming on). */
     private static boolean eel(TankmateSpecies s) {
-        return s.model() == TankmateSpecies.Model.KUHLI && org.overengineer.bettacraft.config.CommonConfig.smoothSwimming();
+        return s.model() == TankmateSpecies.Model.KUHLI && Features.enabled(Feature.SMOOTH_SWIMMING);
     }
 
     /** M21.5: a calm, long glide along the bottom, mostly ahead (few changes of direction). */
@@ -573,7 +575,7 @@ final class TankmateBehaviour {
             glassFace = dir;
             ticks = 200 + r.nextInt(400);
             // M21.5: FLAG_GLASS (upright) only on arrival (see tick); legacy: at once
-            behaviourFlags = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? 0 : TankmateEntity.FLAG_GLASS;
+            behaviourFlags = Features.enabled(Feature.SMOOTH_SWIMMING) ? 0 : TankmateEntity.FLAG_GLASS;
             return true;
         }
         return false;

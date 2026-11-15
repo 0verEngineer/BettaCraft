@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,7 +64,7 @@ public final class TankWater {
 
     /** M23: corner filters standing under water in the interior. */
     public static int cornerFilters(ServerLevel level, TankData tank) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters()) return 0;
+        if (!Features.enabled(Feature.MORE_INTERNAL_FILTERS)) return 0;
         var r = InteriorRegions.get(level.getServer()).get(tank.regionId());
         if (r == null || !r.built()) return 0;
         var eq = InteriorManager.equipment(level.getServer(), r);
@@ -79,7 +81,7 @@ public final class TankWater {
         var eq = InteriorManager.equipment(level.getServer(), r);
         double y = TankCare.waterLocalHeight(tank, r.scale());
         return new double[]{eq.shareBelow(eq.filters(), y),
-                org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters() ? eq.shareBelow(eq.corners(), y) : 0, eq.shareBelow(eq.pumps(), y)};
+                Features.enabled(Feature.MORE_INTERNAL_FILTERS) ? eq.shareBelow(eq.corners(), y) : 0, eq.shareBelow(eq.pumps(), y)};
     }
 
     /** M23: the FE-using devices that run with the filters, weighted by their regulators (external, internal, corner, skimmers, flow pumps). */

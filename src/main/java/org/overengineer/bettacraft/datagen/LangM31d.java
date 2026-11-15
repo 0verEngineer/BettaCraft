@@ -10,8 +10,6 @@ final class LangM31d {
     private LangM31d() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("bettacraft.configuration.mobsInGlass", "Mobs in glass");
-        a.accept("bettacraft.configuration.mobsInGlass.tooltip", "Mobs in glass: drowned, zombies, husks, skeletons, strays, spiders, cave spiders, silverfish, endermites and small slimes and magma cubes live shrunk and harmless in tanks (mob jar, bait, capture items of other mods); they drop nothing (off: none go in; those in tanks stay)");
         a.accept("bettacraft.configuration.mobCatchHealth", "Mob jar: health at most");
         a.accept("bettacraft.configuration.mobCatchHealth.tooltip", "Share of its health a mob may have at most to go into the mob jar (0.25 = weakened to a quarter)");
         a.accept("bettacraft.configuration.mobUndeadBurn", "Undead burn without a lid");

@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "waterChemistry.enabled"
+    }
+  ],
   "type": "minecraft:smelting",
   "category": "misc",
   "cookingtime": 200,

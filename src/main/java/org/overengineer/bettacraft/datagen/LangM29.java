@@ -67,8 +67,6 @@ final class LangM29 {
         a.accept("log.bettacraft.tm.ate_prey", "%s ate %s small fish and %s shrimp");
         a.accept("log.bettacraft.tm.parents_feed", "The young (%s) graze the skin secretion of their parents");
         a.accept("log.bettacraft.tm.brood_died", "A brood (%s, %s young) died without its parents");
-        a.accept("bettacraft.configuration.cichlids", "Cichlids");
-        a.accept("bettacraft.configuration.cichlids.tooltip", "Cichlids: ram, Bolivian ram, cockatoo and Agassiz's dwarf cichlid, angelfish and discus at the wandering trader, in the aquarium net and wild (open brooders and cave brooders that guard their brood; off: no new ones; fish already caught stay)");
         a.accept("bettacraft.configuration.angelfishPreyPerDay", "Small fish an angelfish eats");
         a.accept("bettacraft.configuration.angelfishPreyPerDay.tooltip", "Small fish (neons, embers, mosquito rasboras ...) and shrimp one adult angelfish eats per day; plants hide them (0 = never)");
         a.accept("bettacraft.configuration.broodDefence", "Cichlid brood defence");

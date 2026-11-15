@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -13,7 +15,7 @@ import org.overengineer.bettacraft.equipment.OutletSide;
 /**
  * Cabinet: filter slot, the two heater slots of that filter (only with a filter), 3x3 storage; M22.4: the button
  * "Outlet: back / left / right / front" (which tank wall the filter hose goes up; hidden while the server has
- * {@code features.cabinetOutletSide} off).
+ * {@code features.equipment.cabinetOutletSide} off).
  */
 public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/cabinet.png");
@@ -50,7 +52,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
                     ? org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_DOWN : org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_UP);
         });
         b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.bettacraft.regulator.button_tooltip")));
-        b.visible = org.overengineer.bettacraft.config.CommonConfig.powerRegulator();
+        b.visible = Features.enabled(Feature.POWER_REGULATOR);
         return b;
     }
 
@@ -112,7 +114,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         updateOutlet();
         if (powerBtn != null) {
-            powerBtn.visible = org.overengineer.bettacraft.config.CommonConfig.powerRegulator() && menu.hasFilter();
+            powerBtn.visible = Features.enabled(Feature.POWER_REGULATOR) && menu.hasFilter();
             powerBtn.setMessage(Component.literal(menu.power() * 10 + "%"));
         }
         super.render(g, mouseX, mouseY, partialTick);

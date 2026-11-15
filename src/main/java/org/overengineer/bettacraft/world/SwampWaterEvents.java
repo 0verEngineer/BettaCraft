@@ -46,7 +46,7 @@ public final class SwampWaterEvents {
         if (!level.getFluidState(pos).is(FluidTags.WATER)) return;
         var biome = level.getBiome(pos);
         ItemStack result;
-        if (biome.is(ModTags.SALT_WATER_BIOMES)) result = new ItemStack(ModItems.SALT_WATER_BOTTLE.get());
+        if (biome.is(ModTags.SALT_WATER_BIOMES) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.SALTWATER)) result = new ItemStack(ModItems.SALT_WATER_BOTTLE.get()); // M33
         else if (biome.is(ModTags.BETTA_SPAWN_BIOMES)) result = new ItemStack(ModItems.SWAMP_WATER_BOTTLE.get());
         else return;
         if (!level.mayInteract(player, pos)) return;
@@ -57,12 +57,13 @@ public final class SwampWaterEvents {
         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         player.setItemInHand(event.getHand(), ItemUtils.createFilledResult(stack, player, result));
         // M12: swamp water sometimes brings up a bit of duckweed
-        if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && level.getRandom().nextDouble()
+        // M33: each find only while its feature is on
+        if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS) && level.getRandom().nextDouble()
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.PLANTS_BOTTLE_CHANCE, 0.15)) {
             ItemStack duckweed = org.overengineer.bettacraft.tank.plants.TankPlants.item(org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED);
             if (!player.getInventory().add(duckweed)) player.drop(duckweed, false);
             player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.plants.duckweed_in_bottle"), true);
-        } else if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && level.getRandom().nextDouble()
+        } else if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS) && level.getRandom().nextDouble()
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.AQUATIC_BOTTLE_CHANCE, 0.05)) {
             // M13: or a cutting of a swamp plant (Cryptocoryne, Ludwigia, Rotala)
             var r = level.getRandom();
@@ -73,7 +74,7 @@ public final class SwampWaterEvents {
                     cutting.getHoverName()), true);
         }
         // M26: and now and then a few daphnia (the start of a daphnia barrel)
-        if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && level.getRandom().nextDouble()
+        if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES) && level.getRandom().nextDouble()
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE, 0.08)) {
             ItemStack daphnia = new ItemStack(ModItems.DAPHNIA.get());
             if (!player.getInventory().add(daphnia)) player.drop(daphnia, false);

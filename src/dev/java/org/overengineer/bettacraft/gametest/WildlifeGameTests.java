@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.core.BlockPos;
@@ -308,18 +310,18 @@ public final class WildlifeGameTests {
         h.succeed();
     }
 
-    /** With features.wildColors off no wild animal shows a bred colour (config test: own batch, restored). */
+    /** With features.breeding.wildColors off no wild animal shows a bred colour (config test: own batch, restored). */
     @GameTest(template = EMPTY, timeoutTicks = 60, batch = "bettacraft_wildlife_config")
     public static void wildColoursCanBeSwitchedOff(GameTestHelper h) {
-        boolean before = CommonConfig.FEATURE_WILD_COLORS.get();
+        boolean before = Features.own(Feature.WILD_COLORS);
         try {
-            CommonConfig.FEATURE_WILD_COLORS.set(false);
+            Features.set(Feature.WILD_COLORS, false);
             Random r = new Random(5);
             for (int i = 0; i < 5000; i++) {
                 check(Wildlife.critter(CritterSpecies.NEOCARIDINA, r).color(CritterSpecies.NEOCARIDINA) == CritterGenes.WILD_COLOR, "a coloured wild shrimp");
             }
         } finally {
-            CommonConfig.FEATURE_WILD_COLORS.set(before);
+            Features.set(Feature.WILD_COLORS, before);
         }
         h.succeed();
     }

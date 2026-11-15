@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.co2;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -19,7 +21,7 @@ import org.overengineer.bettacraft.tank.TankWater;
  * ({@link WaterChemistry#co2Target}): the sources next to the tank (bio CO2 bottles, gas cylinders: bubbles per second,
  * {@code co2Dosing.co2PerBubble} per water block) and the animals' breath add CO2, the plants take it up in light, the
  * surface and the aeration of M23 drive it out ({@link WaterChemistry#co2Exchange} with the oxygen exchange and
- * {@link TankAeration#co2Stripping}). Without a source (or with {@code features.co2} off) the water goes back to the
+ * {@link TankAeration#co2Stripping}). Without a source (or with {@code features.co2.enabled} off) the water goes back to the
  * air's 3 mg/L. The CO2 lowers the pH ({@link org.overengineer.bettacraft.chem.TankChemistry}), makes the plants grow
  * faster ({@link #growth}), holds back the algae of strong light ({@link #algaeBalance}) and too much harms the animals
  * ({@link #distance}).
@@ -28,7 +30,7 @@ public final class TankCo2 {
     private TankCo2() {}
 
     public static boolean enabled() {
-        return CommonConfig.co2();
+        return Features.enabled(Feature.CO2);
     }
 
     /** The CO2 sources that serve this tank. */
@@ -118,7 +120,7 @@ public final class TankCo2 {
         return bad + (co2 - l) / 10.0;
     }
 
-    /** The CO2 distance of this tank for an animal of that tolerance (0 with features.co2 off or a dry tank). */
+    /** The CO2 distance of this tank for an animal of that tolerance (0 with features.co2.enabled off or a dry tank). */
     public static double distance(TankData t, double tolerance) {
         if (!enabled() || t.waterMb() <= 0) return 0;
         return distance(t.co2(), stressFrom(), lethalFrom(), tolerance);
@@ -143,7 +145,7 @@ public final class TankCo2 {
 
     /** Whether the lights of the tank are on now (its daylight timer, or the daylight without one): the solenoid valve opens. */
     public static boolean lightsOn(ServerLevel level, TankData t) {
-        if (CommonConfig.lightTimer() && t.lightTimer()) return org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getDayTime()) > 0;
+        if (Features.enabled(Feature.LIGHT_TIMER) && t.lightTimer()) return org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getDayTime()) > 0;
         if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasFixedTime()) return true;
         int m = org.overengineer.bettacraft.tank.TankLighting.minuteOfDay(level.getDayTime());
         return m >= 6 * 60 && m < 19 * 60; // 6:00 - 19:00 (sunrise to sunset)

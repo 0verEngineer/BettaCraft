@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -450,9 +452,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         critterTakeButton.visible = tab == Tab.INHABITANTS && critterPage;
         clutchButton.visible = tab == Tab.INHABITANTS && critterPage && v != null && v.critters.clutches > 0;
         // M22.3
-        boolean list = org.overengineer.bettacraft.config.CommonConfig.animalList();
+        boolean list = Features.enabled(Feature.ANIMAL_LIST);
         sexButton.visible = tab == Tab.INHABITANTS && critterPage && list && selectedCritter == null;
-        containerButton.visible = tab == Tab.INHABITANTS && critterPage && org.overengineer.bettacraft.config.CommonConfig.bigContainers();
+        containerButton.visible = tab == Tab.INHABITANTS && critterPage && Features.enabled(Feature.BIG_CONTAINERS);
         if (!containerButton.visible) critterBucket = false;
         analyseButton.visible = tab == Tab.INHABITANTS && v != null && !v.genesFree;
         sexButton.setMessage(Component.translatable("gui.bettacraft.critters.sex." + (critterSex == 1 ? "male" : critterSex == 2 ? "female" : "any")));
@@ -1703,7 +1705,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     private List<CritterRow> critterRows(TankView v) {
         List<CritterRow> rows = new ArrayList<>();
-        boolean list = org.overengineer.bettacraft.config.CommonConfig.animalList();
+        boolean list = Features.enabled(Feature.ANIMAL_LIST);
         for (TankView.CritterGroup gr : v.critters.groups) {
             rows.add(new CritterRow(gr, null));
             if (list && critterExpanded && gr.key().equals(selectedGroup)) {
@@ -1745,7 +1747,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             fitLine(g, Component.translatable("gui.bettacraft.critters.empty_hint").withStyle(ChatFormatting.GRAY), lx + 2, ly + 13, 0xA0A0A0, 96);
         }
         List<CritterRow> rows = critterRows(v);
-        boolean list = org.overengineer.bettacraft.config.CommonConfig.animalList();
+        boolean list = Features.enabled(Feature.ANIMAL_LIST);
         for (int r = 0; r < CRITTER_ROWS; r++) {
             int idx = groupScroll + r;
             if (idx >= rows.size()) break;

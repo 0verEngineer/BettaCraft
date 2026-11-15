@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "decor.enabled"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_mangrove_roots": {

@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "corals.enabled"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_fire_coral": {

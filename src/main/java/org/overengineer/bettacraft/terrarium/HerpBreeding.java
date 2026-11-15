@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -47,7 +49,7 @@ import org.overengineer.bettacraft.tank.interior.Substrate;
  *     limit (water and land) and the entity limit allow; the others stay in their eggs and die.</li>
  * </ol>
  * The egg block is checked every ten seconds: a player who broke it in the interior destroyed the clutch.
- * Switches: {@code features.turtleBreeding}, part c {@code features.herpBreeding} (off: no new clutches; laid ones still hatch).
+ * Switches: {@code features.turtles.breeding}, part c {@code features.terrariums.herpBreeding} (off: no new clutches; laid ones still hatch).
  */
 public final class HerpBreeding {
     /** Nest reach of a female (tank blocks, flat). */
@@ -124,7 +126,7 @@ public final class HerpBreeding {
     /** Whether this species breeds now (its switches and whether it breeds in a tank at all). */
     public static boolean breedingOn(HerpSpecies s) {
         if (!s.breeds()) return false;
-        return s.turtle() ? CommonConfig.turtles() && CommonConfig.turtleBreeding() : CommonConfig.herps() && CommonConfig.herpBreeding();
+        return s.turtle() ? Features.enabled(Feature.TURTLES) && Features.enabled(Feature.TURTLE_BREEDING) : Features.enabled(Feature.HERPS) && Features.enabled(Feature.HERP_BREEDING);
     }
 
     /** The egg block of a species: the jelly clutch of the frogs, the leathery eggs of the reptiles. */

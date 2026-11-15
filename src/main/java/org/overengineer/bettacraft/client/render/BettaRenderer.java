@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.render;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -146,7 +148,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         // body wiggle: strong while swimming, a faint sway while hovering (a full wiggle at rest looked like turning)
         double v = Math.hypot(fish.getX() - fish.xo, fish.getZ() - fish.zo);
         // M21.5: the eased speed (the raw last-tick speed made the wiggle jump)
-        float swim = org.overengineer.bettacraft.config.CommonConfig.smoothSwimming() ? Math.min(1F, fish.swimPose.swim(partialTick) * 0.75F)
+        float swim = Features.enabled(Feature.SMOOTH_SWIMMING) ? Math.min(1F, fish.swimPose.swim(partialTick) * 0.75F)
                 : (float) Math.min(1.0, v / 0.04);
         float f = (fish.isSick() ? 2.0F : 1.2F + 3.1F * swim) * Mth.sin(0.6F * bob);
         pose.mulPose(Axis.YP.rotationDegrees(f));

@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "equipment.stoneCabinets"
+    }
+  ],
   "type": "bettacraft:stone_cabinet",
   "category": "misc",
   "key": {

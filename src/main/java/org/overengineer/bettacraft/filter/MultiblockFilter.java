@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.filter;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -151,7 +153,7 @@ public final class MultiblockFilter {
 
     /** {count, water blocks} of the multiblock filters cleaning this tank now. */
     public static double[] serving(Level level, TankBlockEntity c) {
-        if (!CommonConfig.multiblockFilter()) return new double[2];
+        if (!Features.enabled(Feature.MULTIBLOCK_FILTER)) return new double[2];
         synchronized (SERVING) {
             var m = SERVING.get(level);
             var e = m == null ? null : m.get(c.getBlockPos());
@@ -169,7 +171,7 @@ public final class MultiblockFilter {
 
     /** M25: water blocks the peat of the multiblock filters running for this tank softens now. */
     public static double peat(Level level, TankBlockEntity c) {
-        if (!CommonConfig.multiblockFilter()) return 0;
+        if (!Features.enabled(Feature.MULTIBLOCK_FILTER)) return 0;
         synchronized (SERVING) {
             var m = SERVING.get(level);
             var e = m == null ? null : m.get(c.getBlockPos());

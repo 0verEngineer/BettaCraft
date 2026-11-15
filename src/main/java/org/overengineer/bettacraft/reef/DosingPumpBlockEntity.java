@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -136,7 +138,7 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
             if (!level.isLoaded(n)) continue;
             TankBlockEntity c = TankMultiblock.getController(level, n);
             if (c != null) add(out, c);
-            if (CommonConfig.pipes() && d != getBlockState().getValue(DosingPumpBlock.FACING) && level.getBlockState(n).getBlock() instanceof PipeBlock) {
+            if (Features.enabled(Feature.PIPES) && d != getBlockState().getValue(DosingPumpBlock.FACING) && level.getBlockState(n).getBlock() instanceof PipeBlock) {
                 PipeNetwork net = PipeNetwork.of(level, n);
                 if (net == null) continue;
                 for (BlockPos e : net.tankEnds(level)) {

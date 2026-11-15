@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,7 +30,7 @@ import org.overengineer.bettacraft.tank.TankWater;
 
 /**
  * M32 part a (question A1): our needs for the animals of other mods with a {@link ForeignProfile}, in our tanks only
- * ({@code features.foreignCare}). Every second with the tank's care loop each of them gets the bettas' health timers
+ * ({@code features.foreignAnimals.care}). Every second with the tank's care loop each of them gets the bettas' health timers
  * ({@link BettaHealth}: hunger, temperature out of its range, bad water, wrong salinity, pH/TDS far out, too little oxygen,
  * overcrowding; sick after a week of trouble, dead after two more) with the values of its profile. A fed animal that is
  * not sick heals. The timers live in the entity's persistent data ({@link #KEY}), so they travel with it (bucket data
@@ -81,7 +83,7 @@ public final class ForeignCare {
 
     /** The care step of a tank (every second): the timers of every foreign animal with a profile. */
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
-        if (days <= 0 || !org.overengineer.bettacraft.config.CommonConfig.foreignCare()) return;
+        if (days <= 0 || !Features.enabled(Feature.FOREIGN_CARE)) return;
         TankData t = c.getTank();
         if (t.inhabitants().isEmpty()) return;
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
@@ -143,7 +145,7 @@ public final class ForeignCare {
     /** The foreign animals of the tank that eat this food, hungriest first (empty while the care is off). */
     public static List<LivingEntity> eaters(ServerLevel level, TankData t, ItemStack food, @Nullable BettaFood.Kind kind) {
         List<LivingEntity> out = new ArrayList<>();
-        if (!org.overengineer.bettacraft.config.CommonConfig.foreignCare() || ForeignProfiles.all().isEmpty()) return out;
+        if (!Features.enabled(Feature.FOREIGN_CARE) || ForeignProfiles.all().isEmpty()) return out;
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             ForeignProfile p = ForeignProfiles.of(e.getType());
             if (p != null && e instanceof LivingEntity le && eats(p, e, food, kind)) out.add(le);

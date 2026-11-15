@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.entity.betta;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -447,7 +449,7 @@ public class BettaEntity extends AbstractFish {
             flareAmount = net.minecraft.util.Mth.approach(flareAmount, isFlaring() ? 1F : 0F, 0.125F);
             // M21.5: eased swimming speed and body yaw (the wiggle followed the raw last-tick speed, the body the synced yaw steps)
             swimPose.tick(this, 0.6F, 0F, 0F, false);
-            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+            if (Features.enabled(Feature.SMOOTH_SWIMMING)) {
                 yBodyRot = swimPose.yaw();
                 yHeadRot = yBodyRot;
             }

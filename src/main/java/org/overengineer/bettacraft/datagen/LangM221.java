@@ -8,8 +8,6 @@ final class LangM221 {
 
     static void addAll(BiConsumer<String, String> a) {
         // config: swaying water plants in the miniature
-        a.accept("bettacraft.configuration.swayingForeignPlants", "Swaying water plants (Minecraft, other mods)");
-        a.accept("bettacraft.configuration.swayingForeignPlants.tooltip", "Kelp, seagrass, corals (#bettacraft:swaying_plants) and the water plants of other mods sway in the miniature outside the tank like inside (off: they stand still for everyone)");
         a.accept("bettacraft.configuration.swayingPlants", "Swaying water plants in miniatures");
         a.accept("bettacraft.configuration.swayingPlants.tooltip", "Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank (off: they stand still, only for you)");
         a.accept("bettacraft.configuration.swaying", "Swaying water plants");

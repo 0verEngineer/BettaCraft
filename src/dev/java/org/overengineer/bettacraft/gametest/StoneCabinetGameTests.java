@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * crafts a cabinet of that stone; metals, copper, glass, purpur, prismarine, mud bricks, mixed stones and slabs of
  * another stone do not; a stone of another mod in the dev runtime works the same; the cabinet keeps its stone through
  * breaking and placing, needs a pickaxe and has the hardness, blast resistance and sound of the stone; wooden cabinets
- * stay as they were; with {@code features.stoneCabinets} off nothing can be crafted.
+ * stay as they were; with {@code features.equipment.stoneCabinets} off nothing can be crafted.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -196,17 +198,17 @@ public final class StoneCabinetGameTests {
         });
     }
 
-    /** features.stoneCabinets off: no stone cabinets can be crafted, wooden ones still can. */
+    /** features.equipment.stoneCabinets off: no stone cabinets can be crafted, wooden ones still can. */
     @GameTest(template = EMPTY, batch = "bettacraft_stone_cabinet_config")
     public static void stoneCabinetsOffCraftsNone(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean before = CommonConfig.stoneCabinets();
+        boolean before = Features.enabled(Feature.STONE_CABINETS);
         try {
-            CommonConfig.FEATURE_STONE_CABINETS.set(false);
+            Features.set(Feature.STONE_CABINETS, false);
             h.assertTrue(craft(level, grid(Items.STONE_BRICK_SLAB, Items.STONE_BRICKS)).isEmpty(), "no stone cabinet while off");
             h.assertTrue(!craft(level, grid(Items.SPRUCE_SLAB, Items.SPRUCE_PLANKS)).isEmpty(), "wooden cabinets still");
         } finally {
-            CommonConfig.FEATURE_STONE_CABINETS.set(before);
+            Features.set(Feature.STONE_CABINETS, before);
         }
         h.assertTrue(!craft(level, grid(Items.STONE_BRICK_SLAB, Items.STONE_BRICKS)).isEmpty(), "on again");
         h.succeed();

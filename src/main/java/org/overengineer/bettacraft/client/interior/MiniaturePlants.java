@@ -23,7 +23,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSnapshot;
 /**
  * M21.1: the plant meshes of Rotala, Vallisneria and Anubias also in the miniature outside the tank. The miniature
  * builder puts the blocks of these plants into buffers of their own ({@link MiniatureMesh#plantBuffers}); while a tank is
- * closer than {@code render.miniaturePlantMeshDistance} (and {@code features.plantMeshes} is on) those voxels are left
+ * closer than {@code render.miniaturePlantMeshDistance} (and {@code features.visuals.plantMeshes} is on) those voxels are left
  * out and the tank draws the same meshes as inside ({@link PlantMeshRenderer}, built from the client copy of the
  * interior), scaled down with the miniature and swaying the same way. Further away the voxels come back (LOD).
  * <p>

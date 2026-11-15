@@ -22,7 +22,7 @@ import org.overengineer.bettacraft.registry.ModBlocks;
 /**
  * M21 plant prototype: the blocks of Rotala, Vallisneria and Anubias stay as they are (collision, the outline for the
  * shears, growth, the sync to the miniature), but in the tank interior they draw nothing while
- * {@code features.plantMeshes} is on: {@link PlantMeshRenderer} draws the plant with real leaves from its root instead.
+ * {@code features.visuals.plantMeshes} is on: {@link PlantMeshRenderer} draws the plant with real leaves from its root instead.
  * The miniature outside the tank still gets the block model (its builder passes a {@link RegionBlockGetter}): since
  * M21.1 it keeps those voxels apart and shows them only beyond the LOD distance; closer, the tank draws the meshes
  * ({@link MiniaturePlants}). While the chunk renderer asks for the model data, the roots are noted for

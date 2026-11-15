@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -194,9 +196,9 @@ public final class MonitorGameTests {
 
     @GameTest(template = EMPTY, batch = "bettacraft_m27_off", timeoutTicks = 40)
     public static void monitorsSwitchOff(GameTestHelper h) {
-        boolean on = CommonConfig.FEATURE_MONITORS.get();
+        boolean on = Features.own(Feature.MONITORS);
         try {
-            CommonConfig.FEATURE_MONITORS.set(false);
+            Features.set(Feature.MONITORS, false);
             BlockPos tl = new BlockPos(10, 2, 8);
             wall(h, tl, 1, 1);
             MonitorBlockEntity c = be(h, tl);
@@ -206,7 +208,7 @@ public final class MonitorGameTests {
             TankHistory.onCare(h.getLevel(), t);
             h.assertTrue(TankHistory.get(h.getLevel()).series(t.getTank().id()) == null, "records nothing");
         } finally {
-            CommonConfig.FEATURE_MONITORS.set(on);
+            Features.set(Feature.MONITORS, on);
         }
         h.succeed();
     }

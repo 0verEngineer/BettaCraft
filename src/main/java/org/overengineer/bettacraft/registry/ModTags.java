@@ -156,7 +156,7 @@ public final class ModTags {
     public static final TagKey<Block> LIMESTONE = TagKey.create(Registries.BLOCK, BettaCraft.id("limestone"));
     /** M25: driftwood in the tank (logs, roots): releases tannins, lowers the pH a little. */
     public static final TagKey<Block> DRIFTWOOD = TagKey.create(Registries.BLOCK, BettaCraft.id("driftwood"));
-    /** M28: clay and terracotta in a tank interior: the young shrimp hide in its holes and tubes ({@code features.decorEffects}). */
+    /** M28: clay and terracotta in a tank interior: the young shrimp hide in its holes and tubes ({@code features.decor.effects}). */
     public static final TagKey<Block> SHRIMP_SHELTER = TagKey.create(Registries.BLOCK, BettaCraft.id("shrimp_shelter"));
     /** M29: blocks of the small caves the Apistogramma females spawn in (the coconut shell, the slate cave). */
     public static final TagKey<Block> SMALL_CAVES = TagKey.create(Registries.BLOCK, BettaCraft.id("small_caves"));

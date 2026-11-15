@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -134,7 +136,7 @@ public final class TankInhabitants {
         return new InhabitantRules.Settings(ServerConfig.getOr(ServerConfig.INHABITANTS_ALLOW, List.of()),
                 ServerConfig.getOr(ServerConfig.INHABITANTS_DENY, List.of()),
                 ServerConfig.getOr(ServerConfig.INHABITANTS_MAX_HITBOX, (double) MAX_HITBOX),
-                ServerConfig.getOr(ServerConfig.INHABITANTS_REFUSE_HOSTILE, true), org.overengineer.bettacraft.config.CommonConfig.bigAnimals());
+                ServerConfig.getOr(ServerConfig.INHABITANTS_REFUSE_HOSTILE, true), Features.enabled(Feature.BIG_ANIMALS));
     }
 
     /**
@@ -521,7 +523,7 @@ public final class TankInhabitants {
         for (Entity e : level.getEntities((Entity) null, box, e -> e.isAlive() && (hasTankRef(e) || adoptable(e)))) {
             if (!tank.contains(e.blockPosition())) continue;
             // M17: a young animal of a big species that grew past inhabitants.maxHitbox in the tank goes out in a bag
-            // M30: a big animal stays (the size rule only decides when it goes in; with features.bigAnimals off it stays too)
+            // M30: a big animal stays (the size rule only decides when it goes in; with features.bigTanks.bigAnimals off it stays too)
             if (evict && !org.overengineer.bettacraft.big.BigAnimals.isBig(e) && accepts(e.getType(), e) == Acceptance.TOO_BIG) {
                 evictOutgrown(level, controller, e);
                 continue;

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.ArrayList;
@@ -93,7 +95,7 @@ public final class WildlifeCommand {
                 : Component.translatable("command.bettacraft.wildlife.plants", Component.translatable("command.bettacraft.wildlife.plants."
                 + plants.name().toLowerCase(java.util.Locale.ROOT)), org.overengineer.bettacraft.sources.WildTables.wildPlants(plants).entries().size(),
                 org.overengineer.bettacraft.sources.WildTables.wildFloating(plants).entries().size(),
-                org.overengineer.bettacraft.config.CommonConfig.wildPlants() ? "" : " (features.wildPlants: off)"));
+                Features.enabled(Feature.AQUATIC_WILD) ? "" : " (" + Feature.AQUATIC_WILD.key() + ": off)"));
         // the animals of the mod in the spawn list and their share of the group
         int total = 0, oursTotal = 0;
         for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) total += d.getWeight().asInt();
@@ -127,7 +129,7 @@ public final class WildlifeCommand {
         say(src, Component.translatable(!any ? "command.bettacraft.wildlife.vanilla.no_species"
                 : vanillaRoom ? "command.bettacraft.wildlife.vanilla.room" : "command.bettacraft.wildlife.vanilla.full"));
         int limit = WildSpawnPass.perPlayer();
-        if (!CommonConfig.wildSpawnPass()) {
+        if (!Features.enabled(Feature.WILD_SPAWN_PASS)) {
             say(src, Component.translatable("command.bettacraft.wildlife.pass.off"));
         } else if (near >= limit) {
             say(src, Component.translatable("command.bettacraft.wildlife.pass.full", near, limit));

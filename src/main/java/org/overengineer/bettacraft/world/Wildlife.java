@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.world;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
@@ -37,14 +39,14 @@ public final class Wildlife {
 
     // ------------------------------------------------------------------ colours and mutations
 
-    /** Chance that a wild animal shows a bred colour openly ({@code wildlife.beautifulWildChance}, {@code features.wildColors}). */
+    /** Chance that a wild animal shows a bred colour openly ({@code wildlife.beautifulWildChance}, {@code features.breeding.wildColors}). */
     public static double beautifulChance() {
-        return CommonConfig.wildColors() ? ServerConfig.getOr(ServerConfig.WILD_BEAUTIFUL_CHANCE, 0.03) : 0;
+        return Features.enabled(Feature.WILD_COLORS) ? ServerConfig.getOr(ServerConfig.WILD_BEAUTIFUL_CHANCE, 0.03) : 0;
     }
 
     /** Chance per gene and birth for the animals without their own genetics ({@code wildlife.otherMutationChance}). */
     public static double mutationChance() {
-        return CommonConfig.mutations() ? ServerConfig.getOr(ServerConfig.WILD_MUTATION_CHANCE, 0.003) : 0;
+        return Features.enabled(Feature.MUTATIONS) ? ServerConfig.getOr(ServerConfig.WILD_MUTATION_CHANCE, 0.003) : 0;
     }
 
     /** Genes of a wild betta: wild colours with hidden carriers, rarely a domestic-looking fish. */
@@ -53,12 +55,12 @@ public final class Wildlife {
         return BettaGenotype.randomWild(wildBettaSpecies(r.nextDouble()), r);
     }
 
-    /** M29 part c: shares of the wild species among the wild bettas (features.wildBettas): Betta imbellis, Betta smaragdina. */
+    /** M29 part c: shares of the wild species among the wild bettas (features.bettas.wildSpecies): Betta imbellis, Betta smaragdina. */
     public static final double IMBELLIS_SHARE = 0.15, SMARAGDINA_SHARE = 0.1;
 
     /** M29 part c: the species of a wild betta for a roll in 0..1. */
     public static org.overengineer.bettacraft.genetics.BettaSpecies wildBettaSpecies(double roll) {
-        if (!CommonConfig.wildBettas()) return org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS;
+        if (!Features.enabled(Feature.WILD_BETTAS)) return org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS;
         if (roll < IMBELLIS_SHARE) return org.overengineer.bettacraft.genetics.BettaSpecies.IMBELLIS;
         if (roll < IMBELLIS_SHARE + SMARAGDINA_SHARE) return org.overengineer.bettacraft.genetics.BettaSpecies.SMARAGDINA;
         return org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS;
@@ -70,7 +72,7 @@ public final class Wildlife {
      */
     public static TankmateGenes tankmate(TankmateSpecies s, RandomGenerator r) {
         if (r.nextDouble() < beautifulChance()) {
-            if (TankmateGenes.livebearer(s) && CommonConfig.livebearerGenetics()) {
+            if (TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
                 var strains = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(s == TankmateSpecies.ENDLER_GUPPY);
                 if (!strains.isEmpty()) return TankmateGenes.strain(s, strains.get(r.nextInt(strains.size())));
             } else if (s.varieties().size() > 1) {
@@ -83,7 +85,7 @@ public final class Wildlife {
     /** Genes of a wild shrimp, crayfish or snail ({@link NetCatching#wildGenes}), rarely showing a colour line. */
     public static CritterGenes critter(CritterSpecies s, RandomGenerator r) {
         int loci = s.loci().length;
-        if (!CommonConfig.snailColors() && s == CritterSpecies.RAMSHORN) loci = 2;
+        if (!Features.enabled(Feature.SNAIL_COLORS) && s == CritterSpecies.RAMSHORN) loci = 2;
         if (loci > 0 && r.nextDouble() < beautifulChance()) {
             return CritterGenes.pure(r.nextInt(loci), 0.25F + r.nextFloat() * 0.3F);
         }
@@ -156,7 +158,9 @@ public final class Wildlife {
      */
     public static boolean checkBig(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!natural(spawnType)) return true;
-        if (!CommonConfig.wildFish() || !CommonConfig.bigAnimals()) return false;
+        if (!Features.enabled(Feature.TANKMATES_WILD) || !Features.enabled(Feature.BIG_ANIMALS)) return false;
+        TankmateSpecies big = TankmateSpecies.of(type);
+        if (big != null && !big.available()) return false;
         if (!level.getFluidState(pos).is(FluidTags.WATER) || inTank(level, pos)) return false;
         int sea = level.getSeaLevel();
         if (pos.getY() > sea || pos.getY() < sea - 24) return false;
@@ -257,7 +261,7 @@ public final class Wildlife {
     /** Spawn rule of the wild tankmates and frogs: open surface water, no tank, few of them nearby. */
     public static boolean checkFish(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!natural(spawnType)) return true;
-        if (!CommonConfig.wildFish()) return false;
+        if (!wildSpawns(type)) return false;
         if (!level.getFluidState(pos).is(FluidTags.WATER) || inTank(level, pos)) return false;
         int sea = level.getSeaLevel();
         if (pos.getY() > sea || pos.getY() < sea - 13) return false;
@@ -266,10 +270,20 @@ public final class Wildlife {
         return nearby(level, pos, net.minecraft.world.entity.animal.AbstractFish.class, Wildlife::isWildFish) < cap;
     }
 
+    /**
+     * M33: whether wild ones of this tankmate (its species switch and the tankmates' wild spawns) or of the dwarf clawed frog
+     * (the frogs' wild spawns) may spawn by themselves.
+     */
+    public static boolean wildSpawns(EntityType<?> type) {
+        TankmateSpecies s = TankmateSpecies.of(type);
+        if (s != null) return s.available() && Features.enabled(Feature.TANKMATES_WILD);
+        return Features.enabled(Feature.FROGS_WILD);
+    }
+
     /** Spawn rule of the wild small animals: water right above a solid bottom, near the surface, no tank, few nearby. */
     public static boolean checkCritter(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!natural(spawnType)) return true;
-        if (!CommonConfig.wildCritters()) return false;
+        if (!Features.enabled(Feature.INVERTEBRATES_WILD)) return false;
         if (!level.getFluidState(pos).is(FluidTags.WATER) || inTank(level, pos)) return false;
         if (!level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), net.minecraft.core.Direction.UP)) return false;
         int sea = level.getSeaLevel();

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -114,12 +116,12 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     }
 
     /**
-     * M22.4: the side the hose of the filter goes up. On the server BACK while {@code features.cabinetOutletSide} is off (the
+     * M22.4: the side the hose of the filter goes up. On the server BACK while {@code features.equipment.cabinetOutletSide} is off (the
      * setting is kept); on the client the side the server sent.
      */
     public OutletSide outletSide() {
         if (level != null && level.isClientSide) return outlet;
-        return org.overengineer.bettacraft.config.CommonConfig.cabinetOutletSide() ? outlet : OutletSide.BACK;
+        return Features.enabled(Feature.CABINET_OUTLET_SIDE) ? outlet : OutletSide.BACK;
     }
 
     /** M22.4: the stored setting (also while the feature is off). */

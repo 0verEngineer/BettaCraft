@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.entity.tankmate;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -46,7 +48,7 @@ class TankmateMoveControl extends MoveControl {
         if (horiz > 1e-5) {
             float want = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90F;
             boolean fast = speedModifier > 1.1;
-            if (org.overengineer.bettacraft.config.CommonConfig.smoothSwimming()) {
+            if (Features.enabled(Feature.SMOOTH_SWIMMING)) {
                 // M21.5: the turn rate accelerates and brakes (no snapping), the fish keeps some speed while it turns: a curve
                 float maxTurn = fast ? 18F : precise ? 12F : 7F;
                 float diff = Mth.wrapDegrees(want - fish.getYRot());

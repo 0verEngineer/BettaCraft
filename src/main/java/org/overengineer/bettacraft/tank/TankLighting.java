@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -40,9 +42,9 @@ public final class TankLighting {
         return 0;
     }
 
-    /** Light factor 0..1 of the tank's settings at this time (1 with features.lightTimer off). */
+    /** Light factor 0..1 of the tank's settings at this time (1 with features.equipment.lightTimer off). */
     public static double factor(TankData t, long dayTime) {
-        if (!CommonConfig.lightTimer()) return 1;
+        if (!Features.enabled(Feature.LIGHT_TIMER)) return 1;
         double f = t.lightDimmer() / 100.0;
         if (t.lightTimer()) f *= curve(minuteOfDay(dayTime), t.lightOn(), t.lightOff());
         return Math.max(0, Math.min(1, f));

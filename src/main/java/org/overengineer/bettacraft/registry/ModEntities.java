@@ -148,8 +148,13 @@ public final class ModEntities {
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        // M33: natural spawns of wild bettas only with features.bettas.wildSpawns (the biome lists are fixed at world load)
         event.register(BETTA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, spawnType, pos, random) -> (spawnType != net.minecraft.world.entity.MobSpawnType.NATURAL
+                        && spawnType != net.minecraft.world.entity.MobSpawnType.CHUNK_GENERATION
+                        || org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BETTAS_WILD))
+                        && WaterAnimal.checkSurfaceWaterAnimalSpawnRules(type, level, spawnType, pos, random),
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
         // M22.3: the wild tankmates, frogs and small animals (rare, never in a tank)
         for (var e : TANKMATES.entrySet()) {
             // M30: the big animals with their own, rarer rule

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -103,7 +105,7 @@ public final class LiveFood {
      * they need (the hungriest first); the rest sinks to the shrimp and snails. The water of the suspension overflows.
      */
     public static int fillTank(ServerLevel level, TankBlockEntity c, FluidStack resource, IFluidHandler.FluidAction action) {
-        if (!CommonConfig.liveFoodPump()) return 0;
+        if (!Features.enabled(Feature.LIVE_FOOD_PUMP)) return 0;
         int portions = resource.getAmount() / PORTION_MB;
         ItemStack food = food(resource);
         if (portions <= 0 || food.isEmpty() || BettaFood.kind(food) == null) return 0;

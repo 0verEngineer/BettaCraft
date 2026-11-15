@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.containers;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -95,7 +97,7 @@ public final class BucketCatching {
     /** The config switch (common). */
     private static final class CommonConfigs {
         static boolean big() {
-            return org.overengineer.bettacraft.config.CommonConfig.bigContainers();
+            return Features.enabled(Feature.BIG_CONTAINERS);
         }
     }
 }

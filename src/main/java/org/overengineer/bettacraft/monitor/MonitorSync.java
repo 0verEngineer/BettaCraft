@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,7 +35,7 @@ import org.overengineer.bettacraft.tank.TankData;
  * M27: the work of a monitor screen every {@link #INTERVAL} ticks (in its controller, all screens in the same tick):
  * <ol>
  * <li>Power: while a power option is on ({@link #powerRequired}) it takes {@code monitor.fePerBlock} FE per tick and block,
- * else it shows "No power". With {@code features.monitors} off it is dark.</li>
+ * else it shows "No power". With {@code features.monitors.enabled} off it is dark.</li>
  * <li>Viewers: the players tracking the chunk (their render distance) within {@link #VIEW_DISTANCE} blocks. Without
  * viewers nothing else happens: no tank lookups, no packets.</li>
  * <li>Tanks: every {@link #DISCOVER_EVERY} cycles it looks through the loaded chunks around it for tank controllers within
@@ -77,7 +79,7 @@ public final class MonitorSync {
 
     public static void cycle(ServerLevel level, MonitorBlockEntity c) {
         int status;
-        if (!CommonConfig.monitors()) status = MonitorBlockEntity.OFF;
+        if (!Features.enabled(Feature.MONITORS)) status = MonitorBlockEntity.OFF;
         else if (!powerRequired()) status = MonitorBlockEntity.ON;
         else status = c.energy().use(fePerBlock() * c.area() * INTERVAL) ? MonitorBlockEntity.ON : MonitorBlockEntity.NO_POWER;
         c.setStatus(status);

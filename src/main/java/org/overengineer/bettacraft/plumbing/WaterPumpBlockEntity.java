@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -50,7 +52,7 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
     public int pump(Level level, BlockPos pos, BlockState state) {
         int n = 0;
         double share = Regulator.share(power);
-        if (CommonConfig.pipes() && share > 0 && !level.hasNeighborSignal(pos)) {
+        if (Features.enabled(Feature.PIPES) && share > 0 && !level.hasNeighborSignal(pos)) {
             int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
             if (DeviceEnergy.required()) energy.drive(level, pos, fe); // M32 part c: Create's rotation
             if (!DeviceEnergy.required() || energy.getEnergyStored() >= fe) {

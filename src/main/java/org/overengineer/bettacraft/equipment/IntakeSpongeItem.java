@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -29,7 +31,7 @@ public class IntakeSpongeItem extends Item {
         Level level = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();
         Player player = ctx.getPlayer();
-        if (!org.overengineer.bettacraft.config.CommonConfig.moreInternalFilters()) return InteractionResult.PASS;
+        if (!Features.enabled(Feature.MORE_INTERNAL_FILTERS)) return InteractionResult.PASS;
         Regulator.Device d = Regulator.find(level, pos);
         if (d == null || !d.takesSponge()) return InteractionResult.PASS;
         if (d.hasSponge()) {

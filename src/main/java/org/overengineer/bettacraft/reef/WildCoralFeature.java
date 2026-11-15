@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.config.Features;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -17,7 +18,7 @@ import org.overengineer.bettacraft.registry.ModBlocks;
  * M22.3: a colony of one Bettacraft coral (or the bubble tip anemone) on a warm ocean reef. Placed after the vanilla
  * reef (the vegetation step of the warm ocean); it looks for the tops of vanilla coral blocks with water above around the
  * spot and settles a few colonies of one species there. Nothing happens away from a reef or with
- * {@code features.wildCorals} off.
+ * {@code features.corals.wildCorals} off.
  */
 public class WildCoralFeature extends Feature<NoneFeatureConfiguration> {
     /** Search radius around the spot. */
@@ -34,7 +35,7 @@ public class WildCoralFeature extends Feature<NoneFeatureConfiguration> {
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
-        if (!CommonConfig.wildCorals()) return false;
+        if (!Features.enabled(org.overengineer.bettacraft.config.Feature.WILD_CORALS)) return false;
         return place(ctx.level(), ctx.origin(), ctx.random());
     }
 

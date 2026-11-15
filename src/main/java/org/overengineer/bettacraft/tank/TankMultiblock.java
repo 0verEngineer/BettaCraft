@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -158,7 +160,7 @@ public final class TankMultiblock {
             if (count <= bestCount) continue;
             int scale = subset.getFirst().getTank().scale();
             // M30: with big tanks, tanks of different scales join (the finer interiors are shrunk, InteriorRescale)
-            if (!org.overengineer.bettacraft.config.CommonConfig.bigTanks() && subset.stream().anyMatch(c -> c.getTank().scale() != scale)) continue;
+            if (!Features.enabled(Feature.BIG_TANKS) && subset.stream().anyMatch(c -> c.getTank().scale() != scale)) continue;
             if (freeShapes() ? fitsAsShape(pos, subset) : fitsAsCuboid(pos, subset)) {
                 best = subset;
                 bestCount = count;
@@ -277,10 +279,10 @@ public final class TankMultiblock {
 
     /**
      * M30: the interior scale of a joined tank: the finest scale of the parts, smaller (8, 4) once the tank is longer than
-     * {@code bigTankRules.interiorScale8Above} / {@code interiorScale4Above} blocks (features.bigTanks; off: the main tank's).
+     * {@code bigTankRules.interiorScale8Above} / {@code interiorScale4Above} blocks (features.bigTanks.enabled; off: the main tank's).
      */
     static int mergedScale(List<TankData> olds, List<BlockPos> blocks, int mainScale) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.bigTanks()) return mainScale;
+        if (!Features.enabled(Feature.BIG_TANKS)) return mainScale;
         int scale = mainScale;
         for (TankData t : olds) scale = Math.min(scale, t.scale());
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;

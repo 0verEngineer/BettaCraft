@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -65,7 +67,7 @@ public class AirStoneBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.powerRegulator()) return InteractionResult.PASS;
+        if (!Features.enabled(Feature.POWER_REGULATOR)) return InteractionResult.PASS;
         if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

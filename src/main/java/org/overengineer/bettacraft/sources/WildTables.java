@@ -105,7 +105,7 @@ public final class WildTables {
 
     /**
      * M22.4: what the aquarium net scoops up from the bottom with a plant (share {@code interiorPlants.netPlantShare} of its
-     * catches, {@code features.plantNetCatches}): rivers Vallisneria, Monte Carlo from the banks, Java moss on the stones;
+     * catches, {@code features.aquaticPlants.netCatches}): rivers Vallisneria, Monte Carlo from the banks, Java moss on the stones;
      * jungle water the Amazon sword (Amazon basin), Alternanthera (South America) and the tiger lotus (tropical Africa and
      * Asia); swamps Monte Carlo, Alternanthera, the tiger lotus and the crypts with the rare "Flamingo".
      */

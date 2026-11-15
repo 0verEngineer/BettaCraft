@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -239,7 +241,7 @@ public final class TankCare {
             if (level.isLoaded(p) && level.getBlockEntity(p) instanceof FeederBlockEntity f) return f;
         }
         // M21.5: a clip-on feeder on the side of a top block
-        if (org.overengineer.bettacraft.config.CommonConfig.clipFeeder()) {
+        if (Features.enabled(Feature.CLIP_FEEDER)) {
             for (long l : tank.members()) {
                 BlockPos p = BlockPos.of(l);
                 if (tank.contains(p.above())) continue;

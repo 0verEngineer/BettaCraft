@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -1038,10 +1040,10 @@ public final class TankmateBreeding {
         return (int) Math.floor((cap - others) / org.overengineer.bettacraft.tank.BigTankRules.water(len, f) + 1e-6);
     }
 
-    /** M21.6: the species a guppy or an endler crosses with (with features.livebearerGenetics), or null. */
+    /** M21.6: the species a guppy or an endler crosses with (with features.tankmates.livebearerGenetics), or null. */
     @Nullable
     public static TankmateSpecies hybridPartner(TankmateSpecies s) {
-        if (!org.overengineer.bettacraft.config.CommonConfig.livebearerGenetics()) return null;
+        if (!Features.enabled(Feature.LIVEBEARER_GENETICS)) return null;
         return s == TankmateSpecies.GUPPY ? TankmateSpecies.ENDLER_GUPPY : s == TankmateSpecies.ENDLER_GUPPY ? TankmateSpecies.GUPPY : null;
     }
 

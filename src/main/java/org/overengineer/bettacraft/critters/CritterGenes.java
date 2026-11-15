@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.random.RandomGenerator;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -218,7 +220,7 @@ public record CritterGenes(int a, int b, float grade) {
             case "caridina:black" -> 0x16141C;
             case "caridina:taiwan" -> 0x3C86E0; // Blue Bolt
             case "caridina:tiger" -> 0x1E3A9C; // Orange Eye Blue Tiger
-            case "apple_snail:gold" -> org.overengineer.bettacraft.config.CommonConfig.snailColors() ? 0xF4C414 : 0xE8B828; // M21.5: a stronger yellow
+            case "apple_snail:gold" -> Features.enabled(Feature.SNAIL_COLORS) ? 0xF4C414 : 0xE8B828; // M21.5: a stronger yellow
             case "apple_snail:blue" -> 0x5A7CB0;
             case "apple_snail:purple" -> 0x6A3A72;
             case "apple_snail:ivory" -> 0xEEE6D2;

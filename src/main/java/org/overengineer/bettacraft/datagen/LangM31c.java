@@ -10,12 +10,6 @@ final class LangM31c {
     private LangM31c() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("bettacraft.configuration.herps", "Amphibians and reptiles");
-        a.accept("bettacraft.configuration.herps.tooltip", "Amphibians and reptiles in terraria and paludaria: dart frogs, horned frog, leopard gecko, crested gecko and corn snake (off: none go into tanks; those in tanks stay)");
-        a.accept("bettacraft.configuration.herpBreeding", "Breeding of amphibians and reptiles");
-        a.accept("bettacraft.configuration.herpBreeding.tooltip", "Breeding of the amphibians and reptiles: eggs on the land of the tank (dart frog tadpoles into the water, the leopard gecko's sex by the nest temperature; the horned frog does not breed) (off: no eggs; eggs already laid still hatch)");
-        a.accept("bettacraft.configuration.wildHerps", "Wild amphibians and reptiles");
-        a.accept("bettacraft.configuration.wildHerps.tooltip", "Wild amphibians and reptiles: dart frogs and crested geckos in jungles, horned frogs in savannas and swamps, leopard geckos in deserts and badlands (#bettacraft:arid_lands), corn snakes in forests and plains (#bettacraft:snake_lands)");
 
         a.accept("entity.bettacraft.dart_frog", "Poison Dart Frog");
         a.accept("entity.bettacraft.dart_frog.tinctorius", "Dyeing Poison Dart Frog");

@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -24,7 +26,7 @@ import org.overengineer.bettacraft.registry.ModBlocks;
  * M21.5: break protection ("Bruchschutz", switch in the tank menu, owner or OP only, off for new tanks). While it is on
  * nobody can break the tank - not the owner, not in creative - nor the lid, light and feeders on it, the clip-on feeders
  * on its glass and the cabinet under it; explosions and pistons leave it alone too
- * ({@code tank.protectFromExplosionsAndPistons}, default on). {@code features.breakProtection} off: no effect.
+ * ({@code tank.protectFromExplosionsAndPistons}, default on). {@code features.equipment.breakProtection} off: no effect.
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class TankProtection {
@@ -33,7 +35,7 @@ public final class TankProtection {
     /** The protected tank this block belongs to (glass, lid / light / feeder on it, clip-on feeder, cabinet under it), or null. */
     @Nullable
     public static TankBlockEntity protectedBy(Level level, BlockPos pos) {
-        if (!CommonConfig.breakProtection()) return null;
+        if (!Features.enabled(Feature.BREAK_PROTECTION)) return null;
         BlockState s = level.getBlockState(pos);
         if (s.is(ModBlocks.TANK.get())) return check(level, pos);
         if (s.is(ModBlocks.TANK_LID.get()) || s.getBlock() instanceof org.overengineer.bettacraft.equipment.TankLightBlock || s.is(ModBlocks.FEEDER.get())) return check(level, pos.below());
@@ -59,7 +61,7 @@ public final class TankProtection {
     /** Owner or OP; null = done, else the reason it was refused. */
     @Nullable
     public static Component toggle(Player player, TankBlockEntity c) {
-        if (!CommonConfig.breakProtection()) return Component.translatable("message.bettacraft.tank.break_protection_off");
+        if (!Features.enabled(Feature.BREAK_PROTECTION)) return Component.translatable("message.bettacraft.tank.break_protection_off");
         TankData t = c.getTank();
         boolean owner = player.getUUID().equals(t.owner()) || player.hasPermissions(2) || t.owner() == null;
         if (!owner) return Component.translatable("message.bettacraft.tank.only_owner");

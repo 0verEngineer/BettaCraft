@@ -115,7 +115,5 @@ final class LangM27 {
         a.accept("bettacraft.configuration.range.tooltip", "Blocks from a monitor within which it finds the tanks (nearest point of the tank)");
         a.accept("bettacraft.configuration.fePerBlock", "Monitor FE per block");
         a.accept("bettacraft.configuration.fePerBlock.tooltip", "FE per tick of each monitor block while a power option is on (power.* or pipes.pumpsRequireEnergy)");
-        a.accept("bettacraft.configuration.monitors", "Monitors");
-        a.accept("bettacraft.configuration.monitors.tooltip", "Monitors: screens of monitor blocks that show the values of every tank in range, with graphs of the last days (off: the screens stay dark and record nothing)");
     }
 }

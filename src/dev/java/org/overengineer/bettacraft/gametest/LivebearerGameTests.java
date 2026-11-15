@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -32,7 +34,7 @@ import org.overengineer.bettacraft.world.TankmateTrades;
  * M21.6: the guppy and endler genetics in a tank: the young inherit at birth (the father's Y to every son, his X to
  * every daughter, recessive body colours carried hidden), the sons of a Red Cobra and a Full Gold are Red Cobras,
  * endlers and guppies make hybrids, old fixed varieties are converted on load and kept across save and load, the
- * trader sells strains, and with {@code features.livebearerGenetics} off nothing of it happens.
+ * trader sells strains, and with {@code features.tankmates.livebearerGenetics} off nothing of it happens.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -243,12 +245,12 @@ public final class LivebearerGameTests {
         h.succeed();
     }
 
-    /** features.livebearerGenetics off: no genome on the entity (old textures), no hybrids. */
+    /** features.tankmates.livebearerGenetics off: no genome on the entity (old textures), no hybrids. */
     @GameTest(template = EMPTY, timeoutTicks = 300, batch = "bettacraft_livebearer_config")
     public static void geneticsOffKeepsTheOldVarieties(GameTestHelper h) {
-        boolean before = CommonConfig.livebearerGenetics();
+        boolean before = Features.enabled(Feature.LIVEBEARER_GENETICS);
         try {
-            CommonConfig.FEATURE_LIVEBEARER_GENETICS.set(false);
+            Features.set(Feature.LIVEBEARER_GENETICS, false);
             TankBlockEntity c = tank(h, 2, 2);
             TankmateEntity f = add(h, c, TankmateSpecies.GUPPY, TankmateGenes.wild(TankmateSpecies.GUPPY, 0.0, new Random(3)::nextLong), true);
             add(h, c, TankmateSpecies.ENDLER_GUPPY, TankmateGenes.pure(TankmateSpecies.ENDLER_GUPPY, "tiger"), false);
@@ -258,7 +260,7 @@ public final class LivebearerGameTests {
             days(h, c, 6.0, 0.5);
             h.assertTrue(!f.isGravid() && mates(h, c).size() == 2, "no hybrids without the genetics");
         } finally {
-            CommonConfig.FEATURE_LIVEBEARER_GENETICS.set(before);
+            Features.set(Feature.LIVEBEARER_GENETICS, before);
         }
         h.succeed();
     }

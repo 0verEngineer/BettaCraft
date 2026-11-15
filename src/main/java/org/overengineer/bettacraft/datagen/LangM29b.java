@@ -65,10 +65,6 @@ final class LangM29b {
         a.accept("cause.bettacraft.teeth", "overgrown teeth (no snails or hard food)");
         a.accept("cause.bettacraft.fin_nipping", "nipped fins");
         a.accept("log.bettacraft.tm.fin_nipping", "%s nips the fins of %s");
-        a.accept("bettacraft.configuration.puffers", "Puffers");
-        a.accept("bettacraft.configuration.puffers.tooltip", "Puffers: dwarf puffer, red-eye puffer and the brackish green spotted puffer at the wandering trader, in the aquarium net and wild (they eat snails, nip fins and need snails or hard food for their teeth; off: no new ones; fish already caught stay)");
-        a.accept("bettacraft.configuration.barbsAndLoaches", "Barbs and loaches");
-        a.accept("bettacraft.configuration.barbsAndLoaches.tooltip", "Barbs and loaches: tiger, odessa and cherry barb, dwarf chain loach, reticulated loach and garra at the wandering trader, in the aquarium net and wild (off: no new ones; fish already caught stay)");
         a.accept("bettacraft.configuration.pufferSnailsPerDay", "Snails a puffer eats");
         a.accept("bettacraft.configuration.pufferSnailsPerDay.tooltip", "Snails one puffer eats per day; it prefers bladder and ramshorn snails (0 = never)");
         a.accept("bettacraft.configuration.pufferTeethDays", "Days until a puffer's teeth overgrow");

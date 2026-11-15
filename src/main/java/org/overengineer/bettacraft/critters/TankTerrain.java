@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -80,7 +82,7 @@ public final class TankTerrain implements CritterMovement.Terrain {
     /** M21: the floor under an overhang or in a cave at the height y (see {@link CritterMovement.Terrain#groundAt}). */
     @Override
     public double groundAt(double x, double y, double z) {
-        if (region == null || server == null || !org.overengineer.bettacraft.config.CommonConfig.pathfinding()) return ground(x, z);
+        if (region == null || server == null || !Features.enabled(Feature.PATHFINDING)) return ground(x, z);
         int bx = (int) Math.floor(x), bz = (int) Math.floor(z);
         int ix = bx - minX, iz = bz - minZ;
         if (ix < 0 || iz < 0 || ix >= sx || iz >= sz) return Double.NaN;
@@ -118,7 +120,7 @@ public final class TankTerrain implements CritterMovement.Terrain {
     /** M21: a spot on the floor with decoration or leaves above it (under an overhang, in a cave) near (x, z). */
     @Override
     public double[] shelter(double x, double y, double z, double reach, java.util.random.RandomGenerator rnd) {
-        if (region == null || server == null || !org.overengineer.bettacraft.config.CommonConfig.pathfinding()) return null;
+        if (region == null || server == null || !Features.enabled(Feature.PATHFINDING)) return null;
         for (int i = 0; i < 16; i++) {
             double sx2 = x + (rnd.nextDouble() * 2 - 1) * reach, sz2 = z + (rnd.nextDouble() * 2 - 1) * reach;
             double top = ground(sx2, sz2);

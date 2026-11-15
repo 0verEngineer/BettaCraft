@@ -36,9 +36,5 @@ final class LangM224 {
         a.accept("bettacraft.configuration.fishingPlantsSwamp.tooltip", "Plants fishing brings up in swamps (plantFishingChance): entries \"plant_id=weight\"; empty = none");
         a.accept("bettacraft.configuration.fishingPlantsMangrove", "Fishing plants in mangrove swamps");
         a.accept("bettacraft.configuration.fishingPlantsMangrove.tooltip", "Plants fishing brings up in mangrove swamps (plantFishingChance): entries \"plant_id=weight\"; empty = none");
-        a.accept("bettacraft.configuration.plantNetCatches", "Plants with the net");
-        a.accept("bettacraft.configuration.plantNetCatches.tooltip", "The aquarium net now and then brings up an aquarium plant from the bottom of rivers, jungle water and swamps (interiorPlants.netPlantShare; off: plants only from fishing, bottles, shears and the trader)");
-        a.accept("bettacraft.configuration.cabinetOutletSide", "Outlet side of the cabinet filter");
-        a.accept("bettacraft.configuration.cabinetOutletSide.tooltip", "Setting in the cabinet menu: on which tank wall the hose of the external filter in the cabinet goes up (back, left, right, front); jet, bubbles and the current follow it, in front of the outlet the water moves faster (seahorses, corals) (off: always the back wall, the current evenly like before)");
     }
 }

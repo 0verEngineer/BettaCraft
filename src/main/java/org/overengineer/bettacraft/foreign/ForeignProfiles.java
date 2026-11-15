@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.config.Features;
+import org.overengineer.bettacraft.config.Feature;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.Reader;
@@ -56,10 +58,10 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         return byType.get(type);
     }
 
-    /** The profile of this animal while our care for foreign animals is on ({@code features.foreignCare}), or null. */
+    /** The profile of this animal while our care for foreign animals is on ({@code features.foreignAnimals.care}), or null. */
     @Nullable
     public static ForeignProfile cared(Entity e) {
-        return CommonConfig.foreignCare() ? byType.get(e.getType()) : null;
+        return Features.enabled(Feature.FOREIGN_CARE) ? byType.get(e.getType()) : null;
     }
 
     /**
@@ -77,7 +79,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     /** The profile of this type while our care for foreign animals is on, or null. */
     @Nullable
     public static ForeignProfile cared(EntityType<?> type) {
-        return CommonConfig.foreignCare() ? byType.get(type) : null;
+        return Features.enabled(Feature.FOREIGN_CARE) ? byType.get(type) : null;
     }
 
     @Nullable
@@ -149,7 +151,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         }
         for (Map.Entry<EntityType<?>, ForeignProfile> e : map.entrySet()) {
             if (e.getValue().terrarium() == null) continue;
-            TerrariumAnimals.register(e.getKey(), e.getValue().terrarium(), CommonConfig::foreignCare);
+            TerrariumAnimals.register(e.getKey(), e.getValue().terrarium(), () -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FOREIGN_CARE));
             TERRARIUM.add(e.getKey());
         }
         byType = Map.copyOf(map);
