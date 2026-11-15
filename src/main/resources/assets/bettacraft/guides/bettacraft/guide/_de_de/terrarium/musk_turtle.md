@@ -33,8 +33,12 @@ oder auf eine Wurzel, um sich zu sonnen.
   Stufe höchstens einen viertel Block der Miniatur).
 * Was ihr fehlt, zeigen der Reiter **Klima** und das Logbuch. Zu kaltes oder zu warmes Wasser und die falsche Art von Becken
   kosten nach einem Tag Leben; zu viel oder zu wenig Land stresst sie nur. Nach 7 Tagen ohne Futter hungert sie.
-* Im Becken vermehrt sie sich noch nicht.
+* Sie legt 2 bis 4 Eier in Sand oder Erde auf dem Land (siehe [Schildkrötenzucht](turtle_breeding.md)); ihre Eier geben
+  Weibchen an beiden Enden des Temperaturbereichs und Männchen in der Mitte (22 bis 26 °C).
+* Sie wächst in 4 Spieltagen heran. Ein Wassereimer fängt sie außerhalb eines Beckens.
 
 ## Bezug
 
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in Sümpfen, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.wildTurtles`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in Flüssen, in Gruppen von 1–2 (Spawn-Gewicht 2) (Config `features.wildTurtles`).
 * <ItemLink id="bettacraft:musk_turtle_bucket" />: **Fahrender Händler** (seltene Angebote): 1 für 7 Smaragde (Config `features.turtles`).

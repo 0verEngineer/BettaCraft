@@ -33,8 +33,12 @@ a root to bask.
   block of the miniature).
 * What it lacks shows in the **Climate** tab and in the log. Water too cold or too warm and the wrong kind of tank cost
   health after a day; too much land or too little only stresses it. After 7 days without food it starves.
-* It does not breed in the tank yet.
+* It lays 2 to 4 eggs into sand or soil on the land (see [turtle breeding](turtle_breeding.md)); its eggs give females
+  at both ends of the temperature range and males in the middle (22 to 26 °C).
+* It grows up in 4 game days. A water bucket catches it outside a tank.
 
 ## Obtaining
 
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in swamps, in groups of 1–2 (spawn weight 4) (config `features.wildTurtles`).
+* <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wild** in rivers, in groups of 1–2 (spawn weight 2) (config `features.wildTurtles`).
 * <ItemLink id="bettacraft:musk_turtle_bucket" />: **Wandering trader** (rare offers): 1 for 7 emeralds (config `features.turtles`).

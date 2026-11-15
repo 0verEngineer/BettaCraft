@@ -34,6 +34,8 @@ class AnimalSourcesTest {
         out.put(Target.FROG, "dwarf clawed frog");
         for (TankmateSpecies s : TankmateSpecies.values()) out.put(Target.tankmate(s), s.id());
         for (CritterSpecies s : CritterSpecies.values()) out.put(Target.critter(s), s.id());
+        // M31 part b: the turtles (their bucket or box is the target)
+        for (var s : org.overengineer.bettacraft.terrarium.TurtleSpecies.ALL) out.put(Target.item(s.containerId()), s.id());
         return out;
     }
 

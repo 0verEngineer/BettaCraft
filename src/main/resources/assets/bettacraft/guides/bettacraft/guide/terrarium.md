@@ -68,7 +68,19 @@ warmest place), too dry or too humid, not enough UV, no basking spot, too little
 warm. Being in the wrong tank, too cold or too hot costs health after a day (`terrarium.harmAfterDays`); the rest only
 stresses it. It eats when the tank is fed (by hand or by the [feeder](equipment/feeder.md)).
 
-The first one is the [musk turtle](terrarium/musk_turtle.md).
+The turtles:
+
+| Turtle | Tank | Needs |
+|---|---|---|
+| [Musk turtle](terrarium/musk_turtle.md) | paludarium, little land | water 20-28 °C |
+| [Pond slider](terrarium/slider_turtle.md) (red-eared, yellow-bellied) | paludarium, half land | basking lamp, UV; **grows large** (12 blocks) |
+| [Hermann's tortoise](terrarium/hermann_tortoise.md) | dry terrarium | basking lamp, strong UV, greens; brumates in the cold |
+| [Reeves' turtle](terrarium/reeves_turtle.md) | paludarium | basking spot, a little cooler |
+| Sea turtle hatchlings (vanilla) | paludarium | only hatchlings; grown ones are too big |
+
+They lay eggs into sand or soil on the land, and the nest temperature decides the sex of the hatchlings:
+[turtle breeding](terrarium/turtle_breeding.md). Wild ones live in swamps and rivers (the water turtles) and in savannas
+and dry shrublands (the tortoise).
 
 ## Water care in a terrarium
 
@@ -80,4 +92,5 @@ and the menu says so. A paludarium keeps all of them for its water.
 Server config `terrarium.*`: the land shares of the kinds, the strength of the devices, the time constants, the water of
 the mister, the days to harm; `power.*`: heat mats use the heaters' energy switch (`heatMatFePerTick`), misters their own
 (`terrarium.misterRequiresEnergy`). Common config: `features.terrarium` (off: every tank is an aquarium),
-`features.terrariumDevices`, `features.turtles`.
+`features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`. Turtles:
+`terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

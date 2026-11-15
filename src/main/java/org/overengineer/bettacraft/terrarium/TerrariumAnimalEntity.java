@@ -105,6 +105,32 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         return stress;
     }
 
+    /** M31 part b: spawned wild by the spawn pass and still free (despawns far from players). */
+    public boolean isWild() {
+        return wild && !TankInhabitants.hasTankRef(this) && !hasCustomName();
+    }
+
+    /** M31 part b: the tank it lives in (server; null outside a tank). */
+    @Nullable
+    protected TankData tankData() {
+        return tank;
+    }
+
+    /** M31 part b: whether it ate within this many days. */
+    public boolean fedWithin(double days) {
+        return lastFed != NEVER && daysSinceFed() <= days;
+    }
+
+    /** M31 part b: the hunger stands still for this many days (brumation). */
+    protected void pauseHunger(double days) {
+        if (lastFed != NEVER) lastFed += Math.round(days * TICKS_PER_DAY);
+    }
+
+    /** M31 part b: whether it rests and should not move (brumation); the walker then holds still. */
+    protected boolean resting() {
+        return false;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -123,7 +149,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
                 cold = tank.hasClimate() && n.air().below(tank.airTemp());
             }
         }
-        if (tank != null && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
+        if (tank != null && !resting() && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
         boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null && walker.basking();
         if (entityData.get(DATA_BASKING) != bask) entityData.set(DATA_BASKING, bask);
     }
@@ -131,7 +157,8 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     @Override
     protected void customServerAiStep() {
         if (tank != null && level() instanceof ServerLevel server) {
-            walker.tick(this, server, tank, gait(), cold);
+            if (resting()) walker.hold();
+            else walker.tick(this, server, tank, gait(), cold);
             return;
         }
         super.customServerAiStep();

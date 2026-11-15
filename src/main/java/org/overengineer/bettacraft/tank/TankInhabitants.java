@@ -154,6 +154,7 @@ public final class TankInhabitants {
     public static long carriedWater(ItemStack stack) {
         if (stack.getItem() instanceof FishBagItem) return BAG_MB;
         if (stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem) return 0; // M30: the tub brings no water
+        if (stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem) return 0; // M31 part b: a terrarium box neither
         FishContainers.Foreign f = FishContainers.kind(stack);
         return f != null ? f.waterMb : BUCKET_MB;
     }
@@ -175,6 +176,7 @@ public final class TankInhabitants {
             return ItemInteractionResult.CONSUME;
         }
         ItemStack empty = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem ? new ItemStack(ModItems.TRANSPORT_TUB.get()) // M30
+                : stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem ? new ItemStack(ModItems.TERRARIUM_BOX.get()) // M31 part b
                 : stack.getItem() instanceof FishBagItem ? new ItemStack(ModItems.FISH_BAG.get())
                 : FishContainers.kind(stack) != null ? FishContainers.emptied(stack) : new ItemStack(Items.BUCKET);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, empty));
@@ -206,7 +208,9 @@ public final class TankInhabitants {
             return Component.translatable("message.bettacraft.tank.too_little_water", Math.round(minFill * 100));
         }
         Acceptance pre = accepts(type, null);
-        if (pre != Acceptance.OK && pre != Acceptance.BIG) return rejection(pre, type);
+        // M31 part b: a young animal of a big species in a bag (a sea turtle hatchling) is judged by its own size below
+        boolean ownSize = pre == Acceptance.TOO_BIG && (FishContainers.storedEntity(stack) != null || FishBagItem.storedEntity(stack) != null);
+        if (pre != Acceptance.OK && pre != Acceptance.BIG && !ownSize) return rejection(pre, type);
         // M30: a big animal needs a tank big enough for it (and the other big ones in it); said before the water
         if (pre == Acceptance.BIG) {
             Component big = org.overengineer.bettacraft.big.BigAnimals.refusal(tank, liveInhabitants(level, tank), type, null);
@@ -413,7 +417,7 @@ public final class TankInhabitants {
             return m.species().stock() * ServerConfig.getOr(ServerConfig.TANKMATES_STOCKING, 1.0) * m.lifeStage().stocking();
         }
         // M30: a big animal of another kind (the dolphin) like a big species: a quarter of the water blocks it needs
-        if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31
+        if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) return ta instanceof org.overengineer.bettacraft.terrarium.TurtleEntity ? ta.stockWeight() : ta.stockWeight() * (isAdult(e) ? 1.0 : 0.25); // M31 (part b: a turtle by its growth)
         double big = org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e);
         if (big > 0) return 25.0 * big * big * big;
         double w = e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity

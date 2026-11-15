@@ -763,6 +763,7 @@ public final class GuideGen {
             case NEAR_WATER -> t("next to water", "neben Wasser");
             case SAND -> t("anywhere", "überall");
             case COLD_WATER -> t("in cold lakes and frozen rivers", "in kalten Seen und gefrorenen Flüssen");
+            case DRY_LAND -> t("in savannas and dry shrublands", "in Savannen und trockenem Buschland"); // M31 part b
         };
     }
 

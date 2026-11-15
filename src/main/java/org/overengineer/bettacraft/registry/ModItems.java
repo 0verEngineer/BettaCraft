@@ -45,10 +45,32 @@ public final class ModItems {
             () -> new DeferredSpawnEggItem(ModEntities.DWARF_FROG, 0x6E6450, 0x3A3428, new Item.Properties()));
     /** M31: a musk turtle in a bucket of water. */
     public static final DeferredItem<net.minecraft.world.item.MobBucketItem> MUSK_TURTLE_BUCKET = ITEMS.register("musk_turtle_bucket",
-            () -> new org.overengineer.bettacraft.containers.AnimalBucketItem(ModEntities.MUSK_TURTLE.get(), net.minecraft.world.level.material.Fluids.WATER,
-                    net.minecraft.sounds.SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
+            () -> new org.overengineer.bettacraft.terrarium.TurtleBucketItem(ModEntities.MUSK_TURTLE.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<DeferredSpawnEggItem> MUSK_TURTLE_SPAWN_EGG = ITEMS.register("musk_turtle_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.MUSK_TURTLE, 0x3E3526, 0xC8B878, new Item.Properties()));
+    /** M31 part b: the other turtles: buckets of water for the water turtles, a terrarium box for the tortoise. */
+    public static final DeferredItem<net.minecraft.world.item.MobBucketItem> SLIDER_TURTLE_BUCKET = ITEMS.register("slider_turtle_bucket",
+            () -> new org.overengineer.bettacraft.terrarium.TurtleBucketItem(ModEntities.SLIDER_TURTLE.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<net.minecraft.world.item.MobBucketItem> REEVES_TURTLE_BUCKET = ITEMS.register("reeves_turtle_bucket",
+            () -> new org.overengineer.bettacraft.terrarium.TurtleBucketItem(ModEntities.REEVES_TURTLE.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<net.minecraft.world.item.MobBucketItem> HERMANN_TORTOISE_BOX = ITEMS.register("hermann_tortoise_box",
+            () -> new org.overengineer.bettacraft.terrarium.AnimalBoxItem(ModEntities.HERMANN_TORTOISE.get(), new Item.Properties().stacksTo(1)));
+    /** M31 part b: the empty terrarium box (catches a tortoise; later the land animals of part c). */
+    public static final DeferredItem<Item> TERRARIUM_BOX = ITEMS.register("terrarium_box", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<DeferredSpawnEggItem> SLIDER_TURTLE_SPAWN_EGG = ITEMS.register("slider_turtle_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.SLIDER_TURTLE, 0x3E5A2A, 0xC83A2A, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> HERMANN_TORTOISE_SPAWN_EGG = ITEMS.register("hermann_tortoise_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.HERMANN_TORTOISE, 0xC8A050, 0x3A2A18, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> REEVES_TURTLE_SPAWN_EGG = ITEMS.register("reeves_turtle_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.REEVES_TURTLE, 0x5A4630, 0xD8C060, new Item.Properties()));
+
+    /** M31 part b: the bucket or box item of a turtle species. */
+    public static Item turtleContainer(org.overengineer.bettacraft.terrarium.TurtleSpecies s) {
+        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.SLIDER) return SLIDER_TURTLE_BUCKET.get();
+        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.HERMANN) return HERMANN_TORTOISE_BOX.get();
+        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.REEVES) return REEVES_TURTLE_BUCKET.get();
+        return MUSK_TURTLE_BUCKET.get();
+    }
 
     /** M12: floating plants for the water surface of a tank (no blocks; the lily pad is the vanilla item). */
     public static final java.util.Map<org.overengineer.bettacraft.tank.plants.FloatingPlantType,

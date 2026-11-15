@@ -8,6 +8,8 @@
   nozzle (``mister_nozzle``);
 * thermo-hygrometer: a white case (``thermo_hygrometer_side``) and the grey-green LCD face with its frame
   (``thermo_hygrometer_front``); the digits are drawn live by its block entity renderer.
+* M31 part b: turtle eggs (``turtle_eggs``): a chalky cream shell with faint grey-brown speckles and a few grains of the
+  nest sand stuck to it.
 
 Deterministic pixel grids and procedural faces, no vanilla pixels.
 
@@ -124,6 +126,23 @@ def thermo_front():
     return _img(px)
 
 
+def turtle_eggs():
+    """Chalky cream egg shell: soft light-dark mottling, a few speckles, sand grains on the lower rows."""
+    r = _rng(3109)
+
+    def px(x, y):
+        v = 0.94 + 0.06 * r.random()
+        col = _rgb("#f0e8d4") * v
+        if r.random() < 0.05:
+            col = _rgb("#bfb39a")
+        if y >= 11 and r.random() < 0.18:
+            col = _rgb("#cdb27a") * (0.9 + 0.1 * r.random())
+        if y <= 3:
+            col = col * 1.03
+        return col
+    return _img(px)
+
+
 def write_all():
     out = []
     tex = {
@@ -131,6 +150,7 @@ def write_all():
         "basking_lamp_shade": lamp_shade(), "basking_lamp_bulb": lamp_bulb(True), "basking_lamp_bulb_off": lamp_bulb(False),
         "mister_tank": mister_tank(), "mister_cap": mister_cap(), "mister_nozzle": mister_nozzle(),
         "thermo_hygrometer_side": thermo_side(), "thermo_hygrometer_front": thermo_front(),
+        "turtle_eggs": turtle_eggs(),
     }
     for name, img in tex.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))

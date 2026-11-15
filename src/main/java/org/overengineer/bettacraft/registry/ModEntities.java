@@ -40,6 +40,30 @@ public final class ModEntities {
                     .clientTrackingRange(6)
                     .build(BettaCraft.id("musk_turtle").toString()));
 
+    /** M31 part b: pond slider (Trachemys scripta, red-eared or yellow-bellied), grows to about 25 cm. */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.TurtleEntity>> SLIDER_TURTLE = ENTITIES.register("slider_turtle",
+            () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.TurtleEntity>of((t, l) -> new org.overengineer.bettacraft.terrarium.TurtleEntity(t, l, org.overengineer.bettacraft.terrarium.TurtleSpecies.SLIDER), MobCategory.CREATURE)
+                    .sized(0.78F, 0.32F).eyeHeight(0.2F).clientTrackingRange(6)
+                    .build(BettaCraft.id("slider_turtle").toString()));
+    /** M31 part b: Hermann's tortoise (Testudo hermanni), about 18 cm. */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.TurtleEntity>> HERMANN_TORTOISE = ENTITIES.register("hermann_tortoise",
+            () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.TurtleEntity>of((t, l) -> new org.overengineer.bettacraft.terrarium.TurtleEntity(t, l, org.overengineer.bettacraft.terrarium.TurtleSpecies.HERMANN), MobCategory.CREATURE)
+                    .sized(0.62F, 0.4F).eyeHeight(0.24F).clientTrackingRange(6)
+                    .build(BettaCraft.id("hermann_tortoise").toString()));
+    /** M31 part b: Chinese three-keeled pond turtle (Mauremys reevesii), about 15 cm. */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.TurtleEntity>> REEVES_TURTLE = ENTITIES.register("reeves_turtle",
+            () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.TurtleEntity>of((t, l) -> new org.overengineer.bettacraft.terrarium.TurtleEntity(t, l, org.overengineer.bettacraft.terrarium.TurtleSpecies.REEVES), MobCategory.CREATURE)
+                    .sized(0.58F, 0.28F).eyeHeight(0.18F).clientTrackingRange(6)
+                    .build(BettaCraft.id("reeves_turtle").toString()));
+
+    /** M31 part b: the entity type of a turtle species. */
+    public static EntityType<? extends org.overengineer.bettacraft.terrarium.TurtleEntity> turtle(org.overengineer.bettacraft.terrarium.TurtleSpecies s) {
+        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.SLIDER) return SLIDER_TURTLE.get();
+        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.HERMANN) return HERMANN_TORTOISE.get();
+        if (s == org.overengineer.bettacraft.terrarium.TurtleSpecies.REEVES) return REEVES_TURTLE.get();
+        return MUSK_TURTLE.get();
+    }
+
     /** M22.3: a shrimp, crayfish, snail or hermit crab living in the world (one type, the species is data). */
     public static final Supplier<EntityType<org.overengineer.bettacraft.entity.critter.WildCritterEntity>> WILD_CRITTER = ENTITIES.register("wild_critter",
             () -> EntityType.Builder.of(org.overengineer.bettacraft.entity.critter.WildCritterEntity::new, MobCategory.WATER_AMBIENT)
@@ -89,6 +113,9 @@ public final class ModEntities {
         event.put(BETTA.get(), BettaEntity.createAttributes().build());
         event.put(DWARF_FROG.get(), org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.createAttributes().build());
         event.put(MUSK_TURTLE.get(), org.overengineer.bettacraft.terrarium.MuskTurtleEntity.createAttributes().build()); // M31
+        event.put(SLIDER_TURTLE.get(), org.overengineer.bettacraft.terrarium.TurtleEntity.createAttributes(org.overengineer.bettacraft.terrarium.TurtleSpecies.SLIDER).build()); // M31 part b
+        event.put(HERMANN_TORTOISE.get(), org.overengineer.bettacraft.terrarium.TurtleEntity.createAttributes(org.overengineer.bettacraft.terrarium.TurtleSpecies.HERMANN).build());
+        event.put(REEVES_TURTLE.get(), org.overengineer.bettacraft.terrarium.TurtleEntity.createAttributes(org.overengineer.bettacraft.terrarium.TurtleSpecies.REEVES).build());
         event.put(WILD_CRITTER.get(), org.overengineer.bettacraft.entity.critter.WildCritterEntity.createAttributes().build()); // M22.3
         for (var e : TANKMATES.entrySet()) event.put(e.getValue().get(), org.overengineer.bettacraft.entity.tankmate.TankmateEntity.createAttributes(e.getKey()).build());
     }
@@ -107,6 +134,11 @@ public final class ModEntities {
                 org.overengineer.bettacraft.world.Wildlife::checkFish, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(WILD_CRITTER.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.OCEAN_FLOOR,
                 org.overengineer.bettacraft.world.Wildlife::checkCritter, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        // M31 part b: the wild turtles (on the shore of their water; the tortoise on dry grassland)
+        for (var s : org.overengineer.bettacraft.terrarium.TurtleSpecies.ALL) {
+            event.register(turtle(s), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    org.overengineer.bettacraft.terrarium.TurtleSpawns::check, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        }
     }
 
     private ModEntities() {}

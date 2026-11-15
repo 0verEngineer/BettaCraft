@@ -27,6 +27,9 @@ public final class Compat {
     public static final List<ResourceLocation> SWAMP_BIOMES = List.of(rl(TF, "swamp"));
     public static final List<ResourceLocation> RIVER_BIOMES = List.of(rl(TF, "stream"));
     public static final List<ResourceLocation> JUNGLE_BIOMES = List.of(rl(RU, "tropics"), rl(BOP, "tropics"));
+    /** M31 part b: dry shrubland and steppe of the biome mods (#bettacraft:tortoise_lands; their savannas come with #c:is_savanna). */
+    public static final List<ResourceLocation> TORTOISE_BIOMES = List.of(rl(RU, "shrubland"), rl(RU, "dry_bushland"), rl(RU, "steppe"),
+            rl(BWG, "allium_shrubland"), rl(BWG, "firecracker_chaparral"));
 
     /** Predators: kill bettas and small inhabitants (PLAN 4.3). */
     public static final List<ResourceLocation> PREDATORS = List.of(

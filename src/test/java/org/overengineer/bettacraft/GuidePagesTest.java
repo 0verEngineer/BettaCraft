@@ -307,7 +307,8 @@ class GuidePagesTest {
             return false;
         }
         // M31: the terrarium animals are entities (their buckets and eggs are the items with pages)
-        if (p.equals("musk_turtle")) return false;
+        if (org.overengineer.bettacraft.terrarium.TurtleSpecies.byId(p) != null) return false;
+        if (p.equals("turtle_eggs")) return false; // M31 part b: eggs only in the interior, no item
         return !(p.equals("betta") || p.equals("dwarf_clawed_frog") || p.equals("wild_critter") || p.equals("guide") || p.startsWith("interior_") || p.endsWith("_segment"));
     }
 }

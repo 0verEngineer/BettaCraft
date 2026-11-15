@@ -70,7 +70,19 @@ Land oder Wasser, Wasser zu kalt oder zu warm. Das falsche Becken, zu kalt oder 
 (`terrarium.harmAfterDays`); der Rest stresst es nur. Es frisst, wenn das Becken gefüttert wird (von Hand oder mit dem
 [Futterautomaten](equipment/feeder.md)).
 
-Das erste ist die [Moschusschildkröte](terrarium/musk_turtle.md).
+Die Schildkröten:
+
+| Schildkröte | Becken | Braucht |
+|---|---|---|
+| [Moschusschildkröte](terrarium/musk_turtle.md) | Paludarium, wenig Land | Wasser 20-28 °C |
+| [Schmuckschildkröte](terrarium/slider_turtle.md) (Rotwange, Gelbwange) | Paludarium, halb Land | Wärmespot, UV; **wird groß** (12 Blöcke) |
+| [Griechische Landschildkröte](terrarium/hermann_tortoise.md) | trockenes Terrarium | Wärmespot, viel UV, Grünzeug; Winterstarre bei Kälte |
+| [Dreikielschildkröte](terrarium/reeves_turtle.md) | Paludarium | Sonnenplatz, etwas kühler |
+| Schlüpflinge der Meeresschildkröte (Vanilla) | Paludarium | nur Schlüpflinge; ausgewachsene sind zu groß |
+
+Sie legen Eier in Sand oder Erde auf dem Land, und die Nesttemperatur bestimmt das Geschlecht der Schlüpflinge:
+[Schildkrötenzucht](terrarium/turtle_breeding.md). Wilde leben in Sümpfen und Flüssen (die Wasserschildkröten) und in
+Savannen und trockenem Buschland (die Landschildkröte).
 
 ## Wasserpflege im Terrarium
 
@@ -82,4 +94,5 @@ und das Menü sagt das. Ein Paludarium behält sie alle für sein Wasser.
 Server-Config `terrarium.*`: die Landanteile der Arten, die Stärke der Geräte, die Zeitkonstanten, das Wasser der
 Sprühanlage, die Tage bis zum Schaden; `power.*`: Heizmatten nutzen den Energie-Schalter der Heizer (`heatMatFePerTick`),
 Sprühanlagen ihren eigenen (`terrarium.misterRequiresEnergy`). Common-Config: `features.terrarium` (aus: jedes Becken ist ein
-Aquarium), `features.terrariumDevices`, `features.turtles`.
+Aquarium), `features.terrariumDevices`, `features.turtles`, `features.turtleBreeding`, `features.wildTurtles`. Schildkröten:
+`terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`.

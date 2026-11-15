@@ -77,7 +77,7 @@ public final class CommonConfig {
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_CRAYFISH, FEATURE_AXOLOTL_CARE;
     public static final ModConfigSpec.BooleanValue FEATURE_WILD_PLANTS;
     public static final ModConfigSpec.BooleanValue FEATURE_BIG_TANKS, FEATURE_BIG_ANIMALS; // M30
-    public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES; // M31
+    public static final ModConfigSpec.BooleanValue FEATURE_TERRARIUM, FEATURE_TERRARIUM_DEVICES, FEATURE_TURTLES, FEATURE_TURTLE_BREEDING, FEATURE_WILD_TURTLES; // M31
     public static final ModConfigSpec.IntValue SPAWN_BIG_WEIGHT;
     public static final ModConfigSpec.DoubleValue WILD_PLANT_FREQUENCY;
 
@@ -273,8 +273,12 @@ public final class CommonConfig {
                 "is an aquarium as before, no climate values)").define("terrarium", true);
         FEATURE_TERRARIUM_DEVICES = b.comment("Terrarium devices: heat mat, basking lamp, mister and thermo-hygrometer (off: they do nothing; a basking lamp",
                 "still shines like a light)").define("terrariumDevices", true);
-        FEATURE_TURTLES = b.comment("Turtles in paludaria and terraria: the musk turtle (off: none go into tanks, none are sold; those in tanks stay)")
-                .define("turtles", true);
+        FEATURE_TURTLES = b.comment("Turtles in paludaria and terraria: musk turtle, slider, Hermann's tortoise, Reeves' turtle and the hatchlings of the sea",
+                "turtle (off: none go into tanks, none are sold; those in tanks stay)").define("turtles", true);
+        FEATURE_TURTLE_BREEDING = b.comment("Turtle breeding: females lay eggs into sand or soil on the land of the tank, the nest temperature decides the sex",
+                "of the hatchlings (off: no eggs; eggs already laid still hatch)").define("turtleBreeding", true);
+        FEATURE_WILD_TURTLES = b.comment("Wild turtles: sliders and musk turtles in swamps and rivers, Reeves' turtles in rivers, Hermann's tortoises in",
+                "savannas and dry shrublands (#bettacraft:tortoise_lands)").define("wildTurtles", true);
         b.pop();
         b.comment("Sounds (M23)").push("sounds");
         SOUNDS_USE_VANILLA = b.comment("Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds",
@@ -393,6 +397,8 @@ public final class CommonConfig {
     public static boolean terrarium() { return getOr(FEATURE_TERRARIUM, true); } // M31
     public static boolean terrariumDevices() { return getOr(FEATURE_TERRARIUM_DEVICES, true); }
     public static boolean turtles() { return getOr(FEATURE_TURTLES, true); }
+    public static boolean turtleBreeding() { return getOr(FEATURE_TURTLE_BREEDING, true); }
+    public static boolean wildTurtles() { return getOr(FEATURE_WILD_TURTLES, true); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
     // M25
     public static boolean waterChemistry() { return getOr(FEATURE_WATER_CHEMISTRY, true); }

@@ -24,6 +24,14 @@ public record WildlifeSpawnsBiomeModifier() implements BiomeModifier {
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD) return;
+        // M31 part b: the wild turtles (creatures on the shore of swamps and rivers, the tortoise on dry land)
+        if (org.overengineer.bettacraft.terrarium.TurtleSpawns.enabled()) {
+            for (var e : org.overengineer.bettacraft.terrarium.TurtleSpawns.entries(org.overengineer.bettacraft.terrarium.TurtleSpawns.home(biome))) {
+                var type = ModEntities.turtle(e.species());
+                int[] g = org.overengineer.bettacraft.terrarium.TurtleSpawns.group(e.species());
+                builder.getMobSpawnSettings().addSpawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, e.weight(), g[0], g[1]));
+            }
+        }
         NetCatching.Water w = Wildlife.water(biome);
         if (w == NetCatching.Water.NONE) return;
         var spawns = builder.getMobSpawnSettings();

@@ -308,6 +308,10 @@ public final class ModBlocks {
     // ------------------------------------------------------------------ M31 terrarium devices
 
     /** M31: heat mat stuck under or onto a tank. */
+    /** M31 part b: a turtle clutch half buried in the land of a tank's interior (no item; the tank incubates it). */
+    public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> TURTLE_EGGS = BLOCKS.register("turtle_eggs",
+            () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.HeatMatBlock> HEAT_MAT = BLOCKS.register("heat_mat",
             () -> new org.overengineer.bettacraft.terrarium.HeatMatBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
                     .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)

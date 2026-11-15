@@ -338,7 +338,8 @@ public final class TankClimate {
     public static TerrariumNeeds.Conditions conditions(TankData t) {
         double air = t.hasClimate() ? t.airTemp() : Double.NaN;
         return new TerrariumNeeds.Conditions(t.terrariumMode(), air, t.hasClimate() ? t.humidity() : Double.NaN, t.uv(),
-                t.hasClimate() ? t.baskTemp() : air, Math.max(0, t.landShare()), t.waterMb() > 0 ? t.waterTemp() : Double.NaN);
+                t.hasClimate() ? t.baskTemp() : air, Math.max(0, t.landShare()), t.waterMb() > 0 ? t.waterTemp() : Double.NaN,
+                t.capacityMb() / (double) TankData.MB_PER_BLOCK); // M31 part b: the size for the big turtles
     }
 
     /** The climate state of a tank, or null. */

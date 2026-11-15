@@ -16,7 +16,7 @@ final class LangM31 {
         a.accept("bettacraft.configuration.terrariumDevices", "Terrarium devices");
         a.accept("bettacraft.configuration.terrariumDevices.tooltip", "Terrarium devices: heat mat, basking lamp, mister and thermo-hygrometer (off: they do nothing; a basking lamp still shines like a light)");
         a.accept("bettacraft.configuration.turtles", "Turtles");
-        a.accept("bettacraft.configuration.turtles.tooltip", "Turtles in paludaria and terraria: the musk turtle (off: none go into tanks, none are sold; those in tanks stay)");
+        a.accept("bettacraft.configuration.turtles.tooltip", "Turtles in paludaria and terraria: musk turtle, slider, Hermann's tortoise, Reeves' turtle and the hatchlings of the sea turtle (off: none go into tanks, none are sold; those in tanks stay)");
         a.accept("bettacraft.configuration.paludariumLandShare", "Paludarium from land share");
         a.accept("bettacraft.configuration.paludariumLandShare.tooltip", "A tank with water is a paludarium from this share of land on (interior columns whose top is above the water)");
         a.accept("bettacraft.configuration.terrariumLandShare", "Terrarium from land share");

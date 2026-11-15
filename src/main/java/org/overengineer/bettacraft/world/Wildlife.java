@@ -284,6 +284,7 @@ public final class Wildlife {
      */
     public static boolean isWildAnimal(Entity e) {
         if (e instanceof org.overengineer.bettacraft.entity.critter.WildCritterEntity c) return c.isWild();
+        if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity t) return t.isWild(); // M31 part b: wild turtles
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b) {
             return !b.fromBucket() && !b.isPersistenceRequired() && !b.hasCustomName() && !org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(b);
         }

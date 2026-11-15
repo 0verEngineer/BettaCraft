@@ -193,6 +193,13 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.MUSK_TURTLE_BUCKET.get()); // M31
                 out.accept(ModItems.FROG_SPAWN_EGG.get());
                 out.accept(ModItems.MUSK_TURTLE_SPAWN_EGG.get()); // M31
+                out.accept(ModItems.SLIDER_TURTLE_BUCKET.get()); // M31 part b
+                out.accept(ModItems.REEVES_TURTLE_BUCKET.get());
+                out.accept(ModItems.HERMANN_TORTOISE_BOX.get());
+                out.accept(ModItems.TERRARIUM_BOX.get());
+                out.accept(ModItems.SLIDER_TURTLE_SPAWN_EGG.get());
+                out.accept(ModItems.REEVES_TURTLE_SPAWN_EGG.get());
+                out.accept(ModItems.HERMANN_TORTOISE_SPAWN_EGG.get());
                 // M19: tankmates (a shoal or a pair in a fish bag, every variety; bucket and spawn egg), their breeding items
                 out.accept(ModItems.BREEDING_BOX.get());
                 out.accept(ModItems.FRY_POWDER.get());

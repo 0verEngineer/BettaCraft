@@ -100,6 +100,13 @@ public final class ModTags {
     /** The wild corals grow here (world generation, new chunks). Contains {@code #bettacraft:warm_ocean_waters}. */
     public static final TagKey<Biome> CORAL_REEF_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("coral_reef_biomes"));
 
+    /** M31 part b: Hermann's tortoise lives wild here (savannas, dry shrubland). */
+    public static final TagKey<Biome> TORTOISE_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("tortoise_lands"));
+    /** M31 part b: turtles lay their eggs into these blocks on the land of a tank (sand and soil). */
+    public static final TagKey<Block> TURTLE_NEST_GROUND = TagKey.create(Registries.BLOCK, BettaCraft.id("turtle_nest_ground"));
+    /** M31 part b: greens for the turtles and the tortoise (dandelion, clover, herbs: dandelion, pink petals, short grass, fern, oxeye daisy). */
+    public static final TagKey<net.minecraft.world.item.Item> TURTLE_GREENS = TagKey.create(Registries.ITEM, BettaCraft.id("turtle_greens"));
+
     /** Water in these biomes gives salt water bottles (oceans). */
     public static final TagKey<Biome> SALT_WATER_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("salt_water_biomes"));
     /** Mining these blocks may drop artemia cysts. */

@@ -334,6 +334,7 @@ public final class ModDataGen {
             DataGenM28.blockStates(this); // M28 part c
             DataGenM281.blockStates(this); // M28.1
             DataGenM31.blockStates(this); // M31 part a
+            DataGenM31b.blockStates(this); // M31 part b
             simpleBlock(ModBlocks.ACTIVE_SOIL.get(), cubeAll(ModBlocks.ACTIVE_SOIL.get())); // M25 part d
         }
 
@@ -610,6 +611,7 @@ public final class ModDataGen {
             DataGenM28.itemModels(this); // M28 part c
             DataGenM30.itemModels(this); // M30 part a
             DataGenM31.itemModels(this); // M31 part a
+            DataGenM31b.itemModels(this); // M31 part b
             withExistingParent("active_soil", modLoc("block/active_soil")); // M25 part d
             withExistingParent("cabinet", modLoc("block/cabinet"));
             withExistingParent("tank_lid", modLoc("block/tank_lid"));
@@ -1018,6 +1020,7 @@ public final class ModDataGen {
             DataGenM28.recipes(output, hasIt(ModItems.TANK.get())); // M28 part c
             DataGenM30.recipes(output, hasIt(ModItems.TANK.get())); // M30 part a
             DataGenM31.recipes(output, hasIt(ModItems.TANK.get())); // M31 part a
+            DataGenM31b.recipes(output, hasIt(ModItems.TANK.get())); // M31 part b
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
             ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
@@ -1175,6 +1178,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.RO_UNIT.get());
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
             for (Block b : DataGenM31.blocks()) dropSelf(b); // M31 part a
+            add(ModBlocks.TURTLE_EGGS.get(), LootTable.lootTable()); // M31 part b: broken eggs give nothing
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
@@ -1214,6 +1218,7 @@ public final class ModDataGen {
                         l.addAll(DataGenM25b.blocks()); // M25
                         l.addAll(DataGenM25c.blocks());
                         l.addAll(DataGenM31.blocks()); // M31 part a
+                        l.add(ModBlocks.TURTLE_EGGS.get()); // M31 part b
                         l.addAll(DataGenM26.blocks()); // M26 part a
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
@@ -1286,6 +1291,7 @@ public final class ModDataGen {
             DataGenM25b.blockTags(this::tag); // M25
             DataGenM25c.blockTags(this::tag);
             DataGenM31.blockTags(this::tag); // M31 part a
+            DataGenM31b.blockTags(this::tag); // M31 part b
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c
@@ -1360,6 +1366,7 @@ public final class ModDataGen {
                     ModItems.ARTEMIA_NAUPLII.get());
             tag(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
             DataGenM26.itemTags(this::tag); // M26 part a: tubifex, daphnia and what the cultures eat
+            DataGenM31b.itemTags(this::tag); // M31 part b: the greens of the turtles
             // M9: organic matter for the larva tub
             tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry
@@ -1445,6 +1452,10 @@ public final class ModDataGen {
             // M28.1: every animal of the mod, and the ones that spawn wild (for commands: @e[type=#bettacraft:all_animals])
             var all = tag(ModTags.ALL_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
             var wild = tag(ModTags.WILD_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
+            for (var s : org.overengineer.bettacraft.terrarium.TurtleSpecies.ALL) { // M31 part b: the turtles (all of them wild)
+                all.add(ModEntities.turtle(s));
+                wild.add(ModEntities.turtle(s));
+            }
             for (var e : ModEntities.TANKMATES.entrySet()) {
                 all.add(e.getValue().get());
                 if (org.overengineer.bettacraft.world.Wildlife.spawnsWild(e.getKey())) wild.add(e.getValue().get());
@@ -1480,6 +1491,9 @@ public final class ModDataGen {
                     net.minecraft.world.level.biome.Biomes.SNOWY_TAIGA, net.minecraft.world.level.biome.Biomes.TAIGA,
                     net.minecraft.world.level.biome.Biomes.OLD_GROWTH_PINE_TAIGA, net.minecraft.world.level.biome.Biomes.OLD_GROWTH_SPRUCE_TAIGA);
             tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN).addTag(Tags.Biomes.IS_BEACH); // M20: beaches too
+            // M31 part b: Hermann's tortoise: savannas and the dry shrublands of biome mods (its home is Mediterranean scrub)
+            var tortoise = tag(ModTags.TORTOISE_LANDS).addTag(Tags.Biomes.IS_SAVANNA);
+            Compat.TORTOISE_BIOMES.forEach(tortoise::addOptional);
         }
     }
 }

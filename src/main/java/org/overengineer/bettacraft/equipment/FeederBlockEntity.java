@@ -38,7 +38,8 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         return new ItemStackHandler(n) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
-                return stack.is(ModTags.BETTA_FOOD) || stack.is(net.minecraft.tags.ItemTags.FISHES); // M30 part c: raw fish for dolphins
+                return stack.is(ModTags.BETTA_FOOD) || stack.is(net.minecraft.tags.ItemTags.FISHES) // M30 part c: raw fish for dolphins
+                        || stack.is(ModTags.TURTLE_GREENS); // M31 part b: greens for the turtles
             }
 
             @Override
@@ -174,6 +175,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
             }
         }
         used += org.overengineer.bettacraft.big.DolphinCare.feedFromFeeder(level, tank, items); // M30 part c
+        used += org.overengineer.bettacraft.terrarium.TurtleGreens.feedFromFeeder(level, tank, items); // M31 part b
         if (first >= 0 && slots > 1) {
             turn = (first + 1) % slots;
             setChanged();

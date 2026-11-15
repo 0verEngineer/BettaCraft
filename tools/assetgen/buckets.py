@@ -132,18 +132,54 @@ TURTLE_SHELL = [(6, 5), (7, 5), (8, 5), (9, 5), (5, 6), (6, 6), (7, 6), (8, 6), 
 TURTLE_SKIN = [(11, 6), (12, 6), (11, 7), (4, 6), (5, 8), (10, 8), (4, 8)]
 
 
-def _turtle(base, front, dx, dy):
-    """M31: the musk turtle bucket: a small dark turtle in the water (domed shell, head to the right, feet)."""
+def _turtle(base, front, dx, dy, shell=(70, 58, 38), dark=(40, 33, 22), skin=(58, 58, 50), stripe=(210, 200, 150), patch=None):
+    """M31: a turtle bucket: a small turtle in the water (domed shell, head to the right, feet); part b colours it per
+    species (the slider with its red ear patch, Reeves' turtle with the yellow head line)."""
     img = base.copy()
-    shell = np.array([70, 58, 38, 255], np.uint8)
-    dark = np.array([40, 33, 22, 255], np.uint8)
-    skin = np.array([58, 58, 50, 255], np.uint8)
+    shell, dark, skin = (np.array([*c, 255], np.uint8) for c in (shell, dark, skin))
     for (x, y) in TURTLE_SHELL:
         img[y + dy, x + dx] = dark if (x + y) % 3 == 0 else shell
     for (x, y) in TURTLE_SKIN:
         img[y + dy, x + dx] = skin
-    img[6 + dy, 12 + dx] = np.array([210, 200, 150, 255], np.uint8)  # the pale stripe of the head
+    img[6 + dy, 12 + dx] = np.array([*stripe, 255], np.uint8)  # the pale stripe of the head
+    if patch is not None:
+        img[7 + dy, 11 + dx] = np.array([*patch, 255], np.uint8)
     return _over(img, front)
+
+
+BOX_WOOD, BOX_DARK, BOX_HOLE = (176, 132, 82), (120, 86, 50), (40, 28, 18)
+
+
+def _box(tortoise: bool):
+    """M31 part b: the terrarium box: a wooden crate with a row of air holes in its lid; filled, a tortoise looks out."""
+    img = np.zeros((S, S, 4), np.uint8)
+    wood, dark, hole = (np.array([*c, 255], np.uint8) for c in (BOX_WOOD, BOX_DARK, BOX_HOLE))
+    for y in range(5, 15):
+        for x in range(1, 15):
+            edge = x in (1, 14) or y in (5, 14)
+            seam = y == 10 and not edge  # the joint between the two boards
+            img[y, x] = dark if edge or seam else wood
+            if not edge and (x * 7 + y * 3) % 11 == 0:
+                img[y, x] = (wood * 0.9).astype(np.uint8)
+    for x in range(2, 14):  # the lid, a little wider
+        img[4, x] = dark
+        img[3, x] = wood if 2 < x < 13 else dark
+    for x in (3, 6, 9, 12):  # a row of air holes under the lid
+        img[7, x] = hole
+    if tortoise:
+        shell, black, skin = (np.array([*c, 255], np.uint8) for c in ((200, 154, 70), (30, 24, 14), (118, 110, 82)))
+        for x in range(3, 11):  # the dome above the open lid, black scute seams
+            img[2, x] = black if x in (5, 8) else shell
+        for x in range(4, 10):
+            img[1, x] = black if x == 7 else shell
+        for x in range(5, 9):
+            img[0, x] = shell
+        img[2, 11] = skin  # the head looking out to the right
+        img[1, 11] = skin
+        img[1, 12] = skin
+        img[2, 12] = skin
+        img[1, 13] = np.array([20, 18, 12, 255], np.uint8)
+    return img
 
 
 def _over(dst, src):
@@ -162,9 +198,12 @@ def textures() -> dict[str, np.ndarray]:
     front = icons.grid(B_FRONT, FRONT)
     frog = _frog(base, front, 0, 4)
     turtle = _turtle(base, front, 0, 4)
+    slider = _turtle(base, front, 0, 4, shell=(70, 86, 40), dark=(150, 140, 60), skin=(62, 84, 44), stripe=(220, 200, 80), patch=(200, 36, 26))
+    reeves = _turtle(base, front, 0, 4, shell=(72, 52, 30), dark=(110, 82, 50), skin=(52, 52, 44), stripe=(170, 186, 80))
     sea_body, sea_fins = _fish(B_SEAHORSE, B_INSIDE)
     return {"betta_bucket": base, "betta_bucket_fish": body, "betta_bucket_fish_fins": fins,
             "betta_bucket_glass": front, "dwarf_frog_bucket": frog, "musk_turtle_bucket": turtle,
+            "slider_turtle_bucket": slider, "reeves_turtle_bucket": reeves, "hermann_tortoise_box": _box(True), "terrarium_box": _box(False),
             "seahorse_bucket_fish": sea_body, "seahorse_bucket_fish_fins": sea_fins}
 
 

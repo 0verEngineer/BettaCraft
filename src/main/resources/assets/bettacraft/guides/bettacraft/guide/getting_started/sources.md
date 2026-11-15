@@ -215,6 +215,12 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Mexican Turbo Snail](../saltwater/turbo_snail.md): spawns in lukewarm oceans (spawn weight 3).
 * [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md): spawns in lukewarm oceans (spawn weight 3).
 * [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md): spawns in lukewarm oceans (spawn weight 1).
+* [Bucket of Pond Slider](../terrarium/slider_turtle.md): spawns in swamps (spawn weight 4).
+* [Bucket of Musk Turtle](../terrarium/musk_turtle.md): spawns in swamps (spawn weight 4).
+* [Bucket of Pond Slider](../terrarium/slider_turtle.md): spawns in rivers (spawn weight 3).
+* [Bucket of Musk Turtle](../terrarium/musk_turtle.md): spawns in rivers (spawn weight 2).
+* [Bucket of Reeves' Turtle](../terrarium/reeves_turtle.md): spawns in rivers (spawn weight 3).
+* [Boxed Hermann's Tortoise](../terrarium/hermann_tortoise.md): spawns in savannas and dry shrublands (spawn weight 4).
 * [Zoanthids](../saltwater/zoanthus.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 * [Green Star Polyps](../saltwater/green_star_polyps.md): shears on a wild coral colony in warm oceans (coral reefs) (always).
 * [Mushroom Coral](../saltwater/mushroom_coral.md): shears on a wild coral colony in warm oceans (coral reefs) (always).

@@ -36,5 +36,7 @@ public enum Where {
     /** Any sand ({@code #bettacraft:artemia_sand}). */
     SAND,
     /** M28.1: {@code #bettacraft:cold_waters} (frozen rivers, the lakes of taigas and snowy plains, cold land biomes by {@code #c:is_cold/overworld}). */
-    COLD_WATER
+    COLD_WATER,
+    /** M31 part b: {@code #bettacraft:tortoise_lands} (savannas by {@code #c:is_savanna}, the dry shrublands of biome mods). */
+    DRY_LAND
 }

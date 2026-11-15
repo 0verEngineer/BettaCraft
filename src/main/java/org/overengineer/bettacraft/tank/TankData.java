@@ -126,6 +126,9 @@ public final class TankData {
      */
     private org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM;
     private float landShare = -1F, airTemp = Float.NaN, groundTemp = Float.NaN, baskTemp = Float.NaN, humidity = Float.NaN, uv = 0F, matDuty = 0F;
+    /** M31 part b: turtle eggs buried in the land (saved under "turtle_eggs" only while there are some). */
+    private final List<org.overengineer.bettacraft.terrarium.TurtleClutch> turtleClutches = new ArrayList<>();
+    private int nextTurtleClutchId = 1;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -393,6 +396,8 @@ public final class TankData {
     public void setLightOff(int minutes) { this.lightOff = Math.floorMod(minutes, 24 * 60); }
 
     // M31 terrarium
+    public List<org.overengineer.bettacraft.terrarium.TurtleClutch> turtleClutches() { return turtleClutches; }
+    public int nextTurtleClutchId() { return nextTurtleClutchId++; }
     public org.overengineer.bettacraft.terrarium.TerrariumMode terrariumMode() { return terrariumMode; }
     public void setTerrariumMode(org.overengineer.bettacraft.terrarium.TerrariumMode m) { this.terrariumMode = m == null ? org.overengineer.bettacraft.terrarium.TerrariumMode.AQUARIUM : m; }
     /** Share of the floor that is land (-1 = not worked out yet). */
@@ -568,6 +573,10 @@ public final class TankData {
         lightOn = o.lightOn;
         lightOff = o.lightOff;
         setClimate(o.climate()); // M31 (the mode and the land share are worked out again)
+        // M31 part b: the turtle eggs inside this part stay
+        turtleClutches.clear();
+        nextTurtleClutchId = Math.max(nextTurtleClutchId, o.nextTurtleClutchId);
+        for (var c : o.turtleClutches) if (contains(BlockPos.containing(c.x, c.y + 0.01, c.z))) turtleClutches.add(c.copy());
     }
 
     public float waterQuality() { return waterQuality; }
@@ -667,6 +676,12 @@ public final class TankData {
         t.putInt("light_on", lightOn);
         t.putInt("light_off", lightOff);
         if (terrariumWorthSaving()) t.put("terrarium", saveTerrarium()); // M31
+        if (!turtleClutches.isEmpty()) { // M31 part b
+            ListTag te = new ListTag();
+            for (var c : turtleClutches) te.add(c.save());
+            t.put("turtle_eggs", te);
+            t.putInt("next_turtle_clutch", nextTurtleClutchId);
+        }
         return t;
     }
 
@@ -788,6 +803,15 @@ public final class TankData {
         d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;
         d.lightOff = t.contains("light_off", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_off"), 1440) : 20 * 60;
         if (t.contains("terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompound("terrarium")); // M31
+        ListTag te = t.getList("turtle_eggs", Tag.TAG_COMPOUND); // M31 part b
+        int maxTurtle = 0;
+        for (int i = 0; i < te.size(); i++) {
+            var c = org.overengineer.bettacraft.terrarium.TurtleClutch.load(te.getCompound(i));
+            if (c == null) continue;
+            d.turtleClutches.add(c);
+            maxTurtle = Math.max(maxTurtle, c.id);
+        }
+        d.nextTurtleClutchId = Math.max(maxTurtle + 1, t.contains("next_turtle_clutch", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_turtle_clutch") : 1);
         d.recomputeBounds();
         return d;
     }

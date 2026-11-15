@@ -90,6 +90,35 @@ public final class LandWalker {
     @Nullable
     private Activity forced;
 
+    /**
+     * M31 part b: walk to this spot on the land now (a female to her nest), for at most {@code ticks}; afterwards the walker
+     * picks its own goals again. {@link #arrivedAt} tells when it is there.
+     */
+    public void goTo(Mob mob, ServerLevel level, TankData t, Vec3 target, int ticks) {
+        activity = Activity.LAND;
+        goal = target;
+        goalTicks = ticks;
+        atGoal = false;
+        pathIndex = 0;
+        List<Vec3> way = InteriorPaths.walk(level.getServer(), t, mob.position(), target, Double.NaN);
+        path = way != null && !way.isEmpty() ? way : null;
+    }
+
+    /** M31 part b: whether the animal stands at this goal (within {@code reach} blocks, ignoring the height). */
+    public static boolean arrivedAt(Mob mob, Vec3 target, double reach) {
+        double dx = mob.getX() - target.x, dz = mob.getZ() - target.z;
+        return dx * dx + dz * dz <= reach * reach;
+    }
+
+    /** M31 part b: stand still (brumation): no goal, no path, resting. */
+    public void hold() {
+        activity = Activity.REST;
+        goal = null;
+        path = null;
+        goalTicks = 0;
+        atGoal = false;
+    }
+
     /** The terrain of the tank (rebuilt every second). */
     public TankTerrain terrain(ServerLevel level, TankData t) {
         long now = level.getGameTime();

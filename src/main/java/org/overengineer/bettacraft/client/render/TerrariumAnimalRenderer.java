@@ -29,12 +29,18 @@ public class TerrariumAnimalRenderer extends MobRenderer<TerrariumAnimalEntity, 
 
     @Override
     public ResourceLocation getTextureLocation(TerrariumAnimalEntity e) {
+        // M31 part b: the varieties (the slider: red-eared, yellow-bellied) have their own textures
+        if (e instanceof org.overengineer.bettacraft.terrarium.TurtleEntity t && t.species().varieties().size() > 1) {
+            return VARIETIES.computeIfAbsent(t.species().texture(t.variety()), k -> BettaCraft.id("textures/entity/terrarium/" + k + ".png"));
+        }
         return texture;
     }
 
+    private static final java.util.Map<String, ResourceLocation> VARIETIES = new java.util.concurrent.ConcurrentHashMap<>();
+
     @Override
     protected void scale(TerrariumAnimalEntity e, PoseStack pose, float partialTick) {
-        float s = e.isBaby() ? scale * 0.5F : scale;
+        float s = scale * e.getAgeScale(); // M31 part b: a turtle hatchling grows from its hatch size
         pose.scale(s, s, s);
     }
 }

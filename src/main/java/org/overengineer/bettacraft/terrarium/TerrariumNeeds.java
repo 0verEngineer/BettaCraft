@@ -16,8 +16,18 @@ import java.util.Set;
  * @param land      share of the floor that must be land (min, max): a musk turtle 0.05..0.5, a tortoise 0.9..1
  * @param basking   needs a basking spot (a lit basking lamp) warmer than the air
  * @param water     water temperature range for animals that swim (NaN..NaN = not checked)
+ * @param minBlocks M31 part b: smallest tank (water and land blocks) the grown animal needs (0 = any; a grown slider 12)
  */
-public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double uv, Range land, boolean basking, Range water) {
+public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double uv, Range land, boolean basking, Range water, double minBlocks) {
+    public TerrariumNeeds(Habitat habitat, Range air, Range humidity, double uv, Range land, boolean basking, Range water) {
+        this(habitat, air, humidity, uv, land, basking, water, 0);
+    }
+
+    /** The same needs without the tank size (a young animal). */
+    public TerrariumNeeds young() {
+        return minBlocks <= 0 ? this : new TerrariumNeeds(habitat, air, humidity, uv, land, basking, water, 0);
+    }
+
     /** The tank modes an animal lives in. */
     public enum Habitat {
         /** Terrarium without water (a water dish is fine). */
@@ -62,7 +72,9 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
 
     /** The problems an animal can have with its tank. */
     public enum Problem {
-        WRONG_HABITAT, TOO_COLD, TOO_HOT, TOO_DRY, TOO_HUMID, NO_UV, NO_BASKING, TOO_LITTLE_LAND, TOO_LITTLE_WATER, WATER_COLD, WATER_HOT;
+        WRONG_HABITAT, TOO_COLD, TOO_HOT, TOO_DRY, TOO_HUMID, NO_UV, NO_BASKING, TOO_LITTLE_LAND, TOO_LITTLE_WATER, WATER_COLD, WATER_HOT,
+        /** M31 part b: the tank is smaller than the grown animal needs (stress only). */
+        TOO_SMALL;
 
         public String translationKey() {
             return "gui.bettacraft.terrarium.problem." + name().toLowerCase(java.util.Locale.ROOT);
@@ -82,8 +94,13 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
      * @param bask      basking spot temperature (°C; = air without a lit lamp)
      * @param land      land share of the floor
      * @param waterTemp water temperature (NaN without water)
+     * @param blocks    M31 part b: size of the tank in blocks (NaN = not checked)
      */
-    public record Conditions(TerrariumMode mode, double air, double humidity, double uv, double bask, double land, double waterTemp) {}
+    public record Conditions(TerrariumMode mode, double air, double humidity, double uv, double bask, double land, double waterTemp, double blocks) {
+        public Conditions(TerrariumMode mode, double air, double humidity, double uv, double bask, double land, double waterTemp) {
+            this(mode, air, humidity, uv, bask, land, waterTemp, Double.NaN);
+        }
+    }
 
     /** The result of {@link #assess}: the problems and how much each is off (K, % or share). */
     public record Assessment(Set<Problem> problems, double severity) {
@@ -151,6 +168,10 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
                 sev += water.off(c.waterTemp()) / 8.0;
             }
         }
+        if (minBlocks > 0 && Double.isFinite(c.blocks()) && c.blocks() < minBlocks - 1e-6) {
+            out.add(Problem.TOO_SMALL);
+            sev += (minBlocks - c.blocks()) / (minBlocks * 4.0);
+        }
         return out.isEmpty() ? Assessment.FINE : new Assessment(out, sev);
     }
 
@@ -158,7 +179,7 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
     public static final class Builder {
         private final Habitat habitat;
         private Range air = Range.ANY, humidity = Range.ANY, land = Range.ANY, water = Range.ANY;
-        private double uv;
+        private double uv, minBlocks;
         private boolean basking;
 
         Builder(Habitat habitat) {
@@ -171,9 +192,10 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
         public Builder water(double min, double max) { water = Range.of(min, max); return this; }
         public Builder uv(double index) { uv = index; return this; }
         public Builder basking() { basking = true; return this; }
+        public Builder minBlocks(double blocks) { minBlocks = blocks; return this; }
 
         public TerrariumNeeds build() {
-            return new TerrariumNeeds(habitat, air, humidity, uv, land, basking, water);
+            return new TerrariumNeeds(habitat, air, humidity, uv, land, basking, water, minBlocks);
         }
     }
 }

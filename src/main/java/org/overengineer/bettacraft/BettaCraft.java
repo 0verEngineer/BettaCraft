@@ -50,9 +50,8 @@ public final class BettaCraft {
         // M22.1: the sea water bucket in a cauldron and from a dispenser like a water bucket
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork((Runnable) BettaCraft::containerSetup));
         // M31: the terrarium animals and their needs (the care hook)
-        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(() ->
-                org.overengineer.bettacraft.terrarium.TerrariumAnimals.register(ModEntities.MUSK_TURTLE.get(), org.overengineer.bettacraft.terrarium.MuskTurtleEntity.NEEDS,
-                        org.overengineer.bettacraft.config.CommonConfig::turtles)));
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(
+                org.overengineer.bettacraft.terrarium.TerrariumAnimals::registerOurs));
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) ->
                 org.overengineer.bettacraft.equipment.CabinetStones.clear());

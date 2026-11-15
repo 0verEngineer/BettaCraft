@@ -17,6 +17,19 @@ public interface TerrariumAnimal {
     /** One care step in its tank with the assessment of its needs ({@code days} since the last step). */
     void onTerrariumCare(ServerLevel level, TankBlockEntity tank, TerrariumNeeds.Assessment assessment, double days);
 
+    /**
+     * M31 part b: the assessment as the animal bears it now (a brumating tortoise does not mind the cold); the care step
+     * logs and shows this one. Called after {@link #onTerrariumCare}.
+     */
+    default TerrariumNeeds.Assessment adjust(TerrariumNeeds.Assessment a) {
+        return a;
+    }
+
+    /** M31 part b: whether it eats greens ({@code #bettacraft:turtle_greens}: dandelion, clover, herbs). */
+    default boolean eatsGreens() {
+        return false;
+    }
+
     /** Whether it eats this food (fed by hand or by the feeder like the fish). */
     default boolean eatsFood(BettaFood.Kind kind) {
         return false;

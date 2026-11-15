@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:sand",
+    "#minecraft:dirt",
+    "#c:sands",
+    "minecraft:farmland",
+    "minecraft:dirt_path"
+  ]
+}

@@ -600,6 +600,8 @@ public final class TankView {
         public boolean devicesOn = true, heatPowered = true, misterPowered = true;
         /** "type key|problem key" of every animal kind with a problem. */
         public final List<String> problems = new ArrayList<>();
+        /** M31 part b: the turtle clutches: "species key|eggs|progress %|nest °C|sex class (open, females, males, mixed)". */
+        public final List<String> eggs = new ArrayList<>();
         public int animals;
 
         public org.overengineer.bettacraft.terrarium.TerrariumMode mode() {
@@ -630,6 +632,9 @@ public final class TankView {
             ListTag p = new ListTag();
             for (String s : problems) p.add(StringTag.valueOf(s));
             t.put("problems", p);
+            ListTag e = new ListTag();
+            for (String s : eggs) e.add(StringTag.valueOf(s));
+            t.put("eggs", e);
             return t;
         }
 
@@ -656,6 +661,9 @@ public final class TankView {
             problems.clear();
             ListTag p = t.getList("problems", Tag.TAG_STRING);
             for (int i = 0; i < p.size(); i++) problems.add(p.getString(i));
+            eggs.clear();
+            ListTag e = t.getList("eggs", Tag.TAG_STRING);
+            for (int i = 0; i < e.size(); i++) eggs.add(e.getString(i));
         }
     }
 
@@ -704,9 +712,20 @@ public final class TankView {
             var n = org.overengineer.bettacraft.terrarium.TerrariumAnimals.needs(e);
             if (n == null) continue;
             x.animals++;
-            for (var p : n.assess(cond).problems()) seen.add(e.getType().getDescriptionId() + "|" + p.translationKey());
+            var a = n.assess(cond);
+            if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) a = ta.adjust(a); // M31 part b: brumation
+            if (e instanceof org.overengineer.bettacraft.terrarium.TurtleEntity te && te.isBrumating()) seen.add(e.getType().getDescriptionId() + "|gui.bettacraft.terrarium.brumating");
+            for (var p : a.problems()) seen.add(e.getType().getDescriptionId() + "|" + p.translationKey());
         }
         x.problems.addAll(seen);
+        // M31 part b: the clutches in the land
+        double nest = org.overengineer.bettacraft.terrarium.TurtleBreeding.nestTemp(t);
+        for (var k : t.turtleClutches()) {
+            double f = k.femaleShare();
+            String sex = k.tspDays <= 1e-9 ? "open" : f > 0.8 ? "females" : f < 0.2 ? "males" : "mixed";
+            x.eggs.add(k.species.translationKey() + "|" + k.eggs + "|" + Math.round(k.progress * 100) + "|"
+                    + org.overengineer.bettacraft.terrarium.TankClimate.f1((float) nest) + "|" + sex);
+        }
         return x;
     }
 

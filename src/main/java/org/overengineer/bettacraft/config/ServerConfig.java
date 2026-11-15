@@ -326,6 +326,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue TERRA_PALUDARIUM_LAND, TERRA_TERRARIUM_LAND, TERRA_MAT_LIFT, TERRA_LAMP_AIR, TERRA_BASK_LIFT,
             TERRA_LAMP_UV, TERRA_SKY_UV, TERRA_MIST_HUMIDITY, TERRA_WATER_HUMIDITY, TERRA_PLANT_HUMIDITY, TERRA_TAU_AIR, TERRA_TAU_HUMIDITY,
             TERRA_MISTER_MB, TERRA_HARM_DAYS, POWER_HEAT_MAT_FE, POWER_MISTER_FE;
+    // M31 part b: turtles
+    public static final ModConfigSpec.DoubleValue TERRA_BRUMATION_BELOW, TERRA_INCUBATION_SPEED, TERRA_CLUTCH_DAYS;
+    public static final ModConfigSpec.BooleanValue TERRA_BRUMATION;
     public static final ModConfigSpec.BooleanValue POWER_MISTER;
     public static final ModConfigSpec.IntValue BIG_MAX_SIZE_X, BIG_MAX_SIZE_Y, BIG_MAX_SIZE_Z, INTERIOR_SCALE8_ABOVE, INTERIOR_SCALE4_ABOVE;
     public static final ModConfigSpec.DoubleValue BIG_LONG_SIDE, BIG_SHORT_SIDE, BIG_HEIGHT, BIG_WATER, BIG_DOLPHIN_HUNGRY_DAYS, BIG_SPAWN_CHANCE,
@@ -1007,6 +1010,14 @@ public final class ServerConfig {
                 .defineInRange("misterMbPerSecond", 2.0, 0.0, 1000.0);
         TERRA_HARM_DAYS = b.comment("In-game days a terrarium animal bears a harmful problem (wrong tank, too cold or hot) before it loses health")
                 .defineInRange("harmAfterDays", 1.0, 0.0, 100.0);
+        TERRA_BRUMATION = b.comment("M31 part b: Hermann's tortoises brumate (rest without food or harm) while the air of their tank is below",
+                        "brumationBelow (off: the cold harms them like the other turtles)").define("brumation", true);
+        TERRA_BRUMATION_BELOW = b.comment("Air temperature (°C) below which a tortoise brumates (it wakes up 2 K above; frost below 2 °C still harms)")
+                .defineInRange("brumationBelow", 12.0, 3.0, 25.0);
+        TERRA_INCUBATION_SPEED = b.comment("Speed of the incubation of turtle eggs (2 = twice as fast; at the pivotal temperature a clutch takes 3-4 in-game days)")
+                .defineInRange("incubationSpeed", 1.0, 0.05, 50.0);
+        TERRA_CLUTCH_DAYS = b.comment("In-game days a female turtle waits after laying before she lays again")
+                .defineInRange("clutchIntervalDays", 4.0, 0.1, 100.0);
         POWER_HEAT_MAT_FE = b.comment("FE per tick a heat mat needs while it heats (with power.heaterRequiresEnergy)")
                 .defineInRange("heatMatFePerTick", 4.0, 0.0, 100000.0);
         POWER_MISTER = b.comment("Misters only spray while the tank has enough FE").define("misterRequiresEnergy", false);

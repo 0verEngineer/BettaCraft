@@ -35,6 +35,7 @@ public final class TerrariumCare {
             TerrariumNeeds.Assessment a = needs.assess(cond);
             if (e instanceof TerrariumAnimal ta) {
                 ta.onTerrariumCare(level, c, a, days);
+                a = ta.adjust(a); // M31 part b: brumation
             } else if (e instanceof LivingEntity le) {
                 generic(le, a, days, c);
             }

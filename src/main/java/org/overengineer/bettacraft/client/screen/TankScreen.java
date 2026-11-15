@@ -1132,6 +1132,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 y += 10;
             }
         }
+        // M31 part b: the turtle eggs in the land (progress, nest temperature, what the temperature makes of them)
+        y += c.problems.isEmpty() ? 11 : 1;
+        for (int i = 0; i < Math.min(2, c.eggs.size()) && y < 140; i++) {
+            String[] e = c.eggs.get(i).split("[|]");
+            if (e.length < 5) continue;
+            fitLine(g, Component.translatable("gui.bettacraft.terrarium.eggs", e[1], Component.translatable(e[0]), e[2], e[3],
+                    Component.translatable("gui.bettacraft.terrarium.eggs." + e[4])).withStyle(ChatFormatting.AQUA), x, y, TEXT_LIGHT, w);
+            y += 10;
+        }
     }
 
     /** A value bar on the right of a climate line (0..1), with an optional white mark (the target). */
