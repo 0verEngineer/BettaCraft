@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm30a')) {
+                // gradlew runClient -Psmoketestm30a : only the M30 part a scene (a 32 x 8 x 16 sea water tank with two dolphins,
+                // a big freshwater tank with two pangasius, the player with a full transport tub)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m30aonly', 'true'
+            }
             if (project.hasProperty('smoketestm29d')) {
                 // gradlew runClient -Psmoketestm29d : only the M29 part d scene (Florida crayfish in every colour and marbled
                 // crayfish, a cool axolotl tank with the five colours and eggs on a plant, close-ups)

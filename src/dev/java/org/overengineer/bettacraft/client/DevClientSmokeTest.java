@@ -123,6 +123,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM291 m291;
     /** -Psmoketestm291b: plants, sound test, air pump in the cabinet, multiblock filter under a tank. */
     private static DevClientSmokeM291b m291b;
+    /** -Psmoketestm30a: big tanks, dolphins, the pangasius, the transport tub. */
+    private static final boolean M30A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m30aonly");
+    private static DevClientSmokeM30a m30a;
     /** -Psmoketestm29d: the big crayfish and the axolotls. */
     private static DevClientSmokeM29d m29d;
     private static DevClientSmokeM281 m281;
@@ -213,6 +216,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M30A_ONLY) {
+                if (ticks == 60) m30a = new DevClientSmokeM30a();
+                if (m30a != null && m30a.tick()) {
+                    m30a = null;
+                    LOGGER.info("[smoketest] client world test finished (M30 part a only)");
                     mc.stop();
                 }
                 return;

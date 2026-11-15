@@ -213,7 +213,7 @@ public final class DevShowcase {
         // 2: tankmates (fresh water), a small group each
         at = startRow(level, "Beifische (Süßwasser)");
         for (TankmateSpecies s : TankmateSpecies.values()) {
-            if (s.marine()) continue;
+            if (s.marine() || s.isLarge()) continue; // M30: the big animals need big tanks
             TankBlockEntity c = tank(level, at, 2, 2, 2, 0F, true);
             fish(level, c, s, Math.min(4, Math.max(2, s.shoal())), r);
             name(level, at, de(s.translationKey()));
@@ -363,7 +363,7 @@ public final class DevShowcase {
             at = at.east(2 + GAP);
         }
         for (TankmateSpecies s : TankmateSpecies.values()) {
-            if (!s.marine()) continue;
+            if (!s.marine() || s.isLarge()) continue;
             TankBlockEntity c = tank(level, at, 2, 2, 2, 35F, true);
             reefLight(level, at, 2);
             InteriorRegion ir = region(level, c, Blocks.SAND.defaultBlockState());

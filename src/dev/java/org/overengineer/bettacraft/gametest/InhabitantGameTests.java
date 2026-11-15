@@ -157,7 +157,7 @@ public final class InhabitantGameTests {
         h.assertTrue(insert(h, c, bettaBucket(1), p) != null, "25% fill is below the 50% minimum");
         TankInteractions.changeWater(h.getLevel(), c, 3000);
         ok(insert(h, c, bettaBucket(1), p));
-        h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.TOO_BIG, "dolphins are too big");
+        h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphins only by the size rule of big tanks (M30)");
         h.assertTrue(TankInhabitants.accepts(EntityType.AXOLOTL, null) == TankInhabitants.Acceptance.OK, "axolotl ok");
         h.succeed();
     }

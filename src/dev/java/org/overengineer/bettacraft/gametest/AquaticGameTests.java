@@ -220,7 +220,7 @@ public final class AquaticGameTests {
         var allow = ServerConfig.INHABITANTS_ALLOW.get();
         var deny = ServerConfig.INHABITANTS_DENY.get();
         try {
-            h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.TOO_BIG, "dolphin too big");
+            h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphin: size rule of big tanks (M30)");
             h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.BLACKLISTED, "frog blacklisted");
             h.assertTrue(TankInhabitants.accepts(EntityType.WITHER, null) == TankInhabitants.Acceptance.BOSS, "wither is a boss");
             h.assertTrue(TankInhabitants.accepts(EntityType.ENDERMITE, null) == TankInhabitants.Acceptance.HOSTILE, "endermite hostile");
@@ -239,7 +239,8 @@ public final class AquaticGameTests {
             ServerConfig.INHABITANTS_DENY.set(List.of());
             TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 16000);
             Component tooBig = TankInhabitants.insert(h.getLevel(), c, FishBagItem.fillWith(EntityType.DOLPHIN.create(h.getLevel())), EntityType.DOLPHIN, null, 100);
-            h.assertTrue(tooBig != null && tooBig.getString().contains("too big"), "message names the size: " + tooBig);
+            // M30: a dolphin is a big animal: the message names the tank it needs (32 x 16 blocks)
+            h.assertTrue(tooBig != null && tooBig.getString().contains("32"), "message names the size: " + tooBig);
         } finally {
             ServerConfig.INHABITANTS_ALLOW.set(allow);
             ServerConfig.INHABITANTS_DENY.set(deny);
