@@ -68,8 +68,14 @@ Blocks dort), und nur aus der Nähe.
 
 Eine Alarm-Kachel überwacht einen Wert eines Beckens. Solange der Wert über dem Grenzwert liegt (oder darunter), blinkt
 die Kachel; mit **Redstone** gibt zusätzlich jeder Block des Bildschirms ein **Redstone-Signal der Stärke 15** in alle
-Richtungen, und ein Komparator liest die Zahl der ausgelösten Alarme (bis 15). Bildschirme mit so einem Alarm prüfen
-ihre Becken jede Sekunde, auch wenn niemand hinschaut. Ein nicht geladenes Becken löst nie einen Alarm aus.
+Richtungen, und ein Komparator liest die Zahl der ausgelösten Alarme (bis 15). Seit 1.25.0 prüft jeder Bildschirm mit
+einer Alarm-Kachel seine Becken jede Sekunde, auch wenn niemand hinschaut. Ein nicht geladenes Becken löst nie einen
+Alarm aus.
+
+**Wegpunkt auf der Karte** (seit 1.25.0, mit JourneyMap): Löst ein Alarm aus, bekommen der Besitzer des Beckens und die
+Spieler im Umkreis von 128 Blöcken einen roten Wegpunkt „Becken-Alarm“ am Becken; er verschwindet, wenn der letzte Alarm
+des Beckens aus ist. Server-Schalter `features.alarmWaypoints`, für dich selbst `map.showAlarmWaypoints` in der
+Client-Config. Modpack-Skripte bekommen den Alarm als Event, siehe [Modpacks: Quests und Skripte](../settings/modpacks.md).
 
 ## Bezug
 

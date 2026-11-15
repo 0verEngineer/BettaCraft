@@ -64,8 +64,13 @@ and only from close by.
 
 An alarm tile watches one value of one tank. While the value is past its limit the tile blinks; with **redstone** on,
 every block of the screen also gives a **redstone signal of 15** to all sides, and a comparator reads the number of
-triggered alarms (up to 15). Screens with such an alarm check their tanks every second even when nobody looks. A tank
-that is not loaded never triggers an alarm.
+triggered alarms (up to 15). Since 1.25.0 every screen with an alarm tile checks its tanks every second even when
+nobody looks. A tank that is not loaded never triggers an alarm.
+
+**Waypoint on the map** (since 1.25.0, with JourneyMap): when an alarm goes off, the owner of the tank and the players
+within 128 blocks get a red waypoint "Tank alarm" at the tank; it goes away when the last alarm of the tank clears.
+Server switch `features.alarmWaypoints`, for yourself `map.showAlarmWaypoints` in the client config. Modpack scripts
+get the alarm as an event, see [Modpacks: quests and scripts](../settings/modpacks.md).
 
 ## Obtaining
 
