@@ -266,6 +266,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m291b.tag', project.findProperty('m291btag') ?: ''
                 systemProperty 'bettacraft.smoketest.m291b.plantsonly', project.hasProperty('m291bplants') ? 'true' : 'false'
             }
+            if (project.hasProperty('smoketestm33b')) {
+                // gradlew runClient -Psmoketestm33b : only the M33 part b scene (tankmates and salt water off: the creative tab
+                // and the handbook without them, a page with the notice)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m33bonly', 'true'
+            }
             if (project.hasProperty('smoketestm32d')) {
                 // gradlew runClient -Pmaps -Psmoketestm32d : only the M32 part d scene (a monitor alarm puts a JourneyMap waypoint
                 // at its tank, it goes away when the water cools)

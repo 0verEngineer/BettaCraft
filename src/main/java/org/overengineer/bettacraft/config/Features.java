@@ -17,6 +17,13 @@ public final class Features {
         return resolve(f, Features::own);
     }
 
+    /** M33 part b: why a feature is off: the outermost parent or requirement that is off, else the feature itself. */
+    public static Feature cause(Feature f) {
+        if (f.parent() != null && !enabled(f.parent())) return cause(f.parent());
+        for (Feature r : f.requires()) if (!enabled(r)) return cause(r);
+        return f;
+    }
+
     /** All of these features are on (none given = true). */
     public static boolean all(Iterable<Feature> features) {
         for (Feature f : features) if (!enabled(f)) return false;

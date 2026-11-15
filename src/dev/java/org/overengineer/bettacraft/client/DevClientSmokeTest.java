@@ -143,6 +143,9 @@ final class DevClientSmokeTest {
     /** -Pmaps -Psmoketestm32d: a monitor alarm puts a JourneyMap waypoint at its tank (M32 part d). */
     private static final boolean M32D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32donly");
     private static DevClientSmokeM32d m32d;
+    /** -Psmoketestm33b: the creative tab and the handbook with the tankmates and salt water off (M33 part b). */
+    private static final boolean M33B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m33bonly");
+    private static DevClientSmokeM33b m33b;
     private static DevClientSmokeM31d m31d;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
     private static final boolean M31B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31bonly");
@@ -243,6 +246,15 @@ final class DevClientSmokeTest {
                 if (readme != null && readme.tick()) {
                     readme = null;
                     LOGGER.info("[smoketest] client world test finished (README media only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M33B_ONLY) {
+                if (ticks == 60) m33b = new DevClientSmokeM33b();
+                if (m33b != null && m33b.tick()) {
+                    m33b = null;
+                    LOGGER.info("[smoketest] client world test finished (M33 part b only)");
                     mc.stop();
                 }
                 return;

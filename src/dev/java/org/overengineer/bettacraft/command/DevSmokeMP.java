@@ -197,6 +197,10 @@ public final class DevSmokeMP {
                         a.length > 1 && "3,false,ph,alarm,detail".equals(a[1]));
                 check(name + ": the screen gives a redstone signal for the alarm (server alarms " + alarms + ")", alarms == 1);
             }
+            case "featoff" -> check(name + ": server's tankmates off: remote, tankmates, neons in the tab, bettas in the tab " + text.substring(8)
+                    + " (expected true false 0 true)", text.endsWith(" true false 0 true"));
+            case "feaon" -> check(name + ": tankmates on again: remote, tankmates, neons > 0, bettas " + text.substring(6),
+                    text.startsWith("feaon true true ") && !text.contains(" true true 0 ") && text.endsWith(" true"));
             case "error" -> fail(name + ": " + text.substring(6));
             default -> { }
         }
@@ -1360,6 +1364,17 @@ public final class DevSmokeMP {
             if (p2 != null) p2.teleportTo(server.overworld(), mainMin.getX() + 5.5, mainMin.getY(), mainMin.getZ() - 2.5, 35F, 10F);
             say("shot", "all", tankArg());
         }, () -> reports.containsKey(P1 + ":shot") && reports.containsKey(P2 + ":shot"), 20 * 40));
+        // M33 part b: the server switches the tankmates off: both clients get its switches and their creative tab drops them
+        steps.add(new Step("features off", () -> {
+            org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, false);
+            org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server);
+            say("features", "all", "featoff");
+        }, () -> reports.containsKey(P1 + ":featoff") && reports.containsKey(P2 + ":featoff"), 20 * 30));
+        steps.add(new Step("features on", () -> {
+            org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, true);
+            org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server);
+            say("features", "all", "feaon");
+        }, () -> reports.containsKey(P1 + ":feaon") && reports.containsKey(P2 + ":feaon"), 20 * 30));
         steps.add(new Step("third look", () -> say("state", "all", "3," + tankArg()),
                 () -> reports.containsKey(P1 + ":state3") && reports.containsKey(P2 + ":state3"), 20 * 30));
         steps.add(new Step("quit", () -> say("quit", "all", ""), () -> server.getPlayerList().getPlayerCount() == 0, 20 * 60));
@@ -1410,6 +1425,7 @@ public final class DevSmokeMP {
         if (finished) return;
         finished = true;
         ServerConfig.EVAPORATION_ENABLED.set(savedEvaporation);
+        org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, true); // M33 part b
         if (server != null && base != null) {
             for (int cx = (base.getX() - 8) >> 4; cx <= (base.getX() + 14) >> 4; cx++)
                 for (int cz = (base.getZ() - 8) >> 4; cz <= (base.getZ() + 14) >> 4; cz++) server.overworld().setChunkForced(cx, cz, false);

@@ -476,6 +476,7 @@ final class DevClientSmokeMP {
                 then(80, () -> shot("overlay")); // Jade / The One Probe / WTHIT on the tank under the crosshair
                 then(5, () -> send("shot"));
             }
+            case "features" -> then(20, () -> sendFeatures(args)); // M33 part b
             case "quit" -> then(20, () -> {
                 Minecraft mc = Minecraft.getInstance();
                 LOGGER.info("[mp] {} client finished", name());
@@ -490,6 +491,19 @@ final class DevClientSmokeMP {
     private static BlockPos pos(String s) {
         String[] p = s.split(",");
         return new BlockPos(Integer.parseInt(p[0].trim()), Integer.parseInt(p[1].trim()), Integer.parseInt(p[2].trim()));
+    }
+
+    /** M33 part b: {@code <phase> <remote> <tankmates on> <neon buckets in the tab> <betta buckets in the tab>} on this client. */
+    private static void sendFeatures(String phase) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return;
+        org.overengineer.bettacraft.client.ClientFeatures.invalidateCreativeTabs();
+        net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(mc.player.connection.enabledFeatures(), false, mc.level.registryAccess());
+        var items = org.overengineer.bettacraft.registry.ModCreativeTabs.MAIN.get().getDisplayItems();
+        long neons = items.stream().filter(s -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(s.getItem()).getPath().equals("neon_tetra_bucket")).count();
+        boolean bettas = items.stream().anyMatch(s -> s.is(org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get()));
+        send(phase + " " + org.overengineer.bettacraft.config.Features.remote() + " "
+                + org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.TANKMATES) + " " + neons + " " + bettas);
     }
 
     private static void send(String report) {

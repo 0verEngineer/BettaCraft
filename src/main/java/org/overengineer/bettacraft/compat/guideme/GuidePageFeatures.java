@@ -98,6 +98,7 @@ public final class GuidePageFeatures {
             for (ResourceLocation p = parent(guide, pageId); p != null && off == null; p = parent(guide, p)) off = offFeature(guide.getParsedPage(p));
         }
         if (off == null) return;
+        off = Features.cause(off); // the group that is off, not the sub-switch it takes along
         List<LytBlock> blocks = new ArrayList<>(document.getBlocks());
         document.clearContent();
         LytParagraph notice = new LytParagraph();

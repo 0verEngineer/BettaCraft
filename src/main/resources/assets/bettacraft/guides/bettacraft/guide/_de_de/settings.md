@@ -98,19 +98,7 @@ navigation:
 Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fest, das Rezept der Fischtüte
 (`recipes.fishBag`: AUTO, KELP oder PLASTIC), welche Overlay-Mod die Bettacraft-Zeilen zeigt (`compat.overlayProvider`:
 AUTO = nur die erste vorhandene von Jade, WTHIT und The One Probe, damit zwei Overlay-Mods nicht jedes Aquarium doppelt
-zeigen; JADE, TOP, WTHIT oder ALL) und Schalter für einzelne Funktionen (`features.*`): `interiorPathfinding` (Frösche
-laufen um die Deko herum, Kleintiere gehen unter Überhänge und in Höhlen, Harnischwelse schwimmen in ihre Laichhöhle; aus
-= geradeaus) und `plantMeshes` (die neue Optik der Pflanzen und Korallen im Innenraum und in der Miniatur; aus = die
-Blöcke, für alle), seit 1.14.2 `swayingForeignPlants` (Kelp, Seegras, Korallen und Wasserpflanzen anderer Mods wippen in
-der Miniatur; der Tag `#bettacraft:swaying_plants`, andere Unterwasserpflanzen werden selbst erkannt: `swaying.autoDetect`,
-nie wippen: `swaying.exclude` mit Block-IDs, `#Tags` oder `modid:*`), seit 1.13.2 `smoothSwimming` (Fische wenden im Bogen und neigen sich weich, Dornaugen
-schlängeln sich und verstecken sich tagsüber, Harnischwelse stellen sich erst an der Scheibe auf), `greenNeonTetra` (der
-Grüne Neon beim Händler und im Kescher), `snailColors` (eigene Farbtöne der Rennschnecken, meist goldene Apfelschnecken
-mit Bändern, rote Posthörner), `detailedDecor` (der große Schädel und das große Wrack), `breakProtection` (der Schalter
-im Becken-Menü), `clipOnFeeder` und seit 1.13.3 `livebearerGenetics` (die [Guppy- und Endler-Genetik](tankmates/guppy_genetics.md); aus = die alten festen Farbformen) und seit 1.13.4 `stoneCabinets` ([Schränke aus Stein](equipment/cabinet.md); aus = nur Holzschränke herstellbar) und seit 1.14.1 `seahorses` ([Seepferdchen](saltwater/seahorses.md); aus = keine aus Kescher und Händler) und seit 1.15.1 `plantNetCatches` (Aquarienpflanzen aus dem [Kescher](equipment/tank_net.md); aus = Pflanzen nur vom Angeln, aus Flaschen, mit der Schere und vom Händler) und `cabinetOutletSide` (die [Auslass-Seite](equipment/cabinet.md) des Schrankfilters; aus = immer die Rückwand, gleichmäßige Strömung) und seit 1.16.0 `oxygen` ([Sauerstoff](aquarium/oxygen.md)),
-`aeration` ([Luftpumpe und Ausströmer](equipment/air_pump.md)), `moreInternalFilters` (Schwamm- und Eckfilter,
-Ansaugschutz), `fryIntake` (Motorfilter saugen Jungfische ein), `powerRegulator` ([Leistungsregler](equipment/regulator.md)),
-`ledTiers` ([LED-Panel und Hochleistungs-LED](equipment/light.md)) und `lightTimer` (Dimmer und Tageslicht-Timer) und seit 1.17.0 `stainlessSteel` ([Schmelztiegel](equipment/crucible.md)), `pipes` ([Rohre und Wasserpumpe](equipment/pipes.md)), `interiorPipes` ([Bodendurchführung und Innenraum-Rohre](equipment/bulkhead.md)), `multiblockFilter` ([Multiblock-Filter](equipment/multiblock_filter.md)), `autoWaterChange` ([Wasserwechsel-Steuerung](equipment/water_change.md)) und `topOff` ([Niveausensor](equipment/top_off.md)) und seit 1.18.0 `waterChemistry` ([Wasserchemie](aquarium/water_chemistry.md); aus = die Werte stehen still und kein Tier stört sich daran), `co2` ([CO2-Düngung](equipment/co2.md); aus = die Geräte geben kein CO2) und `reverseOsmosis` ([Osmoseanlage](equipment/reverse_osmosis.md); aus = sie läuft nicht), `caridina` ([Bienengarnelen](invertebrates/caridina.md)), `sulawesi` ([Kardinalgarnele](invertebrates/sulawesi_shrimp.md) und [Tylomelania](invertebrates/tylomelania.md); aus = keine neuen aus Kescher, Wildnis und vom Händler) und `reefDosing` ([Riffchemie](saltwater/reef_chemistry.md) und [Dosierpumpe](saltwater/dosing_pump.md); aus = die Werte stehen still und die Pumpe dosiert nicht) und seit 1.19.0 `liveFoodCultures` ([Tubifex-Zuchtschale](food/tubifex_dish.md) und [Daphnien-Fass](food/daphnia_barrel.md); aus = die Kulturen stehen still) und `liveFoodPump` ([Lebendfutter-Pumpe](food/live_food_pump.md); aus = sie pumpt nicht und Becken nehmen kein Lebendfutter aus Rohren), `foodMaker` ([Futtermaschine](food/food_maker.md); aus = sie steht still) und `foodVariety` ([Futtervielfalt](food/food_variety.md); aus = jedes Futter ist gleich) und seit 1.20.0 `monitors` ([Monitore](equipment/monitor.md); aus = die Bildschirme bleiben dunkel und zeichnen nichts auf) und seit 1.25.0 `foreignCare`, `foreignBreeding` und `suppressForeignBreeding` ([Tiere anderer Mods](settings/foreign_profiles.md): unsere Bedürfnisse und unsere Zucht für die Tiere mit Profil, ihre eigene Zucht im Becken unterdrückt; aus = Sache ihrer Mod) und `createContraptions` ([Becken mit Create bewegen](settings/create.md); aus = Create kann Becken nicht bewegen), `createRotation` (Creates Rotation treibt Pumpen, Osmoseanlage und Futtermaschine an; aus = nur FE und die Kurbel) und `createDisplayLinks` (Becken und Monitore für Creates Display Link; aus = er kann sie nicht lesen), `modpackEvents` (die Events für [KubeJS-Skripte](settings/modpacks.md); aus = keine) und `alarmWaypoints` (Karten-Wegpunkte an Becken mit [Monitor-Alarm](equipment/monitor.md); aus = keine).
+zeigen; JADE, TOP, WTHIT oder ALL) und die Feature-Schalter (`features.*`, siehe Feature-Schalter unten).
 Die Common-Config `sounds.useVanilla` schaltet die Gerätesounds auf Minecrafts eigene zurück; die Client-Config hat eine
 Lautstärke je Geräteart (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`); das Summen
 der Luftpumpen und das Surren der Strömungspumpen sind aus, bis `sound.airPumpSound` bzw. `sound.flowPumpSound` eingeschaltet
@@ -125,6 +113,45 @@ Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 B
 Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere und Algen gezeichnet werden (`render.tankDetailDistance`, 48), wie
 stark farbige Lichter das Wasser tönen (`render.lightTint`, 0 bis 1, Standard 0,6; 0 = die Farbe zeigt sich nur an der
 Lampe), den Verlassen-Hinweis im Innenraum (`hud.interiorLeaveHint`) und die Alarm-Wegpunkte auf der eigenen Karte (`map.showAlarmWaypoints`).
+
+## Feature-Schalter
+
+Jeder Teil von Bettacraft lässt sich in der **Common-Config** unter `features` abschalten (auch in den Mod-Einstellungen),
+damit ein Modpack nur behält, was es will. Jede Gruppe hat ihren Schalter `enabled`, ihre Unterschalter liegen daneben
+(`features.tankmates.enabled`, `features.tankmates.cichlids`). Ein Unterschalter ist aus, wenn seine Gruppe aus ist, und
+manche brauchen eine andere Gruppe (Rifffische und Seepferdchen brauchen die Beifische, Korallen das Meerwasser, jeder
+Zucht-Schalter `breeding.enabled`, Schildkröten die Terrarien). Aus heißt:
+
+* **Kein neuer Inhalt:** seine Rezepte (auch der Futtermaschine und des Schmelztiegels), Händler-Angebote, Loot, Kescher-
+  und Angelfänge und Wild-Spawns entfallen. Datapacks können dieselbe Bedingung nutzen: `{"type": "bettacraft:feature", "feature": "corals.enabled"}`
+  in Rezepten und Loot-Tabellen.
+* **Ausgeblendet:** Kreativ-Tab, JEI (mit den Kategorien von Futtermaschine und Schmelztiegel) und dieses Handbuch lassen
+  es weg; eine Seite, die man über einen Link erreicht, sagt, dass es aus ist. Ein Client auf einem Server folgt den
+  Schaltern des Servers.
+* **Seine Logik ruht:** nichts davon wird gelöscht und nichts stirbt. Tiere, Pflanzen, Blöcke und Items bleiben in der Welt
+  und warten; wieder an, geht alles weiter, wo es stand.
+
+| Schalter | Aus: was ruht |
+|---|---|
+| `bettas.enabled` | die Pflege der Bettas (Hunger, Krankheit, Wachstum), Nester und Kämpfe |
+| `breeding.enabled` | jede Zucht: Nester, Laichen, Trächtigkeit, Gelege, Junge der Garnelen und Schnecken |
+| `interior.enabled` | niemand kann in ein Becken (wer drin ist, kann hinaus); die Pflanzen drinnen wachsen nicht |
+| `floatingPlants.enabled`, `aquaticPlants.enabled`, `corals.enabled` | diese Pflanzen wachsen, wuchern und zehren nicht |
+| `invertebrates.enabled` | Garnelen, Schnecken und Krebse stehen still (kein Fressen, Altern, Vermehren, Sterben) |
+| `algae.enabled` | Algen wachsen nicht und werden nicht abgeweidet |
+| `frogs.enabled` | Krallenfrösche bekommen keinen Hunger und brauchen keine Luft |
+| `tankmates.enabled` (und jede Gruppe, `saltwater.reefFish`) | ihre Pflege, Schwärme, Kämpfe und Zucht |
+| `saltwater.enabled` | der Salzgehalt schadet niemandem |
+| `power.enabled` | kein Gerät braucht FE (wie mit allen Strom-Optionen aus) |
+| `liveFood.enabled` | Zuchtansätze und Kulturen stehen still |
+| `sounds.enabled` | die Gerätesounds schweigen |
+| `foreignAnimals.enabled`, `decor.enabled`, `compat.create.enabled` | ihre Unterschalter (Pflege, Zucht, Laub, Contraptions ...) |
+| `compat.jei`, `compat.overlays`, `compat.guideme`, `compat.betterFishTanks` | die Anbindung an diese Mod (keine JEI-Seiten, keine Overlay-Zeilen, kein Handbuch-Item, kein Aussetzen in BFT-Becken) |
+| `compat.mekanism`, `compat.enderio`, `compat.thermal` | das Edelstahl-Rezept der Maschine dieser Mod |
+
+Jeder Schalter hat in den Mod-Einstellungen seine eigene Zeile mit Erklärung. Eine Config von vor 1.26 wird beim Start von
+selbst auf diese Schlüssel umgestellt (die alte Datei bleibt als `bettacraft-common.toml.pre-m33`); nach einer Änderung in der
+Datei bringt `/reload` Rezepte und Loot auf den Stand.
 
 ## Dieses Handbuch
 

@@ -98,19 +98,7 @@ navigation:
 The **common config** sets the spawn weight and group size of wild bettas and the fish bag recipe (`recipes.fishBag`:
 AUTO, KELP or PLASTIC), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`: AUTO = only the first
 installed one of Jade, WTHIT and The One Probe, so two overlay mods do not show every aquarium twice; JADE, TOP, WTHIT or
-ALL) and switches for single features (`features.*`): `interiorPathfinding` (frogs walk around the decoration, small
-animals go under overhangs and into caves, plecos swim into their spawning cave; off = straight lines) and `plantMeshes`
-(the new look of the plants and corals in the interior and the miniature; off = the blocks, for everyone), since 1.14.2
-`swayingForeignPlants` (kelp, seagrass, corals and other mods' water plants sway in the miniature; the tag
-`#bettacraft:swaying_plants`, other underwater plants found automatically: `swaying.autoDetect`, never sway:
-`swaying.exclude` with block ids, `#tags` or `modid:*`),
-since 1.13.2 `smoothSwimming` (fish turn in curves and tilt smoothly, kuhli loaches undulate and hide by day, plecos stand
-up only on the glass), `greenNeonTetra` (the green neon at the trader and in the net), `snailColors` (individual shades of
-the racer nerites, mostly gold apple snails with bands, red ramshorns), `detailedDecor` (the big skull and shipwreck),
-`breakProtection` (the switch in the tank menu), `clipOnFeeder` and since 1.13.3 `livebearerGenetics` (the [guppy and endler genetics](tankmates/guppy_genetics.md); off = the old fixed varieties) and since 1.13.4 `stoneCabinets` ([cabinets of stone](equipment/cabinet.md); off = only wooden ones can be crafted) and since 1.14.1 `seahorses` ([seahorses](saltwater/seahorses.md); off = none from the net and the trader) and since 1.15.1 `plantNetCatches` (aquarium plants from the [net](equipment/tank_net.md); off = plants only from fishing, bottles, shears and the trader) and `cabinetOutletSide` (the [outlet side](equipment/cabinet.md) of the cabinet filter; off = always the back wall, even flow) and since 1.16.0 `oxygen` ([oxygen](aquarium/oxygen.md)), `aeration`
-([air pump and air stones](equipment/air_pump.md)), `moreInternalFilters` (sponge and corner filter, intake sponge),
-`fryIntake` (motor filters suck in fry), `powerRegulator` ([power regulator](equipment/regulator.md)), `ledTiers`
-([LED panel and high-power LED](equipment/light.md)) and `lightTimer` (dimmer and daylight timer) and since 1.17.0 `stainlessSteel` ([crucible](equipment/crucible.md)), `pipes` ([pipes and the water pump](equipment/pipes.md)), `interiorPipes` ([bulkhead and interior pipes](equipment/bulkhead.md)), `multiblockFilter` ([multiblock filter](equipment/multiblock_filter.md)), `autoWaterChange` ([water change controller](equipment/water_change.md)) and `topOff` ([level sensor](equipment/top_off.md)) and since 1.18.0 `waterChemistry` ([water chemistry](aquarium/water_chemistry.md); off = the values stand still and no animal minds them), `co2` ([CO2 dosing](equipment/co2.md); off = the devices give no CO2), `reverseOsmosis` ([reverse osmosis unit](equipment/reverse_osmosis.md); off = it does not run), `caridina` ([bee shrimp](invertebrates/caridina.md)), `sulawesi` ([cardinal shrimp](invertebrates/sulawesi_shrimp.md) and [Tylomelania](invertebrates/tylomelania.md); off = no new ones from the net, the wild and the trader) and `reefDosing` ([reef chemistry](saltwater/reef_chemistry.md) and the [dosing pump](saltwater/dosing_pump.md); off = the values stand still and the pump does not dose) and since 1.19.0 `liveFoodCultures` ([tubifex dish](food/tubifex_dish.md) and [daphnia barrel](food/daphnia_barrel.md); off = the cultures stand still) and `liveFoodPump` ([live food pump](food/live_food_pump.md); off = it does not pump and tanks take no live food from pipes), `foodMaker` ([food maker](food/food_maker.md); off = it stands still) and `foodVariety` ([food variety](food/food_variety.md); off = every food is the same) and since 1.20.0 `monitors` ([monitors](equipment/monitor.md); off = the screens stay dark and record nothing) and since 1.25.0 `foreignCare`, `foreignBreeding` and `suppressForeignBreeding` ([animals of other mods](settings/foreign_profiles.md): our needs and our breeding for the animals with a profile, their own breeding suppressed in the tank; off = left to their mod) and `createContraptions` ([moving tanks with Create](settings/create.md); off = Create cannot move tanks), `createRotation` (Create's rotation drives pumps, the reverse osmosis unit and the food maker; off = only FE and the crank) and `createDisplayLinks` (tanks and monitors for Create's Display Link; off = it cannot read them), `modpackEvents` (the events for [KubeJS scripts](settings/modpacks.md); off = none are posted) and `alarmWaypoints` (map waypoints at tanks with a [monitor alarm](equipment/monitor.md); off = none). The common config
+ALL) and the feature switches (`features.*`, see Feature switches below). The common config
 `sounds.useVanilla` switches the device sounds back to Minecraft's own; the client config has a volume per kind of
 device (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`); the hum of the air pumps
 and the whir of the flow pumps are off until `sound.airPumpSound` or `sound.flowPumpSound` is switched on. The client
@@ -125,6 +113,44 @@ the filter sound, the connected glass textures (`render.connectedGlass`) and the
 floating plants, small animals and algae are drawn (`render.tankDetailDistance`, 48), how strongly coloured lights tint
 the water (`render.lightTint`, 0 to 1, default 0.6; 0 = the colour only shows at the lamp), the leave hint in the
 interior (`hud.interiorLeaveHint`) and the alarm waypoints on your own map (`map.showAlarmWaypoints`).
+
+## Feature switches
+
+Every part of Bettacraft can be switched off in the **common config** under `features` (also in the Mod settings), so a
+modpack keeps only what it wants. Every group has its switch `enabled`, its sub-switches sit next to it
+(`features.tankmates.enabled`, `features.tankmates.cichlids`). A sub-switch is off when its group is off, and some need
+another group (reef fish and seahorses need the tankmates, corals need salt water, every breeding switch needs
+`breeding.enabled`, turtles need the terrariums). Off means:
+
+* **No new content:** its recipes (also of the food maker and the crucible), wandering trader offers, loot, net and fishing
+  catches and wild spawns are gone. Datapacks can use the same condition: `{"type": "bettacraft:feature", "feature": "corals.enabled"}`
+  in recipes and loot tables.
+* **Hidden:** the creative tab, JEI (with the categories of the food maker and the crucible) and this handbook leave it out;
+  a page reached through a link says that it is off. A client on a server follows the server's switches.
+* **Its logic rests:** nothing of it is deleted and nothing dies. Animals, plants, blocks and items stay in the world and
+  wait; switched on again, everything goes on where it stood.
+
+| Switch | Off: what rests |
+|---|---|
+| `bettas.enabled` | betta care (hunger, illness, growth), nests and fights |
+| `breeding.enabled` | every breeding: nests, spawning, pregnancies, clutches, shrimp and snail young |
+| `interior.enabled` | nobody can go into a tank (who is inside can leave); the plants inside do not grow |
+| `floatingPlants.enabled`, `aquaticPlants.enabled`, `corals.enabled` | these plants neither grow, spread nor take up waste |
+| `invertebrates.enabled` | shrimp, snails and crayfish stand still (no eating, ageing, breeding, dying) |
+| `algae.enabled` | algae neither grow nor get grazed |
+| `frogs.enabled` | dwarf frogs neither get hungry nor need air |
+| `tankmates.enabled` (and each group, `saltwater.reefFish`) | their care, shoals, fights and breeding |
+| `saltwater.enabled` | salinity harms nobody |
+| `power.enabled` | no device needs FE (as with every power option off) |
+| `liveFood.enabled` | breeders and cultures stand still |
+| `sounds.enabled` | the device sounds are silent |
+| `foreignAnimals.enabled`, `decor.enabled`, `compat.create.enabled` | their sub-switches (care, breeding, leaf litter, contraptions ...) |
+| `compat.jei`, `compat.overlays`, `compat.guideme`, `compat.betterFishTanks` | the integration with that mod (no JEI pages, no overlay lines, no handbook item, no release into BFT tanks) |
+| `compat.mekanism`, `compat.enderio`, `compat.thermal` | the stainless steel recipe of that mod's machine |
+
+Every switch has its own line in the Mod settings with an explanation. A config from before 1.26 is moved to these keys
+by itself when the game starts (the old file stays as `bettacraft-common.toml.pre-m33`); after a change in the file `/reload`
+brings the recipes and loot up to date.
 
 ## This handbook
 
