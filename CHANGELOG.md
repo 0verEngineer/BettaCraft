@@ -4,6 +4,43 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.22.1-beta.1] - 2026-11-15
+
+Fixes and polish: no water blocks in the tank interior, every block as a 3D item, device sounds without rustling, finer
+Bucephalandras and Cryptocorynes, the air pump in the cabinet and the multiblock filter under a tank.
+
+### Added
+- **Air pump in the aquarium cabinet:** the cabinet menu has a slot for an air pump. It drives the air stones and sponge
+  filters of the tank above like a pump beside it (FE, monitor and tank menu count it); its air hose goes up together
+  with the filter hose at the cabinet's outlet side. Old cabinets keep their contents.
+- **Sound test:** the client command `/bettacraft sounds` plays every device sound (own and Minecraft twin) one after
+  another with its name in the chat.
+- Client config `sound.airPumpSound` and `sound.flowPumpSound` (both off by default).
+- The showcase world has a multiblock filter connected by pipes, one directly under its tank and an air pump in a
+  cabinet.
+
+### Changed
+- **Device sounds:** the filter outlet is a calm trickle of bubbles instead of a rustling noise; air stones and sponge
+  filters keep only their bubbling (the noise beds are gone, nothing above 3 to 5 kHz); all of them quieter. The hum of
+  the air pumps and the whir of the flow pumps are quieter and **off by default** (switch them on in the client config).
+- **Every block of the mod is a 3D block item** (inventory, hotbar, JEI, handbook), like vanilla blocks; plants and
+  crossed models stay flat. Lights show their beam, heaters and coolers their glass tube; clearer icons for the crucible
+  (glowing melt), the daphnia barrel (water fleas), the food maker and the monitor.
+- **Stainless steel without blaze powder:** the crucible melts 4 iron, coal and nether quartz into 3 ingots (blaze rods
+  and powder stay fuel).
+- **Plants:** Bucephalandras have short, narrow lanceolate leaves close to the rhizome; Cryptocorynes have narrower,
+  longer leaves straight from the rosette, without a stalk; Vallisneria sways at about 30 % of its old swing (inside and
+  outside).
+- **Air hoses** run down the glass to the floor and over the floor to the air stones and sponge filters (to the nearest,
+  then on to the next) instead of ending in the middle of the water.
+
+### Fixed
+- Breaking kelp, seagrass, corals, sea pickles or any waterlogged block (also of other mods) in a tank interior, with
+  shears, by hand or with a piston, left a vanilla water block; the interior now gets air, and stray water blocks of
+  earlier versions go on the next rescan.
+- A multiblock filter could not get a tank built on top of it: a click with a block on a filter part opened the filter
+  screen instead of placing the block. A filter directly under its tank (connectors facing up into the floor) works.
+
 ## [1.22.0-beta.1] - 2026-11-15
 
 New freshwater species: 27 tankmates (cichlids, puffers, barbs and loaches, danios, rainbowfish, tetras, livebearers and

@@ -91,7 +91,7 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   from his brood pouch.
 
 ### Equipment and water
-- Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter inside), automatic and
+- Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside), automatic and
   clip-on feeders, air pumps with air stones (bubble columns), light bar, LED panel and high-power LED in 16 colours
   with dimmer and daylight timer.
 - **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a
@@ -167,7 +167,7 @@ The handbook (GuideME) and the JEI pages explain everything else.
 |---|---|
 | `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`), feature switches (`features.*`) |
-| `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound |
+| `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound, device volumes, air pump and flow pump sounds (off by default) |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
 Config). By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
