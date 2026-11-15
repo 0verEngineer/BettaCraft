@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "fintastic:red_algae_block",
+    "fintastic:red_algae_carpet"
+  ],
+  "role": "carpet",
+  "required": false
+}

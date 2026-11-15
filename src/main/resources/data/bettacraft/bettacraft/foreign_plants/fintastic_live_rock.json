@@ -1,0 +1,10 @@
+{
+  "blocks": [
+    "fintastic:live_rock",
+    "fintastic:porous_live_rock",
+    "fintastic:green_algae_live_rock",
+    "fintastic:red_algae_live_rock"
+  ],
+  "role": "live_rock",
+  "required": false
+}

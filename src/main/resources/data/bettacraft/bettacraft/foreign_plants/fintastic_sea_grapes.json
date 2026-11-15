@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "fintastic:sea_grapes",
+    "fintastic:sea_grapes_plant"
+  ],
+  "role": "stem",
+  "required": false
+}

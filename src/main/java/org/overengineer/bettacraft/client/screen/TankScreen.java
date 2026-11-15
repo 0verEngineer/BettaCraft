@@ -1340,10 +1340,22 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int right = 238 - x;
         fitLine(g, Component.translatable("gui.bettacraft.aquatic.count", a.total, a.maxPlants), x, y, TEXT_LIGHT, right);
         y += 11;
-        if (a.total == 0) {
-            fitLine(g, Component.translatable(a.built ? "gui.bettacraft.aquatic.none" : "gui.bettacraft.aquatic.none_built").withStyle(ChatFormatting.GRAY),
-                    x, y, TEXT_LIGHT, right);
+        if (a.foreign > 0) {
+            // M38: plants of Minecraft and other mods (they count, but do not grow)
+            fitLine(g, Component.translatable("gui.bettacraft.aquatic.foreign", a.foreign, String.format(java.util.Locale.ROOT, "%,d", a.foreignMass))
+                    .withStyle(ChatFormatting.DARK_AQUA), x, y, TEXT_LIGHT, right);
             y += 11;
+            if (a.total == 0) {
+                fitLine(g, Component.translatable("gui.bettacraft.aquatic.foreign_share", fmt(a.share * 100)), x, y, TEXT_LIGHT, right);
+                y += 11;
+            }
+        }
+        if (a.total == 0) {
+            if (a.foreign == 0) {
+                fitLine(g, Component.translatable(a.built ? "gui.bettacraft.aquatic.none" : "gui.bettacraft.aquatic.none_built").withStyle(ChatFormatting.GRAY),
+                        x, y, TEXT_LIGHT, right);
+                y += 11;
+            }
         } else {
             fitLine(g, Component.translatable("gui.bettacraft.aquatic.mass", String.format(java.util.Locale.ROOT, "%,d", a.blocks),
                     fmt(a.share * 100)), x, y, TEXT_LIGHT, right);

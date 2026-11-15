@@ -1,0 +1,9 @@
+{
+  "blocks": [
+    "fintastic:aquatic_moss_block",
+    "fintastic:aquatic_moss_carpet",
+    "fintastic:aquatic_moss_phyllid"
+  ],
+  "role": "moss",
+  "required": false
+}

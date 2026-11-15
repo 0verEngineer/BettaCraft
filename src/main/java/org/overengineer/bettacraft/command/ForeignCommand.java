@@ -39,6 +39,10 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * the tank the player looks at (within 8 blocks) or else in every tank within {@code radius} blocks (default 32), each with
  * its entity id and the profile file that maps it ({@link ForeignProfiles}) or "no profile"; then the entity types of other
  * mods (not vanilla) that live in these tanks without a profile, for modpack makers who want to write one.
+ * <p>
+ * M38: {@code /bettacraft foreign plants [radius]} does the same for the plants, corals and live rock of Minecraft and other
+ * mods in the interiors: every plant that counts with its block, role, plant mass and profile file, then the plant-like
+ * blocks of other mods in there without a profile.
  */
 public final class ForeignCommand {
     public static final int DEFAULT_RADIUS = 32;
@@ -51,7 +55,106 @@ public final class ForeignCommand {
         return Commands.literal("foreign").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("list").executes(ctx -> list(ctx.getSource(), DEFAULT_RADIUS))
                         .then(Commands.argument("radius", IntegerArgumentType.integer(1, 256))
-                                .executes(ctx -> list(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius")))));
+                                .executes(ctx -> list(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius")))))
+                .then(Commands.literal("plants").executes(ctx -> plants(ctx.getSource(), DEFAULT_RADIUS))
+                        .then(Commands.argument("radius", IntegerArgumentType.integer(1, 256))
+                                .executes(ctx -> plants(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius")))));
+    }
+
+    // ------------------------------------------------------------------ M38: plants
+
+    /** One kind of foreign plant in a tank: block, profile file, role, how many plants, their blocks and their plant mass. */
+    public record PlantRow(ResourceLocation block, ResourceLocation profile, String role, int plants, int blocks, double mass) {}
+
+    /** The plants of other mods in a tank by block and profile (GameTests). */
+    public static List<PlantRow> plantRows(ServerLevel level, TankBlockEntity c) {
+        var r = org.overengineer.bettacraft.plants.InteriorPlants.region(level.getServer(), c.getTank());
+        if (r == null) return List.of();
+        var effect = org.overengineer.bettacraft.plants.foreign.ForeignPlants.effect(level.getServer(), r);
+        Map<String, PlantRow> rows = new LinkedHashMap<>();
+        for (var g : effect.groups()) {
+            // shown by the first block of its profile (kelp, not kelp_plant), the blocks of a tag by their own id
+            var prof = org.overengineer.bettacraft.plants.foreign.ForeignPlants.files().get(g.file());
+            ResourceLocation id = prof != null && !prof.blocks().isEmpty() ? prof.blocks().get(0) : BuiltInRegistries.BLOCK.getKey(g.block());
+            String k = id + " " + g.file();
+            PlantRow o = rows.get(k);
+            rows.put(k, o == null ? new PlantRow(id, g.file(), g.role().id(), 1, g.blocks(), g.mass())
+                    : new PlantRow(id, g.file(), o.role(), o.plants() + 1, o.blocks() + g.blocks(), o.mass() + g.mass()));
+        }
+        List<PlantRow> out = new ArrayList<>(rows.values());
+        out.sort(Comparator.comparing((PlantRow p) -> p.block().toString()));
+        return out;
+    }
+
+    /** Plant-like blocks of other mods (not vanilla, not ours) in the interior of a tank without a profile, with their count. */
+    public static Map<ResourceLocation, Integer> unprofiledPlants(ServerLevel level, TankBlockEntity c) {
+        Map<ResourceLocation, Integer> out = new java.util.TreeMap<>();
+        var r = org.overengineer.bettacraft.plants.InteriorPlants.region(level.getServer(), c.getTank());
+        ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
+        if (r == null || in == null) return out;
+        int x0 = r.originX(), z0 = r.originZ(), y0 = org.overengineer.bettacraft.tank.interior.InteriorRegion.BASE_Y;
+        org.overengineer.bettacraft.tank.interior.InteriorWorldOps.forEachBlock(in, x0, y0, z0, x0 + r.sizeX() - 1, y0 + r.sizeY() - 1, z0 + r.sizeZ() - 1,
+                (x, y, z, s) -> {
+                    ResourceLocation id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
+                    if ("minecraft".equals(id.getNamespace()) || BettaCraft.MOD_ID.equals(id.getNamespace())) return;
+                    if (!plantLike(s) || org.overengineer.bettacraft.plants.foreign.ForeignPlants.entry(s.getBlock()).file() != null) return;
+                    out.merge(id, 1, Integer::sum);
+                });
+        return out;
+    }
+
+    /** A plant (bush, kelp-like, coral) or a block in our water plant tags. */
+    static boolean plantLike(net.minecraft.world.level.block.state.BlockState s) {
+        var b = s.getBlock();
+        return b instanceof net.minecraft.world.level.block.BushBlock || b instanceof net.minecraft.world.level.block.GrowingPlantBlock
+                || b instanceof net.minecraft.world.level.block.BaseCoralPlantTypeBlock || s.is(net.minecraft.tags.BlockTags.CORALS)
+                || s.is(org.overengineer.bettacraft.registry.ModTags.SWAYING_PLANTS) || s.is(org.overengineer.bettacraft.registry.ModTags.INTERIOR_WATER_PLANTS)
+                || s.is(org.overengineer.bettacraft.registry.ModTags.FLOATING_PLANTS);
+    }
+
+    static int plants(CommandSourceStack src, int radius) {
+        ServerLevel level = src.getLevel();
+        TankBlockEntity looked = lookedAt(src);
+        List<TankBlockEntity> tanks = looked != null ? List.of(looked) : tanksNear(level, src.getPosition(), radius);
+        if (!org.overengineer.bettacraft.plants.foreign.ForeignPlants.enabled()) say(src, Component.translatable("command.bettacraft.foreign.plants_off").withStyle(ChatFormatting.GOLD));
+        int shown = 0, total = 0;
+        Map<ResourceLocation, Integer> missing = new java.util.TreeMap<>();
+        for (TankBlockEntity c : tanks) {
+            List<PlantRow> rows = plantRows(level, c);
+            Map<ResourceLocation, Integer> un = unprofiledPlants(level, c);
+            un.forEach((k, v) -> missing.merge(k, v, Integer::sum));
+            var r = org.overengineer.bettacraft.plants.InteriorPlants.region(level.getServer(), c.getTank());
+            var effect = org.overengineer.bettacraft.plants.foreign.ForeignPlants.effect(level.getServer(), r);
+            if (rows.isEmpty() && effect.liveRock() == 0 && un.isEmpty()) continue;
+            shown++;
+            BlockPos p = c.getBlockPos();
+            Component name = c.getTank().name().isEmpty() ? Component.translatable("block.bettacraft.tank") : Component.literal(c.getTank().name());
+            say(src, Component.translatable("command.bettacraft.foreign.plants_tank", name, p.getX() + " " + p.getY() + " " + p.getZ(), effect.plants(),
+                    String.format(java.util.Locale.ROOT, "%.1f", org.overengineer.bettacraft.plants.InteriorPlants.foreignShare(level.getServer(), c.getTank()) * 100))
+                    .withStyle(ChatFormatting.AQUA));
+            for (int i = 0; i < Math.min(PER_TANK, rows.size()); i++) {
+                PlantRow row = rows.get(i);
+                total += row.plants();
+                say(src, Component.translatable("command.bettacraft.foreign.plant", row.block().toString(), row.plants(), row.role(),
+                        String.valueOf(Math.round(row.mass())), row.profile().toString()));
+            }
+            if (rows.size() > PER_TANK) say(src, Component.translatable("command.bettacraft.foreign.more", rows.size() - PER_TANK));
+            if (effect.liveRock() > 0) say(src, Component.translatable("command.bettacraft.foreign.live_rock", effect.liveRock()));
+            if (effect.overLimit() > 0) say(src, Component.translatable("command.bettacraft.foreign.over_limit", effect.overLimit()).withStyle(ChatFormatting.GOLD));
+        }
+        if (shown == 0) {
+            say(src, looked != null ? Component.translatable("command.bettacraft.foreign.plants_none_here")
+                    : Component.translatable("command.bettacraft.foreign.plants_none", radius));
+            return 0;
+        }
+        if (missing.isEmpty()) {
+            say(src, Component.translatable("command.bettacraft.foreign.plants_unprofiled.none"));
+        } else {
+            StringBuilder b = new StringBuilder();
+            for (Map.Entry<ResourceLocation, Integer> e : missing.entrySet()) b.append(b.length() > 0 ? ", " : "").append(e.getKey()).append(" (").append(e.getValue()).append(')');
+            say(src, Component.translatable("command.bettacraft.foreign.plants_unprofiled", b.toString()).withStyle(ChatFormatting.GOLD));
+        }
+        return total;
     }
 
     /** Whether an animal in a tank counts as foreign: not ours and without Bettacraft's own care. */

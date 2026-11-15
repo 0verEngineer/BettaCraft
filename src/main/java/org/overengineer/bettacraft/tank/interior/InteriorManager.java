@@ -654,6 +654,8 @@ public final class InteriorManager {
 
     /** The region's equipment, rescanned first if a bulk change made it stale. */
     public static InteriorEquipment equipment(MinecraftServer server, InteriorRegion r) {
+        // M38: other blocks have a foreign plant profile now (a data pack, a mod added or updated): count them again
+        if (r.built() && r.equipment().foreignSignature() != org.overengineer.bettacraft.plants.foreign.ForeignPlants.signature()) r.equipment().markNeedsScan();
         if (r.equipment().needsScan()) {
             ServerLevel interior = interiorLevel(server);
             if (interior != null) {

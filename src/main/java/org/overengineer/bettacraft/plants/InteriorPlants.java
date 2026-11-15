@@ -361,6 +361,9 @@ public final class InteriorPlants {
     /** Share of the water surface (interior blocks) covered by plant blocks at the surface (stem tops, lotus pads). */
     public static double surfaceCover(TankData t, InteriorRegion r) {
         int s = r.plants().surfaceBlocks();
+        // M38: floating leaves of Minecraft and other mods (lily pads, duckweed) shade it block by block
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server != null) s += org.overengineer.bettacraft.plants.foreign.ForeignPlants.effect(server, r).floating();
         if (s <= 0) return 0;
         int area = TankPlants.surface(t).area() * r.scale() * r.scale();
         return area <= 0 ? 0 : s / (double) area;
@@ -371,7 +374,9 @@ public final class InteriorPlants {
         TankData t = c.getTank();
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.INTERIOR)) return; // M33 part b: the interior rests
         InteriorRegion r = region(level.getServer(), t);
-        if (r == null || r.plants().isEmpty() || days <= 0) return;
+        if (r == null || days <= 0) return;
+        foreignUptake(level, c, r, days); // M38: the plants of other mods take up waste too, without light
+        if (r.plants().isEmpty()) return;
         grow(level, c, r, days);
     }
 
@@ -582,14 +587,32 @@ public final class InteriorPlants {
         c.setChanged();
     }
 
-    /** Water quality per day the plants of a tank take up now (menu). */
+    /** Water quality per day the plants of a tank take up now (menu): ours with light, those of other mods always (M38). */
     public static double uptakePerDay(ServerLevel level, TankBlockEntity c, InteriorRegion r) {
         Env env = env(level, c, r);
         double active = 0;
         for (InteriorPlant p : r.plants().all()) if (env.rate(p) > 0) active += p.blocks;
         double k = ServerConfig.getOr(ServerConfig.AQUATIC_WASTE_UPTAKE, 0.5);
         if (!TankWater.qualityEnabled() || k <= 0) return 0;
-        return k * active / Math.pow(r.scale(), 3) * Math.min(1.0, env.effectiveLight() / 12.0) / Math.max(1.0, c.getTank().waterBlocks());
+        return k * active / Math.pow(r.scale(), 3) * Math.min(1.0, env.effectiveLight() / 12.0) / Math.max(1.0, c.getTank().waterBlocks())
+                + foreignUptakePerDay(level, c, r);
+    }
+
+    /** M38: water quality per day the plants of Minecraft and other mods take up (no light minimum, they have no needs). */
+    public static double foreignUptakePerDay(ServerLevel level, TankBlockEntity c, InteriorRegion r) {
+        double k = ServerConfig.getOr(ServerConfig.AQUATIC_WASTE_UPTAKE, 0.5);
+        if (!TankWater.qualityEnabled() || k <= 0) return 0;
+        double mass = org.overengineer.bettacraft.plants.foreign.ForeignPlants.mass(level.getServer(), r);
+        return mass <= 0 ? 0 : k * mass / Math.pow(r.scale(), 3) / Math.max(1.0, c.getTank().waterBlocks());
+    }
+
+    static void foreignUptake(ServerLevel level, TankBlockEntity c, InteriorRegion r, double days) {
+        TankData t = c.getTank();
+        if (t.waterQuality() >= 1.0F || t.waterMb() <= 0) return;
+        double dq = foreignUptakePerDay(level, c, r) * days;
+        if (dq <= 0) return;
+        t.setWaterQuality((float) Math.min(1.0, t.waterQuality() + dq));
+        c.setChanged();
     }
 
     // ------------------------------------------------------------------ writing the blocks
@@ -949,11 +972,27 @@ public final class InteriorPlants {
 
     // ------------------------------------------------------------------ effects on the tank
 
-    /** Plant mass in tank blocks per water block (0 without plants). */
+    /**
+     * Plant mass in tank blocks per water block (0 without plants): ours and (M38) those of Minecraft and other mods, each
+     * of them like a full-grown plant of ours of its growth form times {@code interiorPlants.foreignPlantFactor}.
+     */
     public static double volumeShare(MinecraftServer server, TankData t) {
+        return ownShare(server, t) + foreignShare(server, t);
+    }
+
+    /** M38: the share of our own plants alone. */
+    public static double ownShare(MinecraftServer server, TankData t) {
         InteriorRegion r = region(server, t);
         if (r == null || r.plants().isEmpty()) return 0;
         return r.plants().blocks() / Math.pow(r.scale(), 3) / Math.max(1.0, t.waterBlocks());
+    }
+
+    /** M38: the share of the plants of Minecraft and other mods (0 with features.aquaticPlants.foreignPlants off). */
+    public static double foreignShare(MinecraftServer server, TankData t) {
+        InteriorRegion r = region(server, t);
+        if (r == null) return 0;
+        double m = org.overengineer.bettacraft.plants.foreign.ForeignPlants.mass(server, r);
+        return m <= 0 ? 0 : m / Math.pow(r.scale(), 3) / Math.max(1.0, t.waterBlocks());
     }
 
     /** Breeding readiness bonus of a well planted tank (server config interiorPlants.breedingBonus). */
@@ -971,7 +1010,7 @@ public final class InteriorPlants {
     /** Plants at the surface plus floating plants cover the surface densely (warning). */
     public static boolean overgrown(MinecraftServer server, TankData t) {
         InteriorRegion r = region(server, t);
-        if (r == null || r.plants().isEmpty()) return false;
+        if (r == null) return false;
         double own = surfaceCover(t, r);
         return own >= 0.05 && own + TankPlants.coverage(t) >= ServerConfig.getOr(ServerConfig.PLANTS_DENSE_FROM, 0.5);
     }

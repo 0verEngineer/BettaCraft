@@ -1,6 +1,38 @@
 {
   "values": [
     {
+      "id": "regions_unexplored:cattail",
+      "required": false
+    },
+    {
+      "id": "alexscaves:ping_pong_sponge",
+      "required": false
+    },
+    {
+      "id": "twilightforest:huge_water_lily",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:duckweed",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:flowering_lily_pad",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:giant_lily_pad",
+      "required": false
+    },
+    {
+      "id": "twilightforest:huge_lily_pad",
+      "required": false
+    },
+    {
+      "id": "twilightforest:huge_water_lily",
+      "required": false
+    },
+    {
       "id": "fintastic:duckweed",
       "required": false
     },

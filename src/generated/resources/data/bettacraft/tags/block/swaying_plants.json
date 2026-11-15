@@ -1,5 +1,17 @@
 {
   "values": [
+    {
+      "id": "regions_unexplored:cattail",
+      "required": false
+    },
+    {
+      "id": "alexscaves:ping_pong_sponge",
+      "required": false
+    },
+    {
+      "id": "twilightforest:huge_water_lily",
+      "required": false
+    },
     "minecraft:kelp",
     "minecraft:kelp_plant",
     "minecraft:seagrass",

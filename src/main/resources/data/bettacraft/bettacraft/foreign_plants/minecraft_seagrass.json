@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "minecraft:seagrass",
+    "minecraft:tall_seagrass"
+  ],
+  "role": "ribbon",
+  "required": false
+}

@@ -124,14 +124,18 @@ public final class TankNitrate {
         return TankWater.animals(TankInhabitants.liveInhabitants(level, t), t) / Math.max(1.0, t.waterBlocks()) / ref;
     }
 
-    /** 0..1 how densely planted the tank is (plants in the interior and floating plants), times their light. */
+    /**
+     * 0..1 how densely planted the tank is (plants in the interior and floating plants), ours times their light; the plants
+     * of Minecraft and other mods (M38) without a light minimum.
+     */
     public static double plants(ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
-        double share = Math.min(1.0, org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t) * 4
+        double own = Math.min(1.0, org.overengineer.bettacraft.plants.InteriorPlants.ownShare(level.getServer(), t) * 4
                 + org.overengineer.bettacraft.tank.plants.TankPlants.coverage(t) * 0.5);
-        if (share <= 0) return 0;
-        int light = org.overengineer.bettacraft.tank.plants.TankPlants.light(level, c);
-        return share * (light >= 7 ? 1.0 : 0.3);
+        double foreign = org.overengineer.bettacraft.plants.InteriorPlants.foreignShare(level.getServer(), t) * 4;
+        if (own <= 0 && foreign <= 0) return 0;
+        int light = own > 0 ? org.overengineer.bettacraft.tank.plants.TankPlants.light(level, c) : 15;
+        return Math.min(1.0, own * (light >= 7 ? 1.0 : 0.3) + foreign);
     }
 
     /** mg/L per day in this tank now. */

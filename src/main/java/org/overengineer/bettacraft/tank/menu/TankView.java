@@ -381,6 +381,8 @@ public final class TankView {
         /** Highest tint level per species (red species: the colour they show). */
         public int[] tints = new int[org.overengineer.bettacraft.plants.PlantSpecies.values().length];
         public int total, maxPlants, blocks, light, growing, fullGrown, dark, dry;
+        /** M38: plants of Minecraft and other mods that count, and their plant mass (interior blocks). */
+        public int foreign, foreignMass;
         public float share, surfaceCover, growthSpeed, hiding, temp;
         public double uptakePerDay;
         public boolean bonus, overgrown, built;
@@ -399,10 +401,16 @@ public final class TankView {
             t.putBoolean("bonus", bonus);
             t.putBoolean("overgrown", overgrown);
             t.putBoolean("built", built);
+            t.putIntArray("foreign", new int[]{foreign, foreignMass});
             return t;
         }
 
         void load(CompoundTag t) {
+            int[] fo = t.getIntArray("foreign");
+            if (fo.length == 2) {
+                foreign = fo[0];
+                foreignMass = fo[1];
+            }
             int[] c = t.getIntArray("counts");
             if (c.length == counts.length) counts = c;
             int[] ti = t.getIntArray("tints");
@@ -452,6 +460,9 @@ public final class TankView {
             else if (env.rate(p) > 0) a.growing++;
         }
         a.total = r.plants().size();
+        var foreign = org.overengineer.bettacraft.plants.foreign.ForeignPlants.effect(level.getServer(), r); // M38
+        a.foreign = foreign.plants();
+        a.foreignMass = (int) Math.round(foreign.mass());
         a.share = (float) org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t);
         a.surfaceCover = (float) org.overengineer.bettacraft.plants.InteriorPlants.surfaceCover(t, r);
         a.hiding = (float) org.overengineer.bettacraft.plants.InteriorPlants.hiding(level.getServer(), t);

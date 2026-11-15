@@ -51,6 +51,15 @@ public final class InteriorEquipment {
     int floorBlocks, acidFloor, limeFloor, limeRocks, driftwood, activeSoil;
     /** M28: almond leaves and alder cones on the floor, shelter blocks (clay and terracotta) for the young shrimp. */
     int leafLitter, alderCones, shelter;
+    /**
+     * M38: blocks of plants, corals and live rock of Minecraft and other mods that have a profile
+     * ({@link org.overengineer.bettacraft.plants.foreign.ForeignPlants}), by position; bumped version on every change; the
+     * profile signature the index was made with (another one: scanned again).
+     */
+    final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<net.minecraft.world.level.block.Block> foreignPlants = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+    int foreignVersion, foreignSignature;
+    private long foreignKey;
+    private org.overengineer.bettacraft.plants.foreign.ForeignPlants.Effect foreignEffect;
 
     public Long2IntOpenHashMap heaters() { return heaters; }
     public Long2IntOpenHashMap coolers() { return coolers; }
@@ -77,6 +86,21 @@ public final class InteriorEquipment {
     public int leafLitter() { return leafLitter; }
     public int alderCones() { return alderCones; }
     public int shelter() { return shelter; }
+    // M38
+    public it.unimi.dsi.fastutil.longs.Long2ObjectMap<net.minecraft.world.level.block.Block> foreignPlants() { return foreignPlants; }
+    public int foreignVersion() { return foreignVersion; }
+    public int foreignSignature() { return foreignSignature; }
+
+    /** M38: the cached effect of the foreign plants for this key (null: compute it). */
+    @javax.annotation.Nullable
+    public org.overengineer.bettacraft.plants.foreign.ForeignPlants.Effect foreignEffect(long key) {
+        return foreignEffect != null && foreignKey == key ? foreignEffect : null;
+    }
+
+    public void cacheForeignEffect(long key, org.overengineer.bettacraft.plants.foreign.ForeignPlants.Effect e) {
+        foreignKey = key;
+        foreignEffect = e;
+    }
 
     /** M25: a floor block's substrate changed ({@code null} = none): the soil / limestone counts follow. */
     public void onSubstrate(@javax.annotation.Nullable BlockState old, @javax.annotation.Nullable BlockState neu) {
@@ -155,6 +179,7 @@ public final class InteriorEquipment {
     }
 
     private void remove(long key, BlockState s) {
+        if (foreignPlants.remove(key) != null) foreignVersion++; // M38
         if (s.is(ModTags.LIMESTONE)) limeRocks = Math.max(0, limeRocks - 1); // M25
         else if (s.is(ModTags.DRIFTWOOD)) driftwood = Math.max(0, driftwood - 1);
         if (s.is(ModBlocks.ALMOND_LEAF_LITTER.get())) leafLitter = Math.max(0, leafLitter - 1); // M28
@@ -184,6 +209,10 @@ public final class InteriorEquipment {
     }
 
     private void add(long key, BlockState s) {
+        if (org.overengineer.bettacraft.plants.foreign.ForeignPlants.indexed(s)) { // M38
+            foreignPlants.put(key, s.getBlock());
+            foreignVersion++;
+        }
         if (s.is(ModTags.LIMESTONE)) limeRocks++; // M25
         else if (s.is(ModTags.DRIFTWOOD)) driftwood++;
         if (s.is(ModBlocks.ALMOND_LEAF_LITTER.get())) leafLitter++; // M28
@@ -253,6 +282,9 @@ public final class InteriorEquipment {
         substrate = 0;
         floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = activeSoil = 0;
         leafLitter = alderCones = shelter = 0;
+        foreignPlants.clear(); // M38
+        foreignVersion++;
+        foreignSignature = org.overengineer.bettacraft.plants.foreign.ForeignPlants.signature();
         needsScan = false;
         if (!r.built()) return;
         int x0 = r.originX(), z0 = r.originZ();
@@ -360,6 +392,27 @@ public final class InteriorEquipment {
         }
         t.putLongArray("plumbing_keys", qk);
         t.putIntArray("plumbing_codes", qv);
+        // M38: the foreign plant blocks with a palette of their ids
+        long[] fk = new long[foreignPlants.size()];
+        int[] fi = new int[foreignPlants.size()];
+        java.util.List<String> palette = new java.util.ArrayList<>();
+        java.util.Map<net.minecraft.world.level.block.Block, Integer> index = new java.util.HashMap<>();
+        int f = 0;
+        for (var e : foreignPlants.long2ObjectEntrySet()) {
+            fk[f] = e.getLongKey();
+            fi[f++] = index.computeIfAbsent(e.getValue(), b -> {
+                palette.add(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(b).toString());
+                return palette.size() - 1;
+            });
+        }
+        net.minecraft.nbt.ListTag pl = new net.minecraft.nbt.ListTag();
+        for (String id : palette) pl.add(net.minecraft.nbt.StringTag.valueOf(id));
+        CompoundTag ft = new CompoundTag();
+        ft.putLongArray("keys", fk);
+        ft.putIntArray("blocks", fi);
+        ft.put("palette", pl);
+        ft.putInt("signature", foreignSignature);
+        t.put("foreign_plants", ft);
         if (needsScan) t.putBoolean("rescan", true);
         return t;
     }
@@ -414,6 +467,28 @@ public final class InteriorEquipment {
             activeSoil = chem.length >= 6 ? chem[5] : 0; // part d: there was no active soil before
         } else {
             floorBlocks = acidFloor = limeFloor = limeRocks = driftwood = activeSoil = 0;
+            needsScan = true;
+        }
+        // M38: regions of earlier versions find their plants of Minecraft and other mods once
+        foreignPlants.clear();
+        foreignVersion++;
+        if (t.contains("foreign_plants")) {
+            CompoundTag ft = t.getCompound("foreign_plants");
+            long[] fk = ft.getLongArray("keys");
+            int[] fi = ft.getIntArray("blocks");
+            net.minecraft.nbt.ListTag pl = ft.getList("palette", net.minecraft.nbt.Tag.TAG_STRING);
+            net.minecraft.world.level.block.Block[] blocks = new net.minecraft.world.level.block.Block[pl.size()];
+            for (int i = 0; i < pl.size(); i++) {
+                var id = net.minecraft.resources.ResourceLocation.tryParse(pl.getString(i));
+                blocks[i] = id == null ? null : net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(id).orElse(null);
+            }
+            for (int i = 0; i < fk.length && i < fi.length; i++) {
+                if (fi[i] >= 0 && fi[i] < blocks.length && blocks[fi[i]] != null) foreignPlants.put(fk[i], blocks[fi[i]]);
+                else needsScan = true; // a block of a mod that is gone
+            }
+            foreignSignature = ft.getInt("signature");
+        } else {
+            foreignSignature = 0;
             needsScan = true;
         }
         int[] litter = t.getIntArray("litter"); // M28: regions of earlier versions count the litter and shelter once

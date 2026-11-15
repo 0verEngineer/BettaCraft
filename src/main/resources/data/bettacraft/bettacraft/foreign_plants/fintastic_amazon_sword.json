@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "fintastic:amazon_sword",
+    "fintastic:tall_amazon_sword"
+  ],
+  "role": "rosette",
+  "required": false
+}

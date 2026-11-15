@@ -132,6 +132,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue AQUATIC_BREEDING_BONUS;
     public static final ModConfigSpec.DoubleValue AQUATIC_HIDING;
     public static final ModConfigSpec.IntValue AQUATIC_MAX_PER_TANK;
+    /** M38: how strongly a plant of Minecraft or another mod works, relative to a full-grown plant of ours of the same growth form. */
+    public static final ModConfigSpec.DoubleValue FOREIGN_PLANT_FACTOR;
     public static final ModConfigSpec.BooleanValue AQUATIC_SPREAD;
     public static final ModConfigSpec.DoubleValue AQUATIC_FISHING_CHANCE;
     public static final ModConfigSpec.DoubleValue AQUATIC_BOTTLE_CHANCE;
@@ -552,6 +554,10 @@ public final class ServerConfig {
                 .defineInRange("hidingSpots", 0.6, 0.0, 1.0);
         AQUATIC_MAX_PER_TANK = b.comment("Most aquarium plants (roots) one tank interior holds; side shoots and runners stop there")
                 .defineInRange("maxPlantsPerTank", 48, 1, 1024);
+        FOREIGN_PLANT_FACTOR = b.comment("M38: a plant or coral of Minecraft or another mod in the interior (features.aquaticPlants.foreignPlants)",
+                        "works like a full-grown plant of ours of the same growth form times this (nitrate, waste, breeding, hiding;",
+                        "live rock of other mods: times our live rock). They do not grow and have no needs, so a little less (0 = no effect)")
+                .defineInRange("foreignPlantFactor", 0.6, 0.0, 2.0);
         AQUATIC_SPREAD = b.comment("Whether full-grown stem plants, Vallisneria, Monte Carlo and Cryptocoryne form side shoots and runners")
                 .define("plantsSpread", true);
         AQUATIC_FISHING_CHANCE = b.comment("Chance that fishing in a jungle, river or swamp brings up an aquarium plant instead of the catch")

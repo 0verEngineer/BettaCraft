@@ -1,0 +1,7 @@
+{
+  "blocks": [
+    "#minecraft:coral_blocks"
+  ],
+  "role": "coral",
+  "required": false
+}

@@ -1344,6 +1344,7 @@ public final class ModDataGen {
             DataGenM31c.blockTags(this::tag); // M31 part c
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM37.blockTags(this::tag); // M37
+            DataGenM38.blockTags(this::tag); // M38
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c
             DataGenM32b.blockTags(this::tag); // M32 part b

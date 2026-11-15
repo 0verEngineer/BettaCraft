@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "fintastic:lotus",
+    "fintastic:lotus_flower"
+  ],
+  "role": "bulb",
+  "required": false
+}

@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "minecraft:kelp",
+    "minecraft:kelp_plant"
+  ],
+  "role": "stem",
+  "required": false
+}

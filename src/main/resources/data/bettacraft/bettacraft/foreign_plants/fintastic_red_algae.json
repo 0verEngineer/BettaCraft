@@ -1,0 +1,9 @@
+{
+  "blocks": [
+    "fintastic:red_algae",
+    "fintastic:red_algae_fan",
+    "fintastic:red_algae_wall_fan"
+  ],
+  "role": "moss",
+  "required": false
+}

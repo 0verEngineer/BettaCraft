@@ -38,7 +38,8 @@ public final class TankReef {
     public static int liveRock(ServerLevel level, TankData t) {
         var r = InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r == null || !r.built()) return 0;
-        return InteriorManager.equipment(level.getServer(), r).liveRock();
+        return InteriorManager.equipment(level.getServer(), r).liveRock()
+                + org.overengineer.bettacraft.plants.foreign.ForeignPlants.liveRock(level.getServer(), r); // M38: live rock of other mods
     }
 
     /** Water blocks the live rock keeps clean (salt water only): per tank block worth of live rock. */
@@ -46,7 +47,9 @@ public final class TankReef {
         if (!t.marine()) return 0;
         var r = InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r == null || !r.built()) return 0;
-        int n = InteriorManager.equipment(level.getServer(), r).liveRock();
+        // M38: live rock of other mods (Fintastic) is a smaller filter: times interiorPlants.foreignPlantFactor
+        double n = InteriorManager.equipment(level.getServer(), r).liveRock()
+                + org.overengineer.bettacraft.plants.foreign.ForeignPlants.liveRock(level.getServer(), r) * org.overengineer.bettacraft.plants.foreign.ForeignPlants.factor();
         if (n <= 0) return 0;
         return n / Math.pow(r.scale(), 3) * ServerConfig.getOr(ServerConfig.REEF_LIVE_ROCK_BLOCKS, 24.0);
     }

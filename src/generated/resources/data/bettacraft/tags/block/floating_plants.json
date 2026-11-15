@@ -1,5 +1,25 @@
 {
   "values": [
+    {
+      "id": "regions_unexplored:duckweed",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:flowering_lily_pad",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:giant_lily_pad",
+      "required": false
+    },
+    {
+      "id": "twilightforest:huge_lily_pad",
+      "required": false
+    },
+    {
+      "id": "twilightforest:huge_water_lily",
+      "required": false
+    },
     "minecraft:lily_pad",
     {
       "id": "fintastic:duckweed",

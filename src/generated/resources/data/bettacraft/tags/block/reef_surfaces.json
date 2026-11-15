@@ -1,5 +1,29 @@
 {
   "values": [
+    {
+      "id": "fintastic:live_rock",
+      "required": false
+    },
+    {
+      "id": "fintastic:porous_live_rock",
+      "required": false
+    },
+    {
+      "id": "fintastic:green_algae_live_rock",
+      "required": false
+    },
+    {
+      "id": "fintastic:red_algae_live_rock",
+      "required": false
+    },
+    {
+      "id": "fintastic:dead_live_rock",
+      "required": false
+    },
+    {
+      "id": "fintastic:dead_porous_live_rock",
+      "required": false
+    },
     "bettacraft:reef_rock",
     "bettacraft:live_rock",
     "#minecraft:coral_blocks",

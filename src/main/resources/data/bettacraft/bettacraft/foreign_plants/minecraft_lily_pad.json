@@ -1,0 +1,7 @@
+{
+  "blocks": [
+    "minecraft:lily_pad"
+  ],
+  "role": "floating",
+  "required": false
+}
