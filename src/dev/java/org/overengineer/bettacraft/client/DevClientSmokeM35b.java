@@ -217,12 +217,14 @@ final class DevClientSmokeM35b {
         pose(level, pc, insert(level, pc, crab, 1, false), 8.0, 2.8, Double.NaN, 200F);
         EntityType<?> otter = type("crittersandcompanions:otter");
         if (otter != null) pose(level, pc, insert(level, pc, otter, 1, false), 10.0, 5.2, Double.NaN, 230F);
-        // the dragonflies in the air over the water
+        // the dragonflies in the air over the water (M39 part b: fliers go into a closed tank only; frozen, they stay without one)
+        for (BlockPos top : fc.getTank().openTops()) level.setBlock(top, org.overengineer.bettacraft.registry.ModBlocks.TANK_LID.get().defaultBlockState(), 3);
         double fs = fc.getTank().waterSurfaceY();
         pose(level, fc, insert(level, fc, dragonfly, 1, false), 3.2, 2.8, fs + 0.6, 80F);
         EntityType<?> cnc = type("crittersandcompanions:dragonfly");
         if (cnc != null) pose(level, fc, insert(level, fc, cnc, 1, false), 6.4, 3.6, fs + 0.95, 250F);
         else pose(level, fc, insert(level, fc, dragonfly, 1, false), 6.6, 3.4, fs + 0.95, 250F);
+        for (BlockPos top : fc.getTank().openTops()) level.setBlock(top, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
         for (TankBlockEntity c : List.of(tc, pc, fc)) c.markTankChanged();
     }
 

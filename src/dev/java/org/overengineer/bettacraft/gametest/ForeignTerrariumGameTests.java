@@ -292,7 +292,7 @@ public final class ForeignTerrariumGameTests {
             TankBlockEntity c = terrarium(h, 2, 2, 12, 3, 6);
             LivingEntity t = put(h, c, container(h, a.type(), false, false));
             h.assertTrue(ForeignFood.isFood(new ItemStack(Items.DANDELION)), "the feeder takes dandelions");
-            h.assertFalse(ForeignFood.isFood(new ItemStack(Items.WHEAT)), "but not wheat");
+            h.assertFalse(ForeignFood.isFood(new ItemStack(Items.STICK)), "but not sticks"); // M39 part b: wheat is food of the rat, zebra ...
             ForeignProfile p = ForeignProfiles.of(t.getType());
             ForeignCare.advance(level, c, t, p, 1.2);
             h.assertTrue(ForeignCare.health(t).daysSinceFed() >= 1.2 - 1e-6, "hungry now");

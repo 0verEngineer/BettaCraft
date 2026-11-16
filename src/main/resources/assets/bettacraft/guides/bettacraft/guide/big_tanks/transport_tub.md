@@ -19,7 +19,7 @@ Carries **one big animal** with all its data. It is heavy: while a full tub is i
   take-out buttons put a big animal into it; a big animal you caught before (not a wild one) can be scooped up with it.
 * **Into a tank:** right-click a tank that is big enough ([size rule](../big_tanks.md)); the message names the size the
   animal needs. The tub brings no water.
-* **Release:** right-click open water.
+* **Release:** right-click open water (a big land animal of another mod, such as a lion or a komodo dragon: right-click the ground).
 
 ## Obtaining
 

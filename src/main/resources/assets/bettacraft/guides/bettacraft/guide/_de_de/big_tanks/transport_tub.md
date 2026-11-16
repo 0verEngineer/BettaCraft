@@ -20,7 +20,7 @@ langsamer (`bigAnimalRules.tubSlowness`).
   kannst du direkt hineinschöpfen.
 * **Ins Becken:** Rechtsklick auf ein Becken, das groß genug ist ([Größenregel](../big_tanks.md)); die Meldung nennt die
   Größe, die das Tier braucht. Die Wanne bringt kein Wasser mit.
-* **Freilassen:** Rechtsklick auf offenes Wasser.
+* **Freilassen:** Rechtsklick auf offenes Wasser (ein großes Landtier einer anderen Mod wie ein Löwe oder ein Komodowaran: Rechtsklick auf den Boden).
 
 ## Bezug
 

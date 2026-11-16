@@ -22,7 +22,7 @@ haben ([Profile für Tiere anderer Mods](../settings/foreign_profiles.md)). Bett
 | Dschungelskorpion | Naturalist | trockenes Terrarium, feuchte Luft (60 bis 90 %) | 0,2 m: 3 × 2 × 1 Blöcke |
 | Schnecke | Naturalist | trockenes Terrarium, feuchte Luft (70 bis 100 %), kühl | seine Hitbox |
 | Krabbe | Naturalist | Paludarium, Süß- oder Meerwasser | seine Hitbox |
-| Libelle | Naturalist, Critters and Companions | Paludarium, fliegt | 0,1 m (für die breiten Flügel) |
+| Libelle | Naturalist, Critters and Companions | Paludarium, fliegt (**Deckel**) | 0,1 m (für die breiten Flügel) |
 | Ente | Naturalist | großes Paludarium | 0,6 m: 8 × 4 × 2 Blöcke, 22 Blöcke Becken |
 | Capybara | Naturalist | großes Paludarium | 1,2 m: 15 × 8 × 4 Blöcke, 173 Blöcke Becken |
 | Wandelndes Blatt | Critters and Companions | trockenes Terrarium, feuchte Luft (60 bis 90 %) | seine Hitbox |
@@ -68,6 +68,42 @@ Mit einem Profil bekommt ein Tier:
 * Das **Capybara** kommt mit dem [großen Kescher](../big_tanks/large_net.md) in eine [Transportwanne](../big_tanks/transport_tub.md);
   die anderen kommen in die Terrarienbox.
 * Der **Seehase** von Critters and Companions hat ein Aquarien-Profil: ein Meerwasseraquarium (18 bis 28 °C, Pellets), keine Zucht.
+
+## Insekten, Kleintiere, Säugetiere und Vögel
+
+Bettacraft bringt auch Profile für die Insekten und Krabbeltiere, die Säugetiere und die Vögel von Naturalist, Critters and
+Companions und Living Things mit: für jedes, das von der Größe her in ein Becken passt. Die
+[Liste der Tiere anderer Mods](../settings/foreign_animal_list.md) nennt jedes mit Becken, Länge und Futter.
+
+| Gruppe | Tiere | Becken | Zucht |
+|---|---|---|---|
+| Insekten | Raupe, Schmetterling, Glühwürmchen, Ameise (Naturalist); Hirschkäfer, Stabschrecke, Marienkäfer, Eichelbohrer (Critters and Companions) | trockenes Terrarium (das Glühwürmchen auch Paludarium) | keine (ihr eigenes Leben bleibt ihrer Mod) |
+| Spinnen | Springspinne (Critters and Companions) | trockenes Terrarium | keine |
+| Aufräumtruppe | Assel, Schnecke (Critters and Companions), Schnecke (Living Things) | feuchtes Trockenterrarium | Asseln lebende Junge, Schnecken Eier in Sand oder Erde |
+| Kleine Säugetiere | Igel, Maulwurf, Ratte (Naturalist); Frettchen, Roter Panda (Critters and Companions); Koala, Affe, Waschbär (Living Things) | trockenes Terrarium (der Waschbär auch Paludarium) | lebende Junge, ein Weibchen und ein Männchen |
+| Vögel | Vogel (Naturalist), Shima Enaga (Critters and Companions), Eule (Living Things) | trockenes Terrarium mit **Deckel** | Eier, ein Weibchen und ein Männchen |
+| Bodenvögel | Truthahn (Naturalist), Pfau (Living Things) | großes Trockenterrarium mit **Deckel** (sie flattern hoch) | Eier in Sand oder Erde |
+| Pinguin und Flamingo | Living Things | großes Paludarium: der Pinguin kalt (−10 bis 12 °C) und jagt kleine Fische, der Flamingo warm und frisst Lebendfutter | Eier in Sand oder Erde |
+| Komodowaran | Naturalist | großes Trockenterrarium, Sonnenplatz, UV (2,5 m: 30 × 15 × 8 Blöcke) | keine im Becken |
+| Große Säugetiere | Bär, Schwarzbär, Wildschwein, Hirsch, Zebra, Löwe, Tiger, Strauß, Geier (Naturalist); Löwe, Strauß (Living Things) | großes Trockenterrarium nach ihrer Länge (1,4 bis 2,4 m) | keine im Becken |
+
+* **Ein Deckel für die Flieger.** Schmetterlinge, Glühwürmchen, Marienkäfer, Libellen und die Vögel brauchen eine geschlossene
+  Oberseite: jeder obere Block des Beckens mit einem <ItemLink id="bettacraft:tank_lid" />, einem Licht oder einem
+  Futterautomaten bedeckt. Bei offener Oberseite lehnen unsere Becken sie ab, und eins, dessen Deckel abgenommen wird, fliegt
+  innerhalb von etwa einer Stunde aus dem Becken (es kommt lebend in die Welt über dem Becken).
+* **Die Aufräumtruppe.** Asseln und Schnecken fressen die Futterreste (die Portionen, die niemand brauchte, verrotten nicht)
+  und leben vom Abfall der anderen Tiere: Solange ein anderes Tier des Beckens frisst, brauchen sie kein eigenes Futter.
+* **Glühwürmchen** leuchten nachts in ihrem Becken, alle paar Sekunden ein Aufblitzen, und das Tageslicht durchs Glas vertreibt
+  sie nicht (in der Welt verstecken sie sich vor der Sonne).
+* **Die Raupe** wird bei Naturalist nur auf ihrem eigenen Weg zum Schmetterling: Sie braucht einen echten Stamm neben sich in
+  der Welt. Das Land eines Beckens ist sein Innenraum in Miniatur, darum bleibt sie in unseren Becken eine Raupe (Bettacraft
+  unterdrückt das nicht).
+* **Große** (ab 1,2 m) kommen mit dem [großen Kescher](../big_tanks/large_net.md) in eine
+  [Transportwanne](../big_tanks/transport_tub.md), die anderen in die Terrarienbox. Eine volle Wanne lässt ein Landtier auf
+  dem Boden frei, ein Wassertier ins Wasser. Die Großen vermehren sich im Becken nicht (die Jungen würden herauswachsen), wie
+  die Großfische.
+* **Zu groß** sind Elefant, Mammut, Giraffe, Flusspferd und Nashorn (Naturalist, Living Things); der Netherritter und die
+  uralte Lohe von Living Things sind feindlich und der junge Enderdrache kein Tier fürs Becken: Alle werden mit Grund abgelehnt.
 
 ## Fische im Wasserteil eines Paludariums
 

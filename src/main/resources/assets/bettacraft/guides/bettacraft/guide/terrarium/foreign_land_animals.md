@@ -22,7 +22,7 @@ Land and marsh animals of other mods can live in our terraria and paludaria when
 | Jungle scorpion | Naturalist | dry terrarium, humid air (60 to 90 %) | 0.2 m: 3 × 2 × 1 blocks |
 | Snail | Naturalist | dry terrarium, humid air (70 to 100 %), cool | its hitbox |
 | Crab | Naturalist | paludarium, fresh or sea water | its hitbox |
-| Dragonfly | Naturalist, Critters and Companions | paludarium, flies | 0.1 m (for its wide wings) |
+| Dragonfly | Naturalist, Critters and Companions | paludarium, flies (**lid**) | 0.1 m (for its wide wings) |
 | Duck | Naturalist | big paludarium | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of tank |
 | Capybara | Naturalist | big paludarium | 1.2 m: 15 × 8 × 4 blocks, 173 blocks of tank |
 | Leaf insect | Critters and Companions | dry terrarium, humid air (60 to 90 %) | its hitbox |
@@ -67,6 +67,40 @@ With a profile an animal gets:
 * The **capybara** goes with the [large net](../big_tanks/large_net.md) into a [transport tub](../big_tanks/transport_tub.md);
   the others go into the terrarium box.
 * The **sea bunny** of Critters and Companions has an aquarium profile: a sea water aquarium (18 to 28 °C, pellets), no breeding.
+
+## Insects, small animals, mammals and birds
+
+Bettacraft also brings profiles for the insects and crawlers, the mammals and the birds of Naturalist, Critters and Companions
+and Living Things: every one that fits a tank by its size. The [list of the animals of other mods](../settings/foreign_animal_list.md)
+names each with its tank, length and food.
+
+| Group | Animals | Tank | Breeding |
+|---|---|---|---|
+| Insects | caterpillar, butterfly, firefly, ant (Naturalist); stag beetle, stick bug, ladybug, acorn weevil (Critters and Companions) | dry terrarium (the firefly a paludarium too) | none (their own life is left to their mod) |
+| Spiders | jumping spider (Critters and Companions) | dry terrarium | none |
+| Clean-up crew | roly-poly, snail (Critters and Companions), snail (Living Things) | humid dry terrarium | woodlice live young, snails eggs into sand or soil |
+| Small mammals | hedgehog, mole, rat (Naturalist); ferret, red panda (Critters and Companions); koala, monkey, raccoon (Living Things) | dry terrarium (the raccoon a paludarium too) | live young, a female and a male |
+| Birds | bird (Naturalist), shima enaga (Critters and Companions), owl (Living Things) | dry terrarium with a **lid** | eggs, a female and a male |
+| Ground birds | turkey (Naturalist), peacock (Living Things) | big dry terrarium with a **lid** (they flutter up) | eggs into sand or soil |
+| Penguin and flamingo | Living Things | big paludarium: the penguin cold (−10 to 12 °C) and hunting small fish, the flamingo warm, eating live food | eggs into sand or soil |
+| Komodo dragon | Naturalist | big dry terrarium, basking spot, UV (2.5 m: 30 × 15 × 8 blocks) | none in a tank |
+| Big mammals | bear, black bear, boar, deer, zebra, lion, tiger, ostrich, vulture (Naturalist); lion, ostrich (Living Things) | big dry terrarium by their length (1.4 to 2.4 m) | none in a tank |
+
+* **A lid for the fliers.** Butterflies, fireflies, ladybugs, dragonflies and the birds need a closed top: every top block of
+  the tank covered with a <ItemLink id="bettacraft:tank_lid" />, a light or a feeder. With an open top our tanks refuse them,
+  and one whose lid is taken off flies out of the tank within an hour or so (it is let go alive into the world above the tank).
+* **The clean-up crew.** Woodlice and snails eat the leftovers of the food (the portions nobody needed do not rot) and live
+  from the waste of the other animals: as long as another animal of the tank eats, they need no food of their own.
+* **Fireflies** glow at night in their tank, flashing every few seconds, and the daylight through the glass does not drive them
+  away (in the world they hide from the sun).
+* **The caterpillar** turns into a butterfly only by its own way in Naturalist: it needs a real log beside it in the world.
+  The land of a tank is its interior in miniature, so in our tanks it stays a caterpillar (Bettacraft does not suppress it).
+* **Big ones** (1.2 m and more) go with the [large net](../big_tanks/large_net.md) into a [transport tub](../big_tanks/transport_tub.md),
+  the others into the terrarium box. A full tub lets a land animal go on the ground, a water animal into water. The big ones
+  do not breed in a tank (the young would outgrow it), like the big fish.
+* **Too big** are the elephant, the mammoth, the giraffe, the hippo and the rhino (Naturalist, Living Things); the nether knight
+  and the ancient blaze of Living Things are hostile and the baby ender dragon no animal for a tank: all of them are refused
+  with the reason.
 
 ## Fish in the water part of a paludarium
 

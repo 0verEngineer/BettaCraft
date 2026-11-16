@@ -96,6 +96,9 @@ installed are skipped quietly (unless `"required": true`). Example:
 | `terrarium.prey` | it eats the small fish and shrimp of its tank up to this length (blocks; from 0.5 also bettas and dwarf frogs) |
 | `terrarium.box` | the terrarium box catches it (default true; false: the large net and the transport tub) |
 | `terrarium.min_blocks` | a small animal's smallest tank (blocks of water and land; smaller stresses it) |
+| `terrarium.lid` | it flies and needs a closed top: refused while a top block is open, flies out when the lid is taken off (default: true for `fly`) |
+| `terrarium.cleanup` | one of the clean-up crew: it eats the leftovers of the food and lives from the waste of the other animals |
+| `terrarium.glows` | it glows in the dark of its tank (the glow of its mod, kept going; the daylight does not drive it away) |
 | `breeding.nest`, `nest_temperature` | eggs into a nest on the land whose top is of this block tag (`#bettacraft:turtle_nest_ground`: sand and soil), hatching in `days` at that nest temperature (°C; warmer faster, at 18 °C and below they wait, above 36 °C they die) |
 | `length` | a big water animal of an aquarium: its length in metres for the [size rule](../big_tanks.md) of the big animals (the water of the tank counts); left out: its hitbox decides |
 | `breeding.sex` | `none` (default: any two breed), `random` (half female, half male) or `temperature` (with a `nest`: warm nests give females, cool ones males, half and half at `nest_temperature`, like our turtles); then only a female and a male breed |

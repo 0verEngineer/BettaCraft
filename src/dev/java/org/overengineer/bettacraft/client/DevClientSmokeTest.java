@@ -163,6 +163,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm39a: big fish of other mods in a big tank, sea animals of other mods, the Aquaculture turtles (M39 part a). */
     private static final boolean M39A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39aonly");
     private static DevClientSmokeM39a m39a;
+    /** -Psmoketestm39b: insects, mammals and birds of other mods in terraria, the komodo dragon, fireflies at night (M39 part b). */
+    private static final boolean M39B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39bonly");
+    private static DevClientSmokeM39b m39b;
     /** -Psmoketestm35b: lizard, snake and scorpions in a terrarium, fish in a paludarium's water part with a crab, dragonflies (M35 part b). */
     private static final boolean M35B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35bonly");
     private static DevClientSmokeM35b m35b;
@@ -294,6 +297,15 @@ final class DevClientSmokeTest {
                 if (m36 != null && m36.tick()) {
                     m36 = null;
                     LOGGER.info("[smoketest] client world test finished (M36 only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M39B_ONLY) {
+                if (ticks == 60) m39b = new DevClientSmokeM39b();
+                if (m39b != null && m39b.tick()) {
+                    m39b = null;
+                    LOGGER.info("[smoketest] client world test finished (M39 part b only)");
                     mc.stop();
                 }
                 return;

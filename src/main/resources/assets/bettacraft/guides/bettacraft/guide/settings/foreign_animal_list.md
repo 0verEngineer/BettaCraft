@@ -109,20 +109,57 @@ tables below are made from the profiles themselves. A mod that is not installed 
 | Aquaculture 2 | `aquaculture:box_turtle` | terrarium, 22–30 °C | – | `#bettacraft:turtle_greens`, `#bettacraft:feeder_insects`, `#c:foods/fruit` | eggs into a nest on the land, the nest temperature decides the sex (half and half at 28.5 °C) |
 | Aquaculture 2 | `aquaculture:starshell_turtle` | paludarium, 22–32 °C | – | `#bettacraft:turtle_greens`, pellets and flakes, live and frozen food | eggs into a nest on the land, the nest temperature decides the sex (half and half at 29 °C) |
 | Critters and Companions | `crittersandcompanions:dragonfly` | paludarium, 18–32 °C | 0.1 m: 2 × 1 × 1 blocks, 1 blocks of room | `#bettacraft:small_feeder_insects` | no |
+| Critters and Companions | `crittersandcompanions:ferret` | terrarium, 5–28 °C | 0.5 m: 6 × 3 × 2 blocks, 13 blocks of room | `#c:foods/raw_meat`, `minecraft:egg` | live young, a female and a male |
+| Critters and Companions | `crittersandcompanions:jumping_spider` | terrarium, 20–30 °C | – | `#bettacraft:small_feeder_insects`, `#bettacraft:feeder_insects` | no |
+| Critters and Companions | `crittersandcompanions:ladybug` | terrarium, 15–28 °C | – | `#minecraft:leaves`, `#minecraft:flowers`, `#bettacraft:turtle_greens` | no |
 | Critters and Companions | `crittersandcompanions:leaf_insect` | terrarium, 22–30 °C | – | `#minecraft:leaves` | eggs into a nest on the land |
 | Critters and Companions | `crittersandcompanions:otter` | paludarium, 0–28 °C | 1 m: 12 × 6 × 3 blocks, 100 blocks of room | `#minecraft:fishes`, `#c:foods/raw_fish`, `crittersandcompanions:clam` | live young |
+| Critters and Companions | `crittersandcompanions:red_panda` | terrarium, 0–25 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | `minecraft:bamboo`, `#c:foods/fruit`, `minecraft:sweet_berries`, `#minecraft:leaves` | live young, a female and a male |
+| Critters and Companions | `crittersandcompanions:roly_poly` | terrarium, 15–27 °C | – | `#minecraft:leaves`, `#bettacraft:turtle_greens`, `minecraft:carrot`, `minecraft:potato` | live young |
+| Critters and Companions | `crittersandcompanions:shima_enaga` | terrarium, -5–25 °C | – | `#c:seeds`, `#bettacraft:small_feeder_insects` | eggs, a female and a male |
+| Critters and Companions | `crittersandcompanions:snail` | terrarium, 15–26 °C | – | `#bettacraft:turtle_greens`, `#minecraft:leaves`, `minecraft:carrot`, `minecraft:beetroot` | eggs into a nest on the land |
+| Critters and Companions | `crittersandcompanions:stag_beetle` | terrarium, 18–28 °C | – | `#c:foods/fruit`, `minecraft:sugar`, `minecraft:sweet_berries` | no |
+| Critters and Companions | `crittersandcompanions:stick_bug` | terrarium, 22–30 °C | – | `#minecraft:leaves` | no |
+| Critters and Companions | `crittersandcompanions:weevil` | terrarium, 15–28 °C | – | `#c:seeds`, `minecraft:sweet_berries`, `#c:foods/fruit` | no |
 | Living Things | `livingthings:crab` | paludarium, 18–30 °C | – | pellets and flakes, `#c:foods/raw_fish` | no |
+| Living Things | `livingthings:flamingo` | paludarium, 18–36 °C | 1.2 m: 15 × 8 × 4 blocks, 173 blocks of room | live and frozen food, fry food | eggs into a nest on the land, a female and a male |
+| Living Things | `livingthings:koala` | terrarium, 15–32 °C | 0.7 m: 9 × 5 × 3 blocks, 35 blocks of room | `#minecraft:leaves` | live young, a female and a male |
+| Living Things | `livingthings:monkey` | terrarium, 22–32 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | `#c:foods/fruit`, `minecraft:melon_slice`, `minecraft:sweet_berries` | live young, a female and a male |
+| Living Things | `livingthings:owl` | terrarium, 0–28 °C | 0.5 m: 6 × 3 × 2 blocks, 13 blocks of room | `#c:foods/raw_meat` | eggs, a female and a male, variants inherited |
+| Living Things | `livingthings:peacock` | terrarium, 10–32 °C | 1 m: 12 × 6 × 3 blocks, 100 blocks of room | `#c:seeds`, `minecraft:wheat`, `#bettacraft:turtle_greens` | eggs into a nest on the land, a female and a male |
+| Living Things | `livingthings:penguin` | paludarium, -10–12 °C | 0.9 m: 11 × 6 × 3 blocks, 73 blocks of room | `#c:foods/raw_fish`, `#minecraft:fishes` | eggs into a nest on the land, a female and a male |
+| Living Things | `livingthings:raccoon` | terrarium or paludarium, 0–30 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | `#c:foods/fruit`, `#c:foods/raw_fish`, `#c:seeds`, `minecraft:sweet_berries` | live young, a female and a male |
+| Living Things | `livingthings:snail` | terrarium, 15–26 °C | – | `#bettacraft:turtle_greens`, `#minecraft:leaves`, `minecraft:carrot`, `minecraft:beetroot` | eggs into a nest on the land, variants inherited |
 | Naturalist | `naturalist:alligator` | paludarium, 24–36 °C | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish` | eggs into a nest on the land, variants inherited |
+| Naturalist | `naturalist:ant` | terrarium, 20–32 °C | – | `minecraft:sugar`, `#c:seeds`, `minecraft:sweet_berries`, `#c:foods/fruit` | no |
+| Naturalist | `naturalist:bear` | terrarium, -10–26 °C | 2.2 m: 27 × 14 × 7 blocks, 1065 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish`, `minecraft:sweet_berries`, `minecraft:honey_bottle`, `minecraft:honeycomb` | no |
+| Naturalist | `naturalist:bird` | terrarium, 5–30 °C | – | `#c:seeds`, `#bettacraft:small_feeder_insects`, `minecraft:sweet_berries` | eggs, a female and a male, variants inherited |
+| Naturalist | `naturalist:black_bear` | terrarium, -10–28 °C | 1.7 m: 21 × 11 × 6 blocks, 492 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish`, `minecraft:sweet_berries`, `minecraft:honey_bottle`, `minecraft:honeycomb` | no |
+| Naturalist | `naturalist:boar` | terrarium, -5–30 °C | 1.4 m: 17 × 9 × 5 blocks, 275 blocks of room | `#c:foods/fruit`, `minecraft:carrot`, `minecraft:potato`, `minecraft:beetroot`, `#c:seeds` | no |
+| Naturalist | `naturalist:butterfly` | terrarium, 20–32 °C | – | `#minecraft:flowers`, `minecraft:honey_bottle`, `minecraft:sweet_berries` | no |
 | Naturalist | `naturalist:capybara` | paludarium, 20–34 °C | 1.2 m: 15 × 8 × 4 blocks, 173 blocks of room | `#bettacraft:turtle_greens`, `minecraft:melon_slice`, `minecraft:sugar_cane` | live young |
+| Naturalist | `naturalist:caterpillar` | terrarium, 16–30 °C | – | `#minecraft:leaves`, `#bettacraft:turtle_greens` | no |
 | Naturalist | `naturalist:crab` | paludarium, 18–30 °C | – | pellets and flakes, `#c:foods/raw_fish` | no |
+| Naturalist | `naturalist:deer` | terrarium, -10–28 °C | 1.7 m: 21 × 11 × 6 blocks, 492 blocks of room | `#bettacraft:turtle_greens`, `#minecraft:leaves`, `minecraft:wheat`, `minecraft:apple` | no |
 | Naturalist | `naturalist:desert_scorpion` | terrarium, 24–38 °C | – | `#bettacraft:feeder_insects` | live young |
 | Naturalist | `naturalist:dragonfly` | paludarium, 18–32 °C | 0.1 m: 2 × 1 × 1 blocks, 1 blocks of room | `#bettacraft:small_feeder_insects` | no |
 | Naturalist | `naturalist:duck` | paludarium, 5–30 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | pellets and flakes, `#c:seeds`, `#bettacraft:turtle_greens`, `#c:foods/raw_fish` | eggs into a nest on the land |
+| Naturalist | `naturalist:firefly` | terrarium or paludarium, 15–30 °C | – | `#minecraft:flowers`, `#bettacraft:small_feeder_insects` | no |
+| Naturalist | `naturalist:hedgehog` | terrarium, 10–28 °C | 0.3 m: 3 × 2 × 1 blocks, 2 blocks of room | `#bettacraft:feeder_insects`, `#bettacraft:small_feeder_insects`, `#c:foods/raw_meat`, `#c:foods/fruit` | live young, a female and a male, variants inherited |
 | Naturalist | `naturalist:jungle_scorpion` | terrarium, 22–30 °C | 0.2 m: 3 × 2 × 1 blocks, 1 blocks of room | `#bettacraft:feeder_insects` | live young, variants inherited |
+| Naturalist | `naturalist:komodo_dragon` | terrarium, 26–38 °C | 2.5 m: 30 × 15 × 8 blocks, 1563 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish` | no |
+| Naturalist | `naturalist:lion`, `livingthings:lion` | terrarium, 18–40 °C | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#c:foods/raw_meat` | no |
 | Naturalist | `naturalist:lizard` | terrarium, 24–38 °C | – | `#bettacraft:feeder_insects`, `#bettacraft:turtle_greens` | eggs into a nest on the land, variants inherited |
+| Naturalist | `naturalist:mole` | terrarium, 5–26 °C | 0.2 m: 3 × 2 × 1 blocks, 1 blocks of room | `#bettacraft:feeder_insects`, `#bettacraft:small_feeder_insects`, `#c:foods/raw_meat` | live young, a female and a male, variants inherited |
+| Naturalist | `naturalist:ostrich`, `livingthings:ostrich` | terrarium, 10–40 °C | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#c:seeds`, `#bettacraft:turtle_greens`, `minecraft:wheat` | no |
+| Naturalist | `naturalist:rat` | terrarium, 10–30 °C | 0.3 m: 3 × 2 × 1 blocks, 2 blocks of room | `#c:seeds`, `#c:foods/fruit`, `minecraft:bread`, `minecraft:carrot`, `minecraft:wheat` | live young, a female and a male, variants inherited |
 | Naturalist | `naturalist:snail` | terrarium, 15–26 °C | – | `#bettacraft:turtle_greens`, `minecraft:carrot`, `minecraft:beetroot` | eggs into a nest on the land |
 | Naturalist | `naturalist:snake` | terrarium, 22–32 °C | – | `#bettacraft:snake_prey` | eggs into a nest on the land, variants inherited |
+| Naturalist | `naturalist:tiger` | terrarium, 5–34 °C | 2.4 m: 29 × 15 × 8 blocks, 1383 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish` | no |
 | Naturalist | `naturalist:tortoise` | terrarium, 22–35 °C | 1 m: 12 × 6 × 3 blocks, 100 blocks of room | `#bettacraft:turtle_greens` | eggs into a nest on the land, variants inherited |
+| Naturalist | `naturalist:turkey` | terrarium, 0–30 °C | 1 m: 12 × 6 × 3 blocks, 100 blocks of room | `#c:seeds`, `minecraft:wheat`, `#bettacraft:turtle_greens` | eggs into a nest on the land, a female and a male |
+| Naturalist | `naturalist:vulture` | terrarium, 15–38 °C | 1 m: 12 × 6 × 3 blocks, 100 blocks of room | `#c:foods/raw_meat` | no |
+| Naturalist | `naturalist:zebra` | terrarium, 15–38 °C | 2.3 m: 28 × 14 × 7 blocks, 1217 blocks of room | `minecraft:wheat`, `minecraft:hay_block`, `#bettacraft:turtle_greens` | no |
 
 ## Refused animals
 
@@ -133,7 +170,11 @@ tables below are made from the profiles themselves. A mod that is not installed 
 | Alex's Caves | `alexscaves:deep_one`, `alexscaves:deep_one_knight`, `alexscaves:deep_one_mage` | hostile creatures |
 | Alex's Caves | `alexscaves:hullbreaker` | far too big for any tank |
 | Aquaculture 2 | `aquaculture:brown_shrooma`, `aquaculture:red_shrooma` | mushroom creatures, no water animals |
+| Living Things | `livingthings:baby_ender_dragon` | not for a tank |
+| Living Things | `livingthings:nether_knight`, `livingthings:ancient_blaze` | hostile creatures |
 | Living Things | `livingthings:shroomie` | mushroom creatures, no water animals |
+| Living Things | `livingthings:elephant`, `livingthings:giraffe` | far too big for any tank |
 | Naturalist | `naturalist:anglerfish`, `naturalist:blobfish` | deep-sea animals (cold, dark, high pressure) |
 | Naturalist | `naturalist:great_white_shark`, `naturalist:whale` | far too big for any tank |
+| Naturalist | `naturalist:elephant`, `naturalist:mammoth`, `naturalist:giraffe`, `naturalist:hippo`, `naturalist:rhino` | far too big for any tank |
 | Twilight Forest | `twilightforest:fire_beetle`, `twilightforest:pinch_beetle`, `twilightforest:slime_beetle`, `twilightforest:helmet_crab`, `twilightforest:hedge_spider`, `twilightforest:king_spider`, `twilightforest:swarm_spider` | hostile creatures |

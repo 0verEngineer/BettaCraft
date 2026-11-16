@@ -97,6 +97,7 @@ public final class ForeignTerrariumBGameTests {
     public static void partBAnimalsOnlyIntoTheirTanks(GameTestHelper h) {
         TankBlockEntity dry = terrarium(h, 2, 2, 12, 3, 6);
         TankBlockEntity palu = paludarium(h, 2, 10, 12, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
+        ForeignLandAnimalsGameTests.lid(h, palu); // M39 part b: the dragonflies need a closed top
         TankBlockEntity small = paludarium(h, 16, 2, 6, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
         TankBlockEntity big = paludarium(h, 2, 18, 16, 4, 8, 0, 0.5, Blocks.SAND.defaultBlockState());
         String wrong = "message.bettacraft.terrarium.wrong_mode", tooSmall = "message.bettacraft.big.too_small";
@@ -164,6 +165,7 @@ public final class ForeignTerrariumBGameTests {
         try {
             h.assertTrue(a.profile().land().gait().style() == LandWalker.Style.FLY, "the flying style");
             TankBlockEntity c = paludarium(h, 2, 2, 12, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
+            ForeignLandAnimalsGameTests.lid(h, c); // M39 part b: a flier needs a closed top
             LivingEntity d = put(h, c, container(h, a.type(), false, false));
             double surface = c.getTank().waterSurfaceY();
             h.runAfterDelay(5, () -> {

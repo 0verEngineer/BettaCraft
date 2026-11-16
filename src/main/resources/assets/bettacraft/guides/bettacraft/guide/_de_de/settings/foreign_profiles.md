@@ -96,6 +96,9 @@ Entities, deren Mod nicht installiert ist, werden still übersprungen (außer mi
 | `terrarium.prey` | es frisst die kleinen Fische und Garnelen seines Beckens bis zu dieser Länge (Blöcke; ab 0,5 auch Bettas und Krallenfrösche) |
 | `terrarium.box` | die Terrarienbox fängt es (Standard true; false: großer Kescher und Transportwanne) |
 | `terrarium.min_blocks` | das kleinste Becken eines kleinen Tiers (Blöcke Wasser und Land; kleiner stresst es) |
+| `terrarium.lid` | es fliegt und braucht eine geschlossene Oberseite: abgelehnt, solange ein oberer Block offen ist, fliegt davon, wenn der Deckel abgenommen wird (Standard: true bei `fly`) |
+| `terrarium.cleanup` | gehört zur Aufräumtruppe: frisst die Futterreste und lebt vom Abfall der anderen Tiere |
+| `terrarium.glows` | leuchtet im Dunkeln seines Beckens (das Leuchten seiner Mod, am Laufen gehalten; das Tageslicht vertreibt es nicht) |
 | `breeding.nest`, `nest_temperature` | Eier in ein Nest auf dem Land, dessen Oberseite zu diesem Block-Tag gehört (`#bettacraft:turtle_nest_ground`: Sand und Erde); sie schlüpfen nach `days` bei dieser Nesttemperatur (°C; wärmer schneller, bei 18 °C und darunter warten sie, über 36 °C sterben sie) |
 | `length` | ein großes Wassertier im Aquarium: seine Länge in Metern für die [Größenregel](../big_tanks.md) der Großtiere (es zählt das Wasser des Beckens); weggelassen: die Hitbox entscheidet |
 | `breeding.sex` | `none` (Standard: zwei beliebige vermehren sich), `random` (halb Weibchen, halb Männchen) oder `temperature` (mit `nest`: warme Nester ergeben Weibchen, kühle Männchen, halb und halb bei `nest_temperature`, wie bei unseren Schildkröten); dann vermehren sich nur ein Weibchen und ein Männchen |
