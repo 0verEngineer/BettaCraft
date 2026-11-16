@@ -9,6 +9,11 @@ item_ids:
   - bettacraft:filter_pump_head
   - bettacraft:filter_inlet
   - bettacraft:filter_outlet
+  - bettacraft:filter_inlet_pipe
+  - bettacraft:filter_outlet_pipe
+  - bettacraft:pipe_tee
+  - bettacraft:intake_guard
+  - bettacraft:outlet_guard
 ---
 
 # Multiblock external filter
@@ -47,6 +52,21 @@ places the block instead of opening the screen, so you can build the aquarium on
 
 The old one-block [external filter](filters.md) stays the small variant.
 
+
+## Several aquariums, guards
+
+Since M40 one filter serves **several aquariums**. The <ItemLink id="bettacraft:filter_inlet_pipe" /> (blue) leads from
+the aquariums to the inlet, the <ItemLink id="bettacraft:filter_outlet_pipe" /> (orange) from the outlet back. A filter
+pipe joins at most two neighbours; a <ItemLink id="bettacraft:pipe_tee" /> used on it makes a branch. The pipes dock on
+**any side, the top or the bottom** of an aquarium: the pipe dock appears inside at that spot, and interior pipes lead on
+from it. The cleaning and the flow are **shared by the water volume** of the aquariums.
+
+Every dock needs a **guard** inside: an <ItemLink id="bettacraft:intake_guard" /> (or an intake strainer) on the inlet
+line, an <ItemLink id="bettacraft:outlet_guard" /> (or a lily pipe, nozzle or spray bar) on the return line. Use the guard
+on the glass where the pipe docks. **Without a guard the filter does not filter that aquarium** (warning in the aquarium
+and filter menus), and a pipe that leads into the aquarium and out again is not allowed. **This also holds for filters
+built before the update: fit the guards.**
+
 ## Obtaining
 
 Crafting:
@@ -55,3 +75,8 @@ Crafting:
 <RecipesFor id="bettacraft:filter_pump_head" />
 <RecipesFor id="bettacraft:filter_inlet" />
 <RecipesFor id="bettacraft:filter_outlet" />
+<RecipesFor id="bettacraft:filter_inlet_pipe" />
+<RecipesFor id="bettacraft:filter_outlet_pipe" />
+<RecipesFor id="bettacraft:pipe_tee" />
+<RecipesFor id="bettacraft:intake_guard" />
+<RecipesFor id="bettacraft:outlet_guard" />

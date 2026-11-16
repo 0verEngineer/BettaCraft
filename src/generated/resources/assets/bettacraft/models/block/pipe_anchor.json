@@ -1,0 +1,73 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#f"
+        },
+        "east": {
+          "texture": "#s"
+        },
+        "north": {
+          "texture": "#s"
+        },
+        "south": {
+          "texture": "#s"
+        },
+        "up": {
+          "texture": "#f"
+        },
+        "west": {
+          "texture": "#s"
+        }
+      },
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        2,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#s"
+        },
+        "east": {
+          "texture": "#s"
+        },
+        "north": {
+          "texture": "#s"
+        },
+        "south": {
+          "texture": "#s"
+        },
+        "up": {
+          "texture": "#s"
+        },
+        "west": {
+          "texture": "#s"
+        }
+      },
+      "from": [
+        5,
+        2,
+        5
+      ],
+      "to": [
+        11,
+        8,
+        11
+      ]
+    }
+  ],
+  "textures": {
+    "f": "bettacraft:block/pipe_anchor",
+    "particle": "bettacraft:block/plumbing_steel",
+    "s": "bettacraft:block/plumbing_steel"
+  }
+}

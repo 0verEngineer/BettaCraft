@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bettacraft:block/outlet_guard",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bettacraft:block/outlet_guard"
+    },
+    "facing=south": {
+      "model": "bettacraft:block/outlet_guard",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bettacraft:block/outlet_guard",
+      "y": 270
+    }
+  }
+}

@@ -327,6 +327,7 @@ public final class ModDataGen {
             }, TankLightBlock.POWERED, TankLightBlock.COLOR, TankLightBlock.DIM); // M18: the colour is a tint of the panel (BettaCraftClient)
             DataGenM23.blockStates(this); // M23
             DataGenM24.blockStates(this); // M24
+            DataGenM40.blockStates(this); // M40 part a
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
             DataGenM26.blockStates(this); // M26 part a
@@ -605,6 +606,7 @@ public final class ModDataGen {
             withExistingParent("external_filter", modLoc("block/external_filter"));
             DataGenM23.itemModels(this); // M23
             DataGenM24.itemModels(this); // M24
+            DataGenM40.itemModels(this); // M40 part a
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
@@ -1049,6 +1051,7 @@ public final class ModDataGen {
             reefRecipes(output);
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
+            DataGenM40.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part a
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
@@ -1222,6 +1225,15 @@ public final class ModDataGen {
             add(ModBlocks.FROG_EGGS.get(), LootTable.lootTable()); // M31 part c
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             for (Block b : DataGenM37.blocks()) dropSelf(b); // M37
+            for (Block b : DataGenM40.blocks()) dropSelf(b); // M40 part a
+            for (Block b : DataGenM40.pipes()) { // M40: a filter pipe, and its T-piece back from a branch
+                add(b, LootTable.lootTable()
+                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(b))))
+                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
+                                .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(b)
+                                        .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                                .hasProperty(org.overengineer.bettacraft.plumbing.FilterPipeBlock.JUNCTION, true))))));
+            }
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
             dropOther(ModBlocks.ALDER_CONES.get(), ModItems.ALDER_CONE.get());
@@ -1264,6 +1276,8 @@ public final class ModDataGen {
                         l.add(ModBlocks.FROG_EGGS.get()); // M31 part c
                         l.addAll(DataGenM26.blocks()); // M26 part a
                         l.addAll(DataGenM37.blocks()); // M37
+                        l.addAll(DataGenM40.blocks()); // M40 part a
+                        l.addAll(DataGenM40.pipes());
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
@@ -1344,6 +1358,7 @@ public final class ModDataGen {
             DataGenM31c.blockTags(this::tag); // M31 part c
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM37.blockTags(this::tag); // M37
+            DataGenM40.blockTags(this::tag); // M40 part a
             DataGenM38.blockTags(this::tag); // M38
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c

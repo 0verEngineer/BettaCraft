@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "pipes.filterLines"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "tag": "c:dyes/orange"
+    },
+    "P": [
+      {
+        "item": "bettacraft:glass_pipe"
+      },
+      {
+        "item": "bettacraft:stainless_steel_pipe"
+      }
+    ]
+  },
+  "pattern": [
+    "PPP",
+    "PDP",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "id": "bettacraft:filter_outlet_pipe"
+  }
+}

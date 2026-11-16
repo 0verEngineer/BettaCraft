@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "mount=down": {
+      "model": "bettacraft:block/pipe_anchor"
+    },
+    "mount=east": {
+      "model": "bettacraft:block/pipe_anchor",
+      "x": 270,
+      "y": 90
+    },
+    "mount=north": {
+      "model": "bettacraft:block/pipe_anchor",
+      "x": 270
+    },
+    "mount=south": {
+      "model": "bettacraft:block/pipe_anchor",
+      "x": 270,
+      "y": 180
+    },
+    "mount=up": {
+      "model": "bettacraft:block/pipe_anchor",
+      "x": 180
+    },
+    "mount=west": {
+      "model": "bettacraft:block/pipe_anchor",
+      "x": 270,
+      "y": 270
+    }
+  }
+}

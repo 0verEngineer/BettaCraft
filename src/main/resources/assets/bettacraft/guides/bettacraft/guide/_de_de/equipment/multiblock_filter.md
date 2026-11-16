@@ -9,6 +9,11 @@ item_ids:
   - bettacraft:filter_pump_head
   - bettacraft:filter_inlet
   - bettacraft:filter_outlet
+  - bettacraft:filter_inlet_pipe
+  - bettacraft:filter_outlet_pipe
+  - bettacraft:pipe_tee
+  - bettacraft:intake_guard
+  - bettacraft:outlet_guard
 ---
 
 # Multiblock-Außenfilter
@@ -48,6 +53,21 @@ Block, statt den Bildschirm zu öffnen, so kannst du das Aquarium obendrauf baue
 
 Der alte Ein-Block-[Außenfilter](filters.md) bleibt die kleine Variante.
 
+
+## Mehrere Aquarien, Schutzaufsätze
+
+Seit M40 versorgt ein Filter **mehrere Aquarien**. Das <ItemLink id="bettacraft:filter_inlet_pipe" /> (blau) führt von
+den Aquarien zum Einlass, das <ItemLink id="bettacraft:filter_outlet_pipe" /> (orange) vom Auslass zurück. Ein Filterrohr
+verbindet höchstens zwei Nachbarn; ein <ItemLink id="bettacraft:pipe_tee" /> darauf macht eine Abzweigung. Die Rohre
+docken an **jeder Seite, oben oder unten** an einem Aquarium an: der Rohranschluss erscheint innen an dieser Stelle, und
+Innenraum-Rohre führen von dort weiter. Reinigung und Durchfluss werden **nach dem Wasservolumen** der Aquarien aufgeteilt.
+
+Jeder Anschluss braucht innen einen **Schutzaufsatz**: einen <ItemLink id="bettacraft:intake_guard" /> (oder einen
+Ansaugkorb) an der Einlassleitung, einen <ItemLink id="bettacraft:outlet_guard" /> (oder eine Lily Pipe, Düse oder einen
+Sprühbalken) an der Rücklaufleitung. Den Schutz auf das Glas anwenden, wo das Rohr andockt. **Ohne Schutz filtert der
+Filter dieses Aquarium nicht** (Warnung im Aquarium- und im Filtermenü), und ein Rohr, das ins Aquarium hinein und wieder
+hinaus führt, geht nicht. **Das gilt auch für Filter, die vor dem Update gebaut wurden: Schutzaufsätze nachrüsten.**
+
 ## Bezug
 
 Herstellung:
@@ -56,3 +76,8 @@ Herstellung:
 <RecipesFor id="bettacraft:filter_pump_head" />
 <RecipesFor id="bettacraft:filter_inlet" />
 <RecipesFor id="bettacraft:filter_outlet" />
+<RecipesFor id="bettacraft:filter_inlet_pipe" />
+<RecipesFor id="bettacraft:filter_outlet_pipe" />
+<RecipesFor id="bettacraft:pipe_tee" />
+<RecipesFor id="bettacraft:intake_guard" />
+<RecipesFor id="bettacraft:outlet_guard" />

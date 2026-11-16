@@ -16,6 +16,7 @@ import aquatic_plants
 import reef
 import aeration
 import plumbing
+import filter_lines
 import chemistry
 import co2_osmosis
 import reef_dosing
@@ -66,6 +67,7 @@ def main() -> int:
     written += reef.write_all()  # M20
     written += aeration.write_all()  # M23
     written += plumbing.write_all()  # M24
+    written += filter_lines.write_all()  # M40
     written += chemistry.write_all()  # M25
     written += co2_osmosis.write_all()  # M25 part b
     written += reef_dosing.write_all()  # M25 part c

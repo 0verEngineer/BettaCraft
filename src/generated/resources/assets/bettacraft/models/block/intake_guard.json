@@ -1,0 +1,73 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#m"
+        },
+        "east": {
+          "texture": "#m"
+        },
+        "north": {
+          "texture": "#m"
+        },
+        "south": {
+          "texture": "#m"
+        },
+        "up": {
+          "texture": "#m"
+        },
+        "west": {
+          "texture": "#m"
+        }
+      },
+      "from": [
+        3,
+        3,
+        3
+      ],
+      "to": [
+        13,
+        13,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#s"
+        },
+        "east": {
+          "texture": "#s"
+        },
+        "north": {
+          "texture": "#s"
+        },
+        "south": {
+          "texture": "#s"
+        },
+        "up": {
+          "texture": "#s"
+        },
+        "west": {
+          "texture": "#s"
+        }
+      },
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        3,
+        10
+      ]
+    }
+  ],
+  "textures": {
+    "m": "bettacraft:block/intake_guard",
+    "particle": "bettacraft:block/intake_guard",
+    "s": "bettacraft:block/plumbing_steel"
+  }
+}

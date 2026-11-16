@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "pipes.filterLines"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_filter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:filter_pump_head"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:filter_outlet_pipe"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_filter"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:filter_outlet_pipe"
+    ]
+  }
+}
