@@ -20,13 +20,31 @@ CMD="$WT/src/main/java/org/overengineer/bettacraft/command"
 if [ -f "$WT/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" ]; then CMD="$WT/src/dev/java/org/overengineer/bettacraft/command"; fi
 cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
 SHOW="$CMD/DevShowcase.java"
-# extra row after the last showcase row; manifest right after the world is saved
+# extra row at the end of build(ServerLevel) (after the last showcase row); manifest right after the world is saved.
+# M40: the end of build() is found by matching its braces (strings, chars and comments skipped): newer DevShowcase
+# versions have other methods (terraria, blockOf ...) between build() and startRow(), where the old search put the hook.
 python - "$SHOW" <<'PY'
 import sys
 p = sys.argv[1]
 s = open(p, encoding='utf-8').read()
-a = s.index('    private static BlockPos startRow(')
-end = s.rindex('    }\n', 0, a)
+head = 'private static void build(ServerLevel level) {'
+j = s.index(head) + len(head)
+depth = 1
+while depth > 0:
+    if s.startswith('//', j):
+        j = s.index('\n', j)
+    elif s.startswith('/*', j):
+        j = s.index('*/', j) + 2
+    elif s[j] in '"\'':
+        q = s[j]
+        j += 1
+        while s[j] != q:
+            j += 2 if s[j] == '\\' else 1
+        j += 1
+    else:
+        depth += {'{': 1, '}': -1}.get(s[j], 0)
+        j += 1
+end = s.rindex('\n', 0, j - 1) + 1  # the line with the closing brace of build()
 s = s[:end] + '        DevUpgradeReference.extras(level, origin.offset(0, 0, row * ROW));\n' + s[end:]
 s = s.replace('server.saveEverything(false, true, true);', 'server.saveEverything(false, true, true);\n                DevUpgradeReference.manifest(server, level);', 1)
 open(p, 'w', encoding='utf-8').write(s)

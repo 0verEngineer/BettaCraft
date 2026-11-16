@@ -169,6 +169,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm40a: one multiblock filter for three tanks, the pipe docks and guards inside (M40 part a). */
     private static final boolean M40A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m40aonly");
     private static DevClientSmokeM40a m40a;
+    /** -Psmoketestm40b: a row of pipe bundles with all four lines, the filter with its fresh and waste water ports (M40 part b). */
+    private static final boolean M40B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m40bonly");
+    private static DevClientSmokeM40b m40b;
     /** -Psmoketestm39c: the peaceful animals of Minecraft as terrarium pets (M39 part c, optional feature #25). */
     private static final boolean M39C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39conly");
     private static DevClientSmokeM39c m39c;
@@ -303,6 +306,15 @@ final class DevClientSmokeTest {
                 if (m36 != null && m36.tick()) {
                     m36 = null;
                     LOGGER.info("[smoketest] client world test finished (M36 only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M40B_ONLY) {
+                if (ticks == 60) m40b = new DevClientSmokeM40b();
+                if (m40b != null && m40b.tick()) {
+                    m40b = null;
+                    LOGGER.info("[smoketest] client world test finished (M40 part b only)");
                     mc.stop();
                 }
                 return;

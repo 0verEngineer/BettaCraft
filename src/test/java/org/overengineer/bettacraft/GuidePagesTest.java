@@ -320,6 +320,7 @@ class GuidePagesTest {
         if (org.overengineer.bettacraft.terrarium.HerpSpecies.byId(p) != null) return false;
         if (p.equals("turtle_eggs")) return false; // M31 part b: eggs only in the interior, no item
         if (p.equals("pipe_anchor")) return false; // M40: the pipe dock is put in by the game, no item
+        if (p.equals("filter_pipe_bundle")) return false; // M40 part b: made by putting a second line into a filter pipe, no item
         return !(p.equals("betta") || p.equals("dwarf_clawed_frog") || p.equals("wild_critter") || p.equals("guide") || p.startsWith("interior_") || p.endsWith("_segment"));
     }
 }

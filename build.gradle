@@ -290,6 +290,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m35aonly', 'true'
             }
+            if (project.hasProperty('smoketestm40b')) {
+                // gradlew runClient -Psmoketestm40b : only the M40 part b scene (a row of pipe bundles with all four filter lines,
+                // the filter with its fresh and waste water ports, a level sensor and a water change controller on it)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m40bonly', 'true'
+            }
             if (project.hasProperty('smoketestm40a')) {
                 // gradlew runClient -Psmoketestm40a : only the M40 part a scene (one multiblock filter for three tanks through filter
                 // pipes and T-pieces, docks on the front and the top, the docks and guards inside, the filter screen)
