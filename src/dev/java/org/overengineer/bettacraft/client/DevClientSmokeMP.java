@@ -52,6 +52,8 @@ final class DevClientSmokeMP {
     private static final Deque<Step> steps = new ArrayDeque<>();
     private static int wait, connectTries, ticks, retryAt = -1;
     private static boolean connecting, ready, sizeSet;
+    /** M40 part c: the first pipe cover report was sent (the second one reports the cover taken off). */
+    private static boolean pipeCoverSeen;
     @Nullable
     private static BlockPos tank;
     private static int readyIn = -1, quitIn = -1;
@@ -417,6 +419,24 @@ final class DevClientSmokeMP {
                     String wc = mc.level.getBlockEntity(at.offset(-1, 0, 1)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity w
                             ? w.intervalDays() + "," + w.share() : "none";
                     send("plumbing " + joins + "," + wc);
+                });
+            }
+            case "pipecover" -> {
+                // M40 part c: the covers of a pipe and a bundle on this client (block entity update), the bundle's lines, its light,
+                // the pipe's shape; the first report "pipecover", the second (after the server took the pipe's cover off) "pipecoveroff"
+                BlockPos at = pos(args);
+                boolean second = pipeCoverSeen;
+                pipeCoverSeen = true;
+                then(60, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    BlockPos b = at.east();
+                    var ca = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(mc.level, at);
+                    var cb = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(mc.level, b);
+                    int lines = org.overengineer.bettacraft.plumbing.FilterPipes.lines(mc.level, b).size();
+                    int light = mc.level.getBlockState(b).getLightEmission(mc.level, b);
+                    boolean full = net.minecraft.world.level.block.Block.isShapeFullBlock(mc.level.getBlockState(at).getShape(mc.level, at));
+                    send((second ? "pipecoveroff " : "pipecover ") + (ca == null ? "none" : net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(ca.getBlock()))
+                            + "," + (cb == null ? "none" : net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(cb.getBlock())) + "," + lines + "," + light + "," + full);
                 });
             }
             case "waterchange" -> then(20, () -> {

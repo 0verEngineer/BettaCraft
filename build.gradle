@@ -290,6 +290,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m35aonly', 'true'
             }
+            if (project.hasProperty('smoketestm40c')) {
+                // gradlew runClient -Psmoketestm40c [-Ppower] [-Pstorage] [-Pfacades] : only the M40 part c scene (the bundles of part b
+                // under pipe covers, the facades of AE2, EnderIO, Mekanism Covers and Cable Facades on filter pipes, each with its mod)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m40conly', 'true'
+            }
             if (project.hasProperty('smoketestm40b')) {
                 // gradlew runClient -Psmoketestm40b : only the M40 part b scene (a row of pipe bundles with all four filter lines,
                 // the filter with its fresh and waste water ports, a level sensor and a water change controller on it)
@@ -668,6 +674,9 @@ idea {
 //   -Pkubejs  : run/kubejs-mods (M32 part d: KubeJS and Rhino from ATM10AA) for runClient, runServer and runGameTestServer;
 //               the example script of modpack/kubejs is copied into the run's kubejs/server_scripts (its lines go to
 //               logs/kubejs/server.log)
+//   -Pfacades : run/facade-mods (M40 part c: Cable Facades from ATM10AA) for runClient, runServer and runGameTestServer; the
+//               GameTest cableFacadesOnAFilterPipe puts its facade on our filter pipes (its block tag is in our data). Mekanism
+//               Covers (a Mekanism addon) lies in run/power-mods
 //   -Pcompare : run/compare-mods (M36: DragN's Just Bettas + GeckoLib + TerraBlender from ATM10AA) for runClient and runServer:
 //               only to compare the size of our bettas with theirs (the M36 client smoke puts one of theirs next to ours);
 //               never in the jar, the repo or the README
@@ -683,6 +692,7 @@ def extraMods = [
         [dir: file('run/quest-mods'), on: project.hasProperty('quests'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/map-mods'), on: project.hasProperty('maps'), tasks: ['runClient']],
         [dir: file('run/kubejs-mods'), on: project.hasProperty('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/facade-mods'), on: project.hasProperty('facades'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/compare-mods'), on: project.hasProperty('compare'), tasks: ['runClient', 'runServer']],
 ]
 // -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
@@ -772,7 +782,7 @@ tasks.register('runMultiplayerTest') {
         logs.mkdirs()
         def runDir = file('run')
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/compare-mods'].each { d ->
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()

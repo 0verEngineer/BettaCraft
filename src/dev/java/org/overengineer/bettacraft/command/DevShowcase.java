@@ -536,6 +536,7 @@ public final class DevShowcase {
         }
         for (int x = 2; x < 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 0), (x % 2 == 0 ? ModBlocks.GLASS_PIPE : ModBlocks.STAINLESS_STEEL_PIPE).get().defaultBlockState());
         LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());
+        filterLines(level, at.east(6 + GAP)); // M40
         terraria(level); // M31
         // M30: big tanks (the last row: they are deeper than a row): the freshwater giants and the sea giants
         at = startRow(level, "Großbecken");
@@ -1091,6 +1092,63 @@ public final class DevShowcase {
         org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, fl.offset(2, 0, 0)); // M40
         name(level, at.above(), "Multiblock-Filter unter dem Becken");
         LOGGER.info("[showcase] M29.1 multiblock filter under the tank at {}", ut.getBlockPos());
+    }
+
+    /**
+     * M40: one multiblock filter for two tanks. The intake (blue) and return (orange) lines leave the filter in a row of pipe
+     * bundles that also carry the fresh (green) and waste (brown) water lines, then branch with T-pieces into both tanks
+     * (guards inside). The fresh water line ends at a reservoir with water, the waste water line at an empty reservoir; a
+     * level sensor and a water change controller sit on the filter. Two bundles wear covers (stone bricks, oak planks).
+     * Layout (x east, z south): tanks x 0..1 at z 0..1 and z 3..4, T-pieces x 2, bundles x 3..6 at z 2, filter x 7..9.
+     */
+    private static void filterLines(ServerLevel level, BlockPos at) {
+        for (int x = 2; x <= 9; x++) for (int z = 0; z <= 4; z++) level.setBlockAndUpdate(at.offset(x, -1, z), Blocks.POLISHED_ANDESITE.defaultBlockState());
+        TankBlockEntity a = tank(level, at, 2, 2, 2, 0F, true);
+        TankBlockEntity b = tank(level, at.offset(0, 0, 3), 2, 2, 2, 0F, true);
+        for (int y = 0; y < 2; y++) {
+            level.setBlockAndUpdate(at.offset(8, y, 2), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
+            if (level.getBlockEntity(at.offset(8, y, 2)) instanceof org.overengineer.bettacraft.filter.FilterChamberBlockEntity ch)
+                ch.setMedium(new ItemStack(y == 0 ? ModItems.CERAMIC_RINGS.get() : ModItems.FILTER_FOAM.get()));
+        }
+        BlockPos head = at.offset(8, 2, 2);
+        var facing = org.overengineer.bettacraft.filter.FilterPartBlock.FACING;
+        level.setBlockAndUpdate(head, ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(7, 0, 2), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(facing, Direction.WEST));
+        level.setBlockAndUpdate(at.offset(7, 1, 2), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(facing, Direction.WEST));
+        level.setBlockAndUpdate(at.offset(8, 0, 1), ModBlocks.FILTER_FRESH_PORT.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        level.setBlockAndUpdate(at.offset(8, 0, 3), ModBlocks.FILTER_WASTE_PORT.get().defaultBlockState().setValue(facing, Direction.SOUTH));
+        level.setBlockAndUpdate(at.offset(9, 0, 2), ModBlocks.LEVEL_SENSOR.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(9, 1, 2), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(3, 0, 0), ModBlocks.RESERVOIR.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(3, 0, 4), ModBlocks.RESERVOIR.get().defaultBlockState());
+        if (level.getBlockEntity(at.offset(3, 0, 0)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity res)
+            res.water().fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 16000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        Block in = ModBlocks.FILTER_INLET_PIPE.get(), out = ModBlocks.FILTER_OUTLET_PIPE.get(), fresh = ModBlocks.FILTER_FRESH_PIPE.get(), waste = ModBlocks.FILTER_WASTE_PIPE.get();
+        // the branches at the tanks first (T-pieces at x 2), then the runs to the filter
+        for (int[] q : new int[][]{{2, 0, 1}, {2, 0, 3}, {2, 0, 2}}) level.setBlockAndUpdate(at.offset(q[0], q[1], q[2]), in.defaultBlockState());
+        for (int[] q : new int[][]{{2, 1, 1}, {2, 1, 3}, {2, 1, 2}, {3, 1, 2}}) level.setBlockAndUpdate(at.offset(q[0], q[1], q[2]), out.defaultBlockState());
+        org.overengineer.bettacraft.plumbing.FilterPipeBlock.makeJunction(level, at.offset(2, 0, 2));
+        org.overengineer.bettacraft.plumbing.FilterPipeBlock.makeJunction(level, at.offset(2, 1, 2));
+        for (int x = 3; x <= 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 2), in.defaultBlockState());
+        level.setBlockAndUpdate(at.offset(6, 1, 2), out.defaultBlockState());
+        for (int[] q : new int[][]{{8, 0, 0}, {7, 0, 0}, {6, 0, 0}, {6, 0, 1}, {3, 0, 1}}) level.setBlockAndUpdate(at.offset(q[0], q[1], q[2]), fresh.defaultBlockState());
+        for (int[] q : new int[][]{{8, 0, 4}, {7, 0, 4}, {6, 0, 4}, {6, 0, 3}, {3, 0, 3}}) level.setBlockAndUpdate(at.offset(q[0], q[1], q[2]), waste.defaultBlockState());
+        // the bundles: from the filter end on, every line joins its pipe at the end
+        for (int x = 6; x >= 3; x--)
+            for (var l : new org.overengineer.bettacraft.plumbing.PipeLine[]{org.overengineer.bettacraft.plumbing.PipeLine.RETURN,
+                    org.overengineer.bettacraft.plumbing.PipeLine.FRESH, org.overengineer.bettacraft.plumbing.PipeLine.WASTE})
+                org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.addLine(level, at.offset(x, 0, 2), l, null, null);
+        org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, head);
+        var st = org.overengineer.bettacraft.filter.MultiblockFilter.scan(level, head);
+        int tanksServed = org.overengineer.bettacraft.filter.MultiblockFilter.links(level, st).size();
+        if (tanksServed != 2 || st.fresh().size() != 1 || st.waste().size() != 1)
+            LOGGER.warn("[showcase] M40 the filter reaches {} tanks, {} fresh and {} waste ports", tanksServed, st.fresh().size(), st.waste().size());
+        org.overengineer.bettacraft.plumbing.PipeCovers.apply(level, at.offset(4, 0, 2), Blocks.STONE_BRICKS.defaultBlockState(), new ItemStack(Blocks.STONE_BRICKS), null);
+        org.overengineer.bettacraft.plumbing.PipeCovers.apply(level, at.offset(5, 0, 2), Blocks.OAK_PLANKS.defaultBlockState(), new ItemStack(Blocks.OAK_PLANKS), null);
+        name(level, at, "Ein Filter, zwei Becken");
+        name(level, at.offset(0, 0, 3), "Rohrbündel mit vier Leitungen");
+        LOGGER.info("[showcase] M40 filter lines at {}: {} tanks ({} and {})", at, tanksServed, a.getBlockPos(), b.getBlockPos());
     }
 
     private static void glassAndShapes(ServerLevel level, BlockPos at) {

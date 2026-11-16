@@ -89,7 +89,9 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   (`run/create-mods`: Create 6, Create Aeronautics bundled and Sable from ATM10AA; `CreateGameTests` move tanks on a bearing and a
   Sable sub-level; the travelling tanks are `tank/TankMoves`, `compat/create/`), `-Pquests` (`run/quest-mods`: FTB Quests +
   libraries; the chapter of `modpack/` is copied into the run, `QuestGameTests`), `-Pkubejs` (`run/kubejs-mods`: KubeJS, Rhino;
-  the example script is copied into the run), `-Pmaps` (`run/map-mods`: JourneyMap, client only; alarm waypoints). The public
+  the example script is copied into the run), `-Pmaps` (`run/map-mods`: JourneyMap, client only; alarm waypoints), `-Pfacades`
+  (`run/facade-mods`: Cable Facades; its block tag `cable_facades:supports_facade` is in our data, `PipeCoverGameTests`; Mekanism
+  Covers lies in `run/power-mods`). The public
   events for scripts are in `api/event` (posted by `api/ApiEvents`). Leave runtime mods out
   with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoCompat`; add `-Ptop`, `-Pwthit`. `-Pbackground` makes a plain
   `runClient` a background window.

@@ -189,6 +189,10 @@ public final class DevSmokeMP {
                     a.length > 1 && "true,2,2".equals(a[1]));
             case "plumbing" -> check(name + ": pipe joins pump and reservoir, controller interval and share " + (a.length > 1 ? a[1] : "?") + " (server true,9,25)",
                     a.length > 1 && "true,9,25".equals(a[1])); // M24
+            case "pipecover" -> check(name + ": covers, bundle lines, light, full shape " + (a.length > 1 ? a[1] : "?")
+                    + " (server minecraft:stone_bricks,minecraft:glowstone,2,15,true)", a.length > 1 && "minecraft:stone_bricks,minecraft:glowstone,2,15,true".equals(a[1])); // M40 part c
+            case "pipecoveroff" -> check(name + ": the pipe's cover is off " + (a.length > 1 ? a[1] : "?") + " (server none,minecraft:glowstone,2,15,false)",
+                    a.length > 1 && "none,minecraft:glowstone,2,15,false".equals(a[1]));
             case "cabpump" -> check(name + ": air pump in the cabinet and pump sounds off by default " + (a.length > 1 ? a[1] : "?") + " (expected true,false,false)",
                     a.length > 1 && "true,false,false".equals(a[1])); // M29.1
             case "outletmenu" -> check(name + ": cabinet menu with the outlet button (" + (a.length > 1 ? a[1] : "?") + ")", a.length > 1 && "ok".equals(a[1]));
@@ -1218,6 +1222,25 @@ public final class DevSmokeMP {
         }, () -> server.overworld().getBlockEntity(base.offset(-27, 0, 13)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity wc
                 && wc.intervalDays() == 3 && wc.share() == 30 && wc.enabled() && wc.last() >= 0
                 && TankMultiblock.getController(server.overworld(), base.offset(-26, 0, 12)) instanceof TankBlockEntity c && c.getTank().nitrate() < 39.9F, 20 * 30));
+        // M40 part c: covers on a filter pipe (stone bricks) and a pipe bundle (glowstone): both clients see the covers (block
+        // entity update), the bundle keeps its two lines and shines; then the pipe's cover comes off and both see the pipe again
+        steps.add(new Step("pipe covers", () -> {
+            ServerLevel level = server.overworld();
+            BlockPos a = base.offset(-29, 0, 16), b = base.offset(-28, 0, 16);
+            level.setBlockAndUpdate(a, ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
+            level.setBlockAndUpdate(b, ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
+            org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.addLine(level, b, org.overengineer.bettacraft.plumbing.PipeLine.RETURN, null, null);
+            check("cover on the pipe", org.overengineer.bettacraft.plumbing.PipeCovers.apply(level, a, net.minecraft.world.level.block.Blocks.STONE_BRICKS.defaultBlockState(),
+                    new ItemStack(net.minecraft.world.item.Items.STONE_BRICKS), null));
+            check("cover on the bundle", org.overengineer.bettacraft.plumbing.PipeCovers.apply(level, b, net.minecraft.world.level.block.Blocks.GLOWSTONE.defaultBlockState(),
+                    new ItemStack(net.minecraft.world.item.Items.GLOWSTONE), null));
+            say("pipecover", "all", a.getX() + "," + a.getY() + "," + a.getZ());
+        }, () -> reports.containsKey(P1 + ":pipecover") && reports.containsKey(P2 + ":pipecover"), 20 * 30));
+        steps.add(new Step("pipe cover off", () -> {
+            BlockPos a = base.offset(-29, 0, 16);
+            check("the cover comes off", org.overengineer.bettacraft.plumbing.PipeCovers.remove(server.overworld(), a).is(net.minecraft.world.item.Items.STONE_BRICKS));
+            say("pipecover", "all", a.getX() + "," + a.getY() + "," + a.getZ());
+        }, () -> reports.containsKey(P1 + ":pipecoveroff") && reports.containsKey(P2 + ":pipecoveroff"), 20 * 30));
         // M27: a 2x1 monitor screen next to a named tank: both clients get the screen, its automatic layout and the tank's
         // values (only viewers get data, bundled); then Dev1 sends a layout like the editor (part b) and both see it
         steps.add(new Step("monitor", () -> {
