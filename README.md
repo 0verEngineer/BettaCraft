@@ -293,6 +293,12 @@ README); the generated files are committed, so the Gradle build does not need Py
 Development-only code (smoke tests, the showcase world, GameTests) lives in the source set `src/dev`: every `run*` task
 loads it, the jar does not contain it.
 
+The normal GameTests (about 716, 3 to 4 minutes) include complete breeding runs over several generations
+(`GenerationsGameTests`): a pair breeds, the young are reared, the chosen ones go by bucket, fish bag, net, transport tub or
+terrarium box into a new tank and breed on, for bettas, guppies, shrimp and snails, axolotls, dart frogs, slider turtles and
+leopard geckos, bamboo sharks and stingrays and animals of other mods by their profiles (inheritance, varieties, pedigree,
+the menu's values, rare traits). `-Pgametests=generations` runs only them (about a minute with the server start).
+
 ### Integration tests (optional)
 
 The integrations with other mods have an optional test suite of their own that no build runs on its own:
@@ -312,7 +318,7 @@ The GameTest server runs in `run/gametest-integration` and adds the integration-
 fluids and FE through the pipes, cables and networks of Pipez, EnderIO, Mekanism, Create, AE2, Refined Storage, Integrated
 Tunnels, XNet, LaserIO, Modular Routers and Flux Networks into feeders, tanks and the filter; autocrafting into the food maker
 and the crucible; the capture items of EnderIO and Industrial Foregoing; the KubeJS example script; every id of another mod in
-Bettacraft's data. A missing mod fails these tests, so an incomplete group cannot look green. `-Pgametests=<prefix>` runs only
+Bettacraft's data; breeding runs of Critters and Companions koi. A missing mod fails these tests, so an incomplete group cannot look green. `-Pgametests=<prefix>` runs only
 the tests whose method name or batch starts with the prefix (also in the normal suite).
 
 ### Zoo tests (optional)
@@ -321,7 +327,7 @@ The second part of the optional suite tests Bettacraft against the animals and w
 integrate (no profile of its own):
 
 ```
-./gradlew zooTests --no-configuration-cache                                 # all GameTests plus the zoo tests
+./gradlew zooTests --no-configuration-cache                                 # all GameTests plus the zoo tests, ~7 minutes
 ./gradlew zooTests -Pgametests=bettacraft_zoo --no-configuration-cache      # only the zoo tests (~4 minutes)
 ./gradlew runClient -Pzoo -Psmoketestm42b --no-configuration-cache          # the miniature with those animals and plants
 ```

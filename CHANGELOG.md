@@ -4,6 +4,36 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.33.1-beta.1] - 2026-11-17
+
+A big test round with every integrated mod, the animals of mods without a profile and complete breeding runs over several
+generations; this release fixes what it found.
+
+### Added
+- **Filter media by automation:** hoppers, pipes and the import/export buses of Applied Energistics 2 and Refined Storage put
+  a fresh filter medium into an empty chamber of the multiblock filter and take a used-up one (clogged or spent) out; a
+  medium that still works stays in. Switch `features.equipment.filterMediaAutomation` (on; off: media only by hand). The
+  handbook's filter media page says how.
+- The tank menu shows the sex (♀/♂) of the turtles, geckos and dart frogs, so a breeder can pick a pair (the nest
+  temperature decides it).
+
+### Fixed
+- **Fish Eggs** gave every fish of the world its own breeding and food hunting: our bettas and tankmates (and foreign fish
+  in a tank whose own breeding is suppressed) laid eggs of that mod, whose young hatched without genes and stuck in the tank
+  glass. Those goals are now taken from them.
+- After a crash (the list of interior regions older than the interior itself) a new tank could take over the interior of an
+  old one with its plants and blocks; a new tank now skips every region that already holds an interior.
+- A copied packed tank item (creative middle click, another mod's duplication) and the creative copy of a standing tank
+  (pick block with its data) became a second tank with the same id, interior, water and small animals; only the first
+  placement now brings the tank back, every copy is a plain tank block.
+- An axolotl taken out of a tank with a bucket lost its generation and the magnifier's analysis (only the colour genes went
+  into the bucket); both now travel with it.
+
+### Changed
+- Developers: the optional test suites `gradlew integrationTests` (every integrated mod) and `gradlew zooTests` (mods with
+  animals and plants that Bettacraft does not integrate), breeding runs over generations in the GameTests, `-Pgametests=` for
+  subsets, a lag simulation for the multiplayer test (`-Pmplag`); every GameTest run starts with a fresh world.
+
 ## [1.33.0-beta.1] - 2026-11-17
 
 With Create a whole aquarium runs on one shaft: a drive adapter on the tank, or a shaft on the cabinet under it, turns

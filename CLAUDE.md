@@ -103,8 +103,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   (Integrated Dynamics + Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
   Industrial Foregoing, Athena and Farmer's Delight for EnderIO's models and Ice and Fire's recipes, from ATM10AA). The GameTest server then runs in `run/gametest-integration`: the whole normal suite plus
   the integration-only tests of `gametest/integration` (registered by `IntegrationSuite` only with `bettacraft.integration`;
-  they fail when a mod of the group is missing, `IntegrationGroupTests` also checks every foreign id of our data). About 6
-  minutes for ~750 tests. `-Pgametests=<prefix>[,...]` runs only the tests whose method name or batch starts with a prefix
+  they fail when a mod of the group is missing, `IntegrationGroupTests` also checks every foreign id of our data). About 5-6
+  minutes for ~750 tests. `gradlew zooTests` (below) takes about 7 minutes. `-Pgametests=<prefix>[,...]` runs only the tests whose method name or batch starts with a prefix
   (e.g. `-Pgametests=bettacraft_integration`), also for the normal suite. The client side: `runClient -Pintegration
   -Psmoketestm42` (JEI, GuideME), `-Psmoketestm8` (overlays; with `-Ptop -PnoJade` / `-Pwthit -PnoJade`), `-Psmoketestm32d`
   (JourneyMap). CI: the manual workflow `integration.yml` runs `integrationTests -PintegrationPartial` with the open-licence
@@ -119,6 +119,14 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   bugs of ours (exceptions in our code, an animal lost or doubled when taken out, put back, packed or released, refused animals
   left in the tank, a breakable inhabited tank, a plant lost when the tank breaks). Client: `runClient -Pzoo -Psmoketestm42b`
   (the miniature with those animals and plants; the Aether stays out of the dev client, its Accessories mixin crashes there).
+- **Breeding runs** (M42 part c, in the normal suite): `GenerationsGameTests` breed bettas, guppies, Neocaridina (by grade),
+  ramshorns, axolotls, dart frogs, sliders (TSD), leopard gecko morphs, bamboo sharks, stingrays, tropical fish by a test
+  profile, Fintastic guppies and Aquaculture box turtles over two to four generations; the chosen young go by the menu's
+  take-out (bucket, bag, net, tub, box) into new tanks (`breeder`, `takeOut`, `putIn`, `move` are public for other
+  packages). Config only in their own batches through `withConfig` (also turns `breeding.mutations` off; guppies still
+  mutate at 0.4 %). The care uses the level's random and the inhabitants' order, so their numbers differ from run to run:
+  the assertions are statistical with wide margins. `-Pgametests=generations`; the koi of Critters and Companions run in the
+  integration suite (`IntegrationBreedingTests`, batch `bettacraft_integration_breeding`).
 - Other M42 test switches: `runMultiplayerTest -Pmplag` (dev `DevNetLag`: 40-250 ms both ways, every second interior
   delta lost), `bash tools/upgrade/chain.sh` (a reference world saved by an intermediate version, then `smoketestUpgrade
   -PupgradeWorld="Bettacraft Kette 1.13.1-1.31.0"`). Every GameTest run deletes its old world first (it used to grow by every
