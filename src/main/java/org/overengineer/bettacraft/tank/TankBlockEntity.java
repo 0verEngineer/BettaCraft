@@ -195,6 +195,15 @@ public class TankBlockEntity extends BlockEntity {
      * A mover put this block down from data (Create's block entity transformer): it is handled as moved even when it came
      * back to the very place it left (a bearing turned once round), with the rotation the mover reported (null = find out).
      */
+    /** M42 part b: drops the tank data a placed item brought (a copy of a packed tank): the block forms a tank like a new one. */
+    void forgetPackedData() {
+        movedFrom = null;
+        savedAt = null;
+        moveRotation = null;
+        stowed = new net.minecraft.nbt.ListTag();
+        setController(null, null);
+    }
+
     public void markMoved(@Nullable int[] rotation) {
         this.moveRotation = TankMoveMap.valid(rotation) ? rotation.clone() : null;
         if (savedAt != null) this.movedFrom = savedAt;

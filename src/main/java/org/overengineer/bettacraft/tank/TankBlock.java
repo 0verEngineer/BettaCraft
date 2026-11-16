@@ -291,10 +291,15 @@ public class TankBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level instanceof ServerLevel && PackedTank.isPacked(stack) && level.getBlockEntity(pos) instanceof TankBlockEntity packed) {
+        if (level instanceof ServerLevel server && PackedTank.isPacked(stack) && level.getBlockEntity(pos) instanceof TankBlockEntity packed) {
             // M32 part c: a packed tank (its data came with the item): it arrives like a moved tank (TankMoves)
-            packed.markMoved(null);
-            return;
+            if (PackedTank.claim(server, stack)) {
+                packed.markMoved(null);
+                return;
+            }
+            // M42 part b: a copy of a packed tank item that was placed before: a plain tank block, without the tank's data
+            org.slf4j.LoggerFactory.getLogger("bettacraft/tank").warn("A copy of an already placed packed tank was put down at {}: it is a plain tank block", pos);
+            packed.forgetPackedData();
         }
         if (level instanceof ServerLevel server && !org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)) {
             TankMultiblock.onTankBlockAdded(server, pos, placer instanceof ServerPlayer sp ? sp : null);
