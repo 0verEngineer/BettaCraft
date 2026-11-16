@@ -82,7 +82,7 @@ the Mods 10, and fine on its own.
   guard their young.
 - **Water animals of other mods** live in the aquariums too; whales, bosses and hostile mobs are refused with a reason.
 
-![An Amazon tank: discus, rummy nose and cardinal tetras over sand and roots between sword plants and Vallisneria](images/bettacraft-amazon-tank-swimming.gif)
+![An Amazon tank: discus, angelfish, rummy nose and cardinal tetras over sand and roots between sword plants and Vallisneria](images/bettacraft-amazon-tank-swimming.gif)
 
 ## Salt water, reef tanks and seahorses
 

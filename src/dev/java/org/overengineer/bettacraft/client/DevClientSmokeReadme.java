@@ -383,6 +383,8 @@ final class DevClientSmokeReadme {
         InteriorPlants.settleTint(level, am);
         RandomSource fr = RandomSource.create(43);
         for (int i = 0; i < 3; i++) fish(level, am, TankmateSpecies.DISCUS, TankmateGenes.wild(TankmateSpecies.DISCUS), i % 2 == 0, fr);
+        // 1.33.3: the angelfish pair is back (their dorsal fins no longer stick out of the water at the surface)
+        for (int i = 0; i < 2; i++) fish(level, am, TankmateSpecies.ANGELFISH, TankmateGenes.wild(TankmateSpecies.ANGELFISH), i % 2 == 0, fr);
         for (int i = 0; i < 8; i++) fish(level, am, TankmateSpecies.RUMMY_NOSE_TETRA, TankmateGenes.wild(TankmateSpecies.RUMMY_NOSE_TETRA), i % 2 == 0, fr);
         for (int i = 0; i < 12; i++) fish(level, am, TankmateSpecies.CARDINAL_TETRA, TankmateGenes.wild(TankmateSpecies.CARDINAL_TETRA), i % 2 == 0, fr);
         for (int i = 0; i < 3; i++) fish(level, am, TankmateSpecies.PANDA_CORY, TankmateGenes.wild(TankmateSpecies.PANDA_CORY), i % 2 == 0, fr);

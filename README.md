@@ -18,7 +18,7 @@ run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel
     <td><img src="docs/images/bettacraft-plant-growth.gif" alt="A time lapse: cuttings grow into Vallisneria, Rotala, Ludwigia, a sword plant and a Monte Carlo carpet"></td>
   </tr>
   <tr>
-    <td><img src="docs/images/bettacraft-amazon-tank-swimming.gif" alt="An Amazon tank: discus, rummy nose and cardinal tetras between sword plants"></td>
+    <td><img src="docs/images/bettacraft-amazon-tank-swimming.gif" alt="An Amazon tank: discus, angelfish, rummy nose and cardinal tetras between sword plants"></td>
     <td><img src="docs/images/bettacraft-shrimp-tank-crawling.gif" alt="A shrimp tank: Neocaridina in every colour, bee shrimp, nerites and a dwarf crayfish"></td>
   </tr>
   <tr>
