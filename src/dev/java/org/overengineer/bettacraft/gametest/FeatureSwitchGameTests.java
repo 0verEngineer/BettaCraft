@@ -82,6 +82,17 @@ public final class FeatureSwitchGameTests {
         }
         Loader l = new Loader(server.registryAccess());
         l.injectContext(ICondition.IContext.EMPTY, server.registryAccess());
+        // M42: KubeJS mixes into RecipeManager.apply and reads the reload resources it keeps in the real manager (a field of
+        // its mixin); a fresh manager lacks them (NullPointerException), so it gets those of the server's
+        try {
+            java.lang.reflect.Field kjs = RecipeManager.class.getDeclaredField("kjs$resources");
+            kjs.setAccessible(true);
+            kjs.set(l, kjs.get(server.getRecipeManager()));
+        } catch (NoSuchFieldException ignored) {
+            // no KubeJS
+        } catch (IllegalAccessException e) {
+            throw new GameTestAssertException("cannot prepare the recipe loader for KubeJS: " + e);
+        }
         l.load(files, rm);
         return l;
     }
