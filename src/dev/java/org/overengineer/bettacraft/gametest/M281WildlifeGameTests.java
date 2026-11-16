@@ -178,7 +178,8 @@ public final class M281WildlifeGameTests {
         try {
             int limit = WildSpawnPass.perPlayer();
             check(limit > 0 && WildSpawnPass.room(level, min) == limit, "room before: " + WildSpawnPass.room(level, min));
-            var type = ModEntities.WILD_CRITTER.get();
+            // M46: the fish limit (the small animals have their own, CritterSpawnPassGameTests)
+            var type = ModEntities.TANKMATES.get(TankmateSpecies.GUPPY).get();
             for (int i = 0; i < limit; i++) type.spawn(level, min.offset(i % size, 0, i / size), net.minecraft.world.entity.MobSpawnType.NATURAL);
             check(WildSpawnPass.room(level, min) == 0, "room with " + limit + " wild animals: " + WildSpawnPass.room(level, min));
             check(WildSpawnPass.tryFor(level, min, RandomSource.create(3)) == 0, "the pass spawned over its limit");

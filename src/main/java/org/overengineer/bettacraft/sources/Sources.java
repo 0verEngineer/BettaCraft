@@ -220,7 +220,7 @@ public final class Sources {
             if (frog > 0) out.add(new Source(Source.Kind.SPAWN, Target.FROG, where, frog, frog, 1, 2, 0, false, Feature.FROGS_WILD.key(), null));
             int critters = org.overengineer.bettacraft.world.Wildlife.critterWeight(w);
             if (critters <= 0) continue;
-            var table = org.overengineer.bettacraft.world.Wildlife.critterTable(w, false, false);
+            var table = org.overengineer.bettacraft.world.Wildlife.critterSpawnTable(w, false, false); // M46: the apple snail damped
             double total = 0;
             for (var c : table) total += c.weight();
             for (var c : table) {

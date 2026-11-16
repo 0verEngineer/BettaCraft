@@ -12,8 +12,10 @@ final class LangM281 {
     static void addAll(BiConsumer<String, String> a) {
         a.accept("bettacraft.configuration.spawnPassInterval", "Spawn pass interval");
         a.accept("bettacraft.configuration.spawnPassInterval.tooltip", "Ticks between two tries of the own spawn pass per player (20 ticks = 1 second)");
-        a.accept("bettacraft.configuration.spawnPassPerPlayer", "Wild animals per player at most");
-        a.accept("bettacraft.configuration.spawnPassPerPlayer.tooltip", "The own spawn pass only spawns while fewer than this many wild animals of the mod live within 48 blocks of the player (0 = it spawns nothing)");
+        a.accept("bettacraft.configuration.spawnPassPerPlayer", "Wild fish per player at most");
+        a.accept("bettacraft.configuration.spawnPassPerPlayer.tooltip", "The own spawn pass only spawns fish, frogs and turtles while fewer than this many of them live within 48 blocks of the player (0 = it spawns none; the small animals have their own limit)");
+        a.accept("bettacraft.configuration.spawnPassCrittersPerPlayer", "Wild small animals per player at most");
+        a.accept("bettacraft.configuration.spawnPassCrittersPerPlayer.tooltip", "The own spawn pass only spawns shrimp, snails, crayfish and hermit crabs while fewer than this many wild ones live within 48 blocks of the player (one own try per pass, preferring shallow water; 0 = it spawns none)");
         a.accept("command.bettacraft.wildlife.interior", "This is the inside of a tank: no wild animals here.");
         a.accept("command.bettacraft.wildlife.biome", "Biome %s: water for spawns %s, for the net %s");
         a.accept("command.bettacraft.wildlife.none", "No animals of Bettacraft spawn in this biome.");
@@ -26,6 +28,7 @@ final class LangM281 {
         a.accept("command.bettacraft.wildlife.pass.off", "Own spawn pass: off (features.wildSpawnPass.enabled)");
         a.accept("command.bettacraft.wildlife.pass.full", "Own spawn pass: waiting, %s of %s wild animals already nearby");
         a.accept("command.bettacraft.wildlife.pass.on", "Own spawn pass: tries every %s s in water %s to %s blocks away, up to %s more animals");
+        a.accept("command.bettacraft.wildlife.pass.critters", "Small animals of the pass: %s of %s nearby");
         a.accept("command.bettacraft.wildlife.list.none", "No animals of Bettacraft within %s blocks (tank inhabitants left out).");
         a.accept("command.bettacraft.wildlife.list.header", "%s animals of Bettacraft within %s blocks (tank inhabitants left out):");
         a.accept("command.bettacraft.wildlife.list.entry", "%s at %s %s %s (%s blocks, %s)");

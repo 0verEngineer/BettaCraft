@@ -224,9 +224,23 @@ public final class Wildlife {
         return NetCatching.table(w, plants, hard, false).stream().filter(c -> c.species() != null).toList();
     }
 
+    /**
+     * M46: how much less often the apple snail is picked when small animals spawn than it is caught with the net. Its net weight
+     * (30 against 5 to 12 for the others of the jungle) made almost every jungle spawn an apple snail, so the shrimp, crayfish
+     * and Sulawesi snails of that water were hardly ever seen.
+     */
+    public static final double APPLE_SNAIL_SPAWN_FACTOR = 0.25;
+
+    /** M46: the small animals that spawn in a water with their weights: the net's table, the apple snail damped. */
+    public static List<NetCatching.Catch> critterSpawnTable(NetCatching.Water w, boolean plants, boolean hard) {
+        return critterTable(w, plants, hard).stream()
+                .map(c -> c.species() == CritterSpecies.APPLE_SNAIL ? new NetCatching.Catch(c.species(), c.weight() * APPLE_SNAIL_SPAWN_FACTOR) : c).toList();
+    }
+
+    /** The species of a group of small animals that spawns in this water ({@link #critterSpawnTable}). */
     @Nullable
     public static CritterSpecies pickCritter(NetCatching.Water w, boolean plants, boolean hard, RandomGenerator r) {
-        var c = NetCatching.roll(critterTable(w, plants, hard), r);
+        var c = NetCatching.roll(critterSpawnTable(w, plants, hard), r);
         return c == null ? null : c.species();
     }
 

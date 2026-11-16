@@ -114,8 +114,8 @@ public final class WildlifeCommand {
             say(src, Component.translatable("command.bettacraft.wildlife.species", oursTotal, total, share, names));
         }
         // our wild animals nearby
-        int near = WildSpawnPass.nearby(level, pos);
-        say(src, Component.translatable("command.bettacraft.wildlife.nearby", WildSpawnPass.PLAYER_RADIUS, near));
+        int near = WildSpawnPass.nearby(level, pos), critters = WildSpawnPass.crittersNearby(level, pos); // M46: two limits
+        say(src, Component.translatable("command.bettacraft.wildlife.nearby", WildSpawnPass.PLAYER_RADIUS, near + critters));
         // the vanilla cap
         Map<String, Integer> cap = capMobs(level, pos);
         int capCount = cap.values().stream().mapToInt(Integer::intValue).sum(), capMax = MobCategory.WATER_AMBIENT.getMaxInstancesPerChunk();
@@ -136,6 +136,9 @@ public final class WildlifeCommand {
         } else {
             say(src, Component.translatable("command.bettacraft.wildlife.pass.on", WildSpawnPass.interval() / 20F, WildSpawnPass.MIN_DISTANCE,
                     WildSpawnPass.MAX_DISTANCE, limit - near));
+        }
+        if (Features.enabled(Feature.WILD_SPAWN_PASS)) {
+            say(src, Component.translatable("command.bettacraft.wildlife.pass.critters", critters, WildSpawnPass.crittersPerPlayer()));
         }
         return ours.size();
     }
