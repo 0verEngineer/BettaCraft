@@ -403,7 +403,13 @@ public final class FilterWaterGameTests {
             h.succeed();
             return;
         }
-        FilterPortBlockEntity fresh = foreignRig(h, block("pipez:fluid_pipe"));
+        BlockState pz = block("pipez:fluid_pipe").defaultBlockState();
+        for (var pr : pz.getProperties()) if (pr.getName().equals("has_data")) pz = pz.setValue((net.minecraft.world.level.block.state.properties.BooleanProperty) pr, true);
+        rig(h);
+        PlumbingGameTests.reservoir(h, new BlockPos(15, 2, 4), 16000, null);
+        h.setBlock(new BlockPos(14, 2, 4), pz);
+        pipes(h, ModBlocks.FILTER_FRESH_PIPE.get(), new int[]{12, 2, 4}, new int[]{13, 2, 4});
+        FilterPortBlockEntity fresh = port(h, 11, 2, 4);
         try {
             Object pipe = h.getLevel().getBlockEntity(abs(h, 14, 2, 4));
             pipe.getClass().getMethod("setExtracting", Direction.class, boolean.class).invoke(pipe, Direction.EAST, true);
@@ -436,6 +442,8 @@ public final class FilterWaterGameTests {
                     Class.forName("com.enderio.enderio.api.conduits.connection.config.ConnectionConfig"));
             Object east = get.invoke(be, fluid, Direction.EAST);
             Object extract = east.getClass().getMethod("withIsExtract", boolean.class).invoke(east, true);
+            Class<?> rc = Class.forName("com.enderio.enderio.api.io.RedstoneControl");
+            extract = extract.getClass().getMethod("withExtractRedstoneControl", rc).invoke(extract, rc.getField("ALWAYS_ACTIVE").get(null));
             extract = extract.getClass().getMethod("withIsInsert", boolean.class).invoke(extract, false);
             set.invoke(be, fluid, Direction.EAST, extract);
             Object west = get.invoke(be, fluid, Direction.WEST);
@@ -445,10 +453,23 @@ public final class FilterWaterGameTests {
             throw new GameTestAssertException("EnderIO API changed: " + e);
         }
         FilterPortBlockEntity fresh = port(h, 11, 2, 4);
-        h.succeedWhen(() -> h.assertTrue(fresh.water().amount() > 0, "the EnderIO conduit fills the fresh port: " + fresh.water().amount()));
+        Object be = level.getBlockEntity(abs(h, 14, 2, 4));
+        h.succeedWhen(() -> {
+            String why = "";
+            try {
+                var reg = level.registryAccess().registryOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.ResourceLocation.parse("enderio:conduit")));
+                Object fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.ResourceLocation.parse("enderio:fluid")));
+                var st = be.getClass().getMethod("getConnectionStatus", net.minecraft.core.Holder.class, Direction.class);
+                var cf = be.getClass().getMethod("getConnectionConfig", net.minecraft.core.Holder.class, Direction.class);
+                why = "east " + st.invoke(be, fluid, Direction.EAST) + " " + cf.invoke(be, fluid, Direction.EAST) + ", west " + st.invoke(be, fluid, Direction.WEST) + " " + cf.invoke(be, fluid, Direction.WEST);
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                why = e.toString();
+            }
+            h.assertTrue(fresh.water().amount() > 0, "the EnderIO conduit fills the fresh port: " + fresh.water().amount() + "; " + why);
+        });
     }
 
-    /** Mekanism: water put into a mechanical pipe goes on into our fresh water line, and the line joins the pipe. */
+    /** Mekanism: a mechanical pipe pulling from a reservoir pushes into our fresh water line, and the line joins the pipe. */
     @GameTest(template = EMPTY, batch = "bettacraft_power_mekanism_water", timeoutTicks = 300)
     public static void mekanismPipeFillsTheFreshLine(GameTestHelper h) {
         if (!loaded("mekanism")) {
@@ -457,14 +478,18 @@ public final class FilterWaterGameTests {
         }
         ServerLevel level = h.getLevel();
         FilterPortBlockEntity fresh = foreignRig(h, block("mekanism:basic_mechanical_pipe"));
-        h.setBlock(new BlockPos(15, 2, 4), Blocks.AIR);
-        h.runAfterDelay(5, () -> {
+        try {
+            Object tile = level.getBlockEntity(abs(h, 14, 2, 4));
+            Object transmitter = tile.getClass().getMethod("getTransmitter").invoke(tile);
+            Class<?> type = Class.forName("mekanism.common.lib.transmitter.ConnectionType");
+            Object pull = type.getField("PULL").get(null);
+            transmitter.getClass().getMethod("setConnectionTypeRaw", Direction.class, type).invoke(transmitter, Direction.EAST, pull);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            throw new GameTestAssertException("Mekanism API changed: " + e);
+        }
+        h.succeedWhen(() -> {
             h.assertTrue(FilterPipes.joined(slot(h, 13, 2, 4, PipeLine.FRESH), Direction.EAST), "our fresh pipe joins the Mekanism pipe");
-            IFluidHandler mek = level.getCapability(Capabilities.FluidHandler.BLOCK, abs(h, 14, 2, 4), Direction.EAST);
-            h.assertTrue(mek != null, "the Mekanism pipe has a fluid handler");
-            int in = mek.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE);
-            h.assertTrue(in > 0, "the pipe takes water");
-            h.succeedWhen(() -> h.assertTrue(fresh.water().amount() > 0, "Mekanism passes it into the fresh port: " + fresh.water().amount()));
+            h.assertTrue(fresh.water().amount() > 0, "Mekanism pulls from the reservoir into the fresh port: " + fresh.water().amount());
         });
     }
 
@@ -526,7 +551,7 @@ public final class FilterWaterGameTests {
         }
         h.setBlock(new BlockPos(14, 3, 4), importer);
         h.setBlock(new BlockPos(15, 3, 4), block("refinedstorage:creative_controller").defaultBlockState());
-        h.setBlock(new BlockPos(15, 4, 4), block("refinedstorage:creative_storage_block").defaultBlockState());
+        h.setBlock(new BlockPos(15, 4, 4), block("refinedstorage:creative_fluid_storage_block").defaultBlockState()); // fluids need a fluid storage
         h.succeedWhen(() -> h.assertTrue(waste.water().amount() < 4000, "the RS importer pulls from the waste line: " + waste.water().amount()));
     }
 
