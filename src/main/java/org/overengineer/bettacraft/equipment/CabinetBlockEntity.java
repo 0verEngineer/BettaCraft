@@ -49,6 +49,26 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     public static final Set<CabinetBlockEntity> CLIENT_FILTERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
     /** M29.1: client-side cabinets currently loaded with an air pump (hum; never touched on the server). */
     public static final Set<CabinetBlockEntity> CLIENT_AIR_PUMPS = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    /** M44.1: the cabinets loaded on the server, so a changed {@code cabinetFronts} switch reaches them at once. */
+    private static final Set<CabinetBlockEntity> SERVER_LOADED = Collections.synchronizedSet(Collections.newSetFromMap(new java.util.WeakHashMap<>())); // weak: also copies in other mods' virtual levels
+
+    /**
+     * M44.1: every loaded cabinet sets its front again (the feature switch {@code features.equipment.cabinetFronts} or a
+     * preset changed in the config file or the config screen). Server thread only.
+     */
+    public static void refreshAllFronts() {
+        java.util.List<CabinetBlockEntity> loaded;
+        synchronized (SERVER_LOADED) {
+            loaded = java.util.List.copyOf(SERVER_LOADED);
+        }
+        for (CabinetBlockEntity c : loaded) {
+            if (c.isRemoved() || c.level == null || c.level.isClientSide || !c.level.isLoaded(c.worldPosition)) {
+                SERVER_LOADED.remove(c);
+                continue;
+            }
+            CabinetBlock.refresh(c.level, c.worldPosition);
+        }
+    }
 
     private ResourceLocation wood = DEFAULT_WOOD;
     /** M22.4: the side the filter hose goes up (server: as set; client: the effective side the server sent). */
@@ -468,6 +488,13 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (level != null && level.isClientSide && clientHasAirPump) CLIENT_AIR_PUMPS.add(this);
         // M44: the front of a cabinet of an older version (or after the feature switch changed) is set a tick later
         if (level instanceof net.minecraft.server.level.ServerLevel sl) sl.scheduleTick(worldPosition, getBlockState().getBlock(), 1);
+        if (level != null && !level.isClientSide) SERVER_LOADED.add(this);
+    }
+
+    @Override
+    public void setLevel(net.minecraft.world.level.Level level) {
+        super.setLevel(level);
+        if (!level.isClientSide) SERVER_LOADED.add(this); // M44.1: also a cabinet placed in this tick
     }
 
     @Override
@@ -478,6 +505,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (b != null && level != null && !level.isClientSide) b.release(level, this);
         CLIENT_FILTERS.remove(this);
         CLIENT_AIR_PUMPS.remove(this);
+        SERVER_LOADED.remove(this);
     }
 
     @Override
@@ -485,6 +513,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         super.onChunkUnloaded();
         CLIENT_FILTERS.remove(this);
         CLIENT_AIR_PUMPS.remove(this);
+        SERVER_LOADED.remove(this);
     }
 
     @Override

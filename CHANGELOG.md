@@ -4,6 +4,13 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.35.1-beta.1] - 2026-11-16
+
+### Fixed
+- **Cabinet fronts switch at once:** turning `features.equipment.cabinetFronts` (or a preset) on or off in the config file
+  or the config screen now changes every loaded cabinet right away; before, a cabinet only showed it after its chunk was
+  loaded again or its row changed.
+
 ## [1.35.0-beta.1] - 2026-11-16
 
 Mobs and pets walk with real steps in their tanks, and long cabinet rows get one calm front.

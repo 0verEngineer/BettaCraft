@@ -204,7 +204,7 @@ public final class CabinetFrontGameTests {
         h.succeed();
     }
 
-    /** The switch off: the old two doors without joints everywhere, the menu hides the button, the setting is kept. */
+    /** The switch off (M44.1: at once for the loaded cabinets, as on a config reload): the old two doors without joints everywhere, the menu hides the button, the setting is kept. */
     @GameTest(template = EMPTY, batch = "bettacraft_cabinet_fronts_off", timeoutTicks = 100)
     public static void cabinetFrontsSwitchedOff(GameTestHelper h) {
         ServerLevel level = h.getLevel();
@@ -216,7 +216,7 @@ public final class CabinetFrontGameTests {
         boolean feature = Features.own(Feature.CABINET_FRONTS);
         try {
             Features.set(Feature.CABINET_FRONTS, false);
-            for (int x = 0; x < 6; x++) CabinetBlock.refresh(level, h.absolutePos(new BlockPos(2 + x, 1, 3)));
+            CabinetBlockEntity.refreshAllFronts(); // M44.1: what a config reload does, the loaded cabinets switch at once
             h.assertTrue("TTTTTT".equals(fronts(h, 2, 3, 6)), "off: two doors everywhere: " + fronts(h, 2, 3, 6));
             for (int x = 0; x < 6; x++) h.assertTrue(!h.getBlockState(new BlockPos(2 + x, 1, 3)).getValue(CabinetBlock.JOINTS), "off: no joints");
             // new cabinets as well
@@ -231,7 +231,7 @@ public final class CabinetFrontGameTests {
             Features.set(Feature.CABINET_FRONTS, feature);
             sp.getServer().getPlayerList().remove(sp);
         }
-        for (int x = 0; x < 7; x++) CabinetBlock.refresh(level, h.absolutePos(new BlockPos(2 + x, 1, 3)));
+        CabinetBlockEntity.refreshAllFronts();
         h.assertTrue(h.getBlockState(at).getValue(CabinetBlock.FRONT) == CabinetFront.SINGLE, "on again: the single door");
         h.assertTrue(fronts(h, 2, 3, 7).equals(expected(7).substring(0, 5) + "S" + expected(7).substring(6)), "on again: " + fronts(h, 2, 3, 7));
         h.succeed();

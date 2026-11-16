@@ -89,7 +89,10 @@ public final class BettaCraft {
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
             if (e.getConfig().getSpec() == CommonConfig.SPEC) { // M33 part b: the feature switches changed in the file
                 var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
-                if (server != null) server.execute(() -> org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server));
+                if (server != null) server.execute(() -> {
+                    org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server);
+                    org.overengineer.bettacraft.equipment.CabinetBlockEntity.refreshAllFronts(); // M44.1: fronts switch at once
+                });
                 return;
             }
             if (e.getConfig().getSpec() != ServerConfig.SPEC) return;
