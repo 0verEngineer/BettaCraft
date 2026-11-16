@@ -740,6 +740,8 @@
   "bettacraft.configuration.features.equipment.moreInternalFilters.tooltip": "Luftbetriebener Schwammfilter (schonend, braucht eine Luftpumpe), Eckfilter und Ansaugschutz für Motorfilter (aus: nicht platzierbar bzw. anbringbar, vorhandene reinigen nicht)",
   "bettacraft.configuration.features.equipment.multiblockFilter": "Multiblock-Außenfilter",
   "bettacraft.configuration.features.equipment.multiblockFilter.tooltip": "Multiblock-Außenfilter aus Filterkammern, Pumpenkopf und Anschlüssen, mit Filtermedien, die verschmutzen und gereinigt werden müssen (aus: er reinigt nicht)",
+  "bettacraft.configuration.features.equipment.filterMediaAutomation": "Filtermedien per Automatik",
+  "bettacraft.configuration.features.equipment.filterMediaAutomation.tooltip": "Trichter, Rohre und die Busse von ME und RS setzen ein frisches Filtermedium in eine leere Kammer des Multiblock-Filters und nehmen ein verbrauchtes Medium (ganz verschmutzt bzw. aufgebraucht) heraus; ein Medium, das noch arbeitet, bleibt drin (aus: Medien nur von Hand)",
   "bettacraft.configuration.features.equipment.ledTiers": "LED-Stufen",
   "bettacraft.configuration.features.equipment.ledTiers.tooltip": "Stärkere Aquarienlichter: LED-Panel (2 Blöcke breit) und Hochleistungs-LED (beliebig groß); stärkeres Licht macht rote Pflanzen roter, lässt Starklichtpflanzen wachsen und bringt mehr Algen (aus: die neuen Lichter zählen wie die Lichtleiste)",
   "bettacraft.configuration.features.equipment.lightTimer": "Dimmer und Tageslicht-Timer",

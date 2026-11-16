@@ -29,6 +29,10 @@ filter's screen show the dirt; a clogged sponge or ceramic still cleans a fifth.
 cauldron loses one level. Carbon and peat are not cleaned: put in fresh ones. A medium that was a quarter dirty or
 more leaves <ItemLink id="bettacraft:mulm" /> (two from three quarters): food for the [tubifex dish](../food/tubifex_dish.md).
 
+**Automation:** hoppers, pipes and the buses of ME and RS put a fresh medium into an empty chamber and take a medium
+out once it is used up (fully clogged or spent); a medium that still works stays in, so an import bus never pulls the new
+one straight back out. Config switch: `features.equipment.filterMediaAutomation`.
+
 ## Obtaining
 
 Crafting:

@@ -39,6 +39,56 @@ public class FilterChamberBlockEntity extends BlockEntity {
         changed();
     }
 
+    /** M42: whether the medium is used up (fully clogged or spent): only then may automation take it out. */
+    public boolean spent() {
+        return !medium.isEmpty() && dirt() >= 1.0;
+    }
+
+    /**
+     * M42: the item capability of the chamber for hoppers, pipes and ME / RS buses (switch
+     * {@code equipment.filterMediaAutomation}): one slot; a fresh filter medium goes into an empty chamber, a spent medium
+     * (fully clogged or used up) comes out. A medium still working stays in, so an import bus or a pipe never pulls the
+     * new medium right back out.
+     */
+    public net.neoforged.neoforge.items.IItemHandler automation() {
+        return new net.neoforged.neoforge.items.IItemHandler() {
+            @Override
+            public int getSlots() {
+                return 1;
+            }
+
+            @Override
+            public ItemStack getStackInSlot(int slot) {
+                return slot == 0 ? medium : ItemStack.EMPTY;
+            }
+
+            @Override
+            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+                if (slot != 0 || stack.isEmpty() || !medium.isEmpty() || !isItemValid(slot, stack)) return stack;
+                if (!simulate) setMedium(stack.copyWithCount(1));
+                return stack.getCount() == 1 ? ItemStack.EMPTY : stack.copyWithCount(stack.getCount() - 1);
+            }
+
+            @Override
+            public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                if (slot != 0 || amount <= 0 || !spent()) return ItemStack.EMPTY;
+                ItemStack out = medium.copy();
+                if (!simulate) setMedium(ItemStack.EMPTY);
+                return out;
+            }
+
+            @Override
+            public int getSlotLimit(int slot) {
+                return 1;
+            }
+
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack) {
+                return slot == 0 && stack.getItem() instanceof FilterMediaItem;
+            }
+        };
+    }
+
     /** Adds dirt (0..1 of a full clog). */
     public void dirty(double amount) {
         if (medium.isEmpty() || !medium.isDamageableItem() || amount <= 0) return;

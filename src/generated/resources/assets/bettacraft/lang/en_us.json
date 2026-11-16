@@ -402,6 +402,8 @@
   "bettacraft.configuration.features.equipment.cabinetOutletSide.tooltip": "Setting in the cabinet menu: on which tank wall the hose of the external filter in the cabinet goes up (back, left, right, front); jet, bubbles and the current follow it, in front of the outlet the water moves faster (seahorses, corals) (off: always the back wall, the current evenly like before)",
   "bettacraft.configuration.features.equipment.clipOnFeeder": "Clip-on feeder",
   "bettacraft.configuration.features.equipment.clipOnFeeder.tooltip": "Clip-on feeder: a small automatic feeder that hangs on the side of the glass (for tanks whose top is taken by a light) (off: it cannot be placed and placed ones do not feed)",
+  "bettacraft.configuration.features.equipment.filterMediaAutomation": "Filter media by automation",
+  "bettacraft.configuration.features.equipment.filterMediaAutomation.tooltip": "Hoppers, pipes and the buses of ME and RS put a fresh filter medium into an empty chamber of the multiblock filter and take a used-up medium (fully clogged or spent) out; a medium that still works stays in (off: media only by hand)",
   "bettacraft.configuration.features.equipment.ledTiers": "LED tiers",
   "bettacraft.configuration.features.equipment.ledTiers.tooltip": "Stronger aquarium lights: the LED panel (2 blocks wide) and the high-power LED (any size); stronger light makes red plants redder, lets the strong-light plants grow and brings more algae (off: the new lights count like the light bar)",
   "bettacraft.configuration.features.equipment.lightTimer": "Dimmer and daylight timer",

@@ -154,6 +154,9 @@ public final class BettaCraft {
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.CO2_STATION.get(), (be, side) -> be.gasIn());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CO2_STATION.get(),
                 (be, side) -> org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() ? be.energy() : null);
+        // M42: hoppers, pipes and ME / RS buses change the filter media (fresh ones in, used-up ones out)
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FILTER_CHAMBER.get(),
+                (be, side) -> org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FILTER_MEDIA_AUTOMATION) ? be.automation() : null);
         // hoppers, pipes and other mods insert food into the feeder
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.FEEDER.get(),
                 (be, side) -> be.items());

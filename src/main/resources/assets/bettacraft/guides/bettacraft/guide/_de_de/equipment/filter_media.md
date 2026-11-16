@@ -30,6 +30,10 @@ ausgewaschen, der Kessel verliert eine Stufe. Kohle und Torf werden nicht gerein
 einem Viertel oder mehr verschmutzt war, hinterlässt <ItemLink id="bettacraft:mulm" /> (zwei ab drei Vierteln): Futter für
 die [Tubifex-Zuchtschale](../food/tubifex_dish.md).
 
+**Automatik:** Trichter, Rohre und die Busse von ME und RS setzen ein frisches Medium in eine leere Kammer und nehmen ein
+Medium heraus, sobald es verbraucht ist (ganz verstopft bzw. aufgebraucht); ein Medium, das noch arbeitet, bleibt drin, so
+zieht ein Import-Bus das neue nicht gleich wieder heraus. Config-Schalter: `features.equipment.filterMediaAutomation`.
+
 ## Bezug
 
 Herstellung:
