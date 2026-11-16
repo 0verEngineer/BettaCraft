@@ -139,6 +139,40 @@ public final class DupeGameTests {
         });
     }
 
+    /**
+     * A creative copy of a standing tank block (pick block with its data: the controller's tank data in the item) placed beside it:
+     * a new plain tank, not a second one with the same id, interior, small animals or bettas.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_m42_dupes", timeoutTicks = 100)
+    public static void aCreativeCopyOfAStandingTankIsAPlainTank(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        TankBlockEntity c = ForeignGameTests.tank(h, 2, 2, 1, 1, 1, 26F);
+        UUID betta = LiveFoodGameTests.betta(h, c, false, 42_23L).getUUID();
+        TankCritters.add(level, c, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, true, 10);
+        int region = InteriorManager.ensureRegion(level, c).id();
+        ItemStack copy = new ItemStack(ModBlocks.TANK.get());
+        net.minecraft.world.item.BlockItem.setBlockEntityData(copy, org.overengineer.bettacraft.registry.ModBlockEntities.TANK.get(),
+                c.saveWithoutMetadata(level.registryAccess()));
+        BlockPos floor = h.absolutePos(new BlockPos(10, 1, 4));
+        level.setBlockAndUpdate(floor, Blocks.STONE.defaultBlockState());
+        ServerPlayer p = MockPlayers.serverPlayer(h);
+        try {
+            p.setItemInHand(InteractionHand.MAIN_HAND, copy);
+            copy.useOn(new UseOnContext(level, p, InteractionHand.MAIN_HAND, copy, new BlockHitResult(Vec3.atCenterOf(floor).add(0, 0.5, 0), Direction.UP, floor, false)));
+        } finally {
+            p.discard();
+        }
+        h.runAfterDelay(20, () -> {
+            TankBlockEntity n = TankMultiblock.getController(level, floor.above());
+            h.assertTrue(n != null, "the copy forms a tank");
+            h.assertTrue(!n.getTank().id().equals(c.getTank().id()), "a new tank, not a second one with the same id");
+            h.assertTrue(n.getTank().regionId() != region, "not the same interior");
+            h.assertTrue(n.getTank().critters().isEmpty() && n.getTank().inhabitants().isEmpty(), "no small animals or animals of the original");
+            h.assertTrue(level.getEntities((Entity) null, new AABB(floor).inflate(30), e -> e.getUUID().equals(betta)).size() == 1, "the betta exists once");
+            h.succeed();
+        });
+    }
+
     /** One block of a tank broken, put back and broken again in the same tick: its part of the interior (a chest of diamonds) drops once. */
     @GameTest(template = EMPTY, batch = "bettacraft_m42_dupes", timeoutTicks = 100)
     public static void breakingAndPuttingBackABlockDropsItsInteriorOnce(GameTestHelper h) {

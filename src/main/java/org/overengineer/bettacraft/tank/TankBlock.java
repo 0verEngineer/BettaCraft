@@ -300,6 +300,11 @@ public class TankBlock extends BaseEntityBlock {
             // M42 part b: a copy of a packed tank item that was placed before: a plain tank block, without the tank's data
             org.slf4j.LoggerFactory.getLogger("bettacraft/tank").warn("A copy of an already placed packed tank was put down at {}: it is a plain tank block", pos);
             packed.forgetPackedData();
+        } else if (level instanceof ServerLevel && stack.has(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA)
+                && level.getBlockEntity(pos) instanceof TankBlockEntity copied && (copied.getTank() != null || copied.getControllerPos() != null)) {
+            // M42 part b: a creative copy of a standing tank (pick block with its data) is a plain tank block, never a second tank with
+            // the same id, interior region, water and small animals (it arrived like a moved tank before)
+            copied.forgetPackedData();
         }
         if (level instanceof ServerLevel server && !org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)) {
             TankMultiblock.onTankBlockAdded(server, pos, placer instanceof ServerPlayer sp ? sp : null);
