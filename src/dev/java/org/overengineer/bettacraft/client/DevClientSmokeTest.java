@@ -165,6 +165,9 @@ final class DevClientSmokeTest {
     /** -Pzoo -Psmoketestm42b: the miniature with animals and plants of mods we do not integrate (M42 part b). */
     private static final boolean M42B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42bonly");
     private static DevClientSmokeM42b m42b;
+    /** -Psmoketestm46: the heat mat icon, the wild carpets, the herps from all sides, the critter spawn pass (M46). */
+    private static final boolean M46_ONLY = Boolean.getBoolean("bettacraft.smoketest.m46only");
+    private static DevClientSmokeM46 m46;
     /** -Pquests -Pkubejs -Psmoketestm45: the quest chapter in the quest book, English and German (M45). */
     private static final boolean M45_ONLY = Boolean.getBoolean("bettacraft.smoketest.m45only");
     private static DevClientSmokeM45 m45;
@@ -275,8 +278,10 @@ final class DevClientSmokeTest {
                 rules.getRule(GameRules.RULE_DOMOBSPAWNING).set(false, null);
                 LevelSettings settings = new LevelSettings("bettacraft_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE, false,
                         Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT);
+                // M46: -Psmoketestm46 needs real biomes (rivers, swamps, jungles): a normal world of the same seed
+                var preset = Boolean.getBoolean("bettacraft.smoketest.normalworld") ? WorldPresets.NORMAL : WorldPresets.FLAT;
                 mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, false, false),
-                        ra -> ra.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
+                        ra -> ra.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(preset).value().createWorldDimensions(),
                         e.getNewScreen());
             }
         });
@@ -423,6 +428,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M46_ONLY) {
+                if (ticks == 60) m46 = new DevClientSmokeM46();
+                if (m46 != null && m46.tick()) {
+                    m46 = null;
+                    LOGGER.info("[smoketest] client world test finished (M46 only)");
                     mc.stop();
                 }
                 return;

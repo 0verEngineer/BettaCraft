@@ -373,6 +373,16 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm46')) {
+                // gradlew runClient -Psmoketestm46 : the M46 scene (the heat mat item lying flat in hand, frames, inventory and JEI;
+                // the wild carpets in a river, a swamp and a jungle pool next to interior carpets; the leopard gecko morphs and
+                // young and the other herps from eight / four directions; shrimp and snails of the spawn pass at the river bank)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m46only', 'true'
+                systemProperty 'bettacraft.smoketest.normalworld', 'true'
+                // -Pm46carpets=<tag>: only the carpet pools (to compare carpet variants), screenshots named with the tag
+                if (project.hasProperty('m46carpets')) systemProperty 'bettacraft.smoketest.m46carpets', project.property('m46carpets')
+            }
             if (project.hasProperty('smoketestm45')) {
                 // gradlew runClient -Pquests -Pkubejs -Psmoketestm45 : the M45 scene (the quest chapter in FTB Quests' book, zoomed
                 // out and one quest, in English and German; the hidden power and Create quests and the progress from earned
