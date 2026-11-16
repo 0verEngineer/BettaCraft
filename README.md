@@ -107,11 +107,12 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - **Ten giants:** pangasius, redtail and wels catfish, arapaima and motoro stingray in fresh water; bamboo shark (it lays
   egg cases that hatch when there is room), blacktip reef shark, spotted eagle ray, schooling cownose rays and the
   honeycomb moray in its lair in sea water. Wild in rivers, jungle water and warm oceans; vanilla **dolphins** in very
-  big sea water tanks.
+  big sea water tanks. The giant fish of other mods (arapaimas, coelacanth, tuna, gar, catfish, the manta ray and shark of
+  Living Things) go into big tanks by the same rule with their real length.
 - Caught with the **large net** or the **steel leader** into a **transport tub** that carries one animal; big animals
   swim wide curves, turn slowly and eat the small fish of their tank.
 
-### Terraria, turtles, frogs and mobs in glass
+### Terraria, turtles, frogs, pets and mobs in glass
 - **Terrarium and paludarium:** a tank without water is a terrarium, one with water and land built in its interior a
   paludarium, with air temperature, humidity and UV; heat mats, basking lamps, misters and a thermo-hygrometer. The
   tank type can also be fixed in the menu, so a terrarium is never flooded by mistake.
@@ -124,6 +125,13 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
   paludaria: the Naturalist tortoise, alligator, lizard, snake, scorpions, snail, crab, dragonfly, duck and capybara, the
   Critters and Companions dragonfly, leaf insect and otter; the terrarium box catches them. Fish live in the water part of a
   paludarium, and grown sea turtles go into big sea water paludaria with a beach.
+- **Insects, small mammals and birds of other mods:** butterflies, fireflies (they glow at night), beetles, ladybugs,
+  hedgehogs, rats, ferrets, red pandas, koalas, owls, penguins, flamingos and more of Naturalist, Critters and Companions
+  and Living Things; fliers need a lid, woodlice and snails are the clean-up crew, mammals and birds breed as pairs; the
+  komodo dragon, bears, deer, zebras and lions in big terraria. The Aquaculture turtles follow our turtle rules.
+- **Minecraft animals as pets:** chickens (chicks from eggs in the sand), rabbits on grass, bees with flowers and a mini
+  beehive in the interior, frogs in paludaria, cats, foxes, parrots, armadillos, bats and wolves at their real size; pigs,
+  sheep, cows, horses, llamas and pandas in big terraria. Caught with the terrarium box or bait; no drops, no farm.
 - **Mobs in glass:** drowned, zombies, skeletons, spiders, small slimes and a few more live **shrunk and harmless** in
   tanks: caught with the mob jar, lured with bait or put in from an EnderIO soul vial; a zombie under water becomes a
   drowned, fed pairs breed, and they never drop anything.
@@ -184,7 +192,7 @@ No other mod is required.
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
-| Fintastic, Aquaculture 2, Critters and Companions, Naturalist (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; their land and marsh animals (tortoise, alligator, lizard, snake, scorpions, crab, dragonflies, duck, capybara, otter ...) live in terraria and paludaria; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
+| Fintastic, Aquaculture 2, Fish of Thieves, Critters and Companions, Naturalist, Living Things (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; their land and marsh animals (tortoise, alligator, lizard, snake, scorpions, crab, dragonflies, duck, capybara, otter ...) live in terraria and paludaria; also Fish of Thieves (variants inherited, trophies sterile) and Living Things, the insects, mammals and birds of these mods, and big ones by the size rule; deep-sea, giant and hostile animals are refused with a reason; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
 | [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients and products; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |

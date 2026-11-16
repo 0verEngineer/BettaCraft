@@ -107,6 +107,12 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
   capybara and the Critters and Companions otter, dragonfly and leaf insect live in terraria and paludaria with our care
   and breeding; catch them with the terrarium box. Fish swim in the water part of a paludarium, and sea turtles go into big
   sea water paludaria with a beach.
+- **Insects, small mammals and birds** of Naturalist, Critters and Companions and Living Things in terraria: butterflies
+  and fireflies (they glow at night) under a lid, beetles, hedgehogs, ferrets, red pandas, koalas, owls, penguins and
+  flamingos; woodlice and snails clean up the leftovers; the komodo dragon, bears and lions in big terraria.
+- **Minecraft animals as pets:** chickens with chicks from eggs in the sand, rabbits on grass, bees with flowers and a
+  mini beehive, frogs, cats, foxes, parrots and more at their real size; cows, horses and pandas in big terraria. No drops,
+  no farm.
 - **Mobs in glass:** drowned, zombies, skeletons, spiders and small slimes live shrunk and harmless in a tank. Weaken one
   and catch it in a **mob jar**, lure it into an open tank with bait, or bring it in an EnderIO soul vial. A zombie under
   water becomes a drowned, fed pairs breed, and mobs in glass never drop anything: decoration, not a farm.
@@ -149,9 +155,10 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   water animals of any mod.
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
-- **Animals of other mods:** Fintastic, Aquaculture 2, Critters and Companions and Naturalist fish get our care and
-  breeding in Bettacraft aquariums (their young inherit their colours), their land and marsh animals live in terraria and
-  paludaria; modpacks add profiles for any animal.
+- **Animals of other mods:** the fish of Fintastic, Aquaculture 2, Fish of Thieves, Critters and Companions, Naturalist and
+  Living Things get our care and breeding in Bettacraft aquariums (their young inherit their colours), the giants go into
+  big tanks by their real length, their land animals live in terraria and paludaria; deep-sea, giant and hostile animals
+  are refused with a reason; modpacks add profiles for any animal.
 - **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; Display Links show tank values. **AE2 and Refined
   Storage** autocrafting feeds the food maker and the crucible; **Mekanism** tanks take the Bettacraft fluids.
@@ -204,9 +211,10 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
 Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
 Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Terrarien und Paludarien mit Schildkröten, Pfeilgiftfröschen,
-Geckos und Kornnattern, Landtieren anderer Mods (Naturalist, Critters and Companions), verkleinerte Mobs im Glas, Filter,
+Geckos und Kornnattern, Landtieren, Insekten, Säugetieren und Vögeln anderer Mods (Naturalist, Critters and Companions,
+Living Things), Minecraft-Tieren als Terrarien-Haustieren (Hühner, Kaninchen, Bienen, Frösche …), verkleinerte Mobs im Glas, Filter,
 Licht, CO2, Rohre, Wasserchemie, Flüssigdünger, Lebendfutter und eine Futtermaschine, und eine Kurbel für alle, die ohne
-Stromerzeuger spielen. Fische anderer Mods (Fintastic, Aquaculture …)
+Stromerzeuger spielen. Fische anderer Mods (Fintastic, Aquaculture, Fish of Thieves …, die Riesen im Großbecken)
 bekommen unsere Pflege und Zucht, Kelp, Seegras, Korallen und Wasserpflanzen anderer Mods wirken im Becken wie unsere, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
 ein FTB-Quests-Kapitel, KubeJS-Events, JourneyMap-Wegpunkte bei Alarmen, einen Schalter für jedes Feature und
 Voreinstellungen (einfach, realistisch, nur Deko). Die Mod und das Handbuch im Spiel sind

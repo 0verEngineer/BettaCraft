@@ -4,6 +4,56 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.31.0-beta.1] - 2026-11-17
+
+The animals of the aquarium and animal mods of ATM10 live in our tanks by their real size: the giant fish and rays in big
+tanks, the insects, small mammals and birds of Naturalist, Critters and Companions and Living Things in terraria, and the
+peaceful animals of Minecraft as terrarium pets.
+
+### Added
+- **Water animals of other mods** (profiles): the fish and invertebrates of Fintastic, Aquaculture 2, Fish of Thieves (ten
+  species, their colour variants inherited; trophy fish do not breed), Naturalist (rays, jellyfish, clams, starfish, giant
+  isopods), the Critters and Companions dumbo octopus and Living Things (seahorses, crabs). The giants (arapaimas,
+  coelacanth, tuna, gar, muskellunge, catfish, halibut, the Living Things manta ray and shark) go into big tanks by the size
+  rule with their real length; they do not breed there.
+- The Aquaculture turtles (box, arrau and starshell turtle) in terraria and paludaria by our turtle rules: basking spot,
+  UV, eggs in the land, and the nest temperature decides the sex.
+- Food of other mods: Fintastic copepods, daphnia and fairy shrimp are live food (Fintastic daphnia start the daphnia
+  barrel); the fish flakes of Fish Eggs are flake food, its fish and squid eggs frozen food that conditions for breeding.
+- **Refusals with a reason:** deep-sea animals (anglerfish, blobfish, the abyssal creatures of Alex's Caves), whales and
+  great white sharks, mushroom and cave creatures and hostile ones (Twilight Forest beetles, deep ones) are refused with a
+  message that says why; the handbook lists them.
+- **Insects, small mammals and birds of other mods** in terraria: Naturalist caterpillar, butterfly, firefly, ant,
+  hedgehog, mole, rat, songbird, turkey and vulture; Critters and Companions stag beetle, stick bug, jumping spider,
+  ladybug, acorn weevil, roly-poly, snail, ferret, red panda and shima enaga; Living Things snail, koala, monkey, raccoon,
+  owl, peacock, penguin (a cold paludarium, it hunts small fish) and flamingo. Fliers need a closed top and fly out of an
+  open tank; woodlice and snails are the clean-up crew (they eat the leftovers and live from the waste); fireflies glow at
+  night. The mammals and birds breed as a female and a male.
+- The komodo dragon and the big mammals (boar, deer, bears, zebra, lions, tiger, ostriches) in big terraria by the size
+  rule; the large net and the transport tub catch big land animals, and a full tub releases a land animal on the ground.
+- **Minecraft animals as terrarium pets:** chickens, rabbits, bees, frogs, cats, ocelots, foxes, parrots, armadillos, bats
+  and wolves at their real size, and pigs, goats, sheep, cows, mooshrooms, horses, donkeys, mules, llamas, pandas and polar
+  bears in big terraria by the size rule. Moved by our walker and fed by hand or from the feeder; bees need flowers and a
+  beehive in the interior (a mini hive), rabbits and the grazers grass, frogs a paludarium; chicks hatch from eggs in the
+  sand, the others have young (the big ones from 1.5 m do not breed in a tank). Caught with the terrarium box, the large
+  net and the tub, or lured with their food as bait into an open tank. They drop nothing and give no wool, milk or eggs.
+  Camels, sniffers, striders and the undead horses are refused.
+- Shiny: the shiny animals of the mod keep their shine in our tanks and fish bags.
+- New profile keys: `length`, `refuse`, `breeding.sex` (`random`, `temperature`), `breeding.sterile`, `terrarium.lid`,
+  `terrarium.cleanup`, `terrarium.glows`, `terrarium.needs` and `terrarium.grazes`.
+- Feature switch `features.foreignAnimals.vanillaPets` (the other new animals use the switches of the animals of other
+  mods and the big animals).
+- Handbook (English and German): the list of the animals of other mods (generated tables of every profile), land animals
+  of other mods (lids, clean-up crew, glow, the big ones), Minecraft animals as pets, and the new profile keys.
+
+### Changed
+- **The dragonflies of Naturalist and Critters and Companions need a lid now:** in an open terrarium or paludarium they
+  fly away (alive) after the update.
+- The vanilla frog is off `#bettacraft:tank_blacklist` while the Minecraft pets are on: it lives in paludaria.
+- The giant fish of Fintastic and Aquaculture and the Living Things manta ray are off the blacklist (the size rule decides).
+- The Naturalist jellyfish (0.3 m) and giant clam fit by their real size instead of their hitbox.
+- Cownose rays keep closer to the leader of their school.
+
 ## [1.30.0-beta.1] - 2026-11-17
 
 Plants and corals of Minecraft and other mods work in the aquariums like ours: kelp, seagrass, lily pads, corals and the
