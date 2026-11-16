@@ -59,6 +59,7 @@ public class PlumbingBlock extends Block {
     /** The code of a state in the equipment index (0 = no plumbing). */
     public static int code(BlockState s) {
         if (!(s.getBlock() instanceof PlumbingBlock b)) return 0;
+        if (b instanceof PipeAnchorBlock) return Plumb.code(b.kind, s.getValue(PipeAnchorBlock.MOUNT).get3DDataValue()); // M40
         return Plumb.code(b.kind, b.kind.outlet() ? s.getValue(FACING).get2DDataValue() : 0);
     }
 
@@ -100,6 +101,9 @@ public class PlumbingBlock extends Block {
                 yield s;
             }
             case STRAINER -> box(4, 0, 4, 12, 12, 12);
+            case INTAKE_GUARD -> box(3, 3, 3, 13, 13, 13); // M40
+            case OUTLET_GUARD -> box(4, 4, 4, 12, 12, 12);
+            case ANCHOR -> PipeAnchorBlock.shape(state);
             case LILY -> box(4, 0, 4, 12, 16, 12);
             case NOZZLE -> box(5, 4, 5, 11, 12, 11);
             case SPRAY_BAR -> state.getValue(FACING).getAxis() == Direction.Axis.Z ? box(0, 6, 6, 16, 10, 10) : box(6, 6, 0, 10, 10, 16);
@@ -115,6 +119,8 @@ public class PlumbingBlock extends Block {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource r) {
         if (!kind.outlet() || !state.getValue(ACTIVE)) return;
+        // M40: the guards are filter openings: few, slow bubbles (the filter keeps the water clear, not a jet)
+        if ((kind == Plumb.INTAKE_GUARD || kind == Plumb.OUTLET_GUARD) && r.nextInt(3) != 0) return;
         Direction f = state.getValue(FACING);
         double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
         int n = kind == Plumb.SPRAY_BAR ? 6 : 3;

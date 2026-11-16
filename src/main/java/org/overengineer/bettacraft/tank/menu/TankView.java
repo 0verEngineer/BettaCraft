@@ -830,6 +830,8 @@ public final class TankView {
         public double declinePerDay, filterShare, animalsPerBlock, filterCapacity, evaporationPerDay;
         public int openTop, totalTop, internalFilters;
         public long lastFreshWater = -1;
+        /** M40: multiblock filters that reach the tank but do not filter it ("x y z|status", see MultiblockFilter.LinkStatus). */
+        public final List<String> filterWarnings = new ArrayList<>();
         public boolean heaterPower, filterPower, lightPower, heatPowered = true, filterPowered = true, lightPowered = true;
         public long buffer, bufferCap;
         public int demand;
@@ -894,6 +896,9 @@ public final class TankView {
             t.putDouble("filter_share", filterShare);
             t.putDouble("animals", animalsPerBlock);
             t.putDouble("filter_cap", filterCapacity);
+            ListTag fw = new ListTag();
+            for (String x : filterWarnings) fw.add(StringTag.valueOf(x));
+            t.put("filter_warn", fw); // M40
             t.putDouble("evap", evaporationPerDay);
             t.putInt("open", openTop);
             t.putInt("top", totalTop);
@@ -984,6 +989,9 @@ public final class TankView {
             filterShare = t.getDouble("filter_share");
             animalsPerBlock = t.getDouble("animals");
             filterCapacity = t.getDouble("filter_cap");
+            filterWarnings.clear();
+            ListTag fw = t.getList("filter_warn", Tag.TAG_STRING);
+            for (int i = 0; i < fw.size(); i++) filterWarnings.add(fw.getString(i));
             evaporationPerDay = t.getDouble("evap");
             openTop = t.getInt("open");
             totalTop = t.getInt("top");
@@ -1176,6 +1184,8 @@ public final class TankView {
         double blocks = t.waterBlocks();
         w.animalsPerBlock = blocks <= 0 ? 0 : animals / blocks;
         w.filterCapacity = org.overengineer.bettacraft.tank.TankWater.filterBlocks(level, c);
+        for (var e : org.overengineer.bettacraft.filter.MultiblockFilter.warnings(level, c).entrySet()) // M40: filters without guards
+            w.filterWarnings.add(e.getKey().getX() + " " + e.getKey().getY() + " " + e.getKey().getZ() + "|" + e.getValue().key());
         w.filterShare = org.overengineer.bettacraft.tank.WaterQuality.filterShare(w.filterCapacity, blocks, p);
         w.declinePerDay = !w.qualityEnabled || t.waterMb() <= 0 ? 0
                 : org.overengineer.bettacraft.tank.WaterQuality.wastePerDay(animals, blocks, p) * (1 - w.filterShare);

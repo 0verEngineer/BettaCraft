@@ -15,7 +15,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
+import org.overengineer.bettacraft.plumbing.FilterLines;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeLine;
+import org.overengineer.bettacraft.plumbing.interior.TankAnchors;
 import org.overengineer.bettacraft.plumbing.PipeNetwork;
 import org.overengineer.bettacraft.tank.TankBlock;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -28,6 +31,12 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * the same tank (directly or through pipes and bulkheads) it keeps that tank's water clean like an external filter:
  * the sum of its chambers' media ({@link FilterMedium#blocks} x how clean they are) x its power regulator. The old
  * external filter stays the small one-block variant.
+ * <p>
+ * M40 ({@code features.pipes.filterLines}): one filter serves every tank its intake and its return line both reach
+ * ({@link #links}: directly, through the filter pipes and their T-pieces or the old pipes); its cleaning and its flow are
+ * shared by the tanks' water volumes ({@link #shares}). Every place where a line docks on a tank needs a guard in the
+ * interior ({@link TankAnchors}); without one, or with a pipe that leads through the tank, the filter does not work for
+ * that tank and its menus warn ({@link #warnings}). This holds for filters built before M40 too.
  */
 public final class MultiblockFilter {
     private MultiblockFilter() {}
@@ -188,6 +197,122 @@ public final class MultiblockFilter {
         synchronized (SERVING) {
             SERVING.clear();
         }
+        synchronized (REPORTS) {
+            REPORTS.clear();
+        }
+    }
+
+    // ------------------------------------------------------------------ M40: one filter, several tanks
+
+    /** M40: how a filter works for one of its tanks (all but OK: it does not filter that tank). */
+    public enum LinkStatus {
+        OK, NO_INTAKE_GUARD, NO_OUTLET_GUARD, PASS_THROUGH, NO_WATER;
+
+        public String key() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+
+        /** A missing guard or a pipe through the tank: a warning in the tank and filter menus. */
+        public boolean warning() {
+            return this == NO_INTAKE_GUARD || this == NO_OUTLET_GUARD || this == PASS_THROUGH;
+        }
+    }
+
+    /** M40: a tank of a filter with the docks of its intake and return lines on it. */
+    public record Link(TankBlockEntity tank, List<FilterLines.Dock> intakes, List<FilterLines.Dock> returns) {
+        public long water() {
+            return tank.getTank().waterMb();
+        }
+    }
+
+    /** M40: the tanks the filter reaches with its intake and its return line (both are needed). */
+    public static List<Link> links(Level level, Structure s) {
+        Map<BlockPos, TankBlockEntity> tanks = new java.util.LinkedHashMap<>();
+        Map<BlockPos, List<FilterLines.Dock>> in = new HashMap<>(), out = new HashMap<>();
+        for (int role = 0; role < 2; role++) {
+            List<BlockPos> connectors = role == 0 ? s.inlets() : s.outlets();
+            PipeLine line = role == 0 ? PipeLine.INTAKE : PipeLine.RETURN;
+            Map<BlockPos, List<FilterLines.Dock>> into = role == 0 ? in : out;
+            for (BlockPos p : connectors) {
+                Direction f = level.getBlockState(p).getValue(FilterPartBlock.FACING);
+                for (FilterLines.Dock d : FilterLines.docks(level, p, f, line)) {
+                    TankBlockEntity c = TankMultiblock.getController(level, d.member());
+                    if (c == null) continue;
+                    tanks.putIfAbsent(c.getBlockPos(), c);
+                    List<FilterLines.Dock> l = into.computeIfAbsent(c.getBlockPos(), k -> new ArrayList<>());
+                    if (!l.contains(d)) l.add(d);
+                }
+            }
+        }
+        List<Link> links = new ArrayList<>();
+        for (var e : tanks.entrySet()) {
+            List<FilterLines.Dock> i = in.get(e.getKey()), o = out.get(e.getKey());
+            if (i != null && o != null) links.add(new Link(e.getValue(), i, o));
+        }
+        return links;
+    }
+
+    /** M40: whether the filter works for this tank: every dock of its lines guarded, no pipe through the tank, water in it. */
+    public static LinkStatus status(net.minecraft.server.level.ServerLevel level, Link l) {
+        if (TankAnchors.required(level)) {
+            boolean pass = false, intake = false, outlet = false;
+            for (FilterLines.Dock d : l.intakes()) {
+                TankAnchors.Guard g = TankAnchors.guardOf(level, l.tank(), d.member(), d.face(), true);
+                pass |= g == TankAnchors.Guard.PASS_THROUGH;
+                intake |= g == TankAnchors.Guard.OPEN;
+            }
+            for (FilterLines.Dock d : l.returns()) {
+                TankAnchors.Guard g = TankAnchors.guardOf(level, l.tank(), d.member(), d.face(), false);
+                pass |= g == TankAnchors.Guard.PASS_THROUGH;
+                outlet |= g == TankAnchors.Guard.OPEN;
+            }
+            if (pass) return LinkStatus.PASS_THROUGH;
+            if (intake) return LinkStatus.NO_INTAKE_GUARD;
+            if (outlet) return LinkStatus.NO_OUTLET_GUARD;
+        }
+        return l.water() <= 0 ? LinkStatus.NO_WATER : LinkStatus.OK;
+    }
+
+    /**
+     * A1: the share of each working tank of a filter, by its water volume (pure; {@code water[i] <= 0} gets none). The
+     * shares add up to 1 when any tank has water.
+     */
+    public static double[] shares(long[] water) {
+        double sum = 0;
+        for (long w : water) if (w > 0) sum += w;
+        double[] out = new double[water.length];
+        if (sum <= 0) return out;
+        for (int i = 0; i < water.length; i++) out[i] = water[i] > 0 ? water[i] / sum : 0;
+        return out;
+    }
+
+    private record Report(LinkStatus status, long time) {}
+
+    private static final Map<Level, Map<BlockPos, Map<BlockPos, Report>>> REPORTS = new WeakHashMap<>();
+
+    /** The pump head reports how it works for the tank with this controller (the tank menu shows the warnings). */
+    static void report(Level level, BlockPos controller, BlockPos head, LinkStatus status) {
+        synchronized (REPORTS) {
+            REPORTS.computeIfAbsent(level, k -> new HashMap<>()).computeIfAbsent(controller.immutable(), k -> new HashMap<>())
+                    .put(head.immutable(), new Report(status, level.getGameTime()));
+        }
+    }
+
+    /** M40: the multiblock filters that reach this tank but do not filter it now (missing guard, pipe through it), by pump head. */
+    public static Map<BlockPos, LinkStatus> warnings(Level level, TankBlockEntity c) {
+        Map<BlockPos, LinkStatus> out = new java.util.TreeMap<>();
+        if (!Features.enabled(Feature.MULTIBLOCK_FILTER) || !Features.enabled(Feature.FILTER_LINES)) return out;
+        synchronized (REPORTS) {
+            var m = REPORTS.get(level);
+            var e = m == null ? null : m.get(c.getBlockPos());
+            if (e == null) return out;
+            long now = level.getGameTime();
+            for (var r : e.entrySet()) {
+                if (now - r.getValue().time > SERVE_TICKS || now < r.getValue().time || !r.getValue().status.warning()) continue;
+                out.put(r.getKey(), r.getValue().status);
+            }
+        }
+        return out;
     }
 
     /** The tank served by a multiblock filter whose part touches {@code pos} (for the level sensor at the filter), or null. */

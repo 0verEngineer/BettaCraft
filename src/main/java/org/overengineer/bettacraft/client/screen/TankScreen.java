@@ -942,7 +942,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     ? Component.translatable("gui.bettacraft.water.no_filter").withStyle(ChatFormatting.GOLD)
                     : Component.translatable("gui.bettacraft.water.filters", outside, w.internalFilters, (int) w.filterCapacity,
                     Math.round(w.filterShare * 100)).withStyle(ChatFormatting.AQUA);
-            line(g, filters, x, y, TEXT_LIGHT);
+            // M40: a multiblock filter that reaches the tank without its guards (or with a pipe through it) does not filter it
+            if (!w.filterWarnings.isEmpty()) {
+                String[] kp = w.filterWarnings.getFirst().split("[|]", 2);
+                filters = Component.translatable("gui.bettacraft.water.filter_warning." + (kp.length > 1 ? kp[1] : "no_intake_guard"), kp[0])
+                        .withStyle(ChatFormatting.RED);
+                if (w.filterWarnings.size() > 1) filters = filters.copy().append(Component.literal(" (+" + (w.filterWarnings.size() - 1) + ")"));
+            }
+            fitLine(g, filters, x, y, TEXT_LIGHT, 226);
             y += 11;
         } else {
             line(g, Component.translatable("gui.bettacraft.water.quality_off").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);

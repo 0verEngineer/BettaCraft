@@ -72,6 +72,11 @@ public final class ModBlockEntities {
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity>> FILTER_PUMP_HEAD = BLOCK_ENTITIES.register("filter_pump_head",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity::new, ModBlocks.FILTER_PUMP_HEAD.get()).build(null));
 
+    @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity>> FILTER_PIPE = BLOCK_ENTITIES.register("filter_pipe",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity::new, ModBlocks.FILTER_INLET_PIPE.get(),
+                    ModBlocks.FILTER_OUTLET_PIPE.get()).build(null)); // M40
+
     // M25
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.co2.BioCo2BlockEntity>> BIO_CO2 = BLOCK_ENTITIES.register("bio_co2",

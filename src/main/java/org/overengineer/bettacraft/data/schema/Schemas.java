@@ -56,6 +56,14 @@ public final class Schemas {
             .step(1, Schemas::springV1toV2) // M37: the spring of the crank
             .build();
 
+    /**
+     * Pump head of the multiblock filter (M24; versioned from M40). v0 -> v1 (M40, D2): a pump head from before M40 is
+     * marked {@code retrofit}: its filter now needs guards on every connection in the tanks, and its warnings say so.
+     */
+    public static final MigrationChain FILTER_PUMP_HEAD = MigrationChain.builder("filter_pump_head")
+            .step(0, Schemas::pumpHeadV0toV1)
+            .build();
+
     /** Larva tub and artemia hatchery (M9): water, slots and progress. */
     public static final MigrationChain CULTURE_TUB = MigrationChain.builder("culture_tub")
             .step(0, data -> data)
@@ -243,6 +251,11 @@ public final class Schemas {
     }
 
     /** M37: external filters and cabinets of an older world have an unwound spring. */
+    static CompoundTag pumpHeadV0toV1(CompoundTag data) {
+        if (!data.contains("retrofit", Tag.TAG_ANY_NUMERIC)) data.putBoolean("retrofit", true);
+        return data;
+    }
+
     static CompoundTag springV1toV2(CompoundTag data) {
         if (!data.contains("spring", Tag.TAG_ANY_NUMERIC)) data.putLong("spring", 0L);
         return data;

@@ -139,6 +139,11 @@ public final class InfoLines {
         for (int i = 0; i < warn.size(); i++) {
             out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getString(i)).withStyle(ChatFormatting.RED));
         }
+        ListTag fw = d.getList("filter_warn", Tag.TAG_STRING);
+        for (int i = 0; i < fw.size(); i++) {
+            String[] kp = fw.getString(i).split("[|]", 2);
+            if (kp.length == 2) out.add(Component.translatable("gui.bettacraft.water.filter_warning." + kp[1], kp[0]).withStyle(ChatFormatting.RED));
+        }
         if (details) {
             ListTag list = d.getList("list", Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {

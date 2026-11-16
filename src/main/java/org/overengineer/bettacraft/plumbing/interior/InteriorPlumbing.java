@@ -43,10 +43,22 @@ public final class InteriorPlumbing {
     /** Pieces searched from one bulkhead at most. */
     public static final int MAX_PIECES = 4096;
 
-    /** The outlets reached from one bulkhead connection. */
-    public record Net(LongArrayList outflows, LongArrayList intakes) {
+    /**
+     * The outlets reached from one bulkhead connection. M40: {@code ports} are the other connections to the outside
+     * (bulkheads, docks of filter pipes) the interior pipes also reach: a pipe that leads into the tank and out again.
+     */
+    public record Net(LongArrayList outflows, LongArrayList intakes, LongArrayList ports) {
+        public Net(LongArrayList outflows, LongArrayList intakes) {
+            this(outflows, intakes, new LongArrayList());
+        }
+
         public boolean empty() {
             return outflows.isEmpty() && intakes.isEmpty();
+        }
+
+        /** M40: the pipes lead out of the tank again (no water goes through such a connection). */
+        public boolean passThrough() {
+            return !ports.isEmpty();
         }
     }
 
@@ -60,7 +72,7 @@ public final class InteriorPlumbing {
 
     /** Pure: the outlets joined to the piece at {@code start} (pieces join their six neighbours; outlets end a line). */
     public static Net search(Long2IntOpenHashMap plumbing, long start) {
-        LongArrayList out = new LongArrayList(), in = new LongArrayList();
+        LongArrayList out = new LongArrayList(), in = new LongArrayList(), ports = new LongArrayList();
         LongOpenHashSet seen = new LongOpenHashSet();
         ArrayDeque<Long> queue = new ArrayDeque<>();
         queue.add(start);
@@ -76,9 +88,10 @@ public final class InteriorPlumbing {
                 if (p.outflow()) out.add(n);
                 else if (p.intake()) in.add(n);
                 else if (p == Plumb.PIPE) queue.add(n);
+                else if (p.port()) ports.add(n); // M40: another connection to the outside
             }
         }
-        return new Net(out, in);
+        return new Net(out, in, ports);
     }
 
     /** The outlets of the bulkhead connection {@code port} of a region (cached until a piece changes). */
@@ -126,11 +139,11 @@ public final class InteriorPlumbing {
     /** A bulkhead and the outlets behind it. */
     public record Bulkhead(InteriorRegion region, long port, Net net) {
         public boolean canFill() {
-            return !net.outflows().isEmpty();
+            return !net.outflows().isEmpty() && !net.passThrough(); // M40: no water through a pipe that leads out again
         }
 
         public boolean canDrain() {
-            return !net.intakes().isEmpty();
+            return !net.intakes().isEmpty() && !net.passThrough();
         }
 
         public void flowIn(long now, long mb) {
@@ -140,6 +153,11 @@ public final class InteriorPlumbing {
         public void flowOut(long now, long mb) {
             if (mb > 0) mark(region.id(), net.intakes(), now);
         }
+    }
+
+    /** M40: water went through these outlets now (the filter marks the guards and outlets behind its connections). */
+    public static void markFlow(int regionId, LongArrayList keys, long now) {
+        mark(regionId, keys, now);
     }
 
     static void mark(int regionId, LongArrayList keys, long now) {
@@ -196,7 +214,7 @@ public final class InteriorPlumbing {
         return n;
     }
 
-    /** {bulkheads, pipes, outlets} of a tank. */
+    /** {bulkheads and pipe docks, pipes, outlets and guards} of a tank. */
     public static int[] count(ServerLevel level, TankData t) {
         InteriorRegion r = InteriorRegions.get(level.getServer()).get(t.regionId());
         int[] n = new int[3];
@@ -204,7 +222,7 @@ public final class InteriorPlumbing {
         InteriorManager.equipment(level.getServer(), r);
         for (int code : r.equipment().plumbing().values()) {
             Plumb p = Plumb.kind(code);
-            n[p == Plumb.PORT ? 0 : p == Plumb.PIPE ? 1 : 2]++;
+            n[p.port() ? 0 : p == Plumb.PIPE ? 1 : 2]++;
         }
         return n;
     }

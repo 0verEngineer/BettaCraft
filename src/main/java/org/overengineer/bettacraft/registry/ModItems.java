@@ -337,6 +337,13 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FILTER_PUMP_HEAD = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_PUMP_HEAD);
     public static final DeferredItem<BlockItem> FILTER_INLET = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_INLET);
     public static final DeferredItem<BlockItem> FILTER_OUTLET = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_OUTLET);
+    // M40: the filter pipes, the T-piece and the guards
+    public static final DeferredItem<BlockItem> FILTER_INLET_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_INLET_PIPE);
+    public static final DeferredItem<BlockItem> FILTER_OUTLET_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_OUTLET_PIPE);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeTeeItem> PIPE_TEE = ITEMS.register("pipe_tee",
+            () -> new org.overengineer.bettacraft.plumbing.PipeTeeItem(new Item.Properties()));
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTAKE_GUARD = plumbing(ModBlocks.INTAKE_GUARD, org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> OUTLET_GUARD = plumbing(ModBlocks.OUTLET_GUARD, org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
     public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> FILTER_FOAM = media("filter_foam", org.overengineer.bettacraft.filter.FilterMedium.SPONGE);
     public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> CERAMIC_RINGS = media("ceramic_rings", org.overengineer.bettacraft.filter.FilterMedium.CERAMIC);
     public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> ACTIVATED_CARBON = media("activated_carbon", org.overengineer.bettacraft.filter.FilterMedium.CARBON);

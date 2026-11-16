@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.network.RegulatorPayload;
  * cleaning, every chamber's medium with its dirt, and the power regulator.
  */
 public class MultiblockFilterScreen extends Screen {
-    private static final int W = 280, H = 170;
+    private static final int W = 280, H = 214;
     private final BlockPos pos;
     private int left, top;
 
@@ -70,7 +70,28 @@ public class MultiblockFilterScreen extends Screen {
         g.drawString(font, tank, x, y, 0xFFFFFF);
         y += 12;
         g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, 0xFFFFFF);
-        y += 16;
+        y += 12;
+        // M40: every tank of the filter (A1: its share by water volume), or why the filter does not work for it
+        var tanks = h.tanks();
+        if (h.retrofit() && tanks.stream().anyMatch(t -> t.status().warning())) {
+            g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.retrofit").withStyle(ChatFormatting.RED), x, y, 0xFFFFFF);
+            y += 11;
+        }
+        for (int i = 0; i < tanks.size() && i < 4; i++) {
+            var t = tanks.get(i);
+            String at = t.tank().getX() + " " + t.tank().getY() + " " + t.tank().getZ();
+            Component line = t.status() == MultiblockFilter.LinkStatus.OK
+                    ? Component.translatable("gui.bettacraft.mb_filter.link", at, t.percent(), t.flow(), Math.round(t.clean())).withStyle(ChatFormatting.GREEN)
+                    : Component.translatable("gui.bettacraft.mb_filter.link_off", at, Component.translatable("gui.bettacraft.mb_filter.link." + t.status().key()))
+                    .withStyle(t.status().warning() ? ChatFormatting.RED : ChatFormatting.GOLD);
+            g.drawString(font, line, x, y, 0xFFFFFF);
+            y += 10;
+        }
+        if (tanks.size() > 4) {
+            g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.more_tanks", tanks.size() - 4).withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
+            y += 10;
+        }
+        y += 6;
         int[] m = h.media();
         int col = 0;
         for (int i = 0; i < m.length && i < 16; i++) {

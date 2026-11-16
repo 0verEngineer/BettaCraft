@@ -49,6 +49,11 @@ public class PlumbingItem extends BlockItem {
             if (level.isClientSide) return InteractionResult.SUCCESS;
             return installFromOutside((ServerLevel) level, ctx.getClickedPos(), ctx.getPlayer(), ctx.getItemInHand());
         }
+        // M40: a guard used on the glass where a filter pipe docks goes behind that connection in the interior
+        if ((kind == Plumb.INTAKE_GUARD || kind == Plumb.OUTLET_GUARD) && level.getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock) {
+            if (level.isClientSide) return InteractionResult.SUCCESS;
+            return TankAnchors.installGuard((ServerLevel) level, ctx.getClickedPos(), ctx.getClickedFace(), ctx.getPlayer(), ctx.getItemInHand(), kind);
+        }
         return super.useOn(ctx);
     }
 
@@ -117,11 +122,36 @@ public class PlumbingItem extends BlockItem {
             return InteractionResult.FAIL;
         }
         if (!level.isClientSide && ctx.getPlayer() != null && !InteriorManager.canBuild(ctx.getPlayer(), ctx.getClickedPos())) return InteractionResult.FAIL;
+        // M40: no pipe that leads into the tank and out again
+        if (!level.isClientSide && kind == Plumb.PIPE && joinsTwoPorts((ServerLevel) level, ctx.getClickedPos())) {
+            say(ctx.getPlayer(), level, "message.bettacraft.plumbing.pass_through");
+            return InteractionResult.FAIL;
+        }
         return super.place(ctx);
+    }
+
+    /** M40: whether an interior pipe at {@code pos} would join two connections to the outside (bulkheads, pipe docks). */
+    public static boolean joinsTwoPorts(ServerLevel interior, BlockPos pos) {
+        InteriorRegion r = InteriorManager.regionAt(interior.getServer(), pos);
+        if (r == null || !r.built()) return false;
+        it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap m = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap(r.equipment().plumbing());
+        long k = BlockPos.asLong(r.localX(pos.getX()), r.localY(pos.getY()), r.localZ(pos.getZ()));
+        m.put(k, Plumb.code(Plumb.PIPE, 0));
+        return passThrough(m, k);
+    }
+
+    /** Pure: the pipe at {@code key} reaches two or more connections to the outside. */
+    public static boolean passThrough(it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap plumbing, long key) {
+        return InteriorPlumbing.search(plumbing, key).ports().size() >= 2;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.bettacraft." + (kind == Plumb.PORT ? "bulkhead" : "interior_plumbing") + ".usage").withStyle(ChatFormatting.DARK_GRAY));
+        String key = switch (kind) {
+            case PORT -> "bulkhead";
+            case INTAKE_GUARD, OUTLET_GUARD -> "guard"; // M40
+            default -> "interior_plumbing";
+        };
+        tooltip.add(Component.translatable("tooltip.bettacraft." + key + ".usage").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

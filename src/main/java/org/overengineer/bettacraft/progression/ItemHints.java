@@ -49,6 +49,8 @@ public final class ItemHints {
             "stainless_steel_ingot", "crucible", "glass_pipe", "stainless_steel_pipe", "water_pump", "bulkhead", "interior_pipe", "intake_strainer",
             "lily_pipe", "nozzle", "spray_bar", "filter_chamber", "filter_pump_head", "filter_inlet", "filter_outlet", "filter_foam", "ceramic_rings",
             "activated_carbon", "filter_peat", "reservoir", "level_sensor", "water_change_controller",
+            // M40 part a: the filter pipes, the T-piece and the guards
+            "filter_inlet_pipe", "filter_outlet_pipe", "pipe_tee", "intake_guard", "outlet_guard",
             // M25: water chemistry
             "tds_meter", "ph_test_kit", "remineralising_salt", "almond_leaf", "alder_cone",
             // M25 part b: CO2 and reverse osmosis

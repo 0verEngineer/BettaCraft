@@ -35,6 +35,11 @@ import org.overengineer.bettacraft.tank.TankNitrate;
  * it pulls a batch of water through an inlet and pushes it out of an outlet (half a water pump x regulator, slower with
  * clogged sponges), finds the tank both lead to, cleans it by its media and lets the media clog with the tank's
  * stocking. Shows everything in its screen (synced: chambers, media, flow, tank, problem).
+ * <p>
+ * M40 ({@code features.pipes.filterLines}): it serves every tank its lines reach ({@link MultiblockFilter#links}); the
+ * cleaning and the flow are shared by the tanks' water volumes, a tank without guards (or with a pipe through it) gets
+ * nothing and a warning. A pump head from before M40 is marked {@code retrofit} by its schema migration: its warnings say
+ * that the update asks for the guards now (D2), until every tank of it is guarded.
  */
 public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.Device, org.overengineer.bettacraft.winding.Windable {
     private int power = 10;
@@ -49,6 +54,18 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     private int[] media = new int[0];
     private long lastScan = Long.MIN_VALUE;
     private MultiblockFilter.Structure structure;
+    /** M40: the tanks of the filter (looked up with the structure, and when a filter pipe changed). */
+    private List<MultiblockFilter.Link> links = List.of();
+    private int linkVersion = -1;
+    /** M40 synced: per tank of the filter its status, flow and cleaning. */
+    private List<TankLink> tanks = List.of();
+    /** M40 (D2): built before M40 (set by the schema migration); cleared once every tank of the filter is guarded. */
+    private boolean retrofit;
+    /** M40: the players already told in chat about the missing guards of this pre-M40 filter (once per server run). */
+    private final java.util.Set<java.util.UUID> told = new java.util.HashSet<>();
+
+    /** M40: one tank of the filter as the screen shows it. */
+    public record TankLink(BlockPos tank, MultiblockFilter.LinkStatus status, int flow, double clean, int percent) {}
 
     public FilterPumpHeadBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FILTER_PUMP_HEAD.get(), pos, state);
@@ -78,6 +95,10 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     public int flow() { return flow; }
     public double cleanBlocks() { return cleanBlocks; }
     @Nullable public BlockPos servedTank() { return tank; }
+    /** M40: every tank of the filter with its status. */
+    public List<TankLink> tanks() { return tanks; }
+    /** M40 (D2): a filter from before M40 that still lacks guards. */
+    public boolean retrofit() { return retrofit; }
     public int[] media() { return media; }
 
     static void serverTick(Level level, BlockPos pos, BlockState state, FilterPumpHeadBlockEntity be) {
@@ -93,13 +114,122 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** One batch (public for the GameTests; {@code force} scans the parts again first). */
     public int run(ServerLevel level, boolean force) {
         long now = level.getGameTime();
-        if (structure == null || force || now - lastScan >= 40 || now < lastScan) {
+        boolean rescan = structure == null || force || now - lastScan >= 40 || now < lastScan;
+        if (rescan) {
             structure = MultiblockFilter.scan(level, worldPosition);
             lastScan = now;
         }
         MultiblockFilter.Structure s = structure;
         List<FilterChamberBlockEntity> ch = new ArrayList<>();
         for (BlockPos p : s.chambers()) if (level.getBlockEntity(p) instanceof FilterChamberBlockEntity c) ch.add(c);
+        if (!Features.enabled(Feature.FILTER_LINES)) {
+            links = List.of();
+            tanks = List.of();
+            return runSingle(level, s, ch);
+        }
+        if (rescan || linkVersion != org.overengineer.bettacraft.plumbing.FilterPipeBlock.version()) {
+            linkVersion = org.overengineer.bettacraft.plumbing.FilterPipeBlock.version();
+            links = s.formed() ? MultiblockFilter.links(level, s) : List.of();
+        }
+        // every tank: guarded? water in it?
+        List<MultiblockFilter.LinkStatus> st = new ArrayList<>();
+        List<MultiblockFilter.Link> working = new ArrayList<>();
+        for (MultiblockFilter.Link l : links) {
+            MultiblockFilter.LinkStatus x = l.tank().isRemoved() ? MultiblockFilter.LinkStatus.NO_WATER : MultiblockFilter.status(level, l);
+            st.add(x);
+            if (x == MultiblockFilter.LinkStatus.OK) working.add(l);
+        }
+        long[] water = new long[working.size()];
+        for (int i = 0; i < water.length; i++) water[i] = working.get(i).water();
+        double[] part = MultiblockFilter.shares(water);
+        int[] flows = new int[working.size()];
+        double[] cleans = new double[working.size()];
+        int moved = 0;
+        double clean = 0;
+        BlockPos served = null;
+        double share = Regulator.share(power);
+        if (s.formed() && Features.enabled(Feature.MULTIBLOCK_FILTER) && share > 0 && !working.isEmpty() && !level.hasNeighborSignal(worldPosition)) {
+            int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
+            if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
+            if (!DeviceEnergy.required() || org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, DeviceEnergy.pumpFe())) {
+                int max = maxBatch(ch, share);
+                // A1: the flow is shared by the water volumes (the pump moves each tank's share through the filter and back)
+                for (int i = 0; i < flows.length; i++) {
+                    flows[i] = (int) Math.round(max * part[i]);
+                    moved += flows[i];
+                }
+                if (moved > 0) {
+                    if (DeviceEnergy.required()) org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, DeviceEnergy.pumpFe()); // M37: FE, else the spring
+                    double peat = 0;
+                    for (FilterChamberBlockEntity c : ch) {
+                        double b = c.kind().blocks() * c.kind().efficiency(c.dirt());
+                        clean += b;
+                        if (c.kind() == FilterMedium.PEAT) peat += b; // M25: peat softens the water
+                    }
+                    clean *= share;
+                    peat *= share;
+                    // A1: and so is the cleaning
+                    for (int i = 0; i < flows.length; i++) {
+                        MultiblockFilter.Link l = working.get(i);
+                        cleans[i] = clean * part[i];
+                        if (flows[i] <= 0) continue;
+                        if (served == null) served = l.tank().getBlockPos();
+                        MultiblockFilter.serve(level, l.tank().getBlockPos(), worldPosition, cleans[i], peat * part[i]);
+                        for (var d : l.intakes()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), true, now);
+                        for (var d : l.returns()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), false, now);
+                    }
+                    clog(level, working, part, ch, PipeNetwork.WINDOW / 24000.0);
+                }
+            }
+        }
+        if (served == null) MultiblockFilter.stop(level, worldPosition);
+        // the reports for the tank menus and what the screen shows
+        List<TankLink> out = new ArrayList<>();
+        boolean allOk = !links.isEmpty();
+        for (int i = 0; i < links.size(); i++) {
+            MultiblockFilter.Link l = links.get(i);
+            MultiblockFilter.LinkStatus x = st.get(i);
+            MultiblockFilter.report(level, l.tank().getBlockPos(), worldPosition, x);
+            allOk &= !x.warning();
+            int w = working.indexOf(l);
+            out.add(new TankLink(l.tank().getBlockPos(), x, w < 0 ? 0 : flows[w] / PipeNetwork.WINDOW, w < 0 ? 0 : cleans[w],
+                    w < 0 ? 0 : (int) Math.round(part[w] * 100)));
+        }
+        if (retrofit && allOk) {
+            retrofit = false; // D2: retrofitted
+            setChanged();
+        } else if (retrofit && !links.isEmpty()) tellRetrofit(level);
+        boolean changed = !out.equals(tanks);
+        tanks = out;
+        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served, changed);
+        return moved;
+    }
+
+    /** mB the pump moves per batch at most: half a water pump x regulator, slower with clogged sponges. */
+    private static int maxBatch(List<FilterChamberBlockEntity> ch, double share) {
+        double spongeDirt = 0;
+        int sponges = 0;
+        for (FilterChamberBlockEntity c : ch) {
+            if (c.kind() == FilterMedium.SPONGE) {
+                spongeDirt += c.dirt();
+                sponges++;
+            }
+        }
+        double flowFactor = 1 - 0.6 * (sponges == 0 ? 0 : spongeDirt / sponges);
+        return (int) Math.round(ServerConfig.getOr(ServerConfig.PIPE_PUMP_RATE, 200) / 2.0 * PipeNetwork.WINDOW * share * flowFactor);
+    }
+
+    /** D2: the players near a filter from before M40 hear once (per server run) why it stopped. */
+    private void tellRetrofit(ServerLevel level) {
+        for (var p : level.players()) {
+            if (p.distanceToSqr(worldPosition.getCenter()) > 32 * 32 || !told.add(p.getUUID())) continue;
+            p.sendSystemMessage(Component.translatable("message.bettacraft.mb_filter.retrofit", worldPosition.getX(), worldPosition.getY(), worldPosition.getZ())
+                    .withStyle(net.minecraft.ChatFormatting.RED));
+        }
+    }
+
+    /** The filter as before M40 ({@code features.pipes.filterLines} off): one tank, no guards. */
+    private int runSingle(ServerLevel level, MultiblockFilter.Structure s, List<FilterChamberBlockEntity> ch) {
         int moved = 0;
         double clean = 0;
         BlockPos served = null;
@@ -108,17 +238,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * PipeNetwork.WINDOW * share);
             if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
             if (!DeviceEnergy.required() || org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, DeviceEnergy.pumpFe())) {
-                double spongeDirt = 0;
-                int sponges = 0;
-                for (FilterChamberBlockEntity c : ch) {
-                    if (c.kind() == FilterMedium.SPONGE) {
-                        spongeDirt += c.dirt();
-                        sponges++;
-                    }
-                }
-                double flowFactor = 1 - 0.6 * (sponges == 0 ? 0 : spongeDirt / sponges);
-                int max = (int) Math.round(ServerConfig.getOr(ServerConfig.PIPE_PUMP_RATE, 200) / 2.0 * PipeNetwork.WINDOW * share * flowFactor);
-                moved = pump(level, s, max);
+                moved = pump(level, s, maxBatch(ch, share));
                 if (moved > 0) {
                     if (DeviceEnergy.required()) org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, DeviceEnergy.pumpFe()); // M37: FE, else the spring
                     TankBlockEntity t = tankOf(level, s);
@@ -138,8 +258,16 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             }
         }
         if (served == null) MultiblockFilter.stop(level, worldPosition);
-        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served);
+        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served, false);
         return moved;
+    }
+
+    /** M40: the media clog with the stocking of all its tanks, weighted by their shares. */
+    private void clog(ServerLevel level, List<MultiblockFilter.Link> working, double[] part, List<FilterChamberBlockEntity> ch, double days) {
+        double load = 0;
+        for (int i = 0; i < working.size(); i++) load += part[i] * Math.max(0.25, Math.min(4.0, TankNitrate.load(level, working.get(i).tank().getTank())));
+        double rate = ServerConfig.getOr(ServerConfig.MEDIA_DIRT_PER_DAY, 0.04) * Math.max(0.25, load) * days;
+        for (FilterChamberBlockEntity c : ch) c.dirty(rate * c.kind().dirtRate());
     }
 
     /** Lets the media clog: {@code multiblockFilter.dirtPerDay} x the tank's stocking (at least a quarter) x the medium's rate. */
@@ -152,6 +280,16 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** Clogs every chamber of this filter by {@code days} at the stocking of its tank (GameTests, catching up). */
     public void clogDays(ServerLevel level, double days) {
         if (structure == null) structure = MultiblockFilter.scan(level, worldPosition);
+        if (Features.enabled(Feature.FILTER_LINES)) {
+            List<MultiblockFilter.Link> w = new ArrayList<>();
+            for (MultiblockFilter.Link l : MultiblockFilter.links(level, structure)) if (MultiblockFilter.status(level, l) == MultiblockFilter.LinkStatus.OK) w.add(l);
+            long[] water = new long[w.size()];
+            for (int i = 0; i < water.length; i++) water[i] = w.get(i).water();
+            List<FilterChamberBlockEntity> ch = new ArrayList<>();
+            for (BlockPos p : structure.chambers()) if (level.getBlockEntity(p) instanceof FilterChamberBlockEntity c) ch.add(c);
+            if (!w.isEmpty()) clog(level, w, MultiblockFilter.shares(water), ch, days);
+            return;
+        }
         TankBlockEntity t = tankOf(level, structure);
         if (t == null) return;
         List<FilterChamberBlockEntity> ch = new ArrayList<>();
@@ -189,10 +327,10 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         return null;
     }
 
-    private void update(Level level, MultiblockFilter.Structure s, List<FilterChamberBlockEntity> ch, int flowNow, double clean, @Nullable BlockPos served) {
+    private void update(Level level, MultiblockFilter.Structure s, List<FilterChamberBlockEntity> ch, int flowNow, double clean, @Nullable BlockPos served, boolean linksChanged) {
         int[] m = new int[ch.size()];
         for (int i = 0; i < ch.size(); i++) m[i] = ch.get(i).kind().ordinal() * 1000 + (int) Math.round(ch.get(i).dirt() * 100);
-        boolean dirty = s.problem() != problem || s.chambers().size() != chambers || s.inlets().size() != inlets || s.outlets().size() != outlets
+        boolean dirty = linksChanged || s.problem() != problem || s.chambers().size() != chambers || s.inlets().size() != inlets || s.outlets().size() != outlets
                 || flowNow != flow || Math.abs(clean - cleanBlocks) > 0.05 || !java.util.Objects.equals(served, tank) || !java.util.Arrays.equals(m, media);
         problem = s.problem();
         chambers = s.chambers().size();
@@ -259,6 +397,18 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         t.putDouble("clean", cleanBlocks);
         if (tank != null) t.put("tank", NbtUtils.writeBlockPos(tank));
         t.putIntArray("media", media);
+        t.putBoolean("retrofit", retrofit);
+        net.minecraft.nbt.ListTag l = new net.minecraft.nbt.ListTag();
+        for (TankLink k : tanks) {
+            CompoundTag e = new CompoundTag();
+            e.put("pos", NbtUtils.writeBlockPos(k.tank()));
+            e.putString("status", k.status().name());
+            e.putInt("flow", k.flow());
+            e.putDouble("clean", k.clean());
+            e.putInt("percent", k.percent());
+            l.add(e);
+        }
+        t.put("tanks", l);
     }
 
     private void read(CompoundTag t) {
@@ -275,19 +425,37 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         cleanBlocks = t.getDouble("clean");
         tank = t.contains("tank") ? NbtUtils.readBlockPos(t, "tank").orElse(null) : null;
         media = t.getIntArray("media");
+        retrofit = t.getBoolean("retrofit");
+        List<TankLink> l = new ArrayList<>();
+        var list = t.getList("tanks", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag e = list.getCompound(i);
+            MultiblockFilter.LinkStatus st;
+            try {
+                st = MultiblockFilter.LinkStatus.valueOf(e.getString("status"));
+            } catch (IllegalArgumentException x) {
+                st = MultiblockFilter.LinkStatus.OK;
+            }
+            BlockPos p = NbtUtils.readBlockPos(e, "pos").orElse(null);
+            if (p != null) l.add(new TankLink(p, st, e.getInt("flow"), e.getDouble("clean"), e.getInt("percent")));
+        }
+        tanks = l;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        org.overengineer.bettacraft.data.schema.Schemas.FILTER_PUMP_HEAD.stamp(tag);
         write(tag);
         energy.save(tag);
         spring.save(tag, "spring");
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
+        super.loadAdditional(raw, registries);
+        // M40: the schema stamp is only on the saved block entity, not on the sync tag (which carries "retrofit" itself)
+        CompoundTag tag = level != null && level.isClientSide ? raw : org.overengineer.bettacraft.data.schema.Schemas.FILTER_PUMP_HEAD.migrate(raw);
         read(tag);
         energy.load(tag);
         spring.load(tag, "spring");

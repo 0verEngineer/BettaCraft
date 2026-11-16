@@ -94,6 +94,7 @@ public final class TankCare {
         org.overengineer.bettacraft.co2.TankCo2.step(server, be, dt / 24000.0); // M25: CO2 dosing
         org.overengineer.bettacraft.chem.TankChemistry.step(server, be, dt / 24000.0); // M25: TDS and pH
         org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.syncStates(server, be); // M24: outlets show their stream
+        if (server.getGameTime() % 100 < 20) org.overengineer.bettacraft.plumbing.interior.TankAnchors.sweep(server, be); // M40: docks without a pipe go
         org.overengineer.bettacraft.tank.plants.TankPlants.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.plants.InteriorPlants.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.fertilizer.Fertilizer.step(server, be, dt / 24000.0); // M37: the fertilizer fades a little by itself

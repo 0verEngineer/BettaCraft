@@ -53,6 +53,7 @@ public final class FeatureContent {
         put(Feature.TOP_OFF, "level_sensor");
         put(Feature.AUTO_WATER_CHANGE, "water_change_controller");
         put(Feature.INTERIOR_PIPES, "bulkhead", "interior_pipe", "intake_strainer", "lily_pipe", "nozzle", "spray_bar");
+        put(Feature.FILTER_LINES, "filter_inlet_pipe", "filter_outlet_pipe", "pipe_tee", "intake_guard", "outlet_guard"); // M40
         put(Feature.WATER_CHEMISTRY, "tds_meter", "ph_test_kit", "remineralising_salt", "almond_leaf", "alder_cone", "active_soil");
         put(Feature.CO2, "co2_solenoid", "bio_co2", "co2_cylinder", "co2_station");
         put(Feature.OSMOSIS, "ro_membrane", "ro_prefilter", "ro_unit", "ro_water_bucket");

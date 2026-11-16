@@ -289,6 +289,15 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_PUMP_HEAD = filterPart("filter_pump_head", org.overengineer.bettacraft.filter.FilterPartBlock.Part.PUMP_HEAD);
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_INLET = filterPart("filter_inlet", org.overengineer.bettacraft.filter.FilterPartBlock.Part.INLET);
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_OUTLET = filterPart("filter_outlet", org.overengineer.bettacraft.filter.FilterPartBlock.Part.OUTLET);
+    // M40: the filter pipes (intake and return line), the dock of a pipe in the interior and the guards
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_INLET_PIPE = filterPipe("filter_inlet_pipe", org.overengineer.bettacraft.plumbing.PipeLine.INTAKE);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_OUTLET_PIPE = filterPipe("filter_outlet_pipe", org.overengineer.bettacraft.plumbing.PipeLine.RETURN);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock> PIPE_ANCHOR = BLOCKS.register("pipe_anchor",
+            () -> new org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noLootTable().sound(SoundType.METAL).noOcclusion()
+                    .pushReaction(PushReaction.BLOCK).isRedstoneConductor((s, l, p) -> false)));
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTAKE_GUARD = plumbing("intake_guard", org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> OUTLET_GUARD = plumbing("outlet_guard", org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
 
     // ------------------------------------------------------------------ M25 CO2 and reverse osmosis
 
@@ -387,6 +396,11 @@ public final class ModBlocks {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)
                 .isRedstoneConductor((s, l, p) -> false)));
+    }
+
+    private static DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> filterPipe(String id, org.overengineer.bettacraft.plumbing.PipeLine line) {
+        return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.FilterPipeBlock(line, BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
     }
 
     private static DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> filterPart(String id, org.overengineer.bettacraft.filter.FilterPartBlock.Part part) {

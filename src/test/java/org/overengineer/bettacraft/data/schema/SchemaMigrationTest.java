@@ -261,6 +261,22 @@ class SchemaMigrationTest {
         assertEquals(2, Schemas.CABINET.currentVersion());
         assertEquals(1, Schemas.GUIDE_BOOK.currentVersion());
         assertEquals(1, Schemas.CULTURE_TUB.currentVersion());
+        assertEquals(1, Schemas.FILTER_PUMP_HEAD.currentVersion());
+    }
+
+    /** Frozen M24..M39 (v0, no schema) pump head: kept as it was and marked retrofit (M40, D2: it needs guards now). */
+    @Test
+    void pumpHeadV0IsMarkedForTheGuards() {
+        CompoundTag v0 = snbt("{power:7,problem:\"NONE\",chambers:2,inlets:1,outlets:1,flow:70,clean:36.0d,tank:{X:1,Y:64,Z:2},"
+                + "media:[I;1000,2050],energy:500,spring:0L}");
+        CompoundTag v1 = Schemas.FILTER_PUMP_HEAD.migrate(v0);
+        assertEquals(1, Schema.read(v1));
+        assertTrue(v1.getBoolean("retrofit"), "a filter from before M40 needs its guards");
+        assertEquals(7, v1.getInt("power"), "the regulator is kept");
+        assertEquals(2050, v1.getIntArray("media")[1], "the media are kept");
+        // a pump head saved by M40 keeps its own value
+        CompoundTag now = Schemas.FILTER_PUMP_HEAD.stamp(snbt("{power:10,retrofit:0b}"));
+        assertFalse(Schemas.FILTER_PUMP_HEAD.migrate(now).getBoolean("retrofit"));
     }
 
     /** Frozen M8 (v4) controller: the evaporation placeholder goes, water quality and power stay or get defaults. */
