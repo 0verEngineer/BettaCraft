@@ -150,7 +150,7 @@ public final class PipeCoverGameTests {
             click(p, r.pipe(), Direction.UP);
             h.assertTrue(cover(h, r.pipe()) != null && cover(h, r.pipe()).is(Blocks.GLOWSTONE), "glowstone on the pipe");
             h.assertTrue(level.getBlockState(r.pipe()).getLightEmission(level, r.pipe()) == 15, "it shines: " + level.getBlockState(r.pipe()).getLightEmission(level, r.pipe()));
-            h.assertTrue(p.getInventory().countItem(Items.STONE_BRICKS) == 4, "the stone bricks came back: " + p.getInventory().countItem(Items.STONE_BRICKS));
+            h.assertTrue(p.getInventory().countItem(Items.STONE_BRICKS) == 1, "the stone brick of the cover came back: " + p.getInventory().countItem(Items.STONE_BRICKS));
             // sneak-right-click with the pipe cover: the glowstone back, the pipe again
             p.setShiftKeyDown(true);
             click(p, r.pipe(), Direction.UP);
