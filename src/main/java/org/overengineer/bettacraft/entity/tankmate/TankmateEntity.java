@@ -625,11 +625,13 @@ public class TankmateEntity extends AbstractFish {
         super.aiStep();
         TankWaterVolume w = tankWater;
         if (w != null && !level().isClientSide && isInWater()) {
-            // keep the whole fish inside the water of the tank (not in the glass, not above the surface)
+            // keep the whole fish inside the water of the tank (not in the glass, not above the surface); 1.33.3: the
+            // top of the rendered model (the tall dorsal fin of an angelfish), not 0.8 of the hitbox, stays below the
+            // surface, and a fish above that line goes back at once (halfway let it bob up through the surface)
             Vec3 p = position();
-            Vec3 c = w.clamp(p, sideMargin(), 1.0 / 16 + 0.005, Math.max(0.04, getBbHeight() * 0.8));
+            Vec3 c = w.clamp(p, sideMargin(), 1.0 / 16 + 0.005, TankmateExtents.surfaceMargin(this));
             if (c.x != p.x || c.y != p.y || c.z != p.z) {
-                setPos(p.x + (c.x - p.x) * 0.5, p.y + (c.y - p.y) * 0.5, p.z + (c.z - p.z) * 0.5);
+                setPos(p.x + (c.x - p.x) * 0.5, c.y < p.y ? c.y : p.y + (c.y - p.y) * 0.5, p.z + (c.z - p.z) * 0.5);
                 Vec3 dm = getDeltaMovement();
                 setDeltaMovement((c.x - p.x) * dm.x < 0 ? 0 : dm.x, (c.y - p.y) * dm.y < 0 ? 0 : dm.y, (c.z - p.z) * dm.z < 0 ? 0 : dm.z);
             }

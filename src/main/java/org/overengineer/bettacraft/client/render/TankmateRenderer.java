@@ -18,6 +18,7 @@ import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.model.TankmateModel;
 import org.overengineer.bettacraft.client.model.TankmateModelDefinitions;
 import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
+import org.overengineer.bettacraft.entity.tankmate.TankmateExtents;
 import org.overengineer.bettacraft.tankmates.TankmateSpecies;
 
 /**
@@ -61,31 +62,19 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         return TEXTURES.computeIfAbsent(s.texture(variety, female), n -> BettaCraft.id("textures/entity/tankmates/" + n + ".png"));
     }
 
-    /** Length factor of the sexes: livebearer females are bigger, gourami females a little smaller. */
+    /** Length factor of the sexes (shared with the server: {@link TankmateExtents#sexScale}). */
     public static float sexScale(TankmateSpecies s, boolean female) {
-        return switch (s.model()) {
-            case LIVEBEARER -> female ? 1.2F : 0.9F;
-            case PLATY -> female ? 1.08F : 0.95F;
-            case SWORDTAIL -> female ? 1.05F : 0.95F; // M29 part c
-            case GOURAMI -> female ? 0.92F : 1.0F;
-            case CICHLID -> female ? 0.9F : 1.0F; // M29: dwarf cichlid females are smaller
-            case APISTO -> female ? 0.72F : 1.0F;
-            default -> female ? 1.04F : 1.0F;
-        };
+        return TankmateExtents.sexScale(s, female);
     }
 
     /** The model is 32 px = 2 blocks long at scale 1: scale to the species' length, the stage and the sex. */
     public static float scaleOf(TankmateEntity fish) {
-        TankmateSpecies s = fish.species();
-        return (float) (s.length() / (TankmateModelDefinitions.LENGTH / 16.0)) * fish.lifeStage().scale() * sexScale(s, fish.isFemale()) * hybridScale(fish);
+        return TankmateExtents.renderScale(fish);
     }
 
     /** M21.6: hybrids are between the guppy and the endler in size (by their endler share). */
     public static float hybridScale(TankmateEntity fish) {
-        var p = fish.livebearerPhenotype();
-        if (p == null) return 1F;
-        double len = TankmateSpecies.GUPPY.length() + (TankmateSpecies.ENDLER_GUPPY.length() - TankmateSpecies.GUPPY.length()) * p.endler();
-        return (float) (len / fish.species().length());
+        return TankmateExtents.hybridScale(fish);
     }
 
     @Override
@@ -124,7 +113,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     protected void scale(TankmateEntity fish, PoseStack pose, float partialTick) {
         float s = scaleOf(fish);
         // M29: the balloon ram is short and round (a bred body shape on the colour locus)
-        if (fish.species() == TankmateSpecies.RAM_CICHLID && "balloon".equals(fish.variety())) pose.scale(s * 1.08F, s * 1.15F, s * 0.78F);
+        if (fish.species() == TankmateSpecies.RAM_CICHLID && "balloon".equals(fish.variety())) pose.scale(s * 1.08F, s * TankmateExtents.heightScale(fish), s * 0.78F);
         else pose.scale(s, s, s);
     }
 

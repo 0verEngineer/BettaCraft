@@ -314,7 +314,7 @@ final class TankmateBehaviour {
         if (s.airGulper() && r.nextInt(5) == 0) {
             double ahead = len * (1.5 + r.nextDouble());
             Vec3 at = clamp(w, new Vec3(p.x - Math.sin(heading) * ahead, p.y, p.z + Math.cos(heading) * ahead));
-            Vec3 up = w.surfacePoint(at, 0.2, Math.max(0.05, fish.getBbHeight()));
+            Vec3 up = w.surfacePoint(at, 0.2, TankmateExtents.surfaceMargin(fish));
             go(steer(server, w, up), 0.9, Mode.CRUISE);
             largeGoal = up;
             ticks = 100 + r.nextInt(60);
@@ -530,7 +530,7 @@ final class TankmateBehaviour {
 
     private void gulp(TankWaterVolume w) {
         Vec3 p = fish.position();
-        Vec3 up = w.surfacePoint(p, 0.2, Math.max(0.05, fish.getBbHeight()));
+        Vec3 up = w.surfacePoint(p, 0.2, TankmateExtents.surfaceMargin(fish));
         go(up, 1.4, Mode.GULP);
         ticks = 80;
     }
@@ -671,12 +671,16 @@ final class TankmateBehaviour {
     private Vec3 band(TankWaterVolume w, TankmateSpecies s, Vec3 v) {
         double floor = w.box().minY, h = Math.max(0.1, w.surface() - floor);
         double lo = floor + h * s.zone().lo + fish.getBbHeight() * 0.5, hi = floor + h * s.zone().hi;
+        // 1.33.3: never so high that the dorsal fin of a tall fish (angelfish, discus) leaves the water
+        double cap = Math.max(floor + 1.0 / 16 + 0.02, w.surface() - TankmateExtents.surfaceMargin(fish) - 0.01);
+        hi = Math.min(hi, cap);
+        lo = Math.min(lo, cap);
         if (hi < lo) hi = lo;
         return new Vec3(v.x, Mth.clamp(v.y, lo, hi), v.z);
     }
 
     private Vec3 clamp(TankWaterVolume w, Vec3 v) {
-        return w.clamp(v, fish.sideMargin() + 0.015, 1.0 / 16 + 0.02, Math.max(0.05, fish.getBbHeight()));
+        return w.clamp(v, fish.sideMargin() + 0.015, 1.0 / 16 + 0.02, TankmateExtents.surfaceMargin(fish) + 0.01);
     }
 
     /** A point just above the ground (substrate, decoration, leaves) at x/z. */
@@ -685,7 +689,7 @@ final class TankmateBehaviour {
         TankTerrain t = terrain(server);
         double g = t == null ? Double.NaN : t.ground(c.x, c.z);
         if (!Double.isFinite(g)) g = w.box().minY;
-        double y = Math.min(g + 0.01, w.surface() - fish.getBbHeight() - 0.02);
+        double y = Math.min(g + 0.01, w.surface() - TankmateExtents.surfaceMargin(fish) - 0.01);
         return new Vec3(c.x, Math.max(w.box().minY, y), c.z);
     }
 

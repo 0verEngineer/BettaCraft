@@ -63,7 +63,11 @@ public final class TankWaterVolume {
      * nearly full surface put the head of a 0.8 high squid through the lid of a 2 high tank).
      */
     public Vec3 clamp(Vec3 v, double side, double bottom, double top, double height) {
-        long b = BlockPos.asLong(Mth.floor(v.x), Mth.floor(Math.min(v.y, surface - 1e-4)), Mth.floor(v.z));
+        double yy = Math.min(v.y, surface - 1e-4);
+        // 1.33.3: a body taller than the distance to the surface (an angelfish's fin) must go down into the block below:
+        // clamped inside its own top block it stuck at the block's floor with the fin above the surface
+        long b = BlockPos.asLong(Mth.floor(v.x), Mth.floor(Math.min(yy, surface - top)), Mth.floor(v.z));
+        if (!wet(b)) b = BlockPos.asLong(Mth.floor(v.x), Mth.floor(yy), Mth.floor(v.z));
         if (!wet(b)) b = nearestWet(v);
         if (b == Long.MIN_VALUE) return v;
         int x = BlockPos.getX(b), y = BlockPos.getY(b), z = BlockPos.getZ(b);
@@ -73,7 +77,7 @@ public final class TankWaterVolume {
         double z1 = z + 1 - (members.contains(BlockPos.offset(b, Direction.SOUTH)) ? 0 : side);
         double y0 = y + (members.contains(BlockPos.offset(b, Direction.DOWN)) ? 0 : bottom);
         long up = BlockPos.offset(b, Direction.UP);
-        double y1 = wet(up) ? y + 1 : Math.min(y + 1 - (members.contains(up) ? 0 : 1.0 / 16), surface - top);
+        double y1 = Math.min(wet(up) ? y + 1 : y + 1 - (members.contains(up) ? 0 : 1.0 / 16), surface - top);
         if (height > 0) {
             long c = b;
             while (members.contains(BlockPos.offset(c, Direction.UP))) c = BlockPos.offset(c, Direction.UP);
