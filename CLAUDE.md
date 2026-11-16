@@ -150,8 +150,11 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 - Every new feature gets a switch in the feature tree: a `Feature` constant (a new group `<group>.enabled` or a child of an
   existing group, never one switch per milestone), en label/tooltip in the enum, de in `de_de.json`; code asks
   `Features.enabled(Feature.X)`, new items/recipes/sources get their feature in `FeatureContent` (recipes then get their
-  condition in `runData`), and the switch gets a GameTest that turns it off. The handbook is kept up to date in English
-  and German together (navigation, a page per species / device with `item_ids`, an Obtaining section).
+  condition in `runData`), and the switch gets a GameTest that turns it off.
+- **Handbook stays current:** every new or changed player-facing thing (species, device, block, mechanic, config option,
+  menu) is in the handbook in English and German together: navigation, a page per species / device with `item_ids` for
+  every new item, an Obtaining section, images from the smoke screenshots; then `gradlew updateGuide` for the generated
+  sections (`GuidePagesTest` must stay green).
 - **Quests stay current:** every new player-facing feature (species group, device, system) gets or extends a quest in the
   FTB Quests chapter: `tools/modpack/ftbquests_chapter.py` (advancement or item task, dependency, position), texts
   `quest.bettacraft.<quest>.title/.desc` en (datagen) + de, then `py tools/modpack/ftbquests_chapter.py`; `QuestChapterTest`
