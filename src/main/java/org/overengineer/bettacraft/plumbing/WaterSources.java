@@ -59,14 +59,7 @@ public final class WaterSources {
 
     /** Fresh water the handlers next to the device can give (salty water does not count). */
     public static long available(Level level, BlockPos pos, boolean freshOnly) {
-        long n = 0;
-        for (IFluidHandler h : handlers(level, pos)) {
-            FluidStack s = FluidMoves.peekWater(h, Integer.MAX_VALUE);
-            WaterValues v = WaterValues.from(s);
-            if (s.isEmpty() || (freshOnly && v != null && !v.fresh())) continue;
-            n += s.getAmount();
-        }
-        return n;
+        return at(level, pos).available(freshOnly);
     }
 
     /** A portion of water taken from a source: amount and values (null = tap water). */
@@ -74,31 +67,80 @@ public final class WaterSources {
 
     /** Takes up to {@code max} mB of water from the handlers next to the device (fresh only if asked). */
     public static List<Portion> take(Level level, BlockPos pos, int max, boolean freshOnly) {
-        List<Portion> out = new ArrayList<>();
-        int left = max;
-        for (IFluidHandler h : handlers(level, pos)) {
-            if (left <= 0) break;
-            FluidStack s = FluidMoves.peekWater(h, left);
-            WaterValues v = WaterValues.from(s);
-            if (s.isEmpty() || (freshOnly && v != null && !v.fresh())) continue;
-            FluidStack got = h.drain(s, IFluidHandler.FluidAction.EXECUTE);
-            if (got.isEmpty()) continue;
-            out.add(new Portion(got.getAmount(), WaterValues.from(got)));
-            left -= got.getAmount();
-        }
-        return out;
+        return at(level, pos).take(max, freshOnly);
     }
 
     /** Whether a handler next to the device holds only salty water (for the status line). */
     public static boolean onlySalty(Level level, BlockPos pos) {
-        boolean salty = false;
-        for (IFluidHandler h : handlers(level, pos)) {
-            FluidStack s = FluidMoves.peekWater(h, Integer.MAX_VALUE);
-            if (s.isEmpty()) continue;
-            WaterValues v = WaterValues.from(s);
-            if (v == null || v.fresh()) return false;
-            salty = true;
+        return at(level, pos).onlySalty();
+    }
+
+    /** The water next to a device: endless from a water source block, else from the fluid handlers next to it. */
+    public static Supply at(Level level, BlockPos pos) {
+        return new Supply(endless(level, pos), handlers(level, pos));
+    }
+
+    /**
+     * M40 part b: where a device gets its water: endless tap water, or a list of fluid handlers (those next to it; on a
+     * multiblock filter also its fresh water ports and their lines, {@code filter.FilterWater#supply}).
+     */
+    public static final class Supply {
+        private final boolean endless;
+        private final List<IFluidHandler> handlers;
+
+        public Supply(boolean endless, List<IFluidHandler> handlers) {
+            this.endless = endless;
+            this.handlers = handlers;
         }
-        return salty;
+
+        public boolean endless() {
+            return endless;
+        }
+
+        public List<IFluidHandler> handlers() {
+            return handlers;
+        }
+
+        /** Water the handlers can give (salty water does not count with {@code freshOnly}). */
+        public long available(boolean freshOnly) {
+            long n = 0;
+            for (IFluidHandler h : handlers) {
+                FluidStack s = FluidMoves.peekWater(h, Integer.MAX_VALUE);
+                WaterValues v = WaterValues.from(s);
+                if (s.isEmpty() || (freshOnly && v != null && !v.fresh())) continue;
+                n += s.getAmount();
+            }
+            return n;
+        }
+
+        /** Takes up to {@code max} mB of water from the handlers (fresh only if asked). */
+        public List<Portion> take(int max, boolean freshOnly) {
+            List<Portion> out = new ArrayList<>();
+            int left = max;
+            for (IFluidHandler h : handlers) {
+                if (left <= 0) break;
+                FluidStack s = FluidMoves.peekWater(h, left);
+                WaterValues v = WaterValues.from(s);
+                if (s.isEmpty() || (freshOnly && v != null && !v.fresh())) continue;
+                FluidStack got = h.drain(s, IFluidHandler.FluidAction.EXECUTE);
+                if (got.isEmpty()) continue;
+                out.add(new Portion(got.getAmount(), WaterValues.from(got)));
+                left -= got.getAmount();
+            }
+            return out;
+        }
+
+        /** Whether the handlers hold only salty water (for the status line). */
+        public boolean onlySalty() {
+            boolean salty = false;
+            for (IFluidHandler h : handlers) {
+                FluidStack s = FluidMoves.peekWater(h, Integer.MAX_VALUE);
+                if (s.isEmpty()) continue;
+                WaterValues v = WaterValues.from(s);
+                if (v == null || v.fresh()) return false;
+                salty = true;
+            }
+            return salty;
+        }
     }
 }

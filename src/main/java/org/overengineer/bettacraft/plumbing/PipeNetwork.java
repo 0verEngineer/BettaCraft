@@ -119,7 +119,7 @@ public final class PipeNetwork {
                 BlockState ns = level.getBlockState(n);
                 if (ns.getBlock() instanceof PipeBlock) {
                     if (seen.size() < MAX_PIPES && seen.add(n.asLong())) queue.add(n);
-                } else if (!(ns.getBlock() instanceof PipeConnectable)) {
+                } else if (!(ns.getBlock() instanceof PipeConnectable c && c.pipeConnects(ns, d.getOpposite()))) { // M40 part b: the water ports are ends
                     ends.add(new End(n, d.getOpposite()));
                 }
             }

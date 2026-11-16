@@ -38,7 +38,8 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * with an empty hand to take it out; the pump head shows the filter.
  */
 public class FilterPartBlock extends BaseEntityBlock implements PipeConnectable {
-    public enum Part { CHAMBER, PUMP_HEAD, INLET, OUTLET }
+    /** M40 part b: FRESH and WASTE are the fresh and waste water ports (F1, {@link FilterPortBlockEntity}). */
+    public enum Part { CHAMBER, PUMP_HEAD, INLET, OUTLET, FRESH, WASTE }
 
     public static final MapCodec<FilterPartBlock> CODEC = simpleCodec(p -> new FilterPartBlock(Part.CHAMBER, p));
     /** Inlet / outlet: the side the pipe joins (pointing away from the filter). */
@@ -126,12 +127,19 @@ public class FilterPartBlock extends BaseEntityBlock implements PipeConnectable 
         }
         super.onRemove(state, level, pos, newState, moving);
         PipeNetwork.invalidate(level);
+        org.overengineer.bettacraft.plumbing.FilterPipeBlock.touch(); // M40: the filter lines look again
     }
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
         PipeNetwork.invalidate(level);
+        org.overengineer.bettacraft.plumbing.FilterPipeBlock.touch(); // M40: the filter lines look again
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext ctx, java.util.List<Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+        if (part == Part.FRESH || part == Part.WASTE) tooltip.add(Component.translatable("tooltip.bettacraft.filter_port.usage").withStyle(ChatFormatting.DARK_GRAY)); // M40 part b
     }
 
     @Nullable
@@ -140,6 +148,7 @@ public class FilterPartBlock extends BaseEntityBlock implements PipeConnectable 
         return switch (part) {
             case CHAMBER -> new FilterChamberBlockEntity(pos, state);
             case PUMP_HEAD -> new FilterPumpHeadBlockEntity(pos, state);
+            case FRESH, WASTE -> new FilterPortBlockEntity(pos, state); // M40 part b
             default -> null;
         };
     }
@@ -147,6 +156,7 @@ public class FilterPartBlock extends BaseEntityBlock implements PipeConnectable 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (part == Part.WASTE && !level.isClientSide) return createTickerHelper(type, ModBlockEntities.FILTER_PORT.get(), FilterPortBlockEntity::serverTick);
         return part == Part.PUMP_HEAD && !level.isClientSide
                 ? createTickerHelper(type, ModBlockEntities.FILTER_PUMP_HEAD.get(), FilterPumpHeadBlockEntity::serverTick) : null;
     }

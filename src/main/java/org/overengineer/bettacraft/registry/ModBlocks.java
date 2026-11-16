@@ -292,6 +292,14 @@ public final class ModBlocks {
     // M40: the filter pipes (intake and return line), the dock of a pipe in the interior and the guards
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_INLET_PIPE = filterPipe("filter_inlet_pipe", org.overengineer.bettacraft.plumbing.PipeLine.INTAKE);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_OUTLET_PIPE = filterPipe("filter_outlet_pipe", org.overengineer.bettacraft.plumbing.PipeLine.RETURN);
+    // M40 part b: the fresh and waste water line, the pipe bundle (2 to 4 lines in one block, no item), the water ports of the filter
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_FRESH_PIPE = filterPipe("filter_fresh_pipe", org.overengineer.bettacraft.plumbing.PipeLine.FRESH);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_WASTE_PIPE = filterPipe("filter_waste_pipe", org.overengineer.bettacraft.plumbing.PipeLine.WASTE);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock> FILTER_PIPE_BUNDLE = BLOCKS.register("filter_pipe_bundle",
+            () -> new org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_FRESH_PORT = filterPart("filter_fresh_port", org.overengineer.bettacraft.filter.FilterPartBlock.Part.FRESH);
+    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_WASTE_PORT = filterPart("filter_waste_port", org.overengineer.bettacraft.filter.FilterPartBlock.Part.WASTE);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock> PIPE_ANCHOR = BLOCKS.register("pipe_anchor",
             () -> new org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noLootTable().sound(SoundType.METAL).noOcclusion()

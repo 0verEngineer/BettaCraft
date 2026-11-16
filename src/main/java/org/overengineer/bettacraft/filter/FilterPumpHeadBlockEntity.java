@@ -57,6 +57,9 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** M40: the tanks of the filter (looked up with the structure, and when a filter pipe changed). */
     private List<MultiblockFilter.Link> links = List.of();
     private int linkVersion = -1;
+    private boolean linksStale = true;
+    /** M40 part b synced: the fresh and waste water ports and the water in them. */
+    private int freshPorts, wastePorts, freshMb, wasteMb;
     /** M40 synced: per tank of the filter its status, flow and cleaning. */
     private List<TankLink> tanks = List.of();
     /** M40 (D2): built before M40 (set by the schema migration); cleared once every tank of the filter is guarded. */
@@ -100,6 +103,33 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** M40 (D2): a filter from before M40 that still lacks guards. */
     public boolean retrofit() { return retrofit; }
     public int[] media() { return media; }
+    /** M40 part b: the fresh / waste water ports of the filter and the mB in them (synced). */
+    public int freshPorts() { return freshPorts; }
+    public int wastePorts() { return wastePorts; }
+    public int freshMb() { return freshMb; }
+    public int wasteMb() { return wasteMb; }
+
+    /** The parts of the filter (scanned again at most every 40 ticks). */
+    public MultiblockFilter.Structure structure(ServerLevel level) {
+        long now = level.getGameTime();
+        if (structure == null || now - lastScan >= 40 || now < lastScan) {
+            structure = MultiblockFilter.scan(level, worldPosition);
+            lastScan = now;
+            linksStale = true;
+        }
+        return structure;
+    }
+
+    /** M40: the tanks of the filter, looked up again when the parts were scanned or a filter pipe changed. */
+    public List<MultiblockFilter.Link> currentLinks(ServerLevel level) {
+        MultiblockFilter.Structure s = structure(level);
+        if (linksStale || linkVersion != org.overengineer.bettacraft.plumbing.FilterPipeBlock.version()) {
+            linkVersion = org.overengineer.bettacraft.plumbing.FilterPipeBlock.version();
+            linksStale = false;
+            links = s.formed() && Features.enabled(Feature.FILTER_LINES) ? MultiblockFilter.links(level, s) : List.of();
+        }
+        return links;
+    }
 
     static void serverTick(Level level, BlockPos pos, BlockState state, FilterPumpHeadBlockEntity be) {
         if ((level.getGameTime() + pos.asLong()) % PipeNetwork.WINDOW != 0) return;
@@ -108,18 +138,15 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
 
     /** Forgets the structure so the next run scans again (a part was placed or broken; tests). */
     public void rescan() {
-        lastScan = Long.MIN_VALUE;
+        structure = null;
+        linksStale = true;
     }
 
     /** One batch (public for the GameTests; {@code force} scans the parts again first). */
     public int run(ServerLevel level, boolean force) {
         long now = level.getGameTime();
-        boolean rescan = structure == null || force || now - lastScan >= 40 || now < lastScan;
-        if (rescan) {
-            structure = MultiblockFilter.scan(level, worldPosition);
-            lastScan = now;
-        }
-        MultiblockFilter.Structure s = structure;
+        if (force) rescan();
+        MultiblockFilter.Structure s = structure(level);
         List<FilterChamberBlockEntity> ch = new ArrayList<>();
         for (BlockPos p : s.chambers()) if (level.getBlockEntity(p) instanceof FilterChamberBlockEntity c) ch.add(c);
         if (!Features.enabled(Feature.FILTER_LINES)) {
@@ -127,10 +154,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             tanks = List.of();
             return runSingle(level, s, ch);
         }
-        if (rescan || linkVersion != org.overengineer.bettacraft.plumbing.FilterPipeBlock.version()) {
-            linkVersion = org.overengineer.bettacraft.plumbing.FilterPipeBlock.version();
-            links = s.formed() ? MultiblockFilter.links(level, s) : List.of();
-        }
+        currentLinks(level);
         // every tank: guarded? water in it?
         List<MultiblockFilter.LinkStatus> st = new ArrayList<>();
         List<MultiblockFilter.Link> working = new ArrayList<>();
@@ -328,6 +352,17 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     }
 
     private void update(Level level, MultiblockFilter.Structure s, List<FilterChamberBlockEntity> ch, int flowNow, double clean, @Nullable BlockPos served, boolean linksChanged) {
+        // M40 part b: the water ports
+        int fm = 0, wm = 0;
+        for (BlockPos p : s.fresh()) if (level.getBlockEntity(p) instanceof FilterPortBlockEntity port) fm += port.water().amount();
+        for (BlockPos p : s.waste()) if (level.getBlockEntity(p) instanceof FilterPortBlockEntity port) wm += port.water().amount();
+        if (fm != freshMb || wm != wasteMb || s.fresh().size() != freshPorts || s.waste().size() != wastePorts) {
+            freshMb = fm;
+            wasteMb = wm;
+            freshPorts = s.fresh().size();
+            wastePorts = s.waste().size();
+            linksChanged = true;
+        }
         int[] m = new int[ch.size()];
         for (int i = 0; i < ch.size(); i++) m[i] = ch.get(i).kind().ordinal() * 1000 + (int) Math.round(ch.get(i).dirt() * 100);
         boolean dirty = linksChanged || s.problem() != problem || s.chambers().size() != chambers || s.inlets().size() != inlets || s.outlets().size() != outlets
@@ -409,6 +444,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             l.add(e);
         }
         t.put("tanks", l);
+        t.putIntArray("ports", new int[]{freshPorts, wastePorts, freshMb, wasteMb}); // M40 part b
     }
 
     private void read(CompoundTag t) {
@@ -440,6 +476,11 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             if (p != null) l.add(new TankLink(p, st, e.getInt("flow"), e.getDouble("clean"), e.getInt("percent")));
         }
         tanks = l;
+        int[] ports = t.getIntArray("ports");
+        freshPorts = ports.length == 4 ? ports[0] : 0;
+        wastePorts = ports.length == 4 ? ports[1] : 0;
+        freshMb = ports.length == 4 ? ports[2] : 0;
+        wasteMb = ports.length == 4 ? ports[3] : 0;
     }
 
     @Override

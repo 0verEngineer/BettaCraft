@@ -1,4 +1,6 @@
 """M40 assets: the filter pipes (intake and return line), the pipe T-piece, the guards and the pipe dock in the interior.
+Part b: the fresh water (green) and waste water (brown) line, their ports on the filter and the steel manifold of the pipe
+bundle (up to four lines in one block).
 
 Block textures: brushed steel pipes with a coloured band per line (blue: the intake to the filter's inlet, orange: the
 return from its outlet, the colours of the connectors), the brass collar of a T-piece, the fine mesh of the intake guard,
@@ -19,6 +21,8 @@ from plumbing import S, _img, _rgb, steel
 
 INTAKE = "#3a8ad8"
 RETURN = "#e08a30"
+FRESH = "#4cb85a"
+WASTE = "#7a5234"
 
 
 def line_pipe(colour, seed):
@@ -73,6 +77,40 @@ def flange():
     return _img(px)
 
 
+def port(colour):
+    """Fresh / waste water port face: a pipe socket with the colour ring of its line, a drop mark above it."""
+    ring = _rgb(colour)
+
+    def px(x, y):
+        d = math.hypot(x - 7.5, y - 8.5)
+        if d < 2.6:
+            return _rgb("#14181c")
+        if d < 3.8:
+            return _rgb("#c8d0d8")
+        if d < 4.8:
+            return ring
+        if 6 <= x <= 9 and 1 <= y <= 2:
+            return ring * 0.9
+        if x in (0, 15) or y in (0, 15):
+            return _rgb("#8e98a2")
+        return _rgb("#aab2bb") * (0.95 + 0.05 * math.sin(y))
+    return _img(px)
+
+
+def manifold():
+    """The steel manifold of a pipe bundle: brushed steel with a darker frame and four rivets."""
+    def px(x, y):
+        base = _rgb("#a9b2bc") * (0.93 + 0.05 * math.sin(x * 0.8) + 0.02 * ((x * 5 + y * 11) % 7) / 7)
+        if x in (0, 15) or y in (0, 15):
+            return base * 0.7
+        if x in (1, 14) or y in (1, 14):
+            return base * 0.86
+        if (x, y) in ((3, 3), (12, 3), (3, 12), (12, 12)):
+            return _rgb("#5c646c")
+        return base
+    return _img(px)
+
+
 TEE = [
     "................",
     "................",
@@ -98,6 +136,8 @@ def write_all():
     out = []
     blocks = {
         "filter_inlet_pipe": line_pipe(INTAKE, 4001), "filter_outlet_pipe": line_pipe(RETURN, 4002),
+        "filter_fresh_pipe": line_pipe(FRESH, 4003), "filter_waste_pipe": line_pipe(WASTE, 4004),
+        "filter_fresh_port": port(FRESH), "filter_waste_port": port(WASTE), "filter_pipe_bundle": manifold(),
         "pipe_tee": tee_collar(), "intake_guard": mesh(True), "outlet_guard": mesh(False), "pipe_anchor": flange(),
     }
     for name, img in blocks.items():

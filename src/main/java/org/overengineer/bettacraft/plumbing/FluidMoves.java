@@ -35,7 +35,8 @@ public final class FluidMoves {
         return n;
     }
 
-    private static int fill(IFluidHandler to, FluidStack water) {
+    /** Fills water into {@code to} (with the plain-water fallback); returns the mB it took. */
+    public static int fill(IFluidHandler to, FluidStack water) {
         int n = to.fill(water.copy(), IFluidHandler.FluidAction.EXECUTE);
         if (n <= 0 && WaterValues.from(water) != null) n = to.fill(new FluidStack(water.getFluidHolder(), water.getAmount()), IFluidHandler.FluidAction.EXECUTE);
         return n;

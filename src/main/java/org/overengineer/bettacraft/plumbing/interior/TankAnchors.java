@@ -172,7 +172,7 @@ public final class TankAnchors {
         if (!level.isLoaded(n)) return true; // unknown: keep it
         BlockState s = level.getBlockState(n);
         Direction back = face.getOpposite();
-        if (s.getBlock() instanceof FilterPipeBlock) return s.getValue(PipeBlock.SIDES.get(back));
+        if (org.overengineer.bettacraft.plumbing.FilterPipes.isPipe(s)) return org.overengineer.bettacraft.plumbing.FilterPipes.docksTowards(level, n, s, back); // part b: bundles
         if (s.getBlock() instanceof PipeBlock) return s.getValue(PipeBlock.SIDES.get(back));
         if (s.getBlock() instanceof FilterPartBlock f) return (f.part() == FilterPartBlock.Part.INLET || f.part() == FilterPartBlock.Part.OUTLET) && s.getValue(FilterPartBlock.FACING) == back;
         return false;

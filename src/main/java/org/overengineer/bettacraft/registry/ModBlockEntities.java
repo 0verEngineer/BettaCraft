@@ -75,7 +75,11 @@ public final class ModBlockEntities {
     @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity>> FILTER_PIPE = BLOCK_ENTITIES.register("filter_pipe",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity::new, ModBlocks.FILTER_INLET_PIPE.get(),
-                    ModBlocks.FILTER_OUTLET_PIPE.get()).build(null)); // M40
+                    ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(), ModBlocks.FILTER_WASTE_PIPE.get(),
+                    ModBlocks.FILTER_PIPE_BUNDLE.get()).build(null)); // M40 (part b: the fresh and waste line, the bundle)
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterPortBlockEntity>> FILTER_PORT = BLOCK_ENTITIES.register("filter_port",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterPortBlockEntity::new, ModBlocks.FILTER_FRESH_PORT.get(),
+                    ModBlocks.FILTER_WASTE_PORT.get()).build(null)); // M40 part b
 
     // M25
     @SuppressWarnings("DataFlowIssue")

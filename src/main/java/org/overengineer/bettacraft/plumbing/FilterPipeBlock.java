@@ -44,6 +44,10 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * that fits, so one filter feeds several tanks. A line joins pipes of the same line, its filter connector and tank blocks
  * on any side, the top or the bottom: there its connection appears in the interior ({@code TankAnchors}). Pipes hold
  * no water and pump nothing: the filter's pump head works through them ({@link FilterLines}).
+ * <p>
+ * Part b: also the fresh and the waste water line ({@link PipeLine#water()}: they join the fluid handlers of other blocks
+ * instead of tanks and offer one themselves, {@link FilterLineFluid}). The pipe of another line used on a pipe makes a
+ * bundle of both ({@link FilterPipeBundleBlock}). The joining rules are in {@link FilterPipes}, shared with the bundle.
  */
 public class FilterPipeBlock extends BaseEntityBlock {
     public static final MapCodec<FilterPipeBlock> CODEC = simpleCodec(p -> new FilterPipeBlock(PipeLine.INTAKE, p));
@@ -116,32 +120,28 @@ public class FilterPipeBlock extends BaseEntityBlock {
         return s.getBlock() instanceof FilterPipeBlock && s.getValue(SIDES.get(d));
     }
 
-    /** What is on side {@code d} of a pipe of {@code line}: a pipe of the same line, a tank, its connector, or nothing it joins. */
-    enum Target { NONE, PIPE, TANK, CONNECTOR }
-
-    static Target target(PipeLine line, BlockState n, Direction d) {
-        if (n.getBlock() instanceof FilterPipeBlock f) return f.line == line ? Target.PIPE : Target.NONE;
-        if (n.getBlock() instanceof TankBlock) return Target.TANK;
-        if (n.getBlock() instanceof FilterPartBlock p && p.part() == line.connector() && n.getValue(FilterPartBlock.FACING) == d.getOpposite()) return Target.CONNECTOR;
-        return Target.NONE;
+    /** Part b: the line of this single pipe as a slot of {@link FilterPipes}. */
+    public static int slot(BlockState s) {
+        int slot = FilterPipes.PRESENT | (s.getValue(JUNCTION) ? FilterPipes.JUNCTION : 0);
+        for (Direction d : Direction.values()) if (s.getValue(SIDES.get(d))) slot |= FilterPipes.bit(d);
+        return slot;
     }
 
-    /** Whether a new connection on side {@code d} can be made (the neighbour pipe has room or is already joined to us). */
-    private boolean canJoin(BlockGetter level, BlockPos pos, Direction d) {
-        BlockState n = level.getBlockState(pos.relative(d));
-        Target t = target(line, n, d);
-        if (t == Target.NONE) return false;
-        if (t == Target.PIPE) return n.getValue(SIDES.get(d.getOpposite())) || count(n) < limit(n);
-        return true;
+    /** The block state of a single pipe for a slot (its sides and its T-piece). */
+    public BlockState stateOf(int slot) {
+        BlockState s = defaultBlockState().setValue(JUNCTION, FilterPipes.junction(slot));
+        for (Direction d : Direction.values()) s = s.setValue(SIDES.get(d), FilterPipes.joined(slot, d));
+        return s;
+    }
+
+    /** Bumps the version (a filter part or something else a line reaches changed). */
+    public static void touch() {
+        version++;
     }
 
     /** Joins free sides (in this order) while the pipe has room. */
     BlockState connect(BlockState s, BlockGetter level, BlockPos pos, List<Direction> order) {
-        for (Direction d : order) {
-            if (count(s) >= limit(s)) break;
-            if (!s.getValue(SIDES.get(d)) && canJoin(level, pos, d)) s = s.setValue(SIDES.get(d), true);
-        }
-        return s;
+        return stateOf(FilterPipes.connect(line, slot(s), level, pos, order));
     }
 
     @Override
@@ -157,13 +157,7 @@ public class FilterPipeBlock extends BaseEntityBlock {
     @Override
     protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         version++;
-        BooleanProperty p = SIDES.get(dir);
-        Target t = target(line, neighbor, dir);
-        boolean on;
-        if (t == Target.PIPE) on = neighbor.getValue(SIDES.get(dir.getOpposite())); // the neighbour pipe decided when it was placed
-        else if (t == Target.NONE) on = false;
-        else on = state.getValue(p) || count(state) < limit(state); // a tank or the connector appeared: joined while there is room
-        return state.setValue(p, on);
+        return state.setValue(SIDES.get(dir), FilterPipes.side(line, slot(state), level, pos, dir));
     }
 
     @Override
@@ -171,10 +165,11 @@ public class FilterPipeBlock extends BaseEntityBlock {
         super.onPlace(state, level, pos, old, moving);
         version++;
         if (level.isClientSide || old.is(this)) return;
+        if (old.getBlock() instanceof FilterPipeBundleBlock) return; // a bundle down to its last line: its sides stay as they were
         // set directly (a structure, a command, the GameTests): join as if it had been placed by hand
         BlockState now = count(state) == 0 ? connect(state, level, pos, List.of(Direction.values())) : state;
         if (now != state) level.setBlock(pos, now, Block.UPDATE_ALL);
-        dock((ServerLevel) level, pos, now);
+        FilterPipes.dock((ServerLevel) level, pos, line, slot(now));
     }
 
     @Override
@@ -186,27 +181,28 @@ public class FilterPipeBlock extends BaseEntityBlock {
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos from, boolean moving) {
         super.neighborChanged(state, level, pos, block, from, moving);
-        if (!level.isClientSide) dock((ServerLevel) level, pos, state);
-    }
-
-    /** E2: where the pipe docks on a tank, its connection appears in the interior right away. */
-    private static void dock(ServerLevel level, BlockPos pos, BlockState s) {
-        if (!Features.enabled(Feature.FILTER_LINES)) return;
-        for (Direction d : Direction.values()) {
-            if (!s.getValue(SIDES.get(d))) continue;
-            BlockPos n = pos.relative(d);
-            if (!(level.getBlockState(n).getBlock() instanceof TankBlock)) continue;
-            TankBlockEntity c = TankMultiblock.getController(level, n);
-            if (c == null) continue;
-            if (org.overengineer.bettacraft.plumbing.interior.TankAnchors.existing(level, c, n, d.getOpposite()) == Long.MIN_VALUE)
-                org.overengineer.bettacraft.plumbing.interior.TankAnchors.ensure(level, c, n, d.getOpposite());
+        if (level.isClientSide) return;
+        version++;
+        if (line.water()) {
+            // part b: another mod's block next to it may get its fluid handler only after it was placed
+            BlockState now = stateOf(FilterPipes.refresh(line, slot(state), level, pos));
+            if (now != state) {
+                level.setBlock(pos, now, Block.UPDATE_CLIENTS);
+                state = now;
+            }
         }
+        FilterPipes.dock((ServerLevel) level, pos, line, slot(state));
     }
 
-    // ------------------------------------------------------------------ the T-piece
+    // ------------------------------------------------------------------ the T-piece, a second line (part b)
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        // part b: the pipe of another line goes into this block: it becomes a bundle that carries both
+        if (stack.getItem() instanceof net.minecraft.world.item.BlockItem bi && bi.getBlock() instanceof FilterPipeBlock other && other.line != line) {
+            if (!level.isClientSide) FilterPipeBundleBlock.addLine(level, pos, other.line, player, stack);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!(stack.getItem() instanceof PipeTeeItem)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (state.getValue(JUNCTION)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
@@ -220,13 +216,17 @@ public class FilterPipeBlock extends BaseEntityBlock {
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    /** Turns the pipe at {@code pos} into a T-piece and joins every neighbour that fits (public for the GameTests). */
+    /** Turns the pipe at {@code pos} into a T-piece and joins every neighbour that fits (public for the GameTests; part b: a bundle's first line without one). */
     public static boolean makeJunction(Level level, BlockPos pos) {
         BlockState s = level.getBlockState(pos);
+        if (s.getBlock() instanceof FilterPipeBundleBlock) {
+            for (PipeLine l : FilterPipes.lines(level, pos)) if (!FilterPipes.junction(FilterPipes.at(level, pos, l))) return FilterPipeBundleBlock.makeJunction(level, pos, l);
+            return false;
+        }
         if (!(s.getBlock() instanceof FilterPipeBlock f) || s.getValue(JUNCTION)) return false;
         BlockState now = f.connect(s.setValue(JUNCTION, true), level, pos, List.of(Direction.values()));
         level.setBlock(pos, now, Block.UPDATE_ALL);
-        if (level instanceof ServerLevel sl) dock(sl, pos, now);
+        if (level instanceof ServerLevel sl) FilterPipes.dock(sl, pos, f.line, slot(now));
         return true;
     }
 
@@ -246,6 +246,7 @@ public class FilterPipeBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.bettacraft.filter_pipe.usage").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable(line.water() ? "tooltip.bettacraft.filter_water_pipe.usage" : "tooltip.bettacraft.filter_pipe.usage").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("tooltip.bettacraft.filter_pipe.bundle").withStyle(ChatFormatting.DARK_GRAY)); // part b
     }
 }

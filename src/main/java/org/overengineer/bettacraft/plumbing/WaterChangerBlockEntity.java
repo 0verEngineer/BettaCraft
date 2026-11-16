@@ -27,6 +27,11 @@ import org.overengineer.bettacraft.tank.TankNitrate;
  * {@link #intervalDays} days (menu): it drains the old water (down the drain) and fills the same amount of fresh water
  * from the reservoir, pipe or other mod's tank next to it, or endlessly from a water source block next to it. It only
  * drains what it can refill. Fresh tap water has the temperature of the place (a cool water change, M19).
+ * <p>
+ * M40 part b (F1, {@code features.pipes.filterWater}): on a multiblock filter it changes the water of every tank of the
+ * filter at once ({@link #share} % of each tank), refilled from what is next to it and from the filter's fresh water ports;
+ * the old water goes out of the filter's waste water ports or is discarded without one. When the fresh water is short,
+ * each tank gets its part by its share ({@code filter.FilterWater#distribute}).
  */
 public class WaterChangerBlockEntity extends BlockEntity implements org.overengineer.bettacraft.winding.Windable {
     public enum Status { WAITING, CHANGED, NO_TANK, NO_WATER, NO_POWER, OFF, DISABLED }
@@ -39,6 +44,10 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
     private long last = -1;
     private Status status = Status.WAITING;
     private int lastMb;
+    /** M40 part b (synced): the tanks it changes through a multiblock filter (0: a tank next to it, or none). */
+    private int filterTanks;
+    /** M40 part b: mB of old water of the last change through a filter that went out of its waste water ports (the rest was discarded). */
+    private int lastWasteMb;
     private final DeviceEnergy energy = new DeviceEnergy(40000, this::setChanged);
     /** M33 part d (hardening): game time of the last "change now" from the menu (one per second; not saved). */
     private long manualAt = Long.MIN_VALUE;
@@ -69,6 +78,8 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
     public long last() { return last; }
     public Status status() { return status; }
     public int lastMb() { return lastMb; }
+    public int filterTanks() { return filterTanks; }
+    public int lastWasteMb() { return lastWasteMb; }
 
     /** M33 part d: whether "change now" may run again (at most once per {@code 20} ticks, a client can send it in a loop). */
     public boolean manualChangeAllowed(long now) {
@@ -105,19 +116,22 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
         Status st;
         int done = 0;
         TankBlockEntity c = WaterSources.tank(level, worldPosition, false);
+        var filter = c == null ? org.overengineer.bettacraft.filter.FilterWater.filterNextTo(level, worldPosition) : null;
+        java.util.List<TankBlockEntity> tanks = filter == null ? java.util.List.of() : org.overengineer.bettacraft.filter.FilterWater.tanks(level, filter);
         long now = level.getGameTime();
         if (!Features.enabled(Feature.AUTO_WATER_CHANGE)) st = Status.OFF;
         else if (!enabled && !force) st = Status.DISABLED;
-        else if (c == null) st = Status.NO_TANK;
+        else if (c == null && tanks.isEmpty()) st = Status.NO_TANK;
         else if (!force && last >= 0 && now - last < intervalDays() * 24000L) st = status == Status.CHANGED ? Status.CHANGED : Status.WAITING;
         else {
-            int r = change(level, c);
+            int r = c != null ? change(level, c) : changeAll(level, filter, tanks);
             done = Math.max(0, r);
             st = r > 0 ? Status.CHANGED : r < 0 ? Status.NO_POWER : Status.NO_WATER;
             if (done > 0) last = now;
         }
-        if (st != status || done > 0) {
+        if (st != status || done > 0 || tanks.size() != filterTanks) {
             status = st;
+            filterTanks = tanks.size();
             changed();
         }
         return done;
@@ -154,6 +168,57 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
         return (int) filled;
     }
 
+    /**
+     * M40 part b: changes the water of every tank of the filter: {@link #share} % of each (never below the minimum fill),
+     * refilled from next to it and the filter's fresh water ports, the old water out of its waste water ports. Returns the mB
+     * changed (0: nothing to change or to refill, -1: not enough FE).
+     */
+    private int changeAll(ServerLevel level, org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity filter, java.util.List<TankBlockEntity> tanks) {
+        long[] want = new long[tanks.size()];
+        long sum = 0;
+        for (int i = 0; i < want.length; i++) {
+            TankData t = tanks.get(i).getTank();
+            long amount = Math.round(t.capacityMb() * share / 100.0);
+            long min = t.inhabitants().isEmpty() ? 0 : Math.round(ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5) * t.capacityMb());
+            want[i] = Math.max(0, Math.min(amount, t.waterMb() - min));
+            sum += want[i];
+        }
+        if (sum <= 0) return 0;
+        WaterSources.Supply supply = org.overengineer.bettacraft.filter.FilterWater.supply(level, worldPosition, filter);
+        long[] give = org.overengineer.bettacraft.filter.FilterWater.distribute(want, supply.endless() ? sum : supply.available(false));
+        long total = 0;
+        for (long g : give) total += g;
+        if (total <= 0) return 0;
+        int fe = (int) Math.ceil(DeviceEnergy.pumpFe() * total / 100.0);
+        if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
+        if (DeviceEnergy.required() && !org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, DeviceEnergy.pumpFe())) return -1; // M37: FE, else the spring
+        long filled = 0;
+        int kept = 0;
+        for (int i = 0; i < give.length; i++) {
+            if (give[i] <= 0) continue;
+            TankBlockEntity c = tanks.get(i);
+            TankData t = c.getTank();
+            net.neoforged.neoforge.fluids.FluidStack old = org.overengineer.bettacraft.tank.WaterValues.stack((int) give[i], org.overengineer.bettacraft.tank.WaterValues.of(t));
+            TankInteractions.changeWater(level, c, -give[i]);
+            kept += org.overengineer.bettacraft.filter.FilterWater.dispose(level, filter, old);
+            long in = 0;
+            if (supply.endless()) {
+                TankInteractions.changeWater(level, c, give[i]);
+                in = give[i];
+            } else {
+                for (WaterSources.Portion p : supply.take((int) give[i], false)) {
+                    TankInteractions.addWater(level, c, p.mb(), p.values());
+                    in += p.mb();
+                }
+            }
+            filled += in;
+            TankCare.log(level, c, "log.bettacraft.auto_water_change", String.valueOf(Math.round(in * 100.0 / Math.max(1, t.capacityMb()))), String.valueOf(in));
+        }
+        lastMb = (int) filled;
+        lastWasteMb = kept;
+        return (int) filled;
+    }
+
     private void changed() {
         setChanged();
         if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
@@ -166,6 +231,8 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
         tag.putLong("last", last);
         tag.putString("status", status.name());
         tag.putInt("last_mb", lastMb);
+        tag.putInt("filter_tanks", filterTanks);
+        tag.putInt("last_waste_mb", lastWasteMb);
     }
 
     @Override
@@ -189,6 +256,8 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
             status = Status.WAITING;
         }
         lastMb = tag.getInt("last_mb");
+        filterTanks = tag.getInt("filter_tanks");
+        lastWasteMb = tag.getInt("last_waste_mb");
         energy.load(tag);
         spring.load(tag, "spring");
     }

@@ -43,8 +43,13 @@ public final class MultiblockFilter {
 
     public enum Problem { NONE, NO_HEAD, TWO_HEADS, NO_CHAMBER, TOO_MANY, NO_INLET, NO_OUTLET }
 
-    /** The parts of one filter. */
-    public record Structure(BlockPos head, List<BlockPos> chambers, List<BlockPos> inlets, List<BlockPos> outlets, Problem problem) {
+    /** The parts of one filter (part b: with its fresh and waste water ports, which are optional). */
+    public record Structure(BlockPos head, List<BlockPos> chambers, List<BlockPos> inlets, List<BlockPos> outlets, List<BlockPos> fresh,
+                            List<BlockPos> waste, Problem problem) {
+        public Structure(BlockPos head, List<BlockPos> chambers, List<BlockPos> inlets, List<BlockPos> outlets, Problem problem) {
+            this(head, chambers, inlets, outlets, List.of(), List.of(), problem);
+        }
+
         public boolean formed() {
             return problem == Problem.NONE;
         }
@@ -60,7 +65,7 @@ public final class MultiblockFilter {
 
     /** Scans the filter around the pump head at {@code head}. */
     public static Structure scan(Level level, BlockPos head) {
-        List<BlockPos> chambers = new ArrayList<>(), inlets = new ArrayList<>(), outlets = new ArrayList<>();
+        List<BlockPos> chambers = new ArrayList<>(), inlets = new ArrayList<>(), outlets = new ArrayList<>(), fresh = new ArrayList<>(), waste = new ArrayList<>();
         int heads = 0;
         int limit = maxChambers();
         java.util.Set<BlockPos> seen = new java.util.HashSet<>();
@@ -87,12 +92,15 @@ public final class MultiblockFilter {
                 } else if ((is(ns, FilterPartBlock.Part.INLET) || is(ns, FilterPartBlock.Part.OUTLET)) && ns.getValue(FilterPartBlock.FACING) == d) {
                     seen.add(n.immutable());
                     (is(ns, FilterPartBlock.Part.INLET) ? inlets : outlets).add(n.immutable());
+                } else if ((is(ns, FilterPartBlock.Part.FRESH) || is(ns, FilterPartBlock.Part.WASTE)) && ns.getValue(FilterPartBlock.FACING) == d) {
+                    seen.add(n.immutable()); // part b: the fresh and the waste water port
+                    (is(ns, FilterPartBlock.Part.FRESH) ? fresh : waste).add(n.immutable());
                 }
             }
         }
         Problem pr = heads > 1 ? Problem.TWO_HEADS : chambers.isEmpty() ? Problem.NO_CHAMBER : tooMany || chambers.size() > limit ? Problem.TOO_MANY
                 : inlets.isEmpty() ? Problem.NO_INLET : outlets.isEmpty() ? Problem.NO_OUTLET : Problem.NONE;
-        return new Structure(head.immutable(), chambers, inlets, outlets, pr);
+        return new Structure(head.immutable(), chambers, inlets, outlets, fresh, waste, pr);
     }
 
     /** The pump head of the filter the part at {@code pos} belongs to, or null. */
@@ -200,6 +208,7 @@ public final class MultiblockFilter {
         synchronized (REPORTS) {
             REPORTS.clear();
         }
+        FilterLines.forget();
     }
 
     // ------------------------------------------------------------------ M40: one filter, several tanks

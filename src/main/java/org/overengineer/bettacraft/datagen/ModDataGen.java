@@ -328,6 +328,7 @@ public final class ModDataGen {
             DataGenM23.blockStates(this); // M23
             DataGenM24.blockStates(this); // M24
             DataGenM40.blockStates(this); // M40 part a
+            DataGenM40b.blockStates(this); // M40 part b
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
             DataGenM26.blockStates(this); // M26 part a
@@ -607,6 +608,7 @@ public final class ModDataGen {
             DataGenM23.itemModels(this); // M23
             DataGenM24.itemModels(this); // M24
             DataGenM40.itemModels(this); // M40 part a
+            DataGenM40b.itemModels(this); // M40 part b
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
@@ -1052,6 +1054,7 @@ public final class ModDataGen {
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
             DataGenM40.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part a
+            DataGenM40b.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part b
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
@@ -1226,7 +1229,8 @@ public final class ModDataGen {
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             for (Block b : DataGenM37.blocks()) dropSelf(b); // M37
             for (Block b : DataGenM40.blocks()) dropSelf(b); // M40 part a
-            for (Block b : DataGenM40.pipes()) { // M40: a filter pipe, and its T-piece back from a branch
+            for (Block b : DataGenM40b.blocks()) dropSelf(b); // M40 part b
+            for (Block b : java.util.stream.Stream.concat(DataGenM40.pipes().stream(), DataGenM40b.pipes().stream()).toList()) { // M40: a filter pipe, and its T-piece back from a branch
                 add(b, LootTable.lootTable()
                         .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(b))))
                         .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
@@ -1278,6 +1282,8 @@ public final class ModDataGen {
                         l.addAll(DataGenM37.blocks()); // M37
                         l.addAll(DataGenM40.blocks()); // M40 part a
                         l.addAll(DataGenM40.pipes());
+                        l.addAll(DataGenM40b.blocks()); // M40 part b
+                        l.addAll(DataGenM40b.pipes());
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
@@ -1359,6 +1365,7 @@ public final class ModDataGen {
             DataGenM26.blockTags(this::tag); // M26 part a
             DataGenM37.blockTags(this::tag); // M37
             DataGenM40.blockTags(this::tag); // M40 part a
+            DataGenM40b.blockTags(this::tag); // M40 part b
             DataGenM38.blockTags(this::tag); // M38
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c

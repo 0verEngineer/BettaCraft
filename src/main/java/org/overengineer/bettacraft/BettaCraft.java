@@ -212,6 +212,13 @@ public final class BettaCraft {
                 ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.RESERVOIR.get(),
                 (be, side) -> be.water());
+        // M40 part b: the fresh and waste water lines (single pipes and bundles that carry one) and the water ports of the filter;
+        // the intake and return lines stay inside the filter
+        event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                (level, pos, state, be, side) -> org.overengineer.bettacraft.plumbing.FilterLineFluid.of(level, pos, state, be),
+                ModBlocks.FILTER_FRESH_PIPE.get(), ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ModBlockEntities.FILTER_PORT.get(),
+                (be, side) -> be.outside());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, ModBlockEntities.CRUCIBLE.get(),
                 (be, side) -> be.automation(side));
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, ModBlockEntities.CRUCIBLE.get(),

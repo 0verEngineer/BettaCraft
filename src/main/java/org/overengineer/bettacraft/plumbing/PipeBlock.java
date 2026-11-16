@@ -81,7 +81,8 @@ public class PipeBlock extends Block {
         BlockPos n = pos.relative(d);
         BlockState ns = level.getBlockState(n);
         if (ns.getBlock() instanceof PipeBlock) return true;
-        if (ns.getBlock() instanceof PipeConnectable c) return c.pipeConnects(ns, d.getOpposite());
+        // M40 part b: a block of ours that pipes do not join on that face may still have a fluid handler there (the fresh and waste water ports)
+        if (ns.getBlock() instanceof PipeConnectable c && c.pipeConnects(ns, d.getOpposite())) return true;
         if (ns.isAir() || !(level instanceof Level l)) return false;
         return l.getCapability(Capabilities.FluidHandler.BLOCK, n, ns, l.getBlockEntity(n), d.getOpposite()) != null;
     }

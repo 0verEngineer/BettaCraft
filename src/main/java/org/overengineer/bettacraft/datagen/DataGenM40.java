@@ -53,7 +53,7 @@ final class DataGenM40 {
         guards(p);
     }
 
-    private static void pipe(BlockStateProvider p, Block block, String name) {
+    static void pipe(BlockStateProvider p, Block block, String name) {
         float a = 5, b = 11;
         var tex = p.modLoc("block/" + name);
         BlockModelBuilder core = p.models().getBuilder(name + "_core").texture("t", tex).texture("particle", tex).renderType("solid");

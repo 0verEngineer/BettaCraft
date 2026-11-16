@@ -71,6 +71,12 @@ public class MultiblockFilterScreen extends Screen {
         y += 12;
         g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, 0xFFFFFF);
         y += 12;
+        if (h.freshPorts() > 0 || h.wastePorts() > 0) { // M40 part b: the water ports
+            Component w = h.wastePorts() > 0 ? Component.translatable("gui.bettacraft.mb_filter.water", h.freshMb(), h.wasteMb())
+                    : Component.translatable("gui.bettacraft.mb_filter.no_waste", h.freshMb());
+            g.drawString(font, w.copy().withStyle(ChatFormatting.DARK_AQUA), x, y, 0xFFFFFF);
+            y += 12;
+        }
         // M40: every tank of the filter (A1: its share by water volume), or why the filter does not work for it
         var tanks = h.tanks();
         if (h.retrofit() && tanks.stream().anyMatch(t -> t.status().warning())) {

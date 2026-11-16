@@ -340,6 +340,10 @@ public final class ModItems {
     // M40: the filter pipes, the T-piece and the guards
     public static final DeferredItem<BlockItem> FILTER_INLET_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_INLET_PIPE);
     public static final DeferredItem<BlockItem> FILTER_OUTLET_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_OUTLET_PIPE);
+    public static final DeferredItem<BlockItem> FILTER_FRESH_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_FRESH_PIPE); // M40 part b
+    public static final DeferredItem<BlockItem> FILTER_WASTE_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_WASTE_PIPE);
+    public static final DeferredItem<BlockItem> FILTER_FRESH_PORT = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_FRESH_PORT);
+    public static final DeferredItem<BlockItem> FILTER_WASTE_PORT = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_WASTE_PORT);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeTeeItem> PIPE_TEE = ITEMS.register("pipe_tee",
             () -> new org.overengineer.bettacraft.plumbing.PipeTeeItem(new Item.Properties()));
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTAKE_GUARD = plumbing(ModBlocks.INTAKE_GUARD, org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);

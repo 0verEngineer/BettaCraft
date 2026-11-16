@@ -55,7 +55,8 @@ public final class FilterPipeModel extends BakedModelWrapper<BakedModel> {
     }
 
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
-        for (Block b : List.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get())) {
+        for (Block b : List.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(),
+                ModBlocks.FILTER_WASTE_PIPE.get())) {
             for (BlockState s : b.getStateDefinition().getPossibleStates()) {
                 ModelResourceLocation loc = BlockModelShaper.stateToModelLocation(s);
                 BakedModel m = event.getModels().get(loc);

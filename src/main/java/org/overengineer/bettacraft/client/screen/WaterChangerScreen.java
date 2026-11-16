@@ -16,7 +16,7 @@ import org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity;
  * did last. Values come live from the synced block entity; changes go to the server.
  */
 public class WaterChangerScreen extends Screen {
-    private static final int W = 270, H = 132;
+    private static final int W = 270, H = 154; // M40 part b: two lines for the filter
     private final BlockPos pos;
     private int left, top;
     private Button toggle;
@@ -74,6 +74,11 @@ public class WaterChangerScreen extends Screen {
         Component status = Component.translatable("gui.bettacraft.water_changer.status." + w.status().name().toLowerCase(java.util.Locale.ROOT), w.lastMb());
         g.drawString(font, status.copy().withStyle(w.status() == WaterChangerBlockEntity.Status.CHANGED || w.status() == WaterChangerBlockEntity.Status.WAITING
                 ? ChatFormatting.AQUA : ChatFormatting.GOLD), left + 10, top + 98, 0xFFFFFF);
+        if (w.filterTanks() > 0) { // M40 part b: on a multiblock filter
+            g.drawString(font, Component.translatable("gui.bettacraft.water_changer.filter", w.filterTanks()).withStyle(ChatFormatting.DARK_AQUA), left + 10, top + 126, 0xFFFFFF);
+            if (w.lastWasteMb() > 0) g.drawString(font, Component.translatable("gui.bettacraft.water_changer.filter_waste", w.lastWasteMb())
+                    .withStyle(ChatFormatting.GRAY), left + 10, top + 138, 0xFFFFFF);
+        }
         if (w.last() >= 0 && w.enabled()) {
             double days = Math.max(0, (w.last() + w.intervalDays() * 24000L - now) / 24000.0);
             g.drawString(font, Component.translatable("gui.bettacraft.water_changer.next", String.format(java.util.Locale.ROOT, "%.1f", days))
