@@ -49,6 +49,25 @@ final class DevClientSmokeM45 {
         then(40, () -> shot("chapter_en"));
         then(5, () -> openQuest("tankmates"));
         then(30, () -> shot("quest_en"));
+        // a feature switched off while the player is online: the script hides its quests on the client too, and shows them again
+        then(5, () -> {
+            mc.setScreen(null);
+            server(p -> {
+                org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, false);
+                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.server);
+            });
+        });
+        then(20, () -> clientHidden("tankmates", true));
+        then(5, this::openChapter);
+        then(40, () -> shot("chapter_tankmates_off"));
+        then(5, () -> {
+            mc.setScreen(null);
+            server(p -> {
+                org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, true);
+                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.server);
+            });
+        });
+        then(20, () -> clientHidden("tankmates", false));
         then(5, () -> language("de_de"));
         then(10, this::openChapter);
         then(40, () -> shot("chapter_de"));
@@ -124,6 +143,24 @@ final class DevClientSmokeM45 {
             LOGGER.info("[smoketest] M45 quest book open: {} zoom {}", mc.screen == null ? "NONE (FAIL)" : mc.screen.getClass().getSimpleName(), call(screen, "getZoom"));
         } catch (ReflectiveOperationException | LinkageError e) {
             LOGGER.error("[smoketest] M45 quest book (FAIL)", e);
+        }
+    }
+
+    /** Whether the client's copy of the quest is invisible as expected (the script sent the change to the players online). */
+    private void clientHidden(String name, boolean hidden) {
+        try {
+            Object file = Class.forName("dev.ftb.mods.ftbquests.client.ClientQuestFile").getField("INSTANCE").get(null);
+            for (Object q : (List<?>) call(chapter(file), "getQuests")) {
+                if (!((String) call(q, "getRawTitle")).contains("quest.bettacraft." + name + ".title")) continue;
+                net.minecraft.nbt.CompoundTag d = new net.minecraft.nbt.CompoundTag();
+                call(q, "writeData", d, mc.level.registryAccess());
+                LOGGER.info("[smoketest] M45 client quest {} invisible {} (expected {}) {}", name, d.getBoolean("invisible"), hidden,
+                        d.getBoolean("invisible") == hidden ? "PASS" : "FAIL");
+                return;
+            }
+            LOGGER.error("[smoketest] M45 client quest {} not found (FAIL)", name);
+        } catch (ReflectiveOperationException | LinkageError e) {
+            LOGGER.error("[smoketest] M45 client quest (FAIL)", e);
         }
     }
 
