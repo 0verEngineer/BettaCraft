@@ -43,6 +43,15 @@ hat seine eigene Seite, auch mehrere Schränke unter einem großen Becken. Klick
   der Rückwand. Die Einstellung `features.equipment.cabinetOutletSide` schaltet den Knopf ab (dann nutzt jeder Schrank die Rückwand,
   und die Strömung ist wieder gleichmäßig).
 
+## Create-Welle
+
+Mit **Create** nimmt ein Schrank eine drehende Welle, die das Aquarium darüber mit Strom versorgt, wie ein
+[Antriebsadapter](drive_adapter.md): der Knopf mit dem Wellen-Symbol links vom Filterplatz wählt die Seite (**keine**,
+hinten, links, rechts, vorne oder unten; Klick: nächste, Schleichen + Klick: vorige), ein Messingflansch markiert sie.
+Eine Welle, ein Zahnrad oder Getriebe dort lädt den FE-Puffer des Beckens und kostet Stress im Netz von Create; mit
+Aufziehen an zieht der Rest die Feder des Schranks auf. Der Schrank behält die Seite auf seinem Item. Server können das
+abschalten (`features.compat.create.cabinetDrive`) oder nur einige Seiten erlauben (`createDrive.cabinetSides`).
+
 ## Steinschränke
 
 ![Schränke aus verschiedenen Steinen mit Aquarien](../images/cabinets_stone.png)

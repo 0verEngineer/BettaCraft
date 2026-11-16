@@ -55,6 +55,10 @@ A turning Create shaft, cogwheel, gearbox or motor whose shaft points at a **wat
 * The devices cost **no stress**: they are not part of Create's network, they only take the speed of the shaft.
   An overstressed network gives them nothing.
 
+**The whole tank on one shaft:** a [drive adapter](../equipment/drive_adapter.md) on a tank wall or under the tank, or a
+shaft on the side of the cabinet under it, charges the tank's FE buffer, so every device of the tank runs on rotation.
+These two cost **real stress**, by the load of the devices (switch `features.compat.create.drive`).
+
 ## Display Links
 
 A Create **Display Link** placed on an aquarium block reads **Tank values**: one line per value (temperature, water

@@ -31,5 +31,8 @@ Gerät braucht bei kleinerem [Leistungsregler](regulator.md) weniger FE.
 Wassergeräte und der **Unterschrank** unter dem Aquarium, der alle Geräte seines Aquariums versorgt. FE geht vor, die
 Feder springt ein, solange es fehlt.
 
+**Create statt FE:** mit Create lädt ein [Antriebsadapter](drive_adapter.md) am Becken oder eine Welle am Schrank darunter
+den Puffer mit Drehkraft (mit echtem Stress).
+
 Der Tab **Wasser** im Aquarium-Menü zeigt die gespeicherte FE, den Bedarf und welche Gruppe ohne Strom ist; auch die
 Übersicht warnt. Lichter, die nicht auf einem Aquarium stehen (an einer Decke hängen), leuchten immer.

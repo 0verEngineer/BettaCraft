@@ -30,5 +30,8 @@ device uses less FE at a lower [power regulator](regulator.md) setting.
 devices and the **cabinet** under the tank, which powers every device of its tank. FE goes first, the spring stands in
 while it is short.
 
+**Create instead of FE:** with Create a [drive adapter](drive_adapter.md) on the tank, or a shaft on the cabinet under it,
+charges the buffer from rotation (with real stress).
+
 The **Water** tab of the tank menu shows the stored FE, how much the aquarium needs and which group is unpowered; the
 overview warns as well. Lights that are not on an aquarium (hanging from a ceiling) always shine.

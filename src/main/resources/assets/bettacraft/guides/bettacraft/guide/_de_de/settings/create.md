@@ -60,6 +60,11 @@ Eine drehende Create-Welle, ein Zahnrad, Getriebe oder Motor, dessen Welle auf e
 * Die Geräte kosten **keine Belastung (Stress)**: sie gehören nicht zu Creates Netz, sie nehmen nur die Drehzahl der
   Welle. Ein überlastetes Netz gibt ihnen nichts.
 
+**Das ganze Becken an einer Welle:** ein [Antriebsadapter](../equipment/drive_adapter.md) an einer Beckenwand oder unter
+dem Becken, oder eine Welle an der Seite des Schranks darunter, lädt den FE-Puffer des Beckens, so laufen alle Geräte des
+Beckens mit Drehkraft. Diese beiden kosten **echten Stress**, nach der Last der Geräte (Schalter
+`features.compat.create.drive`).
+
 ## Display Links
 
 Ein **Display Link** von Create an einem Aquariumblock liest **Beckenwerte**: eine Zeile pro Wert (Temperatur,

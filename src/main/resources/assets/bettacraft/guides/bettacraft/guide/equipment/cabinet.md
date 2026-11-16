@@ -42,6 +42,15 @@ also several cabinets under one big tank. Click for the next side, sneak + click
   wall. The setting `features.equipment.cabinetOutletSide` switches the button off (every cabinet then uses the back wall and the
   flow is even again).
 
+## Create shaft
+
+With **Create** a cabinet takes a turning shaft that powers the aquarium above it, like a
+[drive adapter](drive_adapter.md): the button with the shaft icon left of the filter slot chooses the side (**none**,
+back, left, right, front or bottom; click for the next one, sneak + click for the previous one), a brass flange marks it.
+A shaft, cogwheel or gearbox there charges the tank's FE buffer and costs stress in Create's network; with winding on, the
+rest winds the cabinet's spring. The cabinet keeps the side on its item. Servers can switch it off
+(`features.compat.create.cabinetDrive`) or allow only some sides (`createDrive.cabinetSides`).
+
 ## Stone cabinets
 
 ![Cabinets of different stones with aquariums](../images/cabinets_stone.png)
