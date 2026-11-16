@@ -884,6 +884,35 @@ def m39c(out_en: Path) -> None:
             print("missing", src)
 
 
+# M40 scenes (DevClientSmokeM40a/b/c, -Psmoketestm40a, -Psmoketestm40b, -Psmoketestm40c -Ppower -Pstorage -Pfacades): one filter for
+# three aquariums, the filter screen with its aquariums, the guard at a side dock, the pipe bundles, the water ports, the
+# covers and the facades of other mods
+M40_WORLD = {"filter_lines": ("bettacraft_m40a_filter", (40, 380, 1240, 730)),
+             "pipe_guards": ("bettacraft_m40a_dock_side", (440, 330, 760, 500)),
+             "pipe_bundle": ("bettacraft_m40b_bundle_end", (0, 40, 1280, 720)),
+             "filter_water": ("bettacraft_m40b_filter_water", (150, 150, 900, 640)),
+             "pipe_covers": ("bettacraft_m40c_covers_close", (0, 240, 1280, 700)),
+             "pipe_facades": ("bettacraft_m40c_facades", (0, 150, 1280, 620))}
+M40_SCREEN = ("bettacraft_m40a_screen", (362, 268, 918, 480))
+
+
+def m40(out_en: Path) -> None:
+    for name, (shot, box) in M40_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+    shot, box = M40_SCREEN
+    src = SHOTS / f"{shot}.png"
+    if src.exists():
+        save(Image.open(src).convert("RGB").crop(box), out_en / "filter_screen_tanks.png")
+    else:
+        print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -898,6 +927,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m40"]:
+        m40(out_en)
+        return 0
     if sys.argv[1:] == ["m39c"]:
         m39c(out_en)
         return 0

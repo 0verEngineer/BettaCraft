@@ -9,15 +9,6 @@ item_ids:
   - bettacraft:filter_pump_head
   - bettacraft:filter_inlet
   - bettacraft:filter_outlet
-  - bettacraft:filter_inlet_pipe
-  - bettacraft:filter_outlet_pipe
-  - bettacraft:pipe_tee
-  - bettacraft:intake_guard
-  - bettacraft:outlet_guard
-  - bettacraft:filter_fresh_pipe
-  - bettacraft:filter_waste_pipe
-  - bettacraft:filter_fresh_port
-  - bettacraft:filter_waste_port
 ---
 
 # Multiblock external filter
@@ -57,32 +48,20 @@ places the block instead of opening the screen, so you can build the aquarium on
 The old one-block [external filter](filters.md) stays the small variant.
 
 
-## Several aquariums, guards
+## Several aquariums: filter lines
 
-Since M40 one filter serves **several aquariums**. The <ItemLink id="bettacraft:filter_inlet_pipe" /> (blue) leads from
-the aquariums to the inlet, the <ItemLink id="bettacraft:filter_outlet_pipe" /> (orange) from the outlet back. A filter
-pipe joins at most two neighbours; a <ItemLink id="bettacraft:pipe_tee" /> used on it makes a branch. The pipes dock on
-**any side, the top or the bottom** of an aquarium: the pipe dock appears inside at that spot, and interior pipes lead on
-from it. The cleaning and the flow are **shared by the water volume** of the aquariums.
+Since version 1.32 one filter serves **several aquariums** through its own pipes, and up to four lines run in one block:
 
-Every dock needs a **guard** inside: an <ItemLink id="bettacraft:intake_guard" /> (or an intake strainer) on the inlet
-line, an <ItemLink id="bettacraft:outlet_guard" /> (or a lily pipe, nozzle or spray bar) on the return line. Use the guard
-on the glass where the pipe docks. **Without a guard the filter does not filter that aquarium** (warning in the aquarium
-and filter menus), and a pipe that leads into the aquarium and out again is not allowed. **This also holds for filters
-built before the update: fit the guards.**
+* [Filter lines and guards](filter_lines.md): the intake and return pipes, T-pieces, docking on any side, the guards.
+* [Pipe bundles, fresh and waste water](pipe_bundle.md): four lines in one block, water changes and top-off for every
+  aquarium of the filter.
+* [Pipe cover and facades](pipe_cover.md): hide the pipes behind any full block.
 
-## Pipe bundles, fresh and waste water
+**Important for old worlds:** every multiblock filter now needs an **intake guard and an outlet guard** in each of its
+aquariums, also filters built before the update. Until they are fitted the filter **does not filter** (red note in its
+screen and in the aquarium menu). Servers can keep the old way with `features.pipes.filterLines = false`.
 
-Up to **four lines run in one block**, like the conduits of other mods: right-click a filter pipe with the pipe of another
-line and both run on in a pipe bundle (sneak-right-click with an empty hand takes the line you look at out again). Each line
-keeps its own connections and T-piece; the lines never mix. The <ItemLink id="bettacraft:filter_fresh_pipe" /> (green) and
-the <ItemLink id="bettacraft:filter_waste_pipe" /> (brown) are the two other lines.
-
-The <ItemLink id="bettacraft:filter_fresh_port" /> on a chamber takes water from a water pump, a reservoir, an ME or RS
-export bus or the pipes of other mods (straight or through the fresh water line); a water source block next to it is
-endless tap water. A **level sensor or water change controller touching the filter** then tops off and changes the water
-of **every aquarium of the filter**, shared by what each one needs. The old water goes out of the
-<ItemLink id="bettacraft:filter_waste_port" />; without one it is discarded.
+<SubPages icons={true} />
 
 ## Obtaining
 
@@ -92,12 +71,3 @@ Crafting:
 <RecipesFor id="bettacraft:filter_pump_head" />
 <RecipesFor id="bettacraft:filter_inlet" />
 <RecipesFor id="bettacraft:filter_outlet" />
-<RecipesFor id="bettacraft:filter_inlet_pipe" />
-<RecipesFor id="bettacraft:filter_outlet_pipe" />
-<RecipesFor id="bettacraft:pipe_tee" />
-<RecipesFor id="bettacraft:intake_guard" />
-<RecipesFor id="bettacraft:outlet_guard" />
-<RecipesFor id="bettacraft:filter_fresh_pipe" />
-<RecipesFor id="bettacraft:filter_waste_pipe" />
-<RecipesFor id="bettacraft:filter_fresh_port" />
-<RecipesFor id="bettacraft:filter_waste_port" />
