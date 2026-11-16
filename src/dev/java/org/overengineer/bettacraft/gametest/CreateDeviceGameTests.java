@@ -48,14 +48,14 @@ public final class CreateDeviceGameTests {
         return ModList.get().isLoaded("create");
     }
 
-    private static Block block(String id) {
+    static Block block(String id) {
         Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
         if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
         return b;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static BlockState with(BlockState s, String property, Comparable value) {
+    static BlockState with(BlockState s, String property, Comparable value) {
         for (Property<?> p : s.getProperties()) if (p.getName().equals(property)) return s.setValue((Property) p, value);
         throw new GameTestAssertException("no property " + property + " on " + s);
     }
@@ -72,7 +72,7 @@ public final class CreateDeviceGameTests {
         throw new GameTestAssertException("no field " + c.getName() + "." + name);
     }
 
-    private static Method method(Class<?> c, String name, int params) {
+    static Method method(Class<?> c, String name, int params) {
         for (Class<?> k = c; k != null; k = k.getSuperclass()) {
             for (Method m : k.getDeclaredMethods()) {
                 if (m.getName().equals(name) && m.getParameterCount() == params) {
@@ -85,7 +85,7 @@ public final class CreateDeviceGameTests {
     }
 
     /** A creative motor at {@code rel} whose shaft points {@code facing}, turning at {@code rpm}. */
-    private static void motor(GameTestHelper h, BlockPos rel, Direction facing, int rpm) {
+    static void motor(GameTestHelper h, BlockPos rel, Direction facing, int rpm) {
         h.setBlock(rel, with(block("create:creative_motor").defaultBlockState(), "facing", facing));
         BlockEntity be = h.getBlockEntity(rel);
         if (be == null) throw new GameTestAssertException("no motor block entity");

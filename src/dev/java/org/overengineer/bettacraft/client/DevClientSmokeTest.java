@@ -159,6 +159,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM38 m38;
     /** -Psmoketestm37: the fertilizer maker, the crank and the cabinet's spring, the water tab (M37). */
     private static final boolean M37_ONLY = Boolean.getBoolean("bettacraft.smoketest.m37only");
+    /** -Pcreate -Psmoketestm41: a tank powered by Create's rotation through a drive adapter and a cabinet shaft (M41). */
+    private static final boolean M41_ONLY = Boolean.getBoolean("bettacraft.smoketest.m41only");
+    private static DevClientSmokeM41 m41;
     private static DevClientSmokeM37 m37;
     /** -Psmoketestm39a: big fish of other mods in a big tank, sea animals of other mods, the Aquaculture turtles (M39 part a). */
     private static final boolean M39A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39aonly");
@@ -408,6 +411,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M41_ONLY) {
+                if (ticks == 60) m41 = new DevClientSmokeM41();
+                if (m41 != null && m41.tick()) {
+                    m41 = null;
+                    LOGGER.info("[smoketest] client world test finished (M41 only)");
                     mc.stop();
                 }
                 return;

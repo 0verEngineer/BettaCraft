@@ -596,6 +596,10 @@ public final class DevSmokeUpgrade {
                     problems.add("cabinet " + p.toShortString() + ": outlet side " + cab.outletSetting() + " instead of the back wall");
                 }
                 cabinetsChecked++;
+                // M41: a cabinet of a world from before M41 takes no Create shaft (schema v3: drive none)
+                if (cab.driveSetting() != org.overengineer.bettacraft.equipment.DriveSide.NONE) {
+                    problems.add("cabinet " + p.toShortString() + ": drive side " + cab.driveSetting() + " instead of none");
+                }
                 // M23: full power, no intake sponge
                 if (legacy && (cab.regulator() != 10 || cab.intakeSponge())) problems.add("cabinet " + p.toShortString() + ": regulator " + cab.regulator() + ", sponge " + cab.intakeSponge());
                 // M29.1: the old cabinet got the air pump slot (empty) and kept its items in their slots
