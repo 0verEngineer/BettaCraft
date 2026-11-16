@@ -26,8 +26,9 @@ shrimp and snails that one actually meets in the wild.
 - **Wild carpets** (Hemianthus, Monte Carlo, Marsilea, Staurogyne, hairgrass in the world) are dense cushions of several
   heights with leafy tops, small tufts, a little colour variety and a soft, ragged rim instead of a flat plate.
 - **Artemia cysts from sand: 4 % instead of 8 %** (`drops.artemiaFromSandChance`). A world whose server config still has
-  the old default 0.08 is moved to 0.04 once (logged, old file kept as `bettacraft-server.toml.pre-m46`); a chance you set
-  yourself stays.
+  the old default 0.08 is moved to 0.04 once (logged, old file kept as `bettacraft-server.toml.pre-m46`), the global
+  `config/bettacraft-server.toml` before loading and a world's own `serverconfig/bettacraft-server.toml` when the server has
+  started (the world remembers it, so 0.08 set again later stays); a chance you set yourself stays.
 - When small animals spawn the **apple snail is picked a quarter as often** as the net catches it, so the dwarf crayfish,
   Sulawesi shrimp and Tylomelania of jungle water show up too (jungle spawns: about 40 % apple snails instead of 75 %).
 - `wildlife.spawnPassPerPlayer` (10) now counts the wild fish, frogs and turtles only; `/bettacraft wildlife` shows both
