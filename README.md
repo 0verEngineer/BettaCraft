@@ -14,14 +14,31 @@ run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel
     <td><img src="docs/images/bettacraft-reef-tank-swimming.gif" alt="A reef tank: clownfish at their anemone, green chromis, a yellow tang, seahorses and corals"></td>
   </tr>
   <tr>
+    <td><img src="docs/images/bettacraft-betta-flaring.gif" alt="A Mustard Gas halfmoon male spreads its fins and flares"></td>
+    <td><img src="docs/images/bettacraft-plant-growth.gif" alt="A time lapse: cuttings grow into Vallisneria, Rotala, Ludwigia, a sword plant and a Monte Carlo carpet"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/bettacraft-amazon-tank-swimming.gif" alt="An Amazon tank: discus, rummy nose and cardinal tetras between sword plants"></td>
+    <td><img src="docs/images/bettacraft-shrimp-tank-crawling.gif" alt="A shrimp tank: Neocaridina in every colour, bee shrimp, nerites and a dwarf crayfish"></td>
+  </tr>
+  <tr>
     <td><img src="docs/images/bettacraft-betta-varieties.jpg" alt="Six betta varieties in a row: Koi Galaxy, Black Orchid, Mustard Gas, Samurai, Avatar, Hellboy"></td>
     <td><img src="docs/images/bettacraft-tank-interior.jpg" alt="Inside the planted tank at 16 blocks per tank block"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/bettacraft-terraria.jpg" alt="A paludarium with sliders and a musk turtle, and a leopard gecko terrarium"></td>
+    <td><img src="docs/images/bettacraft-big-sea-tank.jpg" alt="A big sea water tank with a blacktip reef shark, eagle and cownose rays and a bamboo shark"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/bettacraft-filter-lines.jpg" alt="One multiblock filter for two tanks with filter pipes, T-pieces, a pipe bundle and pipe covers"></td>
+    <td><img src="docs/images/bettacraft-aquarium-room-shaders.jpg" alt="The aquarium room with Complementary Reimagined shaders"></td>
   </tr>
 </table>
 
 ![The tank menu with the genes of a betta and the water values, and the handbook page on genetics](docs/images/bettacraft-menus.png)
 
-More pictures and animations (also with Complementary shaders) are in [docs/images](docs/images).
+More pictures and animations (most also with Complementary Reimagined shaders) are in [docs/images](docs/images); they
+are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Building from source").
 
 ## Features
 
@@ -281,7 +298,8 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 ./gradlew runClient             # dev client with Jade, JEI, GuideME and the aquarium mods
 ./gradlew buildShowcase         # (re)builds the showcase world "Bettacraft Schaukasten" in run/saves (no window)
 ./gradlew runMultiplayerTest    # dedicated server + two background clients (Dev1, Dev2) play a scripted session
-./gradlew runClient -Psmoketestreadme -PnoJei   # README media scene (background window), then:
+./gradlew runClient -Psmoketestm43 -PnoJei      # README / mod page media in a copy of the showcase world (background
+./gradlew runClient -Psmoketestm43 -PnoJei -Pshaders  # window; fixed day and weather), then the stills with Complementary
 py tools/assetgen/readme_media.py       # run/screenshots -> docs/images (stills, GIF and WebP animations)
 ```
 

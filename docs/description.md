@@ -2,10 +2,11 @@
 
 # Bettacraft
 
-**Betta fish and real aquariums for Minecraft 1.21.1 (NeoForge).** Catch wild bettas and tankmates, keep them in
-multiblock aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the
-water, run filters, lights, CO2, pipes and reef dosing, culture live food, and breed new colours with real Mendel
-genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
+**Realistic fishkeeping in Minecraft 1.21.1 (NeoForge).** Catch wild bettas and tankmates, keep them in multiblock
+aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the water, run
+filters, lights, CO2, pipes and reef dosing, culture live food, and breed new colours with real Mendel genetics. Water
+chemistry, temperature, stocking and food all matter, the way they do in a real tank. Made for big modpacks such as All
+the Mods 10, and fine on its own.
 
 ![An aquarium room: a reef tank, a planted show tank with LED panels, CO2 and a multiblock filter, and a betta nano tank](images/bettacraft-aquarium-room.jpg)
 
@@ -22,25 +23,26 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 - **Breeding:** condition the pair with live food, give them floating plants for the bubble nest, and raise eggs,
   larvae and fry through six life stages on infusoria and artemia that you culture yourself. Two adult males flare and
   fight, also at a mirror stick. The breeding tab shows Punnett squares.
-- **Two sizes:** Normal (the default) or Large (the size before 1.28), one server setting for everyone; only the look
-  and the hitbox change.
+- **Two sizes:** Normal (the default, close to a real betta next to a block) or Large, one server setting for everyone;
+  only the look and the hitbox change.
 
 ![Six betta varieties: Koi Galaxy, Black Orchid, Mustard Gas, Samurai, Avatar, Hellboy](images/bettacraft-betta-varieties.jpg)
 
-## Aquariums you build yourself
+![A Mustard Gas halfmoon male spreads its fins and flares](images/bettacraft-betta-flaring.gif)
+
+## Tanks and the interior
 
 - **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable up to
-  64; big tanks up to 32x16x32), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket, and the
-  animals are real entities.
+  64; big tanks up to 32x16x32), with the connected texture of the glass or perfectly clear. Real vanilla water, filled
+  bucket by bucket, and the animals are real entities.
 - **The interior:** sneak and right-click with an empty hand to step inside the tank, a pocket dimension at 16 blocks
   per tank block. Build with any block: substrates, equipment and 28 decorations: castles, shipwrecks and a ship's bow,
   aquascaping stones (Seiryu, dragon stone, holey rock, lava rock, slate caves), roots and spiderwood, clay tubes that
-  plecos breed in, a diving helmet and a treasure chest that bubbles from the air pump. Almond leaves and alder cones on
-  the floor lower the pH and feed the shrimp. Outside, the aquarium shows the result as a live miniature, and several
-  players can build at once.
+  plecos breed in, a diving helmet and a treasure chest that bubbles from the air pump. Outside, the aquarium shows the
+  result as a live miniature, and several players can build at once.
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, stocking, water quality, oxygen,
-  sickness and recovery. A tank menu with tabs (overview, inhabitants and their genes, breeding, water, devices,
-  plants, interior, log), name sign, owner lock and break protection.
+  sickness and recovery. A tank menu with tabs (overview, inhabitants and their genes, breeding, water, devices, plants,
+  interior, log), name sign, owner lock and break protection.
 
 ![Inside the planted tank at 16 blocks per tank block, plants swaying](images/bettacraft-tank-interior-swaying.gif)
 
@@ -52,95 +54,87 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
   light, some need CO2 or soft water, are trimmed with shears and clean the water. The **Marimo** ball rolls with the
   current. **Floating plants** (duckweed, salvinia, water lettuce, hornwort ...) drift on the surface and spread.
 - **Liquid fertilizer** from the fertilizer maker makes them grow faster; too much feeds the algae.
-- **Plants of Minecraft and other mods work too:** kelp, seagrass, corals and the water plants of Fintastic, Regions
-  Unexplored, Twilight Forest and Alex's Caves lower the nitrate and count for breeding, without growing or needs.
+- **Plants of Minecraft and other mods work too:** kelp, seagrass, corals and the water plants of other mods lower the
+  nitrate and count for breeding, without growing or needs.
 - **Every plant grows wild** in the waters it comes from (jungle, swamp, river, mangrove, cold lakes, lush caves):
   shears cut a cutting, floating plants lie on calm water like lily pads.
 - Every plant and coral has real leaves, polyps and tentacles that **sway in the water**, inside and in the miniature;
   zoanthids and star polyps close when a fish swims by.
 
-![A planted tank with a betta, tetras and rasboras](images/bettacraft-planted-tank.jpg)
+![A time lapse: cuttings grow into Vallisneria, Rotala, Ludwigia, a sword plant and a Monte Carlo carpet](images/bettacraft-plant-growth.gif)
 
-## Tankmates and small animals
+## Shrimp, snails and other small animals
+
+- **Neocaridina in eleven colours** with selection grades that you breed up, bee shrimp from Crystal Red S to SSS,
+  Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and dwarf clawed frogs. Algae grow, and the
+  cleaning crew eats them.
+- **Big crayfish** (blue and orange Florida crayfish, the all-female marbled crayfish) eat plants and catch slow fish.
+- **Axolotls** get real care in a cool tank: eggs on the plants, larvae, and the five colours inherited by Mendel.
+
+![A shrimp tank: Neocaridina in every colour, bee shrimp, nerites and a dwarf crayfish on moss and wood](images/bettacraft-shrimp-tank-crawling.gif)
+
+## Tankmates
 
 - **48 freshwater tankmates** with their own models and behaviour: tetras, rasboras and danios, rainbowfish, corydoras,
   plecos, loaches, barbs, guppies and endlers (with their own genetics and 28 strains), platys, mollies, swordtails,
-  gouramis, **cichlids** (rams, Apistogramma, angelfish, discus) and **puffers** that eat snails. Shoals, water ranges,
-  predators and prey, fin nippers, and a breeding style for every species: open and cave brooders guard their young.
-- **Shrimp, snails and more:** Neocaridina in eleven colours with selection grades, bee shrimp from Crystal Red S to
-  SSS, Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and dwarf clawed frogs. Algae grow,
-  and the cleaning crew eats them. **Big crayfish** (blue and orange Florida crayfish, the all-female marbled crayfish)
-  eat plants and catch slow fish.
-- **Axolotls** get real care in a cool tank: eggs on the plants, larvae, and the five colours inherited by Mendel.
+  gouramis, **cichlids** (rams, Apistogramma, angelfish, discus) and **puffers** that eat snails.
+- Shoals, water ranges, predators and prey, fin nippers, and a breeding style for every species: open and cave brooders
+  guard their young.
 - **Water animals of other mods** live in the aquariums too; whales, bosses and hostile mobs are refused with a reason.
 
-## Reef tanks and seahorses
+![An Amazon tank: discus, rummy nose and cardinal tetras over sand and roots between sword plants and Vallisneria](images/bettacraft-amazon-tank-swimming.gif)
+
+## Salt water, reef tanks and seahorses
 
 - Sea water and salinity, protein skimmer, flow pump, live rock and actinic light. Eight corals and the bubble tip
   anemone grow with light, flow, calcium, alkalinity and magnesium from a four-channel dosing pump, and they bleach,
   glow and give frags. Clownfish spawn at their anemone; tangs, gobies, chromis, damsels, cleaner shrimp, hermit crabs.
 - **Seahorses** swim upright, hold on to plants and corals, and the male gives birth from his brood pouch.
+- **Big tanks** up to 32 x 16 x 32 blocks with a size rule for big animals by their real length: the bamboo shark that
+  lays egg cases, the blacktip reef shark, eagle and cownose rays, the honeycomb moray, and in fresh water pangasius,
+  redtail and wels catfish, the arapaima and the motoro stingray. Vanilla **dolphins** live in very big sea water tanks.
+  Catch the giants with the large net or a steel leader on your fishing rod into a transport tub.
 
 ![A reef tank: clownfish at their anemone, green chromis, a yellow tang, seahorses and corals](images/bettacraft-reef-tank-swimming.gif)
 
-## Big tanks and big animals
+![A big sea water tank with a blacktip reef shark, eagle and cownose rays and a bamboo shark](images/bettacraft-big-sea-tank.jpg)
 
-- **Big tanks** up to 32 x 16 x 32 blocks with a coarser interior, and a **size rule** for big animals by their real
-  length: a 1 m bamboo shark needs 12 x 6 x 3 blocks, a dolphin 32 x 16 x 8.
-- **Ten giants:** pangasius, redtail and wels catfish, arapaima and the motoro stingray in fresh water; the bamboo shark
-  that lays egg cases (mermaid's purses), the blacktip reef shark, the spotted eagle ray, schooling cownose rays and the
-  honeycomb moray that lives in a lair under your rocks in sea water. Vanilla **dolphins** live in very big sea water
-  tanks and take raw fish from the feeder.
-- Catch them with the **large net** or a **steel leader** on your fishing rod into a **transport tub**; they swim wide
-  curves, turn slowly and eat the small fish of their tank.
-
-![A big sea water tank with a blacktip reef shark, a bamboo shark and its egg cases, eagle and cownose rays](images/bettacraft-big-sea-tank.jpg)
-
-## Terraria, turtles, frogs and mobs in glass
+## Terraria and paludaria
 
 - A tank without water is a **terrarium**, one with water and land a **paludarium**, with air temperature, humidity and
   UV from heat mats, basking lamps and misters. Fix the tank type in the menu and a terrarium is never flooded by mistake.
 - **Turtles** (musk turtle, sliders, Hermann's tortoise, Reeves' turtle) lay eggs in the sand, and the nest temperature
   decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
   that climb the glass and a **corn snake**.
-- **Land animals of other mods:** the Naturalist tortoise, alligator, lizard, snake, scorpions, crab, dragonfly, duck and
-  capybara and the Critters and Companions otter, dragonfly and leaf insect live in terraria and paludaria with our care
-  and breeding; catch them with the terrarium box. Fish swim in the water part of a paludarium, and sea turtles go into big
-  sea water paludaria with a beach.
-- **Insects, small mammals and birds** of Naturalist, Critters and Companions and Living Things in terraria: butterflies
-  and fireflies (they glow at night) under a lid, beetles, hedgehogs, ferrets, red pandas, koalas, owls, penguins and
-  flamingos; woodlice and snails clean up the leftovers; the komodo dragon, bears and lions in big terraria.
+- **Land animals of other mods** (insects, small mammals, birds and reptiles of Naturalist, Critters and Companions and
+  Living Things) live in terraria with our care and breeding; catch them with the terrarium box.
 - **Minecraft animals as pets:** chickens with chicks from eggs in the sand, rabbits on grass, bees with flowers and a
-  mini beehive, frogs, cats, foxes, parrots and more at their real size; cows, horses and pandas in big terraria. No drops,
-  no farm.
-- **Mobs in glass:** drowned, zombies, skeletons, spiders and small slimes live shrunk and harmless in a tank. Weaken one
-  and catch it in a **mob jar**, lure it into an open tank with bait, or bring it in an EnderIO soul vial. A zombie under
-  water becomes a drowned, fed pairs breed, and mobs in glass never drop anything: decoration, not a farm.
+  mini beehive, frogs, cats, foxes and more at their real size. No drops, no farm.
+- **Mobs in glass:** drowned, zombies, skeletons, spiders and small slimes live shrunk and harmless in a tank. Catch one
+  in a **mob jar** or lure it in with bait: decoration, not a farm.
 
-## Equipment, water and chemistry
+![A paludarium with sliders and a musk turtle under a basking lamp, and a leopard gecko terrarium](images/bettacraft-terraria.jpg)
 
-- Internal, external, sponge and corner filters, cabinets of any wood or stone, automatic and clip-on feeders, air
-  pumps with air stones, light bars and LED panels in 16 colours with dimmer and daylight timer.
-- **Pipes and water changes:** glass and stainless steel pipes and pumps carry water with all its values, a multiblock
-  filter of any size with media that clog, nitrate that makes water changes matter, and a water change controller that
-  does them for you.
-- **One filter, many aquariums:** filter pipes with T-pieces dock on any side of a tank (with guards inside), up to four
-  lines run in one pipe bundle, fresh and waste water ports change the water of every tank of the filter, and a pipe cover
-  hides the pipes behind any block.
+![A terrarium with Minecraft pets: chickens, rabbits, a bee at its mini beehive and a cat](images/bettacraft-terrarium-pets.jpg)
+
+## Technology
+
+- **Equipment:** internal, external, sponge and corner filters, cabinets of any wood or stone, automatic and clip-on
+  feeders, air pumps with air stones, light bars and LED panels in 16 colours with dimmer and daylight timer.
+- **Pipes and the multiblock filter:** glass and stainless steel pipes and pumps carry water with all its values. A
+  multiblock filter of any size with media that clog serves several aquariums: filter pipes with T-pieces dock on any side
+  of a tank, up to four lines run in one pipe bundle, fresh and waste water ports change the water of every tank of the
+  filter, and a pipe cover hides the pipes behind any block.
 - **Water chemistry:** TDS, pH and hardness from the water, the substrate, driftwood, leaves and CO2, with a range for
-  every animal. CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
-- Optional Forge Energy for the equipment, or a **crank** that winds the filters, water devices and the cabinet under a
-  tank instead, or with Create a **drive adapter** that runs the whole tank on rotation. All sounds are generated by the
-  mod's own tools.
+  every animal. CO2 cylinders and bio CO2, a reverse osmosis unit, nitrate that makes water changes matter, and a water
+  change controller that does them for you.
+- **Food:** live food cultures (tubifex, daphnia, mosquito larvae, artemia) that a live food pump sends through the pipes;
+  a food maker for pellets, flakes, wafers and frozen food; a varied diet makes the colours stronger.
+- **Power, your choice:** by default nothing needs energy. With the power options on, the devices take Forge Energy, or
+  you wind them with a **crank**, or with Create a **drive adapter** runs every device of a tank on rotation with real
+  stress.
 
-## Food and live food
-
-- **Live food cultures:** tubifex worms, daphnia, mosquito larvae and artemia grow, go stale and crash when crowded or
-  hot. A **live food pump** sends them through the pipes into the tanks on a schedule.
-- **Food maker:** pellets, flakes, granules, algae wafers, fry powder, shrimp food and frozen food from vanilla
-  ingredients and live food, on a spring wound with the crank or on FE. Hoppers, AE2 and Refined Storage fill and empty it.
-- **Food variety:** every kind of eater has favourite and poorly suited food; a varied diet helps the fish recover and
-  makes the bettas' colours stronger.
+![One multiblock filter for two tanks: filter pipes with T-pieces, a pipe bundle with four lines, fresh and waste water ports and pipe covers](images/bettacraft-filter-lines.jpg)
 
 ## Handbook and menus
 
@@ -155,73 +149,63 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   required.
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
-- **Aquarium and fish mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, and the small
-  water animals of any mod.
+- **Aquarium and animal mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, Critters and
+  Companions and Living Things: their animals get our care and breeding (their young inherit their colours), the giants go
+  into big tanks by their real length, their land animals into terraria; deep-sea, giant and hostile animals are refused
+  with a reason; modpacks add profiles for any animal.
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
-  The facades of AE2, EnderIO, Mekanism Covers and **Cable Facades** hide the filter pipes.
-- **Animals of other mods:** the fish of Fintastic, Aquaculture 2, Fish of Thieves, Critters and Companions, Naturalist and
-  Living Things get our care and breeding in Bettacraft aquariums (their young inherit their colours), the giants go into
-  big tanks by their real length, their land animals live in terraria and paludaria; deep-sea, giant and hostile animals
-  are refused with a reason; modpacks add profiles for any animal.
+  The facades of AE2, EnderIO, Mekanism Covers and Cable Facades hide the filter pipes.
 - **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals; rotation
-  drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and a **drive adapter** on a tank (or a
-  shaft on its cabinet) powers every device of the tank, with real stress; Display Links show tank values. **AE2 and Refined
-  Storage** autocrafting feeds the food maker and the crucible; **Mekanism** tanks take the Bettacraft fluids.
+  drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
+  tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
 - **For modpacks:** an FTB Quests chapter "Bettacraft" (33 quests, English and German), KubeJS events (animal born,
-  animal died, monitor alarm), **JourneyMap** waypoints at tanks with a monitor alarm, a switch for every feature,
-  presets (simple, realistic, decoration only) and `/bettacraft foreign list` to see which animals of other mods still
-  need a profile.
+  animal died, monitor alarm), JourneyMap waypoints at tanks with a monitor alarm, and `/bettacraft foreign list` to see
+  which animals of other mods still need a profile.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
   O' Plenty and others get the wild animals, plants and corals (biome tags).
 - **Sodium and Iris:** supported, water and miniatures render correctly with shaders.
 
-![The aquarium room with Complementary shaders](images/bettacraft-aquarium-room-shaders.jpg)
+![The aquarium room with Complementary Reimagined shaders](images/bettacraft-aquarium-room-shaders.jpg)
+
+![The planted tank with Complementary Reimagined shaders](images/bettacraft-planted-tank-shaders.jpg)
+
+![Inside the planted tank with Complementary Reimagined shaders: shadows of the plants on the substrate](images/bettacraft-tank-interior-shaders.jpg)
 
 ## FAQ
 
 **Does it work with shaders?** Yes. Sodium and Iris are supported, the water and the miniatures render correctly. The
-pictures above were taken with Complementary Reimagined.
+last three pictures under Compatibility were taken with Complementary Reimagined; every other picture on this page is
+without shaders.
 
 **Can I use it in my modpack?** Yes. The mod is MIT licensed (code and all assets), so you may include it in any pack.
-Every feature has its own switch (`features.*` in `config/bettacraft-common.toml`, 105 in all): off, it loses its
-recipes, trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests. Presets
-(`preset = SIMPLE | REALISTIC | DECOR`) set other defaults in one line, `care.mode = NO_DEATH` keeps every animal alive,
-and datapacks can use the `bettacraft:feature` recipe and loot condition. Tags and datapacks control spawns, food,
-inhabitants and genetics.
+Tags and datapacks control spawns, food, inhabitants and genetics, and the pack files (quest chapter, KubeJS example)
+come with every release.
+
+**Can I turn features off?** Yes. Every feature has its own switch (`features.*` in `config/bettacraft-common.toml`, 105
+in all): off, it loses its recipes, trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its
+logic rests. Presets (`preset = SIMPLE | REALISTIC | DECOR`) set other defaults in one line, `care.mode = NO_DEATH` keeps
+every animal alive, and datapacks can use the `bettacraft:feature` recipe and loot condition.
 
 **Where is the config?** `serverconfig/bettacraft-server.toml` in the world (tank size, animals, breeding, water, power
-...), `config/bettacraft-common.toml` (spawns, feature switches) and `config/bettacraft-client.toml` (render
-distances, connected glass, effects). Every option can also be changed in game: Mods > Bettacraft > Config.
+...), `config/bettacraft-common.toml` (spawns, feature switches) and `config/bettacraft-client.toml` (render distances,
+connected glass, effects). Every option can also be changed in game: Mods > Bettacraft > Config.
 
-**Do I need power?** No. By default no device needs energy; with the power options on they take Forge Energy, or you
-wind them with the crank.
+**Do I need power?** No. By default no device needs energy; with the power options on they take Forge Energy, a crank or
+Create rotation.
 
-**Will my fish die while I am away?** By default time stands still for aquariums in unloaded chunks, and water
-quality and evaporation are on but gentle.
+**Will my fish die while I am away?** By default time stands still for aquariums in unloaded chunks, and water quality and
+evaporation are on but gentle.
 
 **Is it a beta?** Yes. Worlds are migrated between versions and nothing should get lost, but keep backups. Bugs and
 ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issues).
 
-## Credits
+## Acknowledgements
 
 - Code, procedural textures, models, sounds and the logo: 0verEngineer. Every asset comes from the mod's own generator
   (`tools/assetgen`), no third-party assets are used. Licence: MIT.
-- Developed with the help of AI coding tools; the screenshots and animations are real in-game captures.
-- Inspired by real betta and aquarium keeping. Thanks to the authors of NeoForge, GuideME, JEI, Jade and the mods
-  Bettacraft works with.
+- Developed with the help of AI coding tools. The pictures and animations on this page are real in-game captures of the
+  mod, taken automatically in its showcase world.
+- Inspired by real betta and aquarium keeping. Thanks to the authors of NeoForge, GuideME, JEI, Jade, Sodium, Iris,
+  Complementary Reimagined and the mods Bettacraft works with.
 - Source code, changelog and issues: [github.com/0verEngineer/BettaCraft](https://github.com/0verEngineer/BettaCraft).
-
-## Kurz auf Deutsch
-
-Bettacraft bringt Kampffische (Bettas) und echte Aquarien nach Minecraft 1.21.1 (NeoForge): Wildfänge aus dem Sumpf,
-Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem Glas, eine begehbare Innenwelt zum
-Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Terrarien und Paludarien mit Schildkröten, Pfeilgiftfröschen,
-Geckos und Kornnattern, Landtieren, Insekten, Säugetieren und Vögeln anderer Mods (Naturalist, Critters and Companions,
-Living Things), Minecraft-Tieren als Terrarien-Haustieren (Hühner, Kaninchen, Bienen, Frösche …), verkleinerte Mobs im Glas, Filter,
-Licht, CO2, Rohre (ein Multiblock-Filter für mehrere Becken, Rohrbündel und Verkleidungen), Wasserchemie, Flüssigdünger, Lebendfutter und eine Futtermaschine, und eine Kurbel für alle, die ohne
-Stromerzeuger spielen. Fische anderer Mods (Fintastic, Aquaculture, Fish of Thieves …, die Riesen im Großbecken)
-bekommen unsere Pflege und Zucht, Kelp, Seegras, Korallen und Wasserpflanzen anderer Mods wirken im Becken wie unsere, Becken fahren auf Create-Contraptions und Luftschiffen mit und laufen mit einem Antriebsadapter an Creates Drehkraft (mit echtem Stress), und für Modpacks gibt es
-ein FTB-Quests-Kapitel, KubeJS-Events, JourneyMap-Wegpunkte bei Alarmen, einen Schalter für jedes Feature und
-Voreinstellungen (einfach, realistisch, nur Deko). Die Mod und das Handbuch im Spiel sind
-komplett auf Deutsch übersetzt; die Spielsprache Deutsch genügt.
