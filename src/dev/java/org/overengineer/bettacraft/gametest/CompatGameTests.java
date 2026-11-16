@@ -231,7 +231,7 @@ public final class CompatGameTests {
         } finally {
             sp.getServer().getPlayerList().remove(sp);
         }
-        h.assertTrue(TankInhabitants.accepts(entity("fintastic", "arapaima"), null) == TankInhabitants.Acceptance.BLACKLISTED, "arapaima blacklisted");
+        h.assertTrue(TankInhabitants.accepts(entity("fintastic", "arapaima"), null) == TankInhabitants.Acceptance.BIG, "arapaima a big animal (M39)");
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "coelacanth"), null) != TankInhabitants.Acceptance.OK, "coelacanth refused");
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "pleco"), null) == TankInhabitants.Acceptance.OK, "pleco via tank_inhabitants");
         h.assertTrue(entity("fintastic", "freshwater_shark").is(ModTags.PREDATORS), "sharkminnow is a predator");
@@ -297,7 +297,7 @@ public final class CompatGameTests {
 
     // ------------------------------------------------------------------ Aquaculture
 
-    /** Small Aquaculture fish are accepted, the big ones are blacklisted although their hitbox is small. */
+    /** Small Aquaculture fish are accepted, the big ones (M39: by their profile length) only into a big tank although their hitbox is small. */
     @GameTest(template = EMPTY)
     public static void aquacultureSizes(GameTestHelper h) {
         if (skip(h, "aquaculture")) return;
@@ -305,8 +305,8 @@ public final class CompatGameTests {
         Player p = h.makeMockPlayer(GameType.SURVIVAL);
         ok(insert(h, c, new ItemStack(item("aquaculture", "minnow_bucket")), p));
         h.assertTrue(insert(h, c, new ItemStack(item("aquaculture", "tuna_bucket")), p) != null, "tuna refused");
-        h.assertTrue(TankInhabitants.accepts(entity("aquaculture", "tuna"), null) == TankInhabitants.Acceptance.BLACKLISTED, "tuna blacklisted");
-        h.assertTrue(TankInhabitants.accepts(entity("aquaculture", "arapaima"), null) == TankInhabitants.Acceptance.BLACKLISTED, "arapaima blacklisted");
+        h.assertTrue(TankInhabitants.accepts(entity("aquaculture", "tuna"), null) == TankInhabitants.Acceptance.BIG, "tuna a big animal (M39)");
+        h.assertTrue(TankInhabitants.accepts(entity("aquaculture", "arapaima"), null) == TankInhabitants.Acceptance.BIG, "arapaima a big animal (M39)");
         h.assertTrue(entity("aquaculture", "piranha").is(ModTags.PREDATORS), "piranha is a predator");
         h.assertTrue(BettaFood.kind(new ItemStack(item("aquaculture", "worm"))) == BettaFood.Kind.LIVE, "worms are live food");
         h.assertTrue(new ItemStack(item("aquaculture", "fish_fillet_raw")).is(ModTags.PELLET_FISH), "fillets make pellets");

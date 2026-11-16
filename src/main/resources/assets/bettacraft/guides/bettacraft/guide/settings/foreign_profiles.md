@@ -50,6 +50,7 @@ the aquarium nothing changes: the animal lives by its own mod there.
 | Critters and Companions | [leaf insect](../terrarium/foreign_land_animals.md) | humid terrarium, leaves | eggs into sand or soil |
 | Critters and Companions | [otter](../terrarium/foreign_land_animals.md) | big paludarium, 1 m, fish, hunts small fish | live young |
 | Critters and Companions | sea bunny | sea water aquarium, pellets | no |
+| Fintastic, Aquaculture, Fish of Thieves, Naturalist, Critters and Companions, Living Things | the big fish, the turtles of Aquaculture, Fish of Thieves, jellyfish, rays, starfish, the dumbo octopus, seahorses, sharks ... | see the [list of animals of other mods](foreign_animal_list.md) | |
 
 ## Writing a profile
 
@@ -96,6 +97,10 @@ installed are skipped quietly (unless `"required": true`). Example:
 | `terrarium.box` | the terrarium box catches it (default true; false: the large net and the transport tub) |
 | `terrarium.min_blocks` | a small animal's smallest tank (blocks of water and land; smaller stresses it) |
 | `breeding.nest`, `nest_temperature` | eggs into a nest on the land whose top is of this block tag (`#bettacraft:turtle_nest_ground`: sand and soil), hatching in `days` at that nest temperature (°C; warmer faster, at 18 °C and below they wait, above 36 °C they die) |
+| `length` | a big water animal of an aquarium: its length in metres for the [size rule](../big_tanks.md) of the big animals (the water of the tank counts); left out: its hitbox decides |
+| `breeding.sex` | `none` (default: any two breed), `random` (half female, half male) or `temperature` (with a `nest`: warm nests give females, cool ones males, half and half at `nest_temperature`, like our turtles); then only a female and a male breed |
+| `breeding.sterile` | NBT keys (true or false) that keep an animal from breeding when they are true (the trophies of Fish of Thieves: `["Trophy"]`); the young never get them |
+| `refuse` | instead of everything else: the tank refuses the animal with a reason, `deep_sea`, `too_big`, `hostile`, `fungus`, `cave` or `land` (the server option `inhabitants.allow` still lets it in) |
 | `suppress_own_breeding` | `false` lets the animal's own breeding run in the aquarium too |
 
 Animals with a care of their own in Bettacraft (our animals, the axolotl, dolphin, sea turtle and the mobs in glass) cannot

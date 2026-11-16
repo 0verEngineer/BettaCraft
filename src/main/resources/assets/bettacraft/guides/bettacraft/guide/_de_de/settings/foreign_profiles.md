@@ -49,6 +49,7 @@ Außerhalb des Aquariums ändert sich nichts: Dort lebt das Tier nach seiner eig
 | Critters and Companions | [Wandelndes Blatt](../terrarium/foreign_land_animals.md) | feuchtes Terrarium, Laub | Eier in Sand oder Erde |
 | Critters and Companions | [Otter](../terrarium/foreign_land_animals.md) | großes Paludarium, 1 m, Fisch, jagt kleine Fische | lebende Junge |
 | Critters and Companions | Seehase | Meerwasseraquarium, Pellets | nein |
+| Fintastic, Aquaculture, Fish of Thieves, Naturalist, Critters and Companions, Living Things | die großen Fische, die Schildkröten von Aquaculture, Fish of Thieves, Quallen, Rochen, Seesterne, der Dumbo-Oktopus, Seepferdchen, Haie … | siehe die [Liste der Tiere anderer Mods](foreign_animal_list.md) | |
 | Critters and Companions | Koi | Teichfisch (4 bis 28 °C) | Eier an Pflanzen, 16 Wasserblöcke |
 
 ## Ein Profil schreiben
@@ -96,6 +97,10 @@ Entities, deren Mod nicht installiert ist, werden still übersprungen (außer mi
 | `terrarium.box` | die Terrarienbox fängt es (Standard true; false: großer Kescher und Transportwanne) |
 | `terrarium.min_blocks` | das kleinste Becken eines kleinen Tiers (Blöcke Wasser und Land; kleiner stresst es) |
 | `breeding.nest`, `nest_temperature` | Eier in ein Nest auf dem Land, dessen Oberseite zu diesem Block-Tag gehört (`#bettacraft:turtle_nest_ground`: Sand und Erde); sie schlüpfen nach `days` bei dieser Nesttemperatur (°C; wärmer schneller, bei 18 °C und darunter warten sie, über 36 °C sterben sie) |
+| `length` | ein großes Wassertier im Aquarium: seine Länge in Metern für die [Größenregel](../big_tanks.md) der Großtiere (es zählt das Wasser des Beckens); weggelassen: die Hitbox entscheidet |
+| `breeding.sex` | `none` (Standard: zwei beliebige vermehren sich), `random` (halb Weibchen, halb Männchen) oder `temperature` (mit `nest`: warme Nester ergeben Weibchen, kühle Männchen, halb und halb bei `nest_temperature`, wie bei unseren Schildkröten); dann vermehren sich nur ein Weibchen und ein Männchen |
+| `breeding.sterile` | NBT-Schlüssel (wahr oder falsch), die ein Tier an der Vermehrung hindern, wenn sie wahr sind (die Trophäen von Fish of Thieves: `["Trophy"]`); die Jungen erben sie nie |
+| `refuse` | statt allem anderen: das Becken lehnt das Tier mit einem Grund ab, `deep_sea`, `too_big`, `hostile`, `fungus`, `cave` oder `land` (die Serveroption `inhabitants.allow` lässt es trotzdem hinein) |
 | `suppress_own_breeding` | `false` lässt die eigene Zucht des Tiers im Aquarium zusätzlich laufen |
 
 Tiere mit eigener Pflege in Bettacraft (unsere Tiere, Axolotl, Delfin, Meeresschildkröte und die Mobs im Glas) können kein

@@ -290,6 +290,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m35aonly', 'true'
             }
+            if (project.hasProperty('smoketestm39a')) {
+                // gradlew runClient -Psmoketestm39a [-Paquatic] : only the M39 part a scene (big fish of other mods in a big tank,
+                // sea animals of other mods, the Aquaculture turtles in a paludarium)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m39aonly', 'true'
+            }
             if (project.hasProperty('smoketestm35b')) {
                 // gradlew runClient -Psmoketestm35b : only the M35 part b scene (Naturalist lizard, snake and scorpions in a dry
                 // terrarium, fish in the water part of a paludarium with a crab, dragonflies over the water)

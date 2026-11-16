@@ -240,6 +240,7 @@ public final class GuideGen {
         }
         floatingTable(out, "plants/floating_plants.md");
         foreignPlantTable(out, "plants/foreign_plants.md"); // M38
+        foreignAnimalTables(out, "settings/foreign_animal_list.md"); // M39
         sourcesPage(out, "getting_started/sources.md");
         advancements(out, "progress.md");
         return out;
@@ -698,6 +699,127 @@ public final class GuideGen {
             tb.row(MOD_NAMES.getOrDefault(ns, ns), String.join(", ", ids), as, effect);
         }
         out.computeIfAbsent(page, k -> new LinkedHashMap<>()).put(t("## The plants", "## Die Pflanzen"), tb.render());
+    }
+
+    // ================================================================== M39: the animals of other mods
+
+    private static final Map<String, String> ANIMAL_MODS = Map.of("minecraft", "Minecraft", "fintastic", "Fintastic", "aquaculture", "Aquaculture 2",
+            "fishofthieves", "Fish of Thieves", "naturalist", "Naturalist", "crittersandcompanions", "Critters and Companions",
+            "livingthings", "Living Things", "alexscaves", "Alex's Caves", "twilightforest", "Twilight Forest");
+
+    /**
+     * The shipped profiles of {@code data/bettacraft/bettacraft/foreign_animals}: the water animals, the land and marsh animals
+     * (where they live, the size rule, food, breeding) and the refused ones with their reason; sorted by mod and file.
+     */
+    private void foreignAnimalTables(Map<String, Map<String, String>> out, String page) {
+        Path dir = project().resolve("src/main/resources/data/bettacraft/bettacraft/foreign_animals");
+        List<Path> files = new ArrayList<>();
+        try (var st = Files.list(dir)) {
+            st.filter(f -> f.toString().endsWith(".json")).sorted().forEach(files::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        Table water = new Table(t("Mod", "Mod"), t("Animals", "Tiere"), t("Water", "Wasser"), t("Size rule", "Größenregel"), t("Food", "Futter"),
+                t("Breeding", "Zucht"));
+        Table land = new Table(t("Mod", "Mod"), t("Animals", "Tiere"), t("Tank", "Becken"), t("Size rule", "Größenregel"), t("Food", "Futter"),
+                t("Breeding", "Zucht"));
+        Table refused = new Table(t("Mod", "Mod"), t("Animals", "Tiere"), t("Why", "Warum"));
+        var f = new org.overengineer.bettacraft.tank.BigTankRules.Factors(12, 6, 3, 100);
+        for (Path file : files) {
+            org.overengineer.bettacraft.foreign.ForeignProfile p;
+            try {
+                p = org.overengineer.bettacraft.foreign.ForeignProfile.parse(com.google.gson.JsonParser.parseString(Files.readString(file)).getAsJsonObject(), w -> {});
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            List<String> ids = new ArrayList<>();
+            for (var id : p.entities()) ids.add("`" + id + "`");
+            String ns = p.entities().get(0).getNamespace();
+            String mod = ANIMAL_MODS.getOrDefault(ns, ns);
+            if (p.refuse() != null) {
+                String why = switch (p.refuse()) {
+                    case "deep_sea" -> t("deep-sea animals (cold, dark, high pressure)", "Tiefseetiere (kalt, dunkel, hoher Druck)");
+                    case "too_big" -> t("far too big for any tank", "viel zu groß für jedes Becken");
+                    case "hostile" -> t("hostile creatures", "feindliche Wesen");
+                    case "fungus" -> t("mushroom creatures, no water animals", "Pilzwesen, keine Wassertiere");
+                    case "cave" -> t("bound to their cave world", "an ihre Höhlenwelt gebunden");
+                    default -> t("not for a tank", "nichts fürs Becken");
+                };
+                refused.row(mod, String.join(", ", ids), why);
+                continue;
+            }
+            double len = p.bigLength();
+            String size = "–";
+            if (len > 0) {
+                var n = org.overengineer.bettacraft.tank.BigTankRules.need(len, f);
+                size = t(fmt1(len) + " m: " + n.longSide() + " × " + n.shortSide() + " × " + n.height() + " blocks, " + n.water() + " blocks of room",
+                        fmt1(len).replace('.', ',') + " m: " + n.longSide() + " × " + n.shortSide() + " × " + n.height() + " Blöcke, " + n.water() + " Blöcke Raum");
+            }
+            String food = foodWords(p);
+            String breed = breedWords(p);
+            if (p.terrarium() == null) {
+                String salt = saltWord(p.salinity()) + ", " + (int) p.tempMin() + "–" + (int) p.tempMax() + " °C";
+                water.row(mod, String.join(", ", ids), salt, size, food, breed);
+            } else {
+                String tank = switch (p.terrarium().habitat()) {
+                    case DRY -> t("terrarium", "Terrarium");
+                    case PALUDARIUM, WET -> t("paludarium", "Paludarium");
+                    default -> t("terrarium or paludarium", "Terrarium oder Paludarium");
+                };
+                if (Double.isFinite(p.terrarium().air().min())) tank += ", " + (int) p.terrarium().air().min() + "–" + (int) p.terrarium().air().max() + " °C";
+                land.row(mod, String.join(", ", ids), tank, size, food, breed);
+            }
+        }
+        Map<String, String> m = out.computeIfAbsent(page, k -> new LinkedHashMap<>());
+        m.put(t("## Water animals", "## Wassertiere"), water.render());
+        m.put(t("## Land and marsh animals", "## Land- und Sumpftiere"), land.render());
+        m.put(t("## Refused animals", "## Abgelehnte Tiere"), refused.render());
+    }
+
+    private String saltWord(org.overengineer.bettacraft.tank.Salinity.Range r) {
+        if (r.equals(org.overengineer.bettacraft.tank.Salinity.Range.FRESH)) return t("fresh", "Süßwasser");
+        if (r.equals(org.overengineer.bettacraft.tank.Salinity.Range.BRACKISH)) return t("fresh to brackish", "Süß- bis Brackwasser");
+        if (r.equals(org.overengineer.bettacraft.tank.Salinity.Range.BRACKISH_ONLY)) return t("brackish", "Brackwasser");
+        if (r.equals(org.overengineer.bettacraft.tank.Salinity.Range.MARINE) || r.equals(org.overengineer.bettacraft.tank.Salinity.Range.HARDY_MARINE)) {
+            return t("sea", "Meerwasser");
+        }
+        if (r.equals(org.overengineer.bettacraft.tank.Salinity.Range.ANY)) return t("fresh or sea", "Süß- oder Meerwasser");
+        return (int) r.min() + "–" + (int) r.max() + " ‰";
+    }
+
+    private String foodWords(org.overengineer.bettacraft.foreign.ForeignProfile p) {
+        List<String> w = new ArrayList<>();
+        for (String x : p.food()) {
+            w.add(switch (x) {
+                case "normal" -> t("pellets and flakes", "Pellets und Flocken");
+                case "live" -> t("live and frozen food", "Lebend- und Frostfutter");
+                case "fry" -> t("fry food", "Aufzuchtfutter");
+                default -> "`" + x + "`";
+            });
+        }
+        return w.isEmpty() ? "–" : String.join(", ", w);
+    }
+
+    private String breedWords(org.overengineer.bettacraft.foreign.ForeignProfile p) {
+        var b = p.breeding();
+        if (!b.breeds()) return t("no", "nein");
+        StringBuilder s = new StringBuilder(b.type() == org.overengineer.bettacraft.foreign.ForeignProfile.Type.LIVEBEARER ? t("live young", "lebendgebärend")
+                : b.nests() ? t("eggs into a nest on the land", "Eier in ein Nest an Land") : t("eggs", "Eier"));
+        if (b.needsPlants()) s.append(t(" on plants", " an Pflanzen"));
+        if (b.minWaterBlocks() > 0) s.append(t(", from " + (int) b.minWaterBlocks() + " water blocks", ", ab " + (int) b.minWaterBlocks() + " Wasserblöcken"));
+        if (b.sex() == org.overengineer.bettacraft.foreign.ForeignProfile.Sex.TEMPERATURE) {
+            s.append(t(", the nest temperature decides the sex (half and half at " + fmt1(b.nestPivot()) + " °C)",
+                    ", die Nesttemperatur bestimmt das Geschlecht (halb und halb bei " + fmt1(b.nestPivot()).replace('.', ',') + " °C)"));
+        } else if (b.sex() == org.overengineer.bettacraft.foreign.ForeignProfile.Sex.RANDOM) {
+            s.append(t(", a female and a male", ", ein Weibchen und ein Männchen"));
+        }
+        if (!b.inherit().isEmpty()) s.append(t(", variants inherited", ", Varianten vererbt"));
+        if (!b.sterile().isEmpty()) s.append(t(", trophies do not breed", ", Trophäen vermehren sich nicht"));
+        return s.toString();
+    }
+
+    private static String fmt1(double v) {
+        return v == Math.rint(v) ? String.valueOf((long) v) : String.valueOf(Math.round(v * 10) / 10.0);
     }
 
     // ================================================================== the page "where to find what"
