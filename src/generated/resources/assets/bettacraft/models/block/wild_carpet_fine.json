@@ -2,8 +2,10 @@
   "parent": "bettacraft:block/template_wild_carpet",
   "textures": {
     "accent": "bettacraft:block/wild_carpet_fine_accent",
+    "cushion": "bettacraft:block/wild_carpet_fine_cushion",
+    "ground": "bettacraft:block/wild_carpet_fine_ground",
     "leaf": "bettacraft:block/wild_carpet_fine",
-    "mat": "bettacraft:block/plant_leaf_mat",
+    "side": "bettacraft:block/wild_carpet_fine_side",
     "top": "bettacraft:block/wild_carpet_fine_top"
   }
 }

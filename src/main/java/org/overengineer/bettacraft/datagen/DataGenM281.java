@@ -126,7 +126,9 @@ final class DataGenM281 {
         String tex = "block/" + kind.id() + "_" + look;
         b.texture("leaf", p.modLoc(tex)).texture("accent", p.modLoc(tex + "_accent")).texture("top", p.modLoc(tex + "_top"));
         if (kind == WildPlantKind.EPIPHYTE) b.texture("rhizome", p.modLoc("block/plant_rhizome"));
-        if (kind == WildPlantKind.CARPET) b.texture("mat", p.modLoc("needle".equals(look) ? "block/plant_leaf_needle" : "block/plant_leaf_mat"));
+        if (kind == WildPlantKind.CARPET) { // M46: cushions with leafy tops and sides on a ground layer with a ragged rim
+            b.texture("cushion", p.modLoc(tex + "_cushion")).texture("side", p.modLoc(tex + "_side")).texture("ground", p.modLoc(tex + "_ground"));
+        }
         return b;
     }
 }
