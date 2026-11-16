@@ -337,6 +337,7 @@ public final class TankmateGameTests {
         TankBlockEntity open = tank(h, 2, 2, 2, 3, 2, 2, 12000, 25F);
         TankBlockEntity boxed = tank(h, 8, 2, 2, 3, 2, 2, 12000, 25F);
         ServerPlayer sp = player(h);
+        var watcher = QuestAdv.watcher(h, open); // M45
         use(sp, boxed.getBlockPos(), new ItemStack(ModItems.BREEDING_BOX.get()));
         h.assertTrue(boxed.getTank().breedingBox(), "breeding box hung in");
         h.assertTrue(TankInhabitants.breakBlockedReason(level, boxed.getBlockPos()).isPresent(), "the box keeps the tank");
@@ -351,6 +352,8 @@ public final class TankmateGameTests {
             days(h, c, TankmateBreeding.gestationDays() + 0.25, 0.25, 25F);
             h.assertTrue(logged(c.getTank(), c == open ? "log.bettacraft.tm.born" : "log.bettacraft.tm.born_box"), "she gave birth");
         }
+        QuestAdv.check(h, watcher, "livebearer_litter"); // M45
+        QuestAdv.gone(h, watcher);
         long fryOpen = mates(h, open, null).stream().filter(m -> !m.isAdult()).count();
         h.assertTrue(fryOpen > 0, "free fry in the open tank: " + fryOpen);
         int inBox = TankmateBreeding.boxFry(boxed.getTank());

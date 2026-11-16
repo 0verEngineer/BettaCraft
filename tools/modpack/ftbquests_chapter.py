@@ -132,25 +132,25 @@ QUESTS = [
     # equipment and technology
     ("cabinet", [adv("cabinet")], ["equipment"], 7.00, -2.00, 25, None),
     ("cooler", [adv("cooler")], ["cabinet"], 9.00, -2.00, 25, None),
-    ("aeration", [item("air_pump"), item("air_stone")], ["cooler"], 11.00, -2.00, 50, None),
-    ("sponge_filter", [item("sponge_filter")], ["cooler"], 11.00, -3.50, 25, None),
-    ("led_lights", [item("led_panel")], ["cooler"], 9.00, -3.50, 50, None),
-    ("light_timer", [adv("light_timer")], ["led_lights"], 9.00, -5.00, 25, None),
-    ("regulator", [adv("regulator")], ["sponge_filter"], 13.00, -3.50, 25, None),
-    ("powered", [adv("powered")], ["regulator"], 15.00, -3.50, 50, None),
-    ("wound_up", [adv("wound_up")], ["regulator"], 13.00, -5.00, 50, None),
-    ("stainless_steel", [item("crucible"), item("stainless_steel_ingot")], ["external_filter"], 6.00, 7.50, 75, None),
-    ("pipes", [item("water_pump"), item("glass_pipe")], ["external_filter"], 8.00, 7.50, 50, None),
-    ("interior_pipes", [item("bulkhead"), item("spray_bar")], ["pipes"], 6.00, 9.00, 50, None),
-    ("auto_water_change", [adv("auto_water_change")], ["pipes"], 8.00, 9.00, 100, None),
-    ("top_off", [item("level_sensor")], ["pipes"], 10.00, 9.00, 50, None),
+    ("aeration", [item("air_pump"), item("air_stone")], ["cooler"], 11.00, -1.40, 50, None),
+    ("sponge_filter", [item("sponge_filter")], ["cooler"], 11.25, -2.90, 25, None),
+    ("led_lights", [item("led_panel")], ["cooler"], 10.50, -4.25, 50, None),
+    ("light_timer", [adv("light_timer")], ["led_lights"], 12.25, -4.75, 25, None),
+    ("regulator", [adv("regulator")], ["sponge_filter"], 13.25, -2.90, 25, None),
+    ("powered", [adv("powered")], ["regulator"], 15.25, -2.90, 50, None),
+    ("wound_up", [adv("wound_up")], ["regulator"], 14.75, -4.40, 50, None),
+    ("pipes", [item("water_pump"), item("glass_pipe")], ["cabinet"], 6.00, -4.75, 50, None),
+    ("stainless_steel", [item("crucible"), item("stainless_steel_ingot")], ["pipes"], 4.50, -5.75, 75, None),
+    ("interior_pipes", [item("bulkhead"), item("spray_bar")], ["pipes"], 4.00, -7.75, 50, None),
+    ("auto_water_change", [adv("auto_water_change")], ["pipes"], 5.50, -6.75, 100, None),
+    ("top_off", [item("level_sensor")], ["pipes"], 7.00, -8.25, 50, None),
     ("multiblock_filter", [item("filter_chamber"), item("filter_pump_head"), item("filter_inlet"), item("filter_outlet")],
-     ["external_filter"], 10.00, 4.50, 100, None),
+     ["cabinet"], 7.25, -6.50, 100, None),
     ("filter_lines", [item("filter_inlet_pipe"), item("filter_outlet_pipe"), item("intake_guard"), item("outlet_guard")],
-     ["multiblock_filter"], 12.00, 4.50, 75, None),
-    ("shared_filter", [adv("shared_filter")], ["filter_lines"], 14.00, 4.25, 150, "hexagon"),
-    ("filter_water", [item("filter_fresh_port"), item("filter_waste_port")], ["filter_lines"], 12.00, 3.00, 75, None),
-    ("pipe_covers", [item("pipe_cover")], ["filter_lines"], 14.00, 2.50, 25, None),
+     ["multiblock_filter"], 8.75, -7.50, 75, None),
+    ("shared_filter", [adv("shared_filter")], ["filter_lines"], 10.75, -7.75, 150, "hexagon"),
+    ("filter_water", [item("filter_fresh_port"), item("filter_waste_port")], ["filter_lines"], 8.75, -9.00, 75, None),
+    ("pipe_covers", [item("pipe_cover")], ["filter_lines"], 10.50, -9.50, 25, None),
     # plants and the interior
     ("decor", [adv("decor")], ["interior"], -1.00, -3.50, 25, None),
     ("floating_plants", [item("salvinia")], ["fill_tank"], -1.00, -2.00, 25, None),
@@ -196,8 +196,8 @@ QUESTS = [
     ("foreign_animal", [adv("foreign_animal")], ["fish_bag"], 0.50, 7.25, 50, None),
     ("mob_in_glass", [adv("mob_in_glass")], ["fish_bag"], 2.25, 8.25, 50, None),
     # Create (optional)
-    ("travelling_tank", [adv("travelling_tank")], ["cabinet"], 6.25, -5.00, 100, None),
-    ("create_drive", [adv("create_drive")], ["cabinet"], 7.50, -3.75, 100, None),
+    ("create_drive", [adv("create_drive")], ["cabinet"], 8.75, -5.25, 100, None),
+    ("travelling_tank", [adv("travelling_tank")], ["create_drive"], 10.50, -6.00, 100, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -378,8 +378,52 @@ def main():
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(L) + "\n")
     print("wrote %s (%d quests, %d new)" % (OUT, len(QUESTS), len(QUESTS) - FIRST_CHAPTER))
+    readme_table(eff)
     if os.environ.get("PREVIEW"):
         preview(os.environ["PREVIEW"])
+
+
+README = os.path.join(ROOT, "README.md")
+EN = os.path.join(ROOT, "src", "generated", "resources", "assets", "bettacraft", "lang", "en_us.json")
+
+
+NL = chr(10)
+
+
+def readme_table(eff):
+    """The README's table of the quests by feature switch (between the markers quests:start / quests:end)."""
+    if not os.path.exists(EN):
+        return
+    en = json.load(open(EN, encoding="utf-8"))
+    rows = {}
+    for q in QUESTS:
+        own = OWN_FEATURES.get(q[0])
+        if own:
+            key = "`features.%s`" % FEATURES[own[0]]["path"]
+        elif eff[q[0]]:
+            key = " + ".join("`features.%s`" % FEATURES[f]["path"] for f in eff[q[0]])
+        else:
+            key = "always (the core of the mod)"
+        title = en.get("quest.bettacraft.%s.title" % q[0], q[0])
+        extra = []
+        if q[0] in MODS:
+            extra.append("needs " + ", ".join(MODS[q[0]]))
+        if q[0] in NEEDS_POWER:
+            extra.append("needs a power option")
+        if q[0] in OPTIONAL:
+            extra.append("optional")
+        rows.setdefault(key, []).append(title + (" (" + "; ".join(extra) + ")" if extra else ""))
+    lines = ["A quest is shown while its switch is on and also those of the quests it depends on (the tags in the chapter).", "",
+             "| Switch | Quests |", "|---|---|"]
+    for k in sorted(rows, key=lambda k: (not k.startswith("always"), k)):
+        lines.append("| %s | %s |" % (k, ", ".join(rows[k])))
+    text = open(README, encoding="utf-8").read()
+    a, b = "<!-- quests:start -->", "<!-- quests:end -->"
+    if a not in text or b not in text:
+        return
+    i, j = text.index(a) + len(a), text.index(b)
+    text = text[:i] + NL + NL.join(lines) + NL + text[j:]
+    open(README, "w", encoding="utf-8", newline=NL).write(text)
 
 
 def preview(path):

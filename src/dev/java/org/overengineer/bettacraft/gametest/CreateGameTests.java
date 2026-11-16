@@ -307,6 +307,7 @@ public final class CreateGameTests {
         TankBlockEntity c = stockedTank(h, 16, 2, 4, 4, 1, 1);
         UUID tankId = c.getTank().id();
         Set<Long> old = new HashSet<>(c.getTank().members());
+        var watcher = QuestAdv.watcher(h, c); // M45
         Entity contraption = assemble(bearing);
         for (long l : old) h.assertTrue(level.getBlockState(BlockPos.of(l)).isAir(), "every block of the tank left");
         h.onEachTick(() -> hold(bearing));
@@ -320,6 +321,7 @@ public final class CreateGameTests {
                 TankBlockEntity n = TankMultiblock.getController(level, BlockPos.of(old.iterator().next()).above(2));
                 h.assertTrue(n != null && n.getTank().id().equals(tankId) && n.getTank().memberCount() == 4, "the whole tank came back");
                 h.assertTrue(TankInhabitants.liveInhabitants(level, n.getTank()).size() == 2, "with both bettas");
+                QuestAdv.check(h, watcher, "travelling_tank"); // M45
             });
         });
     }

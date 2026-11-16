@@ -124,7 +124,11 @@ public final class BigTankGameTests {
         h.assertTrue(says(e, "message.bettacraft.big.too_small"), "11 x 6 is too short: " + (e == null ? "accepted" : e.getString()));
         h.assertTrue(e.getString().contains("12") && e.getString().contains("6"), "the message names 12 x 6: " + e.getString());
         TankBlockEntity c = tank(h, 0, 1, 10, 12, 3, 6, 0F);
+        var watcher = QuestAdv.watcher(h, c); // M45
         ok(insert(h, c, pangasiusTub(h)));
+        QuestAdv.check(h, watcher, "big_animal");
+        h.assertTrue(!QuestAdv.done(watcher, "tankmate_inserted"), "a big animal, no tankmate");
+        QuestAdv.gone(h, watcher);
         ok(insert(h, c, pangasiusTub(h))); // 216 water blocks: two (200)
         Component third = insert(h, c, pangasiusTub(h));
         h.assertTrue(says(third, "message.bettacraft.big.too_little_water"), "a third needs 300 water blocks: " + (third == null ? "accepted" : third.getString()));

@@ -169,6 +169,7 @@ public final class CritterGameTests {
 
     private static void shrimpBreedTrue(GameTestHelper h) {
         TankBlockEntity red = tank(h, 2, 2, 2, 3, 2, 2, 12000);
+        var watcher = QuestAdv.watcher(h, red); // M45
         add(h, red, CritterSpecies.NEOCARIDINA, CritterGenes.pure(0, 0.5F), true);
         add(h, red, CritterSpecies.NEOCARIDINA, CritterGenes.pure(0, 0.5F), false);
         TankBlockEntity mix = tank(h, 8, 2, 2, 3, 2, 2, 12000);
@@ -184,6 +185,8 @@ public final class CritterGameTests {
         }
         h.assertTrue(berried || count(red.getTank(), CritterSpecies.NEOCARIDINA) > 2, "a female carried eggs: " + debug(red.getTank()));
         h.assertTrue(logged(red.getTank(), "log.bettacraft.critters_born"), "the log names the young");
+        QuestAdv.check(h, watcher, "critters_bred"); // M45
+        QuestAdv.gone(h, watcher);
         for (Critter k : red.getTank().critters()) {
             if (k.generation == 1) h.assertTrue(k.genes.shows(0), "red x red gives red young");
         }
@@ -394,6 +397,7 @@ public final class CritterGameTests {
         h.assertTrue(AlgaeSim.get(t.algae(), face.asLong(), Direction.NORTH.get2DDataValue()) == 0, "the face is clean");
         h.assertTrue(AlgaeSim.get(t.algae(), face.above().asLong(), Direction.NORTH.get2DDataValue()) > 0.5, "the face above is not");
         h.assertTrue(scraper.getDamageValue() == 1, "a little wear");
+        QuestAdv.check(h, sp, "algae_scraped"); // M45
         sp.setShiftKeyDown(true);
         use(sp, face.above(), Direction.NORTH, scraper);
         sp.setShiftKeyDown(false);

@@ -373,6 +373,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm45')) {
+                // gradlew runClient -Pquests -Pkubejs -Psmoketestm45 : the M45 scene (the quest chapter in FTB Quests' book, zoomed
+                // out and one quest, in English and German; the hidden power and Create quests and the progress from earned
+                // advancements logged)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m45only', 'true'
+            }
             if (project.hasProperty('smoketestm44')) {
                 // gradlew runClient -Psmoketestm44 : the M44 scene (mobs, pets and our terrarium animals walking in tanks next to the
                 // same mobs outside, with walkAnimationBoost 0 and auto, logged and as frame sequences; cabinet rows with their fronts,

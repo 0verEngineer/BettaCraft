@@ -165,6 +165,9 @@ final class DevClientSmokeTest {
     /** -Pzoo -Psmoketestm42b: the miniature with animals and plants of mods we do not integrate (M42 part b). */
     private static final boolean M42B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42bonly");
     private static DevClientSmokeM42b m42b;
+    /** -Pquests -Pkubejs -Psmoketestm45: the quest chapter in the quest book, English and German (M45). */
+    private static final boolean M45_ONLY = Boolean.getBoolean("bettacraft.smoketest.m45only");
+    private static DevClientSmokeM45 m45;
     /** -Psmoketestm44: the walk animation in tanks and the cabinet fronts (M44). */
     private static final boolean M44_ONLY = Boolean.getBoolean("bettacraft.smoketest.m44only");
     private static DevClientSmokeM44 m44;
@@ -420,6 +423,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M45_ONLY) {
+                if (ticks == 60) m45 = new DevClientSmokeM45();
+                if (m45 != null && m45.tick()) {
+                    m45 = null;
+                    LOGGER.info("[smoketest] client world test finished (M45 only)");
                     mc.stop();
                 }
                 return;

@@ -228,8 +228,11 @@ public final class TurtleGameTests {
             HerpClutch k = new HerpClutch(t.nextHerpClutchId(), HerpSpecies.SLIDER, 6,
                     new net.minecraft.world.phys.Vec3(t.min().getX() + 1, t.min().getY() + 0.05, t.min().getZ() + 1), egg, 424242L);
             t.herpClutches().add(k);
+            var watcher = QuestAdv.watcher(h, c); // M45
             for (int i = 0; i < 40 && !t.herpClutches().isEmpty(); i++) HerpBreeding.step(level, c, 0.25);
             h.assertTrue(t.herpClutches().isEmpty(), "hatched");
+            QuestAdv.check(h, watcher, "turtle_clutch");
+            QuestAdv.gone(h, watcher);
             h.assertFalse(in.getBlockState(egg).is(ModBlocks.TURTLE_EGGS.get()), "the egg block is gone");
             for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
                 if (!(e instanceof HerpEntity y)) continue;

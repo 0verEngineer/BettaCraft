@@ -8,7 +8,9 @@ navigation:
 # Progress
 
 Bettacraft has its own advancement tab (press **L**): it follows you from the first wild betta to a whole dynasty, the
-first tankmates, live food and a guppy collection. Every advancement below also shows what it is for.
+first tankmates, live food and a guppy collection, and since 1.36.0 also through the small animals, terraria and turtles,
+big animals and the technology. Every advancement below also shows what it is for. They are also the tasks of the
+[quest chapter](settings/modpacks.md) for modpacks.
 
 * The handbook itself: crafted from a book and betta pellets, or given once (config `guide.giveBook`: on the first join,
   with the first caught betta or the first crafted Bettacraft item).
@@ -51,3 +53,25 @@ first tankmates, live food and a guppy collection. Every advancement below also 
 | <ItemImage id="bettacraft:mosquito_larvae" /> | ↳ **Live Food** | Hatch mosquito larvae |
 | <ItemImage id="bettacraft:larva_tub" /> | ↳ **Larva Farmer** | Take live food out of a larva tub or an artemia hatchery |
 | <ItemImage id="bettacraft:betta_pellets" /> | ↳ **Fish Flakes** | Craft betta pellets |
+| <ItemImage id="bettacraft:neon_tetra_bucket" /> | ↳ **Community Tank** | Put a tankmate fish into a tank |
+| <ItemImage id="bettacraft:breeding_box" /> | ↳ **Born Alive** | Livebearers give birth in one of your tanks |
+| <ItemImage id="bettacraft:lined_seahorse_bucket" /> | ↳ **Proud Father** | A male seahorse releases fry from his pouch |
+| <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Colony** | Young shrimp, snails or crayfish are born in a tank |
+| <ItemImage id="bettacraft:algae_scraper" /> | ↳ **Clear View** | Scrape algae off the glass of a tank with the algae scraper |
+| <ItemImage id="bettacraft:terrarium_box" /> | ↳ **Hatchlings** | A clutch of a terrarium animal hatches |
+| <ItemImage id="minecraft:turtle_egg" /> | ↳ **Warm or Cool** | Turtle eggs hatch: the nest temperature decided their sex |
+| <ItemImage id="minecraft:moss_block" /> | ↳ **Half and Half** | Open the menu of a paludarium: water and land in one tank |
+| <ItemImage id="minecraft:turtle_scute" /> | ↳ **Ocean Giant** | Put a sea turtle into a big sea water paludarium |
+| <ItemImage id="minecraft:rabbit_foot" /> | ↳ **House Pet** | A peaceful Minecraft animal moves into a terrarium or paludarium |
+| <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Guest from Afar** | Put an axolotl or an animal of another mod with a Bettacraft profile into a tank |
+| <ItemImage id="bettacraft:mob_jar" /> | ↳ **Ship in a Bottle** | Get a mob into a tank, shrunk and harmless |
+| <ItemImage id="bettacraft:large_net" /> | ↳ **Big Fish** | Put a big animal such as a shark, a ray or a giant catfish into a big tank |
+| <ItemImage id="bettacraft:filter_pump_head" /> | ↳ **One Filter for All** | A multiblock filter cleans the water of two tanks at once |
+| <ItemImage id="bettacraft:water_change_controller" /> | ↳ **Hands Free** | A water change controller changes the water of a tank by itself |
+| <ItemImage id="bettacraft:fish_flakes" /> | ↳ **Balanced Diet** | Open the menu of a tank with a fish on a varied diet |
+| <ItemImage id="bettacraft:sponge_filter" /> | ↳ **Turn It Down** | Turn a filter, an air pump or a flow pump below 100 % with its power regulator |
+| <ItemImage id="bettacraft:led_panel" /> | ↳ **Sunrise, Sunset** | Switch on the daylight timer of a tank's lights |
+| <ItemImage id="minecraft:redstone" /> | ↳ **Plugged In** | Open the menu of a tank with energy in its buffer while devices need power |
+| <ItemImage id="bettacraft:crank" /> | ↳ **Wound Up** | Wind a device with the crank |
+| <ItemImage id="minecraft:piston" /> | ↳ **Shaft Power** | A turning Create shaft drives a tank through a drive adapter or its cabinet |
+| <ItemImage id="minecraft:minecart" /> | ↳ **Mobile Aquarium** | A tank arrives in one piece somewhere else on a contraption |

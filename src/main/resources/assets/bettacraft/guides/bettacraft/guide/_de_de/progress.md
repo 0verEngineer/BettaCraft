@@ -8,8 +8,9 @@ navigation:
 # Fortschritt
 
 Bettacraft hat einen eigenen Fortschritte-Reiter (Taste **L**): er begleitet dich vom ersten wilden Betta bis zur ganzen
-Dynastie, zu den ersten Beifischen, zum Lebendfutter und zur Guppy-Sammlung. Jeder Fortschritt unten zeigt auch, wofür er
-steht.
+Dynastie, zu den ersten Beifischen, zum Lebendfutter und zur Guppy-Sammlung, seit 1.36.0 auch durch die Kleintiere, Terrarien und
+Schildkröten, die großen Tiere und die Technik. Jeder Fortschritt unten zeigt auch, wofür er steht. Sie sind auch die
+Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 
 * Das Handbuch selbst: aus einem Buch und Betta-Pellets hergestellt oder einmal geschenkt (Config `guide.giveBook`: beim
   ersten Betreten, mit dem ersten gefangenen Betta oder dem ersten hergestellten Bettacraft-Item).
@@ -52,3 +53,25 @@ steht.
 | <ItemImage id="bettacraft:mosquito_larvae" /> | ↳ **Lebendfutter** | Lass Mückenlarven schlüpfen |
 | <ItemImage id="bettacraft:larva_tub" /> | ↳ **Larvenfarm** | Nimm Lebendfutter aus einem Larvenbottich oder Artemia-Zuchtbecken |
 | <ItemImage id="bettacraft:betta_pellets" /> | ↳ **Fischfutter** | Stelle Betta-Pellets her |
+| <ItemImage id="bettacraft:neon_tetra_bucket" /> | ↳ **Gesellschaftsbecken** | Setze einen Beifisch in ein Becken |
+| <ItemImage id="bettacraft:breeding_box" /> | ↳ **Lebend geboren** | Lebendgebärende bekommen in einem deiner Becken Junge |
+| <ItemImage id="bettacraft:lined_seahorse_bucket" /> | ↳ **Stolzer Vater** | Ein Seepferdchen-Männchen entlässt Junge aus seiner Bruttasche |
+| <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Kolonie** | In einem Becken kommen junge Garnelen, Schnecken oder Krebse zur Welt |
+| <ItemImage id="bettacraft:algae_scraper" /> | ↳ **Klare Sicht** | Kratze mit dem Algenschaber Algen von der Scheibe eines Beckens |
+| <ItemImage id="bettacraft:terrarium_box" /> | ↳ **Schlüpflinge** | Ein Gelege eines Terrarientiers schlüpft |
+| <ItemImage id="minecraft:turtle_egg" /> | ↳ **Warm oder kühl** | Schildkröteneier schlüpfen: Die Nesttemperatur hat ihr Geschlecht bestimmt |
+| <ItemImage id="minecraft:moss_block" /> | ↳ **Halb und halb** | Öffne das Menü eines Paludariums: Wasser und Land in einem Becken |
+| <ItemImage id="minecraft:turtle_scute" /> | ↳ **Riese des Ozeans** | Setze eine Meeresschildkröte in ein großes Meerwasser-Paludarium |
+| <ItemImage id="minecraft:rabbit_foot" /> | ↳ **Haustier** | Ein friedliches Minecraft-Tier zieht in ein Terrarium oder Paludarium |
+| <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Gast von weit her** | Setze einen Axolotl oder ein Tier einer anderen Mod mit Bettacraft-Profil in ein Becken |
+| <ItemImage id="bettacraft:mob_jar" /> | ↳ **Buddelschiff** | Bring einen Mob in ein Becken, geschrumpft und harmlos |
+| <ItemImage id="bettacraft:large_net" /> | ↳ **Dicker Fisch** | Setze ein großes Tier wie einen Hai, einen Rochen oder einen Riesenwels in ein Großbecken |
+| <ItemImage id="bettacraft:filter_pump_head" /> | ↳ **Ein Filter für alle** | Ein Multiblock-Filter reinigt das Wasser von zwei Becken zugleich |
+| <ItemImage id="bettacraft:water_change_controller" /> | ↳ **Freihändig** | Eine Wasserwechsel-Steuerung wechselt das Wasser eines Beckens von selbst |
+| <ItemImage id="bettacraft:fish_flakes" /> | ↳ **Ausgewogene Kost** | Öffne das Menü eines Beckens mit einem abwechslungsreich gefütterten Fisch |
+| <ItemImage id="bettacraft:sponge_filter" /> | ↳ **Etwas leiser** | Stelle einen Filter, eine Luftpumpe oder eine Strömungspumpe mit dem Leistungsregler unter 100 % |
+| <ItemImage id="bettacraft:led_panel" /> | ↳ **Sonnenaufgang** | Schalte die Tageslicht-Zeitschaltung der Beckenbeleuchtung ein |
+| <ItemImage id="minecraft:redstone" /> | ↳ **Am Netz** | Öffne das Menü eines Beckens mit Energie im Speicher, während Geräte Strom brauchen |
+| <ItemImage id="bettacraft:crank" /> | ↳ **Aufgezogen** | Ziehe ein Gerät mit der Kurbel auf |
+| <ItemImage id="minecraft:piston" /> | ↳ **Wellenkraft** | Eine drehende Create-Welle treibt ein Becken über einen Antriebsadapter oder seinen Schrank an |
+| <ItemImage id="minecraft:minecart" /> | ↳ **Mobiles Aquarium** | Ein Becken kommt auf einer Contraption heil an einem anderen Ort an |

@@ -46,8 +46,17 @@ final class MockPlayers {
     }
 
     static ServerPlayer serverPlayer(GameTestHelper h) {
+        return serverPlayer(h, false);
+    }
+
+    /**
+     * M45: {@code plain} makes an instance of ServerPlayer itself (survival), not of a subclass: Architectury (FTB Quests)
+     * counts every subclass as a fake player and skips it in its player tick.
+     */
+    static ServerPlayer serverPlayer(GameTestHelper h, boolean plain) {
         CommonListenerCookie cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
-        ServerPlayer player = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation()) {
+        ServerPlayer player = plain ? new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation())
+                : new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation()) {
             @Override
             public boolean isSpectator() {
                 return false;

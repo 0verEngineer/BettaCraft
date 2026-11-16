@@ -316,8 +316,11 @@ public final class MinecraftPetsGameTests {
         LivingEntity rabbit = wild(h, EntityType.RABBIT, h.relativeVec(Vec3.atBottomCenterOf(top)).add(-1.0, -1.0, 0));
         rabbit.setNoGravity(true);
         MinecraftPets.layBait(level, c, new ItemStack(Items.CARROT));
+        var watcher = QuestAdv.watcher(h, c); // M45
         MinecraftPets.lure(level, c);
         h.assertFalse(rabbit.isAlive(), "the rabbit went in");
+        QuestAdv.check(h, watcher, "pet_terrarium");
+        QuestAdv.gone(h, watcher);
         h.assertTrue(ofType(h, c, EntityType.RABBIT).size() == 1, "one rabbit in the terrarium");
         h.assertTrue(MinecraftPets.bait(c) == null, "one bait, one animal");
         h.assertTrue(logged(c.getTank(), "log.bettacraft.pet.lured"), "the luring logged");

@@ -8,17 +8,18 @@
 // optional (it never blocks the chapter); when the switch is on again, it shows again. Nothing is written to the quest
 // file: the script runs when the server has started, when a player logs in (after /ftbquests reload) and when the
 // Bettacraft configs are reloaded while the server runs. Players who already completed a hidden quest keep it (and see it).
-// Your own quests can use the same tags.
+// Your own quests can use the same tags. (KubeJS shares one scope between the server scripts: the names here start with
+// $Bcq so they never clash with those of bettacraft_events.js.)
 
-const $ServerQuestFile = Java.loadClass('dev.ftb.mods.ftbquests.quest.ServerQuestFile')
-const $EditObjectResponseMessage = Java.loadClass('dev.ftb.mods.ftbquests.net.EditObjectResponseMessage')
-const $PacketDistributor = Java.loadClass('net.neoforged.neoforge.network.PacketDistributor')
-const $CompoundTag = Java.loadClass('net.minecraft.nbt.CompoundTag')
-const $BettacraftApi = Java.loadClass('org.overengineer.bettacraft.api.BettacraftApi')
-const $FeaturesChangedEvent = Java.loadClass('org.overengineer.bettacraft.api.event.FeaturesChangedEvent')
+const $BcqQuestFile = Java.loadClass('dev.ftb.mods.ftbquests.quest.ServerQuestFile')
+const $BcqEditResponse = Java.loadClass('dev.ftb.mods.ftbquests.net.EditObjectResponseMessage')
+const $BcqPackets = Java.loadClass('net.neoforged.neoforge.network.PacketDistributor')
+const $BcqCompoundTag = Java.loadClass('net.minecraft.nbt.CompoundTag')
+const $BcqApi = Java.loadClass('org.overengineer.bettacraft.api.BettacraftApi')
+const $BcqFeaturesChanged = Java.loadClass('org.overengineer.bettacraft.api.event.FeaturesChangedEvent')
 
 function bettacraftShowQuests(server) {
-  const file = $ServerQuestFile.INSTANCE
+  const file = $BcqQuestFile.INSTANCE
   if (!file || !server) return 0
   const registries = server.registryAccess()
   let changed = 0, hidden = 0
@@ -28,18 +29,18 @@ function bettacraftShowQuests(server) {
       let ours = false
       tags.forEach(t => { if (String(t).startsWith('bettacraft_')) ours = true })
       if (!ours) return
-      const show = $BettacraftApi.questTagsOn(tags)
-      const optional = !show || tags.contains($BettacraftApi.TAG_OPTIONAL)
+      const show = $BcqApi.questTagsOn(tags)
+      const optional = !show || tags.contains($BcqApi.TAG_OPTIONAL)
       if (!show) hidden++
       // the quest's own data, changed the way the quest editor changes it
-      const nbt = new $CompoundTag()
+      const nbt = new $BcqCompoundTag()
       quest.writeData(nbt, registries)
       if (nbt.getBoolean('invisible') == !show && nbt.getBoolean('optional') == optional) return
       nbt.putBoolean('invisible', !show)
       nbt.putBoolean('optional', optional)
       quest.readData(nbt, registries)
       quest.clearCachedData()
-      if (server.getPlayerCount() > 0) $PacketDistributor.sendToAllPlayers(new $EditObjectResponseMessage(quest))
+      if (server.getPlayerCount() > 0) $BcqPackets.sendToAllPlayers(new $BcqEditResponse(quest))
       changed++
     })
   })
@@ -50,4 +51,4 @@ function bettacraftShowQuests(server) {
 ServerEvents.loaded(event => bettacraftShowQuests(event.server))
 PlayerEvents.loggedIn(event => bettacraftShowQuests(event.server))
 // the configs were reloaded (needs features.compat.modpackEvents, on by default)
-NativeEvents.onEvent($FeaturesChangedEvent, event => bettacraftShowQuests(event.getServer()))
+NativeEvents.onEvent($BcqFeaturesChanged, event => bettacraftShowQuests(event.getServer()))

@@ -448,7 +448,11 @@ public final class ForeignTerrariumGameTests {
         TankBlockEntity stone = paludarium(h, 16, 18, 12, 3, 8, 35, 0.25, Blocks.STONE.defaultBlockState());
         h.assertTrue(says(insert(h, stone, container(h, EntityType.TURTLE, true, false)), "message.bettacraft.sea_turtle.no_beach"), "no beach: refused");
         TankBlockEntity c = paludarium(h, 2, 2, 12, 3, 8, 35, 0.25, Blocks.SAND.defaultBlockState());
+        var watcher = QuestAdv.watcher(h, c); // M45
         put(h, c, container(h, EntityType.TURTLE, true, false));
+        QuestAdv.check(h, watcher, "sea_turtle");
+        h.assertTrue(!QuestAdv.done(watcher, "big_animal"), "a sea turtle has its own advancement");
+        QuestAdv.gone(h, watcher);
         Turtle baby = EntityType.TURTLE.create(level);
         baby.setAge(-24000);
         baby.moveTo(h.absoluteVec(new Vec3(20, 2, 2)));

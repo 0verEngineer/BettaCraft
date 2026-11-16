@@ -287,8 +287,10 @@ public final class AerationGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.setPos(Vec3.atCenterOf(h.absolutePos(new BlockPos(2, 3, 5))));
         BlockPos filterPos = h.absolutePos(new BlockPos(2, 2, 4));
+        h.assertTrue(!QuestAdv.done(sp, "regulator"), "not before");
         Regulator.apply(sp, filterPos, -3, false);
         h.assertTrue(f.regulator() == 7, "wheel down three steps: " + f.regulator());
+        QuestAdv.check(h, sp, "regulator"); // M45
         Regulator.apply(sp, filterPos, 4, true);
         h.assertTrue(f.regulator() == 4, "set to 40 %: " + f.regulator());
         Regulator.apply(sp, filterPos, 20, false);

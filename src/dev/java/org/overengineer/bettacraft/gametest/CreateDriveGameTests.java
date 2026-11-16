@@ -222,6 +222,7 @@ public final class CreateDriveGameTests {
         devices(h, c, new BlockPos(6, 2, 4), Direction.WEST, new BlockPos(4, 4, 4));
         BlockPos at = new BlockPos(3, 2, 4);
         TankDrive.Input in = adapter(h, at, Direction.WEST, 64);
+        var watcher = QuestAdv.watcher(h, c); // M45
         h.runAfterDelay(10, () -> {
             try {
                 h.assertTrue(in.speed() == 64F, "the adapter turns at 64 RPM: " + in.speed());
@@ -229,6 +230,8 @@ public final class CreateDriveGameTests {
                 // the first step fills the empty buffer at full power
                 long got = drive(level, c);
                 h.assertTrue(got == 256L * 20, "full power for an empty buffer: " + got);
+                QuestAdv.check(h, watcher, "create_drive");
+                QuestAdv.gone(h, watcher);
                 float full = in.stressImpact();
                 h.assertTrue(Math.abs(full * 64F - 512F) < 1F, "512 SU at full load: " + full * 64F);
                 h.assertTrue(Math.abs(networkStress(be(h, at)) - 512F) < 1F, "Create's network carries the stress: " + networkStress(be(h, at)));

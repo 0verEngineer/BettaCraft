@@ -483,6 +483,7 @@ public final class PlumbingGameTests {
         ServerLevel level = h.getLevel();
         TankBlockEntity c = tank(h, 1, 2, 1, 2, 2, 2); // 8000 mB
         c.getTank().setNitrate(40);
+        var watcher = QuestAdv.watcher(h, c); // M45
         h.setBlock(new BlockPos(3, 2, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
         WaterChangerBlockEntity wc = (WaterChangerBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 1)));
         wc.set(7, 25, true);
@@ -500,6 +501,8 @@ public final class PlumbingGameTests {
         int full = wc.check(level, true);
         h.assertTrue(full == 2000 && c.getTank().waterMb() == 8000 && near(c.getTank().nitrate(), 30, 0.01), "25 %: " + full + ", " + c.getTank().nitrate());
         h.assertTrue(AerationGameTests.logged(c, "log.bettacraft.auto_water_change"), "logged");
+        QuestAdv.check(h, watcher, "auto_water_change"); // M45
+        QuestAdv.gone(h, watcher);
         // not due yet: nothing
         h.assertTrue(wc.check(level, false) == 0 && wc.status() == WaterChangerBlockEntity.Status.CHANGED, "not due: " + wc.status());
         h.succeed();

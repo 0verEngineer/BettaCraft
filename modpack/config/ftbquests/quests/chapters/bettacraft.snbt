@@ -565,7 +565,7 @@
 			],
 			title: "{\"translate\":\"quest.bettacraft.aeration.title\"}",
 			x: 11.0d,
-			y: -2.0d
+			y: -1.4d
 		},
 		{
 			dependencies: ["72A818B1562BE874"],
@@ -577,8 +577,8 @@
 				{ id: "1E61D518841B6EEB", item: { count: 1, id: "bettacraft:sponge_filter" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.sponge_filter.title\"}",
-			x: 11.0d,
-			y: -3.5d
+			x: 11.2d,
+			y: -2.9d
 		},
 		{
 			dependencies: ["72A818B1562BE874"],
@@ -590,8 +590,8 @@
 				{ id: "30D3868105E00787", item: { count: 1, id: "bettacraft:led_panel" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.led_lights.title\"}",
-			x: 9.0d,
-			y: -3.5d
+			x: 10.5d,
+			y: -4.2d
 		},
 		{
 			dependencies: ["679658351E0E4A16"],
@@ -603,8 +603,8 @@
 				{ advancement: "bettacraft:light_timer", criterion: "", id: "6BD972B026ADD056", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.light_timer.title\"}",
-			x: 9.0d,
-			y: -5.0d
+			x: 12.2d,
+			y: -4.8d
 		},
 		{
 			dependencies: ["3C39DABF588FD0F0"],
@@ -616,8 +616,8 @@
 				{ advancement: "bettacraft:regulator", criterion: "", id: "1073AB0550A2768D", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.regulator.title\"}",
-			x: 13.0d,
-			y: -3.5d
+			x: 13.2d,
+			y: -2.9d
 		},
 		{
 			dependencies: ["6D64AA4FC08CF1F8"],
@@ -630,8 +630,8 @@
 				{ advancement: "bettacraft:powered", criterion: "", id: "2B977E76339EEB4F", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.powered.title\"}",
-			x: 15.0d,
-			y: -3.5d
+			x: 15.2d,
+			y: -2.9d
 		},
 		{
 			dependencies: ["6D64AA4FC08CF1F8"],
@@ -644,83 +644,83 @@
 				{ advancement: "bettacraft:wound_up", criterion: "", id: "560EF1527750F618", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.wound_up.title\"}",
-			x: 13.0d,
-			y: -5.0d
+			x: 14.8d,
+			y: -4.4d
 		},
 		{
-			dependencies: ["56ED14C9233146D9"],
-			description: ["{\"translate\":\"quest.bettacraft.stainless_steel.desc\"}"],
-			id: "4F5509F16121A7AD",
-			rewards: [{ id: "0EA71C0B43FAC15E", type: "xp", xp: 75 }, { count: 2, id: "3C988266C33EA4E9", item: { count: 1, id: "bettacraft:stainless_steel_ingot" }, type: "item" }],
-			tags: ["bettacraft_feature:equipment.stainlessSteel", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
-			tasks: [
-				{ id: "57913F6BFDA42EE8", item: { count: 1, id: "bettacraft:crucible" }, type: "item" },
-				{ id: "7D77B75C156E8A4E", item: { count: 1, id: "bettacraft:stainless_steel_ingot" }, type: "item" }
-			],
-			title: "{\"translate\":\"quest.bettacraft.stainless_steel.title\"}",
-			x: 6.0d,
-			y: 7.5d
-		},
-		{
-			dependencies: ["56ED14C9233146D9"],
+			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.pipes.desc\"}"],
 			id: "75F7A0B9785676A9",
 			rewards: [{ id: "162F93A277401CD4", type: "xp", xp: 50 }, { count: 8, id: "0B001A565F1363BD", item: { count: 1, id: "bettacraft:glass_pipe" }, type: "item" }],
-			tags: ["bettacraft_feature:pipes.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.enabled"],
 			tasks: [
 				{ id: "2F4E5EFF16CA9D5D", item: { count: 1, id: "bettacraft:water_pump" }, type: "item" },
 				{ id: "608186008E06FA54", item: { count: 1, id: "bettacraft:glass_pipe" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.pipes.title\"}",
-			x: 8.0d,
-			y: 7.5d
+			x: 6.0d,
+			y: -4.8d
+		},
+		{
+			dependencies: ["75F7A0B9785676A9"],
+			description: ["{\"translate\":\"quest.bettacraft.stainless_steel.desc\"}"],
+			id: "4F5509F16121A7AD",
+			rewards: [{ id: "0EA71C0B43FAC15E", type: "xp", xp: 75 }, { count: 2, id: "3C988266C33EA4E9", item: { count: 1, id: "bettacraft:stainless_steel_ingot" }, type: "item" }],
+			tags: ["bettacraft_feature:equipment.stainlessSteel", "bettacraft_feature:pipes.enabled"],
+			tasks: [
+				{ id: "57913F6BFDA42EE8", item: { count: 1, id: "bettacraft:crucible" }, type: "item" },
+				{ id: "7D77B75C156E8A4E", item: { count: 1, id: "bettacraft:stainless_steel_ingot" }, type: "item" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.stainless_steel.title\"}",
+			x: 4.5d,
+			y: -5.8d
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.interior_pipes.desc\"}"],
 			id: "0AF865004DBC0D91",
 			rewards: [{ id: "2DC711E0143F95B9", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:pipes.interiorPipes", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.interiorPipes"],
 			tasks: [
 				{ id: "6C62B6B5D436F923", item: { count: 1, id: "bettacraft:bulkhead" }, type: "item" },
 				{ id: "3599143BFF3386FF", item: { count: 1, id: "bettacraft:spray_bar" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.interior_pipes.title\"}",
-			x: 6.0d,
-			y: 9.0d
+			x: 4.0d,
+			y: -7.8d
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.auto_water_change.desc\"}"],
 			id: "42BEF0FC5132BF87",
 			rewards: [{ id: "70357322CFA6A81A", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:pipes.autoWaterChange", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.autoWaterChange"],
 			tasks: [
 				{ advancement: "bettacraft:auto_water_change", criterion: "", id: "47A6B1B5721B5791", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.auto_water_change.title\"}",
-			x: 8.0d,
-			y: 9.0d
+			x: 5.5d,
+			y: -6.8d
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.top_off.desc\"}"],
 			id: "216DE45855BE76D6",
 			rewards: [{ id: "19ADEE7F5958E452", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:pipes.topOff", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.topOff"],
 			tasks: [
 				{ id: "75E4440D64B10009", item: { count: 1, id: "bettacraft:level_sensor" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.top_off.title\"}",
-			x: 10.0d,
-			y: 9.0d
+			x: 7.0d,
+			y: -8.2d
 		},
 		{
-			dependencies: ["56ED14C9233146D9"],
+			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.multiblock_filter.desc\"}"],
 			id: "510CECC79FBBC892",
 			rewards: [{ id: "346BDAF1CFFB607E", type: "xp", xp: 100 }, { count: 2, id: "6BC0B35C8C6C6B00", item: { count: 1, id: "bettacraft:filter_foam" }, type: "item" }, { count: 1, id: "66716D4DCE6BCDAB", item: { count: 1, id: "bettacraft:activated_carbon" }, type: "item" }],
-			tags: ["bettacraft_feature:equipment.multiblockFilter", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:equipment.multiblockFilter"],
 			tasks: [
 				{ id: "2386D801CE0C98F2", item: { count: 1, id: "bettacraft:filter_chamber" }, type: "item" },
 				{ id: "7E79CC115418A5E3", item: { count: 1, id: "bettacraft:filter_pump_head" }, type: "item" },
@@ -728,15 +728,15 @@
 				{ id: "1EBE8585A7B1FCA7", item: { count: 1, id: "bettacraft:filter_outlet" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.multiblock_filter.title\"}",
-			x: 10.0d,
-			y: 4.5d
+			x: 7.2d,
+			y: -6.5d
 		},
 		{
 			dependencies: ["510CECC79FBBC892"],
 			description: ["{\"translate\":\"quest.bettacraft.filter_lines.desc\"}"],
 			id: "1A4B85F432B08214",
 			rewards: [{ id: "62CC162FFF15E01D", type: "xp", xp: 75 }, { count: 1, id: "2F5E8EEEEF944729", item: { count: 1, id: "bettacraft:intake_guard" }, type: "item" }],
-			tags: ["bettacraft_feature:pipes.filterLines", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.filterLines"],
 			tasks: [
 				{ id: "59D5DE93BFA1411F", item: { count: 1, id: "bettacraft:filter_inlet_pipe" }, type: "item" },
 				{ id: "117E314DED29E40F", item: { count: 1, id: "bettacraft:filter_outlet_pipe" }, type: "item" },
@@ -744,8 +744,8 @@
 				{ id: "6DF31B6543BD44CF", item: { count: 1, id: "bettacraft:outlet_guard" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.filter_lines.title\"}",
-			x: 12.0d,
-			y: 4.5d
+			x: 8.8d,
+			y: -7.5d
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
@@ -754,40 +754,40 @@
 			rewards: [{ id: "7C5C34C8AD830752", type: "xp", xp: 150 }, { count: 2, id: "51B3410C45636B80", item: { count: 1, id: "bettacraft:ceramic_rings" }, type: "item" }],
 			shape: "hexagon",
 			size: 1.5d,
-			tags: ["bettacraft_feature:pipes.filterLines", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.filterLines"],
 			tasks: [
 				{ advancement: "bettacraft:shared_filter", criterion: "", id: "13F2FFB9D95E5B82", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.shared_filter.title\"}",
-			x: 14.0d,
-			y: 4.2d
+			x: 10.8d,
+			y: -7.8d
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
 			description: ["{\"translate\":\"quest.bettacraft.filter_water.desc\"}"],
 			id: "6F98F06CCF52AFE0",
 			rewards: [{ id: "0C976183E158E118", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:pipes.filterWater", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.filterWater"],
 			tasks: [
 				{ id: "452E9D124996F6CA", item: { count: 1, id: "bettacraft:filter_fresh_port" }, type: "item" },
 				{ id: "440512EC07DFBCC2", item: { count: 1, id: "bettacraft:filter_waste_port" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.filter_water.title\"}",
-			x: 12.0d,
-			y: 3.0d
+			x: 8.8d,
+			y: -9.0d
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
 			description: ["{\"translate\":\"quest.bettacraft.pipe_covers.desc\"}"],
 			id: "4AFD01C67F21FCE0",
 			rewards: [{ id: "1769961B006CCD11", type: "xp", xp: 25 }, { count: 4, id: "6BE0E543E6B98DAB", item: { count: 1, id: "bettacraft:pipe_cover" }, type: "item" }],
-			tags: ["bettacraft_feature:pipes.pipeCovers", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature:pipes.pipeCovers"],
 			tasks: [
 				{ id: "3F257BF8E8882277", item: { count: 1, id: "bettacraft:pipe_cover" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.pipe_covers.title\"}",
-			x: 14.0d,
-			y: 2.5d
+			x: 10.5d,
+			y: -9.5d
 		},
 		{
 			dependencies: ["644840C2E1FE3E99"],
@@ -1267,20 +1267,6 @@
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
-			description: ["{\"translate\":\"quest.bettacraft.travelling_tank.desc\"}"],
-			id: "2E62BB1B7A378210",
-			optional: true,
-			rewards: [{ id: "394F0C191755B698", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:compat.create.contraptions", "bettacraft_mod:create", "bettacraft_optional"],
-			tasks: [
-				{ advancement: "bettacraft:travelling_tank", criterion: "", id: "711C5EC0B9388805", type: "advancement" }
-			],
-			title: "{\"translate\":\"quest.bettacraft.travelling_tank.title\"}",
-			x: 6.2d,
-			y: -5.0d
-		},
-		{
-			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.create_drive.desc\"}"],
 			id: "663B15EEFEA08E9F",
 			optional: true,
@@ -1290,8 +1276,22 @@
 				{ advancement: "bettacraft:create_drive", criterion: "", id: "5193E1A6A7477D64", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.create_drive.title\"}",
-			x: 7.5d,
-			y: -3.8d
+			x: 8.8d,
+			y: -5.2d
+		},
+		{
+			dependencies: ["663B15EEFEA08E9F"],
+			description: ["{\"translate\":\"quest.bettacraft.travelling_tank.desc\"}"],
+			id: "2E62BB1B7A378210",
+			optional: true,
+			rewards: [{ id: "394F0C191755B698", type: "xp", xp: 100 }],
+			tags: ["bettacraft_feature:compat.create.contraptions", "bettacraft_feature:compat.create.drive", "bettacraft_mod:create", "bettacraft_optional"],
+			tasks: [
+				{ advancement: "bettacraft:travelling_tank", criterion: "", id: "711C5EC0B9388805", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.travelling_tank.title\"}",
+			x: 10.5d,
+			y: -6.0d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

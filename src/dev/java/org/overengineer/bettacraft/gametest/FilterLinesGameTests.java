@@ -135,8 +135,11 @@ public final class FilterLinesGameTests {
         head.run(level, true);
         h.assertTrue(statuses(head).stream().allMatch(s -> s == MultiblockFilter.LinkStatus.NO_OUTLET_GUARD), "no outlet guards: " + statuses(head));
         guardAll(level, head.getBlockPos());
+        var watcher = QuestAdv.watcher(h, b); // M45
         int moved = head.run(level, true);
         h.assertTrue(statuses(head).stream().allMatch(s -> s == MultiblockFilter.LinkStatus.OK), "guarded: " + statuses(head));
+        QuestAdv.check(h, watcher, "shared_filter");
+        QuestAdv.gone(h, watcher);
         h.assertTrue(moved > 0 && MultiblockFilter.warnings(level, a).isEmpty(), "it runs, no warning: " + moved);
         // A1: by water volume (8, 8, 16 blocks)
         double da = TankWater.filterBlocks(level, a) - a0, db = TankWater.filterBlocks(level, b) - b0, dc = TankWater.filterBlocks(level, c) - c0;

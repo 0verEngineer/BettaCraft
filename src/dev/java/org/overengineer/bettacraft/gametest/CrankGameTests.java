@@ -194,6 +194,11 @@ public final class CrankGameTests {
             // a click on a chamber winds the pump head
             long before = d.head().windSpring().ticks();
             h.assertTrue(crank(h, d.chamber()) == Winding.Result.WOUND && d.head().windSpring().ticks() > before, "a chamber winds its pump head");
+            // M45: the crank of a player gives the advancement
+            var sp = MockPlayers.serverPlayer(h);
+            h.assertTrue(Winding.wind(h.getLevel(), d.pump().getBlockPos(), sp) == Winding.Result.WOUND, "the player winds the pump");
+            QuestAdv.check(h, sp, "wound_up");
+            QuestAdv.gone(h, sp);
             // the cabinet to full
             int clicks = 1;
             while (crank(h, d.cabinet()) == Winding.Result.WOUND) clicks++;

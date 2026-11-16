@@ -21,25 +21,46 @@ values the pack changes itself still win, and `presetKeep` keeps single defaults
 
 ## FTB Quests chapter
 
-`config/ftbquests/quests/chapters/bettacraft.snbt` is the chapter **Bettacraft**, 33 quests from the first aquarium to
-the reef and the terrarium:
+`config/ftbquests/quests/chapters/bettacraft.snbt` is the chapter **Bettacraft**: since 1.36.0 96 quests (33 before) in
+branches from the first tank:
 
 1. **The first tank:** build it, fill it, a heater, a filter and a light.
-2. **The betta:** catch one in a swamp, put it in, pellets, the feeder.
-3. **Water care:** pH and TDS, a water change, 26 to 28 °C, the external filter, the reverse osmosis unit.
-4. **Breeding:** bubble nest, spawning, food for the fry, free swimming, grown up, a named variety, the fifth
-   generation.
-5. **Plants:** into the interior, substrate, the first plant, CO2.
-6. **The reef:** sea water, protein skimmer and live rock, the first coral, the dosing pump.
-7. **Big tanks:** 64 blocks, the food maker, the monitors.
-8. **The terrarium:** the terrarium box, basking lamp, mister and thermo-hygrometer, a leopard gecko.
+2. **The betta:** catch one, put it in, pellets, the feeder, a varied diet, the mirror stick, the magnifier, nursing a sick
+   betta (and, optional, the lesson of two males).
+3. **Water care and breeding:** pH and TDS, water changes, 26 to 28 °C, the external filter, reverse osmosis; bubble nest
+   to the fifth generation.
+4. **Plants and the interior:** substrate, plants, CO2, floating plants, decoration, fertilizer, algae.
+5. **Live food:** swamp water, mosquito larvae, larva tub and hatchery, cultures, the live food pump.
+6. **Tankmates:** the fish bag, community fish, livebearer litters and the guppy strains, cichlids, puffers, barbs and
+   loaches, gouramis; shrimp, snails and crayfish breeding; frogs.
+7. **The reef:** sea water, skimmer, corals, dosing (and fertilizer dosing), clownfish, seahorses and their fry.
+8. **Terraria and paludaria:** the terrarium box and devices, geckos and their clutches, the paludarium, turtles and
+   their clutches, sea turtles, Minecraft pets.
+9. **Big tanks and guests:** 64 blocks, food maker, monitors, the large net and transport tub, a big animal; axolotls and
+   animals of other mods, mobs in glass.
+10. **Technology:** the cabinet, coolers, aeration, sponge filters, LED lights and the daylight timer, the power
+    regulator, pipes, stainless steel, bulkheads, the water change controller, the top-off, the multiblock filter with
+    filter lines, ports and pipe covers, a filter for two tanks.
+11. **Optional:** with a power option on, energy in a tank and the crank; with Create, the drive adapter and a travelling
+    tank.
 
-The tasks are Bettacraft advancements and items, the rewards a little experience. The texts are translation keys of
-Bettacraft (`quest.bettacraft.*`), so every language of the mod is in the quests too (English and German). Copy the
-file into `config/ftbquests/quests/chapters/` and run `/ftbquests reload` or restart: the chapter appears in the default
-group; move it, change rewards or add quests in the quest editor as with any chapter. FTB Quests moves the texts into
-its `lang/en_us.snbt` the first time it saves; they stay translation keys there. The ids of the quests never change, so
-a newer version of the file replaces the old quests instead of adding them twice.
+The tasks are Bettacraft [advancements](../progress.md) and items, the rewards some experience and small items: plant
+cuttings, food, a spare test kit, filter media, salt, a few glass pipes. The texts are translation keys of Bettacraft
+(`quest.bettacraft.*`), so every language of the mod is in the quests too (English and German). Copy the file into
+`config/ftbquests/quests/chapters/` and run `/ftbquests reload` or restart: the chapter appears in the default group;
+move it, change rewards or add quests in the quest editor as with any chapter. FTB Quests moves the texts into its
+`lang/en_us.snbt` the first time it saves; they stay translation keys there.
+
+**Updating:** the ids, tasks and dependencies of the quests never change, so a newer version of the file replaces the old
+quests instead of adding them twice, and every player keeps their progress. Advancements a player already has complete
+the advancement tasks of new quests by themselves (FTB Quests checks them every few ticks once the quest may start).
+
+**Switched-off features:** every quest has FTB Quests tags for the [feature switches](../settings.md) it needs
+(`bettacraft_feature:<path>`, also those of the quests before it), `bettacraft_mod:create` and `bettacraft_needs:power`.
+The script `kubejs/server_scripts/bettacraft_quests.js` (KubeJS) hides the quests whose switches are off: they become
+invisible and optional, so they never block the chapter, and come back when the switch is on again (it runs when the
+server starts, when a player logs in and when the configs are reloaded; it writes nothing into the quest file). Without
+KubeJS they stay visible; hide them in the editor. Your own quests can use the same tags.
 
 Heracles (the other quest mod) is not supported.
 
@@ -66,6 +87,9 @@ NativeEvents.onEvent($AnimalBornEvent, event => {
 For reading a tank, `org.overengineer.bettacraft.api.BettacraftApi` has `isTank(level, pos)`, `tankId`, `tankName`,
 `tankController` and `tankValues(level, pos)` (the values of the monitors by id: `temperature`, `water_quality`, `ph`,
 `tds`, `salinity`, ...); `pos` can be any block of the tank. The switch `features.compat.modpackEvents` turns the events off.
+Since 1.36.0 `FeaturesChangedEvent` (`getServer()`) says that the configs were reloaded while the server runs, and
+`BettacraftApi.featureEnabled(path)` and `questTagsOn(tags)` answer whether a feature switch (with its parents) or the
+tags of a quest are on; the quest script above uses them.
 
 ## Map waypoints
 

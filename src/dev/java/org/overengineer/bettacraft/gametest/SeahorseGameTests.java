@@ -269,8 +269,11 @@ public final class SeahorseGameTests {
         h.assertTrue(m.gravidFather() != null && m.gravidFather().text().equals(f.genes().text()), "with the female's genes");
         h.assertTrue(logged(c.getTank(), "log.bettacraft.tm.pouch"), "logged");
         int before = mates(h, c).size();
+        var watcher = QuestAdv.watcher(h, c); // M45
         m.setGravid(Seahorses.pouchDays() + 0.01, m.gravidFather());
         TankmateBreeding.step(level, c, 0.01);
+        QuestAdv.check(h, watcher, "seahorse_fry");
+        QuestAdv.gone(h, watcher);
         List<TankmateEntity> all = mates(h, c);
         long fry = all.stream().filter(x -> x.species() == TankmateSpecies.LINED_SEAHORSE && x.lifeStage() == LifeStage.FRY).count();
         h.assertTrue(!m.isGravid(), "the pouch is empty again");

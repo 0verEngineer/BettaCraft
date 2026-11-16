@@ -125,6 +125,7 @@ public final class MobsInGlassGameTests {
         ItemStack full = p.getMainHandItem();
         h.assertTrue(MobJarItem.containedType(full) == EntityType.ZOMBIE && z.isRemoved(), "the jar holds the zombie");
         h.assertTrue(TankInhabitants.insert(level, dry, full, EntityType.ZOMBIE, p, 0L) == null, "the zombie goes into the terrarium");
+        QuestAdv.check(h, p, "mob_in_glass"); // M45
         Mob in = mobs(h, dry, EntityType.ZOMBIE).getFirst();
         h.assertTrue(Math.abs(in.getScale() - 0.18F) < 0.01F && in.getBbHeight() < 0.4F, "shrunk: scale " + in.getScale() + " height " + in.getBbHeight());
         h.assertTrue(GlassMobs.isGlassMob(in) && in.isPersistenceRequired(), "marked and kept");

@@ -252,8 +252,12 @@ public final class HerpGameTests {
         h.assertTrue(in.getBlockState(k.interiorPos()).is(ModBlocks.FROG_EGGS.get()), "a frog clutch in the interior");
         h.assertTrue(in.getBlockState(k.interiorPos().below()).is(Blocks.MOSS_BLOCK), "on the moss");
         t.herpClutches().clear();
+        var watcher = QuestAdv.watcher(h, c); // M45
         int n = HerpBreeding.hatch(level, c, k);
         h.assertTrue(n == k.eggs, "all hatch: " + n);
+        QuestAdv.check(h, watcher, "herp_clutch");
+        h.assertTrue(!QuestAdv.done(watcher, "turtle_clutch"), "frogs are no turtles");
+        QuestAdv.gone(h, watcher);
         double surface = t.waterSurfaceY();
         int tadpoles = 0;
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
