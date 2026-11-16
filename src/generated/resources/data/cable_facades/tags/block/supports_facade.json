@@ -1,0 +1,9 @@
+{
+  "values": [
+    "bettacraft:filter_inlet_pipe",
+    "bettacraft:filter_outlet_pipe",
+    "bettacraft:filter_fresh_pipe",
+    "bettacraft:filter_waste_pipe",
+    "bettacraft:filter_pipe_bundle"
+  ]
+}

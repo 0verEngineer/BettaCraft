@@ -609,6 +609,7 @@ public final class ModDataGen {
             DataGenM24.itemModels(this); // M24
             DataGenM40.itemModels(this); // M40 part a
             DataGenM40b.itemModels(this); // M40 part b
+            DataGenM40c.itemModels(this); // M40 part c
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
@@ -1055,6 +1056,7 @@ public final class ModDataGen {
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
             DataGenM40.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part a
             DataGenM40b.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part b
+            DataGenM40c.recipes(output, hasIt(ModItems.FILTER_INLET_PIPE.get())); // M40 part c
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
@@ -1366,6 +1368,7 @@ public final class ModDataGen {
             DataGenM37.blockTags(this::tag); // M37
             DataGenM40.blockTags(this::tag); // M40 part a
             DataGenM40b.blockTags(this::tag); // M40 part b
+            DataGenM40c.blockTags(this::tag); // M40 part c: Cable Facades
             DataGenM38.blockTags(this::tag); // M38
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c

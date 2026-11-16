@@ -4,7 +4,7 @@ bundle (up to four lines in one block).
 
 Block textures: brushed steel pipes with a coloured band per line (blue: the intake to the filter's inlet, orange: the
 return from its outlet, the colours of the connectors), the brass collar of a T-piece, the fine mesh of the intake guard,
-the mesh cap of the outlet guard and the flange of a pipe dock; the item icon of the T-piece. Deterministic and
+the mesh cap of the outlet guard and the flange of a pipe dock; the item icons of the T-piece and (part c) the pipe cover. Deterministic and
 procedural, no vanilla pixels.
 
 Run from the repo root:  py tools/assetgen/filter_lines.py
@@ -132,6 +132,28 @@ TEE = [
 TEE_P = {"b": "#5c646c", "S": "#d0d8e0", "s": "#9aa4ae", "c": "#8a6a2a", "C": "#d8b05a"}
 
 
+# M40 part c: the pipe cover, a steel trowel with a brick-faced plate on its blade (the cover it puts on)
+COVER = [
+    "................",
+    "................",
+    "........bbbbbbb.",
+    ".......bRRrRRRb.",
+    "......bRRrRRRRb.",
+    ".....brrrrrrrrb.",
+    ".....bRRRRrRRb..",
+    "....bRRRRrRRb...",
+    "....bbbbbbbbb...",
+    "......sSs.......",
+    ".....sSs........",
+    "....hHs.........",
+    "...hHh..........",
+    "..hHh...........",
+    "..hh............",
+    "................",
+]
+COVER_P = {"b": "#4c545c", "R": "#b65a3c", "r": "#d8cfc0", "s": "#9aa4ae", "S": "#d0d8e0", "h": "#5a3a22", "H": "#8a5a32"}
+
+
 def write_all():
     out = []
     blocks = {
@@ -143,6 +165,7 @@ def write_all():
     for name, img in blocks.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))
     out.append(save_png(grid(TEE, TEE_P), ITEM_TEX / "pipe_tee.png"))
+    out.append(save_png(grid(COVER, COVER_P), ITEM_TEX / "pipe_cover.png"))
     return out
 
 
