@@ -68,7 +68,8 @@ final class DevSmokeM16 {
             if (s.id().getNamespace().equals("bettacraft")) continue;
             ItemStack stack = container(level, s);
             if (stack.isEmpty()) continue;
-            boolean variable = s.accepted() || s.acceptance() == TankInhabitants.Acceptance.TOO_BIG; // size by variant
+            // size by variant; M39: a big animal of a small real length (Naturalist's jellyfish, 0.3 m) fits even this tank by the size rule
+            boolean variable = s.accepted() || s.acceptance() == TankInhabitants.Acceptance.TOO_BIG || s.acceptance() == TankInhabitants.Acceptance.BIG;
             if (!s.accepted() && !variable) {
                 Component err = TankInhabitants.insert(level, c, stack, s.type(), null, TankInhabitants.carriedWater(stack));
                 if (err == null) throw new IllegalStateException("M16: " + s.id() + " (" + s.acceptance() + ") was let in");

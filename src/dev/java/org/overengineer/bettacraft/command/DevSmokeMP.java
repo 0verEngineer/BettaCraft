@@ -745,7 +745,7 @@ public final class DevSmokeMP {
         steps.add(new Step("second look", () -> say("state", "all", "2," + tankArg()),
                 () -> reports.containsKey(P1 + ":state2") && reports.containsKey(P2 + ":state2"), 20 * 30));
         steps.add(new Step("motion", () -> say("motion", "all", "160," + tankArg()),
-                () -> reports.containsKey(P1 + ":motion") && reports.containsKey(P2 + ":motion"), 20 * 40));
+                () -> reports.containsKey(P1 + ":motion") && reports.containsKey(P2 + ":motion"), 20 * 90)); // 480 frames: slow background windows need ~50 s
         // M13: aquarium plants in the interior grow while nobody is inside; both miniatures follow
         steps.add(new Step("aquarium plants", () -> {
             TankBlockEntity c = main();
