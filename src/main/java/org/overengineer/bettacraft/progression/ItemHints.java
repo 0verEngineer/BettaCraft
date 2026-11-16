@@ -52,7 +52,7 @@ public final class ItemHints {
             // M40 part a: the filter pipes, the T-piece and the guards
             "filter_inlet_pipe", "filter_outlet_pipe", "pipe_tee", "intake_guard", "outlet_guard",
             // M40 part b: the fresh and waste water line and the water ports of the filter
-            "filter_fresh_pipe", "filter_waste_pipe", "filter_fresh_port", "filter_waste_port",
+            "filter_fresh_pipe", "filter_waste_pipe", "filter_fresh_port", "filter_waste_port", "pipe_cover",
             // M25: water chemistry
             "tds_meter", "ph_test_kit", "remineralising_salt", "almond_leaf", "alder_cone",
             // M25 part b: CO2 and reverse osmosis

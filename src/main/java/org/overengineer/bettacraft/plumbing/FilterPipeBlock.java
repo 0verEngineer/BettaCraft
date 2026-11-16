@@ -48,6 +48,8 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * Part b: also the fresh and the waste water line ({@link PipeLine#water()}: they join the fluid handlers of other blocks
  * instead of tanks and offer one themselves, {@link FilterLineFluid}). The pipe of another line used on a pipe makes a
  * bundle of both ({@link FilterPipeBundleBlock}). The joining rules are in {@link FilterPipes}, shared with the bundle.
+ * <p>
+ * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
 public class FilterPipeBlock extends BaseEntityBlock {
     public static final MapCodec<FilterPipeBlock> CODEC = simpleCodec(p -> new FilterPipeBlock(PipeLine.INTAKE, p));
@@ -203,6 +205,8 @@ public class FilterPipeBlock extends BaseEntityBlock {
             if (!level.isClientSide) FilterPipeBundleBlock.addLine(level, pos, other.line, player, stack);
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
+        ItemInteractionResult facade = PipeCovers.useForeign(stack, level, pos, player, hand); // part c: another mod's facade
+        if (facade != null) return facade;
         if (!(stack.getItem() instanceof PipeTeeItem)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (state.getValue(JUNCTION)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
@@ -236,12 +240,54 @@ public class FilterPipeBlock extends BaseEntityBlock {
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         VoxelShape s = state.getValue(JUNCTION) ? JUNCTION_CORE : CORE;
         for (var e : SIDES.entrySet()) if (state.getValue(e.getValue())) s = Shapes.or(s, ARMS.get(e.getKey()));
-        return s;
+        return PipeCovers.shape(level, pos, s); // part c: a full block under a cover
     }
 
     @Override
     protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return true; // part c: also under a cover (the light engine reads no block entities off the main thread)
+    }
+
+    /** Part c: the pipe (and its T-piece) from the loot table, and the block or facade of its cover. */
+    @Override
+    protected List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootParams.Builder params) {
+        List<ItemStack> out = new ArrayList<>(super.getDrops(state, params));
+        PipeCovers.addDrops(out, params.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY));
+        return out;
+    }
+
+    // ------------------------------------------------------------------ the cover (part c)
+
+    @Override
+    public boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir) {
+        return PipeCovers.hidesNeighbour(level, pos);
+    }
+
+    @Override
+    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return PipeCovers.shade(level, pos);
+    }
+
+    @Override
+    public boolean hasDynamicLightEmission(BlockState state) {
         return true;
+    }
+
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        return PipeCovers.light(level, pos);
+    }
+
+    @Override
+    public net.minecraft.world.level.block.SoundType getSoundType(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos, @Nullable net.minecraft.world.entity.Entity entity) {
+        var s = PipeCovers.sound(level, pos, entity);
+        return s != null ? s : super.getSoundType(state, level, pos, entity);
+    }
+
+    @Override
+    public BlockState getAppearance(BlockState state, net.minecraft.world.level.BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+        BlockState c = PipeCovers.coverAt(level, pos);
+        return c != null ? c : state;
     }
 
     @Override

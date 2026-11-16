@@ -68,6 +68,10 @@ public final class BettaCraft {
         if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.MOD_ID)) {
             org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.register();
         }
+        // M40 part c: Cable Facades (its facades on our filter pipes: the block tag in our data; here the pipes hidden under them)
+        if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.facades.CableFacadesCompat.MOD_ID)) {
+            org.overengineer.bettacraft.compat.facades.CableFacadesCompat.register();
+        }
         // The One Probe (M8): providers through its IMC entry point. Jade and WTHIT find their plugins themselves.
         if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.top.TheOneProbeCompat.MOD_ID)) {
             org.overengineer.bettacraft.compat.top.TheOneProbeCompat.register(modBus);

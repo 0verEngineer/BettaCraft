@@ -346,6 +346,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FILTER_WASTE_PORT = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_WASTE_PORT);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeTeeItem> PIPE_TEE = ITEMS.register("pipe_tee",
             () -> new org.overengineer.bettacraft.plumbing.PipeTeeItem(new Item.Properties()));
+    /** M40 part c: the pipe cover tool (a block in the off hand draws a filter pipe as that block; not used up). */
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeCoverItem> PIPE_COVER = ITEMS.register("pipe_cover",
+            () -> new org.overengineer.bettacraft.plumbing.PipeCoverItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTAKE_GUARD = plumbing(ModBlocks.INTAKE_GUARD, org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> OUTLET_GUARD = plumbing(ModBlocks.OUTLET_GUARD, org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
     public static final DeferredItem<org.overengineer.bettacraft.filter.FilterMediaItem> FILTER_FOAM = media("filter_foam", org.overengineer.bettacraft.filter.FilterMedium.SPONGE);

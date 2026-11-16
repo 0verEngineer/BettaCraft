@@ -297,7 +297,7 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_WASTE_PIPE = filterPipe("filter_waste_pipe", org.overengineer.bettacraft.plumbing.PipeLine.WASTE);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock> FILTER_PIPE_BUNDLE = BLOCKS.register("filter_pipe_bundle",
             () -> new org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+                    .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().dynamicShape().isRedstoneConductor((s, l, p) -> false)));
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_FRESH_PORT = filterPart("filter_fresh_port", org.overengineer.bettacraft.filter.FilterPartBlock.Part.FRESH);
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_WASTE_PORT = filterPart("filter_waste_port", org.overengineer.bettacraft.filter.FilterPartBlock.Part.WASTE);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock> PIPE_ANCHOR = BLOCKS.register("pipe_anchor",
@@ -407,8 +407,9 @@ public final class ModBlocks {
     }
 
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> filterPipe(String id, org.overengineer.bettacraft.plumbing.PipeLine line) {
+        // M40 part c: dynamic shape (a cover makes it a full block, from the block entity)
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.FilterPipeBlock(line, BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+                .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().dynamicShape().isRedstoneConductor((s, l, p) -> false)));
     }
 
     private static DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> filterPart(String id, org.overengineer.bettacraft.filter.FilterPartBlock.Part part) {

@@ -221,6 +221,14 @@ public final class BettaCraftClient {
     static final int TUBIFEX_WATER = 0xFF6E5A3A, DAPHNIA_WATER = 0xFF5E8A3E;
 
     private static void onBlockColors(RegisterColorHandlersEvent.Block event) {
+        // M40 part c: a covered filter pipe or bundle is tinted like its cover (grass, leaves)
+        event.register((state, level, pos, tint) -> {
+            if (level == null || pos == null) return -1;
+            var c = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(level, pos);
+            return c == null ? -1 : net.minecraft.client.Minecraft.getInstance().getBlockColors().getColor(c, level, pos, tint);
+        }, org.overengineer.bettacraft.registry.ModBlocks.FILTER_INLET_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_OUTLET_PIPE.get(),
+                org.overengineer.bettacraft.registry.ModBlocks.FILTER_FRESH_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_WASTE_PIPE.get(),
+                org.overengineer.bettacraft.registry.ModBlocks.FILTER_PIPE_BUNDLE.get());
         event.register((state, level, pos, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.LARVA_TUB.get());
         // M13: aquarium plants: grey textures tinted per species, part and redness (also in the miniature)
         for (var b : org.overengineer.bettacraft.registry.ModBlocks.AQUATIC_PLANTS.values()) {

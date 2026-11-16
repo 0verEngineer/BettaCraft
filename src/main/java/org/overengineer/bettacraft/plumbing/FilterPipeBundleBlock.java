@@ -54,6 +54,8 @@ import org.overengineer.bettacraft.registry.ModItems;
  * <p>
  * Drawn as a steel manifold ({@link #HUB}) with one arm per joined side and line; the arms of a line sit at the same spot
  * of a face in every bundle (so bundles line up), {@link #arm}.
+ * <p>
+ * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
 public class FilterPipeBundleBlock extends BaseEntityBlock {
     public static final MapCodec<FilterPipeBundleBlock> CODEC = simpleCodec(FilterPipeBundleBlock::new);
@@ -148,12 +150,46 @@ public class FilterPipeBundleBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return shapeOf(linesAt(level, pos));
+        return PipeCovers.shape(level, pos, shapeOf(linesAt(level, pos))); // part c: a full block under a cover
     }
 
     @Override
     protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return true; // part c: also under a cover (the light engine reads no block entities off the main thread)
+    }
+
+    // ------------------------------------------------------------------ the cover (part c)
+
+    @Override
+    public boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir) {
+        return PipeCovers.hidesNeighbour(level, pos);
+    }
+
+    @Override
+    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return PipeCovers.shade(level, pos);
+    }
+
+    @Override
+    public boolean hasDynamicLightEmission(BlockState state) {
         return true;
+    }
+
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        return PipeCovers.light(level, pos);
+    }
+
+    @Override
+    public net.minecraft.world.level.block.SoundType getSoundType(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos, @Nullable net.minecraft.world.entity.Entity entity) {
+        var s = PipeCovers.sound(level, pos, entity);
+        return s != null ? s : super.getSoundType(state, level, pos, entity);
+    }
+
+    @Override
+    public BlockState getAppearance(BlockState state, net.minecraft.world.level.BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+        BlockState c = PipeCovers.coverAt(level, pos);
+        return c != null ? c : state;
     }
 
     /** The line of the bundle closest to where it was hit (an arm, else the spot of the line next to the manifold). */
@@ -264,10 +300,11 @@ public class FilterPipeBundleBlock extends BaseEntityBlock {
         }
         if (s.getBlock() instanceof FilterPipeBlock) {
             BlockState cover = level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be ? be.cover() : null;
+            ItemStack from = level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be ? be.coverItem() : ItemStack.EMPTY;
             // without shape updates first: the neighbours look at the bundle once it carries its lines
             level.setBlock(pos, ModBlocks.FILTER_PIPE_BUNDLE.get().defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
             if (!(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be)) return false;
-            be.init(cover, lines);
+            be.init(cover, from, lines);
         }
         if (!(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be)) return false;
         int slot = FilterPipes.connectNew(line, FilterPipes.PRESENT, level, pos);
@@ -292,8 +329,9 @@ public class FilterPipeBundleBlock extends BaseEntityBlock {
         if (left.size() == 1) {
             PipeLine l = left.iterator().next();
             BlockState cover = be.cover();
+            ItemStack from = be.coverItem();
             level.setBlock(pos, pipeOf(l).stateOf(FilterPipes.slot(now, l)), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
-            if (level.getBlockEntity(pos) instanceof FilterPipeBlockEntity single) single.init(cover, 0);
+            if (level.getBlockEntity(pos) instanceof FilterPipeBlockEntity single) single.init(cover, from, 0);
         } else {
             be.setLines(now);
         }
@@ -319,6 +357,8 @@ public class FilterPipeBundleBlock extends BaseEntityBlock {
             if (!level.isClientSide) addLine(level, pos, f.line(), player, stack);
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
+        ItemInteractionResult facade = PipeCovers.useForeign(stack, level, pos, player, hand); // part c: another mod's facade
+        if (facade != null) return facade;
         if (stack.getItem() instanceof PipeTeeItem) {
             if (!level.isClientSide) {
                 PipeLine l = lineAt(linesAt(level, pos), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
@@ -364,7 +404,10 @@ public class FilterPipeBundleBlock extends BaseEntityBlock {
     @Override
     protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         BlockEntity be = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        return be instanceof FilterPipeBlockEntity f ? drops(f.lines()) : List.of();
+        if (!(be instanceof FilterPipeBlockEntity f)) return List.of();
+        List<ItemStack> out = drops(f.lines());
+        PipeCovers.addDrops(out, f); // part c: the block or facade of its cover
+        return out;
     }
 
     @Override

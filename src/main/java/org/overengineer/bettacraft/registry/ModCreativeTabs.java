@@ -107,7 +107,7 @@ public final class ModCreativeTabs {
                         ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER)) out.accept(it.get());
                 // M40: the filter pipes, the T-piece and the guards
                 for (var it : java.util.List.of(ModItems.FILTER_INLET_PIPE, ModItems.FILTER_OUTLET_PIPE, ModItems.FILTER_FRESH_PIPE, ModItems.FILTER_WASTE_PIPE,
-                        ModItems.PIPE_TEE, ModItems.INTAKE_GUARD, ModItems.OUTLET_GUARD, ModItems.FILTER_FRESH_PORT, ModItems.FILTER_WASTE_PORT)) out.accept(it.get());
+                        ModItems.PIPE_TEE, ModItems.PIPE_COVER, ModItems.INTAKE_GUARD, ModItems.OUTLET_GUARD, ModItems.FILTER_FRESH_PORT, ModItems.FILTER_WASTE_PORT)) out.accept(it.get());
                 // M25: water chemistry
                 for (var it : java.util.List.of(ModItems.TDS_METER, ModItems.PH_TEST_KIT, ModItems.REMINERALISING_SALT, ModItems.ALMOND_LEAF, ModItems.ALDER_CONE, ModItems.ACTIVE_SOIL)) out.accept(it.get());
                 // M25 part b: CO2 and reverse osmosis
