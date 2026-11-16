@@ -4,6 +4,18 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.33.3-beta.1] - 2026-11-17
+
+A fix for tall fish at the water surface.
+
+### Fixed
+- **Angelfish fins out of the water:** tall tankmates kept only most of their hitbox below the surface, but the angelfish
+  is drawn almost twice as high as its hitbox, so near the surface its dorsal fin stuck out of the water and through the
+  glass lid (the discus a little too). Every tankmate now keeps the top of its drawn model (taken from the model itself,
+  for every body plan, sex, life stage, hybrid share and the balloon ram) below the surface, also while it gulps air, rests
+  or swims up to its zone; a fish taller than the water left in its top block now sinks into the block below instead of
+  sticking at the block's floor. The angelfish pair is back in the Amazon tank of the media.
+
 ## [1.33.2-beta.1] - 2026-11-17
 
 Release material: new pictures and animations for the README and the CurseForge page, and the mod page in English only.
