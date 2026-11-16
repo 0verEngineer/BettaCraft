@@ -14,6 +14,8 @@ item_ids:
 Der Leopardgecko (*Eublepharis macularius*, etwa 22 cm) lebt in der felsigen Halbwüste Pakistans und Afghanistans: ein
 gelber, schwarz gefleckter Bodengecko mit dickem Schwanz (sein Fettspeicher) und Augenlidern. Am Glas klettern kann er nicht.
 
+![Die drei Morphen Normal, Tangerine und Albino, je ein erwachsenes Tier mit einem Jungtier](../images/leopard_gecko_morphs.png)
+
 ## Pflege
 
 | | |

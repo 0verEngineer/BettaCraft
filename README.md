@@ -87,7 +87,7 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   **fertilizer maker** mixes it from kelp meal, nutrient salt and water and pipes it into the tank; the dosing pump doses
   it too.
 - **Every plant grows wild** in the waters of its origin: Anubias and Bucephalandra on stones in jungle water, stem
-  plants and carpets in swamps, Vallisneria and mosses in rivers, Marimo balls in cold lakes, floating plants on calm
+  plants and carpet cushions in swamps, Vallisneria and mosses in rivers, Marimo balls in cold lakes, floating plants on calm
   water. Shears cut a cutting, the plant grows back.
 - Every plant and coral has **real leaves, polyps and tentacles that sway** in the water, inside and in the miniature
   outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
@@ -106,7 +106,8 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   colours inherited by Mendel (blue recessive and rare).
 - **Wild animals and corals** live in the waters they come from (jungle, swamp, river, mangrove, warm and lukewarm
   ocean); the waters are biome tags, so the biomes of biome mods count too. Catch them with the aquarium net. An own
-  frugal spawn pass keeps them findable next to the fish of other mods; `/bettacraft wildlife` shows what lives where.
+  frugal spawn pass keeps them findable next to the fish of other mods (the shrimp and snails with their own limit, in
+  shallow water by the bank); `/bettacraft wildlife` shows what lives where.
 - **Water animals of all mods** (fish, axolotls, tadpoles, seahorses ...) live in the aquariums; whales, bosses and
   hostile mobs are refused with a reason, other big animals go by the size rule of the big tanks.
 

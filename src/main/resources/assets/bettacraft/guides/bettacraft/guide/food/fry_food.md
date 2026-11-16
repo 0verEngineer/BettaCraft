@@ -39,7 +39,7 @@ Infusoria are tiny single-celled animals that grow in water with plant matter.
 
 Artemia are brine shrimp; their dried eggs (cysts) hatch in salt water.
 
-1. **Cysts:** mining sand (also red sand) sometimes drops <ItemLink id="bettacraft:artemia_cysts" /> (8 %). One jar
+1. **Cysts:** mining sand (also red sand) sometimes drops <ItemLink id="bettacraft:artemia_cysts" /> (4 %). One jar
    is one culture (or one batch of the [artemia hatchery](artemia_hatchery.md)); jars stack to 64.
 2. **Salt water:** use a glass bottle on water in an ocean: a <ItemLink id="bettacraft:salt_water_bottle" />.
 3. Mix both into an <ItemLink id="bettacraft:artemia_culture" /> and wait **one in-game day in the light** (light level
@@ -49,7 +49,7 @@ Artemia are brine shrimp; their dried eggs (cysts) hatch in salt water.
 ## Obtaining
 
 * <ItemLink id="bettacraft:salt_water_bottle" />: **Glass bottle** filled with water in oceans and at beaches.
-* <ItemLink id="bettacraft:artemia_cysts" />: **Breaking sand**: 8 % per block.
+* <ItemLink id="bettacraft:artemia_cysts" />: **Breaking sand**: 4 % per block.
 
 Crafting:
 

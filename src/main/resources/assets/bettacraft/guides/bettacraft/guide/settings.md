@@ -42,7 +42,7 @@ navigation:
 | `interior.leaveSneakTicks` | 60 | how long to sneak (and look up) to leave |
 | `interior.leaveLookUpDegrees` | 60 | how steeply up you have to look while sneaking to leave (0 = sneaking alone) |
 | `interior.syncRange`, `preparationBudgetMs` | 96, 8 | players this close get the miniature; server time per tick for building new interiors |
-| `drops.artemiaFromSandChance` | 0.08 | a jar of artemia cysts from sand (one jar is one culture) |
+| `drops.artemiaFromSandChance` | 0.04 | a jar of artemia cysts from sand (one jar is one culture) |
 | `waterQuality.qualityEnabled` | true | water quality on (loss per day 0.01, per animal 0.04, per overfed portion 0.01, filters remove 0.8, bad below 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | water blocks a filter keeps clean |
 | `evaporation.evaporationEnabled` | true | open tanks lose water (`mbPerBlockPerDay` 20) |
@@ -298,8 +298,12 @@ The wild fish, frogs and small animals belong to the vanilla spawn group *water 
 fish. Its cap is 20 per player, and with many fish mods (Fish of Thieves, Naturalist, ...) the fish of the oceans nearby
 often fill it. So Bettacraft also has its own frugal spawn pass (common config `features.wildSpawnPass.enabled`, on): every
 `wildlife.spawnPassInterval` ticks (200 = 10 seconds) each player gets one try in fitting water 24 to 48 blocks away,
-while fewer than `wildlife.spawnPassPerPlayer` (10) wild animals of the mod live within 48 blocks. The usual rules stay:
-a few per 32 blocks (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), never in an aquarium, and far from the player
+while fewer than `wildlife.spawnPassPerPlayer` (10) wild fish, frogs and turtles of the mod live within 48 blocks. The
+small animals (shrimp, snails, crayfish, hermit crabs) have their own limit and their own try each pass:
+`wildlife.spawnPassCrittersPerPlayer` (12) within 48 blocks, so fish and small animals never take each other's room. Their
+try prefers shallow water (1 to 6 blocks deep) over sand, gravel or stone or by water plants, in small groups, so they can
+be seen from the bank; deep ground stays possible. When they spawn the apple snail is picked a quarter as often as the net
+catches it, so the other animals of the jungle show up too. The usual rules stay: a few per 32 blocks (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), never in an aquarium, and far from the player
 they vanish again like vanilla fish. The weights are `spawn.wildFishWeight` and `spawn.wildCritterWeight` (common config).
 
 All animals of the mod are in the entity tag `#bettacraft:all_animals`, the ones that spawn by themselves in

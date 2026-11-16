@@ -4,6 +4,35 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.36.1-beta.1] - 2026-11-17
+
+Small fixes: the heat mat icon, nicer wild carpets, the leopard gecko without holes, fewer artemia cysts from sand, and
+shrimp and snails that one actually meets in the wild.
+
+### Fixed
+- **Leopard gecko (and the other terrarium animals) no longer grey or see-through:** the textures of the frogs, geckos, the
+  corn snake and the turtles (and of the shrimp, snails, crayfish and hermit crabs) were laid out with the cube sizes
+  rounded up, while Minecraft maps the exact sizes, so the faces sampled empty texels at their edges and one looked into
+  the model. The textures now cover every face exactly; the patterns also run on across the edges. A test checks every
+  face of every model.
+- **Heat mat item lies flat** like the mat under a terrarium (inventory, hand, item frame, on the ground, JEI); placed on a
+  wall it still stands upright.
+- **Shrimp, snails and crayfish are seen in the wild again:** they no longer share the own spawn pass's limit with the
+  fish. They have their own limit (`wildlife.spawnPassCrittersPerPlayer`, 12 within 48 blocks) and their own try per
+  pass, which prefers shallow water (1 to 6 blocks deep) over sand, gravel and stone or by water plants, in small groups,
+  so they can be seen from the bank.
+
+### Changed
+- **Wild carpets** (Hemianthus, Monte Carlo, Marsilea, Staurogyne, hairgrass in the world) are dense cushions of several
+  heights with leafy tops, small tufts, a little colour variety and a soft, ragged rim instead of a flat plate.
+- **Artemia cysts from sand: 4 % instead of 8 %** (`drops.artemiaFromSandChance`). A world whose server config still has
+  the old default 0.08 is moved to 0.04 once (logged, old file kept as `bettacraft-server.toml.pre-m46`); a chance you set
+  yourself stays.
+- When small animals spawn the **apple snail is picked a quarter as often** as the net catches it, so the dwarf crayfish,
+  Sulawesi shrimp and Tylomelania of jungle water show up too (jungle spawns: about 40 % apple snails instead of 75 %).
+- `wildlife.spawnPassPerPlayer` (10) now counts the wild fish, frogs and turtles only; `/bettacraft wildlife` shows both
+  limits.
+
 ## [1.36.0-beta.1] - 2026-11-16
 
 The quest chapter for modpacks catches up with everything since 1.25.0, and the advancements with it.

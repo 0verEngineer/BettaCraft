@@ -14,6 +14,8 @@ item_ids:
 The leopard gecko (*Eublepharis macularius*, about 22 cm) lives in the rocky semi-desert of Pakistan and Afghanistan: a
 yellow, black-spotted ground gecko with a fat tail (its fat store) and eyelids. It cannot climb glass.
 
+![The three morphs normal, tangerine and albino, each adult with a young one](../images/leopard_gecko_morphs.png)
+
 ## Care
 
 | | |

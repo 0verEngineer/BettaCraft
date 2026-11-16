@@ -37,6 +37,8 @@ calm water like lily pads: pick them up by hand, with shears or scoop them with 
 Strong-light plants grow only in shallow water and, like the soft-water plants, are rare. Config:
 `features.aquaticPlants.wildPlants`, `spawn.wildPlantFrequency`.
 
+![Wild carpets in a swamp pool: cushions of HC Cuba, Marsilea, Staurogyne and hairgrass, grown and trimmed](images/wild_carpets.png)
+
 ## All plants
 
 | | Plant | Growth form | Light | Full size |

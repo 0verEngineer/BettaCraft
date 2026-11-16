@@ -84,7 +84,7 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Mosquito Larvae](../food.md): breaking mud in swamps (4 %).
 * [Tubifex Worms](../food/tubifex_dish.md): breaking mud in swamps (5 %).
 * [Daphnia](../food/daphnia_barrel.md): glass bottle filled with water in swamps (8 %).
-* [Artemia Cysts](../food/fry_food.md): breaking sand (8 %).
+* [Artemia Cysts](../food/fry_food.md): breaking sand (4 %).
 * [Betta](../bettas.md): spawns in swamps (spawn weight 8).
 * [Betta imbellis](../bettas/betta_imbellis.md): spawns in swamps (spawn weight 8).
 * [Betta smaragdina](../bettas/betta_smaragdina.md): spawns in swamps (spawn weight 8).
@@ -187,8 +187,8 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Arapaima](../big_tanks/arapaima.md): spawns in jungle water (spawn weight 1).
 * [Motoro Stingray](../big_tanks/motoro_stingray.md): spawns in jungle water (spawn weight 2).
 * [Dwarf Clawed Frog](../invertebrates/dwarf_clawed_frog.md): spawns in jungle water (spawn weight 4).
-* [Apple Snail](../invertebrates/apple_snail.md): spawns in jungle water (spawn weight 5).
-* [Dwarf Crayfish (CPO)](../invertebrates/dwarf_crayfish.md): spawns in jungle water (spawn weight 1).
+* [Apple Snail](../invertebrates/apple_snail.md): spawns in jungle water (spawn weight 3).
+* [Dwarf Crayfish (CPO)](../invertebrates/dwarf_crayfish.md): spawns in jungle water (spawn weight 2).
 * [Cardinal Shrimp](../invertebrates/sulawesi_shrimp.md): spawns in jungle water (spawn weight 1).
 * [Tylomelania Snail](../invertebrates/tylomelania.md): spawns in jungle water (spawn weight 1).
 * [Ocellaris Clownfish](../saltwater/ocellaris_clownfish.md): spawns in warm oceans (coral reefs) (spawn weight 6).

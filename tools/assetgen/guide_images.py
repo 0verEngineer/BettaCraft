@@ -963,6 +963,21 @@ def m44(out_en: Path) -> None:
         print("missing", src)
 
 
+# M46 scene (DevClientSmokeM46, -Psmoketestm46): the wild carpet cushions in a swamp pool, the leopard gecko morphs (adults in
+# front, the young behind them) from the side
+M46_WORLD = {"wild_carpets": ("bettacraft_m46_carpet_swamp", (0, 200, 1280, 760)),
+             "leopard_gecko_morphs": ("bettacraft_m46_gecko_morphs_2", (140, 280, 1140, 760))}
+
+
+def m46(out_en: Path) -> None:
+    for name, (shot, box) in M46_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -977,6 +992,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m46"]:
+        m46(out_en)
+        return 0
     if sys.argv[1:] == ["m44"]:
         m44(out_en)
         return 0

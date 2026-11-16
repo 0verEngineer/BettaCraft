@@ -42,7 +42,7 @@ navigation:
 | `interior.leaveSneakTicks` | 60 | wie lange man zum Verlassen schleichen (und nach oben schauen) muss |
 | `interior.leaveLookUpDegrees` | 60 | wie steil man beim Schleichen nach oben schauen muss, um hinauszukommen (0 = Schleichen allein) |
 | `interior.syncRange`, `preparationBudgetMs` | 96, 8 | Spieler so nah bekommen die Miniatur; Serverzeit pro Tick für den Bau neuer Innenräume |
-| `drops.artemiaFromSandChance` | 0.08 | eine Dose Artemia-Zysten aus Sand (eine Dose ist ein Ansatz) |
+| `drops.artemiaFromSandChance` | 0.04 | eine Dose Artemia-Zysten aus Sand (eine Dose ist ein Ansatz) |
 | `waterQuality.qualityEnabled` | true | Wasserqualität an (Verlust pro Tag 0.01, pro Tier 0.04, pro Überfütterung 0.01, Filter entfernen 0.8, schlecht unter 0.35) |
 | `waterQuality.externalFilterBlocks`, `internalFilterBlocks` | 32, 16 | Wasserblöcke, die ein Filter sauber hält |
 | `evaporation.evaporationEnabled` | true | offene Aquarien verlieren Wasser (`mbPerBlockPerDay` 20) |
@@ -309,8 +309,13 @@ Tropenfische. Deren Obergrenze liegt bei 20 pro Spieler, und mit vielen Fisch-Mo
 füllen die Fische der Ozeane in der Nähe sie oft ganz. Darum hat Bettacraft zusätzlich einen eigenen, sparsamen
 Spawn-Durchlauf (Common-Config `features.wildSpawnPass.enabled`, an): alle `wildlife.spawnPassInterval` Ticks (200 = 10 Sekunden)
 bekommt jeder Spieler einen Versuch in passendem Wasser 24 bis 48 Blöcke entfernt, solange weniger als
-`wildlife.spawnPassPerPlayer` (10) Wildtiere der Mod im Umkreis von 48 Blöcken leben. Die üblichen Regeln bleiben: wenige
-pro 32 Blöcke (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), nie in einem Aquarium, und weit weg vom Spieler
+`wildlife.spawnPassPerPlayer` (10) wilde Fische, Frösche und Schildkröten der Mod im Umkreis von 48 Blöcken leben. Die
+Kleintiere (Garnelen, Schnecken, Krebse, Einsiedlerkrebse) haben eine eigene Grenze und einen eigenen Versuch pro Durchlauf:
+`wildlife.spawnPassCrittersPerPlayer` (12) im Umkreis von 48 Blöcken, so nehmen Fische und Kleintiere einander nie den Platz
+weg. Ihr Versuch bevorzugt flaches Wasser (1 bis 6 Blöcke tief) über Sand, Kies oder Stein oder an Wasserpflanzen, in
+kleinen Gruppen, damit man sie vom Ufer aus sieht; tiefer Grund bleibt möglich. Beim Spawnen wird die Apfelschnecke nur ein
+Viertel so oft gewählt, wie der Kescher sie fängt, damit auch die anderen Tiere des Dschungels vorkommen. Die üblichen
+Regeln bleiben: wenige pro 32 Blöcke (`wildlife.wildFishNearby` 6, `wildCrittersNearby` 8), nie in einem Aquarium, und weit weg vom Spieler
 verschwinden sie wieder wie Vanilla-Fische. Die Gewichte sind `spawn.wildFishWeight` und `spawn.wildCritterWeight`
 (Common-Config).
 

@@ -86,7 +86,7 @@ die [Biom-Tags](../settings.md)).
 * [Mückenlarven](../food.md): Schlamm abbauen in Sümpfen (4 %).
 * [Tubifex](../food/tubifex_dish.md): Schlamm abbauen in Sümpfen (5 %).
 * [Daphnien](../food/daphnia_barrel.md): Glasflasche mit Wasser in Sümpfen (8 %).
-* [Artemia-Zysten](../food/fry_food.md): Sand abbauen (8 %).
+* [Artemia-Zysten](../food/fry_food.md): Sand abbauen (4 %).
 * [Betta](../bettas.md): spawnt in Sümpfen (Spawn-Gewicht 8).
 * [Betta imbellis](../bettas/betta_imbellis.md): spawnt in Sümpfen (Spawn-Gewicht 8).
 * [Betta smaragdina](../bettas/betta_smaragdina.md): spawnt in Sümpfen (Spawn-Gewicht 8).
@@ -189,8 +189,8 @@ die [Biom-Tags](../settings.md)).
 * [Arapaima](../big_tanks/arapaima.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
 * [Süßwasserstechrochen](../big_tanks/motoro_stingray.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
 * [Zwergkrallenfrosch](../invertebrates/dwarf_clawed_frog.md): spawnt in Dschungelgewässern (Spawn-Gewicht 4).
-* [Apfelschnecke](../invertebrates/apple_snail.md): spawnt in Dschungelgewässern (Spawn-Gewicht 5).
-* [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
+* [Apfelschnecke](../invertebrates/apple_snail.md): spawnt in Dschungelgewässern (Spawn-Gewicht 3).
+* [Zwergkrebs (CPO)](../invertebrates/dwarf_crayfish.md): spawnt in Dschungelgewässern (Spawn-Gewicht 2).
 * [Kardinalgarnele](../invertebrates/sulawesi_shrimp.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
 * [Tylomelania-Schnecke](../invertebrates/tylomelania.md): spawnt in Dschungelgewässern (Spawn-Gewicht 1).
 * [Falscher Clownfisch](../saltwater/ocellaris_clownfish.md): spawnt in warmen Ozeanen (Korallenriffe) (Spawn-Gewicht 6).

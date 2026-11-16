@@ -37,6 +37,8 @@ halb ausgewachsen. Schwimmpflanzen liegen wie Seerosenblätter auf ruhigem Wasse
 oder mit dem [Kescher](equipment/tank_net.md) abschöpfen. Starklicht-Pflanzen wachsen nur in flachem Wasser und sind, wie
 die Weichwasser-Pflanzen, selten. Config: `features.aquaticPlants.wildPlants`, `spawn.wildPlantFrequency`.
 
+![Wilde Bodendecker in einem Sumpftümpel: Polster aus HC Cuba, Marsilea, Staurogyne und Nadelsimse, gewachsen und geschnitten](images/wild_carpets.png)
+
 ## Alle Pflanzen
 
 | | Pflanze | Wuchsform | Licht | Volle Größe |
