@@ -467,11 +467,11 @@ public final class ForeignLandAnimalsGameTests {
             h.assertTrue(a.isAlive() && t.inhabitants().contains(a.getUUID()), "alive in the tank");
             var box = TankInhabitants.tankBox(t).inflate(0.5);
             h.assertTrue(box.contains(a.position()), "in the tank: " + a.position());
-            // M39 part c (flaky before): a part sits where the mod puts it from the body's heading and pitch, so a steeply diving
-            // arapaima near the bottom has its tail part below the glass (one run in two dozen); the parts go with the body (within its
-            // 2.5 m), and the body stays in the tank
+            // M39 part c (flaky before: "its part in the tank too"): Fintastic puts the head and tail parts at past positions of the
+            // body (a ring buffer of the last ticks) along its pitch, so after a quick climb or turn the tail trails several blocks
+            // behind, also below the glass, until it catches up; the parts belong to the body and follow it (not left in the world)
             for (var part : a.getParts()) {
-                h.assertTrue(part.position().distanceTo(a.position()) <= 3.0, "its part " + part.position() + " with the body " + a.position());
+                h.assertTrue(part.position().distanceTo(a.position()) <= 8.0, "its part " + part.position() + " follows the body " + a.position());
             }
             h.assertTrue(TankInhabitants.liveInhabitants(h.getLevel(), t).stream().noneMatch(x -> x instanceof net.neoforged.neoforge.entity.PartEntity<?>),
                     "the parts are no inhabitants");
