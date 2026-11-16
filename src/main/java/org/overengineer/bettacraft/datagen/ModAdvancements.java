@@ -32,7 +32,11 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
     static final String[] IDS = {"root", "catch_betta", "build_tank", "fill_tank", "insert_betta", "ideal_temperature", "feeder", "recovered",
             "fight", "nest_built", "spawned", "fry_free", "grown_up", "variety_bred", "dynasty", "big_tank", "enter_interior", "decor", "substrate",
             "filter", "cabinet", "swamp_water", "mosquito_larvae", "pellets", "fry_food", "water_change", "cooler", "food_bred", "mirror",
-            "guppy_strain", "guppy_collection", "guppy_hybrid"};
+            "guppy_strain", "guppy_collection", "guppy_hybrid",
+            // M45
+            "tankmate_inserted", "livebearer_litter", "seahorse_fry", "critters_bred", "algae_scraped", "herp_clutch", "turtle_clutch",
+            "paludarium", "sea_turtle", "pet_terrarium", "foreign_animal", "mob_in_glass", "big_animal", "shared_filter",
+            "auto_water_change", "varied_diet", "regulator", "light_timer", "powered", "wound_up", "create_drive", "travelling_tank"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -136,6 +140,43 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         simple(swamp, "fry_food", ModItems.ARTEMIA_NAUPLII.get(), AdvancementType.TASK,
                 "fry_food", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
                         ModItems.INFUSORIA.get(), ModItems.ARTEMIA_NAUPLII.get())));
+        m45(filled, inserted, tank, interior, larvae);
+    }
+
+    /**
+     * M45: the advancements of the systems since M21 (they are also the tasks of the FTB Quests chapter): each by a
+     * {@code bettacraft:event} that {@link Progress} fires where it happens.
+     */
+    private void m45(AdvancementHolder filled, AdvancementHolder inserted, AdvancementHolder tank, AdvancementHolder interior, AdvancementHolder larvae) {
+        var tm = ModItems.TANKMATE_BUCKETS;
+        AdvancementHolder mates = event(filled, "tankmate_inserted", tm.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.NEON_TETRA).get(),
+                AdvancementType.TASK, Progress.TANKMATE);
+        event(mates, "livebearer_litter", ModItems.BREEDING_BOX.get(), AdvancementType.TASK, Progress.LITTER);
+        event(mates, "seahorse_fry", tm.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.LINED_SEAHORSE).get(), AdvancementType.GOAL,
+                Progress.SEAHORSE_FRY);
+        event(filled, "critters_bred", ModItems.CRITTER_BUCKET.get(), AdvancementType.TASK, Progress.CRITTERS_BRED);
+        event(filled, "algae_scraped", ModItems.ALGAE_SCRAPER.get(), AdvancementType.TASK, Progress.ALGAE_SCRAPED);
+        AdvancementHolder palu = event(tank, "paludarium", Items.MOSS_BLOCK, AdvancementType.TASK, Progress.PALUDARIUM);
+        event(palu, "herp_clutch", ModItems.TERRARIUM_BOX.get(), AdvancementType.GOAL, Progress.HERP_CLUTCH);
+        AdvancementHolder turtle = event(palu, "turtle_clutch", Items.TURTLE_EGG, AdvancementType.GOAL, Progress.TURTLE_CLUTCH);
+        event(turtle, "sea_turtle", Items.TURTLE_SCUTE, AdvancementType.CHALLENGE, Progress.SEA_TURTLE);
+        event(palu, "pet_terrarium", Items.RABBIT_FOOT, AdvancementType.TASK, Progress.PET);
+        event(filled, "foreign_animal", Items.AXOLOTL_BUCKET, AdvancementType.TASK, Progress.FOREIGN);
+        event(filled, "mob_in_glass", ModItems.MOB_JAR.get(), AdvancementType.TASK, Progress.MOB_IN_GLASS);
+        event(tank, "big_animal", ModItems.LARGE_NET.get(), AdvancementType.CHALLENGE, Progress.BIG_ANIMAL);
+        event(tank, "shared_filter", ModItems.FILTER_PUMP_HEAD.get(), AdvancementType.GOAL, Progress.SHARED_FILTER);
+        event(tank, "auto_water_change", ModItems.WATER_CHANGE_CONTROLLER.get(), AdvancementType.TASK, Progress.AUTO_WATER_CHANGE);
+        event(inserted, "varied_diet", ModItems.FISH_FLAKES.get(), AdvancementType.TASK, Progress.VARIED_DIET);
+        AdvancementHolder reg = event(tank, "regulator", ModItems.SPONGE_FILTER.get(), AdvancementType.TASK, Progress.REGULATOR);
+        event(tank, "light_timer", ModItems.LED_PANEL.get(), AdvancementType.TASK, Progress.LIGHT_TIMER);
+        event(reg, "powered", Items.REDSTONE, AdvancementType.TASK, Progress.POWERED);
+        event(reg, "wound_up", ModItems.CRANK.get(), AdvancementType.TASK, Progress.WOUND);
+        event(tank, "create_drive", Items.PISTON, AdvancementType.TASK, Progress.CREATE_DRIVE);
+        event(tank, "travelling_tank", Items.MINECART, AdvancementType.GOAL, Progress.TRAVELLED);
+    }
+
+    private AdvancementHolder event(AdvancementHolder parent, String name, ItemLike icon, AdvancementType type, String event) {
+        return simple(parent, name, icon, type, "event", BettaEventTrigger.Instance.of(event));
     }
 
     /** An advancement with one or more criteria (pairs of name, criterion), any of which completes it. */

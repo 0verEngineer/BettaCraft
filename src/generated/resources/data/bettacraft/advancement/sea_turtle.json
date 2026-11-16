@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:turtle_clutch",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "sea_turtle"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.sea_turtle.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:turtle_scute"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.sea_turtle.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

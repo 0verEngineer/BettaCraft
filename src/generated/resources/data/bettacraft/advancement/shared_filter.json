@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "shared_filter"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.shared_filter.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:filter_pump_head"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.shared_filter.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:fill_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "critters_bred"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.critters_bred.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:critter_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.critters_bred.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

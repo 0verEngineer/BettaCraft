@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:paludarium",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "pet_terrarium"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.pet_terrarium.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:rabbit_foot"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.pet_terrarium.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -84,7 +84,10 @@ public final class TankActions {
                 else if (Features.enabled(Feature.LIGHT_TIMER)) {
                     switch (p.action()) {
                         case SET_DIMMER -> tank.setLightDimmer(p.value());
-                        case TOGGLE_TIMER -> tank.setLightTimer(!tank.lightTimer());
+                        case TOGGLE_TIMER -> {
+                            tank.setLightTimer(!tank.lightTimer());
+                            if (tank.lightTimer()) org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.LIGHT_TIMER); // M45
+                        }
                         case SET_LIGHT_ON -> tank.setLightOn(p.value());
                         default -> tank.setLightOff(p.value());
                     }

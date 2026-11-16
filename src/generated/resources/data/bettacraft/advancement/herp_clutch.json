@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:paludarium",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "herp_clutch"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.herp_clutch.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:terrarium_box"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.herp_clutch.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

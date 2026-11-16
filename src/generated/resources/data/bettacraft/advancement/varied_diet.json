@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "varied_diet"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.varied_diet.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:fish_flakes"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.varied_diet.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

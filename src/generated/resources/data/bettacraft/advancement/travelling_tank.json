@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "travelling_tank"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.travelling_tank.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:minecart"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.travelling_tank.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

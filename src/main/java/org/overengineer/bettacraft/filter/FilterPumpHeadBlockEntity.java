@@ -203,6 +203,11 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
                         for (var d : l.returns()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), false, now);
                     }
                     clog(level, working, part, ch, PipeNetwork.WINDOW / 24000.0);
+                    int servedTanks = 0; // M45: one filter for two or more tanks
+                    for (int f : flows) if (f > 0) servedTanks++;
+                    if (servedTanks >= 2) for (int i = 0; i < flows.length; i++) {
+                        if (flows[i] > 0) org.overengineer.bettacraft.progression.Progress.awardNear(level, working.get(i).tank(), org.overengineer.bettacraft.progression.Progress.SHARED_FILTER, servedTanks);
+                    }
                 }
             }
         }

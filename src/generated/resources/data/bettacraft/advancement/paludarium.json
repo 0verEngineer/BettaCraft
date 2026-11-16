@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "paludarium"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.paludarium.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:moss_block"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.paludarium.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

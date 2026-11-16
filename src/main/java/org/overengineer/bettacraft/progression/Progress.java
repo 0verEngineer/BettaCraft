@@ -50,6 +50,51 @@ public final class Progress {
     public static final String LB_STRAIN = "lb_strain";
     /** M21.6: a bred endler x guppy hybrid grew up. */
     public static final String LB_HYBRID = "lb_hybrid";
+    // M45: the events of the new advancements (the advancement ids are the same words)
+    /** A tankmate fish was put into a tank. */
+    public static final String TANKMATE = "tankmate_inserted";
+    /** Livebearers gave birth in a tank (log tm.born / tm.born_box). */
+    public static final String LITTER = "livebearer_litter";
+    /** A male seahorse released fry from his pouch (log tm.pouch_born). */
+    public static final String SEAHORSE_FRY = "seahorse_fry";
+    /** Young shrimp, snails or crayfish were born (log critters_born). */
+    public static final String CRITTERS_BRED = "critters_bred";
+    /** Algae scraped off the glass (log algae_scraped). */
+    public static final String ALGAE_SCRAPED = "algae_scraped";
+    /** A clutch of a terrarium animal (geckos, snakes, frogs) hatched. */
+    public static final String HERP_CLUTCH = "herp_clutch";
+    /** A turtle clutch hatched (the nest temperature decides the sexes). */
+    public static final String TURTLE_CLUTCH = "turtle_clutch";
+    /** The tank menu of a paludarium was opened. */
+    public static final String PALUDARIUM = "paludarium";
+    /** A sea turtle was put into a tank. */
+    public static final String SEA_TURTLE = "sea_turtle";
+    /** A peaceful Minecraft animal moved into a terrarium or paludarium. */
+    public static final String PET = "pet_terrarium";
+    /** An axolotl or an animal of another mod with a profile was put into a tank. */
+    public static final String FOREIGN = "foreign_animal";
+    /** A mob went into a tank (mob jar, bait). */
+    public static final String MOB_IN_GLASS = "mob_in_glass";
+    /** A big animal (by the size rule) was put into a tank. */
+    public static final String BIG_ANIMAL = "big_animal";
+    /** A multiblock filter cleans the water of two or more tanks (value = tanks). */
+    public static final String SHARED_FILTER = "shared_filter";
+    /** The water change controller changed water (log auto_water_change). */
+    public static final String AUTO_WATER_CHANGE = "auto_water_change";
+    /** The tank menu of a tank with a fish on a varied diet was opened. */
+    public static final String VARIED_DIET = "varied_diet";
+    /** A device was turned below 100 % with its power regulator. */
+    public static final String REGULATOR = "regulator";
+    /** The daylight timer of a tank's lights was switched on. */
+    public static final String LIGHT_TIMER = "light_timer";
+    /** The tank menu of a tank with FE in its buffer while a power option is on was opened. */
+    public static final String POWERED = "powered";
+    /** A device was wound with the crank. */
+    public static final String WOUND = "wound_up";
+    /** A turning Create shaft drives a tank (drive adapter or cabinet). */
+    public static final String CREATE_DRIVE = "create_drive";
+    /** A tank arrived somewhere else in one piece (Create contraption, Sable sub-level). */
+    public static final String TRAVELLED = "travelling_tank";
 
     private Progress() {}
 
@@ -96,6 +141,11 @@ public final class Progress {
             case "log.bettacraft.fry_free" -> FRY_FREE;
             case "log.bettacraft.fight" -> FIGHT;
             case "log.bettacraft.recovered" -> RECOVERED;
+            case "log.bettacraft.tm.born", "log.bettacraft.tm.born_box" -> LITTER; // M45
+            case "log.bettacraft.tm.pouch_born" -> SEAHORSE_FRY;
+            case "log.bettacraft.critters_born" -> CRITTERS_BRED;
+            case "log.bettacraft.algae_scraped" -> ALGAE_SCRAPED;
+            case "log.bettacraft.auto_water_change" -> AUTO_WATER_CHANGE;
             default -> null;
         };
         if (event != null) awardNear(level, controller, event, 0);
@@ -141,5 +191,46 @@ public final class Progress {
             award(player, IDEAL_TEMPERATURE);
         }
         if (!TankEquipment.filters(player.level(), controller).isEmpty()) award(player, FILTER);
+        // M45: states of the tank
+        if (t.terrariumMode() == org.overengineer.bettacraft.terrarium.TerrariumMode.PALUDARIUM) award(player, PALUDARIUM);
+        if (org.overengineer.bettacraft.tank.TankPower.anyRequired() && t.powerBuffer() > 0) award(player, POWERED);
+        if (org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FOOD_VARIETY)) {
+            var diet = org.overengineer.bettacraft.food.FoodDiet.params();
+            for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(player.serverLevel(), t)) {
+                org.overengineer.bettacraft.entity.betta.BettaHealth h = e instanceof BettaEntity b ? b.health()
+                        : e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m ? m.health() : null;
+                if (h != null && h.varied(diet)) {
+                    award(player, VARIED_DIET);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * M45: an animal went into a tank ({@code big}: by the size rule of the big animals): the advancements of the tankmates,
+     * the big animals, the mobs in glass, the Minecraft pets, the sea turtles and the foreign animals. Without a player (a
+     * lured pet) the players near the tank.
+     */
+    public static void onInserted(@Nullable Player player, ServerLevel level, TankBlockEntity controller, net.minecraft.world.entity.Entity e, boolean big) {
+        String ev = insertEvent(e, big);
+        if (ev == null) return;
+        if (player != null) award(player, ev);
+        else awardNear(level, controller, ev, 0);
+    }
+
+    /** M45: the advancement event of an animal that went into a tank, or null. */
+    @Nullable
+    public static String insertEvent(net.minecraft.world.entity.Entity e, boolean big) {
+        var type = e.getType();
+        if (org.overengineer.bettacraft.mobs.GlassMobs.isGlassMob(e) || org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return MOB_IN_GLASS;
+        if (org.overengineer.bettacraft.foreign.ForeignProfiles.pet(type)) return PET;
+        if (type == net.minecraft.world.entity.EntityType.TURTLE) return SEA_TURTLE;
+        if (big) return BIG_ANIMAL;
+        if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity) return TANKMATE;
+        if (type == net.minecraft.world.entity.EntityType.AXOLOTL) return FOREIGN;
+        String ns = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).getNamespace();
+        if (!org.overengineer.bettacraft.BettaCraft.MOD_ID.equals(ns) && org.overengineer.bettacraft.foreign.ForeignProfiles.of(type) != null) return FOREIGN;
+        return null;
     }
 }

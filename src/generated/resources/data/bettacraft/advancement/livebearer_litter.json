@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:tankmate_inserted",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "livebearer_litter"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.livebearer_litter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:breeding_box"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.livebearer_litter.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

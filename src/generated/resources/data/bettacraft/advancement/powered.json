@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:regulator",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "powered"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.powered.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:redstone"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.powered.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

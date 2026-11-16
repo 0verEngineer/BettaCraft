@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "big_animal"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.big_animal.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:large_net"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.big_animal.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

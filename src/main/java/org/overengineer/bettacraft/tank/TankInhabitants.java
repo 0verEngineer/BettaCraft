@@ -346,6 +346,7 @@ public final class TankInhabitants {
         tank.inhabitants().add(e.getUUID());
         TankCare.log(level, controller, "log.bettacraft.inserted", TankCare.nameArg(e));
         if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.INSERTED);
+        org.overengineer.bettacraft.progression.Progress.onInserted(player, level, controller, e, acc == Acceptance.BIG); // M45
         reconcile(level, controller);
         controller.markTankChanged(); // clients learn the inhabitant count (break rule without flicker)
         return null;

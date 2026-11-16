@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import org.overengineer.bettacraft.config.Feature;
+import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.monitor.MonitorValue;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankMultiblock;
@@ -62,5 +64,37 @@ public final class BettacraftApi {
         float[] v = MonitorValue.sampleAll((ServerLevel) level, c);
         for (MonitorValue m : MonitorValue.ALL) out.put(m.id, v[m.ordinal()]);
         return out;
+    }
+
+    /** M45: the prefix of the FTB Quests tags for a feature switch ({@code bettacraft_feature:tankmates.livebearerGenetics}). */
+    public static final String TAG_FEATURE = "bettacraft_feature:";
+    /** M45: the prefix of the quest tags for another mod the quest needs ({@code bettacraft_mod:create}). */
+    public static final String TAG_MOD = "bettacraft_mod:";
+    /** M45: the quest tag of quests that only work while a device needs power ({@code power.*RequiresEnergy} in the server config). */
+    public static final String TAG_NEEDS_POWER = "bettacraft_needs:power";
+    /** M45: the quest tag of quests that are optional by design (they stay optional while shown). */
+    public static final String TAG_OPTIONAL = "bettacraft_optional";
+
+    /**
+     * Whether the feature switch of this path is on ({@code tankmates.livebearerGenetics}, {@code corals.enabled}; the switch
+     * itself, its parents and the features it requires, see {@code config/bettacraft-common.toml}). An unknown path counts as on.
+     */
+    public static boolean featureEnabled(String path) {
+        Feature f = Feature.byPath(path);
+        return f == null || Features.enabled(f);
+    }
+
+    /**
+     * M45: whether a quest with these FTB Quests tags fits this server: every {@code bettacraft_feature:<path>} is on, every
+     * {@code bettacraft_mod:<modid>} is loaded and, with {@code bettacraft_needs:power}, a device needs power. Other tags are
+     * ignored. The example script {@code bettacraft_quests.js} hides the quests of the Bettacraft chapter where this is false.
+     */
+    public static boolean questTagsOn(Iterable<String> tags) {
+        for (String t : tags) {
+            if (t.startsWith(TAG_FEATURE) && !featureEnabled(t.substring(TAG_FEATURE.length()))) return false;
+            if (t.startsWith(TAG_MOD) && !net.neoforged.fml.ModList.get().isLoaded(t.substring(TAG_MOD.length()))) return false;
+            if (t.equals(TAG_NEEDS_POWER) && !org.overengineer.bettacraft.tank.TankPower.anyRequired()) return false;
+        }
+        return true;
     }
 }

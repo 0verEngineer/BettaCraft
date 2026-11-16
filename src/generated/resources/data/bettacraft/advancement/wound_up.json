@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:regulator",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "wound_up"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.wound_up.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:crank"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.wound_up.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -92,12 +92,16 @@ public final class BettaCraft {
                 if (server != null) server.execute(() -> {
                     org.overengineer.bettacraft.network.FeatureSyncPayload.sendAll(server);
                     org.overengineer.bettacraft.equipment.CabinetBlockEntity.refreshAllFronts(); // M44.1: fronts switch at once
+                    org.overengineer.bettacraft.api.ApiEvents.featuresChanged(server); // M45: the quest script shows and hides its quests
                 });
                 return;
             }
             if (e.getConfig().getSpec() != ServerConfig.SPEC) return;
             var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
-            if (server != null) server.execute(() -> org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server));
+            if (server != null) server.execute(() -> {
+                org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
+                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(server); // M45: the power options decide some quests
+            });
         });
         // M35.1: a server config from before M35.1 loses food.artemiaCystStackSize (and gets the 4x sand chance if it had the old default)
         org.overengineer.bettacraft.config.FeatureMigration.migrateServerFile(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-server.toml"));

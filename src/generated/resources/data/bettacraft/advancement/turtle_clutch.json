@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:paludarium",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "turtle_clutch"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.turtle_clutch.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:turtle_egg"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.turtle_clutch.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

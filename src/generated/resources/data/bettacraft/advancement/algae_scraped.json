@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:fill_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "algae_scraped"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.algae_scraped.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:algae_scraper"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.algae_scraped.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

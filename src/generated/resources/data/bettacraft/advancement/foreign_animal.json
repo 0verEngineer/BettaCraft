@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:fill_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "foreign_animal"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.foreign_animal.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:axolotl_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.foreign_animal.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

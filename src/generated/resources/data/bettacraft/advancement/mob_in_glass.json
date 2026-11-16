@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:fill_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "mob_in_glass"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.mob_in_glass.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:mob_jar"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.mob_in_glass.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

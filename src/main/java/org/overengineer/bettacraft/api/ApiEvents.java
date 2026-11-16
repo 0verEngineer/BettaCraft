@@ -58,6 +58,12 @@ public final class ApiEvents {
         }
     }
 
+    /** M45: the feature switches or the server config were reloaded (the quest script shows and hides its quests again). */
+    public static void featuresChanged(net.minecraft.server.MinecraftServer server) {
+        if (!on() || server == null) return;
+        post(new org.overengineer.bettacraft.api.event.FeaturesChangedEvent(server));
+    }
+
     /** Young of one brood ({@code count} 0: nothing). */
     public static void born(ServerLevel level, TankBlockEntity c, ResourceLocation species, int count, boolean hatched, boolean foreign, boolean critter) {
         if (count <= 0 || !on() || c == null) return;

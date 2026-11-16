@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:build_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "create_drive"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.create_drive.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:piston"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.create_drive.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

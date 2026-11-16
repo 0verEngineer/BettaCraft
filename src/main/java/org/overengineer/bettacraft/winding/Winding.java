@@ -198,6 +198,7 @@ public final class Winding {
             return Result.FULL;
         }
         w.onWound();
+        org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WOUND); // M45
         float pitch = 0.7F + 0.5F * (float) s.fill(); // the spring gets tighter
         if (ModSounds.devices()) level.playSound(null, at, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
         if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.wound", name, s.percent(), hours(s)), true);

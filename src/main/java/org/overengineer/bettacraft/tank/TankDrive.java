@@ -235,6 +235,12 @@ public final class TankDrive {
             }
         }
         c.driveFe = (int) Math.round(fe);
+        for (Input in : inputs) {
+            if (in.speed() != 0 && !in.overstressed()) { // M45: a turning shaft drives the tank
+                org.overengineer.bettacraft.progression.Progress.awardNear(level, c, org.overengineer.bettacraft.progression.Progress.CREATE_DRIVE, 0);
+                break;
+            }
+        }
         buffer = Math.min(buffer, Math.max(TankPower.capacity(), t.powerBuffer())); // rounding
         if (buffer != t.powerBuffer()) {
             t.setPowerBuffer(buffer);

@@ -284,6 +284,7 @@ public final class HerpBreeding {
                 String.valueOf(males));
         if (lost > 0) TankCare.log(level, c, "log.bettacraft.turtle.hatch_crowded", String.valueOf(lost));
         org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.registry.ModEntities.herp(s), females + males, true); // M32 part d
+        if (females + males > 0) org.overengineer.bettacraft.progression.Progress.awardNear(level, c, s.turtle() ? org.overengineer.bettacraft.progression.Progress.TURTLE_CLUTCH : org.overengineer.bettacraft.progression.Progress.HERP_CLUTCH, females + males); // M45
         c.markTankChanged();
         return females + males;
     }

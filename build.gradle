@@ -798,6 +798,7 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.co
     def copies = [
             [src: file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: withGroup('quests')],
             [src: file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: withGroup('kubejs')],
+            [src: file('modpack/kubejs/server_scripts/bettacraft_quests.js'), dst: file(base + '/kubejs/server_scripts/bettacraft_quests.js'), on: withGroup('kubejs')], // M45
     ]
     t.doFirst {
         copies.each { c ->

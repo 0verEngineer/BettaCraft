@@ -303,6 +303,9 @@ public final class TankMoves {
         TankMultiblock.install(level, t, skip);
         TankBlockEntity controller = TankMultiblock.getController(level, t.anchor());
         if (controller != null && t.regionId() >= 0) InteriorManager.regionFor(level, controller);
+        if (controller != null && !(map.identityRotation() && map.from().equals(map.to()))) {
+            org.overengineer.bettacraft.progression.Progress.awardNear(level, controller, org.overengineer.bettacraft.progression.Progress.TRAVELLED, 0); // M45
+        }
         if (!missing.isEmpty()) {
             LOGGER.warn("Tank {} arrived at {} without {} of its blocks: they count as broken", t.id(), t.anchor(), missing.size());
             TankMultiblock.removeBlocks(level, t, missing);

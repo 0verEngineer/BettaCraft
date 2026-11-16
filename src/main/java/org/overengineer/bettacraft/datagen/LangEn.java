@@ -50,6 +50,7 @@ final class LangEn {
         LangM32b.addAll(a); // M32 part b
         LangM32c.addAll(a); // M32 part c
         LangM32d.addAll(a); // M32 part d
+        LangM45.addAll(a); // M45: advancements and quests
         LangM33c.addAll(a); // M33 part c
         LangM33d.addAll(a); // M33 part d
         LangM331.addAll(a); // M33.1
