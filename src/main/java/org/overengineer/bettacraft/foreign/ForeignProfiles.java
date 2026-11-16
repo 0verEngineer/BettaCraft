@@ -63,13 +63,34 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     /** The profile of this type, or null (the mapping itself; every user checks its own feature switch). */
     @Nullable
     public static ForeignProfile of(EntityType<?> type) {
-        return byType.get(type);
+        ForeignProfile p = byType.get(type);
+        return p != null && p.terrarium() != null && petsOff(type) ? null : p; // M39 part c: the switch of the Minecraft pets
+    }
+
+    /**
+     * M39 part c (#25): whether this type is one of Minecraft's (a terrarium pet with a terrarium profile, or a refused one): their
+     * profiles count only while {@code features.foreignAnimals.vanillaPets} is on.
+     */
+    public static boolean vanilla(EntityType<?> type) {
+        return "minecraft".equals(BuiltInRegistries.ENTITY_TYPE.getKey(type).getNamespace());
+    }
+
+    /** M39 part c: a Minecraft type while the switch of the Minecraft terrarium pets is off. */
+    static boolean petsOff(EntityType<?> type) {
+        return vanilla(type) && !Features.enabled(Feature.VANILLA_PETS);
+    }
+
+    /** M39 part c (#25): whether this type is a Minecraft terrarium pet now (a terrarium profile, the switch on). */
+    public static boolean pet(EntityType<?> type) {
+        if (!vanilla(type)) return false;
+        ForeignProfile p = of(type);
+        return p != null && p.terrarium() != null;
     }
 
     /** The profile of this animal while our care for foreign animals is on ({@code features.foreignAnimals.care}), or null. */
     @Nullable
     public static ForeignProfile cared(Entity e) {
-        return Features.enabled(Feature.FOREIGN_CARE) ? byType.get(e.getType()) : null;
+        return Features.enabled(Feature.FOREIGN_CARE) ? of(e.getType()) : null;
     }
 
     /**
@@ -87,7 +108,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     /** The profile of this type while our care for foreign animals is on, or null. */
     @Nullable
     public static ForeignProfile cared(EntityType<?> type) {
-        return Features.enabled(Feature.FOREIGN_CARE) ? byType.get(type) : null;
+        return Features.enabled(Feature.FOREIGN_CARE) ? of(type) : null;
     }
 
     @Nullable
@@ -107,7 +128,8 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
      */
     @Nullable
     public static String refusal(EntityType<?> type) {
-        return refused.get(type);
+        String why = refused.get(type);
+        return why != null && petsOff(type) ? null : why; // M39 part c: the refused Minecraft animals with the switch of the pets
     }
 
     /** M39: every refused type with its reason. */
@@ -251,7 +273,12 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         }
         for (Map.Entry<EntityType<?>, ForeignProfile> e : map.entrySet()) {
             if (e.getValue().terrarium() == null) continue;
-            TerrariumAnimals.register(e.getKey(), e.getValue().terrarium(), ForeignTerrarium::enabled); // M35: features.foreignAnimals.terrarium
+            EntityType<?> type = e.getKey();
+            if (vanilla(type)) { // M39 part c (#25): a Minecraft pet also by features.foreignAnimals.vanillaPets
+                TerrariumAnimals.register(type, e.getValue().terrarium(), () -> ForeignTerrarium.enabled() && Features.enabled(Feature.VANILLA_PETS));
+            } else {
+                TerrariumAnimals.register(type, e.getValue().terrarium(), ForeignTerrarium::enabled); // M35: features.foreignAnimals.terrarium
+            }
             TERRARIUM.add(e.getKey());
         }
         fileByType = Map.copyOf(fileMap);

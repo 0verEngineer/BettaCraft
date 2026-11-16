@@ -1,0 +1,45 @@
+{
+  "entity": "minecraft:bat",
+  "group": "bat",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#bettacraft:feeder_insects",
+    "#bettacraft:small_feeder_insects",
+    "#c:foods/fruit"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      1,
+      1
+    ],
+    "days": 4,
+    "pause_days": 12,
+    "rate": 0.15,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      10,
+      30
+    ],
+    "humidity": [
+      50,
+      95
+    ],
+    "length": 0.15,
+    "min_blocks": 8,
+    "movement": {
+      "style": "fly",
+      "walk": 0.05,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.5,
+      "height": 0.4,
+      "water_time": 0.1
+    }
+  }
+}

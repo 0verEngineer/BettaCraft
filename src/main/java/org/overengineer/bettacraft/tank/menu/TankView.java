@@ -755,6 +755,11 @@ public final class TankView {
             if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimal ta) a = ta.adjust(a); // M31 part b: brumation
             if (e instanceof org.overengineer.bettacraft.terrarium.HerpEntity te && te.isBrumating()) seen.add(e.getType().getDescriptionId() + "|gui.bettacraft.terrarium.brumating");
             for (var p : a.problems()) seen.add(e.getType().getDescriptionId() + "|" + p.translationKey());
+            // M39 part c (#25): flowers, grass, a beehive the animal misses in the interior
+            var land = org.overengineer.bettacraft.foreign.ForeignProfiles.cared(e) != null ? org.overengineer.bettacraft.foreign.ForeignTerrarium.land(e.getType()) : null;
+            if (land != null && !land.needs().isEmpty()) {
+                for (var need : org.overengineer.bettacraft.foreign.MinecraftPets.missing(level, c, land)) seen.add(e.getType().getDescriptionId() + "|" + need.problemKey());
+            }
         }
         x.problems.addAll(seen);
         // M31 part b: the clutches in the land

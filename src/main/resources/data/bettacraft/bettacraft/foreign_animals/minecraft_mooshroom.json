@@ -1,0 +1,33 @@
+{
+  "entity": "minecraft:mooshroom",
+  "group": "cattle",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:cow_food",
+    "minecraft:brown_mushroom",
+    "minecraft:red_mushroom"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      5,
+      26
+    ],
+    "humidity": [
+      60,
+      100
+    ],
+    "length": 2.0,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.02,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.45,
+      "height": 1.3
+    }
+  }
+}

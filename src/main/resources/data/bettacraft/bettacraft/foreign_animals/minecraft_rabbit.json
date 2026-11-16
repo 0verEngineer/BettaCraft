@@ -1,0 +1,49 @@
+{
+  "entity": "minecraft:rabbit",
+  "group": "rabbit",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:rabbit_food",
+    "#bettacraft:turtle_greens"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      6
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.35,
+    "sex": "random",
+    "inherit": [
+      "RabbitType"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      0,
+      28
+    ],
+    "humidity": [
+      30,
+      80
+    ],
+    "min_blocks": 6,
+    "needs": [
+      "grass"
+    ],
+    "grazes": true,
+    "movement": {
+      "style": "hop",
+      "walk": 0.03,
+      "max_step": 0.5,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.4
+    }
+  }
+}

@@ -141,6 +141,10 @@ public final class ForeignBreeding {
             TerrariumNeeds.Assessment a = p.terrarium().assess(org.overengineer.bettacraft.terrarium.TankClimate.conditions(t));
             if (a.harmful()) return "climate";
         }
+        if (p.land() != null && !p.land().needs().isEmpty()) { // M39 part c (#25): bees without a hive or flowers, rabbits without grass
+            List<ForeignProfile.Need> missing = MinecraftPets.missing(level, c, p.land());
+            if (!missing.isEmpty()) return "no_" + missing.getFirst().key();
+        }
         if (b.needsPlants() && TankmateSpots.plants(level.getServer(), t, false).isEmpty() && TankmateSpots.plants(level.getServer(), t, true).isEmpty()) {
             return "plants";
         }
@@ -203,7 +207,7 @@ public final class ForeignBreeding {
                 TankCare.log(level, c, "log.bettacraft.foreign.cannot_breed", TankCare.nameArg(ready.get(0)),
                         "@gui.bettacraft.foreign.blocked." + (females.isEmpty() ? "no_female" : "no_male"));
             }
-            if (("tank_size".equals(why) || "plants".equals(why)) && c.logDue("foreign_breed:" + ready.get(0).getType().getDescriptionId() + why, now, LOG_TICKS * 4)) {
+            if (("tank_size".equals(why) || "plants".equals(why) || why.startsWith("no_")) && c.logDue("foreign_breed:" + ready.get(0).getType().getDescriptionId() + why, now, LOG_TICKS * 4)) {
                 TankCare.log(level, c, "log.bettacraft.foreign.cannot_breed", TankCare.nameArg(ready.get(0)), "@gui.bettacraft.foreign.blocked." + why);
             }
             return;

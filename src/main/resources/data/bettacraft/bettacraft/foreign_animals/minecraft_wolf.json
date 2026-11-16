@@ -1,0 +1,45 @@
+{
+  "entity": "minecraft:wolf",
+  "group": "dog",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:wolf_food"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      6
+    ],
+    "days": 4,
+    "pause_days": 10,
+    "rate": 0.2,
+    "sex": "random",
+    "inherit": [
+      "variant",
+      "CollarColor"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -20,
+      28
+    ],
+    "humidity": [
+      20,
+      90
+    ],
+    "length": 1.0,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.8,
+      "bask_time": 0.0,
+      "rest_time": 0.45,
+      "height": 0.8
+    }
+  }
+}

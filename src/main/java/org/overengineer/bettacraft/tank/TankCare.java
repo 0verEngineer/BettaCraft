@@ -109,6 +109,7 @@ public final class TankCare {
         org.overengineer.bettacraft.foreign.ForeignBreeding.step(server, be, dt / 24000.0); // M32 part a: their breeding ours, their own suppressed
         org.overengineer.bettacraft.foreign.ForeignTerrarium.hunt(server, be, dt / 24000.0); // M35: an alligator eats the small fish
         org.overengineer.bettacraft.foreign.ForeignHabits.step(server, be, dt / 24000.0); // M39 part b: fliers out of an open top, the clean-up crew
+        org.overengineer.bettacraft.foreign.MinecraftPets.step(server, be, dt / 24000.0); // M39 part c: the needs of the Minecraft pets, no farm, bait
         TankBreeding.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.tankmates.TankmateBreeding.step(server, be, dt / 24000.0); // M19
         org.overengineer.bettacraft.reef.ReefCare.step(server, be, dt / 24000.0); // M20: salt shock of frogs and foreign animals

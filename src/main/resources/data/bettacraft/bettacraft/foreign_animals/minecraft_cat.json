@@ -1,0 +1,45 @@
+{
+  "entity": "minecraft:cat",
+  "group": "cat",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:cat_food"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      4
+    ],
+    "days": 4,
+    "pause_days": 10,
+    "rate": 0.2,
+    "sex": "random",
+    "inherit": [
+      "variant",
+      "CollarColor"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      5,
+      32
+    ],
+    "humidity": [
+      20,
+      80
+    ],
+    "length": 0.5,
+    "movement": {
+      "style": "walk",
+      "walk": 0.025,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.5,
+      "height": 0.5
+    }
+  }
+}

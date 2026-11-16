@@ -1,0 +1,49 @@
+{
+  "entity": "minecraft:sheep",
+  "group": "sheep",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:sheep_food"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      1,
+      2
+    ],
+    "days": 4,
+    "pause_days": 12,
+    "rate": 0.2,
+    "sex": "random",
+    "inherit": [
+      "Color"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -10,
+      28
+    ],
+    "humidity": [
+      30,
+      90
+    ],
+    "length": 1.3,
+    "box": false,
+    "needs": [
+      "grass"
+    ],
+    "grazes": true,
+    "movement": {
+      "style": "walk",
+      "walk": 0.02,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 1.0
+    }
+  }
+}

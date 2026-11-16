@@ -1,0 +1,35 @@
+{
+  "entity": "minecraft:horse",
+  "group": "horse",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:horse_food"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -10,
+      32
+    ],
+    "humidity": [
+      20,
+      80
+    ],
+    "length": 2.2,
+    "box": false,
+    "needs": [
+      "grass"
+    ],
+    "grazes": true,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 1.5
+    }
+  }
+}

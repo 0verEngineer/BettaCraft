@@ -1,0 +1,42 @@
+{
+  "entity": "minecraft:pig",
+  "group": "pig",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:pig_food"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      3,
+      6
+    ],
+    "days": 4,
+    "pause_days": 10,
+    "rate": 0.2,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -5,
+      30
+    ],
+    "humidity": [
+      30,
+      90
+    ],
+    "length": 1.2,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.025,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 0.8
+    }
+  }
+}

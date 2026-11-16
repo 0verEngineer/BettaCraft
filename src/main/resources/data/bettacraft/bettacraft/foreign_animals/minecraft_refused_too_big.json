@@ -1,0 +1,7 @@
+{
+  "entity": [
+    "minecraft:camel",
+    "minecraft:sniffer"
+  ],
+  "refuse": "too_big"
+}

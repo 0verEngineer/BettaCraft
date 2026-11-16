@@ -1,0 +1,57 @@
+{
+  "entity": "minecraft:frog",
+  "group": "frog",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#bettacraft:feeder_insects",
+    "#bettacraft:small_feeder_insects",
+    "minecraft:slime_ball",
+    "live"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3,
+    "sex": "random",
+    "inherit": [
+      "variant"
+    ]
+  },
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      10,
+      30
+    ],
+    "water": [
+      10,
+      28
+    ],
+    "humidity": [
+      60,
+      100
+    ],
+    "land": [
+      0.3,
+      0.8
+    ],
+    "min_blocks": 6,
+    "movement": {
+      "style": "hop",
+      "walk": 0.03,
+      "max_step": 0.5,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 0.4,
+      "swim": 0.03,
+      "water_time": 0.35
+    }
+  }
+}

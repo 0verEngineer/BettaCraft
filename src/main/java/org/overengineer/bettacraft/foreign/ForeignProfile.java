@@ -89,12 +89,23 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      *                   rot) and lives from the waste of the other animals (fed while they are)
      * @param glows      M39 part b: it glows in the dark of its tank (fireflies): its own glow is kept going there, and the daylight
      *                   through the glass does not drive it away
+     * @param needs      M39 part c (#25): what its tank must offer in the interior besides the climate ({@link Need}: flowers for the
+     *                   bees, grass for the rabbits and the grazers, a beehive for the bees); a missing one is a problem in the menu
+     *                   and the log, and it does not breed there
+     * @param grazes     M39 part c: it lives from the grass or the flowers of its needs (the rabbits and sheep from the grass, the bees
+     *                   from the flowers): fed while they grow on the land of its tank
      */
     public record Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box,
-                       boolean lid, boolean cleanup, boolean glows) {
+                       boolean lid, boolean cleanup, boolean glows, List<Need> needs, boolean grazes) {
         /** M35: without lid, clean-up crew and glow. */
         public Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box) {
             this(lengthM, volume, gait, preyLength, box, gait != null && gait.style() == LandWalker.Style.FLY, false, false);
+        }
+
+        /** M39 part b: without the needs of part c. */
+        public Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box,
+                    boolean lid, boolean cleanup, boolean glows) {
+            this(lengthM, volume, gait, preyLength, box, lid, cleanup, glows, List.of(), false);
         }
 
         public boolean big() {
@@ -103,6 +114,24 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
 
         public boolean walks() {
             return gait != null;
+        }
+    }
+
+    /**
+     * M39 part c (#25): what a terrarium animal needs in the interior of its tank, by what stands on the land there (scanned
+     * with the land, {@code TankClimate#scanLand}): flowers ({@code #minecraft:flowers}), grass (a grass block, grass, ferns) and a
+     * beehive or bee nest ({@code #minecraft:beehives}: in the interior a mini hive, a sixteenth of the tank block).
+     */
+    public enum Need {
+        FLOWERS, GRASS, HIVE;
+
+        public String key() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+
+        /** The menu text of the missing need ({@code gui.bettacraft.terrarium.problem.no_<need>}). */
+        public String problemKey() {
+            return "gui.bettacraft.terrarium.problem.no_" + key();
         }
     }
 
@@ -449,8 +478,25 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
             }
         }
         boolean flies = gait != null && gait.style() == LandWalker.Style.FLY;
+        List<Need> wants = new ArrayList<>(); // M39 part c
+        if (t.has("needs")) {
+            for (JsonElement e : array(t.get("needs"))) {
+                String n = e.getAsString().trim().toUpperCase(Locale.ROOT);
+                try {
+                    Need need = Need.valueOf(n);
+                    if (!wants.contains(need)) wants.add(need);
+                } catch (IllegalArgumentException ex) {
+                    warn.accept("unknown need \"" + n.toLowerCase(Locale.ROOT) + "\" (flowers, grass, hive)");
+                }
+            }
+        }
+        boolean grazes = bool(t, "grazes", false);
+        if (grazes && !wants.contains(Need.FLOWERS) && !wants.contains(Need.GRASS)) {
+            warn.accept("\"grazes\" needs \"flowers\" or \"grass\" in \"needs\" (ignored)");
+            grazes = false;
+        }
         return new Land(length, vol, gait, Math.max(0, num(t, "prey", 0)), bool(t, "box", true), bool(t, "lid", flies),
-                bool(t, "cleanup", false), bool(t, "glows", false)); // M39 part b
+                bool(t, "cleanup", false), bool(t, "glows", false), List.copyOf(wants), grazes); // M39 part b, c
     }
 
     static Salinity.Range salinity(JsonElement e, Salinity.Range fallback, Consumer<String> warn) {

@@ -718,6 +718,8 @@
   "bettacraft.configuration.features.foreignAnimals.axolotlCare.tooltip": "Axolotl-Pflege: Vanilla-Axolotl im Becken wollen kühles Wasser (15–20 °C, Kühler), leiden bei Wärme und vermehren sich dort: Eier an den Pflanzen, Larven als Baby-Axolotl, die fünf Farben nach Mendel vererbt (Blau rezessiv und selten; aus: Axolotl im Becken bleiben Vanilla)",
   "bettacraft.configuration.features.foreignAnimals.terrarium": "Land- und Sumpftiere anderer Mods",
   "bettacraft.configuration.features.foreignAnimals.terrarium.tooltip": "Land- und Sumpftiere anderer Mods mit Terrarium-Profil (Vorgaben: Landschildkröte und Alligator von Naturalist) in Terrarien und Paludarien (sie brauchen auch features.terrariums.enabled): nach der Größenregel der Großtiere über das Land, das Wasser oder das ganze Becken, von unserem Läufer bewegt, Landfutter von Hand und aus dem Futterautomaten, Eier in Sand oder Erde; die Terrarienbox fängt sie und die Tiere von terrarium.boxAllow (aus: keine kommen in Becken, die Box nimmt keine; die im Becken bleiben)",
+  "bettacraft.configuration.features.foreignAnimals.vanillaPets": "Minecraft-Tiere als Terrarien-Haustiere",
+  "bettacraft.configuration.features.foreignAnimals.vanillaPets.tooltip": "Die friedlichen Tiere von Minecraft leben nach ihren Profilen (minecraft_*.json) in Terrarien und Paludarien: Hühner, Kaninchen, Bienen, Frösche, Katzen, Ozelots, Füchse, Papageien, Gürteltiere, Fledermäuse und Wölfe, dazu Schweine, Schafe, Ziegen, Kühe, Mooshrooms, Pferde, Esel, Maultiere, Lamas, Pandas und Eisbären als Großtiere nach der Größenregel; vom Läufer bewegt, von Hand und aus dem Futterautomaten gefüttert, mit eigenen Bedürfnissen (Bienen: Blumen und ein Bienenstock im Innenraum; Kaninchen und die Grasfresser: Gras; Frösche: ein Paludarium), Küken aus Eiern im Sand und eigene Junge; gefangen mit der Terrarienbox, dem großen Kescher und der Wanne oder mit Köder; sie lassen nichts fallen und geben keine Wolle, Milch oder Eier (aus: keine kommen hinein und die Box nimmt keine, die Ablehnungen von Kamel, Schnüffler, Schreiter und den untoten Pferden entfallen auch; Tiere in Becken bleiben)",
   "bettacraft.configuration.features.power.enabled": "Strom (FE)",
   "bettacraft.configuration.features.power.enabled.tooltip": "Geräte verbrauchen Forge Energy (FE) aus Kabeln und Akkus anderer Mods (aus: die Geräte laufen ohne Strom). Aus: alles darunter ist auch aus, und seine Rezepte, Händler-Angebote, Loot, Kescher- und Angelfänge und Wild-Spawns entfallen; Items und Blöcke, die es schon gibt, bleiben.",
   "bettacraft.configuration.features.power.regulator": "Leistungsregler",
@@ -3964,5 +3966,15 @@
   "log.bettacraft.foreign.hatched_sexes": "%2$s junge %1$s aus dem Nest geschlüpft (%3$s Weibchen, %4$s Männchen)",
   "message.bettacraft.terrarium.needs_lid": "%s würde wegfliegen: erst jeden oberen Block des Beckens abdecken (Deckel, Licht oder Futterautomat)",
   "log.bettacraft.foreign.flew_out": "%s ist durch die offene Oberseite des Beckens davongeflogen",
-  "log.bettacraft.foreign.cleanup": "Die Aufräumtruppe (%s und andere) hat %s übrige Portionen gefressen"
+  "log.bettacraft.foreign.cleanup": "Die Aufräumtruppe (%s und andere) hat %s übrige Portionen gefressen",
+  "gui.bettacraft.terrarium.problem.no_flowers": "keine Blumen an Land",
+  "gui.bettacraft.terrarium.problem.no_grass": "zu wenig Gras an Land",
+  "gui.bettacraft.terrarium.problem.no_hive": "kein Bienenstock im Innenraum",
+  "gui.bettacraft.foreign.blocked.no_flowers": "es braucht Blumen an Land",
+  "gui.bettacraft.foreign.blocked.no_grass": "es braucht Gras an Land",
+  "gui.bettacraft.foreign.blocked.no_hive": "es braucht einen Bienenstock im Innenraum",
+  "message.bettacraft.pet.no_farm": "%s gibt hier nichts her: die Haustiere unserer Becken sind keine Farm",
+  "message.bettacraft.pet.bait": "%s als Köder ausgelegt: ein Tier, das es frisst, läuft ins offene Becken (einen Tag lang)",
+  "log.bettacraft.pet.bait": "%s als Köder für die Tiere ringsum ausgelegt",
+  "log.bettacraft.pet.lured": "%s kam wegen des Köders herein"
 }

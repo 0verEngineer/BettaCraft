@@ -1,0 +1,38 @@
+{
+  "entity": [
+    "minecraft:donkey",
+    "minecraft:mule"
+  ],
+  "group": "horse",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:horse_food"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -5,
+      35
+    ],
+    "humidity": [
+      10,
+      70
+    ],
+    "length": 1.9,
+    "box": false,
+    "needs": [
+      "grass"
+    ],
+    "grazes": true,
+    "movement": {
+      "style": "walk",
+      "walk": 0.025,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 1.4
+    }
+  }
+}

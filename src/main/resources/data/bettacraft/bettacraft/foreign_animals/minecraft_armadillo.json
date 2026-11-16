@@ -1,0 +1,44 @@
+{
+  "entity": "minecraft:armadillo",
+  "group": "armadillo",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#minecraft:armadillo_food",
+    "#bettacraft:feeder_insects"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      4,
+      4
+    ],
+    "days": 4,
+    "pause_days": 12,
+    "rate": 0.2,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      18,
+      36
+    ],
+    "humidity": [
+      20,
+      60
+    ],
+    "min_blocks": 6,
+    "movement": {
+      "style": "walk",
+      "walk": 0.015,
+      "max_step": 0.5,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 0.5,
+      "special": 0.2,
+      "burrows": true
+    }
+  }
+}

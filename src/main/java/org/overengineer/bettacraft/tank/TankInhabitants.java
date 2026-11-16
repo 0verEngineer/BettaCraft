@@ -136,7 +136,9 @@ public final class TankInhabitants {
         EntityDimensions d = type.getDimensions();
         float w = instance != null ? instance.getBbWidth() : d.width(), h = instance != null ? instance.getBbHeight() : d.height();
         String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
-        var facts = new InhabitantRules.Facts(id, w, h, type.is(ModTags.TANK_BLACKLIST), type.is(ModTags.TANK_INHABITANTS),
+        // M39 part c (#25): the vanilla frog (on the blacklist since M16) is a paludarium pet while the Minecraft pets are on
+        boolean black = type.is(ModTags.TANK_BLACKLIST) && !org.overengineer.bettacraft.foreign.ForeignProfiles.pet(type);
+        var facts = new InhabitantRules.Facts(id, w, h, black, type.is(ModTags.TANK_INHABITANTS),
                 type.is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
                 // M31: a terrarium animal (turtle, frog, gecko ...) needs no water to live in
                 instance == null || org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type) ? null : isWaterAnimal(instance),

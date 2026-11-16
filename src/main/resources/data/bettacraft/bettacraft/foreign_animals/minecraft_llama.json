@@ -1,0 +1,38 @@
+{
+  "entity": [
+    "minecraft:llama",
+    "minecraft:trader_llama"
+  ],
+  "group": "llama",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:llama_food"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -15,
+      25
+    ],
+    "humidity": [
+      10,
+      70
+    ],
+    "length": 2.0,
+    "box": false,
+    "needs": [
+      "grass"
+    ],
+    "grazes": true,
+    "movement": {
+      "style": "walk",
+      "walk": 0.025,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 1.7
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "entity": "minecraft:bee",
+  "group": "bee",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#minecraft:bee_food",
+    "#minecraft:flowers",
+    "minecraft:honey_bottle"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      1,
+      2
+    ],
+    "days": 3,
+    "pause_days": 5,
+    "rate": 0.3
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      12,
+      32
+    ],
+    "humidity": [
+      30,
+      80
+    ],
+    "min_blocks": 6,
+    "needs": [
+      "flowers",
+      "hive"
+    ],
+    "grazes": true,
+    "movement": {
+      "style": "fly",
+      "walk": 0.04,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.4,
+      "water_time": 0.1
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "entity": [
+    "minecraft:strider",
+    "minecraft:skeleton_horse",
+    "minecraft:zombie_horse"
+  ],
+  "refuse": "unsuitable"
+}
