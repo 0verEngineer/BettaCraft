@@ -135,6 +135,8 @@ public class FilterPipeBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag t = new CompoundTag();
         write(t, registries);
+        // part c: never empty (a client ignores an empty update: a single pipe whose cover came off kept it on the client)
+        t.putBoolean("synced", true);
         return t;
     }
 
