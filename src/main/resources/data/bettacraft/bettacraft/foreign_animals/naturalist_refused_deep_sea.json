@@ -1,0 +1,7 @@
+{
+  "entity": [
+    "naturalist:anglerfish",
+    "naturalist:blobfish"
+  ],
+  "refuse": "deep_sea"
+}

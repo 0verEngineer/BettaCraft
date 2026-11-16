@@ -1,0 +1,7 @@
+{
+  "entity": [
+    "naturalist:great_white_shark",
+    "naturalist:whale"
+  ],
+  "refuse": "too_big"
+}

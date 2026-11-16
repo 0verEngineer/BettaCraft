@@ -1,0 +1,22 @@
+{
+  "entity": "aquaculture:muskellunge",
+  "group": "giant_fish",
+  "length": 1.2,
+  "care": {
+    "temperature": [
+      4,
+      26
+    ],
+    "min_quality": 0.45,
+    "salinity": "fresh",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

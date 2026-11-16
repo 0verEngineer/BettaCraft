@@ -1,0 +1,36 @@
+{
+  "entity": "fintastic:freshwater_shark",
+  "group": "shark_minnow",
+  "care": {
+    "temperature": [
+      22,
+      28
+    ],
+    "min_quality": 0.5,
+    "salinity": "fresh",
+    "stock": 1.0
+  },
+  "food": [
+    "normal",
+    "live"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      24,
+      27
+    ],
+    "min_water_blocks": 16,
+    "needs_plants": true,
+    "young": [
+      2,
+      4
+    ],
+    "days": 2,
+    "pause_days": 5,
+    "rate": 0.3,
+    "inherit": [
+      "Variant"
+    ]
+  }
+}

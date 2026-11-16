@@ -1,0 +1,22 @@
+{
+  "entity": "fintastic:catfish",
+  "group": "giant_fish",
+  "length": 1.2,
+  "care": {
+    "temperature": [
+      20,
+      28
+    ],
+    "min_quality": 0.4,
+    "salinity": "brackish",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

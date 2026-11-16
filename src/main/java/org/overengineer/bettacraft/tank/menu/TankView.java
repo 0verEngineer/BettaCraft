@@ -62,6 +62,13 @@ public final class TankView {
         }
 
         /** M19: a tankmate (the details are in {@link #tankmate}). */
+        /** M39: the stage of an animal of another mod with a sex of ours ({@link #female} counts). */
+        public static final String SEXED = "sexed";
+
+        public boolean sexed() {
+            return SEXED.equals(stage);
+        }
+
         public boolean isTankmate() {
             return tankmate.contains("species");
         }
@@ -1082,7 +1089,8 @@ public final class TankView {
             } else {
                 float hp = e instanceof net.minecraft.world.entity.LivingEntity le ? round(le.getHealth() / le.getMaxHealth()) : 1F;
                 float[] fv = org.overengineer.bettacraft.foreign.ForeignCare.menuValues(e); // M32 part a: our needs by its profile
-                i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", TankInhabitants.isAdult(e),
+                Boolean fem = org.overengineer.bettacraft.foreign.ForeignBreeding.sexOf(e); // M39: a sexed profile (the turtles of other mods)
+                i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, fem != null && fem, fem != null ? Inhabitant.SEXED : "", TankInhabitants.isAdult(e),
                         fv != null ? round(fv[0]) : 1F, fv != null ? round(fv[1]) : 1F, fv != null && fv[2] > 0, e instanceof Bucketable, BettaGenome.DEFAULT, BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0,
                         false, 0F, false);
             }

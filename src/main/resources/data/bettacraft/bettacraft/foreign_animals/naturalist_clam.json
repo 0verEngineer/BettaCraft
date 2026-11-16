@@ -1,0 +1,22 @@
+{
+  "entity": "naturalist:clam",
+  "group": "invertebrate",
+  "length": 0.6,
+  "care": {
+    "temperature": [
+      24,
+      29
+    ],
+    "min_quality": 0.6,
+    "salinity": "marine",
+    "hunger_days": 3.0,
+    "stock": 0.5
+  },
+  "food": [
+    "fry",
+    "live"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

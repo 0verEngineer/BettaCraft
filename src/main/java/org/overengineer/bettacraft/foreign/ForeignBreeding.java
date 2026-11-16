@@ -66,6 +66,8 @@ import org.slf4j.LoggerFactory;
 public final class ForeignBreeding {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/foreign");
     public static final String BROOD = "bettacraft:foreign_brood", REST = "bettacraft:foreign_rest";
+    /** M39: the sex of an animal of a sexed profile in its persistent data ({@code true}: female). */
+    public static final String SEX = "bettacraft:foreign_female";
     private static final long LOG_TICKS = 6000;
     /** Set while we add an animal of our own breeding (the join guard lets it in). */
     private static int ours;
@@ -148,9 +150,40 @@ public final class ForeignBreeding {
     /** Whether this animal may breed now: grown, not resting, fed and healthy (with our care on). */
     static boolean ready(LivingEntity e, ForeignProfile p) {
         if (!e.isAlive() || e.isBaby() || e.getPersistentData().getDouble(REST) > 0) return false;
+        if (sterile(e, p)) return false; // M39 (F1): a trophy fish of Fish of Thieves
         if (ForeignProfiles.cared(e) == null) return true; // M35: the sea turtle has no hunger of ours
         BettaHealth h = ForeignCare.health(e);
         return !h.isSick() && !h.isHungry(ForeignCare.params(p));
+    }
+
+    /** M39 (question F1): whether one of the sterile keys of the profile is set on the animal (a trophy fish does not breed). */
+    public static boolean sterile(Entity e, ForeignProfile p) {
+        if (p.breeding().sterile().isEmpty()) return false;
+        CompoundTag all = e.saveWithoutId(new CompoundTag());
+        for (String k : p.breeding().sterile()) if (all.getBoolean(k)) return true;
+        return false;
+    }
+
+    /**
+     * M39: whether an animal of a sexed profile is female. One without a sex yet (caught wild, from before) gets one now, half
+     * and half by its UUID (the same answer every time).
+     */
+    public static boolean female(Entity e) {
+        CompoundTag d = e.getPersistentData();
+        if (!d.contains(SEX)) d.putBoolean(SEX, (e.getUUID().getLeastSignificantBits() & 1L) == 0);
+        return d.getBoolean(SEX);
+    }
+
+    /** M39: sets the sex of an animal of a sexed profile. */
+    public static void setFemale(Entity e, boolean female) {
+        e.getPersistentData().putBoolean(SEX, female);
+    }
+
+    /** M39: the sex of an animal with a sexed breeding profile (true: female) for the menu, or null if it has none. */
+    @Nullable
+    public static Boolean sexOf(Entity e) {
+        ForeignProfile p = ForeignProfiles.cared(e);
+        return p != null && p.breeding().sexed() && p.breeding().breeds() ? female(e) : null;
     }
 
     private static void mate(ServerLevel level, TankBlockEntity c, ForeignProfile p, List<LivingEntity> list, double days, RandomGenerator rnd) {
@@ -159,17 +192,29 @@ public final class ForeignBreeding {
         if (ready.size() < 2) return;
         String why = blocked(level, c, p);
         long now = level.getGameTime();
+        // M39: a sexed profile needs a female and a male among the ready ones
+        List<LivingEntity> females = new ArrayList<>(), males = new ArrayList<>();
+        if (why == null && p.breeding().sexed()) {
+            for (LivingEntity e : ready) (female(e) ? females : males).add(e);
+            if (females.isEmpty() || males.isEmpty()) why = "sexes";
+        }
         if (why != null) {
+            if ("sexes".equals(why) && c.logDue("foreign_breed:" + ready.get(0).getType().getDescriptionId() + why, now, LOG_TICKS * 4)) {
+                TankCare.log(level, c, "log.bettacraft.foreign.cannot_breed", TankCare.nameArg(ready.get(0)),
+                        "@gui.bettacraft.foreign.blocked." + (females.isEmpty() ? "no_female" : "no_male"));
+            }
             if (("tank_size".equals(why) || "plants".equals(why)) && c.logDue("foreign_breed:" + ready.get(0).getType().getDescriptionId() + why, now, LOG_TICKS * 4)) {
                 TankCare.log(level, c, "log.bettacraft.foreign.cannot_breed", TankCare.nameArg(ready.get(0)), "@gui.bettacraft.foreign.blocked." + why);
             }
             return;
         }
-        if (rnd.nextDouble() >= 1 - Math.exp(-p.breeding().rate() * (ready.size() / 2) * days)) return;
-        LivingEntity mother = ready.get(rnd.nextInt(ready.size()));
+        int pairs = p.breeding().sexed() ? Math.min(females.size(), males.size()) : ready.size() / 2;
+        if (rnd.nextDouble() >= 1 - Math.exp(-p.breeding().rate() * pairs * days)) return;
+        List<LivingEntity> mothers = p.breeding().sexed() ? females : ready, fathers = p.breeding().sexed() ? males : ready;
+        LivingEntity mother = mothers.get(rnd.nextInt(mothers.size()));
         LivingEntity father = null;
         double best = Double.MAX_VALUE;
-        for (LivingEntity e : ready) {
+        for (LivingEntity e : fathers) {
             if (e == mother) continue;
             double dd = e.distanceToSqr(mother);
             if (dd < best) {
@@ -207,7 +252,10 @@ public final class ForeignBreeding {
         int made = 0;
         for (int i = 0; i < n; i++) {
             Vec3 at = mother.position().add((rnd.nextDouble() - 0.5) * 0.4, 0, (rnd.nextDouble() - 0.5) * 0.4);
-            if (spawnYoung(level, c, mother.getType(), p, motherGenes, fatherGenes, at, rnd) != null) made++;
+            Entity y = spawnYoung(level, c, mother.getType(), p, motherGenes, fatherGenes, at, rnd);
+            if (y == null) continue;
+            made++;
+            if (b.sexed()) setFemale(y, rnd.nextBoolean()); // M39: no nest, no temperature: half and half
         }
         TankCare.log(level, c, "log.bettacraft.foreign.young", TankCare.nameArg(mother), String.valueOf(made));
         org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.api.ApiEvents.id(mother.getType()), made, b.type() != ForeignProfile.Type.LIVEBEARER, true, false); // M32 part d
@@ -228,14 +276,16 @@ public final class ForeignBreeding {
         if (e == null) return null;
         // M35: a terrarium animal hatches where it is (its nest on the land), a water animal in the water
         Vec3 p0 = p.terrarium() != null ? at : new TankWaterVolume(c.getTank()).clamp(at, Math.max(0.1, e.getBbWidth() / 2), 0.05, Math.max(0.1, e.getBbHeight()));
-        if (!b.inherit().isEmpty() || b.offspringNbt() != null) {
+        if (!b.inherit().isEmpty() || b.offspringNbt() != null || !b.sterile().isEmpty()) {
             CompoundTag data = e.saveWithoutId(new CompoundTag());
             for (String k : b.inherit()) {
+                if (b.sterile().contains(k)) continue; // M39 (F1): never inherited
                 CompoundTag from = rnd.nextBoolean() ? mother : father;
                 if (!from.contains(k)) from = from == mother ? father : mother;
                 if (from.contains(k)) data.put(k, from.get(k).copy());
             }
             if (b.offspringNbt() != null) data.merge(b.offspringNbt().copy());
+            for (String k : b.sterile()) data.putBoolean(k, false); // M39 (F1): a young trophy fish? never
             data.remove("UUID");
             try {
                 e.load(data);

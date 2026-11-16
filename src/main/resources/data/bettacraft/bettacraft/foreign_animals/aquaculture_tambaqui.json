@@ -1,0 +1,22 @@
+{
+  "entity": "aquaculture:tambaqui",
+  "group": "giant_fish",
+  "length": 0.9,
+  "care": {
+    "temperature": [
+      24,
+      30
+    ],
+    "min_quality": 0.4,
+    "salinity": "fresh",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/fruit"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

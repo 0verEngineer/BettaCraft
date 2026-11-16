@@ -1,0 +1,22 @@
+{
+  "entity": "aquaculture:pollock",
+  "group": "giant_fish",
+  "length": 0.9,
+  "care": {
+    "temperature": [
+      2,
+      14
+    ],
+    "min_quality": 0.45,
+    "salinity": "marine",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "entity": "aquaculture:minnow",
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      4,
+      24
+    ],
+    "min_quality": 0.4,
+    "salinity": "fresh"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      16,
+      22
+    ],
+    "needs_plants": true,
+    "young": [
+      2,
+      4
+    ],
+    "days": 2,
+    "pause_days": 4,
+    "rate": 0.4
+  }
+}

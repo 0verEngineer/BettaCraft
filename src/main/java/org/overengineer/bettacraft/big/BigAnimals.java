@@ -38,6 +38,9 @@ public final class BigAnimals {
         // size too: it grows up in the tank); without regard to the switches, so one in a tank is never put out as too big
         double profiled = org.overengineer.bettacraft.foreign.ForeignTerrarium.length(type);
         if (profiled > 0) return profiled;
+        // M39: a big water animal of another mod by the length of its aquarium profile (Aquaculture's tuna, Fintastic's arapaima ...)
+        var p = org.overengineer.bettacraft.foreign.ForeignProfiles.of(type);
+        if (p != null && p.bigLength() > 0) return p.bigLength();
         if (type == EntityType.TURTLE) return org.overengineer.bettacraft.terrarium.SeaTurtles.LENGTH_M;
         if (!type.is(ModTags.BIG_TANK_ANIMALS)) return 0;
         float w = e != null ? e.getBbWidth() : type.getDimensions().width(), h = e != null ? e.getBbHeight() : type.getDimensions().height();

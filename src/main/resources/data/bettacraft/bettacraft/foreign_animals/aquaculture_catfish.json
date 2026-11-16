@@ -1,0 +1,22 @@
+{
+  "entity": "aquaculture:catfish",
+  "group": "giant_fish",
+  "length": 1.0,
+  "care": {
+    "temperature": [
+      10,
+      30
+    ],
+    "min_quality": 0.35,
+    "salinity": "fresh",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

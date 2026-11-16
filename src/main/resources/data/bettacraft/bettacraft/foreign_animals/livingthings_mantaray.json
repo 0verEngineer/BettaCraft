@@ -1,0 +1,22 @@
+{
+  "entity": "livingthings:mantaray",
+  "group": "ray",
+  "length": 2.5,
+  "care": {
+    "temperature": [
+      22,
+      28
+    ],
+    "min_quality": 0.6,
+    "salinity": "marine",
+    "hunger_days": 1.5
+  },
+  "food": [
+    "live",
+    "fry",
+    "normal"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

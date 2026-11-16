@@ -1,0 +1,21 @@
+{
+  "entity": "naturalist:giant_isopod",
+  "group": "invertebrate",
+  "care": {
+    "temperature": [
+      4,
+      14
+    ],
+    "min_quality": 0.5,
+    "salinity": "marine",
+    "hunger_days": 5.0,
+    "stock": 0.5
+  },
+  "food": [
+    "normal",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "entity": [
+    "alexscaves:lanternfish",
+    "alexscaves:tripodfish",
+    "alexscaves:sea_pig",
+    "alexscaves:gossamer_worm"
+  ],
+  "refuse": "deep_sea"
+}

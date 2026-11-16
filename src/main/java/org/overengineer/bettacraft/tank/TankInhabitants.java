@@ -68,7 +68,9 @@ public final class TankInhabitants {
     /** M16: BOSS, HOSTILE and NOT_AQUATIC added; NOT_BUCKETABLE is no longer used (the fish bag holds any water animal). */
     public enum Acceptance { OK, BLACKLISTED, TOO_BIG, NOT_BUCKETABLE, BOSS, HOSTILE, NOT_AQUATIC,
         /** M30: a big animal of known length: the tank decides ({@link org.overengineer.bettacraft.big.BigAnimals#refusal}); never a bucket or bag. */
-        BIG }
+        BIG,
+        /** M39 (question E1): refused by its profile, with a reason ({@link org.overengineer.bettacraft.foreign.ForeignProfiles#refusal}). */
+        REFUSED }
 
     @Nullable
     private static final Field MOB_BUCKET_TYPE = findBucketTypeField();
@@ -138,7 +140,7 @@ public final class TankInhabitants {
                 type.is(net.neoforged.neoforge.common.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
                 // M31: a terrarium animal (turtle, frog, gecko ...) needs no water to live in
                 instance == null || org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type) ? null : isWaterAnimal(instance),
-                org.overengineer.bettacraft.big.BigAnimals.length(type, instance));
+                org.overengineer.bettacraft.big.BigAnimals.length(type, instance), org.overengineer.bettacraft.foreign.ForeignProfiles.refusal(type));
         return InhabitantRules.decide(facts, rules());
     }
 
@@ -225,6 +227,8 @@ public final class TankInhabitants {
                                    @Nullable Player player, long addMb) {
         TankData tank = controller.getTank();
         if (player != null && !canModify(player, tank)) return Component.translatable("message.bettacraft.tank.locked");
+        // M39 (question E1): an unsuitable animal (deep sea, too big, a fungus ...) is refused with its reason before anything else
+        if (org.overengineer.bettacraft.foreign.ForeignProfiles.refusal(type) != null && accepts(type, null) == Acceptance.REFUSED) return refusedMessage(type);
         double minFill = ServerConfig.getOr(ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5);
         // M31: a terrarium animal goes into the tank mode it lives in (a terrarium needs no water), not by the fill
         boolean terra = org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type);
@@ -381,8 +385,19 @@ public final class TankInhabitants {
             case HOSTILE -> Component.translatable("message.bettacraft.tank.hostile", type.getDescription());
             case NOT_AQUATIC -> Component.translatable("message.bettacraft.tank.not_aquatic", type.getDescription());
             case BLACKLISTED -> Component.translatable("message.bettacraft.tank.blacklisted", type.getDescription());
+            case REFUSED -> refusedMessage(type); // M39
             default -> Component.translatable("message.bettacraft.tank.rejected", type.getDescription());
         };
+    }
+
+    /**
+     * M39 (question E1): why our tanks refuse this animal of another mod: {@code message.bettacraft.tank.refused.<reason>} of its
+     * profile, the general one for a reason without a text of its own.
+     */
+    public static Component refusedMessage(EntityType<?> type) {
+        String why = org.overengineer.bettacraft.foreign.ForeignProfiles.refusal(type);
+        if (why == null || !org.overengineer.bettacraft.foreign.ForeignProfile.REFUSE_REASONS.contains(why)) why = "unsuitable";
+        return Component.translatable("message.bettacraft.tank.refused." + why, type.getDescription());
     }
 
     /** Random position inside the water of the tank (in a block that has water). */

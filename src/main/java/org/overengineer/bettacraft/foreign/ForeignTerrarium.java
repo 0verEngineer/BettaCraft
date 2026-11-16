@@ -275,7 +275,8 @@ public final class ForeignTerrarium {
         if (!(target instanceof LivingEntity le) || target instanceof Player || !le.isAlive()) return;
         if (BettaCraft.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(target.getType()).getNamespace())) return; // ours: their own way
         // villagers, golems, monsters ...: the box is nothing for them, their own click stays
-        if (!boxTakes(target) && !(target instanceof net.minecraft.world.entity.animal.Animal) && ForeignProfiles.of(target.getType()) == null) return;
+        if (!boxTakes(target) && !(target instanceof net.minecraft.world.entity.animal.Animal) && ForeignProfiles.of(target.getType()) == null
+                && ForeignProfiles.refusal(target.getType()) == null) return; // M39: a refused one hears why
         Player player = event.getEntity();
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
@@ -299,6 +300,7 @@ public final class ForeignTerrarium {
     @Nullable
     public static Component boxRefusal(Player player, Entity target) {
         if (!boxTakes(target)) {
+            if (ForeignProfiles.refusal(target.getType()) != null) return TankInhabitants.refusedMessage(target.getType()); // M39 (E1)
             if (!enabled()) return Component.translatable("message.bettacraft.feature_off");
             ForeignProfile p = ForeignProfiles.of(target.getType());
             if (p != null && p.land() != null && !p.land().box()) return Component.translatable("message.bettacraft.box.too_big", target.getDisplayName());

@@ -1,0 +1,29 @@
+{
+  "entity": "aquaculture:carp",
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      4,
+      30
+    ],
+    "min_quality": 0.3,
+    "salinity": "fresh",
+    "stock": 2.0
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      18,
+      24
+    ],
+    "min_water_blocks": 24,
+    "needs_plants": true,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3
+  }
+}

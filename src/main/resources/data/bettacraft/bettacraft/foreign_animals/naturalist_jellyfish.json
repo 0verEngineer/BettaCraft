@@ -1,0 +1,22 @@
+{
+  "entity": "naturalist:jellyfish",
+  "group": "jellyfish",
+  "length": 0.3,
+  "care": {
+    "temperature": [
+      12,
+      26
+    ],
+    "min_quality": 0.5,
+    "salinity": "marine",
+    "hunger_days": 2.0,
+    "stock": 0.5
+  },
+  "food": [
+    "live",
+    "fry"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

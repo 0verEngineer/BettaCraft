@@ -1,0 +1,11 @@
+{
+  "entity": [
+    "alexscaves:radgill",
+    "alexscaves:gammaroach",
+    "alexscaves:trilocaris",
+    "alexscaves:gloomoth",
+    "alexscaves:sweetish_fish",
+    "alexscaves:gum_worm"
+  ],
+  "refuse": "cave"
+}

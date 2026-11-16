@@ -15,6 +15,8 @@ public final class Compat {
     /** M16: other mods of the ATM10 pack with water animals (see meilensteine/M16.md for the whole inventory). */
     public static final String SHINY = "shiny", DEEPER_DARKER = "deeperdarker", CATACLYSM = "cataclysm", CRITTERS = "crittersandcompanions",
             LIVING_THINGS = "livingthings", SUSHI = "sushigocrafting", ALEXS_CAVES = "alexscaves";
+    /** M39: food of the Fish Eggs mod. */
+    public static final String FISH_EGGS = "fisheggs";
 
     /**
      * M25.1: biomes of biome mods in our water tags where their own tags don't already say it (rivers, beaches, swamps
@@ -37,23 +39,25 @@ public final class Compat {
             rl(FOT, "battlegill"), rl(FOT, "wrecker"), rl(FOT, "devilfish"),
             rl(AQUACULTURE, "piranha"),
             rl(FINTASTIC, "freshwater_shark"), rl(FINTASTIC, "catfish"), rl(FINTASTIC, "featherback"),
+            // M39: the big predatory fish that go into big tanks by their profiles now
+            rl(FINTASTIC, "arapaima"), rl(AQUACULTURE, "arapaima"), rl(AQUACULTURE, "muskellunge"), rl(AQUACULTURE, "gar"),
+            rl(AQUACULTURE, "capitaine"), rl(AQUACULTURE, "catfish"), rl(AQUACULTURE, "tuna"), rl(AQUACULTURE, "red_grouper"),
+            rl(AQUACULTURE, "atlantic_cod"), rl(AQUACULTURE, "pollock"), rl(AQUACULTURE, "atlantic_halibut"), rl(AQUACULTURE, "pacific_halibut"),
+            rl(AQUACULTURE, "bayad"), rl(LIVING_THINGS, "shark"),
             // M16: the shiny variants of vanilla predators, the angler fish of the Otherside, the Cataclysm lionfish (hostile,
             // only in tanks when allowed in the config)
             rl(SHINY, "shiny_pufferfish"), rl(SHINY, "shiny_axolotl"), rl(DEEPER_DARKER, "angler_fish"), rl(CATACLYSM, "lionfish"));
 
-    /** Never in our tanks: giant fish whose hitbox is small (Aquaculture uses at most 0.8 x 0.4 for every fish). */
+    /**
+     * Never in our tanks. M39: the giant fish of Fintastic, Aquaculture and the manta ray of Living Things left the list: their
+     * profiles give them their real length, so they go into big tanks by the size rule (M30).
+     */
     public static final List<ResourceLocation> BLACKLIST = List.of(
-            rl(FINTASTIC, "arapaima"), rl(FINTASTIC, "coelacanth"),
-            rl(AQUACULTURE, "arapaima"), rl(AQUACULTURE, "tuna"), rl(AQUACULTURE, "pacific_halibut"),
-            rl(AQUACULTURE, "atlantic_halibut"), rl(AQUACULTURE, "red_grouper"), rl(AQUACULTURE, "muskellunge"),
-            rl(AQUACULTURE, "gar"), rl(AQUACULTURE, "catfish"), rl(AQUACULTURE, "bayad"), rl(AQUACULTURE, "capitaine"),
-            rl(AQUACULTURE, "tambaqui"), rl(AQUACULTURE, "carp"), rl(AQUACULTURE, "pollock"),
-            rl(AQUACULTURE, "atlantic_cod"), rl(AQUACULTURE, "pink_salmon"), rl(AQUACULTURE, "blackfish"),
-            // M16: manta ray, tuna; land and lava pets of Cataclysm in buckets (the baby leviathan follows and teleports to its
+            // M16: the tuna of Sushi Go Crafting; land and lava pets of Cataclysm in buckets (the baby leviathan follows and teleports to its
             // owner) and the frogs (no tank animals; M35 part b: the otter of Critters and Companions has a paludarium profile now and
             // left the list: the profile keeps it out of aquariums). Fintastic gouramis go by the size
             // of their variant (the giant gourami is too big, three-spot and dwarf gouramis fit).
-            rl(LIVING_THINGS, "mantaray"), rl(SUSHI, "tuna"),
+            rl(SUSHI, "tuna"),
             rl(CATACLYSM, "the_baby_leviathan"), rl(CATACLYSM, "modern_remnant"), rl(CATACLYSM, "netherite_ministrosity"),
             rl(SHINY, "shiny_frog"));
 

@@ -39,6 +39,8 @@ public final class ModTags {
     public static final TagKey<Item> TUBIFEX_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("tubifex_food"));
     /** M26: what feeds a daphnia barrel (yeast, green water). */
     public static final TagKey<Item> DAPHNIA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("daphnia_food"));
+    /** M39: what starts a daphnia barrel (our daphnia, Fintastic's). */
+    public static final TagKey<Item> DAPHNIA_STARTERS = TagKey.create(Registries.ITEM, BettaCraft.id("daphnia_starters"));
     /** M26 part b: frozen food (live food frozen with ice): eaten like live food, but not pumped. */
     public static final TagKey<Item> FROZEN_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("frozen_food"));
     /** M29 part b: hard food that wears down the teeth of the puffers (shell food). */

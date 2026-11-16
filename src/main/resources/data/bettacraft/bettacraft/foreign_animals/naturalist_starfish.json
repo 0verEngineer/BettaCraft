@@ -1,0 +1,21 @@
+{
+  "entity": "naturalist:starfish",
+  "group": "invertebrate",
+  "care": {
+    "temperature": [
+      18,
+      26
+    ],
+    "min_quality": 0.6,
+    "salinity": "marine",
+    "hunger_days": 3.0,
+    "stock": 0.3
+  },
+  "food": [
+    "normal",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "entity": "livingthings:crab",
+  "group": "crab",
+  "care": {
+    "hunger_days": 2.0,
+    "salinity": "any"
+  },
+  "food": [
+    "normal",
+    "#c:foods/raw_fish"
+  ],
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      18,
+      30
+    ],
+    "water": [
+      16,
+      28
+    ],
+    "humidity": [
+      60,
+      100
+    ],
+    "land": [
+      0.3,
+      0.8
+    ],
+    "min_blocks": 6,
+    "movement": {
+      "style": "walk",
+      "walk": 0.02,
+      "swim": 0.02,
+      "bottom": true,
+      "max_step": 0.4,
+      "water_time": 0.4,
+      "bask_time": 0.1,
+      "rest_time": 0.3,
+      "height": 0.3
+    }
+  }
+}

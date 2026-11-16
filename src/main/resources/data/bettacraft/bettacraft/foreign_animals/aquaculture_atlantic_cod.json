@@ -1,0 +1,22 @@
+{
+  "entity": "aquaculture:atlantic_cod",
+  "group": "giant_fish",
+  "length": 1.0,
+  "care": {
+    "temperature": [
+      2,
+      15
+    ],
+    "min_quality": 0.4,
+    "salinity": "hardy_marine",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

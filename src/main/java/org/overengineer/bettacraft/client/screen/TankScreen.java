@@ -1586,7 +1586,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             int y = ly + r * ROW_H;
             if (i.uuid().equals(selected)) g.fill(lx, y, lx + 99, y + ROW_H, 0x80FFFFFF);
             else if (mx >= lx && mx < lx + 100 && my >= y && my < y + ROW_H) g.fill(lx, y, lx + 99, y + ROW_H, 0x30FFFFFF);
-            String sym = i.betta() || i.isTankmate() ? (i.female() ? "♀ " : "♂ ") : "";
+            String sym = i.betta() || i.isTankmate() || i.sexed() ? (i.female() ? "♀ " : "♂ ") : ""; // M39: foreign animals with a sex of ours
             Component name = Component.literal(sym).append(inhabitantName(i));
             String s = font.plainSubstrByWidth(name.getString(), 90);
             int color = i.sick() ? 0xFF8080 : 0xFFFFFF;
@@ -1624,6 +1624,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (!sel.betta()) {
             line(g, Component.translatable(sel.typeKey()).withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
             y += 10;
+            if (sel.sexed()) { // M39
+                line(g, BettaTooltip.sex(sel.female()), x, y, TEXT_LIGHT);
+                y += 10;
+            }
             line(g, Component.translatable("gui.bettacraft.fish.foreign"), x, y, 0xA0A0A0);
             return;
         }

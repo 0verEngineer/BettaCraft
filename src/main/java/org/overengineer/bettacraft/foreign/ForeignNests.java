@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.Block;
@@ -143,27 +144,56 @@ public final class ForeignNests {
             end(mother, p, interior, block);
             return;
         }
-        double progress = Math.min(1, nest.getDouble("progress") + EggSex.rate(p.breeding().nestPivot(), p.breeding().days(), temp, HerpBreeding.speed()) * days);
+        double before = nest.getDouble("progress");
+        double progress = Math.min(1, before + EggSex.rate(p.breeding().nestPivot(), p.breeding().days(), temp, HerpBreeding.speed()) * days);
         nest.putDouble("progress", progress);
+        // M39 (question I1): the temperature in the thermosensitive period (the middle third) decides the sex of the young
+        if (p.breeding().sex() == ForeignProfile.Sex.TEMPERATURE && Double.isFinite(temp) && before < EggSex.TSP_TO && progress > EggSex.TSP_FROM) {
+            nest.putDouble("tsp_sum", nest.getDouble("tsp_sum") + temp * days);
+            nest.putDouble("tsp_days", nest.getDouble("tsp_days") + days);
+        }
         if (progress < 1 - 1e-9) return;
         int eggs = nest.getInt("eggs");
         Vec3 at = new Vec3(nest.getDouble("x"), nest.getDouble("y") + 0.01, nest.getDouble("z"));
+        double tsp = nest.getDouble("tsp_days") > 0 ? nest.getDouble("tsp_sum") / nest.getDouble("tsp_days") : temp;
         end(mother, p, interior, block);
-        hatch(level, c, mother, p, eggs, at, rnd);
+        hatch(level, c, mother, p, eggs, at, rnd, tsp);
     }
 
     /** The young of a clutch at its nest, as many as the tank has room for (the entity limit, the hard stocking limit). */
     static int hatch(ServerLevel level, TankBlockEntity c, LivingEntity mother, ForeignProfile p, int eggs, Vec3 at, RandomGenerator rnd) {
+        return hatch(level, c, mother, p, eggs, at, rnd, HerpBreeding.nestTemp(c.getTank()));
+    }
+
+    /**
+     * The young of a clutch at its nest; M39: with a sexed profile each one is female by the chance of the nest temperature
+     * {@code tsp} in the thermosensitive period ({@link ForeignProfile.Sex#TEMPERATURE}) or half and half.
+     */
+    static int hatch(ServerLevel level, TankBlockEntity c, LivingEntity mother, ForeignProfile p, int eggs, Vec3 at, RandomGenerator rnd, double tsp) {
         TankData t = c.getTank();
         var live = TankInhabitants.liveInhabitants(level, t);
         int room = Math.max(0, ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64) - live.size());
         CompoundTag genes = ForeignBreeding.inherited(mother, p);
         int made = 0;
+        int females = 0;
+        double chance = p.breeding().sex() == ForeignProfile.Sex.TEMPERATURE ? EggSex.femaleChance(p.breeding().nestPivot(), tsp) : 0.5;
         for (int i = 0; i < Math.min(eggs, room); i++) {
             Vec3 spot = at.add((rnd.nextDouble() - 0.5) * 0.2, 0, (rnd.nextDouble() - 0.5) * 0.2);
-            if (ForeignBreeding.spawnYoung(level, c, mother.getType(), p, genes, genes, spot, rnd) != null) made++;
+            Entity y = ForeignBreeding.spawnYoung(level, c, mother.getType(), p, genes, genes, spot, rnd);
+            if (y == null) continue;
+            made++;
+            if (p.breeding().sexed()) {
+                boolean f = rnd.nextDouble() < chance;
+                ForeignBreeding.setFemale(y, f);
+                if (f) females++;
+            }
         }
-        TankCare.log(level, c, "log.bettacraft.foreign.hatched", "@" + mother.getType().getDescriptionId(), String.valueOf(made));
+        if (p.breeding().sexed() && made > 0) { // M39: how many of each
+            TankCare.log(level, c, "log.bettacraft.foreign.hatched_sexes", "@" + mother.getType().getDescriptionId(), String.valueOf(made),
+                    String.valueOf(females), String.valueOf(made - females));
+        } else {
+            TankCare.log(level, c, "log.bettacraft.foreign.hatched", "@" + mother.getType().getDescriptionId(), String.valueOf(made));
+        }
         if (made < eggs) TankCare.log(level, c, "log.bettacraft.turtle.hatch_crowded", String.valueOf(eggs - made));
         org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.api.ApiEvents.id(mother.getType()), made, true, true, false); // M32 part d
         c.markTankChanged();

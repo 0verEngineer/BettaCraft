@@ -1,0 +1,21 @@
+{
+  "entity": "crittersandcompanions:dumbo_octopus",
+  "group": "octopus",
+  "care": {
+    "temperature": [
+      2,
+      10
+    ],
+    "min_quality": 0.6,
+    "salinity": "marine",
+    "hunger_days": 1.5,
+    "stock": 0.5
+  },
+  "food": [
+    "live",
+    "normal"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

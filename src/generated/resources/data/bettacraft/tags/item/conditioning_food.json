@@ -1,5 +1,13 @@
 {
   "values": [
-    "bettacraft:tubifex"
+    "bettacraft:tubifex",
+    {
+      "id": "fisheggs:fish_eggs",
+      "required": false
+    },
+    {
+      "id": "fisheggs:squid_eggs",
+      "required": false
+    }
   ]
 }

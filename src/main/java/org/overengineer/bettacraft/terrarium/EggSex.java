@@ -37,6 +37,12 @@ public final class EggSex {
         return Math.min(1.0, warm + cool);
     }
 
+    /** M39: the share of females at this temperature for the pattern MF with this pivot (the turtles of other mods, question I1). */
+    public static double femaleChance(double pivot, double temp) {
+        if (!Double.isFinite(temp)) return 0.5;
+        return logistic((temp - pivot) / WIDTH);
+    }
+
     private static double logistic(double x) {
         return 1.0 / (1.0 + Math.exp(-x));
     }

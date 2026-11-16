@@ -1,0 +1,22 @@
+{
+  "entity": "livingthings:shark",
+  "group": "shark",
+  "length": 2.0,
+  "care": {
+    "temperature": [
+      22,
+      28
+    ],
+    "min_quality": 0.5,
+    "salinity": "marine",
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#c:foods/raw_fish",
+    "normal",
+    "live"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

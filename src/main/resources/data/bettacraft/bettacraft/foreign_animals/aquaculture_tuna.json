@@ -1,0 +1,21 @@
+{
+  "entity": "aquaculture:tuna",
+  "group": "giant_fish",
+  "length": 2.0,
+  "care": {
+    "temperature": [
+      14,
+      28
+    ],
+    "min_quality": 0.6,
+    "salinity": "marine",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

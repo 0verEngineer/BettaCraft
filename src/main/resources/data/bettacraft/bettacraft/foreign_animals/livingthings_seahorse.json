@@ -1,0 +1,34 @@
+{
+  "entity": "livingthings:seahorse",
+  "group": "seahorse",
+  "care": {
+    "temperature": [
+      22,
+      26
+    ],
+    "min_quality": 0.6,
+    "salinity": "marine",
+    "stock": 0.5
+  },
+  "food": [
+    "live",
+    "fry"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "temperature": [
+      24,
+      26
+    ],
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 5,
+    "rate": 0.3,
+    "inherit": [
+      "SeahorseVariant"
+    ]
+  }
+}

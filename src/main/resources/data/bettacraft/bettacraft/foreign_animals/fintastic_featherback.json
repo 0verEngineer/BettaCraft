@@ -1,0 +1,22 @@
+{
+  "entity": "fintastic:featherback",
+  "group": "knifefish",
+  "length": 0.8,
+  "care": {
+    "temperature": [
+      24,
+      30
+    ],
+    "min_quality": 0.45,
+    "salinity": "fresh",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

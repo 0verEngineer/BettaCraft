@@ -3951,5 +3951,15 @@
   "bettacraft.configuration.features.fertilizer.enabled": "Flüssigdünger",
   "bettacraft.configuration.features.fertilizer.enabled.tooltip": "Flüssigdünger und die Düngermaschine: Dünger im Wasser beschleunigt das Wachstum der Aquarien- und Schwimmpflanzen von Bettacraft (nicht der Pflanzen anderer Mods), die Pflanzen verbrauchen ihn, Wasserwechsel verdünnen ihn, zu viel lässt die Algen schneller wachsen (aus: der Dünger wirkt nicht und die Maschine steht still) Aus: alles darunter ist auch aus, und seine Rezepte, Händler-Angebote, Loot, Kescher- und Angelfänge und Wild-Spawns entfallen; Items und Blöcke, die es schon gibt, bleiben.",
   "bettacraft.configuration.features.fertilizer.dosing": "Dünger im Dosierer",
-  "bettacraft.configuration.features.fertilizer.dosing.tooltip": "Der Dosierer gibt auch Flüssigdünger aus einem Düngerkanister, in Süß- und Salzwasserbecken (aus: Düngerkanister wirken nicht)"
+  "bettacraft.configuration.features.fertilizer.dosing.tooltip": "Der Dosierer gibt auch Flüssigdünger aus einem Düngerkanister, in Süß- und Salzwasserbecken (aus: Düngerkanister wirken nicht)",
+  "message.bettacraft.tank.refused.deep_sea": "%s ist ein Tiefseetier: Es braucht die kalte, dunkle Tiefe mit ihrem Druck und lebt nicht im Aquarium",
+  "message.bettacraft.tank.refused.too_big": "%s ist viel zu groß für jedes Becken",
+  "message.bettacraft.tank.refused.hostile": "%s ist ein feindliches Wesen und kommt nicht ins Becken",
+  "message.bettacraft.tank.refused.fungus": "%s ist ein Pilzwesen, kein Wassertier",
+  "message.bettacraft.tank.refused.cave": "%s gehört in seine Höhlenwelt und lebt nicht im Aquarium",
+  "message.bettacraft.tank.refused.land": "%s ist kein Tier fürs Becken",
+  "message.bettacraft.tank.refused.unsuitable": "%s lebt nicht in einem Bettacraft-Becken",
+  "gui.bettacraft.foreign.blocked.no_female": "es gibt kein Weibchen",
+  "gui.bettacraft.foreign.blocked.no_male": "es gibt kein Männchen",
+  "log.bettacraft.foreign.hatched_sexes": "%2$s junge %1$s aus dem Nest geschlüpft (%3$s Weibchen, %4$s Männchen)"
 }

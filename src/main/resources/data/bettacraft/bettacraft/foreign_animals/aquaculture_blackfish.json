@@ -1,0 +1,27 @@
+{
+  "entity": "aquaculture:blackfish",
+  "group": "food_fish",
+  "care": {
+    "temperature": [
+      8,
+      22
+    ],
+    "min_quality": 0.45,
+    "salinity": "marine"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      14,
+      20
+    ],
+    "min_water_blocks": 24,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3
+  }
+}

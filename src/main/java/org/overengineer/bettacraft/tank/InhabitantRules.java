@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
  * M16: which animals may live in a tank, as plain logic without registries (unit tested). {@link TankInhabitants#accepts}
  * collects the facts of an entity type (tags, size, spawn category, instance) and asks {@link #decide}.
  * <p>
- * Order: config deny list, config allow list, tag {@code #bettacraft:tank_blacklist}, tag
+ * Order: config deny list, config allow list, M39: a refusing profile (deep-sea fish, whales, fungus creatures ...), tag {@code #bettacraft:tank_blacklist}, tag
  * {@code #bettacraft:tank_inhabitants}, bosses ({@code #c:bosses}), M30: big animals of known length ({@link TankInhabitants.Acceptance#BIG}:
  * the tank decides, {@link BigTankRules}), size (hitbox wider or taller than
  * {@code inhabitants.maxHitbox}), hostile mobs (spawn category monster, {@code inhabitants.refuseHostile}), and animals
@@ -17,7 +17,13 @@ import javax.annotation.Nullable;
 public final class InhabitantRules {
     /** Everything known about a type. {@code aquatic} is null while no instance was looked at. */
     public record Facts(String id, float width, float height, boolean blacklistTag, boolean whitelistTag, boolean boss,
-                        boolean hostile, @Nullable Boolean aquatic, double bigLength) {
+                        boolean hostile, @Nullable Boolean aquatic, double bigLength, @Nullable String refuse) {
+        /** M30: without a refusal of a profile. */
+        public Facts(String id, float width, float height, boolean blacklistTag, boolean whitelistTag, boolean boss, boolean hostile,
+                     @Nullable Boolean aquatic, double bigLength) {
+            this(id, width, height, blacklistTag, whitelistTag, boss, hostile, aquatic, bigLength, null);
+        }
+
         /** A type without a known big length (M16). */
         public Facts(String id, float width, float height, boolean blacklistTag, boolean whitelistTag, boolean boss, boolean hostile,
                      @Nullable Boolean aquatic) {
@@ -39,6 +45,7 @@ public final class InhabitantRules {
     public static TankInhabitants.Acceptance decide(Facts f, Settings s) {
         if (matches(s.deny(), f.id())) return TankInhabitants.Acceptance.BLACKLISTED;
         if (matches(s.allow(), f.id())) return TankInhabitants.Acceptance.OK;
+        if (f.refuse() != null) return TankInhabitants.Acceptance.REFUSED; // M39 (E1): a refusing profile, with its reason
         if (f.blacklistTag()) return TankInhabitants.Acceptance.BLACKLISTED;
         if (f.whitelistTag()) return TankInhabitants.Acceptance.OK;
         if (f.boss()) return TankInhabitants.Acceptance.BOSS;

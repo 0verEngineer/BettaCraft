@@ -1,0 +1,22 @@
+{
+  "entity": "fintastic:coelacanth",
+  "group": "giant_fish",
+  "length": 2.0,
+  "care": {
+    "temperature": [
+      14,
+      22
+    ],
+    "min_quality": 0.5,
+    "salinity": "marine",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

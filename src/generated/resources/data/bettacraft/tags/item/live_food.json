@@ -4,6 +4,18 @@
     "bettacraft:tubifex",
     "bettacraft:daphnia",
     {
+      "id": "fintastic:copepod",
+      "required": false
+    },
+    {
+      "id": "fintastic:daphnia",
+      "required": false
+    },
+    {
+      "id": "fintastic:fairy_shrimp",
+      "required": false
+    },
+    {
       "id": "aquaculture:worm",
       "required": false
     },

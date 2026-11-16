@@ -1,0 +1,12 @@
+{
+  "entity": [
+    "twilightforest:fire_beetle",
+    "twilightforest:pinch_beetle",
+    "twilightforest:slime_beetle",
+    "twilightforest:helmet_crab",
+    "twilightforest:hedge_spider",
+    "twilightforest:king_spider",
+    "twilightforest:swarm_spider"
+  ],
+  "refuse": "hostile"
+}

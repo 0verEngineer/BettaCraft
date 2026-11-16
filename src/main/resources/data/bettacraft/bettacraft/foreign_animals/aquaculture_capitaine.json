@@ -1,0 +1,22 @@
+{
+  "entity": "aquaculture:capitaine",
+  "group": "giant_fish",
+  "length": 1.5,
+  "care": {
+    "temperature": [
+      22,
+      30
+    ],
+    "min_quality": 0.4,
+    "salinity": "fresh",
+    "hunger_days": 2.0
+  },
+  "food": [
+    "normal",
+    "live",
+    "#c:foods/raw_fish"
+  ],
+  "breeding": {
+    "type": "none"
+  }
+}

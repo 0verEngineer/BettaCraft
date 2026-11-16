@@ -1,0 +1,33 @@
+{
+  "entity": "fishofthieves:devilfish",
+  "group": "fantasy_fish",
+  "care": {
+    "temperature": [
+      24,
+      32
+    ],
+    "min_quality": 0.4,
+    "salinity": "any"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      26.0,
+      30.0
+    ],
+    "min_water_blocks": 8,
+    "young": [
+      2,
+      4
+    ],
+    "days": 2,
+    "pause_days": 5,
+    "rate": 0.3,
+    "inherit": [
+      "variant"
+    ],
+    "sterile": [
+      "Trophy"
+    ]
+  }
+}

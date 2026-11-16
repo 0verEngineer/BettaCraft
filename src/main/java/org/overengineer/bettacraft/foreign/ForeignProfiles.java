@@ -48,6 +48,8 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     public static int renamedWarnings;
     /** M33 part d: the profile file that maps each type (for {@code /bettacraft foreign list}). */
     private static volatile Map<EntityType<?>, ResourceLocation> fileByType = Map.of();
+    /** M39 (question E1): the types our tanks refuse, with the reason of their profile. */
+    private static volatile Map<EntityType<?>, String> refused = Map.of();
     /** Types registered as terrarium animals by a profile (taken back on the next reload). */
     private static final Set<EntityType<?>> TERRARIUM = new HashSet<>();
     /** The files of the last {@link #set} (GameTests add their own and restore these). */
@@ -97,6 +99,20 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     @Nullable
     public static ResourceLocation fileOf(EntityType<?> type) {
         return fileByType.get(type);
+    }
+
+    /**
+     * M39 (question E1): the reason our tanks refuse this type ({@code deep_sea}, {@code too_big}, {@code hostile}, {@code fungus},
+     * {@code cave} ...), or null. Whatever the switches: an unsuitable animal stays out.
+     */
+    @Nullable
+    public static String refusal(EntityType<?> type) {
+        return refused.get(type);
+    }
+
+    /** M39: every refused type with its reason. */
+    public static Map<EntityType<?>, String> refused() {
+        return refused;
     }
 
     /** Every mapped type with its profile (handbook, dev command, tests). */
@@ -198,6 +214,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
         TERRARIUM.clear();
         Map<EntityType<?>, ForeignProfile> map = new LinkedHashMap<>();
         Map<EntityType<?>, ResourceLocation> fileMap = new LinkedHashMap<>();
+        Map<EntityType<?>, String> refusedMap = new LinkedHashMap<>();
         int skipped = 0;
         for (Map.Entry<ResourceLocation, ForeignProfile> f : files.entrySet()) {
             ForeignProfile p = f.getValue();
@@ -221,6 +238,13 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
                     LOGGER.warn("{}: {} has Bettacraft's own care and is not mapped", f.getKey(), eid);
                     continue;
                 }
+                if (p.refuse() != null) { // M39 (E1): refused, nothing else (a later file can map it after all)
+                    map.remove(type.get());
+                    refusedMap.put(type.get(), p.refuse());
+                    fileMap.put(type.get(), f.getKey());
+                    continue;
+                }
+                refusedMap.remove(type.get());
                 map.put(type.get(), p);
                 fileMap.put(type.get(), f.getKey());
             }
@@ -231,8 +255,9 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
             TERRARIUM.add(e.getKey());
         }
         fileByType = Map.copyOf(fileMap);
+        refused = Map.copyOf(refusedMap);
         byType = Map.copyOf(map);
-        LOGGER.info("Loaded {} foreign animal profiles for {} entity types ({} of mods not installed)", files.size(), map.size(), skipped);
+        LOGGER.info("Loaded {} foreign animal profiles for {} entity types, {} refused ({} of mods not installed)", files.size(), map.size(), refusedMap.size(), skipped);
         return byType;
     }
 }

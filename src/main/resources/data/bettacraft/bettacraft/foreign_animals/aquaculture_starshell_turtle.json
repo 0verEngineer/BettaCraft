@@ -1,0 +1,54 @@
+{
+  "entity": "aquaculture:starshell_turtle",
+  "group": "turtle",
+  "care": {
+    "hunger_days": 1.5
+  },
+  "food": [
+    "#bettacraft:turtle_greens",
+    "normal",
+    "live"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 29,
+    "sex": "temperature",
+    "young": [
+      2,
+      4
+    ],
+    "days": 4,
+    "pause_days": 6,
+    "rate": 0.3
+  },
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      22,
+      32
+    ],
+    "water": [
+      22,
+      28
+    ],
+    "land": [
+      0.25,
+      0.75
+    ],
+    "uv": 3,
+    "basking": true,
+    "min_blocks": 10,
+    "movement": {
+      "style": "walk",
+      "walk": 0.012,
+      "swim": 0.02,
+      "bottom": true,
+      "max_step": 0.4,
+      "water_time": 0.5,
+      "bask_time": 0.25,
+      "rest_time": 0.25,
+      "height": 0.3
+    }
+  }
+}

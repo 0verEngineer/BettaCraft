@@ -1,0 +1,36 @@
+{
+  "entity": "fintastic:dwarf_frog",
+  "group": "frog",
+  "care": {
+    "temperature": [
+      22,
+      28
+    ],
+    "min_quality": 0.45,
+    "salinity": "fresh",
+    "hunger_days": 1.5,
+    "stock": 0.5
+  },
+  "food": [
+    "live",
+    "normal"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      24,
+      27
+    ],
+    "needs_plants": true,
+    "young": [
+      2,
+      4
+    ],
+    "days": 2,
+    "pause_days": 4,
+    "rate": 0.4,
+    "inherit": [
+      "Variant"
+    ]
+  }
+}

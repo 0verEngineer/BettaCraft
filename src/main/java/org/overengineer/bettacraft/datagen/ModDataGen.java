@@ -1422,6 +1422,7 @@ public final class ModDataGen {
             DataGenM31b.itemTags(this::tag); // M31 part b: the greens of the turtles
             DataGenM31c.itemTags(this::tag); // M31 part c: insects, fruit, prey
             DataGenM31d.itemTags(this::tag); // M31 part d: capture items of other mods
+            DataGenM39.itemTags(this::tag); // M39 part a: live, flake and frozen food of other mods
             // M9: organic matter for the larva tub
             tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry

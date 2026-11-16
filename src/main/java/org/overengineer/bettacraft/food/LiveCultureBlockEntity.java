@@ -216,7 +216,7 @@ public class LiveCultureBlockEntity extends BlockEntity {
     // ------------------------------------------------------------------ inputs
 
     public boolean isStarter(ItemStack s) {
-        return s.is(tubifex() ? ModItems.TUBIFEX.get() : ModItems.DAPHNIA.get());
+        return tubifex() ? s.is(ModItems.TUBIFEX.get()) : s.is(ModTags.DAPHNIA_STARTERS); // M39: Fintastic's daphnia too
     }
 
     public boolean isFood(ItemStack s) {

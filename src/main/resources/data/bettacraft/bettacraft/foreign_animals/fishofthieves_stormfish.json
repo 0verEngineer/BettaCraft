@@ -1,0 +1,33 @@
+{
+  "entity": "fishofthieves:stormfish",
+  "group": "fantasy_fish",
+  "care": {
+    "temperature": [
+      10,
+      24
+    ],
+    "min_quality": 0.4,
+    "salinity": "marine"
+  },
+  "breeding": {
+    "type": "eggs",
+    "temperature": [
+      15.0,
+      19.0
+    ],
+    "min_water_blocks": 8,
+    "young": [
+      2,
+      4
+    ],
+    "days": 2,
+    "pause_days": 5,
+    "rate": 0.3,
+    "inherit": [
+      "variant"
+    ],
+    "sterile": [
+      "Trophy"
+    ]
+  }
+}

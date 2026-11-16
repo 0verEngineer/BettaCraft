@@ -1,0 +1,9 @@
+{
+  "values": [
+    "bettacraft:daphnia",
+    {
+      "id": "fintastic:daphnia",
+      "required": false
+    }
+  ]
+}

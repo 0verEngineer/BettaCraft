@@ -46,11 +46,31 @@ import org.overengineer.bettacraft.terrarium.TerrariumNeeds;
  * @param terrarium the terrarium needs (M31) if it lives in a terrarium or paludarium instead of an aquarium, or null
  * @param land      M35: how a terrarium animal lives in its tank (its size for the size rule, how it moves, what it hunts,
  *                  whether the terrarium box takes it), or null for an aquarium animal
+ * @param lengthM   M39: the length in metres of a big water animal of an aquarium profile for the size rule of the big animals
+ *                  (M30, the water of the tank); NaN: none (its hitbox decides, as before). A terrarium profile has it in {@link #land}.
+ * @param refuse    M39 (question E1): the reason our tanks refuse the animal ({@code deep_sea}, {@code too_big}, {@code hostile},
+ *                  {@code fungus}, {@code cave} ...; a message {@code message.bettacraft.tank.refused.<reason>}), or null. A
+ *                  refusing profile maps nothing else (no care, no breeding).
  */
 public record ForeignProfile(List<ResourceLocation> entities, boolean required, String group, @Nullable String species,
                              double tempMin, double tempMax, double minQuality, Salinity.Range salinity, @Nullable ChemTolerance.Range chemistry,
                              boolean labyrinth, double hungerDays, double stock, List<String> food, Breeding breeding, boolean suppressOwn,
-                             @Nullable TerrariumNeeds terrarium, @Nullable Land land) {
+                             @Nullable TerrariumNeeds terrarium, @Nullable Land land, double lengthM, @Nullable String refuse) {
+
+    /** M35 and before: a profile without an aquarium length and without a refusal. */
+    public ForeignProfile(List<ResourceLocation> entities, boolean required, String group, @Nullable String species,
+                          double tempMin, double tempMax, double minQuality, Salinity.Range salinity, @Nullable ChemTolerance.Range chemistry,
+                          boolean labyrinth, double hungerDays, double stock, List<String> food, Breeding breeding, boolean suppressOwn,
+                          @Nullable TerrariumNeeds terrarium, @Nullable Land land) {
+        this(entities, required, group, species, tempMin, tempMax, minQuality, salinity, chemistry, labyrinth, hungerDays, stock, food,
+                breeding, suppressOwn, terrarium, land, Double.NaN, null);
+    }
+
+    /** M39: the length (m) the size rule of the big animals uses for it: the land part's, else the aquarium length; 0 if none. */
+    public double bigLength() {
+        if (land != null && land.big()) return land.lengthM();
+        return Double.isFinite(lengthM) && lengthM > 0 ? lengthM : 0;
+    }
 
     /**
      * M35: a terrarium animal of another mod in its tank.
@@ -86,6 +106,12 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         };
     }
 
+    /** M39 (question E1): the refusal reasons with a message of their own ({@code message.bettacraft.tank.refused.<reason>}); any other says "unsuitable". */
+    public static final List<String> REFUSE_REASONS = List.of("deep_sea", "too_big", "hostile", "fungus", "cave", "land", "unsuitable");
+
+    /** M39: how the animals of a profile get their sex in our tanks. */
+    public enum Sex { NONE, RANDOM, TEMPERATURE }
+
     /** How the animal breeds in our tanks. */
     public enum Type {
         /** It does not breed there (its own breeding is still suppressed). */
@@ -117,11 +143,31 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      *                      null: the eggs stay with the mother (M32)
      * @param nestPivot     M35: the nest temperature (°C) at which the eggs hatch in {@link #days}; warmer faster, at
      *                      18 °C and below they wait, above 36 °C they die (the turtle eggs of M31)
+     * @param sex           M39: how the animals get a sex in our tanks (only a female and a male breed): {@link Sex#NONE} (no
+     *                      sexes, any two breed, M32), {@link Sex#RANDOM} (half and half) or {@link Sex#TEMPERATURE} (the nest
+     *                      temperature decides, like our turtles: warm nests give females, at {@link #nestPivot} half and half)
+     * @param sterile       M39 (question F1): NBT keys (booleans) that make an animal not breed when set (the trophy fish of Fish of
+     *                      Thieves); the young never get them from their parents
      */
     public record Breeding(Type type, double tempMin, double tempMax, double minWaterBlocks, boolean needsPlants, double days,
                            int youngMin, int youngMax, double pauseDays, double rate, @Nullable ResourceLocation offspring,
-                           @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable ResourceLocation nest, double nestPivot) {
-        public static final Breeding NONE = new Breeding(Type.NONE, Double.NaN, Double.NaN, 0, false, 1, 0, 0, 0, 0, null, null, List.of(), true, null, 30);
+                           @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable ResourceLocation nest, double nestPivot,
+                           Sex sex, List<String> sterile) {
+        public static final Breeding NONE = new Breeding(Type.NONE, Double.NaN, Double.NaN, 0, false, 1, 0, 0, 0, 0, null, null, List.of(), true, null, 30,
+                Sex.NONE, List.of());
+
+        /** M35 and before: without sexes and sterile keys. */
+        public Breeding(Type type, double tempMin, double tempMax, double minWaterBlocks, boolean needsPlants, double days,
+                        int youngMin, int youngMax, double pauseDays, double rate, @Nullable ResourceLocation offspring,
+                        @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable ResourceLocation nest, double nestPivot) {
+            this(type, tempMin, tempMax, minWaterBlocks, needsPlants, days, youngMin, youngMax, pauseDays, rate, offspring, offspringNbt, inherit, baby,
+                    nest, nestPivot, Sex.NONE, List.of());
+        }
+
+        /** M39: whether the animals of this profile have sexes (a pair is a female and a male). */
+        public boolean sexed() {
+            return sex != Sex.NONE;
+        }
 
         /** M35: the eggs go into a nest on the land. */
         public boolean nests() {
@@ -174,6 +220,15 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         }
         if (entities.isEmpty()) throw new Invalid("empty \"entity\" list");
         boolean required = bool(o, "required", false);
+        if (o.has("refuse")) { // M39 (E1): a refusal maps nothing else
+            String why = o.get("refuse").getAsString().trim().toLowerCase(Locale.ROOT);
+            if (!why.matches("[a-z0-9_]+")) {
+                warn.accept("bad refuse reason \"" + why + "\" (a word like deep_sea, too_big, hostile, fungus, cave)");
+                why = "unsuitable";
+            }
+            return new ForeignProfile(List.copyOf(entities), required, str(o, "group", "refused"), null, 18, 28, 0.4, Salinity.Range.FRESH, null,
+                    false, 1, Double.NaN, List.of(), Breeding.NONE, true, null, null, Double.NaN, why);
+        }
         String speciesId = str(o, "species", null);
         TankmateSpecies sp = null;
         if (speciesId != null) {
@@ -217,8 +272,17 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         boolean suppress = bool(o, "suppress_own_breeding", true);
         TerrariumNeeds terra = o.has("terrarium") ? terrarium(o.getAsJsonObject("terrarium"), warn) : null;
         Land land = terra != null ? land(o.getAsJsonObject("terrarium"), terra, warn) : null;
+        double length = num(o, "length", Double.NaN); // M39: a big water animal of an aquarium by the size rule
+        if (Double.isFinite(length) && length <= 0) {
+            warn.accept("\"length\" must be above 0 (ignored)");
+            length = Double.NaN;
+        }
+        if (Double.isFinite(length) && terra != null) {
+            warn.accept("\"length\" of a terrarium animal goes into \"terrarium\" (ignored here)");
+            length = Double.NaN;
+        }
         return new ForeignProfile(List.copyOf(entities), required, group, sp != null ? sp.id() : null, temp[0], temp[1], quality, salt, chem,
-                labyrinth, hunger, stock, List.copyOf(food), breeding, suppress, terra, land);
+                labyrinth, hunger, stock, List.copyOf(food), breeding, suppress, terra, land, length, null);
     }
 
     private static Breeding breeding(@Nullable JsonObject b, @Nullable TankmateSpecies sp, double[] temp, Consumer<String> warn) {
@@ -264,9 +328,22 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
             if (nest == null) warn.accept("bad nest tag \"" + n + "\" (a block tag, e.g. #bettacraft:turtle_nest_ground)");
             else if (type != Type.EGGS) warn.accept("\"nest\" only counts for \"type\": \"eggs\"");
         }
+        Sex sex = Sex.NONE; // M39
+        if (b.has("sex")) {
+            String sx = b.get("sex").getAsString().trim().toUpperCase(Locale.ROOT);
+            try {
+                sex = Sex.valueOf(sx);
+            } catch (IllegalArgumentException ex) {
+                warn.accept("unknown sex \"" + sx.toLowerCase(Locale.ROOT) + "\" (none, random, temperature)");
+            }
+            if (sex == Sex.TEMPERATURE && nest == null) warn.accept("\"sex\": \"temperature\" needs a \"nest\" (the nest temperature decides)");
+        }
+        List<String> sterile = new ArrayList<>();
+        if (b.has("sterile")) for (JsonElement e : array(b.get("sterile"))) sterile.add(e.getAsString());
+        for (String k : sterile) if (inherit.contains(k)) warn.accept("\"" + k + "\" is sterile and cannot be inherited");
         return new Breeding(type, bt[0], bt[1], Math.max(0, num(b, "min_water_blocks", 0)), needsPlants, days, young[0], young[1],
                 Math.max(0, num(b, "pause_days", 3.0)), Math.max(0, num(b, "rate", 0.5)), offspring, nbt, List.copyOf(inherit), bool(b, "baby", true),
-                nest, num(b, "nest_temperature", 30));
+                nest, num(b, "nest_temperature", 30), sex, List.copyOf(sterile));
     }
 
     /** Our breeding types in the three of the foreign animals: young carried in the body or mouth are born free; the rest lay eggs. */

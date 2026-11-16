@@ -14,6 +14,30 @@
     "bettacraft:frozen_daphnia",
     "bettacraft:shell_food",
     {
+      "id": "fintastic:copepod",
+      "required": false
+    },
+    {
+      "id": "fintastic:daphnia",
+      "required": false
+    },
+    {
+      "id": "fintastic:fairy_shrimp",
+      "required": false
+    },
+    {
+      "id": "fisheggs:fish_food",
+      "required": false
+    },
+    {
+      "id": "fisheggs:fish_eggs",
+      "required": false
+    },
+    {
+      "id": "fisheggs:squid_eggs",
+      "required": false
+    },
+    {
       "id": "fintastic:regular_feed",
       "required": false
     },

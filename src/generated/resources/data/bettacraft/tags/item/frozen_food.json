@@ -2,6 +2,14 @@
   "values": [
     "bettacraft:frozen_mosquito_larvae",
     "bettacraft:frozen_artemia",
-    "bettacraft:frozen_daphnia"
+    "bettacraft:frozen_daphnia",
+    {
+      "id": "fisheggs:fish_eggs",
+      "required": false
+    },
+    {
+      "id": "fisheggs:squid_eggs",
+      "required": false
+    }
   ]
 }

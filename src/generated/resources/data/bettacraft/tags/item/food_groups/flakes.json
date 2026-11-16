@@ -1,5 +1,9 @@
 {
   "values": [
-    "bettacraft:fish_flakes"
+    "bettacraft:fish_flakes",
+    {
+      "id": "fisheggs:fish_food",
+      "required": false
+    }
   ]
 }
