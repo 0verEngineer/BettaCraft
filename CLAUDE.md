@@ -152,6 +152,10 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   `Features.enabled(Feature.X)`, new items/recipes/sources get their feature in `FeatureContent` (recipes then get their
   condition in `runData`), and the switch gets a GameTest that turns it off. The handbook is kept up to date in English
   and German together (navigation, a page per species / device with `item_ids`, an Obtaining section).
+- **Quests stay current:** every new player-facing feature (species group, device, system) gets or extends a quest in the
+  FTB Quests chapter: `tools/modpack/ftbquests_chapter.py` (advancement or item task, dependency, position), texts
+  `quest.bettacraft.<quest>.title/.desc` en (datagen) + de, then `py tools/modpack/ftbquests_chapter.py`; `QuestChapterTest`
+  and the `-Pquests` GameTests stay green.
 - GameTests are deterministic (fixed seeds, config-changing tests in their own batch, config restored on failure).
 - **Minecraft clients only in background mode** (`-Psmoketest*` flags or `-Pbackground`: unfocused window on the
   secondary monitor) – the user may be working on the PC. Servers / GameTest servers have no window and are fine.
