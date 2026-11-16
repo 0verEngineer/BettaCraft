@@ -161,7 +161,7 @@ class FeatureMigrationTest {
         CommentedConfig c = parse(Files.readString(file, StandardCharsets.UTF_8));
         assertNull(at(c, "food.artemiaCystStackSize"), "the old key is gone");
         assertEquals(20, ((Number) at(c, "food.fryPerItem")).intValue(), "the rest stays");
-        assertEquals(0.08, ((Number) at(c, "drops.artemiaFromSandChance")).doubleValue(), 1e-9, "the old default chance is 4x");
+        assertEquals(0.04, ((Number) at(c, "drops.artemiaFromSandChance")).doubleValue(), 1e-9, "the old default chance becomes the current one");
         assertTrue(Files.exists(dir.resolve("bettacraft-server.toml.pre-m35.1")), "the old file is kept");
         // a second run changes nothing
         String once = Files.readString(file, StandardCharsets.UTF_8);
@@ -174,5 +174,51 @@ class FeatureMigrationTest {
         CommentedConfig fresh = parse("[drops]\nartemiaFromSandChance = 0.02\n");
         assertTrue(FeatureMigration.migrateServer(fresh).isEmpty(), "no old key: nothing to do");
         assertEquals(0.02, ((Number) at(fresh, "drops.artemiaFromSandChance")).doubleValue(), 1e-9);
+    }
+
+    /** M46: 0.08 with the 1.36.0 comment becomes 0.04 once; 0.10, a later 0.08 and a hand-written 0.08 stay. */
+    @Test
+    void serverConfigHalvesTheOldSandChance() throws IOException {
+        String toml = """
+                [drops]
+                	#Chance that breaking sand drops a jar
+                	# Default: 0.08
+                	# Range: 0.0 ~ 1.0
+                	artemiaFromSandChance = 0.08
+                [food]
+                fryPerItem = 20
+                """;
+        Path file = dir.resolve("bettacraft-server.toml");
+        Files.writeString(file, toml, StandardCharsets.UTF_8);
+        FeatureMigration.migrateServerFile(file);
+        CommentedConfig c = parse(Files.readString(file, StandardCharsets.UTF_8));
+        assertEquals(0.04, ((Number) at(c, "drops.artemiaFromSandChance")).doubleValue(), 1e-9, "the 1.36.0 default is halved");
+        assertEquals(20, ((Number) at(c, "food.fryPerItem")).intValue(), "the rest stays");
+        assertTrue(c.getComment(List.of("drops", "artemiaFromSandChance")).contains("Default: 0.04"), "comment follows");
+        assertTrue(Files.exists(dir.resolve("bettacraft-server.toml.pre-m46")), "the old file is kept");
+        String once = Files.readString(file, StandardCharsets.UTF_8);
+        FeatureMigration.migrateServerFile(file);
+        assertEquals(once, Files.readString(file, StandardCharsets.UTF_8), "only once");
+        // a set chance stays
+        CommentedConfig own = parse("""
+                [drops]
+                # Default: 0.08
+                artemiaFromSandChance = 0.1
+                """);
+        assertTrue(FeatureMigration.migrateServerM46(own).isEmpty());
+        assertEquals(0.10, ((Number) at(own, "drops.artemiaFromSandChance")).doubleValue(), 1e-9, "0.10 stays");
+        // 0.08 chosen after the update (the comment already names the new default) stays, so does one without a comment
+        CommentedConfig later = parse("""
+                [drops]
+                # Default: 0.04
+                artemiaFromSandChance = 0.08
+                """);
+        assertTrue(FeatureMigration.migrateServerM46(later).isEmpty(), "0.08 set after the update stays");
+        CommentedConfig bare = parse("""
+                [drops]
+                artemiaFromSandChance = 0.08
+                """);
+        assertTrue(FeatureMigration.migrateServerM46(bare).isEmpty(), "no default comment: someone wrote it, it stays");
+        assertEquals(0.04, ServerConfig.ARTEMIA_SAND_CHANCE, 1e-9, "the new default");
     }
 }

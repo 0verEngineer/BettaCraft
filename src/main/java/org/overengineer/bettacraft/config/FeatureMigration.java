@@ -23,6 +23,9 @@ import java.util.Map;
  * <p>
  * M35.1: the same for the server config ({@link #migrateServer}: the artemia cyst stack size is gone), old file kept as
  * {@code bettacraft-server.toml.pre-m35.1}.
+ * <p>
+ * M46: a server config still holding the 1.36.0 default sand chance (0.08, written by a version whose default it was) gets
+ * the new one (0.04), once; old file kept as {@code bettacraft-server.toml.pre-m46}.
  */
 public final class FeatureMigration {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("bettacraft/config");
@@ -87,14 +90,32 @@ public final class FeatureMigration {
         done.add("food.artemiaCystStackSize = " + old + " removed (artemia cyst jars always stack to 64)");
         if (config.get(SAND_CHANCE) instanceof Number n && Math.abs(n.doubleValue() - ServerConfig.ARTEMIA_SAND_CHANCE_OLD) < 1e-9) {
             config.set(SAND_CHANCE, ServerConfig.ARTEMIA_SAND_CHANCE);
-            done.add("drops.artemiaFromSandChance " + n + " -> " + ServerConfig.ARTEMIA_SAND_CHANCE + " (the old default, now 4x)");
+            done.add("drops.artemiaFromSandChance " + n + " -> " + ServerConfig.ARTEMIA_SAND_CHANCE + " (the old default, now the M46 default)");
         }
+        return done;
+    }
+
+    /**
+     * M46: the default sand chance went from 0.08 to 0.04. A file whose chance is still 0.08 and whose comment of that key
+     * still says {@code Default: 0.08} (NeoForge writes the default into the comment and rewrites it with the new one when it
+     * loads the file) gets 0.04, once: after the first load the comment says 0.04, so a chance set to 0.08 later stays, and
+     * every other value stays. Returns one line per change.
+     */
+    public static List<String> migrateServerM46(CommentedConfig config) {
+        List<String> done = new ArrayList<>();
+        if (!(config.get(SAND_CHANCE) instanceof Number n) || Math.abs(n.doubleValue() - ServerConfig.ARTEMIA_SAND_CHANCE_M35) > 1e-9) return done;
+        String comment = config.getComment(SAND_CHANCE);
+        if (comment == null || !java.util.regex.Pattern.compile("Default:\\s*0?\\.08\\b").matcher(comment).find()) return done;
+        config.set(SAND_CHANCE, ServerConfig.ARTEMIA_SAND_CHANCE);
+        config.setComment(SAND_CHANCE, comment.replaceAll("Default:(\\s*)0?\\.08\\b", "Default:$1" + ServerConfig.ARTEMIA_SAND_CHANCE));
+        done.add("drops.artemiaFromSandChance " + n + " -> " + ServerConfig.ARTEMIA_SAND_CHANCE + " (the 1.36.0 default, halved in 1.36.1)");
         return done;
     }
 
     /** Migrates the server config file in place (if it exists and has old keys, M35.1); never throws. */
     public static void migrateServerFile(Path file) {
         migrateFile(file, FeatureMigration::migrateServer, ".pre-m35.1", "Migrated {} settings of {} (M35.1):");
+        migrateFile(file, c -> migrateServerM46((CommentedConfig) c), ".pre-m46", "Migrated {} settings of {} (M46):");
     }
 
     /** Migrates the common config file in place (if it exists and has old keys); never throws. */

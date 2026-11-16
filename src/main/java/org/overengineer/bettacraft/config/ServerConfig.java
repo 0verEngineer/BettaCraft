@@ -111,8 +111,8 @@ public final class ServerConfig {
 
     // drops
     public static final ModConfigSpec.DoubleValue DROPS_ARTEMIA_FROM_SAND_CHANCE;
-    /** M35.1: 4x the old 0.02 (one jar is one culture now). */
-    public static final double ARTEMIA_SAND_CHANCE = 0.08, ARTEMIA_SAND_CHANCE_OLD = 0.02;
+    /** M35.1: 0.02 became 0.08 (one jar is one culture now); M46: halved to 0.04. */
+    public static final double ARTEMIA_SAND_CHANCE = 0.04, ARTEMIA_SAND_CHANCE_OLD = 0.02, ARTEMIA_SAND_CHANCE_M35 = 0.08;
 
     // water quality (M9)
     public static final ModConfigSpec.BooleanValue WATER_QUALITY_ENABLED;
@@ -294,6 +294,8 @@ public final class ServerConfig {
     // M28.1: the own spawn pass of the wild animals
     public static final ModConfigSpec.IntValue WILD_PASS_INTERVAL;
     public static final ModConfigSpec.IntValue WILD_PASS_PER_PLAYER;
+    /** M46: the small animals' own limit of the spawn pass (they no longer share {@link #WILD_PASS_PER_PLAYER} with the fish). */
+    public static final ModConfigSpec.IntValue WILD_PASS_CRITTERS_PER_PLAYER;
     // M23: aeration, oxygen, internal filters, lights
     public static final ModConfigSpec.BooleanValue POWER_AIR_PUMP;
     public static final ModConfigSpec.DoubleValue POWER_AIR_PUMP_FE;
@@ -1044,9 +1046,12 @@ public final class ServerConfig {
                 .defineInRange("wildCrittersNearby", 8, 0, 256);
         WILD_PASS_INTERVAL = b.comment("Ticks between two tries of the own spawn pass per player (20 ticks = 1 second; features.wildSpawnPass.enabled)")
                 .defineInRange("spawnPassInterval", 200, 20, 72000);
-        WILD_PASS_PER_PLAYER = b.comment("The own spawn pass only spawns while fewer than this many wild animals of the mod live within 48 blocks of",
-                        "the player (features.wildSpawnPass.enabled; 0 = it spawns nothing)")
+        WILD_PASS_PER_PLAYER = b.comment("The own spawn pass only spawns fish, frogs and turtles while fewer than this many of them (wild, of the mod)",
+                        "live within 48 blocks of the player (features.wildSpawnPass.enabled; 0 = it spawns none; the small animals have their own limit)")
                 .defineInRange("spawnPassPerPlayer", 10, 0, 256);
+        WILD_PASS_CRITTERS_PER_PLAYER = b.comment("The own spawn pass only spawns shrimp, snails, crayfish and hermit crabs while fewer than this many wild ones",
+                        "live within 48 blocks of the player (one own try per pass, preferring shallow water; 0 = it spawns none)")
+                .defineInRange("spawnPassCrittersPerPlayer", 12, 0, 256);
         b.pop();
 
         b.comment("M30: big tanks (features.bigTanks.enabled): larger tanks and a smaller interior scale for them").push("bigTankRules");

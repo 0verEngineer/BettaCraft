@@ -226,20 +226,20 @@ public final class CystGameTests {
     }
 
     /**
-     * The sources of cysts give 4x as much: the only one is the sand drop (2 % -> 8 %, one jar each; no trader offer, loot,
-     * recipe or net catch gives cysts), the handbook source table says so, and 4000 sand blocks broken with a fixed seed drop
-     * about 8 % jars.
+     * The sources of cysts: the only one is the sand drop (2 % -> 8 % in M35.1, halved to 4 % in M46, one jar each; no trader
+     * offer, loot, recipe or net catch gives cysts), the handbook source table says so, and 4000 sand blocks broken with a fixed
+     * seed drop about 4 % jars.
      */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void sandDropsFourTimesAsManyJars(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         double chance = ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.getDefault();
-        h.assertTrue(Math.abs(chance - 4 * ServerConfig.ARTEMIA_SAND_CHANCE_OLD) < 1e-9 && Math.abs(chance - 0.08) < 1e-9, "8 % = 4 x 2 %: " + chance);
+        h.assertTrue(Math.abs(chance - ServerConfig.ARTEMIA_SAND_CHANCE_M35 / 2) < 1e-9 && Math.abs(chance - 0.04) < 1e-9, "4 % = 8 % / 2: " + chance);
         List<Source> sources = Sources.of(Target.item("artemia_cysts"));
         h.assertTrue(sources.size() == 1, "one source of cysts: " + sources);
         Source s = sources.get(0);
-        h.assertTrue(s.kind() == Source.Kind.BLOCK_DROP && Math.abs(s.chance() - 0.08) < 1e-9 && s.min() <= 1 && s.max() <= 1,
-                "the sand drop, 8 %, one jar: " + s);
+        h.assertTrue(s.kind() == Source.Kind.BLOCK_DROP && Math.abs(s.chance() - 0.04) < 1e-9 && s.min() <= 1 && s.max() <= 1,
+                "the sand drop, 4 %, one jar: " + s);
         h.assertTrue(sources.stream().noneMatch(x -> x.kind() == Source.Kind.TRADER_USUAL || x.kind() == Source.Kind.TRADER_RARE), "no trader offer");
         // break sand 4000 times with one random source of a fixed seed (the first values of neighbouring seeds are alike)
         BlockPos pos = h.absolutePos(new BlockPos(4, 2, 4));
@@ -258,7 +258,7 @@ public final class CystGameTests {
             }
         }
         h.assertTrue(sand == 4000, "the sand itself: " + sand);
-        h.assertTrue(jars >= 240 && jars <= 400, "about 8 % jars (320 of 4000, was 80): " + jars);
+        h.assertTrue(jars >= 110 && jars <= 210, "about 4 % jars (160 of 4000; 320 in 1.36.0): " + jars);
         h.succeed();
     }
 }
