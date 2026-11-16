@@ -1291,6 +1291,18 @@ tasks.named('check').configure { dependsOn 'verifyReleaseJar' }
 // suite plus the integration-only tests (gametest/integration) with every integrated mod (see -Pintegration above), in
 // run/gametest-integration. Run by hand (gradlew integrationTests --no-configuration-cache) or in CI only from the manual
 // workflow integration.yml. The groups' jars come from local folders (copied from an ATM10 instance), see the README.
+// M42: a GameTest server that fails to start (a mod missing a dependency, a crash while loading) ends with exit code 0, and
+// the task looked green; the run counts only when the server reported its result line
+tasks.matching { it.name == 'runGameTestServer' }.configureEach { t ->
+    def log = file(gameTestDir + '/logs/latest.log')
+    t.doLast {
+        def text = log.exists() ? log.getText('UTF-8') : ''
+        if (!(text =~ /All \d+ required tests passed/)) {
+            throw new GradleException("the GameTest server reported no result (did it start? see ${log})")
+        }
+    }
+}
+
 tasks.register('integrationTests') {
     group = 'bettacraft'
     description = 'GameTests with every integrated mod, including the integration-only tests (M42, optional)'
