@@ -910,8 +910,8 @@ tasks.register('runMultiplayerTest') {
         def procs = []
         def deadline = System.currentTimeMillis() + 14 * 60 * 1000L
         try {
-            // M42 part b: -Pmplag puts a bad connection between the server and each client (DevNetLag: 40-250 ms both ways, a
-            // quarter of the interior deltas lost)
+            // M42 part b: -Pmplag puts a bad connection between the server and each client (DevNetLag: 40-250 ms both ways, every
+            // second interior delta lost)
             def serverJvm = ['-Dbettacraft.smoketest.mp=true'] + (project.hasProperty('mplag') ? ['-Dbettacraft.mp.lag=true'] : [])
             def server = start('server', cmd(srv, 'server', serverJvm, []), runDir)
             procs << server

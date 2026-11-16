@@ -119,8 +119,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   bugs of ours (exceptions in our code, an animal lost or doubled when taken out, put back, packed or released, refused animals
   left in the tank, a breakable inhabited tank, a plant lost when the tank breaks). Client: `runClient -Pzoo -Psmoketestm42b`
   (the miniature with those animals and plants; the Aether stays out of the dev client, its Accessories mixin crashes there).
-- Other M42 test switches: `runMultiplayerTest -Pmplag` (dev `DevNetLag`: 40-250 ms both ways, a quarter of the interior
-  deltas lost), `bash tools/upgrade/chain.sh` (a reference world saved by an intermediate version, then `smoketestUpgrade
+- Other M42 test switches: `runMultiplayerTest -Pmplag` (dev `DevNetLag`: 40-250 ms both ways, every second interior
+  delta lost), `bash tools/upgrade/chain.sh` (a reference world saved by an intermediate version, then `smoketestUpgrade
   -PupgradeWorld="Bettacraft Kette 1.13.1-1.31.0"`). Every GameTest run deletes its old world first (it used to grow by every
   run and filled the disk).
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the

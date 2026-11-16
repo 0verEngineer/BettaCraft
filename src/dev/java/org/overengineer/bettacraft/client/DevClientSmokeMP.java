@@ -151,7 +151,10 @@ final class DevClientSmokeMP {
             case "tankmates" -> {
                 // M19: the tankmates (entities with their variety) and the clutches (tank view) of the small tank on this client
                 BlockPos min = pos(args);
-                then(60, () -> {
+                whenReady(60, 10, () -> {
+                    var cc = org.overengineer.bettacraft.tank.TankMultiblock.getController(Minecraft.getInstance().level, min);
+                    return cc != null && cc.getTank() != null;
+                }, () -> {
                     Minecraft mc = Minecraft.getInstance();
                     var box = new net.minecraft.world.phys.AABB(min).expandTowards(2, 2, 2);
                     var mates = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.tankmate.TankmateEntity.class, box);
@@ -453,7 +456,8 @@ final class DevClientSmokeMP {
                 // M22.4: Dev1 opens the cabinet menu with a right-click on the cabinet's front and presses the outlet button
                 // like the tank menu step: a right-click (use key) on the cabinet the server turned the player to
                 then(30, () -> net.minecraft.client.KeyMapping.click(Minecraft.getInstance().options.keyUse.getKey()));
-                then(40, () -> {
+                whenReady(40, 10, () -> Minecraft.getInstance().screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen cs
+                        && cs.getMenu().outletSide() != null, () -> {
                     Minecraft mc = Minecraft.getInstance();
                     if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) || mc.gameMode == null) {
                         send("outletmenu none:" + mc.screen + "_hit:" + (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult b ? b.getBlockPos().toShortString().replace(" ", "")
@@ -865,6 +869,22 @@ final class DevClientSmokeMP {
 
     private static void then(int delay, Runnable action) {
         steps.add(new Step(delay, action));
+    }
+
+    /**
+     * M42 part b: runs {@code action} once {@code ready} holds, checked every {@code delay} ticks at most {@code tries} times (then it
+     * runs anyway and reports what the client has): with a slow connection (-Pmplag) the data may come a moment later.
+     */
+    private static void whenReady(int delay, int tries, java.util.function.BooleanSupplier ready, Runnable action) {
+        then(delay, () -> {
+            if (ready.getAsBoolean() || tries <= 1) action.run();
+            else steps.addFirst(new Step(delay, () -> whenReady0(delay, tries - 1, ready, action)));
+        });
+    }
+
+    private static void whenReady0(int delay, int tries, java.util.function.BooleanSupplier ready, Runnable action) {
+        if (ready.getAsBoolean() || tries <= 1) action.run();
+        else steps.addFirst(new Step(delay, () -> whenReady0(delay, tries - 1, ready, action)));
     }
 
     private static void tick() {

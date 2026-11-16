@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * M42 part b, dev only ({@code gradlew runMultiplayerTest -Pmplag}, system property {@code bettacraft.mp.lag}): a bad connection
  * between the dedicated server and each player. Every packet both ways waits a random 40 to 250 ms (in order, as over TCP: a
- * packet never overtakes the one before), and a quarter of the interior deltas (the miniature's block changes) never arrive:
+ * packet never overtakes the one before), and every second interior delta (the miniature's block changes) never arrives:
  * the client has to notice the gap in the versions and ask for the whole interior again. The multiplayer test then has to
  * pass all the same.
  */
@@ -28,8 +28,7 @@ public final class DevNetLag {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     static final boolean ON = Boolean.getBoolean("bettacraft.mp.lag");
     static final int MIN_MS = 40, MAX_MS = 250;
-    static final double DROP_DELTAS = 0.25;
-    public static final AtomicInteger DROPPED = new AtomicInteger(), DELAYED = new AtomicInteger();
+    public static final AtomicInteger DROPPED = new AtomicInteger(), DELAYED = new AtomicInteger(), DELTAS = new AtomicInteger();
 
     private DevNetLag() {}
 
@@ -39,61 +38,88 @@ public final class DevNetLag {
         var channel = p.connection.getConnection().channel();
         if (channel == null || channel.pipeline().get("bettacraft_lag") != null || channel.pipeline().get("packet_handler") == null) return;
         channel.pipeline().addBefore("packet_handler", "bettacraft_lag", new Lag(p.getGameProfile().getName().hashCode()));
-        LOGGER.info("[smoketest] MP lag on for {}: {}-{} ms both ways, {}% of the interior deltas dropped", p.getGameProfile().getName(), MIN_MS, MAX_MS,
-                Math.round(DROP_DELTAS * 100));
+        LOGGER.info("[smoketest] MP lag on for {}: {}-{} ms both ways, every second interior delta dropped", p.getGameProfile().getName(), MIN_MS, MAX_MS);
     }
 
     @SubscribeEvent
     public static void onStopping(net.neoforged.neoforge.event.server.ServerStoppingEvent event) {
-        if (ON) LOGGER.info("[smoketest] MP lag: {} packets delayed, {} interior deltas dropped", DELAYED.get(), DROPPED.get());
+        if (ON) LOGGER.info("[smoketest] MP lag: {} packets delayed, {} interior deltas seen, {} dropped", DELAYED.get(), DELTAS.get(), DROPPED.get());
     }
 
-    /** Delays both directions in order and drops a share of the interior deltas. */
+    /**
+     * Delays both directions and drops a share of the interior deltas. Each direction is one queue drained in order by one task
+     * (single scheduled writes could swap two packets whose times were equal: a menu's data before the menu).
+     */
     static final class Lag extends ChannelDuplexHandler {
         private final Random random;
         private long nextOut, nextIn;
+        private final java.util.ArrayDeque<Object[]> outQ = new java.util.ArrayDeque<>(), inQ = new java.util.ArrayDeque<>();
+        private boolean outScheduled, inScheduled;
 
         Lag(long seed) {
             this.random = new Random(seed);
         }
 
-        private synchronized long delay(boolean out) {
-            long now = System.nanoTime();
-            long at = now + TimeUnit.MILLISECONDS.toNanos(MIN_MS + random.nextInt(MAX_MS - MIN_MS + 1));
-            if (out) at = nextOut = Math.max(nextOut, at);
-            else at = nextIn = Math.max(nextIn, at);
-            return Math.max(0, at - now);
+        /** The time this packet is due: random lag, never before the one before it (as over TCP). */
+        private long due(boolean out) {
+            long at = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MIN_MS + random.nextInt(MAX_MS - MIN_MS + 1));
+            if (out) return nextOut = Math.max(nextOut, at);
+            return nextIn = Math.max(nextIn, at);
         }
 
         @Override
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+            if (msg instanceof net.minecraft.network.protocol.game.ClientboundBundlePacket b) {
+                for (var sub : b.subPackets()) if (sub instanceof ClientboundCustomPayloadPacket p && p.payload() instanceof InteriorDeltaPayload) DELTAS.incrementAndGet();
+            }
             if (msg instanceof ClientboundCustomPayloadPacket pkt && pkt.payload() instanceof InteriorDeltaPayload) {
-                boolean drop;
-                synchronized (this) {
-                    drop = random.nextDouble() < DROP_DELTAS;
-                }
-                if (drop) {
+                // every second one (the multiplayer test sends only a handful): the client must notice the gap and ask again
+                if (DELTAS.incrementAndGet() % 2 == 0) {
                     DROPPED.incrementAndGet();
                     promise.trySuccess();
                     return;
                 }
             }
             DELAYED.incrementAndGet();
-            ctx.executor().schedule(() -> {
-                ctx.writeAndFlush(msg, promise);
-            }, delay(true), TimeUnit.NANOSECONDS);
+            outQ.add(new Object[]{due(true), msg, promise});
+            if (!outScheduled) drainOut(ctx);
+        }
+
+        private void drainOut(ChannelHandlerContext ctx) {
+            outScheduled = false;
+            long now = System.nanoTime();
+            boolean wrote = false;
+            while (!outQ.isEmpty() && (long) outQ.peek()[0] <= now) {
+                Object[] e = outQ.poll();
+                ctx.write(e[1], (ChannelPromise) e[2]);
+                wrote = true;
+            }
+            if (wrote) ctx.flush();
+            if (!outQ.isEmpty()) {
+                outScheduled = true;
+                ctx.executor().schedule(() -> drainOut(ctx), Math.max(0, (long) outQ.peek()[0] - now), TimeUnit.NANOSECONDS);
+            }
         }
 
         @Override
         public void flush(ChannelHandlerContext ctx) {
-            // every delayed write flushes itself
+            // the queue flushes what it writes
         }
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
-            ctx.executor().schedule(() -> {
-                ctx.fireChannelRead(msg);
-            }, delay(false), TimeUnit.NANOSECONDS);
+            inQ.add(new Object[]{due(false), msg});
+            if (!inScheduled) drainIn(ctx);
+        }
+
+        private void drainIn(ChannelHandlerContext ctx) {
+            inScheduled = false;
+            long now = System.nanoTime();
+            while (!inQ.isEmpty() && (long) inQ.peek()[0] <= now) ctx.fireChannelRead(inQ.poll()[1]);
+            if (!inQ.isEmpty()) {
+                inScheduled = true;
+                ctx.executor().schedule(() -> drainIn(ctx), Math.max(0, (long) inQ.peek()[0] - now), TimeUnit.NANOSECONDS);
+            }
         }
     }
 }
