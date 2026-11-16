@@ -146,9 +146,9 @@ jobs:
         with:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
-          # optional integrations (CurseForge slugs; check them on the project pages before the first upload, a wrong
-          # slug fails the upload): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fish Tanks, Fish of Thieves. Fintastic,
-          # Aquaculture 2 and Naturalist are supported too; add their slugs once checked on CurseForge (RELEASING.md)
+          # optional integrations (CurseForge slugs, all checked on their project pages in M43; a wrong slug fails the
+          # upload): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fishtanks, Fish of Thieves, Fintastic, Aquaculture 2,
+          # Naturalist
           curseforge-dependencies: |
             jade(optional)
             guideme(optional)
@@ -157,6 +157,9 @@ jobs:
             wthit-forge(optional)
             better-fishtanks(optional)
             fish-of-thieves(optional)
+            fintastic(optional)
+            aquaculture(optional)
+            naturalist(optional)
           files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
           name: Bettacraft ${{ steps.version.outputs.version }}
           version: ${{ steps.version.outputs.version }}

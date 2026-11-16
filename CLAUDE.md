@@ -17,7 +17,7 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
 | `tools/ci` | `fetch_mods.py` + `power-mods.json` / `integration-mods.json`: pinned Modrinth jars for the `-Ppower` GameTests and the manual integration run in CI |
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
-| `docs/description.md` | the CurseForge mod page (English, short German summary); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
+| `docs/description.md` | the CurseForge mod page (English only); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
 | `docs/images` | README / CurseForge media (made by `tools/assetgen/readme_media.py`; banner by `preview.py`) |
 | `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>`), `integration.yml` (manual only) |
 
@@ -71,7 +71,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ./gradlew updateGuide                             # regenerate the data-driven handbook sections
 ./gradlew runServer -Psmoketest --no-configuration-cache      # server smoke (also with -PnoCompat)
 ./gradlew runClient -Psmoketestm25c --no-configuration-cache  # a milestone's client smoke scene (background window)
-./gradlew runClient -Psmoketestreadme -PnoJei --no-configuration-cache # README media, then py tools/assetgen/readme_media.py
+./gradlew runClient -Psmoketestm43 -PnoJei --no-configuration-cache   # README / mod page media in a copy of the showcase world
+                                                  # (after buildShowcase; again with -Pshaders), then py tools/assetgen/readme_media.py
 ./gradlew runMultiplayerTest --no-configuration-cache         # dedicated server + two background clients
 ./gradlew smoketestUpgrade                        # loads a reference world of an old version, nothing may be lost
 ./gradlew buildShowcase                           # showcase world "Bettacraft Schaukasten" (then -Pshowcasetour)
