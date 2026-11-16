@@ -360,6 +360,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm42')) {
+                // gradlew runClient -Pintegration -Psmoketestm42 : only the M42 scene (JEI recipe screens of the food maker and the
+                // crucible, a filter medium's information page, the handbook page of the filter media, with every integrated mod)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m42only', 'true'
+            }
             if (project.hasProperty('smoketestm41')) {
                 // gradlew runClient -Pcreate -Psmoketestm41 : only the M41 scene (a tank powered by Create: a drive adapter on its
                 // wall, a shaft on the cabinet under it; the adapter with Create's goggles, the cabinet's flange and menu)

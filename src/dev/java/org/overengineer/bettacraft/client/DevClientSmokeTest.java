@@ -159,6 +159,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM38 m38;
     /** -Psmoketestm37: the fertilizer maker, the crank and the cabinet's spring, the water tab (M37). */
     private static final boolean M37_ONLY = Boolean.getBoolean("bettacraft.smoketest.m37only");
+    /** -Pintegration -Psmoketestm42: JEI recipe screens and the handbook with every integrated mod loaded (M42). */
+    private static final boolean M42_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42only");
+    private static DevClientSmokeM42 m42;
     /** -Pcreate -Psmoketestm41: a tank powered by Create's rotation through a drive adapter and a cabinet shaft (M41). */
     private static final boolean M41_ONLY = Boolean.getBoolean("bettacraft.smoketest.m41only");
     private static DevClientSmokeM41 m41;
@@ -411,6 +414,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M42_ONLY) {
+                if (ticks == 60) m42 = new DevClientSmokeM42();
+                if (m42 != null && m42.tick()) {
+                    m42 = null;
+                    LOGGER.info("[smoketest] client world test finished (M42 only)");
                     mc.stop();
                 }
                 return;
