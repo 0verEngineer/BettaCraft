@@ -124,6 +124,9 @@ genetics. Made for big modpacks such as All the Mods 10, and fine on its own.
 - **Pipes and water changes:** glass and stainless steel pipes and pumps carry water with all its values, a multiblock
   filter of any size with media that clog, nitrate that makes water changes matter, and a water change controller that
   does them for you.
+- **One filter, many aquariums:** filter pipes with T-pieces dock on any side of a tank (with guards inside), up to four
+  lines run in one pipe bundle, fresh and waste water ports change the water of every tank of the filter, and a pipe cover
+  hides the pipes behind any block.
 - **Water chemistry:** TDS, pH and hardness from the water, the substrate, driftwood, leaves and CO2, with a range for
   every animal. CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
 - Optional Forge Energy for the equipment, or a **crank** that winds the filters, water devices and the cabinet under a
@@ -155,6 +158,7 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   water animals of any mod.
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
+  The facades of AE2, EnderIO, Mekanism Covers and **Cable Facades** hide the filter pipes.
 - **Animals of other mods:** the fish of Fintastic, Aquaculture 2, Fish of Thieves, Critters and Companions, Naturalist and
   Living Things get our care and breeding in Bettacraft aquariums (their young inherit their colours), the giants go into
   big tanks by their real length, their land animals live in terraria and paludaria; deep-sea, giant and hostile animals
@@ -213,7 +217,7 @@ Zucht nach Mendel mit Hunderten Farbformen, Multiblock-Aquarien aus beliebigem G
 Einrichten mit Wracks, Aquascaping-Steinen und Wurzeln, fast 50 wachsende Pflanzen und Korallen, fast 50 Beifische (Buntbarsche, Kugelfische, Guramis …), Garnelen, Schnecken, große Krebse, Axolotl-Zucht, Meerwasser mit Seepferdchen, Großbecken mit Haien, Rochen, Riesenwelsen und Delfinen, Terrarien und Paludarien mit Schildkröten, Pfeilgiftfröschen,
 Geckos und Kornnattern, Landtieren, Insekten, Säugetieren und Vögeln anderer Mods (Naturalist, Critters and Companions,
 Living Things), Minecraft-Tieren als Terrarien-Haustieren (Hühner, Kaninchen, Bienen, Frösche …), verkleinerte Mobs im Glas, Filter,
-Licht, CO2, Rohre, Wasserchemie, Flüssigdünger, Lebendfutter und eine Futtermaschine, und eine Kurbel für alle, die ohne
+Licht, CO2, Rohre (ein Multiblock-Filter für mehrere Becken, Rohrbündel und Verkleidungen), Wasserchemie, Flüssigdünger, Lebendfutter und eine Futtermaschine, und eine Kurbel für alle, die ohne
 Stromerzeuger spielen. Fische anderer Mods (Fintastic, Aquaculture, Fish of Thieves …, die Riesen im Großbecken)
 bekommen unsere Pflege und Zucht, Kelp, Seegras, Korallen und Wasserpflanzen anderer Mods wirken im Becken wie unsere, Becken fahren auf Create-Contraptions und Luftschiffen mit, und für Modpacks gibt es
 ein FTB-Quests-Kapitel, KubeJS-Events, JourneyMap-Wegpunkte bei Alarmen, einen Schalter für jedes Feature und

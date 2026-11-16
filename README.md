@@ -143,6 +143,10 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a
   bulkhead leads to interior pipes, a multiblock filter of any size with media that clog; nitrate makes water changes
   matter, a water change controller and a top-off do them for you.
+- **One filter, many aquariums:** filter pipes with T-pieces dock on any side of a tank (guards inside keep the animals
+  out), up to four lines run in one pipe bundle, fresh and waste water ports do the water changes of every tank of the
+  filter, and a pipe cover (or the facades of AE2, EnderIO, Mekanism Covers and Cable Facades) hides the pipes behind any
+  block.
 - **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
 - Optional Forge Energy for the equipment, power regulator, own procedural sounds. No generator? A **crank** winds the
@@ -198,6 +202,7 @@ No other mod is required.
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
 | [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
+| Applied Energistics 2, EnderIO, Mekanism Covers, [Cable Facades](https://www.curseforge.com/minecraft/mc-mods/cable-facades) | their facades and covers hide the filter pipes and pipe bundles (Cable Facades through its block tag, its config untouched) |
 | Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water`, `bettacraft:sea_water` and `bettacraft:live_food` (Mekanism tanks too); CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
 | Biome mods (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Twilight Forest, ...) | their swamps, rivers, mangroves, lush caves and warm oceans get the wild animals, net catches, fishing loot and corals of their vanilla counterparts (biome tags `#bettacraft:*_waters`, `#bettacraft:coral_reef_biomes`) |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |

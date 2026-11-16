@@ -4,6 +4,57 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.32.0-beta.1] - 2026-11-17
+
+One multiblock filter serves several aquariums: its own filter pipes with T-pieces dock on any side of a tank, up to four
+lines run in one pipe bundle, fresh and waste water ports do the water changes of all its tanks, guards keep the animals
+out of the pipes, and covers hide the pipes behind any block.
+
+> **Breaking for existing worlds:** every multiblock filter now needs an **intake guard and an outlet guard** in each of its
+> aquariums, **also filters built before this update**. Until they are fitted an old filter keeps its media, regulator and
+> power but **does not filter** (a red note in its screen and in the aquarium menu, and a chat message with its position to
+> players nearby). Fit the guards where its pipes enter the aquarium (use them on the glass there). Servers that want the
+> old behaviour switch the filter lines off: `features.pipes.filterLines = false` (a filter then serves one aquarium as
+> before, without guards).
+
+### Added
+- **Filter lines:** the filter inlet pipe (blue, intake) and filter outlet pipe (orange, return). A pipe joins at most two
+  neighbours; the **pipe T-piece** makes it a branch to every side, so one filter serves several aquariums. Its cleaning and
+  flow are shared by the water volume of the aquariums; the filter screen lists every aquarium with its share or the reason
+  it is not filtered.
+- **Docking anywhere:** filter pipes dock on any side, the top or the bottom of an aquarium; a pipe dock appears inside at
+  that spot and interior pipes lead on from it. A pipe that leads into an aquarium and out again is refused.
+- **Guards:** the intake guard (fine mesh) and outlet guard (mesh cap) in the aquarium; the intake strainer, lily pipe,
+  nozzle and spray bar count as guards. Without its guard a filter does not filter that aquarium (warnings in the aquarium
+  menu, Jade / The One Probe / WTHIT and the filter screen).
+- **Pipe bundle:** up to four filter lines in one block like conduits (right-click a filter pipe with the pipe of another
+  line; sneak-right-click with an empty hand takes the line you look at out). Each line keeps its own sides and T-piece.
+- **Fresh and waste water at the filter:** filter fresh water pipe (green) and waste water pipe (brown), fresh and waste
+  water ports on the chambers (8 buckets each). A level sensor or water change controller touching the filter tops off and
+  changes the water of all its aquariums (shared by need); the old water goes out of the waste port or is discarded
+  without one. Water pumps, reservoirs, the pipes of Pipez, EnderIO and Mekanism, AE2 export buses and Refined Storage
+  importers plug into the fresh and waste lines.
+- **Pipe cover:** with the pipe cover in the main hand and a full block in the off hand, right-click a filter pipe or
+  bundle and it is drawn as that block (a full block to walk on, with the block's light, shade and sounds); its lines and
+  connections stay. The block comes back when the cover comes off (sneak-right-click with the pipe cover) or the pipe is
+  broken.
+- **Facades of other mods** on the filter pipes: Applied Energistics 2 cable facades, EnderIO conduit facades and
+  Mekanism Covers put their block on as the cover (the facade is kept and given back). **Cable Facades** puts its own
+  facades on the filter pipes and bundles: the block tag `cable_facades:supports_facade` is in our data (its config is not
+  touched), and the pipes are hidden under its facades.
+- Feature switches `features.pipes.filterLines`, `features.pipes.filterWater` and `features.pipes.pipeCovers`.
+- Handbook (English and German): pages for the filter lines and guards, the pipe bundle with fresh and waste water, and
+  the pipe cover and facades.
+
+### Changed
+- **Old multiblock filters need guards** (see above); the switch `features.pipes.filterLines = false` keeps the old way.
+- Glass and stainless steel pipes also join blocks that only offer a fluid handler (the filter's water ports).
+- A level sensor or water change controller on a multiblock filter works on all its aquariums instead of the first one.
+
+### Fixed
+- An animal put into a nearly full, low tank (a squid in a tank two blocks high) could start with its head in the lid,
+  slip out and lose its tank; it now starts with its whole body below the lid.
+
 ## [1.31.0-beta.1] - 2026-11-17
 
 The animals of the aquarium and animal mods of ATM10 live in our tanks by their real size: the giant fish and rays in big
