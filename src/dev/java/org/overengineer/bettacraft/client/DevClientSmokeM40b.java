@@ -60,11 +60,11 @@ final class DevClientSmokeM40b {
         then(1, () -> mc.options.hideGui = true);
         then(200, () -> look(base.getX() + 6.5, base.getY() + 5.0, base.getZ() + 13.5, 180F, 32F));
         then(200, () -> shot("bundles"));
-        then(1, () -> look(base.getX() + 6.6, base.getY() + 1.6, base.getZ() + 8.6, 210F, 28F));
+        then(1, () -> look(base.getX() + 10.0, base.getY() + 3.4, base.getZ() + 9.8, 150F, 42F));
         then(150, () -> shot("bundle_end"));
         then(1, () -> look(base.getX() + 15.5, base.getY() + 2.6, base.getZ() + 9.5, 130F, 22F));
         then(150, () -> shot("filter_water"));
-        then(1, () -> look(base.getX() + 4.5, base.getY() + 1.4, base.getZ() + 9.2, 160F, 25F));
+        then(1, () -> look(base.getX() + 1.6, base.getY() + 3.4, base.getZ() + 9.6, 210F, 42F));
         then(150, () -> shot("bundle_start"));
         then(1, () -> server(p -> p.teleportTo(p.server.overworld(), head.getX() + 3.5, head.getY() - 1.0, head.getZ() + 0.5, 90F, 10F)));
         then(80, () -> {
