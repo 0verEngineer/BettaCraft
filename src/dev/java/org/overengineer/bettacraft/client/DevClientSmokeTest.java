@@ -165,6 +165,9 @@ final class DevClientSmokeTest {
     /** -Pzoo -Psmoketestm42b: the miniature with animals and plants of mods we do not integrate (M42 part b). */
     private static final boolean M42B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42bonly");
     private static DevClientSmokeM42b m42b;
+    /** -Psmoketestm44: the walk animation in tanks and the cabinet fronts (M44). */
+    private static final boolean M44_ONLY = Boolean.getBoolean("bettacraft.smoketest.m44only");
+    private static DevClientSmokeM44 m44;
     /** -Pcreate -Psmoketestm41: a tank powered by Create's rotation through a drive adapter and a cabinet shaft (M41). */
     private static final boolean M41_ONLY = Boolean.getBoolean("bettacraft.smoketest.m41only");
     private static DevClientSmokeM41 m41;
@@ -417,6 +420,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M44_ONLY) {
+                if (ticks == 60) m44 = new DevClientSmokeM44();
+                if (m44 != null && m44.tick()) {
+                    m44 = null;
+                    LOGGER.info("[smoketest] client world test finished (M44 only)");
                     mc.stop();
                 }
                 return;

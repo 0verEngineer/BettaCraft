@@ -70,6 +70,8 @@ public final class DevSmokeUpgrade {
     private static final List<String> problems = new ArrayList<>();
     /** M22.4: cabinets whose outlet side was checked (old cabinets keep the back wall). */
     private static int cabinetsChecked;
+    /** M44: the fronts the old cabinets show after loading. */
+    private static final java.util.List<String> cabinetFronts = new java.util.ArrayList<>();
     /** M23: external filters and lights of the old world checked (full power, no sponge, not dimmed). */
     private static int m23Checked;
     /** M24: tanks of the old world checked (nitrate starts at 0, no water change noted, no bulkhead). */
@@ -164,6 +166,7 @@ public final class DevSmokeUpgrade {
                 }
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
+                LOGGER.info("[smoketest] upgrade: cabinets are auto with joints and show the fronts of their rows (M44): {}", cabinetFronts);
                 LOGGER.info("[smoketest] upgrade: {} filters and lights run at full power, undimmed (M23)", m23Checked);
                 LOGGER.info("[smoketest] upgrade: {} tanks start with nitrate 0 and no water change (M24)", m24Checked);
                 LOGGER.info("[smoketest] upgrade: {} sea water buckets give the sea water fluid (M25)", seaBuckets);
@@ -596,6 +599,17 @@ public final class DevSmokeUpgrade {
                     problems.add("cabinet " + p.toShortString() + ": outlet side " + cab.outletSetting() + " instead of the back wall");
                 }
                 cabinetsChecked++;
+                // M44: an old cabinet becomes Auto with joints, and a tick after loading it shows the front of its row
+                if (legacy && (cab.frontSetting() != org.overengineer.bettacraft.equipment.CabinetFrontSetting.AUTO || !cab.joints())) {
+                    problems.add("cabinet " + p.toShortString() + ": front " + cab.frontSetting() + ", joints " + cab.joints() + " instead of auto with joints");
+                }
+                BlockState want = org.overengineer.bettacraft.equipment.CabinetBlock.withFront(s, level, p);
+                if (s.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT) != want.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT)
+                        || s.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.JOINTS) != want.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.JOINTS)) {
+                    problems.add("cabinet " + p.toShortString() + ": shows " + s.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT) + " instead of "
+                            + want.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT));
+                }
+                cabinetFronts.add(s.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT).getSerializedName());
                 // M41: a cabinet of a world from before M41 takes no Create shaft (schema v3: drive none)
                 if (cab.driveSetting() != org.overengineer.bettacraft.equipment.DriveSide.NONE) {
                     problems.add("cabinet " + p.toShortString() + ": drive side " + cab.driveSetting() + " instead of none");

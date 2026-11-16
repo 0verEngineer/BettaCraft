@@ -162,6 +162,12 @@ public final class DevSmokeMP {
                 check(name + ": tank type " + (a.length > 9 ? a[9] : "?") + " (server terrarium)", a.length > 9 && "terrarium".equals(a[9]));
             }
             case "reef" -> checkReef(name, a);
+            case "m44" -> { // M44: the fronts of the cabinet row and the legs of the zombie in glass on every client
+                check(name + ": cabinet fronts " + (a.length > 1 ? a[1] : "?") + " (server DSRD-)", a.length > 1 && "DSRD-".equals(a[1]));
+                int walk = a.length > 2 ? Integer.parseInt(a[2]) : -1, ground = a.length > 3 ? Integer.parseInt(a[3]) : -1;
+                check(name + ": the zombie in glass swings its legs " + walk + " / 100 on average (at least 15)", walk >= 15);
+                check(name + ": the zombie in glass stands on the ground " + ground + " % of the ticks (at least 50)", ground >= 50);
+            }
             case "cabinets" -> check(name + ": stone and wooden cabinet " + (a.length > 2 ? a[1] + " " + a[2] : "?") + " (server minecraft:deepslate_bricks minecraft:cherry_planks)",
                     a.length > 3 && "minecraft:deepslate_bricks".equals(a[1]) && "minecraft:cherry_planks".equals(a[2]) && "deepslate_bricks".equals(a[3]));
             case "seahorses" -> checkSeahorses(name, a);
@@ -672,6 +678,16 @@ public final class DevSmokeMP {
         return server.getPlayerList().getPlayerByName(name);
     }
 
+    /** M44: a new land goal for the zombie in glass of the M31 terrarium (it walks while the clients watch its legs). */
+    private static void walkGlassZombie(ServerLevel level, BlockPos m31) {
+        for (var z : level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(m31).inflate(8))) {
+            if (z.hasData(org.overengineer.bettacraft.registry.ModAttachments.GLASS_STATE.get())) {
+                var w = z.getData(org.overengineer.bettacraft.registry.ModAttachments.GLASS_STATE.get()).walker();
+                if (w != null) w.forceActivity(org.overengineer.bettacraft.terrarium.LandWalker.Activity.LAND);
+            }
+        }
+    }
+
     private static void say(String command, String target, String args) {
         server.getPlayerList().broadcastSystemMessage(Component.literal(PREFIX + command + ":" + target + ":" + args), false);
     }
@@ -1139,6 +1155,26 @@ public final class DevSmokeMP {
             BlockPos at = base.offset(-12, 0, 6);
             say("outlets", "all", at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> reports.containsKey(P1 + ":outletsright,front") && reports.containsKey(P2 + ":outletsright,front"), 20 * 30));
+        // M44: a row of four cabinets (the second from the viewer's left fixed to a single door, the last one without joints) and
+        // the zombie in glass of the M31 terrarium kept walking: every client sees the fronts and moves the zombie's legs
+        steps.add(new Step("m44", () -> {
+            BlockPos at = base.offset(-30, 0, 6), m31 = base.offset(-22, 0, 28);
+            ServerLevel level = server.overworld();
+            for (int i = 0; i < 4; i++) {
+                level.setBlockAndUpdate(at.offset(i, 0, 0), ModBlocks.CABINET.get().defaultBlockState()
+                        .setValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING, net.minecraft.core.Direction.NORTH));
+            }
+            // facing north the viewer's left is the east: block i from the left stands at x + 3 - i
+            if (level.getBlockEntity(at.offset(2, 0, 0)) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
+                cab.setFrontSetting(org.overengineer.bettacraft.equipment.CabinetFrontSetting.SINGLE);
+            }
+            if (level.getBlockEntity(at) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) cab.setJoints(false);
+            walkGlassZombie(level, m31);
+            say("m44", "all", at.getX() + "," + at.getY() + "," + at.getZ() + ";" + m31.getX() + "," + m31.getY() + "," + m31.getZ());
+        }, () -> {
+            if (server.getTickCount() % 40 == 0) walkGlassZombie(server.overworld(), base.offset(-22, 0, 28));
+            return reports.containsKey(P1 + ":m44") && reports.containsKey(P2 + ":m44");
+        }, 20 * 40));
         // M29.1: an air pump goes into the stone cabinet: both clients learn it (hose); their pump sounds are off by default
         steps.add(new Step("cabinet air pump", () -> {
             BlockPos at = base.offset(-12, 0, 6);

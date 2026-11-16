@@ -151,10 +151,12 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   sheep, cows, horses, llamas and pandas in big terraria. Caught with the terrarium box or bait; no drops, no farm.
 - **Mobs in glass:** drowned, zombies, skeletons, spiders, small slimes and a few more live **shrunk and harmless** in
   tanks: caught with the mob jar, lured with bait or put in from an EnderIO soul vial; a zombie under water becomes a
-  drowned, fed pairs breed, and they never drop anything.
+  drowned, fed pairs breed, and they never drop anything. Mobs and pets walk with real steps in their tanks (their legs
+  matched to their size and pace).
 
 ### Equipment and water
-- Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside), automatic and
+- Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside; a row of
+  cabinets gets one front with drawers at both ends and double doors between them, or a front of your choice), automatic and
   clip-on feeders, air pumps with air stones (bubble columns), light bar, LED panel and high-power LED in 16 colours
   with dimmer and daylight timer.
 - **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a

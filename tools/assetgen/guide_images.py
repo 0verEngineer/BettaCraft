@@ -931,6 +931,38 @@ def m41(out_en: Path) -> None:
             print("missing", src)
 
 
+# M44 scene (DevClientSmokeM44, -Psmoketestm44): cabinet rows with their fronts (1 to 4, 5 and 6, 12 blocks; drawers at the
+# ends, double doors, a single door in odd rows) stacked into one picture, and the cabinet menu with the buttons Front and
+# joints (GUI scale 2 in that run: doubled to the size of the other menu pictures)
+M44_STRIPS = [("bettacraft_m44_cab_rows_1to4", (0, 330, 1280, 640)), ("bettacraft_m44_cab_rows_5_6", (0, 330, 1280, 640)),
+              ("bettacraft_m44_cab_row_12", (60, 230, 1220, 540))]
+M44_MENU = ("bettacraft_m44_menu_auto", (464, 316, 816, 648))
+
+
+def m44(out_en: Path) -> None:
+    strips = []
+    for shot, box in M44_STRIPS:
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            return
+        im = Image.open(src).convert("RGB").crop(box)
+        strips.append(im.resize((1000, round(im.height * 1000 / im.width)), Image.LANCZOS))
+    sheet = Image.new("RGB", (1000, sum(s.height for s in strips) + 4 * (len(strips) - 1)), (40, 40, 40))
+    y = 0
+    for s in strips:
+        sheet.paste(s, (0, y))
+        y += s.height + 4
+    save(sheet, out_en / "cabinet_fronts.png")
+    shot, box = M44_MENU
+    src = SHOTS / f"{shot}.png"
+    if src.exists():
+        im = Image.open(src).convert("RGB").crop(box)
+        save(im.resize((im.width * 2, im.height * 2), Image.NEAREST), out_en / "cabinet_front_menu.png")
+    else:
+        print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -945,6 +977,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m44"]:
+        m44(out_en)
+        return 0
     if sys.argv[1:] == ["m41"]:
         m41(out_en)
         return 0

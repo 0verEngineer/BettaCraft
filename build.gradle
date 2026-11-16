@@ -373,6 +373,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm44')) {
+                // gradlew runClient -Psmoketestm44 : the M44 scene (mobs, pets and our terrarium animals walking in tanks next to the
+                // same mobs outside, with walkAnimationBoost 0 and auto, logged and as frame sequences; cabinet rows with their fronts,
+                // the menu settings, without joints and with the feature off; the cabinet menu)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m44only', 'true'
+            }
             if (project.hasProperty('smoketestm42b')) {
                 // gradlew runClient -Pzoo -Psmoketestm42b : only the M42 part b scene (the miniature with the animals and water plants
                 // of mods we do not integrate: a tank, a terrarium and a planted tank)

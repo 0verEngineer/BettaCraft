@@ -23,7 +23,30 @@ The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **
   aquarium above, like one beside it; its air hose goes up next to the filter hose at the outlet side.
 * **Nine storage slots** for food and other things. Hoppers can use them, and the [feeder](feeder.md) on the aquarium
   takes food from the cabinets under it.
-* Broken, the cabinet drops its contents like a chest and keeps its wood and its outlet side.
+* Broken, the cabinet drops its contents like a chest and keeps its wood, its outlet side and its front.
+
+## Fronts
+
+![Rows of cabinets from one to twelve blocks with their fronts](../images/cabinet_fronts.png)
+
+A row of cabinets side by side (facing the same way) shows **one front** instead of two narrow doors on every block:
+
+* **1 block:** the two doors as always. **2 blocks:** one double door.
+* **3 and more:** a block of **drawers at both ends** and **double doors** over two blocks between them. An odd row gets a
+  **single door** with its handle at the side in the middle (in rows of 5, 9, 13 ... with a drawer block on each side of
+  it, so the row stays symmetric).
+* The fronts follow the row by themselves when you place, break or turn a cabinet, for rows up to 32 blocks (longer rows
+  get double doors all along). Two rows meeting at a corner keep their own fronts.
+
+![The cabinet menu with the buttons Front and joints](../images/cabinet_front_menu.png)
+
+The button **"Front: Auto"** at the top right of the cabinet menu fixes the front of this one cabinet: **Auto** (from the
+row, the default), **double door, left leaf**, **double door, right leaf**, **single door**, **drawers** or **two doors
+(old)**. Click for the next, sneak + click for the previous one. The small button next to it switches the thin **dark
+joints** between the doors and drawers (on by default; off: planks only). Broken and placed again, the cabinet keeps both
+(its item shows them). Cabinets of older worlds become Auto with joints. The setting `features.equipment.cabinetFronts`
+switches the fronts off: every cabinet then shows its two doors like before and the buttons are hidden (the settings are
+kept).
 
 ## Outlet side
 

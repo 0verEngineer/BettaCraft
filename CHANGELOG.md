@@ -4,6 +4,33 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.35.0-beta.1] - 2026-11-16
+
+Mobs and pets walk with real steps in their tanks, and long cabinet rows get one calm front.
+
+### Added
+- **Cabinet fronts:** cabinets side by side now show one front: a drawer block at both ends (from three blocks on), double
+  doors over two blocks between them, a single door with its handle at the side in the middle of an odd row; two cabinets
+  are one double door, a single cabinet keeps its two doors. The fronts follow the row automatically (up to 32 blocks)
+  when cabinets are placed, broken or turned; rows of different directions meeting at a corner keep their own fronts.
+- The button **"Front"** in the cabinet menu fixes the front of one cabinet: Auto (the default), double door left or right
+  leaf, single door, drawers or the old two doors; the small button next to it switches the **joints**. Broken, the cabinet
+  keeps both on its item.
+- Thin **dark joints** between the doors and drawers (also of the old two-door front) make the fronts readable on planks.
+- Feature switch `features.equipment.cabinetFronts` (off: every cabinet shows its two doors like before, the button is
+  hidden, the settings are kept).
+- Client option `walkAnimationBoost` (render): `auto` (the default), a factor from 0.1 to 10 for all, or 0 for vanilla.
+
+### Fixed
+- **Gliding mobs in tanks:** vanilla moves the legs by the distance a mob walks in a tick, without its size, so the shrunk
+  mobs in glass and the slow terrarium pets barely moved their legs and glided. In a tank the distance is now divided by
+  the mob's scale and multiplied by a factor (auto: 1.5 for the shrunk mobs, 3 for pets at their real size), so they step
+  like the same mobs outside; spiders and geckos on the glass move their legs while they climb.
+- Our own terrarium animals (geckos, tortoises, frogs, snakes) had no walk animation at all in a tank; they move their legs
+  again.
+- Animals moved by the terrarium walker were never on the ground (the chicken flapped its wings all the time); they are
+  now while they stand, not while they hop, climb, swim or fly.
+
 ## [1.34.0-beta.1] - 2026-11-16
 
 A new minor release that bundles the work since 1.33.0: the big test round with every integrated mod and its fixes

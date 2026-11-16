@@ -24,7 +24,32 @@ Der <ItemLink id="bettacraft:cabinet" /> ist ein Unterbau für das Aquarium aus 
   darüber an, wie eine daneben; ihr Luftschlauch läuft neben dem Filterschlauch an der Auslass-Seite hoch.
 * **Neun Lagerplätze** für Futter und anderes. Trichter können sie benutzen, und der [Futterautomat](feeder.md) auf dem
   Aquarium nimmt Futter aus den Schränken darunter.
-* Abgebaut droppt der Schrank seinen Inhalt wie eine Truhe und behält sein Holz und seine Auslass-Seite.
+* Abgebaut droppt der Schrank seinen Inhalt wie eine Truhe und behält sein Holz, seine Auslass-Seite und seine Front.
+
+## Fronten
+
+![Schrankreihen von einem bis zwölf Blöcken mit ihren Fronten](../images/cabinet_fronts.png)
+
+Eine Reihe nebeneinander stehender Schränke (in dieselbe Richtung) zeigt **eine Front** statt zwei schmaler Türen auf
+jedem Block:
+
+* **1 Block:** die zwei Türen wie immer. **2 Blöcke:** eine Doppeltür.
+* **Ab 3 Blöcken:** ein **Schubladenblock an beiden Enden** und dazwischen **Doppeltüren** über je zwei Blöcke. Eine
+  ungerade Reihe bekommt in der Mitte eine **Einzeltür** mit seitlichem Griff (bei 5, 9, 13 … Blöcken mit einem
+  Schubladenblock auf jeder Seite, damit die Reihe symmetrisch bleibt).
+* Die Fronten folgen der Reihe von selbst, wenn du einen Schrank setzt, abbaust oder drehst, bei Reihen bis 32 Blöcke
+  (längere Reihen bekommen durchgehend Doppeltüren). Zwei Reihen, die sich an einer Ecke treffen, behalten ihre eigenen
+  Fronten.
+
+![Das Schrank-Menü mit den Knöpfen Front und Fugen](../images/cabinet_front_menu.png)
+
+Der Knopf **„Schrankfront: Automatisch“** oben rechts im Schrank-Menü legt die Front dieses einen Schranks fest:
+**Auto** (aus der Reihe, Standard), **Doppeltür, linker Flügel**, **Doppeltür, rechter Flügel**, **Einzeltür**,
+**Schubladen** oder **zwei Türen (alt)**. Klick: nächste, Schleichen + Klick: vorige. Der kleine Knopf daneben schaltet
+die dünnen **dunklen Fugen** zwischen Türen und Schubladen (standardmäßig an; aus: nur Bretter). Abgebaut und neu gesetzt
+behält der Schrank beides (sein Item zeigt es an). Schränke aus älteren Welten werden zu Auto mit Fugen. Die Einstellung
+`features.equipment.cabinetFronts` schaltet die Fronten ab: Dann zeigt jeder Schrank wie bisher seine zwei Türen, und die
+Knöpfe sind ausgeblendet (die Einstellungen bleiben erhalten).
 
 ## Auslass-Seite
 

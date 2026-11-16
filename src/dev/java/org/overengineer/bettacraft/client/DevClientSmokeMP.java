@@ -321,6 +321,48 @@ final class DevClientSmokeMP {
                     send("cabinets " + w[0] + " " + w[1] + " " + (sound == net.minecraft.world.level.block.SoundType.DEEPSLATE_BRICKS ? "deepslate_bricks" : "other"));
                 });
             }
+            case "m44" -> {
+                // M44: the fronts of the four cabinets (from the viewer's left; "-" = no joints) and, over 100 ticks, the walk
+                // animation and the ground of the zombie in glass in the M31 terrarium
+                String[] two = args.split(";");
+                BlockPos at = pos(two[0]), m31 = pos(two[1]);
+                double[] acc = new double[3];
+                then(40, () -> {});
+                for (int k = 0; k < 100; k++) {
+                    then(1, () -> {
+                        Minecraft mc = Minecraft.getInstance();
+                        net.minecraft.world.entity.monster.Zombie z = null;
+                        for (var e : mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(m31).inflate(8))) {
+                            if (z == null || e.getScale() < z.getScale()) z = e;
+                        }
+                        if (z == null) return;
+                        acc[0] += z.walkAnimation.speed();
+                        acc[1]++;
+                        if (z.onGround()) acc[2]++;
+                    });
+                }
+                then(1, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    StringBuilder b = new StringBuilder();
+                    for (int i = 0; i < 4; i++) {
+                        var st = mc.level.getBlockState(at.offset(3 - i, 0, 0));
+                        if (!st.hasProperty(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT)) {
+                            b.append('?');
+                            continue;
+                        }
+                        b.append(switch (st.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT)) {
+                            case TWO -> 'T';
+                            case PAIR_L -> 'L';
+                            case PAIR_R -> 'R';
+                            case SINGLE -> 'S';
+                            case DRAWERS -> 'D';
+                        });
+                        if (!st.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.JOINTS)) b.append('-');
+                    }
+                    long walk = acc[1] == 0 ? -1 : Math.round(acc[0] / acc[1] * 100), ground = acc[1] == 0 ? -1 : Math.round(acc[2] / acc[1] * 100);
+                    send("m44 " + b + " " + walk + " " + ground);
+                });
+            }
             case "outlets" -> {
                 // M22.4: the outlet side of the two cabinets as this client knows it (block entity update)
                 BlockPos at = pos(args);
