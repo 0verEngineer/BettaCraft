@@ -4,6 +4,12 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.34.0-beta.1] - 2026-11-16
+
+A new minor release that bundles the work since 1.33.0: the big test round with every integrated mod and its fixes
+(1.33.1), the new release material (1.33.2) and the angelfish fin fix (1.33.3). See those sections for the details;
+there are no further changes.
+
 ## [1.33.3-beta.1] - 2026-11-17
 
 A fix for tall fish at the water surface.
