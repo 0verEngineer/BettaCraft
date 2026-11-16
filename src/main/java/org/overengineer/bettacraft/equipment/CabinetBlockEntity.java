@@ -55,6 +55,9 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     private OutletSide outlet = OutletSide.BACK;
     /** M41: the side that takes a Create shaft (server: as set; client: the effective side the server sent). */
     private DriveSide drive = DriveSide.NONE;
+    /** M44: the front chosen in the menu (AUTO: from the row) and the dark joints between leaves and drawers. */
+    private CabinetFrontSetting front = CabinetFrontSetting.AUTO;
+    private boolean joints = true;
     /** Client copy: whether the filter slot is filled (the slot itself is not synced outside the menu). */
     private boolean clientHasFilter;
     /** M29.1: client copy of whether the air pump slot is filled. */
@@ -156,6 +159,38 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             var tank = FilterHost.tankOf(level, tankBlockPos());
             if (tank != null) org.overengineer.bettacraft.tank.TankCurrents.invalidate(tank);
+        }
+    }
+
+    // ------------------------------------------------------------------ M44 front
+
+    /** M44: the front set in the menu (kept while {@code features.equipment.cabinetFronts} is off). */
+    public CabinetFrontSetting frontSetting() {
+        return front;
+    }
+
+    /** M44: whether the front shows the dark joints (menu setting). */
+    public boolean joints() {
+        return joints;
+    }
+
+    public void setFrontSetting(CabinetFrontSetting setting) {
+        if (setting == null || setting == front) return;
+        front = setting;
+        frontChanged();
+    }
+
+    public void setJoints(boolean on) {
+        if (on == joints) return;
+        joints = on;
+        frontChanged();
+    }
+
+    private void frontChanged() {
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            CabinetBlock.refresh(level, worldPosition);
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -334,6 +369,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putString("wood", wood.toString());
         if (outlet != OutletSide.BACK) tag.putString("outlet", outlet.id()); // M22.4
         tag.putString("drive", drive.id()); // M41
+        if (front != CabinetFrontSetting.AUTO) tag.putString("front", front.id()); // M44
+        if (!joints) tag.putBoolean("joints", false);
         tag.put("items", items.serializeNBT(registries));
         if (airDriven > 0) tag.putInt("air_driven", airDriven); // M29.1
         saveM23(tag);
@@ -349,6 +386,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         wood = w == null ? DEFAULT_WOOD : w;
         outlet = OutletSide.byId(tag.getString("outlet")); // M22.4: old cabinets keep the back wall
         drive = DriveSide.byId(tag.getString("drive")); // M41: old cabinets take no shaft
+        front = CabinetFrontSetting.byId(tag.getString("front")); // M44: old cabinets: AUTO, with joints
+        joints = !tag.contains("joints") || tag.getBoolean("joints");
         if (tag.contains("items")) {
             items.deserializeNBT(registries, tag.getCompound("items"));
             if (items.getSlots() != SLOTS) {
@@ -377,6 +416,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putInt("air_driven", airDriven);
         tag.putString("outlet", outletSide().id()); // M22.4: the effective side
         tag.putString("drive", driveSide().id()); // M41: the effective side
+        tag.putString("front", front.id()); // M44 (the client predicts its state with it)
+        tag.putBoolean("joints", joints);
         saveM23(tag);
         tag.putInt("regulator", regulator());
         return tag;
@@ -402,6 +443,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         airDriven = Math.max(0, tag.getInt("air_driven"));
         outlet = OutletSide.byId(tag.getString("outlet"));
         drive = DriveSide.byId(tag.getString("drive")); // M41
+        front = CabinetFrontSetting.byId(tag.getString("front")); // M44
+        joints = !tag.contains("joints") || tag.getBoolean("joints");
         loadM23(tag);
         afterClientUpdate(old);
     }
@@ -423,6 +466,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         super.onLoad();
         if (level != null && level.isClientSide && clientHasFilter) CLIENT_FILTERS.add(this);
         if (level != null && level.isClientSide && clientHasAirPump) CLIENT_AIR_PUMPS.add(this);
+        // M44: the front of a cabinet of an older version (or after the feature switch changed) is set a tick later
+        if (level instanceof net.minecraft.server.level.ServerLevel sl) sl.scheduleTick(worldPosition, getBlockState().getBlock(), 1);
     }
 
     @Override
@@ -454,6 +499,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (w != null) wood = w;
         outlet = OutletSide.byId(input.get(ModDataComponents.OUTLET_SIDE.get())); // M22.4
         drive = DriveSide.byId(input.get(ModDataComponents.DRIVE_SIDE.get())); // M41
+        front = CabinetFrontSetting.byId(input.get(ModDataComponents.CABINET_FRONT.get())); // M44
+        joints = !Boolean.FALSE.equals(input.get(ModDataComponents.CABINET_JOINTS.get()));
     }
 
     @Override
@@ -462,6 +509,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         components.set(ModDataComponents.WOOD.get(), wood);
         if (outlet != OutletSide.BACK) components.set(ModDataComponents.OUTLET_SIDE.get(), outlet.id()); // M22.4: only when set
         if (drive != DriveSide.NONE) components.set(ModDataComponents.DRIVE_SIDE.get(), drive.id()); // M41: only when set
+        if (front != CabinetFrontSetting.AUTO) components.set(ModDataComponents.CABINET_FRONT.get(), front.id()); // M44: only when set
+        if (!joints) components.set(ModDataComponents.CABINET_JOINTS.get(), false);
     }
 
     @Override
@@ -469,5 +518,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.remove("wood");
         tag.remove("outlet");
         tag.remove("drive");
+        tag.remove("front");
+        tag.remove("joints");
     }
 }

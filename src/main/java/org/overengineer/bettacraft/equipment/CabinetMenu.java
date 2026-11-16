@@ -31,6 +31,8 @@ public class CabinetMenu extends AbstractContainerMenu {
     public static final int BUTTON_OUTLET0 = 0;
     /** M41: menu buttons: the next / previous side of the Create shaft that the server allows. */
     public static final int BUTTON_DRIVE_NEXT = 30, BUTTON_DRIVE_PREVIOUS = 31;
+    /** M44: menu button ids 40..45 set the front ({@link CabinetFrontSetting} ordinal), 50 switches the joints. */
+    public static final int BUTTON_FRONT0 = 40, BUTTON_JOINTS = 50;
     @Nullable
     private final CabinetBlockEntity cabinet;
     private final IItemHandlerModifiable items;
@@ -94,6 +96,18 @@ public class CabinetMenu extends AbstractContainerMenu {
             }
         });
         addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(cabinet)); // M37
+        frontSlot.set(cabinet == null ? -1 : frontValue(cabinet)); // M44
+        addDataSlot(new net.minecraft.world.inventory.DataSlot() {
+            @Override
+            public int get() {
+                return cabinet == null ? frontSlot.get() : frontValue(cabinet);
+            }
+
+            @Override
+            public void set(int v) {
+                frontSlot.set(v);
+            }
+        });
         drive.set(cabinet == null ? -1 : driveValue(cabinet)); // M41
         addDataSlot(new net.minecraft.world.inventory.DataSlot() {
             @Override
@@ -106,6 +120,28 @@ public class CabinetMenu extends AbstractContainerMenu {
                 drive.set(v);
             }
         });
+    }
+
+    // ------------------------------------------------------------------ M44 front
+
+    /** M44: the front setting (ordinal) + 16 with joints, -1 while {@code features.equipment.cabinetFronts} is off on the server. */
+    private final net.minecraft.world.inventory.DataSlot frontSlot = net.minecraft.world.inventory.DataSlot.standalone();
+
+    private static int frontValue(CabinetBlockEntity c) {
+        return Features.enabled(Feature.CABINET_FRONTS) ? c.frontSetting().ordinal() + (c.joints() ? 16 : 0) : -1;
+    }
+
+    /** M44: the front setting shown in the menu, or null while the fronts are switched off. */
+    @Nullable
+    public CabinetFrontSetting frontSetting() {
+        int v = cabinet == null ? frontSlot.get() : frontValue(cabinet);
+        return v < 0 ? null : CabinetFrontSetting.byIndex(v & 15);
+    }
+
+    /** M44: whether the front shows its joints (false while the fronts are switched off). */
+    public boolean joints() {
+        int v = cabinet == null ? frontSlot.get() : frontValue(cabinet);
+        return v >= 0 && (v & 16) != 0;
     }
 
     // ------------------------------------------------------------------ M41 Create shaft
@@ -167,6 +203,12 @@ public class CabinetMenu extends AbstractContainerMenu {
         if (cabinet != null && (id == BUTTON_DRIVE_NEXT || id == BUTTON_DRIVE_PREVIOUS)) { // M41
             if (!org.overengineer.bettacraft.tank.TankDrive.cabinetsEnabled()) return false;
             cabinet.setDriveSide(nextAllowed(cabinet.driveSetting(), id == BUTTON_DRIVE_NEXT));
+            return true;
+        }
+        if (cabinet != null && (id == BUTTON_JOINTS || (id >= BUTTON_FRONT0 && id < BUTTON_FRONT0 + CabinetFrontSetting.values().length))) { // M44
+            if (!Features.enabled(Feature.CABINET_FRONTS)) return false;
+            if (id == BUTTON_JOINTS) cabinet.setJoints(!cabinet.joints());
+            else cabinet.setFrontSetting(CabinetFrontSetting.byIndex(id - BUTTON_FRONT0));
             return true;
         }
         if (cabinet == null || id < BUTTON_OUTLET0 || id >= BUTTON_OUTLET0 + OutletSide.values().length) return false;

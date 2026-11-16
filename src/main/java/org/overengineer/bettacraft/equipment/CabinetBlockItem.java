@@ -74,5 +74,13 @@ public class CabinetBlockItem extends BlockItem {
         if (drive != DriveSide.NONE) {
             tooltip.add(Component.translatable("gui.bettacraft.cabinet.drive", Component.translatable(drive.translationKey())).withStyle(ChatFormatting.DARK_AQUA));
         }
+        // M44: a cabinet with a front set in its menu, or without joints
+        CabinetFrontSetting front = CabinetFrontSetting.byId(stack.get(ModDataComponents.CABINET_FRONT.get()));
+        if (front != CabinetFrontSetting.AUTO) {
+            tooltip.add(Component.translatable("gui.bettacraft.cabinet.front", Component.translatable(front.translationKey())).withStyle(ChatFormatting.DARK_AQUA));
+        }
+        if (Boolean.FALSE.equals(stack.get(ModDataComponents.CABINET_JOINTS.get()))) {
+            tooltip.add(Component.translatable("tooltip.bettacraft.cabinet.no_joints").withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 }

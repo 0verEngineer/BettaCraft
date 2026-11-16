@@ -57,7 +57,7 @@ public final class MobsInGlassGameTests {
     // ------------------------------------------------------------------ helpers
 
     /** A dry tank: a terrarium. */
-    private static TankBlockEntity terrarium(GameTestHelper h, int x, int sy) {
+    static TankBlockEntity terrarium(GameTestHelper h, int x, int sy) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 2, sy, 2, 0);
         TerrariumMode m = TankClimate.refreshMode(h.getLevel(), c);
         if (m != TerrariumMode.TERRARIUM) throw new GameTestAssertException("no terrarium: " + m);
@@ -82,7 +82,7 @@ public final class MobsInGlassGameTests {
         return s;
     }
 
-    private static Mob put(GameTestHelper h, TankBlockEntity c, EntityType<? extends Mob> type) {
+    static Mob put(GameTestHelper h, TankBlockEntity c, EntityType<? extends Mob> type) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         var err = TankInhabitants.insert(h.getLevel(), c, jar(h, type), type, null, 0L);
         if (err != null) throw new GameTestAssertException(type + " in: " + err.getString());

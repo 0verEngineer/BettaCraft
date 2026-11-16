@@ -100,7 +100,7 @@ public final class HerpGameTests {
     }
 
     /** A dry 3x3x3 terrarium with a sand floor. */
-    private static TankBlockEntity terrarium(GameTestHelper h, int x) {
+    static TankBlockEntity terrarium(GameTestHelper h, int x) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 3, 3, 3, 0);
         interior(h, c, Blocks.SAND.defaultBlockState());
         TankClimate.step(h.getLevel(), c, 0.01);
@@ -119,7 +119,7 @@ public final class HerpGameTests {
         return stack;
     }
 
-    private static HerpEntity put(GameTestHelper h, TankBlockEntity c, HerpSpecies s, boolean female, int variety) {
+    static HerpEntity put(GameTestHelper h, TankBlockEntity c, HerpSpecies s, boolean female, int variety) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         var err = TankInhabitants.insert(h.getLevel(), c, box(h, s, female, variety), ModEntities.herp(s), null, 0L);
         if (err != null) throw new GameTestAssertException(s.id() + " in: " + err.getString());

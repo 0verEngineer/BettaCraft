@@ -409,12 +409,18 @@ public final class ModDataGen {
         /**
          * M4: cabinet, front = north in the model. Wooden parts use the placeholder {@code block/cabinet_wood}, which the
          * client swaps for the planks of the cabinet. Joined sides lose the counter-top overhang.
+         * <p>
+         * M44: one model per front ({@code CabinetFront}), joints and joined sides: {@code cabinet[_left|_right|_both]} is the
+         * old two-door front without joints (also the item), the others add {@code _<front>} and {@code _joints}.
          */
         private void cabinet() {
-            ModelFile[] variants = new ModelFile[4];
-            for (int i = 0; i < 4; i++) {
-                boolean left = (i & 1) != 0, right = (i & 2) != 0;
-                String name = "cabinet" + (left && right ? "_both" : left ? "_left" : right ? "_right" : "");
+            var fronts = org.overengineer.bettacraft.equipment.CabinetFront.values();
+            ModelFile[][][] variants = new ModelFile[fronts.length][2][4];
+            for (var front : fronts) for (int j = 0; j < 2; j++) for (int i = 0; i < 4; i++) {
+                boolean left = (i & 1) != 0, right = (i & 2) != 0, joints = j == 1;
+                String name = "cabinet" + (left && right ? "_both" : left ? "_left" : right ? "_right" : "")
+                        + (front == org.overengineer.bettacraft.equipment.CabinetFront.TWO && !joints ? "" : "_" + front.getSerializedName())
+                        + (joints ? "_joints" : "");
                 // M21.7: parent block/block for the display transforms of the item (it lay flat, back to the viewer)
                 BlockModelBuilder m = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")))
                         .texture("wood", modLoc("block/cabinet_wood")).texture("trim", modLoc("block/cabinet_trim"))
@@ -426,20 +432,72 @@ public final class ModDataGen {
                 // counter top: overhangs at the front and at free sides (left = east, right = west in the model)
                 float x0 = right ? 0 : -0.5F, x1 = left ? 16 : 16.5F;
                 box(m, x0, 14, -0.5F, x1, 16, 16, "#wood", d -> d == Direction.UP || d == Direction.SOUTH || (d == Direction.EAST && left) || (d == Direction.WEST && right));
-                // plinth and two doors with handles
+                // plinth and the front
                 box(m, 0, 0, -0.25F, 16, 1.5F, 0, "#trim", d -> false);
-                box(m, 1, 2.5F, -0.5F, 7.75F, 13, 0, "#wood", d -> false);
-                box(m, 8.25F, 2.5F, -0.5F, 15, 13, 0, "#wood", d -> false);
-                box(m, 6.25F, 7, -1.25F, 7, 10.5F, -0.5F, "#trim", d -> false);
-                box(m, 9, 7, -1.25F, 9.75F, 10.5F, -0.5F, "#trim", d -> false);
-                variants[i] = m;
+                front(m, front, joints);
+                variants[front.ordinal()][j][i] = m;
             }
             getVariantBuilder(ModBlocks.CABINET.get()).forAllStates(state -> {
                 int i = (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.LEFT) ? 1 : 0)
                         | (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.RIGHT) ? 2 : 0);
-                return ConfiguredModel.builder().modelFile(variants[i])
+                int j = state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.JOINTS) ? 1 : 0;
+                return ConfiguredModel.builder().modelFile(variants[state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT).ordinal()][j][i])
                         .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING).toYRot() + 180) % 360).build();
             });
+        }
+
+        /** M44: a box on the front in the viewer's coordinates ({@code u} from the viewer's left edge; model x = 16 - u). */
+        private static void fbox(BlockModelBuilder m, float u0, float y0, float z0, float u1, float y1, float z1, String tex) {
+            box(m, 16 - u1, y0, z0, 16 - u0, y1, z1, tex, d -> false);
+        }
+
+        /** M44: a door leaf from {@code u0} to {@code u1} with its handle at {@code handle} (NaN: none). */
+        private static void door(BlockModelBuilder m, float u0, float u1, float handle) {
+            fbox(m, u0, 2.5F, -0.5F, u1, 13, 0, "#wood");
+            if (!Float.isNaN(handle)) fbox(m, handle, 7, -1.25F, handle + 0.75F, 10.5F, -0.5F, "#trim");
+        }
+
+        /** M44: a dark joint in a gap of the front: a thin strip of trim just in front of the carcass, between the leaves. */
+        private static void joint(BlockModelBuilder m, float u0, float y0, float u1, float y1) {
+            fbox(m, u0, y0, -0.25F, u1, y1, -0.2F, "#trim");
+        }
+
+        /**
+         * M44: the front of one block. The old two doors keep their exact elements; a double door over two blocks has its
+         * handles at the joint between the blocks (with joints the leaves leave a gap of 0.5 px there, as between the two
+         * doors, filled with the dark joint).
+         */
+        private static void front(BlockModelBuilder m, org.overengineer.bettacraft.equipment.CabinetFront front, boolean joints) {
+            switch (front) {
+                case TWO -> { // the elements of M4 in model coordinates (symmetric)
+                    box(m, 1, 2.5F, -0.5F, 7.75F, 13, 0, "#wood", d -> false);
+                    box(m, 8.25F, 2.5F, -0.5F, 15, 13, 0, "#wood", d -> false);
+                    box(m, 6.25F, 7, -1.25F, 7, 10.5F, -0.5F, "#trim", d -> false);
+                    box(m, 9, 7, -1.25F, 9.75F, 10.5F, -0.5F, "#trim", d -> false);
+                    if (joints) joint(m, 7.78F, 2.5F, 8.22F, 13);
+                }
+                case PAIR_L -> {
+                    door(m, 1, joints ? 15.75F : 15.875F, 14.25F);
+                    if (joints) joint(m, 15.78F, 2.5F, 16, 13);
+                }
+                case PAIR_R -> {
+                    door(m, joints ? 0.25F : 0.125F, 15, 1);
+                    if (joints) joint(m, 0, 2.5F, 0.22F, 13);
+                }
+                case SINGLE -> door(m, 1, 15, 12.75F);
+                case DRAWERS -> {
+                    float[][] rows = {{2.5F, 5.75F}, {6.25F, 9.5F}, {10, 13}};
+                    for (float[] r : rows) {
+                        fbox(m, 1, r[0], -0.5F, 15, r[1], 0, "#wood");
+                        float c = (r[0] + r[1]) / 2;
+                        fbox(m, 6, c - 0.375F, -1.0F, 10, c + 0.375F, -0.5F, "#trim");
+                    }
+                    if (joints) {
+                        joint(m, 1, 5.78F, 15, 6.22F);
+                        joint(m, 1, 9.53F, 15, 9.97F);
+                    }
+                }
+            }
         }
 
         /** M21.5: a box element with the vanilla default UVs, clamped to 0..16 (faces that reach past the block). */
@@ -1265,7 +1323,8 @@ public final class ModDataGen {
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CABINET.get())
                             .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                                    .include(ModDataComponents.WOOD.get()).include(ModDataComponents.OUTLET_SIDE.get()))))));
+                                    .include(ModDataComponents.WOOD.get()).include(ModDataComponents.OUTLET_SIDE.get())
+                                    .include(ModDataComponents.CABINET_FRONT.get()).include(ModDataComponents.CABINET_JOINTS.get()))))));
         }
 
         @Override

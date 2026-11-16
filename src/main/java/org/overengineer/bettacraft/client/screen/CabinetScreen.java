@@ -40,7 +40,66 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         addRenderableWidget(outletButton);
         powerBtn = addRenderableWidget(powerButton(leftPos + OUTLET_X + OUTLET_W + 2, topPos + OUTLET_Y, 84 - OUTLET_W, OUTLET_H, menu::power, menu.containerId));
         driveButton = addRenderableWidget(new DriveButton(leftPos + DRIVE_X, topPos + DRIVE_Y)); // M41
+        // M44: the front of this cabinet (click: next, sneak + click: previous) and the joints
+        frontButton = addRenderableWidget(new TankScreen.FitButton(leftPos + FRONT_X, topPos + FRONT_Y, FRONT_W, FRONT_H, Component.empty(), b -> {
+            org.overengineer.bettacraft.equipment.CabinetFrontSetting f = menu.frontSetting();
+            if (f == null || minecraft == null || minecraft.gameMode == null) return;
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_FRONT0 + (hasShiftDown() ? f.previous() : f.next()).ordinal());
+        }));
+        jointButton = addRenderableWidget(new JointButton(leftPos + JOINT_X, topPos + FRONT_Y));
         updateOutlet();
+    }
+
+    // ------------------------------------------------------------------ M44 front
+
+    /** M44: right of the title, above the storage: the front button and the joint switch. */
+    public static final int FRONT_X = 97, FRONT_Y = 3, FRONT_W = 60, FRONT_H = 12, JOINT_X = FRONT_X + FRONT_W + 1, JOINT_W = 12;
+    private TankScreen.FitButton frontButton;
+    private JointButton jointButton;
+    private org.overengineer.bettacraft.equipment.CabinetFrontSetting shownFront;
+
+    private void updateFront() {
+        if (frontButton == null) return;
+        org.overengineer.bettacraft.equipment.CabinetFrontSetting f = menu.frontSetting();
+        frontButton.visible = f != null;
+        jointButton.visible = f != null;
+        if (f == null || f == shownFront) return;
+        shownFront = f;
+        frontButton.setMessage(Component.translatable("gui.bettacraft.cabinet.front", Component.translatable(f.translationKey() + ".short")));
+        frontButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.cabinet.front", Component.translatable(f.translationKey()))
+                .append(NL).append(Component.translatable("gui.bettacraft.cabinet.front.tooltip").withStyle(net.minecraft.ChatFormatting.GRAY))));
+    }
+
+    /** M44: a small switch with a picture of two doors: a dark joint between them while the joints are on. */
+    private final class JointButton extends net.minecraft.client.gui.components.Button {
+        private Boolean shown;
+
+        JointButton(int x, int y) {
+            super(x, y, JOINT_W, FRONT_H, Component.translatable("gui.bettacraft.cabinet.joints"), b -> {
+                if (minecraft == null || minecraft.gameMode == null) return;
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_JOINTS);
+            }, DEFAULT_NARRATION);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+            boolean on = menu.joints();
+            if (shown == null || shown != on) {
+                shown = on;
+                setTooltip(Tooltip.create(Component.translatable(on ? "gui.bettacraft.cabinet.joints.on" : "gui.bettacraft.cabinet.joints.off")
+                        .append(NL).append(Component.translatable("gui.bettacraft.cabinet.joints.tooltip").withStyle(net.minecraft.ChatFormatting.GRAY))));
+            }
+            super.renderWidget(g, mouseX, mouseY, partialTick);
+            int x = getX() + 3, y = getY() + 3, w = getWidth() - 6, h = getHeight() - 6;
+            g.fill(x, y, x + w, y + h, 0xFFB08A58); // two doors in planks colour
+            if (on) g.fill(x + w / 2, y, x + w / 2 + 1, y + h, 0xFF2A2320); // the joint
+            else g.fill(x + w / 2, y + h / 2 - 1, x + w / 2 + 1, y + h / 2 + 1, 0xFF6A5236); // only the handles
+        }
+
+        @Override
+        public void renderString(GuiGraphics g, net.minecraft.client.gui.Font font, int color) {
+            // the picture instead of the text
+        }
     }
 
     // ------------------------------------------------------------------ M41 Create shaft
@@ -129,6 +188,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     protected void containerTick() {
         super.containerTick();
         updateOutlet();
+        updateFront();
         if (driveButton != null) driveButton.update();
     }
 
@@ -153,7 +213,11 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        super.renderLabels(g, mouseX, mouseY);
+        // M44: the title leaves room for the front button (long wood names are cut)
+        boolean room = frontButton != null && frontButton.visible;
+        String t = room ? font.plainSubstrByWidth(title.getString(), FRONT_X - titleLabelX - 2) : title.getString();
+        g.drawString(font, t, titleLabelX, titleLabelY, 0x404040, false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
         Component f = Component.translatable("gui.bettacraft.cabinet.filter");
         g.drawString(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, 0x606060, false);
         // M29.1: the heaters' label gave way to the air pump slot; empty slots explain themselves in a tooltip
@@ -173,6 +237,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         updateOutlet();
+        updateFront();
         if (driveButton != null) driveButton.update();
         if (powerBtn != null) {
             powerBtn.visible = Features.enabled(Feature.POWER_REGULATOR) && menu.hasFilter();

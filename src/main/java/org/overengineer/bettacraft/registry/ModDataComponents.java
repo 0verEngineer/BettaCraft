@@ -47,6 +47,13 @@ public final class ModDataComponents {
     public static final Supplier<DataComponentType<String>> DRIVE_SIDE = COMPONENTS.registerComponentType("drive_side",
             b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8));
 
+    /** M44: the front set in the cabinet menu ({@code CabinetFrontSetting} id; missing = auto). */
+    public static final Supplier<DataComponentType<String>> CABINET_FRONT = COMPONENTS.registerComponentType("cabinet_front",
+            b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8));
+    /** M44: false when the cabinet front has no dark joints (missing = joints). */
+    public static final Supplier<DataComponentType<Boolean>> CABINET_JOINTS = COMPONENTS.registerComponentType("cabinet_joints",
+            b -> b.persistent(com.mojang.serialization.Codec.BOOL).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL));
+
     /** M24: the values (temperature, salt, quality, nitrate) of water in pipes and other mods' tanks. */
     public static final Supplier<DataComponentType<org.overengineer.bettacraft.tank.WaterValues>> WATER_VALUES = COMPONENTS.registerComponentType("water",
             b -> b.persistent(org.overengineer.bettacraft.tank.WaterValues.CODEC).networkSynchronized(org.overengineer.bettacraft.tank.WaterValues.STREAM_CODEC));
