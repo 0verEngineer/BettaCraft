@@ -24,7 +24,7 @@ import math
 import numpy as np
 
 from common import JAVA_SRC, TEX, save_png
-from critters import Group, c, java_layer, pack
+from critters import Group, box_texels, c, java_layer, pack
 
 TERRA_TEX = TEX / "entity" / "terrarium"
 
@@ -294,33 +294,16 @@ TEXTURES.update(herp_animals.TEXTURES)
 
 
 def texture(groups: list[Group], colour, seed: int, size: int) -> np.ndarray:
-    """Box-UV texture like critters.texture, coloured per face pixel by ``colour``."""
+    """Box-UV texture like critters.texture, coloured per face pixel by ``colour`` (M46: every texel the faces sample,
+    ``critters.box_texels``)."""
     rng = np.random.default_rng(seed)
     img = np.zeros((size, size, 4))
     for cu in (cu for g in groups for cu in g.cubes):
-        w, h, d = cu.size
-        cx, cy, cz = cu.center
-        x0, y0, z0 = cx - w / 2, cy - h / 2, cz - d / 2
-        W, D, H = int(math.ceil(w)), int(math.ceil(d)), int(math.ceil(h))
-        rects = [
-            ("top", cu.u + D, cu.v, W, D, lambda a, b: (x0 + a, y0, z0 + b)),
-            ("bottom", cu.u + D + W, cu.v, W, D, lambda a, b: (x0 + a, y0 + h, z0 + b)),
-            ("east", cu.u, cu.v + D, D, H, lambda a, b: (x0 + w, y0 + b, z0 + a)),
-            ("north", cu.u + D, cu.v + D, W, H, lambda a, b: (x0 + a, y0 + b, z0)),
-            ("west", cu.u + D + W, cu.v + D, D, H, lambda a, b: (x0, y0 + b, z0 + d - a)),
-            ("south", cu.u + 2 * D + W, cu.v + D, W, H, lambda a, b: (x0 + w - a, y0 + b, z0 + d)),
-        ]
-        for face, u0, v0, fw, fh, fn in rects:
-            for j in range(max(1, fh)):
-                for i in range(max(1, fw)):
-                    uu, vv = u0 + i, v0 + j
-                    if not (0 <= uu < size and 0 <= vv < size):
-                        continue
-                    a = (i + 0.5) * (w if face in ("top", "bottom", "north", "south") else d) / max(1, fw)
-                    b = (j + 0.5) * (d if face in ("top", "bottom") else h) / max(1, fh)
-                    px, py, pz = fn(a, b)
-                    img[vv, uu, :3] = colour(cu, face, px, py, pz, rng)
-                    img[vv, uu, 3] = 1.0
+        for face, uu, vv, px, py, pz in box_texels(cu):
+            if not (0 <= uu < size and 0 <= vv < size):
+                continue
+            img[vv, uu, :3] = colour(cu, face, px, py, pz, rng)
+            img[vv, uu, 3] = 1.0
     return img
 
 

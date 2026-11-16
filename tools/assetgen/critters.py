@@ -312,6 +312,47 @@ def pack(groups: list[Group]) -> int:
     raise ValueError("texture too small")
 
 
+def box_texels(cu: Cube):
+    """M46: the texels the box UV of ``cu`` really samples, in the layout of Minecraft's ``ModelPart.Cube`` (fractional
+    sizes give fractional face rectangles: west ``u..u+d``, north ``u+d..u+d+w``, east ``u+d+w..u+2d+w``, south
+    ``u+2d+w..u+2d+2w`` in the rows ``v+d..v+d+h``; top (min y) ``u+d..u+d+w`` and bottom (max y) ``u+d+w..u+d+2w`` in
+    ``v..v+d``), with the orientation of its vertices. Every texel a face touches is listed once; where two faces share a
+    texel (a fractional edge) the face covering more of it gets it. Yields ``(face, u, v, px, py, pz)`` with the model point
+    at the texel centre (clamped into the face). Face names as the colour functions use them: ``top`` = min y (up, the model's
+    y points down), ``bottom`` = max y, ``north`` = min z, ``south`` = max z, ``west`` = min x, ``east`` = max x.
+
+    Before M46 the painters laid the faces out with the sizes rounded up, so faces with fractional sizes sampled unpainted,
+    transparent texels at their edges (holes with the cutout render type: one saw into the model and its grey insides)."""
+    w, h, d = cu.size
+    cx, cy, cz = cu.center
+    x0, y0, z0 = cx - w / 2, cy - h / 2, cz - d / 2
+    x1, y1, z1 = x0 + w, y0 + h, z0 + d
+    u, v = cu.u, cu.v
+    # face, u1, v1, u2, v2 (as in ModelPart.Cube), model point from (a, b) = distance from (u1, v1) in texels
+    faces = [
+        ("top", u + d, v, u + d + w, v + d, lambda a, b: (x0 + a, y0, z1 - b)),
+        ("bottom", u + d + w, v, u + d + 2 * w, v + d, lambda a, b: (x0 + a, y1, z1 - b)),
+        ("west", u, v + d, u + d, v + d + h, lambda a, b: (x0, y0 + b, z1 - a)),
+        ("north", u + d, v + d, u + d + w, v + d + h, lambda a, b: (x0 + a, y0 + b, z0)),
+        ("east", u + d + w, v + d, u + 2 * d + w, v + d + h, lambda a, b: (x1, y0 + b, z0 + a)),
+        ("south", u + 2 * d + w, v + d, u + 2 * d + 2 * w, v + d + h, lambda a, b: (x1 - a, y0 + b, z1)),
+    ]
+    best: dict[tuple[int, int], tuple[float, tuple]] = {}
+    for face, fu1, fv1, fu2, fv2, fn in faces:
+        if fu2 - fu1 <= 1e-6 or fv2 - fv1 <= 1e-6:
+            continue
+        for tv in range(math.floor(fv1 + 1e-6), math.ceil(fv2 - 1e-6)):
+            for tu in range(math.floor(fu1 + 1e-6), math.ceil(fu2 - 1e-6)):
+                cover = (min(tu + 1, fu2) - max(tu, fu1)) * (min(tv + 1, fv2) - max(tv, fv1))
+                if cover <= best.get((tu, tv), (0.0,))[0]:
+                    continue
+                a = min(max(tu + 0.5, fu1), fu2) - fu1
+                b = min(max(tv + 0.5, fv1), fv2) - fv1
+                best[(tu, tv)] = (cover, (face, tu, tv) + tuple(fn(a, b)))
+    for _, texel in best.values():
+        yield texel
+
+
 def _pattern(cu: Cube, face: str, px: float, py: float, pz: float, rng) -> float:
     """Brightness (0..1) of the greyscale texture at model point (px, py, pz)."""
     shade = {"top": 1.0, "bottom": 0.6, "north": 0.86, "south": 0.86, "east": 0.78, "west": 0.78}[face]
@@ -366,32 +407,14 @@ def texture(groups: list[Group], name: str, seed: int, size: int) -> np.ndarray:
     rng = np.random.default_rng(seed)
     img = np.zeros((size, size, 4))
     for cu in (cu for g in groups for cu in g.cubes):
-        w, h, d = cu.size
-        cx, cy, cz = cu.center
-        x0, y0, z0 = cx - w / 2, cy - h / 2, cz - d / 2
-        W, D, H = int(math.ceil(w)), int(math.ceil(d)), int(math.ceil(h))
-        rects = [  # face, u0, v0, width, height, mapping of (a, b) -> model point
-            ("top", cu.u + D, cu.v, W, D, lambda a, b: (x0 + a, y0, z0 + b)),
-            ("bottom", cu.u + D + W, cu.v, W, D, lambda a, b: (x0 + a, y0 + h, z0 + b)),
-            ("east", cu.u, cu.v + D, D, H, lambda a, b: (x0 + w, y0 + b, z0 + a)),
-            ("north", cu.u + D, cu.v + D, W, H, lambda a, b: (x0 + a, y0 + b, z0)),
-            ("west", cu.u + D + W, cu.v + D, D, H, lambda a, b: (x0, y0 + b, z0 + d - a)),
-            ("south", cu.u + 2 * D + W, cu.v + D, W, H, lambda a, b: (x0 + w - a, y0 + b, z0 + d)),
-        ]
-        for face, u0, v0, fw, fh, fn in rects:
-            for j in range(max(1, fh)):
-                for i in range(max(1, fw)):
-                    uu, vv = u0 + i, v0 + j
-                    if not (0 <= uu < size and 0 <= vv < size):
-                        continue
-                    a = (i + 0.5) * (w if face in ("top", "bottom", "north", "south") else d) / max(1, fw)
-                    b = (j + 0.5) * (d if face in ("top", "bottom") else h) / max(1, fh)
-                    px, py, pz = fn(a, b)
-                    if name == "frog":
-                        img[vv, uu, :3] = _frog_colour(cu, face, px, py, pz, rng)
-                    else:
-                        img[vv, uu, :3] = _pattern(cu, face, px, py, pz, rng)
-                    img[vv, uu, 3] = 1.0
+        for face, uu, vv, px, py, pz in box_texels(cu):
+            if not (0 <= uu < size and 0 <= vv < size):
+                continue
+            if name == "frog":
+                img[vv, uu, :3] = _frog_colour(cu, face, px, py, pz, rng)
+            else:
+                img[vv, uu, :3] = _pattern(cu, face, px, py, pz, rng)
+            img[vv, uu, 3] = 1.0
     return img
 
 
@@ -403,57 +426,39 @@ def overlay(groups: list[Group], size: int, kind: str, seed: int, group: str = "
     img = np.zeros((size, size, 4))
     shell = [g for g in groups if g.name == group]
     for cu in (cu for g in shell for cu in g.cubes):
-        w, h, d = cu.size
-        cx, cy, cz = cu.center
-        x0, y0, z0 = cx - w / 2, cy - h / 2, cz - d / 2
-        W, D, H = int(math.ceil(w)), int(math.ceil(d)), int(math.ceil(h))
-        rects = [
-            ("top", cu.u + D, cu.v, W, D, lambda a, b: (x0 + a, y0, z0 + b)),
-            ("bottom", cu.u + D + W, cu.v, W, D, lambda a, b: (x0 + a, y0 + h, z0 + b)),
-            ("east", cu.u, cu.v + D, D, H, lambda a, b: (x0 + w, y0 + b, z0 + a)),
-            ("north", cu.u + D, cu.v + D, W, H, lambda a, b: (x0 + a, y0 + b, z0)),
-            ("west", cu.u + D + W, cu.v + D, D, H, lambda a, b: (x0, y0 + b, z0 + d - a)),
-            ("south", cu.u + 2 * D + W, cu.v + D, W, H, lambda a, b: (x0 + w - a, y0 + b, z0 + d)),
-        ]
-        for face, u0, v0, fw, fh, fn in rects:
+        for face, uu, vv, px, py, pz in box_texels(cu):
             shade = {"top": 1.0, "bottom": 0.6, "north": 0.86, "south": 0.86, "east": 0.78, "west": 0.78}[face]
-            for j in range(max(1, fh)):
-                for i in range(max(1, fw)):
-                    uu, vv = u0 + i, v0 + j
-                    if not (0 <= uu < size and 0 <= vv < size):
-                        continue
-                    a = (i + 0.5) * (w if face in ("top", "bottom", "north", "south") else d) / max(1, fw)
-                    b = (j + 0.5) * (d if face in ("top", "bottom") else h) / max(1, fh)
-                    px, py, pz = fn(a, b)
-                    if kind == "fine":
-                        on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 3.4 + 0.7) > 0.72
-                    elif kind == "wide":
-                        on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 1.9 + 0.4) > 0.55
-                    elif kind.startswith("bee"):  # M25c: white bands of a bee shrimp; a higher banding grade is whiter
-                        level = int(kind[3:])  # 0 = A .. 3 = SSS
-                        if cu.name in ("rostrum",):
-                            on = level >= 2
-                        elif cu.name == "tail":
-                            on = level >= 1 and px * px > 1.2
-                        elif cu.name == "carapace":
-                            # the head stays coloured on the low grades, a red/black "hinomaru" spot on SSS
-                            spot = (pz + 3.4) ** 2 + (py + 4.2) ** 2 < 2.2
-                            on = (math.sin(pz * 1.6 + 1.0) > (0.55 - level * 0.45)) and not (level >= 2 and spot)
-                        else:
-                            on = math.sin(pz * 2.4 + 0.6) > (0.35 - level * 0.42)
-                    elif kind == "tiger":  # M25c: thin dark stripes across the segments
-                        on = math.sin(pz * 3.1 + 0.4) > 0.78 and face != "north" and face != "south"
-                    elif kind == "marble":  # M29d: the dark marbling of the marbled crayfish
-                        v = math.sin(px * 1.9 + math.sin(pz * 1.4 + py * 0.8) * 2.2) + math.sin(pz * 2.3 + px * 0.7) * 0.6
-                        on = v > 0.95 + (rng.random() - 0.5) * 0.35
-                    elif kind == "dots":  # M25c: the white dots of the cardinal shrimp
-                        on = rng.random() < 0.09 and face in ("top", "east", "west")
-                    else:  # apple snail bands around the whorls
-                        on = math.sin(-py * 0.95 + pz * 0.18) > 0.72
-                    if not on or face == "bottom":
-                        continue
-                    img[vv, uu, :3] = max(0.0, min(1.0, 0.95 * shade + (rng.random() - 0.5) * 0.06))
-                    img[vv, uu, 3] = 1.0
+            if not (0 <= uu < size and 0 <= vv < size):
+                continue
+            if kind == "fine":
+                on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 3.4 + 0.7) > 0.72
+            elif kind == "wide":
+                on = math.sin((py * 1.1 + pz * 0.55 + px * 0.2) * 1.9 + 0.4) > 0.55
+            elif kind.startswith("bee"):  # M25c: white bands of a bee shrimp; a higher banding grade is whiter
+                level = int(kind[3:])  # 0 = A .. 3 = SSS
+                if cu.name in ("rostrum",):
+                    on = level >= 2
+                elif cu.name == "tail":
+                    on = level >= 1 and px * px > 1.2
+                elif cu.name == "carapace":
+                    # the head stays coloured on the low grades, a red/black "hinomaru" spot on SSS
+                    spot = (pz + 3.4) ** 2 + (py + 4.2) ** 2 < 2.2
+                    on = (math.sin(pz * 1.6 + 1.0) > (0.55 - level * 0.45)) and not (level >= 2 and spot)
+                else:
+                    on = math.sin(pz * 2.4 + 0.6) > (0.35 - level * 0.42)
+            elif kind == "tiger":  # M25c: thin dark stripes across the segments
+                on = math.sin(pz * 3.1 + 0.4) > 0.78 and face != "north" and face != "south"
+            elif kind == "marble":  # M29d: the dark marbling of the marbled crayfish
+                v = math.sin(px * 1.9 + math.sin(pz * 1.4 + py * 0.8) * 2.2) + math.sin(pz * 2.3 + px * 0.7) * 0.6
+                on = v > 0.95 + (rng.random() - 0.5) * 0.35
+            elif kind == "dots":  # M25c: the white dots of the cardinal shrimp
+                on = rng.random() < 0.09 and face in ("top", "east", "west")
+            else:  # apple snail bands around the whorls
+                on = math.sin(-py * 0.95 + pz * 0.18) > 0.72
+            if not on or face == "bottom":
+                continue
+            img[vv, uu, :3] = max(0.0, min(1.0, 0.95 * shade + (rng.random() - 0.5) * 0.06))
+            img[vv, uu, 3] = 1.0
     return img
 
 
