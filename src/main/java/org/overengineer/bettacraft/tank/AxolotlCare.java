@@ -51,6 +51,8 @@ public final class AxolotlCare {
             GENERATION = "bettacraft:axolotl_gen", ANALYSED = "bettacraft:axolotl_analysed";
     /** Key of the genes in the bucket data of an axolotl taken out of a tank. */
     public static final String BUCKET_KEY = "BettacraftGenes";
+    /** M42: the generation and the magnifier's analysis in the bucket data (they were lost: every bucketed axolotl began a new pedigree). */
+    public static final String BUCKET_GENERATION = "BettacraftGeneration", BUCKET_ANALYSED = "BettacraftAnalysed";
     private static final long LOG_TICKS = 6000;
 
     private AxolotlCare() {}
@@ -135,14 +137,26 @@ public final class AxolotlCare {
 
     /** Keeps the genes in the bucket data of an axolotl taken out of a tank (vanilla and other mods ignore the key). */
     public static void toBucket(Entity e, CompoundTag bucketData) {
-        if (e instanceof Axolotl a && a.getPersistentData().contains(GENES, Tag.TAG_COMPOUND)) bucketData.put(BUCKET_KEY, genes(a).save());
+        if (!(e instanceof Axolotl a)) return;
+        CompoundTag d = a.getPersistentData();
+        if (d.contains(GENES, Tag.TAG_COMPOUND)) bucketData.put(BUCKET_KEY, genes(a).save());
+        if (d.getInt(GENERATION) > 0) bucketData.putInt(BUCKET_GENERATION, d.getInt(GENERATION)); // M42
+        if (d.getBoolean(ANALYSED)) bucketData.putBoolean(BUCKET_ANALYSED, true);
     }
 
-    /** Takes the genes back from the bucket data, if they still fit its colour. */
+    /**
+     * Takes the genes back from the bucket data, if they still fit its colour (M42: the generation always, the magnifier's
+     * analysis with the genes).
+     */
     public static void fromBucket(Entity e, CompoundTag bucketData) {
-        if (!(e instanceof Axolotl a) || !bucketData.contains(BUCKET_KEY, Tag.TAG_COMPOUND)) return;
+        if (!(e instanceof Axolotl a)) return;
+        if (bucketData.getInt(BUCKET_GENERATION) > 0) a.getPersistentData().putInt(GENERATION, bucketData.getInt(BUCKET_GENERATION));
+        if (!bucketData.contains(BUCKET_KEY, Tag.TAG_COMPOUND)) return;
         CritterGenes g = CritterGenes.load(bucketData.getCompound(BUCKET_KEY));
-        if (variant(g) == a.getVariant()) setGenes(a, g);
+        if (variant(g) == a.getVariant()) {
+            setGenes(a, g);
+            if (bucketData.getBoolean(BUCKET_ANALYSED)) a.getPersistentData().putBoolean(ANALYSED, true);
+        }
     }
 
     /**

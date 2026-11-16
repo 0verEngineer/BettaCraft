@@ -1090,7 +1090,10 @@ public final class TankView {
             } else if (e instanceof org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity ta) {
                 // M31: terrarium animals: hunger and the stress from their needs
                 float hp = round(ta.getHealth() / ta.getMaxHealth());
-                i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, false, "", !ta.isBaby(), round(1F - ta.stress()), round(ta.satiation()),
+                // M42: our turtles, geckos and frogs show their sex (decided by the nest temperature) like the sexed animals of other mods
+                boolean herp = ta instanceof org.overengineer.bettacraft.terrarium.HerpEntity;
+                boolean fem = herp && ((org.overengineer.bettacraft.terrarium.HerpEntity) ta).isFemale();
+                i = new Inhabitant(e.getUUID(), custom, e.getType().getDescriptionId(), false, fem, herp ? Inhabitant.SEXED : "", !ta.isBaby(), round(1F - ta.stress()), round(ta.satiation()),
                         ta.stress() >= 0.5F, ta instanceof Bucketable, BettaGenome.DEFAULT, BettaGenotype.homozygous(BettaGenome.DEFAULT), hp, 1F, 0, false, 0F, false);
             } else if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
                 // M19: tankmates have needs like the bettas, plus their shoal, temperature range and breeding state
