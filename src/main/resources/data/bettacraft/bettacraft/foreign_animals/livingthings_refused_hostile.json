@@ -1,0 +1,7 @@
+{
+  "entity": [
+    "livingthings:nether_knight",
+    "livingthings:ancient_blaze"
+  ],
+  "refuse": "hostile"
+}

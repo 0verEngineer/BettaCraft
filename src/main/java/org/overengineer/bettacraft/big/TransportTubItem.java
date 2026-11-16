@@ -163,7 +163,12 @@ public class TransportTubItem extends Item {
         if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
         BlockPos pos = hit.getBlockPos();
         if (level.getBlockState(pos).getBlock() instanceof TankBlock) return InteractionResultHolder.pass(stack);
-        if (!level.getFluidState(pos).is(FluidTags.WATER)) {
+        // M39 part b: a big land animal of another mod (a lion, a komodo dragon ...) goes back onto the land, a water animal into water
+        boolean land = !level.getFluidState(pos).is(FluidTags.WATER) && landAnimal(containedType(stack));
+        if (land) {
+            if (!level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty()) return InteractionResultHolder.fail(stack);
+            pos = pos.above();
+        } else if (!level.getFluidState(pos).is(FluidTags.WATER)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
             return InteractionResultHolder.fail(stack);
         }
@@ -174,7 +179,7 @@ public class TransportTubItem extends Item {
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
                 return InteractionResultHolder.fail(stack);
             }
-            e.moveTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
+            e.moveTo(pos.getX() + 0.5, pos.getY() + (land ? 0.0 : 0.1), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
             if (e instanceof Bucketable b) b.setFromBucket(true);
             if (e instanceof Mob m) m.setPersistenceRequired();
             TankInhabitants.release(e);
@@ -182,10 +187,17 @@ public class TransportTubItem extends Item {
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
                 return InteractionResultHolder.fail(stack);
             }
-            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.PLAYERS, 1.0F, 0.7F);
+            level.playSound(null, pos, land ? SoundEvents.ARMOR_EQUIP_LEATHER.value() : SoundEvents.BUCKET_EMPTY_FISH, SoundSource.PLAYERS, 1.0F, 0.7F);
             return InteractionResultHolder.consume(new ItemStack(this));
         }
         return InteractionResultHolder.success(stack);
+    }
+
+    /** M39 part b: whether the tub holds a land animal of another mod (a terrarium profile that does not live in the water part). */
+    static boolean landAnimal(@javax.annotation.Nullable EntityType<?> type) {
+        if (type == null) return false;
+        var l = org.overengineer.bettacraft.foreign.ForeignTerrarium.land(type);
+        return l != null && l.volume() != org.overengineer.bettacraft.tank.BigTankRules.Volume.WATER;
     }
 
     @Override

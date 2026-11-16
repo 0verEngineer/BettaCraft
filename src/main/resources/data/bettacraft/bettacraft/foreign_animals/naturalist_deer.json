@@ -1,0 +1,34 @@
+{
+  "entity": "naturalist:deer",
+  "group": "deer",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#bettacraft:turtle_greens",
+    "#minecraft:leaves",
+    "minecraft:wheat",
+    "minecraft:apple"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -10,
+      28
+    ],
+    "humidity": [
+      30,
+      90
+    ],
+    "length": 1.7,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.8
+    }
+  }
+}

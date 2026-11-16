@@ -1,0 +1,31 @@
+{
+  "entity": "crittersandcompanions:jumping_spider",
+  "group": "spider",
+  "care": {
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#bettacraft:small_feeder_insects",
+    "#bettacraft:feeder_insects"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      20,
+      30
+    ],
+    "humidity": [
+      50,
+      80
+    ],
+    "min_blocks": 2,
+    "movement": {
+      "style": "hop",
+      "walk": 0.012,
+      "max_step": 1.0,
+      "bask_time": 0.1,
+      "rest_time": 0.5,
+      "height": 0.2
+    }
+  }
+}

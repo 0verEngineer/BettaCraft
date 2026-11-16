@@ -3961,5 +3961,8 @@
   "message.bettacraft.tank.refused.unsuitable": "%s lebt nicht in einem Bettacraft-Becken",
   "gui.bettacraft.foreign.blocked.no_female": "es gibt kein Weibchen",
   "gui.bettacraft.foreign.blocked.no_male": "es gibt kein Männchen",
-  "log.bettacraft.foreign.hatched_sexes": "%2$s junge %1$s aus dem Nest geschlüpft (%3$s Weibchen, %4$s Männchen)"
+  "log.bettacraft.foreign.hatched_sexes": "%2$s junge %1$s aus dem Nest geschlüpft (%3$s Weibchen, %4$s Männchen)",
+  "message.bettacraft.terrarium.needs_lid": "%s würde wegfliegen: erst jeden oberen Block des Beckens abdecken (Deckel, Licht oder Futterautomat)",
+  "log.bettacraft.foreign.flew_out": "%s ist durch die offene Oberseite des Beckens davongeflogen",
+  "log.bettacraft.foreign.cleanup": "Die Aufräumtruppe (%s und andere) hat %s übrige Portionen gefressen"
 }

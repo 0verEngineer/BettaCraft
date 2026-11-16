@@ -1,0 +1,57 @@
+{
+  "entity": "livingthings:flamingo",
+  "group": "flamingo",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "live",
+    "fry"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 28,
+    "young": [
+      1,
+      1
+    ],
+    "days": 5,
+    "pause_days": 12,
+    "rate": 0.15,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      18,
+      36
+    ],
+    "humidity": [
+      40,
+      100
+    ],
+    "water": [
+      18,
+      32
+    ],
+    "land": [
+      0.3,
+      0.7
+    ],
+    "length": 1.2,
+    "volume": "all",
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.015,
+      "swim": 0.01,
+      "bottom": true,
+      "max_step": 0.4,
+      "water_time": 0.55,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.9
+    }
+  }
+}

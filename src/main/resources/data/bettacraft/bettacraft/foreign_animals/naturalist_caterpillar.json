@@ -1,0 +1,32 @@
+{
+  "entity": "naturalist:caterpillar",
+  "group": "insect",
+  "care": {
+    "hunger_days": 1.5
+  },
+  "food": [
+    "#minecraft:leaves",
+    "#bettacraft:turtle_greens"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      16,
+      30
+    ],
+    "humidity": [
+      50,
+      90
+    ],
+    "min_blocks": 2,
+    "movement": {
+      "style": "climb",
+      "walk": 0.006,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.6,
+      "height": 0.2,
+      "special": 0.4
+    }
+  }
+}

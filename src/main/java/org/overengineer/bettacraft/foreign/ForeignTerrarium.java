@@ -161,6 +161,7 @@ public final class ForeignTerrarium {
         TerrariumNeeds needs = TerrariumAnimals.needs(m);
         boolean cold = needs != null && t.hasClimate() && needs.air().below(t.airTemp());
         s.walker.tick(m, level, t, gait, cold);
+        ForeignHabits.tick(m, level); // M39 part b: a firefly glows in the dark of its tank and stays in the daylight
         m.setYHeadRot(m.getYRot());
         m.yBodyRot = m.getYRot();
         return true;
@@ -294,6 +295,23 @@ public final class ForeignTerrarium {
             }
         }
         catchInto(player, event.getHand(), target);
+    }
+
+    /**
+     * M39 part b: the large net (and the transport tub) on a big land animal of another mod, before the animal's own interaction
+     * (a tame ferret or a lion of a mod would take the click for itself): the net catches it into a tub as it does a big fish.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onBigInteract(PlayerInteractEvent.EntityInteract event) {
+        ItemStack stack = event.getItemStack();
+        boolean net = stack.getItem() instanceof org.overengineer.bettacraft.big.LargeNetItem;
+        boolean tub = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem && !org.overengineer.bettacraft.big.TransportTubItem.isFilled(stack);
+        if (!net && !tub || !(event.getTarget() instanceof LivingEntity le) || !le.isAlive()) return;
+        ForeignProfile.Land l = land(le.getType());
+        if (l == null || !l.big() || l.box()) return; // the box catches the small ones
+        event.setCanceled(true);
+        InteractionResult r = stack.getItem().interactLivingEntity(stack, event.getEntity(), le, event.getHand());
+        event.setCancellationResult(r == InteractionResult.PASS ? InteractionResult.sidedSuccess(event.getLevel().isClientSide) : r);
     }
 
     /** Why the box does not take this animal for this player, or null. */

@@ -1,0 +1,31 @@
+{
+  "entity": "crittersandcompanions:ladybug",
+  "group": "insect",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#minecraft:leaves",
+    "#minecraft:flowers",
+    "#bettacraft:turtle_greens"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      15,
+      28
+    ],
+    "humidity": [
+      40,
+      80
+    ],
+    "min_blocks": 3,
+    "movement": {
+      "style": "fly",
+      "walk": 0.04,
+      "water_time": 0.1,
+      "rest_time": 0.4,
+      "height": 0.3
+    }
+  }
+}

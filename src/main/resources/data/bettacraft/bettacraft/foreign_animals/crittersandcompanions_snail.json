@@ -1,0 +1,48 @@
+{
+  "entity": "crittersandcompanions:snail",
+  "group": "snail",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#bettacraft:turtle_greens",
+    "#minecraft:leaves",
+    "minecraft:carrot",
+    "minecraft:beetroot"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 22,
+    "young": [
+      2,
+      4
+    ],
+    "days": 3,
+    "pause_days": 6,
+    "rate": 0.3,
+    "sex": "none"
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      15,
+      26
+    ],
+    "humidity": [
+      70,
+      100
+    ],
+    "min_blocks": 3,
+    "cleanup": true,
+    "movement": {
+      "style": "climb",
+      "walk": 0.004,
+      "max_step": 1.0,
+      "bask_time": 0.0,
+      "rest_time": 0.5,
+      "height": 0.3,
+      "special": 0.3
+    }
+  }
+}

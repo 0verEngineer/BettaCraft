@@ -46,18 +46,24 @@ public class LargeNetItem extends Item {
             player.displayClientMessage(Component.translatable("message.bettacraft.big.need_tub", target.getDisplayName()), true);
             return InteractionResult.CONSUME;
         }
+        org.overengineer.bettacraft.tank.TankBlockEntity from = null;
         if (TankInhabitants.hasTankRef(target) && player.level() instanceof ServerLevel sl) {
             var c = TankInhabitants.resolveController(sl, target);
             if (c != null && !TankInhabitants.canModify(player, c.getTank())) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
                 return InteractionResult.CONSUME;
             }
+            from = c;
         }
         if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
         Component name = target.getDisplayName();
         TankInhabitants.release(target); // M35 part b: first (a mother takes her clutch along), then the tub saves her
         ItemStack tub = TransportTubItem.fillWith(target);
         target.discard();
+        if (from != null) { // M39 part b: out of its tank's list at once (not only by the next reconciliation)
+            from.getTank().inhabitants().remove(target.getUUID());
+            from.markTankChanged();
+        }
         BigCatching.give(player, slot, tub, name);
         return InteractionResult.CONSUME;
     }

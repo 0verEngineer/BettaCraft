@@ -1,0 +1,34 @@
+{
+  "entity": [
+    "naturalist:lion",
+    "livingthings:lion"
+  ],
+  "group": "big_cat",
+  "care": {
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#c:foods/raw_meat"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      18,
+      40
+    ],
+    "humidity": [
+      20,
+      60
+    ],
+    "length": 2.0,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.8
+    }
+  }
+}

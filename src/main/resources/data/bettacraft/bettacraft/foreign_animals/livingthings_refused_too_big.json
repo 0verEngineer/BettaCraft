@@ -1,0 +1,7 @@
+{
+  "entity": [
+    "livingthings:elephant",
+    "livingthings:giraffe"
+  ],
+  "refuse": "too_big"
+}

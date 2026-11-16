@@ -1,0 +1,36 @@
+{
+  "entity": [
+    "naturalist:ostrich",
+    "livingthings:ostrich"
+  ],
+  "group": "ratite",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#c:seeds",
+    "#bettacraft:turtle_greens",
+    "minecraft:wheat"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      10,
+      40
+    ],
+    "humidity": [
+      10,
+      60
+    ],
+    "length": 2.0,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.8
+    }
+  }
+}

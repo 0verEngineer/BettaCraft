@@ -1,0 +1,47 @@
+{
+  "entity": "livingthings:raccoon",
+  "group": "raccoon",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#c:foods/fruit",
+    "#c:foods/raw_fish",
+    "#c:seeds",
+    "minecraft:sweet_berries"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      4
+    ],
+    "days": 4,
+    "pause_days": 10,
+    "rate": 0.2,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "any",
+    "air": [
+      0,
+      30
+    ],
+    "humidity": [
+      40,
+      90
+    ],
+    "length": 0.6,
+    "movement": {
+      "style": "walk",
+      "walk": 0.02,
+      "swim": 0.015,
+      "bottom": false,
+      "max_step": 0.6,
+      "water_time": 0.2,
+      "bask_time": 0.0,
+      "rest_time": 0.4,
+      "height": 0.4
+    }
+  }
+}

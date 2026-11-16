@@ -1,0 +1,46 @@
+{
+  "entity": "naturalist:turkey",
+  "group": "fowl",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#c:seeds",
+    "minecraft:wheat",
+    "#bettacraft:turtle_greens"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 28,
+    "young": [
+      2,
+      5
+    ],
+    "days": 4,
+    "pause_days": 10,
+    "rate": 0.2,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      0,
+      30
+    ],
+    "humidity": [
+      30,
+      80
+    ],
+    "length": 1.0,
+    "lid": true,
+    "movement": {
+      "style": "walk",
+      "walk": 0.02,
+      "max_step": 0.5,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.5
+    }
+  }
+}

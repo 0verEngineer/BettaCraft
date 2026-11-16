@@ -1,0 +1,41 @@
+{
+  "entity": "crittersandcompanions:shima_enaga",
+  "group": "songbird",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#c:seeds",
+    "#bettacraft:small_feeder_insects"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "young": [
+      2,
+      5
+    ],
+    "days": 3,
+    "pause_days": 8,
+    "rate": 0.25,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -5,
+      25
+    ],
+    "humidity": [
+      30,
+      80
+    ],
+    "min_blocks": 8,
+    "movement": {
+      "style": "fly",
+      "walk": 0.05,
+      "water_time": 0.05,
+      "rest_time": 0.5,
+      "height": 0.4
+    }
+  }
+}

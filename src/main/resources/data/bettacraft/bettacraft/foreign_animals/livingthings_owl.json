@@ -1,0 +1,43 @@
+{
+  "entity": "livingthings:owl",
+  "group": "owl",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#c:foods/raw_meat"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "young": [
+      1,
+      3
+    ],
+    "days": 5,
+    "pause_days": 10,
+    "rate": 0.15,
+    "sex": "random",
+    "inherit": [
+      "OwlVariant"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      0,
+      28
+    ],
+    "humidity": [
+      30,
+      80
+    ],
+    "length": 0.5,
+    "movement": {
+      "style": "fly",
+      "walk": 0.05,
+      "water_time": 0.05,
+      "rest_time": 0.5,
+      "height": 0.4
+    }
+  }
+}

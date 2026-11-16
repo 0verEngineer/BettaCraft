@@ -1,0 +1,31 @@
+{
+  "entity": "naturalist:butterfly",
+  "group": "insect",
+  "care": {
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#minecraft:flowers",
+    "minecraft:honey_bottle",
+    "minecraft:sweet_berries"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      20,
+      32
+    ],
+    "humidity": [
+      50,
+      90
+    ],
+    "min_blocks": 6,
+    "movement": {
+      "style": "fly",
+      "walk": 0.04,
+      "water_time": 0.1,
+      "rest_time": 0.4,
+      "height": 0.3
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "entity": "crittersandcompanions:weevil",
+  "group": "insect",
+  "care": {
+    "hunger_days": 2.5
+  },
+  "food": [
+    "#c:seeds",
+    "minecraft:sweet_berries",
+    "#c:foods/fruit"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      15,
+      28
+    ],
+    "humidity": [
+      40,
+      80
+    ],
+    "min_blocks": 2,
+    "movement": {
+      "style": "walk",
+      "walk": 0.008,
+      "max_step": 0.5,
+      "bask_time": 0.0,
+      "rest_time": 0.5,
+      "height": 0.2
+    }
+  }
+}

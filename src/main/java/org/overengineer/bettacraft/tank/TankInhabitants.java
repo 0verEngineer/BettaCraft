@@ -235,6 +235,8 @@ public final class TankInhabitants {
         if (terra) {
             Component no = org.overengineer.bettacraft.terrarium.TerrariumAnimals.refusal(level, controller, type);
             if (no != null) return no;
+            Component lid = org.overengineer.bettacraft.foreign.ForeignHabits.lidRefusal(level, controller, type); // M39 part b: fliers need a lid
+            if (lid != null) return lid;
         } else if (org.overengineer.bettacraft.terrarium.PaludariumWater.applies(level, controller)) {
             // M35 part b: a water animal in a paludarium goes by its water part (deep enough for it; the stocking and the size
             // rule of the big animals below measure the water), not by the fill of the whole tank (a third of water is normal there)

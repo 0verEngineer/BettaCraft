@@ -1,0 +1,48 @@
+{
+  "entity": "naturalist:mole",
+  "group": "mole",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#bettacraft:feeder_insects",
+    "#bettacraft:small_feeder_insects",
+    "#c:foods/raw_meat"
+  ],
+  "breeding": {
+    "type": "livebearer",
+    "young": [
+      2,
+      5
+    ],
+    "days": 4,
+    "pause_days": 10,
+    "rate": 0.2,
+    "sex": "random",
+    "inherit": [
+      "Variant"
+    ]
+  },
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      5,
+      26
+    ],
+    "humidity": [
+      40,
+      90
+    ],
+    "length": 0.2,
+    "movement": {
+      "style": "walk",
+      "walk": 0.012,
+      "max_step": 0.4,
+      "bask_time": 0.0,
+      "rest_time": 0.5,
+      "height": 0.3,
+      "special": 0.5,
+      "burrows": true
+    }
+  }
+}

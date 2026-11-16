@@ -1,0 +1,32 @@
+{
+  "entity": "naturalist:tiger",
+  "group": "big_cat",
+  "care": {
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#c:foods/raw_meat",
+    "#c:foods/raw_fish"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      5,
+      34
+    ],
+    "humidity": [
+      40,
+      100
+    ],
+    "length": 2.4,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.8
+    }
+  }
+}

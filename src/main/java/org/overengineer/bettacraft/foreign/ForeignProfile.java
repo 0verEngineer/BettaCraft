@@ -82,8 +82,21 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      * @param gait       how it moves in the tank (our walker, {@code LandWalker}); null: its own AI
      * @param preyLength it eats small fish and animals of the tank up to this length (blocks; 0: none)
      * @param box        the terrarium box catches it (false: the large net and the transport tub, like the big water animals)
+     * @param lid        M39 part b (question G1): it flies (flying insects, birds) and needs a closed top: our tanks refuse it while a
+     *                   top block of the tank is open, and it flies out of a tank whose lid is taken off (default: yes for the
+     *                   {@code fly} movement)
+     * @param cleanup    M39 part b: one of the clean-up crew (woodlice, snails): it eats the leftovers of the tank's food (they do not
+     *                   rot) and lives from the waste of the other animals (fed while they are)
+     * @param glows      M39 part b: it glows in the dark of its tank (fireflies): its own glow is kept going there, and the daylight
+     *                   through the glass does not drive it away
      */
-    public record Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box) {
+    public record Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box,
+                       boolean lid, boolean cleanup, boolean glows) {
+        /** M35: without lid, clean-up crew and glow. */
+        public Land(double lengthM, BigTankRules.Volume volume, @Nullable LandWalker.Gait gait, double preyLength, boolean box) {
+            this(lengthM, volume, gait, preyLength, box, gait != null && gait.style() == LandWalker.Style.FLY, false, false);
+        }
+
         public boolean big() {
             return Double.isFinite(lengthM) && lengthM > 0;
         }
@@ -391,7 +404,8 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      * M35: the land part of a terrarium profile: {@code length} (m), {@code volume} (land, water, all; by the habitat if not
      * given: a dry terrarium animal the land, a water animal the water, else the whole tank), {@code movement} (a style
      * {@code walk}, {@code slither}, {@code hop}, {@code climb}, {@code swim}, {@code fly} (part b), or {@code own} for the mod's own AI, or an
-     * object with {@code style} and the gait numbers), {@code prey} (blocks) and {@code box}.
+     * object with {@code style} and the gait numbers), {@code prey} (blocks) and {@code box}; M39 part b: {@code lid} (default: a
+     * flier needs one), {@code cleanup} and {@code glows}.
      */
     private static Land land(JsonObject t, TerrariumNeeds needs, Consumer<String> warn) {
         double length = num(t, "length", Double.NaN);
@@ -434,7 +448,9 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
                 gait = g;
             }
         }
-        return new Land(length, vol, gait, Math.max(0, num(t, "prey", 0)), bool(t, "box", true));
+        boolean flies = gait != null && gait.style() == LandWalker.Style.FLY;
+        return new Land(length, vol, gait, Math.max(0, num(t, "prey", 0)), bool(t, "box", true), bool(t, "lid", flies),
+                bool(t, "cleanup", false), bool(t, "glows", false)); // M39 part b
     }
 
     static Salinity.Range salinity(JsonElement e, Salinity.Range fallback, Consumer<String> warn) {

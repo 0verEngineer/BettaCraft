@@ -1,0 +1,35 @@
+{
+  "entity": "naturalist:black_bear",
+  "group": "bear",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "#c:foods/raw_meat",
+    "#c:foods/raw_fish",
+    "minecraft:sweet_berries",
+    "minecraft:honey_bottle",
+    "minecraft:honeycomb"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      -10,
+      28
+    ],
+    "humidity": [
+      30,
+      90
+    ],
+    "length": 1.7,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.8
+    }
+  }
+}

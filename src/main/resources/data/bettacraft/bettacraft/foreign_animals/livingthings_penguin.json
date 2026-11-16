@@ -1,0 +1,57 @@
+{
+  "entity": "livingthings:penguin",
+  "group": "penguin",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "#c:foods/raw_fish",
+    "#minecraft:fishes"
+  ],
+  "breeding": {
+    "type": "eggs",
+    "nest": "#bettacraft:turtle_nest_ground",
+    "nest_temperature": 20,
+    "young": [
+      1,
+      2
+    ],
+    "days": 5,
+    "pause_days": 12,
+    "rate": 0.15,
+    "sex": "random"
+  },
+  "terrarium": {
+    "habitat": "paludarium",
+    "air": [
+      -10,
+      12
+    ],
+    "humidity": [
+      40,
+      100
+    ],
+    "water": [
+      0,
+      14
+    ],
+    "land": [
+      0.3,
+      0.7
+    ],
+    "length": 0.9,
+    "volume": "all",
+    "prey": 0.4,
+    "movement": {
+      "style": "walk",
+      "walk": 0.012,
+      "swim": 0.06,
+      "bottom": false,
+      "max_step": 0.4,
+      "water_time": 0.5,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.6
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "entity": "naturalist:zebra",
+  "group": "equid",
+  "care": {
+    "hunger_days": 1.0
+  },
+  "food": [
+    "minecraft:wheat",
+    "minecraft:hay_block",
+    "#bettacraft:turtle_greens"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      15,
+      38
+    ],
+    "humidity": [
+      20,
+      60
+    ],
+    "length": 2.3,
+    "box": false,
+    "movement": {
+      "style": "walk",
+      "walk": 0.03,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.35,
+      "height": 0.8
+    }
+  }
+}

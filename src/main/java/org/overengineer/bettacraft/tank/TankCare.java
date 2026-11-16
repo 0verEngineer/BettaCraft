@@ -108,6 +108,7 @@ public final class TankCare {
         org.overengineer.bettacraft.foreign.ForeignCare.step(server, be, dt / 24000.0); // M32 part a: our needs for animals of other mods
         org.overengineer.bettacraft.foreign.ForeignBreeding.step(server, be, dt / 24000.0); // M32 part a: their breeding ours, their own suppressed
         org.overengineer.bettacraft.foreign.ForeignTerrarium.hunt(server, be, dt / 24000.0); // M35: an alligator eats the small fish
+        org.overengineer.bettacraft.foreign.ForeignHabits.step(server, be, dt / 24000.0); // M39 part b: fliers out of an open top, the clean-up crew
         TankBreeding.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.tankmates.TankmateBreeding.step(server, be, dt / 24000.0); // M19
         org.overengineer.bettacraft.reef.ReefCare.step(server, be, dt / 24000.0); // M20: salt shock of frogs and foreign animals
@@ -363,6 +364,9 @@ public final class TankCare {
         left -= frogsFed;
         left -= org.overengineer.bettacraft.terrarium.TerrariumFeeding.feed(terra, Math.max(0, Math.min(left, terra.size())), round); // M31
         left -= org.overengineer.bettacraft.foreign.ForeignCare.feed(foreign, Math.max(0, Math.min(left, foreign.size())), round); // M32 part a
+        // M39 part b: the clean-up crew of a terrarium (woodlice, snails) eats the leftovers and the food the bettas did not need
+        if (left > 0) left = org.overengineer.bettacraft.foreign.ForeignHabits.eatLeftovers(level, controller, left);
+        if (overfed > 0) overfed = org.overengineer.bettacraft.foreign.ForeignHabits.eatLeftovers(level, controller, overfed);
         // what is left sinks to the floor: the small animals eat it (or a little of what the bettas ate as crumbs)
         org.overengineer.bettacraft.critters.TankCritters.addFood(controller.getTank(), left > 0 ? left : fed * org.overengineer.bettacraft.critters.TankCritters.CRUMBS);
         TankWater.overfed(level, controller, overfed);

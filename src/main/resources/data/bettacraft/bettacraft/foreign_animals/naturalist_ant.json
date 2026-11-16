@@ -1,0 +1,33 @@
+{
+  "entity": "naturalist:ant",
+  "group": "insect",
+  "care": {
+    "hunger_days": 2.0
+  },
+  "food": [
+    "minecraft:sugar",
+    "#c:seeds",
+    "minecraft:sweet_berries",
+    "#c:foods/fruit"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      20,
+      32
+    ],
+    "humidity": [
+      30,
+      70
+    ],
+    "min_blocks": 2,
+    "movement": {
+      "style": "walk",
+      "walk": 0.015,
+      "max_step": 0.6,
+      "bask_time": 0.0,
+      "rest_time": 0.25,
+      "height": 0.2
+    }
+  }
+}

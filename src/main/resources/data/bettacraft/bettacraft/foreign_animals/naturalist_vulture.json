@@ -1,0 +1,30 @@
+{
+  "entity": "naturalist:vulture",
+  "group": "bird_of_prey",
+  "care": {
+    "hunger_days": 3.0
+  },
+  "food": [
+    "#c:foods/raw_meat"
+  ],
+  "terrarium": {
+    "habitat": "dry",
+    "air": [
+      15,
+      38
+    ],
+    "humidity": [
+      20,
+      60
+    ],
+    "length": 1.0,
+    "box": false,
+    "movement": {
+      "style": "fly",
+      "walk": 0.05,
+      "water_time": 0.05,
+      "rest_time": 0.5,
+      "height": 0.4
+    }
+  }
+}

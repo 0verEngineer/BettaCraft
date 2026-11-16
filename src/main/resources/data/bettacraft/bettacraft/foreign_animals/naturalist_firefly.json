@@ -1,0 +1,31 @@
+{
+  "entity": "naturalist:firefly",
+  "group": "insect",
+  "care": {
+    "hunger_days": 5.0
+  },
+  "food": [
+    "#minecraft:flowers",
+    "#bettacraft:small_feeder_insects"
+  ],
+  "terrarium": {
+    "habitat": "any",
+    "air": [
+      15,
+      30
+    ],
+    "humidity": [
+      60,
+      100
+    ],
+    "min_blocks": 6,
+    "glows": true,
+    "movement": {
+      "style": "fly",
+      "walk": 0.04,
+      "water_time": 0.1,
+      "rest_time": 0.4,
+      "height": 0.3
+    }
+  }
+}

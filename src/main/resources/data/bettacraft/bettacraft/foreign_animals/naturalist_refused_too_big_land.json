@@ -1,0 +1,10 @@
+{
+  "entity": [
+    "naturalist:elephant",
+    "naturalist:mammoth",
+    "naturalist:giraffe",
+    "naturalist:hippo",
+    "naturalist:rhino"
+  ],
+  "refuse": "too_big"
+}
