@@ -85,6 +85,13 @@ public final class DevSmokeUpgrade {
     /** M35.1: chest, hatchery and item entity with old cyst jars that came through loading (and in stage 2 a reload). */
     private static int m351Checked;
     private static final String M351_FILE = "bettacraft_m35_1_cysts.txt";
+    /** M40 (D2): multiblock filters of the old world: their media kept, marked retrofit, a warning and no filtering until guarded. */
+    private static int m40Checked;
+    /**
+     * M40: the reference world is one of the old 1.13 line (the checks for what came after it apply), not a newer one such
+     * as {@code Bettacraft Referenz 1.31.0} (built for the old multiblock filters of M40: only the comparison and the M40 check).
+     */
+    private static boolean legacy = true;
 
     private DevSmokeUpgrade() {}
 
@@ -100,6 +107,7 @@ public final class DevSmokeUpgrade {
                 Path file = root.resolve(STAGE == 1 ? REFERENCE : SNAPSHOT);
                 if (!Files.exists(file)) throw new IllegalStateException("missing " + file);
                 expected = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+                legacy = legacyVersion(expected.has("version") ? expected.get("version").getAsString() : "");
                 Set<Long> chunks = new HashSet<>();
                 for (JsonElement e : expected.getAsJsonArray("tanks")) {
                     BlockPos p = BlockPos.of(e.getAsJsonObject().get("pos").getAsLong());
@@ -125,7 +133,7 @@ public final class DevSmokeUpgrade {
                 // a few ticks for the animals to join their tanks
             } else if (readyAt > 0 && ticks == readyAt + 40) {
                 compare(server, level);
-                if (STAGE == 1) { // M29: every betta of the old world is a pure Betta splendens
+                if (STAGE == 1 && legacy) { // M29: every betta of the old world is a pure Betta splendens
                     for (var e : level.getAllEntities()) {
                         if (!(e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b)) continue;
                         var g = b.getBettaData().genotype();
@@ -137,7 +145,8 @@ public final class DevSmokeUpgrade {
                         else problems.add("old betta " + b.getUUID() + " is " + age + " days old");
                     }
                 }
-                if (STAGE == 2) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
+                if (STAGE == 2 && legacy) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
+                m40Check(level); // M40: old multiblock filters need their guards now
                 if (!problems.isEmpty()) {
                     for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                     throw new IllegalStateException(problems.size() + " difference(s)");
@@ -146,7 +155,7 @@ public final class DevSmokeUpgrade {
                     server.saveEverything(false, true, true);
                     write(server, level, SNAPSHOT);
                     // M35.1: the reference world (1.13.1) has no cyst jars: old ones as fixtures, loaded from the old save format
-                    m351Place(server, level);
+                    if (legacy) m351Place(server, level);
                     if (!problems.isEmpty()) {
                         for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                         throw new IllegalStateException(problems.size() + " problem(s) with the old cyst jars");
@@ -163,6 +172,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} old bettas start with no age or the age of their stage (M33 old age)", m33Checked);
                 LOGGER.info("[smoketest] upgrade: {} tanks with their tank type (old ones automatic, M33.1)", m331Checked);
                 LOGGER.info("[smoketest] upgrade: {} places with old artemia cyst jars keep their count without the old uses (M35.1)", m351Checked);
+                LOGGER.info("[smoketest] upgrade: {} old multiblock filters keep their media and warn until guarded (M40, D2)", m40Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -171,6 +181,44 @@ public final class DevSmokeUpgrade {
         } catch (Exception e) {
             LOGGER.error("[smoketest] UPGRADE STAGE " + STAGE + " FAILED", e);
             server.halt(false);
+        }
+    }
+
+    // ------------------------------------------------------------------ M40 old multiblock filters
+
+    /** Whether the reference version is of the 1.13 line or older (before M22: the checks for later changes apply). */
+    static boolean legacyVersion(String v) {
+        String[] p = v.split("[.-]");
+        try {
+            return p.length < 2 || (Integer.parseInt(p[0]) == 1 && Integer.parseInt(p[1]) < 14);
+        } catch (NumberFormatException e) {
+            return true;
+        }
+    }
+
+    /**
+     * D2: a multiblock filter of the old world (no guards in its tanks) is marked retrofit (stage 2: still, after the save),
+     * keeps its media and its regulator, and after a batch it warns for its tank and cleans nothing.
+     */
+    private static void m40Check(ServerLevel level) {
+        for (ChunkPos cp : forced) {
+            for (var be : new ArrayList<>(level.getChunk(cp.x, cp.z).getBlockEntities().values())) {
+                if (!(be instanceof org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity h)) continue;
+                h.run(level, true);
+                int media = 0;
+                for (int m : h.media()) if (m / 1000 != org.overengineer.bettacraft.filter.FilterMedium.NONE.ordinal()) media++;
+                boolean warns = h.tanks().stream().anyMatch(t -> t.status().warning());
+                boolean tankWarns = h.tanks().stream().anyMatch(t -> {
+                    var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, t.tank());
+                    return c != null && !org.overengineer.bettacraft.filter.MultiblockFilter.warnings(level, c).isEmpty();
+                });
+                if (!h.retrofit() || !warns || !tankWarns || h.cleanBlocks() > 0 || media == 0 || h.power() != 10) {
+                    problems.add("M40 old multiblock filter at " + h.getBlockPos() + ": retrofit " + h.retrofit() + ", tanks " + h.tanks() + ", media " + media
+                            + ", clean " + h.cleanBlocks() + ", power " + h.power());
+                } else {
+                    m40Checked++;
+                }
+            }
         }
     }
 
@@ -280,6 +328,8 @@ public final class DevSmokeUpgrade {
                 continue;
             }
             for (String k : new String[]{"name", "water", "members", "front", "locked", "owner", "signVisible", "regionId"}) {
+                // M40: a tank without an interior may get one (a multiblock filter puts the docks of its pipes in): nothing lost
+                if (k.equals("regionId") && want.get(k).getAsInt() == -1 && have.get(k).getAsInt() >= 0) continue;
                 if (!want.get(k).equals(have.get(k))) problems.add(where + ": " + k + " " + want.get(k) + " -> " + have.get(k));
             }
             // floating plants spread while the world runs: none may be lost, a few more are fine
@@ -294,7 +344,9 @@ public final class DevSmokeUpgrade {
             }
             // M33.1: a tank of an older world starts on the automatic tank type (and keeps a type it had)
             String wantType = want.has("tank_mode") ? want.get("tank_mode").getAsString() : "auto";
-            if (have.has("tank_mode") && !wantType.equals(have.get("tank_mode").getAsString())) {
+            if (!legacy) {
+                // a newer world: its tank types were not written into the reference
+            } else if (have.has("tank_mode") && !wantType.equals(have.get("tank_mode").getAsString())) {
                 problems.add(where + ": tank type " + wantType + " -> " + have.get("tank_mode").getAsString());
             } else if (have.has("tank_mode")) m331Checked++;
             if (Math.abs(want.get("salinity").getAsDouble() - have.get("salinity").getAsDouble()) > 1e-3) {
@@ -316,7 +368,7 @@ public final class DevSmokeUpgrade {
                     if (wa.has(k) && !wa.get(k).equals(ha.get(k))) problems.add(where + ": animal " + wa.get("uuid").getAsString() + " " + k + " " + wa.get(k) + " -> " + ha.get(k));
                 }
                 // M21.6: guppies and endlers of an older version (no genome yet) get the genome of their variety
-                if (ha.has("lb_expected") && !wa.has("lb")) {
+                if (legacy && ha.has("lb_expected") && !wa.has("lb")) {
                     converted++;
                     if (!ha.get("lb_expected").equals(ha.get("lb"))) {
                         problems.add(where + ": animal " + wa.get("uuid").getAsString() + " genome " + ha.get("lb") + ", expected " + ha.get("lb_expected"));
@@ -335,7 +387,7 @@ public final class DevSmokeUpgrade {
             }
             if (!want.get("equipment").equals(have.get("equipment"))) problems.add(where + ": equipment " + want.get("equipment") + " -> " + have.get("equipment"));
             // M22.3: every animal of an older world counts as analysed (magnifier)
-            if (have.has("unanalysed") && have.get("unanalysed").getAsInt() > 0) problems.add(where + ": " + have.get("unanalysed") + " animals not analysed");
+            if (legacy && have.has("unanalysed") && have.get("unanalysed").getAsInt() > 0) problems.add(where + ": " + have.get("unanalysed") + " animals not analysed");
             equipment += want.getAsJsonArray("equipment").size();
         }
         Map<Long, JsonElement> chests = new TreeMap<>();
@@ -350,7 +402,7 @@ public final class DevSmokeUpgrade {
         LOGGER.info("[smoketest] upgrade stage {}: compared {} tanks, {} animals, {} small animals, {} equipment blocks, {} items in chests: {} difference(s)",
                 STAGE, expected.getAsJsonArray("tanks").size(), animals, critters, equipment, items, problems.size());
         LOGGER.info("[smoketest] upgrade stage {}: {} guppies and endlers converted from their old variety", STAGE, converted);
-        if (STAGE == 1 && converted < 16) problems.add("only " + converted + " old guppies and endlers converted (the reference has every old variety)");
+        if (STAGE == 1 && legacy && converted < 16) problems.add("only " + converted + " old guppies and endlers converted (the reference has every old variety)");
     }
 
     /**
@@ -418,7 +470,7 @@ public final class DevSmokeUpgrade {
     private static JsonObject tank(MinecraftServer server, ServerLevel level, TankBlockEntity c) {
         TankData t = c.getTank();
         // M24: a tank of an older version starts without nitrate (40 ticks of care add a trace at most) and without bulkheads
-        if (STAGE == 1) {
+        if (STAGE == 1 && legacy) {
             if (t.nitrate() > 0.5F) problems.add("tank " + c.getBlockPos().toShortString() + ": nitrate " + t.nitrate() + " instead of 0");
             if (t.lastWaterChange() >= 0) problems.add("tank " + c.getBlockPos().toShortString() + ": a water change noted");
             m24Checked++;
@@ -540,21 +592,21 @@ public final class DevSmokeUpgrade {
                 e.addProperty("heater0", BuiltInRegistries.ITEM.getKey(cab.heater(0).getItem()).toString());
                 e.addProperty("items", items(cab.items()));
                 // M22.4: a cabinet of an older world keeps its hose on the back wall
-                if (cab.outletSetting() != org.overengineer.bettacraft.equipment.OutletSide.BACK) {
+                if (legacy && cab.outletSetting() != org.overengineer.bettacraft.equipment.OutletSide.BACK) {
                     problems.add("cabinet " + p.toShortString() + ": outlet side " + cab.outletSetting() + " instead of the back wall");
                 }
                 cabinetsChecked++;
                 // M23: full power, no intake sponge
-                if (cab.regulator() != 10 || cab.intakeSponge()) problems.add("cabinet " + p.toShortString() + ": regulator " + cab.regulator() + ", sponge " + cab.intakeSponge());
+                if (legacy && (cab.regulator() != 10 || cab.intakeSponge())) problems.add("cabinet " + p.toShortString() + ": regulator " + cab.regulator() + ", sponge " + cab.intakeSponge());
                 // M29.1: the old cabinet got the air pump slot (empty) and kept its items in their slots
-                if (cab.items().getSlots() != CabinetBlockEntity.SLOTS || cab.hasAirPump() || cab.airDriven() != 0)
+                if (legacy && (cab.items().getSlots() != CabinetBlockEntity.SLOTS || cab.hasAirPump() || cab.airDriven() != 0))
                     problems.add("cabinet " + p.toShortString() + ": " + cab.items().getSlots() + " slots, air pump " + cab.hasAirPump());
             } else if (be instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity xf) {
-                if (xf.regulator() != 10 || xf.intakeSponge()) problems.add("filter " + p.toShortString() + ": regulator " + xf.regulator() + ", sponge " + xf.intakeSponge());
+                if (legacy && (xf.regulator() != 10 || xf.intakeSponge())) problems.add("filter " + p.toShortString() + ": regulator " + xf.regulator() + ", sponge " + xf.intakeSponge());
                 m23Checked++;
             } else if (s.getBlock() instanceof org.overengineer.bettacraft.equipment.TankLightBlock) {
                 // M23: an old light is not dimmed (a lit one shines at 15)
-                if (s.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.DIM) != 0) problems.add("light " + p.toShortString() + " dimmed");
+                if (legacy && s.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.DIM) != 0) problems.add("light " + p.toShortString() + " dimmed");
                 m23Checked++;
             } else if (be instanceof FeederBlockEntity f) {
                 e.addProperty("items", items(f.items()));
@@ -607,7 +659,7 @@ public final class DevSmokeUpgrade {
             List<String> comps = new ArrayList<>();
             for (var c : s.getComponentsPatch().entrySet()) comps.add(String.valueOf(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.getKey())));
             // M22.3: old bags and buckets hold animals that count as analysed
-            if (STAGE == 1 && !analysedContents(s)) problems.add("chest " + cb.getBlockPos().toShortString() + " slot " + i + ": animals not analysed");
+            if (STAGE == 1 && legacy && !analysedContents(s)) problems.add("chest " + cb.getBlockPos().toShortString() + " slot " + i + ": animals not analysed");
             // M25 part b: an old sea water bucket stays valid and is sea water for other mods
             if (STAGE == 1 && s.is(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get())) {
                 var fh = net.neoforged.neoforge.fluids.FluidUtil.getFluidHandler(s.copy()).orElse(null);

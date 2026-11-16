@@ -166,6 +166,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm39b: insects, mammals and birds of other mods in terraria, the komodo dragon, fireflies at night (M39 part b). */
     private static final boolean M39B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39bonly");
     private static DevClientSmokeM39b m39b;
+    /** -Psmoketestm40a: one multiblock filter for three tanks, the pipe docks and guards inside (M40 part a). */
+    private static final boolean M40A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m40aonly");
+    private static DevClientSmokeM40a m40a;
     /** -Psmoketestm39c: the peaceful animals of Minecraft as terrarium pets (M39 part c, optional feature #25). */
     private static final boolean M39C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39conly");
     private static DevClientSmokeM39c m39c;
@@ -300,6 +303,15 @@ final class DevClientSmokeTest {
                 if (m36 != null && m36.tick()) {
                     m36 = null;
                     LOGGER.info("[smoketest] client world test finished (M36 only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M40A_ONLY) {
+                if (ticks == 60) m40a = new DevClientSmokeM40a();
+                if (m40a != null && m40a.tick()) {
+                    m40a = null;
+                    LOGGER.info("[smoketest] client world test finished (M40 part a only)");
                     mc.stop();
                 }
                 return;

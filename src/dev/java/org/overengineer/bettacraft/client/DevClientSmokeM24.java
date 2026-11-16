@@ -271,6 +271,8 @@ final class DevClientSmokeM24 {
         server(p -> {
             ServerLevel level = p.serverLevel();
             if (level.getBlockEntity(base.offset(5, 3, 0)) instanceof org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity h) {
+                org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, h.getBlockPos()); // M40: its guards
+                h.run(level, true);
                 if (!h.problem().equals(org.overengineer.bettacraft.filter.MultiblockFilter.Problem.NONE) || h.servedTank() == null)
                     LOGGER.error("[smoketest] M24 the multiblock filter does not serve its tank: {} {}", h.problem(), h.servedTank());
                 else LOGGER.info("[smoketest] M24 multiblock filter: {} chambers, {} mB/t, cleans {}", h.chambers(), h.flow(), h.cleanBlocks());

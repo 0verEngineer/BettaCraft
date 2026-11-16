@@ -513,6 +513,7 @@ public final class DevShowcase {
         level.setBlockAndUpdate(at.offset(4, 2, 0), ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
         level.setBlockAndUpdate(at.offset(3, 0, 0), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.WEST));
         level.setBlockAndUpdate(at.offset(3, 1, 0), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.WEST));
+        org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, at.offset(4, 2, 0)); // M40: the guards in the tank
         name(level, at, "Multiblock-Filter");
         at = at.east(5 + GAP);
         TankBlockEntity wt = tank(level, at, 3, 2, 2, 0F, true);
@@ -1071,6 +1072,7 @@ public final class DevShowcase {
             BlockPos p = at.offset(x, yz[0], yz[1]);
             level.setBlockAndUpdate(p, Block.updateFromNeighbourShapes(level.getBlockState(p), level, p));
         }
+        org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, at.offset(6, 2, 0)); // M40
         name(level, at, "Multiblock-Filter über Rohre");
         LOGGER.info("[showcase] M29.1 multiblock filter by pipes at {}", pt.getBlockPos());
         at = at.east(7 + GAP);
@@ -1086,6 +1088,7 @@ public final class DevShowcase {
         level.setBlockAndUpdate(at.offset(1, 0, 0), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.UP));
         level.setBlockAndUpdate(fl.offset(2, 0, 0), ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
         TankBlockEntity ut = tank(level, at.above(), 2, 2, 2, 0F, true);
+        org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, fl.offset(2, 0, 0)); // M40
         name(level, at.above(), "Multiblock-Filter unter dem Becken");
         LOGGER.info("[showcase] M29.1 multiblock filter under the tank at {}", ut.getBlockPos());
     }

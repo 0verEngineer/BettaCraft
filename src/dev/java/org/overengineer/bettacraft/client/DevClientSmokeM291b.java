@@ -159,6 +159,7 @@ final class DevClientSmokeM291b {
             ch.setMedium(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.FILTER_FOAM.get()));
         TankBlockEntity f = tank(level, p, filterTank, 2);
         if (level.getBlockEntity(fl.offset(2, 0, 0)) instanceof org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity head) {
+            org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, head.getBlockPos()); // M40: its guards
             int moved = head.run(level, true);
             LOGGER.info("[smoketest] M29.1 filter under the tank: {} moved {} mB, serves {}", head.problem(), moved, head.servedTank());
             if (moved <= 0 || !f.getBlockPos().equals(head.servedTank())) LOGGER.error("[smoketest] M29.1 the multiblock filter under the tank does not run");

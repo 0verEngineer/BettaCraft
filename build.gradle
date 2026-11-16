@@ -290,6 +290,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m35aonly', 'true'
             }
+            if (project.hasProperty('smoketestm40a')) {
+                // gradlew runClient -Psmoketestm40a : only the M40 part a scene (one multiblock filter for three tanks through filter
+                // pipes and T-pieces, docks on the front and the top, the docks and guards inside, the filter screen)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m40aonly', 'true'
+            }
             if (project.hasProperty('smoketestm39c')) {
                 // gradlew runClient -Psmoketestm39c : only the M39 part c scene (the peaceful animals of Minecraft as terrarium pets:
                 // chickens, rabbits, bees with flowers and a beehive, cats, foxes ...; a frog paludarium; cows, a horse, a panda in a big terrarium)

@@ -128,6 +128,7 @@ public final class M291GameTests {
         ((FilterChamberBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(2, 2, 2)))).setMedium(new ItemStack(ModItems.FILTER_FOAM.get()));
         ((FilterChamberBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 2)))).setMedium(new ItemStack(ModItems.CERAMIC_RINGS.get()));
         FilterPumpHeadBlockEntity head = (FilterPumpHeadBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(4, 2, 2)));
+        FilterLinesGameTests.guardAll(level, head.getBlockPos()); // M40: the guards on the docks in the floor
         double without = TankWater.filterBlocks(level, c);
         long w = c.getTank().waterMb();
         int moved = head.run(level, true);

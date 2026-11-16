@@ -363,6 +363,7 @@ public final class PlumbingGameTests {
         FilterPumpHeadBlockEntity head = (FilterPumpHeadBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 4, 0)));
         h.assertTrue(head.run(level, true) == 0 && head.problem() == MultiblockFilter.Problem.NO_OUTLET, "no outlet yet: " + head.problem());
         h.setBlock(new BlockPos(2, 3, 0), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.WEST));
+        FilterLinesGameTests.guardAll(level, head.getBlockPos()); // M40: every connection in the tank needs its guard
         double without = TankWater.filterBlocks(level, c);
         long w = c.getTank().waterMb();
         int moved = head.run(level, true);

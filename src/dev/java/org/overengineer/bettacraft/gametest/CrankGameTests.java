@@ -344,6 +344,7 @@ public final class CrankGameTests {
             h.setBlock(new BlockPos(12, 3, 10), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.WEST));
             be(h, new BlockPos(13, 2, 10), FilterChamberBlockEntity.class).setMedium(new ItemStack(ModItems.CERAMIC_RINGS.get()));
             FilterPumpHeadBlockEntity head = be(h, new BlockPos(13, 3, 10), FilterPumpHeadBlockEntity.class);
+            FilterLinesGameTests.guardAll(level, head.getBlockPos()); // M40
             h.assertTrue(head.run(level, true) == 0, "no FE, unwound: the pump head stands still");
             crank(h, new BlockPos(13, 2, 10)); // a click on the chamber
             head.windSpring().set(head.windSpring().capacity());
