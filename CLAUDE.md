@@ -100,7 +100,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   integrationTests --no-configuration-cache` (or any run task with `-Pintegration`) switches on every group above that we
   integrate (power, aquatic, biomes, storage, create, quests, kubejs, facades; maps for `runClient`) plus `run/integration-mods`
   (Integrated Dynamics + Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
-  Industrial Foregoing from ATM10AA). The GameTest server then runs in `run/gametest-integration`: the whole normal suite plus
+  Industrial Foregoing, Athena and Farmer's Delight for EnderIO's models and Ice and Fire's recipes, from ATM10AA). The GameTest server then runs in `run/gametest-integration`: the whole normal suite plus
   the integration-only tests of `gametest/integration` (registered by `IntegrationSuite` only with `bettacraft.integration`;
   they fail when a mod of the group is missing, `IntegrationGroupTests` also checks every foreign id of our data). About 6
   minutes for ~750 tests. `-Pgametests=<prefix>[,...]` runs only the tests whose method name or batch starts with a prefix

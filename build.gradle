@@ -737,7 +737,8 @@ idea {
 //   -Pintegration (or the task integrationTests): every group above that we integrate (power, aquatic, biomes, storage,
 //               create, quests, kubejs, facades; maps for runClient) plus run/integration-mods (M42: Integrated Dynamics,
 //               Integrated Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
-//               Industrial Foregoing from ATM10AA) for runClient, runServer and runGameTestServer
+//               Industrial Foregoing, and Athena and Farmer's Delight which EnderIO's models and Ice and Fire's recipes look for,
+//               from ATM10AA) for runClient, runServer and runGameTestServer
 def runModsDir = file('run/mods')
 def gameTestModsDir = file(gameTestDir + '/mods')
 def extraMods = [

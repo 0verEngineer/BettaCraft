@@ -305,7 +305,8 @@ The integrations with other mods have an optional test suite of their own that n
 
 It loads the dev mod groups of every mod Bettacraft integrates (`-Ppower`, `-Paquatic`, `-Pbiomes`, `-Pstorage`, `-Pcreate`,
 `-Pquests`, `-Pkubejs`, `-Pfacades`, for the client also `-Pmaps`) plus `run/integration-mods` (Integrated Dynamics and
-Integrated Tunnels, XNet, LaserIO, Modular Routers, Industrial Foregoing and their libraries). The jars are not in the
+Integrated Tunnels, XNet, LaserIO, Modular Routers, Industrial Foregoing, their libraries, and Athena and Farmer's Delight
+that other mods of the group look for). The jars are not in the
 repository: copy them from a local ATM10 instance into the `run/*-mods` folders (`-Pintegration` works with any run task).
 The GameTest server runs in `run/gametest-integration` and adds the integration-only tests (`gametest/integration`): items,
 fluids and FE through the pipes, cables and networks of Pipez, EnderIO, Mekanism, Create, AE2, Refined Storage, Integrated
