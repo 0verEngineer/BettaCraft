@@ -315,6 +315,26 @@ and the crucible; the capture items of EnderIO and Industrial Foregoing; the Kub
 Bettacraft's data. A missing mod fails these tests, so an incomplete group cannot look green. `-Pgametests=<prefix>` runs only
 the tests whose method name or batch starts with the prefix (also in the normal suite).
 
+### Zoo tests (optional)
+
+The second part of the optional suite tests Bettacraft against the animals and water plants of mods it does **not**
+integrate (no profile of its own):
+
+```
+./gradlew zooTests --no-configuration-cache                                 # all GameTests plus the zoo tests
+./gradlew zooTests -Pgametests=bettacraft_zoo --no-configuration-cache      # only the zoo tests (~4 minutes)
+./gradlew runClient -Pzoo -Psmoketestm42b --no-configuration-cache          # the miniature with those animals and plants
+```
+
+It loads `run/zoo-mods` (copied from an ATM10 instance: the Aether, Ars Nouveau and Ars Elemental, Productive Bees,
+Occultism, Thaumaturge, EvilCraft, Actually Additions, Mahou Tsukai, Psychadelic Chemistry, Fungi Delight, Oritech Things and
+Garnished with their libraries) together with the groups `-Paquatic`, `-Pbiomes` and `-Pcreate`, whose animals without a
+profile count too. The zoo tests survey every foreign mob and water plant without a profile: how each way in decides (its own
+bucket, the fish bag, the terrarium box, a capture item), how the animals live for a while in tanks, terraria and paludaria,
+taking them out, putting them back, packing and releasing the tank, and plants in the interior and when the tank breaks. They
+write their findings to `run/gametest-zoo/zoo/*.tsv` and fail only on a bug of Bettacraft (an exception in its code, an animal
+lost or doubled, a refused animal left in the tank, an inhabited tank that can be broken, a plant that is lost).
+
 ## Continuous integration and releases
 
 [![Build](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml)

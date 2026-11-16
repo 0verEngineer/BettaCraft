@@ -162,6 +162,9 @@ final class DevClientSmokeTest {
     /** -Pintegration -Psmoketestm42: JEI recipe screens and the handbook with every integrated mod loaded (M42). */
     private static final boolean M42_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42only");
     private static DevClientSmokeM42 m42;
+    /** -Pzoo -Psmoketestm42b: the miniature with animals and plants of mods we do not integrate (M42 part b). */
+    private static final boolean M42B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42bonly");
+    private static DevClientSmokeM42b m42b;
     /** -Pcreate -Psmoketestm41: a tank powered by Create's rotation through a drive adapter and a cabinet shaft (M41). */
     private static final boolean M41_ONLY = Boolean.getBoolean("bettacraft.smoketest.m41only");
     private static DevClientSmokeM41 m41;
@@ -414,6 +417,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M42B_ONLY) {
+                if (ticks == 60) m42b = new DevClientSmokeM42b();
+                if (m42b != null && m42b.tick()) {
+                    m42b = null;
+                    LOGGER.info("[smoketest] client world test finished (M42 part b only)");
                     mc.stop();
                 }
                 return;

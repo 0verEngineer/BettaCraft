@@ -47,10 +47,18 @@ configurations {
 // (tools/ci/integration-mods.json); the integration-only tests whose mods are missing then pass with a log line.
 def integration = project.hasProperty('integration') || project.hasProperty('integrationPartial') ||
         gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
-def withGroup = { String name -> project.hasProperty(name) || integration }
+// M42 part b: the zoo, the other half of the optional suite. gradlew zooTests (or any run task with -Pzoo) puts run/zoo-mods
+// (mods of the ATM10 pack with animals and water plants that we do NOT integrate: Aether, Ars Nouveau + Elemental, Productive
+// Bees, Occultism, Thaumaturge, EvilCraft, Actually Additions, Mahou Tsukai, Psychadelic Chemistry, Fungi Delight, Oritech
+// Things, Garnished and their libraries, from ATM10AA) on the run together with the groups aquatic, biomes and create (their
+// animals without a profile count too). The GameTest server runs in run/gametest-zoo and registers the zoo tests of
+// gametest/zoo (system property bettacraft.zoo), which record how those animals and plants behave in our tanks.
+def zoo = project.hasProperty('zoo') || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('zootests') }
+def zooGroups = ['aquatic', 'biomes', 'create']
+def withGroup = { String name -> project.hasProperty(name) || integration || (zoo && name in zooGroups) }
 // a group whose mods the run requires (biomes, aquatic: some tests then insist on them); not in a partial CI run
-def requireGroup = { String name -> project.hasProperty(name) || (integration && !project.hasProperty('integrationPartial')) }
-def gameTestDir = integration ? 'run/gametest-integration' : 'run/gametest'
+def requireGroup = { String name -> project.hasProperty(name) || (integration && !project.hasProperty('integrationPartial')) || (zoo && name in zooGroups) }
+def gameTestDir = integration ? 'run/gametest-integration' : zoo ? 'run/gametest-zoo' : 'run/gametest'
 
 // Minecraft 1.21.1 ships Java 21. The foojay resolver (settings.gradle) downloads it if missing.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -365,6 +373,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm42b')) {
+                // gradlew runClient -Pzoo -Psmoketestm42b : only the M42 part b scene (the miniature with the animals and water plants
+                // of mods we do not integrate: a tank, a terrarium and a planted tank)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m42bonly', 'true'
+            }
             if (project.hasProperty('smoketestm42')) {
                 // gradlew runClient -Pintegration -Psmoketestm42 : only the M42 scene (JEI recipe screens of the food maker and the
                 // crucible, a filter medium's information page, the handbook page of the filter media, with every integrated mod)
@@ -517,6 +531,8 @@ neoForge {
             // M42: the integration-only GameTests (gametest/integration) are registered, every mod of the group is required
             if (integration) systemProperty 'bettacraft.integration', 'true'
             if (project.hasProperty('integrationPartial')) systemProperty 'bettacraft.integration.partial', 'true'
+            // M42 part b: the zoo tests (gametest/zoo): animals and plants of mods we do not integrate
+            if (zoo) systemProperty 'bettacraft.zoo', 'true'
             // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case) starts with a prefix
             if (project.hasProperty('gametests')) systemProperty 'bettacraft.gametest.only', project.property('gametests')
         }
@@ -576,7 +592,7 @@ dependencies {
     // Jade (optional dependency, PLAN 10). In dev it is on the run classpath unless -PnoJade is given; never for
     // GameTests (Jade pings the mock players of the GameTest framework, which cannot receive payloads).
     compileOnly "maven.modrinth:jade:${jade_version}"
-    boolean gameTests = gradle.startParameter.taskNames.any { it.toLowerCase().contains('gametest') || it.toLowerCase().endsWith('integrationtests') }
+    boolean gameTests = gradle.startParameter.taskNames.any { it.toLowerCase().contains('gametest') || it.toLowerCase().endsWith('integrationtests') || it.toLowerCase().endsWith('zootests') }
     if (!project.hasProperty('noJade') && !gameTests) localRuntime "maven.modrinth:jade:${jade_version}"
     // GuideME (optional, PLAN 9): the handbook. On the run classpath in dev (also for GameTests: the book tests need the
     // guide item) unless -PnoGuideme is given.
@@ -739,6 +755,9 @@ idea {
 //               Integrated Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
 //               Industrial Foregoing, and Athena and Farmer's Delight which EnderIO's models and Ice and Fire's recipes look for,
 //               from ATM10AA) for runClient, runServer and runGameTestServer
+//   -Pzoo (or the task zooTests): run/zoo-mods (M42 part b: mods of the pack with animals and water plants we do not integrate,
+//               see above) plus the groups aquatic, biomes and create, for runClient, runServer and runGameTestServer; not with
+//               -Pintegration (that group holds exactly the integrated mods)
 def runModsDir = file('run/mods')
 def gameTestModsDir = file(gameTestDir + '/mods')
 def extraMods = [
@@ -754,6 +773,8 @@ def extraMods = [
         [dir: file('run/facade-mods'), on: withGroup('facades'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/compare-mods'), on: project.hasProperty('compare'), tasks: ['runClient', 'runServer']],
         [dir: file('run/integration-mods'), on: integration, tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        // the Aether stays out of the dev client: the mixin of Accessories (in its jar) finds no target there and the client crashes
+        [dir: file('run/zoo-mods'), on: zoo, tasks: ['runClient', 'runServer', 'runGameTestServer'], notOnClient: ['aether-']],
 ]
 // -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
 // removed without the flag)
@@ -787,16 +808,17 @@ tasks.matching { it.name == 'runClient' }.configureEach { t ->
 }
 tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestServer'] }.configureEach { t ->
     def target = t.name == 'runGameTestServer' ? gameTestModsDir : runModsDir
-    def plan = extraMods.collect { g -> [jars: (g.dir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }, add: g.on && t.name in g.tasks] }
+    def plan = extraMods.collect { g -> [jars: (g.dir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }, add: g.on && t.name in g.tasks,
+            skip: t.name == 'runClient' ? (g.notOnClient ?: []) : []] }
     t.doFirst {
         target.mkdirs()
         // a library in two groups (TerraBlender, GeckoLib) stays when one of them is on
-        def wanted = plan.findAll { it.add }.collectMany { g -> g.jars*.name } as Set
+        def wanted = plan.findAll { it.add }.collectMany { g -> g.jars.findAll { j -> !g.skip.any { j.name.startsWith(it) } }*.name } as Set
         plan.each { g ->
             g.jars.each { jar ->
                 def dst = new File(target, jar.name)
-                if (g.add) java.nio.file.Files.copy(jar.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
-                else if (dst.exists() && !(jar.name in wanted)) dst.delete()
+                if (jar.name in wanted) java.nio.file.Files.copy(jar.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                else if (dst.exists()) dst.delete()
             }
         }
     }
@@ -842,7 +864,7 @@ tasks.register('runMultiplayerTest') {
         logs.mkdirs()
         def runDir = file('run')
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods', 'run/integration-mods'].each { d ->
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods', 'run/integration-mods', 'run/zoo-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()
@@ -888,7 +910,10 @@ tasks.register('runMultiplayerTest') {
         def procs = []
         def deadline = System.currentTimeMillis() + 14 * 60 * 1000L
         try {
-            def server = start('server', cmd(srv, 'server', ['-Dbettacraft.smoketest.mp=true'], []), runDir)
+            // M42 part b: -Pmplag puts a bad connection between the server and each client (DevNetLag: 40-250 ms both ways, a
+            // quarter of the interior deltas lost)
+            def serverJvm = ['-Dbettacraft.smoketest.mp=true'] + (project.hasProperty('mplag') ? ['-Dbettacraft.mp.lag=true'] : [])
+            def server = start('server', cmd(srv, 'server', serverJvm, []), runDir)
             procs << server
             def serverLog = new File(logs, 'server.log')
             while (!(serverLog.exists() && serverLog.getText('UTF-8').contains('Done ('))) {
@@ -1314,5 +1339,14 @@ tasks.matching { it.name == 'runGameTestServer' }.configureEach { t ->
 tasks.register('integrationTests') {
     group = 'bettacraft'
     description = 'GameTests with every integrated mod, including the integration-only tests (M42, optional)'
+    dependsOn 'runGameTestServer'
+}
+
+// M42 part b: the zoo, the second part of the optional suite: the whole GameTest suite plus the zoo tests (gametest/zoo) with the
+// mods we do not integrate (run/zoo-mods) and the groups aquatic, biomes and create, in run/gametest-zoo. The tests write their
+// findings to run/gametest-zoo/zoo/*.tsv. Run by hand: gradlew zooTests --no-configuration-cache
+tasks.register('zooTests') {
+    group = 'bettacraft'
+    description = 'GameTests with mods we do not integrate (animals, water plants), including the zoo tests (M42, optional)'
     dependsOn 'runGameTestServer'
 }

@@ -66,6 +66,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ./gradlew build                                   # jar + unit tests + verifyReleaseJar
 ./gradlew runGameTestServer --no-configuration-cache          # GameTests (add -Ppower for the FE mods)
 ./gradlew integrationTests --no-configuration-cache           # optional integration suite: every integrated mod (~6 min)
+./gradlew zooTests --no-configuration-cache                   # optional zoo suite: mods we do NOT integrate (animals, plants)
 ./gradlew runData --no-configuration-cache        # regenerate src/generated
 ./gradlew updateGuide                             # regenerate the data-driven handbook sections
 ./gradlew runServer -Psmoketest --no-configuration-cache      # server smoke (also with -PnoCompat)
@@ -108,6 +109,20 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   -Psmoketestm42` (JEI, GuideME), `-Psmoketestm8` (overlays; with `-Ptop -PnoJade` / `-Pwthit -PnoJade`), `-Psmoketestm32d`
   (JourneyMap). CI: the manual workflow `integration.yml` runs `integrationTests -PintegrationPartial` with the open-licence
   jars of `tools/ci/integration-mods.json`; tests whose mods are missing there pass with a log line.
+- **Optional zoo suite** (M42 part b, the other half of the optional suite, never in `build` or the normal suite): `gradlew
+  zooTests --no-configuration-cache` (or any run task with `-Pzoo`) puts `run/zoo-mods` (mods of ATM10AA with animals or
+  water plants that we do NOT integrate: Aether, Ars Nouveau + Elemental, Productive Bees, Occultism, Thaumaturge, EvilCraft,
+  Actually Additions, Mahou Tsukai, Psychadelic Chemistry, Fungi Delight, Oritech Things, Garnished + libraries; not
+  `run/integration-mods`) on the run with the groups aquatic, biomes and create, GameTest dir `run/gametest-zoo`. The zoo
+  tests (`gametest/zoo`, registered by `ZooSuite` only with `bettacraft.zoo`) survey every foreign mob and water plant without
+  a profile and write what they do in our tanks, terraria and paludaria to `run/gametest-zoo/zoo/*.tsv`; they fail only on
+  bugs of ours (exceptions in our code, an animal lost or doubled when taken out, put back, packed or released, refused animals
+  left in the tank, a breakable inhabited tank, a plant lost when the tank breaks). Client: `runClient -Pzoo -Psmoketestm42b`
+  (the miniature with those animals and plants; the Aether stays out of the dev client, its Accessories mixin crashes there).
+- Other M42 test switches: `runMultiplayerTest -Pmplag` (dev `DevNetLag`: 40-250 ms both ways, a quarter of the interior
+  deltas lost), `bash tools/upgrade/chain.sh` (a reference world saved by an intermediate version, then `smoketestUpgrade
+  -PupgradeWorld="Bettacraft Kette 1.13.1-1.31.0"`). Every GameTest run deletes its old world first (it used to grow by every
+  run and filled the disk).
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the
   manual *full* run adds smokes without optional mods / with TOP + WTHIT and GameTests with `-Ppower`. `release.yml`
   on a `v<mod_version>` tag: full tests, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is
