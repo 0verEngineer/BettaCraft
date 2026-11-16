@@ -9,6 +9,8 @@ feature: foreignAnimals.enabled
 
 # Liste der Tiere anderer Mods
 
+![Rochen, Seestern, Quallen, Fische von Fish of Thieves, ein Dumbo-Oktopus und ein Seepferdchen im Meerwasseraquarium](../images/foreign_water_animals.png)
+
 Jedes Tier einer anderen Mod, für das Bettacraft ein [Profil](foreign_profiles.md) mitbringt, und die Tiere, die es
 ablehnt. Die Tabellen unten entstehen aus den Profilen selbst. Eine Mod, die nicht installiert ist, hat einfach keine Tiere
 im Spiel.
@@ -35,6 +37,8 @@ im Spiel.
 * **Futter anderer Mods:** Copepoden, Daphnien und Feenkrebse von Fintastic sind Lebendfutter (und Fintastics Daphnien
   setzen ein [Daphnienfass](../food/daphnia_barrel.md) an); die Fischflocken von Fish Eggs sind Flockenfutter; ihre
   Fischeier und Tintenfischeier sind eiweißreiches Frostfutter, das wie Tubifex zur Zucht anregt.
+
+![Sternpanzer-Schildkröten und eine Krabbe am Sandufer, eine Arrauschildkröte im Wasser eines Paludariums](../images/foreign_turtles.png)
 
 ## Wassertiere
 

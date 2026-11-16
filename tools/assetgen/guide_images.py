@@ -836,6 +836,22 @@ def m38(out_en: Path) -> None:
             print("missing", src)
 
 
+# M39 part a scene (DevClientSmokeM39a, -Psmoketestm39a -Paquatic): the sea animals of other mods, the Aquaculture turtles
+M39A_WORLD = {"foreign_water_animals": ("bettacraft_m39a_sea", (180, 250, 1180, 580)),
+              "foreign_turtles": ("bettacraft_m39a_turtles", (120, 300, 1160, 590))}
+
+
+def m39a(out_en: Path) -> None:
+    for name, (shot, box) in M39A_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -850,6 +866,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m39a"]:
+        m39a(out_en)
+        return 0
     if sys.argv[1:] == ["m38"]:
         m38(out_en)
         return 0

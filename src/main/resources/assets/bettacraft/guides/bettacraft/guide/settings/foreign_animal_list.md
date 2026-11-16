@@ -9,6 +9,8 @@ feature: foreignAnimals.enabled
 
 # List of animals of other mods
 
+![Ray, starfish, jellyfish, Fish of Thieves fish, a dumbo octopus and a seahorse in a sea water aquarium](../images/foreign_water_animals.png)
+
 Every animal of another mod that Bettacraft ships a [profile](foreign_profiles.md) for, and the animals it refuses. The
 tables below are made from the profiles themselves. A mod that is not installed simply has no animals in the game.
 
@@ -32,6 +34,8 @@ tables below are made from the profiles themselves. A mod that is not installed 
 * **Food of other mods:** Fintastic's copepods, daphnia and fairy shrimp are live food (and Fintastic's daphnia start a
   [daphnia barrel](../food/daphnia_barrel.md)); the fish flakes of Fish Eggs are flake food; its fish eggs and squid eggs are
   protein-rich frozen food that conditions for breeding like tubifex.
+
+![Starshell turtles and a crab on the sandy bank, an arrau turtle in the water of a paludarium](../images/foreign_turtles.png)
 
 ## Water animals
 
