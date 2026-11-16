@@ -4,6 +4,38 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.36.0-beta.1] - 2026-11-16
+
+The quest chapter for modpacks catches up with everything since 1.25.0, and the advancements with it.
+
+### Added
+- **Quest chapter "Bettacraft" (FTB Quests, `bettacraft-modpack-<version>.zip`): 63 new quests, 96 in all**, in branches
+  from the first tank: tankmates with the livebearer litters and the guppy strains, community fish, cichlids, puffers,
+  barbs and loaches, gouramis; shrimp, snails and crayfish; frogs; reef fish and seahorses; the paludarium, turtles and
+  their clutches, sea turtles, Minecraft pets, gecko clutches; big animals; axolotls and animals of other mods, mobs in
+  glass; the technology (cabinet, cooler, aeration, sponge filters, LED lights and the daylight timer, the power regulator,
+  pipes, stainless steel, bulkheads, the water change controller, the top-off, the multiblock filter with filter lines,
+  ports and pipe covers); live food cultures and the pump, food variety, fertilizer and its dosing, algae, decoration; the
+  mirror stick, the magnifier, the fish doctor. Optional quests for energy, the crank and Create (drive adapter, a
+  travelling tank) never block the chapter.
+- **Item rewards** besides the experience: plant cuttings, food, a spare test kit, filter media, salt, glass pipes, a few
+  more (the old quests got some too).
+- **22 new advancements** in the Bettacraft tab (also the tasks of the new quests): Community Tank, Born Alive, Proud
+  Father, Colony, Clear View, Hatchlings, Warm or Cool, Half and Half, Ocean Giant, House Pet, Guest from Afar, Ship in a
+  Bottle, Big Fish, One Filter for All, Hands Free, Balanced Diet, Turn It Down, Sunrise, Sunset, Plugged In, Wound Up,
+  Shaft Power, Mobile Aquarium.
+- **Quests of switched-off features hide themselves:** every quest carries FTB Quests tags for its feature switches; the
+  new KubeJS script `kubejs/server_scripts/bettacraft_quests.js` makes the quests of switches that are off (and of Create
+  without Create, of energy without a power option) invisible and optional, and shows them again when the switch is
+  turned on. For scripts: `BettacraftApi.featureEnabled(path)`, `BettacraftApi.questTagsOn(tags)` and the event
+  `FeaturesChangedEvent` (the configs were reloaded).
+- The README lists which quests belong to which feature switch.
+
+### Changed
+- The 33 quests of the first chapter keep their ids, tasks, dependencies and rewards: players keep their progress when a
+  pack updates the file; advancements they already have complete the new quests by themselves. The chapter got a new
+  layout.
+
 ## [1.35.1-beta.1] - 2026-11-16
 
 ### Fixed

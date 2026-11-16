@@ -278,9 +278,109 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   mod counts as in an aquarium (a stem plant, a carpet, floating leaves, a coral, live rock ...; handbook "Plants of other
   mods").
 - **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
-  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and a KubeJS example; the
-  NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent` (`org.overengineer.bettacraft.api.event`) and
-  `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other mods (`features.modpackEvents`).
+  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and two KubeJS scripts; the
+  NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent`, `FeaturesChangedEvent`
+  (`org.overengineer.bettacraft.api.event`) and `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other
+  mods (`features.modpackEvents`). See "Quest chapter" below.
+
+### Quest chapter
+
+The chapter **Bettacraft** has 96 quests (since 1.36.0; 33 before) in branches from the first tank: bettas and their
+breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
+reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
+glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water
+change controller, top-off, multiblock filter with filter lines) and two optional Create quests. Tasks are Bettacraft
+advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
+
+- **Updating a pack:** copy the new `bettacraft.snbt` over the old one and run `/ftbquests reload` (or restart). The 33
+  quests of the first chapter keep their ids, tasks, dependencies and rewards, so the progress of every player stays;
+  new quests only add to them. Advancement tasks of new quests complete by themselves for players who already have the
+  advancement (FTB Quests checks them every few ticks once the quest may start), item tasks when the item is in the
+  inventory. Quests you changed in the editor are replaced by the file's version, so keep your own quests in another chapter.
+- **Switched-off features:** every quest carries FTB Quests tags for its feature switches
+  (`bettacraft_feature:<path>`, also those of the quests it depends on), `bettacraft_mod:create` and
+  `bettacraft_needs:power` (a power option of the server config). `kubejs/server_scripts/bettacraft_quests.js` hides the
+  quests whose tags are off (invisible and optional, so they never block the chapter) when the server starts, when a
+  player logs in and when the configs are reloaded; switched on again, they show again. Nothing is written into the
+  quest file. Without KubeJS the quests of switched-off features stay visible (hide them in the editor), and the Create
+  and power quests are optional anyway. `BettacraftApi.questTagsOn(tags)` and `featureEnabled(path)` serve your own scripts.
+
+<!-- quests:start -->
+A quest is shown while its switch is on and also those of the quests it depends on (the tags in the chapter).
+
+| Switch | Quests |
+|---|---|
+| always (the core of the mod) | Glass House, Water Works, The Basics, Travel Bag, Under the Tank, Cool Down, Swamp Soup |
+| `features.algae.enabled` | Clear View |
+| `features.aquaticPlants.enabled` | Green Thumb |
+| `features.bettas.enabled` | Labyrinth Fish, Moving In, Fish Flakes, Room Service, Tropical, Mirror, Mirror, Back on Fin, A Lesson Learned (optional) |
+| `features.bigTanks.bigAnimals` | Heavy Lifting, Big Fish |
+| `features.bigTanks.enabled` | Public Aquarium |
+| `features.breeding.enabled` | Bubble Architect |
+| `features.breeding.enabled` + `features.bettas.enabled` | Clutch |
+| `features.breeding.magnifier` | Under the Lens |
+| `features.co2.enabled` | Fizz |
+| `features.compat.create.contraptions` | Mobile Aquarium (needs create; optional) |
+| `features.compat.create.drive` | Shaft Power (needs create; optional) |
+| `features.corals.enabled` | Polyps |
+| `features.corals.reefDosing` | Reef Chemistry |
+| `features.decor.enabled` | Interior Design |
+| `features.equipment.aeration` | Bubbles |
+| `features.equipment.ledTiers` | Strong Light |
+| `features.equipment.lightTimer` | Sunrise, Sunset |
+| `features.equipment.moreInternalFilters` | Gentle Flow |
+| `features.equipment.multiblockFilter` | Filter Room |
+| `features.equipment.stainlessSteel` | Stainless |
+| `features.fertilizer.dosing` | Automatic Gardener |
+| `features.fertilizer.enabled` | Plant Food |
+| `features.floatingPlants.enabled` | Floating Carpet |
+| `features.foodMachine.enabled` | Food Factory |
+| `features.foodVariety.enabled` | Balanced Diet |
+| `features.foreignAnimals.enabled` | Guest from Afar |
+| `features.foreignAnimals.vanillaPets` | House Pet |
+| `features.frogs.enabled` | Tiny Frogs |
+| `features.interior.enabled` | Honey, I Shrunk Myself, Groundwork |
+| `features.invertebrates.enabled` | Cleanup Crew, Colony |
+| `features.liveFood.cultures` | Cultures |
+| `features.liveFood.enabled` | Microscopic Menu, Wriggling, Food Farm |
+| `features.liveFood.enabled` + `features.breeding.enabled` + `features.bettas.enabled` | Free Swimming, All Grown Up, Designer Fish, Dynasty |
+| `features.liveFood.pump` | Live Delivery |
+| `features.mobsInGlass.enabled` | Ship in a Bottle |
+| `features.monitors.enabled` | Control Room |
+| `features.osmosis.enabled` | Pure Water |
+| `features.pipes.autoWaterChange` | Hands Free |
+| `features.pipes.enabled` | Pipework |
+| `features.pipes.filterLines` | Filter Lines, One Filter for All |
+| `features.pipes.filterWater` | Fresh In, Waste Out |
+| `features.pipes.interiorPipes` | Through the Glass |
+| `features.pipes.pipeCovers` | Out of Sight |
+| `features.pipes.topOff` | Top It Off |
+| `features.power.enabled` | Plugged In (needs a power option; optional) |
+| `features.power.regulator` | Turn It Down |
+| `features.power.winding` | Wound Up (needs a power option; optional) |
+| `features.saltwater.enabled` | Salt Water |
+| `features.saltwater.enabled` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Clean Reef |
+| `features.saltwater.reefFish` | Clownfish |
+| `features.saltwater.seahorses` | Seahorses |
+| `features.saltwater.seahorses` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Proud Father |
+| `features.tankmates.barbsAndLoaches` | Barbs and Loaches |
+| `features.tankmates.cichlids` | Dwarf Cichlids |
+| `features.tankmates.communityFish` | Schooling Fish |
+| `features.tankmates.enabled` | Community Tank, Born Alive |
+| `features.tankmates.gouramis` | Gouramis |
+| `features.tankmates.livebearerGenetics` | Strain Breeder, Crossbreed, Strain Collection |
+| `features.tankmates.puffers` | Puffers |
+| `features.terrariums.devices` | Desert and Rainforest |
+| `features.terrariums.devices` + `features.terrariums.herps` | Leopard Gecko |
+| `features.terrariums.enabled` | Half and Half |
+| `features.terrariums.herpBreeding` | Hatchlings |
+| `features.terrariums.herps` | Dry Land |
+| `features.turtles.breeding` | Warm or Cool |
+| `features.turtles.enabled` | Turtles |
+| `features.turtles.seaTurtles` | Ocean Giant |
+| `features.waterChemistry.enabled` | Test Your Water |
+| `features.waterChemistry.enabled` + `features.bettas.enabled` | Fresh Start, Plumbing |
+<!-- quests:end -->
 - **Feature switches and presets:** every feature can be turned off on its own (`features.*` in
   `config/bettacraft-common.toml`; the server sends them to the clients). Datapacks can use the recipe and loot condition
   `{"type": "bettacraft:feature", "feature": "tankmates.cichlids"}`. `preset = SIMPLE | REALISTIC | DECOR` sets other
