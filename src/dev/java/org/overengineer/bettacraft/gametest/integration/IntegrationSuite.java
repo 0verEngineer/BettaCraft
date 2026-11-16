@@ -25,7 +25,7 @@ public final class IntegrationSuite {
     /** Every test class of the suite. */
     static final List<Class<?>> CLASSES = List.of(
             IntegrationGroupTests.class, IntegrationTransportTests.class, IntegrationModTests.class, IntegrationPowerTests.class,
-            IntegrationStorageTests.class);
+            IntegrationStorageTests.class, IntegrationTunnelsTests.class);
 
     private IntegrationSuite() {}
 

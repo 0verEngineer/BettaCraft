@@ -117,9 +117,44 @@ final class IntegrationRig {
         throw new GameTestAssertException("API changed: no method " + c.getName() + "." + name + "/" + params);
     }
 
+    /** The method of that name whose parameters take the arguments (overloads with the same count are told apart). */
+    static Method method(Class<?> c, String name, Object[] args) {
+        Method fallback = null;
+        java.util.List<Method> all = new java.util.ArrayList<>();
+        for (Class<?> k = c; k != null; k = k.getSuperclass()) all.addAll(java.util.Arrays.asList(k.getDeclaredMethods()));
+        all.addAll(java.util.Arrays.asList(c.getMethods()));
+        for (Method m : all) {
+            if (!m.getName().equals(name) || m.getParameterCount() != args.length) continue;
+            if (fallback == null) fallback = m;
+            Class<?>[] p = m.getParameterTypes();
+            boolean ok = true;
+            for (int i = 0; i < p.length && ok; i++) ok = args[i] == null ? !p[i].isPrimitive() : box(p[i]).isInstance(args[i]);
+            if (ok) {
+                m.setAccessible(true);
+                return m;
+            }
+        }
+        if (fallback == null) throw new GameTestAssertException("API changed: no method " + c.getName() + "." + name + "/" + args.length);
+        fallback.setAccessible(true);
+        return fallback;
+    }
+
+    private static Class<?> box(Class<?> c) {
+        if (!c.isPrimitive()) return c;
+        if (c == int.class) return Integer.class;
+        if (c == long.class) return Long.class;
+        if (c == boolean.class) return Boolean.class;
+        if (c == byte.class) return Byte.class;
+        if (c == short.class) return Short.class;
+        if (c == float.class) return Float.class;
+        if (c == double.class) return Double.class;
+        if (c == char.class) return Character.class;
+        return Void.class;
+    }
+
     static Object call(Object o, String name, Object... args) {
         try {
-            return method(o.getClass(), name, args.length).invoke(o, args);
+            return method(o.getClass(), name, args).invoke(o, args);
         } catch (ReflectiveOperationException e) {
             Throwable t = e.getCause() != null ? e.getCause() : e;
             throw new GameTestAssertException(o.getClass().getSimpleName() + "." + name + ": " + t);
@@ -128,7 +163,7 @@ final class IntegrationRig {
 
     static Object callStatic(String cls, String name, Object... args) {
         try {
-            return method(Class.forName(cls), name, args.length).invoke(null, args);
+            return method(Class.forName(cls), name, args).invoke(null, args);
         } catch (ReflectiveOperationException e) {
             Throwable t = e.getCause() != null ? e.getCause() : e;
             throw new GameTestAssertException(cls + "." + name + ": " + t);
