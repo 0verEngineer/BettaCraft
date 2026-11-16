@@ -188,10 +188,42 @@ public final class InteriorManager {
         int s = t.scale();
         byte[] cells = org.overengineer.bettacraft.tank.TankShape.encode(t.members(), t.min().getX(), t.min().getY(), t.min().getZ(),
                 t.sizeX(), t.sizeY(), t.sizeZ());
-        InteriorRegion r = InteriorRegions.get(tankLevel.getServer()).allocate(t.sizeX() * s, t.sizeY() * s, t.sizeZ() * s, s,
-                tankLevel.dimension(), t.anchor(), t.id(), t.owner(), cells);
+        InteriorRegions regions = InteriorRegions.get(tankLevel.getServer());
+        InteriorRegion r;
+        for (int skipped = 0; ; skipped++) {
+            r = regions.allocate(t.sizeX() * s, t.sizeY() * s, t.sizeZ() * s, s, tankLevel.dimension(), t.anchor(), t.id(), t.owner(), cells);
+            if (skipped >= MAX_SKIPPED_REGIONS || !usedBefore(tankLevel.getServer(), r)) break;
+            // M42 part b: the region list (saved data, written at autosave and shutdown) is older than the interior chunks (written
+            // whenever they unload), e.g. after a crash: this id was handed out before and its interior is still there. A new tank
+            // must not take over that old interior (its blocks, plants, chests); the id stays used.
+            LOGGER.warn("Interior region {} was used before (its chunks are still in the interior dimension; the region list is older "
+                    + "than the world, e.g. after a crash): skipping it", r.id());
+            regions.remove(r.id());
+        }
         t.setRegionId(r.id());
         return r;
+    }
+
+    /** Ids tried at most for one new region before the next one is taken anyway (a whole row of old interiors). */
+    private static final int MAX_SKIPPED_REGIONS = 4096;
+
+    /**
+     * M42 part b: whether the interior of this freshly allocated region already exists: its first floor block is there (its chunk
+     * loaded), or its chunk was saved before. Regions are 2048 blocks apart, so the chunk of a region's corner is never made for
+     * another region.
+     */
+    static boolean usedBefore(MinecraftServer server, InteriorRegion r) {
+        ServerLevel in = interiorLevel(server);
+        if (in == null) return false;
+        net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(r.originX() >> 4, r.originZ() >> 4);
+        net.minecraft.world.level.chunk.LevelChunk now = in.getChunkSource().getChunkNow(cp.x, cp.z);
+        if (now != null) return !now.getBlockState(new BlockPos(r.originX(), InteriorRegion.FLOOR_Y, r.originZ())).isAir();
+        try {
+            return in.getChunkSource().chunkMap.read(cp).join().isPresent();
+        } catch (RuntimeException e) {
+            LOGGER.debug("Could not read the interior chunk {} of region {}", cp, r.id(), e);
+            return false;
+        }
     }
 
     /** Chunk x range [0] .. [1] and z range [2] .. [3] (inclusive) touched by the region's shell. */

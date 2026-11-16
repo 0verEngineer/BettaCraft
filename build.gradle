@@ -1294,8 +1294,15 @@ tasks.named('check').configure { dependsOn 'verifyReleaseJar' }
 // workflow integration.yml. The groups' jars come from local folders (copied from an ATM10 instance), see the README.
 // M42: a GameTest server that fails to start (a mod missing a dependency, a crash while loading) ends with exit code 0, and
 // the task looked green; the run counts only when the server reported its result line
+// M42 part b: the GameTest server never deleted its world, so every run added the region files of its new random test positions
+// (over and interior dimension) to the last runs': run/gametest/world had grown to 7,000 + 150,000 region files and filled the
+// disk. Each run starts with a fresh world now.
 tasks.matching { it.name == 'runGameTestServer' }.configureEach { t ->
     def log = file(gameTestDir + '/logs/latest.log')
+    def world = file(gameTestDir + '/world')
+    t.doFirst {
+        if (world.exists() && !world.deleteDir()) throw new GradleException("cannot delete the old GameTest world ${world}")
+    }
     t.doLast {
         def text = log.exists() ? log.getText('UTF-8') : ''
         if (!(text =~ /All \d+ required tests passed/)) {
