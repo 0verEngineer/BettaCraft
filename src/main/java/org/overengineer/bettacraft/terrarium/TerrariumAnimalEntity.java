@@ -184,6 +184,8 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     public void travel(Vec3 input) {
         if (tank != null || entityData.get(DATA_IN_TANK)) {
             setDeltaMovement(Vec3.ZERO);
+            // M44: the legs still move with the walker's steps (the client animates them; up a wall the climb counts too)
+            if (level().isClientSide) calculateEntityAnimation(herpPose().wall() != null);
             return;
         }
         super.travel(input);

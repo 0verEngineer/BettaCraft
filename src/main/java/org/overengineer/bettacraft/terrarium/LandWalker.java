@@ -337,6 +337,7 @@ public final class LandWalker {
         }
         pose = show;
         highest = Math.max(highest, (int) Math.round((ny - t.min().getY()) * 16));
+        ground(mob, newLift == 0 && show.wall() == null && ny <= g + GROUND_EPS); // M44: standing, not hopping, climbing or swimming
         move(mob, pos, nx, ny + newLift, nz, newLift);
     }
 
@@ -374,6 +375,7 @@ public final class LandWalker {
             return;
         }
         highest = Math.max(highest, (int) Math.round((ny - t.min().getY()) * 16));
+        ground(mob, ny <= g + GROUND_EPS); // M44: a flier only on its perch
         move(mob, pos, nx, ny, nz, 0);
     }
 
@@ -423,6 +425,7 @@ public final class LandWalker {
             if (ny <= g + 1e-3) {
                 wall = null;
                 pose = Pose.NONE;
+                ground(mob, true);
                 move(mob, pos, pos.x, g, pos.z, 0);
                 return;
             }
@@ -434,7 +437,20 @@ public final class LandWalker {
         mob.setYRot(yaw);
         mob.yBodyRot = yaw;
         mob.yHeadRot = yaw;
+        ground(mob, false);
         move(mob, pos, pos.x, ny, pos.z, 0);
+    }
+
+    /** M44: how close above the ground the animal counts as standing on it. */
+    private static final double GROUND_EPS = 0.02;
+
+    /**
+     * M44: the walker places the animal with {@code setPos}, never with {@code move()}, so vanilla never sets {@code onGround}
+     * (it stayed false: the chicken flapped its wings all the time). Set while it stands, not while it hops, climbs, swims
+     * or flies; the client gets it with the position packets.
+     */
+    private static void ground(Mob mob, boolean on) {
+        if (mob.onGround() != on) mob.setOnGround(on);
     }
 
     private void move(Mob mob, Vec3 pos, double nx, double ny, double nz, double newLift) {

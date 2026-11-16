@@ -35,6 +35,8 @@ public final class ClientConfig {
     public static final ModConfigSpec.BooleanValue AIR_PUMP_SOUND, FLOW_PUMP_SOUND;
     /** M32 part d: waypoints at tanks with a monitor alarm on this player's map (JourneyMap), with features.alarmWaypoints. */
     public static final ModConfigSpec.BooleanValue ALARM_WAYPOINTS;
+    /** M44: the walk animation of mobs in tanks: "auto", a factor, 0 = vanilla ({@code terrarium.WalkAnimation}). */
+    public static final ModConfigSpec.ConfigValue<String> WALK_ANIMATION_BOOST;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -58,6 +60,10 @@ public final class ClientConfig {
                 .defineInRange("signScale", 1.0, 0.5, 2.0);
         LIGHT_TINT = b.comment("How strongly coloured aquarium lights tint the water of their tank: 0 = not at all (the light colour only shows at the lamp), 1 = water in the light colour")
                 .defineInRange("lightTint", 0.6, 0.0, 1.0);
+        WALK_ANIMATION_BOOST = b.comment("Leg movement of mobs and animals walking in tanks and terraria: they walk slowly there and the mobs in glass are shrunk, "
+                + "so vanilla barely moves their legs (they glide). auto = matched to their size (1.5 for shrunk mobs, 3 for animals in real size), "
+                + "a number from 0.1 to 10 = that factor for all, 0 = like vanilla")
+                .define("walkAnimationBoost", "auto", o -> o instanceof String str && org.overengineer.bettacraft.terrarium.WalkAnimation.parse(str) != null);
         LOG_MINIATURE_STATS = b.comment("Write mesh build and sync statistics of tank miniatures to the log (for debugging)").define("logMiniatureStats", false);
         b.pop();
         b.comment("On-screen hints").push("hud");
@@ -88,6 +94,20 @@ public final class ClientConfig {
 
     public static boolean swayingPlants() {
         return CommonConfig.getOr(SWAYING_PLANTS, true);
+    }
+
+    private static String boostText;
+    private static float boostValue = org.overengineer.bettacraft.terrarium.WalkAnimation.AUTO;
+
+    /** M44: the walk animation setting ({@code WalkAnimation.AUTO}, a factor, 0 = vanilla); auto while the config is not loaded. */
+    public static float walkAnimationBoost() {
+        String t = CommonConfig.getOr(WALK_ANIMATION_BOOST, "auto");
+        if (!t.equals(boostText)) {
+            Float v = org.overengineer.bettacraft.terrarium.WalkAnimation.parse(t);
+            boostValue = v == null ? org.overengineer.bettacraft.terrarium.WalkAnimation.AUTO : v;
+            boostText = t;
+        }
+        return boostValue;
     }
 
     public static boolean alarmWaypoints() {
