@@ -12,8 +12,6 @@
 // $Bcq so they never clash with those of bettacraft_events.js.)
 
 const $BcqQuestFile = Java.loadClass('dev.ftb.mods.ftbquests.quest.ServerQuestFile')
-const $BcqEditResponse = Java.loadClass('dev.ftb.mods.ftbquests.net.EditObjectResponseMessage')
-const $BcqPackets = Java.loadClass('net.neoforged.neoforge.network.PacketDistributor')
 const $BcqCompoundTag = Java.loadClass('net.minecraft.nbt.CompoundTag')
 const $BcqApi = Java.loadClass('org.overengineer.bettacraft.api.BettacraftApi')
 const $BcqFeaturesChanged = Java.loadClass('org.overengineer.bettacraft.api.event.FeaturesChangedEvent')
@@ -40,7 +38,7 @@ function bettacraftShowQuests(server) {
       nbt.putBoolean('optional', optional)
       quest.readData(nbt, registries)
       quest.clearCachedData()
-      if (server.getPlayerCount() > 0) $BcqPackets.sendToAllPlayers(new $BcqEditResponse(quest))
+      if (server.getPlayerCount() > 0) $BcqApi.sendQuestEdit(quest) // to the players online, like the quest editor
       changed++
     })
   })

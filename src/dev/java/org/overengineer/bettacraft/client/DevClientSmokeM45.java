@@ -43,6 +43,7 @@ final class DevClientSmokeM45 {
             }
         }));
         then(60, this::checkServer);
+        then(200, () -> mc.getToasts().clear()); // the advancement toasts
         then(5, () -> language("en_us"));
         then(10, this::openChapter);
         then(40, () -> shot("chapter_en"));
@@ -118,7 +119,8 @@ final class DevClientSmokeM45 {
                 return;
             }
             call(screen, "selectChapter", chapter);
-            for (int i = 0; i < 6; i++) call(screen, "addZoom", -1.0);
+            for (int i = 0; i < 2; i++) call(screen, "addZoom", -1.0);
+            org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), 2, 2); // no tooltip over the chapter
             LOGGER.info("[smoketest] M45 quest book open: {} zoom {}", mc.screen == null ? "NONE (FAIL)" : mc.screen.getClass().getSimpleName(), call(screen, "getZoom"));
         } catch (ReflectiveOperationException | LinkageError e) {
             LOGGER.error("[smoketest] M45 quest book (FAIL)", e);

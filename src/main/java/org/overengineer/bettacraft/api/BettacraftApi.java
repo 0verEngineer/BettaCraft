@@ -85,6 +85,28 @@ public final class BettacraftApi {
     }
 
     /**
+     * M45: sends an FTB Quests quest (or any quest object) that a script changed on the server to every player, the way FTB
+     * Quests' editor does ({@code EditObjectResponseMessage}); scripts cannot pick that constructor themselves (it is
+     * overloaded). By reflection, no dependency on FTB Quests; returns false without it.
+     */
+    public static boolean sendQuestEdit(Object questObject) {
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server == null) return false;
+        try {
+            Class<?> base = Class.forName("dev.ftb.mods.ftbquests.quest.QuestObjectBase");
+            Object msg = Class.forName("dev.ftb.mods.ftbquests.net.EditObjectResponseMessage").getConstructor(base).newInstance(questObject);
+            // FTB Quests' payloads go through Architectury's network (its own wrapper), not NeoForge's PacketDistributor
+            Class.forName("dev.architectury.networking.NetworkManager")
+                    .getMethod("sendToPlayers", Iterable.class, net.minecraft.network.protocol.common.custom.CustomPacketPayload.class)
+                    .invoke(null, server.getPlayerList().getPlayers(), msg);
+            return true;
+        } catch (ReflectiveOperationException | ClassCastException | LinkageError e) {
+            com.mojang.logging.LogUtils.getLogger().warn("Could not send the changed quest {}: {}", questObject, e.toString());
+            return false;
+        }
+    }
+
+    /**
      * M45: whether a quest with these FTB Quests tags fits this server: every {@code bettacraft_feature:<path>} is on, every
      * {@code bettacraft_mod:<modid>} is loaded and, with {@code bettacraft_needs:power}, a device needs power. Other tags are
      * ignored. The example script {@code bettacraft_quests.js} hides the quests of the Bettacraft chapter where this is false.
