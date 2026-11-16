@@ -254,6 +254,7 @@ public final class ForeignHabits {
         GlowFields f = fields(m);
         if (f.glow() == null) return false;
         m.getEntityData().set(f.glow(), FLASH_TICKS);
+        if (f.start() != null) m.getEntityData().set(f.start(), m.tickCount); // the glow animation starts now
         return true;
     }
 }

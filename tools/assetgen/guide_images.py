@@ -852,6 +852,22 @@ def m39a(out_en: Path) -> None:
             print("missing", src)
 
 
+# M39 part b scene (DevClientSmokeM39b, -Psmoketestm39b -Paquatic): insects and crawlers, small mammals and birds of other mods
+M39B_WORLD = {"foreign_insects": ("bettacraft_m39b_insects", (130, 250, 1170, 570)),
+              "foreign_mammals": ("bettacraft_m39b_mammals", (90, 270, 1190, 550))}
+
+
+def m39b(out_en: Path) -> None:
+    for name, (shot, box) in M39B_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -866,6 +882,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m39b"]:
+        m39b(out_en)
+        return 0
     if sys.argv[1:] == ["m39a"]:
         m39a(out_en)
         return 0

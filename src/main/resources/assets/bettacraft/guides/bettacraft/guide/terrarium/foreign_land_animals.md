@@ -74,6 +74,10 @@ Bettacraft also brings profiles for the insects and crawlers, the mammals and th
 and Living Things: every one that fits a tank by its size. The [list of the animals of other mods](../settings/foreign_animal_list.md)
 names each with its tank, length and food.
 
+![Caterpillar, butterflies, fireflies, ants, a woodlouse, snails, a stag beetle, a stick bug, a ladybug, a jumping spider and an acorn weevil in a closed terrarium](../images/foreign_insects.png)
+
+![Hedgehog, mole, rat, ferret, red panda, koala, monkey, raccoon, a songbird, a shima enaga and an owl in a closed terrarium](../images/foreign_mammals.png)
+
 | Group | Animals | Tank | Breeding |
 |---|---|---|---|
 | Insects | caterpillar, butterfly, firefly, ant (Naturalist); stag beetle, stick bug, ladybug, acorn weevil (Critters and Companions) | dry terrarium (the firefly a paludarium too) | none (their own life is left to their mod) |

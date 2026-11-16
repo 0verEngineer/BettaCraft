@@ -75,6 +75,10 @@ Bettacraft bringt auch Profile für die Insekten und Krabbeltiere, die Säugetie
 Companions und Living Things mit: für jedes, das von der Größe her in ein Becken passt. Die
 [Liste der Tiere anderer Mods](../settings/foreign_animal_list.md) nennt jedes mit Becken, Länge und Futter.
 
+![Raupe, Schmetterlinge, Glühwürmchen, Ameisen, eine Assel, Schnecken, ein Hirschkäfer, eine Stabschrecke, ein Marienkäfer, eine Springspinne und ein Eichelbohrer in einem geschlossenen Terrarium](../images/foreign_insects.png)
+
+![Igel, Maulwurf, Ratte, Frettchen, Roter Panda, Koala, Affe, Waschbär, ein Singvogel, eine Shima Enaga und eine Eule in einem geschlossenen Terrarium](../images/foreign_mammals.png)
+
 | Gruppe | Tiere | Becken | Zucht |
 |---|---|---|---|
 | Insekten | Raupe, Schmetterling, Glühwürmchen, Ameise (Naturalist); Hirschkäfer, Stabschrecke, Marienkäfer, Eichelbohrer (Critters and Companions) | trockenes Terrarium (das Glühwürmchen auch Paludarium) | keine (ihr eigenes Leben bleibt ihrer Mod) |

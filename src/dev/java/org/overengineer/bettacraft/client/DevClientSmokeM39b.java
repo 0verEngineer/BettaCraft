@@ -80,7 +80,7 @@ final class DevClientSmokeM39b {
         then(80, () -> server(p -> fireflies.forEach(f -> {
             if (f instanceof Mob m) ForeignHabits.flashNow(m);
         })));
-        then(8, () -> shot("fireflies"));
+        then(3, () -> shot("fireflies"));
         then(1, () -> server(p -> p.serverLevel().setDayTime(dayTime)));
         then(1, () -> mc.options.hideGui = false);
     }
