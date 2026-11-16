@@ -63,7 +63,7 @@ final class DevClientSmokeM41 {
         then(100, () -> shot("drive"));
         then(1, () -> look(base.getX() - 1.6, base.getY() + 1.0, base.getZ() - 1.4, -30F, 14F));
         then(40, () -> shot("adapter"));
-        then(1, () -> look(base.getX() + 3.4, base.getY() + 0.2, base.getZ() - 1.6, 34F, 16F));
+        then(1, () -> look(base.getX() + 3.0, base.getY() + 0.3, base.getZ() - 0.8, 38F, 26F));
         then(40, () -> shot("cabinet"));
         // Create's goggles on the adapter: the overlay needs the GUI
         then(1, () -> mc.options.hideGui = false);

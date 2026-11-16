@@ -913,6 +913,24 @@ def m40(out_en: Path) -> None:
         print("missing", src)
 
 
+# M41 scene (DevClientSmokeM41, -Pcreate -Psmoketestm41): a tank on Create's rotation through a drive adapter on its wall and a
+# shaft on the cabinet under it; the adapter close up with Create's goggles, the cabinet's flange
+M41_WORLD = {"drive_adapter": ("bettacraft_m41_drive", (0, 120, 1280, 840)),
+             "drive_adapter_goggles": ("bettacraft_m41_goggles", (0, 0, 1280, 960)),
+             "cabinet_drive": ("bettacraft_m41_cabinet", (160, 120, 1120, 840))}
+
+
+def m41(out_en: Path) -> None:
+    for name, (shot, box) in M41_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -927,6 +945,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m41"]:
+        m41(out_en)
+        return 0
     if sys.argv[1:] == ["m40"]:
         m40(out_en)
         return 0

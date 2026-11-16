@@ -1,6 +1,6 @@
 """M41 assets: the drive adapter (Create's rotation for the tank buffer) and the flange of the Create shaft on a cabinet.
 
-A Create-like workshop look made from scratch: a grey stone casing in a dark wooden frame, brass bearing ring, collar and
+A Create-like workshop look made from scratch: a grey stone casing in a dark wooden frame, brass bearing ring and
 mounting plate with bolts, a grey alloy shaft with a groove. Deterministic pixel grids and procedural faces, no pixels of
 Create or vanilla.
 
@@ -108,20 +108,6 @@ def shaft():
     return _img(px)
 
 
-def collar():
-    """Brass collar on the shaft with a dark set screw."""
-    r = _rng(4106)
-
-    def px(x, y):
-        v = _rgb(BRASS) * (0.92 + 0.08 * r.random())
-        if y in (0, 15):
-            v = _rgb(BRASS_DARK)
-        if 6 <= x <= 9 and 6 <= y <= 9:
-            v = _rgb("#3a3630")
-        return v
-    return _img(px)
-
-
 def coupling():
     """The flange of the Create shaft on a cabinet: dark iron with a brass hub face and six bolts."""
     r = _rng(4107)
@@ -145,7 +131,7 @@ def coupling():
 def write_all():
     out = []
     blocks = {"drive_adapter_casing": casing(), "drive_adapter_front": front(), "drive_adapter_plate": plate(),
-              "drive_adapter_ring": ring(), "drive_adapter_shaft": shaft(), "drive_adapter_collar": collar(),
+              "drive_adapter_ring": ring(), "drive_adapter_shaft": shaft(),
               "drive_coupling": coupling()}
     for name, img in blocks.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))

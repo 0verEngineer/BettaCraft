@@ -41,9 +41,8 @@ public final class DriveAdapterRenderer implements BlockEntityRenderer<DriveAdap
         ps.translate(-0.5, -0.5, -0.5);
         DriveRender.face(ps, facing);
         var vc = buffers.getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
-        // the stub from the front face to the bearing (model north: z 0 .. 4), with a collar in the bearing
+        // the stub from the front face into the bearing ring (model north: z 0 .. 4)
         DriveRender.box(ps, vc, DriveRender.sprite("drive_adapter_shaft"), 6, 6, 0, 10, 10, 4, light);
-        DriveRender.box(ps, vc, DriveRender.sprite("drive_adapter_collar"), 5.5F, 5.5F, 2.5F, 10.5F, 10.5F, 3.5F, light);
         ps.popPose();
     }
 }

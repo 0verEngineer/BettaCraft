@@ -33,7 +33,8 @@ final class DataGenM41 {
             f.texture("#plate");
             if (d == Direction.SOUTH) f.cullface(d);
         }).end();
-        m.element().from(2, 2, 5).to(14, 14, 14).allFaces((d, f) -> f.texture(d == Direction.NORTH ? "#front" : "#casing")).end();
+        // the casing shows its whole texture (wooden frame) on every face
+        m.element().from(2, 2, 5).to(14, 14, 14).allFaces((d, f) -> f.texture(d == Direction.NORTH ? "#front" : "#casing").uvs(0, 0, 16, 16)).end();
         m.element().from(5, 5, 3).to(11, 11, 5).allFaces((d, f) -> f.texture("#ring")).end();
     }
 

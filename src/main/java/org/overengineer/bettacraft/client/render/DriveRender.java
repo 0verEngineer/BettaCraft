@@ -44,7 +44,9 @@ public final class DriveRender {
     /** The flange where the shaft goes into a cabinet (on its drive side), a ring around the shaft hole. */
     public static void cabinetCoupling(CabinetBlockEntity cab, PoseStack ps, MultiBufferSource buffers, int light) {
         Direction face = cab.driveFace();
-        if (face == null) return;
+        if (face == null || cab.getLevel() == null) return;
+        // the light in front of the face (the cabinet's own block is dark inside)
+        light = net.minecraft.client.renderer.LevelRenderer.getLightColor(cab.getLevel(), cab.getBlockPos().relative(face));
         VertexConsumer vc = buffers.getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
         TextureAtlasSprite s = sprite("drive_coupling");
         ps.pushPose();
