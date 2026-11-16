@@ -479,6 +479,86 @@ public final class ZooAnimalTests {
         return ZooSuite.row(c.mod(), c.id(), c.flags(), c.size(), s.in.trim(), after.toString(), act.toString());
     }
 
+    // ------------------------------------------------------------------ breeding control
+
+    /**
+     * The control for "new ones near 0" of the land and water tables: the same pairs, in love, with the suppression of their own
+     * breeding switched off (features.foreignAnimals.suppressOwnBreeding): which of them breed in our tanks by their own AI. Own
+     * batch (the switch); the table {@code zoo/breeding.tsv} lists both. A baby with the switch on is a violation.
+     */
+    @GameTest(templateNamespace = BettaCraft.MOD_ID, template = ZooSuite.EMPTY, batch = "bettacraft_zoo_breeding", timeoutTicks = LIVE_TICKS * 2 + 400)
+    public static void zooOwnBreedingWithAndWithoutSuppression(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        List<Cand> pairs = new ArrayList<>();
+        for (Cand c : waterAnimals(level)) if (c.flags().contains("Animal")) pairs.add(c);
+        for (Cand c : landAnimals(level)) if (c.flags().contains("Animal") && !c.id().contains("familiar") && !c.id().contains("summon")) pairs.add(c);
+        if (pairs.size() > 48) pairs = pairs.subList(0, 48);
+        List<Cand> mine = pairs;
+        List<? extends String> allowBefore = ServerConfig.TERRA_BOX_ALLOW.get();
+        boolean suppressBefore = org.overengineer.bettacraft.config.Features.own(org.overengineer.bettacraft.config.Feature.SUPPRESS_FOREIGN_BREEDING);
+        Runnable restore = () -> {
+            ServerConfig.TERRA_BOX_ALLOW.set(allowBefore);
+            org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.SUPPRESS_FOREIGN_BREEDING, suppressBefore);
+        };
+        try {
+            ServerConfig.TERRA_BOX_ALLOW.set(mine.stream().map(Cand::id).toList());
+            List<String> violations = new ArrayList<>();
+            Map<Cand, String> on = new LinkedHashMap<>(), off = new LinkedHashMap<>();
+            breedRound(h, mine, 0, true, on, violations, () -> breedRound(h, mine, 24, false, off, violations, () -> {
+                try {
+                    List<List<String>> rows = new ArrayList<>();
+                    for (Cand c : mine) rows.add(ZooSuite.row(c.mod(), c.id(), c.flags(), on.get(c), off.get(c)));
+                    ZooSuite.table("breeding", List.of("mod", "entity", "flags", "suppression on: young", "suppression off: young"), rows);
+                    ZooSuite.verdict("zoo breeding", violations);
+                    h.succeed();
+                } finally {
+                    restore.run();
+                }
+            }));
+        } catch (RuntimeException ex) {
+            restore.run();
+            throw ex;
+        }
+    }
+
+    /** Pairs in love in a grid of tanks (slots from {@code first}) for LIVE_TICKS, the young counted; then {@code next}. */
+    private static void breedRound(GameTestHelper h, List<Cand> pairs, int first, boolean suppress, Map<Cand, String> out, List<String> violations, Runnable next) {
+        ServerLevel level = h.getLevel();
+        org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.SUPPRESS_FOREIGN_BREEDING, suppress);
+        List<Slot> slots = new ArrayList<>();
+        for (int i = 0; i < pairs.size() && i < 24; i++) {
+            Cand c = pairs.get(i);
+            Slot s = new Slot(c);
+            slots.add(s);
+            int k = first + i, x = 1 + 3 * (k % 10), z = 1 + 3 * (k / 10);
+            boolean land = !c.water();
+            try {
+                s.tank = land ? ZooAccess.terrarium(h, x, z, 2, 2, 2) : ZooAccess.waterTank(h, x, z, 2, 2, 2, 25F);
+                for (int n = 0; n < 2; n++) putIn(h, s, land, false);
+                for (UUID u : s.put) if (level.getEntity(u) instanceof Animal a) {
+                    a.setAge(0);
+                    a.setInLove(null);
+                }
+            } catch (Throwable t) {
+                s.in += " EXCEPTION " + ZooSuite.brief(t);
+            }
+        }
+        h.runAfterDelay(LIVE_TICKS, () -> {
+            for (Slot s : slots) {
+                if (s.tank == null || s.put.size() < 2) {
+                    out.put(s.cand, "not two in (" + s.in.trim() + ")");
+                    continue;
+                }
+                Set<UUID> mine = new HashSet<>(s.put);
+                List<Entity> young = near(level, s.tank.getTank(), s.cand.type()).stream().filter(e -> !mine.contains(e.getUUID())).toList();
+                out.put(s.cand, String.valueOf(young.size()));
+                if (suppress && !young.isEmpty()) violations.add(s.cand.id() + ": " + young.size() + " young of its own breeding with the suppression on");
+                for (Entity e : young) e.discard();
+            }
+            next.run();
+        });
+    }
+
     // ------------------------------------------------------------------ paludarium
 
     /** The water animals without a profile in one sea water and one freshwater paludarium (12 x 3 x 8, a third land). */
