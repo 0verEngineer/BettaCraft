@@ -4,6 +4,25 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.33.2-beta.1] - 2026-11-17
+
+Release material: new pictures and animations for the README and the CurseForge page, and the mod page in English only.
+No change to the game.
+
+### Changed
+- **README and mod page media:** new pictures and animations, all taken in the game in the showcase world at a fixed time
+  of day and weather, each still also with Complementary Reimagined: a betta flaring, a plant growth time lapse, an Amazon
+  tank with discus, a shrimp tank with every Neocaridina colour, terraria and a paludarium, Minecraft pets, mobs in glass,
+  the multiblock filter for several tanks and an overview of the showcase; the aquarium room, the planted and reef tanks,
+  the varieties, the interior and the menus taken again (bettas at their normal size since 1.28).
+- The CurseForge description (`docs/description.md`) is English only and follows the feature sections of the README
+  (bettas, tanks and interior, plants, small animals, tankmates, salt water, terraria, technology, compatibility, FAQ,
+  acknowledgements).
+- The CurseForge upload of the release workflow names Fintastic, Aquaculture 2 and Naturalist as optional dependencies too
+  (every slug checked on CurseForge).
+- Developers: `gradlew runClient -Psmoketestm43` makes the media in a fresh copy of the showcase world (after `gradlew
+  buildShowcase`; add `-Pshaders` for the shader stills), then `py tools/assetgen/readme_media.py`.
+
 ## [1.33.1-beta.1] - 2026-11-17
 
 A big test round with every integrated mod, the animals of mods without a profile and complete breeding runs over several
