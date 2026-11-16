@@ -75,7 +75,7 @@ public final class IntegrationStorageTests {
     /** AE2: a pattern provider pushes 4 iron, coal and quartz into the crucible over a magma block; out come 3 stainless steel. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_ae2_crafting", timeoutTicks = 900)
     public static void ae2PatternProviderFeedsTheCrucible(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("ae2");
+        if (IntegrationSuite.lacks(h, "ae2")) return;
         h.setBlock(new BlockPos(2, 1, 2), Blocks.MAGMA_BLOCK);
         h.setBlock(new BlockPos(2, 2, 2), ModBlocks.CRUCIBLE.get().defaultBlockState());
         CrucibleBlockEntity c = (CrucibleBlockEntity) be(h, new BlockPos(2, 2, 2));
@@ -94,7 +94,7 @@ public final class IntegrationStorageTests {
     /** Refined Storage: the autocrafter facing the food maker accepts the ingredients of a crafting step and pushes them in. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_rs_crafting", timeoutTicks = 900)
     public static void refinedStorageAutocrafterFeedsTheFoodMaker(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("refinedstorage");
+        if (IntegrationSuite.lacks(h, "refinedstorage")) return;
         if (FoodMakerBlockEntity.powered()) throw new GameTestAssertException("the spring of the food maker needs the power options off");
         FoodMakerBlockEntity m = PlumbingGameTestsAccess.foodMaker(h, new BlockPos(2, 2, 2));
         h.setBlock(new BlockPos(3, 2, 2), with(block("refinedstorage:autocrafter").defaultBlockState(), "direction", "west"));
@@ -127,7 +127,7 @@ public final class IntegrationStorageTests {
      */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_ae2_media", timeoutTicks = 900)
     public static void ae2BusesChangeTheFilterMedia(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("ae2");
+        if (IntegrationSuite.lacks(h, "ae2")) return;
         ServerLevel level = h.getLevel();
         h.setBlock(new BlockPos(2, 2, 2), ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
         var chamber = (org.overengineer.bettacraft.filter.FilterChamberBlockEntity) be(h, new BlockPos(2, 2, 2));

@@ -43,8 +43,13 @@ configurations {
 // LaserIO, Modular Routers, Industrial Foregoing and their libraries, from ATM10AA). The GameTest server then runs in a
 // directory of its own (run/gametest-integration) and also registers the integration-only GameTests of
 // gametest/integration (system property bettacraft.integration); the normal suite never contains them.
-def integration = project.hasProperty('integration') || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
+// -PintegrationPartial (CI, .github/workflows/integration.yml): only the jars with a pinned official download are there
+// (tools/ci/integration-mods.json); the integration-only tests whose mods are missing then pass with a log line.
+def integration = project.hasProperty('integration') || project.hasProperty('integrationPartial') ||
+        gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
 def withGroup = { String name -> project.hasProperty(name) || integration }
+// a group whose mods the run requires (biomes, aquatic: some tests then insist on them); not in a partial CI run
+def requireGroup = { String name -> project.hasProperty(name) || (integration && !project.hasProperty('integrationPartial')) }
 def gameTestDir = integration ? 'run/gametest-integration' : 'run/gametest'
 
 // Minecraft 1.21.1 ships Java 21. The foojay resolver (settings.gradle) downloads it if missing.
@@ -507,10 +512,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = project.file(gameTestDir)
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-            if (withGroup('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1
-            if (withGroup('aquatic')) systemProperty 'bettacraft.aquaticmods', 'true' // M38: the ForeignPlantGameTests then need Alex's Caves
+            if (requireGroup('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1
+            if (requireGroup('aquatic')) systemProperty 'bettacraft.aquaticmods', 'true' // M38: the ForeignPlantGameTests then need Alex's Caves
             // M42: the integration-only GameTests (gametest/integration) are registered, every mod of the group is required
             if (integration) systemProperty 'bettacraft.integration', 'true'
+            if (project.hasProperty('integrationPartial')) systemProperty 'bettacraft.integration.partial', 'true'
             // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case) starts with a prefix
             if (project.hasProperty('gametests')) systemProperty 'bettacraft.gametest.only', project.property('gametests')
         }

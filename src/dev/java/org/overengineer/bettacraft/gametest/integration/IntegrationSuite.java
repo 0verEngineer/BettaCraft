@@ -2,6 +2,7 @@ package org.overengineer.bettacraft.gametest.integration;
 
 import java.util.List;
 import net.minecraft.gametest.framework.GameTestAssertException;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -13,7 +14,7 @@ import org.overengineer.bettacraft.BettaCraft;
  * GameTest run); they are registered here only when the system property {@code bettacraft.integration} is set, which
  * {@code gradlew integrationTests} (or {@code runGameTestServer -Pintegration}) does together with every dev group of the
  * mods we integrate. Unlike the tests of the normal suite they do not pass silently without their mod: a missing mod of the
- * group fails ({@link #require}), so a run with an incomplete group cannot look green.
+ * group fails ({@link #lacks}), so a run with an incomplete group cannot look green (except a partial CI run).
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class IntegrationSuite {
@@ -36,10 +37,22 @@ public final class IntegrationSuite {
         LOGGER.info("[integration] registered {} integration test classes", CLASSES.size());
     }
 
-    /** Fails the test when one of the mods is not loaded (the group is incomplete). */
-    public static void require(String... mods) {
-        for (String m : mods) {
-            if (!ModList.get().isLoaded(m)) throw new GameTestAssertException("the integration group lacks the mod " + m + " (see run/*-mods)");
-        }
+    /**
+     * CI runs ({@code -PintegrationPartial}) have only the mods with a pinned official download (tools/ci/integration-mods.json):
+     * a test whose mods are missing then passes with a log line instead of failing.
+     */
+    public static final boolean PARTIAL = Boolean.getBoolean("bettacraft.integration.partial");
+
+    /**
+     * Whether the test lacks one of its mods: then it fails (the group is incomplete), or in a partial run it passes at once and
+     * the caller returns.
+     */
+    public static boolean lacks(GameTestHelper h, String... mods) {
+        List<String> missing = java.util.Arrays.stream(mods).filter(m -> !ModList.get().isLoaded(m)).toList();
+        if (missing.isEmpty()) return false;
+        if (!PARTIAL) throw new GameTestAssertException("the integration group lacks " + missing + " (see run/*-mods)");
+        LOGGER.warn("[integration] partial run: skipped, lacks {}", missing);
+        h.succeed();
+        return true;
     }
 }

@@ -1,0 +1,76 @@
+# Optional integration suite (M42), only by hand: Actions > Integration tests > Run workflow.
+#
+# Runs gradlew integrationTests -PintegrationPartial: the whole GameTest suite plus the integration-only GameTests
+# (gametest/integration) with the integrated mods that have an open licence and a pinned Modrinth download
+# (tools/ci/integration-mods.json, fetched and SHA-512 checked by tools/ci/fetch_mods.py). The other mods of the local
+# integration group (CurseForge-only or closed licences) are missing here, so their integration-only tests pass with a log
+# line; the complete run (every mod, about 6 minutes) is local: gradlew integrationTests --no-configuration-cache with the
+# run/*-mods folders filled from an ATM10 instance (see the README, "Building from source").
+name: Integration tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+  GRADLE_ARGS: --no-configuration-cache --stacktrace --console=plain
+
+jobs:
+  integration:
+    name: GameTests with the integrated mods (partial)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      - name: Fetch pinned optional mods (Modrinth, SHA-512 checked)
+        run: python3 tools/ci/fetch_mods.py tools/ci/integration-mods.json
+
+      - name: Integration GameTests
+        run: |
+          chmod +x gradlew
+          ./gradlew integrationTests -PintegrationPartial $GRADLE_ARGS 2>&1 | tee integration.log
+
+      - name: Failed GameTests
+        if: failure() && hashFiles('integration.log') != ''
+        run: |
+          grep -E "LogTestReporter\]: .* failed at " integration.log | sed -E 's/^.*LogTestReporter\]: /::error title=GameTest failed::/' || true
+
+      - name: Skipped integration tests (mods not in CI)
+        if: always() && hashFiles('integration.log') != ''
+        run: |
+          grep -E "\[integration\] partial run" integration.log | sed -E 's/^.*\[integration\] /::notice title=Integration test skipped::/' | sort | uniq -c || true
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logs-integration
+          path: |
+            run/gametest-integration/logs/
+            integration.log
+          retention-days: 7
+          if-no-files-found: ignore

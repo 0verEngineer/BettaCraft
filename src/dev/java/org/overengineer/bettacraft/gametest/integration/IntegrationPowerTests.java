@@ -40,7 +40,7 @@ public final class IntegrationPowerTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_flux", timeoutTicks = 300)
     public static void fluxNetworkPowersATank(GameTestHelper h) {
-        IntegrationSuite.require("fluxnetworks", "powah");
+        if (IntegrationSuite.lacks(h, "fluxnetworks", "powah")) return;
         Runnable restore = powerOn();
         TankBlockEntity t;
         try {
@@ -64,7 +64,7 @@ public final class IntegrationPowerTests {
     /** Mekanism: a universal cable from a creative cell (it pushes) into a tank block. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_mekanism_power", timeoutTicks = 300)
     public static void mekanismUniversalCablePowersATank(GameTestHelper h) {
-        IntegrationSuite.require("mekanism", "powah");
+        if (IntegrationSuite.lacks(h, "mekanism", "powah")) return;
         Runnable restore = powerOn();
         TankBlockEntity t;
         try {
@@ -82,7 +82,7 @@ public final class IntegrationPowerTests {
     /** Mekanism: a logistical transporter pulling from a chest pushes the pellets into a feeder (the dirt stays). */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_mekanism", timeoutTicks = 900)
     public static void mekanismTransporterFillsAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("mekanism");
+        if (IntegrationSuite.lacks(h, "mekanism")) return;
         ChestBlockEntity c = chest(h, new BlockPos(1, 2, 2), new ItemStack(ModItems.BETTA_PELLETS.get(), 16), new ItemStack(Items.DIRT, 16));
         h.setBlock(new BlockPos(2, 2, 2), block("mekanism:basic_logistical_transporter"));
         h.setBlock(new BlockPos(3, 2, 2), block("mekanism:basic_logistical_transporter"));
@@ -97,7 +97,7 @@ public final class IntegrationPowerTests {
     /** Mekanism: a mechanical pipe pulling from a reservoir fills a tank. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_mekanism", timeoutTicks = 600)
     public static void mekanismPipeFillsATank(GameTestHelper h) {
-        IntegrationSuite.require("mekanism");
+        if (IntegrationSuite.lacks(h, "mekanism")) return;
         PlumbingGameTestsAccess.reservoir(h, new BlockPos(1, 2, 2), 16000);
         h.setBlock(new BlockPos(2, 2, 2), block("mekanism:basic_mechanical_pipe"));
         h.setBlock(new BlockPos(3, 2, 2), block("mekanism:basic_mechanical_pipe"));

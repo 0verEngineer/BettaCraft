@@ -108,7 +108,7 @@ public final class IntegrationTunnelsTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_tunnels", timeoutTicks = 900)
     public static void integratedTunnelsExporterFillsAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("integrateddynamics", "integratedtunnels");
+        if (IntegrationSuite.lacks(h, "integrateddynamics", "integratedtunnels")) return;
         ChestBlockEntity c = chest(h, new BlockPos(1, 2, 2), new ItemStack(ModItems.BETTA_PELLETS.get(), 16), new ItemStack(Items.DIRT, 16));
         FeederBlockEntity f = feeder(h, new BlockPos(4, 2, 2));
         String aspect = rig(h, "INTERFACE_ITEM", "EXPORTER_ITEM");
@@ -120,7 +120,7 @@ public final class IntegrationTunnelsTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_tunnels", timeoutTicks = 900)
     public static void integratedTunnelsExporterFillsATank(GameTestHelper h) {
-        IntegrationSuite.require("integrateddynamics", "integratedtunnels");
+        if (IntegrationSuite.lacks(h, "integrateddynamics", "integratedtunnels")) return;
         PlumbingGameTestsAccess.reservoir(h, new BlockPos(1, 2, 2), 16000);
         TankBlockEntity t = tank(h, 4, 2, 2, 2, 2, 2, false);
         String aspect = rig(h, "INTERFACE_FLUID", "EXPORTER_FLUID");
@@ -129,7 +129,7 @@ public final class IntegrationTunnelsTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_tunnels_power", timeoutTicks = 400)
     public static void integratedTunnelsExporterPowersATank(GameTestHelper h) {
-        IntegrationSuite.require("integrateddynamics", "integratedtunnels", "powah");
+        if (IntegrationSuite.lacks(h, "integrateddynamics", "integratedtunnels", "powah")) return;
         Runnable restore = powerOn();
         TankBlockEntity t;
         String aspect;

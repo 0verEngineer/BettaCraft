@@ -5,8 +5,9 @@
 
 Every jar comes from its official Modrinth CDN url and must match the pinned SHA-512, otherwise the script fails and
 deletes the file. The jars land in the group's folder (e.g. run/power-mods), from where build.gradle copies them into
-the run with -Ppower. Jars that are already there with the right hash are kept. Nothing of this is committed.
-Only the Python standard library is used.
+the run with -Ppower; a mod may name its own folder in "target" (tools/ci/integration-mods.json spans several groups).
+Jars that are already there with the right hash are kept. Nothing of this is committed. Only the Python standard library
+is used.
 """
 import hashlib
 import json
@@ -33,7 +34,9 @@ def main(spec_path):
         name = os.path.basename(mod['file'])
         if not mod['url'].startswith('https://cdn.modrinth.com/'):
             sys.exit(f'{name}: only Modrinth CDN urls are allowed, got {mod["url"]}')
-        dst = os.path.join(target, name)
+        folder = os.path.join(root, mod['target']) if 'target' in mod else target
+        os.makedirs(folder, exist_ok=True)
+        dst = os.path.join(folder, name)
         if os.path.isfile(dst) and sha512(dst) == mod['sha512']:
             print(f'ok      {name} (cached)')
             continue

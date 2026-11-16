@@ -58,7 +58,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_pipez", timeoutTicks = 900)
     public static void pipezItemPipeFillsAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("pipez");
+        if (IntegrationSuite.lacks(h, "pipez")) return;
         ChestBlockEntity c = pelletChest(h);
         h.setBlock(new BlockPos(2, 2, 2), pipez("pipez:item_pipe"));
         FeederBlockEntity f = feeder(h, new BlockPos(3, 2, 2));
@@ -68,7 +68,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_pipez", timeoutTicks = 900)
     public static void pipezFluidPipeFillsATank(GameTestHelper h) {
-        IntegrationSuite.require("pipez");
+        if (IntegrationSuite.lacks(h, "pipez")) return;
         org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess.reservoir(h, new BlockPos(1, 2, 2), 16000);
         h.setBlock(new BlockPos(2, 2, 2), pipez("pipez:fluid_pipe"));
         TankBlockEntity t = tank(h, 3, 2, 2, 2, 2, 2, false);
@@ -80,7 +80,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_enderio", timeoutTicks = 900)
     public static void enderioItemConduitFillsAFeeder(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("enderio");
+        if (IntegrationSuite.lacks(h, "enderio")) return;
         ServerLevel level = h.getLevel();
         ChestBlockEntity c = pelletChest(h);
         FeederBlockEntity f = feeder(h, new BlockPos(3, 2, 2));
@@ -111,7 +111,7 @@ public final class IntegrationTransportTests {
     /** A chute with pellets above a feeder drops them into it (and keeps dirt, which the feeder refuses). */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_create", timeoutTicks = 200)
     public static void createChuteFillsAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("create");
+        if (IntegrationSuite.lacks(h, "create")) return;
         FeederBlockEntity f = feeder(h, new BlockPos(2, 2, 2));
         h.setBlock(new BlockPos(2, 3, 2), block("create:chute"));
         h.setBlock(new BlockPos(4, 2, 2), org.overengineer.bettacraft.registry.ModBlocks.FEEDER.get().defaultBlockState());
@@ -148,7 +148,7 @@ public final class IntegrationTransportTests {
     /** An export bus with pellets in its filter, from a chest behind a storage bus into a feeder. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_ae2", timeoutTicks = 900)
     public static void ae2ExportBusFillsAFeeder(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("ae2");
+        if (IntegrationSuite.lacks(h, "ae2")) return;
         ServerLevel level = h.getLevel();
         FeederBlockEntity f = feeder(h, new BlockPos(2, 2, 2));
         ChestBlockEntity c = chest(h, new BlockPos(5, 2, 2), new ItemStack(ModItems.BETTA_PELLETS.get(), 16), new ItemStack(Items.DIRT, 16));
@@ -168,7 +168,7 @@ public final class IntegrationTransportTests {
     /** An export bus with water in its filter, from a reservoir behind a storage bus into a tank. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_ae2", timeoutTicks = 900)
     public static void ae2ExportBusFillsATankWithWater(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("ae2");
+        if (IntegrationSuite.lacks(h, "ae2")) return;
         ServerLevel level = h.getLevel();
         TankBlockEntity t = tank(h, 1, 2, 2, 2, 2, 2, false);
         org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess.reservoir(h, new BlockPos(6, 2, 2), 16000);
@@ -189,7 +189,7 @@ public final class IntegrationTransportTests {
     /** An exporter with pellets in its filter, from a chest behind an external storage into a feeder. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_rs", timeoutTicks = 900)
     public static void refinedStorageExporterFillsAFeeder(GameTestHelper h) throws Exception {
-        IntegrationSuite.require("refinedstorage");
+        if (IntegrationSuite.lacks(h, "refinedstorage")) return;
         FeederBlockEntity f = feeder(h, new BlockPos(2, 2, 2));
         h.setBlock(new BlockPos(3, 2, 2), with(block("refinedstorage:exporter").defaultBlockState(), "direction", "west"));
         h.setBlock(new BlockPos(4, 2, 2), block("refinedstorage:creative_controller").defaultBlockState());
@@ -204,6 +204,21 @@ public final class IntegrationTransportTests {
                     + ", chest " + count(c, ModItems.BETTA_PELLETS.get()));
             h.assertTrue(count(c, Items.DIRT) == 16, "the dirt stays");
         });
+    }
+
+    /** An exporter with water in its filter, from a reservoir behind an external storage into a tank. */
+    @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_rs", timeoutTicks = 900)
+    public static void refinedStorageExporterFillsATankWithWater(GameTestHelper h) throws Exception {
+        if (IntegrationSuite.lacks(h, "refinedstorage")) return;
+        TankBlockEntity t = tank(h, 1, 2, 2, 2, 2, 2, false);
+        h.setBlock(new BlockPos(3, 2, 2), with(block("refinedstorage:exporter").defaultBlockState(), "direction", "west"));
+        h.setBlock(new BlockPos(4, 2, 2), block("refinedstorage:creative_controller").defaultBlockState());
+        h.setBlock(new BlockPos(5, 2, 2), with(block("refinedstorage:external_storage").defaultBlockState(), "direction", "east"));
+        org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess.reservoir(h, new BlockPos(6, 2, 2), 16000);
+        Object key = Class.forName("com.refinedmods.refinedstorage.common.support.resource.FluidResource")
+                .getConstructor(net.minecraft.world.level.material.Fluid.class).newInstance(net.minecraft.world.level.material.Fluids.WATER);
+        call(be(h, new BlockPos(3, 2, 2)), "setFilters", java.util.List.of(key));
+        h.succeedWhen(() -> h.assertTrue(t.getTank().waterMb() > 0, "the exporter fills the tank: " + t.getTank().waterMb()));
     }
 
     // ------------------------------------------------------------------ LaserIO
@@ -227,7 +242,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_laserio", timeoutTicks = 900)
     public static void laserioItemCardsFillAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("laserio");
+        if (IntegrationSuite.lacks(h, "laserio")) return;
         ChestBlockEntity c = pelletChest(h);
         FeederBlockEntity f = feeder(h, new BlockPos(6, 2, 2));
         laser(h, new BlockPos(2, 2, 2), Direction.WEST, new BlockPos(5, 2, 2), Direction.EAST, "laserio:card_item");
@@ -236,7 +251,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_laserio", timeoutTicks = 900)
     public static void laserioFluidCardsFillATank(GameTestHelper h) {
-        IntegrationSuite.require("laserio");
+        if (IntegrationSuite.lacks(h, "laserio")) return;
         org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess.reservoir(h, new BlockPos(1, 2, 2), 16000);
         TankBlockEntity t = tank(h, 6, 2, 2, 2, 2, 2, false);
         laser(h, new BlockPos(2, 2, 2), Direction.WEST, new BlockPos(5, 2, 2), Direction.EAST, "laserio:card_fluid");
@@ -245,7 +260,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_laserio_power", timeoutTicks = 900)
     public static void laserioEnergyCardsPowerATank(GameTestHelper h) {
-        IntegrationSuite.require("laserio", "powah");
+        if (IntegrationSuite.lacks(h, "laserio", "powah")) return;
         Runnable restore = powerOn();
         TankBlockEntity t;
         try {
@@ -284,7 +299,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_routers", timeoutTicks = 900)
     public static void modularRouterSenderFillsAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("modularrouters");
+        if (IntegrationSuite.lacks(h, "modularrouters")) return;
         h.setBlock(new BlockPos(2, 2, 2), with(block("modularrouters:modular_router").defaultBlockState(), "facing", "east"));
         FeederBlockEntity f = feeder(h, new BlockPos(3, 2, 2));
         h.setBlock(new BlockPos(2, 2, 4), with(block("modularrouters:modular_router").defaultBlockState(), "facing", "east"));
@@ -304,7 +319,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_routers", timeoutTicks = 900)
     public static void modularRouterFluidModuleFillsATank(GameTestHelper h) {
-        IntegrationSuite.require("modularrouters");
+        if (IntegrationSuite.lacks(h, "modularrouters")) return;
         h.setBlock(new BlockPos(2, 2, 2), with(block("modularrouters:modular_router").defaultBlockState(), "facing", "east"));
         TankBlockEntity t = tank(h, 3, 2, 2, 2, 2, 2, false);
         Object router = be(h, new BlockPos(2, 2, 2));
@@ -383,7 +398,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_xnet", timeoutTicks = 900)
     public static void xnetItemChannelFillsAFeeder(GameTestHelper h) {
-        IntegrationSuite.require("xnet", "powah");
+        if (IntegrationSuite.lacks(h, "xnet", "powah")) return;
         ChestBlockEntity c = pelletChest(h);
         FeederBlockEntity f = feeder(h, new BlockPos(5, 2, 2));
         xnet(h, "xnet.item", "itemMode", new BlockPos(1, 2, 2), new BlockPos(5, 2, 2));
@@ -392,7 +407,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_xnet", timeoutTicks = 900)
     public static void xnetFluidChannelFillsATank(GameTestHelper h) {
-        IntegrationSuite.require("xnet", "powah");
+        if (IntegrationSuite.lacks(h, "xnet", "powah")) return;
         org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess.reservoir(h, new BlockPos(1, 2, 2), 16000);
         TankBlockEntity t = tank(h, 5, 2, 2, 2, 2, 2, false);
         xnet(h, "xnet.fluid", "fluidMode", new BlockPos(1, 2, 2), new BlockPos(5, 2, 2));
@@ -401,7 +416,7 @@ public final class IntegrationTransportTests {
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_xnet_power", timeoutTicks = 400)
     public static void xnetEnergyChannelPowersATank(GameTestHelper h) {
-        IntegrationSuite.require("xnet", "powah");
+        if (IntegrationSuite.lacks(h, "xnet", "powah")) return;
         Runnable restore = powerOn();
         TankBlockEntity t;
         try {
