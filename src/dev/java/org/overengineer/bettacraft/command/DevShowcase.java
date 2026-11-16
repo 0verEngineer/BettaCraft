@@ -619,6 +619,21 @@ public final class DevShowcase {
             for (String id : List.of("naturalist:lizard", "naturalist:snake", "naturalist:desert_scorpion")) foreign(level, fc, id);
             name(level, at, "Landtiere anderer Mods");
         }
+        // M39 part c: Minecraft animals as terrarium pets (grass, flowers, a mini beehive in the interior, a lid for the fliers)
+        at = at.east(4 + GAP);
+        TankBlockEntity vc = tank(level, at, 4, 2, 3, 0F, false);
+        InteriorRegion vr = region(level, vc, Blocks.GRASS_BLOCK.defaultBlockState());
+        for (int x = 0; x < vr.sizeX(); x++) for (int z = 0; z < vr.sizeZ(); z++) {
+            int k = (x * 7 + z * 13) % 23;
+            if (k == 0) in.setBlock(vr.toWorld(x, 0, z), (x % 2 == 0 ? Blocks.DANDELION : Blocks.POPPY).defaultBlockState(), 2);
+            else if (k < 4) in.setBlock(vr.toWorld(x, 0, z), Blocks.SHORT_GRASS.defaultBlockState(), 2);
+        }
+        rock(in, vr, vr.sizeX() * 3 / 4, vr.sizeZ() / 3, 2, 3, Blocks.OAK_LOG.defaultBlockState());
+        in.setBlock(vr.toWorld(vr.sizeX() * 3 / 4, 3, vr.sizeZ() / 3), Blocks.BEEHIVE.defaultBlockState(), 2);
+        for (int x = 0; x < 4; x++) for (int z = 0; z < 3; z++) level.setBlockAndUpdate(at.offset(x, 2, z), ModBlocks.TANK_LID.get().defaultBlockState());
+        org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, vc);
+        for (String id : List.of("minecraft:chicken", "minecraft:chicken", "minecraft:rabbit", "minecraft:rabbit", "minecraft:bee", "minecraft:cat")) foreign(level, vc, id);
+        name(level, at, "Minecraft-Haustiere");
         LOGGER.info("[showcase] M31 row: paludarium {}, terraria, mobs in glass {}", pc.getBlockPos(), sc.getBlockPos());
     }
 

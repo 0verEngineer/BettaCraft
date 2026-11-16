@@ -413,7 +413,11 @@ public final class ForeignTerrariumGameTests {
             h.assertTrue(TerrariumBoxItem.containedType(filled) == tortoise.type(), "a box with the tortoise");
             h.assertTrue(filled.getMaxStackSize() == 1, "one animal per box");
             LivingEntity cow = wild(h, EntityType.COW, new Vec3(8, 2, 28));
-            h.assertTrue(says(ForeignTerrarium.boxRefusal(player, cow), "message.bettacraft.box.refused"), "a cow has no profile");
+            // M39 part c: the cow is a big Minecraft pet now (the large net and the tub); an allay has no profile
+            h.assertTrue(says(ForeignTerrarium.boxRefusal(player, cow), "message.bettacraft.box.too_big"), "a cow is too big for the box");
+            LivingEntity allay = wild(h, EntityType.ALLAY, new Vec3(10, 2, 28));
+            h.assertTrue(says(ForeignTerrarium.boxRefusal(player, allay), "message.bettacraft.box.refused"), "an allay has no profile");
+            allay.discard();
             player.interactOn(cow, InteractionHand.MAIN_HAND);
             h.assertTrue(cow.isAlive(), "the cow stays");
             LivingEntity g = wild(h, alligator.type(), new Vec3(14, 2, 28));

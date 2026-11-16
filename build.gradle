@@ -290,6 +290,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m35aonly', 'true'
             }
+            if (project.hasProperty('smoketestm39c')) {
+                // gradlew runClient -Psmoketestm39c : only the M39 part c scene (the peaceful animals of Minecraft as terrarium pets:
+                // chickens, rabbits, bees with flowers and a beehive, cats, foxes ...; a frog paludarium; cows, a horse, a panda in a big terrarium)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m39conly', 'true'
+            }
             if (project.hasProperty('smoketestm39b')) {
                 // gradlew runClient -Psmoketestm39b [-Paquatic] : only the M39 part b scene (insects, small mammals and birds of
                 // other mods in closed terraria, the komodo dragon in a big terrarium, penguin and flamingo, fireflies at night)

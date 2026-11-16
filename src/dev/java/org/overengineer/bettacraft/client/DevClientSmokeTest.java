@@ -166,6 +166,9 @@ final class DevClientSmokeTest {
     /** -Psmoketestm39b: insects, mammals and birds of other mods in terraria, the komodo dragon, fireflies at night (M39 part b). */
     private static final boolean M39B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39bonly");
     private static DevClientSmokeM39b m39b;
+    /** -Psmoketestm39c: the peaceful animals of Minecraft as terrarium pets (M39 part c, optional feature #25). */
+    private static final boolean M39C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39conly");
+    private static DevClientSmokeM39c m39c;
     /** -Psmoketestm35b: lizard, snake and scorpions in a terrarium, fish in a paludarium's water part with a crab, dragonflies (M35 part b). */
     private static final boolean M35B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35bonly");
     private static DevClientSmokeM35b m35b;
@@ -297,6 +300,15 @@ final class DevClientSmokeTest {
                 if (m36 != null && m36.tick()) {
                     m36 = null;
                     LOGGER.info("[smoketest] client world test finished (M36 only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M39C_ONLY) {
+                if (ticks == 60) m39c = new DevClientSmokeM39c();
+                if (m39c != null && m39c.tick()) {
+                    m39c = null;
+                    LOGGER.info("[smoketest] client world test finished (M39 part c only)");
                     mc.stop();
                 }
                 return;

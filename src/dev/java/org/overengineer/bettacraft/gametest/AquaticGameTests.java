@@ -221,14 +221,14 @@ public final class AquaticGameTests {
         var deny = ServerConfig.INHABITANTS_DENY.get();
         try {
             h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphin: size rule of big tanks (M30)");
-            h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.BLACKLISTED, "frog blacklisted");
+            h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.OK, "frog: a paludarium pet (M39 part c; on the blacklist while the pets are off)");
             h.assertTrue(TankInhabitants.accepts(EntityType.WITHER, null) == TankInhabitants.Acceptance.BOSS, "wither is a boss");
             h.assertTrue(TankInhabitants.accepts(EntityType.VEX, null) == TankInhabitants.Acceptance.HOSTILE, "vex hostile");
             // M31 part d: the endermite is a mob in glass (shrunk in the tank), unless the deny list names it
             h.assertTrue(TankInhabitants.accepts(EntityType.ENDERMITE, null) == TankInhabitants.Acceptance.OK, "endermite: a mob in glass");
-            Entity bee = EntityType.BEE.create(h.getLevel());
-            h.assertTrue(TankInhabitants.accepts(EntityType.BEE, bee) == TankInhabitants.Acceptance.NOT_AQUATIC, "a bee is no water animal");
-            bee.discard();
+            Entity allay = EntityType.ALLAY.create(h.getLevel()); // M39 part c: the bee is a terrarium pet now
+            h.assertTrue(TankInhabitants.accepts(EntityType.ALLAY, allay) == TankInhabitants.Acceptance.NOT_AQUATIC, "an allay is no water animal");
+            allay.discard();
             Entity squid = EntityType.SQUID.create(h.getLevel());
             h.assertTrue(TankInhabitants.accepts(EntityType.SQUID, squid) == TankInhabitants.Acceptance.OK, "squids fit (0.8)");
             squid.discard();

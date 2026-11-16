@@ -283,13 +283,13 @@ public final class ForeignGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m32_foreign_terrarium", timeoutTicks = 100)
     public static void terrariumProfileAndOwnCare(GameTestHelper h) {
         withProfile("""
-                {"entity": ["minecraft:frog", "minecraft:axolotl", "bettacraft:betta"], "group": "test",
+                {"entity": ["minecraft:allay", "minecraft:axolotl", "bettacraft:betta"], "group": "test",
                  "terrarium": {"habitat": "paludarium", "air": [15, 30], "water": [12, 28], "land": [0.2, 0.8]}}""", () -> {
-            h.assertTrue(TerrariumAnimals.isTerrariumAnimal(EntityType.FROG), "the frog is a terrarium animal by its profile");
+            h.assertTrue(TerrariumAnimals.isTerrariumAnimal(EntityType.ALLAY), "the allay is a terrarium animal by its profile (M39 part c: the frog has a shipped one)");
             h.assertTrue(ForeignProfiles.of(EntityType.AXOLOTL) == null, "the axolotl keeps its own care (M29)");
             h.assertTrue(ForeignProfiles.of(type("bettacraft:betta")) == null, "our bettas are never mapped");
         });
-        h.assertTrue(!TerrariumAnimals.isTerrariumAnimal(EntityType.FROG), "taken back with the profile");
+        h.assertTrue(!TerrariumAnimals.isTerrariumAnimal(EntityType.ALLAY), "taken back with the profile");
         h.succeed();
     }
 
