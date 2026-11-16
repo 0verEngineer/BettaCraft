@@ -37,6 +37,16 @@ configurations {
     devRuntimeOnly.extendsFrom runtimeOnly
 }
 
+// M42: the optional integration suite. gradlew integrationTests (or any run task with -Pintegration) switches on every dev
+// group of mods we integrate (power, aquatic, biomes, storage, create, quests, kubejs, facades, maps for the client) plus
+// run/integration-mods (the pipe and capture mods that have no group of their own: Integrated Dynamics + Tunnels, XNet,
+// LaserIO, Modular Routers, Industrial Foregoing and their libraries, from ATM10AA). The GameTest server then runs in a
+// directory of its own (run/gametest-integration) and also registers the integration-only GameTests of
+// gametest/integration (system property bettacraft.integration); the normal suite never contains them.
+def integration = project.hasProperty('integration') || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
+def withGroup = { String name -> project.hasProperty(name) || integration }
+def gameTestDir = integration ? 'run/gametest-integration' : 'run/gametest'
+
 // Minecraft 1.21.1 ships Java 21. The foojay resolver (settings.gradle) downloads it if missing.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -481,7 +491,7 @@ neoForge {
             if (project.hasProperty('smoketestmp')) systemProperty 'bettacraft.smoketest.mp', 'true'
             // M25.1: -Pbiomes : a world of its own (run/world_biomes); the biome mods write their biome source into the
             // level.dat (Lithostitched), the normal dev world would no longer load without them
-            if (project.hasProperty('biomes')) {
+            if (withGroup('biomes')) {
                 systemProperty 'bettacraft.biomemods', 'true'
                 programArguments.addAll '--world', 'world_biomes'
             }
@@ -489,10 +499,14 @@ neoForge {
 
         gameTestServer {
             type = 'gameTestServer'
-            gameDirectory = project.file('run/gametest')
+            gameDirectory = project.file(gameTestDir)
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-            if (project.hasProperty('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1
-            if (project.hasProperty('aquatic')) systemProperty 'bettacraft.aquaticmods', 'true' // M38: the ForeignPlantGameTests then need Alex's Caves
+            if (withGroup('biomes')) systemProperty 'bettacraft.biomemods', 'true' // M25.1
+            if (withGroup('aquatic')) systemProperty 'bettacraft.aquaticmods', 'true' // M38: the ForeignPlantGameTests then need Alex's Caves
+            // M42: the integration-only GameTests (gametest/integration) are registered, every mod of the group is required
+            if (integration) systemProperty 'bettacraft.integration', 'true'
+            // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case) starts with a prefix
+            if (project.hasProperty('gametests')) systemProperty 'bettacraft.gametest.only', project.property('gametests')
         }
 
         data {
@@ -550,7 +564,7 @@ dependencies {
     // Jade (optional dependency, PLAN 10). In dev it is on the run classpath unless -PnoJade is given; never for
     // GameTests (Jade pings the mock players of the GameTest framework, which cannot receive payloads).
     compileOnly "maven.modrinth:jade:${jade_version}"
-    boolean gameTests = gradle.startParameter.taskNames.any { it.toLowerCase().contains('gametest') }
+    boolean gameTests = gradle.startParameter.taskNames.any { it.toLowerCase().contains('gametest') || it.toLowerCase().endsWith('integrationtests') }
     if (!project.hasProperty('noJade') && !gameTests) localRuntime "maven.modrinth:jade:${jade_version}"
     // GuideME (optional, PLAN 9): the handbook. On the run classpath in dev (also for GameTests: the book tests need the
     // guide item) unless -PnoGuideme is given.
@@ -708,28 +722,33 @@ idea {
 //   -Pcompare : run/compare-mods (M36: DragN's Just Bettas + GeckoLib + TerraBlender from ATM10AA) for runClient and runServer:
 //               only to compare the size of our bettas with theirs (the M36 client smoke puts one of theirs next to ours);
 //               never in the jar, the repo or the README
+//   -Pintegration (or the task integrationTests): every group above that we integrate (power, aquatic, biomes, storage,
+//               create, quests, kubejs, facades; maps for runClient) plus run/integration-mods (M42: Integrated Dynamics,
+//               Integrated Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
+//               Industrial Foregoing from ATM10AA) for runClient, runServer and runGameTestServer
 def runModsDir = file('run/mods')
-def gameTestModsDir = file('run/gametest/mods')
+def gameTestModsDir = file(gameTestDir + '/mods')
 def extraMods = [
         [dir: file('run/shader-mods'), on: project.hasProperty('shaders'), tasks: ['runClient']],
-        [dir: file('run/power-mods'), on: project.hasProperty('power'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/aquatic-mods'), on: project.hasProperty('aquatic'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/biome-mods'), on: project.hasProperty('biomes'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/storage-mods'), on: project.hasProperty('storage'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/create-mods'), on: project.hasProperty('create'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/quest-mods'), on: project.hasProperty('quests'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/map-mods'), on: project.hasProperty('maps'), tasks: ['runClient']],
-        [dir: file('run/kubejs-mods'), on: project.hasProperty('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
-        [dir: file('run/facade-mods'), on: project.hasProperty('facades'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/power-mods'), on: withGroup('power'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/aquatic-mods'), on: withGroup('aquatic'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/biome-mods'), on: withGroup('biomes'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/storage-mods'), on: withGroup('storage'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/create-mods'), on: withGroup('create'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/quest-mods'), on: withGroup('quests'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/map-mods'), on: withGroup('maps'), tasks: ['runClient']],
+        [dir: file('run/kubejs-mods'), on: withGroup('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: file('run/facade-mods'), on: withGroup('facades'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: file('run/compare-mods'), on: project.hasProperty('compare'), tasks: ['runClient', 'runServer']],
+        [dir: file('run/integration-mods'), on: integration, tasks: ['runClient', 'runServer', 'runGameTestServer']],
 ]
 // -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
 // removed without the flag)
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach { t ->
-    def base = t.name == 'runGameTestServer' ? 'run/gametest' : 'run'
+    def base = t.name == 'runGameTestServer' ? gameTestDir : 'run'
     def copies = [
-            [src: file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: project.hasProperty('quests')],
-            [src: file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: project.hasProperty('kubejs')],
+            [src: file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: withGroup('quests')],
+            [src: file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: withGroup('kubejs')],
     ]
     t.doFirst {
         copies.each { c ->
@@ -810,7 +829,7 @@ tasks.register('runMultiplayerTest') {
         logs.mkdirs()
         def runDir = file('run')
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods'].each { d ->
+        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods', 'run/integration-mods'].each { d ->
             (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
         }
         def props = new Properties()
@@ -1255,3 +1274,13 @@ tasks.register('curseforgeDescription') {
 }
 
 tasks.named('check').configure { dependsOn 'verifyReleaseJar' }
+
+// M42: the optional integration suite, not part of build or check and not of the normal runGameTestServer: the whole GameTest
+// suite plus the integration-only tests (gametest/integration) with every integrated mod (see -Pintegration above), in
+// run/gametest-integration. Run by hand (gradlew integrationTests --no-configuration-cache) or in CI only from the manual
+// workflow integration.yml. The groups' jars come from local folders (copied from an ATM10 instance), see the README.
+tasks.register('integrationTests') {
+    group = 'bettacraft'
+    description = 'GameTests with every integrated mod, including the integration-only tests (M42, optional)'
+    dependsOn 'runGameTestServer'
+}
