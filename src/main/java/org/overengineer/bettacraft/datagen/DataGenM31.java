@@ -102,8 +102,28 @@ final class DataGenM31 {
                 .rotationY(((int) s.getValue(ThermoHygrometerBlock.FACING).toYRot() + 180) % 360).build());
     }
 
+    /**
+     * M46: the heat mat item lies flat like the mat under a terrarium (it stood upright like the wall mat before): the glowing
+     * foil in the middle of the item space, a carpet-like view in the inventory, flat in the hand and on the ground, facing
+     * out of an item frame. Only the item; the wall mat still stands upright when placed.
+     */
+    private static void heatMatItem(ItemModelProvider p) {
+        var b = p.getBuilder("heat_mat").parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+                .texture("mat", p.modLoc("block/heat_mat_on")).texture("particle", p.modLoc("block/heat_mat_on"));
+        b.element().from(1, 7.5F, 1).to(15, 8.5F, 15).allFaces((d, f) -> f.texture("#mat").uvs(1, d.getAxis().isVertical() ? 1 : 14, 15, 15)).end();
+        b.transforms()
+                .transform(net.minecraft.world.item.ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, 0, 0).scale(0.8F).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.GROUND).rotation(0, 0, 0).translation(0, 2, 0).scale(0.4F).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.FIXED).rotation(-90, 0, 0).translation(0, 0, 0).scale(0.75F).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation(75, 45, 0).translation(0, 2.5F, 0).scale(0.375F).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(75, 45, 0).translation(0, 2.5F, 0).scale(0.375F).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(10, 45, 0).translation(0, 1.5F, 0).scale(0.45F).end()
+                .transform(net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(10, 225, 0).translation(0, 1.5F, 0).scale(0.45F).end()
+                .end();
+    }
+
     static void itemModels(ItemModelProvider p) {
-        DataGenM291.block(p.withExistingParent("heat_mat", p.modLoc("block/heat_mat_wall_on")), 0.9F, 0, 0, 30);
+        heatMatItem(p);
         DataGenM291.block(p.withExistingParent("basking_lamp", p.modLoc("block/basking_lamp_on")), 1.0F, 0, 3.5F, 30);
         DataGenM291.block(p.withExistingParent("mister", p.modLoc("block/mister")), 1.0F, 0, 3.0F, 30);
         DataGenM291.block(p.withExistingParent("thermo_hygrometer", p.modLoc("block/thermo_hygrometer")), 1.3F, 0, 0, 0);
