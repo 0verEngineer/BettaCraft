@@ -133,6 +133,27 @@ im Spiel.
 | Living Things | `livingthings:penguin` | Paludarium, -10–12 °C | 0,9 m: 11 × 6 × 3 Blöcke, 73 Blöcke Raum | `#c:foods/raw_fish`, `#minecraft:fishes` | Eier in ein Nest an Land, ein Weibchen und ein Männchen |
 | Living Things | `livingthings:raccoon` | Terrarium oder Paludarium, 0–30 °C | 0,6 m: 8 × 4 × 2 Blöcke, 22 Blöcke Raum | `#c:foods/fruit`, `#c:foods/raw_fish`, `#c:seeds`, `minecraft:sweet_berries` | lebendgebärend, ein Weibchen und ein Männchen |
 | Living Things | `livingthings:snail` | Terrarium, 15–26 °C | – | `#bettacraft:turtle_greens`, `#minecraft:leaves`, `minecraft:carrot`, `minecraft:beetroot` | Eier in ein Nest an Land, Varianten vererbt |
+| Minecraft | `minecraft:armadillo` | Terrarium, 18–36 °C | – | `#minecraft:armadillo_food`, `#bettacraft:feeder_insects` | lebendgebärend, ein Weibchen und ein Männchen |
+| Minecraft | `minecraft:bat` | Terrarium, 10–30 °C | 0,2 m: 2 × 1 × 1 Blöcke, 1 Blöcke Raum | `#bettacraft:feeder_insects`, `#bettacraft:small_feeder_insects`, `#c:foods/fruit` | lebendgebärend, ein Weibchen und ein Männchen |
+| Minecraft | `minecraft:bee` | Terrarium, 12–32 °C; braucht Blumen und ein Bienenstock | – | `#minecraft:bee_food`, `#minecraft:flowers`, `minecraft:honey_bottle` | lebendgebärend |
+| Minecraft | `minecraft:cat` | Terrarium, 5–32 °C | 0,5 m: 6 × 3 × 2 Blöcke, 13 Blöcke Raum | `#minecraft:cat_food` | lebendgebärend, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:chicken` | Terrarium, 5–30 °C | – | `#minecraft:chicken_food`, `#c:seeds`, `#bettacraft:feeder_insects` | Eier in ein Nest an Land, ein Weibchen und ein Männchen |
+| Minecraft | `minecraft:cow` | Terrarium, -10–28 °C; braucht Gras | 2 m: 24 × 12 × 6 Blöcke, 800 Blöcke Raum | `#minecraft:cow_food` | nein |
+| Minecraft | `minecraft:donkey`, `minecraft:mule` | Terrarium, -5–35 °C; braucht Gras | 1,9 m: 23 × 12 × 6 Blöcke, 686 Blöcke Raum | `#minecraft:horse_food` | nein |
+| Minecraft | `minecraft:fox` | Terrarium, -15–28 °C | 0,6 m: 8 × 4 × 2 Blöcke, 22 Blöcke Raum | `#minecraft:fox_food`, `minecraft:chicken`, `minecraft:rabbit` | lebendgebärend, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:frog` | Paludarium, 10–30 °C | – | `#bettacraft:feeder_insects`, `#bettacraft:small_feeder_insects`, `minecraft:slime_ball`, Lebend- und Frostfutter | Eier, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:goat` | Terrarium, -15–25 °C; braucht Gras | 1,2 m: 15 × 8 × 4 Blöcke, 173 Blöcke Raum | `#minecraft:goat_food` | lebendgebärend, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:horse` | Terrarium, -10–32 °C; braucht Gras | 2,2 m: 27 × 14 × 7 Blöcke, 1065 Blöcke Raum | `#minecraft:horse_food` | nein |
+| Minecraft | `minecraft:llama`, `minecraft:trader_llama` | Terrarium, -15–25 °C; braucht Gras | 2 m: 24 × 12 × 6 Blöcke, 800 Blöcke Raum | `#minecraft:llama_food` | nein |
+| Minecraft | `minecraft:mooshroom` | Terrarium, 5–26 °C | 2 m: 24 × 12 × 6 Blöcke, 800 Blöcke Raum | `#minecraft:cow_food`, `minecraft:brown_mushroom`, `minecraft:red_mushroom` | nein |
+| Minecraft | `minecraft:ocelot` | Terrarium, 20–34 °C | 0,6 m: 8 × 4 × 2 Blöcke, 22 Blöcke Raum | `#minecraft:ocelot_food` | lebendgebärend, ein Weibchen und ein Männchen |
+| Minecraft | `minecraft:panda` | Terrarium, 0–28 °C | 1,6 m: 20 × 10 × 5 Blöcke, 410 Blöcke Raum | `#minecraft:panda_food`, `minecraft:bamboo`, `minecraft:cake` | nein |
+| Minecraft | `minecraft:parrot` | Terrarium, 20–34 °C | 0,4 m: 5 × 3 × 2 Blöcke, 5 Blöcke Raum | `#minecraft:parrot_food`, `#c:foods/fruit` | Eier, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:pig` | Terrarium, -5–30 °C | 1,2 m: 15 × 8 × 4 Blöcke, 173 Blöcke Raum | `#minecraft:pig_food` | lebendgebärend, ein Weibchen und ein Männchen |
+| Minecraft | `minecraft:polar_bear` | Terrarium oder Paludarium, -30–10 °C | 2,2 m: 27 × 14 × 7 Blöcke, 1065 Blöcke Raum | `#minecraft:fishes`, `minecraft:cod`, `minecraft:salmon`, `#c:foods/raw_meat` | nein |
+| Minecraft | `minecraft:rabbit` | Terrarium, 0–28 °C; braucht Gras | – | `#minecraft:rabbit_food`, `#bettacraft:turtle_greens` | lebendgebärend, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:sheep` | Terrarium, -10–28 °C; braucht Gras | 1,3 m: 16 × 8 × 4 Blöcke, 220 Blöcke Raum | `#minecraft:sheep_food` | lebendgebärend, ein Weibchen und ein Männchen, Varianten vererbt |
+| Minecraft | `minecraft:wolf` | Terrarium, -20–28 °C | 1 m: 12 × 6 × 3 Blöcke, 100 Blöcke Raum | `#minecraft:wolf_food` | lebendgebärend, ein Weibchen und ein Männchen, Varianten vererbt |
 | Naturalist | `naturalist:alligator` | Paludarium, 24–36 °C | 2 m: 24 × 12 × 6 Blöcke, 800 Blöcke Raum | `#c:foods/raw_meat`, `#c:foods/raw_fish` | Eier in ein Nest an Land, Varianten vererbt |
 | Naturalist | `naturalist:ant` | Terrarium, 20–32 °C | – | `minecraft:sugar`, `#c:seeds`, `minecraft:sweet_berries`, `#c:foods/fruit` | nein |
 | Naturalist | `naturalist:bear` | Terrarium, -10–26 °C | 2,2 m: 27 × 14 × 7 Blöcke, 1065 Blöcke Raum | `#c:foods/raw_meat`, `#c:foods/raw_fish`, `minecraft:sweet_berries`, `minecraft:honey_bottle`, `minecraft:honeycomb` | nein |
@@ -177,6 +198,8 @@ im Spiel.
 | Living Things | `livingthings:nether_knight`, `livingthings:ancient_blaze` | feindliche Wesen |
 | Living Things | `livingthings:shroomie` | Pilzwesen, keine Wassertiere |
 | Living Things | `livingthings:elephant`, `livingthings:giraffe` | viel zu groß für jedes Becken |
+| Minecraft | `minecraft:camel`, `minecraft:sniffer` | viel zu groß für jedes Becken |
+| Minecraft | `minecraft:strider`, `minecraft:skeleton_horse`, `minecraft:zombie_horse` | nichts fürs Becken |
 | Naturalist | `naturalist:anglerfish`, `naturalist:blobfish` | Tiefseetiere (kalt, dunkel, hoher Druck) |
 | Naturalist | `naturalist:great_white_shark`, `naturalist:whale` | viel zu groß für jedes Becken |
 | Naturalist | `naturalist:elephant`, `naturalist:mammoth`, `naturalist:giraffe`, `naturalist:hippo`, `naturalist:rhino` | viel zu groß für jedes Becken |

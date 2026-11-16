@@ -767,6 +767,17 @@ public final class GuideGen {
                     default -> t("terrarium or paludarium", "Terrarium oder Paludarium");
                 };
                 if (Double.isFinite(p.terrarium().air().min())) tank += ", " + (int) p.terrarium().air().min() + "–" + (int) p.terrarium().air().max() + " °C";
+                if (p.land() != null && !p.land().needs().isEmpty()) { // M39 part c: flowers, grass, a beehive in the interior
+                    List<String> needs = new ArrayList<>();
+                    for (var n : p.land().needs()) {
+                        needs.add(switch (n) {
+                            case FLOWERS -> t("flowers", "Blumen");
+                            case GRASS -> t("grass", "Gras");
+                            case HIVE -> t("a beehive", "ein Bienenstock");
+                        });
+                    }
+                    tank += "; " + t("needs ", "braucht ") + String.join(t(" and ", " und "), needs);
+                }
                 land.row(mod, String.join(", ", ids), tank, size, food, breed);
             }
         }

@@ -120,6 +120,9 @@ They eat [feeder insects](terrarium/feeder_insects.md) (crickets, fruit flies), 
 [Land animals of other mods](terrarium/foreign_land_animals.md) with a terrarium profile: the tortoise and the alligator of
 Naturalist (the alligator in a big paludarium), caught with the terrarium box or the large net.
 
+[Minecraft animals as pets](terrarium/minecraft_pets.md): chickens, rabbits, bees, frogs, cats, foxes, parrots and more at their
+real size, the big ones (cows, horses, pandas ...) in big terraria; with needs of their own (grass, flowers, a beehive), no drops.
+
 [Mobs in glass](terrarium/mobs_in_glass.md): drowned, zombies, spiders, small slimes and a few more live shrunk and harmless
 in tanks (mob jar, bait, the capture items of other mods). They drop nothing.
 

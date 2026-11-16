@@ -868,6 +868,22 @@ def m39b(out_en: Path) -> None:
             print("missing", src)
 
 
+# M39 part c scene (DevClientSmokeM39c, -Psmoketestm39c): the peaceful animals of Minecraft as terrarium pets
+M39C_WORLD = {"minecraft_pets": ("bettacraft_m39c_pets", (460, 190, 1280, 560)),
+              "minecraft_frogs": ("bettacraft_m39c_frogs", (170, 200, 1120, 565))}
+
+
+def m39c(out_en: Path) -> None:
+    for name, (shot, box) in M39C_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -882,6 +898,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m39c"]:
+        m39c(out_en)
+        return 0
     if sys.argv[1:] == ["m39b"]:
         m39b(out_en)
         return 0

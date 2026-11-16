@@ -99,6 +99,8 @@ Entities, deren Mod nicht installiert ist, werden still übersprungen (außer mi
 | `terrarium.lid` | es fliegt und braucht eine geschlossene Oberseite: abgelehnt, solange ein oberer Block offen ist, fliegt davon, wenn der Deckel abgenommen wird (Standard: true bei `fly`) |
 | `terrarium.cleanup` | gehört zur Aufräumtruppe: frisst die Futterreste und lebt vom Abfall der anderen Tiere |
 | `terrarium.glows` | leuchtet im Dunkeln seines Beckens (das Leuchten seiner Mod, am Laufen gehalten; das Tageslicht vertreibt es nicht) |
+| `terrarium.needs` | was der Innenraum bieten muss: `flowers` (drei Blumen an Land), `grass` (ein Zehntel des Landes), `hive` (ein Bienenstock oder Bienennest); fehlt etwas, ist es ein Problem im Menü und es gibt keine Zucht |
+| `terrarium.grazes` | lebt vom Gras oder den Blumen seiner Bedürfnisse: satt, solange sie da sind (Kaninchen, Schafe, Bienen) |
 | `breeding.nest`, `nest_temperature` | Eier in ein Nest auf dem Land, dessen Oberseite zu diesem Block-Tag gehört (`#bettacraft:turtle_nest_ground`: Sand und Erde); sie schlüpfen nach `days` bei dieser Nesttemperatur (°C; wärmer schneller, bei 18 °C und darunter warten sie, über 36 °C sterben sie) |
 | `length` | ein großes Wassertier im Aquarium: seine Länge in Metern für die [Größenregel](../big_tanks.md) der Großtiere (es zählt das Wasser des Beckens); weggelassen: die Hitbox entscheidet |
 | `breeding.sex` | `none` (Standard: zwei beliebige vermehren sich), `random` (halb Weibchen, halb Männchen) oder `temperature` (mit `nest`: warme Nester ergeben Weibchen, kühle Männchen, halb und halb bei `nest_temperature`, wie bei unseren Schildkröten); dann vermehren sich nur ein Weibchen und ein Männchen |

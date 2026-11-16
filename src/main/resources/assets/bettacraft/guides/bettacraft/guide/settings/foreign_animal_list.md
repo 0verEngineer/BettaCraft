@@ -130,6 +130,27 @@ tables below are made from the profiles themselves. A mod that is not installed 
 | Living Things | `livingthings:penguin` | paludarium, -10–12 °C | 0.9 m: 11 × 6 × 3 blocks, 73 blocks of room | `#c:foods/raw_fish`, `#minecraft:fishes` | eggs into a nest on the land, a female and a male |
 | Living Things | `livingthings:raccoon` | terrarium or paludarium, 0–30 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | `#c:foods/fruit`, `#c:foods/raw_fish`, `#c:seeds`, `minecraft:sweet_berries` | live young, a female and a male |
 | Living Things | `livingthings:snail` | terrarium, 15–26 °C | – | `#bettacraft:turtle_greens`, `#minecraft:leaves`, `minecraft:carrot`, `minecraft:beetroot` | eggs into a nest on the land, variants inherited |
+| Minecraft | `minecraft:armadillo` | terrarium, 18–36 °C | – | `#minecraft:armadillo_food`, `#bettacraft:feeder_insects` | live young, a female and a male |
+| Minecraft | `minecraft:bat` | terrarium, 10–30 °C | 0.2 m: 2 × 1 × 1 blocks, 1 blocks of room | `#bettacraft:feeder_insects`, `#bettacraft:small_feeder_insects`, `#c:foods/fruit` | live young, a female and a male |
+| Minecraft | `minecraft:bee` | terrarium, 12–32 °C; needs flowers and a beehive | – | `#minecraft:bee_food`, `#minecraft:flowers`, `minecraft:honey_bottle` | live young |
+| Minecraft | `minecraft:cat` | terrarium, 5–32 °C | 0.5 m: 6 × 3 × 2 blocks, 13 blocks of room | `#minecraft:cat_food` | live young, a female and a male, variants inherited |
+| Minecraft | `minecraft:chicken` | terrarium, 5–30 °C | – | `#minecraft:chicken_food`, `#c:seeds`, `#bettacraft:feeder_insects` | eggs into a nest on the land, a female and a male |
+| Minecraft | `minecraft:cow` | terrarium, -10–28 °C; needs grass | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#minecraft:cow_food` | no |
+| Minecraft | `minecraft:donkey`, `minecraft:mule` | terrarium, -5–35 °C; needs grass | 1.9 m: 23 × 12 × 6 blocks, 686 blocks of room | `#minecraft:horse_food` | no |
+| Minecraft | `minecraft:fox` | terrarium, -15–28 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | `#minecraft:fox_food`, `minecraft:chicken`, `minecraft:rabbit` | live young, a female and a male, variants inherited |
+| Minecraft | `minecraft:frog` | paludarium, 10–30 °C | – | `#bettacraft:feeder_insects`, `#bettacraft:small_feeder_insects`, `minecraft:slime_ball`, live and frozen food | eggs, a female and a male, variants inherited |
+| Minecraft | `minecraft:goat` | terrarium, -15–25 °C; needs grass | 1.2 m: 15 × 8 × 4 blocks, 173 blocks of room | `#minecraft:goat_food` | live young, a female and a male, variants inherited |
+| Minecraft | `minecraft:horse` | terrarium, -10–32 °C; needs grass | 2.2 m: 27 × 14 × 7 blocks, 1065 blocks of room | `#minecraft:horse_food` | no |
+| Minecraft | `minecraft:llama`, `minecraft:trader_llama` | terrarium, -15–25 °C; needs grass | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#minecraft:llama_food` | no |
+| Minecraft | `minecraft:mooshroom` | terrarium, 5–26 °C | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#minecraft:cow_food`, `minecraft:brown_mushroom`, `minecraft:red_mushroom` | no |
+| Minecraft | `minecraft:ocelot` | terrarium, 20–34 °C | 0.6 m: 8 × 4 × 2 blocks, 22 blocks of room | `#minecraft:ocelot_food` | live young, a female and a male |
+| Minecraft | `minecraft:panda` | terrarium, 0–28 °C | 1.6 m: 20 × 10 × 5 blocks, 410 blocks of room | `#minecraft:panda_food`, `minecraft:bamboo`, `minecraft:cake` | no |
+| Minecraft | `minecraft:parrot` | terrarium, 20–34 °C | 0.4 m: 5 × 3 × 2 blocks, 5 blocks of room | `#minecraft:parrot_food`, `#c:foods/fruit` | eggs, a female and a male, variants inherited |
+| Minecraft | `minecraft:pig` | terrarium, -5–30 °C | 1.2 m: 15 × 8 × 4 blocks, 173 blocks of room | `#minecraft:pig_food` | live young, a female and a male |
+| Minecraft | `minecraft:polar_bear` | terrarium or paludarium, -30–10 °C | 2.2 m: 27 × 14 × 7 blocks, 1065 blocks of room | `#minecraft:fishes`, `minecraft:cod`, `minecraft:salmon`, `#c:foods/raw_meat` | no |
+| Minecraft | `minecraft:rabbit` | terrarium, 0–28 °C; needs grass | – | `#minecraft:rabbit_food`, `#bettacraft:turtle_greens` | live young, a female and a male, variants inherited |
+| Minecraft | `minecraft:sheep` | terrarium, -10–28 °C; needs grass | 1.3 m: 16 × 8 × 4 blocks, 220 blocks of room | `#minecraft:sheep_food` | live young, a female and a male, variants inherited |
+| Minecraft | `minecraft:wolf` | terrarium, -20–28 °C | 1 m: 12 × 6 × 3 blocks, 100 blocks of room | `#minecraft:wolf_food` | live young, a female and a male, variants inherited |
 | Naturalist | `naturalist:alligator` | paludarium, 24–36 °C | 2 m: 24 × 12 × 6 blocks, 800 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish` | eggs into a nest on the land, variants inherited |
 | Naturalist | `naturalist:ant` | terrarium, 20–32 °C | – | `minecraft:sugar`, `#c:seeds`, `minecraft:sweet_berries`, `#c:foods/fruit` | no |
 | Naturalist | `naturalist:bear` | terrarium, -10–26 °C | 2.2 m: 27 × 14 × 7 blocks, 1065 blocks of room | `#c:foods/raw_meat`, `#c:foods/raw_fish`, `minecraft:sweet_berries`, `minecraft:honey_bottle`, `minecraft:honeycomb` | no |
@@ -174,6 +195,8 @@ tables below are made from the profiles themselves. A mod that is not installed 
 | Living Things | `livingthings:nether_knight`, `livingthings:ancient_blaze` | hostile creatures |
 | Living Things | `livingthings:shroomie` | mushroom creatures, no water animals |
 | Living Things | `livingthings:elephant`, `livingthings:giraffe` | far too big for any tank |
+| Minecraft | `minecraft:camel`, `minecraft:sniffer` | far too big for any tank |
+| Minecraft | `minecraft:strider`, `minecraft:skeleton_horse`, `minecraft:zombie_horse` | not for a tank |
 | Naturalist | `naturalist:anglerfish`, `naturalist:blobfish` | deep-sea animals (cold, dark, high pressure) |
 | Naturalist | `naturalist:great_white_shark`, `naturalist:whale` | far too big for any tank |
 | Naturalist | `naturalist:elephant`, `naturalist:mammoth`, `naturalist:giraffe`, `naturalist:hippo`, `naturalist:rhino` | far too big for any tank |

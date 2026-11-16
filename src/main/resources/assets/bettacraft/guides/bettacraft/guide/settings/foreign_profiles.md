@@ -99,6 +99,8 @@ installed are skipped quietly (unless `"required": true`). Example:
 | `terrarium.lid` | it flies and needs a closed top: refused while a top block is open, flies out when the lid is taken off (default: true for `fly`) |
 | `terrarium.cleanup` | one of the clean-up crew: it eats the leftovers of the food and lives from the waste of the other animals |
 | `terrarium.glows` | it glows in the dark of its tank (the glow of its mod, kept going; the daylight does not drive it away) |
+| `terrarium.needs` | what the interior must offer: `flowers` (three on the land), `grass` (a tenth of the land), `hive` (a beehive or bee nest); a missing one is a problem in the menu and stops the breeding |
+| `terrarium.grazes` | it lives from the grass or flowers of its needs: fed while they are there (rabbits, sheep, bees) |
 | `breeding.nest`, `nest_temperature` | eggs into a nest on the land whose top is of this block tag (`#bettacraft:turtle_nest_ground`: sand and soil), hatching in `days` at that nest temperature (°C; warmer faster, at 18 °C and below they wait, above 36 °C they die) |
 | `length` | a big water animal of an aquarium: its length in metres for the [size rule](../big_tanks.md) of the big animals (the water of the tank counts); left out: its hitbox decides |
 | `breeding.sex` | `none` (default: any two breed), `random` (half female, half male) or `temperature` (with a `nest`: warm nests give females, cool ones males, half and half at `nest_temperature`, like our turtles); then only a female and a male breed |

@@ -124,6 +124,9 @@ Sie fressen [Futterinsekten](terrarium/feeder_insects.md) (Heimchen, Fruchtflieg
 [Landtiere anderer Mods](terrarium/foreign_land_animals.md) mit Terrarium-Profil: Landschildkröte und Alligator von
 Naturalist (der Alligator in einem großen Paludarium), gefangen mit der Terrarienbox oder dem großen Kescher.
 
+[Minecraft-Tiere als Haustiere](terrarium/minecraft_pets.md): Hühner, Kaninchen, Bienen, Frösche, Katzen, Füchse, Papageien und mehr
+in echter Größe, die großen (Kühe, Pferde, Pandas …) in großen Terrarien; mit eigenen Bedürfnissen (Gras, Blumen, Bienenstock), ohne Drops.
+
 [Mobs im Glas](terrarium/mobs_in_glass.md): Ertrunkene, Zombies, Spinnen, kleine Schleime und ein paar weitere leben verkleinert
 und harmlos in Becken (Mobglas, Köder, die Fang-Items anderer Mods). Sie droppen nichts.
 
