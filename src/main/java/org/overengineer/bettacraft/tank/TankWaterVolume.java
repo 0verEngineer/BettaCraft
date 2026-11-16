@@ -53,6 +53,16 @@ public final class TankWaterVolume {
      * above the floor and {@code top} below the surface (where the block holds the surface).
      */
     public Vec3 clamp(Vec3 v, double side, double bottom, double top) {
+        return clamp(v, side, bottom, top, 0);
+    }
+
+    /**
+     * Like {@link #clamp(Vec3, double, double, double)} for a body {@code height} high: its head also stays below the
+     * glass lid of its column (the topmost tank block above it). An entity that starts inside the lid's collision box is
+     * not held by it and slips out of the tank (M40 part c: the flaky squid of {@code aquaticspecies_0}: feet 0.3 below a
+     * nearly full surface put the head of a 0.8 high squid through the lid of a 2 high tank).
+     */
+    public Vec3 clamp(Vec3 v, double side, double bottom, double top, double height) {
         long b = BlockPos.asLong(Mth.floor(v.x), Mth.floor(Math.min(v.y, surface - 1e-4)), Mth.floor(v.z));
         if (!wet(b)) b = nearestWet(v);
         if (b == Long.MIN_VALUE) return v;
@@ -64,6 +74,11 @@ public final class TankWaterVolume {
         double y0 = y + (members.contains(BlockPos.offset(b, Direction.DOWN)) ? 0 : bottom);
         long up = BlockPos.offset(b, Direction.UP);
         double y1 = wet(up) ? y + 1 : Math.min(y + 1 - (members.contains(up) ? 0 : 1.0 / 16), surface - top);
+        if (height > 0) {
+            long c = b;
+            while (members.contains(BlockPos.offset(c, Direction.UP))) c = BlockPos.offset(c, Direction.UP);
+            y1 = Math.min(y1, BlockPos.getY(c) + 1 - 1.0 / 16 - 0.01 - height);
+        }
         y1 = Math.max(y0, y1);
         return new Vec3(clamp(v.x, x0, x1), clamp(v.y, y0, y1), clamp(v.z, z0, z1));
     }

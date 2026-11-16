@@ -328,11 +328,11 @@ public final class TankInhabitants {
                 return Component.translatable("message.bettacraft.tank.crowded_full", cap);
             }
         }
-        // keep the hitbox clear of the glass walls: an entity that starts inside a wall's collision box is not held by it
-        // and could slip through (out of the tank, or into the notch of a free shape)
+        // keep the hitbox clear of the glass walls and the lid: an entity that starts inside a wall's collision box is not
+        // held by it and could slip through (out of the tank, or into the notch of a free shape)
         double half = e.getBbWidth() / 2 + 1.0 / 16 + 0.01;
         if (!terra) spawn = new TankWaterVolume(tank.members(), Math.max(tank.waterSurfaceY(), tank.min().getY() + 0.9), TankCare.waterBox(tank))
-                .clamp(spawn, half, 1.0 / 16 + 0.01, Math.min(0.3, e.getBbHeight()));
+                .clamp(spawn, half, 1.0 / 16 + 0.01, Math.min(0.3, e.getBbHeight()), e.getBbHeight());
         e.moveTo(spawn.x, spawn.y, spawn.z, level.getRandom().nextFloat() * 360F, 0F);
         adopt(e, controller);
         // M17: the animal must really join the level (a UUID clash or another mod cancelling the join): otherwise the

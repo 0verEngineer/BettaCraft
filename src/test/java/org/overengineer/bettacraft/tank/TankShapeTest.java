@@ -176,4 +176,19 @@ class TankShapeTest {
         assertTrue(l.contains(BlockPos.asLong((int) Math.floor(nest.x), 0, (int) Math.floor(nest.z))), "nest in the shape: " + nest);
         assertEquals(0.74, nest.y, 1e-9);
     }
+
+    /** M40 part c (the flaky aquaticspecies_0): a tall body near a full surface keeps its head below the lid of its column. */
+    @Test
+    void tallBodyStaysBelowTheLid() {
+        LongSet l = box(0, 0, 0, 3, 2, 3);
+        TankWaterVolume w = new TankWaterVolume(l, 1.78, new AABB(0, 0, 0, 3, 1.78, 3));
+        // feet alone: 0.3 below the surface
+        assertEquals(1.48, w.clamp(new Vec3(1.5, 1.7, 1.5), 0.5, 0.07, 0.3).y, 1e-9);
+        // a squid 0.8 high: its head stays under the lid (2 - 1/16)
+        Vec3 squid = w.clamp(new Vec3(1.5, 1.7, 1.5), 0.5, 0.07, 0.3, 0.8);
+        assertTrue(squid.y + 0.8 < 2 - 1.0 / 16, "head below the lid: " + squid);
+        // a body taller than the room stands at the bottom of its block
+        assertEquals(1.0, w.clamp(new Vec3(1.5, 1.7, 1.5), 0.5, 0.07, 0.3, 2.5).y, 1e-9);
+        assertEquals(0.07, w.clamp(new Vec3(1.5, 0.5, 1.5), 0.5, 0.07, 0.3, 2.5).y, 1e-9);
+    }
 }
