@@ -15,11 +15,11 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `src/test` | JUnit tests (genetics, chemistry, lang completeness, config labels, ids, handbook generator `guide/GuideGen` + `GuideGenTest`, `GuidePagesTest`) |
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
 | `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
-| `tools/ci` | `fetch_mods.py` + `power-mods.json`: pinned Modrinth jars for the `-Ppower` GameTests in CI |
+| `tools/ci` | `fetch_mods.py` + `power-mods.json` / `integration-mods.json`: pinned Modrinth jars for the `-Ppower` GameTests and the manual integration run in CI |
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
 | `docs/description.md` | the CurseForge mod page (English, short German summary); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
 | `docs/images` | README / CurseForge media (made by `tools/assetgen/readme_media.py`; banner by `preview.py`) |
-| `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>`) |
+| `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>`), `integration.yml` (manual only) |
 
 ## Key systems (where to look)
 
@@ -65,6 +65,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ```
 ./gradlew build                                   # jar + unit tests + verifyReleaseJar
 ./gradlew runGameTestServer --no-configuration-cache          # GameTests (add -Ppower for the FE mods)
+./gradlew integrationTests --no-configuration-cache           # optional integration suite: every integrated mod (~6 min)
 ./gradlew runData --no-configuration-cache        # regenerate src/generated
 ./gradlew updateGuide                             # regenerate the data-driven handbook sections
 ./gradlew runServer -Psmoketest --no-configuration-cache      # server smoke (also with -PnoCompat)
@@ -95,6 +96,18 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   events for scripts are in `api/event` (posted by `api/ApiEvents`). Leave runtime mods out
   with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoCompat`; add `-Ptop`, `-Pwthit`. `-Pbackground` makes a plain
   `runClient` a background window.
+- **Optional integration suite** (M42, never part of `build`/`check` or the normal `runGameTestServer`): `gradlew
+  integrationTests --no-configuration-cache` (or any run task with `-Pintegration`) switches on every group above that we
+  integrate (power, aquatic, biomes, storage, create, quests, kubejs, facades; maps for `runClient`) plus `run/integration-mods`
+  (Integrated Dynamics + Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
+  Industrial Foregoing from ATM10AA). The GameTest server then runs in `run/gametest-integration`: the whole normal suite plus
+  the integration-only tests of `gametest/integration` (registered by `IntegrationSuite` only with `bettacraft.integration`;
+  they fail when a mod of the group is missing, `IntegrationGroupTests` also checks every foreign id of our data). About 6
+  minutes for ~750 tests. `-Pgametests=<prefix>[,...]` runs only the tests whose method name or batch starts with a prefix
+  (e.g. `-Pgametests=bettacraft_integration`), also for the normal suite. The client side: `runClient -Pintegration
+  -Psmoketestm42` (JEI, GuideME), `-Psmoketestm8` (overlays; with `-Ptop -PnoJade` / `-Pwthit -PnoJade`), `-Psmoketestm32d`
+  (JourneyMap). CI: the manual workflow `integration.yml` runs `integrationTests -PintegrationPartial` with the open-licence
+  jars of `tools/ci/integration-mods.json`; tests whose mods are missing there pass with a log line.
 - CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the
   manual *full* run adds smokes without optional mods / with TOP + WTHIT and GameTests with `-Ppower`. `release.yml`
   on a `v<mod_version>` tag: full tests, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is

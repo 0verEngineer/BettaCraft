@@ -293,6 +293,27 @@ README); the generated files are committed, so the Gradle build does not need Py
 Development-only code (smoke tests, the showcase world, GameTests) lives in the source set `src/dev`: every `run*` task
 loads it, the jar does not contain it.
 
+### Integration tests (optional)
+
+The integrations with other mods have an optional test suite of their own that no build runs on its own:
+
+```
+./gradlew integrationTests --no-configuration-cache                    # all GameTests with every integrated mod, ~6 minutes
+./gradlew integrationTests -Pgametests=bettacraft_integration --no-configuration-cache   # only the integration-only tests
+./gradlew runClient -Pintegration -Psmoketestm42 --no-configuration-cache  # JEI and the handbook with every mod (background window)
+```
+
+It loads the dev mod groups of every mod Bettacraft integrates (`-Ppower`, `-Paquatic`, `-Pbiomes`, `-Pstorage`, `-Pcreate`,
+`-Pquests`, `-Pkubejs`, `-Pfacades`, for the client also `-Pmaps`) plus `run/integration-mods` (Integrated Dynamics and
+Integrated Tunnels, XNet, LaserIO, Modular Routers, Industrial Foregoing and their libraries). The jars are not in the
+repository: copy them from a local ATM10 instance into the `run/*-mods` folders (`-Pintegration` works with any run task).
+The GameTest server runs in `run/gametest-integration` and adds the integration-only tests (`gametest/integration`): items,
+fluids and FE through the pipes, cables and networks of Pipez, EnderIO, Mekanism, Create, AE2, Refined Storage, Integrated
+Tunnels, XNet, LaserIO, Modular Routers and Flux Networks into feeders, tanks and the filter; autocrafting into the food maker
+and the crucible; the capture items of EnderIO and Industrial Foregoing; the KubeJS example script; every id of another mod in
+Bettacraft's data. A missing mod fails these tests, so an incomplete group cannot look green. `-Pgametests=<prefix>` runs only
+the tests whose method name or batch starts with the prefix (also in the normal suite).
+
 ## Continuous integration and releases
 
 [![Build](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml)
@@ -307,6 +328,10 @@ loads it, the jar does not contain it.
   `verifyReleaseJar`, the top section of `CHANGELOG.md` as release notes, a GitHub release (a prerelease for `-alpha`,
   `-beta` and `-rc` versions) and, once the token and project id are set, the file upload to CurseForge (the only mod
   site). It also builds the CurseForge project description (`curseforgeDescription`, see below) as a workflow artifact.
+- **Integration tests** (`.github/workflows/integration.yml`, only started by hand): `gradlew integrationTests
+  -PintegrationPartial` with the integrated mods that have an open licence and a pinned Modrinth download
+  (`tools/ci/integration-mods.json`); the integration-only tests of the other mods pass with a notice. The complete run is
+  local (see "Integration tests" above).
 - The same checks locally:
 
 ```
