@@ -62,7 +62,7 @@ public final class IntegrationModTests {
     /** EnderIO: the soul vial catches a spider by its own right-click code; the tank takes it out of the vial. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_captures", timeoutTicks = 100)
     public static void enderioSoulVialCaughtByEnderIoGoesIntoATerrarium(GameTestHelper h) {
-        IntegrationSuite.require("enderio");
+        if (IntegrationSuite.lacks(h, "enderio")) return;
         TankBlockEntity c = PlumbingGameTestsAccess.terrarium(h, 4, 2);
         ServerPlayer p = PlumbingGameTestsAccess.player(h);
         p.setGameMode(GameType.SURVIVAL);
@@ -81,7 +81,7 @@ public final class IntegrationModTests {
     /** Industrial Foregoing: the mob imprisonment tool catches a spider by its own capture code; the tank takes it out. */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_captures", timeoutTicks = 100)
     public static void imprisonmentToolCaughtByIndustrialForegoingGoesIntoATerrarium(GameTestHelper h) {
-        IntegrationSuite.require("industrialforegoing");
+        if (IntegrationSuite.lacks(h, "industrialforegoing")) return;
         TankBlockEntity c = PlumbingGameTestsAccess.terrarium(h, 4, 2);
         ServerPlayer p = PlumbingGameTestsAccess.player(h);
         p.setGameMode(GameType.SURVIVAL);
@@ -125,7 +125,7 @@ public final class IntegrationModTests {
      */
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_kubejs", timeoutTicks = 200)
     public static void kubejsExampleScriptHandlesOurEvents(GameTestHelper h) {
-        IntegrationSuite.require("kubejs");
+        if (IntegrationSuite.lacks(h, "kubejs")) return;
         TankBlockEntity t = tank(h, 2, 2, 2, 2, 2, 2, true);
         String name = "kubejs-probe-" + UUID.randomUUID().toString().substring(0, 8);
         t.getTank().setName(name);
@@ -148,6 +148,35 @@ public final class IntegrationModTests {
         h.assertTrue(added.contains("3 x bettacraft:betta born in tank " + name), "the born handler logged: " + added);
         h.assertTrue(added.contains("bettacraft:betta died of hunger in tank " + name), "the died handler logged: " + added);
         h.assertTrue(!added.contains("ERROR") && !added.contains("WARN"), "no script error: " + added);
+        h.succeed();
+    }
+
+    private static boolean fishEggsGoals(net.minecraft.world.entity.Mob m) {
+        return java.util.stream.Stream.concat(m.goalSelector.getAvailableGoals().stream(), m.targetSelector.getAvailableGoals().stream())
+                .anyMatch(w -> w.getGoal().getClass().getName().startsWith("dev.cephelo.fisheggs."));
+    }
+
+    /**
+     * Fish Eggs (M42 fix): the mod gives every fish its breeding and food hunting goals (fed fish pair up and lay egg items that
+     * hatch fish without our genes). A tropical fish in the world keeps them; our betta never gets them; a tropical fish put
+     * into a tank loses them (suppressOwnBreeding) after a care step.
+     */
+    @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_fisheggs", timeoutTicks = 100)
+    public static void fishEggsBreedingStaysOutOfOurFish(GameTestHelper h) {
+        if (IntegrationSuite.lacks(h, "fisheggs")) return;
+        var level = h.getLevel();
+        var wild = h.spawn(EntityType.TROPICAL_FISH, new BlockPos(1, 2, 8));
+        h.assertTrue(fishEggsGoals(wild), "Fish Eggs gives a tropical fish in the world its goals (else this test checks nothing): "
+                + wild.targetSelector.getAvailableGoals().stream().map(w -> w.getGoal().getClass().getName()).toList());
+        var betta = h.spawn(org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), new BlockPos(3, 2, 8));
+        h.assertTrue(!fishEggsGoals(betta), "our betta has none of Fish Eggs' goals");
+        TankBlockEntity t = tank(h, 2, 2, 2, 2, 2, 2, true);
+        var err = TankInhabitants.insert(level, t, new ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH, null, false);
+        h.assertTrue(err == null, "the tropical fish goes in: " + (err == null ? "" : err.getString()));
+        org.overengineer.bettacraft.foreign.ForeignBreeding.step(level, t, 0.01);
+        var inTank = TankInhabitants.liveInhabitants(level, t.getTank()).stream().filter(e -> e.getType() == EntityType.TROPICAL_FISH).findFirst()
+                .orElseThrow(() -> new GameTestAssertException("no tropical fish in the tank"));
+        h.assertTrue(!fishEggsGoals((net.minecraft.world.entity.Mob) inTank), "the tropical fish in the tank lost Fish Eggs' goals");
         h.succeed();
     }
 }

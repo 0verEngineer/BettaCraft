@@ -339,6 +339,7 @@ public final class ForeignBreeding {
     /** Takes the love from a foreign inhabitant (its own breeding cannot start in the tank). */
     static void calm(Entity e) {
         if (!foreign(e) || !(e instanceof LivingEntity)) return;
+        if (e instanceof net.minecraft.world.entity.Mob mob) org.overengineer.bettacraft.compat.ModBreedingGoals.strip(mob); // M42: Fish Eggs
         if (e instanceof net.minecraft.world.entity.animal.Animal a) {
             if (a.isInLove()) a.resetLove();
             return;
