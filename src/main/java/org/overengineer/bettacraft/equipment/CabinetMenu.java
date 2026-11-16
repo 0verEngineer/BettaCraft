@@ -29,6 +29,8 @@ public class CabinetMenu extends AbstractContainerMenu {
     public static final int FILTER = 0, HEATER0 = 1, AIR_PUMP = 3, STORAGE0 = 4, PLAYER0 = 4 + CabinetBlockEntity.STORAGE;
     /** M22.4: menu button ids 0..3 set the outlet side ({@link OutletSide} ordinal). */
     public static final int BUTTON_OUTLET0 = 0;
+    /** M41: menu buttons: the next / previous side of the Create shaft that the server allows. */
+    public static final int BUTTON_DRIVE_NEXT = 30, BUTTON_DRIVE_PREVIOUS = 31;
     @Nullable
     private final CabinetBlockEntity cabinet;
     private final IItemHandlerModifiable items;
@@ -92,6 +94,53 @@ public class CabinetMenu extends AbstractContainerMenu {
             }
         });
         addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(cabinet)); // M37
+        drive.set(cabinet == null ? -1 : driveValue(cabinet)); // M41
+        addDataSlot(new net.minecraft.world.inventory.DataSlot() {
+            @Override
+            public int get() {
+                return cabinet == null ? drive.get() : driveValue(cabinet);
+            }
+
+            @Override
+            public void set(int v) {
+                drive.set(v);
+            }
+        });
+    }
+
+    // ------------------------------------------------------------------ M41 Create shaft
+
+    /** M41: the side of the Create shaft (ordinal), -1 while the server has no Create or the shaft on cabinets is off. */
+    private final net.minecraft.world.inventory.DataSlot drive = net.minecraft.world.inventory.DataSlot.standalone();
+
+    /** The setting's ordinal, + 16 when the server does not allow that side ({@code createDrive.cabinetSides}); -1: not available. */
+    private static int driveValue(CabinetBlockEntity c) {
+        if (!org.overengineer.bettacraft.tank.TankDrive.cabinetsEnabled()) return -1;
+        DriveSide s = c.driveSetting();
+        return s.ordinal() + (org.overengineer.bettacraft.tank.TankDrive.sideAllowed(s) ? 0 : 16);
+    }
+
+    /** M41: the drive side shown in the menu, or null while the setting is not available. */
+    @Nullable
+    public DriveSide driveSide() {
+        int v = cabinet == null ? drive.get() : driveValue(cabinet);
+        return v < 0 ? null : DriveSide.byIndex(v & 15);
+    }
+
+    /** M41: whether the server allows the side shown. */
+    public boolean driveAllowed() {
+        int v = cabinet == null ? drive.get() : driveValue(cabinet);
+        return v >= 0 && v < 16;
+    }
+
+    /** The next side from {@code from} the server allows (none is always allowed). */
+    static DriveSide nextAllowed(DriveSide from, boolean forward) {
+        DriveSide s = from;
+        for (int i = 0; i < DriveSide.values().length; i++) {
+            s = forward ? s.next() : s.previous();
+            if (org.overengineer.bettacraft.tank.TankDrive.sideAllowed(s)) return s;
+        }
+        return DriveSide.NONE;
     }
 
     /** M37: the spring of the cabinet in percent (-1: not windable now). */
@@ -115,6 +164,11 @@ public class CabinetMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (powerButton(player, id, cabinet)) return true;
+        if (cabinet != null && (id == BUTTON_DRIVE_NEXT || id == BUTTON_DRIVE_PREVIOUS)) { // M41
+            if (!org.overengineer.bettacraft.tank.TankDrive.cabinetsEnabled()) return false;
+            cabinet.setDriveSide(nextAllowed(cabinet.driveSetting(), id == BUTTON_DRIVE_NEXT));
+            return true;
+        }
         if (cabinet == null || id < BUTTON_OUTLET0 || id >= BUTTON_OUTLET0 + OutletSide.values().length) return false;
         if (!Features.enabled(Feature.CABINET_OUTLET_SIDE)) return false;
         cabinet.setOutletSide(OutletSide.byIndex(id - BUTTON_OUTLET0));

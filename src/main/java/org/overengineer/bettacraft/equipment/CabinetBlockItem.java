@@ -69,5 +69,10 @@ public class CabinetBlockItem extends BlockItem {
             tooltip.add(Component.translatable("tooltip.bettacraft.cabinet.outlet", Component.translatable(OutletSide.byId(side).translationKey()))
                     .withStyle(ChatFormatting.DARK_AQUA));
         }
+        // M41: a cabinet that takes a Create shaft
+        DriveSide drive = DriveSide.byId(stack.get(ModDataComponents.DRIVE_SIDE.get()));
+        if (drive != DriveSide.NONE) {
+            tooltip.add(Component.translatable("gui.bettacraft.cabinet.drive", Component.translatable(drive.translationKey())).withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 }

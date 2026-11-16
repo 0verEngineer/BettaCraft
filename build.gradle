@@ -350,6 +350,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm41')) {
+                // gradlew runClient -Pcreate -Psmoketestm41 : only the M41 scene (a tank powered by Create: a drive adapter on its
+                // wall, a shaft on the cabinet under it; the adapter with Create's goggles, the cabinet's flange and menu)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m41only', 'true'
+            }
             if (project.hasProperty('smoketestm32c')) {
                 // gradlew runClient -Pcreate -Psmoketestm32c : only the M32 part c scene (Display Links write the values of a tank
                 // onto a sign)
@@ -563,6 +569,10 @@ dependencies {
     // loaded only when Create is there; everything else of the Create compat is reflection. Never in the jar; in dev
     // Create comes from run/create-mods (-Pcreate).
     compileOnly "maven.modrinth:create:${create_version}"
+    // M41: the drive adapter's classes extend Create's kinetic block and block entity, whose super types live in the libraries
+    // Create bundles (Ponder with Catnip, Flywheel, Registrate): compileOnly from the jars nested in the same Create jar
+    // (extracted by extractCreateLibraries, read only). Never in our jar.
+    compileOnly files({ fileTree(layout.buildDirectory.dir('create-libraries')).include('*.jar').files }) { builtBy 'extractCreateLibraries' }
     compileOnly "maven.modrinth:wthit:${wthit_version}"
     compileOnly "maven.modrinth:badpackets:${badpackets_version}"
     if (project.hasProperty('wthit') && !project.hasProperty('noWthit') && !gameTests) {
@@ -586,6 +596,24 @@ dependencies {
     testImplementation platform("org.junit:junit-bom:${junit_version}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// M41: the libraries nested in the Create jar (jar-in-jar), for compiling the drive classes (compileOnly above)
+configurations {
+    createJar { transitive = false }
+}
+dependencies {
+    createJar "maven.modrinth:create:${create_version}"
+}
+tasks.register('extractCreateLibraries', Copy) {
+    def jar = configurations.createJar
+    inputs.files(jar)
+    from({ zipTree(jar.singleFile) }) {
+        include 'META-INF/jarjar/*.jar'
+        eachFile { it.path = it.name }
+        includeEmptyDirs = false
+    }
+    into layout.buildDirectory.dir('create-libraries')
 }
 
 test {

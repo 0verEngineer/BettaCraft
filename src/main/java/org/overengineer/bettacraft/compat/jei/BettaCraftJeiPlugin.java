@@ -163,6 +163,7 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_JEI)) return;
         for (String path : ItemHints.ITEMS) {
             Item item = BuiltInRegistries.ITEM.get(BettaCraft.id(path));
+            if (item == net.minecraft.world.item.Items.AIR) continue; // M41: the drive adapter exists only with Create
             info(registration, List.of(new ItemStack(item)), "info.bettacraft." + path);
         }
         List<ItemStack> decor = new ArrayList<>();

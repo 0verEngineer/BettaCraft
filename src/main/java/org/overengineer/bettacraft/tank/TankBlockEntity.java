@@ -125,6 +125,11 @@ public class TankBlockEntity extends BlockEntity {
     public int airOutlets, airDriven;
     /** FE per tick the equipment needed in the last care step (for the menu and the info overlays). */
     int lastDemand;
+    /** M41 (transient, set by {@link TankDrive#step}): FE per tick Create's rotation gave, its inputs, whether one is overstressed. */
+    int driveFe, driveInputs;
+    boolean driveOverstressed;
+    /** M41: positions of the drive adapters on this tank ({@link TankEquipment}). */
+    java.util.List<BlockPos> driveCache = java.util.List.of();
     /** M31: heat mats and misters at the tank (transient cache, see TankEquipment), whether the misters have FE. */
     java.util.List<BlockPos> heatMatCache = java.util.List.of(), misterCache = java.util.List.of();
     boolean misterPowered = true;
@@ -271,6 +276,9 @@ public class TankBlockEntity extends BlockEntity {
     public boolean airPowered() { return airPowered; }
     public boolean misterPowered() { return misterPowered; } // M31
     public int lastDemand() { return lastDemand; }
+    public int driveFe() { return driveFe; }
+    public int driveInputs() { return driveInputs; }
+    public boolean driveOverstressed() { return driveOverstressed; }
 
     public boolean isCrowded() {
         return crowded;

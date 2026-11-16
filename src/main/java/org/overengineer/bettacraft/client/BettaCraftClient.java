@@ -309,6 +309,10 @@ public final class BettaCraftClient {
         event.registerBlockEntityRenderer(ModBlockEntities.AIR_PUMP.get(), org.overengineer.bettacraft.client.render.AirHoseRenderer::new); // M23
         event.registerBlockEntityRenderer(ModBlockEntities.THERMO_HYGROMETER.get(), org.overengineer.bettacraft.client.render.ThermoHygrometerRenderer::new); // M31
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get(), org.overengineer.bettacraft.client.render.MonitorRenderer::new); // M27
+        // M41: the drive adapter's shaft (the block exists only with Create)
+        if (net.neoforged.fml.ModList.get().isLoaded(org.overengineer.bettacraft.compat.create.CreateCompat.MOD_ID)) {
+            org.overengineer.bettacraft.compat.create.DriveAdapterRenderer.register(event);
+        }
     }
 
     private static void onScreens(RegisterMenuScreensEvent event) {

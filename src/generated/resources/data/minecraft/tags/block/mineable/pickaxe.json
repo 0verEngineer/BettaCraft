@@ -49,6 +49,10 @@
     "bettacraft:filter_fresh_port",
     "bettacraft:filter_waste_port",
     "bettacraft:filter_pipe_bundle",
+    {
+      "id": "bettacraft:drive_adapter",
+      "required": false
+    },
     "bettacraft:monitor",
     "bettacraft:protein_skimmer",
     "bettacraft:reef_rock",

@@ -73,6 +73,7 @@ public final class FeatureContent {
         put(Feature.TERRARIUM_DEVICES, "heat_mat", "basking_lamp", "mister", "thermo_hygrometer");
         put(Feature.HERPS, "terrarium_box");
         put(Feature.MOBS_IN_GLASS, "mob_jar", "mob_jar_filled");
+        put(Feature.CREATE_DRIVE, "drive_adapter"); // M41 (only registered with Create)
     }
 
     /** The features of a Bettacraft item ({@code neon_tetra_bucket}); empty = always there. */

@@ -46,6 +46,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
     public void render(T be, float partialTick, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
         Level level = be.getLevel();
         if (level == null) return;
+        if (be instanceof CabinetBlockEntity drive) DriveRender.cabinetCoupling(drive, ps, buffers, light); // M41: the flange of the Create shaft
         // M29.1: the air pump in the cabinet: its hose beside the filter hose (also without a filter)
         if (be instanceof CabinetBlockEntity cab && cab.hasAirPump()) AirHoseRenderer.renderCabinet(cab, ps, buffers);
         FilterFlow.Path p = path(level, be);

@@ -189,6 +189,10 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue WIND_TICKS_PER_CHARGE, WIND_CLICKS_PER_CHARGE;
     public static final ModConfigSpec.DoubleValue WIND_EXTERNAL_FILTER, WIND_MULTIBLOCK_FILTER, WIND_CABINET, WIND_OSMOSIS, WIND_WATER_CHANGER,
             WIND_WATER_PUMP, WIND_FERTILIZER_MAKER;
+    // M41: Create's rotation for the tank's FE buffer (drive adapter, shaft on the cabinet)
+    public static final ModConfigSpec.IntValue DRIVE_FULL_SPEED, DRIVE_FE, DRIVE_MAX_FE;
+    public static final ModConfigSpec.DoubleValue DRIVE_STRESS_PER_FE, DRIVE_IDLE_STRESS, DRIVE_FE_PER_SPRING_TICK;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> DRIVE_CABINET_SIDES;
     public static final ModConfigSpec.DoubleValue FERT_PORTION_BLOCKS, FERT_DECAY, FERT_PLANT_USE, FERT_BOOST, FERT_OVERDOSE, FERT_ALGAE, FERT_PIPE_UP_TO;
     public static final ModConfigSpec.IntValue FERT_MAKER_TICKS, FERT_MAKER_FE;
     public static final ModConfigSpec.DoubleValue DIET_VARIETY_DAYS;
@@ -796,6 +800,29 @@ public final class ServerConfig {
                 .defineInRange("waterPumpCharges", 1.0, 0.05, 64.0);
         WIND_FERTILIZER_MAKER = b.comment("Charges the spring of the fertilizer maker holds (it needs its spring without the power options)")
                 .defineInRange("fertilizerMakerCharges", 1.0, 0.05, 64.0);
+        b.pop();
+
+        b.comment("M41: Create's rotation charges the FE buffer of a tank (features.compat.create.drive, only with Create): a drive adapter on",
+                "a tank wall or under the tank, or a shaft on the side of a cabinet under the tank set in its menu. The inputs of a tank give",
+                "what its devices need and what fills the buffer, and they cost Create stress (SU) by that load").push("createDrive");
+        DRIVE_FULL_SPEED = b.comment("RPM at which one input gives its full power (slower proportionally, faster no more)")
+                .defineInRange("fullSpeedRpm", 64, 1, 256);
+        DRIVE_FE = b.comment("FE per tick one input gives at full speed")
+                .defineInRange("fePerTickPerInput", 256, 1, 1000000);
+        DRIVE_MAX_FE = b.comment("FE per tick all inputs of one tank give together at most (several adapters add up to this)")
+                .defineInRange("maxFePerTickPerTank", 1024, 1, 10000000);
+        DRIVE_STRESS_PER_FE = b.comment("Stress units (SU) an input costs for every FE per tick it gives (2: 128 FE/t cost 256 SU)")
+                .defineInRange("stressPerFe", 2.0, 0.0, 1000000.0);
+        DRIVE_IDLE_STRESS = b.comment("Stress units per RPM an input costs while it turns without load (0.5: 32 SU at 64 RPM)")
+                .defineInRange("idleStressPerRpm", 0.5, 0.0, 1000000.0);
+        DRIVE_FE_PER_SPRING_TICK = b.comment("With power.winding on, a cabinet's shaft winds the cabinet's spring with the FE the tank does not need:",
+                        "this many FE wind one device-tick")
+                .defineInRange("fePerSpringTick", 10.0, 0.1, 100000.0);
+        DRIVE_CABINET_SIDES = b.comment("Sides of a cabinet that may take the shaft (back, left, right, front, bottom; seen from the cabinet's door).",
+                        "Empty: no cabinet takes a shaft (features.compat.create.cabinetDrive switches it off as a whole)")
+                .defineListAllowEmpty("cabinetSides", java.util.List.of("back", "left", "right", "front", "bottom"), () -> "back",
+                        o -> o instanceof String str && org.overengineer.bettacraft.equipment.DriveSide.byIdOrNull(str) != null
+                                && org.overengineer.bettacraft.equipment.DriveSide.byIdOrNull(str) != org.overengineer.bettacraft.equipment.DriveSide.NONE);
         b.pop();
 
         b.comment("M37: liquid fertilizer (features.fertilizer.enabled): it speeds up the growth of the aquarium and floating plants of",

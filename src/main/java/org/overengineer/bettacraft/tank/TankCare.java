@@ -85,6 +85,7 @@ public final class TankCare {
         TankData tank = be.getTank();
         if (tank.hasLegacyHeaters()) TankEquipment.moveLegacyHeaters(server, be);
         TankPower.step(server, be, dt);
+        TankDrive.step(server, be, dt); // M41: Create's rotation refills the buffer with what the devices took
         updateTemperature(server, be, dt / 24000.0);
         TankWater.step(server, be, dt / 24000.0);
         TankNitrate.step(server, be, dt / 24000.0); // M24: nitrate rises, water changes lower it

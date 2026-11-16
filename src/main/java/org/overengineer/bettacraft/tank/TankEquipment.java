@@ -32,6 +32,8 @@ public final class TankEquipment {
         TankData t = c.getTank();
         List<BlockPos> filters = new ArrayList<>(), cabinets = new ArrayList<>(), skimmers = new ArrayList<>(), pumps = new ArrayList<>(), co2 = new ArrayList<>();
         List<BlockPos> mats = new ArrayList<>(), misters = new ArrayList<>(); // M31
+        List<BlockPos> drives = new ArrayList<>(); // M41
+        TankDrive.Bridge drive = TankDrive.BRIDGE;
         // M10: every outer side face of the shape (also the walls of a notch), and below every block without a tank
         // block under it (the bottom layer of a cuboid; for a free shape also under raised parts)
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
@@ -53,6 +55,8 @@ public final class TankEquipment {
         for (int i = 0; i < c.equipmentFaces.length; i++) {
             Direction d = Direction.from3DDataValue(c.equipmentFaceDirs[i]);
             p.set(c.equipmentFaces[i]);
+            // M41: a drive adapter with its back on this face (on a wall or under the tank)
+            if (drive != null && level.isLoaded(p) && drive.isAdapter(level.getBlockState(p), d)) drives.add(p.immutable());
             if (d == Direction.DOWN) {
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof CabinetBlock) cabinets.add(p.immutable());
                 if (level.isLoaded(p) && isMat(level.getBlockState(p), Direction.UP)) mats.add(p.immutable()); // M31: a heat mat under the floor
@@ -75,6 +79,8 @@ public final class TankEquipment {
         cabinets.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.filterCache = List.copyOf(filters);
         c.cabinetCache = List.copyOf(cabinets);
+        drives.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
+        c.driveCache = List.copyOf(new java.util.LinkedHashSet<>(drives));
         skimmers.sort(java.util.Comparator.comparingLong(BlockPos::asLong));
         c.skimmerCache = List.copyOf(skimmers);
         List<BlockPos> mine = new ArrayList<>();
@@ -180,6 +186,12 @@ public final class TankEquipment {
         }
         for (CabinetBlockEntity cab : cabinets(level, c)) if (cab.hasFilter()) out.add(cab);
         return out;
+    }
+
+    /** M41: the drive adapters on this tank (only with Create). */
+    public static List<BlockPos> driveAdapters(Level level, TankBlockEntity c) {
+        scanIfNeeded(level, c);
+        return c.driveCache;
     }
 
     /** Cabinets directly below the tank. */

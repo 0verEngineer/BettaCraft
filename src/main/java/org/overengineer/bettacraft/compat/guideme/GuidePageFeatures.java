@@ -32,6 +32,7 @@ import org.overengineer.bettacraft.progression.GuideBook;
  * ({@link DeepNavigation}) leaves them out with everything below them, the search drops them, and a page reached anyway (a
  * link, the item key) starts with a notice. A page belongs to:
  * <ol>
+ * <li>M41: its frontmatter {@code mod: <modid>} while that mod is missing (the page of an integration), then</li>
  * <li>its frontmatter {@code feature: <path>} (pages without own items: chapters, care pages), else</li>
  * <li>its {@code item_ids}: hidden when every Bettacraft item of it is off (one core or foreign item keeps it), else</li>
  * <li>its name when that is a small animal ({@code invertebrates/neocaridina.md}).</li>
@@ -47,6 +48,11 @@ public final class GuidePageFeatures {
         if (page == null || !BettaCraft.MOD_ID.equals(page.getId().getNamespace())) return null;
         Map<String, Object> fm = page.getFrontmatter().additionalProperties();
         Object own = fm.get("feature");
+        // M41: a page of another mod's integration ({@code mod: create}) is hidden without that mod (named by its feature)
+        if (fm.get("mod") instanceof String mod && !net.neoforged.fml.ModList.get().isLoaded(mod)) {
+            Feature f = own instanceof String path ? Feature.byPath(path) : null;
+            return f != null ? f : Feature.CREATE;
+        }
         if (own instanceof String path) {
             Feature f = Feature.byPath(path);
             return f != null && !Features.enabled(f) ? f : null;

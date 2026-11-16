@@ -70,6 +70,8 @@ public final class ItemHints {
             "monitor",
             // M37: the crank, liquid fertilizer and the fertilizer maker
             "crank", "fertilizer_maker", "kelp_meal", "nutrient_salt", "liquid_fertilizer", "fertilizer_canister",
+            // M41: the drive adapter (only registered with Create)
+            "drive_adapter",
             // M30: catching big animals
             "large_net", "transport_tub", "steel_leader");
 

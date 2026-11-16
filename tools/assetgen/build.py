@@ -9,6 +9,7 @@ import breeding
 import critters
 import tankmates
 import cultures
+import create_drive
 import decor
 import decor_icons
 import equipment
@@ -68,6 +69,7 @@ def main() -> int:
     written += aeration.write_all()  # M23
     written += plumbing.write_all()  # M24
     written += filter_lines.write_all()  # M40
+    written += create_drive.write_all()  # M41
     written += chemistry.write_all()  # M25
     written += co2_osmosis.write_all()  # M25 part b
     written += reef_dosing.write_all()  # M25 part c

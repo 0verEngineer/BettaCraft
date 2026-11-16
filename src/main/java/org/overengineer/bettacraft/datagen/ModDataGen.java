@@ -333,6 +333,7 @@ public final class ModDataGen {
             DataGenM25c.blockStates(this); // M25 part c
             DataGenM26.blockStates(this); // M26 part a
             DataGenM37.blockStates(this); // M37
+            DataGenM41.blockStates(this); // M41: the drive adapter (only the model)
             DataGenM27.blockStates(this); // M27
             DataGenM28.blockStates(this); // M28 part c
             DataGenM281.blockStates(this); // M28.1
@@ -615,6 +616,7 @@ public final class ModDataGen {
             DataGenM25c.itemModels(this);
             DataGenM26.itemModels(this); // M26 part a
             DataGenM37.itemModels(this); // M37
+            DataGenM41.itemModels(this); // M41
             DataGenM27.itemModels(this); // M27
             DataGenM28.itemModels(this); // M28 part c
             DataGenM30.itemModels(this); // M30 part a
@@ -1369,6 +1371,7 @@ public final class ModDataGen {
             DataGenM40.blockTags(this::tag); // M40 part a
             DataGenM40b.blockTags(this::tag); // M40 part b
             DataGenM40c.blockTags(this::tag); // M40 part c: Cable Facades
+            DataGenM41.blockTags(this::tag); // M41: the drive adapter (optional: only with Create)
             DataGenM38.blockTags(this::tag); // M38
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c

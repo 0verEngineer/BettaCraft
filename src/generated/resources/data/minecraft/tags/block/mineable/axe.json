@@ -2,6 +2,10 @@
   "values": [
     "bettacraft:cabinet",
     "bettacraft:larva_tub",
-    "bettacraft:daphnia_barrel"
+    "bettacraft:daphnia_barrel",
+    {
+      "id": "bettacraft:drive_adapter",
+      "required": false
+    }
   ]
 }

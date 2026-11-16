@@ -145,6 +145,11 @@ public final class InfoData {
             out.putLong("power", t.powerBuffer());
             out.putLong("power_cap", TankPower.capacity());
             out.putInt("demand", c.lastDemand());
+            if (c.driveInputs() > 0) { // M41: Create's rotation charges the buffer
+                out.putInt("drive_fe", c.driveFe());
+                out.putInt("drive_inputs", c.driveInputs());
+                out.putBoolean("drive_overstressed", c.driveOverstressed());
+            }
             out.putBoolean("unpowered", (TankPower.heaterRequired() && !c.heatPowered()) || (TankPower.filterRequired() && !c.filterPowered())
                     || (TankPower.lightRequired() && !c.lightPowered()));
         }
@@ -184,6 +189,14 @@ public final class InfoData {
         }
         if (f instanceof org.overengineer.bettacraft.winding.Windable w) putSpring(out, w); // M37
         if (f instanceof CabinetBlockEntity cab) {
+            // M41: the Create shaft on its drive side
+            org.overengineer.bettacraft.tank.TankDrive.Bridge drive = org.overengineer.bettacraft.tank.TankDrive.BRIDGE;
+            if (drive != null && cab.driveSide() != org.overengineer.bettacraft.equipment.DriveSide.NONE) {
+                out.putString("drive", cab.driveSide().id());
+                double fe = drive.cabinetFe(cab);
+                out.putInt("drive_fe", fe < 0 ? -1 : (int) Math.round(fe));
+                out.putBoolean("drive_overstressed", drive.cabinetOverstressed(cab));
+            }
             int n = 0;
             for (int i = 0; i < cab.storage().getSlots(); i++) n += cab.storage().getStackInSlot(i).getCount();
             out.putInt("storage", n);

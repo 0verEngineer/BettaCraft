@@ -43,6 +43,9 @@ public final class ModDataComponents {
     /** M22.4: the outlet side of a cabinet ({@code OutletSide} id; missing = back). */
     public static final Supplier<DataComponentType<String>> OUTLET_SIDE = COMPONENTS.registerComponentType("outlet_side",
             b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8));
+    /** M41: the side of a cabinet that takes a Create shaft (only when one is set), kept on the item. */
+    public static final Supplier<DataComponentType<String>> DRIVE_SIDE = COMPONENTS.registerComponentType("drive_side",
+            b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8));
 
     /** M24: the values (temperature, salt, quality, nitrate) of water in pipes and other mods' tanks. */
     public static final Supplier<DataComponentType<org.overengineer.bettacraft.tank.WaterValues>> WATER_VALUES = COMPONENTS.registerComponentType("water",

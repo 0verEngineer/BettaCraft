@@ -118,6 +118,9 @@ public final class ModCreativeTabs {
                         ModItems.MAGNESIUM_CANISTER, ModItems.TRACE_CANISTER)) out.accept(it.get());
                 // M31: terrarium devices
                 for (var it : java.util.List.of(ModItems.HEAT_MAT, ModItems.BASKING_LAMP, ModItems.MISTER, ModItems.THERMO_HYGROMETER)) out.accept(it.get());
+                // M41: the drive adapter (only with Create)
+                var drive = org.overengineer.bettacraft.tank.TankDrive.ADAPTER_ITEM;
+                if (drive != null) out.accept(drive.get());
                 out.accept(ModItems.CO2_CYLINDER.get());
                 ItemStack fullCylinder = new ItemStack(ModItems.CO2_CYLINDER.get());
                 org.overengineer.bettacraft.co2.Co2CylinderItem.setGas(fullCylinder, 1e9F);

@@ -135,6 +135,11 @@ public final class InfoLines {
             if (d.getBoolean("unpowered")) p.append(" ").append(Component.translatable("jade.bettacraft.no_power").withStyle(ChatFormatting.RED));
             out.add(p);
         }
+        if (d.contains("drive_inputs")) { // M41
+            out.add(d.getBoolean("drive_overstressed") && d.getInt("drive_fe") <= 0
+                    ? Component.translatable("jade.bettacraft.tank.drive_overstressed", d.getInt("drive_inputs")).withStyle(ChatFormatting.RED)
+                    : Component.translatable("jade.bettacraft.tank.drive", d.getInt("drive_fe"), d.getInt("drive_inputs")).withStyle(ChatFormatting.GRAY));
+        }
         ListTag warn = d.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < warn.size(); i++) {
             out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getString(i)).withStyle(ChatFormatting.RED));
@@ -182,6 +187,13 @@ public final class InfoLines {
         }
         if (d.getInt("coolers") > 0) out.add(Component.translatable("jade.bettacraft.filter.coolers", d.getInt("coolers"), d.getInt("cool")));
         out.addAll(spring(d)); // M37
+        if (d.contains("drive")) { // M41: the Create shaft of a cabinet
+            Component side = Component.translatable("gui.bettacraft.cabinet.drive." + d.getString("drive"));
+            int fe = d.getInt("drive_fe");
+            out.add(d.getBoolean("drive_overstressed") ? Component.translatable("jade.bettacraft.cabinet.drive_overstressed", side).withStyle(ChatFormatting.RED)
+                    : fe < 0 ? Component.translatable("jade.bettacraft.cabinet.drive_none", side).withStyle(ChatFormatting.GRAY)
+                    : Component.translatable("jade.bettacraft.cabinet.drive", side, fe).withStyle(ChatFormatting.AQUA));
+        }
         if (!d.getBoolean("has_filter")) return out;
         if (d.getBoolean("attached")) {
             String name = d.getString("tank");

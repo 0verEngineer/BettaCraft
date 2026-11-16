@@ -73,6 +73,7 @@ public final class Schemas {
     public static final MigrationChain CABINET = MigrationChain.builder("cabinet")
             .step(0, data -> data)
             .step(1, Schemas::springV1toV2) // M37: the spring of the crank
+            .step(2, Schemas::cabinetDriveV2toV3) // M41: the side that takes a Create shaft
             .build();
 
     /** Tank interior region SavedData (one per server, in the overworld data folder). */
@@ -253,6 +254,12 @@ public final class Schemas {
     /** M37: external filters and cabinets of an older world have an unwound spring. */
     static CompoundTag pumpHeadV0toV1(CompoundTag data) {
         if (!data.contains("retrofit", Tag.TAG_ANY_NUMERIC)) data.putBoolean("retrofit", true);
+        return data;
+    }
+
+    /** M41: cabinets from before M41 take no Create shaft ({@code drive: none}). */
+    static CompoundTag cabinetDriveV2toV3(CompoundTag data) {
+        if (!data.contains("drive", Tag.TAG_STRING)) data.putString("drive", "none");
         return data;
     }
 

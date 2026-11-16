@@ -53,6 +53,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     private ResourceLocation wood = DEFAULT_WOOD;
     /** M22.4: the side the filter hose goes up (server: as set; client: the effective side the server sent). */
     private OutletSide outlet = OutletSide.BACK;
+    /** M41: the side that takes a Create shaft (server: as set; client: the effective side the server sent). */
+    private DriveSide drive = DriveSide.NONE;
     /** Client copy: whether the filter slot is filled (the slot itself is not synced outside the menu). */
     private boolean clientHasFilter;
     /** M29.1: client copy of whether the air pump slot is filled. */
@@ -154,6 +156,44 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             var tank = FilterHost.tankOf(level, tankBlockPos());
             if (tank != null) org.overengineer.bettacraft.tank.TankCurrents.invalidate(tank);
+        }
+    }
+
+    // ------------------------------------------------------------------ M41 Create shaft
+
+    /**
+     * M41: the side that takes a Create shaft. On the server NONE while Create is missing, {@code
+     * features.compat.create.cabinetDrive} is off or {@code createDrive.cabinetSides} does not list the side (the setting is
+     * kept); on the client the side the server sent.
+     */
+    public DriveSide driveSide() {
+        if (level != null && level.isClientSide) return drive;
+        if (drive == DriveSide.NONE || !org.overengineer.bettacraft.tank.TankDrive.cabinetsEnabled()
+                || !org.overengineer.bettacraft.tank.TankDrive.sideAllowed(drive)) return DriveSide.NONE;
+        return drive;
+    }
+
+    /** M41: the stored setting (also while the feature is off). */
+    public DriveSide driveSetting() {
+        return drive;
+    }
+
+    /** M41: the face of the cabinet the shaft goes into (pointing away from it), or null. */
+    @Nullable
+    public net.minecraft.core.Direction driveFace() {
+        BlockState s = getBlockState();
+        if (!s.hasProperty(CabinetBlock.FACING)) return null;
+        return driveSide().face(s.getValue(CabinetBlock.FACING));
+    }
+
+    public void setDriveSide(DriveSide side) {
+        if (side == null || side == drive) return;
+        drive = side;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            org.overengineer.bettacraft.tank.TankDrive.Bridge b = org.overengineer.bettacraft.tank.TankDrive.BRIDGE;
+            if (b != null) b.release(level, this); // the next care step charges the new side
         }
     }
 
@@ -293,6 +333,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         Schemas.CABINET.stamp(tag);
         tag.putString("wood", wood.toString());
         if (outlet != OutletSide.BACK) tag.putString("outlet", outlet.id()); // M22.4
+        tag.putString("drive", drive.id()); // M41
         tag.put("items", items.serializeNBT(registries));
         if (airDriven > 0) tag.putInt("air_driven", airDriven); // M29.1
         saveM23(tag);
@@ -307,6 +348,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         ResourceLocation old = wood;
         wood = w == null ? DEFAULT_WOOD : w;
         outlet = OutletSide.byId(tag.getString("outlet")); // M22.4: old cabinets keep the back wall
+        drive = DriveSide.byId(tag.getString("drive")); // M41: old cabinets take no shaft
         if (tag.contains("items")) {
             items.deserializeNBT(registries, tag.getCompound("items"));
             if (items.getSlots() != SLOTS) {
@@ -334,6 +376,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putBoolean("has_air_pump", hasAirPump()); // M29.1
         tag.putInt("air_driven", airDriven);
         tag.putString("outlet", outletSide().id()); // M22.4: the effective side
+        tag.putString("drive", driveSide().id()); // M41: the effective side
         saveM23(tag);
         tag.putInt("regulator", regulator());
         return tag;
@@ -358,6 +401,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         clientHasAirPump = tag.getBoolean("has_air_pump"); // M29.1
         airDriven = Math.max(0, tag.getInt("air_driven"));
         outlet = OutletSide.byId(tag.getString("outlet"));
+        drive = DriveSide.byId(tag.getString("drive")); // M41
         loadM23(tag);
         afterClientUpdate(old);
     }
@@ -384,6 +428,9 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     @Override
     public void setRemoved() {
         super.setRemoved();
+        // M41: a shaft at this cabinet stops costing stress
+        org.overengineer.bettacraft.tank.TankDrive.Bridge b = org.overengineer.bettacraft.tank.TankDrive.BRIDGE;
+        if (b != null && level != null && !level.isClientSide) b.release(level, this);
         CLIENT_FILTERS.remove(this);
         CLIENT_AIR_PUMPS.remove(this);
     }
@@ -406,6 +453,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         ResourceLocation w = input.get(ModDataComponents.WOOD.get());
         if (w != null) wood = w;
         outlet = OutletSide.byId(input.get(ModDataComponents.OUTLET_SIDE.get())); // M22.4
+        drive = DriveSide.byId(input.get(ModDataComponents.DRIVE_SIDE.get())); // M41
     }
 
     @Override
@@ -413,11 +461,13 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         super.collectImplicitComponents(components);
         components.set(ModDataComponents.WOOD.get(), wood);
         if (outlet != OutletSide.BACK) components.set(ModDataComponents.OUTLET_SIDE.get(), outlet.id()); // M22.4: only when set
+        if (drive != DriveSide.NONE) components.set(ModDataComponents.DRIVE_SIDE.get(), drive.id()); // M41: only when set
     }
 
     @Override
     public void removeComponentsFromTag(CompoundTag tag) {
         tag.remove("wood");
         tag.remove("outlet");
+        tag.remove("drive");
     }
 }

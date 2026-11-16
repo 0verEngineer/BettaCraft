@@ -258,7 +258,7 @@ class SchemaMigrationTest {
         assertEquals(1, Schemas.INTERIOR_FLOOR.currentVersion());
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
         assertEquals(2, Schemas.EXTERNAL_FILTER.currentVersion());
-        assertEquals(2, Schemas.CABINET.currentVersion());
+        assertEquals(3, Schemas.CABINET.currentVersion());
         assertEquals(1, Schemas.GUIDE_BOOK.currentVersion());
         assertEquals(1, Schemas.CULTURE_TUB.currentVersion());
         assertEquals(1, Schemas.FILTER_PUMP_HEAD.currentVersion());
@@ -346,7 +346,7 @@ class SchemaMigrationTest {
         assertEquals(2, Schema.read(f));
         assertTrue(f.contains("heaters"));
         CompoundTag c = Schemas.CABINET.migrate(snbt("{wood:\"biomesoplenty:fir_planks\"}"));
-        assertEquals(2, Schema.read(c));
+        assertEquals(3, Schema.read(c)); // M41: the drive side
         assertEquals("biomesoplenty:fir_planks", c.getString("wood"), "modded wood ids are kept");
     }
 
@@ -607,5 +607,24 @@ class SchemaMigrationTest {
         assertEquals(5, f.getInt("regulator"));
         CompoundTag c = Schemas.CABINET.migrate(snbt("{schema:1,wood:\"minecraft:oak_planks\",spring:500L}"));
         assertEquals(500L, c.getLong("spring"), "a wound spring is kept");
+    }
+
+    /** M41: a cabinet from before M41 takes no Create shaft; its spring, outlet and wood stay. */
+    @Test
+    void cabinetV2GetsNoDriveSide() throws Exception {
+        CompoundTag c = Schemas.CABINET.migrate(snbt("{schema:2,wood:\"minecraft:spruce_planks\",outlet:\"left\",spring:700L}"));
+        assertEquals(3, Schema.read(c));
+        assertEquals("none", c.getString("drive"));
+        assertEquals(700L, c.getLong("spring"));
+        assertEquals("left", c.getString("outlet"));
+        assertEquals("minecraft:spruce_planks", c.getString("wood"));
+        assertEquals(org.overengineer.bettacraft.equipment.DriveSide.NONE, org.overengineer.bettacraft.equipment.DriveSide.byId(c.getString("drive")));
+        // the oldest cabinets (no version) go through every step
+        CompoundTag old = Schemas.CABINET.migrate(snbt("{wood:\"minecraft:oak_planks\"}"));
+        assertEquals("none", old.getString("drive"));
+        assertEquals(0L, old.getLong("spring"));
+        // a set side stays
+        CompoundTag set = Schemas.CABINET.migrate(snbt("{schema:3,wood:\"minecraft:oak_planks\",drive:\"bottom\"}"));
+        assertEquals(org.overengineer.bettacraft.equipment.DriveSide.BOTTOM, org.overengineer.bettacraft.equipment.DriveSide.byId(set.getString("drive")));
     }
 }
