@@ -150,7 +150,8 @@ More pictures and animations (also with Complementary shaders) are in [docs/imag
 - **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
 - Optional Forge Energy for the equipment, power regulator, own procedural sounds. No generator? A **crank** winds the
-  filters, the water devices and the cabinet under a tank, which then powers every device of its tank.
+  filters, the water devices and the cabinet under a tank, which then powers every device of its tank. With **Create** a
+  drive adapter on the tank (or a shaft on its cabinet) powers every device of the tank from rotation, with real stress.
 
 ### Food and live food
 - **Live food cultures:** tubifex worms in a dish with mud and mulm (or the waste water of a tank), daphnia in a barrel
@@ -197,7 +198,7 @@ No other mod is required.
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
 | Fintastic, Aquaculture 2, Fish of Thieves, Critters and Companions, Naturalist, Living Things (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; their land and marsh animals (tortoise, alligator, lizard, snake, scorpions, crab, dragonflies, duck, capybara, otter ...) live in terraria and paludaria; also Fish of Thieves (variants inherited, trophies sterile) and Living Things, the insects, mammals and birds of these mods, and big ones by the size rule; deep-sea, giant and hostile animals are refused with a reason; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
-| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; Display Links show tank values; Create pipes fill aquariums |
+| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; a drive adapter on a tank (or a shaft on its cabinet) powers every device of the tank with real stress; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients and products; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
 | [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off |

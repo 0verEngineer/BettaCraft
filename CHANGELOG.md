@@ -4,6 +4,35 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.33.0-beta.1] - 2026-11-17
+
+With Create a whole aquarium runs on one shaft: a drive adapter on the tank, or a shaft on the cabinet under it, turns
+Create's rotation into the tank's power, and it costs real stress in Create's network.
+
+### Added
+- **Drive adapter** (only with Create; recipe: a shaft, an andesite casing, two copper ingots and redstone): set on a tank
+  wall or under a tank, a Create shaft, cogwheel or motor at it charges the tank's FE buffer, so every device that takes
+  the tank's FE runs on rotation (filters, flow pumps and skimmers, heaters, coolers and heat mats, lights, air pumps,
+  misters), without FE cables. **64 RPM** give the full 256 FE/t, slower proportionally; several adapters on one tank add
+  up to 1024 FE/t.
+- **Real stress:** the adapter is a kinetic block of Create's network; it costs **2 SU per FE/t** it gives (at least
+  0.5 SU per RPM when idle), so a small tank costs little and a filling buffer or many heaters cost more. An overstressed
+  network gives the tank nothing. Create's goggles show its stress and what it gives the tank.
+- **Shaft on the cabinet:** the cabinet menu has a button (Create's shaft, left of the filter slot) for the side that takes
+  a shaft: none, back, left, right, front or bottom. A shaft, cogwheel or gearbox there charges the tank above like an
+  adapter (its stress is carried by that shaft's network), a brass flange marks the side, the cabinet keeps it on its
+  item. With winding on, what the tank does not need **winds the cabinet's spring**, so the tank keeps running for a
+  while after the rotation stops; the crank still winds it too.
+- Jade / The One Probe / WTHIT: the cabinet's shaft (side, FE/t, overstressed) and on the aquarium what Create gives.
+- Feature switches `features.compat.create.drive` and `features.compat.create.cabinetDrive`; server config section
+  `createDrive` (full speed, FE per input, the limit per tank, stress per FE and when idle, FE per spring tick, the
+  cabinet sides a server allows).
+- Handbook (English and German): the drive adapter page; the cabinet, power and Create pages name it. Without Create the
+  page, the item, the recipe and the cabinet button are not there.
+
+### Changed
+- Cabinets store their shaft side (data version 3; cabinets of older worlds take no shaft).
+
 ## [1.32.0-beta.1] - 2026-11-17
 
 One multiblock filter serves several aquariums: its own filter pipes with T-pieces dock on any side of a tank, up to four
