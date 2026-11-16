@@ -215,7 +215,18 @@ public final class BigMarineGameTests {
         for (int i = 0; i < 3; i++) BigTankGameTests.ok(BigTankGameTests.insert(h, b, BigFreshwaterGameTests.tub(h, TankmateSpecies.COWNOSE_RAY)));
         List<TankmateEntity> school = mates(h, b, TankmateSpecies.COWNOSE_RAY);
         h.assertTrue(school.size() == 3, "three cownose rays");
-        for (int i = 0; i < school.size(); i++) school.get(i).getRandom().setSeed(30_5L + i);
+        // M39 part c (flaky before): the tubs put the rays at spots and headings of the level's random (shared by every test
+        // running at the time), so the paths differed from run to run; now fixed spots, headings and seeds
+        Vec3 ca = new TankWaterVolume(a.getTank()).box().getCenter();
+        eagle.moveTo(ca.x, ca.y, ca.z, 0F, 0F);
+        Vec3 cb = new TankWaterVolume(b.getTank()).box().getCenter();
+        for (int i = 0; i < school.size(); i++) {
+            school.get(i).moveTo(cb.x - 3 + 3 * i, cb.y, cb.z, 90F, 0F);
+            school.get(i).setDeltaMovement(Vec3.ZERO);
+            school.get(i).getRandom().setSeed(30_5L + i);
+        }
+        eagle.setDeltaMovement(Vec3.ZERO);
+        eagle.getRandom().setSeed(30_4L);
         double[] eSum = {0}, apart = {0};
         int[] n = {0}, rest = {0};
         h.onEachTick(() -> {

@@ -392,9 +392,12 @@ final class TankmateBehaviour {
         double fx = -Math.sin(h), fz = Math.cos(h); // the leader's heading
         double ahead = len * 0.8 + offset.z;
         Vec3 t = band(w, s, clamp(w, lead.position().add(fx * ahead + fz * offset.x, offset.y, fz * ahead - fx * offset.x)));
-        go(steer(server, w, t), fish.position().distanceTo(t) > len * 2 ? 1.1 : 0.85, Mode.CRUISE);
+        // M39 part c: a follower that fell behind hurries (from 1.5 body lengths) and looks again twice a second, so a turn of
+        // the leader does not leave it a whole stale target behind (before: every 1-2 s, 1.1 only from 2 lengths)
+        double d = fish.position().distanceTo(t);
+        go(steer(server, w, t), d > len * 1.5 ? 1.2 : 0.85, Mode.CRUISE);
         largeGoal = null;
-        ticks = 20 + r.nextInt(20);
+        ticks = 10 + r.nextInt(10);
         return true;
     }
 
