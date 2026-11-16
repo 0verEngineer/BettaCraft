@@ -33,8 +33,8 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
 /**
  * M29 part b: the puffers eat snails (bladder and ramshorn snails first) and wear their teeth down on them; overgrown teeth
  * refuse soft food until shell food comes; fin nippers (tiger barbs) go for a betta and an angelfish but not for the
- * cherry barbs; the green spotted puffer only lives in brackish water. Snail counts of a multi-day step are deterministic
- * (expected value at least one per day).
+ * cherry barbs; the green spotted puffer only lives in brackish water. The snails of a multi-day step are drawn from the
+ * level's random, which the test seeds (M42 part b: unseeded it failed about one run in 60).
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -89,7 +89,11 @@ public final class PufferGameTests {
         for (int i = 0; i < 8; i++) TankCritters.add(level, c, CritterSpecies.BLADDER_SNAIL, CritterGenes.WILD, i % 2 == 0, 10);
         for (int i = 0; i < 8; i++) TankCritters.add(level, c, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, i % 2 == 0, 10);
         int bladder = count(c.getTank(), CritterSpecies.BLADDER_SNAIL), nerite = count(c.getTank(), CritterSpecies.ZEBRA_NERITE);
-        TankmateBreeding.step(level, c, 3.0); // expected 6 snails
+        // M42 part b: the step draws on the level's random: 6 tries (2 puffers x 1 snail a day x 3 days), a nerite cracked only one
+        // time in three, so about 5.2 snails; at random fewer than 3, or as many nerites as bladder snails, about 1.7 % of the runs
+        // (simulated). Seeded, the draws are the same in every run.
+        level.getRandom().setSeed(29_2001L);
+        TankmateBreeding.step(level, c, 3.0); // expected 6 tries
         int ateBladder = bladder - count(c.getTank(), CritterSpecies.BLADDER_SNAIL), ateNerite = nerite - count(c.getTank(), CritterSpecies.ZEBRA_NERITE);
         h.assertTrue(ateBladder + ateNerite >= 3, "snails eaten: " + ateBladder + " bladder, " + ateNerite + " nerites");
         h.assertTrue(ateBladder > ateNerite, "bladder snails first: " + ateBladder + " / " + ateNerite);
