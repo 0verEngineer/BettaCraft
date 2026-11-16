@@ -12,6 +12,8 @@ public final class DevClientHooks {
     public static void init() {
         if (Boolean.getBoolean("bettacraft.smoketest.world")) {
             DevClientSmokeTest.register();
+        } else if (Boolean.getBoolean("bettacraft.media")) {
+            DevClientMedia.register(); // M43: gradlew runClient -Psmoketestm43: README and mod page media in a copy of the showcase world
         } else if (Boolean.getBoolean("bettacraft.showcase.tour")) {
             DevClientShowcaseTour.register(); // M21: gradlew runClient -Pshowcasetour: screenshots of the showcase world
         } else if (Boolean.getBoolean("bettacraft.smoketest.mp")) {

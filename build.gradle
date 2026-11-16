@@ -379,6 +379,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m42bonly', 'true'
             }
+            if (project.hasProperty('smoketestm43')) {
+                // gradlew runClient -Psmoketestm43 : the release media (M43) in a fresh copy "Bettacraft Medien" of the showcase world
+                // (gradlew buildShowcase first): fixed day and clear weather, the README room built beside the showcase, extra
+                // tanks (flaring, a growth time lapse, an Amazon tank) and fixed camera scenes of the showcase rows as
+                // run/screenshots/readme_*.png and readme_anim_*; add -Pshaders for Complementary (stills only, suffix _shaders);
+                // then py tools/assetgen/readme_media.py
+                systemProperty 'bettacraft.media', 'true'
+            }
             if (project.hasProperty('smoketestm42')) {
                 // gradlew runClient -Pintegration -Psmoketestm42 : only the M42 scene (JEI recipe screens of the food maker and the
                 // crucible, a filter medium's information page, the handbook page of the filter media, with every integrated mod)

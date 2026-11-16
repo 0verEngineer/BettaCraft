@@ -1,7 +1,8 @@
 """README / mod page media from the README smoke scene.
 
-    gradlew runClient -Psmoketestreadme                        # stills + frame sequences (background window)
-    gradlew runClient -Psmoketestreadme -Pshaders -Preadmeroom # optional: the room with Complementary (_shaders)
+    gradlew buildShowcase                                      # M43: the showcase world, then
+    gradlew runClient -Psmoketestm43                           # stills + frame sequences in a copy of it (background window)
+    gradlew runClient -Psmoketestm43 -Pshaders                 # the stills with Complementary Reimagined (_shaders)
     py tools/assetgen/readme_media.py [run/screenshots] [docs/images]
 
 Stills become JPEGs (scenes) or a PNG (menus), the frame sequences small looping GIFs (one global palette, unchanged
@@ -30,12 +31,34 @@ STILLS = {
     'readme_nano': ('bettacraft-betta-nano-tank', None, 1280),
     # M30 part c: the sea giants (gradlew runClient -Psmoketestm30c)
     'bettacraft_m30c_rays_side': ('bettacraft-big-sea-tank', (0.0, 0.08, 1.0, 0.86), 1280),
+    # M43: the extra tanks and the showcase rows of the media run (gradlew runClient -Psmoketestm43 [-Pshaders])
+    'readme_amazon': ('bettacraft-amazon-tank', None, 1280),
+    'readme_flare': ('bettacraft-betta-flaring', None, 1280),
+    'readme_grow_done': ('bettacraft-growth-done', None, 1280),
+    'readme_shrimp': ('bettacraft-shrimp-tank', (0.0, 0.0, 1.0, 0.82), 1280),
+    'readme_terraria': ('bettacraft-terraria', None, 1280),
+    'readme_paludarium': ('bettacraft-paludarium', None, 1280),
+    'readme_pets': ('bettacraft-terrarium-pets', None, 1280),
+    'readme_mobs_in_glass': ('bettacraft-mobs-in-glass', None, 1280),
+    'readme_sea_giants': ('bettacraft-sea-giants', None, 1280),
+    'readme_fresh_giants': ('bettacraft-freshwater-giants', None, 1280),
+    'readme_filter_lines': ('bettacraft-filter-lines', None, 1280),
+    'readme_showcase_overview': ('bettacraft-showcase-overview', None, 1280),
 }
+# M43: every still of the room and the showcase also with Complementary Reimagined (suffix _shaders)
+for _k, (_n, _b, _w) in list(STILLS.items()):
+    if _k.startswith('readme_') and not _k.endswith('_shaders') and not _k.startswith('readme_menu'):
+        STILLS.setdefault(_k + '_shaders', (_n + '-shaders', _b, _w))
 # frame sequence -> (output name, crop fractions or None, width, frames per second, first frame, frame count)
 ANIMS = {
     'planted': ('bettacraft-planted-tank-swimming', None, 600, 20, 0, 80),
     'reef': ('bettacraft-reef-tank-swimming', None, 640, 20, 0, 100),
     'inside': ('bettacraft-tank-interior-swaying', None, 440, 20, 0, 50),
+    # M43
+    'amazon': ('bettacraft-amazon-tank-swimming', None, 600, 20, 0, 90),
+    'flare': ('bettacraft-betta-flaring', None, 560, 20, 0, 100),
+    'grow': ('bettacraft-plant-growth', None, 600, 12, 0, 96),
+    'shrimp': ('bettacraft-shrimp-tank-crawling', (0.0, 0.0, 1.0, 0.82), 600, 20, 0, 80),
 }
 
 
@@ -64,7 +87,7 @@ def stills():
 
 
 # the tank window without the player inventory, and the top of the handbook page (fractions of the 1600x900 shot)
-MENU_BOX = (0.268, 0.115, 0.733, 0.588)
+MENU_BOX = (0.344, 0.243, 0.656, 0.558)
 GUIDE_BOX = (0.0, 0.0, 1.0, 0.425)
 
 

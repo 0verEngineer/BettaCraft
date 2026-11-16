@@ -98,6 +98,17 @@ final class DevClientSmokeReadme {
     private double seqNext;
 
     DevClientSmokeReadme() {
+        this(false);
+    }
+
+    /**
+     * @param media M43 ({@code -Psmoketestm43}, {@link DevClientMedia}): in a copy of the showcase world: the time and the
+     *              weather fixed, the name plates of the showcase tanks hidden, the room built beside the showcase, and after
+     *              the README pictures the extra tanks (flaring, a growth time lapse, an Amazon tank) and fixed camera scenes
+     *              of the showcase rows (terraria, critter colours, guppies, big tanks, the filter lines, the overview)
+     */
+    DevClientSmokeReadme(boolean media) {
+        this.media = media;
         active = this;
         if (!listening) {
             listening = true;
@@ -112,10 +123,15 @@ final class DevClientSmokeReadme {
             mc.options.enableVsync().set(false);
             mc.getWindow().updateVsync(false);
             mc.options.framerateLimit().set(120);
+            mc.options.fov().set(70);
         });
-        then(1, () -> server(this::build));
+        if (media) then(1, () -> server(this::prepareShowcase));
+        then(1, () -> {
+            building = true;
+            server(this::build);
+        });
         then(1, () -> server(p -> {
-            p.serverLevel().setDayTime(5000);
+            p.serverLevel().setDayTime(media ? 6000 : 5000);
             reach(p, false);
         }));
         // the room: let the chunks, miniatures and plant meshes build
@@ -178,6 +194,7 @@ final class DevClientSmokeReadme {
             then(60, () -> shot("guide"));
             then(5, () -> mc.setScreen(null));
             then(1, () -> mc.options.hideGui = true);
+            if (media) mediaScenes();
         }
         then(1, () -> mc.options.languageCode = lang);
     }
@@ -226,6 +243,7 @@ final class DevClientSmokeReadme {
         level.setBlockAndUpdate(h.offset(6, 0, 1), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.WEST));
         level.setBlockAndUpdate(h.offset(6, 1, 1), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.WEST));
         level.setBlockAndUpdate(h.offset(6, 0, 2), ModBlocks.AIR_PUMP.get().defaultBlockState().setValue(AirPumpBlock.FACING, Direction.WEST));
+        org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, h.offset(7, 2, 1)); // M40: the intake guards in the tank
         TankEquipment.invalidate(hero);
         // the reef tank, 4 x 2 x 3, blue and white lights, a dosing pump
         BlockPos rf = base.offset(9, 1, 0);
@@ -268,7 +286,313 @@ final class DevClientSmokeReadme {
         String[] varieties = {"koi_galaxy", "black_orchid", "mustard_gas", "samurai", "avatar", "hellboy"};
         for (String v : varieties) betta(level, gal, v, false);
         server(pl -> arrangeGallery(pl.serverLevel(), varieties.length));
+        if (this.media) buildExtras(level, in);
+        built = true;
         LOGGER.info("[smoketest] README scene at {}, varieties at {}", base, gallery);
+    }
+
+    // ------------------------------------------------------------------ M43: media in the showcase world
+
+    private final boolean media;
+    /** The build runs on the server thread (after the showcase scan in the media run): the steps wait for it. */
+    private volatile boolean building, built;
+    /** The extra tanks of the media run: an Amazon tank, a flaring male, a growth time lapse (min corners). */
+    private BlockPos amazonAt, flareAt, growAt, shrimpAt;
+    private TankBlockEntity growTank;
+    private final List<InteriorPlant> growing = new ArrayList<>();
+    /** Per frame of a sequence, on the server: what changes in the scene (flaring on and off, the plants growing). */
+    private java.util.function.BiConsumer<ServerPlayer, Integer> seqHook;
+    private record Box(String name, BlockPos min, BlockPos max) {
+        Box union(Box o) {
+            return new Box(name + "+" + o.name, new BlockPos(Math.min(min.getX(), o.min.getX()), Math.min(min.getY(), o.min.getY()), Math.min(min.getZ(), o.min.getZ())),
+                    new BlockPos(Math.max(max.getX(), o.max.getX()), Math.max(max.getY(), o.max.getY()), Math.max(max.getZ(), o.max.getZ())));
+        }
+    }
+    /** The named tanks of the showcase (their German name plates, read before they are hidden), filled on the server. */
+    private final Map<String, Box> named = new java.util.concurrent.ConcurrentHashMap<>();
+    private final List<Box> allTanks = java.util.Collections.synchronizedList(new ArrayList<>());
+    private volatile BlockPos showcaseOrigin;
+    private volatile int showcaseGround;
+
+    /**
+     * The showcase world: day and clear weather that stay, no mobs; every tank of the showcase found (the chunks around the
+     * spawn loaded), their names noted and the name plates hidden (the pictures are for an English page), and the player
+     * moved to the free ground west of the showcase where the room is built.
+     */
+    private void prepareShowcase(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        var rules = level.getGameRules();
+        rules.getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        rules.getRule(net.minecraft.world.level.GameRules.RULE_WEATHER_CYCLE).set(false, p.server);
+        rules.getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(false, p.server);
+        level.setWeatherParameters(1_000_000, 0, false, false);
+        level.setDayTime(6000);
+        BlockPos spawn = level.getSharedSpawnPos();
+        showcaseGround = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
+        showcaseOrigin = new BlockPos(spawn.getX() + 3, showcaseGround, spawn.getZ() + 6);
+        int hidden = 0;
+        for (int cx = (spawn.getX() - 24) >> 4; cx <= (spawn.getX() + 230) >> 4; cx++)
+            for (int cz = (spawn.getZ() - 8) >> 4; cz <= (spawn.getZ() + 260) >> 4; cz++) {
+                var chunk = level.getChunk(cx, cz);
+                for (var be : List.copyOf(chunk.getBlockEntities().values())) {
+                    if (!(be instanceof TankBlockEntity t) || !t.isController()) continue;
+                    var d = t.getTank();
+                    Box b = new Box(d.name() == null ? "" : d.name(), d.min(), d.max());
+                    allTanks.add(b);
+                    if (!b.name().isEmpty()) named.put(b.name(), b);
+                    d.setSignVisible(false);
+                    t.markTankChanged();
+                    hidden++;
+                }
+            }
+        LOGGER.info("[smoketest] media: {} showcase tanks, {} named, origin {}", hidden, named.size(), showcaseOrigin);
+        int x = spawn.getX() - 70, z = spawn.getZ() - 40;
+        int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, x, z);
+        p.teleportTo(level, x + 0.5, y, z + 0.5, 0F, 0F);
+    }
+
+    /** The extra tanks of the media run, in a line behind the varieties tank (each against its own back wall). */
+    private void buildExtras(ServerLevel level, ServerLevel in) {
+        BlockPos line = base.offset(0, 1, -62);
+        for (int x = -8; x <= 34; x++)
+            for (int y = -1; y < 6; y++) level.setBlockAndUpdate(line.offset(x, y, 3), Blocks.SMOOTH_QUARTZ.defaultBlockState());
+        // an Amazon tank, 5 x 3 x 2: discus, angelfish and cardinal tetras over sand and roots, sword plants
+        amazonAt = line;
+        for (int x = 0; x < 5; x++) for (int z = 0; z < 2; z++) cabinet(level, amazonAt.offset(x, -1, z));
+        TankBlockEntity am = tank(level, amazonAt, 5, 3, 2, 0F);
+        am.getTank().setWaterTemp(28F);
+        am.getTank().setTargetTemp(28F);
+        for (int x = 0; x < 5; x++)
+            for (int z = 0; z < 2; z++)
+                level.setBlockAndUpdate(amazonAt.offset(x, 3, z), ModBlocks.LED_PANEL.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
+                        .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 4).setValue(LedPanelBlock.PARTNER_POS, z == 0)
+                        .setValue(TankLightBlock.LIT, true));
+        for (int x = 0; x < 5; x++) for (int y = 0; y < 3; y++) level.setBlockAndUpdate(amazonAt.offset(x, y, 2), Blocks.BLACK_CONCRETE.defaultBlockState());
+        InteriorRegion ar = region(level, am, Blocks.SAND.defaultBlockState());
+        rock(in, ar, 22, 22, 6, 9, Blocks.STRIPPED_OAK_LOG.defaultBlockState());
+        rock(in, ar, 58, 24, 5, 12, Blocks.STRIPPED_OAK_LOG.defaultBlockState());
+        long seed = 4300;
+        for (int x = 4; x < 78; x += 6) plant(in, ar, PlantSpecies.VALLISNERIA, x, 0, 28 - (x / 6) % 2 * 2, seed++);
+        plant(in, ar, PlantSpecies.AMAZON_SWORD, 10, 0, 18, seed++);
+        plant(in, ar, PlantSpecies.AMAZON_SWORD, 40, 0, 20, seed++);
+        plant(in, ar, PlantSpecies.AMAZON_SWORD, 70, 0, 16, seed++);
+        plant(in, ar, PlantSpecies.CRYPT_BROWN, 30, 0, 8, seed++);
+        plant(in, ar, PlantSpecies.CRYPT_GREEN, 50, 0, 6, seed++);
+        plant(in, ar, PlantSpecies.JAVA_FERN, 22, -1, 22, seed++);
+        plant(in, ar, PlantSpecies.ANUBIAS_NANA, 58, -1, 24, seed);
+        InteriorPlants.settleTint(level, am);
+        RandomSource fr = RandomSource.create(43);
+        for (int i = 0; i < 3; i++) fish(level, am, TankmateSpecies.DISCUS, TankmateGenes.wild(TankmateSpecies.DISCUS), i % 2 == 0, fr);
+        for (int i = 0; i < 8; i++) fish(level, am, TankmateSpecies.RUMMY_NOSE_TETRA, TankmateGenes.wild(TankmateSpecies.RUMMY_NOSE_TETRA), i % 2 == 0, fr);
+        for (int i = 0; i < 12; i++) fish(level, am, TankmateSpecies.CARDINAL_TETRA, TankmateGenes.wild(TankmateSpecies.CARDINAL_TETRA), i % 2 == 0, fr);
+        for (int i = 0; i < 3; i++) fish(level, am, TankmateSpecies.PANDA_CORY, TankmateGenes.wild(TankmateSpecies.PANDA_CORY), i % 2 == 0, fr);
+        // a flaring male, 2 x 1 x 1, side on in the middle (frozen; the flaring is switched on and off while recording)
+        flareAt = line.offset(12, 0, 0);
+        for (int x = 0; x < 2; x++) cabinet(level, flareAt.offset(x, -1, 0));
+        TankBlockEntity fl = tank(level, flareAt, 2, 1, 1, 0F);
+        for (int x = 0; x < 2; x++) level.setBlockAndUpdate(flareAt.offset(x, 0, 1), Blocks.BLACK_CONCRETE.defaultBlockState());
+        InteriorRegion flr = region(level, fl, Blocks.SAND.defaultBlockState());
+        plant(in, flr, PlantSpecies.JAVA_FERN, 4, 0, 12, 4310);
+        plant(in, flr, PlantSpecies.CRYPT_GREEN, 27, 0, 12, 4311);
+        InteriorPlants.settleTint(level, fl);
+        betta(level, fl, "mustard_gas", false);
+        // a growth time lapse, 3 x 2 x 2: cuttings that grow while recording
+        growAt = line.offset(20, 0, 0);
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 2; z++) cabinet(level, growAt.offset(x, -1, z));
+        growTank = tank(level, growAt, 3, 2, 2, 0F);
+        for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) level.setBlockAndUpdate(growAt.offset(x, y, 2), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 3; x++)
+            level.setBlockAndUpdate(growAt.offset(x, 2, 1), ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
+                    .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 2).setValue(TankLightBlock.LIT, true));
+        InteriorRegion gr = InteriorManager.ensureRegion(level, growTank);
+        for (int x = 0; x < gr.sizeX(); x++)
+            for (int z = 0; z < gr.sizeZ(); z++)
+                Substrate.set(in, new BlockPos(gr.originX() + x, InteriorRegion.FLOOR_Y, gr.originZ() + z),
+                        (z < 10 ? Blocks.SAND : ModBlocks.ACTIVE_SOIL.get()).defaultBlockState(), false);
+        rock(in, gr, 14, 18, 6, 7, Blocks.STONE.defaultBlockState());
+        long gs = 4400;
+        int[][] spots = {{4, 26}, {12, 28}, {36, 27}, {44, 25}, {24, 24}, {30, 20}, {40, 16}, {6, 14}, {20, 6}, {28, 5}, {36, 7}, {14, 18}};
+        PlantSpecies[] kinds = {PlantSpecies.VALLISNERIA, PlantSpecies.VALLISNERIA, PlantSpecies.VALLISNERIA, PlantSpecies.LUDWIGIA, PlantSpecies.ROTALA,
+                PlantSpecies.ALTERNANTHERA, PlantSpecies.AMAZON_SWORD, PlantSpecies.CRYPT_FLAMINGO, PlantSpecies.MONTE_CARLO, PlantSpecies.MONTE_CARLO,
+                PlantSpecies.MONTE_CARLO, PlantSpecies.JAVA_FERN};
+        for (int i = 0; i < spots.length; i++) {
+            int y = kinds[i] == PlantSpecies.JAVA_FERN ? topAt(in, gr, spots[i][0], spots[i][1]) : 0;
+            InteriorPlant gp = InteriorPlants.plantAt(in, gr, kinds[i], spots[i][0], y, spots[i][1], 0, gs++);
+            if (gp != null) growing.add(gp);
+            else LOGGER.warn("[smoketest] media growth {} not planted", kinds[i].id());
+        }
+        for (int i = 0; i < 8; i++) fish(level, growTank, TankmateSpecies.EMBER_TETRA, TankmateGenes.wild(TankmateSpecies.EMBER_TETRA), i % 2 == 0, fr);
+        for (int i = 0; i < 5; i++) TankCritters.add(level, growTank, CritterSpecies.NEOCARIDINA, CritterGenes.pure(0, 0.7F), i % 2 == 0, 10);
+        // a shrimp tank, 3 x 1 x 1: every Neocaridina colour, bee shrimp, nerites and a dwarf crayfish on moss and wood
+        shrimpAt = line.offset(28, 0, 0);
+        for (int x = 0; x < 3; x++) cabinet(level, shrimpAt.offset(x, -1, 0));
+        TankBlockEntity sh = tank(level, shrimpAt, 3, 1, 1, 0F);
+        for (int x = 0; x < 3; x++) level.setBlockAndUpdate(shrimpAt.offset(x, 0, 1), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 3; x++)
+            level.setBlockAndUpdate(shrimpAt.offset(x, 1, 0), ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
+                    .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 2).setValue(TankLightBlock.LIT, true));
+        InteriorRegion sr = region(level, sh, ModBlocks.ACTIVE_SOIL.get().defaultBlockState());
+        rock(in, sr, 14, 10, 5, 4, Blocks.OAK_LOG.defaultBlockState());
+        rock(in, sr, 36, 11, 4, 3, Blocks.STONE.defaultBlockState());
+        plant(in, sr, PlantSpecies.JAVA_MOSS, 14, -1, 10, 4500);
+        plant(in, sr, PlantSpecies.JAVA_MOSS, 12, -1, 8, 4501);
+        plant(in, sr, PlantSpecies.ANUBIAS_NANA, 36, -1, 11, 4502);
+        plant(in, sr, PlantSpecies.CRYPT_GREEN, 26, 0, 13, 4503);
+        plant(in, sr, PlantSpecies.CRYPT_BROWN, 44, 0, 12, 4504);
+        InteriorPlants.settleTint(level, sh);
+        int colours = CritterSpecies.NEOCARIDINA.loci().length;
+        for (int l = 0; l < colours; l++)
+            for (int i = 0; i < 2; i++) TankCritters.add(level, sh, CritterSpecies.NEOCARIDINA, CritterGenes.pure(l, 0.8F), i == 0, 10);
+        for (int i = 0; i < 3; i++) TankCritters.add(level, sh, CritterSpecies.CARIDINA, CritterGenes.pure(Math.min(i, CritterSpecies.CARIDINA.loci().length - 1), 0.8F), i % 2 == 0, 10);
+        for (int i = 0; i < 2; i++) TankCritters.add(level, sh, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, i == 0, 10);
+        TankCritters.add(level, sh, CritterSpecies.DWARF_CRAYFISH, CritterGenes.WILD, true, 10);
+    }
+
+    /** The flaring male side on in the middle of its tank, frozen. */
+    private void arrangeFlare(ServerLevel level) {
+        for (BettaEntity b : level.getEntitiesOfClass(BettaEntity.class, new AABB(flareAt).inflate(2, 1, 1))) {
+            b.moveTo(flareAt.getX() + 1.0, flareAt.getY() + 0.48, flareAt.getZ() + 0.5, 90F, 0F);
+            b.setYBodyRot(90F);
+            b.setYHeadRot(90F);
+            SmokeFreeze.freeze(b, true);
+        }
+    }
+
+    /** The media scenes after the README pictures: the extra tanks, then the showcase rows. */
+    private void mediaScenes() {
+        // the Amazon tank
+        then(1, () -> lookAt(new Box("amazon", amazonAt.below(), amazonAt.offset(4, 2, 1)), 0F, 6F, 0.85));
+        then(120, () -> shot("amazon"));
+        then(1, () -> { if (!shaders) sequence("amazon", 100); });
+        then(20, () -> {});
+        // the flaring male: zoomed in, flaring on and off
+        then(1, () -> server(p -> arrangeFlare(p.serverLevel())));
+        then(1, () -> {
+            mc.options.fov().set(30);
+            look(flareAt.getX() + 1.0, flareAt.getY() + 0.52, flareAt.getZ() - 1.25, 0F, 1F);
+        });
+        then(60, () -> server(p -> flareAll(p.serverLevel(), 40)));
+        then(20, () -> shot("flare"));
+        then(60, () -> {
+            if (shaders) return;
+            seqHook = (p, i) -> { if (i >= 12 && i < 52 || i >= 76) flareAll(p.serverLevel(), 2); };
+            sequence("flare", 100);
+        });
+        then(20, () -> {
+            seqHook = null;
+            mc.options.fov().set(70);
+        });
+        // the growth time lapse: every plant from its cutting to full size, one stage after the other
+        then(1, () -> lookAt(new Box("grow", growAt.below(), growAt.offset(2, 1, 1)), 0F, 6F, 0.72));
+        then(120, () -> {
+            if (shaders) return;
+            seqHook = (p, i) -> grow(p.serverLevel(), i, 70);
+            sequence("grow", 96);
+        });
+        then(20, () -> {
+            seqHook = null;
+            shot("grow_done");
+        });
+        // the shrimp tank: zoomed in a little
+        then(1, () -> {
+            mc.options.fov().set(40);
+            look(shrimpAt.getX() + 1.5, shrimpAt.getY() + 0.62, shrimpAt.getZ() - 1.75, 0F, 7F);
+        });
+        then(120, () -> shot("shrimp"));
+        then(1, () -> { if (!shaders) sequence("shrimp", 80); });
+        then(20, () -> mc.options.fov().set(70));
+        // the showcase
+        then(1, () -> showcaseShot("terraria", 0F, 12F, 0.85, "Paludarium: Schmuckschildkröten", "Terrarium: Leopardgeckos"));
+        then(1, () -> showcaseShot("paludarium", 0F, 10F, 0.8, "Paludarium: Schmuckschildkröten"));
+        then(1, () -> showcaseShot("pets", 0F, 12F, 0.85, "Minecraft-Haustiere"));
+        then(1, () -> showcaseShot("mobs_in_glass", 0F, 10F, 0.8, "Mobs im Glas: Spinne, Skelett"));
+        then(1, () -> showcaseShot("sea_giants", 0F, 14F, 0.8, "Riesen des Meeres"));
+        then(1, () -> showcaseShot("fresh_giants", 0F, 14F, 0.8, "Süßwasser-Riesen"));
+        then(1, () -> showcaseShot("filter_lines", -25F, 38F, 0.85, "Ein Filter, zwei Becken", "Rohrbündel mit vier Leitungen"));
+        then(1, () -> {
+            if (showcaseOrigin == null) return;
+            look(showcaseOrigin.getX() + 70, showcaseGround + 44, showcaseOrigin.getZ() - 20, 0F, 50F);
+        });
+        then(200, () -> shot("showcase_overview"));
+    }
+
+    /** The male of the flare tank flares for {@code ticks} more ticks. */
+    private void flareAll(ServerLevel level, int ticks) {
+        for (BettaEntity b : level.getEntitiesOfClass(BettaEntity.class, new AABB(flareAt).inflate(2, 1, 1)))
+            b.flare(level.getGameTime() + ticks);
+    }
+
+    /** Frame {@code i} of the time lapse: every plant at the stage of its share of {@code frames} (staggered a little). */
+    private void grow(ServerLevel level, int i, int frames) {
+        ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+        InteriorRegion r = InteriorManager.ensureRegion(level, growTank);
+        for (int k = 0; k < growing.size(); k++) {
+            InteriorPlant gp = growing.get(k);
+            double t = Math.max(0, Math.min(1, (i - k * 1.5) / (frames - growing.size() * 1.5)));
+            int stage = (int) Math.round(t * gp.species.stages());
+            if (stage != gp.target) {
+                gp.target = stage;
+                InteriorPlants.apply(in, r, gp);
+            }
+        }
+        if (i % 10 == 0) InteriorPlants.settleTint(level, growTank);
+    }
+
+    /** A still of named showcase tanks (union of their boxes), after the chunks and miniatures have loaded. */
+    private void showcaseShot(String name, float yaw, float pitch, double dist, String... tanks) {
+        Box box = null;
+        for (String t : tanks) {
+            Box b = named.get(t);
+            if (b == null) {
+                LOGGER.error("[smoketest] media: no showcase tank named {}", t);
+                continue;
+            }
+            box = box == null ? b : box.union(b);
+        }
+        if (box == null) return;
+        Box fb = box;
+        steps.addFirst(new Step(140, () -> shot(name)));
+        lookAt(new Box(fb.name(), fb.min().below(), fb.max()), yaw, pitch, dist);
+    }
+
+    /** A still of {@code count} tanks of a showcase row from the {@code from}th on (the row found by its header plate). */
+    private void showcaseRowShot(String name, String header, int from, int count) {
+        Box head = null;
+        for (var e : named.entrySet()) if (e.getKey().startsWith(header)) head = e.getValue();
+        if (head == null) {
+            LOGGER.error("[smoketest] media: no showcase row {}", header);
+            return;
+        }
+        Box h = head;
+        List<Box> row;
+        synchronized (allTanks) {
+            row = new ArrayList<>(allTanks.stream().filter(b -> b.min().getZ() == h.min().getZ() && b.min().getX() > h.min().getX())
+                    .sorted(java.util.Comparator.comparingInt(b -> b.min().getX())).toList());
+        }
+        if (row.size() < from + count) {
+            LOGGER.error("[smoketest] media: row {} has {} tanks", header, row.size());
+            return;
+        }
+        Box box = row.get(from);
+        for (int i = from + 1; i < from + count; i++) box = box.union(row.get(i));
+        Box fb = box;
+        steps.addFirst(new Step(140, () -> shot(name)));
+        lookAt(new Box(fb.name(), fb.min().below(), fb.max()), 0F, 10F, 1.0);
+    }
+
+    /**
+     * The camera on a box of blocks (min and max inclusive): looking along {@code yaw} / {@code pitch} at its centre, far
+     * enough that the box fills about four fifths of the 16:9 picture at the field of view of 70 ({@code dist} scales it).
+     */
+    private void lookAt(Box b, float yaw, float pitch, double dist) {
+        double w = b.max().getX() - b.min().getX() + 1, h = b.max().getY() - b.min().getY() + 1, d = b.max().getZ() - b.min().getZ() + 1;
+        double cx = b.min().getX() + w / 2, cy = b.min().getY() + h / 2, cz = b.min().getZ() + d / 2;
+        double tanV = Math.tan(Math.toRadians(35)), tanH = tanV * 16 / 9;
+        double r = Math.max(w / 2 / (tanH * 0.84), h / 2 / (tanV * 0.84)) + d / 2;
+        r *= dist;
+        double yr = Math.toRadians(yaw), pr = Math.toRadians(pitch);
+        double dx = -Math.sin(yr) * Math.cos(pr), dy = -Math.sin(pr), dz = Math.cos(yr) * Math.cos(pr);
+        look(cx - dx * r, cy - dy * r, cz - dz * r, yaw, pitch);
     }
 
     /** The bettas of the varieties tank in a row, side on, alternating directions, frozen. */
@@ -497,6 +821,7 @@ final class DevClientSmokeReadme {
         }
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         if (seqLeft > 0) return false;
+        if (building && !built) return false;
         if (steps.isEmpty()) {
             active = null;
             return true;
@@ -542,6 +867,11 @@ final class DevClientSmokeReadme {
         seqNext += 1;
         if (t > seqNext) seqNext = Math.floor(t) + 1; // dropped behind: keep the pace of the game
         mc.getToasts().clear();
+        if (seqHook != null) {
+            var hook = seqHook;
+            int i = seqIndex;
+            server(p -> hook.accept(p, i));
+        }
         String file = String.format(java.util.Locale.ROOT, "readme_anim_%s_%03d.png", seqName, seqIndex++);
         Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), c -> {});
         if (--seqLeft == 0) server(p -> p.server.tickRateManager().setTickRate(20F));
