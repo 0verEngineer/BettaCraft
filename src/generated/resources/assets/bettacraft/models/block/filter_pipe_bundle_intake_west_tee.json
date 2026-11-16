@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        }
+      },
+      "from": [
+        2,
+        8.1,
+        3.5
+      ],
+      "to": [
+        3.5,
+        12.5,
+        7.9
+      ]
+    }
+  ],
+  "render_type": "minecraft:solid",
+  "textures": {
+    "c": "bettacraft:block/pipe_tee",
+    "particle": "bettacraft:block/filter_inlet_pipe"
+  }
+}

@@ -14,6 +14,10 @@ item_ids:
   - bettacraft:pipe_tee
   - bettacraft:intake_guard
   - bettacraft:outlet_guard
+  - bettacraft:filter_fresh_pipe
+  - bettacraft:filter_waste_pipe
+  - bettacraft:filter_fresh_port
+  - bettacraft:filter_waste_port
 ---
 
 # Multiblock-Außenfilter
@@ -68,6 +72,20 @@ Sprühbalken) an der Rücklaufleitung. Den Schutz auf das Glas anwenden, wo das 
 Filter dieses Aquarium nicht** (Warnung im Aquarium- und im Filtermenü), und ein Rohr, das ins Aquarium hinein und wieder
 hinaus führt, geht nicht. **Das gilt auch für Filter, die vor dem Update gebaut wurden: Schutzaufsätze nachrüsten.**
 
+## Rohrbündel, Frisch- und Abwasser
+
+Bis zu **vier Leitungen laufen in einem Block**, wie die Conduits anderer Mods: ein Filterrohr mit dem Rohr einer anderen
+Leitung rechtsklicken, und beide laufen in einem Rohrbündel weiter (Schleichen + Rechtsklick mit leerer Hand nimmt die
+angeschaute Leitung wieder heraus). Jede Leitung behält ihre eigenen Verbindungen und ihr T-Stück; die Leitungen mischen
+sich nie. Das <ItemLink id="bettacraft:filter_fresh_pipe" /> (grün) und das <ItemLink id="bettacraft:filter_waste_pipe" />
+(braun) sind die beiden anderen Leitungen.
+
+Der <ItemLink id="bettacraft:filter_fresh_port" /> an einer Kammer nimmt Wasser von einer Wasserpumpe, einem Reservoir,
+einem ME- oder RS-Exportbus oder den Rohren anderer Mods (direkt oder über die Frischwasserleitung); ein Wasserquellblock
+daneben ist endloses Leitungswasser. Ein **Niveausensor oder eine Wasserwechsel-Steuerung am Filter** füllt dann **alle
+Aquarien des Filters** nach und wechselt ihr Wasser, aufgeteilt nach dem, was jedes braucht. Das Altwasser geht aus dem
+<ItemLink id="bettacraft:filter_waste_port" />; ohne ihn wird es verworfen.
+
 ## Bezug
 
 Herstellung:
@@ -81,3 +99,7 @@ Herstellung:
 <RecipesFor id="bettacraft:pipe_tee" />
 <RecipesFor id="bettacraft:intake_guard" />
 <RecipesFor id="bettacraft:outlet_guard" />
+<RecipesFor id="bettacraft:filter_fresh_pipe" />
+<RecipesFor id="bettacraft:filter_waste_pipe" />
+<RecipesFor id="bettacraft:filter_fresh_port" />
+<RecipesFor id="bettacraft:filter_waste_port" />

@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "pipes.filterWater"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:filter_outlet"
+    },
+    {
+      "tag": "c:dyes/brown"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:filter_waste_port"
+  }
+}

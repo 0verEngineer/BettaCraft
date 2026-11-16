@@ -14,6 +14,10 @@ item_ids:
   - bettacraft:pipe_tee
   - bettacraft:intake_guard
   - bettacraft:outlet_guard
+  - bettacraft:filter_fresh_pipe
+  - bettacraft:filter_waste_pipe
+  - bettacraft:filter_fresh_port
+  - bettacraft:filter_waste_port
 ---
 
 # Multiblock external filter
@@ -67,6 +71,19 @@ on the glass where the pipe docks. **Without a guard the filter does not filter 
 and filter menus), and a pipe that leads into the aquarium and out again is not allowed. **This also holds for filters
 built before the update: fit the guards.**
 
+## Pipe bundles, fresh and waste water
+
+Up to **four lines run in one block**, like the conduits of other mods: right-click a filter pipe with the pipe of another
+line and both run on in a pipe bundle (sneak-right-click with an empty hand takes the line you look at out again). Each line
+keeps its own connections and T-piece; the lines never mix. The <ItemLink id="bettacraft:filter_fresh_pipe" /> (green) and
+the <ItemLink id="bettacraft:filter_waste_pipe" /> (brown) are the two other lines.
+
+The <ItemLink id="bettacraft:filter_fresh_port" /> on a chamber takes water from a water pump, a reservoir, an ME or RS
+export bus or the pipes of other mods (straight or through the fresh water line); a water source block next to it is
+endless tap water. A **level sensor or water change controller touching the filter** then tops off and changes the water
+of **every aquarium of the filter**, shared by what each one needs. The old water goes out of the
+<ItemLink id="bettacraft:filter_waste_port" />; without one it is discarded.
+
 ## Obtaining
 
 Crafting:
@@ -80,3 +97,7 @@ Crafting:
 <RecipesFor id="bettacraft:pipe_tee" />
 <RecipesFor id="bettacraft:intake_guard" />
 <RecipesFor id="bettacraft:outlet_guard" />
+<RecipesFor id="bettacraft:filter_fresh_pipe" />
+<RecipesFor id="bettacraft:filter_waste_pipe" />
+<RecipesFor id="bettacraft:filter_fresh_port" />
+<RecipesFor id="bettacraft:filter_waste_port" />

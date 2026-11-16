@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#h"
+        },
+        "east": {
+          "texture": "#h"
+        },
+        "north": {
+          "texture": "#h"
+        },
+        "south": {
+          "texture": "#h"
+        },
+        "up": {
+          "texture": "#h"
+        },
+        "west": {
+          "texture": "#h"
+        }
+      },
+      "from": [
+        3.5,
+        3.5,
+        3.5
+      ],
+      "to": [
+        12.5,
+        12.5,
+        12.5
+      ]
+    }
+  ],
+  "render_type": "minecraft:solid",
+  "textures": {
+    "h": "bettacraft:block/filter_pipe_bundle",
+    "particle": "bettacraft:block/filter_pipe_bundle"
+  }
+}
