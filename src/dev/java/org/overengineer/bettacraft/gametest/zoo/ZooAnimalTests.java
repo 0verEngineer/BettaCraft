@@ -491,8 +491,13 @@ public final class ZooAnimalTests {
         ServerLevel level = h.getLevel();
         List<Cand> pairs = new ArrayList<>();
         for (Cand c : waterAnimals(level)) if (c.flags().contains("Animal")) pairs.add(c);
-        for (Cand c : landAnimals(level)) if (c.flags().contains("Animal") && !c.id().contains("familiar") && !c.id().contains("summon")) pairs.add(c);
-        if (pairs.size() > 48) pairs = pairs.subList(0, 48);
+        // the land animals that the box takes (the tables): one of each mod first, then the rest
+        List<Cand> walkers = new ArrayList<>();
+        Set<String> mods = new HashSet<>();
+        for (Cand c : landAnimals(level)) if (c.flags().contains("Animal") && !c.id().contains("familiar") && !c.id().contains("summon") && mods.add(c.mod())) walkers.add(c);
+        for (Cand c : landAnimals(level)) if (c.flags().contains("Animal") && !c.id().contains("familiar") && !c.id().contains("summon") && !walkers.contains(c)) walkers.add(c);
+        pairs.addAll(walkers);
+        if (pairs.size() > 24) pairs = pairs.subList(0, 24);
         List<Cand> mine = pairs;
         List<? extends String> allowBefore = ServerConfig.TERRA_BOX_ALLOW.get();
         boolean suppressBefore = org.overengineer.bettacraft.config.Features.own(org.overengineer.bettacraft.config.Feature.SUPPRESS_FOREIGN_BREEDING);
@@ -501,7 +506,7 @@ public final class ZooAnimalTests {
             org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.SUPPRESS_FOREIGN_BREEDING, suppressBefore);
         };
         try {
-            ServerConfig.TERRA_BOX_ALLOW.set(mine.stream().map(Cand::id).toList());
+            ServerConfig.TERRA_BOX_ALLOW.set(mine.stream().filter(c -> !c.water()).map(Cand::id).toList()); // a listed water animal would count as a terrarium animal
             List<String> violations = new ArrayList<>();
             Map<Cand, String> on = new LinkedHashMap<>(), off = new LinkedHashMap<>();
             breedRound(h, mine, 0, true, on, violations, () -> breedRound(h, mine, 24, false, off, violations, () -> {
