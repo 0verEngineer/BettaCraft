@@ -29,7 +29,7 @@ import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "modpack", "config", "ftbquests", "quests", "chapters", "bettacraft.snbt")
-FEATURE_JAVA = os.path.join(ROOT, "src", "main", "java", "org", "overengineer", "bettacraft", "config", "Feature.java")
+FEATURE_JAVA = os.path.join(ROOT, "common", "src", "main", "java", "org", "overengineer", "bettacraft", "config", "Feature.java")
 
 
 def qid(name):
@@ -422,7 +422,7 @@ def main():
 
 
 README = os.path.join(ROOT, "README.md")
-EN = os.path.join(ROOT, "src", "generated", "resources", "assets", "bettacraft", "lang", "en_us.json")
+EN = os.path.join(ROOT, "common", "src", "generated", "resources", "assets", "bettacraft", "lang", "en_us.json")
 
 
 NL = chr(10)

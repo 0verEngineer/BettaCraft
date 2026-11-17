@@ -2,17 +2,20 @@
 
 Betta fish and aquarium mod for Minecraft 1.21.1 (NeoForge). modid `bettacraft`, package `org.overengineer.bettacraft`,
 MIT licence (code, generator and all assets). Target: the ATM10 modpack (NeoForge 21.1.x; built against
-`neo_version` in `gradle.properties`, runs on `[21.1.200,)`), Java 21, ModDevGradle, Gradle 9. The user is German and
+`neo_version` in `gradle.properties`, runs on `[21.1.200,)`), Java 21, ModDevGradle, Gradle 9. M52: multiloader layout
+(`common/` + one module per loader), see the Ports section. The user is German and
 writes in German; code, comments, commits, README and CHANGELOG are English, the handbook is English and German.
 
 ## Repo layout
 
 | Path | What |
 |---|---|
-| `src/main` | the mod (the only code in the released jar) |
-| `src/dev` | development-only source set, merged into the mod in every `gradlew run*` task but never in the jar: smoke scenes `DevSmoke*` / `DevClientSmoke*`, the showcase world (`command/DevShowcase`), GameTests (`gametest/`) and their template |
-| `src/generated` | output of `gradlew runData` (recipes, tags, models, `en_us.json`, advancements), committed |
-| `src/test` | JUnit tests (genetics, chemistry, lang completeness, config labels, ids, handbook generator `guide/GuideGen` + `GuideGenTest`, `GuidePagesTest`) |
+| `common/src/main` | the mod, loader-independent (compiled against vanilla only, NeoForm mode); everything loader-specific goes through `platform/` (`Platform`, `ClientPlatform`, shims with NeoForge's names: `DeferredRegister`, `IItemHandler`, `FluidStack`, `PacketDistributor` ...) |
+| `common/src/generated` | output of `gradlew runData` (recipes, tags, models, `en_us.json`, advancements), committed |
+| `common/src/test` | JUnit tests (genetics, chemistry, lang completeness, config labels, ids, handbook generator `guide/GuideGen` + `GuideGenTest`, `GuidePagesTest`); compiled in common, run by the neoforge module |
+| `common/accesstransformer.cfg` | the vanilla members NeoForge's AT opens and common uses (compile only) |
+| `neoforge/src/main` | the NeoForge mod: entry point `neoforge/BettaCraftNeoForge`, platform implementation, capabilities, NeoForge event glue (`*NeoForgeEvents`), datagen, baked models, JEI/Jade/WTHIT/TOP/GuideME/Create compat; jar = common + neoforge |
+| `neoforge/src/dev` | development-only source set, merged into the mod in every `gradlew run*` task but never in the jar: smoke scenes `DevSmoke*` / `DevClientSmoke*`, the showcase world (`command/DevShowcase`), GameTests (`gametest/`) and their template |
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
 | `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
 | `tools/ci` | `fetch_mods.py` + `power-mods.json` / `integration-mods.json`: pinned Modrinth jars for the `-Ppower` GameTests and the manual integration run in CI |
@@ -55,7 +58,7 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 - **Handbook** (GuideME): `assets/bettacraft/guides/bettacraft/guide/` (en) and `_de_de/` (de), images in
   `guide/images/` cropped from smoke screenshots by `tools/assetgen/guide_images.py`. Obtaining sections, profiles and
   species tables are generated from the game data: sources in `sources/` (`WildTables`, `TraderOffers`, `Sources`),
-  page catalogue in `src/test/.../guide/GuideGen`, then `gradlew updateGuide`.
+  page catalogue in `common/src/test/.../guide/GuideGen`, then `gradlew updateGuide`.
 - IDs must never contain `aquarium`, `fishtank`, `fish_tank`, `fishbowl`, `fish_bowl` (`CompatIdsTest`).
 
 ## Build and test
@@ -67,7 +70,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ./gradlew runGameTestServer --no-configuration-cache          # GameTests (add -Ppower for the FE mods)
 ./gradlew integrationTests --no-configuration-cache           # optional integration suite: every integrated mod (~6 min)
 ./gradlew zooTests --no-configuration-cache                   # optional zoo suite: mods we do NOT integrate (animals, plants)
-./gradlew runData --no-configuration-cache        # regenerate src/generated
+./gradlew runData --no-configuration-cache        # regenerate common/src/generated
 ./gradlew updateGuide                             # regenerate the data-driven handbook sections
 ./gradlew runServer -Psmoketest --no-configuration-cache      # server smoke (also with -PnoCompat)
 ./gradlew runClient -Psmoketestm25c --no-configuration-cache  # a milestone's client smoke scene (background window)
@@ -132,7 +135,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   delta lost), `bash tools/upgrade/chain.sh` (a reference world saved by an intermediate version, then `smoketestUpgrade
   -PupgradeWorld="Bettacraft Kette 1.13.1-1.31.0"`). Every GameTest run deletes its old world first (it used to grow by every
   run and filled the disk).
-- CI (`build.yml`): build, changelog section, `runData` must not change `src/generated`, GameTests, server smoke; the
+- CI (`build.yml`): build, changelog section, `runData` must not change `common/src/generated`, GameTests, server smoke; the
   manual *full* run adds smokes without optional mods / with TOP + WTHIT and GameTests with `-Ppower`. `release.yml`
   on a `v<mod_version>` tag: full tests, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is
   `RELEASING.md` (not committed).

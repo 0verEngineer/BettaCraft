@@ -76,9 +76,9 @@ jobs:
       - name: Generated resources are up to date (runData)
         run: |
           ./gradlew runData $GRADLE_ARGS
-          if [ -n "$(git status --porcelain -- src/generated)" ]; then
-            git status --porcelain -- src/generated | head -50
-            echo "::error::src/generated differs from the runData output: run gradlew runData and commit the result"
+          if [ -n "$(git status --porcelain -- common/src/generated)" ]; then
+            git status --porcelain -- common/src/generated | head -50
+            echo "::error::common/src/generated differs from the runData output: run gradlew runData and commit the result"
             exit 1
           fi
 
@@ -120,7 +120,9 @@ jobs:
             gametest.log
             smoke-*.log
             build/reports/
-            build/verifyReleaseJar.txt
+            common/build/reports/
+            neoforge/build/reports/
+            neoforge/build/verifyReleaseJar.txt
           retention-days: 7
           if-no-files-found: ignore
 

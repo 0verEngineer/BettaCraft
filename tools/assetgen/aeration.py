@@ -453,7 +453,7 @@ def write_all():
     }
     for name, img in icons.items():
         out.append(save_png(img, ITEM_TEX / f"{name}.png"))
-    out.append(save_png(air_hose_entity(), ROOT / "src/main/resources/assets/bettacraft/textures/entity/filter/air_hose.png"))
+    out.append(save_png(air_hose_entity(), ROOT / "common/src/main/resources/assets/bettacraft/textures/entity/filter/air_hose.png"))
     return out
 
 

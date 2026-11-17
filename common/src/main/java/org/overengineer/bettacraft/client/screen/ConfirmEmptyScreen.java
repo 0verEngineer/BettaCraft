@@ -1,0 +1,83 @@
+package org.overengineer.bettacraft.client.screen;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import org.overengineer.bettacraft.platform.network.PacketDistributor;
+import org.overengineer.bettacraft.network.EmptyConfirmPayload;
+
+/**
+ * M22.1: asks before the animals of a bucket or a bag go into the world ({@code ContainerRules}): the container and what
+ * happens, two buttons "Cancel" (focused, also Escape) and "Empty". Only "Empty" tells the server to let them go.
+ */
+public final class ConfirmEmptyScreen extends Screen {
+    private static final int W = 220, H = 92;
+    private final InteractionHand hand;
+    private final ItemStack stack;
+    /** The last screen opened (smoke tests press its buttons). */
+    public static ConfirmEmptyScreen last;
+    private Button cancel, empty;
+
+    public ConfirmEmptyScreen(InteractionHand hand, ItemStack stack) {
+        super(Component.translatable("gui.bettacraft.confirm_empty.title"));
+        this.hand = hand;
+        this.stack = stack;
+        last = this;
+    }
+
+    /** Opens the screen (client thread), unless another screen is open. */
+    public static void open(InteractionHand hand, ItemStack stack) {
+        Minecraft mc = Minecraft.getInstance();
+        mc.execute(() -> {
+            if (mc.screen == null) mc.setScreen(new ConfirmEmptyScreen(hand, stack));
+        });
+    }
+
+    @Override
+    protected void init() {
+        int left = (width - W) / 2, top = (height - H) / 2;
+        cancel = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.confirm_empty.cancel"), b -> onClose())
+                .bounds(left + 12, top + H - 28, 94, 20).build());
+        empty = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.confirm_empty.empty"), b -> confirm())
+                .bounds(left + W - 106, top + H - 28, 94, 20).build());
+        setInitialFocus(cancel);
+    }
+
+    /** "Empty": the server lets the animals go (and checks everything again). */
+    public void confirm() {
+        PacketDistributor.sendToServer(new EmptyConfirmPayload(hand));
+        onClose();
+    }
+
+    public void cancel() {
+        onClose();
+    }
+
+    @Override
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        super.render(g, mouseX, mouseY, partialTick);
+        int left = (width - W) / 2, top = (height - H) / 2;
+        g.fill(left, top, left + W, top + H, 0xE0101820);
+        g.renderOutline(left, top, W, H, 0xFF6A8CA8);
+        g.renderItem(stack, left + 10, top + 9);
+        g.drawString(font, title, left + 32, top + 13, 0xFFFFFF);
+        Component what = Component.translatable("gui.bettacraft.confirm_empty.text", stack.getHoverName());
+        int y = top + 32;
+        for (var line : font.split(what, W - 20)) {
+            g.drawString(font, line, left + 10, y, 0xC8D2DC);
+            y += 10;
+        }
+        // the buttons over the box
+        cancel.render(g, mouseX, mouseY, partialTick);
+        empty.render(g, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+}

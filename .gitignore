@@ -23,5 +23,5 @@ tools/assetgen/build/
 # Gradle extras
 repo/
 .run/
-src/generated/**/.cache/
+common/src/generated/**/.cache/
 logs/

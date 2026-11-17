@@ -9,7 +9,7 @@ import random
 
 from PIL import Image
 
-ROOT = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'main', 'resources', 'assets', 'bettacraft', 'textures')
+ROOT = os.path.join(os.path.dirname(__file__), '..', '..', 'common', 'src', 'main', 'resources', 'assets', 'bettacraft', 'textures')
 BLOCK = os.path.join(ROOT, 'block')
 ITEM = os.path.join(ROOT, 'item')
 

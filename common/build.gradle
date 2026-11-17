@@ -1,0 +1,88 @@
+// M52: the loader-independent part of the mod. Compiled against vanilla Minecraft only (ModDevGradle in NeoForm mode,
+// Mojang names with Parchment) plus the config API (NeoForge's ModConfigSpec through Forge Config API Port's
+// NeoForge-API artifact, the same class names NeoForge itself has) and Mixin. No NeoForge or Fabric class may be used
+// here: everything loader-specific goes through org.overengineer.bettacraft.platform (one implementation per loader).
+// This project builds no jar of its own: each loader module compiles these sources and resources into its jar.
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev'
+}
+
+version = mod_version
+group = mod_group_id
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    neoFormVersion = project.neo_form_version
+    // the vanilla members NeoForge's access transformer opens and the common code uses (compile only)
+    accessTransformers.from(file('accesstransformer.cfg'))
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+}
+
+sourceSets.main.resources {
+    // Resources produced by the data generators (gradlew runData, run by the neoforge module)
+    srcDir('src/generated/resources')
+    exclude('**/*.bbmodel')
+    exclude('.cache')
+}
+
+repositories {
+    // Forge Config API Port (the config classes for common code)
+    exclusiveContent {
+        forRepository { maven { name = 'Fuzs'; url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' } }
+        filter { includeGroup 'fuzs.forgeconfigapiport' }
+    }
+    // Mixin (annotations only; the loaders bring their own Mixin at runtime)
+    exclusiveContent {
+        forRepository { maven { name = 'FabricMC'; url = 'https://maven.fabricmc.net/' } }
+        filter { includeGroup 'net.fabricmc' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'BlameJared (JEI)'; url = 'https://maven.blamejared.com' } }
+        filter { includeGroup 'mezz.jei' }
+    }
+}
+
+// compile-time stand-ins for API classes whose published jars use intermediary names (src/stubs, never in a jar)
+sourceSets {
+    stubs
+}
+neoForge.addModdingDependenciesTo(sourceSets.stubs)
+neoForge.addModdingDependenciesTo(sourceSets.test)
+
+dependencies {
+    // before the port's jar: its TranslatableEnum has intermediary names
+    compileOnly sourceSets.stubs.output
+    compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forgeconfigapiport_version}"
+    compileOnly 'net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7'
+    compileOnly 'io.github.llamalad7:mixinextras-common:0.4.1'
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+
+    // the JUnit tests run without a Minecraft bootstrap; the config specs are built from the port's classes
+    testImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forgeconfigapiport_version}"
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // the boundary check reports every place at once
+    options.compilerArgs += ['-Xmaxerrs', '100000']
+}
+
+// The JUnit tests (src/test) are compiled here (they may use only vanilla and common classes) but run in the neoforge module:
+// Forge Config API Port's API jar has intermediary names and cannot build the config specs at runtime. gradlew test and
+// gradlew updateGuide run them there (neoforge/build.gradle).
+tasks.named('test', Test).configure { enabled = false }
+
+// nothing of common is published on its own
+tasks.named('jar', Jar).configure { enabled = false }

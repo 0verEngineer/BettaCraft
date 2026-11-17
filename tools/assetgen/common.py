@@ -12,14 +12,14 @@ BUILD = ASSETGEN / "build"
 GEN = BUILD / "generated"
 PREVIEW = BUILD / "preview"
 
-RES = ROOT / "src" / "main" / "resources"
+RES = ROOT / "common" / "src" / "main" / "resources"  # M52: the mod lives in common/
 TEX = RES / "assets" / "bettacraft" / "textures"
 ENTITY_TEX = TEX / "entity" / "betta"
 ITEM_TEX = TEX / "item"
 BLOCK_TEX = TEX / "block"
 LOGO = RES / "bettacraft.png"
 GUI_TEX = TEX / "gui"
-JAVA_SRC = ROOT / "src" / "main" / "java" / "org" / "overengineer" / "bettacraft"
+JAVA_SRC = ROOT / "common" / "src" / "main" / "java" / "org" / "overengineer" / "bettacraft"
 REVIEW_DIR = ROOT / "builds"
 
 

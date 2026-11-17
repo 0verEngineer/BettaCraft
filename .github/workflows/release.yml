@@ -97,8 +97,8 @@ jobs:
           chmod +x gradlew
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
           ./gradlew assemble verifyReleaseJar releaseNotes curseforgeDescription modpackZip ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
-          cat build/verifyReleaseJar.txt
-          jar="build/libs/bettacraft-${{ steps.version.outputs.version }}.jar"
+          cat neoforge/build/verifyReleaseJar.txt
+          jar="build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar"
           test -f "$jar"
           (cd build/libs && sha256sum "$(basename "$jar")" > "$(basename "$jar").sha256")
           cat build/libs/*.sha256
@@ -112,8 +112,8 @@ jobs:
         with:
           name: bettacraft-${{ steps.version.outputs.version }}
           path: |
-            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
             build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
             build/release-notes.md
           if-no-files-found: error
@@ -133,8 +133,8 @@ jobs:
           name: Bettacraft ${{ steps.version.outputs.version }}
           body_path: build/release-notes.md
           files: |
-            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
             build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
           prerelease: ${{ steps.version.outputs.type != 'release' }}
           make_latest: ${{ steps.version.outputs.type == 'release' }}
@@ -160,7 +160,7 @@ jobs:
             fintastic(optional)
             aquaculture(optional)
             naturalist(optional)
-          files: build/libs/bettacraft-${{ steps.version.outputs.version }}.jar
+          files: build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
           name: Bettacraft ${{ steps.version.outputs.version }}
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ steps.version.outputs.type }}

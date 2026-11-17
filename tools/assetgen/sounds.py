@@ -62,7 +62,7 @@ import soundfile as sf
 
 SR = 44100
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "src" / "main" / "resources" / "assets" / "bettacraft" / "sounds" / "block"
+OUT = ROOT / "common" / "src" / "main" / "resources" / "assets" / "bettacraft" / "sounds" / "block"
 
 LOOP_N = 2 * SR  # 2 s loops, 88200 samples (a whole number of 50 Hz cycles)
 

@@ -1,0 +1,35 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.overengineer.bettacraft.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "interior.ChunkGenerationTaskMixin",
+    "interior.ChunkMapMixin",
+    "interior.CoralBlockMixin",
+    "interior.CoralMixin",
+    "interior.FloatingPlantItemMixin",
+    "interior.FlowingFluidMixin",
+    "interior.GameTestServerMixin",
+    "interior.InteriorWaterPlantMixin",
+    "interior.InteriorWaterPlantPlacementMixin",
+    "interior.LevelMixin",
+    "interior.ServerLevelMixin",
+    "interior.WaterPlantPlacementMixin",
+    "interior.WaterlilyBlockMixin",
+    "mob.LivingEntityGlassMixin",
+    "mob.MobGlassMixin",
+    "mob.SlimeGlassMixin",
+    "mob.ZombieGlassMixin",
+    "villager.MerchantContainerMixin"
+  ],
+  "client": [
+    "client.BackgroundWindowMixin",
+    "client.ClientChunkCacheMixin",
+    "client.ClientLevelMixin",
+    "client.IrisBlockIdsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
