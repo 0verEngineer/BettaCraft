@@ -126,19 +126,19 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
 
     // ------------------------------------------------------------------ pure model
 
-    /** Pure: mB of feed water for {@code ro} mB of reverse osmosis water with {@code wastePerPart} parts of waste. */
+    /** Pure: see {@link RoModel#feedFor}. */
     public static double feedFor(double ro, double wastePerPart) {
-        return ro * (1 + Math.max(0, wastePerPart));
+        return RoModel.feedFor(ro, wastePerPart);
     }
 
-    /** Pure: mB of reverse osmosis water from this much feed. */
+    /** Pure: see {@link RoModel#roFrom}. */
     public static double roFrom(double feed, double wastePerPart) {
-        return feed / (1 + Math.max(0, wastePerPart));
+        return RoModel.roFrom(feed, wastePerPart);
     }
 
-    /** Pure: wear points (of 100) of a part that lasts {@code buckets} buckets after {@code mb} mB. */
+    /** Pure: see {@link RoModel#wear}. */
     public static double wear(double mb, double buckets) {
-        return mb * 100.0 / (Math.max(0.001, buckets) * 1000.0);
+        return RoModel.wear(mb, buckets);
     }
 
     // ------------------------------------------------------------------ work

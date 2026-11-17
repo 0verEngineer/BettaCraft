@@ -50,4 +50,9 @@ public enum FilterMedium implements StringRepresentable {
     public String getSerializedName() {
         return name().toLowerCase(java.util.Locale.ROOT);
     }
+
+    /** M26: mulm a medium of this dirt (0..1) gives when it is washed: one from a quarter dirty, two from three quarters. */
+    public static int mulmFrom(double dirt) {
+        return dirt >= 0.75 ? 2 : dirt >= 0.25 ? 1 : 0;
+    }
 }

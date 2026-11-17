@@ -45,9 +45,9 @@ public class FilterMediaItem extends Item {
         return stack.getItem() instanceof FilterMediaItem m ? m.medium : FilterMedium.NONE;
     }
 
-    /** M26: mulm a medium of this dirt (0..1) gives when it is washed: one from a quarter dirty, two from three quarters. */
+    /** M26: mulm a medium of this dirt gives when it is washed (see {@link FilterMedium#mulmFrom}). */
     public static int mulmFrom(double dirt) {
-        return dirt >= 0.75 ? 2 : dirt >= 0.25 ? 1 : 0;
+        return FilterMedium.mulmFrom(dirt);
     }
 
     // M52b: not repairable (no repairable component; isValidRepairItem is gone since 1.21.2)

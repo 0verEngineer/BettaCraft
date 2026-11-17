@@ -44,29 +44,19 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
 
     // ------------------------------------------------------------------ pure model
 
-    /**
-     * Pure: how strong the fermentation is at {@code p} (0..1 of its time): it starts within the first sixth, holds and
-     * fades over the last 40 %; 0 before and after.
-     */
+    /** Pure: see {@link Co2Model#curve}. */
     public static double curve(double p) {
-        if (p <= 0 || p >= 1) return 0;
-        if (p < 0.15) return p / 0.15;
-        if (p > 0.6) return (1 - p) / 0.4;
-        return 1;
+        return Co2Model.curve(p);
     }
 
-    /** Pure: the uneven yeast: 0.7..1.3, changes every few hours (deterministic from the position and the time). */
+    /** Pure: see {@link Co2Model#unevenness}. */
     public static double unevenness(long seed, long gameTime) {
-        long h = seed * 0x9E3779B97F4A7C15L + Math.floorDiv(gameTime, 4000L) * 0xC2B2AE3D27D4EB4FL;
-        h ^= h >>> 29;
-        h *= 0xBF58476D1CE4E5B9L;
-        h ^= h >>> 32;
-        return 0.7 + 0.6 * ((h >>> 11) / (double) (1L << 53));
+        return Co2Model.unevenness(seed, gameTime);
     }
 
-    /** Pure: days a brew with this much sugar ferments. */
+    /** Pure: see {@link Co2Model#daysFor}. */
     public static double daysFor(int sugar) {
-        return ServerConfig.getOr(ServerConfig.CO2_BIO_DAYS, 4.0) * Math.max(1, Math.min(MAX_SUGAR, sugar)) / MAX_SUGAR;
+        return Co2Model.daysFor(sugar);
     }
 
     // ------------------------------------------------------------------ state

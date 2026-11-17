@@ -111,9 +111,9 @@ public class Co2StationBlockEntity extends BlockEntity {
         return n;
     }
 
-    /** Pure: bubble-days a station adds in {@code ticks} with {@code fires} burning fires. */
+    /** Pure: see {@link Co2Model#fill}. */
     public static double fill(int fires, long ticks, double capacity, int ticksPerCylinder) {
-        return fires <= 0 ? 0 : capacity * fires * ticks / Math.max(1.0, ticksPerCylinder);
+        return Co2Model.fill(fires, ticks, capacity, ticksPerCylinder);
     }
 
     static void serverTick(Level level, BlockPos pos, BlockState state, Co2StationBlockEntity be) {

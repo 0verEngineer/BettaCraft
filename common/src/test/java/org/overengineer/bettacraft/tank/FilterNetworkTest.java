@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.overengineer.bettacraft.filter.MultiblockFilter;
 import org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing;
 import org.overengineer.bettacraft.plumbing.interior.Plumb;
-import org.overengineer.bettacraft.plumbing.interior.PlumbingItem;
 import org.overengineer.bettacraft.plumbing.interior.TankAnchors;
 
 /** M40 part a: the shares of a filter by water volume, where a pipe docks inside, the guards and the pipes through a tank. */
@@ -67,8 +66,8 @@ class FilterNetworkTest {
         assertFalse(n.passThrough());
         assertEquals(1, n.intakes().size(), "the guard at the pipe");
         // the last piece up to the top dock would lead the pipe out again
-        assertTrue(PlumbingItem.passThrough(withPipe(m, BlockPos.asLong(8, 5, 8)), BlockPos.asLong(8, 5, 8)));
-        assertFalse(PlumbingItem.passThrough(withPipe(m, BlockPos.asLong(7, 4, 8)), BlockPos.asLong(7, 4, 8)));
+        assertTrue(InteriorPlumbing.passThrough(withPipe(m, BlockPos.asLong(8, 5, 8)), BlockPos.asLong(8, 5, 8)));
+        assertFalse(InteriorPlumbing.passThrough(withPipe(m, BlockPos.asLong(7, 4, 8)), BlockPos.asLong(7, 4, 8)));
         m.put(BlockPos.asLong(8, 5, 8), Plumb.code(Plumb.PIPE, 0));
         assertTrue(InteriorPlumbing.search(m, bottom).passThrough(), "built anyway (a command): the dock stays closed");
     }

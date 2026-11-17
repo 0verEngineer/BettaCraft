@@ -108,19 +108,19 @@ class CultureModelTest {
 
     @Test
     void mulmFromWashedMedia() {
-        assertEquals(0, org.overengineer.bettacraft.filter.FilterMediaItem.mulmFrom(0.1));
-        assertEquals(1, org.overengineer.bettacraft.filter.FilterMediaItem.mulmFrom(0.5));
-        assertEquals(2, org.overengineer.bettacraft.filter.FilterMediaItem.mulmFrom(0.9));
+        assertEquals(0, org.overengineer.bettacraft.filter.FilterMedium.mulmFrom(0.1));
+        assertEquals(1, org.overengineer.bettacraft.filter.FilterMedium.mulmFrom(0.5));
+        assertEquals(2, org.overengineer.bettacraft.filter.FilterMedium.mulmFrom(0.9));
     }
 
     @Test
     void pumpScheduleSpreadsTheDoses() {
-        assertEquals(LiveFoodPumpBlockEntity.eventKey(999, 1) + 1, LiveFoodPumpBlockEntity.eventKey(1000, 1), "7:00");
-        assertEquals(LiveFoodPumpBlockEntity.eventKey(1000, 1), LiveFoodPumpBlockEntity.eventKey(24999, 1), "once a day");
-        long a = LiveFoodPumpBlockEntity.eventKey(1000, 2), b = LiveFoodPumpBlockEntity.eventKey(13000, 2);
+        assertEquals(LiveFoodSchedule.eventKey(999, 1) + 1, LiveFoodSchedule.eventKey(1000, 1), "7:00");
+        assertEquals(LiveFoodSchedule.eventKey(1000, 1), LiveFoodSchedule.eventKey(24999, 1), "once a day");
+        long a = LiveFoodSchedule.eventKey(1000, 2), b = LiveFoodSchedule.eventKey(13000, 2);
         assertEquals(a + 1, b, "12 hours later");
-        assertEquals(b, LiveFoodPumpBlockEntity.eventKey(24999, 2));
-        assertEquals(b + 1, LiveFoodPumpBlockEntity.eventKey(25000, 2), "next morning");
-        assertTrue(LiveFoodPumpBlockEntity.eventKey(24000L * 500 + 4000, 8) > LiveFoodPumpBlockEntity.eventKey(24000L * 500 + 1000, 8));
+        assertEquals(b, LiveFoodSchedule.eventKey(24999, 2));
+        assertEquals(b + 1, LiveFoodSchedule.eventKey(25000, 2), "next morning");
+        assertTrue(LiveFoodSchedule.eventKey(24000L * 500 + 4000, 8) > LiveFoodSchedule.eventKey(24000L * 500 + 1000, 8));
     }
 }

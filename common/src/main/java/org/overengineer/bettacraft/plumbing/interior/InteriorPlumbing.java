@@ -70,6 +70,11 @@ public final class InteriorPlumbing {
     /** Region id -> outlet key -> the look last set on the block (so the interior is only touched when it changes). */
     private static final Map<Integer, it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap> SHOWN = new ConcurrentHashMap<>();
 
+    /** Pure: the pipe at {@code key} reaches two or more connections to the outside. */
+    public static boolean passThrough(Long2IntOpenHashMap plumbing, long key) {
+        return search(plumbing, key).ports().size() >= 2;
+    }
+
     /** Pure: the outlets joined to the piece at {@code start} (pieces join their six neighbours; outlets end a line). */
     public static Net search(Long2IntOpenHashMap plumbing, long start) {
         LongArrayList out = new LongArrayList(), in = new LongArrayList(), ports = new LongArrayList();

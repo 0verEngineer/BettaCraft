@@ -32,7 +32,6 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  */
 public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     public static final int SLOTS = 9;
-    private static final long[][] SCHEDULE = {{1000}, {1000, 11000}, {1000, 7000, 13000}};
 
     /** Slots of this feeder (9; the M21.5 clip-on feeder 1). */
     protected final int slots;
@@ -111,15 +110,9 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         return level == null ? null : TankMultiblock.getController(level, worldPosition.below());
     }
 
-    /** Key of the latest scheduled feeding at or before {@code dayTime}. */
+    /** Key of the latest scheduled feeding at or before {@code dayTime} (see {@link FeedSchedule#eventKey}). */
     static long eventKey(long dayTime, int feedings) {
-        long[] times = SCHEDULE[Math.max(1, Math.min(3, feedings)) - 1];
-        long day = Math.floorDiv(dayTime, 24000L);
-        long tod = Math.floorMod(dayTime, 24000L);
-        for (int i = times.length - 1; i >= 0; i--) {
-            if (tod >= times[i]) return day * 4 + i;
-        }
-        return (day - 1) * 4 + (times.length - 1);
+        return FeedSchedule.eventKey(dayTime, feedings);
     }
 
     /** M21.5: whether this feeder works (the clip-on feeder can be switched off). */

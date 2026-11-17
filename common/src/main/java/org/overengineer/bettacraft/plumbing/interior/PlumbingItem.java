@@ -145,7 +145,7 @@ public class PlumbingItem extends BlockItem {
 
     /** Pure: the pipe at {@code key} reaches two or more connections to the outside. */
     public static boolean passThrough(it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap plumbing, long key) {
-        return InteriorPlumbing.search(plumbing, key).ports().size() >= 2;
+        return InteriorPlumbing.passThrough(plumbing, key);
     }
 
     @Override

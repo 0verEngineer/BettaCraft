@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.overengineer.bettacraft.chem.ChemTolerance;
 import org.overengineer.bettacraft.chem.WaterChemistry;
-import org.overengineer.bettacraft.osmosis.RoUnitBlockEntity;
+import org.overengineer.bettacraft.osmosis.RoModel;
 
 /** M25 part b: the pure CO2 model (balance, harm, bio CO2, filling) and the reverse osmosis numbers. */
 class Co2Test {
@@ -52,38 +52,38 @@ class Co2Test {
 
     @Test
     void bioCo2StartsSlowlyHoldsAndFades() {
-        assertEquals(0, BioCo2BlockEntity.curve(0), 1e-9);
-        assertTrue(BioCo2BlockEntity.curve(0.05) < 0.5);
-        assertEquals(1, BioCo2BlockEntity.curve(0.4), 1e-9);
-        assertTrue(BioCo2BlockEntity.curve(0.9) < 0.3);
-        assertEquals(0, BioCo2BlockEntity.curve(1), 1e-9);
+        assertEquals(0, Co2Model.curve(0), 1e-9);
+        assertTrue(Co2Model.curve(0.05) < 0.5);
+        assertEquals(1, Co2Model.curve(0.4), 1e-9);
+        assertTrue(Co2Model.curve(0.9) < 0.3);
+        assertEquals(0, Co2Model.curve(1), 1e-9);
         // uneven, but always 0.7..1.3 and the same for the same time
         double min = 2, max = 0;
         for (long t = 0; t < 400000; t += 4000) {
-            double u = BioCo2BlockEntity.unevenness(12345L, t);
+            double u = Co2Model.unevenness(12345L, t);
             min = Math.min(min, u);
             max = Math.max(max, u);
-            assertEquals(u, BioCo2BlockEntity.unevenness(12345L, t + 100), 1e-12);
+            assertEquals(u, Co2Model.unevenness(12345L, t + 100), 1e-12);
         }
         assertTrue(min >= 0.7 && max <= 1.3 && max - min > 0.2, min + ".." + max);
         // four sugar: the full time, one sugar a quarter
-        assertEquals(4.0, BioCo2BlockEntity.daysFor(4), 1e-9);
-        assertEquals(1.0, BioCo2BlockEntity.daysFor(1), 1e-9);
+        assertEquals(4.0, Co2Model.daysFor(4), 1e-9);
+        assertEquals(1.0, Co2Model.daysFor(1), 1e-9);
     }
 
     @Test
     void stationFillsWithFlueGas() {
-        assertEquals(0, Co2StationBlockEntity.fill(0, 24000, 60, 24000), 1e-9);
-        assertEquals(60, Co2StationBlockEntity.fill(1, 24000, 60, 24000), 1e-9);
-        assertEquals(60, Co2StationBlockEntity.fill(2, 12000, 60, 24000), 1e-9);
+        assertEquals(0, Co2Model.fill(0, 24000, 60, 24000), 1e-9);
+        assertEquals(60, Co2Model.fill(1, 24000, 60, 24000), 1e-9);
+        assertEquals(60, Co2Model.fill(2, 12000, 60, 24000), 1e-9);
     }
 
     @Test
     void reverseOsmosisYieldAndWear() {
-        assertEquals(4000, RoUnitBlockEntity.feedFor(1000, 3), 1e-9);
-        assertEquals(250, RoUnitBlockEntity.roFrom(1000, 3), 1e-9);
+        assertEquals(4000, RoModel.feedFor(1000, 3), 1e-9);
+        assertEquals(250, RoModel.roFrom(1000, 3), 1e-9);
         // a membrane for 128 buckets: 100 wear points after 128000 mB
-        assertEquals(100, RoUnitBlockEntity.wear(128000, 128), 1e-9);
-        assertEquals(1, RoUnitBlockEntity.wear(1280, 128), 1e-9);
+        assertEquals(100, RoModel.wear(128000, 128), 1e-9);
+        assertEquals(1, RoModel.wear(1280, 128), 1e-9);
     }
 }

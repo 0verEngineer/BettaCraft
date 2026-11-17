@@ -159,13 +159,9 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
         return ServerConfig.getOr(ServerConfig.LIVE_FOOD_PUMP_FE, 200);
     }
 
-    /** Key of the latest dose at or before {@code dayTime} ({@code doses} evenly spread from {@link #FIRST_DOSE}). */
+    /** Key of the latest dose at or before {@code dayTime} (see {@link LiveFoodSchedule#eventKey}). */
     public static long eventKey(long dayTime, int doses) {
-        if (doses <= 0) return 0;
-        long t = dayTime - FIRST_DOSE;
-        long day = Math.floorDiv(t, 24000L);
-        long tod = Math.floorMod(t, 24000L);
-        return day * doses + tod * doses / 24000L;
+        return LiveFoodSchedule.eventKey(dayTime, doses);
     }
 
     // ------------------------------------------------------------------ ticking
