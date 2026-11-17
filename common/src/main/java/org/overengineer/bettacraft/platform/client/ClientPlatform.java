@@ -46,6 +46,9 @@ public interface ClientPlatform {
     /** M52: the loader's adapter that draws one of our dynamic models (NeoForge model data, Fabric's renderer API). */
     BlockStateModel wrap(DynamicModel model);
 
+    /** M52b: our dynamic model inside a model made by {@link #wrap}, or null for any other model. */
+    @Nullable DynamicModel dynamic(BlockStateModel model);
+
     /** The quads of a (foreign) model without render data, of one side (null: unculled) and chunk layer (null: all). */
     List<BakedQuad> quads(BlockStateModel model, @Nullable BlockState state, @Nullable Direction side, RandomSource rand,
             @Nullable ChunkSectionLayer layer);

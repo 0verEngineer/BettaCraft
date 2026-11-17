@@ -91,8 +91,11 @@ public final class DecorPreview {
             ps.translate(0.5, 0.5, 0.5);
             ps.scale(1.002F, 1.002F, 1.002F);
             ps.translate(-0.5, -0.5, -0.5);
-            org.overengineer.bettacraft.platform.client.ClientPlatform.get().renderSingleBlock(mc.getBlockRenderer(), b.state(), ps, x -> vc, 0xF000F0,
-                    OverlayTexture.NO_OVERLAY, rt);
+            // M52b: tesselated without face culling like 1.21.1's renderSingleBlock; Tinted makes it full bright
+            var cp = org.overengineer.bettacraft.platform.client.ClientPlatform.get();
+            var model = mc.getBlockRenderer().getBlockModel(b.state());
+            cp.tesselate(b.state(), b.pos(), mc.level, ps, x -> vc, false, net.minecraft.util.RandomSource.create(42L),
+                    cp.modelData(model, mc.level, b.pos(), b.state()), null);
             ps.popPose();
         }
         buffers.endBatch(rt);
@@ -100,8 +103,9 @@ public final class DecorPreview {
             ps.pushPose();
             ps.translate(-cam.x, -cam.y, -cam.z);
             net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1).inflate(0.01);
-            net.minecraft.client.renderer.LevelRenderer.renderLineBox(ps, buffers.getBuffer(RenderTypes.lines()), box,
-                    blocked ? 1F : 0.35F, blocked ? 0.25F : 0.95F, blocked ? 0.25F : 1F, 0.9F);
+            net.minecraft.client.renderer.ShapeRenderer.renderShape(ps, buffers.getBuffer(RenderTypes.lines()), net.minecraft.world.phys.shapes.Shapes.create(box),
+                    0, 0, 0, net.minecraft.util.ARGB.colorFromFloat(0.9F, blocked ? 1F : 0.35F, blocked ? 0.25F : 0.95F, blocked ? 0.25F : 1F),
+                    mc.getWindow().getAppropriateLineWidth());
             ps.popPose();
             buffers.endBatch(RenderTypes.lines());
         }
@@ -120,7 +124,11 @@ public final class DecorPreview {
         }
         @Override public VertexConsumer setUv(float u, float v) { d.setUv(u, v); return this; }
         @Override public VertexConsumer setUv1(int u, int v) { d.setUv1(u, v); return this; }
-        @Override public VertexConsumer setUv2(int u, int v) { d.setUv2(u, v); return this; }
+        @Override public VertexConsumer setColor(int argb) {
+            return setColor(argb >> 16 & 255, argb >> 8 & 255, argb & 255, argb >>> 24);
+        }
+        @Override public VertexConsumer setUv2(int u, int v) { d.setUv2(240, 240); return this; } // full bright
         @Override public VertexConsumer setNormal(float x, float y, float z) { d.setNormal(x, y, z); return this; }
+        @Override public VertexConsumer setLineWidth(float width) { d.setLineWidth(width); return this; }
     }
 }

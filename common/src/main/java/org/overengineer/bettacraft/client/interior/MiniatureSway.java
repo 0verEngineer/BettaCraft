@@ -173,6 +173,12 @@ public final class MiniatureSway {
         }
 
         @Override
+        public VertexConsumer setColor(int argb) {
+            d.color.set(n, argb);
+            return this;
+        }
+
+        @Override
         public VertexConsumer setUv(float u, float v) {
             d.v.set(n * STRIDE + 3, u);
             d.v.set(n * STRIDE + 4, v);

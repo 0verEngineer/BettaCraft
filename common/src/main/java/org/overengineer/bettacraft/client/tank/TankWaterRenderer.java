@@ -56,7 +56,7 @@ public final class TankWaterRenderer {
         if (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()) return;
         // M50: a travelling tank (airship) draws its sloshing water itself (the model data of the block says so)
         if (Boolean.TRUE.equals(org.overengineer.bettacraft.platform.client.ClientPlatform.get().modelValue(level, pos, org.overengineer.bettacraft.tank.TankBlockEntity.WATER_DYNAMIC))) return;
-        var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+        var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
         TextureAtlasSprite still = atlas.apply(STILL), side = atlas.apply(SIDE);
         int light = LevelRenderer.getLightColor(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.

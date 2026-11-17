@@ -121,7 +121,7 @@ final class RegionBlockGetter implements BlockAndTintGetter {
     }
 
     @Override
-    public int getMinBuildHeight() {
+    public int getMinY() {
         return -1;
     }
 }

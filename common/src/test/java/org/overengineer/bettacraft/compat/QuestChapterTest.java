@@ -117,7 +117,7 @@ class QuestChapterTest {
         assertEquals("bettacraft", chapter.getStringOr("filename", ""));
         ids.add(chapter.getStringOr("id", ""));
         key(chapter.getStringOr("title", ""), problems, "chapter title");
-        key(chapter.getListOrEmpty("subtitle").getString(0), problems, "chapter subtitle");
+        key(chapter.getListOrEmpty("subtitle").getStringOr(0, ""), problems, "chapter subtitle");
         assertTrue(quests.size() >= 90, "the chapter of M45 has about 95 quests: " + quests.size());
         int advancements = 0, items = 0, itemRewards = 0;
         for (int i = 0; i < quests.size(); i++) {
@@ -125,9 +125,9 @@ class QuestChapterTest {
             String qid = q.getStringOr("id", "");
             if (!ids.add(qid)) problems.add("id twice: " + qid);
             key(q.getStringOr("title", ""), problems, qid + " title");
-            key(q.getListOrEmpty("description").getString(0), problems, qid + " description");
+            key(q.getListOrEmpty("description").getStringOr(0, ""), problems, qid + " description");
             for (Tag d : q.getListOrEmpty("dependencies")) {
-                if (!BY_ID.containsKey(d.getAsString())) problems.add(qid + ": unknown dependency " + d.getAsString());
+                if (!BY_ID.containsKey(org.overengineer.bettacraft.util.NbtCompat.asString(d))) problems.add(qid + ": unknown dependency " + org.overengineer.bettacraft.util.NbtCompat.asString(d));
             }
             ListTag tasks = q.getListOrEmpty("tasks");
             if (tasks.isEmpty()) problems.add(qid + ": no task");
@@ -167,7 +167,7 @@ class QuestChapterTest {
                 }
             }
             if (!xp) problems.add(qid + ": no xp reward");
-            boolean optionalTag = q.getListOrEmpty("tags").stream().anyMatch(t -> t.getAsString().equals(BettacraftApi.TAG_OPTIONAL));
+            boolean optionalTag = q.getListOrEmpty("tags").stream().anyMatch(t -> org.overengineer.bettacraft.util.NbtCompat.asString(t).equals(BettacraftApi.TAG_OPTIONAL));
             if (optionalTag != q.getBooleanOr("optional", false)) problems.add(qid + ": optional and the tag " + BettacraftApi.TAG_OPTIONAL + " differ");
         }
         for (String id : ids) {
@@ -203,7 +203,7 @@ class QuestChapterTest {
             Set<String> wanted = new TreeSet<>(List.of(p[2].trim().split(" ")));
             if (!tasks.equals(wanted)) problems.add(name + ": tasks " + tasks + " instead of " + wanted);
             Set<String> deps = new TreeSet<>();
-            for (Tag d : q.getListOrEmpty("dependencies")) deps.add(d.getAsString());
+            for (Tag d : q.getListOrEmpty("dependencies")) deps.add(org.overengineer.bettacraft.util.NbtCompat.asString(d));
             Set<String> wantedDeps = new TreeSet<>();
             for (String d : p[3].trim().split(" ")) if (!d.isBlank()) wantedDeps.add(d);
             if (!deps.equals(wantedDeps)) problems.add(name + ": dependencies " + deps + " instead of " + wantedDeps);
@@ -230,7 +230,7 @@ class QuestChapterTest {
         Integer s = state.get(id);
         if (s != null) return s == 2;
         state.put(id, 1);
-        for (Tag d : BY_ID.get(id).getListOrEmpty("dependencies")) if (!acyclic(d.getAsString(), state)) return false;
+        for (Tag d : BY_ID.get(id).getListOrEmpty("dependencies")) if (!acyclic(org.overengineer.bettacraft.util.NbtCompat.asString(d), state)) return false;
         state.put(id, 2);
         return true;
     }
@@ -238,7 +238,7 @@ class QuestChapterTest {
     private static List<Feature> features(CompoundTag q, List<String> problems) {
         List<Feature> out = new ArrayList<>();
         for (Tag t : q.getListOrEmpty("tags")) {
-            String s = t.getAsString();
+            String s = org.overengineer.bettacraft.util.NbtCompat.asString(t);
             if (s.startsWith(BettacraftApi.TAG_FEATURE)) {
                 Feature f = Feature.byPath(s.substring(BettacraftApi.TAG_FEATURE.length()));
                 if (f == null) problems.add(q.getStringOr("id", "") + ": unknown feature tag " + s);
@@ -267,12 +267,12 @@ class QuestChapterTest {
             CompoundTag q = e.getValue();
             List<Feature> tags = features(q, problems);
             for (Tag d : q.getListOrEmpty("dependencies")) {
-                CompoundTag dq = BY_ID.get(d.getAsString());
+                CompoundTag dq = BY_ID.get(org.overengineer.bettacraft.util.NbtCompat.asString(d));
                 for (Feature f : features(dq, problems)) if (!covered(tags, f)) problems.add(e.getKey() + ": depends on a quest of " + f.path());
                 for (Tag t : dq.getListOrEmpty("tags")) {
-                    String s = t.getAsString();
+                    String s = org.overengineer.bettacraft.util.NbtCompat.asString(t);
                     if ((s.startsWith(BettacraftApi.TAG_MOD) || s.equals(BettacraftApi.TAG_NEEDS_POWER))
-                            && q.getListOrEmpty("tags").stream().noneMatch(x -> x.getAsString().equals(s))) {
+                            && q.getListOrEmpty("tags").stream().noneMatch(x -> org.overengineer.bettacraft.util.NbtCompat.asString(x).equals(s))) {
                         problems.add(e.getKey() + ": depends on a quest with " + s);
                     }
                 }

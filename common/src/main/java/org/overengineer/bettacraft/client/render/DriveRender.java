@@ -24,7 +24,7 @@ public final class DriveRender {
     private DriveRender() {}
 
     public static TextureAtlasSprite sprite(String name) {
-        return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(BettaCraft.id("block/" + name));
+        return org.overengineer.bettacraft.client.ClientCompat.blockSprites().apply(BettaCraft.id("block/" + name));
     }
 
     /** Turns the pose so that model north (-z) points to {@code facing}, about the block centre. */
@@ -48,7 +48,7 @@ public final class DriveRender {
         if (face == null || cab.getLevel() == null) return;
         // the light in front of the face (the cabinet's own block is dark inside)
         light = net.minecraft.client.renderer.LevelRenderer.getLightColor(cab.getLevel(), cab.getBlockPos().relative(face));
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(InventoryMenu.BLOCK_ATLAS));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS));
         TextureAtlasSprite s = sprite("drive_coupling");
         ps.pushPose();
         face(ps, face);

@@ -23,7 +23,7 @@ public class ThermoHygrometerRenderer extends org.overengineer.bettacraft.client
     private final Font font;
 
     public ThermoHygrometerRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.font = ctx.getFont();
+        this.font = ctx.font();
     }
 
     @Override

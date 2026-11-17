@@ -174,7 +174,7 @@ public final class DeviceEffects {
         if (top <= pos.getY() + 0.4) return;
         int n = RAND.nextDouble() < 0.4 + 0.6 * share ? 1 + (share > 0.6 && RAND.nextBoolean() ? 1 : 0) : 0;
         for (int i = 0; i < n; i++) {
-            level.addParticle(new ModParticles.AirBubble(top, 0.07F + 0.05F * RAND.nextFloat()), true,
+            level.addParticle(new ModParticles.AirBubble(top, 0.07F + 0.05F * RAND.nextFloat()), true, false,
                     pos.getX() + 0.5 + (RAND.nextDouble() - 0.5) * 0.4, pos.getY() + 0.4, pos.getZ() + 0.5 + (RAND.nextDouble() - 0.5) * 0.4,
                     (RAND.nextDouble() - 0.5) * 0.02, 0.06 + RAND.nextDouble() * 0.03, (RAND.nextDouble() - 0.5) * 0.02);
         }
@@ -234,7 +234,7 @@ public final class DeviceEffects {
                 int n = 1 + RAND.nextInt(3);
                 spongeBubbles += n;
                 // force: also further than 32 blocks (the interior is large; we limit it to 48 ourselves)
-                for (int i = 0; i < n; i++) mc.level.addParticle(new ModParticles.AirBubble(surface, 0.14F + 0.08F * RAND.nextFloat()), true,
+                for (int i = 0; i < n; i++) mc.level.addParticle(new ModParticles.AirBubble(surface, 0.14F + 0.08F * RAND.nextFloat()), true, false,
                         x + (RAND.nextDouble() - 0.5) * 0.25, sp[3] + RAND.nextDouble() * 0.2, z + (RAND.nextDouble() - 0.5) * 0.25, 0, 0.05 + RAND.nextDouble() * 0.04, 0);
             }
             if (ClientConfig.FILTER_SOUND.get() && RAND.nextInt(60) == 0 && mc.player.distanceToSqr(x, sp[3], z) < 16 * 16) {

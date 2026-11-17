@@ -57,7 +57,7 @@ public final class BettaSkins {
         NativeImage img = composite(layers);
         if (img == null) return null;
         loc = BettaCraft.id("dynamic/betta_skin_" + (counter++));
-        Minecraft.getInstance().getTextureManager().register(loc, new DynamicTexture(img));
+        Minecraft.getInstance().getTextureManager().register(loc, new DynamicTexture(loc::toString, img));
         SKINS.put(key, loc);
         if (SKINS.size() > MAX) {
             var it = SKINS.entrySet().iterator();
@@ -93,7 +93,7 @@ public final class BettaSkins {
             float tb = (layer.argb() & 0xFF) / 255F, ta = ((layer.argb() >>> 24) & 0xFF) / 255F;
             for (int y = 0; y < h; y++) {
                 for (int x = 0; x < w; x++) {
-                    int p = m.getPixelRGBA(x, y); // ABGR
+                    int p = net.minecraft.util.ARGB.toABGR(m.getPixel(x, y)); // ABGR
                     float sa = ((p >>> 24) & 0xFF) / 255F * ta;
                     if (sa <= 0) continue;
                     float sr = (p & 0xFF) / 255F * tr, sg = ((p >> 8) & 0xFF) / 255F * tg, sb = ((p >> 16) & 0xFF) / 255F * tb;
@@ -120,7 +120,7 @@ public final class BettaSkins {
             for (int x = 0; x < w; x++) {
                 int i = y * w + x;
                 int ca = Math.round(a[i] * 255), cr = Math.round(r[i] * 255), cg = Math.round(g[i] * 255), cb = Math.round(b[i] * 255);
-                out.setPixelRGBA(x, y, ca << 24 | cb << 16 | cg << 8 | cr);
+                out.setPixelABGR(x, y, ca << 24 | cb << 16 | cg << 8 | cr);
             }
         }
         return out;

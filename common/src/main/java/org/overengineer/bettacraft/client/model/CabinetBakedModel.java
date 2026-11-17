@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
@@ -42,23 +41,20 @@ public class CabinetBakedModel extends WrappedModel {
     private final BlockState fixedWood;
     /** (wood, side) -> retextured quads of this wrapped model. */
     private final Map<BlockState, List<BakedQuad>[]> cache = new ConcurrentHashMap<>();
-    private final Map<Identifier, BlockStateModel> itemVariants;
-    private final ItemOverrides overrides;
 
-    public CabinetBakedModel(BlockStateModel original, @Nullable BlockState fixedWood, @Nullable Map<Identifier, BlockStateModel> shared) {
+    public CabinetBakedModel(BlockStateModel original, @Nullable BlockState fixedWood) {
         super(original);
         this.fixedWood = fixedWood;
-        this.itemVariants = shared != null ? shared : new ConcurrentHashMap<>();
-        this.overrides = new ItemOverrides() {
-            @Override
-            public BlockStateModel resolve(BlockStateModel model, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-                Identifier id = CabinetBlockItem.getWood(stack);
-                return itemVariants.computeIfAbsent(id, k -> ClientPlatform.get().wrap(new CabinetBakedModel(originalModel, CabinetBlockItem.woodBlock(stack).defaultBlockState(), itemVariants)));
-            }
-        };
     }
 
-    /** Wraps every cabinet block state model and the item model (models are rebaked on every resource reload). */
+    /** M52b: the quads of the cabinet item in the planks {@code wood} (1.21.1: item overrides; see {@code BlockModelItem}). */
+    public static List<BakedQuad> retextureAll(List<BakedQuad> quads, BlockState wood) {
+        TextureAtlasSprite target = woodSprite(wood);
+        List<BakedQuad> out = new ArrayList<>(quads.size());
+        for (BakedQuad q : quads) out.add(q.sprite().contents().name().equals(PLACEHOLDER) ? retexture(q, target) : q);
+        return List.copyOf(out);
+    }
+
     /** Forget the planks sprites (resource reload). */
     public static void clearSprites() {
         WOOD_SPRITES.clear();
@@ -76,10 +72,10 @@ public class CabinetBakedModel extends WrappedModel {
             RandomSource r = RandomSource.create(42);
             for (Direction d : new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.UP}) {
                 List<BakedQuad> q = ClientPlatform.get().quads(m, w, d, r, null);
-                if (!q.isEmpty() && q.getFirst().getSprite().atlasLocation().equals(TextureAtlas.LOCATION_BLOCKS)) return q.getFirst().getSprite();
+                if (!q.isEmpty() && q.getFirst().sprite().atlasLocation().equals(TextureAtlas.LOCATION_BLOCKS)) return q.getFirst().sprite();
             }
             List<BakedQuad> q = ClientPlatform.get().quads(m, w, null, r, null);
-            if (!q.isEmpty()) return q.getFirst().getSprite();
+            if (!q.isEmpty()) return q.getFirst().sprite();
             return m.particleIcon();
         });
     }
@@ -132,19 +128,8 @@ public class CabinetBakedModel extends WrappedModel {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public TextureAtlasSprite getParticleIcon() {
-        return woodSprite(fixedWood != null ? fixedWood : Blocks.OAK_PLANKS.defaultBlockState());
-    }
-
-    @Override
     public TextureAtlasSprite particle(ModelValues data) {
         return woodSprite(woodOf(data));
-    }
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return overrides;
     }
 
 }

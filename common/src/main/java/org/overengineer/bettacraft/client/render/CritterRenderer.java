@@ -356,7 +356,7 @@ public final class CritterRenderer {
             vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
             boolean was = eggs.visible;
             eggs.visible = true;
-            float t = (net.minecraft.Util.getMillis() % 100000L) / 1000F + o.yaw;
+            float t = (net.minecraft.util.Util.getMillis() % 100000L) / 1000F + o.yaw;
             for (int i = 0; i < 9; i++) {
                 pose.pushPose();
                 float a = i * 2.39F + t * 0.3F;

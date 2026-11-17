@@ -212,11 +212,11 @@ public final class TravelWater {
             int lo = cur == Long.MIN_VALUE ? y : Math.min(y, (int) (cur >> 32)), hi = cur == Long.MIN_VALUE ? y : Math.max(y, (int) cur);
             cols.put(key, ((long) lo << 32) | (hi & 0xFFFFFFFFL));
         }
-        var atlas = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+        var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
         TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), side = atlas.apply(TankWaterRenderer.SIDE);
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS));
         PoseStack.Pose p = pose.last();
-        double time = (mc.level == null ? 0 : (mc.level.getGameTime() % 24000L)) / 20.0 + mc.getTimer().getGameTimeDeltaPartialTick(false) / 20.0;
+        double time = (mc.level == null ? 0 : (mc.level.getGameTime() % 24000L)) / 20.0 + org.overengineer.bettacraft.client.ClientCompat.partialTick() / 20.0;
         for (var e : cols.long2LongEntrySet()) {
             int x = BlockPos.getX(e.getLongKey()), z = BlockPos.getZ(e.getLongKey());
             int lo = (int) (e.getLongValue() >> 32), hi = (int) e.getLongValue();

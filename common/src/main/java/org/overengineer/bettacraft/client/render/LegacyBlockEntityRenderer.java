@@ -32,7 +32,7 @@ public abstract class LegacyBlockEntityRenderer<T extends BlockEntity> implement
     }
 
     @Override
-    public void extractRenderState(T be, State<T> state, float partialTick, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
+    public void extractRenderState(T be, State<T> state, float partialTick, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTick, cameraPos, crumbling);
         state.blockEntity = be;
         state.partialTick = partialTick;

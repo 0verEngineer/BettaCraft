@@ -3,21 +3,22 @@ package org.overengineer.bettacraft.client.particle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.registry.ModParticles;
 
 /**
  * M23: an air bubble of an air stone or sponge filter. It rises (a little faster as it goes, wobbling) up to the given
  * height and pops there; unlike Minecraft's bubble it does not need a water block (the tank interior has none).
  */
-public class AirBubbleParticle extends TextureSheetParticle {
+public class AirBubbleParticle extends SingleQuadParticle {
     private final float top;
     private final double phase;
 
-    protected AirBubbleParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, float top, float size) {
-        super(level, x, y, z);
+    protected AirBubbleParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, float top, float size, TextureAtlasSprite sprite) {
+        super(level, x, y, z, sprite);
         this.top = top;
         this.xd = vx;
         this.yd = Math.max(0.01, vy);
@@ -48,16 +49,14 @@ public class AirBubbleParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE; // like Minecraft's bubble: drawn before the tank water, seen through it
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.OPAQUE; // like Minecraft's bubble: drawn before the tank water, seen through it
     }
 
     public record Provider(SpriteSet sprites) implements ParticleProvider<ModParticles.AirBubble> {
         @Override
-        public Particle createParticle(ModParticles.AirBubble o, ClientLevel level, double x, double y, double z, double vx, double vy, double vz) {
-            AirBubbleParticle p = new AirBubbleParticle(level, x, y, z, vx, vy, vz, o.top(), o.size());
-            p.pickSprite(sprites);
-            return p;
+        public Particle createParticle(ModParticles.AirBubble o, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
+            return new AirBubbleParticle(level, x, y, z, vx, vy, vz, o.top(), o.size(), sprites.get(random));
         }
     }
 }

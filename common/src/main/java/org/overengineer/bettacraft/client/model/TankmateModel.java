@@ -110,7 +110,7 @@ public class TankmateModel extends EntityModel<MobState<TankmateEntity>> {
     @Nullable
     private static ModelPart find(ModelPart p, String name) {
         if (p.hasChild(name)) return p.getChild(name);
-        for (ModelPart c : p.getAllParts().toList()) {
+        for (ModelPart c : p.getAllParts()) {
             if (c != p && c.hasChild(name)) return c.getChild(name);
         }
         return null;

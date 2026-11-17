@@ -9,7 +9,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -27,7 +26,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * and the life stage (guppy and platy females a bit bigger than the males). The body sways with the tail; ascending or
  * descending fish tilt; a pleco or otocinclus on the glass stands upright with its belly to the glass.
  */
-public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel> {
+public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<TankmateEntity>, TankmateModel> {
     public static final Map<TankmateSpecies.Model, ModelLayerLocation> LAYERS = new EnumMap<>(TankmateSpecies.Model.class);
 
     static {
@@ -79,39 +78,49 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     }
 
     @Override
-    public void render(TankmateEntity fish, float yaw, float partialTicks, PoseStack pose, MultiBufferSource buffers, int light) {
+    public MobState<TankmateEntity> createRenderState() {
+        return new MobState<>();
+    }
+
+    /** M52b: what 1.21.1 chose in render(): the model (the genetics model for livebearers), the skin, the shadow. */
+    @Override
+    public void extractRenderState(TankmateEntity fish, MobState<TankmateEntity> state, float partialTick) {
+        super.extractRenderState(fish, state, partialTick);
+        state.entity = fish;
+        state.partialTick = partialTick;
         var lb = fish.livebearerPhenotype();
-        if (lb != null) {
-            // M21.6: the genetics model with the expressed tail shape
-            boolean adult = adultLook(fish);
-            guppyModel.prepare(lb.tail(), GuppyLook.tailScale(lb, adult), !adult);
-            this.model = guppyModel;
-        } else {
-            this.model = models.get(fish.species().model());
-        }
-        this.shadowRadius = 0.1F * (float) fish.species().length() * fish.lifeStage().scale();
-        super.render(fish, yaw, partialTicks, pose, buffers, light);
+        state.model = lb != null ? guppyModel : models.get(fish.species().model());
+        Identifier skin = lb != null ? BettaSkins.get(GuppyLook.layers(lb, adultLook(fish), fish.isGravid())) : null;
+        state.skin = skin != null ? skin : texture(fish.species(), fish.variety(), fish.isFemale());
     }
 
     @Override
-    public Identifier getTextureLocation(TankmateEntity fish) {
-        var lb = fish.livebearerPhenotype();
-        if (lb != null) {
-            Identifier skin = BettaSkins.get(GuppyLook.layers(lb, adultLook(fish), fish.isGravid()));
-            if (skin != null) return skin;
-        }
-        return texture(fish.species(), fish.variety(), fish.isFemale());
+    protected float getShadowRadius(MobState<TankmateEntity> state) {
+        return 0.1F * (float) state.entity.species().length() * state.entity.lifeStage().scale();
     }
 
     @Override
-    protected RenderType getRenderType(TankmateEntity fish, boolean bodyVisible, boolean translucent, boolean glowing) {
-        Identifier tex = getTextureLocation(fish);
+    public void submit(MobState<TankmateEntity> state, PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector collector,
+                       net.minecraft.client.renderer.state.CameraRenderState camera) {
+        if (state.model instanceof TankmateModel m) this.model = m;
+        super.submit(state, pose, collector, camera);
+    }
+
+    @Override
+    public Identifier getTextureLocation(MobState<TankmateEntity> state) {
+        return state.skin != null ? state.skin : texture(state.entity.species(), state.entity.variety(), state.entity.isFemale());
+    }
+
+    @Override
+    protected RenderType getRenderType(MobState<TankmateEntity> state, boolean bodyVisible, boolean translucent, boolean glowing) {
+        Identifier tex = getTextureLocation(state);
         if (!bodyVisible && !translucent) return glowing ? RenderTypes.outline(tex) : null;
         return RenderTypes.entityCutout(tex);
     }
 
     @Override
-    protected void scale(TankmateEntity fish, PoseStack pose, float partialTick) {
+    protected void scale(MobState<TankmateEntity> state, PoseStack pose) {
+        TankmateEntity fish = state.entity;
         float s = scaleOf(fish);
         // M29: the balloon ram is short and round (a bred body shape on the colour locus)
         if (fish.species() == TankmateSpecies.RAM_CICHLID && "balloon".equals(fish.variety())) pose.scale(s * 1.08F, s * TankmateExtents.heightScale(fish), s * 0.78F);
@@ -119,8 +128,10 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     }
 
     @Override
-    protected void setupRotations(TankmateEntity fish, PoseStack pose, float bob, float yBodyRot, float partialTick, float scale) {
-        super.setupRotations(fish, pose, bob, yBodyRot, partialTick, scale);
+    protected void setupRotations(MobState<TankmateEntity> state, PoseStack pose, float yBodyRot, float scale) {
+        super.setupRotations(state, pose, yBodyRot, scale);
+        TankmateEntity fish = state.entity;
+        float bob = state.ageInTicks, partialTick = state.partialTick;
         if (!Features.enabled(Feature.SMOOTH_SWIMMING)) {
             legacyRotations(fish, pose, bob);
             return;

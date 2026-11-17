@@ -349,7 +349,7 @@ public final class PlantMeshRenderer {
     }
 
     static net.minecraft.client.renderer.texture.TextureAtlasSprite[] miniSprites() {
-        var atlas = Minecraft.getInstance().getModelManager().getAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
+        var atlas = org.overengineer.bettacraft.client.ClientCompat.blockAtlas();
         var out = new net.minecraft.client.renderer.texture.TextureAtlasSprite[PlantTex.ALL.length];
         for (int i = 0; i < out.length; i++) out[i] = atlas.getSprite(PlantTex.ALL[i].sprite);
         return out;
@@ -359,16 +359,15 @@ public final class PlantMeshRenderer {
      * Outside (the miniature): the block atlas with its mipmaps (the "mini" leaf textures are in it, being under
      * textures/block), drawn with the entity cut-out shader like the meshes inside (so shader packs treat both the same).
      */
-    static final RenderType MINI = RenderType.create("bettacraft_plant_mesh_mini", com.mojang.blaze3d.vertex.DefaultVertexFormat.NEW_ENTITY,
-            com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, 1 << 18, true, false,
-            RenderType.CompositeState.builder()
-                    .setShaderState(net.minecraft.client.renderer.RenderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
-                    .setTextureState(new net.minecraft.client.renderer.RenderStateShard.TextureStateShard(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS, false, true))
-                    .setTransparencyState(net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY)
-                    .setCullState(net.minecraft.client.renderer.RenderStateShard.NO_CULL)
-                    .setLightmapState(net.minecraft.client.renderer.RenderStateShard.LIGHTMAP)
-                    .setOverlayState(net.minecraft.client.renderer.RenderStateShard.OVERLAY)
-                    .createCompositeState(true));
+    static final RenderType MINI = RenderType.create("bettacraft_plant_mesh_mini",
+            net.minecraft.client.renderer.rendertype.RenderSetup.builder(net.minecraft.client.renderer.RenderPipelines.ENTITY_CUTOUT_NO_CULL)
+                    .withTexture("Sampler0", net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS) // the atlas sampler: mipmapped
+                    .useLightmap()
+                    .useOverlay()
+                    .affectsCrumbling()
+                    .bufferSize(1 << 18)
+                    .setOutline(net.minecraft.client.renderer.rendertype.RenderSetup.OutlineProperty.AFFECTS_OUTLINE)
+                    .createRenderSetup());
 
     // ------------------------------------------------------------------ drawing
 

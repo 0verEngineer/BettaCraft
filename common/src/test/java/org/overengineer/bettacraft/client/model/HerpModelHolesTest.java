@@ -79,6 +79,16 @@ class HerpModelHolesTest {
             public VertexConsumer setNormal(float x, float y, float z) {
                 return this;
             }
+
+            @Override
+            public VertexConsumer setColor(int argb) {
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setLineWidth(float width) {
+                return this;
+            }
         };
         root.render(new PoseStack(), capture, 0xF000F0, 0);
         return out;

@@ -231,7 +231,7 @@ public class TankBakedModel implements DynamicModel {
         long key = (state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12)
                 | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 48); // M20: the salt byte reaches bit 46
         return waterCache.computeIfAbsent(key, k -> {
-            var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
+            var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
             List<BakedQuad> list = new ArrayList<>();
             TankWaterRenderer.faces(state, above, gaps, light, (d, c, col, rev) ->
@@ -354,7 +354,7 @@ public class TankBakedModel implements DynamicModel {
                 int[] argb = new int[w * h];
                 for (int y = 0; y < h; y++) {
                     for (int x = 0; x < w; x++) {
-                        int abgr = img.getPixelRGBA(x, y);
+                        int abgr = net.minecraft.util.ARGB.toABGR(img.getPixel(x, y));
                         argb[y * w + x] = (abgr & 0xFF00FF00) | ((abgr & 0xFF) << 16) | ((abgr >> 16) & 0xFF);
                     }
                 }

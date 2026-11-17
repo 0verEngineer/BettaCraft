@@ -30,7 +30,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
     private final Font font;
 
     public TankSignRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.font = ctx.getFont();
+        this.font = ctx.font();
     }
 
 
@@ -109,7 +109,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         pose.mulPose(Axis.YP.rotationDegrees(-front.toYRot()));
         // black plate slightly behind the text (towards the glass), double-sided
         org.joml.Matrix4f m = pose.last().pose();
-        com.mojang.blaze3d.vertex.VertexConsumer bg = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderType.textBackground());
+        com.mojang.blaze3d.vertex.VertexConsumer bg = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.textBackground());
         float hw = plateW / 2, hh = plateH / 2, bz = -0.004F;
         float[][] quad = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
         for (int i = 0; i < 4; i++) bg.addVertex(m, quad[i][0], quad[i][1], bz).setColor(0xFF101010).setLight(packed);

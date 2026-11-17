@@ -3,12 +3,15 @@ package org.overengineer.bettacraft.client.model;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.model.geom.ModelPart;
+import org.overengineer.bettacraft.client.render.GuppyLook;
+import org.overengineer.bettacraft.client.render.MobState;
+import org.overengineer.bettacraft.client.render.TankmateRenderer;
 import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
 
 /**
  * M21.6: the guppy and endler model of the livebearer genetics ({@link GuppyModelDefinitions}): the tankmate animation,
  * plus one tail part per tail shape of which only the expressed one shows; females and the young get a smaller tail and
- * the female fins. The renderer calls {@link #prepare} before each fish.
+ * the female fins. It picks them in {@link #setupAnim} from the fish.
  */
 public class GuppyModel extends TankmateModel {
     private final Map<String, ModelPart> shapes = new HashMap<>();
@@ -34,8 +37,15 @@ public class GuppyModel extends TankmateModel {
     }
 
     @Override
-    public void setupAnim(TankmateEntity fish, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        super.setupAnim(fish, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    public void setupAnim(MobState<TankmateEntity> state) {
+        // M52b: the model is posed when the submit queue draws the fish (not when the renderer submits it), so the tail
+        // shape of the fish is chosen here
+        var lb = state.entity.livebearerPhenotype();
+        if (lb != null) {
+            boolean adult = TankmateRenderer.adultLook(state.entity);
+            prepare(lb.tail(), GuppyLook.tailScale(lb, adult), !adult);
+        }
+        super.setupAnim(state);
         for (var e : shapes.entrySet()) e.getValue().visible = e.getKey().equals(shape);
         tailGroup.xScale = 1F;
         tailGroup.yScale = tailScale;

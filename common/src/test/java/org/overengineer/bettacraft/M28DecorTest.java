@@ -41,7 +41,7 @@ class M28DecorTest {
         int n = 0;
         ListTag blocks = nbt.getListOrEmpty("blocks");
         for (int i = 0; i < blocks.size(); i++) {
-            if (palette.getCompound(blocks.getCompoundOrEmpty(i).getIntOr("state", 0)).getStringOr("Name", "").equals(block)) n++;
+            if (palette.getCompoundOrEmpty(blocks.getCompoundOrEmpty(i).getIntOr("state", 0)).getStringOr("Name", "").equals(block)) n++;
         }
         return n;
     }

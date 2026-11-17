@@ -58,7 +58,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
     private final Font font;
 
     public MonitorRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.font = ctx.getFont();
+        this.font = ctx.font();
     }
 
     /** The bundled data from the server (one entry per screen). */

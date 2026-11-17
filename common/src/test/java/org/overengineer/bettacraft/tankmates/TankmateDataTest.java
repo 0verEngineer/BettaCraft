@@ -151,7 +151,7 @@ class TankmateDataTest {
         }
         assertTrue(TankmateSpecies.PEARL_GOURAMI.territorial() && !TankmateSpecies.HONEY_GOURAMI.territorial());
         assertTrue(TankmateSpecies.CHOCOLATE_GOURAMI.mouthbrooder() && !TankmateSpecies.PLATY.mouthbrooder());
-        assertTrue(!NbtCompat.has(org.overengineer.bettacraft.chem.ChemTolerance.tankmate(TankmateSpecies.CHOCOLATE_GOURAMI), 7.5, 300), "soft water only");
+        assertTrue(!org.overengineer.bettacraft.chem.ChemTolerance.tankmate(TankmateSpecies.CHOCOLATE_GOURAMI).contains(7.5, 300), "soft water only");
         for (TankmateSpecies s : java.util.List.of(TankmateSpecies.ZEBRA_DANIO, TankmateSpecies.CELESTIAL_PEARL_DANIO, TankmateSpecies.FORKTAIL_RAINBOW,
                 TankmateSpecies.NEON_DWARF_RAINBOW, TankmateSpecies.EMPEROR_TETRA, TankmateSpecies.RUMMY_NOSE_TETRA, TankmateSpecies.BLACK_PHANTOM_TETRA,
                 TankmateSpecies.BLACK_MOLLY, TankmateSpecies.SWORDTAIL)) {

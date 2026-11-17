@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.client;
 
-import net.minecraft.client.renderer.item.ItemProperties;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.interior.ClientInteriorCache;
 import org.overengineer.bettacraft.client.interior.MiniatureRenderer;
@@ -32,7 +31,7 @@ public final class ClientSetup {
     static final int TUBIFEX_WATER = 0xFF6E5A3A, DAPHNIA_WATER = 0xFF5E8A3E;
 
     public interface ItemColors {
-        void register(net.minecraft.client.color.item.ItemColor color, net.minecraft.world.level.ItemLike... items);
+        void register(org.overengineer.bettacraft.client.item.ItemTints.Tint color, net.minecraft.world.level.ItemLike... items);
     }
 
     public interface BlockColors {
@@ -48,9 +47,9 @@ public final class ClientSetup {
         <T extends net.minecraft.world.entity.Entity> void registerEntityRenderer(net.minecraft.world.entity.EntityType<? extends T> type,
                 net.minecraft.client.renderer.entity.EntityRendererProvider<T> provider);
 
-        <T extends net.minecraft.world.level.block.entity.BlockEntity> void registerBlockEntityRenderer(
+        <T extends net.minecraft.world.level.block.entity.BlockEntity, S extends net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> void registerBlockEntityRenderer(
                 net.minecraft.world.level.block.entity.BlockEntityType<? extends T> type,
-                net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider<T> provider);
+                net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider<T, S> provider);
     }
 
     public interface Screens {
@@ -60,7 +59,7 @@ public final class ClientSetup {
 
     public interface ItemProperties {
         void register(net.minecraft.world.item.Item item, net.minecraft.resources.Identifier id,
-                net.minecraft.client.renderer.item.ClampedItemPropertyFunction function);
+                org.overengineer.bettacraft.client.item.ItemPredicates.Function function);
     }
 
     public interface RenderLayers {
@@ -69,7 +68,7 @@ public final class ClientSetup {
 
     public interface Particles {
         <T extends net.minecraft.core.particles.ParticleOptions> void registerSpriteSet(net.minecraft.core.particles.ParticleType<T> type,
-                net.minecraft.client.particle.ParticleEngine.SpriteParticleRegistration<T> factory);
+                java.util.function.Function<net.minecraft.client.particle.SpriteSet, net.minecraft.client.particle.ParticleProvider<T>> factory);
     }
 
     public static void itemColors(ItemColors event) {
@@ -94,7 +93,7 @@ public final class ClientSetup {
         event.register((stack, tint) -> {
             if (tint == 0 || tint >= 3) return 0xFFFFFFFF;
             var critters = stack.get(ModDataComponents.CRITTERS.get());
-            var k = critters == null || critters.isEmpty() ? null : org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
+            org.overengineer.bettacraft.critters.Critter k = critters == null || critters.isEmpty() ? null : org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
             int rgb = k == null ? 0xC8A070 : k.genes.rgb(k.species);
             if (k != null && (k.species.nerite() || k.species == org.overengineer.bettacraft.critters.CritterSpecies.ASSASSIN_SNAIL)) rgb = k.species.wildColor();
             return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.35F));
@@ -259,6 +258,25 @@ public final class ClientSetup {
     public static void particles(Particles event) {
         event.registerSpriteSet(org.overengineer.bettacraft.registry.ModParticles.AIR_BUBBLE.get(),
                 org.overengineer.bettacraft.client.particle.AirBubbleParticle.Provider::new);
+    }
+
+    /**
+     * M52b: the item model types of the mod (1.21.4 item models): the tint source of the 1.21.1 item colours and the
+     * conditional property of the 1.21.1 item properties; NeoForge registers them in its events, Fabric in its registries.
+     */
+    public interface ItemModelTypes {
+        void tintSource(net.minecraft.resources.Identifier id, com.mojang.serialization.MapCodec<? extends net.minecraft.client.color.item.ItemTintSource> codec);
+
+        void conditionalProperty(net.minecraft.resources.Identifier id,
+                com.mojang.serialization.MapCodec<? extends net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty> codec);
+
+        void itemModel(net.minecraft.resources.Identifier id, com.mojang.serialization.MapCodec<? extends net.minecraft.client.renderer.item.ItemModel.Unbaked> codec);
+    }
+
+    public static void itemModelTypes(ItemModelTypes event) {
+        event.tintSource(org.overengineer.bettacraft.client.item.ItemTints.TYPE, org.overengineer.bettacraft.client.item.ItemTints.Source.MAP_CODEC);
+        event.conditionalProperty(org.overengineer.bettacraft.client.item.ItemPredicates.TYPE, org.overengineer.bettacraft.client.item.ItemPredicates.Property.MAP_CODEC);
+        event.itemModel(org.overengineer.bettacraft.client.item.BlockModelItem.TYPE, org.overengineer.bettacraft.client.item.BlockModelItem.Unbaked.MAP_CODEC);
     }
 
     /** The item models that change with the item's state ("filled"). */

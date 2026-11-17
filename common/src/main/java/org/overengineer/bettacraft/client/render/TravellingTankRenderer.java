@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -130,7 +129,8 @@ public final class TravellingTankRenderer {
             CompoundTag tag = src.getCompoundOrEmpty(i);
             Entity e;
             try {
-                e = EntityType.create(tag, mc.level).orElse(null);
+                e = EntityType.create(org.overengineer.bettacraft.util.NbtCompat.input(mc.level.registryAccess(), tag), mc.level,
+                        net.minecraft.world.entity.EntitySpawnReason.LOAD).orElse(null);
             } catch (RuntimeException ex) {
                 e = null;
             }
@@ -185,10 +185,12 @@ public final class TravellingTankRenderer {
             }
             pose.pushPose();
             try {
-                @SuppressWarnings("unchecked")
-                EntityRenderer<Entity> r = (EntityRenderer<Entity>) mc.getEntityRenderDispatcher().getRenderer(e);
-                pose.translate(px, py, pz);
-                r.render(e, yaw, partialTick, pose, buffers, light);
+                // M52b: through the 1.21.9 render states, into the submit queue of the tank's block entity renderer
+                var dispatcher = mc.getEntityRenderDispatcher();
+                var state = dispatcher.extractEntity(e, partialTick);
+                state.lightCoords = light;
+                state.shadowPieces.clear();
+                dispatcher.submit(state, mc.gameRenderer.getLevelRenderState().cameraRenderState, px, py, pz, pose, LegacyBlockEntityRenderer.collector());
             } catch (RuntimeException ex) {
                 if (!failedOnce) {
                     failedOnce = true;

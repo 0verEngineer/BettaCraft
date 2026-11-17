@@ -9,7 +9,7 @@ import org.overengineer.bettacraft.client.model.DwarfFrogModel;
 import org.overengineer.bettacraft.entity.frog.DwarfFrogEntity;
 
 /** M14: the dwarf clawed frog (model of nominal length 16 px, drawn at its real size of about 0.3 blocks). */
-public class DwarfFrogRenderer extends MobRenderer<DwarfFrogEntity, DwarfFrogModel> {
+public class DwarfFrogRenderer extends MobRenderer<DwarfFrogEntity, MobState<DwarfFrogEntity>, DwarfFrogModel> {
     private static final Identifier TEXTURE = BettaCraft.id("textures/entity/critters/frog.png");
     public static final float SCALE = 0.3F;
 
@@ -18,13 +18,25 @@ public class DwarfFrogRenderer extends MobRenderer<DwarfFrogEntity, DwarfFrogMod
     }
 
     @Override
-    public Identifier getTextureLocation(DwarfFrogEntity frog) {
+    public MobState<DwarfFrogEntity> createRenderState() {
+        return new MobState<>();
+    }
+
+    @Override
+    public void extractRenderState(DwarfFrogEntity frog, MobState<DwarfFrogEntity> state, float partialTick) {
+        super.extractRenderState(frog, state, partialTick);
+        state.entity = frog;
+        state.partialTick = partialTick;
+    }
+
+    @Override
+    public Identifier getTextureLocation(MobState<DwarfFrogEntity> state) {
         return TEXTURE;
     }
 
     @Override
-    protected void scale(DwarfFrogEntity frog, PoseStack pose, float partialTick) {
-        float k = SCALE * frog.sizeFactor(); // M47: froglets are smaller
+    protected void scale(MobState<DwarfFrogEntity> state, PoseStack pose) {
+        float k = SCALE * state.entity.sizeFactor(); // M47: froglets are smaller
         pose.scale(k, k, k);
     }
 }
