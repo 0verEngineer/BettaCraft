@@ -994,6 +994,31 @@ def m47(out_en: Path) -> None:
             print("missing", src)
 
 
+# M48 scene (DevClientSmokeM48, -Psmoketestm48): the tetra and cory forms, the bronze cory and the panda garra, the new reef
+# animals, the clownfish larvae. ``py guide_images.py m48``.
+M48_WORLD = {"neon_forms": ("bettacraft_m48_neon_forms", (150, 300, 1130, 480)),
+             "panda_cory_forms": ("bettacraft_m48_panda_cory_forms", (200, 290, 1120, 500)),
+             "bronze_cory_forms": ("bettacraft_m48_bronze_cory_forms", (180, 280, 1100, 500)),
+             "tm_bronze_cory": ("bettacraft_m48_bronze_cory_forms", (180, 270, 560, 500)),
+             "tm_panda_garra": ("bettacraft_m48_sp_panda_garra", (180, 270, 1100, 500)),
+             "sp_mandarinfish": ("bettacraft_m48_sp_mandarinfish", (380, 330, 1000, 640)),
+             "sp_banggai_cardinal": ("bettacraft_m48_sp_banggai_cardinal", (440, 290, 840, 520)),
+             "sp_lyretail_anthias": ("bettacraft_m48_sp_lyretail_anthias", (440, 280, 1280, 520)),
+             "sp_fire_shrimp": ("bettacraft_m48_sp_fire_shrimp", (300, 330, 900, 730)),
+             "reef_larvae": ("bettacraft_m48_larvae", (300, 150, 960, 620))}
+
+
+def m48(out_en: Path) -> None:
+    for name, (shot, box) in M48_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1008,6 +1033,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m48"]:
+        m48(out_en)
+        return 0
     if sys.argv[1:] == ["m47"]:
         m47(out_en)
         return 0

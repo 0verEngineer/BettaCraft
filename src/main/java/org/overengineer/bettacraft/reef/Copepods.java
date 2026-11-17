@@ -28,6 +28,8 @@ public final class Copepods {
     public static final double SEED = 0.03;
     /** Portions a small reef fish (not a mandarin) picks per day. */
     public static final double PICKED_BY_OTHERS = 0.1;
+    /** Share of the capacity that stays hidden deep in the rock: the fish never get it, the stock always grows back from it. */
+    public static final double REFUGE = 0.1;
 
     private Copepods() {}
 
@@ -59,10 +61,13 @@ public final class Copepods {
                 else if (m.species().marine() && !m.species().isLarge() && m.isAdult()) others += PICKED_BY_OTHERS;
             }
             if (!mandarins.isEmpty()) {
-                p = Math.max(0, p - others * days);
+                double hidden = Math.min(p, REFUGE * k);
+                double reach = p - hidden;
+                reach = Math.max(0, reach - others * days);
                 double demand = 0;
                 for (TankmateEntity m : mandarins) demand += need(m) * days;
-                double q = demand <= 0 ? 0 : Math.min(1, p / demand);
+                double q = demand <= 0 ? 0 : Math.min(1, reach / demand);
+                p = hidden + reach;
                 for (TankmateEntity m : mandarins) {
                     double eat = need(m) * days * q;
                     p -= eat;

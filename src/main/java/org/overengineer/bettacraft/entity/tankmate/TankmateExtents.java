@@ -82,7 +82,7 @@ public final class TankmateExtents {
 
     /** M48 part a: the length factor of the tail and dorsal fin (the longfin panda cory; 1 = the model). */
     public static float finScale(TankmateEntity fish) {
-        return fish.species() == TankmateSpecies.PANDA_CORY && "longfin".equals(fish.variety()) ? 1.7F : 1F;
+        return fish.species() == TankmateSpecies.PANDA_CORY && "longfin".equals(fish.variety()) ? 2.0F : 1F;
     }
 
     /** How high the rendered fish reaches above its position (blocks; never below the hitbox). */

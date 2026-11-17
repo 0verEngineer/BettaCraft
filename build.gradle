@@ -373,6 +373,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm48')) {
+                // gradlew runClient -Psmoketestm48 : the M48 scene (the tetra and cory forms, the bronze cory and the panda garra;
+                // a reef tank with live rock, mandarin, Banggai, anthias and fire shrimp; clownfish larvae with rotifers, the menu)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m48only', 'true'
+            }
             if (project.hasProperty('smoketestm47')) {
                 // gradlew runClient -Psmoketestm47 : the M47 scene (a normal world with structures: the aquarist villager in a
                 // village next to his breeding basin, his trade menu with a bred betta in the trade slot, the ram forms Black and
