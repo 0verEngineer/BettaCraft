@@ -1893,9 +1893,13 @@ def _spangles(seed):
 
 def ram_look(sp, var, female):
     """Rams: golden head with a black bar through the eye, a black spot in the middle, blue spangles; the female with a
-    pink belly. Gold, Electric Blue; the balloon has the wild colours (its short body is the renderer's)."""
+    pink belly. Gold, Electric Blue; the balloon has the wild colours (its short body is the renderer's). M47: Black (dark
+    body and fins with blue spangles) and German Blue (a stronger blue than the wild form, a red belly and a red eye)."""
     sp_ = _spangles(2901 + len(var))
     bolivian = sp == "bolivian_ram"
+
+    def base_belly(t, v):
+        return mix(C("#2a6ee8"), C("#f0e0c8"), smooth(0.7, 1.0, v))
 
     def body(t, v, x, z, y):
         k = sp_[int(abs(z) * 2.7 + abs(x) * 1.3) % 64, int((y + 30) * 2.3) % 64]
@@ -1908,6 +1912,25 @@ def ram_look(sp, var, female):
                 return C("#5a5048")
             base = mix(C("#e8c870"), C("#b8b0a0"), smooth(0.2, 0.6, t))
             return mix(base, C("#f0ece0"), smooth(0.6, 1.0, v))
+        if var == "black":
+            # M47: velvet black front, blue-black flanks, bright blue spangles
+            if 0.12 < t < 0.18 and v < 0.8:
+                return C("#050508")
+            base = mix(C("#101014"), C("#18202e"), smooth(0.2, 0.7, t))
+            if female and 0.32 < t < 0.6 and v > 0.7:
+                base = mix(base, C("#a0405a"), 0.55)
+            return mix(base, C("#3a7ee0"), 0.65) if k > 0.86 else base
+        if var == "german_blue":
+            # M47: the eye bar and the spot like the wild form, a strong blue body, the head golden, the belly red
+            if 0.12 < t < 0.18 and v < 0.8:
+                return C("#100c0a")
+            if abs(t - 0.45) < 0.05 and 0.3 < v < 0.5:
+                return C("#100c0a")
+            if 0.3 < t < 0.6 and v > 0.7:
+                return mix(C("#e0303a") if female else C("#d84a30"), base_belly(t, v), 0.25)
+            base = mix(C("#f0a028"), C("#2a6ee8"), smooth(0.1, 0.3, t))
+            base = mix(base, C("#1e58d8"), smooth(0.5, 0.9, t) * 0.6)
+            return mix(base, C("#7ad0ff"), 0.75) if k > 0.72 else base
         if var == "electric_blue":
             if 0.12 < t < 0.18 and v < 0.75:
                 return C("#10204a")
@@ -1936,6 +1959,18 @@ def ram_look(sp, var, female):
             if part in ("dorsal", "dorsal2") and (b + 1) / 2 > 0.8:
                 return C("#e05030")
             return C("#d8d0b8") if k < 0.8 else C("#6a8ab0")
+        if var == "black":
+            if part == "pelvic":
+                return C("#c02a20") if a < 0.6 else C("#0a0a0e")
+            return C("#121218") if k < 0.86 else C("#2e6ed0")
+        if var == "german_blue":
+            if part == "dorsal2":
+                return C("#100c0a")
+            if part == "pelvic":
+                return C("#e83020") if a < 0.75 else C("#2a60e0")
+            if part == "pectoral":
+                return C("#d8dcf0")
+            return C("#e0402c") if k < 0.45 else C("#2a78f0") if k < 0.8 else C("#90d8ff")
         if var == "electric_blue":
             return C("#2a80f0") if k < 0.75 else C("#a0d0ff")
         if var == "gold":
@@ -1947,7 +1982,7 @@ def ram_look(sp, var, female):
         if part == "pectoral":
             return C("#e0dcc8")
         return C("#d04030") if k < 0.72 else C("#40b8f0")
-    return Look(body, fins, eye="#a02018")
+    return Look(body, fins, eye="#e0201a" if var == "german_blue" else "#a02018")
 
 
 def apisto_look(sp, var, female):
@@ -2449,7 +2484,7 @@ SPECIES = [
     ("lined_seahorse", "seahorse", ["wild", "yellow", "orange"], False),
     ("dwarf_seahorse", "seahorse", ["wild"], False),
     # M29 part a: cichlids
-    ("ram_cichlid", "cichlid", ["wild", "gold", "electric_blue", "balloon"], True),
+    ("ram_cichlid", "cichlid", ["wild", "gold", "electric_blue", "black", "german_blue", "balloon"], True),
     ("bolivian_ram", "cichlid", ["wild"], False),
     ("cockatoo_cichlid", "apisto", ["wild", "double_red", "orange_flash"], True),
     ("agassiz_dwarf_cichlid", "apisto", ["wild", "fire_red"], True),

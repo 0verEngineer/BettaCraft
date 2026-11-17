@@ -133,7 +133,7 @@ public enum TankmateSpecies {
     RAM_CICHLID(d("ram_cichlid", "Mikrogeophagus ramirezi", Model.CICHLID, Group.CICHLID, Breeding.OPEN, Zone.LOW)
             .size(0.45).temp(25, 31).breed(27, 30).quality(0.65).shoal(1).stock(0.8).brood(20, 60).growth(1.3)
             .eats(0.35).territorial().territory(3).dimorphic().egg(0xE8A040, 0x3A78C8).native_(Water.RIVER, 6).native_(Water.JUNGLE, 3)
-            .trader(Trade.COMMON).varieties("wild", "gold", "electric_blue", "balloon")),
+            .trader(Trade.COMMON).varieties("wild", "gold", "electric_blue", "black", "german_blue", "balloon")),
     BOLIVIAN_RAM(d("bolivian_ram", "Mikrogeophagus altispinosus", Model.CICHLID, Group.CICHLID, Breeding.OPEN, Zone.LOW)
             .size(0.62).temp(22, 29).breed(25, 28).quality(0.5).shoal(1).stock(1.0).brood(20, 60).growth(1.5)
             .eats(0.35).territorial().territory(3).egg(0xE8B860, 0xD06030).native_(Water.RIVER, 4).native_(Water.JUNGLE, 2).trader(Trade.RARE)),

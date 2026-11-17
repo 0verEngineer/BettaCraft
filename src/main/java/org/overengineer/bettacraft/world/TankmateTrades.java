@@ -50,7 +50,8 @@ public final class TankmateTrades {
             }
         } else {
             String variety = s.varieties().size() > 1 && rnd.nextInt(3) == 0 ? s.variety(1 + rnd.nextInt(s.varieties().size() - 1)) : s.variety(0);
-            genes = () -> TankmateGenes.pure(s, variety);
+            // M47: wild-type fish from the trader carry a bred variety hidden now and then, like wild-caught ones
+            genes = variety.equals(s.variety(0)) && s.varieties().size() > 1 ? () -> TankmateGenes.wild(s, 0.08, rnd) : () -> TankmateGenes.pure(s, variety);
         }
         var bag = TankmateItems.groupBag(s, n, genes, rnd, true);
         return new MerchantOffer(new ItemCost(Items.EMERALD, Math.min(64, price)), Optional.empty(), bag, 3, 1, 0.05F);

@@ -12,10 +12,12 @@ final class LangM29 {
         a.accept("entity.bettacraft.ram_cichlid", "Ram Cichlid");
         a.accept("item.bettacraft.ram_cichlid_bucket", "Bucket of Ram Cichlid");
         a.accept("item.bettacraft.ram_cichlid_spawn_egg", "Ram Cichlid Spawn Egg");
-        a.accept("info.bettacraft.tankmate.ram_cichlid", "Ram Cichlid (Mikrogeophagus ramirezi) from the llanos rivers of Venezuela and Colombia.\nA small, colourful dwarf cichlid: golden head with a black bar through the eye, blue spangles; the female has a pink belly. Gold, Electric Blue and the short Balloon form.\nAs a pair, 25–31 °C, soft water, water: sensitive. Counts 0.8 fish in the stocking.\nOpen brooder: the pair cleans a flat stone and guards eggs and young. Fine with a betta if the tank is big enough.\nCatch: aquarium net in rivers and jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.ram_cichlid", "Ram Cichlid (Mikrogeophagus ramirezi) from the llanos rivers of Venezuela and Colombia.\nA small, colourful dwarf cichlid: golden head with a black bar through the eye, blue spangles; the female has a pink belly. Gold, Electric Blue, Black, German Blue and the short Balloon form.\nAs a pair, 25–31 °C, soft water, water: sensitive. Counts 0.8 fish in the stocking.\nOpen brooder: the pair cleans a flat stone and guards eggs and young. Fine with a betta if the tank is big enough.\nCatch: aquarium net in rivers and jungle water, wandering trader.");
         a.accept("variety.bettacraft.ram_cichlid.wild", "Wild type");
         a.accept("variety.bettacraft.ram_cichlid.gold", "Gold");
         a.accept("variety.bettacraft.ram_cichlid.electric_blue", "Electric Blue");
+        a.accept("variety.bettacraft.ram_cichlid.black", "Black"); // M47
+        a.accept("variety.bettacraft.ram_cichlid.german_blue", "German Blue");
         a.accept("variety.bettacraft.ram_cichlid.balloon", "Balloon");
         a.accept("entity.bettacraft.bolivian_ram", "Bolivian Ram");
         a.accept("item.bettacraft.bolivian_ram_bucket", "Bucket of Bolivian Ram");
