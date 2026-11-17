@@ -87,7 +87,10 @@ public final class GuideGen {
                 StringBuilder b = new StringBuilder();
                 for (JsonElement e : o.getAsJsonArray("ingredients")) {
                     JsonObject i = e.getAsJsonObject();
-                    String item = i.has("item") ? i.get("item").getAsString() : TAG_ITEMS.getOrDefault(i.get("tag").getAsString(), "minecraft:barrier");
+                    // M52b: {"ingredient": "<item>" | "#<tag>", "count": n} (1.21.2 ingredients)
+                    JsonElement in = i.get("ingredient");
+                    String id = in.isJsonArray() ? in.getAsJsonArray().get(0).getAsString() : in.getAsString();
+                    String item = id.startsWith("#") ? TAG_ITEMS.getOrDefault(id.substring(1), "minecraft:barrier") : id;
                     if (!b.isEmpty()) b.append(" + ");
                     b.append(i.has("count") ? i.get("count").getAsInt() : 1).append(" × <ItemLink id=\"").append(item).append("\" />");
                 }

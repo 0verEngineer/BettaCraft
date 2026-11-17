@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:basalt"
-    },
-    {
-      "item": "minecraft:basalt"
-    },
-    {
-      "item": "minecraft:blackstone"
-    },
-    {
-      "item": "minecraft:magma_block"
-    }
+    "minecraft:basalt",
+    "minecraft:basalt",
+    "minecraft:blackstone",
+    "minecraft:magma_block"
   ],
   "result": {
     "count": 1,

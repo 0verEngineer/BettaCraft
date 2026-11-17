@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "tag": "c:glass_blocks/cheap"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "G": "#c:glass_blocks/cheap",
+    "I": "#c:ingots/iron"
   },
   "pattern": [
     "IGI",

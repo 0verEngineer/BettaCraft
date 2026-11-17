@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "minecraft:boats"
-    },
-    {
-      "tag": "minecraft:planks"
-    },
-    {
-      "item": "minecraft:moss_carpet"
-    }
+    "#minecraft:boats",
+    "#minecraft:planks",
+    "minecraft:moss_carpet"
   ],
   "result": {
     "count": 1,

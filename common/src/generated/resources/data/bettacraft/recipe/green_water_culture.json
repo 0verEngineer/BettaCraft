@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:swamp_water_bottle"
-    },
-    {
-      "item": "minecraft:bone_meal"
-    }
+    "bettacraft:swamp_water_bottle",
+    "minecraft:bone_meal"
   ],
   "result": {
     "count": 1,

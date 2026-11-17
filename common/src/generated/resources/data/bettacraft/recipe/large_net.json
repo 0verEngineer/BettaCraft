@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    },
-    "T": {
-      "item": "bettacraft:tank_net"
-    },
-    "W": {
-      "tag": "c:strings"
-    }
+    "S": "#c:ingots/stainless_steel",
+    "T": "bettacraft:tank_net",
+    "W": "#c:strings"
   },
   "pattern": [
     "SSS",

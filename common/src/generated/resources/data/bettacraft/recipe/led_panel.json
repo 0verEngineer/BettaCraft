@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "L": {
-      "item": "bettacraft:tank_light"
-    }
+    "I": "#c:ingots/iron",
+    "L": "bettacraft:tank_light"
   },
   "pattern": [
     "LLL",

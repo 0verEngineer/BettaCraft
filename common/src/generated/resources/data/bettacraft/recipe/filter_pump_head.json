@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": {
-      "item": "bettacraft:water_pump"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "P": "bettacraft:water_pump",
+    "R": "#c:dusts/redstone",
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     "SRS",

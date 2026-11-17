@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "C": {
-      "tag": "c:ingots/gold"
-    },
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "S": {
-      "tag": "c:rods/wooden"
-    }
+    "C": "#c:ingots/gold",
+    "G": "#c:glass_panes",
+    "S": "#c:rods/wooden"
   },
   "pattern": [
     " C ",

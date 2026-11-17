@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:cobblestone"
-    },
-    {
-      "item": "minecraft:andesite"
-    },
-    {
-      "item": "minecraft:mossy_cobblestone"
-    }
+    "minecraft:cobblestone",
+    "minecraft:andesite",
+    "minecraft:mossy_cobblestone"
   ],
   "result": {
     "count": 2,

@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:deepslate_tiles"
-    },
-    {
-      "item": "minecraft:deepslate_tiles"
-    },
-    {
-      "item": "minecraft:polished_deepslate"
-    },
-    {
-      "item": "minecraft:cobbled_deepslate"
-    }
+    "minecraft:deepslate_tiles",
+    "minecraft:deepslate_tiles",
+    "minecraft:polished_deepslate",
+    "minecraft:cobbled_deepslate"
   ],
   "result": {
     "count": 1,

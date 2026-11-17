@@ -8,21 +8,11 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:stone"
-    },
-    {
-      "item": "minecraft:stone"
-    },
-    {
-      "item": "minecraft:andesite"
-    },
-    {
-      "item": "minecraft:tuff"
-    },
-    {
-      "item": "minecraft:calcite"
-    }
+    "minecraft:stone",
+    "minecraft:stone",
+    "minecraft:andesite",
+    "minecraft:tuff",
+    "minecraft:calcite"
   ],
   "result": {
     "count": 1,

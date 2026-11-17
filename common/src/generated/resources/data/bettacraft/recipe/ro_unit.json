@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "P": {
-      "item": "bettacraft:glass_pipe"
-    }
+    "B": "minecraft:bucket",
+    "G": "#c:glass_panes",
+    "I": "#c:ingots/iron",
+    "P": "bettacraft:glass_pipe"
   },
   "pattern": [
     "PGP",

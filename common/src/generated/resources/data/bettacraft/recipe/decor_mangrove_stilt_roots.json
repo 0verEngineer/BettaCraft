@@ -12,27 +12,13 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:mangrove_roots"
-    },
-    {
-      "item": "minecraft:mangrove_roots"
-    },
-    {
-      "item": "minecraft:mangrove_roots"
-    },
-    {
-      "item": "minecraft:mangrove_roots"
-    },
-    {
-      "item": "minecraft:mangrove_log"
-    },
-    {
-      "item": "minecraft:mangrove_log"
-    },
-    {
-      "item": "minecraft:mud"
-    }
+    "minecraft:mangrove_roots",
+    "minecraft:mangrove_roots",
+    "minecraft:mangrove_roots",
+    "minecraft:mangrove_roots",
+    "minecraft:mangrove_log",
+    "minecraft:mangrove_log",
+    "minecraft:mud"
   ],
   "result": {
     "count": 1,

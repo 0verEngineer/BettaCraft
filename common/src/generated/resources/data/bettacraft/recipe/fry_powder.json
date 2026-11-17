@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:betta_pellets"
-    },
-    {
-      "item": "bettacraft:betta_pellets"
-    },
-    {
-      "item": "minecraft:bone_meal"
-    }
+    "bettacraft:betta_pellets",
+    "bettacraft:betta_pellets",
+    "minecraft:bone_meal"
   ],
   "result": {
     "count": 3,

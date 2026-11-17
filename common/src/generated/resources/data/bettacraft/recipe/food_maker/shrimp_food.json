@@ -13,15 +13,15 @@
   "ingredients": [
     {
       "count": 1,
-      "item": "minecraft:kelp"
+      "ingredient": "minecraft:kelp"
     },
     {
       "count": 1,
-      "tag": "bettacraft:food_vegetables"
+      "ingredient": "#bettacraft:food_vegetables"
     },
     {
       "count": 1,
-      "item": "minecraft:bone_meal"
+      "ingredient": "minecraft:bone_meal"
     }
   ],
   "result": {

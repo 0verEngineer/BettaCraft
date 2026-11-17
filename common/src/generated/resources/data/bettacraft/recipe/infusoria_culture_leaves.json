@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:swamp_water_bottle"
-    },
-    {
-      "tag": "minecraft:leaves"
-    }
+    "bettacraft:swamp_water_bottle",
+    "#minecraft:leaves"
   ],
   "result": {
     "count": 1,

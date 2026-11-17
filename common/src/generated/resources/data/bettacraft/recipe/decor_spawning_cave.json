@@ -12,9 +12,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "bettacraft:spawning_cave"
-    }
+    "C": "bettacraft:spawning_cave"
   },
   "pattern": [
     "CCC",

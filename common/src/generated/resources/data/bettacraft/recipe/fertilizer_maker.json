@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "C": {
-      "item": "minecraft:cauldron"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "K": {
-      "item": "bettacraft:crank"
-    }
+    "B": "minecraft:bucket",
+    "C": "minecraft:cauldron",
+    "I": "#c:ingots/iron",
+    "K": "bettacraft:crank"
   },
   "pattern": [
     "IBI",

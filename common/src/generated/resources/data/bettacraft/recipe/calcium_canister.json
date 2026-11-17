@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:dosing_canister"
-    },
-    {
-      "item": "bettacraft:calcium_additive"
-    },
-    {
-      "item": "bettacraft:calcium_additive"
-    }
+    "bettacraft:dosing_canister",
+    "bettacraft:calcium_additive",
+    "bettacraft:calcium_additive"
   ],
   "result": {
     "count": 1,

@@ -9,12 +9,8 @@
   "category": "misc",
   "group": "bettacraft:led_panel_dye",
   "ingredients": [
-    {
-      "item": "bettacraft:led_panel"
-    },
-    {
-      "item": "minecraft:purple_dye"
-    }
+    "bettacraft:led_panel",
+    "minecraft:purple_dye"
   ],
   "result": {
     "components": {

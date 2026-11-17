@@ -8,9 +8,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "S": {
-      "tag": "c:slime_balls"
-    }
+    "S": "#c:slime_balls"
   },
   "pattern": [
     "S",

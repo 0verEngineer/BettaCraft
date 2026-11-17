@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "tag": "c:ingots/gold"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "G": "#c:ingots/gold",
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     " S ",

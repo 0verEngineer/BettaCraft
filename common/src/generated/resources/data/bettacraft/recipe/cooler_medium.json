@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:cooler_small"
-    },
-    {
-      "item": "bettacraft:cooler_small"
-    },
-    {
-      "tag": "c:dusts/redstone"
-    }
+    "bettacraft:cooler_small",
+    "bettacraft:cooler_small",
+    "#c:dusts/redstone"
   ],
   "result": {
     "count": 1,

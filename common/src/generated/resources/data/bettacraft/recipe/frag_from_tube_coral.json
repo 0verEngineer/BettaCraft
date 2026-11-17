@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:tube_coral"
-    },
-    {
-      "item": "bettacraft:reef_rock"
-    }
+    "minecraft:tube_coral",
+    "bettacraft:reef_rock"
   ],
   "result": {
     "count": 2,

@@ -1,0 +1,24 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "bettacraft:item/betta_bucket",
+    "tints": [
+      {
+        "type": "bettacraft:tint",
+        "index": 0
+      },
+      {
+        "type": "bettacraft:tint",
+        "index": 1
+      },
+      {
+        "type": "bettacraft:tint",
+        "index": 2
+      },
+      {
+        "type": "bettacraft:tint",
+        "index": 3
+      }
+    ]
+  }
+}

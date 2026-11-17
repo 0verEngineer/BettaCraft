@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "minecraft:leaves"
-    },
-    {
-      "item": "minecraft:brown_dye"
-    }
+    "#minecraft:leaves",
+    "minecraft:brown_dye"
   ],
   "result": {
     "count": 2,

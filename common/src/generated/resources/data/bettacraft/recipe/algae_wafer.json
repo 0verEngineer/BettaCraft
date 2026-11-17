@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:dried_kelp"
-    },
-    {
-      "item": "minecraft:dried_kelp"
-    },
-    {
-      "item": "bettacraft:betta_pellets"
-    }
+    "minecraft:dried_kelp",
+    "minecraft:dried_kelp",
+    "bettacraft:betta_pellets"
   ],
   "result": {
     "count": 4,

@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:water_bucket"
-    },
-    {
-      "item": "bettacraft:sea_salt"
-    }
+    "minecraft:water_bucket",
+    "bettacraft:sea_salt"
   ],
   "result": {
     "count": 1,

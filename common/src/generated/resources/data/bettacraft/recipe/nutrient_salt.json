@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:bone_meal"
-    },
-    {
-      "item": "minecraft:charcoal"
-    },
-    {
-      "tag": "c:nuggets/iron"
-    }
+    "minecraft:bone_meal",
+    "minecraft:charcoal",
+    "#c:nuggets/iron"
   ],
   "result": {
     "count": 2,

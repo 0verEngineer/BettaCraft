@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "minecraft:clock"
-    },
-    "P": {
-      "item": "bettacraft:water_pump"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "C": "minecraft:clock",
+    "P": "bettacraft:water_pump",
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     "SCS",

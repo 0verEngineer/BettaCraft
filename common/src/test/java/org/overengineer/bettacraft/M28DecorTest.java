@@ -30,9 +30,9 @@ class M28DecorTest {
         for (DecorType t : DecorType.values()) {
             assertTrue(Files.exists(STRUCTURES.resolve(t.id() + ".nbt")), "structure of " + t);
             ListTag size = read(t.id()).getListOrEmpty("size");
-            assertEquals(t.sizeX, size.getInt(0), t + " x");
-            assertEquals(t.sizeY, size.getInt(1), t + " y");
-            assertEquals(t.sizeZ, size.getInt(2), t + " z");
+            assertEquals(t.sizeX, size.getIntOr(0, 0), t + " x");
+            assertEquals(t.sizeY, size.getIntOr(1, 0), t + " y");
+            assertEquals(t.sizeZ, size.getIntOr(2, 0), t + " z");
         }
     }
 

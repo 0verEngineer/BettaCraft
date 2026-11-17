@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:swamp_water_bottle"
-    },
-    {
-      "item": "minecraft:seagrass"
-    }
+    "bettacraft:swamp_water_bottle",
+    "minecraft:seagrass"
   ],
   "result": {
     "count": 1,

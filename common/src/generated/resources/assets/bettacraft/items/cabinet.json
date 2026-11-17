@@ -1,0 +1,7 @@
+{
+  "model": {
+    "type": "bettacraft:block_model",
+    "kind": "cabinet",
+    "model": "bettacraft:item/cabinet"
+  }
+}

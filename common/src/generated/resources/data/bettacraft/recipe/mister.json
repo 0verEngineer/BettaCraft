@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:glass_bottle"
-    },
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "N": {
-      "tag": "c:nuggets/iron"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "B": "minecraft:glass_bottle",
+    "G": "#c:glass_panes",
+    "N": "#c:nuggets/iron",
+    "R": "#c:dusts/redstone"
   },
   "pattern": [
     " N ",

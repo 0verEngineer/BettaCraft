@@ -8,9 +8,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:glass_pipe"
-    }
+    "bettacraft:glass_pipe"
   ],
   "result": {
     "count": 8,

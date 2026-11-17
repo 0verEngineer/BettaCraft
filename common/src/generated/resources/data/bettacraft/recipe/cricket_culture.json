@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:wheat"
-    },
-    {
-      "item": "minecraft:short_grass"
-    },
-    {
-      "item": "minecraft:paper"
-    }
+    "minecraft:wheat",
+    "minecraft:short_grass",
+    "minecraft:paper"
   ],
   "result": {
     "count": 3,

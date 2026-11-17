@@ -153,8 +153,8 @@ class SchemaMigrationTest {
         CompoundTag v2 = Schemas.BETTA.migrate(v0);
         assertEquals(4, Schema.read(v2));
         net.minecraft.nbt.ListTag body = v2.getCompoundOrEmpty("genome").getListOrEmpty("body_color");
-        assertEquals("does_not_exist", body.getString(0), "unknown ids are carried along");
-        assertEquals("does_not_exist", body.getString(1));
+        assertEquals("does_not_exist", body.getStringOr(0, ""), "unknown ids are carried along");
+        assertEquals("does_not_exist", body.getStringOr(1, ""));
         assertTrue(v2.getBooleanOr("custom", false));
     }
 
@@ -170,12 +170,12 @@ class SchemaMigrationTest {
         assertFalse(g.contains("shape"), "shape is renamed to finform");
         net.minecraft.nbt.ListTag fin = g.getListOrEmpty("finform");
         assertEquals(2, fin.size());
-        assertEquals("halfmoon", fin.getString(0));
-        assertEquals("halfmoon", fin.getString(1));
+        assertEquals("halfmoon", fin.getStringOr(0, ""));
+        assertEquals("halfmoon", fin.getStringOr(1, ""));
         for (String k : new String[]{"pectoral", "body_color", "fin_color", "pattern", "pattern_color", "iridescence", "iridescence_color"}) {
             net.minecraft.nbt.ListTag l = g.getListOrEmpty(k);
             assertEquals(2, l.size(), k);
-            assertEquals(l.getString(0), l.getString(1), k + " is homozygous");
+            assertEquals(l.getStringOr(0, ""), l.getStringOr(1, ""), k + " is homozygous");
         }
         assertEquals("x", g.getStringOr("future_gene", ""), "unknown genome keys are kept");
         assertEquals("bettacraft:betta", g.getStringOr("species", ""));
@@ -202,11 +202,11 @@ class SchemaMigrationTest {
         CompoundTag g = v3.getCompoundOrEmpty("genome");
         net.minecraft.nbt.ListTag fin = g.getListOrEmpty("finform");
         net.minecraft.nbt.ListTag len = g.getListOrEmpty("fin_length");
-        assertEquals("round", fin.getString(0));
-        assertEquals("halfmoon", fin.getString(1));
-        assertEquals("short", len.getString(0), "plakat allele -> short");
-        assertEquals("long", len.getString(1), "halfmoon allele -> long");
-        assertEquals("x", g.getListOrEmpty("future_gene").getString(0), "unknown loci are kept");
+        assertEquals("round", fin.getStringOr(0, ""));
+        assertEquals("halfmoon", fin.getStringOr(1, ""));
+        assertEquals("short", len.getStringOr(0, ""), "plakat allele -> short");
+        assertEquals("long", len.getStringOr(1, ""), "halfmoon allele -> long");
+        assertEquals("x", g.getListOrEmpty("future_gene").getStringOr(0, ""), "unknown loci are kept");
         assertEquals("keep", v3.getStringOr("custom", ""));
         assertEquals(3, v3.getIntOr("generation", 0));
         // phenotype unchanged: a plakat carrying halfmoon is still a plakat (short-finned roundtail)
@@ -235,12 +235,12 @@ class SchemaMigrationTest {
         CompoundTag v4 = Schemas.TANK_BLOCK_ENTITY.migrate(v3);
         assertEquals(11, Schema.read(v4));
         CompoundTag nest = v4.getCompoundOrEmpty("tank").getCompoundOrEmpty("nest");
-        assertEquals("round", nest.getCompoundOrEmpty("father_genome").getListOrEmpty("finform").getString(0));
-        assertEquals("long", nest.getCompoundOrEmpty("father_genome").getListOrEmpty("fin_length").getString(1));
-        assertEquals("long", nest.getCompoundOrEmpty("mother_genome").getListOrEmpty("fin_length").getString(0));
+        assertEquals("round", nest.getCompoundOrEmpty("father_genome").getListOrEmpty("finform").getStringOr(0, ""));
+        assertEquals("long", nest.getCompoundOrEmpty("father_genome").getListOrEmpty("fin_length").getStringOr(1, ""));
+        assertEquals("long", nest.getCompoundOrEmpty("mother_genome").getListOrEmpty("fin_length").getStringOr(0, ""));
         CompoundTag egg = nest.getListOrEmpty("eggs").getCompoundOrEmpty(0).getCompoundOrEmpty("genome");
-        assertEquals("short", egg.getListOrEmpty("fin_length").getString(0));
-        assertEquals("red", egg.getListOrEmpty("body_color").getString(0));
+        assertEquals("short", egg.getListOrEmpty("fin_length").getStringOr(0, ""));
+        assertEquals("red", egg.getListOrEmpty("body_color").getStringOr(0, ""));
         assertTrue(nest.getListOrEmpty("eggs").getCompoundOrEmpty(0).getBooleanOr("female", false));
         assertFalse(nest.getListOrEmpty("eggs").getCompoundOrEmpty(1).getCompoundOrEmpty("genome").contains("fin_length"));
         // a tank without nest is untouched apart from the stamp
@@ -323,10 +323,10 @@ class SchemaMigrationTest {
         assertFalse(t.contains("heaters"), "old key is gone");
         net.minecraft.nbt.ListTag l = t.getListOrEmpty("legacy_heaters");
         assertEquals(4, l.size(), "all four slots are kept");
-        assertEquals("bettacraft:heater_large", l.getString(0));
-        assertEquals("", l.getString(1));
-        assertEquals("othermod:gone_heater", l.getString(2), "ids of removed mods are kept");
-        assertEquals("bettacraft:heater_small", l.getString(3));
+        assertEquals("bettacraft:heater_large", l.getStringOr(0, ""));
+        assertEquals("", l.getStringOr(1, ""));
+        assertEquals("othermod:gone_heater", l.getStringOr(2, ""), "ids of removed mods are kept");
+        assertEquals("bettacraft:heater_small", l.getStringOr(3, ""));
         assertEquals("Old tank", t.getStringOr("name", ""));
         assertEquals("keep", t.getStringOr("custom", ""));
         assertEquals(26.5F, t.getFloatOr("water_temp", 0f));

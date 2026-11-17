@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:green_wool"
-    },
-    {
-      "tag": "c:strings"
-    }
+    "minecraft:green_wool",
+    "#c:strings"
   ],
   "result": {
     "count": 4,

@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:filter_outlet"
-    },
-    {
-      "tag": "c:dyes/brown"
-    }
+    "bettacraft:filter_outlet",
+    "#c:dyes/brown"
   ],
   "result": {
     "count": 1,

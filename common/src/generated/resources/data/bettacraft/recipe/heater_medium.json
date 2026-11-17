@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:heater_small"
-    },
-    {
-      "item": "bettacraft:heater_small"
-    },
-    {
-      "tag": "c:dusts/redstone"
-    }
+    "bettacraft:heater_small",
+    "bettacraft:heater_small",
+    "#c:dusts/redstone"
   ],
   "result": {
     "count": 1,

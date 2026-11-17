@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "bettacraft:tank_light_dye8",
   "key": {
-    "D": {
-      "item": "minecraft:black_dye"
-    },
-    "L": {
-      "item": "bettacraft:tank_light"
-    }
+    "D": "minecraft:black_dye",
+    "L": "bettacraft:tank_light"
   },
   "pattern": [
     "LLL",

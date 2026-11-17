@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:stone_bricks"
-    },
-    "I": {
-      "item": "minecraft:iron_bars"
-    },
-    "W": {
-      "item": "minecraft:stone_brick_wall"
-    }
+    "B": "minecraft:stone_bricks",
+    "I": "minecraft:iron_bars",
+    "W": "minecraft:stone_brick_wall"
   },
   "pattern": [
     "W W",

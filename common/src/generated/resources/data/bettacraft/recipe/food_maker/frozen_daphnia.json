@@ -13,11 +13,11 @@
   "ingredients": [
     {
       "count": 4,
-      "item": "bettacraft:daphnia"
+      "ingredient": "bettacraft:daphnia"
     },
     {
       "count": 1,
-      "tag": "bettacraft:freezing_ice"
+      "ingredient": "#bettacraft:freezing_ice"
     }
   ],
   "result": {

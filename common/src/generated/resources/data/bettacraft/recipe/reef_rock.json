@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "C": {
-      "item": "minecraft:calcite"
-    },
-    "S": {
-      "tag": "minecraft:sand"
-    }
+    "C": "minecraft:calcite",
+    "S": "#minecraft:sand"
   },
   "pattern": [
     "CS",

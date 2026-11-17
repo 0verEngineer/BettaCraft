@@ -13,15 +13,15 @@
   "ingredients": [
     {
       "count": 2,
-      "item": "minecraft:bone_meal"
+      "ingredient": "minecraft:bone_meal"
     },
     {
       "count": 1,
-      "tag": "bettacraft:pellet_fish"
+      "ingredient": "#bettacraft:pellet_fish"
     },
     {
       "count": 1,
-      "item": "minecraft:dried_kelp"
+      "ingredient": "minecraft:dried_kelp"
     }
   ],
   "result": {

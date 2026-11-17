@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "M": {
-      "item": "minecraft:moss_block"
-    },
-    "T": {
-      "item": "minecraft:tuff"
-    }
+    "M": "minecraft:moss_block",
+    "T": "minecraft:tuff"
   },
   "pattern": [
     "TMT",

@@ -29,12 +29,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "P": {
-      "tag": "bettacraft:plastic_sheets"
-    },
-    "S": {
-      "tag": "c:strings"
-    }
+    "P": "#bettacraft:plastic_sheets",
+    "S": "#c:strings"
   },
   "pattern": [
     " S ",

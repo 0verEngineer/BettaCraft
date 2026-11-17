@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "H": {
-      "item": "minecraft:hopper"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "K": {
-      "item": "minecraft:dried_kelp"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    },
-    "W": {
-      "tag": "minecraft:wool"
-    }
+    "H": "minecraft:hopper",
+    "I": "#c:ingots/iron",
+    "K": "minecraft:dried_kelp",
+    "R": "#c:dusts/redstone",
+    "W": "#minecraft:wool"
   },
   "pattern": [
     "KHK",

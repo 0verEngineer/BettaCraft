@@ -4,8 +4,7 @@
       "faces": {
         "down": {
           "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
+            "light_emission": 15
           },
           "texture": "#panel",
           "tintindex": 0
@@ -65,8 +64,7 @@
       "faces": {
         "down": {
           "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
+            "light_emission": 15
           },
           "texture": "#panel",
           "tintindex": 0

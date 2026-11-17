@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "N": {
-      "tag": "c:nuggets/iron"
-    },
-    "P": {
-      "tag": "c:glass_panes"
-    },
-    "S": {
-      "tag": "c:rods/wooden"
-    }
+    "N": "#c:nuggets/iron",
+    "P": "#c:glass_panes",
+    "S": "#c:rods/wooden"
   },
   "pattern": [
     "P",

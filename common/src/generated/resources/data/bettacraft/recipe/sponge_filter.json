@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "H": {
-      "item": "bettacraft:air_hose"
-    },
-    "S": {
-      "item": "bettacraft:intake_sponge"
-    }
+    "G": "#c:glass_panes",
+    "H": "bettacraft:air_hose",
+    "S": "bettacraft:intake_sponge"
   },
   "pattern": [
     " H ",

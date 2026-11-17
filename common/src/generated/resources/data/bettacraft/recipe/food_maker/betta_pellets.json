@@ -9,15 +9,15 @@
   "ingredients": [
     {
       "count": 1,
-      "tag": "bettacraft:pellet_fish"
+      "ingredient": "#bettacraft:pellet_fish"
     },
     {
       "count": 1,
-      "item": "minecraft:wheat"
+      "ingredient": "minecraft:wheat"
     },
     {
       "count": 1,
-      "item": "minecraft:dried_kelp"
+      "ingredient": "minecraft:dried_kelp"
     }
   ],
   "result": {

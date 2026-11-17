@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "B": {
-      "item": "minecraft:bucket"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "B": "minecraft:bucket",
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     "S S",

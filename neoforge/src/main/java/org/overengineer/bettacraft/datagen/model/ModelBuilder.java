@@ -191,6 +191,18 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             return self();
         }
 
+        /** Minecraft's uv of a face when the model gives none (the face's projection of the element). */
+        float[] defaultUvs(Direction d) {
+            return switch (d) {
+                case DOWN -> new float[]{fx, 16 - tz, tx, 16 - fz};
+                case UP -> new float[]{fx, fz, tx, tz};
+                case NORTH -> new float[]{16 - tx, 16 - ty, 16 - fx, 16 - fy};
+                case SOUTH -> new float[]{fx, 16 - ty, tx, 16 - fy};
+                case WEST -> new float[]{fz, 16 - ty, tz, 16 - fy};
+                case EAST -> new float[]{16 - tz, 16 - ty, 16 - fz, 16 - fy};
+            };
+        }
+
         JsonObject toJson() {
             JsonObject o = new JsonObject();
             o.add("from", vec(fx, fy, fz));
@@ -258,9 +270,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             JsonObject toJson() {
                 JsonObject o = new JsonObject();
                 o.addProperty("texture", texture == null ? "#missing" : texture);
-                if (uvs != null) {
+                // like NeoForge 1.21.1: the uv only when it is not the face's default (from the element's corners), as floats
+                if (uvs != null && !java.util.Arrays.equals(uvs, defaultUvs(direction))) {
                     JsonArray a = new JsonArray();
-                    for (float u : uvs) a.add(num(u));
+                    for (float u : uvs) a.add(u);
                     o.add("uv", a);
                 }
                 if (cullface != null) o.addProperty("cullface", cullface.getSerializedName());

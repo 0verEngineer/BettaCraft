@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "bettacraft:tank_light_dye",
   "ingredients": [
-    {
-      "item": "bettacraft:tank_light"
-    },
-    {
-      "item": "minecraft:light_blue_dye"
-    }
+    "bettacraft:tank_light",
+    "minecraft:light_blue_dye"
   ],
   "result": {
     "components": {

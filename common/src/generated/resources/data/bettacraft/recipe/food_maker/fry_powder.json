@@ -13,11 +13,11 @@
   "ingredients": [
     {
       "count": 1,
-      "item": "minecraft:egg"
+      "ingredient": "minecraft:egg"
     },
     {
       "count": 1,
-      "item": "minecraft:wheat"
+      "ingredient": "minecraft:wheat"
     }
   ],
   "result": {

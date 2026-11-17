@@ -143,7 +143,7 @@ public final class InfoLines {
         }
         ListTag warn = d.getListOrEmpty("warnings");
         for (int i = 0; i < warn.size(); i++) {
-            out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getString(i)).withStyle(ChatFormatting.RED));
+            out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getStringOr(i, "")).withStyle(ChatFormatting.RED));
         }
         ListTag fw = d.getListOrEmpty("filter_warn");
         for (int i = 0; i < fw.size(); i++) {

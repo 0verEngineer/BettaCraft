@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "item": "minecraft:grindstone"
-    },
-    "H": {
-      "item": "minecraft:hopper"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "G": "minecraft:grindstone",
+    "H": "minecraft:hopper",
+    "I": "#c:ingots/iron"
   },
   "pattern": [
     "IHI",

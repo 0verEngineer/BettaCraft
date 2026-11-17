@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "minecraft:wool"
-    },
-    {
-      "tag": "c:dusts/redstone"
-    },
-    {
-      "item": "minecraft:iron_bars"
-    }
+    "#c:ingots/iron",
+    "#c:ingots/iron",
+    "#minecraft:wool",
+    "#c:dusts/redstone",
+    "minecraft:iron_bars"
   ],
   "result": {
     "count": 1,

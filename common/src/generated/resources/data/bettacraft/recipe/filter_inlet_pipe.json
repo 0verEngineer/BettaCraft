@@ -8,16 +8,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "D": {
-      "tag": "c:dyes/blue"
-    },
+    "D": "#c:dyes/blue",
     "P": [
-      {
-        "item": "bettacraft:glass_pipe"
-      },
-      {
-        "item": "bettacraft:stainless_steel_pipe"
-      }
+      "bettacraft:glass_pipe",
+      "bettacraft:stainless_steel_pipe"
     ]
   },
   "pattern": [

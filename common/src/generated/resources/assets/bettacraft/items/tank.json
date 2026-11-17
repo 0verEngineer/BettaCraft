@@ -1,0 +1,7 @@
+{
+  "model": {
+    "type": "bettacraft:block_model",
+    "kind": "tank",
+    "model": "bettacraft:item/tank"
+  }
+}

@@ -13,11 +13,11 @@
   "ingredients": [
     {
       "count": 4,
-      "item": "bettacraft:artemia_nauplii"
+      "ingredient": "bettacraft:artemia_nauplii"
     },
     {
       "count": 1,
-      "tag": "bettacraft:freezing_ice"
+      "ingredient": "#bettacraft:freezing_ice"
     }
   ],
   "result": {

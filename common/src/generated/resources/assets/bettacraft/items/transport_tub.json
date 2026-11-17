@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "name": "bettacraft:filled",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "bettacraft:item/transport_tub"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "bettacraft:item/transport_tub_filled"
+    },
+    "property": "bettacraft:property",
+    "threshold": 1.0
+  }
+}

@@ -8,21 +8,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "bettacraft:spawning_cave"
-    },
-    "L": {
-      "tag": "minecraft:logs"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    },
-    "S": {
-      "tag": "c:rods/wooden"
-    },
-    "W": {
-      "item": "minecraft:white_wool"
-    }
+    "C": "bettacraft:spawning_cave",
+    "L": "#minecraft:logs",
+    "P": "#minecraft:planks",
+    "S": "#c:rods/wooden",
+    "W": "minecraft:white_wool"
   },
   "pattern": [
     " SW",

@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "N": {
-      "tag": "c:nuggets/iron"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    },
-    "W": {
-      "tag": "c:strings"
-    }
+    "N": "#c:nuggets/iron",
+    "S": "#c:ingots/stainless_steel",
+    "W": "#c:strings"
   },
   "pattern": [
     "  S",

@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "c:ingots/copper"
-    },
-    {
-      "tag": "c:dusts/redstone"
-    },
-    {
-      "tag": "c:ingots/iron"
-    }
+    "#c:ingots/copper",
+    "#c:dusts/redstone",
+    "#c:ingots/iron"
   ],
   "result": {
     "count": 1,

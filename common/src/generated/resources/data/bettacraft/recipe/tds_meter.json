@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "ingredients": [
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "c:ingots/copper"
-    },
-    {
-      "tag": "c:dusts/redstone"
-    },
-    {
-      "tag": "c:glass_panes"
-    }
+    "#c:ingots/iron",
+    "#c:ingots/copper",
+    "#c:dusts/redstone",
+    "#c:glass_panes"
   ],
   "result": {
     "count": 1,

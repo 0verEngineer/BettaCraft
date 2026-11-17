@@ -8,24 +8,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "tag": "c:slime_balls"
-    },
-    {
-      "item": "minecraft:dried_kelp"
-    }
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper",
+    "#c:slime_balls",
+    "minecraft:dried_kelp"
   ],
   "result": {
     "count": 1,

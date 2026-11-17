@@ -2,15 +2,9 @@
   "type": "bettacraft:cabinet",
   "category": "misc",
   "key": {
-    "C": {
-      "tag": "c:chests/wooden"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    },
-    "S": {
-      "tag": "minecraft:wooden_slabs"
-    }
+    "C": "#c:chests/wooden",
+    "P": "#minecraft:planks",
+    "S": "#minecraft:wooden_slabs"
   },
   "pattern": [
     "SSS",

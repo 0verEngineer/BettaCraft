@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:iron_bars"
-    },
-    {
-      "tag": "c:nuggets/iron"
-    },
-    {
-      "tag": "c:strings"
-    }
+    "minecraft:iron_bars",
+    "#c:nuggets/iron",
+    "#c:strings"
   ],
   "result": {
     "count": 2,

@@ -9,9 +9,7 @@
   "category": "food",
   "cookingtime": 600,
   "experience": 0.05,
-  "ingredient": {
-    "item": "minecraft:birch_leaves"
-  },
+  "ingredient": "minecraft:birch_leaves",
   "result": {
     "count": 1,
     "id": "bettacraft:alder_cone"

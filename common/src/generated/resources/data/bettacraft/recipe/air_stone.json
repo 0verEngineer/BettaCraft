@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:flint"
-    },
-    {
-      "tag": "c:sands"
-    },
-    {
-      "item": "bettacraft:air_hose"
-    }
+    "minecraft:flint",
+    "#c:sands",
+    "bettacraft:air_hose"
   ],
   "result": {
     "count": 2,

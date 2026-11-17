@@ -8,31 +8,19 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "P": [
-      {
-        "tag": "bettacraft:aquatic_plants"
-      },
-      {
-        "type": "neoforge:compound",
-        "children": [
-          {
-            "item": "minecraft:seagrass"
-          },
-          {
-            "item": "minecraft:kelp"
-          },
-          {
-            "item": "minecraft:lily_pad"
-          }
+    "G": "#c:glass_panes",
+    "P": {
+      "neoforge:ingredient_type": "neoforge:compound",
+      "children": [
+        "#bettacraft:aquatic_plants",
+        [
+          "minecraft:seagrass",
+          "minecraft:kelp",
+          "minecraft:lily_pad"
         ]
-      }
-    ],
-    "S": {
-      "tag": "minecraft:wooden_slabs"
-    }
+      ]
+    },
+    "S": "#minecraft:wooden_slabs"
   },
   "pattern": [
     "G G",

@@ -9,15 +9,15 @@
   "ingredients": [
     {
       "count": 2,
-      "item": "minecraft:dried_kelp"
+      "ingredient": "minecraft:dried_kelp"
     },
     {
       "count": 1,
-      "tag": "bettacraft:food_vegetables"
+      "ingredient": "#bettacraft:food_vegetables"
     },
     {
       "count": 1,
-      "item": "minecraft:wheat"
+      "ingredient": "minecraft:wheat"
     }
   ],
   "result": {

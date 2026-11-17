@@ -9,15 +9,15 @@
   "ingredients": [
     {
       "count": 1,
-      "item": "minecraft:spider_eye"
+      "ingredient": "minecraft:spider_eye"
     },
     {
       "count": 2,
-      "item": "minecraft:wheat"
+      "ingredient": "minecraft:wheat"
     },
     {
       "count": 1,
-      "item": "minecraft:dried_kelp"
+      "ingredient": "minecraft:dried_kelp"
     }
   ],
   "result": {

@@ -8,210 +8,76 @@
   "type": "bettacraft:stone_cabinet",
   "category": "misc",
   "key": {
-    "C": {
-      "tag": "c:chests/wooden"
-    },
+    "C": "#c:chests/wooden",
     "P": [
-      {
-        "item": "minecraft:stone"
-      },
-      {
-        "item": "minecraft:cobblestone"
-      },
-      {
-        "item": "minecraft:mossy_cobblestone"
-      },
-      {
-        "item": "minecraft:smooth_stone"
-      },
-      {
-        "item": "minecraft:stone_bricks"
-      },
-      {
-        "item": "minecraft:mossy_stone_bricks"
-      },
-      {
-        "item": "minecraft:granite"
-      },
-      {
-        "item": "minecraft:polished_granite"
-      },
-      {
-        "item": "minecraft:diorite"
-      },
-      {
-        "item": "minecraft:polished_diorite"
-      },
-      {
-        "item": "minecraft:andesite"
-      },
-      {
-        "item": "minecraft:polished_andesite"
-      },
-      {
-        "item": "minecraft:cobbled_deepslate"
-      },
-      {
-        "item": "minecraft:polished_deepslate"
-      },
-      {
-        "item": "minecraft:deepslate_bricks"
-      },
-      {
-        "item": "minecraft:deepslate_tiles"
-      },
-      {
-        "item": "minecraft:tuff"
-      },
-      {
-        "item": "minecraft:polished_tuff"
-      },
-      {
-        "item": "minecraft:tuff_bricks"
-      },
-      {
-        "item": "minecraft:blackstone"
-      },
-      {
-        "item": "minecraft:polished_blackstone"
-      },
-      {
-        "item": "minecraft:polished_blackstone_bricks"
-      },
-      {
-        "item": "minecraft:sandstone"
-      },
-      {
-        "item": "minecraft:cut_sandstone"
-      },
-      {
-        "item": "minecraft:smooth_sandstone"
-      },
-      {
-        "item": "minecraft:red_sandstone"
-      },
-      {
-        "item": "minecraft:cut_red_sandstone"
-      },
-      {
-        "item": "minecraft:smooth_red_sandstone"
-      },
-      {
-        "item": "minecraft:bricks"
-      },
-      {
-        "item": "minecraft:nether_bricks"
-      },
-      {
-        "item": "minecraft:red_nether_bricks"
-      },
-      {
-        "item": "minecraft:quartz_block"
-      },
-      {
-        "item": "minecraft:smooth_quartz"
-      }
+      "minecraft:stone",
+      "minecraft:cobblestone",
+      "minecraft:mossy_cobblestone",
+      "minecraft:smooth_stone",
+      "minecraft:stone_bricks",
+      "minecraft:mossy_stone_bricks",
+      "minecraft:granite",
+      "minecraft:polished_granite",
+      "minecraft:diorite",
+      "minecraft:polished_diorite",
+      "minecraft:andesite",
+      "minecraft:polished_andesite",
+      "minecraft:cobbled_deepslate",
+      "minecraft:polished_deepslate",
+      "minecraft:deepslate_bricks",
+      "minecraft:deepslate_tiles",
+      "minecraft:tuff",
+      "minecraft:polished_tuff",
+      "minecraft:tuff_bricks",
+      "minecraft:blackstone",
+      "minecraft:polished_blackstone",
+      "minecraft:polished_blackstone_bricks",
+      "minecraft:sandstone",
+      "minecraft:cut_sandstone",
+      "minecraft:smooth_sandstone",
+      "minecraft:red_sandstone",
+      "minecraft:cut_red_sandstone",
+      "minecraft:smooth_red_sandstone",
+      "minecraft:bricks",
+      "minecraft:nether_bricks",
+      "minecraft:red_nether_bricks",
+      "minecraft:quartz_block",
+      "minecraft:smooth_quartz"
     ],
     "S": [
-      {
-        "item": "minecraft:stone_slab"
-      },
-      {
-        "item": "minecraft:cobblestone_slab"
-      },
-      {
-        "item": "minecraft:mossy_cobblestone_slab"
-      },
-      {
-        "item": "minecraft:smooth_stone_slab"
-      },
-      {
-        "item": "minecraft:stone_brick_slab"
-      },
-      {
-        "item": "minecraft:mossy_stone_brick_slab"
-      },
-      {
-        "item": "minecraft:granite_slab"
-      },
-      {
-        "item": "minecraft:polished_granite_slab"
-      },
-      {
-        "item": "minecraft:diorite_slab"
-      },
-      {
-        "item": "minecraft:polished_diorite_slab"
-      },
-      {
-        "item": "minecraft:andesite_slab"
-      },
-      {
-        "item": "minecraft:polished_andesite_slab"
-      },
-      {
-        "item": "minecraft:cobbled_deepslate_slab"
-      },
-      {
-        "item": "minecraft:polished_deepslate_slab"
-      },
-      {
-        "item": "minecraft:deepslate_brick_slab"
-      },
-      {
-        "item": "minecraft:deepslate_tile_slab"
-      },
-      {
-        "item": "minecraft:tuff_slab"
-      },
-      {
-        "item": "minecraft:polished_tuff_slab"
-      },
-      {
-        "item": "minecraft:tuff_brick_slab"
-      },
-      {
-        "item": "minecraft:blackstone_slab"
-      },
-      {
-        "item": "minecraft:polished_blackstone_slab"
-      },
-      {
-        "item": "minecraft:polished_blackstone_brick_slab"
-      },
-      {
-        "item": "minecraft:sandstone_slab"
-      },
-      {
-        "item": "minecraft:cut_sandstone_slab"
-      },
-      {
-        "item": "minecraft:smooth_sandstone_slab"
-      },
-      {
-        "item": "minecraft:red_sandstone_slab"
-      },
-      {
-        "item": "minecraft:cut_red_sandstone_slab"
-      },
-      {
-        "item": "minecraft:smooth_red_sandstone_slab"
-      },
-      {
-        "item": "minecraft:brick_slab"
-      },
-      {
-        "item": "minecraft:nether_brick_slab"
-      },
-      {
-        "item": "minecraft:red_nether_brick_slab"
-      },
-      {
-        "item": "minecraft:quartz_slab"
-      },
-      {
-        "item": "minecraft:smooth_quartz_slab"
-      }
+      "minecraft:stone_slab",
+      "minecraft:cobblestone_slab",
+      "minecraft:mossy_cobblestone_slab",
+      "minecraft:smooth_stone_slab",
+      "minecraft:stone_brick_slab",
+      "minecraft:mossy_stone_brick_slab",
+      "minecraft:granite_slab",
+      "minecraft:polished_granite_slab",
+      "minecraft:diorite_slab",
+      "minecraft:polished_diorite_slab",
+      "minecraft:andesite_slab",
+      "minecraft:polished_andesite_slab",
+      "minecraft:cobbled_deepslate_slab",
+      "minecraft:polished_deepslate_slab",
+      "minecraft:deepslate_brick_slab",
+      "minecraft:deepslate_tile_slab",
+      "minecraft:tuff_slab",
+      "minecraft:polished_tuff_slab",
+      "minecraft:tuff_brick_slab",
+      "minecraft:blackstone_slab",
+      "minecraft:polished_blackstone_slab",
+      "minecraft:polished_blackstone_brick_slab",
+      "minecraft:sandstone_slab",
+      "minecraft:cut_sandstone_slab",
+      "minecraft:smooth_sandstone_slab",
+      "minecraft:red_sandstone_slab",
+      "minecraft:cut_red_sandstone_slab",
+      "minecraft:smooth_red_sandstone_slab",
+      "minecraft:brick_slab",
+      "minecraft:nether_brick_slab",
+      "minecraft:red_nether_brick_slab",
+      "minecraft:quartz_slab",
+      "minecraft:smooth_quartz_slab"
     ]
   },
   "pattern": [

@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:calcite"
-    },
-    {
-      "item": "bettacraft:sea_salt"
-    }
+    "minecraft:calcite",
+    "bettacraft:sea_salt"
   ],
   "result": {
     "count": 4,

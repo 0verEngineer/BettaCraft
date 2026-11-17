@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "P": {
-      "tag": "c:glass_panes"
-    },
-    "S": {
-      "tag": "c:strings"
-    }
+    "P": "#c:glass_panes",
+    "S": "#c:strings"
   },
   "pattern": [
     "P P",

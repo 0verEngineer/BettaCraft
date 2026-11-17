@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:rotifers"
-    },
-    {
-      "item": "bettacraft:phytoplankton"
-    },
-    {
-      "item": "bettacraft:phytoplankton"
-    }
+    "bettacraft:rotifers",
+    "bettacraft:phytoplankton",
+    "bettacraft:phytoplankton"
   ],
   "result": {
     "count": 2,

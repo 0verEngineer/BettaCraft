@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "name": "bettacraft:filled",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "bettacraft:item/mob_jar"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "bettacraft:item/mob_jar_filled"
+    },
+    "property": "bettacraft:property",
+    "threshold": 1.0
+  }
+}

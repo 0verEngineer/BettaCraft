@@ -13,11 +13,11 @@
   "ingredients": [
     {
       "count": 4,
-      "item": "bettacraft:mosquito_larvae"
+      "ingredient": "bettacraft:mosquito_larvae"
     },
     {
       "count": 1,
-      "tag": "bettacraft:freezing_ice"
+      "ingredient": "#bettacraft:freezing_ice"
     }
   ],
   "result": {

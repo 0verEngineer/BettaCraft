@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:polished_diorite"
-    },
-    {
-      "item": "minecraft:polished_diorite"
-    },
-    {
-      "item": "minecraft:diorite"
-    },
-    {
-      "item": "minecraft:moss_carpet"
-    }
+    "minecraft:polished_diorite",
+    "minecraft:polished_diorite",
+    "minecraft:diorite",
+    "minecraft:moss_carpet"
   ],
   "result": {
     "count": 1,

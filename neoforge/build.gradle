@@ -616,7 +616,7 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
             gameDirectory = rootProject.file('run/data')
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', commonProject.file('src/generated/resources/').getAbsolutePath(),
@@ -626,8 +626,9 @@ neoForge {
         configureEach {
             // the game directories stay in the repository root (run/ ...), whatever the module
             if (name in ['client', 'server']) gameDirectory = rootProject.file('run')
-            // the dev source set (and through it main) is on the class path of every run
-            sourceSet = sourceSets.dev
+            // the dev source set (and through it main) is on the class path of every run (M52b: -PnoDev leaves it out, e.g. for
+            // runData while the dev sources do not compile)
+            sourceSet = project.hasProperty('noDev') ? sourceSets.main : sourceSets.dev
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.INFO
         }
@@ -636,7 +637,7 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
-            sourceSet(sourceSets.dev)
+            if (!project.hasProperty('noDev')) sourceSet(sourceSets.dev)
         }
     }
 }

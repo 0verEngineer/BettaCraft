@@ -5,7 +5,7 @@
   "group": "bettacraft:tank_style",
   "ingredients": [
     {
-      "type": "neoforge:components",
+      "neoforge:ingredient_type": "neoforge:components",
       "components": {
         "bettacraft:glass": "minecraft:glass",
         "bettacraft:tank_style": "clean"

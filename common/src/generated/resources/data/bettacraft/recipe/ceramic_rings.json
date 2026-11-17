@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bone_meal"
-    },
-    "C": {
-      "item": "minecraft:clay_ball"
-    }
+    "B": "minecraft:bone_meal",
+    "C": "minecraft:clay_ball"
   },
   "pattern": [
     " C ",

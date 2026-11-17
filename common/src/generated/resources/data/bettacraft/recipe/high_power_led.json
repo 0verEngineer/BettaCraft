@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "tag": "c:ingots/copper"
-    },
-    "G": {
-      "tag": "c:dusts/glowstone"
-    },
-    "P": {
-      "item": "bettacraft:led_panel"
-    }
+    "C": "#c:ingots/copper",
+    "G": "#c:dusts/glowstone",
+    "P": "bettacraft:led_panel"
   },
   "pattern": [
     "CCC",

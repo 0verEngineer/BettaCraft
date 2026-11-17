@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "B": {
-      "item": "minecraft:brick"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    },
-    "T": {
-      "item": "minecraft:stick"
-    }
+    "B": "minecraft:brick",
+    "S": "#c:ingots/stainless_steel",
+    "T": "minecraft:stick"
   },
   "pattern": [
     "SS ",

@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "minecraft:logs"
-    },
-    {
-      "tag": "minecraft:logs"
-    },
-    {
-      "item": "minecraft:mangrove_roots"
-    }
+    "#minecraft:logs",
+    "#minecraft:logs",
+    "minecraft:mangrove_roots"
   ],
   "result": {
     "count": 2,

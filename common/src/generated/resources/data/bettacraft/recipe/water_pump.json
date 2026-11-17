@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": {
-      "item": "bettacraft:glass_pipe"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "P": "bettacraft:glass_pipe",
+    "R": "#c:dusts/redstone",
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     " S ",

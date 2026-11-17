@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "c:ingots/stainless_steel"
-    },
-    {
-      "item": "bettacraft:glass_pipe"
-    },
-    {
-      "item": "minecraft:dried_kelp"
-    }
+    "#c:ingots/stainless_steel",
+    "bettacraft:glass_pipe",
+    "minecraft:dried_kelp"
   ],
   "result": {
     "count": 1,

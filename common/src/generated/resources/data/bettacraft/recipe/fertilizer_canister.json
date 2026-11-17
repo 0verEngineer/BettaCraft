@@ -8,18 +8,16 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
+    "bettacraft:dosing_canister",
     {
-      "item": "bettacraft:dosing_canister"
-    },
-    {
-      "type": "neoforge:components",
+      "neoforge:ingredient_type": "neoforge:components",
       "components": {
         "minecraft:damage": 0
       },
       "items": "bettacraft:liquid_fertilizer"
     },
     {
-      "type": "neoforge:components",
+      "neoforge:ingredient_type": "neoforge:components",
       "components": {
         "minecraft:damage": 0
       },

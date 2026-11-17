@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "D": {
-      "tag": "c:dusts/glowstone"
-    },
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "D": "#c:dusts/glowstone",
+    "G": "#c:glass_panes",
+    "I": "#c:ingots/iron"
   },
   "pattern": [
     "III",

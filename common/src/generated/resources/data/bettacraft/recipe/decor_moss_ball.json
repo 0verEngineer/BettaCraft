@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:moss_block"
-    },
-    {
-      "item": "minecraft:slime_ball"
-    }
+    "minecraft:moss_block",
+    "minecraft:slime_ball"
   ],
   "result": {
     "count": 4,

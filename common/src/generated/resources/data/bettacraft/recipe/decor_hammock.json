@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:oak_leaves"
-    },
-    {
-      "item": "minecraft:oak_fence"
-    },
-    {
-      "tag": "c:strings"
-    }
+    "minecraft:oak_leaves",
+    "minecraft:oak_fence",
+    "#c:strings"
   ],
   "result": {
     "count": 2,

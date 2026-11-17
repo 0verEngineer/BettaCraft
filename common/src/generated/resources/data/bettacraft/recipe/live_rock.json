@@ -9,40 +9,18 @@
   "category": "building",
   "key": {
     "C": [
-      {
-        "item": "minecraft:tube_coral"
-      },
-      {
-        "item": "minecraft:brain_coral"
-      },
-      {
-        "item": "minecraft:bubble_coral"
-      },
-      {
-        "item": "minecraft:fire_coral"
-      },
-      {
-        "item": "minecraft:horn_coral"
-      },
-      {
-        "item": "minecraft:tube_coral_fan"
-      },
-      {
-        "item": "minecraft:brain_coral_fan"
-      },
-      {
-        "item": "minecraft:bubble_coral_fan"
-      },
-      {
-        "item": "minecraft:fire_coral_fan"
-      },
-      {
-        "item": "minecraft:horn_coral_fan"
-      }
+      "minecraft:tube_coral",
+      "minecraft:brain_coral",
+      "minecraft:bubble_coral",
+      "minecraft:fire_coral",
+      "minecraft:horn_coral",
+      "minecraft:tube_coral_fan",
+      "minecraft:brain_coral_fan",
+      "minecraft:bubble_coral_fan",
+      "minecraft:fire_coral_fan",
+      "minecraft:horn_coral_fan"
     ],
-    "R": {
-      "item": "bettacraft:reef_rock"
-    }
+    "R": "bettacraft:reef_rock"
   },
   "pattern": [
     "RRR",

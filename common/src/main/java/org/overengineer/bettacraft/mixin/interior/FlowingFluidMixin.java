@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FlowingFluid.class)
 public abstract class FlowingFluidMixin {
     @Inject(method = "spread", at = @At("HEAD"), cancellable = true)
-    private void bettacraft$dryInterior(Level level, BlockPos pos, FluidState state, CallbackInfo ci) {
+    private void bettacraft$dryInterior(net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.world.level.block.state.BlockState blockState, FluidState state, CallbackInfo ci) {
         if (InteriorManager.isInterior(level) && !(level.getBlockState(pos).getBlock() instanceof LiquidBlock)) ci.cancel();
     }
 }

@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:chest"
-    },
-    {
-      "item": "bettacraft:air_stone"
-    },
-    {
-      "tag": "c:nuggets/gold"
-    },
-    {
-      "item": "minecraft:yellow_concrete"
-    }
+    "minecraft:chest",
+    "bettacraft:air_stone",
+    "#c:nuggets/gold",
+    "minecraft:yellow_concrete"
   ],
   "result": {
     "count": 1,

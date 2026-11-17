@@ -8,18 +8,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:terracotta"
-    },
-    {
-      "item": "minecraft:orange_terracotta"
-    },
-    {
-      "item": "minecraft:white_terracotta"
-    },
-    {
-      "item": "minecraft:clay_ball"
-    }
+    "minecraft:terracotta",
+    "minecraft:orange_terracotta",
+    "minecraft:white_terracotta",
+    "minecraft:clay_ball"
   ],
   "result": {
     "count": 1,

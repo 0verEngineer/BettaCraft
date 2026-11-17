@@ -61,7 +61,6 @@ public final class BettaCraftClient {
         // M52b: no Create on 1.21.11 (the travelling tank client of compat/create is left out of this branch)
         modBus.addListener(BettaCraftClient::onClientSetup);
         // M52b: the item colours and properties of 1.21.1 as our own tint source and item model property (1.21.4 item models)
-        ClientSetup.itemColors(org.overengineer.bettacraft.client.item.ItemTints::register);
         modBus.addListener((RegisterColorHandlersEvent.ItemTintSources e) -> ClientSetup.itemModelTypes(itemModelTypes(e, null, null)));
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent e) -> ClientSetup.itemModelTypes(itemModelTypes(null, e, null)));
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterItemModelsEvent e) -> ClientSetup.itemModelTypes(itemModelTypes(null, null, e)));
@@ -167,6 +166,7 @@ public final class BettaCraftClient {
         // Client extensions were registered during Minecraft construction (before this event); wrap vanilla water now.
         event.enqueueWork(TankAwareWaterExtensions::install);
         event.enqueueWork(() -> ClientSetup.itemProperties(org.overengineer.bettacraft.client.item.ItemPredicates::register));
+        event.enqueueWork(() -> ClientSetup.itemColors(org.overengineer.bettacraft.client.item.ItemTints::register));
     }
 
     /** M52b: our item model types into whichever of NeoForge's three registration events fired. */

@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bettacraft:interior_pipe"
-    },
-    {
-      "item": "minecraft:iron_bars"
-    }
+    "bettacraft:interior_pipe",
+    "minecraft:iron_bars"
   ],
   "result": {
     "count": 1,

@@ -8,15 +8,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": {
-      "tag": "c:nuggets/iron"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    },
-    "S": {
-      "tag": "minecraft:wooden_slabs"
-    }
+    "I": "#c:nuggets/iron",
+    "P": "#minecraft:planks",
+    "S": "#minecraft:wooden_slabs"
   },
   "pattern": [
     "P P",

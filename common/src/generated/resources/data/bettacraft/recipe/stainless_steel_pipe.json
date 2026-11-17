@@ -8,9 +8,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     "SSS"
