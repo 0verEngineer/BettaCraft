@@ -39,13 +39,13 @@ def villager() -> np.ndarray:
     _rect(img, 14, 44, 16, 62, dark, rng)
     # a belt over the robe front and back and the sides
     _rect(img, 0, 46, 28, 47, strap)
-    # the fish on the apron (an orange betta, head right)
-    fish = [(8, 52), (9, 51), (9, 52), (9, 53), (10, 51), (10, 52), (10, 53), (11, 52), (12, 52), (7, 51), (7, 53), (6, 50), (6, 54)]
+    # the fish on the apron (an orange betta, head right, its fins spread), below the crossed arms
+    fish = [(9, 53), (10, 53), (7, 54), (8, 54), (9, 54), (10, 54), (11, 54), (8, 55), (9, 55), (10, 55), (11, 55), (12, 55),
+            (7, 56), (9, 56), (10, 56), (6, 53), (6, 57)]
     for x, y in fish:
-        if 6 <= x < 14:
-            img[y, x, :3] = hex_f("#e8701e")
-            img[y, x, 3] = 1
-    img[52, 11, :3] = hex_f("#f6c060")
+        img[y, x, :3] = hex_f("#e8701e")
+        img[y, x, 3] = 1
+    img[55, 11, :3] = hex_f("#1a1a1a")  # the eye
     # the body (16,20: 8x12x6): the bib on the chest, the straps over the shoulders and crossed on the back
     _rect(img, 23, 28, 29, 38, teal, rng)
     _rect(img, 23, 27, 29, 28, dark)
@@ -56,12 +56,18 @@ def villager() -> np.ndarray:
         for x in (37 + int(i * 0.6), 42 - int(i * 0.6)):
             img[26 + i, x, :3] = hex_f(strap)
             img[26 + i, x, 3] = 1
-    # rubber gloves: the lower half of the arms (44,22: 4x8x4) and the crossed forearms (40,38: 8x4x4)
+    # rubber gloves: the hands are the ends of the crossed forearms (40,38: 8x4x4): its two end faces and two texels of the
+    # front, top and bottom at each end; rolled-up sleeves: a teal cuff at the lower end of the arms (44,22: 4x8x4)
     glove = "#3a6ad0"
-    _rect(img, 44, 30, 60, 34, glove, rng)
-    _rect(img, 52, 22, 56, 26, glove, rng)  # bottom of the arms
-    _rect(img, 40, 42, 64, 46, glove, rng)
-    _rect(img, 44, 38, 60, 42, glove, rng)
+    _rect(img, 40, 42, 44, 46, glove, rng)  # one end
+    _rect(img, 52, 42, 56, 46, glove, rng)  # the other end
+    for x0 in (44, 50):
+        _rect(img, x0, 42, x0 + 2, 46, glove, rng)  # front
+        _rect(img, x0, 38, x0 + 2, 42, glove, rng)  # top
+        _rect(img, x0 + 8, 38, x0 + 10, 42, glove, rng)  # bottom
+    for x0 in (56, 62):
+        _rect(img, x0, 42, x0 + 2, 46, glove, rng)  # back
+    _rect(img, 44, 32, 60, 34, dark, rng)
     # the cap (hat layer, 32,0: 8x10x8): crown and the top rows of the sides, a darker brim at the front
     _rect(img, 40, 0, 48, 8, teal, rng)
     _rect(img, 32, 8, 64, 10, teal, rng)

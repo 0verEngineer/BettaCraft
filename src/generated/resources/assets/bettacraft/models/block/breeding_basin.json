@@ -458,9 +458,6 @@
     },
     {
       "faces": {
-        "down": {
-          "texture": "minecraft:missingno"
-        },
         "east": {
           "texture": "#water",
           "uv": [
@@ -520,9 +517,6 @@
     },
     {
       "faces": {
-        "down": {
-          "texture": "minecraft:missingno"
-        },
         "east": {
           "texture": "#glass"
         },
@@ -531,9 +525,6 @@
         },
         "south": {
           "texture": "#glass"
-        },
-        "up": {
-          "texture": "minecraft:missingno"
         },
         "west": {
           "texture": "#glass"

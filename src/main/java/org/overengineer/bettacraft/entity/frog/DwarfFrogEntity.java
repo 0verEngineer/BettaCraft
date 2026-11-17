@@ -289,7 +289,7 @@ public class DwarfFrogEntity extends AbstractFish {
             breath = -1;
             surfacing = false;
             setBreathing(false);
-            if (clasped != null) release();
+            if (clasped != null && !TankInhabitants.hasTankRef(this)) release(); // taken out of the tank (not: the tank not found yet)
             return;
         }
         if (clasped != null) amplexusStep(server);
@@ -340,7 +340,7 @@ public class DwarfFrogEntity extends AbstractFish {
     private void amplexusStep(ServerLevel server) {
         DwarfFrogEntity f = clasped;
         if (f == null) return;
-        if (!f.isAlive() || f.tankWater == null || !isAlive() || !Features.enabled(Feature.FROGS)) {
+        if (!f.isAlive() || !isAlive() || !TankInhabitants.hasTankRef(f) || !Features.enabled(Feature.FROGS)) {
             release();
             return;
         }
@@ -355,7 +355,7 @@ public class DwarfFrogEntity extends AbstractFish {
         yBodyRot = yaw;
         yHeadRot = yaw;
         breath = Math.max(breath, f.breath);
-        boolean atSurface = Math.abs(f.getY() + f.getBbHeight() - f.tankWater.surface()) < 0.2;
+        boolean atSurface = f.tankWater != null && Math.abs(f.getY() + f.getBbHeight() - f.tankWater.surface()) < 0.2;
         if (amplexus >= AMPLEXUS_TICKS && (atSurface || amplexus >= AMPLEXUS_TICKS * 2)) {
             org.overengineer.bettacraft.tank.TankBlockEntity c = TankInhabitants.resolveController(server, this);
             if (c != null) FrogBreeding.lay(server, c, f, this);
