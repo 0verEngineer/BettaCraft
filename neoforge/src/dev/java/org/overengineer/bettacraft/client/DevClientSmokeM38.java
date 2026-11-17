@@ -77,7 +77,7 @@ final class DevClientSmokeM38 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(0, 1, 0));
-            var e = ForeignPlants.effect(p.server, org.overengineer.bettacraft.plants.InteriorPlants.region(p.server, c.getTank()));
+            var e = ForeignPlants.effect(p.level().getServer(), org.overengineer.bettacraft.plants.InteriorPlants.region(p.level().getServer(), c.getTank()));
             LOGGER.info("[smoketest] M38 fresh tank: {} plants of other mods, mass {}, floating {}, over the limit {}", e.plants(), Math.round(e.mass()),
                     e.floating(), e.overLimit());
             if (e.plants() < 10) LOGGER.error("[smoketest] M38 too few plants of other mods count: {}", e.plants());
@@ -142,7 +142,7 @@ final class DevClientSmokeM38 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         for (int x = -4; x <= 14; x++)
             for (int z = -6; z <= 6; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
@@ -274,7 +274,7 @@ final class DevClientSmokeM38 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -309,7 +309,7 @@ final class DevClientSmokeM38 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m38_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m38_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

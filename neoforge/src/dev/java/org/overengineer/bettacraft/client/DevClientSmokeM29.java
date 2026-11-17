@@ -489,7 +489,7 @@ final class DevClientSmokeM29 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, prefix + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, prefix + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

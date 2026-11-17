@@ -107,10 +107,10 @@ final class DevClientSmokeM218 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
         then(1, () -> {
-            if (mc.player != null) mc.player.getInventory().getSelectedSlot() = 8;
+            if (mc.player != null) mc.player.getInventory().setSelectedSlot(8);
         });
         then(40, () -> {
-            mc.getToasts().clear();
+            mc.getToastManager().clear();
             checkStack();
         });
         then(5, () -> shot("hotbar"));
@@ -281,7 +281,7 @@ final class DevClientSmokeM218 {
         p.getInventory().setItem(9, new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 7));
         p.getInventory().setItem(10, new ItemStack(ModItems.ARTEMIA_NAUPLII.get(), 4));
         p.getInventory().setItem(11, TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.CLEAN, 64));
-        p.getInventory().getSelectedSlot() = 8;
+        p.getInventory().setSelectedSlot(8);
         p.teleportTo(p.level(), glass.getX() + 1.5, glass.getY() - 0.2, glass.getZ() - 3.0, java.util.Set.of(), 0F, 18F, false);
     }
 
@@ -378,7 +378,7 @@ final class DevClientSmokeM218 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -459,7 +459,7 @@ final class DevClientSmokeM218 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -494,7 +494,7 @@ final class DevClientSmokeM218 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_8_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_8_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

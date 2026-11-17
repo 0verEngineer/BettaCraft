@@ -7,7 +7,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,8 +15,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -64,7 +64,7 @@ public final class PlantSourceGameTests {
             sp.getInventory().add(new ItemStack(ModItems.FISH_BAG.get(), 4));
             sp.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.AQUARIUM_NET.get()));
             for (int i = 0; i < n; i++) {
-                sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
+                sp.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.AQUARIUM_NET.get()));
                 NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
                 for (int s = 0; s < sp.getInventory().getContainerSize(); s++) {
                     ItemStack st = sp.getInventory().getItem(s);
@@ -75,7 +75,7 @@ public final class PlantSourceGameTests {
                 }
             }
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         return out;
     }

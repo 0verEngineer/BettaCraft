@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -17,8 +18,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -208,12 +209,12 @@ public final class FilterWaterGameTests {
         FilterPipeBlock.makeJunction(level, abs(h, 5, 3, 4));
         h.setBlock(new BlockPos(11, 2, 4), ModBlocks.FILTER_FRESH_PORT.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.EAST));
         head.rescan();
-        if (MultiblockFilter.links(level, head.structure(level)).size() != 2) throw new GameTestAssertException("the filter does not reach both tanks");
+        if (MultiblockFilter.links(level, head.structure(level)).size() != 2) throw new GameTestFailure("the filter does not reach both tanks");
         return new Rig(head, a, b);
     }
 
     private static FilterPortBlockEntity port(GameTestHelper h, int x, int y, int z) {
-        if (!(h.getLevel().getBlockEntity(abs(h, x, y, z)) instanceof FilterPortBlockEntity p)) throw new GameTestAssertException("no port at " + x + " " + y + " " + z);
+        if (!(h.getLevel().getBlockEntity(abs(h, x, y, z)) instanceof FilterPortBlockEntity p)) throw new GameTestFailure("no port at " + x + " " + y + " " + z);
         return p;
     }
 
@@ -383,7 +384,7 @@ public final class FilterWaterGameTests {
 
     private static Block block(String id) {
         return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(net.minecraft.resources.Identifier.parse(id))
-                .orElseThrow(() -> new GameTestAssertException("no block " + id));
+                .orElseThrow(() -> new GameTestFailure("no block " + id));
     }
 
     /** The fresh water port of a rig with a fresh pipe at (12..13, 2, 4) and the foreign block at (14, 2, 4); a reservoir with water at (15, 2, 4). */
@@ -413,7 +414,7 @@ public final class FilterWaterGameTests {
             Object pipe = h.getLevel().getBlockEntity(abs(h, 14, 2, 4));
             pipe.getClass().getMethod("setExtracting", Direction.class, boolean.class).invoke(pipe, Direction.EAST, true);
         } catch (ReflectiveOperationException | NullPointerException e) {
-            throw new GameTestAssertException("Pipez API changed: " + e);
+            throw new GameTestFailure("Pipez API changed: " + e);
         }
         h.succeedWhen(() -> h.assertTrue(fresh.water().amount() > 0, "the Pipez pipe fills the fresh port: " + fresh.water().amount()));
     }
@@ -430,7 +431,7 @@ public final class FilterWaterGameTests {
         PlumbingGameTests.reservoir(h, new BlockPos(15, 2, 4), 16000, null);
         try {
             var reg = level.registryAccess().lookupOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.Identifier.parse("enderio:conduit")));
-            net.minecraft.core.Holder<?> fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.Identifier.parse("enderio:fluid")));
+            net.minecraft.core.Holder<?> fluid = reg.getOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.Identifier.parse("enderio:fluid")));
             h.setBlock(new BlockPos(14, 2, 4), block("enderio:conduit"));
             Object be = level.getBlockEntity(abs(h, 14, 2, 4));
             be.getClass().getMethod("addConduit", net.minecraft.core.Holder.class, Direction.class, net.minecraft.world.entity.player.Player.class)
@@ -449,7 +450,7 @@ public final class FilterWaterGameTests {
             Object insert = west.getClass().getMethod("withIsInsert", boolean.class).invoke(west, true);
             set.invoke(be, fluid, Direction.WEST, insert);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new GameTestAssertException("EnderIO API changed: " + e);
+            throw new GameTestFailure("EnderIO API changed: " + e);
         }
         FilterPortBlockEntity fresh = port(h, 11, 2, 4);
         Object be = level.getBlockEntity(abs(h, 14, 2, 4));
@@ -457,7 +458,7 @@ public final class FilterWaterGameTests {
             String why = "";
             try {
                 var reg = level.registryAccess().lookupOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.Identifier.parse("enderio:conduit")));
-                Object fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.Identifier.parse("enderio:fluid")));
+                Object fluid = reg.getOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.Identifier.parse("enderio:fluid")));
                 var st = be.getClass().getMethod("getConnectionStatus", net.minecraft.core.Holder.class, Direction.class);
                 var cf = be.getClass().getMethod("getConnectionConfig", net.minecraft.core.Holder.class, Direction.class);
                 why = "east " + st.invoke(be, fluid, Direction.EAST) + " " + cf.invoke(be, fluid, Direction.EAST) + ", west " + st.invoke(be, fluid, Direction.WEST) + " " + cf.invoke(be, fluid, Direction.WEST);
@@ -484,7 +485,7 @@ public final class FilterWaterGameTests {
             Object pull = type.getField("PULL").get(null);
             transmitter.getClass().getMethod("setConnectionTypeRaw", Direction.class, type).invoke(transmitter, Direction.EAST, pull);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new GameTestAssertException("Mekanism API changed: " + e);
+            throw new GameTestFailure("Mekanism API changed: " + e);
         }
         h.succeedWhen(() -> {
             h.assertTrue(FilterPipes.joined(slot(h, 13, 2, 4, PipeLine.FRESH), Direction.EAST), "our fresh pipe joins the Mekanism pipe");
@@ -505,7 +506,7 @@ public final class FilterWaterGameTests {
         pipes(h, ModBlocks.FILTER_FRESH_PIPE.get(), new int[]{12, 2, 4}, new int[]{13, 2, 4});
         java.lang.reflect.Method set = null;
         for (java.lang.reflect.Method m : Class.forName("appeng.api.parts.PartHelper").getMethods()) if (m.getName().equals("setPart") && m.getParameterCount() == 5) set = m;
-        if (set == null) throw new GameTestAssertException("AE2 API changed: no PartHelper.setPart");
+        if (set == null) throw new GameTestFailure("AE2 API changed: no PartHelper.setPart");
         BlockPos a = abs(h, 14, 2, 4), b = abs(h, 15, 2, 4);
         net.minecraft.world.item.Item cable = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse("ae2:fluix_glass_cable"));
         net.minecraft.world.item.Item export = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse("ae2:export_bus"));
@@ -514,7 +515,7 @@ public final class FilterWaterGameTests {
         set.invoke(null, level, b, null, null, cable);
         Object bus = set.invoke(null, level, a, Direction.WEST, null, export);
         set.invoke(null, level, b, Direction.EAST, null, storage);
-        if (bus == null) throw new GameTestAssertException("AE2 did not place the export bus");
+        if (bus == null) throw new GameTestFailure("AE2 did not place the export bus");
         java.lang.reflect.Method getConfig = bus.getClass().getMethod("getConfig");
         getConfig.setAccessible(true);
         Object config = getConfig.invoke(bus);

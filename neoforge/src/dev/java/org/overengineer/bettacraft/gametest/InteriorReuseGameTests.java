@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.lang.reflect.Field;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.interior.InteriorManager;
@@ -60,7 +61,7 @@ public final class InteriorReuseGameTests {
         int before = (int) next.get(regions);
         TankBlockEntity third = CritterGameTests.tank(h, 14, 2, 2, 2, 2, 2, 8000);
         InteriorRegion t = InteriorManager.ensureRegion(level, third);
-        if (t.id() != before) throw new GameTestAssertException("a never used region was skipped: " + before + " -> " + t.id());
+        if (t.id() != before) throw new GameTestFailure("a never used region was skipped: " + before + " -> " + t.id());
         map.put(id, r); // the first tank keeps its region for the clean-up of the test area
         h.succeed();
     }

@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
@@ -56,7 +57,7 @@ public final class TerrariumGameTests {
 
     private static ServerLevel interiorLevel(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -92,15 +93,15 @@ public final class TerrariumGameTests {
     }
 
     private static MuskTurtleEntity turtleIn(GameTestHelper h, TankBlockEntity c) {
-        MuskTurtleEntity t = ModEntities.MUSK_TURTLE.get().create(h.getLevel());
-        if (t == null) throw new GameTestAssertException("no turtle");
+        MuskTurtleEntity t = ModEntities.MUSK_TURTLE.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (t == null) throw new GameTestFailure("no turtle");
         ItemStack bucket = t.getBucketItemStack();
         t.saveToBucketTag(bucket);
         t.discard();
         var err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.MUSK_TURTLE.get(), null, 0L);
-        if (err != null) throw new GameTestAssertException("turtle in: " + err.getString());
+        if (err != null) throw new GameTestFailure("turtle in: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (e instanceof MuskTurtleEntity m) return m;
-        throw new GameTestAssertException("no turtle in the tank");
+        throw new GameTestFailure("no turtle in the tank");
     }
 
     // ------------------------------------------------------------------ modes
@@ -202,7 +203,7 @@ public final class TerrariumGameTests {
         h.setBlock(new BlockPos(1, 2, 2), ModBlocks.THERMO_HYGROMETER.get().defaultBlockState().setValue(ThermoHygrometerBlock.FACING, Direction.WEST));
         var s = h.getBlockState(new BlockPos(1, 2, 2));
         h.assertTrue(ThermoHygrometerBlock.tank(h.getLevel(), h.absolutePos(new BlockPos(1, 2, 2)), s) == c, "the display finds its tank");
-        int signal = s.getAnalogOutputSignal(h.getLevel(), h.absolutePos(new BlockPos(1, 2, 2)));
+        int signal = s.getAnalogOutputSignal(h.getLevel(), h.absolutePos(new BlockPos(1, 2, 2)), net.minecraft.core.Direction.NORTH);
         h.assertTrue(signal == Math.round(t.humidity() * 15 / 100F), "comparator reads the humidity: " + signal + " for " + t.humidity());
         h.succeed();
     }
@@ -220,7 +221,7 @@ public final class TerrariumGameTests {
         h.setBlock(new BlockPos(2, 4, 2), ModBlocks.MISTER.get().defaultBlockState());
         TankEquipment.invalidate(c);
         MisterBlockEntity m = (MisterBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(2, 4, 2)));
-        if (m == null) throw new GameTestAssertException("no mister");
+        if (m == null) throw new GameTestFailure("no mister");
         m.water().fill(new FluidStack(Fluids.WATER, 4000), IFluidHandler.FluidAction.EXECUTE);
         m.setSetting(95);
         for (int i = 0; i < 20; i++) step(h, c, 0.005, 1);
@@ -244,7 +245,7 @@ public final class TerrariumGameTests {
         // an aquarium refuses it
         TankBlockEntity fish = CritterGameTests.tank(h, 10, 2, 2, 2, 2, 2, 8000);
         interior(h, fish);
-        MuskTurtleEntity probe = ModEntities.MUSK_TURTLE.get().create(h.getLevel());
+        MuskTurtleEntity probe = ModEntities.MUSK_TURTLE.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         ItemStack bucket = probe.getBucketItemStack();
         probe.saveToBucketTag(bucket);
         probe.discard();

@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -14,8 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.critters.Critter;
@@ -57,7 +58,7 @@ public final class PathfindingGameTests {
     private PathfindingGameTests() {}
 
     private static InteriorRegion interior(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++) {
@@ -94,13 +95,13 @@ public final class PathfindingGameTests {
 
     private static DwarfFrogEntity frogIn(GameTestHelper h, TankBlockEntity c) {
         ServerLevel level = h.getLevel();
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         ItemStack bag = FishBagItem.fillWith(f);
         f.discard();
         var err = TankInhabitants.insert(level, c, bag, ModEntities.DWARF_FROG.get(), null, 0L);
-        if (err != null) throw new GameTestAssertException("frog in: " + err.getString());
+        if (err != null) throw new GameTestFailure("frog in: " + err.getString());
         for (var e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof DwarfFrogEntity d) return d;
-        throw new GameTestAssertException("no frog in the tank");
+        throw new GameTestFailure("no frog in the tank");
     }
 
     /**
@@ -165,7 +166,7 @@ public final class PathfindingGameTests {
         int under = 0;
         for (int n = 0; n < 6; n++) {
             Critter k = TankCritters.add(level, c, CritterSpecies.DWARF_CRAYFISH, CritterGenes.wild(1, 0, rnd), n % 2 == 0, 30);
-            if (k == null) throw new GameTestAssertException("tank full");
+            if (k == null) throw new GameTestFailure("tank full");
             k.x = t.min().getX() + 0.12 + n * 0.02;
             k.z = t.min().getZ() + 0.12;
             k.y = terrain.ground(k.x, k.z);
@@ -209,7 +210,7 @@ public final class PathfindingGameTests {
         InteriorRegion r = interior(h, c);
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         var err = DecorItem.place(in, DecorType.SPAWNING_CAVE, new BlockPos(r.originX() + 17, InteriorRegion.BASE_Y, r.originZ() + 12), Rotation.NONE, null);
-        if (err != null) throw new GameTestAssertException("cave: " + err.getString());
+        if (err != null) throw new GameTestFailure("cave: " + err.getString());
         var caves = TankmateSpots.caves(level.getServer(), c.getTank());
         h.assertTrue(caves.size() == 1, "one cave");
         var spot = caves.getFirst();
@@ -218,7 +219,7 @@ public final class PathfindingGameTests {
         Vec3 behind = w.clamp(spot.pos().subtract(spot.dir().scale(0.8)).add(0, 0.15, 0), 0.3, 0.1, 0.2);
         TankmateEntity m = TankmateBreeding.spawn(level, c, TankmateSpecies.BRISTLENOSE_PLECO, TankmateGenes.wild(TankmateSpecies.BRISTLENOSE_PLECO),
                 false, LifeStage.ADULT, 0, behind);
-        if (m == null) throw new GameTestAssertException("no pleco");
+        if (m == null) throw new GameTestFailure("no pleco");
         m.health().feed();
         m.setCave(spot.pos(), spot.dir());
         List<Vec3> way = InteriorPaths.swim(level.getServer(), c.getTank(), behind, spot.pos(), w.surface());

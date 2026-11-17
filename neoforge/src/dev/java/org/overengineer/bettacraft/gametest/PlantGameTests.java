@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -25,8 +26,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.equipment.ExternalFilterBlock;
@@ -67,7 +68,7 @@ public final class PlantGameTests {
             TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
         }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(blocks.getFirst()));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
@@ -84,7 +85,7 @@ public final class PlantGameTests {
         sp.teleportTo(h.getLevel(), x, y - sp.getEyeHeight(), z, java.util.Set.of(), 0F, 90F, false);
         sp.setXRot(90F);
         sp.setYRot(0F);
-        sp.getInventory().getSelectedSlot() = 8; // the hand slot stays apart from the items the player gets
+        sp.getInventory().setSelectedSlot(8); // the hand slot stays apart from the items the player gets
         return sp;
     }
 
@@ -137,7 +138,7 @@ public final class PlantGameTests {
             h.assertTrue(t.plants().size() == 2 && t.plants().get(1).type == FloatingPlantType.LILY_PAD, "lily pad on the surface");
             h.assertTrue(h.getLevel().getBlockState(top.above()).isAir(), "no lily pad block placed");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -215,7 +216,7 @@ public final class PlantGameTests {
             for (int x = 4; x < 8; x++) for (int z = 4; z < 7; z++) if (!(x == 4 && z == 4)) litLight(h, new BlockPos(x, 3, z));
             BlockPos feederPos = new BlockPos(4, 3, 4);
             h.setBlock(feederPos, ModBlocks.FEEDER.get().defaultBlockState());
-            org.overengineer.bettacraft.equipment.FeederBlockEntity feeder = (org.overengineer.bettacraft.equipment.FeederBlockEntity) h.getBlockEntity(feederPos);
+            org.overengineer.bettacraft.equipment.FeederBlockEntity feeder = h.getBlockEntity(feederPos, org.overengineer.bettacraft.equipment.FeederBlockEntity.class);
             feeder.items().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 64), false);
             for (int i = 0; i < 2; i++) {
                 var g = org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(net.minecraft.util.RandomSource.create(40 + i));
@@ -339,7 +340,7 @@ public final class PlantGameTests {
             use(sp, h, top, new ItemStack(Items.BUCKET));
             h.assertTrue(t.waterMb() == water - 1000, "bucket still drains: " + t.waterMb());
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         // breaking the whole tank drops the plants
         int before = t.plants().size();
@@ -356,7 +357,7 @@ public final class PlantGameTests {
         sp.teleportTo(h.getLevel(), x, eyeY - sp.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         sp.setYRot(yaw);
         sp.setXRot(pitch);
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         return sp;
     }
 
@@ -402,7 +403,7 @@ public final class PlantGameTests {
             h.assertTrue(t.plants().size() >= 1, "the other frogbit stays: " + t.plants().size());
             h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu with the net");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         // from above, looking down at the second frogbit
         ServerPlayer top = lookingDown(h, b.x, o.getY() + 4.5, b.z);
@@ -421,7 +422,7 @@ public final class PlantGameTests {
             h.assertTrue(!(top.containerMenu instanceof TankMenu), "no menu");
             h.assertTrue(top.level() == h.getLevel(), "sneaking with the net does not enter the interior");
         } finally {
-            top.getServer().getPlayerList().remove(top);
+            top.level().getServer().getPlayerList().remove(top);
         }
         h.succeed();
     }
@@ -461,7 +462,7 @@ public final class PlantGameTests {
             TankActions.handle(sp, new TankActionPayload(menu.containerId, TankActions.THIN_PLANTS, 0, "", Optional.empty()));
             h.assertTrue(t.plants().size() == 3, "the owner thins out: " + t.plants().size());
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -494,7 +495,7 @@ public final class PlantGameTests {
             use(sp, h, top, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                     org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
             h.assertTrue(TankInhabitants.liveInhabitants(level, t).size() == 1, "betta bucket puts the fish in");
-            var tropical = net.minecraft.world.entity.EntityType.TROPICAL_FISH.create(level);
+            var tropical = net.minecraft.world.entity.EntityType.TROPICAL_FISH.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(tropical);
             tropical.discard();
             use(sp, h, top, bag);
@@ -507,7 +508,7 @@ public final class PlantGameTests {
             for (FloatingPlant p : t.plants()) after.add(p.id);
             h.assertTrue(after.equals(ids), "plants unchanged: " + ids + " -> " + after);
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -530,7 +531,7 @@ public final class PlantGameTests {
         for (int k = 0; k < 400; k++) {
             TankPlants.step(level, c, 0.0);
             for (FloatingPlant p : t.plants()) {
-                if (!s.contains(p.x, p.z)) throw new GameTestAssertException("plant over the notch / outside at " + p.x + "/" + p.z);
+                if (!s.contains(p.x, p.z)) throw new GameTestFailure("plant over the notch / outside at " + p.x + "/" + p.z);
             }
         }
         // a second tank with a filter on the west wall: plants near the jet move away
@@ -602,7 +603,7 @@ public final class PlantGameTests {
                         if (t != null && t != FloatingPlantType.LILY_PAD) { // vanilla junk has lily pads anyway
                             plants++;
                             if (biome.equals("minecraft:swamp") && t == FloatingPlantType.RED_ROOT_FLOATER) {
-                                throw new GameTestAssertException("red root floater only in mangrove swamps");
+                                throw new GameTestFailure("red root floater only in mangrove swamps");
                             }
                             if (!biome.equals("minecraft:plains")) seen.add(t);
                         }
@@ -626,10 +627,10 @@ public final class PlantGameTests {
         var rnd = h.getLevel().getRandom();
         java.util.Set<Item> generic = new java.util.HashSet<>(), rare = new java.util.HashSet<>();
         for (int level = 1; level <= 2; level++) {
-            VillagerTrades.ItemListing[] listings = VillagerTrades.WANDERING_TRADER_TRADES.get(level);
+            VillagerTrades.ItemListing[] listings = org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level);
             h.assertTrue(listings != null, "trade level " + level);
             for (VillagerTrades.ItemListing l : listings) {
-                var offer = l.getOffer(trader, rnd);
+                var offer = l.getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, rnd);
                 if (offer != null) (level == 1 ? generic : rare).add(offer.getResult().getItem());
             }
         }
@@ -676,7 +677,7 @@ public final class PlantGameTests {
             h.assertTrue(count(sp, item(FloatingPlantType.DUCKWEED)) == 1, "duckweed with it");
         } finally {
             ServerConfig.PLANTS_BOTTLE_CHANCE.set(saved);
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -693,7 +694,7 @@ public final class PlantGameTests {
         CompoundTag tank = tag.getCompoundOrEmpty("tank");
         tank.remove("plants");
         tank.remove("next_plant_id");
-        c.loadWithComponents(tag, level.registryAccess());
+        c.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), tag));
         TankData t = c.getTank();
         h.assertTrue(t.plants().isEmpty(), "no plants after the migration");
         BlockPos o = h.absolutePos(new BlockPos(4, 1, 4));

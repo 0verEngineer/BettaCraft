@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
@@ -69,14 +70,14 @@ public final class WaterGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
 
     private static ExternalFilterBlockEntity filter(GameTestHelper h, BlockPos rel, Direction towardsTank) {
         h.setBlock(rel, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, towardsTank));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter BE");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter BE");
         return f;
     }
 
@@ -85,11 +86,11 @@ public final class WaterGameTests {
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), data);
         java.util.Set<java.util.UUID> before = new java.util.HashSet<>(c.getTank().inhabitants());
         var err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof BettaEntity b && !before.contains(b.getUUID())) return b;
         }
-        throw new GameTestAssertException("betta not found");
+        throw new GameTestFailure("betta not found");
     }
 
     private static void clear(TankBlockEntity c, GameTestHelper h) {
@@ -192,7 +193,7 @@ public final class WaterGameTests {
         TankBlockEntity c = tank(h, 4, 1, 4, 2, 2, 2, 8000);
         TankData t = c.getTank();
         float ambient = TankCare.ambient(level, t);
-        if (ambient <= 20.5F) throw new GameTestAssertException("the GameTest biome is too cold for the cooler test: " + ambient);
+        if (ambient <= 20.5F) throw new GameTestFailure("the GameTest biome is too cold for the cooler test: " + ambient);
         t.setTargetTemp(20.0F);
         t.setWaterTemp(ambient);
         ExternalFilterBlockEntity f = filter(h, new BlockPos(6, 1, 4), Direction.WEST);
@@ -385,7 +386,7 @@ public final class WaterGameTests {
         tank.remove("water_quality");
         tank.putFloat("evaporation", 0.0F);
         tank.putLong("power", 0L);
-        c.loadWithComponents(tag, level.registryAccess());
+        c.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), tag));
         TankData t = c.getTank();
         h.assertTrue(t.waterQuality() == 1.0F && t.lastFreshWater() == -1 && t.evaporationCarry() == 0, "defaults after migration");
         h.assertTrue(t.waterMb() == 2000, "water kept");

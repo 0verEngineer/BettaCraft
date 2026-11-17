@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,11 +11,11 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
-import net.minecraft.gametest.framework.GameTestGenerator;
+import org.overengineer.bettacraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.gametest.framework.TestFunction;
+import org.overengineer.bettacraft.gametest.framework.TestFunction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -33,8 +34,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.AquaticSpecies;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -84,7 +85,7 @@ public final class AquaticGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
@@ -92,8 +93,8 @@ public final class AquaticGameTests {
     /** A filled container for this species: its own bucket if it has one, else our fish bag. */
     private static ItemStack container(GameTestHelper h, AquaticSpecies.Species s) {
         if (!s.buckets().isEmpty()) return new ItemStack(s.buckets().getFirst());
-        Entity e = s.type().create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("cannot create " + s.id());
+        Entity e = s.type().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("cannot create " + s.id());
         ItemStack bag = FishBagItem.fillWith(e);
         e.discard();
         return bag;
@@ -115,7 +116,7 @@ public final class AquaticGameTests {
         h.assertTrue(all.size() <= SLICES * PER_TEST, all.size() + " water animals: raise SLICES in AquaticGameTests");
         for (String v : List.of("cod", "salmon", "tropical_fish", "pufferfish", "axolotl", "tadpole", "squid", "glow_squid")) {
             AquaticSpecies.Species s = all.stream().filter(x -> x.id().getNamespace().equals("minecraft") && x.id().getPath().equals(v))
-                    .findFirst().orElseThrow(() -> new GameTestAssertException("vanilla " + v + " not found"));
+                    .findFirst().orElseThrow(() -> new GameTestFailure("vanilla " + v + " not found"));
             h.assertTrue(s.accepted(), v + " goes into tanks, got " + s.acceptance());
         }
         for (String v : List.of("dolphin", "turtle", "guardian", "elder_guardian", "frog")) {
@@ -148,7 +149,7 @@ public final class AquaticGameTests {
             h.succeed();
             return;
         }
-        if (mine.size() > PER_TEST) throw new GameTestAssertException(mine.size() + " species in one test: raise SLICES");
+        if (mine.size() > PER_TEST) throw new GameTestFailure(mine.size() + " species in one test: raise SLICES");
         List<Placed> placed = new ArrayList<>();
         for (int i = 0; i < mine.size(); i++) {
             AquaticSpecies.Species s = mine.get(i);
@@ -169,7 +170,7 @@ public final class AquaticGameTests {
                 h.assertTrue(live.size() == 1 && live.getFirst().getType() == s.type(), s.id() + ": one inside, got " + live);
                 placed.add(new Placed(s, c, live.getFirst().getUUID()));
             } else {
-                if (s.accepted() && !sizeOnly) throw new GameTestAssertException(s.id() + " should go in: " + err.getString());
+                if (s.accepted() && !sizeOnly) throw new GameTestFailure(s.id() + " should go in: " + err.getString());
                 h.assertTrue(!err.getString().isBlank(), s.id() + ": refusal has a message");
                 h.assertTrue(live.isEmpty(), s.id() + ": nothing inside after the refusal");
                 LOGGER.info("[aquatic] {} refused: {}", s.id(), err.getString());
@@ -186,7 +187,7 @@ public final class AquaticGameTests {
                     sp.getInventory().clearContent();
                     sp.getInventory().add(bag ? new ItemStack(ModItems.FISH_BAG.get()) : new ItemStack(Items.BUCKET));
                     Component err = TankInhabitants.takeOut(sp, p.tank(), p.entity(), bag);
-                    if (err != null) throw new GameTestAssertException(p.species().id() + ": take out failed: " + err.getString());
+                    if (err != null) throw new GameTestFailure(p.species().id() + ": take out failed: " + err.getString());
                     h.assertTrue(h.getLevel().getEntity(p.entity()) == null, p.species().id() + ": gone from the tank");
                     boolean filled = false;
                     for (ItemStack s : sp.getInventory().getNonEquipmentItems()) filled |= TankInhabitants.containedType(s) == p.species().type();
@@ -194,7 +195,7 @@ public final class AquaticGameTests {
                     LOGGER.info("[aquatic] {} lived {} ticks in a tank and was taken out with a {}", p.species().id(), LIVE_TICKS, bag ? "bag" : "bucket");
                 }
             } finally {
-                sp.getServer().getPlayerList().remove(sp);
+                sp.level().getServer().getPlayerList().remove(sp);
             }
             h.succeed();
         });
@@ -203,9 +204,9 @@ public final class AquaticGameTests {
     private static void checkInside(GameTestHelper h, List<Placed> placed, boolean last) {
         for (Placed p : placed) {
             Entity e = h.getLevel().getEntity(p.entity());
-            if (e == null || !e.isAlive()) throw new GameTestAssertException(p.species().id() + " died in the tank" + (e == null ? "" : ": " + e));
+            if (e == null || !e.isAlive()) throw new GameTestFailure(p.species().id() + " died in the tank" + (e == null ? "" : ": " + e));
             if (!TankInhabitants.inside(p.tank().getTank(), e)) {
-                throw new GameTestAssertException(p.species().id() + " left the tank: " + e.position() + " tank " + p.tank().getTank().min());
+                throw new GameTestFailure(p.species().id() + " left the tank: " + e.position() + " tank " + p.tank().getTank().min());
             }
             h.assertTrue(TankInhabitants.hasTankRef(e), p.species().id() + " keeps its tank reference");
             if (last) h.assertTrue(p.tank().getTank().inhabitants().contains(p.entity()), p.species().id() + " is on the inhabitant list");
@@ -226,10 +227,10 @@ public final class AquaticGameTests {
             h.assertTrue(TankInhabitants.accepts(EntityType.VEX, null) == TankInhabitants.Acceptance.HOSTILE, "vex hostile");
             // M31 part d: the endermite is a mob in glass (shrunk in the tank), unless the deny list names it
             h.assertTrue(TankInhabitants.accepts(EntityType.ENDERMITE, null) == TankInhabitants.Acceptance.OK, "endermite: a mob in glass");
-            Entity allay = EntityType.ALLAY.create(h.getLevel()); // M39 part c: the bee is a terrarium pet now
+            Entity allay = EntityType.ALLAY.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED); // M39 part c: the bee is a terrarium pet now
             h.assertTrue(TankInhabitants.accepts(EntityType.ALLAY, allay) == TankInhabitants.Acceptance.NOT_AQUATIC, "an allay is no water animal");
             allay.discard();
-            Entity squid = EntityType.SQUID.create(h.getLevel());
+            Entity squid = EntityType.SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             h.assertTrue(TankInhabitants.accepts(EntityType.SQUID, squid) == TankInhabitants.Acceptance.OK, "squids fit (0.8)");
             squid.discard();
             h.assertTrue(EntityType.AXOLOTL.is(ModTags.PREDATORS), "axolotls are predators");
@@ -243,7 +244,7 @@ public final class AquaticGameTests {
             ServerConfig.INHABITANTS_ALLOW.set(List.of());
             ServerConfig.INHABITANTS_DENY.set(List.of());
             TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 16000);
-            Component tooBig = TankInhabitants.insert(h.getLevel(), c, FishBagItem.fillWith(EntityType.DOLPHIN.create(h.getLevel())), EntityType.DOLPHIN, null, 100);
+            Component tooBig = TankInhabitants.insert(h.getLevel(), c, FishBagItem.fillWith(EntityType.DOLPHIN.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED)), EntityType.DOLPHIN, null, 100);
             // M30: a dolphin is a big animal: the message names the tank it needs (32 x 16 blocks)
             h.assertTrue(tooBig != null && tooBig.getString().contains("32"), "message names the size: " + tooBig);
         } finally {
@@ -257,13 +258,13 @@ public final class AquaticGameTests {
     @GameTest(template = EMPTY)
     public static void squidInFishBag(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 16000);
-        Entity squid = EntityType.GLOW_SQUID.create(h.getLevel());
+        Entity squid = EntityType.GLOW_SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         squid.setCustomName(Component.literal("Inky"));
         ItemStack bag = FishBagItem.fillWith(squid);
         squid.discard();
         h.assertTrue(FishBagItem.storedEntity(bag) != null, "full entity data in the bag");
         Component err = TankInhabitants.insert(h.getLevel(), c, bag, EntityType.GLOW_SQUID, null, 100);
-        if (err != null) throw new GameTestAssertException(err.getString());
+        if (err != null) throw new GameTestFailure(err.getString());
         Entity in = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
         h.assertTrue(in.getType() == EntityType.GLOW_SQUID && "Inky".equals(in.getCustomName().getString()), "the named glow squid is inside");
         h.runAfterDelay(100, () -> {
@@ -276,11 +277,11 @@ public final class AquaticGameTests {
                 Component out = TankInhabitants.takeOut(sp, c, in.getUUID(), true);
                 h.assertTrue(out == null, "taken out with the bag: " + (out == null ? "" : out.getString()));
                 ItemStack filled = sp.getInventory().getNonEquipmentItems().stream().filter(s -> FishBagItem.storedEntity(s) != null).findFirst()
-                        .orElseThrow(() -> new GameTestAssertException("no filled bag"));
+                        .orElseThrow(() -> new GameTestFailure("no filled bag"));
                 CompoundTag t = FishBagItem.storedEntity(filled);
                 h.assertTrue("minecraft:glow_squid".equals(t.getStringOr("id", "")) && t.getStringOr("CustomName", "").contains("Inky"), "data kept: " + t);
             } finally {
-                sp.getServer().getPlayerList().remove(sp);
+                sp.level().getServer().getPlayerList().remove(sp);
             }
             h.succeed();
         });
@@ -290,7 +291,7 @@ public final class AquaticGameTests {
 
     private static Tadpole tadpoleIn(GameTestHelper h, TankBlockEntity c) {
         Component err = TankInhabitants.insert(h.getLevel(), c, new ItemStack(Items.TADPOLE_BUCKET), EntityType.TADPOLE, null, 1000);
-        if (err != null) throw new GameTestAssertException(err.getString());
+        if (err != null) throw new GameTestFailure(err.getString());
         return (Tadpole) TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
     }
 
@@ -331,8 +332,7 @@ public final class AquaticGameTests {
             Tadpole t = tadpoleIn(h, c);
             growUp(t);
             h.assertTrue(t.isAlive() && TankInhabitants.inside(c.getTank(), t), "still a tadpole in the tank");
-            CompoundTag tag = new CompoundTag();
-            t.addAdditionalSaveData(tag);
+            CompoundTag tag = org.overengineer.bettacraft.util.NbtCompat.saveEntityWithoutId(t);
             h.assertTrue(tag.getIntOr("Age", 0) < Tadpole.ticksToBeFrog, "age set back: " + tag.getIntOr("Age", 0));
         } finally {
             ServerConfig.INHABITANTS_TADPOLES.set(saved);
@@ -347,7 +347,7 @@ public final class AquaticGameTests {
     public static void noTankInsideATank(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 1, 2, 2, 2, 2, 0);
         ServerLevel interior = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (interior == null) throw new GameTestAssertException("no interior dimension");
+        if (interior == null) throw new GameTestFailure("no interior dimension");
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         BlockPos floor = r.toWorld(5, 0, 5).below();
         BlockPos target = floor.above();
@@ -372,7 +372,7 @@ public final class AquaticGameTests {
                     new BlockHitResult(Vec3.atCenterOf(outside.below()).add(0, 0.5, 0), Direction.UP, outside.below(), false));
             h.assertTrue(stack.useOn(ok).consumesAction() && h.getLevel().getBlockState(outside).getBlock() instanceof TankBlock, "outside it is placed");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         // set without the item (commands, structure tools): broken again and dropped
         interior.setBlockAndUpdate(target, ModBlocks.TANK.get().defaultBlockState());

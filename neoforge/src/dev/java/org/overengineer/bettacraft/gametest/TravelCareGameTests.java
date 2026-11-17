@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -11,8 +12,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -53,7 +54,7 @@ public final class TravelCareGameTests {
         CommunityFishGameTests.betta(h, c, BettaGenotype.randomWild(BettaSpecies.SPLENDENS, r), true);
         List<Entity> out = new ArrayList<>();
         ListTag stowed = TankMoves.pack(level, t, out);
-        if (stowed.size() != 2) throw new GameTestAssertException("two bettas packed: " + stowed.size());
+        if (stowed.size() != 2) throw new GameTestFailure("two bettas packed: " + stowed.size());
         for (Entity e : out) e.discard();
         CompoundTag nbt = c.saveWithFullMetadata(level.registryAccess());
         nbt.put("stowed", stowed);

@@ -3,13 +3,13 @@ package org.overengineer.bettacraft.gametest;
 import org.overengineer.bettacraft.util.NbtCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
 import org.overengineer.bettacraft.equipment.CabinetBlock;
@@ -85,7 +85,7 @@ public final class M291GameTests {
         BlockPos cp2 = new BlockPos(12, 1, 12);
         h.setBlock(cp2, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         CabinetBlockEntity cab2 = (CabinetBlockEntity) level.getBlockEntity(h.absolutePos(cp2));
-        cab2.loadWithComponents(old, level.registryAccess());
+        cab2.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), old));
         h.assertTrue(cab2.items().getSlots() == CabinetBlockEntity.SLOTS, "the old cabinet gets the pump slot");
         h.assertTrue(cab2.filterItem().is(ModItems.EXTERNAL_FILTER.get()) && cab2.items().getStackInSlot(9).getCount() == 12,
                 "and keeps its filter and storage");

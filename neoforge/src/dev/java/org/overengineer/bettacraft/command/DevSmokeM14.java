@@ -82,7 +82,7 @@ final class DevSmokeM14 {
         TankCritters.add(level, c, CritterSpecies.APPLE_SNAIL, CritterGenes.pure(1, 0.4F), false, 6);
         TankCritters.add(level, c, CritterSpecies.RAMSHORN, CritterGenes.pure(0, 0.4F), true, 5);
         for (var f : TankAlgae.wetFaces(c.getTank())) AlgaeSim.set(c.getTank().algae(), f.pos(), f.dir(), 0.8F);
-        DwarfFrogEntity frog = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity frog = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         ItemStack bag = FishBagItem.fillWith(frog);
         frog.discard();
         var err = TankInhabitants.insert(level, c, bag, ModEntities.DWARF_FROG.get(), null, 0L);
@@ -132,11 +132,11 @@ final class DevSmokeM14 {
         int[] counts = info.getIntArray("critters").orElse(new int[0]);
         if (counts.length != 4 || counts[0] + counts[2] < 7) throw new IllegalStateException("M14: overlay counts " + java.util.Arrays.toString(counts));
         if (ModItems.ALGAE_SCRAPER.get() == null || ModItems.FROG_BUCKET.get() == null) throw new IllegalStateException("M14: items");
-        var trader = EntityType.WANDERING_TRADER.create(level);
+        var trader = EntityType.WANDERING_TRADER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         List<CritterSpecies> offered = new ArrayList<>();
-        for (int lv = 1; lv <= 2; lv++) {
-            for (VillagerTrades.ItemListing l : VillagerTrades.WANDERING_TRADER_TRADES.get(lv)) {
-                var offer = l.getOffer(trader, level.getRandom());
+        for (var tradePool : VillagerTrades.WANDERING_TRADER_TRADES) {
+            for (VillagerTrades.ItemListing l : tradePool.getLeft()) {
+                var offer = l.getOffer(level, trader, level.getRandom());
                 if (offer == null) continue;
                 var animals = TankCritters.bagged(offer.getResult());
                 if (animals != null) offered.add(Critter.loadAnimal(animals.getFirst(), 0, 0, 0, 0).species);

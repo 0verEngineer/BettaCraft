@@ -55,7 +55,7 @@ final class DevSmokeM11 {
         // recipes and advancement
         var rm = level.getServer().getRecipeManager();
         for (String id : new String[]{"tank", "tank_clean", "tank_textured_to_clean", "tank_clean_to_textured", "mirror_stick"}) {
-            if (rm.byKey(BettaCraft.id(id)).isEmpty()) throw new IllegalStateException("M11: recipe " + id + " missing");
+            if (rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id(id))).isEmpty()) throw new IllegalStateException("M11: recipe " + id + " missing");
         }
         if (level.getServer().getAdvancements().get(BettaCraft.id("mirror")) == null) throw new IllegalStateException("M11: advancement mirror missing");
         CompoundTag info = InfoData.tank(level, base);

@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -20,8 +21,8 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.big.BigAnimals;
 import org.overengineer.bettacraft.big.TransportTubItem;
@@ -76,23 +77,23 @@ public final class ForeignWaterAnimalsGameTests {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no entity " + id));
     }
 
     private static Item item(String id) {
-        return BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no item " + id));
+        return BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no item " + id));
     }
 
     private static ForeignProfile profile(EntityType<?> t) {
         ForeignProfile p = ForeignProfiles.of(t);
-        if (p == null) throw new GameTestAssertException("no profile for " + BuiltInRegistries.ENTITY_TYPE.getKey(t));
+        if (p == null) throw new GameTestFailure("no profile for " + BuiltInRegistries.ENTITY_TYPE.getKey(t));
         return p;
     }
 
     /** A new animal of this type in a transport tub (big ones) or a fish bag (small ones). */
     private static ItemStack holder(GameTestHelper h, EntityType<?> type, boolean tub) {
-        Entity e = type.create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("no " + type);
+        Entity e = type.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("no " + type);
         ItemStack s = tub ? TransportTubItem.fillWith(e) : FishBagItem.fillWith(e);
         e.discard();
         return s;
@@ -106,9 +107,9 @@ public final class ForeignWaterAnimalsGameTests {
     private static void expect(GameTestHelper h, TankBlockEntity c, ItemStack stack, String key, String what) {
         Component err = insert(h, c, stack);
         if (key == null) {
-            if (err != null) throw new GameTestAssertException(what + " refused: " + err.getString());
+            if (err != null) throw new GameTestFailure(what + " refused: " + err.getString());
         } else if (!ForeignTerrariumGameTests.says(err, key)) {
-            throw new GameTestAssertException(what + ": expected " + key + ", got " + (err == null ? "accepted" : err.getString()));
+            throw new GameTestFailure(what + ": expected " + key + ", got " + (err == null ? "accepted" : err.getString()));
         }
     }
 

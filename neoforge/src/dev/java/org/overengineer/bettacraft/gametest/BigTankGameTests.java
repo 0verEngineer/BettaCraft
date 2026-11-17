@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.world.InteractionResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -22,8 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.big.BigAnimals;
 import org.overengineer.bettacraft.big.BigCatching;
@@ -67,9 +68,9 @@ public final class BigTankGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankData t = c.getTank();
-        if (t.sizeX() != sx || t.sizeY() != sy || t.sizeZ() != sz) throw new GameTestAssertException("tank is " + t.sizeX() + "x" + t.sizeY() + "x" + t.sizeZ());
+        if (t.sizeX() != sx || t.sizeY() != sy || t.sizeZ() != sz) throw new GameTestFailure("tank is " + t.sizeX() + "x" + t.sizeY() + "x" + t.sizeZ());
         TankInteractions.changeWater(h.getLevel(), c, t.capacityMb(), salt);
         t.setWaterTemp(25F);
         t.setTargetTemp(25F);
@@ -79,13 +80,13 @@ public final class BigTankGameTests {
 
     static ItemStack pangasiusTub(GameTestHelper h) {
         ItemStack tub = BigCatching.caught(h.getLevel(), TankmateSpecies.PANGASIUS, NetCatching.random(h.getLevel()));
-        if (tub == null) throw new GameTestAssertException("no pangasius");
+        if (tub == null) throw new GameTestFailure("no pangasius");
         return tub;
     }
 
     static ItemStack dolphinTub(GameTestHelper h) {
-        Dolphin d = EntityType.DOLPHIN.create(h.getLevel());
-        if (d == null) throw new GameTestAssertException("no dolphin");
+        Dolphin d = EntityType.DOLPHIN.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (d == null) throw new GameTestFailure("no dolphin");
         ItemStack tub = TransportTubItem.fillWith(d);
         d.discard();
         return tub;
@@ -93,12 +94,12 @@ public final class BigTankGameTests {
 
     static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
         EntityType<?> type = TankInhabitants.containedType(stack);
-        if (type == null) throw new GameTestAssertException("no entity type in " + stack);
+        if (type == null) throw new GameTestFailure("no entity type in " + stack);
         return TankInhabitants.insert(h.getLevel(), c, stack, type, null, TankInhabitants.carriedWater(stack));
     }
 
     static void ok(Component error) {
-        if (error != null) throw new GameTestAssertException("insert failed: " + error.getString());
+        if (error != null) throw new GameTestFailure("insert failed: " + error.getString());
     }
 
     /** The first filled transport tub in the inventory (a creative player keeps the empty one, like a bucket). */
@@ -143,7 +144,7 @@ public final class BigTankGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void bucketsAndBagsRefuseBigAnimals(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        TankmateEntity fish = org.overengineer.bettacraft.registry.ModEntities.TANKMATES.get(TankmateSpecies.PANGASIUS).get().create(level);
+        TankmateEntity fish = org.overengineer.bettacraft.registry.ModEntities.TANKMATES.get(TankmateSpecies.PANGASIUS).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         fish.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(5, 2, 5)));
         level.addFreshEntity(fish);
         ServerPlayer p = MockPlayers.serverPlayer(h);

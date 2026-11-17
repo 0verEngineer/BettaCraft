@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
@@ -64,7 +65,7 @@ public final class HerpGameTests {
 
     private static ServerLevel interiorLevel(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -93,7 +94,7 @@ public final class HerpGameTests {
         TankInteractions.changeWater(h.getLevel(), c, 9000);
         TankClimate.step(h.getLevel(), c, 0.01);
         TankData t = c.getTank();
-        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestAssertException("no paludarium: " + t.terrariumMode() + " land " + t.landShare());
+        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestFailure("no paludarium: " + t.terrariumMode() + " land " + t.landShare());
         t.setClimate(new Climate.State(24, 24, 24, 90, 0, 0));
         t.setWaterTemp(24F);
         return c;
@@ -104,13 +105,13 @@ public final class HerpGameTests {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 3, 3, 3, 0);
         interior(h, c, Blocks.SAND.defaultBlockState());
         TankClimate.step(h.getLevel(), c, 0.01);
-        if (c.getTank().terrariumMode() != TerrariumMode.TERRARIUM) throw new GameTestAssertException("no terrarium: " + c.getTank().terrariumMode());
+        if (c.getTank().terrariumMode() != TerrariumMode.TERRARIUM) throw new GameTestFailure("no terrarium: " + c.getTank().terrariumMode());
         return c;
     }
 
     private static ItemStack box(GameTestHelper h, HerpSpecies s, boolean female, int variety) {
-        HerpEntity e = ModEntities.herp(s).create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("no " + s.id());
+        HerpEntity e = ModEntities.herp(s).create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("no " + s.id());
         e.setFemale(female);
         e.setVariety(variety);
         ItemStack stack = e.getBucketItemStack();
@@ -122,11 +123,11 @@ public final class HerpGameTests {
     static HerpEntity put(GameTestHelper h, TankBlockEntity c, HerpSpecies s, boolean female, int variety) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         var err = TankInhabitants.insert(h.getLevel(), c, box(h, s, female, variety), ModEntities.herp(s), null, 0L);
-        if (err != null) throw new GameTestAssertException(s.id() + " in: " + err.getString());
+        if (err != null) throw new GameTestFailure(s.id() + " in: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof HerpEntity t && !before.contains(e)) return t;
         }
-        throw new GameTestAssertException("no " + s.id() + " in the tank");
+        throw new GameTestFailure("no " + s.id() + " in the tank");
     }
 
     // ------------------------------------------------------------------ admission and climate
@@ -315,13 +316,13 @@ public final class HerpGameTests {
     public static void wildHerps(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         var biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.JUNGLE)) == HerpSpawns.Home.JUNGLE, "jungle");
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.DESERT)) == HerpSpawns.Home.ARID, "desert");
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.BADLANDS)) == HerpSpawns.Home.ARID, "badlands");
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.FOREST)) == HerpSpawns.Home.WOODLAND, "forest");
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.SNOWY_PLAINS)) == null, "no reptiles in the snow");
-        List<EntityType<?>> jungle = mobs(biomes.getHolderOrThrow(Biomes.JUNGLE).value()), desert = mobs(biomes.getHolderOrThrow(Biomes.DESERT).value()),
-                forest = mobs(biomes.getHolderOrThrow(Biomes.FOREST).value()), savanna = mobs(biomes.getHolderOrThrow(Biomes.SAVANNA).value());
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.JUNGLE)) == HerpSpawns.Home.JUNGLE, "jungle");
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.DESERT)) == HerpSpawns.Home.ARID, "desert");
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.BADLANDS)) == HerpSpawns.Home.ARID, "badlands");
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.FOREST)) == HerpSpawns.Home.WOODLAND, "forest");
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.SNOWY_PLAINS)) == null, "no reptiles in the snow");
+        List<EntityType<?>> jungle = mobs(biomes.getOrThrow(Biomes.JUNGLE).value()), desert = mobs(biomes.getOrThrow(Biomes.DESERT).value()),
+                forest = mobs(biomes.getOrThrow(Biomes.FOREST).value()), savanna = mobs(biomes.getOrThrow(Biomes.SAVANNA).value());
         h.assertTrue(jungle.contains(ModEntities.herp(HerpSpecies.DART_FROG)) && jungle.contains(ModEntities.herp(HerpSpecies.CRESTED_GECKO)), "jungle animals");
         h.assertTrue(desert.contains(ModEntities.herp(HerpSpecies.LEOPARD_GECKO)), "the leopard gecko in deserts");
         h.assertTrue(forest.contains(ModEntities.herp(HerpSpecies.CORN_SNAKE)), "the corn snake in forests");
@@ -341,7 +342,7 @@ public final class HerpGameTests {
         // the wild variety: never a morph
         var random = net.minecraft.util.RandomSource.create(5);
         for (int i = 0; i < 50; i++) {
-            h.assertTrue(HerpSpawns.variety(HerpSpecies.CORN_SNAKE, biomes.getHolderOrThrow(Biomes.FOREST), random, EntitySpawnReason.NATURAL) == 0, "wild corn snakes");
+            h.assertTrue(HerpSpawns.variety(HerpSpecies.CORN_SNAKE, biomes.getOrThrow(Biomes.FOREST), random, EntitySpawnReason.NATURAL) == 0, "wild corn snakes");
         }
         for (HerpSpecies s : List.of(HerpSpecies.DART_FROG, HerpSpecies.HORNED_FROG, HerpSpecies.LEOPARD_GECKO, HerpSpecies.CRESTED_GECKO, HerpSpecies.CORN_SNAKE)) {
             List<Source> src = Sources.of(Target.item(s.containerId()));
@@ -353,7 +354,7 @@ public final class HerpGameTests {
 
     private static List<EntityType<?>> mobs(net.minecraft.world.level.biome.Biome b) {
         List<EntityType<?>> out = new ArrayList<>();
-        for (var d : b.getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) out.add(d.type);
+        for (var d : b.getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) out.add(d.value().type());
         return out;
     }
 }

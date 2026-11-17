@@ -51,7 +51,7 @@ final class DevClientSmokeM30b {
         then(1, () -> mc.options.hideGui = true);
         then(1, () -> look(base.getX() + 12, base.getY() + 3.5, base.getZ() - 14, 0F, 8F));
         // let the stingrays settle near the ground, then hold everyone still for the pictures
-        then(200, () -> server(p -> place(p.server.overworld())));
+        then(200, () -> server(p -> place(p.level().getServer().overworld())));
         then(60, () -> {
             int n = mc.level.getEntitiesOfClass(TankmateEntity.class, new AABB(base).inflate(40), e -> e.species().isLarge()).size();
             LOGGER.info("[smoketest] M30b giants seen by the client: {}", n);
@@ -105,7 +105,7 @@ final class DevClientSmokeM30b {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(-12, 2, 300);
         TankBlockEntity c = tank(level, p, base, 24, 6, 12);
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
@@ -132,7 +132,7 @@ final class DevClientSmokeM30b {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -163,7 +163,7 @@ final class DevClientSmokeM30b {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m30b_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m30b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

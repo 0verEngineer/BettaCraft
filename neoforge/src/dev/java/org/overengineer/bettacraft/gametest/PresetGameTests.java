@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -14,8 +15,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.chem.ChemTolerance;
 import org.overengineer.bettacraft.chem.TankChemistry;
@@ -117,7 +118,7 @@ public final class PresetGameTests {
                     TankMultiblock.onTankBlockAdded(level, h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(level, h.absolutePos(new BlockPos(4, 1, 4)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(level, c, 44_000); // an air gap for the frog
         c.getTank().setWaterTemp(26F);
         c.getTank().setTargetTemp(26F);
@@ -131,7 +132,7 @@ public final class PresetGameTests {
         for (boolean female : new boolean[]{false, true}) {
             BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(female ? 2 : 1)), female, 0);
             var err = TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), null, false);
-            if (err != null) throw new GameTestAssertException("betta: " + err.getString());
+            if (err != null) throw new GameTestFailure("betta: " + err.getString());
         }
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof BettaEntity b) bettas.add(b);
         List<TankmateEntity> mates = new ArrayList<>();
@@ -140,22 +141,22 @@ public final class PresetGameTests {
             Vec3 p = w.clamp(new Vec3(w.box().getCenter().x + i * 0.3, w.box().minY + 0.4, w.box().getCenter().z), 0.35, 0.1, 0.2);
             TankmateEntity e = TankmateBreeding.spawn(level, c, TankmateSpecies.NEON_TETRA, TankmateGenes.wild(TankmateSpecies.NEON_TETRA), i % 2 == 0,
                     LifeStage.ADULT, 0, p);
-            if (e == null) throw new GameTestAssertException("could not spawn a neon");
+            if (e == null) throw new GameTestFailure("could not spawn a neon");
             mates.add(e);
         }
         List<Critter> critters = new ArrayList<>();
         for (CritterSpecies s : List.of(CritterSpecies.NEOCARIDINA, CritterSpecies.NEOCARIDINA, CritterSpecies.RAMSHORN, CritterSpecies.ZEBRA_NERITE)) {
             critters.add(TankCritters.add(level, c, s, CritterGenes.WILD, critters.size() % 2 == 0, s.juvenileDays() + 1));
         }
-        if (critters.contains(null)) throw new GameTestAssertException("could not add the small animals");
+        if (critters.contains(null)) throw new GameTestFailure("could not add the small animals");
         DwarfFrogEntity frog = null;
         Axolotl axolotl = null;
         if (frogAndAxolotl) {
-            DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+            DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack bag = FishBagItem.fillWith(f);
             f.discard();
             var err = TankInhabitants.insert(level, c, bag, ModEntities.DWARF_FROG.get(), null, 0L);
-            if (err != null) throw new GameTestAssertException("frog: " + err.getString());
+            if (err != null) throw new GameTestFailure("frog: " + err.getString());
             for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof DwarfFrogEntity d) frog = d;
             axolotl = (Axolotl) ForeignGameTests.add(h, c, EntityType.AXOLOTL, t -> {});
         }
@@ -321,7 +322,7 @@ public final class PresetGameTests {
             s.frog().hurt(h.getLevel().damageSources().drown(), 100F);
             check(h, s.frog().isAlive(), "drowning killed the frog");
             // /kill still kills
-            s.frog().kill();
+            s.frog().kill((net.minecraft.server.level.ServerLevel) s.frog().level());
             check(h, !s.frog().isAlive(), "/kill does not kill");
             // NORMAL again: the hopeless water kills
             ServerConfig.CARE_MODE.set(ServerConfig.CareMode.NORMAL);

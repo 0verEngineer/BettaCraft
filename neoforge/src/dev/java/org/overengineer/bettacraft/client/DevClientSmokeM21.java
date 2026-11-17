@@ -76,9 +76,9 @@ final class DevClientSmokeM21 {
                 then(1, () -> server(p -> {
                     InteriorRegion r = region;
                     if (r == null) return;
-                    ServerLevel in = InteriorManager.interiorLevel(p.server);
+                    ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
                     BlockPos at = r.toWorld(v.x(), v.y(), v.z());
-                    p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, v.yaw(), v.pitch());
+                    p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), v.yaw(), v.pitch(), true);
                 }));
                 then(v == VIEWS.getFirst() ? 140 : 70, () -> {
                     if (meshes) {
@@ -98,7 +98,7 @@ final class DevClientSmokeM21 {
             if (r == null || !IrisCompat.shaderPackInUse()) return;
             View v = VIEWS.getFirst();
             BlockPos at = r.toWorld(v.x(), v.y(), v.z());
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, v.yaw(), v.pitch());
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), v.yaw(), v.pitch(), true);
         }));
         then(80, () -> PlantMeshRenderer.shadows = false);
         then(40, () -> {
@@ -112,7 +112,7 @@ final class DevClientSmokeM21 {
             InteriorRegion r = region;
             if (r == null) return;
             BlockPos at = r.toWorld(VIEWS.get(1).x(), VIEWS.get(1).y(), VIEWS.get(1).z());
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, VIEWS.get(1).yaw(), VIEWS.get(1).pitch());
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), VIEWS.get(1).yaw(), VIEWS.get(1).pitch(), true);
         }));
         then(100, () -> {
             if (IrisCompat.shaderPackInUse()) {
@@ -127,7 +127,7 @@ final class DevClientSmokeM21 {
             PlantMeshRenderer.maxRebuildDelay = 0;
             server(p -> {
                 InteriorRegion r = region;
-                ServerLevel in = InteriorManager.interiorLevel(p.server);
+                ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
                 for (InteriorPlant pl : r.plants().all()) {
                     if (pl.species == PlantSpecies.ROTALA && pl.x == 7 && pl.y == 0 && pl.z == 24) {
                         int n = InteriorPlants.trim(in, r, pl, null, null, null);
@@ -147,7 +147,7 @@ final class DevClientSmokeM21 {
         });
         then(1, () -> setMeshes(saved));
         then(1, () -> server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), base.getX() + 1.5, base.getY() + 1.0, base.getZ() - 3.0, 0F, 10F);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), base.getX() + 1.5, base.getY() + 1.0, base.getZ() - 3.0, java.util.Set.of(), 0F, 10F, true);
         }));
         // the new fish buckets in the hotbar
         then(60, () -> server(p -> {
@@ -175,7 +175,7 @@ final class DevClientSmokeM21 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(-20, 2, 260);
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) for (int x = 0; x < 3; x++) blocks.add(base.offset(x, y, z));
@@ -250,7 +250,7 @@ final class DevClientSmokeM21 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

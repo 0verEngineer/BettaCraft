@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -16,8 +17,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -58,13 +59,13 @@ public final class LiveFoodGameTests {
 
     static LiveCultureBlockEntity culture(GameTestHelper h, BlockPos rel, boolean tubifex) {
         h.setBlock(rel, (tubifex ? ModBlocks.TUBIFEX_DISH : ModBlocks.DAPHNIA_BARREL).get().defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof LiveCultureBlockEntity be)) throw new GameTestAssertException("no culture");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof LiveCultureBlockEntity be)) throw new GameTestFailure("no culture");
         return be;
     }
 
     static LiveFoodPumpBlockEntity pump(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.LIVE_FOOD_PUMP.get().defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof LiveFoodPumpBlockEntity p)) throw new GameTestAssertException("no pump");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof LiveFoodPumpBlockEntity p)) throw new GameTestFailure("no pump");
         return p;
     }
 
@@ -72,11 +73,11 @@ public final class LiveFoodGameTests {
         BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(seed)), female, 0);
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof BettaEntity b && b.getBettaData().fishId().equals(d.fishId())) return b;
         }
-        throw new GameTestAssertException("inserted betta not found");
+        throw new GameTestFailure("inserted betta not found");
     }
 
     private static void light(GameTestHelper h, BlockPos rel) {
@@ -215,7 +216,7 @@ public final class LiveFoodGameTests {
         TankBlockEntity c = AerationGameTests.tank(h, 1, 2, 1, 2, 2, 2);
         betta(h, c, true, 27);
         h.setBlock(new BlockPos(4, 2, 1), ModBlocks.ARTEMIA_HATCHERY.get().defaultBlockState());
-        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(4, 2, 1))) instanceof CultureTubBlockEntity hatchery)) throw new GameTestAssertException("no hatchery");
+        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(4, 2, 1))) instanceof CultureTubBlockEntity hatchery)) throw new GameTestFailure("no hatchery");
         LiveFoodPumpBlockEntity p = pump(h, new BlockPos(3, 2, 1));
         hatchery.items().setStackInSlot(CultureTubBlockEntity.OUTPUT, new ItemStack(ModItems.ARTEMIA_NAUPLII.get(), 3));
         p.setDoses(0);
@@ -233,7 +234,7 @@ public final class LiveFoodGameTests {
         h.assertTrue(p.status() == LiveFoodPumpBlockEntity.PUMPED, "tubifex into the tank next to it: " + p.status());
         // the hatchery gets the bottle of each pumped portion back (the shrimp in the tank eat nauplii)
         h.setBlock(new BlockPos(4, 2, 1), ModBlocks.ARTEMIA_HATCHERY.get().defaultBlockState());
-        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(4, 2, 1))) instanceof CultureTubBlockEntity hatch2)) throw new GameTestAssertException("no hatchery");
+        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(4, 2, 1))) instanceof CultureTubBlockEntity hatch2)) throw new GameTestFailure("no hatchery");
         hatch2.items().setStackInSlot(CultureTubBlockEntity.OUTPUT, new ItemStack(ModItems.ARTEMIA_NAUPLII.get(), 2));
         c.getTank().setCritterFood(0); // the leftovers of the tubifex fed them already
         for (int i = 0; i < 4; i++) {
@@ -265,7 +266,7 @@ public final class LiveFoodGameTests {
         h.assertTrue(fish.health().waterStress() > stress + 0.4, "poor worms stress: " + stress + " -> " + fish.health().waterStress());
         // the feeder: pellets in the first slot, daphnia in the second: the daphnia go first
         h.setBlock(new BlockPos(1, 3, 1), ModBlocks.FEEDER.get().defaultBlockState());
-        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(1, 3, 1))) instanceof FeederBlockEntity feeder)) throw new GameTestAssertException("no feeder");
+        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(1, 3, 1))) instanceof FeederBlockEntity feeder)) throw new GameTestFailure("no feeder");
         feeder.items().setStackInSlot(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 5));
         feeder.items().setStackInSlot(1, new ItemStack(ModItems.DAPHNIA.get(), 5));
         feeder.feedNow(level, c);

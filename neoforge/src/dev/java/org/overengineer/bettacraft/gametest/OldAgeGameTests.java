@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -10,8 +11,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
@@ -67,14 +68,14 @@ public final class OldAgeGameTests {
             TankBlockEntity c = AerationGameTests.tank(h, 4, 1, 4, 4, 3, 4);
             BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(3)), true, 0);
             var err = TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), null, false);
-            if (err != null) throw new GameTestAssertException("betta: " + err.getString());
+            if (err != null) throw new GameTestFailure("betta: " + err.getString());
             BettaEntity betta = null;
             for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof BettaEntity b) betta = b;
-            if (betta == null) throw new GameTestAssertException("no betta");
+            if (betta == null) throw new GameTestFailure("no betta");
             TankWaterVolume w = new TankWaterVolume(c.getTank());
             TankmateEntity neon = TankmateBreeding.spawn(level, c, TankmateSpecies.NEON_TETRA, TankmateGenes.wild(TankmateSpecies.NEON_TETRA), true,
                     LifeStage.ADULT, 0, w.clamp(w.box().getCenter(), 0.35, 0.1, 0.2));
-            if (neon == null) throw new GameTestAssertException("no neon");
+            if (neon == null) throw new GameTestFailure("no neon");
             // NO_DEATH: they grow old but live on
             for (int i = 0; i < 40; i++) step(c, betta, neon, level);
             h.assertTrue(betta.isAlive() && neon.isAlive(), "no death of old age in NO_DEATH");

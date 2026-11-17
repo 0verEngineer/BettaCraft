@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,8 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig.GiveBook;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
@@ -55,8 +56,8 @@ public final class ProgressionGameTests {
     }
 
     private static boolean done(ServerPlayer p, String id) {
-        var holder = p.server.getAdvancements().get(BettaCraft.id(id));
-        if (holder == null) throw new GameTestAssertException("advancement " + id + " missing");
+        var holder = p.level().getServer().getAdvancements().get(BettaCraft.id(id));
+        if (holder == null) throw new GameTestFailure("advancement " + id + " missing");
         return p.getAdvancements().getOrStartProgress(holder).isDone();
     }
 
@@ -115,7 +116,7 @@ public final class ProgressionGameTests {
             h.assertTrue(drops.size() == 1, "one book at the feet, found " + drops.size());
             ItemEntity book = drops.getFirst();
             h.assertTrue(owner.getUUID().equals(GameTestCompat.target(book)), "only the owner may pick it up");
-            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(book).getLong(GuideBook.OWNER_UNTIL) > h.getLevel().getGameTime(), "owner-only time stored");
+            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(book).getLongOr(GuideBook.OWNER_UNTIL, 0L) > h.getLevel().getGameTime(), "owner-only time stored");
             // another player cannot take it
             book.playerTouch(other);
             h.assertTrue(book.isAlive() && books(other) == 0, "other player cannot pick the book up within 60 s");
@@ -143,8 +144,8 @@ public final class ProgressionGameTests {
         ServerPlayer p = player(h, 12, 12);
         try {
             // catching a betta with a water bucket (vanilla bucket pickup through BettaEntity.mobInteract)
-            BettaEntity betta = ModEntities.BETTA.get().create(h.getLevel());
-            if (betta == null) throw new GameTestAssertException("no betta");
+            BettaEntity betta = ModEntities.BETTA.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            if (betta == null) throw new GameTestFailure("no betta");
             BlockPos water = h.absolutePos(new BlockPos(12, 1, 14));
             h.getLevel().setBlockAndUpdate(water, net.minecraft.world.level.block.Blocks.WATER.defaultBlockState());
             betta.snapTo(water.getX() + 0.5, water.getY() + 0.3, water.getZ() + 0.5, 0, 0);
@@ -167,7 +168,7 @@ public final class ProgressionGameTests {
                 TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(bp), p);
             }
             TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(2, 1, 2)));
-            if (c == null) throw new GameTestAssertException("tank did not form");
+            if (c == null) throw new GameTestFailure("tank did not form");
             c.getTank().setOwner(p.getUUID());
             Progress.award(p, Progress.TANK_BUILT, c.getTank().memberCount());
             h.assertTrue(done(p, "build_tank") && !done(p, "big_tank"), "small tank: build_tank only");

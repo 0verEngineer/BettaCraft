@@ -99,7 +99,7 @@ final class DevSmokeM16 {
 
     private static ItemStack container(ServerLevel level, AquaticSpecies.Species s) {
         if (!s.buckets().isEmpty()) return new ItemStack(s.buckets().getFirst());
-        Entity e = s.type().create(level);
+        Entity e = s.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return ItemStack.EMPTY;
         ItemStack bag = FishBagItem.fillWith(e);
         e.discard();

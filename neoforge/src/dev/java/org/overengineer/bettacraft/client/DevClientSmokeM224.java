@@ -71,7 +71,7 @@ final class DevClientSmokeM224 {
         // 2. the cabinet menu with the outlet button, English and German; the tooltip of a cabinet item with its side
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
-        then(40, () -> mc.getToasts().clear()); // the recipe and advancement toasts of the new items
+        then(40, () -> mc.getToastManager().clear()); // the recipe and advancement toasts of the new items
         cabinetMenu("cabinet_menu");
         then(5, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
         then(20, () -> hover(s -> s.is(ModItems.CABINET.get()) && s.has(ModDataComponents.OUTLET_SIDE.get())));
@@ -93,7 +93,7 @@ final class DevClientSmokeM224 {
         ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         base = p.blockPosition().offset(-10, 0, 480);
         // a light floor and a white wall behind the row
         for (int x = -6; x < 4 * SPACING + 6; x++)
@@ -183,8 +183,8 @@ final class DevClientSmokeM224 {
             if (mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) {
                 double x = s.getGuiLeft() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
                 double y = s.getGuiTop() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
-                s.mouseClicked(x, y, 0);
-                s.mouseReleased(x, y, 0);
+                s.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)), false);
+                s.mouseReleased(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)));
             }
         });
         then(10, () -> {
@@ -271,7 +271,7 @@ final class DevClientSmokeM224 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -294,14 +294,14 @@ final class DevClientSmokeM224 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void awaitReload() {
         if (reload != null && !reload.isDone()) {
             steps.addFirst(new Step(10, this::awaitReload));
         } else {
-            if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+            if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
             LOGGER.info("[smoketest] M22.4 resources reloaded for {}", mc.options.languageCode);
         }
     }
@@ -340,7 +340,7 @@ final class DevClientSmokeM224 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_4_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_4_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

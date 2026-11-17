@@ -103,7 +103,7 @@ final class DevClientSmokeM7 {
                 InteriorManager.enter(p, mixMin);
             }));
             then(80, () -> server(p -> {
-                InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
+                InteriorRegion r = InteriorManager.regionAt(p.level().getServer(), p.blockPosition());
                 if (r == null) return;
                 BlockPos eye = r.toWorld(30, 2, 14);
                 p.teleportTo(p.level(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, java.util.Set.of(), 0F, 12F, false);
@@ -257,6 +257,6 @@ final class DevClientSmokeM7 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

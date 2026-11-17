@@ -1,17 +1,18 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.CritterGenes;
 import org.overengineer.bettacraft.critters.CritterSpecies;
@@ -59,7 +60,7 @@ public final class CichlidGameTests {
         var b = w.box();
         Vec3 p = w.clamp(new Vec3((b.minX + b.maxX) / 2, b.minY + 0.5, (b.minZ + b.maxZ) / 2), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -90,7 +91,7 @@ public final class CichlidGameTests {
     }
 
     private static InteriorRegion interior(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++) {
@@ -102,7 +103,7 @@ public final class CichlidGameTests {
     private static void decor(GameTestHelper h, InteriorRegion r, DecorType type, int lx, int lz) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         var err = DecorItem.place(in, type, new BlockPos(r.originX() + lx, InteriorRegion.BASE_Y, r.originZ() + lz), Rotation.NONE, null);
-        if (err != null) throw new GameTestAssertException("decor " + type + ": " + err.getString());
+        if (err != null) throw new GameTestFailure("decor " + type + ": " + err.getString());
     }
 
     private static void remove(TankBlockEntity c, TankmateEntity e) {

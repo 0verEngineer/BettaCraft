@@ -49,7 +49,7 @@ public final class DevBiomeMods {
         var reg = access.lookupOrThrow(Registries.BIOME);
         for (Want w : WANTS) {
             var key = ResourceKey.create(Registries.BIOME, Identifier.parse(w.id()));
-            var holder = reg.getHolder(key);
+            var holder = reg.get(key);
             if (holder.isEmpty()) {
                 out.add(w.id() + " missing");
                 continue;
@@ -71,7 +71,7 @@ public final class DevBiomeMods {
             if (plants != null && !hasFeature(b, "wild_plants")) out.add(w.id() + ": no wild plants feature");
         }
         // the lush caves of Regions Unexplored by the common tags (#c:is_lush and #c:is_cave)
-        reg.getHolder(ResourceKey.create(Registries.BIOME, Identifier.parse("regions_unexplored:ancient_delta"))).ifPresent(b -> {
+        reg.get(ResourceKey.create(Registries.BIOME, Identifier.parse("regions_unexplored:ancient_delta"))).ifPresent(b -> {
             if (!BiomeWaters.lushCave(b) || NetCatching.water(b, false) != NetCatching.Water.CAVE) out.add("regions_unexplored:ancient_delta is no lush cave");
         });
         return out;
@@ -79,11 +79,11 @@ public final class DevBiomeMods {
 
     public static boolean hasFeature(Holder<Biome> b, String id) {
         return b.value().getGenerationSettings().features().stream().anyMatch(set -> set.stream()
-                .anyMatch(f -> f.unwrapKey().map(k -> k.location().equals(BettaCraft.id(id))).orElse(false)));
+                .anyMatch(f -> f.unwrapKey().map(k -> k.identifier().equals(BettaCraft.id(id))).orElse(false)));
     }
 
     public static boolean hasCorals(Holder<Biome> b) {
         return b.value().getGenerationSettings().features().stream().anyMatch(set -> set.stream()
-                .anyMatch(f -> f.unwrapKey().map(k -> k.location().equals(BettaCraft.id("wild_coral"))).orElse(false)));
+                .anyMatch(f -> f.unwrapKey().map(k -> k.identifier().equals(BettaCraft.id("wild_coral"))).orElse(false)));
     }
 }

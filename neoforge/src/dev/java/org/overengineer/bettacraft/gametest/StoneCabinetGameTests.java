@@ -6,7 +6,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -28,8 +28,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.equipment.CabinetBlock;
@@ -70,7 +70,7 @@ public final class StoneCabinetGameTests {
     }
 
     private static ItemStack craft(ServerLevel level, CraftingInput in) {
-        var r = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, in, level);
+        var r = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, in, level);
         return r.map(h -> h.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
     }
 
@@ -81,7 +81,7 @@ public final class StoneCabinetGameTests {
     @GameTest(template = EMPTY)
     public static void stoneCabinetRecipeTakesEveryStoneWithItsSlab(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        var rm = level.getRecipeManager();
+        var rm = level.recipeAccess();
         // the slab of every vanilla stone of the table comes from the game's recipes
         for (CabinetStones.Pair p : CabinetStones.VANILLA) {
             Item slab = CabinetStones.slabFor(rm, level.registryAccess(), p.stone());

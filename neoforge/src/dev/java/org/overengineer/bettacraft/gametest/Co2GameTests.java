@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.FluidUtil;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.chem.ChemTolerance;
 import org.overengineer.bettacraft.chem.TankChemistry;
@@ -65,7 +66,7 @@ public final class Co2GameTests {
     private static Co2CylinderBlockEntity cylinder(GameTestHelper h, TankBlockEntity c, BlockPos rel, boolean solenoid) {
         h.setBlock(rel, ModBlocks.CO2_CYLINDER.get().defaultBlockState().setValue(Co2CylinderBlock.FACING, Direction.NORTH).setValue(Co2CylinderBlock.SOLENOID, solenoid));
         TankEquipment.invalidate(c);
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof Co2CylinderBlockEntity b)) throw new GameTestAssertException("no cylinder");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof Co2CylinderBlockEntity b)) throw new GameTestFailure("no cylinder");
         b.setGas(Co2CylinderBlockEntity.capacity());
         return b;
     }
@@ -169,7 +170,7 @@ public final class Co2GameTests {
         h.setBlock(rel, ModBlocks.BIO_CO2.get().defaultBlockState());
         TankEquipment.invalidate(c);
         BioCo2BlockEntity bio = (BioCo2BlockEntity) level.getBlockEntity(h.absolutePos(rel));
-        if (bio == null) throw new GameTestAssertException("no bio CO2");
+        if (bio == null) throw new GameTestFailure("no bio CO2");
         ServerPlayer sp = player(h, new ItemStack(Items.WATER_BUCKET));
         bio.use(sp, InteractionHand.MAIN_HAND, sp.getMainHandItem());
         h.assertTrue(sp.getMainHandItem().is(Items.BUCKET), "the water went in");
@@ -199,7 +200,7 @@ public final class Co2GameTests {
         h.setBlock(furnace, Blocks.FURNACE.defaultBlockState().setValue(BlockStateProperties.LIT, false));
         h.setBlock(station, ModBlocks.CO2_STATION.get().defaultBlockState());
         Co2StationBlockEntity st = (Co2StationBlockEntity) level.getBlockEntity(h.absolutePos(station));
-        if (st == null) throw new GameTestAssertException("no station");
+        if (st == null) throw new GameTestFailure("no station");
         st.items().setStackInSlot(0, new ItemStack(ModItems.CO2_CYLINDER.get()));
         h.assertTrue(st.step(level, 1200) == 0, "a cold furnace gives nothing");
         h.setBlock(furnace, Blocks.FURNACE.defaultBlockState().setValue(BlockStateProperties.LIT, true));
@@ -226,7 +227,7 @@ public final class Co2GameTests {
             h.setBlock(furnace, Blocks.FURNACE.defaultBlockState().setValue(BlockStateProperties.LIT, true));
             h.setBlock(station, ModBlocks.CO2_STATION.get().defaultBlockState());
             Co2StationBlockEntity st = (Co2StationBlockEntity) level.getBlockEntity(h.absolutePos(station));
-            if (st == null) throw new GameTestAssertException("no station");
+            if (st == null) throw new GameTestFailure("no station");
             st.items().setStackInSlot(0, new ItemStack(ModItems.CO2_CYLINDER.get()));
             h.assertTrue(st.step(level, 20) == 0 && st.lastNoPower(), "no FE: the compressor stands still");
             st.energy().receiveEnergy(20000, false);
@@ -236,7 +237,7 @@ public final class Co2GameTests {
             h.setBlock(water, Blocks.WATER.defaultBlockState());
             h.setBlock(ro, ModBlocks.RO_UNIT.get().defaultBlockState());
             RoUnitBlockEntity unit = (RoUnitBlockEntity) level.getBlockEntity(h.absolutePos(ro));
-            if (unit == null) throw new GameTestAssertException("no RO unit");
+            if (unit == null) throw new GameTestFailure("no RO unit");
             unit.parts().setStackInSlot(RoUnitBlockEntity.MEMBRANE, new ItemStack(ModItems.RO_MEMBRANE.get()));
             unit.parts().setStackInSlot(RoUnitBlockEntity.PREFILTER, new ItemStack(ModItems.RO_PREFILTER.get()));
             int slow = unit.step(level, 20);
@@ -256,7 +257,7 @@ public final class Co2GameTests {
         BlockPos ro = new BlockPos(2, 2, 2);
         h.setBlock(ro, ModBlocks.RO_UNIT.get().defaultBlockState());
         RoUnitBlockEntity unit = (RoUnitBlockEntity) level.getBlockEntity(h.absolutePos(ro));
-        if (unit == null) throw new GameTestAssertException("no RO unit");
+        if (unit == null) throw new GameTestFailure("no RO unit");
         unit.setFeed(1000);
         h.assertTrue(unit.step(level, 20) == 0 && unit.stopReason().equals("no_membrane"), "no membrane: stops");
         unit.parts().setStackInSlot(RoUnitBlockEntity.MEMBRANE, new ItemStack(ModItems.RO_MEMBRANE.get()));
@@ -346,7 +347,7 @@ public final class Co2GameTests {
             BlockPos ro2 = new BlockPos(6, 2, 6);
             h.setBlock(ro2, ModBlocks.RO_UNIT.get().defaultBlockState());
             RoUnitBlockEntity unit = (RoUnitBlockEntity) level.getBlockEntity(h.absolutePos(ro2));
-            if (unit == null) throw new GameTestAssertException("no RO unit");
+            if (unit == null) throw new GameTestFailure("no RO unit");
             unit.parts().setStackInSlot(RoUnitBlockEntity.MEMBRANE, new ItemStack(ModItems.RO_MEMBRANE.get()));
             unit.parts().setStackInSlot(RoUnitBlockEntity.PREFILTER, new ItemStack(ModItems.RO_PREFILTER.get()));
             unit.setFeed(1000);

@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -23,8 +24,8 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaData;
@@ -60,7 +61,7 @@ public final class InhabitantGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
@@ -72,12 +73,12 @@ public final class InhabitantGameTests {
 
     private static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack, Player p) {
         EntityType<?> type = TankInhabitants.containedType(stack);
-        if (type == null) throw new GameTestAssertException("no entity type in " + stack);
+        if (type == null) throw new GameTestFailure("no entity type in " + stack);
         return TankInhabitants.insert(h.getLevel(), c, stack, type, p, stack.getItem() instanceof FishBagItem);
     }
 
     private static void ok(Component error) {
-        if (error != null) throw new GameTestAssertException("insert failed: " + error.getString());
+        if (error != null) throw new GameTestFailure("insert failed: " + error.getString());
     }
 
     /** The rendered fish (tail, fins), not only its hitbox, stays inside the glass, whichever way it faces a wall. */
@@ -201,7 +202,7 @@ public final class InhabitantGameTests {
             h.assertTrue(bucket && bag, "player got a betta bucket and a filled bag");
             h.succeed();
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
     }
 
@@ -279,7 +280,7 @@ public final class InhabitantGameTests {
         h.assertTrue(used == 1 && b.health().daysSinceFed() == 0, "one pellet feeds the fish");
         // entity NBT and bucket data use the identical key and content
         CompoundTag nbt = new CompoundTag();
-        b.addAdditionalSaveData(nbt);
+        nbt.merge(org.overengineer.bettacraft.gametest.framework.DevNbt.save(b.registryAccess(), b::addAdditionalSaveData));
         ItemStack bucket = new ItemStack(ModItems.BETTA_BUCKET.get());
         b.saveToBucketTag(bucket);
         CompoundTag bucketTag = bucket.get(DataComponents.BUCKET_ENTITY_DATA).copyTag();
@@ -323,7 +324,7 @@ public final class InhabitantGameTests {
             h.assertTrue(outside == 0, "no animal released outside the tank, got " + outside);
             h.assertTrue(!h.getLevel().getFluidState(h.absolutePos(new BlockPos(4, 1, 3))).isSource(), "no water placed in front of the tank");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -345,7 +346,7 @@ public final class InhabitantGameTests {
             h.assertTrue(c.getTank().log().size() == logs + 1
                     && "log.bettacraft.taken_out".equals(c.getTank().log().getLast().key()), "logged as taken out");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }

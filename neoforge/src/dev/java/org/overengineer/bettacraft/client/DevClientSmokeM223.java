@@ -123,7 +123,7 @@ final class DevClientSmokeM223 {
         ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         BlockPos base = p.blockPosition().offset(-30, 2, 420);
         pool = base;
         reef = base.offset(20, 0, 0);
@@ -170,7 +170,7 @@ final class DevClientSmokeM223 {
                 new CritterGenes(1, 0b10, 0.4F), 6, r), k % 2 == 0, 12);
         for (int k = 0; k < 4; k++) TankCritters.add(level, c, CritterSpecies.RAMSHORN, CritterGenes.WILD, false, 12);
         TankWaterVolume w = new TankWaterVolume(c.getTank());
-        BettaEntity b = ModEntities.BETTA.get().create(level);
+        BettaEntity b = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         b.setBettaData(BettaData.create(BettaGenotype.randomWild(level.random), false, 0));
         ItemStack bb = b.getBucketItemStack();
         b.saveToBucketTag(bb);
@@ -329,7 +329,7 @@ final class DevClientSmokeM223 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -345,7 +345,7 @@ final class DevClientSmokeM223 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -382,7 +382,7 @@ final class DevClientSmokeM223 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_3_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_3_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -1,16 +1,17 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -34,13 +35,13 @@ public final class FilterMediaAutomationGameTests {
 
     private static FilterChamberBlockEntity chamber(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.FILTER_CHAMBER.get().defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof FilterChamberBlockEntity c)) throw new GameTestAssertException("no chamber");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof FilterChamberBlockEntity c)) throw new GameTestFailure("no chamber");
         return c;
     }
 
     private static HopperBlockEntity hopper(GameTestHelper h, BlockPos rel, Direction facing) {
         h.setBlock(rel, Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, facing));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof HopperBlockEntity hb)) throw new GameTestAssertException("no hopper");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof HopperBlockEntity hb)) throw new GameTestFailure("no hopper");
         return hb;
     }
 
@@ -52,7 +53,7 @@ public final class FilterMediaAutomationGameTests {
 
     @GameTest(template = EMPTY, batch = "bettacraft_m42_media", timeoutTicks = 300)
     public static void hoppersChangeTheFilterMedia(GameTestHelper h) {
-        if (!Features.enabled(Feature.FILTER_MEDIA_AUTOMATION)) throw new GameTestAssertException("the switch is off");
+        if (!Features.enabled(Feature.FILTER_MEDIA_AUTOMATION)) throw new GameTestFailure("the switch is off");
         FilterChamberBlockEntity c = chamber(h, new BlockPos(2, 2, 2));
         HopperBlockEntity above = hopper(h, new BlockPos(2, 3, 2), Direction.DOWN);
         above.setItem(0, new ItemStack(ModItems.FILTER_FOAM.get())); // media do not stack

@@ -1,18 +1,19 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.platform.energy.IEnergyStorage;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -47,7 +48,7 @@ public final class MonitorGameTests {
     }
 
     private static MonitorBlockEntity be(GameTestHelper h, BlockPos rel) {
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof MonitorBlockEntity be)) throw new GameTestAssertException("no monitor at " + rel);
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof MonitorBlockEntity be)) throw new GameTestFailure("no monitor at " + rel);
         return be;
     }
 
@@ -234,7 +235,7 @@ public final class MonitorGameTests {
         h.assertTrue(c.alarms() == 1, "one alarm: " + c.alarms());
         h.assertTrue(be(h, tl.west()).alarms() == 1, "every block of the screen knows it");
         h.assertTrue(h.getBlockState(lamp).getValue(net.minecraft.world.level.block.RedstoneLampBlock.LIT), "the lamp beside the screen is lit");
-        int analog = h.getBlockState(tl).getAnalogOutputSignal(level, h.absolutePos(tl));
+        int analog = h.getBlockState(tl).getAnalogOutputSignal(level, h.absolutePos(tl), net.minecraft.core.Direction.NORTH);
         h.assertTrue(analog == 1, "comparator: number of alarms " + analog);
         t.getTank().setWaterTemp(25F);
         MonitorSync.cycle(level, c);
@@ -277,7 +278,7 @@ public final class MonitorGameTests {
         for (int i = 0; i < warn.size(); i++) noFilter |= "monitor.bettacraft.warn.no_filter".equals(warn.getCompoundOrEmpty(i).getStringOr("k", ""));
         h.assertTrue(noFilter || !org.overengineer.bettacraft.tank.TankWater.qualityEnabled(), "a tank without filter warns: " + warn);
         var log = k.detail.getListOrEmpty("log");
-        h.assertTrue(!log.isEmpty() && "log.bettacraft.critters_born".equals(log.getCompound(log.size() - 1).getStringOr("k", "")), "the log: " + log);
+        h.assertTrue(!log.isEmpty() && "log.bettacraft.critters_born".equals(log.getCompoundOrEmpty(log.size() - 1).getStringOr("k", "")), "the log: " + log);
         h.assertTrue(k.detail.getListOrEmpty("animals").isEmpty(), "no animals");
         h.succeed();
     }

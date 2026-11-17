@@ -75,7 +75,7 @@ public final class DevSmokeTest {
         }
         boolean guideme = org.overengineer.bettacraft.progression.GuideBook.available();
         boolean book = !org.overengineer.bettacraft.progression.GuideBook.createBook().isEmpty();
-        boolean recipe = server.getRecipeManager().byKey(BettaCraft.id("guide")).isPresent();
+        boolean recipe = server.getRecipeManager().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("guide"))).isPresent();
         LOGGER.info("[smoketest] M6: {} advancements, GuideME {}, handbook item {}, handbook recipe {}, giveBook {}", adv, guideme, book,
                 recipe, org.overengineer.bettacraft.progression.GuideBook.mode());
         if (adv < 20) throw new IllegalStateException("advancements missing");

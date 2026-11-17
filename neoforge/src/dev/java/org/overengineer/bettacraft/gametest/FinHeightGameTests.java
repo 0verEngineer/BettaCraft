@@ -1,13 +1,14 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.AnimalSize;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -45,7 +46,7 @@ public final class FinHeightGameTests {
         // right at the surface: the old margin would have left the fin above it
         Vec3 p = new Vec3(b.minX + x, w.surface() - 0.1, (b.minZ + b.maxZ) / 2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.getRandom().setSeed(seed);
         e.health().feed();
         return e;
@@ -106,7 +107,7 @@ public final class FinHeightGameTests {
                 var s = org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get()),
                         org.overengineer.bettacraft.entity.betta.BettaData.create(g, i == 1, 0));
                 var err = TankInhabitants.insert(h.getLevel(), c, s, TankInhabitants.containedType(s), p, false);
-                if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+                if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
             }
             for (var e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (e instanceof BettaEntity b) fish.add(b);
             for (int i = 0; i < fish.size(); i++) {

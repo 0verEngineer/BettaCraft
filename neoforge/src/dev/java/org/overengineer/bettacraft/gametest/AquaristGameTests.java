@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -21,8 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -59,12 +60,12 @@ public final class AquaristGameTests {
     private AquaristGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     private static Villager aquarist(GameTestHelper h, BlockPos at, int level) {
         Villager v = h.spawn(EntityType.VILLAGER, at);
-        v.setVillagerData(v.getVillagerData().setProfession(ModVillagers.AQUARIST.get()).setLevel(level));
+        v.setVillagerData(v.getVillagerData().withProfession(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.wrapAsHolder(ModVillagers.AQUARIST.get())).withLevel(level));
         v.setNoAi(true);
         return v;
     }
@@ -82,10 +83,10 @@ public final class AquaristGameTests {
         var poi = PoiTypes.forState(ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         check(poi.isPresent() && poi.get().is(ModVillagers.AQUARIST_POI_KEY), "the basin is the aquarist's point of interest: " + poi);
         check(ModVillagers.AQUARIST.get().acquirableJobSite().test(poi.get()), "the profession takes the basin");
-        check(VillagerProfession.NONE.acquirableJobSite().test(poi.get()), "an unemployed villager looks for it");
+        check(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getValueOrThrow(VillagerProfession.NONE).acquirableJobSite().test(poi.get()), "an unemployed villager looks for it");
         for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) h.setBlock(new BlockPos(x, 0, z), net.minecraft.world.level.block.Blocks.GRASS_BLOCK);
         Villager v = h.spawn(EntityType.VILLAGER, new BlockPos(10, 1, 8));
-        h.succeedWhen(() -> check(Aquarists.isAquarist(v), "still " + v.getVillagerData().getProfession()));
+        h.succeedWhen(() -> check(Aquarists.isAquarist(v), "still " + v.getVillagerData().profession()));
     }
 
     /** Each level has its two offers, every listing gives an offer, the shown items are what the table says. */
@@ -100,7 +101,7 @@ public final class AquaristGameTests {
             check(list != null && list.length == 2, "level " + level + ": " + (list == null ? 0 : list.length) + " offers");
             for (int k = 0; k < 2; k++) {
                 for (int i = 0; i < 20; i++) {
-                    MerchantOffer o = list[k].getOffer(v, rnd);
+                    MerchantOffer o = list[k].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, rnd);
                     check(o != null && !o.getResult().isEmpty(), "level " + level + " offer " + k + " made nothing");
                     boolean buys = AquaristTrades.isAppraisal(o.getResult());
                     if (level <= 2 && k == 1) {
@@ -155,7 +156,7 @@ public final class AquaristGameTests {
     public static void pricesByGenes(GameTestHelper h) {
         Villager v = aquarist(h, new BlockPos(3, 1, 3), 2);
         var trades = VillagerTrades.TRADES.get(ModVillagers.AQUARIST.get());
-        MerchantOffer bucketOffer = trades.get(1)[1].getOffer(v, h.getLevel().getRandom()), bagOffer = trades.get(2)[1].getOffer(v, h.getLevel().getRandom());
+        MerchantOffer bucketOffer = trades.get(1)[1].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom()), bagOffer = trades.get(2)[1].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom());
         try {
             ItemStack plain = betta(BettaGenome.DEFAULT, 0, "adult");
             BettaGenome fancy = new BettaGenome(BettaGenome.SPECIES_BETTA, "halfmoon", BettaGenome.LONG, "dumbo", "white", "red", "dalmatian",
@@ -206,13 +207,13 @@ public final class AquaristGameTests {
         var poi = PoiTypes.forState(ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         List<String> problems = new ArrayList<>();
         var trades = VillagerTrades.TRADES.get(ModVillagers.AQUARIST.get());
-        for (int level = 1; level <= 5; level++) for (var l : trades.get(level)) if (l.getOffer(v, h.getLevel().getRandom()) != null) problems.add("level " + level);
+        for (int level = 1; level <= 5; level++) for (var l : trades.get(level)) if (l.getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom()) != null) problems.add("level " + level);
         if (poi.isPresent() && ModVillagers.AQUARIST.get().acquirableJobSite().test(poi.get())) problems.add("the basin is taken");
         h.runAfterDelay(210, () -> {
             try {
                 check(problems.isEmpty(), "with the switch off: " + problems);
-                check(v.getVillagerData().getProfession() == VillagerProfession.NONE && v.getOffers().isEmpty(),
-                        "the aquarist keeps " + v.getVillagerData().getProfession() + " with " + v.getOffers().size() + " offers");
+                check(v.getVillagerData().profession() == VillagerProfession.NONE && v.getOffers().isEmpty(),
+                        "the aquarist keeps " + v.getVillagerData().profession() + " with " + v.getOffers().size() + " offers");
             } finally {
                 Features.set(Feature.AQUARIST_VILLAGER, true);
             }

@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -21,8 +22,8 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.CritterGenes;
@@ -87,7 +88,7 @@ public final class ReefGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water, salt);
         c.getTank().setWaterTemp(26F);
         c.getTank().setTargetTemp(26F);
@@ -98,7 +99,7 @@ public final class ReefGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         return sp;
     }
 
@@ -122,7 +123,7 @@ public final class ReefGameTests {
 
     private static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
         EntityType<?> type = TankInhabitants.containedType(stack);
-        if (type == null) throw new GameTestAssertException("no entity type in " + stack);
+        if (type == null) throw new GameTestFailure("no entity type in " + stack);
         return TankInhabitants.insert(h.getLevel(), c, stack, type, null, 0L);
     }
 
@@ -142,7 +143,7 @@ public final class ReefGameTests {
         var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(new Vec3((w.box().minX + w.box().maxX) / 2, w.box().minY + 0.4, (w.box().minZ + w.box().maxZ) / 2), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -152,7 +153,7 @@ public final class ReefGameTests {
     }
 
     private static InteriorRegion region(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         return InteriorManager.ensureRegion(h.getLevel(), c);
     }
 
@@ -234,7 +235,7 @@ public final class ReefGameTests {
                 ServerConfig.SALT_OCEAN_BUCKETS.set(saved);
             }
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -349,7 +350,7 @@ public final class ReefGameTests {
         ServerPlayer sp = player(h);
         InteriorPlant acro, freshAcro;
         try {
-            sp.teleportTo(in, r.toWorld(2, 0, 2).getX() + 0.5, r.toWorld(2, 0, 2).getY(), r.toWorld(2, 0, 2).getZ() + 0.5, 0F, 0F);
+            sp.teleportTo(in, r.toWorld(2, 0, 2).getX() + 0.5, r.toWorld(2, 0, 2).getY(), r.toWorld(2, 0, 2).getZ() + 0.5, java.util.Set.of(), 0F, 0F, true);
             // on stone: refused; on reef rock: glued on
             BlockPos stone = r.toWorld(6, 0, 6);
             in.setBlock(stone, Blocks.STONE.defaultBlockState(), 3);
@@ -364,7 +365,7 @@ public final class ReefGameTests {
             use(sp, r.toWorld(20, 0, 8).below(), Direction.UP, new ItemStack(ModItems.FLOW_PUMP.get()));
             h.assertTrue(TankReef.pumps(level, c.getTank()) == 1, "a flow pump: " + TankReef.pumps(level, c.getTank()));
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         in.setBlock(rf.toWorld(12, 0, 6), ModBlocks.REEF_ROCK.get().defaultBlockState(), 3);
         freshAcro = InteriorPlants.plantAt(in, rf, PlantSpecies.ACROPORA, 12, 1, 6, 0, 11L);
@@ -391,13 +392,13 @@ public final class ReefGameTests {
             // frags with shears (from inside: the M13 trim)
             ServerPlayer sp2 = player(h);
             try {
-                sp2.teleportTo(in, r.toWorld(12, 2, 3).getX() + 0.5, r.toWorld(12, 2, 3).getY(), r.toWorld(12, 2, 3).getZ() + 0.5, 0F, 0F);
+                sp2.teleportTo(in, r.toWorld(12, 2, 3).getX() + 0.5, r.toWorld(12, 2, 3).getY(), r.toWorld(12, 2, 3).getZ() + 0.5, java.util.Set.of(), 0F, 0F, true);
                 int got = InteriorPlants.trim(in, r, acro, sp2, new ItemStack(Items.SHEARS), InteractionHand.MAIN_HAND);
                 int frags = 0;
                 for (ItemStack s : sp2.getInventory().getNonEquipmentItems()) if (s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.ACROPORA).get())) frags += s.getCount();
                 h.assertTrue(got > 0 && frags > 0, "frags cut: " + got + " / " + frags);
             } finally {
-                sp2.getServer().getPlayerList().remove(sp2);
+                sp2.level().getServer().getPlayerList().remove(sp2);
             }
             h.succeed();
         });
@@ -470,7 +471,7 @@ public final class ReefGameTests {
                 sp.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.AQUARIUM_NET.get()));
                 int reefFish = 0, critters = 0, frags = 0;
                 for (int i = 0; i < 40; i++) {
-                    sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
+                    sp.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.AQUARIUM_NET.get()));
                     NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
                 }
                 for (ItemStack s : sp.getInventory().getNonEquipmentItems()) {
@@ -484,7 +485,7 @@ public final class ReefGameTests {
                 h.assertTrue(critters > 0, "reef critters caught: " + critters);
                 h.assertTrue(reefFish + critters + frags >= 30, "almost every try catches: " + (reefFish + critters + frags));
             } finally {
-                sp.getServer().getPlayerList().remove(sp);
+                sp.level().getServer().getPlayerList().remove(sp);
             }
         } finally {
             ServerConfig.CRITTERS_NET_CHANCE.set(chance);

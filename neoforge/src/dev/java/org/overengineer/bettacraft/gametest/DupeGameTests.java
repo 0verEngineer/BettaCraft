@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -24,8 +25,8 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.CritterGenes;
 import org.overengineer.bettacraft.critters.CritterSpecies;
@@ -151,8 +152,8 @@ public final class DupeGameTests {
         TankCritters.add(level, c, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, true, 10);
         int region = InteriorManager.ensureRegion(level, c).id();
         ItemStack copy = new ItemStack(ModBlocks.TANK.get());
-        net.minecraft.world.item.BlockItem.setBlockEntityData(copy, org.overengineer.bettacraft.registry.ModBlockEntities.TANK.get(),
-                c.saveWithoutMetadata(level.registryAccess()));
+        copy.set(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(
+                org.overengineer.bettacraft.registry.ModBlockEntities.TANK.get(), c.saveWithoutMetadata(level.registryAccess())));
         BlockPos floor = h.absolutePos(new BlockPos(10, 1, 4));
         level.setBlockAndUpdate(floor, Blocks.STONE.defaultBlockState());
         ServerPlayer p = MockPlayers.serverPlayer(h);
@@ -197,7 +198,7 @@ public final class DupeGameTests {
             var cont = s.get(net.minecraft.core.component.DataComponents.CONTAINER);
             if (cont != null) for (ItemStack x : cont.nonEmptyItems()) if (x.is(Items.DIAMOND)) diamonds += x.getCount();
         }
-        if (diamonds != 5) throw new GameTestAssertException("the chest's 5 diamonds came out as " + diamonds);
+        if (diamonds != 5) throw new GameTestFailure("the chest's 5 diamonds came out as " + diamonds);
         h.succeed();
     }
 }

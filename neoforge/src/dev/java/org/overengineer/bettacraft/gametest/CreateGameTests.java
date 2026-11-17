@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Field;
@@ -13,7 +14,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -36,8 +37,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.critters.CritterGenes;
@@ -74,14 +75,14 @@ public final class CreateGameTests {
 
     static Block block(String id) {
         Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
-        if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
+        if (b == Blocks.AIR) throw new GameTestFailure("no block " + id);
         return b;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     static BlockState with(BlockState s, String property, Comparable value) {
         for (Property<?> p : s.getProperties()) if (p.getName().equals(property)) return s.setValue((Property) p, value);
-        throw new GameTestAssertException("no property " + property + " on " + s);
+        throw new GameTestFailure("no property " + property + " on " + s);
     }
 
     static Field field(Class<?> c, String name) {
@@ -93,12 +94,12 @@ public final class CreateGameTests {
             } catch (NoSuchFieldException ignored) {
             }
         }
-        throw new GameTestAssertException("no field " + c.getName() + "." + name);
+        throw new GameTestFailure("no field " + c.getName() + "." + name);
     }
 
     static Method method(Class<?> c, String name, int params) {
         for (Method m : c.getMethods()) if (m.getName().equals(name) && m.getParameterCount() == params) return m;
-        throw new GameTestAssertException("no method " + c.getName() + "." + name);
+        throw new GameTestFailure("no method " + c.getName() + "." + name);
     }
 
     /** A tank of sx x sy x sz blocks at rel (x, y, z), full of water, with two bettas and two snails. */
@@ -128,8 +129,8 @@ public final class CreateGameTests {
     /** The bearing below {@code anchor} (rel), facing up, and its block entity. */
     static BlockEntity bearing(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, with(block("create:mechanical_bearing").defaultBlockState(), "facing", Direction.UP));
-        BlockEntity be = h.getBlockEntity(rel);
-        if (be == null) throw new GameTestAssertException("no bearing block entity");
+        BlockEntity be = h.getLevel().getBlockEntity(h.absolutePos(rel));
+        if (be == null) throw new GameTestFailure("no bearing block entity");
         return be;
     }
 
@@ -139,7 +140,7 @@ public final class CreateGameTests {
         Object moved = field(bearing.getClass(), "movedContraption").get(bearing);
         if (moved == null) {
             Object ex = field(bearing.getClass(), "lastException").get(bearing);
-            throw new GameTestAssertException("the bearing did not assemble: " + ex);
+            throw new GameTestFailure("the bearing did not assemble: " + ex);
         }
         hold(bearing);
         return (Entity) moved;
@@ -150,7 +151,7 @@ public final class CreateGameTests {
         try {
             field(bearing.getClass(), "assembleNextTick").setBoolean(bearing, false);
         } catch (IllegalAccessException e) {
-            throw new GameTestAssertException("bearing: " + e);
+            throw new GameTestFailure("bearing: " + e);
         }
     }
 
@@ -207,7 +208,7 @@ public final class CreateGameTests {
             try {
                 disassemble(bearing, contraption, new BlockPos(0, 3, 0), 0F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = TankMultiblock.getController(level, oldAnchor.above(3));
@@ -262,7 +263,7 @@ public final class CreateGameTests {
             try {
                 disassemble(bearing, contraption, BlockPos.ZERO, 90F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = null;
@@ -314,7 +315,7 @@ public final class CreateGameTests {
             try {
                 disassemble(bearing, contraption, new BlockPos(0, 2, 0), 0F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = TankMultiblock.getController(level, BlockPos.of(old.iterator().next()).above(2));
@@ -426,10 +427,10 @@ public final class CreateGameTests {
                 Class<?> sim = Class.forName("dev.simulated_team.simulated.util.SimAssemblyHelper");
                 Method dis = null;
                 for (Method m : sim.getMethods()) if (m.getName().equals("disassembleSubLevel")) dis = m;
-                if (dis == null) throw new GameTestAssertException("no disassembleSubLevel");
+                if (dis == null) throw new GameTestFailure("no disassembleSubLevel");
                 dis.invoke(null, level, subLevel, plotAnchor, anchor.above(2), Rotation.CLOCKWISE_90, false);
             } catch (ReflectiveOperationException e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = null;
@@ -494,7 +495,7 @@ public final class CreateGameTests {
             try {
                 disassemble(bearing, contraption, new BlockPos(0, 3, 0), 0F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = tankNear(level, oldAnchor.above(3), tankId, 2);
@@ -555,7 +556,7 @@ public final class CreateGameTests {
             try {
                 disassemble(bearing, contraption, new BlockPos(0, 3, 0), 0F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.runAfterDelay(2, () -> {
                 List<ItemEntity> items = tankItems(level, oldAnchor);
@@ -574,7 +575,7 @@ public final class CreateGameTests {
                     stack.useOn(new UseOnContext(level, sp, InteractionHand.MAIN_HAND, stack,
                             new BlockHitResult(Vec3.atCenterOf(floor).add(0, 0.5, 0), Direction.UP, floor, false)));
                 } finally {
-                    sp.getServer().getPlayerList().remove(sp);
+                    sp.level().getServer().getPlayerList().remove(sp);
                 }
                 h.succeedWhen(() -> {
                     TankBlockEntity n = TankMultiblock.getController(level, floor.above());
@@ -606,7 +607,7 @@ public final class CreateGameTests {
         h.onEachTick(() -> hold(bearing));
         h.runAfterDelay(2, () -> {
             h.assertTrue(InteriorRegions.get(level.getServer()).get(regionId) != null, "the region stays while the tank travels");
-            contraption.kill();
+            contraption.kill((net.minecraft.server.level.ServerLevel) contraption.level());
             h.succeedWhen(() -> h.assertTrue(InteriorRegions.get(level.getServer()).get(regionId) == null, "the region of the destroyed tank is freed"));
         });
     }

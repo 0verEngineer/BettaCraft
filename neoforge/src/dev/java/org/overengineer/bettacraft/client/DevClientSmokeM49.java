@@ -321,7 +321,7 @@ final class DevClientSmokeM49 {
     }
 
     private static void herp(ServerLevel level, TankBlockEntity c, HerpSpecies s) {
-        HerpEntity e = ModEntities.herp(s).create(level);
+        HerpEntity e = ModEntities.herp(s).create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return;
         ItemStack box = e.getBucketItemStack();
         e.saveToBucketTag(box);
@@ -431,7 +431,7 @@ final class DevClientSmokeM49 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -466,8 +466,8 @@ final class DevClientSmokeM49 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
+        mc.getToastManager().clear();
         if (mc.player != null) LOGGER.info("[smoketest] M49 shot {} from {}", name, mc.player.getEyePosition());
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m49_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m49_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

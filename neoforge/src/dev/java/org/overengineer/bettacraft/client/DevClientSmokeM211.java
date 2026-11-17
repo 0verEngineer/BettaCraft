@@ -116,7 +116,7 @@ final class DevClientSmokeM211 {
             cutBefore = MiniaturePlants.meshBlocks(region.id(), 7, 0, 24);
             server(p -> {
                 InteriorRegion r = region;
-                ServerLevel in = InteriorManager.interiorLevel(p.server);
+                ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
                 for (InteriorPlant pl : r.plants().all()) {
                     if (pl.species == PlantSpecies.ROTALA && pl.x == 7 && pl.y == 0 && pl.z == 24) InteriorPlants.trim(in, r, pl, null, null, null);
                 }
@@ -134,12 +134,12 @@ final class DevClientSmokeM211 {
         inside("inside_vallisneria", 38, 4, 16, 0F, -60F);
         inside("inside_vallisneria_side", 30, 22, 22, -90F, -28F);
         // floating plants from above: height layers on and off (the lily pads close up, then the whole tank)
-        then(1, () -> server(p -> p.teleportTo(p.server.overworld(), pond.getX() + 0.85, pond.getY() + 2.0 - p.getEyeHeight(), pond.getZ() + 0.9, 0F, 90F)));
+        then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), pond.getX() + 0.85, pond.getY() + 2.0 - p.getEyeHeight(), pond.getZ() + 0.9, java.util.Set.of(), 0F, 90F, true)));
         then(100, () -> shot("lily_top_new"));
         then(1, () -> FloatingPlantRenderer.layered = false);
         then(20, () -> shot("lily_top_old"));
         then(1, () -> FloatingPlantRenderer.layered = true);
-        then(1, () -> server(p -> p.teleportTo(p.server.overworld(), pond.getX() + 1.5, pond.getY() + 3.1 - p.getEyeHeight(), pond.getZ() + 1.0, 0F, 90F)));
+        then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), pond.getX() + 1.5, pond.getY() + 3.1 - p.getEyeHeight(), pond.getZ() + 1.0, java.util.Set.of(), 0F, 90F, true)));
         then(40, () -> shot("pond_top_new"));
         then(1, () -> FloatingPlantRenderer.layered = false);
         then(20, () -> shot("pond_top_old"));
@@ -159,7 +159,7 @@ final class DevClientSmokeM211 {
         then(1, () -> server(p -> {
             InteriorRegion r = region;
             BlockPos at = r.toWorld(x, y, z);
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, yaw, pitch);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), yaw, pitch, true);
         }));
         then(100, () -> shot(name));
     }
@@ -176,7 +176,7 @@ final class DevClientSmokeM211 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(-20, 2, 300);
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) for (int x = 0; x < 3; x++) blocks.add(base.offset(x, y, z));
@@ -240,7 +240,7 @@ final class DevClientSmokeM211 {
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true);
             else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
@@ -273,7 +273,7 @@ final class DevClientSmokeM211 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_1_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_1_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

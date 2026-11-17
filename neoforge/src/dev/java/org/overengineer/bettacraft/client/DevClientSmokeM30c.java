@@ -56,7 +56,7 @@ final class DevClientSmokeM30c {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         then(1, () -> look(base.getX() + 14, base.getY() + 3.6, base.getZ() - 17, 0F, 8F));
-        then(200, () -> server(p -> place(p.server.overworld())));
+        then(200, () -> server(p -> place(p.level().getServer().overworld())));
         then(80, () -> {
             int n = mc.level.getEntitiesOfClass(TankmateEntity.class, new AABB(base).inflate(40), e -> e.species().isLarge()).size();
             LOGGER.info("[smoketest] M30c sea giants seen by the client: {}", n);
@@ -122,7 +122,7 @@ final class DevClientSmokeM30c {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(-14, 2, 300);
         TankBlockEntity c = tank(level, p, base, 28, 6, 14);
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
@@ -143,7 +143,7 @@ final class DevClientSmokeM30c {
                     if (!inside) in.setBlock(r.toWorld(x, y, z), (x + y + z) % 5 == 0 ? Blocks.ANDESITE.defaultBlockState() : Blocks.STONE.defaultBlockState(), 2);
                 }
         TankData t = c.getTank();
-        terrain = new TankTerrain(t, p.server, r, true);
+        terrain = new TankTerrain(t, p.level().getServer(), r, true);
         for (TankmateSpecies s : new TankmateSpecies[]{TankmateSpecies.BAMBOO_SHARK, TankmateSpecies.BLACKTIP_REEF_SHARK, TankmateSpecies.SPOTTED_EAGLE_RAY,
                 TankmateSpecies.COWNOSE_RAY, TankmateSpecies.COWNOSE_RAY, TankmateSpecies.HONEYCOMB_MORAY}) {
             var tub = BigCatching.caught(level, s, NetCatching.random(level));
@@ -166,7 +166,7 @@ final class DevClientSmokeM30c {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -197,7 +197,7 @@ final class DevClientSmokeM30c {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m30c_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m30c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

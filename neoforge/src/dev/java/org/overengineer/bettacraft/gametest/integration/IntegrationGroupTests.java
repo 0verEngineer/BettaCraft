@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -13,14 +14,14 @@ import java.util.TreeSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 
 /**
@@ -52,7 +53,7 @@ public final class IntegrationGroupTests {
     public static void everyIntegratedModIsLoaded(GameTestHelper h) {
         List<String> missing = GROUP.stream().filter(m -> !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m)).toList();
         if (!missing.isEmpty() && IntegrationSuite.PARTIAL) IntegrationSuite.LOGGER.warn("[integration] partial run without {}", missing);
-        else if (!missing.isEmpty()) throw new GameTestAssertException("the integration group lacks " + missing);
+        else if (!missing.isEmpty()) throw new GameTestFailure("the integration group lacks " + missing);
         h.succeed();
     }
 
@@ -105,10 +106,10 @@ public final class IntegrationGroupTests {
         for (String[] r : new String[][]{{"create", "compat/create_drive_adapter"}, {"create", "compat/create_stainless_steel_ingot"},
                 {"enderio", "compat/enderio_stainless_steel_ingot"}, {"mekanism", "compat/mekanism_stainless_steel_ingot"}}) {
             Identifier id = Identifier.fromNamespaceAndPath(BettaCraft.MOD_ID, r[1]);
-            if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(r[0]) && server.getRecipeManager().byKey(id).isEmpty()) recipes.add(id.toString());
+            if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(r[0]) && server.getRecipeManager().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, id)).isEmpty()) recipes.add(id.toString());
         }
         if (!recipes.isEmpty()) bad.add("recipes not loaded: " + recipes);
-        if (!bad.isEmpty()) throw new GameTestAssertException(bad.size() + " ids of loaded mods unknown: " + String.join("; ", bad));
+        if (!bad.isEmpty()) throw new GameTestFailure(bad.size() + " ids of loaded mods unknown: " + String.join("; ", bad));
         h.assertTrue(checked[0] > 300, "checked only " + checked[0] + " foreign ids");
         IntegrationSuite.LOGGER.info("[integration] {} ids of other mods checked", checked[0]);
         h.succeed();

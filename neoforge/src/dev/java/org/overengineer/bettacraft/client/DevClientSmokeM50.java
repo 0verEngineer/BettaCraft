@@ -111,8 +111,8 @@ final class DevClientSmokeM50 {
         then(1, () -> {
             int received;
             try {
-                received = org.overengineer.bettacraft.compat.create.CreateTravelClient.received;
-            } catch (LinkageError e) {
+                received = (int) Class.forName("org.overengineer.bettacraft.compat.create.CreateTravelClient").getField("received").get(null); // M52b: by name (no Create on 1.21.11)
+            } catch (ReflectiveOperationException | LinkageError e) {
                 received = -1;
             }
             LOGGER.info("[smoketest] M50 travelling tank states received by the client: {}", received);
@@ -178,7 +178,7 @@ final class DevClientSmokeM50 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         level.setDayTime(6000);
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         bearingPos = p.blockPosition().offset(0, 6, 160);
         var bearingBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:mechanical_bearing"));
         if (bearingBlock == Blocks.AIR) {
@@ -236,7 +236,8 @@ final class DevClientSmokeM50 {
 
     private void startCart(ServerPlayer p) {
         ServerLevel level = p.level();
-        cart = new Minecart(level, railStart.getX() + 0.5, railStart.getY() + 0.1, railStart.getZ() + 0.5);
+        cart = new Minecart(net.minecraft.world.entity.EntityType.MINECART, level);
+        cart.setPos(railStart.getX() + 0.5, railStart.getY() + 0.1, railStart.getZ() + 0.5);
         level.addFreshEntity(cart);
         pushing = true;
     }
@@ -302,7 +303,7 @@ final class DevClientSmokeM50 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -347,7 +348,7 @@ final class DevClientSmokeM50 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m50_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m50_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

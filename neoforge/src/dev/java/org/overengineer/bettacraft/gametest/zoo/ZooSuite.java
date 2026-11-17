@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest.zoo;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,9 +13,6 @@ import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.resources.Identifier;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import org.overengineer.bettacraft.BettaCraft;
 
 /**
@@ -28,7 +26,6 @@ import org.overengineer.bettacraft.BettaCraft;
  * put back, packed or released, a refused animal that is left in the tank anyway, a tank that can be broken with animals in
  * it, a plant that breaks without its item. What the foreign animals themselves do (escape, die, breed) is only written down.
  */
-@EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class ZooSuite {
     static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("bettacraft/zoo");
     public static final boolean ENABLED = Boolean.getBoolean("bettacraft.zoo");
@@ -36,16 +33,10 @@ public final class ZooSuite {
     /** Namespaces that are never part of the zoo: ours and Minecraft's (they have their own tests). */
     static final Set<String> OWN = Set.of(BettaCraft.MOD_ID, "minecraft");
 
+    /** Read by {@code BettaGameTests} (only when {@link #ENABLED}). */
     static final List<Class<?>> CLASSES = List.of(ZooAnimalTests.class, ZooPlantTests.class);
 
     private ZooSuite() {}
-
-    @SubscribeEvent
-    public static void register(RegisterGameTestsEvent event) {
-        if (!ENABLED) return;
-        for (Class<?> c : CLASSES) event.register(c);
-        LOGGER.info("[zoo] registered {} zoo test classes", CLASSES.size());
-    }
 
     static String id(Identifier rl) {
         return rl.toString();
@@ -90,7 +81,7 @@ public final class ZooSuite {
     static void verdict(String what, List<String> violations) {
         if (violations.isEmpty()) return;
         LOGGER.error("[zoo] {}: {} violation(s): {}", what, violations.size(), violations);
-        throw new GameTestAssertException(what + ": " + violations.size() + " violation(s) of our rules: " + String.join("; ", violations.subList(0, Math.min(6, violations.size()))));
+        throw new GameTestFailure(what + ": " + violations.size() + " violation(s) of our rules: " + String.join("; ", violations.subList(0, Math.min(6, violations.size()))));
     }
 
     static List<String> row(Object... cells) {

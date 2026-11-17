@@ -123,8 +123,8 @@ final class DevClientSmokeM47 {
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
         level.setDayTime(6000);
-        level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
+        level.getGameRules().set(GameRules.ADVANCE_TIME, false, level.getServer());
+        level.getGameRules().set(GameRules.ADVANCE_WEATHER, false, level.getServer());
         level.setWeatherParameters(12000, 0, false, false);
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -157,12 +157,12 @@ final class DevClientSmokeM47 {
         }
         level.setBlock(basin, ModBlocks.BREEDING_BASIN.get().defaultBlockState().setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING,
                 Direction.NORTH), 3);
-        Villager v = EntityType.VILLAGER.create(level);
+        Villager v = EntityType.VILLAGER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         v.snapTo(basin.getX() + 1.5, basin.getY(), basin.getZ() + 0.5, 90F, 0F);
         v.setPersistenceRequired();
         level.addFreshEntity(v);
         aquarist = v;
-        LOGGER.info("[m47] basin at {}, villager {}", basin, v.getVillagerData().getProfession());
+        LOGGER.info("[m47] basin at {}, villager {}", basin, v.getVillagerData().profession());
     }
 
     /** The aquarist stands still beside his basin, facing the camera. */
@@ -174,8 +174,8 @@ final class DevClientSmokeM47 {
         LOGGER.info("[smoketest] M47 an unemployed villager took the breeding basin: {} ({} aquarists near, ours {}) {}", hired, near.size(),
                 Aquarists.isAquarist(v), hired ? "PASS" : "FAIL");
         for (Villager o : near) if (o != v) o.discard(); // the scene shows ours
-        if (!Aquarists.isAquarist(v)) v.setVillagerData(v.getVillagerData().setProfession(ModVillagers.AQUARIST.get()));
-        v.setVillagerData(v.getVillagerData().setLevel(3));
+        if (!Aquarists.isAquarist(v)) v.setVillagerData(v.getVillagerData().withProfession(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.wrapAsHolder(ModVillagers.AQUARIST.get())));
+        v.setVillagerData(v.getVillagerData().withLevel(3));
         v.snapTo(basin.getX() - 0.4, basin.getY(), basin.getZ() - 0.9, 180F, 0F);
         v.setYHeadRot(180F);
         v.setYBodyRot(180F);
@@ -188,7 +188,7 @@ final class DevClientSmokeM47 {
         var r = v.getRandom();
         for (int level = 1; level <= 5; level++) {
             for (var l : trades.get(level)) {
-                MerchantOffer o = l.getOffer(v, r);
+                MerchantOffer o = l.getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, r);
                 if (o != null) out.add(o);
             }
         }
@@ -197,7 +197,7 @@ final class DevClientSmokeM47 {
 
     private void trade(ServerPlayer p) {
         Villager v = aquarist;
-        v.setVillagerData(v.getVillagerData().setLevel(5));
+        v.setVillagerData(v.getVillagerData().withLevel(5));
         MerchantOffers offers = new MerchantOffers();
         offers.addAll(allOffers(v));
         v.setOffers(offers);
@@ -296,7 +296,7 @@ final class DevClientSmokeM47 {
     }
 
     private static DwarfFrogEntity frog(ServerLevel level, TankBlockEntity c, boolean female, Vec3 at) {
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (f == null) return null;
         f.setFemale(female);
         f.snapTo(at.x, at.y, at.z, 0F, 0F);
@@ -314,7 +314,7 @@ final class DevClientSmokeM47 {
     // ------------------------------------------------------------------ steps
 
     private void lookAt(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -345,7 +345,7 @@ final class DevClientSmokeM47 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m47_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m47_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

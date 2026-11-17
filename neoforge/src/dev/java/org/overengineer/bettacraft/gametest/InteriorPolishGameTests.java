@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -15,8 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.registry.ModBlocks;
@@ -43,12 +44,12 @@ public final class InteriorPolishGameTests {
         for (BlockPos p : rel) h.setBlock(p, ModBlocks.TANK.get().defaultBlockState());
         for (BlockPos p : rel) TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(rel.getFirst()));
-        if (c == null || c.getTank().memberCount() != rel.size()) throw new GameTestAssertException("tank did not form");
+        if (c == null || c.getTank().memberCount() != rel.size()) throw new GameTestFailure("tank did not form");
         return c;
     }
 
     private static InteriorRegion region(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         h.assertTrue(r.built(), "region built");
         return r;
@@ -103,8 +104,8 @@ public final class InteriorPolishGameTests {
             h.assertTrue(h.getBlockState(l.get(2)).isAir(), "broken once the player is out");
             h.succeed();
         } finally {
-            inside.getServer().getPlayerList().remove(inside);
-            outside.getServer().getPlayerList().remove(outside);
+            inside.level().getServer().getPlayerList().remove(inside);
+            outside.level().getServer().getPlayerList().remove(outside);
         }
     }
 
@@ -159,7 +160,7 @@ public final class InteriorPolishGameTests {
             h.assertTrue(p.position().distanceTo(start) < 0.5, "back in front of the tank");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -183,7 +184,7 @@ public final class InteriorPolishGameTests {
             h.succeed();
         } finally {
             ServerConfig.INTERIOR_LEAVE_LOOK_UP.set(saved);
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +27,8 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.Critter;
@@ -86,7 +87,7 @@ public final class CritterGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water);
         c.getTank().setWaterTemp(25F);
         c.getTank().setTargetTemp(25F);
@@ -95,7 +96,7 @@ public final class CritterGameTests {
 
     private static Critter add(GameTestHelper h, TankBlockEntity c, CritterSpecies s, CritterGenes g, boolean female) {
         Critter k = TankCritters.add(h.getLevel(), c, s, g, female, s.juvenileDays() + 1);
-        if (k == null) throw new GameTestAssertException("tank full");
+        if (k == null) throw new GameTestFailure("tank full");
         return k;
     }
 
@@ -134,7 +135,7 @@ public final class CritterGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().getSelectedSlot() = 8; // the hand is the last hotbar slot: items given go to the first slots
+        sp.getInventory().setSelectedSlot(8); // the hand is the last hotbar slot: items given go to the first slots
         return sp;
     }
 
@@ -244,7 +245,7 @@ public final class CritterGameTests {
             for (CritterObject o : t.critterObjects()) if (o.kind == CritterObject.Kind.CLUTCH) clutch = o;
             if (d % 5 == 0) for (Critter k : t.critters()) if (k.species == CritterSpecies.APPLE_SNAIL && k.female) trace.append(" | ").append(k.debug()).append(" eggs ").append(k.eggs);
         }
-        if (clutch == null) throw new GameTestAssertException("no clutch:" + trace);
+        if (clutch == null) throw new GameTestFailure("no clutch:" + trace);
         h.assertTrue(clutch != null, "an apple snail laid a clutch: " + debug(t));
         h.assertTrue(clutch.y > t.waterSurfaceY(), "above the water line: " + clutch.y + " > " + t.waterSurfaceY());
         h.assertTrue(clutch.face != Critter.FLOOR, "on the glass");
@@ -571,7 +572,7 @@ public final class CritterGameTests {
                 // and the test checks six waters; failed once in 65 local runs)
                 // (the filled bags are taken out after every swing: 60 of them do not fit into the inventory)
                 for (int i = 0; i < SWINGS; i++) {
-                    sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
+                    sp.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.AQUARIUM_NET.get()));
                     NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
                     for (int slot = 0; slot < sp.getInventory().getNonEquipmentItems().size(); slot++) {
                         ItemStack s = sp.getInventory().getNonEquipmentItems().get(slot);
@@ -613,7 +614,7 @@ public final class CritterGameTests {
             sp.getInventory().clearContent();
             sp.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.AQUARIUM_NET.get()));
             biome(level, water, "minecraft:river");
-            sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
+            sp.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.AQUARIUM_NET.get()));
             NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
             h.assertTrue(sp.getInventory().getNonEquipmentItems().stream().allMatch(ItemStack::isEmpty), "no bag, no catch");
         } finally {
@@ -657,8 +658,8 @@ public final class CritterGameTests {
         Set<CritterSpecies> generic = EnumSet.noneOf(CritterSpecies.class), rare = EnumSet.noneOf(CritterSpecies.class);
         boolean frog = false, coloured = false;
         for (int level = 1; level <= 2; level++) {
-            for (VillagerTrades.ItemListing l : VillagerTrades.WANDERING_TRADER_TRADES.get(level)) {
-                var offer = l.getOffer(trader, rnd);
+            for (VillagerTrades.ItemListing l : org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level)) {
+                var offer = l.getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, rnd);
                 if (offer == null) continue;
                 ItemStack r = offer.getResult();
                 List<CompoundTag> c = TankCritters.bagged(r);
@@ -683,13 +684,13 @@ public final class CritterGameTests {
 
     private static DwarfFrogEntity frogIn(GameTestHelper h, TankBlockEntity c) {
         ServerLevel level = h.getLevel();
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         ItemStack bag = FishBagItem.fillWith(f);
         f.discard();
         var err = TankInhabitants.insert(level, c, bag, ModEntities.DWARF_FROG.get(), null, 0L);
-        if (err != null) throw new GameTestAssertException("frog in: " + err.getString());
+        if (err != null) throw new GameTestFailure("frog in: " + err.getString());
         for (var e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof DwarfFrogEntity d) return d;
-        throw new GameTestAssertException("no frog in the tank");
+        throw new GameTestFailure("no frog in the tank");
     }
 
     /** A frog swims up to breathe in a tank with the air gap and keeps its air (short air in the config). */

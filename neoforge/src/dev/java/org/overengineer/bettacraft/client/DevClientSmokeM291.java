@@ -111,20 +111,20 @@ final class DevClientSmokeM291 {
                 int cx = (i % cols) * cw, cy = (i / cols) * ch;
                 g.fill(cx + 1, cy + 1, cx + cw - 1, cy + ch - 1, 0xFFC6C6C6);
                 var pose = g.pose();
-                pose.pushPose();
-                pose.translate(cx + (cw - 16 * scale) / 2F, cy + 3, 0);
-                pose.scale(scale, scale, 1F);
+                pose.pushMatrix();
+                pose.translate(cx + (cw - 16 * scale) / 2F, cy + 3);
+                pose.scale(scale, scale);
                 g.renderItem(items.get(i), 0, 0);
-                pose.popPose();
+                pose.popMatrix();
                 String id = BuiltInRegistries.ITEM.getKey(items.get(i).getItem()).getPath();
-                pose.pushPose();
-                pose.translate(cx + 2, cy + 5 + 16 * scale, 0);
-                pose.scale(0.5F, 0.5F, 1F);
+                pose.pushMatrix();
+                pose.translate(cx + 2, cy + 5 + 16 * scale);
+                pose.scale(0.5F, 0.5F);
                 int max = (cw - 4) * 2;
                 String s = font.plainSubstrByWidth(id, max);
                 g.drawString(font, s, 0, 0, 0xFF202020, false);
                 if (s.length() < id.length()) g.drawString(font, font.plainSubstrByWidth(id.substring(s.length()), max), 0, 9, 0xFF202020, false);
-                pose.popPose();
+                pose.popMatrix();
             }
         }
 
@@ -155,6 +155,6 @@ final class DevClientSmokeM291 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m291_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m291_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -111,7 +111,7 @@ final class DevClientSmokeM28b {
         then(1, () -> server(p -> {
             InteriorPlant m = null;
             for (InteriorPlant pl : regions[1].plants().all()) if (pl.species == PlantSpecies.MARIMO) m = pl;
-            ServerLevel in = InteriorManager.interiorLevel(p.server);
+            ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
             boolean rolled = m != null && InteriorPlants.roll(in, regions[1], m, -1, 0) && InteriorPlants.roll(in, regions[1], m, -1, 0);
             LOGGER.info("[smoketest] M28b Marimo rolled two blocks: {} ({})", rolled, m);
             if (!rolled) LOGGER.error("[smoketest] M28b the Marimo did not roll");
@@ -163,7 +163,7 @@ final class DevClientSmokeM28b {
             };
             int y = top(s);
             BlockPos at = r.toWorld(s.x(), y + size / 3, Math.max(1, s.z() - size));
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 12F);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 12F, true);
         });
     }
 
@@ -171,7 +171,7 @@ final class DevClientSmokeM28b {
         server(p -> {
             InteriorRegion r = regions[t];
             BlockPos at = r.toWorld(r.sizeX() / 2, 14, 1);
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 22F);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 22F, true);
         });
     }
 
@@ -229,7 +229,7 @@ final class DevClientSmokeM28b {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(-12, 2, 400);
         int x0 = 0;
@@ -287,7 +287,7 @@ final class DevClientSmokeM28b {
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true);
             else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
@@ -320,7 +320,7 @@ final class DevClientSmokeM28b {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m28b_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m28b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

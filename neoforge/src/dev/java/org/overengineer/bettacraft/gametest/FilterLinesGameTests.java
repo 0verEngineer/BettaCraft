@@ -3,15 +3,15 @@ package org.overengineer.bettacraft.gametest;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -262,7 +262,7 @@ public final class FilterLinesGameTests {
         old.remove("schema");
         old.remove("retrofit");
         old.putInt("power", 10);
-        head.loadWithComponents(old, level.registryAccess());
+        head.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), old));
         h.assertTrue(head.retrofit(), "the migration marks the old filter");
         double w0 = TankWater.filterBlocks(level, c);
         h.assertTrue(head.run(level, true) == 0 && statuses(head).equals(List.of(MultiblockFilter.LinkStatus.NO_INTAKE_GUARD)), "no guard: " + statuses(head));
@@ -277,7 +277,7 @@ public final class FilterLinesGameTests {
         h.assertTrue(!head.retrofit(), "retrofitted: the mark is gone");
         // saved again: stays unmarked
         FilterPumpHeadBlockEntity copy = new FilterPumpHeadBlockEntity(head.getBlockPos(), head.getBlockState());
-        copy.loadWithComponents(head.saveWithoutMetadata(level.registryAccess()), level.registryAccess());
+        copy.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), head.saveWithoutMetadata(level.registryAccess())));
         h.assertTrue(!copy.retrofit(), "a pump head saved by M40 is no old one");
         h.succeed();
     }

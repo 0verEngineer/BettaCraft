@@ -91,18 +91,18 @@ final class DevClientSmokeM24 {
             InteriorRegion r = pipeRegion;
             if (r == null) return;
             BlockPos at = r.toWorld(r.scale() + r.scale() / 2 + 4, 6, r.scale() + r.scale() / 2 - 10);
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 22F, -18F);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 22F, -18F, true);
         }));
         then(120, () -> {
             checkInterior();
             shot("interior");
         });
-        then(1, () -> server(p -> p.teleportTo(p.server.overworld(), base.getX() + 6.0, base.getY() + 1.5, base.getZ() - 2.0, 0F, 0F)));
+        then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), base.getX() + 6.0, base.getY() + 1.5, base.getZ() - 2.0, java.util.Set.of(), 0F, 0F, true)));
         then(5, () -> server(p -> p.teleportTo(p.level(), base.getX() + 4.5, base.getY() + 1.0, base.getZ() - 1.5, java.util.Set.of(), 0F, 20F, false)));
         // 3. screens
         then(60, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
-        then(40, () -> mc.getToasts().clear());
+        then(40, () -> mc.getToastManager().clear());
         then(1, () -> org.overengineer.bettacraft.util.ClientHooks.openFilter(base.offset(5, 3, 0)));
         then(20, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.MultiblockFilterScreen)) LOGGER.error("[smoketest] M24 no filter screen");
@@ -161,14 +161,14 @@ final class DevClientSmokeM24 {
         ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         for (int x = -8; x < 3 * SPACING + 6; x++)
             for (int z = -14; z < 9; z++) {
                 level.setBlock(base.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
                 level.setBlock(base.offset(x, 0, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
                 for (int y = 1; y < 14; y++) level.setBlock(base.offset(x, y, z), z == 7 ? Blocks.WHITE_CONCRETE.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
             }
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         // ---- left: the multiblock filter, level sensor, reservoir, water change controller
         TankBlockEntity a = tank(level, p, base.offset(0, 1, 0), 4, 2, 3, 900);
         a.getTank().setNitrate(34F);
@@ -210,7 +210,7 @@ final class DevClientSmokeM24 {
         for (int[] c : new int[][]{{0, 0}, {3, 0}, {0, 2}, {3, 2}}) level.setBlockAndUpdate(base.offset(SPACING + c[0], 1, c[1]), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
         // inside: from the nozzle bulkhead (cell 1,1) pipes up to a lily pipe, a nozzle and a spray bar; a strainer at the other one
         int s = rb.scale();
-        var plumbing = InteriorManager.equipment(p.server, rb).plumbing();
+        var plumbing = InteriorManager.equipment(p.level().getServer(), rb).plumbing();
         long port1 = InteriorPlumbing.portInCell(plumbing, 1, 1, s), port2 = InteriorPlumbing.portInCell(plumbing, 2, 1, s);
         if (port1 == Long.MIN_VALUE || port2 == Long.MIN_VALUE) LOGGER.error("[smoketest] M24 the bulkheads were not fitted");
         int px = BlockPos.getX(port1), pz = BlockPos.getZ(port1), qx = BlockPos.getX(port2), qz = BlockPos.getZ(port2);
@@ -384,7 +384,7 @@ final class DevClientSmokeM24 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -406,14 +406,14 @@ final class DevClientSmokeM24 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void awaitReload() {
         if (reload != null && !reload.isDone()) {
             steps.addFirst(new Step(10, this::awaitReload));
         } else {
-            if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+            if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
             LOGGER.info("[smoketest] M24 resources reloaded for {}", mc.options.languageCode);
         }
     }
@@ -452,7 +452,7 @@ final class DevClientSmokeM24 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m24_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m24_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -1,16 +1,17 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import static org.overengineer.bettacraft.gametest.integration.IntegrationRig.*;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
 import org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess;
@@ -51,7 +52,7 @@ public final class IntegrationPowerTests {
             Object data = callStatic("sonar.fluxnetworks.common.connection.FluxNetworkData", "getInstance");
             Object network = call(data, "createNetwork", PlumbingGameTestsAccess.player(h), "bettacraft-test", 0xff0000,
                     enumValue("sonar.fluxnetworks.api.network.SecurityLevel", "PUBLIC"), "");
-            if (network == null) throw new GameTestAssertException("Flux Networks made no network");
+            if (network == null) throw new GameTestFailure("Flux Networks made no network");
             h.assertTrue((boolean) call(be(h, new BlockPos(2, 2, 2)), "connect", network), "the plug joins the network");
             h.assertTrue((boolean) call(be(h, new BlockPos(6, 2, 2)), "connect", network), "the point joins the network");
         } catch (RuntimeException e) {

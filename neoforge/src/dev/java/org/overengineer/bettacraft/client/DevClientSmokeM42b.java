@@ -160,7 +160,7 @@ final class DevClientSmokeM42b {
         TankData wt = wc.getTank();
         int i = 0;
         for (ZooAnimalTests.Cand c : ZooAnimalTests.waterAnimals(level)) {
-            Entity e = c.type().create(level);
+            Entity e = c.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (e == null) continue;
             LivingEntity in = insert(level, wc, c.type(), FishBagItem.fillWith(e));
             e.discard();
@@ -183,7 +183,7 @@ final class DevClientSmokeM42b {
         try {
             for (ZooAnimalTests.Cand c : walkers) {
                 if (j >= 18) break;
-                Entity e = c.type().create(level);
+                Entity e = c.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                 if (e == null) continue;
                 Vec3 at = Vec3.atCenterOf(land).add(0, 6, 0);
                 e.snapTo(at.x, at.y, at.z, 0, 0);
@@ -226,7 +226,7 @@ final class DevClientSmokeM42b {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -257,7 +257,7 @@ final class DevClientSmokeM42b {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m42b_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m42b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

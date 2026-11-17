@@ -112,7 +112,7 @@ final class DevClientSmokeM35a {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         BlockPos base = p.blockPosition().offset(-12, 2, 200);
         // --- the alligators: 24 x 6 x 12 (interior scale 8: 192 x 48 x 96), water a third, a sandy bank on the right
         gator = base;
@@ -152,7 +152,7 @@ final class DevClientSmokeM35a {
 
     /** Puts a new animal of the type in by its container (as a player would); the animal, or null with an error logged. */
     private static LivingEntity insert(ServerLevel level, TankBlockEntity c, EntityType<?> type, int kind, boolean baby) {
-        Entity e = type.create(level);
+        Entity e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         if (baby && e instanceof Mob m) m.setBaby(true);
         e.snapTo(c.getBlockPos().getX(), c.getBlockPos().getY(), c.getBlockPos().getZ());
@@ -217,7 +217,7 @@ final class DevClientSmokeM35a {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -248,7 +248,7 @@ final class DevClientSmokeM35a {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m35a_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m35a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

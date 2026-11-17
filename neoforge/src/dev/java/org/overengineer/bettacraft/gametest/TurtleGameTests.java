@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -18,8 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
@@ -65,7 +66,7 @@ public final class TurtleGameTests {
 
     private static ServerLevel interiorLevel(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -95,7 +96,7 @@ public final class TurtleGameTests {
         TankInteractions.changeWater(h.getLevel(), c, 9000);
         TankClimate.step(h.getLevel(), c, 0.01);
         TankData t = c.getTank();
-        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestAssertException("no paludarium: " + t.terrariumMode() + " land " + t.landShare());
+        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestFailure("no paludarium: " + t.terrariumMode() + " land " + t.landShare());
         climate(t, 25, 25);
         t.setWaterTemp(25F);
         return c;
@@ -106,7 +107,7 @@ public final class TurtleGameTests {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 3, 3, 3, 0);
         interior(h, c);
         TankClimate.step(h.getLevel(), c, 0.01);
-        if (c.getTank().terrariumMode() != TerrariumMode.TERRARIUM) throw new GameTestAssertException("no terrarium: " + c.getTank().terrariumMode());
+        if (c.getTank().terrariumMode() != TerrariumMode.TERRARIUM) throw new GameTestFailure("no terrarium: " + c.getTank().terrariumMode());
         return c;
     }
 
@@ -121,8 +122,8 @@ public final class TurtleGameTests {
     }
 
     private static ItemStack container(GameTestHelper h, HerpSpecies s, boolean female) {
-        HerpEntity e = ModEntities.herp(s).create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("no " + s.id());
+        HerpEntity e = ModEntities.herp(s).create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("no " + s.id());
         e.setFemale(female);
         ItemStack stack = e.getBucketItemStack();
         e.saveToBucketTag(stack);
@@ -133,11 +134,11 @@ public final class TurtleGameTests {
     private static HerpEntity put(GameTestHelper h, TankBlockEntity c, HerpSpecies s, boolean female) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         var err = TankInhabitants.insert(h.getLevel(), c, container(h, s, female), ModEntities.herp(s), null, 0L);
-        if (err != null) throw new GameTestAssertException(s.id() + " in: " + err.getString());
+        if (err != null) throw new GameTestFailure(s.id() + " in: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof HerpEntity t && !before.contains(e)) return t;
         }
-        throw new GameTestAssertException("no " + s.id() + " in the tank");
+        throw new GameTestFailure("no " + s.id() + " in the tank");
     }
 
     // ------------------------------------------------------------------ admission
@@ -163,12 +164,12 @@ public final class TurtleGameTests {
         h.assertTrue(TankInhabitants.insert(level, palu, container(h, HerpSpecies.HERMANN, true), ModEntities.HERMANN_TORTOISE.get(), null, 0L) != null,
                 "a paludarium refuses the tortoise");
         // the vanilla sea turtle (M35: a big animal): neither a grown one nor a hatchling fits a small paludarium
-        Turtle grown = EntityType.TURTLE.create(level);
+        Turtle grown = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         grown.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(20, 2, 20)));
         ItemStack bigBag = FishBagItem.fillWith(grown);
         grown.discard();
         h.assertTrue(TankInhabitants.insert(level, palu, bigBag, EntityType.TURTLE, null, true) != null, "a grown sea turtle is refused");
-        Turtle baby = EntityType.TURTLE.create(level);
+        Turtle baby = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         baby.setAge(-24000);
         ItemStack bag = FishBagItem.fillWith(baby);
         baby.discard();
@@ -308,14 +309,14 @@ public final class TurtleGameTests {
     public static void wildTurtles(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         var biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.SWAMP)) == HerpSpawns.Home.SWAMP, "swamp");
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.RIVER)) == HerpSpawns.Home.RIVER, "river");
-        h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.SAVANNA)) == HerpSpawns.Home.DRY_LAND, "savanna");
-        h.assertTrue(HerpSpawns.entries(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.PLAINS))).stream().noneMatch(e -> e.species().turtle()),
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.SWAMP)) == HerpSpawns.Home.SWAMP, "swamp");
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.RIVER)) == HerpSpawns.Home.RIVER, "river");
+        h.assertTrue(HerpSpawns.home(biomes.getOrThrow(Biomes.SAVANNA)) == HerpSpawns.Home.DRY_LAND, "savanna");
+        h.assertTrue(HerpSpawns.entries(HerpSpawns.home(biomes.getOrThrow(Biomes.PLAINS))).stream().noneMatch(e -> e.species().turtle()),
                 "no turtles in plains (part c: the corn snake lives there)");
         List<EntityType<?>> swamp = new ArrayList<>(), savanna = new ArrayList<>();
-        for (var d : biomes.getHolderOrThrow(Biomes.SWAMP).value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) swamp.add(d.type);
-        for (var d : biomes.getHolderOrThrow(Biomes.SAVANNA).value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) savanna.add(d.type);
+        for (var d : biomes.getOrThrow(Biomes.SWAMP).value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) swamp.add(d.value().type());
+        for (var d : biomes.getOrThrow(Biomes.SAVANNA).value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) savanna.add(d.value().type());
         h.assertTrue(swamp.contains(ModEntities.SLIDER_TURTLE.get()) && swamp.contains(ModEntities.MUSK_TURTLE.get()), "sliders and musk turtles in swamps");
         h.assertTrue(savanna.contains(ModEntities.HERMANN_TORTOISE.get()) && !savanna.contains(ModEntities.SLIDER_TURTLE.get()), "the tortoise in savannas");
         // the rules: a slider on stone next to water, a tortoise on grass under the open sky, not on stone

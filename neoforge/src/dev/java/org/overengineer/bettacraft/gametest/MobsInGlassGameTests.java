@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.NbtOps;
@@ -23,8 +24,8 @@ import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.MobCaptures;
 import org.overengineer.bettacraft.mobs.GlassMobData;
@@ -59,7 +60,7 @@ public final class MobsInGlassGameTests {
     static TankBlockEntity terrarium(GameTestHelper h, int x, int sy) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 2, sy, 2, 0);
         TerrariumMode m = TankClimate.refreshMode(h.getLevel(), c);
-        if (m != TerrariumMode.TERRARIUM) throw new GameTestAssertException("no terrarium: " + m);
+        if (m != TerrariumMode.TERRARIUM) throw new GameTestFailure("no terrarium: " + m);
         return c;
     }
 
@@ -67,14 +68,14 @@ public final class MobsInGlassGameTests {
     private static TankBlockEntity aquarium(GameTestHelper h, int x) {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 2, 2, 2, 8000);
         TerrariumMode m = TankClimate.refreshMode(h.getLevel(), c);
-        if (m != TerrariumMode.AQUARIUM) throw new GameTestAssertException("no aquarium: " + m);
+        if (m != TerrariumMode.AQUARIUM) throw new GameTestFailure("no aquarium: " + m);
         return c;
     }
 
     /** A weakened mob of this type caught in a full jar. */
     private static ItemStack jar(GameTestHelper h, EntityType<? extends Mob> type) {
-        Mob m = type.create(h.getLevel());
-        if (m == null) throw new GameTestAssertException("no " + type);
+        Mob m = type.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (m == null) throw new GameTestFailure("no " + type);
         m.setHealth(1F);
         ItemStack s = MobJarItem.fillWith(m);
         m.discard();
@@ -84,11 +85,11 @@ public final class MobsInGlassGameTests {
     static Mob put(GameTestHelper h, TankBlockEntity c, EntityType<? extends Mob> type) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         var err = TankInhabitants.insert(h.getLevel(), c, jar(h, type), type, null, 0L);
-        if (err != null) throw new GameTestAssertException(type + " in: " + err.getString());
+        if (err != null) throw new GameTestFailure(type + " in: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof Mob m && e.getType() == type && !before.contains(e)) return m;
         }
-        throw new GameTestAssertException("no " + type + " in the tank");
+        throw new GameTestFailure("no " + type + " in the tank");
     }
 
     private static List<Mob> mobs(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
@@ -112,8 +113,8 @@ public final class MobsInGlassGameTests {
         Zombie z = h.spawn(EntityType.ZOMBIE, new BlockPos(8, 2, 8));
         p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
         h.assertTrue(item.interactLivingEntity(p.getMainHandItem(), p, z, InteractionHand.MAIN_HAND) == InteractionResult.FAIL, "a healthy zombie stays out");
-        h.assertTrue(p.getCooldowns().isOnCooldown(item), "the jar cools down after a try");
-        p.getCooldowns().removeCooldown(item);
+        h.assertTrue(p.getCooldowns().isOnCooldown(new net.minecraft.world.item.ItemStack(item)), "the jar cools down after a try");
+        p.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item));
         var creeper = h.spawn(EntityType.CREEPER, new BlockPos(10, 2, 8));
         creeper.setHealth(1F);
         h.assertTrue(item.interactLivingEntity(p.getMainHandItem(), p, creeper, InteractionHand.MAIN_HAND) == InteractionResult.FAIL, "no creeper in glass");
@@ -244,7 +245,7 @@ public final class MobsInGlassGameTests {
         GlassMobs.step(level, dry, 0.01);
         List<Mob> drowned = mobs(h, wet, EntityType.DROWNED);
         h.assertTrue(drowned.size() == 3, "a baby drowned: " + drowned.size());
-        Mob baby = drowned.stream().filter(Mob::isBaby).findFirst().orElseThrow(() -> new GameTestAssertException("no baby"));
+        Mob baby = drowned.stream().filter(Mob::isBaby).findFirst().orElseThrow(() -> new GameTestFailure("no baby"));
         h.assertTrue(GlassMobs.isGlassMob(baby) && GlassMobs.data(baby).growth < 1, "the baby is a young mob in glass");
         List<Mob> spiders = mobs(h, dry, EntityType.SPIDER);
         h.assertTrue(spiders.size() == 3, "a spiderling: " + spiders.size());
@@ -294,13 +295,13 @@ public final class MobsInGlassGameTests {
         ItemStack vial = new ItemStack(BuiltInRegistries.ITEM.getValue(MobCaptures.SOUL_VIAL));
         @SuppressWarnings("unchecked")
         DataComponentType<Object> soul = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(MobCaptures.SOUL);
-        if (soul == null || soul.codec() == null) throw new GameTestAssertException("no enderio:soul component");
+        if (soul == null || soul.codec() == null) throw new GameTestFailure("no enderio:soul component");
         try {
             Object value = soul.codec().parse(NbtOps.INSTANCE, TagParser.parseCompoundFully("{entity_type:\"minecraft:spider\",entity_tag:{id:\"minecraft:spider\",Health:4.0f}}"))
                     .getOrThrow();
             vial.set(soul, value);
         } catch (Exception e) {
-            throw new GameTestAssertException("soul: " + e);
+            throw new GameTestFailure("soul: " + e);
         }
         h.assertTrue(TankInhabitants.containedType(vial) == EntityType.SPIDER, "the vial holds a spider");
         ServerPlayer p = MockPlayers.serverPlayer(h);

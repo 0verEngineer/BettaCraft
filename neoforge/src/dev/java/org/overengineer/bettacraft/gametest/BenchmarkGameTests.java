@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.CritterGenes;
 import org.overengineer.bettacraft.critters.CritterSpecies;
@@ -83,14 +84,14 @@ public final class BenchmarkGameTests {
         for (int i = 0; i < bettas; i++) {
             BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(seed + i)), true, 0);
             var err = TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), null, false);
-            if (err != null) throw new GameTestAssertException("betta: " + err.getString());
+            if (err != null) throw new GameTestFailure("betta: " + err.getString());
         }
         TankWaterVolume w = new TankWaterVolume(c.getTank());
         for (int i = 0; i < neons; i++) {
             Vec3 p = w.clamp(new Vec3(w.box().getCenter().x + (i % 5) * 0.3, w.box().minY + 0.4 + (i / 5) * 0.2, w.box().getCenter().z), 0.35, 0.1, 0.2);
             TankmateEntity e = TankmateBreeding.spawn(level, c, TankmateSpecies.NEON_TETRA, TankmateGenes.wild(TankmateSpecies.NEON_TETRA), i % 2 == 0,
                     LifeStage.ADULT, 0, p);
-            if (e == null) throw new GameTestAssertException("could not spawn a neon");
+            if (e == null) throw new GameTestFailure("could not spawn a neon");
         }
         CritterSpecies[] kinds = {CritterSpecies.NEOCARIDINA, CritterSpecies.ZEBRA_NERITE, CritterSpecies.RAMSHORN};
         for (int i = 0; i < critters; i++) TankCritters.add(level, c, kinds[i % 3], CritterGenes.WILD, i % 2 == 0, kinds[i % 3].juvenileDays() + 1);
@@ -176,7 +177,7 @@ public final class BenchmarkGameTests {
             n = PipeNetwork.of(level, start);
         }
         double buildMs = (System.nanoTime() - t0) / 1e6 / builds;
-        if (n == null) throw new GameTestAssertException("no network");
+        if (n == null) throw new GameTestFailure("no network");
         h.assertTrue(n.pipes().size() >= 1000 || n.pipes().size() == PipeNetwork.MAX_PIPES, "1000 pipes in one network: " + n.pipes().size());
         h.assertTrue(n.tankEnds(level).size() >= 2, "both tanks are ends: " + n.tankEnds(level).size());
         report("building a network of " + n.pipes().size() + " pipes with " + n.ends().size() + " ends", buildMs, 1);
@@ -212,7 +213,7 @@ public final class BenchmarkGameTests {
         BlockPos topLeft = new BlockPos(28, 6, 20);
         for (int y = 0; y < 5; y++) for (int x = 0; x < 8; x++) h.setBlock(topLeft.west(x).below(y), s);
         if (!(level.getBlockEntity(h.absolutePos(topLeft)) instanceof MonitorBlockEntity m) || m.controller() == null) {
-            throw new GameTestAssertException("no monitor screen");
+            throw new GameTestFailure("no monitor screen");
         }
         MonitorBlockEntity c = m.controller();
         DashboardLayout l = new DashboardLayout();
@@ -246,7 +247,7 @@ public final class BenchmarkGameTests {
         TankBlockEntity c = CritterGameTests.tank(h, 2, 2, 2, 3, 2, 3, 0);
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
-        if (r == null || in == null) throw new GameTestAssertException("no interior");
+        if (r == null || in == null) throw new GameTestFailure("no interior");
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++) {
             Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
             if (x < r.sizeX() / 2) for (int y = 0; y < 6; y++) in.setBlock(r.toWorld(x, y, z), Blocks.DIRT.defaultBlockState(), 3);

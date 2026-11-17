@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -17,8 +18,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
@@ -59,7 +60,7 @@ public final class BreedingGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(2, 1, 2)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, water);
         // warm water for breeding: a large heater keeps the target temperature
         c.getTank().legacyHeaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
@@ -71,9 +72,9 @@ public final class BreedingGameTests {
     private static BettaEntity insert(GameTestHelper h, TankBlockEntity c, BettaData d) {
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (BettaEntity b : bettas(h, c)) if (b.getBettaData().fishId().equals(d.fishId())) return b;
-        throw new GameTestAssertException("inserted betta not found");
+        throw new GameTestFailure("inserted betta not found");
     }
 
     private static BettaEntity adult(GameTestHelper h, TankBlockEntity c, boolean female, long seed) {
@@ -169,7 +170,7 @@ public final class BreedingGameTests {
             if (phase[0] >= 3) return;
             if (tick > 5800) {
                 restore.run();
-                throw new GameTestAssertException("life cycle stuck in phase " + phase[0] + " (0 nest, 1 hatching, 2 growing)");
+                throw new GameTestFailure("life cycle stuck in phase " + phase[0] + " (0 nest, 1 hatching, 2 growing)");
             }
             // the player feeds now and then: pellets for the adults, infusoria and nauplii for the fry
             if (tick % 40 == 0) {
@@ -373,7 +374,7 @@ public final class BreedingGameTests {
         BettaCare.advance(level, c, adult, 0.9);
         BlockPos fp = new BlockPos(2, 3, 2);
         h.setBlock(fp, ModBlocks.FEEDER.get().defaultBlockState());
-        FeederBlockEntity f = (FeederBlockEntity) h.getBlockEntity(fp);
+        FeederBlockEntity f = h.getBlockEntity(fp, FeederBlockEntity.class);
         f.items().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 4), false);
         f.items().insertItem(1, new ItemStack(ModItems.INFUSORIA.get(), 2), false);
         int used = f.feedNow(level, c);

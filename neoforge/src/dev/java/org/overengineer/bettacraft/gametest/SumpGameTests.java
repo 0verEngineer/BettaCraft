@@ -1,16 +1,17 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -45,7 +46,7 @@ public final class SumpGameTests {
     private SumpGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     /** A 2x2x2 tank at (x, 2, z) with a cabinet under its corner; returns the controller. */
@@ -59,7 +60,7 @@ public final class SumpGameTests {
     }
 
     static CabinetBlockEntity cabinet(GameTestHelper h, int x, int z) {
-        return (CabinetBlockEntity) h.getBlockEntity(new BlockPos(x, 1, z));
+        return h.getBlockEntity(new BlockPos(x, 1, z), CabinetBlockEntity.class);
     }
 
     /** A sump with these chambers into the cabinet. */
@@ -143,7 +144,7 @@ public final class SumpGameTests {
         TankBlockEntity c = tankWithCabinet(h, 4, 4, 35F);
         BlockPos pumpRel = new BlockPos(4, 1, 3);
         h.setBlock(pumpRel, ModBlocks.DOSING_PUMP.get().defaultBlockState().setValue(DosingPumpBlock.FACING, Direction.NORTH));
-        DosingPumpBlockEntity pump = (DosingPumpBlockEntity) h.getBlockEntity(pumpRel);
+        DosingPumpBlockEntity pump = h.getBlockEntity(pumpRel, DosingPumpBlockEntity.class);
         check(pump.targets().isEmpty(), "no sump: the pump beside the cabinet reaches nothing");
         check(Sump.tankBeside(level, h.absolutePos(pumpRel)) == null, "no tank beside without a sump");
         putSump(cabinet(h, 4, 4));
@@ -155,12 +156,12 @@ public final class SumpGameTests {
 
     private static CalciumReactorBlockEntity reactor(GameTestHelper h, BlockPos rel, int rubble, boolean gas) {
         h.setBlock(rel, ModBlocks.CALCIUM_REACTOR.get().defaultBlockState().setValue(CalciumReactorBlock.FACING, Direction.NORTH));
-        CalciumReactorBlockEntity r = (CalciumReactorBlockEntity) h.getBlockEntity(rel);
+        CalciumReactorBlockEntity r = h.getBlockEntity(rel, CalciumReactorBlockEntity.class);
         if (rubble > 0) r.items().setStackInSlot(0, new ItemStack(ModItems.CORAL_RUBBLE.get(), rubble));
         if (gas) {
             BlockPos cyl = rel.north();
             h.setBlock(cyl, ModBlocks.CO2_CYLINDER.get().defaultBlockState());
-            ((org.overengineer.bettacraft.co2.Co2CylinderBlockEntity) h.getBlockEntity(cyl)).setGas(1000F);
+            (h.getBlockEntity(cyl, org.overengineer.bettacraft.co2.Co2CylinderBlockEntity.class)).setGas(1000F);
         }
         return r;
     }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,9 +10,9 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestAssertException;
-import net.minecraft.gametest.framework.GameTestGenerator;
+import org.overengineer.bettacraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.gametest.framework.TestFunction;
+import org.overengineer.bettacraft.gametest.framework.TestFunction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,8 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.FeatureContent;
@@ -107,7 +108,7 @@ public final class FeatureRestGameTests {
                     TankMultiblock.onTankBlockAdded(level, h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(level, h.absolutePos(new BlockPos(4, 1, 4)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(level, c, 48_000);
         c.getTank().setWaterTemp(26F);
         c.getTank().setTargetTemp(26F);
@@ -115,7 +116,7 @@ public final class FeatureRestGameTests {
         for (boolean female : new boolean[]{false, true}) {
             BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(female ? 2 : 1)), female, 0);
             var err = TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), null, false);
-            if (err != null) throw new GameTestAssertException("betta: " + err.getString());
+            if (err != null) throw new GameTestFailure("betta: " + err.getString());
         }
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof BettaEntity b) bettas.add(b);
         List<TankmateEntity> mates = new ArrayList<>();
@@ -124,14 +125,14 @@ public final class FeatureRestGameTests {
             Vec3 p = w.clamp(new Vec3(w.box().getCenter().x + i * 0.3, w.box().minY + 0.4, w.box().getCenter().z), 0.35, 0.1, 0.2);
             TankmateEntity e = TankmateBreeding.spawn(level, c, TankmateSpecies.NEON_TETRA, TankmateGenes.wild(TankmateSpecies.NEON_TETRA), i % 2 == 0,
                     LifeStage.ADULT, 0, p);
-            if (e == null) throw new GameTestAssertException("could not spawn a neon");
+            if (e == null) throw new GameTestFailure("could not spawn a neon");
             mates.add(e);
         }
         List<Critter> critters = new ArrayList<>();
         critters.add(TankCritters.add(level, c, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, true, CritterSpecies.ZEBRA_NERITE.juvenileDays() + 1));
         critters.add(TankCritters.add(level, c, CritterSpecies.RAMSHORN, CritterGenes.WILD, false, CritterSpecies.RAMSHORN.juvenileDays() + 1));
         critters.add(TankCritters.add(level, c, CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, false, CritterSpecies.ZEBRA_NERITE.juvenileDays() + 1));
-        if (critters.contains(null)) throw new GameTestAssertException("could not add the small animals");
+        if (critters.contains(null)) throw new GameTestFailure("could not add the small animals");
         return new Stock(c, bettas, mates, critters);
     }
 
@@ -151,16 +152,16 @@ public final class FeatureRestGameTests {
     // ------------------------------------------------------------------ what a feature that is off must not give
 
     private static void check(boolean ok, Feature f, String what) {
-        if (!ok) throw new GameTestAssertException(f.key() + ": " + what);
+        if (!ok) throw new GameTestFailure(f.key() + ": " + what);
     }
 
     /** Recipe id -> result item path (ours only). */
     private static Map<Identifier, String> results(ServerLevel level, RecipeManager rm) {
         Map<Identifier, String> out = new java.util.HashMap<>();
         for (RecipeHolder<?> r : rm.getRecipes()) {
-            ItemStack res = r.value().getResultItem(level.registryAccess());
+            ItemStack res = org.overengineer.bettacraft.gametest.framework.DevRecipes.result(r.value());
             Identifier id = res.isEmpty() ? null : BuiltInRegistries.ITEM.getKey(res.getItem());
-            out.put(r.id(), id != null && id.getNamespace().equals(BettaCraft.MOD_ID) ? id.getPath() : "");
+            out.put(r.id().identifier(), id != null && id.getNamespace().equals(BettaCraft.MOD_ID) ? id.getPath() : "");
         }
         return out;
     }
@@ -184,13 +185,13 @@ public final class FeatureRestGameTests {
         RecipeManager rm = FeatureSwitchGameTests.recipes(level);
         for (var e : before.entrySet()) {
             if (e.getValue().isEmpty() || Features.all(FeatureContent.ofItem(e.getValue()))) continue;
-            check(rm.byKey(e.getKey()).isEmpty(), f, "recipe " + e.getKey() + " of " + e.getValue() + " is still there");
+            check(rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, e.getKey())).isEmpty(), f, "recipe " + e.getKey() + " of " + e.getValue() + " is still there");
         }
         WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(1, 1, 1));
         try {
             for (TraderOffers.Offer o : TraderOffers.all()) {
                 if (o.allowed()) continue;
-                for (int i = 0; i < 10; i++) check(o.gatedListing().getOffer(trader, level.getRandom()) == null, f, "the trader still offers " + o.id());
+                for (int i = 0; i < 10; i++) check(o.gatedListing().getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, level.getRandom()) == null, f, "the trader still offers " + o.id());
             }
         } finally {
             trader.discard();
@@ -299,7 +300,7 @@ public final class FeatureRestGameTests {
         // on again: everything is back
         check(Features.enabled(f), f, "not on again");
         RecipeManager rm = FeatureSwitchGameTests.recipes(level);
-        for (Identifier id : before.keySet()) check(rm.byKey(id).isPresent(), f, "recipe " + id + " not back");
+        for (Identifier id : before.keySet()) check(rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, id)).isPresent(), f, "recipe " + id + " not back");
         check(allowedOffers().containsAll(offers), f, "offers not back");
         check(new FeatureLootCondition(f).test(null), f, "loot condition not back");
         care(h, s);

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
@@ -29,13 +30,13 @@ final class IntegrationRig {
 
     static Block block(String id) {
         Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
-        if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
+        if (b == Blocks.AIR) throw new GameTestFailure("no block " + id);
         return b;
     }
 
     static Item item(String id) {
         Item i = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
-        if (i == Items.AIR) throw new GameTestAssertException("no item " + id);
+        if (i == Items.AIR) throw new GameTestFailure("no item " + id);
         return i;
     }
 
@@ -46,12 +47,12 @@ final class IntegrationRig {
     }
 
     private static <T extends Comparable<T>> BlockState set(BlockState s, Property<T> p, String value) {
-        return p.getValue(value).map(v -> s.setValue(p, v)).orElseThrow(() -> new GameTestAssertException("no value " + value + " of " + p.getName()));
+        return p.getValue(value).map(v -> s.setValue(p, v)).orElseThrow(() -> new GameTestFailure("no value " + value + " of " + p.getName()));
     }
 
     static ChestBlockEntity chest(GameTestHelper h, BlockPos rel, ItemStack... stacks) {
         h.setBlock(rel, Blocks.CHEST.defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ChestBlockEntity c)) throw new GameTestAssertException("no chest");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ChestBlockEntity c)) throw new GameTestFailure("no chest");
         for (int i = 0; i < stacks.length; i++) c.setItem(i, stacks[i]);
         return c;
     }
@@ -65,7 +66,7 @@ final class IntegrationRig {
     /** A feeder standing on its own (its item capability takes food only). */
     static FeederBlockEntity feeder(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.FEEDER.get().defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof FeederBlockEntity f)) throw new GameTestAssertException("no feeder");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof FeederBlockEntity f)) throw new GameTestFailure("no feeder");
         return f;
     }
 
@@ -85,7 +86,7 @@ final class IntegrationRig {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water) TankInteractions.changeWater(h.getLevel(), c, c.getTank().capacityMb());
         return c;
     }
@@ -114,7 +115,7 @@ final class IntegrationRig {
                 return m;
             }
         }
-        throw new GameTestAssertException("API changed: no method " + c.getName() + "." + name + "/" + params);
+        throw new GameTestFailure("API changed: no method " + c.getName() + "." + name + "/" + params);
     }
 
     /** The method of that name whose parameters take the arguments (overloads with the same count are told apart). */
@@ -134,7 +135,7 @@ final class IntegrationRig {
                 return m;
             }
         }
-        if (fallback == null) throw new GameTestAssertException("API changed: no method " + c.getName() + "." + name + "/" + args.length);
+        if (fallback == null) throw new GameTestFailure("API changed: no method " + c.getName() + "." + name + "/" + args.length);
         fallback.setAccessible(true);
         return fallback;
     }
@@ -157,7 +158,7 @@ final class IntegrationRig {
             return method(o.getClass(), name, args).invoke(o, args);
         } catch (ReflectiveOperationException e) {
             Throwable t = e.getCause() != null ? e.getCause() : e;
-            throw new GameTestAssertException(o.getClass().getSimpleName() + "." + name + ": " + t);
+            throw new GameTestFailure(o.getClass().getSimpleName() + "." + name + ": " + t);
         }
     }
 
@@ -166,7 +167,7 @@ final class IntegrationRig {
             return method(Class.forName(cls), name, args).invoke(null, args);
         } catch (ReflectiveOperationException e) {
             Throwable t = e.getCause() != null ? e.getCause() : e;
-            throw new GameTestAssertException(cls + "." + name + ": " + t);
+            throw new GameTestFailure(cls + "." + name + ": " + t);
         }
     }
 
@@ -179,10 +180,10 @@ final class IntegrationRig {
             } catch (NoSuchFieldException ignored) {
                 // the super class
             } catch (IllegalAccessException e) {
-                throw new GameTestAssertException("field " + name + ": " + e);
+                throw new GameTestFailure("field " + name + ": " + e);
             }
         }
-        throw new GameTestAssertException("API changed: no field " + o.getClass().getName() + "." + name);
+        throw new GameTestFailure("API changed: no field " + o.getClass().getName() + "." + name);
     }
 
     static Object staticField(String cls, String name) {
@@ -190,7 +191,7 @@ final class IntegrationRig {
             Field f = Class.forName(cls).getField(name);
             return f.get(null);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("API changed: " + cls + "." + name + ": " + e);
+            throw new GameTestFailure("API changed: " + cls + "." + name + ": " + e);
         }
     }
 
@@ -200,7 +201,7 @@ final class IntegrationRig {
 
     static Object be(GameTestHelper h, BlockPos rel) {
         Object be = h.getLevel().getBlockEntity(h.absolutePos(rel));
-        if (be == null) throw new GameTestAssertException("no block entity at " + rel + " (" + h.getBlockState(rel) + ")");
+        if (be == null) throw new GameTestFailure("no block entity at " + rel + " (" + h.getBlockState(rel) + ")");
         return be;
     }
 

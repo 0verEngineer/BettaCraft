@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.food.FoodMakerBlockEntity;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -40,13 +41,13 @@ public final class StorageGameTests {
 
     private static Item item(String id) {
         Item i = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
-        if (i == Items.AIR) throw new GameTestAssertException("no item " + id);
+        if (i == Items.AIR) throw new GameTestFailure("no item " + id);
         return i;
     }
 
     private static Block block(String id) {
         Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
-        if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
+        if (b == Blocks.AIR) throw new GameTestFailure("no block " + id);
         return b;
     }
 
@@ -60,14 +61,14 @@ public final class StorageGameTests {
                 return m;
             }
         }
-        throw new GameTestAssertException("no method " + c.getName() + "." + name);
+        throw new GameTestFailure("no method " + c.getName() + "." + name);
     }
 
     /** AE2: a cable part (side null) or a bus on a side of the cable bus at {@code abs}. */
     private static Object aePart(ServerLevel level, BlockPos abs, Direction side, String item) throws Exception {
         Method set = method(Class.forName("appeng.api.parts.PartHelper"), "setPart", 5);
         Object part = set.invoke(null, level, abs, side, null, item(item));
-        if (part == null) throw new GameTestAssertException("AE2 did not place " + item);
+        if (part == null) throw new GameTestFailure("AE2 did not place " + item);
         return part;
     }
 
@@ -98,7 +99,7 @@ public final class StorageGameTests {
         FoodMakerBlockEntity m = maker(h, new BlockPos(2, 2, 2));
         m.items().setStackInSlot(1, new ItemStack(Items.WHEAT, 4));
         h.setBlock(new BlockPos(5, 2, 2), Blocks.CHEST.defaultBlockState());
-        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(5, 2, 2))) instanceof ChestBlockEntity chest)) throw new GameTestAssertException("no chest");
+        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(5, 2, 2))) instanceof ChestBlockEntity chest)) throw new GameTestFailure("no chest");
         chest.setItem(0, new ItemStack(Items.EGG, 2));
         // cable bus east of the machine: import bus west (machine), storage bus east (a chest one further), export bus on a
         // second cable bus south of the machine facing north; power from a creative energy cell on top
@@ -173,7 +174,7 @@ public final class StorageGameTests {
         h.setBlock(new BlockPos(3, 2, 2), block("ae2:pattern_provider").defaultBlockState());
         h.setBlock(new BlockPos(4, 2, 2), block("ae2:creative_energy_cell").defaultBlockState());
         Object provider = level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 2)));
-        if (provider == null) throw new GameTestAssertException("no pattern provider");
+        if (provider == null) throw new GameTestFailure("no pattern provider");
         Object logic = method(provider.getClass(), "getLogic", 0).invoke(provider);
         Class<?> aeKey = Class.forName("appeng.api.stacks.AEKey");
         Class<?> itemKey = Class.forName("appeng.api.stacks.AEItemKey");
@@ -189,7 +190,7 @@ public final class StorageGameTests {
         method(patternInv.getClass(), "setItemDirect", 2).invoke(patternInv, 0, pattern);
         method(logic.getClass(), "updatePatterns", 0).invoke(logic);
         Object details = helper.getMethod("decodePattern", ItemStack.class, net.minecraft.world.level.Level.class).invoke(null, pattern, level);
-        if (details == null) throw new GameTestAssertException("the pattern does not decode");
+        if (details == null) throw new GameTestFailure("the pattern does not decode");
         Object[] inputs = (Object[]) method(details.getClass(), "getInputs", 0).invoke(details);
         Class<?> counter = Class.forName("appeng.api.stacks.KeyCounter");
         Object holders = java.lang.reflect.Array.newInstance(counter, inputs.length);
@@ -210,7 +211,7 @@ public final class StorageGameTests {
                 pushed[0] = (boolean) push.invoke(logic, details, holders); // true once the grid is up
                 if (pushed[0]) m.setSpring(FoodMakerBlockEntity.springMax());
             } catch (ReflectiveOperationException e) {
-                throw new GameTestAssertException("pushPattern: " + e);
+                throw new GameTestFailure("pushPattern: " + e);
             }
         });
         h.succeedWhen(() -> {

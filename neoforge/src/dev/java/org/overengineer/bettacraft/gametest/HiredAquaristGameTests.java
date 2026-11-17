@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.world.InteractionResult;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -21,8 +22,8 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.platform.item.IItemHandler;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.aquarist.AquaristAccess;
@@ -69,7 +70,7 @@ public final class HiredAquaristGameTests {
     private HiredAquaristGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     // ------------------------------------------------------------------ helpers
@@ -94,7 +95,7 @@ public final class HiredAquaristGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, 1, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, c.getTank().capacityMb(), 0F);
         c.getTank().setWaterTemp(26F);
         c.getTank().setTargetTemp(26F);
@@ -125,7 +126,7 @@ public final class HiredAquaristGameTests {
 
     static IItemHandler chest(GameTestHelper h) {
         IItemHandler c = org.overengineer.bettacraft.platform.Platform.get().itemHandler(h.getLevel(), h.absolutePos(CHEST), null);
-        if (c == null) throw new GameTestAssertException("no chest");
+        if (c == null) throw new GameTestFailure("no chest");
         return c;
     }
 
@@ -566,7 +567,7 @@ public final class HiredAquaristGameTests {
             check(AquaristWork.tanks(h.getLevel(), npc).contains(bs), "his aquarist works there");
             h.succeed();
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("FTB Teams: " + (e.getCause() != null ? e.getCause() : e));
+            throw new GameTestFailure("FTB Teams: " + (e.getCause() != null ? e.getCause() : e));
         } finally {
             if (party != null) {
                 try {
@@ -612,7 +613,8 @@ public final class HiredAquaristGameTests {
             AquaristRecords.PlayerRecord r = AquaristRecords.get(level.getServer()).player(sp.getUUID());
             check(r.npc == null && r.left == 1 && r.notBefore > level.getServer().overworld().getGameTime(), "he left: the next one later");
             check(!level.getPoiManager().existsAtPosition(org.overengineer.bettacraft.villager.ModVillagers.AQUARIST_POI_KEY, h.absolutePos(BASIN))
-                    || level.getPoiManager().getFreeTickets(h.absolutePos(BASIN)) == 1, "the basin is free again");
+                    || level.getPoiManager().getInSquare(t -> true, h.absolutePos(BASIN), 0, net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.ANY)
+                            .anyMatch(rec -> rec.getPos().equals(h.absolutePos(BASIN)) && rec.getFreeTickets() == 1), "the basin is free again");
             h.succeed();
         } finally {
             ServerConfig.AQUARIST_WAGE.set(wage);
@@ -716,7 +718,7 @@ public final class HiredAquaristGameTests {
         for (BlockPos p : blocks) level.setBlock(p, ModBlocks.TANK.get().defaultBlockState(), 3);
         TankMultiblock.formAll(level, blocks);
         TankBlockEntity c = TankMultiblock.getController(level, min);
-        if (c == null) throw new GameTestAssertException("no far tank");
+        if (c == null) throw new GameTestFailure("no far tank");
         TankInteractions.changeWater(level, c, c.getTank().capacityMb());
         c.getTank().setWaterTemp(26F);
         c.getTank().setOwner(owner);
@@ -731,11 +733,11 @@ public final class HiredAquaristGameTests {
         java.util.Set<UUID> before = new java.util.HashSet<>(c.getTank().inhabitants());
         var err = TankInhabitants.insert(h.getLevel(), c, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d),
                 ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (UUID u : c.getTank().inhabitants()) {
             if (!before.contains(u) && h.getLevel().getEntity(u) instanceof BettaEntity b) return b;
         }
-        throw new GameTestAssertException("inserted betta not found (far)");
+        throw new GameTestFailure("inserted betta not found (far)");
     }
 
     private static void await(GameTestHelper h, int max, java.util.function.BooleanSupplier done, String what, Runnable then) {
@@ -743,7 +745,7 @@ public final class HiredAquaristGameTests {
             then.run();
             return;
         }
-        if (max <= 0) throw new GameTestAssertException("timed out: " + what);
+        if (max <= 0) throw new GameTestFailure("timed out: " + what);
         h.runAfterDelay(1, () -> await(h, max - 1, done, what, then));
     }
 
@@ -806,7 +808,7 @@ public final class HiredAquaristGameTests {
             var tag = c.getTank().save();
             tag.remove("aquarist");
             check(TankData.load(tag).aquaristAccess() == AquaristAccess.OWNER, "an old tank: the owner's aquarist");
-            npc.kill();
+            npc.kill((net.minecraft.server.level.ServerLevel) npc.level());
             check(AquaristRecords.get(h.getLevel().getServer()).player(sp.getUUID()).npc == null, "/kill: he is gone for the records");
             h.succeed();
         } finally {

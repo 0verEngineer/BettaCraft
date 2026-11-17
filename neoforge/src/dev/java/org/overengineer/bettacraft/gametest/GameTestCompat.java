@@ -46,18 +46,27 @@ final class GameTestCompat {
     /** No crafting remainder (NeoForge asks the item with the stack, vanilla / Fabric by the item). */
     static boolean noRemainder(net.minecraft.world.item.ItemStack stack) {
         try {
-            var m = net.minecraft.world.item.Item.class.getMethod("getCraftingRemainingItem", net.minecraft.world.item.ItemStack.class);
+            var m = net.minecraft.world.item.Item.class.getMethod("getCraftingRemainder", net.minecraft.world.item.ItemStack.class);
             return ((net.minecraft.world.item.ItemStack) m.invoke(stack.getItem(), stack)).isEmpty();
         } catch (NoSuchMethodException e) {
             try {
                 var m = stack.getItem().getClass().getMethod("getRecipeRemainder", net.minecraft.world.item.ItemStack.class); // FabricItem
                 return ((net.minecraft.world.item.ItemStack) m.invoke(stack.getItem(), stack)).isEmpty();
             } catch (ReflectiveOperationException ex) {
-                return !stack.getItem().hasCraftingRemainingItem();
+                return stack.getItem().getCraftingRemainder().isEmpty();
             }
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * M52b: the stack in the hand after {@code Item#use} (1.21.2: the result names a changed stack, otherwise the one
+     * held is kept).
+     */
+    static net.minecraft.world.item.ItemStack heldAfter(net.minecraft.world.InteractionResult r, net.minecraft.world.item.ItemStack held) {
+        if (r instanceof net.minecraft.world.InteractionResult.Success s && s.heldItemTransformedTo() != null) return s.heldItemTransformedTo();
+        return held;
     }
 
     /** The causes of the animal deaths our public events report (through the event sink, on both loaders). */

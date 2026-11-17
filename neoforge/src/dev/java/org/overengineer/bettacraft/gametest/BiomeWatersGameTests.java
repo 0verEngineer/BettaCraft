@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
@@ -12,8 +13,8 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import org.overengineer.bettacraft.platform.Tags;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.command.DevBiomeMods;
 import org.overengineer.bettacraft.critters.NetCatching;
@@ -35,7 +36,7 @@ public final class BiomeWatersGameTests {
     private BiomeWatersGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     // ------------------------------------------------------------------ the checks before M25.1 (reference)
@@ -72,8 +73,8 @@ public final class BiomeWatersGameTests {
         var reg = h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME);
         List<String> bad = new ArrayList<>();
         int n = 0;
-        for (var b : reg.holders().toList()) {
-            var id = b.key().location();
+        for (var b : reg.listElements().toList()) {
+            var id = b.key().identifier();
             if (!id.getNamespace().equals("minecraft")) continue;
             n++;
             NetCatching.Water old = oldNet(b);
@@ -106,10 +107,10 @@ public final class BiomeWatersGameTests {
                 new Want(ModTags.RIVER_WATERS, Biomes.RIVER), new Want(ModTags.RIVER_WATERS, Biomes.FROZEN_RIVER),
                 new Want(ModTags.BEACH_WATERS, Biomes.BEACH), new Want(ModTags.JUNGLE_WATERS, Biomes.JUNGLE),
                 new Want(ModTags.JUNGLE_WATERS, Biomes.BAMBOO_JUNGLE), new Want(ModTags.CORAL_REEF_BIOMES, Biomes.WARM_OCEAN))) {
-            check(reg.getHolderOrThrow(w.biome()).is(w.tag()), w.biome().location() + " not in #" + w.tag().location());
+            check(reg.getOrThrow(w.biome()).is(w.tag()), w.biome().identifier() + " not in #" + w.tag().location());
         }
-        check(!reg.getHolderOrThrow(Biomes.OCEAN).is(ModTags.WARM_OCEAN_WATERS), "the ocean is no warm ocean");
-        check(!reg.getHolderOrThrow(Biomes.DEEP_LUKEWARM_OCEAN).is(ModTags.CORAL_REEF_BIOMES), "no reef in the deep lukewarm ocean");
+        check(!reg.getOrThrow(Biomes.OCEAN).is(ModTags.WARM_OCEAN_WATERS), "the ocean is no warm ocean");
+        check(!reg.getOrThrow(Biomes.DEEP_LUKEWARM_OCEAN).is(ModTags.CORAL_REEF_BIOMES), "no reef in the deep lukewarm ocean");
         h.succeed();
     }
 

@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevSmokeOldWorld {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final boolean ENABLED = Boolean.getBooleanOr("bettacraft.smoketest.oldworld", false);
+    private static final boolean ENABLED = Boolean.getBoolean("bettacraft.smoketest.oldworld");
     private static final Pattern REGION = Pattern.compile("r\\.(-?\\d+)\\.(-?\\d+)\\.mca");
     private static int ticks;
     private static int haltAt = -1;

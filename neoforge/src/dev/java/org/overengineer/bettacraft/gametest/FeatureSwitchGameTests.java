@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -23,8 +24,8 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.FeatureLootCondition;
@@ -61,8 +62,9 @@ public final class FeatureSwitchGameTests {
             super(registries);
         }
 
-        void load(Map<Identifier, JsonElement> files, ResourceManager resources) {
-            apply(files, resources, InactiveProfiler.INSTANCE);
+        /** M52b: 1.21.2 reads the recipe files in prepare (the loader's conditions decide there) and applies the map. */
+        void load(ResourceManager resources) {
+            apply(prepare(resources, InactiveProfiler.INSTANCE), resources, InactiveProfiler.INSTANCE);
         }
     }
 
@@ -70,17 +72,6 @@ public final class FeatureSwitchGameTests {
     static RecipeManager recipes(ServerLevel level) {
         var server = level.getServer();
         ResourceManager rm = server.getResourceManager();
-        Map<Identifier, JsonElement> files = new HashMap<>();
-        for (var e : rm.listResources("recipe", p -> p.getNamespace().equals(BettaCraft.MOD_ID) && p.getPath().endsWith(".json")).entrySet()) {
-            String path = e.getKey().getPath();
-            try (Reader r = e.getValue().openAsReader()) {
-                JsonElement json = JsonParser.parseReader(r);
-                if (!LoaderHooks.get().recipeAllowed(json, server)) continue; // Fabric: the conditions are read with the file
-                files.put(BettaCraft.id(path.substring("recipe/".length(), path.length() - ".json".length())), json);
-            } catch (IOException ex) {
-                throw new GameTestAssertException("cannot read " + e.getKey() + ": " + ex);
-            }
-        }
         Loader l = new Loader(server.registryAccess());
         LoaderHooks.get().prepareRecipeLoader(l, server);
         // M42: KubeJS mixes into RecipeManager.apply and reads the reload resources it keeps in the real manager (a field of
@@ -92,14 +83,14 @@ public final class FeatureSwitchGameTests {
         } catch (NoSuchFieldException ignored) {
             // no KubeJS
         } catch (IllegalAccessException e) {
-            throw new GameTestAssertException("cannot prepare the recipe loader for KubeJS: " + e);
+            throw new GameTestFailure("cannot prepare the recipe loader for KubeJS: " + e);
         }
-        l.load(files, rm);
+        l.load(rm);
         return l;
     }
 
     private static boolean has(RecipeManager rm, String id) {
-        return rm.byKey(BettaCraft.id(id)).isPresent();
+        return rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id(id))).isPresent();
     }
 
     /** Sets switches off and gives back their old values for {@link #restore}. */
@@ -117,17 +108,17 @@ public final class FeatureSwitchGameTests {
     }
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     /** Whether the offer makes anything in 40 tries. */
     private static boolean offers(GameTestHelper h, WanderingTrader trader, String offer) {
         for (TraderOffers.Offer o : TraderOffers.all()) {
             if (!o.id().equals(offer)) continue;
-            for (int i = 0; i < 40; i++) if (o.gatedListing().getOffer(trader, h.getLevel().getRandom()) != null) return true;
+            for (int i = 0; i < 40; i++) if (o.gatedListing().getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, h.getLevel().getRandom()) != null) return true;
             return false;
         }
-        throw new GameTestAssertException("no offer " + offer);
+        throw new GameTestFailure("no offer " + offer);
     }
 
     /** A water column at sea level for the spawn rules; returns a spot in it. */
@@ -153,7 +144,7 @@ public final class FeatureSwitchGameTests {
         for (String id : List.of("tank", "food_maker", "crucible", "stainless_steel_ingot_from_crucible", "frag_from_brain_coral",
                 "larva_tub", "glass_pipe", "food_maker/frozen_daphnia")) {
             check(has(rm, id), "recipe " + id + " missing with everything on");
-            check(h.getLevel().getServer().getRecipeManager().byKey(BettaCraft.id(id)).isPresent(), "server lacks " + id);
+            check(h.getLevel().getServer().getRecipeManager().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id(id))).isPresent(), "server lacks " + id);
         }
         h.succeed();
     }

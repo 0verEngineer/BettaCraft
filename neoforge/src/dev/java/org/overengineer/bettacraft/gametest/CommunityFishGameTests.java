@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -11,8 +12,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaData;
@@ -58,7 +59,7 @@ public final class CommunityFishGameTests {
         var b = w.box();
         Vec3 p = w.clamp(new Vec3((b.minX + b.maxX) / 2, b.minY + 0.5, (b.minZ + b.maxZ) / 2), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -77,11 +78,11 @@ public final class CommunityFishGameTests {
         BettaData d = BettaData.create(g, female, 0);
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof BettaEntity b && b.getBettaData().fishId().equals(d.fishId())) return b;
         }
-        throw new GameTestAssertException("inserted betta not found");
+        throw new GameTestFailure("inserted betta not found");
     }
 
     /** A chocolate gourami pair spawns, the female carries the eggs in her mouth and spits out young; nothing goes into the box. */

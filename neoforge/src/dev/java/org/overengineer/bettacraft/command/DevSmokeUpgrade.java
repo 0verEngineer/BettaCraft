@@ -260,7 +260,7 @@ public final class DevSmokeUpgrade {
         net.minecraft.nbt.ListTag list = new net.minecraft.nbt.ListTag();
         list.add(oldJars(16, 7, 0));
         chest.put("Items", list);
-        level.getBlockEntity(base).loadWithComponents(chest, reg);
+        level.getBlockEntity(base).loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(reg, chest));
         level.getBlockEntity(base).setChanged();
         plainJars("chest", ((ChestBlockEntity) level.getBlockEntity(base)).getItem(0), 16);
         BlockPos hp = base.above(2);
@@ -274,7 +274,7 @@ public final class DevSmokeUpgrade {
         items.putInt("Size", 3);
         tag.put("items", items);
         tag.put("opened_jar", oldJars(1, 12, -1));
-        tub.loadWithComponents(tag, reg);
+        tub.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(reg, tag));
         tub.setChanged();
         plainJars("hatchery", tub.items().getStackInSlot(org.overengineer.bettacraft.food.CultureTubBlockEntity.INPUT), 17);
         net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(level, base.getX() + 0.5, base.getY() + 4, base.getZ() + 0.5,
@@ -283,7 +283,7 @@ public final class DevSmokeUpgrade {
         et.merge(NbtCompat.saveEntityWithoutId(drop));
         et.put("Item", oldJars(16, 9, -1));
         net.minecraft.world.entity.item.ItemEntity loaded = new net.minecraft.world.entity.item.ItemEntity(net.minecraft.world.entity.EntityType.ITEM, level);
-        loaded.load(et);
+        org.overengineer.bettacraft.util.NbtCompat.loadEntity(loaded, et);
         loaded.setUUID(UUID.randomUUID());
         loaded.setNoGravity(true);
         loaded.setUnlimitedLifetime();
@@ -659,7 +659,7 @@ public final class DevSmokeUpgrade {
             var t = bucket.copyTag();
             if (t.contains(TankmateEntity.KEY) && !org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompoundOrEmpty(TankmateEntity.KEY))) return false;
             if (t.contains(org.overengineer.bettacraft.entity.betta.BettaData.KEY)
-                    && !org.overengineer.bettacraft.entity.betta.BettaData.load(t.getCompound(org.overengineer.bettacraft.entity.betta.BettaData.KEY)).analysed()) return false;
+                    && !org.overengineer.bettacraft.entity.betta.BettaData.load(t.getCompoundOrEmpty(org.overengineer.bettacraft.entity.betta.BettaData.KEY)).analysed()) return false;
         }
         var fish = s.get(org.overengineer.bettacraft.registry.ModDataComponents.FISH_DATA.get());
         return fish == null || fish.analysed();

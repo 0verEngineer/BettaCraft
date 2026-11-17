@@ -1,18 +1,19 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.platform.item.IItemHandler;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
@@ -50,7 +51,7 @@ public final class FoodMakerGameTests {
 
     static FoodMakerBlockEntity maker(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.FOOD_MAKER.get().defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof FoodMakerBlockEntity be)) throw new GameTestAssertException("no food maker");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof FoodMakerBlockEntity be)) throw new GameTestFailure("no food maker");
         return be;
     }
 
@@ -197,7 +198,7 @@ public final class FoodMakerGameTests {
         TankBlockEntity c = AerationGameTests.tank(h, 1, 1, 1, 2, 2, 2);
         BettaEntity fish = LiveFoodGameTests.betta(h, c, true, 262);
         h.setBlock(new BlockPos(1, 3, 1), ModBlocks.FEEDER.get().defaultBlockState());
-        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(1, 3, 1))) instanceof FeederBlockEntity feeder)) throw new GameTestAssertException("no feeder");
+        if (!(level.getBlockEntity(h.absolutePos(new BlockPos(1, 3, 1))) instanceof FeederBlockEntity feeder)) throw new GameTestFailure("no feeder");
         feeder.items().setStackInSlot(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 5));
         feeder.items().setStackInSlot(1, new ItemStack(ModItems.FISH_FLAKES.get(), 5));
         feeder.items().setStackInSlot(2, new ItemStack(ModItems.FOOD_GRANULES.get(), 5));

@@ -1,17 +1,18 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
@@ -55,7 +56,7 @@ public final class LivebearerGameTests {
         var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(new Vec3((w.box().minX + w.box().maxX) / 2, w.box().minY + 0.3, (w.box().minZ + w.box().maxZ) / 2), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, g, female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -200,8 +201,8 @@ public final class LivebearerGameTests {
                 fish.put("genes", genes);
                 fish.putBoolean("female", female);
                 fish.putString("stage", LifeStage.ADULT.id());
-                TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(h.getLevel());
-                if (e == null) throw new GameTestAssertException("no entity");
+                TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+                if (e == null) throw new GameTestFailure("no entity");
                 e.loadTankmate(fish);
                 LivebearerGenome g = e.genes().lb();
                 h.assertTrue(g != null, o[1] + ": converted");
@@ -212,7 +213,7 @@ public final class LivebearerGameTests {
                     h.assertTrue(LivebearerStrain.of(e.livebearerPhenotype()) == want, o[1] + ": strain " + want + ", got " + LivebearerStrain.of(e.livebearerPhenotype()));
                 }
                 // saved with its genome, loaded again: the same
-                TankmateEntity again = ModEntities.TANKMATES.get(s).get().create(h.getLevel());
+                TankmateEntity again = ModEntities.TANKMATES.get(s).get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                 again.loadTankmate(e.saveTankmate());
                 h.assertTrue(g.equals(again.genes().lb()), o[1] + ": kept across save and load");
                 e.discard();

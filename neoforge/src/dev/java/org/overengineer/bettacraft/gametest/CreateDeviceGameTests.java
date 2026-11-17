@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -20,8 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluids;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.create.CreateKinetics;
 import org.overengineer.bettacraft.food.FoodMakerBlockEntity;
@@ -49,14 +50,14 @@ public final class CreateDeviceGameTests {
 
     static Block block(String id) {
         Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
-        if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
+        if (b == Blocks.AIR) throw new GameTestFailure("no block " + id);
         return b;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     static BlockState with(BlockState s, String property, Comparable value) {
         for (Property<?> p : s.getProperties()) if (p.getName().equals(property)) return s.setValue((Property) p, value);
-        throw new GameTestAssertException("no property " + property + " on " + s);
+        throw new GameTestFailure("no property " + property + " on " + s);
     }
 
     private static Field field(Class<?> c, String name) {
@@ -68,7 +69,7 @@ public final class CreateDeviceGameTests {
             } catch (NoSuchFieldException ignored) {
             }
         }
-        throw new GameTestAssertException("no field " + c.getName() + "." + name);
+        throw new GameTestFailure("no field " + c.getName() + "." + name);
     }
 
     static Method method(Class<?> c, String name, int params) {
@@ -80,19 +81,19 @@ public final class CreateDeviceGameTests {
                 }
             }
         }
-        throw new GameTestAssertException("no method " + c.getName() + "." + name);
+        throw new GameTestFailure("no method " + c.getName() + "." + name);
     }
 
     /** A creative motor at {@code rel} whose shaft points {@code facing}, turning at {@code rpm}. */
     static void motor(GameTestHelper h, BlockPos rel, Direction facing, int rpm) {
         h.setBlock(rel, with(block("create:creative_motor").defaultBlockState(), "facing", facing));
         BlockEntity be = h.getBlockEntity(rel);
-        if (be == null) throw new GameTestAssertException("no motor block entity");
+        if (be == null) throw new GameTestFailure("no motor block entity");
         try {
             Object speed = field(be.getClass(), "generatedSpeed").get(be);
             method(speed.getClass(), "setValue", 1).invoke(speed, rpm);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("motor speed: " + e);
+            throw new GameTestFailure("motor speed: " + e);
         }
     }
 
@@ -123,7 +124,7 @@ public final class CreateDeviceGameTests {
         h.setBlock(water, Blocks.WATER.defaultBlockState());
         h.setBlock(ro, ModBlocks.RO_UNIT.get().defaultBlockState());
         RoUnitBlockEntity unit = (RoUnitBlockEntity) level.getBlockEntity(h.absolutePos(ro));
-        if (unit == null) throw new GameTestAssertException("no RO unit");
+        if (unit == null) throw new GameTestFailure("no RO unit");
         unit.parts().setStackInSlot(RoUnitBlockEntity.MEMBRANE, new ItemStack(ModItems.RO_MEMBRANE.get()));
         unit.parts().setStackInSlot(RoUnitBlockEntity.PREFILTER, new ItemStack(ModItems.RO_PREFILTER.get()));
         int slow = unit.step(level, 20);
@@ -167,7 +168,7 @@ public final class CreateDeviceGameTests {
         link.getClass().getField("activeSource").set(link, source);
         lookup.findVirtual(link.getClass(), "updateGatheredData", java.lang.invoke.MethodType.methodType(void.class)).invoke(link);
         h.succeedWhen(() -> {
-            if (!(level.getBlockEntity(h.absolutePos(new BlockPos(8, 2, 4))) instanceof SignBlockEntity sign)) throw new GameTestAssertException("no sign");
+            if (!(level.getBlockEntity(h.absolutePos(new BlockPos(8, 2, 4))) instanceof SignBlockEntity sign)) throw new GameTestFailure("no sign");
             String first = sign.getFrontText().getMessage(0, false).getString();
             String second = sign.getFrontText().getMessage(1, false).getString();
             h.assertTrue(first.contains("°C"), "the temperature on the sign: '" + first + "'");

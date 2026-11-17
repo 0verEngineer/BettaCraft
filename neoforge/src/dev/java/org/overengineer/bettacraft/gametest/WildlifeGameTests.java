@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
@@ -9,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +27,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.containers.AnimalContainers;
@@ -81,14 +82,14 @@ public final class WildlifeGameTests {
     // ------------------------------------------------------------------ helpers
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     private static ServerPlayer player(GameTestHelper h) {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().getSelectedSlot() = 0;
+        sp.getInventory().setSelectedSlot(0);
         return sp;
     }
 
@@ -101,7 +102,7 @@ public final class WildlifeGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water, salt);
         c.getTank().setWaterTemp(25F);
         c.getTank().setTargetTemp(25F);
@@ -162,13 +163,13 @@ public final class WildlifeGameTests {
                 new Want(Biomes.RIVER, ModEntities.WILD_CRITTER.get()),
                 new Want(Biomes.MANGROVE_SWAMP, ModEntities.WILD_CRITTER.get()),
                 new Want(Biomes.WARM_OCEAN, ModEntities.WILD_CRITTER.get()))) {
-            var spawns = biomes.getHolderOrThrow(w.biome()).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
-            check(spawns.stream().anyMatch(d -> d.type == w.type()), w.type() + " does not spawn in " + w.biome().location());
+            var spawns = biomes.getOrThrow(w.biome()).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+            check(spawns.stream().anyMatch(d -> d.value().type() == w.type()), w.type() + " does not spawn in " + w.biome().identifier());
         }
-        var plains = biomes.getHolderOrThrow(Biomes.PLAINS).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
-        check(plains.stream().noneMatch(d -> d.type == ModEntities.WILD_CRITTER.get()), "small animals in the plains");
-        var desert = biomes.getHolderOrThrow(Biomes.JUNGLE).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
-        check(desert.stream().noneMatch(d -> d.type == ModEntities.TANKMATES.get(TankmateSpecies.GUPPY).get() && d.getWeight().asInt() > 99), "weights too high");
+        var plains = biomes.getOrThrow(Biomes.PLAINS).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+        check(plains.stream().noneMatch(d -> d.value().type() == ModEntities.WILD_CRITTER.get()), "small animals in the plains");
+        var desert = biomes.getOrThrow(Biomes.JUNGLE).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+        check(desert.stream().noneMatch(d -> d.value().type() == ModEntities.TANKMATES.get(TankmateSpecies.GUPPY).get() && d.weight() > 99), "weights too high");
         h.succeed();
     }
 
@@ -202,7 +203,7 @@ public final class WildlifeGameTests {
             check(wild.removeWhenFarAway(100) && !wild.analysed(), "a wild fish does not despawn or knows its genes");
             ItemStack b = wild.getBucketItemStack();
             wild.saveToBucketTag(b);
-            TankmateEntity caught = type.create(level);
+            TankmateEntity caught = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             caught.loadFromBucketTag(b.get(DataComponents.BUCKET_ENTITY_DATA).copyTag());
             check(!caught.isWild(), "a caught fish is still wild");
             wild.discard();
@@ -254,8 +255,8 @@ public final class WildlifeGameTests {
         check(e != null && e.saveAnimal().equals(original), "the entity changed the animal: " + (e == null ? null : e.saveAnimal()) + " vs " + original);
         CompoundTag saved = new CompoundTag();
         saved.merge(NbtCompat.saveEntityWithoutId(e));
-        WildCritterEntity loaded = ModEntities.WILD_CRITTER.get().create(level);
-        loaded.load(saved);
+        WildCritterEntity loaded = ModEntities.WILD_CRITTER.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        org.overengineer.bettacraft.util.NbtCompat.loadEntity(loaded, saved);
         check(loaded.saveAnimal().equals(original), "saving the entity lost data: " + loaded.saveAnimal());
         // caught with a bucket of water in the world: the bucket holds exactly that animal
         pool(h, 4, 4, 4, 3);
@@ -276,7 +277,7 @@ public final class WildlifeGameTests {
         TankBlockEntity c = tank(h, 14, 2, 14, 18000, 0F);
         ItemStack after = useOn(sp, h, new BlockPos(14, 3, 14), sp.getItemInHand(InteractionHand.MAIN_HAND));
         check(after.is(Items.BUCKET), "the bucket did not go into the tank: " + after);
-        Critter inTank = c.getTank().critters().stream().filter(x -> x.female).findFirst().orElseThrow(() -> new GameTestAssertException("not in the tank"));
+        Critter inTank = c.getTank().critters().stream().filter(x -> x.female).findFirst().orElseThrow(() -> new GameTestFailure("not in the tank"));
         check(inTank.saveAnimal().equals(original), "the tank changed the animal: " + inTank.saveAnimal() + " vs " + original);
         // out again by id into a fish bag, then into the world (confirmed): a wild entity with the same data
         sp.getInventory().clearContent();
@@ -350,7 +351,7 @@ public final class WildlifeGameTests {
         ServerPlayer sp = player(h);
         TankBlockEntity c = tank(h, 2, 1, 2, 18000, 0F);
         TankBlockEntity other = tank(h, 12, 1, 12, 18000, 0F);
-        BettaEntity b = ModEntities.BETTA.get().create(level);
+        BettaEntity b = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         b.setBettaData(BettaData.create(BettaGenotype.randomWild(level.random), false, 0));
         ItemStack bb = b.getBucketItemStack();
         b.saveToBucketTag(bb);
@@ -381,7 +382,7 @@ public final class WildlifeGameTests {
         check(bettaBucket != null && org.overengineer.bettacraft.entity.betta.BettaBucketItem.data(bettaBucket).analysed(), "the bucket lost the analysis");
         useOn(sp, h, new BlockPos(13, 2, 13), bettaBucket.copy());
         BettaEntity moved = (BettaEntity) TankInhabitants.liveInhabitants(level, other.getTank()).stream().filter(e -> e instanceof BettaEntity).findFirst()
-                .orElseThrow(() -> new GameTestAssertException("the betta is not in the other tank"));
+                .orElseThrow(() -> new GameTestFailure("the betta is not in the other tank"));
         check(moved.getBettaData().analysed(), "the other tank lost the analysis");
         // the neon into a bag, the shrimp into a bucket: still analysed
         sp.getInventory().clearContent();
@@ -406,7 +407,7 @@ public final class WildlifeGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 100, batch = "bettacraft_wildlife_config")
     public static void magnifierOneAnimalAndOldWorlds(GameTestHelper h) {
         var level = h.getLevel();
-        TankmateEntity m = ModEntities.TANKMATES.get(TankmateSpecies.PLATY).get().create(level);
+        TankmateEntity m = ModEntities.TANKMATES.get(TankmateSpecies.PLATY).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         check(!m.analysed() && MagnifierItem.analyse(m) && m.analysed() && !MagnifierItem.analyse(m), "one tankmate");
         // an old tankmate (no flag in its data): analysed
         CompoundTag t = m.saveTankmate();
@@ -571,9 +572,9 @@ public final class WildlifeGameTests {
     public static void wildCoralsGrowOnReefsAndGiveFrags(GameTestHelper h) {
         var level = h.getLevel();
         // the feature is in the warm ocean
-        var warm = level.registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.WARM_OCEAN).value();
+        var warm = level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.WARM_OCEAN).value();
         boolean listed = warm.getGenerationSettings().features().stream().anyMatch(set -> set.stream()
-                .anyMatch(f -> f.unwrapKey().map(k -> k.location().equals(BettaCraft.id("wild_coral"))).orElse(false)));
+                .anyMatch(f -> f.unwrapKey().map(k -> k.identifier().equals(BettaCraft.id("wild_coral"))).orElse(false)));
         check(listed, "the wild corals are not in the warm ocean");
         // a small reef: coral blocks with water above
         for (int x = 2; x <= 12; x++)

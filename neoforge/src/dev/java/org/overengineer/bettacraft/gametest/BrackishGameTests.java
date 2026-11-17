@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -11,8 +12,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -61,7 +62,7 @@ public final class BrackishGameTests {
     private BrackishGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     // ------------------------------------------------------------------ the archerfish
@@ -103,7 +104,7 @@ public final class BrackishGameTests {
     private static InteriorRegion floor(GameTestHelper h, TankBlockEntity c, BlockState floor) {
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++) {
             Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z), floor, false);
         }
@@ -128,17 +129,17 @@ public final class BrackishGameTests {
     }
 
     private static HerpEntity putMudskipper(GameTestHelper h, TankBlockEntity c) {
-        HerpEntity e = ModEntities.herp(HerpSpecies.MUDSKIPPER).create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("no mudskipper");
+        HerpEntity e = ModEntities.herp(HerpSpecies.MUDSKIPPER).create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("no mudskipper");
         ItemStack box = e.getBucketItemStack();
         e.saveToBucketTag(box);
         e.discard();
         check(box.is(ModItems.herpContainer(HerpSpecies.MUDSKIPPER)), "it travels in a terrarium box");
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         var err = TankInhabitants.insert(h.getLevel(), c, box, ModEntities.herp(HerpSpecies.MUDSKIPPER), null, 0L);
-        if (err != null) throw new GameTestAssertException("mudskipper in: " + err.getString());
+        if (err != null) throw new GameTestFailure("mudskipper in: " + err.getString());
         for (Entity x : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (x instanceof HerpEntity m && !before.contains(x)) return m;
-        throw new GameTestAssertException("no mudskipper in the tank");
+        throw new GameTestFailure("no mudskipper in the tank");
     }
 
     /** The mudskipper goes into a paludarium (not an aquarium); brackish water suits it, fresh water stresses it; it spawns in mangroves. */
@@ -159,7 +160,7 @@ public final class BrackishGameTests {
         check(Mudskippers.happy(level, brackish.getTank()) && !Mudskippers.happy(level, fresh.getTank()), "happy in brackish water only");
         check(HerpSpecies.MUDSKIPPER.gait().style() == org.overengineer.bettacraft.terrarium.LandWalker.Style.CLIMB, "it climbs");
         var mangrove = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
-                .getHolderOrThrow(net.minecraft.world.level.biome.Biomes.MANGROVE_SWAMP);
+                .getOrThrow(net.minecraft.world.level.biome.Biomes.MANGROVE_SWAMP);
         check(HerpSpawns.home(mangrove) == HerpSpawns.Home.MANGROVE, "the mangrove swamp is its home");
         check(HerpSpawns.entries(HerpSpawns.Home.MANGROVE).stream().anyMatch(e -> e.species() == HerpSpecies.MUDSKIPPER)
                 && HerpSpawns.entries(HerpSpawns.Home.MANGROVE).stream().anyMatch(e -> e.species() == HerpSpecies.SLIDER), "mudskippers and the swamp animals in mangroves");

@@ -82,13 +82,13 @@ final class DevSmokeM13 {
         if (saved.getIntOr("schema", 0) != 4) throw new IllegalStateException("M13: regions saved as schema " + saved.getIntOr("schema", 0));
         for (var e : ModItems.AQUATIC_PLANTS.entrySet()) if (e.getValue().get() == null) throw new IllegalStateException("M13: item " + e.getKey());
         boolean sword = false, lotus = false;
-        for (int lv = 1; lv <= 2; lv++) {
-            for (VillagerTrades.ItemListing l : VillagerTrades.WANDERING_TRADER_TRADES.get(lv)) {
+        for (var tradePool : VillagerTrades.WANDERING_TRADER_TRADES) {
+            for (VillagerTrades.ItemListing l : tradePool.getLeft()) {
                 {
                     // M33: the listings are wrapped by their feature switches; the plant ones need no trader
                     net.minecraft.world.item.trading.MerchantOffer offer;
                     try {
-                        offer = l.getOffer(null, level.getRandom());
+                        offer = l.getOffer(level, null, level.getRandom());
                     } catch (RuntimeException ex) {
                         continue;
                     }

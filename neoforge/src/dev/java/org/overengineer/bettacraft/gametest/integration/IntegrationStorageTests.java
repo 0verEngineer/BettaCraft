@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import static org.overengineer.bettacraft.gametest.integration.IntegrationRig.*;
 
 import java.lang.reflect.Array;
@@ -7,7 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.crucible.CrucibleBlockEntity;
 import org.overengineer.bettacraft.food.FoodMakerBlockEntity;
@@ -52,7 +53,7 @@ public final class IntegrationStorageTests {
         call(call(logic, "getPatternInv"), "setItemDirect", 0, pattern);
         call(logic, "updatePatterns");
         Object details = helper.getMethod("decodePattern", ItemStack.class, net.minecraft.world.level.Level.class).invoke(null, pattern, level);
-        if (details == null) throw new GameTestAssertException("the pattern does not decode");
+        if (details == null) throw new GameTestFailure("the pattern does not decode");
         Object[] ins = (Object[]) call(details, "getInputs");
         Class<?> counter = Class.forName("appeng.api.stacks.KeyCounter");
         Object holders = Array.newInstance(counter, ins.length);
@@ -95,7 +96,7 @@ public final class IntegrationStorageTests {
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_rs_crafting", timeoutTicks = 900)
     public static void refinedStorageAutocrafterFeedsTheFoodMaker(GameTestHelper h) throws Exception {
         if (IntegrationSuite.lacks(h, "refinedstorage")) return;
-        if (FoodMakerBlockEntity.powered()) throw new GameTestAssertException("the spring of the food maker needs the power options off");
+        if (FoodMakerBlockEntity.powered()) throw new GameTestFailure("the spring of the food maker needs the power options off");
         FoodMakerBlockEntity m = PlumbingGameTestsAccess.foodMaker(h, new BlockPos(2, 2, 2));
         h.setBlock(new BlockPos(3, 2, 2), with(block("refinedstorage:autocrafter").defaultBlockState(), "direction", "west"));
         h.setBlock(new BlockPos(4, 2, 2), block("refinedstorage:creative_controller").defaultBlockState());
@@ -134,7 +135,7 @@ public final class IntegrationStorageTests {
         var chest = chest(h, new BlockPos(5, 2, 2), new ItemStack(ModItems.ACTIVATED_CARBON.get()), new ItemStack(ModItems.ACTIVATED_CARBON.get()));
         Method setPart = null;
         for (Method m : Class.forName("appeng.api.parts.PartHelper").getMethods()) if (m.getName().equals("setPart") && m.getParameterCount() == 5) setPart = m;
-        if (setPart == null) throw new GameTestAssertException("AE2 API changed: no PartHelper.setPart");
+        if (setPart == null) throw new GameTestFailure("AE2 API changed: no PartHelper.setPart");
         for (BlockPos p : new BlockPos[]{new BlockPos(3, 2, 2), new BlockPos(4, 2, 2), new BlockPos(3, 2, 3), new BlockPos(2, 2, 3)}) {
             setPart.invoke(null, level, h.absolutePos(p), null, null, item("ae2:fluix_glass_cable"));
         }

@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -31,8 +32,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.CritterGenes;
@@ -80,7 +81,7 @@ public final class YoungAndLightGameTests {
 
     private static void mustInsert(GameTestHelper h, TankBlockEntity c, BettaData d) {
         Component err = insert(h, c, d);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
     }
 
     private static void near(GameTestHelper h, double got, double want, String what) {
@@ -133,14 +134,14 @@ public final class YoungAndLightGameTests {
     @GameTest(template = EMPTY)
     public static void otherYoungCountLikeJuveniles(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        Axolotl a = EntityType.AXOLOTL.create(level);
+        Axolotl a = EntityType.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         h.assertTrue(a != null, "axolotl");
         a.setBaby(true);
         near(h, TankInhabitants.weight(a), 0.1, "baby axolotl");
         a.setBaby(false);
         near(h, TankInhabitants.weight(a), 1.0, "adult axolotl");
         a.discard();
-        var frog = ModEntities.DWARF_FROG.get().create(level);
+        var frog = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (frog != null) {
             near(h, TankInhabitants.weight(frog), 1.0, "frog (frogsPerFish 1)");
             frog.discard();
@@ -233,7 +234,7 @@ public final class YoungAndLightGameTests {
             h.assertTrue(TankPlants.light(level, c) == lightBefore, "plants get the same light: " + lightBefore + " vs " + TankPlants.light(level, c));
             for (DyeColor d : DyeColor.values()) h.assertTrue(light(d).getLightEmission() == 15, "level 15 for " + d);
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -258,10 +259,10 @@ public final class YoungAndLightGameTests {
             List<ItemStack> white = Block.getDrops(light(DyeColor.WHITE), level, stone.above(), null);
             h.assertTrue(white.size() == 1 && !white.getFirst().has(DataComponents.BLOCK_STATE), "white drops the plain item: " + white);
             h.assertTrue(ItemStack.isSameItemSameComponents(white.getFirst(), new ItemStack(ModItems.TANK_LIGHT.get())), "stacks with old lights");
-            ItemStack clone = placed.getBlock().getCloneItemStack(level, stone.above(), placed);
+            ItemStack clone = placed.getCloneItemStack(level, stone.above(), false);
             h.assertTrue(TankLightItem.colorOf(clone) == DyeColor.BLUE, "middle click: blue");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -283,7 +284,7 @@ public final class YoungAndLightGameTests {
     }
 
     private static ItemStack craft(ServerLevel level, CraftingInput in) {
-        return level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, in, level)
+        return level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, in, level)
                 .map(r -> r.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
     }
 

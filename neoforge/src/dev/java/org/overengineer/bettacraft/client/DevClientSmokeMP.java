@@ -545,8 +545,8 @@ final class DevClientSmokeMP {
                     }
                     double x = s.getGuiLeft() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
                     double y = s.getGuiTop() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
-                    s.mouseClicked(x, y, 0); // left -> right
-                    s.mouseReleased(x, y, 0);
+                    s.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)), false); // left -> right
+                    s.mouseReleased(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)));
                     send("outletmenu ok");
                 });
             }
@@ -592,8 +592,7 @@ final class DevClientSmokeMP {
             case "quit" -> then(20, () -> {
                 Minecraft mc = Minecraft.getInstance();
                 LOGGER.info("[mp] {} client finished", name());
-                if (mc.level != null) mc.level.disconnect();
-                mc.disconnect();
+                mc.disconnectFromWorld(net.minecraft.client.multiplayer.ClientLevel.DEFAULT_QUIT_MESSAGE);
                 quitIn = 40;
             });
             default -> LOGGER.warn("[mp] unknown script line {}", line);
@@ -641,7 +640,7 @@ final class DevClientSmokeMP {
             send("error state " + phase + ": no tank on the client at " + tank);
             return;
         }
-        double time = mc.level.getGameTime() + mc.getTimer().getGameTimeDeltaPartialTick(false);
+        double time = mc.level.getGameTime() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
         long ids = 0;
         double cx = 0, cz = 0;
         for (FloatingPlant p : t.plants()) {
@@ -946,7 +945,12 @@ final class DevClientSmokeMP {
 
     /** M50: how many states of travelling tanks this client got (only with Create). */
     private static int travelReceived() {
-        return org.overengineer.bettacraft.platform.Platform.get().isModLoaded("create") ? org.overengineer.bettacraft.compat.create.CreateTravelClient.received : -1;
+        if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded("create")) return -1;
+        try {
+            return (int) Class.forName("org.overengineer.bettacraft.compat.create.CreateTravelClient").getField("received").get(null); // M52b: by name (no Create on 1.21.11)
+        } catch (ReflectiveOperationException | LinkageError e) {
+            return -1;
+        }
     }
 
     /** M50: the packed animals of the tank on this contraption entity as this client's copy of it shows them (reflection on Create). */
@@ -1029,8 +1033,8 @@ final class DevClientSmokeMP {
 
     private static void shot(String what) {
         Minecraft mc = Minecraft.getInstance();
-        mc.getToasts().clear();
+        mc.getToastManager().clear();
         String file = "mp_" + name().toLowerCase(Locale.ROOT) + "_" + what + ".png";
-        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), c -> LOGGER.info("[mp] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), 1, c -> LOGGER.info("[mp] {}", c.getString()));
     }
 }

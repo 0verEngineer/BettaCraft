@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.chem.TankChemistry;
 import org.overengineer.bettacraft.config.CommonConfig;
@@ -63,7 +64,7 @@ public final class M28DecorGameTests {
     private static List<DecorTemplate.Placed> place(GameTestHelper h, InteriorRegion r, DecorType t, int x, int z, Rotation rot) {
         ServerLevel in = AerationGameTests.interior(h);
         var err = DecorItem.place(in, t, at(r, x, 0, z), rot, null);
-        if (err != null) throw new GameTestAssertException(t + ": " + err.getString());
+        if (err != null) throw new GameTestFailure(t + ": " + err.getString());
         return DecorItem.template(in, t.structure()).orElseThrow().layout(at(r, x, 0, z), rot);
     }
 
@@ -82,7 +83,7 @@ public final class M28DecorGameTests {
             List<DecorTemplate.Placed> blocks = place(h, r, t, 16, 16, Rotation.CLOCKWISE_90);
             h.assertTrue(blocks.size() >= 30, t + ": only " + blocks.size() + " blocks");
             for (var b : blocks) {
-                if (!in.getBlockState(b.pos()).is(b.state().getBlock())) throw new GameTestAssertException(t + ": missing " + b.state() + " at " + b.pos());
+                if (!in.getBlockState(b.pos()).is(b.state().getBlock())) throw new GameTestFailure(t + ": missing " + b.state() + " at " + b.pos());
             }
             for (var b : blocks) in.setBlock(b.pos(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
@@ -116,7 +117,7 @@ public final class M28DecorGameTests {
         Vec3 start = w.clamp(spot.pos().add(spot.dir().scale(0.6)).add(0, 0.2, 0), 0.3, 0.1, 0.2);
         TankmateEntity m = TankmateBreeding.spawn(level, c, TankmateSpecies.BRISTLENOSE_PLECO, TankmateGenes.wild(TankmateSpecies.BRISTLENOSE_PLECO),
                 false, LifeStage.ADULT, 0, start);
-        if (m == null) throw new GameTestAssertException("no pleco");
+        if (m == null) throw new GameTestFailure("no pleco");
         m.health().feed();
         m.setCave(spot.pos(), spot.dir());
         h.assertTrue(InteriorPaths.swim(level.getServer(), c.getTank(), start, spot.pos(), w.surface()) != null, "a way into the cave");
@@ -135,7 +136,7 @@ public final class M28DecorGameTests {
         InteriorRegion r = AerationGameTests.region(h, c);
         BlockPos stone = null;
         for (var b : place(h, r, DecorType.TREASURE_CHEST, 16, 16, Rotation.NONE)) if (b.state().is(ModBlocks.AIR_STONE.get())) stone = b.pos();
-        if (stone == null) throw new GameTestAssertException("no air stone in the chest");
+        if (stone == null) throw new GameTestFailure("no air stone in the chest");
         h.assertTrue(eq(h, r).airStones().size() == 1, "the chest's air stone is an outlet of the tank");
         TankAeration.step(level, c, 0.1);
         ServerLevel in = AerationGameTests.interior(h);

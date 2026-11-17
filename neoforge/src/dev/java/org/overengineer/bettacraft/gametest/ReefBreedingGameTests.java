@@ -1,16 +1,17 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -52,7 +53,7 @@ public final class ReefBreedingGameTests {
     private ReefBreedingGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     private static TankBlockEntity reef(GameTestHelper h, int x, int z) {
@@ -67,7 +68,7 @@ public final class ReefBreedingGameTests {
         var r = h.getLevel().getRandom();
         Vec3 p = w.clamp(new Vec3(w.box().minX + 0.4 + r.nextDouble() * 1.2, w.box().minY + 0.4, w.box().minZ + 0.4 + r.nextDouble() * 1.2), 0.3, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, stage, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -84,7 +85,7 @@ public final class ReefBreedingGameTests {
 
     /** {@code n} blocks of live rock on the floor of the interior. */
     private static void liveRock(GameTestHelper h, TankBlockEntity c, int n) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         int placed = 0;
@@ -251,8 +252,8 @@ public final class ReefBreedingGameTests {
                 "phytoplankton ripens in light");
         check(ModItems.ROTIFER_CULTURE.get().result() == ModItems.ROTIFERS.get(), "rotifers ripen");
         var rm = FeatureSwitchGameTests.recipes(level);
-        check(rm.byKey(BettaCraft.id("phytoplankton_culture_seagrass")).isPresent() && rm.byKey(BettaCraft.id("rotifer_culture_start")).isPresent()
-                && rm.byKey(BettaCraft.id("rotifer_culture")).isPresent(), "the culture recipes");
+        check(rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("phytoplankton_culture_seagrass"))).isPresent() && rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("rotifer_culture_start"))).isPresent()
+                && rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("rotifer_culture"))).isPresent(), "the culture recipes");
         // the rotifers live on the phytoplankton
         TankBlockEntity plain = reef(h, 2, 14);
         TankBlockEntity green = reef(h, 8, 14);

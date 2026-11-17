@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -14,8 +15,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.osmosis.RoUnitBlockEntity;
 import org.overengineer.bettacraft.plumbing.FluidMoves;
@@ -38,10 +39,10 @@ public final class MekanismGameTests {
 
     private static IFluidHandler mekTank(GameTestHelper h, BlockPos rel) {
         Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse("mekanism:basic_fluid_tank"));
-        if (b == Blocks.AIR) throw new GameTestAssertException("no Mekanism fluid tank");
+        if (b == Blocks.AIR) throw new GameTestFailure("no Mekanism fluid tank");
         h.setBlock(rel, b.defaultBlockState());
         IFluidHandler cap = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(h.getLevel(), h.absolutePos(rel), Direction.UP);
-        if (cap == null) throw new GameTestAssertException("the Mekanism tank has no fluid capability");
+        if (cap == null) throw new GameTestFailure("the Mekanism tank has no fluid capability");
         return cap;
     }
 
@@ -65,7 +66,7 @@ public final class MekanismGameTests {
         h.setBlock(water, Blocks.WATER.defaultBlockState());
         h.setBlock(ro, ModBlocks.RO_UNIT.get().defaultBlockState());
         RoUnitBlockEntity unit = (RoUnitBlockEntity) level.getBlockEntity(h.absolutePos(ro));
-        if (unit == null) throw new GameTestAssertException("no RO unit");
+        if (unit == null) throw new GameTestFailure("no RO unit");
         unit.parts().setStackInSlot(RoUnitBlockEntity.MEMBRANE, new ItemStack(ModItems.RO_MEMBRANE.get()));
         unit.parts().setStackInSlot(RoUnitBlockEntity.PREFILTER, new ItemStack(ModItems.RO_PREFILTER.get()));
         for (int i = 0; i < 30; i++) unit.step(level, 20);

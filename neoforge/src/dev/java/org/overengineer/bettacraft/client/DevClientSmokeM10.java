@@ -74,15 +74,15 @@ final class DevClientSmokeM10 {
         then(1, () -> server(p -> {
             InteriorRegion r = miniRegion;
             if (r == null) return;
-            ServerLevel in = InteriorManager.interiorLevel(p.server);
+            ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
             BlockPos at = r.toWorld(4, r.sizeY() - 3, 4);
-            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, -45F, 42F);
+            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), -45F, 42F, true);
         }));
         then(100, () -> shot("interior"));
         then(1, () -> server(p -> {
             if (InteriorManager.isInterior(p.level())) {
-                ServerLevel ow = p.server.overworld();
-                p.teleportTo(ow, base.getX() + 6.5, base.getY() + 5.2, base.getZ() - 6.5, 0F, 32F);
+                ServerLevel ow = p.level().getServer().overworld();
+                p.teleportTo(ow, base.getX() + 6.5, base.getY() + 5.2, base.getZ() - 6.5, java.util.Set.of(), 0F, 32F, true);
             }
         }));
         then(40, () -> mc.options.hideGui = false);
@@ -240,7 +240,7 @@ final class DevClientSmokeM10 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m10_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m10_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

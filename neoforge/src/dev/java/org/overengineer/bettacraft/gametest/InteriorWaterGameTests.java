@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -46,8 +47,8 @@ public final class InteriorWaterGameTests {
                 TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
             }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(2, 1, 2)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("interior dimension not loaded");
+        if (c == null) throw new GameTestFailure("tank did not form");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("interior dimension not loaded");
         return InteriorManager.ensureRegion(h.getLevel(), c);
     }
 
@@ -78,7 +79,7 @@ public final class InteriorWaterGameTests {
 
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         BlockPos stand = r.toWorld(12, 2, 4);
-        sp.teleportTo(in, stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5, 0F, 0F);
+        sp.teleportTo(in, stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5, java.util.Set.of(), 0F, 0F, true);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         try {
             // shears: kelp (the top, then the bottom), seagrass and tall seagrass
@@ -97,7 +98,7 @@ public final class InteriorWaterGameTests {
                         + in.getBlockState(p));
             }
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
 
         // a kelp column whose bottom is cut away: the rest never turns into water
@@ -126,7 +127,7 @@ public final class InteriorWaterGameTests {
         BlockPos stray = r.toWorld(8, 1, 14), kept = r.toWorld(9, 1, 14);
         in.setBlock(r.toWorld(9, 0, 14), Blocks.STONE.defaultBlockState(), 3);
         in.setBlock(kept, Blocks.SEAGRASS.defaultBlockState(), 3);
-        in.getChunkAt(stray).setBlockState(stray, Blocks.WATER.defaultBlockState(), false);
+        in.getChunkAt(stray).setBlockState(stray, Blocks.WATER.defaultBlockState(), 0);
         h.assertTrue(in.getBlockState(stray).is(Blocks.WATER), "stray water set up");
         r.equipment().markNeedsScan();
         InteriorManager.equipment(h.getLevel().getServer(), r);

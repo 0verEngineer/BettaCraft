@@ -135,7 +135,7 @@ final class DevClientSmokeM222 {
         level.setDayTime(6000);
         level.setWeatherParameters(6000, 0, false, false);
         base = p.blockPosition().offset(-COLUMNS * SPACING / 2, 0, 6);
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         RandomSource r = RandomSource.create(2222);
         for (int i = 0; i < subjects.size(); i++) {
             Subject s = subjects.get(i);
@@ -422,7 +422,7 @@ final class DevClientSmokeM222 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_2_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_2_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

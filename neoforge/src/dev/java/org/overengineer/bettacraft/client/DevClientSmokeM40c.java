@@ -190,7 +190,7 @@ final class DevClientSmokeM40c {
     private static ItemStack withData(String item, String component, Object value) {
         ItemStack s = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse(item)));
         var t = (net.minecraft.core.component.DataComponentType<Object>) net.minecraft.core.registries.BuiltInRegistries.DATA_COMPONENT_TYPE
-                .get(net.minecraft.resources.Identifier.parse(component));
+                .getValue(net.minecraft.resources.Identifier.parse(component));
         if (t != null) s.set(t, value);
         return s;
     }
@@ -243,7 +243,7 @@ final class DevClientSmokeM40c {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -274,7 +274,7 @@ final class DevClientSmokeM40c {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m40c_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m40c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -116,7 +116,7 @@ final class DevClientSmokeM31d {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         level.setDayTime(6000);
         // --- drowned: an aquarium with a sand bottom and a ruined stone wall at the back
         drowned = p.blockPosition().offset(-12, 2, 200);
@@ -161,7 +161,7 @@ final class DevClientSmokeM31d {
     }
 
     private static Mob put(ServerLevel level, TankBlockEntity c, EntityType<? extends Mob> type, boolean baby) {
-        Mob m = type.create(level);
+        Mob m = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (m == null) return null;
         if (baby) m.setBaby(true);
         if (m instanceof Slime s) s.setSize(1, true);
@@ -218,7 +218,7 @@ final class DevClientSmokeM31d {
         at(put(level, lc, EntityType.SILVERFISH, false), slimes, lter, 1.6, 0.7, Double.NaN, 120F);
         at(put(level, lc, EntityType.ENDERMITE, false), slimes, lter, 2.5, 1.8, Double.NaN, 220F);
         // the jars
-        ItemStack full = MobJarItem.fillWith(EntityType.ZOMBIE.create(level));
+        ItemStack full = MobJarItem.fillWith(EntityType.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED));
         for (int i = 0; i < 2; i++) {
             ItemFrame f = new ItemFrame(level, frames.offset(i, 1, 0), Direction.NORTH);
             f.setItem(i == 0 ? new ItemStack(ModItems.MOB_JAR.get()) : full, false);
@@ -232,7 +232,7 @@ final class DevClientSmokeM31d {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -264,7 +264,7 @@ final class DevClientSmokeM31d {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m31d_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m31d_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

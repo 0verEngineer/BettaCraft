@@ -98,7 +98,7 @@ final class DevClientSmokeM11 {
             inv.setItem(2, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(), LIGHT_BLUE, TankStyle.TEXTURED, 4));
             inv.setItem(3, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(), GLASS, TankStyle.CLEAN, 4));
             inv.setItem(4, new ItemStack(ModItems.MIRROR_STICK.get()));
-            inv.getSelectedSlot() = 0;
+            inv.setSelectedSlot(0);
         }));
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> look(base.getX() + 6.5, base.getY() + 1.5, base.getZ() - 2.2, 0F, 0F));
@@ -121,7 +121,7 @@ final class DevClientSmokeM11 {
         then(1, () -> server(p -> p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.MIRROR_STICK.get()))));
         then(1, () -> lookAt(mirrorTank.getX() + 1.0 - 0.7, mirrorTank.getY() + 0.75, mirrorTank.getZ() - 0.9,
                 new Vec3(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.5, mirrorTank.getZ() + 0.9)));
-        then(70, () -> mc.getToasts().clear());
+        then(70, () -> mc.getToastManager().clear());
         then(10, () -> shot("mirror"));
         // the male shows the mirror its side (bettas see sideways): from the mirror's point of view, without GUI, with
         // the stick still held up (handbook image)
@@ -285,7 +285,7 @@ final class DevClientSmokeM11 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m11_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m11_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

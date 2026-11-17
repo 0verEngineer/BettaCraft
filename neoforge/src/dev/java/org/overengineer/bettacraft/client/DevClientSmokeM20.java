@@ -99,13 +99,13 @@ final class DevClientSmokeM20 {
         then(1, () -> server(p -> {
             InteriorRegion r = reefRegion;
             if (r == null) return;
-            ServerLevel in = InteriorManager.interiorLevel(p.server);
+            ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
             BlockPos at = r.toWorld(40, 14, 2);
-            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 18F);
+            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 18F, true);
         }));
         then(120, () -> shot("reef_interior"));
         then(1, () -> server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, 0F, 0F);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, true);
         }));
         // 4. menus
         then(10, () -> mc.options.hideGui = false);
@@ -496,12 +496,12 @@ final class DevClientSmokeM20 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -514,8 +514,8 @@ final class DevClientSmokeM20 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
+        mc.getToastManager().clear();
         if (mc.player != null) LOGGER.info("[smoketest] M20 shot {} from {}", name, mc.player.getEyePosition());
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m20_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] " + c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m20_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
     }
 }

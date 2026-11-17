@@ -81,16 +81,16 @@ final class DevClientSmokeM36 {
         then(1, () -> look(row.getX() + 3.0, row.getY() + 0.85, row.getZ() - 7.0, 0F, 0F));
         then(40, () -> server(this::place));
         then(10, () -> shot("row_normal"));
-        then(1, () -> mc.getEntityRenderDispatcher().setRenderHitBoxes(true));
+        then(1, () -> mc.debugEntries.setStatus(net.minecraft.client.gui.components.debug.DebugScreenEntries.ENTITY_HITBOXES, net.minecraft.client.gui.components.debug.DebugScreenEntryStatus.ALWAYS_ON));
         then(5, () -> shot("row_normal_hitbox"));
-        then(1, () -> mc.getEntityRenderDispatcher().setRenderHitBoxes(false));
+        then(1, () -> mc.debugEntries.setStatus(net.minecraft.client.gui.components.debug.DebugScreenEntries.ENTITY_HITBOXES, net.minecraft.client.gui.components.debug.DebugScreenEntryStatus.NEVER));
         solo("normal");
         then(1, () -> server(p -> ServerConfig.SIZE_BETTA.set(AnimalSize.LARGE)));
         then(5, () -> server(this::place)); // the same spots (the fish refreshed their hitbox on their own)
         then(10, () -> shot("row_large"));
-        then(1, () -> mc.getEntityRenderDispatcher().setRenderHitBoxes(true));
+        then(1, () -> mc.debugEntries.setStatus(net.minecraft.client.gui.components.debug.DebugScreenEntries.ENTITY_HITBOXES, net.minecraft.client.gui.components.debug.DebugScreenEntryStatus.ALWAYS_ON));
         then(5, () -> shot("row_large_hitbox"));
-        then(1, () -> mc.getEntityRenderDispatcher().setRenderHitBoxes(false));
+        then(1, () -> mc.debugEntries.setStatus(net.minecraft.client.gui.components.debug.DebugScreenEntries.ENTITY_HITBOXES, net.minecraft.client.gui.components.debug.DebugScreenEntryStatus.NEVER));
         then(1, () -> server(p -> log(p, "large")));
         solo("large");
         // the background without fish (to measure the drawn fish in the pictures)
@@ -342,7 +342,7 @@ final class DevClientSmokeM36 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
+        mc.getToastManager().clear();
         if (mc.level != null && name.startsWith("solo")) {
             for (Entity e : mc.level.entitiesForRendering()) {
                 if (e instanceof Mob m && !m.isInvisible() && e.blockPosition().closerThan(row, 10)) {
@@ -350,6 +350,6 @@ final class DevClientSmokeM36 {
                 }
             }
         }
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m36_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m36_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

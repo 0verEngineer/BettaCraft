@@ -37,12 +37,12 @@ final class DevClientSmokeM45 {
         // the player already has some advancements (as in an old world): the new quests must complete by themselves
         then(1, () -> server(p -> {
             for (String a : List.of("build_tank", "fill_tank", "swamp_water", "mosquito_larvae", "paludarium", "tankmate_inserted")) {
-                var holder = p.server.getAdvancements().get(BettaCraft.id(a));
+                var holder = p.level().getServer().getAdvancements().get(BettaCraft.id(a));
                 if (holder != null) for (String c : holder.value().criteria().keySet()) p.getAdvancements().award(holder, c);
             }
         }));
         then(60, this::checkServer);
-        then(200, () -> mc.getToasts().clear()); // the advancement toasts
+        then(200, () -> mc.getToastManager().clear()); // the advancement toasts
         then(5, () -> language("en_us"));
         then(10, this::openChapter);
         then(40, () -> shot("chapter_en"));
@@ -53,7 +53,7 @@ final class DevClientSmokeM45 {
             mc.setScreen(null);
             server(p -> {
                 org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, false);
-                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.server);
+                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.level().getServer());
             });
         });
         then(20, () -> clientHidden("tankmates", true));
@@ -63,7 +63,7 @@ final class DevClientSmokeM45 {
             mc.setScreen(null);
             server(p -> {
                 org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, true);
-                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.server);
+                org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.level().getServer());
             });
         });
         then(20, () -> clientHidden("tankmates", false));
@@ -107,7 +107,7 @@ final class DevClientSmokeM45 {
                     String t = (String) call(q, "getRawTitle");
                     String n = t.replaceAll(".*quest\\.bettacraft\\.([a-z0-9_]+)\\.title.*", "$1");
                     net.minecraft.nbt.CompoundTag d = new net.minecraft.nbt.CompoundTag();
-                    call(q, "writeData", d, p.server.registryAccess());
+                    call(q, "writeData", d, p.level().getServer().registryAccess());
                     if (d.getBooleanOr("invisible", false)) {
                         hidden++;
                         hiddenNames.append(n).append(' ');
@@ -138,7 +138,7 @@ final class DevClientSmokeM45 {
             }
             call(screen, "selectChapter", chapter);
             for (int i = 0; i < 2; i++) call(screen, "addZoom", -1.0);
-            org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), 2, 2); // no tooltip over the chapter
+            org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), 2, 2); // no tooltip over the chapter
             LOGGER.info("[smoketest] M45 quest book open: {} zoom {}", mc.screen == null ? "NONE (FAIL)" : mc.screen.getClass().getSimpleName(), call(screen, "getZoom"));
         } catch (ReflectiveOperationException | LinkageError e) {
             LOGGER.error("[smoketest] M45 quest book (FAIL)", e);
@@ -214,7 +214,7 @@ final class DevClientSmokeM45 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m45_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m45_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

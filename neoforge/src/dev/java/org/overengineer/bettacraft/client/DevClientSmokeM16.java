@@ -89,13 +89,13 @@ final class DevClientSmokeM16 {
         then(30, () -> {
             if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
         });
-        then(25, () -> mc.getToasts().clear());
+        then(25, () -> mc.getToastManager().clear());
         then(5, () -> shot("menu_animals"));
         then(1, () -> mc.setScreen(null));
         // a dolphin is refused (the message in the action bar)
         then(5, () -> server(p -> {
             p.teleportTo(p.level(), base.getX() + 2.5, base.getY() - 0.2, base.getZ() - 2.6, java.util.Set.of(), 0F, 12F, false);
-            Entity dolphin = EntityType.DOLPHIN.create(p.level());
+            Entity dolphin = EntityType.DOLPHIN.create(p.level(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack bag = FishBagItem.fillWith(dolphin);
             dolphin.discard();
             p.setItemInHand(InteractionHand.MAIN_HAND, bag);
@@ -121,7 +121,7 @@ final class DevClientSmokeM16 {
                 LOGGER.error("[smoketest] M16 no block to click in the interior: {}", hit);
             }
         });
-        then(10, () -> mc.getToasts().clear());
+        then(10, () -> mc.getToastManager().clear());
         then(4, () -> shot("interior_no_tank"));
         then(20, () -> {
             var hit = mc.hitResult;
@@ -177,7 +177,7 @@ final class DevClientSmokeM16 {
                 return org.overengineer.bettacraft.command.DevSmokeM7.foreignBucket(item);
             }
         }
-        Entity e = type.create(level);
+        Entity e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return ItemStack.EMPTY;
         ItemStack bag = FishBagItem.fillWith(e);
         e.discard();
@@ -232,7 +232,7 @@ final class DevClientSmokeM16 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m16_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m16_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.world.InteractionResult;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.container;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.insert;
@@ -15,7 +16,7 @@ import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.wil
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -34,8 +35,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.big.BigAnimals;
 import org.overengineer.bettacraft.config.Feature;
@@ -75,7 +76,7 @@ public final class MinecraftPetsGameTests {
 
     private static ForeignProfile profile(EntityType<?> t) {
         ForeignProfile p = ForeignProfiles.of(t);
-        if (p == null) throw new GameTestAssertException("no profile for " + BuiltInRegistries.ENTITY_TYPE.getKey(t));
+        if (p == null) throw new GameTestFailure("no profile for " + BuiltInRegistries.ENTITY_TYPE.getKey(t));
         return p;
     }
 
@@ -89,14 +90,14 @@ public final class MinecraftPetsGameTests {
         boolean tub = !profile(type).land().box();
         Component err = insert(h, c, container(h, type, tub, false));
         if (key == null) {
-            if (err != null) throw new GameTestAssertException(what + " refused: " + err.getString());
+            if (err != null) throw new GameTestFailure(what + " refused: " + err.getString());
             for (LivingEntity e : ofType(h, c, type)) {
                 c.getTank().inhabitants().remove(e.getUUID());
                 TankInhabitants.release(e);
                 e.discard();
             }
         } else if (!says(err, key)) {
-            throw new GameTestAssertException(what + ": expected " + key + ", got " + (err == null ? "accepted" : err.getString()));
+            throw new GameTestFailure(what + ": expected " + key + ", got " + (err == null ? "accepted" : err.getString()));
         }
     }
 

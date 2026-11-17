@@ -72,7 +72,7 @@ final class DevClientShowcaseTour {
             if (pick != null) {
                 var b = pick;
                 LOGGER.info("[smoketest] showcase tour: pressing {}", b.getMessage().getString());
-                Minecraft.getInstance().execute(b::onPress);
+                Minecraft.getInstance().execute(() -> b.onPress(new net.minecraft.client.input.MouseButtonInfo(0, 0)));
             }
         });
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderFrameEvent.Post e) -> {
@@ -227,7 +227,7 @@ final class DevClientShowcaseTour {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,15 +10,15 @@ import java.util.TreeSet;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.CritterGenes;
 import org.overengineer.bettacraft.critters.CritterSpecies;
@@ -66,7 +67,7 @@ public final class ChunkUnloadGameTests {
         for (BlockPos pos : blocks) level.setBlock(pos, ModBlocks.TANK.get().defaultBlockState(), 3);
         TankMultiblock.formAll(level, blocks);
         TankBlockEntity c = TankMultiblock.getController(level, min);
-        if (c == null) throw new GameTestAssertException("no tank");
+        if (c == null) throw new GameTestFailure("no tank");
         c.getTank().setFront(Direction.NORTH);
         TankInteractions.changeWater(level, c, c.getTank().capacityMb());
         c.getTank().setWaterTemp(26F);
@@ -83,7 +84,7 @@ public final class ChunkUnloadGameTests {
         for (int i = 0; i < 4; i++) {
             Vec3 p = w.clamp(new Vec3(b.minX + 0.7 + i * 0.7, b.minY + 0.5, (b.minZ + b.maxZ) / 2), 0.35, 0.1, 0.2);
             if (TankmateBreeding.spawn(h.getLevel(), c, TankmateSpecies.NEON_TETRA, TankmateGenes.wild(TankmateSpecies.NEON_TETRA), i % 2 == 0,
-                    LifeStage.ADULT, 0, p) == null) throw new GameTestAssertException("no tetra");
+                    LifeStage.ADULT, 0, p) == null) throw new GameTestFailure("no tetra");
         }
         for (int i = 0; i < 5; i++) TankCritters.add(h.getLevel(), c, i < 3 ? CritterSpecies.NEOCARIDINA : CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, i % 2 == 0, 10);
     }
@@ -99,7 +100,7 @@ public final class ChunkUnloadGameTests {
             then.run();
             return;
         }
-        if (max <= 0) throw new GameTestAssertException("timed out: " + what);
+        if (max <= 0) throw new GameTestFailure("timed out: " + what);
         h.runAfterDelay(1, () -> await(h, max - 1, done, what, then));
     }
 
@@ -116,7 +117,7 @@ public final class ChunkUnloadGameTests {
             TankBlockEntity c = build(h, min);
             stock(h, c);
             Snapshot first = snapshot(level, c.getTank());
-            if (first.animals().size() != 6 || first.critters() != 5) throw new GameTestAssertException("stocked: " + first);
+            if (first.animals().size() != 6 || first.critters() != 5) throw new GameTestFailure("stocked: " + first);
             cycle(h, min, first, 0, () -> {
                 force(level, min, false);
                 h.succeed();
@@ -135,7 +136,7 @@ public final class ChunkUnloadGameTests {
         int wait = round == 1 ? (int) Math.floorMod(-(level.getGameTime() + min.asLong() + 1), 20) + 1 : 40;
         h.runAfterDelay(Math.max(1, wait), () -> {
             TankBlockEntity c = TankMultiblock.getController(level, min);
-            if (c == null) throw new GameTestAssertException("round " + round + ": no tank before the unload");
+            if (c == null) throw new GameTestFailure("round " + round + ": no tank before the unload");
             Snapshot before = snapshot(level, c.getTank());
             check(round + " (before)", expect, before);
             force(level, min, false);
@@ -154,7 +155,7 @@ public final class ChunkUnloadGameTests {
                                 check(round + " (after)", expect, after);
                                 long twice = level.getEntities((Entity) null, TankInhabitants.tankBox(cc.getTank()).inflate(2),
                                         e -> expect.animals().containsKey(e.getUUID())).size();
-                                if (twice != expect.animals().size()) throw new GameTestAssertException("round " + round + ": " + twice + " animals for " + expect.animals().size());
+                                if (twice != expect.animals().size()) throw new GameTestFailure("round " + round + ": " + twice + " animals for " + expect.animals().size());
                                 cycle(h, min, expect, round + 1, done);
                             });
                         }));
@@ -169,10 +170,10 @@ public final class ChunkUnloadGameTests {
     }
 
     private static void check(String what, Snapshot expect, Snapshot now) {
-        if (!now.animals().equals(expect.animals())) throw new GameTestAssertException("round " + what + ": animals " + now.animals().size() + " " + now.animals().keySet()
+        if (!now.animals().equals(expect.animals())) throw new GameTestFailure("round " + what + ": animals " + now.animals().size() + " " + now.animals().keySet()
                 + " expected " + expect.animals().keySet());
-        if (now.critters() != expect.critters()) throw new GameTestAssertException("round " + what + ": small animals " + now.critters() + " of " + expect.critters());
-        if (!now.listed().equals(expect.listed())) throw new GameTestAssertException("round " + what + ": inhabitant list " + now.listed() + " expected " + expect.listed());
-        if (Math.abs(now.water() - expect.water()) > 1000) throw new GameTestAssertException("round " + what + ": water " + now.water() + " of " + expect.water());
+        if (now.critters() != expect.critters()) throw new GameTestFailure("round " + what + ": small animals " + now.critters() + " of " + expect.critters());
+        if (!now.listed().equals(expect.listed())) throw new GameTestFailure("round " + what + ": inhabitant list " + now.listed() + " expected " + expect.listed());
+        if (Math.abs(now.water() - expect.water()) > 1000) throw new GameTestFailure("round " + what + ": water " + now.water() + " of " + expect.water());
     }
 }

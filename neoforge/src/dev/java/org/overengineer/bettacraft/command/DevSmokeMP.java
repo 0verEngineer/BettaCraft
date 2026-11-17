@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevSmokeMP {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final boolean ENABLED = Boolean.getBooleanOr("bettacraft.smoketest.mp", false);
+    private static final boolean ENABLED = Boolean.getBoolean("bettacraft.smoketest.mp");
     /** Whole test: 10 minutes (the clients need about a minute to start). */
     private static final int TIMEOUT_TICKS = 20 * 60 * 10;
     static final String P1 = "Dev1", P2 = "Dev2";
@@ -475,7 +475,7 @@ public final class DevSmokeMP {
     /** M22.1: Dev1 stands over {@code at} (the block below its feet + 1), looking straight down. */
     private static void overBlock(ServerPlayer p, BlockPos at) {
         p.resetFallDistance();
-        p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 0F, 90F);
+        p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, java.util.Set.of(), 0F, 90F, true);
     }
 
     /**
@@ -607,9 +607,9 @@ public final class DevSmokeMP {
         for (int i = 0; i < 6; i++) TankPlants.add(lc, FloatingPlantType.DUCKWEED, lMin.getX() + 0.5 + (i % 3) * 0.6, lMin.getZ() + 1.5 + (i / 3) * 0.8, 0.6F, i);
         // a bright, quiet stage
         level.setDayTime(6000);
-        level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, server);
-        level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, server);
-        level.getGameRules().getRule(GameRules.SPAWN_MOBS).set(false, server);
+        level.getGameRules().set(GameRules.ADVANCE_TIME, false, server);
+        level.getGameRules().set(GameRules.ADVANCE_WEATHER, false, server);
+        level.getGameRules().set(GameRules.SPAWN_MOBS, false, server);
         level.setWeatherParameters(6000, 0, false, false);
         server.setDifficulty(Difficulty.PEACEFUL, true);
         savedEvaporation = ServerConfig.getOr(ServerConfig.EVAPORATION_ENABLED, true);
@@ -643,17 +643,17 @@ public final class DevSmokeMP {
         double dx = tx - px, dz = tz - pz, d = Math.sqrt(dx * dx + dz * dz);
         float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
         float pitch = (float) Math.toDegrees(Math.atan2(eye - topY, d));
-        p.teleportTo(in, px, base, pz, yaw, pitch);
+        p.teleportTo(in, px, base, pz, java.util.Set.of(), yaw, pitch, true);
     }
 
     /** Dev1 in front of the north glass, eye a little below the water surface, looking south at the tank. */
     private static void placeDev1(ServerPlayer p) {
-        p.teleportTo(server.overworld(), mainMin.getX() + 2.0, mainMin.getY(), mainMin.getZ() - 2.0, 0F, 0F);
+        p.teleportTo(server.overworld(), mainMin.getX() + 2.0, mainMin.getY(), mainMin.getZ() - 2.0, java.util.Set.of(), 0F, 0F, true);
     }
 
     /** Dev2 on the ledge south of the tank, looking down at the surface. */
     private static void placeDev2(ServerPlayer p) {
-        p.teleportTo(server.overworld(), mainMin.getX() + 2.0, mainMin.getY() + 3.0, mainMin.getZ() + 6.6, 180F, 32F);
+        p.teleportTo(server.overworld(), mainMin.getX() + 2.0, mainMin.getY() + 3.0, mainMin.getZ() + 6.6, java.util.Set.of(), 180F, 32F, true);
     }
 
     @SubscribeEvent
@@ -830,7 +830,7 @@ public final class DevSmokeMP {
             for (String n : List.of(P1, P2)) {
                 ServerPlayer p = player(n);
                 if (p == null) continue;
-                p.teleportTo(server.overworld(), lMin.getX() + (n.equals(P1) ? 1.5 : 0.5), lMin.getY(), lMin.getZ() - 1.5, 0F, 20F);
+                p.teleportTo(server.overworld(), lMin.getX() + (n.equals(P1) ? 1.5 : 0.5), lMin.getY(), lMin.getZ() - 1.5, java.util.Set.of(), 0F, 20F, true);
                 entered.put(n, p.position());
                 InteriorManager.enter(p, lMin.offset(0, 0, 1));
             }
@@ -889,7 +889,7 @@ public final class DevSmokeMP {
             if (p != null) {
                 hand(P2, ItemStack.EMPTY);
                 // in front of the north-west block of the L, looking at its north face
-                p.teleportTo(server.overworld(), lMin.getX() + 0.5, lMin.getY(), lMin.getZ() - 1.5, 0F, 36F);
+                p.teleportTo(server.overworld(), lMin.getX() + 0.5, lMin.getY(), lMin.getZ() - 1.5, java.util.Set.of(), 0F, 36F, true);
             }
             say("mine", P2, "1," + lMin.getX() + "," + lMin.getY() + "," + lMin.getZ());
         }, () -> reports.containsKey(P2 + ":mine1"), 20 * 30));
@@ -1044,7 +1044,7 @@ public final class DevSmokeMP {
             // M31 part b: a yellow-bellied slider and a slider hatchling next to the tank (no AI; the dev world keeps the last run's)
             for (var old : level.getEntitiesOfClass(org.overengineer.bettacraft.terrarium.HerpEntity.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
             for (int i = 0; i < 2; i++) {
-                var s = org.overengineer.bettacraft.registry.ModEntities.SLIDER_TURTLE.get().create(level);
+                var s = org.overengineer.bettacraft.registry.ModEntities.SLIDER_TURTLE.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                 if (s == null) continue;
                 s.setVariety(1);
                 if (i == 1) s.makeHatchling();
@@ -1054,7 +1054,7 @@ public final class DevSmokeMP {
                 level.addFreshEntity(s);
             }
             // M31 part c: a harlequin crested gecko shown clinging to a wall (the synced pose)
-            var g = org.overengineer.bettacraft.registry.ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO).create(level);
+            var g = org.overengineer.bettacraft.registry.ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO).create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (g != null) {
                 g.setVariety(2);
                 g.setNoAi(true);
@@ -1065,7 +1065,7 @@ public final class DevSmokeMP {
             }
             // M31 part d: a zombie from a mob jar into the terrarium: shrunk on every client (the synced scale attribute)
             for (var old : level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
-            var zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(level);
+            var zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (zombie != null) {
                 zombie.setHealth(1F);
                 var jar = org.overengineer.bettacraft.mobs.MobJarItem.fillWith(zombie);
@@ -1149,7 +1149,7 @@ public final class DevSmokeMP {
             p.resetFallDistance();
             // the stage hangs in the air: a block to stand on in front of the cabinet
             server.overworld().setBlockAndUpdate(at.offset(0, -1, -2), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
-            p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 1.6, 0F, 35F); // looking at the cabinet door
+            p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 1.6, java.util.Set.of(), 0F, 35F, true); // looking at the cabinet door
             hand(P1, ItemStack.EMPTY); // the client opens the menu itself (right-click on the cabinet)
             say("outletmenu", P1, at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> server.overworld().getBlockEntity(base.offset(-12, 0, 6)) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab
@@ -1221,7 +1221,7 @@ public final class DevSmokeMP {
             // the stage hangs in the air: a block to stand on beside the pump
             server.overworld().setBlockAndUpdate(new BlockPos(min.getX() - 2, min.getY() - 1, min.getZ() - 2), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
             p.resetFallDistance();
-            p.teleportTo(server.overworld(), min.getX() - 1.5, min.getY(), min.getZ() - 1.5, 0F, 30F);
+            p.teleportTo(server.overworld(), min.getX() - 1.5, min.getY(), min.getZ() - 1.5, java.util.Set.of(), 0F, 30F, true);
             say("regulate", P1, (min.getX() - 1) + "," + min.getY() + "," + min.getZ());
         }, () -> server.overworld().getBlockEntity(base.offset(-19, 0, 12)) instanceof org.overengineer.bettacraft.equipment.AirPumpBlockEntity a && a.power() == 5, 20 * 30));
         // M24: a tank fed by a water pump through a steel pipe from a reservoir, with a water change controller: both clients
@@ -1259,7 +1259,7 @@ public final class DevSmokeMP {
             if (p == null) return;
             server.overworld().setBlockAndUpdate(new BlockPos(min.getX() - 1, min.getY() - 1, min.getZ() - 2), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
             p.resetFallDistance();
-            p.teleportTo(server.overworld(), min.getX() - 0.5, min.getY(), min.getZ() - 1.5, 0F, 30F);
+            p.teleportTo(server.overworld(), min.getX() - 0.5, min.getY(), min.getZ() - 1.5, java.util.Set.of(), 0F, 30F, true);
             say("waterchange", P1, (min.getX() - 1) + "," + min.getY() + "," + (min.getZ() + 1));
         }, () -> server.overworld().getBlockEntity(base.offset(-27, 0, 13)) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity wc
                 && wc.intervalDays() == 3 && wc.share() == 30 && wc.enabled() && wc.last() >= 0
@@ -1314,7 +1314,7 @@ public final class DevSmokeMP {
             if (p == null) return;
             server.overworld().setBlockAndUpdate(at.offset(0, -1, -3), net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
             p.resetFallDistance();
-            p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 2.5, 0F, 10F);
+            p.teleportTo(server.overworld(), at.getX() + 0.5, at.getY(), at.getZ() - 2.5, java.util.Set.of(), 0F, 10F, true);
             say("monitorlayout", P1, at.getX() + "," + at.getY() + "," + at.getZ());
         }, () -> server.overworld().getBlockEntity(monitorMin().offset(1, 0, -3)) instanceof org.overengineer.bettacraft.monitor.MonitorBlockEntity m
                 && !m.layout().auto && m.layout().tiles.size() == 3, 20 * 30));
@@ -1456,7 +1456,7 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.network.ServerSettingsPayload.sendAll(server);
             placeDev1(player(P1));
             ServerPlayer p2 = player(P2);
-            if (p2 != null) p2.teleportTo(server.overworld(), mainMin.getX() + 5.5, mainMin.getY(), mainMin.getZ() - 2.5, 35F, 10F);
+            if (p2 != null) p2.teleportTo(server.overworld(), mainMin.getX() + 5.5, mainMin.getY(), mainMin.getZ() - 2.5, java.util.Set.of(), 35F, 10F, true);
             say("shot", "all", tankArg());
         }, () -> reports.containsKey(P1 + ":shot") && reports.containsKey(P2 + ":shot"), 20 * 40));
         // M33 part b: the server switches the tankmates off: both clients get its switches and their creative tab drops them
@@ -1710,7 +1710,7 @@ public final class DevSmokeMP {
         steps.add(new Step("aquarists: menu", () -> {
             ServerPlayer p1 = player(P1);
             if (p1 != null) {
-                p1.teleportTo(server.overworld(), aq1.getX(), aq1.getY(), aq1.getZ() - 2.5, 0F, 15F);
+                p1.teleportTo(server.overworld(), aq1.getX(), aq1.getY(), aq1.getZ() - 2.5, java.util.Set.of(), 0F, 15F, true);
                 org.overengineer.bettacraft.aquarist.AquaristMenu.open(p1, aq1);
             }
             say("aquaristmenu", P1, String.valueOf(aq1.getId()));

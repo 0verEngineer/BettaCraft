@@ -101,7 +101,7 @@ final class DevClientSmokeM28c {
         server(p -> {
             InteriorRegion r = regions[t];
             BlockPos at = r.toWorld(r.sizeX() / 2, 13, 0);
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 24F);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 24F, true);
         });
     }
 
@@ -112,7 +112,7 @@ final class DevClientSmokeM28c {
             int size = Math.max(s.type().sizeX, s.type().sizeY);
             int back = s.type().sizeZ / 2 + size;
             BlockPos at = r.toWorld(Math.max(0, s.x() - back / 2), Math.max(2, s.type().sizeY / 2 + 2), Math.max(0, s.z() - back));
-            p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, -28F, 18F);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), -28F, 18F, true);
         });
     }
 
@@ -141,7 +141,7 @@ final class DevClientSmokeM28c {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(-14, 2, 460);
         int x0 = 0;
@@ -176,7 +176,7 @@ final class DevClientSmokeM28c {
             in.setBlock(pos, b.defaultBlockState(), Block.UPDATE_ALL);
             litter++;
         }
-        var eq = InteriorManager.equipment(p.server, lr);
+        var eq = InteriorManager.equipment(p.level().getServer(), lr);
         LOGGER.info("[smoketest] M28c scene at {}: {} of {} decorations placed, {} litter (counted {} leaves, {} cones)", base, placed, spots.size(), litter,
                 eq.leafLitter(), eq.alderCones());
         if (placed < spots.size()) LOGGER.error("[smoketest] M28c not every decoration placed");
@@ -187,7 +187,7 @@ final class DevClientSmokeM28c {
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true);
             else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
@@ -220,7 +220,7 @@ final class DevClientSmokeM28c {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m28c_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m28c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

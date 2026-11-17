@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.container;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.insert;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.ofType;
@@ -12,7 +13,7 @@ import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.wil
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -27,8 +28,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.big.BigAnimals;
 import org.overengineer.bettacraft.big.TransportTubItem;
@@ -77,12 +78,12 @@ public final class ForeignLandAnimalsGameTests {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no entity " + id));
     }
 
     private static ForeignProfile profile(EntityType<?> t) {
         ForeignProfile p = ForeignProfiles.of(t);
-        if (p == null) throw new GameTestAssertException("no profile for " + BuiltInRegistries.ENTITY_TYPE.getKey(t));
+        if (p == null) throw new GameTestFailure("no profile for " + BuiltInRegistries.ENTITY_TYPE.getKey(t));
         return p;
     }
 
@@ -101,14 +102,14 @@ public final class ForeignLandAnimalsGameTests {
         boolean tub = !profile(type).land().box();
         Component err = insert(h, c, container(h, type, tub, false));
         if (key == null) {
-            if (err != null) throw new GameTestAssertException(what + " refused: " + err.getString());
+            if (err != null) throw new GameTestFailure(what + " refused: " + err.getString());
             for (LivingEntity e : ofType(h, c, type)) {
                 c.getTank().inhabitants().remove(e.getUUID());
                 TankInhabitants.release(e);
                 e.discard();
             }
         } else if (!says(err, key)) {
-            throw new GameTestAssertException(what + ": expected " + key + ", got " + (err == null ? "accepted" : err.getString()));
+            throw new GameTestFailure(what + ": expected " + key + ", got " + (err == null ? "accepted" : err.getString()));
         }
     }
 
@@ -233,7 +234,7 @@ public final class ForeignLandAnimalsGameTests {
             LivingEntity w = put(h, c, container(h, crew.type(), false, false));
             h.assertTrue(crew.profile().land().cleanup(), "the clean-up crew");
             ForeignProfile cp = ForeignProfiles.of(w.getType());
-            if (cp == null) throw new GameTestAssertException("no profile for the woodlouse");
+            if (cp == null) throw new GameTestFailure("no profile for the woodlouse");
             // alone: hungry after its hunger days
             ForeignCare.advance(level, c, w, cp, cp.hungerDays() + 0.5);
             ForeignHabits.step(level, c, 0.01);
@@ -345,8 +346,8 @@ public final class ForeignLandAnimalsGameTests {
         while (h.getLevel().getBlockState(ground).isAir() && ground.getY() > h.getLevel().getMinY()) ground = ground.below();
         player.snapTo(ground.getX() + 0.5, ground.getY() + 1.0, ground.getZ() + 0.5, 0F, 90F); // looking straight down onto the ground
         var r = held.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
-        h.assertTrue(r.getResult().consumesAction(), "let go on the land: " + r.getResult());
-        h.assertFalse(TransportTubItem.isFilled(r.getObject()), "the tub is empty again");
+        h.assertTrue(r.consumesAction(), "let go on the land: " + r);
+        h.assertFalse(TransportTubItem.isFilled(GameTestCompat.heldAfter(r, held)), "the tub is empty again");
         for (Entity e : h.getLevel().getEntities(komodo, TankInhabitants.tankBox(big.getTank()).inflate(40), e -> !TankInhabitants.hasTankRef(e))) e.discard();
         player.discard();
         h.succeed();
@@ -455,7 +456,7 @@ public final class ForeignLandAnimalsGameTests {
         if (skip(h, "fintastic")) return;
         EntityType<?> arapaima = type("fintastic:arapaima");
         TankBlockEntity c = ForeignGameTests.tank(h, 1, 1, 30, 8, 16, 27F);
-        Entity e0 = arapaima.create(h.getLevel());
+        Entity e0 = arapaima.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         ItemStack tub = TransportTubItem.fillWith(e0);
         e0.discard();
         LivingEntity a = put(h, c, tub);

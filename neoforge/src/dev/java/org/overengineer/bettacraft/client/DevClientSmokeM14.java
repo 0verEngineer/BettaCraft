@@ -189,7 +189,7 @@ final class DevClientSmokeM14 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(0, 2, 260);
         // A: the colony tank
         place(level, cuboid(base, 4, 2, 2));
@@ -215,7 +215,7 @@ final class DevClientSmokeM14 {
         BettaData d = BettaData.create(BettaGenome.of(Map.of("finform", "halfmoon", "fin_length", "long", "body_color", "royal_blue", "fin_color", "red"),
                 BettaGenome.DEFAULT), false, level.getGameTime());
         TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), p, 0L);
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (f != null) {
             ItemStack bag = FishBagItem.fillWith(f);
             f.discard();
@@ -366,7 +366,7 @@ final class DevClientSmokeM14 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void then(int delay, Runnable action) {
@@ -398,7 +398,7 @@ final class DevClientSmokeM14 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m14_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m14_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

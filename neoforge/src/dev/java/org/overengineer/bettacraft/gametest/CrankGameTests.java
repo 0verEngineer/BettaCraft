@@ -1,18 +1,19 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -96,21 +97,21 @@ public final class CrankGameTests {
 
     private static ExternalFilterBlockEntity filter(GameTestHelper h, BlockPos rel, Direction towardsTank) {
         h.setBlock(rel, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, towardsTank));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter");
         return f;
     }
 
     private static CabinetBlockEntity cabinet(GameTestHelper h, BlockPos rel, boolean withFilter) {
         h.setBlock(rel, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         CabinetBlockEntity cab = (CabinetBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(rel));
-        if (cab == null) throw new GameTestAssertException("no cabinet");
+        if (cab == null) throw new GameTestFailure("no cabinet");
         if (withFilter) cab.items().setStackInSlot(CabinetBlockEntity.FILTER_SLOT, new ItemStack(ModItems.EXTERNAL_FILTER.get()));
         return cab;
     }
 
     private static <T extends BlockEntity> T be(GameTestHelper h, BlockPos rel, Class<T> type) {
         BlockEntity b = h.getLevel().getBlockEntity(h.absolutePos(rel));
-        if (!type.isInstance(b)) throw new GameTestAssertException("no " + type.getSimpleName() + " at " + rel);
+        if (!type.isInstance(b)) throw new GameTestFailure("no " + type.getSimpleName() + " at " + rel);
         return type.cast(b);
     }
 

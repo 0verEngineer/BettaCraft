@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -33,8 +34,8 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -112,7 +113,7 @@ public final class GenerationsGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         return sp;
     }
 
@@ -124,11 +125,11 @@ public final class GenerationsGameTests {
         sp.getInventory().clearContent();
         sp.getInventory().setItem(0, empty);
         Component err = TankInhabitants.takeOut(sp, from, e.getUUID(), bag);
-        if (err != null) throw new GameTestAssertException("take out " + e.getType().getDescriptionId() + ": " + err.getString());
+        if (err != null) throw new GameTestFailure("take out " + e.getType().getDescriptionId() + ": " + err.getString());
         h.assertTrue(!e.isAlive() || e.isRemoved(), "the animal left the tank");
         h.assertTrue(!from.getTank().inhabitants().contains(e.getUUID()), "no longer an inhabitant");
         for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (TankInhabitants.containedType(s) != null) return s.copy();
-        throw new GameTestAssertException("no filled container after taking out " + e.getType().getDescriptionId());
+        throw new GameTestFailure("no filled container after taking out " + e.getType().getDescriptionId());
     }
 
     /** Puts the animal of a filled container into {@code to} by right-clicking the tank with it; returns the new inhabitant. */
@@ -140,7 +141,7 @@ public final class GenerationsGameTests {
         InteractionResult r = TankInhabitants.tryInsert(filled, level, to.getBlockPos(), sp, InteractionHand.MAIN_HAND);
         h.assertTrue(r == InteractionResult.CONSUME, "inserted: " + r);
         for (Entity e : TankInhabitants.liveInhabitants(level, to.getTank())) if (!before.contains(e)) return e;
-        throw new GameTestAssertException("nothing came into the tank from " + filled);
+        throw new GameTestFailure("nothing came into the tank from " + filled);
     }
 
     /** Moves {@code e} from one tank to the other in {@code empty} (the menu's take-out, then a right-click on the new tank). */
@@ -154,7 +155,7 @@ public final class GenerationsGameTests {
 
     static TankView.Inhabitant row(TankView v, Entity e) {
         for (TankView.Inhabitant i : v.inhabitants) if (i.uuid().equals(e.getUUID())) return i;
-        throw new GameTestAssertException("the menu does not list " + e.getType().getDescriptionId());
+        throw new GameTestFailure("the menu does not list " + e.getType().getDescriptionId());
     }
 
     static boolean logged(TankData t, String key) {
@@ -208,7 +209,7 @@ public final class GenerationsGameTests {
     private static BettaEntity betta(GameTestHelper h, TankBlockEntity c, BettaGenotype g, boolean female) {
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, female, 0));
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         return bettas(h, c).stream().filter(b -> b.isFemale() == female && b.genotype().equals(g)).findFirst().orElseThrow();
     }
 
@@ -380,7 +381,7 @@ public final class GenerationsGameTests {
         var w = new TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(w.box().getCenter(), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, TankmateSpecies.GUPPY, g, female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("no guppy");
+        if (e == null) throw new GameTestFailure("no guppy");
         e.health().feed();
         return e;
     }
@@ -557,9 +558,9 @@ public final class GenerationsGameTests {
         sp.getInventory().clearContent();
         sp.getInventory().setItem(0, new ItemStack(ModItems.FISH_BAG.get()));
         Component err = TankCritters.takeOutById(h.getLevel(), c, sp, k.id, false);
-        if (err != null) throw new GameTestAssertException("take out " + k.species.id() + ": " + err.getString());
+        if (err != null) throw new GameTestFailure("take out " + k.species.id() + ": " + err.getString());
         for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (TankCritters.bagged(s) != null) return s.copy();
-        throw new GameTestAssertException("no filled bag");
+        throw new GameTestFailure("no filled bag");
     }
 
     /** Moves the chosen small animals into {@code to} (each in a fish bag); returns them as they arrived. */
@@ -759,7 +760,7 @@ public final class GenerationsGameTests {
     private static Axolotl axolotl(GameTestHelper h, TankBlockEntity c, CritterGenes g) {
         Vec3 p = new TankWaterVolume(c.getTank()).clamp(Vec3.atCenterOf(c.getTank().min()).add(0.5, 0, 0.5), 0.45, 0.1, 0.45);
         Axolotl a = AxolotlCare.spawn(h.getLevel(), c, g, 0, p);
-        if (a == null) throw new GameTestAssertException("no axolotl");
+        if (a == null) throw new GameTestFailure("no axolotl");
         a.setAge(0);
         return a;
     }
@@ -868,15 +869,15 @@ public final class GenerationsGameTests {
         org.overengineer.bettacraft.tank.TankInteractions.changeWater(h.getLevel(), c, sx * sz * 1000L);
         TankClimate.step(h.getLevel(), c, 0.01);
         TankData t = c.getTank();
-        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestAssertException("no paludarium: " + t.terrariumMode());
+        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestFailure("no paludarium: " + t.terrariumMode());
         t.setClimate(new Climate.State(air, air, air + 12, humidity, 5, 0));
         t.setWaterTemp(air);
         return c;
     }
 
     private static HerpEntity herp(GameTestHelper h, TankBlockEntity c, HerpSpecies s, boolean female, int variety) {
-        HerpEntity e = ModEntities.herp(s).create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("no " + s.id());
+        HerpEntity e = ModEntities.herp(s).create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("no " + s.id());
         e.setFemale(female);
         e.setVariety(variety);
         ItemStack stack = e.getBucketItemStack();
@@ -1035,7 +1036,7 @@ public final class GenerationsGameTests {
         TankWaterVolume w = new TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(w.box().getCenter(), 0.6, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }

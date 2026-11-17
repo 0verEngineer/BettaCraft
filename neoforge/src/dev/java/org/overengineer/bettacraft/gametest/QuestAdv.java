@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -23,8 +24,8 @@ final class QuestAdv {
     }
 
     static boolean done(ServerPlayer p, String id) {
-        var holder = p.server.getAdvancements().get(BettaCraft.id(id));
-        if (holder == null) throw new GameTestAssertException("advancement " + id + " missing");
+        var holder = p.level().getServer().getAdvancements().get(BettaCraft.id(id));
+        if (holder == null) throw new GameTestFailure("advancement " + id + " missing");
         return p.getAdvancements().getOrStartProgress(holder).isDone();
     }
 

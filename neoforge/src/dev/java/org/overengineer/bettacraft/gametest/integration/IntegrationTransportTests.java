@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import static org.overengineer.bettacraft.gametest.integration.IntegrationRig.*;
 
 import java.lang.reflect.Method;
@@ -7,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -85,7 +86,7 @@ public final class IntegrationTransportTests {
         ChestBlockEntity c = pelletChest(h);
         FeederBlockEntity f = feeder(h, new BlockPos(3, 2, 2));
         var reg = level.registryAccess().lookupOrThrow(ResourceKey.createRegistryKey(Identifier.parse("enderio:conduit")));
-        Holder<?> conduit = reg.getHolderOrThrow(ResourceKey.create(reg.key(), Identifier.parse("enderio:item")));
+        Holder<?> conduit = reg.getOrThrow(ResourceKey.create(reg.key(), Identifier.parse("enderio:item")));
         h.setBlock(new BlockPos(2, 2, 2), block("enderio:conduit"));
         Object be = be(h, new BlockPos(2, 2, 2));
         be.getClass().getMethod("addConduit", Holder.class, Direction.class, Player.class).invoke(be, conduit, Direction.UP,
@@ -94,14 +95,14 @@ public final class IntegrationTransportTests {
         Method set = be.getClass().getMethod("setConnectionConfig", Holder.class, Direction.class,
                 Class.forName("com.enderio.enderio.api.conduits.connection.config.ConnectionConfig"));
         Object west = get.invoke(be, conduit, Direction.WEST);
-        if (west == null) throw new GameTestAssertException("the item conduit did not connect to the chest");
+        if (west == null) throw new GameTestFailure("the item conduit did not connect to the chest");
         Class<?> rc = Class.forName("com.enderio.enderio.api.io.RedstoneControl");
         Object extract = call(west, "withIsExtract", true);
         extract = call(extract, "withExtractRedstoneControl", rc.getField("ALWAYS_ACTIVE").get(null));
         extract = call(extract, "withIsInsert", false);
         set.invoke(be, conduit, Direction.WEST, extract);
         Object east = get.invoke(be, conduit, Direction.EAST);
-        if (east == null) throw new GameTestAssertException("the item conduit did not connect to the feeder");
+        if (east == null) throw new GameTestFailure("the item conduit did not connect to the feeder");
         set.invoke(be, conduit, Direction.EAST, call(call(east, "withIsInsert", true), "withIsExtract", false));
         pelletsArrive(h, c, f, "the EnderIO item conduit");
     }
@@ -132,9 +133,9 @@ public final class IntegrationTransportTests {
     private static Object aePart(ServerLevel level, BlockPos abs, Direction side, String item) throws Exception {
         Method set = null;
         for (Method m : Class.forName("appeng.api.parts.PartHelper").getMethods()) if (m.getName().equals("setPart") && m.getParameterCount() == 5) set = m;
-        if (set == null) throw new GameTestAssertException("AE2 API changed: no PartHelper.setPart");
+        if (set == null) throw new GameTestFailure("AE2 API changed: no PartHelper.setPart");
         Object part = set.invoke(null, level, abs, side, null, item(item));
-        if (part == null) throw new GameTestAssertException("AE2 did not place " + item);
+        if (part == null) throw new GameTestFailure("AE2 did not place " + item);
         return part;
     }
 
@@ -292,7 +293,7 @@ public final class IntegrationTransportTests {
             DataComponentType<Object> type = (DataComponentType<Object>) ((java.util.function.Supplier<?>) staticField("me.desht.modularrouters.core.ModDataComponents", "COMMON_MODULE_SETTINGS")).get();
             s.set(type, value);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("Modular Routers API changed: " + e);
+            throw new GameTestFailure("Modular Routers API changed: " + e);
         }
         return s;
     }
@@ -333,7 +334,7 @@ public final class IntegrationTransportTests {
             DataComponentType<Object> type = (DataComponentType<Object>) ((java.util.function.Supplier<?>) staticField("me.desht.modularrouters.core.ModDataComponents", "FLUID_SETTINGS")).get();
             module.set(type, value);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("Modular Routers API changed: " + e);
+            throw new GameTestFailure("Modular Routers API changed: " + e);
         }
         call(call(router, "getModules"), "setStackInSlot", 0, module);
         call(call(router, "getBuffer"), "insertItem", 0, new ItemStack(Items.WATER_BUCKET), false);
@@ -367,7 +368,7 @@ public final class IntegrationTransportTests {
             setField(call(ext, "getConnectorSettings"), modeField, enumValue("mcjty.xnet.apiimpl.enums.InsExtMode", "EXT"));
             setField(call(ins, "getConnectorSettings"), modeField, enumValue("mcjty.xnet.apiimpl.enums.InsExtMode", "INS"));
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("XNet API changed: " + e);
+            throw new GameTestFailure("XNet API changed: " + e);
         }
         call(controller, "markAsDirty");
     }
@@ -390,10 +391,10 @@ public final class IntegrationTransportTests {
             } catch (NoSuchFieldException ignored) {
                 // the super class
             } catch (IllegalAccessException e) {
-                throw new GameTestAssertException("field " + name + ": " + e);
+                throw new GameTestFailure("field " + name + ": " + e);
             }
         }
-        throw new GameTestAssertException("API changed: no field " + o.getClass().getName() + "." + name);
+        throw new GameTestFailure("API changed: no field " + o.getClass().getName() + "." + name);
     }
 
     @GameTest(template = EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_xnet", timeoutTicks = 900)

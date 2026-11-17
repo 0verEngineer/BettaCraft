@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.gametest;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -19,8 +19,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.CritterGenes;
@@ -73,7 +73,7 @@ public final class HardeningGameTests {
             h.assertTrue(InteriorSync.fullSends - before == 1, "one full send for 10 requests, got " + (InteriorSync.fullSends - before));
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -146,7 +146,7 @@ public final class HardeningGameTests {
         CompoundTag tag = be.saveWithoutMetadata(level.registryAccess());
         BlockPos bogus = other.above(3);
         tag.putIntArray("controller", new int[]{bogus.getX(), bogus.getY(), bogus.getZ()});
-        be.loadWithComponents(tag, level.registryAccess());
+        be.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), tag));
         h.assertTrue(TankMultiblock.getController(level, other) == null, "orphaned");
         h.assertTrue(TankMultiblock.repairOrphan(level, other, be), "repaired");
         TankBlockEntity now = TankMultiblock.getController(level, other);
@@ -187,7 +187,7 @@ public final class HardeningGameTests {
     public static void emptyFeederFeedsNobody(GameTestHelper h) {
         BlockPos fp = new BlockPos(4, 1, 4);
         h.setBlock(fp, ModBlocks.FEEDER.get().defaultBlockState());
-        FeederBlockEntity f = (FeederBlockEntity) h.getBlockEntity(fp);
+        FeederBlockEntity f = h.getBlockEntity(fp, FeederBlockEntity.class);
         for (int i = 0; i < 8; i++) h.assertTrue(!f.consumeVirtualPortion(0.25), "empty feeder, portion " + i);
         f.items().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 1), false);
         int fed = 0;
@@ -213,7 +213,7 @@ public final class HardeningGameTests {
         }
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
-            p.teleportTo(in, a.getX() + 2, a.getY(), a.getZ(), 0, 0);
+            p.teleportTo(in, a.getX() + 2, a.getY(), a.getZ(), java.util.Set.of(), 0, 0, true);
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
             p.gameMode.destroyBlock(a.above(2));
             int items = 0;
@@ -224,7 +224,7 @@ public final class HardeningGameTests {
             h.assertTrue(items == 2, "both heaters dropped, got " + items);
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -247,10 +247,10 @@ public final class HardeningGameTests {
             p.teleportTo(level, w.getX() + 0.5, w.getY() + 1.2, w.getZ() + 0.5, java.util.Set.of(), 0, 90, false);
             p.setItemInHand(InteractionHand.MAIN_HAND, bag);
             var result = bag.getItem().use(level, p, InteractionHand.MAIN_HAND);
-            h.assertTrue(FishBagItem.isFilled(result.getObject()), "bag still holds its animal");
+            h.assertTrue(FishBagItem.isFilled(GameTestCompat.heldAfter(result, bag)), "bag still holds its animal");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -263,13 +263,13 @@ public final class HardeningGameTests {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             BlockPos inside = r.toWorld(4, 1, 4);
-            p.teleportTo(in, inside.getX() + 0.5, inside.getY(), inside.getZ() + 0.5, 0, 0);
+            p.teleportTo(in, inside.getX() + 0.5, inside.getY(), inside.getZ() + 0.5, java.util.Set.of(), 0, 0, true);
             h.assertTrue(InteriorManager.playersInside(h.getLevel().getServer(), c.getTank()).size() == 1, "player inside");
             p.setHealth(0);
             h.assertTrue(InteriorManager.playersInside(h.getLevel().getServer(), c.getTank()).isEmpty(), "a dead player does not count");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 

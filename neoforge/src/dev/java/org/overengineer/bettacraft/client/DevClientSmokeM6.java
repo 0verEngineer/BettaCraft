@@ -138,7 +138,7 @@ final class DevClientSmokeM6 {
         then(1, () -> guiScale(3));
         then(5, () -> {
             mc.setScreen(null);
-            mc.getToasts().clear();
+            mc.getToastManager().clear();
             var adv = mc.player.connection.getAdvancements();
             mc.setScreen(new net.minecraft.client.gui.screens.advancements.AdvancementsScreen(adv));
         });
@@ -155,7 +155,7 @@ final class DevClientSmokeM6 {
 
     /** Server side: every Bettacraft advancement for the player (to show the whole tree). */
     static void grantAll(ServerPlayer p) {
-        for (var holder : p.server.getAdvancements().getAllAdvancements()) {
+        for (var holder : p.level().getServer().getAdvancements().getAllAdvancements()) {
             if (!holder.id().getNamespace().equals(BettaCraft.MOD_ID) || holder.id().getPath().startsWith("recipes/")) continue;
             var progress = p.getAdvancements().getOrStartProgress(holder);
             for (String c : progress.getRemainingCriteria()) p.getAdvancements().award(holder, c);
@@ -197,7 +197,7 @@ final class DevClientSmokeM6 {
     }
 
     private void mouseTo(double x, double y) {
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x, y);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x, y);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -215,6 +215,6 @@ final class DevClientSmokeM6 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

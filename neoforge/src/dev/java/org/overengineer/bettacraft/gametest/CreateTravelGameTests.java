@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -9,7 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestInfo;
@@ -27,8 +28,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -152,10 +153,10 @@ public final class CreateTravelGameTests {
                     Class<?> sim = Class.forName("dev.simulated_team.simulated.util.SimAssemblyHelper");
                     Method dis = null;
                     for (Method m : sim.getMethods()) if (m.getName().equals("disassembleSubLevel")) dis = m;
-                    if (dis == null) throw new GameTestAssertException("no disassembleSubLevel");
+                    if (dis == null) throw new GameTestFailure("no disassembleSubLevel");
                     dis.invoke(null, level, subLevel, plotAnchor, anchor.above(2), Rotation.CLOCKWISE_90, false);
                 } catch (ReflectiveOperationException e) {
-                    throw new GameTestAssertException("disassembly failed: " + e);
+                    throw new GameTestFailure("disassembly failed: " + e);
                 }
                 h.succeedWhen(() -> {
                     TankBlockEntity n = CreateGameTests.tankNear(level, anchor.above(2), tankId, 3);
@@ -191,7 +192,7 @@ public final class CreateTravelGameTests {
         c.getTank().setPowerBuffer(0);
         c.getTank().setTargetTemp(30F);
         h.setBlock(new BlockPos(x - 1, 2, z), ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.EAST));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x - 1, 2, z))) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x - 1, 2, z))) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter");
         f.insertHeater(new ItemStack(ModItems.HEATER_SMALL.get()));
         if (adapter) {
             var b = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(BettaCraft.id("drive_adapter"));
@@ -212,9 +213,9 @@ public final class CreateTravelGameTests {
                 if (nbt != null && NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND) && TankData.load(nbt.getCompoundOrEmpty("tank")).id().equals(tank)) return nbt;
             }
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("contraption data: " + e);
+            throw new GameTestFailure("contraption data: " + e);
         }
-        throw new GameTestAssertException("no controller on the contraption");
+        throw new GameTestFailure("no controller on the contraption");
     }
 
     private static double sinceFed(CompoundTag nbt) {
@@ -228,7 +229,7 @@ public final class CreateTravelGameTests {
         try {
             CreateGameTests.method(contraption.getClass(), "setAngle", 1).invoke(contraption, angle);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("setAngle: " + e);
+            throw new GameTestFailure("setAngle: " + e);
         }
     }
 
@@ -285,7 +286,7 @@ public final class CreateTravelGameTests {
                 turn(cb, 0F);
                 CreateGameTests.disassemble(bb, cb, BlockPos.ZERO, 0F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = CreateGameTests.tankNear(level, anchorA, ida, 2);
@@ -343,7 +344,7 @@ public final class CreateTravelGameTests {
                         CreateGameTests.method(now[0].getClass(), "disassemble", 0).invoke(now[0]);
                     }
                 } catch (Exception e) {
-                    throw new GameTestAssertException("disassembly failed: " + e);
+                    throw new GameTestFailure("disassembly failed: " + e);
                 }
                 h.succeedWhen(() -> {
                     TankBlockEntity n = CreateGameTests.tankNear(level, anchor.above(2), id, 2);
@@ -380,7 +381,7 @@ public final class CreateTravelGameTests {
             try {
                 CreateGameTests.disassemble(bearing, contraption, BlockPos.ZERO, 0F);
             } catch (Exception e) {
-                throw new GameTestAssertException("disassembly failed: " + e);
+                throw new GameTestFailure("disassembly failed: " + e);
             }
             h.succeedWhen(() -> {
                 TankBlockEntity n = CreateGameTests.tankNear(level, anchor, id, 1);

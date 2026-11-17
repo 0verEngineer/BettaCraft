@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,7 +10,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
@@ -25,8 +26,8 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
@@ -51,7 +52,7 @@ public final class M281WildlifeGameTests {
     private M281WildlifeGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     /** A pool {@code size} wide, 4 deep, its surface at sea level, at the test's x/z (absolute; the test area lies lower). */
@@ -80,8 +81,8 @@ public final class M281WildlifeGameTests {
                 for (int y = -1; y < 8; y++) level.setBlock(min.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
     }
 
-    private static List<MobSpawnSettings.SpawnerData> ours(GameTestHelper h, ResourceKey<Biome> biome) {
-        return WildSpawnPass.ours(h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(biome));
+    private static List<net.minecraft.util.random.Weighted<MobSpawnSettings.SpawnerData>> ours(GameTestHelper h, ResourceKey<Biome> biome) {
+        return WildSpawnPass.ours(h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(biome));
     }
 
     // ------------------------------------------------------------------ tags
@@ -114,20 +115,20 @@ public final class M281WildlifeGameTests {
         boolean foreign = false;
         List<String> lines = new ArrayList<>();
         for (var key : keys) {
-            var list = biomes.getHolderOrThrow(key).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+            var list = biomes.getOrThrow(key).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
             int total = 0, ours = 0;
             Map<String, Integer> byMod = new LinkedHashMap<>();
             for (var d : list) {
-                int w = d.getWeight().asInt();
+                int w = d.weight();
                 total += w;
-                String ns = BuiltInRegistries.ENTITY_TYPE.getKey(d.type).getNamespace();
+                String ns = BuiltInRegistries.ENTITY_TYPE.getKey(d.value().type()).getNamespace();
                 byMod.merge(ns, w, Integer::sum);
-                if (d.type.is(ModTags.ALL_ANIMALS)) ours += w;
+                if (d.value().type().is(ModTags.ALL_ANIMALS)) ours += w;
                 if (!ns.equals("minecraft") && !ns.equals(BettaCraft.MOD_ID)) foreign = true;
             }
-            lines.add(String.format(java.util.Locale.ROOT, "%-28s ours %4d of %4d = %5.1f %%  %s", key.location(), ours, total,
+            lines.add(String.format(java.util.Locale.ROOT, "%-28s ours %4d of %4d = %5.1f %%  %s", key.identifier(), ours, total,
                     total == 0 ? 0.0 : 100.0 * ours / total, byMod));
-            if (key != Biomes.OCEAN) check(ours > 0, "no animals of the mod spawn in " + key.location());
+            if (key != Biomes.OCEAN) check(ours > 0, "no animals of the mod spawn in " + key.identifier());
         }
         LOG.info("M28.1 water-ambient spawn weights per biome (other mods: {}):\n{}", foreign, String.join("\n", lines));
         h.succeed();
@@ -156,7 +157,7 @@ public final class M281WildlifeGameTests {
             check(spawned.size() == made, "wild animals around: " + spawned.size() + " of " + made);
             for (Entity e : spawned) {
                 check(Wildlife.isWildAnimal(e), e + " is not wild");
-                check(river.stream().anyMatch(d -> d.type == e.getType()), e.getType() + " is no river animal");
+                check(river.stream().anyMatch(d -> d.value().type() == e.getType()), e.getType() + " is no river animal");
                 BlockPos p = e.blockPosition();
                 check(p.getX() >= min.getX() && p.getX() < min.getX() + size && p.getZ() >= min.getZ() && p.getZ() < min.getZ() + size
                         && level.getFluidState(p).isSource(), e + " spawned outside the water");
@@ -195,7 +196,7 @@ public final class M281WildlifeGameTests {
             var controller = TankMultiblock.getController(level, t);
             check(controller != null, "tank did not form");
             org.overengineer.bettacraft.tank.TankInteractions.changeWater(level, controller, 18000, 0F);
-            var all = new ArrayList<MobSpawnSettings.SpawnerData>();
+            var all = new ArrayList<net.minecraft.util.random.Weighted<MobSpawnSettings.SpawnerData>>();
             all.addAll(ours(h, Biomes.RIVER));
             all.addAll(ours(h, Biomes.SWAMP));
             RandomSource r = RandomSource.create(7);
@@ -228,13 +229,13 @@ public final class M281WildlifeGameTests {
         try {
             for (int i = 0; i < 3; i++) ModEntities.WILD_CRITTER.get().spawn(level, min.offset(i, 0, 1), net.minecraft.world.entity.EntitySpawnReason.NATURAL);
             CommandSourceStack src = level.getServer().createCommandSourceStack().withLevel(level).withPosition(Vec3.atCenterOf(min.offset(2, 3, 2)))
-                    .withPermission(4).withSuppressedOutput();
+                    .withPermission(net.minecraft.server.permissions.LevelBasedPermissionSet.OWNER).withSuppressedOutput();
             var d = level.getServer().getCommands().getDispatcher();
             d.execute("bettacraft wildlife", src);
             check(d.execute("bettacraft wildlife list 12", src) >= 3, "the list misses the small animals");
             check(d.execute("bettacraft wildlife glow 12", src) >= 3, "nothing glows");
             for (Entity e : WildSpawnPass.wildAround(level, min, 12)) check(((LivingEntity) e).hasEffect(MobEffects.GLOWING), e + " does not glow");
-            var noOp = level.getServer().createCommandSourceStack().withLevel(level).withPermission(0).withSuppressedOutput();
+            var noOp = level.getServer().createCommandSourceStack().withLevel(level).withPermission(net.minecraft.server.permissions.LevelBasedPermissionSet.ALL).withSuppressedOutput();
             boolean refused;
             try {
                 d.execute("bettacraft wildlife", noOp);

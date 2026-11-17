@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import static org.overengineer.bettacraft.gametest.integration.IntegrationRig.*;
 
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.api.event.AnimalBornEvent;
 import org.overengineer.bettacraft.api.event.AnimalDiedEvent;
@@ -175,7 +176,7 @@ public final class IntegrationModTests {
         h.assertTrue(err == null, "the tropical fish goes in: " + (err == null ? "" : err.getString()));
         org.overengineer.bettacraft.foreign.ForeignBreeding.step(level, t, 0.01);
         var inTank = TankInhabitants.liveInhabitants(level, t.getTank()).stream().filter(e -> e.getType() == EntityType.TROPICAL_FISH).findFirst()
-                .orElseThrow(() -> new GameTestAssertException("no tropical fish in the tank"));
+                .orElseThrow(() -> new GameTestFailure("no tropical fish in the tank"));
         h.assertTrue(!fishEggsGoals((net.minecraft.world.entity.Mob) inTank), "the tropical fish in the tank lost Fish Eggs' goals");
         h.succeed();
     }

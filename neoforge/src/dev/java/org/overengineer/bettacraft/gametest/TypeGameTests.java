@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -15,8 +16,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaData;
@@ -57,7 +58,7 @@ public final class TypeGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(2, 1, 2)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, water);
         c.getTank().legacyHeaters().setItem(0, new ItemStack(ModItems.HEATER_LARGE.get()));
         c.getTank().setTargetTemp(27.0F);
@@ -68,9 +69,9 @@ public final class TypeGameTests {
     private static BettaEntity insert(GameTestHelper h, TankBlockEntity c, BettaData d) {
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (BettaEntity b : bettas(h, c)) if (b.getBettaData().fishId().equals(d.fishId())) return b;
-        throw new GameTestAssertException("inserted betta not found");
+        throw new GameTestFailure("inserted betta not found");
     }
 
     private static List<BettaEntity> bettas(GameTestHelper h, TankBlockEntity c) {
@@ -210,7 +211,7 @@ public final class TypeGameTests {
         }
         nest.put("eggs", eggs);
         tag.getCompoundOrEmpty("tank").put("nest", nest);
-        c.loadWithComponents(tag, level.registryAccess());
+        c.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), tag));
         BubbleNest n = c.getTank().nest();
         h.assertTrue(n != null && n.eggCount() == 3, "three eggs survive the load");
         for (BubbleNest.Egg e : n.eggs()) {

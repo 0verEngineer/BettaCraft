@@ -1,17 +1,18 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.chem.ChemTolerance;
 import org.overengineer.bettacraft.chem.TankChemistry;
@@ -54,7 +55,7 @@ public final class ReefDosingGameTests {
 
     private static DosingPumpBlockEntity pump(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.DOSING_PUMP.get().defaultBlockState().setValue(DosingPumpBlock.FACING, Direction.NORTH));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof DosingPumpBlockEntity p)) throw new GameTestAssertException("no pump");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof DosingPumpBlockEntity p)) throw new GameTestFailure("no pump");
         return p;
     }
 

@@ -114,7 +114,7 @@ final class DevClientSmokeM31c {
     }
 
     private static void put(ServerLevel level, TankBlockEntity c, HerpSpecies s, boolean female, int variety, boolean young) {
-        HerpEntity t = ModEntities.herp(s).create(level);
+        HerpEntity t = ModEntities.herp(s).create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         t.setFemale(female);
         t.setVariety(variety);
         if (young) t.makeHatchling();
@@ -127,7 +127,7 @@ final class DevClientSmokeM31c {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         // --- dart frogs: a paludarium, water on the left, mossy land rising to the right
         frogs = p.blockPosition().offset(-12, 2, 200);
         TankBlockEntity fc = tank(level, p, frogs, 4, 3, 3);
@@ -270,7 +270,7 @@ final class DevClientSmokeM31c {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -301,7 +301,7 @@ final class DevClientSmokeM31c {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m31c_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m31c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

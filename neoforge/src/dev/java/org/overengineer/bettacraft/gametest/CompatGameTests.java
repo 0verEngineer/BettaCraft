@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +27,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.FishContainers;
 import org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat;
@@ -79,7 +80,7 @@ public final class CompatGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
@@ -87,13 +88,13 @@ public final class CompatGameTests {
     private static Item item(String ns, String path) {
         Identifier id = Identifier.fromNamespaceAndPath(ns, path);
         Item i = BuiltInRegistries.ITEM.getValue(id);
-        if (i == Items.AIR) throw new GameTestAssertException("missing item " + id);
+        if (i == Items.AIR) throw new GameTestFailure("missing item " + id);
         return i;
     }
 
     private static EntityType<?> entity(String ns, String path) {
         Identifier id = Identifier.fromNamespaceAndPath(ns, path);
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElseThrow(() -> new GameTestAssertException("missing entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElseThrow(() -> new GameTestFailure("missing entity " + id));
     }
 
     private static ItemStack bettaBucket(long seed) {
@@ -103,8 +104,8 @@ public final class CompatGameTests {
 
     /** A betta entity (not added to the level) with the data of {@link #bettaBucket}. */
     private static BettaEntity betta(GameTestHelper h, long seed) {
-        BettaEntity b = ModEntities.BETTA.get().create(h.getLevel());
-        if (b == null) throw new GameTestAssertException("no betta");
+        BettaEntity b = ModEntities.BETTA.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (b == null) throw new GameTestFailure("no betta");
         b.loadFromBucketTag(bettaBucket(seed).get(DataComponents.BUCKET_ENTITY_DATA).copyTag());
         return b;
     }
@@ -112,25 +113,25 @@ public final class CompatGameTests {
     @Nullable
     private static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack, Player p) {
         EntityType<?> type = TankInhabitants.containedType(stack);
-        if (type == null) throw new GameTestAssertException("no entity type in " + stack);
+        if (type == null) throw new GameTestFailure("no entity type in " + stack);
         return TankInhabitants.insert(h.getLevel(), c, stack, type, p, TankInhabitants.carriedWater(stack));
     }
 
     private static void ok(@Nullable Component error) {
-        if (error != null) throw new GameTestAssertException("insert failed: " + error.getString());
+        if (error != null) throw new GameTestFailure("insert failed: " + error.getString());
     }
 
     private static Object call(String cls, String method, Class<?>[] types, Object... args) {
         try {
             return Class.forName(cls).getMethod(method, types).invoke(null, args);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException(cls + "#" + method + ": " + e);
+            throw new GameTestFailure(cls + "#" + method + ": " + e);
         }
     }
 
     private static ItemStack findFilled(ServerPlayer sp, Item item) {
         for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (s.is(item) && FishContainers.storedEntity(s) != null) return s;
-        throw new GameTestAssertException("no filled " + BuiltInRegistries.ITEM.getKey(item) + " in the inventory");
+        throw new GameTestFailure("no filled " + BuiltInRegistries.ITEM.getKey(item) + " in the inventory");
     }
 
     // ------------------------------------------------------------------ Better Fish Tanks
@@ -169,7 +170,7 @@ public final class CompatGameTests {
             h.assertTrue(!stored.getCompoundOrEmpty("neoforge:attachments").contains(BettaCraft.id("tank_ref").toString()), "tank_ref released");
             h.succeed();
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
     }
 
@@ -183,7 +184,7 @@ public final class CompatGameTests {
                 for (int z = 0; z < 3; z++) h.setBlock(new BlockPos(4 + x, 1 + y, 4 + z), bft.defaultBlockState());
         BlockPos rel = new BlockPos(5, 1, 5);
         h.runAfterDelay(20, () -> {
-            BlockEntity be = h.getBlockEntity(rel);
+            BlockEntity be = h.getLevel().getBlockEntity(h.absolutePos(rel));
             h.assertTrue(BetterFishTanksCompat.fillWater(be, 9000) == 9000, "9000 mB into the 18 block BFT tank");
             h.assertTrue(BetterFishTanksCompat.waterAmount(be) == 9000, "BFT tank holds the water");
             h.assertTrue(h.getLevel().getFluidState(h.absolutePos(rel)).is(net.minecraft.tags.FluidTags.WATER), "lower layer is water");
@@ -209,26 +210,26 @@ public final class CompatGameTests {
     public static void fintasticNetAndTags(GameTestHelper h) {
         if (skip(h, "fintastic")) return;
         TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 12000);
-        Item net = item("fintastic", "fishnet");
-        Entity guppy = entity("fintastic", "guppy").create(h.getLevel());
-        ItemStack full = FishContainers.fill(new ItemStack(net), guppy, null);
+        Item fishnet = item("fintastic", "fishnet");
+        Entity guppy = entity("fintastic", "guppy").create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        ItemStack full = FishContainers.fill(new ItemStack(fishnet), guppy, null);
         guppy.discard();
         h.assertTrue((boolean) call("net.voidarkana.fintastic.common.item.custom.FishnetItem", "containsEntity",
                 new Class<?>[]{ItemStack.class}, full), "Fintastic reads our fishnet format");
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
             ok(insert(h, c, full, sp));
-            h.assertTrue(c.getTank().waterMb() == 12000, "a net brings no water");
+            h.assertTrue(c.getTank().waterMb() == 12000, "a fishnet brings no water");
             Entity in = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
             h.assertTrue(in.getType() == entity("fintastic", "guppy"), "guppy inside");
-            sp.getInventory().add(new ItemStack(net));
-            h.assertTrue(TankInhabitants.bagWater(sp) == 0, "a net takes no water");
+            sp.getInventory().add(new ItemStack(fishnet));
+            h.assertTrue(TankInhabitants.bagWater(sp) == 0, "a fishnet takes no water");
             h.assertTrue(TankInhabitants.takeOut(sp, c, in.getUUID(), true) == null, "take out with the fishnet");
             h.assertTrue(c.getTank().waterMb() == 12000, "still no water change");
             h.assertTrue((boolean) call("net.voidarkana.fintastic.common.item.custom.FishnetItem", "containsEntity",
-                    new Class<?>[]{ItemStack.class}, findFilled(sp, net)), "Fintastic sees the guppy in the net");
+                    new Class<?>[]{ItemStack.class}, findFilled(sp, fishnet)), "Fintastic sees the guppy in the net");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "arapaima"), null) == TankInhabitants.Acceptance.BIG, "arapaima a big animal (M39)");
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "coelacanth"), null) != TankInhabitants.Acceptance.OK, "coelacanth refused");
@@ -286,7 +287,7 @@ public final class CompatGameTests {
         ItemStack bucket = bettaBucket(41);
         p.setItemInHand(InteractionHand.MAIN_HAND, bucket);
         h.useBlock(plaque, p);
-        CompoundTag nbt = h.getBlockEntity(plaque).saveWithoutMetadata(h.getLevel().registryAccess());
+        CompoundTag nbt = h.getLevel().getBlockEntity(h.absolutePos(plaque)).saveWithoutMetadata(h.getLevel().registryAccess());
         CompoundTag data = nbt.getCompoundOrEmpty("PlaqueData");
         h.assertTrue("bettacraft:betta".equals(data.getStringOr("id", "")), "betta on the plaque, got " + nbt);
         h.assertTrue(data.contains(BettaData.KEY), "with its genome");

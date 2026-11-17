@@ -100,9 +100,9 @@ final class DevClientSmokeM23 {
         then(1, () -> server(p -> {
             InteriorRegion r = airRegion;
             if (r == null) return;
-            ServerLevel in = InteriorManager.interiorLevel(p.server);
+            ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
             BlockPos at = r.toWorld(40, 12, 2);
-            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 20F, 10F);
+            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 20F, 10F, true);
         }));
         then(160, () -> shot("interior"));
         then(1, () -> server(p -> {
@@ -118,12 +118,12 @@ final class DevClientSmokeM23 {
             shot("interior_stones");
         });
         then(1, () -> server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), base.getX() + 2.0, base.getY() + 1.5, base.getZ() - 3.5, 0F, 0F);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), base.getX() + 2.0, base.getY() + 1.5, base.getZ() - 3.5, java.util.Set.of(), 0F, 0F, true);
         }));
         // 5. menus: tab Devices en + de, regulator of the air pump, external filter with its power button
         then(60, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
-        then(40, () -> mc.getToasts().clear());
+        then(40, () -> mc.getToastManager().clear());
         tankMenu("menu_devices", base.offset(0, 1, 0));
         tankMenu("menu_devices_panel", base.offset(SPACING, 1, 0));
         then(1, () -> org.overengineer.bettacraft.util.ClientHooks.openRegulator(base.offset(-1, 1, 1)));
@@ -168,7 +168,7 @@ final class DevClientSmokeM23 {
         ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         for (int x = -8; x < 3 * SPACING + 6; x++)
             for (int z = -12; z < 9; z++) {
                 level.setBlock(base.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
@@ -198,7 +198,7 @@ final class DevClientSmokeM23 {
                         .setValue(TankLightBlock.LIT, true).setValue(TankLightBlock.COLOR, x == 1 || x == 2 ? DyeColor.WHITE : DyeColor.LIGHT_BLUE));
             }
         // plants in every tank: red Alternanthera, Ludwigia and Monte Carlo (strong light)
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         for (int i = 0; i < 3; i++) {
             InteriorRegion r = InteriorManager.ensureRegion(level, tanks[i]);
             InteriorPlants.plantAt(in, r, PlantSpecies.ALTERNANTHERA, 46, 0, 32, 6, 7L + i);
@@ -350,7 +350,7 @@ final class DevClientSmokeM23 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -372,14 +372,14 @@ final class DevClientSmokeM23 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void awaitReload() {
         if (reload != null && !reload.isDone()) {
             steps.addFirst(new Step(10, this::awaitReload));
         } else {
-            if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+            if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
             LOGGER.info("[smoketest] M23 resources reloaded for {}", mc.options.languageCode);
         }
     }
@@ -418,7 +418,7 @@ final class DevClientSmokeM23 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m23_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m23_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

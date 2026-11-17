@@ -136,7 +136,6 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM32b m32b;
     /** -Pcreate -Psmoketestm32c: a Display Link writes tank values onto a sign (M32 part c). */
     private static final boolean M32C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32conly");
-    private static DevClientSmokeM32c m32c;
     /** -Pmaps -Psmoketestm32d: a monitor alarm puts a JourneyMap waypoint at its tank (M32 part d). */
     private static final boolean M32D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32donly");
     private static DevClientSmokeM32d m32d;
@@ -283,15 +282,15 @@ final class DevClientSmokeTest {
             if (!created && screen instanceof TitleScreen) {
                 created = true;
                 Minecraft mc = Minecraft.getInstance();
-                GameRules rules = new GameRules();
-                rules.getRule(GameRules.RULE_DAYLIGHT).set(false, null);
-                rules.getRule(GameRules.SPAWN_MOBS).set(false, null);
+                GameRules rules = new GameRules(WorldDataConfiguration.DEFAULT.enabledFeatures());
+                rules.set(GameRules.ADVANCE_TIME, false, null);
+                rules.set(GameRules.SPAWN_MOBS, false, null);
                 LevelSettings settings = new LevelSettings("bettacraft_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE, false,
                         Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT);
                 // M46: -Psmoketestm46 needs real biomes (rivers, swamps, jungles): a normal world of the same seed
                 var preset = Boolean.getBoolean("bettacraft.smoketest.normalworld") ? WorldPresets.NORMAL : WorldPresets.FLAT;
                 mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, Boolean.getBoolean("bettacraft.smoketest.structures"), false),
-                        ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(preset).value().createWorldDimensions(),
+                        ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getOrThrow(preset).value().createWorldDimensions(),
                         screen);
             }
         });
@@ -542,12 +541,9 @@ final class DevClientSmokeTest {
                 return;
             }
             if (M32C_ONLY) {
-                if (ticks == 60) m32c = new DevClientSmokeM32c();
-                if (m32c != null && m32c.tick()) {
-                    m32c = null;
-                    LOGGER.info("[smoketest] client world test finished (M32 part c only)");
-                    mc.stop();
-                }
+                // M52b: Create (Display Link) has no 1.21.11 build; the scene is not part of this branch
+                LOGGER.info("[smoketest] client world test finished (M32 part c only: no Create on this version)");
+                mc.stop();
                 return;
             }
             if (M32B_ONLY) {
@@ -1063,7 +1059,7 @@ final class DevClientSmokeTest {
                 case 940 -> mc.getSingleplayerServer().execute(() -> {
                     // holding a dino skull: placement hologram on the floor in front
                     ServerPlayer p = player(mc);
-                    InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
+                    InteriorRegion r = InteriorManager.regionAt(p.level().getServer(), p.blockPosition());
                     if (r != null) {
                         BlockPos eye = r.toWorld(59, 1, 6);
                         p.teleportTo(p.level(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, java.util.Set.of(), 0F, 45F, false);
@@ -1217,7 +1213,7 @@ final class DevClientSmokeTest {
         double scale = mc.getWindow().getGuiScale();
         int left = (scr.width - 176) / 2, top = (scr.height - 166) / 2;
         int x = left + 8 + col * 18 + 8, y = top + (row < 3 ? 84 + row * 18 : 142) + 8;
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -1318,7 +1314,7 @@ final class DevClientSmokeTest {
     }
 
     private static void shot(Minecraft mc, String name) {
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 
     private static void buildScene() {
@@ -1370,8 +1366,8 @@ final class DevClientSmokeTest {
         for (int x = 0; x < 4; x++) {
             BlockPos lp = tankMin.offset(x, 3, 1);
             BlockState s = level.getBlockState(lp);
-            level.setBlockAndUpdate(lp, s.updateShape(Direction.EAST, level.getBlockState(lp.east()), level, lp, lp.east())
-                    .updateShape(Direction.WEST, level.getBlockState(lp.west()), level, lp, lp.west()));
+            BlockState e = s.updateShape(level, level, lp, Direction.EAST, lp.east(), level.getBlockState(lp.east()), level.getRandom());
+            level.setBlockAndUpdate(lp, e.updateShape(level, level, lp, Direction.WEST, lp.west(), level.getBlockState(lp.west()), level.getRandom()));
         }
         BlockPos fp = tankMin.offset(3, 3, 2);
         level.setBlockAndUpdate(fp, ModBlocks.FEEDER.get().defaultBlockState());
@@ -1384,7 +1380,7 @@ final class DevClientSmokeTest {
         // a pool with a wild betta next to it (ordinary water stays vanilla)
         for (int x = 0; x < 2; x++)
             for (int z = 0; z < 2; z++) level.setBlockAndUpdate(feet.offset(4 + x, -1, 4 + z), Blocks.WATER.defaultBlockState());
-        var wild = ModEntities.BETTA.get().create(level);
+        var wild = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (wild != null) {
             wild.snapTo(feet.getX() + 5, feet.getY() - 0.8, feet.getZ() + 5, 0, 0);
             wild.finalizeSpawn(level, level.getCurrentDifficultyAt(wild.blockPosition()), net.minecraft.world.entity.EntitySpawnReason.NATURAL, null);

@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -22,8 +23,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
@@ -73,7 +74,7 @@ public final class ShapeGameTests {
 
     private static TankBlockEntity controller(GameTestHelper h, BlockPos rel) {
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(rel));
-        if (c == null) throw new GameTestAssertException("no controller for " + rel);
+        if (c == null) throw new GameTestFailure("no controller for " + rel);
         return c;
     }
 
@@ -90,7 +91,7 @@ public final class ShapeGameTests {
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (l == null) throw new GameTestAssertException("interior dimension not loaded in the GameTest server");
+        if (l == null) throw new GameTestFailure("interior dimension not loaded in the GameTest server");
         return l;
     }
 
@@ -229,11 +230,11 @@ public final class ShapeGameTests {
             ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, true, 0));
             EntityType<?> type = TankInhabitants.containedType(bucket);
             var err = TankInhabitants.insert(h.getLevel(), c, bucket, type, player, false);
-            if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+            if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         }
         ItemStack tropical = new ItemStack(Items.TROPICAL_FISH_BUCKET);
         var err = TankInhabitants.insert(h.getLevel(), c, tropical, EntityType.TROPICAL_FISH, player, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         TankData t = c.getTank();
         // the volume never hands out a point in the notch (swim targets, food, fry)
         TankWaterVolume w = new TankWaterVolume(t);
@@ -243,17 +244,17 @@ public final class ShapeGameTests {
             Vec3 v = new Vec3(box.minX - 1 + r.nextDouble() * (box.getXsize() + 2), box.minY - 1 + r.nextDouble() * 3,
                     box.minZ - 1 + r.nextDouble() * (box.getZsize() + 2));
             Vec3 cl = w.clamp(v, 0.3, 0.1, 0.3);
-            if (!t.contains(BlockPos.containing(cl)) || !w.contains(cl)) throw new GameTestAssertException("clamped outside the shape: " + v + " -> " + cl);
+            if (!t.contains(BlockPos.containing(cl)) || !w.contains(cl)) throw new GameTestFailure("clamped outside the shape: " + v + " -> " + cl);
         }
         Set<String> seen = new HashSet<>();
         long start = h.getTick();
         h.onEachTick(() -> {
             List<Entity> live = TankInhabitants.liveInhabitants(h.getLevel(), t);
-            if (live.size() < 4) throw new GameTestAssertException("lost an inhabitant: " + live.size());
+            if (live.size() < 4) throw new GameTestFailure("lost an inhabitant: " + live.size());
             for (Entity e : live) {
-                if (!t.contains(e.blockPosition())) throw new GameTestAssertException(e.getType() + " left the shape at " + e.position());
+                if (!t.contains(e.blockPosition())) throw new GameTestFailure(e.getType() + " left the shape at " + e.position());
                 seen.add(e.blockPosition().toShortString());
-                if (e instanceof BettaEntity b && !b.isInTank() && h.getTick() - start > 40) throw new GameTestAssertException("betta lost its tank");
+                if (e instanceof BettaEntity b && !b.isInTank() && h.getTick() - start > 40) throw new GameTestFailure("betta lost its tank");
             }
             if (h.getTick() - start >= 300) {
                 h.assertTrue(seen.size() >= 2, "the fish moved around the L: " + seen);
@@ -372,7 +373,7 @@ public final class ShapeGameTests {
         h.assertTrue(loaded.fullBox() && loaded.cellsX() == 2 && loaded.cellsZ() == 1, "pre-M10 region: full box of 2x1x1 cells");
         CompoundTag be = c.saveWithFullMetadata(level.registryAccess());
         h.assertTrue(be.getIntOr("schema", 0) == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "tank block entity saved with the current schema (M10: 5, M11: 6)");
-        c.loadWithComponents(be, level.registryAccess());
+        c.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), be));
         h.assertTrue(c.getTank().memberCount() == 2 && c.getTank().waterMb() == 1500, "loaded M9 tank");
         // grow into an L
         add(h, new BlockPos(3, 1, 3));

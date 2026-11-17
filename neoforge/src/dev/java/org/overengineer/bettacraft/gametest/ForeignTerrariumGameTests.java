@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.world.InteractionResult;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -25,8 +26,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.platform.item.ItemStackHandler;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.big.BigAnimals;
@@ -79,10 +80,10 @@ public final class ForeignTerrariumGameTests {
 
     static Animal animal(String file, String naturalistId, EntityType<?> standIn) {
         ForeignProfile p = ForeignProfiles.files().get(BettaCraft.id(file));
-        if (p == null) throw new GameTestAssertException("no shipped profile " + file);
+        if (p == null) throw new GameTestFailure("no shipped profile " + file);
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(Identifier.parse(naturalistId).getNamespace())) {
             EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(naturalistId)).orElseThrow();
-            if (ForeignProfiles.of(t) != p) throw new GameTestAssertException(naturalistId + " is not mapped to its profile");
+            if (ForeignProfiles.of(t) != p) throw new GameTestFailure(naturalistId + " is not mapped to its profile");
             return new Animal(t, p, true);
         }
         return new Animal(standIn, new ForeignProfile(List.of(BuiltInRegistries.ENTITY_TYPE.getKey(standIn)), false, p.group(), p.species(), p.tempMin(),
@@ -128,7 +129,7 @@ public final class ForeignTerrariumGameTests {
 
     static ServerLevel interior(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -147,7 +148,7 @@ public final class ForeignTerrariumGameTests {
         TankBlockEntity c = CritterGameTests.tank(h, x, 2, z, sx, sy, sz, 0);
         sandFloor(h, c);
         TankClimate.step(h.getLevel(), c, 0.01);
-        if (c.getTank().terrariumMode() != TerrariumMode.TERRARIUM) throw new GameTestAssertException("no terrarium: " + c.getTank().terrariumMode());
+        if (c.getTank().terrariumMode() != TerrariumMode.TERRARIUM) throw new GameTestFailure("no terrarium: " + c.getTank().terrariumMode());
         c.getTank().setClimate(new Climate.State(30, 31, 42, 50, 5, 0));
         return c;
     }
@@ -167,7 +168,7 @@ public final class ForeignTerrariumGameTests {
         int x1 = (int) Math.round(r.sizeX() * landShare);
         for (int lx = 0; lx < x1; lx++) for (int lz = 0; lz < r.sizeZ(); lz++) in.setBlock(r.toWorld(lx, y, lz), top, 2);
         TankClimate.step(h.getLevel(), c, 0.01);
-        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestAssertException("no paludarium: " + t.terrariumMode() + " land " + t.landShare());
+        if (t.terrariumMode() != TerrariumMode.PALUDARIUM) throw new GameTestFailure("no paludarium: " + t.terrariumMode() + " land " + t.landShare());
         t.setClimate(new Climate.State(30, 31, 42, 70, 5, 0));
         t.setWaterTemp(27F);
         t.setTargetTemp(27F);
@@ -177,19 +178,19 @@ public final class ForeignTerrariumGameTests {
 
     /** A live animal of this type in the world at a spot of the test (not in a tank). */
     static LivingEntity wild(GameTestHelper h, EntityType<?> type, Vec3 rel) {
-        Entity e = type.create(h.getLevel());
-        if (!(e instanceof LivingEntity le)) throw new GameTestAssertException("no " + type);
+        Entity e = type.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (!(e instanceof LivingEntity le)) throw new GameTestFailure("no " + type);
         Vec3 a = h.absoluteVec(rel);
         e.snapTo(a.x, a.y, a.z, 0, 0);
         if (e instanceof Mob m) m.setPersistenceRequired();
-        if (!h.getLevel().addFreshEntity(e)) throw new GameTestAssertException("not added");
+        if (!h.getLevel().addFreshEntity(e)) throw new GameTestFailure("not added");
         return le;
     }
 
     /** A container (filled terrarium box or transport tub) holding a new animal of this type (a baby if asked). */
     static ItemStack container(GameTestHelper h, EntityType<?> type, boolean tub, boolean baby) {
-        Entity e = type.create(h.getLevel());
-        if (e == null) throw new GameTestAssertException("no " + type);
+        Entity e = type.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (e == null) throw new GameTestFailure("no " + type);
         if (baby && e instanceof Mob m) m.setBaby(true);
         ItemStack s = tub ? TransportTubItem.fillWith(e) : TerrariumBoxItem.fillWith(e);
         e.discard();
@@ -198,16 +199,16 @@ public final class ForeignTerrariumGameTests {
 
     static Component insert(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
         EntityType<?> type = TankInhabitants.containedType(stack);
-        if (type == null) throw new GameTestAssertException("no animal in " + stack);
+        if (type == null) throw new GameTestFailure("no animal in " + stack);
         return TankInhabitants.insert(h.getLevel(), c, stack, type, null, TankInhabitants.carriedWater(stack));
     }
 
     static LivingEntity put(GameTestHelper h, TankBlockEntity c, ItemStack stack) {
         List<Entity> before = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
         Component err = insert(h, c, stack);
-        if (err != null) throw new GameTestAssertException("refused: " + err.getString());
+        if (err != null) throw new GameTestFailure("refused: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (!before.contains(e) && e instanceof LivingEntity le) return le;
-        throw new GameTestAssertException("not in the tank");
+        throw new GameTestFailure("not in the tank");
     }
 
     static List<LivingEntity> ofType(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
@@ -235,10 +236,10 @@ public final class ForeignTerrariumGameTests {
         ForeignBreeding.step(level, c, 30.0);
         LivingEntity mother = null;
         for (LivingEntity e : ofType(h, c, type)) if (org.overengineer.bettacraft.platform.Platform.get().persistentData(e).contains(ForeignBreeding.BROOD)) mother = e;
-        if (mother == null) throw new GameTestAssertException("no " + type.getDescriptionId() + " carries eggs");
-        if (!logged(c.getTank(), "log.bettacraft.foreign.gravid")) throw new GameTestAssertException("not logged as carrying eggs");
+        if (mother == null) throw new GameTestFailure("no " + type.getDescriptionId() + " carries eggs");
+        if (!logged(c.getTank(), "log.bettacraft.foreign.gravid")) throw new GameTestFailure("not logged as carrying eggs");
         ForeignBreeding.step(level, c, ForeignNests.WALK_DAYS + 0.01);
-        if (ForeignNests.nestOf(mother) == null) throw new GameTestAssertException("no nest laid: " + c.getTank().log());
+        if (ForeignNests.nestOf(mother) == null) throw new GameTestFailure("no nest laid: " + c.getTank().log());
         return mother;
     }
 
@@ -453,7 +454,7 @@ public final class ForeignTerrariumGameTests {
         QuestAdv.check(h, watcher, "sea_turtle");
         h.assertTrue(!QuestAdv.done(watcher, "big_animal"), "a sea turtle has its own advancement");
         QuestAdv.gone(h, watcher);
-        Turtle baby = EntityType.TURTLE.create(level);
+        Turtle baby = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         baby.setAge(-24000);
         baby.snapTo(h.absoluteVec(new Vec3(20, 2, 2)));
         h.assertTrue(TankInhabitants.bagTakes(baby), "a hatchling goes into a bag");

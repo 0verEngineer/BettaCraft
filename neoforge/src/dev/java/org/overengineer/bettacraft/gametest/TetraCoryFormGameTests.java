@@ -1,18 +1,19 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -49,7 +50,7 @@ public final class TetraCoryFormGameTests {
     private TetraCoryFormGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     private static TankBlockEntity tank(GameTestHelper h, int x, int z, int sx, int sz, float temp) {
@@ -66,7 +67,7 @@ public final class TetraCoryFormGameTests {
         Vec3 p = w.clamp(new Vec3(w.box().minX + r.nextDouble() * (w.box().maxX - w.box().minX), w.box().minY + 0.2,
                 w.box().minZ + r.nextDouble() * (w.box().maxZ - w.box().minZ)), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, g, female, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -180,8 +181,8 @@ public final class TetraCoryFormGameTests {
         TankmateEntity old = add(h, c, neon, new TankmateGenes("wild", "wild"), true);
         CompoundTag tag = new CompoundTag();
         tag.merge(NbtCompat.saveEntityWithoutId(old));
-        TankmateEntity loaded = ModEntities.TANKMATES.get(neon).get().create(h.getLevel());
-        loaded.load(tag);
+        TankmateEntity loaded = ModEntities.TANKMATES.get(neon).get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        org.overengineer.bettacraft.util.NbtCompat.loadEntity(loaded, tag);
         check(loaded.variety().equals("wild") && neon.texture(loaded.variety(), true).equals("neon_tetra_wild"), "the old neon loads wild");
         loaded.discard();
         h.succeed();

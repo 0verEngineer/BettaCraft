@@ -78,7 +78,7 @@ final class DevClientSmokeM331 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         palu = p.blockPosition().offset(-8, 2, 220);
         TankBlockEntity pc = tank(level, p, palu, 4, 3, 3);
         InteriorRegion r = InteriorManager.ensureRegion(level, pc);
@@ -158,7 +158,7 @@ final class DevClientSmokeM331 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m331_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m331_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

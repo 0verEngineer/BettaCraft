@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -20,8 +21,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.critters.BigCrayfish;
@@ -77,7 +78,7 @@ public final class BigCrayfishGameTests {
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (l == null) throw new GameTestAssertException("interior dimension not loaded");
+        if (l == null) throw new GameTestFailure("interior dimension not loaded");
         return l;
     }
 
@@ -171,7 +172,7 @@ public final class BigCrayfishGameTests {
         int l = AxolotlCare.locus(v);
         Vec3 p = new TankWaterVolume(c.getTank()).clamp(Vec3.atCenterOf(c.getTank().min()).add(0.5, 0, 0.5), 0.45, 0.1, 0.45);
         Axolotl a = AxolotlCare.spawn(h.getLevel(), c, l < 0 ? CritterGenes.WILD : CritterGenes.pure(l, 0.1F), 0, p);
-        if (a == null) throw new GameTestAssertException("no axolotl");
+        if (a == null) throw new GameTestFailure("no axolotl");
         a.setAge(0);
         return a;
     }
@@ -229,9 +230,9 @@ public final class BigCrayfishGameTests {
         h.assertTrue(logged(c.getTank(), "log.bettacraft.axolotl_warm"), "logged");
         CompoundTagHolder data = new CompoundTagHolder();
         AxolotlCare.toBucket(a, data.tag);
-        Axolotl b = net.minecraft.world.entity.EntityType.AXOLOTL.create(level);
+        Axolotl b = net.minecraft.world.entity.EntityType.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         h.assertTrue(b != null, "second axolotl");
-        b.setVariant(Axolotl.Variant.WILD);
+        b.setComponent(net.minecraft.core.component.DataComponents.AXOLOTL_VARIANT, Axolotl.Variant.WILD);
         AxolotlCare.fromBucket(b, data.tag);
         h.assertTrue(AxolotlCare.genes(b).carries(AxolotlCare.BLUE), "the bucket kept the hidden blue");
         b.discard();

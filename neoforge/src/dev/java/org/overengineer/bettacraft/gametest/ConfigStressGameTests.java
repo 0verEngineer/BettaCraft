@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -8,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CollectionTag;
@@ -21,8 +22,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.Preset;
@@ -109,7 +110,7 @@ public final class ConfigStressGameTests {
             TankmateSpecies s = i < 4 ? TankmateSpecies.NEON_TETRA : TankmateSpecies.PANDA_CORY;
             Vec3 p = w.clamp(new Vec3(b.minX + 0.6 + i * 0.6, b.minY + 0.5, (b.minZ + b.maxZ) / 2), 0.35, 0.1, 0.2);
             var m = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), i % 2 == 0, LifeStage.ADULT, 0, p);
-            if (m == null) throw new GameTestAssertException("could not spawn " + s);
+            if (m == null) throw new GameTestFailure("could not spawn " + s);
         }
         for (int i = 0; i < 6; i++) TankCritters.add(h.getLevel(), c, i < 4 ? CritterSpecies.NEOCARIDINA : CritterSpecies.ZEBRA_NERITE, CritterGenes.WILD, i % 2 == 0, 10);
         return c;
@@ -117,10 +118,10 @@ public final class ConfigStressGameTests {
 
     /** The paths of every NaN or infinite number in the tag. */
     static void nonFinite(Tag t, String path, List<String> out) {
-        if (t instanceof FloatTag f && !Float.isFinite(f.getAsFloat())) out.add(path + "=" + f.getAsFloat());
-        else if (t instanceof DoubleTag d && !Double.isFinite(d.getAsDouble())) out.add(path + "=" + d.getAsDouble());
+        if (t instanceof FloatTag f && !Float.isFinite(f.floatValue())) out.add(path + "=" + f.floatValue());
+        else if (t instanceof DoubleTag d && !Double.isFinite(d.doubleValue())) out.add(path + "=" + d.doubleValue());
         else if (t instanceof CompoundTag c) for (String k : c.keySet()) nonFinite(c.get(k), path + "." + k, out);
-        else if (t instanceof CollectionTag<?> l) for (int i = 0; i < l.size(); i++) nonFinite(l.get(i), path + "[" + i + "]", out);
+        else if (t instanceof CollectionTag l) for (int i = 0; i < l.size(); i++) nonFinite(l.get(i), path + "[" + i + "]", out);
     }
 
     /** A day of care in steps of different lengths; then the tank and its animals checked. Problems go to {@code out}. */
@@ -186,7 +187,7 @@ public final class ConfigStressGameTests {
     private static void runPasses(GameTestHelper h, List<ModConfigSpec.ConfigValue<?>> all, List<TankBlockEntity> tanks,
                                   List<Function<ModConfigSpec.ConfigValue<?>, Object>> passes, List<String> names, int i, List<String> problems) {
         if (i >= passes.size()) {
-            if (!problems.isEmpty()) throw new GameTestAssertException(problems.size() + " problem(s): " + String.join("; ", problems.subList(0, Math.min(6, problems.size()))));
+            if (!problems.isEmpty()) throw new GameTestFailure(problems.size() + " problem(s): " + String.join("; ", problems.subList(0, Math.min(6, problems.size()))));
             h.succeed();
             return;
         }
@@ -255,7 +256,7 @@ public final class ConfigStressGameTests {
                 if (!java.util.Objects.equals(eff, e.getValue())) problems.add("CUSTOM: " + String.join(".", e.getKey().getPath()) + " is " + eff + ", the file says " + e.getValue());
             }
             restore.run();
-            if (!problems.isEmpty()) throw new GameTestAssertException(problems.size() + " problem(s): " + String.join("; ", problems.subList(0, Math.min(6, problems.size()))));
+            if (!problems.isEmpty()) throw new GameTestFailure(problems.size() + " problem(s): " + String.join("; ", problems.subList(0, Math.min(6, problems.size()))));
             h.succeed();
         });
     }

@@ -66,7 +66,7 @@ final class DevClientSmokeM40b {
         then(150, () -> shot("filter_water"));
         then(1, () -> look(base.getX() + 1.6, base.getY() + 3.4, base.getZ() + 9.6, 210F, 42F));
         then(150, () -> shot("bundle_start"));
-        then(1, () -> server(p -> p.teleportTo(p.server.overworld(), head.getX() + 3.5, head.getY() - 1.0, head.getZ() + 0.5, 90F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), head.getX() + 3.5, head.getY() - 1.0, head.getZ() + 0.5, java.util.Set.of(), 90F, 10F, true)));
         then(80, () -> {
             mc.options.hideGui = false;
             mc.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head));
@@ -172,7 +172,7 @@ final class DevClientSmokeM40b {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -203,7 +203,7 @@ final class DevClientSmokeM40b {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m40b_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m40b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

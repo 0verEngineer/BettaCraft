@@ -169,10 +169,10 @@ final class DevClientSmokeM46 {
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
         level.setDayTime(6000);
-        level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
+        level.getGameRules().set(GameRules.ADVANCE_TIME, false, level.getServer());
+        level.getGameRules().set(GameRules.ADVANCE_WEATHER, false, level.getServer());
         level.setWeatherParameters(12000, 0, false, false);
-        level.getGameRules().getRule(GameRules.SPAWN_MOBS).set(false, level.getServer());
+        level.getGameRules().set(GameRules.SPAWN_MOBS, false, level.getServer());
         home = p.blockPosition().offset(0, 40, 0);
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -214,8 +214,8 @@ final class DevClientSmokeM46 {
         inv.setItem(3, new ItemStack(Items.WHITE_CARPET));
         inv.setItem(4, new ItemStack(ModBlocks.BASKING_LAMP.get()));
         inv.setItem(9, new ItemStack(ModItems.HEAT_MAT.get(), 4));
-        inv.getSelectedSlot() = 0;
-        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
+        inv.setSelectedSlot(0);
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket(0));
         p.inventoryMenu.broadcastChanges();
         LOGGER.info("[m46] heat mat scene at {}", wall);
     }
@@ -388,7 +388,7 @@ final class DevClientSmokeM46 {
     }
 
     private static void herp(ServerLevel level, EntityType<?> type, int variety, boolean young, double x, double y, double z, float yaw) {
-        if (!(type.create(level) instanceof net.minecraft.world.entity.Mob m)) return;
+        if (!(type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED) instanceof net.minecraft.world.entity.Mob m)) return;
         m.snapTo(x, y, z, yaw, 0F);
         m.setYHeadRot(yaw);
         m.setYBodyRot(yaw);
@@ -417,7 +417,7 @@ final class DevClientSmokeM46 {
     // ------------------------------------------------------------------ steps
 
     private void lookAt(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -448,7 +448,7 @@ final class DevClientSmokeM46 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m46_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m46_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

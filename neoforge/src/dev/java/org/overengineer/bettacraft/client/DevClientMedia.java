@@ -64,7 +64,7 @@ final class DevClientMedia {
             }
             if (pick != null) {
                 var b = pick;
-                Minecraft.getInstance().execute(b::onPress);
+                Minecraft.getInstance().execute(() -> b.onPress(new net.minecraft.client.input.MouseButtonInfo(0, 0)));
             }
         });
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> {

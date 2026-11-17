@@ -97,7 +97,7 @@ final class DevClientSmokeM15 {
             if (!inside) LOGGER.error("[smoketest] M15 the player is not in the interior");
             mc.player.setXRot(25F);
         });
-        then(30, () -> mc.getToasts().clear());
+        then(30, () -> mc.getToastManager().clear());
         then(10, () -> shot("interior_hint"));
         String lang = mc.options.languageCode;
         then(1, () -> language("de_de"));
@@ -274,11 +274,11 @@ final class DevClientSmokeM15 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m15_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m15_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

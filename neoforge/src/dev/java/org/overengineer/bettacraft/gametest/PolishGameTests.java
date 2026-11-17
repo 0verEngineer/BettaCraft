@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.Perms;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -19,8 +20,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
@@ -60,7 +61,7 @@ public final class PolishGameTests {
 
     static TankmateEntity spawn(GameTestHelper h, TankBlockEntity c, TankmateSpecies s, Vec3 p) {
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), false, LifeStage.ADULT, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -69,7 +70,7 @@ public final class PolishGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(mode);
         sp.getInventory().clearContent();
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         BlockPos at = h.absolutePos(new BlockPos(1, 2, 1));
         sp.teleportTo(h.getLevel(), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 0F, false);
         return sp;
@@ -105,7 +106,7 @@ public final class PolishGameTests {
                 if (f.tickCount % 40 == 0) org.slf4j.LoggerFactory.getLogger("bettacraft/gametest").info("[glass] {} at {} target {} d {} v {} speed {}",
                         f.species().id(), f.position(), t, String.format("%.3f", d), f.getDeltaMovement(), f.getSpeed());
                 boolean upright = f.flag(TankmateEntity.FLAG_GLASS);
-                if (upright && d > 0.2) throw new GameTestAssertException(f.species().id() + " stands upright " + String.format("%.2f", d) + " blocks before the glass");
+                if (upright && d > 0.2) throw new GameTestFailure(f.species().id() + " stands upright " + String.format("%.2f", d) + " blocks before the glass");
                 if (upright) arrived[i] = true;
             }
         });
@@ -153,7 +154,7 @@ public final class PolishGameTests {
         }
         // saved and loaded
         var tag = c.getTank().save();
-        h.assertTrue(tag.getBoolean("break_protected"), "saved");
+        h.assertTrue(tag.getBooleanOr("break_protected", false), "saved");
         h.assertTrue(TankProtection.toggle(owner, c) == null && !c.getTank().breakProtected(), "switched off");
         h.assertTrue(owner.gameMode.destroyBlock(h.absolutePos(new BlockPos(3, 3, 4))), "the lid can be broken again");
         h.succeed();

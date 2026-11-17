@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
 import com.google.gson.JsonParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -24,8 +25,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.foreign.ForeignBreeding;
@@ -72,29 +73,29 @@ public final class ForeignGameTests {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no entity " + id));
     }
 
     /** An animal of {@code type} as an inhabitant of the tank (at its middle). */
     static LivingEntity add(GameTestHelper h, TankBlockEntity c, EntityType<?> type, Consumer<CompoundTag> data) {
-        Entity e = type.create(h.getLevel());
-        if (!(e instanceof LivingEntity le)) throw new GameTestAssertException("no living " + type);
+        Entity e = type.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (!(e instanceof LivingEntity le)) throw new GameTestFailure("no living " + type);
         CompoundTag t = NbtCompat.saveEntityWithoutId(e);
         data.accept(t);
         t.remove("UUID");
-        e.load(t);
+        org.overengineer.bettacraft.util.NbtCompat.loadEntity(e, t);
         TankData tank = c.getTank();
         Vec3 mid = new TankWaterVolume(tank).clamp(TankInhabitants.tankBox(tank).getCenter(), 0.3, 0.1, 0.3);
         e.snapTo(mid.x, mid.y, mid.z, 0, 0);
         TankInhabitants.adopt(e, c);
-        if (!h.getLevel().addFreshEntity(e)) throw new GameTestAssertException("not added");
+        if (!h.getLevel().addFreshEntity(e)) throw new GameTestFailure("not added");
         tank.inhabitants().add(e.getUUID());
         return le;
     }
 
     private static ForeignProfile profile(String json) {
         return ForeignProfile.parse(JsonParser.parseString(json).getAsJsonObject(), w -> {
-            throw new GameTestAssertException("profile warning: " + w);
+            throw new GameTestFailure("profile warning: " + w);
         });
     }
 
@@ -153,7 +154,7 @@ public final class ForeignGameTests {
             float[] menu = ForeignCare.menuValues(fish);
             h.assertTrue(menu != null && menu[1] > 0.9F, "the menu shows it fed");
             // a fish of the same kind outside any tank gets nothing
-            Entity wild = EntityType.TROPICAL_FISH.create(level);
+            Entity wild = EntityType.TROPICAL_FISH.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             wild.snapTo(h.absoluteVec(new Vec3(20, 3, 20)));
             level.addFreshEntity(wild);
             ForeignCare.step(level, c, 5.0);
@@ -353,11 +354,11 @@ public final class ForeignGameTests {
                     m.invoke(a, level, b);
                     return;
                 } catch (ReflectiveOperationException ex) {
-                    throw new GameTestAssertException("spawnChildFromBreeding: " + ex);
+                    throw new GameTestFailure("spawnChildFromBreeding: " + ex);
                 }
             }
         }
-        throw new GameTestAssertException("no spawnChildFromBreeding");
+        throw new GameTestFailure("no spawnChildFromBreeding");
     }
 
     private static Object call(Object o, String name, Object... args) {
@@ -366,11 +367,11 @@ public final class ForeignGameTests {
                 try {
                     return m.invoke(o, args);
                 } catch (ReflectiveOperationException ex) {
-                    throw new GameTestAssertException(name + ": " + ex);
+                    throw new GameTestFailure(name + ": " + ex);
                 }
             }
         }
-        throw new GameTestAssertException("no method " + name);
+        throw new GameTestFailure("no method " + name);
     }
 
     /**

@@ -5,7 +5,7 @@ import io.netty.buffer.Unpooled;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.food.CultureTubBlockEntity;
@@ -75,7 +75,7 @@ public final class CystGameTests {
         h.assertTrue(!jar.isDamageableItem() && !jar.isBarVisible(), "no wear, no bar");
         h.assertTrue(GameTestCompat.noRemainder(jar), "no remainder");
         CraftingInput input = CraftingInput.of(2, 1, List.of(new ItemStack(ModItems.SALT_WATER_BOTTLE.get()), jars(5)));
-        var recipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level);
+        var recipe = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, input, level);
         h.assertTrue(recipe.isPresent(), "artemia culture recipe");
         ItemStack out = recipe.get().value().assemble(input, level.registryAccess());
         h.assertTrue(out.is(ModItems.ARTEMIA_CULTURE.get()) && out.getCount() == 1, "one culture: " + out);
@@ -124,7 +124,7 @@ public final class CystGameTests {
             }
             h.assertTrue(stacks == 2 && total == 100 && biggest == 64, "two stacks (64 + 36): " + stacks + " / " + total + " / " + biggest);
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -156,7 +156,7 @@ public final class CystGameTests {
         comps.putInt("minecraft:damage", 12);
         item.put("components", comps);
         ItemEntity back = new ItemEntity(EntityType.ITEM, level);
-        back.load(et);
+        org.overengineer.bettacraft.util.NbtCompat.loadEntity(back, et);
         h.assertTrue(back.getItem().getCount() == 16 && plain(back.getItem()), "item entity: 16 plain jars: " + back.getItem());
         // they stack with new ones
         ServerPlayer sp = MockPlayers.serverPlayer(h);
@@ -171,7 +171,7 @@ public final class CystGameTests {
                 h.assertTrue(sp.getInventory().getNonEquipmentItems().get(i).isEmpty(), "nothing in slot " + i);
             }
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -206,7 +206,7 @@ public final class CystGameTests {
         h.assertTrue(found, "the input slot in the save");
         tag.put("opened_jar", oldJarsTag(1, 11));
         tub.items().setStackInSlot(CultureTubBlockEntity.INPUT, ItemStack.EMPTY);
-        tub.loadWithComponents(tag, reg);
+        tub.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(reg, tag));
         ItemStack in = tub.items().getStackInSlot(CultureTubBlockEntity.INPUT);
         h.assertTrue(in.getCount() == 17 && plain(in), "17 plain jars in the slot: " + in + " " + in.getComponentsPatch());
         h.assertTrue(tub.openedJar().isEmpty() && tub.ingredientUses() == 17, "no open jar left, 17 batches: " + tub.ingredientUses());
@@ -244,7 +244,7 @@ public final class CystGameTests {
         h.assertTrue(sources.stream().noneMatch(x -> x.kind() == Source.Kind.TRADER_USUAL || x.kind() == Source.Kind.TRADER_RARE), "no trader offer");
         // break sand 4000 times with one random source of a fixed seed (the first values of neighbouring seeds are alike)
         BlockPos pos = h.absolutePos(new BlockPos(4, 2, 4));
-        var table = level.getServer().reloadableRegistries().getLootTable(Blocks.SAND.getLootTable());
+        var table = level.getServer().reloadableRegistries().getLootTable(Blocks.SAND.getLootTable().orElseThrow());
         int jars = 0, sand = 0;
         net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(351L);
         for (int i = 0; i < 4000; i++) {

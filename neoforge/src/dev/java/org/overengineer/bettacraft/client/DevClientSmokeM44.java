@@ -313,7 +313,7 @@ final class DevClientSmokeM44 {
     }
 
     private static LivingEntity insertBox(ServerLevel level, TankBlockEntity c, EntityType<?> type) {
-        Entity e = type.create(level);
+        Entity e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         var p = ForeignProfiles.of(type);
         boolean tub = p != null && p.land() != null && !p.land().box();
@@ -323,7 +323,7 @@ final class DevClientSmokeM44 {
     }
 
     private static LivingEntity insertJar(ServerLevel level, TankBlockEntity c, EntityType<? extends Mob> type) {
-        Mob m = type.create(level);
+        Mob m = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (m == null) return null;
         m.setHealth(1F);
         ItemStack jar = MobJarItem.fillWith(m);
@@ -347,7 +347,7 @@ final class DevClientSmokeM44 {
     }
 
     private Mob outside(ServerLevel level, EntityType<? extends Mob> type, double dx, double dz) {
-        Mob m = type.create(level);
+        Mob m = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (m == null) return null;
         m.snapTo(pen.getX() + dx, pen.getY(), pen.getZ() + dz, 0F, 0F);
         m.setPersistenceRequired();
@@ -489,7 +489,7 @@ final class DevClientSmokeM44 {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -521,7 +521,7 @@ final class DevClientSmokeM44 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m44_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m44_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

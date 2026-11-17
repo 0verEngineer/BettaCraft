@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -23,8 +24,8 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.decor.DecorItem;
 import org.overengineer.bettacraft.decor.DecorType;
@@ -65,14 +66,14 @@ public final class InteriorGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
 
     static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (l == null) throw new GameTestAssertException("interior dimension not loaded in the GameTest server");
+        if (l == null) throw new GameTestFailure("interior dimension not loaded in the GameTest server");
         return l;
     }
 
@@ -93,7 +94,7 @@ public final class InteriorGameTests {
             p.teleportTo(h.getLevel(), start.x, start.y, start.z, java.util.Set.of(), 0, 0, false);
             InteriorManager.enter(p, c.getBlockPos());
             h.assertTrue(InteriorManager.isInterior(p.level()), "player is in the interior dimension");
-            h.assertTrue(InteriorManager.regionAt(p.server, p.blockPosition()) == r, "player stands in the tank's region");
+            h.assertTrue(InteriorManager.regionAt(p.level().getServer(), p.blockPosition()) == r, "player stands in the tank's region");
             boolean left = false;
             for (int i = 0; i < 59; i++) left |= InteriorEvents.sneakTick(p, true);
             h.assertFalse(left, "59 ticks of sneaking are not enough");
@@ -105,7 +106,7 @@ public final class InteriorGameTests {
             h.assertTrue(p.position().distanceTo(start) < 0.5, "back at the return point");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -121,7 +122,7 @@ public final class InteriorGameTests {
             h.assertFalse(InteriorManager.isInterior(p.level()), "locked tank: stranger stays outside");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -133,7 +134,7 @@ public final class InteriorGameTests {
         BlockPos floor = new BlockPos(r.originX() + 3, InteriorRegion.FLOOR_Y, r.originZ() + 4);
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
-            p.teleportTo(in, floor.getX() + 0.5, floor.getY() + 1, floor.getZ() + 0.5, 0, 0);
+            p.teleportTo(in, floor.getX() + 0.5, floor.getY() + 1, floor.getZ() + 0.5, java.util.Set.of(), 0, 0, true);
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SAND, 10));
             h.assertTrue(Substrate.use(p, InteractionHand.MAIN_HAND, floor), "substrate interaction handled");
@@ -160,7 +161,7 @@ public final class InteriorGameTests {
             h.assertTrue(r.equipment().substrateCount() == 0, "substrate counter back to 0");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -188,7 +189,7 @@ public final class InteriorGameTests {
             h.assertTrue(p.getMainHandItem().getCount() == 1, "blocked placement keeps the item");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -233,7 +234,7 @@ public final class InteriorGameTests {
             h.assertTrue(InteriorSync.syncedBlocks(r.id()) == r.sizeX() * r.sizeZ() + 1, "counts follow the delta");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -256,7 +257,7 @@ public final class InteriorGameTests {
         // breaking a segment by a player removes the whole rod and gives the item back
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
-            p.teleportTo(in, low.getX() + 2, low.getY(), low.getZ(), 0, 0);
+            p.teleportTo(in, low.getX() + 2, low.getY(), low.getZ(), java.util.Set.of(), 0, 0, true);
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
             p.gameMode.destroyBlock(low.above(3));
             h.assertTrue(in.getBlockState(low).isAir() && in.getBlockState(low.above(5)).isAir(), "whole rod removed");
@@ -265,7 +266,7 @@ public final class InteriorGameTests {
             h.assertTrue(r.equipment().heaters().size() == 1, "one heater left");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -341,13 +342,13 @@ public final class InteriorGameTests {
         in.setBlockAndUpdate(foot.north(), Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.HEAD));
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
-            p.teleportTo(in, foot.getX() + 0.5, foot.getY(), foot.getZ() + 2.5, 0, 0);
+            p.teleportTo(in, foot.getX() + 0.5, foot.getY(), foot.getZ() + 2.5, java.util.Set.of(), 0, 0, true);
             p.gameMode.useItemOn(p, in, ItemStack.EMPTY, InteractionHand.MAIN_HAND,
                     new BlockHitResult(Vec3.atCenterOf(foot), Direction.UP, foot, false));
             h.assertTrue(in.getBlockState(foot).is(Blocks.RED_BED) && in.getBlockState(foot.north()).is(Blocks.RED_BED), "bed still there (no explosion)");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 

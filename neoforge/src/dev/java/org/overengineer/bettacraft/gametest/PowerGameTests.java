@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
@@ -14,8 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.equipment.CabinetBlock;
@@ -55,19 +56,19 @@ public final class PowerGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, c.getTank().capacityMb());
         return c;
     }
 
     private static ExternalFilterBlockEntity filter(GameTestHelper h, BlockPos rel, Direction towardsTank) {
         h.setBlock(rel, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, towardsTank));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter BE");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter BE");
         return f;
     }
 
     private static Block block(String id) {
-        return BuiltInRegistries.BLOCK.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no block " + id));
+        return BuiltInRegistries.BLOCK.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no block " + id));
     }
 
     private static boolean loaded(String... mods) {
@@ -211,7 +212,7 @@ public final class PowerGameTests {
             pipe.getClass().getMethod("setExtracting", Direction.class, boolean.class).invoke(pipe, Direction.WEST, true);
         } catch (ReflectiveOperationException | NullPointerException e) {
             saved.apply();
-            throw new GameTestAssertException("Pipez API changed: " + e);
+            throw new GameTestFailure("Pipez API changed: " + e);
         }
         h.runAfterDelay(80, () -> {
             long got = c.getTank().powerBuffer();
@@ -277,13 +278,13 @@ public final class PowerGameTests {
         ServerLevel level = h.getLevel();
         try {
             var reg = level.registryAccess().lookupOrThrow(ResourceKey.createRegistryKey(Identifier.parse("enderio:conduit")));
-            Holder<?> energy = reg.getHolderOrThrow(ResourceKey.create(reg.key(), Identifier.parse("enderio:energy")));
+            Holder<?> energy = reg.getOrThrow(ResourceKey.create(reg.key(), Identifier.parse("enderio:energy")));
             h.setBlock(rel, block("enderio:conduit"));
             Object be = level.getBlockEntity(h.absolutePos(rel));
             be.getClass().getMethod("addConduit", Holder.class, Direction.class, net.minecraft.world.entity.player.Player.class)
                     .invoke(be, energy, Direction.UP, MockPlayers.serverPlayer(h));
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new GameTestAssertException("EnderIO API changed: " + e);
+            throw new GameTestFailure("EnderIO API changed: " + e);
         }
     }
 }

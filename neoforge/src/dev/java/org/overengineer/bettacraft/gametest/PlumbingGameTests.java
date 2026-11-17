@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -24,8 +25,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -82,7 +83,7 @@ public final class PlumbingGameTests {
 
     static WaterPumpBlockEntity pump(GameTestHelper h, BlockPos rel, Direction out) {
         h.setBlock(rel, ModBlocks.WATER_PUMP.get().defaultBlockState().setValue(WaterPumpBlock.FACING, out));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof WaterPumpBlockEntity p)) throw new GameTestAssertException("no pump");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof WaterPumpBlockEntity p)) throw new GameTestFailure("no pump");
         return p;
     }
 
@@ -96,7 +97,7 @@ public final class PlumbingGameTests {
 
     static ReservoirBlockEntity reservoir(GameTestHelper h, BlockPos rel, int mb, WaterValues v) {
         h.setBlock(rel, ModBlocks.RESERVOIR.get().defaultBlockState());
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ReservoirBlockEntity r)) throw new GameTestAssertException("no reservoir");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ReservoirBlockEntity r)) throw new GameTestFailure("no reservoir");
         if (mb > 0) r.water().fill(WaterValues.stack(mb, v), IFluidHandler.FluidAction.EXECUTE);
         return r;
     }
@@ -116,7 +117,7 @@ public final class PlumbingGameTests {
             if (lava) h.setBlock(rel.below(), Blocks.MAGMA_BLOCK);
             h.setBlock(rel, ModBlocks.CRUCIBLE.get().defaultBlockState());
             BlockPos pos = h.absolutePos(rel);
-            if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity be)) throw new GameTestAssertException("no crucible");
+            if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity be)) throw new GameTestFailure("no crucible");
             be.items().setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 5));
             be.items().setStackInSlot(1, new ItemStack(Items.COAL, 1));
             be.items().setStackInSlot(2, new ItemStack(Items.QUARTZ, 1));
@@ -156,7 +157,7 @@ public final class PlumbingGameTests {
         h.assertTrue(ours.is(ModTags.STAINLESS_STEEL_INGOTS), "our ingot carries #c:ingots/stainless_steel");
         var steelTag = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", "ingots/steel"));
         h.assertTrue(!ours.is(steelTag), "our ingot is no plain steel");
-        var pipeRecipe = level.getRecipeManager().byKey(BettaCraft.id("stainless_steel_pipe")).orElseThrow();
+        var pipeRecipe = level.recipeAccess().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("stainless_steel_pipe"))).orElseThrow();
         var ok = net.minecraft.world.item.crafting.CraftingInput.of(3, 1, List.of(ours.copy(), ours.copy(), ours.copy()));
         h.assertTrue(((net.minecraft.world.item.crafting.CraftingRecipe) pipeRecipe.value()).matches(ok, level), "pipes from stainless steel");
         int foreign = 0;
@@ -169,9 +170,9 @@ public final class PlumbingGameTests {
             h.assertTrue(!((net.minecraft.world.item.crafting.CraftingRecipe) pipeRecipe.value()).matches(in, level), "no pipes from foreign steel");
         }
         boolean mek = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("mekanism"), eio = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("enderio");
-        h.assertTrue(level.getRecipeManager().byKey(BettaCraft.id("compat/mekanism_stainless_steel_ingot")).isPresent() == mek, "Mekanism recipe only with Mekanism");
-        h.assertTrue(level.getRecipeManager().byKey(BettaCraft.id("compat/enderio_stainless_steel_ingot")).isPresent() == eio, "EnderIO recipe only with EnderIO");
-        h.assertTrue(level.getRecipeManager().byKey(BettaCraft.id("stainless_steel_ingot_from_crucible")).isPresent(), "the crucible recipe");
+        h.assertTrue(level.recipeAccess().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("compat/mekanism_stainless_steel_ingot"))).isPresent() == mek, "Mekanism recipe only with Mekanism");
+        h.assertTrue(level.recipeAccess().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("compat/enderio_stainless_steel_ingot"))).isPresent() == eio, "EnderIO recipe only with EnderIO");
+        h.assertTrue(level.recipeAccess().byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, BettaCraft.id("stainless_steel_ingot_from_crucible"))).isPresent(), "the crucible recipe");
         com.mojang.logging.LogUtils.getLogger().info("M24 stainless steel: {} foreign steel items rejected, mekanism {}, enderio {}", foreign, mek, eio);
         h.succeed();
     }

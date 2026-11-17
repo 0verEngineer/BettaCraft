@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -109,7 +110,7 @@ public final class CreateDriveGameTests {
     /** An external filter with a heater on the tank wall, a lit light on top, the tank to heat: every group has demand. */
     private static void devices(GameTestHelper h, TankBlockEntity c, BlockPos filterRel, Direction towardsTank, BlockPos lightRel) {
         h.setBlock(filterRel, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, towardsTank));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(filterRel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(filterRel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter");
         f.insertHeater(new ItemStack(ModItems.HEATER_SMALL.get()));
         h.setBlock(lightRel, ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.LIT, true));
         c.getTank().setTargetTemp(34F);
@@ -118,7 +119,7 @@ public final class CreateDriveGameTests {
 
     private static Block adapterBlock() {
         Block b = BuiltInRegistries.BLOCK.getValue(BettaCraft.id("drive_adapter"));
-        if (b == Blocks.AIR) throw new GameTestAssertException("no drive adapter with Create");
+        if (b == Blocks.AIR) throw new GameTestFailure("no drive adapter with Create");
         return b;
     }
 
@@ -131,14 +132,14 @@ public final class CreateDriveGameTests {
     }
 
     private static TankDrive.Input input(GameTestHelper h, BlockPos rel) {
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof TankDrive.Input in)) throw new GameTestAssertException("no adapter at " + rel);
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof TankDrive.Input in)) throw new GameTestFailure("no adapter at " + rel);
         return in;
     }
 
     private static CabinetBlockEntity cabinet(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         CabinetBlockEntity cab = (CabinetBlockEntity) h.getLevel().getBlockEntity(h.absolutePos(rel));
-        if (cab == null) throw new GameTestAssertException("no cabinet");
+        if (cab == null) throw new GameTestFailure("no cabinet");
         cab.items().setStackInSlot(CabinetBlockEntity.FILTER_SLOT, new ItemStack(ModItems.EXTERNAL_FILTER.get()));
         return cab;
     }
@@ -150,7 +151,7 @@ public final class CreateDriveGameTests {
             Object net = kinetic.getClass().getMethod("getOrCreateNetwork").invoke(kinetic);
             return (Float) net.getClass().getMethod("calculateStress").invoke(net);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("network stress: " + e);
+            throw new GameTestFailure("network stress: " + e);
         }
     }
 
@@ -158,13 +159,13 @@ public final class CreateDriveGameTests {
         try {
             return (Boolean) kinetic.getClass().getMethod("isOverStressed").invoke(kinetic);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("overstressed: " + e);
+            throw new GameTestFailure("overstressed: " + e);
         }
     }
 
     private static BlockEntity be(GameTestHelper h, BlockPos rel) {
         BlockEntity b = h.getLevel().getBlockEntity(h.absolutePos(rel));
-        if (b == null) throw new GameTestAssertException("no block entity at " + rel);
+        if (b == null) throw new GameTestFailure("no block entity at " + rel);
         return b;
     }
 
@@ -373,7 +374,7 @@ public final class CreateDriveGameTests {
             seq.thenExecute(() -> {
                 cab.setDriveSide(side);
                 Direction face = cab.driveFace();
-                if (face == null) throw new GameTestAssertException("no face for " + side);
+                if (face == null) throw new GameTestFailure("no face for " + side);
                 CreateDeviceGameTests.motor(h, cabPos.relative(face), face.getOpposite(), 64);
             }).thenExecuteAfter(8, () -> {
                 Direction face = cab.driveFace();

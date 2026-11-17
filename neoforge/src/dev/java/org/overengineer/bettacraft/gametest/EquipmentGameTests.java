@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +27,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.CabinetBlock;
 import org.overengineer.bettacraft.equipment.CabinetBlockEntity;
@@ -66,7 +67,7 @@ public final class EquipmentGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water);
         return c;
     }
@@ -74,7 +75,7 @@ public final class EquipmentGameTests {
     /** Places an external filter like a player clicking the tank side (state from {@link ExternalFilterBlock#getStateForPlacement} rules). */
     private static ExternalFilterBlockEntity filter(GameTestHelper h, BlockPos rel, Direction towardsTank) {
         h.setBlock(rel, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, towardsTank));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter BE");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter BE");
         return f;
     }
 
@@ -110,7 +111,7 @@ public final class EquipmentGameTests {
         h.runAfterDelay(2, () -> {
             List<ItemEntity> drops = level.getEntitiesOfClass(ItemEntity.class, new AABB(h.absolutePos(new BlockPos(3, 1, 4))).inflate(1.5));
             ItemEntity drop = drops.stream().filter(e -> e.getItem().is(ModItems.EXTERNAL_FILTER.get())).findFirst()
-                    .orElseThrow(() -> new GameTestAssertException("filter item dropped"));
+                    .orElseThrow(() -> new GameTestFailure("filter item dropped"));
             h.assertTrue(FilterHeaters.capacityOfItem(drop.getItem()) == 32, "the dropped filter keeps its heater");
             // removing the tank block next to the remaining filter detaches it as well
             TankBlockEntity c2 = TankMultiblock.getController(level, h.absolutePos(new BlockPos(4, 1, 4)));
@@ -152,7 +153,7 @@ public final class EquipmentGameTests {
         ListTag old = new ListTag();
         for (String id : new String[]{"bettacraft:heater_large", "", "bettacraft:heater_small", "bettacraft:heater_medium"}) old.add(StringTag.valueOf(id));
         tank.put("heaters", old);
-        c.loadWithComponents(tag, level.registryAccess());
+        c.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), tag));
         TankData t = c.getTank();
         h.assertTrue(countHeaters(t) == 3, "three old heaters survive the migration, got " + countHeaters(t));
         h.assertTrue(TankCare.slotHeaterBlocks(t) == 112, "old heaters keep heating until moved: " + TankCare.slotHeaterBlocks(t));
@@ -182,16 +183,16 @@ public final class EquipmentGameTests {
     private static void withExtraPlanks(Item extra, Runnable check) {
         var reg = BuiltInRegistries.ITEM;
         Map<TagKey<Item>, List<Holder<Item>>> original = new HashMap<>();
-        reg.getTags().forEach(p -> original.put(p.getFirst(), p.getSecond().stream().toList()));
+        reg.getTags().forEach(p -> original.put(p.key(), p.stream().toList()));
         Map<TagKey<Item>, List<Holder<Item>>> changed = new HashMap<>(original);
         List<Holder<Item>> planks = new ArrayList<>(original.getOrDefault(ItemTags.PLANKS, List.of()));
         planks.add(reg.wrapAsHolder(extra));
         changed.put(ItemTags.PLANKS, planks);
-        reg.bindTags(changed);
+        reg.prepareTagReload(new net.minecraft.tags.TagLoader.LoadResult<>(net.minecraft.core.registries.Registries.ITEM, changed)).apply();
         try {
             check.run();
         } finally {
-            reg.bindTags(original);
+            reg.prepareTagReload(new net.minecraft.tags.TagLoader.LoadResult<>(net.minecraft.core.registries.Registries.ITEM, original)).apply();
         }
     }
 
@@ -204,10 +205,10 @@ public final class EquipmentGameTests {
     @GameTest(template = EMPTY)
     public static void cabinetRecipeAcceptsAnyPlanksFromTag(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        var rm = level.getRecipeManager();
+        var rm = level.recipeAccess();
         // vanilla but non-tree wood
         var crimson = rm.getRecipeFor(RecipeType.CRAFTING, grid(Items.CRIMSON_SLAB, Items.CRIMSON_PLANKS, Items.CHEST), level)
-                .orElseThrow(() -> new GameTestAssertException("crimson cabinet recipe"));
+                .orElseThrow(() -> new GameTestFailure("crimson cabinet recipe"));
         h.assertTrue(crimson.value() instanceof CabinetRecipe, "our recipe");
         ItemStack r = crimson.value().assemble(grid(Items.CRIMSON_SLAB, Items.CRIMSON_PLANKS, Items.CHEST), level.registryAccess());
         h.assertTrue(r.is(ModItems.CABINET.get()) && CabinetBlockItem.getWood(r).toString().equals("minecraft:crimson_planks"), "crimson wood: " + r);
@@ -221,7 +222,7 @@ public final class EquipmentGameTests {
         h.assertTrue(CabinetRecipe.findWood(grid(Items.OAK_SLAB, Items.MUSHROOM_STEM, Items.CHEST)) == null, "not planks without the tag");
         withExtraPlanks(Items.MUSHROOM_STEM, () -> {
             CraftingInput in = grid(Items.SPRUCE_SLAB, Items.MUSHROOM_STEM, Items.CHEST);
-            var modded = rm.getRecipeFor(RecipeType.CRAFTING, in, level).orElseThrow(() -> new GameTestAssertException("tag planks recipe"));
+            var modded = rm.getRecipeFor(RecipeType.CRAFTING, in, level).orElseThrow(() -> new GameTestFailure("tag planks recipe"));
             ItemStack out = modded.value().assemble(in, level.registryAccess());
             h.assertTrue(CabinetBlockItem.getWood(out).toString().equals("minecraft:mushroom_stem"), "wood from the tag entry: " + out);
         });

@@ -60,11 +60,11 @@ final class DevClientSmokeM40a {
         then(200, () -> shot("filter"));
         then(1, () -> look(base.getX() + 2.5, base.getY() + 2.4, base.getZ() + 4.2, 180F, 20F));
         then(150, () -> shot("front"));
-        then(1, () -> server(p -> p.teleportTo(InteriorManager.interiorLevel(p.server), innerA.getX() + 0.5, innerA.getY(), innerA.getZ() + 0.5, -38F, 6F)));
+        then(1, () -> server(p -> p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), innerA.getX() + 0.5, innerA.getY(), innerA.getZ() + 0.5, java.util.Set.of(), -38F, 6F, true)));
         then(200, () -> shot("dock_side"));
-        then(1, () -> server(p -> p.teleportTo(InteriorManager.interiorLevel(p.server), innerB.getX() + 0.5, innerB.getY(), innerB.getZ() + 0.5, 0F, -28F)));
+        then(1, () -> server(p -> p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), innerB.getX() + 0.5, innerB.getY(), innerB.getZ() + 0.5, java.util.Set.of(), 0F, -28F, true)));
         then(200, () -> shot("dock_top"));
-        then(1, () -> server(p -> p.teleportTo(p.server.overworld(), head.getX() + 0.5, head.getY() - 1.0, head.getZ() + 3.5, 180F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), head.getX() + 0.5, head.getY() - 1.0, head.getZ() + 3.5, java.util.Set.of(), 180F, 10F, true)));
         then(80, () -> {
             mc.options.hideGui = false;
             mc.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head));
@@ -97,7 +97,7 @@ final class DevClientSmokeM40a {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(-10, 2, 200);
         for (BlockPos q : BlockPos.betweenClosed(base.offset(-2, -1, -2), base.offset(20, 6, 8)))
             level.setBlock(q, q.getY() == base.getY() - 1 ? Blocks.SMOOTH_STONE.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
@@ -170,7 +170,7 @@ final class DevClientSmokeM40a {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -201,7 +201,7 @@ final class DevClientSmokeM40a {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m40a_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m40a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

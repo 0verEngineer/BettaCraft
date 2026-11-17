@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -26,8 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -76,7 +77,7 @@ public final class PipeCoverGameTests {
         h.setBlock(new BlockPos(3, 3, 4), ModBlocks.FILTER_OUTLET_PIPE.get().defaultBlockState());
         TankBlockEntity t = PlumbingGameTests.tank(h, 4, 2, 4, 2, 1, 2);
         h.setBlock(new BlockPos(3, 2, 4), ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
-        if (!FilterPipeBundleBlock.addLine(level, abs(h, 3, 2, 4), PipeLine.RETURN, null, null)) throw new GameTestAssertException("no bundle");
+        if (!FilterPipeBundleBlock.addLine(level, abs(h, 3, 2, 4), PipeLine.RETURN, null, null)) throw new GameTestFailure("no bundle");
         FilterLinesGameTests.guardAll(level, head.getBlockPos());
         return new Rig(head, t, abs(h, 2, 2, 4), abs(h, 3, 2, 4));
     }
@@ -101,7 +102,7 @@ public final class PipeCoverGameTests {
 
     /** A right-click on {@code pos} (from above) like a player's: block first, then the item. */
     private static InteractionResult click(ServerPlayer p, BlockPos pos, Direction face) {
-        Vec3 hit = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(face.getNormal()).scale(0.5));
+        Vec3 hit = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(face.getUnitVec3i()).scale(0.5));
         return p.gameMode.useItemOn(p, p.level(), p.getMainHandItem(), InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
     }
 
@@ -172,7 +173,7 @@ public final class PipeCoverGameTests {
             List<ItemStack> sd = Block.getDrops(level.getBlockState(single), level, single, level.getBlockEntity(single));
             h.assertTrue(sd.size() == 2 && sd.stream().anyMatch(s -> s.is(Items.BRICKS)) && sd.stream().anyMatch(s -> s.is(ModItems.FILTER_WASTE_PIPE.get())), "drops of a covered pipe: " + sd);
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
         h.succeed();
     }
@@ -205,13 +206,13 @@ public final class PipeCoverGameTests {
     }
 
     private static Item item(String id) {
-        return BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no item " + id));
+        return BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no item " + id));
     }
 
     @SuppressWarnings("unchecked")
     private static void set(ItemStack stack, String component, Object value) {
         DataComponentType<Object> t = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(Identifier.parse(component));
-        if (t == null) throw new GameTestAssertException("no data component " + component);
+        if (t == null) throw new GameTestFailure("no data component " + component);
         stack.set(t, value);
     }
 
@@ -241,7 +242,7 @@ public final class PipeCoverGameTests {
             List<ItemStack> drops = Block.getDrops(level.getBlockState(r.bundle()), level, r.bundle(), level.getBlockEntity(r.bundle()));
             h.assertTrue(drops.stream().anyMatch(s -> s.is(facade.getItem())), "breaking the bundle drops the facade: " + drops);
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
         h.succeed();
     }
@@ -323,7 +324,7 @@ public final class PipeCoverGameTests {
             }
             filters(h, r, "under Cable Facades");
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
         h.succeed();
     }

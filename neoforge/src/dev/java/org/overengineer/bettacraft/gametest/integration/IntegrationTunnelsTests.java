@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import static org.overengineer.bettacraft.gametest.integration.IntegrationRig.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
 import org.overengineer.bettacraft.gametest.PlumbingGameTestsAccess;
@@ -48,7 +49,7 @@ public final class IntegrationTunnelsTests {
         Object item = call(type, "getItem");
         boolean ok = (boolean) callStatic("org.cyclops.integrateddynamics.core.helper.PartHelpers", "addPart", h.getLevel(), h.absolutePos(rel), side,
                 type, new ItemStack((net.minecraft.world.item.Item) item));
-        if (!ok) throw new GameTestAssertException("Integrated Dynamics did not add the part " + type);
+        if (!ok) throw new GameTestFailure("Integrated Dynamics did not add the part " + type);
     }
 
     /** A variable card holding the constant {@code true} (a value type variable facade, as the logic programmer writes). */
@@ -63,7 +64,7 @@ public final class IntegrationTunnelsTests {
             Object registry = callStatic("org.cyclops.integrateddynamics.core.item.VariableFacadeHandlerRegistry", "getInstance");
             return (ItemStack) call(registry, "writeVariableFacadeItem", new ItemStack(item("integrateddynamics:variable")), facade, handler);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("Integrated Dynamics API changed: " + e);
+            throw new GameTestFailure("Integrated Dynamics API changed: " + e);
         }
     }
 
@@ -71,7 +72,7 @@ public final class IntegrationTunnelsTests {
     private static String activate(GameTestHelper h, BlockPos rel, Direction side) {
         ServerLevel level = h.getLevel();
         Object container = ((java.util.Optional<?>) callStatic("org.cyclops.integrateddynamics.core.helper.PartHelpers", "getPartContainer",
-                (Level) level, h.absolutePos(rel), side)).orElseThrow(() -> new GameTestAssertException("no part container"));
+                (Level) level, h.absolutePos(rel), side)).orElseThrow(() -> new GameTestFailure("no part container"));
         Object state = call(container, "getPartState", side);
         Object type = ((java.util.Map<?, ?>) call(container, "getParts")).get(side);
         @SuppressWarnings("unchecked")
@@ -80,7 +81,7 @@ public final class IntegrationTunnelsTests {
         try {
             boolType = Class.forName("org.cyclops.integrateddynamics.core.evaluate.variable.ValueTypes").getField("BOOLEAN").get(null);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("Integrated Dynamics API changed: " + e);
+            throw new GameTestFailure("Integrated Dynamics API changed: " + e);
         }
         List<String> names = new ArrayList<>();
         int index = -1;
@@ -89,7 +90,7 @@ public final class IntegrationTunnelsTests {
             names.add(name);
             if (index < 0 && call(aspects.get(i), "getValueType") == boolType && name.contains("export")) index = i;
         }
-        if (index < 0) throw new GameTestAssertException("no boolean export aspect in " + names);
+        if (index < 0) throw new GameTestFailure("no boolean export aspect in " + names);
         call(call(state, "getInventory"), "setItem", index, trueCard());
         Object target = callStatic("org.cyclops.integrateddynamics.api.part.PartTarget", "fromCenter", (Level) level, h.absolutePos(rel), side);
         call(type, "updateActivation", target, state, null);

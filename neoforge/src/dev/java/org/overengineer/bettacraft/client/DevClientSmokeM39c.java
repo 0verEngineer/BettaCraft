@@ -124,7 +124,7 @@ final class DevClientSmokeM39c {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         BlockPos base = p.blockPosition().offset(-12, 2, 200);
         // --- the pet terrarium: 12 x 3 x 6, grass with flowers, a beehive on a stump, a closed top
         pets = base;
@@ -154,7 +154,7 @@ final class DevClientSmokeM39c {
 
     /** Puts a new animal of the type in by its container (as a player would); the animal, or null with an error logged. */
     private static LivingEntity insert(ServerLevel level, TankBlockEntity c, EntityType<?> type, boolean baby) {
-        Entity e = type.create(level);
+        Entity e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         if (baby && e instanceof Mob m) m.setBaby(true);
         var p = ForeignProfiles.of(type);
@@ -238,7 +238,7 @@ final class DevClientSmokeM39c {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -269,7 +269,7 @@ final class DevClientSmokeM39c {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m39c_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m39c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

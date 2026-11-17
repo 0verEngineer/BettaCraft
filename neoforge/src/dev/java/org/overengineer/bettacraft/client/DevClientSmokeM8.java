@@ -196,8 +196,8 @@ final class DevClientSmokeM8 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear(); // advancement toasts would cover the overlay
+        mc.getToastManager().clear(); // advancement toasts would cover the overlay
         String file = "bettacraft_m8_" + tag + "_" + name;
-        Screenshot.grab(mc.gameDirectory, file + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, file + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

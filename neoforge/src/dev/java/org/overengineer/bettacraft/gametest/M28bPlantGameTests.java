@@ -1,16 +1,17 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.plants.AquaticPlantBlock;
 import org.overengineer.bettacraft.plants.InteriorPlant;
@@ -44,7 +45,7 @@ public final class M28bPlantGameTests {
             TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
         }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, 1, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, 2000);
         c.getTank().setWaterTemp(26F);
         c.getTank().setTargetTemp(26F);
@@ -53,7 +54,7 @@ public final class M28bPlantGameTests {
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (l == null) throw new GameTestAssertException("interior dimension not loaded");
+        if (l == null) throw new GameTestFailure("interior dimension not loaded");
         return l;
     }
 

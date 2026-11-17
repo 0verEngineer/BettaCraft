@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -35,7 +35,7 @@ import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
@@ -97,7 +97,7 @@ public final class ZooAnimalTests {
         if (e instanceof AbstractFish) sb.append("Fish ");
         if (e instanceof Animal) sb.append("Animal ");
         if (e instanceof Enemy) sb.append("Enemy ");
-        if (e instanceof FlyingAnimal || e instanceof net.minecraft.world.entity.FlyingMob) sb.append("Flying ");
+        if (e instanceof FlyingAnimal || e instanceof net.minecraft.world.entity.monster.Ghast || e instanceof net.minecraft.world.entity.monster.Phantom) sb.append("Flying ");
         if (e instanceof net.minecraft.world.entity.TamableAnimal) sb.append("Tamable ");
         if (e instanceof net.minecraft.world.entity.animal.Bucketable) sb.append("Bucketable ");
         if (e instanceof LivingEntity le && le.canBreatheUnderwater()) sb.append("BreathesWater ");
@@ -116,7 +116,7 @@ public final class ZooAnimalTests {
             if (type == EntityType.PLAYER) continue;
             Entity e;
             try {
-                e = type.create(level);
+                e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             } catch (Throwable t) {
                 out.add(new Status(type, rl.toString(), "create failed", null, ZooSuite.brief(t)));
                 continue;
@@ -221,7 +221,7 @@ public final class ZooAnimalTests {
             without++;
             String box = "", capture = "", bucket = "";
             try {
-                Entity e = c.type().create(level);
+                Entity e = c.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                 Vec3 at = h.absoluteVec(new Vec3(20, 2, 20));
                 e.snapTo(at.x, at.y, at.z, 0, 0);
                 box = key(ForeignTerrarium.boxRefusal(player, e));
@@ -368,7 +368,7 @@ public final class ZooAnimalTests {
         ItemStack stack;
         String how;
         if (land) {
-            Entity e = c.type().create(level);
+            Entity e = c.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             Vec3 at = h.absoluteVec(new Vec3(30, 2, 30));
             e.snapTo(at.x, at.y, at.z, 0, 0);
             if (!ForeignTerrarium.boxTakes(e)) {
@@ -383,7 +383,7 @@ public final class ZooAnimalTests {
             stack = new ItemStack(c.bucket());
             how = "bucket";
         } else {
-            Entity e = c.type().create(level);
+            Entity e = c.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             stack = FishBagItem.fillWith(e);
             e.discard();
             how = "bag";
@@ -580,7 +580,7 @@ public final class ZooAnimalTests {
             var salt = org.overengineer.bettacraft.reef.SaltTolerance.of(c.type());
             TankBlockEntity into = salt != null && salt.marine() ? sea : fresh;
             try {
-                Entity e = c.type().create(level);
+                Entity e = c.type().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                 List<Entity> before = ofType(level, into.getTank(), c.type());
                 Component msg = TankInhabitants.insert(level, into, FishBagItem.fillWith(e), c.type(), null, TankInhabitants.BAG_MB);
                 e.discard();

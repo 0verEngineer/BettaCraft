@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.CritterGenes;
@@ -92,7 +93,7 @@ public final class TankmateGameTests {
         Vec3 p = w.clamp(new Vec3(w.box().minX + r.nextDouble() * (w.box().maxX - w.box().minX), w.box().minY + 0.2,
                 w.box().minZ + r.nextDouble() * (w.box().maxZ - w.box().minZ)), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, g, female, stage, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -129,7 +130,7 @@ public final class TankmateGameTests {
     }
 
     private static InteriorRegion interior(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         InteriorRegion r = InteriorManager.ensureRegion(h.getLevel(), c);
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++) {
@@ -141,14 +142,14 @@ public final class TankmateGameTests {
     private static void decor(GameTestHelper h, InteriorRegion r, DecorType type, int lx, int lz) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
         var err = DecorItem.place(in, type, new BlockPos(r.originX() + lx, InteriorRegion.BASE_Y, r.originZ() + lz), Rotation.NONE, null);
-        if (err != null) throw new GameTestAssertException("decor " + type + ": " + err.getString());
+        if (err != null) throw new GameTestFailure("decor " + type + ": " + err.getString());
     }
 
     private static ServerPlayer player(GameTestHelper h) {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         return sp;
     }
 
@@ -559,7 +560,7 @@ public final class TankmateGameTests {
         h.assertTrue(tm.size() == 2, "two species on the breeding tab: " + tm.size());
         // save and load keep genes, sex, stage
         CompoundTag saved = g.saveTankmate();
-        TankmateEntity copy = ModEntities.TANKMATES.get(TankmateSpecies.PLATY).get().create(level);
+        TankmateEntity copy = ModEntities.TANKMATES.get(TankmateSpecies.PLATY).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         copy.loadTankmate(saved);
         h.assertTrue("mickey_mouse".equals(copy.variety()) && copy.isFemale() && copy.lifeStage() == LifeStage.JUVENILE, "data survives");
         // the bucket keeps it too

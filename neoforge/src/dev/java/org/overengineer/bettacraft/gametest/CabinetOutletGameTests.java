@@ -5,7 +5,7 @@ import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -14,8 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
@@ -192,12 +192,12 @@ public final class CabinetOutletGameTests {
             // saved and loaded
             CompoundTag saved = cab.saveWithFullMetadata(level.registryAccess());
             CabinetBlockEntity copy = new CabinetBlockEntity(h.absolutePos(cp), state);
-            copy.loadWithComponents(saved, level.registryAccess());
+            copy.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), saved));
             h.assertTrue(copy.outletSetting() == OutletSide.LEFT, "saved and loaded: " + copy.outletSetting());
             // an old cabinet (no "outlet" in its data) keeps the back wall
             saved.remove("outlet");
             CabinetBlockEntity old = new CabinetBlockEntity(h.absolutePos(cp), state);
-            old.loadWithComponents(saved, level.registryAccess());
+            old.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), saved));
             h.assertTrue(old.outletSetting() == OutletSide.BACK, "old cabinet: back");
             // broken: the drop remembers the side, placed again it is back
             List<ItemStack> drops = Block.getDrops(state, level, h.absolutePos(cp), cab);
@@ -215,7 +215,7 @@ public final class CabinetOutletGameTests {
                     "back: no component " + backDrops);
         } finally {
             Features.set(Feature.CABINET_OUTLET_SIDE, feature);
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }

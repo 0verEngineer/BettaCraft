@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -15,8 +16,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.command.ForeignCommand;
 import org.overengineer.bettacraft.config.Feature;
@@ -57,7 +58,7 @@ public final class ForeignPlantGameTests {
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (l == null) throw new GameTestAssertException("interior dimension not loaded");
+        if (l == null) throw new GameTestFailure("interior dimension not loaded");
         return l;
     }
 
@@ -110,7 +111,7 @@ public final class ForeignPlantGameTests {
         Map<String, ForeignPlantRole> want = new LinkedHashMap<>();
         for (String[] p : plants) {
             Block b = block(p[0]);
-            if (b == null) throw new GameTestAssertException(p[0] + " is not registered (renamed?)");
+            if (b == null) throw new GameTestFailure(p[0] + " is not registered (renamed?)");
             set(in, r, x, 0, 4, b.defaultBlockState());
             // the dry interior keeps it (#bettacraft:interior_water_plants, the mixins of M7)
             h.assertTrue(b.defaultBlockState().canSurvive(in, at(r, x, 0, 4)) || p.length > 2, p[0] + " survives in the dry interior");
@@ -383,7 +384,7 @@ public final class ForeignPlantGameTests {
         if (fossil != null) set(in, r, 16, 0, 4, fossil.defaultBlockState());
         var rows = ForeignCommand.plantRows(h.getLevel(), c);
         h.assertTrue(rows.size() == 2, "kelp and seagrass rows: " + rows);
-        var kelp = rows.stream().filter(x -> x.block().getPath().equals("kelp")).findFirst().orElseThrow(() -> new GameTestAssertException("no kelp row: " + rows));
+        var kelp = rows.stream().filter(x -> x.block().getPath().equals("kelp")).findFirst().orElseThrow(() -> new GameTestFailure("no kelp row: " + rows));
         h.assertTrue(kelp.plants() == 2 && kelp.blocks() == 5 && kelp.role().equals("stem") && kelp.profile().equals(BettaCraft.id("minecraft_kelp")),
                 "the kelp row: " + kelp);
         var un = ForeignCommand.unprofiledPlants(h.getLevel(), c);
@@ -414,7 +415,7 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void biomeModPlantsCount(GameTestHelper h) {
         boolean ru = block("regions_unexplored:cattail") != null, tf = block("twilightforest:huge_lily_pad") != null;
-        if (Boolean.getBooleanOr("bettacraft.biomemods", false) && !(ru && tf)) throw new GameTestAssertException("-Pbiomes but Regions Unexplored / Twilight Forest are not loaded");
+        if (Boolean.getBoolean("bettacraft.biomemods") && !(ru && tf)) throw new GameTestFailure("-Pbiomes but Regions Unexplored / Twilight Forest are not loaded");
         if (!ru && !tf) {
             h.succeed();
             return;
@@ -438,7 +439,7 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void alexsCavesSpongeCounts(GameTestHelper h) {
         boolean ac = block("alexscaves:ping_pong_sponge") != null;
-        if (Boolean.getBooleanOr("bettacraft.aquaticmods", false) && !ac) throw new GameTestAssertException("-Paquatic but Alex's Caves is not loaded");
+        if (Boolean.getBoolean("bettacraft.aquaticmods") && !ac) throw new GameTestFailure("-Paquatic but Alex's Caves is not loaded");
         if (!ac) {
             h.succeed();
             return;

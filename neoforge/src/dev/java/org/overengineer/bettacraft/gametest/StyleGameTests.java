@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -24,8 +25,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.info.InfoData;
 import org.overengineer.bettacraft.compat.info.InfoLines;
@@ -63,7 +64,7 @@ public final class StyleGameTests {
 
     private static void add(GameTestHelper h, BlockPos rel, Identifier glass, TankStyle style) {
         h.setBlock(rel, ModBlocks.TANK.get().defaultBlockState());
-        if (h.getBlockEntity(rel) instanceof TankBlockEntity be) {
+        if (h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof TankBlockEntity be) {
             be.setGlassId(glass);
             be.setStyle(style);
         }
@@ -72,7 +73,7 @@ public final class StyleGameTests {
 
     private static TankBlockEntity controller(GameTestHelper h, BlockPos rel) {
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(rel));
-        if (c == null) throw new GameTestAssertException("no controller for " + rel);
+        if (c == null) throw new GameTestFailure("no controller for " + rel);
         return c;
     }
 
@@ -83,7 +84,7 @@ public final class StyleGameTests {
     }
 
     private static ItemStack craft(ServerLevel level, CraftingInput in) {
-        return level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, in, level)
+        return level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, in, level)
                 .map(r -> r.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
     }
 
@@ -97,7 +98,7 @@ public final class StyleGameTests {
     public static void stylesHaveTheirOwnRecipes(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         // textured: any glass, iron ingot in the middle
-        var textured = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, tankGrid(Items.LIGHT_BLUE_STAINED_GLASS, Items.IRON_INGOT), level);
+        var textured = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, tankGrid(Items.LIGHT_BLUE_STAINED_GLASS, Items.IRON_INGOT), level);
         h.assertTrue(textured.isPresent() && textured.get().value() instanceof TankRecipe, "textured tank recipe");
         ItemStack t = craft(level, tankGrid(Items.LIGHT_BLUE_STAINED_GLASS, Items.IRON_INGOT));
         h.assertTrue(t.getCount() == 4 && TankBlockItem.getGlass(t).equals(LIGHT_BLUE) && TankBlockItem.getStyle(t) == TankStyle.TEXTURED,
@@ -114,7 +115,7 @@ public final class StyleGameTests {
         // conversion of one vanilla-glass tank, also an item made before M11 (no style component)
         ItemStack old = TankBlockItem.setGlass(new ItemStack(ModItems.TANK.get()), GLASS);
         h.assertTrue(!old.has(ModDataComponents.TANK_STYLE.get()), "pre-M11 item");
-        var toClean = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, single(old), level);
+        var toClean = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, single(old), level);
         h.assertTrue(toClean.isPresent() && toClean.get().value() instanceof TankStyleRecipe r && r.from() == TankStyle.TEXTURED, "conversion recipe");
         ItemStack converted = craft(level, single(old));
         h.assertTrue(converted.getCount() == 1 && TankBlockItem.getStyle(converted) == TankStyle.CLEAN, "old tank -> clean");
@@ -161,14 +162,14 @@ public final class StyleGameTests {
         h.assertTrue(be.getIntOr("schema", 0) >= 6 && "clean".equals(be.getStringOr("style", "")), "M11 and later write schema 6+ with the style");
         be.putInt("schema", 5);
         be.remove("style");
-        c.loadWithComponents(be, level.registryAccess());
+        c.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), be));
         h.assertTrue(c.getStyle() == TankStyle.TEXTURED && c.getGlassId().equals(LIGHT_BLUE), "M10 tank is textured, glass kept");
         h.assertTrue(c.getTank().memberCount() == 2 && c.getTank().waterMb() == 1500 && "M10 tank".equals(c.getTank().name()), "tank data kept");
-        TankBlockEntity member = (TankBlockEntity) h.getBlockEntity(new BlockPos(3, 1, 2));
+        TankBlockEntity member = h.getBlockEntity(new BlockPos(3, 1, 2), TankBlockEntity.class);
         CompoundTag mt = member.saveWithFullMetadata(level.registryAccess());
         mt.putInt("schema", 5);
         mt.remove("style");
-        member.loadWithComponents(mt, level.registryAccess());
+        member.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), mt));
         h.assertTrue(member.getStyle() == TankStyle.TEXTURED, "member block is textured");
         // a new textured block of that glass now joins the migrated tank
         add(h, new BlockPos(2, 1, 3), LIGHT_BLUE, TankStyle.TEXTURED);
@@ -292,10 +293,10 @@ public final class StyleGameTests {
         BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(seed)), female, 0);
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d);
         Component err = TankInhabitants.insert(h.getLevel(), c, bucket, ModEntities.BETTA.get(), null, false);
-        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) {
             if (e instanceof BettaEntity b && b.getBettaData().fishId().equals(d.fishId())) return b;
         }
-        throw new GameTestAssertException("inserted betta not found");
+        throw new GameTestFailure("inserted betta not found");
     }
 }

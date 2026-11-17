@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.api.BettacraftApi;
 import org.overengineer.bettacraft.api.event.AnimalBornEvent;
@@ -103,7 +104,7 @@ public final class ModpackEventGameTests {
             // dies by damage
             CAUGHT.clear();
             LivingEntity other = (LivingEntity) org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, c.getTank()).stream()
-                    .filter(e -> e != a && e.isAlive()).findFirst().orElseThrow(() -> new GameTestAssertException("no other fish"));
+                    .filter(e -> e != a && e.isAlive()).findFirst().orElseThrow(() -> new GameTestFailure("no other fish"));
             other.hurt(level.damageSources().generic(), 1000F);
             died = caught(AnimalDiedEvent.class);
             h.assertTrue(died.size() == 1 && "injuries".equals(died.getFirst().getCause()) && died.getFirst().getEntity() == other,
@@ -170,7 +171,7 @@ public final class ModpackEventGameTests {
                     "broken: both cleared (" + caught(TankAlarmEvent.class).size() + ")");
             h.assertTrue(!MonitorAlarms.waypointOpen(t.getTank().id()), "no waypoint left");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }

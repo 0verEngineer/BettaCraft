@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ChunkHolder;
@@ -10,8 +11,8 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.plants.InteriorPlants;
 import org.overengineer.bettacraft.plants.PlantSpecies;
@@ -74,7 +75,7 @@ public final class InteriorChunkGameTests {
             m.setAccessible(true);
             return (Iterable<ChunkHolder>) m.invoke(map);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("cannot list the chunk holders: " + e);
+            throw new GameTestFailure("cannot list the chunk holders: " + e);
         }
     }
 

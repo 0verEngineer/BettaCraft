@@ -97,9 +97,9 @@ final class DevClientSmokeM13 {
         then(1, () -> server(p -> {
             InteriorRegion r = mainRegion;
             if (r == null) return;
-            ServerLevel in = InteriorManager.interiorLevel(p.server);
+            ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
             BlockPos at = r.toWorld(32, 9, 1);
-            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 12F);
+            p.teleportTo(in, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 12F, true);
         }));
         then(120, () -> shot("interior"));
         then(1, () -> server(p -> {
@@ -118,8 +118,8 @@ final class DevClientSmokeM13 {
         then(80, () -> shot("interior_top"));
         then(1, () -> server(p -> {
             if (InteriorManager.isInterior(p.level())) {
-                ServerLevel ow = p.server.overworld();
-                p.teleportTo(ow, base.getX() + 2.0, base.getY() + 1.5, base.getZ() - 2.5, 0F, 0F);
+                ServerLevel ow = p.level().getServer().overworld();
+                p.teleportTo(ow, base.getX() + 2.0, base.getY() + 1.5, base.getZ() - 2.5, java.util.Set.of(), 0F, 0F, true);
             }
         }));
         // the aquarium plants page of the menu, English and German
@@ -151,7 +151,7 @@ final class DevClientSmokeM13 {
             for (BlockPos at : List.of(base, base.offset(0, 0, 8), base.offset(8, 0, 8))) {
                 TankBlockEntity c = TankMultiblock.getController(p.level(), at);
                 if (c == null) continue;
-                InteriorRegion r = InteriorPlants.region(p.server, c.getTank());
+                InteriorRegion r = InteriorPlants.region(p.level().getServer(), c.getTank());
                 LOGGER.info("[smoketest] M13 tank {}: {} plants, {} plant blocks, light {}", at, r == null ? 0 : r.plants().size(),
                         r == null ? 0 : r.plants().blocks(), TankPlants.light(p.level(), c));
             }
@@ -234,7 +234,7 @@ final class DevClientSmokeM13 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         base = p.blockPosition().offset(0, 2, 230);
         // A: the planted tank 4x2x2 under a lit light bar
         place(level, cuboid(base, 4, 2, 2));
@@ -346,7 +346,7 @@ final class DevClientSmokeM13 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void then(int delay, Runnable action) {
@@ -378,7 +378,7 @@ final class DevClientSmokeM13 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m13_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m13_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

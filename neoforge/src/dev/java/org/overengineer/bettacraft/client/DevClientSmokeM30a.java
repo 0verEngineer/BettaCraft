@@ -65,12 +65,12 @@ final class DevClientSmokeM30a {
         then(60, () -> shot("dolphin_tank_near"));
         then(1, () -> look(small.getX() + 6, small.getY() + 2.0, small.getZ() - 5.5, 0F, 6F));
         then(120, () -> {
-            server(p -> freezePangasius(p.server.overworld()));
+            server(p -> freezePangasius(p.level().getServer().overworld()));
         });
         then(40, () -> shot("pangasius_tank"));
         // the player with a full transport tub in the hand (the slowness shows in the FOV and the attribute)
         then(1, () -> server(p -> {
-            ItemStack tub = BigCatching.caught(p.server.overworld(), TankmateSpecies.PANGASIUS, NetCatching.random(p.level()));
+            ItemStack tub = BigCatching.caught(p.level().getServer().overworld(), TankmateSpecies.PANGASIUS, NetCatching.random(p.level()));
             p.setItemInHand(InteractionHand.MAIN_HAND, tub);
             TransportTubItem.updateSlowness(p);
             LOGGER.info("[smoketest] M30 walking speed with a full tub: {}", p.getAttributeValue(Attributes.MOVEMENT_SPEED));
@@ -111,7 +111,7 @@ final class DevClientSmokeM30a {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         BlockPos base = p.blockPosition().offset(-16, 2, 300);
         big = base;
         small = base.offset(8, 0, -24);
@@ -126,7 +126,7 @@ final class DevClientSmokeM30a {
                     for (int y = 0; y < h; y++) in.setBlock(r.toWorld(s[0] + x, y, s[1] + z), Blocks.STONE.defaultBlockState(), 2);
                 }
         for (int i = 0; i < 2; i++) {
-            Dolphin d = EntityType.DOLPHIN.create(level);
+            Dolphin d = EntityType.DOLPHIN.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack tub = TransportTubItem.fillWith(d);
             d.discard();
             var err = TankInhabitants.insert(level, a, tub, EntityType.DOLPHIN, null, 0);
@@ -150,7 +150,7 @@ final class DevClientSmokeM30a {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -181,7 +181,7 @@ final class DevClientSmokeM30a {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m30a_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m30a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

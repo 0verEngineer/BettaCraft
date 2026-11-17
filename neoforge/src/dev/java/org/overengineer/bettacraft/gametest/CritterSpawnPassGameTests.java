@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -14,8 +15,8 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -40,7 +41,7 @@ public final class CritterSpawnPassGameTests {
     private CritterSpawnPassGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     /**
@@ -111,8 +112,8 @@ public final class CritterSpawnPassGameTests {
             check(WildSpawnPass.critterRoom(level, top) == 0, "room for small animals at their limit: " + WildSpawnPass.critterRoom(level, top));
             check(WildSpawnPass.room(level, top) == fishLimit, "the small animals take the fish's room: " + WildSpawnPass.room(level, top));
             check(WildSpawnPass.tryCrittersFor(level, top, r) == 0, "the small animals' try went over its limit");
-            var river = WildSpawnPass.fish(WildSpawnPass.ours(level.registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.RIVER)));
-            check(!river.isEmpty() && river.stream().noneMatch(d -> d.type == critter), "river fish entries " + river);
+            var river = WildSpawnPass.fish(WildSpawnPass.ours(level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.RIVER)));
+            check(!river.isEmpty() && river.stream().noneMatch(d -> d.value().type() == critter), "river fish entries " + river);
             int fish = 0;
             for (int i = 0; i < 16 && fish == 0; i++) {
                 fish = WildSpawnPass.spawnInColumn(level, WildSpawnPass.surface(level, top.getX() + 1 + i % 8, top.getZ() + 1 + i / 8), river, r, WildSpawnPass.room(level, top));

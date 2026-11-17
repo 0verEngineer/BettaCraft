@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.critters.TankCritters;
@@ -83,7 +84,7 @@ public final class SoakGameTests {
                 String.format(java.util.Locale.ROOT, "%.1f", msPerDay), String.format(java.util.Locale.ROOT, "%.3f", msPerDay / tanks.size() / STEPS_PER_DAY));
         // a care step runs every second per tank in play; here 24 per tank and day: stay below 1 ms per tank and step
         if (msPerDay / tanks.size() / STEPS_PER_DAY > 1.0) problems.add(String.format(java.util.Locale.ROOT, "a care step took %.2f ms", msPerDay / tanks.size() / STEPS_PER_DAY));
-        if (!problems.isEmpty()) throw new GameTestAssertException(problems.size() + " problem(s): " + String.join("; ", problems.subList(0, Math.min(6, problems.size()))));
+        if (!problems.isEmpty()) throw new GameTestFailure(problems.size() + " problem(s): " + String.join("; ", problems.subList(0, Math.min(6, problems.size()))));
         h.succeed();
     }
 }

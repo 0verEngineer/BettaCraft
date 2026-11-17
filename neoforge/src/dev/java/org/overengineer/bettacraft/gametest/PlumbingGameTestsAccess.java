@@ -18,7 +18,7 @@ public final class PlumbingGameTestsAccess {
     public static org.overengineer.bettacraft.tank.TankBlockEntity terrarium(GameTestHelper h, int x, int sy) {
         org.overengineer.bettacraft.tank.TankBlockEntity c = CritterGameTests.tank(h, x, 2, 2, 2, sy, 2, 0);
         var m = org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(h.getLevel(), c);
-        if (m != org.overengineer.bettacraft.terrarium.TerrariumMode.TERRARIUM) throw new net.minecraft.gametest.framework.GameTestAssertException("no terrarium: " + m);
+        if (m != org.overengineer.bettacraft.terrarium.TerrariumMode.TERRARIUM) throw new org.overengineer.bettacraft.gametest.framework.GameTestFailure("no terrarium: " + m);
         return c;
     }
 

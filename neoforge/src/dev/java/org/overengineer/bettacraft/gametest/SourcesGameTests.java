@@ -8,15 +8,15 @@ import java.util.Set;
 import java.util.random.RandomGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.Critter;
 import org.overengineer.bettacraft.critters.NetCatching;
@@ -148,14 +148,14 @@ public final class SourcesGameTests {
         var rnd = h.getLevel().getRandom();
         // every offer of the table reaches the trader (NeoForge builds his lists from the WandererTradesEvent)
         Set<VillagerTrades.ItemListing> registered = new HashSet<>();
-        for (int level = 1; level <= 2; level++) registered.addAll(List.of(VillagerTrades.WANDERING_TRADER_TRADES.get(level)));
+        for (int level = 1; level <= 2; level++) registered.addAll(List.of(org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level)));
         for (TraderOffers.Offer o : TraderOffers.all()) {
             h.assertTrue(registered.contains(o.gatedListing()), "offer " + o.id() + " is not among the trader's listings");
-            boolean usual = List.of(VillagerTrades.WANDERING_TRADER_TRADES.get(1)).contains(o.gatedListing());
+            boolean usual = List.of(org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(1)).contains(o.gatedListing());
             h.assertTrue(usual == (o.slot() == TraderOffers.Slot.USUAL), "offer " + o.id() + " in the wrong slot");
             Set<String> seen = new HashSet<>();
             for (int i = 0; i < 60; i++) {
-                MerchantOffer m = o.listing().getOffer(trader, rnd);
+                MerchantOffer m = o.listing().getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, rnd);
                 if (m == null) continue;
                 String t = target(m.getResult());
                 int n = count(m.getResult()), price = m.getBaseCostA().getCount();

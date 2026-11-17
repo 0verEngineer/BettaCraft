@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.LifeStage;
 import org.overengineer.bettacraft.entity.tankmate.TankmateCare;
@@ -64,7 +65,7 @@ public final class SeahorseGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water, salt);
         c.getTank().setWaterTemp(temp);
         c.getTank().setTargetTemp(temp);
@@ -75,7 +76,7 @@ public final class SeahorseGameTests {
         var w = new TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(new Vec3((w.box().minX + w.box().maxX) / 2, w.box().minY + 0.3, (w.box().minZ + w.box().maxZ) / 2), 0.35, 0.1, 0.7);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), female, stage, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
@@ -91,7 +92,7 @@ public final class SeahorseGameTests {
     }
 
     private static InteriorRegion region(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         return InteriorManager.ensureRegion(h.getLevel(), c);
     }
 
@@ -168,13 +169,13 @@ public final class SeahorseGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         try {
-            sp.teleportTo(in, r.toWorld(2, 0, 2).getX() + 0.5, r.toWorld(2, 0, 2).getY(), r.toWorld(2, 0, 2).getZ() + 0.5, 0F, 0F);
+            sp.teleportTo(in, r.toWorld(2, 0, 2).getX() + 0.5, r.toWorld(2, 0, 2).getY(), r.toWorld(2, 0, 2).getZ() + 0.5, java.util.Set.of(), 0F, 0F, true);
             BlockPos at = r.toWorld(20, 0, 8).below();
             ItemStack pump = new ItemStack(ModItems.FLOW_PUMP.get());
             sp.setItemInHand(InteractionHand.MAIN_HAND, pump);
             sp.gameMode.useItemOn(sp, in, pump, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(at).add(0, 0.5, 0), Direction.UP, at, false));
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         TankmateEntity a = add(h, c, TankmateSpecies.DWARF_SEAHORSE, false, LifeStage.ADULT);
         TankmateEntity b = add(h, calm, TankmateSpecies.DWARF_SEAHORSE, false, LifeStage.ADULT);

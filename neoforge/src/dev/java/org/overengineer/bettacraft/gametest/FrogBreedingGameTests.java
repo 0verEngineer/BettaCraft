@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -11,8 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -52,7 +53,7 @@ public final class FrogBreedingGameTests {
     private FrogBreedingGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     private static TankBlockEntity tank(GameTestHelper h, int x, int z, int sx, int sz, float temp) {
@@ -65,18 +66,18 @@ public final class FrogBreedingGameTests {
 
     static DwarfFrogEntity frog(GameTestHelper h, TankBlockEntity c, boolean female) {
         ServerLevel level = h.getLevel();
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
-        if (f == null) throw new GameTestAssertException("no frog");
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (f == null) throw new GameTestFailure("no frog");
         f.setFemale(female);
         ItemStack bag = FishBagItem.fillWith(f);
         f.discard();
         var err = TankInhabitants.insert(level, c, bag, ModEntities.DWARF_FROG.get(), null, 0L);
-        if (err != null) throw new GameTestAssertException("frog in: " + err.getString());
+        if (err != null) throw new GameTestFailure("frog in: " + err.getString());
         DwarfFrogEntity found = null;
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
             if (e instanceof DwarfFrogEntity d && d.isFemale() == female && !d.inAmplexus()) found = d;
         }
-        if (found == null) throw new GameTestAssertException("no frog in the tank");
+        if (found == null) throw new GameTestFailure("no frog in the tank");
         found.makeReadyForTest();
         return found;
     }
@@ -251,13 +252,13 @@ public final class FrogBreedingGameTests {
     public static void oldFrogsLoadWithASexAndBroodIsSaved(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         for (int i = 0; i < 6; i++) {
-            DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+            DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             CompoundTag tag = new CompoundTag();
             tag.merge(NbtCompat.saveEntityWithoutId(f));
             tag.getCompoundOrEmpty("frog").remove("female");
             tag.getCompoundOrEmpty("frog").remove("young_days");
-            DwarfFrogEntity g = ModEntities.DWARF_FROG.get().create(level);
-            g.load(tag);
+            DwarfFrogEntity g = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            org.overengineer.bettacraft.util.NbtCompat.loadEntity(g, tag);
             boolean expected = (f.getUUID().getLeastSignificantBits() & 1L) == 1L;
             check(g.getUUID().equals(f.getUUID()) && g.isFemale() == expected && g.isAdult(), "old frog: sex from the UUID, grown");
             CompoundTag again = new CompoundTag();
@@ -266,11 +267,11 @@ public final class FrogBreedingGameTests {
             f.discard();
             g.discard();
         }
-        DwarfFrogEntity young = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity young = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         young.makeFroglet();
         young.setFemale(true);
         ItemStack bag = FishBagItem.fillWith(young);
-        DwarfFrogEntity back = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity back = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         back.loadFromBucketTag(bag.get(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA).copyTag());
         check(back.isFemale() && !back.isAdult() && back.sizeFactor() < 1F, "a froglet in a bag stays a young female");
         young.discard();
@@ -317,8 +318,8 @@ public final class FrogBreedingGameTests {
         TankmateEntity old = TankmateBreeding.spawn(level, c, s, new TankmateGenes("gold", "balloon"), true, LifeStage.ADULT, 2, p);
         CompoundTag tag = new CompoundTag();
         tag.merge(NbtCompat.saveEntityWithoutId(old));
-        TankmateEntity loaded = ModEntities.TANKMATES.get(s).get().create(level);
-        loaded.load(tag);
+        TankmateEntity loaded = ModEntities.TANKMATES.get(s).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        org.overengineer.bettacraft.util.NbtCompat.loadEntity(loaded, tag);
         check(loaded.genes().a().equals("gold") && loaded.genes().b().equals("balloon") && loaded.variety().equals("gold") && loaded.generation() == 2,
                 "the old ram loads unchanged: " + loaded.genes().text());
         loaded.discard();

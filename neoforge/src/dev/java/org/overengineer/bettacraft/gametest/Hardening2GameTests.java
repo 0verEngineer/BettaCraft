@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.command.ForeignCommand;
 import org.overengineer.bettacraft.foreign.ForeignProfile;
@@ -45,19 +46,19 @@ public final class Hardening2GameTests {
     @GameTest(template = EMPTY)
     public static void glassMobKeepsItsMarkWhenConverted(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        Skeleton s = EntityType.SKELETON.create(level);
-        if (s == null) throw new GameTestAssertException("no skeleton");
+        Skeleton s = EntityType.SKELETON.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        if (s == null) throw new GameTestFailure("no skeleton");
         Vec3 at = h.absoluteVec(new Vec3(4.5, 2, 4.5));
         s.snapTo(at.x, at.y, at.z, 0, 0);
         level.addFreshEntity(s);
         GlassMobs.prepare(s);
         h.assertTrue(GlassMobs.isGlassMob(s), "marked");
         // what Skeleton#doFreezeConversion does
-        Stray n = s.convertTo(EntityType.STRAY, true);
-        if (n == null) throw new GameTestAssertException("no conversion");
+        Stray n = s.convertTo(EntityType.STRAY, net.minecraft.world.entity.ConversionParams.single(s, true, true), x -> {});
+        if (n == null) throw new GameTestFailure("no conversion");
         GameTestCompat.converted(s, n);
         h.assertTrue(GlassMobs.isGlassMob(n), "the stray carries the mark of the skeleton");
-        n.kill();
+        n.kill((net.minecraft.server.level.ServerLevel) n.level());
         List<ItemEntity> drops = level.getEntitiesOfClass(ItemEntity.class, n.getBoundingBox().inflate(3));
         h.assertTrue(drops.isEmpty(), "no drops: " + drops.size());
         h.succeed();
@@ -68,7 +69,7 @@ public final class Hardening2GameTests {
     public static void waterChangerChangesNowOncePerSecond(GameTestHelper h) {
         h.setBlock(new BlockPos(2, 2, 2), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
         if (!(h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(2, 2, 2))) instanceof WaterChangerBlockEntity be)) {
-            throw new GameTestAssertException("no water changer");
+            throw new GameTestFailure("no water changer");
         }
         long now = h.getLevel().getGameTime();
         h.assertTrue(be.manualChangeAllowed(now), "the first one runs");
@@ -87,7 +88,7 @@ public final class Hardening2GameTests {
             h.assertTrue(ok == ModNetwork.TEMPLATE_REQUESTS_PER_SECOND, "answered " + ok + " of 100 in one second");
             h.succeed();
         } finally {
-            p.getServer().getPlayerList().remove(p);
+            p.level().getServer().getPlayerList().remove(p);
         }
     }
 
@@ -100,7 +101,7 @@ public final class Hardening2GameTests {
         BlockPos pipe = h.absolutePos(new BlockPos(3, 2, 1));
         h.assertTrue(level.getBlockState(pipe).getValue(PipeBlock.SIDES.get(Direction.WEST)), "the pipe joins the tank");
         IFluidHandler f = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, pipe, Direction.EAST);
-        if (f == null) throw new GameTestAssertException("no fluid handler on the pipe");
+        if (f == null) throw new GameTestFailure("no fluid handler on the pipe");
         h.assertTrue(t.getTank().waterMb() > 0, "the tank has water");
         FluidStack sea = f.drain(new FluidStack(ModFluids.SEA_WATER.get(), 100), IFluidHandler.FluidAction.SIMULATE);
         h.assertTrue(sea.isEmpty(), "asked for sea water, got " + sea.getAmount() + " mB of " + sea.getFluid());

@@ -1,9 +1,10 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -26,8 +27,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
@@ -76,7 +77,7 @@ public final class AquaticPlantGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         if (water > 0) TankInteractions.changeWater(h.getLevel(), c, water);
         c.getTank().setWaterTemp(26F);
         c.getTank().setTargetTemp(26F);
@@ -85,7 +86,7 @@ public final class AquaticPlantGameTests {
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel l = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (l == null) throw new GameTestAssertException("interior dimension not loaded");
+        if (l == null) throw new GameTestFailure("interior dimension not loaded");
         return l;
     }
 
@@ -114,7 +115,7 @@ public final class AquaticPlantGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.teleportTo(level, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 0F, false);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         return sp;
     }
 
@@ -148,7 +149,7 @@ public final class AquaticPlantGameTests {
         for (PlantShapes.Voxel v : InteriorPlants.shape(r, p).at(p.stage)) {
             if (v.part() == part && v.y() >= minY) return r.toWorld(p.x + v.x(), p.y + v.y(), p.z + v.z());
         }
-        throw new GameTestAssertException("no " + part + " block in " + p);
+        throw new GameTestFailure("no " + part + " block in " + p);
     }
 
     // ------------------------------------------------------------------ planting
@@ -198,7 +199,7 @@ public final class AquaticPlantGameTests {
             h.assertTrue(h.getLevel().getBlockState(h.absolutePos(new BlockPos(20, 2, 20))).isAir(), "nothing planted outside");
             h.assertTrue(sp.getMainHandItem().getCount() == 1, "item kept outside");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -314,7 +315,7 @@ public final class AquaticPlantGameTests {
                     new BlockHitResult(new Vec3(point.x, point.y, t.min().getZ()), Direction.NORTH, glass, false));
             InteriorPlant aimed = InteriorPlants.aimedAt(in, r, t, sp.getEyePosition(), sp.getViewVector(1.0F));
             h.assertTrue(p.stage == 4, "trimmed from outside: " + p.stage + " (aimed at " + aimed + " from " + sp.getEyePosition() + " looking "
-                    + sp.getViewVector(1.0F) + " at " + point + ", in " + sp.level().dimension().location() + ")");
+                    + sp.getViewVector(1.0F) + " at " + point + ", in " + sp.level().dimension().identifier() + ")");
             h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu");
             // looking at an empty part of the tank: nothing happens
             sp.teleportTo(level, t.min().getX() + 0.2, eye.y - sp.getEyeHeight(), eye.z, java.util.Set.of(), 0F, 0F, false);
@@ -323,7 +324,7 @@ public final class AquaticPlantGameTests {
                     new BlockHitResult(new Vec3(t.min().getX() + 0.2, eye.y, t.min().getZ()), Direction.NORTH, t.min(), false));
             h.assertTrue(p.stage == 4 && !(sp.containerMenu instanceof TankMenu), "empty spot: no trim, no menu");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -354,7 +355,7 @@ public final class AquaticPlantGameTests {
             InteriorPlant again = r.plants().at(8, 1, 8);
             h.assertTrue(again != null && again.stage == 4 && again.blocks > 10, "replanted at its size: " + again);
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -367,7 +368,7 @@ public final class AquaticPlantGameTests {
                 return st;
             }
         }
-        throw new GameTestAssertException("no " + s + " item dropped at " + at);
+        throw new GameTestFailure("no " + s + " item dropped at " + at);
     }
 
     /** Breaking the tank block a plant is rooted in drops the plant (with its stage); merging tanks keeps the plants. */
@@ -392,7 +393,7 @@ public final class AquaticPlantGameTests {
         boolean found = false;
         for (ItemEntity e : level.getEntitiesOfClass(ItemEntity.class, new AABB(merged.getTank().min()).inflate(3))) {
             if (e.getItem().getItem() instanceof AquaticPlantItem ai && ai.species() == PlantSpecies.CRYPT_BROWN && AquaticPlantItem.stage(e.getItem()) == 6) found = true;
-            if (e.getItem().getItem() instanceof AquaticPlantItem && e.getItem().getCount() > 1) throw new GameTestAssertException("one item per plant, not per block");
+            if (e.getItem().getItem() instanceof AquaticPlantItem && e.getItem().getCount() > 1) throw new GameTestFailure("one item per plant, not per block");
         }
         h.assertTrue(found, "plant dropped with its stage");
         h.succeed();
@@ -497,8 +498,8 @@ public final class AquaticPlantGameTests {
         var rnd = h.getLevel().getRandom();
         java.util.Set<Item> generic = new java.util.HashSet<>(), rare = new java.util.HashSet<>();
         for (int level = 1; level <= 2; level++) {
-            for (VillagerTrades.ItemListing l : VillagerTrades.WANDERING_TRADER_TRADES.get(level)) {
-                var offer = l.getOffer(trader, rnd);
+            for (VillagerTrades.ItemListing l : org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level)) {
+                var offer = l.getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, rnd);
                 if (offer != null) (level == 1 ? generic : rare).add(offer.getResult().getItem());
             }
         }
@@ -528,7 +529,7 @@ public final class AquaticPlantGameTests {
             h.assertTrue(count(sp, item(PlantSpecies.JAVA_MOSS).getItem()) == 1, "no Java moss away from water");
         } finally {
             ServerConfig.AQUATIC_MOSS_CHANCE.set(saved);
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -561,7 +562,7 @@ public final class AquaticPlantGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.teleportTo(level, water.getX() + 0.5, water.getY() + 2.6 - sp.getEyeHeight(), water.getZ() + 0.5, java.util.Set.of(), 0F, 90F, false);
         sp.setXRot(90F);
-        sp.getInventory().getSelectedSlot() = 8;
+        sp.getInventory().setSelectedSlot(8);
         try {
             ServerConfig.AQUATIC_BOTTLE_CHANCE.set(1.0);
             ServerConfig.PLANTS_BOTTLE_CHANCE.set(0.0);
@@ -583,7 +584,7 @@ public final class AquaticPlantGameTests {
         } finally {
             ServerConfig.AQUATIC_BOTTLE_CHANCE.set(saved);
             ServerConfig.PLANTS_BOTTLE_CHANCE.set(savedDuck);
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -599,7 +600,7 @@ public final class AquaticPlantGameTests {
             h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu");
             h.assertTrue(c.getTank().waterMb() == 2000, "tank unchanged");
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }

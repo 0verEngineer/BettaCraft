@@ -87,7 +87,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class DevShowcase {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/showcase");
-    private static final boolean ENABLED = Boolean.getBooleanOr("bettacraft.showcase", false);
+    private static final boolean ENABLED = Boolean.getBoolean("bettacraft.showcase");
     private static final int GAP = 4, ROW = 9;
     private static int ticks;
     private static int haltAt = -1;
@@ -170,11 +170,11 @@ public final class DevShowcase {
 
     private static void prepare(MinecraftServer server, ServerLevel level) {
         GameRules rules = level.getGameRules();
-        rules.getRule(GameRules.RULE_DAYLIGHT).set(false, server);
-        rules.getRule(GameRules.SPAWN_MOBS).set(false, server);
-        rules.getRule(GameRules.RULE_WEATHER_CYCLE).set(false, server);
-        rules.getRule(GameRules.RULE_DO_PATROL_SPAWNING).set(false, server);
-        rules.getRule(GameRules.RULE_DO_TRADER_SPAWNING).set(false, server);
+        rules.set(GameRules.ADVANCE_TIME, false, server);
+        rules.set(GameRules.SPAWN_MOBS, false, server);
+        rules.set(GameRules.ADVANCE_WEATHER, false, server);
+        rules.set(GameRules.SPAWN_PATROLS, false, server);
+        rules.set(GameRules.SPAWN_WANDERING_TRADERS, false, server);
         level.setDayTime(6000);
         level.setWeatherParameters(120000, 0, false, false);
         // M21.5: power off in this world (filters, heaters and pumps run without FE)
@@ -186,7 +186,7 @@ public final class DevShowcase {
         BlockPos spawn = level.getRespawnData().pos();
         int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, spawn.getX(), spawn.getZ());
         origin = new BlockPos(spawn.getX() + 3, ground, spawn.getZ() + 6);
-        level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
+        level.setRespawnData(net.minecraft.world.level.storage.LevelData.RespawnData.of(level.dimension(), new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F, 0F));
         // keep the whole showcase loaded while it is built (the animals are entities)
         for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
             for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 20 * ROW + 16 >> 4) + 1; cz++) { // M30: the big tanks of the last row
@@ -322,7 +322,7 @@ public final class DevShowcase {
                         r.nextFloat() * 6.28F);
             }
             c.markTankChanged();
-            name(level, at, de(TankPlants.item(t).getDescriptionId()));
+            name(level, at, de(TankPlants.item(t).getItem().getDescriptionId()));
             at = at.east(2 + GAP);
         }
         // 6: decoration
@@ -438,7 +438,7 @@ public final class DevShowcase {
         List<Identifier> stones = new ArrayList<>();
         for (var p : org.overengineer.bettacraft.equipment.CabinetStones.VANILLA) stones.add(blockOf(p.stone()));
         int modded = 0;
-        for (var p : org.overengineer.bettacraft.equipment.CabinetStones.all(level.getRecipeManager(), level.registryAccess())) {
+        for (var p : org.overengineer.bettacraft.equipment.CabinetStones.all(level.recipeAccess(), level.registryAccess())) {
             if (!p.stoneId().getNamespace().equals("minecraft") && modded++ < 6) stones.add(blockOf(p.stone()));
         }
         for (Identifier id : stones) {
@@ -644,7 +644,7 @@ public final class DevShowcase {
     /** M35: a land animal of another mod from its terrarium box into a tank. */
     private static void foreign(ServerLevel level, TankBlockEntity c, String id) {
         var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getOptional(net.minecraft.resources.Identifier.parse(id)).orElse(null);
-        var e = type != null ? type.create(level) : null;
+        var e = type != null ? type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED) : null;
         if (e == null) return;
         ItemStack box = org.overengineer.bettacraft.terrarium.TerrariumBoxItem.fillWith(e);
         e.discard();
@@ -654,7 +654,7 @@ public final class DevShowcase {
     }
 
     private static void herp(ServerLevel level, TankBlockEntity c, org.overengineer.bettacraft.terrarium.HerpSpecies s, boolean female, int variety) {
-        var e = org.overengineer.bettacraft.registry.ModEntities.herp(s).create(level);
+        var e = org.overengineer.bettacraft.registry.ModEntities.herp(s).create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return;
         e.setFemale(female);
         e.setVariety(variety);
@@ -667,7 +667,7 @@ public final class DevShowcase {
     }
 
     private static void glassMob(ServerLevel level, TankBlockEntity c, net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob> type, boolean baby) {
-        var m = type.create(level);
+        var m = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (m == null) return;
         if (baby) m.setBaby(true);
         if (m instanceof net.minecraft.world.entity.monster.Slime s) s.setSize(1, true);
@@ -932,7 +932,7 @@ public final class DevShowcase {
     }
 
     private static void frog(ServerLevel level, TankBlockEntity c) {
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (f == null) return;
         ItemStack bag = FishBagItem.fillWith(f);
         f.discard();

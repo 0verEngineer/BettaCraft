@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.tank.TankBlock;
@@ -44,7 +44,7 @@ public final class TankGameTests {
 
     private static TankBlockEntity controller(GameTestHelper h, BlockPos rel) {
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(rel));
-        if (c == null) throw new net.minecraft.gametest.framework.GameTestAssertException("no controller for " + rel);
+        if (c == null) throw new org.overengineer.bettacraft.gametest.framework.GameTestFailure("no controller for " + rel);
         return c;
     }
 

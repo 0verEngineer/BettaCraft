@@ -163,7 +163,7 @@ final class DevClientSmokeReadme {
                 TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(0, 1, 0));
                 InteriorRegion r = InteriorManager.ensureRegion(p.level(), c);
                 BlockPos at = r.toWorld(48, 16, 1);
-                p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 18F);
+                p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 18F, true);
             }));
             then(160, () -> shot("inside"));
             then(1, () -> { if (!shaders) sequence("inside", 70); });
@@ -203,7 +203,7 @@ final class DevClientSmokeReadme {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         RandomSource r = RandomSource.create(1800);
         base = p.blockPosition().offset(-4, 0, 24);
         // the room: plank floor, a back wall with a dark skirting, a long spruce cabinet counter
@@ -322,9 +322,9 @@ final class DevClientSmokeReadme {
     private void prepareShowcase(ServerPlayer p) {
         ServerLevel level = p.level();
         var rules = level.getGameRules();
-        rules.getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
-        rules.getRule(net.minecraft.world.level.gamerules.GameRules.RULE_WEATHER_CYCLE).set(false, p.server);
-        rules.getRule(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS).set(false, p.server);
+        rules.set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
+        rules.set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_WEATHER, false, p.level().getServer());
+        rules.set(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS, false, p.level().getServer());
         level.setWeatherParameters(1_000_000, 0, false, false);
         level.setDayTime(6000);
         BlockPos spawn = level.getRespawnData().pos();
@@ -807,7 +807,7 @@ final class DevClientSmokeReadme {
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
-            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true);
             else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
@@ -845,16 +845,16 @@ final class DevClientSmokeReadme {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
+        mc.getToastManager().clear();
         String file = "readme_" + name + (shaders ? "_shaders" : "") + ".png";
-        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 
     /** Starts a frame sequence of {@code frames} pictures, one per game tick. */
     private void sequence(String name, int frames) {
         // quarter speed while recording: four times as many drawn frames per game tick, so every picture is close to its
         // tick (the animations of the mod run on game time); the steps wait until the sequence is complete
-        server(p -> p.server.tickRateManager().setTickRate(5F));
+        server(p -> p.level().getServer().tickRateManager().setTickRate(5F));
         seqName = name;
         seqLeft = frames;
         seqIndex = 0;
@@ -868,15 +868,15 @@ final class DevClientSmokeReadme {
         if (t < seqNext) return;
         seqNext += 1;
         if (t > seqNext) seqNext = Math.floor(t) + 1; // dropped behind: keep the pace of the game
-        mc.getToasts().clear();
+        mc.getToastManager().clear();
         if (seqHook != null) {
             var hook = seqHook;
             int i = seqIndex;
             server(p -> hook.accept(p, i));
         }
         String file = String.format(java.util.Locale.ROOT, "readme_anim_%s_%03d.png", seqName, seqIndex++);
-        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), c -> {});
-        if (--seqLeft == 0) server(p -> p.server.tickRateManager().setTickRate(20F));
+        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), 1, c -> {});
+        if (--seqLeft == 0) server(p -> p.level().getServer().tickRateManager().setTickRate(20F));
         if (seqLeft == 0) LOGGER.info("[smoketest] README sequence {} done ({} frames)", seqName, seqIndex);
     }
 }

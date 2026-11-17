@@ -123,7 +123,7 @@ public final class DevSmokeM7 {
         int expected = inserted.size();
         if (loaded(BetterFishTanksCompat.MOD_ID)) {
             // a betta through the BFT fish bag, and out again into an empty BFT bag
-            BettaEntity b = ModEntities.BETTA.get().create(level);
+            BettaEntity b = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             BettaData d = BettaData.create(BettaGenome.randomDomestic(level.getRandom()), false, level.getGameTime());
             b.loadFromBucketTag(BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d).get(DataComponents.BUCKET_ENTITY_DATA).copyTag());
             ItemStack bag = FishContainers.fill(new ItemStack(BuiltInRegistries.ITEM.getValue(FishContainers.BFT_FISH_BAG)), b, null);
@@ -145,8 +145,8 @@ public final class DevSmokeM7 {
         for (Item i : BuiltInRegistries.ITEM) if (new ItemStack(i).is(ModTags.PELLET_FISH)) pelletFish++;
         LOGGER.info("[smoketest] M7 predators {}, blacklist {} entries, {} raw fish for pellets", predators, blacklist.size(), pelletFish);
         if (!predators.contains("minecraft:pufferfish") || pelletFish < 2) throw new IllegalStateException("tags");
-        var biomes = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME).getTag(ModTags.BETTA_SPAWN_BIOMES)
-                .map(s -> s.stream().map(h -> h.unwrapKey().map(k -> k.location().toString()).orElse("?")).toList()).orElse(List.of());
+        var biomes = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME).get(ModTags.BETTA_SPAWN_BIOMES)
+                .map(s -> s.stream().map(h -> h.unwrapKey().map(k -> k.identifier().toString()).orElse("?")).toList()).orElse(List.of());
         LOGGER.info("[smoketest] M7 betta spawn biomes: {}", biomes);
         if (biomes.isEmpty()) throw new IllegalStateException("no spawn biomes");
         if (loaded(BetterFishTanksCompat.MOD_ID)) bftRelease(level, base, fake);

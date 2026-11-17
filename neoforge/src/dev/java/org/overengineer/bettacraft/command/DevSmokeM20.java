@@ -156,7 +156,7 @@ final class DevSmokeM20 {
         Component err = TankInhabitants.insert(level, c, new ItemStack(ModItems.BETTA_BUCKET.get()), ModEntities.BETTA.get(), null, 0L);
         if (err == null) throw new IllegalStateException("M20: a betta went into sea water");
         var info = org.overengineer.bettacraft.compat.info.InfoData.tank(level, p);
-        if (info == null || info.getFloat("salinity") < 30) throw new IllegalStateException("M20: the overlay does not know the salt");
+        if (info == null || info.getFloatOr("salinity", 0F) < 30) throw new IllegalStateException("M20: the overlay does not know the salt");
         // trader offers
         var bag = TankCritters.bagOf(CritterSpecies.HERMIT_CRAB, 3, () -> CritterGenes.WILD, new java.util.Random(3)::nextLong, false);
         if (TankCritters.bagged(bag) == null || TankCritters.bagged(bag).size() != 3) throw new IllegalStateException("M20: hermit crab bag");

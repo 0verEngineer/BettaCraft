@@ -45,7 +45,37 @@ def createClasses = ['CreateDisplays', 'CreateDrive', 'CreateTravel', 'CreateTra
 sourceSets.main.java.exclude(createClasses)
 sourceSets.dev.java.exclude(['org/overengineer/bettacraft/gametest/CreateDeviceGameTests.java',
                              'org/overengineer/bettacraft/gametest/CreateTravelGameTests.java',
+                             'org/overengineer/bettacraft/gametest/CreateDriveGameTests.java',
+                             'org/overengineer/bettacraft/gametest/CreateGameTests.java',
                              'org/overengineer/bettacraft/client/DevClientSmokeM32c.java'])
+// M52b: the GameTest classes of the normal suite (every class with @GameTestHolder) for BettaGameTests, which registers them
+// on the data-driven GameTest system of 1.21.5+ (NeoForge no longer scans the annotation)
+def gameTestListDir = layout.buildDirectory.dir('generated/devresources')
+sourceSets.dev.resources.srcDir(gameTestListDir)
+tasks.register('gameTestList') {
+    def out = gameTestListDir.map { it.file('bettacraft_gametests.txt') }
+    def src = file('src/dev/java')
+    def excluded = sourceSets.dev.java.excludes
+    inputs.dir(src)
+    outputs.file(out)
+    doLast {
+        def names = []
+        src.eachFileRecurse { f ->
+            if (!f.name.endsWith('.java')) return
+            def rel = src.toPath().relativize(f.toPath()).toString().replace(File.separator, '/')
+            if (rel in excluded) return
+            def text = f.getText('UTF-8')
+            if (!(text =~ /(?m)^@GameTestHolder/)) return
+            def pkg = (text =~ /(?m)^package ([\w.]+);/)[0][1]
+            names << pkg + '.' + (f.name - '.java')
+        }
+        names.sort()
+        out.get().asFile.parentFile.mkdirs()
+        out.get().asFile.text = names.join(System.lineSeparator()) + System.lineSeparator()
+        logger.lifecycle("gameTestList: ${names.size()} GameTest classes")
+    }
+}
+tasks.named('processDevResources').configure { dependsOn 'gameTestList' }
 configurations {
     devImplementation.extendsFrom implementation
     devCompileOnly.extendsFrom compileOnly
@@ -73,7 +103,11 @@ def zooGroups = ['aquatic', 'biomes', 'create']
 def withGroup = { String name -> project.hasProperty(name) || integration || (zoo && name in zooGroups) }
 // a group whose mods the run requires (biomes, aquatic: some tests then insist on them); not in a partial CI run
 def requireGroup = { String name -> project.hasProperty(name) || (integration && !project.hasProperty('integrationPartial')) || (zoo && name in zooGroups) }
-def gameTestDir = integration ? 'run/gametest-integration' : zoo ? 'run/gametest-zoo' : 'run/gametest'
+// M52b: every run of this branch (Minecraft 1.21.11) has its game directories under runRoot (default run/1.21.11, -PrunDir=...),
+// never in run/ itself: the worlds, configs and mods folders there are the 1.21.1 ones of master. The folders of the optional
+// mod groups (run/power-mods ...) are only read and stay in run/.
+def runRoot = (project.findProperty('runDir') ?: 'run/1.21.11').toString()
+def gameTestDir = runRoot + (integration ? '/gametest-integration' : zoo ? '/gametest-zoo' : '/gametest')
 
 // Minecraft 1.21.1 ships Java 21. The foojay resolver (settings.gradle) downloads it if missing.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -611,7 +645,8 @@ neoForge {
             if (project.hasProperty('integrationPartial')) systemProperty 'bettacraft.integration.partial', 'true'
             // M42 part b: the zoo tests (gametest/zoo): animals and plants of mods we do not integrate
             if (zoo) systemProperty 'bettacraft.zoo', 'true'
-            // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case) starts with a prefix
+            // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case), method or batch starts with a prefix
+            // (M52b: filtered by BettaGameTests when it registers them)
             if (project.hasProperty('gametests')) systemProperty 'bettacraft.gametest.only', project.property('gametests')
         }
 
@@ -625,7 +660,7 @@ neoForge {
 
         configureEach {
             // the game directories stay in the repository root (run/ ...), whatever the module
-            if (name in ['client', 'server']) gameDirectory = rootProject.file(project.findProperty('runDir') ?: 'run')
+            if (name in ['client', 'server']) gameDirectory = rootProject.file(runRoot)
             // the dev source set (and through it main) is on the class path of every run (M52b: -PnoDev leaves it out, e.g. for
             // runData while the dev sources do not compile)
             sourceSet = project.hasProperty('noDev') ? sourceSets.main : sourceSets.dev
@@ -819,7 +854,7 @@ idea {
 //   -Pzoo (or the task zooTests): run/zoo-mods (M42 part b: mods of the pack with animals and water plants we do not integrate,
 //               see above) plus the groups aquatic, biomes and create, for runClient, runServer and runGameTestServer; not with
 //               -Pintegration (that group holds exactly the integrated mods)
-def runModsDir = rootProject.file('run/mods')
+def runModsDir = rootProject.file(runRoot + '/mods')
 def gameTestModsDir = rootProject.file(gameTestDir + '/mods')
 def extraMods = [
         [dir: rootProject.file('run/shader-mods'), on: project.hasProperty('shaders'), tasks: ['runClient']],
@@ -840,7 +875,7 @@ def extraMods = [
 // -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
 // removed without the flag)
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach { t ->
-    def base = t.name == 'runGameTestServer' ? gameTestDir : 'run'
+    def base = t.name == 'runGameTestServer' ? gameTestDir : runRoot
     def copies = [
             [src: rootProject.file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: rootProject.file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: withGroup('quests')],
             [src: rootProject.file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: rootProject.file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: withGroup('kubejs')],
@@ -856,7 +891,7 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.co
     }
 }
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
-def fmlToml = rootProject.file('run/config/fml.toml')
+def fmlToml = rootProject.file(runRoot + '/config/fml.toml')
 def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }
 tasks.matching { it.name == 'runClient' }.configureEach { t ->
     t.doFirst {
@@ -890,8 +925,8 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestSe
 def oldWorldName = project.findProperty('oldWorld') ?: 'Bettacraft Testwelt M11'
 tasks.matching { it.name == 'runServer' }.configureEach { t ->
     if (project.hasProperty('smoketestOldWorld')) {
-        def src = rootProject.file("run/saves/${oldWorldName}")
-        def dst = rootProject.file('run/oldworld_check')
+        def src = rootProject.file("${runRoot}/saves/${oldWorldName}")
+        def dst = rootProject.file(runRoot + '/oldworld_check')
         t.doFirst {
             if (!src.isDirectory()) throw new GradleException("old world not found: ${src}")
             dst.deleteDir()
@@ -924,7 +959,7 @@ tasks.register('runMultiplayerTest') {
         def logs = rootProject.file('build/mptest')
         logs.deleteDir()
         logs.mkdirs()
-        def runDir = rootProject.file('run')
+        def runDir = rootProject.file(runRoot)
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage are not part of this test; M50: -Pcreate puts
         // Create, Create Aeronautics and Sable on the server and both clients (a tank turns on a bearing, DevSmokeMP)
         def mpCreate = project.hasProperty('create')
@@ -1038,9 +1073,9 @@ tasks.register('buildShowcase') {
         def logs = rootProject.file('build/showcase')
         logs.deleteDir()
         logs.mkdirs()
-        def dir = rootProject.file('run/showcase')
+        def dir = rootProject.file(runRoot + '/showcase')
         dir.mkdirs()
-        def saves = rootProject.file('run/saves')
+        def saves = rootProject.file(runRoot + '/saves')
         saves.mkdirs()
         def world = new File(saves, 'Bettacraft Schaukasten')
         world.deleteDir()
@@ -1084,7 +1119,7 @@ tasks.register('smoketestUpgrade') {
     dependsOn { tasks.named('runServer').get().classpathProvider }
     doLast {
         def worldName = project.findProperty('upgradeWorld') ?: 'Bettacraft Referenz 1.13.1'
-        def src = rootProject.file("run/saves/${worldName}")
+        def src = rootProject.file("${runRoot}/saves/${worldName}")
         if (!new File(src, 'bettacraft_reference.json').exists()) {
             throw new GradleException("reference world missing: ${src} (build it with: bash tools/upgrade/build_reference.sh)")
         }
@@ -1093,7 +1128,7 @@ tasks.register('smoketestUpgrade') {
         def logs = rootProject.file('build/upgrade')
         logs.deleteDir()
         logs.mkdirs()
-        def dir = rootProject.file('run/upgrade')
+        def dir = rootProject.file(runRoot + '/upgrade')
         def saves = new File(dir, 'saves')
         def world = new File(saves, 'upgrade_check')
         world.deleteDir()

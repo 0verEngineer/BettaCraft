@@ -90,13 +90,13 @@ final class DevClientSmokeM217 {
                 int k = i % hotbar.size();
                 p.getInventory().setItem(i, CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), hotbar.get(k)));
             }
-            p.getInventory().getSelectedSlot() = 4;
+            p.getInventory().setSelectedSlot(4);
             p.teleportTo(p.level(), counters.getX() + 6.0, counters.getY(), counters.getZ() - 5.5, java.util.Set.of(), 0F, 12F, false);
         }));
         then(1, () -> {
-            if (mc.player != null) mc.player.getInventory().getSelectedSlot() = 4;
+            if (mc.player != null) mc.player.getInventory().setSelectedSlot(4);
         });
-        then(60, () -> mc.getToasts().clear());
+        then(60, () -> mc.getToastManager().clear());
         then(5, () -> shot("hotbar"));
         // the menu of a stone cabinet (its name in the title) with stone cabinet items in the storage
         then(1, () -> server(p -> {
@@ -159,7 +159,7 @@ final class DevClientSmokeM217 {
         var slot = scr.getMenu().slots.stream().filter(sl -> sl.getItem().is(ModItems.CABINET.get())).skip(4).findFirst().orElse(null);
         if (slot == null) return;
         int x = scr.getGuiLeft() + slot.x + 8, y = scr.getGuiTop() + slot.y + 8;
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), x * scale, y * scale);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
         try {
             for (String f : new String[] {"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -178,7 +178,7 @@ final class DevClientSmokeM217 {
         base = p.blockPosition().offset(-30, 3, 440);
         List<Identifier> ids = new ArrayList<>();
         for (CabinetStones.Pair s : CabinetStones.VANILLA) ids.add(block(s.stone()));
-        List<CabinetStones.Pair> all = CabinetStones.all(level.getRecipeManager(), level.registryAccess());
+        List<CabinetStones.Pair> all = CabinetStones.all(level.recipeAccess(), level.registryAccess());
         int modded = 0;
         for (CabinetStones.Pair s : all) {
             if (!s.stoneId().getNamespace().equals("minecraft") && modded < 8) {
@@ -241,7 +241,7 @@ final class DevClientSmokeM217 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -276,7 +276,7 @@ final class DevClientSmokeM217 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_7_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_7_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

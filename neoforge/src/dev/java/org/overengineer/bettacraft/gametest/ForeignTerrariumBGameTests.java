@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -21,8 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.TankTerrain;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
@@ -74,14 +75,14 @@ public final class ForeignTerrariumBGameTests {
     private static void tryInsert(GameTestHelper h, TankBlockEntity c, Animal a, boolean tub, String expectKey, String what) {
         Component err = insert(h, c, container(h, a.type(), tub, false));
         if (expectKey == null) {
-            if (err != null) throw new GameTestAssertException(what + " refused: " + err.getString());
+            if (err != null) throw new GameTestFailure(what + " refused: " + err.getString());
             for (LivingEntity e : ofType(h, c, a.type())) {
                 c.getTank().inhabitants().remove(e.getUUID());
                 TankInhabitants.release(e);
                 e.discard();
             }
         } else if (!says(err, expectKey)) {
-            throw new GameTestAssertException(what + ": expected " + expectKey + ", got " + (err == null ? "accepted" : err.getString()));
+            throw new GameTestFailure(what + ": expected " + expectKey + ", got " + (err == null ? "accepted" : err.getString()));
         }
     }
 
@@ -144,7 +145,7 @@ public final class ForeignTerrariumBGameTests {
         TankInteractions.changeWater(h.getLevel(), sea, 0, 35F);
         sea.getTank().setSalinity(35F);
         TankBlockEntity fresh = ForeignGameTests.tank(h, 8, 2, 3, 3, 3, 25F);
-        Entity e = bunny.create(h.getLevel());
+        Entity e = bunny.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         ItemStack bag = FishBagItem.fillWith(e);
         e.discard();
         // the salt of a foreign profile counts with salt.foreignSalinity = REALISTIC (default LENIENT: no refusal)
@@ -194,10 +195,10 @@ public final class ForeignTerrariumBGameTests {
 
     private static Entity firstOf(GameTestHelper h, String file) {
         ForeignProfile p = ForeignProfiles.files().get(BettaCraft.id(file));
-        if (p == null) throw new GameTestAssertException("no shipped profile " + file);
+        if (p == null) throw new GameTestFailure("no shipped profile " + file);
         for (Identifier id : p.entities()) {
             var t = BuiltInRegistries.ENTITY_TYPE.getOptional(id);
-            if (t.isPresent()) return t.get().create(h.getLevel());
+            if (t.isPresent()) return t.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         }
         return null;
     }

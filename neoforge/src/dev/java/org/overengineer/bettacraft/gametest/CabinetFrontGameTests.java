@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.gametest;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -167,13 +167,13 @@ public final class CabinetFrontGameTests {
             h.assertTrue("single".equals(upd.getStringOr("front", "")) && !upd.getBooleanOr("joints", false), "update tag: " + upd);
             CompoundTag saved = cab.saveWithFullMetadata(level.registryAccess());
             CabinetBlockEntity copy = new CabinetBlockEntity(h.absolutePos(mid), h.getBlockState(mid));
-            copy.loadWithComponents(saved, level.registryAccess());
+            copy.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), saved));
             h.assertTrue(copy.frontSetting() == CabinetFrontSetting.SINGLE && !copy.joints(), "saved and loaded");
             // an old cabinet (no front, no joints in its data): auto with joints
             saved.remove("front");
             saved.remove("joints");
             CabinetBlockEntity old = new CabinetBlockEntity(h.absolutePos(mid), h.getBlockState(mid));
-            old.loadWithComponents(saved, level.registryAccess());
+            old.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), saved));
             h.assertTrue(old.frontSetting() == CabinetFrontSetting.AUTO && old.joints(), "old cabinet: auto, joints");
             // broken: the drop keeps the setting, placed again (alone) the block shows it
             List<ItemStack> drops = Block.getDrops(h.getBlockState(mid), level, h.absolutePos(mid), cab);
@@ -199,7 +199,7 @@ public final class CabinetFrontGameTests {
             menu.clickMenuButton(sp, CabinetMenu.BUTTON_JOINTS);
             h.assertTrue("DLRD".equals(fronts(h, 2, 3, 4)) && h.getBlockState(mid).getValue(CabinetBlock.JOINTS), "auto again: " + fronts(h, 2, 3, 4));
         } finally {
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         h.succeed();
     }
@@ -229,7 +229,7 @@ public final class CabinetFrontGameTests {
             h.assertTrue(cab.frontSetting() == CabinetFrontSetting.SINGLE && cab.joints(), "off: the setting is kept");
         } finally {
             Features.set(Feature.CABINET_FRONTS, feature);
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
         }
         CabinetBlockEntity.refreshAllFronts();
         h.assertTrue(h.getBlockState(at).getValue(CabinetBlock.FRONT) == CabinetFront.SINGLE, "on again: the single door");

@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.util.Perms;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -20,8 +21,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -57,7 +58,7 @@ public final class TankModeGameTests {
 
     private static ServerLevel interiorLevel(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -99,7 +100,7 @@ public final class TankModeGameTests {
     }
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new GameTestFailure(what);
     }
 
     // ------------------------------------------------------------------ the water limit
@@ -168,7 +169,7 @@ public final class TankModeGameTests {
         TankClimate.step(h.getLevel(), c, 0.01);
         check(t.terrariumMode() == TerrariumMode.TERRARIUM, "dry: terrarium, got " + t.terrariumMode());
         // the type is saved only when set (old worlds and automatic tanks save nothing new)
-        check(!t.save().getCompound("terrarium").contains("type"), "nothing new saved for an automatic tank");
+        check(!t.save().getCompoundOrEmpty("terrarium").contains("type"), "nothing new saved for an automatic tank");
         h.succeed();
     }
 
@@ -234,7 +235,7 @@ public final class TankModeGameTests {
             check(t.tankMode() == TankModeSetting.TERRARIUM, "the chosen type is kept while the switch is off");
         } catch (RuntimeException e) {
             Features.set(Feature.TANK_MODE, before);
-            sp.getServer().getPlayerList().remove(sp);
+            sp.level().getServer().getPlayerList().remove(sp);
             throw e;
         }
         h.runAfterDelay(WaterLimit.SET_TICKS + 1, () -> {
@@ -262,7 +263,7 @@ public final class TankModeGameTests {
                         && t.tankMode() == TankModeSetting.PALUDARIUM, "out of reach: refused");
             } finally {
                 Features.set(Feature.TANK_MODE, before);
-                sp.getServer().getPlayerList().remove(sp);
+                sp.level().getServer().getPlayerList().remove(sp);
             }
             h.succeed();
         });

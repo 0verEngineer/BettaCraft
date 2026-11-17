@@ -77,7 +77,7 @@ final class DevClientSmokeM51 {
         // the arrival and his offer
         then(1, () -> server(this::arrive));
         for (int i = 0; i < 12; i++) then(20, () -> server(this::faceHim));
-        then(1, () -> mc.setScreen(new net.minecraft.client.gui.screens.ChatScreen("")));
+        then(1, () -> mc.setScreen(new net.minecraft.client.gui.screens.ChatScreen("", false)));
         then(20, () -> shot("offer_chat"));
         then(1, () -> mc.setScreen(null));
         String lang = mc.options.languageCode;
@@ -137,9 +137,9 @@ final class DevClientSmokeM51 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         level.setDayTime(1500);
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
-        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS).set(false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_WEATHER, false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS, false, level.getServer());
         level.setWeatherParameters(12000, 0, false, false);
         reach(p, false);
         base = p.blockPosition().offset(0, -2, 0);
@@ -241,7 +241,7 @@ final class DevClientSmokeM51 {
     private void lineUp(ServerPlayer p) {
         ServerLevel level = p.level();
         for (int i = 0; i < AquaristEntity.VARIANTS; i++) {
-            AquaristEntity e = ModEntities.HIRED_AQUARIST.get().create(level);
+            AquaristEntity e = ModEntities.HIRED_AQUARIST.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (e == null) continue;
             e.setVariant(i);
             e.setCustomName(null);
@@ -316,7 +316,7 @@ final class DevClientSmokeM51 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -351,7 +351,7 @@ final class DevClientSmokeM51 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m51_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m51_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

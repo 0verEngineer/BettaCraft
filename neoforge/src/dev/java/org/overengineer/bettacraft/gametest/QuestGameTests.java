@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -16,8 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.api.ApiEvents;
 import org.overengineer.bettacraft.api.BettacraftApi;
@@ -72,13 +73,13 @@ public final class QuestGameTests {
 
     private static Object questFile() throws ReflectiveOperationException {
         Object file = Class.forName("dev.ftb.mods.ftbquests.quest.ServerQuestFile").getField("INSTANCE").get(null);
-        if (file == null) throw new GameTestAssertException("FTB Quests has no quest file");
+        if (file == null) throw new GameTestFailure("FTB Quests has no quest file");
         return file;
     }
 
     private static Object chapter() throws ReflectiveOperationException {
         for (Object c : (List<?>) call(questFile(), "getAllChapters")) if ("bettacraft".equals(call(c, "getFilename"))) return c;
-        throw new GameTestAssertException("no chapter bettacraft (copied into run/gametest/config/ftbquests?)");
+        throw new GameTestFailure("no chapter bettacraft (copied into run/gametest/config/ftbquests?)");
     }
 
     /** Quest name (from the title key) -> quest. */
@@ -159,14 +160,14 @@ public final class QuestGameTests {
             h.assertTrue(deps >= QUESTS - 1 && items >= 40 && advancements >= 45 && itemRewards >= 30,
                     "dependencies " + deps + ", items " + items + ", advancements " + advancements + ", item rewards " + itemRewards);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("FTB Quests API changed: " + e);
+            throw new GameTestFailure("FTB Quests API changed: " + e);
         }
         h.succeed();
     }
 
     private static void grant(ServerPlayer p, String id) {
-        var holder = p.server.getAdvancements().get(BettaCraft.id(id));
-        if (holder == null) throw new GameTestAssertException("no advancement " + id);
+        var holder = p.level().getServer().getAdvancements().get(BettaCraft.id(id));
+        if (holder == null) throw new GameTestFailure("no advancement " + id);
         for (String c : holder.value().criteria().keySet()) p.getAdvancements().award(holder, c);
     }
 
@@ -197,18 +198,18 @@ public final class QuestGameTests {
                         Object known = file.getClass().getMethod("getTeamData", net.minecraft.world.entity.player.Player.class).invoke(file, sp);
                         boolean start = (boolean) team.getClass().getMethod("canStartTasks", q.get(n).getClass()).invoke(team, q.get(n));
                         boolean submit = (boolean) task.getClass().getMethod("canSubmit", team.getClass(), ServerPlayer.class).invoke(task, team, sp);
-                        throw new GameTestAssertException(n + " not completed from the advancement the player had (team of the player " + known
+                        throw new GameTestFailure(n + " not completed from the advancement the player had (team of the player " + known
                                 + ", may start " + start + ", task can submit " + submit + ")");
                     }
                     h.assertTrue(!(boolean) completed.invoke(team, q.get("food_bred")), "food_bred not (no advancement)");
                     QuestAdv.gone(h, sp);
                 } catch (ReflectiveOperationException e) {
-                    throw new GameTestAssertException("FTB Quests API changed: " + e);
+                    throw new GameTestFailure("FTB Quests API changed: " + e);
                 }
             });
         } catch (ReflectiveOperationException e) {
             QuestAdv.gone(h, sp);
-            throw new GameTestAssertException("FTB Quests API changed: " + e);
+            throw new GameTestFailure("FTB Quests API changed: " + e);
         }
     }
 
@@ -263,7 +264,7 @@ public final class QuestGameTests {
             h.assertTrue(!back.getBooleanOr("invisible", false) && !back.getBooleanOr("optional", false), "shown and required again");
             assertShownByTags(h, q, "tankmates on again");
         } catch (ReflectiveOperationException e) {
-            throw new GameTestAssertException("FTB Quests API changed: " + e);
+            throw new GameTestFailure("FTB Quests API changed: " + e);
         } finally {
             Features.set(Feature.TANKMATES, saved);
             ApiEvents.featuresChanged(h.getLevel().getServer());

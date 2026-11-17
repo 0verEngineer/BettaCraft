@@ -80,13 +80,13 @@ final class DevSmokeM12 {
             if (e.getValue().get() == null) throw new IllegalStateException("M12: item " + e.getKey() + " missing");
         }
         boolean frogbit = false, red = false;
-        for (int lv = 1; lv <= 2; lv++) {
-            for (VillagerTrades.ItemListing l : VillagerTrades.WANDERING_TRADER_TRADES.get(lv)) {
+        for (var tradePool : VillagerTrades.WANDERING_TRADER_TRADES) {
+            for (VillagerTrades.ItemListing l : tradePool.getLeft()) {
                 {
                     // M33: the listings are wrapped by their feature switches; the plant ones need no trader
                     net.minecraft.world.item.trading.MerchantOffer offer;
                     try {
-                        offer = l.getOffer(null, level.getRandom());
+                        offer = l.getOffer(level, null, level.getRandom());
                     } catch (RuntimeException ex) {
                         continue;
                     }

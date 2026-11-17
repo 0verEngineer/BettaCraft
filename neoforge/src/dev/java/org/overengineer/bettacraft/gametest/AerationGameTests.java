@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -20,8 +21,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
@@ -87,7 +88,7 @@ public final class AerationGameTests {
                     TankMultiblock.onTankBlockAdded(h.getLevel(), h.absolutePos(p), null);
                 }
         TankBlockEntity c = TankMultiblock.getController(h.getLevel(), h.absolutePos(new BlockPos(x, y, z)));
-        if (c == null) throw new GameTestAssertException("tank did not form");
+        if (c == null) throw new GameTestFailure("tank did not form");
         TankInteractions.changeWater(h.getLevel(), c, c.getTank().capacityMb(), 0F);
         c.getTank().setWaterTemp(25F);
         c.getTank().setTargetTemp(25F);
@@ -96,7 +97,7 @@ public final class AerationGameTests {
     }
 
     static InteriorRegion region(GameTestHelper h, TankBlockEntity c) {
-        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestAssertException("no interior dimension");
+        if (InteriorManager.interiorLevel(h.getLevel().getServer()) == null) throw new GameTestFailure("no interior dimension");
         return InteriorManager.ensureRegion(h.getLevel(), c);
     }
 
@@ -118,7 +119,7 @@ public final class AerationGameTests {
     static AirPumpBlockEntity pump(GameTestHelper h, TankBlockEntity c, BlockPos rel) {
         h.setBlock(rel, ModBlocks.AIR_PUMP.get().defaultBlockState().setValue(AirPumpBlock.FACING, Direction.NORTH));
         TankEquipment.invalidate(c);
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof AirPumpBlockEntity p)) throw new GameTestAssertException("no air pump");
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof AirPumpBlockEntity p)) throw new GameTestFailure("no air pump");
         return p;
     }
 
@@ -126,7 +127,7 @@ public final class AerationGameTests {
         var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(new Vec3((w.box().minX + w.box().maxX) / 2, w.box().minY + 0.4, (w.box().minZ + w.box().maxZ) / 2), 0.35, 0.1, 0.2);
         TankmateEntity e = TankmateBreeding.spawn(h.getLevel(), c, s, TankmateGenes.wild(s), false, stage, 0, p);
-        if (e == null) throw new GameTestAssertException("could not spawn " + s.id());
+        if (e == null) throw new GameTestFailure("could not spawn " + s.id());
         e.health().feed();
         return e;
     }
