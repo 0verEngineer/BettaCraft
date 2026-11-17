@@ -373,6 +373,15 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm47')) {
+                // gradlew runClient -Psmoketestm47 : the M47 scene (a normal world with structures: the aquarist villager in a
+                // village next to his breeding basin, his trade menu with a bred betta in the trade slot, the ram forms Black and
+                // German Blue, a frog tank with amplexus, spawn and tadpoles)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m47only', 'true'
+                systemProperty 'bettacraft.smoketest.normalworld', 'true'
+                systemProperty 'bettacraft.smoketest.structures', 'true'
+            }
             if (project.hasProperty('smoketestm46')) {
                 // gradlew runClient -Psmoketestm46 : the M46 scene (the heat mat item lying flat in hand, frames, inventory and JEI;
                 // the wild carpets in a river, a swamp and a jungle pool next to interior carpets; the leopard gecko morphs and

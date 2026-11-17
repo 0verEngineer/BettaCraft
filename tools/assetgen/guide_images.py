@@ -978,6 +978,22 @@ def m46(out_en: Path) -> None:
             print("missing", src)
 
 
+M47_WORLD = {"aquarist_villager": ("bettacraft_m47_aquarist_village", (300, 120, 1180, 840)),
+             "aquarist_trades": ("bettacraft_m47_trade_betta", (366, 314, 916, 646)),
+             "ram_forms": ("bettacraft_m47_rams", (130, 300, 1150, 760)),
+             "frog_breeding": ("bettacraft_m47_frog_spawn_top", (60, 100, 1220, 720)),
+             "frog_amplexus": ("bettacraft_m47_amplexus", (240, 260, 1000, 640))}
+
+
+def m47(out_en: Path) -> None:
+    for name, (shot, box) in M47_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            save(Image.open(src).convert("RGB").crop(box), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -992,6 +1008,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m47"]:
+        m47(out_en)
+        return 0
     if sys.argv[1:] == ["m46"]:
         m46(out_en)
         return 0
