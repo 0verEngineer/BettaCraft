@@ -12,12 +12,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:book"
-    },
-    {
-      "item": "bettacraft:betta_pellets"
-    }
+    "minecraft:book",
+    "bettacraft:betta_pellets"
   ],
   "result": {
     "count": 1,

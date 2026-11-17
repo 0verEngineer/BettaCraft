@@ -625,7 +625,7 @@ neoForge {
 
         configureEach {
             // the game directories stay in the repository root (run/ ...), whatever the module
-            if (name in ['client', 'server']) gameDirectory = rootProject.file('run')
+            if (name in ['client', 'server']) gameDirectory = rootProject.file(project.findProperty('runDir') ?: 'run')
             // the dev source set (and through it main) is on the class path of every run (M52b: -PnoDev leaves it out, e.g. for
             // runData while the dev sources do not compile)
             sourceSet = project.hasProperty('noDev') ? sourceSets.main : sourceSets.dev

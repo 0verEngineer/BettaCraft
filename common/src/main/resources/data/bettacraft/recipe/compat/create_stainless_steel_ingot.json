@@ -16,21 +16,11 @@
   "type": "create:mixing",
   "heat_requirement": "heated",
   "ingredients": [
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "minecraft:coals"
-    },
-    {
-      "tag": "c:gems/quartz"
-    }
+    "#c:ingots/iron",
+    "#c:ingots/iron",
+    "#c:ingots/iron",
+    "#minecraft:coals",
+    "#c:gems/quartz"
   ],
   "results": [
     {
