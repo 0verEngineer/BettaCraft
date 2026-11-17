@@ -255,7 +255,7 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
   sich nach unseren Regeln, ihre eigene Zucht ist dort unterdrückt. Modpacks können für jedes Tier Profile ergänzen, siehe
   [Profile für Tiere anderer Mods](settings/foreign_profiles.md).
 * **Create und Create Aeronautics:** Aquarien fahren auf Kolben, Lagern, Seilzügen, Portalkränen, Loren, Zügen und
-  Luftschiffen mit, die Tiere verpackt und schwimmend gezeichnet; Creates Rotation treibt Pumpen, Osmoseanlage und
+  Luftschiffen mit, unterwegs gepflegt (auf Luftschiffen schwimmen die Tiere weiter), mit schwappendem Wasser; Creates Rotation treibt Pumpen, Osmoseanlage und
   Futtermaschine an, Display Links zeigen Beckenwerte, Create-Rohre füllen Aquarien, siehe
   [Becken mit Create bewegen](settings/create.md).
 * **Applied Energistics 2 und Refined Storage:** Busse, Interfaces, Importer und Exporter bewegen Futter, Zutaten und

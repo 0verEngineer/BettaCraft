@@ -1053,6 +1053,24 @@ def m49(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M50 scene (DevClientSmokeM50, -Pcreate -Psmoketestm50): the sloshing water of a tank on a minecart contraption in a curve
+# and on a bearing that stopped at once, a tank with live bettas on a Sable airship. ``py guide_images.py m50``.
+M50_WORLD = {"travel_curve": ("bettacraft_m50_cart_curve", (460, 180, 1040, 580)),
+             "travel_stop": ("bettacraft_m50_bearing_stop", (520, 200, 1080, 620)),
+             "travel_airship": ("bettacraft_m50_airship", (330, 230, 950, 720))}
+
+
+def m50(out_en: Path) -> None:
+    for name, (shot, box) in M50_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1067,6 +1085,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m50"]:
+        m50(out_en)
+        return 0
     if sys.argv[1:] == ["m49"]:
         m49(out_en, out_de)
         return 0

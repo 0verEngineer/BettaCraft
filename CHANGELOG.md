@@ -4,6 +4,41 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.40.0-beta.1] - 2026-11-17
+
+Tanks keep living on the road: on Create Aeronautics airships everything runs as on the ground, on Create contraptions the
+tank data is cared for, powered by the contraption; the water sloshes in curves.
+
+### Added
+- **Care on the road** (switch `features.compat.create.travelCare`, on by default):
+  - **Airships (Sable):** a tank on a Create Aeronautics airship lives on. The bettas and the other animals of Bettacraft
+    stay real and swim in it on the ship (Sable keeps them there, our data puts them into `sable:retain_in_sub_level`), the
+    care, breeding and every device on the ship work as on the ground, with power from the ship's cables, batteries and
+    generators (a drive adapter on a shaft). The temperature comes from the air where the ship flies. Animals of Minecraft
+    and other mods still travel packed. Put down, they are back in the tank exactly once.
+  - **Create contraptions** (pistons, bearings, carts, trains): the tank's data is cared for every second of the trip:
+    hunger and health of the packed bettas, tankmates and animals of other mods, the temperature (the air of the biome the
+    contraption is in), the water quality, the filters, heaters and coolers that travel along (interior devices, an
+    external filter or a cabinet glued to the tank). Breeding pauses there, and nobody dies on the road (an animal at the
+    brink waits for the arrival). The tank's log tells about the trip when it arrives.
+  - **Power on the road:** where the devices need FE they take it from the tank's buffer, from drive adapters at the tank
+    that turn with the trip (`createTravel.dynamoFullSpeed`) and from FE batteries of other mods glued next to the tank
+    (`createTravel.batteryFePerTick`); without power they stop and the values slowly get worse.
+  - The animals drawn on a contraption show how they are (a hungry or sick animal swims slower and lower), the tank's sign
+    shows its values on the road (a new packet every two seconds; network version 18).
+- **Sloshing water:** the water of a tank on a contraption or an airship tilts when it speeds up, brakes or takes a curve,
+  swings back after a stop and carries waves; it stays level when a bearing tilts the tank. Client option
+  `render.travelSloshing` (0 = off).
+- Advancement and optional Create quest **Fish Transport with Power** (the chapter has 111 quests).
+
+### Changed
+- Glued external filters and cabinets travel with their tank on a contraption (and run there).
+- `runMultiplayerTest -Pcreate` puts Create on the server and both clients and turns a tank on a bearing.
+
+### Fixed
+- Bettas, tankmates and dwarf frogs that another mod moved together with their tank (Sable putting an airship down) no
+  longer chase the water of the place they came from.
+
 ## [1.39.0-beta.1] - 2026-11-17
 
 A sump under the tank with a refugium and a calcium reactor; brackish water with the archerfish, the mudskipper, mangroves

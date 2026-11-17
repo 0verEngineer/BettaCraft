@@ -249,7 +249,7 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
   profile: in a Bettacraft aquarium they get hungry, mind the water and breed by our rules, and their own breeding is
   suppressed there. Modpacks can add profiles for any animal, see [Profiles for animals of other mods](settings/foreign_profiles.md).
 * **Create and Create Aeronautics:** aquariums travel on pistons, bearings, pulleys, gantries, carts, trains and
-  airships, with their animals packed and drawn swimming; Create's rotation drives the pumps, the reverse osmosis unit
+  airships, cared for on the road (on airships the animals swim on), with sloshing water; Create's rotation drives the pumps, the reverse osmosis unit
   and the food maker, Display Links show tank values, Create pipes fill aquariums, see
   [Moving tanks with Create](settings/create.md).
 * **Applied Energistics 2 and Refined Storage:** buses, interfaces, importers and exporters move food, ingredients and

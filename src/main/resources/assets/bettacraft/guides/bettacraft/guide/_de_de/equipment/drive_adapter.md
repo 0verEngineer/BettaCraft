@@ -67,6 +67,14 @@ Die Schalter `features.compat.create.drive` (Adapter und Schrank-Welle) und `fea
 die Schrank-Welle); die Zahlen im Server-Config-Abschnitt `createDrive`: volle Drehzahl, FE je Anschluss, Obergrenze je
 Becken, Stress pro FE und im Leerlauf, FE pro Feder-Tick und die Seiten, die ein Schrank nutzen darf (`cabinetSides`).
 
+## Unterwegs
+
+An ein Becken auf einer Create-Contraption geklebt, fährt der Adapter mit. Dort dreht sich kein Create-Netz, also dreht
+er sich mit der Fahrt selbst: je schneller er sich bewegt (`createTravel.dynamoFullSpeed`, 8 Blöcke pro Sekunde für die volle
+Leistung), desto mehr lädt er den Puffer des Beckens für die mitfahrenden Filter und Heizer. Auf einem Lager bewegt sich ein
+Adapter an der Achse nicht und gibt nichts. Auf einem Luftschiff von Create Aeronautics arbeitet er wie am Boden, an einer
+Welle, die ein Generator des Schiffs dreht. Siehe [Becken mit Create bewegen](../settings/create.md).
+
 ## Bezug
 
 Herstellung:

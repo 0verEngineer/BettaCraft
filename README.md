@@ -193,6 +193,10 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 - Optional Forge Energy for the equipment, power regulator, own procedural sounds. No generator? A **crank** winds the
   filters, the water devices and the cabinet under a tank, which then powers every device of its tank. With **Create** a
   drive adapter on the tank (or a shaft on its cabinet) powers every device of the tank from rotation, with real stress.
+- **Tanks on the road:** on Create contraptions the care goes on with the tank's data (hunger, temperature, water quality,
+  the filters and heaters that travel along, powered by the tank's buffer, a drive adapter that turns with the trip or FE
+  batteries of the contraption); on Create Aeronautics airships the animals stay real and everything runs as on the ground.
+  The water sloshes in curves and when a contraption stops.
 
 ### Food and live food
 - **Live food cultures:** tubifex worms in a dish with mud and mulm (or the waste water of a tank), daphnia in a barrel
@@ -239,7 +243,7 @@ No other mod is required.
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
 | [Naturalist](https://modrinth.com/mod/naturalist) | small animals welcome, piranha and anglerfish as predators |
 | Fintastic, Aquaculture 2, Fish of Thieves, Critters and Companions, Naturalist, Living Things (profiles) | their fish get our care (hunger, water values, sickness) and our breeding in Bettacraft aquariums, the young inherit their variants; their own breeding is suppressed there; their land and marsh animals (tortoise, alligator, lizard, snake, scorpions, crab, dragonflies, duck, capybara, otter ...) live in terraria and paludaria; also Fish of Thieves (variants inherited, trophies sterile) and Living Things, the insects, mammals and birds of these mods, and big ones by the size rule; deep-sea, giant and hostile animals are refused with a reason; modpacks add profiles for any animal (`data/<namespace>/bettacraft/foreign_animals`) |
-| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; a drive adapter on a tank (or a shaft on its cabinet) powers every device of the tank with real stress; Display Links show tank values; Create pipes fill aquariums |
+| [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals, cared for on the road (live on airships), the water sloshing; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; a drive adapter on a tank (or a shaft on its cabinet) powers every device of the tank with real stress; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients, products and filter media; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
 | [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off |
@@ -307,11 +311,11 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 
 ### Quest chapter
 
-The chapter **Bettacraft** has 96 quests (since 1.36.0; 33 before) in branches from the first tank: bettas and their
+The chapter **Bettacraft** has 111 quests (1.40.0; 33 before 1.36.0) in branches from the first tank: bettas and their
 breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
 reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
 glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water
-change controller, top-off, multiblock filter with filter lines) and two optional Create quests. Tasks are Bettacraft
+change controller, top-off, multiblock filter with filter lines) and three optional Create quests. Tasks are Bettacraft
 advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
 
 - **Updating a pack:** copy the new `bettacraft.snbt` over the old one and run `/ftbquests reload` (or restart). The 33
@@ -348,6 +352,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.co2.enabled` | Fizz |
 | `features.compat.create.contraptions` | Mobile Aquarium (needs create; optional) |
 | `features.compat.create.drive` | Shaft Power (needs create; optional) |
+| `features.compat.create.travelCare` | Fish Transport with Power (needs create; needs a power option; optional) |
 | `features.corals.enabled` | Polyps |
 | `features.corals.reefDosing` | Reef Chemistry |
 | `features.decor.enabled` | Interior Design |

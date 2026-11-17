@@ -64,6 +64,14 @@ The switches `features.compat.create.drive` (the adapter and the cabinet shaft) 
 (only the cabinet shaft); the numbers in the server config section `createDrive`: full speed, FE per input, the limit
 per tank, the stress per FE and when idle, the FE per spring tick and the sides a cabinet may use (`cabinetSides`).
 
+## On the road
+
+Glued to a tank on a Create contraption, the adapter travels along. No Create network turns there, so it turns with the
+trip itself: the faster it moves (`createTravel.dynamoFullSpeed`, 8 blocks per second for the full power), the more it
+charges the tank's buffer for the filters and heaters that travel along. On a bearing an adapter at the axis does not move
+and gives nothing. On a Create Aeronautics airship it works as on the ground, on a shaft a generator of the ship turns. See
+[Moving tanks with Create](../settings/create.md).
+
 ## Obtaining
 
 Crafting:

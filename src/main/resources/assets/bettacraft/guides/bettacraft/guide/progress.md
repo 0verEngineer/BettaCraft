@@ -82,6 +82,7 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="bettacraft:sump" /> | ↳ **Below Deck** | Put a sump into a cabinet under a tank |
 | <ItemImage id="bettacraft:calcium_reactor" /> | ↳ **Dissolved Coral** | A calcium reactor dissolves coral rubble with CO2 into a reef tank |
 | <ItemImage id="minecraft:minecart" /> | ↳ **Mobile Aquarium** | A tank arrives in one piece somewhere else on a contraption |
+| <ItemImage id="minecraft:redstone_torch" /> | ↳ **Fish Transport with Power** | The filter and heater of a travelling tank run on the power of its contraption or airship |
 | <ItemImage id="bettacraft:betta_bucket" /> | **Labyrinth Fish** | Catch a wild betta in a swamp with a bucket or a fish bag |
 | <ItemImage id="bettacraft:swamp_water_bottle" /> | **Murky Waters** | Fill a glass bottle with swamp water |
 | <ItemImage id="bettacraft:artemia_nauplii" /> | ↳ **Microscopic Menu** | Culture infusoria or hatch artemia nauplii for fry |

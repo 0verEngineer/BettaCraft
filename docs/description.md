@@ -162,10 +162,11 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces); CO2 gas of other mods fills CO2 cylinders.
   The facades of AE2, EnderIO, Mekanism Covers and Cable Facades hide the filter pipes.
-- **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals; rotation
+- **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals, cared for on
+  the road (on airships the fish swim on live) and with sloshing water; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
   tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
-- **For modpacks:** an FTB Quests chapter "Bettacraft" (33 quests, English and German), KubeJS events (animal born,
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (111 quests, English and German), KubeJS events (animal born,
   animal died, monitor alarm), JourneyMap waypoints at tanks with a monitor alarm, and `/bettacraft foreign list` to see
   which animals of other mods still need a profile.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes

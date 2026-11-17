@@ -82,6 +82,7 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="bettacraft:sump" /> | ↳ **Unter Deck** | Setze ein Technikbecken in einen Unterschrank unter einem Becken |
 | <ItemImage id="bettacraft:calcium_reactor" /> | ↳ **Gelöste Koralle** | Ein Kalkreaktor löst Korallenbruch mit CO2 in ein Riffbecken |
 | <ItemImage id="minecraft:minecart" /> | ↳ **Mobiles Aquarium** | Ein Becken kommt auf einer Contraption heil an einem anderen Ort an |
+| <ItemImage id="minecraft:redstone_torch" /> | ↳ **Fischtransport mit Strom** | Filter und Heizer eines reisenden Beckens laufen mit dem Strom seiner Contraption oder seines Luftschiffs |
 | <ItemImage id="bettacraft:betta_bucket" /> | **Labyrinthfisch** | Fange einen wilden Betta im Sumpf mit einem Eimer oder einer Fischtüte |
 | <ItemImage id="bettacraft:swamp_water_bottle" /> | **Trübes Wasser** | Fülle eine Glasflasche mit Sumpfwasser |
 | <ItemImage id="bettacraft:artemia_nauplii" /> | ↳ **Mikroskopisches Menü** | Setze Infusorien an oder lass Artemia-Nauplien für Jungfische schlüpfen |
