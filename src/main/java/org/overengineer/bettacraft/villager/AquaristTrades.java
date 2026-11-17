@@ -159,10 +159,11 @@ public final class AquaristTrades {
         return (trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new ArrayList<>();
-            for (TankmateSpecies s : varietySpecies()) if (s.available()) pool.add(s);
+            for (TankmateSpecies s : varietySpecies()) if (s.available() && s.randomBred(rnd) != null) pool.add(s); // M48: forms switched off
             if (pool.isEmpty()) return null;
             TankmateSpecies s = pool.get(rnd.nextInt(pool.size()));
-            String variety = s.variety(1 + rnd.nextInt(s.varieties().size() - 1));
+            String bred = s.randomBred(rnd); // M48: rare forms less often
+            String variety = bred != null ? bred : s.variety(1 + rnd.nextInt(s.varieties().size() - 1));
             ItemStack bag = TankmateItems.groupBag(s, 2, () -> TankmateGenes.pure(s, variety), rnd, true);
             return new MerchantOffer(new ItemCost(Items.EMERALD, RARE_PAIR_PRICE), Optional.empty(), bag, 3, 30, 0.05F);
         };

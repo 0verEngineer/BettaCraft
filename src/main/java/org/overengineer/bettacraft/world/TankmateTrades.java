@@ -49,7 +49,8 @@ public final class TankmateTrades {
                 genes = () -> TankmateGenes.wild(s, 0.08, rnd);
             }
         } else {
-            String variety = s.varieties().size() > 1 && rnd.nextInt(3) == 0 ? s.variety(1 + rnd.nextInt(s.varieties().size() - 1)) : s.variety(0);
+            String bred = s.varieties().size() > 1 && rnd.nextInt(3) == 0 ? s.randomBred(rnd) : null; // M48: rare forms less often
+            String variety = bred != null ? bred : s.variety(0);
             // M47: wild-type fish from the trader carry a bred variety hidden now and then, like wild-caught ones
             genes = variety.equals(s.variety(0)) && s.varieties().size() > 1 ? () -> TankmateGenes.wild(s, 0.08, rnd) : () -> TankmateGenes.pure(s, variety);
         }

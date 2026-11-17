@@ -917,17 +917,29 @@ def looks(species, variety, female):
     sp, var = species, variety
     if sp == "neon_tetra" or sp == "cardinal_tetra":
         cardinal = sp == "cardinal_tetra"
+        # M48: Diamond (shining blue scales over the back and head), Gold (pale gold body, a silvery stripe, faint red),
+        # Albino (pink-white, the stripe pale silver-blue, the red faded to pink, red eyes)
+        rnd = np.random.default_rng(4801)
+        glint = rnd.random((64, 64))
+        back = {"gold": ("#d8c890", "#ecdcaa"), "albino": ("#f0d8d0", "#f8e8e0")}.get(var, ("#6e6448", "#8a7c58"))
+        stripe = {"gold": ("#e0e8e8", "#f8fcf0"), "albino": ("#a8d0e8", "#d0ecf8")}.get(var, ("#30a8ff", "#5ad0ff"))
+        red = {"gold": ("#f0a888", "#f8c0a0"), "albino": ("#f08a90", "#f8a8a8")}.get(var, ("#e02a24", "#f04a3a"))
 
         def body(t, v, x, z, y):
+            if var == "diamond" and v < 0.47 and t < 0.9:
+                k = glint[int(abs(z) * 2.9 + abs(x) * 1.3) % 64, int((y + 20) * 3.1) % 64]
+                if k > 0.45 or t < 0.2:
+                    return mix(C("#58b8ff"), C("#c8f0ff"), k)
             if v < 0.32:
-                return mix(C("#6e6448"), C("#8a7c58"), v / 0.32)
+                return mix(C(back[0]), C(back[1]), v / 0.32)
             if v < 0.47 and 0.06 < t < 0.92:
-                return mix(C("#30a8ff"), C("#5ad0ff"), (v - 0.32) / 0.15)
+                return mix(C(stripe[0]), C(stripe[1]), (v - 0.32) / 0.15)
             red_from = 0.05 if cardinal else 0.48
             if t > red_from and v < 0.92 and t < 0.98:
-                return C("#e02a24") if v < 0.85 else C("#f04a3a")
-            return C("#e8e8e4")
-        return Look(body, clear("#dcdcd4"))
+                return C(red[0]) if v < 0.85 else C(red[1])
+            return C("#f4f0e8") if var in ("gold", "albino") else C("#e8e8e4")
+        return Look(body, clear("#e8e0d8" if var in ("gold", "albino") else "#dcdcd4"), eye="#d02028" if var == "albino" else "#141414",
+                    ring="#e8c8c0" if var == "albino" else "#c0c0c0")
     if sp == "green_neon_tetra":
         # M21.5: a green (wild) or blue stripe over almost the whole body, a pale belly, only a trace of red at the rear
         blue = var == "blue"
@@ -948,18 +960,20 @@ def looks(species, variety, female):
             return mix(base, C("#c44a1a"), 0.4 * (v < 0.25))
         return Look(body, lambda part, a, b, t, v, z, y: C("#f08040") if part != "pectoral" else C("#e8c0a0"))
     if sp == "glowlight_tetra":
+        albino = var == "albino"  # M48: pink-white with the glowing line, red eyes
+
         def body(t, v, x, z, y):
             if 0.38 < v < 0.52 and t > 0.04:
                 return mix(C("#ff6a2a"), C("#ffa040"), abs(v - 0.45) / 0.07)
-            return mix(C("#b8b4a4"), C("#e4e2d8"), v)
+            return mix(C("#f0dcd4"), C("#fbf0ea"), v) if albino else mix(C("#b8b4a4"), C("#e4e2d8"), v)
 
         def fins(part, a, b, t, v, z, y):
             if part == "dorsal" and a < 0.4:
                 return C("#ff5030")
             if part in ("dorsal", "anal", "pelvic") and (b > 0.6 or (part == "pelvic" and a > 0.6)):
                 return C("#f8f8f8")
-            return C("#cfcabc")
-        return Look(body, fins)
+            return C("#ecdcd4") if albino else C("#cfcabc")
+        return Look(body, fins, eye="#d02028" if albino else "#141414", ring="#e8c8c0" if albino else "#c0c0c0")
     if sp == "harlequin_rasbora":
         def body(t, v, x, z, y):
             # the black wedge: from below the dorsal fin, narrowing to the tail base
@@ -992,7 +1006,11 @@ def looks(species, variety, female):
             return mix(C("#8a8a86"), C("#e6e6e2"), v)
         return Look(body, clear("#d4d4cc"))
     if sp == "panda_cory":
+        albino = var == "albino"  # M48: no black at all, pink-white, red eyes; the longfin has the wild colours
+
         def body(t, v, x, z, y):
+            if albino:
+                return mix(C("#f2d8cc"), C("#fcefe8"), v)
             if 0.08 < t < 0.24 and v < 0.75:
                 return C("#141414")  # the eye mask
             if t > 0.86 and 0.15 < v < 0.75:
@@ -1000,10 +1018,28 @@ def looks(species, variety, female):
             return mix(C("#e8dcc8"), C("#f6ecdc"), v)
 
         def fins(part, a, b, t, v, z, y):
+            if albino:
+                return C("#f4e4dc")
             if part == "dorsal":
                 return C("#181818")
+            if var == "longfin" and part == "tail" and abs(b) > 0.7:
+                return C("#c8c0b4")
             return C("#e8e0d4")
-        return Look(body, fins)
+        return Look(body, fins, eye="#d02028" if albino else "#141414", ring="#e8c0b8" if albino else "#c0c0c0")
+    if sp == "sterbai_cory" and var == "albino":
+        # M48: the albino sterbai: cream-white with faint white dots, the orange pectorals stay, red eyes
+        rnd = np.random.default_rng(301)
+        spots = rnd.random((64, 64))
+
+        def body(t, v, x, z, y):
+            k = spots[int(abs(z) * 3.7) % 64, int((y + 20) * 3.3) % 64]
+            return C("#fffaf0") if k > 0.72 else mix(C("#ecd8c4"), C("#f4e6d8"), v)
+
+        def fins(part, a, b, t, v, z, y):
+            if part == "pectoral" or part == "pelvic":
+                return C("#f8a040")
+            return C("#f4e8dc")
+        return Look(body, fins, eye="#d02028", ring="#e8c0b8")
     if sp == "sterbai_cory":
         rnd = np.random.default_rng(301)
         spots = rnd.random((64, 64))
@@ -1178,6 +1214,10 @@ def looks(species, variety, female):
         return barb_look(sp, var, female)
     if sp in ("dwarf_chain_loach", "reticulated_loach", "garra_rufa"):
         return loach29_look(sp)
+    if sp == "bronze_cory":
+        return bronze_cory_look(var)
+    if sp == "panda_garra":
+        return panda_garra_look()
     if sp in ("zebra_danio", "celestial_pearl_danio"):
         return danio_look(sp, var, female)
     if sp in ("forktail_rainbow", "neon_dwarf_rainbow"):
@@ -1884,6 +1924,59 @@ def loach29_look(sp):
     return Look(body, fins, eye="#2a2420")
 
 
+# M48 part a: the bronze cory and the panda garra
+
+def bronze_cory_look(var):
+    """Bronze cory: metallic green-bronze flanks with a teal sheen, a darker back, a pale belly, clear fins with a dark spot in
+    the dorsal; Albino pink-white with peach, red eyes; Gold Laser the wild colours with an orange-gold stripe along the back."""
+    rnd = np.random.default_rng(4802)
+    sheen = rnd.random((64, 64))
+
+    def body(t, v, x, z, y):
+        if var == "albino":
+            return mix(C("#f0d0c0"), C("#fcece2"), v) if v < 0.85 else C("#fff4ec")
+        if var == "gold_laser" and 0.22 < v < 0.4 and 0.12 < t < 0.9:
+            return mix(C("#f09a20"), C("#ffc850"), abs(v - 0.31) / 0.09)
+        if v > 0.82:
+            return C("#e8dcc0")
+        k = sheen[int(abs(z) * 2.3 + abs(x) * 1.9) % 64, int((y + 20) * 2.1) % 64]
+        base = mix(C("#5a4a2a"), C("#8a7040"), v)
+        if 0.3 < v < 0.8:
+            base = mix(base, C("#3a8a72"), 0.45 + 0.25 * k)
+        return base
+
+    def fins(part, a, b, t, v, z, y):
+        if var == "albino":
+            return C("#f6e2d8")
+        if part == "dorsal" and a < 0.4 and (b + 1) / 2 > 0.4:
+            return C("#2a2418")
+        if part in ("pectoral", "pelvic"):
+            return C("#c8b898")
+        return C("#b8ac90")
+    return Look(body, fins, eye="#d02028" if var == "albino" else "#141414", ring="#e8c0b8" if var == "albino" else "#a0a0a0")
+
+
+def panda_garra_look():
+    """Panda garra: golden yellow with broad black bands (snout, behind the head, mid body, before the tail), a black stripe
+    into the tail fork, yellow fins with dark rays."""
+
+    def body(t, v, x, z, y):
+        if v > 0.86:
+            return C("#f4e8c0")
+        for c, half in ((0.06, 0.05), (0.3, 0.07), (0.56, 0.08), (0.82, 0.06)):
+            if abs(t - c - (v - 0.5) * 0.04) < half:
+                return C("#141210")
+        return mix(C("#e0a820"), C("#f8d050"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        if part == "tail":
+            return C("#141210") if abs(b) < 0.25 or abs(b) > 0.85 else C("#f0c040")
+        if part in ("dorsal", "anal") and int(a * 6) % 2 == 0:
+            return C("#2a2418")
+        return C("#f0c848")
+    return Look(body, fins, eye="#141210")
+
+
 # M29 part a: cichlid looks
 
 def _spangles(seed):
@@ -2463,10 +2556,10 @@ def write_java(models):
 # ---------------------------------------------------------------------------------------------------------- species table (mirrors TankmateSpecies)
 
 SPECIES = [
-    ("neon_tetra", "tetra", ["wild"], False), ("cardinal_tetra", "tetra", ["wild"], False), ("ember_tetra", "tetra", ["wild"], False),
-    ("glowlight_tetra", "tetra", ["wild"], False), ("harlequin_rasbora", "rasbora", ["wild"], False),
-    ("mosquito_rasbora", "rasbora", ["wild"], False), ("pygmy_cory", "cory", ["wild"], False), ("panda_cory", "cory", ["wild"], False),
-    ("sterbai_cory", "cory", ["wild"], False), ("green_gold_cory", "cory", ["wild"], False),
+    ("neon_tetra", "tetra", ["wild", "diamond", "gold", "albino"], False), ("cardinal_tetra", "tetra", ["wild", "gold"], False), ("ember_tetra", "tetra", ["wild"], False),
+    ("glowlight_tetra", "tetra", ["wild", "albino"], False), ("harlequin_rasbora", "rasbora", ["wild"], False),
+    ("mosquito_rasbora", "rasbora", ["wild"], False), ("pygmy_cory", "cory", ["wild"], False), ("panda_cory", "cory", ["wild", "albino", "longfin"], False),
+    ("sterbai_cory", "cory", ["wild", "albino"], False), ("green_gold_cory", "cory", ["wild"], False),
     ("leopard_frog_pleco", "pleco", ["wild"], False), ("zebra_pleco", "pleco", ["wild"], False),
     ("bristlenose_pleco", "pleco", ["wild", "albino", "super_red"], False), ("otocinclus", "oto", ["wild"], False),
     ("kuhli_loach", "kuhli", ["wild"], False), ("clown_loach", "loach", ["wild"], False),
@@ -2526,6 +2619,9 @@ SPECIES = [
     ("spotted_eagle_ray", "eagle_ray", ["wild"], False),
     ("cownose_ray", "cownose_ray", ["wild"], False),
     ("honeycomb_moray", "moray", ["wild"], False),
+    # M48 part a
+    ("bronze_cory", "cory", ["wild", "albino", "gold_laser"], False),
+    ("panda_garra", "garra", ["wild"], False),
 ]
 
 

@@ -75,8 +75,8 @@ public final class Wildlife {
             if (TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
                 var strains = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(s == TankmateSpecies.ENDLER_GUPPY);
                 if (!strains.isEmpty()) return TankmateGenes.strain(s, strains.get(r.nextInt(strains.size())));
-            } else if (s.varieties().size() > 1) {
-                return TankmateGenes.pure(s, s.variety(1 + r.nextInt(s.varieties().size() - 1)));
+            } else if (s.randomBred(r) instanceof String bred) { // M48: rare forms less often, switchable M48 forms
+                return TankmateGenes.pure(s, bred);
             }
         }
         return TankmateGenes.wild(s, 0.08, r);
@@ -96,6 +96,7 @@ public final class Wildlife {
     public static TankmateGenes mutate(TankmateSpecies s, TankmateGenes g, RandomGenerator r) {
         double p = mutationChance();
         if (p <= 0 || TankmateGenes.livebearer(s) || s.varieties().size() < 2) return g;
+        if (s.m48Forms() && !Features.enabled(Feature.TANKMATE_FORMS)) return g; // M48: no new forms while they are switched off
         String a = g.a(), b = g.b();
         if (r.nextDouble() < p) a = other(s, a, r);
         if (r.nextDouble() < p) b = other(s, b, r);

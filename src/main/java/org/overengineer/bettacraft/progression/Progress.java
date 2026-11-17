@@ -100,6 +100,9 @@ public final class Progress {
     public static final String FROG_TADPOLE = "frog_tadpole";
     /** A trade with an aquarist villager. */
     public static final String AQUARIST_TRADE = "aquarist_trade";
+    // M48
+    /** A bred tetra or cory of an M48 bred form grew up. */
+    public static final String TETRA_CORY_FORM = "tetra_cory_form";
 
     private Progress() {}
 
@@ -170,6 +173,8 @@ public final class Progress {
     /** M21.6: a guppy or endler in a tank became adult: a bred one of a named strain or a hybrid counts for the breeding progress. */
     public static void onTankmateGrownUp(ServerLevel level, TankBlockEntity controller, org.overengineer.bettacraft.entity.tankmate.TankmateEntity fish) {
         if (fish.generation() <= 0) return;
+        // M48 part a: a bred form of a tetra or a cory
+        if (fish.species().m48Forms() && !fish.variety().equals(fish.species().variety(0))) awardNear(level, controller, TETRA_CORY_FORM, fish.generation());
         var p = fish.livebearerPhenotype();
         if (p == null) return;
         if (p.hybrid()) {

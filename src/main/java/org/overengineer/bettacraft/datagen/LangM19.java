@@ -10,11 +10,11 @@ final class LangM19 {
         a.accept("entity.bettacraft.neon_tetra", "Neon Tetra");
         a.accept("item.bettacraft.neon_tetra_bucket", "Bucket of Neon Tetra");
         a.accept("item.bettacraft.neon_tetra_spawn_egg", "Neon Tetra Spawn Egg");
-        a.accept("info.bettacraft.tankmate.neon_tetra", "Neon Tetra (Paracheirodon innesi) from the blackwater streams of the upper Amazon (Peru, Colombia).\nA blue neon stripe over a red rear half: the classic shoal fish.\nShoal of 6 or more, 20–27 °C, water: sensitive. Counts 0.35 fish in the stocking.\nScatters its eggs (fine plants, spawning mop).\nCatch: aquarium net in jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.neon_tetra", "Neon Tetra (Paracheirodon innesi) from the blackwater streams of the upper Amazon (Peru, Colombia).\nA blue neon stripe over a red rear half: the classic shoal fish. Bred forms (recessive): Diamond (shining scales on the back), Gold and Albino.\nShoal of 6 or more, 20–27 °C, water: sensitive. Counts 0.35 fish in the stocking.\nScatters its eggs (fine plants, spawning mop).\nCatch: aquarium net in jungle water, wandering trader.");
         a.accept("entity.bettacraft.cardinal_tetra", "Cardinal Tetra");
         a.accept("item.bettacraft.cardinal_tetra_bucket", "Bucket of Cardinal Tetra");
         a.accept("item.bettacraft.cardinal_tetra_spawn_egg", "Cardinal Tetra Spawn Egg");
-        a.accept("info.bettacraft.tankmate.cardinal_tetra", "Cardinal Tetra (Paracheirodon axelrodi) from the Rio Negro and Orinoco (Brazil, Venezuela), warm blackwater.\nLike the neon, but the red runs the whole length of the belly; likes it warmer, good with bettas.\nShoal of 6 or more, 24–30 °C, water: very sensitive. Counts 0.4 fish in the stocking.\nScatters its eggs (fine plants, spawning mop).\nCatch: aquarium net in jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.cardinal_tetra", "Cardinal Tetra (Paracheirodon axelrodi) from the Rio Negro and Orinoco (Brazil, Venezuela), warm blackwater.\nLike the neon, but the red runs the whole length of the belly; likes it warmer, good with bettas. Bred form (recessive): Gold.\nShoal of 6 or more, 24–30 °C, water: very sensitive. Counts 0.4 fish in the stocking.\nScatters its eggs (fine plants, spawning mop).\nCatch: aquarium net in jungle water, wandering trader.");
         a.accept("entity.bettacraft.ember_tetra", "Ember Tetra");
         a.accept("item.bettacraft.ember_tetra_bucket", "Bucket of Ember Tetra");
         a.accept("item.bettacraft.ember_tetra_spawn_egg", "Ember Tetra Spawn Egg");
@@ -22,7 +22,7 @@ final class LangM19 {
         a.accept("entity.bettacraft.glowlight_tetra", "Glowlight Tetra");
         a.accept("item.bettacraft.glowlight_tetra_bucket", "Bucket of Glowlight Tetra");
         a.accept("item.bettacraft.glowlight_tetra_spawn_egg", "Glowlight Tetra Spawn Egg");
-        a.accept("info.bettacraft.tankmate.glowlight_tetra", "Glowlight Tetra (Hemigrammus erythrozonus) from the Essequibo river in Guyana.\nTranslucent with a glowing orange-red line from snout to tail.\nShoal of 6 or more, 23–28 °C, water: sensitive. Counts 0.35 fish in the stocking.\nScatters its eggs (fine plants, spawning mop).\nCatch: aquarium net in jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.glowlight_tetra", "Glowlight Tetra (Hemigrammus erythrozonus) from the Essequibo river in Guyana.\nTranslucent with a glowing orange-red line from snout to tail. Bred form (recessive): Albino.\nShoal of 6 or more, 23–28 °C, water: sensitive. Counts 0.35 fish in the stocking.\nScatters its eggs (fine plants, spawning mop).\nCatch: aquarium net in jungle water, wandering trader.");
         a.accept("entity.bettacraft.harlequin_rasbora", "Harlequin Rasbora");
         a.accept("item.bettacraft.harlequin_rasbora_bucket", "Bucket of Harlequin Rasbora");
         a.accept("item.bettacraft.harlequin_rasbora_spawn_egg", "Harlequin Rasbora Spawn Egg");
@@ -38,11 +38,11 @@ final class LangM19 {
         a.accept("entity.bettacraft.panda_cory", "Panda Cory");
         a.accept("item.bettacraft.panda_cory_bucket", "Bucket of Panda Cory");
         a.accept("item.bettacraft.panda_cory_spawn_egg", "Panda Cory Spawn Egg");
-        a.accept("info.bettacraft.tankmate.panda_cory", "Panda Cory (Corydoras panda) from cool clear streams of the Rio Ucayali in Peru.\nCream with a black eye mask, black dorsal fin and a spot at the tail base. Likes it cool.\nShoal of 6 or more, 20–26 °C, water: sensitive. Counts 0.45 fish in the stocking.\nGlues its eggs to the glass (after a cool water change).\nCatch: aquarium net in jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.panda_cory", "Panda Cory (Corydoras panda) from cool clear streams of the Rio Ucayali in Peru.\nCream with a black eye mask, black dorsal fin and a spot at the tail base. Likes it cool. Bred forms (recessive): Albino and the rare Longfin.\nShoal of 6 or more, 20–26 °C, water: sensitive. Counts 0.45 fish in the stocking.\nGlues its eggs to the glass (after a cool water change).\nCatch: aquarium net in jungle water, wandering trader.");
         a.accept("entity.bettacraft.sterbai_cory", "Sterbai Cory");
         a.accept("item.bettacraft.sterbai_cory_bucket", "Bucket of Sterbai Cory");
         a.accept("item.bettacraft.sterbai_cory_spawn_egg", "Sterbai Cory Spawn Egg");
-        a.accept("info.bettacraft.tankmate.sterbai_cory", "Sterbai Cory (Corydoras sterbai) from the Rio Guaporé (Brazil, Bolivia), warm water.\nDark with white dots and orange pectoral fins; one of the few corys for warm betta tanks.\nShoal of 6 or more, 24–30 °C, water: average. Counts 0.6 fish in the stocking.\nGlues its eggs to the glass (after a cool water change).\nCatch: aquarium net in jungle water, wandering trader.");
+        a.accept("info.bettacraft.tankmate.sterbai_cory", "Sterbai Cory (Corydoras sterbai) from the Rio Guaporé (Brazil, Bolivia), warm water.\nDark with white dots and orange pectoral fins; one of the few corys for warm betta tanks. Bred form (recessive): Albino.\nShoal of 6 or more, 24–30 °C, water: average. Counts 0.6 fish in the stocking.\nGlues its eggs to the glass (after a cool water change).\nCatch: aquarium net in jungle water, wandering trader.");
         a.accept("entity.bettacraft.green_gold_cory", "Green Gold Cory");
         a.accept("item.bettacraft.green_gold_cory_bucket", "Bucket of Green Gold Cory");
         a.accept("item.bettacraft.green_gold_cory_spawn_egg", "Green Gold Cory Spawn Egg");

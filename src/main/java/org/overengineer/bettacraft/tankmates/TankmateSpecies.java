@@ -22,10 +22,11 @@ public enum TankmateSpecies {
     // ---------------------------------------------------------------- tetras (egg scatterers, South America)
     NEON_TETRA(d("neon_tetra", "Paracheirodon innesi", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.25).temp(20, 27).breed(22, 25).quality(0.6).shoal(6).stock(0.35).brood(20, 50).growth(1.0)
-            .eats(0.5).egg(0x2E6FD0, 0xD03028).native_(Water.JUNGLE, 30).trader(Trade.COMMON)),
+            .eats(0.5).egg(0x2E6FD0, 0xD03028).native_(Water.JUNGLE, 30).trader(Trade.COMMON)
+            .varieties("wild", "diamond", "gold", "albino")), // M48: the bred forms of the trade, recessive to the wild type
     CARDINAL_TETRA(d("cardinal_tetra", "Paracheirodon axelrodi", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.32).temp(24, 30).breed(26, 28).quality(0.65).shoal(6).stock(0.4).brood(20, 50).growth(1.1)
-            .eats(0.5).egg(0x2A78E0, 0xE02A20).native_(Water.JUNGLE, 22).trader(Trade.COMMON)),
+            .eats(0.5).egg(0x2A78E0, 0xE02A20).native_(Water.JUNGLE, 22).trader(Trade.COMMON).varieties("wild", "gold")), // M48
     // M21.5: the green neon (Paracheirodon simulans), green or blue stripe over almost the whole body, hardly any red
     GREEN_NEON_TETRA(d("green_neon_tetra", "Paracheirodon simulans", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.22).temp(24, 30).breed(26, 29).quality(0.7).shoal(6).stock(0.25).brood(15, 40).growth(0.9)
@@ -35,7 +36,7 @@ public enum TankmateSpecies {
             .eats(0.3).egg(0xF07028, 0xC04018).native_(Water.JUNGLE, 18).trader(Trade.COMMON)),
     GLOWLIGHT_TETRA(d("glowlight_tetra", "Hemigrammus erythrozonus", Model.TETRA, Group.TETRA, Breeding.SCATTER, Zone.MID)
             .size(0.29).temp(23, 28).breed(25, 28).quality(0.55).shoal(6).stock(0.35).brood(20, 50).growth(1.0)
-            .eats(0.5).egg(0xB8B4A8, 0xF06A30).native_(Water.JUNGLE, 15).trader(Trade.RARE)),
+            .eats(0.5).egg(0xB8B4A8, 0xF06A30).native_(Water.JUNGLE, 15).trader(Trade.RARE).varieties("wild", "albino")), // M48
     // ---------------------------------------------------------------- rasboras (egg scatterers, South-East Asia)
     HARLEQUIN_RASBORA(d("harlequin_rasbora", "Trigonostigma heteromorpha", Model.RASBORA, Group.RASBORA, Breeding.SCATTER, Zone.MID)
             .size(0.37).temp(22, 28).breed(26, 28).quality(0.55).shoal(6).stock(0.45).brood(15, 40).growth(1.0)
@@ -49,10 +50,11 @@ public enum TankmateSpecies {
             .eats(0.15).airGulper().egg(0xB8B0A0, 0x2A2A2A).native_(Water.JUNGLE, 14).trader(Trade.COMMON)),
     PANDA_CORY(d("panda_cory", "Corydoras panda", Model.CORY, Group.CORY, Breeding.GLASS_EGGS, Zone.BOTTOM)
             .size(0.37).temp(20, 26).breed(21, 25).quality(0.55).shoal(6).stock(0.45).brood(12, 30).growth(1.2)
-            .eats(0.2).airGulper().egg(0xE8DCC8, 0x202020).native_(Water.JUNGLE, 16).trader(Trade.COMMON)),
+            .eats(0.2).airGulper().egg(0xE8DCC8, 0x202020).native_(Water.JUNGLE, 16).trader(Trade.COMMON)
+            .varieties("wild", "albino", "longfin").rare("longfin")), // M48: albino; the longfin (long fins on the colour locus) is rare
     STERBAI_CORY(d("sterbai_cory", "Corydoras sterbai", Model.CORY, Group.CORY, Breeding.GLASS_EGGS, Zone.BOTTOM)
             .size(0.5).temp(24, 30).breed(24, 28).quality(0.5).shoal(6).stock(0.6).brood(12, 30).growth(1.3)
-            .eats(0.2).airGulper().egg(0x403A36, 0xF0A040).native_(Water.JUNGLE, 14).trader(Trade.COMMON)),
+            .eats(0.2).airGulper().egg(0x403A36, 0xF0A040).native_(Water.JUNGLE, 14).trader(Trade.COMMON).varieties("wild", "albino")), // M48
     GREEN_GOLD_CORY(d("green_gold_cory", "Corydoras melanotaenia", Model.CORY, Group.CORY, Breeding.GLASS_EGGS, Zone.BOTTOM)
             .size(0.46).temp(22, 27).breed(23, 26).quality(0.55).shoal(6).stock(0.55).brood(12, 30).growth(1.3)
             .eats(0.2).airGulper().egg(0x5A7A4A, 0xE8A030).native_(Water.RIVER, 6).native_(Water.JUNGLE, 8).trader(Trade.RARE)),
@@ -311,7 +313,19 @@ public enum TankmateSpecies {
     HONEYCOMB_MORAY(d("honeycomb_moray", "Gymnothorax favagineus", Model.MORAY, Group.MORAY, Breeding.NONE, Zone.LOW)
             .large(LargeSpecies.of(1.2).turn(6.0).speed(0.4).diet(org.overengineer.bettacraft.food.FoodDiet.Diet.CARNIVORE)
                     .eatsSmallFish(0.8).swim(LargeSpecies.Swim.LURK)).temp(24, 28).breed(25, 27).quality(0.45).shoal(1).brood(0, 0)
-            .growth(6.0).eats(0.5).nocturnal().egg(0x2A2016, 0xE6D890).native_(Water.WARM_OCEAN, 2).salt(Salinity.Range.MARINE));
+            .growth(6.0).eats(0.5).nocturnal().egg(0x2A2016, 0xE6D890).native_(Water.WARM_OCEAN, 2).salt(Salinity.Range.MARINE)),
+    // ---------------------------------------------------------------- M48 part a: more bottom fish (features.tankmates.moreBottomFish)
+    // the bronze corydoras of the rivers east of the Andes: metallic green-bronze flanks, hardy; the albino and the "gold laser"
+    // (an orange-gold stripe along the back) are the bred forms of the trade; eggs on the glass after a cool water change
+    BRONZE_CORY(d("bronze_cory", "Corydoras aeneus", Model.CORY, Group.CORY, Breeding.GLASS_EGGS, Zone.BOTTOM)
+            .size(0.55).temp(20, 28).breed(22, 26).quality(0.4).shoal(6).stock(0.6).brood(15, 40).growth(1.2)
+            .eats(0.2).airGulper().egg(0x8A7A4A, 0x3A8A6A).native_(Water.RIVER, 8).native_(Water.JUNGLE, 6).trader(Trade.COMMON)
+            .varieties("wild", "albino", "gold_laser")),
+    // the panda garra of the hill streams of Myanmar: small, yellow-gold with broad black bands, a sucker mouth; grazes algae,
+    // likes cool, fast, clear water; scatters its eggs over gravel and plants
+    PANDA_GARRA(d("panda_garra", "Garra flavatra", Model.GARRA, Group.LOACH, Breeding.SCATTER, Zone.BOTTOM)
+            .size(0.55).temp(20, 26).breed(22, 25).quality(0.6).shoal(5).stock(0.6).brood(10, 40).growth(1.2)
+            .eats(0.3).algae(0.5).egg(0xE8B840, 0x1E1A16).native_(Water.RIVER, 4).trader(Trade.RARE));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
@@ -509,7 +523,39 @@ public enum TankmateSpecies {
         if (barbOrNewLoach()) return Feature.BARBS_AND_LOACHES;
         if (newGourami()) return Feature.GOURAMIS;
         if (communityFish()) return Feature.COMMUNITY_FISH;
+        if (this == BRONZE_CORY || this == PANDA_GARRA) return Feature.MORE_BOTTOM_FISH; // M48 part a
         return this == GREEN_NEON_TETRA ? Feature.GREEN_NEON : Feature.TANKMATES;
+    }
+
+    /** M48 part a: the species whose bred forms came with M48 (switched with features.tankmates.tetraCoryForms). */
+    public boolean m48Forms() {
+        return switch (this) {
+            case NEON_TETRA, CARDINAL_TETRA, GLOWLIGHT_TETRA, PANDA_CORY, STERBAI_CORY, BRONZE_CORY -> true;
+            default -> false;
+        };
+    }
+
+    /** M48 part a: a rare bred variety (picked a quarter as often by the trader, the wild and the spawn eggs). */
+    public boolean rareVariety(String variety) {
+        return def.rare.contains(variety);
+    }
+
+    /**
+     * M48 part a: a random bred variety for the trader, the wild carriers and spawn eggs (rare ones a quarter as often); null when
+     * the species has none or its forms are switched off ({@code features.tankmates.tetraCoryForms}).
+     */
+    @Nullable
+    public String randomBred(java.util.random.RandomGenerator r) {
+        if (def.varieties.size() < 2) return null;
+        if (m48Forms() && !Features.enabled(Feature.TANKMATE_FORMS)) return null;
+        double total = 0;
+        for (int i = 1; i < def.varieties.size(); i++) total += rareVariety(def.varieties.get(i)) ? 0.25 : 1.0;
+        double x = r.nextDouble() * total;
+        for (int i = 1; i < def.varieties.size(); i++) {
+            x -= rareVariety(def.varieties.get(i)) ? 0.25 : 1.0;
+            if (x < 0) return def.varieties.get(i);
+        }
+        return def.varieties.getLast();
     }
 
     /** M21.5: new ones come from the trader and the net ({@link #feature} on, with its group). */
@@ -674,6 +720,7 @@ public enum TankmateSpecies {
         boolean territorial, bettaTarget, snails, airGulper, nocturnal, broadLeaves, dimorphic, labyrinth, parentsFeed, finNipper;
         double prey, territory;
         List<String> varieties = List.of("wild");
+        List<String> rare = List.of();
         final List<Water> waters = new java.util.ArrayList<>();
         final List<Double> weights = new java.util.ArrayList<>();
         Trade trade = Trade.NONE;
@@ -778,6 +825,7 @@ public enum TankmateSpecies {
         Def finNipper() { finNipper = true; return this; }
         Def egg(int a, int b) { egg1 = a; egg2 = b; return this; }
         Def varieties(String... v) { varieties = List.of(v); return this; }
+        Def rare(String... v) { rare = List.of(v); return this; }
         Def trader(Trade t) { trade = t; return this; }
         Def salt(Salinity.Range r) { salt = r; return this; }
 

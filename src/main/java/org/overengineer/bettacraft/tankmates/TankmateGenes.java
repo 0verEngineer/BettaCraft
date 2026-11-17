@@ -94,7 +94,10 @@ public record TankmateGenes(String a, String b, @Nullable LivebearerGenome lb) {
     public static TankmateGenes wild(TankmateSpecies s, double carrier, RandomGenerator r) {
         String w = s.variety(0);
         String a = w;
-        if (s.varieties().size() >= 2 && carrier > 0 && r.nextDouble() < carrier) a = s.variety(1 + r.nextInt(s.varieties().size() - 1));
+        if (s.varieties().size() >= 2 && carrier > 0 && r.nextDouble() < carrier) {
+            String bred = s.randomBred(r); // M48: rare forms less often, the M48 forms only with their switch
+            if (bred != null) a = bred;
+        }
         if (livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
             return new TankmateGenes(a, w, LivebearerGenome.wild(s == TankmateSpecies.ENDLER_GUPPY, r));
         }

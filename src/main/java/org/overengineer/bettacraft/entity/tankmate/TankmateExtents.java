@@ -80,9 +80,14 @@ public final class TankmateExtents {
         return fish.species() == TankmateSpecies.RAM_CICHLID && "balloon".equals(fish.variety()) ? 1.15F : 1F;
     }
 
+    /** M48 part a: the length factor of the tail and dorsal fin (the longfin panda cory; 1 = the model). */
+    public static float finScale(TankmateEntity fish) {
+        return fish.species() == TankmateSpecies.PANDA_CORY && "longfin".equals(fish.variety()) ? 1.7F : 1F;
+    }
+
     /** How high the rendered fish reaches above its position (blocks; never below the hitbox). */
     public static double top(TankmateEntity fish) {
-        double model = topPixels(fish.species().model()) / 16.0 * renderScale(fish) * heightScale(fish);
+        double model = topPixels(fish.species().model()) / 16.0 * renderScale(fish) * heightScale(fish) * (finScale(fish) > 1F ? 1.25 : 1.0);
         return Math.max(model, fish.getBbHeight());
     }
 

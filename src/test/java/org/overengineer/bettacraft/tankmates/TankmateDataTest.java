@@ -47,7 +47,7 @@ class TankmateDataTest {
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(55, java.util.Arrays.stream(TankmateSpecies.values()).filter(t -> !t.isLarge()).count()); // M30: the big animals apart // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c)
+        assertEquals(57, java.util.Arrays.stream(TankmateSpecies.values()).filter(t -> !t.isLarge()).count()); // M30: the big animals apart // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c), M48: + bronze cory, panda garra
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));
@@ -62,7 +62,8 @@ class TankmateDataTest {
             for (String t : s.textures()) assertTrue(Files.exists(textures().resolve(t + ".png")), "texture " + t);
         }
         assertEquals("guppy_blue_grass_female", TankmateSpecies.GUPPY.texture("blue_grass", true));
-        assertEquals("neon_tetra", TankmateSpecies.NEON_TETRA.texture("wild", true));
+        assertEquals("ember_tetra", TankmateSpecies.EMBER_TETRA.texture("wild", true));
+        assertEquals("neon_tetra_wild", TankmateSpecies.NEON_TETRA.texture("wild", true)); // M48: the neon has forms
         assertEquals("bristlenose_pleco_albino", TankmateSpecies.BRISTLENOSE_PLECO.texture("albino", false));
     }
 

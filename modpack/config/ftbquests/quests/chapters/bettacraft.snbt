@@ -1318,6 +1318,32 @@
 			title: "{\"translate\":\"quest.bettacraft.frog_tadpole.title\"}",
 			x: 3.0d,
 			y: 6.0d
+		},
+		{
+			dependencies: ["54D6D4C90E19DD2D"],
+			description: ["{\"translate\":\"quest.bettacraft.bottom_fish.desc\"}"],
+			id: "49F42BF6BE489467",
+			rewards: [{ id: "0E65E63E38654E9E", type: "xp", xp: 25 }],
+			tags: ["bettacraft_feature:tankmates.moreBottomFish"],
+			tasks: [
+				{ id: "79A6B50CE446F72A", item: { count: 1, id: "bettacraft:bronze_cory_bucket" }, type: "item" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.bottom_fish.title\"}",
+			x: -1.2d,
+			y: 6.0d
+		},
+		{
+			dependencies: ["54D6D4C90E19DD2D"],
+			description: ["{\"translate\":\"quest.bettacraft.tetra_cory_form.desc\"}"],
+			id: "25371DCC86813117",
+			rewards: [{ id: "5FF2049D45926630", type: "xp", xp: 100 }, { count: 1, id: "64907CC1CE2FBDBD", item: { count: 1, id: "bettacraft:spawning_mop" }, type: "item" }],
+			tags: ["bettacraft_feature:tankmates.tetraCoryForms", "bettacraft_feature:breeding.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:tetra_cory_form", criterion: "", id: "542F5694E22D217D", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.tetra_cory_form.title\"}",
+			x: -2.6d,
+			y: 7.4d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

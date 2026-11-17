@@ -76,8 +76,8 @@ class WildlifeTest {
         int changed = 0;
         for (int i = 0; i < 20000; i++) if (!Wildlife.mutate(TankmateSpecies.BRISTLENOSE_PLECO, g, r).text().equals(g.text())) changed++;
         assertTrue(changed > 60 && changed < 200, "about 0.6 % of the young: " + changed);
-        TankmateGenes one = TankmateGenes.wild(TankmateSpecies.NEON_TETRA);
-        for (int i = 0; i < 2000; i++) assertEquals(one, Wildlife.mutate(TankmateSpecies.NEON_TETRA, one, r), "one variety: nothing to mutate");
+        TankmateGenes one = TankmateGenes.wild(TankmateSpecies.EMBER_TETRA);
+        for (int i = 0; i < 2000; i++) assertEquals(one, Wildlife.mutate(TankmateSpecies.EMBER_TETRA, one, r), "one variety: nothing to mutate");
     }
 
     @Test

@@ -169,6 +169,17 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
         if (filaments != null) filaments.xRot = 0.15F * Mth.sin(ageInTicks * 0.12F + fish.getId());
         // M30 part c: a moray breathes by opening and closing its mouth (wider while it lies in its lair)
         if (jaw != null) jaw.xRot = (rest ? 0.2F : 0.1F) + (rest ? 0.16F : 0.08F) * Mth.sin(ageInTicks * 0.13F + fish.getId() * 2.3F);
+        // M48 part a: the longfin panda cory: long, flowing tail and dorsal fin (a bred fin form on the colour locus)
+        float fin = org.overengineer.bettacraft.entity.tankmate.TankmateExtents.finScale(fish);
+        if (tail != null) {
+            tail.zScale = fin;
+            tail.yScale = 1F + (fin - 1F) * 0.5F;
+            if (fin > 1F) tail.yRot *= 0.75F;
+        }
+        if (dorsal != null) {
+            dorsal.yScale = fin;
+            dorsal.zScale = 1F + (fin - 1F) * 0.6F;
+        }
         boolean f = fish.isFemale();
         if (male != null) male.visible = !f;
         if (female != null) female.visible = f;

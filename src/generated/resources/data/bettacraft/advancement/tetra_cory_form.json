@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "tetra_cory_form"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.tetra_cory_form.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:fish_bag"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.tetra_cory_form.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

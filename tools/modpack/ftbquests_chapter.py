@@ -202,6 +202,10 @@ QUESTS = [
     # ------------------------------------------------------------ M47
     ("aquarist", [adv("aquarist_trade")], ["insert_betta"], 7.50, 4.00, 50, None),
     ("frog_tadpole", [adv("frog_tadpole")], ["frogs"], 3.00, 6.00, 100, None),
+
+    # ------------------------------------------------------------ M48 part a
+    ("bottom_fish", [item("bronze_cory_bucket")], ["tankmates"], -1.20, 6.00, 25, None),
+    ("tetra_cory_form", [adv("tetra_cory_form")], ["tankmates"], -2.60, 7.40, 100, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -234,6 +238,7 @@ OWN_FEATURES = {
     "foreign_animal": ["FOREIGN_ANIMALS"], "mob_in_glass": ["MOBS_IN_GLASS"],
     "travelling_tank": ["CREATE_CONTRAPTIONS"], "create_drive": ["CREATE_DRIVE"],
     "aquarist": ["AQUARIST_VILLAGER"], "frog_tadpole": ["FROG_BREEDING"],
+    "bottom_fish": ["MORE_BOTTOM_FISH"], "tetra_cory_form": ["TANKMATE_FORMS", "BREEDING"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
@@ -284,6 +289,7 @@ REWARDS = {
     "big_gear": [("steel_leader", 1)],
     "guppy_collection": [("fish_bag", 4)],
     "aquarist": [("breeding_basin", 1)],
+    "tetra_cory_form": [("spawning_mop", 1)],
 }
 
 FIRST_CHAPTER = 33  # quests of the chapter of 1.25.0 (ids, tasks, dependencies frozen)

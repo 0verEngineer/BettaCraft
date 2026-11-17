@@ -176,8 +176,8 @@ public class TankmateEntity extends AbstractFish {
                         var strains = org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.of(species == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY);
                         genes = TankmateGenes.strain(species, strains.get(random.nextInt(strains.size())));
                     }
-                } else if (species.varieties().size() > 1 && random.nextInt(3) == 0) {
-                    genes = TankmateGenes.pure(species, species.variety(1 + random.nextInt(species.varieties().size() - 1)));
+                } else if (species.varieties().size() > 1 && random.nextInt(3) == 0 && species.randomBred(random::nextLong) instanceof String bred) {
+                    genes = TankmateGenes.pure(species, bred); // M48
                 }
             }
             syncLook();
