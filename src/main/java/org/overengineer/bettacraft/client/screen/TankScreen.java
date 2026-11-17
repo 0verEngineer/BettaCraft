@@ -99,6 +99,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private int breedScroll;
     private EditBox nameBox, fishNameBox;
     private Button protectButton;
+    /** M51: who may let his hired aquarist work here (right of the lock). */
+    private Button aquaristButton;
     /** M33.1: the tank type, in the overview (every tank) and in the climate tab. */
     private Button modeButton, climateModeButton;
     private Button lockButton, signButton, signPosButton, frontButton, minusButton, plusButton, enterButton;
@@ -241,17 +243,22 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }).bounds(x + 176, y + 125, 62, 13).build());
 
         // ---- overview
-        nameBox = new EditBox(font, x + 11, y + 21, 96, 13, Component.translatable("gui.bettacraft.tank.name"));
+        nameBox = new EditBox(font, x + 11, y + 21, 80, 13, Component.translatable("gui.bettacraft.tank.name"));
         nameBox.setMaxLength(TankData.MAX_NAME_LENGTH);
         nameBox.setHint(Component.translatable("gui.bettacraft.tank.name_hint").withStyle(ChatFormatting.DARK_GRAY));
         nameBox.setResponder(s -> nameDirtyTicks = 15);
         overview.add(addRenderableWidget(nameBox));
-        lockButton = addRenderableWidget(Button.builder(Component.empty(), b -> send(TankActions.TOGGLE_LOCK, 0, "", null))
-                .bounds(x + 164, y + 20, 74, 15).build());
+        lockButton = addRenderableWidget(new FitButton(x + 148, y + 20, 62, 15, Component.empty(), b -> send(TankActions.TOGGLE_LOCK, 0, "", null)));
         overview.add(lockButton);
         // M21.5: break protection, between the name and the lock
-        protectButton = addRenderableWidget(new FitButton(x + 110, y + 20, 52, 15, Component.empty(), b -> send(TankActions.TOGGLE_PROTECT, 0, "", null)));
+        protectButton = addRenderableWidget(new FitButton(x + 94, y + 20, 52, 15, Component.empty(), b -> send(TankActions.TOGGLE_PROTECT, 0, "", null)));
         overview.add(protectButton);
+        // M51: the hired aquarist (mine / everyone's / none), right of the lock
+        aquaristButton = addRenderableWidget(new FitButton(x + 212, y + 20, 26, 15, Component.empty(), b -> {
+            TankView v = view();
+            if (v != null) send(TankActions.SET_AQUARIST, v.aquaristAccess.next().ordinal(), "", null);
+        }));
+        overview.add(aquaristButton);
         // sign, sign position and front side share the row; labels that are still too long are drawn smaller, not scrolled
         signButton = addRenderableWidget(new FitButton(x + 10, y + 38, 62, 14, Component.empty(), b -> send(TankActions.TOGGLE_SIGN, 0, "", null)));
         signPosButton = addRenderableWidget(new FitButton(x + 74, y + 38, 82, 14, Component.empty(), b -> {
@@ -559,6 +566,15 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         protectButton.setMessage(Component.translatable(v.breakProtected ? "gui.bettacraft.tank.protect_on" : "gui.bettacraft.tank.protect_off")
                 .withStyle(v.breakProtected ? ChatFormatting.GOLD : ChatFormatting.WHITE));
         protectButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.protect_tooltip")));
+        aquaristButton.visible = v.aquaristFeature && tab == Tab.OVERVIEW;
+        aquaristButton.active = lockButton.active;
+        aquaristButton.setMessage(Component.translatable(v.aquaristAccess.translationKey() + ".short").withStyle(switch (v.aquaristAccess) {
+            case OWNER -> ChatFormatting.WHITE;
+            case ALL -> ChatFormatting.GREEN;
+            case NONE -> ChatFormatting.GRAY;
+        }));
+        aquaristButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.aquarist.tooltip",
+                Component.translatable(v.aquaristAccess.translationKey()).withStyle(ChatFormatting.AQUA))));
         lockButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.lock_tooltip",
                 v.ownerName.isEmpty() ? Component.translatable("gui.bettacraft.tank.no_owner") : Component.literal(v.ownerName))));
         signButton.setMessage(Component.translatable(v.signVisible ? "gui.bettacraft.tank.sign_on" : "gui.bettacraft.tank.sign_off"));

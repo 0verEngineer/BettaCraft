@@ -93,6 +93,22 @@ final class JadeClientTooltips {
         }
     }
 
+    /** M51: the hired aquarist (synced data only). */
+    static final class Aquarist implements IEntityComponentProvider {
+        static final Aquarist INSTANCE = new Aquarist();
+
+        @Override
+        public void appendTooltip(ITooltip tooltip, EntityAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
+            if (accessor.getEntity() instanceof org.overengineer.bettacraft.aquarist.AquaristEntity a) InfoLines.aquarist(a).forEach(tooltip::add);
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.AQUARIST;
+        }
+    }
+
     static final class Betta implements IEntityComponentProvider {
         static final Betta INSTANCE = new Betta();
 

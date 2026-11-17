@@ -106,6 +106,10 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
         @Override
         public void addProbeEntityInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, Entity entity, IProbeHitEntityData data) {
             if (entity instanceof BettaEntity b && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) betta(info, mode, b);
+            if (entity instanceof org.overengineer.bettacraft.aquarist.AquaristEntity a // M51
+                    && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) {
+                for (var line : InfoLines.aquarist(a)) info.text(line);
+            }
         }
     }
 }

@@ -44,7 +44,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
             // M49
             "sump_installed", "calcium_reactor", "archerfish_shot", "archerfish_splash", "mudskipper_paludarium", "mangrove_grown", "amano_young",
             // M50
-            "powered_trip"};
+            "powered_trip",
+            // M51
+            "aquarist_hired"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -191,6 +193,8 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         // M47: the frogs' first tadpoles, a trade with the aquarist villager
         event(filled, "frog_tadpole", ModItems.FROG_BUCKET.get(), AdvancementType.GOAL, Progress.FROG_TADPOLE);
         event(inserted, "aquarist_trade", ModItems.BREEDING_BASIN.get(), AdvancementType.TASK, Progress.AQUARIST_TRADE);
+        // M51: the hired aquarist (he comes after the first breeding)
+        event(inserted, "aquarist_hired", Items.EMERALD, AdvancementType.GOAL, Progress.AQUARIST_HIRED);
         // M48: a bred form of a tetra or a cory
         event(inserted, "tetra_cory_form", ModItems.FISH_BAG.get(), AdvancementType.GOAL, Progress.TETRA_CORY_FORM);
         // M49 part a: the sump under the tank, the calcium reactor; part b: the brackish water theme

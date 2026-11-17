@@ -118,6 +118,30 @@ public final class MonitorAlarms {
         return t != null && t.isController() ? t.getTank().owner() : null;
     }
 
+    /**
+     * M51: an alarm of something else than a monitor (the hired aquarist's warnings): the waypoint at the tank opens for
+     * {@code player} only (and again when he comes online) and closes when the last alarm of the tank clears. Off without
+     * {@code features.compat.journeymap}.
+     */
+    public static void external(ServerLevel level, UUID tank, String key, BlockPos pos, String tankName, String value, boolean on, @javax.annotation.Nullable UUID player) {
+        if (on) {
+            if (!Features.enabled(Feature.ALARM_WAYPOINTS) || player == null) return;
+            AlarmWaypointPayload add = new AlarmWaypointPayload(tank, true, level.dimension().location(), pos, tankName, value);
+            Set<UUID> to = BOOK.open(tank, key, player, add, () -> {
+                Set<UUID> s = new LinkedHashSet<>();
+                if (level.getServer().getPlayerList().getPlayer(player) != null) s.add(player);
+                return s;
+            });
+            for (UUID p : to) send(level, p, add);
+        } else {
+            AlarmWaypointBook.Entry e = BOOK.entry(tank);
+            Set<UUID> to = BOOK.close(tank, key);
+            if (to.isEmpty()) return;
+            BlockPos at = e != null && e.data instanceof AlarmWaypointPayload a ? a.pos() : pos;
+            for (UUID p : to) send(level, p, new AlarmWaypointPayload(tank, false, level.dimension().location(), at, tankName, value));
+        }
+    }
+
     /** The owner (online, any level) and the players of the tank's level within {@link #WAYPOINT_RANGE} blocks. */
     static Set<UUID> recipients(ServerLevel level, BlockPos pos, UUID owner) {
         Set<UUID> out = new LinkedHashSet<>();

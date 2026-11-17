@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "18"; // M50: the state of tanks travelling on Create contraptions (M37: water values carry the fertilizer)
+    public static final String VERSION = "19"; // M51: the menu of the hired aquarist (M50: travelling tanks; M37: fertilizer in water values)
 
     private ModNetwork() {}
 
@@ -44,7 +44,17 @@ public final class ModNetwork {
         r.playToClient(AlarmWaypointPayload.TYPE, AlarmWaypointPayload.STREAM_CODEC, ModNetwork::onAlarmWaypoint); // M32 part d
         r.playToClient(FeatureSyncPayload.TYPE, FeatureSyncPayload.STREAM_CODEC, ModNetwork::onFeatures); // M33 part b
         r.playToClient(TravellingTankPayload.TYPE, TravellingTankPayload.STREAM_CODEC, ModNetwork::onTravellingTank); // M50
+        r.playToClient(AquaristViewPayload.TYPE, AquaristViewPayload.STREAM_CODEC, ModNetwork::onAquaristView); // M51
+        r.playToServer(AquaristActionPayload.TYPE, AquaristActionPayload.STREAM_CODEC, (p, ctx) -> ctx.enqueueWork(() -> {
+            if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.aquarist.AquaristMenu.handle(sp, p);
+        })); // M51
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+    }
+
+    private static void onAquaristView(AquaristViewPayload payload, IPayloadContext ctx) {
+        if (FMLEnvironment.dist.isClient()) {
+            ctx.enqueueWork(() -> org.overengineer.bettacraft.client.screen.AquaristScreen.accept(payload.view()));
+        }
     }
 
     private static void onTravellingTank(TravellingTankPayload payload, IPayloadContext ctx) {

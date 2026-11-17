@@ -246,6 +246,19 @@ public final class InfoLines {
      * Betta: type, sex and stage always (from the entity, also without server data); health and the first genotype
      * line in a tank; all genotype lines and the generation with {@code details}.
      */
+    /** M51: the hired aquarist (from his synced data): whom he works for and what he does. */
+    public static List<Component> aquarist(org.overengineer.bettacraft.aquarist.AquaristEntity a) {
+        List<Component> out = new ArrayList<>();
+        String status = a.status();
+        boolean bad = status.equals("no_workplace") || status.equals("no_bed") || status.equals("unpaid") || status.equals("off");
+        if (!a.employerName().isEmpty()) {
+            out.add(Component.translatable(a.phase() == org.overengineer.bettacraft.aquarist.AquaristEntity.Phase.OFFERING ? "message.bettacraft.aquarist.offers_to"
+                    : "message.bettacraft.aquarist.works_for", a.getName(), a.employerName()).withStyle(ChatFormatting.GRAY));
+        }
+        out.add(Component.translatable("gui.bettacraft.aquarist.status." + status).withStyle(bad ? ChatFormatting.RED : ChatFormatting.GREEN));
+        return out;
+    }
+
     public static List<Component> betta(BettaEntity b, CompoundTag d, boolean details) {
         List<Component> out = new ArrayList<>();
         if (d == null) d = new CompoundTag();

@@ -150,6 +150,14 @@ public final class TankData {
     /** M49: flies for the archerfish (in the plankton compound) and the mangroves of the interior. */
     private double flies;
     private final List<org.overengineer.bettacraft.plants.Mangroves.Tree> mangroves = new ArrayList<>();
+    /**
+     * M51: which hired aquarists may work at this tank ({@link org.overengineer.bettacraft.aquarist.AquaristAccess}: the
+     * owner's and his team's only, also those of other players, none) and when an aquarist last did each of his tasks here
+     * (game times by task id; shared by every aquarist, so two never do the same twice). Saved under "aquarist" only once
+     * set; older worlds have none.
+     */
+    private org.overengineer.bettacraft.aquarist.AquaristAccess aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER;
+    private final CompoundTag aquaristWork = new CompoundTag();
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -433,6 +441,12 @@ public final class TankData {
     public void setFlies(double v) { this.flies = Math.min(64, clean(v)); }
     /** M49: the mangroves growing in the interior ({@link org.overengineer.bettacraft.plants.Mangroves}). */
     public List<org.overengineer.bettacraft.plants.Mangroves.Tree> mangroves() { return mangroves; }
+    /** M51: who may let his hired aquarist work here. */
+    public org.overengineer.bettacraft.aquarist.AquaristAccess aquaristAccess() { return aquaristAccess; }
+    public void setAquaristAccess(org.overengineer.bettacraft.aquarist.AquaristAccess a) { this.aquaristAccess = a == null ? org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER : a; }
+    /** M51: game time an aquarist last did task {@code task} here (Long.MIN_VALUE: never). */
+    public long aquaristDone(String task) { return aquaristWork.contains(task) ? aquaristWork.getLong(task) : Long.MIN_VALUE; }
+    public void setAquaristDone(String task, long time) { aquaristWork.putLong(task, time); }
     public void setPhytoplankton(double v) { this.phytoplankton = clean(v); }
     public double nauplii() { return nauplii; }
     public void setNauplii(double v) { this.nauplii = clean(v); }
@@ -605,6 +619,8 @@ public final class TankData {
         front = o.front;
         locked = o.locked;
         breakProtected = o.breakProtected;
+        aquaristAccess = o.aquaristAccess; // M51
+        for (String k : o.aquaristWork.getAllKeys()) aquaristWork.putLong(k, o.aquaristWork.getLong(k));
         tankMode = o.tankMode; // M33.1: the parts of a split tank and a merged tank keep the type
         waterQuality = o.waterQuality;
         lastFreshWater = o.lastFreshWater;
@@ -901,6 +917,12 @@ public final class TankData {
             for (var m : mangroves) ml.add(m.save());
             t.put("mangroves", ml);
         }
+        if (aquaristAccess != org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER || !aquaristWork.isEmpty()) { // M51
+            CompoundTag a = new CompoundTag();
+            if (aquaristAccess != org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER) a.putString("access", aquaristAccess.id());
+            if (!aquaristWork.isEmpty()) a.put("done", aquaristWork.copy());
+            t.put("aquarist", a);
+        }
         return t;
     }
 
@@ -1060,6 +1082,12 @@ public final class TankData {
         for (Tag e : t.getList("mangroves", Tag.TAG_COMPOUND)) {
             var m = org.overengineer.bettacraft.plants.Mangroves.Tree.load((CompoundTag) e);
             if (m != null) d.mangroves.add(m);
+        }
+        if (t.contains("aquarist", Tag.TAG_COMPOUND)) { // M51
+            CompoundTag a = t.getCompound("aquarist");
+            d.aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.byId(a.getString("access"));
+            CompoundTag done = a.getCompound("done");
+            for (String k : done.getAllKeys()) d.aquaristWork.putLong(k, done.getLong(k));
         }
         d.recomputeBounds();
         return d;

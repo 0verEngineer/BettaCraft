@@ -149,6 +149,24 @@ final class DevClientSmokeMP {
                     send("travel " + travelReceived() + " " + !list.isEmpty() + " " + packed);
                 });
             }
+            case "aquarists" -> then(40, () -> { // M51: both aquarists and whom they work for
+                Minecraft mc = Minecraft.getInstance();
+                String[] ids = args.split(",");
+                var n1 = mc.level.getEntity(Integer.parseInt(ids[0]));
+                var n2 = mc.level.getEntity(Integer.parseInt(ids[1]));
+                boolean seen = n1 instanceof org.overengineer.bettacraft.aquarist.AquaristEntity && n2 instanceof org.overengineer.bettacraft.aquarist.AquaristEntity;
+                send("aquarists " + seen + "," + (n1 instanceof org.overengineer.bettacraft.aquarist.AquaristEntity x ? x.employerName() : "-") + ","
+                        + (n2 instanceof org.overengineer.bettacraft.aquarist.AquaristEntity y ? y.employerName() : "-"));
+            });
+            case "aquaristmenu" -> {
+                then(40, () -> shot("aquarist_menu"));
+                then(1, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    boolean open = mc.screen instanceof org.overengineer.bettacraft.client.screen.AquaristScreen;
+                    send("aquaristmenu " + (open ? "ok" : "no-window:" + mc.screen));
+                    if (open) mc.setScreen(null);
+                });
+            }
             case "light" -> {
                 // M18: the colour of the dyed light and the tint of its tank's water on this client
                 String[] s = args.split(";", 2);

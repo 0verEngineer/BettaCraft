@@ -156,6 +156,9 @@ public final class TankView {
     public boolean locked;
     /** M21.5: break protection on, and whether the feature is switched on at all. */
     public boolean breakProtected, protectionFeature;
+    /** M51: who may let his hired aquarist work here, and whether the feature is on. */
+    public org.overengineer.bettacraft.aquarist.AquaristAccess aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER;
+    public boolean aquaristFeature;
     public boolean canModify = true;
     public boolean isOwner;
     public String ownerName = "";
@@ -1037,6 +1040,8 @@ public final class TankView {
         out.putBoolean("locked", t.locked());
         out.putBoolean("break_protected", t.breakProtected());
         out.putBoolean("protection_feature", Features.enabled(Feature.BREAK_PROTECTION));
+        out.putString("aquarist_access", t.aquaristAccess().id()); // M51
+        out.putBoolean("aquarist_feature", Features.enabled(Feature.AQUARIST_NPC));
         out.putBoolean("can_modify", TankInhabitants.canModify(player, t));
         out.putBoolean("owner", player.getUUID().equals(t.owner()));
         String ownerName = "";
@@ -1328,6 +1333,8 @@ public final class TankView {
         v.locked = t.getBoolean("locked");
         v.breakProtected = t.getBoolean("break_protected");
         v.protectionFeature = t.getBoolean("protection_feature");
+        v.aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.byId(t.getString("aquarist_access")); // M51
+        v.aquaristFeature = t.getBoolean("aquarist_feature");
         v.canModify = t.getBoolean("can_modify");
         v.isOwner = t.getBoolean("owner");
         v.ownerName = t.getString("owner_name");

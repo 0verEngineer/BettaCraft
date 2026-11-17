@@ -76,6 +76,8 @@ public final class TankCare {
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastCareTick = now;
         care(server, be, dt);
+        // M51: the index of owned tanks (the arrival of the hired aquarist counts them, he finds his tanks in it)
+        if (Features.enabled(Feature.AQUARIST_NPC)) org.overengineer.bettacraft.aquarist.AquaristRecords.get(server.getServer()).noteTank(server, be);
         // M50: a tank whose devices run on power on an airship
         if (be.lastDemand > 0 && be.filterPowered && be.heatPowered && TankMoves.livesOn(level, pos)) {
             org.overengineer.bettacraft.progression.Progress.awardNear(server, be, org.overengineer.bettacraft.progression.Progress.POWERED_TRIP, 0);

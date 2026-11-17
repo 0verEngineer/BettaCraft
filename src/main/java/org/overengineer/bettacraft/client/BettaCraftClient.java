@@ -293,6 +293,7 @@ public final class BettaCraftClient {
 
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
+        event.registerEntityRenderer(ModEntities.HIRED_AQUARIST.get(), org.overengineer.bettacraft.client.render.AquaristRenderer::new); // M51
         event.registerEntityRenderer(ModEntities.DWARF_FROG.get(), org.overengineer.bettacraft.client.render.DwarfFrogRenderer::new);
         event.registerEntityRenderer(ModEntities.MUSK_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "musk_turtle", 0.8F, 0.2F)); // M31
         event.registerEntityRenderer(ModEntities.SLIDER_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "slider_turtle", 0.9F, 0.3F)); // M31 part b

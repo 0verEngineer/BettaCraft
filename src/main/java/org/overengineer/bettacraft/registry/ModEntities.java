@@ -24,6 +24,14 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .build(BettaCraft.id("betta").toString()));
 
+    /** M51: the hired aquarist (a person, not a villager). */
+    public static final Supplier<EntityType<org.overengineer.bettacraft.aquarist.AquaristEntity>> HIRED_AQUARIST = ENTITIES.register("hired_aquarist",
+            () -> EntityType.Builder.of(org.overengineer.bettacraft.aquarist.AquaristEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.95F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(10)
+                    .build(BettaCraft.id("hired_aquarist").toString()));
+
     /** M14: African dwarf clawed frog (Hymenochirus), about 3.5 cm. */
     public static final Supplier<EntityType<org.overengineer.bettacraft.entity.frog.DwarfFrogEntity>> DWARF_FROG = ENTITIES.register("dwarf_clawed_frog",
             () -> EntityType.Builder.of(org.overengineer.bettacraft.entity.frog.DwarfFrogEntity::new, MobCategory.WATER_AMBIENT)
@@ -138,6 +146,7 @@ public final class ModEntities {
 
     private static void onAttributes(EntityAttributeCreationEvent event) {
         event.put(BETTA.get(), BettaEntity.createAttributes().build());
+        event.put(HIRED_AQUARIST.get(), org.overengineer.bettacraft.aquarist.AquaristEntity.createAttributes().build()); // M51
         event.put(DWARF_FROG.get(), org.overengineer.bettacraft.entity.frog.DwarfFrogEntity.createAttributes().build());
         event.put(MUSK_TURTLE.get(), org.overengineer.bettacraft.terrarium.MuskTurtleEntity.createAttributes().build()); // M31
         event.put(SLIDER_TURTLE.get(), org.overengineer.bettacraft.terrarium.HerpEntity.createAttributes(org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER).build()); // M31 part b

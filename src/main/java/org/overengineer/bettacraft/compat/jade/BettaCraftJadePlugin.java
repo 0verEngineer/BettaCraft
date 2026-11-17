@@ -22,6 +22,8 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
     public static final ResourceLocation CULTURE = BettaCraft.id("culture");
     /** M37: the spring of the devices the crank winds. */
     public static final ResourceLocation SPRING = BettaCraft.id("spring");
+    /** M51: the hired aquarist. */
+    public static final ResourceLocation AQUARIST = BettaCraft.id("hired_aquarist");
 
     @Override
     public void register(IWailaCommonRegistration registration) {
@@ -42,6 +44,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(JadeClientTooltips.Tank.INSTANCE, TankBlock.class);
         registration.registerEntityComponent(JadeClientTooltips.Betta.INSTANCE, BettaEntity.class);
+        registration.registerEntityComponent(JadeClientTooltips.Aquarist.INSTANCE, org.overengineer.bettacraft.aquarist.AquaristEntity.class); // M51
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlock.class);

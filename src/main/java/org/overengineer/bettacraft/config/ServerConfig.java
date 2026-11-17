@@ -285,6 +285,11 @@ public final class ServerConfig {
     /** M49: the sump, its refugium and the calcium reactor; the brackish water animals and the mangroves. */
     public static final ModConfigSpec.DoubleValue SUMP_WATER_BLOCKS, REFUGIUM_NITRATE, CHAETO_DOUBLING_DAYS, CALCIUM_REACTOR_CA, CALCIUM_REACTOR_RUBBLE;
     public static final ModConfigSpec.DoubleValue ARCHER_INSECTS, ARCHER_SPLASH, AMANO_LARVA_DAYS, AMANO_FRESH_LARVA_DAYS, AMANO_LARVA_SURVIVAL, MANGROVE_STAGE_DAYS;
+    // M51: the hired aquarist (features.aquaristNpc.enabled)
+    public static final ModConfigSpec.IntValue AQUARIST_MIN_TANKS, AQUARIST_RETURN_MIN, AQUARIST_RETURN_MAX, AQUARIST_MAX_TANKS, AQUARIST_WORK_RADIUS,
+            AQUARIST_HOME_RADIUS, AQUARIST_WAGE_EMERALDS, AQUARIST_WAGE_FOOD, AQUARIST_LEAVE_DAYS;
+    public static final ModConfigSpec.DoubleValue AQUARIST_OFFER_DAYS, AQUARIST_UNPAID_SPEED;
+    public static final ModConfigSpec.BooleanValue AQUARIST_WAGE, AQUARIST_FTB_TEAMS;
     public static final ModConfigSpec.IntValue REEF_PUMP_BLOCKS;
     public static final ModConfigSpec.DoubleValue REEF_CORAL_GROWTH;
     public static final ModConfigSpec.DoubleValue REEF_CALCIUM_PER_STAGE;
@@ -1225,6 +1230,29 @@ public final class ServerConfig {
                         "phytoplankton about twice as many, at most 80 %)").defineInRange("amanoLarvaSurvival", 0.35, 0.0, 1.0);
         MANGROVE_STAGE_DAYS = b.comment("Days between two growth stages of a mangrove in a tank interior (in light; brackish water a third faster)")
                 .defineInRange("mangroveStageDays", 1.5, 0.05, 100.0);
+        b.pop();
+        b.comment("M51: the hired aquarist (features.aquaristNpc.enabled): a man or woman who comes to each player with tanks and a first",
+                "breeding, and works for that player when hired (feeding, water changes, algae, plants, moving young, warnings)").push("hiredAquarist");
+        AQUARIST_MIN_TANKS = b.comment("Own tanks a player needs (besides a first breeding) before an aquarist comes by").defineInRange("minOwnTanks", 3, 1, 1000);
+        AQUARIST_RETURN_MIN = b.comment("Fewest in-game days after a refusal (or after an aquarist left) until the next one comes; another breeding",
+                "is needed too").defineInRange("returnDaysMin", 5, 0, 1000);
+        AQUARIST_RETURN_MAX = b.comment("Most in-game days after a refusal until the next aquarist comes (a random day between the two)")
+                .defineInRange("returnDaysMax", 10, 0, 1000);
+        AQUARIST_OFFER_DAYS = b.comment("In-game days an aquarist waits for an answer before he leaves again (counts as a refusal)")
+                .defineInRange("offerDays", 1.0, 0.05, 100.0);
+        AQUARIST_MAX_TANKS = b.comment("Tanks one aquarist looks after at most (the nearest to his workplace first)").defineInRange("maxTanksCared", 16, 1, 256);
+        AQUARIST_WORK_RADIUS = b.comment("Blocks around his workplace (the breeding basin) in which an aquarist looks after tanks").defineInRange("workRadius", 32, 4, 128);
+        AQUARIST_HOME_RADIUS = b.comment("Blocks around him in which an aquarist looks for a free bed and a free breeding basin").defineInRange("homeRadius", 32, 4, 128);
+        AQUARIST_WAGE = b.comment("Whether an aquarist wants a wage each in-game day (emeralds or food from a chest next to his workplace); without it",
+                "he works for nothing and never leaves for lack of pay").define("wage", true);
+        AQUARIST_WAGE_EMERALDS = b.comment("Emeralds an aquarist takes as his wage each in-game day (0: he takes only food)").defineInRange("wageEmeralds", 1, 0, 64);
+        AQUARIST_WAGE_FOOD = b.comment("Food items (bread, cooked fish ...) an aquarist takes instead each in-game day when there are no emeralds",
+                "(0: emeralds only)").defineInRange("wageFood", 3, 0, 64);
+        AQUARIST_LEAVE_DAYS = b.comment("In-game days without wage (or without a bed and a workplace) after which an aquarist leaves")
+                .defineInRange("unpaidDaysUntilLeave", 3, 1, 100);
+        AQUARIST_UNPAID_SPEED = b.comment("How fast an aquarist works while his wage is missing (1 = as fast as when paid)").defineInRange("unpaidWorkSpeed", 0.5, 0.05, 1.0);
+        AQUARIST_FTB_TEAMS = b.comment("With FTB Teams: the tanks of the members of the employer's team count as his own (off: only the employer's",
+                "tanks and the tanks released for every aquarist)").define("ftbTeams", true);
         b.pop();
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");
         GUIDE_GIVE_BOOK = b.comment("When each player gets the handbook, once: ON_JOIN = on the first join, ON_FIRST_CATCH_OR_CRAFT = with the",

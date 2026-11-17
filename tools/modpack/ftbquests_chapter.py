@@ -221,6 +221,8 @@ QUESTS = [
     ("amano", [adv("amano_young")], ["critters_bred"], -1.00, 8.60, 250, "hexagon"),
     # ------------------------------------------------------------ M50: the care on the road (Create, optional)
     ("powered_trip", [adv("powered_trip")], ["travelling_tank"], 12.25, -6.75, 150, None),
+    # ------------------------------------------------------------ M51: the hired aquarist
+    ("aquarist_hired", [adv("aquarist_hired")], ["spawned"], 11.00, 1.10, 150, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -258,6 +260,7 @@ OWN_FEATURES = {
     "sump": ["SUMP"], "refugium": ["REFUGIUM"], "calcium_reactor": ["CALCIUM_REACTOR"], "archerfish": ["ARCHERFISH"],
     "mudskipper": ["MUDSKIPPER"], "mangrove": ["MANGROVES"], "amano": ["AMANO_SHRIMP", "BREEDING"],
     "powered_trip": ["CREATE_TRAVEL_CARE"],
+    "aquarist_hired": ["AQUARIST_NPC"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.

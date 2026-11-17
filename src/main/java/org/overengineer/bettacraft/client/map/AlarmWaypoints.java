@@ -32,7 +32,9 @@ public final class AlarmWaypoints {
     static String label(AlarmWaypointPayload p) {
         MonitorValue v = MonitorValue.byId(p.value());
         Component name = p.name().isEmpty() ? Component.translatable("waypoint.bettacraft.tank") : Component.literal(p.name());
-        Component value = v == null ? Component.literal(p.value()) : Component.translatable(v.translationKey());
+        // M51: a warning of the hired aquarist ("aquarist:warning.<key>")
+        Component value = v != null ? Component.translatable(v.translationKey()) : p.value().startsWith("aquarist:")
+                ? Component.translatable("aquarist.bettacraft." + p.value().substring("aquarist:".length())) : Component.literal(p.value());
         return Component.translatable("waypoint.bettacraft.alarm", name, value).getString();
     }
 

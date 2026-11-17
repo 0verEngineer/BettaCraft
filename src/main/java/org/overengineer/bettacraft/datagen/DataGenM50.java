@@ -18,6 +18,7 @@ final class DataGenM50 {
     static void entityTags(java.util.function.Function<TagKey<EntityType<?>>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<EntityType<?>>> tag) {
         var retain = tag.apply(TankMoves.RETAIN);
         BuiltInRegistries.ENTITY_TYPE.stream().filter(t -> BettaCraft.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(t).getNamespace()))
+                .filter(t -> t != org.overengineer.bettacraft.registry.ModEntities.HIRED_AQUARIST.get()) // M51: a person, not an animal of a tank
                 .sorted(java.util.Comparator.comparing(t -> BuiltInRegistries.ENTITY_TYPE.getKey(t).toString()))
                 .forEach(retain::add);
     }

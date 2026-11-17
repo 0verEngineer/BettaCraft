@@ -126,11 +126,18 @@ public final class Progress {
     public static final String MANGROVE = "mangrove_grown";
     /** Amano larvae settled as young shrimp in brackish water (log amano.young). */
     public static final String AMANO_YOUNG = "amano_young";
+    // M51
+    /** A player hired the aquarist who came to him. */
+    public static final String AQUARIST_HIRED = "aquarist_hired";
+    /** M51: the breeding events (the hired aquarist comes after one, and after a refusal only after another one). */
+    static final java.util.Set<String> BREEDING_EVENTS = java.util.Set.of(SPAWNED, FRY_FREE, LITTER, SEAHORSE_FRY, CRITTERS_BRED, HERP_CLUTCH, TURTLE_CLUTCH,
+            FROG_TADPOLE, CLOWN_LARVAE, BANGGAI_YOUNG, AMANO_YOUNG);
 
     private Progress() {}
 
     public static void award(@Nullable Player player, String event, int value) {
         if (player instanceof ServerPlayer sp && !(sp.level().isClientSide)) {
+            if (BREEDING_EVENTS.contains(event)) org.overengineer.bettacraft.aquarist.AquaristArrival.onBreeding(sp); // M51
             try {
                 ModTriggers.EVENT.get().trigger(sp, event, value);
             } catch (RuntimeException e) {

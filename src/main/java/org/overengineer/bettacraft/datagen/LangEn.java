@@ -55,6 +55,7 @@ final class LangEn {
         LangM48.addAll(a); // M48: tetra and cory forms, bronze cory, panda garra, reef animals, clownfish larvae
         LangM49.addAll(a); // M49: sump, refugium, calcium reactor; the brackish water theme
         LangM50.addAll(a); // M50: care on the road (Create contraptions, airships), sloshing water
+        LangM51.addAll(a); // M51: the hired aquarist
         LangM33c.addAll(a); // M33 part c
         LangM33d.addAll(a); // M33 part d
         LangM331.addAll(a); // M33.1

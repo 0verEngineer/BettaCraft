@@ -27,6 +27,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         registrar.body(new Filter(), CabinetBlock.class);
         registrar.body(new Culture(), org.overengineer.bettacraft.food.CultureTubBlock.class);
         registrar.body(new Betta(), BettaEntity.class);
+        registrar.body(new Aquarist(), org.overengineer.bettacraft.aquarist.AquaristEntity.class); // M51
         registrar.body(new Spring(), org.overengineer.bettacraft.food.FoodMakerBlock.class);
         registrar.body(new Spring(), org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock.class);
         registrar.body(new Spring(), org.overengineer.bettacraft.osmosis.RoUnitBlock.class);
@@ -78,6 +79,15 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.culture(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+        }
+    }
+
+    /** M51: the hired aquarist (synced data only). */
+    static final class Aquarist implements IEntityComponentProvider {
+        @Override
+        public void appendBody(ITooltip tooltip, IEntityAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
+            if (accessor.getEntity() instanceof org.overengineer.bettacraft.aquarist.AquaristEntity a) InfoLines.aquarist(a).forEach(tooltip::addLine);
         }
     }
 

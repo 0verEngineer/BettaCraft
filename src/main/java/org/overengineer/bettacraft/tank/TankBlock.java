@@ -388,6 +388,12 @@ public class TankBlock extends BaseEntityBlock {
             if (controller == null) {
                 TankInteractions.showInfo(sp, pos);
             } else {
+                // M51: a tank without an owner (from before owners, built by a machine or a command) goes to the next player who opens it
+                if (controller.getTank().owner() == null && !sp.isSpectator()) {
+                    controller.getTank().setOwner(sp.getUUID());
+                    org.overengineer.bettacraft.tank.TankCare.log(sp.serverLevel(), controller, "log.bettacraft.owner_taken", TankCare.nameArg(sp));
+                    controller.markTankChanged();
+                }
                 sp.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, controller),
                         Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(controller.getBlockPos()));
                 org.overengineer.bettacraft.progression.Progress.onMenuOpened(sp, controller);

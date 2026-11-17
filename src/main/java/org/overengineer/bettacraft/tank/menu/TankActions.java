@@ -51,6 +51,8 @@ public final class TankActions {
     public static final int TOGGLE_TIMER = 17;
     public static final int SET_LIGHT_ON = 18;
     public static final int SET_LIGHT_OFF = 19;
+    /** M51: who may let his hired aquarist work here (owner or OP; value = the {@code AquaristAccess} ordinal). */
+    public static final int SET_AQUARIST = 20;
 
     /** M22.3: bits of the value of {@link #TAKE_CRITTER}: 0-1 how many (one best, one worst, a full container), 2-3 the sex, 4 a bucket. */
     public static int critterValue(int mode, int sex, boolean bucket) {
@@ -112,6 +114,17 @@ public final class TankActions {
                 }
             }
             case TOGGLE_PROTECT -> error = org.overengineer.bettacraft.tank.TankProtection.toggle(player, controller);
+            case SET_AQUARIST -> {
+                var values = org.overengineer.bettacraft.aquarist.AquaristAccess.values();
+                if (!owner && tank.owner() != null) error = Component.translatable("message.bettacraft.tank.only_owner");
+                else if (!Features.enabled(Feature.AQUARIST_NPC)) error = Component.translatable("message.bettacraft.aquarist.feature_off");
+                else if (p.value() >= 0 && p.value() < values.length) {
+                    if (tank.owner() == null) tank.setOwner(player.getUUID());
+                    tank.setAquaristAccess(values[p.value()]);
+                    TankCare.log(player.serverLevel(), controller, "log.bettacraft.aquarist.access", TankCare.nameArg(player),
+                            "@" + values[p.value()].translationKey());
+                }
+            }
             case SET_TARGET -> {
                 if (!modify) error = locked();
                 else tank.setTargetTemp(p.value() / 2.0F);

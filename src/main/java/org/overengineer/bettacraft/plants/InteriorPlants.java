@@ -855,6 +855,25 @@ public final class InteriorPlants {
         trim(interior, r, p, player, shears, hand);
     }
 
+    /**
+     * M51: a hired aquarist trims a plant: cut back like with shears, logged with {@code who}; the cuttings are not given
+     * (the caller takes {@link #item}{@code (species, 0)} times the result). Returns the cuttings.
+     */
+    public static int trimBy(ServerLevel interior, InteriorRegion r, InteriorPlant p, String who) {
+        int cut = Math.min(p.species.trimStages(), p.stage - p.species.trimFloor());
+        if (cut <= 0) return 0;
+        p.target = p.stage - cut;
+        p.progress = 0;
+        apply(interior, r, p);
+        int n = p.species.cuttingsPerTrim(cut);
+        InteriorRegions.get(interior.getServer()).setDirty();
+        TankBlockEntity c = controller(interior.getServer(), r);
+        if (c != null && c.getLevel() instanceof ServerLevel tl) {
+            TankCare.log(tl, c, "log.bettacraft.aquatic_trimmed", who, "@" + item(p.species, 0).getDescriptionId(), String.valueOf(n));
+        }
+        return n;
+    }
+
     /** Cuts a plant back by {@link PlantSpecies#trimStages()} and gives the cuttings. Returns the cuttings given. */
     public static int trim(ServerLevel interior, InteriorRegion r, InteriorPlant p, @Nullable Player player, @Nullable ItemStack shears,
                            @Nullable InteractionHand hand) {

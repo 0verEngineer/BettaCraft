@@ -1492,6 +1492,19 @@
 			title: "{\"translate\":\"quest.bettacraft.powered_trip.title\"}",
 			x: 12.2d,
 			y: -6.8d
+		},
+		{
+			dependencies: ["2DC6A271E943D192"],
+			description: ["{\"translate\":\"quest.bettacraft.aquarist_hired.desc\"}"],
+			id: "4B6906DE47FD1153",
+			rewards: [{ id: "51B665498763D596", type: "xp", xp: 150 }],
+			tags: ["bettacraft_feature:aquaristNpc.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:aquarist_hired", criterion: "", id: "0689FAEAD74F1A25", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.aquarist_hired.title\"}",
+			x: 11.0d,
+			y: 1.1d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

@@ -227,6 +227,9 @@ public final class DevSmokeMP {
                     + " (expected true custom true NORMAL)", text.equals("precustom true custom true NORMAL"));
             case "error" -> fail(name + ": " + text.substring(6));
             case "travel" -> checkTravel(name, a); // M50
+            case "aquarists" -> check(name + ": sees both aquarists with their employers " + (a.length > 1 ? a[1] : "?") + " (expected true,Dev1,Dev2)",
+                    a.length > 1 && "true,Dev1,Dev2".equals(a[1])); // M51
+            case "aquaristmenu" -> check(name + ": the menu of his own aquarist " + (a.length > 1 ? a[1] : "?"), a.length > 1 && a[1].startsWith("ok"));
             default -> { }
         }
         reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine", "sizes").contains(a[0]) ? a[1] : "")
@@ -1475,6 +1478,7 @@ public final class DevSmokeMP {
             say("preset", "all", "precustom");
         }, () -> reports.containsKey(P1 + ":precustom") && reports.containsKey(P2 + ":precustom"), 20 * 30));
         if (net.neoforged.fml.ModList.get().isLoaded("create")) travel(); // M50: with -Pcreate a tank turns on a bearing
+        aquarists(); // M51: a hired aquarist for each player
         steps.add(new Step("third look", () -> say("state", "all", "3," + tankArg()),
                 () -> reports.containsKey(P1 + ":state3") && reports.containsKey(P2 + ":state3"), 20 * 30));
         steps.add(new Step("quit", () -> say("quit", "all", ""), () -> server.getPlayerList().getPlayerCount() == 0, 20 * 60));
@@ -1622,6 +1626,159 @@ public final class DevSmokeMP {
             check("travel: the trip is in the tank's log", c != null && c.getTank().log().stream().anyMatch(l -> l.key().equals("log.bettacraft.travel.arrived")));
             clearTravel(server.overworld());
         }, () -> true, 20));
+    }
+
+    // ------------------------------------------------------------------ M51: a hired aquarist for each of the two players
+
+    private static BlockPos aqBase;
+    private static org.overengineer.bettacraft.aquarist.AquaristEntity aq1, aq2;
+    private static final Map<String, BlockPos> aqTanks = new java.util.LinkedHashMap<>();
+
+    /**
+     * M51: two players, two aquarists (Dev1's and Dev2's, each with his own basin, chest and bed) and four tanks with algae:
+     * Dev1's own, Dev2's own, Dev2's released for every aquarist and Dev2's locked (released too). Each aquarist cleans his
+     * employer's tank and the released one, never the other player's own tank or the locked one; both clients see both
+     * aquarists with their employers' names; only the employer changes his aquarist's tasks; Dev1 opens his aquarist's menu.
+     */
+    private static void aquarists() {
+        steps.add(new Step("aquarists: hire", () -> {
+            ServerLevel level = server.overworld();
+            aqBase = base.offset(-26, 0, -10);
+            for (int cx = (aqBase.getX() - 4) >> 4; cx <= (aqBase.getX() + 22) >> 4; cx++)
+                for (int cz = (aqBase.getZ() - 4) >> 4; cz <= (aqBase.getZ() + 14) >> 4; cz++) level.setChunkForced(cx, cz, true);
+            AABB box = new AABB(aqBase.offset(-3, -1, -3).getCenter(), aqBase.offset(22, 6, 14).getCenter()).inflate(1);
+            for (Entity e : level.getEntitiesOfClass(Entity.class, box, e -> !(e instanceof ServerPlayer))) e.discard();
+            for (BlockPos p : BlockPos.betweenClosed(aqBase.offset(-3, 0, -3), aqBase.offset(22, 5, 14))) {
+                if (!level.getBlockState(p).isAir()) level.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+            }
+            for (BlockPos p : BlockPos.betweenClosed(aqBase.offset(-3, -1, -3), aqBase.offset(22, -1, 14))) level.setBlockAndUpdate(p, Blocks.SMOOTH_STONE.defaultBlockState());
+            ServerPlayer p1 = player(P1), p2 = player(P2);
+            if (p1 == null || p2 == null) {
+                fail("aquarists: players missing");
+                return;
+            }
+            for (java.util.UUID u : List.of(p1.getUUID(), p2.getUUID())) org.overengineer.bettacraft.aquarist.AquaristRecords.get(server).reset(u);
+            aq1 = aquarist(level, p1, aqBase);
+            aq2 = aquarist(level, p2, aqBase.offset(0, 0, 8));
+            aqTanks.clear();
+            aqTanks.put("dev1", aqTank(level, aqBase.offset(8, 0, 0), p1.getUUID(), org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER, false));
+            aqTanks.put("dev2", aqTank(level, aqBase.offset(8, 0, 6), p2.getUUID(), org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER, false));
+            aqTanks.put("released", aqTank(level, aqBase.offset(14, 0, 0), p2.getUUID(), org.overengineer.bettacraft.aquarist.AquaristAccess.ALL, false));
+            aqTanks.put("locked", aqTank(level, aqBase.offset(14, 0, 6), p2.getUUID(), org.overengineer.bettacraft.aquarist.AquaristAccess.ALL, true));
+            check("aquarists: both have a home", aq1.housed() && aq2.housed());
+            // (Dev1 also owns the main tank of the stage: he opened its menu, and a tank without an owner goes to who opens it)
+            var t1 = org.overengineer.bettacraft.aquarist.AquaristWork.tanks(level, aq1).stream().map(TankBlockEntity::getBlockPos).toList();
+            var t2 = org.overengineer.bettacraft.aquarist.AquaristWork.tanks(level, aq2).stream().map(TankBlockEntity::getBlockPos).toList();
+            check("aquarists: Dev1's looks after his own and the released tank, not Dev2's or the locked one " + t1,
+                    t1.contains(aqTanks.get("dev1")) && t1.contains(aqTanks.get("released")) && !t1.contains(aqTanks.get("dev2")) && !t1.contains(aqTanks.get("locked")));
+            check("aquarists: Dev2's looks after his own and the released tank, not Dev1's or the locked one " + t2,
+                    t2.contains(aqTanks.get("dev2")) && t2.contains(aqTanks.get("released")) && !t2.contains(aqTanks.get("dev1")) && !t2.contains(aqTanks.get("locked")));
+            p1.teleportTo(level, aqBase.getX() + 4.5, aqBase.getY(), aqBase.getZ() - 4.5, 0F, 20F);
+            p2.teleportTo(level, aqBase.getX() + 4.5, aqBase.getY(), aqBase.getZ() + 13.5, 180F, 20F);
+        }, () -> true, 20));
+        steps.add(new Step("aquarists: work", () -> {}, () -> {
+            ServerLevel level = server.overworld();
+            return algae(level, "dev1") < 0.01 && algae(level, "dev2") < 0.01 && algae(level, "released") < 0.01;
+        }, 20 * 120));
+        steps.add(new Step("aquarists: check", () -> {
+            ServerLevel level = server.overworld();
+            check("aquarists: the locked tank is untouched (" + algae(level, "locked") + ")", algae(level, "locked") > 0.5);
+            check("aquarists: Dev1's tank only by Dev1's aquarist " + workers(level, "dev1"), workers(level, "dev1").equals(java.util.Set.of(aq1.logName())));
+            check("aquarists: Dev2's tank only by Dev2's aquarist " + workers(level, "dev2"), workers(level, "dev2").equals(java.util.Set.of(aq2.logName())));
+            check("aquarists: the released tank by one of them " + workers(level, "released"),
+                    !workers(level, "released").isEmpty() && java.util.Set.of(aq1.logName(), aq2.logName()).containsAll(workers(level, "released")));
+            // only the employer changes the tasks
+            ServerPlayer p1 = player(P1), p2 = player(P2);
+            var feed = org.overengineer.bettacraft.aquarist.AquaristTask.FEED;
+            int before = aq2.taskLevel(feed);
+            if (p1 != null) {
+                p1.teleportTo(level, aq2.getX() - 1.5, aq2.getY(), aq2.getZ(), -90F, 10F);
+                org.overengineer.bettacraft.aquarist.AquaristMenu.handle(p1, new org.overengineer.bettacraft.network.AquaristActionPayload(aq2.getId(),
+                        org.overengineer.bettacraft.aquarist.AquaristMenu.SET_LEVEL, feed.ordinal() * 10 + 3, ""));
+            }
+            check("aquarists: Dev1 cannot change Dev2's aquarist", aq2.taskLevel(feed) == before);
+            if (p2 != null) {
+                p2.teleportTo(level, aq2.getX() + 1.5, aq2.getY(), aq2.getZ(), 90F, 10F);
+                org.overengineer.bettacraft.aquarist.AquaristMenu.handle(p2, new org.overengineer.bettacraft.network.AquaristActionPayload(aq2.getId(),
+                        org.overengineer.bettacraft.aquarist.AquaristMenu.SET_LEVEL, feed.ordinal() * 10 + 3, ""));
+            }
+            check("aquarists: Dev2 changes his own aquarist", aq2.taskLevel(feed) == 3);
+            say("aquarists", "all", aq1.getId() + "," + aq2.getId());
+        }, () -> reports.containsKey(P1 + ":aquarists") && reports.containsKey(P2 + ":aquarists"), 20 * 30));
+        steps.add(new Step("aquarists: menu", () -> {
+            ServerPlayer p1 = player(P1);
+            if (p1 != null) {
+                p1.teleportTo(server.overworld(), aq1.getX(), aq1.getY(), aq1.getZ() - 2.5, 0F, 15F);
+                org.overengineer.bettacraft.aquarist.AquaristMenu.open(p1, aq1);
+            }
+            say("aquaristmenu", P1, String.valueOf(aq1.getId()));
+        }, () -> reports.containsKey(P1 + ":aquaristmenu"), 20 * 30));
+        steps.add(new Step("aquarists: clean up", () -> {
+            ServerLevel level = server.overworld();
+            for (var a : new org.overengineer.bettacraft.aquarist.AquaristEntity[]{aq1, aq2}) if (a != null) a.discard();
+            for (String n : List.of(P1, P2)) {
+                ServerPlayer p = player(n);
+                if (p != null) org.overengineer.bettacraft.aquarist.AquaristRecords.get(server).reset(p.getUUID());
+            }
+            for (BlockPos p : BlockPos.betweenClosed(aqBase.offset(-3, 0, -3), aqBase.offset(22, 5, 14))) {
+                if (!level.getBlockState(p).isAir()) level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+            }
+            for (int cx = (aqBase.getX() - 4) >> 4; cx <= (aqBase.getX() + 22) >> 4; cx++)
+                for (int cz = (aqBase.getZ() - 4) >> 4; cz <= (aqBase.getZ() + 14) >> 4; cz++) level.setChunkForced(cx, cz, false);
+            ServerPlayer p1 = player(P1), p2 = player(P2);
+            if (p1 != null) placeDev1(p1);
+            if (p2 != null) placeDev2(p2);
+        }, () -> true, 20));
+    }
+
+    private static org.overengineer.bettacraft.aquarist.AquaristEntity aquarist(ServerLevel level, ServerPlayer p, BlockPos at) {
+        level.setBlockAndUpdate(at, org.overengineer.bettacraft.registry.ModBlocks.BREEDING_BASIN.get().defaultBlockState());
+        level.setBlockAndUpdate(at.east(), Blocks.CHEST.defaultBlockState());
+        var foot = Blocks.WHITE_BED.defaultBlockState().setValue(net.minecraft.world.level.block.BedBlock.FACING, net.minecraft.core.Direction.SOUTH)
+                .setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.FOOT);
+        level.setBlockAndUpdate(at.offset(-2, 0, 0), foot);
+        level.setBlockAndUpdate(at.offset(-2, 0, 1), foot.setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));
+        var npc = org.overengineer.bettacraft.aquarist.AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().getName(),
+                net.minecraft.world.phys.Vec3.atBottomCenterOf(at.offset(1, 0, 2)));
+        npc.setHome(level, at, at.offset(-2, 0, 1));
+        npc.alwaysDay = true;
+        for (var t : org.overengineer.bettacraft.aquarist.AquaristTask.ALL) npc.setTaskLevel(t, t == org.overengineer.bettacraft.aquarist.AquaristTask.ALGAE ? 3 : 0);
+        return npc;
+    }
+
+    private static BlockPos aqTank(ServerLevel level, BlockPos min, java.util.UUID owner, org.overengineer.bettacraft.aquarist.AquaristAccess access, boolean locked) {
+        List<BlockPos> blocks = new ArrayList<>();
+        for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
+        for (BlockPos p : blocks) level.setBlockAndUpdate(p, org.overengineer.bettacraft.registry.ModBlocks.TANK.get().defaultBlockState());
+        TankMultiblock.formAll(level, blocks);
+        TankBlockEntity c = TankMultiblock.getController(level, min);
+        if (c == null) {
+            fail("aquarists: no tank at " + min);
+            return min;
+        }
+        org.overengineer.bettacraft.tank.TankInteractions.changeWater(level, c, c.getTank().capacityMb());
+        c.getTank().setOwner(owner);
+        c.getTank().setAquaristAccess(access);
+        c.getTank().setLocked(locked);
+        for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(c.getTank()))
+            org.overengineer.bettacraft.tank.algae.AlgaeSim.set(c.getTank().algae(), f.pos(), f.dir(), 0.8F);
+        c.markTankChanged();
+        org.overengineer.bettacraft.aquarist.AquaristRecords.get(server).noteTank(level, c);
+        return c.getBlockPos();
+    }
+
+    private static double algae(ServerLevel level, String tank) {
+        TankBlockEntity c = TankMultiblock.getController(level, aqTanks.get(tank));
+        return c == null ? -1 : org.overengineer.bettacraft.tank.algae.TankAlgae.mean(c.getTank());
+    }
+
+    /** The names in the tank's log entries of the aquarists' work. */
+    private static java.util.Set<String> workers(ServerLevel level, String tank) {
+        TankBlockEntity c = TankMultiblock.getController(level, aqTanks.get(tank));
+        java.util.Set<String> out = new java.util.HashSet<>();
+        if (c == null) return out;
+        for (var e : c.getTank().log()) if (e.key().startsWith("log.bettacraft.aquarist.") && !e.args().isEmpty()) out.add(e.args().get(0));
+        return out;
     }
 
     /** Removes the travel stage (tank blocks, bearing, bettas) around the bearing's place. */

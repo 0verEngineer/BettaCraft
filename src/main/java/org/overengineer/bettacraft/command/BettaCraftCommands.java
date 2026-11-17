@@ -59,6 +59,7 @@ public final class BettaCraftCommands {
                 .then(PresetCommand.build())
                 // M33 part d: the foreign animals in tanks and their profiles
                 .then(ForeignCommand.build())
+                .then(AquaristCommand.build()) // M51
                 // M16: every water animal of the loaded mods and whether tanks take it (table in bettacraft-water-animals.tsv)
                 .then(Commands.literal("wateranimals").requires(s -> s.hasPermission(2)).executes(ctx -> {
                     var src = ctx.getSource();
